@@ -1,0 +1,159 @@
+Mono path[0] = 'C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/integration-c17101d03-1005/TumbangPreso_Data/Managed'
+Mono config path = 'C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/integration-c17101d03-1005/MonoBleedingEdge/etc'
+CodeReloadManager initialized
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+Initialize engine version: 6000.5.8f1 (5cb7df797b7d)
+[Subsystems] Discovering subsystems at path C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/integration-c17101d03-1005/TumbangPreso_Data/UnitySubsystems
+Forcing GfxDevice: Direct3D 11
+GfxDevice: creating device client; kGfxThreadingModeClientWorkerJobs
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: AMD Radeon RX 6600 (ID=0x73ff)
+    Vendor:   ATI
+    VRAM:     8147 MB
+    Driver:   32.0.21043.19003
+Begin MonoManager ReloadAssembly
+- Finished resetting the current domain, in  0.046 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+D3D11 device created for Microsoft Media Foundation video decoding.
+<RI> Initializing input.
+Using Windows.Gaming.Input
+<RI> Input initialized.
+[Audio] loaded 65 of 65 cues.
+UnloadTime: 1.025500 ms
+[Build] TUMBANG PRESO 1.0.0 | c17101d03df7+dirty | protocol 151 | StandaloneWindows64
+[NetIdentity] Signed in to UGS as S47V6raJNEQQn1brI5pTTYTDYhEC on profile pc-pu151-host1005n1. Relay and Lobby are available.
+Unexpected timestamp values detected. This can occur in H.264 videos not encoded with the baseline profile. Timestamps will be skewed to correct the playback for C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/integration-c17101d03-1005/TumbangPreso_Data/sharedassets0.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/integration-c17101d03-1005/TumbangPreso_Data/sharedassets0.resource
+[SplashShaders] shaders=76 variants=139 warmed=139 complete=True calls=139 frames=23 budget_ms=2.0 elapsed_ms=372.259 max_slice_ms=6.244
+[Career] the cached career belongs to another account; starting a fresh one.
+[Splash] preload exceeded six seconds; keeping the loading screen visible until it is ready.
+First video frame not zero: 4 (0.133333s). Result may be out of sync. Please make sure tracks all start at 0 in C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/integration-c17101d03-1005/TumbangPreso_Data/resources.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/integration-c17101d03-1005/TumbangPreso_Data/resources.resource
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 0 of 297 renderers, 0 with a roof variant.
+[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.
+[Splash] map asset warmup completed in 2.55 s.
+[Splash] preload retained 9510 assets in memory.
+Unloading 9 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 2.138400 ms
+Unloading 346 unused Assets to reduce memory usage. Loaded Objects now: 12752.
+Total: 9.212600 ms (FindLiveObjects: 0.860400 ms CreateObjectMapping: 1.681500 ms MarkObjects: 6.511100 ms  DeleteObjects: 0.159400 ms)
+
+[Splash] boot loading finished after 22.46 s (work-driven, no reading window).
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 1.368700 ms
+Unloading 32 unused Assets to reduce memory usage. Loaded Objects now: 12293.
+Total: 8.295400 ms (FindLiveObjects: 0.814200 ms CreateObjectMapping: 1.471800 ms MarkObjects: 5.932800 ms  DeleteObjects: 0.076100 ms)
+
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Net] offline
+[Net] signing in to online services...
+[Net] allocating relay server...
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] publishing the online room...
+[Query] Created UGS Lobby d6MmkFAmTftsghRtBnqUYV with JoinCode RWCK
+[Net] relay hosting active, code RWCK (relay KJNDRW)
+[NetApproval] peer=1 approved=True reason=
+[NetArrival] peer=1 seat=1 replaces=-1
+[Net] 2 connected, seat 1
+[Link] Good at 198 ms round trip (host, worst peer).
+[Link] Poor at 208 ms round trip (host, worst peer).
+[Link] Good at 88 ms round trip (host, worst peer).
+[NetReady] peer 1 seat 1 ready=True -> 1 of 1
+[NetReady] peer 1 seat 1 ready=False -> 0 of 1
+[NetReady] peer 1 seat 1 ready=True -> 1 of 1
+[Link] Poor at 379 ms round trip (host, worst peer).
+[NetReady] peer 0 seat 0 ready=True -> 0 of 1
+[Link] Good at 92 ms round trip (host, worst peer).
+[NetReady] peer 1 seat 1 ready=True -> 1 of 1
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 14.215500 ms
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[NetSeat] arena installed: LocalSlot=0 spectator=False host=True allBots=False | s0:reader+sim+live+act | s1:-+live+act | s2:-+ai+sim+bot+live+act | s3:-+ai+sim+bot+live+act
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[AA] mode requested 0x MSAA + FXAA on; QualitySettings.antiAliasing 0; camera 'Main Camera' allowMSAA True, allowHDR True, path Forward; target delivered 1 sample(s), format ARGBHalf; device supportsMultisampledTextures 1
+Unloading 87 unused Assets to reduce memory usage. Loaded Objects now: 20405.
+Total: 21.234800 ms (FindLiveObjects: 1.872600 ms CreateObjectMapping: 2.792200 ms MarkObjects: 9.199900 ms  DeleteObjects: 7.369300 ms)
+
+[ArenaPrewarm] drew 20 views in 0.36 s.
+[HubLoading] Eskinita ready after 1.54 s.
+[Link] Poor at 239 ms round trip (host, worst peer).
+[Link] Good at 93 ms round trip (host, worst peer).
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 2 begins, taya is seat 1
+[Slice] round 3 begins, taya is seat 2
+[Slice] round 4 begins, taya is seat 3
+[Slice] match over. scores: 0 / 270 / 1400 / 1320. seat 2 wins
+[NetDisconnect] peer=1 local=0 server=True connected=True
+[Handover] seat 1 was rated 1500; a Normal bot is finishing it.
+[Net] 1 connected
+[Link] Unknown at 0 ms round trip (host, worst peer).
+[NetLifecycle] requested-stop server=True relay=True origin=  at TumbangPreso.Net.NetSession.Stop () [0x00000] in <2f38d6ffafee42be94193c0b06b7dfef>:0 
+  at TumbangPreso.UI.SceneFlow.LeaveMatchToMainMenu () [0x00000] in <2f38d6ffafee42be94193c0b06b7dfef>:0 
+  at TumbangPreso.UI.Hub.HubKit+<>c__DisplayClass22_0.<Button>b__0 () [0x00000] in <2f38d6ffafee42be94193c0b06b7dfef>:0 
+  at UnityEngine.Events.InvokableCall.Invoke () [0x00000] in <78b8abfe2cc94360809513165a28ff6a>:0 
+  at UnityEngine.Events.UnityEvent.Invoke () [0x00000] in <78b8abfe2cc94360809513165a28ff6a>:0 
+  at UnityEngine.UI.Button.Press () [0x00000] in <af44bdfb03f9418ab767fd5f280e14db>:0 
+  at UnityEngine.UI.Button.OnPointerClick (UnityEngine.EventSystems.PointerEventData eventData) [0x00000] in <af44bdfb03f9418ab767fd5f280e14db>:0 
+  at TumbangPreso.UI.Hub.HubButton.OnPointerClick (UnityEngine.EventSystems.PointerEventData eventData) [0x00000] in <2f38d6ffafee42be94193c0b06b7dfef>:0 
+  at UnityEngine.EventSystems.ExecuteEvents.Execute (UnityEngine.EventSystems.IPointerClickHandler handler, UnityEngine.EventSystems.BaseEventData eventData) [0x00000] in <af44bdfb03f9418ab767fd5f280e14db>:0 
+  at UnityEngine.EventSystems.ExecuteEvents.Execute[T] (UnityEngine.GameObject target, UnityEngine.EventSystems.BaseEventData eventData, UnityEngine.EventSystems.ExecuteEvents+EventFunction`1[T1] functor) [0x00000] in <af44bdfb03f9418ab767fd5f280e14db>:0 
+  at UnityEngine.InputSystem.UI.InputSystemUIInputModule.ProcessPointerButton (UnityEngine.InputSystem.UI.PointerModel+ButtonState& button, UnityEngine.EventSystems.PointerEventData eventData) [0x00000] in <00da4731018f46d3a57c27840d155b32>:0 
+  at UnityEngine.InputSystem.UI.InputSystemUIInputModule.ProcessPointer (UnityEngine.InputSystem.UI.PointerModel& state) [0x00000] in <00da4731018f46d3a57c27840d155b32>:0 
+  at UnityEngine.InputSystem.UI.InputSystemUIInputModule.Process () [0x00000] in <00da4731018f46d3a57c27840d155b32>:0 
+  at UnityEngine.EventSystems.EventSystem.Update () [0x00000] in <af44bdfb03f9418ab767fd5f280e14db>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+UnloadTime: 15.859300 ms
+Unloading 447 unused Assets to reduce memory usage. Loaded Objects now: 12418.
+Total: 12.311000 ms (FindLiveObjects: 0.913200 ms CreateObjectMapping: 1.677300 ms MarkObjects: 9.132100 ms  DeleteObjects: 0.588000 ms)
+
+[Query] Deleted UGS Lobby d6MmkFAmTftsghRtBnqUYV
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+First video frame not zero: 4 (0.133333s). Result may be out of sync. Please make sure tracks all start at 0 in C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/integration-c17101d03-1005/TumbangPreso_Data/resources.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/integration-c17101d03-1005/TumbangPreso_Data/resources.resource
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Net] offline
+[Net] connecting to 192.168.1.144:8910
+[Net] connected
+[Net] connected as seat 2
+[Link] Good at 83 ms round trip (client).
+[NetDisconnect] peer=1 local=1 server=False connected=True
+[Net] disconnected: [Disconnect Event][Client-1][TransportClientId-4294967296][ProtocolTimeout] Connection closed due to timed out.
+[Abandon] HostLost: ABANDONED at round 0 of 4; this peer may no longer resolve anything
+[NetLifecycle] requested-stop server=False relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00000] in <2f38d6ffafee42be94193c0b06b7dfef>:0 
+  at TumbangPreso.UI.ConvertedMatchSetup.LeaveRoom () [0x00000] in <2f38d6ffafee42be94193c0b06b7dfef>:0 
+  at TumbangPreso.UI.ConvertedMatchSetup.HubDisconnected (System.String detail) [0x00000] in <2f38d6ffafee42be94193c0b06b7dfef>:0 
+  at TumbangPreso.UI.ConvertedMatchSetup.HandleClientDisconnected (System.String reason) [0x00000] in <2f38d6ffafee42be94193c0b06b7dfef>:0 
+  at TumbangPreso.Net.NetSession.OnClientDisconnected (System.UInt64 clientId) [0x00000] in <2f38d6ffafee42be94193c0b06b7dfef>:0 
+  at Unity.Netcode.NetworkConnectionManager.InvokeOnClientDisconnectCallback (System.UInt64 clientId) [0x00000] in <c4fd0518d4684a88b0e2647e75b23b32>:0 
+  at Unity.Netcode.NetworkConnectionManager.DisconnectEventHandler (System.UInt64 transportClientId) [0x00000] in <c4fd0518d4684a88b0e2647e75b23b32>:0 
+  at Unity.Netcode.NetworkConnectionManager.HandleNetworkEvent (Unity.Netcode.NetworkEvent networkEvent, System.UInt64 transportClientId, System.ArraySegment`1[T] payload, System.Single receiveTime) [0x00000] in <c4fd0518d4684a88b0e2647e75b23b32>:0 
+  at Unity.Netcode.NetworkTransport.InvokeOnTransportEvent (Unity.Netcode.NetworkEvent eventType, System.UInt64 clientId, System.ArraySegment`1[T] payload, System.Single receiveTime) [0x00000] in <c4fd0518d4684a88b0e2647e75b23b32>:0 
+  at Unity.Netcode.Transports.UTP.UnityTransport.ProcessEvent () [0x00000] in <c4fd0518d4684a88b0e2647e75b23b32>:0 
+  at Unity.Netcode.Transports.UTP.UnityTransport.OnEarlyUpdate () [0x00000] in <c4fd0518d4684a88b0e2647e75b23b32>:0 
+  at Unity.Netcode.NetworkTransport.EarlyUpdate () [0x00000] in <c4fd0518d4684a88b0e2647e75b23b32>:0 
+  at Unity.Netcode.NetworkManager.NetworkUpdate (Unity.Netcode.NetworkUpdateStage updateStage) [0x00000] in <c4fd0518d4684a88b0e2647e75b23b32>:0 
+  at Unity.Netcode.NetworkUpdateLoop.RunNetworkUpdateStage (Unity.Netcode.NetworkUpdateStage updateStage) [0x00000] in <c4fd0518d4684a88b0e2647e75b23b32>:0 
+  at Unity.Netcode.NetworkUpdateLoop+NetworkEarlyUpdate+<>c.<CreateLoopSystem>b__0_0 () [0x00000] in <c4fd0518d4684a88b0e2647e75b23b32>:0 
+[Net] offline

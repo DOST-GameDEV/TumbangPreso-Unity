@@ -21,39 +21,46 @@ explicitly authorized; unnecessary AGENTS feature entry was removed at owner req
 
 ## Current source and live work
 
-Published source c17101d03df7fe5a5c5a985723f7a2aea8899393, protocol151.
-Latest owner priorities: UI quality/future-proof imports, network robustness and
-optimization. Custom Rules warm palette/shared scalable plate/primary Done now
-passes one actual native view check with five1080p/QHD/4K match/private-page
-captures; first wrong-parent capture fixture failure retained. Native10856 and
-exact202 metadata/sharedprefs/profile/Quality restoration are terminal. Publish
-this UI unit; keep paired-network artifactc171 frozen and label evidence separately.
-NetIdentity resets only its cached availability on natural Play
-entry; original Editor secondPlay SDK/cache mismatch is corrected. Hosted-room
-publication now serializes and coalesces pending state; original delayed update
-falsely overwrote4 occupied with2, candidate10/10 native cases pass. Full current
-Windows build14708 and restoration helper13260 are terminal0:258files,
-2691130591bytes, Runtime7bf1f3c11bf68216829cd6f011ec6053df05932b118882b1c64995744659bf81.
-Exact203 generated import/EOL changes restored;19310 frozen inputs unchanged.
-Actual UI pair parent56220 is LIVE: host3388/window8324306 ONLINE publicRWCK,
-local client20120 exited normally before laptop test. No match started yet.
-Owner explicitly resumed laptop and joint testing. Existing laptop chat reports
-pulledc171, prior report deltas preserved, exactpackage258files/allhashes verified
-and current nonbatchEditor23268/runner24439 on isolatedc171; oldEditor layout
-and helper-pipe recovery retained. Its gameplay/input/practice/
-carrier/replay lane remains reserved. PC owns Net/lobby/account/UI/rootTODO and
-integration. First coordinate matching artifact and actual laptop UI admission
-intoRWCK, then opening-camera/movement/skill/recovery/results. Do not revive old
-laptop-off directives or invent an acceptance pass from preparation.
+Published source e77241381552f8c8bbbe5e914a0cdf042c88956c; frozen paired artifact
+c17101d03/protocol151/recording14. Rules palette/plate/Done styling qualified
+locally by one actual native review/five captures. Source current-scope pending:
+PausePanel input custody/ended notice fix, original3causeFAIL/2controlsPASS ->
+candidate5/5PASS; native11892/6288 and exact202metadata/sharedprefs/profile/
+Quality restoration perrun terminal. Publish this coherent unit with scoped
+paired evidence. Preserve Auditor/private cancelled Yasmin script; M4tyu633 only.
 
-QA Relay Request timeout/hostkick remains OPEN; earlier same-PC and original
-Editor control joins survived admission but do not close the reported environment.
-Owner ibis/Canva export guidance is saved in UI_DESIGN_METHOD. Preserve original
-PNG/source pixels, clean alpha and game-rendered labels. OldYasmin cyan/goggles
-active, cancelled private wardrobe draft and Auditor dirt preserved. M4tyu633
-sole author/committer. Desktop untouched. Prior rejectedcf405 deletion remains
-preserved; no alternate deletion route. No workers/new chats/paid services.
-Exact live jobs/paths: Logs/arrival-pan-review1004/current-resume.json.
+Two actual machines completed owner-code/owner-start ONLINE RWCK4x90 with full
+matching record ef825a4dccae475e88ed7990be31d0b2,2424B/SHA63ce9511523c85b5f41d70d1ab32079355339d914bb258589b0773cd39be6d27.
+Laptop then normally hosted LANVGNR and PC naturally discovered/row-joined.
+A real client ProtocolTimeout beforeStart coincided with a failed read-only
+Pipeline probe; pause/error-pause were not highlighted, cause not proven. Same
+room normalrejoin/no gameplayprobes completed4x90, full record
+78e6013911614781a571827884ed6543,2452B/SHAc2e19f313e30ab7fc8b4433f4a0832655903069a7bf9aeddf1535c8e132fee8d,
+results visible both. Reciprocal PC LANHEAK was initially absent from laptop
+browser, then naturally appeared aftertabswitch beforeanyobserverbind. Real
+beacons reachedbothNICs and laptop, rowjoinadmittedpeer2. Initialviewdelay remains
+OPEN; do not claim a permanent broadcast block, firewall fix or unicast proof.
+
+Basilio E/Q report remains OPEN. Laptop's bounded actual InputSystem observer
+found plain Sky E produced TEXT only, E/Q/Wstate0 and no state/delta event. Thus
+automated single-letter no-response is an input-tool confound, not a kit cause.
+Laptop owns PlayerInputReader/inputproducer investigation and tests supported
+modifier chord in ordinary Practice; PC owns Net/UI/cast routing/rootTODO and
+integration. No held2s/motion/whole-skill pass. Ask current ownership before
+reassignment; checkpoint/finish units for joint LAN/online tests, then resume.
+
+PC players3388/20120 normalexit0; parent56220 terminal, profiles/sharedinput
+restored, exe/runtime unchanged. Temporary artifactshare21720 stopped after
+laptop258-file verifiedACK. No PCnative/game/recorder/proxy/browser leftovers.
+LaptopEditor23268 remains task-owned active Practice; preserve until its own
+normalexit/restoration. Owner explicitly resumed PCComputerUse; do not revive
+old physicalEscape stop. Skytext-only get_window_state refresh avoids WGC
+FrameArrivedtimeouts; fresh owned HWNDcrop is read-only, exclude occludedCodex
+captures from game-render evidence. ActualQAonlineRequesttimeout/hostkick and
+broader physical input/performance/UI acceptance stay OPEN. CurrentCLI is
+AppData/Local/Unity/bin/unity.exe, PATHunity.cmd is an Editorwrapper.
+Prior cf405 deletion was automatically rejected; preserve/no bypass. Desktop
+untouched. Exact refs/jobs/next: Logs/arrival-pan-review1004/current-resume.json.
 
 Laptop departure branch b1486856d was fetched and normally merged/pushed10ceb.
 Independent Root review verified8 boulder,7 online150 and18 Practice raw Git

@@ -194,6 +194,17 @@ Nothing was deleted or renumbered.
   failure preserved. [Evidence](reports/reliability-2026-10-05/custom-rules-presentation/README.md).
 - [ ] Rest of session focus: UI appearance/quality, network robustness and measured
   optimization. Preserve authored designs; no speculative compression or downgrades.
+- [x] Preserve a body's prior or completed-match input freeze when closing its
+  menu and stop describing completed matches as still playing. Original three
+  causes fail/two controls pass; candidate five focused native cases pass.
+  [Evidence](reports/reliability-2026-10-05/completed-menu-custody/README.md).
+- [x] Actual two-machine online and LAN4x90 matches save identical complete
+  host/client records. LAN row joins work in both hosting directions. Preserve
+  owner-driven first code/start, the probe-adjacent lobby timeout and initial
+  reciprocal empty-view delay as limits. [Evidence](reports/reliability-2026-10-05/two-machine-ui151/README.md).
+- [ ] Owner Basilio E/Q failure on both machines: isolate actual input events,
+  effective bindings and eligible ability consumption. Automated presses showed
+  no convincing cooldown response; kit-present/post-match state is insufficient.
 - [x] Host-approved rules update shared state before UI observers, including
   when no lobby view exists. Two mode/state causes plus three guards become5/5;
   saved preferences stay unchanged. [Evidence](reports/reliability-2026-10-05/rules-receiver-state/README.md).
