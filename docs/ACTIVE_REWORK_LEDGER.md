@@ -50,8 +50,13 @@ Earlier small f5e/a2 layouts stay historical unshipped evidence. The original
 43428 cause/control remains the baseline; no redundant rerun was needed.
 Root owns Net/UI, integration and the shared queue/checkpoint. Preserve protected
 ProjectAuditorSettings.asset dirt and private tools/build_yasmin_benguet_voxel.py.
-Laptop freezes one current protocol152 Windows build after Home source publication,
-then normal operator and visible online/LAN controls on its available machine.
+Laptop's current protocol152 Windows build is frozen on8db2dda82, including
+accepted Home821 and inactive-stage activation8db. Root verified nine exact
+stage evidence blobs/two source hashes, original2causeFAIL7controlsPASS ->9PASS.
+Parent84169/Python15108; profilelpt-build152-8db2dda82-1005; native PID follows
+launch.json. Preserve frozen Assets/Packages/ProjectSettings until parent and
+restoration terminal. No duplicate launches. Then normal operator and visible
+online/LAN controls on the laptop's available machine.
 PC remains personal-use: no Root native/player launches, input or window shortcuts.
 
 ## Qualified evidence and remaining acceptance
@@ -85,9 +90,10 @@ after terminal/path/subject checks; preserved all active-worktree refs and build
 
 ## Next action
 
-Publish exact accepted Home source/fixture, send its ref to the laptop for one
-coherent current152 build. Freeze inputs until parent/restoration terminal and
-verify artifact manifest/hashes before actual GUI/network/operator checks.
+Wait current8db build identity/terminal result and exact input/preference/Quality
+restoration. Verify source/runtime/artifact manifest before actual GUI/network/
+operator checks. Root's later documentation-only commits do not change that
+artifact's frozen8db production identity; do not rebuild for a documentation tip.
 Prior151 build/peer evidence is historical; the owner's Relay timeout, host-kick
 and non-host lag remain open. No unchanged passing-suite repeats or style loops.
 No PC native/input/window actions until owner release. Preserve exact live job
