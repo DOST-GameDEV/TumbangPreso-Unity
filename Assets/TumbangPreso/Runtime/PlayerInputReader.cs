@@ -46,6 +46,7 @@ namespace TumbangPreso
         private int _menuClosedFrame=-1;
         private bool _loadingInputHeld, _chatInputHeld;
         private bool _focused = true;
+        private bool _captureButtonsAfterFocus;
         private readonly Core.ToggleControl _sprintToggle = new();
         private readonly Core.ToggleControl _restoreToggle = new();
         private Carrier _carrier;
@@ -289,6 +290,13 @@ namespace TumbangPreso
                 _motor.Intent.Clear();
                 _motor.Intent.CommitFrame();
                 return;
+            }
+            if (_captureButtonsAfterFocus)
+            {
+                // Focus can return before queued background device events reach the actions.
+                // Capture their held state after the Input System update, before gameplay reads it.
+                _captureButtonsAfterFocus = false;
+                DiscardMenuButtonsUntilRelease();
             }
             ReconcileDeviceInput();
 
@@ -571,6 +579,7 @@ namespace TumbangPreso
             }
             // Buttons pressed while away also need an observed release on return.
             DiscardMenuButtonsUntilRelease();
+            _captureButtonsAfterFocus = focused;
         }
 
         private void CancelPendingInput()

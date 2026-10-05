@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 21:15:27Z" end-time="2026-10-05 21:15:27Z" duration="0.4051542">
+  <test-suite type="TestSuite" id="3220" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1808" result="Failed" site="Child" start-time="2026-10-05 21:15:27Z" end-time="2026-10-05 21:15:27Z" duration="0.405154" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3212" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1808" result="Failed" site="Child" start-time="2026-10-05 21:15:27Z" end-time="2026-10-05 21:15:27Z" duration="0.389522" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="42740" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3213" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1808" result="Failed" site="Child" start-time="2026-10-05 21:15:27Z" end-time="2026-10-05 21:15:27Z" duration="0.379298" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3216" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1806" result="Failed" site="Child" start-time="2026-10-05 21:15:27Z" end-time="2026-10-05 21:15:27Z" duration="0.369678" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2453" name="QueuedFocusReturnTests" fullname="TumbangPreso.PlayTests.QueuedFocusReturnTests" classname="TumbangPreso.PlayTests.QueuedFocusReturnTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-05 21:15:27Z" end-time="2026-10-05 21:15:27Z" duration="0.345532" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2455" name="ABackgroundQueuedRecoveryCannotAppearAfterFocusReturn" fullname="TumbangPreso.PlayTests.QueuedFocusReturnTests.ABackgroundQueuedRecoveryCannotAppearAfterFocusReturn" methodname="ABackgroundQueuedRecoveryCannotAppearAfterFocusReturn" classname="TumbangPreso.PlayTests.QueuedFocusReturnTests" runstate="Runnable" seed="124454759" result="Failed" start-time="2026-10-05 21:15:27Z" end-time="2026-10-05 21:15:27Z" duration="0.178686" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Queued background recovery became gameplay input.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.QueuedFocusReturnTests+<ABackgroundQueuedRecoveryCannotAppearAfterFocusReturn>d__17.MoveNext () [0x00069] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\QueuedFocusReturnTests.cs:74
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2454" name="ABackgroundQueuedThrowCannotStartAfterFocusReturn" fullname="TumbangPreso.PlayTests.QueuedFocusReturnTests.ABackgroundQueuedThrowCannotStartAfterFocusReturn" methodname="ABackgroundQueuedThrowCannotStartAfterFocusReturn" classname="TumbangPreso.PlayTests.QueuedFocusReturnTests" runstate="Runnable" seed="1597727445" result="Failed" start-time="2026-10-05 21:15:27Z" end-time="2026-10-05 21:15:27Z" duration="0.037301" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A queued background hold started a new charge after focus return.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.QueuedFocusReturnTests+<ABackgroundQueuedThrowCannotStartAfterFocusReturn>d__16.MoveNext () [0x0007f] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\QueuedFocusReturnTests.cs:66
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2457" name="AFreshThrowAfterFocusSettlesStillChargesAndReleases" fullname="TumbangPreso.PlayTests.QueuedFocusReturnTests.AFreshThrowAfterFocusSettlesStillChargesAndReleases" methodname="AFreshThrowAfterFocusSettlesStillChargesAndReleases" classname="TumbangPreso.PlayTests.QueuedFocusReturnTests" runstate="Runnable" seed="87057776" result="Passed" start-time="2026-10-05 21:15:27Z" end-time="2026-10-05 21:15:27Z" duration="0.050936" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2456" name="AnAlreadyProcessedBackgroundHoldStillWaitsForRelease" fullname="TumbangPreso.PlayTests.QueuedFocusReturnTests.AnAlreadyProcessedBackgroundHoldStillWaitsForRelease" methodname="AnAlreadyProcessedBackgroundHoldStillWaitsForRelease" classname="TumbangPreso.PlayTests.QueuedFocusReturnTests" runstate="Runnable" seed="703851750" result="Passed" start-time="2026-10-05 21:15:27Z" end-time="2026-10-05 21:15:27Z" duration="0.032598" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2458" name="RecoveryRetirementDoesNotBlockRecoveredMovement" fullname="TumbangPreso.PlayTests.QueuedFocusReturnTests.RecoveryRetirementDoesNotBlockRecoveredMovement" methodname="RecoveryRetirementDoesNotBlockRecoveredMovement" classname="TumbangPreso.PlayTests.QueuedFocusReturnTests" runstate="Runnable" seed="1183285318" result="Failed" start-time="2026-10-05 21:15:27Z" end-time="2026-10-05 21:15:27Z" duration="0.034954" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Movement may recover without reviving its queued recovery button.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.QueuedFocusReturnTests+<RecoveryRetirementDoesNotBlockRecoveredMovement>d__20.MoveNext () [0x0009e] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\QueuedFocusReturnTests.cs:97
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

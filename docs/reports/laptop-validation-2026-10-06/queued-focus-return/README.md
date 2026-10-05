@@ -1,0 +1,13 @@
+# Retire queued background button input after focus returns
+
+A focus callback can run before queued background device events reach InputActions. The reader immediately captured held buttons on focus return, but the late-processed event appeared afterward and escaped release suppression. Original native source ab452b3185e7d528edf436a744b7d83446a64bb6 reproduced an actual unintended Carrier charge and recovery hold after focus return. Three causes failed; two controls passed.
+
+PlayerInputReader now also captures held buttons at the first resumed Update, after Input System event processing and before gameplay reads. It retains immediate focus cancellation and the existing release gate. Movement can recover during that read; button actions wait for an observed release. No binding, controller mapping, hero, balance, visual, save format or networking change.
+
+Original Unity42740/parent17605 ran five actual cases: queued throw, queued recovery and recovered-movement-with-recovery failed; already-processed background hold and a fresh post-return throw/release passed. Candidate40452/10813 passes the same five. Only seven existing adjacent ReaderBackgroundFocusTests/InputFocusLifetimeTests ran next,44800/26076, all pass: background movement/recovery, processed hold release, recovered movement, sprint-toggle retirement, recovery-edge retirement and ordinary sprint release. There is no repeated five-case sweep or skipped case.
+
+The fixtures queue genuine InputSystem virtual Gamepad states before a focus callback, process them afterward, and drive the actual reader/Carrier/Slipper consumers. They never write private charge or timer fields. Their minimal scene/body setup is reused from the existing carrier lifetime fixture. This proves native queued-event ordering, not physical Alt-Tab, controller hardware, mouse input or packaged two-machine acceptance. Those operator scopes remain open.
+
+All three parents are terminal. Each21136-input snapshot restored after278 importer metadata plus ProjectAuditor churn; all13 existing isolated editor preference values were independently verified restored. Full native qualified-input manifests remain local; their exact hashes and selected production/fixture hashes are recorded. Candidate and adjacent source bytes match the current production/fixture inputs exactly. No private preference/auth dumps are published.
+
+The previously qualified0358 shared package does not contain this new reader change. Its discovery/open Rules acceptance is reused for unchanged source; no new build or unchanged network match is justified merely by this report. The next combined checked artifact should include the reader correction for appropriate focus/input operator checks.

@@ -1,0 +1,106 @@
+{
+  "original": {
+    "baseCommit": "ab452b3185e7d528edf436a744b7d83446a64bb6",
+    "fullNativeQualifiedInputManifestSha256": "cae403cb54cdb6d6161f854fbc47eafc0544e137f9bbb752eb362e70b7d017fb",
+    "inputCount": 21136,
+    "selectedQualifiedRawInputHashes": {
+      "Assets/TumbangPreso/Runtime/PlayerInputReader.cs": "b0604d8fed05fe2d993ad1091d9c735c794d6de71294904bd43123756afb2742",
+      "Assets/TumbangPreso/Tests/PlayMode/QueuedFocusReturnTests.cs": "6ea75b35ce4023b5b6e17f72c1e5d09486aa07552994056ccdd7fb6c3286551e",
+      "Assets/TumbangPreso/Tests/PlayMode/QueuedFocusReturnTests.cs.meta": "55c55fea01e14e6c8bdd5fcbd2868be565a43d412e1c9649f466a57b7589998d"
+    },
+    "identity": {
+      "schemaVersion": 1,
+      "workerId": "qa-a-be075dcdfa07",
+      "validationOnly": true,
+      "projectRoot": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a",
+      "sourceProject": "C:\\Users\\Matthew\\dev\\tump-integration1003",
+      "sourceCommit": "8e7cfc7feb4eee614d456347ccbb26ad962d1714",
+      "companyName": "BH Studios Validation",
+      "productName": "TumpWorker-qa-a-be075dcdfa07",
+      "editorVersion": "6000.5.8f1",
+      "guardVersion": 1,
+      "guardSha256": "65b69c94b83cfe306293fec69649d2846f122fc083007c5d1bf64d3849dc4f90",
+      "libraryPath": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Library",
+      "libraryPhysical": true,
+      "libraryCopyFrom": "C:\\Users\\Matthew\\dev\\tump-laptop-native1003\\Library",
+      "requiredProfile": "validation-qa-a-be075dcdfa07",
+      "shippingBuildsAllowed": false,
+      "warmupRequired": true,
+      "editorValidation": "not_run",
+      "state": "ready"
+    },
+    "filter": "TumbangPreso.PlayTests.QueuedFocusReturnTests",
+    "scope": "Actual queued InputSystem state/focus callback/Carrier consumer; virtual device, not physical hardware or real OS focus claim",
+    "existingPrefsIndependentlyVerified": 13
+  },
+  "candidate": {
+    "baseCommit": "ab452b3185e7d528edf436a744b7d83446a64bb6",
+    "fullNativeQualifiedInputManifestSha256": "d42e7008b7468514349fcba70559e9361f69bd65fcb3f7b9d9d8704a911b5818",
+    "inputCount": 21136,
+    "selectedQualifiedRawInputHashes": {
+      "Assets/TumbangPreso/Runtime/PlayerInputReader.cs": "4a26373eaa5f5d43c6cc22c220353fd0eefd17696c933acae5baa3dce76efc63",
+      "Assets/TumbangPreso/Tests/PlayMode/QueuedFocusReturnTests.cs": "6ea75b35ce4023b5b6e17f72c1e5d09486aa07552994056ccdd7fb6c3286551e",
+      "Assets/TumbangPreso/Tests/PlayMode/QueuedFocusReturnTests.cs.meta": "55c55fea01e14e6c8bdd5fcbd2868be565a43d412e1c9649f466a57b7589998d"
+    },
+    "identity": {
+      "schemaVersion": 1,
+      "workerId": "qa-a-be075dcdfa07",
+      "validationOnly": true,
+      "projectRoot": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a",
+      "sourceProject": "C:\\Users\\Matthew\\dev\\tump-integration1003",
+      "sourceCommit": "8e7cfc7feb4eee614d456347ccbb26ad962d1714",
+      "companyName": "BH Studios Validation",
+      "productName": "TumpWorker-qa-a-be075dcdfa07",
+      "editorVersion": "6000.5.8f1",
+      "guardVersion": 1,
+      "guardSha256": "65b69c94b83cfe306293fec69649d2846f122fc083007c5d1bf64d3849dc4f90",
+      "libraryPath": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Library",
+      "libraryPhysical": true,
+      "libraryCopyFrom": "C:\\Users\\Matthew\\dev\\tump-laptop-native1003\\Library",
+      "requiredProfile": "validation-qa-a-be075dcdfa07",
+      "shippingBuildsAllowed": false,
+      "warmupRequired": true,
+      "editorValidation": "not_run",
+      "state": "ready"
+    },
+    "filter": "TumbangPreso.PlayTests.QueuedFocusReturnTests",
+    "scope": "Actual queued InputSystem state/focus callback/Carrier consumer; virtual device, not physical hardware or real OS focus claim",
+    "existingPrefsIndependentlyVerified": 13
+  },
+  "adjacent": {
+    "baseCommit": "ab452b3185e7d528edf436a744b7d83446a64bb6",
+    "fullNativeQualifiedInputManifestSha256": "8736353c9aed81f6a4e9a2593f2d2c42aa9ada7005ba69267a32f445f25ab750",
+    "inputCount": 21136,
+    "selectedQualifiedRawInputHashes": {
+      "Assets/TumbangPreso/Runtime/PlayerInputReader.cs": "4a26373eaa5f5d43c6cc22c220353fd0eefd17696c933acae5baa3dce76efc63",
+      "Assets/TumbangPreso/Tests/PlayMode/QueuedFocusReturnTests.cs": "6ea75b35ce4023b5b6e17f72c1e5d09486aa07552994056ccdd7fb6c3286551e",
+      "Assets/TumbangPreso/Tests/PlayMode/QueuedFocusReturnTests.cs.meta": "55c55fea01e14e6c8bdd5fcbd2868be565a43d412e1c9649f466a57b7589998d",
+      "Assets/TumbangPreso/Tests/PlayMode/ReaderBackgroundFocusTests.cs": "fd46cc67f8e04f6c9db0b02d20d0c704a85dc40e720c5c046a29719b2fdbe767",
+      "Assets/TumbangPreso/Tests/PlayMode/InputFocusLifetimeTests.cs": "b95882c1c29e79437c87b39ddc95214bb5ce4081a3937603a33d254c96ed3b22"
+    },
+    "identity": {
+      "schemaVersion": 1,
+      "workerId": "qa-a-be075dcdfa07",
+      "validationOnly": true,
+      "projectRoot": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a",
+      "sourceProject": "C:\\Users\\Matthew\\dev\\tump-integration1003",
+      "sourceCommit": "8e7cfc7feb4eee614d456347ccbb26ad962d1714",
+      "companyName": "BH Studios Validation",
+      "productName": "TumpWorker-qa-a-be075dcdfa07",
+      "editorVersion": "6000.5.8f1",
+      "guardVersion": 1,
+      "guardSha256": "65b69c94b83cfe306293fec69649d2846f122fc083007c5d1bf64d3849dc4f90",
+      "libraryPath": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Library",
+      "libraryPhysical": true,
+      "libraryCopyFrom": "C:\\Users\\Matthew\\dev\\tump-laptop-native1003\\Library",
+      "requiredProfile": "validation-qa-a-be075dcdfa07",
+      "shippingBuildsAllowed": false,
+      "warmupRequired": true,
+      "editorValidation": "not_run",
+      "state": "ready"
+    },
+    "filter": "TumbangPreso.PlayTests.ReaderBackgroundFocusTests;TumbangPreso.PlayTests.InputFocusLifetimeTests",
+    "scope": "Existing adjacent focus/sprint/recovery/movement controls on qualified candidate; not a repeated five-case sweep",
+    "existingPrefsIndependentlyVerified": 13
+  }
+}

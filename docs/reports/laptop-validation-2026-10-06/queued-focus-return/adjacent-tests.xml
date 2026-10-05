@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Passed" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 21:20:15Z" end-time="2026-10-05 21:20:15Z" duration="0.4105798">
+  <test-suite type="TestSuite" id="3220" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1808" result="Passed" start-time="2026-10-05 21:20:15Z" end-time="2026-10-05 21:20:15Z" duration="0.410580" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3212" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1808" result="Passed" start-time="2026-10-05 21:20:15Z" end-time="2026-10-05 21:20:15Z" duration="0.393324" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="44800" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3213" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1808" result="Passed" start-time="2026-10-05 21:20:15Z" end-time="2026-10-05 21:20:15Z" duration="0.382833" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3216" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1806" result="Passed" start-time="2026-10-05 21:20:15Z" end-time="2026-10-05 21:20:15Z" duration="0.371686" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1780" name="InputFocusLifetimeTests" fullname="TumbangPreso.PlayTests.InputFocusLifetimeTests" classname="TumbangPreso.PlayTests.InputFocusLifetimeTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-05 21:20:15Z" end-time="2026-10-05 21:20:15Z" duration="0.141503" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1782" name="LosingFocusRetiresBufferedRecoveryInput" fullname="TumbangPreso.PlayTests.InputFocusLifetimeTests.LosingFocusRetiresBufferedRecoveryInput" methodname="LosingFocusRetiresBufferedRecoveryInput" classname="TumbangPreso.PlayTests.InputFocusLifetimeTests" runstate="Runnable" seed="1851695975" result="Passed" start-time="2026-10-05 21:20:15Z" end-time="2026-10-05 21:20:15Z" duration="0.072220" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1781" name="LosingFocusRetiresTheLatchedSprintWithoutParkingTheOwner" fullname="TumbangPreso.PlayTests.InputFocusLifetimeTests.LosingFocusRetiresTheLatchedSprintWithoutParkingTheOwner" methodname="LosingFocusRetiresTheLatchedSprintWithoutParkingTheOwner" classname="TumbangPreso.PlayTests.InputFocusLifetimeTests" runstate="Runnable" seed="320776213" result="Passed" start-time="2026-10-05 21:20:15Z" end-time="2026-10-05 21:20:15Z" duration="0.029851" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1783" name="OrdinaryReleaseKeepsTheConfiguredSprintToggle" fullname="TumbangPreso.PlayTests.InputFocusLifetimeTests.OrdinaryReleaseKeepsTheConfiguredSprintToggle" methodname="OrdinaryReleaseKeepsTheConfiguredSprintToggle" classname="TumbangPreso.PlayTests.InputFocusLifetimeTests" runstate="Runnable" seed="1871659999" result="Passed" start-time="2026-10-05 21:20:15Z" end-time="2026-10-05 21:20:15Z" duration="0.029008" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2503" name="ReaderBackgroundFocusTests" fullname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests" classname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-05 21:20:15Z" end-time="2026-10-05 21:20:15Z" duration="0.183796" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2504" name="BackgroundFramesCannotRestoreHeldMovement" fullname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests.BackgroundFramesCannotRestoreHeldMovement" methodname="BackgroundFramesCannotRestoreHeldMovement" classname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests" runstate="Runnable" seed="618833725" result="Passed" start-time="2026-10-05 21:20:15Z" end-time="2026-10-05 21:20:15Z" duration="0.083669" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2507" name="FocusedHardwareAndRecoveredMovementRemainAvailable" fullname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests.FocusedHardwareAndRecoveredMovementRemainAvailable" methodname="FocusedHardwareAndRecoveredMovementRemainAvailable" classname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests" runstate="Runnable" seed="1001316645" result="Passed" start-time="2026-10-05 21:20:15Z" end-time="2026-10-05 21:20:15Z" duration="0.034215" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2506" name="FocusReturnWaitsForBackgroundHeldButtonRelease" fullname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests.FocusReturnWaitsForBackgroundHeldButtonRelease" methodname="FocusReturnWaitsForBackgroundHeldButtonRelease" classname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests" runstate="Runnable" seed="1413037256" result="Passed" start-time="2026-10-05 21:20:15Z" end-time="2026-10-05 21:20:15Z" duration="0.033246" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2505" name="NewBackgroundButtonCannotBufferRecovery" fullname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests.NewBackgroundButtonCannotBufferRecovery" methodname="NewBackgroundButtonCannotBufferRecovery" classname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests" runstate="Runnable" seed="460504810" result="Passed" start-time="2026-10-05 21:20:15Z" end-time="2026-10-05 21:20:15Z" duration="0.030912" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
