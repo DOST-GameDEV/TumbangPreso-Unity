@@ -1,0 +1,35 @@
+Input System module state changed to: Initialized.
+[Net] offline
+[Net] signing in to online services...
+[Net] allocating relay server...
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] publishing the online room...
+[Query] Created UGS Lobby C6V6WF94ztrnPuKCTfNNoD with JoinCode GEJH
+[Net] relay hosting active, code GEJH (relay 8CJ6TB)
+[NetApproval] peer=1 approved=True reason=
+[NetArrival] peer=1 seat=1 replaces=-1
+[Net] 2 connected, seat 1
+[NetDisconnect] peer=1 local=0 server=True connected=True
+[Net] 1 connected
+[NetApproval] peer=2 approved=True reason=
+[NetArrival] peer=2 seat=1 replaces=-1
+[Net] 2 connected, seat 1
+[NetReady] peer 2 seat 1 ready=True -> 1 of 1
+[NetReady] peer 0 seat 0 ready=True -> 0 of 1
+[ArenaPrewarm] drew 20 views in 0.33 s.
+[HubLoading] Eskinita ready after 1.15 s.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 2 begins, taya is seat 1
+[Slice] round 3 begins, taya is seat 2
+[Slice] round 4 begins, taya is seat 3
+[Slice] match over. scores: 20 / 20 / 1600 / 1300. seat 2 wins
+[NetDisconnect] peer=2 local=0 server=True connected=True
+[Handover] seat 1 was rated 1500; a Normal bot is finishing it.
+[Net] 1 connected
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Query] Deleted UGS Lobby C6V6WF94ztrnPuKCTfNNoD
+Input System module state changed to: ShutdownInProgress.
+Input System module state changed to: Shutdown.

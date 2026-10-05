@@ -1,0 +1,40 @@
+{
+  "initialMovie": {
+    "pid": 24284,
+    "parent": 98331,
+    "terminal": true,
+    "expiredBeforeHostStart": true,
+    "arrivalQualified": false
+  },
+  "secondMovie": {
+    "pid": 9816,
+    "parent": 68322,
+    "terminal": true,
+    "exitCode": 0,
+    "titleGdigrabStaleSurfaceAtSampledTimes": [
+      0,
+      3,
+      7,
+      11,
+      15,
+      19,
+      60,
+      120
+    ],
+    "arrivalQualified": false
+  },
+  "pcActualForegroundStills": {
+    "wideCourtTitleHeld90HandsHidden": true,
+    "laterFpp68Seconds": true,
+    "continuousHandoffOrNoTransientClaim": false
+  },
+  "inputs": {
+    "functionKeyAndKeypadRebindsAccepted": false,
+    "savedBindingsChanged": false,
+    "physicalOrOriginalEQMovementQualified": false,
+    "escapeMatchMenuObserved": true,
+    "mouseTagRefusalObserved": "Cannot Tag: Can Must Be Upright",
+    "skillAcceptedByHostQualified": false
+  },
+  "scope": "Independent PC observations/corrections; completed movies are unqualified stale capture, not game freeze; no fabricated physical/key/skill/latency pass"
+}

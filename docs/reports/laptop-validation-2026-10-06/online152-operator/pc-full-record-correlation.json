@@ -1,0 +1,12 @@
+{
+  "independentlyEqualPcFullRecord": true,
+  "matchId": "e1e79e65c91945f9aaf03fc08bd10d2d",
+  "bytes": 2406,
+  "sha256": "d752868f47b73a7195f7ff47dfe3de61f07df80f65d8938c1b0776706f949afd",
+  "algorithm": "json.dumps(FULLHistoryobject,sort_keys=True,separators=(comma,colon),ensure_ascii=False).encode(UTF8),no newline/no fields removed",
+  "pcExitPid": 21280,
+  "pcParent": 37298,
+  "pcExitCode": 0,
+  "pcInputSeedRestored": true,
+  "pcAll261ArtifactUnchanged": true
+}

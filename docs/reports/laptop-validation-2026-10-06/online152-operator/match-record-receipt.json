@@ -1,0 +1,20 @@
+{
+  "matchId": "e1e79e65c91945f9aaf03fc08bd10d2d",
+  "bytes": 2406,
+  "sha256": "d752868f47b73a7195f7ff47dfe3de61f07df80f65d8938c1b0776706f949afd",
+  "fields": [
+    "MatchId",
+    "Mode",
+    "MapId",
+    "Rounds",
+    "DurationSeconds",
+    "PlayedUtc",
+    "WinningSlot",
+    "Online",
+    "Ranked",
+    "DefenderByRound",
+    "Players"
+  ],
+  "playerCount": 4,
+  "scope": "FULL saved match object all fields/no newline, source4b679 natural4x90 completion; not a movement/skill or continuous-camera pass"
+}

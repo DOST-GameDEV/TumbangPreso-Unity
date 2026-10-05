@@ -1,0 +1,26 @@
+{
+  "source": "4b679b0a8fd9ea882ede486d32513ca8293334d9",
+  "protocol": 152,
+  "profile": "lpt-online152-1006f",
+  "profilePath": "C:\\Users\\Matthew\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\d857758eaaf09df0f6ab27ad77b418a49d8cd3c8d9904293f8c580e56c6c4ff4",
+  "command": [
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Builds\\current-laptop-4b679b0a8-1005\\TumbangPreso.exe",
+    "-force-d3d11",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1280",
+    "-screen-height",
+    "720",
+    "-tp-framecap",
+    "60",
+    "-tp-profile",
+    "lpt-online152-1006f",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Logs\\online-owner152-1006f\\player.log"
+  ],
+  "manifestSha256": "2a258217bd64c108c545ae39067f9b038da84dbb190c41c364ac01e542f65462",
+  "route": "normal visible boot; actual UI clicks; no network bootstrap",
+  "scope": "Actual same updated packaged laptop ONLINE host/PC public-row and code client; bounded first-arrival and observed owner movement/skill paths; no bootstrap/game APIs/hardware or broad latency pass",
+  "pid": 19080
+}
