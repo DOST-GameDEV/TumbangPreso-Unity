@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Passed" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 19:50:13Z" end-time="2026-10-05 19:50:14Z" duration="0.4809761">
+  <test-suite type="TestSuite" id="3214" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1803" result="Passed" start-time="2026-10-05 19:50:13Z" end-time="2026-10-05 19:50:14Z" duration="0.480976" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3206" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1803" result="Passed" start-time="2026-10-05 19:50:13Z" end-time="2026-10-05 19:50:14Z" duration="0.469870" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="44200" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3207" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1803" result="Passed" start-time="2026-10-05 19:50:13Z" end-time="2026-10-05 19:50:14Z" duration="0.466020" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3210" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1801" result="Passed" start-time="2026-10-05 19:50:13Z" end-time="2026-10-05 19:50:14Z" duration="0.461757" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1465" name="CustomRulesLiveRefreshTests" fullname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests" classname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-05 19:50:13Z" end-time="2026-10-05 19:50:14Z" duration="0.436102" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1468" name="ClosedScreenAdoptsCurrentRulesOnReopen" fullname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests.ClosedScreenAdoptsCurrentRulesOnReopen" methodname="ClosedScreenAdoptsCurrentRulesOnReopen" classname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests" runstate="Runnable" seed="76862611" result="Passed" start-time="2026-10-05 19:50:13Z" end-time="2026-10-05 19:50:13Z" duration="0.162904" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1471" name="DisableAndReenableRetiresAndRestoresObservation" fullname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests.DisableAndReenableRetiresAndRestoresObservation" methodname="DisableAndReenableRetiresAndRestoresObservation" classname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests" runstate="Runnable" seed="1142667634" result="Passed" start-time="2026-10-05 19:50:13Z" end-time="2026-10-05 19:50:13Z" duration="0.043484" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1469" name="HostBroadcastKeepsItsWorkingCopy" fullname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests.HostBroadcastKeepsItsWorkingCopy" methodname="HostBroadcastKeepsItsWorkingCopy" classname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests" runstate="Runnable" seed="203868063" result="Passed" start-time="2026-10-05 19:50:13Z" end-time="2026-10-05 19:50:13Z" duration="0.045264" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1472" name="NonHostPacketDoesNotChangeVisibleRules" fullname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests.NonHostPacketDoesNotChangeVisibleRules" methodname="NonHostPacketDoesNotChangeVisibleRules" classname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests" runstate="Runnable" seed="1325751521" result="Passed" start-time="2026-10-05 19:50:13Z" end-time="2026-10-05 19:50:13Z" duration="0.043703" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1470" name="OfflineEditorKeepsItsWorkingCopy" fullname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests.OfflineEditorKeepsItsWorkingCopy" methodname="OfflineEditorKeepsItsWorkingCopy" classname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests" runstate="Runnable" seed="538338065" result="Passed" start-time="2026-10-05 19:50:13Z" end-time="2026-10-05 19:50:14Z" duration="0.041956" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1466" name="OpenMatchPageFollowsActualRemoteRulesReceive" fullname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests.OpenMatchPageFollowsActualRemoteRulesReceive" methodname="OpenMatchPageFollowsActualRemoteRulesReceive" classname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests" runstate="Runnable" seed="2018675472" result="Passed" start-time="2026-10-05 19:50:14Z" end-time="2026-10-05 19:50:14Z" duration="0.044234" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1467" name="OpenRoomPageRefreshesBotsWithoutLosingSelectedTab" fullname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests.OpenRoomPageRefreshesBotsWithoutLosingSelectedTab" methodname="OpenRoomPageRefreshesBotsWithoutLosingSelectedTab" classname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests" runstate="Runnable" seed="1060296886" result="Passed" start-time="2026-10-05 19:50:14Z" end-time="2026-10-05 19:50:14Z" duration="0.042423" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

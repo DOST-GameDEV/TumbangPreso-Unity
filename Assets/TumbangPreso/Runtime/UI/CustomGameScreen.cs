@@ -111,6 +111,25 @@ namespace TumbangPreso.UI
 
         private void Awake() => ScreenTakeover.Register(this, () => IsOpen);
 
+        private void OnEnable()
+        {
+            Net.MatchRpc.OnRulesChanged += HandleRulesChanged;
+            RefreshRemoteRules();
+        }
+
+        private void OnDisable() => Net.MatchRpc.OnRulesChanged -= HandleRulesChanged;
+
+        private void HandleRulesChanged(string wire) => RefreshRemoteRules();
+
+        private void RefreshRemoteRules()
+        {
+            // The receive path adopts session rules before announcing them. Keep an open
+            // client view current without saving the host's choices or replacing a host draft.
+            if (!IsOpen || MayEdit) return;
+            _editing = SceneFlow.SelectedRules.Clone();
+            Refresh();
+        }
+
         private void OnDestroy() => ScreenTakeover.Unregister(this);
 
         /// <summary>
