@@ -1,0 +1,82 @@
+{
+  "01-host-online-xyuu.png": {
+    "bytes": 184037,
+    "sha256": "89a375725490ecaced8418c2322ed084e4b03de647ff6ecc8b1af838750a299c"
+  },
+  "02-client-online-natural-row.png": {
+    "bytes": 84855,
+    "sha256": "7b6817852bb89942c7b26534b3eb7b0f4feae7123fa7771fe98b9ad9a6c9c01f"
+  },
+  "03-client-admitted-xyuu.png": {
+    "bytes": 182106,
+    "sha256": "9ab4a2162da3666f7abb281eddd59cca55313139fa52735deb5621296ba8d229"
+  },
+  "04-client-ready-xyuu.png": {
+    "bytes": 182377,
+    "sha256": "7df090467809fd7fd497c7d475609368faff61d712490e7ed119df8442e0f01d"
+  },
+  "05-host-ready-received.png": {
+    "bytes": 186205,
+    "sha256": "bfc68bf3caca73b9a7ecd8e8caae1ae7354cd667006328b63608002311234b16"
+  },
+  "06-client-ready-sustained.png": {
+    "bytes": 180091,
+    "sha256": "f6f6f45295bd2edc8567ed1ad997f9330da3753cd98a04189d27cdf8624d4bf1"
+  },
+  "07-host-stayed-xyuu-after-client-leave.png": {
+    "bytes": 183517,
+    "sha256": "d463681fa7fd95a6d5cd1820db1885adbb882db6b4387bcd60b7b88677e92990"
+  },
+  "08-client-rejoined-ready-reset.png": {
+    "bytes": 181907,
+    "sha256": "bd9c4268de969d4fb15f2eb00db5ccc8d6fcdb28e4f942010d6176d0eaf5b5db"
+  },
+  "09-client-home-after-host-left.png": {
+    "bytes": 173290,
+    "sha256": "e8d5d5be50c988a6cde89814f6ce8b87af86e5c83c7c8aa82536ff446765bb0b"
+  },
+  "10-client-own-quit-menu.png": {
+    "bytes": 126170,
+    "sha256": "564373554cf01c3aeedd4d038a39b46d6c8069cfbd2e2fbfb78cb05526d952ef"
+  },
+  "11-host-own-quit-menu.png": {
+    "bytes": 134026,
+    "sha256": "bf33f8436b7abe984ddfc239dcd039c92c5b47d51b616bd565bca2094d620388"
+  },
+  "admission-receipt.json": {
+    "bytes": 1902,
+    "sha256": "2b00e5890c47df1664b0de56d39a7e9bca5f11e038e732f50583303cb979949a"
+  },
+  "artifact-manifest.json": {
+    "bytes": 50323,
+    "sha256": "47cfe4a338bd0a5de12d4081d53e6a49f9b9e09aee4be8cd28cc796924a83847"
+  },
+  "build-launch.json": {
+    "bytes": 953,
+    "sha256": "bf66b55688c3fc09c1f3e462d4b51f80f938f057cc6373859c5a7a38c79d6715"
+  },
+  "build-restoration.json": {
+    "bytes": 22272,
+    "sha256": "f819edbdb9b17f855c0f42b1ff8e7d1c1c91fd0b074dd35eb91c9497ffb7f3a0"
+  },
+  "client-launch.json": {
+    "bytes": 1017,
+    "sha256": "b10d723f84dc67a5defe5c31d8505d405efdef320cb8e32462764ce160d38054"
+  },
+  "client-player.log": {
+    "bytes": 9900,
+    "sha256": "412c6c5693f512c99c139123b027f6a815292fa8628e8be053d362f54e564cdf"
+  },
+  "direct-result.json": {
+    "bytes": 1595,
+    "sha256": "a3296c84e4397309e97b1c11d561dc32b432aa9f6979c2bafca84b74665cfdcd"
+  },
+  "host-launch.json": {
+    "bytes": 1009,
+    "sha256": "3dc6aaa96ed5cca361d2e30423ecc94df59b7150d4a0361e7b4bcf779e696cb3"
+  },
+  "host-player.log": {
+    "bytes": 8067,
+    "sha256": "dea858e98611f771904635969f1c1644d10977d7ccb2223d44de23c08137a84c"
+  }
+}
