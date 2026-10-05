@@ -202,7 +202,7 @@ namespace TumbangPreso.EditorTools.MapKit
             new Rule("arena_stage_rim") { Emission = 2.4f },
             new Rule("arena_stage_under") { Emission = 3.0f },
             new Rule("arena_stage_mark") { Emission = 2.2f },
-            new Rule("arena_stage_props") { Emission = 2.6f },
+            new Rule("arena_stage_props") { Emission = 4.4f },   // 2.6 read dark once HDR stayed on under MSAA: a saturated purple no longer clips up to bright
             new Rule("arena_stage_*"),
 
             // ---- THE HOLO KIT (tools/author_arena_holo.py): the hologram ads and the slipper.
