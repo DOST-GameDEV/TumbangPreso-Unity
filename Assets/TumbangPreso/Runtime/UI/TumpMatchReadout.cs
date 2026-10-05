@@ -184,7 +184,7 @@ namespace TumbangPreso.UI
         public void Flash(bool active) => _effects.Flash(active);
         public void Tick(CharacterMotor local, bool spectating, bool training, bool hidePowers, bool spectatorControls)
         {
-            Canvas.enabled = !RoleSwapCard.Showing && !HalftimePresentation.Playing;
+            Canvas.enabled = !RoleSwapCard.Showing && !HalftimePresentation.Playing && !Map.ArenaIntro.HidesUi;
             float dt = Time.unscaledDeltaTime;
             if (_toastLeft > 0) { _toastLeft -= dt; if (_toastLeft <= 0) { _toast.enabled = false; SizeToastPlate(); } }
             if (_hitLeft > 0)

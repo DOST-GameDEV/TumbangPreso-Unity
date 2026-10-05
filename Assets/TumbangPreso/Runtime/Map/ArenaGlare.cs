@@ -132,10 +132,22 @@ namespace TumbangPreso.Map
 
             fx.DrawBillboard(ArenaFx.Cell.Dot, lamp, core, ArenaFx.White, glare);
             fx.DrawBillboard(ArenaFx.Cell.Dot, lamp, unit * 0.11f, colour, 0.75f * glare);
-            // The burn: a white bloom over the lamp and the lamp's colour wide round it.
-            fx.DrawBillboard(ArenaFx.Cell.Dot, lamp, unit * 0.26f, ArenaFx.White, 0.55f * glare * glare);
-            fx.DrawBillboard(ArenaFx.Cell.Dot, lamp, unit * 0.62f, colour, 0.16f * glare);
-            if (glare > 0.1f) Burst(fx, lamp, unit, colour, glare, rich ? 14 : 6);
+            // ⚠️ THE BURN AND THE STARBURST ARE IN THE LENS, NOT AT THE LAMP (owner, 2026-10-05, twice:
+            // "still dont get any star glare"). Drawn out at the lamp they were behind everything nearer:
+            // in the tunnel the players' heads fill the frame and covered all of it, and in play the rays
+            // were a pixel wide. A lens's flare is over the whole picture, so for a `rich` lamp (a show
+            // spot, the opening's light) they are drawn just in front of the eye, where the lamp is on the
+            // screen, wide and bright. `seen` is still the caller's answer to what hides the lamp.
+            Vector3 burnAt = lamp;
+            float burnUnit = unit;
+            if (rich)
+            {
+                burnAt = _eye + (_forward + _right * (x * _tanX) + _up * (y * _tanY)) * Lens;
+                burnUnit = Lens * _tanY * size;
+            }
+            fx.DrawBillboard(ArenaFx.Cell.Dot, burnAt, burnUnit * 0.34f, ArenaFx.White, 0.8f * glare * glare);
+            fx.DrawBillboard(ArenaFx.Cell.Dot, burnAt, burnUnit * 0.80f, colour, 0.22f * glare);
+            if (glare > 0.06f) Burst(fx, burnAt, burnUnit, colour, glare, rich ? 16 : 6);
             // The anamorphic streak: the star's cell pulled long and thin across the frame.
             fx.DrawQuad(ArenaFx.Cell.Star, lamp, _right * (unit * (0.25f + 0.55f * glare)), _up * (unit * 0.085f), colour, 0.6f * glare);
 
@@ -168,11 +180,11 @@ namespace TumbangPreso.Map
                 float h = Mathf.Repeat(seed * 7.31f + i * 0.618034f, 1.0f), k = Mathf.Repeat(h * 5.77f + 0.31f, 1.0f);
                 float angle = (i + 0.7f * h) * Mathf.PI / rays + seed * Mathf.PI;
                 Vector3 along = _right * Mathf.Cos(angle) + _up * Mathf.Sin(angle), across = _up * Mathf.Cos(angle) - _right * Mathf.Sin(angle);
-                float length = unit * (0.22f + 0.62f * k * k) * grow, width = unit * (0.006f + 0.008f * h);
+                float length = unit * (0.30f + 0.95f * k * k) * grow, width = unit * (0.020f + 0.030f * h);
                 bool tinted = i % 3 == 2;
                 fx.DrawQuad(ArenaFx.Cell.Streak, lamp, across * width, along * length,
                             tinted ? Tints[(i / 3 + (int)(seed * 6.0f)) % Tints.Length] : i % 2 == 0 ? ArenaFx.White : colour,
-                            (tinted ? 0.34f : 0.5f) * glare * (0.55f + 0.45f * h));
+                            (tinted ? 0.55f : 0.85f) * glare * (0.6f + 0.4f * h));
             }
         }
 

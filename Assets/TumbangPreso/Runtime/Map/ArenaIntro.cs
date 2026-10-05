@@ -228,6 +228,7 @@ namespace TumbangPreso.Map
 
             TakeModels(players);
             HideCan();
+            HideUi();
             _screens.Build(transform, _centre, players);
             BuildOverlay();
             BuildSound();
@@ -276,6 +277,7 @@ namespace TumbangPreso.Map
 
             ReleaseModels();
             ShowCan();
+            ShowUi();
             _screens.Destroy();
             if (_overlay != null) { Destroy(_overlay.gameObject); _overlay = null; _ink = null; _veil = null; }
             if (_grade != null) _grade.SetEventGrade(1.0f, 1.0f);
@@ -284,6 +286,32 @@ namespace TumbangPreso.Map
             if (_loop != null) _loop.Stop();
             if (_ringer != null) _ringer.Stop();
             _camera = null; _grade = null;
+        }
+
+        // ⚠️ THE FILM PLAYS WITHOUT THE GAME'S UI (owner, 2026-10-05: "can you also hide the ui at the start
+        // cinematic"): the HUD, the prompts and the touch controls were drawn over it. Every screen canvas
+        // under the arrival's own curtain (order 150) is switched off for the film and put back by `End`,
+        // and the match readout, which sets its own canvas every frame, asks `HidesUi`.
+        private readonly System.Collections.Generic.List<Canvas> _hiddenUi = new System.Collections.Generic.List<Canvas>();
+
+        /// <summary>True while an opening is on the screen: the game's UI stays down.</summary>
+        public static bool HidesUi => Instance != null && Instance._prepared;
+
+        private void HideUi()
+        {
+            _hiddenUi.Clear();
+            foreach (var canvas in FindObjectsByType<Canvas>())
+            {
+                if (canvas == null || !canvas.enabled || !canvas.isRootCanvas || canvas.renderMode == RenderMode.WorldSpace || canvas.sortingOrder >= 150) continue;
+                canvas.enabled = false;
+                _hiddenUi.Add(canvas);
+            }
+        }
+
+        private void ShowUi()
+        {
+            foreach (var canvas in _hiddenUi) if (canvas != null) canvas.enabled = true;
+            _hiddenUi.Clear();
         }
 
         /// <summary>A shake for the opening's picture, from `ArenaShow` (a lock, the reveal). Nothing outside an opening.</summary>
