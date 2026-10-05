@@ -12,8 +12,33 @@ namespace TumbangPreso
         private long _momentSequence, _receivedMomentSequence;
         private int _firstKnockdownRound;
 
+        private bool _presentationPrepared;
+
+        /// <summary>
+        /// Stamp the coming match's id BEFORE it starts, on the host or offline, and have `StartMatch`
+        /// keep it. For a map whose look before the start depends on the id: the Arena derives its
+        /// layout from it (`ArenaStage.LayoutFor`), and with the id stamped only in `StartMatch` the
+        /// stage its opening built was the layout of id 0 and the one played was another (owner,
+        /// 2026-10-05: "the map in the cinematic is different from what you first play").
+        /// Nothing is sent: a client adopts the host's id as it always has.
+        /// </summary>
+        public void PreparePresentationMatch()
+        {
+            if (MatchInProgress || _presentationPrepared || !NetAuthority.ShouldResolve()) return;
+            BeginPresentationMatch();
+            _presentationPrepared = PresentationMatchId != 0;
+        }
+
         private void BeginPresentationMatch()
         {
+            if (_presentationPrepared)
+            {
+                // Prepared before the start: the id stands, the rest begins as ever.
+                _presentationPrepared = false;
+                _momentSequence = _receivedMomentSequence = 0; _firstKnockdownRound = 0; LastMoment = default;
+                if (PresentationMatchId != 0) return;
+            }
+
             PresentationMatchId = NetAuthority.IsNetworked && Net.MatchRpc.Instance != null
                 ? Net.MatchRpc.Instance.EnsurePresentationMatch()
                 : Math.Max(DateTime.UtcNow.Ticks, PresentationMatchId + 1);

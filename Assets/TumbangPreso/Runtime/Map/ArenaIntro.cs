@@ -222,6 +222,8 @@ namespace TumbangPreso.Map
             Timeline = TimesFor(!reducedMotion && !_fullSeen);
             LastSeconds = Timeline.End; LastCompleted = false;
             LandedSeat = -1; _tick = -2; _beats = 0; _punch = 0.0f; _last = -1.0f;
+            // The match's id now, so the stage this opening builds is the one round 1 is played on.
+            GameServices.Match?.PreparePresentationMatch();
             Age = 0.0f; Began = double.NaN; Now = Timeline.Full ? Beat.Tunnel : Beat.Reveal;
 
             TakeModels(players);

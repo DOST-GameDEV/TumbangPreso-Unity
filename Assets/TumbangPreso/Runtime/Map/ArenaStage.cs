@@ -441,6 +441,11 @@ namespace TumbangPreso.Map
 
         private void Update()
         {
+            // Before the first match the id is stamped early, so the stage standing here (and the one the
+            // opening builds) is the one round 1 is played on, not the layout of id 0.
+            var match = GameServices.Match;
+            if (match != null && match.PresentationMatchId == 0 && !match.MatchInProgress) match.PreparePresentationMatch();
+
             if (_replay >= 0 && PresentationClock.Held) ApplyLayout(_replay);
             else ApplyForRound(WantedRound());
         }
