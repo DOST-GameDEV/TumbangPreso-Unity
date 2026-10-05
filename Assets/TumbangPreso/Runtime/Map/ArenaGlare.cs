@@ -67,8 +67,8 @@ namespace TumbangPreso.Map
         /// <summary>
         /// 0 below `from`, 1 above `to`, eased between: the shader's smoothstep.
         ///
-        /// ⚠️⚠️ THIS IS WHY NO GLARE EVER SHOWED (found 2026-10-05 from the trace below, after four
-        /// redraws of the look). Every fade here was written `Mathf.SmoothStep(edge0, edge1, x)`, as
+        /// ⚠️⚠️ THIS IS WHY NO GLARE EVER SHOWED (found 2026-10-05, after four
+        /// redraws of the look and a trace written to a file from the owner's play). Every fade here was written `Mathf.SmoothStep(edge0, edge1, x)`, as
         /// in a shader. Unity's `Mathf.SmoothStep(from, to, t)` is the OTHER thing: it blends from
         /// `from` to `to` by t. So "how far in frame" was 1 minus a number between 1.0 and 1.6, never
         /// above zero, and every lamp was refused before anything was drawn. NEVER call
@@ -109,8 +109,7 @@ namespace TumbangPreso.Map
         public static float Lamp(ArenaFx fx, Vector3 lamp, Vector3 aim, Color colour, float power, float full, float gone,
                                  float size = 1.0f, bool rich = false, bool ghosts = false, float seen = 1.0f, float floor = 0.0f)
         {
-            if (rich) _dbgRich++;
-            if (!_has || power <= 0.0f || seen <= 0.0f) { if (rich) _dbgWhy = !_has ? "no camera" : power <= 0.0f ? "no power" : "hidden (seen 0)"; return 0.0f; }
+            if (!_has || power <= 0.0f || seen <= 0.0f) return 0.0f;
 
             Vector3 to = lamp - _eye;
             float depth = Vector3.Dot(to, _forward);
@@ -125,7 +124,7 @@ namespace TumbangPreso.Map
             float framed = 1.0f - Ramp(1.0f, 1.6f, out_);
             // What the LENS does with it reaches much further out of shot: see `Bleed`.
             float lens = ghosts ? 1.0f - Ramp(1.2f, 3.0f, out_) : 0.0f;
-            if (framed <= 0.0f && lens <= 0.0f) { if (rich) _dbgWhy = "out of frame by " + out_.ToString("0.00") + (ghosts ? "" : ", ghosts off"); return 0.0f; }
+            if (framed <= 0.0f && lens <= 0.0f) return 0.0f;
 
             float metres = to.magnitude;
             float angle = Mathf.Acos(Mathf.Clamp(Vector3.Dot(aim, -to) / metres, -1.0f, 1.0f)) * Mathf.Rad2Deg;
@@ -192,7 +191,7 @@ namespace TumbangPreso.Map
         /// </summary>
         private static void LensBurst(ArenaFx fx, float x, float y, float out_, Color colour, float size, float glare, float seed)
         {
-            if (glare < 0.05f) { _dbgWhy = "too weak: " + glare.ToString("0.000") + " at " + out_.ToString("0.00") + " out"; return; }
+            if (glare < 0.05f) return;
             float pull = out_ > 1.02f ? 1.02f / out_ : 1.0f;
             Add(x * pull, y * pull, glare, size, colour, seed);
         }
@@ -210,16 +209,17 @@ namespace TumbangPreso.Map
         // strength. The opening's fades are drawn the same way and are known to show.
         // `ArenaFx` presents them once a frame (`Present`), after every caller has drawn.
 
-        private const int MaxFlares = 10, BurstPixels = 512;
+        private const int MaxFlares = 10, Layers = 2, BurstPixels = 768;
         private struct Shown { public float X, Y, Glare, Size, Seed; public Color Colour; }
         private static readonly Shown[] Asked = new Shown[MaxFlares];
         private static int _asked;
         private static Canvas _canvas;
-        private static readonly RawImage[] Images = new RawImage[MaxFlares];
+        private static readonly RawImage[] Images = new RawImage[MaxFlares * Layers];
+        private static Material _added;
         private static Texture2D _burst;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStatics() { _asked = 0; _canvas = null; _burst = null; _frame = -1; }
+        private static void ResetStatics() { _asked = 0; _canvas = null; _burst = null; _added = null; _frame = -1; }
 
         /// <summary>Ask for a flare this frame at (x, y), -1 to 1 across the frame. The strongest `MaxFlares` are kept.</summary>
         private static void Add(float x, float y, float glare, float size, Color colour, float seed)
@@ -235,41 +235,11 @@ namespace TumbangPreso.Map
             Asked[slot] = new Shown { X = x, Y = y, Glare = glare, Size = size, Seed = seed, Colour = colour };
         }
 
-        // ⚠️ A DIAGNOSTIC, IN THE EDITOR ONLY, UNTIL THE FLARE HAS BEEN SEEN (2026-10-05: four versions
-        // did not show for the owner and the cause could not be found by reading). Twice a second it
-        // appends one line to Logs/arena/glare_debug.txt: how many `rich` lamps asked, how many flares
-        // were kept, why the last one that was refused was refused, and the canvas's state.
-        private static int _dbgRich;
-        private static string _dbgWhy = "";
-        private static float _dbgNext;
-
-        [System.Diagnostics.Conditional("UNITY_EDITOR")]
-        private static void Trace(int count, float flash)
-        {
-            if (Time.unscaledTime < _dbgNext) { _dbgRich = 0; return; }
-            _dbgNext = Time.unscaledTime + 0.5f;
-            try
-            {
-                float top = 0.0f; int best = -1;
-                for (int i = 0; i < count; i++) if (Asked[i].Glare * Asked[i].Size > top) { top = Asked[i].Glare * Asked[i].Size; best = i; }
-                string line = Time.unscaledTime.ToString("0.0") + " s  rich lamps " + _dbgRich + "  flares " + count
-                    + (best >= 0 ? "  strongest glare " + Asked[best].Glare.ToString("0.00") + " size " + Asked[best].Size.ToString("0.00") + " at " + Asked[best].X.ToString("0.00") + "," + Asked[best].Y.ToString("0.00") : "")
-                    + "  last refusal: " + (_dbgWhy.Length > 0 ? _dbgWhy : "none") + "  flash " + flash.ToString("0.00") + "  has camera " + _has
-                    + "  canvas " + (_canvas == null ? "none" : (_canvas.enabled ? "on" : "OFF") + " order " + _canvas.sortingOrder + " active " + _canvas.gameObject.activeInHierarchy)
-                    + "  opening " + ArenaIntro.HidesUi + "\n";
-                System.IO.Directory.CreateDirectory("Logs/arena");
-                System.IO.File.AppendAllText("Logs/arena/glare_debug.txt", line);
-            }
-            catch (System.Exception) { }
-            _dbgRich = 0; _dbgWhy = "";
-        }
-
         /// <summary>Put this frame's flares on the screen and forget them. Called once a frame by `ArenaFx`, last.</summary>
         public static void Present(Transform owner)
         {
             int count = _asked;
             _asked = 0;
-            Trace(count, Settings.SettingsStore.Current.EffectiveFlashIntensity);
             float flash = Settings.SettingsStore.Current.EffectiveFlashIntensity;
             if (flash <= 0.001f) count = 0;
             if (count == 0 && _canvas == null) return;
@@ -279,26 +249,40 @@ namespace TumbangPreso.Map
             int order = ArenaIntro.HidesUi ? 150 : -20;
             if (_canvas.sortingOrder != order) _canvas.sortingOrder = order;
             if (!_canvas.enabled) _canvas.enabled = true;   // the opening switches the game's canvases off; never this one
-            float tall = Screen.height;
+            // ⚠️ TWO LAYERS, TURNING AGAINST EACH OTHER, ADDED TO THE FRAME (owner, 2026-10-05, of one
+            // still picture blended over it: "in the opening screen it just looks like a plain image").
+            // The second layer is the first mirrored, a little smaller, turning the other way, so the
+            // rays cross and shimmer as glare does when the eye moves; and both are light, not paint
+            // (`ArenaLensFlare.shader`), so the middle burns the frame out to white.
+            // ⚠️ AND IN PLAY IT IS HELD BACK (same message: "slightly too much when the can is down"):
+            // eight spots flare at once there, so each is two thirds of a frame's height and under
+            // half strength. The opening's one light (size over 1.5) is whole and fills the frame.
+            float tall = Screen.height, clock = Time.unscaledTime;
             for (int i = 0; i < MaxFlares; i++)
             {
-                var image = Images[i];
-                if (image == null) continue;
                 bool on = i < count;
-                if (image.enabled != on) image.enabled = on;
-                if (!on) continue;
+                for (int layer = 0; layer < Layers; layer++)
+                {
+                    var image = Images[i * Layers + layer];
+                    if (image == null) continue;
+                    if (image.enabled != on) image.enabled = on;
+                    if (!on) continue;
 
-                var a = Asked[i];
-                var rect = image.rectTransform;
-                rect.anchorMin = rect.anchorMax = new Vector2(a.X * 0.5f + 0.5f, a.Y * 0.5f + 0.5f);
-                // A show spot (size 1) is under a frame's height across, and up to eight show at once; the
-                // opening's light (size up to 3.9) fills the frame.
-                float across = tall * 0.95f * a.Size * (0.45f + 0.55f * a.Glare);
-                rect.sizeDelta = new Vector2(across, across);
-                rect.localRotation = Quaternion.Euler(0.0f, 0.0f, a.Seed * 360.0f);
-                Color c = Color.Lerp(Color.white, a.Colour, 0.35f);
-                c.a = Mathf.Clamp01(a.Glare * (a.Size > 1.5f ? 1.15f : 0.8f)) * Mathf.Lerp(0.45f, 1.0f, flash);
-                image.color = c;
+                    var a = Asked[i];
+                    bool big = a.Size > 1.5f, spot = !big && a.Size >= 0.6f;
+                    var rect = image.rectTransform;
+                    rect.anchorMin = rect.anchorMax = new Vector2(a.X * 0.5f + 0.5f, a.Y * 0.5f + 0.5f);
+                    float across = tall * (spot ? 0.68f : 0.95f) * a.Size * (0.45f + 0.55f * a.Glare) * (layer == 0 ? 1.0f : 0.84f);
+                    // A slow breath in the size, each layer on its own beat.
+                    across *= 1.0f + 0.035f * Mathf.Sin(clock * (layer == 0 ? 1.7f : 2.3f) + a.Seed * 40.0f);
+                    rect.sizeDelta = new Vector2(across, across);
+                    rect.localScale = new Vector3(layer == 0 ? 1.0f : -1.0f, 1.0f, 1.0f);
+                    rect.localRotation = Quaternion.Euler(0.0f, 0.0f, a.Seed * 360.0f + (layer == 0 ? clock * 5.0f : 137.0f - clock * 3.5f));
+                    Color c = Color.Lerp(Color.white, a.Colour, 0.35f);
+                    float shimmer = 0.88f + 0.12f * Mathf.Sin(clock * (layer == 0 ? 6.1f : 4.3f) + a.Seed * 70.0f + layer);
+                    c.a = Mathf.Clamp01(a.Glare * (big ? 1.0f : spot ? 0.46f : 0.8f)) * (layer == 0 ? 1.0f : 0.62f) * shimmer * Mathf.Lerp(0.45f, 1.0f, flash);
+                    image.color = c;
+                }
             }
         }
 
@@ -310,12 +294,19 @@ namespace TumbangPreso.Map
             _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             _canvas.sortingOrder = -20;
             if (_burst == null) _burst = PaintBurst();
-            for (int i = 0; i < MaxFlares; i++)
+            if (_added == null)
+            {
+                var shader = Resources.Load<Shader>("Shaders/ArenaLensFlare");
+                if (shader != null && shader.isSupported) _added = new Material(shader) { name = "Arena lens flare", hideFlags = HideFlags.DontSave };
+                else Debug.LogWarning("[Arena] Shaders/ArenaLensFlare is missing: the lens flares are blended, not added.");
+            }
+            for (int i = 0; i < Images.Length; i++)
             {
                 var child = new GameObject("Flare " + i);
                 child.transform.SetParent(go.transform, false);
                 var image = child.AddComponent<RawImage>();
                 image.texture = _burst;
+                if (_added != null) image.material = _added;
                 image.raycastTarget = false;
                 image.enabled = false;
                 image.rectTransform.pivot = new Vector2(0.5f, 0.5f);
@@ -326,26 +317,30 @@ namespace TumbangPreso.Map
         private static uint _paint;
         private static float Next() { _paint ^= _paint << 13; _paint ^= _paint >> 17; _paint ^= _paint << 5; return (_paint & 0xFFFFFF) / 16777216.0f; }
 
-        /// <summary>The burst: white light in the alpha. A burnt-out middle, a soft bloom round it, and
-        /// a hundred and fifty rays, each with its own width, length and strength, a few of them faintly coloured.</summary>
+        /// <summary>
+        /// The burst: white light in the alpha. A middle that burns out only at its very centre and
+        /// falls away softly, and a hundred and sixty rays in three lengths (short, middling, to the
+        /// rim). Each length is its own profile round the circle, SUMMED and read between its steps,
+        /// so no ray has a stepped edge and none cuts another off (the first version took the
+        /// strongest ray at each angle, which left staircases and dashes where two met). A faint
+        /// spread of colour turns slowly round it, none in the middle.
+        /// </summary>
         private static Texture2D PaintBurst()
         {
-            const int n = BurstPixels, steps = 1440;
-            var strength = new float[steps];
-            var reach = new float[steps];
-            var hue = new float[steps];
+            const int n = BurstPixels, steps = 2048, bands = 3;
+            var profile = new float[bands][];
+            for (int b = 0; b < bands; b++) profile[b] = new float[steps];
+            float[] reach = { 0.42f, 0.70f, 1.0f };
             _paint = 0x9E3779B9u;
-            for (int ray = 0; ray < 150; ray++)
+            for (int ray = 0; ray < 160; ray++)
             {
-                float at = Next() * steps, width = 1.2f + 9.0f * Next() * Next(), power = 0.25f + 0.75f * Next(), far = 0.35f + 0.65f * Next() * Next();
-                if (ray % 12 == 0) { far = 1.0f; power = 1.0f; width += 3.0f; }   // ten long strong ones
-                float tint = Next();
+                int b = ray % 10 == 0 ? 2 : ray % 3 == 0 ? 1 : 0;
+                float at = Next() * steps, width = (b == 2 ? 5.0f : 2.0f) + 10.0f * Next() * Next(), power = (b == 2 ? 0.8f : 0.3f) + 0.6f * Next();
                 int span = Mathf.CeilToInt(width * 3.0f);
                 for (int k = -span; k <= span; k++)
                 {
                     int index = ((Mathf.RoundToInt(at) + k) % steps + steps) % steps;
-                    float w = Mathf.Exp(-(k * k) / (width * width)) * power;
-                    if (w > strength[index]) { strength[index] = w; reach[index] = far; hue[index] = tint; }
+                    profile[b][index] += Mathf.Exp(-(k * k) / (width * width)) * power;
                 }
             }
 
@@ -356,17 +351,21 @@ namespace TumbangPreso.Map
                 {
                     float x = (px + 0.5f) / n * 2.0f - 1.0f, y = (py + 0.5f) / n * 2.0f - 1.0f;
                     float r = Mathf.Sqrt(x * x + y * y);
-                    // Between two steps of the angle the strength is blended, so a ray's edge is not a staircase.
-                    float turn = (Mathf.Atan2(y, x) / (2.0f * Mathf.PI) + 0.5f) * steps;
+                    float angle = Mathf.Atan2(y, x) / (2.0f * Mathf.PI) + 0.5f;
+                    float turn = angle * steps;
                     int index = (int)turn % steps, next = (index + 1) % steps;
-                    float along = Mathf.Clamp01(1.0f - r / Mathf.Max(0.05f, reach[index]));
-                    float rays = Mathf.Lerp(strength[index], strength[next], turn - Mathf.Floor(turn)) * along * Mathf.Sqrt(along) * Mathf.Clamp01(r * 9.0f);
-                    // The middle burns out only at its very centre and falls away softly: never a disc with an edge.
+                    float between = turn - Mathf.Floor(turn);
+                    float rays = 0.0f;
+                    for (int b = 0; b < bands; b++)
+                    {
+                        float along = Mathf.Clamp01(1.0f - r / reach[b]);
+                        rays += Mathf.Min(1.0f, Mathf.Lerp(profile[b][index], profile[b][next], between)) * along * Mathf.Sqrt(along);
+                    }
+                    rays *= Mathf.Clamp01(r * 9.0f);
                     float core = Mathf.Exp(-r * r * 140.0f) * 1.1f + Mathf.Exp(-r * r * 22.0f) * 0.55f + Mathf.Exp(-r * r * 4.0f) * 0.16f;
-                    float alpha = Mathf.Clamp01(rays * 0.85f + core) * Mathf.Clamp01((1.0f - r) * 8.0f);
-                    // A faint spread of colour out along the rays, none in the middle.
-                    float tinted = Mathf.Clamp01(r * 2.2f) * 0.24f * Mathf.Clamp01(1.0f - core);
-                    Color rgb = Color.Lerp(Color.white, Color.HSVToRGB(hue[index], 0.75f, 1.0f), tinted);
+                    float alpha = Mathf.Clamp01(rays * 0.8f + core) * Mathf.Clamp01((1.0f - r) * 6.0f);
+                    float tinted = Mathf.Clamp01(r * 2.2f) * 0.22f * Mathf.Clamp01(1.0f - core);
+                    Color rgb = Color.Lerp(Color.white, Color.HSVToRGB(Mathf.Repeat(angle * 3.0f + r * 0.35f, 1.0f), 0.7f, 1.0f), tinted);
                     pixels[py * n + px] = new Color32((byte)(rgb.r * 255.0f), (byte)(rgb.g * 255.0f), (byte)(rgb.b * 255.0f), (byte)(alpha * 255.0f));
                 }
             }
@@ -421,7 +420,7 @@ namespace TumbangPreso.Map
             float gx = x * pull, gy = y * pull;
             // The ghosts: small coloured discs strung along the line through the middle of the
             // screen and a little off it, as the photograph has them, and one thin ring.
-            float lit = flare * flash;
+            float lit = flare * flash * 0.55f;   // held back: "slightly too much when the can is down"
             Ghost(fx, ArenaFx.Cell.ThinRing, gx, gy, -0.38f, 0.10f, colour, 0.08f * lit);
             Ghost(fx, ArenaFx.Cell.Disc, gx, gy, -1.05f, 0.055f, ArenaFx.Magenta, 0.10f * lit, 0.05f);
             Ghost(fx, ArenaFx.Cell.Disc, gx, gy, -0.78f, 0.030f, ArenaFx.Lime, 0.12f * lit, -0.07f);

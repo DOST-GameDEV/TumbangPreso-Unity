@@ -433,6 +433,17 @@ namespace TumbangPreso.Map
 
             Physics.SyncTransforms();
             LayoutApplied?.Invoke(layout);
+
+            // ⚠️ BEFORE A MATCH, THE BODIES ARE SEATED AGAIN (owner, 2026-10-05: "on entablado sometimes
+            // during the count down ur in the floor"). They are seated on the floor when they spawn, on the
+            // layout standing then, and nothing seats them again until the round starts. The layout can now
+            // change in between (the match's id is stamped before the opening), and where the new deck is
+            // higher the body was left inside it through the opening and the 3, 2, 1. In a match the round's
+            // own reset does this, so this is only for the time before one.
+            var match = GameServices.Match;
+            if (match != null && !match.MatchInProgress)
+                foreach (var motor in FindObjectsByType<CharacterMotor>())
+                    if (motor != null) MatchHost.SeatOnFloor(motor);
         }
 
         /// <summary>The map's effects (`ArenaFx`, and with it the show and the ambience) install
