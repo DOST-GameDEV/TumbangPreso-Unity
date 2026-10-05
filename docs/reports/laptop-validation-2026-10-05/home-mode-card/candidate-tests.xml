@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 13:24:40Z" end-time="2026-10-05 13:24:46Z" duration="6.785272">
+  <test-suite type="TestSuite" id="3160" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1763" result="Passed" start-time="2026-10-05 13:24:40Z" end-time="2026-10-05 13:24:46Z" duration="6.785272" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3152" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1763" result="Passed" start-time="2026-10-05 13:24:40Z" end-time="2026-10-05 13:24:46Z" duration="6.773434" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="3796" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3153" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1763" result="Passed" start-time="2026-10-05 13:24:40Z" end-time="2026-10-05 13:24:46Z" duration="6.767783" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3156" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1761" result="Passed" start-time="2026-10-05 13:24:40Z" end-time="2026-10-05 13:24:46Z" duration="6.761697" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1668" name="HomeModeCardReadabilityTests" fullname="TumbangPreso.PlayTests.HomeModeCardReadabilityTests" classname="TumbangPreso.PlayTests.HomeModeCardReadabilityTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-05 13:24:40Z" end-time="2026-10-05 13:24:46Z" duration="6.733623" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1669" name="ActualModePostersStayClearOfTheHeadlineAt720And1080" fullname="TumbangPreso.PlayTests.HomeModeCardReadabilityTests.ActualModePostersStayClearOfTheHeadlineAt720And1080" methodname="ActualModePostersStayClearOfTheHeadlineAt720And1080" classname="TumbangPreso.PlayTests.HomeModeCardReadabilityTests" runstate="Runnable" seed="2059538604" result="Passed" start-time="2026-10-05 13:24:40Z" end-time="2026-10-05 13:24:44Z" duration="4.110539" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[TumpUiCapture] Home-mode-card-0-1280 cream source=252,211,159 pixel=54,22,14; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Home-mode-card-0-1920 cream source=252,211,159 pixel=53,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Home-mode-card-1-1280 cream source=252,211,159 pixel=54,22,14; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Home-mode-card-1-1920 cream source=252,211,159 pixel=53,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Home-mode-card-2-1280 cream source=252,211,159 pixel=53,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Home-mode-card-2-1920 cream source=252,211,159 pixel=53,22,14; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1670" name="ModeCardStillOpensItsChoiceDoorAndBackKeepsTheSelection" fullname="TumbangPreso.PlayTests.HomeModeCardReadabilityTests.ModeCardStillOpensItsChoiceDoorAndBackKeepsTheSelection" methodname="ModeCardStillOpensItsChoiceDoorAndBackKeepsTheSelection" classname="TumbangPreso.PlayTests.HomeModeCardReadabilityTests" runstate="Runnable" seed="2067068038" result="Passed" start-time="2026-10-05 13:24:44Z" end-time="2026-10-05 13:24:46Z" duration="2.611918" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

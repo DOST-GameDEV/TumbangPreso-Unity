@@ -1,0 +1,13 @@
+{
+  "base": "8d786d6f550595c453f065140ca5cecb182d6a2a",
+  "rootPacketBase": "f5bf1d0ad4a026f07809e0f7b1af82cc7615bab8",
+  "filter": "TumbangPreso.PlayTests.HomeModeCardReadabilityTests",
+  "expected": 2,
+  "originalExpected": "1poster geometryFAIL+1door/backcontrolPASS",
+  "candidateExpected": "2PASS and6native mode/resolutioncaptures",
+  "fixtureSHA256": "b1075acdb660c1db85c2043de44f53395bb12242ceda6790779a8c08a47c29ed",
+  "candidateSHA256": "a2f91087c711526fe90f1b0bd0f0e4c9d5bc94a255d5c935db6b10de6d8fbde1",
+  "publicationOwner": "Desktop",
+  "initialFixtureSHA256": "e5cb8fd2cf8471a1bff59b7c196991863b992443cf020f9eb5a13a5c9921c14b",
+  "fixtureRepair": "Correct choice0Ranked preserved; Resumed refreshes mode card on normal chooser return, Tick only notices. Initial and incorrect intermediate fixture failures retained; geometry assertions unchanged."
+}
