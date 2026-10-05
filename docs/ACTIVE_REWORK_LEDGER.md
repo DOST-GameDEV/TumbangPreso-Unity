@@ -22,7 +22,8 @@ explicitly authorized; unnecessary AGENTS feature entry was removed at owner req
 ## Current source and live work
 
 Root checkout C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i.
-Source97a313e33, protocol151/recording14. Full accepted Windows artifact97a313e33
+Source9fbca3c6a plus receiver rules lifecycle fix5/5. Protocol151/recording14.
+Full accepted Windows artifact97a313e33
 includes current rules/discovery fixes and all prior boulder/palm/tag/menu fixes.
 Actual local LAN4x30 pairMTDX: one discovery row, correct192.168.1.7 hint, client
 read-only rules4x30 and BOTH result headers4rounds. FULL saved objects equal,
@@ -33,8 +34,10 @@ retained. Prior native quit focus/UIA crash remains diagnostic, no speculative f
 OldYasmin cyan/goggles active; Benguet replacement cancelled. PreserveAuditor/private
 wardrobe script. Root commits/merge authoredM4tyu633; incoming19a4bb902/3d869233b/
 16fdcdaef were Codex. Owner reiterated soleM4author; checkincomingauthors/preflight.
-Next: clean verified superseded owned artifact, then receiver rules without lobby
-view and timed preferred-address expiry; no unchanged test repetition.
+Supersededcf405 removal was rejected by automatic approval review: blocked by
+policy. Preserved; no alternate deletion route. All owned processes are terminal.
+Next: timed preferred-address expiry check and package coherent next fixes;
+no unchanged test repetition.
 
 Latest owner instruction: laptop is off; PC continues ALONE. Laptop goal was
 explicitly paused. Do not wake/message it, wait for a pair or reuse obsolete

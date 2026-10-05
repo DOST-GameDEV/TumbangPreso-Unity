@@ -143,6 +143,9 @@ Nothing was deleted or renumbered.
 
 ### OWNER-MULTIPLAYER-FEEDBACK-1004: current live-test reports
 
+- [x] Host-approved rules update shared state before UI observers, including
+  when no lobby view exists. Two mode/state causes plus three guards become5/5;
+  saved preferences stay unchanged. [Evidence](reports/reliability-2026-10-05/rules-receiver-state/README.md).
 - [x] First arrival and repeated introductions receive the host's current custom
   rules before seating. Actual four-round LAN match exposed an eight-round client
   header; native missing-reply failures become2/2 with host password/preferences
