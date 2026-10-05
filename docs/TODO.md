@@ -146,6 +146,10 @@ Nothing was deleted or renumbered.
 - [ ] October5 owner real ONLINE failure: visible public room but Relay request
   timeout; host returned Home after someone joined, causal timing uncertain.
   Prior LAN/online successes do not close this current report.
+- [x] Record requested shutdown origin and distinguish transport/server stop
+  events across restarts. Actual native listen-host Stop/restart/external shutdown
+  passes; this is diagnostic evidence, not closure of current QA host loss.
+  [Evidence](reports/reliability-2026-10-05/network-shutdown-origin/README.md).
 - [x] Recover one transient Relay request timeout with an ownership-scoped retry.
   Native2causes/2controls -> seven passes including repeat/cancel/replacement.
   [Evidence](reports/reliability-2026-10-05/relay-request-timeout/README.md).

@@ -22,11 +22,11 @@ explicitly authorized; unnecessary AGENTS feature entry was removed at owner req
 ## Current source and live work
 
 Latest owner focus: UI appearance/quality/future-proof imports, network robustness
-and optimization. Root published2c9f790bf UI source-quality/edges. Next text/import guard unit has
-native6text/5import passes plus actualHome at1080p/1440p/4K; parents terminal0.
-202 incidental metadata restored; all original PNGs unchanged. UI font atlas
-quality bounded160pixels, legacy layout/typefaces preserved. Next publish then
-trace host shutdown and package current fixes for actual player validation.
+and optimization. Root published7502ff3d6 UI text/import guards; prior2c9 source-quality/edges.
+Native6text/5import passes plus actualHome at1080p/1440p/4K, all parents0, all
+original PNGs unchanged. Current shutdown-origin unit native1PASS covers real
+hostStop/restart/external managerShutdown and resets the diagnostic flag.
+Next publish then full Windows package and ordinary online GUI pair/idle/exit.
 Current QA ONLINE timeout/hostreturnedHome remains OPEN; local97a online admission
 passed but does not resolve the tester environment. Latest accepted Windows
 package97a313e33 predates receiver-state, retry and current UI changes.

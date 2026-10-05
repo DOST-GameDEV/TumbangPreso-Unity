@@ -1,0 +1,3 @@
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <94e621a98dc74755bd2344a3103a6a79>:0 
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+[NetLifecycle] server-stopped wasHost=True requestedStop=False

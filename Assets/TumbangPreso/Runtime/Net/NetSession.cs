@@ -686,8 +686,16 @@ namespace TumbangPreso.Net
         {
             _nm.OnClientConnectedCallback += OnClientConnected;
             _nm.OnClientDisconnectCallback += OnClientDisconnected;
+            _nm.OnTransportFailure += OnTransportFailure;
+            _nm.OnServerStopped += OnServerStopped;
             _nm.ConnectionApprovalCallback += ApproveConnection;
         }
+
+        private bool _stopWasRequested;
+        private void OnTransportFailure() => Debug.LogWarning(
+            $"[NetLifecycle] transport-failure server={_nm?.IsServer} relay={IsRelay} requestedStop={_stopWasRequested}");
+        private void OnServerStopped(bool wasHost) => Debug.Log(
+            $"[NetLifecycle] server-stopped wasHost={wasHost} requestedStop={_stopWasRequested}");
 
         /// <summary>
         /// ⚠️⚠️ THE LAST RESORT FOR A WEDGED NETWORKMANAGER (QA, 2026-09-26; `PrepareManagerForStart` has the whole story). When a
@@ -704,6 +712,8 @@ namespace TumbangPreso.Net
             {
                 _nm.OnClientConnectedCallback -= OnClientConnected;
                 _nm.OnClientDisconnectCallback -= OnClientDisconnected;
+                _nm.OnTransportFailure -= OnTransportFailure;
+                _nm.OnServerStopped -= OnServerStopped;
                 _nm.ConnectionApprovalCallback -= ApproveConnection;
                 DestroyImmediate(_nm);
             }
@@ -722,6 +732,8 @@ namespace TumbangPreso.Net
             {
                 _nm.OnClientConnectedCallback -= OnClientConnected;
                 _nm.OnClientDisconnectCallback -= OnClientDisconnected;
+                _nm.OnTransportFailure -= OnTransportFailure;
+                _nm.OnServerStopped -= OnServerStopped;
                 _nm.ConnectionApprovalCallback -= ApproveConnection;
 
                 if (_seatHandlerOn != null && _nm.CustomMessagingManager != null)
@@ -780,6 +792,7 @@ namespace TumbangPreso.Net
         private bool StartNetcode(Func<bool> start, string what)
         {
             _startProblem = null;
+            _stopWasRequested = false;
             if (!PrepareManagerForStart(out var problem)) { _startProblem = $"{what} failed: {problem}"; return false; }
             try { return start(); }
             catch (Exception first)
@@ -1535,6 +1548,14 @@ namespace TumbangPreso.Net
 
         private void StopCurrentTransport()
         {
+            if (_nm != null && _nm.IsListening)
+            {
+                _stopWasRequested = true;
+                // Record the initiating call only at shutdown, not on the movement hot path.
+                // No room codes, account IDs or credentials are included.
+                Debug.Log($"[NetLifecycle] requested-stop server={_nm.IsServer} relay={IsRelay} origin="
+                    + new System.Diagnostics.StackTrace(1, false));
+            }
             ClearJoinedClientRoomTitle();
             _connectingAttempt = null;
             if (!_localShutdown) MatchRpc.Instance?.NotifyLocalPeerLeaving();

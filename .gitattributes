@@ -19,3 +19,6 @@ docs/reports/reliability-2026-10-05/relay-request-timeout/*.xml -text -whitespac
 docs/reports/reliability-2026-10-05/ui-source-quality/*.xml -text -whitespace
 
 docs/reports/reliability-2026-10-05/ui-text-quality/*.xml -text -whitespace
+
+docs/reports/reliability-2026-10-05/network-shutdown-origin/*.xml -text -whitespace
+docs/reports/reliability-2026-10-05/network-shutdown-origin/lifecycle-events.txt -text -whitespace
