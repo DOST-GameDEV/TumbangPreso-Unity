@@ -55,7 +55,7 @@ namespace TumbangPreso.UI
         }
         public static UnityEngine.UI.Text Text(Transform parent,string name,string words,int size,TypeRole role=TypeRole.Reading)
         {
-            var theme=OwnerUiTheme.Current;var text=Rect(parent,name).gameObject.AddComponent<UnityEngine.UI.Text>();
+            var theme=OwnerUiTheme.Current;var text=Rect(parent,name).gameObject.AddComponent<CrispUiText>();
             text.text=words;text.font=role==TypeRole.Display?theme.Display:role==TypeRole.Accent?theme.Accent:theme.Reading;
             // Temporary Nunito replacement reads heavier/larger than the old Lydian.
             // Owner requested a smaller reading size; keep the established small-window

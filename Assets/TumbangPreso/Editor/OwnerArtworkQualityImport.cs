@@ -9,7 +9,7 @@ namespace TumbangPreso.EditorTools
     public sealed class OwnerArtworkQualityImport : AssetPostprocessor
     {
         public const int QualityMaxTextureSize = 8192;
-        public override uint GetVersion() => 2;
+        public override uint GetVersion() => 3;
         private void OnPreprocessTexture()
         {
             bool menu = assetPath.StartsWith("Assets/TumbangPreso/Resources/UI/owner-menu-edits/", StringComparison.Ordinal);
@@ -31,7 +31,7 @@ namespace TumbangPreso.EditorTools
             importer.crunchedCompression = false;
             importer.npotScale = TextureImporterNPOTScale.None;
             // A cap preserves source dimensions; it does not upscale smaller images.
-            importer.maxTextureSize = QualityMaxTextureSize;
+            ProtectResolution(importer);
             importer.alphaSource = TextureImporterAlphaSource.FromInput;
             importer.alphaIsTransparency = !plate && !mask;
             importer.sRGBTexture = !mask;
@@ -39,5 +39,18 @@ namespace TumbangPreso.EditorTools
             importer.filterMode = minified ? FilterMode.Trilinear : FilterMode.Bilinear;
             importer.wrapMode = TextureWrapMode.Clamp;
         }
+
+        public static void ProtectResolution(TextureImporter importer)
+        {
+            importer.maxTextureSize = QualityMaxTextureSize;
+            // World texture quality must not shrink interface art or its alpha edges.
+            importer.ignoreMipmapLimit = true;
+            // Old target presets can silently override the defaults on the next player build.
+            foreach (string target in QualityTargets)
+                if (importer.GetPlatformTextureSettings(target).overridden)
+                    importer.ClearPlatformTextureSettings(target);
+        }
+
+        private static readonly string[] QualityTargets = { "Standalone", "Android", "iPhone", "WebGL", "Windows Store Apps" };
     }
 }

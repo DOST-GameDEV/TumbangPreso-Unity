@@ -7,6 +7,7 @@ namespace TumbangPreso.EditorTools
     // Keep the owner's transparent vector exports proportional after reimport.
     public sealed class BrandArtworkImport : AssetPostprocessor
     {
+        public override uint GetVersion() => 3;
         private void OnPreprocessTexture()
         {
             string path = assetPath;
@@ -31,7 +32,7 @@ namespace TumbangPreso.EditorTools
             importer.wrapMode = TextureWrapMode.Clamp;
             importer.filterMode = FilterMode.Bilinear;
             importer.textureCompression = TextureImporterCompression.Uncompressed;
-            importer.maxTextureSize = OwnerArtworkQualityImport.QualityMaxTextureSize;
+            OwnerArtworkQualityImport.ProtectResolution(importer);
             importer.sRGBTexture = true;
         }
     }

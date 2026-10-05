@@ -1,0 +1,67 @@
+{
+  "sourceRef": "2c9f790bf61e0984129bf083cf2e46d5a0799d2c",
+  "profile": "pc-ui-text-layout1005",
+  "filter": "TumbangPreso.Tests.CrispUiTextTests",
+  "expectedCases": 6,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-ui-text-layout1005",
+    "-runTests",
+    "-testPlatform",
+    "EditMode",
+    "-testFilter",
+    "TumbangPreso.Tests.CrispUiTextTests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\ui-quality-owner1005\\native-text-layout\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\ui-quality-owner1005\\native-text-layout\\editor.log"
+  ],
+  "pid": 16612,
+  "exitCode": 0,
+  "cases": [
+    {
+      "name": "TumbangPreso.Tests.CrispUiTextTests.ActualFontGetsMoreSamplesWithoutChangingLayout(0.75f,False)",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.CrispUiTextTests.ActualFontGetsMoreSamplesWithoutChangingLayout(1.0f,False)",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.CrispUiTextTests.ActualFontGetsMoreSamplesWithoutChangingLayout(1.5f,False)",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.CrispUiTextTests.ActualFontGetsMoreSamplesWithoutChangingLayout(0.75f,True)",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.CrispUiTextTests.ActualFontGetsMoreSamplesWithoutChangingLayout(1.0f,True)",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.CrispUiTextTests.ActualFontGetsMoreSamplesWithoutChangingLayout(1.5f,True)",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "exactCaseCount": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "sourceChanged": [],
+  "protectedCount": 19306,
+  "terminal": true
+}

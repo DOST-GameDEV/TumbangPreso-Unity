@@ -22,11 +22,11 @@ explicitly authorized; unnecessary AGENTS feature entry was removed at owner req
 ## Current source and live work
 
 Latest owner focus: UI appearance/quality/future-proof imports, network robustness
-and optimization. Root sourcef198637b8 includes Relay timeout retry7PASS; current
-UI source quality unit has visual1PASS at1080p/1440p/4K, allocation2PASS and
-effective-import3PASS. All parents terminal0, shared inputs restored,202 incidental
-metadata restored; intended76owner/brand imports kept, source PNGs byte-identical.
-Next publish this unit then sharpen text and trace actual host lifecycle shutdown.
+and optimization. Root published2c9f790bf UI source-quality/edges. Next text/import guard unit has
+native6text/5import passes plus actualHome at1080p/1440p/4K; parents terminal0.
+202 incidental metadata restored; all original PNGs unchanged. UI font atlas
+quality bounded160pixels, legacy layout/typefaces preserved. Next publish then
+trace host shutdown and package current fixes for actual player validation.
 Current QA ONLINE timeout/hostreturnedHome remains OPEN; local97a online admission
 passed but does not resolve the tester environment. Latest accepted Windows
 package97a313e33 predates receiver-state, retry and current UI changes.

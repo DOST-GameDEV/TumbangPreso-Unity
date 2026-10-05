@@ -152,6 +152,9 @@ Nothing was deleted or renumbered.
 - [x] Preserve owner-art source resolution on reimport and smooth generated UI edges;
   three viewport captures, two allocation checks and three effective imports pass.
   [Evidence](reports/reliability-2026-10-05/ui-source-quality/README.md).
+- [x] Sharpen shared owner/Hub text sampling and guard UI against stale target
+  compression presets/global mip limits. Native text6/6, imports5/5 and realHome
+  three-resolution visual check pass. [Evidence](reports/reliability-2026-10-05/ui-text-quality/README.md).
 - [ ] October5 UI quality: improve authored artwork/text crispness, remove leftover
   white fringes and preserve quality through future imports/builds/resolutions.
 - [ ] Rest of session focus: UI appearance/quality, network robustness and measured

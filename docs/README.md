@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Menu text and future import guards: [native evidence and limits](reports/reliability-2026-10-05/ui-text-quality/README.md).
+
 UI source quality: [native viewport, import and allocation evidence](reports/reliability-2026-10-05/ui-source-quality/README.md).
 
 Current-source Paete Linux player and impaired transport: [build provenance and peer checks](reports/paete-current-player-2026-10-05/README.md).

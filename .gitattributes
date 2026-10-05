@@ -17,3 +17,5 @@ docs/reports/reliability-2026-10-05/lan151-visible-rules/*-player.log -text -whi
 docs/reports/reliability-2026-10-05/relay-request-timeout/*.xml -text -whitespace
 
 docs/reports/reliability-2026-10-05/ui-source-quality/*.xml -text -whitespace
+
+docs/reports/reliability-2026-10-05/ui-text-quality/*.xml -text -whitespace

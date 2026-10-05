@@ -128,8 +128,16 @@ and the legacy menu backdrop; BrandArtworkImport owns the selected brand exports
 Preserve source pixels up to8192 without compression/crunch or NPOT resizing.
 Keep color plates sRGB and only explicit data masks linear. Preserve alpha with
 bilinear filtering; minified clouds/leaves use mipmaps. Do not upscale a small
-source and call it higher detail. Check platform overrides when changing targets.
+source and call it higher detail. The scoped policy clears stale common target overrides and excludes UI from
+global texture mip limits.
 Keep generated geometry edges measured in screen pixels and inspect real native
 captures at1080p,1440p and4K. Authored rough lettering is distinct from bad sampling.
 Text quality and embedded painted borders need their own demonstrated fixes.
 [Current evidence](reports/reliability-2026-10-05/ui-source-quality/README.md).
+
+OwnerUiLayout/HubKit preserve legacy Text contracts through CrispUiText. Small
+dynamic fonts sample up to twice the displayed pixel size with a160-pixel heading
+cap, then retain logical size and preferred layout. Static/best-fit text falls
+back unchanged. Preserve typefaces and compare actual native glyphs/frames before
+changing this bound. Sharper glyph sampling costs atlas space; do not claim it is
+a font-memory optimization. [Current evidence](reports/reliability-2026-10-05/ui-text-quality/README.md).
