@@ -1,0 +1,9 @@
+{
+  "base": "f69a64a0350467346805fa1fd97658cf1a208a44",
+  "normalizedLFSourceSHA256": {
+    "Assets/TumbangPreso/Runtime/Camera/MatchReplayArchive.cs": "e507c38cf42dd2db035664b788b128776bebc671be6eb1487354d7981ccc3f56",
+    "Assets/TumbangPreso/Tests/PlayMode/ReplayArchiveRecoveryTests.cs": "86c894909609741f9a3d050e3f5c5695b241288a8390c4319a4229475480d854",
+    "Assets/TumbangPreso/Tests/PlayMode/ReplayArchiveRecoveryTests.cs.meta": "1a68a07e3ea61eec3ad289eb69c488750751dae294ae0de6d35d2e13ec84582c"
+  },
+  "metadataFormatting": "Removed redundant final blank line after native import; same valid GUID433b67cd59c84403943565f5c754ea17. Runtime/test code matches tested packet."
+}
