@@ -938,11 +938,9 @@ namespace TumbangPreso.UI
             if (relayConnected && await _net.WaitForConnectionAsync(cancellationToken)) return true;
             cancellationToken.ThrowIfCancellationRequested();
 
-            // ⚠️ `docs/TODO.md` § 65.4 IS OPEN AND THIS IS WHERE IT SURFACES: the online browser
-            // can offer a lobby whose Relay allocation is already gone. Moving the browser onto
-            // the lobby does not fix that and must not hide it, so the reason reaches the player
-            // rather than being swallowed into a generic failure.
-            Report(Reason("Could not join that online game. Its session may have ended."));
+            // A request timeout does not establish that the host's session expired.
+            // Preserve the specific connection reason without guessing the room's state.
+            Report(Reason("Could not connect to that online game. Please try again."));
             return false;
         }
     }
