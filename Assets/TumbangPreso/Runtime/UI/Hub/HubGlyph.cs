@@ -206,7 +206,8 @@ namespace TumbangPreso.UI.Hub
 
         private void Dot(float cx, float cy, float radius)
         {
-            const int steps = 14;
+            float pixels = radius * _scale * (canvas != null ? canvas.scaleFactor : 1f);
+            int steps = Mathf.Clamp(Mathf.CeilToInt(2f * Mathf.PI * pixels / 4f), 14, 96);
             int start = _vh.currentVertCount;
             _vh.AddVert(P(cx, cy), _colour, Vector2.zero);
             for (int s = 0; s < steps; s++)
@@ -215,6 +216,22 @@ namespace TumbangPreso.UI.Hub
                 _vh.AddVert(P(cx + Mathf.Cos(a) * radius, cy + Mathf.Sin(a) * radius), _colour, Vector2.zero);
             }
             for (int s = 0; s < steps; s++) _vh.AddTriangle(start, start + 1 + s, start + 1 + (s + 1) % steps);
+            float edge = 1f / Mathf.Max(.1f, canvas != null ? canvas.scaleFactor : 1f);
+            Color32 clear = _colour; clear.a = 0;
+            int ring = _vh.currentVertCount;
+            for (int s = 0; s < steps; s++)
+            {
+                float angle = s * Mathf.PI * 2f / steps;
+                Vector2 normal = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+                Vector2 point = P(cx + normal.x * radius, cy + normal.y * radius);
+                _vh.AddVert(point, _colour, Vector2.zero);
+                _vh.AddVert(point + normal * edge, clear, Vector2.zero);
+            }
+            for (int s = 0; s < steps; s++)
+            {
+                int a = ring + s * 2, b = ring + ((s + 1) % steps) * 2;
+                _vh.AddTriangle(a, b, a + 1); _vh.AddTriangle(a + 1, b, b + 1);
+            }
         }
 
         /// <summary>A convex filled polygon from x,y pairs, fanned from its centroid.</summary>
@@ -228,6 +245,34 @@ namespace TumbangPreso.UI.Hub
             _vh.AddVert(P(centre.x, centre.y), _colour, Vector2.zero);
             for (int k = 0; k < count; k++) _vh.AddVert(P(xy[k * 2], xy[k * 2 + 1]), _colour, Vector2.zero);
             for (int k = 0; k < count; k++) _vh.AddTriangle(start, start + 1 + k, start + 1 + (k + 1) % count);
+            float area = 0f;
+            for (int k = 0; k < count; k++)
+            {
+                int next = (k + 1) % count;
+                area += xy[k * 2] * xy[next * 2 + 1] - xy[next * 2] * xy[k * 2 + 1];
+            }
+            float direction = area < 0 ? -1f : 1f;
+            float edge = 1f / Mathf.Max(.1f, canvas != null ? canvas.scaleFactor : 1f);
+            Color32 clear = _colour; clear.a = 0;
+            int ring = _vh.currentVertCount;
+            for (int k = 0; k < count; k++)
+            {
+                int before = (k + count - 1) % count, after = (k + 1) % count;
+                Vector2 point = P(xy[k * 2], xy[k * 2 + 1]);
+                Vector2 incoming = (point - P(xy[before * 2], xy[before * 2 + 1])).normalized;
+                Vector2 outgoing = (P(xy[after * 2], xy[after * 2 + 1]) - point).normalized;
+                Vector2 a = new Vector2(incoming.y, -incoming.x) * direction;
+                Vector2 b = new Vector2(outgoing.y, -outgoing.x) * direction;
+                Vector2 normal = (a + b).normalized;
+                float miter = edge / Mathf.Max(.5f, Vector2.Dot(normal, b));
+                _vh.AddVert(point, _colour, Vector2.zero);
+                _vh.AddVert(point + normal * miter, clear, Vector2.zero);
+            }
+            for (int k = 0; k < count; k++)
+            {
+                int a = ring + k * 2, b = ring + ((k + 1) % count) * 2;
+                _vh.AddTriangle(a, b, a + 1); _vh.AddTriangle(a + 1, b, b + 1);
+            }
         }
 
         private void Star(bool filled)

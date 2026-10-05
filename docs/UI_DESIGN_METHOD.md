@@ -155,3 +155,8 @@ separate TextArea after it. InputField inserts caret/selection first under the
 text parent; sharing the background's parent hides those pixels behind Plate.
 Validate render order as well as bounds, collapse automatic selection before
 measuring a thin caret and assert caret width to distinguish the two meshes.
+
+Filled glyph edges use one physical screen pixel of transparent coverage and
+bounded adaptive circle detail. Preserve outward winding, cap corner miters and
+inspect actual-size native frames; geometry is scalable but is still rasterized
+by the display. Do not replace authored rough silhouettes merely to smooth edges.

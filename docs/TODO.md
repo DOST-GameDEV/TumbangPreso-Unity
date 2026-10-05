@@ -170,6 +170,9 @@ Nothing was deleted or renumbered.
   separate text layer. Actual player exposed invisible rendering; final native
   thin-caret width/order/bounds check passes with visible captured caret.
   [Layer correction](reports/reliability-2026-10-05/browser-and-editable-text/README.md#actual-player-layering-correction).
+- [x] Smooth filled UI glyph edges and use bounded circle detail based on pixel
+  radius. ActualHome native1080p/1440p/4K captures pass; authored glyph colors and
+  layouts remain. [Evidence](reports/reliability-2026-10-05/ui-source-quality/README.md#filled-glyph-edges).
 - [ ] October5 UI quality: improve authored artwork/text crispness, remove leftover
   white fringes and preserve quality through future imports/builds/resolutions.
 - [ ] Rest of session focus: UI appearance/quality, network robustness and measured

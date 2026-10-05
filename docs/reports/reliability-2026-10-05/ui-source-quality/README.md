@@ -40,3 +40,21 @@ Text rendering is still a separate active issue. Painted white borders embedded 
 supplied art are not automatically erased. This is an Editor/native visual and
 import result, not a newly packaged Windows release or owner visual approval.
 The reported online host shutdown remains open; this unit makes no network claim.
+
+## Filled glyph edges
+
+Filled icon polygons and dots now receive the same one-physical-pixel transparent
+edge as line glyphs. Polygon winding determines outward normals and corner miters
+are bounded. Circle segments scale with rendered radius, between14 and96, rather
+than keeping a14-sided silhouette at every size. The colors, positions, radius,
+control bounds, materials and authored artwork remain; no new texture/material
+or glyph renderer is added. This is subtle edge sampling, not an icon redesign.
+
+Based on04ffa1bb8 plus this glyph change, native1072 passes the actualHome viewport
+check at1080p,1440p and4K. The actual-size4K store-icon detail was inspected. The
+unchanged text/browser/caret checks are reused rather than repeated. Additional
+edge geometry is bounded; no GPU timing gain is claimed. Parent exits0,19310
+frozen inputs verified unchanged after202 incidental metadata deltas are retained
+and restored exactly; profile/input/editor preferences/Quality restored.
+No owned game/editor/proxy/recorder or browser remains. The latest Windows893
+package predates the final field-layer and filled-glyph source changes.
