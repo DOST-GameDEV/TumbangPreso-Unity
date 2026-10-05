@@ -1,7 +1,7 @@
 # Ilalim ng Tulay rework guide (ILALIM-1)
 
 ⚠️⚠️⚠️ **HANDOFF FOR THE NEXT SESSION (written 2026-10-05). Read this first; the CURRENT STATE
-entries under it are the detailed record, newest first. THE NEXT MAP IS THE ARENA:
+entries under it are the detailed record, newest first. THE ARENA MAP IS NOW BUILT AND IN PLAY-TEST: its state is [ARENA_HANDOFF](ARENA_HANDOFF.md). Its brief:
 [ARENA_MAP_BRIEF](ARENA_MAP_BRIEF.md), TODO ARENA-1. Ilalim is parked where this block leaves it.**
 - **Branch and remote.** The work is on `QoLUpdates`, PUSHED at `aaa66cb2d` (2026-10-05) on the
   owner's explicit asks. Local commits after that push (the character ambient occlusion test, F8)

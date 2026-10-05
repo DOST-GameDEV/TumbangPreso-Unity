@@ -3908,7 +3908,11 @@ after Kanto and the Lagoon Cove. Team-facing issues from that merge are in
   - re-run WorldCourtCueTests (the chalk is four edges now) and decide ILALIM-1.7's list;
   - whether the character ambient occlusion test (F8, local only) becomes the look;
   - the character redesign prototype (a Blender try of one blocky kid, not in the game).
-### ARENA-1 · The arena map ⚠️ BRIEF ONLY, 2026-10-05 (the next map)
+### ARENA-1 · The arena map ⚠️ BUILT AND IN PLAY-TEST WITH THE OWNER, 2026-10-05
+
+**READ [ARENA_HANDOFF](ARENA_HANDOFF.md) FIRST: it is the current state, the open list and the rules.
+The numbered items below are the original plan; items 1.2 to 1.7 are built (see the handoff's table),
+1.8 (an online match with a joining player, a weaker PC) is not done. Local only, not pushed.**
 
 Owner, 2026-10-05: "we'll be resuming with a new arena style map. ideally this arena will feature a
 cheering crowd, rocket leaegue goal style effects and holograms, the main play area has features like
@@ -3926,15 +3930,15 @@ from Ilalim and the questions for the owner are in [ARENA_MAP_BRIEF](ARENA_MAP_B
   and the pads"): the layout is derived from the round number and match id, nothing sent; an 8 s
   break on this map with cinematic cameras; the drone is a third edge-recovery kind, then the
   tag's 5 s; one new message for the pickups; one protocol bump for all of it.
-- [ ] ARENA-1.2 A grey-box blockout at exact gameplay dimensions (the can at the origin, the 14 m
+- [x] ARENA-1.2 A grey-box blockout at exact gameplay dimensions (the can at the origin, the 14 m
   box, the 9 m spawn ring) with two layouts, playable with bots: the rotation, the fall, jump pads
   (`JumpPad`, reused) and the sprint charge pickup, before any art.
-- [ ] ARENA-1.3 The performance budget and a probe from the first build (`IlalimPerfProbe` is the
+- [x] ARENA-1.3 The performance budget and a probe from the first build (`IlalimPerfProbe` is the
   pattern): shared materials, real LODs, occlusion.
-- [ ] ARENA-1.4 The arena kit in Blender (floor, platforms, stands, lights) and its builder.
-- [ ] ARENA-1.5 The crowd: a cheap technique for full stands that reacts to the match.
-- [ ] ARENA-1.6 Holograms and the knockdown celebration (the "Rocket League goal" moment).
-- [ ] ARENA-1.7 Sound: the crowd bed and its reactions, the celebration, the pads.
+- [x] ARENA-1.4 The arena kit in Blender (floor, platforms, stands, lights) and its builder.
+- [x] ARENA-1.5 The crowd: a cheap technique for full stands that reacts to the match.
+- [x] ARENA-1.6 Holograms and the knockdown celebration (the "Rocket League goal" moment).
+- [x] ARENA-1.7 Sound: the crowd bed and its reactions, the celebration, the pads.
 - [ ] ARENA-1.8 Checks, a played match online with a joining player, then the map pool.
 ### LIGHT-2 · Lighting style picker in the Graphics tab ⚠️ IN PROGRESS, 2026-09-25 (only slot 3 open)
 

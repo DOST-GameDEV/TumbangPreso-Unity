@@ -1,6 +1,9 @@
 # The arena map: brief (ARENA-1)
 
-Status: BRIEF, THE OWNER'S ANSWERS AND THE AGREED DESIGN (ARENA-1.1), 2026-10-05. Nothing is built. This is the next map after the Ilalim
+Status: THE MAP IS BUILT AND IN PLAY-TEST (2026-10-05). **Read [ARENA_HANDOFF](ARENA_HANDOFF.md) first for the current
+state and the open list.** This file is the design record: the brief, the owner's answers, the agreed design (ARENA-1.1),
+then one section per system as it was built (ARENA-1.6 to 1.10). Where an early section and a later one disagree (the box
+grey-box, the 14 m floor, a catch at y -3, a 10 s halftime), the LATER section is the game. It began as the map after the Ilalim
 rebuild; read [ILALIM_REWORK_GUIDE](ILALIM_REWORK_GUIDE.md)'s HANDOFF block for the pipeline and the
 lessons this brief leans on, and TODO ARENA-1 for the work items.
 
