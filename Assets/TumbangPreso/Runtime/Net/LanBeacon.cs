@@ -568,7 +568,7 @@ namespace TumbangPreso.Net
             bool v2 = parts[0] == MagicV2;
             if (!v2 && parts[0] != Magic) return false;
 
-            if (!int.TryParse(parts[1], out int port) || port <= 0) return false;
+            if (!int.TryParse(parts[1], out int port) || port <= 0 || port > ushort.MaxValue) return false;
             if (!int.TryParse(parts[2], out int seated)) seated = 0;
             if (!int.TryParse(parts[3], out int maxSeats)) maxSeats = LobbySession.MaxPlayers;
 

@@ -171,6 +171,12 @@ Nothing was deleted or renumbered.
   candidate ten native cases pass including replacement ownership and failed
   older-update recovery. Live QA timeout/host kick remains open.
   [Evidence](reports/reliability-2026-10-05/hosted-publication-order/README.md).
+- [x] Reject LAN advertisement ports above65535 before the transport truncates
+  them to ushort. Original six invalid-port cases fail/six valid controls pass;
+  the exact one-line candidate passes12/12 native cases across legacy/current
+  beacons. Root independently verified ten raw Git blobs, XML counts and tested
+  production/fixture hashes. This does not close the QA timeout/discovery report.
+  [Port boundary evidence](reports/laptop-validation-2026-10-05/lan-port-boundary/README.md).
 - [x] Preserve owner-art source resolution on reimport and smooth generated UI edges;
   three viewport captures, two allocation checks and three effective imports pass.
   [Evidence](reports/reliability-2026-10-05/ui-source-quality/README.md).
@@ -214,6 +220,13 @@ Nothing was deleted or renumbered.
   host/client records. LAN row joins work in both hosting directions. Preserve
   owner-driven first code/start, the probe-adjacent lobby timeout and initial
   reciprocal empty-view delay as limits. [Evidence](reports/reliability-2026-10-05/two-machine-ui151/README.md).
+- [x] Current61a Windows package on two laptop instances passes normal public
+  row join, Ready, at least268.4seconds idle, client leave/rejoin and deliberate
+  host-leave recovery. Both own-menu Quit exits0; source/profiles/preferences and
+  artifact restored or unchanged. Root verified20 raw Git blobs and inspected
+  row/rejoin/recovered-Home captures. JPEG screenshots prove controls, not lossless
+  UI quality. No new full-match, two-machine, impaired-link or QA-failure closure.
+  [Current local online controls](reports/laptop-validation-2026-10-05/current-online-lobby/README.md).
 - [ ] Owner Basilio E/Q failure on both machines: isolate actual input events,
   effective bindings and eligible ability consumption. Sky letter presses produce
   TEXT rather than key-state events. Native producer-to-consumer checks pass13/13;
