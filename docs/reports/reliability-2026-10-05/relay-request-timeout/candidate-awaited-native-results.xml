@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Passed" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 01:46:56Z" end-time="2026-10-05 01:46:57Z" duration="1.3682157">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1352" result="Passed" start-time="2026-10-05 01:46:56Z" end-time="2026-10-05 01:46:57Z" duration="1.368216" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2666" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1352" result="Passed" start-time="2026-10-05 01:46:56Z" end-time="2026-10-05 01:46:57Z" duration="1.341157" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="14752" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2667" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1352" result="Passed" start-time="2026-10-05 01:46:56Z" end-time="2026-10-05 01:46:57Z" duration="1.323528" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2668" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1352" result="Passed" start-time="2026-10-05 01:46:56Z" end-time="2026-10-05 01:46:57Z" duration="1.306158" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2275" name="RelayJoinTimeoutTests" fullname="TumbangPreso.Tests.RelayJoinTimeoutTests" classname="TumbangPreso.Tests.RelayJoinTimeoutTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-05 01:46:56Z" end-time="2026-10-05 01:46:57Z" duration="1.275196" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2279" name="AlreadySuccessfulRequestDoesNotRepeat" fullname="TumbangPreso.Tests.RelayJoinTimeoutTests.AlreadySuccessfulRequestDoesNotRepeat" methodname="AlreadySuccessfulRequestDoesNotRepeat" classname="TumbangPreso.Tests.RelayJoinTimeoutTests" runstate="Runnable" seed="1898540402" result="Passed" start-time="2026-10-05 01:46:56Z" end-time="2026-10-05 01:46:56Z" duration="0.032530" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2283" name="CancelledAttemptCannotRetry" fullname="TumbangPreso.Tests.RelayJoinTimeoutTests.CancelledAttemptCannotRetry" methodname="CancelledAttemptCannotRetry" classname="TumbangPreso.Tests.RelayJoinTimeoutTests" runstate="Runnable" seed="1996787198" result="Passed" start-time="2026-10-05 01:46:56Z" end-time="2026-10-05 01:46:56Z" duration="0.007572" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] Join cancelled.
+]]></output>
+            </test-case>
+            <test-case id="2280" name="ExpiredCodeIsNotRetriedOrReclassifiedAsTimeout" fullname="TumbangPreso.Tests.RelayJoinTimeoutTests.ExpiredCodeIsNotRetriedOrReclassifiedAsTimeout" methodname="ExpiredCodeIsNotRetriedOrReclassifiedAsTimeout" classname="TumbangPreso.Tests.RelayJoinTimeoutTests" runstate="Runnable" seed="1941750940" result="Passed" start-time="2026-10-05 01:46:56Z" end-time="2026-10-05 01:46:56Z" duration="0.013955" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2281" name="RepeatedTimeoutStopsAfterOneRetry" fullname="TumbangPreso.Tests.RelayJoinTimeoutTests.RepeatedTimeoutStopsAfterOneRetry" methodname="RepeatedTimeoutStopsAfterOneRetry" classname="TumbangPreso.Tests.RelayJoinTimeoutTests" runstate="Runnable" seed="1581606494" result="Passed" start-time="2026-10-05 01:46:56Z" end-time="2026-10-05 01:46:56Z" duration="0.401524" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] Online join timed out; retrying the connection...
+]]></output>
+            </test-case>
+            <test-case id="2282" name="ReplacedAttemptCannotRetryOrInvalidateItsSuccessor" fullname="TumbangPreso.Tests.RelayJoinTimeoutTests.ReplacedAttemptCannotRetryOrInvalidateItsSuccessor" methodname="ReplacedAttemptCannotRetryOrInvalidateItsSuccessor" classname="TumbangPreso.Tests.RelayJoinTimeoutTests" runstate="Runnable" seed="1733249619" result="Passed" start-time="2026-10-05 01:46:56Z" end-time="2026-10-05 01:46:56Z" duration="0.002289" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2278" name="TransientTimeoutThenSuccessKeepsTheCurrentAttempt" fullname="TumbangPreso.Tests.RelayJoinTimeoutTests.TransientTimeoutThenSuccessKeepsTheCurrentAttempt" classname="TumbangPreso.Tests.RelayJoinTimeoutTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-05 01:46:56Z" end-time="2026-10-05 01:46:57Z" duration="0.799600" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2276" name="TransientTimeoutThenSuccessKeepsTheCurrentAttempt(NetworkError)" fullname="TumbangPreso.Tests.RelayJoinTimeoutTests.TransientTimeoutThenSuccessKeepsTheCurrentAttempt(NetworkError)" methodname="TransientTimeoutThenSuccessKeepsTheCurrentAttempt" classname="TumbangPreso.Tests.RelayJoinTimeoutTests" runstate="Runnable" seed="763772304" result="Passed" start-time="2026-10-05 01:46:56Z" end-time="2026-10-05 01:46:57Z" duration="0.396527" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Net] Online join timed out; retrying the connection...
+]]></output>
+              </test-case>
+              <test-case id="2277" name="TransientTimeoutThenSuccessKeepsTheCurrentAttempt(RequestTimeOut)" fullname="TumbangPreso.Tests.RelayJoinTimeoutTests.TransientTimeoutThenSuccessKeepsTheCurrentAttempt(RequestTimeOut)" methodname="TransientTimeoutThenSuccessKeepsTheCurrentAttempt" classname="TumbangPreso.Tests.RelayJoinTimeoutTests" runstate="Runnable" seed="387306709" result="Passed" start-time="2026-10-05 01:46:57Z" end-time="2026-10-05 01:46:57Z" duration="0.400122" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Net] Online join timed out; retrying the connection...
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -21,8 +21,15 @@ explicitly authorized; unnecessary AGENTS feature entry was removed at owner req
 
 ## Current source and live work
 
+Latest owner focus: UI prettiness/crispness/future-proof import quality, network
+robustness and optimization for the rest of this session. Urgent current ONLINE
+requesttimeout/hostreturnedHome report remains OPEN. Normal online97a public
+admission passed here; it does not resolve the tester environment. Timeoutretry
+now native7PASS with cancellation/replacement/permanent-failure guards. Source
+publication next; then actual UI visual fixes, no unchanged validation loops.
+
 Root checkout C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i.
-Source9fbca3c6a plus receiver rules lifecycle fix5/5. Protocol151/recording14.
+Sourcebff14e59e plus ownership-scoped Relay timeout retry7/7. Protocol151/recording14.
 Full accepted Windows artifact97a313e33
 includes current rules/discovery fixes and all prior boulder/palm/tag/menu fixes.
 Actual local LAN4x30 pairMTDX: one discovery row, correct192.168.1.7 hint, client

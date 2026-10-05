@@ -1410,7 +1410,7 @@ namespace TumbangPreso.Net
             SetStatus($"joining relay allocation {relayJoinCode}...");
             try
             {
-                JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(relayJoinCode.Trim());
+                JoinAllocation joinAllocation = await RequestRelayJoinAsync(relayJoinCode.Trim(), attempt);
                 if (!CanContinueJoin(attempt)) return false;
                 var relayServerData = joinAllocation.ToRelayServerData("dtls");
                 _utp.SetRelayServerData(relayServerData);
@@ -1456,6 +1456,32 @@ namespace TumbangPreso.Net
         /// ⚠️ `StartClient` CALLS `Stop` FIRST when a session is already live, so this also covers
         /// the disconnect that a re-join produces on the way out of the old connection.
         /// </summary>
+        private Func<string, Task<JoinAllocation>> _relayJoinDispatch;
+        private async Task<JoinAllocation> RequestRelayJoinAsync(string code, JoinAttemptGate.Attempt attempt)
+        {
+            for (int request = 0; ; request++)
+            {
+                if (!CanContinueJoin(attempt)) return null;
+                try
+                {
+                    return await (_relayJoinDispatch == null
+                        ? RelayService.Instance.JoinAllocationAsync(code) : _relayJoinDispatch(code));
+                }
+                catch (RelayServiceException error) when (request == 0 && IsRelayRequestTimeout(error))
+                {
+                    if (!CanContinueJoin(attempt)) return null;
+                    SetStatus("Online join timed out; retrying the connection...");
+                    await Task.Delay(350);
+                }
+            }
+        }
+
+        private static bool IsRelayRequestTimeout(RelayServiceException error)
+            => error.Reason == RelayExceptionReason.RequestTimeOut ||
+               (error.Reason == RelayExceptionReason.NetworkError &&
+                (error.Message.IndexOf("timeout", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                 error.Message.IndexOf("timed out", StringComparison.OrdinalIgnoreCase) >= 0));
+
         private bool _localShutdown;
         public bool IsStopping => _localShutdown;
 

@@ -140,6 +140,16 @@ Nothing was deleted or renumbered.
 
 ### OWNER-MULTIPLAYER-FEEDBACK-1004: current live-test reports
 
+- [ ] October5 owner real ONLINE failure: visible public room but Relay request
+  timeout; host returned Home after someone joined, causal timing uncertain.
+  Prior LAN/online successes do not close this current report.
+- [x] Recover one transient Relay request timeout with an ownership-scoped retry.
+  Native2causes/2controls -> seven passes including repeat/cancel/replacement.
+  [Evidence](reports/reliability-2026-10-05/relay-request-timeout/README.md).
+- [ ] October5 UI quality: improve authored artwork/text crispness, remove leftover
+  white fringes and preserve quality through future imports/builds/resolutions.
+- [ ] Rest of session focus: UI appearance/quality, network robustness and measured
+  optimization. Preserve authored designs; no speculative compression or downgrades.
 - [x] Host-approved rules update shared state before UI observers, including
   when no lobby view exists. Two mode/state causes plus three guards become5/5;
   saved preferences stay unchanged. [Evidence](reports/reliability-2026-10-05/rules-receiver-state/README.md).
