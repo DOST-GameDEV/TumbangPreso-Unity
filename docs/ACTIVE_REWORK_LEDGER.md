@@ -38,7 +38,10 @@ and the fixture. Host admission now preserves the running server identity using
 qualified288d source and3059 fixture, original one cause/three controls ->four
 passes. Root verified18 raw blobs, source/fixture/meta LF hashes and XML.
 Laptop next qualifies root card imports and Home rendering before one152 build.
-Root's import/UI candidates remain unapplied.
+Root card importer is now exact qualifiedcd4 with79e fixture/meta353. Native
+three passes preserve Arena960x540 RGB24; Hero already1040x920 RGB24/mips disabled,
+so its extra flag is future protection only. Root verified14 raw Git blobs and
+all three source PNG hashes. Home layout remains an unapplied candidate.
 Root owns Net/UI, integration and the shared queue/checkpoint. Preserve protected
 ProjectAuditorSettings.asset dirt and private tools/build_yasmin_benguet_voxel.py.
 The uncommitted HomeModeCardReadabilityTests.cs/meta fixture is qualified, but the
@@ -76,9 +79,10 @@ after terminal/path/subject checks; preserved all active-worktree refs and build
 
 ## Next action
 
-Publish checked host-identity refusal with unchanged protocol152 and qualified
-fixture; do not rerun unchanged passes. Laptop proceeds with root card import
-baseline/candidate and Home refinement. Card fixture79e uses installed NUnit;
+Published8c48 host refusal with unchanged protocol152 and qualified fixture.
+Card importercd4/fixture79e is qualified3/3 and being published; do not repeat
+these unchanged checks. Laptop proceeds with actual Home refinement rendering.
+Card fixture79e uses installed NUnit;
 Home candidate normalized LF f5e8 (raw CRLF07bb), unchanged patch. Logs packets
 are exact; initial fixture errors are preserved, never attributed to production.
 After these coherent UI fixes, package current152 and run visible live controls.

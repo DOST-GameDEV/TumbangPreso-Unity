@@ -1,5 +1,16 @@
 # TODO: Tumbang Preso Unity
 
+### UI-CARD-IMPORT-1005: preserve authored pixels on reimport
+
+- [x] Extend the existing artwork guard to map/mode cards and bump its import
+  version. Arena's960x540 source previously became1024x512 DXT1; now it retains
+  960x540 RGB24. Hero Strike already kept1040x920 RGB24 with mipmaps disabled;
+  its extra flag is future quality protection, not a demonstrated current blur.
+  Original two assertion failures/one brand control ->candidate3/3 native passes.
+  Root verifies14 raw Git blobs, source/fixture/meta/XML and all3unchanged PNG
+  hashes. [Evidence](reports/laptop-validation-2026-10-05/card-import-quality/README.md).
+- [ ] Current packaged image review and broader UI visual acceptance.
+
 ### HOST-IDENTITY-COLLISION-1005: preserve the running room owner
 
 - [x] Refuse a remote arrival claiming the running server's identity before it can
