@@ -64,6 +64,9 @@ namespace TumbangPreso.PlayTests
             float waited = 0f;
             while (waited < 40f && (Camera.main == null || ArenaStage.Instance == null || Object.FindObjectsByType<CharacterMotor>().Length < 2)) { waited += Time.unscaledDeltaTime; yield return null; }
             for (float t = 0f; t < 6f; t += Time.unscaledDeltaTime) yield return null;
+            // ARENA-INTRO: the match's opening hides the stage until it is built; this measures the map standing whole.
+            ArenaIntro.Stop();
+            yield return null; yield return null;
 
             var cam = Camera.main;
             var stage = ArenaStage.Instance;

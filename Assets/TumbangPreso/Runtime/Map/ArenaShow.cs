@@ -41,6 +41,12 @@ namespace TumbangPreso.Map
     /// HALFTIME PLAYS THE SAME SHOW, SECOND: its replay and standings come first, on the old
     /// stage with none of this, and then these 8 s run from `BreakBeats.Age` 0 exactly as on an
     /// ordinary break (`ArenaStage.TryBreak`, `Showing`).
+    ///
+    /// ARENA-INTRO: THE MATCH'S OPENING PLAYS THE SAME SHOW, FROM NOTHING (`ArenaStage.TryOpening`,
+    /// `BreakBeats.Opening`, driven by `ArenaIntro`): the scan, the pieces rising and locking, the
+    /// reveal and the drones are these, on shorter beats. What is the break's alone is left out
+    /// (the alarm and the undock's clunk: nothing was docked), the drones take the players from
+    /// where the opening stood them on the turf, and each punch goes to the opening's camera too.
     /// </summary>
     [DefaultExecutionOrder(900)]
     public sealed class ArenaShow : MonoBehaviour
@@ -56,6 +62,11 @@ namespace TumbangPreso.Map
         /// <summary>How high over the stage the players are carried, and the title stands.</summary>
         private const float CarryHeight = 9.0f, TitleHeight = 7.5f;
         private const int MaxLifted = 8;
+
+        /// <summary>How long before the undock a drone comes down over its player: the lift's first second.</summary>
+        public const float LiftLead = 0.75f;
+        /// <summary>The opening has no match id yet: its own key, which no break can have.</summary>
+        private const long OpeningKey = long.MaxValue;
 
         private long _match = -1;
         private int _round = -1;
@@ -78,6 +89,8 @@ namespace TumbangPreso.Map
         private readonly Transform[] _liftRoot = new Transform[MaxLifted];
         private readonly Vector3[] _liftRest = new Vector3[MaxLifted], _liftFrom = new Vector3[MaxLifted], _liftTo = new Vector3[MaxLifted];
         private readonly Quaternion[] _liftTurn = new Quaternion[MaxLifted];
+        /// <summary>ARENA-INTRO: how far round from its body's facing the opening left each model, degrees (0 in a break).</summary>
+        private readonly float[] _liftYaw = new float[MaxLifted];
         private readonly ArenaDrone[] _liftDrone = new ArenaDrone[MaxLifted];
         private int _lifted;
         private bool _lifting;
@@ -104,13 +117,15 @@ namespace TumbangPreso.Map
             var stage = ArenaStage.Instance;
             var fx = ArenaFx.Instance;
             var hp = HalftimePresentation.Instance;
-            if (stage == null || fx == null || hp == null || !stage.TryBreak(out var beats) || !beats.Showing || beats.From == beats.To)
+            if (stage == null || fx == null || !stage.TryShow(out var beats) || !beats.Showing || beats.From == beats.To || (hp == null && !beats.Opening))
             {
                 EndBreak();
                 return;
             }
 
-            if (hp.MatchId != _match || hp.CompletedRound != _round) Begin(stage, hp, beats);
+            long match = beats.Opening ? OpeningKey : hp.MatchId;
+            int round = beats.Opening ? 0 : hp.CompletedRound;
+            if (match != _match || round != _round) Begin(stage, match, round, beats);
 
             float age = beats.Age;
             Vector3 centre = stage.transform.position;
@@ -126,17 +141,17 @@ namespace TumbangPreso.Map
             Title(stage, beats, centre);
             Move(stage, fx, beats, centre, dt);
             Reveal(stage, fx, beats, centre);
-            Lift(stage, fx, hp, beats, centre, dt);
+            Lift(stage, fx, beats.Opening ? Core.MatchRules.DefenderSlotFor(1) : hp.NextTaya, beats, centre, dt);
 
             _last = age;
         }
 
         private bool Crossed(float at, float age) => _last < at && age >= at;
 
-        private void Begin(ArenaStage stage, HalftimePresentation hp, in ArenaStage.BreakBeats beats)
+        private void Begin(ArenaStage stage, long match, int round, in ArenaStage.BreakBeats beats)
         {
             EndBreak();
-            _match = hp.MatchId; _round = hp.CompletedRound;
+            _match = match; _round = round;
             // Joined in the middle: what is left plays, what was missed does not.
             _last = beats.Age <= 0.6f ? -1.0f : beats.Age;
 
@@ -154,6 +169,16 @@ namespace TumbangPreso.Map
             var layout = beats.To >= 0 && beats.To < stage.LayoutCount ? stage.Layouts[beats.To] : null;
             _name = layout != null && !string.IsNullOrEmpty(layout.Name) ? layout.Name.ToUpperInvariant() : "";
             _typed = -1;
+            if (_subtitle != null) _subtitle.text = beats.Opening ? OpeningCaption : BreakCaption;
+        }
+
+        private const string BreakCaption = "NEXT STAGE", OpeningCaption = "THE STAGE";
+
+        /// <summary>A punch for whichever camera is drawing the show: the break's, or the opening's.</summary>
+        private static void Punch(float strength)
+        {
+            ArenaBreakCamera.Punch(strength);
+            ArenaIntro.Punch(strength);
         }
 
         private void EndBreak()
@@ -171,7 +196,7 @@ namespace TumbangPreso.Map
             float age = beats.Age;
             if (Crossed(0.05f, age))
             {
-                ArenaFx.CueFlat("sfx_arena_alarm");
+                if (!beats.Opening) ArenaFx.CueFlat("sfx_arena_alarm");
                 // A first pulse out from the can as the lights go down.
                 fx.Ring(centre + Vector3.up * 0.15f, 0.5f, stage.Radius + 6.0f, ArenaFx.Magenta, 0.55f, 0.9f, ArenaFx.Cell.ThinRing);
             }
@@ -233,7 +258,7 @@ namespace TumbangPreso.Map
                 return;
             }
 
-            if (_titleCanvas == null) BuildTitle();
+            if (_titleCanvas == null) { BuildTitle(); _subtitle.text = beats.Opening ? OpeningCaption : BreakCaption; }
             if (!_titleCanvas.gameObject.activeSelf) _titleCanvas.gameObject.SetActive(true);
 
             // Typed on, a letter at a time (a new string only when a letter is added).
@@ -276,7 +301,7 @@ namespace TumbangPreso.Map
 
             _title = Label(go.transform, "Name", 240, new Vector2(0.0f, 40.0f), ArenaFx.Cyan);
             _subtitle = Label(go.transform, "Caption", 60, new Vector2(0.0f, -150.0f), ArenaFx.White);
-            _subtitle.text = "NEXT STAGE";
+            _subtitle.text = BreakCaption;
 
             // The widest the name can be, measured once on the full word, so the title does not
             // change size as it is typed.
@@ -317,9 +342,9 @@ namespace TumbangPreso.Map
             bool undock = Crossed(beats.Undock, age);
             if (undock)
             {
-                ArenaFx.CueFlat("sfx_arena_undock");
+                if (!beats.Opening) ArenaFx.CueFlat("sfx_arena_undock");
                 ArenaFx.CueFlat("sfx_arena_thruster", 0.92f, 1.0f, 0.9f);
-                ArenaBreakCamera.Punch(0.9f);
+                Punch(0.9f);
                 ArenaCrowd.Excite(0.55f, 3.5f);
                 Surge = Mathf.Max(Surge, 0.7f);
             }
@@ -333,7 +358,7 @@ namespace TumbangPreso.Map
                 if (move.Motion == ArenaStage.Motion.Absent || move.Motion == ArenaStage.Motion.Still) continue;
 
                 var piece = stage.Pieces[i];
-                bool wasThere = piece.Shapes[beats.From].Exists;
+                bool wasThere = beats.From >= 0 && piece.Shapes[beats.From].Exists;
                 float thick = wasThere ? piece.Shapes[beats.From].Thick : piece.Shapes[beats.To].Thick;
 
                 // The undock: every piece that is there lets go at once.
@@ -438,7 +463,7 @@ namespace TumbangPreso.Map
             float pitch = Mathf.Min(1.18f, 0.9f + 0.035f * _locks);
             _locks++;
             ArenaFx.CueFlat("sfx_arena_lock", pitch, pitch, last ? 1.2f : 1.0f);
-            ArenaBreakCamera.Punch(last ? 1.5f : 1.0f);
+            Punch(last ? 1.5f : 1.0f);
             Surge = 1.0f;
 
             for (int k = 0; k < n; k++)
@@ -463,7 +488,7 @@ namespace TumbangPreso.Map
                 ArenaFx.CueFlat("sfx_arena_reveal");
                 ArenaCrowdAudio.Reveal();
                 ArenaFx.CueFlat("sfx_arena_pyro", 0.92f, 1.0f, 0.9f);
-                ArenaBreakCamera.Punch(2.2f);
+                Punch(2.2f);
                 ArenaCrowd.Excite(1.0f, 5.5f);
                 ArenaCrowd.Wave();
                 ArenaAmbience.Stinger();
@@ -512,14 +537,14 @@ namespace TumbangPreso.Map
 
         // ------------------------------------------------------------------ the players' lift
 
-        private void Lift(ArenaStage stage, ArenaFx fx, HalftimePresentation hp, in ArenaStage.BreakBeats beats, Vector3 centre, float dt)
+        private void Lift(ArenaStage stage, ArenaFx fx, int nextTaya, in ArenaStage.BreakBeats beats, Vector3 centre, float dt)
         {
             float age = beats.Age;
-            float come = beats.Undock - 0.75f, rise = beats.Undock - 0.1f, across = beats.Undock + 0.9f, over = beats.MoveEnd - 0.2f;
+            float come = beats.Undock - LiftLead, rise = beats.Undock - 0.1f, across = beats.Undock + 0.9f, over = beats.MoveEnd - 0.2f;
             float lower = beats.Reveal + 0.15f, down = beats.Reveal + 1.05f, gone = Mathf.Min(beats.Duration - 0.05f, down + 0.9f);
 
             if (age < come || age >= beats.Duration - 0.02f) { if (_lifting) EndLift(); return; }
-            if (!_lifting) BeginLift(hp);
+            if (!_lifting) BeginLift(nextTaya, beats.Opening);
 
             float carry = centre.y + Mathf.Max(0.0f, stage.CanHeight) + CarryHeight;
             for (int i = 0; i < _lifted; i++)
@@ -540,7 +565,8 @@ namespace TumbangPreso.Map
                 Vector3 offset = at - body.transform.position;
                 var parent = root.parent;
                 root.localPosition = _liftRest[i] + (parent != null ? parent.InverseTransformVector(offset) : offset);
-                root.localRotation = _liftTurn[i] * Quaternion.AngleAxis(360.0f * Smooth((age - rise) / (lower - rise)), Vector3.up);
+                float turned = Smooth((age - rise) / (lower - rise));
+                root.localRotation = _liftTurn[i] * Quaternion.AngleAxis(360.0f * turned + _liftYaw[i] * (1.0f - turned), Vector3.up);
 
                 // The drone over it: down onto the body looking for it, locked on, with it all the
                 // way, a bow where it set the body down, and away. The drone draws each act itself.
@@ -564,7 +590,7 @@ namespace TumbangPreso.Map
             }
         }
 
-        private void BeginLift(HalftimePresentation hp)
+        private void BeginLift(int nextTaya, bool opening)
         {
             _lifting = true;
             _lifted = 0;
@@ -586,7 +612,14 @@ namespace TumbangPreso.Map
                 int i = _lifted++;
                 _liftBody[i] = body; _liftRoot[i] = root; _liftRest[i] = root.localPosition; _liftTurn[i] = root.localRotation;
                 _liftFrom[i] = body.transform.position;
-                _liftTo[i] = MarkFor(body, hp.NextTaya);
+                // ARENA-INTRO: the opening stood this body's model on the turf, and let go of it this frame.
+                _liftYaw[i] = 0.0f;
+                if (opening && ArenaIntro.TryStand(body.PlayerSlot, out var stood, out float facing))
+                {
+                    _liftFrom[i] = stood;
+                    _liftYaw[i] = Mathf.DeltaAngle(body.transform.eulerAngles.y, facing);
+                }
+                _liftTo[i] = MarkFor(body, nextTaya);
 
                 if (_liftDrone[i] == null)
                 {

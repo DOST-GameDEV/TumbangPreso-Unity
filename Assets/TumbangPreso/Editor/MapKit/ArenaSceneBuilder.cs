@@ -683,6 +683,8 @@ namespace TumbangPreso.EditorTools.MapKit
             effects.AddComponent<ArenaAmbience>();
             // The crowd's sound and the stadium's PA (`ArenaAmbience` adds it to a scene built before it existed).
             effects.AddComponent<ArenaCrowdAudio>();
+            // ARENA-INTRO: the match's opening (`ArenaIntro.Ensure` adds it to a scene built before it existed).
+            effects.AddComponent<ArenaIntro>();
         }
 
         /// <summary>The break's camera (`ArenaBreakCamera` poses it every frame of a break). It

@@ -503,6 +503,9 @@ namespace TumbangPreso.Map
         {
             public int From, To;
             public bool Halftime;
+            /// <summary>ARENA-INTRO. True for the match's opening (`TryOpening`): the stage is built
+            /// from `Nothing`, so `From` is -1 and every reader of `Shapes[From]` checks it.</summary>
+            public bool Opening;
             /// <summary>False through halftime's package, before the show: the stage is still,
             /// on the old layout, and nothing of the show is drawn or heard. `Age` is negative.</summary>
             public bool Showing;
@@ -545,6 +548,60 @@ namespace TumbangPreso.Map
             return beats.MoveEnd > beats.MoveStart;
         }
 
+        // ------------------------------------------------------------------ ARENA-INTRO: the opening
+        //
+        // THE MATCH OPENS ON AN EMPTY SHAFT AND THE STAGE IS BUILT IN FRONT OF THE PLAYERS (owner,
+        // 2026-10-05: "then the arena gets built"). `ArenaIntro` owns that film and its clock; it
+        // tells the stage each frame how far into the build it is (`HoldOpening`, negative before
+        // the build's beat), and the stage answers with the same `BreakBeats` a break gives, from
+        // `Nothing` to the applied layout, so the travel here and `ArenaShow`'s light, sound, shake
+        // and drones are the break's own and nothing is written twice. The colliders are never
+        // touched: round 1's layout is live from `Awake`, only what is drawn waits in the shaft.
+        // A stamp two frames old is dead, so an opening that stops for any reason leaves the stage
+        // standing whole on the next frame with nothing to put back.
+
+        /// <summary>The layout a stage is built from in the opening: none. Every piece arrives.</summary>
+        public const int Nothing = -1;
+        /// <summary>The opening's own beats, in seconds from the build's start: shorter than a break's.</summary>
+        public const float OpeningScanStart = 0.15f, OpeningScanSeconds = 1.1f, OpeningUndock = 1.3f, OpeningMoveStart = 1.5f, OpeningSettle = 1.5f;
+
+        private static int _openingFrame = -9;
+        private static float _openingAge, _openingSeconds;
+
+        /// <summary>Called every frame of the opening by `ArenaIntro`: `age` seconds into the
+        /// build (negative while the shaft is still empty), of `seconds`.</summary>
+        public static void HoldOpening(float age, float seconds)
+        {
+            _openingFrame = Time.frameCount; _openingAge = age; _openingSeconds = seconds;
+        }
+
+        /// <summary>The opening that is playing on this stage, as a break's beats. False on every
+        /// frame `ArenaIntro` did not ask for it, which is every frame outside the match's opening.</summary>
+        public bool TryOpening(out BreakBeats beats)
+        {
+            beats = default;
+            if (Time.frameCount - _openingFrame > 1 || Applied < 0 || LayoutCount == 0) return false;
+
+            beats.Opening = true;
+            beats.From = Nothing;
+            beats.To = Applied;
+            beats.Showing = true;
+            beats.Duration = _openingSeconds;
+            beats.Age = _openingAge;
+            beats.ScanStart = OpeningScanStart;
+            beats.ScanEnd = OpeningScanStart + OpeningScanSeconds;
+            beats.Undock = OpeningUndock;
+            beats.MoveStart = OpeningMoveStart;
+            beats.MoveEnd = beats.Duration - OpeningSettle;
+            beats.Reveal = beats.MoveEnd + RevealLag;
+            return beats.MoveEnd > beats.MoveStart;
+        }
+
+        /// <summary>The show that is playing: a break's, or the opening's. What the travel here and
+        /// `ArenaShow` read. Everything that is the BREAK's alone (its camera, the PA's call, the
+        /// spots' chase) still reads `TryBreak`.</summary>
+        public bool TryShow(out BreakBeats beats) => TryBreak(out beats) || TryOpening(out beats);
+
         /// <summary>How far out from the can the hologram's scan has reached, metres; past the
         /// whole stage once it is done.</summary>
         public float ScanRadius(in BreakBeats beats)
@@ -563,7 +620,7 @@ namespace TumbangPreso.Map
         /// </summary>
         private bool TryTravel()
         {
-            if (!TryBreak(out var beats) || !beats.Showing || beats.To != Applied || beats.From == beats.To) return false;
+            if (!TryShow(out var beats) || !beats.Showing || beats.To != Applied || beats.From == beats.To) return false;
             if (beats.Age >= beats.MoveEnd) return false;
 
             PoseTravel(beats.From, beats.To, beats.Travel, Mathf.Clamp01((beats.Age - beats.ScanStart) / HologramFade),
@@ -607,9 +664,10 @@ namespace TumbangPreso.Map
         public Motion MotionOf(int index, int from, int to)
         {
             var piece = index >= 0 && index < Pieces.Length ? Pieces[index] : null;
-            if (piece == null || piece.Shapes == null || from < 0 || to < 0 || from >= piece.Shapes.Length || to >= piece.Shapes.Length) return Motion.Absent;
+            if (piece == null || piece.Shapes == null || from < Nothing || to < 0 || from >= piece.Shapes.Length || to >= piece.Shapes.Length) return Motion.Absent;
 
-            var a = piece.Shapes[from];
+            // ARENA-INTRO: from `Nothing` no piece was there, so each one in the new layout arrives.
+            var a = from >= 0 ? piece.Shapes[from] : default;
             var b = piece.Shapes[to];
             if (!a.Exists && !b.Exists) return Motion.Absent;
             if (!b.Exists) return Motion.Leave;
@@ -660,7 +718,7 @@ namespace TumbangPreso.Map
             float t = move.T = Mathf.Clamp01((travel - move.Starts) / PieceShare);
             float e = move.E = Slam(t);
 
-            var a = Pieces[index].Shapes[from];
+            var a = from >= 0 ? Pieces[index].Shapes[from] : default;
             var b = Pieces[index].Shapes[to];
             switch (move.Motion)
             {
@@ -717,7 +775,7 @@ namespace TumbangPreso.Map
                     continue;
                 }
 
-                var a = piece.Shapes[from];
+                var a = from >= 0 ? piece.Shapes[from] : default;
                 var b = piece.Shapes[to];
 
                 // The hologram of where the piece is going: it comes up as the scan passes over
