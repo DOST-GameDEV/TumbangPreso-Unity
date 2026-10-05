@@ -4708,6 +4708,8 @@ namespace TumbangPreso.Net
             // be drawn on this machine's clock.
             var clamped = Core.CustomGameRules.Parse(wire, UI.SceneFlow.SelectedMode);
 
+            // Rule state must be ready even when no lobby view is observing this reply.
+            UI.SceneFlow.AdoptRemoteRules(clamped);
             OnRulesChanged?.Invoke(Core.CustomGameRules.ToWire(clamped));
             OnFormatChanged?.Invoke((int)clamped.Format);
         }

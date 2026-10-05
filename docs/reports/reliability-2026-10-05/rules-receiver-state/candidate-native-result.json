@@ -1,0 +1,62 @@
+{
+  "sourceRef": "9fbca3c6a5c7bf57c45aa260c9df26ae961c2dfe",
+  "profile": "pc-rules-state-cand1005",
+  "filter": "TumbangPreso.Tests.RulesReceiverStateTests",
+  "expectedCases": 5,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-rules-state-cand1005",
+    "-runTests",
+    "-testPlatform",
+    "EditMode",
+    "-testFilter",
+    "TumbangPreso.Tests.RulesReceiverStateTests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\rules-receiver-state1005\\candidate-native\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\rules-receiver-state1005\\candidate-native\\editor.log"
+  ],
+  "pid": 22780,
+  "exitCode": 0,
+  "cases": [
+    {
+      "name": "TumbangPreso.Tests.RulesReceiverStateTests.AnotherPeerCannotChangeRules",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.RulesReceiverStateTests.EmptyPacketCannotChangeRules",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.RulesReceiverStateTests.HostRulesUpdateStateBeforeNotifyingViewsWithoutSavingLocalPreferences(HeroStrike,4,30)",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.RulesReceiverStateTests.HostRulesUpdateStateBeforeNotifyingViewsWithoutSavingLocalPreferences(Classic,6,45)",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.RulesReceiverStateTests.ListenHostIgnoresItsOwnRulesMessage",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "exactCaseCount": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "sourceChanged": [],
+  "protectedCount": 19292,
+  "terminal": true
+}
