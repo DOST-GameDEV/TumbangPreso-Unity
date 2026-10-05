@@ -316,12 +316,22 @@ namespace TumbangPreso.Map
         {
             switch ((layout ?? "").ToLowerInvariant())
             {
-                case "plaza": return 8.5f;
-                // tore and hukay: 2 m and more ONTO the ring (owner, 2026-10-06: "i want there to still be a piece of the
-                // ring that the taya can still walk on"), and not past where attackers spawn (2 m outside it) still has deck.
-                case "tore": return 10.0f;
+                // ⚠️ THE LINE KEEPS CLEAR OF EVERY PAD (owner, 2026-10-06: "the rings were extended too much to the point
+                // where it interferes as the player tries to jump shoot on the pad. need you to ensure the rings dont
+                // interfere like that for all stages"). A pad the line runs through is half in the box, and a throw from
+                // a jump off it is refused or allowed by which side the feet left from. Each radius below is at least
+                // 1.6 m from the centre of every jump pad and 1.2 m from every speed pad of its layout
+                // (tools/arena_layouts.json), on the INSIDE, so the pads are outside the box:
+                //   plaza      jump pads at 8.0                 -> 6.4, on the wide middle disc
+                //   tore       jump pads at 10.25 on the ring   -> 8.6: the taya keeps the ring's inner 0.6 m
+                //   hukay      speed pads at 10.5 on the ring   -> 9.3: the taya keeps the ring's inner 1.3 m
+                //   krus       nearest pad at 16.25             -> 7.9, just onto the apron
+                //   entablado  nearest pad at 10.35             -> 7.5, just onto the raised apron
+                // (hukay's two jump pads are down in the pit at 3.7, inside any box: as they were under the square.)
+                case "plaza": return 6.4f;
+                case "tore": return 8.6f;
                 case "krus": return 7.9f;
-                case "hukay": return 10.5f;
+                case "hukay": return 9.3f;
                 case "entablado": return 7.5f;
                 default: return Core.Balance.ConfinementRadius;
             }
