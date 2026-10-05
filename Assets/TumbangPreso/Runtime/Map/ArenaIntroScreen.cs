@@ -40,13 +40,14 @@ namespace TumbangPreso.Map
 
         /// <summary>The portrait's square, canvas units.</summary>
         private const float Frame = 440.0f;
-        private static readonly Color Ground = new Color(0.02f, 0.03f, 0.09f, 0.97f);
+        private static readonly Color Ground = new Color(0.03f, 0.05f, 0.15f, 1.0f);
         private static readonly Color Plate = new Color(0.10f, 0.16f, 0.42f, 1.0f);
 
         private sealed class Face
         {
             public CanvasGroup Group;
             public Image Portrait, PlateImage, Flash, BarA, BarB, Rule;
+            public RawImage Roll;
             public Text Initial, Header, Name, Sub, Stamp;
         }
 
@@ -122,7 +123,15 @@ namespace TumbangPreso.Map
             var face = new Face { Group = go.AddComponent<CanvasGroup>() };
             face.Group.blocksRaycasts = false; face.Group.interactable = false;
 
+            // ⚠️ A SCREEN, NOT A CARD HELD UP TO ONE (owner, 2026-10-06: "tv needs to look more screen like").
+            // It was a flat panel 3 per cent see-through, so the screen's own logo showed through it and
+            // nothing said it was lit. Now: an opaque ground lit from its middle (a deep blue that falls
+            // to near black at the edges, as a panel's backlight does), and over everything on it the
+            // LED grid (`Pixels`: every cell a lit dot with dark gaps, 244 across) and a slow bright band
+            // rolling down it. The words and the portrait are drawn UNDER the grid, so they are made of
+            // its dots too.
             Fill(go.transform, "Ground", Vector2.zero, new Vector2(Wide, Tall), Ground);
+            Picture(go.transform, "Backlight", Backlight(), new Vector2(Wide, Tall), new Color(0.16f, 0.32f, 0.95f, 0.55f), new Rect(0, 0, 1, 1));
             // ⚠️ ONE COLUMN, CENTRED (owner, 2026-10-05, drawing over the first card, which had the
             // portrait at the left, the text at the right and TAYA stamped askew in the bottom corner:
             // "idk about the taya text.. its so off-layout"). His drawing: a line of text at the top,
@@ -146,10 +155,65 @@ namespace TumbangPreso.Map
             face.Stamp.text = "TAYA";
             face.Stamp.gameObject.SetActive(false);
 
+            face.Roll = Picture(go.transform, "Roll", Backlight(), new Vector2(Wide * 1.6f, 220.0f), new Color(0.6f, 0.85f, 1.0f, 0.10f), new Rect(0, 0, 1, 1));
+            Picture(go.transform, "Pixels", Pixels(), new Vector2(Wide, Tall), new Color(1.0f, 1.0f, 1.0f, 0.62f), new Rect(0, 0, Wide / 8.0f, Tall / 8.0f));
             face.BarA = Fill(go.transform, "Scan A", Vector2.zero, new Vector2(Wide, 26.0f), new Color(1.0f, 1.0f, 1.0f, 0.0f));
             face.BarB = Fill(go.transform, "Scan B", Vector2.zero, new Vector2(Wide, 10.0f), new Color(1.0f, 1.0f, 1.0f, 0.0f));
             face.Flash = Fill(go.transform, "Flash", Vector2.zero, new Vector2(Wide, Tall), new Color(1.0f, 1.0f, 1.0f, 0.0f));
             return face;
+        }
+
+        private static Texture2D _pixels, _backlight;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics() { _pixels = null; _backlight = null; }
+
+        /// <summary>One LED cell, tiled: black, clear in a soft round dot at the middle, so what is under shows as dots.</summary>
+        private static Texture2D Pixels()
+        {
+            if (_pixels != null) return _pixels;
+            const int n = 16;
+            var pixels = new Color32[n * n];
+            for (int y = 0; y < n; y++)
+                for (int x = 0; x < n; x++)
+                {
+                    float dx = (x + 0.5f) / n - 0.5f, dy = (y + 0.5f) / n - 0.5f;
+                    float gap = Mathf.Clamp01((Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy)) - 0.30f) / 0.16f);
+                    pixels[y * n + x] = new Color32(0, 0, 4, (byte)(gap * 255.0f));
+                }
+            _pixels = new Texture2D(n, n, TextureFormat.RGBA32, true) { name = "Arena screen LED cell", wrapMode = TextureWrapMode.Repeat, filterMode = FilterMode.Trilinear, hideFlags = HideFlags.DontSave };
+            _pixels.SetPixels32(pixels); _pixels.Apply(true, true);
+            return _pixels;
+        }
+
+        /// <summary>A soft white blob, whole at the middle and nothing at the rim: the backlight, and the rolling band.</summary>
+        private static Texture2D Backlight()
+        {
+            if (_backlight != null) return _backlight;
+            const int n = 64;
+            var pixels = new Color32[n * n];
+            for (int y = 0; y < n; y++)
+                for (int x = 0; x < n; x++)
+                {
+                    float dx = (x + 0.5f) / n * 2.0f - 1.0f, dy = (y + 0.5f) / n * 2.0f - 1.0f;
+                    float a = Mathf.Clamp01(1.0f - (dx * dx * 0.75f + dy * dy));
+                    pixels[y * n + x] = new Color32(255, 255, 255, (byte)(a * a * 255.0f));
+                }
+            _backlight = new Texture2D(n, n, TextureFormat.RGBA32, false) { name = "Arena screen backlight", wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear, hideFlags = HideFlags.DontSave };
+            _backlight.SetPixels32(pixels); _backlight.Apply(false, true);
+            return _backlight;
+        }
+
+        private static RawImage Picture(Transform parent, string name, Texture texture, Vector2 size, Color colour, Rect uv)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+            var image = go.AddComponent<RawImage>();
+            image.texture = texture; image.color = colour; image.uvRect = uv; image.raycastTarget = false;
+            var rect = image.rectTransform;
+            rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchoredPosition = Vector2.zero; rect.sizeDelta = size;
+            return image;
         }
 
         private static Image Fill(Transform parent, string name, Vector2 at, Vector2 size, Color colour)
@@ -240,6 +304,7 @@ namespace TumbangPreso.Map
             for (int k = 0; k < Faces; k++)
             {
                 var face = _faces[k];
+                if (face.Roll != null) face.Roll.rectTransform.anchoredPosition = new Vector2(0.0f, (0.5f - Mathf.Repeat(Time.unscaledTime * 0.22f + k * 0.13f, 1.0f)) * (Tall + 220.0f));
                 face.BarA.rectTransform.anchoredPosition = new Vector2(0.0f, (a - 0.5f) * (Tall - 40.0f));
                 face.BarB.rectTransform.anchoredPosition = new Vector2(0.0f, (b - 0.5f) * (Tall - 40.0f));
                 face.BarA.color = new Color(1.0f, 1.0f, 1.0f, 0.16f * glitch);
