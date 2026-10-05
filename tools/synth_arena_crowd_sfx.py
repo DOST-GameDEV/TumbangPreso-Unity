@@ -5,6 +5,12 @@
   py -3 tools/synth_arena_crowd_sfx.py --report           (also the pictures and numbers in Logs/arena/audio/)
   py -3 tools/synth_arena_crowd_sfx.py --no-vo            (no grains of the recorded announcer in the crowd)
 
+THE CROWD CUES BELOW ARE NO LONGER WRITTEN BY THIS TOOL (2026-10-05). The owner rejected the synthesised
+crowd ("just sounds like noise and not actual crowd cheers"); every sfx_arena_crowd_* and sfx_arena_chant_*
+file is now cut from real recordings by tools/build_arena_crowd_from_recordings.py. This tool still writes
+the four sfx_arena_pa_* stings and the announcer's stadium takes (`--no-vo --only pa`, unchanged), and it
+skips every crowd cue unless `--synthetic-crowd` is given. The recipes stay as a record.
+
 Owner, 2026-10-05, after playing the map: "there should be reverbey crowd cheers, chants, and an
 announcer". Until now the map had one 3.6 s roar (tools/synth_arena_show_sfx.py) and nothing
 continuous. Runtime/Map/ArenaCrowdAudio.cs plays what this writes; the mix level of each is its row
@@ -42,9 +48,12 @@ THE PUBLIC ADDRESS. The existing announcer takes are also written out as the sta
 them (band limited 320 to 3800 Hz, a presence peak, a touch of drive, then the bowl with a stronger
 slap): Resources/ArenaPa/pa_<take>.wav, 22050 Hz (nothing above 4 kHz is left in them).
 ArenaCrowdAudio plays those in place of the dry takes ON THIS MAP ONLY. A NEW RECORDING DROPPED INTO
-Resources/Vo NEEDS THIS RUN AGAIN (`--only pa_`) or it plays dry. There is no text to speech here
-and nobody was recorded: the new lines the map wants are a list in ArenaCrowdAudio.cs, and until
-they are recorded their moments are marked by the four `sfx_arena_pa_*` stings below.
+Resources/Vo NEEDS THIS RUN AGAIN (`--no-vo --only pa`) or it plays dry. The map's new lines (a list
+in ArenaCrowdAudio.cs) are AI-CLONED TAKES of the announcer's voice, made with their consent on
+2026-10-05 by tools/clone_announcer_lines.py and listed in Resources/Vo/AI_CLONED_LINES.md; a line
+with no file is marked by one of the four `sfx_arena_pa_*` stings below. ONLY THE ELEVEN RECORDED
+TAKES (`RECORDED`) ARE EVER USED AS THE CROWD'S GRAINS: a cloned take gets its PA version and
+nothing else.
 
 Writes into Assets/TumbangPreso/Resources/Sfx/ (44100 Hz, mono, 16 bit). One-shots are normalised
 to 0.85 peak like every other cue; the five beds are normalised by RMS (a bed is mixed by its
@@ -344,6 +353,11 @@ def build_pool(seed):
     for name in pool:
         pool[name] = [unit(x) for x in pool[name]]
     return pool
+
+
+# The announcer's own recordings (docs/HUMAN.md). Every other vo_* file is an AI-cloned take.
+RECORDED = ("vo_clock_10_1", "vo_clock_30_1", "vo_count_1_1", "vo_count_2_1", "vo_count_3_1", "vo_count_go_1",
+            "vo_count_go_2", "vo_match_draw_1", "vo_match_draw_2", "vo_match_win_1", "vo_match_win_2")
 
 
 def load_vo():
@@ -1137,15 +1151,21 @@ def main():
     ap.add_argument("--only", default="")
     ap.add_argument("--report", action="store_true")
     ap.add_argument("--no-vo", action="store_true")
+    ap.add_argument("--synthetic-crowd", action="store_true")
     args = ap.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
 
     takes = load_vo()
-    crowd_takes = [] if args.no_vo else takes
+    crowd_takes = [] if args.no_vo else [take for take in takes if take[0] in RECORDED]
     pool = build_pool(4100)
     rows = []
     for name, build, seed, loop_rms in SOUNDS:
         if args.only and args.only not in name:
+            continue
+        # THE CROWD IS REAL RECORDINGS SINCE 2026-10-05 (tools/build_arena_crowd_from_recordings.py; the owner
+        # rejected this synthesis: "just sounds like noise"). Only the PA's stings are written from here,
+        # so no run of this tool can put the synthetic crowd back over the recordings by accident.
+        if not name.startswith("sfx_arena_pa_") and not args.synthetic_crowd:
             continue
         x = finish(build(np.random.default_rng(seed), pool, crowd_takes), loop_rms)
         path = OUT / (name + ".wav")
