@@ -1,0 +1,26 @@
+{
+  "sourceRef": "617c767e256161499c2f4426e94c8dca51d93025",
+  "profile": "pc-current-ui1006",
+  "filter": "TumbangPreso.PlayTests.UiEdgeQualityReview.CurrentHomeAndJoinRenderAtPcAndQhdSizes",
+  "expectedCases": 1,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-current-ui1006",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.UiEdgeQualityReview.CurrentHomeAndJoinRenderAtPcAndQhdSizes",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\current-ui1006\\native-review\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\current-ui1006\\native-review\\editor.log"
+  ],
+  "pid": 22452
+}

@@ -20,5 +20,21 @@ namespace TumbangPreso.PlayTests
                     TumpHub.Current.Canvas, size.x, size.y, false, checkActionBounds:true);
             Assert.IsInstanceOf<HubHome>(TumpHub.Current.Top);
         }
+
+        [UnityTest]
+        public IEnumerator CurrentHomeAndJoinRenderAtPcAndQhdSizes()
+        {
+            yield return HubFlowTests.OpenHome();
+            foreach (var size in new[] { new Vector2Int(1600,900), new Vector2Int(2560,1440) })
+                yield return TumpUiCapture.Capture("Current152-Home-" + size.x + "x" + size.y,
+                    TumpHub.Current.Canvas, size.x, size.y, false, checkActionBounds:true);
+            TumpHub.Current.Push<HubJoin>();
+            // The chalk illustration has a .2s delay and .55s draw-in.
+            yield return new WaitForSecondsRealtime(.8f);
+            foreach (var size in new[] { new Vector2Int(1600,900), new Vector2Int(2560,1440) })
+                yield return TumpUiCapture.Capture("Current152-Join-" + size.x + "x" + size.y,
+                    TumpHub.Current.Canvas, size.x, size.y, false, checkActionBounds:true);
+            Assert.IsInstanceOf<HubJoin>(TumpHub.Current.Top);
+        }
     }
 }
