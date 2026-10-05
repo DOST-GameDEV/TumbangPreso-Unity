@@ -1,0 +1,10 @@
+{
+  "originalBase": "1389ab5007e13ea3eb3735b36ed671bad25164d0",
+  "candidateBase": "5aa0140ec3197f69dd400786edcd81ff8cba7879",
+  "betweenBaseDelta": "MatchPoseHistory.CopySurface material correction only; Arena original sources unchanged",
+  "normalizedLFSourceSHA256": {
+    "Assets/TumbangPreso/Runtime/Map/ArenaStage.cs": "33f745173398826cb4df6b3124e24927b928ac0749e4ae72aadb67955a07474c",
+    "Assets/TumbangPreso/Runtime/Map/ArenaFallRecovery.cs": "036451ff3ee89ed8f880801fe8f7aef746e5abe73e8b226b7abeabe6fed6dd11",
+    "Assets/TumbangPreso/Tests/PlayMode/ArenaOwnerLifetimeTests.cs": "d73d7ed51cb1d4fe29e87e8fa38b4e51276f09bdf80ec8acd26699502d9a8a32"
+  }
+}

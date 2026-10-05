@@ -309,9 +309,10 @@ namespace TumbangPreso.Map
 
         private void OnDisable()
         {
+            if (Instance != this) return;
             AIController.EdgeSense = false;
             Net.MatchRpc.MoveFloorY = Net.MatchRpc.DefaultMoveFloorY;
-            if (Instance == this) Instance = null;
+            Instance = null;
         }
 
         /// <summary>
@@ -350,8 +351,12 @@ namespace TumbangPreso.Map
 
         private void OnDestroy()
         {
-            AIController.EdgeSense = false;
-            if (Instance == this) Instance = null;
+            if (Instance == this)
+            {
+                AIController.EdgeSense = false;
+                Net.MatchRpc.MoveFloorY = Net.MatchRpc.DefaultMoveFloorY;
+                Instance = null;
+            }
             if (_morphMeshes != null)
                 foreach (var mesh in _morphMeshes) if (mesh != null) Destroy(mesh);
         }

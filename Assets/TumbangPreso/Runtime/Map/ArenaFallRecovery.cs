@@ -112,7 +112,9 @@ namespace TumbangPreso.Map
         }
         private void OnDisable()
         {
-            if(Instance==this)Instance=null;Watch(null);_lost.Clear();_away.Clear();_safe.Clear();
+            bool ownsHooks=Instance==this;
+            if(ownsHooks)Instance=null;Watch(null);_lost.Clear();_away.Clear();_safe.Clear();
+            if(!ownsHooks)return;
             // Every other map falls by the game's own numbers and reels on a flat line.
             if(CharacterMotor.MapFall==Updraft)CharacterMotor.MapFall=null;
             if(Abilities.PaeteVine.MapCatch==VineCatch)Abilities.PaeteVine.MapCatch=null;
