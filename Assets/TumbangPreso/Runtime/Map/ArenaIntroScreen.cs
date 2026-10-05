@@ -38,6 +38,8 @@ namespace TumbangPreso.Map
         /// <summary>The card in canvas units, and how many metres one unit is on a corner screen and on the scoreboard.</summary>
         private const float Wide = 1950.0f, Tall = 860.0f, CornerScale = 0.02f, BoardScale = 0.00513f;
 
+        /// <summary>The portrait's square, canvas units.</summary>
+        private const float Frame = 440.0f;
         private static readonly Color Ground = new Color(0.02f, 0.03f, 0.09f, 0.97f);
         private static readonly Color Plate = new Color(0.10f, 0.16f, 0.42f, 1.0f);
 
@@ -121,21 +123,27 @@ namespace TumbangPreso.Map
             face.Group.blocksRaycasts = false; face.Group.interactable = false;
 
             Fill(go.transform, "Ground", Vector2.zero, new Vector2(Wide, Tall), Ground);
-            face.Rule = Fill(go.transform, "Rule", new Vector2(360.0f, 190.0f), new Vector2(1080.0f, 8.0f), ArenaFx.Cyan);
-            face.PlateImage = Fill(go.transform, "Plate", new Vector2(-560.0f, 0.0f), new Vector2(700.0f, 700.0f), Plate);
-            face.Initial = Label(go.transform, "Initial", 420, new Vector2(-560.0f, 0.0f), new Vector2(700.0f, 700.0f), ArenaFx.White);
-            face.Portrait = Fill(go.transform, "Portrait", new Vector2(-560.0f, 0.0f), new Vector2(700.0f, 700.0f), Color.white);
+            // ⚠️ ONE COLUMN, CENTRED (owner, 2026-10-05, drawing over the first card, which had the
+            // portrait at the left, the text at the right and TAYA stamped askew in the bottom corner:
+            // "idk about the taya text.. its so off-layout"). His drawing: a line of text at the top,
+            // the portrait framed in the middle, a line of text at the bottom. So: the question at the
+            // top, which TAYA lands on and replaces, square and in the same place; the framed
+            // portrait; the name and the seat under it. `Rule` is the portrait's frame.
+            face.Rule = Fill(go.transform, "Frame", Vector2.zero, new Vector2(Frame + 20.0f, Frame + 20.0f), ArenaFx.Cyan);
+            Fill(go.transform, "Frame ground", Vector2.zero, new Vector2(Frame, Frame), Ground);
+            face.PlateImage = Fill(go.transform, "Plate", Vector2.zero, new Vector2(Frame, Frame), Plate);
+            face.Initial = Label(go.transform, "Initial", 300, Vector2.zero, new Vector2(Frame, Frame), ArenaFx.White);
+            face.Portrait = Fill(go.transform, "Portrait", Vector2.zero, new Vector2(Frame - 16.0f, Frame - 16.0f), Color.white);
             face.Portrait.preserveAspect = true;
 
-            face.Header = Label(go.transform, "Header", 84, new Vector2(360.0f, 290.0f), new Vector2(1120.0f, 120.0f), ArenaFx.Cyan);
-            face.Header.text = "SINO ANG TAYA?";
-            face.Name = Label(go.transform, "Name", 200, new Vector2(360.0f, 40.0f), new Vector2(1120.0f, 260.0f), ArenaFx.White);
-            face.Name.resizeTextForBestFit = true; face.Name.resizeTextMinSize = 60; face.Name.resizeTextMaxSize = 200;
+            face.Header = Label(go.transform, "Header", 92, new Vector2(0.0f, 334.0f), new Vector2(1700.0f, 130.0f), ArenaFx.Cyan);
+            face.Header.text = "WHO'S THE TAYA?";
+            face.Name = Label(go.transform, "Name", 128, new Vector2(0.0f, -302.0f), new Vector2(1700.0f, 150.0f), ArenaFx.White);
+            face.Name.resizeTextForBestFit = true; face.Name.resizeTextMinSize = 60; face.Name.resizeTextMaxSize = 128;
             face.Name.horizontalOverflow = HorizontalWrapMode.Wrap; face.Name.verticalOverflow = VerticalWrapMode.Truncate;
-            face.Sub = Label(go.transform, "Sub", 70, new Vector2(360.0f, -140.0f), new Vector2(1120.0f, 100.0f), ArenaFx.Cyan);
-            face.Stamp = Label(go.transform, "Stamp", 250, new Vector2(360.0f, -290.0f), new Vector2(1120.0f, 280.0f), ArenaFx.Gold);
+            face.Sub = Label(go.transform, "Sub", 52, new Vector2(0.0f, -394.0f), new Vector2(1700.0f, 64.0f), ArenaFx.Cyan);
+            face.Stamp = Label(go.transform, "Stamp", 150, new Vector2(0.0f, 334.0f), new Vector2(1700.0f, 170.0f), ArenaFx.Gold);
             face.Stamp.text = "TAYA";
-            face.Stamp.rectTransform.localRotation = Quaternion.Euler(0.0f, 0.0f, 5.0f);
             face.Stamp.gameObject.SetActive(false);
 
             face.BarA = Fill(go.transform, "Scan A", Vector2.zero, new Vector2(Wide, 26.0f), new Color(1.0f, 1.0f, 1.0f, 0.0f));
@@ -236,7 +244,7 @@ namespace TumbangPreso.Map
                 face.BarB.rectTransform.anchoredPosition = new Vector2(0.0f, (b - 0.5f) * (Tall - 40.0f));
                 face.BarA.color = new Color(1.0f, 1.0f, 1.0f, 0.16f * glitch);
                 face.BarB.color = new Color(0.45f, 0.95f, 1.0f, 0.22f * glitch);
-                face.Portrait.rectTransform.anchoredPosition = new Vector2(-560.0f + (a - 0.5f) * 36.0f * glitch, 0.0f);
+                face.Portrait.rectTransform.anchoredPosition = new Vector2((a - 0.5f) * 36.0f * glitch, 0.0f);
                 face.Flash.color = new Color(1.0f, 1.0f, 1.0f, Mathf.Clamp01(flash));
                 if (_stamped) face.Stamp.rectTransform.localScale = Vector3.one * size;
                 face.Rule.color = _stamped ? ArenaFx.Gold : ArenaFx.Cyan;

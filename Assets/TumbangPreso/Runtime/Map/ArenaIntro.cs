@@ -506,7 +506,7 @@ namespace TumbangPreso.Map
                 // 1 and 2. Low at their backs, following them out and rising toward the mouth.
                 float p = _still ? 0.0f : Smooth((age - t.Walk) / (t.Reveal - t.Walk));
                 float bob = _still ? 0.0f : Mathf.Sin((line - LineStart) / Stride * Mathf.PI * 4.0f) * 0.018f;
-                Pose(_centre + new Vector3(0.3f, Mathf.Lerp(0.95f, 1.75f, p) + bob, line - Mathf.Lerp(4.0f, 3.1f, p)),
+                Pose(_centre + new Vector3(0.0f, Mathf.Lerp(0.95f, 1.75f, p) + bob, line - Mathf.Lerp(4.0f, 3.1f, p)),   // dead centre between the two files
                      _centre + new Vector3(0.0f, Mathf.Lerp(1.9f, 4.4f, p), line + 40.0f), 50.0f);
             }
             else if (age < t.Taya)
