@@ -205,6 +205,10 @@ Nothing was deleted or renumbered.
 - [ ] Owner Basilio E/Q failure on both machines: isolate actual input events,
   effective bindings and eligible ability consumption. Automated presses showed
   no convincing cooldown response; kit-present/post-match state is insufficient.
+- [x] Give active Unstoppable a named first-person HUD countdown using its existing
+  clock. Original rendered confirmation fails while two clock/inactive controls
+  pass; candidate three native cases pass with captured label. Preserve skill
+  mechanics and orbiting ward. [Evidence](reports/reliability-2026-10-05/basilio-active-feedback/README.md).
 - [x] Host-approved rules update shared state before UI observers, including
   when no lobby view exists. Two mode/state causes plus three guards become5/5;
   saved preferences stay unchanged. [Evidence](reports/reliability-2026-10-05/rules-receiver-state/README.md).

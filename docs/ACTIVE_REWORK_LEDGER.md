@@ -21,6 +21,27 @@ explicitly authorized; unnecessary AGENTS feature entry was removed at owner req
 
 ## Current source and live work
 
+Latest incoming f69a64a03/0d11a2716 integrated normally, M4 authors verified;
+43 raw evidence hashes exact and13 input-consumer XML cases pass. Owner's latest
+question is cast visibility. Unstoppable FPP confirmation fix is ready to publish:
+original rendered label fails/two clock-inactive controls pass -> candidate3/3.
+StatusStack already had name/clock; add ShowWithReticle only on Dante signature
+and keep its named timer despite reticle suppression. Existing ward/mechanics
+unchanged. Native22108/8576 and exact202 metadata/prefs/profile/Quality restoration
+terminal, actual HUD image inspected. No source work overlaps laptop replay lane.
+
+Combined1d401 Windows full16584/classification67631 terminal0,258files/
+2691131135B, Runtime883b2812a691351178ee2c94f05fbe22a0e8e8655f5e3c1c2b42a42e95d3d7b7.
+Actualplayer19352 updatedRules pages verified, but normalquit exitC0000005 at
+UnityPlayer.dll RVA16f9c36; retained event/log and unresolved symbol lookup.
+Parent35902 terminal/profiles+input restored/runtime-exe unchanged. Do not claim
+cleanexit0. Owner complained of ChatGPT close attempts via laptop: all further
+close/AltF4 actions are STOPPED pending actual target/focus audit. Never close
+Codex/ChatGPT or whole browsers. Current windows inventory has only pre-existing
+ChatGPT and Chrome, no owned games. Avoid stale window IDs and occluded captures.
+Laptop now reserves MatchReplayArchive.cs + focused lifecycle test, own native job.
+Exact current source/jobs/next is current-resume.json; old proof context below.
+
 Published source e77241381552f8c8bbbe5e914a0cdf042c88956c; frozen paired artifact
 c17101d03/protocol151/recording14. Rules palette/plate/Done styling qualified
 locally by one actual native review/five captures. Source current-scope pending:
