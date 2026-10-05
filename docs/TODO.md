@@ -7,7 +7,13 @@
   records independently match every field: LAN2401bytes and online2405bytes.
 - [ ] Repair LAN discovery/code joining: the laptop's natural LAN list stays
   empty85.2seconds and GWEC code fails. Direct192.168.1.7:8910 joins successfully.
-  Reverse host roles after the current fixes to isolate routing from receive behavior.
+  Corrected917 repeats empty31.672seconds/CHPJ code failure while direct joining
+  passes. Reverse roles discover/code-join normally. Independent diagnostic UDP
+  delivers unicast but none of three broadcast variants. Published solicitation
+  e557c1f89 preserves passive adverts and adds current-host unicast replies to
+  browser requests; original one cause/five controls becomes eight passes plus
+  two focused lifetime/throttle passes. Actual new-package discovery/code is open.
+  [Evidence](reports/reliability-2026-10-06/lan-solicitation/README.md).
 - [x] Repair post-match client recovery: original normal host MAIN MENU silently
   created client LAN rooms6JKN/KJ9W. Native two failures/six controls become
   eight passes. Corrected917b shared player now returns the untouched PC client
@@ -27,6 +33,15 @@
   The two-human LAN flow does not qualify those scenarios.
 - [ ] Tester Relay timeout/host kick, physical skill input and non-host movement
   delay acceptance remain open. These completed matches do not close those reports.
+
+### UI-REMOTE-RULES-1006: current values in an already-open client panel
+
+- [x] Receive-path event refreshes only an open read-only Rules view, preserving
+  host drafts, saved preferences and the selected tab. Actual native callback/UI
+  original three failures/four controls become seven passes. Root verifies eight
+  raw evidence blobs and three qualified source/fixture/meta hashes.
+  [Evidence](reports/laptop-validation-2026-10-06/open-rules-refresh/README.md).
+- [ ] Matching new-package two-machine open-panel host-change acceptance.
 
 ### UI-GLYPH-ARCS-1006: smooth translucent curved icons
 

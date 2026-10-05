@@ -141,3 +141,22 @@ The FPP00:30/Wait frame may be normal post-intro countdown, so initialcamera
 report remains open without a speculative patch. Small-control target+33offset
 is a tool confound; row-button failure is not product-qualified.
 Exact local refs/jobs and one next action remain in current-resume.json.
+
+## Latest discovery correction
+
+Current917 PC-host repeat CHPJ confirms laptopempty31.672s/codeNoGameAnswered,
+normalIPadmission2/4Ready passes. Owned PC Quit0/restorespreferences/package.
+Laptop ownQuit stalled afterInputShutdown andrequiredexactownedPIDcleanup;
+forcedexit is notnormalQuitacceptance. Itswrapperrestorationisconfirmed.
+Independent18991 diagnostic receivesONLYunicast39B andno threebroadcastvariants;
+actualMono physicalendpointlist/sendcalls are valid. OS/networkcauseunproven.
+LANsolicitatione557c1f89publishedvia0358e70de: existing8911 browserquery andcurrent
+advertiserunicastreply, passivecompatibility/perrequesterthrottle/generation
+cleanup; original1causeFAIL5controls ->8PASS plus2newboundaryPASS. All21134inputs
+andprefsrestore216deltas; initialcompilefailureZEROcases remainsunqualified.
+Rootverified14rawGitblobs and5LFproduction/fixturehashes. Newpackageoperator
+PChostfirstLAN/code is REQUIRED; nativeactualsocketpassdoesnotcloseit.
+LaptopenRulesc6fix7PASS isintegrated/verified8raw+3LFhashes; matchingnewpackage
+openclientpanelupdate remainsopen. LaptopwillreviewLanthenbuildONEcombined
+newWindowsartifact. Rootnoheavyjob/playeractive; preserve917/8dbbaselines and
+profiles. Exactnextcommand/liveownershipinJSON, no newbuildfordocs.
