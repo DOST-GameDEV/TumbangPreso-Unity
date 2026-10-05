@@ -326,6 +326,17 @@ namespace TumbangPreso.Visual
             new MapLook("LagoonCove",new Color(.44f,.42f,.64f),new Color(.66f,.52f,.54f),new Color(.62f,.46f,.34f),new Color(.9f,.8f,1.1f),70,340,4,false)
                 .Air(new Color(.98f,.78f,.64f),new Color(.3f,.46f,.72f),new Color(1,.74f,.54f),new Color(1,.8f,.64f),new Color(.62f,.54f,.74f))
                 .Key(new Color(1,.8f,.56f),1.25f,6,.7f,new Color(.05f,.03f,.06f)),
+            // ⚠️ ARENA: A NIGHT MATCH (docs/ARENA_ART_BRIEF.md: a stadium floating in the night sky, owner:
+            // "bluelock/rocketleague stadium in aesthetic ... night time"). The one row that is NOT daylight, so
+            // it reads the rules above for a night: the key is the floodlights, a cool white from high up
+            // (elevation 0 keeps the scene light's own angle), and the shade is still COLOURED, a deep navy,
+            // never black, with the coloured floor under it. The air is a dark indigo that starts past the
+            // field (140 m) and is thin at the upper stands (r 181), so the bowl stays clear and only the
+            // city recedes. Sky: near-black navy zenith down to an indigo horizon, the city's glow; clouds
+            // are faint. Light chalk, like Kanto. Nothing here is near #f87020 or #0080e8.
+            new MapLook("Arena",new Color(.3f,.34f,.52f),new Color(.26f,.28f,.4f),new Color(.16f,.17f,.24f),new Color(.78f,.82f,1.1f),140,620,0,false)
+                .Air(new Color(.1f,.12f,.22f),new Color(.03f,.04f,.1f),new Color(.16f,.14f,.3f),new Color(.3f,.3f,.44f),new Color(.08f,.09f,.16f))
+                .Key(new Color(.92f,.95f,1),1.15f,0,.7f,new Color(.02f,.024f,.045f)),
             // ⚠️ THE FIRST ILALIM NG TULAY, VAULTED 2026-10-01 (ILALIM-1.6) at Scenes/Vault/IlalimNgTulayOld.unity:
             // its look, kept so the vaulted scene still opens in it. This was the "IlalimNgTulay" row.
             new MapLook("IlalimNgTulayOld",new Color(.46f,.47f,.64f),new Color(.5f,.5f,.58f),new Color(.5f,.42f,.36f),new Color(.82f,.82f,1.12f),36,180,2,false)

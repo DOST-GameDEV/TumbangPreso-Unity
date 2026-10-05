@@ -1,0 +1,904 @@
+{
+ "notes": "The arena stage's five round layouts. WRITTEN BY tools/author_arena_layouts.py: edit that, not this. Unity coordinates (x right, y up, z forward), metres, the can at the origin. A bearing is degrees clockwise from +z: x = r sin b, z = r cos b. A ramp's plan is every point within width/2 of its bearing line whose true distance from the origin is between r0 and r1; its height is linear in that distance (z0 at r0, z1 at r1). An arc sweeps clockwise from a0 to a1 (a1 > a0, a0 may be negative). A piece keeps its id and kind across layouts and travels; an id missing from a layout sinks away. 'bonus' lists the pieces only a jump pad reaches. Speed pad halfSize is [across, along]; 'tangent' travel is clockwise, 'radial' travel is outward.",
+ "stageTop": 0.0,
+ "pitRadius": 40.0,
+ "wallHalf": 22.0,
+ "catchY": -4.5,
+ "spawns": {
+  "taya": [
+   0,
+   0,
+   -2.5
+  ],
+  "attackers": [
+   [
+    -1.8,
+    0,
+    9
+   ],
+   [
+    0,
+    0,
+    9
+   ],
+   [
+    1.8,
+    0,
+    9
+   ]
+  ]
+ },
+ "layouts": [
+  {
+   "name": "plaza",
+   "canHeight": 0.0,
+   "bonus": [],
+   "pieces": [
+    {
+     "id": "drum",
+     "kind": "disc",
+     "r": 11.5,
+     "top": 0.0,
+     "thick": 1.0
+    },
+    {
+     "id": "walk",
+     "kind": "ring",
+     "r0": 13.5,
+     "r1": 17.0,
+     "top": 0.0,
+     "thick": 1.0
+    },
+    {
+     "id": "arc1",
+     "kind": "arc",
+     "r0": 18.5,
+     "r1": 21.5,
+     "a0": 13.0,
+     "a1": 77.0,
+     "top": 0.0,
+     "thick": 1.0
+    },
+    {
+     "id": "arc2",
+     "kind": "arc",
+     "r0": 18.5,
+     "r1": 21.5,
+     "a0": 103.0,
+     "a1": 167.0,
+     "top": 0.0,
+     "thick": 1.0
+    },
+    {
+     "id": "arc3",
+     "kind": "arc",
+     "r0": 18.5,
+     "r1": 21.5,
+     "a0": 193.0,
+     "a1": 257.0,
+     "top": 0.0,
+     "thick": 1.0
+    },
+    {
+     "id": "arc4",
+     "kind": "arc",
+     "r0": 18.5,
+     "r1": 21.5,
+     "a0": 283.0,
+     "a1": 347.0,
+     "top": 0.0,
+     "thick": 1.0
+    },
+    {
+     "id": "ramp1",
+     "kind": "ramp",
+     "bearing": 0.0,
+     "r0": 11.5,
+     "r1": 13.5,
+     "z0": 0.0,
+     "z1": 0.0,
+     "width": 6.0,
+     "thick": 0.8
+    },
+    {
+     "id": "ramp2",
+     "kind": "ramp",
+     "bearing": 90.0,
+     "r0": 11.5,
+     "r1": 13.5,
+     "z0": 0.0,
+     "z1": 0.0,
+     "width": 6.0,
+     "thick": 0.8
+    },
+    {
+     "id": "ramp3",
+     "kind": "ramp",
+     "bearing": 180.0,
+     "r0": 11.5,
+     "r1": 13.5,
+     "z0": 0.0,
+     "z1": 0.0,
+     "width": 6.0,
+     "thick": 0.8
+    },
+    {
+     "id": "ramp4",
+     "kind": "ramp",
+     "bearing": 270.0,
+     "r0": 11.5,
+     "r1": 13.5,
+     "z0": 0.0,
+     "z1": 0.0,
+     "width": 6.0,
+     "thick": 0.8
+    },
+    {
+     "id": "link1",
+     "kind": "ramp",
+     "bearing": 45.0,
+     "r0": 17.0,
+     "r1": 18.5,
+     "z0": 0.0,
+     "z1": 0.0,
+     "width": 4.5,
+     "thick": 0.8
+    },
+    {
+     "id": "link2",
+     "kind": "ramp",
+     "bearing": 135.0,
+     "r0": 17.0,
+     "r1": 18.5,
+     "z0": 0.0,
+     "z1": 0.0,
+     "width": 4.5,
+     "thick": 0.8
+    },
+    {
+     "id": "link3",
+     "kind": "ramp",
+     "bearing": 225.0,
+     "r0": 17.0,
+     "r1": 18.5,
+     "z0": 0.0,
+     "z1": 0.0,
+     "width": 4.5,
+     "thick": 0.8
+    },
+    {
+     "id": "link4",
+     "kind": "ramp",
+     "bearing": 315.0,
+     "r0": 17.0,
+     "r1": 18.5,
+     "z0": 0.0,
+     "z1": 0.0,
+     "width": 4.5,
+     "thick": 0.8
+    }
+   ],
+   "jumpPads": [
+    {
+     "bearing": 120.0,
+     "r": 8.0,
+     "y": 0.0,
+     "speed": 15.5
+    },
+    {
+     "bearing": 300.0,
+     "r": 8.0,
+     "y": 0.0,
+     "speed": 15.5
+    }
+   ],
+   "speedPads": [
+    {
+     "bearing": 90.0,
+     "r": 15.25,
+     "y": 0.0,
+     "along": "tangent",
+     "halfSize": [
+      0.75,
+      1.5
+     ]
+    },
+    {
+     "bearing": 270.0,
+     "r": 15.25,
+     "y": 0.0,
+     "along": "tangent",
+     "halfSize": [
+      0.75,
+      1.5
+     ]
+    }
+   ],
+   "pickups": [
+    {
+     "bearing": 155.0,
+     "r": 20.0,
+     "y": 0.0
+    },
+    {
+     "bearing": 335.0,
+     "r": 20.0,
+     "y": 0.0
+    },
+    {
+     "bearing": 180.0,
+     "r": 15.25,
+     "y": 0.0
+    }
+   ]
+  },
+  {
+   "name": "tore",
+   "canHeight": 1.5,
+   "bonus": [],
+   "pieces": [
+    {
+     "id": "drum",
+     "kind": "disc",
+     "r": 4.6,
+     "top": 1.5,
+     "thick": 1.0
+    },
+    {
+     "id": "walk",
+     "kind": "ring",
+     "r0": 8.0,
+     "r1": 12.5,
+     "top": 0.0,
+     "thick": 1.0
+    },
+    {
+     "id": "ramp1",
+     "kind": "ramp",
+     "bearing": 0.0,
+     "r0": 4.6,
+     "r1": 8.0,
+     "z0": 1.5,
+     "z1": 0.0,
+     "width": 3.5,
+     "thick": 0.8
+    },
+    {
+     "id": "ramp2",
+     "kind": "ramp",
+     "bearing": 90.0,
+     "r0": 4.6,
+     "r1": 8.0,
+     "z0": 1.5,
+     "z1": 0.0,
+     "width": 3.5,
+     "thick": 0.8
+    },
+    {
+     "id": "ramp3",
+     "kind": "ramp",
+     "bearing": 180.0,
+     "r0": 4.6,
+     "r1": 8.0,
+     "z0": 1.5,
+     "z1": 0.0,
+     "width": 3.5,
+     "thick": 0.8
+    },
+    {
+     "id": "ramp4",
+     "kind": "ramp",
+     "bearing": 270.0,
+     "r0": 4.6,
+     "r1": 8.0,
+     "z0": 1.5,
+     "z1": 0.0,
+     "width": 3.5,
+     "thick": 0.8
+    },
+    {
+     "id": "arc1",
+     "kind": "arc",
+     "r0": 16.0,
+     "r1": 21.0,
+     "a0": -5.0,
+     "a1": 95.0,
+     "top": 0.0,
+     "thick": 1.0
+    },
+    {
+     "id": "arc3",
+     "kind": "arc",
+     "r0": 16.0,
+     "r1": 21.0,
+     "a0": 175.0,
+     "a1": 275.0,
+     "top": 0.0,
+     "thick": 1.0
+    },
+    {
+     "id": "link1",
+     "kind": "ramp",
+     "bearing": 45.0,
+     "r0": 12.5,
+     "r1": 16.0,
+     "z0": 0.0,
+     "z1": 0.0,
+     "width": 3.0,
+     "thick": 0.8
+    },
+    {
+     "id": "link3",
+     "kind": "ramp",
+     "bearing": 225.0,
+     "r0": 12.5,
+     "r1": 16.0,
+     "z0": 0.0,
+     "z1": 0.0,
+     "width": 3.0,
+     "thick": 0.8
+    }
+   ],
+   "jumpPads": [
+    {
+     "bearing": 135.0,
+     "r": 10.25,
+     "y": 0.0,
+     "speed": 15.5
+    },
+    {
+     "bearing": 315.0,
+     "r": 10.25,
+     "y": 0.0,
+     "speed": 15.5
+    }
+   ],
+   "speedPads": [
+    {
+     "bearing": 70.0,
+     "r": 18.5,
+     "y": 0.0,
+     "along": "tangent",
+     "halfSize": [
+      0.75,
+      1.5
+     ]
+    },
+    {
+     "bearing": 250.0,
+     "r": 18.5,
+     "y": 0.0,
+     "along": "tangent",
+     "halfSize": [
+      0.75,
+      1.5
+     ]
+    }
+   ],
+   "pickups": [
+    {
+     "bearing": 10.0,
+     "r": 18.5,
+     "y": 0.0
+    },
+    {
+     "bearing": 190.0,
+     "r": 18.5,
+     "y": 0.0
+    },
+    {
+     "bearing": 180.0,
+     "r": 10.25,
+     "y": 0.0
+    }
+   ]
+  },
+  {
+   "name": "krus",
+   "canHeight": 0.0,
+   "bonus": [],
+   "pieces": [
+    {
+     "id": "drum",
+     "kind": "disc",
+     "r": 5.0,
+     "top": 0.0,
+     "thick": 1.0
+    },
+    {
+     "id": "walk",
+     "kind": "ring",
+     "r0": 14.0,
+     "r1": 18.5,
+     "top": 0.0,
+     "thick": 1.0
+    },
+    {
+     "id": "apron",
+     "kind": "arc",
+     "r0": 7.6,
+     "r1": 10.6,
+     "a0": -24.0,
+     "a1": 24.0,
+     "top": 0.0,
+     "thick": 1.0
+    },
+    {
+     "id": "ramp1",
+     "kind": "ramp",
+     "bearing": 0.0,
+     "r0": 5.0,
+     "r1": 7.6,
+     "z0": 0.0,
+     "z1": 0.0,
+     "width": 2.6,
+     "thick": 0.8
+    },
+    {
+     "id": "link1",
+     "kind": "ramp",
+     "bearing": 0.0,
+     "r0": 10.6,
+     "r1": 14.0,
+     "z0": 0.0,
+     "z1": 0.0,
+     "width": 2.6,
+     "thick": 0.8
+    },
+    {
+     "id": "ramp2",
+     "kind": "ramp",
+     "bearing": 90.0,
+     "r0": 5.0,
+     "r1": 14.0,
+     "z0": 0.0,
+     "z1": 0.0,
+     "width": 2.6,
+     "thick": 0.8
+    },
+    {
+     "id": "ramp3",
+     "kind": "ramp",
+     "bearing": 180.0,
+     "r0": 5.0,
+     "r1": 14.0,
+     "z0": 0.0,
+     "z1": 0.0,
+     "width": 2.6,
+     "thick": 0.8
+    },
+    {
+     "id": "ramp4",
+     "kind": "ramp",
+     "bearing": 270.0,
+     "r0": 5.0,
+     "r1": 14.0,
+     "z0": 0.0,
+     "z1": 0.0,
+     "width": 2.6,
+     "thick": 0.8
+    }
+   ],
+   "jumpPads": [
+    {
+     "bearing": 45.0,
+     "r": 16.25,
+     "y": 0.0,
+     "speed": 15.5
+    },
+    {
+     "bearing": 225.0,
+     "r": 16.25,
+     "y": 0.0,
+     "speed": 15.5
+    }
+   ],
+   "speedPads": [
+    {
+     "bearing": 112.0,
+     "r": 16.25,
+     "y": 0.0,
+     "along": "tangent",
+     "halfSize": [
+      0.75,
+      1.5
+     ]
+    },
+    {
+     "bearing": 292.0,
+     "r": 16.25,
+     "y": 0.0,
+     "along": "tangent",
+     "halfSize": [
+      0.75,
+      1.5
+     ]
+    }
+   ],
+   "pickups": [
+    {
+     "bearing": 135.0,
+     "r": 16.25,
+     "y": 0.0
+    },
+    {
+     "bearing": 315.0,
+     "r": 16.25,
+     "y": 0.0
+    },
+    {
+     "bearing": 180.0,
+     "r": 16.25,
+     "y": 0.0
+    }
+   ]
+  },
+  {
+   "name": "hukay",
+   "canHeight": -1.2,
+   "bonus": [],
+   "pieces": [
+    {
+     "id": "drum",
+     "kind": "disc",
+     "r": 5.2,
+     "top": -1.2,
+     "thick": 1.0
+    },
+    {
+     "id": "walk",
+     "kind": "ring",
+     "r0": 8.0,
+     "r1": 13.0,
+     "top": 0.0,
+     "thick": 1.0
+    },
+    {
+     "id": "ramp1",
+     "kind": "ramp",
+     "bearing": 0.0,
+     "r0": 5.2,
+     "r1": 8.0,
+     "z0": -1.2,
+     "z1": 0.0,
+     "width": 5.0,
+     "thick": 0.8
+    },
+    {
+     "id": "ramp2",
+     "kind": "ramp",
+     "bearing": 90.0,
+     "r0": 5.2,
+     "r1": 8.0,
+     "z0": -1.2,
+     "z1": 0.0,
+     "width": 5.0,
+     "thick": 0.8
+    },
+    {
+     "id": "ramp3",
+     "kind": "ramp",
+     "bearing": 180.0,
+     "r0": 5.2,
+     "r1": 8.0,
+     "z0": -1.2,
+     "z1": 0.0,
+     "width": 5.0,
+     "thick": 0.8
+    },
+    {
+     "id": "ramp4",
+     "kind": "ramp",
+     "bearing": 270.0,
+     "r0": 5.2,
+     "r1": 8.0,
+     "z0": -1.2,
+     "z1": 0.0,
+     "width": 5.0,
+     "thick": 0.8
+    },
+    {
+     "id": "arc1",
+     "kind": "arc",
+     "r0": 15.5,
+     "r1": 21.0,
+     "a0": 7.0,
+     "a1": 83.0,
+     "top": 1.0,
+     "thick": 1.0
+    },
+    {
+     "id": "arc2",
+     "kind": "arc",
+     "r0": 15.5,
+     "r1": 21.0,
+     "a0": 97.0,
+     "a1": 173.0,
+     "top": 1.0,
+     "thick": 1.0
+    },
+    {
+     "id": "arc3",
+     "kind": "arc",
+     "r0": 15.5,
+     "r1": 21.0,
+     "a0": 187.0,
+     "a1": 263.0,
+     "top": 1.0,
+     "thick": 1.0
+    },
+    {
+     "id": "arc4",
+     "kind": "arc",
+     "r0": 15.5,
+     "r1": 21.0,
+     "a0": 277.0,
+     "a1": 353.0,
+     "top": 1.0,
+     "thick": 1.0
+    },
+    {
+     "id": "link1",
+     "kind": "ramp",
+     "bearing": 45.0,
+     "r0": 13.0,
+     "r1": 15.5,
+     "z0": 0.0,
+     "z1": 1.0,
+     "width": 3.5,
+     "thick": 0.8
+    },
+    {
+     "id": "link2",
+     "kind": "ramp",
+     "bearing": 135.0,
+     "r0": 13.0,
+     "r1": 15.5,
+     "z0": 0.0,
+     "z1": 1.0,
+     "width": 3.5,
+     "thick": 0.8
+    },
+    {
+     "id": "link3",
+     "kind": "ramp",
+     "bearing": 225.0,
+     "r0": 13.0,
+     "r1": 15.5,
+     "z0": 0.0,
+     "z1": 1.0,
+     "width": 3.5,
+     "thick": 0.8
+    },
+    {
+     "id": "link4",
+     "kind": "ramp",
+     "bearing": 315.0,
+     "r0": 13.0,
+     "r1": 15.5,
+     "z0": 0.0,
+     "z1": 1.0,
+     "width": 3.5,
+     "thick": 0.8
+    }
+   ],
+   "jumpPads": [
+    {
+     "bearing": 60.0,
+     "r": 3.7,
+     "y": -1.2,
+     "speed": 15.5
+    },
+    {
+     "bearing": 240.0,
+     "r": 3.7,
+     "y": -1.2,
+     "speed": 15.5
+    }
+   ],
+   "speedPads": [
+    {
+     "bearing": 35.0,
+     "r": 10.5,
+     "y": 0.0,
+     "along": "tangent",
+     "halfSize": [
+      0.75,
+      1.5
+     ]
+    },
+    {
+     "bearing": 215.0,
+     "r": 10.5,
+     "y": 0.0,
+     "along": "tangent",
+     "halfSize": [
+      0.75,
+      1.5
+     ]
+    }
+   ],
+   "pickups": [
+    {
+     "bearing": 70.0,
+     "r": 18.25,
+     "y": 1.0
+    },
+    {
+     "bearing": 250.0,
+     "r": 18.25,
+     "y": 1.0
+    },
+    {
+     "bearing": 160.0,
+     "r": 18.25,
+     "y": 1.0
+    }
+   ]
+  },
+  {
+   "name": "entablado",
+   "canHeight": 0.0,
+   "bonus": [
+    "arc1",
+    "arc4"
+   ],
+   "pieces": [
+    {
+     "id": "drum",
+     "kind": "disc",
+     "r": 4.2,
+     "top": 0.0,
+     "thick": 1.0
+    },
+    {
+     "id": "apron",
+     "kind": "arc",
+     "r0": 7.2,
+     "r1": 13.5,
+     "a0": -72.0,
+     "a1": 72.0,
+     "top": 1.2,
+     "thick": 1.0
+    },
+    {
+     "id": "ramp2",
+     "kind": "ramp",
+     "bearing": 50.0,
+     "r0": 4.2,
+     "r1": 7.2,
+     "z0": 0.0,
+     "z1": 1.2,
+     "width": 3.0,
+     "thick": 0.8
+    },
+    {
+     "id": "ramp4",
+     "kind": "ramp",
+     "bearing": 310.0,
+     "r0": 4.2,
+     "r1": 7.2,
+     "z0": 0.0,
+     "z1": 1.2,
+     "width": 3.0,
+     "thick": 0.8
+    },
+    {
+     "id": "arc2",
+     "kind": "arc",
+     "r0": 8.2,
+     "r1": 15.5,
+     "a0": 102.0,
+     "a1": 172.0,
+     "top": 0.0,
+     "thick": 1.0
+    },
+    {
+     "id": "arc3",
+     "kind": "arc",
+     "r0": 8.2,
+     "r1": 15.5,
+     "a0": 188.0,
+     "a1": 258.0,
+     "top": 0.0,
+     "thick": 1.0
+    },
+    {
+     "id": "link2",
+     "kind": "ramp",
+     "bearing": 138.0,
+     "r0": 4.2,
+     "r1": 8.2,
+     "z0": 0.0,
+     "z1": 0.0,
+     "width": 3.0,
+     "thick": 0.8
+    },
+    {
+     "id": "link3",
+     "kind": "ramp",
+     "bearing": 222.0,
+     "r0": 4.2,
+     "r1": 8.2,
+     "z0": 0.0,
+     "z1": 0.0,
+     "width": 3.0,
+     "thick": 0.8
+    },
+    {
+     "id": "arc1",
+     "kind": "arc",
+     "r0": 17.5,
+     "r1": 21.5,
+     "a0": 96.0,
+     "a1": 134.0,
+     "top": 3.0,
+     "thick": 0.6
+    },
+    {
+     "id": "arc4",
+     "kind": "arc",
+     "r0": 17.5,
+     "r1": 21.5,
+     "a0": 226.0,
+     "a1": 264.0,
+     "top": 3.0,
+     "thick": 0.6
+    }
+   ],
+   "jumpPads": [
+    {
+     "bearing": 116.0,
+     "r": 13.6,
+     "y": 0.0,
+     "speed": 15.5
+    },
+    {
+     "bearing": 244.0,
+     "r": 13.6,
+     "y": 0.0,
+     "speed": 15.5
+    }
+   ],
+   "speedPads": [
+    {
+     "bearing": 325.0,
+     "r": 10.35,
+     "y": 1.2,
+     "along": "tangent",
+     "halfSize": [
+      0.75,
+      1.5
+     ]
+    },
+    {
+     "bearing": 160.0,
+     "r": 11.85,
+     "y": 0.0,
+     "along": "radial",
+     "halfSize": [
+      0.75,
+      1.5
+     ]
+    }
+   ],
+   "pickups": [
+    {
+     "bearing": 115.0,
+     "r": 19.5,
+     "y": 3.0
+    },
+    {
+     "bearing": 245.0,
+     "r": 19.5,
+     "y": 3.0
+    },
+    {
+     "bearing": 200.0,
+     "r": 11.85,
+     "y": 0.0
+    }
+   ]
+  }
+ ]
+}

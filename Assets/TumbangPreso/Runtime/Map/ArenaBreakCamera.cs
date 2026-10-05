@@ -14,7 +14,7 @@ namespace TumbangPreso.Map
     ///
     /// HALFTIME IS LEFT ALONE. The 10 s middle break keeps its own replay and standings.
     ///
-    /// Grey-box: it carries no listener and none of the game camera's outline or anti-alias
+    /// It carries no listener and none of the game camera's outline or anti-alias
     /// passes; it takes the map's colour grade so the picture does not change tone at the cut.
     /// </summary>
     [RequireComponent(typeof(Camera))]
@@ -29,6 +29,9 @@ namespace TumbangPreso.Map
         public float OrbitRadiusFrom = 26.0f, OrbitRadiusTo = 21.0f;
         public float OrbitHeightFrom = 11.0f, OrbitHeightTo = 19.0f;
         public float PushRadius = 9.0f, PushHeight = 5.5f;
+        /// <summary>The orbit above is written for a stage this far across from the can to its
+        /// furthest edge; it is scaled to the stage's own `Radius`. The push in is on the can and is not.</summary>
+        public float AuthoredRadius = 14.0f;
 
         private Camera _camera;
 
@@ -69,8 +72,9 @@ namespace TumbangPreso.Map
 
             float yaw = (StartYaw + OrbitSweep * orbit + PushSweep * push) * Mathf.Deg2Rad;
             float can = stage.CanHeight;
-            float radius = Mathf.Lerp(Mathf.Lerp(OrbitRadiusFrom, OrbitRadiusTo, orbit), PushRadius, push);
-            float height = Mathf.Lerp(Mathf.Lerp(OrbitHeightFrom, OrbitHeightTo, orbit), PushHeight + can, push);
+            float scale = AuthoredRadius > 0.0f ? Mathf.Max(1.0f, stage.Radius / AuthoredRadius) : 1.0f;
+            float radius = Mathf.Lerp(Mathf.Lerp(OrbitRadiusFrom, OrbitRadiusTo, orbit) * scale, PushRadius, push);
+            float height = Mathf.Lerp(Mathf.Lerp(OrbitHeightFrom, OrbitHeightTo, orbit) * scale, PushHeight + can, push);
 
             Vector3 centre = stage.transform.position;
             Vector3 eye = centre + new Vector3(Mathf.Sin(yaw) * radius, height, Mathf.Cos(yaw) * radius);

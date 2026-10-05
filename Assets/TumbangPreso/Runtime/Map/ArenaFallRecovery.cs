@@ -15,6 +15,12 @@ namespace TumbangPreso.Map
     /// one place the owner's rule says a fall must not send it. That plane stays as the last
     /// resort.
     ///
+    /// ⚠️ THE LINE IS HALF A METRE ABOVE THAT REFUSAL (the data's -4.5), AND A FALLING BODY
+    /// CROSSES HALF A METRE BETWEEN TWO POSES. The host sees a remote body only where its last
+    /// accepted pose put it, so a body whose poses went -4.3 then -5.2 would never be seen under
+    /// the line. So a body in the air under the lowest deck is also caught when its own speed
+    /// carries it past the line within `PoseLead`: nothing is left for it to land on there.
+    ///
     /// ⚠️ ONLY THE HOST DECIDES (`NetAuthority.ShouldResolve()`, round or free roam alike, as
     /// `RooftopRecovery` does). Nothing here is sent: the carry is the `Drone` edge recovery
     /// kind, whose kind, phase and pose already ride `SyncUnit`. What every peer does run is
@@ -22,7 +28,7 @@ namespace TumbangPreso.Map
     /// </summary>
     public sealed class ArenaFallRecovery : MonoBehaviour
     {
-        public const float SlipperDelay=8,SafeMargin=1,SafeRefresh=.2f;
+        public const float SlipperDelay=8,SafeMargin=1,SafeRefresh=.2f,PoseLead=.15f;
         public static ArenaFallRecovery Instance { get; private set; }
         private static readonly RaycastHit[] FloorHits=new RaycastHit[16];
         private static readonly Vector3[] Around={Vector3.right,Vector3.left,Vector3.forward,Vector3.back};
@@ -108,6 +114,13 @@ namespace TumbangPreso.Map
             _lost.Add(slipper,Time.time+SlipperDelay);
         }
 
+        private static bool Fallen(CharacterMotor who,Vector3 p)
+        {
+            float line=ArenaStage.CatchY;
+            if(p.y<line)return true;
+            return !who.IsGrounded&&p.y<ArenaStage.Instance.LowestUnderside&&p.y+Mathf.Min(0,who.Velocity.y)*PoseLead<line;
+        }
+
         private void FixedUpdate()
         {
             if(!Live||!NetAuthority.ShouldResolve())return;
@@ -125,7 +138,7 @@ namespace TumbangPreso.Map
             {
                 if(who==null||!who.gameObject.activeInHierarchy||who.IsEdgeRecovering)continue;
                 var p=who.transform.position;
-                if(p.y>=ArenaStage.CatchY){if(remember)RememberSafe(who);continue;}
+                if(!Fallen(who,p)){if(remember)RememberSafe(who);continue;}
                 var carried=who.GetComponent<Carrier>()?.Held;if(carried!=null)Lose(carried);
                 var landing=ChooseLanding(who);
                 // The body faces its travel; `SyncUnit` refuses a kind without a unit Outward.
