@@ -1,54 +1,18 @@
 {
-  "candidate1-classified-result.json": {
+  "integrated-render-classified-result.json": {
     "bytes": 284,
-    "sha256": "be422418adc3b0c65e9c14999e21d7ae2ed1b63ce44724f7f474d89448806f5b"
+    "sha256": "90572ff99f963270c9fb12d55d96b4c90541a4278e0befb8e344172e5f5c73d1"
   },
-  "candidate1-direct-result.json": {
+  "integrated-render-direct-result.json": {
     "bytes": 68752,
-    "sha256": "3bfe0c68f5e344334739ccf8ab3cf7e5f5ceb5c6a539321614339c18074baaef"
+    "sha256": "7b28e56ea829ceda4aa0d79dd27485b65ae07fbbd041312c7966d8c52df559b6"
   },
-  "candidate1-launch.json": {
+  "integrated-render-launch.json": {
     "bytes": 968,
-    "sha256": "9ffcf698faa72a90924337ae0b8702ee86f0bb9ec78c115233a835f8b88a10e0"
+    "sha256": "f80425b967e24cfa2b9a15eead3dbbffa425378acadcc94ea25aa7a30bb7db69"
   },
-  "candidate1-tests.xml": {
-    "bytes": 6174,
-    "sha256": "0ad5fc36a9bb334d153dccce8cacd004aa215e804f5301f47ecd047b6211b631"
-  },
-  "checked-source.json": {
-    "bytes": 692,
-    "sha256": "c5f141c46eb915b24f442ee66a7ee1dffa9af736e00f9d5cd1ec505c0d809d9b"
-  },
-  "final-classified-result.json": {
-    "bytes": 284,
-    "sha256": "be422418adc3b0c65e9c14999e21d7ae2ed1b63ce44724f7f474d89448806f5b"
-  },
-  "final-direct-result.json": {
-    "bytes": 68752,
-    "sha256": "45738d5c44e30219305153f9b520f2c45625ffc1e0bf7942263e43426bf570b2"
-  },
-  "final-launch.json": {
-    "bytes": 968,
-    "sha256": "13831109882e543e85c53d28294791d548b5b4c5996d169d85186c73da16c926"
-  },
-  "final-tests.xml": {
-    "bytes": 6175,
-    "sha256": "68827ce71be87dcb5465fd43d08a99f469376a5474861143b62f4bb1e1e4a720"
-  },
-  "original-classified-result.json": {
-    "bytes": 361,
-    "sha256": "6125c7eb6d966d7039231379481c98e025d06baf9b7c466ae0b56685f1f3edef"
-  },
-  "original-direct-result.json": {
-    "bytes": 68752,
-    "sha256": "7bb035db9316fc2a93ece8bf73c3524efbaf0e015739564db818d75de84ca7a8"
-  },
-  "original-launch.json": {
-    "bytes": 964,
-    "sha256": "5d36c5fb31cf9c1e34ad3c45c5f335e810ba366637bab7fdac3c741d43712f67"
-  },
-  "original-tests.xml": {
-    "bytes": 8191,
-    "sha256": "d27a1ecaf4fc1742b8d759b52d40861f7d18ce5192d4293aa5b93ae64ccd4a27"
+  "integrated-render-tests.xml": {
+    "bytes": 5111,
+    "sha256": "66e5d7e11254cc876251478b903301434a4a879ed4d2a0314ca11e1b96f01547"
   }
 }

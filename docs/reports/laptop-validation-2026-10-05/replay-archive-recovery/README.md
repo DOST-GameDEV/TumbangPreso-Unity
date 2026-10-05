@@ -62,3 +62,18 @@ physical-input symptoms. Native same-machine gameplay and decodable clip retenti
 are qualified; current packaged replay pixels/audio, impaired transport and human
 acceptance remain separate. The desktop owns network/root queue/integration and
 has received this source reservation and the causal results.
+
+## Integrated rendering and fallback follow-up
+
+Integrated source a9ee42365b46a64fa8be17cfbb7a8668dc886b1c also passes the two
+existing ReplayVisibilityRecoveryTests: ordinary actual retained-clip Draw and
+Dispose preserve original live visibility; an interrupted draw with lost world
+owner restores live renderers, canvases and lights on fallback. This executes
+Camera.Render through the normal case and retains the exception-path control.
+It is native graphical recovery evidence, not human visual/audio acceptance.
+
+Unity29740/parent99905 are terminal0,2/2PASS. The warm worker verified19316inputs
+and applied only seven bounded source updates from the preceding qualified run.
+All265generated changes, Quality and13existing preferences are preserved/restored.
+No production or test edits were needed for this follow-up; passing13input and
+3archive cases were reused rather than repeated.
