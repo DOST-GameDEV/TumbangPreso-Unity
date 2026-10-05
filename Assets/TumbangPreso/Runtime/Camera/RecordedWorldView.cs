@@ -43,6 +43,7 @@ namespace TumbangPreso.CameraSystem
         private GroundContactVisual _canLanding;
         private readonly Dictionary<int,CourtEscapePuff> _escapePuffs=new Dictionary<int,CourtEscapePuff>();
         private readonly Dictionary<int,CourtContactDust> _contactDust=new Dictionary<int,CourtContactDust>();
+        private Map.ArenaStage _arena;
         public bool Ready {get;private set;}
         public string UnavailableReason {get;private set;}
         public RenderTexture Target=>_target;
@@ -53,6 +54,9 @@ namespace TumbangPreso.CameraSystem
             {
                 if(SystemInfo.graphicsDeviceType==UnityEngine.Rendering.GraphicsDeviceType.Null){UnavailableReason="No rendering device";return;}
                 if(Camera.main==null||clip.Map!=UnityEngine.SceneManagement.SceneManager.GetActiveScene().name){UnavailableReason="Camera or map not ready: camera="+(Camera.main!=null)+" scene="+UnityEngine.SceneManagement.SceneManager.GetActiveScene().name+" clip="+clip.Map;return;}
+                // Arena's stage rearranges every round. Stand it in this clip's own layout,
+                // from the match and round the clip already carries, before any cast below.
+                _arena=Map.ArenaStage.Instance;if(_arena!=null)_arena.BeginReplay(clip.MatchId,clip.Round);
                 // Root pose samples and fields use world coordinates. Keep this owned
                 // stage at world identity even when the overlay owner is transformed.
                 _stage=new GameObject("~RecordedWorld");_stage.SetActive(false);
@@ -295,6 +299,12 @@ namespace TumbangPreso.CameraSystem
             // Animals use live private schedules, not recorded pose tracks.
             // Keep present-time visits out of past events; restore after render.
             foreach(var life in Object.FindObjectsByType<AmbientLife>())Hide(life.gameObject);
+            // Arena's effects mesh is built facing the live camera, and its drones are live, not recorded.
+            if(_arena!=null)
+            {
+                if(Map.ArenaFx.Instance!=null)Hide(Map.ArenaFx.Instance.gameObject);
+                foreach(var drone in Object.FindObjectsByType<Map.ArenaDrone>())Hide(drone.gameObject);
+            }
             foreach(var field in _fields.Values)field.Visible(true);
             foreach(var trail in _trails.Values)trail.Visible(true);
             foreach(var actor in GameServices.Round.Players)if(actor!=null){Hide(actor.gameObject);var pet=actor.GetComponent<CharacterVisual>()?.Companion;if(pet!=null)Hide(pet.gameObject);}
@@ -336,6 +346,7 @@ namespace TumbangPreso.CameraSystem
             if(_frameMaterial!=null)Object.Destroy(_frameMaterial);_frameMaterial=null;
             if(_sky!=null)Object.Destroy(_sky);_sky=null;
             if(_stage!=null)Object.Destroy(_stage);_stage=null;
+            if(_arena!=null)_arena.EndReplay();_arena=null;
             foreach(var trail in _trails.Values)trail.Dispose();_trails.Clear();
             _items.Clear();foreach(var field in _fields.Values)field.Dispose();_fields.Clear();
         }

@@ -278,6 +278,7 @@ namespace TumbangPreso
             _chilledLeft = 0.0f;
             _hauntedLeft = 0.0f;
             _carryLeft = 0.0f;
+            EndHaul();
             ClearSpeedBoost();
             ClearReworkStatuses();
             ClearVoodoo();
@@ -441,6 +442,78 @@ namespace TumbangPreso
             _carryLeft = Mathf.Max(0.0f, _carryLeft - dt);
             _externalVelocity.x = _carryVelocity.x;
             _externalVelocity.z = _carryVelocity.z;
+        }
+
+        // ------------------------------------------------------------------ THE HAUL
+
+        private Vector3 _haulVia, _haulTo;
+        private float _haulSpeed, _haulUntil;
+
+        /// <summary>How far over the landing's floor a hauled body crosses to it, and the longest a haul may last.</summary>
+        public const float HaulClearance = 0.45f, HaulMaxSeconds = 2.5f;
+
+        /// <summary>True while a line is hauling this body up and over to a landing.</summary>
+        public bool IsHauled => Time.time < _haulUntil;
+
+        /// <summary>
+        /// Haul this body out of a drop: across to the column over <paramref name="via"/> at the
+        /// height it is at, straight up that column until its feet are `HaulClearance` over
+        /// <paramref name="landing"/>, then across to the landing, and let go. A carry cannot do
+        /// this: it is horizontal, and its lift is one push against gravity.
+        ///
+        /// ⚠️ ONLY THE ARENA ASKS FOR IT (Paete's vines on a body in its shaft,
+        /// `Map.ArenaFallRecovery.VineCatch`), so no other map's movement can change by it.
+        ///
+        /// ⚠️ THE OWNER OF THE BODY APPLIES IT, like `BeginCarry`, and nothing is sent: the body
+        /// moves at `speed` (never over `Balance.MaxKnockbackSpeed`, far under the host's move
+        /// budget) and its poses travel as they always do. It ends at the landing, at its
+        /// deadline, under anything overhead, and on a stun, a root, a teleport or a round reset.
+        /// </summary>
+        public bool BeginHaul(Vector3 via, Vector3 landing, float speed)
+        {
+            if (!MayMutateGameplayState() || !IsLocallySimulated()) return false;
+            if (!Finite(via) || !Finite(landing) || !float.IsFinite(speed)) return false;
+            if (IsEdgeRecovering || IsStunned || IsRooted || IsFlying) return false;
+            Vector3 at = transform.position;
+            _haulVia = via; _haulTo = landing;
+            _haulSpeed = Mathf.Clamp(speed, 1.0f, Balance.MaxKnockbackSpeed);
+            float path = Flat(via - at) + Mathf.Max(0.0f, landing.y + HaulClearance - at.y) + Flat(landing - via);
+            _haulUntil = Time.time + Mathf.Min(HaulMaxSeconds, path / _haulSpeed + 0.4f);
+            _carryLeft = 0.0f;
+            _externalVelocity = Vector3.zero;
+            _grounded = false;
+            return true;
+        }
+
+        private void EndHaul() => _haulUntil = 0.0f;
+
+        private static float Flat(Vector3 v) => Mathf.Sqrt(v.x * v.x + v.z * v.z);
+
+        /// <summary>Called from the physics step after gravity: while a haul lasts, the velocity is the line's.</summary>
+        private void StepHaul(float dt)
+        {
+            if (!IsHauled) return;
+            if (IsStunned || IsRooted || IsFlying) { EndHaul(); return; }
+
+            Vector3 at = transform.position;
+            float rise = _haulTo.y + HaulClearance - at.y;
+            bool under = rise > 0.05f;
+            Vector3 across = (under ? _haulVia : _haulTo) - at; across.y = 0.0f;
+            float left = across.magnitude;
+
+            Vector3 velocity;
+            if (left > 0.1f) velocity = across / left * Mathf.Min(_haulSpeed, left / dt);
+            else if (under) velocity = Vector3.up * Mathf.Min(_haulSpeed, rise / dt);
+            else
+            {
+                // Over the landing: let go, and gravity sets the body down the last of the way.
+                EndHaul();
+                _velocity = Vector3.zero;
+                _externalVelocity = Vector3.zero;
+                return;
+            }
+            _velocity = velocity;
+            _externalVelocity = Vector3.zero;
         }
 
         private static bool Finite(Vector3 v)

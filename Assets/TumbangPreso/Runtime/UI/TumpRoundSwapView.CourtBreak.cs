@@ -38,8 +38,9 @@ namespace TumbangPreso.UI
         // its stage rebuilding itself behind the card (`HalftimePresentation.LiveStageBreak`),
         // and an 1100 by 270 card dead centre covered the can, the hologram and every lock. So
         // on that map's ordinary break, and nowhere else, the same card sits in the lower third
-        // at 0.7 of its size. Halftime there, and every break on every other map, is untouched:
-        // the anchors and the scale below are exactly the old ones whenever `lower` is false.
+        // at 0.7 of its size. Halftime's package there (replay, standings), and every break on
+        // every other map, is untouched: the anchors and the scale below are exactly the old ones
+        // whenever `lower` is false. When that map's halftime reaches its show the card goes down too.
         private const float LowerThirdScale=.7f, LowerThirdMargin=30;
         private bool _lowerThird;
 
@@ -160,10 +161,13 @@ namespace TumbangPreso.UI
             float settle=1-Mathf.Pow(1-appear,3);
             float exit=Mathf.SmoothStep(0,1,Mathf.Clamp01(_remaining/.2f));
             _popupFade.alpha=settle*exit;
-            bool lower=!_halftime&&HalftimePresentation.LiveStageBreak;
+            // Arena's halftime ends in the same show: the card goes down to the lower third when it starts.
+            bool lower=HalftimePresentation.LiveStageBreak&&(!_halftime||HalftimePresentation.Instance?.StageShowPlaying==true);
             if(lower!=_lowerThird)
             {
                 _lowerThird=lower;
+                // Mid-card (halftime's show taking over): it comes in again where it now sits.
+                if(_halftime&&lower){_entered=Time.unscaledTime;age=0;appear=reduced?1:0;settle=appear;_popupFade.alpha=settle*exit;}
                 _popup.anchorMin=_popup.anchorMax=new Vector2(.5f,lower?0:.5f);_popup.pivot=new Vector2(.5f,lower?0:.5f);
             }
             _popup.anchoredPosition=lower?new Vector2(0,LowerThirdMargin-(reduced?0:(1-settle)*24))

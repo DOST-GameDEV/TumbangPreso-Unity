@@ -38,7 +38,9 @@ namespace TumbangPreso.Map
     /// (`SliceRunner.SpawnPointFor` with the break's own next taya, on the new layout's floor),
     /// and put back exactly as it was when the break ends.
     ///
-    /// HALFTIME IS LEFT ALONE: its own replay and standings cover the stage.
+    /// HALFTIME PLAYS THE SAME SHOW, SECOND: its replay and standings come first, on the old
+    /// stage with none of this, and then these 8 s run from `BreakBeats.Age` 0 exactly as on an
+    /// ordinary break (`ArenaStage.TryBreak`, `Showing`).
     /// </summary>
     [DefaultExecutionOrder(900)]
     public sealed class ArenaShow : MonoBehaviour
@@ -102,7 +104,7 @@ namespace TumbangPreso.Map
             var stage = ArenaStage.Instance;
             var fx = ArenaFx.Instance;
             var hp = HalftimePresentation.Instance;
-            if (stage == null || fx == null || hp == null || !stage.TryBreak(out var beats) || beats.Halftime || beats.From == beats.To)
+            if (stage == null || fx == null || hp == null || !stage.TryBreak(out var beats) || !beats.Showing || beats.From == beats.To)
             {
                 EndBreak();
                 return;

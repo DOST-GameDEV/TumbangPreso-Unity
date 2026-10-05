@@ -31,6 +31,14 @@ namespace TumbangPreso.Map
     /// theres no emphasis on it"): the alarm, the move, the reveal. This file owns the beats'
     /// times (`BreakBeats`) and where each piece is (`MoveOf`); `ArenaShow` puts the light, the
     /// sound and the shake on them, and `ArenaBreakCamera` cuts to them.
+    ///
+    /// HALFTIME IS TWO ACTS (owner, 2026-10-05: "halftime replay is interfereing with the
+    /// transformation animation"): first the halftime package every map has (replay, then
+    /// standings), with this stage held on the layout of the round just played, colliders and
+    /// visuals, and nothing of the show; THEN the same 8 s show. The show's clock is
+    /// `HalftimePresentation.StageShowBegan`, read here by `TryBreak` and nowhere else. A REPLAY
+    /// is drawn through the live stage, so while one is up the stage stands in the layout of
+    /// the clip's own round (`BeginReplay`).
     /// </summary>
     [DefaultExecutionOrder(-200)]
     public sealed class ArenaStage : MonoBehaviour
@@ -38,8 +46,13 @@ namespace TumbangPreso.Map
         /// <summary>Null on every other map.</summary>
         public static ArenaStage Instance { get; private set; }
 
-        /// <summary>The ordinary break on this map, in place of 3.5 s. Halftime stays 10 s.</summary>
+        /// <summary>The ordinary break on this map, in place of 3.5 s: the show. Halftime is its
+        /// own 10 s and then this (`HalftimePresentation.DurationFor`).</summary>
         public const float BreakSeconds = 8.0f;
+
+        /// <summary>How much of this map's halftime is the package (replay to 5.8 s, then
+        /// standings) before the show takes the stage. The one number to trim the standings by.</summary>
+        public const float HalftimeLeadSeconds = HalftimePresentation.HalftimeDuration;
 
         /// <summary>
         /// THE FALL IS A REAL FALL (owner, 2026-10-05: "falling off threshold is too high, you
@@ -89,8 +102,6 @@ namespace TumbangPreso.Map
         /// <summary>The hologram comes up this long into a break, over `HologramFade`, and stands
         /// alone for `HologramSeconds` before the first piece moves: the alarm's beat.</summary>
         private const float HologramLead = 0.3f, HologramFade = 0.5f, HologramSeconds = 2.3f;
-        /// <summary>Halftime's replay comes first, so its travel takes the last seconds before the settle.</summary>
-        private const float HalftimeTravelSeconds = 3.2f;
         /// <summary>Each piece moves for this share of the travel; the rest is the stagger
         /// between one piece's lock and the next's.</summary>
         public const float PieceShare = 0.42f;
@@ -273,7 +284,7 @@ namespace TumbangPreso.Map
         /// on a different floor from everyone else.</summary>
         [NonSerialized] public int HoldLayout = -1;
 
-        private int _shown = -1;
+        private int _shown = -1, _replay = -1;
         private Renderer[][][] _hologramRenderers;
         private GameObject[] _morphs;
         private Mesh[] _morphMeshes;
@@ -387,6 +398,12 @@ namespace TumbangPreso.Map
             var match = GameServices.Match;
             if (match == null || match.RoundNumber < 1) return 1;
 
+            // Halftime's package (the replay, the standings) comes before the show: the stage
+            // stays as it was for the round just played until the show takes it.
+            var hp = HalftimePresentation.Instance;
+            if (hp != null && hp.Active && !hp.StageShowPlaying && hp.MatchId == match.PresentationMatchId && hp.CompletedRound == match.RoundNumber)
+                return match.RoundNumber;
+
             bool roundActive = GameServices.Round != null && GameServices.Round.RoundActive;
             return match.MatchInProgress && !roundActive ? match.RoundNumber + 1 : match.RoundNumber;
         }
@@ -422,7 +439,37 @@ namespace TumbangPreso.Map
         /// themselves here if the scene was built before they existed.</summary>
         private void Start() => ArenaFx.Ensure();
 
-        private void Update() => ApplyForRound(WantedRound());
+        private void Update()
+        {
+            if (_replay >= 0 && PresentationClock.Held) ApplyLayout(_replay);
+            else ApplyForRound(WantedRound());
+        }
+
+        /// <summary>
+        /// A replay is about to be drawn through this stage (`RecordedWorldView` renders the live
+        /// scene with recorded bodies): stand in the layout of the round the clip was recorded
+        /// in, from the clip's own match id and round, until `EndReplay`. The visuals always;
+        /// the colliders too (the replay's camera and ground marks cast against them) while the
+        /// simulation is held, which is every replay a player sees.
+        /// </summary>
+        public void BeginReplay(long matchId, int round)
+        {
+            int count = LayoutCount;
+            if (count == 0) return;
+
+            _replay = HoldLayout >= 0 ? HoldLayout : LayoutFor(matchId, round, count);
+            if (PresentationClock.Held) ApplyLayout(_replay);
+            Show(_replay);
+        }
+
+        /// <summary>The replay is over: back to the layout the match is on, this frame.</summary>
+        public void EndReplay()
+        {
+            if (_replay < 0) return;
+            _replay = -1;
+            ApplyForRound(WantedRound());
+            Present();
+        }
 
         private void LateUpdate() => Present();
 
@@ -431,6 +478,12 @@ namespace TumbangPreso.Map
         {
             if (Applied < 0) return;
 
+            if (_replay >= 0)
+            {
+                if (Travelling || _shown != _replay) Show(_replay);
+                return;
+            }
+
             if (TryTravel()) return;
             if (Travelling || _shown != Applied) ShowApplied();
         }
@@ -438,7 +491,9 @@ namespace TumbangPreso.Map
         /// <summary>
         /// The break that is playing, as the beats every part of the show reads (the stage's
         /// travel here, `ArenaShow`'s light and sound, `ArenaBreakCamera`'s cuts), all in seconds
-        /// from the host's `Began` stamp, so every peer is on the same frame of the same beat:
+        /// from the SHOW's start (`HalftimePresentation.StageShowBegan`: the host's `Began` stamp
+        /// on an ordinary break, the end of the package at halftime), so every peer is on the
+        /// same frame of the same beat, and the show is the same 8 s in both:
         ///   ALARM   `ScanStart` to `ScanEnd`: the next layout's hologram sweeps in from the can;
         ///   THE MOVE `Undock` (every moving piece jolts), then `MoveStart` to `MoveEnd`: the
         ///           pieces go one after another and each LOCKS at the end of its own window;
@@ -448,6 +503,9 @@ namespace TumbangPreso.Map
         {
             public int From, To;
             public bool Halftime;
+            /// <summary>False through halftime's package, before the show: the stage is still,
+            /// on the old layout, and nothing of the show is drawn or heard. `Age` is negative.</summary>
+            public bool Showing;
             public float Age, Duration, ScanStart, ScanEnd, Undock, MoveStart, MoveEnd, Reveal;
             /// <summary>0 to 1 through the move.</summary>
             public float Travel => Mathf.Clamp01((Age - MoveStart) / (MoveEnd - MoveStart));
@@ -462,6 +520,7 @@ namespace TumbangPreso.Map
         /// The break that is playing on this stage. The layouts are read off the break's own
         /// completed round, so a peer that joins in the middle of a break lands on the same
         /// frame of the travel as everyone. False outside a break, and for a break of another match.
+        /// ⚠️ TRUE THROUGH HALFTIME'S PACKAGE TOO, with `Showing` false: every reader checks it.
         /// </summary>
         public bool TryBreak(out BreakBeats beats)
         {
@@ -474,15 +533,15 @@ namespace TumbangPreso.Map
             beats.From = LayoutFor(hp.MatchId, hp.CompletedRound, count);
             beats.To = LayoutFor(hp.MatchId, hp.CompletedRound + 1, count);
             beats.Halftime = hp.IsHalftime;
-            beats.Duration = hp.Duration;
-            beats.MoveEnd = hp.Duration - SettleSeconds;
+            beats.Showing = hp.StageShowPlaying;
+            beats.Duration = hp.StageShowDuration;
+            beats.MoveEnd = beats.Duration - SettleSeconds;
             beats.MoveStart = HologramLead + HologramSeconds;
-            if (hp.IsHalftime) beats.MoveStart = Mathf.Max(beats.MoveStart, beats.MoveEnd - HalftimeTravelSeconds);
             beats.ScanStart = beats.MoveStart - HologramSeconds;
             beats.ScanEnd = beats.ScanStart + ScanSeconds;
             beats.Undock = beats.MoveStart - UndockLead;
             beats.Reveal = beats.MoveEnd + RevealLag;
-            beats.Age = (float)(SharedUltimatePhase.Now - hp.Began);
+            beats.Age = hp.StageShowAge;
             return beats.MoveEnd > beats.MoveStart;
         }
 
@@ -504,7 +563,7 @@ namespace TumbangPreso.Map
         /// </summary>
         private bool TryTravel()
         {
-            if (!TryBreak(out var beats) || beats.To != Applied || beats.From == beats.To) return false;
+            if (!TryBreak(out var beats) || !beats.Showing || beats.To != Applied || beats.From == beats.To) return false;
             if (beats.Age >= beats.MoveEnd) return false;
 
             PoseTravel(beats.From, beats.To, beats.Travel, Mathf.Clamp01((beats.Age - beats.ScanStart) / HologramFade),
@@ -734,23 +793,26 @@ namespace TumbangPreso.Map
         private static bool IsAuthored(Piece piece, int layout) =>
             piece.Authored != null && layout < piece.Authored.Length && piece.Authored[layout];
 
-        private void ShowApplied()
+        private void ShowApplied() => Show(Applied);
+
+        /// <summary>The visuals at rest in one layout: the applied one, or a replay's.</summary>
+        private void Show(int layout)
         {
             Travelling = false;
-            _shown = Applied;
-            if (Applied < 0) return;
+            _shown = layout;
+            if (layout < 0) return;
 
             for (int i = 0; i < Pieces.Length; i++)
             {
                 var piece = Pieces[i];
-                if (piece == null || piece.Shapes == null || Applied >= piece.Shapes.Length) continue;
+                if (piece == null || piece.Shapes == null || layout >= piece.Shapes.Length) continue;
 
-                ShowSolid(piece, piece.Shapes[Applied].Exists ? Applied : -1, 0.0f, 0.0f);
+                ShowSolid(piece, piece.Shapes[layout].Exists ? layout : -1, 0.0f, 0.0f);
                 ShowMorph(i, false);
                 ShowHologram(i, -1, 0.0f, 0.0f);
             }
 
-            SetFeatures(Applied);
+            SetFeatures(layout);
         }
 
         /// <summary>Only that layout's solid of the piece is drawn (none for -1), turned `yaw`

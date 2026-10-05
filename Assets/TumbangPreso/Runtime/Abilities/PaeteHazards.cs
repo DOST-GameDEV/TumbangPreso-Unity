@@ -13,6 +13,21 @@ namespace TumbangPreso.Abilities
     /// </summary>
     public static class PaeteVine
     {
+        /// <summary>
+        /// A MAP'S OWN CATCH (owner, 2026-10-05, on the Arena: "paete's utility is like a grappling
+        /// hook but it doesnt even have much of a time window to let me clutch back up"). The reel
+        /// is a flat carry with a 3 m/s lift: it crosses a floor and cannot climb out of a drop. A
+        /// map with a drop answers here for a body at <paramref name="feet"/> whose vines reached
+        /// <paramref name="anchor"/> (<paramref name="caught"/>: on something, not the end of their
+        /// range): true with the floor he is hauled onto and the column he is hauled up
+        /// (`CharacterMotor.BeginHaul`). The Arena sets it for a body in its shaft
+        /// (`Map.ArenaFallRecovery.VineCatch`).
+        ///
+        /// ⚠️ NULL ON EVERY OTHER MAP, where the anchor and the reel are exactly what they were.
+        /// </summary>
+        public delegate bool CatchRule(Vector3 feet, Vector3 anchor, bool caught, out Vector3 via, out Vector3 landing);
+        public static CatchRule MapCatch;
+
         public static Vector3 FindAnchor(Vector3 feet, Vector3 forward, Vector3 aimPoint)
         {
             Vector3 origin = feet + Vector3.up * 1.3f;
@@ -32,6 +47,8 @@ namespace TumbangPreso.Abilities
                 best = hit.distance;
                 anchor = hit.point + hit.normal * 0.25f;
             }
+            // Over a map's drop the vines take the floor he will be hauled onto, so every peer draws them to it.
+            if (MapCatch != null && MapCatch(feet, anchor, !float.IsPositiveInfinity(best), out _, out Vector3 floor)) return floor;
             // Aimed at the sky with nothing to catch: the vines take the ground under that point.
             if (float.IsPositiveInfinity(best)) anchor.y = Mathf.Min(anchor.y, feet.y + 0.2f);
             anchor = AIController.ClampToPlayable(anchor, 0.4f);

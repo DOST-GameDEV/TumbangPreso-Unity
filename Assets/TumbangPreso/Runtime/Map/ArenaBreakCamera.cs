@@ -6,8 +6,8 @@ namespace TumbangPreso.Map
     /// The Arena's break picture: the camera that shows the stage rebuilding itself between
     /// rounds (owner: "ther'll be camera cinematics showing the transforming play arrea").
     ///
-    /// It is its own camera drawn OVER the game camera (a higher depth), enabled only while an
-    /// ordinary break is playing on this map, so `CameraRig` and `HalftimePresentation` are not
+    /// It is its own camera drawn OVER the game camera (a higher depth), enabled only while the
+    /// show is playing on this map, so `CameraRig` and `HalftimePresentation` are not
     /// touched and the player's view is exactly where it was when the break ends. It moves on
     /// the break's shared clock, never `deltaTime` (`Time.timeScale` is 0 in a break).
     ///
@@ -31,7 +31,9 @@ namespace TumbangPreso.Map
     /// THE DIM IS ON THIS CAMERA'S OWN GRADE (`ColourGrade.SetEventGrade`), so the scene's
     /// lights, the look system and the game camera are untouched and nothing has to be put back.
     ///
-    /// HALFTIME IS LEFT ALONE. The 10 s middle break keeps its own replay and standings.
+    /// AT HALFTIME IT WAITS. The middle break's own 10 s (replay, standings) play first with
+    /// this camera off; it takes the picture when the show starts
+    /// (`HalftimePresentation.StageShowPlaying`) and cuts the same five shots.
     ///
     /// It carries no listener and none of the game camera's outline or anti-alias
     /// passes; it takes the map's colour grade so the picture does not change tone at the cut.
@@ -114,7 +116,7 @@ namespace TumbangPreso.Map
         {
             var stage = ArenaStage.Instance;
             var hp = HalftimePresentation.Instance;
-            bool show = stage != null && hp != null && hp.Active && !hp.IsHalftime && hp.Duration > 0.0f;
+            bool show = stage != null && hp != null && hp.StageShowPlaying && hp.Duration > 0.0f;
 
             if (_camera.enabled != show) _camera.enabled = show;
             Showing = show ? _camera : (Showing == _camera ? null : Showing);

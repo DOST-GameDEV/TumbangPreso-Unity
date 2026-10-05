@@ -4,6 +4,7 @@
     blender -b --python tools/author_arena_holo.py -- --version=vN [--shots=eye,air,...] [--no-render]
     blender -b --python tools/author_arena_holo.py -- --version=vN --options     (the three balloon designs, blocked)
     blender -b --python tools/author_arena_holo.py -- --version=vN --shots=pose  (only the balloon's posed pictures)
+    blender -b --python tools/author_arena_holo.py -- --version=vN --shots=column  (only an ad column's head and foot)
 
 Builds ArtSource/arena/kits/holo.blend (collection `arena_holo`), tools/arena_holo_motion.json and
 the review pictures Logs/arena/holo/holo_<shot>_vN.png. Read docs/ARENA_ART_BRIEF.md first.
@@ -73,6 +74,14 @@ MOTION = os.path.join(ROOT, "tools", "arena_holo_motion.json")
 EYE = K.EYE
 Z = Vector((0, 0, 1))
 PRE = "arena_holo_"
+# LIGHT THAT RUNS OUT. A mesh built with `fade=True` carries a colour attribute of this name, white
+# with an alpha per corner. tools/export_arena_unity.py writes it (and only it) as COLOR_0, glTFast
+# imports COLOR_0 as the mesh's vertex colour, and TumbangPreso/ArenaGlow multiplies its alpha by the
+# vertex alpha (always: `_VertexTint` is only about the rgb, which stays white here). So a sheet of
+# light can dissolve along its length with no texture doing it: nothing to stretch, nothing for a
+# block-compressed texture to break up. `GONE` (1 - alpha, a plain float) is the same thing for
+# Blender's own pictures and is never exported: a mesh without it reads 0, which is "all there".
+FADE, GONE = "arena_fade", "holo_gone"
 
 EMIT = {"ads": 1.5, "fx": 1.4, "logo": 1.6, "metal": 1.0, "led": 2.4, "balloon": 1.0}
 FILE = {"ads": "ads", "fx": "fx", "logo": "fx", "metal": "metal", "led": "led", "balloon": "balloon"}
@@ -121,6 +130,12 @@ def material(kind):
         # would darken what is behind it, which a hologram never does.
         em = nt.nodes.new("ShaderNodeEmission")
         em.inputs["Strength"].default_value = EMIT[kind] * 1.15
+        gone = nt.nodes.new("ShaderNodeAttribute")                 # the vertex fade (`GONE`), as Unity's vertex alpha does it
+        gone.attribute_type = "GEOMETRY"; gone.attribute_name = GONE
+        left = nt.nodes.new("ShaderNodeMath"); left.operation = "MULTIPLY_ADD"
+        left.inputs[1].default_value = -EMIT[kind] * 1.15; left.inputs[2].default_value = EMIT[kind] * 1.15
+        nt.links.new(gone.outputs["Fac"], left.inputs[0])
+        nt.links.new(left.outputs[0], em.inputs["Strength"])
         nt.links.new(e.outputs["Color"], em.inputs["Color"])
         clear = nt.nodes.new("ShaderNodeBsdfTransparent")
         add = nt.nodes.new("ShaderNodeAddShader")
@@ -158,9 +173,11 @@ class Mesh:
     """One object. Points are given in the WORLD; `done` moves them to the object's own space, its
     origin at `origin` (the pivot) and, with `basis`, its axes turned (a leaning axis to spin on)."""
 
-    def __init__(self, name, origin, basis=None):
+    def __init__(self, name, origin, basis=None, fade=False):
         self.name, self.bm, self.slots = PRE + name, bmesh.new(), []
         self.uv = self.bm.loops.layers.uv.new("UVMap")
+        self.col = self.bm.loops.layers.float_color.new(FADE) if fade else None      # see FADE
+        self.gone = self.bm.loops.layers.float.new(GONE) if fade else None
         self.origin = Vector(origin)
         self.basis = basis
 
@@ -169,31 +186,39 @@ class Mesh:
             self.slots.append(kind)
         return self.slots.index(kind)
 
-    def face(self, pts, kind, uvs, smooth=False):
+    def face(self, pts, kind, uvs, smooth=False, alphas=None):
+        """`alphas` (a mesh built with fade=True only): how much of the light is there at each
+        point, 1 whole, 0 gone. See FADE."""
         f = self.bm.faces.new([self.bm.verts.new(p) for p in pts])
         f.material_index = self.slot(kind)
         f.smooth = smooth
         for l, uv in zip(f.loops, uvs):
             l[self.uv].uv = uv
+        if alphas is not None:
+            for l, a in zip(f.loops, alphas):
+                a = min(max(a, 0.0), 1.0)
+                l[self.col] = (1.0, 1.0, 1.0, a)
+                l[self.gone] = 1.0 - a
         return f
 
-    def quad(self, pts, kind, box, smooth=False):
+    def quad(self, pts, kind, box, smooth=False, alphas=None):
         """pts: bottom-left, bottom-right, top-right, top-left as its reader sees it."""
         u0, v0, u1, v1 = box
-        return self.face(pts, kind, ((u0, v0), (u1, v0), (u1, v1), (u0, v1)), smooth)
+        return self.face(pts, kind, ((u0, v0), (u1, v0), (u1, v1), (u0, v1)), smooth, alphas)
 
-    def ribbon(self, pts, width, side, kind="fx", tile="line", closed=False, cross=None):
+    def ribbon(self, pts, width, side, kind="fx", tile="line", closed=False, cross=None, alphas=None):
         """A line of light along pts: a strip `width` wide lying along `side` (a direction, or a
         function of the point's index), and with `cross` a second strip across it, so the line
-        cannot be seen edge-on from anywhere."""
+        cannot be seen edge-on from anywhere. `alphas`: one per point (see `face`)."""
         u0, v0, u1, v1 = T.atlas_uv(T.FX[tile])
         n = len(pts)
         for i in range(n if closed else n - 1):
             a, b = Vector(pts[i]), Vector(pts[(i + 1) % n])
+            fa = None if alphas is None else (alphas[i], alphas[(i + 1) % n], alphas[(i + 1) % n], alphas[i])
             for which in ((side, cross) if cross is not None else (side,)):
                 sa = (which(i) if callable(which) else which).normalized() * (width / 2)
                 sb = (which((i + 1) % n) if callable(which) else which).normalized() * (width / 2)
-                self.quad([a - sa, b - sb, b + sb, a + sa], kind, (u0, v0, u1, v1))
+                self.quad([a - sa, b - sb, b + sb, a + sa], kind, (u0, v0, u1, v1), alphas=fa)
 
     def lathe(self, centre, profile, sides=16, kinds=None, axis=Z, phase=0.0):
         """A closed solid of revolution: profile is (radius, height, kind) from the bottom of the
@@ -282,6 +307,12 @@ class Mesh:
 
     def done(self, coll, weld=True):
         bm = self.bm
+        if self.col is not None:                                  # every corner nobody faded is whole (the solids: a buoy, a bar)
+            for f in bm.faces:
+                for l in f.loops:
+                    if l[self.col][0] < 0.5:
+                        l[self.col] = (1.0, 1.0, 1.0, 1.0)
+                        l[self.gone] = 0.0
         inv = Matrix.Translation(-self.origin)
         if self.basis is not None:
             inv = self.basis.to_4x4().inverted() @ inv
@@ -444,6 +475,27 @@ def move(ob, kind, **kw):
 
 
 COLUMN_W = 52.0                            # one advertisement across: an ad is 52 m by 26 m, so nothing is stretched
+COLUMN_HEAD = 1.5                          # ad heights over which the stack dissolves at its top
+COLUMN_FOOT = 0.75                         # ad heights over which it comes up out of the projector's light
+COLUMN_GLOW = 0.85                         # ad heights the soft beam outlives the last ad by
+FADE_ROWS = 12                             # rows of faces across a fade: the ramp is a curve, a row is a straight piece of it
+FADE_GAMMA = 2.0                           # the project is linear: light that falls evenly to the eye falls as its square
+
+
+def ease(t):
+    t = min(max(t, 0.0), 1.0)
+    return t * t * (3.0 - 2.0 * t)
+
+
+def rows_between(za, zb, zones):
+    """Heights from za to zb: one step where nothing changes, FADE_ROWS steps across each (lo, hi) zone."""
+    zs = {za, zb}
+    for lo, hi in zones:
+        for k in range(FADE_ROWS + 1):
+            z = lo + (hi - lo) * k / FADE_ROWS
+            if za < z < zb:
+                zs.add(z)
+    return sorted(zs)
 
 
 def column(coll, name, bearing, r, z0, z1, strip, built):
@@ -454,58 +506,118 @@ def column(coll, name, bearing, r, z0, z1, strip, built):
     One ad fills the strip's width, so an ad is read whole and undistorted from the stage; v is the
     height over eight ads, so moving v scrolls the stack. Depth the flat way, every layer in its own
     plane (metres further from the can than the front strip):
-        -1.4  a scan band across the head and the foot       -0.8  edge lines and divider lines
+        -1.4  the foot's scan band, the head's scan lines     -0.8  edge lines and divider lines
          0.0  THE STRIP, one-sided, reading toward the can    0.9  a soft beam, wider than the strip
          1.6  a broken dotted sheet                           3.0  THE BACK STRIP, the other eight ads,
          3.8  the back's edge lines                                one-sided, reading the right way
-         4.4  the back's scan bands                                from the air
+         4.4  the back's scan band and scan lines                  from the air
     and one sheet of beam square across them all, so the column is not a hairline seen edge-on.
-    Under it a projector bar rides on two emitter buoys."""
+    Under it a projector bar rides on two emitter buoys.
+
+    THE HEAD AND THE FOOT (v7). The owner, 2026-10-05, of a picture of a column's head in the game:
+    "can we make the ads have a more natural top edge". What he saw above the last ad was the BEAM:
+    one quad 88 m wide and 610 m tall that ran 80 m past the ads, wearing a 192 x 176 px cell of the
+    fx atlas whose own top and bottom 16 % were its fade. A texel of it was 0.46 m wide and 3.5 m
+    TALL, the fade was 28 texels, and Unity block-compresses the atlas (4 x 4 blocks: 1.8 m by 14 m
+    of sky each; its emission image is 5:6:5 colour and no brighter than 53 of 255 there), so the
+    fade broke into ragged pale upright streaks, with the strip's hard top cut through whichever
+    ad was passing, and a scan band and two corner ticks drawn across the lot.
+
+    Now nothing at either end is a texture's doing. The stack DISSOLVES: over the top COLUMN_HEAD ad
+    heights every layer's light eases to nothing, by a per-corner alpha in rows (see FADE): both ad
+    strips, the dotted sheet, the edge lines and the dividers together, so an ad scrolls up into the
+    fade and is gone before the strip ends. The beam is a grid of corners that all read the ONE
+    brightest texel of its cell, its shape (soft across, rising out of the projector, outliving the
+    last ad by COLUMN_GLOW ad heights as a glow) entirely in the corners' alpha. Where the head's
+    scan band and ticks were, six thin scan lines stand in the fade, each fainter, shorter and
+    further from the last, their ends fading out. At the foot the frame is as it was (it is the
+    projector's end), and the ads come up out of it over COLUMN_FOOT ad heights instead of being cut."""
     F = Frame(bearing, r)
     w = COLUMN_W
     ad_h = w / T.AD_ASPECT
-    ads = Mesh("column_%s_ads" % name, F.p(0, 0, z0))
+    head, base = COLUMN_HEAD * ad_h, COLUMN_FOOT * ad_h
+    out = lambda z: ease((z1 - z) / head) ** FADE_GAMMA           # 1 below the head, 0 at the very top
+    up = lambda z: ease((z - z0) / base) ** FADE_GAMMA            # 0 at the foot, 1 above it
+    ends = ((z0, z0 + base), (z1 - head, z1))
+
+    ads = Mesh("column_%s_ads" % name, F.p(0, 0, z0), fade=True)
     for face, st in ((0, strip), (1, 1 - strip)):
         ua, ub, _ = T.ad_uv(st)
         ua, ub = ua + 0.5 / T.ADS_W, ub - 0.5 / T.ADS_W
         v0 = 0.37 * face
-        v1 = v0 + (z1 - z0) / (ad_h * T.ADS_PER_STRIP)
-        if face == 0:
-            pts = [F.p(-w / 2, 0.0, z0), F.p(w / 2, 0.0, z0), F.p(w / 2, 0.0, z1), F.p(-w / 2, 0.0, z1)]
-        else:                                                     # seen from behind: its reader's left is +x here
-            pts = [F.p(w / 2, 3.0, z0), F.p(-w / 2, 3.0, z0), F.p(-w / 2, 3.0, z1), F.p(w / 2, 3.0, z1)]
-        ads.quad(pts, "ads", (ua, v0, ub, v1))
+        V = lambda z: v0 + (z - z0) / (ad_h * T.ADS_PER_STRIP)    # an ad is ad_h tall whatever row it is in: nothing is stretched
+        zs = rows_between(z0, z1, ends)
+        for za, zb in zip(zs, zs[1:]):
+            la, lb = up(za) * out(za), up(zb) * out(zb)
+            if face == 0:
+                pts = [F.p(-w / 2, 0.0, za), F.p(w / 2, 0.0, za), F.p(w / 2, 0.0, zb), F.p(-w / 2, 0.0, zb)]
+            else:                                                 # seen from behind: its reader's left is +x here
+                pts = [F.p(w / 2, 3.0, za), F.p(-w / 2, 3.0, za), F.p(-w / 2, 3.0, zb), F.p(w / 2, 3.0, zb)]
+            ads.quad(pts, "ads", (ua, V(za), ub, V(zb)), alphas=(la, la, lb, lb))
     ob = move(ads.done(coll, weld=False), "scroll", v_per_second=0.018 + 0.004 * (strip * 2 - 1), material="arena_holo_ads")
     built.append(("column " + name, [ob], "ad column"))
 
-    rig = Mesh("column_%s_rig" % name, F.p(0, 0, z0))
-    dbox = T.atlas_uv(T.FX["dots"])
+    rig = Mesh("column_%s_rig" % name, F.p(0, 0, z0), fade=True)
+    du0, dv0, du1, dv1 = T.atlas_uv(T.FX["dots"])
     cell = w * 1.12 / 4
-    rows = int((z1 - z0 + 12.0) / cell)
+    rows = int(math.ceil((z1 - z0 + 6.0) / cell))
     for j in range(rows):                                         # the dotted sheet: square panels, one in three left out
         for k in range(4):
             if (j + k * 2 + int(bearing)) % 3 == 0:
                 continue
             xa, za = -w * 0.56 + k * cell, z0 - 6.0 + j * cell
-            rig.quad([F.p(xa, 1.6, za), F.p(xa + cell, 1.6, za), F.p(xa + cell, 1.6, za + cell), F.p(xa, 1.6, za + cell)], "fx", dbox)
-    beam = T.atlas_uv(T.FX["beam"])
-    foot, head = z0 - 26.0, z1 + 80.0
-    rig.quad([F.p(-w * 0.85, 0.9, foot), F.p(w * 0.85, 0.9, foot), F.p(w * 0.85, 0.9, head), F.p(-w * 0.85, 0.9, head)], "fx", beam)
-    rig.quad([F.p(0.0, -w * 0.30, foot), F.p(0.0, w * 0.36, foot), F.p(0.0, w * 0.36, head), F.p(0.0, -w * 0.30, head)], "fx", beam)
+            zs = rows_between(za, min(za + cell, z1), ends[1:])   # a panel in the head is cut into the fade's rows (and at the top)
+            for zc, zd in zip(zs, zs[1:]):
+                va, vb = dv0 + (dv1 - dv0) * (zc - za) / cell, dv0 + (dv1 - dv0) * (zd - za) / cell
+                rig.quad([F.p(xa, 1.6, zc), F.p(xa + cell, 1.6, zc), F.p(xa + cell, 1.6, zd), F.p(xa, 1.6, zd)], "fx", (du0, va, du1, vb),
+                         alphas=(out(zc), out(zc), out(zd), out(zd)))
+
+    # THE BEAM: every corner reads the one brightest texel of its cell (the middle), and the corners'
+    # alpha is its whole shape. Nothing of the cell is stretched over the sky any more.
+    bu0, bv0, bu1, bv1 = T.atlas_uv(T.FX["beam"])
+    core = ((bu0 + bu1) / 2, (bv0 + bv1) / 2)
+    foot, glow = z0 - 26.0, z1 + COLUMN_GLOW * ad_h
+    rise = lambda z: ease((z - foot) / (26.0 + base)) ** FADE_GAMMA
+    die = lambda z: ease((glow - z) / (head + COLUMN_GLOW * ad_h)) ** FADE_GAMMA
+    beam_zs = rows_between(foot, glow, ((foot, z0 + base), (z1 - head, glow)))
+
+    def beam(at, span, cols):
+        """An upright sheet of beam: `at(x)` the point x metres along it at height 0, `span` its two ends."""
+        xs = [span[0] + (span[1] - span[0]) * i / cols for i in range(cols + 1)]
+        mid, reach = (span[0] + span[1]) / 2, (span[1] - span[0]) / 2
+        soft = lambda x: max(0.0, 1.0 - abs(x - mid) / reach) ** 2.6
+        for za, zb in zip(beam_zs, beam_zs[1:]):
+            ha, hb = rise(za) * die(za), rise(zb) * die(zb)
+            for xa, xb in zip(xs, xs[1:]):
+                rig.face([at(xa) + Z * za, at(xb) + Z * za, at(xb) + Z * zb, at(xa) + Z * zb], "fx", (core,) * 4,
+                         alphas=(soft(xa) * ha, soft(xb) * ha, soft(xb) * hb, soft(xa) * hb))
+
+    beam(lambda x: F.p(x, 0.9, 0.0), (-w * 0.85, w * 0.85), 16)
+    beam(lambda x: F.p(0.0, x, 0.0), (-w * 0.30, w * 0.36), 8)
+
     scan = T.atlas_uv(T.FX["scan"])
+    side_zs = rows_between(z0 - 3.0, z1, ends[1:])
     for y, sgn in ((-0.8, 1), (3.8, -1)):                         # the frame: an edge line up each side, a divider every four ads
         for sx in (-1, 1):
-            rig.ribbon([F.p(sx * (w / 2 + 1.3), y, z0 - 3.0), F.p(sx * (w / 2 + 1.3), y, z1 + 3.0)], 1.1, F.dx, cross=F.dy)
+            rig.ribbon([F.p(sx * (w / 2 + 1.3), y, z) for z in side_zs], 1.1, F.dx, cross=F.dy, alphas=[out(z) for z in side_zs])
         zz = z0 + ad_h * 4
         while zz < z1 - 1.0:
-            rig.ribbon([F.p(-w / 2 - 0.4, y + 0.2 * sgn, zz), F.p(w / 2 + 0.4, y + 0.2 * sgn, zz)], 0.8, Z)
+            if out(zz) > 0.02:
+                rig.ribbon([F.p(-w / 2 - 0.4, y + 0.2 * sgn, zz), F.p(w / 2 + 0.4, y + 0.2 * sgn, zz)], 0.8, Z, alphas=[out(zz)] * 2)
             zz += ad_h * 4
-        for zz in (z0 - 3.0, z1 + 3.0):                           # corner ticks closing the frame at the foot and the head
-            for sx in (-1, 1):
-                rig.ribbon([F.p(sx * (w / 2 + 1.85), y - 0.2 * sgn, zz), F.p(sx * (w / 2 - 7.0), y - 0.2 * sgn, zz)], 1.1, Z)
+        for sx in (-1, 1):                                        # corner ticks closing the frame at the foot (the head is left open)
+            rig.ribbon([F.p(sx * (w / 2 + 1.85), y - 0.2 * sgn, z0 - 3.0), F.p(sx * (w / 2 - 7.0), y - 0.2 * sgn, z0 - 3.0)], 1.1, Z, alphas=[1.0] * 2)
     for y in (-1.4, 4.4):
-        for zz in (z0 - 9.0, z1 + 5.0):
-            rig.quad([F.p(-w * 0.54, y, zz), F.p(w * 0.54, y, zz), F.p(w * 0.54, y, zz + 3.4), F.p(-w * 0.54, y, zz + 3.4)], "fx", scan)
+        zz = z0 - 9.0                                             # the scan band across the foot
+        rig.quad([F.p(-w * 0.54, y, zz), F.p(w * 0.54, y, zz), F.p(w * 0.54, y, zz + 3.4), F.p(-w * 0.54, y, zz + 3.4)], "fx", scan, alphas=(1.0,) * 4)
+        # The head: six scan lines standing in the fade, thinning out upward (0 is where the fade
+        # starts, 1 the last ad's end): each fainter, thinner and shorter, its two ends fading out.
+        for t in (0.10, 0.25, 0.43, 0.64, 0.89, 1.18):
+            zz = z1 - head + head * t
+            lit = 0.85 * (1.0 - t / 1.36) ** 1.5
+            half = (w / 2) * (1.0 - 0.34 * t)
+            xs = (-half, -half * 0.55, half * 0.55, half)
+            rig.ribbon([F.p(x, y, zz) for x in xs], 0.9 - 0.4 * t / 1.18, Z, alphas=(0.0, lit, lit, 0.0))
     # The emitter: a projector bar under the strip, its ends inside two buoys.
     band = "gold" if strip == 0 else "magenta"
     top = z0 - 26.0
@@ -1510,6 +1622,14 @@ def pictures(version, shots, info):
         shoot("close_jeepney_side", version, j.p(150.0, -120.0, -20.0), j.p(0, 0, -8.0), lens=32)
         f = Frame(PCX_FAR["bearing"], PCX_FAR["r"], info["pcx_far_z"])
         shoot("close_pcx_far", version, f.p(-90.0, -300.0, -60.0), f.p(0, 0, -20.0), lens=32)
+    if want("column"):                                            # a column's head and foot (v7: the stack dissolves, nothing is cut)
+        _, cb, cr, cz0, cz1, _ = COLUMNS[0]
+        c = Frame(cb, cr)
+        shoot("column_head_can", version, (0, 0, EYE), c.p(0, 0, cz1 - 40.0), lens=120)                 # as the owner's picture: from the stage, long
+        shoot("column_head_stage", version, c.p(-40.0, -190.0, cz1 - 120.0), c.p(0, 0, cz1 - 28.0), lens=28)
+        shoot("column_head_air", version, c.p(70.0, 210.0, cz1 + 30.0), c.p(0, 0, cz1 - 34.0), lens=28)  # the back strip
+        shoot("column_foot_stage", version, c.p(-40.0, -170.0, cz0 - 20.0), c.p(0, 0, cz0 + 16.0), lens=28)
+        shoot("column_foot_air", version, c.p(70.0, 200.0, cz0 + 110.0), c.p(0, 0, cz0 + 10.0), lens=28)
     if want("flat"):
         scene = bpy.context.scene
         engine = scene.render.engine

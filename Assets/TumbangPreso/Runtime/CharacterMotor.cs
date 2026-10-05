@@ -440,6 +440,7 @@ namespace TumbangPreso
         public void Teleport(Vector3 position)
         {
             if (!MayMutateGameplayState()) return;
+            EndHaul();
             if(IsEdgeRecovering)ClearTrip();
             if(_predictingAbility>=0)ExpectAbilityTeleport(_predictingAbility);
             // ⚠️⚠️ THE ARENA WALL IS ENFORCED HERE TOO, AND THIS IS THE PATH THAT ACTUALLY
@@ -940,9 +941,13 @@ namespace TumbangPreso
             }
 
             ApplyGravity(dt);
+            // A haul owns the whole velocity while it lasts (`CharacterMotor.Status.cs`).
+            StepHaul(dt);
 
             Vector3 total = _velocity + _externalVelocity;
             CollisionFlags flags = _cc.Move(total * dt);
+            // Hauled up into something overhead: the line lets go rather than pin the body there.
+            if ((flags & CollisionFlags.Above) != 0) EndHaul();
 
             // ⚠️ `isGrounded` ALONE IS NOT TRUSTWORTHY. It reflects only the last Move and
             // goes false on slopes, on steps and on the frame an impulse lifts the capsule.
@@ -1305,6 +1310,24 @@ namespace TumbangPreso
         /// </summary>
         private const float GroundedRestVelocityY = -2.0f;
 
+        /// <summary>
+        /// A MAP'S OWN FALL. A map may change the gravity and the terminal speed of a body that
+        /// is in the air in its own space: the Arena's shaft, where an updraft slows the fall
+        /// (`Map.ArenaFallRecovery.Updraft`, owner, 2026-10-05: "the fall effect is too fast").
+        /// It is handed the game's numbers (`Balance.CharacterGravity`, `Balance.MaxFallSpeed`)
+        /// and changes them or leaves them.
+        ///
+        /// ⚠️ NULL ON EVERY OTHER MAP, and then the two numbers reach the same two lines they
+        /// always did: nothing about a fall anywhere else moves. The map that sets it clears it
+        /// when it unloads, as `MatchRpc.MoveFloorY` is.
+        ///
+        /// ⚠️ ONLY THE PEER THAT SIMULATES THE BODY RUNS IT (`ApplyGravity` is never reached on a
+        /// replica), and nothing is sent: the owner falls slower and its poses travel as they
+        /// always do. `MatchRpc.AcceptMove` limits how FAST a body may go, never how slow.
+        /// </summary>
+        public delegate void FallRule(CharacterMotor who, ref float gravity, ref float maxFallSpeed);
+        public static FallRule MapFall;
+
         private void ApplyGravity(float dt)
         {
             // Flight owns the vertical while it lasts (`CharacterMotor.Status.cs`).
@@ -1353,8 +1376,10 @@ namespace TumbangPreso
             }
             else
             {
-                _velocity.y -= Balance.CharacterGravity * dt;
-                if (_velocity.y < -Balance.MaxFallSpeed) _velocity.y = -Balance.MaxFallSpeed;
+                float gravity = Balance.CharacterGravity, maxFallSpeed = Balance.MaxFallSpeed;
+                MapFall?.Invoke(this, ref gravity, ref maxFallSpeed);
+                _velocity.y -= gravity * dt;
+                if (_velocity.y < -maxFallSpeed) _velocity.y = -maxFallSpeed;
             }
         }
 

@@ -1556,7 +1556,15 @@ namespace TumbangPreso.CameraSystem
             // and behind the body looking DOWN the shaft: its rings go by and the city is under
             // their feet. `ArenaStage.IsShaftFall` is false on every other map (no stage), and
             // the drone's own view (`ApplyEdgeRecoveryView`) takes over at the catch.
-            bool shaft = Map.ArenaStage.IsShaftFall(_character);
+            //
+            // ⚠️⚠️ ONLY ONCE THE BODY IS PAST SAVING (owner, 2026-10-05, playing: "paete's utility is
+            // like a grappling hook but it doesnt even have much of a time window to let me clutch
+            // back up"). This view is the emote orbit: the mouse turns the lens and not the body,
+            // the pitch is held between 6 and 48 degrees DOWN, and `AimPoint` is cast along it, so
+            // from the first metre of a fall a player could not look at the deck, let alone aim a
+            // skill at it. Down to `ArenaFallRecovery.LostDepth` the view and the aim stay the
+            // player's own; under it "nothing the player presses matters" is true and this opens.
+            bool shaft = Map.ArenaFallRecovery.IsLostFall(_character);
             bool down = _character != null && (_character.IsTripped || held || rooted || blown || shaft);
             if (down != _fallView) _blownView = down && blown;
             if (shaft && !_shaftView) _shaftOpened = true;

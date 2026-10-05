@@ -14,6 +14,8 @@ like a balloon, like the balloon cow in overwatch".
 
   ads      1024 x 2048, RGBA. TWO STRIPS of eight advertisements, one above the next, for the ad
            columns. v wraps, so Unity scrolls a strip by moving v; u 0..0.5 is strip A, 0.5..1 is B.
+           Each ad stands clear of its cell's sides (AD_GUTTER), so the strips do not bleed
+           into each other in the far mips.
            An ad is light on nothing: a faint wash, a hand-drawn frame, lettering and one emblem.
   fx       2048 x 2048, RGBA. The free-standing holograms' atlas (FX): PC EXPRESS, the TUMP stamp,
            the globe's ring of text, five LINE-ART FIGURES of the game's world (a jeepney, a
@@ -57,6 +59,15 @@ ADS_W, ADS_H = 1024, 2048
 AD_PX = (512, 256)                         # one advertisement
 ADS_PER_STRIP = 8
 AD_ASPECT = 2.0
+# THE GUTTER. The two strips share one image, side by side, and a column is 400 to 700 m from the
+# stage: Unity draws it from the third or fourth mip, where one texel is 8 or 16 of these pixels and
+# a strip's edge takes in its neighbour (and, the image wrapping in u, strip B's far edge takes in
+# strip A's near one). So an ad is laid into its 512 x 256 cell at 480 x 240 (the same shape: 2 : 1),
+# 16 px clear of each side and 8 px of the top and the bottom. With the ad's own clear margin that
+# is 23 px of nothing between a strip's edge and its first line: clean to the fourth mip. v needs no
+# gutter: above and below an ad is the next ad of its own strip, and the image wraps in v on purpose
+# (ArenaHoloMotion scrolls it; ArenaArtPlacer imports it Repeat).
+AD_GUTTER = (16, 8)
 # (key, ground, ink, second ink, lines). The order is top to bottom.
 STRIPS = (
     ("pcx", "sinag", "tsinelas", "kape", "liga", "pisonet", "halo", "lata"),
@@ -774,14 +785,24 @@ def ad(key, seed):
 
 
 def ads():
+    """The two strips. Each ad is painted at AD_PX and laid into its cell AD_GUTTER px clear of the
+    cell's sides (see AD_GUTTER): brought down whole, the same in both directions, so it is not
+    stretched. Its colour is brought down under its own alpha, so no dark fringe is made."""
     rgb = np.zeros((ADS_H, ADS_W, 3))
     alpha = np.zeros((ADS_H, ADS_W))
     w, h = AD_PX
+    gx, gy = AD_GUTTER
+    iw, ih = w - 2 * gx, h - 2 * gy
     for s, strip in enumerate(STRIPS):
         for k, key in enumerate(strip):
             c, a = ad(key, 9000 + s * 100 + k * 10)
-            rgb[k * h:(k + 1) * h, s * w:(s + 1) * w] = c
-            alpha[k * h:(k + 1) * h, s * w:(s + 1) * w] = a
+            lit = np.dstack([c * a[..., None], a]).astype(np.float32)
+            small = np.dstack([np.asarray(Image.fromarray(lit[..., i], mode="F").resize((iw, ih), Image.LANCZOS)) for i in range(4)])
+            sa = np.clip(small[..., 3], 0, 1)
+            sc = np.clip(small[..., :3] / np.maximum(sa, 1e-4)[..., None], 0, 1)
+            y0, x0 = k * h + gy, s * w + gx
+            rgb[y0:y0 + ih, x0:x0 + iw] = sc
+            alpha[y0:y0 + ih, x0:x0 + iw] = sa
     rgb = bleed(rgb, alpha)
     save("ads", rgb, alpha)
     save("ads_emit", rgb * alpha[..., None])

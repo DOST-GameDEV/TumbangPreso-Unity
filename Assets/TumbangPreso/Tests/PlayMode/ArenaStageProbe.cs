@@ -251,12 +251,15 @@ namespace TumbangPreso.PlayTests
 
                 who.Teleport(new Vector3(gap.x, 1.0f, gap.z));
                 float lowest = who.transform.position.y, began = Time.realtimeSinceStartup;
+                // Game time as well: the updraft's fall is a length of game time, whatever the frame rate.
+                float beganGame = Time.time, atOneSecond = float.NaN;
                 bool shotFalling = false; int traced = 0; var trace = new StringBuilder();
                 while (Time.realtimeSinceStartup - began < 8f && who.EdgeKind != EdgeRecoveryKind.Drone)
                 {
                     Time.timeScale = 1f; lowest = Mathf.Min(lowest, who.transform.position.y);
-                    // The first second and a half, ten times a second: where the body is and what is under it.
-                    if (traced < 15 && Time.realtimeSinceStartup - began >= traced * 0.1f)
+                    if (float.IsNaN(atOneSecond) && Time.time - beganGame >= 1.0f) atOneSecond = who.transform.position.y;
+                    // The whole fall (about 3.5 s), ten times a second: where the body is and what is under it.
+                    if (traced < 38 && Time.realtimeSinceStartup - began >= traced * 0.1f)
                     {
                         traced++;
                         Vector3 at = who.transform.position;
@@ -270,7 +273,10 @@ namespace TumbangPreso.PlayTests
                 }
                 bool caught = who.EdgeKind == EdgeRecoveryKind.Drone;
                 float caughtAfter = Time.realtimeSinceStartup - began;
+                float fellFor = Time.time - beganGame;
                 report.AppendLine($"FALL: {who.name} (bot {who.IsBot}) dropped at ({gap.x:F1}, {gap.z:F1}); caught {(caught ? "after " + caughtAfter.ToString("F2") + " s" : "NEVER")}, lowest y {lowest:F2}");
+                report.AppendLine($"  the fall in game time: {fellFor:F2} s to the catch, y {atOneSecond:F2} after the first second " +
+                                  $"(the updraft: {ArenaFallRecovery.UpdraftGravity:F0} m/s2, {ArenaFallRecovery.UpdraftSpeedTop:F0} to {ArenaFallRecovery.UpdraftSpeedDeep:F0} m/s over {ArenaFallRecovery.UpdraftDepth:F0} m)");
                 report.Append(trace);
                 if (!caught) Fail("fall: the body was never taken by the drone (EdgeKind never became Drone)");
                 else
@@ -279,6 +285,11 @@ namespace TumbangPreso.PlayTests
                     // The owner's rule (2026-10-05): a real fall. The early catch (`ArenaFallRecovery.PoseLead`) may take
                     // a body at terminal speed a metre or so above the line; anything higher is the old short fall.
                     if (lowest > ArenaStage.CatchY + 2.5f) Fail($"fall: the body was caught at y {lowest:F2}, well above the catch line {ArenaStage.CatchY:F2}: not the long fall the design asks for");
+                    // The owner's rule (2026-10-05, second look): "the fall effect is too fast". On the updraft a drop
+                    // from 1 m over the deck is caught about 3.5 s later and is about 3 m down after its first second;
+                    // at the game's own gravity it was caught after 1.4 s and was 8 m down after one.
+                    if (fellFor < 2.8f || fellFor > 4.5f) Fail($"fall: the body was caught {fellFor:F2} s of game time after the drop; the updraft's fall is 3.0 to 3.5 s");
+                    if (!(atOneSecond > -6.5f)) Fail($"fall: the body was at y {atOneSecond:F2} one second into the fall; on the updraft it is above -6.5");
                     began = Time.realtimeSinceStartup;
                     bool shotLift = false, shotBeam = false; float carriedLowest = lowest, highest = lowest;
                     while (Time.realtimeSinceStartup - began < 10f && who.IsEdgeRecovering)

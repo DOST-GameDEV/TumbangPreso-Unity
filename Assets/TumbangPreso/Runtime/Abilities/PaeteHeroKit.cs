@@ -107,6 +107,12 @@ namespace TumbangPreso.Abilities
                 _elapsed += dt;
                 if (_elapsed < PaeteRules.VineReachSeconds) return;
                 _reeled = true;
+                // ⚠️ OUT OF A MAP'S DROP, THE VINES HAUL (`PaeteVine.MapCatch`, the Arena's shaft): up the
+                // column and over onto the floor, which the flat reel below cannot do. Asked again here
+                // because he has fallen further since the vines left. Null on every other map.
+                if (PaeteVine.MapCatch != null
+                    && PaeteVine.MapCatch(_caster.transform.position, _anchor, true, out Vector3 via, out Vector3 landing)
+                    && _caster.BeginHaul(via, landing, PaeteRules.VineReelSpeed)) return;
                 // His own body: the owner simulates it (BeginCarry refuses anywhere else).
                 Vector3 d = Flat(_anchor - _caster.transform.position);
                 if (d.magnitude <= PaeteRules.VineStopShort) return;

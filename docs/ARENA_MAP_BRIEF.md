@@ -140,7 +140,7 @@ messages on `MatchRpc` (no NetworkVariables); `NetSession.ProtocolVersion` is 14
   `MatchBreak` (`SharedUltimatePhase.Now`). The stage animates on THAT clock, never `deltaTime`.
 - The break today draws a frozen frame. On this map it draws the live stage through cinematic
   cameras (owner: "ther'll be camera cinematics showing the transforming play arrea").
-- THE BREAK IS LONGER ON THIS MAP: 8 s in place of 3.5 s (start value; halftime stays 10 s). The
+- THE BREAK IS LONGER ON THIS MAP: 8 s in place of 3.5 s (start value; halftime is its own 10 s and THEN these 8 s, see ARENA-1.9). The
   duration is read from the map on every peer, so it stays shared. This is a timing change like
   protocol133's and ships under the same protocol bump as the map's entry in the pool.
 - Colliders switch to the next layout at the break's start (nothing simulates while held); the
@@ -247,6 +247,35 @@ speed is 25 m/s (`Balance.MaxFallSpeed`), under the 30 m/s move budget, so a 22 
 falls the camera swings out above it looking down the shaft, the body tumbles and wind streaks rush
 past it (`ArenaStage.IsShaftFall`).
 
+### The fall is a clutch window (ARENA-1.10, 2026-10-05)
+The owner, playing: "the fall effect is too fast, paete's utility is like a grappling hook but it
+doesnt even have much of a time window to let me clutch back up". This REPLACES the 1.5 s and the
+"while a body falls" sentence above. The catch line, the move floor and the kill plane have not moved.
+
+- THE UPDRAFT (`ArenaFallRecovery.Updraft`, set as `CharacterMotor.MapFall` while the map is loaded,
+  null on every other map). A body in the air with nothing of the stage under it, from 0.3 m under
+  the deck: gravity 8 m/s2 (20 elsewhere), terminal speed 3 m/s at the deck rising to 10 m/s from
+  14 m down (25 elsewhere), and a body arriving faster is braked at 30 m/s2. Walking off an edge:
+  3.7 m down after 1 s (it was 12.2), 6.4 m after 1.5 s, 9.8 m after 2 s, caught at y -22 after 3.3 s
+  (it was 1.4 s). Air control is the motor's own, unchanged (full walking speed).
+- ONLY THE PEER THAT SIMULATES THE BODY RUNS IT. Nothing is sent. The host and the replicas never
+  predicted a fall (a remote body is where its owner's poses put it), and `AcceptMove` limits how
+  fast a body goes, never how slow. The catch is still the host's, at the line.
+- PAETE'S LIANA LEAP IS A FLAT REEL (14 m/s along the ground, a 3 m/s lift): time alone could not
+  make it a way back. In the shaft it hauls instead (`PaeteVine.MapCatch` = `ArenaFallRecovery.VineCatch`,
+  `CharacterMotor.BeginHaul`): the vines take the deck point nearest what they caught, if that was
+  the stage, else the one nearest him within 9 m of his chest (his 8 m range to the rim, and the
+  metre in from it), and he is pulled up his own column and over onto it at 14 m/s. Cast within
+  about 1.8 s of leaving the edge. No deck in reach, or a floor over his head: the ordinary reel.
+- THE VIEW AND THE BODY ARE THE PLAYER'S OWN down to 10.5 m under the deck (`ArenaFallRecovery.LostDepth`,
+  about 2.1 s in). The fall view is the emote orbit (the mouse turns the lens, not the body; the
+  pitch is held 6 to 48 degrees down; the aim is cast along it), so it used to take the aim away
+  from the first metre. It and the tumble now open only under that depth, where no skill reaches.
+- OTHER KITS: Nemu's return to Kuro and Amihan's Updraft (2.8 m of climb, so from the first 0.7 s)
+  work as they always did, with the longer window. Dashes and blinks are flat and do not climb.
+- SEEN: a teal ring lifting off under the body and cyan streaks rising past it (`ArenaFallRecovery.Gust`
+  through `ArenaFx`), on every peer, in the window only.
+
 ### Effects
 Every effect on this map is drawn by `ArenaFx` (one mesh, one material, one draw call) and placed
 by `ArenaShow`, `ArenaDrone` or `ArenaAmbience`. All of it is presentation, local to each peer, and
@@ -301,3 +330,22 @@ The owner, after playing: "the spotlight being pointed at you when the can is do
 - Everything has the bowl's reverb baked in (a synthesised impulse response, loops convolved circularly so they have no seam). `py -3 tools/synth_arena_crowd_sfx.py --report` writes pictures and numbers to `Logs/arena/audio/`.
 - On this map the announcer's takes play through the stadium (`Resources/ArenaPa/pa_<take>.wav`, baked by the same tool; rerun it with `--only pa` when a new take lands in `Resources/Vo`).
 - The map's own lines are NOT RECORDED (there is no text to speech here): `ArenaCrowdAudio.Lines` lists the nine, with wording. Each is wired and captioned and plays the day `Resources/Vo/vo_<id>_1.wav` exists; until then a sting marks the moment.
+
+## Halftime is two acts: the package, then the show (ARENA-1.9, 2026-10-05)
+
+The owner, playing: "halftime replay is interfereing with the transformation animation". NOT YET RUN: compiled outside Unity only.
+
+What collided. The colliders went to the next layout at the break's start, so the replay's camera and ground marks cast against the wrong floor. The replay is the LIVE scene drawn with recorded bodies, and the stage in it was already scanning (2.7 s) and moving (5.0 s) under them, with the pads switched off. A clip from an earlier round was drawn on the current round's layout. The rest of the travel ran hidden behind the frozen frame, so the round started on a stage nobody saw change.
+
+Now, on this map only, halftime is 18 s on the one shared clock (`HalftimePresentation.DurationFor`, from the host's `Began` stamp and the map, nothing sent):
+
+| Seconds | Act | What |
+|---|---|---|
+| 0 to 10 | THE PACKAGE, as on every map | frozen frame; replay from 0.35 s to 5.8 s; standings to 10 s (the centred card). The stage stands on the layout of the round just played, colliders and visuals; no show light, sound, camera, drone or PA call. |
+| 10 to 18 | THE SHOW | the ARENA-1.6 table from its 0.0 to its 8.0, unchanged (alarm, move, reveal, break camera, lift, crowd). The colliders go to the next layout at 10.0. The frozen frame is dropped and the card comes in again in the lower third. |
+
+- ONE CLOCK FOR THE SHOW: `HalftimePresentation.StageShowBegan`, `StageShowAge`, `StageShowPlaying` (the break's start on an ordinary break, the package's end at halftime). `ArenaStage.TryBreak` reads it and gives `BreakBeats.Age` and `Showing`; `ArenaShow`, `ArenaBreakCamera`, `ArenaAmbience` and `ArenaCrowdAudio` read only those. A peer joining in either act computes the same act.
+- To trim the standings, lower `ArenaStage.HalftimeLeadSeconds` (10; the replay ends at 5.8 s). It is the only number.
+- A REPLAY ON THIS MAP stands the stage in the layout of the clip's own round (`ArenaStage.BeginReplay`, from the clip's match id and round; the clip format is unchanged), and leaves out this map's effects mesh (it is built facing the live camera) and its drones (live, not recorded).
+- NOT DONE: the drone is not recorded, so a clip that contains a fall shows the body carried by nothing; the crowd, the screens and the balloon in a replay are the present ones, not the recorded moment's.
+- `ArenaMatchProbe` now expects 18 s at halftime, the stage travelling in every break, and no travel during the package.

@@ -48,7 +48,7 @@ namespace TumbangPreso.PlayTests
         private const int Width = 1600, Height = 900;
         private const float FrameStep = 1.0f / 60.0f;
         /// <summary>A layout whose bots fall more often than this (per bot, per minute of live
-        /// play) is called a FAIL: a fall costs about eight seconds, so one a minute is an eighth
+        /// play) is called a FAIL: a fall costs about twelve seconds (3.3 falling on the updraft, 3.5 carried, 5 frozen), so one a minute is a fifth
         /// of a bot's round. The probe's own line, not a rule of the game.</summary>
         private const float FallRateLimit = 1.0f;
         /// <summary>A layout whose bots spend more than this share of live play standing still
@@ -136,6 +136,8 @@ namespace TumbangPreso.PlayTests
             public float Began, Ended = -1;
             public double BreakBegan = -1, BreakEnded = -1;
             public bool Travelled;
+            /// <summary>The stage was seen moving in halftime's package (its replay and standings), before the show.</summary>
+            public bool TravelledEarly;
             public int Knocks, Restores, Tags;
         }
 
@@ -280,6 +282,8 @@ namespace TumbangPreso.PlayTests
                     if (!held) clock += Time.deltaTime;
                     int layout = stage.Applied;
                     if (current != null && stage.Travelling && held) current.Travelled = true;
+                    var breakNow = HalftimePresentation.Instance;
+                    if (current != null && stage.Travelling && breakNow != null && breakNow.Active && !breakNow.StageShowPlaying) current.TravelledEarly = true;
                     bool play = round.RoundActive && !held && match.MatchInProgress && layout >= 0;
                     if (play) { live[layout] += Time.deltaTime; liveFrames++; }
 
@@ -338,7 +342,7 @@ namespace TumbangPreso.PlayTests
                                 fall = track.Open = new Fall
                                 {
                                     Round = match.RoundNumber, Layout = layout, Seat = i, Defender = who.IsDefender,
-                                    Launched = clock - track.LastLaunchAt < 4.0f, Stunned = track.WasStunned, Jumped = track.MaxRise > 2.0f,
+                                    Launched = clock - track.LastLaunchAt < 6.5f, Stunned = track.WasStunned, Jumped = track.MaxRise > 2.0f,
                                     Boosted = who.IsSpeedBoosted, Plan = brains[i] != null ? brains[i].Plan.ToString() : "-",
                                     Left = track.HadGround ? track.LastGrounded : at, Caught = at, At = clock, Lowest = at.y,
                                     Airborne = clock - track.LastGroundedAt, LeftSpeed = leftVelocity.magnitude, Phase = 1, Mark = clock,
@@ -475,7 +479,7 @@ namespace TumbangPreso.PlayTests
                 float liveTotal = live.Sum();
                 report.AppendLine($"ARENA MATCH PROBE, {SceneFlow.Arena}, {mode}, {rounds} rounds of {roundSeconds} s (CustomRules, pinned), {(human ? "three bots and an idle player in seat 1 (the _hud pictures are that player's view)" : "four bots (GameLaunch.AllBots)")}");
                 report.AppendLine($"Arrival and countdown took {arrival:F1} s. Then {frames} frames at a fixed 1/60 s: {clock:F0} s of game time ({liveTotal:F0} s of live rounds) in {realPlay:F0} s of real time, " +
-                                  $"breaks included; live play ran at about {(liveFrames > 0 && realPlay > 0 ? liveTotal / Mathf.Max(1.0f, realPlay - breaks * ArenaStage.BreakSeconds) : 0):F1}x real time.");
+                                  $"breaks included; live play ran at about {(liveFrames > 0 && realPlay > 0 ? liveTotal / Mathf.Max(1.0f, realPlay - (float)records.Where(r => r.BreakBegan >= 0 && r.BreakEnded >= 0).Sum(r => r.BreakEnded - r.BreakBegan)) : 0):F1}x real time.");
                 report.AppendLine($"Match ended: {ended} (winner seat {winner}); rounds started {records.Count}; breaks {breaks}; scores {string.Join(", ", Enumerable.Range(0, Balance.PlayerCount).Select(s => match.ScoreFor(s)))}.");
                 report.AppendLine($"Travelled in live play: {string.Join(", ", travelled.Select((t, i) => $"seat {i} {t:F0} m"))}.");
                 report.AppendLine();
@@ -520,6 +524,9 @@ namespace TumbangPreso.PlayTests
                     report.AppendLine($"  t {fall.At,5:F0} round {fall.Round} '{stage.Layouts[Mathf.Max(0, fall.Layout)].Name}' seat {fall.Seat}{(fall.Defender ? " (taya)" : "")} plan {fall.Plan}: left {fall.Piece} at ({fall.Left.x:F1}, {fall.Left.y:F1}, {fall.Left.z:F1}) " +
                                       $"at {fall.LeftSpeed:F1} m/s, {how}, {fall.Airborne:F2} s in the air; caught at ({fall.Caught.x:F1}, {fall.Caught.y:F2}, {fall.Caught.z:F1}), lowest {fall.Lowest:F2}; {after}");
                     if (fall.Lowest <= ArenaStage.MoveFloorY) fallsOk = false;
+                    // The updraft (`ArenaFallRecovery.Updraft`): from a deck to the catch is over 3 s. Under 2.5 s in
+                    // the air is the game's own gravity, which reaches the line in 1.4 s.
+                    if (fall.Airborne < 2.5f) { fallsOk = false; report.AppendLine($"    TOO FAST: {fall.Airborne:F2} s in the air, the updraft's fall is 3.0 to 3.5 s"); }
                     if (fall.Interrupted) continue;
                     if (fall.Phase >= 2 && (!fall.OnFloor || !fall.Tagged)) fallsOk = false;
                     if (fall.Phase >= 3 && Mathf.Abs(fall.FrozenFor - StatusRules.TaggedSeconds) > 0.6f) fallsOk = false;
@@ -563,9 +570,9 @@ namespace TumbangPreso.PlayTests
                 report.AppendLine();
 
                 var played = records.Where(r => r.BreakBegan >= 0).ToList();
-                bool breaksOk = breaks == rounds - 1 && played.Count == breaks && played.All(r => r.BreakEnded >= 0 && Math.Abs(r.BreakEnded - r.BreakBegan - HalftimePresentation.DurationFor(HalftimePresentation.IsMiddleBreak(r.Round, rounds))) < 1.0 && (r.Travelled || HalftimePresentation.IsMiddleBreak(r.Round, rounds)));
+                bool breaksOk = breaks == rounds - 1 && played.Count == breaks && played.All(r => r.BreakEnded >= 0 && Math.Abs(r.BreakEnded - r.BreakBegan - HalftimePresentation.DurationFor(HalftimePresentation.IsMiddleBreak(r.Round, rounds))) < 1.0 && r.Travelled && !r.TravelledEarly);
                 Verdict("BREAKS: each round's end plays the break, the stage travels, the next round starts", breaksOk,
-                    $"{breaks} breaks for {rounds} rounds; lengths {string.Join(", ", played.Select(r => r.BreakEnded >= 0 ? (r.BreakEnded - r.BreakBegan).ToString("F2") : "open"))} s (the map's break is {ArenaStage.BreakSeconds:F0} s); pictures {(breakShots ? "written (match_break_*.png)" : "NOT written")}");
+                    $"{breaks} breaks for {rounds} rounds; lengths {string.Join(", ", played.Select(r => r.BreakEnded >= 0 ? (r.BreakEnded - r.BreakBegan).ToString("F2") : "open"))} s (the map's break is {ArenaStage.BreakSeconds:F0} s; its halftime is {HalftimePresentation.HalftimeDuration:F0} s of replay and standings and then that show, {HalftimePresentation.DurationFor(true):F0} s){(played.Any(r => r.TravelledEarly) ? "; THE STAGE MOVED DURING HALFTIME'S REPLAY OR STANDINGS" : "")}; pictures {(breakShots ? "written (match_break_*.png)" : "NOT written")}");
 
                 report.AppendLine("PADS AND PICKUPS, fires per layout (jump pads / speed pads / stamina pickups taken)");
                 for (int l = 0; l < layoutCount; l++)

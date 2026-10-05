@@ -409,7 +409,7 @@ namespace TumbangPreso.Map
             _chase = Mathf.Max(0.0f, _chase - dt);
 
             bool focus = _focus > 0.0f, chase = _chase > 0.0f && !focus;
-            if (stage.TryBreak(out var beats) && !beats.Halftime && beats.From != beats.To)
+            if (stage.TryBreak(out var beats) && beats.Showing && beats.From != beats.To)
             {
                 focus = beats.Age >= beats.Undock && beats.Age < beats.Reveal + 0.8f;
                 chase = beats.Age < beats.Undock;

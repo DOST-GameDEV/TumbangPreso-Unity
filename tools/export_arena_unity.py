@@ -99,6 +99,12 @@ PROP_SETS = {
                     "drone_beam", "drone_beam_core", "drone_spot"),
 }
 SHAFT_RIM = "stage_shaft_rim"
+# THE ONE VERTEX COLOUR THAT IS EXPORTED: a colour attribute of this name (white, with an alpha per
+# corner), as COLOR_0. A mesh without it gets no COLOR_0, as before, whatever other colour attributes
+# it carries. glTFast imports COLOR_0 as the mesh's vertex colour and TumbangPreso/ArenaGlow
+# multiplies its alpha by the vertex alpha: that is how the Holo kit's ad columns dissolve at their
+# heads (tools/author_arena_holo.py, FADE). The read-back at the end counts the files that carry it.
+VERTEX_FADE = "arena_fade"
 
 
 def log(*a):
@@ -229,7 +235,8 @@ def export_glb(objects, path):
     bpy.ops.export_scene.gltf(
         filepath=str(path), export_format="GLB", use_selection=True, export_apply=False, export_yup=True,
         export_materials="EXPORT", export_image_format="NONE", export_texcoords=True, export_normals=True,
-        export_tangents=False, export_vertex_color="NONE", export_attributes=False, export_cameras=False,
+        export_tangents=False, export_vertex_color="NAME", export_vertex_color_name=VERTEX_FADE, export_all_vertex_colors=False,
+        export_active_vertex_color_when_no_material=False, export_attributes=False, export_cameras=False,
         export_lights=False, export_animations=False, export_skins=False, export_morph=False, export_extras=False)
 
 

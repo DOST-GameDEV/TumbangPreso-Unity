@@ -780,12 +780,12 @@ namespace TumbangPreso.Map
         /// <summary>
         /// The crowd's part in the stage's transformation (`ArenaShow` has the light and its own
         /// cues, and calls `Reveal`): a hush under the alarm, and the PA calling the stage that
-        /// is coming. True while the alarm holds. Halftime is its own show and is left alone.
+        /// is coming. True while the alarm holds. Silent through halftime's package, before the show.
         /// </summary>
         private bool Break(ArenaStage stage, in ArenaStage.BreakBeats beats)
         {
             var hp = HalftimePresentation.Instance;
-            if (hp == null || beats.Halftime || beats.From == beats.To) return false;
+            if (hp == null || !beats.Showing || beats.From == beats.To) return false;
 
             if (hp.MatchId != _breakMatch || hp.CompletedRound != _breakRound)
             {
