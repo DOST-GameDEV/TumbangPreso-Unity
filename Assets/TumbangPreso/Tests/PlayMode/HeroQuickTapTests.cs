@@ -160,6 +160,52 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(HeroKit.CastOutcome.Missing, _hero.LastAnswer(HeroAbilitySystem.Slot.Skill1));
         }
 
+        [UnityTest] public IEnumerator ReenabledReaderDoesNotCastSignatureHeldDuringDisable()
+        {
+            yield return ActualConsumer();
+            _reader.enabled = false;
+            yield return NativePress(Key.E, false);
+            Assert.IsTrue(_keyboard.eKey.isPressed);
+            Assert.IsFalse(_hero.Kit.Skill1.IsActive, "Disabled producer must not cast.");
+            _reader.enabled = true;
+            yield return null; yield return null; yield return null;
+            Assert.IsFalse(_hero.Kit.Skill1.IsActive, "Reenable spent an E press from the disabled interval.");
+            Assert.AreEqual(HeroKit.CastOutcome.Missing, _hero.LastAnswer(HeroAbilitySystem.Slot.Skill1));
+            InputSystem.QueueStateEvent(_keyboard, new KeyboardState());
+            yield return null; yield return null;
+            yield return NativePress(Key.E, false);
+            Assert.IsTrue(_hero.Kit.Skill1.IsActive, "Observed release and fresh E must remain usable.");
+        }
+
+        [UnityTest] public IEnumerator ReenabledReaderDoesNotCastRoleHeldDuringDisable()
+        {
+            yield return ActualConsumer();
+            _reader.enabled = false;
+            yield return NativePress(Key.Q, false);
+            Assert.IsTrue(_keyboard.qKey.isPressed);
+            Assert.AreEqual(SlipperAffinity.Normal, _shoe.Affinity);
+            _reader.enabled = true;
+            yield return null; yield return null; yield return null;
+            Assert.AreEqual(SlipperAffinity.Normal, _shoe.Affinity, "Reenable spent Q on the owned slipper without a fresh press.");
+            Assert.AreEqual(HeroKit.CastOutcome.Missing, _hero.LastAnswer(HeroAbilitySystem.Slot.Skill2));
+            InputSystem.QueueStateEvent(_keyboard, new KeyboardState());
+            yield return null; yield return null;
+            yield return NativePress(Key.Q, false);
+            Assert.AreEqual(SlipperAffinity.Concussed, _shoe.Affinity);
+        }
+
+        [UnityTest] public IEnumerator ReenabledReaderStillAcceptsFreshSignaturePress()
+        {
+            yield return ActualConsumer();
+            _reader.enabled = false;
+            yield return null; yield return null;
+            _reader.enabled = true;
+            yield return null; yield return null;
+            yield return NativePress(Key.E, false);
+            Assert.AreEqual(HeroKit.CastOutcome.Cast, _hero.LastAnswer(HeroAbilitySystem.Slot.Skill1));
+            Assert.IsTrue(_hero.Kit.Skill1.IsActive);
+        }
+
         private void Hardware(Key key, bool releaseBeforePoll)
         {
             InputSystem.QueueStateEvent(_keyboard, new KeyboardState(key));

@@ -1,0 +1,7 @@
+{
+  "base": "f5bf1d0ad4a026f07809e0f7b1af82cc7615bab8",
+  "normalizedLFSourceSHA256": {
+    "Assets/TumbangPreso/Runtime/PlayerInputReader.cs": "0670ceda7f9b0d78b25ef42d17ac474e0ea93f5947addffa9faa73c410a69042",
+    "Assets/TumbangPreso/Tests/PlayMode/HeroQuickTapTests.cs": "fd48a02118a61b01261f6a5f6145061488c0cf4273589ddd0362b5b990a3e781"
+  }
+}

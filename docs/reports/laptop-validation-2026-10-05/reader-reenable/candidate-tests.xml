@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="16" result="Passed" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 13:09:09Z" end-time="2026-10-05 13:09:10Z" duration="1.011798">
+  <test-suite type="TestSuite" id="3157" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1761" result="Passed" start-time="2026-10-05 13:09:09Z" end-time="2026-10-05 13:09:10Z" duration="1.011798" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3149" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1761" result="Passed" start-time="2026-10-05 13:09:09Z" end-time="2026-10-05 13:09:10Z" duration="0.999427" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12488" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3150" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1761" result="Passed" start-time="2026-10-05 13:09:09Z" end-time="2026-10-05 13:09:10Z" duration="0.993666" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3153" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1759" result="Passed" start-time="2026-10-05 13:09:09Z" end-time="2026-10-05 13:09:10Z" duration="0.988235" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1640" name="HeroQuickTapTests" fullname="TumbangPreso.PlayTests.HeroQuickTapTests" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" testcasecount="16" result="Passed" start-time="2026-10-05 13:09:09Z" end-time="2026-10-05 13:09:10Z" duration="0.961019" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1656" name="AKeyHeldThroughMenuClosureCannotCastUntilReleasedAndPressedAgain" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.AKeyHeldThroughMenuClosureCannotCastUntilReleasedAndPressedAgain" methodname="AKeyHeldThroughMenuClosureCannotCastUntilReleasedAndPressedAgain" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="807316328" result="Passed" start-time="2026-10-05 13:09:09Z" end-time="2026-10-05 13:09:09Z" duration="0.143423" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1653" name="MenuClosureDefersHeldStickLookForOnlyItsFrame" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.MenuClosureDefersHeldStickLookForOnlyItsFrame" methodname="MenuClosureDefersHeldStickLookForOnlyItsFrame" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="1018365966" result="Passed" start-time="2026-10-05 13:09:09Z" end-time="2026-10-05 13:09:09Z" duration="0.069931" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1652" name="MenuClosureDiscardsLateTouchLookInItsFrame" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.MenuClosureDiscardsLateTouchLookInItsFrame" methodname="MenuClosureDiscardsLateTouchLookInItsFrame" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="86516441" result="Passed" start-time="2026-10-05 13:09:09Z" end-time="2026-10-05 13:09:09Z" duration="0.031815" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1644" name="MovementNativeStateStillDrivesActualMotor" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.MovementNativeStateStillDrivesActualMotor" methodname="MovementNativeStateStillDrivesActualMotor" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="1067618886" result="Passed" start-time="2026-10-05 13:09:09Z" end-time="2026-10-05 13:09:09Z" duration="0.110213" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1655" name="OrdinaryHeldSignatureStillProducesOneEdge" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.OrdinaryHeldSignatureStillProducesOneEdge" methodname="OrdinaryHeldSignatureStillProducesOneEdge" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="1193336425" result="Passed" start-time="2026-10-05 13:09:09Z" end-time="2026-10-05 13:09:09Z" duration="0.034508" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1654" name="OrdinaryTouchLookStillReachesGameplay" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.OrdinaryTouchLookStillReachesGameplay" methodname="OrdinaryTouchLookStillReachesGameplay" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="193991400" result="Passed" start-time="2026-10-05 13:09:09Z" end-time="2026-10-05 13:09:09Z" duration="0.031061" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1647" name="ReenabledReaderDoesNotCastRoleHeldDuringDisable" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.ReenabledReaderDoesNotCastRoleHeldDuringDisable" methodname="ReenabledReaderDoesNotCastRoleHeldDuringDisable" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="379765179" result="Passed" start-time="2026-10-05 13:09:09Z" end-time="2026-10-05 13:09:09Z" duration="0.071264" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1646" name="ReenabledReaderDoesNotCastSignatureHeldDuringDisable" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.ReenabledReaderDoesNotCastSignatureHeldDuringDisable" methodname="ReenabledReaderDoesNotCastSignatureHeldDuringDisable" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="1055499333" result="Passed" start-time="2026-10-05 13:09:09Z" end-time="2026-10-05 13:09:09Z" duration="0.066216" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1648" name="ReenabledReaderStillAcceptsFreshSignaturePress" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.ReenabledReaderStillAcceptsFreshSignaturePress" methodname="ReenabledReaderStillAcceptsFreshSignaturePress" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="1720592023" result="Passed" start-time="2026-10-05 13:09:09Z" end-time="2026-10-05 13:09:10Z" duration="0.055877" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1643" name="RoleNativeQuickTapImbuesActualOwnedSlipper" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.RoleNativeQuickTapImbuesActualOwnedSlipper" methodname="RoleNativeQuickTapImbuesActualOwnedSlipper" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="1069897332" result="Passed" start-time="2026-10-05 13:09:10Z" end-time="2026-10-05 13:09:10Z" duration="0.060536" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1650" name="RoleSkillQuickTapSurvivesUntilGameplayConsumesIt" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.RoleSkillQuickTapSurvivesUntilGameplayConsumesIt" methodname="RoleSkillQuickTapSurvivesUntilGameplayConsumesIt" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="1537804226" result="Passed" start-time="2026-10-05 13:09:10Z" end-time="2026-10-05 13:09:10Z" duration="0.033985" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1642" name="SignatureNativeQuickTapActivatesActualBasilioConsumer" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.SignatureNativeQuickTapActivatesActualBasilioConsumer" methodname="SignatureNativeQuickTapActivatesActualBasilioConsumer" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="1288312787" result="Passed" start-time="2026-10-05 13:09:10Z" end-time="2026-10-05 13:09:10Z" duration="0.064210" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1641" name="SignatureNativeStateReachesActualBasilioConsumer" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.SignatureNativeStateReachesActualBasilioConsumer" methodname="SignatureNativeStateReachesActualBasilioConsumer" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="1486451354" result="Passed" start-time="2026-10-05 13:09:10Z" end-time="2026-10-05 13:09:10Z" duration="0.063426" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1649" name="SignatureQuickTapSurvivesUntilGameplayConsumesIt" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.SignatureQuickTapSurvivesUntilGameplayConsumesIt" methodname="SignatureQuickTapSurvivesUntilGameplayConsumesIt" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="1815862203" result="Passed" start-time="2026-10-05 13:09:10Z" end-time="2026-10-05 13:09:10Z" duration="0.032327" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1645" name="TextEventDoesNotActivateActualBasilioConsumer" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.TextEventDoesNotActivateActualBasilioConsumer" methodname="TextEventDoesNotActivateActualBasilioConsumer" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="2003783715" result="Passed" start-time="2026-10-05 13:09:10Z" end-time="2026-10-05 13:09:10Z" duration="0.045383" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1651" name="UltimateQuickTapSurvivesUntilGameplayConsumesIt" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.UltimateQuickTapSurvivesUntilGameplayConsumesIt" methodname="UltimateQuickTapSurvivesUntilGameplayConsumesIt" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="2016237813" result="Passed" start-time="2026-10-05 13:09:10Z" end-time="2026-10-05 13:09:10Z" duration="0.031986" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

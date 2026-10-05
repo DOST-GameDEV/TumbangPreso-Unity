@@ -121,7 +121,13 @@ namespace TumbangPreso
         private bool _throwDeviceLost, _lungeDeviceLost;
         private bool _throwHardwareHeld, _lungeHardwareHeld;
 
-        private void OnEnable() => InputSystem.onDeviceChange += DeviceChanged;
+        private void OnEnable()
+        {
+            InputSystem.onDeviceChange += DeviceChanged;
+            // Actions keep receiving device events while this producer is disabled.
+            // Retire presses from that interval before the resumed owner reads them.
+            DiscardMenuButtonsUntilRelease();
+        }
 
         private void DeviceChanged(InputDevice device, InputDeviceChange change)
         {
