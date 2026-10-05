@@ -1,0 +1,28 @@
+{
+  "pid": 10264,
+  "window": 919526,
+  "foregroundBeforeAndAfter": true,
+  "physicalClientRect": [
+    0,
+    0,
+    1920,
+    1080
+  ],
+  "physicalClientWidth": 1920,
+  "physicalClientHeight": 1080,
+  "physicalWindowRect": [
+    0,
+    0,
+    1920,
+    1080
+  ],
+  "windowDpi": 120,
+  "dpiAwareness": 2,
+  "observerDpiContext": "PerMonitorV2 for read-only coordinates; restored afterward",
+  "image": "C:\\Users\\Matthew\\Documents\\Codex\\2026-10-03\\continue-competition-readiness-engineering-for-dost\\work\\lossless-capture1005\\06-own-quit-native1080.png",
+  "format": "PNG",
+  "sha256": "f72dbf37a1aae92d096cb526f9e9956516113161c4703f98de24b1052d702053",
+  "resampling": false,
+  "jpegConversion": false,
+  "scope": "Physical foreground desktop client pixels; not engine backbuffer/audio/input acceptance"
+}

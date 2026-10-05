@@ -1,0 +1,10 @@
+{
+  "removedLocalBranch": "competition-laptop-scan-trim-proof1004",
+  "retainedTip": "34092fe02920469e58fd8e8fccd9418405b6305a",
+  "reason": "Merged ancestor of origin/ASTRAReworks, task-owned, no active worktree",
+  "removedBranches": 1,
+  "removedBuildDirectories": 0,
+  "removedBytes": 0,
+  "finishedOwnedCompilerHelpers": "None live at inventory; none killed",
+  "preserved": "Active integration/main/ASTRA and all occupied/unmerged/unrelated refs; source/private work/profiles/saves/essential evidence/accepted61a/c171/f489 artifacts"
+}

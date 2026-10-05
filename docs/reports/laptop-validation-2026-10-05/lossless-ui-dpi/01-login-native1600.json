@@ -1,0 +1,28 @@
+{
+  "pid": 10264,
+  "window": 919526,
+  "foregroundBeforeAndAfter": true,
+  "physicalClientRect": [
+    160,
+    104,
+    1760,
+    1004
+  ],
+  "physicalClientWidth": 1600,
+  "physicalClientHeight": 900,
+  "physicalWindowRect": [
+    151,
+    66,
+    1769,
+    1013
+  ],
+  "windowDpi": 120,
+  "dpiAwareness": 2,
+  "observerDpiContext": "PerMonitorV2 for read-only coordinates; restored afterward",
+  "image": "C:\\Users\\Matthew\\Documents\\Codex\\2026-10-03\\continue-competition-readiness-engineering-for-dost\\work\\lossless-capture1005\\01-login-native1600.png",
+  "format": "PNG",
+  "sha256": "558376e14a825b4e910cb1c18a9523003feadf5ec48b901777e0d48534a8bb71",
+  "resampling": false,
+  "jpegConversion": false,
+  "scope": "Physical foreground desktop client pixels; not engine backbuffer/audio/input acceptance"
+}
