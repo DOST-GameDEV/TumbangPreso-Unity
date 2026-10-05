@@ -1,0 +1,22 @@
+{
+  "classified-result.json": {
+    "bytes": 284,
+    "sha256": "ab14e913fa3df900de8fd0700874c76390da938fa183844f8867834c596e1336"
+  },
+  "direct-result.json": {
+    "bytes": 72240,
+    "sha256": "2a38735749e3789b940bd6894f5db09bae587d5b5c9a1ff48d7c0abb97e429a5"
+  },
+  "launch.json": {
+    "bytes": 1012,
+    "sha256": "46e7721186e3765c469fb1e1453c254220475cfaf0196ecfb6fd4336834b4109"
+  },
+  "qualified-hashes.json": {
+    "bytes": 734,
+    "sha256": "4f3bcd8cde125e425235f73544ac1cb3d05ddb45e040a61aef3412b8eee5d74b"
+  },
+  "tests.xml": {
+    "bytes": 4306,
+    "sha256": "16b7563242f3976069188ca6f9896787986c466985362d94dd64bdc006e3e365"
+  }
+}
