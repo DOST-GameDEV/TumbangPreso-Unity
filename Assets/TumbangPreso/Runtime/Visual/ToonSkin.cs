@@ -235,6 +235,18 @@ namespace TumbangPreso.Visual
             }
         }
 
+        /// <summary>
+        /// ⚠️ SMOOTH SHADING IS THE GAME'S LOOK FOR CHARACTERS (owner, 2026-10-05, after testing it on
+        /// the redesigned heroes with the cast's own ambient occlusion at 0.14 m). The toon shader
+        /// reads the global `_CharacterSmoothShade`: 1 is a smooth falloff, 0 the old two-band cel.
+        /// Set once before the first scene, so the menus and previews wear it too.
+        /// </summary>
+        public const float CharacterSmoothShade = 1f;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        private static void WearSmoothShading() =>
+            UnityEngine.Shader.SetGlobalFloat("_CharacterSmoothShade", CharacterSmoothShade);
+
         public static Shader Shader
         {
             get

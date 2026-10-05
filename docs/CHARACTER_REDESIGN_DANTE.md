@@ -1,5 +1,11 @@
 # Character redesign prototype: Dante (displayed as Basilio)
 
+> ⚠️ **START AT SECTION 15.** It is the current state (end of 2026-10-05, second session) and it
+> supersedes anything above it that disagrees. Sections 1 to 14 are the record of how it got
+> there, in order, and several early statements in them are no longer true (the prototype IS in
+> Unity now, the rig is no longer seven bones, the model is no longer fully rigid, the cast is
+> no longer one hero).
+
 **Status, 2026-10-05, branch `QoLUpdates`.** A PROTOTYPE, built and rendered in Blender only.
 It is NOT in the game: no roster row, no runtime code and no existing character file was
 changed, and it has never been opened in a Unity scene. Nothing is committed or pushed; the
@@ -297,3 +303,404 @@ Governing docs: [CHARACTER_MODEL_METHOD.md](CHARACTER_MODEL_METHOD.md) sections 
 indexes twelve images: the original beside A and B, the A and B turnarounds and faces, the
 three head carvings, the 10 m size check with silhouettes, the redesign beside Paete, the
 texture sheet, the close-ups of the fixed spots, and one image of the rejected rounded head.
+
+## 12. Second session, 2026-10-05: the owner's choices and v12 to v14
+
+Worked in worktree `dante-character-redesign-873f79` (branch
+`claude/dante-character-redesign-873f79`, fast-forwarded to `a883bbe70`), so the map session
+in the other worktree is not disturbed. Still Blender only. Nothing committed.
+
+**Decided by the owner (closes section 6 items 1 and 2):** hair **A** (block hair) on the
+**shaped** head. `HEAD_VARIANT` now defaults to `shaped`. B is still built, as a reference.
+
+| | The owner said | What changed |
+|---|---|---|
+| f | "fix the asymmetrical and detached hood" (both collar ends circled) | The collar is the same on both sides, starts 5 mm inside the torso's top at shoulder width, spreads under the jaw as a shelf and stands as a wall 8 to 12 mm off the shaped head. Its top stays under the ear blocks. `COLLAR_TOP`, `COLLAR_PROFILE`. |
+| g | "theres z-fighting on these patches" (knee patch, back tail patch) | Checked the source frames: both patches are paint on one surface, no coplanar geometry, and they are stable frame to frame. The shimmer was the GIF's per-frame palette on a low-contrast soft olive mark. Fixed both ways: patches are now hard-edged scraps of the OTHER garment (brown on the coat, green on the knee) with a dark rim and pale thread, the knee patch sits wholly below the hem, and the turntable GIF uses one palette with no dithering. |
+
+**Weak spots of section 7 fixed for A:** the back of the hair is no longer one slab. Three
+hand-set slabs (`BACK_SLABS`) hang from the crown over the back mass, 15 mm proud, and the
+mass under them takes the deeper tone. The crown slab is lower (0.738) with taller, more
+unequal crest chunks.
+
+**Still open:** the shoes are plain; arms still press the coat-tails in `idle`; B still shows
+A's stepped forehead shadow (B was not chosen); everything under "Unverified" in section 7.
+Next is section 9 step 2, the Unity side-by-side.
+
+Renders: `Logs/character-redesign-dante/v14*` (turnaround, face, close-ups, 10 m, golem, and
+`v14_A_shaped_360.gif` with its eight-angle sheet). The turntable script is not in `tools/`.
+
+**v15 to v16, same session.** Owner: "is the head passing through the hood?" (skin circled
+between the nape points) and a request to see `jump`, `fall`, `walk`, `sprint` and the head
+looking around.
+
+- It was not passing through. v14 had lowered the collar's back below the hair's foot, so the
+  back of the head showed over the rim. v15 raised the collar into the hair; a head-turn test
+  then showed the hair (head bone) cutting through the collar (torso bone) at 20 degrees.
+- v16: the back of the collar stops at 0.404, under the hair's foot; the three nape points hang
+  wholly outside its wall; a thin dark `hair-nape-liner` on the back of the head, inside the
+  collar, is what shows over the rim. Clean from behind at 20 and 35 degrees of yaw and 12 of
+  pitch. At 55 degrees the jaw corner still dips into the collar's front: a box turning inside
+  a fitted square collar cannot avoid that, and the game's procedural head motion is far smaller.
+- The game DOES drive the head bone in code (`CharacterAnimator.LocomotionArms`, `ThrowBody`,
+  `TagBody`, `DanceClip`, `HeroAbilityClips`), so the collar has to be checked with the head
+  turned, not only in `idle`.
+- Clips on the new meshes, in Blender: `walk`, `sprint`, `jump`, `fall`, `idle` all play with
+  no tearing (every vertex is rigid to one bone). In `jump` and `fall` the legs swing out
+  through the coat-tails, which ride the torso; the original's tails do the same.
+  `Logs/character-redesign-dante/v16_anim_*.gif`. The look-around is a rig test (head bone
+  turned by script), not a game clip; the rig has no such clip.
+
+**v17 to v18, same session.** Owner: "make sure nothing is clipping into clothing", "make it so
+the clothes will bend/distort to follow his body", "the back of his cloak is supposed to be
+connected, like a coat tail", and "the animations we have dont fit the poppy/cartoony style".
+
+- **The model is no longer fully rigid.** `Part.bend` gives a piece blended weights. Three pieces
+  use it: the coat skirt (torso at the top, up to 0.78 of each leg at the hem, the two legs
+  mixed across the middle), the collar (0.55 of the head at its rim) and the tips of the three
+  nape points (0.6 of the torso). Everything else is still one bone a vertex. The `.glb` now
+  writes four joints and weights a vertex. This DEPARTS from the cast's rigid rule (Voxel guide)
+  on the owner's words.
+- **The coat skirt is one piece**, open only at the front (`coat-skirt`), replacing the two
+  split tails.
+- **New clips, prototype only:** `tools/author_character_redesign_dante_clips.py` writes
+  `walk`, `sprint`, `jump` and `fall` into the two prototype `.glb` files in place of the ones
+  copied from `team-dante.glb`, same lengths. Bounce, squash and stretch as scale on `root`
+  (a NEW channel), snapped swings, torso twist against the legs. `team-dante.glb` is untouched.
+- **A limit found:** the arms cannot rise above straight out. The head is wider than the
+  shoulders and starts at the top of the arm, so a raised arm goes into the collar and then
+  the head. `jump` and `fall` throw the arms wide instead of up.
+- **Checked by eye only**, in Blender, on `idle`, the four new clips and the head-turn test.
+  There is no measured penetration test. Not checked: `slide`, `sit`, the five hero clips, the
+  emotes, the upper arms against the skirt in `idle`, and all of it in Unity, where the game
+  adds procedural motion on top of the clips.
+
+Renders: `Logs/character-redesign-dante/v18_anim_*.gif`, `v18_extremes.png`.
+
+**v19, same session.** Owner: "should try bending the arms for animations, especially for the
+sprint and walk" and "the head still clips in the looking around".
+
+- **Two elbow bones, which the cast does not have:** `forearm-left` and `forearm-right`, children
+  of the arm bones at x 0.172, appended AFTER the seven so their names and indices do not move.
+  Each arm is now two rigid blocks that overlap at the elbow. `walk`, `sprint`, `jump` and
+  `fall` key them; every other clip leaves the arm straight, as before. The rig is therefore NO
+  LONGER byte-identical to `team-dante.glb` (section 3's "seven bones" row no longer holds).
+- **What the elbows cost in the game, not done:** `CharacterVisual.PalmCentre` and the hand
+  anchor find the hand from `arm-right` alone, so a carried tsinelas would stay where a straight
+  arm's hand would be. First-person arms are separate assets and unaffected. Any code that
+  walks "the seven bones" by name still finds all seven.
+- **The collar is the head's from its shelf up** (`COLLAR_FOLLOW` 0.92 from 0.358). It turns
+  and nods with the head, so the jaw cannot turn through it; the twist is taken by the 20 mm
+  between the shoulders and the shelf. Seen clean at 55 degrees of yaw and 22 of pitch, by eye.
+
+Renders: `Logs/character-redesign-dante/v19_anim_*.gif`, `v19_extremes.png`.
+
+**v20 to v22.** Owner: "make it so the arms arent bent too much towards the inside of the
+torso". The folded forearm is turned 30 degrees OUT (`SPLAY`), the upper arm hangs wider, and
+fold plus swing stays under about 105 degrees from hanging. On the elbows' cost in the game the
+owner said: "if that's the case we'll have to rework it later on", so the elbows stay.
+
+## 13. The rest of the cast (owner, 2026-10-05)
+
+"for now we're focusing on fixing the character designs. so following dante's rework, redesign
+the rest of the characters. spin up multiple agents to do this for each character, and the
+animations i want them all in one gif for each character. remember to be critical of your own
+work". This CLOSES section 6 item 4 and supersedes section 10's "one character at a time".
+
+One agent a hero, each in its own files, all PROTOTYPES outside `Resources`:
+
+| What | Where, for hero `<id>` |
+|---|---|
+| Scripts (copies of Dante's four, rewritten for the hero; never edit Dante's or another hero's) | `tools/author_character_redesign_<id>.py`, `_<id>_textures.py`, `_<id>_clips.py`, `tools/render_character_redesign_<id>.py`, `tools/sheet_character_redesign_<id>.py` |
+| Model and atlas | `Assets/TumbangPreso/Art/CharacterRedesign/<id>/<id>-redesign.glb`, `<id>-redesign-atlas.png` |
+| Source | `ArtSource/<id>/redesign-20261005/<id>_redesign.blend` |
+| Renders | `Logs/character-redesign-<id>/vNN...` |
+| The one motion gif | `tools/render_character_redesign_motion.py -- <id> vNN` then `tools/sheet_character_redesign_motion.py <id> vNN` (shared, do not edit) |
+
+**The rules every hero inherits from Dante's review, each one a thing the owner said:**
+
+1. The head is the game's BOX head, `shaped` carving (cheeks, a brow ledge, a tapered jaw),
+   never a round skull. Detail is paint and pieces ADDED to blocks. Same kid, more detail.
+2. Nothing invented. Every piece and colour is one the hero's current model already has. Keep
+   each hero's deliberate signature (CAST_CLOTHING_STYLE.md: Nemu's cowl over her lower face,
+   Cheska's pale ice colours).
+3. No painted hair shine. Hair is flat tones by which way a face points. A flat back or top
+   gets BLOCKS (layered slabs, graded chunks), not drawing.
+4. Paint stops at its own piece's edges. No paint from one part on another (ears, hands).
+5. A sewn mark is hard edged with a rim, or it reads as a render fault. Never half hide one
+   under another piece.
+6. Collars, hoods and scarves are symmetric unless the original is not, grow out of the
+   shoulders, and from the jaw up they follow the HEAD bone, so the head cannot turn through
+   them. Check with the head turned 55 degrees and nodded 22, from the front AND the back.
+7. Cloth that lies across two bones BENDS (`Part.bend`): skirts and coat-tails take the legs
+   toward the hem, long hair tips take the torso. A coat's back is one piece.
+8. Two elbow bones, `forearm-left` and `forearm-right`, appended after the seven. Arms fold
+   forward and OUTWARD, never across the torso. ⚠️ AMENDED the same day. The first wording said
+   arms never rise above straight out; the owner then said "the arms dont really get much higher
+   than the original A posing.. the jump looks like he's shrugging". A STRAIGHT arm still cannot
+   rise (the head is wider than the shoulders), so arms go up THROUGH THE ELBOW: the upper arm
+   lifts about 12 degrees, the forearm folds up and out past the cheek in a V, and may stretch
+   (scale on the forearm bone) as it is thrown. A jump must read as arms UP.
+9. New `idle`, `walk`, `sprint`, `jump`, `fall`, the same lengths as the clips they replace.
+   `idle` is ACTED, not wobbled: stances a waiting person takes, held long enough to read
+   (fists on hips, arms folded, a look about, a tapping foot), with breathing kept small
+   underneath. Layered sines on every bone were tried and the owner said "he's just distorting
+   around.. needs more character". It may be longer than the clip it replaces (Dante's is 8 s). `jump` is a STANDING jump, both feet together, never a stride
+   (owner: "i need a jump for standing still"). All of them: bounce,
+   squash and stretch on `root`, snapped swings. Each hero's motion is its OWN (AGENTS.md:
+   copied cast-wide looks are not allowed): a heavy hero lands heavy, a light one floats.
+10. Feet on zero, the original's height and proportions, the hand top where a tsinelas sits,
+    role hues `#f87020` and `#0080e8` off large areas, under 6,000 triangles.
+12. ⚠️ A CUTE FACE, NOT A PORTRAIT. Owner, on the whole redesigned cast: "the faces look too
+    realistic and look too human, like it lost its charm, the characters have eyebags etc..
+    they need to be more cutesy". NO nose (no wedge, no painted bridge or shadow). NO eye
+    sockets, under-eye creases, lid lines, lip shadow, jaw or cheekbone contour, wrinkles. Eyes
+    are the ORIGINAL's simple solid ink shapes, about a third bigger; the mouth is the
+    original's, one stroke. Allowed: flat skin with one very soft lit patch, the fringe's shadow
+    as one flat tone, and a round blush under each eye ON THE GIRLS ONLY (Cheska, Nemu, Amihan).
+    The owner: "reserve the blush for the female characters". No blush on Dante, Sean, Zack, Rafi. Judge it beside the original's face: as
+    cute, or cuter. (This removes the nose that came with the `shaped` head in rule 1.)
+    ⚠️ THE EYE'S OUTLINE IS THE EXPRESSION, SO IT IS MEASURED, NOT REDRAWN. Two heroes lost
+    theirs in the first cute pass: Cheska "lost the eye quirk" (a notch in the bottom of each
+    eye) and Amihan lost her "slight smug look" (the slanted top edge of each eye). Take the
+    slot 8 ink polygons off the original `team-<id>.glb`, vertex for vertex, left and right
+    separately, and scale THOSE. Same for the mouth.
+    ⚠️ NO DARK FACETS ON THE LOWER FACE. The `shaped` jaw turns under and the toon shadow band
+    lands on it as hard dark shapes; the owner called them "random dark spots". The front plane
+    runs clean to the chin and the head's closing ring is hidden in the neck or collar.
+11. Render, LOOK, write down what is wrong, fix, render again under a new version name.
+    Close-ups and the turned head catch what a turnaround hides.
+
+Held back: **Phaister (Soraya) and Paete** are finalized and protected by AGENTS.md. No
+prototype was started for them; that needs the owner's word. The twelve Classic street
+characters were not started either.
+
+**v23 to v25.** Jump and fall throw the arms up in a V through the elbows, with a forearm
+stretch at take-off; fists reach eye height beside the head, which is the ceiling for this
+body without passing through the head. The motion gif is now a GRID of ten cells that all play
+at once (owner: "more like a grid where all animations play at the same time"), 96 frames at
+24 a second. `Logs/character-redesign-dante/v25_dante_motion.gif`.
+
+**v26 to v27.** Owner: "fix the idle animation to look less linear and livelier" and "is the jump
+supposed to be one foot forward? i need a jump for standing still". The one-foot-forward pose was
+the old clip's, which the first new `jump` had kept. `jump` is now symmetric (toes trail, then
+both legs swing up in front). `idle` is new: breathing as squash on `root`, a rock from foot to
+foot, torso, head and arms each a beat behind. `Logs/character-redesign-dante/v27_dante_motion.gif`.
+
+**v28 to v30.** The sine idle was rejected ("the idle looks like he's just distorting around..
+needs more character, like sometimes he puts his hands on the waist, or crosses his arms").
+`idle` is now an 8 s acted loop: stand, fists on hips and a look each way, drop, arms folded
+with a tapping foot and a look away, let go. Arms are posed by the direction they point
+(`_arm` in the clips script). Folding needs the forearms stretched 1.55 times to cross at all;
+at their own length they only meet. ⚠️ The idle is no longer 1.33 s; check anything in the game
+that assumes its length, or split the stances into clips the game picks between. The grid gif
+runs 192 frames when the idle is longer than 96. `Logs/character-redesign-dante/v30_dante_motion.gif`.
+
+### Cast status at the end of 2026-10-05 (all prototypes, Blender only, nothing committed)
+
+| Hero | Version | Triangles | Idle stances | Shown to the owner | Main open faults |
+|---|---|---|---|---|---|
+| dante | v30 | 4,017 | fists on hips; arms folded with a tapping foot | yes | upper arms press the skirt in the stand; shoes plain; jaw dips into the collar front at 55 degrees |
+| cheska | v05 | 5,596 | warms her hands; two hops; tugs her hat strings | yes | jump arms only reach shoulder height (ear flaps); flap fur shears at a 55 degree turn; the hop does not read in a still |
+| sean | v05 | 5,360 | bicep flex; bull lean with a pawing foot; guard and two jabs | yes | nape tail stretches at 55 degrees; plain back of the skull; guard reads as arms held out from the front |
+| amihan | v06 | 5,900 | hands behind her back on her toes; two hops; feeling the wind | yes | cuffs cut the torso side in the stand; wind stance reads as a wave; forearms thin when stretched |
+| nemu | v08 | 4,688 | nods off and jolts awake; yawn and stretch; sleeve swish | yes | sleeves inside the torso with arms down (as the original); looks plainer than the rest; sprint sleeves now held out, not streaming |
+| rafi | v07 | 5,964 | hands behind his back; swimmer's shake-out; hand on his shark tooth | yes | front flap against the forward thigh in walk and sprint; forearms stretch about twice their length in the jump |
+| zack | v08 | 5,980 | hands in jacket pockets; fixing the quiff; hands behind his back | yes | pockets stance has the fists sitting ON the jacket front; quiff hand reaches the temple, not the lock |
+
+Every hero's jump puts the fists at cheek to ear height in a V, never overhead: the heads are
+wider than the shoulders. Every idle is 8 s. Every model has the two elbow bones. None has been
+in Unity, none has a measured penetration test, and `slide`, `sit`, the hero clips and the
+emotes are unchecked on all of them. Each hero's own faults are in the comments of its scripts
+and its renders are under `Logs/character-redesign-<id>/`.
+
+## 14. Playable swap, prepared and NOT yet run (owner, 2026-10-05: "i want to see this in game")
+
+The owner chose a playable swap in this worktree and said NOT YET to launching Unity. Prepared,
+uncommitted, no Unity run:
+
+- `Editor/RosterBookBuilder.cs` `PersonModels`: the seven redesigned heroes point at
+  `CharacterRedesign/<id>/<id>-redesign.glb`. Phaister and Paete are unchanged. Reverting those
+  rows and rebuilding the roster book undoes the swap; no `team-<id>.glb` was touched.
+- `Runtime/Visual/CharacterVisual.cs` `HandBones`: `forearm-right` and `forearm-left` are tried
+  before the arm bones, so a carried tsinelas follows the bent hand on a rig with elbows. Cast
+  rigs have no such bone and behave as before.
+- `.meta` files for the six new models and atlases, copied from Dante's prototype with fresh
+  GUIDs, so they import with the same glTFast settings.
+
+When the owner says go (editor closed, Hub signed in, nobody else running Unity), in order:
+`RosterBookBuilder.Build` through `tools/run_unity_guarded.py`, look at `HeroTurnaroundProbe`
+or `PersonSwapProbe` output, then `GameBuilder.BuildWindows -buildOutput Builds/<name>/TumbangPreso.exe`.
+This worktree has no `Library`, so the first launch is a full import.
+
+Expected to be wrong on first sight, none of it checked: first-person arms (separate assets,
+old look); `CharacterAnimator.EdgeRecovery` and other code that measures the palm on
+`arm-left`/`arm-right` by index; the game's procedural squash (`CharacterSquashStretch`)
+stacking on the clips' own `root` scale; anything that assumes a 1.33 s idle; palette recolours
+(the atlas models ignore the palette); avatars, hero select and showcase art made from the
+old models; tests that assert seven bones or the old heights.
+
+## 15. CURRENT STATE, end of 2026-10-05 (read this first)
+
+### 15.1 Where the work is
+
+- Worktree `.claude/worktrees/dante-character-redesign-873f79`, branch
+  `claude/dante-character-redesign-873f79`, HEAD `a883bbe70` (the first session's commit).
+  **Everything since is UNCOMMITTED and nothing is pushed.** Commit and push only when the owner
+  asks. No attribution trailers, no em dashes.
+- The owner's Unity editor (6000.5.8f1) is OPEN on this worktree. Never run batch Unity while
+  it is; never kill it. Changes reach it by the editor recompiling (the owner must be out of
+  Play mode and click into the window). `Logs/Editor.log` in the worktree is the editor's log.
+- ⚠️ The working tree has about 400 modified files that are NOT this work and must never be
+  committed: Unity re-saved `Resources/UI/input/xelu/**`, `Resources/Models/RosterArms/*`,
+  hero `*-motion/*.anim` (Phaister's and Paete's included), `ProjectSettings/*`, and the files
+  the owner listed at the start. Whether the RosterArms and `.anim` rewrites are real changes
+  or Unity re-serialising has NOT been checked. Stage explicit paths only.
+
+### 15.2 What exists
+
+Seven redesigned heroes, each a prototype with its own scripts (section 13's table):
+`dante`, `cheska`, `sean`, `zack`, `nemu`, `rafi`, `amihan`. Phaister and Paete are protected
+and untouched. The twelve Classic characters are not started.
+
+| Hero | Latest | Triangles | Notes specific to it |
+|---|---|---|---|
+| dante | v37 | about 3,960 | Hair A, quiet clothes (`QUIET_CLOTH`), long bangs, eyes measured off the original at 1.28, no blush |
+| cheska | v14 | 5,584 | Eyes at 1.15 with the notch, blush, cords hang straight under the flaps |
+| sean | v15 | 5,316 | The ORIGINAL's cut-corner head (not Dante's shape), eyes at 1.14, bracer bands are separate flat pieces |
+| zack | v18 | 5,968 | Face is `measured` (v13). The owner REJECTED smug variants A, B, C. Do not offer them again |
+| nemu | v11 | 4,688 | Quiet clothes; cowl, fringe and face scale together; eyes NOT enlarged |
+| rafi | v14 | 5,992 | 8 triangles spare. Neck gap open (15.5) |
+| amihan | v16 | 5,888 | Eyes at 1.15 with the slanted top edge, curved mouth, blush |
+
+Shared tools (do not let a hero's agent edit them): `tools/render_character_redesign_motion.py`,
+`tools/sheet_character_redesign_motion.py` (the grid gif). Motion gifs on disk are STALE for
+every hero; the owner said "gifs when i ask only".
+
+### 15.3 The rules, as they stand now
+
+Section 13's rules 1 to 12, with these later amendments. Each is the owner's own correction.
+
+1. **Head shape:** Dante's rounded `shaped` rows for everyone except Sean (soft superellipse
+   corners, fullest at the cheeks, lower corners rounding in). The jaw tapers gently and the
+   closing rings hide in the neck or collar.
+2. **Flat face plane:** the FRONT depth of the head is one constant value from under the mouth
+   to the hairline. No brow ledge, no cheek standing proud. In the game's shader any step there
+   draws a straight line across the face. Blender's imitation hides it.
+3. **Head size 0.84:** every vertex on the `head` bone is scaled 0.84 about the head joint AFTER
+   UVs are resolved (`HEAD_SCALE`, `HEAD_JOINT`). This departs from the cast's 24/23/53.
+4. **Cute face:** no nose, no sockets, creases, lids, lip shadow or contour. Eyes and mouth are
+   the original's slot 8 outlines MEASURED off `team-<id>.glb`, eyes scaled 1.14 to 1.28, mouth
+   drawn as one smooth curved stroke. Blush on Cheska, Nemu and Amihan only.
+5. **Quiet clothes** on Dante and Nemu (no stitches, dust or patches; soft marks at 0.40, folds
+   at 0.32). NOT yet applied to the other five; the owner has not asked.
+6. **Arms:** elbows fold forward and outward; jump and fall throw the arms up in a V through
+   the elbow, as high as clears the head; `jump` is a standing two-footed jump.
+7. **Idle is acted**, 8 s, stances that belong to that hero (section 13 table has each).
+8. **Paint smears on angled faces** (found on Sean's fist in Unity). Fixed on Sean's arms only:
+   a face takes a drawing only when it squarely faces a view; chamfers take a flat tone. The
+   same projection is still used on every hero's torso, legs, shoes and head. I offered to
+   apply the flat-tone rule cast-wide; THE OWNER HAS NOT ANSWERED.
+9. **My own pass after every agent** (owner: "i need you to do your own passes when the agent
+   is done"). Render close-ups myself and compare across the cast before showing anything.
+   Saved to memory as `own-pass-after-agents`.
+
+### 15.4 What is in Unity
+
+- `Editor/RosterBookBuilder.cs` `PersonModels`: the seven heroes point at the redesign `.glb`
+  files (a marked block; reverting those rows and rebuilding the roster book undoes it). The
+  roster book was rebuilt once in batch mode before the editor was opened.
+- `Runtime/Visual/CharacterVisual.cs` `HandBones`: forearm bones tried first, so a carried
+  tsinelas should follow the bent hand. NOT verified in play.
+- `Shaders/Toon.shader`: a global `_CharacterSmoothShade` (0 is the shipped cel look) and a
+  wrapped-Lambert term in `LightingToon`.
+- `Runtime/Visual/WorldOutline.cs`: `CharacterAoRadiusTest` beside `CharacterAoTest`.
+- `Runtime/UI/TumpMatchReadout.cs`: the F8 character AO switch is REMOVED at the owner's word.
+- `Editor/CharacterRedesignLineup.cs` (new, editor only):
+  - **Build Lineup On Ilalim (temp scene)**: copies the map to
+    `Scenes/Temp/IlalimNgTulay.unity` (same scene NAME so the map's look is found; not in the
+    build), puts the seven redesigns in a row 6 m behind the court with each original behind
+    it. A file `Temp/character-redesign-lineup.request` makes the open editor rebuild it once.
+  - Play in that scene starts the game's **Training Range** (`GameLaunch.TrainingRange`), so the
+    owner has a player to move with and no match. Whether it shows an opening camera move or
+    unwanted HUD has NOT been seen.
+  - **Ctrl+Shift+J** cel or smooth shading (smooth is the default, with character AO on).
+  - **Ctrl+Shift+K** cycles the character AO size; the owner chose **0.14 m**.
+  - The head-size toggle is gone (heads are built small now).
+- `Resources/SwimmingAnimations/*-redesign.asset` and `RecoveryAnimations/*-redesign.asset`
+  were generated by `AuthoredAnimationBuildCheck.RepairMissing` so a build passes. Not reviewed.
+- `Builds/character-redesign-20261005/TumbangPreso.exe` exists but is STALE (old heads, old
+  faces). Rebuild only when the owner asks and the editor is closed.
+- All of this is editor-test wiring. In a built game the cel look and zero character AO still
+  ship. Making smooth shading and AO 0.14 real is a separate decision (it would reach Phaister
+  and Paete too).
+
+### 15.5 Open, in the order I would take it
+
+1. **The elbow pass (the owner's next ask).** Systems that still target `arm-right` /
+   `arm-left` and do not know the elbow: `HeroAbilityClips*` (about 170 references),
+   `CharacterAnimator.LocomotionArms`, `VoxelDresser`, `PhaisterHandProps`, `PaeteVfx`,
+   `AbilityVfx`, `WindTumble`, `SwimmingMotion`, `DanceClip`, `CharacterAnimator.EdgeRecovery`
+   (measures the palm by bone index). Decide per system whether a hand attachment moves to the
+   forearm or the clip needs an elbow key. First check a carried tsinelas in the Training Range.
+2. **Unanswered questions to the owner:** apply the flat-tone-on-angled-faces fix cast-wide?
+   Rafi's neck gap (add a neck block and trim a hair chunk, or raise the 6,000 limit)? Quiet
+   clothes for the other five? Round Sean's head like the rest? Exaggerate Amihan's eye slant
+   (it matches the original but reads faint)? Make smooth shading and AO 0.14 the real look?
+3. **Not checked on any hero:** `slide`, `sit`, hero ability clips, emotes, first-person arms,
+   walk and sprint frames at the new head size, anything measured for penetration.
+4. **Seen in the owner's first Unity screenshot of Dante, not yet addressed:** hard-edged dark
+   patches at the shaved temple, colours far more saturated than the Blender renders, the
+   collar's inner face showing as a pale strip beside the jaw.
+5. Cheska v14's cord fix is the agent's word only; I have not opened its sheet.
+
+### 15.6 How to work (lessons of this session)
+
+- Blender's imitation of the shader hides real faults. Trust the owner's Unity screenshots over
+  any Blender render, and say "checked in Blender only" when that is true.
+- One agent a hero (they keep their context; continue them by id rather than spawning new
+  ones), same instruction to all, then my own pass. Agents drift apart unless measured against
+  the original and against Dante.
+- Windows sometimes refuses a file write with `OSError: [Errno 22]` while the editor or another
+  process holds the file; retry after a second. Bash heredocs with apostrophes break; write
+  edit scripts to the scratchpad and run them.
+- Show the owner pictures (faces beside the original), short and often. He corrects fast.
+
+### 15.7 Third session, 2026-10-05 (elbow pass begun; all uncommitted, none seen running)
+
+- **The game draws walk and run itself** (`CharacterAnimator.LocomotionArms`, from `GaitStyles`),
+  so the redesign `walk` and `sprint` clips only ever reached the forearms. And the redesign
+  glbs are named `<id>-redesign`, which `GaitStyles.For` did not know, so all seven walked the
+  `Custom` gait. Fixed: `-redesign` maps to the hero's own style.
+- Owner chose: the game's gait bends the elbows per hero. `Gait.Elbow` and `Gait.ElbowPump`
+  (degrees, per hero, walk and run), `GaitPose.ElbowLeft/Right`, `PoseElbow` in
+  `LocomotionArms` (folds ahead and 30 degrees outward; the carrying arm stays straight).
+  Rigs without forearm bones ignore all of it. NUMBERS ARE FIRST GUESSES, unseen.
+- `CharacterVisual.HandBone(skin, "left"|"right", out bone, out palm)`: the bone the hand is on
+  (forearm first). Used by the ledge grab (`EdgeRecovery`, which also holds the forearm straight)
+  and `ZackCircuitTell`. Ability clips were left alone: a clip that keys only the upper arm
+  plays with a straight forearm.
+- Owner's answers: clothes are fine as they are (no quiet pass on the other five); Sean's head
+  stays; Amihan's eye slant stays; Rafi's neck is fine; no cast-wide flat-tone pass.
+- **Smooth shading and AO 0.14 m are now the GAME's look (owner: yes).** `ToonSkin` sets the
+  global `_CharacterSmoothShade` to 1 before the first scene; `WorldLookProfile` defaults are
+  `CharacterAmbientOcclusion` 1 and radius 0.14. It reaches everything on the Toon shader (the
+  cast, first-person arms, summoned things), not the map. NOT seen in a normal match or a
+  build; tests that assert the two-band ramp (`ToonLightFalloffTests`, `WorldCourtCueTests`)
+  have not been run and may need updating. This supersedes 15.4's "the cel look still ships".
+- Owner: "should probably work on a paete and phaister rework". Prototypes started, one agent
+  each, same file layout (`<id>` = `phaister`, `paete`); the real files stay untouched.
+- **OWNER DECISION, 2026-10-05: "we'll be using the character redesigns from now on instead of
+  the older models".** The redesigns are no longer a side test. All nine heroes' roster rows
+  point at `CharacterRedesign/<id>/<id>-redesign.glb`; `Character Redesign/Use Redesigns In
+  Roster` (editor menu, also run once by the trigger file when it contains `roster`) rebuilds
+  the roster book and authors missing swim and recovery sets. The old `team-<id>.glb` files
+  are still on disk and untouched. Still nothing committed.
+- Paete is at v07 (owner's exceptions: head at FULL size, real brow blocks, eyes at the
+  original's size, the plank between the eyes stays). Phaister is at v06 (face approved at
+  v04; hat at the ORIGINAL's size, not scaled with the head; stacked curls). Her display name
+  is Soraya. `PhaisterHandProps`, `PhaisterManika`, `VoodooSkyCircle`, `VoodooSoulDraw` use
+  `HandBone`; `PaeteVfx` takes the braid tip off the forearm bone (`TipReach`, 0.26).
+  `BodyScaleFor` knows `paete-redesign` (1.3). Swim and recovery authoring still measure on
+  the upper arm.
+- Rafi's neck gap is shown in `Logs/character-redesign-rafi/v14_neck_gap.png`.

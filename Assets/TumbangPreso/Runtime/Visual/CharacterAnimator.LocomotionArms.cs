@@ -52,6 +52,13 @@ namespace TumbangPreso.Visual
         public string GaitStyleName => _gaitStyle != null ? _gaitStyle.Name : "";
         public GaitStyle Style => _gaitStyle;
 
+        /// <summary>How far a folded forearm is turned OUT from straight ahead. Owner, 2026-10-05, of forearms folded straight
+        /// ahead on these wide bodies: *"can you make is so the arms arent bent too much towards the inside of the torso"*.</summary>
+        public const float ElbowSplayDegrees = 30f;
+        /// <summary>The elbows, on a rig that has them (the redesign prototypes); null on the seven-bone cast.</summary>
+        private Transform _swingForeL, _swingForeR;
+        private Vector3 _foreAlongL = Vector3.left, _foreAlongR = Vector3.right;
+        private Quaternion _swingForeLRest, _swingForeRRest;
         private Transform _swingArmL, _swingArmR, _swingLegL, _swingLegR, _swingTorso, _swingHead, _swingRoot;
         /// <summary>Each arm's local axis that runs from the shoulder to the fist, measured off the bind pose.</summary>
         private Vector3 _alongL = Vector3.left, _alongR = Vector3.right;
@@ -117,6 +124,8 @@ namespace TumbangPreso.Visual
             if (_swingLegR != null) _swingLegR.localRotation = _swingLegRRest;
             if (_swingArmL != null) _swingArmL.localRotation = _swingArmLRest;
             if (_swingArmR != null) _swingArmR.localRotation = _swingArmRRest;
+            if (_swingForeL != null) _swingForeL.localRotation = _swingForeLRest;
+            if (_swingForeR != null) _swingForeR.localRotation = _swingForeRRest;
             if (_swingHead != null) _swingHead.localRotation = _swingHeadRest;
             if (_swingTorso != null) _swingTorso.localRotation = _swingTorsoRest;
             _swingApplied = false;
@@ -126,6 +135,7 @@ namespace TumbangPreso.Visual
         {
             RestoreLocomotionArms();
             _swingArmL = _swingArmR = _swingLegL = _swingLegR = _swingTorso = _swingHead = _swingRoot = null;
+            _swingForeL = _swingForeR = null;
             _legReachWorld = 0; StanceSide = 0; FootPlantDrop = 0;
             _swingBonesResolved = false;
             _armSwingAmount = 0;
@@ -159,6 +169,8 @@ namespace TumbangPreso.Visual
 
             _swingArmLRest = _swingArmL.localRotation; _swingArmRRest = _swingArmR.localRotation;
             _swingLegLRest = _swingLegL.localRotation; _swingLegRRest = _swingLegR.localRotation;
+            if (_swingForeL != null) _swingForeLRest = _swingForeL.localRotation;
+            if (_swingForeR != null) _swingForeRRest = _swingForeR.localRotation;
             if (_swingTorso != null) _swingTorsoRest = _swingTorso.localRotation;
             if (_swingHead != null) _swingHeadRest = _swingHead.localRotation;
             if (_swingRoot != null) { _swingRootPosRest = _swingRoot.localPosition; _swingRootRotRest = _swingRoot.localRotation; }
@@ -196,6 +208,11 @@ namespace TumbangPreso.Visual
                 + pose.Stride * sideArmR * Mathf.Lerp(WalkCarrySwingDegrees, RunCarrySwingDegrees, _runWeight),
                 sideArmR < 0 ? pose.SpreadLeft : pose.SpreadRight, amount);
 
+            // The elbows, after the upper arms they hang from. The carrying arm keeps the clip's straight forearm: the tsinelas
+            // rides that hand and its carry pose was authored on a straight arm.
+            PoseElbow(_swingForeL, _foreAlongL, _swingArmL, _alongL, sideArmL, sideArmL < 0 ? pose.ElbowLeft : pose.ElbowRight, amount);
+            if (!carrying) PoseElbow(_swingForeR, _foreAlongR, _swingArmR, _alongR, sideArmR, sideArmR < 0 ? pose.ElbowLeft : pose.ElbowRight, amount);
+
             float sideLegL = SideOf(_swingLegL, -1f), sideLegR = SideOf(_swingLegR, 1f);
             PoseLimb(_swingLegL, _legAxisL, sideLegL, sideLegL < 0 ? pose.LegLeft : pose.LegRight, sideLegL < 0 ? pose.SplayLeft : pose.SplayRight, amount);
             PoseLimb(_swingLegR, _legAxisR, sideLegR, sideLegR < 0 ? pose.LegLeft : pose.LegRight, sideLegR < 0 ? pose.SplayLeft : pose.SplayRight, amount);
@@ -225,6 +242,8 @@ namespace TumbangPreso.Visual
                     {
                         case "arm-left": if (_swingArmL == null) { _swingArmL = bone; _alongL = AlongArm(binds, i, _alongL); armSkin = skin; armBinds = binds; } break;
                         case "arm-right": if (_swingArmR == null) { _swingArmR = bone; _alongR = AlongArm(binds, i, _alongR); } break;
+                        case "forearm-left": if (_swingForeL == null) { _swingForeL = bone; _foreAlongL = AlongArm(binds, i, _foreAlongL); } break;
+                        case "forearm-right": if (_swingForeR == null) { _swingForeR = bone; _foreAlongR = AlongArm(binds, i, _foreAlongR); } break;
                         case "leg-left": if (_swingLegL == null) { _swingLegL = bone; _legAxisL = DownLeg(binds, i); legIndex = i; } break;
                         case "leg-right": if (_swingLegR == null) { _swingLegR = bone; _legAxisR = DownLeg(binds, i); } break;
                         case "torso": if (_swingTorso == null) _swingTorso = bone; break;
@@ -305,6 +324,20 @@ namespace TumbangPreso.Visual
         {
             float x = transform.InverseTransformPoint(bone.position).x;
             return Mathf.Abs(x) < 1e-3f ? fallback : Mathf.Sign(x);
+        }
+
+        /// <summary>
+        /// Folds a forearm `fold` degrees off the line of its upper arm, toward ahead-and-outward of the character
+        /// (`ElbowSplayDegrees`), from wherever the clip left it. Does nothing on a rig with no elbow.
+        /// </summary>
+        private void PoseElbow(Transform fore, Vector3 foreAxis, Transform upper, Vector3 upperAxis, float side, float fold, float amount)
+        {
+            if (fore == null || upper == null) return;
+            float splay = ElbowSplayDegrees * Mathf.Deg2Rad;
+            var ahead = transform.TransformDirection(new Vector3(side * Mathf.Sin(splay), 0f, Mathf.Cos(splay)));
+            var desired = Vector3.RotateTowards(upper.TransformDirection(upperAxis).normalized, ahead, Mathf.Max(0f, fold) * Mathf.Deg2Rad, 0f);
+            var target = Quaternion.FromToRotation(fore.TransformDirection(foreAxis), desired) * fore.rotation;
+            fore.rotation = Quaternion.Slerp(fore.rotation, target, amount);
         }
 
         /// <summary>

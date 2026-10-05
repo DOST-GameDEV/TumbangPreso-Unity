@@ -61,8 +61,9 @@ namespace TumbangPreso.Visual
             fx._reach = Mathf.Max(0.05f, reachSeconds);
             fx._reel = Mathf.Max(0.05f, reelSeconds);
             fx._return = 0.22f;
-            fx._left = FindBone(caster.transform, "arm-left");
-            fx._right = FindBone(caster.transform, "arm-right");
+            // The bone each braid's TIP is on: the forearm on a rig with elbows (`TipReach`).
+            fx._left = FindBone(caster.transform, "forearm-left") ?? FindBone(caster.transform, "arm-left");
+            fx._right = FindBone(caster.transform, "forearm-right") ?? FindBone(caster.transform, "arm-right");
             fx._torso = FindBone(caster.transform, "torso") ?? caster.transform;
             // Two thick bark limbs, two thin dark vines coiled round them, one lit lime strand.
             // ⚠️ The lit strand is LEAF GREEN, not the eye light: on the asphalt the eye light's
@@ -113,6 +114,13 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>
+        /// How far along a bone's local x its braid ends. 0.47 from the shoulder on the seven-bone rig; on a rig with
+        /// elbows (the redesign prototype) the braid hangs off `forearm-<side>`, whose pivot is the elbow at 0.360 out,
+        /// so the same tip is 0.26 along it (measured in `tools/author_character_redesign_paete.py`).
+        /// </summary>
+        internal static float TipReach(Transform bone) => bone != null && bone.name.StartsWith("forearm") ? 0.26f : 0.47f;
+
+        /// <summary>
         /// The tip of a forearm, whichever way the rig's axes run: of the two points one arm's length
         /// out along the bone's local x, the one further from the torso is the hand.
         /// </summary>
@@ -123,8 +131,9 @@ namespace TumbangPreso.Visual
             // every other screen (and the owner in third person) sees it leave the body's forearms.
             if (CameraSystem.CameraRig.TryViewmodelHand(_caster, arm == _left, out var viewHand)) return viewHand;
             if (arm == null) return transform.position;
-            Vector3 a = arm.TransformPoint(new Vector3(0.47f, 0f, 0f));
-            Vector3 b = arm.TransformPoint(new Vector3(-0.47f, 0f, 0f));
+            float reach = TipReach(arm);
+            Vector3 a = arm.TransformPoint(new Vector3(reach, 0f, 0f));
+            Vector3 b = arm.TransformPoint(new Vector3(-reach, 0f, 0f));
             Vector3 c = _torso != null ? _torso.position : arm.position;
             return (a - c).sqrMagnitude > (b - c).sqrMagnitude ? a : b;
         }
@@ -407,12 +416,14 @@ namespace TumbangPreso.Visual
             if (caster == null) return;
             foreach (string bone in new[] { "arm-left", "arm-right" })
             {
-                Transform arm = null, torso = null;
+                Transform arm = null, fore = null, torso = null;
                 foreach (var t in caster.GetComponentsInChildren<Transform>(true))
                 {
                     if (t.name == bone) arm = t;
+                    if (t.name == "fore" + bone) fore = t;
                     if (t.name == "torso") torso = t;
                 }
+                if (fore != null) arm = fore;
                 if (arm == null) continue;
                 var go = new GameObject("PaetePalmGlow");
                 var fx = go.AddComponent<PaetePalmGlow>();
@@ -427,8 +438,9 @@ namespace TumbangPreso.Visual
         {
             _age += Time.deltaTime;
             if (_age >= _life) { Destroy(gameObject); return; }
-            Vector3 a = _arm.TransformPoint(new Vector3(0.47f, 0f, 0f));
-            Vector3 b = _arm.TransformPoint(new Vector3(-0.47f, 0f, 0f));
+            float reach = PaeteVineReach.TipReach(_arm);
+            Vector3 a = _arm.TransformPoint(new Vector3(reach, 0f, 0f));
+            Vector3 b = _arm.TransformPoint(new Vector3(-reach, 0f, 0f));
             Vector3 c = _torso != null ? _torso.position : _arm.position;
             transform.position = (a - c).sqrMagnitude > (b - c).sqrMagnitude ? a : b;
             float k = Mathf.Clamp01(_age / _life);

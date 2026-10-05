@@ -394,6 +394,18 @@ Shader "TumbangPreso/Toon"
         float4 _WorldLookShape,_WorldKeyDirection,_WorldSoftLight;
         half _ShadowBand;
         half _BandEdge;
+        // ⚠️⚠️ § SMOOTH SHADING. A GLOBAL, deliberately absent from `Properties` for
+        // § THE RENDER STYLE's reason; 0 (unset) is the old two-band look. Owner,
+        // 2026-10-05, looking at the character redesign in the editor: *"i think we have a
+        // celshader set on for the character shading in game, can we use regular shading + AO"*.
+        // The redesigned cast has soft, rounded forms, and on those the hard band draws straight
+        // lines and dark facets wherever a surface turns. At 1 the light falls off smoothly
+        // (a wrapped Lambert between `_ShadowBand` and full light) with no step at all.
+        // ⚠️ THE GAME'S LOOK SINCE 2026-10-05 (owner: yes, for characters). `ToonSkin` sets it to 1
+        // when the game starts; the editor's Character Redesign menu can still flip it to compare.
+        // It reaches everything drawn with this shader: the cast, their first-person arms, and
+        // what they summon. The map is drawn with other shaders and is untouched.
+        half _CharacterSmoothShade;
 
         // --- The tonemap, and why a shader is carrying one -------------------------------
         //
@@ -477,7 +489,12 @@ Shader "TumbangPreso/Toon"
             // This generated lookup has no mipmaps. Sample its authored level directly;
             // implicit screen derivatives produced invalid cloud/Mesa lighting samples.
             half3 ramp = tex2Dlod(_WorldToonRamp, float4(softBand, .5, 0, 0)).rgb;
-            c.rgb = s.Albedo * _LightColor0.rgb * lerp(level.xxx,ramp,_WorldLookWeight) * falloff;
+            half3 lit = lerp(level.xxx,ramp,_WorldLookWeight);
+            // § SMOOTH SHADING: a wrapped Lambert, so the terminator is a gradient and the side
+            // turned from the sun still reads. Shadows fold in the same way as the band's.
+            half smoothLevel = lerp(_ShadowBand, 1.0h, saturate(ndl * 0.6h + 0.4h) * lerp(0.35h, 1.0h, shadowed));
+            lit = lerp(lit, smoothLevel.xxx, _CharacterSmoothShade);
+            c.rgb = s.Albedo * _LightColor0.rgb * lit * falloff;
             c.a = s.Alpha;
             return c;
         }

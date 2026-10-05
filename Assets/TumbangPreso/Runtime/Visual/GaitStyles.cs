@@ -26,6 +26,9 @@ namespace TumbangPreso.Visual
         public static GaitStyle For(string modelName)
         {
             string name = string.IsNullOrEmpty(modelName) ? "" : modelName.Replace("(Clone)", "").Trim();
+            // ⚠️ A REDESIGN PROTOTYPE WALKS AS ITS HERO. Its glb is `<id>-redesign`, which matched nothing below, so all seven
+            // redesigned heroes fell through to `Custom` and walked the same walk (found 2026-10-05).
+            if (name.EndsWith("-redesign")) name = "team-" + name.Substring(0, name.Length - "-redesign".Length);
             switch (name)
             {
                 case "team-sean": return Sean;
@@ -82,6 +85,7 @@ namespace TumbangPreso.Visual
                 ArmSpread = 22, ArmForward = 24, ArmBack = 16, ArmCarry = 3, ArmSnap = 1, ArmLag = 0.095f,
                 Lean = -1.5f, LeanPulse = 1.2f, Roll = 2.5f, Twist = 9,
                 HeadPitch = -2, HeadSteady = .95f, Sway = .03f, Stomp = .02f, Glide = 1.1f,
+                Elbow = 16, ElbowPump = 8,   // elbows (redesign rig only): big arms barely fold walking; a fighter's fists up when he closes
             },
             Run = new Gait
             {
@@ -89,6 +93,7 @@ namespace TumbangPreso.Visual
                 ArmSpread = 18, ArmForward = 38, ArmBack = 30, ArmCarry = 26, ArmSnap = .8f, ArmLag = 0.057f,
                 Lean = 11, LeanPulse = 1.5f, Roll = 1, Twist = 13,
                 HeadPitch = -4, HeadSteady = .75f, Bounce = .04f, BounceDelay = .06f, Sway = .01f, Stomp = .03f, Glide = 1.1f,
+                Elbow = 78, ElbowPump = 14,
             },
             // The shoulder drive: the chest turns sharply into each step and holds, rather than rocking evenly.
             Quirk = (ref GaitPose p, in GaitMoment m) =>
@@ -117,6 +122,7 @@ namespace TumbangPreso.Visual
                 Lean = -2.5f, Roll = 4.5f, Twist = 6,
                 HeadPitch = -1, HeadTilt = 5, HeadNod = 3.5f, HeadSteady = .3f,
                 Bounce = .045f, BounceDelay = .04f, Sway = .05f, Glide = 1.3f,
+                Elbow = 10, ElbowPump = 14,   // elbows (redesign rig only): loose and swinging; running, the sharpest fold in the cast
             },
             Run = new Gait
             {
@@ -125,6 +131,7 @@ namespace TumbangPreso.Visual
                 Lean = 13, Roll = 1, Twist = 8,
                 HeadPitch = -3, HeadTilt = 2, HeadNod = 1, HeadSteady = .7f,
                 Bounce = .06f, BounceDelay = .05f, Sway = .01f, Glide = 1.3f,
+                Elbow = 88, ElbowPump = 22,
             },
         };
 
@@ -144,6 +151,7 @@ namespace TumbangPreso.Visual
                 ArmSpread = 22, ArmForward = 16, ArmBack = 12, ArmCarry = 2, ArmSnap = .8f, ArmLag = 0.12f,
                 Lean = 3, LeanPulse = 1.8f, Roll = 5.5f, RollDelay = .04f, Twist = 3,
                 HeadPitch = 4, HeadSteady = .5f, Sway = .075f, Stomp = .05f, Glide = 1.35f,
+                Elbow = 12, ElbowPump = 4,   // elbows (redesign rig only): stone held away from the body; a charge, not a sprint
             },
             Run = new Gait
             {
@@ -151,6 +159,7 @@ namespace TumbangPreso.Visual
                 ArmSpread = 24, ArmForward = 34, ArmBack = 26, ArmCarry = 6, ArmSnap = .9f, ArmLag = 0.12f,
                 Lean = 16, LeanPulse = 2, Roll = 3, Twist = 4,
                 HeadPitch = 5, HeadSteady = .35f, Bounce = .01f, Sway = .04f, Stomp = .05f, Glide = 1.4f,
+                Elbow = 55, ElbowPump = 10,
             },
         };
 
@@ -169,6 +178,7 @@ namespace TumbangPreso.Visual
                 ArmSpread = 16, ArmForward = 22, ArmBack = 16, ArmCarry = 2, ArmSnap = 1, ArmLag = 0.095f,
                 Lean = 2, Roll = 2, Twist = 4,
                 HeadPitch = 0, HeadSteady = 1, Bounce = .012f, Sway = .02f, Glide = 1.3f,
+                Elbow = 14, ElbowPump = 8,   // elbows (redesign rig only): tidy and exact; a skater's arms at the run
             },
             Run = new Gait
             {
@@ -176,6 +186,7 @@ namespace TumbangPreso.Visual
                 ArmSpread = 14, ArmForward = 50, ArmBack = 42, ArmCarry = 4, ArmSnap = 1, ArmLag = 0.095f,
                 Lean = 15, Roll = 1.5f, Twist = 11,
                 HeadPitch = -3, HeadSteady = 1, Bounce = .008f, Sway = .015f, Glide = 1.35f,
+                Elbow = 72, ElbowPump = 10,
             },
             // Reading the court: a slow look to one side and the other while she walks, gone when she runs.
             Quirk = (ref GaitPose p, in GaitMoment m) => p.HeadYaw += 9f * Wave(m.Time, .22f) * (1f - m.Run),
@@ -210,6 +221,7 @@ namespace TumbangPreso.Visual
                 ArmSpread = 38, ArmForward = 4, ArmBack = 4, ArmCarry = -6, ArmSnap = 1, ArmLag = .1f,
                 Lean = 3, Roll = 1, Twist = 1,
                 HeadPitch = 4, HeadSteady = 0, Sway = .01f, Glide = 2.6f,
+                Elbow = 4, ElbowPump = 0,   // elbows (redesign rig only): bell sleeves hang, then stream straight back
             },
             Run = new Gait
             {
@@ -217,6 +229,7 @@ namespace TumbangPreso.Visual
                 ArmSpread = 12, ArmForward = 5, ArmBack = 5, ArmCarry = -58, ArmSnap = 1, ArmLag = .08f,
                 Lean = 14, Roll = 1, Twist = 2,
                 HeadPitch = 5, HeadSteady = 0, Bounce = .03f, BounceDelay = .05f, Sway = .01f, Glide = 1.45f,
+                Elbow = 0, ElbowPump = 0,
             },
             Quirk = (ref GaitPose p, in GaitMoment m) =>
             {
@@ -252,6 +265,7 @@ namespace TumbangPreso.Visual
                 ArmSpread = 22, ArmForward = 32, ArmBack = 14, ArmCarry = 8, ArmSnap = 1.1f, ArmLag = 0.12f,
                 Lean = -1.5f, Roll = 5, RollDelay = .05f, Twist = 7,
                 HeadPitch = -5, HeadSteady = .5f, Bounce = .02f, Sway = .085f, Glide = 1.35f,
+                Elbow = 18, ElbowPump = 22,   // elbows (redesign rig only): a flourish in front; flung out and back at the run
             },
             Run = new Gait
             {
@@ -259,6 +273,7 @@ namespace TumbangPreso.Visual
                 ArmSpread = 34, ArmForward = 26, ArmBack = 34, ArmCarry = -20, ArmSnap = 1, ArmLag = 0.114f,
                 Lean = 12, Roll = 2, Twist = 5,
                 HeadPitch = -5, HeadSteady = .6f, Bounce = .07f, BounceDelay = .05f, Sway = .02f, Glide = 1.4f,
+                Elbow = 14, ElbowPump = 6,
             },
             // A performer's head: it rides the hips a beat late, like she knows she is being watched.
             Quirk = (ref GaitPose p, in GaitMoment m) =>
@@ -284,6 +299,7 @@ namespace TumbangPreso.Visual
                 ArmSpread = 28, ArmForward = 30, ArmBack = 26, ArmCarry = 2, ArmSnap = .85f, ArmLag = .11f,
                 Lean = -2, Roll = 7, RollDelay = .12f, Twist = 6,
                 HeadPitch = -1, HeadTilt = -3, HeadSteady = .75f, Bounce = .012f, Sway = .1f, Glide = 1.35f,
+                Elbow = 8, ElbowPump = 12,   // elbows (redesign rig only): loose and late; long and loose at the run
             },
             Run = new Gait
             {
@@ -291,6 +307,7 @@ namespace TumbangPreso.Visual
                 ArmSpread = 26, ArmForward = 46, ArmBack = 40, ArmCarry = 2, ArmSnap = .9f, ArmLag = .1f,
                 Lean = 13, Roll = 3.5f, RollDelay = .08f, Twist = 10,
                 HeadPitch = -3, HeadSteady = .8f, Bounce = .025f, Sway = .045f, Glide = 1.4f,
+                Elbow = 44, ElbowPump = 20,
             },
             Quirk = (ref GaitPose p, in GaitMoment m) =>
             {
@@ -330,6 +347,7 @@ namespace TumbangPreso.Visual
                 ArmSpread = 30, ArmForward = 44, ArmBack = 26, ArmCarry = 6, ArmSnap = 1.1f, ArmLag = .06f,
                 Lean = 6, Roll = 2.5f, Twist = 7,
                 HeadPitch = -5, HeadNod = .5f, HeadSteady = .6f, Bounce = .07f, BounceDelay = .05f, Sway = .015f, Glide = 1.3f,
+                Elbow = 20, ElbowPump = 18,   // elbows (redesign rig only): swinging high in front; wings swept straight back
             },
             Run = new Gait
             {
@@ -337,6 +355,7 @@ namespace TumbangPreso.Visual
                 ArmSpread = 42, ArmForward = 7, ArmBack = 9, ArmCarry = -52, ArmSnap = 1, ArmLag = .1f,
                 Lean = 22, Roll = 3, RollDelay = .08f, Twist = 3,
                 HeadPitch = -12, HeadSteady = .8f, Bounce = .03f, BounceDelay = .1f, Sway = .01f, Glide = 1.8f,
+                Elbow = 8, ElbowPump = 0,
             },
             // The skip: the rise after one foot lands higher than after the other, walking only.
             Quirk = (ref GaitPose p, in GaitMoment m) =>
@@ -362,6 +381,7 @@ namespace TumbangPreso.Visual
                 ArmSpread = 15, ArmForward = 18, ArmBack = 16, ArmCarry = 3, ArmSnap = .8f, ArmLag = .1f,
                 Lean = 4, LeanPulse = 2.5f, Roll = 5.5f, RollDelay = .1f, Twist = 2,
                 HeadPitch = 2, HeadNod = 3, HeadSteady = .4f, Sway = .075f, Stomp = .07f, Glide = 1.02f,
+                Elbow = 6, ElbowPump = 6,   // elbows (redesign rig only): long heavy boughs that hardly fold
             },
             Run = new Gait
             {
@@ -369,6 +389,7 @@ namespace TumbangPreso.Visual
                 ArmSpread = 16, ArmForward = 30, ArmBack = 28, ArmCarry = 4, ArmSnap = .85f, ArmLag = .09f,
                 Lean = 9, LeanPulse = 3, Roll = 4, RollDelay = .08f, Twist = 3,
                 HeadPitch = 1, HeadNod = 3, HeadSteady = .5f, Bounce = .02f, Sway = .05f, Stomp = .07f, Glide = 1.05f,
+                Elbow = 20, ElbowPump = 8,
             },
             Quirk = (ref GaitPose p, in GaitMoment m) =>
             {

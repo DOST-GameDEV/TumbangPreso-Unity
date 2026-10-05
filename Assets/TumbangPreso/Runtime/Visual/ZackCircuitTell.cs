@@ -40,11 +40,9 @@ namespace TumbangPreso.Visual
             var visual=_caster.GetComponent<CharacterVisual>();
             var skin=visual!=null && visual.Model!=null
                 ? visual.Model.GetComponentInChildren<SkinnedMeshRenderer>() : null;
-            if(skin!=null)
-                for(int i=0;i<skin.bones.Length;i++)
-                    if(skin.bones[i]!=null && skin.bones[i].name=="arm-left"
-                        && CharacterVisual.PalmCentre(skin,i,out var palm))
-                    { _leftArm=skin.bones[i];_leftPalm=palm;break; }
+            // The bone his left HAND is on: the forearm on a rig with elbows (`CharacterVisual.HandBone`).
+            if(skin!=null && CharacterVisual.HandBone(skin,"left",out int hand,out var palm))
+            { _leftArm=skin.bones[hand];_leftPalm=palm; }
             // Resolve once per acquisition, never a scene search in LateUpdate.
             foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))
                 if(arms.isActiveAndEnabled && arms.BoundCharacter==_caster){_ownerArms=arms;break;}

@@ -76,6 +76,7 @@ ROOT = os.path.dirname(TOOLS)
 sys.path.insert(0, TOOLS)
 import build_person_voxel as bpv  # noqa: E402  the cast's glb reader and writer, not edited
 import author_character_redesign_dante_textures as tex  # noqa: E402  the island layout
+import author_character_redesign_dante_clips as clips  # noqa: E402  the prototype's own locomotion clips
 
 BASE = os.path.join(ROOT, "Assets/TumbangPreso/Art/characters/persons/team-dante.glb")
 FOLDER = os.path.join(ROOT, "Assets/TumbangPreso/Art/CharacterRedesign/dante")
@@ -85,7 +86,26 @@ BLEND = os.path.join(ROOT, "ArtSource/dante/redesign-20261005/dante_redesign.ble
 NAME = "dante-redesign"
 
 BONES = ["root", "leg-left", "leg-right", "torso", "arm-left", "arm-right", "head"]
-HEIGHT = 0.785           # the original's top, hair included (team-dante.glb head-mesh bounds)
+# ⚠️ TWO BONES THE CAST DOES NOT HAVE. Owner, 2026-10-05: *"should try bending the arms for
+# animations, especially for the sprint and walk"*. One bone an arm cannot bend, so each arm gets
+# an elbow: a child of the arm bone, appended AFTER the seven so their indices and names do not
+# move. A clip that does not key them leaves the arm straight, exactly as before.
+# ⚠️ WHAT THIS COSTS IN THE GAME: `CharacterVisual.PalmCentre` finds the hand from `arm-right`
+# alone. With the elbow bent, the hand is no longer where that code parks a carried tsinelas.
+# The hand anchor would have to hang off `forearm-right`. Not done; this is a prototype.
+ELBOW_X = 0.172
+EXTRA_BONES = [("forearm-left", "arm-left", 1), ("forearm-right", "arm-right", -1)]
+ALL_BONES = BONES + [name for name, _, _ in EXTRA_BONES]
+# ⚠️⚠️ THE HEAD IS 0.84 OF THE ORIGINAL'S. Owner, 2026-10-05, after flipping between the two sizes
+# in the game on the whole lineup: *"smaller heads are better"*, then *"yes rebuild the heads at
+# 84 for all seven"*. Everything skinned to the head bone (the head block, ears, hair, horn) is
+# built and painted at the original's size and then scaled about the head JOINT, so the paint
+# keeps its place and the proportions inside the head do not change. The collar is drawn in with
+# it. This DEPARTS from the cast's 24 / 23 / 53 proportions (Voxel_Person_Guide.md) on the owner's
+# word: the head is now about 48 per cent of his height, and he stands 0.716 tall, not 0.785.
+HEAD_SCALE = 0.84
+HEAD_JOINT = Vector((0.0, 0.0024, 0.343))   # the `head` bone of team-dante.glb, in Blender space
+HEIGHT = HEAD_JOINT.z + (0.787 - HEAD_JOINT.z) * HEAD_SCALE   # the top of his hair after the scale
 SHARP_ANGLE = 40.0       # degrees: a chamfer is a hard edge, a soft corner or a taper is one form
 TRIANGLE_BUDGET = 6000   # the brief's ceiling; the original is 7,741
 
@@ -156,6 +176,8 @@ class Part:
         self.bone = self.bm.verts.layers.int.new("bone")
         self.jobs = []      # (face, mapping, swatch params, the vertices those params belong to)
         self.pieces = []    # (name, triangles)
+        self.blend = {}     # vertex -> [(bone, weight)], for the few pieces that BEND
+        self.collar_verts = set()
 
     def loft(self, name, bone, rings, mapping, caps=(True, True), tip=None, params=None):
         """Skin `rings` in order. `mapping` is one spec or f(segment, column) -> spec.
@@ -168,7 +190,7 @@ class Part:
         count = len(rings)
         if params is None:
             params = [i / float(max(count - 1, 1)) for i in range(count)]
-        index = BONES.index(bone)
+        index = ALL_BONES.index(bone)
 
         # round the ring a swatch is spread by LENGTH, so a narrow chamfer takes a narrow strip
         widest = max(rings, key=lambda r: sum((r[j] - r[(j + 1) % n]).length for j in range(n)))
@@ -254,6 +276,18 @@ class Part:
             rings = [[move(p) for p in r] for r in rings]
         return self.loft(name, bone, rings, mapping, caps=caps, params=params)
 
+    def bend(self, faces, weights):
+        """Make a piece soft: `weights(position)` gives [(bone, weight)] for each of its vertices.
+
+        ⚠️ The cast is rigid, one bone a vertex (Voxel_Person_Guide.md), and so is this model
+        except where cloth or hair lies ACROSS two bones. Owner, 2026-10-05: *"make it so the
+        clothes will bend/distort to follow his body"*. A coat-tail rigid to the torso is walked
+        through by the legs; a collar rigid to the torso is turned through by the head.
+        """
+        for f in faces:
+            for v in f.verts:
+                self.blend[v] = weights(v.co)
+
     def wedge(self, name, bone, base, tip, base_half, tip_half, mapping, chamfer, across=X):
         """A block standing on `base` and narrowing to `tip`: a hair clump, a loose cloth end."""
         w = (Vector(tip) - Vector(base)).normalized()
@@ -305,12 +339,19 @@ class Part:
         self.bm.to_mesh(mesh)
         obj = bpy.data.objects.new(self.name, mesh)
         bpy.context.scene.collection.objects.link(obj)
-        for b in BONES:
+        for b in ALL_BONES:
             obj.vertex_groups.new(name=b)
         layer = self.bm.verts.layers.int["bone"]
         self.bm.verts.ensure_lookup_table()
+        self.bm.verts.index_update()
         for v in self.bm.verts:
-            obj.vertex_groups[v[layer]].add([v.index], 1.0, "REPLACE")
+            mix = [(b, w) for b, w in self.blend.get(v, ()) if w > 0.001]
+            if not mix:
+                obj.vertex_groups[v[layer]].add([v.index], 1.0, "REPLACE")
+                continue
+            total = sum(w for _, w in mix)
+            for b, w in mix:
+                obj.vertex_groups[b].add([v.index], w / total, "REPLACE")
         for poly in mesh.polygons:
             poly.use_smooth = True
         mesh.set_sharp_from_angle(angle=math.radians(SHARP_ANGLE))
@@ -318,6 +359,11 @@ class Part:
         mod.object = armature
         obj.parent = armature
         return obj
+
+
+def _ramp(a, b, x):
+    """0 at `a`, 1 at `b`, clamped."""
+    return max(0.0, min(1.0, (x - a) / (b - a)))
 
 
 def bezier(p0, p1, p2, t):
@@ -357,20 +403,25 @@ HEAD_ROWS = {
         (0.646, 0.165, 0.157, 0.159, 4.6),
         (0.661, 0.148, 0.141, 0.144, 4.0),
     ],
+    # ⚠️ THE FRONT OF THE FACE IS ONE FLAT PLANE: the same depth (0.165) from the jaw to the hair.
+    # It had a brow ledge (the front stepping out 11 mm at 0.524) and a cheek that stood 7 mm
+    # proud at 0.428. In the game's two-band toon shader each of those is a ring where the
+    # light flips, so they drew STRAIGHT LINES across his face. Owner, 2026-10-05, from a
+    # screenshot in Unity: *"the eyebrow dent is making this weird shading artifact where theres
+    # a straight line on his head"*. The cheek fullness stays in the WIDTH, where it is silhouette.
     "shaped": [
         (0.343, 0.104, 0.116, 0.108, 3.4),
         (0.357, 0.140, 0.144, 0.140, 3.8),
-        (0.388, 0.164, 0.160, 0.156, 4.0),
-        (0.428, 0.181, 0.170, 0.162, 4.2),
-        (0.470, 0.175, 0.163, 0.162, 4.2),
-        (0.512, 0.171, 0.160, 0.162, 4.2),
-        (0.524, 0.172, 0.171, 0.162, 4.2),
-        (0.604, 0.169, 0.167, 0.162, 4.2),
+        (0.388, 0.164, 0.162, 0.156, 4.0),
+        (0.428, 0.181, 0.165, 0.162, 4.2),
+        (0.470, 0.175, 0.165, 0.162, 4.2),
+        (0.520, 0.171, 0.165, 0.162, 4.2),
+        (0.604, 0.169, 0.165, 0.162, 4.2),
         (0.646, 0.162, 0.158, 0.158, 3.8),
         (0.661, 0.140, 0.136, 0.140, 3.4),
     ],
 }
-HEAD_VARIANT = "carved"
+HEAD_VARIANT = "shaped"   # the owner picked `shaped` with hair A, 2026-10-05
 NOSE = {"carved": 0.015, "shaped": 0.022}    # how far the foot of the nose stands off the face
 
 
@@ -395,15 +446,9 @@ def build_head(part, variant):
     else:
         rows = HEAD_ROWS[variant]
         part.loft("head-box", "head", [super_ring(*row) for row in rows], skin)
-        # the nose: a wedge that leaves the face at the bridge and stands proud at its foot, so
-        # the ink line falls under it and down its sides, never round it like a patch
-        front = next(r for r in rows if r[0] >= 0.42)[2]
-        y = 0.001 - front + 0.003
-        proud = NOSE[variant]
-        foot = [Vector((-0.017, y, 0.432)), Vector((0.017, y, 0.432)), Vector((0.007, y, 0.474)), Vector((-0.007, y, 0.474))]
-        face = [Vector((-0.014, y - proud, 0.436)), Vector((0.014, y - proud, 0.436)),
-                Vector((0.006, y - 0.004, 0.472)), Vector((-0.006, y - 0.004, 0.472))]
-        part.loft("nose", "head", [foot, face], skin, caps=(False, True))
+        # ⚠️ NO NOSE. A wedge stood here, with its own ink line. Owner, 2026-10-05: the faces "look
+        # too human, like it lost its charm.. they need to be more cutesy". The cast has no nose,
+        # and a face with two big eyes and a mouth on a flat front is what makes it a toy.
     # ears: small blocks, as the original's are, narrowing a little outward
     for s in (1, -1):
         part.block("ear", "head", Y, Z, [((s * 0.164, 0.012, 0.456), 0.030, 0.042), ((s * 0.216, 0.016, 0.456), 0.024, 0.034)],
@@ -420,20 +465,34 @@ HAIR_CHAMFER = 0.013
 WEDGES = [
     # the fringe: four slabs side by side over the forehead, cut to four lengths like the
     # original's stepped block fringe, longest on his right, the gold eye left clear
-    ("fringe-long",  (-0.128, -0.182, 0.672), (-0.136, -0.187, 0.512), (0.046, 0.026), (0.038, 0.018)),
-    ("fringe-mid",   (-0.044, -0.184, 0.674), (-0.050, -0.189, 0.566), (0.040, 0.027), (0.034, 0.018)),
-    ("fringe-notch", (0.030, -0.184, 0.676),  (0.028, -0.188, 0.618),  (0.036, 0.026), (0.031, 0.018)),
-    ("fringe-short", (0.104, -0.182, 0.674),  (0.104, -0.186, 0.600),  (0.040, 0.024), (0.034, 0.017)),
+    # ⚠️ LONGER, AND WIDER AT THE FOOT. Owner, 2026-10-05, seeing him in the game: *"dante's
+    # forehead looks too big and his head looks like a rectangle. should probably extend the
+    # bangs"*. With the nose and the face shading gone, the bare skin between a short fringe and
+    # the eyes was a tall blank panel. The slabs now come down to just over the eyes (their tops
+    # are at 0.502 and 0.512) and a fifth slab covers the corner by the shaved temple.
+    ("fringe-long",  (-0.128, -0.182, 0.672), (-0.138, -0.188, 0.506), (0.046, 0.026), (0.040, 0.018)),
+    ("fringe-mid",   (-0.044, -0.184, 0.674), (-0.052, -0.190, 0.522), (0.040, 0.027), (0.036, 0.018)),
+    ("fringe-notch", (0.030, -0.184, 0.676),  (0.026, -0.189, 0.552),  (0.036, 0.026), (0.033, 0.018)),
+    ("fringe-short", (0.104, -0.182, 0.674),  (0.102, -0.187, 0.534),  (0.040, 0.024), (0.036, 0.017)),
     ("sideburn",     (-0.187, -0.104, 0.650), (-0.185, -0.118, 0.456), (0.021, 0.052), (0.015, 0.026)),
-    # the crest: four chunks thrown up and back toward his right, no two the same height
-    ("crest-quiff",  (-0.040, -0.110, 0.720), (-0.060, -0.138, 0.762), (0.090, 0.066), (0.048, 0.036)),
-    ("crest-high",   (0.004, 0.004, 0.720),   (-0.012, 0.018, 0.764),  (0.098, 0.078), (0.052, 0.044)),
-    ("crest-back",   (-0.094, 0.104, 0.720),  (-0.118, 0.124, 0.758),  (0.078, 0.066), (0.042, 0.036)),
-    ("crest-left",   (0.074, 0.074, 0.720),   (0.082, 0.088, 0.760),   (0.058, 0.058), (0.034, 0.034)),
+    # the crest: four chunks thrown up and back toward his right, no two the same height. They
+    # stand on a slab kept LOW (0.738), so from above the crown is four stepped masses and not
+    # one flat square with ridges on it
+    ("crest-quiff",  (-0.044, -0.104, 0.706), (-0.068, -0.140, 0.760), (0.094, 0.070), (0.050, 0.036)),
+    ("crest-high",   (0.006, 0.006, 0.706),   (-0.016, 0.026, 0.766),  (0.100, 0.080), (0.050, 0.042)),
+    ("crest-back",   (-0.092, 0.106, 0.706),  (-0.122, 0.134, 0.764),  (0.080, 0.068), (0.042, 0.034)),
+    ("crest-left",   (0.076, 0.078, 0.706),   (0.088, 0.098, 0.753),   (0.060, 0.060), (0.032, 0.032)),
     # the back mass ends in three blunt points, each its own length
-    ("nape-right",   (-0.126, 0.180, 0.420),  (-0.148, 0.200, 0.340),  (0.056, 0.031), (0.032, 0.018)),
-    ("nape-mid",     (-0.010, 0.182, 0.420),  (-0.020, 0.206, 0.322),  (0.060, 0.031), (0.034, 0.018)),
-    ("nape-left",    (0.106, 0.180, 0.420),   (0.118, 0.198, 0.358),   (0.050, 0.031), (0.030, 0.017)),
+    # ⚠️ their inner faces stay behind y 0.192: the collar's back wall and its piping reach 0.188
+    ("nape-right",   (-0.126, 0.214, 0.420),  (-0.148, 0.224, 0.340),  (0.056, 0.022), (0.032, 0.015)),
+    ("nape-mid",     (-0.010, 0.215, 0.420),  (-0.020, 0.228, 0.322),  (0.060, 0.022), (0.034, 0.015)),
+    ("nape-left",    (0.106, 0.214, 0.420),   (0.118, 0.222, 0.358),   (0.050, 0.022), (0.030, 0.014)),
+]
+#   the layer over the back: (name, top, foot, half size at the top, half size at the foot)
+BACK_SLABS = [
+    ("back-right", (-0.122, 0.213, 0.676), (-0.130, 0.217, 0.522), (0.060, 0.017), (0.046, 0.013)),
+    ("back-mid",   (-0.012, 0.215, 0.680), (-0.020, 0.220, 0.474), (0.056, 0.018), (0.044, 0.013)),
+    ("back-left",  (0.098, 0.213, 0.676),  (0.102, 0.216, 0.552),  (0.054, 0.017), (0.042, 0.013)),
 ]
 
 
@@ -442,15 +501,34 @@ def build_hair(part):
     # carries no drawing: each clump is a lighter top plane, the flat tone round its sides and a
     # darker underside, and the ink edge and the toon ramp do the rest, as on the original.
     hair = tones("hair_top", "hair", "hair_under")
-    part.block("hair-slab", "head", X, Y, [((0, 0, 0.646), (0.198, 0.150), 0.192), ((0, 0, 0.752), (0.190, 0.142), 0.182)],
+    # the mass underneath, down the back: one step deeper, so the layer laid over it reads as
+    # hair lying on hair (CAST_CLOTHING_STYLE.md rule 7: the dark tone underneath and behind)
+    deep = tones("hair", "hair_under", "hair_under")
+    part.block("hair-slab", "head", X, Y, [((0, 0, 0.646), (0.198, 0.150), 0.192), ((0, 0, 0.738), (0.190, 0.142), 0.182)],
                hair, HAIR_CHAMFER)
     part.block("hair-back", "head", X, Y, [((0, 0.178, 0.408), (0.190, 0.166), 0.034), ((0, 0.172, 0.664), (0.190, 0.160), 0.038)],
-               hair, HAIR_CHAMFER)
+               deep, HAIR_CHAMFER)
+    # the undercut at the nape: a thin dark layer on the back of the head, inside the collar,
+    # so what shows over the collar's rim between the nape points is hair and not skin
+    part.block("hair-nape-liner", "head", X, Y, [((0, 0.160, 0.366), 0.150, 0.010), ((0, 0.162, 0.412), 0.156, 0.011)],
+               flat("hair_under"), 0.004)
     part.block("hair-side", "head", X, Y, [((-0.187, 0.045, 0.506), 0.020, 0.104), ((-0.187, 0.045, 0.662), 0.022, 0.110)],
                hair, 0.010)
     for name, base, tip, base_half, tip_half in WEDGES:
         # the fringe is cut square, the other clumps a little softer
-        part.wedge("hair-" + name, "head", base, tip, base_half, tip_half, hair, 0.006 if name.startswith("fringe") else 0.010)
+        faces = part.wedge("hair-" + name, "head", base, tip, base_half, tip_half, deep if name.startswith("nape") else hair,
+                           0.006 if name.startswith("fringe") else 0.010)
+        if name.startswith("nape"):
+            # the points lie on his back: their tips stay with the shoulders when the head tips
+            # back, instead of digging into the coat
+            part.bend(faces, lambda co: [("head", 1.0 - 0.6 * _ramp(0.420, 0.335, co.z)), ("torso", 0.6 * _ramp(0.420, 0.335, co.z))])
+    # ⚠️ THE BACK WAS ONE FLAT BLACK SLAB (handoff section 7, and the owner circled "the whole back
+    # of the hair"). Paint is not the answer: the owner turned down drawn shine. So the back gets
+    # what the fringe has, blocks: three slabs hanging from the crown over the back mass, each its
+    # own width and length, the longest in the middle-right, standing 15 mm proud so each throws
+    # an ink edge and a shadow on the mass under it. Set by hand, like the fringe.
+    for name, base, tip, base_half, tip_half in BACK_SLABS:
+        part.wedge("hair-" + name, "head", base, tip, base_half, tip_half, hair, 0.008)
 
 
 # ---------------------------------------------------------------------------
@@ -554,11 +632,26 @@ def chest_y(z):
 
 
 TAIL_TOP = 0.226
+SKIRT_FOLLOW = 0.78   # how much of a leg's swing the hem takes
 #   the collar round the neck, from his right tip (s = 0) behind him to his left tip (s = 1):
-#   (s, top height). It stands tallest on the scar's side and folds low on the other.
-COLLAR_TOP = [(0.00, 0.356), (0.07, 0.392), (0.20, 0.408), (0.34, 0.428), (0.50, 0.446),
-              (0.66, 0.454), (0.80, 0.462), (0.92, 0.454), (1.00, 0.360)]
-COLLAR_BASE = 0.346
+#   (s, top height). ⚠️ THE SAME ON BOTH SIDES. It used to stand taller on the scar's side and
+#   fold low on the other, round a ring wider than the shoulders. Owner, 2026-10-05, circling
+#   both ends of it: *"fix the asymmetrical and detached hood"*. Its top also stays under the
+#   ear blocks (their foot is at 0.414).
+#   Behind, it stops at 0.404, UNDER the foot of the hair's back mass (0.408), and the nape
+#   points hang wholly outside its wall. A collar raised into the hair (tried, to hide the skin
+#   that showed over the rim) was cut through by the hair as soon as the head turned 20 degrees:
+#   the hair rides the head bone, the collar the torso. The skin is hidden by `hair-nape-liner`.
+COLLAR_TOP = [(0.00, 0.372), (0.06, 0.398), (0.14, 0.408), (0.26, 0.405), (0.50, 0.404),
+              (0.74, 0.405), (0.86, 0.408), (0.94, 0.398), (1.00, 0.372)]
+COLLAR_BASE = 0.338   # 5 mm INTO the torso's top: it grows out of the shoulders
+COLLAR_SHELF = 0.358
+COLLAR_WALL = 0.008
+COLLAR_FOLLOW = 0.92
+#   (height, half width, depth to the front, depth to the back) of its outer face. It leaves the
+#   shoulders (the torso is 0.138 by 0.100 there), spreads out under the jaw as a shelf, then
+#   stands as a wall that follows the head's own taper 8 to 12 mm off it, so nothing floats.
+COLLAR_PROFILE = [(0.338, 0.146, 0.108, 0.110), (0.358, 0.162, 0.162, 0.166), (0.420, 0.200, 0.188, 0.190)]
 COLLAR_GAP = 40.0   # degrees each side of straight ahead left open
 
 
@@ -581,28 +674,46 @@ def build_torso(part):
     part.block("buckle-stone", "torso", X, Z, [((0, y0 - 0.012, 0.219), 0.022, 0.018), ((0, y0 - 0.023, 0.219), 0.017, 0.013)],
                proj_facing("torso", ahead, "jade"), 0.005)
 
-    # the coat-tails: two flared blocks, cut open at the front, their hems lower behind than in
-    # front, each hem a band of gold standing 4 mm proud (CAST_CLOTHING_STYLE.md rules 3 and 5)
-    gold = swatch("gold", (0.0, 3.0), (0.05, 0.95))
+    # THE COAT'S SKIRT. One piece round the hips, open only at the front, its hem lower behind
+    # than in front, the hem a band of gold standing 4 mm proud (CAST_CLOTHING_STYLE.md rules 3
+    # and 5). ⚠️ It was two separate tails split up the back. Owner, 2026-10-05, marking that
+    # split: *"the back of his cloak is supposed to be connected, like a coat tail"*.
+    # ⚠️ AND IT BENDS. Rigid to the torso, the legs walked straight through it. Its top ring is
+    # the torso's; toward the hem each side takes up to SKIRT_FOLLOW of its own leg, and across
+    # the middle the two legs are mixed, so the back panel twists between them as he strides.
+    gold = swatch("gold", (0.0, 8.0), (0.05, 0.95), "columns")
     w, d = torso_half(TAIL_TOP)
-    for s in (1, -1):
-        def tail(inner, outer, front, back, z_front, z_back, cut):
-            pts = rect_ring((0, 0, 0), X * s, Y, (-inner, outer), (front, back), cut)
-            out = []
-            for p in pts:
-                f = (p.y + front) / (front + back)
-                out.append(Vector((p.x, p.y + TORSO_CY, z_front + (z_back - z_front) * f)))
-            return out
-        hem_front, hem_back = 0.134, 0.100
-        # ⚠️ the outer wall stays inside 0.160: `idle` drops the arms 45 degrees and a wider tail
-        # runs into the sleeve and the wrist, where two ink edges then fight
-        rings = [tail(0.036, 0.150, 0.126, 0.144, hem_front + 0.004, hem_back + 0.004, 0.006),
-                 tail(0.030, 0.158, 0.134, 0.152, hem_front, hem_back, 0.012),
-                 tail(0.028, 0.156, 0.132, 0.150, hem_front + 0.020, hem_back + 0.020, 0.012),
-                 tail(0.027, 0.152, 0.128, 0.146, hem_front + 0.0205, hem_back + 0.0205, 0.012),
-                 tail(0.000, w + 0.004, d + 0.004, d + 0.006, TAIL_TOP, TAIL_TOP, 0.012)]
-        part.loft("coat-tail", "torso", rings, lambda i, j: (flat("lining"), gold, gold, cloth)[i],
-                  caps=(True, False), params=[0.0, 0.2, 1.0, 1.0, 1.0])
+    top_r = (w + 0.004, d + 0.004, d + 0.006)       # half width, depth to the front, to the back
+    # ⚠️ the outer wall stays inside 0.160: `idle` drops the arms 45 degrees and a wider skirt
+    # runs into the sleeve and the wrist, where two ink edges then fight
+    hem_r = (0.158, 0.134, 0.152)
+    sections, params = [], []
+    angles = (1.2, 8, 24, 45, 66, 90, 114, 135, 156, 172, 180, 188, 204, 225, 246, 270, 294, 315, 336, 352, 358.8)
+    for theta in angles:
+        a = math.radians(theta)
+        px = -math.copysign(abs(math.sin(a)) ** 0.4, math.sin(a))     # his right first, then behind
+        py = -math.copysign(abs(math.cos(a)) ** 0.4, math.cos(a))     # -1 in front, +1 behind
+        hem = 0.117 - 0.017 * py                                      # 0.134 in front, 0.100 behind
+
+        def at(z, f, inset):
+            r = [top_r[k] + (hem_r[k] - top_r[k]) * f - inset for k in range(3)]
+            return Vector((px * r[0], TORSO_CY + py * (r[2] if py >= 0 else r[1]), z))
+
+        mid = 0.5 * (TAIL_TOP + hem + 0.020)
+        sections.append([at(TAIL_TOP, 0.0, 0.0), at(mid, 0.58, 0.0), at(hem + 0.020, 0.985, 0.0), at(hem + 0.0205, 1.0, -0.002),
+                         at(hem, 1.0, -0.004), at(hem + 0.004, 1.0, 0.009), at(mid, 0.58, 0.010), at(TAIL_TOP, 0.0, 0.010)])
+        params.append(theta / 360.0)
+    skirt = part.loft("coat-skirt", "torso", sections,
+                      lambda i, j: (cloth, cloth, gold, gold, gold, flat("lining"), flat("lining"), flat("lining"))[j], params=params)
+
+    def skirt_weights(co):
+        down = _ramp(TAIL_TOP, 0.105, co.z) ** 0.8
+        leg = SKIRT_FOLLOW * down
+        left = _ramp(-0.070, 0.070, co.x)
+        left = left * left * (3.0 - 2.0 * left)
+        return [("torso", 1.0 - leg), ("leg-left", leg * left), ("leg-right", leg * (1.0 - left))]
+
+    part.bend(skirt, skirt_weights)
 
     # the lapels' gold edge, as geometry, down the chest
     for s in (1, -1):
@@ -618,8 +729,15 @@ def build_torso(part):
         part.block("frog-knot", "torso", X, Z, [((0, y - 0.002, z), 0.013, 0.013), ((0, y - 0.015, z), 0.013, 0.013)],
                    flat("jade"), 0.005)
 
-    # the standing collar: flat panels round the foot of the head block, resting on the shoulders,
+    # the standing collar: flat panels that grow out of the shoulders and stand round the jaw,
     # piped along the top (the original's collar blocks sit in the same place)
+    def profile(height):
+        rows = COLLAR_PROFILE
+        for (z0, *lo), (z1, *hi) in zip(rows, rows[1:]):
+            if height <= z1 or z1 == rows[-1][0]:
+                f = (height - z0) / (z1 - z0)
+                return [lo[k] + (hi[k] - lo[k]) * f for k in range(3)]
+
     sections, params = [], []
     for s, top in COLLAR_TOP:
         angle = math.radians((270.0 - COLLAR_GAP) - s * (360.0 - 2.0 * COLLAR_GAP))
@@ -628,28 +746,36 @@ def build_torso(part):
         px = math.copysign(abs(c) ** (2.0 / 5.0), c)
         py = math.copysign(abs(sn) ** (2.0 / 5.0), sn)
 
-        # ⚠️ every point is OUTSIDE the head block (0.170 by 0.160 front, 0.162 back). A collar that
-        # started on the narrower shoulders let the head's lower corners come through its wall.
         def at(height, inset):
-            f = (height - COLLAR_BASE) / 0.116
-            rx = 0.186 + (0.208 - 0.186) * f - inset
-            ry = (0.178 + (0.196 - 0.178) * f if sn >= 0 else 0.174 + (0.184 - 0.174) * f) - inset
-            return Vector((px * rx, 0.001 + py * ry, height))
+            rx, rf, rb = profile(height)
+            return Vector((px * (rx - inset), 0.001 + py * ((rb if sn >= 0 else rf) - inset), height))
 
-        pipe = min(0.018, max(0.004, (top - COLLAR_BASE) * 0.35))
-        sections.append([at(COLLAR_BASE, 0.0), at(top - pipe, 0.0), at(top - pipe, -0.004), at(top, -0.004),
-                         at(top, 0.012), at(COLLAR_BASE, 0.012)])
+        pipe = min(0.014, max(0.004, (top - COLLAR_SHELF) * 0.5))
+        w = COLLAR_WALL
+        sections.append([at(COLLAR_BASE, 0.0), at(COLLAR_SHELF, 0.0), at(top - pipe, 0.0), at(top - pipe, -0.004),
+                         at(top, -0.004), at(top, w), at(COLLAR_SHELF, w), at(COLLAR_BASE, w)])
         params.append(s)
 
     def collar_paint(i, j):
         return (swatch("collar_out", (0.0, 1.0), (0.0, 0.86), "columns"),
+                swatch("collar_out", (0.0, 1.0), (0.0, 0.86), "columns"),
                 swatch("gold", (0.0, 6.0), (0.05, 0.3), "columns"),
                 swatch("gold", (0.0, 6.0), (0.3, 0.95), "columns"),
                 swatch("gold", (0.0, 6.0), (0.95, 0.6), "columns"),
                 swatch("collar_in", (0.0, 1.0), (1.0, 0.0), "columns"),
+                flat("lining"),
                 flat("lining"))[j]
 
-    part.loft("collar", "torso", sections, collar_paint, params=params)
+    collar = part.loft("collar", "torso", sections, collar_paint, params=params)
+    part.collar_verts = {v for f in collar for v in f.verts}
+    # it grows out of the shoulders and its rim goes with the head: half of every turn and nod,
+    # so the jaw and the hair at the nape do not turn through a wall that stood still
+    # ⚠️ FROM THE SHELF UP IT IS THE HEAD'S. At 0.55 of the head, rising toward the rim, the jaw
+    # still turned through the wall (owner: "the head still clips in the looking around"). A wall
+    # that turns WITH the box it surrounds cannot be turned through; all of the twist is taken by
+    # the 20 mm between the shoulders and the shelf, under the jaw.
+    part.bend(collar, lambda co: [("torso", 1.0 - COLLAR_FOLLOW * _ramp(COLLAR_BASE + 0.002, COLLAR_SHELF, co.z)),
+                                  ("head", COLLAR_FOLLOW * _ramp(COLLAR_BASE + 0.002, COLLAR_SHELF, co.z))])
 
 
 # ---------------------------------------------------------------------------
@@ -671,8 +797,11 @@ def build_hand(part, s, bone, group):
 
 
 def build_arm_left(part):
-    bone, skin = "arm-left", proj("armL")
-    arm_block(part, "arm", bone, 1, 0.100, 0.226, (0.052, 0.057), (0.044, 0.047), skin, 0.011)
+    bone, fore = "arm-left", "forearm-left"
+    skin = proj_except("armL", 0, "skin_tone")
+    # two rigid blocks that overlap at the elbow, as a toy's joint does; the cut faces are one tone
+    arm_block(part, "arm", bone, 1, 0.100, ELBOW_X + 0.012, (0.052, 0.057), (0.049, 0.053), skin, 0.011)
+    arm_block(part, "forearm", fore, 1, ELBOW_X - 0.014, 0.226, (0.048, 0.052), (0.044, 0.047), skin, 0.011)
     # what is left of the sleeve: a short block on the shoulder whose far edge is torn in teeth
     start = rect_ring((0.100, ARM_Y, ARM_Z), Y, Z, 0.048, 0.054, 0.006)
     full = rect_ring((0.106, ARM_Y, ARM_Z), Y, Z, 0.059, 0.065, 0.013)
@@ -684,17 +813,18 @@ def build_arm_left(part):
               caps=(True, False))
     # the wrap, 5 mm proud of the forearm. (It had a loose end hanging by the hand; at the coat
     # hem it read as a stray pale wedge and was cut.)
-    arm_block(part, "wrap", bone, 1, 0.168, 0.224, (0.0525, 0.0555), (0.0495, 0.0520), proj_except("armL", 0, "wrap_tone"), 0.005)
-    build_hand(part, 1, bone, "armL")
+    arm_block(part, "wrap", fore, 1, 0.176, 0.224, (0.0530, 0.0570), (0.0495, 0.0520), proj_except("armL", 0, "wrap_tone"), 0.005)
+    build_hand(part, 1, fore, "armL")
 
 
 def build_arm_right(part):
-    bone, skin = "arm-right", proj("armR")
-    arm_block(part, "sleeve", bone, -1, 0.100, 0.174, (0.058, 0.064), (0.056, 0.061), proj_except("armR", 0, "lining"), 0.013)
+    bone, fore = "arm-right", "forearm-right"
+    skin = proj_except("armR", 0, "skin_tone")
+    arm_block(part, "sleeve", bone, -1, 0.100, ELBOW_X + 0.006, (0.058, 0.064), (0.056, 0.061), proj_except("armR", 0, "lining"), 0.013)
     # the roll: a fat gold block round the arm
-    arm_block(part, "cuff", bone, -1, 0.168, 0.200, (0.066, 0.071), (0.066, 0.071), proj_except("armR", 0, "gold_tone"), 0.008)
-    arm_block(part, "forearm", bone, -1, 0.190, 0.226, (0.046, 0.049), (0.044, 0.047), skin, 0.008)
-    build_hand(part, -1, bone, "armR")
+    arm_block(part, "cuff", fore, -1, ELBOW_X - 0.004, 0.204, (0.066, 0.071), (0.066, 0.071), proj_except("armR", 0, "gold_tone"), 0.008)
+    arm_block(part, "forearm", fore, -1, ELBOW_X - 0.010, 0.226, (0.047, 0.050), (0.044, 0.047), skin, 0.008)
+    build_hand(part, -1, fore, "armR")
 
 
 # ---------------------------------------------------------------------------
@@ -744,7 +874,11 @@ def mesh_arrays(obj):
     mesh.calc_loop_triangles()
     normals = mesh.corner_normals
     uvs = mesh.uv_layers[0].data
-    bone_of = [obj.vertex_groups[v.groups[0].group].name for v in mesh.vertices]
+    mix_of = []
+    for v in mesh.vertices:
+        mix = sorted(((g.weight, ALL_BONES.index(obj.vertex_groups[g.group].name)) for g in v.groups if g.weight > 0.001), reverse=True)[:4]
+        total = sum(wt for wt, _ in mix)
+        mix_of.append([(b, wt / total) for wt, b in mix] + [(0, 0.0)] * (4 - len(mix)))
     seen, pos, nrm, uv, joints, weights, idx = {}, [], [], [], [], [], []
     for tri in mesh.loop_triangles:
         for loop in tri.loops:
@@ -758,8 +892,8 @@ def mesh_arrays(obj):
                 pos.append((co.x, co.z, -co.y))
                 nrm.append((n.x, n.z, -n.y))
                 uv.append((t.x, 1.0 - t.y))
-                joints.append((BONES.index(bone_of[vi]), 0, 0, 0))
-                weights.append((1.0, 0.0, 0.0, 0.0))
+                joints.append(tuple(b for b, _ in mix_of[vi]))
+                weights.append(tuple(wt for _, wt in mix_of[vi]))
             idx.append(seen[key])
     return pos, nrm, uv, joints, weights, idx
 
@@ -768,7 +902,7 @@ def write_glb(body, head, out):
     """team-dante.glb with its meshes swapped: skeleton, bind matrices and clips copied untouched."""
     gltf, buffer = bpv.read_glb(BASE)
     names = [gltf["nodes"][i]["name"] for i in gltf["skins"][0]["joints"]]
-    if names != BONES:
+    if names != BONES and names != ALL_BONES:
         raise SystemExit("the base rig's joints are %s, not %s" % (names, BONES))
 
     blob = bytearray()
@@ -805,12 +939,43 @@ def write_glb(body, head, out):
         accessors.append(acc)
         return len(accessors) - 1
 
+    accessor_raw = bpv.accessor_bytes(gltf, buffer, gltf["skins"][0]["inverseBindMatrices"])
     for skin in gltf["skins"]:
         skin["inverseBindMatrices"] = keep(skin["inverseBindMatrices"])
     for anim in gltf["animations"]:
+        if anim["name"] in clips.CLIPS:
+            continue
         for sampler in anim["samplers"]:
             sampler["input"] = keep(sampler["input"])
             sampler["output"] = keep(sampler["output"])
+
+    # the two elbows: a node under each arm, a joint and a bind matrix appended after the seven.
+    # Every rest rotation in this rig is identity, so a bind matrix is the inverse translation.
+    if names == BONES:
+        node_of = {n.get("name"): i for i, n in enumerate(gltf["nodes"])}
+        skin = gltf["skins"][0]
+        raw = struct.unpack("<%df" % (16 * len(BONES)), accessor_raw)
+        matrices = [raw[k * 16:(k + 1) * 16] for k in range(len(BONES))]
+        for name, parent, side in EXTRA_BONES:
+            world = (side * ELBOW_X, ARM_Z, -ARM_Y)
+            pw = [-matrices[BONES.index(parent)][12 + a] for a in range(3)]
+            gltf["nodes"].append({"name": name, "translation": [world[a] - pw[a] for a in range(3)]})
+            gltf["nodes"][node_of[parent]].setdefault("children", []).append(len(gltf["nodes"]) - 1)
+            skin["joints"].append(len(gltf["nodes"]) - 1)
+            matrices.append((1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -world[0], -world[1], -world[2], 1))
+        skin["inverseBindMatrices"] = add([tuple(float(x) for x in m) for m in matrices], "f", "MAT4", 5126)
+
+    # the prototype's own locomotion clips, in place of the ones copied across (the clips script)
+    node_of = {n.get("name"): i for i, n in enumerate(gltf["nodes"])}
+    for anim in gltf["animations"]:
+        if anim["name"] not in clips.CLIPS:
+            continue
+        anim["samplers"], anim["channels"] = [], []
+        for (bone, path), keys in clips.CLIPS[anim["name"]]().items():
+            times = add([(t,) for t, _ in keys], "f", "SCALAR", 5126, minmax=True)
+            values = add([v for _, v in keys], "f", "VEC4" if path == "rotation" else "VEC3", 5126)
+            anim["channels"].append({"sampler": len(anim["samplers"]), "target": {"node": node_of[bone], "path": path}})
+            anim["samplers"].append({"input": times, "output": values, "interpolation": "LINEAR"})
 
     by_name = {m.get("name"): m for m in gltf["meshes"]}   # the base file's own two mesh names
     for name, built in (("body-mesh", body), ("head-mesh", head)):
@@ -867,8 +1032,8 @@ def verify(objects):
     # CharacterVisual.PalmCentre: the arm must run along x, and the hand's top must sit where a
     # carried tsinelas is parked (bone-space +0.0555, with HandTopLift 0.0617 over the palm).
     body = objects[0]
-    group = body.vertex_groups["arm-right"].index
-    arm = [v.co for v in body.data.vertices if v.groups[0].group == group]
+    group = (body.vertex_groups["arm-right"].index, body.vertex_groups["forearm-right"].index)
+    arm = [v.co for v in body.data.vertices if v.groups[0].group in group]
     size = [max(p[a] for p in arm) - min(p[a] for p in arm) for a in range(3)]
     if not (size[0] > size[1] and size[0] > size[2]):
         raise SystemExit("arm-right no longer runs along x: %s" % size)
@@ -897,6 +1062,19 @@ def build(armature, material, head_variant, hair, suffix=""):
     objects = []
     for part in (body, head):
         part.resolve_uvs()
+        # AFTER the paint is placed (it is projected from the full-size shape): the head comes in.
+        part.bm.verts.ensure_lookup_table()
+        collar_low, collar_high = COLLAR_BASE, COLLAR_SHELF
+        for v in part.bm.verts:
+            if part is head:
+                k = HEAD_SCALE
+            elif v in body.collar_verts:
+                # the collar grows out of the shoulders at full size and closes on the smaller head
+                f = max(0.0, min(1.0, (v.co.z - collar_low) / (collar_high - collar_low)))
+                k = 1.0 + (HEAD_SCALE - 1.0) * f
+            else:
+                continue
+            v.co = HEAD_JOINT + (v.co - HEAD_JOINT) * k
         obj = part.to_object(armature)
         obj.data.materials.append(material)
         objects.append(obj)
@@ -919,6 +1097,15 @@ def main():
     for obj in [o for o in bpy.data.objects if o.type == "MESH"]:
         bpy.data.objects.remove(obj)
     armature.name = NAME
+    # the elbows, for the .blend (the .glb gets its own in `write_glb`)
+    bpy.context.view_layer.objects.active = armature
+    bpy.ops.object.mode_set(mode="EDIT")
+    for name, parent, side in EXTRA_BONES:
+        eb = armature.data.edit_bones.new(name)
+        eb.head = (side * ELBOW_X, ARM_Y, ARM_Z)
+        eb.tail = (side * (ELBOW_X + 0.06), ARM_Y, ARM_Z)
+        eb.parent = armature.data.edit_bones[parent]
+    bpy.ops.object.mode_set(mode="OBJECT")
     if armature.animation_data:
         armature.animation_data.action = None
 

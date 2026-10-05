@@ -135,13 +135,16 @@ namespace TumbangPreso.Visual
         [Range(0,1)] public float AmbientOcclusion=.8f;
         [Range(.2f,3)] public float AmbientOcclusionRadius=1f;
         // How much of that occlusion also shades the CAST (owner, 2026-10-04: "can we also test ambient
-        // occlusion for shading the characters too?"). 0 is the shipped look: characters keep only
-        // their own toon shading. F8 in a debug session cycles a test value over this one
-        // (`WorldOutline.CharacterAoTest`); set it here to make a value the look's own.
-        [Range(0,1)] public float CharacterAmbientOcclusion=0f;
+        // occlusion for shading the characters too?"). ⚠️ 1 SINCE 2026-10-05: the owner tested smooth
+        // shading with the cast's own occlusion on the redesigned heroes and said yes to making it
+        // the game's look for every character. It was 0 (characters kept only their toon shading).
+        // `WorldOutline.CharacterAoTest` still lets a probe put a test value over this one.
+        [Range(0,1)] public float CharacterAmbientOcclusion=1f;
         // The cast's kernel radius, metres: a body's scale (a fringe of hair, an arm against a chest),
         // where the world's `AmbientOcclusionRadius` is a doorway's.
-        [Range(.1f,1)] public float CharacterAmbientOcclusionRadius=.35f;
+        // ⚠️ 0.14 SINCE 2026-10-05 (owner: ".14m seems like the best ao setting"). It was a third of a
+        // metre, which spread the shade past creases that are centimetres deep.
+        [Range(.1f,1)] public float CharacterAmbientOcclusionRadius=.14f;
         // 1 draws the cast's hull in a deeper shade of its own colour, 0 in black.
         [Range(0,1)] public float CastInkSelf=.88f;
         // The cast's hull width against its authored width.
