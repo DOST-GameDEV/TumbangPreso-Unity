@@ -131,7 +131,11 @@ namespace TumbangPreso.Map
             // rolling down it. The words and the portrait are drawn UNDER the grid, so they are made of
             // its dots too.
             Fill(go.transform, "Ground", Vector2.zero, new Vector2(Wide, Tall), Ground);
-            Picture(go.transform, "Backlight", Backlight(), new Vector2(Wide, Tall), new Color(0.16f, 0.32f, 0.95f, 0.55f), new Rect(0, 0, 1, 1));
+            Picture(go.transform, "Backlight", Backlight(), new Vector2(Wide, Tall), new Color(0.22f, 0.24f, 0.80f, 0.60f), new Rect(0, 0, 1, 1));
+            // The comic's dots, behind everything drawn on the screen: 75 across, in a lighter blue.
+            Picture(go.transform, "Dots", Pixels(), new Vector2(Wide, Tall), new Color(0.45f, 0.55f, 1.0f, 0.20f), new Rect(0, 0, Wide / 26.0f, Tall / 26.0f));
+            // A chunky ink-and-light border, as a panel in the game's UI has.
+            Border(go.transform, 26.0f, 14.0f, ArenaFx.Cyan);
             // ⚠️ ONE COLUMN, CENTRED (owner, 2026-10-05, drawing over the first card, which had the
             // portrait at the left, the text at the right and TAYA stamped askew in the bottom corner:
             // "idk about the taya text.. its so off-layout"). His drawing: a line of text at the top,
@@ -156,8 +160,7 @@ namespace TumbangPreso.Map
             face.Stamp.gameObject.SetActive(false);
 
             face.Roll = Picture(go.transform, "Roll", Backlight(), new Vector2(Wide * 1.6f, 220.0f), new Color(0.6f, 0.85f, 1.0f, 0.10f), new Rect(0, 0, 1, 1));
-            Picture(go.transform, "Pixels", Pixels(), new Vector2(Wide, Tall), new Color(1.0f, 1.0f, 1.0f, 0.62f), new Rect(0, 0, Wide / 8.0f, Tall / 8.0f));
-            face.Lines = Picture(go.transform, "Scanlines", Lines(), new Vector2(Wide, Tall), new Color(1.0f, 1.0f, 1.0f, 0.55f), new Rect(0, 0, 1, Tall / 14.0f));
+            face.Lines = Picture(go.transform, "Scanlines", Lines(), new Vector2(Wide, Tall), new Color(1.0f, 1.0f, 1.0f, 0.30f), new Rect(0, 0, 1, Tall / 40.0f));
             face.BarA = Fill(go.transform, "Scan A", Vector2.zero, new Vector2(Wide, 26.0f), new Color(1.0f, 1.0f, 1.0f, 0.0f));
             face.BarB = Fill(go.transform, "Scan B", Vector2.zero, new Vector2(Wide, 10.0f), new Color(1.0f, 1.0f, 1.0f, 0.0f));
             face.Flash = Fill(go.transform, "Flash", Vector2.zero, new Vector2(Wide, Tall), new Color(1.0f, 1.0f, 1.0f, 0.0f));
@@ -169,7 +172,7 @@ namespace TumbangPreso.Map
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStatics() { _pixels = null; _backlight = null; _lines = null; }
 
-        /// <summary>One LED cell, tiled: black, clear in a soft round dot at the middle, so what is under shows as dots.</summary>
+        /// <summary>One halftone dot, tiled: white in a round dot at the middle of the cell, nothing round it.</summary>
         private static Texture2D Pixels()
         {
             if (_pixels != null) return _pixels;
@@ -179,18 +182,26 @@ namespace TumbangPreso.Map
                 for (int x = 0; x < n; x++)
                 {
                     float dx = (x + 0.5f) / n - 0.5f, dy = (y + 0.5f) / n - 0.5f;
-                    // ⚠️ RGB SUB-PIXELS (owner, 2026-10-06: "theres no effect on it like the rgb pixels or scanlines
-                    // or wave distort"): each cell is a red, a green and a blue stripe, faint, with a dark gap
-                    // round the cell. Up close it is a grid of coloured dots; from the stands it is a screen.
-                    float gap = Mathf.Clamp01((Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy)) - 0.30f) / 0.16f);
-                    int stripe = Mathf.Clamp((int)((dx + 0.5f) * 3.0f), 0, 2);
-                    float tint = 0.30f * (1.0f - gap);
-                    byte r = (byte)(stripe == 0 ? 255 : 0), g = (byte)(stripe == 1 ? 255 : 0), b = (byte)(stripe == 2 ? 255 : 0);
-                    pixels[y * n + x] = gap > 0.02f ? new Color32(0, 0, 4, (byte)(gap * 255.0f)) : new Color32(r, g, b, (byte)(tint * 255.0f));
+                    // ⚠️ A HALFTONE DOT, NOT RGB SUB-PIXELS (owner, 2026-10-06, of red, green and blue stripes in
+                    // every cell: "it looks weird.. the green and blue and its lacking our cartoony and stylized
+                    // artstyle"). At the distance the screen is seen the stripes averaged to a green haze over a
+                    // blue one. The game draws in flat fills and print dots, so the screen's texture is a comic's:
+                    // one round dot a cell, in the ground's own lighter blue, BEHIND the words and the portrait.
+                    float dot = Mathf.Clamp01((0.34f - Mathf.Sqrt(dx * dx + dy * dy)) / 0.07f);
+                    pixels[y * n + x] = new Color32(255, 255, 255, (byte)(dot * 255.0f));
                 }
             _pixels = new Texture2D(n, n, TextureFormat.RGBA32, true) { name = "Arena screen LED cell", wrapMode = TextureWrapMode.Repeat, filterMode = FilterMode.Trilinear, hideFlags = HideFlags.DontSave };
             _pixels.SetPixels32(pixels); _pixels.Apply(true, true);
             return _pixels;
+        }
+
+        private static void Border(Transform parent, float inset, float thick, Color colour)
+        {
+            float w = Wide - inset * 2.0f, h = Tall - inset * 2.0f;
+            Fill(parent, "Border top", new Vector2(0.0f, h * 0.5f), new Vector2(w, thick), colour);
+            Fill(parent, "Border bottom", new Vector2(0.0f, -h * 0.5f), new Vector2(w, thick), colour);
+            Fill(parent, "Border left", new Vector2(-w * 0.5f, 0.0f), new Vector2(thick, h + thick), colour);
+            Fill(parent, "Border right", new Vector2(w * 0.5f, 0.0f), new Vector2(thick, h + thick), colour);
         }
 
         private static void Slide(Text text, float x, float y)
@@ -328,7 +339,7 @@ namespace TumbangPreso.Map
             {
                 var face = _faces[k];
                 float clock = Time.unscaledTime;
-                if (face.Lines != null) face.Lines.uvRect = new Rect(0, clock * 0.9f, 1, Tall / 14.0f);
+                if (face.Lines != null) face.Lines.uvRect = new Rect(0, clock * 0.35f, 1, Tall / 40.0f);
                 // The wave: a signal that is not quite steady. Each row of the picture slides sideways on its own
                 // phase (a few units of 1950), and now and then the whole picture jumps a line.
                 float wave = Settings.SettingsStore.Current.ReducedUiMotion ? 0.0f : 1.0f;
