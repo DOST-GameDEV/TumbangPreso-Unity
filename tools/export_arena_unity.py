@@ -522,11 +522,28 @@ def main():
 
     # ------------------------------------------------------------ read back and prove
     problems, worst_all, total_tris, total_bytes = [], 0.0, 0, 0
+    faded = {}
     read = {}
     for path, expect in sorted(written.items()):
         gltf, blob = ILA.read_glb(path)
         nodes = node_points(gltf, blob)
         read[path.stem] = nodes
+        prims = [p for m in gltf.get("meshes", []) for p in m["primitives"]]
+        coloured = [p for p in prims if "COLOR_0" in p["attributes"]]
+        if coloured:                                              # the vertex fade (VERTEX_FADE): every primitive of the file, RGBA, and white
+            lows = []
+            for p in coloured:
+                acc = gltf["accessors"][p["attributes"]["COLOR_0"]]
+                col = ILA.accessor(gltf, blob, p["attributes"]["COLOR_0"])
+                if acc["type"] != "VEC4":
+                    problems.append(f"{path.name}: COLOR_0 is {acc['type']}, so it carries no alpha")
+                    continue
+                if float(np.abs(col[:, :3] - 1.0).max()) > 0.01:
+                    problems.append(f"{path.name}: COLOR_0 is not white (a tint, where only a fade was meant)")
+                lows.append(float(col[:, 3].min()))
+            if len(coloured) != len(prims):
+                problems.append(f"{path.name}: {len(coloured)} of {len(prims)} primitives carry COLOR_0 (glTFast reads the first one's)")
+            faded[path.name] = min(lows) if lows else 1.0
         total_bytes += path.stat().st_size
         if len(nodes) != len(expect):
             problems.append(f"{path.name}: {len(nodes)} mesh nodes, expected {len(expect)}")
@@ -553,6 +570,9 @@ def main():
     for p in problems[:40]:
         log("ERROR:", p)
     log(f"read-back: {len(written)} files, {total_tris} triangles, {len(problems)} problems, worst vertex {worst_all * 1000:.3f} mm from Blender's (x, z, y)")
+
+    log(f"vertex fade (COLOR_0, from the colour attribute '{VERTEX_FADE}'): {len(faded)} files: "
+        + ", ".join(f"{n} down to alpha {v:.2f}" for n, v in sorted(faded.items())))
 
     # The frame, in numbers a person can check against the kit and the gameplay data.
     proofs = []

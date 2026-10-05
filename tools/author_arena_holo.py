@@ -130,19 +130,22 @@ def material(kind):
         # would darken what is behind it, which a hologram never does.
         em = nt.nodes.new("ShaderNodeEmission")
         em.inputs["Strength"].default_value = EMIT[kind] * 1.15
-        gone = nt.nodes.new("ShaderNodeAttribute")                 # the vertex fade (`GONE`), as Unity's vertex alpha does it
-        gone.attribute_type = "GEOMETRY"; gone.attribute_name = GONE
-        left = nt.nodes.new("ShaderNodeMath"); left.operation = "MULTIPLY_ADD"
-        left.inputs[1].default_value = -EMIT[kind] * 1.15; left.inputs[2].default_value = EMIT[kind] * 1.15
-        nt.links.new(gone.outputs["Fac"], left.inputs[0])
-        nt.links.new(left.outputs[0], em.inputs["Strength"])
         nt.links.new(e.outputs["Color"], em.inputs["Color"])
         clear = nt.nodes.new("ShaderNodeBsdfTransparent")
         add = nt.nodes.new("ShaderNodeAddShader")
         nt.links.new(em.outputs[0], add.inputs[0])
         nt.links.new(clear.outputs[0], add.inputs[1])
+        # The vertex fade (`GONE`), as Unity's vertex alpha does it: the light mixed away to the clear
+        # sheet. (After the Emission node, whose own sockets are left as they were: the glTF
+        # exporter reads its strength into every .glb that wears this material.)
+        gone = nt.nodes.new("ShaderNodeAttribute")
+        gone.attribute_type = "GEOMETRY"; gone.attribute_name = GONE
+        left = nt.nodes.new("ShaderNodeMixShader")
+        nt.links.new(gone.outputs["Fac"], left.inputs[0])
+        nt.links.new(add.outputs[0], left.inputs[1])
+        nt.links.new(clear.outputs[0], left.inputs[2])
         out = next(n for n in nt.nodes if n.type == "OUTPUT_MATERIAL")
-        nt.links.new(add.outputs[0], out.inputs["Surface"])
+        nt.links.new(left.outputs[0], out.inputs["Surface"])
     _mats[kind] = m
     return m
 
@@ -479,7 +482,7 @@ COLUMN_HEAD = 1.5                          # ad heights over which the stack dis
 COLUMN_FOOT = 0.75                         # ad heights over which it comes up out of the projector's light
 COLUMN_GLOW = 0.85                         # ad heights the soft beam outlives the last ad by
 FADE_ROWS = 12                             # rows of faces across a fade: the ramp is a curve, a row is a straight piece of it
-FADE_GAMMA = 2.0                           # the project is linear: light that falls evenly to the eye falls as its square
+FADE_GAMMA = 1.7                           # the project is linear: light that falls evenly to the eye falls as its square
 
 
 def ease(t):
@@ -523,13 +526,16 @@ def column(coll, name, bearing, r, z0, z1, strip, built):
     fade broke into ragged pale upright streaks, with the strip's hard top cut through whichever
     ad was passing, and a scan band and two corner ticks drawn across the lot.
 
+    (Simulated from the atlas itself, with and without the block compression: only the compressed
+    one streaks.)
+
     Now nothing at either end is a texture's doing. The stack DISSOLVES: over the top COLUMN_HEAD ad
     heights every layer's light eases to nothing, by a per-corner alpha in rows (see FADE): both ad
     strips, the dotted sheet, the edge lines and the dividers together, so an ad scrolls up into the
     fade and is gone before the strip ends. The beam is a grid of corners that all read the ONE
     brightest texel of its cell, its shape (soft across, rising out of the projector, outliving the
     last ad by COLUMN_GLOW ad heights as a glow) entirely in the corners' alpha. Where the head's
-    scan band and ticks were, six thin scan lines stand in the fade, each fainter, shorter and
+    scan band and ticks were, six thin scan lines stand in the upper fade, each fainter, shorter and
     further from the last, their ends fading out. At the foot the frame is as it was (it is the
     projector's end), and the ads come up out of it over COLUMN_FOOT ad heights instead of being cut."""
     F = Frame(bearing, r)
@@ -610,14 +616,16 @@ def column(coll, name, bearing, r, z0, z1, strip, built):
     for y in (-1.4, 4.4):
         zz = z0 - 9.0                                             # the scan band across the foot
         rig.quad([F.p(-w * 0.54, y, zz), F.p(w * 0.54, y, zz), F.p(w * 0.54, y, zz + 3.4), F.p(-w * 0.54, y, zz + 3.4)], "fx", scan, alphas=(1.0,) * 4)
-        # The head: six scan lines standing in the fade, thinning out upward (0 is where the fade
-        # starts, 1 the last ad's end): each fainter, thinner and shorter, its two ends fading out.
-        for t in (0.10, 0.25, 0.43, 0.64, 0.89, 1.18):
+        # The head: six scan lines standing in the upper part of the fade and a little past it,
+        # thinning out upward (0 is where the fade starts, 1 the last ad's end; they start where
+        # an ad is already mostly gone, so none is drawn across lettering that is still read):
+        # each fainter, thinner, shorter and further from the last, its two ends fading out.
+        for t in (0.60, 0.70, 0.82, 0.96, 1.13, 1.33):
             zz = z1 - head + head * t
-            lit = 0.85 * (1.0 - t / 1.36) ** 1.5
-            half = (w / 2) * (1.0 - 0.34 * t)
+            lit = 0.8 * (1.0 - t / 1.6) ** 1.3
+            half = (w / 2) * (1.0 - 0.30 * t)
             xs = (-half, -half * 0.55, half * 0.55, half)
-            rig.ribbon([F.p(x, y, zz) for x in xs], 0.9 - 0.4 * t / 1.18, Z, alphas=(0.0, lit, lit, 0.0))
+            rig.ribbon([F.p(x, y, zz) for x in xs], 0.9 - 0.4 * t / 1.33, Z, alphas=(0.0, lit, lit, 0.0))
     # The emitter: a projector bar under the strip, its ends inside two buoys.
     band = "gold" if strip == 0 else "magenta"
     top = z0 - 26.0
@@ -1627,9 +1635,9 @@ def pictures(version, shots, info):
         c = Frame(cb, cr)
         shoot("column_head_can", version, (0, 0, EYE), c.p(0, 0, cz1 - 40.0), lens=120)                 # as the owner's picture: from the stage, long
         shoot("column_head_stage", version, c.p(-40.0, -190.0, cz1 - 120.0), c.p(0, 0, cz1 - 28.0), lens=28)
-        shoot("column_head_air", version, c.p(70.0, 210.0, cz1 + 30.0), c.p(0, 0, cz1 - 34.0), lens=28)  # the back strip
+        shoot("column_head_air", version, c.p(60.0, 200.0, cz1 - 24.0), c.p(0, 0, cz1 - 30.0), lens=28)  # the back strip
         shoot("column_foot_stage", version, c.p(-40.0, -170.0, cz0 - 20.0), c.p(0, 0, cz0 + 16.0), lens=28)
-        shoot("column_foot_air", version, c.p(70.0, 200.0, cz0 + 110.0), c.p(0, 0, cz0 + 10.0), lens=28)
+        shoot("column_foot_air", version, c.p(38.0, 78.0, cz0 + 62.0), c.p(0, 0, cz0 + 8.0), lens=20)
     if want("flat"):
         scene = bpy.context.scene
         engine = scene.render.engine
