@@ -340,6 +340,22 @@ namespace TumbangPreso.Map
             return text;
         }
 
+        /// <summary>The words that land over the portrait (TAYA in the opening), and their colour. For `ArenaScreens`.</summary>
+        public void Headline(string text, Color colour)
+        {
+            if (_root == null) return;
+            for (int k = 0; k < Faces; k++)
+            {
+                var face = _faces[k];
+                if (face == null) continue;
+                face.Stamp.text = text; face.Stamp.color = colour;
+                face.Stamp.resizeTextForBestFit = true; face.Stamp.resizeTextMinSize = 60; face.Stamp.resizeTextMaxSize = 150;
+            }
+            _accent = colour;
+        }
+
+        private Color _accent = ArenaFx.Gold;
+
         /// <summary>Put the cards up at `alpha` (0 takes them down). Nothing is drawn while they are down.</summary>
         public void SetVisible(float alpha)
         {
@@ -414,7 +430,7 @@ namespace TumbangPreso.Map
                 face.Portrait.rectTransform.anchoredPosition = new Vector2((a - 0.5f) * 36.0f * glitch, 0.0f);
                 face.Flash.color = new Color(1.0f, 1.0f, 1.0f, Mathf.Clamp01(flash));
                 if (_stamped) face.Stamp.rectTransform.localScale = Vector3.one * size;
-                face.Rule.color = _stamped ? ArenaFx.Gold : ArenaFx.Cyan;
+                face.Rule.color = _stamped ? _accent : ArenaFx.Cyan;
             }
         }
 

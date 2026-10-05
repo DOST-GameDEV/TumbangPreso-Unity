@@ -502,7 +502,12 @@ namespace TumbangPreso.Map
 
         /// <summary>The map's effects (`ArenaFx`, and with it the show and the ambience) install
         /// themselves here if the scene was built before they existed.</summary>
-        private void Start() => ArenaFx.Ensure();
+        private void Start()
+        {
+            ArenaFx.Ensure();
+            // The screens' cards in play install themselves too, so a scene built earlier has them.
+            if (GetComponent<ArenaScreens>() == null) gameObject.AddComponent<ArenaScreens>();
+        }
 
         private void Update()
         {
