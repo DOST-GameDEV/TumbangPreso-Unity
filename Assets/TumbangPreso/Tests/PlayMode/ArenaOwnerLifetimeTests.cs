@@ -4,12 +4,14 @@ using TumbangPreso.Abilities;
 using TumbangPreso.Map;
 using UnityEngine;
 using UnityEngine.TestTools;
+using UnityEngine.SceneManagement;
 
 namespace TumbangPreso.PlayTests
 {
     public sealed class ArenaOwnerLifetimeTests
     {
         private GameObject _old, _current;
+        private Scene _inactiveScene;
         private bool _edgeSense;
         private float _floor;
         private CharacterMotor.FallRule _fall;
@@ -28,6 +30,8 @@ namespace TumbangPreso.PlayTests
             if (_old != null) Object.Destroy(_old);
             if (_current != null) Object.Destroy(_current);
             yield return null;
+            if (_inactiveScene.IsValid() && _inactiveScene.isLoaded)
+                yield return SceneManager.UnloadSceneAsync(_inactiveScene);
             yield return PlayModeWorld.Reset();
             AIController.EdgeSense = _edgeSense;
             Net.MatchRpc.MoveFloorY = _floor;
@@ -83,6 +87,37 @@ namespace TumbangPreso.PlayTests
             Assert.AreSame(current, ArenaFallRecovery.Instance);
             Assert.AreEqual(fall, CharacterMotor.MapFall, "Retired recovery removed the new owner's fall rule.");
             Assert.AreEqual(catchRule, PaeteVine.MapCatch, "Retired recovery removed the new owner's vine rule.");
+        }
+
+        private void EnableRecoveryInInactiveScene()
+        {
+            _inactiveScene = SceneManager.CreateScene("Inactive Arena recovery test");
+            _old = new GameObject("Inactive-scene Arena recovery");
+            _old.SetActive(false);
+            SceneManager.MoveGameObjectToScene(_old, _inactiveScene);
+            _old.AddComponent<ArenaFallRecovery>();
+            _old.SetActive(true);
+        }
+
+        [UnityTest] public IEnumerator EnablingInactiveSceneRecoveryPreservesActiveOwnerHooks()
+        {
+            _current = new GameObject("Active-scene Arena recovery");
+            var current = _current.AddComponent<ArenaFallRecovery>();
+            var fall = CharacterMotor.MapFall; var catchRule = PaeteVine.MapCatch;
+            EnableRecoveryInInactiveScene(); yield return null;
+            Assert.AreSame(current, ArenaFallRecovery.Instance);
+            Assert.IsTrue(CharacterMotor.MapFall == fall && PaeteVine.MapCatch == catchRule,
+                "Inactive-scene recovery replaced the active owner's fall or vine hook.");
+        }
+
+        [UnityTest] public IEnumerator EnablingInactiveSceneRecoveryWithoutOwnerLeavesHooksUnclaimed()
+        {
+            Assert.IsNull(ArenaFallRecovery.Instance);
+            Assert.IsNull(CharacterMotor.MapFall); Assert.IsNull(PaeteVine.MapCatch);
+            EnableRecoveryInInactiveScene(); yield return null;
+            Assert.IsNull(ArenaFallRecovery.Instance);
+            Assert.IsTrue(CharacterMotor.MapFall == null && PaeteVine.MapCatch == null,
+                "Inactive-scene recovery installed hooks without owning the active scene.");
         }
 
         [UnityTest] public IEnumerator DisablingCurrentRecoveryRetiresItsHooks()

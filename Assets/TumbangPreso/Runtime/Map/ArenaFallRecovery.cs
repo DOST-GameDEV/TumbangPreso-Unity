@@ -107,7 +107,8 @@ namespace TumbangPreso.Map
 
         private void OnEnable()
         {
-            if(gameObject.scene==SceneManager.GetActiveScene())Instance=this;
+            if(gameObject.scene!=SceneManager.GetActiveScene())return;
+            Instance=this;
             CharacterMotor.MapFall=Updraft;Abilities.PaeteVine.MapCatch=VineCatch;
         }
         private void OnDisable()

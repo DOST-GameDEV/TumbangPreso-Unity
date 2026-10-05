@@ -1,0 +1,5 @@
+{
+  "attempt1": "runner referenced missing baseline path; failed before Unity and before worker source mutation",
+  "attempt2": "explicit previous terminal Home manifest verified21126 inputs; original7cases ran",
+  "initialHypothesisCorrection": "callbacks are static; active-owner takeover not reproduced; no-owner global hook installation is reproduced"
+}

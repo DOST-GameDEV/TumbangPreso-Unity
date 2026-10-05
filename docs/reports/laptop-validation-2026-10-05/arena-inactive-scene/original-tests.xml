@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Failed(Child)" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 15:31:46Z" end-time="2026-10-05 15:31:47Z" duration="0.5052066">
+  <test-suite type="TestSuite" id="3191" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1784" result="Failed" site="Child" start-time="2026-10-05 15:31:46Z" end-time="2026-10-05 15:31:47Z" duration="0.505207" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3183" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1784" result="Failed" site="Child" start-time="2026-10-05 15:31:46Z" end-time="2026-10-05 15:31:47Z" duration="0.498048" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="11620" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3184" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1784" result="Failed" site="Child" start-time="2026-10-05 15:31:46Z" end-time="2026-10-05 15:31:47Z" duration="0.496781" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3187" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1782" result="Failed" site="Child" start-time="2026-10-05 15:31:46Z" end-time="2026-10-05 15:31:47Z" duration="0.495569" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1111" name="ArenaOwnerLifetimeTests" fullname="TumbangPreso.PlayTests.ArenaOwnerLifetimeTests" classname="TumbangPreso.PlayTests.ArenaOwnerLifetimeTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-10-05 15:31:46Z" end-time="2026-10-05 15:31:47Z" duration="0.472549" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1113" name="DestroyingRetiredStagePreservesCurrentOwnerGlobals" fullname="TumbangPreso.PlayTests.ArenaOwnerLifetimeTests.DestroyingRetiredStagePreservesCurrentOwnerGlobals" methodname="DestroyingRetiredStagePreservesCurrentOwnerGlobals" classname="TumbangPreso.PlayTests.ArenaOwnerLifetimeTests" runstate="Runnable" seed="703927622" result="Passed" start-time="2026-10-05 15:31:46Z" end-time="2026-10-05 15:31:47Z" duration="0.188785" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1118" name="DisablingCurrentRecoveryRetiresItsHooks" fullname="TumbangPreso.PlayTests.ArenaOwnerLifetimeTests.DisablingCurrentRecoveryRetiresItsHooks" methodname="DisablingCurrentRecoveryRetiresItsHooks" classname="TumbangPreso.PlayTests.ArenaOwnerLifetimeTests" runstate="Runnable" seed="1283856196" result="Passed" start-time="2026-10-05 15:31:47Z" end-time="2026-10-05 15:31:47Z" duration="0.036372" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1114" name="DisablingCurrentStageRestoresOrdinaryMapGlobals" fullname="TumbangPreso.PlayTests.ArenaOwnerLifetimeTests.DisablingCurrentStageRestoresOrdinaryMapGlobals" methodname="DisablingCurrentStageRestoresOrdinaryMapGlobals" classname="TumbangPreso.PlayTests.ArenaOwnerLifetimeTests" runstate="Runnable" seed="1821989652" result="Passed" start-time="2026-10-05 15:31:47Z" end-time="2026-10-05 15:31:47Z" duration="0.032506" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1115" name="DisablingRetiredRecoveryPreservesCurrentOwnerHooks" fullname="TumbangPreso.PlayTests.ArenaOwnerLifetimeTests.DisablingRetiredRecoveryPreservesCurrentOwnerHooks" methodname="DisablingRetiredRecoveryPreservesCurrentOwnerHooks" classname="TumbangPreso.PlayTests.ArenaOwnerLifetimeTests" runstate="Runnable" seed="283146612" result="Passed" start-time="2026-10-05 15:31:47Z" end-time="2026-10-05 15:31:47Z" duration="0.035161" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1112" name="DisablingRetiredStagePreservesCurrentOwnerGlobals" fullname="TumbangPreso.PlayTests.ArenaOwnerLifetimeTests.DisablingRetiredStagePreservesCurrentOwnerGlobals" methodname="DisablingRetiredStagePreservesCurrentOwnerGlobals" classname="TumbangPreso.PlayTests.ArenaOwnerLifetimeTests" runstate="Runnable" seed="1513247835" result="Passed" start-time="2026-10-05 15:31:47Z" end-time="2026-10-05 15:31:47Z" duration="0.096248" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1116" name="EnablingInactiveSceneRecoveryPreservesActiveOwnerHooks" fullname="TumbangPreso.PlayTests.ArenaOwnerLifetimeTests.EnablingInactiveSceneRecoveryPreservesActiveOwnerHooks" methodname="EnablingInactiveSceneRecoveryPreservesActiveOwnerHooks" classname="TumbangPreso.PlayTests.ArenaOwnerLifetimeTests" runstate="Runnable" seed="2018082206" result="Passed" start-time="2026-10-05 15:31:47Z" end-time="2026-10-05 15:31:47Z" duration="0.035362" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1117" name="EnablingInactiveSceneRecoveryWithoutOwnerLeavesHooksUnclaimed" fullname="TumbangPreso.PlayTests.ArenaOwnerLifetimeTests.EnablingInactiveSceneRecoveryWithoutOwnerLeavesHooksUnclaimed" methodname="EnablingInactiveSceneRecoveryWithoutOwnerLeavesHooksUnclaimed" classname="TumbangPreso.PlayTests.ArenaOwnerLifetimeTests" runstate="Runnable" seed="470217434" result="Failed" start-time="2026-10-05 15:31:47Z" end-time="2026-10-05 15:31:47Z" duration="0.036978" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Inactive-scene recovery installed hooks without owning the active scene.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ArenaOwnerLifetimeTests+<EnablingInactiveSceneRecoveryWithoutOwnerLeavesHooksUnclaimed>d__16.MoveNext () [0x00063] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\ArenaOwnerLifetimeTests.cs:119
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

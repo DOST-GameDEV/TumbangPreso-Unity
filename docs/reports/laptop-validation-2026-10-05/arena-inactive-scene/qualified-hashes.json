@@ -1,0 +1,13 @@
+{
+  "Assets/TumbangPreso/Runtime/Map/ArenaFallRecovery.cs": {
+    "normalizedLFsha256": "2c380b6d237b7c09c1b233f220d0de781a51eca63d7bc67540bf898b300b3274",
+    "testedRawSHA256": "30290766f002a999fb622148196e182d2d2fad16a460db72751a11cab3c70e5b"
+  },
+  "Assets/TumbangPreso/Tests/PlayMode/ArenaOwnerLifetimeTests.cs": {
+    "normalizedLFsha256": "b6f029de025a7e4700b18708238f4876c3f4939306323e2c77b625607c523eab",
+    "testedRawSHA256": "57f15845fea8232bc5e4e0eaeeb5aa57f002740819ca35ac099600cbf729162e"
+  },
+  "Assets/TumbangPreso/Tests/PlayMode/ArenaOwnerLifetimeTests.cs.meta": {
+    "sha256": "ecc49ede1d90f8b847c4ed5824634162a2cbfa84f67902c407cb01d160d755df"
+  }
+}
