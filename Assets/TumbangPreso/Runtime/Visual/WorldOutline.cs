@@ -983,7 +983,7 @@ namespace TumbangPreso.Visual
             // The cast's own kernel (pass 2, CastAO): on only with a share, at a body's scale.
             float castRadius=CharacterAoRadiusTest>0?CharacterAoRadiusTest:WorldLookProfile.Current.CharacterAmbientOcclusionRadius;
             // The bias follows the radius down, or a tight kernel sits wholly inside its own bias.
-            float castBias=Mathf.Min(.006f,castRadius*.02f);
+            float castBias=Mathf.Min(.02f,castRadius*.1f);   // was .006 / .02: a smooth slope shaded itself in stripes (owner, 2026-10-05: "weird lining effect too from the ao")
             _material.SetVector("_CharacterAOParams",new Vector4(castShare,castRadius,castBias,0));
             RenderTexture occlusion=null,occlusionBlur=null;
             float aoStrength=AmbientOcclusionLive?WorldLookProfile.Current.AmbientOcclusion*WorldLookPresentation.Current.Weight:0;

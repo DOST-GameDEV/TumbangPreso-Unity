@@ -459,7 +459,7 @@ namespace TumbangPreso.Settings
         public static readonly string[] CharacterShadingLabels = { "Off", "Soft", "Full" };
         /// <summary>The cast's share of the occlusion for a stored index: 0, a half, all of it.</summary>
         public static float CharacterShadingShare(int index)
-            => Mathf.Clamp(index, 0, CharacterShadingFull) * 0.5f;
+            => Mathf.Clamp(index, 0, CharacterShadingFull) * 0.3f;   // was 0.5 (Full = 1): on the redesigns' smooth faces full strength drew stripes (owner, 2026-10-05)
 
         // -------------------------------------------------------------------
         // MATCH
