@@ -246,7 +246,13 @@ namespace TumbangPreso.CameraSystem
             {
                 target.sharedMaterials = source.sharedMaterials; target.enabled = source.enabled;
                 target.sortingLayerID = source.sortingLayerID; target.sortingOrder = source.sortingOrder;
-                var properties = new MaterialPropertyBlock(); source.GetPropertyBlock(properties); target.SetPropertyBlock(properties);
+                var properties = new MaterialPropertyBlock(); source.GetPropertyBlock(properties);
+                // ⚠️ THE COPY DOES NOT INHERIT A HIT FLASH OR A COAT. The live body's block is read at the moment of the
+                // copy, which for a tag's replay is the moment of the tag: its white hit flash and the caught coat were
+                // at their height and were frozen onto the copy for the whole replay (owner, 2026-10-05: "in the tag
+                // replay camera characters are white with no texture"). A replay that wants them sets them per frame.
+                properties.SetFloat("_FlashAmount", 0.0f); properties.SetFloat("_CaughtAmount", 0.0f); properties.SetFloat("_FrostAmount", 0.0f);
+                target.SetPropertyBlock(properties);
                 target.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                 target.forceRenderingOff = true;
             }
