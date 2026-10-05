@@ -1,0 +1,30 @@
+{
+  "launch.json": {
+    "bytes": 959,
+    "sha256": "c2466af698e65d6ce2ea13c008f2df34857160027463dd39bac93d6df679936e"
+  },
+  "direct-result.json": {
+    "bytes": 23219,
+    "sha256": "10b0626b6a7fc9734235334a20089b4ab5a62809b2195f00b03864ab26baa4a3"
+  },
+  "source-classification.json": {
+    "bytes": 1525,
+    "sha256": "55827b8ecb344a776b5bc228696cac165fc1fef96c406e78786992cd43017ab1"
+  },
+  "artifact-verification.json": {
+    "bytes": 610,
+    "sha256": "bd38f78b9772e692146c739645d1adb98a8c943e7fcb6868656280242dee955b"
+  },
+  "artifact-manifest.json": {
+    "bytes": 51033,
+    "sha256": "2a258217bd64c108c545ae39067f9b038da84dbb190c41c364ac01e542f65462"
+  },
+  "share-cleanup.json": {
+    "bytes": 211,
+    "sha256": "504a7031bcf4b032c314bcc41257379353af21d24ff6a88f6a2011608dc00698"
+  },
+  "pc-full-copy-correlation.json": {
+    "bytes": 358,
+    "sha256": "81b01532345a8576c3f769b5ed928c127b8afc3564542b133d2887de0d6c3ea0"
+  }
+}
