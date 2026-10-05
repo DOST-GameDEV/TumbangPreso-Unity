@@ -1,6 +1,26 @@
 # Networking: Where To Work
 
-Current gameplay contract is protocol124, including adopted Hydro Crosscurrent,
+Current source contract is protocol152 (`NetSession.ProtocolVersion`). Use matching
+packages for actual peers; branch names are not compatibility identifiers. The
+work-status queue is [TODO](TODO.md), not the older evidence narrative below.
+
+The matched0358 Windows package qualifies natural PC-hosted LAN discovery, row
+admission, code rejoin and an already-open client Rules panel. The corrected917
+package qualifies reverse-host completed-match return Home without automatic
+client rehosting. [LAN/Rules acceptance](reports/reliability-2026-10-06/lan-and-live-rules-operator/README.md)
+and [completed recovery](reports/reliability-2026-10-06/corrected-reverse-lan/README.md).
+These scoped passes do not close the tester's Relay timeout/host-kick report,
+non-host delay, all skills, physical input or cross-platform acceptance.
+
+Accepted owner-pose echoes now preserve current local prediction while explicit
+corrections and movement epochs remain authoritative. The causal native evidence
+is [owner feedback](reports/reliability-2026-10-05/owner-pose-feedback/README.md);
+controlled-latency and physical-feel acceptance remain separate. Current source
+also includes the later queued-focus and bunting fixes, which0358 does not carry.
+
+## Historical September30 contracts and qualification
+
+The September30 gameplay contract was protocol124, including adopted Hydro Crosscurrent,
 Skim, Water wall, can-down charge cancellation, revised penalty/fatigue timings
 finite can-height contact, revised knockdown/catch announcement rewards and
 live Frostbite timed recovery, authoritative Amped-Up objective discounts and
