@@ -26,6 +26,8 @@ namespace TumbangPreso
         public string Id;
 
         public GameObject Model;
+        [Tooltip("Optional: the model the FIRST-PERSON arms are cut from and wear the material of, where it is not Model.")]
+        public GameObject ArmModel;
         [Tooltip("Optional companion pet model (e.g. floating ghost pet for Nemu).")]
         public GameObject PetModel;
         public Material Material;

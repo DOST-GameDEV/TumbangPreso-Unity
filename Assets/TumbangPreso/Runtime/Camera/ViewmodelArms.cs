@@ -1754,7 +1754,8 @@ namespace TumbangPreso.CameraSystem
             var left = ViewmodelMeshAssets.Load("Models/RosterArms/" + characterId + "_left");
             var entry = RosterBook.Load()?.FindPersonArt(characterId);
             if (right == null || left == null || entry == null || entry.Model == null) return false;
-            var source = entry.Model.GetComponentInChildren<SkinnedMeshRenderer>(true);
+            // The arms wear the material of the model they were cut from (`RosterEntryAsset.ArmModel`, else the body's).
+            var source = (entry.ArmModel != null ? entry.ArmModel : entry.Model).GetComponentInChildren<SkinnedMeshRenderer>(true);
             var palette = _characterMotor != null
                 ? _characterMotor.GetComponent<Visual.CharacterVisual>()?.AppliedPalette : null;
             if (palette == null || palette.Length == 0) palette = entry.Palette;

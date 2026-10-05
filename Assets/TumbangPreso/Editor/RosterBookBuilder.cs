@@ -94,6 +94,19 @@ namespace TumbangPreso.EditorTools
             { "custom_base", "characters/persons/team-custom-base.glb" },
         };
 
+        /// <summary>
+        /// ⚠️ WHOSE FIRST-PERSON ARMS ARE STILL CUT FROM THE OLD MODEL (owner, 2026-10-05, of Paete's hands in
+        /// first person after his redesign went into the roster: "now paete's hands are weird..", then "for now
+        /// lets just use the old paete model for the fpv"). The arms a player sees are their own meshes
+        /// (`ViewmodelArmAuthor` cuts them from a model by its `arm-<side>` bone) and are not the body others
+        /// see. A redesign has an elbow, so that bone is only the upper arm and the cut left out the forearm
+        /// and the hand. Until the cut follows the elbow, a hero listed here keeps the arms of the old model.
+        /// </summary>
+        private static readonly Dictionary<string, string> FirstPersonArmModels = new Dictionary<string, string>
+        {
+            { "paete", "characters/persons/team-paete.glb" },
+        };
+
         private static readonly Dictionary<string, string> PersonPalettes = new Dictionary<string, string>
         {
             // Classic Palettes
@@ -365,6 +378,10 @@ namespace TumbangPreso.EditorTools
                 asset.Id = entry.Id;
                 asset.Tint = Color.white;
                 asset.Palette = ReadPalette(entry.Id, ref ok);
+
+                // The first-person arms' own model, where a hero has one (`FirstPersonArmModels`).
+                asset.ArmModel = FirstPersonArmModels.TryGetValue(entry.Id, out var armRel)
+                    ? AssetDatabase.LoadAssetAtPath<GameObject>($"{ArtRoot}/{armRel}") : null;
 
                 if (models.TryGetValue(entry.Id, out var rel))
                 {

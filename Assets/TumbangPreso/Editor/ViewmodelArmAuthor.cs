@@ -29,7 +29,8 @@ namespace TumbangPreso.EditorTools
             foreach (var entry in book.People.Where(e => e != null && e.Model != null && (onlyId == null || e.Id == onlyId)))
                 foreach (string side in new[] { "right", "left" })
                 {
-                    Mesh generated = Extract(entry.Model, "arm-" + side);
+                    // From the arms' own model where the entry has one (`RosterBookBuilder.FirstPersonArmModels`).
+                    Mesh generated = Extract(entry.ArmModel != null ? entry.ArmModel : entry.Model, "arm-" + side);
                     if (generated == null) throw new InvalidOperationException(entry.Id + " has no " + side + " arm geometry");
                     string path = Folder + "/" + entry.Id + "_" + side + ".asset";
                     var existing = AssetDatabase.LoadAssetAtPath<Mesh>(path);
