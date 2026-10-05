@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 18:41:07Z" end-time="2026-10-05 18:41:15Z" duration="8.0568342">
+  <test-suite type="TestSuite" id="3194" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1787" result="Passed" start-time="2026-10-05 18:41:07Z" end-time="2026-10-05 18:41:15Z" duration="8.056834" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3186" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1787" result="Passed" start-time="2026-10-05 18:41:07Z" end-time="2026-10-05 18:41:15Z" duration="8.017061" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22452" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3187" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1787" result="Passed" start-time="2026-10-05 18:41:07Z" end-time="2026-10-05 18:41:15Z" duration="7.986167" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3190" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1785" result="Passed" start-time="2026-10-05 18:41:07Z" end-time="2026-10-05 18:41:15Z" duration="7.955719" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="3050" name="UiEdgeQualityReview" fullname="TumbangPreso.PlayTests.UiEdgeQualityReview" classname="TumbangPreso.PlayTests.UiEdgeQualityReview" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-05 18:41:07Z" end-time="2026-10-05 18:41:15Z" duration="7.903087" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="3052" name="CurrentHomeAndJoinRenderAtPcAndQhdSizes" fullname="TumbangPreso.PlayTests.UiEdgeQualityReview.CurrentHomeAndJoinRenderAtPcAndQhdSizes" methodname="CurrentHomeAndJoinRenderAtPcAndQhdSizes" classname="TumbangPreso.PlayTests.UiEdgeQualityReview" runstate="Runnable" seed="1178119050" result="Passed" start-time="2026-10-05 18:41:07Z" end-time="2026-10-05 18:41:15Z" duration="7.888303" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[TumpUiCapture] Current152-Home-1600x900 cream source=252,211,159 pixel=49,32,21; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Current152-Home-2560x1440 cream source=252,211,159 pixel=47,30,20; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Current152-Join-1600x900 cream source=252,211,159 pixel=84,15,14; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Current152-Join-2560x1440 cream source=252,211,159 pixel=75,9,8; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

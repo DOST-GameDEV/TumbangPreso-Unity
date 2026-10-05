@@ -195,12 +195,42 @@ namespace TumbangPreso.UI.Hub
             float pixels = radius * _scale * (canvas != null ? canvas.scaleFactor : 1.0f);
             steps = Mathf.Clamp(Mathf.Max(steps, Mathf.CeilToInt(Mathf.Abs(toDeg - fromDeg) * Mathf.Deg2Rad * pixels / 6.0f)), steps, 96);
             float from = fromDeg * Mathf.Deg2Rad, to = toDeg * Mathf.Deg2Rad;
+            float half = Weight * _scale * .5f;
+            float edge = 1f / Mathf.Max(.1f, canvas != null ? canvas.scaleFactor : 1f);
+            Color32 clear = _colour; clear.a = 0;
+            int start = _vh.currentVertCount;
+            // Joined strips have one opacity at each arc sample. Capping every little
+            // line overlaps its transparent feathers and leaves visible ribs on pale icons.
+            for (int s = 0; s <= steps; s++)
+            {
+                float angle = Mathf.Lerp(from, to, s / (float)steps);
+                Vector2 point = P(cx + Mathf.Cos(angle) * radius, cy + Mathf.Sin(angle) * radius * squash);
+                Vector2 normal = new Vector2(squash * Mathf.Cos(angle), Mathf.Sin(angle)).normalized;
+                _vh.AddVert(point + normal * (half + edge), clear, Vector2.zero);
+                _vh.AddVert(point + normal * half, _colour, Vector2.zero);
+                _vh.AddVert(point - normal * half, _colour, Vector2.zero);
+                _vh.AddVert(point - normal * (half + edge), clear, Vector2.zero);
+            }
             for (int s = 0; s < steps; s++)
             {
-                float a = Mathf.Lerp(from, to, s / (float)steps);
-                float b = Mathf.Lerp(from, to, (s + 1) / (float)steps);
-                Line(cx + Mathf.Cos(a) * radius, cy + Mathf.Sin(a) * radius * squash,
-                     cx + Mathf.Cos(b) * radius, cy + Mathf.Sin(b) * radius * squash);
+                int a = start + s * 4, b = a + 4;
+                for (int strip = 0; strip < 3; strip++)
+                {
+                    _vh.AddTriangle(a + strip, b + strip, b + strip + 1);
+                    _vh.AddTriangle(a + strip, b + strip + 1, a + strip + 1);
+                }
+            }
+            if (Mathf.Abs(toDeg - fromDeg) < 359.99f)
+            {
+                Vector2 first = P(cx + Mathf.Cos(from) * radius, cy + Mathf.Sin(from) * radius * squash);
+                Vector2 last = P(cx + Mathf.Cos(to) * radius, cy + Mathf.Sin(to) * radius * squash);
+                Vector2 firstNormal = new Vector2(squash * Mathf.Cos(from), Mathf.Sin(from)).normalized;
+                Vector2 lastNormal = new Vector2(squash * Mathf.Cos(to), Mathf.Sin(to)).normalized;
+                float direction = Mathf.Sign(to - from);
+                Feather(first - firstNormal * half, first + firstNormal * half,
+                    new Vector2(Mathf.Sin(from), -squash * Mathf.Cos(from)).normalized * (edge * direction));
+                Feather(last + lastNormal * half, last - lastNormal * half,
+                    new Vector2(-Mathf.Sin(to), squash * Mathf.Cos(to)).normalized * (edge * direction));
             }
         }
 
