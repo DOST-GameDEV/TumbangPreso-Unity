@@ -1,5 +1,16 @@
 # TODO: Tumbang Preso Unity
 
+### QOL-INTEGRATION-1005: incoming content and current peer validation
+
+- [x] Merge incoming Arena, Ilalim and roster models without conflicts. Preserve
+  stable IDs, names and ASTRA engineering fixes; incoming Yasmin takes precedence.
+  Remove the temporary train prank release hooks. Added GUID/reference checks pass.
+- [x] Integrate the newer replay-copy material-property correction from fa922a463.
+- [ ] Native merged compilation/import, affected map/model/camera/gameplay and
+  replay render controls. Protocol152 requires matching peers and a current build.
+  The owner's timeout/host-kick report remains unresolved.
+  [Integration scope](reports/reliability-2026-10-05/qol-integration/README.md).
+
 ### PAETE-REFINEMENT-1004: existing animation and player vine latch
 
 - [x] Preserve the existing plant and character shapes while making the charged
@@ -248,7 +259,7 @@ Handoff: [CHARACTER_REDESIGN_DANTE.md](CHARACTER_REDESIGN_DANTE.md).
 - [x] Current61a Windows package on two laptop instances passes normal public
   row join, Ready, at least268.4seconds idle, client leave/rejoin and deliberate
   host-leave recovery. Both own-menu Quit exits0; source/profiles/preferences and
-  artifact restored or unchanged. Root verified20 raw Git blobs and inspected
+  artifact restored or unchanged. Root verified21 raw Git blobs and inspected
   row/rejoin/recovered-Home captures. JPEG screenshots prove controls, not lossless
   UI quality. No new full-match, two-machine, impaired-link or QA-failure closure.
   [Current local online controls](reports/laptop-validation-2026-10-05/current-online-lobby/README.md).
@@ -301,7 +312,8 @@ Handoff: [CHARACTER_REDESIGN_DANTE.md](CHARACTER_REDESIGN_DANTE.md).
   [Evidence](reports/reliability-2026-10-04/arrival-fpp/README.md).
 - [ ] Current packaged multiplayer arrival film and camera handoff acceptance.
 - [ ] Public online rooms are undiscoverable: host publication/query/UI filter
-  verification. QOL is read-only comparison; owner prohibits importing prank code.
+  verification. Current QoL content is owner-authorized for integration; its
+  temporary train prank hooks are removed. Current152 peer acceptance remains open.
 - [x] Fix online host success before registration and Relay advertising a direct
   LAN endpoint. Three native causes plus LAN and real UGS code/browser controls
   pass 5/5. [Evidence](reports/reliability-2026-10-04/online-room-publication/README.md).
