@@ -88,23 +88,23 @@ namespace TumbangPreso.Map
         /// </summary>
         public static readonly (string id, string say, string caption)[] Lines =
         {
-            ("arena_welcome", "Mabuhay! Ito ang Arena!", "Welcome to the Arena!"),
-            ("arena_next_stage", "Susunod na entablado!", "Next stage!"),
+            ("arena_welcome", "Welcome to the Arena!", "Welcome to the Arena!"),
+            ("arena_next_stage", "Next stage!", "Next stage!"),
             ("arena_plaza", "Plaza!", "Plaza!"),
-            ("arena_tore", "Tore!", "Tower!"),
-            ("arena_krus", "Krus!", "Cross!"),
-            ("arena_hukay", "Hukay!", "Pit!"),
-            ("arena_entablado", "Entablado!", "Stage!"),
-            ("arena_balloon", "Pumutok ang lobo!", "The balloon popped!"),
-            ("arena_rescue", "Nasalo! Balik sa laro!", "Caught! Back in the game!"),
+            ("arena_tore", "Tower!", "Tower!"),
+            ("arena_krus", "Cross!", "Cross!"),
+            ("arena_hukay", "The Pit!", "The Pit!"),
+            ("arena_entablado", "Main Stage!", "Main Stage!"),
+            ("arena_balloon", "The balloon popped!", "The balloon popped!"),
+            ("arena_rescue", "Caught! Back in the game!", "Caught! Back in the game!"),
             // The match's moments (2026-10-05). An id's takes are alternate wordings, cycled:
             // tools/arena_announcer_lines.json has every take's text. Each has its own cooldown
             // (`VoiceDirector.CooldownMs`), so these are said now and then, not every time.
-            ("arena_near_miss", "So close! / Muntik na! / Sayang!", "So close!"),
-            ("arena_great_throw", "What a throw! / Ang galing!", "What a throw!"),
-            ("arena_block", "Blocked! / Naharang!", "Blocked!"),
-            ("arena_fall", "Over the edge! / Nahulog!", "Over the edge!"),
-            ("arena_balloon_hit", "The balloon's hit! / Tinamaan ang lobo!", "The balloon's hit!"),
+            ("arena_near_miss", "So close! / Just missed!", "So close!"),
+            ("arena_great_throw", "What a throw! / Off the wall!", "What a throw!"),
+            ("arena_block", "Blocked! / Denied!", "Blocked!"),
+            ("arena_fall", "Over the edge! / Down they go!", "Over the edge!"),
+            ("arena_balloon_hit", "The balloon's hit! / Hit it again!", "The balloon's hit!"),
         };
 
         // ------------------------------------------------------------------ the clips

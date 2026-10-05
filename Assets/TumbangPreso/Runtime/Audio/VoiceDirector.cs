@@ -29,12 +29,20 @@ namespace TumbangPreso.Audio
             "count_go" => "Begin!", "clock_30" => "Thirty seconds left!",
             "clock_10" => "Ten seconds left!", "match_win" => "Winner!",
             "match_draw" => "It's a draw!",
-            // The Arena's own lines (`Map.ArenaCrowdAudio.Lines`). None is recorded yet, and an absent
-            // take is never captioned: `Play` returns before it reaches a caption.
+            // The Arena's own lines (`Map.ArenaCrowdAudio.Lines`). Nobody has recorded them: their takes
+            // are AI-cloned (below). An absent take is never captioned: `Play` returns before a caption.
             "arena_welcome" => "Welcome to the Arena!", "arena_next_stage" => "Next stage!",
             "arena_plaza" => "Plaza!", "arena_tore" => "Tower!", "arena_krus" => "Cross!",
-            "arena_hukay" => "Pit!", "arena_entablado" => "Stage!",
+            "arena_hukay" => "The Pit!", "arena_entablado" => "Main Stage!",
             "arena_balloon" => "The balloon popped!", "arena_rescue" => "Caught! Back in the game!",
+            // AI-CLONED TAKES of the announcer's voice, made with their consent (2026-10-05): every
+            // file is listed in Resources/Vo/AI_CLONED_LINES.md, the script is
+            // tools/arena_announcer_lines.json. The nine Arena lines above are cloned takes too.
+            "tumbang" => "Lata is down!", "taya" => "Taya!", "lata_restored" => "Lata is back up!",
+            "bilis" => "Hurry up!", "ayos" => "Nice one!", "title" => "Tumbang Preso!",
+            "arena_near_miss" => "So close!", "arena_great_throw" => "What a throw!",
+            "arena_block" => "Blocked!", "arena_fall" => "Over the edge!",
+            "arena_balloon_hit" => "The balloon's hit!",
             _ => null
         };
         /// <summary>How far the music drops under a line, and the floor on how long that
@@ -67,6 +75,10 @@ namespace TumbangPreso.Audio
             { "match_win", 0 }, { "match_draw", 0 }, { "title", 0 },
             { "count_3", 0 }, { "count_2", 0 }, { "count_1", 0 }, { "count_go", 0 },
             { "count_5", 0 }, { "count_4", 0 },
+            // Commentary on things that happen often: said now and then, not every time.
+            { "bilis", 0 },   // once per round, like the clock lines
+            { "arena_near_miss", 14000 }, { "arena_great_throw", 12000 }, { "arena_block", 14000 },
+            { "arena_fall", 8000 }, { "arena_balloon_hit", 12000 },
         };
 
         private readonly Dictionary<string, List<AudioClip>> _takes =
@@ -83,6 +95,7 @@ namespace TumbangPreso.Audio
         /// frame the timer sits at or below the threshold.</summary>
         private bool _clock30Said;
         private bool _clock10Said;
+        private bool _clock15Said;
 
         private void Awake()
         {
@@ -221,6 +234,7 @@ namespace TumbangPreso.Audio
         {
             _clock30Said = false;
             _clock10Said = false;
+            _clock15Said = false;
 
             if (roundNumber == 1) Play("taya");
         }
@@ -229,6 +243,9 @@ namespace TumbangPreso.Audio
         public void TickClock(float timeLeft)
         {
             if (!_clock30Said && timeLeft <= 30.0f) { _clock30Said = true; Play("clock_30"); }
+            // "Bilis!" at 15 s (docs/HUMAN.md Table B). Not when the clock is first seen under 10 s:
+            // the ten-second call below is the one that matters then.
+            if (!_clock15Said && timeLeft <= 15.0f) { _clock15Said = true; if (timeLeft > 10.0f) Play("bilis"); }
             if (!_clock10Said && timeLeft <= 10.0f) { _clock10Said = true; Play("clock_10"); }
         }
 
