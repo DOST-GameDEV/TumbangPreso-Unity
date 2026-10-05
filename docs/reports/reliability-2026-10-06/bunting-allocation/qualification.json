@@ -1,0 +1,103 @@
+{
+  "original": {
+    "pid": 20036,
+    "sourceRef": "6379ae555e28f4b949bb2dbe3550129b27bdea51",
+    "exitCode": 2,
+    "cases": [
+      {
+        "name": "TumbangPreso.Tests.HubShapeAllocationTests.RepeatedAnimatedContoursReuseNoiseAndSeedChangesRemainDeterministic(True)",
+        "result": "Passed",
+        "message": null
+      },
+      {
+        "name": "TumbangPreso.Tests.HubShapeAllocationTests.RepeatedAnimatedContoursReuseNoiseAndSeedChangesRemainDeterministic(False)",
+        "result": "Passed",
+        "message": null
+      },
+      {
+        "name": "TumbangPreso.Tests.HubShapeAllocationTests.RepeatedBuntingDrawsAllocateNoRandomOrClosureState",
+        "result": "Failed",
+        "message": "  The 30Hz animation still allocates on every mesh rebuild.\n  Expected: 0\n  But was:  200\n"
+      }
+    ],
+    "classification": {
+      "terminal": true,
+      "inputRestored": true,
+      "editorInputRestored": true,
+      "qualityRestored": true,
+      "profileRestored": true,
+      "protectedCount": 21136,
+      "restoredNativeDeltas": 216,
+      "remainingDeltas": []
+    },
+    "qualifiedRawSourceHashes": {
+      "Assets/TumbangPreso/Runtime/UI/Hub/HubScenery.cs": "940d6eaad02e008de0067bfa8ed3a00db0c6ade6a85966d33b2c25a80dd82c2d",
+      "Assets/TumbangPreso/Tests/HubShapeAllocationTests.cs": "33d380422637eae1657efa424d68a0363859eacd96e6f4b03b9d9d4f85867d9c"
+    },
+    "qualifiedInputManifestSHA256": "5b9e36989398366d08a2aab6b443e7236bd77c8b2884c7752015d6c058c48151"
+  },
+  "candidate": {
+    "pid": 20740,
+    "sourceRef": "6379ae555e28f4b949bb2dbe3550129b27bdea51",
+    "exitCode": 0,
+    "cases": [
+      {
+        "name": "TumbangPreso.Tests.HubShapeAllocationTests.RepeatedAnimatedContoursReuseNoiseAndSeedChangesRemainDeterministic(True)",
+        "result": "Passed",
+        "message": null
+      },
+      {
+        "name": "TumbangPreso.Tests.HubShapeAllocationTests.RepeatedAnimatedContoursReuseNoiseAndSeedChangesRemainDeterministic(False)",
+        "result": "Passed",
+        "message": null
+      },
+      {
+        "name": "TumbangPreso.Tests.HubShapeAllocationTests.RepeatedBuntingDrawsAllocateNoRandomOrClosureState",
+        "result": "Passed",
+        "message": null
+      }
+    ],
+    "classification": {
+      "terminal": true,
+      "inputRestored": true,
+      "editorInputRestored": true,
+      "qualityRestored": true,
+      "profileRestored": true,
+      "protectedCount": 21136,
+      "restoredNativeDeltas": 216,
+      "remainingDeltas": []
+    },
+    "qualifiedRawSourceHashes": {
+      "Assets/TumbangPreso/Runtime/UI/Hub/HubScenery.cs": "08e470f817fe260b903966342e81f3fb579be108b099dd6b2424857969ec78e6",
+      "Assets/TumbangPreso/Tests/HubShapeAllocationTests.cs": "c0de5b87cf7efa9176c10670b3ce8d99796c8bfab37235c69990e8d39501beb7"
+    },
+    "qualifiedInputManifestSHA256": "91274528bb2ada21d88c4e1da31c96094bf07370a0d750531ac6cdf5592b469a"
+  },
+  "resize": {
+    "pid": 21380,
+    "sourceRef": "6379ae555e28f4b949bb2dbe3550129b27bdea51",
+    "exitCode": 0,
+    "cases": [
+      {
+        "name": "TumbangPreso.Tests.HubShapeAllocationTests.RebuiltBuntingMatchesFreshSeedAndWidthAfterReducedMotion",
+        "result": "Passed",
+        "message": null
+      }
+    ],
+    "classification": {
+      "terminal": true,
+      "inputRestored": true,
+      "editorInputRestored": true,
+      "qualityRestored": true,
+      "profileRestored": true,
+      "protectedCount": 21136,
+      "restoredNativeDeltas": 216,
+      "remainingDeltas": []
+    },
+    "qualifiedRawSourceHashes": {
+      "Assets/TumbangPreso/Runtime/UI/Hub/HubScenery.cs": "08e470f817fe260b903966342e81f3fb579be108b099dd6b2424857969ec78e6",
+      "Assets/TumbangPreso/Tests/HubShapeAllocationTests.cs": "ef552896464e26244c289bc4dcc2f7ec9b9752bca2600f3b833d3e5845ed72bd"
+    },
+    "qualifiedInputManifestSHA256": "9490193c6d61edefea6d57885b89954021f0fc36fea88c19f633bae505e3ca0c"
+  }
+}

@@ -1,0 +1,11 @@
+# Reuse the fiesta flag noise without recurring allocations
+
+The menu bunting reconstructed System.Random on every 30Hz mesh rebuild. A calibrated Unity GC.Alloc recorder observes200 allocation events across100 warm redraws in the original. The same run passes both existing animated-contour controls. The earlier GC.GetAllocatedBytesForCurrentThread counter returned zero even for a known retained16KiB allocation and is unusable on this native runtime; this fixture now uses a calibrated profiler recorder.
+
+HubBunting caches the identical Random(seed) float sequence until its seed or total flag count changes. Flag colours, placement, wind phase, arrival timing, string mesh and redraw cadence remain unchanged. Reduced motion avoids creating the noise cache; returning to motion populates it normally. Zero-width layouts retain strings without flags. No source artwork, texture import, text or gameplay changes.
+
+Original Unity20036/parent83314: one causal failure and two contour controls pass. Candidate20740/94756: all same three cases pass, with zero allocation events in100 warm bunting draws and identical positions/colours within the frame. Only the additional resize/seed/reduced-motion control then runs,21380/73691, and passes for720/1600/2560/zero widths and47/48/47 seeds. Production source is unchanged between candidate and resize runs. The printed original10300bytes label is invalid: GC.Alloc marker samples contain timing, not allocation byte totals. Only event counts support the allocation result. No FPS or frame-time improvement is claimed.
+
+All jobs are terminal. Each21136-input snapshot, shared input/editor preferences, named profile and QualitySettings are restored exactly after216 native metadata rewrites. Protected Auditor/private work is retained. Original/candidate fixture hashes differ only because the invalid byte-label output was removed before candidate; resize adds one separate control and does not rerun the earlier passing cases. Exact frozen raw hashes and fresh XML are retained. Full local input manifests remain under Logs/ui-bunting1006.
+
+Current player packaging and two-machine arrival/movement acceptance follow separately. This small allocation repair does not close the owner's network-delay report or establish all-menu visual acceptance.

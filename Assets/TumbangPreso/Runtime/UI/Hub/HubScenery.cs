@@ -828,6 +828,8 @@ namespace TumbangPreso.UI.Hub
         public int Seed = 1;
         private float _arrive = -1;
         private float _nextDraw;
+        private int _noiseSeed;
+        private float[] _flagNoise;
 
         private static readonly Color[] Flags =
             { HubStyle.Chartreuse, HubStyle.Persimmon, HubStyle.Golden, HubStyle.RimRed, HubStyle.Honey };
@@ -862,7 +864,16 @@ namespace TumbangPreso.UI.Hub
                 // Falls in from above and bounces once on its strings.
                 lift = (1 - u) * (1 - u) * 190 - Mathf.Sin(u * Mathf.PI) * 16 * (1 - u);
             }
-            var rng = new System.Random(Seed);
+            int firstCount = Mathf.Max(0, Mathf.CeilToInt(r.width / 74));
+            int secondCount = Mathf.Max(0, Mathf.CeilToInt(r.width / 84));
+            if (!still && (_flagNoise == null || _noiseSeed != Seed || _flagNoise.Length != firstCount + secondCount))
+            {
+                _noiseSeed = Seed;
+                _flagNoise = new float[firstCount + secondCount];
+                var rng = new System.Random(Seed);
+                for (int i = 0; i < _flagNoise.Length; i++) _flagNoise[i] = (float)rng.NextDouble();
+            }
+            int noise = 0;
             Color32 cord = new Color(HubStyle.Ink.r, HubStyle.Ink.g, HubStyle.Ink.b, 0.85f);
             for (int line = 0; line < 2; line++)
             {
@@ -881,7 +892,7 @@ namespace TumbangPreso.UI.Hub
                     var at = Point(f);
                     var colour = Flags[(k + line * 2 + Seed) % Flags.Length];
                     // Each flag swings on its own phase; a gust pushes them all the same way.
-                    float swing = still ? 0 : Mathf.Sin(t * (1.6f + (float)rng.NextDouble()) + k) * (0.05f + 0.18f * gust) - 0.12f * gust;
+                    float swing = still ? 0 : Mathf.Sin(t * (1.6f + _flagNoise[noise++]) + k) * (0.05f + 0.18f * gust) - 0.12f * gust;
                     var tip = at + new Vector2(Mathf.Sin(swing) * 52, -Mathf.Cos(swing) * 52);
                     int i = vh.currentVertCount;
                     vh.AddVert(at + new Vector2(-21, 0), (Color32)colour, Vector2.zero);

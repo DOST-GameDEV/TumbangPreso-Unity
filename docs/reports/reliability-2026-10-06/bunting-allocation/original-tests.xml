@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 21:28:10Z" end-time="2026-10-05 21:28:10Z" duration="0.3989496">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1397" result="Failed" site="Child" start-time="2026-10-05 21:28:10Z" end-time="2026-10-05 21:28:10Z" duration="0.398950" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2723" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1397" result="Failed" site="Child" start-time="2026-10-05 21:28:10Z" end-time="2026-10-05 21:28:10Z" duration="0.379265" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="20036" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2724" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1397" result="Failed" site="Child" start-time="2026-10-05 21:28:10Z" end-time="2026-10-05 21:28:10Z" duration="0.367596" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2725" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1397" result="Failed" site="Child" start-time="2026-10-05 21:28:10Z" end-time="2026-10-05 21:28:10Z" duration="0.356477" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1566" name="HubShapeAllocationTests" fullname="TumbangPreso.Tests.HubShapeAllocationTests" classname="TumbangPreso.Tests.HubShapeAllocationTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-05 21:28:10Z" end-time="2026-10-05 21:28:10Z" duration="0.318866" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1570" name="RepeatedAnimatedContoursReuseNoiseAndSeedChangesRemainDeterministic" fullname="TumbangPreso.Tests.HubShapeAllocationTests.RepeatedAnimatedContoursReuseNoiseAndSeedChangesRemainDeterministic" classname="TumbangPreso.Tests.HubShapeAllocationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-05 21:28:10Z" end-time="2026-10-05 21:28:10Z" duration="0.093721" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1568" name="RepeatedAnimatedContoursReuseNoiseAndSeedChangesRemainDeterministic(True)" fullname="TumbangPreso.Tests.HubShapeAllocationTests.RepeatedAnimatedContoursReuseNoiseAndSeedChangesRemainDeterministic(True)" methodname="RepeatedAnimatedContoursReuseNoiseAndSeedChangesRemainDeterministic" classname="TumbangPreso.Tests.HubShapeAllocationTests" runstate="Runnable" seed="1221533030" result="Passed" start-time="2026-10-05 21:28:10Z" end-time="2026-10-05 21:28:10Z" duration="0.083065" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UIContourAllocation] pressable=True rebuilds=500 allocationEvents=0
+]]></output>
+              </test-case>
+              <test-case id="1569" name="RepeatedAnimatedContoursReuseNoiseAndSeedChangesRemainDeterministic(False)" fullname="TumbangPreso.Tests.HubShapeAllocationTests.RepeatedAnimatedContoursReuseNoiseAndSeedChangesRemainDeterministic(False)" methodname="RepeatedAnimatedContoursReuseNoiseAndSeedChangesRemainDeterministic" classname="TumbangPreso.Tests.HubShapeAllocationTests" runstate="Runnable" seed="338589725" result="Passed" start-time="2026-10-05 21:28:10Z" end-time="2026-10-05 21:28:10Z" duration="0.003083" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UIContourAllocation] pressable=False rebuilds=500 allocationEvents=0
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-case id="1567" name="RepeatedBuntingDrawsAllocateNoRandomOrClosureState" fullname="TumbangPreso.Tests.HubShapeAllocationTests.RepeatedBuntingDrawsAllocateNoRandomOrClosureState" methodname="RepeatedBuntingDrawsAllocateNoRandomOrClosureState" classname="TumbangPreso.Tests.HubShapeAllocationTests" runstate="Runnable" seed="1547048977" result="Failed" start-time="2026-10-05 21:28:10Z" end-time="2026-10-05 21:28:10Z" duration="0.214758" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The 30Hz animation still allocates on every mesh rebuild.
+  Expected: 0
+  But was:  200
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.HubShapeAllocationTests.RepeatedBuntingDrawsAllocateNoRandomOrClosureState () [0x00182] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\HubShapeAllocationTests.cs:47
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[100 warm bunting draws: 200 GC.Alloc events, 10300 bytes
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

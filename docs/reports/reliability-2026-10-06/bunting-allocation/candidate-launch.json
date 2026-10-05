@@ -1,0 +1,26 @@
+{
+  "sourceRef": "6379ae555e28f4b949bb2dbe3550129b27bdea51",
+  "profile": "pc-bunting-profiler-candidate1006",
+  "filter": "TumbangPreso.Tests.HubShapeAllocationTests",
+  "expectedCases": 3,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-bunting-profiler-candidate1006",
+    "-runTests",
+    "-testPlatform",
+    "EditMode",
+    "-testFilter",
+    "TumbangPreso.Tests.HubShapeAllocationTests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\ui-bunting1006\\profiler-candidate-native\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\ui-bunting1006\\profiler-candidate-native\\editor.log"
+  ],
+  "pid": 20740
+}
