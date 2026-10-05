@@ -52,6 +52,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "Assets", "TumbangPreso", "Art", "Arena", "Textures")
 SHEETS = os.path.join(ROOT, "Logs", "arena", "bowl")
 LOGO = os.path.join(ROOT, "Assets", "TumbangPreso", "Art", "ui", "brand", "tump_logo.png")
+STAMP = os.path.join(ROOT, "ArtSource", "arena", "brand", "tump_stamp_owner.png")   # the one-colour stamp drawing, from the owner
 
 # ------------------------------------------------------------------ constants the model imports
 PX = 1024
@@ -510,23 +511,23 @@ def main():
 
     # ---------------------------------------------------------------- the field's paint
     def marking():
-        """The logo as field paint: its own drawing kept, its colours taken to one pale family
-        (white, a chalk green-grey, a deep outline green), because the team colours are reserved
-        and a turf logo is paint, not a print. Under it, the white paint of the lines."""
+        """The logo as field paint, from the owner's STAMP drawing of it (2026-10-05: "ive
+        downloaded the stamp version for u to use in the field. just apply a color overlay on it
+        so its one color", then "one or 2* because of the markings"): its black line is white
+        paint, its grey markings (the stripes on the M, the swirl in the star) a second, greener
+        tone, and everything else is bare turf. Under it, the white paint of the lines."""
         img = np.zeros((PX, PX, 3)); alpha = np.zeros((PX, PX))
         x0, y0, x1, y1 = MARKING_LOGO
-        logo = Image.open(LOGO).convert("RGBA").resize((x1 - x0, y1 - y0), Image.LANCZOS)
-        a = np.asarray(logo, dtype=float) / 255
-        rgb, al = a[..., :3], a[..., 3]
-        lum = rgb[..., 0] * 0.35 + rgb[..., 1] * 0.5 + rgb[..., 2] * 0.15
-        lum = ndimage.gaussian_filter(lum, 0.8)
-        dark, mid, pale = hexcol("1f5a34"), hexcol("b9cfb4"), hexcol("f1f5ec")
-        t1 = np.clip((lum - 0.30) / 0.10, 0, 1)[..., None]           # the maroon outline goes deep green
-        t2 = np.clip((lum - 0.62) / 0.10, 0, 1)[..., None]           # the cream letters go white
-        col = dark * (1 - t1) + (mid * (1 - t2) + pale * t2) * t1
-        img[y0:y1, x0:x1] = col
-        alpha[y0:y1, x0:x1] = np.clip((al - 0.22) * 8 + 0.5, 0, 1)   # the cream letters are half transparent in the file
-        img[alpha < 0.02] = dark                                      # no pale fringe at the cutout
+        stamp = Image.open(STAMP).convert("RGBA")
+        stamp = stamp.crop(stamp.getbbox()).resize((x1 - x0, y1 - y0), Image.LANCZOS)
+        a = np.asarray(stamp, dtype=float) / 255
+        lum = (a[..., 0] * 0.3 + a[..., 1] * 0.6 + a[..., 2] * 0.1) * a[..., 3] + (1.0 - a[..., 3])   # over white paper
+        lum = ndimage.gaussian_filter(lum, 0.7)
+        line = np.clip((0.45 - lum) / 0.16, 0, 1)                     # the black line
+        mark = np.clip((0.95 - lum) / 0.05, 0, 1)                     # the line and the grey markings
+        paint, second = hexcol("f2f6ee"), hexcol("7fc47c")
+        img[y0:y1, x0:x1] = second * (1 - line[..., None]) + paint * line[..., None]
+        alpha[y0:y1, x0:x1] = mark
         px0, py0, px1, py1 = MARKING_PAINT
         band = fill(py1 - py0 + 48, PX, "edf1ea")
         band = lay(band, patches(py1 - py0 + 48, PX, 200, 0.3, 4901, feather=1.2) * 0.5, "dfe6dc")
