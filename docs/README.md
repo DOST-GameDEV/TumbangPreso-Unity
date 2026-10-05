@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Current-source Paete Linux player and impaired transport: [build provenance and peer checks](reports/paete-current-player-2026-10-05/README.md).
+
 Owner follow-up readiness: [real ability and HUD-state correction](reports/power-recast-readiness-2026-10-04/README.md).
 
 First-person source-mesh preservation: [ownership correction and native evidence](reports/viewmodel-mesh-ownership-2026-10-04/README.md).
