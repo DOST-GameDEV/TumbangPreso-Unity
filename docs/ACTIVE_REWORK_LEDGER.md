@@ -21,30 +21,21 @@ explicitly authorized; unnecessary AGENTS feature entry was removed at owner req
 
 ## Current source and live work
 
-Latest owner focus: UI prettiness/crispness/future-proof import quality, network
-robustness and optimization for the rest of this session. Urgent current ONLINE
-requesttimeout/hostreturnedHome report remains OPEN. Normal online97a public
-admission passed here; it does not resolve the tester environment. Timeoutretry
-now native7PASS with cancellation/replacement/permanent-failure guards. Source
-publication next; then actual UI visual fixes, no unchanged validation loops.
-
-Root checkout C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i.
-Sourcebff14e59e plus ownership-scoped Relay timeout retry7/7. Protocol151/recording14.
-Full accepted Windows artifact97a313e33
-includes current rules/discovery fixes and all prior boulder/palm/tag/menu fixes.
-Actual local LAN4x30 pairMTDX: one discovery row, correct192.168.1.7 hint, client
-read-only rules4x30 and BOTH result headers4rounds. FULL saved objects equal,
-match58a49ff1d17f439cb05c7127ecd57dfb. Completedhostleave correctly4of4.
-Bothplayers exited0 sequentially, parent93618 terminal, sharedprefs/profiles restored.
-NoRootgame/Unity/share/recorder active. NoWAN/motion claim; transientRTT663/326ms
-retained. Prior native quit focus/UIA crash remains diagnostic, no speculative fix.
-OldYasmin cyan/goggles active; Benguet replacement cancelled. PreserveAuditor/private
-wardrobe script. Root commits/merge authoredM4tyu633; incoming19a4bb902/3d869233b/
-16fdcdaef were Codex. Owner reiterated soleM4author; checkincomingauthors/preflight.
-Supersededcf405 removal was rejected by automatic approval review: blocked by
-policy. Preserved; no alternate deletion route. All owned processes are terminal.
-Next: timed preferred-address expiry check and package coherent next fixes;
-no unchanged test repetition.
+Latest owner focus: UI appearance/quality/future-proof imports, network robustness
+and optimization. Root sourcef198637b8 includes Relay timeout retry7PASS; current
+UI source quality unit has visual1PASS at1080p/1440p/4K, allocation2PASS and
+effective-import3PASS. All parents terminal0, shared inputs restored,202 incidental
+metadata restored; intended76owner/brand imports kept, source PNGs byte-identical.
+Next publish this unit then sharpen text and trace actual host lifecycle shutdown.
+Current QA ONLINE timeout/hostreturnedHome remains OPEN; local97a online admission
+passed but does not resolve the tester environment. Latest accepted Windows
+package97a313e33 predates receiver-state, retry and current UI changes.
+LAN4x30 MTDX had one row, correct192.168.1.7 hint, matching4-round headers and
+FULL records equal, match58a49ff1d17f439cb05c7127ecd57dfb. Bothplayers exited0.
+NoRoot native editor/game/proxy/recorder active. OldYasmin cyan/goggles active;
+Benguet cancelled. Preserve Auditor/private wardrobe script. M4tyu633 soleauthor.
+Supersededcf405 build removal was automatically rejected: blocked by policy.
+Preserve it; no alternate deletion route. Desktop untouched.
 
 Latest owner instruction: laptop is off; PC continues ALONE. Laptop goal was
 explicitly paused. Do not wake/message it, wait for a pair or reuse obsolete

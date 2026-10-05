@@ -173,10 +173,27 @@ namespace TumbangPreso.UI.Hub
             _vh.AddVert(a - n, _colour, Vector2.zero);
             _vh.AddTriangle(i, i + 1, i + 2);
             _vh.AddTriangle(i, i + 2, i + 3);
+            float edge = 1.0f / Mathf.Max(.1f, canvas != null ? canvas.scaleFactor : 1.0f);
+            Vector2 side = n.normalized * edge, end = d.normalized * edge;
+            Feather(a + n, b + n, side);
+            Feather(b - n, a - n, -side);
+            Feather(a - n, a + n, -end);
+            Feather(b + n, b - n, end);
+        }
+
+        private void Feather(Vector2 a, Vector2 b, Vector2 offset)
+        {
+            Color32 clear = _colour; clear.a = 0;
+            int start = _vh.currentVertCount;
+            _vh.AddVert(a, _colour, Vector2.zero); _vh.AddVert(b, _colour, Vector2.zero);
+            _vh.AddVert(b + offset, clear, Vector2.zero); _vh.AddVert(a + offset, clear, Vector2.zero);
+            _vh.AddTriangle(start, start + 1, start + 2); _vh.AddTriangle(start, start + 2, start + 3);
         }
 
         private void Arc(float cx, float cy, float radius, float fromDeg, float toDeg, int steps, float squash = 1.0f)
         {
+            float pixels = radius * _scale * (canvas != null ? canvas.scaleFactor : 1.0f);
+            steps = Mathf.Clamp(Mathf.Max(steps, Mathf.CeilToInt(Mathf.Abs(toDeg - fromDeg) * Mathf.Deg2Rad * pixels / 6.0f)), steps, 96);
             float from = fromDeg * Mathf.Deg2Rad, to = toDeg * Mathf.Deg2Rad;
             for (int s = 0; s < steps; s++)
             {

@@ -31,7 +31,7 @@ namespace TumbangPreso.EditorTools
             importer.wrapMode = TextureWrapMode.Clamp;
             importer.filterMode = FilterMode.Bilinear;
             importer.textureCompression = TextureImporterCompression.Uncompressed;
-            importer.maxTextureSize = 2048;
+            importer.maxTextureSize = OwnerArtworkQualityImport.QualityMaxTextureSize;
             importer.sRGBTexture = true;
         }
     }

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 02:55:51Z" end-time="2026-10-05 02:55:52Z" duration="0.8342172">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1357" result="Passed" start-time="2026-10-05 02:55:51Z" end-time="2026-10-05 02:55:52Z" duration="0.834217" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2675" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1357" result="Passed" start-time="2026-10-05 02:55:51Z" end-time="2026-10-05 02:55:52Z" duration="0.809376" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="16176" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2676" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1357" result="Passed" start-time="2026-10-05 02:55:51Z" end-time="2026-10-05 02:55:52Z" duration="0.794046" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2677" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1357" result="Passed" start-time="2026-10-05 02:55:51Z" end-time="2026-10-05 02:55:52Z" duration="0.778887" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2139" name="OwnerArtworkQualityTests" fullname="TumbangPreso.Tests.OwnerArtworkQualityTests" classname="TumbangPreso.Tests.OwnerArtworkQualityTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-05 02:55:51Z" end-time="2026-10-05 02:55:52Z" duration="0.748147" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="2143" name="EffectiveImportPreservesSourcePixelsAndCorrectColorData" fullname="TumbangPreso.Tests.OwnerArtworkQualityTests.EffectiveImportPreservesSourcePixelsAndCorrectColorData" classname="TumbangPreso.Tests.OwnerArtworkQualityTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-05 02:55:51Z" end-time="2026-10-05 02:55:52Z" duration="0.743173" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2140" name="EffectiveImportPreservesSourcePixelsAndCorrectColorData(&quot;Assets/TumbangPreso/Resources/UI/owner-menu-edits/cloud-bank-a.png&quot;)" fullname="TumbangPreso.Tests.OwnerArtworkQualityTests.EffectiveImportPreservesSourcePixelsAndCorrectColorData(&quot;Assets/TumbangPreso/Resources/UI/owner-menu-edits/cloud-bank-a.png&quot;)" methodname="EffectiveImportPreservesSourcePixelsAndCorrectColorData" classname="TumbangPreso.Tests.OwnerArtworkQualityTests" runstate="Runnable" seed="953751285" result="Passed" start-time="2026-10-05 02:55:51Z" end-time="2026-10-05 02:55:52Z" duration="0.290833" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UIArtworkQuality] Assets/TumbangPreso/Resources/UI/owner-menu-edits/cloud-bank-a.png source=2172x724 imported=2172x724 format=RGBA32 sRGB=True
+]]></output>
+              </test-case>
+              <test-case id="2141" name="EffectiveImportPreservesSourcePixelsAndCorrectColorData(&quot;Assets/TumbangPreso/Resources/UI/owner-menu-edits/main-sky-background-data.png&quot;)" fullname="TumbangPreso.Tests.OwnerArtworkQualityTests.EffectiveImportPreservesSourcePixelsAndCorrectColorData(&quot;Assets/TumbangPreso/Resources/UI/owner-menu-edits/main-sky-background-data.png&quot;)" methodname="EffectiveImportPreservesSourcePixelsAndCorrectColorData" classname="TumbangPreso.Tests.OwnerArtworkQualityTests" runstate="Runnable" seed="1132682213" result="Passed" start-time="2026-10-05 02:55:52Z" end-time="2026-10-05 02:55:52Z" duration="0.166906" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UIArtworkQuality] Assets/TumbangPreso/Resources/UI/owner-menu-edits/main-sky-background-data.png source=640x350 imported=640x350 format=RGB24 sRGB=True
+]]></output>
+              </test-case>
+              <test-case id="2142" name="EffectiveImportPreservesSourcePixelsAndCorrectColorData(&quot;Assets/TumbangPreso/Resources/UI/owner-menu-edits/main2-sky-mask.png&quot;)" fullname="TumbangPreso.Tests.OwnerArtworkQualityTests.EffectiveImportPreservesSourcePixelsAndCorrectColorData(&quot;Assets/TumbangPreso/Resources/UI/owner-menu-edits/main2-sky-mask.png&quot;)" methodname="EffectiveImportPreservesSourcePixelsAndCorrectColorData" classname="TumbangPreso.Tests.OwnerArtworkQualityTests" runstate="Runnable" seed="1654699751" result="Passed" start-time="2026-10-05 02:55:52Z" end-time="2026-10-05 02:55:52Z" duration="0.272555" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UIArtworkQuality] Assets/TumbangPreso/Resources/UI/owner-menu-edits/main2-sky-mask.png source=1920x1080 imported=1920x1080 format=RGB24 sRGB=False
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

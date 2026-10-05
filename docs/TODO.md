@@ -149,6 +149,9 @@ Nothing was deleted or renumbered.
 - [x] Recover one transient Relay request timeout with an ownership-scoped retry.
   Native2causes/2controls -> seven passes including repeat/cancel/replacement.
   [Evidence](reports/reliability-2026-10-05/relay-request-timeout/README.md).
+- [x] Preserve owner-art source resolution on reimport and smooth generated UI edges;
+  three viewport captures, two allocation checks and three effective imports pass.
+  [Evidence](reports/reliability-2026-10-05/ui-source-quality/README.md).
 - [ ] October5 UI quality: improve authored artwork/text crispness, remove leftover
   white fringes and preserve quality through future imports/builds/resolutions.
 - [ ] Rest of session focus: UI appearance/quality, network robustness and measured

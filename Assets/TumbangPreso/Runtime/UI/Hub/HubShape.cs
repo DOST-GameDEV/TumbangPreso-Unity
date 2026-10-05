@@ -76,7 +76,7 @@ namespace TumbangPreso.UI.Hub
         /// ⚠️ PLATES (rounded, not pressable) GET NONE OF IT and stay flat furniture, so the shape
         /// rule "a chamfer means pressable" is now also a material rule.
         /// </summary>
-        public float RimWidth = 4.5f;
+        public float RimWidth = 0.0f;
         public Color Rim = HubStyle.Honey;
 
         /// <summary>Hover and focus brighten the face by this much (0 to 1), set by `HubButton`.</summary>
@@ -93,6 +93,10 @@ namespace TumbangPreso.UI.Hub
 
         private static readonly List<Vector2> Outer = new List<Vector2>();
         private static readonly List<Vector2> Inner = new List<Vector2>();
+        private readonly float[] _cornerFactors = new float[4];
+        private readonly Vector2[] _edgeOffsets = new Vector2[28];
+        private bool _noiseReady;
+        private int _noiseSeed, _noisePoints;
 
         protected override void OnPopulateMesh(VertexHelper vh)
         {
@@ -108,25 +112,25 @@ namespace TumbangPreso.UI.Hub
             if (ShadowOffset.sqrMagnitude > 0.01f && ShadowColor.a > 0.0f)
             {
                 Build(Outer, Offset(Grow(r, rim), ShadowOffset), corner + rim, 0.0f);
-                Fan(vh, Outer, ShadowColor * color);
+                SmoothFan(vh, Outer, ShadowColor * color);
             }
 
             if (RingWidth > 0.0f)
             {
                 Build(Outer, Grow(r, rim + RingWidth), corner + rim + RingWidth, 0.0f);
-                Fan(vh, Outer, RingColor * color);
+                SmoothFan(vh, Outer, RingColor * color);
             }
 
             if (rim > 0.0f)
             {
                 Build(Outer, Grow(r, rim), corner + rim, 0.0f);
-                Fan(vh, Outer, Rim * color);
+                SmoothFan(vh, Outer, Rim * color);
             }
 
             if (width > 0.0f)
             {
                 Build(Outer, r, corner, 0.0f);
-                Fan(vh, Outer, Outline * color);
+                SmoothFan(vh, Outer, Outline * color);
             }
 
             Rect inside = Grow(r, -width);
@@ -215,21 +219,25 @@ namespace TumbangPreso.UI.Hub
         private void Build(List<Vector2> points, Rect r, float corner, float inset)
         {
             points.Clear();
-            var rng = new System.Random(Seed * 7919 + 17);
-
-            // Four corners, each its own size: the logo has no two corners alike (§ 1.4).
-            float[] c = new float[4];
-            for (int i = 0; i < 4; i++) c[i] = corner * (0.72f + (float)rng.NextDouble() * 0.56f);
+            int count = Pressable ? 8 : 28;
+            if (!_noiseReady || _noiseSeed != Seed || _noisePoints != count)
+            {
+                var rng = new System.Random(Seed * 7919 + 17);
+                for (int i = 0; i < 4; i++) _cornerFactors[i] = 0.72f + (float)rng.NextDouble() * 0.56f;
+                for (int i = 0; i < count; i++) _edgeOffsets[i] = new Vector2(
+                    (float)(rng.NextDouble() - .5) * 2.0f, (float)(rng.NextDouble() - .5) * 2.0f);
+                _noiseSeed = Seed; _noisePoints = count; _noiseReady = true;
+            }
 
             Vector2 bl = new Vector2(r.xMin, r.yMin), br = new Vector2(r.xMax, r.yMin);
             Vector2 tr = new Vector2(r.xMax, r.yMax), tl = new Vector2(r.xMin, r.yMax);
 
             // Clockwise from the top left; each corner is entered along one edge and left along
             // the next, `size` units either side of the true corner.
-            AddCorner(points, tl, new Vector2(0, -1), new Vector2(1, 0), c[0]);
-            AddCorner(points, tr, new Vector2(-1, 0), new Vector2(0, -1), c[1]);
-            AddCorner(points, br, new Vector2(0, 1), new Vector2(-1, 0), c[2]);
-            AddCorner(points, bl, new Vector2(1, 0), new Vector2(0, 1), c[3]);
+            AddCorner(points, tl, new Vector2(0, -1), new Vector2(1, 0), corner * _cornerFactors[0]);
+            AddCorner(points, tr, new Vector2(-1, 0), new Vector2(0, -1), corner * _cornerFactors[1]);
+            AddCorner(points, br, new Vector2(0, 1), new Vector2(-1, 0), corner * _cornerFactors[2]);
+            AddCorner(points, bl, new Vector2(1, 0), new Vector2(0, 1), corner * _cornerFactors[3]);
 
             // A two-unit wobble along the run of each edge, the same at every size so a big
             // sticker is not wobblier than a small one. ⚠️ The inner fill takes the same wobble as
@@ -237,9 +245,7 @@ namespace TumbangPreso.UI.Hub
             float amount = Pressable ? 1.6f : 1.1f;
             for (int i = 0; i < points.Count; i++)
             {
-                float a = (float)(rng.NextDouble() - 0.5) * 2.0f * amount;
-                float b = (float)(rng.NextDouble() - 0.5) * 2.0f * amount;
-                points[i] += new Vector2(a, b);
+                points[i] += _edgeOffsets[i] * amount;
             }
         }
 
@@ -284,6 +290,35 @@ namespace TumbangPreso.UI.Hub
             foreach (var p in points) vh.AddVert(p, colour, Vector2.zero);
             for (int i = 0; i < points.Count; i++)
                 vh.AddTriangle(start, start + 1 + i, start + 1 + (i + 1) % points.Count);
+        }
+
+        private void SmoothFan(VertexHelper vh, List<Vector2> points, Color32 colour)
+        {
+            Fan(vh, points, colour);
+            if (points.Count < 3) return;
+            float edge = 1.0f / Mathf.Max(.1f, canvas != null ? canvas.scaleFactor : 1.0f);
+            Color32 clear = colour; clear.a = 0;
+            int start = vh.currentVertCount;
+            for (int i = 0; i < points.Count; i++)
+            {
+                Vector2 previous = points[(i + points.Count - 1) % points.Count];
+                Vector2 current = points[i];
+                Vector2 next = points[(i + 1) % points.Count];
+                Vector2 a = (current - previous).normalized;
+                Vector2 b = (next - current).normalized;
+                // Build emits clockwise contours; their left normals point outwards.
+                Vector2 normalA = new Vector2(-a.y, a.x);
+                Vector2 normalB = new Vector2(-b.y, b.x);
+                Vector2 normal = (normalA + normalB).normalized;
+                float distance = edge / Mathf.Max(.5f, Vector2.Dot(normal, normalB));
+                vh.AddVert(current, colour, Vector2.zero);
+                vh.AddVert(current + normal * distance, clear, Vector2.zero);
+            }
+            for (int i = 0; i < points.Count; i++)
+            {
+                int a = start + i * 2, b = start + ((i + 1) % points.Count) * 2;
+                vh.AddTriangle(a, b, a + 1); vh.AddTriangle(a + 1, b, b + 1);
+            }
         }
 
         private void Hatch(VertexHelper vh, Rect r, Color32 colour)

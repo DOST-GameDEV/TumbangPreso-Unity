@@ -120,3 +120,16 @@ Frozen and elemental stuns use their existing status indicators without a
 duplicate action bar. Genuine hold-Interact Rooted removal remains actionable.
 Trip and edge recovery are unchanged.
 [Native status-only check](reports/feedback-2026-10-03/status-action-bar.md).
+
+## Source quality across imports and resolutions
+
+OwnerArtworkQualityImport owns supplied owner-menu-edits/owner-painted artwork
+and the legacy menu backdrop; BrandArtworkImport owns the selected brand exports.
+Preserve source pixels up to8192 without compression/crunch or NPOT resizing.
+Keep color plates sRGB and only explicit data masks linear. Preserve alpha with
+bilinear filtering; minified clouds/leaves use mipmaps. Do not upscale a small
+source and call it higher detail. Check platform overrides when changing targets.
+Keep generated geometry edges measured in screen pixels and inspect real native
+captures at1080p,1440p and4K. Authored rough lettering is distinct from bad sampling.
+Text quality and embedded painted borders need their own demonstrated fixes.
+[Current evidence](reports/reliability-2026-10-05/ui-source-quality/README.md).
