@@ -33,13 +33,12 @@ namespace TumbangPreso.Map
     ///   * SEARCHLIGHTS sweeping the sky over the stadium (owner, 2026-10-05: "moving
     ///     spotlights"): six on the hull's rim, one on each of the four landing pads, five on
     ///     the city's rooftops, each with its own period, all on the clock every peer shares.
-    ///   * SHOW SPOTS from under the four canopies: eight shafts that sweep the field and the
+    ///   * SHOW SPOTS from under the four canopies: eight beams that sweep the field and the
     ///     crowd slowly, each with a soft pool where it lands; they chase round the bowl
     ///     through a break's alarm and at the match's end, and snap onto the stage when the
-    ///     platforms move and when the can goes down: four round the can, four following the
-    ///     players, each with a pool on the deck it lands on. A spot that points at the eye
-    ///     GLARES (`ArenaGlare`), the bodies on the stage take a rim of its light, and the
-    ///     picture a brief veil. Shafts and quads: no Light is added.
+    ///     platforms move and when the can goes down. A spot that points at the eye GLARES
+    ///     in the camera (`ArenaGlare`), the bodies on the stage take a rim of its light, and
+    ///     the picture a brief veil. Beams and quads: no Light is added.
     ///   * THE 24 FLOODLIGHT BANKS and the sky's searchlights glare the same way, quietly.
     ///   * THE CITY'S HAZE (owner, 2026-10-05: "a distance haze effect for outside the arena"):
     ///     two shader globals that TumbangPreso/ArenaPainted reads (a layer of lit air low
@@ -393,28 +392,27 @@ namespace TumbangPreso.Map
         /// the field, the odd ones the crowd), never across the stage, so no shaft stands
         /// between a player and the play. CHASE (a break's alarm, the match's end): the eight
         /// run round the lower bowl. FOCUS (the platforms moving, a knocked can): all eight on
-        /// the stage, the even ones round the can and the odd ones each following a player.
+        /// a point over the can.
         ///
-        /// Each is a SHAFT from its lamp (`ArenaGlare.Shaft`) and, where it lands, a POOL: on
-        /// the turf or along a stand when idle, and in focus on the deck under its aim only,
-        /// 5 cm proud of that deck's own top, shrunk to fit inside its edges, and not drawn at
-        /// all over a gap (the shaft runs on down into the shaft of the stadium instead) or
-        /// while the platforms are moving. Its lamp GLARES when it points at the eye
-        /// (`ArenaGlare.Lamp`), unless a body or a deck stands in the way.
+        /// THE BEAMS ARE THE ORIGINAL ONES (owner, 2026-10-05, of a three-quad shaft that
+        /// replaced them: "the old spotlight beam was good, i mean i wanted a camera glare
+        /// when iit was pointed at you"): two `DrawBeam`s of the streak, white and cyan. What
+        /// went is the soft disc that hung in mid-air at each beam's end in focus (his
+        /// "feathered circles"); in its place a POOL on the deck under the aim only, 5 cm proud
+        /// of that deck's own top, shrunk to fit inside its edges, and not drawn over a gap or
+        /// while the platforms are moving. What was added is the CAMERA'S GLARE when a lamp
+        /// points at the eye (`ArenaGlare.Lamp`), unless a body or a deck stands in the way.
         /// </summary>
         private void ShowSpots(ArenaStage stage, ArenaFx fx, float dt, Vector3 centre, bool reduced)
         {
             _focus = Mathf.Max(0.0f, _focus - dt);
             _chase = Mathf.Max(0.0f, _chase - dt);
 
-            // A knocked can is in play, so its spots may follow the players; a break's may not
-            // (the bodies are held, and only their drawn models are carried).
-            bool focus = _focus > 0.0f, chase = _chase > 0.0f && !focus, follow = focus;
+            bool focus = _focus > 0.0f, chase = _chase > 0.0f && !focus;
             if (stage.TryBreak(out var beats) && !beats.Halftime && beats.From != beats.To)
             {
                 focus = beats.Age >= beats.Undock && beats.Age < beats.Reveal + 0.8f;
                 chase = beats.Age < beats.Undock;
-                follow = false;
             }
             // Reduced effects: no chase (it is the one fast sweep here).
             if (reduced) chase = false;
@@ -425,18 +423,16 @@ namespace TumbangPreso.Map
             float veil = focus ? Mathf.Clamp01(_focusAge / 0.12f) * Mathf.Lerp(1.0f, 0.3f, Mathf.Clamp01((_focusAge - 0.25f) / 1.0f)) : 0.0f;
 
             float shared = (float)(ArenaFx.SharedClock % 3600.0);
-            var round = GameServices.Round;
             for (int i = 0; i < Spots; i += reduced ? 2 : 1)
             {
                 Vector3 foot = centre + ArenaStageMesh.Direction(SpotBearing[i]) * SpotRadius + Vector3.up * SpotHeight;
-                bool crowd = (i & 1) == 1, landed = true;
-                float radius = PoolRadius;
+                bool crowd = (i & 1) == 1;
                 Vector3 want;
                 float out_;
                 if (focus)
                 {
                     out_ = 0.0f;
-                    want = FocusPoint(stage, follow ? round : null, i, centre, ref radius, out landed);
+                    want = centre + ArenaStageMesh.Direction(45.0f * i) * 2.5f + Vector3.up * (stage.CanHeight + 1.6f);
                 }
                 else if (chase)
                 {
@@ -459,9 +455,8 @@ namespace TumbangPreso.Map
                 if (reach < 1.0f) continue;
                 Vector3 direction = along / reach;
 
-                // The shaft. Over a gap it has nothing to land on and runs on down.
-                Vector3 end = focus && !landed ? aim + direction * 18.0f : aim;
-                ArenaGlare.Shaft(fx, foot, end, focus ? PoolRadius * 2.0f : 8.5f, SpotColour, 1.0f, _clock, reduced ? 0 : i + 1);
+                fx.DrawBeam(foot, aim, 1.1f, focus ? 4.0f : 8.5f, ArenaFx.White, 0.10f);
+                fx.DrawBeam(foot, aim, 0.4f, focus ? 1.5f : 3.0f, ArenaFx.Cyan, 0.07f);
 
                 // The lamp. Only a spot on the stage can have a body or a deck between it and the eye.
                 float seen = focus ? ArenaGlare.Seen(foot, stage) : 1.0f;
@@ -470,10 +465,15 @@ namespace TumbangPreso.Map
 
                 if (focus)
                 {
-                    // On the deck under it, where it was measured to fit, once the aim has arrived there.
-                    if (!landed || (aim - want).sqrMagnitude > 1.0f) continue;
+                    // No disc in the air at the beam's end. A pool on the deck under it, if there
+                    // is one there, once the aim has arrived.
+                    if ((aim - want).sqrMagnitude > 1.0f) continue;
+                    Vector3 local = stage.transform.InverseTransformPoint(want);
+                    float radius = PoolRadius;
+                    if (!Surface(stage, local.x, local.z, ref radius, out float top)) continue;
+                    local.y = top + 0.05f;
                     float across = radius * 2.0f / 0.92f;
-                    fx.DrawFlat(ArenaFx.Cell.Disc, want, across, across, 0.0f, SpotColour, 0.20f * _lit);
+                    fx.DrawFlat(ArenaFx.Cell.Disc, stage.transform.TransformPoint(local), across, across, 0.0f, SpotColour, 0.20f * _lit);
                     continue;
                 }
 
@@ -484,35 +484,11 @@ namespace TumbangPreso.Map
                 if (r < 1.0f) continue;
                 Vector3 outward = flat / r, sideways = Vector3.Cross(Vector3.up, outward);
                 Vector3 slope = (outward * 2.0f + Vector3.up * (BowlHeight(r + 1.0f) - BowlHeight(r - 1.0f))).normalized;
-                fx.DrawQuad(ArenaFx.Cell.Disc, aim, sideways * 6.0f, slope * 6.0f, SpotColour, 0.16f);
+                fx.DrawQuad(ArenaFx.Cell.Disc, aim, sideways * 6.0f, slope * 6.0f, ArenaFx.White, 0.16f);
             }
             _spotsAimed = true;
 
             ArenaGlare.Veil(fx, veil);
-        }
-
-        /// <summary>
-        /// Where spot `i` points while the spots are on the stage, in the world: an even one
-        /// at its own place on a ring 3.4 m round the can, an odd one at a player's feet (or,
-        /// with no such player, on a wider ring). `landed` is whether a deck is under it; then
-        /// the point is 5 cm over that deck's top and `radius` is the pool that fits on it.
-        /// </summary>
-        private Vector3 FocusPoint(ArenaStage stage, RoundDirector round, int i, Vector3 centre, ref float radius, out bool landed)
-        {
-            int pair = i >> 1;
-            bool odd = (i & 1) == 1;
-            CharacterMotor who = null;
-            if (odd && round != null && pair < round.Players.Count) who = round.Players[pair];
-            if (who != null && (!who.gameObject.activeInHierarchy || ArenaStage.IsShaftFall(who))) who = null;
-
-            Vector3 target = who != null
-                ? who.transform.position
-                : centre + ArenaStageMesh.Direction(45.0f + 90.0f * pair + (odd ? 45.0f : 0.0f)) * (odd ? 7.5f : 3.4f) + Vector3.up * stage.CanHeight;
-
-            Vector3 local = stage.transform.InverseTransformPoint(target);
-            landed = Surface(stage, local.x, local.z, ref radius, out float top);
-            if (landed) local.y = top + 0.05f;
-            return stage.transform.TransformPoint(local);
         }
 
         /// <summary>
@@ -834,7 +810,7 @@ namespace TumbangPreso.Map
         private static void Searchlight(ArenaFx fx, Vector3 foot, Vector3 aim, Vector3 centre, Color colour)
         {
             if (!ArenaGlare.OverTheBowl(foot, centre)) return;
-            ArenaGlare.Lamp(fx, foot, aim.normalized, colour, 0.85f, 1.5f, 6.0f, 1.2f, true, false, 1.0f, 0.12f);
+            ArenaGlare.Lamp(fx, foot, aim.normalized, colour, 0.85f, 1.5f, 6.0f, 1.2f, true, !Settings.SettingsStore.Current.ReducedEffects, 1.0f, 0.12f);
         }
 
         private void Screens(ArenaFx fx, float dt, Vector3 centre)

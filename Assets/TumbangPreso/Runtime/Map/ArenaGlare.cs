@@ -31,10 +31,9 @@ namespace TumbangPreso.Map
     ///   whether anything stands between (`Seen` for the stage's bodies and decks,
     ///   `OverTheBowl` for a lamp outside the stadium).
     ///
-    ///   A SHAFT, through the air, when it points anywhere else (`Shaft`): three quads laid
-    ///   over each other from the lamp (a wide soft cone, a narrower one, a thin white core
-    ///   line), each brightest at the lamp and fading along its length, brighter the more
-    ///   nearly it is seen end on, with dust drifting down it.
+    ///   The beams themselves are `ArenaAmbience`'s own and are not drawn here: the owner
+    ///   kept them ("the old spotlight beam was good, i mean i wanted a camera glare when iit
+    ///   was pointed at you"). What the LENS does (`Flare`) is the part he asked for.
     ///
     /// ⚠️ PRESENTATION ONLY, AND NO LIGHT IS ADDED. No allocation: every number here is a local.
     /// </summary>
@@ -99,7 +98,9 @@ namespace TumbangPreso.Map
             // half frame out (with the game camera tipped down at the can, the canopies' lamps
             // sit just over the top edge, and their ghosts and veil are what says they are on).
             float framed = 1.0f - Mathf.SmoothStep(1.0f, 1.6f, out_);
-            if (framed <= 0.0f) return 0.0f;
+            // What the LENS does with it reaches much further out of shot: see `Bleed`.
+            float lens = ghosts ? 1.0f - Mathf.SmoothStep(1.2f, 3.0f, out_) : 0.0f;
+            if (framed <= 0.0f && lens <= 0.0f) return 0.0f;
 
             float metres = to.magnitude;
             float angle = Mathf.Acos(Mathf.Clamp(Vector3.Dot(aim, -to) / metres, -1.0f, 1.0f)) * Mathf.Rad2Deg;
@@ -107,7 +108,9 @@ namespace TumbangPreso.Map
             facing *= facing;
             float far = 1.0f / (1.0f + metres * metres / (700.0f * 700.0f));
             float amount = power * Mathf.Max(facing, floor) * framed * far * Mathf.Clamp01(seen);
-            if (amount < 0.02f) return 0.0f;
+            float flare = power * facing * Mathf.Max(framed, lens) * far * Mathf.Clamp01(seen);
+            if (ghosts && flare > 0.15f) Flare(fx, x, y, out_, colour, flare);
+            if (amount < 0.02f) return flare;
 
             // One unit: this share of the frame's half height, at the distance it is drawn at.
             lamp = _eye + to * Pull;
@@ -135,17 +138,51 @@ namespace TumbangPreso.Map
                 fx.DrawBillboard(ArenaFx.Cell.ThinRing, lamp, unit * 0.42f, colour, 0.10f * glare);
             }
 
-            if (ghosts && glare > 0.2f)
-            {
-                float flash = Settings.SettingsStore.Current.EffectiveFlashIntensity;
-                Ghost(fx, ArenaFx.Cell.ThinRing, x, y, -0.38f, 0.10f, colour, 0.07f * glare * flash);
-                Ghost(fx, ArenaFx.Cell.Dot, x, y, -0.72f, 0.05f, ArenaFx.Cyan, 0.06f * glare * flash);
-                Ghost(fx, ArenaFx.Cell.ThinRing, x, y, 0.48f, 0.06f, ArenaFx.Violet, 0.05f * glare * flash);
-                _veil += glare;
-                _veilAt += new Vector2(x, y) * glare;
-            }
-
             return amount;
+        }
+
+        /// <summary>
+        /// WHAT THE CAMERA'S LENS DOES WITH A LAMP POINTED AT IT, drawn just in front of the eye
+        /// and so over the whole picture, gently, scaled by the Flash intensity setting:
+        /// three faint ghosts on the line from the lamp through the middle of the screen, a
+        /// share of the frame's veil, and, WHEN THE LAMP ITSELF IS OUT OF SHOT, a flare bleeding
+        /// in from the edge of the frame nearest it: a glow on the edge, a streak from there
+        /// toward the middle, and the anamorphic streak across the frame. With the game camera
+        /// tipped down at the can the canopies' lamps are over the top edge, which is exactly
+        /// when a spot is "pointed at you": this is what says so. (x, y) is where the lamp is,
+        /// -1 to 1 inside the frame; `out_` how far out it is.
+        /// </summary>
+        private static void Flare(ArenaFx fx, float x, float y, float out_, Color colour, float flare)
+        {
+            float flash = Settings.SettingsStore.Current.EffectiveFlashIntensity;
+            if (flash <= 0.001f) return;
+
+            // The ghosts mirror a point no further out than just past the edge.
+            float pull = out_ > 1.15f ? 1.15f / out_ : 1.0f;
+            float gx = x * pull, gy = y * pull;
+            Ghost(fx, ArenaFx.Cell.ThinRing, gx, gy, -0.38f, 0.10f, colour, 0.08f * flare * flash);
+            Ghost(fx, ArenaFx.Cell.Dot, gx, gy, -0.72f, 0.05f, ArenaFx.Cyan, 0.07f * flare * flash);
+            Ghost(fx, ArenaFx.Cell.ThinRing, gx, gy, 0.48f, 0.06f, ArenaFx.Violet, 0.06f * flare * flash);
+            _veil += flare;
+            _veilAt += new Vector2(gx, gy) * flare;
+
+            float bleed = Mathf.SmoothStep(0.85f, 1.1f, out_) * flare * flash;
+            if (bleed <= 0.01f) return;
+
+            // The point of the frame's edge nearest the lamp, and the way from it to the middle.
+            float ex = x / out_, ey = y / out_;
+            Vector3 edge = _eye + (_forward + _right * (ex * _tanX) + _up * (ey * _tanY)) * Lens;
+            Vector3 inward = -(_right * (ex * _tanX) + _up * (ey * _tanY));
+            if (inward.sqrMagnitude < 1e-6f) return;
+            inward.Normalize();
+            Vector3 across = Vector3.Cross(_forward, inward);
+            float half = Lens * _tanY;
+
+            // Half of each of these is outside the frame: what is seen comes in from the edge.
+            fx.DrawBillboard(ArenaFx.Cell.Dot, edge, half * 1.3f, colour, 0.30f * bleed);
+            fx.DrawBillboard(ArenaFx.Cell.Dot, edge, half * 0.35f, ArenaFx.White, 0.55f * bleed);
+            fx.DrawQuad(ArenaFx.Cell.Star, edge, inward * (half * 1.25f), across * (half * 0.10f), ArenaFx.White, 0.40f * bleed);
+            fx.DrawQuad(ArenaFx.Cell.Star, edge, _right * (Lens * _tanX * 1.3f), _up * (half * 0.07f), colour, 0.32f * bleed);
         }
 
         /// <summary>A ghost: on the line from the lamp through the middle of the screen, `along`
@@ -173,42 +210,6 @@ namespace TumbangPreso.Map
             if (alpha <= 0.003f) return;
             Vector3 centre = _eye + (_forward + _right * (at.x * 0.45f * _tanX) + _up * (at.y * 0.45f * _tanY)) * Lens;
             fx.DrawBillboard(ArenaFx.Cell.Dot, centre, Lens * _tanX * 4.2f, ArenaFx.White, alpha);
-        }
-
-        /// <summary>
-        /// A shaft from a lamp at `from` to `to`, `width` across where it ends. Three quads: a
-        /// wide soft cone, a narrower one, and a thin white core line, each brightest at the
-        /// lamp. `dust` (0 off) is this shaft's own number for the motes that drift down it.
-        /// </summary>
-        public static void Shaft(ArenaFx fx, Vector3 from, Vector3 to, float width, Color colour, float strength, float clock, int dust = 0)
-        {
-            if (strength <= 0.0f) return;
-            Vector3 along = to - from;
-            float length = along.magnitude;
-            if (length < 0.5f) return;
-            Vector3 direction = along / length;
-
-            // Seen end on there is more lit air along the line of sight.
-            Vector3 toMiddle = (from + to) * 0.5f - _eye;
-            float end = toMiddle.sqrMagnitude > 1e-4f ? Mathf.Abs(Vector3.Dot(direction, toMiddle.normalized)) : 0.0f;
-            float lit = strength * (1.0f + 1.1f * end * end * end * end);
-
-            fx.DrawShaft(from, to, width * 0.24f, width, colour, 0.085f * lit, 0.022f * lit);
-            fx.DrawShaft(from, to, width * 0.11f, width * 0.45f, colour, 0.12f * lit, 0.03f * lit);
-            fx.DrawShaft(from, to, width * 0.035f, width * 0.10f, ArenaFx.White, 0.26f * lit, 0.04f * lit);
-
-            if (dust <= 0) return;
-            // Dust: three short lengths of the core, each a little brighter, drifting down the shaft.
-            for (int k = 0; k < 3; k++)
-            {
-                float seed = dust * 0.618f + k * 0.377f;
-                float t = Mathf.Repeat(seed + clock * (0.035f + 0.012f * k), 1.0f);
-                float flicker = 0.55f + 0.45f * Mathf.Sin(clock * (5.3f + 1.7f * k) + seed * 40.0f);
-                float a = 0.09f * lit * Mathf.Sin(t * Mathf.PI) * flicker;
-                float wide = width * Mathf.Lerp(0.11f, 0.45f, t);
-                Vector3 at = from + direction * (t * length);
-                fx.DrawShaft(at, at + direction * Mathf.Min(length * 0.05f, 7.0f), wide * 0.8f, wide * 0.8f, ArenaFx.White, a, a * 0.2f);
-            }
         }
 
         /// <summary>

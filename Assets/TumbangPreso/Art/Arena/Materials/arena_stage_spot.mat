@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: arena_stage_beam
+  m_Name: arena_stage_spot
   m_Shader: {fileID: 4800000, guid: 7ed78a7488d6d7f41939a328a4c73a87, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -24,20 +24,20 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _EmissionMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: a0f3603db1cc9334fb6bb52a68c9ec42, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: f1be5b76612ed3f45a7429658e433997, type: 3}
+        m_Texture: {fileID: 2800000, guid: a0f3603db1cc9334fb6bb52a68c9ec42, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _Cull: 0
-    - _DstBlend: 1
-    - _EmissionStrength: 0
+    - _DstBlend: 10
+    - _EmissionStrength: 0.35
     - _Fog: 0
-    - _FogToColour: 0
+    - _FogToColour: 1
     - _Rim: 0
     - _SrcBlend: 5
     - _VertexTint: 0

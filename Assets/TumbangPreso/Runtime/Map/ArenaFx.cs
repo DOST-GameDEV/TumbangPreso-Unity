@@ -538,30 +538,6 @@ namespace TumbangPreso.Map
             Write(v, centre - halfRight - halfUp, centre + halfRight - halfUp, centre + halfRight + halfUp, centre - halfRight + halfUp, cell, colour, alpha);
         }
 
-        /// <summary>
-        /// For this frame only: a SHAFT of light through the air (`ArenaGlare`), turned to face
-        /// the eye about its own length like a beam, but lit along it by the caller: `alpha0` at
-        /// its foot and `alpha1` at its end, where a beam's streak fades at BOTH ends and so has
-        /// no lamp. Only the middle of the streak's cell is drawn (its soft sides, none of its
-        /// ends), so several laid over each other make a cone with a bright core.
-        /// </summary>
-        public void DrawShaft(Vector3 from, Vector3 to, float width0, float width1, Color colour, float alpha0, float alpha1)
-        {
-            if ((alpha0 <= 0.002f && alpha1 <= 0.002f) || !Reserve(out int v)) return;
-            Vector3 along = to - from;
-            Vector3 side = Vector3.Cross(along, _eye - (from + to) * 0.5f);
-            if (side.sqrMagnitude < 1e-8f) side = Vector3.Cross(along, Vector3.up);
-            if (side.sqrMagnitude < 1e-8f) side = Vector3.right;
-            side.Normalize();
-            Write(v, from - side * (width0 * 0.5f), from + side * (width0 * 0.5f), to + side * (width1 * 0.5f), to - side * (width1 * 0.5f), Cell.Streak, colour, alpha0);
-
-            byte end = (byte)(Mathf.Clamp01(alpha1 * _light) * 255.0f);
-            _colours[v + 2].a = end; _colours[v + 3].a = end;
-            float middle = (_uvs[v].y + _uvs[v + 2].y) * 0.5f, reach = (_uvs[v + 2].y - _uvs[v].y) * 0.08f;
-            _uvs[v].y = _uvs[v + 1].y = middle - reach;
-            _uvs[v + 2].y = _uvs[v + 3].y = middle + reach;
-        }
-
         private bool Reserve(out int vertex)
         {
             vertex = (MaxParticles + _immediate) * 4;
