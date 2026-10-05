@@ -1,0 +1,7 @@
+{
+  "ProcessId": 45252,
+  "ParentProcessId": 38048,
+  "ExecutablePath": "C:\\Users\\Matthew\\dev\\tump-integration1003\\Builds\\current-laptop-917bca66c-1005\\TumbangPreso.exe",
+  "CommandLine": "C:\\Users\\Matthew\\dev\\tump-integration1003\\Builds\\current-laptop-917bca66c-1005\\TumbangPreso.exe -force-d3d11 -screen-fullscreen 0 -screen-width 1280 -screen-height 720 -tp-framecap 60 -tp-profile lpt-browse152-1006c -logFile C:\\Users\\Matthew\\dev\\tump-integration1003\\Logs\\corrected-browse152-1006c\\player.log",
+  "CreationDate": "2026-10-06T03:38:36.573605+08:00"
+}

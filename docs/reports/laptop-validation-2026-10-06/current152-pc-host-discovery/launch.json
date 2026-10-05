@@ -1,0 +1,26 @@
+{
+  "source": "917bca66c311fd2832cf571ede2f4b42336deb50",
+  "protocol": 152,
+  "profile": "lpt-browse152-1006c",
+  "profilePath": "C:\\Users\\Matthew\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\d786cab927ee1fe7e398fc190caea43efa5980a9c82c40a40d12222a21a84c9d",
+  "command": [
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Builds\\current-laptop-917bca66c-1005\\TumbangPreso.exe",
+    "-force-d3d11",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1280",
+    "-screen-height",
+    "720",
+    "-tp-framecap",
+    "60",
+    "-tp-profile",
+    "lpt-browse152-1006c",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Logs\\corrected-browse152-1006c\\player.log"
+  ],
+  "manifestSha256": "3ac354c44b450e9ba0d8d9e07b9ae796ffc2577a0692d63c4113ddf5ef9ac313",
+  "route": "normal visible boot; actual UI clicks; no network bootstrap",
+  "scope": "Same corrected917 packaged PC-host natural LAN discovery/code repeat; no match required and no injected network packets",
+  "pid": 45252
+}
