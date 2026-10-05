@@ -18,7 +18,7 @@ namespace TumbangPreso.Net
     /// out of play (switched off, as on a map recovery), and an out-of-play slipper travels as
     /// Loose with no affinity (`SyncSlipperClientRpc`), so nothing on it can say "balloon"; and
     /// no slipper can carry the count or the popped state for a peer that joins later. `NetCue`
-    /// carries a sound and a place, not a number. Protocol 146 (this same change set) covers it.
+    /// carries a sound and a place, not a number. Protocol 152 covers it (146 on QoLUpdates before it met ASTRAReworks).
     ///
     /// NOTHING IS TAKEN FROM A CLIENT. There is no client message: the host decides a hit from
     /// the throw it already resolves (`Carrier.HostThrowAt`), and what it tells the room changes

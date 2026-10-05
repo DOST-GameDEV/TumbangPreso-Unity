@@ -1,0 +1,6 @@
+{
+  "base": "e7587c72e",
+  "filter": "TumbangPreso.PlayTests.PaeteKitPlayProbe.AutonomousBakyaLobNeedsNoSecondPress;TumbangPreso.PlayTests.PaeteKitPlayProbe.AutonomousLobsWaitForMaturityAndRepeatAtFiveSeconds;TumbangPreso.PlayTests.PaeteKitPlayProbe.NoUprightTargetKeepsTheGrownSlipperReady;TumbangPreso.PlayTests.PaeteKitPlayProbe.PausedAndRetiringPlantsNeverAutomaticallyFire;TumbangPreso.PlayTests.PaeteKitPlayProbe.ReplicaWaitsForTheMatchingAcceptedAutomaticShot",
+  "expected": 5,
+  "state": "native original/candidate validation"
+}

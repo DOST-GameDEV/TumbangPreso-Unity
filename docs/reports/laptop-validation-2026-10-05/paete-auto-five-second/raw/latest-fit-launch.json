@@ -1,0 +1,29 @@
+{
+  "pid": 7152,
+  "source": "66c65c8646bf7a97425e69aef651d1cbae570116",
+  "packetKind": "latest",
+  "expected": 4,
+  "out": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\paete-auto-fit-latest1-direct1004",
+  "command": [
+    "C:\\Program Files\\Unity\\Hub\\Editor\\6000.5.8f1\\Editor\\Unity.exe",
+    "-projectPath",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a",
+    "-batchmode",
+    "-force-d3d11",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.PaeteKitPlayProbe.ReadyBakyaRecastThrowsAVisibleMovingSlipper;TumbangPreso.PlayTests.PaeteKitPlayProbe.TheSeedlingGrowsFiresAndComesOutOnlyWhenLoose;TumbangPreso.PlayTests.PaeteKitPlayProbe.VinePlayerQueryChoosesNearestVisibleBodyAndHonoursWallsAndRange;TumbangPreso.PlayTests.PaeteKitPlayProbe.ThornContactPrecedesSnatchAndThePullHasReadableTravel",
+    "-testResults",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\paete-auto-fit-latest1-direct1004\\tests.xml",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\paete-auto-fit-latest1-direct1004\\unity.log",
+    "-tp-profile",
+    "validation-qa-a-be075dcdfa07",
+    "-job-worker-count",
+    "1",
+    "-gc-helper-count",
+    "1"
+  ]
+}

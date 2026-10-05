@@ -1,0 +1,75 @@
+{
+  "originalPreparedHeroScenarioPassed": false,
+  "stagingFailure": "Tournament flag pinned Classic; originalHero assertion/MapIdcaseassert preserved",
+  "actualClassicScenarioFaults": [],
+  "actualClassicPassed": true,
+  "report": {
+    "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\hero8-146-pc-direct1004\\state.txt",
+    "seats": [
+      {
+        "seat": 0,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": false,
+        "score": 130,
+        "travelled": 40.3
+      },
+      {
+        "seat": 1,
+        "char": 2,
+        "bot": true,
+        "origin": "HandedToBot",
+        "taya": false,
+        "score": 50,
+        "travelled": 1104.5
+      },
+      {
+        "seat": 2,
+        "char": 6,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 3450,
+        "travelled": 777.0
+      },
+      {
+        "seat": 3,
+        "char": 9,
+        "bot": true,
+        "origin": "Bot",
+        "taya": true,
+        "score": 2545,
+        "travelled": 768.3
+      }
+    ],
+    "role": "HOST",
+    "networked": "True",
+    "slot": "0",
+    "protocol": "146",
+    "sampled": "1650.0",
+    "round": "8",
+    "active": "False",
+    "defender": "3",
+    "mode": "Classic",
+    "map": "Kanto",
+    "structural": "BA053CD3",
+    "hash": "5903A8FD"
+  },
+  "source": "23168e90888e74a9256a7b396d7bcf49e2dc1eee",
+  "protocol": 146,
+  "naturalEndRecordCompare": {
+    "recordCanonicalSHA256": "d27f0b9246d44696bdda5aa1e5c212336f7a75d8ef9ff78a8ef26e7bde4d09f9",
+    "fullRecordEqualsPeerCanonicalHash": true,
+    "queueEqualsHistoryBothPeers": true,
+    "witnessEqual": [
+      "c9f645728c718e75"
+    ],
+    "mode": "Classic",
+    "rounds": 8,
+    "map": "Kanto",
+    "matchId": "b611a31321014eb0bdd3f57bde48bf35",
+    "scope": "Natural eight-round Classic/Kanto saved result; terminal player reports/restoration still pending; trueHero gate open"
+  },
+  "normalExitAndRestoration": true
+}

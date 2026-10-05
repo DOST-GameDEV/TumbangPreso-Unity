@@ -399,7 +399,7 @@ namespace TumbangPreso.Visual
             // random stream. Only this participant's first-person rendering is hidden.
             ComicPopup.Spawn(at, "TAGGED!", UI.UiTheme.Defense, 1.4f,
                 ComicPopup.Weight.Cast, participantFpp ? rig.Following : null);
-            ImpactBurst.SpawnAt(at);
+            TagContactAccent.Play(taya, victim, at);
             Hitstop.Trigger();
 
             if (taya != null && victim != null)

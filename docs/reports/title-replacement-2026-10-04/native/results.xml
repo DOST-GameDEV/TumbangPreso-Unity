@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 14:08:45Z" end-time="2026-10-04 14:08:53Z" duration="8.3780467">
+  <test-suite type="TestSuite" id="3054" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1674" result="Passed" start-time="2026-10-04 14:08:45Z" end-time="2026-10-04 14:08:53Z" duration="8.378047" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3048" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1674" result="Passed" start-time="2026-10-04 14:08:45Z" end-time="2026-10-04 14:08:53Z" duration="8.358810" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="20136" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3049" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1674" result="Passed" start-time="2026-10-04 14:08:45Z" end-time="2026-10-04 14:08:53Z" duration="8.348488" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3050" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1674" result="Passed" start-time="2026-10-04 14:08:45Z" end-time="2026-10-04 14:08:53Z" duration="8.338463" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1625" name="HomeFlowTests" fullname="TumbangPreso.PlayTests.HomeFlowTests" classname="TumbangPreso.PlayTests.HomeFlowTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-04 14:08:45Z" end-time="2026-10-04 14:08:48Z" duration="2.324101" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1626" name="TitleKeepsSuppliedPaintingSharpAndOneContinueTarget" fullname="TumbangPreso.PlayTests.HomeFlowTests.TitleKeepsSuppliedPaintingSharpAndOneContinueTarget" methodname="TitleKeepsSuppliedPaintingSharpAndOneContinueTarget" classname="TumbangPreso.PlayTests.HomeFlowTests" runstate="Runnable" seed="817503395" result="Passed" start-time="2026-10-04 14:08:45Z" end-time="2026-10-04 14:08:48Z" duration="2.306941" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Shot] wrote Logs/shots-runtime/Home-street-v1.png
+[Shot] wrote Logs/shots-runtime/Home-street-v1-720p.png
+[Shot] wrote Logs/shots-runtime/Home-street-v1-shortwide.png
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2119" name="OwnerMenuSkyTests" fullname="TumbangPreso.PlayTests.OwnerMenuSkyTests" classname="TumbangPreso.PlayTests.OwnerMenuSkyTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-04 14:08:48Z" end-time="2026-10-04 14:08:52Z" duration="4.715961" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2121" name="ReducedMotionKeepsHintAndPaintingFullyVisible" fullname="TumbangPreso.PlayTests.OwnerMenuSkyTests.ReducedMotionKeepsHintAndPaintingFullyVisible" methodname="ReducedMotionKeepsHintAndPaintingFullyVisible" classname="TumbangPreso.PlayTests.OwnerMenuSkyTests" runstate="Runnable" seed="2084180309" result="Passed" start-time="2026-10-04 14:08:48Z" end-time="2026-10-04 14:08:49Z" duration="1.080342" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] Title-clean-reduced cream source=252,211,159 pixel=244,183,121; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="2120" name="SuppliedPaintingStaysStillAfterArrival" fullname="TumbangPreso.PlayTests.OwnerMenuSkyTests.SuppliedPaintingStaysStillAfterArrival" methodname="SuppliedPaintingStaysStillAfterArrival" classname="TumbangPreso.PlayTests.OwnerMenuSkyTests" runstate="Runnable" seed="1672107164" result="Passed" start-time="2026-10-04 14:08:49Z" end-time="2026-10-04 14:08:52Z" duration="3.633174" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] Title-clean-still-before cream source=252,211,159 pixel=244,183,121; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Title-clean-still-after cream source=252,211,159 pixel=244,183,121; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2162" name="OwnerUiAuthoringTests" fullname="TumbangPreso.PlayTests.OwnerUiAuthoringTests" classname="TumbangPreso.PlayTests.OwnerUiAuthoringTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-04 14:08:52Z" end-time="2026-10-04 14:08:53Z" duration="1.159074" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2163" name="OriginalTumpLogoUsesOwnerArtworkAcrossUiRoutes" fullname="TumbangPreso.PlayTests.OwnerUiAuthoringTests.OriginalTumpLogoUsesOwnerArtworkAcrossUiRoutes" methodname="OriginalTumpLogoUsesOwnerArtworkAcrossUiRoutes" classname="TumbangPreso.PlayTests.OwnerUiAuthoringTests" runstate="Runnable" seed="1634418294" result="Passed" start-time="2026-10-04 14:08:52Z" end-time="2026-10-04 14:08:53Z" duration="1.156965" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpGeometry] Vector-TUMP-logo-credits/BackArrow: vertices=12, cull=False, alpha=1, depth=4, material=1
+[TumpUiCapture] Vector-TUMP-logo-credits cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Vector-brand-five-variants cream source=252,211,159 pixel=102,42,48; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

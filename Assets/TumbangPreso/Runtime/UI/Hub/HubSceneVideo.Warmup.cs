@@ -80,6 +80,14 @@ namespace TumbangPreso.UI.Hub
             _preloaded = null;
             if (!string.IsNullOrEmpty(ForcedHero) && ForcedHero != video.Hero)
             { Destroy(video.gameObject); return null; }
+            // A failed hidden preload cannot play. Home gets one fresh decoder
+            // for the same scene while its poster covers preparation.
+            if (video._failed)
+            {
+                string hero = video.Hero;
+                Destroy(video.gameObject);
+                return Create(scene, false, hero);
+            }
             video.transform.SetParent(scene, false);
             video.gameObject.layer = scene.gameObject.layer;
             video.GetComponent<AspectRatioFitter>().enabled = true;

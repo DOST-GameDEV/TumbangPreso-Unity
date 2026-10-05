@@ -120,3 +120,60 @@ Frozen and elemental stuns use their existing status indicators without a
 duplicate action bar. Genuine hold-Interact Rooted removal remains actionable.
 Trip and edge recovery are unchanged.
 [Native status-only check](reports/feedback-2026-10-03/status-action-bar.md).
+
+## Source quality across imports and resolutions
+
+For owner artwork from ibis Paint, retain the layered original and export a PNG
+at its original canvas size. Use transparent PNG for separate buttons, icons and
+panels. For a full-screen 16:9 background, author at3840x2160. Small components
+should contain at least the pixels required at their largest supported display
+size; keep separate pieces so resizing a menu does not stretch baked lettering.
+Prefer game-rendered labels when possible while preserving intentional painted text.
+
+If composing the artwork in Canva, use a canvas matching the intended export
+dimensions and download PNG with transparent background where applicable. Turn
+off file compression and file-size limits when those options are offered. Deliver
+the downloaded file plus the original ibis PNG, not a screenshot or preview.
+Compare pixel dimensions and source pixels before importing. Enlarging a raster
+image or wrapping it in SVG does not create new detail. Preserve clean alpha
+edges instead of flattening against white and removing white afterward.
+Export references: [ibis Paint](https://ibispaint.com/lecture/index.jsp?no=33)
+and [Canva](https://www.canva.com/help/transparent-background/).
+
+OwnerArtworkQualityImport owns supplied owner-menu-edits/owner-painted artwork
+and the legacy menu backdrop; BrandArtworkImport owns the selected brand exports.
+Preserve source pixels up to8192 without compression/crunch or NPOT resizing.
+Keep color plates sRGB and only explicit data masks linear. Preserve alpha with
+bilinear filtering; minified clouds/leaves use mipmaps. Do not upscale a small
+source and call it higher detail. The scoped policy clears stale common target overrides and excludes UI from
+global texture mip limits.
+Keep generated geometry edges measured in screen pixels and inspect real native
+captures at1080p,1440p and4K. Authored rough lettering is distinct from bad sampling.
+Text quality and embedded painted borders need their own demonstrated fixes.
+[Current evidence](reports/reliability-2026-10-05/ui-source-quality/README.md).
+
+OwnerUiLayout/HubKit preserve legacy Text contracts through CrispUiText. Small
+dynamic fonts sample up to twice the displayed pixel size with a160-pixel heading
+cap, then retain logical size and preferred layout. Static/best-fit text falls
+back unchanged. Preserve typefaces and compare actual native glyphs/frames before
+changing this bound. Sharper glyph sampling costs atlas space; do not claim it is
+a font-memory optimization. [Current evidence](reports/reliability-2026-10-05/ui-text-quality/README.md).
+
+Editable InputField text must retain its native glyph generator and line-based
+alignment. Carets and selection use font line metrics, not ink bounds; static
+heading sampling must not change that shared coordinate contract. Check the real
+focused caret mesh and field bounds, not only a static screenshot. Browser empty
+copy must distinguish a pending query and unavailable services from a confirmed
+empty result; redraw status changes even when the room count stays zero.
+[Current focused evidence](reports/reliability-2026-10-05/browser-and-editable-text/README.md).
+
+For HubField, Plate is an opaque child and editable text/placeholder live in a
+separate TextArea after it. InputField inserts caret/selection first under the
+text parent; sharing the background's parent hides those pixels behind Plate.
+Validate render order as well as bounds, collapse automatic selection before
+measuring a thin caret and assert caret width to distinguish the two meshes.
+
+Filled glyph edges use one physical screen pixel of transparent coverage and
+bounded adaptive circle detail. Preserve outward winding, cap corner miters and
+inspect actual-size native frames; geometry is scalable but is still rasterized
+by the display. Do not replace authored rough silhouettes merely to smooth edges.

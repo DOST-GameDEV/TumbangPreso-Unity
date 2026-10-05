@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 10:41:05Z" end-time="2026-10-04 10:41:14Z" duration="9.4798006">
+  <test-suite type="TestSuite" id="3022" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1644" result="Passed" start-time="2026-10-04 10:41:05Z" end-time="2026-10-04 10:41:14Z" duration="9.479801" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3016" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1644" result="Passed" start-time="2026-10-04 10:41:05Z" end-time="2026-10-04 10:41:14Z" duration="9.461889" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="73166" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3017" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1644" result="Passed" start-time="2026-10-04 10:41:05Z" end-time="2026-10-04 10:41:14Z" duration="9.450080" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3018" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1644" result="Passed" start-time="2026-10-04 10:41:05Z" end-time="2026-10-04 10:41:14Z" duration="9.438598" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2896" name="UltimateIntroductionProbe" fullname="TumbangPreso.PlayTests.UltimateIntroductionProbe" classname="TumbangPreso.PlayTests.UltimateIntroductionProbe" runstate="Runnable" testcasecount="14" result="Passed" start-time="2026-10-04 10:41:05Z" end-time="2026-10-04 10:41:14Z" duration="9.400640" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2910" name="BasilioEmptyHandsVisualReview" fullname="TumbangPreso.PlayTests.UltimateIntroductionProbe.BasilioEmptyHandsVisualReview" methodname="BasilioEmptyHandsVisualReview" classname="TumbangPreso.PlayTests.UltimateIntroductionProbe" runstate="Runnable" seed="558473461" result="Passed" start-time="2026-10-04 10:41:05Z" end-time="2026-10-04 10:41:10Z" duration="5.046293" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[AA] mode requested 0x MSAA + FXAA on; QualitySettings.antiAliasing 0; camera 'IntroductionArtWitness' allowMSAA True, allowHDR True, path Forward; target delivered 1 sample(s), format ARGBHalf; device supportsMultisampledTextures 1
+]]></output>
+            </test-case>
+            <test-case id="2909" name="BasilioTitanFissureVisualReview" fullname="TumbangPreso.PlayTests.UltimateIntroductionProbe.BasilioTitanFissureVisualReview" methodname="BasilioTitanFissureVisualReview" classname="TumbangPreso.PlayTests.UltimateIntroductionProbe" runstate="Runnable" seed="2048421894" result="Passed" start-time="2026-10-04 10:41:10Z" end-time="2026-10-04 10:41:14Z" duration="4.341202" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

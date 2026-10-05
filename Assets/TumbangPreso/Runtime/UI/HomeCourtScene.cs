@@ -29,6 +29,8 @@ namespace TumbangPreso.UI
         public float WideVerticalFocus = .71f;
         public float NarrowHorizontalFocus = .30f;
         private UnityEngine.UI.RawImage _image;
+        private float _arrived;
+        private void OnEnable()=>_arrived=Time.unscaledTime;
         private void Awake()
         {
             _image = GetComponent<UnityEngine.UI.RawImage>(); _image.raycastTarget = false;
@@ -44,6 +46,9 @@ namespace TumbangPreso.UI
             float screen = size.x / size.y;
             var uv = screen > source ? new Vector2(1, source / screen) : new Vector2(screen / source, 1);
             bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
+            // The supplied painting enters as one clean frame, with no weather
+            // compositing, zoom or moving cutouts degrading its pixels.
+            _image.color=new Color(1,1,1,reduced?1:Mathf.SmoothStep(0,1,Mathf.Clamp01((Time.unscaledTime-_arrived)/.3f)));
             // Hold her graffiti, which is the logo: the left edge as the window
             // narrows, the top as it widens. The clamp below decides the rest.
             var centre = new Vector2(

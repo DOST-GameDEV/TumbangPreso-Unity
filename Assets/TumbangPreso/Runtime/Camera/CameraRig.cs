@@ -745,11 +745,11 @@ namespace TumbangPreso.CameraSystem
         public void SetActive(bool active)
         {
             _active = active;
-            if (_camera != null) _camera.enabled = active;
+            if (_camera != null && !MatchArrivalPresentation.OwnsCamera) _camera.enabled = active;
 
-            if (_viewmodel != null) _viewmodel.gameObject.SetActive(active && _mode == CameraMode.Fpp);
+            if (_viewmodel != null) _viewmodel.gameObject.SetActive(active && _mode == CameraMode.Fpp && !MatchArrivalPresentation.OwnsCamera);
 
-            if (active) ApplyFppSelfHide();
+            if (active && !MatchArrivalPresentation.OwnsCamera) ApplyFppSelfHide();
             else RestoreSelfHide();
 
             ApplyCarriedSelfHide();
@@ -1013,7 +1013,7 @@ namespace TumbangPreso.CameraSystem
             transform.SetPositionAndRotation(eye, Quaternion.Euler(_pitchDeg + Visual.CanRaiseShape.FppLookDown * squat
                                                                    + Visual.PaeteGroundCall.FppLookDown * kneel, yaw, 0.0f));
 
-            if (_viewmodel != null && !_viewmodel.gameObject.activeSelf)
+            if (_viewmodel != null && !_viewmodel.gameObject.activeSelf && !MatchArrivalPresentation.OwnsCamera)
                 _viewmodel.gameObject.SetActive(true);
 
             // The hand shows what the unit is actually carrying.
@@ -1153,7 +1153,7 @@ namespace TumbangPreso.CameraSystem
         {
             RestoreSelfHide();
 
-            if (_character == null || _mode != CameraMode.Fpp) return;
+            if (_character == null || _mode != CameraMode.Fpp || MatchArrivalPresentation.OwnsCamera) return;
 
             var visual = _visual != null ? _visual : _character.GetComponent<Visual.CharacterVisual>();
             _hiddenModelInstance = visual != null ? visual.Model : null;
@@ -1231,7 +1231,7 @@ namespace TumbangPreso.CameraSystem
         {
             Slipper held = null;
 
-            if (_active && _mode == CameraMode.Fpp && !_emoteView && _character != null)
+            if (_active && _mode == CameraMode.Fpp && !_emoteView && _character != null && !MatchArrivalPresentation.OwnsCamera)
             {
                 var carrier = _character.GetComponent<Carrier>();
                 held = carrier != null ? carrier.Held : null;
@@ -1240,7 +1240,7 @@ namespace TumbangPreso.CameraSystem
             // A released prop starts on the unchanged physical throw origin. Keep
             // its world mesh hidden from this FPP owner until it clears the eye;
             // moving the origin forward would let throws bypass nearby obstacles.
-            if (held == null && _active && _mode == CameraMode.Fpp && !_emoteView && _character != null
+            if (held == null && _active && _mode == CameraMode.Fpp && !_emoteView && _character != null && !MatchArrivalPresentation.OwnsCamera
                 && _hiddenCarriedSlipper != null && _hiddenCarriedSlipper.State == SlipperState.InFlight
                 && _hiddenCarriedSlipper.ThrowerSlot == _character.PlayerSlot)
             {
@@ -1691,7 +1691,7 @@ namespace TumbangPreso.CameraSystem
             _mode = _modeBeforeEmote;
 
             if (_viewmodel != null)
-                _viewmodel.gameObject.SetActive(_active && _mode == CameraMode.Fpp);
+                _viewmodel.gameObject.SetActive(_active && _mode == CameraMode.Fpp && !MatchArrivalPresentation.OwnsCamera);
 
             // ⚠️ AND HIDE IT AGAIN ON THE WAY BACK, or the emote leaves the player looking at
             // their own shoulders and a second set of arms for the rest of the round. The guard

@@ -117,6 +117,10 @@ namespace TumbangPreso.UI
             return button;
         }
 
+        // Transparent export of the owner's original flat-colour SVG master.
+        // Keep its complete tightly framed pixels and native proportions.
+        public static Rect LogoUv => new Rect(0f, 0f, 1f, 1f);
+
         public static Sprite Sprite(string resource)
         {
             if (resource != null && (resource.StartsWith("UI/portraits/", System.StringComparison.Ordinal)
@@ -128,7 +132,13 @@ namespace TumbangPreso.UI
             {
                 var texture = Resources.Load<Texture2D>(resource);
                 if (texture == null) return null;
-                sprite = UnityEngine.Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(.5f, .5f), 100);
+                var rect = new Rect(0, 0, texture.width, texture.height);
+                if (resource == "UI/brand/tump_logo")
+                {
+                    var uv = LogoUv;
+                    rect = new Rect(uv.x*texture.width,uv.y*texture.height,uv.width*texture.width,uv.height*texture.height);
+                }
+                sprite = UnityEngine.Sprite.Create(texture, rect, new Vector2(.5f, .5f), 100);
             }
             Sprites[resource] = sprite;
             return sprite;

@@ -1,0 +1,16 @@
+{
+  "protocol": 151,
+  "baseSource": "9226f4f78ca21d98a8083d6d6832a6a1250714bd",
+  "sourceDelta": "This commit: bounded remote grace, autonomous constraint lifetime, correction interruption, fixed-time charge and opt-in trace. Upstream explicit ACKs and automatic shots retained.",
+  "runtime": {
+    "path": "TumpQA_Data/Managed/TumbangPreso.Runtime.dll",
+    "bytes": 3939840,
+    "sha256": "bdf8259da1aac9a97eb89aac83af900c6cb30e3c97382b474e0baca2567eaa4d"
+  },
+  "fileCount": 254,
+  "bytes": 2601722190,
+  "buildSeconds": 130.6,
+  "buildExit": 0,
+  "linkOneWayDelayMs": 150,
+  "scope": "Three actual Linux processes, loopback UDP relay, not separate physical machines or WAN."
+}

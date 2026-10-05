@@ -6,7 +6,7 @@ namespace TumbangPreso.Visual
     public sealed partial class HeroIntroductionScene
     {
         // =========================================================================================
-        // SEAN, SUPERNOVA, 3.4 s. plan.md § 1.
+        // RAGO, SUPERNOVA, 3.4 s. plan.md § 1.
         //
         // "Waits for one opening. Makes it count." He grew up assembling lantern frames in San
         // Fernando and "learned to notice the small mistake that throws a whole shape off"
@@ -21,7 +21,7 @@ namespace TumbangPreso.Visual
         // actually built: five bamboo sticks, each joining a point to the point two along. It is
         // his craft made visible, not a generic star particle.
         // =========================================================================================
-        private int _duskLow, _duskGlow, _duskHigh, _parolFill;
+        private int _duskLow, _duskGlow, _duskHigh, _parolFill, _parolHalo;
         private readonly List<int> _parolSticks = new List<int>(5), _lanterns = new List<int>(6), _lanternGlows = new List<int>(6),
             _footFlames = new List<int>(6), _sparks = new List<int>(8);
         private static readonly Vector3[] LanternSeats =
@@ -33,14 +33,16 @@ namespace TumbangPreso.Visual
         private void BuildSean()
         {
             _duskLow = Wall("DuskGround", 0, 1.0f, new Color(.14f, .05f, .03f, .88f));
-            _duskGlow = Wall("DuskHorizon", 1.0f, 2.3f, new Color(.96f, .45f, .12f, .62f), emission: .55f);
+            _duskGlow = Wall("DuskHorizon", 1.0f, 2.3f, new Color(.23f, .085f, .04f, 1f), emission: .55f);
             _duskHigh = Wall("DuskSky", 2.3f, 11, new Color(.21f, .08f, .05f, .86f), emission: .12f, cap: true);
+            RagoUnlitBackdrop(_duskLow); RagoUnlitBackdrop(_duskGlow); RagoUnlitBackdrop(_duskHigh);
+            _parolHalo = AddGlow("ParolWarmth", new Color(1, .38f, .05f, .22f), falloff: 2.6f, core: .12f);
             var stick = VfxShapes.Prism(4, 1, 1);
             for (int i = 0; i < 5; i++) _parolSticks.Add(Add("ParolStick" + i, stick, new Color(1, .88f, .48f, .96f), .85f));
             _parolFill = Add("ParolFlame", VfxShapes.TwoSided(VfxShapes.Star(5, .42f, 3)), new Color(.96f, .22f, .04f, .72f), .7f);
             for (int i = 0; i < LanternSeats.Length; i++)
             {
-                _lanternGlows.Add(Add("LanternGlow" + i, VfxShapes.TwoSided(VfxShapes.Splat(12, .1f, 20 + i)), new Color(1, .55f, .15f, .35f), .6f));
+                _lanternGlows.Add(AddGlow("LanternGlow" + i, new Color(1, .44f, .1f, .28f), falloff: 2.6f, core: .1f));
                 _lanterns.Add(Add("PaperLantern" + i, VfxShapes.TwoSided(VfxShapes.StarOutline(5, .45f, 30 + i)), new Color(1, .78f, .3f, .95f), .7f));
             }
             for (int i = 0; i < 6; i++)
@@ -48,6 +50,18 @@ namespace TumbangPreso.Visual
             for (int i = 0; i < 8; i++)
                 _sparks.Add(Add("RiseSpark" + i, VfxShapes.TwoSided(VfxShapes.Star(4, .4f, 50 + i)), new Color(1, .7f, .25f, .95f), .9f));
         }
+
+        private void RagoUnlitBackdrop(int index)
+        {
+            var shader = Shader.Find("Sprites/Default");
+            if(shader == null) return;
+            var piece = _pieces[index];
+            var material = new Material(shader) { name="Rago dusk backdrop", color=piece.Color };
+            piece.Renderer.sharedMaterial=material;
+            VfxRenderTag.Own(piece.Renderer.gameObject,material);
+        }
+
+        private Vector3 RagoParolCentre => (_heldItem != null ? FreePalm : BothPalms) + new Vector3(0,.12f,.30f);
 
         private void SampleSean(float t)
         {
@@ -58,13 +72,14 @@ namespace TumbangPreso.Visual
             // The held breath after the head snaps up: the horizon dims, then flares on the rise.
             float breath = 1 - .45f * Ease(1.8f, 1.95f, t) * (1 - Ease(2.4f, 2.6f, t));
             Tint(_duskLow, dusk); Tint(_duskHigh, dusk);
-            Tint(_duskGlow, dusk * breath * (1 + .35f * Ease(2.9f, 3.05f, t)));
+            var horizon = _pieces[_duskGlow].Color * (.8f + .2f * breath + .12f * Ease(2.9f, 3.05f, t));
+            horizon.a = 1;
+            Tint(_duskGlow, dusk, horizon);
 
             // The parol, between his palms, facing out of his chest.
-            Vector3 centre = BothPalms + new Vector3(0, .12f, .24f);
+            Vector3 centre = RagoParolCentre;
             float gather = Ease(2.4f, 2.7f, t), burst = Ease(2.95f, 3.1f, t);
-            centre = Vector3.Lerp(centre, new Vector3(0, 1.0f, .28f), gather);
-            float parolSize = .30f * (1 - gather * .35f) * (1 - burst);
+            float parolSize = (_heldItem != null ? .26f : .30f) * (1 - gather * .35f) * (1 - burst);
             for (int i = 0; i < 5; i++)
             {
                 // Stick i joins outer point i to outer point i + 2: the frame of a real parol.
@@ -85,6 +100,8 @@ namespace TumbangPreso.Visual
             Place(_parolFill, centre + Vector3.back * .01f, Vector3.one * parolSize * .95f, Quaternion.Euler(90, 0, 0) * Quaternion.Euler(0, 18, 0),
                 fill * leave * (1 + .5f * Flash(t, 2.62f)));
 
+            Place(_parolHalo,centre,Vector3.one * .9f,Quaternion.identity,fill * leave * (1-burst));
+
             // Paper-lantern stars drifting up behind him: his home, arriving with the dusk.
             for (int i = 0; i < _lanterns.Count; i++)
             {
@@ -94,7 +111,7 @@ namespace TumbangPreso.Visual
                 var face = Quaternion.LookRotation(-new Vector3(at.x, 0, at.z - 3).normalized, Vector3.up) * Quaternion.Euler(90, 0, 0);
                 float seen = Ease(born, born + .4f, t) * dusk;
                 Place(_lanterns[i], at, Vector3.one * (.22f + (i % 2) * .06f), face * Quaternion.Euler(0, age * 20, 0), seen);
-                Place(_lanternGlows[i], at + face * Vector3.down * .02f, Vector3.one * (.34f + (i % 2) * .08f), face, seen * (_reducedEffects ? .7f : .75f + .25f * Mathf.Sin(t * 4 + i)));
+                Place(_lanternGlows[i], at + face * Vector3.down * .02f, Vector3.one * (.78f + (i % 2) * .12f), Quaternion.identity, seen * (_reducedEffects ? .7f : .75f + .25f * Mathf.Sin(t * 4 + i)));
             }
 
             // The coil: flames lick up round his feet while he is low, and gather in on the rise.
@@ -114,7 +131,7 @@ namespace TumbangPreso.Visual
                 bool alive = age >= 0;
                 float u = Mathf.Clamp01(age / .42f);
                 float angle = i * Mathf.PI * 2 / _sparks.Count;
-                var at = new Vector3(0, 1.0f, .28f) + new Vector3(Mathf.Cos(angle) * .35f * u, u * 1.6f + LiftAt(t), Mathf.Sin(angle) * .25f * u);
+                var at = centre + new Vector3(Mathf.Cos(angle) * .35f * u, u * 1.6f, Mathf.Sin(angle) * .25f * u);
                 Place(_sparks[i], at, Vector3.one * .07f * (1 - u * .5f), Quaternion.Euler(-90, 0, angle * Mathf.Rad2Deg), alive ? (1 - u * u) * leave : 0);
             }
         }

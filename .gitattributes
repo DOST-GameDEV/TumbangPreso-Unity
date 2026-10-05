@@ -13,3 +13,15 @@ docs/reports/improvement-2026-09-15-buff-rejoin/*.xml -text -whitespace
 docs/reports/pending-casts-2026-09-15/*.xml -text -whitespace
 docs/reports/fpp-shadow-version-2026-09-15/*.xml -text -whitespace
 docs/reports/movement-joining-2026-09-15/*.xml -text -whitespace
+docs/reports/reliability-2026-10-05/lan151-visible-rules/*-player.log -text -whitespace
+docs/reports/reliability-2026-10-05/relay-request-timeout/*.xml -text -whitespace
+
+docs/reports/reliability-2026-10-05/ui-source-quality/*.xml -text -whitespace
+
+docs/reports/reliability-2026-10-05/ui-text-quality/*.xml -text -whitespace
+
+docs/reports/reliability-2026-10-05/network-shutdown-origin/*.xml -text -whitespace
+docs/reports/reliability-2026-10-05/network-shutdown-origin/lifecycle-events.txt -text -whitespace
+
+docs/reports/reliability-2026-10-05/browser-and-editable-text/*.xml -text -whitespace
+docs/reports/reliability-2026-10-05/current-ui-online151/host-lifecycle.txt -text -whitespace

@@ -1,0 +1,19 @@
+{
+  "film": {
+    "pid": 17056,
+    "gamePid": 17928,
+    "window": 10224830,
+    "startedUtc": "2026-10-04T21:25:37.389Z",
+    "done": false,
+    "inputCompletedUtc": "2026-10-04T21:25:39.708Z"
+  },
+  "input": {
+    "pid": 17928,
+    "window": 10224830,
+    "mode": "existing repo scan-code SendInput; attach-only; no game methods",
+    "profile": "pc-p151-plant1005a",
+    "released": true,
+    "key": "q",
+    "heldMs": 150
+  }
+}

@@ -53,6 +53,7 @@ namespace TumbangPreso.UI
         public Texture2D Background=>Pattern!=null?Pattern:Resources.Load<Texture2D>("UI/owner-painted/background");
         public Sprite Art(Piece piece)
         {
+            if(piece==Piece.Logo)return TumpUiFactory.Sprite("UI/brand/tump_logo");
             if(_pieces.TryGetValue(piece,out var sprite) && sprite!=null)return sprite;
             var atlas=Artwork!=null?Artwork:Resources.Load<Texture2D>("UI/owner-painted/artwork");
             if(atlas==null)return null;

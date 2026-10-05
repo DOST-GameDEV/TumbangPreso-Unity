@@ -106,6 +106,48 @@ namespace TumbangPreso.PlayTests
             }
         }
 
+        [UnityTest, Timeout(45000)]
+        public IEnumerator FailedBootWarmupGetsFreshPlaybackWhenHomeOpens()
+        {
+            bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
+            GameObject parent = null;
+            try
+            {
+                Settings.SettingsStore.Current.ReducedUiMotion = false;
+                HubSceneVideo.ForcedHero = "zack";
+                yield return HubSceneVideo.Warmup();
+                var warm = Object.FindAnyObjectByType<HubSceneVideo>();
+                Assert.IsNotNull(warm); Assert.IsTrue(warm.FirstFrameReady);
+                var failedPlayer = warm.Player;
+                var failedTarget = failedPlayer.targetTexture;
+                LogAssert.Expect(LogType.Warning, "[HubSceneVideo] Controlled boot decoder failure - showing the poster instead.");
+                typeof(HubSceneVideo).GetMethod("OnError",
+                    System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                    .Invoke(warm, new object[] { failedPlayer, "Controlled boot decoder failure" });
+                Assert.IsFalse(warm.Prepared); Assert.IsFalse(warm.FirstFrameReady);
+                parent = new GameObject("FailedWarmupHome", typeof(RectTransform));
+                var home = HubSceneVideo.Install((RectTransform)parent.transform);
+                Assert.AreNotSame(warm, home, "Home adopted a failed preload and cannot restart its animation.");
+                Assert.IsNotNull(home.GetComponent<UnityEngine.UI.RawImage>().texture,
+                    "Home must keep its poster while a fresh decoder prepares.");
+                float until = Time.realtimeSinceStartup + 15;
+                while (!home.FirstFrameReady && Time.realtimeSinceStartup < until) yield return null;
+                Assert.IsTrue(home.FirstFrameReady, "Fresh Home playback never decoded a frame.");
+                yield return null;
+                Assert.IsTrue(home.ShowingVideo); Assert.IsTrue(home.Player.isPlaying);
+                long frame = home.Player.frame;
+                yield return new WaitForSecondsRealtime(.6f);
+                Assert.AreNotEqual(frame, home.Player.frame, "Home remained a static poster/frame.");
+                Assert.IsTrue(failedPlayer == null); Assert.IsTrue(failedTarget == null,
+                    "Failed warmup resources survived adoption.");
+            }
+            finally
+            {
+                if (parent != null) Object.Destroy(parent);
+                Settings.SettingsStore.Current.ReducedUiMotion = reduced;
+            }
+        }
+
         [UnityTest, Timeout(30000)]
         public IEnumerator ReducedMotionWarmupUsesThePosterWithoutOpeningADecoder()
         {

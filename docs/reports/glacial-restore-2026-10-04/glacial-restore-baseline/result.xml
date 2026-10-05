@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 12:04:56Z" end-time="2026-10-04 12:04:57Z" duration="0.2601933">
+  <test-suite type="TestSuite" id="3048" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1669" result="Failed" site="Child" start-time="2026-10-04 12:04:56Z" end-time="2026-10-04 12:04:57Z" duration="0.260193" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3042" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1669" result="Failed" site="Child" start-time="2026-10-04 12:04:56Z" end-time="2026-10-04 12:04:57Z" duration="0.249448" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="89902" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3043" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1669" result="Failed" site="Child" start-time="2026-10-04 12:04:56Z" end-time="2026-10-04 12:04:57Z" duration="0.243999" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3044" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1669" result="Failed" site="Child" start-time="2026-10-04 12:04:56Z" end-time="2026-10-04 12:04:57Z" duration="0.239781" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1662" name="IceWorldSnapshotProbe" fullname="TumbangPreso.PlayTests.IceWorldSnapshotProbe" classname="TumbangPreso.PlayTests.IceWorldSnapshotProbe" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-04 12:04:57Z" end-time="2026-10-04 12:04:57Z" duration="0.183826" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1667" name="GlacialArcReplayKeepsFiveRenderOnlySlabs" fullname="TumbangPreso.PlayTests.IceWorldSnapshotProbe.GlacialArcReplayKeepsFiveRenderOnlySlabs" methodname="GlacialArcReplayKeepsFiveRenderOnlySlabs" classname="TumbangPreso.PlayTests.IceWorldSnapshotProbe" runstate="Runnable" seed="1098658634" result="Failed" start-time="2026-10-04 12:04:57Z" end-time="2026-10-04 12:04:57Z" duration="0.092522" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Replay must use the captured arc geometry.
+  Expected: 5
+  But was:  3
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.IceWorldSnapshotProbe+<GlacialArcReplayKeepsFiveRenderOnlySlabs>d__8.MoveNext () [0x0006f] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/IceWorldSnapshotProbe.cs:166
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1666" name="GlacialArcRestoresDamageAlreadyTaken" fullname="TumbangPreso.PlayTests.IceWorldSnapshotProbe.GlacialArcRestoresDamageAlreadyTaken" methodname="GlacialArcRestoresDamageAlreadyTaken" classname="TumbangPreso.PlayTests.IceWorldSnapshotProbe" runstate="Runnable" seed="2079464936" result="Failed" start-time="2026-10-04 12:04:57Z" end-time="2026-10-04 12:04:57Z" duration="0.041757" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A restored wall that already took two hits must shatter on the next hit.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.IceWorldSnapshotProbe+<GlacialArcRestoresDamageAlreadyTaken>d__7.MoveNext () [0x000cb] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/IceWorldSnapshotProbe.cs:158
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1665" name="GlacialArcRestoresItsFiveSlabsAndAgedLife" fullname="TumbangPreso.PlayTests.IceWorldSnapshotProbe.GlacialArcRestoresItsFiveSlabsAndAgedLife" methodname="GlacialArcRestoresItsFiveSlabsAndAgedLife" classname="TumbangPreso.PlayTests.IceWorldSnapshotProbe" runstate="Runnable" seed="1068041576" result="Failed" start-time="2026-10-04 12:04:57Z" end-time="2026-10-04 12:04:57Z" duration="0.037136" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Restoring the compact arc must not rebuild the old straight three-piece wall.
+  Expected: 5
+  But was:  3
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.IceWorldSnapshotProbe+<GlacialArcRestoresItsFiveSlabsAndAgedLife>d__6.MoveNext () [0x000e6] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/IceWorldSnapshotProbe.cs:145
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

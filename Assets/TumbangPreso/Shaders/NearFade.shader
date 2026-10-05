@@ -166,6 +166,7 @@ Shader "TumbangPreso/NearFade"
         // "redefinition of '_MainTex_ST'" error. `Toon.shader` carries the same warning and
         // records what it looks like when it happens.
         sampler2D _MainTex;
+        float4 _MainTex_TexelSize;
         fixed4 _Color;
         half _Glossiness;
         half _Metallic;
@@ -341,7 +342,11 @@ Shader "TumbangPreso/NearFade"
 
             clip(visible - NearFadeBayer(cell));
 
-            fixed4 albedo = tex2D(_MainTex, IN.uv_MainTex) * _Color;
+            // Preserve distance mip filtering with an explicit texture footprint.
+            float2 textureDx = ddx(IN.uv_MainTex) * _MainTex_TexelSize.zw;
+            float2 textureDy = ddy(IN.uv_MainTex) * _MainTex_TexelSize.zw;
+            float textureLod = .5 * log2(max(1.0, max(dot(textureDx, textureDx), dot(textureDy, textureDy))));
+            fixed4 albedo = tex2Dlod(_MainTex, float4(IN.uv_MainTex, 0, textureLod)) * _Color;
 
             o.Albedo = albedo.rgb;
             o.Metallic = _Metallic;

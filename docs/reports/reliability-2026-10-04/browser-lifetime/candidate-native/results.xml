@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 12:50:51Z" end-time="2026-10-04 12:50:51Z" duration="0.1581895">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1328" result="Passed" start-time="2026-10-04 12:50:51Z" end-time="2026-10-04 12:50:51Z" duration="0.158190" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2632" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1328" result="Passed" start-time="2026-10-04 12:50:51Z" end-time="2026-10-04 12:50:51Z" duration="0.127800" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="1212" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2633" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1328" result="Passed" start-time="2026-10-04 12:50:51Z" end-time="2026-10-04 12:50:51Z" duration="0.108890" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2634" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1328" result="Passed" start-time="2026-10-04 12:50:51Z" end-time="2026-10-04 12:50:51Z" duration="0.090152" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2426" name="ServerQueryBrowserLifetimeTests" fullname="TumbangPreso.Tests.ServerQueryBrowserLifetimeTests" classname="TumbangPreso.Tests.ServerQueryBrowserLifetimeTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-04 12:50:51Z" end-time="2026-10-04 12:50:51Z" duration="0.060201" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2429" name="AuthenticationFinishingAfterCloseDoesNotDispatchLookup" fullname="TumbangPreso.Tests.ServerQueryBrowserLifetimeTests.AuthenticationFinishingAfterCloseDoesNotDispatchLookup" methodname="AuthenticationFinishingAfterCloseDoesNotDispatchLookup" classname="TumbangPreso.Tests.ServerQueryBrowserLifetimeTests" runstate="Runnable" seed="1515215766" result="Passed" start-time="2026-10-04 12:50:51Z" end-time="2026-10-04 12:50:51Z" duration="0.033125" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2430" name="CurrentOpeningStillPublishesItsRoom" fullname="TumbangPreso.Tests.ServerQueryBrowserLifetimeTests.CurrentOpeningStillPublishesItsRoom" methodname="CurrentOpeningStillPublishesItsRoom" classname="TumbangPreso.Tests.ServerQueryBrowserLifetimeTests" runstate="Runnable" seed="1354989321" result="Passed" start-time="2026-10-04 12:50:51Z" end-time="2026-10-04 12:50:51Z" duration="0.004472" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2431" name="ExplicitRefreshWithoutAutomaticBrowsingRemainsSupported" fullname="TumbangPreso.Tests.ServerQueryBrowserLifetimeTests.ExplicitRefreshWithoutAutomaticBrowsingRemainsSupported" methodname="ExplicitRefreshWithoutAutomaticBrowsingRemainsSupported" classname="TumbangPreso.Tests.ServerQueryBrowserLifetimeTests" runstate="Runnable" seed="802416987" result="Passed" start-time="2026-10-04 12:50:51Z" end-time="2026-10-04 12:50:51Z" duration="0.001558" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2427" name="ReplyAfterCloseDoesNotRepopulateRooms" fullname="TumbangPreso.Tests.ServerQueryBrowserLifetimeTests.ReplyAfterCloseDoesNotRepopulateRooms" methodname="ReplyAfterCloseDoesNotRepopulateRooms" classname="TumbangPreso.Tests.ServerQueryBrowserLifetimeTests" runstate="Runnable" seed="1197069524" result="Passed" start-time="2026-10-04 12:50:51Z" end-time="2026-10-04 12:50:51Z" duration="0.002148" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2428" name="ReplyFromPreviousOpeningCannotPopulateReopenedBrowser" fullname="TumbangPreso.Tests.ServerQueryBrowserLifetimeTests.ReplyFromPreviousOpeningCannotPopulateReopenedBrowser" methodname="ReplyFromPreviousOpeningCannotPopulateReopenedBrowser" classname="TumbangPreso.Tests.ServerQueryBrowserLifetimeTests" runstate="Runnable" seed="1490142792" result="Passed" start-time="2026-10-04 12:50:51Z" end-time="2026-10-04 12:50:51Z" duration="0.001900" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -90,6 +90,14 @@ namespace TumbangPreso.Diagnostics
             { _lobbyStableFor = 0; return; }
             _lobbyStableFor += Time.unscaledDeltaTime;
             if (_lobbyStableFor < SettleSeconds) return;
+            var args=Environment.GetCommandLineArgs();
+            int mapAt=Array.IndexOf(args,NetBootstrap.MapSwitch);
+            if(mapAt>=0 && mapAt+1<args.Length)
+            {
+                string scene=NetBootstrap.AdoptLaunchMap(args[mapAt+1]);
+                hub.Host.SelectMap(scene);
+                Debug.Log("[NetAuto] selected lobby map "+scene+" through the host UI action.");
+            }
             _lobbyStartSent = true;
             Debug.Log("[NetAuto] START GAME from the visible hub lobby.");
             hub.Host.StartGame();

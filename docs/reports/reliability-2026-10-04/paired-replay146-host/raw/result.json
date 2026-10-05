@@ -1,0 +1,108 @@
+{
+  "source": "f4890bdd43ae8b0129be6ebb9499eb7a54de2d01",
+  "role": "HOST",
+  "protocol": 146,
+  "artifactManifestSha256": "38192bd528af674e84575775d4bcbbf08331ce0b6523d1b98b9366bbb828dafe",
+  "passed": true,
+  "scope": "Two physical Windows machines, synthetic actual catch contact and retained replay transport/view; diagnostic round advance, no natural full-match/operator claim",
+  "pid": 19728,
+  "command": [
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\integration-f4890bdd4-1004\\TumbangPreso.exe",
+    "-batchmode",
+    "-force-d3d11",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1920",
+    "-screen-height",
+    "1080",
+    "-tp-framecap",
+    "60",
+    "-tp-profile",
+    "pc-paired-replay146-f4891004",
+    "-tp-autostart",
+    "2",
+    "-tp-host",
+    "49163",
+    "-tp-map",
+    "Eskinita",
+    "-tp-replayseat",
+    "0",
+    "-tp-replaytrace",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\paired-replay146-pc-direct1004\\host.csv",
+    "-tp-replaymode",
+    "hero",
+    "-tp-replay-contact",
+    "catch",
+    "-tp-replay-ready-peers",
+    "1",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\paired-replay146-pc-direct1004\\player.log"
+  ],
+  "clientStart": {
+    "source": "f4890bdd43ae8b0129be6ebb9499eb7a54de2d01",
+    "started": true,
+    "runnerTerminal": false,
+    "pid": null,
+    "roundsBegun": [],
+    "matchEnded": false,
+    "hostLost": false,
+    "tail": [],
+    "hasReplayPNG": false
+  },
+  "exitCode": 0,
+  "errors": [],
+  "measured": {
+    "rows": 671,
+    "halfSamples": 183,
+    "viewSamples": 100,
+    "heldSamples": 183,
+    "epochs": [
+      "639267125897668305"
+    ],
+    "clips": [
+      "1"
+    ],
+    "scores": {
+      "0": [
+        "170"
+      ],
+      "1": [
+        "0"
+      ],
+      "2": [
+        "0"
+      ],
+      "3": [
+        "0"
+      ]
+    },
+    "pngExists": true
+  },
+  "clientStatus": {
+    "source": "f4890bdd43ae8b0129be6ebb9499eb7a54de2d01",
+    "started": true,
+    "runnerTerminal": false,
+    "pid": 10228,
+    "roundsBegun": [
+      "[Slice] round 1 begins, taya is seat 0"
+    ],
+    "matchEnded": false,
+    "hostLost": true,
+    "tail": [
+      "[NetApproval] peer=0 approved=True reason=",
+      "[NetArrival] peer=0 seat=0 replaces=-1",
+      "[Net] connected as seat 1",
+      "[Net] hosting on 8910, join code P63M",
+      "[Link] Unknown at 0 ms round trip (host, worst peer).",
+      "[Env] repainted 371 of 1117 renderers, 161 with a roof variant.",
+      "[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.",
+      "[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6."
+    ],
+    "hasReplayPNG": true
+  },
+  "terminal": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "artifactUnchanged": true
+}

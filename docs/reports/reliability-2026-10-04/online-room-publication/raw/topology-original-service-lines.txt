@@ -1,0 +1,10 @@
+[NetIdentity] Signed in to UGS as nay9HIgIKeKhCvkmz3LwoayIxLmh on profile pc-room-topology-original1004. Relay and Lobby are available.
+[Net] connected as seat 1
+[Net] hosting on 49171, join code 3WB8
+[Net] offline
+[Net] signing in to online services...
+[Net] allocating relay server...
+[Net] connected as seat 1
+[Net] relay hosting active, code R9FM (relay HBBJPQ)
+[Net] offline
+[Query] Deleted UGS Lobby WQXMVHSpJMVornbkzcvo33

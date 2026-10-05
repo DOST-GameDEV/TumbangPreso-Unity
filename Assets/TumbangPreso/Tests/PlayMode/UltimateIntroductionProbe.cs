@@ -48,46 +48,96 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(90000)]
         public IEnumerator ZackDrawsOverclockIntoHimselfWithoutLosingHisShoe()
             => Study(new[] { "zack" }, false, false, true);
-        private static IEnumerator BuildZackArtStage()
+        [UnityTest, Timeout(90000)]
+        public IEnumerator YasminAbsoluteZeroVisualReview()
+            => Study(new[] { "cheska" }, false, false, true);
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator YasminEmptyHandsVisualReview()
+            => Study(new[] { "cheska" }, false, true, true);
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator RagoSupernovaVisualReview()
+            => Study(new[] { "sean" }, false, false, true);
+        [UnityTest, Timeout(90000)]
+        public IEnumerator RagoEmptyHandsVisualReview()
+            => Study(new[] { "sean" }, false, true, true);
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator BasilioTitanFissureVisualReview()
+            => Study(new[] { "dante" }, false, false, true);
+        [UnityTest, Timeout(90000)]
+        public IEnumerator BasilioEmptyHandsVisualReview()
+            => Study(new[] { "dante" }, false, true, true);
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator NemuSeanceVisualReview()
+            => Study(new[] { "nemu" }, true, false, true);
+        [UnityTest, Timeout(90000)]
+        public IEnumerator NemuEmptyHandsVisualReview()
+            => Study(new[] { "nemu" }, true, true, true);
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator IlyasBreakwaterVisualReview()
+            => Study(new[] { "rafi" }, false, false, true);
+        [UnityTest, Timeout(90000)]
+        public IEnumerator IlyasEmptyHandsVisualReview()
+            => Study(new[] { "rafi" }, false, true, true);
+
+        private static IEnumerator BuildHeroArtStage(string hero)
         {
             GameServices.Ensure(); GameServices.Round.Clear();
             var floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            floor.name = "Overclock art support"; floor.transform.position = Vector3.down * .5f;
+            floor.name = "Hero art support"; floor.transform.position = Vector3.down * .5f;
             floor.transform.localScale = new Vector3(30, 1, 30);
-            var actorObject = new GameObject("Overclock art actor", typeof(CharacterController));
+            var actorObject = new GameObject("Hero art actor", typeof(CharacterController));
             var cc = actorObject.GetComponent<CharacterController>();
             cc.height = 1.6f; cc.radius = .35f; cc.center = Vector3.up * .8f;
             var actor = actorObject.AddComponent<CharacterMotor>();
             actor.Mode = GameMode.HeroStrike; actor.PlayerSlot = 1; actor.IsBot = true;
-            actor.CharacterIndex = Roster.IndexIn(Roster.HeroPeople, "zack");
+            actor.CharacterIndex = Roster.IndexIn(Roster.HeroPeople, hero);
             actorObject.AddComponent<Carrier>(); actorObject.AddComponent<CombatVerbs>();
-            actorObject.AddComponent<TumbangPreso.Abilities.HeroAbilitySystem>().BindHero("zack");
-            var art = Resources.Load<RosterEntryAsset>("Roster/person_zack");
+            actorObject.AddComponent<TumbangPreso.Abilities.HeroAbilitySystem>().BindHero(hero);
+            var art = Resources.Load<RosterEntryAsset>("Roster/person_" + hero);
             actorObject.AddComponent<CharacterVisual>().ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
             GameServices.Round.Register(actor);
             GameServices.Match.ApplySnapshot(new int[4], 1, true);
             GameServices.Round.ApplySnapshot(100, true, 0, true);
             actor.Teleport(new Vector3(0, .12f, -4));
-            var shoe = new GameObject("Overclock held shoe").AddComponent<Slipper>();
+            var shoe = new GameObject("Hero held shoe").AddComponent<Slipper>();
             var shoeArt = Resources.Load<RosterEntryAsset>("Roster/slipper_loafers");
             var shoeModel = Object.Instantiate(shoeArt.Model, shoe.transform);
-            ToonSkin.ApplySlipper(shoeModel, ToonSkin.PropOutlineWidth); shoe.HostForceEquip(actor);
-            var light = new GameObject("Overclock art light").AddComponent<Light>();
+            ToonSkin.ApplySlipper(shoeModel, ToonSkin.PropOutlineWidth);
+            shoe.OwnerSlot = actor.PlayerSlot;
+            Assert.IsTrue(shoe.HostForceEquip(actor), "The art stage must equip its owned slipper.");
+            Assert.AreSame(shoe, actor.GetComponent<Carrier>().Held);
+            var light = new GameObject("Hero art light").AddComponent<Light>();
             light.type = LightType.Directional; light.transform.rotation = Quaternion.Euler(35, -25, 0);
-            var eye = new GameObject("Overclock source camera", typeof(Camera)); eye.tag = "MainCamera";
+            var eye = new GameObject("Hero source camera", typeof(Camera)); eye.tag = "MainCamera";
             eye.AddComponent<CameraRig>().Follow(actor);
             yield return null; yield return null;
         }
 
         private static IEnumerator Study(string[] heroes, bool checkFraming, bool emptyHands = false, bool allowMutedTheme = false)
         {
-            // Zack's render-copy review needs its actual rig/equipment, not an entire
+            // These focused render-copy reviews need their actual rig/equipment, not an entire
             // populated court. Keep other established court probes unchanged.
-            if (heroes.Length == 1 && heroes[0] == "zack") yield return BuildZackArtStage();
+            if (heroes.Length == 1 && (heroes[0] == "zack" || heroes[0] == "cheska" || heroes[0] == "sean" || heroes[0] == "dante" || heroes[0] == "nemu" || heroes[0] == "rafi")) yield return BuildHeroArtStage(heroes[0]);
             else yield return MapRetrievalProbe.Load("Eskinita", GameMode.HeroStrike);
             var actor = GameServices.Round.PlayerAt(1);
             var visual = actor.GetComponent<CharacterVisual>();
-            if (emptyHands) actor.GetComponent<Carrier>().Held?.HostDisarm();
+            if (emptyHands)
+            {
+                var parkedShoe=actor.GetComponent<Carrier>().Held;
+                if(parkedShoe!=null)
+                {
+                    Assert.IsTrue(parkedShoe.HostDisarm());
+                    parkedShoe.transform.position=new Vector3(30,0,30);
+                }
+                Assert.IsNull(actor.GetComponent<Carrier>().Held);
+            }
+            else if (heroes.Length == 1 && (heroes[0] == "zack" || heroes[0] == "cheska" || heroes[0] == "sean" || heroes[0] == "dante" || heroes[0] == "nemu" || heroes[0] == "rafi"))
+                Assert.IsNotNull(actor.GetComponent<Carrier>().Held, "Held-shoe review cannot silently become empty-handed.");
             foreach (var other in GameServices.Round.Players)
                 if (other != actor) other.Teleport(new Vector3(-9, other.transform.position.y, 8 + other.PlayerSlot * 3));
             var camera = new GameObject("IntroductionArtWitness").AddComponent<Camera>();
@@ -120,10 +170,13 @@ namespace TumbangPreso.PlayTests
                     var stage = new GameObject("IntroductionRenderCopy"); stage.SetActive(false);
                     var copy = track.Clone(stage.transform); Assert.IsNotNull(copy);
                     track.Apply(copy, track.Newest);
+                    if(emptyHands)Assert.IsNull(actor.GetComponent<Carrier>().Held,"The empty-hand study must stay empty-handed.");
                     var clip = HeroAbilityClips.BuildUltimateIntroduction(copy.Root.transform, hero, actor.GetComponent<Carrier>().Held != null);
                     // REFINE-2.11: each hero's introduction has its own authored length and lift.
                     var performance = UltimatePerformance.For(hero, actor.GetComponent<Carrier>().Held != null);
                     Assert.IsNotNull(performance, hero + " has no authored introduction table.");
+                    if((hero=="sean"||hero=="dante")&&!emptyHands)
+                        Assert.AreNotSame(UltimatePerformance.For(hero,false),performance,hero+" needs its actual held-equipment performance.");
                     float seconds = performance.Seconds;
                     Assert.IsNotNull(clip); Assert.IsTrue(clip.legacy, "Runtime-authored sampling must work in the native player."); Assert.AreEqual(seconds, clip.length, .01f);
                     int score = GameServices.Match.ScoreFor(1); Vector3 at = actor.transform.position;
@@ -182,30 +235,69 @@ namespace TumbangPreso.PlayTests
                             else report.AppendLine("["+hero+"] visual-only study; retained theme started="+soundStarted+". No audio acceptance.");
                             if(hero=="rafi")
                             {
-                                var wave=scene.Root.GetComponentsInChildren<MeshFilter>(true).Single(m=>m.sharedMesh.name=="Rafi rolled wave").sharedMesh;
-                                Assert.AreEqual(95,wave.vertexCount);Assert.AreEqual(432,wave.triangles.Length);
+                                var wave=scene.Root.GetComponentsInChildren<MeshFilter>(true).Single(m=>m.sharedMesh.name=="Ilyas rolled wave").sharedMesh;
+                                Assert.AreEqual(133,wave.vertexCount);Assert.AreEqual(648,wave.triangles.Length);
+                                Assert.AreEqual(wave.vertexCount,wave.colors.Length,"The curled wave needs its authored fading edge colours.");
+                                Assert.AreEqual(0,wave.colors[0].a,.0001f);
+                                var crest=scene.Root.transform.Find("BreakwaterCrest").GetComponent<MeshFilter>().sharedMesh;
+                                Assert.AreEqual(0,crest.colors[0].a,.0001f,"Foam must taper with the water instead of leaving solid tips.");
                             }
                             scene.SetVisibleForCapture(true);
                         }
-                        if (hero == "zack" && scene != null)
+                        if ((hero == "zack" || hero == "cheska" || hero == "sean" || hero == "dante" || hero == "nemu" || hero == "rafi") && scene != null)
                         {
                             // Warm all three authored shots before starting a wall-clock film.
-                            foreach (float warm in new[] { 0f, .9f, 1.6f, 1.95f, 2.5f, 0f })
+                            foreach (float warm in hero == "sean" ? new[] { 0f, .9f, 1.6f, 1.95f, 2.5f, 2.97f, 3.15f, 0f }
+                                : new[] { 0f, .9f, 1.1f, 1.6f, 1.95f, 2.5f, 2.9f, 0f })
                             {
                                 clip.SampleAnimation(copy.Root, warm); scene.Sample(warm);
                                 scene.Shot(warm, out var eye, out var target, out var lens, camera.aspect);
                                 camera.transform.position = eye; camera.transform.LookAt(target); camera.fieldOfView = lens;
-                                if (Mathf.Abs(warm - 1.95f) < .001f)
+                                if (hero == "zack" && Mathf.Abs(warm - 1.95f) < .001f)
                                 {
                                     var bolt = scene.Root.transform.Find("SnapBolt").GetComponent<MeshFilter>();
                                     var headPoint = copy.Bones.First(b => b.name == "head").position + Vector3.up * .35f;
                                     float contact = bolt.sharedMesh.vertices.Min(v => Vector3.Distance(bolt.transform.TransformPoint(v), headPoint));
                                     Assert.Less(contact, .15f, "Overclock's bolt must reach Zack, not an old distant target.");
                                 }
+                                if(hero=="sean"&&Mathf.Abs(warm-2.5f)<.001f)
+                                {
+                                    var palm=(Vector3)typeof(HeroIntroductionScene).GetProperty(emptyHands ? "BothPalms" : "FreePalm",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(scene);
+                                    var flame=scene.Root.transform.Find("ParolFlame");
+                                    Assert.Less(Vector3.Distance(flame.position,scene.Root.transform.TransformPoint(palm)),.34f,
+                                        "The parol must stay in front of its gathering hand through the coil.");
+                                }
+                                if(hero=="sean"&&Mathf.Abs(warm-2.97f)<.001f)
+                                    Assert.Less(Vector3.Distance(scene.Root.transform.Find("RiseSpark0").position,
+                                        scene.Root.transform.Find("ParolFlame").position),.02f,"The burst must start at the parol.");
+                                if (hero == "cheska" && Mathf.Abs(warm-1.1f)<.001f)
+                                {
+                                    var palm=(Vector3)typeof(HeroIntroductionScene).GetProperty(emptyHands ? "RightPalm" : "FreePalm",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(scene);
+                                    var line=scene.Root.transform.Find("FrostLine");
+                                    var tip=line.TransformPoint(Vector3.up);
+                                    Assert.Less(Vector3.Distance(tip,scene.Root.transform.TransformPoint(palm)),.16f,
+                                        "The drawn frost must end at the actual drawing hand, not across her face.");
+                                }
+                                if (hero == "cheska" && (Mathf.Abs(warm-1.6f)<.001f || Mathf.Abs(warm-2.5f)<.001f))
+                                {
+                                    var palm=(Vector3)typeof(HeroIntroductionScene).GetProperty("FreePalm",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(scene);
+                                    var crystal=scene.Root.transform.Find("GatheredCrystal");
+                                    var headAt=(Vector3)typeof(HeroIntroductionScene).GetProperty("HeadPoint",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(scene);
+                                    report.AppendLine($"Yasmin t={warm:F2} empty={emptyHands} palm={palm:F3} crystal={crystal.localPosition:F3} head={headAt:F3}");
+                                }
+                                if (hero == "cheska" && Mathf.Abs(warm - 2.9f) < .001f)
+                                {
+                                    var crystal = scene.Root.transform.Find("GatheredCrystal").GetComponent<MeshFilter>();
+                                    var shard = scene.Root.transform.Find("SnapShard0");
+                                    float thickness = crystal.sharedMesh.bounds.size.y;
+                                    float gap = Vector3.Distance(crystal.transform.position, shard.position);
+                                    Assert.IsTrue(thickness > .5f && gap < .01f,
+                                        $"Yasmin needs a volumetric crystal and connected shatter; mesh height={thickness:F4}, origin gap={gap:F4}m.");
+                                }
                                 camera.Render(); yield return null;
                             }
                         }
-                        yield return ImprovementEvidenceProbe.Record(camera, hero + (withScene ? "-introduction-scene" : "-introduction-body"), seconds,
+                        yield return ImprovementEvidenceProbe.Record(camera, hero + (withScene ? "-introduction-scene" : "-introduction-body") + (emptyHands ? "-empty" : ""), seconds,
                             drive: age =>
                             {
                                 clip.SampleAnimation(copy.Root, Mathf.Min(age, seconds));
@@ -274,7 +366,7 @@ namespace TumbangPreso.PlayTests
             finally
             {
                 string folder = Environment.GetEnvironmentVariable("TUMP_EVIDENCE") ?? "Logs/improvement-baseline-v1";
-                Directory.CreateDirectory(folder); File.WriteAllText(Path.Combine(folder, "introduction-grounding.txt"), report.ToString());
+                Directory.CreateDirectory(folder); File.WriteAllText(Path.Combine(folder, "introduction-grounding" + (emptyHands ? "-empty" : "") + ".txt"), report.ToString());
                 sourceCamera.SetActive(true); Object.Destroy(camera.gameObject);
             }
         }

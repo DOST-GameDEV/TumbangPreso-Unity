@@ -27,6 +27,9 @@ namespace TumbangPreso
         /// at the exact moment the player is in the most danger in the game.
         /// </summary>
         public bool Timed;
+
+        /// <summary>Keep this named effect visible beside a first-person reticle.</summary>
+        public bool ShowWithReticle;
     }
 
     /// <summary>
@@ -181,6 +184,8 @@ namespace TumbangPreso
                         Remaining = kit.Skill1.DurationRemaining,
                         Total = kit.Skill1.Duration,
                         Timed = true,
+                        // The wearer's FPP camera hides the stone ward itself.
+                        ShowWithReticle = kit is DanteHeroKit,
                     });
 
                 if (kit.Skill2 != null && kit.Skill2.IsActive)

@@ -15,22 +15,22 @@ namespace TumbangPreso.Core
         public const float ColdFeetCooldown = 35.0f;
         public const float ColdFeetSeconds = 7.5f;
         /// <summary>The old Permafrost Sheet's radius and aim band, which already sat in the footprint budget.</summary>
-        public const float ColdFeetRadius = 2.3f;
-        public const float ColdFeetMinRange = 1.8f;
+        public const float ColdFeetRadius = 2.5f;
+        public const float ColdFeetMinRange = 0.5f;
         public const float ColdFeetMaxRange = 5.0f;
 
-        /// <summary>FROSTBITE, owner: *"35 Seconds Cooldown"*. The load lasts 10 s (set here).</summary>
+        /// <summary>FROSTBITE, owner: *"35 Seconds Cooldown"*. Current Wiki armed window:15seconds.</summary>
         public const float FrostbiteCooldown = 35.0f;
-        public const float FrostbiteLoadSeconds = 10.0f;
+        public const float FrostbiteLoadSeconds = 15.0f;
 
         /// <summary>GLACIAL WALL, owner: *"takes 3 slipper hits to shatter"*, *"35 Seconds Cooldown"*.
         /// The arc's size and life are set here.</summary>
         public const float GlacialWallCooldown = 35.0f;
         public const int GlacialWallHits = 3;
-        public const float GlacialWallArcLength = 4.2f;
+        public const float GlacialWallArcLength = 5.0f;
         public const float GlacialWallArcRadius = 3.0f;
-        public const float GlacialWallSeconds = 8.0f;
-        public const float GlacialWallMinRange = 1.8f;
+        public const float GlacialWallSeconds = 10.0f;
+        public const float GlacialWallMinRange = 1.5f;
         public const float GlacialWallMaxRange = 4.0f;
 
         /// <summary>ABSOLUTE ZERO, owner: *"12 Objective Points"*; Frozen on everyone, then Chilled.</summary>
@@ -47,6 +47,7 @@ namespace TumbangPreso.Core
 
         /// <summary>BOULDER imbues a held slipper. Legacy rock constants remain for retained assets.</summary>
         public const float BoulderCooldown = 35.0f;
+        public const float BoulderLoadSeconds = 15.0f;
         public const float BoulderSpeed = 14.0f;
         public const float BoulderRollDistance = 2.0f;
         public const float BoulderHitRadius = 0.7f;

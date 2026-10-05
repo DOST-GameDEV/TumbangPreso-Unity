@@ -1,0 +1,26 @@
+{
+  "actualNormalVisibleBoot": true,
+  "noNetworkBootstrapFlags": true,
+  "guestPointerEntry": true,
+  "registeredPasswordLoginProven": false,
+  "publicListThenJoinButton": true,
+  "independentHostPublicAdmissionACK": true,
+  "leaveThenCodeTypedAndJoinButton": true,
+  "independentHostCodeAdmissionACK": true,
+  "actualReadOnlyRules4x30": true,
+  "actualClientReadyButton": true,
+  "naturalMatchId": "3ae8dc265147411d8b54ea9f7f070f26",
+  "actualRounds": 4,
+  "actualDurationSeconds": 119.94305419921875,
+  "fullCanonicalHistorySHA256": "bfd02a8f283308b5848f9a82597b0d908b2f1b90469146efec24fea628e9d441",
+  "independentHostFullHashACK": true,
+  "manualDraftSelectionProven": false,
+  "openingCinematicProven": false,
+  "sustainedMovementProven": false,
+  "skillActivationProven": false,
+  "humanThrows": [
+    0,
+    0
+  ],
+  "all258ArtifactPostHashesUnchanged": true
+}

@@ -106,7 +106,7 @@ namespace TumbangPreso.Abilities
 
             public Boulder()
                 : base("dante_skill2", "BOULDER",
-                       "Imbue your held slipper. Your next throw inflicts Concussed on a player hit: 75% slower for 2.5 s.",
+                       "Imbue your held slipper for 15 s. Your next throw inflicts Concussed on a player hit: 75% slower for 2.5 s.",
                        GeoRules.BoulderCooldown, 0.0f, AbilityGlyph.DanteBoulder,
                        summary: "Imbue your held slipper with Concussed.",
                        castAction: "hero-dante-boulder", viewmodelAction: "boulder-load",
@@ -123,7 +123,7 @@ namespace TumbangPreso.Abilities
                 if (!NetAuthority.ShouldResolve()) return;
                 var shoe = ctx.Carrier?.Held;
                 if (shoe == null || shoe.State != SlipperState.Held || shoe.Holder != ctx.Motor) return;
-                shoe.Affinity = SlipperAffinity.Concussed;
+                shoe.HostLoadTimedAffinity(SlipperAffinity.Concussed, GeoRules.BoulderLoadSeconds);
                 Net.MatchRpc.Instance?.BroadcastSlipperState(shoe);
             }
         }
@@ -220,7 +220,7 @@ namespace TumbangPreso.Abilities
             go.transform.position = origin;
             var b = go.AddComponent<DanteBoulder>();
             b._owner = ownerSlot;
-            b._velocity = Slipper.SolveArc(origin, target, GeoRules.BoulderSpeed);
+            b._velocity = Slipper.SolveArc(origin, target, GeoRules.BoulderSpeed) * GeoRules.BoulderSpeed;
             DanteBoulderVisual.Build(go.transform);
             return b;
         }

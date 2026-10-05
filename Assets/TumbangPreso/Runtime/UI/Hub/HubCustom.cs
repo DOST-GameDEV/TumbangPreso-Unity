@@ -152,6 +152,7 @@ namespace TumbangPreso.UI.Hub
         private float _nextDraw;
         private const int VisibleRooms = 5;
         private readonly List<HubRoom> _drawnRooms = new List<HubRoom>(VisibleRooms);
+        private string _drawnEmptyMessage;
         private int _drawnSource = -1;
 
         public override void Build()
@@ -274,20 +275,22 @@ namespace TumbangPreso.UI.Hub
         {
             if (_source == 2) return;
             var rooms = Hub.Host.Rooms(_source == 1);
+            string emptyMessage = _source == 1
+                ? "No rooms on your network yet. Host one, or join with a code."
+                : Hub.Host.OnlineBrowserMessage;
             int visible = Mathf.Min(rooms.Count, VisibleRooms);
-            bool same = _drawnSource == _source && _drawnRooms.Count == visible;
+            bool same = _drawnSource == _source && _drawnRooms.Count == visible
+                && (visible > 0 || _drawnEmptyMessage == emptyMessage);
             for (int i = 0; same && i < visible; i++) same = _drawnRooms[i].SameListing(rooms[i]);
             if (same) return;
             _drawnSource = _source;
+            _drawnEmptyMessage = emptyMessage;
             _drawnRooms.Clear();
             for (int i = 0; i < visible; i++) _drawnRooms.Add(rooms[i]);
 
             for (int i = _list.childCount - 1; i >= 0; i--)
                 if (_list.GetChild(i) != _empty.transform) Destroy(_list.GetChild(i).gameObject);
-            _empty.text = rooms.Count == 0
-                ? (_source == 1 ? "No rooms on your network yet. Host one, or join with a code."
-                                : "No public rooms yet. Host one, or join with a code.")
-                : "";
+            _empty.text = rooms.Count == 0 ? emptyMessage : "";
             _emptyCan.gameObject.SetActive(rooms.Count == 0);
 
             for (int i = 0; i < visible; i++)

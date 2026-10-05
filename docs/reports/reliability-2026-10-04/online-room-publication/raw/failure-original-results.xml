@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 15:34:55Z" end-time="2026-10-04 15:34:59Z" duration="4.9068937">
+  <test-suite type="TestSuite" id="3065" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1684" result="Failed" site="Child" start-time="2026-10-04 15:34:55Z" end-time="2026-10-04 15:34:59Z" duration="4.906894" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3059" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1684" result="Failed" site="Child" start-time="2026-10-04 15:34:55Z" end-time="2026-10-04 15:34:59Z" duration="4.777001" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10112" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3060" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1684" result="Failed" site="Child" start-time="2026-10-04 15:34:55Z" end-time="2026-10-04 15:34:59Z" duration="4.750909" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3061" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1684" result="Failed" site="Child" start-time="2026-10-04 15:34:55Z" end-time="2026-10-04 15:34:59Z" duration="4.726367" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2102" name="OnlineRoomPublicationProbe" fullname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe" classname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-04 15:34:55Z" end-time="2026-10-04 15:34:59Z" duration="4.610754" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="Ugs" />
+            </properties>
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2104" name="FailedPublicationCannotLeaveASuccessfulGhostRoom" fullname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe.FailedPublicationCannotLeaveASuccessfulGhostRoom" methodname="FailedPublicationCannotLeaveASuccessfulGhostRoom" classname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe" runstate="Runnable" seed="1459104891" result="Failed" start-time="2026-10-04 15:34:55Z" end-time="2026-10-04 15:34:58Z" duration="2.886857" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The room UI reports success although its online code was never registered.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.OnlineRoomPublicationProbe+<FailedPublicationCannotLeaveASuccessfulGhostRoom>d__4.MoveNext () [0x000be] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\OnlineRoomPublicationProbe.cs:77
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] signing in to online services...
+[Net] allocating relay server...
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] relay hosting active, code 5CGN (relay KCQJ69)
+[NetIdentity] Lobby creation failed while the session was live (signed in as Ly4Co6EF7BNOzmQ1HcdJVu3fY0I7). This is not a sign-in problem. [InvalidOperationException: Injected registration refusal]
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+]]></output>
+            </test-case>
+            <test-case id="2105" name="OnlineHostWaitsUntilItsCodeIsPublished" fullname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe.OnlineHostWaitsUntilItsCodeIsPublished" methodname="OnlineHostWaitsUntilItsCodeIsPublished" classname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe" runstate="Runnable" seed="1796906525" result="Failed" start-time="2026-10-04 15:34:58Z" end-time="2026-10-04 15:34:59Z" duration="1.693614" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The creator can share a custom code before it exists online.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.OnlineRoomPublicationProbe+<OnlineHostWaitsUntilItsCodeIsPublished>d__5.MoveNext () [0x0016d] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\OnlineRoomPublicationProbe.cs:98
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] signing in to online services...
+[Net] allocating relay server...
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] relay hosting active, code RQTA (relay MWMKH6)
+[Query] Created UGS Lobby  with JoinCode RQTA
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

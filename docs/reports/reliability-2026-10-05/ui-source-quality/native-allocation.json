@@ -1,0 +1,47 @@
+{
+  "sourceRef": "f198637b824362b55eab785b490e77326e2baf30",
+  "profile": "pc-ui-allocation1005",
+  "filter": "TumbangPreso.Tests.HubShapeAllocationTests",
+  "expectedCases": 2,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-ui-allocation1005",
+    "-runTests",
+    "-testPlatform",
+    "EditMode",
+    "-testFilter",
+    "TumbangPreso.Tests.HubShapeAllocationTests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\ui-quality-owner1005\\native-allocation\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\ui-quality-owner1005\\native-allocation\\editor.log"
+  ],
+  "pid": 15760,
+  "exitCode": 0,
+  "cases": [
+    {
+      "name": "TumbangPreso.Tests.HubShapeAllocationTests.RepeatedAnimatedContoursReuseNoiseAndSeedChangesRemainDeterministic(True)",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.HubShapeAllocationTests.RepeatedAnimatedContoursReuseNoiseAndSeedChangesRemainDeterministic(False)",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "exactCaseCount": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "sourceChanged": [],
+  "protectedCount": 19300,
+  "terminal": true
+}

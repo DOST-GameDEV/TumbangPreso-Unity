@@ -10,6 +10,8 @@
         "UnityEditor.TestRunner",
         "Unity.InputSystem",
         "Unity.Netcode.Runtime",
+        "Unity.Services.Multiplayer",
+        "Unity.Services.Core",
         "Unity.Collections",
         "Unity.Networking.Transport"
     ],

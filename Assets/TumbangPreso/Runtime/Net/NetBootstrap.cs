@@ -52,6 +52,7 @@ namespace TumbangPreso.Net
         public const string LobbySwitch = "-tp-lobby";
         public const string LobbyPortSwitch = "-tp-lobbyport";
         public const string LobbyJoinSwitch = "-tp-lobbyjoin";
+        public const string LobbyOnlineSwitch = "-tp-lobbyonline";
         public const string LobbyChatSwitch = "-tp-lobbychat";
 
         /// <summary>The port this process's lobby auto-hosts on, or 0 for the default.</summary>
@@ -59,6 +60,8 @@ namespace TumbangPreso.Net
 
         /// <summary>An address or join code to press JOIN with once the lobby has settled.</summary>
         public static string LobbyJoin { get; private set; }
+        /// <summary>Explicit review request to open the normal lobby through Relay.</summary>
+        public static bool LobbyOnline { get; private set; }
 
         /// <summary>One line to say once this process is connected.</summary>
         public static string LobbyChat { get; private set; }
@@ -149,6 +152,7 @@ namespace TumbangPreso.Net
                     LobbyPort = lobbyPort;
 
                 LobbyJoin = Value(args, LobbyJoinSwitch);
+                LobbyOnline = Has(args, LobbyOnlineSwitch);
                 LobbyChat = Value(args, LobbyChatSwitch);
 
                 Requested = true;

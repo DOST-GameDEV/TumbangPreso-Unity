@@ -1,0 +1,18 @@
+{
+  "integrated-render-classified-result.json": {
+    "bytes": 284,
+    "sha256": "90572ff99f963270c9fb12d55d96b4c90541a4278e0befb8e344172e5f5c73d1"
+  },
+  "integrated-render-direct-result.json": {
+    "bytes": 68752,
+    "sha256": "7b28e56ea829ceda4aa0d79dd27485b65ae07fbbd041312c7966d8c52df559b6"
+  },
+  "integrated-render-launch.json": {
+    "bytes": 968,
+    "sha256": "f80425b967e24cfa2b9a15eead3dbbffa425378acadcc94ea25aa7a30bb7db69"
+  },
+  "integrated-render-tests.xml": {
+    "bytes": 5111,
+    "sha256": "66e5d7e11254cc876251478b903301434a4a879ed4d2a0314ca11e1b96f01547"
+  }
+}

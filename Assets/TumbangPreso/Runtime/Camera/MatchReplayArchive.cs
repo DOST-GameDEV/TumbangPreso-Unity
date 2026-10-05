@@ -48,10 +48,19 @@ namespace TumbangPreso.CameraSystem
         public void Bind(MatchPoseHistory history)
         {
             if(_history!=null)_history.Sampled-=Sample;
-            _history=history;if(_history!=null)_history.Sampled+=Sample;
+            _history=history;if(_history!=null&&isActiveAndEnabled)_history.Sampled+=Sample;
         }
-        private void OnEnable(){MatchFlair.Presented+=Moment;AudioDirector.WorldCuePlayed+=RecordSound;}
-        private void OnDisable(){MatchFlair.Presented-=Moment;AudioDirector.WorldCuePlayed-=RecordSound;Bind(null);_props.Clear();_desiredProps.Clear();_pending.Clear();_clips.Clear();}
+        private void OnEnable(){Bind(_history);MatchFlair.Presented+=Moment;AudioDirector.WorldCuePlayed+=RecordSound;}
+        private void OnDisable()
+        {
+            MatchFlair.Presented-=Moment;AudioDirector.WorldCuePlayed-=RecordSound;
+            // Keep the selected history owner for recovery, but consume no samples
+            // while disabled. A new capture window must not bridge the missing time.
+            if(_history!=null)_history.Sampled-=Sample;
+            _props.Clear();_desiredProps.Clear();_pending.Clear();_clips.Clear();
+            _sounds.Clear();_fields.Clear();_fieldIds.Clear();_fieldSequence=0;
+            _match=0;_round=0;_unsafeAt=-100;_propsScanAt=0;
+        }
         private void Update()=>CheckIdentity();
         private void CheckIdentity()
         {

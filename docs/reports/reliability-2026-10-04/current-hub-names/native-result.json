@@ -1,0 +1,49 @@
+{
+  "source": "bd97d0e1aa58609e8ffc713213f8849e0875a49e",
+  "protocol": 145,
+  "profile": "pc-current-hub-bd97-1004",
+  "command": [
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\integration-bd97d0e1a-1004\\TumbangPreso.exe",
+    "-force-d3d11",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1920",
+    "-screen-height",
+    "1080",
+    "-tp-framecap",
+    "60",
+    "-tp-profile",
+    "pc-current-hub-bd97-1004",
+    "-tp-uireview",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\integration-names-races1004\\current-hub-player",
+    "-tp-current-hub-review-only",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\integration-names-races1004\\current-hub-player\\player.log"
+  ],
+  "execution": "direct player; no external timeout or memory/admission guard",
+  "pid": 18464,
+  "exitCode": 0,
+  "review": {
+    "passed": true,
+    "error": "",
+    "stages": [
+      "current hub entry",
+      "current hero label BASILIO",
+      "current hero label YASMIN",
+      "current hero label RAGO",
+      "current hero label ISAGANI",
+      "current hero label NEMU",
+      "current hero label SORAYA",
+      "current hero label ILYAS",
+      "current hero label AMIHAN",
+      "current hero label PAETE",
+      "current hub labels and navigation complete"
+    ],
+    "frameWindows": []
+  },
+  "inputRestored": true,
+  "profileRestored": true,
+  "artifactUnchanged": true,
+  "terminal": true
+}

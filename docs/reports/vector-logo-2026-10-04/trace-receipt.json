@@ -1,0 +1,72 @@
+{
+  "source": "C:\\Users\\matth\\Downloads\\TUMP (9).png",
+  "sourceSha256": "897ed8b5cd3f0ac7d2c6463bd586a3ac9ee78dada833f712097337b44cdf78ca",
+  "inkBounds": [
+    340,
+    121,
+    1630,
+    969
+  ],
+  "svgViewBox": [
+    -2,
+    -2,
+    1294,
+    852
+  ],
+  "palette": [
+    [
+      223,
+      212,
+      215
+    ],
+    [
+      187,
+      208,
+      69
+    ],
+    [
+      142,
+      16,
+      38
+    ],
+    [
+      235,
+      131,
+      98
+    ],
+    [
+      222,
+      183,
+      75
+    ],
+    [
+      218,
+      111,
+      90
+    ],
+    [
+      183,
+      50,
+      37
+    ],
+    [
+      221,
+      143,
+      80
+    ],
+    [
+      157,
+      170,
+      74
+    ]
+  ],
+  "pathCount": 38,
+  "embeddedImages": 0,
+  "export": [
+    2048,
+    1348
+  ],
+  "background": "transparent",
+  "tool": "vtracer0.6.15 spline paths; existing Cairo SVG renderer",
+  "svgSha256": "6245985ed0035f1db57a12c51ed17ca597b64fa3618f5f0a67c650b9a400a4b8"
+}

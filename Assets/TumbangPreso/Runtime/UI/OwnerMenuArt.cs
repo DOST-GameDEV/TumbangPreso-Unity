@@ -10,9 +10,7 @@ namespace TumbangPreso.UI
         private static readonly Dictionary<string,Texture2D> Textures=new Dictionary<string,Texture2D>();
         private static readonly Dictionary<string,Sprite> Sprites=new Dictionary<string,Sprite>();
         private static readonly string[] TextureOnly = {
-            "login-background", "main2-background", "main2-sky-mask", "main2-cloud",
-            "main2-shadow", "main2-leaf", "main-ground-mask", "main-sky-cutout",
-            "main-sky-background-data", "cloud-bank-a", "cloud-bank-b"
+            "login-background", "main2-background"
         };
         private static readonly string[] PaintedPieces = {
             "login3-logo", "login3-tabs-track", "login3-tabs-pill", "login3-field-user",

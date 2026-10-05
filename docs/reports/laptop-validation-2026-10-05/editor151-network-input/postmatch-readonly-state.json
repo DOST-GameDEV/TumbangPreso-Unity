@@ -1,0 +1,78 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "caller": "plugin",
+      "skill": "unity-cli",
+      "format": "json",
+      "code": "return new { focused=UnityEngine.Application.isFocused, paused=UnityEditor.EditorApplication.isPaused, background=UnityEngine.Application.runInBackground, scene=UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, actors=System.Array.ConvertAll(UnityEngine.Object.FindObjectsByType<TumbangPreso.CharacterMotor>(UnityEngine.FindObjectsSortMode.None),m=>new { slot=m.PlayerSlot, mode=m.Mode.ToString(), reader=m.GetComponent<TumbangPreso.PlayerInputReader>()?.enabled, parked=m.Intent.Parked, canAct=m.CanAct(), hero=m.AbilitySystem?.HeroId, kit=m.AbilitySystem?.Kit?.GetType().Name, signature=m.AbilitySystem?.LastAnswer(TumbangPreso.Abilities.HeroAbilitySystem.Slot.Skill1).ToString(), roleSkill=m.AbilitySystem?.LastAnswer(TumbangPreso.Abilities.HeroAbilitySystem.Slot.Skill2).ToString() }) };"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "focused": true,
+        "paused": false,
+        "background": true,
+        "scene": "Eskinita",
+        "actors": [
+          {
+            "slot": 2,
+            "mode": "HeroStrike",
+            "reader": null,
+            "parked": true,
+            "canAct": false,
+            "hero": "rafi",
+            "kit": "RafiHeroKit",
+            "signature": "Cast",
+            "roleSkill": "CannotAct"
+          },
+          {
+            "slot": 3,
+            "mode": "HeroStrike",
+            "reader": null,
+            "parked": true,
+            "canAct": false,
+            "hero": "dante",
+            "kit": "DanteHeroKit",
+            "signature": "Missing",
+            "roleSkill": "Cast"
+          },
+          {
+            "slot": 1,
+            "mode": "HeroStrike",
+            "reader": null,
+            "parked": true,
+            "canAct": false,
+            "hero": "dante",
+            "kit": "DanteHeroKit",
+            "signature": "Missing",
+            "roleSkill": "Missing"
+          },
+          {
+            "slot": 0,
+            "mode": "HeroStrike",
+            "reader": true,
+            "parked": true,
+            "canAct": false,
+            "hero": "dante",
+            "kit": "DanteHeroKit",
+            "signature": "Missing",
+            "roleSkill": "Missing"
+          }
+        ]
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

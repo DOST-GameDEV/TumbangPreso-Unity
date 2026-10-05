@@ -6,7 +6,7 @@ namespace TumbangPreso.Visual
     public sealed partial class HeroIntroductionScene
     {
         // =========================================================================================
-        // RAFI, BREAKWATER, 3.4 s. plan.md § 7.
+        // ILYAS, BREAKWATER, 3.4 s. plan.md § 7.
         //
         // "Draws you into the wrong current. Leaves with his slipper." He grew up in a Sama Dilaut
         // community in Tawi-Tawi where the playing deck was also the way home (BADJAO_EXPANSION.md),
@@ -36,8 +36,11 @@ namespace TumbangPreso.Visual
             }
             for (int i = 0; i < 3; i++) _ripples.Add(Add("FalseStepRipple" + i, VfxShapes.Collar(24, .02f, .82f), new Color(.6f, .9f, .92f, .7f)));
             for (int i = 0; i < 4; i++) _currents.Add(Add("GatheredCurrent" + i, WaterRibbon(), new Color(.25f, .67f, .78f, .5f)));
-            _wave = Add("BreakwaterWave", ArcWallMesh(18, 120), new Color(.16f, .55f, .62f, .64f));
+            _wave = Add("BreakwaterWave", ArcWallMesh(18, 120), Color.white);
+            _pieces[_wave].Renderer.sharedMaterial.SetFloat("_UseVertexColour", 1);
+            _pieces[_wave].Renderer.sharedMaterial.SetFloat("_UseVertexTint", 1);
             _waveCrest = Add("BreakwaterCrest", ArcCrestMesh(18, 120), new Color(.88f, .97f, .96f, .9f));
+            _pieces[_waveCrest].Renderer.sharedMaterial.SetFloat("_UseVertexTint", 1);
             for (int i = 0; i < 6; i++) _spray.Add(Add("SendSpray" + i, VfxShapes.TwoSided(VfxShapes.Splat(8, .3f, 60 + i)), new Color(.85f, .96f, .95f, .85f), plain: true));
         }
 
@@ -45,43 +48,54 @@ namespace TumbangPreso.Visual
         private static Mesh ArcWallMesh(int sides, float arcDegrees)
         {
             var mesh=new Mesh {name="Ilyas rolled wave"};
-            float[] heights={0,.42f,.75f,.96f,1};
-            float[] radii={1,1.015f,.93f,.78f,.62f};
-            var vertices=new Vector3[(sides+1)*5];var uv=new Vector2[vertices.Length];
-            var triangles=new int[sides*4*6];int at=0;
+            float[] heights={0,.34f,.70f,.94f,1,.93f,.79f};
+            float[] radii={1,.99f,.90f,.74f,.53f,.45f,.56f};
+            Color[] bands={new Color(.10f,.34f,.38f,.08f),new Color(.12f,.45f,.49f,.25f),
+                new Color(.16f,.58f,.61f,.40f),new Color(.35f,.73f,.72f,.50f),
+                new Color(.72f,.91f,.84f,.72f),new Color(.48f,.79f,.76f,.48f),new Color(.16f,.53f,.57f,.18f)};
+            const int rows=7;
+            var vertices=new Vector3[(sides+1)*rows];var uv=new Vector2[vertices.Length];var colours=new Color[vertices.Length];
+            var triangles=new int[sides*(rows-1)*6];int at=0;
             for(int i=0;i<=sides;i++)
             {
                 float u=i/(float)sides,a=Mathf.Deg2Rad*(180-arcDegrees*.5f+arcDegrees*u);
                 var rim=new Vector3(Mathf.Sin(a),0,Mathf.Cos(a));
-                for(int row=0;row<5;row++)
+                for(int row=0;row<rows;row++)
                 {
-                    vertices[i*5+row]=rim*radii[row]+Vector3.up*heights[row];
-                    uv[i*5+row]=new Vector2(u,heights[row]);
-                    if(i==sides||row==4)continue;
-                    int n=i*5+row,w=n+5;
+                    vertices[i*rows+row]=rim*radii[row]+Vector3.up*(heights[row]*WaveLipHeight(u));
+                    uv[i*rows+row]=new Vector2(u,heights[row]);
+                    colours[i*rows+row]=bands[row];
+                    colours[i*rows+row].a*=Mathf.Sin(Mathf.PI*u);
+                    if(i==sides||row==rows-1)continue;
+                    int n=i*rows+row,w=n+rows;
                     // RafiWater is Cull Off: one winding, not two coplanar draws.
                     triangles[at++]=n;triangles[at++]=w;triangles[at++]=n+1;
                     triangles[at++]=w;triangles[at++]=w+1;triangles[at++]=n+1;
                 }
             }
-            mesh.vertices=vertices;mesh.uv=uv;mesh.triangles=triangles;
+            mesh.vertices=vertices;mesh.colors=colours;mesh.uv=uv;mesh.triangles=triangles;
             mesh.RecalculateNormals();mesh.RecalculateBounds();return mesh;
         }
+        private static float WaveLipHeight(float u)
+            => 1-.44f*Mathf.Pow(Mathf.Abs(2*u-1),1.5f)+.045f*Mathf.Sin(u*Mathf.PI*5);
+
         private static Mesh ArcCrestMesh(int sides,float arcDegrees)
         {
             var mesh=new Mesh {name="Ilyas rolled crest"};
-            var vertices=new Vector3[(sides+1)*2];var triangles=new int[sides*6];
+            var vertices=new Vector3[(sides+1)*2];var triangles=new int[sides*6];var colours=new Color[vertices.Length];
             for(int i=0;i<=sides;i++)
             {
                 float a=Mathf.Deg2Rad*(180-arcDegrees*.5f+arcDegrees*i/sides);
                 var rim=new Vector3(Mathf.Sin(a),0,Mathf.Cos(a));
-                vertices[i*2]=rim*.70f+Vector3.up*.985f;
-                vertices[i*2+1]=rim*.62f+Vector3.up;
+                float u=i/(float)sides,height=WaveLipHeight(u);
+                colours[i*2]=colours[i*2+1]=new Color(1,1,1,Mathf.Sin(Mathf.PI*u));
+                vertices[i*2]=rim*.55f+Vector3.up*(height*.998f);
+                vertices[i*2+1]=rim*.49f+Vector3.up*(height*.97f);
                 if(i==sides)continue;int n=i*2,t=i*6;
                 triangles[t]=n;triangles[t+1]=n+2;triangles[t+2]=n+1;
                 triangles[t+3]=n+2;triangles[t+4]=n+3;triangles[t+5]=n+1;
             }
-            mesh.vertices=vertices;mesh.triangles=triangles;mesh.RecalculateNormals();mesh.RecalculateBounds();return mesh;
+            mesh.vertices=vertices;mesh.colors=colours;mesh.triangles=triangles;mesh.RecalculateNormals();mesh.RecalculateBounds();return mesh;
         }
 
         private void SampleRafi(float t)

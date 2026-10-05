@@ -146,6 +146,7 @@ namespace TumbangPreso.Net
         private readonly Dictionary<string, Entry> _seen = new Dictionary<string, Entry>();
         private string _lastSignature = "";
         private bool _browsing;
+        private long _browseGeneration;
         private float _sinceQuery;
         private float _sinceHeartbeat;
         private string _activeHostLobbyId;
@@ -172,19 +173,26 @@ namespace TumbangPreso.Net
         private Func<string, Task> _deleteHostedDispatch;
         private long _hostLobbyRequest;
         private TaskCompletionSource<string> _hostLobbyCreation;
+        private Task _hostUpdateTask;
+        private UpdateLobbyOptions _pendingHostedUpdate;
 
         public IEnumerable<Entry> Servers => _seen.Values;
+        public string HostedLobbyProblem { get; private set; } = "";
+        public string OnlineBrowserMessage { get; private set; } = "Finding public rooms...";
 
         public void StartBrowsing()
         {
             if (_browsing) return;
 
+            _browseGeneration++;
             _browsing = true;
+            OnlineBrowserMessage = "Finding public rooms...";
             _sinceQuery = QueryInterval; // Query immediately
         }
 
         public void StopBrowsing()
         {
+            _browseGeneration++;
             _browsing = false;
             lock (_seen)
             {
@@ -222,18 +230,28 @@ namespace TumbangPreso.Net
         /// <summary>
         /// Queries public UGS Lobbies and updates the visible list.
         /// </summary>
-        public async Task RefreshOnlineLobbiesAsync()
+        public Task RefreshOnlineLobbiesAsync()
+            => RefreshOnlineLobbiesWithDispatchAsync(() => NetIdentity.EnsureSignedInAsync(), QueryLobbiesSpacedAsync);
+
+        private async Task RefreshOnlineLobbiesWithDispatchAsync(Func<Task<bool>> authenticate,
+            Func<QueryLobbiesOptions, Task<QueryResponse>> query)
         {
             if (_queryInFlight) return;
             _queryInFlight = true;
+            long generation = _browseGeneration;
 
             try
             {
                 // ⚠ SILENT ON PURPOSE. The reason online is unavailable was logged once, at
                 // boot, by NetIdentity itself. This call awaits that same settled attempt, so
                 // logging here again is what turned one situation into 21 identical warnings.
-                bool authOk = await NetIdentity.EnsureSignedInAsync();
-                if (!authOk) return;
+                bool authOk = await authenticate();
+                if (generation != _browseGeneration) return;
+                if (!authOk)
+                {
+                    OnlineBrowserMessage = "Online services are unavailable. Check your connection and try again.";
+                    return;
+                }
 
                 var options = new QueryLobbiesOptions
                 {
@@ -244,11 +262,13 @@ namespace TumbangPreso.Net
                     }
                 };
 
-                QueryResponse response = await QueryLobbiesSpacedAsync(options);
+                QueryResponse response = await query(options);
+                if (generation != _browseGeneration) return;
                 var freshIds = new HashSet<string>();
 
                 if (response?.Results != null)
                 {
+                    OnlineBrowserMessage = "No public rooms yet. Host one, or join with a code.";
                     lock (_seen)
                     {
                         foreach (var lobby in response.Results)
@@ -342,6 +362,8 @@ namespace TumbangPreso.Net
             }
             catch (Exception e)
             {
+                if (generation == _browseGeneration)
+                    OnlineBrowserMessage = "Could not check online rooms. Retrying...";
                 NetIdentity.ReportServiceCallFailed("Lobby query", e);
             }
             finally
@@ -475,6 +497,7 @@ namespace TumbangPreso.Net
             if (_hostLobbyCreation != null || !string.IsNullOrEmpty(_activeHostLobbyId))
                 _ = DeleteHostedLobbyAsync();
             long request = ++_hostLobbyRequest;
+            HostedLobbyProblem = "";
             var completion = new TaskCompletionSource<string>();
             _hostLobbyCreation = completion;
             string createdId = null;
@@ -551,6 +574,7 @@ namespace TumbangPreso.Net
             }
             catch (Exception e)
             {
+                if (this != null && request == _hostLobbyRequest) HostedLobbyProblem = e.Message;
                 NetIdentity.ReportServiceCallFailed("Lobby creation", e);
                 return null;
             }
@@ -613,13 +637,37 @@ namespace TumbangPreso.Net
                     }
                 };
 
-                await (_updateHostedDispatch == null
-                    ? LobbyService.Instance.UpdateLobbyAsync(_activeHostLobbyId, options)
-                    : _updateHostedDispatch(_activeHostLobbyId, options));
+                // One writer per room: a slow older response must not overwrite newer
+                // counts. While it is in flight, retain only the latest complete advert.
+                _pendingHostedUpdate = options;
+                if (_hostUpdateTask == null || _hostUpdateTask.IsCompleted)
+                    _hostUpdateTask = PublishHostedUpdatesAsync(_activeHostLobbyId, _hostLobbyRequest);
+                await _hostUpdateTask;
             }
             catch (Exception e)
             {
                 NetIdentity.ReportServiceCallFailed("Lobby update", e);
+            }
+        }
+
+        private async Task PublishHostedUpdatesAsync(string lobbyId, long request)
+        {
+            while (this != null && request == _hostLobbyRequest &&
+                   lobbyId == _activeHostLobbyId && _pendingHostedUpdate != null)
+            {
+                var options = _pendingHostedUpdate;
+                _pendingHostedUpdate = null;
+                try
+                {
+                    await (_updateHostedDispatch == null
+                        ? LobbyService.Instance.UpdateLobbyAsync(lobbyId, options)
+                        : _updateHostedDispatch(lobbyId, options));
+                }
+                catch (Exception e)
+                {
+                    if (this != null && request == _hostLobbyRequest)
+                        NetIdentity.ReportServiceCallFailed("Lobby update", e);
+                }
             }
         }
 
@@ -652,6 +700,10 @@ namespace TumbangPreso.Net
             ++_hostLobbyRequest;
             _hostLobbyCreation = null;
             _activeHostLobbyId = null;
+            // A replacement room starts its own writer; the retired writer can
+            // finish its issued request but cannot drain this room's pending state.
+            _hostUpdateTask = null;
+            _pendingHostedUpdate = null;
             _creatingLobby = false;
             _hasPendingCounts = false;
             if (string.IsNullOrEmpty(id) && creation != null) id = await creation.Task;
@@ -678,6 +730,7 @@ namespace TumbangPreso.Net
                 {
                     sb.Append($"{e.Id}:{e.Name}:{e.JoinCode}:{e.Seated}/{e.Occupied}/{e.Capacity}:{e.InProgress};");
                     sb.Append($"{e.RelayCode}:{e.PoolKey}:{e.SkillContract}:{e.HostPlayerId}:{e.BandLow}/{e.BandHigh}/{e.SeatLow}/{e.SeatHigh}:{e.Backfill};");
+                    sb.Append($"{e.Map}:{e.Visibility};");
                 }
             }
 

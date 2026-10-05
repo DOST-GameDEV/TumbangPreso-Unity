@@ -1,0 +1,15 @@
+{
+  "protocol": 149,
+  "baseSource": "1ca81f8ed7a68040e30a7979eb6fcf9f0104c793",
+  "optInDiagnosticDelta": "NetPersonalBuffProbe vine case; same production gameplay source",
+  "runtime": {
+    "path": "TumpQA_Data/Managed/TumbangPreso.Runtime.dll",
+    "bytes": 3936768,
+    "sha256": "32f2d1ab0010a095fc67ff62c18d8232757f6ed450e0297a5433f5375407cbdf"
+  },
+  "files": 254,
+  "bytes": 2601719022,
+  "nativeBuildExit": 0,
+  "buildSeconds": 120.5,
+  "scope": "Linux x86_64, three separate processes on loopback. Not separate physical machines or WAN."
+}

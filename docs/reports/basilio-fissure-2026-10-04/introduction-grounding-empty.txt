@@ -1,0 +1,5 @@
+Private body studies. Ground clearance uses the existing motion-strip deformed-vertex audit.
+[dante] bake space: already scaled (renderer box 1.868 m, baked spans 1.868 and 4.447; rest pose sits at 0.000 m against a floor at 0)
+[dante] visual-only study; retained theme started=False. No audio acceptance.
+dante: clearance -0.00072 to 0.00062 metres
+dante: maximum held-shoe vertices inside rigid head surfaces: 0

@@ -1,0 +1,32 @@
+{
+  "sourceRef": "d28545db929c4a26d05f6dce0e95841d00d18eea",
+  "pid": 9168,
+  "profile": "pc-look-cand1005",
+  "filter": "TumbangPreso.PlayTests.HeroQuickTapTests.MenuClosureDiscardsLateTouchLookInItsFrame;TumbangPreso.PlayTests.HeroQuickTapTests.MenuClosureDefersHeldStickLookForOnlyItsFrame;TumbangPreso.PlayTests.HeroQuickTapTests.OrdinaryTouchLookStillReachesGameplay",
+  "expectedCases": 3,
+  "exitCode": 0,
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.HeroQuickTapTests.MenuClosureDefersHeldStickLookForOnlyItsFrame",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.HeroQuickTapTests.MenuClosureDiscardsLateTouchLookInItsFrame",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.HeroQuickTapTests.OrdinaryTouchLookStillReachesGameplay",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "exactCaseCount": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "terminal": true,
+  "protectedCount": 19284
+}

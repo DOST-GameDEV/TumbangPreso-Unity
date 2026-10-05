@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 15:48:45Z" end-time="2026-10-04 15:48:55Z" duration="10.3262978">
+  <test-suite type="TestSuite" id="3067" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1686" result="Passed" start-time="2026-10-04 15:48:45Z" end-time="2026-10-04 15:48:55Z" duration="10.326298" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3061" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1686" result="Passed" start-time="2026-10-04 15:48:45Z" end-time="2026-10-04 15:48:55Z" duration="10.298616" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="4852" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3062" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1686" result="Passed" start-time="2026-10-04 15:48:45Z" end-time="2026-10-04 15:48:55Z" duration="10.279534" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3063" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1686" result="Passed" start-time="2026-10-04 15:48:45Z" end-time="2026-10-04 15:48:55Z" duration="10.262198" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <output><![CDATA[[NetIdentity] Signed in to UGS as O3gQMstmEq3dja0nVPRxZWlMaFf1 on profile pc-room-isolated1004. Relay and Lobby are available.
+]]></output>
+          <test-suite type="TestFixture" id="2102" name="OnlineRoomPublicationProbe" fullname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe" classname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-04 15:48:45Z" end-time="2026-10-04 15:48:55Z" duration="10.128226" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="Ugs" />
+            </properties>
+            <test-case id="2107" name="DirectLanHostStillAdvertisesItsReachableAddress" fullname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe.DirectLanHostStillAdvertisesItsReachableAddress" methodname="DirectLanHostStillAdvertisesItsReachableAddress" classname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe" runstate="Runnable" seed="835946361" result="Passed" start-time="2026-10-04 15:48:45Z" end-time="2026-10-04 15:48:45Z" duration="0.566980" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 49171, join code DJ8F
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+]]></output>
+            </test-case>
+            <test-case id="2104" name="FailedPublicationCannotLeaveASuccessfulGhostRoom" fullname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe.FailedPublicationCannotLeaveASuccessfulGhostRoom" methodname="FailedPublicationCannotLeaveASuccessfulGhostRoom" classname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe" runstate="Runnable" seed="1265221999" result="Passed" start-time="2026-10-04 15:48:45Z" end-time="2026-10-04 15:48:48Z" duration="2.330174" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] signing in to online services...
+[Net] allocating relay server...
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] publishing the online room...
+[NetIdentity] Lobby creation failed while the session was live (signed in as O3gQMstmEq3dja0nVPRxZWlMaFf1). This is not a sign-in problem. [InvalidOperationException: Injected registration refusal]
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] Could not publish the online room. Injected registration refusal
+]]></output>
+            </test-case>
+            <test-case id="2105" name="OnlineHostWaitsUntilItsCodeIsPublished" fullname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe.OnlineHostWaitsUntilItsCodeIsPublished" methodname="OnlineHostWaitsUntilItsCodeIsPublished" classname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe" runstate="Runnable" seed="1327965221" result="Passed" start-time="2026-10-04 15:48:48Z" end-time="2026-10-04 15:48:49Z" duration="1.556019" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] signing in to online services...
+[Net] allocating relay server...
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] publishing the online room...
+[Query] Created UGS Lobby owned-delayed-fixture with JoinCode 9DSM
+[Net] relay hosting active, code 9DSM (relay FQKR6K)
+[Query] Deleted UGS Lobby owned-delayed-fixture
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+]]></output>
+            </test-case>
+            <test-case id="2106" name="RelayHostDoesNotOfferAnUnreachableDirectLanAddress" fullname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe.RelayHostDoesNotOfferAnUnreachableDirectLanAddress" methodname="RelayHostDoesNotOfferAnUnreachableDirectLanAddress" classname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe" runstate="Runnable" seed="313950913" result="Passed" start-time="2026-10-04 15:48:49Z" end-time="2026-10-04 15:48:51Z" duration="2.107072" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] signing in to online services...
+[Net] allocating relay server...
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] publishing the online room...
+[Query] Created UGS Lobby hbRVxfAmdDezozhy8h2GkY with JoinCode AQM2
+[Net] relay hosting active, code AQM2 (relay M6PNFC)
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+]]></output>
+            </test-case>
+            <test-case id="2103" name="RelayRoomPublishesTheCodeAndPublicListing" fullname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe.RelayRoomPublishesTheCodeAndPublicListing" methodname="RelayRoomPublishesTheCodeAndPublicListing" classname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe" runstate="Runnable" seed="447868410" result="Passed" start-time="2026-10-04 15:48:51Z" end-time="2026-10-04 15:48:55Z" duration="3.543368" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] signing in to online services...
+[Net] allocating relay server...
+[Query] Deleted UGS Lobby hbRVxfAmdDezozhy8h2GkY
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] publishing the online room...
+[Query] Created UGS Lobby oKowjQBPLRJqSHUz9dU7fY with JoinCode TW5Z
+[Net] relay hosting active, code TW5Z (relay T6HWTC)
+[RoomPublication] host=True status=relay hosting active, code TW5Z (relay T6HWTC)
+[RoomPublication] code=TW5Z id=oKowjQBPLRJqSHUz9dU7fY onlineLookup=1 public=True
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

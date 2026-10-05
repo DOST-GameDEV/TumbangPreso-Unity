@@ -1,0 +1,57 @@
+{
+  "sourceRef": "bff14e59ee69c28c5c35ae60e37fdede7566ef9a",
+  "profile": "pc-relay-timeout-orig-correct1005",
+  "filter": "TumbangPreso.Tests.RelayJoinTimeoutTests",
+  "expectedCases": 4,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-relay-timeout-orig-correct1005",
+    "-runTests",
+    "-testPlatform",
+    "EditMode",
+    "-testFilter",
+    "TumbangPreso.Tests.RelayJoinTimeoutTests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\relay-join-timeout1005\\original-corrected-native\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\relay-join-timeout1005\\original-corrected-native\\editor.log"
+  ],
+  "pid": 10952,
+  "exitCode": 2,
+  "cases": [
+    {
+      "name": "TumbangPreso.Tests.RelayJoinTimeoutTests.AlreadySuccessfulRequestDoesNotRepeat",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.RelayJoinTimeoutTests.ExpiredCodeIsNotRetriedOrReclassifiedAsTimeout",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.RelayJoinTimeoutTests.TransientTimeoutThenSuccessKeepsTheCurrentAttempt(NetworkError)",
+      "result": "Failed",
+      "message": "Unity.Services.Relay.RelayServiceException : Request timeout"
+    },
+    {
+      "name": "TumbangPreso.Tests.RelayJoinTimeoutTests.TransientTimeoutThenSuccessKeepsTheCurrentAttempt(RequestTimeOut)",
+      "result": "Failed",
+      "message": "Unity.Services.Relay.RelayServiceException : Request timeout"
+    }
+  ],
+  "exactCaseCount": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "sourceChanged": [],
+  "protectedCount": 19294,
+  "terminal": true
+}

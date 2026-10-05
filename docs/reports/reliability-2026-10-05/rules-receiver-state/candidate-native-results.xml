@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 00:14:03Z" end-time="2026-10-05 00:14:04Z" duration="0.1795669">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1345" result="Passed" start-time="2026-10-05 00:14:03Z" end-time="2026-10-05 00:14:04Z" duration="0.179567" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2657" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1345" result="Passed" start-time="2026-10-05 00:14:03Z" end-time="2026-10-05 00:14:04Z" duration="0.151697" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22780" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2658" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1345" result="Passed" start-time="2026-10-05 00:14:03Z" end-time="2026-10-05 00:14:04Z" duration="0.133265" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2659" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1345" result="Passed" start-time="2026-10-05 00:14:03Z" end-time="2026-10-05 00:14:04Z" duration="0.115645" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2328" name="RulesReceiverStateTests" fullname="TumbangPreso.Tests.RulesReceiverStateTests" classname="TumbangPreso.Tests.RulesReceiverStateTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-05 00:14:03Z" end-time="2026-10-05 00:14:04Z" duration="0.084888" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2332" name="AnotherPeerCannotChangeRules" fullname="TumbangPreso.Tests.RulesReceiverStateTests.AnotherPeerCannotChangeRules" methodname="AnotherPeerCannotChangeRules" classname="TumbangPreso.Tests.RulesReceiverStateTests" runstate="Runnable" seed="1108246599" result="Passed" start-time="2026-10-05 00:14:03Z" end-time="2026-10-05 00:14:04Z" duration="0.059514" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2333" name="EmptyPacketCannotChangeRules" fullname="TumbangPreso.Tests.RulesReceiverStateTests.EmptyPacketCannotChangeRules" methodname="EmptyPacketCannotChangeRules" classname="TumbangPreso.Tests.RulesReceiverStateTests" runstate="Runnable" seed="1441565480" result="Passed" start-time="2026-10-05 00:14:04Z" end-time="2026-10-05 00:14:04Z" duration="0.001270" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2331" name="HostRulesUpdateStateBeforeNotifyingViewsWithoutSavingLocalPreferences" fullname="TumbangPreso.Tests.RulesReceiverStateTests.HostRulesUpdateStateBeforeNotifyingViewsWithoutSavingLocalPreferences" classname="TumbangPreso.Tests.RulesReceiverStateTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-05 00:14:04Z" end-time="2026-10-05 00:14:04Z" duration="0.007348" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2329" name="HostRulesUpdateStateBeforeNotifyingViewsWithoutSavingLocalPreferences(HeroStrike,4,30)" fullname="TumbangPreso.Tests.RulesReceiverStateTests.HostRulesUpdateStateBeforeNotifyingViewsWithoutSavingLocalPreferences(HeroStrike,4,30)" methodname="HostRulesUpdateStateBeforeNotifyingViewsWithoutSavingLocalPreferences" classname="TumbangPreso.Tests.RulesReceiverStateTests" runstate="Runnable" seed="2121261256" result="Passed" start-time="2026-10-05 00:14:04Z" end-time="2026-10-05 00:14:04Z" duration="0.003921" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2330" name="HostRulesUpdateStateBeforeNotifyingViewsWithoutSavingLocalPreferences(Classic,6,45)" fullname="TumbangPreso.Tests.RulesReceiverStateTests.HostRulesUpdateStateBeforeNotifyingViewsWithoutSavingLocalPreferences(Classic,6,45)" methodname="HostRulesUpdateStateBeforeNotifyingViewsWithoutSavingLocalPreferences" classname="TumbangPreso.Tests.RulesReceiverStateTests" runstate="Runnable" seed="1332967860" result="Passed" start-time="2026-10-05 00:14:04Z" end-time="2026-10-05 00:14:04Z" duration="0.000523" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2334" name="ListenHostIgnoresItsOwnRulesMessage" fullname="TumbangPreso.Tests.RulesReceiverStateTests.ListenHostIgnoresItsOwnRulesMessage" methodname="ListenHostIgnoresItsOwnRulesMessage" classname="TumbangPreso.Tests.RulesReceiverStateTests" runstate="Runnable" seed="1881886253" result="Passed" start-time="2026-10-05 00:14:04Z" end-time="2026-10-05 00:14:04Z" duration="0.000669" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

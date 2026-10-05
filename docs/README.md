@@ -1,5 +1,19 @@
 # Documentation: Start Here
 
+Real editor online lifetime: [Play-session mismatch and focused correction](reports/reliability-2026-10-05/editor-online-lifetime/README.md).
+
+Browser feedback and editable text: [native correction evidence](reports/reliability-2026-10-05/browser-and-editable-text/README.md).
+
+Current Windows UI/public and code joins: [actual player evidence](reports/reliability-2026-10-05/current-ui-online151/README.md).
+
+Network shutdown origin: [native lifecycle evidence](reports/reliability-2026-10-05/network-shutdown-origin/README.md).
+
+Menu text and future import guards: [native evidence and limits](reports/reliability-2026-10-05/ui-text-quality/README.md).
+
+UI source quality: [native viewport, import and allocation evidence](reports/reliability-2026-10-05/ui-source-quality/README.md).
+
+Current-source Paete Linux player and impaired transport: [build provenance and peer checks](reports/paete-current-player-2026-10-05/README.md).
+
 Owner follow-up readiness: [real ability and HUD-state correction](reports/power-recast-readiness-2026-10-04/README.md).
 
 First-person source-mesh preservation: [ownership correction and native evidence](reports/viewmodel-mesh-ownership-2026-10-04/README.md).

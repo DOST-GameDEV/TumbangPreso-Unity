@@ -49,6 +49,19 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(30000)]
         public IEnumerator NemuDoesNotRepeatHisRevealedTransformation()
             => Profiles(new[] { "nemu" });
+        [UnityTest, Timeout(90000)]
+        public IEnumerator RagoCurrentIntroductionReturnsToHisLiveAbility()
+            => Profiles(new[] { "sean" });
+        [UnityTest, Timeout(90000)]
+        public IEnumerator BasilioCurrentIntroductionReturnsToHisLiveAbility()
+            => Profiles(new[] { "dante" });
+        [UnityTest, Timeout(90000)]
+        public IEnumerator YasminCurrentIntroductionReturnsToHerLiveAbility()
+            => Profiles(new[] { "cheska" });
+        [UnityTest, Timeout(90000)]
+        public IEnumerator IlyasCurrentIntroductionReturnsToHisLiveAbility()
+            => Profiles(new[] { "rafi" });
+
         private static IEnumerator Profiles(string[] heroes)
         {
             foreach (string hero in heroes)
@@ -78,11 +91,36 @@ namespace TumbangPreso.PlayTests
                 Assert.IsTrue(ultimate.ReservedForIntroduction);Assert.AreEqual(0,ultimate.WindupRemaining);
                 Assert.IsNotNull(GameObject.Find("UltimateScene").GetComponent<UnityEngine.UI.RawImage>().texture,hero+" fell back because its prepared clip was missing.");
                 yield return new WaitForSecondsRealtime(.7f);
+                // Capture the phase's actual rendered target synchronously. The generic
+                // screenshot helper yields layout frames and can outlast a short intro.
+                var picture=GameObject.Find("UltimateScene").GetComponent<UnityEngine.UI.RawImage>();
+                Assert.IsTrue(picture.enabled,hero+" created a texture but never displayed its cinematic. "+UltimatePhaseView.LastShotReport);
+                var frame=(RenderTexture)picture.texture;
+                var previousTarget=RenderTexture.active;
+                var pixels=new Texture2D(frame.width,frame.height,TextureFormat.RGB24,false);
+                try
+                {
+                    RenderTexture.active=frame;
+                    pixels.ReadPixels(new Rect(0,0,frame.width,frame.height),0,0);pixels.Apply();
+                    string folder=System.Environment.GetEnvironmentVariable("TUMP_EVIDENCE")??"Logs/shared-six-v1";
+                    System.IO.Directory.CreateDirectory(folder);
+                    System.IO.File.WriteAllBytes(System.IO.Path.Combine(folder,hero+"-actual-phase-frame.png"),pixels.EncodeToPNG());
+                }
+                finally{RenderTexture.active=previousTarget;Object.Destroy(pixels);}
                 yield return GameplayShots.Render(Camera.main,hero+"-live-introduction",true,outDir:"Logs/shared-six-v1");
                 until=Time.realtimeSinceStartup+4;
                 while(phase.Active&&Time.realtimeSinceStartup<until)yield return null;
                 Assert.IsFalse(phase.Active);Assert.IsFalse(PresentationClock.Held);
-                Assert.IsFalse(ultimate.ReservedForIntroduction);Assert.IsTrue(ultimate.IsWindingUp||ultimate.IsActive);
+                Assert.IsFalse(ultimate.ReservedForIntroduction);
+                if(hero=="rafi")
+                {
+                    // Baha activates instantly into its host-owned moving field;
+                    // unlike the older six profiles it has no ability-duration timer.
+                    var flood=RafiWaterField.Active.SingleOrDefault(f=>f!=null&&f.Capture().Type==TumbangPreso.Net.WorldEffectSnapshot.Kind.Baha&&f.Capture().Owner==actor.PlayerSlot);
+                    Assert.IsNotNull(flood,"Ilyas must create his actual owned Baha field after the introduction.");
+                    Assert.Greater(flood.Remaining,0);
+                }
+                else Assert.IsTrue(ultimate.IsWindingUp||ultimate.IsActive);
                 float revealedScale=0;
                 if(hero=="nemu")
                 {

@@ -1,5 +1,6 @@
 using System;
 using TumbangPreso.Core;
+using TumbangPreso.UI.Hub;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,26 +8,34 @@ namespace TumbangPreso.UI
 {
     public sealed partial class CustomGameScreen
     {
+        private bool _slateRules;
         private void BuildOwnerRules()
         {
             _ownerRules = true;
+            _slateRules = true;
             _canvas = OwnerUiLayout.Canvas(transform, "OwnerCustomGameCanvas", SortingOrder);
             _root = OwnerUiLayout.Rect(_canvas.transform, "CustomGameRoot").gameObject; OwnerUiLayout.Fill((RectTransform)_root.transform);
             var ground = OwnerUiLayout.Rect(_root.transform, "MatchSlateGround").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Fill(ground.rectTransform); ground.color = new Color32(223, 219, 170, 255); ground.raycastTarget = false;
+            OwnerUiLayout.Fill(ground.rectTransform); ground.color = HubStyle.Maroon; ground.raycastTarget = false;
             var design = OwnerUiLayout.DesignArea(_root.transform, "CustomRulesComposition");
-            OwnerTextAction.CreateBack(design, "CustomRulesBack", Close, 57, 24);
+            var back = OwnerTextAction.CreateBack(design, "CustomRulesBack", Close, 57, 24);
+            back.GetComponentInChildren<OwnerUiGlyph>().color = HubStyle.Honey;
             var title = OwnerUiLayout.Text(design, "CustomRulesTitle", "CUSTOM MATCH", 64, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(title.rectTransform, 96, 106, 1697, 103);
+            title.color = HubStyle.Paper;
             _headline = OwnerUiLayout.Text(design, "RulesHeadline", "", 29);
-            OwnerUiLayout.Place(_headline.rectTransform, 98, 211, 1720, 68); _headline.color = OwnerUiTheme.Current.EnteredInk;
+            OwnerUiLayout.Place(_headline.rectTransform, 98, 211, 1720, 68); _headline.color = HubStyle.Honey;
             _ownerMatchTab = OwnerTextAction.Create(design, "MatchRulesTab", "THE MATCH", () => ShowOwnerRulesPage(false), 98, 287, 400, 70, 34);
             _ownerRoomTab = OwnerTextAction.Create(design, "RoomRulesTab", "THE ROOM", () => ShowOwnerRulesPage(true), 570, 287, 400, 70, 34);
             foreach (var tab in new[] { _ownerMatchTab, _ownerRoomTab })
             {
                 var line = OwnerUiLayout.Rect(tab.transform, "SelectedTab").gameObject.AddComponent<Image>();
-                OwnerUiLayout.Place(line.rectTransform, 79, 66, 242, 4); line.color = OwnerUiTheme.Current.Green; line.raycastTarget = false;
+                OwnerUiLayout.Place(line.rectTransform, 79, 66, 242, 4); line.color = HubStyle.Chartreuse; line.raycastTarget = false;
             }
+            var plate = OwnerUiLayout.Rect(design, "RulesPlate").gameObject.AddComponent<HubShape>();
+            OwnerUiLayout.Place(plate.rectTransform, 104, 369, 1705, 545);
+            plate.Fill = HubStyle.Night; plate.Pressable = false; plate.Seed = 419;
+            plate.ShadowOffset = Vector2.zero; plate.raycastTarget = false;
             _ownerMatchPage = OwnerUiLayout.Rect(design, "MatchRulesPage"); OwnerUiLayout.Place(_ownerMatchPage, 122, 380, 1670, 516);
             _ownerRoomPage = OwnerUiLayout.Rect(design, "RoomRulesPage"); OwnerUiLayout.Place(_ownerRoomPage, 122, 380, 1670, 516);
             SlateRule(_ownerMatchPage, "Format", "FORMAT", 0, d => { _editing.Format = (MatchFormat)Cycle((int)_editing.Format, d, FormatCount); Apply(); }, "Choose how the round is played.");
@@ -51,14 +60,20 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Place(placeholder.rectTransform, 22, 8, 548, 73); placeholder.color = OwnerUiTheme.Current.Ochre; _password.placeholder = placeholder;
             _password.onValueChanged.AddListener(value => { if (_editing == null || !MayEdit) return; _editing.Password = value ?? ""; Apply(); });
             var hint = OwnerUiLayout.Text(_passwordRow.transform, "PasswordHelp", "Optional. Use 4 to 16 characters.", 28);
-            OwnerUiLayout.Place(hint.rectTransform, 652, 11, 916, 69); hint.color = OwnerUiTheme.Current.EnteredInk;
+            OwnerUiLayout.Place(hint.rectTransform, 652, 11, 916, 69); hint.color = HubStyle.Honey;
             _ranked = OwnerUiLayout.Text(design, "RankedRulesNote", "Custom rooms do not enter ranked matchmaking.", 28);
-            OwnerUiLayout.Place(_ranked.rectTransform, 104, 918, 1120, 54); _ranked.color = OwnerUiTheme.Current.EnteredInk;
+            OwnerUiLayout.Place(_ranked.rectTransform, 104, 918, 1120, 54); _ranked.color = HubStyle.Honey;
             _refusal = OwnerUiLayout.Text(design, "RulesRefusal", "", 28, OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(_refusal.rectTransform, 103, 972, 1115, 61); _refusal.color = OwnerUiTheme.Current.HintInk;
+            OwnerUiLayout.Place(_refusal.rectTransform, 103, 972, 1115, 61); _refusal.color = HubStyle.Persimmon;
             _ownerReset = OwnerTextAction.Create(design, "ResetRulesButton", "RESET TO DEFAULTS", OnReset, 1280, 912, 520, 65, 28);
+            _ownerReset.GetComponentInChildren<Text>().color = HubStyle.Honey;
             _use = OwnerTextAction.Create(design, "UseRulesButton", "DONE", OnUse, 1385, 985, 417, 70, 42);
             _use.GetComponentInChildren<Text>().font = OwnerUiTheme.Current.Display;
+            _use.GetComponentInChildren<Text>().color = HubStyle.Ink;
+            var donePlate = OwnerUiLayout.Rect(_use.transform, "PrimaryPlate").gameObject.AddComponent<HubShape>();
+            OwnerUiLayout.Fill(donePlate.rectTransform); donePlate.transform.SetAsFirstSibling();
+            donePlate.Fill = HubStyle.Chartreuse; donePlate.Seed = 420;
+            donePlate.BandFraction = .15f; donePlate.raycastTarget = false;
             _root.SetActive(false);
         }
 
@@ -67,12 +82,14 @@ namespace TumbangPreso.UI
             var row = OwnerUiLayout.Rect(parent, id + "Rule"); OwnerUiLayout.Place(row, 0, y, 1650, 86); _ownerRuleRows[id] = row.gameObject;
             var caption = OwnerUiLayout.Text(row, id + "Label", title, 31, OwnerUiLayout.TypeRole.Accent);
             OwnerUiLayout.Place(caption.rectTransform, 17, 5, 364, 76);
+            caption.color = HubStyle.Persimmon;
             var value = OwnerUiLayout.Text(row, id + "Value", "", 31, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(value.rectTransform, 464, 5, 448, 76); value.alignment = TextAnchor.MiddleCenter; _ownerValues[id] = value;
-            var hint = OwnerUiLayout.Text(row, id + "Help", help, 28); hint.color = OwnerUiTheme.Current.EnteredInk;
+            value.color = HubStyle.Paper;
+            var hint = OwnerUiLayout.Text(row, id + "Help", help, 28); hint.color = HubStyle.Honey;
             OwnerUiLayout.Place(hint.rectTransform, 1000, 1, 624, 83);
             var line = OwnerUiLayout.Rect(row, "RuleLine").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Place(line.rectTransform, 14, 84, 1614, 1); line.color = new Color32(103, 112, 68, 85); line.raycastTarget = false;
+            OwnerUiLayout.Place(line.rectTransform, 14, 84, 1614, 1); line.color = new Color(HubStyle.Honey.r, HubStyle.Honey.g, HubStyle.Honey.b, .18f); line.raycastTarget = false;
             foreach (int direction in new[] { -1, 1 })
             {
                 int delta = direction;
@@ -83,8 +100,8 @@ namespace TumbangPreso.UI
                 OwnerUiLayout.Place(arrow.rectTransform, 15, 14, 32, 31);
                 if (delta > 0) arrow.rectTransform.localScale = new Vector3(-1, 1, 1);
                 var button = root.gameObject.AddComponent<Button>(); button.targetGraphic = arrow;
-                var colours = button.colors; colours.normalColor = OwnerUiTheme.Current.ActionInk; colours.highlightedColor = colours.selectedColor = OwnerUiTheme.Current.Green;
-                colours.disabledColor = new Color32(147, 141, 105, 255); button.colors = colours;
+                var colours = button.colors; colours.normalColor = HubStyle.Golden; colours.highlightedColor = colours.selectedColor = HubStyle.Persimmon;
+                colours.disabledColor = new Color(HubStyle.Honey.r, HubStyle.Honey.g, HubStyle.Honey.b, .4f); button.colors = colours;
                 button.onClick.AddListener(() => { if (MayEdit) { MenuSfx.Click(); change(delta); } });
             }
         }

@@ -83,7 +83,7 @@ namespace TumbangPreso.UI.Hub
         public static Text Text(Transform parent, string name, string words, int step, bool display,
                                 Color colour, TextAnchor align = TextAnchor.MiddleLeft)
         {
-            var text = Rect(parent, name).gameObject.AddComponent<Text>();
+            var text = Rect(parent, name).gameObject.AddComponent<CrispUiText>();
             text.font = display ? HubStyle.DisplayFont : HubStyle.ReadingFont;
             text.fontSize = HubStyle.Size(step);
             text.fontStyle = FontStyle.Normal;

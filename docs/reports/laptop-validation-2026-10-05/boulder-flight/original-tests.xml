@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 21:06:41Z" end-time="2026-10-04 21:06:41Z" duration="0.723284">
+  <test-suite type="TestSuite" id="3120" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1731" result="Failed" site="Child" start-time="2026-10-04 21:06:41Z" end-time="2026-10-04 21:06:41Z" duration="0.723284" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3112" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1731" result="Failed" site="Child" start-time="2026-10-04 21:06:41Z" end-time="2026-10-04 21:06:41Z" duration="0.711103" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="35480" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3113" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1731" result="Failed" site="Child" start-time="2026-10-04 21:06:41Z" end-time="2026-10-04 21:06:41Z" duration="0.706355" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3116" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1729" result="Failed" site="Child" start-time="2026-10-04 21:06:41Z" end-time="2026-10-04 21:06:41Z" duration="0.701312" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1450" name="DanteBoulderMotionTests" fullname="TumbangPreso.PlayTests.DanteBoulderMotionTests" classname="TumbangPreso.PlayTests.DanteBoulderMotionTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-04 21:06:41Z" end-time="2026-10-04 21:06:41Z" duration="0.669030" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1451" name="BoulderTravelsAtAuthoredLaunchSpeed" fullname="TumbangPreso.PlayTests.DanteBoulderMotionTests.BoulderTravelsAtAuthoredLaunchSpeed" methodname="BoulderTravelsAtAuthoredLaunchSpeed" classname="TumbangPreso.PlayTests.DanteBoulderMotionTests" runstate="Runnable" seed="587102441" result="Failed" start-time="2026-10-04 21:06:41Z" end-time="2026-10-04 21:06:41Z" duration="0.656832" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Boulder unit direction was used as velocity instead of the authored launch speed.
+  Expected: 1.24339771f +/- 0.310849428f
+  But was:  0.088814497f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DanteBoulderMotionTests+<BoulderTravelsAtAuthoredLaunchSpeed>d__17.MoveNext () [0x0017f] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\DanteBoulderMotionTests.cs:71
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[BoulderFlight] travel=0.0888, expected=1.2434, authoredSpeed=14
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

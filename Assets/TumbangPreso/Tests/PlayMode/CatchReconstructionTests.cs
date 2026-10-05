@@ -27,7 +27,9 @@ namespace TumbangPreso.PlayTests
         {
             SceneFlow.Networked = false; SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
             GameLaunch.SoloSeat = 1; GameLaunch.GuidedTutorial = false;
-            yield return SceneManager.LoadSceneAsync("Eskinita"); yield return new WaitForSeconds(.2f);
+            string map=System.Environment.GetEnvironmentVariable("TUMP_CATCH_REVIEW_MAP")??SceneFlow.Eskinita;
+            Assert.Contains(map,SceneFlow.Maps,"Catch review must target an authored playable map.");
+            yield return SceneManager.LoadSceneAsync(map); yield return new WaitForSeconds(.2f);
             foreach (var ai in Object.FindObjectsByType<AIController>()) ai.enabled = false;
             foreach (var input in Object.FindObjectsByType<PlayerInputReader>()) input.enabled = false;
             Object.FindAnyObjectByType<SliceRunner>().Begin(); yield return null;
@@ -45,6 +47,70 @@ namespace TumbangPreso.PlayTests
             victim.transform.forward = Vector3.forward;
             for (int i = 2; i < 4; i++) round.PlayerAt(i).Teleport(can + new Vector3(-5, 0, i * 2));
         }
+        [UnityTest]
+        public IEnumerator HeadlessTagKeepsRecoveryWithoutAllocatingReplayCamera()
+        {
+            if (SystemInfo.graphicsDeviceType != UnityEngine.Rendering.GraphicsDeviceType.Null)
+                Assert.Ignore("Run with -nographics to exercise the real null graphics device.");
+            yield return Open(); Stage(); yield return new WaitForSeconds(1.1f);
+            var settings = Settings.SettingsStore.Current;
+            bool reduced = settings.ReducedUiMotion, cinematic = settings.CinematicCameraMotion;
+            settings.ReducedUiMotion = false; settings.CinematicCameraMotion = true;
+            try
+            {
+                var actor = GameServices.Round.PlayerAt(0);
+                var victim = GameServices.Round.PlayerAt(1);
+                var view = Object.FindAnyObjectByType<CatchReconstruction>();
+                Assert.IsNotNull(view);
+                Assert.IsTrue(actor.GetComponent<CombatVerbs>().HostResolvePunch(actor.transform.position, actor.transform.forward));
+                float recovery = victim.StunLeft;
+                Assert.Greater(recovery, .3f);
+                yield return new WaitForSeconds(.2f);
+                Assert.IsFalse(view.Playing);
+                Assert.IsNull(GameObject.Find("~CatchPlaybackCamera"));
+                Assert.Greater(victim.StunLeft, 0);
+                Assert.Less(victim.StunLeft, recovery, "Skipping presentation must not pause tag recovery.");
+                Assert.IsNotNull(view.GetComponent<MatchPoseHistory>());
+                Assert.IsNotNull(view.GetComponent<MatchReplayArchive>());
+            }
+            finally { settings.ReducedUiMotion = reduced; settings.CinematicCameraMotion = cinematic; }
+        }
+
+        [UnityTest]
+        public IEnumerator IlalimOverlayTexturesRetainTheirAuthoredRange()
+        {
+#if UNITY_EDITOR
+            var material=UnityEditor.AssetDatabase.LoadAssetAtPath<Material>("Assets/TumbangPreso/Art/IlalimRebuild/Materials/heritage_trim_nurses.mat");
+            Assert.IsNotNull(material);
+            string folder=System.Environment.GetEnvironmentVariable("TUMP_EVIDENCE")??"Logs/ilalim-overlay-textures";
+            System.IO.Directory.CreateDirectory(folder);var report=new System.Text.StringBuilder();
+            foreach(string property in new[]{"_Ov0Tex","_Ov1Tex"})
+            {
+                var texture=material.GetTexture(property) as Texture2D;Assert.IsNotNull(texture);
+                var target=RenderTexture.GetTemporary(texture.width,texture.height,0,RenderTextureFormat.ARGBFloat,RenderTextureReadWrite.Linear);
+                var image=new Texture2D(texture.width,texture.height,TextureFormat.RGBAFloat,false,true);
+                var before=RenderTexture.active;
+                try
+                {
+                    Graphics.Blit(texture,target);RenderTexture.active=target;
+                    image.ReadPixels(new Rect(0,0,target.width,target.height),0,0);image.Apply();
+                    float minimum=1,maximum=0;int invalid=0;
+                    foreach(var pixel in image.GetPixels())
+                    {
+                        if(!float.IsFinite(pixel.r)||!float.IsFinite(pixel.g)||!float.IsFinite(pixel.b))invalid++;
+                        minimum=Mathf.Min(minimum,Mathf.Min(pixel.r,Mathf.Min(pixel.g,pixel.b)));
+                        maximum=Mathf.Max(maximum,Mathf.Max(pixel.r,Mathf.Max(pixel.g,pixel.b)));
+                    }
+                    report.AppendLine($"{property}: {texture.name}, {texture.width}x{texture.height}, {texture.format}, mips{texture.mipmapCount}, min{minimum}, max{maximum}, invalid{invalid}");
+                    System.IO.File.WriteAllText(folder+"/texture-ranges.txt",report.ToString());
+                    Assert.Zero(invalid);Assert.Greater(minimum,.1f,"Subtle authored grime cannot contain black/corrupt imported samples.");
+                }
+                finally {RenderTexture.active=before;RenderTexture.ReleaseTemporary(target);Object.Destroy(image);}
+            }
+#endif
+            yield return null;
+        }
+
         [UnityTest,Timeout(90000)]
         public IEnumerator CatchCameraAdoptsGameplayShaderContextAndRestoresGlobals()
         {
@@ -76,7 +142,18 @@ namespace TumbangPreso.PlayTests
                 System.IO.Directory.CreateDirectory(folder);
                 var target=camera.targetTexture;var image=new Texture2D(target.width,target.height,TextureFormat.RGB24,false);
                 var old=RenderTexture.active;RenderTexture.active=target;image.ReadPixels(new Rect(0,0,target.width,target.height),0,0);image.Apply();RenderTexture.active=old;
-                System.IO.File.WriteAllBytes(folder+"/actual-replay.png",image.EncodeToPNG());Object.Destroy(image);
+                System.IO.File.WriteAllBytes(folder+"/actual-replay.png",image.EncodeToPNG());
+                if(System.Environment.GetEnvironmentVariable("TUMP_CATCH_SURFACE_CHECK")=="1")
+                {
+                    int dark=0,samples=0;
+                    for(int y=Mathf.FloorToInt(image.height*.71f);y<Mathf.FloorToInt(image.height*.79f);y++)
+                        for(int x=Mathf.FloorToInt(image.width*.50f);x<Mathf.FloorToInt(image.width*.54f);x++)
+                        {var pixel=image.GetPixel(x,y);samples++;if(Mathf.Max(pixel.r,Mathf.Max(pixel.g,pixel.b))<20f/255f)dark++;}
+                    System.IO.File.WriteAllText(folder+"/surface-pixels.txt",$"Dark facade pixels: {dark} / {samples}");
+                    Object.Destroy(image);
+                    Assert.Less(dark,10,"Grime overlays must not create isolated near-black speckles on this pale facade.");
+                }
+                else Object.Destroy(image);
                 System.IO.File.WriteAllText(folder+"/look.txt",$"replay weight={weight}; gameplay={WorldLookPresentation.Current.Weight}; architecture={architecture}");
                 Assert.AreEqual(WorldLookPresentation.Current.Weight,weight,.001f,"Replay must adopt the same scoped world shader look as gameplay.");
                 Assert.AreEqual(WorldCueProfile.Current.EnvironmentAppeal,architecture,.001f);
@@ -293,10 +370,13 @@ namespace TumbangPreso.PlayTests
                 System.IO.Directory.CreateDirectory(directory);
                 float lastTime = -1, lastGap = float.MaxValue, lastPoseTime = 0, lastAlpha = 0;
                 float lastShift = 0, lastLean = 0, lastStretch = 0;
+                var poseTiming = new System.Collections.Generic.List<string> { "simulation,delta,presentation,recorded,newest,liveTagTime,liveTorsoLean" };
+                var tagTimeField = typeof(CharacterAnimator).GetField("_tagTime", flags);
                 rendered = c =>
                 {
                     if (c != camera) return;
                     lastTime = Time.unscaledTime - began;
+                    end = (float)Field("_clipEnd");
                     lastPoseTime = Mathf.Lerp(start, end, Mathf.Clamp01(lastTime / CatchReconstruction.AnimationDuration));
                     var bounds = victimCopy.Renderers[0].bounds;
                     foreach (var renderer in victimCopy.Renderers) bounds.Encapsulate(renderer.bounds);
@@ -306,6 +386,7 @@ namespace TumbangPreso.PlayTests
                     lastLean = Vector3.Angle(copiedTorso.up, actor.transform.up);
                     Vector3 armScale = hand.parent.localScale;
                     lastStretch = Mathf.Max(armScale.x / restScale.x, armScale.y / restScale.y, armScale.z / restScale.z);
+                    poseTiming.Add(System.FormattableString.Invariant($"{Time.time:F6},{Time.deltaTime:F6},{lastTime:F6},{lastPoseTime:F6},{track.Newest:F6},{tagTimeField.GetValue(actor.GetComponent<CharacterAnimator>())},{Vector3.Angle(sourceTorso.up, actor.transform.up):F4}"));
                 };
                 Camera.onPostRender += rendered;
                 float next = 0, bestDistance = float.MaxValue, bestGap = float.MaxValue, bestAlpha = 0;
@@ -328,7 +409,7 @@ namespace TumbangPreso.PlayTests
                         byte[] bytes = image.EncodeToPNG();
                         System.IO.File.WriteAllBytes(directory + "/frame-" + frames.ToString("D3") + ".png", bytes);
                         times.Add(presentationTime.ToString("F6", System.Globalization.CultureInfo.InvariantCulture));
-                        float proximity = Mathf.Abs(lastPoseTime - (contact + .17f));
+                        float proximity = Mathf.Abs(lastPoseTime - end);
                         if (proximity < bestDistance)
                         {
                             bestDistance = proximity; bestGap = lastGap; bestAlpha = lastAlpha;
@@ -341,6 +422,7 @@ namespace TumbangPreso.PlayTests
                     finally { RenderTexture.active = previous; Object.Destroy(image); }
                 }
                 System.IO.File.WriteAllLines(directory + "/times.txt", times);
+                System.IO.File.WriteAllLines(directory + "/pose-timing.csv", poseTiming);
                 string values = "distance=" + distance + " contactGap=" + bestGap + " contactAlpha=" + bestAlpha
                     + " sampleError=" + bestDistance + " frames=" + frames
                     + " bodyShift=" + bestShift + " torsoLean=" + bestLean + " armStretch=" + bestStretch + " skinSurfaceGap=" + bestSurfaceGap;

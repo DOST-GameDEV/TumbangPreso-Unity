@@ -217,11 +217,16 @@ namespace TumbangPreso.Net
         /// </summary>
         private const NetworkDelivery RecordDelivery = NetworkDelivery.ReliableFragmentedSequenced;
 
-        private void OnEnable() => NetSession.ClientDisconnected += HandleClientDisconnected;
+        private void OnEnable()
+        {
+            NetSession.ClientDisconnected += HandleClientDisconnected;
+            Abilities.PaetePlant.AutomaticShotFired += BroadcastAutomaticPlantShot;
+        }
 
         private void OnDisable()
         {
             NetSession.ClientDisconnected -= HandleClientDisconnected;
+            Abilities.PaetePlant.AutomaticShotFired -= BroadcastAutomaticPlantShot;
             CancelSnapshotRefreshWork(clearSnapshotTimes: false);
             _pendingSkillCasts.Clear();
         }
@@ -333,6 +338,7 @@ namespace TumbangPreso.Net
             PresentationMatchId = 0; _pendingMoments.Clear();
             ResetUltimateTransport();
             ResetTimedKitTransport();
+            ResetPaeteVineTransport();
             ResetObjectiveCooldownTransport();
             _lastSkillRequest.Clear();_skillRequestSequence=0;_skillEventSequence=0;_skillEpoch=long.MinValue;
             _pendingSkillCasts.Clear();
@@ -383,6 +389,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("TimedKitState", OnTimedKitStateMsg);
             cm.RegisterNamedMessageHandler("CircuitAim", OnCircuitAimMsg);
             cm.RegisterNamedMessageHandler("CircuitState", OnCircuitStateMsg);
+            cm.RegisterNamedMessageHandler("PaeteVine", OnPaeteVineMsg);
             cm.RegisterNamedMessageHandler("CastPreparation", OnCastPreparationMsg);
             cm.RegisterNamedMessageHandler("MovementWindow", OnMovementWindowMsg);
             cm.RegisterNamedMessageHandler("WorldFieldBegin", OnWorldFieldBeginMsg);
@@ -397,6 +404,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("ReqBreakFree", OnReqBreakFreeMsg);
             cm.RegisterNamedMessageHandler("ReqUproot", OnReqUprootMsg);
             cm.RegisterNamedMessageHandler("PlantPulled", OnPlantPulledMsg);
+            cm.RegisterNamedMessageHandler("AutomaticPlantShot", OnAutomaticPlantShotMsg);
             cm.RegisterNamedMessageHandler("SentryTargets", OnSentryTargetsMsg);
             cm.RegisterNamedMessageHandler("ReqPunch", OnReqPunchMsg);
             cm.RegisterNamedMessageHandler("ReqLunge", OnReqLungeMsg);
@@ -896,6 +904,10 @@ namespace TumbangPreso.Net
             // "it only started for the host".
             SyncMapClientRpc(Mathf.Max(0, System.Array.IndexOf(UI.SceneFlow.Maps, UI.SceneFlow.SelectedMap)));
             SyncDifficultyClientRpc(Settings.SettingsStore.Current.AiDifficulty);
+
+            // Rules selected before this peer arrived have already been broadcast.
+            // Reply before seating can start its arena, including on Identify retries.
+            SendRulesTo(senderClientId);
 
             // ⚠️⚠️ THE SEAT GOES **AFTER** THE MODE AND THE MAP, AND IT USED TO GO FIRST. This is
             // the same ordering rule `HostStartMatch` states three paragraphs of reasoning for,
@@ -1991,6 +2003,7 @@ namespace TumbangPreso.Net
                 if (fieldGeneration > 0) SendFeatherfallSnapshot(slot, peer, fieldGeneration, amihan);
                 return;
             }
+            if(kit is Abilities.PaeteHeroKit)SendPaeteVineSnapshot(slot,peer);
             if (!(kit is Abilities.ITimedKitReplication replication)) return;
             SendBoundTimedKit(slot, peer, kit, replication);
             if(kit is Abilities.ZackHeroKit)SendCircuitSnapshot(slot,peer);
@@ -2495,7 +2508,7 @@ namespace TumbangPreso.Net
             ApplyUnitMove(slot, pos, yaw, velocity, grounded, flightEpisode);
             unit.ApplyNetworkResourceIntent(effort);
             unit.AbilitySystem?.ApplyNetworkAim(aim);
-            SyncUnitTransformClientRpc(slot, pos, yaw, velocity);
+            SendUnitPose(slot, pos, yaw, velocity, false, ownerCorrection: false);
         }
 
         /// <summary>
@@ -2518,7 +2531,8 @@ namespace TumbangPreso.Net
         public void SyncUnitTransformClientRpc(int slot, Vector3 pos, float yaw, Vector3 velocity)
             =>SendUnitPose(slot,pos,yaw,velocity,false);
 
-        private void SendUnitPose(int slot,Vector3 pos,float yaw,Vector3 velocity,bool reliable,ulong? onlyClient = null)
+        private void SendUnitPose(int slot,Vector3 pos,float yaw,Vector3 velocity,bool reliable,ulong? onlyClient = null,
+                                  bool ownerCorrection = true)
         {
             if (!NetAuthority.IsHost) return;
             if (_nm == null || _nm.CustomMessagingManager == null) return;
@@ -2535,6 +2549,7 @@ namespace TumbangPreso.Net
                 Epoch = _movementEpochs[slot],
             });
             writer.WriteValueSafe(++_unitPoseSerial[slot]);
+            writer.WriteValueSafe(ownerCorrection);
             writer.WriteValueSafe(pos);
             writer.WriteValueSafe(yaw);
             writer.WriteValueSafe(velocity);
@@ -2596,7 +2611,7 @@ namespace TumbangPreso.Net
             // Netcode invokes the handler locally for the listen host, so every broadcast the
             // host sent was also applied ON the host, a second time, over authoritative state it
             // had just produced. See § THE LOOPBACK.
-            if (NetAuthority.IsHost || !reader.TryBeginRead(216 + VoodooBodySnapshot.WireBytes)) return;
+            if (NetAuthority.IsHost || !reader.TryBeginRead(217 + VoodooBodySnapshot.WireBytes)) return;
 
             reader.ReadValueSafe(out int slot);
             reader.ReadNetworkSerializable(out GameplayActionScope scope);
@@ -2606,6 +2621,7 @@ namespace TumbangPreso.Net
                 scope.Round != (GameServices.Match?.RoundNumber ?? -1)) return;
             int epoch = scope.Epoch;
             reader.ReadValueSafe(out ulong poseSerial);
+            reader.ReadValueSafe(out bool ownerCorrection);
             reader.ReadValueSafe(out Vector3 pos);
             reader.ReadValueSafe(out float yaw);
             reader.ReadValueSafe(out Vector3 velocity);
@@ -2677,7 +2693,9 @@ namespace TumbangPreso.Net
             bool edgeOwned=unit.IsEdgeRecovering||edgeKind!=0;
             unit.ApplyEdgeRecoverySnapshot((EdgeRecoveryKind)edgeKind,edgeGrip,edgeOutward,edgePhase,edgeRatio);
             float facing=local && newEpoch&&!edgeOwned?unit.transform.eulerAngles.y:yaw;
-            unit.ApplyNetworkTransform(pos, facing, velocity, grounded, reconcileLocal: local&&!edgeOwned,force:newEpoch,flightEpisode:flightEpisode);
+            unit.ApplyNetworkTransform(pos, facing, velocity, grounded, reconcileLocal: local&&!edgeOwned,
+                force:newEpoch, flightEpisode:flightEpisode,
+                acceptedOwnerPose:local&&!ownerCorrection&&!newEpoch&&!edgeOwned);
             if(newEpoch)unit.GetComponent<Visual.CharacterVisual>()?.SnapRemoteTransform();
             // A status edge can deplete locally; the host's resource correction
             // below must be the final pool value, including legitimate later gains.
@@ -4644,6 +4662,15 @@ namespace TumbangPreso.Net
             _nm.CustomMessagingManager.SendNamedMessage("SelectRules", NetworkManager.ServerClientId, writer);
         }
 
+        private void SendRulesTo(ulong clientId)
+        {
+            if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
+            using var writer = new FastBufferWriter(256, Allocator.Temp);
+            writer.WriteValueSafe(Core.CustomGameRules.ToWire(UI.SceneFlow.SelectedRules));
+            _nm.CustomMessagingManager.SendNamedMessage("SyncRules", clientId, writer,
+                NetworkDelivery.ReliableSequenced);
+        }
+
         private void OnSelectRulesMsg(ulong senderClientId, FastBufferReader reader)
         {
             if (!NetAuthority.IsHost) return;
@@ -4692,6 +4719,8 @@ namespace TumbangPreso.Net
             // be drawn on this machine's clock.
             var clamped = Core.CustomGameRules.Parse(wire, UI.SceneFlow.SelectedMode);
 
+            // Rule state must be ready even when no lobby view is observing this reply.
+            UI.SceneFlow.AdoptRemoteRules(clamped);
             OnRulesChanged?.Invoke(Core.CustomGameRules.ToWire(clamped));
             OnFormatChanged?.Invoke((int)clamped.Format);
         }

@@ -1,0 +1,21 @@
+{
+  "original-tests.xml": "5e530c2cab956b5223a9dddc79c55460dde3dcf92e283a194959e25766572bef",
+  "original-direct-result.json": "8d9b6679c969d7a349e7293f5eb61f5126ce54800af1d74223bf78e443c3b43e",
+  "original-qualified-source.json": "8a6841be1f8221c9563caac81b7c63dd9067f115e9cdcfc7458f9e876a8c6f9a",
+  "original-launch.json": "1bd9ede53d7a22f25bc82f948aad0580457d5768e8350a53e2c8eb6c736607a5",
+  "original-prejob-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+  "original-post-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+  "original-pre-editor-prefs.json": "01f3ecd25629bbc08ed000561e8124cd84e5884ee3da8c8c780a20d44f5e74e0",
+  "candidate-tests.xml": "fdafc101edf67dba2ab16e57d4c280d306ae0e3c23c22f4351c673cd961a7788",
+  "candidate-direct-result.json": "a05c495889d97b53811fd42e08c7c78bbdf0bbc48cb793a56c2323eab96da7be",
+  "candidate-qualified-source.json": "8ef7b394b77d1494f9efc728570775b6ba1bb87c960eec16ab80135244c85335",
+  "candidate-launch.json": "472799d3e2725173264cd7a46a17c5d5efd2441d95fbdf3921cea179b0ddf368",
+  "candidate-prejob-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+  "candidate-post-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+  "candidate-pre-editor-prefs.json": "01f3ecd25629bbc08ed000561e8124cd84e5884ee3da8c8c780a20d44f5e74e0",
+  "AIController.original.cs": "6881ee4538fff39a56a2ecee5de439c1eead22314287fafcf40533de0526c767",
+  "AIController.candidate.cs": "18497e31bc0a406d1e5a9b53e2ef8e699ddd6a73af608e2943615d59ae5c94a4",
+  "AiRoundOpeningLifetimeTests.cs": "a8191d280228173dd31ac36266278ef1b8d498b018c96deef27383345b9b6d13",
+  "AiRoundOpeningLifetimeTests.cs.meta": "bb82c3e4cfdb7fbfc52a1b94f916633898dfdd0826e4904af0b4ac2fe5cef740",
+  "packet.json": "07c8662b37bfa6d2685bb2507e994b107b1be47e043df2d036d7d30364758151"
+}

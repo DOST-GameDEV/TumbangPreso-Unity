@@ -1,0 +1,29 @@
+{
+  "source": "f4890bdd43ae8b0129be6ebb9499eb7a54de2d01",
+  "protocol": 146,
+  "role": "HOST",
+  "map": "Eskinita",
+  "mode": "HeroStrike",
+  "actualCatchRetainedBytes": 12456,
+  "epoch": "639267125897668305",
+  "clip": 1,
+  "verifiedRemotePeers": 1,
+  "firstClipReal": 29.527,
+  "firstReadyReal": 30.006,
+  "observedClipToReadySeconds": 0.4789999999999992,
+  "halfSeconds": 9.951999999999998,
+  "viewSamples": 100,
+  "allFourScoresDuringHalf": [
+    170,
+    0,
+    0,
+    0
+  ],
+  "simulationDriftDuringHalf": 0.0,
+  "pngInspected": true,
+  "normalRound5Release": true,
+  "terminalExit": 0,
+  "clientRawCorrelationPending": false,
+  "scope": "Diagnostic retained catch clip, two physical machines; explicit intermediate-round advances, no natural complete match, slow-peer or fault-injection claim",
+  "clientRawGitHashesVerified": 11
+}

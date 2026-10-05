@@ -1,0 +1,1982 @@
+using System;
+using System.Collections.Generic;
+using TumbangPreso.Core;
+using UnityEngine;
+
+namespace TumbangPreso
+{
+    /// <summary>
+    /// Movement, stamina and confinement for every unit, human or bot.
+    ///
+    /// ⚠️⚠️ THIS IS THE HIGHEST-RISK FILE IN THE PORT AND THE REASON PHASE 3 EXISTS.
+    /// Godot's `CharacterBody3D.move_and_slide()` and Unity's `CharacterController.Move()`
+    /// do not resolve collisions the same way, so movement FEEL does not survive the port
+    /// for free. It has to be measured against the Godot build on one player, in an empty
+    /// scene, before any netcode is built on top of it: the alternative is discovering it
+    /// in Phase 6 and re-tuning with the whole game already standing on it.
+    ///
+    /// The model is kept as close to the original as the two engines allow: an explicit
+    /// `velocity` field, gravity integrated by hand, and one Move per physics step. Godot
+    /// works the same way, which is why this is the closest available mapping rather than
+    /// a rewrite around Rigidbody forces.
+    /// </summary>
+    /// <remarks>
+    /// ⚠️ -100 SO THE CAPSULE HAS ALREADY MOVED WHEN ANYTHING ELSE RUNS ITS FixedUpdate. The
+    /// carry in <see cref="Carrier.FixedUpdate"/> is the reader that needs it: a held tsinelas
+    /// placed on the hand BEFORE the body moves is a step of walking behind it for the rest of
+    /// the frame. See the execution-order note on `Carrier` for the full ordering.
+    ///
+    /// ⚠️ THE INTENT SNAPSHOT IS UNAFFECTED. `CommitFrame` still runs at the end of this step
+    /// and every consumer of a press EDGE runs in Update, which is a later phase entirely — so
+    /// moving this earlier within FixedUpdate cannot shorten the window those readers see.
+    /// </remarks>
+    [DefaultExecutionOrder(-100)]
+    [RequireComponent(typeof(CharacterController))]
+    public sealed partial class CharacterMotor : MonoBehaviour
+    {
+        [Header("Role")]
+        [SerializeField] private bool _isDefender;
+        [SerializeField] private int _playerSlot;
+        [SerializeField] private int _characterIndex = -1;
+
+        /// ⚠️ KEPT ONLY SO CharacterVisual AND CharacterNameplate KEEP THEIR SIGNATURES.
+        /// Every unit is a Person now; nothing sets these to anything else. They are the
+        /// last two lines of the objects-are-players thesis (`character_base.gd:386`).
+        /// The spectator's POV eye height reads IsPerson, so it cannot be folded away
+        /// without giving SpectatorCamera another source for the same question.
+        [SerializeField] private bool _isPerson = true;
+        [SerializeField] private bool _isCan;
+
+        /// ⚠️ RENAMED FROM `team` IN THE ORIGINAL. There are no teams — this is the
+        /// player's seat, the index into MatchManager.scores, and the rotation position
+        /// that decides when they defend. A spectator legend that says "TEAM A" is
+        /// describing a deleted game (`spectator_camera.gd:416`).
+        [SerializeField] private string _playerName = "";
+        [SerializeField] private bool _isBot;
+
+        public bool IsDefender { get => _isDefender; set => _isDefender = value; }
+        public int PlayerSlot { get => _playerSlot; set => _playerSlot = value; }
+        public int CharacterIndex { get => _characterIndex; set => _characterIndex = value; }
+        public bool IsAttacker => !_isDefender;
+        public bool IsPerson { get => _isPerson; set => _isPerson = value; }
+        public bool IsCan { get => _isCan; set => _isCan = value; }
+        public bool IsBot { get => _isBot; set => _isBot = value; }
+        private bool IsLocalHuman => !_isBot && _playerSlot ==
+            (NetAuthority.IsNetworked ? NetAuthority.LocalSlot : GameLaunch.SoloSeat);
+
+        /// <summary>Empty is a real value: it means "never set one", and every reader
+        /// falls back to <see cref="DisplayName"/> rather than printing a blank row.</summary>
+        public string PlayerName { get => _playerName; set => _playerName = value; }
+
+        /// <summary>
+        /// What to draw over this unit, from `character_base.gd:496`.
+        ///
+        /// ⚠️ IT IS A DISPLAY TRANSFORM, NOT A WRITE. PlayerName keeps the case the player
+        /// typed, so the settings field still shows them their own name as they entered it.
+        /// Case is cosmetic and length is structural, which is why the length limit lives
+        /// on the data (GameSettings.SanitiseName) and the casing lives here.
+        /// </summary>
+        public string DisplayName()
+        {
+            // ⚠️⚠️ THE ANSWER IS REMEMBERED, BECAUSE EVERY BRANCH OF IT ALLOCATES AND IT IS READ
+            // ONCE A FRAME PER BODY. `ToUpperInvariant` returns a new string every call, the
+            // seat fallback is an interpolation, and `CharacterName` walks the roster to get
+            // there. `Hud.UpdateScores` asks all four seats on every tick, the nameplate over
+            // each body asks again, and the YOU card asks a third time.
+            // `HudPerformanceProbe` is what put a number on it.
+            //
+            // ⚠️ THE INPUTS ARE COMPARED, NOT INVALIDATED FROM THE SETTERS, and that is the
+            // safer half of this. `_playerSlot`, `_characterIndex`, `_isBot` and `_playerName`
+            // are all `[SerializeField]` and all written from more than one place, including the
+            // inspector and the seat-rebind path; a cache cleared by hand in four setters is one
+            // future writer away from a body wearing somebody else's name. Reading the fields is
+            // free, and `Mode` is in the list because `CharacterName` looks the roster up per
+            // mode and the two rosters are different people.
+            if (_displayName == null ||
+                _displayNameBot != _isBot ||
+                _displayNameCharacter != _characterIndex ||
+                _displayNameSlot != _playerSlot ||
+                _displayNameMode != Mode ||
+                _displayNameSuffix != _labelSuffix ||
+                _displayNameFrom != _playerName)
+            {
+                _displayNameBot = _isBot;
+                _displayNameCharacter = _characterIndex;
+                _displayNameSlot = _playerSlot;
+                _displayNameMode = Mode;
+                _displayNameSuffix = _labelSuffix;
+                _displayNameFrom = _playerName;
+
+                // ⚠️ THE SUFFIX IS EMPTY ON EVERY ORDINARY SEAT. `ResolveDuplicateLabels` only
+                // writes one when another seat would read the same, so the common case is the
+                // bare name and nothing else. See that method for why a match is the only place
+                // this question can be answered.
+                _displayName = BareLabel() + _labelSuffix;
+            }
+
+            return _displayName;
+        }
+
+        /// <summary>
+        /// The player's name with the `#0000` taken off, for a label inside a match.
+        ///
+        /// ⚠️⚠️ THE SCOREBOARD READ `PLAYER#7645` AND 🧑 ASKED FOR IT GONE, 2026-09-04:
+        /// *"no need to show # number in the thing gang"*, *"just the player name is enough
+        /// here"*. `MatchInstaller` seats a human with `GameServices.Account.LobbyName`, which is
+        /// `AccountRules.Handle(DisplayName, Discriminator)`, so the tag rode all the way into
+        /// the arena on the scoreboard, the nameplate over each body and the YOU card.
+        ///
+        /// ⚠️⚠️ STRIPPED AT THE LABEL, NEVER AT THE SOURCE, AND THAT IS THE WHOLE CARE IN THIS
+        /// CHANGE. The discriminator is what makes two players called PLAYER different people:
+        /// `LobbySession` keys by it, `AccountRules.Handle` builds it, and the lobby and the wire
+        /// need it. Editing `MatchInstaller` to seat the bare name instead would have thrown that
+        /// away everywhere for the sake of one row. **`DisplayName` is the in-match label and
+        /// nothing else reads it**, so this is exactly as wide as the request.
+        ///
+        /// ⚠️ FOUR SEATS ON ONE SCREEN CANNOT COLLIDE THE WAY A LOBBY LIST CAN, which is why the
+        /// tag is not load-bearing here: the rows carry a role badge and a colour, the body
+        /// carries a nameplate in the world, and there are four of them. A lobby browser lists
+        /// strangers and still shows the full handle.
+        ///
+        /// ⚠️ IT FALLS BACK TO THE WHOLE STRING. `TrySplitHandle` refuses anything that is not
+        /// `name#0000`, and a name that never went through `Handle` (an offline profile, a name
+        /// typed into the settings field) has no tag to take off and must survive untouched.
+        /// </summary>
+        private static string NameWithoutTag(string playerName)
+        {
+            if (Core.AccountRules.TrySplitHandle(playerName, out string bare, out _)
+                && !string.IsNullOrEmpty(bare))
+                return bare.ToUpperInvariant();
+
+            return playerName.ToUpperInvariant();
+        }
+
+        /// <summary>
+        /// Added to this seat's label when another seat would otherwise read the same.
+        ///
+        /// ⚠️ IT IS PART OF THE `DisplayName` CACHE KEY, so setting it re-renders the label on
+        /// the next read and setting it to what it already is costs nothing.
+        /// </summary>
+        public string LabelSuffix
+        {
+            get => _labelSuffix;
+            set => _labelSuffix = value ?? "";
+        }
+
+        private string _labelSuffix = "";
+
+        /// <summary>
+        /// Makes every seat's label different from every other seat's.
+        ///
+        /// ⚠️⚠️ 🧑 2026-09-04, ON TOURNAMENTS: *"oh yea in tournmanets PPL might have same #?"*,
+        /// *"idk how it was coded but make it so that they all have a diff #"*, and then the
+        /// case that matters: **"offline tournaments"**. He is right, and it is worse than he
+        /// thinks, in two independent ways.
+        ///
+        /// ⚠️⚠️ FIRST, THE TAG IS A LOCAL HASH AND GUARANTEES NOTHING. `AccountRules.Discriminator`
+        /// is FNV-1a over the stable player id, `% 10000`. **Nothing checks it against the other
+        /// people in the room**, because nothing can: it is computed on each machine from that
+        /// machine's own id. Two accounts sharing a display name collide on the tag about one
+        /// time in ten thousand per pair, which sounds safe and is not once a bracket defaults
+        /// to the same name: `Handle` falls back to the literal `"Player"` for anything that
+        /// fails `TryDisplayName`, so a room of people who never set a name are all PLAYER and
+        /// are drawing from 10,000 tags. Thirty-two of them collide about five per cent of the
+        /// time.
+        ///
+        /// ⚠️⚠️ SECOND, AND THIS IS THE ONE ON SCREEN TODAY: TWO SEATS CAN SHARE A LABEL WITH NO
+        /// ACCOUNTS INVOLVED AT ALL. `Logs/shots-runtime/Eskinita.png` reads **ZACK, PLAYER,
+        /// ZACK, PHAISTER**: two bots picked the same character, so two rows carry the same name
+        /// and the scoreboard cannot tell you which one is the taya. That is the same defect as
+        /// the duplicate 🧑 photographed, and it needs no tournament to reproduce.
+        ///
+        /// ⚠️ SO THE FIX IS AT THE MATCH, WHICH IS THE ONLY PLACE THAT SEES EVERYBODY. A per
+        /// machine hash cannot be made globally unique by better hashing; four seats compared
+        /// against each other can be made unique by construction, which is what this does:
+        ///
+        ///   1. Labels that are already unique are left completely alone. **The common case is
+        ///      untouched**, which is what keeps 🧑's *"just the player name is enough here"*
+        ///      true for every ordinary match.
+        ///   2. A colliding pair gets its `#tag` back, because that is the real distinction
+        ///      between two accounts and is the thing he expected to be different.
+        ///   3. If the tags collide too, or there are none (two bots on one character), the seat
+        ///      number is appended. **That cannot collide**: there are four seats and they are
+        ///      numbered.
+        ///
+        /// ⚠️ IT IS RUN OVER THE WHOLE SEAT LIST RATHER THAN PER SEAT, because "is this name
+        /// unique" is not a question a body can answer about itself.
+        /// </summary>
+        public static void ResolveDuplicateLabels(IReadOnlyList<CharacterMotor> seats)
+        {
+            if (seats == null) return;
+
+            for (int i = 0; i < seats.Count; i++)
+            {
+                var unit = seats[i];
+                if (unit == null) continue;
+
+                bool clash = false;
+
+                for (int j = 0; j < seats.Count; j++)
+                {
+                    if (i == j || seats[j] == null) continue;
+                    if (!string.Equals(unit.BareLabel(), seats[j].BareLabel(),
+                                       StringComparison.Ordinal))
+                        continue;
+
+                    clash = true;
+                    break;
+                }
+
+                if (!clash)
+                {
+                    unit.LabelSuffix = "";
+                    continue;
+                }
+
+                // The tag, when this seat has one and it actually distinguishes it.
+                string tag = "";
+                if (Core.AccountRules.TrySplitHandle(unit._playerName, out _, out string mine))
+                    tag = mine;
+
+                bool tagHelps = tag != "";
+
+                if (tagHelps)
+                {
+                    for (int j = 0; j < seats.Count && tagHelps; j++)
+                    {
+                        if (i == j || seats[j] == null) continue;
+                        if (!string.Equals(unit.BareLabel(), seats[j].BareLabel(),
+                                           StringComparison.Ordinal))
+                            continue;
+
+                        if (Core.AccountRules.TrySplitHandle(seats[j]._playerName, out _,
+                                                            out string theirs)
+                            && theirs == tag)
+                            tagHelps = false;
+                    }
+                }
+
+                unit.LabelSuffix = tagHelps ? $" #{tag}" : $" P{unit._playerSlot + 1}";
+            }
+        }
+
+        /// <summary>This seat's label before any duplicate-breaking suffix.</summary>
+        private string BareLabel()
+            => _isBot ? CharacterName().ToUpperInvariant()
+             : _playerName != "" ? NameWithoutTag(_playerName)
+             : $"P{_playerSlot + 1}";
+
+        private string _displayName;
+        private string _displayNameSuffix;
+        private string _displayNameFrom;
+        private bool _displayNameBot;
+        private int _displayNameCharacter;
+        private int _displayNameSlot;
+        private GameMode _displayNameMode;
+
+        /// <summary>Active game mode for trait lookups and ability kits.</summary>
+        public GameMode Mode { get; set; } = GameMode.HeroStrike;
+
+        private Abilities.HeroAbilitySystem _abilitySystem;
+        public Abilities.HeroAbilitySystem AbilitySystem =>
+            _abilitySystem != null ? _abilitySystem : (_abilitySystem = GetComponent<Abilities.HeroAbilitySystem>());
+
+        /// <summary>The roster pick's name, falling back to the seat number.
+        /// CharacterIndex is -1 until a pick arrives.</summary>
+        /// ⚠️ PUBLIC SINCE 2026-09-03, FOR `YouCard`. It needs the character rather than the
+        /// account handle, because a handle has no length bound and that row has overflowed three
+        /// times. `DisplayName` still prefers the handle for a human, which is right everywhere
+        /// the question is "which of these four seats is that".
+        public string CharacterName()
+        {
+            // ⚠️ THE CORE ROSTER, NOT RosterBook. RosterBook maps an index to a model; the
+            // NAME is balance-layer data and lives in the engine-free package, so a headless
+            // test can assert a legend without loading a single asset.
+            var list = Roster.GetPeople(Mode);
+            if (_characterIndex < 0 || _characterIndex >= list.Count)
+                return $"P{_playerSlot + 1}";
+            return list[_characterIndex].Name;
+        }
+
+        public InputIntent Intent { get; } = new InputIntent();
+        public Stamina Stamina { get; private set; }
+
+        public Vector3 Velocity => _velocity;
+        // Read-only presentation speed includes a slide/lunge's impulse as well
+        // as steerable travel. It never feeds back into movement or networking.
+        public Vector3 PresentationTravelVelocity => _velocity + _externalVelocity;
+        public bool IsGrounded => _grounded;
+        public bool IsSwimming => RooftopPool.Swimming(transform.position);
+        private bool _swimLeap;
+
+        /// <summary>Set false while the round is not live. Confinement and most verbs read it.</summary>
+        public bool RoundActive { get; set; } = true;
+
+        private CharacterController _cc;
+        private Vector3 _velocity;
+        private bool _grounded;
+        private float _fallSpeed;
+        private int _spawnSettle;
+        private Vector3 _spawnSettleAt;
+
+        /// <summary>The push a shove, a block or a tag applied, decaying against Friction.
+        /// Kept separate from walk velocity so a knockback cannot be walked out of.</summary>
+        private Vector3 _externalVelocity;
+
+        private bool _networkTargetKnown;
+
+        /// <summary>
+        /// The owner's own `IsGrounded`, off the wire. See <see cref="StepNetworkReplica"/> for
+        /// why this is transmitted rather than worked out from the replicated velocity.
+        /// </summary>
+        private bool _networkGrounded;
+
+        private Vector3 _networkTargetPosition;
+        private Vector3 _networkTargetVelocity;
+        private float _networkTargetYaw;
+        private Vector3 _networkSmoothVelocity;
+        private float _networkYawVelocity;
+
+        private void Awake()
+        {
+            _cc = GetComponent<CharacterController>();
+            Stamina = new Stamina();
+            if (GetComponent<Visual.MotionFoley>() == null) gameObject.AddComponent<Visual.MotionFoley>();
+            // The Whirled and Chilled body tells, on every peer (`Visual.StatusBodyMarks`).
+            if (GetComponent<Visual.StatusBodyMarks>() == null) gameObject.AddComponent<Visual.StatusBodyMarks>();
+            if (GetComponent<Visual.StatusOverhead>() == null) gameObject.AddComponent<Visual.StatusOverhead>();
+            if (GetComponent<Visual.PhaisterStatusPresenter>() == null) gameObject.AddComponent<Visual.PhaisterStatusPresenter>();
+            // HERO-10 v3: her reach's thread on the caster and her marks over the cursed, from replicated body state.
+            if (GetComponent<Visual.VoodooCursePresenter>() == null) gameObject.AddComponent<Visual.VoodooCursePresenter>();
+        }
+
+        /// ⚠️ THE SPECTATABLE REGISTRY IS POPULATED HERE, NOT AT THE SPAWN SITE. Godot's
+        /// `main.gd` added each unit to the `spectatable` group as it spawned it; that file
+        /// is 3,595 lines and unported, and hanging the spectator's follow cycle on it would
+        /// mean Tab does nothing until the very last phase of the port. A unit registering
+        /// itself is also the stricter version of the same rule: a unit that exists is
+        /// followable, with no second place to remember.
+        ///
+        /// Registration is not a gameplay write and the spectator never writes back, so this
+        /// does not weaken the "spectator touches nothing" contract.
+        private void OnEnable() => CameraSystem.SpectatorCamera.Register(this);
+
+        private void OnDisable() => CameraSystem.SpectatorCamera.Unregister(this);
+
+        /// <summary>
+        /// ⚠️ DO NOT REMOVE ON THE ASSUMPTION UNITY DOES NOT NEED THIS.
+        /// In Godot, writing `position` updates the scene tree immediately and the physics
+        /// broadphase only at the next step, so when roles rotate and two players trade
+        /// marks, each stands on the other's stale collider for one frame. Measured there:
+        /// three contacts with normal (0,1,0), a 1.60 shove upward, then 9.89 units into a
+        /// wall on the next frame. That was expensively diagnosed and role rotation is
+        /// exactly what triggers it.
+        ///
+        /// Unity has the same shape of problem: teleporting a CharacterController does not
+        /// re-run the broadphase until the next physics step, and `Physics.SyncTransforms`
+        /// only syncs transforms, it does not resolve the overlap. Three frames is 50 ms
+        /// and is invisible. Let a probe decide whether it can go, not an assumption.
+        /// </summary>
+        public void BeginSpawnSettle()
+        {
+            unchecked { PresentationTeleportSerial++; }
+            _spawnSettle = Balance.SpawnSettleFrames;
+            _spawnSettleAt = transform.position;
+            _velocity = Vector3.zero;
+            _externalVelocity = Vector3.zero;
+            // ⚠️ A SPAWN IS A FRESH START FOR EVERY STATUS THAT IS NOT A STUN (the stun stack has
+            // its own resets). A Whirl or a Chill must not follow a body across a round boundary,
+            // and a flight must not survive a teleport to the mark.
+            ClearStatuses();
+        }
+
+        /// <summary>
+        /// Stop dead. `main.gd::_on_match_won_freeze_physics` runs this over every character the
+        /// moment the match is won.
+        ///
+        /// ⚠️ THE INTENT IS PARKED TOO, NOT JUST THE VELOCITY. Zeroing the velocity alone leaves
+        /// whatever was held still held, so a player who was sprinting when the last point landed
+        /// is moving again on the next physics step and the freeze lasts one frame. `Parked` is
+        /// the flag `InputIntent` already has for exactly this, and it covers a bot as well as a
+        /// human because both go through the same table.
+        /// </summary>
+        public void FreezeForMatchEnd()
+        {
+            _velocity = Vector3.zero;
+            _externalVelocity = Vector3.zero;
+            Intent.Clear();
+            Intent.CommitFrame();
+            Intent.Parked = true;
+        }
+
+        public int MovementEpoch { get; private set; }
+        // Local presentation discontinuity, including offline teleports. Never
+        // serialized onto the gameplay wire or used to decide movement/outcomes.
+        public int PresentationTeleportSerial { get; private set; }
+        private int _predictingAbility=-1,_teleportAbility=-1;
+        private bool _awaitingTeleport;
+        public bool AwaitingAuthoritativeTeleport=>_awaitingTeleport;
+        public void BeginAbilityPrediction(int slot){_predictingAbility=slot;}
+        public void EndAbilityPrediction(){_predictingAbility=-1;}
+        public void ExpectAbilityTeleport(int slot)
+        {
+            if(NetAuthority.ShouldRequest() && _playerSlot==NetAuthority.LocalSlot)
+            {_awaitingTeleport=true;_teleportAbility=slot;}
+        }
+        public bool RefuseAbilityTeleport(int slot)
+        {
+            if(!_awaitingTeleport || _teleportAbility!=slot)return false;
+            _awaitingTeleport=false;_teleportAbility=-1;return true;
+        }
+        public void AdoptMovementEpoch(int epoch)
+        {
+            if(epoch<=MovementEpoch)return;
+            _paetePull?.Stop("movement epoch changed");
+            ClearNetworkResourceIntent();
+            InvalidateFlightEpisode();
+            MovementEpoch=epoch;_awaitingTeleport=false;_teleportAbility=-1;
+        }
+
+        public void Teleport(Vector3 position)
+        {
+            if (!MayMutateGameplayState()) return;
+            _paetePull?.Stop("teleport");
+            if(IsEdgeRecovering)ClearTrip();
+            if(_predictingAbility>=0)ExpectAbilityTeleport(_predictingAbility);
+            // ⚠️⚠️ THE ARENA WALL IS ENFORCED HERE TOO, AND THIS IS THE PATH THAT ACTUALLY
+            // BROKE IT. `Confine` holds a body that WALKS or is PUSHED at the edge, and a
+            // teleport skips the whole movement step, so a caller handing this an arbitrary
+            // point put a player outside the world with nothing to pull them back. Nemu owns
+            // both such callers: PHANTOM PHASE ends by blinking to wherever the projected
+            // ghost drifted to, and the pet's `EndPossession` teleports Nemu onto the pet.
+            // Neither destination is bounded by anything.
+            //
+            // ⚠️ MEASURED 2026-08-23, and it read as an AI fault rather than an ability one.
+            // A whole Hero Strike match reported a seat 45.8 m out on X against a half width of
+            // 8.6, holding its tsinelas the entire way; it then threw from out there and spent
+            // the rest of the round unable to fetch, because a bot clamps its GOAL to the
+            // playable rectangle and so cannot follow itself out. Clamping at the one function
+            // every teleport already goes through fixes both callers and every future one.
+            //
+            // ⚠️ THE SPAWN MARKS AND THE TAG SAFE ZONE ARE ALL WELL INSIDE THIS, so nothing that
+            // was already correct moves by a millimetre.
+            position = AIController.ClampToPlayable(position);
+
+            _cc.enabled = false;      // CharacterController fights direct transform writes
+            transform.position = position;
+            _cc.enabled = true;
+            BeginSpawnSettle();
+            // A host-side replica still has an interpolation target. Recall must
+            // replace that target too, or the next step slides back to the old body.
+            _networkTargetPosition=position;
+            _networkTargetYaw=transform.eulerAngles.y;
+            _networkTargetVelocity=Vector3.zero;
+            _networkSmoothVelocity=Vector3.zero;
+            _networkYawVelocity=0;
+            GetComponent<Visual.CharacterVisual>()?.SnapRemoteTransform();
+            if(NetAuthority.IsNetworked && NetAuthority.ShouldResolve() &&
+                GameServices.Round?.PlayerAt(_playerSlot)==this)
+                Net.MatchRpc.Instance?.BroadcastTeleport(_playerSlot,position,transform.eulerAngles.y);
+        }
+
+        /// <summary>Where this unit returns to when it falls off the world. Written at
+        /// spawn; the kill plane is the only thing that reads it today.</summary>
+        public Vector3 SpawnPosition { get; set; }
+
+        /// <summary>
+        /// What this seat has been for the whole match: a person, a bot, or a person who left
+        /// and a bot that finished for them.
+        ///
+        /// ⚠️⚠️ `IsBot` CANNOT SAY THE THIRD THING AND THE LADDER NEEDS IT SAID. `Attention.md`
+        /// § 16.1: *"a seat that was HUMAN and then became a bot part way through is neither, and
+        /// the career line for that match currently has no way to say so"*, and the consequence
+        /// it names is the one with teeth: **"a rating that counts a bot's stretch as the
+        /// player's own is a ladder nobody trusts."** `MatchRpc.HostPeerLeft` sets `IsBot = true`
+        /// on a departing player's body, and from that moment the record cannot tell that chair
+        /// apart from one that was filled by `BotFill` before anybody sat down.
+        ///
+        /// ⚠️ IT ONLY EVER MOVES FORWARD. A seat that has been handed over stays handed over for
+        /// the rest of the match even if the player reconnects into it, because the bot's stretch
+        /// happened and the result is no longer wholly theirs. `SeatHandover.RatingMovesFor` is
+        /// what reads it.
+        /// </summary>
+        public Core.SeatOrigin SeatOrigin { get; private set; } = Core.SeatOrigin.Human;
+
+        /// <summary>Record that a bot has taken this chair, and from what.</summary>
+        public void NoteSeatOrigin(Core.SeatOrigin origin)
+        {
+            // Human is the default and never an update; HandedToBot outranks Bot, because a
+            // chair somebody sat in is not a chair nobody sat in.
+            if (origin == Core.SeatOrigin.Human) return;
+            if (SeatOrigin == Core.SeatOrigin.HandedToBot) return;
+
+            SeatOrigin = origin;
+        }
+
+        /// <summary>
+        /// Record that a real person now holds this chair, correcting an install-time guess.
+        ///
+        /// ⚠️⚠️ IT EXISTS BECAUSE A HOST THAT OPENS THE ARENA BEFORE ITS PEERS ARRIVE RECORDED
+        /// EVERY PLAYER'S CHAIR AS A BOT'S, FOR THE WHOLE MATCH. `MatchInstaller.BuildSeat` asks
+        /// the lobby who is sitting where and writes <see cref="Core.SeatOrigin"/> once; a
+        /// seatless referee (`-tp-dedicated`) and any host started with `-tp-autostart` load the
+        /// arena at boot, so the answer at that instant is "nobody", and `NoteSeatOrigin(Human)`
+        /// was a deliberate no-op that could never correct it. `MatchRpc.HostTakeSeatBackFromBot`
+        /// already stopped the AI driving the chair and set `IsBot = false`, and the PERSISTENT
+        /// record beside it stayed `Bot`.
+        ///
+        /// ⚠️⚠️ AND IT IS NOT COSMETIC: `SeatHandover.RatingMovesFor` refuses to move a ladder
+        /// for a seat whose origin is not `Human`, and `SeatHandover.HumanSeats` scales everybody
+        /// else's result by how many chairs held people. A referee-hosted bracket match would
+        /// have submitted four bot seats and moved nothing. `docs/TODO.md` § 145.4b.
+        ///
+        /// ⚠️⚠️ IT STILL ONLY MOVES FORWARD, WHICH IS WHY THE MATCH STATE IS A PARAMETER RATHER
+        /// THAN AN ASSUMPTION. Before the whistle a chair changing hands is the roster settling
+        /// and the honest answer is `Human`. After it, a bot has already played part of the
+        /// match in that chair, so the honest answer is `HandedToBot`, which is the same reading
+        /// the departure case gets and for the same reason: the bot's stretch happened.
+        /// **A `HandedToBot` seat is never walked back**, whoever sits down afterwards.
+        /// </summary>
+        public void NoteSeatClaimedByAPerson(bool midMatch)
+        {
+            if (SeatOrigin == Core.SeatOrigin.HandedToBot) return;
+            if (SeatOrigin == Core.SeatOrigin.Human) return;
+
+            SeatOrigin = midMatch ? Core.SeatOrigin.HandedToBot : Core.SeatOrigin.Human;
+        }
+
+        // -------------------------------------------------------------------
+        // SPEED ZONES — hazard slows, from character_base.gd:1556.
+        //
+        // ⚠️ ONE STACK, IN Stamina. Fatigue already rides `Stamina.SpeedZones`, and the
+        // movement step already reads it. A second list here would be two copies of the same
+        // state and the copy nobody reads is the one that drifts.
+        // -------------------------------------------------------------------
+
+        public void EnterSpeedZone(float multiplier)
+        {
+            if (!MayMutateGameplayState()) return;
+            Stamina.SpeedZones.Enter(multiplier);
+        }
+
+        public void ExitSpeedZone(float multiplier)
+        {
+            if (!MayMutateGameplayState()) return;
+            Stamina.SpeedZones.Exit(multiplier);
+        }
+
+        // Ice changes traction, not the speed-zone stack or combat impulse friction.
+        // The old per-frame 5.5*dt shove lost to Friction=30 before it could slide.
+        // Keep each sheet as a source so leaving one overlapping patch cannot clear
+        // another. Only the host or this body's predicted owner reaches these calls.
+        private readonly Dictionary<UnityEngine.Object,float> _iceSurfaces = new Dictionary<UnityEngine.Object,float>();
+        public bool IsOnIce => _iceSurfaces.Count > 0;
+        public void SetIceSurface(UnityEngine.Object source, float slipperiness)
+        {
+            if (!MayMutateGameplayState()) return;
+            if (slipperiness <= 0) _iceSurfaces.Remove(source);
+            else _iceSurfaces[source]=Mathf.Clamp(slipperiness,.25f,3f);
+        }
+        private float IceAcceleration()
+        {
+            float strongest=1;
+            foreach (float value in _iceSurfaces.Values) strongest=Mathf.Max(strongest,value);
+            // At the normal slowed walk, stopping takes roughly .38 s / .28 m.
+            // Incoming momentum takes longer to arrest, which makes crossing matter.
+            return 3.8f/strongest;
+        }
+
+        /// <summary>The slow currently applied to this unit, 1.0 when clear.</summary>
+        public float SpeedMultiplier => Stamina.SpeedZones.Value;
+
+        /// <summary>
+        /// Put this unit back on its own spawn with no velocity, from
+        /// `character_base.gd:1939`.
+        ///
+        /// ⚠️ NOT DESPAWNED AND NOT DAMAGED. The GDD's rule is stun-only, no permanent
+        /// elimination, so falling off the map costs position and nothing else. Anything
+        /// that makes this destructive is changing the design, not fixing a bug.
+        /// </summary>
+        public void Respawn()
+        {
+            if (!MayMutateGameplayState()) return;
+            Teleport(SpawnPosition);
+            // Godot reached the autoload directly (`AudioManager.play_at`). GameServices is
+            // this port's stand-in for the nine autoloads, and it is null in a bare test
+            // scene, so the call is guarded rather than assumed.
+            // ⚠️ VARIED. This is a 1-vs-3 game and a respawn follows every tag, so it is one of
+            // the most repeated sounds in a round, which is exactly the case
+            // `AudioDirector.PlayAtVaried`'s header was written for.
+            //
+            // ⚠️ ITS REACH IS DELIBERATELY NOT CHANGED IN THE SAME PASS. This sits behind
+            // `MayMutateGameplayState`, and deciding whether it should relay needs an authority
+            // reading rather than a guess; `docs/TODO.md` § 151.15 is where that is written down.
+            if (IsLocalHuman) GameServices.Audio?.PlayUi("respawn");
+        }
+
+        /// <summary>
+        /// The move axis as a world direction.
+        ///
+        /// ⚠️⚠️ MOUSE-AIMED MOVEMENT IS RELATIVE TO THE BODY AND THIS WAS THE "controls are
+        /// inverted and most dont work" REPORT IN FULL. `character_base.gd:912` reads
+        ///
+        ///     direction = transform.basis * Vector3(input.x, 0, input.y)
+        ///
+        /// for a mouse-aimed unit, and a bare world-space `Vector3(x, 0, y)` only for one that
+        /// steers by movement. This file had the world-space form for BOTH, so W walked the
+        /// player toward world +Z no matter which way they were facing: pointing south made W
+        /// reverse, pointing east made it strafe, and only one of the four cardinal headings
+        /// behaved. Nothing about it reads as a movement bug from inside the game.
+        ///
+        /// ⚠️ AND A MOVEMENT-AIMED UNIT TURNS TO FACE ITS DIRECTION, which is `look_at` on the
+        /// same line. Every bot steers this way, and without it a bot slides sideways while its
+        /// punch, its lunge and its shove all fire along a forward vector that never moved. The
+        /// three verbs all derive their direction from the body (`-basis.z` in the .gd), so this
+        /// is combat correctness rather than an animation nicety.
+        /// </summary>
+        private Vector3 Steer(Vector2 axis, float dt)
+        {
+            Vector3 wish = new Vector3(axis.x, 0.0f, axis.y);
+            if (wish.sqrMagnitude > 1.0f) wish.Normalize();
+
+            if (MouseAimed)
+            {
+                if (wish.sqrMagnitude < 0.0001f) return Vector3.zero;
+                wish = transform.TransformDirection(wish);
+                wish.y = 0.0f;
+                return wish.normalized;
+            }
+
+            Vector3 movement = wish.sqrMagnitude < 0.0001f ? Vector3.zero : wish.normalized;
+            Vector3 facing = movement;
+
+            // A movement-aimed body normally turns from its movement keys. A bot holding a
+            // throw has deliberately planted its feet, so the same rule otherwise leaves its
+            // yaw frozen at the direction of its last step while the ballistic aim moves to the
+            // lata. FaceAimPoint is an input request rather than an AI-only transform write: the
+            // motor still owns the turn speed and the bot still uses the same physical body.
+            if (Intent.FaceAimPoint && Intent.HasAimPoint)
+            {
+                facing = Intent.AimPoint - transform.position;
+                facing.y = 0.0f;
+                if (facing.sqrMagnitude > 0.0001f) facing.Normalize();
+                else facing = movement;
+            }
+
+            if (facing.sqrMagnitude < 0.0001f) return movement;
+
+            // ⚠️⚠️ THE BODY TURNS AT A BOUNDED RATE. IT USED TO SNAP, AND THAT IS THE WHOLE OF
+            // 🧑'S 2026-08-27 REPORT: *"they can look straight behind them and turn in 0.1
+            // seconds"*. What stood here was a bare `Quaternion.LookRotation(wish)`, so a
+            // movement-aimed unit was facing its new heading on the very next frame: a full
+            // reversal took one 60th of a second, which no human with a mouse can do.
+            //
+            // ⚠️ THE MOVEMENT IS NOT RATE-LIMITED, ONLY THE FACING, and that is deliberate
+            // rather than an oversight. A keyboard player moves the instant they press a key and
+            // their body catches up; slewing the VELOCITY as well would make bots accelerate
+            // into corners differently from players and would change every pathing number in
+            // `AiTuning`. `wish` is returned unchanged, so the bot still walks where it decided
+            // to walk on the frame it decided.
+            //
+            // ⚠️ AND IT APPLIES TO EVERY MOVEMENT-AIMED UNIT, NOT ONLY TO BOTS. A human on a
+            // gamepad steers this way too (`MouseAimed` is false for them), and a turn cap that
+            // only bots obeyed would be a second movement model, which `CLAUDE.md` § 4 forbids
+            // in as many words: *"a bot presses the same buttons a human does"*.
+            // ⚠️⚠️ THE RATE IS NOT CONSTANT ANY MORE, AND THAT IS § HOW A HAND MOVES A MOUSE IN
+            // `AiTuning`. What stood here was `BodyTurnDegPerSecond * dt`, a flat cap, so the
+            // body turned at exactly 520°/s from the first frame of a turn to the last and then
+            // stopped dead on the mark. It fixed the 2026-08-27 report (*"they can look straight
+            // behind them and turn in 0.1 seconds"*) and replaced it with a different tell:
+            // nothing physical moves at one speed with no ramp at either end. 🧑 2026-08-28:
+            // *"(make sure its head turns like how a human's camera/mouse turns)"*.
+            //
+            // ⚠️⚠️ THE WANTED SPEED SCALES WITH HOW FAR THERE IS TO GO, WHICH IS THE HALF THAT
+            // READS. A person makes a 15° correction slowly and a 170° check fast, so one rate is
+            // wrong at both ends: at 520 the small correction snaps and only the big check looks
+            // right. Dividing the remaining angle by `BodyTurnReachSeconds` gives a hand that
+            // wants to finish any turn in about the same time, which is what a wrist does.
+            //
+            // ⚠️ NOTHING GOT FASTER THAN IT WAS. A full 180° reversal wants 1000°/s at 0.18 s and
+            // clamps to the shipped `BodyTurnDegPerSecond` 520, so the longest turn in the game
+            // still runs at exactly the old cap. Only turns under about 94° behave differently,
+            // and those are the ones that used to snap.
+            //
+            // ⚠️ THE FLOOR IS NOT A START-FROM-ZERO. Accelerating from rest makes every SHORT
+            // press worthless, and the loiter glance is a 0.09 s press: from zero it would be
+            // worth about 12° and the look-around added on 2026-08-27 would quietly stop
+            // happening. `BodyTurnSettleDegPerSecond` is a hand that is already tensed.
+            //
+            // ⚠️ AND `RotateTowards` STILL CLAMPS AT THE TARGET, so there is no overshoot to
+            // correct and no settle wobble. The ease is in how the rate is reached, not in an
+            // oscillation around the mark.
+            float remaining = Quaternion.Angle(transform.rotation,
+                                               Quaternion.LookRotation(facing, Vector3.up));
+
+            float wantRate = Mathf.Clamp(remaining / AiTuning.BodyTurnReachSeconds,
+                                         AiTuning.BodyTurnSettleDegPerSecond,
+                                         AiTuning.BodyTurnDegPerSecond);
+
+            // ⚠️ THE RATE IS NEVER BELOW THE FLOOR WHILE A TURN IS RUNNING. Without this line a
+            // body that has been walking one heading sits at whatever rate it decayed to, and the
+            // first frame of a new turn inherits it: a bot that has stood still is slower to turn
+            // than one that has just turned, for no reason a player could ever read.
+            if (_turnRate < AiTuning.BodyTurnSettleDegPerSecond)
+                _turnRate = AiTuning.BodyTurnSettleDegPerSecond;
+
+            _turnRate = Mathf.MoveTowards(_turnRate, wantRate,
+                                          AiTuning.BodyTurnAccelDegPerSecond2 * Mathf.Max(0.0f, dt));
+
+            float maxTurn = _turnRate * Mathf.Max(0.0f, dt);
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation, Quaternion.LookRotation(facing, Vector3.up), maxTurn);
+
+            return movement;
+        }
+
+        /// <summary>
+        /// The body's current angular speed in degrees per second, carried between frames so a
+        /// turn can accelerate. See the note in <see cref="Steer"/>.
+        ///
+        /// ⚠️ IT IS DELIBERATELY NOT RESET WHEN THE BODY STOPS. A hand does not go rigid the
+        /// instant it stops moving the mouse, and resetting would make the first frame after a
+        /// pause the slowest frame of the next turn. The floor in `Steer` bounds it from below
+        /// and `MoveTowards` bounds it from above, so it cannot drift anywhere useless.
+        /// </summary>
+        private float _turnRate;
+
+        /// <summary>
+        /// True when a local player is steering this unit with the mouse, from
+        /// `character_base.gd::_is_mouse_aimed()`.
+        ///
+        /// ⚠️ ASKED OF THE RIG, NOT STORED HERE. One flag on the motor would have to be kept in
+        /// step with every camera handover: spectating, the debug player switcher, and a peer
+        /// that stops being the authority for a body. The rig is the thing that actually knows.
+        /// </summary>
+        private bool MouseAimed
+        {
+            get
+            {
+                if (_rig == null || !_rig.IsFollowing(this)) return false;
+
+                // ⚠️⚠️ A POSSESSED BODY IS NOT MOUSE-AIMED, AND LEAVING THIS OUT WALKED NEMU
+                // BACKWARDS. 🧑 2026-08-27: *"his character still moves backwards when i click
+                // E"*. The rig still FOLLOWS her while she is riding Kuro (it is her seat, it is
+                // just drawing from the pet's mount), so `IsFollowing` stays true and this
+                // answered "mouse". But `CameraRig.StepLook` is not running for her either:
+                // `StepCompanionLook` runs instead and yaws the PET, so her body's rotation is
+                // frozen at whatever it was when the possession began.
+                //
+                // ⚠️⚠️ AND HER BODY IS BEING DRIVEN BY AN AI IN THE MEANTIME.
+                // `GhostPetCompanion.BeginPossession` adds a temporary `AIController` so she is
+                // not a statue while the player is elsewhere, and an AI writes a WORLD-space
+                // heading (`AIController.Drive` through `EightWay`). With this returning true,
+                // `Steer` then ran `transform.TransformDirection` on it and re-interpreted that
+                // world heading as body-relative, rotating it by her frozen yaw. A bot asking to
+                // walk north walked whichever way her shoulders happened to be pointing, which
+                // is backwards as often as not.
+                //
+                // ⚠️ THE FIX IS HERE RATHER THAN IN `Steer` BECAUSE THE QUESTION IS THE ONE THIS
+                // PROPERTY ALREADY ASKS: is a local player aiming this body with the mouse right
+                // now. While she is possessing, nobody is.
+                var visual = GetComponent<Visual.CharacterVisual>();
+                if (visual != null && visual.Companion != null && visual.Companion.IsPossessed)
+                    return false;
+
+                return _rig.Aim == CameraSystem.AimSource.Mouse;
+            }
+        }
+
+        private CameraSystem.CameraRig _rig;
+
+        /// <summary>
+        /// ⚠️ RE-RESOLVED WHILE IT IS NULL, NOT ONCE IN Awake. `MatchInstaller` builds the rig
+        /// after the seats, so a unit that cached the answer at Awake would cache "no rig" and
+        /// the human seat would steer like a bot for the whole match.
+        /// </summary>
+        private void ResolveRig()
+        {
+            if (_rig != null) return;
+            _rig = FindFirstObjectByType<CameraSystem.CameraRig>();
+        }
+
+        private void FixedUpdate()
+        {
+            if (PresentationClock.Held) return;
+            float dt = Time.fixedDeltaTime;
+
+            ResolveRig();
+
+            if(StepEdgeRecoveryFixed(dt))return;
+
+            // A remote body is a host-authored picture, not a second simulation. Before this
+            // guard every client applied gravity and confinement to remote seats between
+            // snapshots, while the host applied the real movement. That made a correct stream
+            // visibly bob and fight itself, and it made bots look worse than human peers.
+            if (NetAuthority.IsNetworked && !IsLocallySimulated())
+            {
+                StepRemoteStamina(dt);
+                StepNetworkReplica(dt);
+                return;
+            }
+
+            if (_spawnSettle > 0)
+            {
+                _spawnSettle--;
+                transform.position = _spawnSettleAt;
+                return;
+            }
+
+            Stamina.StepFatigue(dt);
+
+            // ⚠️⚠️ A STUNNED UNIT DOES NOT STEER, AND ITS ABSENCE WAS THE REPORTED
+            // *"i can still move while stunned"*. `character_base.gd:932` is explicit:
+            //
+            //     if state != State.NORMAL:
+            //         velocity.x = move_toward(velocity.x, 0, FRICTION * delta)
+            //         velocity.z = move_toward(velocity.z, 0, FRICTION * delta)
+            //         _move_and_confine()
+            //         return
+            //
+            // and this file had no equivalent gate at all, so `Intent.MoveAxis` was read and
+            // `_velocity` written on every frame of a stun. A 5 s tag penalty that the victim
+            // can simply walk out of is not a penalty, and it is the half of the stun the HUD
+            // was already counting down for them.
+            //
+            // ⚠️ THE DECAY IS `Friction`, NOT AN INSTANT ZERO. The walk velocity a shove
+            // interrupted has to bleed off at the same rate every other impulse in the game
+            // does, or a stunned unit stops dead in the air and the knockback reads as a wall.
+            //
+            // ⚠️ AND GRAVITY, THE EXTERNAL IMPULSE AND THE CONFINEMENT ALL STILL RUN BELOW.
+            // Being stunned stops you ACTING; it does not exempt you from the world. A shove
+            // that could not push a stunned body is a shove that cannot combo into a tag,
+            // which is the interaction `IsTaggable`'s own header exists to protect.
+            // ⚠️⚠️ IT ASKS `CanMove()`, NOT `CanAct()`, AND THAT ONE WORD IS 🧑's *"cant move
+            // during buffer time"*. See CanMove: the HUD spends the whole of
+            // `Balance.WarmupBufferDuration` saying "WARMUP / PRACTICE BUFFER · SCORES PAUSED",
+            // which is an invitation to practise. `EndRound` had cleared `RoundActive` on every
+            // body before that window opened, so what the player actually got was the whole
+            // buffer standing still reading an offer they could not take. It was FIFTEEN SECONDS
+            // when that was found and is 5 now (§ 83.13); the fault would be the same at either.
+            bool canSteer = CanMove();
+
+            // ⚠️ A FEARED BODY RUNS ON ITS OWN (the owner's flee), so it counts as moving whatever the stick says.
+            Vector2 axis = canSteer ? (IsFeared ? Vector2.up : Intent.MoveAxis) : Vector2.zero;
+            bool moving = axis.sqrMagnitude > 0.0001f;
+
+            // The sprint multiplier. Fatigue is NOT in this value: it rides the speed-zone
+            // stack so it composes with a hazard zone rather than one silently winning.
+            // HERO-10 (plan 9.5): Phaister walks while she reaches for someone with a curse, but she cannot sprint.
+            Stamina.Step(dt, moving, canSteer && !IsConcussed && !IsFeared && !IsVoodooReaching
+                                                   && Intent.Pressed(Verb.Sprint));
+
+            // ⚠️⚠️ THE FATIGUE CUE, WHICH SHIPPED REGISTERED AND WAS NEVER FIRED ONCE.
+            // `character_base.gd::_enter_fatigue` plays it on the frame the bar bottoms out, and
+            // that moment is worth a sound for the same reason the HUD row exists: emptying the
+            // bar costs a 0.75 speed lockout the player did not choose and cannot see coming.
+            //
+            // ⚠️ THE EDGE IS DETECTED HERE BECAUSE `Stamina` CANNOT MAKE A SOUND. It lives in the
+            // engine-free core package (rule 3), so it has no way to reach the audio director and
+            // must not acquire one. The motor is the nearest thing that has both the state and a
+            // UnityEngine reference, which is exactly the split the package boundary is for.
+            //
+            // ⚠️ AN EDGE, NOT A STATE. Fatigue lasts seconds; playing on the state would retrigger
+            // every frame, which is the buzzsaw case `AudioCues.HeadroomDb` exists to keep out.
+            bool fatigued = Stamina.IsFatigued;
+
+            if (fatigued && !_wasFatigued && IsLocalHuman)
+                // ⚠️ VARIED, for the reason on the respawn above: the bar bottoms out several
+                // times a round per seat. ⚠️ AND IT STAYS PRIVATE ON PURPOSE, unlike the throw
+                // wind-up and the slide: your own bar running out is feedback about you, and
+                // telling the taya when an attacker is fatigued would be handing over a read the
+                // game does not otherwise give. `docs/TODO.md` § 151.15.
+                GameServices.Audio?.PlayUi("stamina_empty");
+
+            _wasFatigued = fatigued;
+
+            // ⚠️⚠️ THE COMMITMENT IS SPENT ON THE STEERING AND NOT ON THE IMPULSE, which is what
+            // makes a retrieval slide read as a slide rather than as a slow walk. The dash lives
+            // in `_externalVelocity` and decays against `Friction` untouched; what this narrows is
+            // how much the player may add to it, so the body keeps going the way it committed and
+            // the taya can read where it is going to come out. `docs/TODO.md` § 146.
+            if (CommitLeft > 0.0f) CommitLeft = Mathf.Max(0.0f, CommitLeft - dt);
+
+            float speed = Stamina.MovementSpeed(_isDefender, Stamina.IsSprinting)
+                          * Stamina.SpeedZones.Value
+                          * (AbilitySystem?.Kit?.MovementSpeedScale ?? 1.0f)
+                          * (CommitLeft > 0.0f ? Balance.SlideSteerScale : 1.0f)
+                          * StatusSpeedScale
+                          * BodySpeedScale
+                          * RooftopPool.MovementScale(transform.position);
+
+            if (canSteer)
+            {
+                Vector3 wish = IsFeared ? FleeWish() : Steer(axis, dt);
+
+                var target=new Vector2(wish.x*speed,wish.z*speed);
+                if (IsOnIce && _grounded)
+                    target=Vector2.MoveTowards(new Vector2(_velocity.x,_velocity.z),target,IceAcceleration()*dt);
+                _velocity.x=target.x;
+                _velocity.z=target.y;
+            }
+            else
+            {
+                _velocity.x = Mathf.MoveTowards(_velocity.x, 0.0f, Balance.Friction * dt);
+                _velocity.z = Mathf.MoveTowards(_velocity.z, 0.0f, Balance.Friction * dt);
+            }
+
+            // ⚠️ EXTERNAL IMPULSES DECAY AGAINST Friction, WHICH IS WHAT MAKES v²/60 TRUE.
+            // Every published knockback distance in the game is that solve, so this
+            // deceleration is not a feel parameter: changing it invalidates SHOVE_SPEED,
+            // LUNGE_SPEED and BLOCK_KNOCKBACK_SPEED all at once.
+            // ⚠️ THE CARRY IS HELD FIRST, THEN RELEASED INTO THE SAME `Friction` DECAY BELOW, which
+            // is what makes its tail the old v^2/(2 x Friction) exactly (`Core.CarryRules`).
+            StepCarry(dt);
+
+            if (_externalVelocity.sqrMagnitude > 0.0001f)
+            {
+                float mag = _externalVelocity.magnitude;
+                mag = Mathf.Max(0.0f, mag - Balance.Friction * dt);
+                _externalVelocity = mag <= 0.0f ? Vector3.zero : _externalVelocity.normalized * mag;
+            }
+
+            ApplyGravity(dt);
+
+            Vector3 total = _velocity + _externalVelocity;
+            if (PaetePullVelocity(dt, out var vineVelocity))
+            {
+                _velocity.x=vineVelocity.x; _velocity.z=vineVelocity.z;
+                total.x=vineVelocity.x; total.z=vineVelocity.z;
+            }
+            CollisionFlags flags = _cc.Move(total * dt);
+
+            // ⚠️ `isGrounded` ALONE IS NOT TRUSTWORTHY. It reflects only the last Move and
+            // goes false on slopes, on steps and on the frame an impulse lifts the capsule.
+            // The collision flag is what the controller actually resolved this step.
+            bool wasAirborne = !_grounded;
+            _grounded = (flags & CollisionFlags.Below) != 0 || _cc.isGrounded;
+
+            // ⚠️ THE LANDING SOUND HAS A SPEED FLOOR. Below LandSfxMinSpeed a landing is
+            // silent, or a unit stepping off a kerb thumps like one that fell off a roof —
+            // and on uneven ground the grounded flag flickers, so every step would thud.
+            if (_grounded && wasAirborne && _fallSpeed > Balance.LandSfxMinSpeed)
+            {
+                float weight = Mathf.InverseLerp(Balance.LandSfxMinSpeed,
+                                                 Balance.MaxFallSpeed, _fallSpeed);
+                NetCue.PlayVaried("land", transform.position,
+                                                 0.86f, 1.04f,
+                                                 Mathf.Lerp(0.65f, 1.0f, weight));
+                GetComponentInChildren<Visual.CharacterSquashStretch>()?
+                    .Squash(Mathf.Lerp(0.12f, 0.30f, weight));
+            }
+
+            // Tracked on the way down, because by the time the capsule is grounded the
+            // vertical velocity has already been zeroed.
+            _fallSpeed = _grounded ? 0.0f : Mathf.Max(_fallSpeed, -_velocity.y);
+
+            ShedCharacterPerch();
+            Confine();
+
+            // Status recovery is timed; Jump has no recovery side effect.
+
+            // ⚠️⚠️ THE INTENT SNAPSHOT IS TAKEN HERE, AT THE END OF THE AUTHORITATIVE STEP, AND
+            // NOWHERE ELSE. `JustPressed` and `JustReleased` are a diff against it, so whoever
+            // takes it decides which readers can still see a press edge. Both producers used to
+            // take their own at the end of their Update, which meant the edge was gone before
+            // this step ran: jump, the shove and the lunge all read as never pressed, for a bot
+            // and for a human alike.
+            //
+            // Taken last, after every verb resolved in this step has been read, so an edge
+            // written by an Update survives into the next physics step exactly once. Consumers
+            // that still run in Update (`Carrier`, for the pickup) then see it until this line
+            // runs, which is what stops a press being dropped entirely on a frame that happens to
+            // carry no physics step at all.
+            Intent.CommitFrame();
+
+            StepNetworkTransform();
+        }
+
+        // -------------------------------------------------------------------
+        // § TELLING EVERYBODY ELSE WHERE THIS BODY IS
+        //
+        // ⚠️⚠️ THE HOST NEVER SENT ITS OWN BODIES AND THAT IS THE WHOLE OF 🧑'S 2026-08-27
+        // REPORT: *"movements only existed in host's side and no one that joined could see
+        // movement and shi happening from them"*. This block was one `if`:
+        //
+        //     if (NetAuthority.ShouldRequest() && _playerSlot == NetAuthority.LocalSlot)
+        //         MatchRpc.Instance?.SubmitMoveServerRpc(...);
+        //
+        // `ShouldRequest()` is `IsNetworked && !IsHost`, so **on the host it is false, always.**
+        // A client submitted its own position and the host relayed it, so a joiner could see
+        // OTHER JOINERS move. Nothing ever transmitted the host's own player, and nothing ever
+        // transmitted a bot, because bots are host-owned and have no client to ask on their
+        // behalf. In the usual test (one host, one joiner, two bots) the joiner saw one moving
+        // body and three statues.
+        //
+        // ⚠️⚠️ `NetAuthority`'S OWN HEADER PREDICTS THIS EXACT FAULT, in the paragraph above
+        // `ShouldRequest`: *"Any verb that calls ShouldResolve MUST also handle ShouldRequest. If
+        // a verb has one without the other, it is broken for somebody and probably silently."*
+        // It records the lunge shipping dead for three of four players for weeks from the same
+        // shape. Movement had the REQUEST half and no host half at all, which is that warning
+        // with the sides swapped, and it is the more expensive version because a dead verb is a
+        // verb nobody uses and a dead transform is the entire game not happening.
+        //
+        // ⚠️ IT SENDS ON THE PHYSICS STEP, WHICH IS THE SAME CADENCE A CLIENT ALREADY SUBMITS AT.
+        // `ApplyUnitMove` snaps rather than interpolating, so a slower host tick would make
+        // host-owned bodies visibly choppier than client-owned ones on the same screen, which
+        // reads as those specific players lagging. Four seats at roughly forty bytes on a 50 Hz
+        // step is about 8 KB/s downstream, which is nothing on a LAN and acceptable on the relay.
+        // If that ever needs to come down, the answer is interpolation on the receiving end
+        // first, not a lower send rate on its own.
+        // -------------------------------------------------------------------
+
+        private void StepNetworkTransform()
+        {
+            if (!NetAuthority.IsNetworked) return;
+
+            // A client speaks only for the body it is actually driving.
+            if (NetAuthority.ShouldRequest())
+            {
+                if (_playerSlot == NetAuthority.LocalSlot)
+                    Net.MatchRpc.Instance?.SubmitMoveServerRpc(
+                        _playerSlot, transform.position, transform.eulerAngles.y, _velocity,
+                        _grounded);
+
+                return;
+            }
+
+            if (!NetAuthority.IsHost) return;
+
+            // ⚠️⚠️ ONLY THE BODIES THE HOST ACTUALLY DRIVES, and the test is which input source
+            // is bolted to them rather than a lobby lookup. `MatchInstaller.BuildSeat` gives the
+            // local human a `PlayerInputReader`, gives an unoccupied seat an `AIController`, and
+            // gives a REMOTE human's seat neither, because that body is moved by the transforms
+            // its owner submits. So "has one of the two" is exactly "the host simulated this
+            // body", it needs no peer list, and it is right the instant `HostPeerLeft` drops an
+            // `AIController` onto a seat somebody just disconnected from.
+            //
+            // ⚠️ RE-BROADCASTING A REMOTE SEAT WOULD NOT BE HARMLESS. The host's copy of it is up
+            // to one step behind whatever that client last sent, so echoing it back out puts a
+            // body that is being driven at 50 Hz into a fight with a stale copy at 50 Hz, which
+            // is visible as a jitter on precisely the players who are playing well.
+            if (!HostDrivesThisBody()) return;
+
+            Net.MatchRpc.Instance?.SyncUnitTransformClientRpc(
+                _playerSlot, transform.position, transform.eulerAngles.y, _velocity);
+        }
+
+        /// <summary>
+        /// Is this body simulated here, rather than being a picture of somebody else's?
+        ///
+        /// ⚠️ THE LOOKUPS ARE CACHED BECAUSE THIS RUNS ON EVERY PHYSICS STEP FOR EVERY SEAT.
+        /// `GetComponent` four times a step is the shape of per-frame cost `CLAUDE.md` § 7.1
+        /// records a HUD string rebuild being caught for. `_inputSourceKnown` is reset by
+        /// <see cref="ForgetInputSource"/> whenever a seat changes hands, which is the only time
+        /// the answer can change.
+        /// </summary>
+        private bool HostDrivesThisBody()
+        {
+            if (!_inputSourceKnown)
+            {
+                // Prefer the replacement producer while the retired one awaits Destroy.
+                // Without a replacement, preserve a surviving paused producer's ownership.
+                _hostReader = GetComponent<PlayerInputReader>();
+                foreach (var reader in GetComponents<PlayerInputReader>())
+                    if (reader.enabled) { _hostReader = reader; break; }
+                _hostBrain = GetComponent<AIController>();
+                foreach (var brain in GetComponents<AIController>())
+                    if (brain.enabled) { _hostBrain = brain; break; }
+                _inputSourceKnown = true;
+            }
+
+            // Destroy is deferred. A same-frame query can refill this cache before
+            // the old bot disappears; Unity references become null afterward,
+            // whereas a cached boolean kept the host simulating that seat forever.
+            return _hostReader != null || _hostBrain != null;
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ CALLED WHENEVER A SEAT CHANGES HANDS, and forgetting to call it is a body that
+        /// goes silent or starts double-talking. A peer disconnecting gains an `AIController`
+        /// (`MatchRpc.HostPeerLeft`) and a peer reclaiming its seat loses one
+        /// (`MatchRpc.HostLateJoin`); both change the answer above and neither is visible from
+        /// here.
+        /// </summary>
+        public void ForgetInputSource() => _inputSourceKnown = false;
+
+        /// <summary>True when this process owns the simulation rather than displaying it.</summary>
+        public bool IsLocallySimulated()
+        {
+            if (!NetAuthority.IsNetworked) return true;
+            if (NetAuthority.IsHost) return HostDrivesThisBody();
+            return _playerSlot == NetAuthority.LocalSlot;
+        }
+
+        /// <summary>
+        /// Gameplay state belongs to the host. The owning client may predict changes to its own
+        /// body so input stays responsive; the continuous host state stream corrects it. An
+        /// observing client may never move or stun somebody else's body, even when a replicated
+        /// hazard happens to run there too.
+        /// </summary>
+        private bool MayMutateGameplayState()
+            => !NetAuthority.IsNetworked || NetAuthority.IsHost || _playerSlot == NetAuthority.LocalSlot;
+
+        /// <summary>
+        /// Queues a host transform. Remote seats smooth toward it; the owning client only
+        /// accepts a correction when prediction has drifted far enough to be visible.
+        /// </summary>
+        public void ApplyNetworkTransform(Vector3 position, float yaw, Vector3 velocity,
+                                          bool grounded, bool reconcileLocal, bool force = false, long flightEpisode = 0)
+        {
+            // ⚠️ ASSIGNED BEFORE THE RECONCILE RETURN BELOW, AND THAT ORDERING MATTERS. A body
+            // whose owner is predicting it skips the rest of this method whenever the error is
+            // small, which is most frames; the pose it keeps is its own, but the grounded bit is
+            // still the owner's truth and `StepNetworkReplica` never runs for it anyway.
+            _networkGrounded = grounded;
+            ObserveFlightPose(grounded, flightEpisode);
+
+            float error = Vector3.Distance(transform.position, position);
+            if(reconcileLocal && !force && _awaitingTeleport)return;
+            if (reconcileLocal && !force && error < 1.25f) return;
+
+            // ⚠️⚠️ THE VELOCITY IS TAKEN WITH THE POSITION OR NOT AT ALL, AND IT USED TO BE
+            // TAKEN ON THE LINE ABOVE `_networkGrounded`, UNCONDITIONALLY. 🧑 2026-08-30, of an
+            // online match: *"randomly jittering in online game for non hosts when they jump"*,
+            // *"its like there is a ceiling above them and they bounce up and down very fast"*.
+            //
+            // A client SIMULATES its own body (`Simulates()`), so a jump writes
+            // `_velocity.y = Balance.JumpVelocity` locally on the press frame. The host has not
+            // seen that press yet — it is still in flight on `SubmitMove` — so the very next
+            // `SyncUnit` carries the host's copy of that seat still resting on the ground at
+            // `GroundedRestVelocityY` = -2.0, and the old first line stamped it straight over
+            // the jump. The body fell. A packet or two later the host's simulation caught up and
+            // sent +`JumpVelocity`, so it rose again, and at the pose rate the two answers
+            // alternate several times a second: a body slamming into a ceiling that is not there.
+            //
+            // ⚠️ THE POSITION HAD THE GUARD ALL ALONG AND THE VELOCITY DID NOT, WHICH IS WHY
+            // READING THE POSE PATH DID NOT EXPLAIN IT. Prediction was correct about WHERE the
+            // body is for the whole 1.25 m window and wrong about where it was GOING every
+            // frame inside it, and the integrator turns the second into the first one step later.
+            //
+            // ⚠️ AN OBSERVED REPLICA IS UNAFFECTED. `ApplyUnitMove` and every other seat pass
+            // `reconcileLocal: false`, so they still take the host's velocity on every packet,
+            // which is what `StepNetworkReplica`'s one-beat lead and the animator both read.
+            _velocity = velocity;
+
+            if(force)
+            {
+                _spawnSettleAt=position;
+                if(!IsLocallySimulated())_spawnSettle=0;
+            }
+            _networkTargetPosition = position;
+            _networkTargetYaw = yaw;
+            _networkTargetVelocity = velocity;
+
+            bool snap = force || !_networkTargetKnown || error > 3.0f;
+            _networkTargetKnown = true;
+
+            if (!snap) return;
+
+            SetNetworkPose(position, yaw);
+            if (IsSwimming) EndFlightImmediately();
+            _networkSmoothVelocity = Vector3.zero;
+            _networkYawVelocity = 0.0f;
+        }
+
+        private void StepNetworkReplica(float dt)
+        {
+            if (!_networkTargetKnown) return;
+
+            // ⚠️⚠️ TRANSMITTED, NOT INFERRED, AND THE INFERENCE IS GONE RATHER THAN KEPT AS A
+            // FALLBACK. `_grounded` is written only by `ApplyGravity` in the local simulation
+            // and this branch returns before ever reaching it, so on a replica it would other-
+            // wise stay FALSE for the whole match. `Visual.CharacterAnimator.ClipFor` asks
+            // `IsGrounded` FIRST:
+            //
+            //     if (!_motor.IsGrounded) return _motor.Velocity.y > 0.5f ? Jump : Fall;
+            //
+            // so Walk, Sprint and Idle were unreachable for anybody you were not driving
+            // yourself. 🧑 2026-08-28, from the host's screen: *"the nonhosts that join can move
+            // and interact but theyre stuck at this pose, they cant do animations and shit"*.
+            //
+            // ⚠️⚠️ THE VELOCITY WINDOW THAT USED TO STAND HERE WAS WRONG IN THE MIDDLE OF A
+            // JUMP, WHICH IS THE ONE PLACE IT MATTERED. It read grounded for any vertical
+            // velocity in (-2.5, 0.5), and a jump passes through that whole band on the way up
+            // AND on the way down. At `Balance.Gravity` that is not "a frame or two at the
+            // apex" as the note claimed: it is about 0.12 s, six fixed steps, twice per jump.
+            // Every remote jump therefore broke into Jump, a flicker of Idle or Walk at the
+            // top, then Fall. 🧑 2026-08-28: *"joining players bug pag nag jjump"*.
+            //
+            // The owner of a body is the only thing that knows the truth, so both payloads now
+            // carry it: a client puts its own `IsGrounded` on `SubmitMove`, the host stores that
+            // onto its copy, and `SyncUnit` relays `unit.IsGrounded` outward for every seat.
+            // `docs/TODO.md` § 63.4.
+            _grounded = _networkGrounded;
+
+            // ⚠️⚠️ THE LEAD IS THE SMOOTHING, AND IT USED TO BE ONE PACKET. 🧑 2026-08-30, of a
+            // LAN match: *"lan isnt laggy as fuck anymore bcz ealrier non hosts were all
+            // behind"*, and separately *"lan is very lag and delayed for non host btw, online
+            // server is more reliable"*.
+            //
+            // The old pair was a 0.020 s lead against a 0.055 s `SmoothDamp`, and those two
+            // numbers are answering different questions. The lead was sized against the SEND
+            // interval — `StepNetworkTransform` sends on the physics step, so 50 Hz, so 0.020 s
+            // — which compensates for the packet being one tick old. It does nothing about the
+            // smoothing itself, and a critically damped filter with a 0.055 s time constant
+            // **trails its target by about that whole time constant**. So a replica sat roughly
+            // 0.055 - 0.020 = **35 ms behind the host's own body before a single millisecond of
+            // network latency**, on every peer, on every map.
+            //
+            // ⚠️⚠️ AND THAT IS WHY IT READ AS WORSE ON A LAN THAN ON THE RELAY, WHICH IS THE PART
+            // THAT MAKES NO SENSE UNTIL YOU SEE IT. 35 ms of filter lag is a fixed cost that does
+            // not care about the link; on the Singapore relay it is a small fraction of the
+            // round trip and invisible, and on a LAN where the round trip is ~1 ms it is
+            // essentially ALL of the lag, and it is the only thing left to notice.
+            //
+            // Leading by the smoothing time is what makes the filter's output land ON the host's
+            // position instead of behind it. The velocity is the host's own, transmitted rather
+            // than differentiated, so this is interpolation arriving on time rather than
+            // extrapolation guessing at a future.
+            //
+            // ⚠️ IT IS NOT `0.055 + 0.020`. Adding the packet age on top would put the replica
+            // AHEAD of the host and turn every direction change into an overshoot-and-snap. The
+            // send interval is already inside the smoothing window, not beside it.
+            //
+            // ⚠️⚠️ THIS IS THE HALF THE SEND-RATE NOTE ABOVE `StepNetworkTransform` PREDICTED.
+            // Its own words: *"If that ever needs to come down, the answer is interpolation on
+            // the receiving end first, not a lower send rate on its own."* Nothing about the
+            // transport, the tick rate or the delivery channel moved, so the relay is affected
+            // exactly as the LAN is and neither is favoured.
+            const float NetworkSmoothTime = 0.055f;
+
+            Vector3 target = _networkTargetPosition + _networkTargetVelocity * NetworkSmoothTime;
+            Vector3 position = Vector3.SmoothDamp(transform.position, target,
+                                                   ref _networkSmoothVelocity, NetworkSmoothTime,
+                                                   40.0f, dt);
+            float yaw = Mathf.SmoothDampAngle(transform.eulerAngles.y, _networkTargetYaw,
+                                              ref _networkYawVelocity, 0.045f,
+                                              1080.0f, dt);
+            SetNetworkPose(position, yaw);
+        }
+
+        /// <summary>
+        /// Puts a replica where the host says it is.
+        ///
+        /// ⚠️⚠️ THE ARENA WALLS APPLY TO A PICTURE OF A BODY EXACTLY AS THEY DO TO A BODY, AND
+        /// UNTIL 2026-08-29 THEY DID NOT. 🧑, of a LAN match: *"if u werent host, the bots and
+        /// slippers were going out of map"*. Only the non-host saw it, and that is the whole
+        /// tell: the host SIMULATES these bodies and its simulation is clamped twice, at
+        /// `MoveStep` and at the confinement. A client does neither. It writes whatever arrived
+        /// straight onto the transform, so the walls existed on exactly one machine in the match.
+        ///
+        /// ⚠️ IT IS THE SAME PAIR OF NUMBERS THE HOST CLAMPS TO, so this can never disagree with
+        /// the host about a position the host considers legal: it can only refuse one the host
+        /// would have refused too. That is what makes it safe to apply to a stream this peer has
+        /// no authority over. `MatchInstaller.MeasurePlayableBounds` runs in `Start` on every
+        /// peer, so a client has had the right numbers all along and simply never used them.
+        ///
+        /// ⚠️ Y IS NOT CLAMPED. Jumps, falls, the kill plane and Ilalim ng Tulay's viaduct all
+        /// live on that axis and none of them is a wall.
+        ///
+        /// ⚠️ THIS IS THE SECOND HALF OF A TWO-PART FIX AND IT IS THE HALF THAT CANNOT REGRESS.
+        /// `MatchRpc.PoseDelivery` stops the reliable-channel bursts that made a replica jump far
+        /// enough for `ApplyNetworkTransform` to treat it as a correction and snap; this makes the
+        /// destination legal whatever the transport does. Either alone leaves the other's failure
+        /// reachable.
+        /// </summary>
+        private void SetNetworkPose(Vector3 position, float yaw)
+        {
+            position = AIController.ClampToPlayable(position);
+
+            bool enabled = _cc != null && _cc.enabled;
+            if (enabled) _cc.enabled = false;
+            transform.SetPositionAndRotation(position, Quaternion.Euler(0.0f, yaw, 0.0f));
+            if (enabled) _cc.enabled = true;
+        }
+
+        private bool _inputSourceKnown;
+        private PlayerInputReader _hostReader;
+        private AIController _hostBrain;
+
+        /// <summary>
+        /// ⚠️⚠️ SHARED WITH `StepNetworkReplica`'S GROUNDED WINDOW, AND THAT SHARING IS THE
+        /// FIX. The window used to be a bare `(-0.5, 0.5)` around the animator's own Jump cut,
+        /// which forgot that a body resting on the ground never reports 0: it reports THIS. A
+        /// standing, idle unit therefore transmits -2.0 every frame, landed outside a window
+        /// that stopped at -0.5, and every replica read it as permanently airborne — Fall or,
+        /// once the apex of a real jump's arc happened to line up, Jump. 🧑, from the host's
+        /// screen, watching a body that was in fact standing still: "you could see other
+        /// players on what looks like a jumping emote." The window now spans this constant
+        /// with the same margin the Jump cut already had.
+        /// </summary>
+        private const float GroundedRestVelocityY = -2.0f;
+
+        private void ApplyGravity(float dt)
+        {
+            // Flight owns the vertical while it lasts (`CharacterMotor.Status.cs`).
+            if (StepFlightVertical(dt)) return;
+            if(_swimLeap&&(_grounded||_velocity.y<=0))_swimLeap=false;
+            if(IsSwimming&&!_swimLeap)
+            {
+                if(Intent.JustPressed(Verb.Jump)&&CanMove())
+                {
+                    _swimLeap=true;
+                    _velocity.y=Balance.JumpVelocity;
+                }
+                else
+                {
+                    // Water absorbs the entry fall before applying buoyancy.
+                    // With only a gentle acceleration toward the float height,
+                    // a normal deck jump hit the1.6m basin floor and put the FPP
+                    // eye .27m underwater. Keep a short, visible settling descent
+                    // without carrying the dry-air terminal speed into the pool.
+                    _velocity.y=Mathf.Max(_velocity.y,-1.8f);
+                    RooftopPool.TrySurface(transform.position,out float floatSurface);
+                    float target=floatSurface-RooftopPool.FloatDepth;
+                    float rise=Mathf.Clamp((target-transform.position.y)*5,-1.8f,1.8f);
+                    _velocity.y=Mathf.MoveTowards(_velocity.y,rise,9*dt);
+                }
+                return;
+            }
+            if (_grounded && _velocity.y <= 0.0f)
+            {
+                // ⚠️ A SMALL CONSTANT DOWNWARD BIAS RATHER THAN ZERO. A CharacterController
+                // resting at exactly 0 vertical velocity reports `isGrounded` false every
+                // other frame, which reads as a unit that cannot jump reliably and cannot
+                // be told apart from an input bug.
+                _velocity.y = GroundedRestVelocityY;
+
+                // ⚠️ `CanMove()`, FOR THE REASON THE STEER GATE GIVES. Walking and jumping are
+                // one permission: gating them differently is how you get a player who can hop
+                // through the warmup buffer but not walk across it.
+                if (Intent.JustPressed(Verb.Jump) && CanMove())
+                {
+                    _velocity.y = Balance.JumpVelocity;
+                    NetCue.PlayVaried("jump", transform.position,
+                                                     0.96f, 1.08f, 0.9f);
+                    GetComponentInChildren<Visual.CharacterSquashStretch>()?.Stretch(0.20f);
+                }
+            }
+            else
+            {
+                _velocity.y -= Balance.CharacterGravity * dt;
+                if (_velocity.y < -Balance.MaxFallSpeed) _velocity.y = -Balance.MaxFallSpeed;
+            }
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ YOU CANNOT STAND ON SOMEBODY'S HEAD. Every unit collides with every other,
+        /// so one capsule resting on another is a perfectly legal floor as far as the
+        /// controller is concerned: grounded goes true in mid-air, gravity is never
+        /// applied, and the player hovers with full walking control. This came from live
+        /// play and is MORE likely here, with three attackers converging on one box.
+        ///
+        /// ⚠️ THE FIX IS A NUDGE, NOT A COLLISION-LAYER CHANGE. Turning character-vs-
+        /// character collision off would take the BODY BLOCK with it, and the taya standing
+        /// in the throwing lane is the whole defensive mechanic. So only a contact steep
+        /// enough to BE a perch is answered.
+        /// </summary>
+        private void ShedCharacterPerch()
+        {
+            if (!_perchedThisStep) return;
+            _perchedThisStep = false;
+
+            Vector3 away = transform.position - _perchContact;
+            away.y = 0.0f;
+            if (away.sqrMagnitude < 0.0001f) away = transform.forward; // exactly stacked
+            _externalVelocity += away.normalized * PerchShedSpeed;
+        }
+
+        private const float PerchNormalMin = 0.7f;
+        private const float PerchShedSpeed = 2.5f;
+        private bool _perchedThisStep;
+        private Vector3 _perchContact;
+
+        /// <summary>Last frame's fatigue state, so the cue fires on the edge. See FixedUpdate.</summary>
+        private bool _wasFatigued;
+
+        private void OnControllerColliderHit(ControllerColliderHit hit)
+        {
+            if (hit.normal.y < PerchNormalMin) return;
+            if (hit.collider.GetComponent<CharacterMotor>() == null) return;
+
+            _perchedThisStep = true;
+            _perchContact = hit.point;
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ A SQUARE, NOT A CIRCLE, and X and Z are clamped INDEPENDENTLY. The chalk the
+        /// map draws and this clamp are the same expression; if either becomes radial the
+        /// throwing line and the chalk stop agreeing and nobody will be able to see why.
+        ///
+        /// ⚠️ ONLY THE DEFENDER IS CONFINED. Attackers move freely everywhere and the box
+        /// is merely dangerous to them, never closed.
+        /// </summary>
+        private void Confine()
+        {
+            Vector3 p = transform.position;
+            float x = p.x, z = p.z;
+
+            if (Confinement.IsConfined(RoundActive, _isDefender) && !MayLeaveBoxToTag)
+                Confinement.ClampToBox(ref x, ref z);
+
+            // ⚠️⚠️ AND NOBODY LEAVES THE ARENA AT ALL, ROLE OR NO ROLE. The chalk box above is a
+            // RULE and applies to the taya only; this is the WALL and applies to everybody. The
+            // port had the wall for the tsinelas and not for the people: `Slipper.BounceOffBounds`
+            // has bounced off the playable walls since it was written, while a body could walk or
+            // be launched straight through the same line into empty space.
+            //
+            // ⚠️ MEASURED, AND IT IS NOT A CORNER CASE. `AiDiagnosticProbe` on 2026-08-23 caught
+            // seat 3 at z = 18.73 against a half depth of 13.0, eight seconds into a Hero Strike
+            // round, still holding its tsinelas. It threw from out there, the slipper landed at
+            // (62.7, 38.4), and the owner then spent the rest of the round in FETCH walking into
+            // the edge of the world at a goal it clamps but a body it did not. The whole-match
+            // probe reported that as 121 unretrieved-slipper penalties and a seat travelling
+            // 2,359 m: the AI looked broken and was in fact the only thing behaving.
+            //
+            // ⚠️ HERO STRIKE IS WHERE IT SURFACES BUT IT IS NOT A HERO BUG. Its kits apply far
+            // more knockback than Classic's do, so they find the missing wall first. A human
+            // shoved off the same edge in Classic has always had the same hole to fall into.
+            //
+            // ⚠️ PER SIDE SINCE 2026-09-27: each wall is its own limit, so an arena whose sea wall
+            // is farther out than its land wall lets a body walk to the shore without also letting
+            // it through the land side. Symmetric arenas clamp exactly as before
+            // (`AIController.PlayableMinX` has the arithmetic).
+            x = AIController.ClampPlayableX(x);
+            z = AIController.ClampPlayableZ(z);
+
+            if (x == p.x && z == p.z) return;
+
+            _cc.enabled = false;
+            transform.position = new Vector3(x, p.y, z);
+            _cc.enabled = true;
+
+            // ⚠️ THE PUSH THAT REACHED THE WALL IS SPENT AT THE WALL. Without this the body is
+            // clamped back every step while the impulse still points outwards, so a knockback
+            // into the edge reads as being pinned there for its whole duration instead of
+            // stopping against it. Only the component INTO the wall is removed: a knockback
+            // along the edge still slides.
+            if (x != p.x)
+            {
+                _externalVelocity.x = 0.0f;
+                _velocity.x = 0.0f;
+            }
+
+            if (z != p.z)
+            {
+                _externalVelocity.z = 0.0f;
+                _velocity.z = 0.0f;
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // The queries every other system asks in. Each is ONE function on purpose:
+        // the HUD and the rule that acts must never be able to disagree.
+        // -------------------------------------------------------------------
+
+        // ⚠️ FEARED ACTS ON NOTHING (owner, 2026-09-26: *"Flee from kuro and drop slipper"*): no throw, pickup or skill.
+        public bool CanAct() => RoundActive && !IsStunned && !IsFeared && !PresentationClock.BlocksInput
+            && !(AbilitySystem?.Kit?.BlocksOwnActions ?? false);
+
+        // -------------------------------------------------------------------
+        // § COMMITMENT
+        //
+        // ⚠️⚠️ IT IS NOT A STUN AND MUST NOT BECOME ONE. A stun is something done TO a body and
+        // it stops it acting; a commitment is something the player chose and it only narrows
+        // where they can steer. `CanAct()` is deliberately untouched by it, so an attacker
+        // mid-slide can still grab, still throw and still be tagged, which is what makes the
+        // slide a decision rather than an animation they have to sit through.
+        //
+        // ⚠️ IT OVERLAPS BY `Max`, LIKE EVERY STUN IN THIS GAME (`CLAUDE.md` § 4). Additive
+        // commitment would let two sources trap a body for their sum, which is the exact bound
+        // that rule exists to keep.
+        // -------------------------------------------------------------------
+
+        /// <summary>Seconds of committed movement left, or 0.</summary>
+        public float CommitLeft { get; private set; }
+
+        /// <summary>True while this body is steering at reduced authority by its own choice.</summary>
+        public bool IsCommitted => CommitLeft > 0.0f;
+
+        /// <summary>
+        /// Commit this body's steering for <paramref name="seconds"/>.
+        ///
+        /// ⚠️ THE SCALE RIDES WITH THE DURATION rather than being a second parameter, because the
+        /// only caller is the retrieval slide and a per-call scale would be a knob nobody can
+        /// state a reason for. `Balance.SlideSteerScale` carries the argument.
+        /// </summary>
+        public void Commit(float seconds)
+        {
+            if (seconds <= 0.0f) return;
+            CommitLeft = Mathf.Max(CommitLeft, seconds);
+        }
+
+        /// <summary>Ends a commitment early. The tag does this: a stunned body is not committed.</summary>
+        public void ReleaseCommitment() => CommitLeft = 0.0f;
+
+        /// <summary>
+        /// May this body WALK right now? A different question from <see cref="CanAct"/>, and
+        /// keeping the two apart is 🧑 2026-08-28: *"cant move during buffer time"*.
+        ///
+        /// ⚠️⚠️ THE ROUND IS NOT PART OF IT, AND PUTTING IT BACK RE-BREAKS THE WARMUP.
+        /// `RoundDirector.EndRound` clears `RoundActive` on every seat and the next round is
+        /// `Balance.WarmupBufferDuration` away, 5 s since § 83.13 and 15 s when this was found.
+        /// `SliceRunner.OnIntermission`
+        /// spends that window putting everyone on their new marks with their tsinelas already in
+        /// hand, `MatchDirector.IsWarmupBuffer` suspends scoring for it, and `Hud.WarmupLine`
+        /// prints "WARMUP / PRACTICE BUFFER · SCORES PAUSED" across the top. Every part of that
+        /// is built to be practised in, and a movement gate reading `RoundActive` froze the whole
+        /// cast for the whole of it, once per round boundary.
+        ///
+        /// `character_base.gd:932` gates the same code on `state != State.NORMAL` and on nothing
+        /// else. The round is a rule about SCORING, not about legs.
+        ///
+        /// ⚠️ NOTHING IS SCOREABLE IN THE WINDOW REGARDLESS, so this cannot leak points.
+        /// `IsTaggable` and `CanThrow` still read `RoundActive` and still refuse, `AddScore`
+        /// returns early on `IsWarmupBuffer`, and `OnRoundStarted` calls `ResetWorld` again on
+        /// the whistle, so wandering during the buffer cannot buy position either: whoever walks
+        /// off is teleported back to their mark before the round begins.
+        ///
+        /// ⚠️ AND THE END OF THE MATCH IS STILL A HARD STOP, through a different mechanism.
+        /// `FreezeForMatchEnd` parks `InputIntent`, which zeroes `MoveAxis` for a bot and a human
+        /// alike. That is the .gd's own `_on_match_won_freeze_physics` and it is the right home
+        /// for a stop meant to be permanent. See `SliceRunner.OnMatchEnded`, which had been
+        /// leaning on `RoundActive` for it and now calls the freeze outright.
+        /// </summary>
+        // ⚠️ ROOTED IS NOT A STUN AND DOES NOT STOP ANYTHING BUT THE LEGS (Paete's sentry, 2026-09-25):
+        // no steering, no jump, and throwing and skills still work (`CanAct` does not read it).
+        public bool CanMove() => !IsStunned && !IsRooted && !(AbilitySystem?.Kit?.BlocksOwnLocomotion ?? false);
+
+        public bool IsStunned => _stunLeft > 0.0f || _tripLeft > 0.0f;
+        public bool HoldingSlipper { get; set; }
+
+        public bool IsInsideBox() =>
+            Confinement.IsInsideBox(transform.position.x, transform.position.z);
+
+        /// <summary>
+        /// The ENTIRE vulnerability rule, in one function. An Attacker inside the box is
+        /// 100% safe until they pick a slipper up. The HUD's VULNERABLE row reads this same
+        /// function, so the warning a player sees cannot disagree with the rule that tags
+        /// them.
+        ///
+        /// ⚠️⚠️ IT ASKS `RoundActive`, NOT `CanAct()`, AND THAT ONE WORD IS A SHIPPED BUG FIX.
+        /// 🧑 2026-08-06, on the Godot build: *"a player that has been sabotaged by a player
+        /// cannot be tagged by the defender. when the attacker is in a frozen state, it cannot
+        /// be tagged."*
+        ///
+        /// `CanAct()` is `RoundActive &amp;&amp; !IsStunned`. The second half is a rule about whether
+        /// this player can DO something; being tagged is something done TO them, and the two
+        /// are not the same question. Reading it here made a stunned attacker IMMUNE, which is
+        /// exactly backwards: standing in the box, holding a slipper, unable to move is the most
+        /// vulnerable a player is ever going to be.
+        ///
+        /// ⚠️ AND IT MADE THE SABOTAGE SCORE UNREACHABLE, which is the proof it was never
+        /// intended. `MatchRules` pays `ScoreSabotage` (50) to whoever shoved the victim inside
+        /// `SabotageWindow`, and only a connecting shove records that credit. But a shove
+        /// staggers, so the very act that earns the credit put the victim into the state that
+        /// made this function refuse the tag that would have paid it. Shove into tag into
+        /// sabotage is a designed combo whose middle step could not happen: a whole scoring
+        /// event dead behind one word, in this port exactly as in the original.
+        ///
+        /// ⚠️ IT DOES NOT OPEN A CHAIN-TAG, AND THE GUARD IS POSITIONAL RATHER THAN THIS ONE.
+        /// The obvious worry is that a tag itself applies a 5 s stun, so allowing a stunned
+        /// attacker to be tagged lets the taya re-lunge on a 1.5 s cooldown and cash the same
+        /// victim twice. It cannot: the tag penalty teleports the victim to their safe spot, so
+        /// `IsInsideBox()` below is already false for the whole stun. The victim is protected by
+        /// where they ARE, which is the check that was doing the work all along.
+        ///
+        /// ⚠️ `RoundActive` IS KEPT, because it is the half of `CanAct()` that genuinely
+        /// belongs. Nobody is taggable between rounds, and dropping it would let a lunge left
+        /// over from the last frame of a round score into the intermission.
+        /// </summary>
+        public bool IsTaggable()
+        {
+            if (_isDefender || !RoundActive) return false;
+            if (AbilitySystem != null && AbilitySystem.IsImmuneToTags) return false;
+            // ⚠️ A BODY HELD ALOFT (Updraft, 2.8 m up) IS OUT OF THE TAYA'S REACH. The reach is a
+            // flat distance, so without this a taya would tag somebody over their head. It is safe
+            // because Updraft cannot START with a slipper inside the box (`AmihanHeroKit`), and a
+            // body aloft cannot pick one up: the retrieval is still made on the ground, in reach.
+            if (IsAloft) return false;
+            // ⚠️ VULNERABLE IS TAGGABLE ANYWHERE, WITH OR WITHOUT A SLIPPER (owner, 2026-09-26: *"easier
+            // to tag and phaister can go out of box and tag them"*).
+            if (IsVulnerable) return true;
+            if (!HoldingSlipper) return false;
+            return IsInsideBox();
+        }
+
+        private float _stunLeft;
+        private float _stunTotal;
+        private float _tripLeft;
+        private float _tripTotal;
+
+        /// <summary>Seconds of stun left, so the HUD can print the number the player needs.</summary>
+        public float StunLeft => _stunLeft;
+
+        /// <summary>What the current stun started at, so a bar can draw a ratio rather than a
+        /// raw number. Reset with the stun, never accumulated.</summary>
+        public float StunTotal => _stunTotal;
+
+        /// <summary>True while the character has tripped and is grounded on the floor.</summary>
+        public bool IsTripped => _tripLeft > 0.0f;
+        public float TripLeft => _tripLeft;
+        public float TripTotal => _tripTotal;
+
+        private float _lastMashTime = -99.0f;
+
+        /// <summary>Seconds elapsed in the current timed fall.</summary>
+        private float _tripElapsed;
+
+        private int _mashPresses;
+        private float _mashRemoved;
+        private float _tripImmuneUntil = -99.0f;
+
+        /// <summary>Legacy wire/readout field, always zero for current timed recovery.</summary>
+        public int MashPresses => _mashPresses;
+
+        /// <summary>Legacy wire/readout field, always zero for current timed recovery.</summary>
+        public float MashRemoved => _mashRemoved;
+
+        /// <summary>Legacy readout retained for older callers; no new press is accepted.</summary>
+        public float LastMashAcceptedTime => _lastMashTime;
+
+        /// <summary>
+        /// True while no hazard may trip this body, because it has only just got up.
+        ///
+        /// ⚠️⚠️ THE MASH IS THE JUMP KEY, SO GETTING UP ENDS WITH A JUMP, EVERY TIME. The
+        /// presses that free a player do not stop the instant `_tripLeft` reaches zero: the next
+        /// one is a real jump, it carries the body well past `StreetTripHazard.MinSpeedToTrip`,
+        /// and it happens while they are still standing on the hazard. The hazard's own
+        /// `Cooldown` is per hazard and cannot see a neighbour, so on Ilalim ng Tulay a pair of
+        /// hazards a few metres apart passed a player back and forth indefinitely. 🧑 reported
+        /// it as not being able to get up at all.
+        ///
+        /// ⚠️ IT IS ONE WINDOW ON THE BODY, NOT A LONGER COOLDOWN ON EACH HAZARD, so a hazard
+        /// added later inherits it without being told about it.
+        /// </summary>
+        public bool IsTripImmune => Time.time < _tripImmuneUntil;
+
+        /// <summary>No status recovery accepts mash input.</summary>
+        public bool CanMashUp => false;
+
+        public void ClearStun()
+        {
+            if (!MayMutateGameplayState()) return;
+            if(_tripLeft<=0)AdvanceRecoveryEpisode();
+            _stunLeft = 0.0f;
+            _stunTotal = 0.0f;
+
+            // ⚠️ THE ELEMENT GOES WITH IT. Leaving it set holds the coat, the vignette and the
+            // TPP swing on a body that is free to move, and the next stun would inherit a
+            // press count from whatever last stunned this seat.
+            _stunElement = StunElement.None;
+            _stunBreakPresses = Balance.StunBreakPressesDefault;
+            _stunMashPresses = 0;
+        }
+
+        public void ClearTrip()
+        {
+            if (!MayMutateGameplayState()) return;
+            bool wasEdge=IsEdgeRecovering;
+            ResetEdgeRecovery();
+            AdvanceRecoveryEpisode();
+            _tripLeft = 0.0f;
+            _tripTotal = 0.0f;
+            _mashPresses = 0;
+            _mashRemoved = 0.0f;
+            _tripElapsed = 0.0f;
+
+            if(wasEdge&&NetAuthority.IsHost)
+            {
+                Net.MatchRpc.Instance?.BeginEdgeMovementOwnership(_playerSlot);
+                Net.MatchRpc.Instance?.SyncUnitTransformClientRpc(_playerSlot,transform.position,transform.eulerAngles.y,_velocity);
+            }
+
+            // ⚠️ NO GRACE FROM HERE. `ClearTrip` is the round and seat reset path, not the
+            // player answering a fall, and handing a fresh round a window of hazard immunity
+            // would be a rule nobody asked for.
+        }
+
+        /// <summary>
+        /// Trips the character, making them tumble flat onto the ground for a duration (e.g. 2.5s)
+        /// before rising back up.
+        /// </summary>
+        public void ApplyTrip(float duration = 2.5f) => ApplyTripCore(duration,false);
+
+        // Gravity is not an enemy stun. A real roof fall still needs a physical
+        // get-up even when a hero currently resists ordinary crowd control.
+        public void ApplyFallRecovery() => ApplyTripCore(2.5f,true);
+
+        private void ApplyTripCore(float duration,bool physicalFall)
+        {
+            if (!MayMutateGameplayState()) return;
+            if (!physicalFall && AbilitySystem != null && AbilitySystem.IsImmuneToStuns) return;
+
+            AdvanceRecoveryEpisode();
+            _tripLeft = Mathf.Max(_tripLeft, duration);
+            _tripTotal = Mathf.Max(_tripTotal, _tripLeft);
+            if (IsTripped) EndFlightImmediately();
+            ReleaseCommitment();
+            _velocity.x = 0.0f;
+            _velocity.z = 0.0f;
+
+            // A new fall is a new mash. Carrying the count over would let a second trip start
+            // with its prompt already full.
+            _mashPresses = 0;
+            _mashRemoved = 0.0f;
+            _lastMashTime = -99.0f;
+            _tripElapsed = 0.0f;
+        }
+
+        /// <summary>Deprecated recovery entry point. Trips end on their authored timer.</summary>
+        public bool MashRecover()
+        {
+            // Retained compatibility entry point. Recovery no longer consumes presses.
+            return false;
+        }
+
+        /// <summary>⚠️ Max(), NEVER additive. That is the entire bound on a stun chain in a
+        /// 1-vs-3 game.</summary>
+        public void ApplyStagger(float duration)
+            => ApplyStagger(duration, StunElement.None, Balance.StunBreakPressesDefault);
+
+        /// <summary>
+        /// § THE ELEMENT STUN. A stagger that names what did it and what it costs to break.
+        ///
+        /// ⚠️⚠️ THE ELEMENT IS WHAT MAKES THE STUN MASHABLE, NOT THE DURATION. 🧑 2026-08-26:
+        /// *"for abilities that freeze or stun enmies ... i want them to look frozen or have the
+        /// element cover them when stunned"* and *"a button mashing thing to get unstunned or
+        /// unfrozen (same as when u trip) but maybe diff UI and effect"*.
+        ///
+        /// `StunElement.None` is the taya's tag and anything else that is a RULE rather than a
+        /// fight, and it stays unmashable: `Balance.TagStunTime` is 5.0 s and the tag is the one
+        /// scoring verb a defender has. See § MASHING OUT OF AN ABILITY STUN in `Balance` for the
+        /// whole argument. Reading mashability off the duration instead would have made the tag
+        /// escapable the moment somebody tuned an ability to 5 s.
+        ///
+        /// ⚠️ THE STRONGER STUN WINS THE ELEMENT, not the most recent one. Two abilities landing
+        /// in the same window is a `Max()` on the duration already; letting the shorter one
+        /// repaint the body would show a victim coated in an element that is not what is holding
+        /// them. The press count travels with it for the same reason.
+        /// </summary>
+        public void ApplyStagger(float duration, StunElement element, int breakPresses)
+        {
+            if (!MayMutateGameplayState()) return;
+            if (AbilitySystem != null && AbilitySystem.IsImmuneToStuns) return;
+
+            // ⚠️⚠️ A STAGGER SHORTER THAN THE MASH FLOOR IS NOT A HOLD AND MUST NOT DRESS AS ONE.
+            // Most `ApplyStagger` calls in the kits are 0.2 to 0.5 s knockback hitches, and at
+            // those lengths `CanMashOutOfStun` is false the whole time: the break card would
+            // appear reading BREAKING FREE, the camera would swing to third person and back, and
+            // the body would flash an element coat, all inside a third of a second and several
+            // times a round. That is not feedback, it is strobing.
+            //
+            // ⚠️ SO THE FLOOR IS THE DEFINITION. `Balance.MinStunDown` is already the part of a
+            // stun a mash cannot buy; a stun that is entirely inside it has nothing to sell, so
+            // it is a stagger and it is drawn as one. Kits therefore do not each need to decide
+            // whether their number is big enough, which is a judgement that would drift the
+            // moment somebody retuned a duration.
+            if (duration <= Balance.MinStunDown) element = StunElement.None;
+            // ⚠️ VULNERABLE: stuns on them last longer (ABILITY-2 plan section 2).
+            if (IsVulnerable) duration *= StatusRules.VulnerableStunScale;
+
+            bool wins = duration >= _stunLeft;
+
+            // ⚠️⚠️ A STAGGERED BODY IS NOT A COMMITTED ONE, AND WITHOUT THIS THE SLIDE WOULD BE
+            // A PUNISH THAT PUNISHES TWICE. `CommitLeft` narrows steering by choice; a stagger
+            // takes it away outright, so leaving the commitment running would mean the attacker
+            // came out of the stun still at `Balance.SlideSteerScale` for whatever was left of it.
+            // Stuns already overlap by `Max` rather than adding for exactly this reason.
+            ReleaseCommitment();
+
+            _stunLeft = Combat.ApplyStagger(_stunLeft, duration);
+
+            // The bar's denominator follows the same Max: a short stun landing inside a longer
+            // one must not rescale the bar and make the remaining time look like it grew.
+            _stunTotal = Mathf.Max(_stunTotal, _stunLeft);
+
+            if (!wins) return;
+            AdvanceRecoveryEpisode();
+
+            _stunElement = element;
+            _stunBreakPresses = breakPresses;
+            _stunMashPresses = 0;
+        }
+
+        private StunElement _stunElement = StunElement.None;
+        private int _stunBreakPresses = Balance.StunBreakPressesDefault;
+        private int _stunMashPresses;
+        private float _lastStunMashTime = -99.0f;
+
+        private int _recoveryEpisode, _recoveryAcknowledged, _recoverySequence;
+        private readonly List<int> _pendingRecovery = new List<int>();
+        public int RecoveryEpisode => _recoveryEpisode;
+        public int RecoveryAcknowledged => _recoveryAcknowledged;
+
+        private void AdvanceRecoveryEpisode()
+        {
+            if (!NetAuthority.ShouldResolve()) return;
+            _recoveryEpisode++;
+            _recoveryAcknowledged=0;
+            _recoverySequence=0;
+            _pendingRecovery.Clear();
+        }
+
+        // One physical press, with the same Core rate limit for humans and bots.
+        // Record only accepted local predictions; a held button does not call this
+        // repeatedly, and a fresh authoritative stun cannot inherit these presses.
+        public bool RecoverFromInput()
+        {
+            // Retained compatibility entry point. Recovery no longer consumes presses.
+            return false;
+        }
+
+        public bool AcceptRecoveryRequest(int episode,int sequence)
+        {
+            // Retained compatibility entry point. Recovery no longer consumes presses.
+            return false;
+        }
+
+        private void ReplayUnacknowledgedRecovery()
+        {
+            // Old buffered presses cannot alter a restored timed state.
+            _pendingRecovery.Clear();
+        }
+
+        /// <summary>What is holding this body, for the coat, the vignette and the card.</summary>
+        public StunElement StunElement => _stunElement;
+
+        /// <summary>Accepted presses against the current stun, so the card can show it filling.</summary>
+        public int StunMashPresses => _stunMashPresses;
+
+        /// <summary>How many presses this stun was declared to take.</summary>
+        public int StunBreakPresses => _stunBreakPresses;
+
+        /// <summary>
+        /// Applies the host's live control state without replaying hits, sounds, score, or
+        /// teleports. This is used both continuously and by rejoin snapshots, so every field a
+        /// HUD or input gate reads is restored together.
+        /// </summary>
+        public void ApplyNetworkState(float stunLeft, float stunTotal, StunElement element,
+                                      int stunBreakPresses, int stunMashPresses,
+                                      float tripLeft, float tripTotal, int tripMashPresses,
+                                      float tripMashRemoved, float staminaCurrent,
+                                      float staminaIdle, float fatigueLeft,
+                                      int recoveryEpisode=-1, int recoveryAcknowledged=0)
+        {
+            if (recoveryEpisode>=0)
+            {
+                if (recoveryEpisode<_recoveryEpisode) return;
+                if (recoveryEpisode>_recoveryEpisode)
+                {
+                    _pendingRecovery.Clear();_recoverySequence=0;
+                    _recoveryEpisode=recoveryEpisode;
+                }
+                _recoveryAcknowledged=Mathf.Max(0,recoveryAcknowledged);
+                _recoverySequence=Mathf.Max(_recoverySequence,_recoveryAcknowledged);
+                _pendingRecovery.RemoveAll(sequence=>sequence<=_recoveryAcknowledged);
+            }
+            _stunLeft = Mathf.Max(0.0f, stunLeft);
+            _stunTotal = Mathf.Max(_stunLeft, stunTotal);
+            _stunElement = _stunLeft > 0.0f ? element : StunElement.None;
+            _stunBreakPresses = Mathf.Clamp(stunBreakPresses, 1, 32);
+            _stunMashPresses = 0; // Legacy wire field is no longer live recovery input.
+
+            _tripLeft = Mathf.Max(0.0f, tripLeft);
+            _tripTotal = Mathf.Max(_tripLeft, tripTotal);
+            _mashPresses = 0;
+            _mashRemoved = 0;
+
+            if (recoveryEpisode>=0 && _playerSlot==NetAuthority.LocalSlot)
+                ReplayUnacknowledgedRecovery();
+            if (IsTagged || IsTripped) EndFlightImmediately();
+            Stamina?.ApplyNetworkSnapshot(staminaCurrent, staminaIdle, fatigueLeft);
+        }
+
+        /// <summary>No elemental hold accepts mash input.</summary>
+        public bool CanMashOutOfStun
+            => false;
+
+        /// <summary>Deprecated recovery entry point. Element holds keep their full timer.</summary>
+        public bool MashOutOfStun()
+        {
+            // Retained compatibility entry point. Recovery no longer consumes presses.
+            return false;
+        }
+
+        // Contact is resolved once by the host. A remote human integrates movement
+        // on its owning peer, so this discrete result must reach that peer explicitly.
+        public void ApplyResolvedImpact(Vector3 impulse)
+        {
+            if(!NetAuthority.ShouldResolve())return;
+            if(AbilitySystem!=null && AbilitySystem.IsImmuneToStuns)return;
+            _paetePull?.Stop("new impact");
+            if(Diagnostics.NetFamiliarProbe.Active)Debug.Log($"[ImpactProbe] resolve slot={_playerSlot} bot={IsBot} sim={IsLocallySimulated()} reader={GetComponent<PlayerInputReader>()!=null} ai={GetComponent<AIController>()!=null}");
+            if(!IsLocallySimulated())
+            {
+                Net.MatchRpc.Instance?.BroadcastImpact(_playerSlot,impulse);
+                return;
+            }
+            ApplyImpulse(impulse);
+        }
+
+        private float IncomingKnockbackSpeedScale => Mode == Core.GameMode.HeroStrike
+            ? Mathf.Sqrt(Mathf.Clamp01(AbilitySystem?.Kit?.IncomingKnockbackDistanceScale ?? 1)) : 1;
+
+        public void ApplyImpulse(Vector3 impulse)
+        {
+            if (!MayMutateGameplayState() || !IsLocallySimulated()) return;
+            float lift=impulse.y;
+            float scale=IncomingKnockbackSpeedScale;
+            if(scale<1)
+            {
+                // Distance under friction is squared speed. Apply the existing cap first.
+                impulse=Vector3.ClampMagnitude(impulse,Balance.MaxKnockbackSpeed);
+                impulse.x*=scale; impulse.z*=scale;
+            }
+            _externalVelocity += impulse;
+
+            float mag = _externalVelocity.magnitude;
+            if (mag > Balance.MaxKnockbackSpeed)
+                _externalVelocity = _externalVelocity.normalized * Balance.MaxKnockbackSpeed;
+
+            if (lift > 0.0f)
+                _velocity.y = Mathf.Min(lift, Balance.MaxKnockbackLift);
+        }
+
+        private void Update()
+        {
+            // ⚠️ ON EVERY PEER, like the stun clock below: the icons and the pickup gate read these
+            // timers, and a replica never runs the physics step.
+            if (!PresentationClock.Held) StepStatuses(Time.deltaTime);
+
+            if (_tripLeft > 0.0f && !IsEdgeRecovering)
+            {
+                // The authored duration now runs normally, including the existing
+                // final get-up beat. No press meter or emergency-only release gate.
+                _tripElapsed += Time.deltaTime;
+                _tripLeft = Mathf.Max(0, _tripLeft - Time.deltaTime);
+
+                if (_tripLeft <= 0.0f)
+                {
+                    AdvanceRecoveryEpisode();
+                    _tripTotal = 0.0f;
+
+                    // ⚠️ THE GRACE IS OPENED HERE, AT THE ONE PLACE A FALL ACTUALLY ENDS, so it
+                    // covers a fall that was mashed away and a fall that timed out alike.
+                    _tripImmuneUntil = Time.time + Balance.TripGraceAfterGetUp;
+                }
+            }
+
+            if (_stunLeft <= 0.0f) return;
+
+            _stunLeft = Mathf.Max(0.0f, _stunLeft - Time.deltaTime);
+
+            // ⚠️ THROUGH `ClearStun`, NOT BY ZEROING `_stunTotal` HERE. A stun now carries an
+            // element and a press count as well as a clock, and this line used to reset one of
+            // the three. The leftovers are invisible until the NEXT stun inherits them: a body
+            // tagged after being frozen would come up wearing ice and offering a mash prompt
+            // against the taya's tag, which is the one stun that must not be escapable.
+            if (_stunLeft <= 0.0f) ClearStun();
+        }
+    }
+}

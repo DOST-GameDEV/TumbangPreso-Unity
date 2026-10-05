@@ -1,0 +1,1 @@
+[CarryPhase] coroutineGap=0.117518015, renderedGap=5.96046448E-08, renderedFrames=60

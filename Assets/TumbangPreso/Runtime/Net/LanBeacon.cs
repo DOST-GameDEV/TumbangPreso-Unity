@@ -43,6 +43,7 @@ namespace TumbangPreso.Net
 
         public bool InProgress;
         public float LastSeen;
+        internal float AddressLastSeen;
 
         /// <summary>
         /// Who sent this advertisement, as a per-PROCESS id rather than a per-machine one.
@@ -495,15 +496,34 @@ namespace TumbangPreso.Net
                 if (IsOurOwn(entry)) continue;
 
                 entry.LastSeen = Time.unscaledTime;
-                string key = $"{entry.Address}:{entry.Port}";
+                entry.AddressLastSeen = entry.LastSeen;
+                string key = string.IsNullOrEmpty(entry.BeaconId)
+                    ? $"endpoint:{entry.Address}:{entry.Port}"
+                    : $"beacon:{entry.BeaconId}:{entry.Port}";
                 lock (_seen)
                 {
+                    // One process may advertise through several adapters. Retain its best
+                    // recently observed endpoint, but still refresh the room's other facts.
+                    if (_seen.TryGetValue(key, out var previous) &&
+                        entry.LastSeen - previous.AddressLastSeen <= EntryTimeout &&
+                        AddressPreference(previous.Address) > AddressPreference(entry.Address))
+                    {
+                        entry.Address = previous.Address;
+                        entry.AddressLastSeen = previous.AddressLastSeen;
+                    }
                     _seen[key] = entry;
                 }
                 touched = true;
             }
 
             if (touched) RaiseIfChanged();
+        }
+
+        private static int AddressPreference(string address)
+        {
+            if (!IPAddress.TryParse(address, out var ip) || IPAddress.IsLoopback(ip)) return 0;
+            byte[] bytes = ip.GetAddressBytes();
+            return bytes.Length == 4 && bytes[0] == 169 && bytes[1] == 254 ? 1 : 2;
         }
 
         /// <summary>
@@ -548,7 +568,7 @@ namespace TumbangPreso.Net
             bool v2 = parts[0] == MagicV2;
             if (!v2 && parts[0] != Magic) return false;
 
-            if (!int.TryParse(parts[1], out int port) || port <= 0) return false;
+            if (!int.TryParse(parts[1], out int port) || port <= 0 || port > ushort.MaxValue) return false;
             if (!int.TryParse(parts[2], out int seated)) seated = 0;
             if (!int.TryParse(parts[3], out int maxSeats)) maxSeats = LobbySession.MaxPlayers;
 

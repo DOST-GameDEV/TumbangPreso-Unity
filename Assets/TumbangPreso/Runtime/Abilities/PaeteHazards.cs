@@ -56,6 +56,32 @@ namespace TumbangPreso.Abilities
             return anchor;
         }
 
+        // Player attachment has its own nearest-solid query. Keep the established
+        // scenery fallback unchanged, and never select a body through a wall.
+        public static CharacterMotor FindPlayer(CharacterMotor caster, Vector3 feet, Vector3 forward, Vector3 aimPoint)
+        {
+            if (caster == null) return null;
+            Vector3 origin = feet + Vector3.up * 1.3f;
+            Vector3 direction = aimPoint - origin;
+            if (direction.sqrMagnitude < .25f) direction = forward;
+            if (direction.sqrMagnitude < .0001f) return null;
+            var hits = Physics.RaycastAll(origin, direction.normalized, PaeteRules.VineRange,
+                ~0, QueryTriggerInteraction.Ignore);
+            System.Array.Sort(hits, (a,b) => a.distance.CompareTo(b.distance));
+            foreach (var hit in hits)
+            {
+                var collider = hit.collider;
+                if (collider == null) continue;
+                var player = collider.GetComponentInParent<CharacterMotor>();
+                if (player == caster || collider.GetComponentInParent<Slipper>() != null ||
+                    collider.GetComponentInParent<Lata>() != null) continue;
+                // Any nearer solid surface blocks the hook, including an invalid body.
+                return player != null && player.isActiveAndEnabled && player.RoundActive &&
+                    !player.IsTagged && player.AbilitySystem?.IsImmuneToStuns != true ? player : null;
+            }
+            return null;
+        }
+
         /// <summary>A throw target: <paramref name="aimPoint"/> on the ground, pulled in to <paramref name="range"/> and kept inside the court.</summary>
         public static Vector3 GroundTarget(Vector3 feet, Vector3 forward, Vector3 aimPoint, float range)
         {
@@ -125,6 +151,8 @@ namespace TumbangPreso.Abilities
 
         public int OwnerSlot { get; private set; } = -1;
         public long InstanceId { get; private set; }
+        // The transport relays successful autonomous shots without replaying a player cast.
+        public static event System.Action<PaetePlant, Vector3> AutomaticShotFired;
         private static readonly long[] RetiredInstances = new long[Balance.PlayerCount];
         private static long _retiredMatch = -1;
         private static int _retiredRound = -1;
@@ -214,6 +242,27 @@ namespace TumbangPreso.Abilities
             PaeteWoodenSlipper.Spawn(Muzzle, target, OwnerSlot);
             GameServices.Audio?.PlayAt("sfx_paete_sprout_fire", transform.position);
             return true;
+        }
+
+        public static bool ApplyAutomaticShot(int ownerSlot, long instanceId, Vector3 aimPoint)
+        {
+            if (!NetAuthority.IsNetworked || NetAuthority.IsHost || instanceId <= 0) return false;
+            var plant = OwnedBy(ownerSlot);
+            if (plant == null || plant.InstanceId != instanceId) return false;
+            return plant.Fire(aimPoint, approvedReplay: true);
+        }
+
+        private void StepAutomaticShot()
+        {
+            if (!NetAuthority.ShouldResolve() || !ShotReady || PresentationClock.Held
+                || PresentationClock.BlocksInput || Time.deltaTime <= 0f) return;
+            var round = GameServices.Round;
+            var lata = round?.Lata;
+            if (round == null || !round.RoundActive || lata == null || !lata.IsUpright) return;
+            // This attacking construct keeps its existing objective: knocking down the lata.
+            // Waiting for a valid upright can does not consume the grown slipper.
+            Vector3 target = lata.transform.position;
+            if (Fire(target)) AutomaticShotFired?.Invoke(this, target);
         }
 
         public void Wither()
@@ -312,7 +361,7 @@ namespace TumbangPreso.Abilities
 
         private void Update()
         {
-            float dt = Time.deltaTime;
+            float dt = PresentationClock.Held ? 0f : Time.deltaTime;
             if (_age < 0f && _age + dt >= 0f) Visual.PaeteGroundBreak.Spawn(transform.position, 0.7f);
             _age += dt;
             _recoil += dt;
@@ -324,6 +373,7 @@ namespace TumbangPreso.Abilities
                 return;
             }
             if (_age >= PaeteRules.PlantLifeSeconds) { Destroy(gameObject); return; }
+            StepAutomaticShot();
             // The shot has grown: a soft pod pop, so its owner hears it is loaded (direction.md section 5.3).
             // Local on every peer off the same clock, like the fire.
             if (_age >= _nextShot && _age - dt < _nextShot && _age > 0.5f)
@@ -380,7 +430,8 @@ namespace TumbangPreso.Abilities
             go.transform.position = origin;
             var s = go.AddComponent<PaeteWoodenSlipper>();
             s._owner = ownerSlot;
-            s._velocity = Slipper.SolveArc(origin, target, PaeteRules.WoodenSlipperSpeed);
+            // SolveArc returns a direction; the wooden slipper must leave at its authored speed.
+            s._velocity = Slipper.SolveArc(origin, target, PaeteRules.WoodenSlipperSpeed) * PaeteRules.WoodenSlipperSpeed;
             s._body = new GameObject("body").transform;
             s._body.SetParent(go.transform, false);
             GrowthVfx.Block(s._body, "sole", new Vector3(0.12f, 0.035f, 0.28f), GrowthVfx.BarkLit);
@@ -529,6 +580,8 @@ namespace TumbangPreso.Abilities
             if (!NetAuthority.ShouldResolve() || !_burst) return;
             if (!_resolved)
             {
+                // Keep a held slipper in its hand until the visible rattan tip arrives.
+                if (_age < PaeteRules.ThornReachSeconds) return;
                 _resolved = true;
                 foreach (var shoe in _caught)
                     if (shoe != null && shoe.HostSnatch()) Net.MatchRpc.Instance?.BroadcastSlipperState(shoe);

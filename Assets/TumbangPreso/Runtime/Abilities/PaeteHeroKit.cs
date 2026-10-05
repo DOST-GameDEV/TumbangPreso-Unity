@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TumbangPreso.Core;
+using TumbangPreso.Net;
 using TumbangPreso.UI;
 using TumbangPreso.Visual;
 using UnityEngine;
@@ -33,6 +34,27 @@ namespace TumbangPreso.Abilities
     /// </summary>
     public sealed class PaeteHeroKit : HeroKit, IWorldEffectBinding
     {
+        private PaetePlayerPull _receivedPull;
+        private PaeteVineReach _receivedVine;
+        public bool ReceiveVine(CharacterMotor caster,PaeteVineState state,float age)
+        {
+            if(state.Phase==PaeteVinePhase.Ended)
+            { _receivedPull?.Stop("host ended");_receivedVine?.ReturnNow();return true; }
+            if(age>=state.Duration)return true;
+            var target=state.Target>=0?GameServices.Round?.PlayerAt(state.Target):null;
+            if(state.Phase==PaeteVinePhase.Player&&(target==null||target.MovementEpoch!=state.TargetEpoch))return false;
+            _receivedPull?.Stop("superseded");_receivedVine?.ReturnNow();
+            if(state.Phase==PaeteVinePhase.Player)
+            {
+                _receivedPull=PaetePlayerPull.Restore(caster,target,state,age);
+                if(_receivedPull==null)return false;
+            }
+            _receivedVine=PaeteVineReach.Build(caster,state.Anchor,PaeteRules.VineReachSeconds,
+                Mathf.Max(.05f,state.Duration-PaeteRules.VineReachSeconds));
+            _receivedVine.FollowPlayer(target);_receivedVine.Step(age);
+            _receivedPull?.BindVisual(_receivedVine,false);
+            return true;
+        }
         public override float UltimateCost => PaeteRules.SentryCost;
 
         public void RebindWorldEffects(CharacterMotor motor)
@@ -53,11 +75,13 @@ namespace TumbangPreso.Abilities
 
         private sealed class KapitBaging : HeroAbility
         {
+            // Predict only the existing windup/cooldown; the scoped host vine state owns movement.
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private CharacterMotor _caster;
             private Vector3 _anchor;
             private float _elapsed;
             private bool _reeled;
+            private PaetePlayerPull _playerPull;
 
             public KapitBaging()
                 : base("paete_skill1", "LIANA LEAP",
@@ -90,14 +114,32 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                if (ctx?.Motor == null) return;
+                if (ctx?.Motor == null || !NetAuthority.ShouldResolve()) return;
                 _caster = ctx.Motor;
                 _elapsed = 0.0f;
                 _reeled = false;
+                var target=PaeteVine.FindPlayer(_caster,ctx.Position,ctx.Forward,ctx.AimPoint);
+                _playerPull=target!=null?PaetePlayerPull.Begin(_caster,target):null;
+                if(_playerPull!=null)
+                {
+                    _reeled=true;
+                    _anchor=target.transform.position+Vector3.up*.9f;
+                    var fx=PaeteVineReach.Build(_caster,_anchor,PaeteRules.VineReachSeconds,
+                        _playerPull.Duration-PaeteRules.VineReachSeconds);
+                    fx.FollowPlayer(target);_playerPull.BindVisual(fx,true);
+                    MatchRpc.Instance?.BroadcastPaeteVine(new PaeteVineState {Owner=_caster.PlayerSlot,
+                        Target=target.PlayerSlot,TargetEpoch=target.MovementEpoch,Phase=PaeteVinePhase.Player,
+                        Anchor=_anchor,CasterEnd=_playerPull.CasterEnd,TargetEnd=_playerPull.TargetEnd,Duration=_playerPull.Duration});
+                    return;
+                }
+                // A visible body that cannot be pulled still blocks this cast's reel.
+                if(target!=null){_reeled=true;return;}
                 _anchor = PaeteVine.FindAnchor(ctx.Position, ctx.Forward, ctx.AimPoint);
                 float distance = Flat(_anchor - ctx.Position).magnitude;
                 float reel = PaeteRules.VineHoldSeconds(distance) + PaeteRules.VineReelSpeed / (2f * Balance.Friction);
                 PaeteVineReach.Build(_caster, _anchor, PaeteRules.VineReachSeconds, reel);
+                MatchRpc.Instance?.BroadcastPaeteVine(new PaeteVineState {Owner=_caster.PlayerSlot,Target=-1,
+                    Phase=PaeteVinePhase.Terrain,Anchor=_anchor,Duration=PaeteRules.VineReachSeconds+reel});
                 _caster.GetComponentInChildren<CharacterSquashStretch>()?.Stretch(0.14f);
             }
 
@@ -116,11 +158,13 @@ namespace TumbangPreso.Abilities
                 // His own body: the owner simulates it (BeginCarry refuses anywhere else).
                 Vector3 d = Flat(_anchor - _caster.transform.position);
                 if (d.magnitude <= PaeteRules.VineStopShort) return;
-                _caster.BeginCarry(d.normalized * PaeteRules.VineReelSpeed + Vector3.up * PaeteRules.VineLift,
+                _caster.ApplyResolvedCarry(d.normalized * PaeteRules.VineReelSpeed + Vector3.up * PaeteRules.VineLift,
                                    PaeteRules.VineHoldSeconds(d.magnitude));
             }
 
-            protected override void OnEnd(AbilityContext ctx) { _caster = null; }
+            // The bounded constraint owns completion and cancellation. A UI ability
+            // timer must not cut short an acknowledged remote motor still arriving.
+            protected override void OnEnd(AbilityContext ctx) { _playerPull=null;_caster = null; }
 
             private static Vector3 Flat(Vector3 v) => new Vector3(v.x, 0.0f, v.z);
         }
@@ -135,14 +179,15 @@ namespace TumbangPreso.Abilities
 
             public PunlangTsinelas()
                 : base("paete_skill2", "BAKYA BLOOM",
-                       "Attacking. Plant a sapling that grows bakya, wooden slippers. Press again: it hurls one where you aim. Uprootable after 15 s.",
+                       "Attacking. Plant a sapling that automatically lobs wooden slippers at the upright lata every 5 s after growing. Uprootable after 15 s.",
                        PaeteRules.PlantCooldown, PaeteRules.PlantLifeSeconds, AbilityGlyph.PaeteSprout,
                        summary: "A sapling grows wooden slippers and throws them for you.",
                        telegraphRadius: 0.6f, telegraphRange: PaeteRules.PlantThrowRange,
                        castAction: "hero-paete-sprout", viewmodelAction: "seed-toss",
                        castCue: "sfx_cast_paete_sprout") { }
 
-            // The second press is the command to throw (owner: *"he can control when they shoot"*).
+            // The original manual command remains available; the October 4 automatic
+            // cadence means the player no longer needs a second press to fire.
             public override bool CanReactivate => true;
 
             // ⚠️⚠️ TWO PRESSES, TWO BODIES (owner, 2026-09-26: *"i want each of his skill to have their
@@ -177,7 +222,7 @@ namespace TumbangPreso.Abilities
             }
 
             // ⚠️⚠️ THE COMMAND WAITS FOR A CLOG (owner, 2026-09-26: *"bug found unli cast for e, supposed to have cooldown"*). The
-            // pod only ever threw a grown clog (`PaetePlant.Fire` checks `ShotReady`, 15 s between clogs), but every press while it
+            // pod only ever threw a grown clog (`PaetePlant.Fire` checks `ShotReady`, now 5 s between clogs), but every press while it
             // lived played the command gesture and its sound, so spamming E looked and sounded like casting without a cooldown.
             // Now a press with no clog is refused as NOT YET (`HeroAbility.ReactivateReady`), and the deck counts down to the next
             // clog instead of saying "Again". With no plant left the press still ends the ability, as before.

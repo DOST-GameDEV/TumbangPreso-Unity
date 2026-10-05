@@ -1,0 +1,30 @@
+{
+  "original": {
+    "railing": {
+      "triangles": 168,
+      "degenerate_uv_triangles": 168
+    },
+    "metal_dark": {
+      "triangles": 12,
+      "degenerate_uv_triangles": 12
+    },
+    "trunk": {
+      "triangles": 178,
+      "degenerate_uv_triangles": 10
+    }
+  },
+  "candidate": {
+    "railing": {
+      "triangles": 168,
+      "degenerate_uv_triangles": 0
+    },
+    "metal_dark": {
+      "triangles": 12,
+      "degenerate_uv_triangles": 0
+    },
+    "trunk": {
+      "triangles": 178,
+      "degenerate_uv_triangles": 10
+    }
+  }
+}

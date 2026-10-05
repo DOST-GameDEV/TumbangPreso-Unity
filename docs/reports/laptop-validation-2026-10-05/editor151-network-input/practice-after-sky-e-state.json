@@ -1,0 +1,42 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "caller": "plugin",
+      "skill": "unity-cli",
+      "format": "json",
+      "code": "return System.Array.ConvertAll(UnityEngine.Object.FindObjectsByType<TumbangPreso.PlayerInputReader>(UnityEngine.FindObjectsSortMode.None),r=>{var m=r.GetComponent<TumbangPreso.CharacterMotor>();var f=typeof(TumbangPreso.PlayerInputReader).GetField(\"_focused\",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);return new{slot=m.PlayerSlot,focused=f.GetValue(r),appFocused=UnityEngine.Application.isFocused,editorFocused=UnityEditor.EditorWindow.focusedWindow?.GetType().Name,inputMode=UnityEngine.InputSystem.InputSystem.settings.updateMode.ToString(),editorInput=UnityEngine.InputSystem.InputSystem.settings.editorInputBehaviorInPlayMode.ToString(),parked=m.Intent.Parked,canAct=m.CanAct(),mode=m.Mode.ToString(),round=TumbangPreso.GameServices.Round.RoundActive,signature=m.AbilitySystem.LastAnswer(TumbangPreso.Abilities.HeroAbilitySystem.Slot.Skill1).ToString(),hasShoe=m.HoldingSlipper};});"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": [
+        {
+          "slot": 1,
+          "focused": true,
+          "appFocused": true,
+          "editorFocused": "GameView",
+          "inputMode": "ProcessEventsInDynamicUpdate",
+          "editorInput": "PointersAndKeyboardsRespectGameViewFocus",
+          "parked": false,
+          "canAct": true,
+          "mode": "HeroStrike",
+          "round": true,
+          "signature": "Missing",
+          "hasShoe": true
+        }
+      ]
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

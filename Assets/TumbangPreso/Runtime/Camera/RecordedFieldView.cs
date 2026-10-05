@@ -35,7 +35,11 @@ namespace TumbangPreso.CameraSystem
             else if(field.Type==WorldEffectSnapshot.Kind.Shock)
             {ZackSkateWake.Build(Root.transform,field.Radius,field.Duration,field.Forward);var fx=Root.GetComponentInChildren<ZackSkateWake>();fx.enabled=false;_step=fx.StepTo;}
             else if(field.Type==WorldEffectSnapshot.Kind.Barricade)
-            {Root.transform.rotation=Quaternion.LookRotation(field.Forward);CheskaIceVisuals.BuildWall(Root.transform,field.FirstScale,field.SecondScale,field.Split,renderOnly:true);}
+            {
+                Root.transform.rotation=Quaternion.LookRotation(field.Forward);
+                if(field.Radius>0)CheskaIceVisuals.BuildArc(Root.transform,field.FirstScale,field.Radius,renderOnly:true);
+                else CheskaIceVisuals.BuildWall(Root.transform,field.FirstScale,field.SecondScale,field.Split,renderOnly:true);
+            }
             else if(field.Type==WorldEffectSnapshot.Kind.Hex)
             {var visual=HeroHazards.SpawnHexSigil(field.Position,field.Radius,field.Duration,field.Owner,field.FirstScale,silent:true,renderOnly:true);visual.transform.SetParent(Root.transform,true);var fx=visual.GetComponent<HeroHazards.WardInscribe>();fx.enabled=false;_step=fx.StepTo;}
             else if(field.Type==WorldEffectSnapshot.Kind.Drift)

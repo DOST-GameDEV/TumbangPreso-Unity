@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 19:56:46Z" end-time="2026-10-04 19:56:55Z" duration="9.3595548">
+  <test-suite type="TestSuite" id="3116" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1727" result="Passed" start-time="2026-10-04 19:56:46Z" end-time="2026-10-04 19:56:55Z" duration="9.359555" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3108" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1727" result="Passed" start-time="2026-10-04 19:56:46Z" end-time="2026-10-04 19:56:55Z" duration="9.350345" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="163277" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3109" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1727" result="Passed" start-time="2026-10-04 19:56:46Z" end-time="2026-10-04 19:56:55Z" duration="9.347508" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3112" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1725" result="Passed" start-time="2026-10-04 19:56:46Z" end-time="2026-10-04 19:56:55Z" duration="9.345242" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1248" name="CatchReconstructionTests" fullname="TumbangPreso.PlayTests.CatchReconstructionTests" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" testcasecount="42" result="Passed" start-time="2026-10-04 19:56:46Z" end-time="2026-10-04 19:56:55Z" duration="9.294448" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1256" name="ContactCameraShowsTheActualReachingHand" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.ContactCameraShowsTheActualReachingHand" methodname="ContactCameraShowsTheActualReachingHand" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1548860079" result="Passed" start-time="2026-10-04 19:56:46Z" end-time="2026-10-04 19:56:51Z" duration="4.868826" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[distance=1 contactGap=0 contactAlpha=1 sampleError=0 frames=40 bodyShift=0.1528863 torsoLean=22.9 armStretch=1 skinSurfaceGap=3.402823E+38
+]]></output>
+            </test-case>
+            <test-case id="1257" name="FarAcceptedTagHasVisibleHandContact" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.FarAcceptedTagHasVisibleHandContact" methodname="FarAcceptedTagHasVisibleHandContact" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1186833797" result="Passed" start-time="2026-10-04 19:56:51Z" end-time="2026-10-04 19:56:55Z" duration="4.408090" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[distance=1.65 contactGap=0 contactAlpha=1 sampleError=0 frames=44 bodyShift=0.4145422 torsoLean=27.98822 armStretch=1.001133 skinSurfaceGap=3.402823E+38
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

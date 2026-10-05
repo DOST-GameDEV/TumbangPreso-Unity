@@ -78,13 +78,18 @@ namespace TumbangPreso.Visual
             float sweepDeg = arcLength / radius * Mathf.Rad2Deg;
             for (int i = 0; i < 5; i++)
             {
-                float a = (-0.5f + i / 4f) * sweepDeg;
+                // Five slabs fill five neighbouring arc segments. Endpoint-centred
+                // placement left four gaps because each slab was only one fifth wide.
+                float a = (-0.5f + (i + .5f) / 5f) * sweepDeg;
                 var slab = Piece(parent, "IceArc_" + i, meshes[i], Ice);
                 // The arc bows AWAY from her: its centre is behind the aimed point by the radius.
                 Vector3 at = Quaternion.Euler(0f, a, 0f) * new Vector3(0f, 0f, radius) - new Vector3(0f, 0f, radius);
                 slab.transform.localPosition = at;
                 slab.transform.localRotation = Quaternion.Euler(0f, a, 0f);
-                slab.transform.localScale = new Vector3(arcLength / 5f / 0.85f, heights[i], 1f);
+                // Cover the outer face of each tangent segment, with a small seam
+                // overlap. The same authored mesh supplies the collision surface.
+                float width = 2f * (radius + .275f) * Mathf.Tan(sweepDeg * Mathf.Deg2Rad / 10f) + .015f;
+                slab.transform.localScale = new Vector3(width / .85f, heights[i], 1f);
                 var position = slab.transform.position; position.y = VfxShapes.GroundPoint(position).y; slab.transform.position = position;
                 if (!renderOnly)
                 {

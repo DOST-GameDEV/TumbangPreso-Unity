@@ -1,0 +1,10 @@
+{
+  "base": "61a650049b4949bda2c60d8df8991ff1e8705ed0",
+  "testSHA256": "0664186898a4a3995ba07eaf11d97eebc68a92a1f3f32553e51e2a38661cdcc0",
+  "platform": "EditMode",
+  "filter": "TumbangPreso.Tests.LobbyAndSettingsTests.LanBeaconRejectsPortsThatWouldWrapInTheTransport;TumbangPreso.Tests.LobbyAndSettingsTests.LanBeaconPreservesValidPortBoundariesAndDefaultPort",
+  "expected": 12,
+  "originalExpected": "6malformed-port failures;6valid controls pass",
+  "candidateExpected": "12pass",
+  "owner": "Desktop owns source publication; immutable local overlays only"
+}

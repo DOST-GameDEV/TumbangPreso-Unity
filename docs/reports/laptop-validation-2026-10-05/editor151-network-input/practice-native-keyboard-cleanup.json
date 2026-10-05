@@ -1,0 +1,37 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "caller": "plugin",
+      "skill": "unity-cli",
+      "format": "json",
+      "code": "var r=System.Linq.Enumerable.First(UnityEngine.Object.FindObjectsByType<TumbangPreso.PlayerInputReader>(UnityEngine.FindObjectsSortMode.None));var m=r.GetComponent<TumbangPreso.CharacterMotor>();var before=new{signature=m.AbilitySystem.LastAnswer(TumbangPreso.Abilities.HeroAbilitySystem.Slot.Skill1).ToString(),role=m.AbilitySystem.LastAnswer(TumbangPreso.Abilities.HeroAbilitySystem.Slot.Skill2).ToString(),affinity=m.GetComponent<TumbangPreso.Carrier>().Held?.Affinity.ToString(),active=m.AbilitySystem.Kit.Skill1.IsActive};var k=(UnityEngine.InputSystem.Keyboard)System.AppDomain.CurrentDomain.GetData(\"lpt151-test-keyboard\");var original=(UnityEngine.InputSystem.Keyboard)System.AppDomain.CurrentDomain.GetData(\"lpt151-real-keyboard\");UnityEngine.InputSystem.InputSystem.RemoveDevice(k);original?.MakeCurrent();System.AppDomain.CurrentDomain.SetData(\"lpt151-test-keyboard\",null);System.AppDomain.CurrentDomain.SetData(\"lpt151-real-keyboard\",null);return new{before=before,temporaryDeviceRemoved=!k.added,originalKeyboardRestored=UnityEngine.InputSystem.Keyboard.current==original,observerCleared=System.AppDomain.CurrentDomain.GetData(\"lpt151-key-observer\")==null};"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "before": {
+          "signature": "Cast",
+          "role": "Cast",
+          "affinity": "Normal",
+          "active": false
+        },
+        "temporaryDeviceRemoved": true,
+        "originalKeyboardRestored": true,
+        "observerCleared": true
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

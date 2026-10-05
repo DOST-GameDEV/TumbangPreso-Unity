@@ -15,7 +15,7 @@ towers placed by sightline from the can, giant hologram ads (with PC Express), a
 mascot balloon. The stage REARRANGES between rounds through five round layouts (plaza, tore, krus,
 hukay, entablado) in an 8 s show. A player who falls is caught by the rescue drone SAGIP, hauled
 back and frozen with the tag's 5 s. Scene: `Assets/TumbangPreso/Scenes/Maps/Arena.unity`, last in
-`SceneFlow.Maps` (index 6), protocol 146.
+`SceneFlow.Maps` (index 6), protocol 152 (it was 146 before the merge with ASTRAReworks, which had used 146 to 151).
 
 ## Branch and rules
 

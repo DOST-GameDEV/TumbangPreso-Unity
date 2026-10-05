@@ -454,6 +454,11 @@ namespace TumbangPreso
         /// </summary>
         private void OnRoundStarted(int roundNumber, int defenderSlot)
         {
+            // Inactive Update exits before the ability layer can reset its clock.
+            // Start every round behind the existing opening gate, regardless of
+            // intermission frames, emotes or temporary human ownership of hero keys.
+            _roundLiveFor = 0.0f;
+            ForgetWhatWasBeingWeighed();
             _gates.Clear();
             _chasing = null;
             _wantedEmote = null;

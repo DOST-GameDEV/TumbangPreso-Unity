@@ -21,6 +21,8 @@ namespace TumbangPreso.Visual
         private Transform _left, _right, _torso;
         private CharacterMotor _caster;
         private Vector3 _anchor;
+        private Transform _followTarget;
+        private float _earlyReturnAge=-1, _earlyReturnScale=1;
         private float _age, _reach, _reel, _return;
         // ⚠️⚠️ v3 (2026-09-26). The owner, with two Marvel Rivals Groot frames: *"make the vines
         // especially look like tree vines/branches and not just green vines"*, *"entangled
@@ -143,7 +145,11 @@ namespace TumbangPreso.Visual
         /// <summary>How much longer his first-person forearms grow at full reach: 45 % (see `Step`; a third read as too little in film c3).</summary>
         private const float FirstPersonStretch = 0.45f;
 
-        private void OnDestroy() => CameraSystem.CameraRig.SetViewmodelReachStretch(_caster, 0f);
+        private void OnDestroy()
+        {
+            CameraSystem.CameraRig.SetViewmodelReachStretch(_caster,0f);
+            foreach(var mesh in _meshes)if(mesh!=null)Destroy(mesh);
+        }
 
         /// <summary>
         /// Re-lays `_centre` (from <paramref name="from"/> to <paramref name="tip"/>) as a curve that leaves along the drawn
@@ -168,9 +174,18 @@ namespace TumbangPreso.Visual
             }
         }
 
+        public void FollowPlayer(CharacterMotor target) { _followTarget=target!=null?target.transform:null; }
+        public void ReturnNow()
+        {
+            if(_earlyReturnAge>=0)return;
+            _earlyReturnScale=_age<_reach?1f-Mathf.Pow(1f-Mathf.Clamp01(_age/_reach),3f):1f;
+            _earlyReturnAge=_age;
+        }
         public void Step(float dt)
         {
+            if(_followTarget!=null)_anchor=_followTarget.position+Vector3.up*.9f;
             _age += dt;
+            if(_earlyReturnAge>=0&&_age-_earlyReturnAge>=_return){Destroy(gameObject);return;}
             float life = _reach + _reel + _return;
             if (_age >= life) { Destroy(gameObject); return; }
 
@@ -182,6 +197,7 @@ namespace TumbangPreso.Visual
             float extend = _age < _reach ? 1f - Mathf.Pow(1f - outT, 3f)
                          : _age < _reach + _reel ? 1f
                          : 1f - backT * backT * (3f - 2f * backT);
+            if(_earlyReturnAge>=0)extend=_earlyReturnScale*(1f-Mathf.SmoothStep(0,1,(_age-_earlyReturnAge)/_return));
             extend = Mathf.Clamp01(extend);
             float taut = _age < _reach ? 0.08f : 0.02f;
             // ⚠️⚠️ IN HIS OWN EYES THE ARM ITSELF REACHES (owner, 2026-09-26, on the first-person frame: *"make it look like its
@@ -250,7 +266,7 @@ namespace TumbangPreso.Visual
             }
 
             // Contact: a knot wraps the anchor when the vines arrive, with one burst of leaves.
-            bool arrived = _age >= _reach && _age < _reach + _reel + _return * 0.5f;
+            bool arrived = _earlyReturnAge<0 && _age >= _reach && _age < _reach + _reel + _return * 0.5f;
             _knot.gameObject.SetActive(arrived);
             if (arrived)
             {

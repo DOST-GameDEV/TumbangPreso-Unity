@@ -773,8 +773,13 @@ namespace TumbangPreso.UI
         /// expire while the match it is announcing is stopped dead. A toast driven by scaled time
         /// would stay on screen forever at exactly the moment it is needed.
         /// </summary>
+        private float _lastBroadcastClockScale = 1f;
+
         private void OnBroadcastClock(float scale)
         {
+            // Clock snapshots reaffirm state; only a changed rate is a new announcement.
+            if (Mathf.Approximately(scale, _lastBroadcastClockScale)) return;
+            _lastBroadcastClockScale = scale;
             if (scale <= 0.001f)
             {
                 ShowToast("PAUSED BY A SPECTATOR", 2.0f);
@@ -1461,22 +1466,10 @@ namespace TumbangPreso.UI
             if (carrier != null && carrier.IsCharging)
             {
                 _crosshair.fontSize = 22;
-                var lata = GameServices.Round.Lata;
-
-                if (lata != null && !lata.IsUpright)
+                if (carrier.IsThrowChargeDecaying)
                 {
-                    // ⚠️ THE THIRD "LATA DOWN", AND THE ONE WITH THE LEAST CLAIM TO IT. See
-                    // `UpdateLataCard`: the card already carries the state and the alert already
-                    // carries the action, both within one glance of the reticle. What the
-                    // crosshair uniquely knows is that the slipper in hand is being wound up and
-                    // cannot legally be released yet, so that is all it says.
-                    _crosshair.text = "HOLDING CHARGE";
+                    _crosshair.text = "LOWERING CHARGE";
                     _crosshair.color = UiTheme.Offense;
-                }
-                else if (lata != null && lata.IsProtected)
-                {
-                    _crosshair.text = $"CAN PROTECTED\n{lata.ProtectionLeft:0.0}s";
-                    _crosshair.color = UiTheme.Defense;
                 }
                 else
                 {

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 18:22:13Z" end-time="2026-10-04 18:22:44Z" duration="31.4398925">
+  <test-suite type="TestSuite" id="3109" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1721" result="Failed" site="Child" start-time="2026-10-04 18:22:13Z" end-time="2026-10-04 18:22:44Z" duration="31.439893" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3101" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1721" result="Failed" site="Child" start-time="2026-10-04 18:22:13Z" end-time="2026-10-04 18:22:44Z" duration="31.419937" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="38736" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3102" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1721" result="Failed" site="Child" start-time="2026-10-04 18:22:13Z" end-time="2026-10-04 18:22:44Z" duration="31.406298" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3105" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1719" result="Failed" site="Child" start-time="2026-10-04 18:22:13Z" end-time="2026-10-04 18:22:44Z" duration="31.381182" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2869" name="TumpNativeHudTests" fullname="TumbangPreso.PlayTests.TumpNativeHudTests" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" testcasecount="24" result="Failed" site="Child" start-time="2026-10-04 18:22:13Z" end-time="2026-10-04 18:22:44Z" duration="31.257942" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2890" name="InitialNormalClockDoesNotAnnounceAResume" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.InitialNormalClockDoesNotAnnounceAResume" methodname="InitialNormalClockDoesNotAnnounceAResume" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="695635894" result="Failed" start-time="2026-10-04 18:22:13Z" end-time="2026-10-04 18:22:28Z" duration="15.256481" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A normal clock snapshot must not announce a spectator resume.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpNativeHudTests+<InitialNormalClockDoesNotAnnounceAResume>d__30.MoveNext () [0x000a1] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\TumpNativeHudTests.cs:1155
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="2893" name="OrdinaryNativeToastStillExpiresWhilePaused" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.OrdinaryNativeToastStillExpiresWhilePaused" methodname="OrdinaryNativeToastStillExpiresWhilePaused" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="1614831537" result="Passed" start-time="2026-10-04 18:22:28Z" end-time="2026-10-04 18:22:33Z" duration="5.049242" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="2892" name="RealPauseSlowAndResumeChangesStillAnnounce" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.RealPauseSlowAndResumeChangesStillAnnounce" methodname="RealPauseSlowAndResumeChangesStillAnnounce" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="267465715" result="Passed" start-time="2026-10-04 18:22:33Z" end-time="2026-10-04 18:22:38Z" duration="4.712999" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="2891" name="RepeatedResumeSnapshotsDoNotRenewTheToast" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.RepeatedResumeSnapshotsDoNotRenewTheToast" methodname="RepeatedResumeSnapshotsDoNotRenewTheToast" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="2134026663" result="Failed" start-time="2026-10-04 18:22:38Z" end-time="2026-10-04 18:22:44Z" duration="6.224168" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Repeated accepted normal snapshots restarted the resume banner.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpNativeHudTests+<RepeatedResumeSnapshotsDoNotRenewTheToast>d__31.MoveNext () [0x0014c] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\TumpNativeHudTests.cs:1173
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

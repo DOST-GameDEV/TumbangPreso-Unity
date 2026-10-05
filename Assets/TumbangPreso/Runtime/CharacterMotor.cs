@@ -431,6 +431,7 @@ namespace TumbangPreso
         public void AdoptMovementEpoch(int epoch)
         {
             if(epoch<=MovementEpoch)return;
+            _paetePull?.Stop("movement epoch changed");
             ClearNetworkResourceIntent();
             InvalidateFlightEpisode();
             ClearSpeedBoost();
@@ -441,6 +442,7 @@ namespace TumbangPreso
         {
             if (!MayMutateGameplayState()) return;
             EndHaul();
+            _paetePull?.Stop("teleport");
             if(IsEdgeRecovering)ClearTrip();
             if(_predictingAbility>=0)ExpectAbilityTeleport(_predictingAbility);
             // ⚠️⚠️ THE ARENA WALL IS ENFORCED HERE TOO, AND THIS IS THE PATH THAT ACTUALLY
@@ -945,6 +947,11 @@ namespace TumbangPreso
             StepHaul(dt);
 
             Vector3 total = _velocity + _externalVelocity;
+            if (PaetePullVelocity(dt, out var vineVelocity))
+            {
+                _velocity.x=vineVelocity.x; _velocity.z=vineVelocity.z;
+                total.x=vineVelocity.x; total.z=vineVelocity.z;
+            }
             CollisionFlags flags = _cc.Move(total * dt);
             // Hauled up into something overhead: the line lets go rather than pin the body there.
             if ((flags & CollisionFlags.Above) != 0) EndHaul();
@@ -1125,7 +1132,8 @@ namespace TumbangPreso
         /// accepts a correction when prediction has drifted far enough to be visible.
         /// </summary>
         public void ApplyNetworkTransform(Vector3 position, float yaw, Vector3 velocity,
-                                          bool grounded, bool reconcileLocal, bool force = false, long flightEpisode = 0)
+                                          bool grounded, bool reconcileLocal, bool force = false, long flightEpisode = 0,
+                                          bool acceptedOwnerPose = false)
         {
             // ⚠️ ASSIGNED BEFORE THE RECONCILE RETURN BELOW, AND THAT ORDERING MATTERS. A body
             // whose owner is predicting it skips the rest of this method whenever the error is
@@ -1134,9 +1142,14 @@ namespace TumbangPreso
             _networkGrounded = grounded;
             ObserveFlightPose(grounded, flightEpisode);
 
+            // Accepted owner poses are acknowledgements of earlier input. Their
+            // round-trip distance is not a prediction error or a host correction.
+            if (acceptedOwnerPose && !force) return;
+
             float error = Vector3.Distance(transform.position, position);
             if(reconcileLocal && !force && _awaitingTeleport)return;
             if (reconcileLocal && !force && error < 1.25f) return;
+            if(reconcileLocal&&(force||error>3f))_paetePull?.Stop("host correction");
 
             // ⚠️⚠️ THE VELOCITY IS TAKEN WITH THE POSITION OR NOT AT ALL, AND IT USED TO BE
             // TAKEN ON THE LINE ABOVE `_networkGrounded`, UNCONDITIONALLY. 🧑 2026-08-30, of an
@@ -1929,6 +1942,7 @@ namespace TumbangPreso
         {
             if(!NetAuthority.ShouldResolve())return;
             if(AbilitySystem!=null && AbilitySystem.IsImmuneToStuns)return;
+            _paetePull?.Stop("new impact");
             if(Diagnostics.NetFamiliarProbe.Active)Debug.Log($"[ImpactProbe] resolve slot={_playerSlot} bot={IsBot} sim={IsLocallySimulated()} reader={GetComponent<PlayerInputReader>()!=null} ai={GetComponent<AIController>()!=null}");
             if(!IsLocallySimulated())
             {

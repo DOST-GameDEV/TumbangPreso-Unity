@@ -1,0 +1,10 @@
+{
+  "terminal": true,
+  "exitCode": 2,
+  "inputs": 19276,
+  "generatedDeltas": 210,
+  "runtimeFixtureChanged": false,
+  "qualityRestored": true,
+  "prefsRestored": 9,
+  "allGeneratedBeforeAfterPreservedAndRestored": true
+}

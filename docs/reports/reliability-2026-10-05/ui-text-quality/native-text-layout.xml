@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 03:12:54Z" end-time="2026-10-05 03:12:54Z" duration="0.3177866">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1363" result="Passed" start-time="2026-10-05 03:12:54Z" end-time="2026-10-05 03:12:54Z" duration="0.317787" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2683" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1363" result="Passed" start-time="2026-10-05 03:12:54Z" end-time="2026-10-05 03:12:54Z" duration="0.301551" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="16612" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2684" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1363" result="Passed" start-time="2026-10-05 03:12:54Z" end-time="2026-10-05 03:12:54Z" duration="0.295320" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2685" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1363" result="Passed" start-time="2026-10-05 03:12:54Z" end-time="2026-10-05 03:12:54Z" duration="0.289382" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1398" name="CrispUiTextTests" fullname="TumbangPreso.Tests.CrispUiTextTests" classname="TumbangPreso.Tests.CrispUiTextTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-05 03:12:54Z" end-time="2026-10-05 03:12:54Z" duration="0.258067" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1405" name="ActualFontGetsMoreSamplesWithoutChangingLayout" fullname="TumbangPreso.Tests.CrispUiTextTests.ActualFontGetsMoreSamplesWithoutChangingLayout" classname="TumbangPreso.Tests.CrispUiTextTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-05 03:12:54Z" end-time="2026-10-05 03:12:54Z" duration="0.252992" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1399" name="ActualFontGetsMoreSamplesWithoutChangingLayout(0.75f,False)" fullname="TumbangPreso.Tests.CrispUiTextTests.ActualFontGetsMoreSamplesWithoutChangingLayout(0.75f,False)" methodname="ActualFontGetsMoreSamplesWithoutChangingLayout" classname="TumbangPreso.Tests.CrispUiTextTests" runstate="Runnable" seed="1233424821" result="Passed" start-time="2026-10-05 03:12:54Z" end-time="2026-10-05 03:12:54Z" duration="0.223573" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[TextQuality] reading=False scale=0.75 glyphPixels=24->45 layout=246.6667x116
+]]></output>
+              </test-case>
+              <test-case id="1400" name="ActualFontGetsMoreSamplesWithoutChangingLayout(1.0f,False)" fullname="TumbangPreso.Tests.CrispUiTextTests.ActualFontGetsMoreSamplesWithoutChangingLayout(1.0f,False)" methodname="ActualFontGetsMoreSamplesWithoutChangingLayout" classname="TumbangPreso.Tests.CrispUiTextTests" runstate="Runnable" seed="1683785247" result="Passed" start-time="2026-10-05 03:12:54Z" end-time="2026-10-05 03:12:54Z" duration="0.003722" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[TextQuality] reading=False scale=1 glyphPixels=31->59 layout=246x116
+]]></output>
+              </test-case>
+              <test-case id="1401" name="ActualFontGetsMoreSamplesWithoutChangingLayout(1.5f,False)" fullname="TumbangPreso.Tests.CrispUiTextTests.ActualFontGetsMoreSamplesWithoutChangingLayout(1.5f,False)" methodname="ActualFontGetsMoreSamplesWithoutChangingLayout" classname="TumbangPreso.Tests.CrispUiTextTests" runstate="Runnable" seed="648880868" result="Passed" start-time="2026-10-05 03:12:54Z" end-time="2026-10-05 03:12:54Z" duration="0.003525" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[TextQuality] reading=False scale=1.5 glyphPixels=45->86 layout=245.3333x116
+]]></output>
+              </test-case>
+              <test-case id="1402" name="ActualFontGetsMoreSamplesWithoutChangingLayout(0.75f,True)" fullname="TumbangPreso.Tests.CrispUiTextTests.ActualFontGetsMoreSamplesWithoutChangingLayout(0.75f,True)" methodname="ActualFontGetsMoreSamplesWithoutChangingLayout" classname="TumbangPreso.Tests.CrispUiTextTests" runstate="Runnable" seed="403716" result="Passed" start-time="2026-10-05 03:12:54Z" end-time="2026-10-05 03:12:54Z" duration="0.002250" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[TextQuality] reading=True scale=0.75 glyphPixels=25->46 layout=256x109.3333
+]]></output>
+              </test-case>
+              <test-case id="1403" name="ActualFontGetsMoreSamplesWithoutChangingLayout(1.0f,True)" fullname="TumbangPreso.Tests.CrispUiTextTests.ActualFontGetsMoreSamplesWithoutChangingLayout(1.0f,True)" methodname="ActualFontGetsMoreSamplesWithoutChangingLayout" classname="TumbangPreso.Tests.CrispUiTextTests" runstate="Runnable" seed="1844832466" result="Passed" start-time="2026-10-05 03:12:54Z" end-time="2026-10-05 03:12:54Z" duration="0.002971" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[TextQuality] reading=True scale=1 glyphPixels=32->61 layout=256x109
+]]></output>
+              </test-case>
+              <test-case id="1404" name="ActualFontGetsMoreSamplesWithoutChangingLayout(1.5f,True)" fullname="TumbangPreso.Tests.CrispUiTextTests.ActualFontGetsMoreSamplesWithoutChangingLayout(1.5f,True)" methodname="ActualFontGetsMoreSamplesWithoutChangingLayout" classname="TumbangPreso.Tests.CrispUiTextTests" runstate="Runnable" seed="1904068631" result="Passed" start-time="2026-10-05 03:12:54Z" end-time="2026-10-05 03:12:54Z" duration="0.003883" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[TextQuality] reading=True scale=1.5 glyphPixels=46->89 layout=256.6667x109.3333
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

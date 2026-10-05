@@ -1,0 +1,7 @@
+case,frames,amount,strideMin,strideMax,leftFwdMin,leftFwdMax,rightFwdMin,rightFwdMax,leftSpreadMin,rightSpreadMin
+empty-sprint,61,1.00,-1.00,1.00,-20.0,40.0,-20.0,40.0,24.0,24.0
+# empty-sprint layer sprint|-6092|-6096|1.00|dante along (-1.00, 0.00, 0.00) (1.00, 0.00, 0.00)
+empty-walk,60,1.00,-1.00,1.00,-10.0,18.0,-10.0,18.0,22.0,22.0
+# empty-walk layer walk|-6092|-6096|1.00|dante along (-1.00, 0.00, 0.00) (1.00, 0.00, 0.00)
+carry-sprint,60,1.00,-1.00,1.00,-20.0,40.0,22.0,46.0,24.0,25.7
+# carry-sprint layer holding-right|-13036|-13040|1.00|dante along (-1.00, 0.00, 0.00) (1.00, 0.00, 0.00)

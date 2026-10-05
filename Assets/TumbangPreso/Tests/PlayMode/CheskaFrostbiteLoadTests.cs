@@ -63,7 +63,7 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(rime.enabled,"A loose shoe must not advertise a held Frostbite load.");
             Assert.IsTrue(_shoe.HostForceEquip(_actor));yield return null;yield return null;
             Assert.IsTrue(rime.enabled,"Returning the same still-loaded shoe lost its cue.");
-            Kit.ConsumeFrostbite();yield return null;yield return null;
+            Kit.CancelFrostbiteWindow();yield return null;yield return null;
             Assert.IsTrue(rime==null||!rime.gameObject.activeInHierarchy);Shot(renderer,"consumed");
             Assert.AreSame(original,mesh.sharedMesh);CollectionAssert.AreEqual(materials,renderer.sharedMaterials);
         }
@@ -109,9 +109,124 @@ namespace TumbangPreso.PlayTests
             CollectionAssert.AreEqual(surfaces,owner.GetComponent<Renderer>().sharedMaterials);
             // Isolated owner-shoe render, not a full player-camera framing claim.
             Shot(owner.GetComponent<Renderer>(),"owner-loaded");
-            Kit.ConsumeFrostbite();yield return null;yield return null;
+            Kit.CancelFrostbiteWindow();yield return null;yield return null;
             Assert.IsTrue(cue==null||!cue.gameObject.activeInHierarchy);
         }
+        [UnityTest] public IEnumerator WikiFrostbiteLoadLastsFifteenSeconds()
+        {
+            Kit.AttackingSkill.Activate(Context);
+            Kit.Tick(Context,10.1f);
+            Assert.IsTrue(Kit.IsFrostbiteLoaded,"The new Wiki load must survive the former ten-second limit.");
+            Kit.Tick(Context,4.8f);
+            Assert.IsTrue(Kit.IsFrostbiteLoaded);
+            Kit.Tick(Context,.2f);
+            Assert.IsFalse(Kit.IsFrostbiteLoaded,"An unthrown Frostbite load must expire at fifteen seconds.");
+            Assert.AreEqual(35,Kit.AttackingSkill.Cooldown);
+            yield return null;
+        }
+
+        [UnityTest] public IEnumerator JoiningFrostbiteCanRestoreFourteenSeconds()
+        {
+            Assert.IsTrue(Kit.RestoreTimedKit(_actor,new TimedKitSnapshot(Kit.AttackingSkill,14f)));
+            Assert.IsTrue(Kit.IsFrostbiteLoaded);
+            Assert.AreEqual(14f,Kit.AttackingSkill.DurationRemaining,.001f);
+            yield return null;
+        }
+
+        [UnityTest] public IEnumerator FrostbiteWindowCoatsEveryThrowWithoutRefreshing()
+        {
+            Kit.AttackingSkill.Activate(Context);Kit.Tick(Context,2f);
+            _carrier.HostThrowAt(_actor.transform.position+Vector3.up,new Vector3(0,0,5),.5f);
+            Assert.AreEqual(SlipperAffinity.Frost,_shoe.Affinity);
+            Assert.IsTrue(Kit.IsFrostbiteLoaded,"Throwing must not consume the fifteen-second window.");
+            Assert.AreEqual(13f,Kit.AttackingSkill.DurationRemaining,.001f);
+            Assert.IsTrue(_shoe.HostForceEquip(_actor));Kit.Tick(Context,2f);
+            _carrier.HostThrowAt(_actor.transform.position+Vector3.up,new Vector3(0,0,5),.5f);
+            Assert.AreEqual(SlipperAffinity.Frost,_shoe.Affinity);
+            Assert.IsTrue(Kit.IsFrostbiteLoaded);Assert.AreEqual(11f,Kit.AttackingSkill.DurationRemaining,.001f);
+            Assert.IsTrue(_shoe.HostForceEquip(_actor));Kit.Tick(Context,11.1f);
+            _carrier.HostThrowAt(_actor.transform.position+Vector3.up,new Vector3(0,0,5),.5f);
+            Assert.AreEqual(SlipperAffinity.Normal,_shoe.Affinity,"Throws after expiry must be ordinary.");
+            yield return null;
+        }
+        [UnityTest] public IEnumerator CryoPlacementUsesTheNewOwnerNumbers()
+        {
+            Assert.AreEqual(2.5f,CryoRules.ColdFeetRadius);
+            Assert.AreEqual(.5f,Kit.Skill1.AimMinRange);Assert.AreEqual(5f,Kit.Skill1.AimMaxRange);
+            Assert.AreEqual(1f,Kit.Skill1.AimRampSeconds);Assert.AreEqual(5f,Kit.Skill1.AimRangeFor(1));
+            Assert.AreEqual(10f,CryoRules.GlacialWallSeconds);Assert.AreEqual(3,CryoRules.GlacialWallHits);
+            Assert.AreEqual(5f,CryoRules.GlacialWallArcLength);Assert.AreEqual(3f,CryoRules.GlacialWallArcRadius);
+            Assert.AreEqual(1.5f,Kit.DefendingSkill.AimMinRange);Assert.AreEqual(4f,Kit.DefendingSkill.AimMaxRange);
+            Assert.AreEqual(1f,Kit.DefendingSkill.AimRampSeconds);Assert.AreEqual(4f,Kit.DefendingSkill.AimRangeFor(1));
+            yield return null;
+        }
+        private CharacterMotor ChillVictim(Vector3 position)
+        {
+            var go=Keep(new GameObject("Chill duration victim",typeof(CharacterController)));
+            var cc=go.GetComponent<CharacterController>();cc.height=1.6f;cc.radius=.35f;cc.center=Vector3.up*.8f;
+            var victim=go.AddComponent<CharacterMotor>();victim.PlayerSlot=2;victim.Mode=GameMode.HeroStrike;
+            victim.RoundActive=true;victim.IsBot=true;victim.Intent.Parked=true;
+            go.AddComponent<Carrier>();GameServices.Round.Register(victim);victim.Teleport(position);return victim;
+        }
+        [UnityTest,Timeout(15000)] public IEnumerator ActualCryoShoveChillExpiresAfterFiveSeconds()
+        {
+            var victim=ChillVictim(_actor.transform.position+Vector3.forward);Physics.SyncTransforms();
+            Assert.IsTrue(_actor.GetComponent<CombatVerbs>().HostResolveShove(_actor.transform.position,Vector3.forward));
+            Assert.AreEqual(Time.time,_actor.GetComponent<CombatVerbs>().LastShoveLandedAt,.001f,"The duration control must exercise a real hit, not an accepted miss.");
+            Assert.AreEqual(5f,victim.ChilledLeft,.001f);
+            yield return new WaitForSeconds(4.7f);Assert.IsTrue(victim.IsChilled);
+            yield return new WaitForSeconds(.5f);Assert.IsFalse(victim.IsChilled,"Ordinary shove Chill must not use the ultimate's combined timer.");
+        }
+        [UnityTest,Timeout(15000)] public IEnumerator ColdFeetChillExpiresFiveSecondsAfterLeavingTheField()
+        {
+            var victim=ChillVictim(new Vector3(4,.13f,-4));
+            var field=Keep(HeroHazards.SpawnIceSheet(new Vector3(4,0,-4),CryoRules.ColdFeetRadius,7.5f,_actor.PlayerSlot,1));
+            yield return new WaitForSeconds(.2f);Assert.That(victim.ChilledLeft,Is.InRange(4.8f,5.01f));
+            victim.Teleport(new Vector3(8,.13f,-4));
+            yield return new WaitForSeconds(5.2f);
+            Assert.IsTrue(field!=null,"The field must still exist so this verifies leaving it, not field destruction.");
+            Assert.IsFalse(victim.IsChilled,"Leaving the ice must not leave a seven-and-a-half-second slow.");
+        }
+
+        [UnityTest] public IEnumerator ActualCryoFieldsUseNewRadiusLifeAndThreeHitWall()
+        {
+            Kit.Skill1.Activate(Context);
+            var ice=Object.FindFirstObjectByType<HeroHazards.IceSheetComponent>();
+            Assert.IsNotNull(ice);Assert.AreEqual(2.5f,ice.Radius);Assert.AreEqual(7.5f,ice.Duration);
+            _actor.IsDefender=true;
+            Kit.DefendingSkill.Activate(Context);
+            var wall=Object.FindFirstObjectByType<HeroHazards.IceBarricadeComponent>();
+            Assert.IsNotNull(wall);Assert.AreEqual(10f,wall.Duration);Assert.AreEqual(3,wall.HitsToShatter);
+            wall.HostSlipperHit();wall.HostSlipperHit();yield return null;
+            Assert.IsTrue(wall!=null);wall.HostSlipperHit();yield return null;
+            Assert.IsTrue(wall==null,"The third slipper hit must shatter the actual wall.");
+        }
+
+        [UnityTest] public IEnumerator GlacialWallHasNoGapsAcrossItsFiveMetreArc()
+        {
+            var wall=Keep(HeroHazards.SpawnIceBarricade(new Vector3(0,0,2),Vector3.forward,10,arcLength:5,arcRadius:3));
+            yield return null;Physics.SyncTransforms();
+            var blockers=wall.GetComponentsInChildren<Collider>();int gaps=0;
+            foreach(float height in new[]{.2f,.9f,1.4f})
+                for(int i=0;i<=80;i++)
+                {
+                    float angle=Mathf.Lerp(-5f/6f+.025f,5f/6f-.025f,i/80f);
+                    var radial=new Vector3(Mathf.Sin(angle),0,Mathf.Cos(angle));
+                    var origin=wall.transform.position+new Vector3(0,height,-3)+radial*4;
+                    var ray=new Ray(origin,-radial);
+                    if(!blockers.Any(c=>c.Raycast(ray,out _,2f)))gaps++;
+                }
+            var light=Keep(new GameObject("Wall coverage light")).AddComponent<Light>();
+            light.type=LightType.Directional;light.transform.rotation=Quaternion.Euler(45,-25,0);
+            var eye=Keep(new GameObject("Compact wall witness")).AddComponent<Camera>();eye.enabled=false;
+            eye.transform.position=new Vector3(0,2.5f,-5);eye.transform.LookAt(new Vector3(0,1,1.7f));eye.fieldOfView=48;
+            string folder=System.Environment.GetEnvironmentVariable("TUMP_EVIDENCE")??"Logs/compact-wall";
+            yield return GameplayShots.Render(eye,"glacial-wall-front",false,outDir:folder,width:960,height:540);
+            eye.transform.position=new Vector3(-5,3,-4);eye.transform.LookAt(new Vector3(0,1,1.7f));
+            yield return GameplayShots.Render(eye,"glacial-wall-side",false,outDir:folder,width:960,height:540);
+            Assert.AreEqual(0,gaps,"The actual five-metre wall has unblocked gaps between its authored ice slabs.");
+        }
+
         private void Shot(Renderer source,string name)
         {
             var go=Keep(new GameObject("Rime asset camera"));var camera=go.AddComponent<Camera>();camera.enabled=false;

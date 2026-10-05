@@ -1020,7 +1020,7 @@ namespace TumbangPreso.UI
             // and `CLAUDE.md` § 6.4: his art is the design system and it is not to be repainted.
             // This draws the file he actually drew, at `Color.white`, on the ground it was drawn
             // against.
-            var logo = Resources.Load<Texture2D>("UI/brand/tump_logo")
+            var logo = OwnerMenuArt.Texture("login3-logo")
                        ?? Resources.Load<Texture2D>("UI/main-menu/TUMP");
 
             if (logo == null)
@@ -1104,7 +1104,8 @@ namespace TumbangPreso.UI
             // `CLAUDE.md` § 5 is about: a number describing a file, kept beside the file, that
             // nobody updates when the file changes. He is iterating on this logo right now and
             // has sent two versions in one day. `logo.width / logo.height` cannot go stale.
-            float aspect = logo.height > 0 ? (float)logo.width / logo.height : 1.0f;
+            var logoUv = TumpUiFactory.LogoUv;
+            float aspect = logo.height > 0 ? logo.width * logoUv.width / (logo.height * logoUv.height) : 1.0f;
 
             var box = new GameObject("LogoBox", typeof(RectTransform));
             box.transform.SetParent(col, false);
@@ -1112,6 +1113,7 @@ namespace TumbangPreso.UI
                 new Vector2(0.0f, y), new Vector2(LogoMarkHeight * aspect, LogoMarkHeight));
 
             var image = Engraved(box.transform, logo, "Logo", 0.0f, Color.white);
+            image.uvRect = logoUv;
             image.raycastTarget = false;
         }
 

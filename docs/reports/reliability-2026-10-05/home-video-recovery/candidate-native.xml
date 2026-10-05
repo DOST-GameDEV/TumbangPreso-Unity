@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 20:38:03Z" end-time="2026-10-04 20:38:05Z" duration="1.8585918">
+  <test-suite type="TestSuite" id="3117" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1728" result="Passed" start-time="2026-10-04 20:38:03Z" end-time="2026-10-04 20:38:05Z" duration="1.858592" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3109" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1728" result="Passed" start-time="2026-10-04 20:38:03Z" end-time="2026-10-04 20:38:05Z" duration="1.838654" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="19548" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3110" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1728" result="Passed" start-time="2026-10-04 20:38:03Z" end-time="2026-10-04 20:38:05Z" duration="1.827558" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3113" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1726" result="Passed" start-time="2026-10-04 20:38:03Z" end-time="2026-10-04 20:38:05Z" duration="1.816712" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1661" name="HubSceneVideoTests" fullname="TumbangPreso.PlayTests.HubSceneVideoTests" classname="TumbangPreso.PlayTests.HubSceneVideoTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-04 20:38:03Z" end-time="2026-10-04 20:38:05Z" duration="1.665983" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1663" name="BootWarmupRetainsOnePausedDecodedFrameAndHandsTheSamePlayerToHome" fullname="TumbangPreso.PlayTests.HubSceneVideoTests.BootWarmupRetainsOnePausedDecodedFrameAndHandsTheSamePlayerToHome" methodname="BootWarmupRetainsOnePausedDecodedFrameAndHandsTheSamePlayerToHome" classname="TumbangPreso.PlayTests.HubSceneVideoTests" runstate="Runnable" seed="46108925" result="Passed" start-time="2026-10-04 20:38:03Z" end-time="2026-10-04 20:38:04Z" duration="0.474275" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="45000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1664" name="FailedBootWarmupGetsFreshPlaybackWhenHomeOpens" fullname="TumbangPreso.PlayTests.HubSceneVideoTests.FailedBootWarmupGetsFreshPlaybackWhenHomeOpens" methodname="FailedBootWarmupGetsFreshPlaybackWhenHomeOpens" classname="TumbangPreso.PlayTests.HubSceneVideoTests" runstate="Runnable" seed="771615802" result="Passed" start-time="2026-10-04 20:38:04Z" end-time="2026-10-04 20:38:05Z" duration="1.122041" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="45000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[HubSceneVideo] Controlled boot decoder failure - showing the poster instead.
+]]></output>
+            </test-case>
+            <test-case id="1665" name="ReducedMotionWarmupUsesThePosterWithoutOpeningADecoder" fullname="TumbangPreso.PlayTests.HubSceneVideoTests.ReducedMotionWarmupUsesThePosterWithoutOpeningADecoder" methodname="ReducedMotionWarmupUsesThePosterWithoutOpeningADecoder" classname="TumbangPreso.PlayTests.HubSceneVideoTests" runstate="Runnable" seed="47238839" result="Passed" start-time="2026-10-04 20:38:05Z" end-time="2026-10-04 20:38:05Z" duration="0.047268" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

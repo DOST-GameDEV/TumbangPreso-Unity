@@ -20,7 +20,8 @@ namespace TumbangPreso.CameraSystem
     { public float Time,Pitch,Gain;public Vector3 Position;public string Id; }
     public sealed class RecordedMatchClip
     {
-        public const int WireVersion=13;
+        //14: barricade fields preserve curved-wall geometry and remaining hits.
+        public const int WireVersion=14;
         public const int ByteLimit=2*1024*1024;
         public const int RawByteLimit=12*1024*1024;
         public const int SoundCueLimit=512;
@@ -102,9 +103,9 @@ namespace TumbangPreso.CameraSystem
                 raw.Position=0;using var reader=new BinaryReader(raw,Encoding.UTF8,true);
                 if(reader.ReadInt32()!=0x54554d50)throw new InvalidDataException("Unsupported clip schema");
                 int version=reader.ReadInt32();
-                // Version10 has the identical layout for pre-water fields. Keep
-                // those saved clips readable; live network admission still requires49.
-                if(version!=WireVersion&&version!=12&&version!=11&&version!=10)throw new InvalidDataException("Unsupported clip schema");
+                // Retain earlier field layouts for saved clips. Arc walls require14;
+                // live network admission separately requires the current protocol.
+                if(version!=WireVersion&&version!=13&&version!=12&&version!=11&&version!=10)throw new InvalidDataException("Unsupported clip schema");
                 var result=new RecordedMatchClip{MatchId=reader.ReadInt64(),Id=reader.ReadInt64(),Round=reader.ReadInt32(),Actor=reader.ReadInt32(),Subject=reader.ReadInt32(),Mode=(GameMode)reader.ReadByte()};
                 result.Map=ReadText(reader,64);result.Reason=ReadText(reader,96);
                 result.Start=reader.ReadSingle();result.End=reader.ReadSingle();result.Contact=reader.ReadSingle();
@@ -164,6 +165,8 @@ namespace TumbangPreso.CameraSystem
                         int id=reader.ReadInt32();var kind=(WorldEffectSnapshot.Kind)reader.ReadByte();
                         var f=new WorldEffectSnapshot.Field{Type=kind,Position=ReadVector(reader,10000),Forward=ReadVector(reader,kind==RecordedSpecialFields.Kuro?10000:2),
                             Duration=reader.ReadSingle(),Remaining=reader.ReadSingle(),Radius=reader.ReadSingle(),FirstScale=reader.ReadSingle(),SecondScale=reader.ReadSingle(),Owner=reader.ReadInt32(),Split=reader.ReadBoolean()};
+                        if(kind==WorldEffectSnapshot.Kind.Barricade && f.Radius>0 && version<14)
+                            throw new InvalidDataException("Arc wall in an incompatible clip");
                         if(WorldEffectSnapshot.UsesDynamicIdentity(kind))
                         {
                             if(version<11 || (kind==WorldEffectSnapshot.Kind.CinderGate && version<12) || (kind==WorldEffectSnapshot.Kind.Baha && version<13))throw new InvalidDataException("Dynamic field in an incompatible clip");

@@ -1,0 +1,96 @@
+{
+  "boundedSeconds": 6,
+  "socketClosed": true,
+  "datagrams": [
+    {
+      "source": "169.254.38.78",
+      "port": 64748,
+      "payload": "tumbang-preso-lan2|8910|1|4|0|HEAK|1|1|8|b7c24fac1c0a|PLAYER'S ROOM"
+    },
+    {
+      "source": "192.168.1.7",
+      "port": 64748,
+      "payload": "tumbang-preso-lan2|8910|1|4|0|HEAK|1|1|8|b7c24fac1c0a|PLAYER'S ROOM"
+    },
+    {
+      "source": "169.254.38.78",
+      "port": 64748,
+      "payload": "tumbang-preso-lan2|8910|1|4|0|HEAK|1|1|8|b7c24fac1c0a|PLAYER'S ROOM"
+    },
+    {
+      "source": "169.254.38.78",
+      "port": 64748,
+      "payload": "tumbang-preso-lan2|8910|1|4|0|HEAK|1|1|8|b7c24fac1c0a|PLAYER'S ROOM"
+    },
+    {
+      "source": "192.168.1.7",
+      "port": 64748,
+      "payload": "tumbang-preso-lan2|8910|1|4|0|HEAK|1|1|8|b7c24fac1c0a|PLAYER'S ROOM"
+    },
+    {
+      "source": "169.254.38.78",
+      "port": 64748,
+      "payload": "tumbang-preso-lan2|8910|1|4|0|HEAK|1|1|8|b7c24fac1c0a|PLAYER'S ROOM"
+    },
+    {
+      "source": "169.254.38.78",
+      "port": 64748,
+      "payload": "tumbang-preso-lan2|8910|1|4|0|HEAK|1|1|8|b7c24fac1c0a|PLAYER'S ROOM"
+    },
+    {
+      "source": "192.168.1.7",
+      "port": 64748,
+      "payload": "tumbang-preso-lan2|8910|1|4|0|HEAK|1|1|8|b7c24fac1c0a|PLAYER'S ROOM"
+    },
+    {
+      "source": "169.254.38.78",
+      "port": 64748,
+      "payload": "tumbang-preso-lan2|8910|1|4|0|HEAK|1|1|8|b7c24fac1c0a|PLAYER'S ROOM"
+    },
+    {
+      "source": "169.254.38.78",
+      "port": 64748,
+      "payload": "tumbang-preso-lan2|8910|1|4|0|HEAK|1|1|8|b7c24fac1c0a|PLAYER'S ROOM"
+    },
+    {
+      "source": "192.168.1.7",
+      "port": 64748,
+      "payload": "tumbang-preso-lan2|8910|1|4|0|HEAK|1|1|8|b7c24fac1c0a|PLAYER'S ROOM"
+    },
+    {
+      "source": "169.254.38.78",
+      "port": 64748,
+      "payload": "tumbang-preso-lan2|8910|1|4|0|HEAK|1|1|8|b7c24fac1c0a|PLAYER'S ROOM"
+    },
+    {
+      "source": "169.254.38.78",
+      "port": 64748,
+      "payload": "tumbang-preso-lan2|8910|1|4|0|HEAK|1|1|8|b7c24fac1c0a|PLAYER'S ROOM"
+    },
+    {
+      "source": "192.168.1.7",
+      "port": 64748,
+      "payload": "tumbang-preso-lan2|8910|1|4|0|HEAK|1|1|8|b7c24fac1c0a|PLAYER'S ROOM"
+    },
+    {
+      "source": "169.254.38.78",
+      "port": 64748,
+      "payload": "tumbang-preso-lan2|8910|1|4|0|HEAK|1|1|8|b7c24fac1c0a|PLAYER'S ROOM"
+    },
+    {
+      "source": "169.254.38.78",
+      "port": 64748,
+      "payload": "tumbang-preso-lan2|8910|1|4|0|HEAK|1|1|8|b7c24fac1c0a|PLAYER'S ROOM"
+    },
+    {
+      "source": "192.168.1.7",
+      "port": 64748,
+      "payload": "tumbang-preso-lan2|8910|1|4|0|HEAK|1|1|8|b7c24fac1c0a|PLAYER'S ROOM"
+    },
+    {
+      "source": "169.254.38.78",
+      "port": 64748,
+      "payload": "tumbang-preso-lan2|8910|1|4|0|HEAK|1|1|8|b7c24fac1c0a|PLAYER'S ROOM"
+    }
+  ]
+}

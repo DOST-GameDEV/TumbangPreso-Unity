@@ -46,6 +46,49 @@ namespace TumbangPreso.PlayTests
             .Single(t => t.name == "LiveNotice");
 
         [UnityTest]
+        public IEnumerator ClosingMenuPreservesAnAlreadyParkedBody()
+        {
+            var motor = _owner.AddComponent<CharacterMotor>(); motor.enabled = false;
+            motor.Intent.Parked = true;
+            _panel = Panel.Open<PausePanel>(_watcher); _panel.Local = motor;
+            yield return null;
+            _panel.Close();
+            Assert.IsTrue(motor.Intent.Parked, "The menu resumed input it did not own.");
+        }
+
+        [UnityTest]
+        public IEnumerator MatchEndingWhileMenuIsOpenKeepsBodyParkedOnClose()
+        {
+            GameServices.Ensure();
+            var rules = Core.CustomGameRules.Defaults(Core.GameMode.HeroStrike);
+            rules.Rounds = 1;
+            SceneFlow.SetSelectedRules(rules); GameServices.Match.StartMatch();
+            SceneFlow.Networked = true;
+            var motor = _owner.AddComponent<CharacterMotor>(); motor.enabled = false;
+            _panel = Panel.Open<PausePanel>(_watcher); _panel.Local = motor;
+            yield return null;
+            GameServices.Round.EndRound(); GameServices.Match.BeginIntermission();
+            Assert.IsTrue(GameServices.Match.HasCompleted);
+            motor.FreezeForMatchEnd();
+            _panel.Close();
+            Assert.IsTrue(motor.Intent.Parked, "Closing the menu undid the completed-match freeze.");
+        }
+
+        [UnityTest]
+        public IEnumerator CompletedMatchNoticeDoesNotClaimTheGameIsStillPlaying()
+        {
+            GameServices.Ensure();
+            var rules = Core.CustomGameRules.Defaults(Core.GameMode.HeroStrike);
+            rules.Rounds = 1;
+            SceneFlow.SetSelectedRules(rules); GameServices.Match.StartMatch();
+            GameServices.Round.EndRound(); GameServices.Match.BeginIntermission();
+            Assert.IsTrue(GameServices.Match.HasCompleted);
+            SceneFlow.Networked = true;
+            yield return Open();
+            StringAssert.Contains("ended", Notice.text);
+        }
+
+        [UnityTest]
         public IEnumerator OfflineMenuStopsScaledTimeAndPhysicsThenResumeRestartsThem()
         {
             var bodyObject = new GameObject("Pause physics witness");

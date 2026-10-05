@@ -567,11 +567,17 @@ namespace TumbangPreso.Net
         // 141: owner restores near-original jump launch, gravity and fall-speed cap.
         // Three-second entry countdown: mixed clients must not release their hold two seconds apart.
         // Revised throw/contact timings, hit-confirmed punch recovery and retired retrieval slide.
-        // 146: the Arena joins the map list as index 6 (maps travel as an index); its ordinary break is 8 s,
-        // read from the map; and the drone carry is a third edge-recovery kind on `SyncUnit`.
-        // Also under 146 (the same unreleased change set): one host-to-all message, `ArenaBalloon`, the
-        // Arena's slipper balloon (hits, popped, its last event), also sent to a joining peer.
-        public const int ProtocolVersion = 146;
+        //146: throws ignore can state; restoration lowers an active charge over0.5s.
+        //147: revised Cryo placement and fifteen-second all-throw Frostbite; timed Boulder.
+        //148: arc-wall snapshots preserve radius, length and remaining hit budget.
+        //150: owner pose acknowledgements are distinct from authoritative corrections.
+        //151: bounded remote vine completion; deadline grace is separate from reel speed.
+        // 152: the Arena joins the map list as index 6 (maps travel as an index); its ordinary break is 8 s,
+        // read from the map; and the drone carry is a third edge-recovery kind on `SyncUnit`. Also one
+        // host-to-all message, `ArenaBalloon`, the Arena's slipper balloon (hits, popped, its last event),
+        // also sent to a joining peer. (This was 146 on QoLUpdates before the two branches met:
+        // ASTRAReworks had taken 146 to 151 for other things.)
+        public const int ProtocolVersion = 152;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
@@ -685,8 +691,16 @@ namespace TumbangPreso.Net
         {
             _nm.OnClientConnectedCallback += OnClientConnected;
             _nm.OnClientDisconnectCallback += OnClientDisconnected;
+            _nm.OnTransportFailure += OnTransportFailure;
+            _nm.OnServerStopped += OnServerStopped;
             _nm.ConnectionApprovalCallback += ApproveConnection;
         }
+
+        private bool _stopWasRequested;
+        private void OnTransportFailure() => Debug.LogWarning(
+            $"[NetLifecycle] transport-failure server={_nm?.IsServer} relay={IsRelay} requestedStop={_stopWasRequested}");
+        private void OnServerStopped(bool wasHost) => Debug.Log(
+            $"[NetLifecycle] server-stopped wasHost={wasHost} requestedStop={_stopWasRequested}");
 
         /// <summary>
         /// ⚠️⚠️ THE LAST RESORT FOR A WEDGED NETWORKMANAGER (QA, 2026-09-26; `PrepareManagerForStart` has the whole story). When a
@@ -703,6 +717,8 @@ namespace TumbangPreso.Net
             {
                 _nm.OnClientConnectedCallback -= OnClientConnected;
                 _nm.OnClientDisconnectCallback -= OnClientDisconnected;
+                _nm.OnTransportFailure -= OnTransportFailure;
+                _nm.OnServerStopped -= OnServerStopped;
                 _nm.ConnectionApprovalCallback -= ApproveConnection;
                 DestroyImmediate(_nm);
             }
@@ -721,6 +737,8 @@ namespace TumbangPreso.Net
             {
                 _nm.OnClientConnectedCallback -= OnClientConnected;
                 _nm.OnClientDisconnectCallback -= OnClientDisconnected;
+                _nm.OnTransportFailure -= OnTransportFailure;
+                _nm.OnServerStopped -= OnServerStopped;
                 _nm.ConnectionApprovalCallback -= ApproveConnection;
 
                 if (_seatHandlerOn != null && _nm.CustomMessagingManager != null)
@@ -779,6 +797,7 @@ namespace TumbangPreso.Net
         private bool StartNetcode(Func<bool> start, string what)
         {
             _startProblem = null;
+            _stopWasRequested = false;
             if (!PrepareManagerForStart(out var problem)) { _startProblem = $"{what} failed: {problem}"; return false; }
             try { return start(); }
             catch (Exception first)
@@ -1321,9 +1340,7 @@ namespace TumbangPreso.Net
                 // notices until a player is stuck. Same reasoning as `docs/TODO.md` § 60: two
                 // routes to one outcome, one of them a subset.
                 if (ok) RegisterSeatHandler();
-                SetStatus(ok
-                    ? $"relay hosting active, code {Lobby.JoinCode} (relay {relayCode})"
-                    : _startProblem ?? "failed to start relay host");
+                if (!ok) SetStatus(_startProblem ?? "failed to start relay host");
 
                 if (ok)
                 {
@@ -1333,18 +1350,28 @@ namespace TumbangPreso.Net
                     _beacon.Port = DefaultPort;
                     _beacon.InProgress = false;
                     PublishLobbyCounts();
-                    _beacon.StartAdvertising();
 
-                    if (Query != null)
-                    {
-                        _ = Query.CreateHostedLobbyAsync(
+                    // Relay does not listen at the direct LAN address. Advertising that
+                    // address makes LAN-first code lookup bypass the working Relay route.
+                    SetStatus("publishing the online room...");
+                    string published = Query == null ? null : await Query.CreateHostedLobbyAsync(
                             LocalLobbyName(),
                             Lobby.JoinCode,
                             relayCode,
                             Lobby.SeatedPeerCount(),
                             Lobby.OccupiedSeatCount(),
                             Advert);
+                    if (!CanContinueJoin(attempt)) return false;
+                    if (string.IsNullOrEmpty(published))
+                    {
+                        string problem = Query?.HostedLobbyProblem;
+                        await EnsureStoppedAsync(attempt);
+                        if (!CanContinueJoin(attempt)) return false;
+                        SetStatus("Could not publish the online room." +
+                            (string.IsNullOrWhiteSpace(problem) ? " Please try again." : " " + problem));
+                        return false;
                     }
+                    SetStatus($"relay hosting active, code {Lobby.JoinCode} (relay {relayCode})");
                 }
 
                 if (!ok)
@@ -1401,7 +1428,7 @@ namespace TumbangPreso.Net
             SetStatus($"joining relay allocation {relayJoinCode}...");
             try
             {
-                JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(relayJoinCode.Trim());
+                JoinAllocation joinAllocation = await RequestRelayJoinAsync(relayJoinCode.Trim(), attempt);
                 if (!CanContinueJoin(attempt)) return false;
                 var relayServerData = joinAllocation.ToRelayServerData("dtls");
                 _utp.SetRelayServerData(relayServerData);
@@ -1447,6 +1474,32 @@ namespace TumbangPreso.Net
         /// ⚠️ `StartClient` CALLS `Stop` FIRST when a session is already live, so this also covers
         /// the disconnect that a re-join produces on the way out of the old connection.
         /// </summary>
+        private Func<string, Task<JoinAllocation>> _relayJoinDispatch;
+        private async Task<JoinAllocation> RequestRelayJoinAsync(string code, JoinAttemptGate.Attempt attempt)
+        {
+            for (int request = 0; ; request++)
+            {
+                if (!CanContinueJoin(attempt)) return null;
+                try
+                {
+                    return await (_relayJoinDispatch == null
+                        ? RelayService.Instance.JoinAllocationAsync(code) : _relayJoinDispatch(code));
+                }
+                catch (RelayServiceException error) when (request == 0 && IsRelayRequestTimeout(error))
+                {
+                    if (!CanContinueJoin(attempt)) return null;
+                    SetStatus("Online join timed out; retrying the connection...");
+                    await Task.Delay(350);
+                }
+            }
+        }
+
+        private static bool IsRelayRequestTimeout(RelayServiceException error)
+            => error.Reason == RelayExceptionReason.RequestTimeOut ||
+               (error.Reason == RelayExceptionReason.NetworkError &&
+                (error.Message.IndexOf("timeout", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                 error.Message.IndexOf("timed out", StringComparison.OrdinalIgnoreCase) >= 0));
+
         private bool _localShutdown;
         public bool IsStopping => _localShutdown;
 
@@ -1500,6 +1553,14 @@ namespace TumbangPreso.Net
 
         private void StopCurrentTransport()
         {
+            if (_nm != null && _nm.IsListening)
+            {
+                _stopWasRequested = true;
+                // Record the initiating call only at shutdown, not on the movement hot path.
+                // No room codes, account IDs or credentials are included.
+                Debug.Log($"[NetLifecycle] requested-stop server={_nm.IsServer} relay={IsRelay} origin="
+                    + new System.Diagnostics.StackTrace(1, false));
+            }
             ClearJoinedClientRoomTitle();
             _connectingAttempt = null;
             if (!_localShutdown) MatchRpc.Instance?.NotifyLocalPeerLeaving();
@@ -2364,6 +2425,8 @@ namespace TumbangPreso.Net
         private static string PlayerFacingDisconnectReason(string raw)
         {
             var cause = Core.SessionEndRules.Classify(raw, wasLocal: false);
+            if (cause == Core.SessionEndCause.HostLost && MatchAbandon.MatchWasCompleted)
+                return MatchAbandon.PlayerLine;
 
             // ⚠️ THE HOST'S OWN SENTENCE STILL WINS WHERE IT IS ONE. `ApproveConnection` writes
             // "Game version mismatch (network protocol 24)" with the actual number in it, and

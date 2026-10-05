@@ -1,0 +1,29 @@
+{
+  "dumpBytes": 8706216,
+  "dumpSha256": "f817deb3913da84c9b5faef9baa5594a9682757500bdf2a6e31b8ec169e82762",
+  "processId": 19352,
+  "exception": "0xc0000005",
+  "threadId": 15248,
+  "threadDescription": "Unity Main Thread",
+  "frames": [
+    {
+      "module": "UnityPlayer.dll",
+      "offset": "0x16f9c36",
+      "symbol": "remove_free_block",
+      "displacement": 22
+    },
+    {
+      "module": "UnityPlayer.dll",
+      "offset": "0x17134b9",
+      "symbol": "?RemoveBlock@DynamicHeapAllocator@@AEAAXPEAX@Z",
+      "displacement": 121
+    },
+    {
+      "module": null,
+      "offset": null
+    }
+  ],
+  "symbolSessionCleaned": true,
+  "method": "Exception stream context plus Windows StackWalk64 with captured-memory callbacks and installed local Unity public symbols.",
+  "limit": "Two allocator frames recovered; third address has no loaded module and unwind stops. No source-level caller or corruption cause identified. Raw dump remains local and uncommitted."
+}

@@ -12,7 +12,7 @@ namespace TumbangPreso
     /// <summary>
     /// The can. It stands on its mark, it goes over, and the taya stands it back up.
     ///
-    /// ⚠️⚠️ IsUpright GATES FOUR SEPARATE RULES: the throw, the tag, passive scoring and the
+    /// ⚠️⚠️ IsUpright gates tagging, objective presentation and the
     /// reset channel. It is host-authoritative, and in the Godot build it is replicated by an
     /// EXPLICIT RPC rather than a synchronised property. That was not a style choice: a
     /// `MultiplayerSynchronizer` writes the property directly, so the setter's signal never
@@ -245,6 +245,7 @@ namespace TumbangPreso
             if (!NetAuthority.ShouldResolve() && (knockedOnThisPeer || restoredOnThisPeer))
                 AnnounceUprightChange(isUpright);
 
+            if (restoredOnThisPeer) LowerHeldThrowCharges();
             if(knockedOnThisPeer||restoredOnThisPeer)UprightChanged?.Invoke(isUpright);
         }
 
@@ -441,10 +442,19 @@ namespace TumbangPreso
             GameServices.Round.NotifyLataRestored();
         }
 
+        private void LowerHeldThrowCharges()
+        {
+            var round = GameServices.Round;
+            if (round == null || round.Lata != this) return;
+            foreach (var body in round.Bodies)
+                if (body != null) body.GetComponent<Carrier>()?.BeginRestoreChargeDecay();
+        }
+
         private void SetUpright(bool value)
         {
             if (_isUpright == value) return;
             _isUpright = value;
+            if (value) LowerHeldThrowCharges();
 
             // ⚠️ ONE PLACE, BOTH DIRECTIONS. The can going over and the can going back up are
             // the same state change read two ways, and the .gd picks the cue off the same

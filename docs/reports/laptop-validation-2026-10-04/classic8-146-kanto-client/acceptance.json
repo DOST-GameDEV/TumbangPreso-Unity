@@ -1,0 +1,16 @@
+{
+  "source": "23168e90888e74a9256a7b396d7bcf49e2dc1eee",
+  "protocol": 146,
+  "originalRequestedHeroGatePassed": false,
+  "stagingMismatch": "Tournament switch pins Classic despite saved Hero preference; no Hero acceptance from this run.",
+  "actualClassicTournamentPassed": true,
+  "matchRecordCanonicalSHA256": "d27f0b9246d44696bdda5aa1e5c212336f7a75d8ef9ff78a8ef26e7bde4d09f9",
+  "queueEqualsHistory": true,
+  "queueWitness": [
+    "c9f645728c718e75"
+  ],
+  "peerRecordMatch": "Root independently reported the identical full canonical hash/queue/witness; raw peer terminal evidence owned by PC.",
+  "terminalExit": 0,
+  "settingsRestored": true,
+  "fullArtifactUnchanged": true
+}

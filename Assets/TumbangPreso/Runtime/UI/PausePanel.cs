@@ -15,6 +15,7 @@ namespace TumbangPreso.UI
         public CharacterMotor Local;
         private Text _title, _notice;
         private bool _pausedOffline;
+        private bool _inputWasParked;
         private float _resumeScale;
         private GameObject _settingsOwner;
         public bool HasNestedView => _settingsOwner != null && _settingsOwner.activeInHierarchy;
@@ -99,13 +100,16 @@ namespace TumbangPreso.UI
                 PresentationClock.RequestScale(0);
             }
             if (_notice != null)
-                _notice.text = _pausedOffline ? "Game paused while this menu is open."
+                _notice.text = GameServices.Match?.HasCompleted == true
+                    ? "This match has ended. Close this menu to view the results."
+                    : _pausedOffline ? "Game paused while this menu is open."
                     : "The match keeps playing while this menu is open.";
             if (_title != null)
                 _title.text = PracticeRange.Active ? "TRAINING" : GameLaunch.Spectator ? "BROADCAST MENU" : "MATCH MENU";
 
             if (Local != null)
             {
+                _inputWasParked = Local.Intent.Parked;
                 // A live match still ticks behind this menu. Withdraw pending actions
                 // before parking makes held input look like a deliberate release.
                 if (!NetAuthority.IsNetworked || Local.PlayerSlot == NetAuthority.LocalSlot)
@@ -140,12 +144,14 @@ namespace TumbangPreso.UI
                 // UI Submit/click can also bind Jump/throw. Consume that menu
                 // press and wait for release before accepting a fresh game action.
                 Local.GetComponent<PlayerInputReader>()?.DiscardMenuButtonsUntilRelease();
-                Local.Intent.Parked = false;
+                // Restore only our menu's withdrawal. A previously parked body,
+                // or a match that ended while this menu was open, stays parked.
+                Local.Intent.Parked = _inputWasParked || GameServices.Match?.HasCompleted == true;
             }
 
             // Only the match wants the mouse back. A close on the way to the title screen has
             // already handed the pointer to the menu and must not have it taken away again.
-            if (SceneFlow.InMatch) CursorMode.Capture();
+            if (SceneFlow.InMatch && GameServices.Match?.HasCompleted != true) CursorMode.Capture();
         }
 
         private void Choice(Transform parent, string label, System.Action onClick,

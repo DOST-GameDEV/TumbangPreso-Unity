@@ -1,0 +1,4 @@
+{
+  "TimeCreated": "2026-10-05T18:05:12.3263142+08:00",
+  "Message": "Faulting application name: TumbangPreso.exe, version: 6000.5.8.47071, time stamp: 0x6a7366ef\r\nFaulting module name: UnityPlayer.dll, version: 6000.5.8.47071, time stamp: 0x6a736a42\r\nException code: 0xc0000005\r\nFault offset: 0x00000000016f9c36\r\nFaulting process id: 0x4b98\r\nFaulting application start time: 0x01dd54af641b267b\r\nFaulting application path: C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\integration-1d4015803-1005\\TumbangPreso.exe\r\nFaulting module path: C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\integration-1d4015803-1005\\UnityPlayer.dll\r\nReport Id: d1dc9184-efd0-4323-933e-1e7e65a0aaf5\r\nFaulting package full name: \r\nFaulting package-relative application ID: "
+}

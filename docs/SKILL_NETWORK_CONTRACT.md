@@ -1,5 +1,71 @@
 # Skill Networking Contract
 
+## Paete delayed player vine, protocol151
+
+The player-pull lifetime includes bounded measured-RTT allowance for remote
+replica updates. Local collision stalls still stop promptly. Restored travel
+speed is derived from the remaining endpoint distance, independently of the
+network grace deadline. The integrated protocol150 explicit owner-pose
+acknowledgement contract handles ordinary delayed echoes; the temporary
+Paete-specific recent-pose workaround was removed. Genuine host corrections
+still interrupt the active constraint.
+The ability presentation timer cannot cancel the live
+constraint prematurely. Matching rebuilt peers are required because earlier149
+clients interpreted the entire deadline as travel time.
+
+## Paete player vine, protocol149
+
+Liana Leap keeps its predicted tell and cooldown, but only the host chooses the
+player or terrain endpoint. A reliable81byte PaeteVine state carries match, round,
+owner movement epoch, sequence, target identity/epoch, endpoints, simulation clock
+and duration. Each peer integrates only its own motor through CharacterController;
+terrain reels use the existing owner-delivered Carry result. Duplicate, foreign,
+wrong-round and wrong-body messages cannot restart a pull. End state retires it;
+late snapshots age the original deadline rather than refreshing it.
+
+The target moves20percent of the available gap, capped at1.25m and reduced by
+existing incoming-displacement resistance. Paete covers the rest. Capsule
+clearance ends both velocities; collision stalls, new impact/carry, status, kit,
+role, round and movement-epoch changes cancel the constraint. No damage, tag,
+score or stun status is added. The terrain range and fallback stay unchanged.
+
+Thorn Harvest now reaches before snatching:0.45s visible reach, pull starts at
+0.65s, and travel lasts1.1s. Matching rebuilt peers are required. Focused local
+physics/receiver evidence is separate from actual matching-peer acceptance.
+[Refinement evidence](reports/paete-refinement-2026-10-04/README.md).
+
+## Compact wall restoration, protocol148 / recording14
+
+Barricade Radius greater than zero carries arc radius; FirstScale is arc length
+and SecondScale is the integer remaining slipper-hit budget. Restoration retains
+aged lifetime and prior damage; replay renders the same arc without live hazards.
+Radius-zero straight/split walls keep their previous scale semantics. Shattered
+walls are not captured. Matching rebuilt peers are required; earlier supported recordings remain readable,
+but arc-wall data requires format14. See reports/glacial-restore-2026-10-04.
+
+## Fifteen-second imbuements, protocol147
+
+Frostbite remains active for15seconds and coats every throw in that window;
+throwing does not consume or refresh it. Cold Feet uses radius2.5m, range0.5–5m
+and a1second aim ramp. Glacial Wall lasts10seconds with range1.5–4m and a1second
+aim ramp; its compact5m arc retains radius3m and three slipper hits still shatter it. Boulder now has a
+15second host-owned deadline on the exact loaded slipper. Dropping/retrieving
+it does not refresh that deadline; replacing its affinity retires the old timer.
+A timely held throw transfers the existing one-hit payload to flight. An expired
+load cannot be launched by racing the normal Update expiry. Pausing simulation
+pauses the deadline. Expiry uses the existing reliable slipper-affinity state
+message; no packet fields were added. Existing35second cooldowns remain.
+Matching rebuilt peers are required for the changed gameplay timings.
+
+## Restore charge return, protocol146
+
+Throws remain legal while the can is down or protected. A real down-to-upright
+edge lowers each active held charge over0.5s on host, owner and observing peers.
+Release is rejected during that decay, including the direct host launch path;
+late charge keepalives cannot raise a returning hand. Identical upright snapshots
+do not restart it. Existing can contact protection and packet layouts remain.
+Matching rebuilt peers are required.
+
 ## Powered ceiling credit, protocol145
 
 Zack's powered ceiling-only safety-bound return preserves the remaining wall-bank

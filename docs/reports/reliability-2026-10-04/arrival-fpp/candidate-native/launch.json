@@ -1,0 +1,26 @@
+{
+  "sourceRef": "bcf7be365462eeec30b110f85db00601c74f440f",
+  "profile": "pc-arrival-fpp-candidate1004",
+  "filter": "TumbangPreso.PlayTests.ArrivalHandoffTests.LateActivationDuringArrivalKeepsGameplayHandsHidden;TumbangPreso.PlayTests.ArrivalHandoffTests.LateFollowDuringArrivalKeepsGameplayHandsHidden;TumbangPreso.PlayTests.ArrivalHandoffTests.NormalFppActivationStillShowsGameplayHands;TumbangPreso.PlayTests.ArrivalHandoffTests.ArrivalCancellationStillRestoresGameplayHands",
+  "expectedCases": 4,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-arrival-fpp-candidate1004",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.ArrivalHandoffTests.LateActivationDuringArrivalKeepsGameplayHandsHidden;TumbangPreso.PlayTests.ArrivalHandoffTests.LateFollowDuringArrivalKeepsGameplayHandsHidden;TumbangPreso.PlayTests.ArrivalHandoffTests.NormalFppActivationStillShowsGameplayHands;TumbangPreso.PlayTests.ArrivalHandoffTests.ArrivalCancellationStillRestoresGameplayHands",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\arrival-fpp1004\\candidate-native\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\arrival-fpp1004\\candidate-native\\editor.log"
+  ],
+  "pid": 21944
+}

@@ -16,6 +16,7 @@ namespace TumbangPreso.Tests
     {
         sealed class Host : IHubHost
         {
+            public string OnlineBrowserMessage { get; set; } = "No public rooms yet. Host one, or join with a code.";
             public bool Allow=true; public int Requested=-1;
             public HubSeat[] Data={
                 new HubSeat{Slot=0,Occupied=true,Mine=true,Host=true,Name="YOU",CharacterPick=-1},

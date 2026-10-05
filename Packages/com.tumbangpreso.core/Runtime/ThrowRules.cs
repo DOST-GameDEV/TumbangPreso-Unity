@@ -54,9 +54,8 @@ namespace TumbangPreso.Core
             if (!c.HoldingSlipper) return false;
             if (c.ThrowCooldownLeft > 0.0f) return false;
 
-            // Current Feedback restores this gate together with charge cancellation.
-            // Do not retain a full wind-up that cannot be released.
-            if (!c.LataUpright) return false;
+            // Can orientation and protection no longer prevent throwing. The carrier
+            // owns the short charge-lowering lock when the can is restored.
 
             // Outside the box. The negation of IsInsideBox, so the boundary case cannot
             // be decided differently in the two places.

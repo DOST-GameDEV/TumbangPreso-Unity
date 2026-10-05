@@ -1,0 +1,10 @@
+{
+  "suppliedSha256": "df0a01ae4759f2017bf510243f1c1026bce19229e4ea95a627a23d2869a63fc9",
+  "installedSha256": "df0a01ae4759f2017bf510243f1c1026bce19229e4ea95a627a23d2869a63fc9",
+  "nativeCases": [
+    4,
+    2
+  ],
+  "oldPlaceholderShotsExcluded": true,
+  "addedLoginOutlineRemoved": true
+}

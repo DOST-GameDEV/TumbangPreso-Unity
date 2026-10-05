@@ -355,7 +355,9 @@ namespace TumbangPreso.UI
                 // stamina arc turning orange and a stun is the caught screen edge thawing with
                 // the time left. Only the untimed power states (Overcharge, Ignition,
                 // Witchfire) still name themselves, because nothing else draws them.
-                if (_reticle != null && row.Timed) continue;
+                // A named self-buff whose world visual is hidden in FPP still
+                // needs confirmation; ordinary timed status shapes stay unchanged.
+                if (_reticle != null && row.Timed && !row.ShowWithReticle) continue;
                 _status[index].enabled = true; _status[index].text = row.Label + (row.Timed ? $" · {row.Remaining:0.0}s" : ""); index++;
             }
         }

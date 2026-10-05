@@ -20,6 +20,7 @@ namespace TumbangPreso.Tests
         private readonly List<string> _deleted = new List<string>();
         private readonly List<(string Id, object Options)> _updates = new List<(string, object)>();
         private TaskCompletionSource<bool> _authentication, _deletion;
+        private TaskCompletionSource<bool> _updateWait;
 
         [SetUp]
         public void Before()
@@ -27,7 +28,7 @@ namespace TumbangPreso.Tests
             Assert.IsTrue(Array.IndexOf(Environment.GetCommandLineArgs(), "-tp-profile") >= 0);
             Assert.IsFalse(NetIdentity.IsOnline, "Hosted lobby tests must never initialize or call SDK services.");
             _creates.Clear(); _operations.Clear(); _deleted.Clear(); _updates.Clear();
-            _authentication = _deletion = null;
+            _authentication = _deletion = _updateWait = null;
             _root = new GameObject("Dormant hosted lobby lifetime"); _root.SetActive(false);
             _query = _root.AddComponent<ServerQuery>();
             Field("_hostAuthDispatch", (Func<Task<bool>>)(() => _authentication?.Task ?? Task.FromResult(true)));
@@ -47,6 +48,7 @@ namespace TumbangPreso.Tests
         public async Task After()
         {
             _authentication?.TrySetResult(false); _deletion?.TrySetResult(true);
+            _updateWait?.TrySetResult(true);
             for (int i = 0; i < _creates.Count; i++) _creates[i].TrySetResult("cleanup-lobby-" + i);
             await Task.WhenAll(_operations);
             // Drive local cleanup explicitly: dormant EditMode has no runtime OnDestroy.
@@ -66,6 +68,78 @@ namespace TumbangPreso.Tests
             var task = _query.DeleteHostedLobbyAsync(); _operations.Add(task); return task;
         }
         private static async Task Settle() { await Task.Yield(); await Task.Yield(); }
+
+        [Test]
+        public async Task SlowPublicationSerializesAndCoalescesToTheLatestRoomCounts()
+        {
+            var creating = Create("Current"); _creates[0].SetResult("lobby-current"); await creating;
+            _updateWait = new TaskCompletionSource<bool>();
+            int concurrent = 0, peak = 0;
+            string published = null;
+            Field("_updateHostedDispatch", (Func<string, object, Task>)(async (id, options) =>
+            {
+                _updates.Add((id, options)); concurrent++; peak = Math.Max(peak, concurrent);
+                if (_updates.Count == 1) await _updateWait.Task;
+                published = DataValue(options, "Occupied"); concurrent--;
+            }));
+            var first = _query.UpdateHostedLobbyAsync(2, 2, false, ServerQuery.HostedAdvert.None);
+            var middle = _query.UpdateHostedLobbyAsync(3, 3, false, ServerQuery.HostedAdvert.None);
+            var latest = _query.UpdateHostedLobbyAsync(4, 4, true, ServerQuery.HostedAdvert.None);
+            _operations.AddRange(new[] { first, middle, latest });
+            _updateWait.SetResult(true);
+            await Task.WhenAll(first, middle, latest);
+            Assert.AreEqual("4", published, "An older response overwrote the latest occupied count.");
+            Assert.AreEqual(1, peak, "The same lobby had concurrent publication requests.");
+            Assert.AreEqual(2, _updates.Count, "Intermediate queued counts were sent instead of coalesced.");
+            Assert.AreEqual("1", DataValue(_updates[1].Options, "InProgress"));
+        }
+        [Test]
+        public async Task RetiredWriterCannotDrainOrDelayTheReplacementRoom()
+        {
+            var firstRoom = Create("First"); _creates[0].SetResult("lobby-first"); await firstRoom;
+            _updateWait = new TaskCompletionSource<bool>();
+            Field("_updateHostedDispatch", (Func<string, object, Task>)((id, options) =>
+            {
+                _updates.Add((id, options));
+                return id == "lobby-first" ? _updateWait.Task : Task.CompletedTask;
+            }));
+            var old = _query.UpdateHostedLobbyAsync(2, 2, false, ServerQuery.HostedAdvert.None);
+            var queued = _query.UpdateHostedLobbyAsync(3, 3, false, ServerQuery.HostedAdvert.None);
+            _operations.AddRange(new[] { old, queued });
+            await Delete();
+            var newRoom = Create("Second"); _creates[1].SetResult("lobby-second"); await newRoom;
+            await _query.UpdateHostedLobbyAsync(1, 1, false, ServerQuery.HostedAdvert.None);
+            Assert.AreEqual(2, _updates.Count, "Replacement publication waited for the retired room.");
+            Assert.AreEqual("lobby-second", _updates[1].Id);
+            _updateWait.SetResult(true); await Task.WhenAll(old, queued);
+            Assert.AreEqual(2, _updates.Count, "Retired pending counts were published after replacement.");
+            Assert.AreEqual("lobby-second", Read<string>("_activeHostLobbyId"));
+        }
+
+        [Test]
+        public async Task FailedOlderPublicationStillDrainsTheLatestCounts()
+        {
+            var room = Create("Current"); _creates[0].SetResult("lobby-current"); await room;
+            _updateWait = new TaskCompletionSource<bool>();
+            Field("_updateHostedDispatch", (Func<string, object, Task>)(async (id, options) =>
+            {
+                _updates.Add((id, options));
+                if (_updates.Count == 1)
+                {
+                    await _updateWait.Task;
+                    throw new InvalidOperationException("synthetic publication failure");
+                }
+            }));
+            var first = _query.UpdateHostedLobbyAsync(2, 2, false, ServerQuery.HostedAdvert.None);
+            var latest = _query.UpdateHostedLobbyAsync(4, 4, true, ServerQuery.HostedAdvert.None);
+            _operations.AddRange(new[] { first, latest });
+            UnityEngine.TestTools.LogAssert.Expect(LogType.Warning,
+                new System.Text.RegularExpressions.Regex("\\[NetIdentity\\] Lobby update failed.*synthetic publication failure"));
+            _updateWait.SetResult(true); await Task.WhenAll(first, latest);
+            Assert.AreEqual(2, _updates.Count);
+            Assert.AreEqual("4", DataValue(_updates[1].Options, "Occupied"));
+        }
+
         private static string DataValue(object options, string key)
         {
             var data = (IDictionary)options.GetType().GetProperty("Data").GetValue(options);
