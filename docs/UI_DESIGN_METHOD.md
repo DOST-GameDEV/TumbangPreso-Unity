@@ -149,3 +149,9 @@ focused caret mesh and field bounds, not only a static screenshot. Browser empty
 copy must distinguish a pending query and unavailable services from a confirmed
 empty result; redraw status changes even when the room count stays zero.
 [Current focused evidence](reports/reliability-2026-10-05/browser-and-editable-text/README.md).
+
+For HubField, Plate is an opaque child and editable text/placeholder live in a
+separate TextArea after it. InputField inserts caret/selection first under the
+text parent; sharing the background's parent hides those pixels behind Plate.
+Validate render order as well as bounds, collapse automatic selection before
+measuring a thin caret and assert caret width to distinguish the two meshes.

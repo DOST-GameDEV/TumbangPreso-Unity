@@ -104,7 +104,11 @@ namespace TumbangPreso.UI.Hub
             HubKit.Stretch(plate.rectTransform);
             plate.raycastTarget = true;
 
-            var text = HubKit.Text(root, "Text", "", HubStyle.Label, true, HubStyle.Ink, TextAnchor.MiddleLeft);
+            // InputField puts its caret first under the text's parent. A separate layer
+            // keeps that caret/selection above the opaque plate without moving hit areas.
+            var textArea = HubKit.Rect(root, "TextArea");
+            HubKit.Stretch(textArea);
+            var text = HubKit.Text(textArea, "Text", "", HubStyle.Label, true, HubStyle.Ink, TextAnchor.MiddleLeft);
             HubKit.Stretch(text.rectTransform);
             text.rectTransform.offsetMin = new Vector2(24, 6);
             text.rectTransform.offsetMax = new Vector2(-24, -6);
@@ -113,7 +117,7 @@ namespace TumbangPreso.UI.Hub
             text.alignByGeometry = false;
             text.horizontalOverflow = HorizontalWrapMode.Overflow;
 
-            var hint = HubKit.Text(root, "Placeholder", placeholder, HubStyle.Body, false,
+            var hint = HubKit.Text(textArea, "Placeholder", placeholder, HubStyle.Body, false,
                                    new Color(HubStyle.Ink.r, HubStyle.Ink.g, HubStyle.Ink.b, 0.5f), TextAnchor.MiddleLeft);
             HubKit.Stretch(hint.rectTransform);
             hint.rectTransform.offsetMin = new Vector2(24, 6);

@@ -45,11 +45,24 @@ namespace TumbangPreso.PlayTests
             yield return null; yield return null;
             Assert.AreEqual(field, field.textComponent.GetComponentInParent<InputField>());
             Assert.IsTrue(field.isFocused);
+            // Activation selects all by default. Collapse it so this check measures
+            // the thin caret, not the much wider selection highlight.
+            field.caretPosition = 4;
+            Assert.AreEqual(field.selectionAnchorPosition, field.selectionFocusPosition);
             typeof(InputField).GetField("m_CaretVisible", flags).SetValue(field, true);
             typeof(InputField).GetMethod("UpdateGeometry", flags, null, System.Type.EmptyTypes, null).Invoke(field, null);
             var renderer = (CanvasRenderer)typeof(InputField).GetField("m_CachedInputRenderer", flags).GetValue(field);
+            Assert.AreEqual(field.textComponent.transform.parent, renderer.transform.parent);
+            Assert.AreNotEqual(field.transform, renderer.transform.parent,
+                "InputField's first-sibling caret must not share the opaque plate's parent.");
+            var plate = field.transform.Find("Plate");
+            Assert.Greater(renderer.transform.parent.GetSiblingIndex(), plate.GetSiblingIndex(),
+                "The text/caret layer must draw after the field background.");
             var caret = renderer.GetMesh();
             Assert.Greater(caret.vertexCount, 0);
+            var meshBounds = caret.bounds;
+            Assert.AreEqual(field.caretWidth, meshBounds.size.x, .01f,
+                "The measured mesh must be the caret, not a selected-text highlight.");
             var rect = (RectTransform)field.transform;
             Rect allowed = rect.rect; allowed.xMin -= 2; allowed.xMax += 2; allowed.yMin -= 2; allowed.yMax += 2;
             foreach (var vertex in caret.vertices)

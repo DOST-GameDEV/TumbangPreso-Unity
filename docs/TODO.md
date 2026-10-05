@@ -166,6 +166,10 @@ Nothing was deleted or renumbered.
   geometry exposed by that player run. Seven text and eight browser checks pass;
   real PlayMode view refresh and caret containment pass after retained failures.
   [Correction](reports/reliability-2026-10-05/browser-and-editable-text/README.md).
+- [x] Keep editable caret/selection above the opaque HubField background in a
+  separate text layer. Actual player exposed invisible rendering; final native
+  thin-caret width/order/bounds check passes with visible captured caret.
+  [Layer correction](reports/reliability-2026-10-05/browser-and-editable-text/README.md#actual-player-layering-correction).
 - [ ] October5 UI quality: improve authored artwork/text crispness, remove leftover
   white fringes and preserve quality through future imports/builds/resolutions.
 - [ ] Rest of session focus: UI appearance/quality, network robustness and measured

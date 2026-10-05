@@ -22,16 +22,19 @@ explicitly authorized; unnecessary AGENTS feature entry was removed at owner req
 ## Current source and live work
 
 Latest owner focus: UI appearance/quality/future-proof imports, network robustness
-and optimization. Root c526bcc5d includes UI source-quality/text/import guards and shutdown traces.
-Actual updated Windows public join plus typed UMKB rejoin pass; host stays2/4
-for298seconds after admission and survives client exit. Both players0, parent
-64888 terminal, profiles/input restored. Host trace shows deliberate LeaveRoom.
-Current corrections: browser loading/unavailable/empty feedback, native editable
-glyph coordinates and line-based HubField alignment. Seven text/eight browser
-checks passed; actual PlayMode22592 view refresh/caret containment now1PASS after
-retained EditMode harness and real caret-layout failures.202 generated metadata
-restored, no owned actors active. Next publish then package corrected source and
-check actual current code-entry caret; keep current QA host loss open.
+and optimization. Root89306f2a7 has browser feedback and native editable-coordinate/line alignment.
+Exact893 Windows build10352 is classified,258files/2691128379bytes, runtime
+14c7f6bc3b4febcc5f6150a6917158577e30ef0b3ddc662f71e7aa788f676517.
+Player12792 typed code but exposed caret/selection behind opaque Plate. Current
+HubField TextArea layer is after Plate; final native23360 collapses selection,
+asserts3-unit thin caret, actual bounds and render order, captures visible caret.
+Parent terminal0,19310 inputs unchanged;202 inherited metadata restored.
+Next publish layer correction then normal current player when packaging next unit.
+893 helper profile length31 caused local SDK10006; use short names <=30, e.g.
+pc-ui151-host1005v2. It is not current QA timeout evidence. Single player12792
+closed0, parent13011 restored profile/input. No owned actors active.
+Independent actual c526 public+typed code rejoin and298s host survival passed;
+both players0, parent64888 terminal. Current QA host loss remains OPEN.
 Current QA ONLINE timeout/hostreturnedHome remains OPEN; local97a online admission
 passed but does not resolve the tester environment. Latest Windows
 packagec526bcc5d has current retry/UI guards but predates the latest caret/browser correction.
