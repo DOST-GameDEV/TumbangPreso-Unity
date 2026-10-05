@@ -1,3 +1,20 @@
+## Latest Root native unit terminal: LAN map copy and HUD discriminator
+
+LegacyLAN noMapfield, so UI/Hub/IHubHost now showsUNKNOWN instead of transportLAN
+underMAP. No advert/protocol/joinscope change or new build just for this label.
+RootHUD diagnostic source test:4988/98897 invalidbatchWaitEnd, zeroXML/unqualified,
+exactownedEditorstopped then216/21136 restored. Onegeometry-onlyrepair1688/57732
+fresh1PASS/native640x480 allscore/portrait/seat/clock cornersinside; noHUDpaddingfix.
+Bothparents terminal/sharedprefs/seed/Quality frozeninputs restoredexact.
+
+Root source paths IHubHost.cs and TumpNativeHudTests.cs checked; current report
+hud-origin-and-lan-copy retains failures/limits. Standalone framebuffer/crop origin
+stillopen. Root allheavy/player/capturejobs terminal, protectedAuditor/privatevoxel
+script preserved. LaptopReader timestamprefinement2newcasesPASS+12priorfocusPASS,
+nowonly2additionalpulseboundariesqualifying beforepublication. Do notedititsReader.
+Next Root actual network-owner movement/first-use cost investigation using current
+source and calibrated counters; no unchanged fullmatch/build/diagnostic loops.
+
 ## October6 current: matched online flow and actual opening recorded
 
 Matched4b679/p152/261files2947173446bytes, manifest2a258/runtime721d includes

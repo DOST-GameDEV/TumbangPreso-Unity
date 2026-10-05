@@ -1,3 +1,12 @@
+### UI-LAN-MAP-1006: distinguish missing map information
+
+- [x] Legacy LAN entries contain no map metadata. Show UNKNOWN in the MAP cell,
+  preserving the existing discovery format, room title, key and joinability.
+  One useful native compilation/geometry check passes; no build solely for copy.
+  [Evidence](reports/reliability-2026-10-06/hud-origin-and-lan-copy/README.md).
+- [ ] Standalone HUD cropping: native640x480 corners fit; same-frame engine
+  screenshot versus physical window/client coordinates remains required.
+
 ### UI-BUNTING-ALLOCATION-1006: preserve motion without recurring random state
 
 - [x] Calibrated native GC.Alloc baseline observes200 events per100 warm redraws.

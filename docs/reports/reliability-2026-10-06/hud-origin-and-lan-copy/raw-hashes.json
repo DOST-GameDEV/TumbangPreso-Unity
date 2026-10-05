@@ -1,0 +1,38 @@
+{
+  "baseline-native-classification.json": {
+    "bytes": 226,
+    "sha256": "c8300f5c10faa7d1ad38449a8302b359248c0a6e19160db8a0095e938224feff"
+  },
+  "baseline-native-launch.json": {
+    "bytes": 1082,
+    "sha256": "9c69d028582d605fec3ae78d582e72d85e6e7e502102a9ae956297f9dc963d0a"
+  },
+  "baseline-native-result.json": {
+    "bytes": 315,
+    "sha256": "77e24ee1dfc0a4bf630b80390b961adfd8b0f7b771592e1491d5ed5df40aeb36"
+  },
+  "geometry-native-classification.json": {
+    "bytes": 226,
+    "sha256": "c8300f5c10faa7d1ad38449a8302b359248c0a6e19160db8a0095e938224feff"
+  },
+  "geometry-native-launch.json": {
+    "bytes": 1072,
+    "sha256": "ff1fd95151c73cb5b58a87c2de114c20adb033ac1985d194d0609b91b8419edc"
+  },
+  "geometry-native-result.json": {
+    "bytes": 476,
+    "sha256": "bacbf8113399b1fab9f5ded7fecb5eac34c0c6d873b070e92f57561a0785526b"
+  },
+  "geometry-native-tests.xml": {
+    "bytes": 3851,
+    "sha256": "ecaabc1be33d60eb165911df6f48440915ec14b5dc81e03d17ac6d9ed196a137"
+  },
+  "native-geometry.txt": {
+    "bytes": 809,
+    "sha256": "f9f2603299d59be710b59aae077ff9dc49deedd7ba87a41cdec9e1f2a863cf68"
+  },
+  "source-lf-hashes.json": {
+    "bytes": 257,
+    "sha256": "14a98ae7b4f4408aeb079eb669ce0112a7eea462349c9ebdd89dc3adcc33ecfb"
+  }
+}

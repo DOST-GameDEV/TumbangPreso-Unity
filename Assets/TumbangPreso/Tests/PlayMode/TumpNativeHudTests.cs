@@ -22,6 +22,35 @@ namespace TumbangPreso.PlayTests
         [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
 
         [UnityTest]
+        public IEnumerator CurrentMatchBarGeometryFitsTheNativeScreen()
+        {
+            yield return Open(GameMode.Classic);
+            Canvas.ForceUpdateCanvases();
+            var canvas = GameObject.Find("OwnerMatchCanvas").GetComponent<Canvas>();
+            var targets = new[] { "MatchScores/ScoreRow0", "MatchScores/ScoreRow0/PlayerPortrait",
+                "MatchScores/ScoreRow0/SeatTag", "RoundClock/ClockFace" };
+            var corners = new Vector3[4];
+            var evidence = new System.Text.StringBuilder();
+            evidence.AppendLine("screen=" + Screen.width + "x" + Screen.height + " canvas=" + canvas.pixelRect + " scale=" + canvas.scaleFactor);
+            foreach (string path in targets)
+            {
+                var target = canvas.transform.Find(path) as RectTransform;
+                Assert.IsNotNull(target, path);
+                target.GetWorldCorners(corners);
+                foreach (var corner in corners)
+                {
+                    var point = RectTransformUtility.WorldToScreenPoint(null, corner);
+                    evidence.AppendLine(path + "=" + point);
+                    Assert.That(point.y, Is.InRange(-.5f, Screen.height + .5f),
+                        path + " crosses the actual native screen edge.");
+                }
+            }
+            string folder = System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath, "../Logs/hud-window-origin1006/native"));
+            System.IO.Directory.CreateDirectory(folder);
+            System.IO.File.WriteAllText(System.IO.Path.Combine(folder, "geometry.txt"), evidence.ToString());
+        }
+
+        [UnityTest]
         public IEnumerator OrdinaryRoundStandingsAreCenteredAndReplaceTheLiveHud()
         {
             yield return Open(GameMode.Classic);

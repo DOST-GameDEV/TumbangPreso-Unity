@@ -1,0 +1,19 @@
+{
+  "sourceRef": "5a0a9f37ab17529bf8ca365a2262dfaa6af7a3c9",
+  "pid": 1688,
+  "exitCode": 0,
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.TumpNativeHudTests.CurrentMatchBarGeometryFitsTheNativeScreen",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "exactCaseCount": true,
+  "terminal": true,
+  "protectedCount": 21136,
+  "inputRestored": true,
+  "editorInputRestored": true,
+  "profileRestored": true,
+  "qualityRestored": true
+}
