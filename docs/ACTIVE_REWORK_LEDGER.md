@@ -116,12 +116,28 @@ fewer vertices. Native Home/Join1600/QHD captures pass, all final views inspecte
 The Join chalk draw-in is settled before capture. All native jobs exit0 and21126
 inputs/preferences/Quality restore byte exactly. No claimed frame-rate gain.
 
-Laptop owns AIController/MatchInstaller and nonvisual Hub/CustomRules bot-state
-consumers; preserve four-seat gate and queue/offline custody. Its original and
-candidate consumer checks are in progress. Root owns Net recovery/discovery, UI
-quality, integration and the queue. Next: verify laptopchecked patch then ONE
-combined shared artifact using its existing cache. Reverse roles (laptop LANhost,
-PC natural LANbrowser/code) and repeat normal host departure after completion.
-Current route inventory shows directed Ethernet192.168.1.255 and defaultEthernet;
-this alone does not establish why discovery failed. No firewall/system changes.
-No unchanged passing reruns. Exact local handles and next commands remain in JSON.
+Laptop botfix61671 is integrated and independently verified25rawblobs/nineLF
+source/fixture/meta hashes. Nine native cases pass across actual start/install/
+queue/offline controls. Combined917b/protocol152 package261files/2947171334bytes
+manifest3ac354c4 is copied and verified on both machines.
+
+Corrected reverse LAN unit is complete: laptophost5R8G appears on the PC's FIRST
+natural LAN view and typed code joins seat2/Ready. Explicit NONE refuses two-human
+Start; GUI Normal permits four30s rounds. Both FULLrecords match2403bytes/SHA78ed5a5a,
+ID083c34baae9b4857a2fa1b17f24738b0. Untouched PC client returns HOME after normal
+host result MainMenu with no replacement LAN host/8910 endpoint. Root8f471 and
+laptop0af718 evidence are published/verified11+30rawblobs. Both players ownQuit0,
+preferences/seed restore and all261 package files stay unchanged. No activeRoot
+native/player/helper or browser tabs. Protected Auditor/private prototype remain.
+
+Root owns Net discovery, arrival-camera investigation, UI quality and integration.
+Laptop owns already-open remote Rules panel refresh; source changes after its
+coherent unit. PC-hosted discovery/code failure remains open: directed Ethernet
+broadcast/default routes exist; reverse success does not prove its cause. Next
+coordinate a normal PC-host repeat on the existing corrected917 artifact after
+laptop's current fix checkpoints. No extra build for docs. Preserve natural
+absence before code/address fallback; do not change firewall/system settings.
+The FPP00:30/Wait frame may be normal post-intro countdown, so initialcamera
+report remains open without a speculative patch. Small-control target+33offset
+is a tool confound; row-button failure is not product-qualified.
+Exact local refs/jobs and one next action remain in current-resume.json.
