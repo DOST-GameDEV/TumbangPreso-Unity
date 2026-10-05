@@ -46,14 +46,25 @@ namespace TumbangPreso.EditorTools.MapKit
     /// The stage's colliders are NOT under `Bounds`: everything under that object is measured
     /// as a wall.
     ///
-    /// THE ART IS OPTIONAL. Art/Arena/arena_layout.json (the Ilalim format, `ArenaArtPlacer`),
-    /// tools/arena_lights.json, tools/arena_traffic.json and the crowd builder are each used if
-    /// they are there. With none of them this still builds a playable scene: the stage, a grey
-    /// field round the shaft, the night look.
+    /// THE ART IS OPTIONAL. Art/Arena/arena_layout.json (written by tools/export_arena_unity.py,
+    /// placed by `ArenaArtPlacer`), the stage and prop models beside it, tools/arena_lights.json,
+    /// tools/arena_traffic.json and the crowd builder are each used if they are there. With none
+    /// of them this still builds a playable scene: the stage, a grey field round the shaft, the
+    /// night look.
     ///
-    /// Menu: Tumbang Preso/Sample Map. Batch: TumbangPreso.EditorTools.MapKit.ArenaSceneBuilder.Run
+    /// THE FRAME. The game's: north is +z, a bearing b at radius r is x = r sin b, z = r cos b.
+    /// The export delivers every model in it. The kits' own data files (lights, traffic, rows)
+    /// are in Blender's (z up, y north) and are turned here by `B`: Blender (x, y, z) is (x, z, y).
+    ///
+    /// ⚠️ THE CAMERAS SEE FURTHER HERE THAN ON ANY OTHER MAP (`MapCameraRange`, on the root, which
+    /// the game camera and a spectator's adopt in their Start): the stadium is 480 m across and
+    /// its city reaches 2387 m from the can. See `PlayFar` for why the game camera takes less
+    /// than the whole of it.
+    ///
+    /// Menu: Tumbang Preso/Sample Map. Batch: TumbangPreso.EditorTools.MapKit.ArenaSceneBuilder.Run,
+    /// .RunReview (build, then the review renders: ArenaSceneBuilder.Review.cs).
     /// </summary>
-    public static class ArenaSceneBuilder
+    public static partial class ArenaSceneBuilder
     {
         public const string SceneName = "Arena";
         public const string ScenePath = "Assets/TumbangPreso/Scenes/Maps/" + SceneName + ".unity";
@@ -64,6 +75,48 @@ namespace TumbangPreso.EditorTools.MapKit
         public const string GeneratedFolder = ArenaArtPlacer.Root + "/StageGenerated";
         /// <summary>Where the art kit's own stage models are looked for, by name.</summary>
         public const string StageFolder = "Stage";
+        /// <summary>Where the stage kit's props are: arena_jump_pad, arena_speed_pad, arena_pickup, arena_drone.</summary>
+        public const string PropsFolder = "Props";
+        private const string SkyShader = "TumbangPreso/ArenaSky";
+        private const string SkyTexture = ArenaArtPlacer.Root + "/Textures/arena_city_sky.png";
+        private const string TrainObject = "city_train", CraftPrefix = "city_craft_";
+
+        /// <summary>
+        /// ⚠️ THE GAME CAMERA'S FAR PLANE IS 1300 m, NOT THE WHOLE MAP'S 2500. `WorldOutline`'s
+        /// edges and ambient occlusion read a 16-bit depth whose step is far / 65536 everywhere:
+        /// 2 cm at 1300 m, 3.8 cm at 2500 m (over the occlusion pass's 3 cm bias, and enough to
+        /// speckle an edge within 2 m of the lens; at the other maps' 240 m it is 4 mm). And
+        /// nothing past 1215 m can be seen from the stage: the furthest landmark tower's top is
+        /// 1090 m from the can, the high barge lane (r 1060, 590 up) 1213 m, the city floor
+        /// through the shaft at most 950 m, and the far ring of towers (to 2130 m) stands under
+        /// the stadium's rim seen from the can, as the city kit built it. A camera that LEAVES
+        /// the stadium (a spectator's, the break's, the review's) takes `FreeFar`: the farthest
+        /// vertex of the city is 2387 m from the can.
+        /// </summary>
+        public const float PlayFar = 1300.0f, FreeFar = 2500.0f;
+
+        /// <summary>
+        /// Where the ink of `WorldOutline` fades out on this map, metres from the eye. Its own
+        /// rule is the fog's distances, which here run to the city (180 to 3400 m) and would draw
+        /// an edge on every seat row and every spectator of every stand. The stage is 44 m
+        /// across (62 m corner to corner inside the walls): the ink is whole to 45 m, so on
+        /// anything a player is playing against, and gone by 85 m, where the lower bowl begins.
+        /// </summary>
+        public const float InkFadeStart = 45.0f, InkFadeEnd = 85.0f;
+
+        /// <summary>A beam is whole at its lamp and gone this share of the way to where the bank
+        /// aims: 0.55 ends it about 30 m up over the field, never on the stage.</summary>
+        private const float BeamShare = 0.55f;
+        /// <summary>How many times wider and taller than its lamp face a beam is at its far end.</summary>
+        private static readonly Vector2 BeamFar = new Vector2(1.55f, 3.5f);
+        /// <summary>The four lights over the stage: how far out (a share of the stage's radius),
+        /// how high (over the 12 m the slipper flies to), how strong.</summary>
+        private const float StageLightOut = 0.65f, StageLightHeight = 15.0f, StageLightIntensity = 0.3f;
+        /// <summary>The kit's speed pad is this half size (across, along) and its jump pad this half width, metres.</summary>
+        private static readonly Vector2 SpeedPadHalf = new Vector2(0.8f, 1.5f);
+        private const float JumpPadHalf = 0.9f;
+        /// <summary>The jump pad's light on this map: the kit's teal (clear of #f87020 and #0080e8).</summary>
+        private static readonly Color JumpGlow = new Color(0.30f, 0.95f, 0.85f);
         private const string MaterialFolder = ArenaArtPlacer.Root + "/Materials";
         private const string CrowdBuilderType = "TumbangPreso.EditorTools.MapKit.ArenaCrowdBuilder";
         private const string Tag = "[Arena] ";
@@ -119,13 +172,20 @@ namespace TumbangPreso.EditorTools.MapKit
             var root = new GameObject(SceneName).transform;
             // What MapAtmosphereAuthor.Apply sets for every map; written here so the two agree.
             root.gameObject.AddComponent<MapGrade>().Set(1.0f, 1.025f, 1.06f, 1.0f, 1.9f);
+            var range = root.gameObject.AddComponent<MapCameraRange>();
+            range.PlayFar = PlayFar; range.FreeFar = FreeFar;
+            range.InkFadeStart = InkFadeStart; range.InkFadeEnd = InkFadeEnd;
+
+            // The kit materials first: the stage's pieces and props wear them too.
+            bool hasArt = ArenaArtPlacer.Exists;
+            if (hasArt) ArenaArtPlacer.Prepare(); else ArenaArtPlacer.Forget();
 
             var stats = Stage(root, layouts, doc["spawns"], stageTop, catchY);
             Gameplay(root, doc["spawns"], wallHalf, wallHeight, stageTop);
             BreakCamera(root, stats.Radius);
 
             int art = 0;
-            if (ArenaArtPlacer.Exists) art = ArenaArtPlacer.Place(root);
+            if (hasArt) art = ArenaArtPlacer.Place(root);
             else
             {
                 Debug.Log($"{Tag}No {ArenaArtPlacer.LayoutPath}: building the grey field in place of the stadium.");
@@ -133,9 +193,10 @@ namespace TumbangPreso.EditorTools.MapKit
             }
 
             bool crowd = Crowd(root);
-            int lights = Floodlights(root);
+            int lights = Floodlights(root, stats.Radius);
             int craft = Traffic(root);
             Lighting(root);
+            ArenaArtPlacer.ReportUnmatched();
 
             EditorSceneManager.MarkSceneDirty(scene);
             Directory.CreateDirectory(Path.GetDirectoryName(ScenePath));
@@ -144,7 +205,8 @@ namespace TumbangPreso.EditorTools.MapKit
             AddSceneToBuildSettings();
             Debug.Log($"{Tag}Scene built: {layouts.Count} layouts, {stats.Pieces} stage pieces ({stats.Authored} art models, " +
                       $"{stats.ColliderMeshes} collider meshes, {stats.VisualMeshes} generated visual meshes), walking radius {stats.Radius:F1} m, " +
-                      $"{art} art placements, crowd {(crowd ? "built" : "absent")}, {lights} floodlights, {craft} sky craft.");
+                      $"{art} art placements, crowd {(crowd ? "built" : "absent")}, {lights} floodlight beams, {craft} sky craft, " +
+                      $"cameras to {PlayFar} m (play) and {FreeFar} m (free).");
         }
 
         // ------------------------------------------------------------------ the stage
@@ -192,7 +254,7 @@ namespace TumbangPreso.EditorTools.MapKit
 
             var stageObject = Group(root, "Stage");
             var stage = stageObject.gameObject.AddComponent<ArenaStage>();
-            stageObject.gameObject.AddComponent<ArenaFallRecovery>();
+            stageObject.gameObject.AddComponent<ArenaFallRecovery>().DroneTemplate = DroneTemplate(stageObject);
             var colliders = Group(stageObject, "Colliders");
             var visuals = Group(stageObject, "Visuals");
             var holograms = Group(stageObject, "Holograms");
@@ -294,10 +356,44 @@ namespace TumbangPreso.EditorTools.MapKit
         }
 
         /// <summary>
+        /// The stage kit's catch drone, left INACTIVE under the stage for `ArenaFallRecovery` to
+        /// copy at run time: the model as imported, already wearing the map's materials (a copy
+        /// made in Play cannot ask the asset database for them). Null without the model, and
+        /// then `ArenaDrone` draws its grey-box.
+        /// </summary>
+        private static GameObject DroneTemplate(Transform stage)
+        {
+            var model = ArenaArtPlacer.FindModel(PropsFolder, "arena_drone");
+            if (model == null) return null;
+
+            var template = (GameObject)PrefabUtility.InstantiatePrefab(model, stage);
+            template.name = "DroneTemplate";
+            ArenaArtPlacer.Dress(template, false);
+            template.SetActive(false);
+            return template;
+        }
+
+        /// <summary>The kit's model of a pad or a pickup as the child `Model` its component looks
+        /// for (`ArenaSpeedPad.ModelName`), wearing the map's materials. Nothing without the model:
+        /// the component then builds its grey-box.</summary>
+        private static void PropModel(Transform parent, string file, Vector3 scale)
+        {
+            var model = ArenaArtPlacer.FindModel(PropsFolder, file);
+            if (model == null) return;
+
+            var instance = (GameObject)PrefabUtility.InstantiatePrefab(model, parent);
+            instance.name = ArenaSpeedPad.ModelName;
+            instance.transform.localScale = scale;
+            ArenaArtPlacer.Dress(instance, false);
+        }
+
+        /// <summary>
         /// One piece as it is drawn in one layout: a holder at the stage's origin (the stage turns
-        /// and lifts the holder, so an art model keeps the rotation its file gave it), carrying
-        /// the art model if there is one, else the generated mesh. With `only` set, every
-        /// material is that one and it casts no shadow: the hologram twin.
+        /// and lifts the holder; an art model is in the game's own frame as imported, so it hangs
+        /// there with no rotation of its own), carrying the art model if there is one, else the
+        /// generated mesh. With `only` set, every material is that one and it casts no shadow:
+        /// the hologram twin. Without, an art model wears the kit's materials and casts and takes
+        /// shadows (the players' shadows fall on the stage).
         /// </summary>
         private static GameObject Visual(Transform parent, string name, GameObject model, Mesh mesh, Material[] materials, Material only)
         {
@@ -313,7 +409,11 @@ namespace TumbangPreso.EditorTools.MapKit
                 holder.AddComponent<MeshRenderer>().sharedMaterials = materials ?? new[] { only, only, only };
             }
 
-            if (only == null) return holder;
+            if (only == null)
+            {
+                if (model != null) ArenaArtPlacer.Dress(holder, true);
+                return holder;
+            }
 
             foreach (var renderer in holder.GetComponentsInChildren<Renderer>(true))
             {
@@ -471,7 +571,18 @@ namespace TumbangPreso.EditorTools.MapKit
             {
                 var pad = Group(group, "JumpPad " + n);
                 pad.position = At(token, $"Layout '{name}' jump pad {n++}");
-                pad.gameObject.AddComponent<JumpPad>().LaunchSpeed = Number(token["speed"], JumpPadSpeed);
+                var jump = pad.gameObject.AddComponent<JumpPad>();
+                jump.LaunchSpeed = Number(token["speed"], JumpPadSpeed);
+                // This map's own pad: the stage kit's round teal one. Without the kit, `JumpPad`'s
+                // defaults stand, which are the pavement pad.
+                var padModel = ArenaArtPlacer.FindModel(PropsFolder, "arena_jump_pad");
+                var padPaint = AssetDatabase.LoadAssetAtPath<Texture2D>(ArenaArtPlacer.Root + "/Textures/arena_stage_props.png");
+                if (padModel != null && padPaint != null)
+                {
+                    jump.Model = padModel; jump.Paint = padPaint; jump.PartPrefix = "jump_";
+                    jump.ModelHalfSize = JumpPadHalf; jump.Round = true; jump.GlowColour = JumpGlow;
+                    jump.SurfaceShader = ArenaArtPlacer.PaintedShader;
+                }
             }
 
             n = 0;
@@ -489,6 +600,8 @@ namespace TumbangPreso.EditorTools.MapKit
                 var speed = pad.gameObject.AddComponent<ArenaSpeedPad>();
                 var half = token["halfSize"] as JArray;
                 if (half != null && half.Count >= 2) speed.HalfSize = new Vector2((float)half[0], (float)half[1]);
+                // The kit's pad is 1.6 by 3.0 m; it is drawn the size the layout's pad acts on.
+                PropModel(pad, "arena_speed_pad", new Vector3(speed.HalfSize.x / SpeedPadHalf.x, 1.0f, speed.HalfSize.y / SpeedPadHalf.y));
             }
 
             n = 0;
@@ -497,6 +610,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 var pickup = Group(group, "StaminaPickup " + n);
                 pickup.position = At(token, $"Layout '{name}' pickup {n++}");
                 pickup.gameObject.AddComponent<ArenaStaminaPickup>();
+                PropModel(pickup, "arena_pickup", Vector3.one);
             }
         }
 
@@ -536,8 +650,9 @@ namespace TumbangPreso.EditorTools.MapKit
             Wall(bounds, "WallNorth", new Vector3(0, y, centre), new Vector3(span, height, WallThickness));
         }
 
-        /// <summary>The break's camera (`ArenaBreakCamera` poses it every frame of a break). Its
-        /// far plane takes in the whole stadium, which the game camera's 240 m does not.</summary>
+        /// <summary>The break's camera (`ArenaBreakCamera` poses it every frame of a break). It
+        /// rises over the stage and carries no outline pass, so its far plane is the whole map's
+        /// (`FreeFar`).</summary>
         private static void BreakCamera(Transform root, float radius)
         {
             var eye = Group(root, "BreakCamera").gameObject;
@@ -546,7 +661,7 @@ namespace TumbangPreso.EditorTools.MapKit
             camera.depth = ArenaBreakCamera.Depth;
             camera.fieldOfView = 50.0f;
             camera.nearClipPlane = 0.3f;
-            camera.farClipPlane = 1200.0f;
+            camera.farClipPlane = FreeFar;
             var from = new Vector3(0.6f, 0.45f, 0.8f) * radius * 1.8f;
             eye.transform.SetPositionAndRotation(from, Quaternion.LookRotation(-from));
             eye.AddComponent<ArenaBreakCamera>();
@@ -587,43 +702,106 @@ namespace TumbangPreso.EditorTools.MapKit
             return true;
         }
 
-        /// <summary>
-        /// The floodlight banks, from tools/arena_lights.json if it is there: a list (or an
-        /// object with a `lights` list) of { "position": [x, y, z], "target": [x, y, z],
-        /// "color": [r, g, b], "intensity": n, "range": n, "angle": degrees }, Unity coordinates;
-        /// everything but the position is optional and a light with no target aims at the can.
-        ///
-        /// ⚠️ THEY ARE SPOTS WITH NO SHADOW, NEVER PER-PIXEL (`ForceVertex`): a pixel light is
-        /// another pass over everything it reaches, and a stadium has dozens. The stage is lit by
-        /// the scene's one directional key (`Lighting`); these mark where the banks are for the
-        /// kits that draw their beams and flares, and add a little vertex light where a shader
-        /// takes it.
-        /// </summary>
-        private static int Floodlights(Transform root)
+        /// <summary>A point of a kit's own data file, which is in the BLENDER frame (metres, z
+        /// up, y north): Blender (x, y, z) is Unity (x, z, y). The same rule the export proves
+        /// for the models (tools/export_arena_unity.py).</summary>
+        private static Vector3 B(JToken token)
         {
+            var v = Vector(token);
+            return new Vector3(v.x, v.z, v.y);
+        }
+
+        /// <summary>
+        /// THE FLOODLIGHTS, as the players see them: a BEAM through the haze from each of the 24
+        /// banks tools/arena_lights.json lists under `roof.floodlight_banks` (the roof kit
+        /// measured each bank's `position`, the middle of its 9.5 by 1.9 m lamp face, and its
+        /// `aim_point` on the stage; Blender frame), and four small lights over the stage.
+        ///
+        /// A BEAM IS EIGHT TRIANGLES: an open fan from the lamp face, widening, whole at the lamp
+        /// and gone by `BeamShare` of the way to its aim, so it stops above the field and never
+        /// washes over the play. One mesh, one added material (TumbangPreso/ArenaGlow: no depth
+        /// write, soft sides, faded out near the eye so a camera flown through one is not
+        /// blinded), all 24 batched: one draw call.
+        ///
+        /// ⚠️ THE BANKS ARE NOT LIGHTS. The first build made each a Light: 24 lamps a frame to
+        /// cull and sort, lighting nothing a shader here takes per pixel. The stadium is lit by
+        /// the ONE directional key (`Lighting`), which stands in for all of them, and the lamp
+        /// faces glow by their own emission (arena_roof_lamp, strength 8). What a real light
+        /// buys is the stage standing out from the field (the art brief's rule 8), so there are
+        /// four, low over the stage, with no shadow and never per pixel (`ForceVertex`:
+        /// TumbangPreso/ArenaPainted takes them per vertex in its one pass).
+        /// </summary>
+        private static int Floodlights(Transform root, float stageRadius)
+        {
+            var parent = Group(root, "Floodlights");
+            for (int i = 0; i < 4; i++)
+            {
+                var light = Group(parent, "StageLight " + i).gameObject.AddComponent<Light>();
+                light.transform.localPosition = ArenaStageMesh.Direction(45.0f + 90.0f * i) * (stageRadius * StageLightOut) + Vector3.up * StageLightHeight;
+                light.type = LightType.Point;
+                light.range = StageLightHeight + stageRadius * 1.2f;
+                light.intensity = StageLightIntensity;
+                light.color = new Color(0.93f, 0.96f, 1.0f);
+                light.shadows = LightShadows.None;
+                light.renderMode = LightRenderMode.ForceVertex;
+            }
+
             if (!File.Exists(LightsPath)) return 0;
 
             var doc = JToken.Parse(File.ReadAllText(LightsPath));
-            var list = doc as JArray ?? doc["lights"] as JArray ?? doc["floodlights"] as JArray;
-            if (list == null) { Debug.LogWarning($"{Tag}{LightsPath} has no list of lights"); return 0; }
+            var banks = doc["roof"] != null ? doc["roof"]["floodlight_banks"] as JArray : null;
+            if (banks == null) { Debug.LogWarning($"{Tag}{LightsPath} has no roof.floodlight_banks list: no beams"); return 0; }
 
-            var parent = Group(root, "Floodlights");
-            int n = 0;
-            foreach (var token in list)
+            var shader = Shader.Find(ArenaArtPlacer.GlowShader);
+            if (shader == null) { Debug.LogWarning($"{Tag}{ArenaArtPlacer.GlowShader} is missing: no beams"); return 0; }
+
+            EnsureFolder(GeneratedFolder);
+            string meshPath = GeneratedFolder + "/arena_floodlight_beam.asset";
+            var mesh = AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
+            bool fresh = mesh == null;
+            if (fresh) mesh = new Mesh();
+            BeamMesh(mesh);
+            mesh.name = "arena_floodlight_beam";
+            if (fresh) AssetDatabase.CreateAsset(mesh, meshPath); else EditorUtility.SetDirty(mesh);
+
+            EnsureFolder(MaterialFolder);
+            string materialPath = MaterialFolder + "/arena_floodlight_beam.mat";
+            var material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+            // Made once: after that its colour and strength are the artist's to tune, and a rebuild leaves them alone.
+            if (material == null)
             {
-                if (token["position"] == null) continue;
+                material = new Material(shader);
+                material.SetColor("_Color", new Color(0.82f, 0.90f, 1.0f, 0.085f));
+                material.SetFloat("_Rim", 1.5f);
+                material.SetVector("_Near", new Vector4(20.0f, 70.0f, 0.0f, 0.0f));
+                material.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+                material.SetFloat("_DstBlend", (float)BlendMode.One);
+                material.SetFloat("_Cull", (float)CullMode.Off);
+                material.SetFloat("_Fog", 1.0f);
+                material.renderQueue = (int)RenderQueue.Transparent + 20;
+                AssetDatabase.CreateAsset(material, materialPath);
+            }
+            material.shader = shader;
+            material.enableInstancing = true;
 
-                Vector3 at = Vector(token["position"]), target = token["target"] != null ? Vector(token["target"]) : Vector3.zero;
-                var light = Group(parent, (string)token["name"] ?? "Floodlight " + n).gameObject.AddComponent<Light>();
-                light.transform.SetPositionAndRotation(at, Quaternion.LookRotation((target - at).sqrMagnitude > 1e-4f ? target - at : Vector3.down));
-                light.type = LightType.Spot;
-                light.spotAngle = Number(token["angle"], 50.0f);
-                light.range = Number(token["range"], Vector3.Distance(at, target) * 1.5f);
-                light.intensity = Number(token["intensity"], 1.2f);
-                var c = token["color"] as JArray;
-                light.color = c != null && c.Count >= 3 ? new Color((float)c[0], (float)c[1], (float)c[2]) : new Color(0.92f, 0.95f, 1.0f);
-                light.shadows = LightShadows.None;
-                light.renderMode = LightRenderMode.ForceVertex;
+            int n = 0;
+            foreach (var bank in banks)
+            {
+                if (bank["position"] == null || bank["aim_point"] == null) continue;
+
+                Vector3 at = B(bank["position"]), aim = B(bank["aim_point"]);
+                if ((aim - at).sqrMagnitude < 1.0f) continue;
+
+                var beam = Group(parent, (string)bank["name"] ?? "Beam " + n);
+                beam.SetPositionAndRotation(at, Quaternion.LookRotation(aim - at, Vector3.up));
+                // The mesh is a unit fan: one lamp face wide, one tall, one long.
+                beam.localScale = new Vector3(Number(bank["face_width_m"], 9.5f), Number(bank["face_height_m"], 1.9f), Vector3.Distance(at, aim) * BeamShare);
+                beam.gameObject.AddComponent<MeshFilter>().sharedMesh = mesh;
+                var renderer = beam.gameObject.AddComponent<MeshRenderer>();
+                renderer.sharedMaterial = material;
+                renderer.shadowCastingMode = ShadowCastingMode.Off;
+                renderer.receiveShadows = false;
+                GameObjectUtility.SetStaticEditorFlags(beam.gameObject, StaticEditorFlags.BatchingStatic);
                 n++;
             }
 
@@ -631,60 +809,130 @@ namespace TumbangPreso.EditorTools.MapKit
         }
 
         /// <summary>
-        /// The sky traffic, from tools/arena_traffic.json if it is there: { "paths": [ { "name",
-        /// "points": [[x, y, z], ...] (a closed loop, Unity coordinates), "speed": m/s,
-        /// "count": craft on the loop, "model": a .glb under Art/Arena/Models, "size": [x, y, z]
-        /// of the stand-in box when there is no model } ] }. `ArenaTraffic` moves them.
+        /// One beam, in its own space: it leaves along +z from a 1 by 1 opening at the origin and
+        /// is `BeamFar` times wider and taller one unit out (the object's scale makes that the
+        /// lamp face and the beam's length). Four open sides, each with its own outward normal
+        /// (the shader's soft sides read it), alpha 1 at the lamp and 0 at the far end.
+        /// </summary>
+        private static void BeamMesh(Mesh mesh)
+        {
+            var near = new[] { new Vector3(-0.5f, -0.5f, 0), new Vector3(0.5f, -0.5f, 0), new Vector3(0.5f, 0.5f, 0), new Vector3(-0.5f, 0.5f, 0) };
+            var vertices = new List<Vector3>();
+            var normals = new List<Vector3>();
+            var colours = new List<Color>();
+            var uvs = new List<Vector2>();
+            var triangles = new List<int>();
+            for (int side = 0; side < 4; side++)
+            {
+                Vector3 a = near[side], b = near[(side + 1) % 4];
+                Vector3 a1 = new Vector3(a.x * BeamFar.x, a.y * BeamFar.y, 1.0f), b1 = new Vector3(b.x * BeamFar.x, b.y * BeamFar.y, 1.0f);
+                // The opening runs counter-clockwise seen from behind the lamp, so this is outward.
+                Vector3 normal = Vector3.Cross(b - a, a1 - a).normalized;
+                int first = vertices.Count;
+                vertices.AddRange(new[] { a, b, b1, a1 });
+                for (int k = 0; k < 4; k++) normals.Add(normal);
+                colours.AddRange(new[] { Color.white, Color.white, new Color(1, 1, 1, 0), new Color(1, 1, 1, 0) });
+                uvs.AddRange(new[] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1) });
+                triangles.AddRange(new[] { first, first + 1, first + 2, first, first + 2, first + 3 });
+            }
+
+            mesh.Clear();
+            mesh.SetVertices(vertices);
+            mesh.SetNormals(normals);
+            mesh.SetColors(colours);
+            mesh.SetUVs(0, uvs);
+            mesh.SetTriangles(triangles, 0);
+            mesh.RecalculateBounds();
+        }
+
+        /// <summary>
+        /// THE SKY TRAFFIC AND THE TRAIN, from tools/arena_traffic.json (the city kit's): `lanes`,
+        /// each a closed loop of `points_blender`, a `speed_mps`, a `count` of craft, what each is
+        /// (`craft`, cycled: kotse, dyip, barge, which are Models/city_craft_KIND.glb, nose along
+        /// +z) and where each starts (`phase`, a share of the loop). `ArenaTraffic` moves them.
+        ///
+        /// ⚠️ `points_blender`, NOT `points_unity`. The city kit wrote the second as (-x, z, -y),
+        /// which is where a raw glTF export lands: half a turn from the game's frame, in which
+        /// the stadium, the layouts and every other number of this map stand (see `B`).
+        ///
+        /// The lane named for the train (`craft` is `city_train`) is not a path. The train is
+        /// one model already bent to its rail loop, placed with the city; it is turned about the
+        /// can at the lane's speed over the loop's radius, the way the loop's points run.
         /// </summary>
         private static int Traffic(Transform root)
         {
             if (!File.Exists(TrafficPath)) return 0;
 
             var doc = JToken.Parse(File.ReadAllText(TrafficPath));
-            var list = doc as JArray ?? doc["paths"] as JArray;
-            if (list == null) { Debug.LogWarning($"{Tag}{TrafficPath} has no list of paths"); return 0; }
+            var lanes = doc["lanes"] as JArray;
+            if (lanes == null) { Debug.LogWarning($"{Tag}{TrafficPath} has no list of lanes"); return 0; }
 
             var parent = Group(root, "SkyTraffic");
             var traffic = parent.gameObject.AddComponent<ArenaTraffic>();
             var paths = new List<ArenaTraffic.Path>();
+            var spinners = new List<ArenaTraffic.Spinner>();
             Material standIn = null;
             int total = 0;
-            foreach (var token in list)
+            foreach (var lane in lanes)
             {
+                string name = (string)lane["name"] ?? "Lane " + paths.Count;
                 var points = new List<Vector3>();
-                foreach (var p in token["points"] as JArray ?? new JArray()) points.Add(Vector(p));
-                if (points.Count < 3) { Debug.LogWarning($"{Tag}A traffic path needs three points or more; skipped"); continue; }
+                foreach (var p in lane["points_blender"] as JArray ?? new JArray()) points.Add(B(p));
+                if (points.Count < 3) { Debug.LogWarning($"{Tag}Traffic lane '{name}' needs three points_blender or more; skipped"); continue; }
 
-                string name = (string)token["name"] ?? "Path " + paths.Count;
-                int count = Mathf.Clamp((int)Number(token["count"], 1.0f), 1, 64);
-                var model = string.IsNullOrEmpty((string)token["model"]) ? null : ArenaArtPlacer.FindModel("Models", (string)token["model"]);
-                var size = token["size"] != null ? Vector(token["size"]) : new Vector3(2.5f, 1.2f, 6.0f);
+                float speed = Number(lane["speed_mps"], 18.0f);
+                var kinds = lane["craft"] as JArray ?? new JArray();
+                if (kinds.Count > 0 && (string)kinds[0] == TrainObject)
+                {
+                    var train = root.Find("Dressing/Train/" + TrainObject);
+                    if (train == null) { Debug.LogWarning($"{Tag}The traffic file has the train's lane but the city placed no {TrainObject}"); continue; }
+
+                    float radius = 0.0f;
+                    foreach (var p in points) radius += new Vector2(p.x, p.z).magnitude / points.Count;
+                    // Which way the loop's points run: a bearing that grows is clockwise, which is a positive yaw.
+                    float turn = Mathf.DeltaAngle(Mathf.Atan2(points[0].x, points[0].z) * Mathf.Rad2Deg, Mathf.Atan2(points[1].x, points[1].z) * Mathf.Rad2Deg);
+                    if (radius < 1.0f) continue;
+                    spinners.Add(new ArenaTraffic.Spinner { Body = train, DegreesPerSecond = Mathf.Sign(turn) * speed / radius * Mathf.Rad2Deg });
+                    continue;
+                }
+
+                int count = Mathf.Clamp((int)Number(lane["count"], 1.0f), 1, 64);
+                var phases = new List<float>();
+                foreach (var phase in lane["phase"] as JArray ?? new JArray()) phases.Add((float)phase);
                 var craft = new Transform[count];
                 for (int i = 0; i < count; i++)
                 {
+                    string kind = kinds.Count > 0 ? (string)kinds[i % kinds.Count] : null;
+                    var model = string.IsNullOrEmpty(kind) ? null : ArenaArtPlacer.FindModel("Models", CraftPrefix + kind);
                     GameObject go;
-                    if (model != null) go = (GameObject)PrefabUtility.InstantiatePrefab(model, parent);
+                    if (model != null)
+                    {
+                        go = (GameObject)PrefabUtility.InstantiatePrefab(model, parent);
+                        ArenaArtPlacer.Dress(go, false);
+                    }
                     else
                     {
                         go = GameObject.CreatePrimitive(PrimitiveType.Cube);
                         go.transform.SetParent(parent, false);
-                        go.transform.localScale = size;
+                        go.transform.localScale = new Vector3(2.5f, 1.2f, 6.0f);
                         Object.DestroyImmediate(go.GetComponent<Collider>());
                         if (standIn == null) standIn = Flat("arena_grey_craft", CraftColour, 0.4f);
-                        go.GetComponent<Renderer>().sharedMaterial = standIn;
+                        var renderer = go.GetComponent<Renderer>();
+                        renderer.sharedMaterial = standIn;
+                        renderer.shadowCastingMode = ShadowCastingMode.Off;
                     }
 
-                    go.name = $"{name} craft {i}";
+                    go.name = $"{name} {kind ?? "craft"} {i}";
                     go.transform.position = points[0];
-                    foreach (var renderer in go.GetComponentsInChildren<Renderer>()) renderer.shadowCastingMode = ShadowCastingMode.Off;
                     craft[i] = go.transform;
                 }
 
-                paths.Add(new ArenaTraffic.Path { Name = name, Points = points.ToArray(), Speed = Number(token["speed"], 18.0f), Craft = craft });
+                paths.Add(new ArenaTraffic.Path { Name = name, Points = points.ToArray(), Speed = speed, Craft = craft, Phases = phases.ToArray() });
                 total += count;
             }
 
             traffic.Paths = paths.ToArray();
+            traffic.Spinners = spinners.ToArray();
             return total;
         }
 
@@ -693,32 +941,29 @@ namespace TumbangPreso.EditorTools.MapKit
         /// <summary>
         /// A NIGHT MATCH. The scene as authored matches the "Arena" `WorldLookProfile` row exactly
         /// (the Lagoon Cove and Ilalim pattern), so the look's weight in Play changes only the
-        /// extras it owns (ramp, grade, clouds):
+        /// extras it owns (ramp, grade, edges):
         ///   * the KEY is one directional light standing in for the floodlights: high, cool
         ///     white, the row's colour, intensity and shadow strength. The row's elevation is 0,
-        ///     so Play keeps this angle;
-        ///   * the AMBIENT trilight (every shadow's colour here) is the row's deep navy;
-        ///   * the FOG is the row's dark indigo, from past the field to well past the stands;
-        ///   * the SKY (Art/MapAtmosphere/ArenaSky.mat, which `MapAtmosphereAuthor.RefreshCloudMaterials`
-        ///     requires of every map in `SceneFlow.Maps`) takes the row's zenith, horizon and
-        ///     cloud colours, and has no sun disc.
-        /// If the sky cannot be authored (its shader or its cloud source is missing) the map is
-        /// still built, under a plain dark background, and the log says so.
+        ///     so Play keeps this angle. It is the only light that casts a shadow, and only the
+        ///     stage and the players cast one (`ArenaArtPlacer`);
+        ///   * the AMBIENT trilight (every shadow's colour here) is the row's deep navy: low, so
+        ///     the stands and the city are carried by what glows, and sit back from the stage;
+        ///   * the FOG is the row's dark indigo, linear from 180 m to 3400 m: the bowl is clear,
+        ///     a tower 900 m out keeps 78 per cent of itself, distance reads and nothing is hidden;
+        ///   * the SKY is the city kit's painted night panorama (`Sky`).
+        /// ⚠️ NOT THROUGH `MapAtmosphereAuthor.Apply`, which every daylight map uses: it gives the
+        /// scene a gradient sky with a daylight cloud photograph and turns every directional
+        /// light to an afternoon sun. This map has ONE sky, the painting; the material is kept
+        /// where that author looks for every map's (Art/MapAtmosphere/ArenaSky.mat).
+        /// BLOOM is `ColourGrade`'s, under the Standard lighting style only (threshold 2.2, the
+        /// look profile's): the lamp faces (8), the hull's glow (7), the pads' lights (3) and the
+        /// stage's rim (3.2) pass it; the screens, the LED rows and the city (0.7 to 1.6) do not.
         /// </summary>
         private static void Lighting(Transform root)
         {
             var sun = new GameObject("FloodlightKey").AddComponent<Light>();
             sun.transform.SetParent(root, false);
             sun.type = LightType.Directional;
-
-            try { MapAtmosphereAuthor.Apply(SceneName); }
-            catch (InvalidOperationException e)
-            {
-                Debug.LogWarning($"{Tag}No authored sky ({e.Message}): the scene has a plain dark background.");
-                RenderSettings.skybox = null;
-            }
-
-            // After Apply, which turns every directional light to a daytime sun.
             sun.transform.rotation = Quaternion.Euler(62.0f, 28.0f, 0.0f);
             sun.shadows = LightShadows.Soft;
             sun.shadowBias = 0.025f;
@@ -728,19 +973,44 @@ namespace TumbangPreso.EditorTools.MapKit
             var look = EnsureLook();
             sun.color = look.Sun; sun.intensity = look.SunIntensity; sun.shadowStrength = look.ShadowStrength;
             RenderSettings.ambientMode = AmbientMode.Trilight;
+            RenderSettings.ambientIntensity = 1.0f;
             RenderSettings.ambientSkyColor = look.Sky; RenderSettings.ambientEquatorColor = look.Equator; RenderSettings.ambientGroundColor = look.Ground;
             RenderSettings.fog = true; RenderSettings.fogMode = FogMode.Linear;
             RenderSettings.fogColor = look.Fog; RenderSettings.fogStartDistance = look.FogStart; RenderSettings.fogEndDistance = look.FogEnd;
+            RenderSettings.skybox = Sky(look, sun);
+            if (RenderSettings.skybox == null) Debug.LogWarning($"{Tag}No painted sky: the scene has a plain dark background.");
+        }
 
-            var sky = RenderSettings.skybox;
-            if (sky != null && sky.HasProperty("_Zenith"))
-            {
-                sky.SetColor("_Zenith", look.Zenith); sky.SetColor("_Horizon", look.Horizon); sky.SetColor("_Ground", look.Fog);
-                sky.SetColor("_CloudLight", look.CloudLight); sky.SetColor("_CloudShade", look.CloudShade);
-                sky.SetColor("_SunColor", look.Sun); sky.SetVector("_SunDirection", -sun.transform.forward);
-                sky.SetFloat("_SunDisc", 0.0f); sky.SetFloat("_SunHalo", 0.0f);
-                EditorUtility.SetDirty(sky);
-            }
+        /// <summary>
+        /// The sky: Art/MapAtmosphere/ArenaSky.mat on TumbangPreso/ArenaSky, drawing
+        /// Art/Arena/Textures/arena_city_sky.png (u is the bearing / 360 from north, clockwise).
+        /// The texture is imported whole (4096 across), with no mipmaps, wrapping round the
+        /// compass and clamped at the poles. The zenith and horizon colours are the look row's:
+        /// the shader does not draw them, the look system reads them (see the shader). Its tint
+        /// and exposure are the neutral pair every map's sky has, which `SkyEvent` moves in Play.
+        /// </summary>
+        private static Material Sky(WorldLookProfile.MapLook look, Light sun)
+        {
+            var shader = Shader.Find(SkyShader);
+            if (shader == null) { Debug.LogWarning($"{Tag}{SkyShader} is missing"); return null; }
+
+            var panorama = File.Exists(SkyTexture) ? ArenaArtPlacer.ImportTexture(SkyTexture, false, true, false, false, false, 4096) : null;
+            if (panorama == null) { Debug.LogWarning($"{Tag}{SkyTexture} is missing"); return null; }
+
+            const string folder = "Assets/TumbangPreso/Art/MapAtmosphere";
+            EnsureFolder(folder);
+            string path = folder + "/" + SceneName + "Sky.mat";
+            var sky = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (sky == null) { sky = new Material(shader); AssetDatabase.CreateAsset(sky, path); }
+            sky.shader = shader;
+            sky.SetTexture("_MainTex", panorama);
+            sky.SetColor("_Zenith", look.Zenith);
+            sky.SetColor("_Horizon", look.Horizon);
+            sky.SetColor("_Tint", new Color(0.5f, 0.5f, 0.5f));
+            sky.SetFloat("_Exposure", 1.0f);
+            sky.SetVector("_SunDirection", -sun.transform.forward);
+            EditorUtility.SetDirty(sky);
+            return sky;
         }
 
         /// <summary>
@@ -790,24 +1060,32 @@ namespace TumbangPreso.EditorTools.MapKit
             return material;
         }
 
-        /// <summary>The hologram's material. Made once: after that it is the artist's to tune or
-        /// to give another shader, and a rebuild leaves it alone.</summary>
+        /// <summary>The hologram's material. Made once: after that its numbers are the artist's
+        /// to tune and a rebuild leaves them alone. Its two pictures are the stage kit's and are
+        /// given again on every build: the hologram's hexagon lines and the deck it turns into.</summary>
         private static Material HologramMaterial()
         {
             EnsureFolder(MaterialFolder);
             string path = $"{MaterialFolder}/arena_stage_hologram.mat";
             var material = AssetDatabase.LoadAssetAtPath<Material>(path);
-            if (material != null) return material;
-
-            var shader = Shader.Find("TumbangPreso/ArenaHologram");
-            if (shader == null)
+            if (material == null)
             {
-                Debug.LogWarning($"{Tag}TumbangPreso/ArenaHologram is missing: the hologram is a plain transparent sprite material.");
-                shader = Shader.Find("Sprites/Default");
+                var shader = Shader.Find("TumbangPreso/ArenaHologram");
+                if (shader == null)
+                {
+                    Debug.LogWarning($"{Tag}TumbangPreso/ArenaHologram is missing: the hologram is a plain transparent sprite material.");
+                    shader = Shader.Find("Sprites/Default");
+                }
+
+                material = new Material(shader) { color = new Color(0.45f, 0.95f, 1.0f, 0.5f), enableInstancing = true };
+                AssetDatabase.CreateAsset(material, path);
             }
 
-            material = new Material(shader) { color = new Color(0.45f, 0.95f, 1.0f, 0.5f), enableInstancing = true };
-            AssetDatabase.CreateAsset(material, path);
+            if (material.HasProperty("_HoloTex") && File.Exists(ArenaArtPlacer.Root + "/Textures/arena_stage_holo.png"))
+                material.SetTexture("_HoloTex", ArenaArtPlacer.ImportTexture("arena_stage_holo.png", false, false, true, true, false));
+            if (material.HasProperty("_DeckTex") && File.Exists(ArenaArtPlacer.Root + "/Textures/arena_stage_deck.png"))
+                material.SetTexture("_DeckTex", ArenaArtPlacer.ImportTexture("arena_stage_deck.png", false, false, true, false, false));
+            EditorUtility.SetDirty(material);
             return material;
         }
 

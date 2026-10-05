@@ -41,6 +41,38 @@ namespace TumbangPreso
         /// 14.4 m, above the consist's roof at about 12.7 m.</summary>
         public float LaunchSpeed = 24.0f;
 
+        // ------------------------------------------------------------------ a map's own pad
+        //
+        // ⚠️ LEFT ALONE, EVERY ONE OF THESE IS THE PAVEMENT PAD EXACTLY: the defaults are the
+        // constants this file had before they existed (the Resources model and paint, its
+        // "pad_" parts, its 0.85 m half size, its square halo, its amber glow, the street's
+        // shader). Ilalim's builder adds this component and sets none of them, and a scene saved
+        // before they existed deserialises to the same defaults. A map with a pad of its own sets
+        // them in ITS builder (the Arena's round teal pad, ArenaSceneBuilder.Features).
+
+        /// <summary>The pad's model: parts named `PartPrefix` + base, cushion, chevron, ring.
+        /// Null: Resources/Map/JumpPad/jump_pad.</summary>
+        public GameObject Model;
+
+        /// <summary>The model's painted atlas. Null: Resources/Map/JumpPad/jump_pad_paint.</summary>
+        public Texture2D Paint;
+
+        /// <summary>What the model's four parts are named before "base", "cushion", "chevron" and "ring".</summary>
+        public string PartPrefix = "pad_";
+
+        /// <summary>Half the model's own width, metres: the look is scaled so this becomes `Radius`.</summary>
+        public float ModelHalfSize = ModelHalf;
+
+        /// <summary>A round pad: the glow on the ground is a ring, not a rounded square.</summary>
+        public bool Round;
+
+        /// <summary>The colour of the pad's light and of the glow on the ground.</summary>
+        public Color GlowColour = Glow;
+
+        /// <summary>The lit shader the pad's parts wear. It must take _MainTex, _Color,
+        /// _EmissionColor and _EmissionFromAlbedo (TumbangPreso/ArenaPainted does too).</summary>
+        public string SurfaceShader = PaintedShader;
+
         private CharacterMotor[] _motors = System.Array.Empty<CharacterMotor>();
         private float _rescan;
         private float _kick;        // 1 on a launch, eased to 0: the pad's answer to throwing somebody
@@ -110,7 +142,7 @@ namespace TumbangPreso
             // Inspector still fills its own trigger square.
             _look = new GameObject("Look").transform;
             _look.SetParent(transform, false);
-            float fit = Radius / ModelHalf;
+            float fit = Radius / Mathf.Max(0.01f, ModelHalfSize);
             _look.localScale = new Vector3(fit, fit, fit);
 
             _modelled = BuildModel();
@@ -143,18 +175,18 @@ namespace TumbangPreso
         /// </summary>
         private bool BuildModel()
         {
-            var prefab = Resources.Load<GameObject>(ModelPath);
-            var paint = Resources.Load<Texture2D>(PaintPath);
+            var prefab = Model != null ? Model : Resources.Load<GameObject>(ModelPath);
+            var paint = Paint != null ? Paint : Resources.Load<Texture2D>(PaintPath);
             Mesh baseMesh = null, cushionMesh = null, chevronMesh = null, ringMesh = null;
             if (prefab != null)
             {
                 foreach (var filter in prefab.GetComponentsInChildren<MeshFilter>(true))
                 {
                     if (filter.sharedMesh == null) continue;
-                    if (Named(filter, "pad_base")) baseMesh = filter.sharedMesh;
-                    else if (Named(filter, "pad_cushion")) cushionMesh = filter.sharedMesh;
-                    else if (Named(filter, "pad_chevron")) chevronMesh = filter.sharedMesh;
-                    else if (Named(filter, "pad_ring")) ringMesh = filter.sharedMesh;
+                    if (Named(filter, PartPrefix + "base")) baseMesh = filter.sharedMesh;
+                    else if (Named(filter, PartPrefix + "cushion")) cushionMesh = filter.sharedMesh;
+                    else if (Named(filter, PartPrefix + "chevron")) chevronMesh = filter.sharedMesh;
+                    else if (Named(filter, PartPrefix + "ring")) ringMesh = filter.sharedMesh;
                 }
             }
             if (paint == null || baseMesh == null || cushionMesh == null || chevronMesh == null || ringMesh == null)
@@ -164,11 +196,11 @@ namespace TumbangPreso
                 return false;
             }
 
-            var shader = Shader.Find(PaintedShader);
+            var shader = Shader.Find(SurfaceShader);
             bool painted = shader != null;
             if (!painted)
             {
-                Warn("[JumpPad] Shader " + PaintedShader + " is missing; the pad wears Standard.");
+                Warn("[JumpPad] Shader " + SurfaceShader + " is missing; the pad wears Standard.");
                 shader = Shader.Find("Standard");
                 if (shader == null) return false;
             }
@@ -271,8 +303,8 @@ namespace TumbangPreso
         {
             // Sprites/Default: unlit, alpha blended, two-sided, and always in a build.
             var shader = Shader.Find("Sprites/Default");
-            _plateMesh = Quad(ModelHalf - LineWidth * 0.5f);
-            _frameMesh = Frame(ModelHalf, LineWidth);
+            _plateMesh = Quad(ModelHalfSize - LineWidth * 0.5f);
+            _frameMesh = Frame(ModelHalfSize, LineWidth);
             _chevronMesh = ChevronMesh(0.34f, 0.17f, 0.085f);
 
             _plateMaterial = new Material(shader) { color = Plate };
@@ -322,8 +354,10 @@ namespace TumbangPreso
             var shader = Shader.Find("Sprites/Default");
             if (shader != null)
             {
-                _haloMesh = HaloMesh(ModelHalf - 0.04f, 0.16f, HaloReach);
-                _haloMaterial = new Material(shader) { name = "JumpPad halo", color = Glow };
+                // A round pad's glow: the corner radius is the whole half size, which leaves no straight side.
+                float half = ModelHalfSize - 0.04f;
+                _haloMesh = HaloMesh(half, Round ? half : 0.16f, HaloReach);
+                _haloMaterial = new Material(shader) { name = "JumpPad halo", color = GlowColour };
                 _halo = Part("Halo", _haloMesh, _haloMaterial, false);
                 _halo.localPosition = new Vector3(0.0f, HaloHeight, 0.0f);
             }
@@ -333,7 +367,7 @@ namespace TumbangPreso
             go.transform.localPosition = new Vector3(0.0f, 0.45f, 0.0f);
             _light = go.AddComponent<Light>();
             _light.type = LightType.Point;
-            _light.color = Glow;
+            _light.color = GlowColour;
             _light.range = LightRange;
             _light.intensity = LightIdle;
             _light.shadows = LightShadows.None;
@@ -504,7 +538,7 @@ namespace TumbangPreso
             {
                 float pop = 1.0f + 0.05f * pulse + 0.30f * burst;
                 _halo.localScale = new Vector3(pop, 1.0f, pop);
-                var c = Glow; c.a = Mathf.Min(1.0f, HaloIdle * (0.8f + 0.35f * pulse) + HaloFlash * burst);
+                var c = GlowColour; c.a = Mathf.Min(1.0f, HaloIdle * (0.8f + 0.35f * pulse) + HaloFlash * burst);
                 _haloMaterial.color = c;
             }
         }

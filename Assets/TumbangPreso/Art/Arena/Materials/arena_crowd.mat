@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: arena_crowd
+  m_Shader: {fileID: 4800000, guid: ac80b1da32221834486ead78a76e006c, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _EmitTex:
+        m_Texture: {fileID: 2800000, guid: b6ae2853f3d1bd848bb1b0d8166b905a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 40bab1a039555e347b585eba0b95ba0b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _Cutoff: 0.5
+    - _EmitStrength: 1
+    - _ExciteLift: 0.12
+    - _FlashRate: 0.05
+    - _FlashStrength: 2.5
+    - _MipBias: -0.5
+    - _NightDesaturate: 0.2
+    m_Colors:
+    - _CellMetres: {r: 1.8, g: 2.7, b: 0.2, a: 0.3}
+    - _Glow0: {r: 0.94, g: 0.96999997, b: 1, a: 1}
+    - _Glow1: {r: 0.62, g: 0.9, b: 1, a: 1}
+    - _Glow2: {r: 0.29999998, g: 0.39999998, b: 1, a: 1}
+    - _Glow3: {r: 1, g: 0.41999996, b: 0.8, a: 1}
+    - _Grid: {r: 0.0234375, g: 0.03515625, b: 42, a: 0}
+    - _NightTint: {r: 0.52, g: 0.56, b: 0.74, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

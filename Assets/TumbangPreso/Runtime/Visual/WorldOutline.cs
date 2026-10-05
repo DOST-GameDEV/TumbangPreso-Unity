@@ -187,6 +187,11 @@ namespace TumbangPreso.Visual
         [SerializeField] private float _fadeStart = -1.0f;
         [SerializeField] private float _fadeEnd = -1.0f;
 
+        /// <summary>A map may name the ink's own distances in place of its fog's
+        /// (`MapCameraRange`: the Arena's fog runs out to its city, kilometres past its stands).
+        /// Negative values adopt the fog again. Nothing calls this on a map that names none.</summary>
+        public void SetFade(float start, float end) { _fadeStart = start; _fadeEnd = end; }
+
         [Header("Exclusion")]
         [SerializeField] private Exclusion _exclusion = Exclusion.ToonSurfaces;
         [SerializeField] private LayerMask _excludedLayers;

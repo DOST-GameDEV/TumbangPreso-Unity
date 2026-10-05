@@ -21,8 +21,11 @@ namespace TumbangPreso.Map
     /// disagree with the host by a moment, and a late join sees every orb as present. When the
     /// message lands, `Infer` goes and the host's availability is applied in its place.
     ///
-    /// GREY-BOX LOOK, built here from primitives: a violet orb floating over a dark disc, hidden
-    /// while taken. Nothing near the team hues (#f87020, #0080e8).
+    /// THE LOOK is the stage kit's model when the scene builder has put one under this object
+    /// (a child named `Model`, parts `pickup_base`, `pickup_cell` and `pickup_halo`, violet): the
+    /// cell floats and turns inside its halo over the base, and both are hidden while taken.
+    /// With no model it is the GREY-BOX, built here from primitives: a violet orb floating over a
+    /// dark disc. Nothing near the team hues (#f87020, #0080e8).
     ///
     /// It belongs to a layout and is switched on and off with it; it is available again on
     /// enable and on every round change.
@@ -51,6 +54,14 @@ namespace TumbangPreso.Map
         private float _takenLeft;       // above 0 while the orb is gone
         private int _round = -1;
 
+        /// <summary>The child the scene builder hangs the kit's model on.</summary>
+        public const string ModelName = "Model";
+        /// <summary>Where the kit floats its cell and halo over the base (tools/author_arena_stage.py).</summary>
+        private const float ModelOrbHeight = 0.95f;
+        private Transform _halo;
+        private float _height = OrbHeight;
+        private bool _modelled;
+
         private Transform _orb;
         private Material _orbMaterial, _baseMaterial;
 
@@ -76,6 +87,7 @@ namespace TumbangPreso.Map
             _lastRatio.Clear();
             _round = GameServices.Match != null ? GameServices.Match.RoundNumber : -1;
             if (_orb != null) _orb.gameObject.SetActive(true);
+            if (_halo != null) _halo.gameObject.SetActive(true);
         }
 
         private void Update()
@@ -97,9 +109,11 @@ namespace TumbangPreso.Map
 
             if (_orb == null) return;
             _orb.gameObject.SetActive(Available);
+            if (_halo != null) _halo.gameObject.SetActive(Available);
             if (!Available) return;
             float t = Time.time * 1.7f + transform.position.x * 0.37f;
-            _orb.localPosition = new Vector3(0.0f, OrbHeight + Mathf.Sin(t) * OrbBob, 0.0f);
+            _orb.localPosition = new Vector3(0.0f, _height + Mathf.Sin(t) * OrbBob, 0.0f);
+            if (_modelled) _orb.localRotation = Quaternion.Euler(0.0f, t * 40.0f, 0.0f);
         }
 
         private IReadOnlyList<CharacterMotor> Bodies()
@@ -161,6 +175,27 @@ namespace TumbangPreso.Map
 
         private void Build()
         {
+            var model = transform.Find(ModelName);
+            if (model != null)
+            {
+                foreach (var part in model.GetComponentsInChildren<Transform>(true))
+                {
+                    if (part.name.StartsWith("pickup_cell", System.StringComparison.Ordinal)) _orb = part;
+                    else if (part.name.StartsWith("pickup_halo", System.StringComparison.Ordinal)) _halo = part;
+                }
+
+                if (_orb != null)
+                {
+                    _modelled = true;
+                    _height = ModelOrbHeight;
+                    _orb.localPosition = new Vector3(0.0f, _height, 0.0f);
+                    if (_halo != null) _halo.localPosition = new Vector3(0.0f, _height, 0.0f);
+                    _orb.gameObject.SetActive(Available);
+                    if (_halo != null) _halo.gameObject.SetActive(Available);
+                    return;
+                }
+            }
+
             // Sprites/Default: unlit, alpha blended, two-sided, and always in a build.
             var shader = Shader.Find("Sprites/Default");
             if (shader == null) return;

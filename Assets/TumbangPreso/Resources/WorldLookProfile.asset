@@ -203,8 +203,8 @@ MonoBehaviour:
     ShadowTint: {r: 0.78, g: 0.82, b: 1.1, a: 1}
     Chalk: {r: 0.96, g: 0.92, b: 0.81, a: 1}
     ChalkEdge: {r: 0.14, g: 0.11, b: 0.075, a: 1}
-    FogStart: 140
-    FogEnd: 620
+    FogStart: 180
+    FogEnd: 3400
     WearKind: 0
     Sun: {r: 0.92, g: 0.95, b: 1, a: 1}
     SunIntensity: 1.15
@@ -217,6 +217,7 @@ MonoBehaviour:
     CloudShade: {r: 0.08, g: 0.09, b: 0.16, a: 1}
     Lift: {r: 0.02, g: 0.024, b: 0.045, a: 1}
     GroundLift: 1
+    NoBlockyClouds: 1
   - Map: IlalimNgTulayOld
     Sky: {r: 0.46, g: 0.47, b: 0.64, a: 1}
     Equator: {r: 0.5, g: 0.5, b: 0.58, a: 1}

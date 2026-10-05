@@ -56,12 +56,24 @@ namespace TumbangPreso.Map
         public sealed class Bank
         {
             public string Name;
-            /// <summary>A row's depth. A spectator stands 0.55 of it behind the row's front edge.</summary>
+            /// <summary>A row's depth. A spectator stands `Stand` of it behind the row's front edge.</summary>
             public float Tread = 1.6f;
-            /// <summary>Per row: x the radius of its front edge, y the height of its floor.</summary>
+            /// <summary>Where a spectator stands, as a share of the tread behind the row's front
+            /// edge. 0.55 is the middle of a plain step (the blockout's rows). The bowl kit's
+            /// true rows have a seat on them, and there it is PAST 1: behind the seat's back, so
+            /// the back hides the sprite's legs and it reads as sitting.</summary>
+            public float Stand = StandAt;
+            /// <summary>Per row: x the radius of its front edge, y the height a spectator's feet are at.</summary>
             public Vector2[] Rows = new Vector2[0];
-            /// <summary>The seated arcs, x from and y to in degrees. The gaps between them are the aisles.</summary>
+            /// <summary>The seated arcs, x from and y to in degrees, that hold for EVERY row of the
+            /// bank. The gaps between them are the aisles. Also what says whether the bank is a ring.</summary>
             public Vector2[] Sections = new Vector2[0];
+            /// <summary>Optional: each row's OWN seated arcs (an aisle is one width in metres, so
+            /// its angle narrows as the rows climb). Row r's are `Spans[SpanStart[r]]` up to
+            /// `Spans[SpanStart[r + 1]]`; `SpanStart` has one more entry than there are rows.
+            /// Empty: `Sections` serves every row.</summary>
+            public Vector2[] Spans = new Vector2[0];
+            public int[] SpanStart = new int[0];
         }
 
         /// <summary>Where nobody sits: bearings x to y, on rows whose floor is below z (a tunnel mouth).</summary>
@@ -292,10 +304,15 @@ namespace TumbangPreso.Map
                 bool ring = span > 300f;
                 for (int r = 0; r < bank.Rows.Length; r++)
                 {
-                    float radius = bank.Rows[r].x + StandAt * bank.Tread, height = bank.Rows[r].y;
-                    for (int s = 0; s < bank.Sections.Length; s++)
+                    float radius = bank.Rows[r].x + bank.Stand * bank.Tread, height = bank.Rows[r].y;
+                    bool own = bank.Spans != null && bank.SpanStart != null && bank.SpanStart.Length == bank.Rows.Length + 1;
+                    int first = own ? bank.SpanStart[r] : 0, last = own ? Mathf.Min(bank.SpanStart[r + 1], bank.Spans.Length) : bank.Sections.Length;
+                    for (int at = first; at < last; at++)
                     {
-                        float lo = bank.Sections[s].x, hi = bank.Sections[s].y;
+                        // `s` numbers the arc within its row, for the seat's id and nothing else.
+                        int s = at - first;
+                        var arc = own ? bank.Spans[at] : bank.Sections[at];
+                        float lo = arc.x, hi = arc.y;
                         int seats = Mathf.Max(1, Mathf.FloorToInt((hi - lo) * Mathf.Deg2Rad * radius / Mathf.Max(0.3f, SeatPitch)));
                         // A ring's chunk is its sector, shared by every ring bank (the lower
                         // bowl's two banks are one mesh per sector); an arc is one chunk.

@@ -3,8 +3,11 @@ using UnityEngine;
 namespace TumbangPreso.Map
 {
     /// <summary>
-    /// The grey-box drone that carries a fallen body back onto the Arena's stage: a flat box
-    /// with four rotors and a beam under it, built from primitives, no assets.
+    /// The drone that carries a fallen body back onto the Arena's stage. With the stage kit's
+    /// model (a TEMPLATE the scene builder leaves in the scene, already wearing the map's
+    /// materials: parts `drone_body`, `drone_rotor_0..3` and `drone_beam`, its nose along +z) it
+    /// is a copy of that; without one it is the grey-box: a flat box with four rotors and a beam
+    /// under it, built from primitives.
     ///
     /// ⚠️ IT DECIDES NOTHING. It hovers over a body for as long as that body's replicated
     /// `EdgeKind` is `Drone` and flies off when it is not, so every peer shows the same carry
@@ -14,13 +17,30 @@ namespace TumbangPreso.Map
     public sealed class ArenaDrone : MonoBehaviour
     {
         public const float Hover=2.6f,ArriveFrom=4.5f,LeaveSeconds=.7f,LeaveSpeed=9;
+        /// <summary>The model's beam is a cone this long, hung from the drone's belly at scale 1.</summary>
+        private const float ModelBeam=2.5f;
+        private bool _modelled;
         private readonly Transform[] _rotors=new Transform[4];
         private CharacterMotor _body;
         private Transform _beam;
         private float _leaving;
 
-        public static ArenaDrone Build(Transform parent)
+        public static ArenaDrone Build(Transform parent,GameObject template=null)
         {
+            if(template!=null)
+            {
+                var copy=Instantiate(template,parent,false);copy.name="Arena drone";copy.SetActive(false);
+                var modelled=copy.GetComponent<ArenaDrone>();if(modelled==null)modelled=copy.AddComponent<ArenaDrone>();
+                int found=0;
+                foreach(var part in copy.GetComponentsInChildren<Transform>(true))
+                {
+                    if(part.name.StartsWith("drone_rotor",System.StringComparison.Ordinal)&&found<modelled._rotors.Length)modelled._rotors[found++]=part;
+                    else if(part.name.StartsWith("drone_beam",System.StringComparison.Ordinal))modelled._beam=part;
+                }
+                // A template with no beam or with rotors missing is not the kit's drone: the grey-box is drawn.
+                if(modelled._beam!=null&&found==modelled._rotors.Length){modelled._modelled=true;return modelled;}
+                Destroy(copy);
+            }
             var root=new GameObject("Arena drone");root.transform.SetParent(parent,false);
             var drone=root.AddComponent<ArenaDrone>();
             Part(PrimitiveType.Cube,"Body",root.transform,Vector3.zero,new Vector3(1.1f,.26f,1.1f),new Color(.42f,.45f,.50f),false);
@@ -77,6 +97,7 @@ namespace TumbangPreso.Map
             // The beam reaches from the drone's belly to the shoulders, and only once it has the body.
             float length=(Hover-1.25f)*arrive;
             _beam.gameObject.SetActive(length>.05f);
+            if(_modelled){_beam.localPosition=Vector3.zero;_beam.localScale=new Vector3(1,length/ModelBeam,1);return;}
             _beam.localPosition=Vector3.down*(.13f+length*.5f);
             _beam.localScale=new Vector3(.55f,length*.5f,.55f);
         }

@@ -50,7 +50,8 @@ namespace TumbangPreso.Visual
         public static BlockyClouds Create(WorldLookPresentation owner, WorldLookProfile.MapLook look, float floor)
         {
             var profile = WorldLookProfile.Current;
-            if (profile.BlockyCloudCount <= 0 || look == null) return null;
+            // A map whose sky is not open above its court has none (the Arena: the ring would hang inside the bowl).
+            if (profile.BlockyCloudCount <= 0 || look == null || look.NoBlockyClouds) return null;
             if (_shader == null && !_shaderMissed)
             {
                 _shader = Shader.Find("TumbangPreso/BlockyCloud");

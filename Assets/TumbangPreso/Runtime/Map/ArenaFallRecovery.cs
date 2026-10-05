@@ -36,6 +36,9 @@ namespace TumbangPreso.Map
         private readonly List<Slipper> _finished=new List<Slipper>();
         private readonly Dictionary<CharacterMotor,Vector3> _safe=new Dictionary<CharacterMotor,Vector3>();
         private readonly Dictionary<CharacterMotor,ArenaDrone> _drones=new Dictionary<CharacterMotor,ArenaDrone>();
+        /// <summary>The stage kit's drone, left inactive in the scene by `ArenaSceneBuilder` and
+        /// copied for each carry. Null: `ArenaDrone` draws its grey-box.</summary>
+        public GameObject DroneTemplate;
         private Transform _droneRoot;
         private ArenaStage _stage;
         private SliceRunner _slice;
@@ -167,7 +170,7 @@ namespace TumbangPreso.Map
                 if(!_drones.TryGetValue(who,out var drone)||drone==null)
                 {
                     if(_droneRoot==null)_droneRoot=new GameObject("Arena drones").transform;
-                    drone=ArenaDrone.Build(_droneRoot);_drones[who]=drone;
+                    drone=ArenaDrone.Build(_droneRoot,DroneTemplate);_drones[who]=drone;
                 }
                 drone.Attend(who);
             }

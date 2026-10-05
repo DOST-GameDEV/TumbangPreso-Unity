@@ -12,9 +12,12 @@ namespace TumbangPreso.Map
     /// faster and its poses travel as they always do. The test is a position test, so the pad
     /// needs no collider and blocks nobody.
     ///
-    /// GREY-BOX LOOK, built here from primitives: a flat green slab with pale stripes running
-    /// along the pad's forward. Green because nothing on a map may read as a team colour
-    /// (#f87020, #0080e8), and the jump pad already owns amber.
+    /// THE LOOK is the stage kit's model when the scene builder has put one under this object
+    /// (a child named `Model`, parts `speed_base` and `speed_chevrons`, lime, its travel along
+    /// +z): the chevrons' glow breathes and jumps when a body is boosted. With no model it is the
+    /// GREY-BOX, built here from primitives: a flat green slab with pale stripes running along
+    /// the pad's forward. Green because nothing on a map may read as a team colour (#f87020,
+    /// #0080e8), and the jump pad already owns amber.
     ///
     /// It belongs to a layout and is switched on and off with it. A boost this pad gave is ended
     /// when the pad is switched off, so none outlives its layout.
@@ -43,6 +46,13 @@ namespace TumbangPreso.Map
         private float _rescan;
         private float _kick;    // 1 when a body is boosted, eased to 0: the stripes hurry
         private float _phase;
+
+        /// <summary>The child the scene builder hangs the kit's model on.</summary>
+        public const string ModelName = "Model";
+        private static readonly int EmissionStrengthId = Shader.PropertyToID("_EmissionStrength");
+        private Renderer _chevrons;
+        private MaterialPropertyBlock _block;
+        private float _glow = 1.0f;
 
         private Transform _look;
         private Material _slabMaterial;
@@ -103,6 +113,22 @@ namespace TumbangPreso.Map
 
         private void Build()
         {
+            var model = transform.Find(ModelName);
+            if (model != null)
+            {
+                _look = model;
+                foreach (var renderer in model.GetComponentsInChildren<Renderer>(true))
+                    if (renderer.name.StartsWith("speed_chevrons", System.StringComparison.Ordinal)) _chevrons = renderer;
+                if (_chevrons != null)
+                {
+                    _block = new MaterialPropertyBlock();
+                    var material = _chevrons.sharedMaterial;
+                    if (material != null && material.HasProperty(EmissionStrengthId)) _glow = material.GetFloat(EmissionStrengthId);
+                }
+                Animate();
+                return;
+            }
+
             // Sprites/Default: unlit, alpha blended, two-sided, and always in a build.
             var shader = Shader.Find("Sprites/Default");
             if (shader == null) return;
@@ -127,6 +153,15 @@ namespace TumbangPreso.Map
         /// <summary>The stripes travel along the pad's forward and fade at both ends, so the pad reads as a direction of travel.</summary>
         private void Animate()
         {
+            if (_chevrons != null)
+            {
+                // The kit's chevrons are one mesh: they breathe, and flare while a body is boosted.
+                float breath = 0.8f + 0.3f * Mathf.Sin(_phase * Mathf.PI * 2.0f);
+                _block.SetFloat(EmissionStrengthId, _glow * (breath + 1.6f * _kick));
+                _chevrons.SetPropertyBlock(_block);
+                return;
+            }
+
             float run = Mathf.Max(0.01f, HalfSize.y * 2.0f - StripeDepth);
             for (int i = 0; i < Stripes; i++)
             {

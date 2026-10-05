@@ -64,6 +64,11 @@ namespace TumbangPreso.Visual
             // `EnvColourPass.RoadTint` already sets, so no material asset or texture is touched.
             // 1 (or an unset 0) leaves the floor alone; the plaza, deck and rooftop keep theirs.
             public float GroundLift=1;
+            // ⚠️ NO VOXEL CLOUDS ON THIS MAP. `BlockyClouds` stands its ring 100 to 150 m out and
+            // 40 to 64 m up, which is open sky over a street and INSIDE the Arena's bowl (its
+            // canopies are 150 to 190 m out and 64 to 71 m up). False, the default and every other
+            // row's value, is today's clouds.
+            public bool NoBlockyClouds;
             public MapLook(string map,Color sky,Color equator,Color ground,Color tint,float fogStart,float fogEnd,int wear,bool dark)
             {
                 Map=map;Sky=sky;Equator=equator;Ground=ground;ShadowTint=tint;FogStart=fogStart;FogEnd=fogEnd;WearKind=wear;
@@ -78,6 +83,7 @@ namespace TumbangPreso.Visual
             public MapLook Key(Color sun,float intensity,float elevation,float shadowStrength,Color lift)
             {Sun=sun;SunIntensity=intensity;SunElevation=elevation;ShadowStrength=shadowStrength;Lift=lift;return this;}
             public MapLook Floor(float lift){GroundLift=lift;return this;}
+            public MapLook Roofed(){NoBlockyClouds=true;return this;}
         }
 
         [Header("Cast and hero props")]
@@ -330,13 +336,17 @@ namespace TumbangPreso.Visual
             // "bluelock/rocketleague stadium in aesthetic ... night time"). The one row that is NOT daylight, so
             // it reads the rules above for a night: the key is the floodlights, a cool white from high up
             // (elevation 0 keeps the scene light's own angle), and the shade is still COLOURED, a deep navy,
-            // never black, with the coloured floor under it. The air is a dark indigo that starts past the
-            // field (140 m) and is thin at the upper stands (r 181), so the bowl stays clear and only the
-            // city recedes. Sky: near-black navy zenith down to an indigo horizon, the city's glow; clouds
-            // are faint. Light chalk, like Kanto. Nothing here is near #f87020 or #0080e8.
-            new MapLook("Arena",new Color(.3f,.34f,.52f),new Color(.26f,.28f,.4f),new Color(.16f,.17f,.24f),new Color(.78f,.82f,1.1f),140,620,0,false)
+            // never black, with the coloured floor under it. The air is a dark indigo. ⚠️ IT RUNS FROM
+            // 180 m TO 3400 m (it was 140 to 620, 2026-10-05): linear fog is WHOLE at its end, and the
+            // landmark towers stand 440 to 900 m out, so at 620 every one of them was the fog's flat
+            // colour. Now the bowl is clear (the upper stands, 183 m, take nothing), a tower at 440 m
+            // keeps 92 per cent of itself and one at 900 m 78, and the far ring at 2000 m 43: distance
+            // reads and nothing is hidden. Sky: the city kit's painted panorama (TumbangPreso/ArenaSky);
+            // the zenith and horizon here are only what glass reflects. No voxel clouds (`Roofed`).
+            // Light chalk, like Kanto. Nothing here is near #f87020 or #0080e8.
+            new MapLook("Arena",new Color(.3f,.34f,.52f),new Color(.26f,.28f,.4f),new Color(.16f,.17f,.24f),new Color(.78f,.82f,1.1f),180,3400,0,false)
                 .Air(new Color(.1f,.12f,.22f),new Color(.03f,.04f,.1f),new Color(.16f,.14f,.3f),new Color(.3f,.3f,.44f),new Color(.08f,.09f,.16f))
-                .Key(new Color(.92f,.95f,1),1.15f,0,.7f,new Color(.02f,.024f,.045f)),
+                .Key(new Color(.92f,.95f,1),1.15f,0,.7f,new Color(.02f,.024f,.045f)).Roofed(),
             // ⚠️ THE FIRST ILALIM NG TULAY, VAULTED 2026-10-01 (ILALIM-1.6) at Scenes/Vault/IlalimNgTulayOld.unity:
             // its look, kept so the vaulted scene still opens in it. This was the "IlalimNgTulay" row.
             new MapLook("IlalimNgTulayOld",new Color(.46f,.47f,.64f),new Color(.5f,.5f,.58f),new Color(.5f,.42f,.36f),new Color(.82f,.82f,1.12f),36,180,2,false)

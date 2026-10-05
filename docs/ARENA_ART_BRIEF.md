@@ -102,7 +102,10 @@ authors `tools/author_ilalim_textures_*.py` before painting anything, and look a
   that suggest floors and rooms.
 - UVs have even texel density and no stretching: check a checker texture on every model before
   painting, on tapered and curved faces above all.
-- World shader in Unity: `TumbangPreso/IlalimPainted` (albedo, emission, anti-tiling resamples).
+- World shader in Unity: `TumbangPreso/ArenaPainted` since ARENA-1.5 (it was to be
+  `TumbangPreso/IlalimPainted`, which has no emission TEXTURE): albedo, an emission map with a
+  strength, the anti-tiling resample and the alpha clip per material, fog per material. Every
+  material's settings are ONE table by name, `Rules` in `Editor/MapKit/ArenaArtPlacer.cs`.
   Give each material an albedo PNG and, where it glows, an emission PNG. Night is carried by
   emission and by the look profile, not by dark albedo alone.
 - The logo is `Assets/TumbangPreso/Art/ui/brand/tump_logo.png`.

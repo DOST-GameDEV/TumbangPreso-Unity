@@ -57,11 +57,11 @@ Shader "TumbangPreso/ArenaCrowd"
 
         // Rule 8 of docs/ARENA_ART_BRIEF.md: the stand is darker and lower in contrast than the
         // stage. The bodies are dimmed and greyed toward navy; the light comes from what they hold.
-        _NightTint ("Night Tint (display space)", Color) = (0.30, 0.33, 0.50, 1)
-        _NightDesaturate ("Night Desaturate", Range(0, 1)) = 0.35
+        _NightTint ("Night Tint (display space)", Color) = (0.52, 0.56, 0.74, 1)
+        _NightDesaturate ("Night Desaturate", Range(0, 1)) = 0.2
         _ExciteLift ("Brightness Added At Full Excitement", Range(0, 1)) = 0.12
 
-        _EmitStrength ("Glow Strength", Range(0, 8)) = 1.6
+        _EmitStrength ("Glow Strength", Range(0, 8)) = 1.0
         _Glow0 ("Glow: white", Color) = (0.94, 0.97, 1.0, 1)
         _Glow1 ("Glow: ice", Color) = (0.62, 0.90, 1.0, 1)
         _Glow2 ("Glow: deep LED blue", Color) = (0.30, 0.40, 1.0, 1)

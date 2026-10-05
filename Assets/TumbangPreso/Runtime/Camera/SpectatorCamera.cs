@@ -657,6 +657,9 @@ namespace TumbangPreso.CameraSystem
         private void Start()
         {
             if (_grade != null) _grade.AdoptFromScene();
+            // A map larger than `SpectatorFar` says so with a `MapCameraRange` (the Arena). No
+            // other map carries one, and then this changes nothing.
+            Visual.MapCameraRange.Adopt(_camera, true);
 
             // Added after ColourGrade so the replay records the same graded picture the
             // spectator saw, not the bright pre-tonemap frame that enters the grade pass.

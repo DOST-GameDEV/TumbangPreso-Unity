@@ -484,6 +484,9 @@ namespace TumbangPreso.CameraSystem
         private void Start()
         {
             if (_grade != null) _grade.AdoptFromScene();
+            // A map larger than the 240 m above says so with a `MapCameraRange` (the Arena). No
+            // other map carries one, and then this changes nothing.
+            Visual.MapCameraRange.Adopt(_camera, false);
         }
 
         /// <summary>
