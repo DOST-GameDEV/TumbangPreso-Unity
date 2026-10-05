@@ -1,0 +1,114 @@
+{
+  "01-mode-select.json": {
+    "bytes": 855,
+    "sha256": "285db2b6530ab63636aceeef32a581c699521efcb8ae55996121e61525336053"
+  },
+  "01-mode-select.png": {
+    "bytes": 356699,
+    "sha256": "8f039d4308bac789b8423212362a907ac421cb8ddf9e5d753f8c8568d6e70e40"
+  },
+  "02-practice-start.json": {
+    "bytes": 858,
+    "sha256": "9caee1b7ebee60f33cdfd75507910f8d06336aa06309441051debf6e6916fa52"
+  },
+  "02-practice-start.png": {
+    "bytes": 1253954,
+    "sha256": "4d752cf3450ea3352dfd0595e5dd5ef880736a45160585e6e1020c8b14d6b337"
+  },
+  "03-bot3-active-menu.json": {
+    "bytes": 860,
+    "sha256": "0e5effe1ee563f211488c178ecd44740dcef659d7da8a44f62daefcfb34db475"
+  },
+  "03-bot3-active-menu.png": {
+    "bytes": 663765,
+    "sha256": "fdcf2e95cece0d9888b1bdf40953d72d6951e8cf86aaa1c98d3c8768a8607087"
+  },
+  "04-ordinary-throw.json": {
+    "bytes": 858,
+    "sha256": "13ec657281be8b6f546d74366fdb808580f62fa4de187075664162f21fa01a73"
+  },
+  "04-ordinary-throw.png": {
+    "bytes": 1036146,
+    "sha256": "8b6ba91dbd3854969943f66e0152503a1621dc0afb836e71bac8e6653c8c1d9e"
+  },
+  "05-bot3-idle-resume.json": {
+    "bytes": 860,
+    "sha256": "6fff1a4c09d3be41aa477ba63dc8bc6d547100af4a98afd62a3009844cc04df4"
+  },
+  "05-bot3-idle-resume.png": {
+    "bytes": 1037536,
+    "sha256": "7a8db892496a3c84e7855e7342c41089c85e8966a0ec7f27cf50b58ebaa2506f"
+  },
+  "06-bot3-idle-later.json": {
+    "bytes": 859,
+    "sha256": "3ace7af35364c56170f8fb9d8e5b630f210d109c11aac706d3bb1db6d61cff62"
+  },
+  "06-bot3-idle-later.png": {
+    "bytes": 1029648,
+    "sha256": "7cb125998f4ea1ff18576931a7e0619a733d636f95a7a2f6fada74e24097037d"
+  },
+  "07-bot3-removed.json": {
+    "bytes": 856,
+    "sha256": "26698c314a85fcaa7a48163a7f0ab0efe725beff48e584a313030cf26a7ac5c1"
+  },
+  "07-bot3-removed.png": {
+    "bytes": 580379,
+    "sha256": "c77a0b83ae5f227b8e463bba2f80d3f593b1adb821a0fa83c089298a19005a0a"
+  },
+  "08-range-reset.json": {
+    "bytes": 855,
+    "sha256": "e2780c72d8f03ef3f9be2572a86b2ed899c8305e9f37beff2e8456ffdac41e41"
+  },
+  "08-range-reset.png": {
+    "bytes": 591958,
+    "sha256": "8b6f944989503f8ed6584292f995eb1a60c20159919cac59d997613779948699"
+  },
+  "09-recovered-bots-resume.json": {
+    "bytes": 865,
+    "sha256": "8555672d139ad2ef52a5af480be1009a9d240199cb083600632e0b9438cbdb24"
+  },
+  "09-recovered-bots-resume.png": {
+    "bytes": 846637,
+    "sha256": "b26e6278dc9efddf88d33bbd0cf1171daa4c935c3a718b39bfc16bf797d045b2"
+  },
+  "10-post-reset-bot-play.json": {
+    "bytes": 863,
+    "sha256": "b96724b9e3b00a815a16a0f3f130988197fb18962be1ce459862ec2c9bca7170"
+  },
+  "10-post-reset-bot-play.png": {
+    "bytes": 1120686,
+    "sha256": "f25600b24048b054fa49d24d528ccc4a899c09a0c563e950a69eb1b4e0eea176"
+  },
+  "11-home-after-practice.json": {
+    "bytes": 863,
+    "sha256": "a49431c6e986c33efb8756139853b88a9b5cdce710ee28014ec4d61eb6712b28"
+  },
+  "11-home-after-practice.png": {
+    "bytes": 1008663,
+    "sha256": "dc21d60bbc536c957ba8f0a406812814b362bec3cf887d772a07856e86dbaa3b"
+  },
+  "12-game-quit-menu.json": {
+    "bytes": 858,
+    "sha256": "1bcc0c50d49b24af55f4db0948df4eb8ae46673fb1847fa0e7b35c79dda2df07"
+  },
+  "12-game-quit-menu.png": {
+    "bytes": 709485,
+    "sha256": "d8277f5eb692a065f211d8a555f1ff4b764c03fd51a2aae25f7f545185b02831"
+  },
+  "direct-result.json": {
+    "bytes": 1943,
+    "sha256": "ae382642e6ee818d184ae475ae37858b3b4b61853d0226c48f2af9c3ed2eb907"
+  },
+  "launch.json": {
+    "bytes": 1067,
+    "sha256": "2960e5459fa76b42707093102143ae85a7290434e463cddd5c2d0c1d547f1103"
+  },
+  "operator-observations.json": {
+    "bytes": 944,
+    "sha256": "5d70ca13fbb845fcc2cea1c2b4d3ad2845ffe69ba5f42c57809f66b5069da209"
+  },
+  "startup-observations.txt": {
+    "bytes": 356,
+    "sha256": "a64d1b23dbd62a81d7f0e51540615ea57b1c05c99d373000a701fb52d6d6eadd"
+  }
+}

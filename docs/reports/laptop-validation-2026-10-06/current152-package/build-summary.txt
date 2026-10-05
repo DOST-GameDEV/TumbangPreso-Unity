@@ -1,0 +1,20 @@
+[Build] retained swim/recovery clips validated for 23 rig hierarchies.
+[Build] app icon set for 8 sizes.
+[Build] corner stamp is the branch name: competition-laptop-integration
+[Build] the working tree is DIRTY: edited Assets/TumbangPreso/Resources/Models/PaeteProps/Textures/colormap.png.meta
+[Build] identity 8db2dda82202690434bd1443555fa3b4fc99eaef, tree dirty, protocol 152, StandaloneWindows64
+[Build] building 13 scenes to C:\Users\Matthew\dev\tump-integration1003\Builds\current-laptop-8db2dda82-1005\TumbangPreso.exe (None)
+[Build]   Assets/TumbangPreso/Scenes/Ui/SplashScreen.unity
+[Build]   Assets/TumbangPreso/Scenes/Ui/MainMenu.unity
+[Build]   Assets/TumbangPreso/Scenes/Ui/ModeSelect.unity
+[Build]   Assets/TumbangPreso/Scenes/Ui/MatchSetup.unity
+[Build]   Assets/TumbangPreso/Scenes/Ui/MultiplayerSetup.unity
+[Build]   Assets/TumbangPreso/Scenes/Ui/MatchResult.unity
+[Build]   Assets/TumbangPreso/Scenes/Maps/Eskinita.unity
+[Build]   Assets/TumbangPreso/Scenes/Maps/BayanPlaza.unity
+[Build]   Assets/TumbangPreso/Scenes/Maps/IlalimNgTulay.unity
+[Build]   Assets/TumbangPreso/Scenes/Maps/SaBubong.unity
+[Build]   Assets/TumbangPreso/Scenes/Maps/LagoonCove.unity
+[Build]   Assets/TumbangPreso/Scenes/Maps/Kanto.unity
+[Build]   Assets/TumbangPreso/Scenes/Maps/Arena.unity
+[Build] SUCCEEDED. 2810 MB, 99s -> C:\Users\Matthew\dev\tump-integration1003\Builds\current-laptop-8db2dda82-1005\TumbangPreso.exe

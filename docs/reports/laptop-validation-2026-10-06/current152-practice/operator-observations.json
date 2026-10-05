@@ -1,0 +1,22 @@
+{
+  "source": "8db2dda82202690434bd1443555fa3b4fc99eaef",
+  "protocol": 152,
+  "route": "Normal Guest/Home/ModeCard/Practice/Training, native mouse/Escape/menu controls; no Game API/bootstrap/input harness",
+  "bot3PresentActive": true,
+  "ordinaryMouseThrowObserved": true,
+  "bot3IdleResumedAtRest": true,
+  "idleCaptureIntervalSeconds": 76.36468410491943,
+  "bot3RemovedAndRestored": true,
+  "resetRestoredHumanHeldShoe": true,
+  "bot4AddedActive": true,
+  "postResetBothPlannerMovementObserved": true,
+  "subsequentCatchQualified": false,
+  "trainingClockTickQualified": false,
+  "physicalHeroKeysQualified": false,
+  "physicalControllerTouchQualified": false,
+  "normalLeaveHome": true,
+  "normalGameQuitExit": 0,
+  "inputPrefsAndSeedRestored": true,
+  "artifactUnchanged": true,
+  "captureFormat": "12 original physical-client PNG1600x900/DPI120; no resampling; Sky displayed snapshots are separate JPEG evidence"
+}

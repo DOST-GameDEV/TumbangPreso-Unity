@@ -1,0 +1,12 @@
+{
+    "sha": "8db2dda82202690434bd1443555fa3b4fc99eaef",
+    "branch": "competition-laptop-integration",
+    "protocol": 152,
+    "target": "StandaloneWindows64",
+    "appVersion": "1.0.0",
+    "ugsProject": "dcf0831e-a5f4-43b4-832e-b687f13a3569",
+    "ugsEnvironment": "production",
+    "builtAt": "2026-10-05 23:53:14",
+    "dirty": true,
+    "treeState": "dirty"
+}
