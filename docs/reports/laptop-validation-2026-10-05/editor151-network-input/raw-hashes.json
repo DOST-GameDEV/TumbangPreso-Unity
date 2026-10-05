@@ -1,8 +1,4 @@
 {
-  ".gitattributes": {
-    "bytes": 241,
-    "sha256": "b64b231a4416aae277ae20506496b5e9cd5c8b438e6063c4d8fbf8bc8870e430"
-  },
   "01-matchsetup-editor.png": {
     "bytes": 134775,
     "sha256": "f29214085ff6283ad51afc7f55d0e9a62a7e8f99fbe4093ad1d04c9a0adb8725"
@@ -174,9 +170,5 @@
   "practice-sky-e-input-events.json": {
     "bytes": 1065,
     "sha256": "4c75d9497b9af73a4a803a5b75c9962c920fbdf325e28526d228f8840899aeed"
-  },
-  "README.md": {
-    "bytes": 7259,
-    "sha256": "a2464318ce76bc9e8021ad76253640c7016147c57658a1894fa9e5288b497997"
   }
 }
