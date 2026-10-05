@@ -21,7 +21,16 @@ explicitly authorized; unnecessary AGENTS feature entry was removed at owner req
 
 ## Current source and live work
 
-Current source40dbb7ca7 is published under M4. Owner wants this PC for personal
+Current incoming a9ee42365 integrates laptop replay fix1968ee789 and PC HUD40db:
+root checked13 exact evidence Git blobs, original2FAIL/1PASS and final3PASS.
+Replay source/fixture diff reviewed; no repeated unchanged native run. Generic
+online failure copy now preserves the technical reason without guessing room
+expiry; copy-only change, no transport behavior or network-resolution claim.
+Owner-requested screenshot player22960/parent21700/session79371 is live on
+accepted1d401 build, isolatedpc-ui-shots-host1005a,1080p. Do not control or close;
+physical Escape stopped Computer Use. Parent restores preferences after exit.
+
+HUD source40dbb7ca7 is published under M4. Owner wants this PC for personal
 use: leave mouse, keyboard, focus and windows alone until owner resumes control.
 Current local inventory has no Unity/player/Python jobs. Laptop acknowledged
 this restriction and continues its own replay lifecycle native qualification.

@@ -161,6 +161,11 @@ Nothing was deleted or renumbered.
 - [x] Recover one transient Relay request timeout with an ownership-scoped retry.
   Native2causes/2controls -> seven passes including repeat/cancel/replacement.
   [Evidence](reports/reliability-2026-10-05/relay-request-timeout/README.md).
+- [x] Remove the expired-session suggestion from the generic online join failure.
+  The owner's screenshot shows a request timeout with that suggestion; the
+  source used it for every failure. Keep the actual session status detail and
+  suggest retrying. Copy-only review; current screenshot player predates this.
+  This does not close the timeout or host-kick report.
 - [x] Serialize hosted-room advertisement updates and retain only the latest
   queued state. Original delayed publication overwrites4 occupied with2;
   candidate ten native cases pass including replacement ownership and failed
@@ -631,6 +636,12 @@ Nothing was deleted or renumbered.
 
 ### REPLAY-SHORTLIST-QUEUE-1004: deliver current retained footage
 
+- [x] Recover capture after archive disable/re-enable and stop disabled archives
+  consuming history samples. Original two lifecycle causes fail/actual-catch
+  control passes; final three PlayMode cases pass. Root reviewed the production
+  diff and independently verified13 evidence Git blobs and original/final XML.
+  Packaged playback, peer recovery and human acceptance remain separate.
+  [Lifecycle evidence](reports/laptop-validation-2026-10-05/replay-archive-recovery/README.md).
 - [x] Replace obsolete transfer entries with the authoritative archive shortlist,
   keep begun still-retained send objects/offsets, update waiting priority and skip
   acknowledged/prior-match clips. Archive policy, wire/protocol144 and bandwidth
