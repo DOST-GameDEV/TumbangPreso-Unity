@@ -1,0 +1,68 @@
+{
+  "original": {
+    "sourceCommit": "af6c2144fd75530ab1bd7eae9e762068bd81ab60",
+    "result": {
+      "terminal": true,
+      "exitCode": 2,
+      "passed": 1,
+      "failed": 1,
+      "expected": 2,
+      "inputs": 21126,
+      "generatedDeltas": 279,
+      "allGeneratedBeforeAfterPreservedAndRestored": true,
+      "qualityRestored": true,
+      "existingPrefsRestored": 13,
+      "productionDelta": false
+    },
+    "cases": [
+      {
+        "name": "ActualModePostersStayClearOfTheHeadlineAt720And1080",
+        "result": "Failed",
+        "failure": "  mode 0 at 1280: poster crosses headline area; mode 0 at 1920: poster crosses headline area; mode 1 at 1280: poster crosses headline area; mode 1 at 1920: poster crosses headline area; mode 2 at 1280: poster crosses headline area; mode 2 at 1920: poster crosses headline area\n  Expected: <empty>\n  But was:  < \"mode 0 at 1280: poster crosses headline area\", \"mode 0 at 1920: poster crosses headline area\", \"mode 1 at 1280: poster crosses headline area\", \"mode 1 at 1920: poster crosses headline area\", \"mode 2 at 1280: poster crosses headline area\", \"mode 2 at 1920: poster crosses headline area\" >\n"
+      },
+      {
+        "name": "ModeCardStillOpensItsChoiceDoorAndBackKeepsTheSelection",
+        "result": "Passed",
+        "failure": null
+      }
+    ],
+    "selectedRawInputHashes": {
+      "Assets/TumbangPreso/Runtime/UI/Hub/HubHome.cs": "58593e9fa6c0fce0d5ab480ffe6d1abd79f02c8bdbd66f681dcc5eba704c5a74",
+      "Assets/TumbangPreso/Tests/PlayMode/HomeModeCardReadabilityTests.cs": "b1075acdb660c1db85c2043de44f53395bb12242ceda6790779a8c08a47c29ed",
+      "Assets/TumbangPreso/Tests/PlayMode/HomeModeCardReadabilityTests.cs.meta": "d3cecd6d741bfb2851e8ff5dee52ba2cc68126c1bc8795b499fe32e52d911f0f"
+    }
+  },
+  "candidate": {
+    "sourceCommit": "af6c2144fd75530ab1bd7eae9e762068bd81ab60",
+    "result": {
+      "terminal": true,
+      "exitCode": 0,
+      "passed": 2,
+      "failed": 0,
+      "expected": 2,
+      "inputs": 21126,
+      "generatedDeltas": 279,
+      "allGeneratedBeforeAfterPreservedAndRestored": true,
+      "qualityRestored": true,
+      "existingPrefsRestored": 13,
+      "productionDelta": false
+    },
+    "cases": [
+      {
+        "name": "ActualModePostersStayClearOfTheHeadlineAt720And1080",
+        "result": "Passed",
+        "failure": null
+      },
+      {
+        "name": "ModeCardStillOpensItsChoiceDoorAndBackKeepsTheSelection",
+        "result": "Passed",
+        "failure": null
+      }
+    ],
+    "selectedRawInputHashes": {
+      "Assets/TumbangPreso/Runtime/UI/Hub/HubHome.cs": "f5e8f7ad921f3833105eaa294ac7a396d42f5ce1c3dcf620c50954ac5ce5deb8",
+      "Assets/TumbangPreso/Tests/PlayMode/HomeModeCardReadabilityTests.cs": "b1075acdb660c1db85c2043de44f53395bb12242ceda6790779a8c08a47c29ed",
+      "Assets/TumbangPreso/Tests/PlayMode/HomeModeCardReadabilityTests.cs.meta": "d3cecd6d741bfb2851e8ff5dee52ba2cc68126c1bc8795b499fe32e52d911f0f"
+    }
+  }
+}
