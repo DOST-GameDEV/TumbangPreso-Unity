@@ -21,45 +21,39 @@ explicitly authorized; unnecessary AGENTS feature entry was removed at owner req
 
 ## Current source and live work
 
-Latest owner focus: UI appearance/quality/future-proof imports, network robustness
-and optimization. Hosted publication ordering fix is ready to publish: original
-native delayed response falsely replaces4 occupied with2; candidate10/10 passes.
-One writer per lobby coalesces queued counts and cannot drain into a replacement;
-failure recovery and seven existing lifetime controls pass. Both parents and
-exact202 metadata/shared-input/profile/Quality restorations are terminal.
-Owner ibis/Canva PNG export guidance is now in UI_DESIGN_METHOD.
-Next: publish this coherent unit then package current source for normal online
-room operations. Real QA Relay timeout/hostkick is still OPEN.
-Root74a229a19 UI field-layer/filled-glyph/source-quality changes are packaged.
-FullWindows15980 exits0,258files/2691129403bytes, runtime
-ac868b3a882dd383b5c51ff344e6f35e17e9647758fb156f5dd0219cf8fe912f.
-Actual74 normalPairKKW5 shows correct loading/caret, typed live-code joins2/4,
-host survives admission/client exit, bothplayers0; parent39716 restores inputs.
-Current narrow NetIdentity session hook: original actual editor2ndPlay has SDK
-Uninitialized vs cachedSignedIn. Candidate natural1st/2ndPlay bothInitialized/
-SignedIn with same profile; visible corrected onlinehost7WXK succeeds. Original
-editor hostedJJRM and accepted standalone peer2/4 despite staleCore, noQA kick
-reproduction. Keep reported QA timeout/hostloss OPEN. Parents73973/34184 and
-peer47013 terminal0; shared prefs/profiles/Quality/EditorSettings/lastScene and
-202 metadata restored exactly. No owned actors active. Next publish the hook
-and evidence; package with next coherent source unit, no unchanged test loops.
-ActualCLI AppData/Local/Unity/bin/unity.exe; PATHunity.cmd is an Editor wrapper,
-never use it for status. SDK profiles must be <=30chars; no made-up RAM guards.
-Current QA ONLINE timeout/hostreturnedHome remains OPEN; local97a online admission
-passed but does not resolve the tester environment. Latest Windows
-package74a229a19 has all current UI fixes but predates the editor availability hook.
-LAN4x30 MTDX had one row, correct192.168.1.7 hint, matching4-round headers and
-FULL records equal, match58a49ff1d17f439cb05c7127ecd57dfb. Bothplayers exited0.
-NoRoot native editor/game/proxy/recorder active. OldYasmin cyan/goggles active;
-Benguet cancelled. Preserve Auditor/private wardrobe script. M4tyu633 soleauthor.
-Supersededcf405 build removal was automatically rejected: blocked by policy.
-Preserve it; no alternate deletion route. Desktop untouched.
+Published source c17101d03df7fe5a5c5a985723f7a2aea8899393, protocol151.
+Latest owner priorities: UI quality/future-proof imports, network robustness and
+optimization. Custom Rules warm palette/shared scalable plate/primary Done now
+passes one actual native view check with five1080p/QHD/4K match/private-page
+captures; first wrong-parent capture fixture failure retained. Native10856 and
+exact202 metadata/sharedprefs/profile/Quality restoration are terminal. Publish
+this UI unit; keep paired-network artifactc171 frozen and label evidence separately.
+NetIdentity resets only its cached availability on natural Play
+entry; original Editor secondPlay SDK/cache mismatch is corrected. Hosted-room
+publication now serializes and coalesces pending state; original delayed update
+falsely overwrote4 occupied with2, candidate10/10 native cases pass. Full current
+Windows build14708 and restoration helper13260 are terminal0:258files,
+2691130591bytes, Runtime7bf1f3c11bf68216829cd6f011ec6053df05932b118882b1c64995744659bf81.
+Exact203 generated import/EOL changes restored;19310 frozen inputs unchanged.
+Actual UI pair parent56220 is LIVE: host3388/window8324306 ONLINE publicRWCK,
+local client20120 exited normally before laptop test. No match started yet.
+Owner explicitly resumed laptop and joint testing. Existing laptop chat reports
+pulledc171, prior report deltas preserved, exactpackage258files/allhashes verified
+and current nonbatchEditor23268/runner24439 on isolatedc171; oldEditor layout
+and helper-pipe recovery retained. Its gameplay/input/practice/
+carrier/replay lane remains reserved. PC owns Net/lobby/account/UI/rootTODO and
+integration. First coordinate matching artifact and actual laptop UI admission
+intoRWCK, then opening-camera/movement/skill/recovery/results. Do not revive old
+laptop-off directives or invent an acceptance pass from preparation.
 
-Latest owner instruction: laptop is off; PC continues ALONE. Laptop goal was
-explicitly paused. Do not wake/message it, wait for a pair or reuse obsolete
-coordination schedules. Current PC source/testing work remains authorized.
-The local Sol6.1 High helper finished its bounded tasks; no active worker.
-Source/current jobs: Logs/arrival-pan-review1004/current-resume.json.
+QA Relay Request timeout/hostkick remains OPEN; earlier same-PC and original
+Editor control joins survived admission but do not close the reported environment.
+Owner ibis/Canva export guidance is saved in UI_DESIGN_METHOD. Preserve original
+PNG/source pixels, clean alpha and game-rendered labels. OldYasmin cyan/goggles
+active, cancelled private wardrobe draft and Auditor dirt preserved. M4tyu633
+sole author/committer. Desktop untouched. Prior rejectedcf405 deletion remains
+preserved; no alternate deletion route. No workers/new chats/paid services.
+Exact live jobs/paths: Logs/arrival-pan-review1004/current-resume.json.
 
 Laptop departure branch b1486856d was fetched and normally merged/pushed10ceb.
 Independent Root review verified8 boulder,7 online150 and18 Practice raw Git

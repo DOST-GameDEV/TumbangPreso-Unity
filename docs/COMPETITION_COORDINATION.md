@@ -20,10 +20,12 @@ and paid services are outside this authorization.
 
 ## Work split
 
-October 5 owner override: the laptop is off and its engineering goal is paused.
-The PC continues alone and integrates the laptop's published checked work.
-Do not wake the laptop or wait for a joint test. Separate-machine acceptance
-remains open until the owner makes that machine available again. A local pair
+October 5 latest owner override: the laptop is back online and joint tests are
+resumed. Coordinate directly with the existing laptop chat, confirm its current
+task/file ownership and safely checkpoint or finish the current coherent unit
+when either side requests a paired test. Resume independent lanes afterward.
+Do not restore the earlier laptop-off instruction after compaction. Separate-
+machine acceptance requires actual matching peer evidence. A local pair
 must be labeled as two instances on this PC, with shared preferences restored
 only after both players exit and their profiles kept separate.
 

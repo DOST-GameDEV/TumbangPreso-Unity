@@ -188,6 +188,10 @@ Nothing was deleted or renumbered.
   layouts remain. [Evidence](reports/reliability-2026-10-05/ui-source-quality/README.md#filled-glyph-edges).
 - [ ] October5 UI quality: improve authored artwork/text crispness, remove leftover
   white fringes and preserve quality through future imports/builds/resolutions.
+- [x] Match Custom Rules to the warm hub palette and give Done a clear primary
+  shape. Native actual match/private-room views pass with five1080p/QHD/4K
+  captures; field presence and4x90 rules retained. First canvas-lookup fixture
+  failure preserved. [Evidence](reports/reliability-2026-10-05/custom-rules-presentation/README.md).
 - [ ] Rest of session focus: UI appearance/quality, network robustness and measured
   optimization. Preserve authored designs; no speculative compression or downgrades.
 - [x] Host-approved rules update shared state before UI observers, including

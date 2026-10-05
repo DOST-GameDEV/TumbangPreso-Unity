@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 07:51:58Z" end-time="2026-10-05 07:51:59Z" duration="0.4471024">
+  <test-suite type="TestSuite" id="3138" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1744" result="Failed" site="Child" start-time="2026-10-05 07:51:58Z" end-time="2026-10-05 07:51:59Z" duration="0.447102" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3130" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1744" result="Failed" site="Child" start-time="2026-10-05 07:51:58Z" end-time="2026-10-05 07:51:59Z" duration="0.430657" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23428" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3131" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1744" result="Failed" site="Child" start-time="2026-10-05 07:51:58Z" end-time="2026-10-05 07:51:59Z" duration="0.423351" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3134" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1742" result="Failed" site="Child" start-time="2026-10-05 07:51:58Z" end-time="2026-10-05 07:51:59Z" duration="0.416828" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1431" name="CustomRulesVisualReview" fullname="TumbangPreso.PlayTests.CustomRulesVisualReview" classname="TumbangPreso.PlayTests.CustomRulesVisualReview" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-05 07:51:58Z" end-time="2026-10-05 07:51:59Z" duration="0.366653" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1432" name="MatchAndPrivateRoomPagesRenderWithTheirExistingControls" fullname="TumbangPreso.PlayTests.CustomRulesVisualReview.MatchAndPrivateRoomPagesRenderWithTheirExistingControls" methodname="MatchAndPrivateRoomPagesRenderWithTheirExistingControls" classname="TumbangPreso.PlayTests.CustomRulesVisualReview" runstate="Runnable" seed="1336585496" result="Failed" start-time="2026-10-05 07:51:58Z" end-time="2026-10-05 07:51:59Z" duration="0.349117" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CustomRulesVisualReview+<MatchAndPrivateRoomPagesRenderWithTheirExistingControls>d__4.MoveNext () [0x000b2] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\CustomRulesVisualReview.cs:42
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
