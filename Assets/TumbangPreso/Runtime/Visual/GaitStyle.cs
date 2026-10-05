@@ -81,6 +81,13 @@ namespace TumbangPreso.Visual
         /// cadence is divided by this. It is also character: Nemu drifts (1.6), Sean plants (1.1).
         /// </summary>
         public float Glide;
+        /// <summary>
+        /// The elbow's fold while the arm swings about its carry angle, and the extra fold at the top of its FORWARD swing
+        /// (a pump). Degrees. ⚠️ ONLY A RIG WITH `forearm-left` AND `forearm-right` READS THESE (the redesign prototypes,
+        /// 2026-10-05); the seven-bone cast rigs have no elbow and ignore them. Owner, of the redesign: *"should try bending
+        /// the arms for animations, especially for the sprint and walk"*, and asked that the game's own gait do it per hero.
+        /// </summary>
+        public float Elbow, ElbowPump;
 
         public static Gait Lerp(in Gait a, in Gait b, float t)
         {
@@ -96,6 +103,7 @@ namespace TumbangPreso.Visual
                 HeadPitch = L(a.HeadPitch, b.HeadPitch), HeadTilt = L(a.HeadTilt, b.HeadTilt), HeadNod = L(a.HeadNod, b.HeadNod),
                 HeadSteady = L(a.HeadSteady, b.HeadSteady), Bounce = L(a.Bounce, b.Bounce), BounceDelay = L(a.BounceDelay, b.BounceDelay),
                 Stomp = L(a.Stomp, b.Stomp), Sway = L(a.Sway, b.Sway), Glide = L(a.Glide, b.Glide),
+                Elbow = L(a.Elbow, b.Elbow), ElbowPump = L(a.ElbowPump, b.ElbowPump),
             };
         }
     }
@@ -108,6 +116,8 @@ namespace TumbangPreso.Visual
     {
         public float LegLeft, LegRight, SplayLeft, SplayRight;
         public float ArmLeft, ArmRight, SpreadLeft, SpreadRight;
+        /// <summary>Each elbow's fold, degrees. Read only by a rig that has forearm bones.</summary>
+        public float ElbowLeft, ElbowRight;
         public float TorsoPitch, TorsoRoll, TorsoYaw;
         public float HeadPitch, HeadRoll, HeadYaw;
         /// <summary>Hip offsets, fractions of leg reach: up, and toward the character's right.</summary>
@@ -179,6 +189,8 @@ namespace TumbangPreso.Visual
                 ArmLeft = g.ArmCarry + Arm(-a) * (1f - g.ArmFavour),
                 ArmRight = g.ArmCarry + Arm(a) * (1f + g.ArmFavour),
                 SpreadLeft = g.ArmSpread, SpreadRight = g.ArmSpread,
+                // The elbow folds further as that arm comes forward.
+                ElbowLeft = g.Elbow + g.ElbowPump * Mathf.Max(0f, -a), ElbowRight = g.Elbow + g.ElbowPump * Mathf.Max(0f, a),
                 TorsoPitch = g.Lean + g.LeanPulse * footfall,
                 TorsoRoll = g.Roll * rollStance,
                 // Right shoulder forward with the left leg: the chest turns toward the left.

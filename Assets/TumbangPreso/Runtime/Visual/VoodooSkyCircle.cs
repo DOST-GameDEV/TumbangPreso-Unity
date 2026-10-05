@@ -423,9 +423,10 @@ namespace TumbangPreso.Visual
                 var b = skinned.bones[i];
                 if (b == null) continue;
                 if (b.name == "head") _crown = b;
-                else if (b.name == "arm-left" && CharacterVisual.PalmCentre(skinned, i, out var lp)) { _leftArm = b; _leftPalm = lp; }
-                else if (b.name == "arm-right" && CharacterVisual.PalmCentre(skinned, i, out var rp)) { _rightArm = b; _rightPalm = rp; }
             }
+            // The bones her HANDS are on: the forearms on a rig with elbows (`CharacterVisual.HandBone`).
+            if (CharacterVisual.HandBone(skinned, "left", out int left, out var lp)) { _leftArm = skinned.bones[left]; _leftPalm = lp; }
+            if (CharacterVisual.HandBone(skinned, "right", out int right, out var rp)) { _rightArm = skinned.bones[right]; _rightPalm = rp; }
         }
 
         private void LateUpdate()

@@ -61,15 +61,23 @@ namespace TumbangPreso.EditorTools
             { "aling_nena",  "characters/persons/character-female-e.glb" },
 
             // Hero Strike Roster (6 action heroes)
-            { "dante",       "characters/persons/team-dante.glb" },
-            { "cheska",      "characters/persons/team-cheska.glb" },
-            { "sean",        "characters/persons/team-sean.glb" },
-            { "zack",        "characters/persons/team-zack.glb" },
-            { "nemu",        "characters/persons/team-nemu.glb" },
-            { "phaister",    "characters/persons/team-phaister.glb" },
-            { "rafi",        "characters/persons/team-rafi.glb" },
-            { "amihan",      "characters/persons/team-amihan.glb" },
-            { "paete",       "characters/persons/team-paete.glb" },
+            // ⚠️⚠️ PROTOTYPE SWAP, THIS BRANCH ONLY, 2026-10-05. The owner asked to SEE the character
+            // redesign in the game (docs/CHARACTER_REDESIGN_DANTE.md). Seven heroes point at their
+            // redesign prototypes so an internal build can be played. The real `team-<id>.glb`
+            // files are untouched; putting a row back to `characters/persons/team-<id>.glb` and
+            // rebuilding the roster book undoes it. DO NOT MERGE THIS BLOCK without the owner's word.
+            // ⚠️ ALL NINE SINCE LATER THE SAME DAY. Owner: "should probably work on a paete and phaister
+            // rework", then "we'll be using the character redesigns from now on instead of the older
+            // models". Phaister and Paete now point at their redesigns too.
+            { "dante",       "CharacterRedesign/dante/dante-redesign.glb" },
+            { "cheska",      "CharacterRedesign/cheska/cheska-redesign.glb" },
+            { "sean",        "CharacterRedesign/sean/sean-redesign.glb" },
+            { "zack",        "CharacterRedesign/zack/zack-redesign.glb" },
+            { "nemu",        "CharacterRedesign/nemu/nemu-redesign.glb" },
+            { "phaister",    "CharacterRedesign/phaister/phaister-redesign.glb" },
+            { "rafi",        "CharacterRedesign/rafi/rafi-redesign.glb" },
+            { "amihan",      "CharacterRedesign/amihan/amihan-redesign.glb" },
+            { "paete",       "CharacterRedesign/paete/paete-redesign.glb" },
             { "custom",      "characters/persons/team-custom.glb" },
 
             // ⚠️⚠️ THE CHARACTER MAKER'S BASE RIG, AND IT IS A NEW ROW RATHER THAN A CHANGE TO

@@ -174,7 +174,9 @@ namespace TumbangPreso.Visual
         // (`GameSettings.CharacterShading`, Full by default; owner, 2026-10-05).
         // The cast's kernel radius, metres: a body's scale (a fringe of hair, an arm against a chest),
         // where the world's `AmbientOcclusionRadius` is a doorway's.
-        [Range(.1f,1)] public float CharacterAmbientOcclusionRadius=.35f;
+        // ⚠️ 0.14 SINCE 2026-10-05 (owner: ".14m seems like the best ao setting"). It was a third of a
+        // metre, which spread the shade past creases that are centimetres deep.
+        [Range(.1f,1)] public float CharacterAmbientOcclusionRadius=.14f;
         // 1 draws the cast's hull in a deeper shade of its own colour, 0 in black.
         [Range(0,1)] public float CastInkSelf=.88f;
         // The cast's hull width against its authored width.

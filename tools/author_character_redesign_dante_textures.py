@@ -67,7 +67,10 @@ INK = "1a1420"; EYE_GOLD = "ffd700"; EYE_AMBER = "c98a00"; WHITE = "f4faff"
 GREEN = "3d6335"; GREEN_LIT = "52804a"; GREEN_DARK = "243e1f"; GREEN_DEEP = "172a15"
 GOLD = "dfb248"; GOLD_LIT = "f3d483"; GOLD_DARK = "a8862c"
 BROWN = "482f1d"; BROWN_LIT = "634329"; BROWN_DARK = "2f1e12"; BROWN_DUST = "7b654c"
-PATCH = "58603a"; PATCH_EDGE = "2e351f"
+# ⚠️ A patch is a scrap of the OTHER garment, hard edged, with a dark rim and pale thread. The
+# first ones were a soft grey olive at low contrast on both cloths; the owner read them as
+# z-fighting (2026-10-05). A mark this size either reads as a sewn thing or as a render fault.
+PATCH = "58603a"; PATCH_EDGE = "2e351f"; THREAD = "d8c79a"
 JADE = "38b848"; JADE_LIT = "68e878"; JADE_DARK = "1e7a35"
 SHOE = "f4faff"; SHOE_SHADE = "c6ccd3"; SHOE_SCUFF = "9d9a93"; SHOE_DIRT = "8a7a66"
 BANDAGE = "ddd5c0"; BANDAGE_SHADE = "b3a78e"; BANDAGE_DIRT = "8f8169"
@@ -145,6 +148,7 @@ SWATCHES = {
     "hair_top": (40, 40, 0.04, 0.04),
     "hair_under": (40, 40, 0.04, 0.04),
     "gold_tone": (40, 40, 0.04, 0.04),
+    "skin_tone": (40, 40, 0.04, 0.04),
     "belt_tone": (40, 40, 0.04, 0.04),
     "cuff_tone": (40, 40, 0.04, 0.04),
     "wrap_tone": (40, 40, 0.04, 0.04),
@@ -262,6 +266,22 @@ def _spline(points, closed=False, steps=10):
     return out
 
 
+# ⚠️ THE CLOTHES ARE QUIET. Owner, 2026-10-05, seeing him in the game: *"lets tone down the details
+# in dantes clothes"*. Every cloth island was drawn with sun patches, folds, stitch rows, a
+# pocket, sewn patches and dust; in the game's flat two-band shader, beside a cast in plain
+# colour, that reads as busy. So the soft cloth marks are laid at well under half strength, the
+# fold strokes fainter still, and the stitches, the dust and both sewn patches are not drawn.
+# The structure (belt, buckle, undershirt, cuffs, piping) is untouched: it is geometry or hard
+# edged. Set QUIET_CLOTH to False to see the busy version again.
+QUIET_CLOTH = True
+SOFT_MARK = 0.40      # sun patches and shade, where a mark is feathered 3 mm or more
+FOLD = 0.32           # fold strokes
+
+
+def _cloth_tone(colour):
+    return QUIET_CLOTH and colour in (GREEN_LIT, GREEN_DARK, GREEN_DEEP, BROWN_LIT, BROWN_DARK, BANDAGE_SHADE, BANDAGE_DIRT)
+
+
 class Island:
     def __init__(self, name, base, size, metres=None):
         from PIL import Image
@@ -291,6 +311,10 @@ class Island:
     def mark(self, colour, points, feather=0.0, strength=1.0, curved=True):
         """A filled patch. `points` are hand-set, in metres; the edge is feathered `feather` mm."""
         from PIL import Image, ImageDraw
+        if QUIET_CLOTH and colour in (BROWN_DUST, SHOE_DIRT):
+            return self
+        if _cloth_tone(colour) and feather >= 3:
+            strength *= SOFT_MARK
         pts = _spline(points, closed=True) if curved else list(points)
         mask = Image.new("L", (self.w, self.h), 0)
         ImageDraw.Draw(mask).polygon([self.px(p) for p in pts], fill=255)
@@ -306,6 +330,8 @@ class Island:
 
     def stroke(self, colour, points, width, feather=0.3, strength=1.0, taper=(0.25, 0.25), curved=True):
         """A brush stroke `width` mm wide through hand-set points, thinning to `taper` at its ends."""
+        if _cloth_tone(colour):
+            strength *= FOLD
         from PIL import Image, ImageDraw
         pts = [self.px(p) for p in (_spline(points) if curved else points)]
         n = len(pts)
@@ -328,6 +354,8 @@ class Island:
 
     def stitch(self, colour, points, width=1.6, dash=6.0, gap=5.0, strength=0.9):
         """A row of hand stitches along a line: short dashes `dash` mm long, `gap` mm apart."""
+        if QUIET_CLOTH:
+            return self
         from PIL import Image, ImageDraw
         pts = [self.px(p) for p in _spline(points, steps=14)]
         mask = Image.new("L", (self.w, self.h), 0)
@@ -344,6 +372,10 @@ class Island:
 
     def band(self, colour, b0, b1, feather=0.0, strength=1.0):
         """Everything between two heights, the whole island wide: how a belt meets itself."""
+        if QUIET_CLOTH and colour in (BROWN_DUST, SHOE_DIRT):
+            return self
+        if _cloth_tone(colour) and feather >= 3:
+            strength *= SOFT_MARK
         a0, a1 = self.win[0], self.win[1]
         pad = (a1 - a0)
         return self.mark(colour, [(a0 - pad, b0), (a1 + pad, b0), (a1 + pad, b1), (a0 - pad, b1)],
@@ -367,57 +399,54 @@ class Island:
 # own shape, sockets, a blush, a jaw that goes dark under the chin.
 # ---------------------------------------------------------------------------
 
+def _about(centre, k, points):
+    """`points` grown `k` times about `centre`."""
+    return [(centre[0] + (x - centre[0]) * k, centre[1] + (y - centre[1]) * k) for x, y in points]
+
+
 def paint_head_front(c):
-    side = mix(SKIN, SKIN_SHADE, 0.45)
-    c.blob(SKIN_LIT, (-0.005, 0.500), 0.110, 0.082, 20, 0.55)
-    # the block's edges turn away: soft down both sides, firmer along the jaw
-    c.mark(side, [(-0.27, 0.72), (-0.160, 0.72), (-0.146, 0.54), (-0.158, 0.40), (-0.140, 0.33), (-0.27, 0.30)], 8, 1.0)
-    c.mark(side, [(0.27, 0.72), (0.160, 0.72), (0.148, 0.55), (0.160, 0.41), (0.142, 0.33), (0.27, 0.30)], 8, 1.0)
-    c.band(SKIN_SHADE, 0.28, 0.380, 5, 0.8)
-    c.band(SKIN_DEEP, 0.28, 0.357, 3, 0.7)
-    c.mark(SKIN, [(-0.060, 0.396), (0.0, 0.370), (0.062, 0.396), (0.040, 0.416), (-0.038, 0.416)], 6, 0.7)
-    # the fringe's cast shadow, stepped like the four slabs that throw it
-    c.mark(SKIN_SHADE, [(-0.26, 0.72), (0.26, 0.72), (0.26, 0.610), (0.146, 0.610), (0.146, 0.588), (0.066, 0.588),
-                        (0.066, 0.606), (-0.006, 0.606), (-0.006, 0.554), (-0.084, 0.554), (-0.084, 0.500),
-                        (-0.176, 0.500), (-0.176, 0.56), (-0.26, 0.56)], 1.6, 0.9, curved=False)
-    c.mark(SKIN_DEEP, [(-0.26, 0.72), (0.26, 0.72), (0.18, 0.652), (0.06, 0.648), (-0.020, 0.626), (-0.090, 0.630),
-                       (-0.150, 0.600), (-0.26, 0.60)], 3, 0.55)
-    # eye sockets
-    c.blob(SKIN_SHADE, (-0.080, 0.482), 0.050, 0.030, 7, 0.55)
-    c.blob(SKIN_SHADE, (0.080, 0.484), 0.050, 0.034, 7, 0.55)
-    # blush, low on the cheek
-    c.blob(BLUSH, (-0.108, 0.424), 0.036, 0.021, 8, 0.5)
-    c.blob(BLUSH, (0.112, 0.420), 0.034, 0.020, 8, 0.45)
-    # the nose: a lit bridge, shade thrown down and to his right
-    c.stroke(SKIN_LIT, [(0.001, 0.474), (0.002, 0.452)], 9, 2.0, 0.6)
-    c.blob(SKIN_DEEP, (-0.008, 0.425), 0.020, 0.007, 2.0, 0.6)
-    # THE SCAR, forehead to jaw through the gold eye. Drawn dark, then a raised pale core, then
-    # cross ticks so it reads as a healed cut and not a tear.
+    # ⚠️⚠️ A CUTE FACE, NOT A PORTRAIT. The first face was modelled in paint: eye sockets, a crease
+    # under the squint, a nose with its own shadow, two steps of jaw shade, a lip shadow. Owner,
+    # 2026-10-05, on the whole redesigned cast: *"the faces look too realistic and look too human,
+    # like it lost its charm, the characters have eyebags etc.. they need to be more cutesy"*.
+    # The cast's charm is a flat face with big simple ink features (CHARACTER_MODEL_METHOD.md
+    # section 2: eyes and a mouth, nothing else). So: NO nose, NO sockets, NO creases or lids drawn
+    # as lines, NO lip shadow, NO jaw contour. What is left is flat skin with one soft lit patch,
+    # the fringe's flat shadow, BIG eyes, a small mouth, and his scar. (Blush is for the girls.)
+    side = mix(SKIN, SKIN_SHADE, 0.30)
+    c.blob(SKIN_LIT, (0.0, 0.470), 0.120, 0.090, 26, 0.35)
+    # the block's edges turn away, faintly
+    c.mark(side, [(-0.27, 0.72), (-0.160, 0.72), (-0.150, 0.54), (-0.160, 0.40), (-0.146, 0.33), (-0.27, 0.30)], 10, 0.8)
+    c.mark(side, [(0.27, 0.72), (0.160, 0.72), (0.152, 0.55), (0.162, 0.41), (0.148, 0.33), (0.27, 0.30)], 10, 0.8)
+    # the fringe's cast shadow, stepped like the four slabs that throw it: ONE flat tone
+    c.mark(SKIN_SHADE, [(-0.26, 0.72), (0.26, 0.72), (0.26, 0.560), (0.142, 0.560), (0.142, 0.522), (0.064, 0.522),
+                        (0.064, 0.540), (-0.010, 0.540), (-0.010, 0.510), (-0.090, 0.510), (-0.090, 0.494),
+                        (-0.180, 0.494), (-0.180, 0.56), (-0.26, 0.56)], 1.6, 0.75, curved=False)
+    # NO BLUSH ON HIM. Owner, 2026-10-05: *"reserve the blush for the female characters"*.
+    # THE SCAR, forehead to jaw through the gold eye: one dark line with a pale core. The cross
+    # ticks are gone with the rest of the fine drawing.
     scar = [(0.040, 0.664), (0.044, 0.610), (0.052, 0.552), (0.066, 0.508), (0.086, 0.468),
             (0.088, 0.432), (0.080, 0.396), (0.066, 0.354)]
     c.stroke(SCAR_DARK, scar, 10.5, 0.5, 1.0, (0.2, 0.15))
     c.stroke(SCAR_LIT, scar, 3.6, 0.4, 0.95, (0.1, 0.1))
-    c.stroke(SCAR_DARK, [(0.071, 0.428), (0.104, 0.421)], 4.2, 0.3, 1.0, (0.4, 0.4), curved=False)
-    c.stroke(SCAR_DARK, [(0.064, 0.396), (0.096, 0.386)], 4.0, 0.3, 1.0, (0.4, 0.4), curved=False)
-    c.stroke(SCAR_DARK, [(0.030, 0.566), (0.068, 0.556)], 3.8, 0.3, 1.0, (0.4, 0.4), curved=False)
-    # HIS RIGHT EYE, the squint: one heavy lid, the eye a slit under it, a crease below
-    c.mark(INK, [(-0.114, 0.488), (-0.080, 0.482), (-0.046, 0.470), (-0.050, 0.461), (-0.082, 0.458),
-                 (-0.108, 0.466)], 0.3, 1.0)
-    c.stroke(INK, [(-0.122, 0.493), (-0.084, 0.488), (-0.040, 0.468)], 7.5, 0.3, 1.0, (0.5, 0.7))
-    c.stroke(SKIN_DEEP, [(-0.108, 0.450), (-0.084, 0.444), (-0.058, 0.447)], 3.0, 0.5, 0.9)
-    # HIS LEFT EYE: a black almond, the gold iris, a slit, one glint (the original's own eye)
-    c.mark(INK, [(0.042, 0.468), (0.052, 0.493), (0.100, 0.508), (0.118, 0.490), (0.106, 0.459),
-                 (0.062, 0.452)], 0.3, 1.0, curved=False)
-    c.blob(EYE_AMBER, (0.079, 0.479), 0.0215, 0.0225, 0.3, 1.0)
-    c.blob(EYE_GOLD, (0.079, 0.479), 0.0175, 0.0185, 0.3, 1.0)
-    c.blob(GOLD_LIT, (0.079, 0.472), 0.011, 0.007, 1.0, 0.7)
-    c.blob(INK, (0.079, 0.479), 0.0046, 0.0165, 0.25, 1.0)
-    c.blob(WHITE, (0.0705, 0.489), 0.0042, 0.0042, 0.2, 1.0)
-    c.stroke(INK, [(0.036, 0.466), (0.050, 0.497), (0.100, 0.513), (0.124, 0.492)], 6.5, 0.3, 1.0, (0.6, 0.6),
-             curved=False)
-    # the mouth: a small frown, one heavy stroke, a lip shadow under it
-    c.stroke(INK, [(-0.036, 0.400), (-0.014, 0.4105), (0.012, 0.411), (0.033, 0.4025)], 6.8, 0.3, 1.0, (0.45, 0.6))
-    c.blob(SKIN_DEEP, (0.0, 0.3905), 0.015, 0.0048, 1.5, 0.65)
+    # THE EYES ARE THE ORIGINAL'S, MEASURED OFF team-dante.glb AND GROWN 1.28 TIMES: there both
+    # are ink shapes 72 mm wide set 40 mm either side of the middle, his right 60 tall, his left
+    # 75, and the gold is a small iris INSIDE the left one (32 by 26). The first cute pass made
+    # the gold eye a third bigger than the other, a round disc with a rim and a glint on a black
+    # plate. Owner, 2026-10-05: *"make dantes yellow eye the same size and make it look less like
+    # a sticker"*. So: one silhouette for both eyes, mirrored, and the gold is an angular iris cut
+    # off by the eye's own slanted top edge, so it sits IN the eye. No rim, no glint, no disc.
+    # HIS RIGHT EYE, the squint: one solid ink wedge, its top edge slanted down toward the middle
+    c.mark(INK, [(-0.132, 0.502), (-0.042, 0.480), (-0.040, 0.452), (-0.112, 0.446), (-0.134, 0.466)], 0.3, 1.0,
+           curved=False)
+    # HIS LEFT EYE: the same wedge mirrored, a little taller at its outer end as the original's is
+    c.mark(INK, [(0.134, 0.512), (0.042, 0.480), (0.040, 0.452), (0.112, 0.446), (0.136, 0.466)], 0.3, 1.0,
+           curved=False)
+    c.mark(EYE_GOLD, [(0.064, 0.4565), (0.110, 0.4535), (0.114, 0.4975), (0.064, 0.4805)], 0.25, 1.0, curved=False)
+    c.mark(EYE_AMBER, [(0.064, 0.4565), (0.110, 0.4535), (0.111, 0.4625), (0.064, 0.4645)], 0.4, 0.55, curved=False)
+    c.mark(INK, [(0.0845, 0.4555), (0.0915, 0.4550), (0.0925, 0.4895), (0.0855, 0.4875)], 0.2, 1.0, curved=False)
+    # the mouth: a small frown, one heavy stroke and nothing under it
+    c.stroke(INK, [(-0.030, 0.392), (-0.012, 0.4015), (0.010, 0.402), (0.028, 0.3945)], 7.4, 0.3, 1.0, (0.5, 0.65))
     # the shaved temple on the horn's side
     c.mark(STUBBLE, [(0.132, 0.72), (0.26, 0.72), (0.26, 0.512), (0.160, 0.512), (0.142, 0.566)], 1.5, 0.92)
     # ears: the cup of each, in shade
@@ -427,10 +456,7 @@ def paint_head_front(c):
 
 def _head_side(c, sign):
     """One side of the head. `sign` is +1 for his left (xpos, the shaved temple), -1 for his right."""
-    c.mark(SKIN_SHADE, [(0.04, 0.72), (0.22, 0.72), (0.22, 0.30), (0.08, 0.30), (0.05, 0.46)], 14, 0.5)
-    c.band(SKIN_SHADE, 0.28, 0.380, 5, 0.8)
-    c.band(SKIN_DEEP, 0.28, 0.357, 3, 0.7)
-    c.blob(BLUSH, (-0.124, 0.424), 0.024, 0.020, 8, 0.4)
+    c.mark(SKIN_SHADE, [(0.04, 0.72), (0.22, 0.72), (0.22, 0.30), (0.08, 0.30), (0.05, 0.46)], 14, 0.35)
     # the ear: a lit rim, the cup dark, drawn as a hook, and his stud under it
     c.blob(SKIN_LIT, (0.012, 0.458), 0.026, 0.036, 2, 0.5)
     c.stroke(SKIN_DEEP, [(-0.004, 0.480), (0.016, 0.474), (0.020, 0.452), (0.006, 0.438), (-0.004, 0.452)], 7.0, 0.6, 0.95)
@@ -529,8 +555,9 @@ def paint_torso_back(c):
     c.stroke(GREEN_DARK, [(-0.070, 0.200), (-0.086, 0.160), (-0.094, 0.112)], 8.0, 0.9, 0.85, (0.3, 0.8))
     c.stroke(GREEN_DARK, [(0.118, 0.200), (0.134, 0.162), (0.140, 0.124)], 7.0, 0.9, 0.8, (0.3, 0.8))
     c.stroke(GREEN_LIT, [(-0.034, 0.198), (-0.044, 0.160), (-0.048, 0.124)], 7.5, 1.2, 0.6, (0.3, 0.6))
-    c.mark(PATCH, [(0.040, 0.180), (0.092, 0.184), (0.096, 0.140), (0.044, 0.135)], 0.4, 1.0, curved=False)
-    c.stitch(PATCH_EDGE, [(0.044, 0.176), (0.088, 0.180), (0.092, 0.144), (0.048, 0.140), (0.044, 0.172)], 1.8, 5.0, 3.5, 1.0)
+    if not QUIET_CLOTH: c.mark(GREEN_DEEP, [(0.036, 0.186), (0.096, 0.190), (0.101, 0.136), (0.040, 0.130)], 0.0, 1.0, curved=False)
+    if not QUIET_CLOTH: c.mark(BROWN_LIT, [(0.040, 0.182), (0.092, 0.186), (0.097, 0.140), (0.044, 0.134)], 0.0, 1.0, curved=False)
+    c.stitch(THREAD, [(0.047, 0.175), (0.086, 0.178), (0.090, 0.147), (0.051, 0.142), (0.047, 0.170)], 2.0, 5.5, 4.0, 1.0)
     c.mark(BROWN_DUST, [(-0.20, 0.126), (-0.120, 0.132), (-0.050, 0.120), (0.030, 0.128), (0.120, 0.120),
                         (0.20, 0.128), (0.20, 0.09), (-0.20, 0.09)], 4, 0.45)
 
@@ -663,8 +690,11 @@ def paint_leg(c, s, view):
         c.mark(BROWN_LIT, [(x(0.045), 0.150), (x(0.122), 0.152), (x(0.126), 0.100), (x(0.050), 0.096)], 6, 0.75)
         c.stroke(BROWN_DARK, [(x(0.036), 0.170), (x(0.050), 0.136), (x(0.040), 0.090)], 4.0, 0.7, 0.8)
         if s > 0:
-            c.mark(PATCH, [(0.058, 0.142), (0.110, 0.146), (0.114, 0.103), (0.062, 0.099)], 0.4, 1.0, curved=False)
-            c.stitch(PATCH_EDGE, [(0.063, 0.138), (0.106, 0.141), (0.109, 0.107), (0.066, 0.104), (0.063, 0.134)], 1.8, 5.0, 3.5, 1.0)
+            # wholly BELOW the coat hem (0.134 in front) and above the rolled cuff, so it is never
+            # half hidden: under the hem it showed as a smudge
+            if not QUIET_CLOTH: c.mark(BROWN_DARK, [(0.056, 0.127), (0.112, 0.130), (0.116, 0.084), (0.060, 0.081)], 0.0, 1.0, curved=False)
+            if not QUIET_CLOTH: c.mark(GREEN, [(0.060, 0.123), (0.108, 0.126), (0.112, 0.088), (0.064, 0.085)], 0.0, 1.0, curved=False)
+            c.stitch(THREAD, [(0.066, 0.117), (0.103, 0.119), (0.106, 0.094), (0.069, 0.091), (0.066, 0.113)], 2.0, 5.0, 4.0, 1.0)
         else:
             c.mark(BROWN_DUST, [(-0.058, 0.136), (-0.112, 0.140), (-0.116, 0.104), (-0.066, 0.100)], 5, 0.5)
     elif view == "back":
@@ -802,6 +832,7 @@ def build(size=ATLAS):
     c = swatch("hair_top", HAIR_TOP); done[c.name] = c
     c = swatch("hair_under", HAIR_DEEP); done[c.name] = c
     c = swatch("gold_tone", GOLD_DARK); done[c.name] = c
+    c = swatch("skin_tone", SKIN_SHADE); done[c.name] = c
     c = swatch("belt_tone", BROWN_DARK); done[c.name] = c
     c = swatch("cuff_tone", BROWN_LIT); done[c.name] = c
     c = swatch("wrap_tone", BANDAGE_SHADE); done[c.name] = c

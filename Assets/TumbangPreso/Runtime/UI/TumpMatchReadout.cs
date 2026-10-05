@@ -533,19 +533,10 @@ namespace TumbangPreso.UI
         private void Sandbox()
         {
             if (UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.f7Key.wasPressedThisFrame && PracticeSandbox.Allowed) PracticeSandbox.Toggle();
-            // F8, beside the other developer switches: the cast's share of the ambient occlusion, for a
-            // look test (owner, 2026-10-04: "can we also test ambient occlusion for shading the
-            // characters too?"). Off (the look's own), half, full, and round again.
-            if (UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.f8Key.wasPressedThisFrame && PracticeSandbox.Allowed)
-            {
-                float now = Visual.WorldOutline.CharacterAoTest;
-                // The player's setting, then off, half and full over it, and round again.
-                Visual.WorldOutline.CharacterAoTest = now < 0f ? 0f : now < 0.25f ? 0.5f : now < 0.75f ? 1f : -1f;
-                now = Visual.WorldOutline.CharacterAoTest;
-                string label = now < 0f ? "YOUR SETTING" : now < 0.25f ? "OFF" : now < 0.75f ? "HALF" : "FULL";
-                Debug.Log("[Look] Character ambient occlusion test: " + label);
-                if (Hud.Instance != null) Hud.Instance.ShowToast("CHARACTER AO  ·  " + label, 1.6f);
-            }
+            // The F8 character ambient occlusion switch lived here (off, half, full). Removed on
+            // 2026-10-05 at the owner's word ("we dont need the F8 character AO toggle anymore"):
+            // the editor's Character Redesign menu drives the same single value
+            // (`WorldOutline.CharacterAoTest`), and two writers of one value could disagree.
             _sandbox.enabled = PracticeSandbox.Allowed && !Hud.OnTouch && (PracticeSandbox.Active || ReadyWindow);
             _sandbox.text = "F7 · No cooldowns " + (PracticeSandbox.Active ? "on" : "off");
             // Keep the practice status above the enlarged deck and its reading hint.

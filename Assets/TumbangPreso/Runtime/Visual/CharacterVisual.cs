@@ -116,7 +116,8 @@ namespace TumbangPreso.Visual
             string name = string.IsNullOrEmpty(modelName) ? "" : modelName.Replace("(Clone)", "").Trim();
             switch (name)
             {
-                case "team-paete": return 1.3f;
+                // His redesign is the same tree at the same size (`paete-redesign.glb`, 2026-10-05).
+                case "team-paete": case "paete-redesign": return 1.3f;
                 default: return 1f;
             }
         }
@@ -382,8 +383,14 @@ namespace TumbangPreso.Visual
         public Transform ModelRoot => _modelRoot;
 
         /// <summary>`character_visual.gd::HAND_BONE_CANDIDATES`. The right arm first, because
-        /// the rig ships `holding-right` and `holding-right-shoot` and nothing for the left.</summary>
-        private static readonly string[] HandBones = { "arm-right", "arm-left" };
+        /// the rig ships `holding-right` and `holding-right-shoot` and nothing for the left.
+        ///
+        /// ⚠️ THE FOREARM FIRST, WHERE A RIG HAS ONE. The redesign prototypes add an elbow
+        /// (`forearm-right`, `forearm-left`) and their hand is skinned to it, so on those rigs
+        /// `arm-right` is only the upper arm: measuring the palm there parks a carried tsinelas
+        /// at the elbow, and it then ignores the bend. A cast rig has no such bone and falls
+        /// through to `arm-right` exactly as before.</summary>
+        private static readonly string[] HandBones = { "forearm-right", "arm-right", "forearm-left", "arm-left" };
 
         /// <summary>
         /// How far above the measured palm centre the carried shoe's ORIGIN sits, along the
@@ -398,6 +405,24 @@ namespace TumbangPreso.Visual
         /// bare number while the palm centre below has to be measured rather than copied.
         /// </summary>
         public const float HandTopLift = 0.0617f;
+
+        /// <summary>
+        /// The bone that carries one side's HAND (`side` is "left" or "right") and the palm centre in that bone's space.
+        ///
+        /// ⚠️ ASK THIS, NOT `arm-left` BY NAME. On a rig with elbows the hand is skinned to `forearm-<side>` and the far end
+        /// of `arm-<side>` is the ELBOW, so anything that measured its palm on the arm bone put its prop, its grip or its
+        /// wire on the elbow (2026-10-05). A seven-bone cast rig has no forearm and gets its arm bone, exactly as before.
+        /// </summary>
+        public static bool HandBone(SkinnedMeshRenderer skinned, string side, out int bone, out Vector3 palm)
+        {
+            bone = -1; palm = Vector3.zero;
+            if (skinned == null || skinned.sharedMesh == null || skinned.bones == null) return false;
+            foreach (string wanted in new[] { "forearm-" + side, "arm-" + side })
+                for (int i = 0; i < skinned.bones.Length; i++)
+                    if (skinned.bones[i] != null && skinned.bones[i].name == wanted && PalmCentre(skinned, i, out palm))
+                    { bone = i; return true; }
+            return false;
+        }
 
         /// <summary>
         /// Finds the hand bone and parks an anchor on the top of its hand.

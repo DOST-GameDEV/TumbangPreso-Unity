@@ -39,10 +39,9 @@ namespace TumbangPreso.Visual
             var visual = caster.GetComponent<CharacterVisual>();
             c._right = visual != null ? visual.HandAnchor : null;
             var skinned = visual != null && visual.Model != null ? visual.Model.GetComponentInChildren<SkinnedMeshRenderer>() : null;
-            if (skinned != null)
-                for (int i = 0; i < skinned.bones.Length; i++)
-                    if (skinned.bones[i] != null && skinned.bones[i].name == "arm-left" && CharacterVisual.PalmCentre(skinned, i, out var palm))
-                    { c._leftArm = skinned.bones[i]; c._leftPalm = palm; break; }
+            // The bone her left HAND is on: the forearm on a rig with elbows (`CharacterVisual.HandBone`).
+            if (CharacterVisual.HandBone(skinned, "left", out int hand, out var palm))
+            { c._leftArm = skinned.bones[hand]; c._leftPalm = palm; }
             if (ViewmodelArms.IsFirstPersonFor(caster))
                 foreach (var arms in Object.FindObjectsByType<ViewmodelArms>())
                     if (arms != null && arms.BoundCharacter == caster) { c._arms = arms; break; }
@@ -157,10 +156,8 @@ namespace TumbangPreso.Visual
             // v2 (film v9): the pin in her LEFT hand, going in, so the prick reads from across the court (v9 showed the doll and no
             // pin; the doll's own pin through its chest is too small at that distance).
             var skinned = visual != null && visual.Model != null ? visual.Model.GetComponentInChildren<SkinnedMeshRenderer>() : null;
-            if (skinned != null)
-                for (int i = 0; i < skinned.bones.Length; i++)
-                    if (skinned.bones[i] != null && skinned.bones[i].name == "arm-left" && CharacterVisual.PalmCentre(skinned, i, out var palm))
-                    { d._leftArm = skinned.bones[i]; d._leftPalm = palm; break; }
+            if (CharacterVisual.HandBone(skinned, "left", out int hand, out var palm))
+            { d._leftArm = skinned.bones[hand]; d._leftPalm = palm; }
             if (d._leftArm != null && d._body != null)
             {
                 d._bodyPin = PhaisterProp.Spawn("hatpin", null, null, PhaisterProp.InsectOutlineWidth);

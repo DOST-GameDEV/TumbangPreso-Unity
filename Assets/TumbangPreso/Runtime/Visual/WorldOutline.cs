@@ -296,6 +296,13 @@ namespace TumbangPreso.Visual
         /// <summary>A debug session's test value for the cast's share of the ambient occlusion (F8,
         /// `Hud`): negative means "use the player's setting" (`GameSettings.CharacterShading`).</summary>
         public static float CharacterAoTest = -1f;
+        /// <summary>A debug session's test value for the RADIUS of the cast's own occlusion kernel, in
+        /// metres: zero or less means "use the look's own" (`WorldLookProfile.CharacterAmbientOcclusionRadius`,
+        /// a third of a metre). The redesigned cast's creases are centimetres deep (piping, a fringe
+        /// over a brow, a cuff on a wrist), and a third of a metre spreads the shade past them; a
+        /// smaller radius keeps it IN the crease. Owner, 2026-10-05: "the ao isnt being applied to the
+        /// character creases properly". Like `CharacterAoTest`, never set by the game itself.</summary>
+        public static float CharacterAoRadiusTest = -1f;
         private const int AmbientOcclusionBlurPass = 3;
         /// <summary>
         /// ⚠️⚠️ THE OCCLUSION'S COST FOLLOWS THE GRAPHICS TIER (owner, 2026-10-04: the game is
@@ -974,7 +981,10 @@ namespace TumbangPreso.Visual
             float castShare=CharacterAoTest>=0?CharacterAoTest:Settings.GameSettings.CharacterShadingShare(Settings.SettingsStore.Current.CharacterShading);
             _material.SetFloat("_CharacterAO",castShare);
             // The cast's own kernel (pass 2, CastAO): on only with a share, at a body's scale.
-            _material.SetVector("_CharacterAOParams",new Vector4(castShare,WorldLookProfile.Current.CharacterAmbientOcclusionRadius,.006f,0));
+            float castRadius=CharacterAoRadiusTest>0?CharacterAoRadiusTest:WorldLookProfile.Current.CharacterAmbientOcclusionRadius;
+            // The bias follows the radius down, or a tight kernel sits wholly inside its own bias.
+            float castBias=Mathf.Min(.006f,castRadius*.02f);
+            _material.SetVector("_CharacterAOParams",new Vector4(castShare,castRadius,castBias,0));
             RenderTexture occlusion=null,occlusionBlur=null;
             float aoStrength=AmbientOcclusionLive?WorldLookProfile.Current.AmbientOcclusion*WorldLookPresentation.Current.Weight:0;
             if(aoStrength>0)
