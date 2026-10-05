@@ -43,6 +43,18 @@ namespace TumbangPreso.Visual
             if (_arrivalWeight == 0) RestoreArrivalPose();
         }
 
+        /// <summary>
+        /// Run the held idle on by `seconds`. The arrival holds the game's clock, and the graph with it: a
+        /// film that keeps a body on screen for many seconds (the Arena's opening) calls this each frame so
+        /// the body breathes. Nothing outside an arrival pose (`SetArrivalPose` above zero).
+        /// </summary>
+        public void AdvanceHeld(float seconds)
+        {
+            if (_arrivalWeight <= 0 || !_graph.IsValid()) return;
+            RestoreArrivalPose();
+            _graph.Evaluate(Mathf.Clamp(seconds, 0f, 0.1f));
+        }
+
         private void RestoreArrivalPose()
         {
             if (!_arrivalApplied || _arrivalBones == null) return;

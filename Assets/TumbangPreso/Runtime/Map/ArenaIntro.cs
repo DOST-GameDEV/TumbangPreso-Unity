@@ -157,6 +157,7 @@ namespace TumbangPreso.Map
         private readonly Quaternion[] _restTurn = new Quaternion[Seats];
         private readonly Transform[] _limb = new Transform[Seats * 4];
         private readonly Quaternion[] _limbRest = new Quaternion[Seats * 4];
+        private readonly CharacterAnimator[] _anim = new CharacterAnimator[Seats];
         private static readonly string[] LimbNames = { "leg-left", "leg-right", "arm-left", "arm-right" };
         private bool _posing;
 
@@ -431,6 +432,14 @@ namespace TumbangPreso.Map
 
                 _body[s] = body; _root[s] = root;
                 _rest[s] = root.localPosition; _restTurn[s] = root.localRotation;
+                // ⚠️ THE BODY IS PUT IN ITS IDLE, AND KEPT BREATHING (owner, 2026-10-06, of the cut to the taya:
+                // "the idle animations arent playing on any of the characters so theyre just A-posing"). The
+                // arrival this film replaced asked each animator for its idle (`SetArrivalPose`); the film did
+                // not, so a body whose graph had not yet run stood in its bind pose, and the game's clock is
+                // held for the whole film, so nothing would have moved it on. The idle is asked for here and
+                // run on each frame (`Models`).
+                _anim[s] = body.GetComponent<CharacterAnimator>();
+                if (_anim[s] != null) _anim[s].SetArrivalPose(s, 0.001f);
                 if (visual.Model == null) continue;
                 foreach (var bone in visual.Model.GetComponentsInChildren<Transform>(true))
                     for (int k = 0; k < 4; k++)
@@ -489,6 +498,13 @@ namespace TumbangPreso.Map
                 // The walk: legs and arms swung about the model's own side axis, opposite pairs
                 // together. Written whole each frame from the rest pose, after the animator
                 // (which holds its idle through the arrival), so nothing accumulates.
+                // The idle, a frame on; the limbs' rest is what it has just written, so the walk is laid over it.
+                if (_anim[s] != null)
+                {
+                    _anim[s].AdvanceHeld(Time.unscaledDeltaTime);
+                    for (int k = 0; k < 4; k++) if (_limb[s * 4 + k] != null) _limbRest[s * 4 + k] = _limb[s * 4 + k].localRotation;
+                }
+                if (stride <= 0.001f) continue;
                 Vector3 side = root.right;
                 float leg = Mathf.Sin(phase) * 27.0f * stride, arm = Mathf.Sin(phase) * 19.0f * stride;
                 Swing(s * 4, side, leg); Swing(s * 4 + 1, side, -leg);
@@ -515,6 +531,7 @@ namespace TumbangPreso.Map
                 if (_root[s] != null) { _root[s].localPosition = _rest[s]; _root[s].localRotation = _restTurn[s]; }
                 for (int k = 0; k < 4; k++)
                     if (_limb[s * 4 + k] != null) _limb[s * 4 + k].localRotation = _limbRest[s * 4 + k];
+                if (_anim[s] != null) { _anim[s].SetArrivalPose(s, 0.0f); _anim[s] = null; }
             }
         }
 
