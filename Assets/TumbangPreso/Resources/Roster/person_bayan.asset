@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterEntryAsset
   Id: bayan
   Model: {fileID: -1533133609512987023, guid: 0dc875b93a83da942bd17f72970c2968, type: 3}
+  ArmModel: {fileID: 0}
   PetModel: {fileID: 0}
   Material: {fileID: 0}
   Tint: {r: 1, g: 1, b: 1, a: 1}

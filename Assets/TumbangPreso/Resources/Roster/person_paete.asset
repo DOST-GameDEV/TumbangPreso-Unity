@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterEntryAsset
   Id: paete
   Model: {fileID: -2956601933218687513, guid: 35220d51cbc5487db8c692d3bd281476, type: 3}
+  ArmModel: {fileID: 8873268921323625194, guid: 84b31d6e2feb2ae4f96317db1244f8c4, type: 3}
   PetModel: {fileID: 0}
   Material: {fileID: 0}
   Tint: {r: 1, g: 1, b: 1, a: 1}

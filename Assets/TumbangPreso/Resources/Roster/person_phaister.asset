@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterEntryAsset
   Id: phaister
   Model: {fileID: 7652984633557190902, guid: 5c631e73b0954575ad4f48282f376cf1, type: 3}
+  ArmModel: {fileID: 0}
   PetModel: {fileID: 0}
   Material: {fileID: 0}
   Tint: {r: 1, g: 1, b: 1, a: 1}
