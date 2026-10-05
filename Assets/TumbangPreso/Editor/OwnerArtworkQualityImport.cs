@@ -9,13 +9,15 @@ namespace TumbangPreso.EditorTools
     public sealed class OwnerArtworkQualityImport : AssetPostprocessor
     {
         public const int QualityMaxTextureSize = 8192;
-        public override uint GetVersion() => 3;
+        public override uint GetVersion() => 4;
         private void OnPreprocessTexture()
         {
             bool menu = assetPath.StartsWith("Assets/TumbangPreso/Resources/UI/owner-menu-edits/", StringComparison.Ordinal);
             bool painted = assetPath.StartsWith("Assets/TumbangPreso/Resources/UI/owner-painted/", StringComparison.Ordinal);
             bool legacyBackdrop = assetPath == "Assets/TumbangPreso/Resources/UI/main-menu/MENU BACKDROP.png";
-            if (!menu && !painted && !legacyBackdrop) return;
+            bool card = assetPath.StartsWith("Assets/TumbangPreso/Resources/UI/map-cards/", StringComparison.Ordinal)
+                || assetPath.StartsWith("Assets/TumbangPreso/Resources/UI/mode-cards/", StringComparison.Ordinal);
+            if (!menu && !painted && !legacyBackdrop && !card) return;
             Apply((TextureImporter)assetImporter, assetPath);
         }
 
