@@ -51,3 +51,22 @@ processes agreed on both final positions. The controlling owner had no backward
 step, the observer refreshed, the pull retired and the pair settled. All three
 players exited 0 after bounded-trace retirement. This qualifies this one seeded
 condition, not every loss pattern, a disconnect, WAN play or human visual feel.
+
+## Host-loss constraint regression
+
+A focused native regression starts a real pair constraint, records host loss
+through MatchAbandon during its reach, then checks that the constraint retires,
+both horizontal positions stop and a new authoritative grab is refused. Clearing
+that authority latch permits another pair constraint, proving that neither motor
+retained the old attachment. This is an in-engine authority-reset control, not
+an actual process rejoin. It passes 1/1 on the frozen 16fdcdae runtime plus the new
+test. All prepared input hashes match after the run, exit is 0, and the existing
+OOM counters are unchanged. No gameplay code was changed for this check.
+
+The matching standalone artifact was then tested with three real processes.
+The owned host process was stopped after the controlling owner's trace reported
+an active vine at 12.22 seconds. Both surviving peers logged HostLost and revoked
+authority while still alive, observed about 2.22 seconds after the stop request.
+All three processes exited 0 after controlled cleanup. This establishes the real
+transport callback path in addition to the native constraint control; it does
+not prove a process rejoin, WAN recovery or post-teardown visual presentation.
