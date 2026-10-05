@@ -232,6 +232,12 @@ Nothing was deleted or renumbered.
   TEXT rather than key-state events. Native producer-to-consumer checks pass13/13;
   physical and paired skill effects remain unqualified.
   [Input evidence](reports/laptop-validation-2026-10-05/editor151-network-input/README.md).
+- [x] Retire E/Q presses received while the player input reader is disabled.
+  Original actual-consumer cases cast the15s signature or imbue the owned slipper
+  without a fresh press; fresh-E control passes. Existing release-before-use on
+  enable fixes both, with16 related native cases passing. Root verified nine raw
+  Git blobs, XML and exact runtime/test hashes; physical E/Q report stays open.
+  [Reader recovery evidence](reports/laptop-validation-2026-10-05/reader-reenable/README.md).
 - [x] Give active Unstoppable a named first-person HUD countdown using its existing
   clock. Original rendered confirmation fails while two clock/inactive controls
   pass; candidate three native cases pass with captured label. Preserve skill
