@@ -29,8 +29,11 @@ copies. Its three properties exist in the current Toon shader. Root integrates
 this narrow delta; merged native compilation and affected acceptance are pending.
 
 Laptop owns ArenaStage.cs, ArenaFallRecovery.cs and a focused replacement-owner
-lifecycle fixture. Its first native unit also checks merged compilation. Require
-original public enable/disable reproduction and controls before any lifecycle fix.
+lifecycle fixture. Published2a77b21ff fixes three reproduced retired-owner failures; all five native
+cases pass including current-owner controls. Root independently verified nine
+raw Git blobs, three LF hashes, XML and exact terminal restoration receipts.
+Merged source compiles/imports. Laptop next owns changed replay/render/roster
+checks, then a coherent152 build. Root's import/UI candidates remain unapplied.
 Root owns Net/UI, integration and the shared queue/checkpoint. Preserve protected
 ProjectAuditorSettings.asset dirt and private tools/build_yasmin_benguet_voxel.py.
 The uncommitted HomeModeCardReadabilityTests.cs/meta fixture is qualified, but the
@@ -63,11 +66,14 @@ Do not call it an automatic approval review or a lack of owner authorization.
 The16 rejected Root build targets are protected from retries or alternate-method
 bypass in the local JSON receipt. Preserve Desktop releases and essential evidence.
 No task-owned Root native jobs, helpers or browser tabs remain active.
+Heartbeat1357 removed48 published temporary commit-message files,7289bytes,
+after terminal/path/subject checks; preserved all active-worktree refs and builds.
 
 ## Next action
 
-Finish publishing the reviewed fa922 replay delta, share the exact ref with the
-laptop without disturbing its frozen native inputs, inspect its compilation and
-Arena reproduction result, then resolve concrete failures before one coherent
-protocol152 build and affected menu/map/model/network checks. Continue independent
-UI source work while laptop execution runs. Keep owner updates at least every60s.
+Latest source2a77b21ff includes fa922 replay correction and checked Arena repair.
+Laptop qualifies changed replay/roster/render before a coherent152 build. Root
+prepares actual map/mode-card import baseline (default compressed/NPOT settings
+escape the existing guard) and revised Home poster/caption render checks. Exact
+packets remain in Logs/ui-card-import1005 and Logs/home-mode-card1005. Neither
+candidate is applied to production before native comparison. Keep updates every60s.
