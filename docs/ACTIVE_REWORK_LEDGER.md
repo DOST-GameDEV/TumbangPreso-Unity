@@ -21,44 +21,47 @@ explicitly authorized; unnecessary AGENTS feature entry was removed at owner req
 
 ## Current source and live work
 
-Current incoming a9ee42365 integrates laptop replay fix1968ee789 and PC HUD40db:
-root checked13 exact evidence Git blobs, original2FAIL/1PASS and final3PASS.
-Replay source/fixture diff reviewed; no repeated unchanged native run. Generic
-online failure copy now preserves the technical reason without guessing room
-expiry; copy-only change, no transport behavior or network-resolution claim.
-Owner-requested screenshot player22960/parent21700/session79371 is live on
-accepted1d401 build, isolatedpc-ui-shots-host1005a,1080p. Do not control or close;
-physical Escape stopped Computer Use. Parent restores preferences after exit.
+Published78903035c includes checked HUD40db, replay1968, online failure copy14b
+and scoped quit evidence. Owner is using the PC: no Computer Use or PC native
+launches until released. Screenshot player22960/parent21700/session79371 finished
+normally0; named settings/shared input restored, exe/runtime unchanged. All old
+window handles are stale. Personal PC use leaves source work authorized.
 
-HUD source40dbb7ca7 is published under M4. Owner wants this PC for personal
-use: leave mouse, keyboard, focus and windows alone until owner resumes control.
-Laptop acknowledged this restriction. The requested screenshot player and its
-restoration parent remain owned by the user's active use; no PC test launches.
-Continue source investigation; QA Relay timeout/host kick remains unresolved.
+Root LAN source unit is qualified and ready for publication: one-line parser
+rejects ports above ushort.MaxValue plus12-case fixture in LobbyAndSettingsTests.cs.
+Native original6FAIL/6validPASS -> candidate12PASS0skip. Both parents/restoration
+terminal. Root checked ten exact evidence Git blobs, XML and source/fixture LF
+hashes against immutable Logs/lan-port-boundary1005/packet.json. No repeated
+unchanged tests; no malformed packets sent. Broader QA failures stay open.
+Preserve protected Auditor dirt/private cancelled Yasmin script. M4tyu633 only.
 
-Latest incoming f69a64a03/0d11a2716 integrated normally, M4 authors verified;
-43 raw evidence hashes exact and13 input-consumer XML cases pass. Owner's latest
-question is cast visibility. Unstoppable FPP confirmation fix is published40db:
-original rendered label fails/two clock-inactive controls pass -> candidate3/3.
-StatusStack already had name/clock; add ShowWithReticle only on Dante signature
-and keep its named timer despite reticle suppression. Existing ward/mechanics
-unchanged. Native22108/8576 and exact202 metadata/prefs/profile/Quality restoration
-terminal, actual HUD image inspected. No source work overlaps laptop replay lane.
+Laptop current61a Windows build is terminal/qualified/restored. Ordinary local
+online pair7345/host16344/client22344 is terminal, roomXYUU; public row admission,
+ReadyACK>=268.4s/client leave/rejoin/host leave and both own-menu Quit exits0.
+Root verified20 raw Git blobs and inspected row/rejoin/recovered-Home captures.
+Those captures are JPEG bytes despite PNG names: controls, not lossless UI proof.
+This is TWO INSTANCES ON LAPTOP, not new two-machine proof. Exact job state must be refreshed
+from the coordinating chat before changing its slot or files. Root owns Net/UI,
+TODO/ledger and eventual LAN boundary publication; laptop owns its current test.
 
-Combined1d401 Windows full16584/classification67631 terminal0,258files/
-2691131135B, Runtime883b2812a691351178ee2c94f05fbe22a0e8e8655f5e3c1c2b42a42e95d3d7b7.
-Actualplayer19352 updatedRules pages verified, but normalquit exitC0000005 at
-UnityPlayer.dll RVA16f9c36; corrected local symbol invocation resolves
-remove_free_block +22. Identical engine-module hash to earlier symbolized build;
-allocator address does not establish the corrupting call stack or source cause.
-Retained event/terminal/symbol receipts: reports/reliability-2026-10-05/quit-access-violation.
-Parent35902 terminal/profiles+input restored/runtime-exe unchanged. Do not claim
-cleanexit0. Owner complained of ChatGPT close attempts via laptop: all further
-close/AltF4 actions are STOPPED pending actual target/focus audit. Never close
-Codex/ChatGPT or whole browsers. Current windows inventory has only pre-existing
-ChatGPT and Chrome, no owned games. Avoid stale window IDs and occluded captures.
-Laptop now reserves MatchReplayArchive.cs + focused lifecycle test, own native job.
-Exact current source/jobs/next is current-resume.json; old proof context below.
+Earlier1d401 review player19352 quit C0000005. Exact local dump matches process,
+exception and Unity Main Thread15248. Installed-symbol StackWalk recovers
+remove_free_block +22 -> DynamicHeapAllocator::RemoveBlock +121, then an unknown
+module/incomplete unwind. No source corruption cause or workaround is proven.
+Raw dump remains local/private. Redacted receipts are in the quit-access-violation
+report, all4 Git blobs hash-verified. Owner screenshot run's later exit0 is a
+control observation with unobserved close route, not resolution of the crash.
+
+All close shortcuts remain stopped after owner complaint. Laptop observed a
+client2687718 metadata/screenshot mismatch showing occluding host853516 until
+explicit activation/fresh view. This is a tool confound, not proof of the earlier
+ChatGPT-close cause. Local read-only crop rejects non-foreground/hidden/minimized
+targets; syntax checked only while owner uses PC. TESTING now reflects current
+owner execution directives and actual-window verification, removing stale guards.
+
+Exact local inputs/jobs/resume command: Logs/arrival-pan-review1004/current-resume.json.
+
+## Retained proof context
 
 Published source e77241381552f8c8bbbe5e914a0cdf042c88956c; frozen paired artifact
 c17101d03/protocol151/recording14. Rules palette/plate/Done styling qualified

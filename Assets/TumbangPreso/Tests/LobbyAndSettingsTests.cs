@@ -705,6 +705,39 @@ namespace TumbangPreso.Tests
             Assert.IsFalse(LanBeacon.TryParsePayload("tumbang-preso-lan|invalid_port|1|4|0|K7X9|Host", "127.0.0.1", out _));
         }
 
+        [TestCase(65536, false)]
+        [TestCase(65537, false)]
+        [TestCase(int.MaxValue, false)]
+        [TestCase(65536, true)]
+        [TestCase(65537, true)]
+        [TestCase(int.MaxValue, true)]
+        public void LanBeaconRejectsPortsThatWouldWrapInTheTransport(int port, bool currentVersion)
+        {
+            string payload = currentVersion
+                ? LanBeacon.BuildPayload(port, 1, 4, false, "K7X9", "Boundary room", 1, 1, 12, "boundary-host")
+                : $"{LanBeacon.Magic}|{port}|1|4|0|K7X9|Boundary room";
+            Assert.IsFalse(LanBeacon.TryParsePayload(payload, "192.0.2.1", out _),
+                "An advertised endpoint must fit the transport's UDP port without truncation.");
+        }
+
+        [TestCase(1, false)]
+        [TestCase(8910, false)]
+        [TestCase(65535, false)]
+        [TestCase(1, true)]
+        [TestCase(8910, true)]
+        [TestCase(65535, true)]
+        public void LanBeaconPreservesValidPortBoundariesAndDefaultPort(int port, bool currentVersion)
+        {
+            string payload = currentVersion
+                ? LanBeacon.BuildPayload(port, 1, 4, false, "K7X9", "Boundary room", 1, 1, 12, "boundary-host")
+                : $"{LanBeacon.Magic}|{port}|1|4|0|K7X9|Boundary room";
+            Assert.IsTrue(LanBeacon.TryParsePayload(payload, "192.0.2.1", out var entry));
+            Assert.AreEqual(port, entry.Port);
+            Assert.AreEqual("K7X9", entry.JoinCode);
+            Assert.AreEqual("Boundary room", entry.HostName);
+            Assert.IsTrue(entry.IsJoinable);
+        }
+
         [Test]
         public void LanEntrySortOrderPutsJoinableFirstThenFillThenName()
         {
