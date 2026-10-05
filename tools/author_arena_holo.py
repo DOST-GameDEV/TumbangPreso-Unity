@@ -2,6 +2,7 @@
 
     py -3 tools/author_arena_textures_holo.py            (the textures, first)
     blender -b --python tools/author_arena_holo.py -- --version=vN [--shots=eye,air,...] [--no-render]
+    blender -b --python tools/author_arena_holo.py -- --version=vN --options     (the three balloon designs, blocked)
 
 Builds ArtSource/arena/kits/holo.blend (collection `arena_holo`), tools/arena_holo_motion.json and
 the review pictures Logs/arena/holo/holo_<shot>_vN.png. Read docs/ARENA_ART_BRIEF.md first.
@@ -17,10 +18,11 @@ overwatch".
 WHAT IS HERE, all of it placed BY SIGHTLINE (`SITES`, and the SIGHT report printed on every build:
 from a player's eye by the can, how many degrees of each thing stand over the stadium, and how much
 of it the towers and the stadium really leave in view, by casting rays at the other kits):
-  1. SIX AD COLUMNS. A curved strip of advertisements 49 m wide that Unity scrolls upward, a second
-     strip on the far side for the air, a dotted sheet 2 m inside it, scan hoops, a soft beam, and
-     an emitter buoy under it. Four stand at the open corners' shoulders 390 to 410 m out, two
-     further off among the towers. They top out ABOVE the towers.
+  1. SIX AD COLUMNS. A tall, straight, FLAT strip of advertisements 52 m wide, square on to the can,
+     that Unity scrolls upward; a second strip behind it reading the right way for the air; between
+     and round them a dotted sheet, a soft beam, edge lines and scan bands, each in its own plane;
+     a projector bar on two emitter buoys under it. Four stand at the open corners' shoulders 390
+     to 410 m out, two further off among the towers. They top out ABOVE the towers.
   2. THE GLOBE over the east stand: a wireframe sphere 104 m across that turns on a leaning axis, and
      a ring of gold text that turns the other way.
   3. LOGOS AND LINE-ART FIGURES of the game's world, each a sheet of light with a dotted sheet behind
@@ -28,10 +30,11 @@ of it the towers and the stadium really leave in view, by casting rays at the ot
      (near, over the east stand; far, on tower T22's roof; and on every ad column), the TUMP stamp, a jeepney, a carabao, a
      rooster, the can being struck, a sprig of sampaguita. Cubes of light drift round the big ones.
   4. THE MASSIVE SLIPPER, both ways, for the owner to choose:
-       the BALLOON  a 74 m inflatable tsinelas with a face, standing on its heel over the south
-                    stand's canopy and bowing to the stage, moored by a tether and four guy ropes to
-                    a winch and anchor rings on the canopy. A closed mesh, painted. It sways about
-                    its tether point.
+       the BALLOON  an inflatable slipper CHARACTER 60 m tall, fat and round, with stubby arms and
+                    feet, a scarf and a small happy face, sitting in the air over the south stand's
+                    canopy and leaning toward the stage, moored by a tether and four guy ropes to a
+                    winch and anchor rings on the canopy. Closed solids, painted. It sways about its
+                    tether point. (Its first design was a flat sole with a staring face: see `balloon`.)
        the HOLOGRAM the same slipper as a wireframe with a faint striped volume, 84 m, standing on its heel and turning over
                     an emitter buoy north of the stadium.
 
@@ -73,6 +76,8 @@ FILE = {"ads": "ads", "fx": "fx", "logo": "fx", "metal": "metal", "led": "led", 
 FLAT = {"ads": (0.5, 0.8, 0.9), "fx": (0.4, 0.9, 1.0), "logo": (0.9, 0.8, 0.5), "metal": (0.2, 0.22, 0.36), "led": (0.4, 0.9, 1.0),
         "balloon": (0.95, 0.8, 0.15)}
 LIGHT = ("ads", "fx", "logo")              # light, not surfaces
+BLK = {"blk_yellow": (0.70, 0.60, 0.02), "blk_back": (0.58, 0.48, 0.02), "blk_maroon": (0.30, 0.02, 0.03), "blk_red": (0.48, 0.04, 0.05),
+       "blk_cream": (0.90, 0.82, 0.58), "blk_pink": (0.86, 0.26, 0.22)}   # the option blockouts' flat colours: never in the kit
 _mats = {}
 
 
@@ -80,6 +85,16 @@ def material(kind):
     """arena_holo_<kind>: its painted albedo and its emission image."""
     if kind in _mats:
         return _mats[kind]
+    if kind in BLK:
+        m = bpy.data.materials.new(kind)
+        m.use_nodes = True
+        b = m.node_tree.nodes.get("Principled BSDF")
+        b.inputs["Base Color"].default_value = (*BLK[kind], 1.0)
+        b.inputs["Emission Color"].default_value = (*BLK[kind], 1.0)
+        b.inputs["Emission Strength"].default_value = 0.35
+        b.inputs["Roughness"].default_value = 0.5
+        _mats[kind] = m
+        return m
     m = bpy.data.materials.new(PRE + kind)
     m.use_nodes = True
     m.diffuse_color = (*FLAT[kind], 1.0)
@@ -396,8 +411,6 @@ COLUMNS = [   # name, bearing, distance, foot of the strip, its top, the strip f
     ("s_far", 180.5, 700.0, 190.0, 870.0, 0),
     ("w_far", 290.0, 620.0, 150.0, 786.0, 1),
 ]
-COLUMN_R = 20.0
-COLUMN_ARC = 140.0
 # name, tile, bearing, distance, height of its middle, width, colour of its hardware's lights
 CARDS = [
     ("pcx_east", "pcx", 110.0, 380.0, 262.0, 112.0, ("white", "cyan")),
@@ -413,7 +426,9 @@ SLIPPER_HOLO = dict(bearing=22.0, r=255.0, z=174.0, length=84.0)
 # The tether point, on the south canopy. The canopy's masts stand at radius 184.5 every ten degrees
 # (..., 199.5, 209.5) with stays running in to its front edge: the mooring is laid BETWEEN two masts,
 # and the balloon's heel rides above their heads (z 91).
-BALLOON_AT = dict(bearing=204.5, r=178.0)
+# The BODY floats a little inboard and 2.5 degrees east of its mooring, so it stands clear of the
+# south-west ad column (bearing 212) seen from the can.
+BALLOON_AT = dict(bearing=204.5, r=178.0, body_bearing=202.0, body_r=171.0, yaw=6.0, lean=12.0, lift=27.0)
 PCX_FAR = dict(tower="T22", bearing=189.0, r=760.0, width=132.0)
 MOVES = []
 BALLOON_OBJECTS = []
@@ -424,56 +439,78 @@ def move(ob, kind, **kw):
     return ob
 
 
+COLUMN_W = 52.0                            # one advertisement across: an ad is 52 m by 26 m, so nothing is stretched
+
+
 def column(coll, name, bearing, r, z0, z1, strip, built):
-    """AN AD COLUMN. The strip is a curved wall of advertisements (one ad is 48.9 m wide and half as
-    tall); v is the height over 8 ads, so moving v scrolls it. The far side carries the other strip."""
+    """AN AD COLUMN: A TALL, STRAIGHT, FLAT STRIP OF LIGHT, square on to the can. (The first build bent
+    the strip round a tube; the owner, 2026-10-05: "the ad columns should be straight flat, not
+    tubes". His reference is flat banners of stacked advertisements standing in the sky.)
+
+    One ad fills the strip's width, so an ad is read whole and undistorted from the stage; v is the
+    height over eight ads, so moving v scrolls the stack. Depth the flat way, every layer in its own
+    plane (metres further from the can than the front strip):
+        -1.4  a scan band across the head and the foot       -0.8  edge lines and divider lines
+         0.0  THE STRIP, one-sided, reading toward the can    0.9  a soft beam, wider than the strip
+         1.6  a broken dotted sheet                           3.0  THE BACK STRIP, the other eight ads,
+         3.8  the back's edge lines                                one-sided, reading the right way
+         4.4  the back's scan bands                                from the air
+    and one sheet of beam square across them all, so the column is not a hairline seen edge-on.
+    Under it a projector bar rides on two emitter buoys."""
     F = Frame(bearing, r)
-    arc = math.radians(COLUMN_ARC)
-    width = COLUMN_R * arc
-    ad_h = width / T.AD_ASPECT
-    segs = 8
+    w = COLUMN_W
+    ad_h = w / T.AD_ASPECT
     ads = Mesh("column_%s_ads" % name, F.p(0, 0, z0))
     for face, st in ((0, strip), (1, 1 - strip)):
         ua, ub, _ = T.ad_uv(st)
         ua, ub = ua + 0.5 / T.ADS_W, ub - 0.5 / T.ADS_W
-        for k in range(segs):
-            f0, f1 = k / segs, (k + 1) / segs
-            pts = []
-            for f in (f0, f1):
-                a = (f - 0.5) * arc
-                d = (-F.dy * math.cos(a) + F.dx * math.sin(a)) if face == 0 else (F.dy * math.cos(a) - F.dx * math.sin(a))
-                pts.append(F.o + d * COLUMN_R)
-            v0, v1 = 0.37 * face, 0.37 * face + (z1 - z0) / (ad_h * T.ADS_PER_STRIP)
-            ads.quad([pts[0] + Z * z0, pts[1] + Z * z0, pts[1] + Z * z1, pts[0] + Z * z1], "ads",
-                     (ua + (ub - ua) * f0, v0, ua + (ub - ua) * f1, v1))
+        v0 = 0.37 * face
+        v1 = v0 + (z1 - z0) / (ad_h * T.ADS_PER_STRIP)
+        if face == 0:
+            pts = [F.p(-w / 2, 0.0, z0), F.p(w / 2, 0.0, z0), F.p(w / 2, 0.0, z1), F.p(-w / 2, 0.0, z1)]
+        else:                                                     # seen from behind: its reader's left is +x here
+            pts = [F.p(w / 2, 3.0, z0), F.p(-w / 2, 3.0, z0), F.p(-w / 2, 3.0, z1), F.p(w / 2, 3.0, z1)]
+        ads.quad(pts, "ads", (ua, v0, ub, v1))
     ob = move(ads.done(coll, weld=False), "scroll", v_per_second=0.018 + 0.004 * (strip * 2 - 1), material="arena_holo_ads")
     built.append(("column " + name, [ob], "ad column"))
 
     rig = Mesh("column_%s_rig" % name, F.p(0, 0, z0))
     dbox = T.atlas_uv(T.FX["dots"])
-    step = width / 4
-    n = int((z1 - z0) / step)
-    for face in (0, 1):                                           # the dotted sheet 2 m inside each strip, in square panels
-        for j in range(n):
-            for k in range(4):
-                pts = []
-                for f in (k / 4, (k + 1) / 4):
-                    a = (f - 0.5) * arc
-                    d = (-F.dy * math.cos(a) + F.dx * math.sin(a)) if face == 0 else (F.dy * math.cos(a) - F.dx * math.sin(a))
-                    pts.append(F.o + d * (COLUMN_R - 2.0))
-                za, zb = z0 + j * step, z0 + (j + 1) * step
-                if (j + k + face) % 3 == 0:
-                    continue                                      # a panel in three is left out: the sheet is broken, not a wall
-                rig.quad([pts[0] + Z * za, pts[1] + Z * za, pts[1] + Z * zb, pts[0] + Z * zb], "fx", dbox)
-    for zz in [z0 - 4.0, z1 + 1.0] + [z0 + ad_h * k for k in range(4, int((z1 - z0) / ad_h), 4)]:
-        hoop(rig, F.p(0, 0, zz), COLUMN_R + 1.6, 3.0, 24)
-    crossed(rig, F.p(0, 0, z0 - 30.0), F.p(0, 0, z1 + 90.0), COLUMN_R * 2.7)
-    base = F.p(0, 0, z0 - 30.0)
-    buoy(rig, base, 14.0, 16 if strip == 0 else 8, 4 if strip == 0 else 3, "cyan", "gold" if strip == 0 else "magenta")
-    for k in range(3):                                            # three projector horns standing in the buoy's ring
-        a = math.tau * k / 3 + 0.5
-        c = base + Vector((math.cos(a), math.sin(a), 0)) * 10.4
-        rig.tube(c - Z * 0.8, c + Z * 5.0, 1.2, 6, 0.7, cap="led.white")
+    cell = w * 1.12 / 4
+    rows = int((z1 - z0 + 12.0) / cell)
+    for j in range(rows):                                         # the dotted sheet: square panels, one in three left out
+        for k in range(4):
+            if (j + k * 2 + int(bearing)) % 3 == 0:
+                continue
+            xa, za = -w * 0.56 + k * cell, z0 - 6.0 + j * cell
+            rig.quad([F.p(xa, 1.6, za), F.p(xa + cell, 1.6, za), F.p(xa + cell, 1.6, za + cell), F.p(xa, 1.6, za + cell)], "fx", dbox)
+    beam = T.atlas_uv(T.FX["beam"])
+    foot, head = z0 - 26.0, z1 + 80.0
+    rig.quad([F.p(-w * 0.85, 0.9, foot), F.p(w * 0.85, 0.9, foot), F.p(w * 0.85, 0.9, head), F.p(-w * 0.85, 0.9, head)], "fx", beam)
+    rig.quad([F.p(0.0, -w * 0.30, foot), F.p(0.0, w * 0.36, foot), F.p(0.0, w * 0.36, head), F.p(0.0, -w * 0.30, head)], "fx", beam)
+    scan = T.atlas_uv(T.FX["scan"])
+    for y, sgn in ((-0.8, 1), (3.8, -1)):                         # the frame: an edge line up each side, a divider every four ads
+        for sx in (-1, 1):
+            rig.ribbon([F.p(sx * (w / 2 + 1.3), y, z0 - 3.0), F.p(sx * (w / 2 + 1.3), y, z1 + 3.0)], 1.1, F.dx, cross=F.dy)
+        zz = z0 + ad_h * 4
+        while zz < z1 - 1.0:
+            rig.ribbon([F.p(-w / 2 - 0.4, y + 0.2 * sgn, zz), F.p(w / 2 + 0.4, y + 0.2 * sgn, zz)], 0.8, Z)
+            zz += ad_h * 4
+        for zz in (z0 - 3.0, z1 + 3.0):                           # corner ticks closing the frame at the foot and the head
+            for sx in (-1, 1):
+                rig.ribbon([F.p(sx * (w / 2 + 1.85), y - 0.2 * sgn, zz), F.p(sx * (w / 2 - 7.0), y - 0.2 * sgn, zz)], 1.1, Z)
+    for y in (-1.4, 4.4):
+        for zz in (z0 - 9.0, z1 + 5.0):
+            rig.quad([F.p(-w * 0.54, y, zz), F.p(w * 0.54, y, zz), F.p(w * 0.54, y, zz + 3.4), F.p(-w * 0.54, y, zz + 3.4)], "fx", scan)
+    # The emitter: a projector bar under the strip, its ends inside two buoys.
+    band = "gold" if strip == 0 else "magenta"
+    top = z0 - 26.0
+    rig.box(F.p(0.0, 1.5, top - 1.0), (w * 0.94, 5.0, 3.2), F.dx, kinds={"+z": "led.white", "-y": "led." + band, "+y": "led." + band})
+    for sx in (-1, 1):
+        buoy(rig, F.p(sx * w * 0.47, 1.5, top), 9.5, 16 if strip == 0 else 8, 3, "cyan", band)
+        rig.tube(F.p(sx * w * 0.47, 1.5, top - 0.6), F.p(sx * w * 0.47, 1.5, top + 6.0), 1.3, 6, 0.7, cap="led.white")   # a horn in each buoy's lens
+    fan = T.atlas_uv(T.FX["slice"])
+    rig.quad([F.p(-w * 0.47, 1.25, top + 0.8), F.p(w * 0.47, 1.25, top + 0.8), F.p(w * 0.5, 1.25, z0 - 9.5), F.p(-w * 0.5, 1.25, z0 - 9.5)], "fx", fan)
     built.append(("column " + name, [rig.done(coll)], None))
 
 
@@ -660,45 +697,154 @@ def slipper_hologram(coll, built):
     built.append(("slipper hologram", [ob], None))
 
 
-def balloon(coll, built, roof_z):
-    """THE SLIPPER BALLOON. One closed skin for the sole (a pillow: the outline swept from the tread's
-    middle round the rim to the footbed's middle), a toe post with a knot, two strap tubes that end
-    inside the knot and inside the sole, a valve, tether patches, and five ropes that end inside the
-    sole and inside the winch and the anchor rings. It stands on its heel, 16 degrees forward of
-    upright so its face looks down at the stage, turned 10 degrees so it is not flat on.
-    Its pivot is the tether point on the canopy; it sways about it."""
-    at = BALLOON_AT
-    F = Frame(at["bearing"], at["r"])
-    L, W, Th = T.BALLOON["length"], T.BALLOON["width"], T.BALLOON["thick"]
-    zc = roof_z(F.o.x, F.o.y)
-    pivot = Vector((F.o.x, F.o.y, zc + 2.2))                       # the winch's fairlead
-    yaw = Matrix.Rotation(math.radians(10.0), 3, "Z")
-    X = yaw @ F.dx
-    N0 = yaw @ (-F.dy)                                             # the footbed looks at the can
-    th = math.radians(16.0)
-    Y = Z * math.cos(th) + N0 * math.sin(th)                       # heel to toe: up, and forward over the stage
-    N = N0 * math.cos(th) - Z * math.sin(th)
-    heel = pivot + F.dy * 7.0 + Z * 27.0                           # the heel's lowest point: over the winch, a little outboard
-    sc = L / 58.0                                                  # the strap and the fittings were drawn for a 58 m slipper
+# ---------------------------------------------------------------- the inflatable toy builder
+def toy_capsule(m, p0, p1, r0, r1, kind, box, sides=12, caps=3):
+    """A closed, round-ended lobe from p0 to p1 (an arm, a foot, a knot): u runs along it by true
+    length, v round it."""
+    bm = m.bm
+    p0, p1 = Vector(p0), Vector(p1)
+    ax = (p1 - p0).normalized()
+    ref = Z if abs(ax.z) < 0.9 else Vector((1, 0, 0))
+    u = ax.cross(ref).normalized()
+    v = ax.cross(u)
+    stations = []
+    for k in range(1, caps + 1):
+        a = (math.pi / 2) * k / caps
+        stations.append((p0 - ax * (r0 * math.cos(a)), r0 * math.sin(a)))
+    for k in range(caps, 0, -1):
+        a = (math.pi / 2) * k / caps
+        stations.append((p1 + ax * (r1 * math.cos(a)), r1 * math.sin(a)))
+    pole0, pole1 = bm.verts.new(p0 - ax * r0), bm.verts.new(p1 + ax * r1)
+    rings = [[bm.verts.new(c + (u * math.cos(math.tau * i / sides) + v * math.sin(math.tau * i / sides)) * rr) for i in range(sides)] for c, rr in stations]
+    edge = [(p0 - ax * r0, 0.0)] + stations + [(p1 + ax * r1, 0.0)]
+    run = [0.0]
+    for (ca, ra), (cb, rb) in zip(edge, edge[1:]):
+        run.append(run[-1] + math.hypot((cb - ca).length, rb - ra))
+    u0, v0, u1, v1 = box
+    U = lambda i: u0 + (u1 - u0) * run[i] / run[-1]
+    V = lambda k: v0 + (v1 - v0) * k / sides
+    slot = m.slot(kind)
+
+    def put(verts, uvs):
+        f = bm.faces.new(verts)
+        f.material_index = slot
+        f.smooth = True
+        for l, uv in zip(f.loops, uvs):
+            l[m.uv].uv = uv
+
+    for j in range(len(rings) - 1):
+        for k in range(sides):
+            k2 = (k + 1) % sides
+            put((rings[j][k], rings[j][k2], rings[j + 1][k2], rings[j + 1][k]),
+                ((U(j + 1), V(k)), (U(j + 1), V(k + 1)), (U(j + 2), V(k + 1)), (U(j + 2), V(k))))
+    last = len(rings)
+    for k in range(sides):
+        k2 = (k + 1) % sides
+        put((rings[0][k2], rings[0][k], pole0), ((U(1), V(k + 1)), (U(1), V(k)), (U(0), V(k + 0.5))))
+        put((rings[-1][k], rings[-1][k2], pole1), ((U(last), V(k)), (U(last), V(k + 1)), (U(last + 1), V(k + 0.5))))
+
+
+def toy_hose(m, path, radii, kind, box, sides=10, closed=False, u_span=(0.0, 1.0), ref=None):
+    """A tube along a path (a strap, a scarf): closed at both ends, or a closed loop. `ref` is a
+    direction the tube's sections are squared to, so they do not twist."""
+    bm = m.bm
+    n = len(path)
+    ref = ref or Z
+    rings = []
+    for i, p in enumerate(path):
+        a = path[(i - 1) % n] if (closed or i > 0) else path[0]
+        b = path[(i + 1) % n] if (closed or i < n - 1) else path[-1]
+        tg = (b - a).normalized()
+        r_ = ref if abs(tg.dot(ref)) < 0.95 else (Vector((1, 0, 0)) if abs(tg.x) < 0.9 else Vector((0, 1, 0)))
+        u = tg.cross(r_).normalized()
+        v = tg.cross(u)
+        rings.append([bm.verts.new(p + (u * math.cos(math.tau * k / sides) + v * math.sin(math.tau * k / sides)) * radii[i]) for k in range(sides)])
+    u0, v0, u1, v1 = box
+    slot = m.slot(kind)
+    count = n if closed else n - 1
+    for i in range(count):
+        i2 = (i + 1) % n
+        for k in range(sides):
+            k2 = (k + 1) % sides
+            f = bm.faces.new((rings[i][k], rings[i][k2], rings[i2][k2], rings[i2][k]))
+            f.material_index = slot
+            f.smooth = True
+            ua = u0 + (u1 - u0) * (u_span[0] + (u_span[1] - u_span[0]) * i / count)
+            ub = u0 + (u1 - u0) * (u_span[0] + (u_span[1] - u_span[0]) * (i + 1) / count)
+            va, vb = v0 + (v1 - v0) * k / sides, v0 + (v1 - v0) * (k + 1) / sides
+            for l, uv in zip(f.loops, ((ua, va), (ua, vb), (ub, vb), (ub, va))):
+                l[m.uv].uv = uv
+    if not closed:
+        for ring, uu in ((rings[0][::-1], u_span[0]), (rings[-1], u_span[1])):
+            f = bm.faces.new(ring)
+            f.material_index = slot
+            for l in f.loops:
+                l[m.uv].uv = (u0 + (u1 - u0) * (uu * 0.98 + 0.01), (v0 + v1) / 2)
+
+
+SKIN = dict(front="balloon", rim="balloon", back="balloon", strap="balloon", limb="balloon", scarf="balloon", uv=True, face=None)
+BLOCK = dict(front="blk_yellow", rim="blk_maroon", back="blk_back", strap="blk_red", limb="blk_yellow", scarf="blk_cream", uv=False, face="blk_maroon")
+
+
+def build_toy(m, heel, X, Y, N, P, skin, down=None):
+    """AN INFLATED SLIPPER CHARACTER, in the frame (X across, Y heel to toe, N out of the footbed),
+    its heel's end at `heel`. P gives the proportions and what it has:
+      the SOLE      one closed pillow: the slipper's outline swept from the middle of the back, round
+                    the rim, to the middle of the front, fat (Th about half its width) and pinched
+                    along its seams into big soft panels;
+      the STRAP     a fat toe post with a knot and two arms that end inside the sole;
+      a SCARF       a closed ring lying in the pinch under the face, a knot and two tails;
+      LIMBS         round-ended lobes that start inside the sole;
+      a FACE        painted (the kit's texture); the blockouts carry it as raised lines.
+    Every part is a closed solid that starts INSIDE the sole, as an inflatable's lobes are sewn on."""
+    L, W, Th = P["L"], P["W"], P["Th"]
+    waist = P.get("waist", 0.8)
+    hwf = lambda t: T.half_width(t, waist)
+    O = T.outline(64, waist)
+    n = len(O)
+    cxy = (sum(p[0] for p in O) / n, 0.5)
+    down = down or -Z
+    bm, uvl = m.bm, m.uv
+    isl = lambda name: T.ISLAND[name] if skin["uv"] else (0.0, 0.0, 1.0, 1.0)
 
     def S(x, t, z):
         return heel + X * (x * W) + Y * (t * L) + N * z
 
     def quilt(x, t):
-        """The sole is three inflated panels: it is pinched thin along the two seams the texture
-        paints across it (the same two bowed lines), and swells between them."""
         q = 1.0
-        for t0, bow in T.SEAMS:
-            q -= 0.30 * math.exp(-((t - (t0 + bow * math.cos(x * math.pi / 0.9))) / 0.030) ** 2)
+        for t0, bow in P.get("seams", ()):
+            q -= P.get("pinch", 0.24) * math.exp(-((t - (t0 + bow * math.cos(x * math.pi / 0.9))) / 0.038) ** 2)
         return q
 
-    m = Mesh("balloon", pivot)
-    bm, uvl = m.bm, m.uv
-    O = T.outline(56)
-    n = len(O)
-    cxy = (sum(p[0] for p in O) / n, 0.5)
-    # Rings from the tread's middle (phi -90) round the rim (0) to the footbed's middle (+90).
-    phis = [-76, -60, -42, -24, -9, 9, 24, 42, 60, 76]
+    def rho(x, t):
+        """How far (x, t) is from the sole's middle toward its outline, 0 to 1."""
+        dx, dt = x - cxy[0], t - cxy[1]
+        if abs(dx) < 1e-9 and abs(dt) < 1e-9:
+            return 0.0
+
+        def inside(k):
+            tt, xx = cxy[1] + k * dt, cxy[0] + k * dx
+            return 0.0 < tt < 1.0 and abs(xx - T.lean(tt)) < hwf(tt)
+        lo, hi = 0.0, 1.0
+        while inside(hi) and hi < 256.0:
+            lo, hi = hi, hi * 2.0
+        for _ in range(40):
+            mid = (lo + hi) / 2
+            lo, hi = (mid, hi) if inside(mid) else (lo, mid)
+        return min(1.0, 1.0 / max(lo, 1e-6))
+
+    def surf(x, t):
+        """The front surface's height over the sole's middle plane at (x, t). The back is its mirror."""
+        s = min(rho(x, t), 0.9999)
+        phi = math.acos(s ** (1.0 / 0.42))
+        return (Th / 2) * (math.sin(phi) ** 0.9) * (1.0 + 0.16 * (1.0 - s)) * quilt(x, t)
+
+    # ---- the sole
+    # Rings evenly spaced from the rim to the middle (the sweep is far from even in angle: at 80 degrees
+    # a ring is still half way out, and the first blockout's middle was one fan of long triangles).
+    half = [8.0, 22.0, 30.0, 44.0, 60.0, 73.0, 83.5, 88.8]
+    phis = [-a for a in half[::-1]] + half
+    band = 22
     rings = []
     for ph in phis:
         a = math.radians(ph)
@@ -712,115 +858,203 @@ def balloon(coll, built, roof_z):
     verts = [[bm.verts.new(S(*p)) for p in ring] for ring in rings]
     bottom = bm.verts.new(S(cxy[0], cxy[1], -Th / 2 * 1.16 * quilt(*cxy)))
     crown = bm.verts.new(S(cxy[0], cxy[1], Th / 2 * 1.16 * quilt(*cxy)))
-    slot = m.slot("balloon")
-    ru0, rv0, ru1, rv1 = T.ISLAND["rim"]
+    ru0, rv0, ru1, rv1 = isl("rim")
 
-    def island(ring_i, i, v_wrap=None):
-        """The UV of ring ring_i's point i: the rim band for the three middle strips, else planar."""
-        ph = phis[ring_i]
-        x, t, _ = rings[ring_i][i % n]
-        if abs(ph) <= 24:
-            f = (ph + 24) / 48.0
-            vv = (i if v_wrap is None else v_wrap) / n
-            return (ru0 + (ru1 - ru0) * (0.04 + 0.92 * f), rv0 + (rv1 - rv0) * vv)
-        return T.foot_uv(x, t, "foot" if ph > 0 else "tread")
+    def planar(x, t, side):
+        return T.foot_uv(x, t, side) if skin["uv"] else (0.0, 0.0)
 
     for j in range(len(phis) - 1):
-        rim = abs(phis[j]) <= 24 and abs(phis[j + 1]) <= 24
+        rim = abs(phis[j]) <= band and abs(phis[j + 1]) <= band
+        part = "rim" if rim else ("front" if phis[j + 1] > band else "back")
         for i in range(n):
             k = (i + 1) % n
             f = bm.faces.new((verts[j][i], verts[j][k], verts[j + 1][k], verts[j + 1][i]))
-            f.material_index = slot
+            f.material_index = m.slot(skin[part])
             f.smooth = True
             if rim:
-                uvs = (island(j, i), island(j, i + 1, i + 1), island(j + 1, i + 1, i + 1), island(j + 1, i))
+                fa, fb = (phis[j] + band) / (2.0 * band), (phis[j + 1] + band) / (2.0 * band)
+                ua, ub = ru0 + (ru1 - ru0) * (0.04 + 0.92 * fa), ru0 + (ru1 - ru0) * (0.04 + 0.92 * fb)
+                va, vb = rv0 + (rv1 - rv0) * i / n, rv0 + (rv1 - rv0) * (i + 1) / n
+                uvs = ((ua, va), (ua, vb), (ub, vb), (ub, va))
             else:
-                # A strip that leaves the rim band is drawn on the planar island all the way: its rim
-                # edge takes the planar place of that edge, so no face is stretched between islands.
-                side = "foot" if phis[j + 1] > 24 or phis[j] > 24 else "tread"
-                uvs = tuple(T.foot_uv(rings[a][b % n][0], rings[a][b % n][1], side) for a, b in ((j, i), (j, k), (j + 1, k), (j + 1, i)))
+                # A strip that leaves the rim band is drawn on the planar island all the way.
+                side = "foot" if part == "front" else "tread"
+                uvs = tuple(planar(rings[a][b][0], rings[a][b][1], side) for a, b in ((j, i), (j, k), (j + 1, k), (j + 1, i)))
             for l, uv in zip(f.loops, uvs):
                 l[uvl].uv = uv
-    for ring_i, pole, side, flip in ((0, bottom, "tread", True), (len(phis) - 1, crown, "foot", False)):
+    for ring_i, pole, part, flip in ((0, bottom, "back", True), (len(phis) - 1, crown, "front", False)):
+        side = "foot" if part == "front" else "tread"
         for i in range(n):
             k = (i + 1) % n
-            loop = (verts[ring_i][k], verts[ring_i][i], pole) if flip else (verts[ring_i][i], verts[ring_i][k], pole)
-            f = bm.faces.new(loop)
-            f.material_index = slot
+            f = bm.faces.new((verts[ring_i][k], verts[ring_i][i], pole) if flip else (verts[ring_i][i], verts[ring_i][k], pole))
+            f.material_index = m.slot(skin[part])
             f.smooth = True
-            pu = T.foot_uv(cxy[0], cxy[1], side)
-            ua = T.foot_uv(rings[ring_i][i][0], rings[ring_i][i][1], side)
-            ub = T.foot_uv(rings[ring_i][k][0], rings[ring_i][k][1], side)
+            pu = planar(cxy[0], cxy[1], side)
+            ua, ub = planar(rings[ring_i][i][0], rings[ring_i][i][1], side), planar(rings[ring_i][k][0], rings[ring_i][k][1], side)
             for l, uv in zip(f.loops, (ub, ua, pu) if flip else (ua, ub, pu)):
                 l[uvl].uv = uv
 
-    # The strap: closed tubes, UVs on the strap island (u along, v round).
-    su0, sv0, su1, sv1 = T.ISLAND["strap"]
+    # ---- the strap: a fat post and knot at the toe, two arms out to the sides. Smooth, no bands.
+    if P.get("post"):
+        pt, at_, r = P["post"], P["anchor"], P["strap_r"]
+        px = T.lean(pt)
+        h0 = surf(px, pt)
+        knot_h = h0 + P["strap_lift"]
+        toy_hose(m, [S(px, pt, h0 - r), S(px, pt, h0 + r * 0.4), S(px, pt, knot_h - r * 0.5), S(px, pt, knot_h + r * 0.5), S(px, pt, knot_h + r * 1.1)],
+                 [r * 0.80, r * 0.74, r * 1.22, r * 1.16, r * 0.42], skin["strap"], isl("strap"), 12, u_span=(0.0, 0.14), ref=X)
+        for sx in (-1, 1):
+            ax = T.lean(at_) + sx * hwf(at_) * P["anchor_x"]
+            path, radii = [], []
+            steps = 18
+            for j in range(steps + 1):
+                f = j / steps
+                x = px + (ax - px) * f + sx * 0.035 * math.sin(math.pi * f)
+                t = pt + (at_ - pt) * f
+                rad = r * (0.86 + 0.30 * math.sin(math.pi * min(1.0, f * 1.2)) ** 0.7)
+                ride = surf(x, t) + rad * 0.80 + P["strap_arch"] * math.sin(math.pi * f) * (1 - 0.45 * f)
+                if f < 0.16:
+                    k = f / 0.16
+                    k = k * k * (3 - 2 * k)
+                    ride = knot_h + (ride - knot_h) * k
+                elif f > 0.86:
+                    k = (f - 0.86) / 0.14
+                    ride = ride + (surf(ax, at_) - rad * 1.1 - ride) * k * k
+                path.append(S(x, t, ride))
+                radii.append(rad)
+            toy_hose(m, path, radii, skin["strap"], isl("strap"), 12, u_span=(0.16, 1.0), ref=N)
 
-    def hose(path, radii, sides=10, u_span=(0.0, 1.0)):
-        ringsv = []
-        for i, p in enumerate(path):
-            a, b = path[max(i - 1, 0)], path[min(i + 1, len(path) - 1)]
-            tg = (b - a).normalized()
-            ref = N if abs(tg.dot(N)) < 0.9 else X
-            u = tg.cross(ref).normalized()
-            v = tg.cross(u)
-            ringsv.append([bm.verts.new(p + (u * math.cos(math.tau * k / sides) + v * math.sin(math.tau * k / sides)) * radii[i]) for k in range(sides)])
-        for i in range(len(path) - 1):
-            for k in range(sides):
-                k2 = (k + 1) % sides
-                f = bm.faces.new((ringsv[i][k], ringsv[i][k2], ringsv[i + 1][k2], ringsv[i + 1][k]))
-                f.material_index = slot
-                f.smooth = True
-                ua = su0 + (su1 - su0) * (u_span[0] + (u_span[1] - u_span[0]) * i / (len(path) - 1))
-                ub = su0 + (su1 - su0) * (u_span[0] + (u_span[1] - u_span[0]) * (i + 1) / (len(path) - 1))
-                va, vb = sv0 + (sv1 - sv0) * k / sides, sv0 + (sv1 - sv0) * (k + 1) / sides
-                for l, uv in zip(f.loops, ((ua, va), (ua, vb), (ub, vb), (ub, va))):
-                    l[uvl].uv = uv
-        for ring, flip, uu in ((ringsv[0], True, u_span[0]), (ringsv[-1], False, u_span[1])):
-            f = bm.faces.new(ring[::-1] if flip else ring)
-            f.material_index = slot
-            for l in f.loops:
-                l[uvl].uv = (su0 + (su1 - su0) * (uu * 0.98 + 0.01), (sv0 + sv1) / 2)
+    # ---- the scarf: a ring lying in the pinch, a knot off to one side, two tails.
+    if P.get("scarf"):
+        st, sr = P["scarf"], P["scarf_r"]
+        ln, hw = T.lean(st), hwf(st)
+        front = [ln - hw * 0.97 + 2 * hw * 0.97 * k / 16 for k in range(17)]
+        path = [S(ln - hw - sr * 0.55 / W, st, 0.0)]
+        path += [S(x, st, surf(x, st) + sr * 0.55) for x in front]
+        path += [S(ln + hw + sr * 0.55 / W, st, 0.0)]
+        path += [S(x, st, -surf(x, st) - sr * 0.55) for x in front[::-1]]
+        toy_hose(m, path, [sr] * len(path), skin["scarf"], isl("scarf"), 10, closed=True, ref=Y)
+        kx = ln + hw * 0.52
+        knot = S(kx, st, surf(kx, st) + sr * 1.5)
+        toy_capsule(m, knot - X * (sr * 0.5), knot + X * (sr * 0.5), sr * 1.25, sr * 1.25, skin["scarf"], isl("scarf"), 10, 3)
+        for k, (lean_, length) in enumerate(((0.10, sr * 4.6), (0.62, sr * 3.6))):
+            d = (down + X * lean_ + N * 0.25).normalized()
+            tail = [knot + d * (length * j / 5) + N * (sr * 0.5 * math.sin(math.pi * j / 5)) for j in range(6)]
+            toy_hose(m, tail, [sr * (0.92 - 0.06 * j) for j in range(6)], skin["scarf"], isl("scarf"), 8, u_span=(0.1 + 0.4 * k, 0.5 + 0.4 * k), ref=X)
 
-    post_t = T.FACE["post_v"]
-    px = T.lean(post_t)
-    knot = S(px, post_t, 0) + N * (Th / 2 + 5.6 * sc)
-    hose([S(px, post_t, 0) + N * (Th / 2 - 3.5), S(px, post_t, 0) + N * (Th / 2 + 1.5 * sc), knot - N * 1.2 * sc, knot + N * 1.4 * sc, knot + N * 3.2 * sc],
-         [2.4 * sc, 2.2 * sc, 3.6 * sc, 3.5 * sc, 1.2 * sc], 12, (0.0, 0.16))
-    for sx in (-1, 1):
-        t1 = T.FACE["anchor_v"]
-        end = S(T.lean(t1) + sx * T.half_width(t1) * 0.80, t1, 0) + N * (Th / 2 - 4.0)
-        path, radii = [], []
-        for j in range(15):
-            f = j / 14
-            c = knot.lerp(end, f) + N * (4.6 * sc * math.sin(math.pi * f) * (1 - 0.55 * f)) + X * (sx * 2.2 * sc * math.sin(math.pi * f))
-            path.append(c)
-            radii.append((2.0 + 1.1 * math.sin(math.pi * min(1.0, f * 1.15)) ** 0.7) * sc)
-        hose(path, radii, 12, (0.17, 1.0))
+    # ---- the limbs: (x in half widths, t, which face (+1 front, -1 back, 0 the edge), its direction in (X, Y, N), length, radii)
+    for hx, t, face, vec, length, r0, r1 in P.get("limbs", ()):
+        x = T.lean(t) + hx * hwf(t)
+        base = S(x, t, face * surf(x, t) * 0.25)
+        d = (X * vec[0] + Y * vec[1] + N * vec[2]).normalized()
+        toy_capsule(m, base, base + d * length, r0, r1, skin["limb"], isl("limb"), 18, 5)
 
-    # The valve at the heel, and the tether patches' D-rings: steel, standing in the skin.
-    vt = 0.035
-    vp = S(T.lean(vt) + T.half_width(vt) * 0.55, vt, 0)
-    out = (vp - S(cxy[0], 0.16, 0)).normalized()
-    m.tube(vp - out * 1.6, vp + out * 1.5, 0.75, 8, 0.6, kind="led.dark", cap="led.rope")
-    m.tube(vp + out * 1.4, vp + out * 2.0, 1.0, 8, kind="led.red", cap="led.red")
+    # ---- the face as raised lines: the blockouts only (the kit's is painted)
+    if skin["face"] and P.get("face"):
+        Fc = P["face"]
+        asp = L / W
+        box = (0.0, 0.0, 1.0, 1.0)
+        lr = Fc["eye_r"] * W * 0.16
+
+        def raised(pts):
+            toy_hose(m, [S(x, t, surf(x, t) + lr * 0.5) for x, t in pts], [lr] * len(pts), skin["face"], box, 6, ref=N)
+
+        for sx in (-1, 1):
+            cx = T.lean(Fc["eye_t"]) + sx * Fc["eye_x"]
+            raised([(cx + Fc["eye_r"] * math.cos(a), Fc["eye_t"] + Fc["eye_r"] * math.sin(a) / asp) for a in (math.radians(-10 + 200 * k / 10) for k in range(11))])
+            bx_ = T.lean(Fc["eye_t"]) + sx * Fc["eye_x"] * 1.55
+            bt = Fc["eye_t"] - Fc["eye_r"] * 1.0 / asp
+            c = S(bx_, bt, surf(bx_, bt) - lr * 1.2)
+            toy_capsule(m, c - X * (lr * 1.4), c + X * (lr * 1.4), lr * 2.4, lr * 2.4, "blk_pink", box, 8, 2)
+        mr = Fc["mouth_r"]
+        raised([(T.lean(Fc["mouth_t"]) + mr * math.cos(a), Fc["mouth_t"] + mr * 0.55 / asp + mr * math.sin(a) / asp) for a in (math.radians(205 + 130 * k / 8) for k in range(9))])
+    return dict(S=S, surf=surf, hwf=hwf, cxy=cxy)
+
+
+# THE BALLOON'S PROPORTIONS (design A, the one built: see `balloon`).
+TOY_A = dict(L=T.BALLOON["length"], W=T.BALLOON["width"], Th=T.BALLOON["thick"], waist=T.BALLOON["waist"], seams=T.SEAMS, pinch=0.24,
+             post=T.BAL["post"], anchor=T.BAL["anchor"], anchor_x=T.BAL["anchor_x"], strap_r=3.5, strap_lift=6.6, strap_arch=2.6,
+             scarf=T.BAL["scarf_t"], scarf_r=2.5,
+             limbs=((-0.93, 0.43, 0, (-0.78, -0.62, 0.10), 13.0, 5.6, 4.9),      # its right arm, down at its side
+                    (0.93, 0.45, 0, (0.74, 0.64, 0.20), 14.0, 5.6, 4.9),         # its left arm, up: a wave
+                    (-0.66, 0.075, 1, (-0.30, -0.62, 0.72), 11.5, 5.4, 5.0),     # two short legs, apart, dangling toward the stage
+                    (0.66, 0.075, 1, (0.30, -0.62, 0.72), 11.5, 5.4, 5.0)),
+             face=dict(eye_t=T.BAL["eye_t"], eye_x=T.BAL["eye_x"], eye_r=T.BAL["eye_r"], mouth_t=T.BAL["mouth_t"], mouth_r=T.BAL["mouth_r"]))
+TOY_B = dict(L=70.0, W=30.0, Th=15.0, waist=0.82, seams=((0.36, 0.02), (0.68, -0.02)), pinch=0.22,
+             post=0.74, anchor=0.48, anchor_x=0.80, strap_r=2.8, strap_lift=5.6, strap_arch=2.4,
+             limbs=((-0.55, 0.22, -1, (-0.2, 0.0, -1.0), 9.0, 4.6, 4.2), (0.55, 0.22, -1, (0.2, 0.0, -1.0), 9.0, 4.6, 4.2),
+                    (-0.55, 0.74, -1, (-0.2, 0.0, -1.0), 9.0, 4.6, 4.2), (0.55, 0.74, -1, (0.2, 0.0, -1.0), 9.0, 4.6, 4.2)),
+             face=dict(eye_t=0.905, eye_x=0.13, eye_r=0.050, mouth_t=0.868, mouth_r=0.036))
+TOY_C = dict(L=52.0, W=25.0, Th=12.0, waist=0.84, seams=((0.60, 0.02),), pinch=0.2,
+             post=0.84, anchor=0.58, anchor_x=0.80, strap_r=2.4, strap_lift=4.8, strap_arch=2.0,
+             face=dict(eye_t=0.38, eye_x=0.20, eye_r=0.07, mouth_t=0.32, mouth_r=0.05))
+
+
+def balloon(coll, built, roof_z):
+    """THE SLIPPER BALLOON, second design. The owner, of the first: "the balloon slipper design looks
+    so off and unsettling". Looking at Logs/arena/holo/holo_close_balloon_front_v4.png, what was
+    unsettling:
+      * THE EYES. Whites, pupils and highlights, wide open, in the dead middle of a tall flat body:
+        a mask that stares. With raised brows and an open mouth with a tongue it reads as alarm.
+      * THE STRAP reads as two red arms or claws reaching down over the face from behind, and its
+        painted bands make it a segmented limb. Nothing says "strap".
+      * THE BODY is a thin tall slab (14 m thick on 74 m): a tongue or a shield, not an inflatable.
+        It has a face but no body: no limbs, no posture, nothing the face belongs to.
+      * A STITCHED SEAM runs through the cheeks, so the face looks sewn on.
+      * The colours were invented (a coral strap), not the game's.
+    The reference is the Overwatch balloon cow: a chunky, round, friendly CHARACTER with stubby limbs
+    and a scarf. Three designs were blocked and compared (`options`, the sheet
+    Logs/arena/holo/balloon_options_v5.png): A a seated mascot with arms, feet and a scarf; B a level
+    parade balloon with a small face on its toe; C a pair tied together. A is built, because it is
+    the only one of the three that is a character from the stage: B shows the stage its underside,
+    and C is two thin soles again.
+
+    A, AS BUILT: the sole is the body, 60 m tall, 36 m wide and 22 m thick, pinched under the face
+    (the scarf lies in the pinch) and at the strap's line into three fat panels. It SITS in the air
+    over the south canopy as a tethered balloon does, leaning 12 degrees toward the stage, its two
+    short legs dangling apart toward the players, one arm down and one up in a wave. The strap is a fat
+    smooth V high on its head, well clear of the face, like a cap worn back. The face is small, low
+    and wide apart: two closed happy arcs, a small smile, two cheeks (the texture). A scarf with a
+    knot and two tails, as the cow has. The back carries the game's stamp.
+    Its pivot is the tether point on the canopy; it sways about it."""
+    at = BALLOON_AT
+    F = Frame(at["bearing"], at["r"])
+    zc = roof_z(F.o.x, F.o.y)
+    pivot = Vector((F.o.x, F.o.y, zc + 2.2))                       # the winch's fairlead
+    Fb = Frame(at["body_bearing"], at["body_r"])                   # the body floats over the masts' heads (z 91), a little inboard
+    yaw = Matrix.Rotation(math.radians(at["yaw"]), 3, "Z")
+    X = yaw @ Fb.dx
+    N0 = yaw @ (-Fb.dy)                                            # the face looks at the can
+    th = math.radians(at["lean"])
+    Y = Z * math.cos(th) + N0 * math.sin(th)                       # heel to toe: up, and forward over the stage
+    N = N0 * math.cos(th) - Z * math.sin(th)
+    heel = Vector((Fb.o.x, Fb.o.y, zc + at["lift"]))
+    P = TOY_A
+
+    m = Mesh("balloon", pivot)
+    toy = build_toy(m, heel, X, Y, N, P, SKIN)
+    S, surf, hwf = toy["S"], toy["surf"], toy["hwf"]
+
+    # The valve, low on the back: steel and a red cap, standing in the skin.
+    vx, vt = T.lean(0.12) + hwf(0.12) * 0.42, 0.12
+    vp = S(vx, vt, -surf(vx, vt))
+    m.tube(vp + N * 1.6, vp - N * 1.5, 0.9, 8, 0.7, kind="led.dark", cap="led.rope")
+    m.tube(vp - N * 1.4, vp - N * 2.1, 1.2, 8, kind="led.red", cap="led.red")
 
     anchors = [("winch", pivot)]
     for k, (dx_, dy_) in enumerate(((-7.0, -5.5), (7.0, -5.5), (-7.5, 6.5), (7.5, 6.5))):
         q = F.p(dx_, dy_, 0.0)
         anchors.append(("ring%d" % k, Vector((q.x, q.y, roof_z(q.x, q.y) + 1.1))))
-    ties = [(0.0, 0.012, -1.2), (-0.26, 0.10, -Th * 0.40), (0.30, 0.10, -Th * 0.40), (-0.33, 0.30, -Th * 0.46), (0.37, 0.30, -Th * 0.46)]
-    for (name, a), (tx, tt, tz) in zip(anchors, ties):
-        p = S(T.lean(tt) + tx * 0.9, tt, tz)
-        inward = (S(cxy[0], tt + 0.06, 0) - p).normalized()
-        m.tube(p + inward * 1.2, p - inward * 0.9, 0.55, 6, kind="metal")              # the D-ring's stub, in the skin
-        m.tube(p + inward * 0.6, a - (a - p).normalized() * -0.5, 0.26 if name == "winch" else 0.17, 5, kind="led.rope")
+    ties = [(0.0, 0.035), (-0.55, 0.11), (0.55, 0.11), (-0.62, 0.30), (0.62, 0.30)]   # on the back: (x in half widths, t)
+    for (name, a), (hx, tt) in zip(anchors, ties):
+        x = T.lean(tt) + hx * hwf(tt)
+        p = S(x, tt, -surf(x, tt))
+        m.tube(p + N * 1.3, p - N * 1.0, 0.6, 6, kind="metal")                       # the D-ring's stub, in the skin
+        m.tube(p + N * 0.5, a + (a - p).normalized() * 0.5, 0.28 if name == "winch" else 0.18, 5, kind="led.rope")
     ob = m.done(coll)
     for p in ob.data.polygons:                                    # the skin is smooth; the hardware is flat
         if ob.data.materials[p.material_index].name != PRE + "balloon":
             p.use_smooth = False
-    move(ob, "sway", degrees=1.3, period=8.5)
+    move(ob, "sway", degrees=1.1, period=9.0)
     built.append(("slipper balloon", [ob], "the slipper, as a balloon"))
 
     # THE MOORING, on the canopy: a winch with its drum, four anchor rings, six up-lights. Static.
@@ -834,13 +1068,73 @@ def balloon(coll, built, roof_z):
         a = math.tau * k / 6 + 0.26
         c = pivot + F.dx * (math.cos(a) * 12.5) + F.dy * (math.sin(a) * 7.5)
         c.z = roof_z(c.x, c.y)
-        aim = (heel + Y * (L * 0.45) - c).normalized()
+        aim = (heel + Y * (P["L"] * 0.45) - c).normalized()
         g.box(c + Z * 0.3, (1.8, 1.8, 1.4), F.dx)
         g.tube(c + Z * 0.6, c + Z * 0.6 + aim * 2.6, 0.8, 8, 1.15, kind="metal", cap="led.white")
     mo = g.done(coll)
     built.append(("slipper balloon", [mo], None))
     BALLOON_OBJECTS[:] = [ob, mo]
     return heel, Y, N, X
+
+
+def options(version):
+    """THE THREE DESIGNS, blocked in flat colours and rendered side by side for the owner
+    (Logs/arena/holo/balloon_options_<front|quarter>_<version>.png; the texture author's
+    --options-sheet joins them). Not the kit: nothing here is saved."""
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+    scene = bpy.context.scene
+    coll = K.collection("balloon options (not the kit)")
+    X, N0 = Vector((1, 0, 0)), Vector((0, -1, 0))
+    up = lambda deg: (Z * math.cos(math.radians(deg)) + N0 * math.sin(math.radians(deg)), N0 * math.cos(math.radians(deg)) - Z * math.sin(math.radians(deg)))
+
+    a = Mesh("option_a", (0, 0, 0))
+    Y, N = up(12.0)
+    build_toy(a, Vector((-84.0, 0, 0)), X, Y, N, TOY_A, BLOCK)
+    a.done(coll)
+
+    b = Mesh("option_b", (0, 0, 0))                               # level, its toe toward the stage and dipped 26 degrees
+    dip = math.radians(26.0)
+    Yb = N0 * math.cos(dip) - Z * math.sin(dip)
+    Nb = Z * math.cos(dip) + N0 * math.sin(dip)
+    build_toy(b, Vector((0.0, 30.0, 44.0)), X, Yb, Nb, TOY_B, BLOCK)
+    b.done(coll)
+
+    c = Mesh("option_c", (0, 0, 0))                               # two, leaning on each other, their straps tied with a rope
+    Y, N = up(10.0)
+    one = build_toy(c, Vector((70.0, 0, 6.0)), X, Y, N, TOY_C, BLOCK)
+    lean2 = Matrix.Rotation(math.radians(-24.0), 3, N0)
+    Pc = dict(TOY_C)
+    Pc.pop("face")
+    two = build_toy(c, Vector((104.0, 9.0, 2.0)), lean2 @ X, lean2 @ Y, lean2 @ N, Pc, BLOCK)
+    k1 = one["S"](T.lean(0.84), 0.84, one["surf"](T.lean(0.84), 0.84) + 6.0)
+    k2 = two["S"](T.lean(0.84), 0.84, two["surf"](T.lean(0.84), 0.84) + 6.0)
+    mid = (k1 + k2) / 2 - Z * 7.0
+    toy_hose(c, [k1, k1.lerp(mid, 0.5) - Z * 2.0, mid, k2.lerp(mid, 0.5) - Z * 2.0, k2], [0.8] * 5, "blk_cream", (0, 0, 1, 1), 6, ref=N0)
+    c.done(coll)
+
+    sun = bpy.data.objects.new("key", bpy.data.lights.new("key", "SUN"))
+    sun.data.energy = 3.2; sun.data.color = (0.9, 0.94, 1.0); sun.data.angle = math.radians(25)
+    sun.rotation_euler = (math.radians(58), math.radians(-12), math.radians(-22))
+    coll.objects.link(sun)
+    world = bpy.data.worlds.new("night"); scene.world = world; world.use_nodes = True
+    world.node_tree.nodes["Background"].inputs[0].default_value = (0.02, 0.026, 0.075, 1)
+    world.node_tree.nodes["Background"].inputs[1].default_value = 1.0
+    engines = [e.identifier for e in bpy.types.RenderSettings.bl_rna.properties["engine"].enum_items]
+    scene.render.engine = "BLENDER_EEVEE_NEXT" if "BLENDER_EEVEE_NEXT" in engines else "BLENDER_EEVEE"
+    scene.view_settings.view_transform = "Standard"
+    os.makedirs(LOGS, exist_ok=True)
+    for name, loc, target, lens in (("front", (6.0, -330.0, -120.0), (6.0, 0.0, 30.0), 50.0), ("quarter", (250.0, -270.0, 60.0), (10.0, 0.0, 28.0), 50.0)):
+        cam_data = bpy.data.cameras.new(name)
+        cam = bpy.data.objects.new(name, cam_data)
+        scene.collection.objects.link(cam)
+        cam.location = loc
+        cam.rotation_euler = (Vector(target) - Vector(loc)).to_track_quat("-Z", "Y").to_euler()
+        cam_data.lens = lens; cam_data.clip_end = 5000
+        scene.camera = cam
+        scene.render.resolution_x, scene.render.resolution_y = 2400, 900
+        scene.render.filepath = os.path.join(LOGS, "balloon_options_%s_%s.png" % (name, version))
+        bpy.ops.render.render(write_still=True)
+    print("OPTIONS_OK %s" % version)
 
 
 def pcx_far(coll, built, ray):
@@ -1025,10 +1319,13 @@ def shoot(name, version, loc, target, lens=35.0, size=(1920, 1080)):
 def pictures(version, shots, info):
     want = lambda k: (not shots) or k in shots
     heel, Y, N, X = info["balloon"]
-    mid = heel + Y * 29.0
+    mid = heel + Y * 30.0
     if want("eye"):
         for b in (0, 45, 90, 135, 180, 225, 270, 315):
             shoot("eye_%03d" % b, version, (0, 0, EYE), K.polar(100.0, b, EYE + 44.0), lens=14)
+    if want("can"):                                               # from the can's eye, long: is an ad read, is the balloon friendly
+        shoot("can_column", version, (0, 0, EYE), K.polar(100.0, COLUMNS[0][1], EYE + 62.0), lens=30)
+        shoot("can_balloon", version, (0, 0, EYE), K.polar(100.0, BALLOON_AT["body_bearing"], EYE + 70.0), lens=30)
     if want("game"):                                              # a narrower look from behind a player: nearer the game's camera
         for b in (200, 90, 20, 290):
             shoot("game_%03d" % b, version, K.polar(9.0, b + 180.0, EYE + 1.6), K.polar(100.0, b, EYE + 34.0), lens=18)
@@ -1037,8 +1334,9 @@ def pictures(version, shots, info):
         shoot("air_east", version, K.polar(1000.0, 96.0, 380.0), (0, 0, 150.0), lens=26)
         shoot("air_high", version, K.polar(1500.0, 320.0, 1100.0), (0, 0, 100.0), lens=30)
     if want("close"):
-        shoot("close_balloon_front", version, mid + N * 105.0 - Z * 30.0 + X * 18.0, mid, lens=32)
-        shoot("close_balloon_back", version, mid - N * 95.0 + Z * 42.0 - X * 40.0, mid - Z * 12.0, lens=30)
+        shoot("close_balloon_front", version, mid + N * 130.0 - Z * 6.0, mid, lens=32)
+        shoot("close_balloon_quarter", version, mid + N * 105.0 + X * 95.0 + Z * 8.0, mid, lens=32)
+        shoot("close_balloon_back", version, mid - N * 120.0 + Z * 34.0 - X * 44.0, mid - Z * 6.0, lens=30)
         shoot("close_balloon_mooring", version, info["pivot"] + N * 46.0 + Z * 26.0 + X * 30.0, info["pivot"] + Z * 12.0, lens=24)
         g = Frame(GLOBE["bearing"], GLOBE["r"], GLOBE["z"])
         shoot("close_globe", version, g.p(60.0, -210.0, -40.0), g.p(0, 0, -12.0), lens=30)
@@ -1046,6 +1344,8 @@ def pictures(version, shots, info):
         shoot("close_slipper_hologram", version, s.p(-50.0, -150.0, -30.0), s.p(0, 0, -6.0), lens=30)
         c = Frame(COLUMNS[0][1], COLUMNS[0][2], 150.0)
         shoot("close_column", version, c.p(-70.0, -230.0, -60.0), c.p(0, 0, 40.0), lens=26)
+        shoot("close_column_side", version, c.p(170.0, -110.0, -40.0), c.p(0, 0, 10.0), lens=26)
+        shoot("close_column_back", version, c.p(90.0, 230.0, 120.0), c.p(0, 0, 60.0), lens=26)
         p = Frame(CARDS[0][2], CARDS[0][3], CARDS[0][4])
         shoot("close_pcx", version, p.p(70.0, -200.0, -40.0), p.p(0, 0, -6.0), lens=32)
         j = Frame(CARDS[3][2], CARDS[3][3], CARDS[3][4])
@@ -1058,8 +1358,8 @@ def pictures(version, shots, info):
         scene.render.engine = "BLENDER_WORKBENCH"
         scene.display.shading.light = "STUDIO"; scene.display.shading.color_type = "MATERIAL"
         scene.display.shading.show_cavity = True
-        shoot("flat_balloon_front", version, mid + N * 105.0 - Z * 30.0 + X * 18.0, mid, lens=32)
-        shoot("flat_balloon_side", version, mid + X * 100.0 + N * 30.0 - Z * 6.0, mid - Z * 6.0, lens=30)
+        shoot("flat_balloon_front", version, mid + N * 130.0 - Z * 6.0, mid, lens=32)
+        shoot("flat_balloon_side", version, mid + X * 130.0 + N * 30.0 - Z * 6.0, mid - Z * 6.0, lens=30)
         shoot("flat_balloon_mooring", version, info["pivot"] + N * 46.0 + Z * 26.0 + X * 30.0, info["pivot"] + Z * 12.0, lens=24)
         c = Frame(COLUMNS[0][1], COLUMNS[0][2], 14.0)
         shoot("flat_buoy", version, c.p(-22.0, -46.0, 18.0), c.p(0, 0, -2.0), lens=30)
@@ -1076,6 +1376,9 @@ def main():
             shots = a.split("=", 1)[1].split(",")
         elif a == "--no-render":
             render = False
+    if "--options" in args:
+        options(version)
+        return
     bpy.ops.wm.read_factory_settings(use_empty=True)
     scene = bpy.context.scene
 

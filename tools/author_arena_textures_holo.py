@@ -21,8 +21,9 @@ like a balloon, like the balloon cow in overwatch".
            hologram is built from (a line, a dotted sheet, a scan band, a beam, a glow, a cube face).
   metal    512, tiling. The emitters' and buoys' painted steel.
   led      256 x 256, eight flat rows (LED): UVs pick a row. Emitter rings, thrusters, ropes.
-  balloon  2048 x 2048. The slipper balloon, painted by island (BALLOON): the footbed with its face,
-           the tread, the rim band with its stitching, the strap.
+  balloon  2048 x 2048. The slipper balloon, painted by island (ISLAND): its front with the face, its
+           back with the game's stamp, the rim band with its stitching, and three rows of tube: the
+           strap, the limbs, the scarf.
 
 THE BRANDS. PC EXPRESS is a real sponsor already in this game and the owner asked for it by name: it
 is the project's own artwork (Assets/TumbangPreso/Art/models/textures/pc_express_horizontal_rgb.png),
@@ -34,8 +35,9 @@ Halo-Halo Holo, Dyip-Lipad, Pansitan sa Ulap), so the columns advertise the same
 carry, and six are new. No other real brand.
 
 ROLE HUES: holograms are cyan, magenta, white and gold; nothing large is near offence orange #f87020
-or defence blue #0080e8 (a logo's own colours excepted). The balloon is the game's slipper: a yellow
-sole. Its strap in the logo is orange, which is the offence colour, so the balloon's is coral red.
+or defence blue #0080e8 (a logo's own colours excepted). The balloon wears the game's own slipper's
+colours (BAL_HEX): the logo's yellow sole and maroon line. The logo's strap is orange, which is the
+offence colour, so the balloon's strap is that maroon lifted to a red.
 """
 import math
 import os
@@ -89,25 +91,37 @@ METAL_TILE_M = 16.0
 
 # ------------------------------------------------------------------ the balloon
 # The slipper stands on its heel: local x across, y from heel to toe, z out of the footbed.
-BALLOON = dict(length=74.0, width=32.0, thick=14.0)
-SEAMS = ((0.335, 0.030), (0.655, -0.028))   # the two seams across the sole: (t at the middle, how far it bows); the model pinches along them
+# The balloon is a CHARACTER whose body is the slipper's sole: fat, short and round (design A of the
+# three in Logs/arena/holo/balloon_options_v5.png). Local x across, y from heel to toe, z out of the front.
+BALLOON = dict(length=60.0, width=36.0, thick=22.0, waist=0.90)
+SEAMS = ((0.60, 0.02), (0.21, 0.0))        # the two seams across the sole: (t at the middle, how far it bows); the model pinches along them
 # UV islands, (u0, v0, u1, v1), v up.
 ISLAND = {
-    "foot":  (0.010, 0.010, 0.430, 0.990),   # the footbed, seen square on: u across, v heel to toe
-    "tread": (0.445, 0.010, 0.765, 0.755),   # the underside, the same way
+    "foot":  (0.010, 0.010, 0.430, 0.990),   # the front, seen square on: u across, v heel to toe
+    "tread": (0.445, 0.010, 0.765, 0.755),   # the back, the same way, mirrored
     "rim":   (0.780, 0.000, 0.990, 1.000),   # the band round the edge: v runs once round, u across the band
-    "strap": (0.445, 0.775, 0.765, 0.990),   # every strap tube: u along it, v round it
+    "strap": (0.445, 0.905, 0.765, 0.990),   # three rows of tube: u along it, v round it
+    "limb":  (0.445, 0.840, 0.765, 0.895),
+    "scarf": (0.445, 0.775, 0.765, 0.830),
 }
-FACE = dict(eye_v=0.405, eye_x=0.19, eye_r=0.085, mouth_v=0.255, post_v=0.79, anchor_v=0.50)
+# Where things are on the balloon: t along the sole, x in widths. The face is small, low and wide apart.
+BAL = dict(post=0.86, anchor=0.60, anchor_x=0.80, scarf_t=0.21, eye_t=0.405, eye_x=0.215, eye_r=0.066, line=0.021,
+           mouth_t=0.335, mouth_r=0.050, blush_x=0.335, blush_t=0.350)
+# The game's own slipper colours (Art/ui/brand/tsinelas_hit.png, avatars/avatar_tsinelas.png): the
+# logo's yellow sole d8c808 and maroon line 980818, the avatar strap's amber f8b828.
+BAL_HEX = dict(yellow="dccb0c", yellow_hi="ece04c", yellow_lo="c2b006", yellow_back="cdbb08", yellow_line="a08c04",
+               maroon="980818", red="b8242e", amber="f8b828", cream="f6ecc8", stitch="fff4b4", blush="f08a80", gloss="fffbd8")
+# The hologram slipper's strap (tools/author_arena_holo.py, `slipper_hologram`).
+FACE = dict(post_v=0.79, anchor_v=0.50)
 
 
-def half_width(t):
+def half_width(t, waist=0.80):
     """The slipper's half width (in widths) at t, 0 at the heel's end, 1 at the toe's: a round heel,
-    a waist, a broad ball, a round toe."""
+    a waist (`waist` of the ball's width), a broad ball, a round toe."""
     t = min(max(t, 0.0), 1.0)
     ends = max(0.0, 1.0 - abs(2.0 * t - 1.0) ** 2.7) ** 0.47
     s = min(max((t - 0.30) / 0.42, 0.0), 1.0)
-    broad = 0.80 + 0.20 * (s * s * (3 - 2 * s))
+    broad = waist + (1.0 - waist) * (s * s * (3 - 2 * s))
     return 0.5 * ends * broad
 
 
@@ -117,17 +131,17 @@ def lean(t):
     return 0.035 * s * s * (3 - 2 * s)
 
 
-def outline(n=56):
+def outline(n=56, waist=0.80):
     """The footbed's outline, counter-clockwise seen from the footbed's side, in (widths, lengths):
     x in about -0.5..0.5, y in 0..1. n is even; the two ends are single points."""
     half = n // 2
     pts = []
     for k in range(half + 1):                                     # up the +x side, heel to toe
         t = (1 - math.cos(math.pi * k / half)) / 2
-        pts.append((lean(t) + half_width(t), t))
+        pts.append((lean(t) + half_width(t, waist), t))
     for k in range(1, half):                                      # back down the -x side
         t = (1 + math.cos(math.pi * k / half)) / 2
-        pts.append((lean(t) - half_width(t), t))
+        pts.append((lean(t) - half_width(t, waist), t))
     return pts
 
 
@@ -813,174 +827,217 @@ def island_px(name, size=2048):
 
 
 def balloon():
-    """THE SLIPPER BALLOON. Vinyl, toy-bright: flat fills with two or three big soft patches, panel
-    seams as dashed stitching, painted gloss in a few large shapes, and a face.
-    The footbed is drawn in (x across in widths, t heel to toe): the same `outline` the model is cut from."""
-    n = 2048
-    img = T.fill(n, n, "a8231f")                                  # the rim's dark red lies under everything, so no seam shows a hole
-    img = T.coat(img, "bd2e24", 500, 0.4, 3001, feather=1.0)
-    glow = np.zeros((n, n))                                       # extra light in the emission: the eyes, the cheeks, the gloss
+    """THE SLIPPER BALLOON, second design (2026-10-05). The owner, of the first: "the balloon slipper
+    design looks so off and unsettling". What was wrong with it is written over `balloon` in
+    tools/author_arena_holo.py; what the PAINT did wrong was: realistic eyes (whites, pupils,
+    highlights) that stare, raised brows, an open mouth with a tongue, and a stitched seam running
+    through the cheeks like a mask's edge.
 
-    # ---- the footbed
-    x0, y0, x1, y1 = island_px("foot")
-    w, h = x1 - x0, y1 - y0
-    yy, xx = np.mgrid[0:h, 0:w].astype(float)
-    # The island spans x in -0.56..0.56 widths and t in -0.02..1.02 (the model maps it the same way).
-    fx_ = (xx / (w - 1.0) - 0.5) * FOOT_SPAN[0]
-    ft = (1 - yy / (h - 1.0)) * FOOT_SPAN[1] + FOOT_T0
-    hw = np.vectorize(half_width)(ft[:, 0])[:, None]
-    ln = np.vectorize(lean)(ft[:, 0])[:, None]
-    # Distance inside the outline, in widths (positive inside), with a hand's wobble.
-    wob = 0.006 * T.smooth(h, w, 90, 3011)
-    d = (hw - np.abs(fx_ - ln)) + wob
-    px = FOOT_SPAN[0] / w                                         # widths per pixel across
-    inside = np.clip(d / (px * 1.6) + 0.5, 0, 1) * ((ft > 0.0) & (ft < 1.0))
-    foot = T.fill(h, w, "f4cf1e")                                 # the sole's yellow
-    foot = T.coat(foot, "ffe45a", 330, 0.36, 3013, feather=1.0)   # a lighter field high on it
-    foot = T.coat(foot, "e2b410", 300, 0.26, 3015, feather=1.0)   # a deeper one low
-    # The welt: a darker band just inside the edge, then a line of stitching.
-    welt = np.clip((0.050 - d) / (px * 2.0) + 0.5, 0, 1) * inside
-    foot = T.lay(foot, welt, "dc9a0c")
-    along = ft * BALLOON["length"] / 1.35                         # a stitch every 1.35 m
-    dash = (np.abs((along % 1.0) - 0.5) < 0.30)
-    stitch = np.clip((px * 2.6 - np.abs(d - 0.082)) / (px * 1.2) + 0.5, 0, 1) * dash * inside
-    foot = T.lay(foot, stitch, "fff1a8")
-    # Panel seams: the footbed is three panels, joined by two curved seams across it.
-    seams = np.zeros((h, w))
-    for t0, bow in SEAMS:
-        line = ft - (t0 + bow * np.cos(fx_ * math.pi / 0.9)) + 0.004 * T.smooth(h, w, 70, 3021)
+    So: a simple face in the spirit of the reference (the Overwatch balloon cow): two closed happy
+    arcs set low and wide apart, a small content smile, two soft cheeks. Nothing else on the face,
+    and no seam near it. The colours are the GAME'S OWN slipper's, taken from its artwork
+    (Art/ui/brand/tsinelas_hit.png and avatars/avatar_tsinelas.png): the logo's yellow sole #d8c808,
+    its maroon line #980818, the avatar strap's amber #f8b828 as the accent. The logo's strap is
+    orange, which is the offence colour: the strap here is the maroon lifted to a red, with the
+    logo strap's diagonal stripes. The two short ticks by the logo slipper's toe are there too.
+
+    Islands (ISLAND): foot (the front), tread (the back, mirrored: the stamp), rim (v once round),
+    and three rows of tube: strap, limb (arms and feet, a pale pad at the tip), scarf."""
+    n = 2048
+    C = BAL_HEX
+    img = T.fill(n, n, C["maroon"])
+    img = T.coat(img, "ac1a22", 500, 0.4, 3001, feather=1.0)
+    glow = np.zeros((n, n))
+    L, W = BALLOON["length"], BALLOON["width"]
+    asp = L / W
+    hwf = np.vectorize(lambda t: half_width(t, BALLOON["waist"]))
+    lnf = np.vectorize(lean)
+    hw1 = lambda t: half_width(t, BALLOON["waist"])
+
+    def field(name, mirror):
+        x0, y0, x1, y1 = island_px(name)
+        w, h = x1 - x0, y1 - y0
+        yy, xx = np.mgrid[0:h, 0:w].astype(float)
+        fx_ = (xx / (w - 1.0) - 0.5) * FOOT_SPAN[0]
+        if mirror:
+            fx_ = -fx_
+        ft = (1 - yy / (h - 1.0)) * FOOT_SPAN[1] + FOOT_T0
+        hw = hwf(ft[:, 0])[:, None]
+        ln = lnf(ft[:, 0])[:, None]
+        d = (hw - np.abs(fx_ - ln)) + 0.004 * T.smooth(h, w, 90, 3011 + mirror)
+        px = FOOT_SPAN[0] / w
+        inside = np.clip(d / (px * 1.6) + 0.5, 0, 1) * ((ft > 0.0) & (ft < 1.0))
+        return (x0, y0, x1, y1), w, h, fx_, ft, d, px, inside
+
+    def disc(fx_, ft, cx, ct, rx, rt=None):
+        """Distance from (cx, ct) in widths, an ellipse rx across and rt along (both in widths)."""
+        return np.hypot((fx_ - cx) / rx, (ft - ct) * asp / (rt or rx))
+
+    def stitched_seams(base, fx_, ft, h, inside, seed):
         tpx = FOOT_SPAN[1] / h
-        seams = np.maximum(seams, np.clip((tpx * 3.0 - np.abs(line)) / (tpx * 1.2) + 0.5, 0, 1))
-        acr = (fx_ * BALLOON["width"] / 1.35) % 1.0
-        st = np.clip((tpx * 2.2 - np.abs(np.abs(line) - tpx * 9.0)) / (tpx * 1.0) + 0.5, 0, 1) * (np.abs(acr - 0.5) < 0.30)
-        foot = T.lay(foot, st * inside, "fff1a8")
-    foot = T.lay(foot, seams * inside * 0.75, "c98a08")
-    # Reinforcing patches where the strap goes in: one at the toe post, one at each side.
-    patches = np.zeros((h, w))
-    for cx, ct, r in ((lean(FACE["post_v"]), FACE["post_v"], 0.105), (-0.345, FACE["anchor_v"], 0.085), (0.375, FACE["anchor_v"], 0.085)):
-        rr = np.hypot((fx_ - cx), (ft - ct) * BALLOON["length"] / BALLOON["width"])
-        ring = np.clip((px * 3.0 - np.abs(rr - r)) / (px * 1.2) + 0.5, 0, 1)
-        patches = np.maximum(patches, np.clip((r - rr) / (px * 1.6) + 0.5, 0, 1))
-        foot = T.lay(foot, np.clip((r - rr) / (px * 1.6) + 0.5, 0, 1) * inside, "e8483a")
-        foot = T.lay(foot, ring * inside, "8c1a18")
-        an = np.arctan2((ft - ct) * BALLOON["length"] / BALLOON["width"], fx_ - cx)
-        st = np.clip((px * 2.0 - np.abs(rr - r * 0.78)) / (px * 1.0) + 0.5, 0, 1) * (np.abs(((an * 9 / math.pi) % 1.0) - 0.5) < 0.3)
-        foot = T.lay(foot, st * inside, "ffd0c0")
-    # THE FACE, on the heel half: two big eyes, brows, a wide smile, round cheeks.
-    asp = BALLOON["length"] / BALLOON["width"]
-    ev, ex, er = FACE["eye_v"], FACE["eye_x"], FACE["eye_r"]
+        for t0, bow in SEAMS:
+            line = ft - (t0 + bow * np.cos(fx_ * math.pi / 0.9)) + 0.003 * T.smooth(base.shape[0], base.shape[1], 70, seed)
+            seam = np.clip((tpx * 3.0 - np.abs(line)) / (tpx * 1.2) + 0.5, 0, 1)
+            acr = (fx_ * W / 1.6) % 1.0
+            st = np.clip((tpx * 2.2 - np.abs(np.abs(line) - tpx * 10.0)) / (tpx * 1.0) + 0.5, 0, 1) * (np.abs(acr - 0.5) < 0.30)
+            base = T.lay(base, st * inside, C["stitch"])
+            base = T.lay(base, seam * inside * 0.7, C["yellow_line"])
+        return base
+
+    # ---- the front
+    (x0, y0, x1, y1), w, h, fx_, ft, d, px, inside = field("foot", False)
+    foot = T.fill(h, w, C["yellow"])
+    foot = T.coat(foot, C["yellow_hi"], 330, 0.36, 3013, feather=1.0)
+    foot = T.coat(foot, C["yellow_lo"], 300, 0.24, 3015, feather=1.0)
+    foot = stitched_seams(foot, fx_, ft, h, inside, 3021)
+    along = ft * L / 1.6
+    stitch = np.clip((px * 2.6 - np.abs(d - 0.105)) / (px * 1.2) + 0.5, 0, 1) * (np.abs((along % 1.0) - 0.5) < 0.30) * inside
+    foot = T.lay(foot, stitch, C["stitch"])
+    # The two ticks by the toe, as on the logo's slipper.
+    for k in range(2):
+        cx, ct = -0.185 + k * 0.05, 0.905 + k * 0.012
+        ang = math.radians(52.0)
+        u = (fx_ - cx) * math.cos(ang) + (ft - ct) * asp * math.sin(ang)
+        v = -(fx_ - cx) * math.sin(ang) + (ft - ct) * asp * math.cos(ang)
+        tick = T.box_mask(u, v, 0.0, 0.0, 0.050, 0.011, 0.010, feather=px * 1.5)
+        foot = T.lay(foot, tick * inside * 0.85, C["yellow_line"])
+    # A reinforcing patch where the strap goes in: at the toe post and at each side.
+    marks = [(lean(BAL["post"]), BAL["post"], 0.085)]
     for sx in (-1, 1):
-        cx = sx * ex + lean(ev)
-        rr = np.hypot((fx_ - cx) / 0.88, (ft - ev) * asp / 1.12)
-        white = np.clip((er - rr) / (px * 1.6) + 0.5, 0, 1)
-        foot = T.lay(foot, np.clip((er * 1.13 - rr) / (px * 1.6) + 0.5, 0, 1) * inside, "5a1c12")       # the outline
-        foot = T.lay(foot, white * inside, "fffaf0")
-        pr = np.hypot((fx_ - (cx - sx * 0.012)) / 0.9, (ft - (ev - 0.006)) * asp / 1.05)
-        foot = T.lay(foot, np.clip((er * 0.60 - pr) / (px * 1.6) + 0.5, 0, 1) * inside, "2a1420")       # the pupil
-        hr = np.hypot(fx_ - (cx - 0.022), (ft - (ev + 0.011)) * asp)
-        hl = np.clip((er * 0.20 - hr) / (px * 1.4) + 0.5, 0, 1)
-        foot = T.lay(foot, hl * inside, "ffffff")
-        pupil = np.clip((er * 0.60 - pr) / (px * 1.6) + 0.5, 0, 1)
-        glow[y0:y1, x0:x1] = np.maximum(glow[y0:y1, x0:x1], (white * (1 - pupil) * 0.55 + hl * 0.4) * inside)
-        brow = (ft - (ev + 0.066 - 0.010 * sx * (fx_ - cx) / er - 0.008 * ((fx_ - cx) / er) ** 2)) * asp
-        bm = np.clip((px * 4.5 - np.abs(brow)) / (px * 1.4) + 0.5, 0, 1) * (np.abs(fx_ - cx) < er * 0.95)
-        foot = T.lay(foot, bm * inside, "5a1c12")
-        ck = np.hypot((fx_ - sx * (ex + 0.085) - lean(ev)) / 1.25, (ft - (ev - 0.062)) * asp)
-        foot = T.lay(foot, np.clip((0.050 - ck) / (px * 5.0) + 0.5, 0, 1) * inside * 0.85, "ff8f88")     # the cheek
-    mv = FACE["mouth_v"]
-    mx = (fx_ - lean(mv)) / 0.150                                  # -1..1 across the mouth
-    top = (ft - (mv + 0.004 + 0.010 * mx * mx)) * asp              # the upper lip: nearly straight, its corners turned up
-    low = (ft - (mv - 0.046 + 0.058 * mx * mx)) * asp              # the lower lip: a deep curve
-    opening = np.clip(-top / (px * 1.6) + 0.5, 0, 1) * np.clip(low / (px * 1.6) + 0.5, 0, 1) * (np.abs(mx) < 1.0)
-    lips = np.clip((px * 4.0 - np.minimum(np.abs(top), np.abs(low))) / (px * 1.4) + 0.5, 0, 1) * (np.abs(mx) < 1.04) * np.clip((low + px * 5) / (px * 1.4), 0, 1) * np.clip((-top + px * 5) / (px * 1.4), 0, 1)
-    foot = T.lay(foot, opening * inside, "7a1a24")
-    tongue = np.clip((0.050 - np.hypot(fx_ - lean(mv), (ft - (mv - 0.047)) * asp * 1.4)) / (px * 1.8) + 0.5, 0, 1) * opening
-    foot = T.lay(foot, tongue * inside, "ff8f88")
-    foot = T.lay(foot, lips * inside, "5a1c12")
-    # Painted gloss: one long soft highlight down the left, a short one by the toe. Vinyl, not chrome.
-    gl = np.clip(1 - np.abs(fx_ + 0.27 - 0.08 * np.sin(ft * 4.0)) / 0.050, 0, 1) * np.clip((ft - 0.52) / 0.05, 0, 1) * np.clip((0.90 - ft) / 0.05, 0, 1)
-    gl = np.maximum(gl, np.clip(1 - np.hypot((fx_ - 0.20) / 0.10, (ft - 0.905) * asp / 0.05), 0, 1))
-    gl = ndimage.gaussian_filter(gl, 6.0) * inside * (1 - patches)
-    foot = T.lay(foot, gl * 0.62, "fffbe0")
-    glow[y0:y1, x0:x1] = np.maximum(glow[y0:y1, x0:x1], gl * 0.35)
+        marks.append((lean(BAL["anchor"]) + sx * hw1(BAL["anchor"]) * BAL["anchor_x"], BAL["anchor"], 0.080))
+    for cx, ct, r in marks:
+        rr = disc(fx_, ft, cx, ct, 1.0)
+        foot = T.lay(foot, np.clip((r - rr) / (px * 1.6) + 0.5, 0, 1) * inside, C["red"])
+        foot = T.lay(foot, np.clip((px * 3.0 - np.abs(rr - r)) / (px * 1.2) + 0.5, 0, 1) * inside, C["maroon"])
+        an = np.arctan2((ft - ct) * asp, fx_ - cx)
+        st = np.clip((px * 2.0 - np.abs(rr - r * 0.74)) / (px * 1.0) + 0.5, 0, 1) * (np.abs(((an * 8 / math.pi) % 1.0) - 0.5) < 0.3)
+        foot = T.lay(foot, st * inside, C["stitch"])
+    # THE FACE: two closed happy arcs, a small smile, two cheeks. That is all of it.
+    et, ex, er = BAL["eye_t"], BAL["eye_x"], BAL["eye_r"]
+    thick = BAL["line"]
+    face = np.zeros((h, w))
+    for sx in (-1, 1):
+        cx = sx * ex + lean(et)
+        rr = disc(fx_, ft, cx, et, 1.0)
+        arc = np.clip((thick / 2 - np.abs(rr - er)) / (px * 1.4) + 0.5, 0, 1) * np.clip(((ft - et) * asp + er * 0.18) / (px * 2.0), 0, 1)
+        for ex_ in (-1, 1):                                       # a round end on each foot of the arc
+            arc = np.maximum(arc, np.clip((thick / 2 - disc(fx_, ft, cx + ex_ * er * 0.984, et - er * 0.18 / asp, 1.0)) / (px * 1.4) + 0.5, 0, 1))
+        face = np.maximum(face, arc)
+        blush = np.clip((1.0 - disc(fx_, ft, sx * BAL["blush_x"] + lean(et), BAL["blush_t"], 0.070, 0.042)) / 0.45, 0, 1)
+        foot = T.lay(foot, blush * inside * 0.78, C["blush"])
+    mt, mr = BAL["mouth_t"], BAL["mouth_r"]
+    rr = disc(fx_, ft, lean(mt), mt + mr * 0.55 / asp, 1.0)
+    smile = np.clip((thick / 2 - np.abs(rr - mr)) / (px * 1.4) + 0.5, 0, 1) * np.clip((-(ft - mt) * asp - mr * 0.05) / (px * 2.0), 0, 1)
+    for ex_ in (-1, 1):
+        smile = np.maximum(smile, np.clip((thick / 2 - disc(fx_, ft, lean(mt) + ex_ * mr * 0.835, mt - mr * 0.05 / asp, 1.0)) / (px * 1.4) + 0.5, 0, 1))
+    face = np.maximum(face, smile)
+    foot = T.lay(foot, face * inside, C["maroon"])
+    # Painted gloss: two big soft shapes high on the left. Vinyl, not chrome.
+    gl = np.clip(1 - disc(fx_, ft, -0.25, 0.745, 0.050, 0.150), 0, 1) + np.clip(1 - disc(fx_, ft, -0.335, 0.52, 0.030, 0.060), 0, 1)
+    gl = ndimage.gaussian_filter(np.clip(gl, 0, 1), 7.0) * inside
+    foot = T.lay(foot, gl * 0.55, C["gloss"])
+    glow[y0:y1, x0:x1] = gl * 0.3
     img[y0:y1, x0:x1] = img[y0:y1, x0:x1] * (1 - inside[..., None]) + foot * inside[..., None]
 
-    # ---- the tread (the underside): a deeper coral with a chevron tread and the same welt
-    x0, y0, x1, y1 = island_px("tread")
-    w, h = x1 - x0, y1 - y0
-    yy, xx = np.mgrid[0:h, 0:w].astype(float)
-    fx_ = (xx / (w - 1.0) - 0.5) * FOOT_SPAN[0]
-    ft = (1 - yy / (h - 1.0)) * FOOT_SPAN[1] + FOOT_T0
-    hw = np.vectorize(half_width)(ft[:, 0])[:, None]
-    ln = np.vectorize(lean)(ft[:, 0])[:, None]
-    d = (hw - np.abs(fx_ + ln)) + 0.006 * T.smooth(h, w, 70, 3031)   # mirrored: it is seen from the other side
-    px = FOOT_SPAN[0] / w
-    inside = np.clip(d / (px * 1.6) + 0.5, 0, 1) * ((ft > 0.0) & (ft < 1.0))
-    # The first tread was one red-brown ribbed field: from the air behind it the balloon read as a red
-    # capsule, not a slipper. So the back is the sole's own yellow, a shade deeper, with a chevron
-    # tread in amber, the red welt round it, and the game's stamp across its upper half: from behind
-    # it is still plainly the same toy, and it carries the logo to the city.
-    tr = T.fill(h, w, "e6b414")
-    tr = T.coat(tr, "f2c832", 240, 0.36, 3033, feather=1.0)
-    tr = T.coat(tr, "d09c0c", 220, 0.26, 3035, feather=1.0)
-    chev = ((ft * BALLOON["length"] / 4.4 + np.abs(fx_) * 2.2) % 1.0)
-    groove = np.clip((0.13 - np.abs(chev - 0.5)) / 0.04 + 0.5, 0, 1) * np.clip((d - 0.085) / (px * 2.0) + 0.5, 0, 1)
-    groove = groove * ((ft < 0.42) | (ft > 0.86))                 # the tread's two patches: the heel and the toe
-    tr = T.lay(tr, groove * 0.75, "b8800a")
-    sw_, sh_ = int(w * 0.70), int(h * 0.32)
+    # ---- the back: a designed back. The same yellow a shade deeper, the game's stamp across the
+    # middle, a chevron tread at the heel and at the toe, the same stitching.
+    (x0, y0, x1, y1), w, h, fx_, ft, d, px, inside = field("tread", True)
+    tr = T.fill(h, w, C["yellow_back"])
+    tr = T.coat(tr, C["yellow"], 240, 0.36, 3033, feather=1.0)
+    tr = T.coat(tr, C["yellow_lo"], 220, 0.26, 3035, feather=1.0)
+    tr = stitched_seams(tr, fx_, ft, h, inside, 3037)
+    chev = ((ft * L / 5.0 + np.abs(fx_) * 1.8) % 1.0)
+    groove = np.clip((0.14 - np.abs(chev - 0.5)) / 0.04 + 0.5, 0, 1) * np.clip((d - 0.13) / (px * 2.0) + 0.5, 0, 1)
+    groove = groove * (((ft > 0.03) & (ft < 0.17)) | (ft > 0.84))
+    tr = T.lay(tr, groove * 0.7, C["yellow_line"])
+    sw_, sh_ = int(w * 0.66), int(h * 0.26)
     st = fit(Image.open(TUMP_STAMP).convert("RGBA").crop((30, 145, 800, 665)), sw_, sh_)
     ink = st[..., 3] * np.clip((0.45 - (st[..., :3] @ np.array([0.3, 0.6, 0.1]))) / 0.3, 0, 1)
     paper = ndimage.gaussian_filter(ndimage.binary_fill_holes(ink > 0.4).astype(float), 1.2)
-    ox_, oy_ = (w - sw_) // 2, int(h * (1 - (0.64 - FOOT_T0) / FOOT_SPAN[1])) - sh_ // 2
+    ox_, oy_ = (w - sw_) // 2, int(h * (1 - (0.41 - FOOT_T0) / FOOT_SPAN[1])) - sh_ // 2
     part = tr[oy_:oy_ + sh_, ox_:ox_ + sw_]
-    part = T.lay(part, paper * 0.92, "fff3c4")
-    part = T.lay(part, ink, "8c1a18")
+    part = T.lay(part, paper * 0.92, C["cream"])
+    part = T.lay(part, ink, C["maroon"])
     tr[oy_:oy_ + sh_, ox_:ox_ + sw_] = part
-    tr = T.lay(tr, np.clip((0.050 - d) / (px * 2.0) + 0.5, 0, 1) * inside, "a8231f")
-    stitch = np.clip((px * 2.6 - np.abs(d - 0.082)) / (px * 1.2) + 0.5, 0, 1) * (np.abs(((ft * BALLOON["length"] / 1.35) % 1.0) - 0.5) < 0.30) * inside
-    tr = T.lay(tr, stitch, "fff1a8")
+    stitch = np.clip((px * 2.6 - np.abs(d - 0.105)) / (px * 1.2) + 0.5, 0, 1) * (np.abs(((ft * L / 1.6) % 1.0) - 0.5) < 0.30) * inside
+    tr = T.lay(tr, stitch, C["stitch"])
     img[y0:y1, x0:x1] = img[y0:y1, x0:x1] * (1 - inside[..., None]) + tr * inside[..., None]
 
-    # ---- the rim band: v runs once round the slipper, u across the band. Stitching either side,
-    # a bead of light along the middle, a panel seam every eighth of the way round.
+    # ---- the rim band: v runs once round the slipper, u across the band.
     x0, y0, x1, y1 = island_px("rim")
     w, h = x1 - x0, y1 - y0
     yy, xx = np.mgrid[0:h, 0:w].astype(float)
     u = xx / (w - 1.0)
-    rim = T.fill(h, w, "b02820")
-    rim = T.coat(rim, "c8382a", 300, 0.4, 3041, feather=1.0, stretch=(1.0, 0.5))
-    rim = T.coat(rim, "971c1a", 260, 0.25, 3043, feather=1.0, stretch=(1.0, 0.5))
-    for uu in (0.14, 0.86):
+    rim = T.fill(h, w, C["maroon"])
+    rim = T.coat(rim, "b01c26", 300, 0.4, 3041, feather=1.0, stretch=(1.0, 0.5))
+    rim = T.coat(rim, "84101a", 260, 0.25, 3043, feather=1.0, stretch=(1.0, 0.5))
+    for uu in (0.10, 0.90):
         st = np.clip((3.0 - np.abs(xx - uu * w)) / 1.4 + 0.5, 0, 1) * (np.abs((yy / 26.0) % 1.0 - 0.5) < 0.30)
-        rim = T.lay(rim, st, "ffb8a8")
-    seam = np.clip((3.0 - np.abs((yy % (h / 8.0)) - h / 16.0)) / 1.4 + 0.5, 0, 1) * (u > 0.14) * (u < 0.86)
-    rim = T.lay(rim, seam * 0.8, "7c1414")
-    bead = ndimage.gaussian_filter(np.clip(1 - np.abs(u - 0.36) / 0.07, 0, 1), 3.0)
-    rim = T.lay(rim, bead * 0.45, "ff9a86")
+        rim = T.lay(rim, st, C["stitch"])
+    seam = np.clip((3.0 - np.abs((yy % (h / 8.0)) - h / 16.0)) / 1.4 + 0.5, 0, 1) * (u > 0.10) * (u < 0.90)
+    rim = T.lay(rim, seam * 0.8, "6c0c14")
+    bead = ndimage.gaussian_filter(np.clip(1 - np.abs(u - 0.62) / 0.07, 0, 1), 3.0)
+    rim = T.lay(rim, bead * 0.4, "e06a70")
     img[y0:y1, x0:x1] = rim
-    glow[y0:y1, x0:x1] = bead * 0.2
 
-    # ---- the strap: u along a tube, v round it. Coral, a gloss line along its crown, stitched edges.
-    x0, y0, x1, y1 = island_px("strap")
-    w, h = x1 - x0, y1 - y0
-    yy, xx = np.mgrid[0:h, 0:w].astype(float)
-    v = yy / (h - 1.0)
-    st_ = T.fill(h, w, "e8483a")
-    st_ = T.coat(st_, "f4604c", 200, 0.4, 3051, feather=1.0, stretch=(0.5, 1.0))
-    st_ = T.coat(st_, "cc3630", 180, 0.25, 3053, feather=1.0, stretch=(0.5, 1.0))
-    gloss = ndimage.gaussian_filter(np.clip(1 - np.abs(v - 0.30) / 0.055, 0, 1) * (np.abs((xx / w * 3.0) % 1.0 - 0.5) < 0.40), 4.0)
-    st_ = T.lay(st_, gloss * 0.6, "ffd8cc")
-    for vv in (0.06, 0.94):
-        sm = np.clip((2.6 - np.abs(yy - vv * h)) / 1.3 + 0.5, 0, 1) * (np.abs((xx / 22.0) % 1.0 - 0.5) < 0.30)
-        st_ = T.lay(st_, sm, "ffd0c0")
-    band = np.clip((2.6 - np.abs((xx % (w / 4.0)) - w / 8.0)) / 1.3 + 0.5, 0, 1)
-    st_ = T.lay(st_, band * 0.35, "9c2020")
-    img[y0:y1, x0:x1] = st_
-    glow[y0:y1, x0:x1] = gloss * 0.3
+    # ---- the three rows of tube: u along it, v round it.
+    def row(name):
+        x0, y0, x1, y1 = island_px(name)
+        w, h = x1 - x0, y1 - y0
+        yy, xx = np.mgrid[0:h, 0:w].astype(float)
+        return (x0, y0, x1, y1), w, h, xx / (w - 1.0), yy / (h - 1.0), xx, yy
+
+    box, w, h, uu, vv, xx, yy = row("strap")
+    st_ = T.fill(h, w, C["red"])
+    st_ = T.coat(st_, "cc3a40", 200, 0.4, 3051, feather=1.0, stretch=(0.5, 1.0))
+    st_ = T.coat(st_, "a01a24", 180, 0.25, 3053, feather=1.0, stretch=(0.5, 1.0))
+    stripe = np.clip((0.20 - np.abs(((xx + yy * 1.4) / 46.0) % 1.0 - 0.5)) / 0.05 + 0.5, 0, 1)   # the logo strap's diagonal stripes
+    st_ = T.lay(st_, stripe * 0.32, "e0666a")
+    gloss = ndimage.gaussian_filter(np.clip(1 - np.abs(vv - 0.30) / 0.07, 0, 1) * ((uu > 0.25) & (uu < 0.9)), 4.0)
+    st_ = T.lay(st_, gloss * 0.45, "ffd0cc")
+    img[box[1]:box[3], box[0]:box[2]] = st_
+
+    box, w, h, uu, vv, xx, yy = row("limb")
+    lb = T.fill(h, w, C["yellow"])
+    lb = T.coat(lb, C["yellow_hi"], 160, 0.36, 3061, feather=1.0)
+    lb = T.coat(lb, C["yellow_lo"], 150, 0.22, 3063, feather=1.0)
+    lb = T.lay(lb, np.clip((3.0 - np.abs(xx - 0.20 * w)) / 1.4 + 0.5, 0, 1) * 0.8, C["yellow_line"])          # the seam where it joins the body
+    lb = T.lay(lb, np.clip((2.4 - np.abs(xx - 0.235 * w)) / 1.2 + 0.5, 0, 1) * (np.abs((yy / 15.0) % 1.0 - 0.5) < 0.30), C["stitch"])
+    pad = np.clip((uu - 0.80 + 0.012 * np.sin(vv * math.tau * 3)) / 0.012 + 0.5, 0, 1)                        # a pale pad on the tip
+    lb = T.lay(lb, pad, C["cream"])
+    lb = T.lay(lb, np.clip((2.6 - np.abs(xx - 0.80 * w)) / 1.2 + 0.5, 0, 1) * 0.6, C["yellow_line"])
+    img[box[1]:box[3], box[0]:box[2]] = lb
+
+    box, w, h, uu, vv, xx, yy = row("scarf")
+    sc = T.fill(h, w, C["cream"])
+    sc = T.coat(sc, "fff6e0", 160, 0.36, 3071, feather=1.0)
+    sc = T.coat(sc, "e4d6b4", 150, 0.22, 3073, feather=1.0)
+    for v0, colr, half in ((0.24, C["red"], 0.060), (0.40, C["amber"], 0.035), (0.74, C["red"], 0.060), (0.90, C["amber"], 0.035)):
+        sc = T.lay(sc, np.clip((half - np.abs(vv - v0 + 0.006 * np.sin(uu * 40.0))) / 0.012 + 0.5, 0, 1), colr)
+    img[box[1]:box[3], box[0]:box[2]] = sc
 
     save("balloon", img)
     # Lit for night from inside and by the stadium's spill: it gives off a good part of its own colour.
     save("balloon_emit", img * 0.70 + glow[..., None] * 0.3)
+
+
+def options_sheet(version):
+    """The three balloon designs side by side for the owner: the blockouts' two pictures (rendered by
+    tools/author_arena_holo.py --options) stacked, with their names."""
+    names = ["A  the seated mascot: arms, feet, a scarf", "B  the parade balloon: level, a face on the toe", "C  the pair, tied together"]
+    parts = [Image.open(LOGS / ("balloon_options_%s_%s.png" % (k, version))).convert("RGB") for k in ("front", "quarter")]
+    w, h = parts[0].size
+    im = Image.new("RGB", (w, h * 2 + 70), (8, 10, 26))
+    d = ImageDraw.Draw(im)
+    f = T.font("bahn", 34)
+    for k, p in enumerate(parts):
+        im.paste(p, (0, 70 + k * h))
+    for k, name in enumerate(names):
+        d.text((w * (k + 0.5) / 3 - d.textlength(name, font=f) / 2, 18), name, font=f, fill=(236, 236, 244))
+    d.text((16, 76), "from the stage's side, below", font=T.font("bahn", 22), fill=(170, 176, 200))
+    d.text((16, 76 + h), "three-quarter", font=T.font("bahn", 22), fill=(170, 176, 200))
+    im.save(LOGS / ("balloon_options_%s.png" % version))
+    print("[arena-holo-tex] options sheet", version)
 
 
 # The footbed island's span: (widths across, lengths along), and the t at its bottom edge.
@@ -1032,11 +1089,13 @@ def main():
     _lazy()
     only = [a for a in sys.argv[1:] if a in PAINTERS]
     for name, fn in PAINTERS.items():
-        if not only or name in only:
+        if (not only and "--options-sheet" not in sys.argv) or name in only:
             fn()
     for i, a in enumerate(sys.argv):
         if a == "--sheet" and i + 1 < len(sys.argv):
             sheet(sys.argv[i + 1])
+        if a == "--options-sheet" and i + 1 < len(sys.argv):
+            options_sheet(sys.argv[i + 1])
 
 
 if __name__ == "__main__":
