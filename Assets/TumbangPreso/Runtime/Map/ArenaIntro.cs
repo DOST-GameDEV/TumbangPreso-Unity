@@ -595,7 +595,7 @@ namespace TumbangPreso.Map
         {
             // The tunnel is dim and the eye opens as they walk out: the camera's own event grade.
             float dim = t.Full ? 1.0f - Smooth((age - (t.Glare - 0.8f)) / (t.Peak - t.Glare + 0.8f)) : 0.0f;
-            if (_grade != null) _grade.SetEventGrade(Mathf.Lerp(1.0f, 0.5f, dim), Mathf.Lerp(1.0f, 0.82f, dim));
+            if (_grade != null) _grade.SetEventGrade(Mathf.Lerp(1.0f, 0.72f, dim), Mathf.Lerp(1.0f, 0.88f, dim));   // was 0.5: dark hair went to solid black shapes in the tunnel (owner, 2026-10-05)
 
             // The map's own glow, up with the glare and back exactly where it was.
             if (_look != null && _lookBloom > 0.0f)
