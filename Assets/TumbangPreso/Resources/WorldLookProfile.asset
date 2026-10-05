@@ -233,8 +233,8 @@ MonoBehaviour:
     BlockyShade: {r: 0.11, g: 0.133, b: 0.329, a: 1}
     BlockyAir: {r: 0.184, g: 0.173, b: 0.455, a: 1}
     CloudsFromBelow: 1
-    Bloom: 0.32
-    BloomThreshold: 1.7
+    Bloom: 0.16
+    BloomThreshold: 1.9
   - Map: IlalimNgTulayOld
     Sky: {r: 0.46, g: 0.47, b: 0.64, a: 1}
     Equator: {r: 0.5, g: 0.5, b: 0.58, a: 1}
