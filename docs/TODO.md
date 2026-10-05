@@ -49,6 +49,11 @@
   evidence blobs/source/XML verified. Static active-owner callbacks were already
   identical; no motion or QA cause is claimed.
   [Activation evidence](reports/laptop-validation-2026-10-05/arena-inactive-scene/README.md).
+- [x] Inactive ArenaStage Awake/OnEnable does not replace active movement globals.
+  Two actual additive-component causes/seven controls ->nine native passes; Root
+  verifies nine raw Git blobs/source/test/XML/restoration. Local preview layout
+  preparation remains intact; current packaged preview/gameplay remains separate.
+  [Stage evidence](reports/laptop-validation-2026-10-05/arena-stage-inactive/README.md).
 - [x] Actual merged Arena scene/roster imports and changed replay contracts pass
   three native cases, including accepted catch coat/prop/world-audio preservation.
   Root verifies five raw Git blobs, the exact fixture and terminal restoration.
