@@ -1,0 +1,38 @@
+{
+  "Assets/TumbangPreso/Runtime/AIController.cs": {
+    "testedRawSHA256": "73a5b3b578633b9f61b27edf07791f48b8864a66ee20c299f91a1a518b6c9ae7",
+    "normalizedLFsha256": "2d380341d306ec8a48ddb2db81e4ee168541c115387fe625bee4eff747ddd941"
+  },
+  "Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.Hub.cs": {
+    "testedRawSHA256": "d6222a9ccc9ce3deb0005c42e351bee413320d8b64d6475cc6c7b07fd47c4e0b",
+    "normalizedLFsha256": "cd111bb6aa022d7b58def30985ee20b37af8fe8036cd26b0c920df6247990f6f"
+  },
+  "Assets/TumbangPreso/Runtime/MatchInstaller.cs": {
+    "testedRawSHA256": "d555fe906b8896364150e7ab4785985a79281c2738bf4b132bae32c32885af3c",
+    "normalizedLFsha256": "18569f22981f7249cfb10295eb54bdd28a834474fec881352d1eba8b85ae5863"
+  },
+  "Assets/TumbangPreso/Tests/PlayMode/CustomBotPolicyStartTests.cs": {
+    "rawSHA256": "4c35e7bcd11405b34aa337c2ac709eace1a3b4a7b587ecb54dd3843158800ed9",
+    "normalizedLFsha256": "104446c235278547cff55ab8a9add7755eb88877bc48c6d0b75a8e8f2bed20b9"
+  },
+  "Assets/TumbangPreso/Tests/PlayMode/CustomBotPolicyStartTests.cs.meta": {
+    "rawSHA256": "2312311c73516b71bd6f1aeeaff5ff45cd9ef2c863d3cca03d864a7998a6fb11",
+    "normalizedLFsha256": "dfd000b0f9f62833c9c8b5c1a7bc64630406e3d58b4e263d9ffaf0f9472b6e13"
+  },
+  "Assets/TumbangPreso/Tests/PlayMode/CustomBotPolicyLoadTests.cs": {
+    "rawSHA256": "f6346611c48160e145bf54535d2998743e0d2a256fed74f273a2689c1b3a43eb",
+    "normalizedLFsha256": "f32bb92c1579897bf715852a8cc06b1cbd4a2dda1ecef95f1d92377caf816280"
+  },
+  "Assets/TumbangPreso/Tests/PlayMode/CustomBotPolicyLoadTests.cs.meta": {
+    "rawSHA256": "6e72651ee68e2313d2233d69c23f6021c4fab9a9dac4a68383d95ff46b0a2164",
+    "normalizedLFsha256": "efc8918d6426f3f2032de540c97bb98502980bb27d73ffcf0da3d309d18445ab"
+  },
+  "Assets/TumbangPreso/Tests/PlayMode/CustomBotPolicyOfflineTests.cs": {
+    "rawSHA256": "7edb2b5fe88e9f05ebb8ea286e5befb65f8f70d726ea90b39dd83ea5c36d4c0b",
+    "normalizedLFsha256": "6d8a6985e5432e25cac4c3d323e15d9cdd614485e83301e110e1e92b7d435ec8"
+  },
+  "Assets/TumbangPreso/Tests/PlayMode/CustomBotPolicyOfflineTests.cs.meta": {
+    "rawSHA256": "900c5f7299d4451dffbd4d7dbba2c0ba9abf08f54593b751a05720c4d0ef0baa",
+    "normalizedLFsha256": "19ceea34e4440874db6e966597ccdf9b547b57a034a4c19962e4f78eeb0e1b46"
+  }
+}

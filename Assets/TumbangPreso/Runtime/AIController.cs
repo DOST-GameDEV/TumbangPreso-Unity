@@ -119,6 +119,12 @@ namespace TumbangPreso
             ActiveDifficulty = (Difficulty)Mathf.Clamp(savedIndex, 0, 2);
         }
 
+        /// <summary>Apply the current custom room policy without rewriting this machine's preference.</summary>
+        internal static void ApplyCustomRoomPolicy(CustomRules rules)
+            => ApplyDifficulty(rules != null && rules.Bots > 0
+                ? Mathf.Clamp(rules.BotDifficulty, 0, NoBotsIndex - 1)
+                : NoBotsIndex);
+
         public static void ApplyDifficultyFromSettings()
             => ApplyDifficulty(Settings.SettingsStore.Current.AiDifficulty);
 
