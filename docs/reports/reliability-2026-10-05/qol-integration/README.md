@@ -37,3 +37,11 @@ renderer property block. All three properties exist in the current Toon shader.
 Other copied material properties are preserved. This integrates the owner's
 reported white replay-body fix; a changed replay capture/control is still required
 and static inspection does not establish visual acceptance.
+
+Merged native compilation/import is now established by the Arena ownership
+comparison: baseline three failures/two controls and corrected five passes.
+Source2a77b21ff restricts shared teardown to the actual owning instance while
+retaining per-instance cleanup. Root independently verified nine raw evidence
+blobs, three normalized source/test hashes and both XML results.
+[Focused native comparison](../../laptop-validation-2026-10-05/arena-owner/README.md).
+Full affected scenes/models/replays and matching152 players remain unqualified.

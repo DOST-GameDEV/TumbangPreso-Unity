@@ -6,8 +6,13 @@
   stable IDs, names and ASTRA engineering fixes; incoming Yasmin takes precedence.
   Remove the temporary train prank release hooks. Added GUID/reference checks pass.
 - [x] Integrate the newer replay-copy material-property correction from fa922a463.
-- [ ] Native merged compilation/import, affected map/model/camera/gameplay and
-  replay render controls. Protocol152 requires matching peers and a current build.
+- [x] Merged native compilation/import and Arena ownership repair: old stage or
+  recovery teardown clears newer globals/hooks in three baseline cases; candidate
+  five cases pass including two current-owner cleanup controls. Root verifies nine
+  raw Git blobs, source/fixture hashes, XML and terminal restoration receipts.
+  [Arena evidence](reports/laptop-validation-2026-10-05/arena-owner/README.md).
+- [ ] Affected full map/model/camera/gameplay and replay render controls.
+  Protocol152 requires matching peers and a current build.
   The owner's timeout/host-kick report remains unresolved.
   [Integration scope](reports/reliability-2026-10-05/qol-integration/README.md).
 
