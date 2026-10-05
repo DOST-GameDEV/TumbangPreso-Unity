@@ -51,11 +51,11 @@ Shader "TumbangPreso/ArenaScreen"
                 float2 uv = i.uv;
                 float y = uv.y;
                 // Two slow waves down the picture, a long one and a short one, moving against each other.
-                float wave = sin(y * 9.0 - _Clock * 1.6) * 0.0050 + sin(y * 31.0 + _Clock * 2.9) * 0.0022;
+                float wave = sin(y * 9.0 - _Clock * 1.6) * 0.0018 + sin(y * 31.0 + _Clock * 2.9) * 0.0008;   // was 0.0050 and 0.0022: "amplitude is too much"
                 // A tear: one narrow band that travels down the screen and shivers as it goes.
                 float band = frac(_Clock * 0.21);
                 float d = y - (1.0 - band);
-                float tear = exp(-d * d * 1400.0) * 0.022 * sin(_Clock * 37.0 + y * 160.0);
+                float tear = exp(-d * d * 1400.0) * 0.008 * sin(_Clock * 37.0 + y * 160.0);
                 uv.x += (wave + tear) * _Wave;
 
                 fixed4 c = tex2D(_MainTex, saturate(uv));
