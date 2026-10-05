@@ -87,14 +87,54 @@ namespace TumbangPreso.Map
             _root = new GameObject("Arena opening screens").transform;
             _root.SetParent(parent, false);
             _root.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+            // ⚠️ ONE CARD, DRAWN TO A TEXTURE, ON EIGHT SCREENS (2026-10-06). The card is laid out once, far under
+            // the map, in front of a camera of its own that draws only it into `_picture`; each screen in the
+            // bowl is a quad wearing that picture through `ArenaScreen.shader`, which bends it line by line (the
+            // owner's "wave distort": moving the card's rows about in code only read as the words sliding). With
+            // the shader missing the eight screens are eight cards again, as they were, with no wave.
+            var shader = Resources.Load<Shader>("Shaders/ArenaScreen");
+            bool pictured = shader != null && shader.isSupported;
+            if (pictured)
+            {
+                _picture = new RenderTexture(1300, 573, 16, RenderTextureFormat.ARGB32) { name = "Arena opening screen", hideFlags = HideFlags.DontSave };
+                _picture.wrapMode = TextureWrapMode.Clamp;
+                var eye = new GameObject("Screen camera");
+                eye.transform.SetParent(_root, false);
+                eye.transform.SetPositionAndRotation(centre + Vector3.down * 4000.0f, Quaternion.identity);
+                var camera = eye.AddComponent<Camera>();
+                camera.clearFlags = CameraClearFlags.SolidColor; camera.backgroundColor = Ground;
+                camera.cullingMask = 1 << UiLayer; camera.nearClipPlane = 0.1f; camera.farClipPlane = 20.0f;
+                camera.allowHDR = false; camera.allowMSAA = false; camera.depth = -60; camera.targetTexture = _picture;
+
+                _faces[0] = BuildFace(_root, "Screen card", eye.transform.position + Vector3.forward * 5.0f, Quaternion.identity, 1.0f);
+                var canvas = _faces[0].Group.GetComponent<Canvas>();
+                canvas.renderMode = RenderMode.ScreenSpaceCamera; canvas.worldCamera = camera; canvas.planeDistance = 5.0f;
+                var scaler = _faces[0].Group.GetComponent<CanvasScaler>();
+                scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+                scaler.referenceResolution = new Vector2(Wide, Tall); scaler.matchWidthOrHeight = 0.5f;
+                foreach (var t in _faces[0].Group.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = UiLayer;
+
+                _glass = new Material(shader) { name = "Arena opening screen", hideFlags = HideFlags.DontSave, mainTexture = _picture };
+                _quad = Quad();
+            }
             for (int k = 0; k < Faces; k++)
             {
                 bool board = k >= 4;
                 Vector3 outward = ArenaStageMesh.Direction(board ? 90.0f * k : 45.0f + 90.0f * k);
                 // A corner screen is read from the can, so its card faces inward; the scoreboard's face outward.
                 Vector3 at = board ? centre + outward * BoardRadius + Vector3.up * BoardHeight : CornerCentre(centre, k);
-                _faces[k] = BuildFace(_root, board ? "Scoreboard card" : "Corner screen card", at,
-                                      Quaternion.LookRotation(board ? -outward : outward, Vector3.up), board ? BoardScale : CornerScale);
+                Quaternion turn = Quaternion.LookRotation(board ? -outward : outward, Vector3.up);
+                float scale = board ? BoardScale : CornerScale;
+                if (!pictured) { _faces[k] = BuildFace(_root, board ? "Scoreboard card" : "Corner screen card", at, turn, scale); continue; }
+
+                var screen = new GameObject(board ? "Scoreboard screen" : "Corner screen");
+                screen.transform.SetParent(_root, false);
+                screen.transform.SetPositionAndRotation(at, turn);
+                screen.transform.localScale = new Vector3(Wide * scale, Tall * scale, 1.0f);
+                screen.AddComponent<MeshFilter>().sharedMesh = _quad;
+                var drawn = screen.AddComponent<MeshRenderer>();
+                drawn.sharedMaterial = _glass;
+                drawn.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; drawn.receiveShadows = false;
             }
 
             _root.gameObject.SetActive(false);
@@ -106,6 +146,22 @@ namespace TumbangPreso.Map
             var people = Core.Roster.GetPeople(who.Mode);
             int pick = who.CharacterIndex;
             return pick >= 0 && pick < people.Count ? UI.OwnerPortraitArt.Get("UI/portraits/" + people[pick].Id) : null;
+        }
+
+        private const int UiLayer = 5;
+        private RenderTexture _picture;
+        private Material _glass;
+        private Mesh _quad;
+
+        /// <summary>A unit quad seen as a canvas is seen (from its -z side), its picture the right way round.</summary>
+        private static Mesh Quad()
+        {
+            var mesh = new Mesh { name = "Arena opening screen quad", hideFlags = HideFlags.DontSave };
+            mesh.SetVertices(new[] { new Vector3(-0.5f, -0.5f, 0), new Vector3(0.5f, -0.5f, 0), new Vector3(0.5f, 0.5f, 0), new Vector3(-0.5f, 0.5f, 0) });
+            mesh.SetUVs(0, new[] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1) });
+            mesh.SetTriangles(new[] { 0, 2, 1, 0, 3, 2 }, 0);
+            mesh.RecalculateBounds();
+            return mesh;
         }
 
         private static Face BuildFace(Transform parent, string name, Vector3 at, Quaternion rotation, float scale)
@@ -292,7 +348,9 @@ namespace TumbangPreso.Map
             bool on = alpha > 0.004f;
             if (_root.gameObject.activeSelf != on) _root.gameObject.SetActive(on);
             if (!on) return;
-            for (int k = 0; k < Faces; k++) _faces[k].Group.alpha = alpha;
+            // The picture's screens fade as one material; the card itself stays whole for its camera.
+            if (_glass != null) { _glass.SetFloat("_Alpha", alpha); return; }
+            for (int k = 0; k < Faces; k++) if (_faces[k] != null) _faces[k].Group.alpha = alpha;
         }
 
         /// <summary>Show one seat's card on every face. A change only: the same seat again costs nothing.</summary>
@@ -305,6 +363,7 @@ namespace TumbangPreso.Map
             for (int k = 0; k < Faces; k++)
             {
                 var face = _faces[k];
+                if (face == null) continue;
                 if (changed)
                 {
                     bool painted = _portraits[seat] != null;
@@ -338,7 +397,13 @@ namespace TumbangPreso.Map
             for (int k = 0; k < Faces; k++)
             {
                 var face = _faces[k];
+                if (face == null) continue;
                 float clock = Time.unscaledTime;
+                if (_glass != null && k == 0)
+                {
+                    _glass.SetFloat("_Clock", clock % 600.0f);
+                    _glass.SetFloat("_Wave", Settings.SettingsStore.Current.ReducedUiMotion ? 0.0f : 1.0f);
+                }
                 if (face.Lines != null) face.Lines.uvRect = new Rect(0, clock * 0.35f, 1, Tall / 40.0f);
                 // No wave: the rows sliding sideways read as the words moving, not as a screen (owner, 2026-10-06).
                 if (face.Roll != null) face.Roll.rectTransform.anchoredPosition = new Vector2(0.0f, (0.5f - Mathf.Repeat(Time.unscaledTime * 0.22f + k * 0.13f, 1.0f)) * (Tall + 220.0f));
@@ -356,6 +421,11 @@ namespace TumbangPreso.Map
         public void Destroy()
         {
             if (_root != null) Object.Destroy(_root.gameObject);
+            if (_glass != null) Object.Destroy(_glass);
+            if (_quad != null) Object.Destroy(_quad);
+            if (_picture != null) { _picture.Release(); Object.Destroy(_picture); }
+            _glass = null; _quad = null; _picture = null;
+            for (int k = 0; k < Faces; k++) _faces[k] = null;
             _root = null; _shown = -2; _stamped = false;
         }
     }
