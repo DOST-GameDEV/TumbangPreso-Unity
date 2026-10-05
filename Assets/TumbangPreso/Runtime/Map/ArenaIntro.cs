@@ -607,9 +607,9 @@ namespace TumbangPreso.Map
                 for (int s = 0; s < Seats; s++) if (_root[s] != null) { all += _stand[s]; counted++; }
                 all = counted > 0 ? all / counted : who;
                 float wide = _still ? 1.0f : Smooth((p - 0.3f) / 0.6f);
-                Vector3 eye = Vector3.Lerp(who + new Vector3(2.3f - 0.3f * p, 1.0f, 5.2f - 0.5f * p), all + new Vector3(0.9f, 1.7f, 8.6f), wide);
+                Vector3 from = Vector3.Lerp(who + new Vector3(2.3f - 0.3f * p, 1.0f, 5.2f - 0.5f * p), all + new Vector3(0.9f, 1.7f, 8.6f), wide);
                 Vector3 look = Vector3.Lerp(who + Vector3.up * 1.25f, all + Vector3.up * 1.1f, wide);
-                Pose(eye, look, Mathf.Lerp(38.0f, 44.0f, wide));
+                Pose(from, look, Mathf.Lerp(38.0f, 44.0f, wide));
             }
             else if (build < ArenaStage.OpeningUndock)
             {
