@@ -8,18 +8,23 @@
 - [ ] Repair LAN discovery/code joining: the laptop's natural LAN list stays
   empty85.2seconds and GWEC code fails. Direct192.168.1.7:8910 joins successfully.
   Reverse host roles after the current fixes to isolate routing from receive behavior.
-- [ ] Repair post-match client recovery: normal host MAIN MENU after either LAN
-  or online completion silently starts a new LAN host on the untouched client
-  (6JKN then KJ9W). MatchRpc routes to networked MatchSetup and AutoHost opens it.
-  Root qualifies current hub HOME recovery with legacy preparation-board controls.
+- [x] Repair post-match client recovery: original normal host MAIN MENU silently
+  created client LAN rooms6JKN/KJ9W. Native two failures/six controls become
+  eight passes. Corrected917b shared player now returns the untouched PC client
+  HOME after completed host departure with no new LAN host/8910 endpoint and
+  the full saved record intact. Legacy preparation-board route remains.
+  [Paired evidence](reports/reliability-2026-10-06/corrected-reverse-lan/README.md).
 - [x] Reconcile current custom bot policy with start and actual installation.
   Original two start failures/three controls become five passes; original two
   installation failures/one queue control become three passes. Offline NONE
   control passes. Root verifies25 raw blobs and nine qualified source/fixture/meta
   hashes. Four-seat gate, queue acceptance and preferences remain intact.
   [Evidence](reports/laptop-validation-2026-10-06/custom-bot-policy/README.md).
-- [ ] Corrected shared-player NONE refusal, enabling bots and host-departure
-  operator acceptance. Native consumer checks do not replace this paired flow.
+- [x] Corrected shared-player NONE refuses Start with two real humans; normal
+  GUI enabling Normal bots permits four30s rounds. Both full saved records agree
+  on all fields (2403bytes/78ed5a5a) and expected two bot participants.
+- [ ] Four-human NONE, queue and broader corrected online operator acceptance.
+  The two-human LAN flow does not qualify those scenarios.
 - [ ] Tester Relay timeout/host kick, physical skill input and non-host movement
   delay acceptance remain open. These completed matches do not close those reports.
 
@@ -30,7 +35,8 @@
   native1600x900 and QHD views pass and final images are inspected; chalk draw-in
   is settled before capture. Source art/fonts remain unchanged.
   [Evidence](reports/reliability-2026-10-06/glyph-arcs/README.md).
-- [ ] Corrected packaged screen acceptance and broader UI review remain open.
+- [x] Corrected917b packaged title, Home, Join/code and rules screens inspected
+  during the normal two-machine flow. Broader UI/device acceptance remains open.
 
 ### HOME-CARD-READABILITY-1005: artwork and a separate caption
 
