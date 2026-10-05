@@ -23,6 +23,10 @@
     "bytes": 800,
     "sha256": "752933cf2789fdcd2dec2b5d29670b95e0a8ad2466eba2d5339c47b034ec93bc"
   },
+  "hero-mipmap-scope.json": {
+    "bytes": 343,
+    "sha256": "80208caac3694feeb132bd9b171a7b8a53d86575fcc731895b5928a25c6c51dd"
+  },
   "original-classified-result.json": {
     "bytes": 284,
     "sha256": "487e095b9622d5e8586059372fdf7318d529c3af4c42904f11a707ce521f0664"

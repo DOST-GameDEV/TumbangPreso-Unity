@@ -42,3 +42,6 @@ native import/quality-policy evidence, not a current player build, visual taste,
 all image acceptance, network recovery or full tournament readiness. The coherent
 protocol152 package must include any subsequently published source/import changes;
 old61a player results do not qualify those changed imports.
+
+Baseline HeroStrikeChoice metadata has enableMipMap0. Its missing mip-limit
+exemption is future resilience/policy, not demonstrated current GPU shrink or blur.
