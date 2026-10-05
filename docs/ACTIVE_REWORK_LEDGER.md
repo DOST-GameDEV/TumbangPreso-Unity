@@ -89,8 +89,9 @@ with only 'blocked by policy'; its specific governing mechanism is unknown.
 Do not call it an automatic approval review or a lack of owner authorization.
 The16 rejected Root build targets are protected from retries or alternate-method
 bypass in the local JSON receipt. Preserve Desktop releases and essential evidence.
-Root player and download/share helpers finished; the current native test parent is
-tracked below. No task-owned browser tabs were opened.
+Root player, download/share helpers and all current native jobs are terminal.
+No task-owned browser tabs were opened. Published temporary messages and exact
+duplicate Join captures were removed; profiles and essential evidence remain.
 Heartbeat1357 removed48 published temporary commit-message files,7289bytes,
 after terminal/path/subject checks; preserved all active-worktree refs and builds.
 
@@ -103,12 +104,24 @@ LAN discovery remained empty85s and code join failed; direct address passed.
 After normal host result MAIN MENU, untouched client unexpectedly creates a new
 LAN room in both runs (6JKN then KJ9W). These are open defects, not full readiness.
 Root player21060/parent9730 ownQuit exit0, shared preferences/seed restored and
-all261 package files unchanged. Root now tests the postmatch recovery destination
-using existing MenuExitLifetimeTests plus two hub-route cases. Original parent92004 terminal: two hub-route failures and six controls pass.
-Candidate14860/parent85120 terminal: all eight pass. Both21126-input manifests
-restored byte exactly, including217 incidental metadata/TimeManager changes.
-Corrected packaged peer recovery remains open. Next publish/integrate then
-coordinate matching corrected artifact and reverse-host LAN checks.
+all261 package files unchanged. Recoveryfix68ce4981c is published: original two
+current-hub route failures/six controls become eight passes. Both21126-input
+manifests restore byte exactly including217 incidental metadata/TimeManager deltas.
+Current hub returns HOME without requesting another room; legacy board retains
+its route. Corrected packaged peer recovery remains open.
+
+Glyphfixf0b62d5f4 is published througha54f9e27a. Pale can arc ribs came from
+per-segment cap/feather overlaps; continuous strips preserve silhouettes and use
+fewer vertices. Native Home/Join1600/QHD captures pass, all final views inspected.
+The Join chalk draw-in is settled before capture. All native jobs exit0 and21126
+inputs/preferences/Quality restore byte exactly. No claimed frame-rate gain.
+
 Laptop owns AIController/MatchInstaller and nonvisual Hub/CustomRules bot-state
-consumers after its player restoration; preserve four-seat gate. Root owns Net
-recovery/discovery, UI quality, integration and queue. No unchanged passing reruns.
+consumers; preserve four-seat gate and queue/offline custody. Its original and
+candidate consumer checks are in progress. Root owns Net recovery/discovery, UI
+quality, integration and the queue. Next: verify laptopchecked patch then ONE
+combined shared artifact using its existing cache. Reverse roles (laptop LANhost,
+PC natural LANbrowser/code) and repeat normal host departure after completion.
+Current route inventory shows directed Ethernet192.168.1.255 and defaultEthernet;
+this alone does not establish why discovery failed. No firewall/system changes.
+No unchanged passing reruns. Exact local handles and next commands remain in JSON.

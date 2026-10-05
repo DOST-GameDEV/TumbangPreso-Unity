@@ -12,10 +12,25 @@
   or online completion silently starts a new LAN host on the untouched client
   (6JKN then KJ9W). MatchRpc routes to networked MatchSetup and AutoHost opens it.
   Root qualifies current hub HOME recovery with legacy preparation-board controls.
-- [ ] Reconcile room Bots NONE with actual vacant-seat bots. Laptop owns existing
-  bot-policy consumers and preserves the four-seat start gate.
+- [x] Reconcile current custom bot policy with start and actual installation.
+  Original two start failures/three controls become five passes; original two
+  installation failures/one queue control become three passes. Offline NONE
+  control passes. Root verifies25 raw blobs and nine qualified source/fixture/meta
+  hashes. Four-seat gate, queue acceptance and preferences remain intact.
+  [Evidence](reports/laptop-validation-2026-10-06/custom-bot-policy/README.md).
+- [ ] Corrected shared-player NONE refusal, enabling bots and host-departure
+  operator acceptance. Native consumer checks do not replace this paired flow.
 - [ ] Tester Relay timeout/host kick, physical skill input and non-host movement
   delay acceptance remain open. These completed matches do not close those reports.
+
+### UI-GLYPH-ARCS-1006: smooth translucent curved icons
+
+- [x] Remove overlapping per-segment arc caps that create pale opacity ribs.
+  Joined strips preserve icon silhouettes and reduce vertices. Current Home/Join
+  native1600x900 and QHD views pass and final images are inspected; chalk draw-in
+  is settled before capture. Source art/fonts remain unchanged.
+  [Evidence](reports/reliability-2026-10-06/glyph-arcs/README.md).
+- [ ] Corrected packaged screen acceptance and broader UI review remain open.
 
 ### HOME-CARD-READABILITY-1005: artwork and a separate caption
 
