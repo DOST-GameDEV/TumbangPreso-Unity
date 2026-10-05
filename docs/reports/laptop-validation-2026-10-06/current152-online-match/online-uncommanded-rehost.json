@@ -1,0 +1,17 @@
+{
+  "observedUTC": "2026-10-05T18:27:13.839965+00:00",
+  "completedMatchId": "9555eedca7874d69a827f96a4b6db595",
+  "pcAction": "Normal resultMAINMENU after fullrecord ACK",
+  "laptopResultInput": false,
+  "laptopInputBetweenAckAndDestination": false,
+  "observedDestination": "NewlocalLANhost1/4 P1YOU HOST KJ9W .144:8910",
+  "pid": 44848,
+  "window": 5113394,
+  "logChain": [
+    "Thehostleftthegame",
+    "HostLostaftercompleted4/4authorityrevoked",
+    "peer0approved",
+    "hosting8910 KJ9W"
+  ],
+  "scope": "Secondrealpostmatchrecovery reproduction afterONLINE; savedcompletedrecord remains preserved"
+}

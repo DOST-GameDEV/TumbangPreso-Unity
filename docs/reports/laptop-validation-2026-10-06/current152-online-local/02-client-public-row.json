@@ -1,0 +1,28 @@
+{
+  "pid": 2024,
+  "window": 1312276,
+  "foregroundBeforeAndAfter": true,
+  "physicalClientRect": [
+    0,
+    0,
+    1920,
+    1080
+  ],
+  "physicalClientWidth": 1920,
+  "physicalClientHeight": 1080,
+  "physicalWindowRect": [
+    0,
+    0,
+    1920,
+    1080
+  ],
+  "windowDpi": 120,
+  "dpiAwareness": 2,
+  "observerDpiContext": "PerMonitorV2 for read-only coordinates; restored afterward",
+  "image": "C:\\Users\\Matthew\\Documents\\Codex\\2026-10-03\\continue-competition-readiness-engineering-for-dost\\work\\lossless-capture1005\\pair152-online\\02-client-public-row.png",
+  "format": "PNG",
+  "sha256": "f1d4568d9bfc0c094d113b73709fe3550b702f46ce40a78cd6933c224b3d9608",
+  "resampling": false,
+  "jpegConversion": false,
+  "scope": "Physical foreground desktop client pixels; not engine backbuffer/audio/input acceptance"
+}

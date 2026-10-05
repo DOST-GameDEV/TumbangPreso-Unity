@@ -1,0 +1,29 @@
+[Net] offline
+[Net] signing in to online services...
+[Net] allocating relay server...
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] publishing the online room...
+[Query] Created UGS Lobby ST4Pp2dGqfkDAPHW4DH6vk with JoinCode S6BP
+[Net] relay hosting active, code S6BP (relay KMNJRT)
+[NetApproval] peer=1 approved=True reason=
+[NetArrival] peer=1 seat=1 replaces=-1
+[Net] 2 connected, seat 1
+[Link] Good at 99 ms round trip (host, worst peer).
+[Link] Poor at 233 ms round trip (host, worst peer).
+[Link] Good at 84 ms round trip (host, worst peer).
+[NetDisconnect] peer=1 local=0 server=True connected=True
+[Net] 1 connected
+[Link] Unknown at 0 ms round trip (host, worst peer).
+[NetApproval] peer=2 approved=True reason=
+[NetArrival] peer=2 seat=1 replaces=-1
+[Net] 2 connected, seat 1
+[Link] Good at 100 ms round trip (host, worst peer).
+[NetLifecycle] requested-stop server=True relay=True origin=  at TumbangPreso.Net.NetSession.Stop () [0x00000] in <cc2768c035ac49cf8e9f8cbfad6ba15f>:0 
+[Net] offline
+[NetDisconnect] peer=2 local=0 server=True connected=True
+[Net] 0 connected
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+[Query] Deleted UGS Lobby ST4Pp2dGqfkDAPHW4DH6vk

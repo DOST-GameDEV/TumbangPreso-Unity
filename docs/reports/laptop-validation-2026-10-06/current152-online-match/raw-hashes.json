@@ -1,0 +1,86 @@
+{
+  "01-public-arena-row.json": {
+    "bytes": 864,
+    "sha256": "b5f1a43cb2e88a599cf41d5b1b52366a7e4a82715e536fcaa515f7124945fe10"
+  },
+  "01-public-arena-row.png": {
+    "bytes": 112232,
+    "sha256": "a88eb184ea80d409f3608689a261f7150c093f939722632e34c10258f99d21b3"
+  },
+  "03-online-actual-hero4x30.json": {
+    "bytes": 870,
+    "sha256": "d48f03b0ccd09d54647e58fa589b0a722d80868ad52431cd6d9f1ec10cad918b"
+  },
+  "03-online-actual-hero4x30.png": {
+    "bytes": 123554,
+    "sha256": "9f64741cac4a4905b7d563cdec544b406d13a7dc03c50039058b79d5a642fec8"
+  },
+  "04-ready-after-actual-rules.json": {
+    "bytes": 872,
+    "sha256": "c852c7f1dd48dd6c2452cf094679499068888adcd2978bb3491c97132ae76846"
+  },
+  "04-ready-after-actual-rules.png": {
+    "bytes": 1139125,
+    "sha256": "b5c16888d11f0450e47244d8645e2f626a75d908ea0132f372c4ff139c0aa6dd"
+  },
+  "05-online-live-round.json": {
+    "bytes": 865,
+    "sha256": "3869a3b3cdea6f33e8918065b2757d0a32448754879ad7e00943555f78621a24"
+  },
+  "05-online-live-round.png": {
+    "bytes": 1511114,
+    "sha256": "cf3dbce738c47970cce7632a6557dedd45fd8f433bac965fac2f27194e78c05a"
+  },
+  "06-natural-online-results.json": {
+    "bytes": 870,
+    "sha256": "f19f528bda90ece0f31c2f3bcb74095e156b5b74c9a3823aae8abfaeb6aae312"
+  },
+  "06-natural-online-results.png": {
+    "bytes": 951420,
+    "sha256": "71c011e0eeaca48a47902f6ba74550ef2af3bd8584c6052ab041e7c0877ea524"
+  },
+  "07-post-online-uncommanded-lan-host.json": {
+    "bytes": 880,
+    "sha256": "f4f45c4046a312079db4eb3e6e0340352892e04fb7ac14f9fa6a5a5f9c2c115e"
+  },
+  "07-post-online-uncommanded-lan-host.png": {
+    "bytes": 1114124,
+    "sha256": "8c3e80a14ec0e45704c1a91191bae1b8ec4504bc0ad7f748e6bd5e6a286f6d5f"
+  },
+  "08-own-quit-after-pairs.json": {
+    "bytes": 868,
+    "sha256": "54c8b1998dd63d69af5d4c606d088b6af398d4b5f0af9d09371cbaa05bac9ec2"
+  },
+  "08-own-quit-after-pairs.png": {
+    "bytes": 718332,
+    "sha256": "e7168d38c5ee9ede6fb1fad5eae6a76eea2d7640b7919c4cea78e9cfb6a0fbc7"
+  },
+  "direct-result.json": {
+    "bytes": 1836,
+    "sha256": "a04d761bfe7d519b316851fb481ce9d25f4e9212152e28a4dda4147c16188d47"
+  },
+  "launch.json": {
+    "bytes": 1052,
+    "sha256": "994da5e4fe25ffd45b273fe9c49b8cdcdaaed30e8668e150fe04a3d9408c9ddb"
+  },
+  "online-match-full-canonical.json": {
+    "bytes": 2405,
+    "sha256": "9e847b08f6c7247f6ba9e8591c65a0afe76c66723c971ff11b3faa1a5b544a64"
+  },
+  "online-match-record-receipt.json": {
+    "bytes": 552,
+    "sha256": "07c405c348edb0d250c28d21604530bddde9861363cafeb3b7aab722ef5aff81"
+  },
+  "online-pc-full-record-correlation.json": {
+    "bytes": 798,
+    "sha256": "f78703b7f058d9334845ac9d817e52815f5725b774bfb3f8bbe3575dea0ed7f2"
+  },
+  "online-uncommanded-rehost.json": {
+    "bytes": 626,
+    "sha256": "2b65b83a730634b6022aadbd36805cab02f5ae5004a426ffc152fbe69357d454"
+  },
+  "runtime-observations.txt": {
+    "bytes": 2486,
+    "sha256": "3a7f5ec400d5f6a1d45a25c18314983a8f7f037b82cf3ab3b081e4acadd369e7"
+  }
+}

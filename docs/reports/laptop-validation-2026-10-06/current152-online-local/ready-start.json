@@ -1,0 +1,11 @@
+{
+  "readyObservedUTC": "2026-10-05T16:29:39.003124+00:00",
+  "readyObservedUnix": 1791217779.0031245,
+  "room": "S6BP",
+  "route": "Natural public Online row JOIN, no code or bootstrap",
+  "hostPid": 1912,
+  "clientPid": 2024,
+  "hostWindow": 5834246,
+  "clientWindow": 1312276,
+  "scope": "Two actual local clients using identical8db package/152/e407 manifest; no completed match or two-machine claim"
+}
