@@ -93,8 +93,8 @@ namespace TumbangPreso.Map
         public const float Dark = 3.0f;
 
         public static Times TimesFor(bool full) => full
-            ? new Times { Full = true, Black = Dark, Walk = Dark + 0.6f, Glare = Dark + 1.6f, Peak = Dark + 3.7f, Reveal = Dark + 3.95f, Taya = Dark + 6.8f, Land = Dark + 10.1f, Spot = Dark + 12.2f, Build = Dark + 12.85f, Handoff = Dark + 12.85f + BuildSeconds, End = Dark + 12.85f + BuildSeconds + 0.8f }
-            : new Times { Full = false, Walk = -1.0f, Glare = -1.0f, Peak = -1.0f, Reveal = 0.0f, Taya = 2.0f, Land = 4.7f, Spot = 6.6f, Build = 7.2f, Handoff = 7.2f + BuildSeconds, End = 7.2f + BuildSeconds + 0.8f };
+            ? new Times { Full = true, Black = Dark, Walk = Dark + 0.6f, Glare = Dark + 1.6f, Peak = Dark + 3.7f, Reveal = Dark + 3.95f, Taya = Dark + 6.8f, Land = Dark + 10.1f, Spot = Dark + 12.2f, Build = Dark + 14.85f, Handoff = Dark + 14.85f + BuildSeconds, End = Dark + 14.85f + BuildSeconds + 0.8f }
+            : new Times { Full = false, Walk = -1.0f, Glare = -1.0f, Peak = -1.0f, Reveal = 0.0f, Taya = 2.0f, Land = 4.7f, Spot = 6.6f, Build = 9.0f, Handoff = 9.0f + BuildSeconds, End = 9.0f + BuildSeconds + 0.8f };
 
         public static ArenaIntro Instance { get; private set; }
 
@@ -598,9 +598,18 @@ namespace TumbangPreso.Map
             else if (age < t.Build)
             {
                 // The spot on the taya: low on the turf in front of the line, looking back at them.
+                // ⚠️ AND THEN THE OTHER THREE (owner, 2026-10-06: "need you to extend when it cuts back to the player, so
+                // it also shows the other players"). It was 0.65 s on the taya alone. Now about 2.6 s: it holds on
+                // the taya for the first third, then draws back and across until all four stand in the frame.
                 float p = _still ? 0.5f : (age - t.Spot) / (t.Build - t.Spot);
                 Vector3 who = _root[_taya] != null ? _stand[_taya] : _centre + new Vector3(0.0f, Ground, LineEnd);
-                Pose(who + new Vector3(2.3f - 0.3f * p, 1.0f, 5.2f - 0.5f * p), who + Vector3.up * 1.25f, 38.0f);
+                Vector3 all = Vector3.zero; int counted = 0;
+                for (int s = 0; s < Seats; s++) if (_root[s] != null) { all += _stand[s]; counted++; }
+                all = counted > 0 ? all / counted : who;
+                float wide = _still ? 1.0f : Smooth((p - 0.3f) / 0.6f);
+                Vector3 eye = Vector3.Lerp(who + new Vector3(2.3f - 0.3f * p, 1.0f, 5.2f - 0.5f * p), all + new Vector3(0.9f, 1.7f, 8.6f), wide);
+                Vector3 look = Vector3.Lerp(who + Vector3.up * 1.25f, all + Vector3.up * 1.1f, wide);
+                Pose(eye, look, Mathf.Lerp(38.0f, 44.0f, wide));
             }
             else if (build < ArenaStage.OpeningUndock)
             {
