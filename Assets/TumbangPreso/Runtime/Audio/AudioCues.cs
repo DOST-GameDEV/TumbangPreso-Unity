@@ -117,19 +117,28 @@ namespace TumbangPreso.Audio
                 { "sfx_arena_balloon_squeak_c", -6.0f }, { "sfx_arena_balloon_boing", -5.0f }, { "sfx_arena_balloon_creak", -10.0f },
                 { "sfx_arena_balloon_pop", -1.0f }, { "sfx_arena_balloon_hiss", -8.0f }, { "sfx_arena_slipper_return", -7.0f },
                 // The Arena's crowd and its public address (owner 2026-10-05: "there should be reverbey crowd cheers,
-                // chants, and an announcer"; `tools/synth_arena_crowd_sfx.py`). `Map.ArenaCrowdAudio` plays every one on
-                // its own sources: the crowd on the Ambience slider, the PA's stings on the Announcer's. The five beds
-                // are loops normalised by RMS (0.13 to 0.17), not by peak, so these rows ARE their loudness: the murmur
-                // sits about 6 dB under Kanto's street bed and the roar over it. The eruption is the loudest thing the
-                // stands do and is mixed as an event; a chant is a feature over the bed; the gasp fires under a throw,
-                // so it is mixed like a status. NOBODY HAS HEARD THESE YET: they are the knobs for that session.
-                { "sfx_arena_crowd_bed_calm", -3.0f }, { "sfx_arena_crowd_bed_lively", -3.0f }, { "sfx_arena_crowd_bed_roar", -1.0f },
-                { "sfx_arena_crowd_bed_tension", -4.0f }, { "sfx_arena_crowd_bed_applause", -4.0f },
-                { "sfx_arena_crowd_erupt", 0.0f }, { "sfx_arena_crowd_cheer", -4.0f }, { "sfx_arena_crowd_ooh", -3.0f },
-                { "sfx_arena_crowd_aww", -4.0f }, { "sfx_arena_crowd_gasp", -8.0f }, { "sfx_arena_crowd_laugh", -4.0f },
-                { "sfx_arena_chant_tumbang_preso", -4.0f }, { "sfx_arena_chant_taya", -4.0f }, { "sfx_arena_chant_tumba", -4.0f },
-                { "sfx_arena_chant_stomp", -3.0f }, { "sfx_arena_chant_ooh_hey", -5.0f }, { "sfx_arena_chant_drums", -5.0f },
-                { "sfx_arena_chant_horns", -7.0f },
+                // chants, and an announcer"). `Map.ArenaCrowdAudio` plays every one on its own sources: the crowd on the
+                // Ambience slider, the PA's stings on the Announcer's.
+                //
+                // ⚠️ THE CROWD IS REAL RECORDINGS SINCE 2026-10-05 (`tools/build_arena_crowd_from_recordings.py`, sources in
+                // `Resources/Sfx/ARENA_CROWD_SOURCES.md`), AND THESE ROWS WERE RESET WITH IT. The owner on the synthesised
+                // crowd: "i dont hear ... reactions to certain happenings in the game". Measured against these rows, that
+                // was the mix: a block's cheer and a throw's gasp played 10 to 16 dB under a murmur at -3. So the murmur is
+                // at -6 and gives way further as the stands rise, and a reaction sits 0 to 4 dB under an event.
+                // The five beds are loops levelled by RMS (0.13 to 0.17), so these rows ARE their loudness. A reaction is
+                // levelled by the RMS of its loudest 0.4 s (0.20 to 0.27; peak under 0.85), not by its peak: a roar and a
+                // clap of the same peak are 10 dB apart to an ear. A reaction's takes (`_2`, `_3`) share its row's value.
+                // NOBODY HAS HEARD THESE YET: they are the knobs for that session.
+                { "sfx_arena_crowd_bed_calm", -6.0f }, { "sfx_arena_crowd_bed_lively", -4.0f }, { "sfx_arena_crowd_bed_roar", -1.0f },
+                { "sfx_arena_crowd_bed_tension", -5.0f }, { "sfx_arena_crowd_bed_applause", -3.0f },
+                { "sfx_arena_crowd_erupt", 0.0f }, { "sfx_arena_crowd_erupt_2", 0.0f }, { "sfx_arena_crowd_erupt_3", 0.0f },
+                { "sfx_arena_crowd_cheer", -1.0f }, { "sfx_arena_crowd_cheer_2", -1.0f }, { "sfx_arena_crowd_cheer_3", -1.0f },
+                { "sfx_arena_crowd_ooh", -1.0f }, { "sfx_arena_crowd_ooh_2", -1.0f }, { "sfx_arena_crowd_ooh_3", -1.0f },
+                { "sfx_arena_crowd_aww", -2.0f }, { "sfx_arena_crowd_aww_2", -2.0f }, { "sfx_arena_crowd_aww_3", -2.0f },
+                { "sfx_arena_crowd_gasp", -4.0f }, { "sfx_arena_crowd_gasp_2", -4.0f },
+                { "sfx_arena_crowd_laugh", -2.0f }, { "sfx_arena_crowd_laugh_2", -2.0f }, { "sfx_arena_crowd_save", 0.0f },
+                { "sfx_arena_chant_stomp", -3.0f }, { "sfx_arena_chant_claps", -3.0f }, { "sfx_arena_chant_claps_fast", -3.0f },
+                { "sfx_arena_chant_ooh_hey", -3.0f }, { "sfx_arena_chant_drums", -3.0f }, { "sfx_arena_chant_horns", -5.0f },
                 { "sfx_arena_pa_chime", -5.0f }, { "sfx_arena_pa_organ", -6.0f }, { "sfx_arena_pa_horn", -5.0f }, { "sfx_arena_pa_fanfare", -5.0f },
                 // Amihan (2026-09-25, `tools/build_amihan_audio.py`). The gather is a sustained
                 // pressure rise under 2.5 s of telegraph and is mixed as a bed; the release is the
@@ -330,15 +339,26 @@ namespace TumbangPreso.Audio
             "sfx_arena_balloon_fly", "sfx_arena_balloon_squeak_a", "sfx_arena_balloon_squeak_b", "sfx_arena_balloon_squeak_c",
             "sfx_arena_balloon_boing", "sfx_arena_balloon_creak", "sfx_arena_balloon_pop", "sfx_arena_balloon_hiss",
             "sfx_arena_slipper_return",
-            // The Arena's crowd and public address (`Map.ArenaCrowdAudio`, `tools/synth_arena_crowd_sfx.py`): five
-            // seamless beds, six reactions, seven chants and four PA stings. Each peer plays them for itself from
-            // events it already has, never through `NetCue`. The announcer's own takes as the stadium plays them are
-            // not cues: they are `Resources/ArenaPa/pa_<take>`, found by the take's name.
+            // The Arena's crowd and public address (`Map.ArenaCrowdAudio`): five seamless beds, six reactions in two or
+            // three takes each (`_2`, `_3`: one is drawn each time), a self-save's roar, six chants and four PA stings.
+            // The crowd is cut from CC0 recordings (`tools/build_arena_crowd_from_recordings.py`); the stings are
+            // `tools/synth_arena_crowd_sfx.py --no-vo --only pa`. Each peer plays them for itself from events it already
+            // has, never through `NetCue`. The announcer's own takes as the stadium plays them are not cues: they are
+            // `Resources/ArenaPa/pa_<take>`, found by the take's name.
+            // ⚠️ THREE NAMES ARE DELIBERATELY ABSENT: `sfx_arena_chant_tumbang_preso`, `sfx_arena_chant_taya` and
+            // `sfx_arena_chant_tumba`. The game's own word chants cannot be cut from another crowd, and the synthesised
+            // ones were rejected and deleted. `ArenaCrowdAudio.Recorded` plays a clapping or drumming pattern in their
+            // place. When the team records one, put the .wav in `Resources/Sfx` and its name back in this list (and a
+            // row in `TrimDb`, about -3): nothing else has to change.
             "sfx_arena_crowd_bed_calm", "sfx_arena_crowd_bed_lively", "sfx_arena_crowd_bed_roar", "sfx_arena_crowd_bed_tension",
             "sfx_arena_crowd_bed_applause",
-            "sfx_arena_crowd_erupt", "sfx_arena_crowd_cheer", "sfx_arena_crowd_ooh", "sfx_arena_crowd_aww", "sfx_arena_crowd_gasp",
-            "sfx_arena_crowd_laugh",
-            "sfx_arena_chant_tumbang_preso", "sfx_arena_chant_taya", "sfx_arena_chant_tumba", "sfx_arena_chant_stomp",
+            "sfx_arena_crowd_erupt", "sfx_arena_crowd_erupt_2", "sfx_arena_crowd_erupt_3",
+            "sfx_arena_crowd_cheer", "sfx_arena_crowd_cheer_2", "sfx_arena_crowd_cheer_3",
+            "sfx_arena_crowd_ooh", "sfx_arena_crowd_ooh_2", "sfx_arena_crowd_ooh_3",
+            "sfx_arena_crowd_aww", "sfx_arena_crowd_aww_2", "sfx_arena_crowd_aww_3",
+            "sfx_arena_crowd_gasp", "sfx_arena_crowd_gasp_2", "sfx_arena_crowd_laugh", "sfx_arena_crowd_laugh_2",
+            "sfx_arena_crowd_save",
+            "sfx_arena_chant_stomp", "sfx_arena_chant_claps", "sfx_arena_chant_claps_fast",
             "sfx_arena_chant_ooh_hey", "sfx_arena_chant_drums", "sfx_arena_chant_horns",
             "sfx_arena_pa_chime", "sfx_arena_pa_organ", "sfx_arena_pa_horn", "sfx_arena_pa_fanfare",
 
