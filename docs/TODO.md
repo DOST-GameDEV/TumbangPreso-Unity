@@ -5,15 +5,19 @@
 - [x] Same byte-identical protocol152 package completes natural Arena Hero Strike
   four-round LAN and public-online matches on the PC and laptop. Full saved
   records independently match every field: LAN2401bytes and online2405bytes.
-- [ ] Repair LAN discovery/code joining: the laptop's natural LAN list stays
+- [x] Repair the reproduced PC-hosted LAN discovery/code joining: the laptop's natural LAN list stays
   empty85.2seconds and GWEC code fails. Direct192.168.1.7:8910 joins successfully.
   Corrected917 repeats empty31.672seconds/CHPJ code failure while direct joining
   passes. Reverse roles discover/code-join normally. Independent diagnostic UDP
   delivers unicast but none of three broadcast variants. Published solicitation
   e557c1f89 preserves passive adverts and adds current-host unicast replies to
   browser requests; original one cause/five controls becomes eight passes plus
-  two focused lifetime/throttle passes. Actual new-package discovery/code is open.
+  two focused lifetime/throttle passes. Matching0358/79d package now discovers
+  PC-hostN743 naturally, joins its row and rejoins by typed code without an IP.
+  Both peers show2/4; host remains live. Broader network/configuration and latency
+  guarantees remain open.
   [Evidence](reports/reliability-2026-10-06/lan-solicitation/README.md).
+  [Actual acceptance](reports/reliability-2026-10-06/lan-and-live-rules-operator/README.md).
 - [x] Repair post-match client recovery: original normal host MAIN MENU silently
   created client LAN rooms6JKN/KJ9W. Native two failures/six controls become
   eight passes. Corrected917b shared player now returns the untouched PC client
@@ -41,7 +45,10 @@
   original three failures/four controls become seven passes. Root verifies eight
   raw evidence blobs and three qualified source/fixture/meta hashes.
   [Evidence](reports/laptop-validation-2026-10-06/open-rules-refresh/README.md).
-- [ ] Matching new-package two-machine open-panel host-change acceptance.
+- [x] Matching0358/79d package: continuously open client ROOM updates
+  NONE->EASY->NORMAL and8x90->4x30 with zero client input/close/reopen. Same-panel
+  MATCH verifies4/30/ScoreTargetOFF. Both ownQuit0/prefs restored/package unchanged.
+  [Actual acceptance](reports/reliability-2026-10-06/lan-and-live-rules-operator/README.md).
 
 ### UI-GLYPH-ARCS-1006: smooth translucent curved icons
 

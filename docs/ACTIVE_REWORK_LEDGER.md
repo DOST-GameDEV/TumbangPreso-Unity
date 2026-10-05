@@ -160,3 +160,23 @@ LaptopenRulesc6fix7PASS isintegrated/verified8raw+3LFhashes; matchingnewpackage
 openclientpanelupdate remainsopen. LaptopwillreviewLanthenbuildONEcombined
 newWindowsartifact. Rootnoheavyjob/playeractive; preserve917/8dbbaselines and
 profiles. Exactnextcommand/liveownershipinJSON, no newbuildfordocs.
+
+## Latest matching-player acceptance
+
+Combined0358/protocol152 package261files2947172902B/manifest79d2dda2/runtime5969
+includesLANe557+Rulesc6. FullcopyverifiedPC. ActualPC9444hostsN743EskinitaPUBLICLAN;
+lptfirstview0.361empty,next14.789observationroomvisible(no exactlatencyclaim).
+NormalrowJOINseat2 andnormalBack/CODEN743rejoinpeer2both2/4, noIP/API. ClientROOM
+remainscontinuouslyopenzeroInput: NONE->EASY->NORMAL/header8x90->4x30updatesinplace,
+selectedpagestays; samepanelMatchconfirms4/30/OFF. PCnormalBack->bothHome/noautohost.
+BothownQuit0 (PC52874/lpt97789), sharedprefs/seedrestoredALL261unchanged. Noactive
+Roothelper/player/Unity/browser. PCoperatorreportdf6c476pushedviaf3083cd verified8
+rawblobs; newlptpackage6fd9verified8raw. Lptoperatorreportcuratingnext, verifyonfetch.
+The originalPC-hostpersistentmissinglist/code andopenRulesstaleview arequalified;
+no whole-network/game/infallible/readinessclaim. Prior917lptforcedshutdownremains
+unresolved despitecurrentnormalexit. RelayQAhostkick/timeout/nonhostrubberband,
+initialcameraandphysicalskills/input/fullmaps/UI/performanceacceptance remainopen.
+Next Root chooseconcretecurrentnetwork/intro defect whilelaptopresumesseparate
+quit/gameplaylane; coordinateactualpeertestaftercurrentcoherentunitwhenneeded.
+Do notrepeatunchangedmatches/builds. ExactlocalnextinJSON. Cleanpublishedmessages
+andduplicateoutputsaftereachunit; rejectedoldbuildtargetsremainprotected.

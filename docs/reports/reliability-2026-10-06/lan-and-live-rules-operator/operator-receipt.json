@@ -1,0 +1,35 @@
+{
+  "source": "0358e70de18f94889ec101201934b40ee466a6b4",
+  "protocol": 152,
+  "manifestSHA256": "79d2dda2607afef210741d3484e173ff40051eefe6f8816e0a02c9aaca978814",
+  "runtimeSHA256": "5969d848ffbe53ff231f36c7e2146988dff05a44b5f6fc4dcb55d7f20d0c3827",
+  "pcPid": 9444,
+  "pcHwnd": 20056096,
+  "laptopPid": 45284,
+  "laptopHwnd": 9242226,
+  "room": "N743",
+  "naturalLanVisible": true,
+  "lanVisibleByObservedSeconds": 14.789,
+  "exactArrivalLatencyQualified": false,
+  "normalRowAdmission": true,
+  "normalCodeRejoin": true,
+  "typedAddress": false,
+  "clientPanelContinuouslyOpen": true,
+  "clientInputDuringHostChanges": false,
+  "clientRoomValueSequence": [
+    "NONE",
+    "EASY",
+    "NORMAL"
+  ],
+  "clientHeaderSequence": [
+    "8 rounds 90s",
+    "4 rounds 30s"
+  ],
+  "hostNormalBack": true,
+  "gameplayStarted": false,
+  "pcNormalQuitExitCode": 0,
+  "pcSeedRestored": true,
+  "pcInputRestored": true,
+  "pcArtifactUnchanged": true,
+  "scope": "Actual two-machine GUI discovery/code/open-panel refresh, not whole-network or gameplay acceptance"
+}
