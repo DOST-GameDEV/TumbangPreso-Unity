@@ -47,6 +47,9 @@ namespace TumbangPreso.CameraSystem
         public bool Ready {get;private set;}
         public string UnavailableReason {get;private set;}
         public RenderTexture Target=>_target;
+        /// <summary>Whether this view's own full-screen picture is shown. Off for a replay that is watched somewhere
+        /// else (the Arena's big screens, `Map.ArenaScreens`): `Target` is still drawn by `Draw`.</summary>
+        public void ShowOnScreen(bool visible){if(_canvas!=null)_canvas.enabled=visible;}
         public RecordedWorldView(Transform owner,RecordedMatchClip clip)
         {
             _clip=clip;_lastTime=clip.Start;

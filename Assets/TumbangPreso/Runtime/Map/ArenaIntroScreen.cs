@@ -47,7 +47,8 @@ namespace TumbangPreso.Map
         {
             public CanvasGroup Group;
             public Image Portrait, PlateImage, Flash, BarA, BarB, Rule;
-            public RawImage Roll, Lines;
+            public RawImage Roll, Lines, Feed;
+            public Text FeedLabel;
             public Text Initial, Header, Name, Sub, Stamp;
         }
 
@@ -215,6 +216,11 @@ namespace TumbangPreso.Map
             face.Stamp.text = "TAYA";
             face.Stamp.gameObject.SetActive(false);
 
+            // A camera's picture over the whole card, with its own small label (`Feed`): off until asked for.
+            face.Feed = Picture(go.transform, "Feed", null, new Vector2(Wide - 48.0f, Tall - 48.0f), Color.white, new Rect(0, 0, 1, 1));
+            face.Feed.enabled = false;
+            face.FeedLabel = Label(go.transform, "Feed label", 64, new Vector2(-Wide * 0.5f + 250.0f, Tall * 0.5f - 86.0f), new Vector2(420.0f, 90.0f), Color.white);
+            face.FeedLabel.enabled = false;
             face.Roll = Picture(go.transform, "Roll", Backlight(), new Vector2(Wide * 1.6f, 220.0f), new Color(0.6f, 0.85f, 1.0f, 0.10f), new Rect(0, 0, 1, 1));
             face.Lines = Picture(go.transform, "Scanlines", Lines(), new Vector2(Wide, Tall), new Color(1.0f, 1.0f, 1.0f, 0.30f), new Rect(0, 0, 1, Tall / 40.0f));
             face.BarA = Fill(go.transform, "Scan A", Vector2.zero, new Vector2(Wide, 26.0f), new Color(1.0f, 1.0f, 1.0f, 0.0f));
@@ -338,6 +344,28 @@ namespace TumbangPreso.Map
             rect.anchoredPosition = at;
             rect.sizeDelta = box;
             return text;
+        }
+
+        /// <summary>
+        /// Put a camera's picture on the screens in place of the card (null takes it off): a replay, for
+        /// `ArenaScreens`. The picture is the screen's shape cut from the middle of `picture` (a camera's frame
+        /// is taller than these screens), under a small label.
+        /// </summary>
+        public void Feed(Texture picture, string label)
+        {
+            if (_root == null) return;
+            for (int k = 0; k < Faces; k++)
+            {
+                var face = _faces[k];
+                if (face == null || face.Feed == null) continue;
+                bool on = picture != null;
+                face.Feed.enabled = on; face.FeedLabel.enabled = on;
+                if (!on) { face.Feed.texture = null; continue; }
+                face.Feed.texture = picture;
+                float shown = Mathf.Clamp01((Tall / Wide) / (picture.height / (float)Mathf.Max(1, picture.width)));
+                face.Feed.uvRect = new Rect(0.0f, (1.0f - shown) * 0.5f, 1.0f, shown);
+                face.FeedLabel.text = label; face.FeedLabel.color = ArenaFx.Gold;
+            }
         }
 
         /// <summary>The words that land over the portrait (TAYA in the opening), and their colour. For `ArenaScreens`.</summary>
