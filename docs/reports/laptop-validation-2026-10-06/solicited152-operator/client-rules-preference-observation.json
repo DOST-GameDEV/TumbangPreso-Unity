@@ -1,0 +1,10 @@
+{
+  "phase": "Read-only ROOM panel open at8x90/NONE; safe persisted fields only",
+  "fields": {
+    "CustomRulesWire": "1|0|8|90|0|3|0|1|0|0|0",
+    "MatchFormat": 0,
+    "AiDifficulty": 1,
+    "CharacterPick": 0
+  },
+  "scope": "Persisted-file observation, not live SettingsStore memory or a broad save proof"
+}

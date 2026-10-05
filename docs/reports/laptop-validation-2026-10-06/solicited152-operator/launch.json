@@ -1,0 +1,26 @@
+{
+  "source": "0358e70de18f94889ec101201934b40ee466a6b4",
+  "protocol": 152,
+  "profile": "lpt-solicit152-1006d",
+  "profilePath": "C:\\Users\\Matthew\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\ae6dbb1ab08bafb984ec8dc8df0c234f5a6fd02849f1177c017c223a312392f6",
+  "command": [
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Builds\\current-laptop-0358e70de-1005\\TumbangPreso.exe",
+    "-force-d3d11",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1280",
+    "-screen-height",
+    "720",
+    "-tp-framecap",
+    "60",
+    "-tp-profile",
+    "lpt-solicit152-1006d",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Logs\\solicited-peer152-1006d\\player.log"
+  ],
+  "manifestSha256": "79d2dda2607afef210741d3484e173ff40051eefe6f8816e0a02c9aaca978814",
+  "route": "normal visible boot; actual UI clicks; no network bootstrap",
+  "scope": "Actual same packaged updatedPC-host naturalLAN/code and already-open clientRules hostchanges; no bootstrap/API/forced match",
+  "pid": 45284
+}

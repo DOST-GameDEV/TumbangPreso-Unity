@@ -1,0 +1,13 @@
+{
+  "clientPid": 45284,
+  "zeroClientInputAfterRulesCloseUntilHome": true,
+  "normalPcHostBack": true,
+  "actualClientHome": true,
+  "newLanHostOr8910Endpoint": false,
+  "clientOwnQuitAttempts": 1,
+  "clientExitCode": 0,
+  "parentTerminal": true,
+  "inputSeedRestored": true,
+  "all261ArtifactFilesUnchanged": true,
+  "scope": "Pre-match host-departure recovery and normal own Quit control; does not close old intermittent shutdown cause"
+}

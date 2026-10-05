@@ -1,0 +1,130 @@
+{
+  "01-first-lan-view.png": {
+    "bytes": 110944,
+    "sha256": "1af0771f70ec4178bb48e8bc23ccd79087ddbc701cb36139e9f9fe11bacc9c24"
+  },
+  "02-natural-pc-room-visible.png": {
+    "bytes": 110928,
+    "sha256": "666bf836516eb7085fa10fea1ef8afbc907d489dedd51a1b98a70766ac584db1"
+  },
+  "03-row-admitted-ready.png": {
+    "bytes": 1159031,
+    "sha256": "aa8d89b7a5d8ff48748f732768e3c83b22a7e53404bce00ddb1d4a2afca2a7e9"
+  },
+  "04-client-back-host-kept.png": {
+    "bytes": 878455,
+    "sha256": "bc0c70fefe924796e2638ecac590cb5a32e5f277ab65783c7f4dd062099b76cd"
+  },
+  "05-code-entered-without-lan-revisit.png": {
+    "bytes": 122360,
+    "sha256": "6dcebfe67bd8f91600dde6851ae8f16508306f0a46e5a265ef07b86c66f3f8a2"
+  },
+  "06-code-rejoined-seat2.png": {
+    "bytes": 1135375,
+    "sha256": "0c629b02766d8287fac228d61e79c808d91327dbf113f449609d24a6ba21227f"
+  },
+  "07-client-room-open-none-8x90.png": {
+    "bytes": 107376,
+    "sha256": "ea4ae3eb47d0854d676ce8c2f557f3ffde15a6b3ebd853561c00cec9ff295aa6"
+  },
+  "08-same-open-room-live-easy.png": {
+    "bytes": 107957,
+    "sha256": "147795f0215cc65296f3eae95eee25d1b6b9ff858098992af33d8a5235ef1b54"
+  },
+  "09-same-open-room-live-normal.png": {
+    "bytes": 107679,
+    "sha256": "8088e98fca2c04cee31c2b22406fbfd3bb2ace75764feaa0562e9542c7eda97c"
+  },
+  "10-same-panel-match-4x30.png": {
+    "bytes": 123744,
+    "sha256": "54bb6dd6fe8937c905dc6da5eb1bc08f14db5ee8c2a0fdda56d86965b5188121"
+  },
+  "11-zero-input-client-home-after-host-back.png": {
+    "bytes": 881782,
+    "sha256": "ee8496c6c536abd38649691e2d3728bced010401df594548ca08d403374d525a"
+  },
+  "12-own-game-quit-after-qualified-pair.png": {
+    "bytes": 606172,
+    "sha256": "e637acfecfddaa98595aa7b17b51c247f627aa05132c3f4504acf4a1f18ce204"
+  },
+  "01-first-lan-view.json": {
+    "bytes": 860,
+    "sha256": "fda35930f3a9bfddba081861406fddc39a41d0fd25e53f24b42c8d3789fffbf3"
+  },
+  "02-natural-pc-room-visible.json": {
+    "bytes": 869,
+    "sha256": "2b7da17a7ac5b173672681fd614a7742b6d8d1826954c8685601df2abfa28d8e"
+  },
+  "03-row-admitted-ready.json": {
+    "bytes": 864,
+    "sha256": "bb5476be9cb0a7fc3330b0e2a20741b63028ad3fdc0ebb41a2583dace7590c64"
+  },
+  "04-client-back-host-kept.json": {
+    "bytes": 867,
+    "sha256": "0cf60ad0d48f862ba6913cc2e5fc8f4d5d2bae0e9fc4f08371bfeaf865802c56"
+  },
+  "05-code-entered-without-lan-revisit.json": {
+    "bytes": 878,
+    "sha256": "2895215e79e4e4088ac439eea45b3423c2eace8491ca3082ec85ee198545ba8e"
+  },
+  "06-code-rejoined-seat2.json": {
+    "bytes": 865,
+    "sha256": "a9e1bf38c4a3783ab51fd432024bad5b3cd0b2284539620d5d4fdb33f5f44e64"
+  },
+  "07-client-room-open-none-8x90.json": {
+    "bytes": 872,
+    "sha256": "04b6c64b92d890ca6e97fcd7ba36ac575822c3e74b1c87b4223a5ad96b5ca267"
+  },
+  "08-same-open-room-live-easy.json": {
+    "bytes": 870,
+    "sha256": "1250d8c84f213f1d8adf66a63ce3df85ad576869c4b8b94f41f56516bc65a3e3"
+  },
+  "09-same-open-room-live-normal.json": {
+    "bytes": 872,
+    "sha256": "d3da81da622e4865b736abc760abeb926419c2b3f983148beb7c77b7c00b1c43"
+  },
+  "10-same-panel-match-4x30.json": {
+    "bytes": 867,
+    "sha256": "211764a898e5208ca9fddd75668d8a9009a28e8d2789cd76d684ca93f28afba8"
+  },
+  "11-zero-input-client-home-after-host-back.json": {
+    "bytes": 884,
+    "sha256": "38ff55387d41db13fc39ece4069c9d97362c8f9ecb7a098e155af5a7a823f5e7"
+  },
+  "12-own-game-quit-after-qualified-pair.json": {
+    "bytes": 880,
+    "sha256": "a073009c3af5df1bb8caf94dd5333b4fc46d369533060cd4afa1f061b2977e6f"
+  },
+  "launch.json": {
+    "bytes": 1055,
+    "sha256": "c73962657b5a7c1032469f2d5b363e0036100d4ed9b2b3143ee8c2dbcb42db4e"
+  },
+  "direct-result.json": {
+    "bytes": 1931,
+    "sha256": "b7be84f4937b2f89c3defc1a626b2de820320513902e504b07fd5cfa3939ac06"
+  },
+  "discovery-operator-receipt.json": {
+    "bytes": 717,
+    "sha256": "675313dd41c679bb7e0242a0a665c7056e168660954a372d6e004e88bb9e4159"
+  },
+  "rules-live-operator-receipt.json": {
+    "bytes": 1515,
+    "sha256": "762244bef0eab42246c6dac1367989ea598c64363f1d20e87ebecc5cecfa45f2"
+  },
+  "client-rules-preference-observation.json": {
+    "bytes": 321,
+    "sha256": "0216a787808a797f9193cb7fea10a38370e1a8bea1297b1d3cca01deb40936a7"
+  },
+  "pc-operator-correlation.json": {
+    "bytes": 580,
+    "sha256": "6cdc02819da4e256f8862c529c8dd6998edafca61ad977f6a06ae79f48d97963"
+  },
+  "recovery-operator-receipt.json": {
+    "bytes": 452,
+    "sha256": "f9804b9583a7b5db65d6ffaff87730ce25db330deb50a4f259bd799a879088cd"
+  },
+  "runtime-observations.txt": {
+    "bytes": 1079,
+    "sha256": "e2c8854aad229e7191e3c36e3ce4d17dd63e6004413659869fc16d112f54cad1"
+  }
+}

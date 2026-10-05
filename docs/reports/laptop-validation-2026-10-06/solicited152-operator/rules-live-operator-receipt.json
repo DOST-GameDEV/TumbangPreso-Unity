@@ -1,0 +1,40 @@
+{
+  "source": "0358e70de18f94889ec101201934b40ee466a6b4",
+  "room": "N743",
+  "continuouslyOpenReadOnlyPanel": true,
+  "clientInputBetweenRoomOpeningAndFinalHostUpdates": false,
+  "roomPageSelectionPreserved": true,
+  "observedBotValues": [
+    "NONE",
+    "EASY",
+    "NORMAL"
+  ],
+  "initialHeader": "Hero Strike Standard8rounds90s",
+  "finalHeaderOnSameRoomPage": "Hero Strike Standard4rounds30s",
+  "samePanelMatchTabAfterFinalUpdates": {
+    "rounds": 4,
+    "seconds": 30,
+    "scoreTarget": "OFF"
+  },
+  "closedOrReopenedToObtainUpdates": false,
+  "safePersistedPreferenceFieldsBefore": {
+    "CustomRulesWire": "1|0|8|90|0|3|0|1|0|0|0",
+    "MatchFormat": 0,
+    "AiDifficulty": 1,
+    "CharacterPick": 0
+  },
+  "safePersistedPreferenceFieldsAfter": {
+    "CustomRulesWire": "1|0|8|90|0|3|0|1|0|0|0",
+    "MatchFormat": 0,
+    "AiDifficulty": 1,
+    "CharacterPick": 0
+  },
+  "safePersistedPreferenceFieldsEqual": true,
+  "scope": "Actual shared updated package client Rules refresh with ordinary host GUI changes; file-field equality is narrower than a full live save proof",
+  "capture08FilenameLimit": "08 filename says live-easy, but inspected physical PNG already shows NORMAL with8x90; earlier EASY was observed in the tool display before the host second press reached the capture. Preserve original exact PNG/filename and do not claim EASY physical PNG.",
+  "physicalCapturedBotValues": [
+    "NONE",
+    "NORMAL"
+  ],
+  "physicalNormalAt8x90Before4x30": true
+}
