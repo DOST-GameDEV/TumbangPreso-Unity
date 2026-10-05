@@ -1,0 +1,34 @@
+{
+  "download-receipt.json": {
+    "bytes": 776,
+    "sha256": "d9418f337969b13a80219f44228c1b66b701914e21079a2e8f02d52d7256e4c3"
+  },
+  "host-bots-normal.png": {
+    "bytes": 102357,
+    "sha256": "bf274e65c34a082d24ec5e657da932e1b612dad55df47c9a2b9879ded1e55869"
+  },
+  "host-left-home.png": {
+    "bytes": 1067497,
+    "sha256": "9058cc5d957bb62f04a45a5c399e0680b5f17f0640ae759d1f2475474f366efb"
+  },
+  "host-match-4x30.png": {
+    "bytes": 118217,
+    "sha256": "144f591e5847aeea450e29ca134c6008c207c5869975803a85d1a2211fc4f946"
+  },
+  "operator-receipt.json": {
+    "bytes": 1091,
+    "sha256": "b3060ca1a397d08053d92bc01d72eaf8d54ba78a07c6fc6ba81c4bad4464d45d"
+  },
+  "pc-host-ready.png": {
+    "bytes": 1078864,
+    "sha256": "abd5b75aa68d6ac2f790d8de7a6524e8dfcf2e492e133306c70b09cca1df9412"
+  },
+  "pc-row-admitted.png": {
+    "bytes": 1058005,
+    "sha256": "80831af656865231839f2ad29f09463087c13b95290713c5cf42417596490d9d"
+  },
+  "pc-terminal-result.json": {
+    "bytes": 999,
+    "sha256": "ee57c1811c0b07ce358870955104322100bc39a1c3ef97bd214c6279e1351ed5"
+  }
+}
