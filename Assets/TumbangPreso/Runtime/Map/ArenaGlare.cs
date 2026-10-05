@@ -117,6 +117,10 @@ namespace TumbangPreso.Map
             float amount = power * Mathf.Max(facing, floor) * framed * far * Mathf.Clamp01(seen);
             float flare = power * facing * Mathf.Max(framed, lens) * far * Mathf.Clamp01(seen);
             if (ghosts && flare > 0.15f) Flare(fx, x, y, out_, colour, flare);
+            // The rays' pattern is the LAMP's own (where it really is), so it does not turn as the camera does.
+            float seed = Mathf.Repeat(lamp.x * 0.137f + lamp.z * 0.291f + lamp.y * 0.053f, 1.0f);
+            if (rich) LensBurst(fx, x, y, out_, colour, size, seed: seed, glare:
+                                power * facing * Mathf.Max(framed, 1.0f - Mathf.SmoothStep(1.2f, 3.0f, out_)) * far * Mathf.Clamp01(seen));
             if (amount < 0.02f) return flare;
 
             // One unit: this share of the frame's half height, at the distance it is drawn at.
@@ -132,22 +136,13 @@ namespace TumbangPreso.Map
 
             fx.DrawBillboard(ArenaFx.Cell.Dot, lamp, core, ArenaFx.White, glare);
             fx.DrawBillboard(ArenaFx.Cell.Dot, lamp, unit * 0.11f, colour, 0.75f * glare);
-            // ⚠️ THE BURN AND THE STARBURST ARE IN THE LENS, NOT AT THE LAMP (owner, 2026-10-05, twice:
-            // "still dont get any star glare"). Drawn out at the lamp they were behind everything nearer:
-            // in the tunnel the players' heads fill the frame and covered all of it, and in play the rays
-            // were a pixel wide. A lens's flare is over the whole picture, so for a `rich` lamp (a show
-            // spot, the opening's light) they are drawn just in front of the eye, where the lamp is on the
-            // screen, wide and bright. `seen` is still the caller's answer to what hides the lamp.
-            Vector3 burnAt = lamp;
-            float burnUnit = unit;
-            if (rich)
+            // A floodlight bank's burn and its few rays, out at the lamp. A `rich` lamp's are in the lens: `LensBurst`.
+            if (!rich)
             {
-                burnAt = _eye + (_forward + _right * (x * _tanX) + _up * (y * _tanY)) * Lens;
-                burnUnit = Lens * _tanY * size;
+                fx.DrawBillboard(ArenaFx.Cell.Dot, lamp, unit * 0.34f, ArenaFx.White, 0.8f * glare * glare);
+                fx.DrawBillboard(ArenaFx.Cell.Dot, lamp, unit * 0.80f, colour, 0.22f * glare);
+                if (glare > 0.06f) Burst(fx, lamp, unit, colour, glare, 6, seed);
             }
-            fx.DrawBillboard(ArenaFx.Cell.Dot, burnAt, burnUnit * 0.34f, ArenaFx.White, 0.8f * glare * glare);
-            fx.DrawBillboard(ArenaFx.Cell.Dot, burnAt, burnUnit * 0.80f, colour, 0.22f * glare);
-            if (glare > 0.06f) Burst(fx, burnAt, burnUnit, colour, glare, rich ? 16 : 6);
             // The anamorphic streak: the star's cell pulled long and thin across the frame.
             fx.DrawQuad(ArenaFx.Cell.Star, lamp, _right * (unit * (0.25f + 0.55f * glare)), _up * (unit * 0.085f), colour, 0.6f * glare);
 
@@ -164,6 +159,28 @@ namespace TumbangPreso.Map
             return amount;
         }
 
+        /// <summary>
+        /// ⚠️ THE BURN AND THE STARBURST OF A `rich` LAMP (a show spot, the opening's light) ARE IN THE
+        /// LENS, NOT AT THE LAMP (owner, 2026-10-05, three times: "still dont get any star glare";
+        /// "its not even the glare, its just 2 light cones forming an x"). Two things hid them. Drawn
+        /// out at the lamp they were behind everything nearer (in the tunnel the players' heads). And
+        /// in play THE LAMPS ARE NOT IN THE FRAME: the canopies' spots are 20 degrees up and the game
+        /// camera looks down at the can, so a glare that faded as its lamp left the frame was at
+        /// nothing exactly when a spot was "pointed at you". So: drawn just in front of the eye,
+        /// where the lamp is on the screen or at the frame's edge nearest it when it is outside (as
+        /// a real lens flares from a light just out of shot), and as strong as the lamp is facing.
+        /// </summary>
+        private static void LensBurst(ArenaFx fx, float x, float y, float out_, Color colour, float size, float glare, float seed)
+        {
+            if (glare < 0.05f) return;
+            float pull = out_ > 1.02f ? 1.02f / out_ : 1.0f;
+            Vector3 at = _eye + (_forward + _right * (x * pull * _tanX) + _up * (y * pull * _tanY)) * Lens;
+            float unit = Lens * _tanY * size;
+            fx.DrawBillboard(ArenaFx.Cell.Dot, at, unit * 0.34f, ArenaFx.White, 0.8f * glare * glare);
+            fx.DrawBillboard(ArenaFx.Cell.Dot, at, unit * 0.80f, colour, 0.22f * glare);
+            Burst(fx, at, unit, colour, glare, 16, seed);
+        }
+
         private static readonly Color[] Tints = { ArenaFx.Gold, ArenaFx.Magenta, ArenaFx.Cyan, ArenaFx.Violet, ArenaFx.Lime, ArenaFx.Teal };
 
         /// <summary>
@@ -171,9 +188,8 @@ namespace TumbangPreso.Map
         /// and lengths that are the lamp's own (hashed from where it is, so no two lamps match and
         /// none shimmers), every third one tinted. They grow with the glare.
         /// </summary>
-        private static void Burst(ArenaFx fx, Vector3 lamp, float unit, Color colour, float glare, int rays)
+        private static void Burst(ArenaFx fx, Vector3 lamp, float unit, Color colour, float glare, int rays, float seed)
         {
-            float seed = Mathf.Repeat(lamp.x * 0.137f + lamp.z * 0.291f + lamp.y * 0.053f, 1.0f);
             float grow = 0.35f + 0.65f * glare;
             for (int i = 0; i < rays; i++)
             {
