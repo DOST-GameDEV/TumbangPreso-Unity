@@ -299,6 +299,12 @@ namespace TumbangPreso.UI
             if (net == null || !net.IsNetworked) { SceneFlow.StartMatch(); return; }
             if (!NetAuthority.IsHost) return;
 
+            // The room's NONE choice must reach the existing four-human gate even
+            // when settings or a previous session left global bot policy enabled.
+            // Queued rooms retain their explicit accepted-bot path below.
+            if (!HubQueueWatch.QueueRoom)
+                AIController.ApplyCustomRoomPolicy(SceneFlow.SelectedRules);
+
             if (!AIController.BotsEnabled && net.Lobby.OccupiedSeatCount() < Balance.PlayerCount)
             {
                 if (HubQueueWatch.QueueRoom) AcceptBots();
