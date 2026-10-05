@@ -159,6 +159,13 @@ Nothing was deleted or renumbered.
 - [x] Sharpen shared owner/Hub text sampling and guard UI against stale target
   compression presets/global mip limits. Native text6/6, imports5/5 and realHome
   three-resolution visual check pass. [Evidence](reports/reliability-2026-10-05/ui-text-quality/README.md).
+- [x] Real c526 Windows public online join and typed-code rejoin succeed; host
+  survives both admissions,298seconds idle and client exit. Both players close0.
+  [Current player evidence](reports/reliability-2026-10-05/current-ui-online151/README.md).
+- [x] Correct false-empty browser feedback and editable text caret/selection
+  geometry exposed by that player run. Seven text and eight browser checks pass;
+  real PlayMode view refresh and caret containment pass after retained failures.
+  [Correction](reports/reliability-2026-10-05/browser-and-editable-text/README.md).
 - [ ] October5 UI quality: improve authored artwork/text crispness, remove leftover
   white fringes and preserve quality through future imports/builds/resolutions.
 - [ ] Rest of session focus: UI appearance/quality, network robustness and measured

@@ -8,6 +8,40 @@ namespace TumbangPreso.Tests
 {
     public sealed class CrispUiTextTests
     {
+        [Test]
+        public void EditableTextKeepsNativeCaretAndSelectionCoordinates()
+        {
+            var root = new GameObject("EditableTextQuality", typeof(RectTransform), typeof(Canvas), typeof(InputField));
+            try
+            {
+                root.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
+                root.GetComponent<Canvas>().scaleFactor = .75f;
+                var ordinary = new GameObject("Ordinary", typeof(RectTransform)).AddComponent<Text>();
+                var crisp = new GameObject("Editable", typeof(RectTransform)).AddComponent<CrispUiText>();
+                foreach (var label in new Text[] { ordinary, crisp })
+                {
+                    label.transform.SetParent(root.transform, false);
+                    label.rectTransform.sizeDelta = new Vector2(500, 80);
+                    label.font = OwnerUiTheme.Current.Reading; label.fontSize = 40;
+                    label.text = "UMKB"; label.alignment = TextAnchor.MiddleLeft;
+                }
+                using var a = new VertexHelper(); using var b = new VertexHelper();
+                typeof(Text).GetMethod("OnPopulateMesh", BindingFlags.Instance | BindingFlags.NonPublic, null,
+                    new[] { typeof(VertexHelper) }, null).Invoke(ordinary, new object[] { a });
+                typeof(CrispUiText).GetMethod("OnPopulateMesh", BindingFlags.Instance | BindingFlags.NonPublic, null,
+                    new[] { typeof(VertexHelper) }, null).Invoke(crisp, new object[] { b });
+                Assert.AreEqual(a.currentVertCount, b.currentVertCount);
+                Assert.AreEqual(ordinary.cachedTextGenerator.verts.Count, crisp.cachedTextGenerator.verts.Count);
+                UIVertex x = default, y = default;
+                for (int i = 0; i < a.currentVertCount; i++)
+                {
+                    a.PopulateUIVertex(ref x, i); b.PopulateUIVertex(ref y, i);
+                    Assert.AreEqual(x.position, y.position, "Editable ink must use the caret's exact native coordinate space.");
+                    Assert.AreEqual(ordinary.cachedTextGenerator.verts[i].position, crisp.cachedTextGenerator.verts[i].position);
+                }
+            }
+            finally { Object.DestroyImmediate(root); }
+        }
         [TestCase(.75f, false)] [TestCase(1f, false)] [TestCase(1.5f, false)]
         [TestCase(.75f, true)] [TestCase(1f, true)] [TestCase(1.5f, true)]
         public void ActualFontGetsMoreSamplesWithoutChangingLayout(float scale, bool reading)

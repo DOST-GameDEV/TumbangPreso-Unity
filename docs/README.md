@@ -1,5 +1,9 @@
 # Documentation: Start Here
 
+Browser feedback and editable text: [native correction evidence](reports/reliability-2026-10-05/browser-and-editable-text/README.md).
+
+Current Windows UI/public and code joins: [actual player evidence](reports/reliability-2026-10-05/current-ui-online151/README.md).
+
 Network shutdown origin: [native lifecycle evidence](reports/reliability-2026-10-05/network-shutdown-origin/README.md).
 
 Menu text and future import guards: [native evidence and limits](reports/reliability-2026-10-05/ui-text-quality/README.md).

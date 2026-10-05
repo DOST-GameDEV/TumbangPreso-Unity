@@ -22,3 +22,6 @@ docs/reports/reliability-2026-10-05/ui-text-quality/*.xml -text -whitespace
 
 docs/reports/reliability-2026-10-05/network-shutdown-origin/*.xml -text -whitespace
 docs/reports/reliability-2026-10-05/network-shutdown-origin/lifecycle-events.txt -text -whitespace
+
+docs/reports/reliability-2026-10-05/browser-and-editable-text/*.xml -text -whitespace
+docs/reports/reliability-2026-10-05/current-ui-online151/host-lifecycle.txt -text -whitespace

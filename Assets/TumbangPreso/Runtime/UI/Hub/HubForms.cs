@@ -109,6 +109,8 @@ namespace TumbangPreso.UI.Hub
             text.rectTransform.offsetMin = new Vector2(24, 6);
             text.rectTransform.offsetMax = new Vector2(-24, -6);
             text.supportRichText = false;
+            // InputField positions the caret and selection from line metrics, not ink bounds.
+            text.alignByGeometry = false;
             text.horizontalOverflow = HorizontalWrapMode.Overflow;
 
             var hint = HubKit.Text(root, "Placeholder", placeholder, HubStyle.Body, false,

@@ -141,3 +141,11 @@ cap, then retain logical size and preferred layout. Static/best-fit text falls
 back unchanged. Preserve typefaces and compare actual native glyphs/frames before
 changing this bound. Sharper glyph sampling costs atlas space; do not claim it is
 a font-memory optimization. [Current evidence](reports/reliability-2026-10-05/ui-text-quality/README.md).
+
+Editable InputField text must retain its native glyph generator and line-based
+alignment. Carets and selection use font line metrics, not ink bounds; static
+heading sampling must not change that shared coordinate contract. Check the real
+focused caret mesh and field bounds, not only a static screenshot. Browser empty
+copy must distinguish a pending query and unavailable services from a confirmed
+empty result; redraw status changes even when the room count stays zero.
+[Current focused evidence](reports/reliability-2026-10-05/browser-and-editable-text/README.md).

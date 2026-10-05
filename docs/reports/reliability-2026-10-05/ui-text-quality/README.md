@@ -46,3 +46,10 @@ The first text fixture failed an ambiguous reflection overload; it was repaired
 with the VertexHelper signature and that failure remains private. No runtime
 failure was hidden. No unused task-owned editor/game/browser remains.
 The current QA online host shutdown remains OPEN.
+
+## Subsequent editable-field correction
+
+The c526 real-player code-entry check exposed a caret regression. Sharper sampling
+now excludes InputField text and HubField retains line-based editable alignment.
+[Current correction and native containment proof](../browser-and-editable-text/README.md).
+Do not use the earlier static-label evidence as proof of editable-field correctness.

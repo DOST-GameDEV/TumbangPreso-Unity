@@ -176,6 +176,7 @@ namespace TumbangPreso.Net
 
         public IEnumerable<Entry> Servers => _seen.Values;
         public string HostedLobbyProblem { get; private set; } = "";
+        public string OnlineBrowserMessage { get; private set; } = "Finding public rooms...";
 
         public void StartBrowsing()
         {
@@ -183,6 +184,7 @@ namespace TumbangPreso.Net
 
             _browseGeneration++;
             _browsing = true;
+            OnlineBrowserMessage = "Finding public rooms...";
             _sinceQuery = QueryInterval; // Query immediately
         }
 
@@ -242,7 +244,12 @@ namespace TumbangPreso.Net
                 // boot, by NetIdentity itself. This call awaits that same settled attempt, so
                 // logging here again is what turned one situation into 21 identical warnings.
                 bool authOk = await authenticate();
-                if (!authOk || generation != _browseGeneration) return;
+                if (generation != _browseGeneration) return;
+                if (!authOk)
+                {
+                    OnlineBrowserMessage = "Online services are unavailable. Check your connection and try again.";
+                    return;
+                }
 
                 var options = new QueryLobbiesOptions
                 {
@@ -259,6 +266,7 @@ namespace TumbangPreso.Net
 
                 if (response?.Results != null)
                 {
+                    OnlineBrowserMessage = "No public rooms yet. Host one, or join with a code.";
                     lock (_seen)
                     {
                         foreach (var lobby in response.Results)
@@ -352,6 +360,8 @@ namespace TumbangPreso.Net
             }
             catch (Exception e)
             {
+                if (generation == _browseGeneration)
+                    OnlineBrowserMessage = "Could not check online rooms. Retrying...";
                 NetIdentity.ReportServiceCallFailed("Lobby query", e);
             }
             finally

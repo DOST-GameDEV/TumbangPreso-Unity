@@ -96,6 +96,7 @@ namespace TumbangPreso.UI.Hub
 
         /// <summary>Start the LAN and online browse loops the JOIN screen reads.</summary>
         void Browse();
+        string OnlineBrowserMessage { get; }
 
         /// <summary>Rooms to list: the LAN beacon's, or the online UGS lobbies. Public rooms only.</summary>
         System.Collections.Generic.List<HubRoom> Rooms(bool lan);

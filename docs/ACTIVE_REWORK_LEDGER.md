@@ -22,14 +22,19 @@ explicitly authorized; unnecessary AGENTS feature entry was removed at owner req
 ## Current source and live work
 
 Latest owner focus: UI appearance/quality/future-proof imports, network robustness
-and optimization. Root published7502ff3d6 UI text/import guards; prior2c9 source-quality/edges.
-Native6text/5import passes plus actualHome at1080p/1440p/4K, all parents0, all
-original PNGs unchanged. Current shutdown-origin unit native1PASS covers real
-hostStop/restart/external managerShutdown and resets the diagnostic flag.
-Next publish then full Windows package and ordinary online GUI pair/idle/exit.
+and optimization. Root c526bcc5d includes UI source-quality/text/import guards and shutdown traces.
+Actual updated Windows public join plus typed UMKB rejoin pass; host stays2/4
+for298seconds after admission and survives client exit. Both players0, parent
+64888 terminal, profiles/input restored. Host trace shows deliberate LeaveRoom.
+Current corrections: browser loading/unavailable/empty feedback, native editable
+glyph coordinates and line-based HubField alignment. Seven text/eight browser
+checks passed; actual PlayMode22592 view refresh/caret containment now1PASS after
+retained EditMode harness and real caret-layout failures.202 generated metadata
+restored, no owned actors active. Next publish then package corrected source and
+check actual current code-entry caret; keep current QA host loss open.
 Current QA ONLINE timeout/hostreturnedHome remains OPEN; local97a online admission
-passed but does not resolve the tester environment. Latest accepted Windows
-package97a313e33 predates receiver-state, retry and current UI changes.
+passed but does not resolve the tester environment. Latest Windows
+packagec526bcc5d has current retry/UI guards but predates the latest caret/browser correction.
 LAN4x30 MTDX had one row, correct192.168.1.7 hint, matching4-round headers and
 FULL records equal, match58a49ff1d17f439cb05c7127ecd57dfb. Bothplayers exited0.
 NoRoot native editor/game/proxy/recorder active. OldYasmin cyan/goggles active;

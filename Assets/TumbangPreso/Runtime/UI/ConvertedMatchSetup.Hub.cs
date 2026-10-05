@@ -362,6 +362,8 @@ namespace TumbangPreso.UI
             net.Query?.StartBrowsing();
         }
 
+        public string OnlineBrowserMessage => NetSession.Instance?.Query?.OnlineBrowserMessage ?? "Finding public rooms...";
+
         public List<HubRoom> Rooms(bool lan)
         {
             var rooms = new List<HubRoom>();

@@ -29,6 +29,29 @@ namespace TumbangPreso.Tests
         private static QueryResponse Response(string id)=>new QueryResponse(new List<Lobby>{new Lobby(id:id,name:id,maxPlayers:4)});
         private static Task<bool> Auth()=>Task.FromResult(true);
 
+        [Test] public async Task PendingQueryDoesNotClaimNoRoomsUntilReplyArrives()
+        {
+            _browser.StartBrowsing();
+            var reply = new TaskCompletionSource<QueryResponse>();
+            var pending = Refresh(Auth, _ => reply.Task);
+            Assert.AreEqual("Finding public rooms...", _browser.OnlineBrowserMessage);
+            reply.SetResult(new QueryResponse(new List<Lobby>())); await pending;
+            Assert.AreEqual("No public rooms yet. Host one, or join with a code.", _browser.OnlineBrowserMessage);
+        }
+        [Test] public async Task FailedAuthenticationIsNotDisplayedAsAnEmptyServerList()
+        {
+            _browser.StartBrowsing(); int queries = 0;
+            await Refresh(() => Task.FromResult(false), _ => { queries++; return Task.FromResult(Response("unused")); });
+            Assert.AreEqual(0, queries);
+            Assert.AreEqual("Online services are unavailable. Check your connection and try again.", _browser.OnlineBrowserMessage);
+        }
+        [Test] public async Task ClosedOpeningCannotOverwriteReopenedLoadingState()
+        {
+            _browser.StartBrowsing(); var auth = new TaskCompletionSource<bool>();
+            var pending = Refresh(() => auth.Task, _ => Task.FromResult(Response("old")));
+            _browser.StopBrowsing(); _browser.StartBrowsing(); auth.SetResult(false); await pending;
+            Assert.AreEqual("Finding public rooms...", _browser.OnlineBrowserMessage);
+        }
         [Test] public async Task ReplyAfterCloseDoesNotRepopulateRooms()
         {
             _browser.StartBrowsing();var reply=new TaskCompletionSource<QueryResponse>();

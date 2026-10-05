@@ -10,7 +10,9 @@ namespace TumbangPreso.UI
 
         protected override void OnPopulateMesh(VertexHelper mesh)
         {
-            if (font == null || !font.dynamic || resizeTextForBestFit)
+            // InputField reads this generator's vertices for caret/selection coordinates.
+            // Keep its native pixel-to-canvas contract, including fields created by shared factories.
+            if (font == null || !font.dynamic || resizeTextForBestFit || GetComponentInParent<InputField>() != null)
             {
                 base.OnPopulateMesh(mesh);
                 return;
