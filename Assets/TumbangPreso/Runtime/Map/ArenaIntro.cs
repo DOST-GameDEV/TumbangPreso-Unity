@@ -70,6 +70,8 @@ namespace TumbangPreso.Map
         public struct Times
         {
             public bool Full;
+            /// <summary>The full opening begins on a black screen for this long, with only the heartbeat.</summary>
+            public float Black;
             public float Walk, Glare, Peak, Reveal, Taya, Land, Spot, Build, Handoff, End;
         }
 
@@ -84,8 +86,14 @@ namespace TumbangPreso.Map
         // after the characters already exit the tunnel"). The tunnel is 10 m deep and the camera needs four of
         // them, so the line has 5 m to the mouth: at the walk's pace (`Line`, 1.28 m/s) that is 3.9 s. The
         // white's peak and the cut to the bowl sit there, and the glare builds through the whole walk to it.
+        // ⚠️ IT OPENS ON BLACK (owner, 2026-10-05: "the opening scene needs to start on a full black screen, sounds
+        // of heartbeats for like 3 seconds and then fade in to the characters walking"). `Dark` seconds of black
+        // with the heart alone, then the picture comes up on a line already walking. Every later time is counted
+        // from the end of the black; the short opening has none.
+        public const float Dark = 3.0f;
+
         public static Times TimesFor(bool full) => full
-            ? new Times { Full = true, Walk = 0.6f, Glare = 1.6f, Peak = 3.7f, Reveal = 3.95f, Taya = 6.8f, Land = 10.1f, Spot = 12.2f, Build = 12.85f, Handoff = 12.85f + BuildSeconds, End = 12.85f + BuildSeconds + 0.8f }
+            ? new Times { Full = true, Black = Dark, Walk = Dark + 0.6f, Glare = Dark + 1.6f, Peak = Dark + 3.7f, Reveal = Dark + 3.95f, Taya = Dark + 6.8f, Land = Dark + 10.1f, Spot = Dark + 12.2f, Build = Dark + 12.85f, Handoff = Dark + 12.85f + BuildSeconds, End = Dark + 12.85f + BuildSeconds + 0.8f }
             : new Times { Full = false, Walk = -1.0f, Glare = -1.0f, Peak = -1.0f, Reveal = 0.0f, Taya = 2.0f, Land = 4.7f, Spot = 6.6f, Build = 7.2f, Handoff = 7.2f + BuildSeconds, End = 7.2f + BuildSeconds + 0.8f };
 
         public static ArenaIntro Instance { get; private set; }
@@ -176,7 +184,7 @@ namespace TumbangPreso.Map
         private AudioSource _loop, _ringer, _shots;
         private AudioClip _rumble, _heart, _whoosh, _ring, _tickClip, _stamp;
         private int _beats;
-        private static readonly float[] HeartAt = { 0.3f, 1.05f, 1.7f, 2.25f, 2.7f, 3.05f, 3.35f, 3.6f };
+        private static readonly float[] HeartAt = { 0.35f, 1.3f, 2.25f, Dark + 0.2f, Dark + 1.0f, Dark + 1.7f, Dark + 2.25f, Dark + 2.7f, Dark + 3.05f, Dark + 3.35f, Dark + 3.6f };
 
         /// <summary>This map's opening, made if the map is loaded and has none. Null on every other map.</summary>
         public static ArenaIntro Ensure()
@@ -442,7 +450,7 @@ namespace TumbangPreso.Map
             // for 1.8 s before the first step. The same ground over the whole time, already in stride as
             // the picture comes up from black, easing only into the stop out on the turf.
             // One steady pace the whole way (9.1 m in 7.1 s), easing only into the stop over the last tenth.
-            float p = Mathf.Clamp01(age / (t.Taya + 0.3f));
+            float p = Mathf.Clamp01((age - t.Black) / (t.Taya + 0.3f - t.Black));
             float eased = p < 0.9f ? p * (0.95f / 0.9f) : 0.95f + 0.05f * (1.0f - (1.0f - (p - 0.9f) / 0.1f) * (1.0f - (p - 0.9f) / 0.1f));
             z = Mathf.Lerp(LineStart, LineEnd, eased);
             stride = Mathf.Clamp01((1.0f - p) * 14.0f);
@@ -547,7 +555,7 @@ namespace TumbangPreso.Map
             if (t.Full && age < t.Reveal)
             {
                 // 1 and 2. Low at their backs, following them out and rising toward the mouth.
-                float p = _still ? 0.0f : Smooth(age / t.Reveal);
+                float p = _still ? 0.0f : Smooth((age - t.Black) / (t.Reveal - t.Black));
                 float bob = _still ? 0.0f : Mathf.Sin((line - LineStart) / Stride * Mathf.PI * 4.0f) * 0.018f;
                 Pose(_centre + new Vector3(0.0f, Mathf.Lerp(0.95f, 1.75f, p) + bob, line - Mathf.Lerp(4.0f, 3.1f, p)),   // dead centre between the two files
                      _centre + new Vector3(0.0f, Mathf.Lerp(1.9f, 4.4f, p), line + 40.0f), 50.0f);
@@ -671,7 +679,7 @@ namespace TumbangPreso.Map
                 {
                     // ⚠️ IT GROWS AS THEY NEAR THE MOUTH, NOT BEFORE (owner: "big glare effect grows before the
                     // players even move forward"): nothing for the first half second, then with every step to the mouth.
-                    float grow = Smooth((age - 0.5f) / (t.Peak - 0.5f));
+                    float grow = Smooth((age - t.Black - 0.5f) / (t.Peak - t.Black - 0.5f));
                     grow = Mathf.Pow(grow, 1.3f);
                     Vector3 sun = _centre + new Vector3(0.0f, Mathf.Lerp(3.6f, 5.2f, grow), -44.0f);
                     Vector3 from = eye - sun;
@@ -684,7 +692,7 @@ namespace TumbangPreso.Map
                     if (grow > 0.02f && from.sqrMagnitude > 1.0f)
                         ArenaGlare.Lamp(fx, sun, from.normalized, FloodColour, Mathf.Lerp(0.4f, 1.0f, grow) * Mathf.Lerp(0.3f, 1.0f, clear), 6.0f, 20.0f,
                                         1.1f + 2.8f * grow, true, flash > 0.3f, 1.0f);
-                    float spill = Smooth((age - 0.4f) / 2.6f) * (0.35f + 0.65f * grow);
+                    float spill = Smooth((age - t.Black - 0.4f) / 2.6f) * (0.35f + 0.65f * grow);
                     Vector3 mouth = _centre + new Vector3(0.0f, Ground + 0.03f, MouthZ);
                     fx.DrawFlat(ArenaFx.Cell.Dot, mouth + new Vector3(0.0f, 0.0f, -3.5f), 5.2f, 15.0f, 0.0f, FloodColour, 0.34f * spill);
                     fx.DrawFlat(ArenaFx.Cell.Dot, mouth + new Vector3(0.0f, 0.0f, -1.0f), 4.0f, 6.0f, 0.0f, ArenaFx.White, 0.30f * spill);
@@ -705,7 +713,8 @@ namespace TumbangPreso.Map
             }
 
             // The white: one rise and one fall, never a flicker, by the Flash intensity setting.
-            float white = 0.0f, ink = 1.0f - Smooth(age / (t.Full ? 0.9f : 0.5f));
+            // Black for `t.Black`, then the picture comes up over a second.
+            float white = 0.0f, ink = 1.0f - Smooth((age - t.Black) / (t.Full ? 1.0f : 0.5f));
             if (t.Full)
             {
                 float up = Smooth((age - (t.Glare + 0.45f)) / (t.Peak - t.Glare - 0.45f));
