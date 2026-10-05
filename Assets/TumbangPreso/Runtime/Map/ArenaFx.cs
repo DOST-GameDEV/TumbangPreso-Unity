@@ -577,6 +577,9 @@ namespace TumbangPreso.Map
 
         private void LateUpdate()
         {
+            // The lamps' flares, asked for by everything that ran before this (order 1000), go on the screen.
+            ArenaGlare.Present(transform);
+
             var view = View;
             if (view != null) { var t = view.transform; _eye = t.position; _right = t.right; _up = t.up; }
             _light = Light;

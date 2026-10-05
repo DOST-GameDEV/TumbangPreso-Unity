@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace TumbangPreso.Map
 {
@@ -142,6 +143,8 @@ namespace TumbangPreso.Map
                 fx.DrawBillboard(ArenaFx.Cell.Dot, lamp, unit * 0.34f, ArenaFx.White, 0.8f * glare * glare);
                 fx.DrawBillboard(ArenaFx.Cell.Dot, lamp, unit * 0.80f, colour, 0.22f * glare);
                 if (glare > 0.06f) Burst(fx, lamp, unit, colour, glare, 6, seed);
+                // The lamp itself stars on the picture (owner: "the light sources themselves should have some").
+                if (framed > 0.5f) Add(x, y, 0.75f * glare, 0.30f * size, colour, seed);
             }
             // The anamorphic streak: the star's cell pulled long and thin across the frame.
             fx.DrawQuad(ArenaFx.Cell.Star, lamp, _right * (unit * (0.25f + 0.55f * glare)), _up * (unit * 0.085f), colour, 0.6f * glare);
@@ -174,11 +177,155 @@ namespace TumbangPreso.Map
         {
             if (glare < 0.05f) return;
             float pull = out_ > 1.02f ? 1.02f / out_ : 1.0f;
-            Vector3 at = _eye + (_forward + _right * (x * pull * _tanX) + _up * (y * pull * _tanY)) * Lens;
-            float unit = Lens * _tanY * size;
-            fx.DrawBillboard(ArenaFx.Cell.Dot, at, unit * 0.34f, ArenaFx.White, 0.8f * glare * glare);
-            fx.DrawBillboard(ArenaFx.Cell.Dot, at, unit * 0.80f, colour, 0.22f * glare);
-            Burst(fx, at, unit, colour, glare, 16, seed);
+            Add(x * pull, y * pull, glare, size, colour, seed);
+        }
+
+        // ------------------------------------------------------------------ the flare on the picture
+        //
+        // ⚠️ THE FLARE IS A PICTURE OVER THE SCREEN, NOT QUADS IN THE WORLD (owner, 2026-10-05, a
+        // fourth time, with a photograph of the sun through a windscreen: "still no lens flare style
+        // glare"; "it needs to look like this on the camera"). Three versions drawn through `ArenaFx`
+        // never showed for him, in the opening or in play, and why was not found without running it.
+        // What his photograph has is rays streaming from the light ACROSS THE WHOLE FRAME, over
+        // everything in it. So each flare is one image on a screen canvas: a painted burst (a burnt
+        // out middle, a hundred and fifty rays of uneven length and width, a faint spread of colour), centred
+        // where the lamp is on the screen, twice the frame's height across for a lamp at full
+        // strength. The opening's fades are drawn the same way and are known to show.
+        // `ArenaFx` presents them once a frame (`Present`), after every caller has drawn.
+
+        private const int MaxFlares = 10, BurstPixels = 512;
+        private struct Shown { public float X, Y, Glare, Size, Seed; public Color Colour; }
+        private static readonly Shown[] Asked = new Shown[MaxFlares];
+        private static int _asked;
+        private static Canvas _canvas;
+        private static readonly RawImage[] Images = new RawImage[MaxFlares];
+        private static Texture2D _burst;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics() { _asked = 0; _canvas = null; _burst = null; _frame = -1; }
+
+        /// <summary>Ask for a flare this frame at (x, y), -1 to 1 across the frame. The strongest `MaxFlares` are kept.</summary>
+        private static void Add(float x, float y, float glare, float size, Color colour, float seed)
+        {
+            int slot = _asked;
+            if (slot >= MaxFlares)
+            {
+                slot = 0;
+                for (int i = 1; i < MaxFlares; i++) if (Asked[i].Glare * Asked[i].Size < Asked[slot].Glare * Asked[slot].Size) slot = i;
+                if (Asked[slot].Glare * Asked[slot].Size >= glare * size) return;
+            }
+            else _asked++;
+            Asked[slot] = new Shown { X = x, Y = y, Glare = glare, Size = size, Seed = seed, Colour = colour };
+        }
+
+        /// <summary>Put this frame's flares on the screen and forget them. Called once a frame by `ArenaFx`, last.</summary>
+        public static void Present(Transform owner)
+        {
+            int count = _asked;
+            _asked = 0;
+            float flash = Settings.SettingsStore.Current.EffectiveFlashIntensity;
+            if (flash <= 0.001f) count = 0;
+            if (count == 0 && _canvas == null) return;
+            if (_canvas == null) BuildCanvas(owner);
+
+            // Under the game's UI in play; over the arrival's curtain and under the opening's own fades in the opening.
+            int order = ArenaIntro.HidesUi ? 150 : -20;
+            if (_canvas.sortingOrder != order) _canvas.sortingOrder = order;
+            if (!_canvas.enabled) _canvas.enabled = true;   // the opening switches the game's canvases off; never this one
+            float tall = Screen.height;
+            for (int i = 0; i < MaxFlares; i++)
+            {
+                var image = Images[i];
+                if (image == null) continue;
+                bool on = i < count;
+                if (image.enabled != on) image.enabled = on;
+                if (!on) continue;
+
+                var a = Asked[i];
+                var rect = image.rectTransform;
+                rect.anchorMin = rect.anchorMax = new Vector2(a.X * 0.5f + 0.5f, a.Y * 0.5f + 0.5f);
+                float across = tall * 2.1f * a.Size * (0.45f + 0.55f * a.Glare);
+                rect.sizeDelta = new Vector2(across, across);
+                rect.localRotation = Quaternion.Euler(0.0f, 0.0f, a.Seed * 360.0f);
+                Color c = Color.Lerp(Color.white, a.Colour, 0.35f);
+                c.a = Mathf.Clamp01(a.Glare * 1.15f) * Mathf.Lerp(0.45f, 1.0f, flash);
+                image.color = c;
+            }
+        }
+
+        private static void BuildCanvas(Transform owner)
+        {
+            var go = new GameObject("Arena lens flares") { hideFlags = HideFlags.DontSave };
+            go.transform.SetParent(owner, false);
+            _canvas = go.AddComponent<Canvas>();
+            _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            _canvas.sortingOrder = -20;
+            if (_burst == null) _burst = PaintBurst();
+            for (int i = 0; i < MaxFlares; i++)
+            {
+                var child = new GameObject("Flare " + i);
+                child.transform.SetParent(go.transform, false);
+                var image = child.AddComponent<RawImage>();
+                image.texture = _burst;
+                image.raycastTarget = false;
+                image.enabled = false;
+                image.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+                Images[i] = image;
+            }
+        }
+
+        private static uint _paint;
+        private static float Next() { _paint ^= _paint << 13; _paint ^= _paint >> 17; _paint ^= _paint << 5; return (_paint & 0xFFFFFF) / 16777216.0f; }
+
+        /// <summary>The burst: white light in the alpha. A burnt-out middle, a soft bloom round it, and
+        /// a hundred and fifty rays, each with its own width, length and strength, a few of them faintly coloured.</summary>
+        private static Texture2D PaintBurst()
+        {
+            const int n = BurstPixels, steps = 1440;
+            var strength = new float[steps];
+            var reach = new float[steps];
+            var hue = new float[steps];
+            _paint = 0x9E3779B9u;
+            for (int ray = 0; ray < 150; ray++)
+            {
+                float at = Next() * steps, width = 1.2f + 9.0f * Next() * Next(), power = 0.25f + 0.75f * Next(), far = 0.35f + 0.65f * Next() * Next();
+                if (ray % 12 == 0) { far = 1.0f; power = 1.0f; width += 3.0f; }   // ten long strong ones
+                float tint = Next();
+                int span = Mathf.CeilToInt(width * 3.0f);
+                for (int k = -span; k <= span; k++)
+                {
+                    int index = ((Mathf.RoundToInt(at) + k) % steps + steps) % steps;
+                    float w = Mathf.Exp(-(k * k) / (width * width)) * power;
+                    if (w > strength[index]) { strength[index] = w; reach[index] = far; hue[index] = tint; }
+                }
+            }
+
+            var pixels = new Color32[n * n];
+            for (int py = 0; py < n; py++)
+            {
+                for (int px = 0; px < n; px++)
+                {
+                    float x = (px + 0.5f) / n * 2.0f - 1.0f, y = (py + 0.5f) / n * 2.0f - 1.0f;
+                    float r = Mathf.Sqrt(x * x + y * y);
+                    // Between two steps of the angle the strength is blended, so a ray's edge is not a staircase.
+                    float turn = (Mathf.Atan2(y, x) / (2.0f * Mathf.PI) + 0.5f) * steps;
+                    int index = (int)turn % steps, next = (index + 1) % steps;
+                    float along = Mathf.Clamp01(1.0f - r / Mathf.Max(0.05f, reach[index]));
+                    float rays = Mathf.Lerp(strength[index], strength[next], turn - Mathf.Floor(turn)) * along * Mathf.Sqrt(along) * Mathf.Clamp01(r * 9.0f);
+                    // The middle burns out only at its very centre and falls away softly: never a disc with an edge.
+                    float core = Mathf.Exp(-r * r * 140.0f) * 1.1f + Mathf.Exp(-r * r * 22.0f) * 0.55f + Mathf.Exp(-r * r * 4.0f) * 0.16f;
+                    float alpha = Mathf.Clamp01(rays * 0.85f + core) * Mathf.Clamp01((1.0f - r) * 8.0f);
+                    // A faint spread of colour out along the rays, none in the middle.
+                    float tinted = Mathf.Clamp01(r * 2.2f) * 0.24f * Mathf.Clamp01(1.0f - core);
+                    Color rgb = Color.Lerp(Color.white, Color.HSVToRGB(hue[index], 0.75f, 1.0f), tinted);
+                    pixels[py * n + px] = new Color32((byte)(rgb.r * 255.0f), (byte)(rgb.g * 255.0f), (byte)(rgb.b * 255.0f), (byte)(alpha * 255.0f));
+                }
+            }
+
+            var texture = new Texture2D(n, n, TextureFormat.RGBA32, true) { name = "Arena lens burst", wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Trilinear, hideFlags = HideFlags.DontSave };
+            texture.SetPixels32(pixels);
+            texture.Apply(true, true);
+            return texture;
         }
 
         private static readonly Color[] Tints = { ArenaFx.Gold, ArenaFx.Magenta, ArenaFx.Cyan, ArenaFx.Violet, ArenaFx.Lime, ArenaFx.Teal };
