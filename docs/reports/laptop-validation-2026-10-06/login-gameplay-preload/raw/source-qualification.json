@@ -1,0 +1,12 @@
+{
+  "base": "770e32219d090ff963a6e359f3c4e62608f187c5",
+  "testedPaths": {
+    "Assets/TumbangPreso/Runtime/UI/ConvertedMainMenu.cs": "4b907e673b6f47534b989c27f649a2a5ff56fd258fb23f8121f3fbf346bcd9c6",
+    "Assets/TumbangPreso/Runtime/UI/SplashScreen.cs": "ab1e8121ce278679590e012cbc0def2c3bded7ed808454e33d339f9618b57f03",
+    "Assets/TumbangPreso/Runtime/Visual/VfxFlipbook.cs": "ad3ce97a6e48ea15d69cd1a43eea30f34849a188920586b2866123ecf946e9f7",
+    "Assets/TumbangPreso/Tests/PlayMode/LoginHomePreloadTests.cs": "7ecd69029a6282fa8dc2cd0dbefcfe171817f78650b12c089c5b618672b74938",
+    "Assets/TumbangPreso/Tests/PlayMode/LoginHomePreloadTests.cs.meta": "8c5298f74846561470a79bf519404c00e07c91ff6b10dfc7b4120d2def75a12d"
+  },
+  "manifestSha256": "cde904dff0a43913df4c897502d15133178d6237fe6a6384c0a1919dd34251b0",
+  "runtimeSameAsFirstRun": true
+}

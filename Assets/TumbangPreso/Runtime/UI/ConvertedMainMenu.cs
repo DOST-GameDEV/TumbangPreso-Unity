@@ -134,9 +134,10 @@ namespace TumbangPreso.UI
 
         private IEnumerator PreloadHomeAssets()
         {
+            yield return SplashScreen.WarmGameplayAssets(done=>_homeAssetsProgress=.8f*done);
             // Reuse the existing caches and decoder preparation rather than
             // making a second copy of the Home resource set.
-            yield return Hub.HubSceneVideo.Warmup(done=>_homeAssetsProgress=done);
+            yield return Hub.HubSceneVideo.Warmup(done=>_homeAssetsProgress=.8f+.2f*done);
             _homeAssetsReady=true;
         }
 
@@ -153,7 +154,7 @@ namespace TumbangPreso.UI
         {
             while(!_homeAssetsReady)
             {
-                _nativeHome.SetLoadingProgress(_homeAssetsProgress*.2f);
+                _nativeHome.SetLoadingProgress(_homeAssetsProgress*.65f);
                 yield return null;
             }
             SceneFlow.Networked=false;
@@ -162,7 +163,7 @@ namespace TumbangPreso.UI
             _homePreload=SceneManager.LoadSceneAsync(SceneFlow.MatchSetup,LoadSceneMode.Single);
             while(_homePreload!=null && !_homePreload.isDone)
             {
-                _nativeHome.SetLoadingProgress(.2f+.8f*_homePreload.progress);
+                _nativeHome.SetLoadingProgress(.65f+.35f*_homePreload.progress);
                 yield return null;
             }
             _nativeHome.SetLoadingProgress(1);

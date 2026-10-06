@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Gameplay preload during usable login: [native cache and interruption checks](reports/laptop-validation-2026-10-06/login-gameplay-preload/README.md).
+
 Responsive login and automatic Home loading: [native preparation evidence](reports/laptop-validation-2026-10-06/login-video-preload/README.md).
 
 Real editor online lifetime: [Play-session mismatch and focused correction](reports/reliability-2026-10-05/editor-online-lifetime/README.md).

@@ -16,6 +16,8 @@ media has a bounded fallback. [Native evidence](reports/studio-intro-2026-10-02/
 
 ## Current Entry Points
 
+Login-time gameplay assets: [native responsiveness and interruption checks](reports/laptop-validation-2026-10-06/login-gameplay-preload/README.md).
+
 Bot rival-spacing queries reuse per-brain scratch storage. A calibrated native
 100-query measurement falls from200allocation events to0; four cases preserve
 claim expiry/refresh and reader independence. No loading or whole-frame claim.
@@ -31,7 +33,7 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 
 | Responsibility | Source |
 |---|---|
-| Boot stages and progress | UI/SplashScreen.cs; shader slices,rosters,audio,menu art,input,glyphs and retained dependencies |
+| Boot stages and progress | UI/SplashScreen.cs keeps shader slices,rosters,audio,menu art,input and retained map dependencies. ConvertedMainMenu overlaps gameplay icon/VFX/prop/hero-data and Home-video preparation with usable login before automatic Home arrival |
 | Roster catalogue handoff | RosterBook.Warmup shares one async catalogue request before SplashScreen iterates its referenced art/clips. Load adopts a completed cancelled request and retains direct synchronous fallback plus the once-only missing warning; no roster IDs/order or serialized art changes |
 | Shader preparation turns | SplashScreen calls WarmUpProgressively(1),checks a2ms elapsed target between calls and caps10variants/turn; one indivisible native compile may overrun,so this is not a hard frame guarantee |
 | Deferred SFX/voice samples | UI/SplashScreen.WarmAudioAssets; yielded sample loading and retention,not just clip references; music/streaming policy unchanged |

@@ -40,16 +40,24 @@ namespace TumbangPreso.PlayTests
    Assert.IsNull(typeof(ConvertedMainMenu).GetField("_homePreload",Hidden).GetValue(menu),"Login must not hold a scene operation.");
    Assert.AreEqual(ThreadPriority.Low,Application.backgroundLoadingPriority);
    var username=(InputField)typeof(SignInScreen).GetField("_username",Hidden).GetValue(signIn);Assert.IsNotNull(username);
-   var frames=new List<float>();float previous=Time.realtimeSinceStartup;float began=previous;
+   var frames=new List<float>();float previous=Time.realtimeSinceStartup;float began=previous;float progress=0;
    for(int i=0; i<90 || (!(bool)typeof(ConvertedMainMenu).GetField("_homeAssetsReady",Hidden).GetValue(menu) && Time.realtimeSinceStartup-began<40); i++)
    {
     username.text="Login_"+i;Assert.AreEqual("Login_"+i,username.text);Assert.IsTrue(signIn.IsOpen);
+    float completed=(float)typeof(ConvertedMainMenu).GetField("_homeAssetsProgress",Hidden).GetValue(menu);
+    Assert.GreaterOrEqual(completed,progress,"Completed preload work went backwards.");progress=completed;
     Assert.AreEqual(SceneFlow.MainMenu,SceneManager.GetActiveScene().name);
     yield return null;float now=Time.realtimeSinceStartup;frames.Add((now-previous)*1000);previous=now;
    }
    Assert.IsTrue((bool)typeof(ConvertedMainMenu).GetField("_homeAssetsReady",Hidden).GetValue(menu),"Home preparation did not finish while login remained open.");
    Directory.CreateDirectory("Logs/login-preload");File.WriteAllLines("Logs/login-preload/frames-ms.txt",frames.ConvertAll(v=>v.ToString("F3",System.Globalization.CultureInfo.InvariantCulture)));
    Assert.IsNull(typeof(ConvertedMainMenu).GetField("_homePreload",Hidden).GetValue(menu));
+   Assert.AreEqual(1f,(float)typeof(ConvertedMainMenu).GetField("_homeAssetsProgress",Hidden).GetValue(menu),.001f);
+   Assert.IsNull(Object.FindFirstObjectByType<MatchDirector>(),"Login preparation created a match.");
+   var icons=(System.Collections.IDictionary)typeof(AbilityIcons).GetField("Cache",BindingFlags.Static|BindingFlags.NonPublic).GetValue(null);
+   Assert.AreEqual(System.Enum.GetValues(typeof(AbilityGlyph)).Length,icons.Count,"A skill icon was left for first use.");
+   Assert.Greater(((System.Collections.IDictionary)typeof(StatusIcons).GetField("Cache",BindingFlags.Static|BindingFlags.NonPublic).GetValue(null)).Count,0);
+   Assert.Greater(((System.Collections.IDictionary)typeof(TumbangPreso.Visual.HeroPropAssets).GetField("RetainedFolders",BindingFlags.Static|BindingFlags.NonPublic).GetValue(null)).Count,0);
    typeof(SignInScreen).GetMethod("Close",Hidden).Invoke(signIn,null);yield return null;
    var title=GameObject.Find("OwnerHomeCanvas");Assert.IsNotNull(title);
    Assert.IsNull(title.transform.Find("StartButton"));
@@ -61,6 +69,18 @@ namespace TumbangPreso.PlayTests
    Assert.AreEqual(SceneFlow.MatchSetup,SceneManager.GetActiveScene().name);
    Assert.IsNotNull(TumpHub.Current);Assert.IsTrue(TumpHub.Current.AtHome);Assert.IsTrue(TumpHub.Current.ShowingHome);
    Assert.AreEqual(priority,Application.backgroundLoadingPriority);
+  }
+
+  [UnityTest]public IEnumerator LeavingDuringPreparationRestoresBackgroundPriority()
+  {
+   yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu);yield return null;
+   var menu=Object.FindFirstObjectByType<ConvertedMainMenu>();Assert.IsNotNull(menu);
+   Assert.IsTrue(menu.GetComponent<SignInScreen>().IsOpen);
+   Assert.IsNull(typeof(ConvertedMainMenu).GetField("_homePreload",Hidden).GetValue(menu));
+   Assert.AreEqual(ThreadPriority.Low,Application.backgroundLoadingPriority);
+   yield return PlayModeWorld.Reset();
+   Assert.AreEqual(priority,Application.backgroundLoadingPriority);
+   Assert.IsNull(Object.FindFirstObjectByType<MatchDirector>());
   }
  }
 }
