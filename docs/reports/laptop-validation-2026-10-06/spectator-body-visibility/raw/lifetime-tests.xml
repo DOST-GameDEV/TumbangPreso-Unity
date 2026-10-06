@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 06:00:34Z" end-time="2026-10-06 06:00:34Z" duration="0.2852463">
+  <test-suite type="TestSuite" id="3305" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1878" result="Passed" start-time="2026-10-06 06:00:34Z" end-time="2026-10-06 06:00:34Z" duration="0.285246" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3297" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1878" result="Passed" start-time="2026-10-06 06:00:34Z" end-time="2026-10-06 06:00:34Z" duration="0.265748" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="44040" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3298" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1878" result="Passed" start-time="2026-10-06 06:00:34Z" end-time="2026-10-06 06:00:34Z" duration="0.252399" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3301" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1876" result="Passed" start-time="2026-10-06 06:00:34Z" end-time="2026-10-06 06:00:34Z" duration="0.239637" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2875" name="SpectatorBodyModelLifetimeTests" fullname="TumbangPreso.PlayTests.SpectatorBodyModelLifetimeTests" classname="TumbangPreso.PlayTests.SpectatorBodyModelLifetimeTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-06 06:00:34Z" end-time="2026-10-06 06:00:34Z" duration="0.213912" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2877" name="ABodyEnabledWithinTheFrameCannotBeMissingFromCachedRenderers" fullname="TumbangPreso.PlayTests.SpectatorBodyModelLifetimeTests.ABodyEnabledWithinTheFrameCannotBeMissingFromCachedRenderers" methodname="ABodyEnabledWithinTheFrameCannotBeMissingFromCachedRenderers" classname="TumbangPreso.PlayTests.SpectatorBodyModelLifetimeTests" runstate="Runnable" seed="2031792573" result="Passed" start-time="2026-10-06 06:00:34Z" end-time="2026-10-06 06:00:34Z" duration="0.104590" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Anim] Registered body has no clips. Check the model's animationType is Generic and importAnimation is on.
+]]></output>
+            </test-case>
+            <test-case id="2878" name="MovingABodyReadsCurrentBoundsWithoutChangingModelIdentity" fullname="TumbangPreso.PlayTests.SpectatorBodyModelLifetimeTests.MovingABodyReadsCurrentBoundsWithoutChangingModelIdentity" methodname="MovingABodyReadsCurrentBoundsWithoutChangingModelIdentity" classname="TumbangPreso.PlayTests.SpectatorBodyModelLifetimeTests" runstate="Runnable" seed="1074544428" result="Passed" start-time="2026-10-06 06:00:34Z" end-time="2026-10-06 06:00:34Z" duration="0.033894" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Anim] Registered body has no clips. Check the model's animationType is Generic and importAnimation is on.
+]]></output>
+            </test-case>
+            <test-case id="2879" name="RepeatedWarmPoseChecksAllocateNoManagedMemory" fullname="TumbangPreso.PlayTests.SpectatorBodyModelLifetimeTests.RepeatedWarmPoseChecksAllocateNoManagedMemory" methodname="RepeatedWarmPoseChecksAllocateNoManagedMemory" classname="TumbangPreso.PlayTests.SpectatorBodyModelLifetimeTests" runstate="Runnable" seed="1577923706" result="Passed" start-time="2026-10-06 06:00:34Z" end-time="2026-10-06 06:00:34Z" duration="0.031909" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Anim] Registered body has no clips. Check the model's animationType is Generic and importAnimation is on.
+]]></output>
+            </test-case>
+            <test-case id="2876" name="ReplacingAModelWithinTheFrameInvalidatesItsOldEnclosure" fullname="TumbangPreso.PlayTests.SpectatorBodyModelLifetimeTests.ReplacingAModelWithinTheFrameInvalidatesItsOldEnclosure" methodname="ReplacingAModelWithinTheFrameInvalidatesItsOldEnclosure" classname="TumbangPreso.PlayTests.SpectatorBodyModelLifetimeTests" runstate="Runnable" seed="999387068" result="Passed" start-time="2026-10-06 06:00:34Z" end-time="2026-10-06 06:00:34Z" duration="0.033359" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Anim] Registered body has no clips. Check the model's animationType is Generic and importAnimation is on.
+[Anim] Registered body has no clips. Check the model's animationType is Generic and importAnimation is on.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
