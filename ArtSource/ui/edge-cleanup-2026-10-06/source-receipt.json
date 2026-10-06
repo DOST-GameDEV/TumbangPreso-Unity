@@ -1,0 +1,148 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-field-user.png",
+    "originalSha256": "0e16fa55a58ea79f3b8528e695d90b9c88e6d90d2a3e35fffed7c3260924dcd4",
+    "originalSize": [
+      547,
+      78
+    ],
+    "cleanSha256": "f2c81ee48fd1a90fb159894de5c15391fb2e1ddef8829c0773e1ef84cf5162e3",
+    "cleanSize": [
+      2188,
+      312
+    ],
+    "svgPaths": 28,
+    "method": "Fit curves to original opacity/core colours; no new template geometry; edge RGB from nearest opaque original paint.",
+    "boundaryDeviationPx": 2.0,
+    "coverageAgreement": 0.9863591618619041,
+    "currentSha256": "f2c81ee48fd1a90fb159894de5c15391fb2e1ddef8829c0773e1ef84cf5162e3"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-field-pass.png",
+    "originalSha256": "99d46cb70b7d730b9e808e236887a59f9bf43599ad8b99fe591912ec7bc22bad",
+    "originalSize": [
+      547,
+      78
+    ],
+    "cleanSha256": "2d22a281f1c3cdbfba79c8f385ed6febaea7e7fb47dda0efa511387c8029f220",
+    "cleanSize": [
+      2188,
+      312
+    ],
+    "svgPaths": 16,
+    "method": "Fit curves to original opacity/core colours; no new template geometry; edge RGB from nearest opaque original paint.",
+    "boundaryDeviationPx": 1.4142135623730951,
+    "coverageAgreement": 0.9862419725308208,
+    "currentSha256": "2d22a281f1c3cdbfba79c8f385ed6febaea7e7fb47dda0efa511387c8029f220"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-field-confirm.png",
+    "originalSha256": "fb4e850d27a27b80545f2b04cead408f1870269f13fea922ed55b4f809236c58",
+    "originalSize": [
+      547,
+      78
+    ],
+    "cleanSha256": "3b2e1dc945f0c8defacf5f8af426e820a2a323795778dc2ea532fa11ca2e7c39",
+    "cleanSize": [
+      2188,
+      312
+    ],
+    "svgPaths": 12,
+    "method": "Fit curves to original opacity/core colours; no new template geometry; edge RGB from nearest opaque original paint.",
+    "boundaryDeviationPx": 1.4142135623730951,
+    "coverageAgreement": 0.9850935170862045,
+    "currentSha256": "3b2e1dc945f0c8defacf5f8af426e820a2a323795778dc2ea532fa11ca2e7c39"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-tabs-track.png",
+    "originalSha256": "3268203839122003e8579264af19f2e661d9d64754c0145a65988a0350882016",
+    "originalSize": [
+      393,
+      89
+    ],
+    "cleanSha256": "d1d92428dfd014ebcca599a608b5d972de7ad2eabd94e3d0ef7c2fdf6004f36d",
+    "cleanSize": [
+      1572,
+      356
+    ],
+    "svgPaths": 11,
+    "method": "Fit curves to original opacity/core colours; no new template geometry; edge RGB from nearest opaque original paint.",
+    "boundaryDeviationPx": 1.0,
+    "coverageAgreement": 0.9885067329959688,
+    "currentSha256": "d1d92428dfd014ebcca599a608b5d972de7ad2eabd94e3d0ef7c2fdf6004f36d"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-tabs-pill.png",
+    "originalSha256": "d866ca11668ccceb925f080c53815f1b8c04364e446c11a1d342790330cdaa6a",
+    "originalSize": [
+      187,
+      63
+    ],
+    "cleanSha256": "02d9298fbdee9c7c86743cc03f91675168975b60beef8cf0eb73530f05c9123b",
+    "cleanSize": [
+      748,
+      252
+    ],
+    "svgPaths": 24,
+    "method": "Fit curves to original opacity/core colours; no new template geometry; edge RGB from nearest opaque original paint.",
+    "boundaryDeviationPx": 2.0,
+    "coverageAgreement": 0.9805619217383923,
+    "currentSha256": "c2e3b8d99653153c25a81a6f9b515701344838c8de21f85c2ea4d567088fb89b",
+    "laterCorrection": "Remove foreign crimson/track matte patches using original green3paint colours; native follow-up pending.",
+    "latestCorrection": "Source pill colours limited to original187/208/69 green,92/119/80 shade and215/236/101 highlight; crimson matte contamination removed. Native follow-up pending."
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-primary.png",
+    "originalSha256": "578b9635ad1b097c5554d8ae758619dd35453456f31c6e0788f0ae285cd054a7",
+    "originalSize": [
+      389,
+      84
+    ],
+    "cleanSha256": "2f133cf10a23df41121caf169f18de8f4938d50e63385426db2e0c079e88c082",
+    "cleanSize": [
+      1556,
+      336
+    ],
+    "svgPaths": 14,
+    "method": "Fit curves to original opacity/core colours; no new template geometry; edge RGB from nearest opaque original paint.",
+    "boundaryDeviationPx": 2.23606797749979,
+    "coverageAgreement": 0.9785163422695556,
+    "currentSha256": "2f133cf10a23df41121caf169f18de8f4938d50e63385426db2e0c079e88c082"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-guest.png",
+    "originalSha256": "4adc09028747660627390d4cc31d3070010e39450c359c62c1127027babc9493",
+    "originalSize": [
+      389,
+      85
+    ],
+    "cleanSha256": "8c8ddd8a9707a5e6dbc9396580a870f2dd60b1af9debf28cb28ea5b1f45794a9",
+    "cleanSize": [
+      1556,
+      340
+    ],
+    "svgPaths": 21,
+    "method": "Fit curves to original opacity/core colours; no new template geometry; edge RGB from nearest opaque original paint.",
+    "boundaryDeviationPx": 2.23606797749979,
+    "coverageAgreement": 0.9830939059428399,
+    "currentSha256": "8c8ddd8a9707a5e6dbc9396580a870f2dd60b1af9debf28cb28ea5b1f45794a9"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-checkbox.png",
+    "originalSha256": "3301aa18517cd702c8e60d1e0d95528ec3a7262c5522aa69df8d7efcca9b83c4",
+    "originalSize": [
+      21,
+      24
+    ],
+    "cleanSha256": "4206b292dfefb834215c7320648d6c400cc2ed3a01f118bfaedb44c7fa6ab97b",
+    "cleanSize": [
+      84,
+      96
+    ],
+    "svgPaths": 13,
+    "method": "Fit curves to original opacity/core colours; no new template geometry; edge RGB from nearest opaque original paint.",
+    "boundaryDeviationPx": 2.0,
+    "coverageAgreement": 0.9285714285714286,
+    "currentSha256": "4206b292dfefb834215c7320648d6c400cc2ed3a01f118bfaedb44c7fa6ab97b"
+  }
+]

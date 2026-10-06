@@ -1,3 +1,28 @@
+### UI-LOGIN-FEEDBACK-1006: caret and actionable refusal
+
+- [ ] Native-check OwnerBoundedInputField caret/selection inside the existing
+  editable44-unit rectangle at1080p/720p, empty/typed/password/select-all states.
+  Source compiles; no native acceptance yet.
+- [ ] Native-check missing-terms pulse together with invalid fields, instruction,
+  correction clearing and reduced-motion behavior. Existing field pulses remain.
+- [ ] Inspect final pill correction removing foreign crimson matte islands. Keep
+  accepted Create/Guest treatment, original silhouettes and original layout.
+
+### UI-EDGE-QUALITY-1006: owner sharpness critique
+
+- [ ] Remove visible jagged/soft edges on current login/title logos and slipper
+  marks. Keep source dimensions, source bitmap bytes, uncompressed imports and
+  aspect ratios. Validate actual native frames rather than judging source size.
+- [ ] Clean the original21x24 terms checkbox edges without replacing its shape;
+  verify empty and checked states while preserving consent and input behavior.
+- [ ] Clean pale edge sampling at field transparency boundaries without changing
+  opaque artwork or its authored palette. Retain before/after captures at1080p
+  and720p and inspect current screens before closing this critique.
+- [ ] After the coherent sharpness unit, replace create-room map/mode/visibility
+  dropdowns with previous/next arrows, keeping options and room behavior.
+- [ ] Apply the owner's separate skill-UI-only reference from the laptop chat,
+  preserving all other HUD fonts, controls and skill behavior. No broad rollback.
+
 ### UI-INGAME-DIN-1006: supplied match typography
 
 - [x] Integrate supplied DIN Next LT Arabic Light/Bold for in-game interface
@@ -7,6 +32,15 @@
 - [ ] Laptop native import, actual HUD/status/announcement/pause/result fit at
   1920x1080 and1280x720, front-end control and map-prefetch context. Compilation
   does not establish rendered quality. [Scope and evidence](reports/ingame-din-2026-10-06/README.md).
+- [x] Actual Arena crowded/quiet/pause/settings captures on exactc9 pass one native
+  case at1080p/720p with all21214 inputs and13 preferences restored. Root verified
+  all12 raw hashes and XML. This is staged render and selected geometry evidence;
+  explicit per-label/results/front-end/prefetch controls remain separate.
+  [Actual frames](reports/ingame-din-2026-10-06/laptop-native/README.md).
+- [x] Owner-requested Windows release exists at Desktop/TumbangPreso-DIN-2026-10-06;
+  Unity17176 succeeds167s,261 files/2947538411 bytes/protocol153/source770. All21212
+  frozen inputs restore exactly, preferences preserved and redundant own backup
+  removed. Local Logs/din-desktop-build1006 retains the package/source receipt.
 
 ### UI-POSTCLAUDE-1856-1006: selected HUD behavior
 

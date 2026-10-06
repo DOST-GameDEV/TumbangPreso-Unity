@@ -334,13 +334,17 @@ namespace TumbangPreso.UI
             if (!string.IsNullOrEmpty(_faultPass.text)) { PulseOwnerField(_password); if (first == null) first = _password; }
             if (_creating && !string.IsNullOrEmpty(_faultConfirm.text))
             { PulseOwnerField(_ownerConfirm); if (first == null) first = _ownerConfirm; }
+            bool missingTerms = _creating && !_ownerTerms.isOn;
+            if (missingTerms) _ownerTermsRow.GetComponent<OwnerConsentPulse>()?.Refuse();
             if (first != null)
             {
+                if (missingTerms) _error.text = "Fix the highlighted fields and tick the terms checkbox.";
                 first.Select(); MenuSfx.Error(); return false;
             }
-            if (_creating && !_ownerTerms.isOn)
+            if (missingTerms)
             {
                 Fail("Read and accept the terms to create an account.");
+                _ownerTerms.Select();
                 return false;
             }
             return true;

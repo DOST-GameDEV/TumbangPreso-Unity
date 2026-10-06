@@ -167,7 +167,7 @@ namespace TumbangPreso.UI
             _ownerTerms.toggleTransition = Toggle.ToggleTransition.None;
             var box = OwnerMenuArt.Image(hit, "OriginalCheckbox", "login3-checkbox");
             OwnerUiLayout.Place(box.rectTransform, 2, 2, 38, 38);
-            var check = OwnerUiGlyph.Create(hit, "AcceptedCheck", OwnerUiGlyph.Mark.Check, theme.ActionInk);
+            var check = OwnerUiGlyph.Create(hit, "AcceptedCheck", OwnerUiGlyph.Mark.FineCheck, theme.Paper);
             OwnerUiLayout.Place(check.rectTransform, 7, 7, 28, 28);
             _ownerTerms.graphic = check;
             _ownerTerms.isOn = false;
@@ -180,6 +180,8 @@ namespace TumbangPreso.UI
             termsLabel.alignment = TextAnchor.MiddleLeft;
             OwnerUiRule.Under(termsLabel);
             Enter(_ownerTermsRow, .25f);
+            var termsPulse = _ownerTermsRow.AddComponent<OwnerConsentPulse>();
+            _ownerTerms.onValueChanged.AddListener(accepted => { if (accepted) termsPulse.Clear(); });
 
             // ---- forgot password, sign-in only ------------------------------
             _ownerForgotRow = OwnerUiLayout.Rect(_ownerForm, "ForgotRow").gameObject;
@@ -244,7 +246,7 @@ namespace TumbangPreso.UI
             var art = OwnerMenuArt.Image(_ownerForm, name, piece);
             art.raycastTarget = true;
             OwnerLoginLayout.Place(art.transform, piece);
-            var input = art.gameObject.AddComponent<InputField>();
+            var input = art.gameObject.AddComponent<OwnerBoundedInputField>();
             input.targetGraphic = art;
             input.transition = Selectable.Transition.None;
             input.lineType = InputField.LineType.SingleLine;

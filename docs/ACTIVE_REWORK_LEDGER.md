@@ -1,4 +1,70 @@
+# Immediate owner-authorized UI continuation
+
+October6 latest owner request: create a fresh continuation chat for the UI work,
+without forking history, after publishing the cleanup. Root stops further editing
+when ownership transfers. Only background source/native work; no foreground PC
+input/control. Continue the original UI edge cleanup, final pill check, caret and
+refusal feedback, room-choice arrows and skill-HUD-only reference. Preserve the
+original authored UI; manual plate redesign was rejected. Create/Guest edges were
+accepted, but selected sign-up pill needed foreign-colour cleanup. Latest pill
+correction and caret/terms-pulse changes compile but need native checks. See
+reports/ui-edge-cleanup-2026-10-06/README.md for exact validation limits. The shown
+picture predates the final pill/caret/terms changes; do not claim current Desktop
+or whole-UI acceptance. Desktop DIN770 remains preserved. Private Auditor and
+Yasmin script stay excluded. No native Root job is running.
+
+The existing laptop confirmed independent optimization/preload/startup/preview
+and gameplay ownership. It currently reserves ConvertedMainMenu.cs, SplashScreen.cs,
+TumpHomeView.cs, HomeCourtView.cs and MapPreviewSurface.cs. UI continuation owns
+art/import/fonts/login visual/input feedback/HUD/host-selector presentation.
+Contact only for concrete overlap or joint tests; do not exchange routine status.
+Never reset, clean, stash, force-push, create subagents or use paid services.
+Read AGENTS and current TODO after pulling ASTRA; push each coherent commit as made.
+
 # Active competition checkpoint
+
+## Current Root UI priority, October 6
+
+Owner prioritizes UI jaggedness/blurriness/pale edge halos, preserving full source
+resolution and uncompressed artwork. Background Unity/source work is permitted;
+foreground PC input/control remains prohibited while the owner studies. Root's
+earlier competition goal remains paused by the explicit font-task request; do not
+silently resume its broader objective. Current scoped UI work proceeds here.
+
+Desktop release770 is complete at Desktop/TumbangPreso-DIN-2026-10-06/TumbangPreso.exe,
+Unity17176 terminal167s/261files/2947538411bytes; all21212 input bytes/prefs restore.
+Its manifest is inside the release folder; own redundant source backup removed.
+DIN actual native c9 Arena frames pass one case; Root verified12 raw hashes/XML.
+
+Owner explicitly rejected the remade shapes: clean existing edges only. Root
+restored original OwnerMenuArt/OwnerPaintedAction/OwnerFieldPulse/OwnerUiGlyph/
+SignInScreen.OwnerPainted code from770, removed OwnerVectorPlate and retained
+rejected source/captures locally for recovery. Never reapply those vector plates
+or the replacement checkbox. Preserve original artwork, shapes, colours, layout,
+controls and all bitmap bytes. Earlier rendered2PASS was not owner acceptance.
+
+Current owner preview follows original bitmap contours directly. Eight login
+Resources PNGs are4x curve exports, with original bytes and exact SVG/parameters
+retained in Logs/ui-edge-smoothing1006/faithful-source. No new rectangle templates
+or changed runtime layout. Coverage agrees97.8-98.9percent for plates, with edge
+changes bounded around1-2original pixels; the tiny checkbox agreement92.9percent
+must be judged from its original silhouette. Owner explicitly requested a new
+check: FineCheck uses a thinner light tick; the original checkbox shape remains.
+Shader experiments are removed. Native faithful28192/session13188 is terminal
+2PASS, actual login1080/720 plus field-feedback controls, all21214 source input
+bytes/prefs restored. Current real boot preview has no Back button at
+faithful-captures/SignInBootChecked-v95.png. Temporary fixture and redundant own
+source backups were removed after verified restoration. No foreground control.
+Source/UI changes are uncommitted; Desktop770 is unchanged. Owner just requested
+the preview, so show this image and retain current state for feedback. Do not
+claim whole-UI visual approval or restore rejected vector plates. Next reconcile
+owner feedback, publish the qualified cleanup, then room arrows/skill reference.
+
+Laptop retains ConvertedMainMenu.cs, TumpHomeView.cs, HomeCourtView.cs and
+MapPreviewSurface.cs for startup/preload/grey-preview optimization. Its held-scene
+draft stalled and was rejected; resource-preload replacement is unaccepted.
+Do not apply its older handoff or overlap those files. Preserve private Auditor,
+Yasmin script, old UI WIP, Desktop release and existing cleanup rejections.
 
 ## Latest owner override: in-game DIN, October 6
 
