@@ -74,3 +74,22 @@ requests. UGS is also disabled in batch mode. Both runs restore all21224 frozen
 inputs and shared preferences after termination. XML, restoration receipts and
 selected actual input frames are in [native-input](native-input). Current source
 qualification does not update the Desktop770 release or approve the pill cap.
+
+## Owner cap and tick correction
+
+The previous pill trace included crimson track matte in the opacity boundary.
+Recolouring it green hid the foreign colour but retained a torn squared cap.
+Only original source coordinatesx160..187 are now retraced from green paint,
+excluding track matte; the existing left paint/shading and3colour palette remain.
+The editable SVG and748x252 export retain the same187x63 layout footprint.
+FineCheck now draws two faces sharing a single joined contour with a thin
+coverage skirt, removing independent-stroke overlap. The checkbox artwork,
+44-unit hitbox, toggle and consent gate are unchanged.
+
+Hidden graphics Unity27416 passes the current boot/checked/unchecked capture
+case at1080/720 with no Back button. All21226 input bytes and shared preferences
+restore after termination. [Current1080](native-cap-tick/boot-1080.png) and
+[current720](native-cap-tick/boot-720.png) replace the earlier rejected cap/tick
+frames for this correction. XML, restoration and original-cap source receipt
+are in native-cap-tick. This is native visual/source qualification, not owner
+approval or an updated Desktop package. Temporary capture fixture is removed.

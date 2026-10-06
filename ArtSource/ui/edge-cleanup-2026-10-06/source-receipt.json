@@ -87,9 +87,19 @@
     "method": "Fit curves to original opacity/core colours; no new template geometry; edge RGB from nearest opaque original paint.",
     "boundaryDeviationPx": 2.0,
     "coverageAgreement": 0.9805619217383923,
-    "currentSha256": "c2e3b8d99653153c25a81a6f9b515701344838c8de21f85c2ea4d567088fb89b",
+    "currentSha256": "33e4cc49c7ac88a313999a018a9d980c6090a631a0e7b334d168384e59ec276c",
     "laterCorrection": "Remove foreign crimson/track matte patches using original green3paint colours; native follow-up pending.",
-    "latestCorrection": "Source pill colours limited to original187/208/69 green,92/119/80 shade and215/236/101 highlight; crimson matte contamination removed. Native follow-up pending."
+    "latestCorrection": "Right source cap x160..187 retraced from original green paint only, excluding crimson track matte. Left art and existing3paint palette preserved. Hidden native27416 boot1080/720 and consent render pass; owner approval separate.",
+    "currentSvgPaths": 6,
+    "currentCapCorrection": {
+      "sourceCapX": [
+        160,
+        187
+      ],
+      "greenMask": "G-R >8 and G-B >15 and alpha >32",
+      "trace": "binary spline, speckle4, corner90, length4, iterations10, splice45, precision3",
+      "nativeEvidence": "docs/reports/ui-edge-cleanup-2026-10-06/native-cap-tick"
+    }
   },
   {
     "path": "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-primary.png",

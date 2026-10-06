@@ -7,13 +7,14 @@
   correction clearing and reduced-motion behavior. Existing field pulses remain.
   Original native catches stale consent instruction; candidate2PASS fixes its
   live summary. All21224 inputs/preferences restored; no live account requests.
-- [ ] Inspect final pill correction removing foreign crimson matte islands. Keep
+- [x] Inspect final pill correction removing foreign crimson matte islands. Keep
   accepted Create/Guest treatment, original silhouettes and original layout.
   Current hidden native boot frames pass1080/720 with no Back button and checked
   FineCheck. All21222 source inputs/preferences restored. Scope is the rendered
   login state, not whole UI approval or Desktop publication.
-  Owner rejects the torn right cap after seeing those frames; repair that cap
-  from original source before room-arrow work.
+  Owner rejected that torn cap and earlier tick. Original-green-only cap trace
+  and joined tick now pass native27416 at1080/720, all21226 inputs restored.
+  Current images are in the edge-cleanup report; owner approval remains separate.
 
 ### UI-EDGE-QUALITY-1006: owner sharpness critique
 
