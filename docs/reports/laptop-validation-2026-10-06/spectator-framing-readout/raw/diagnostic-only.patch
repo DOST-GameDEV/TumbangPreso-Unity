@@ -1,0 +1,29 @@
+--- committed-Director-ea7
++++ temporary-cut-readout
+@@ -413,7 +413,7 @@
+             if ((wantPos - transform.position).sqrMagnitude > CutDistance * CutDistance)
+             {
+                 CutNow();
+-                Cuts++;
++                Cuts++; Debug.Log("SPECTATORCUT|new-beat|"+Time.unscaledTime.ToString("F3")+"|"+Beat+"|"+Shot+"|"+(_shot.Main!=null?_shot.Main.PlayerSlot:-1));
+             }
+         }
+ 
+@@ -562,7 +562,7 @@
+                 && _shotClock >= MinShotSeconds)
+             {
+                 CutNow();
+-                Cuts++;
++                Cuts++; Debug.Log("SPECTATORCUT|distance|"+Time.unscaledTime.ToString("F3")+"|"+Beat+"|"+Shot+"|"+(_shot.Main!=null?_shot.Main.PlayerSlot:-1));
+                 return;
+             }
+ 
+@@ -575,7 +575,7 @@
+                 // Cut to a freshly validated shot instead of rendering that crossing.
+                 _validatedAt = float.NegativeInfinity;
+                 CutNow();
+-                Cuts++;
++                Cuts++; Debug.Log("SPECTATORCUT|transit|"+Time.unscaledTime.ToString("F3")+"|"+Beat+"|"+Shot+"|"+(_shot.Main!=null?_shot.Main.PlayerSlot:-1));
+                 return;
+             }
+             transform.position = nextPosition;

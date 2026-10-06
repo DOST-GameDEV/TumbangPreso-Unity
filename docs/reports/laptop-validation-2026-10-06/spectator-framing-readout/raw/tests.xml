@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 02:32:31Z" end-time="2026-10-06 02:33:29Z" duration="58.8395426">
+  <test-suite type="TestSuite" id="3241" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1824" result="Passed" start-time="2026-10-06 02:32:31Z" end-time="2026-10-06 02:33:29Z" duration="58.839543" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3233" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1824" result="Passed" start-time="2026-10-06 02:32:31Z" end-time="2026-10-06 02:33:29Z" duration="58.821146" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="8152" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3234" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1824" result="Passed" start-time="2026-10-06 02:32:31Z" end-time="2026-10-06 02:33:29Z" duration="58.808410" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3237" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1822" result="Passed" start-time="2026-10-06 02:32:31Z" end-time="2026-10-06 02:33:29Z" duration="58.795826" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2871" name="SpectatorFramingProbe" fullname="TumbangPreso.PlayTests.SpectatorFramingProbe" classname="TumbangPreso.PlayTests.SpectatorFramingProbe" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-06 02:32:31Z" end-time="2026-10-06 02:33:29Z" duration="58.771578" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2872" name="ObserveBayanSubjectFraming" fullname="TumbangPreso.PlayTests.SpectatorFramingProbe.ObserveBayanSubjectFraming" methodname="ObserveBayanSubjectFraming" classname="TumbangPreso.PlayTests.SpectatorFramingProbe" runstate="Runnable" seed="2106258370" result="Passed" start-time="2026-10-06 02:32:31Z" end-time="2026-10-06 02:33:01Z" duration="30.209281" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+SPECTATORCUT|new-beat|15.749|Quiet|QuietEstablish|0
+[Play] wrote Logs/spectator-framing-1006/BayanPlaza/map-natural-0.png
+SPECTATORCUT|new-beat|18.150|Downed|Recovery|1
+SPECTATORCUT|new-beat|20.451|Retrieval|Chase|3
+SPECTATORCUT|transit|20.503|Retrieval|Chase|3
+SPECTATORCUT|transit|20.735|Retrieval|Chase|3
+[Play] wrote Logs/spectator-framing-1006/BayanPlaza/map-natural-1.png
+SPECTATORCUT|new-beat|23.085|Retrieval|Chase|2
+SPECTATORCUT|new-beat|24.237|ThrowPrep|Objective|1
+[Play] wrote Logs/spectator-framing-1006/BayanPlaza/map-natural-2.png
+SPECTATORCUT|new-beat|26.761|Quiet|QuietEstablish|0
+SPECTATORCUT|transit|26.783|Quiet|QuietEstablish|0
+SPECTATORCUT|new-beat|29.331|ThrowPrep|Objective|1
+SPECTATORCUT|new-beat|30.482|Tag|Defender|0
+Natural BayanPlaza capture completed: 3 actual rendered frames, 11 cuts, 0 fallbacks.
+]]></output>
+            </test-case>
+            <test-case id="2873" name="ObserveKantoCutReasons" fullname="TumbangPreso.PlayTests.SpectatorFramingProbe.ObserveKantoCutReasons" methodname="ObserveKantoCutReasons" classname="TumbangPreso.PlayTests.SpectatorFramingProbe" runstate="Runnable" seed="1962970969" result="Passed" start-time="2026-10-06 02:33:01Z" end-time="2026-10-06 02:33:29Z" duration="28.551978" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+SPECTATORCUT|new-beat|44.317|Quiet|QuietEstablish|0
+[Play] wrote Logs/spectator-framing-1006/Kanto/map-natural-0.png
+SPECTATORCUT|new-beat|46.717|Downed|Recovery|1
+SPECTATORCUT|new-beat|49.118|Tag|Defender|0
+[Play] wrote Logs/spectator-framing-1006/Kanto/map-natural-1.png
+SPECTATORCUT|new-beat|52.486|Tag|Defender|0
+[Play] wrote Logs/spectator-framing-1006/Kanto/map-natural-2.png
+SPECTATORCUT|new-beat|54.762|Downed|Recovery|2
+SPECTATORCUT|new-beat|56.963|Tag|Defender|0
+SPECTATORCUT|new-beat|58.125|Retrieval|Chase|1
+SPECTATORCUT|transit|58.184|Retrieval|Chase|1
+SPECTATORCUT|transit|58.326|Retrieval|Chase|1
+SPECTATORCUT|new-beat|59.275|Tag|Defender|0
+Natural Kanto capture completed: 3 actual rendered frames, 10 cuts, 0 fallbacks.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

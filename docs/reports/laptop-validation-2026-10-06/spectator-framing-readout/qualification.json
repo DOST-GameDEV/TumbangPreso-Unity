@@ -1,0 +1,97 @@
+{
+  "effectiveBase": "ea7f5aed53a0f1c4e36929d4f4ad5c216f048855",
+  "declaredIntent": "5052f20575780244653e5d06ca318cd07914ee43",
+  "qualifiedManifestSha256": "43d62a01942cce1724ee822e1349cd34d40942032107ff4cd3a65fec8566e098",
+  "result": {
+    "pid": 8152,
+    "terminal": true,
+    "exitCode": 0,
+    "passed": 2,
+    "failed": 0,
+    "inputCount": 21150,
+    "allInputsRestored": true,
+    "existingPrefsRestored": 13
+  },
+  "samples": {
+    "BayanPlaza": [
+      {
+        "image": "map-natural-0.png",
+        "mainSlot": 0,
+        "caption": "the street",
+        "viewport": [
+          0.4999,
+          0.4875,
+          14.6484
+        ],
+        "insidePoint": true
+      },
+      {
+        "image": "map-natural-1.png",
+        "mainSlot": 3,
+        "caption": "retrieval \u00b7 BASILIO",
+        "viewport": [
+          0.5319,
+          0.489,
+          10.8703
+        ],
+        "insidePoint": true
+      },
+      {
+        "image": "map-natural-2.png",
+        "mainSlot": 0,
+        "caption": "the can",
+        "viewport": [
+          0.5173,
+          0.4901,
+          5.9899
+        ],
+        "insidePoint": true
+      }
+    ],
+    "Kanto": [
+      {
+        "image": "map-natural-0.png",
+        "mainSlot": 0,
+        "caption": "the street",
+        "viewport": [
+          0.5,
+          0.4864,
+          14.7214
+        ],
+        "insidePoint": true
+      },
+      {
+        "image": "map-natural-1.png",
+        "mainSlot": 0,
+        "caption": "tag \u00b7 BASILIO",
+        "viewport": [
+          0.4994,
+          0.4726,
+          6.4925
+        ],
+        "insidePoint": true
+      },
+      {
+        "image": "map-natural-2.png",
+        "mainSlot": 0,
+        "caption": "tag \u00b7 BASILIO",
+        "viewport": [
+          0.4653,
+          0.476,
+          6.5364
+        ],
+        "insidePoint": true
+      }
+    ]
+  },
+  "cutCounts": {
+    "BayanPlaza": {
+      "new-beat": 8,
+      "transit": 3
+    },
+    "Kanto": {
+      "new-beat": 8,
+      "transit": 2
+    }
+  }
+}
