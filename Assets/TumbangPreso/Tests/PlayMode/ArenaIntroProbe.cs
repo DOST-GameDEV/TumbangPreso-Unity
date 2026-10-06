@@ -32,9 +32,12 @@ namespace TumbangPreso.PlayTests
     [Category("WallClock")]
     public sealed class ArenaIntroProbe
     {
-        private const string Folder = "Logs/arena/unity";
+        private static readonly string Folder = Path.Combine(
+            Environment.GetEnvironmentVariable("TUMP_ARENA_INTRO_OUTPUT") ?? "Logs/arena/unity",
+            "intro-" + DateTime.UtcNow.ToString("yyyyMMdd-HHmmss") + "-" + Guid.NewGuid().ToString("N").Substring(0,8));
         private const int Width = 1600, Height = 900;
 
+        private GameObject _capture;
         private bool _bots, _spectator, _motion, _reduced;
         private int _seat;
 
@@ -45,12 +48,16 @@ namespace TumbangPreso.PlayTests
             var settings = Settings.SettingsStore.Current;
             _motion = settings.CinematicCameraMotion; _reduced = settings.ReducedUiMotion;
             yield return PlayModeWorld.Reset();
+            string logRoot=Path.GetFullPath("Logs")+Path.DirectorySeparatorChar;
+            Assert.IsTrue(Path.GetFullPath(Folder).StartsWith(logRoot,StringComparison.OrdinalIgnoreCase),"Opening evidence must remain under this project Logs.");
             Directory.CreateDirectory(Folder);
+            Debug.Log("[ArenaIntroProbe] output "+Path.GetFullPath(Folder));
         }
 
         [UnityTearDown]
         public IEnumerator After()
         {
+            if(_capture!=null)Object.Destroy(_capture); _capture=null;
             Time.timeScale = 1.0f;
             yield return PlayModeWorld.Reset();
             GameLaunch.AllBots = _bots; GameLaunch.Spectator = _spectator; GameLaunch.SoloSeat = _seat;
@@ -61,7 +68,7 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(600000)]
         public IEnumerator TheOpeningPlaysLandsOnTheTayaAndLeavesTheMatchAsItFoundIt()
         {
-            foreach (var stale in Directory.GetFiles(Folder, "intro_*.png")) File.Delete(stale);
+            // Every run gets a fresh output folder; previous acceptance/failure frames are retained.
             LogAssert.ignoreFailingMessages = true;
             GameLaunch.AllBots = false; GameLaunch.Spectator = false; GameLaunch.SoloSeat = 1;
             var settings = Settings.SettingsStore.Current;
@@ -89,6 +96,9 @@ namespace TumbangPreso.PlayTests
             Assert.IsNotNull(stage, "No ArenaStage in the loaded scene.");
             if (intro == null || !intro.Playing) Assert.Fail($"The opening never began within {waited:F1} s of loading the Arena (round active {round.RoundActive}, held {PresentationClock.Held}).");
 
+            TraceModels("opening-found");
+            _capture=new GameObject("Owned after-LateUpdate capture");
+            var afterLate = _capture.AddComponent<ArenaIntroLateCapture>();
             var times = intro.Timeline;
             int taya = MatchRules.DefenderSlotFor(1);
             report.AppendLine($"ARENA INTRO PROBE, {SceneFlow.Arena}, three bots and an idle player in seat 1");
@@ -104,6 +114,7 @@ namespace TumbangPreso.PlayTests
             }
             shots.Add((times.Reveal + 0.9f, "05_reveal_early")); shots.Add((times.Reveal + 2.2f, "06_reveal_bowl"));
             shots.Add((times.Taya + 0.9f, "07_taya_shuffle")); shots.Add((times.Land + 0.3f, "08_taya_stamp")); shots.Add((times.Spot + 0.35f, "09_taya_spot"));
+            shots.Add((times.Build - 0.2f, "09b_cast_wide"));
             shots.Add((times.Build + 1.0f, "10_build_blueprint")); shots.Add((times.Build + 2.9f, "11_build_rising")); shots.Add((times.Build + 4.4f, "12_build_reveal"));
             shots.Add((times.End - 0.25f, "13_handoff"));
             int nextShot = 0;
@@ -143,8 +154,10 @@ namespace TumbangPreso.PlayTests
 
                 if (nextShot < shots.Count && intro.Age >= shots[nextShot].at)
                 {
-                    yield return new WaitForEndOfFrame();
-                    Shot($"{Folder}/intro_{shots[nextShot].name}.png");
+                    yield return null;
+                    string capturePath=$"{Folder}/intro_{shots[nextShot].name}.png";
+                    afterLate.Step=()=>Shot(capturePath);
+                    yield return new WaitUntil(()=>afterLate.Step==null);
                     nextShot++;
                 }
 
@@ -214,20 +227,51 @@ namespace TumbangPreso.PlayTests
             if (can != null) foreach (var renderer in can.GetComponentsInChildren<Renderer>(false)) canDrawn |= renderer.enabled;
             if (can != null && !canDrawn) Fail("the can is not drawn in the live round");
 
-            yield return new WaitForEndOfFrame();
-            Shot($"{Folder}/intro_14_round_live.png");
+            yield return null;
+            afterLate.Step=()=>Shot($"{Folder}/intro_14_round_live.png");
+            yield return new WaitUntil(()=>afterLate.Step==null);
 
             report.Insert(0, (failures.Count == 0 ? "PASS" : $"FAIL ({failures.Count})") + Environment.NewLine);
             File.WriteAllText(Folder + "/intro_probe.txt", report.ToString());
             Debug.Log(report.ToString());
+            failures.AddRange(ModelGaps);
             Assert.IsEmpty(failures, "The Arena intro probe failed:\n" + string.Join("\n", failures) + "\n\n" + report);
+        }
+
+        private static readonly List<string> ModelGaps=new List<string>();
+        private static void TraceModels(string beat)
+        {
+            if(beat=="opening-found")ModelGaps.Clear();
+            var intro=ArenaIntro.Instance;
+            var hidden=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+            var roots=intro!=null?(Transform[])typeof(ArenaIntro).GetField("_root",hidden).GetValue(intro):null;
+            var stands=intro!=null?(Vector3[])typeof(ArenaIntro).GetField("_stand",hidden).GetValue(intro):null;
+            var lines=new StringBuilder();
+            for(int seat=0;seat<4;seat++)
+            {
+                var body=GameServices.Round!=null?GameServices.Round.PlayerAt(seat):null;
+                var visual=body!=null?body.GetComponent<TumbangPreso.Visual.CharacterVisual>():null;
+                var root=visual!=null?visual.ModelRoot:null;
+                var model=visual!=null?visual.Model:null;
+                var captured=roots!=null?roots[seat]:null;
+                if((beat.Contains("09_taya_spot") || beat.Contains("09b_cast_wide")) && body!=null && body.gameObject.activeInHierarchy)
+                {
+                    if(root==null || captured!=root)ModelGaps.Add("Spot has no current captured model root for seat "+seat);
+                    else if(Vector3.Distance(root.position,stands[seat])>1.5f)ModelGaps.Add("Spot root is outside its drawn stand for seat "+seat+": "+Vector3.Distance(root.position,stands[seat]));
+                }
+                lines.AppendLine($"{beat} age={intro?.Age:F3} seat={seat} body={body?.transform.position:F3} captured={captured?.name} capturedAt={captured?.position:F3} current={root?.name} currentAt={root?.position:F3} same={captured==root} stand={(stands!=null?stands[seat]:Vector3.zero):F3} model={model?.transform.position:F3}");
+                if(model!=null)foreach(var renderer in model.GetComponentsInChildren<Renderer>(true))
+                    lines.AppendLine($"  {renderer.name} centre={renderer.bounds.center:F3} bounds={renderer.bounds.size:F3} enabled={renderer.enabled} active={renderer.gameObject.activeInHierarchy} shadows={renderer.shadowCastingMode} forceOff={renderer.forceRenderingOff} layer={renderer.gameObject.layer}");
+            }
+            File.AppendAllText(Folder+"/model-witness.txt",lines.ToString());
         }
 
         /// <summary>The frame as the screen has it, overlays included. Call after `WaitForEndOfFrame`.</summary>
         private static void Shot(string path)
         {
+            TraceModels(Path.GetFileName(path));
             Texture2D image = null;
-            try { image = ScreenCapture.CaptureScreenshotAsTexture(); }
+            try { if (!Application.isBatchMode) image = ScreenCapture.CaptureScreenshotAsTexture(); }
             catch (Exception failure) { Debug.LogWarning("[ArenaIntroProbe] screen capture failed: " + failure.Message); }
 
             if (image == null)
@@ -250,4 +294,11 @@ namespace TumbangPreso.PlayTests
             Object.Destroy(image);
         }
     }
+    [DefaultExecutionOrder(20000)]
+    public sealed class ArenaIntroLateCapture : MonoBehaviour
+    {
+        public System.Action Step;
+        private void LateUpdate() { var pending=Step;Step=null;pending?.Invoke(); }
+    }
+
 }

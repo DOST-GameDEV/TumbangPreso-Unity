@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 07:34:23Z" end-time="2026-10-06 07:35:03Z" duration="39.6122749">
+  <test-suite type="TestSuite" id="3338" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1903" result="Passed" start-time="2026-10-06 07:34:23Z" end-time="2026-10-06 07:35:03Z" duration="39.612275" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3330" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1903" result="Passed" start-time="2026-10-06 07:34:23Z" end-time="2026-10-06 07:35:03Z" duration="39.600170" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="21100" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3331" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1903" result="Passed" start-time="2026-10-06 07:34:23Z" end-time="2026-10-06 07:35:03Z" duration="39.597142" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3334" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1901" result="Passed" start-time="2026-10-06 07:34:23Z" end-time="2026-10-06 07:35:03Z" duration="39.594195" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1137" name="ArenaIntroModelCapture1006Probe" fullname="TumbangPreso.PlayTests.ArenaIntroModelCapture1006Probe" classname="TumbangPreso.PlayTests.ArenaIntroModelCapture1006Probe" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-06 07:34:23Z" end-time="2026-10-06 07:35:03Z" duration="39.540773" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1138" name="TheOpeningPlaysLandsOnTheTayaAndLeavesTheMatchAsItFoundIt" fullname="TumbangPreso.PlayTests.ArenaIntroModelCapture1006Probe.TheOpeningPlaysLandsOnTheTayaAndLeavesTheMatchAsItFoundIt" methodname="TheOpeningPlaysLandsOnTheTayaAndLeavesTheMatchAsItFoundIt" classname="TumbangPreso.PlayTests.ArenaIntroModelCapture1006Probe" runstate="Runnable" seed="447756699" result="Passed" start-time="2026-10-06 07:34:23Z" end-time="2026-10-06 07:35:03Z" duration="39.522570" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="600000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[
+IgnoreFailingMessages:true
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.85, ambience slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_3 at 0.31 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 0.55, ambience slider).
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_3 at 0.38 of full scale before the sliders (excitement 1.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+PASS
+ARENA INTRO PROBE, Arena, three bots and an idle player in seat 1
+timeline (full): walk 3.60, glare 4.60, peak 6.70, reveal 6.95, taya 9.80, lands 13.10, spot 15.20, build 17.85, handoff 23.25, end 24.05
+the opening ran 24.05 s of 24.05 and ran out; 13 of 13 frames saved
+  beat Tunnel   began at   0.00 s on its clock (  0.00 s of real time after it was found)
+  beat Walk     began at   3.60 s on its clock (  3.60 s of real time after it was found)
+  beat Glare    began at   4.60 s on its clock (  4.60 s of real time after it was found)
+  beat Reveal   began at   7.00 s on its clock (  6.99 s of real time after it was found)
+  beat Taya     began at   9.81 s on its clock (  9.80 s of real time after it was found)
+  beat Spot     began at  15.21 s on its clock ( 15.20 s of real time after it was found)
+  beat Build    began at  17.86 s on its clock ( 17.85 s of real time after it was found)
+  beat Handoff  began at  23.26 s on its clock ( 23.25 s of real time after it was found)
+in the tunnel: stage out of sight True, listener muffled True; simulation held throughout True, input blocked throughout True
+the screens landed on seat 0 ("BASILIO"), showing seat 0; round 1's taya is seat 0
+the round went live 4.01 s after the opening ended (the gate's countdown is 3.5 s)
+stage: layout 4 applied (round 1's is 4), travelling False, colliders live True
+  seat 0 (BASILIO, bot): 0.00 m from its mark, floor under the mark at y 1.46, model 0.00 m from its body
+  seat 1 (CAREERORDERFIX): 0.00 m from its mark, floor under the mark at y 2.66, model 0.00 m from its body
+  seat 2 (ILYAS, bot): 0.00 m from its mark, floor under the mark at y 2.66, model 0.00 m from its body
+  seat 3 (BASILIO, bot): 0.00 m from its mark, floor under the mark at y 2.66, model 0.00 m from its body
+after: low pass filters on listeners 0, the opening still muffling False, still playing False
+
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

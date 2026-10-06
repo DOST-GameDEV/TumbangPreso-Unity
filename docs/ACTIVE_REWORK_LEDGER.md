@@ -1,3 +1,16 @@
+## Current Root Arena capture phase terminal
+
+Original model trace21100 lifecycle1PASS39.52: correct captured/current roots at
+opening-found, but coroutine capture reads gameplay roots before Late staging.
+Same-runtime late control22928 lifecycle/root1PASS40.32, cast visibly present.
+Reusable ArenaIntroProbe23636 final1PASS40.78 with15frames and inspected all-four
+wide shot. Original/control21184inputs216deltas each; final21182/216, prefs/quality/
+profile restored. Empty cold-model hypothesis RETIRED AS CAPTURE ARTIFACT; earlier
+raw frames retained and TODO/report corrected. Runtime/hero/staging unchanged.
+NoRootjobs or source observers. Next publish and matching protocol153 player build,
+then coordinate LAN/online host roles with laptop. Laptop owns AI/map traversal.
+Private Auditor/voxel preserved; goal active and full spectator/network incomplete.
+
 ## Current Root QoL153 combined validation terminal
 
 QoL8b5655 published; Core731 pass. Native22292 all28Play pass, requested35 excluded
