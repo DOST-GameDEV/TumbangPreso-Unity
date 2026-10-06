@@ -1,5 +1,10 @@
 ### UI-LOGIN-FEEDBACK-1006: caret and actionable refusal
 
+- [x] Raise terms12 units normally and lower to the original position only while
+  visible field/status feedback exists. Native29796 cases2PASS at1080/720 check
+  typed text, mismatch, correction, consent and unchanged Create placement;
+  all21232 inputs/preferences restored. Current tick is bold by owner request.
+
 - [x] Native-check OwnerBoundedInputField caret/selection inside the existing
   editable44-unit rectangle at1080p/720p, empty/typed/password/select-all states.
   Native ten-state mesh/capture check passes including long text and masking.

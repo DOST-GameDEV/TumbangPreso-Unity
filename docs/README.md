@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Conditional login terms spacing: [native feedback and position evidence](reports/login-terms-spacing-2026-10-07/README.md).
+
 Custom-room choice arrows: [native selector and input evidence](reports/room-arrows-2026-10-07/README.md).
 
 Automatic startup and Home doors: [full boot and pointer-flow checks](reports/laptop-validation-2026-10-06/startup-auto-home-flow/README.md).

@@ -1,5 +1,19 @@
 # Immediate owner-authorized UI continuation
 
+October7 current continuation: original green pill cap/bottom shadow are corrected.
+Latest owner overrides request a bold noticeable painted tick and inline room
+chevrons after rejecting the separate arrow slabs. Published through4655fbac9
+before the current terms-spacing unit. Terms now rise12 units normally and return
+to the original position only while feedback is visible; native29796 passes2/2
+at1080/720 with21232 inputs/preferences restored. No Root native job remains.
+Desktop DIN770 and private Auditor/voxel dirt stay preserved. Next: apply only
+the supplied skill-HUD circles/gold rims/compact saved bindings and validate it.
+Keep current DIN, Darumadrop central clock, all other HUD and ability behavior.
+The laptop additionally reserves HubMapVote.cs and recorded map-preview helpers,
+MapPreviewSurface and startup integration. No conflict with this scoped HUD unit.
+The older entries below are history; do not restore rejected thin tick/boxed
+arrow styles, manual plates or their old source/publication claims.
+
 October6 latest owner request: create a fresh continuation chat for the UI work,
 without forking history, after publishing the cleanup. Root stops further editing
 when ownership transfers. Only background source/native work; no foreground PC
