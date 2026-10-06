@@ -107,7 +107,7 @@ namespace TumbangPreso
                 {
                     if (!Current(generation)) yield break;
                     // The same single handoff as below: the rig is live again for the last of the return.
-                    if (opening.Age >= Mathf.Lerp(opening.Timeline.Handoff, opening.Timeline.End, .7f) && _rig != null) _rig.SetActive(true);
+                    if (opening.Age >= Mathf.Lerp(opening.Timeline.Handoff, opening.Timeline.End, .7f) && MayReturnToGameplay()) _rig.SetActive(true);
                     yield return null;
                 }
                 yield break;
@@ -234,7 +234,7 @@ namespace TumbangPreso
                     rotation = Quaternion.Slerp(rotation, _rotation, handoff);
                     fov = Mathf.Lerp(fov, _fov, handoff);
                 }
-                if (handoff >= .7f && _rigActive && _rig != null)
+                if (handoff >= .7f && MayReturnToGameplay())
                 { _returningToGameplay = true; _rig.SetActive(true); }
             }
             bool cameraMotion = Settings.SettingsStore.Current.CinematicCameraMotion;
@@ -305,6 +305,16 @@ namespace TumbangPreso
             foreach (var actor in _players) actor?.Intent.RequireFreshActions();
         }
 
+        private bool MayReturnToGameplay()
+        {
+            if (!_rigActive || _rig == null) return false;
+            // The public seat handoff may change ownership during the film.
+            // Its current HUD role outranks the saved opening/launch preference.
+            if (Hud.Instance != null) return !Hud.Instance.Spectating;
+            var watcher = _spectator != null ? _spectator : FindFirstObjectByType<SpectatorCamera>();
+            return !GameLaunch.Spectator && (watcher == null || !watcher.isActiveAndEnabled);
+        }
+
         private void Finish()
         {
             // ARENA-INTRO: the Arena's opening, if one is up, puts back everything it posed. A no-op elsewhere.
@@ -319,7 +329,7 @@ namespace TumbangPreso
             if (_camera != null)
             {
                 _camera.transform.SetPositionAndRotation(_position, _rotation); _camera.fieldOfView = _fov;
-                if (_rigActive && _rig != null) _rig.SetActive(true);
+                if (_rigActive && _rig != null) _rig.SetActive(MayReturnToGameplay());
                 _camera = null;
             }
             if (_held) { PresentationClock.Release(); _held = false; FreshInput(); }

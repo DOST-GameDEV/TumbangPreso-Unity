@@ -1,3 +1,14 @@
+## Current Root arrival view ownership terminal
+
+Original two watch-return failures and two gameplay controls; candidate four pass.
+Both native jobs terminal, 21172 frozen inputs and 216 native deltas each restored
+with preferences/quality/profile intact. Current view ownership gates saved rig
+return; no authored camera pose, actor motion or hero change. Natural selected-wide
+body visibility and Arena-specific return remain open. Root next publishes then
+integrates laptop replay29354 and checked QoL0d47 content/protocol153. Laptop owns
+AIController and focused Arena traversal helpers, holding writes for checked ref.
+No unused Root helpers remain. Private Auditor and voxel script preserved.
+
 ## Current Root spectator touch UI terminal
 
 New seven-command strip plus existingstick/look, hidesgameplay/sandbox, menu/

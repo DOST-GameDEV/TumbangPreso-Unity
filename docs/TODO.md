@@ -14,6 +14,11 @@
 
 ### SPECTATOR-REFINE-1006: owner next pass after current pickup/result unit
 
+- [x] Arrival return/cancellation honors current spectator ownership rather than
+  reactivating the saved gameplay rig. Two original failures and two gameplay
+  controls become four native passes. Natural final-frame acceptance remains open.
+  [Evidence](reports/reliability-2026-10-06/arrival-view-ownership/README.md).
+
 - [ ] Finish the current pickup accounting correction, meaningful validation and
   publication first. Then refine spectator and the automatic camera thoroughly.
 - [x] Restore bound pad target-cycle/free-flight/POV controls without keyboard
