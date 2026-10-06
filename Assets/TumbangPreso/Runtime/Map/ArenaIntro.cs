@@ -135,6 +135,8 @@ namespace TumbangPreso.Map
         /// 2026-10-05, of four abreast: "the hall is too crowded. split the characters into 2 lines like the
         /// bluelock reference"): the taya's seat leads the left file, the camera follows the rear pair.</summary>
         private static readonly float[] LaneX = { -0.85f, 0.85f, -0.85f, 0.85f }, LaneZ = { 1.9f, 1.65f, 0.1f, -0.12f };
+        /// <summary>Each seat's place across once the files have opened into one line: the taya's and the next in the middle.</summary>
+        private static readonly float[] AbreastX = { -1.05f, 1.05f, -3.15f, 3.15f };
         private const int Seats = Core.Balance.PlayerCount, MaxTicks = 72;
         private const string WelcomeLine = "arena_welcome";
 
@@ -481,12 +483,21 @@ namespace TumbangPreso.Map
                 if (body == null || root == null) continue;
 
                 // Two files in the tunnel, spreading once they are out on the turf.
-                float z = line + LaneZ[s];
-                float spread = Mathf.Lerp(1.0f, 1.9f, Smooth((z - MouthZ - 1.0f) / 6.0f));
-                float phase = (walked / Stride + s * 0.31f) * Mathf.PI * 2.0f;
+                // ⚠️ THE TWO FILES OPEN INTO ONE LINE ABREAST (owner, 2026-10-06, of the cut back to the players: "the
+                // players are still in 2 lines, make it so it looks like theyre walking to a horizontal line"). From
+                // a little before that cut to a second into it, the rear pair comes up level and all four step out
+                // to their places across (the taya's seat and the next in the middle), still walking, so the camera
+                // arrives on the last steps of it and then on four standing in a row.
+                float form = t.Full || !_still ? Smooth((age - (t.Spot - 1.3f)) / 2.3f) : 1.0f;
+                float move = Mathf.Sin(form * Mathf.PI);
+                float z = line + Mathf.Lerp(LaneZ[s], 1.9f, form);
+                float spread = Mathf.Lerp(1.0f, 1.9f, Smooth((line + LaneZ[s] - MouthZ - 1.0f) / 6.0f));
+                float x = Mathf.Lerp(LaneX[s] * spread, AbreastX[s], form);
+                stride = Mathf.Max(stride, move);
+                float phase = ((walked + form * 2.4f) / Stride + s * 0.31f) * Mathf.PI * 2.0f;
                 float bob = Mathf.Abs(Mathf.Sin(phase)) * 0.035f * stride;
-                Vector3 at = _centre + new Vector3(LaneX[s] * spread, Ground + bob, z);
-                _stand[s] = _centre + new Vector3(LaneX[s] * spread, Ground, z);
+                Vector3 at = _centre + new Vector3(x, Ground + bob, z);
+                _stand[s] = _centre + new Vector3(x, Ground, z);
 
                 // ONLY the drawn model moves: its root's rest pose plus the offset, turned to face the field.
                 var parent = root.parent;
