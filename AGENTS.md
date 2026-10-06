@@ -248,6 +248,10 @@ during long runs, rather than leaving stale processes or branches behind.
   Record the source dependency hash and capture settings so stale footage can be
   detected. A map change is incomplete while its preview depicts an older map.
 - Preserve authored map quality and the existing camera composition. Check the
+  footage against the current MapPreviewSurface output: same pose, lens, sway,
+  lighting, grading, outlines and ambient motion, rather than a new flythrough.
+  Capture settings and source identity must include the preview implementation.
+  Check the
   loop, sharpness and playback on the supported player platforms. Keep the poster
   visible during preparation and failures; changing screens must release or reuse
   the owned player safely. Do not preload full arena scenes solely for these clips.
