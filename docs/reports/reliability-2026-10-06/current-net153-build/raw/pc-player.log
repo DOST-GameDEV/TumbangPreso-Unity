@@ -1,0 +1,61 @@
+Mono path[0] = 'C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/net153-8bdcfab30-1006/TumbangPreso_Data/Managed'
+Mono config path = 'C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/net153-8bdcfab30-1006/MonoBleedingEdge/etc'
+CodeReloadManager initialized
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+Initialize engine version: 6000.5.8f1 (5cb7df797b7d)
+[Subsystems] Discovering subsystems at path C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/net153-8bdcfab30-1006/TumbangPreso_Data/UnitySubsystems
+Forcing GfxDevice: Direct3D 11
+GfxDevice: creating device client; kGfxThreadingModeClientWorkerJobs
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: AMD Radeon RX 6600 (ID=0x73ff)
+    Vendor:   ATI
+    VRAM:     8147 MB
+    Driver:   32.0.21043.19003
+Begin MonoManager ReloadAssembly
+- Finished resetting the current domain, in  0.047 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+D3D11 device created for Microsoft Media Foundation video decoding.
+<RI> Initializing input.
+Using Windows.Gaming.Input
+<RI> Input initialized.
+[Audio] loaded 122 of 122 cues.
+UnloadTime: 1.039400 ms
+[Build] TUMBANG PRESO 1.0.0 | 8bdcfab30ac7+dirty | protocol 153 | StandaloneWindows64
+[NetIdentity] Signed in to UGS as M7Lei0nxNxn5fuQArQSyqYYTRGiz on profile pc-net153-host-ui1006. Relay and Lobby are available.
+Unexpected timestamp values detected. This can occur in H.264 videos not encoded with the baseline profile. Timestamps will be skewed to correct the playback for C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/net153-8bdcfab30-1006/TumbangPreso_Data/sharedassets0.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/net153-8bdcfab30-1006/TumbangPreso_Data/sharedassets0.resource
+[SplashShaders] shaders=83 variants=157 warmed=157 complete=True calls=157 frames=26 budget_ms=2.0 elapsed_ms=237.446 max_slice_ms=7.922
+[Career] the cached career belongs to another account; starting a fresh one.
+[Splash] preload exceeded six seconds; keeping the loading screen visible until it is ready.
+First video frame not zero: 4 (0.133333s). Result may be out of sync. Please make sure tracks all start at 0 in C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/net153-8bdcfab30-1006/TumbangPreso_Data/resources.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/net153-8bdcfab30-1006/TumbangPreso_Data/resources.resource
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Env] repainted 0 of 297 renderers, 0 with a roof variant.
+[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.
+[Splash] map asset warmup completed in 2.47 s.
+[Splash] preload retained 10069 assets in memory.
+Unloading 9 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 4.316000 ms
+Unloading 384 unused Assets to reduce memory usage. Loaded Objects now: 13291.
+Total: 14.430500 ms (FindLiveObjects: 1.578300 ms CreateObjectMapping: 4.046500 ms MarkObjects: 8.531500 ms  DeleteObjects: 0.273600 ms)
+
+[Splash] boot loading finished after 9.59 s (work-driven, no reading window).
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+CodeReloadManager destroyed

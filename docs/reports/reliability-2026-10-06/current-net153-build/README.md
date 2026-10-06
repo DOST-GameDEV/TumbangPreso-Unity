@@ -1,0 +1,7 @@
+# Current153 packaged build and PC use restriction
+
+Direct internal Windows release build Unity24280 from8bdcfab30 exits0. The classified artifact has261 files totaling2947207147 bytes, protocol153, Runtime SHA256 fbf3e0791a808ae367db5d44fb3f0c5db33a7841c7d64b6daa5e5062e62edacb and Core339e00fa0469853257a6081a6015736d16db126ccac9152441ea3f76113f823a. All21182 frozen inputs are restored after217 generated importer/settings deltas; pre-existing Auditor dirt and voxel source are preserved. Input/editor preferences, quality and isolated profile restore exactly. This is build/identity acceptance; player and peer acceptance remain pending.
+
+The ordinary isolated PC player10716 boots in9.59s then exits0 after the owner stops computer control. Preferences restore. Windows capture timed out and the owner explicitly says no PC control while studying. No visible menu or paired-game acceptance is claimed. The goal remains active: laptop takes interactive testing, Root lightweight source and coordination.
+
+Automatic review rejected temporary LAN artifact-server creation and deletion of the verified10722-file/7531421-byte duplicate source backup, with only blocked-by-policy and no specific reason. Neither action executed and neither is bypassed. The backup remains;217 generated deltas are preserved separately. Existing laptop UNC access was unavailable, so it is preparing a same-source local build with separate hashes. Do not call independently built or single-machine results identical-artifact two-machine acceptance. Desktop releases remain untouched.

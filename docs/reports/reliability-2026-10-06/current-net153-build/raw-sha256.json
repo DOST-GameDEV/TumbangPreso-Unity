@@ -1,0 +1,9 @@
+{
+  "raw/build-result.json": "afbdbdced561cb823e897a74976040c2084d9affa239fadd6b9dedb1878ff45d",
+  "raw/source-classification.json": "0ac0dcd6b65ad05769e03ed963b9dd23e28f74b3017113de2fd013e11544c98f",
+  "raw/artifact-manifest.json": "3e2067f1ab7a021ac8d4eec16bed66c25b48e66dcc170fc92e6af2f618ba3d4d",
+  "raw/pc-player-result.json": "471b5bc4a3ab360dfd03602c9a1b01bb4d1f55075dc92f08b159751b606e9629",
+  "raw/pc-player.log": "d431d140ac127586c9ae5100a34cf960fc87205568e5ea71515effdcc7d32be3",
+  "raw/share-rejection.json": "7429cb07c921398323bf8eff97967428775f0169566cac567ae6827cf419f861",
+  "raw/cleanup-pending.json": "0de6d484fa4f68f3329bd478d2c6bec04ebc53f2ec98d279a86d7aea3be98745"
+}

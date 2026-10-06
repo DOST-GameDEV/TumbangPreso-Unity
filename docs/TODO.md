@@ -1,3 +1,11 @@
+### FAMILIAR-CONFINEMENT-1006: respect circular Arena boundary
+
+- [x] Five original diagonal circle failures become passes; four controls remain
+  valid with the actual helper/Core source-linked check. Delegate to map clamp.
+- [ ] Laptop native nine-case integration and actual familiar movement/recall.
+  Current1538bd package predates this fix; fresh packaged acceptance needed.
+  [Evidence](reports/reliability-2026-10-06/familiar-confinement/README.md).
+
 ### QOL-ARENA-153-1006: combined adoption and acceptance
 
 - [x] Merge QoL0d47 normally while preserving ASTRA AI, replay and view ownership.

@@ -7,12 +7,11 @@ namespace TumbangPreso.Visual
     {
         public static Vector3 ClampToCourt(CharacterMotor owner,Vector3 position)
         {
-            // ⚠️ THE TAYA KEEPS THE SQUARE CHALK BOX; everybody else gets the arena walls, PER SIDE since
+            // ⚠️ THE TAYA KEEPS THE MAP'S CHALK SHAPE; everybody else gets the arena walls, PER SIDE since
             // 2026-09-27 (`AIController.PlayableMinX`), so a familiar can scout to a shore the far wall allows.
             if(owner!=null && owner.IsDefender)
             {
-                float r=Core.Confinement.Radius;
-                position.x=Mathf.Clamp(position.x,-r,r);position.z=Mathf.Clamp(position.z,-r,r);
+                Core.Confinement.ClampToBox(ref position.x,ref position.z);
                 return position;
             }
             return AIController.ClampToPlayable(position);

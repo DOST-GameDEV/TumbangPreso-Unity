@@ -1,3 +1,41 @@
+## Current Root familiar circle fix ready for laptop native validation
+
+GhostPetMotion defender ClampToCourt delegates Core.Confinement shape/radius,
+Y and attacker/ownerless bounds unchanged. Actual source-linked .NET check five
+circle failures/four controls ->nine pass; role/map shims explicit, no native
+physics claim. Native FamiliarConfinementTests nine real-component cases prepared
+for laptop after its current153 UI build. Runtime-helper patch and source receipts
+next publish; no PC GUI or heavy jobs while owner studies, goal stays active.
+Laptop owns interactive tests/AI traversal; Root GhostPetMotion/MotionFoley lane.
+Current8bd package261files2.947GB remains accepted only for build/identity, before
+this fix. PC10716 exit0/prefs restored; share and backup deletion rejects remain
+pending without bypass. NoRootplayers/Unity jobs. Private source preserved.
+
+## Current owner studying restriction and active work
+
+Owner says no PC control while studying; laptop takes interactive UI/player/network
+checks. Root remains active on lightweight code and coordination; do not pause
+or complete the goal. No PC foreground/input/player/heavy Unity work until owner
+releases it. PC10716 exited0 and input/editor preferences restored after Escape;
+boot9.59s only, no visible menu/peer acceptance. Build1538bd is checked261files,
+2947207147bytes;21182 source inputs restored after217 deltas. Artifact transfer
+server creation and duplicate-backup directory deletion were automatically
+rejected with only blocked-by-policy; neither executed, do not bypass. Laptop
+checks existing read-only transfer; independent153 build/local tests if absent.
+Current exact-artifact153 two-machine acceptance remains open. Root prepares
+background code work and publishes receipts. Existing private work preserved.
+
+## Current Root protocol153 Windows build live
+
+Unity24280 / exec92040, source8bdcfab30, direct release build under internal
+Builds/net153-8bdcfab30-1006. One Root heavy job; tracked inputs frozen and native
+metadata/project settings backed up. No RAM/admission/automatic timeout guard.
+Next inspect same handle until terminal, verify manifest/identity/hash outputs,
+classify+restore source/native preferences then real user-flow and paired LAN/
+online/reversed host acceptance. Existing152 evidence is historical. Laptop AI
+lane reserved, joint-test request sent for checkpoint. Preserve Desktop release
+and pre-existing Auditor/voxel. Build not yet accepted, goal remains active.
+
 ## Current Root Arena capture phase terminal
 
 Original model trace21100 lifecycle1PASS39.52: correct captured/current roots at
