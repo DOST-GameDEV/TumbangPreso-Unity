@@ -189,7 +189,7 @@ namespace TumbangPreso.UI
         public void SetRenderingEnabled(bool visible)
         {
             _renderingEnabled = visible;
-            if (_camera != null) _camera.enabled = visible && !_busy;
+            if (_camera != null && _camera.enabled != visible) _camera.enabled = visible;
             if (_surface != null && _surface.enabled != visible) _surface.enabled = visible;
         }
         private string _showing;
@@ -378,9 +378,6 @@ namespace TumbangPreso.UI
         private IEnumerator Swap(string map)
         {
             _busy = true;
-            // Retain the last completed image while its scene is parked. Otherwise
-            // the camera clears the visible target to an empty grey frame each tick.
-            if (_camera != null) _camera.enabled = false;
             try
             {
 
@@ -449,9 +446,6 @@ namespace TumbangPreso.UI
                     Unpark(map);
                 }
 
-                // Let activated environment components finish their first frame
-                // before replacing the completed preview image.
-                yield return null;
                 _showing = map;
 
                 AimAt(map);
@@ -462,13 +456,10 @@ namespace TumbangPreso.UI
                 // does not exist on the first swap until EnsureCamera has run.
                 ApplyMapEnvironment(map);
 
-                if (_camera != null && _renderingEnabled) _camera.Render();
-
                 _surface.texture = _target;
                 _surface.color = Color.white;
 
                 _busy = false;
-                if (_camera != null) _camera.enabled = _renderingEnabled;
 
                 // ⚠️ LAST, AFTER THE CAMERA AND THE ENVIRONMENT. A listener's whole reason to exist
                 // is to put something INTO this map, and the two things it needs (a camera to be
@@ -1177,7 +1168,7 @@ namespace TumbangPreso.UI
 
             _camera.fieldOfView = _lobbyShot ? LobbyFieldOfView : FieldOfView;
             _camera.targetTexture = _target;
-            _camera.enabled = _renderingEnabled && !_busy;
+            _camera.enabled = _renderingEnabled;
             if (_surface != null) _surface.texture = _target;
             _camera.clearFlags = CameraClearFlags.Skybox;
             _camera.depth = -10;

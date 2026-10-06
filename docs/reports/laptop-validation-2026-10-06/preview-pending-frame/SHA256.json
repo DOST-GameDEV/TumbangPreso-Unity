@@ -1,0 +1,19 @@
+{
+  "raw/candidate-classified-result.json": "d8b9745b21be3831520c40c18acf45efe0dfb0935275318013b2242e18426074",
+  "raw/candidate-launch.json": "f1618aaac0cb2fcd11f1480941bf8f43c2f8691f6ef2f7da1b3f9e38e82601df",
+  "raw/candidate-MapPreviewSurface.cs": "7c5aa86b2c6587b9fd2ad0bf29a18799f01593aff9cc445780f43c110f3c4fa6",
+  "raw/candidate-profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+  "raw/candidate-tests.xml": "4d859215247efdb776185d4b3da457e7accd988347da6438e684360ca3b4023b",
+  "raw/environment-control-classified-result.json": "907ce5a894d6bb82a56dac3f14fe17088da05130db2be99e1eb9a7e3bcaf6cff",
+  "raw/environment-control-launch.json": "66b6397be8b04bb14c336d35b5efaef6c2f87efcaaae96811dab9f23153489fc",
+  "raw/environment-control-manual-restoration.json": "e27f0b5a658dfa13e388bb51e7c3d04d433649230a55ec7d9854e51da3aab93f",
+  "raw/environment-control-profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+  "raw/environment-control-tests.xml": "898c7de0633dde5d729b070550394d3da3a882b02071032928a3ee152cd85995",
+  "raw/MapPreviewPendingFrameTests.cs": "ababf9a37ce34bdedb103bd220aa082aec0afab904c49eba49e782269c505d58",
+  "raw/MapPreviewPendingFrameTests.cs.meta": "de6e17cfdcc4902e83caa8dbb4c673b7e2d5d9afd78450b3073dc3f896897dd0",
+  "raw/original-classified-result.json": "bcbbeb11e53963c396f115b5c205d0cb6c02964e75f69571efe9bb17a16d7efd",
+  "raw/original-launch.json": "290e0546da65fd49b5990aa032689654d7358b03c1a74619de91bfa2f47bb3f3",
+  "raw/original-MapPreviewSurface.cs": "81c6b1bc4303b64035e5ff280e85403e22d1b6d342bc912748a50f2f4f5ed1fb",
+  "raw/original-profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+  "raw/original-tests.xml": "e9f192ae2a6483f37771ed476fb927aaaa2aec17fe5a79ff8959791eb890070a"
+}
