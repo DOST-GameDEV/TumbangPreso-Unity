@@ -73,6 +73,7 @@ namespace TumbangPreso
         private int _defaultSlot = FallbackSlot;
 
         private UI.DebugBar _bar;
+        private CameraSystem.SpectatorCamera _watcher;
 
         /// <summary>
         /// ⚠️⚠️ IT NO LONGER SELF-DESTRUCTS IN A RELEASE BUILD, AND THAT IS A DELIBERATE
@@ -116,6 +117,16 @@ namespace TumbangPreso
 
             var kb = Keyboard.current;
             if (kb == null) return;
+
+            // These keys select POVs while watching. A solo debug handover must
+            // never turn that camera choice into control of a player's body.
+            if (GameLaunch.Spectator || (UI.Hud.Instance != null && UI.Hud.Instance.Spectating)) return;
+            bool seatKey = kb.f1Key.wasPressedThisFrame || kb.f2Key.wasPressedThisFrame
+                || kb.f3Key.wasPressedThisFrame || kb.f4Key.wasPressedThisFrame
+                || kb.f5Key.wasPressedThisFrame || kb.f6Key.wasPressedThisFrame;
+            if (!seatKey) return;
+            if (_watcher == null) _watcher = FindFirstObjectByType<CameraSystem.SpectatorCamera>();
+            if (_watcher != null && _watcher.isActiveAndEnabled) return;
 
             // The player's own seat, before any key is read, so a cycle starts from where they
             // actually are rather than from slot 0.

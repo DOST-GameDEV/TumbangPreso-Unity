@@ -1,0 +1,26 @@
+{
+  "sourceRef": "a346ac9f4b34722d94451ef1e35dff6031e92e58",
+  "profile": "pc-spectator-seat-candidate1006",
+  "filter": "TumbangPreso.PlayTests.SpectatorSeatKeysTests",
+  "expectedCases": 3,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-spectator-seat-candidate1006",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.SpectatorSeatKeysTests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\spectator-seat-keys1006\\candidate-native\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\spectator-seat-keys1006\\candidate-native\\editor.log"
+  ],
+  "pid": 3440
+}

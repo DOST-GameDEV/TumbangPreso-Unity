@@ -1,0 +1,17 @@
+{
+  "raw/Camera-original.cs": "6270b8f8c4ee9c06cee39af355cfa2bd82bf58b290de2da42962edc8525ec999",
+  "raw/fixture.cs": "3e3a19f14529c7297e64f1b50f684f5f48e9582d5c76981ce7add951b7b765fd",
+  "raw/Switcher-original.cs": "5f1c3c85abaf14bdc0f6057372e178c272d6cae165a6c35ef3925bbf2f35ad67",
+  "raw/candidate-native/classification.json": "0db9973cff2245182271a270e362b2b630646834b8dfb7b47fe248b7505cfd12",
+  "raw/candidate-native/launch.json": "04721ddb0d71d1320ecb50b6a3fdd6be2d11e87df8c24582beb3a4f9526eddb1",
+  "raw/candidate-native/results.xml": "45763917207ac96e639e6ee79afd94c37a807c9f916f177ce37ae6390adacdfb",
+  "raw/final-native/classification.json": "0db9973cff2245182271a270e362b2b630646834b8dfb7b47fe248b7505cfd12",
+  "raw/final-native/launch.json": "caf1abbdb5682e9fcfb3d583870bf231afadb94ad1890068de34d4604e19a493",
+  "raw/final-native/results.xml": "d335f4abbf3e45688573bf052424b46b7dae5203b21494b5e7a68860593fc59c",
+  "raw/original-native/classification.json": "0db9973cff2245182271a270e362b2b630646834b8dfb7b47fe248b7505cfd12",
+  "raw/original-native/launch.json": "0684a0d4b6f1a508fbbb965383ffb7800123a564924f3e659e5c1c2db043866d",
+  "raw/original-native/results.xml": "5859c871bf121f472d9786a5cfede7524ddd711275aed297d08d203e6aca205f",
+  "raw/pov-original-native/classification.json": "0db9973cff2245182271a270e362b2b630646834b8dfb7b47fe248b7505cfd12",
+  "raw/pov-original-native/launch.json": "da48cb681b9dd805f220511bf1a19407de793292dbedc476e6533fd46d2a89ed",
+  "raw/pov-original-native/results.xml": "b3a381fd91e6b56060dfdfa8e7f528bd5350b68fa768e802051d5b6b5ad6064b"
+}

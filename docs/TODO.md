@@ -31,6 +31,10 @@
   controls. Original cause fails/two controls pass; candidate3 pass with two
   native window renders. Clean Feed still hides the whole canvas.
   [Evidence](reports/reliability-2026-10-06/spectator-controls-hint/README.md).
+- [x] Spectator POV keys no longer claim a solo gameplay body or get suppressed
+  by a debug switcher. Two takeover causes and a separate missing-POV cause
+  reproduced; final4 native cases pass with normal gameplay handover intact.
+  [Evidence](reports/reliability-2026-10-06/spectator-seat-keys/README.md).
 - [ ] Plan and validate cinematic coverage while the match is happening for every
   individual character and map, including Classic/Hero Strike and Arena as a
   particular priority. Review subject selection, ability/contact timing, framing,

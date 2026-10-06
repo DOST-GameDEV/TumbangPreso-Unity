@@ -1,3 +1,15 @@
+## Current Root spectator POV ownership terminal
+
+Original22256/75797 two public-watch key-theftFAIL/gameplaycontrolPASS. Switcher
+candidate3440/84793 all3PASS. SeparateCamera19864/1761 nullPOVFAIL because old
+switcher-presence gate stillblockedkeys. Final18008/11420 all4PASS: F2 selects
+actualPOV, watcher staysenabled, readerdisabled, gameplayhandoverretained. Allfour
+21152inputs/216deltas/prefs/Quality/seed restored. No Root nativejobs. SourceCamera
+andDebugSwitcher ownedRoot; Director/bodyclearance ownedlaptop. Laptop48map cases
+frozenonbf/c212 prehint/keyfix; Paete fills lens naturalBayanHero2 leadretained.
+Next publish ownershipfix, sendref, then spectator readout/fulloperator flow while
+laptop finishes native matrix and bodyclearance. Fullcinematic/bots pass remains.
+
 ## Current Root spectator restore hint terminal
 
 Original18732/82112 hidden-control hintFAIL withtwo controlsPASS; candidate9268/
