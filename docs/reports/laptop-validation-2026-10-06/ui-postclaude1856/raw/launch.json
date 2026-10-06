@@ -1,0 +1,28 @@
+{
+  "pid": 12780,
+  "source": "3a9f504389a0a0cdc5a7a4bd3f25db2875a8caa5",
+  "kind": "original",
+  "out": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\ui-postclaude-original1-direct1006",
+  "command": [
+    "C:\\Program Files\\Unity\\Hub\\Editor\\6000.5.8f1\\Editor\\Unity.exe",
+    "-projectPath",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a",
+    "-batchmode",
+    "-force-d3d11",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.StatusTypographyTests;TumbangPreso.PlayTests.TumpNativeHudTests.ScoreFeedReflowsWithoutResettingExpiryAndHonoursReducedMotion;TumbangPreso.PlayTests.TumpNativeHudTests.DenseStatusesRetainHauntedTimersAndReflowWithoutOverlap;TumbangPreso.PlayTests.TumpNativeHudTests.WarningStripIsThinSingleLineAndMatchesActionOpacity",
+    "-testResults",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\ui-postclaude-original1-direct1006\\tests.xml",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\ui-postclaude-original1-direct1006\\unity.log",
+    "-tp-profile",
+    "validation-qa-a-be075dcdfa07",
+    "-job-worker-count",
+    "1",
+    "-gc-helper-count",
+    "1"
+  ]
+}
