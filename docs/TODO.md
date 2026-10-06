@@ -1,5 +1,11 @@
 ### UI-LOGIN-FEEDBACK-1006: caret and actionable refusal
 
+- [x] Combined Desktopcb5 replaces startup9ab after261 file hashes verify.
+  Actual packaged startup33448 passes5.7217s title and Home4to40; build21309 inputs
+  restore. Same-artifact LAN runD passes both strict terminal roles/natural end
+  and complete saved-record parity on PC/laptop. OriginalA/B/C failures retained.
+  [Package and scope](reports/combined-desktop-2026-10-07/README.md).
+
 - [x] October7 urgent startup correction: logos -> login -> main/title loading
   >=5s and until ready -> lobby, no old illustrated loading before login.
   Native cold flow passes after reproducing/fixing first Home frame freeze;

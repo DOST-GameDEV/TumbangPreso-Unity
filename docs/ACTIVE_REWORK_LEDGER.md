@@ -1,35 +1,31 @@
 # Current PC competition checkpoint, October 7
 
-## Combined package and paired observation, latest
+## Current qualified package and next gameplay unit
 
-Grounded tag unit4a80 and laptop settled media/resultsd66 are published through
-normal mergecb5. Exact combined Windows build33012 succeeds,261files/3535817714
-bytes/protocol153/runtimee9b69cf6d8c86a4a15cc2fbb16947312153209be5cd677e1383becf87c06cdd4.
-All21309 frozen inputs/prefs restore. Actualplayer33448 startupPASS with title
-5.7217seconds and firstHome frames4to40. Internal Builds/combined-peer1007 and
-its manifest are stable; current Desktop still9ab. Transfer25504 stopped after
-laptop verified every file. No owned PC player/compiler/helper/tab remains.
+Combined sourcecb5 is installed at Desktop/TumbangPreso-UI-2026-10-07/TumbangPreso.exe:
+261files/3535817714bytes/protocol153, runtimee9b69cf6d8c86a4a15cc2fbb16947312153209be5cd677e1383becf87c06cdd4.
+Build33012/source21309 restoration and actualstartup33448 PASS title5.7217s/Home4to40.
+Both PC33096 and laptop56428 strict pairedD terminals PASS with independently
+saved canonicalrecord94008d90b2b3862605da39afce6e2bb13f8ef6daff42115c68024331c0bbfdcb,
+MatchIdf45f1aa16cb55b90b2390fdef3b2262e7ff5ed65a06a8d674b00ab9fa8d4de9b,
+scores100/0/150/0/humans2/historyQueueWitness1/markerscleared. Every artifact byte
+and own profile/prefs restore. A/B/C false observations remain in reports.
+Two-phase preflight-ready/start signal fixed observation ordering; no runtime
+network fix or assertion relaxation. Source metadata/docs aftercb5 do not alter
+this pinned package. No PC player/compiler/helper/server/tab remains.
+Evidence: reports/combined-desktop-2026-10-07 and two-machine-lan-cb5f report.
+Old9ab Desktop backup stays outside Desktop at Builds/desktop-ui9ab-before-combined1007.
 
-LAN attemptsA/B/C retained. A150s incomplete; B/C natural Hero1/30 matches save
-identical full records on both machines. C MatchIda91454978b05b8b4bb8b7509f8affd33fbd762170a87f78eef303d29415cac1d,
-canonicalrecord93f6f20341711ee86b763e4f11b6560108992f491a63d4046f539c3d72662168,
-scores20/0/0/150, twohumans, history/queue/witness1 each, markerscleared.
-Host strictPASS; client strictFALSE because its final report follows host exit.
-Formal dual-terminal gate stays OPEN despite functional saved-record parity.
-C wall times prove a167second launch gap exceeded120second outlive budget:
-PC UTC22:10:21 launch/22:16:22 report; laptop22:13:08/22:17:11. No runtime
-transport/clock defect established. Preserve original false results.
-
-Next action: existing laptop owns runner-only ready-file/start-file barrier
-implementation and tests, preparing whole artifact/profile before player timer.
-Pull checked runner, prepare BOTH first then Root signal/readlisten/sendexisting
-laptop within one orchestration call without a model gap. PC192.168.1.7,
-laptop192.168.1.144, unchangedcb5 artifact/Bots3WIRE/49153. No fourth unchanged
-retry and no relaxed end/role/save assertions. Then qualify paired receipt and
-Desktop replacement before resuming wider AI/navigation, creative all-map
-intros/arrivals and slipper work. Goal ACTIVE; never infer tournament readiness.
-Private Auditor/voxel dirt preserved. Pruning and local HTTP probe review
-rejections remain in local checkpoints; do not bypass them.
+Next concrete action: run the existing real-clock Classic/Hero AI diagnostic
+rounds and inspect actual decision/movement/feature counters before the next
+focused bot/navigation fix. PC owns AI/bots/navigation, shared map intros/
+cameras/arrivals and slipper reliability. Laptop retains preview/video/media/
+vote and MatchResult/picker; coordinate new peer recovery gates only when needed.
+Goal ACTIVE: broad AI/all-map behavior, distinct authored intros/poses/arrivals,
+natural camera/ground/slipper interactions and tournament/device/WAN/recovery
+acceptance remain unfinished. Preserve finalized heroes and all private dirt.
+Read actual process/refs/source before resuming, use fresh profiles and one heavy
+job. Never reset/clean/stash/force-push or bypass earlier policy rejections.
 
 ## Latest tag-rig unit, October 7
 
