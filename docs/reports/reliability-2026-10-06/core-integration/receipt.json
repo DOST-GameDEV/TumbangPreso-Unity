@@ -1,0 +1,17 @@
+{
+  "sourceCommit": "30ffb90abc5bc9e597994fd8b32885381e1f24e9",
+  "command": "dotnet test Core.Tests/TumbangPreso.Core.Tests.csproj --no-restore --nologo --logger trx;LogFileName=core-current.trx --results-directory Logs/core-integration1006",
+  "exitCode": 0,
+  "total": 729,
+  "passed": 729,
+  "failed": 0,
+  "skipped": 0,
+  "testDuration": "163 ms (runner summary; not gameplay performance)",
+  "rawTRXSHA256": "b900c177ee8992c0c593bea717dda7e87422669bb56849b14fc2fab4547c3c73",
+  "engineFreeSourceFiles": 111,
+  "engineFreeSourceDirty": [],
+  "coreTarget": "netstandard2.1",
+  "testTarget": "net9.0",
+  "nativeJobsStarted": 0,
+  "scope": "Current engine-free source/tests build and all actual 729 test cases. No Unity import/render/input or live transport acceptance."
+}

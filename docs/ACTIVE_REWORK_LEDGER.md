@@ -1,3 +1,14 @@
+## Current Core integration gate terminal
+
+Actual current30ff source full Core suite729PASS/0FAIL/0SKIP, fresh TRX729 results.
+111 tracked Core/test/project LF hashes match Git; netstandard2.1/net9.0 build.
+No Unity/profile/input mutation;163ms is test time, not gameplay performance.
+Root compiler23340/parent17044 verified orphan, exact creation/SDK/no other build
+clients then stopped. Owner Arena game8204/session19499 stays open. Native/live
+network and skill acceptance remain open; laptop Reader source reservation intact.
+Next source/native unit: qualify actual preview edge sampling or current skill
+receipts when a machine slot is released; avoid stale Basilio scenarios.
+
 ## Current Root skill runner guard and owner game
 
 net_dante_matrix.py refuses retired Basilio cases before output/profile/player

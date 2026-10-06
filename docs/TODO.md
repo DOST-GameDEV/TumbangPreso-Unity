@@ -1,3 +1,7 @@
+Current integration evidence: the full engine-free suite passes 729 tests with
+zero failures/skips on source30ff. Unity rendering, input and live transport
+requirements below stay open. [Core gate](reports/reliability-2026-10-06/core-integration/README.md).
+
 ### UI-LAN-MAP-1006: distinguish missing map information
 
 - [x] Legacy LAN entries contain no map metadata. Show UNKNOWN in the MAP cell,
