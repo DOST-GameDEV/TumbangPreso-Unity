@@ -1,2 +1,3 @@
 raw/** -text whitespace=cr-at-eol
 raw/**/*.xml -whitespace
+raw/**/*.log -whitespace
