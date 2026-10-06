@@ -1,3 +1,17 @@
+## Current pickup/result queue unit qualified, ready for camera split
+
+Known retrieval-count upload refusal added locally without rewriting history.
+Original Core1FAIL/1PASS; original native8860/2302 actual1FAIL/7PASS, initialexpected
+count7vsactual8 explicitly classified, no rerun/assertion weakening. Candidatefull
+Core731PASS/0FAIL/0SKIP and native21312/52667 actual8PASS. Both21140inputs/prefs/seed/
+Quality restored216metadata; verified Corecompiler2232/16936 stopped. No livejobs.
+Original actual Arena record remains unchanged; no live service/deployment claim.
+Current counter alreadyshipped2e9 with14rawGit verified; Reader d230 verified18raw/
+11LF/16PASS. Next owner priority spectator/cinematic automatic camera every hero/map,
+especiallyArena. Split afterpublicationACK: laptop director/map clearance; Root
+spectator UI/control/hero cue coverage. Bots fullqualityafter spectator. Combined
+newplayer/live upload acceptance remains open, old4b doesnot qualify newsource.
+
 ## Current pickup accounting corrected and native terminal
 
 Actual owner Arena8x90 record HTTP422 queued,0throws/1retrieval; local current

@@ -4,8 +4,11 @@
   Two native original counter failures become passes; existing press controls and
   corrected one-human training-spare control remain valid. Candidate six pass.
   [Evidence](reports/reliability-2026-10-06/pickup-accounting/README.md).
-- [ ] Preserve and recover the older rejected-record queue without losing local
-  history or letting a permanently invalid head block later valid records.
+- [x] Known permanently impossible retrieval-count head no longer blocks later
+  valid records. Original Core1FAIL/1control and native1FAIL/7controls become
+  full Core731PASS and native8PASS; original local history/counters stay intact,
+  transient retry and ownership preserved. No generic422 dropping.
+  [Queue evidence](reports/reliability-2026-10-06/rejected-retrieval-queue/README.md).
 - [ ] Current corrected player/live result upload acceptance. Local server
   validation and native accounting do not establish deployed acceptance.
 
