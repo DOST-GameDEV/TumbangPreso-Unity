@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 03:03:25Z" end-time="2026-10-06 03:04:03Z" duration="37.9347952">
+  <test-suite type="TestSuite" id="3256" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1839" result="Failed" site="Child" start-time="2026-10-06 03:03:25Z" end-time="2026-10-06 03:04:03Z" duration="37.934795" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3248" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1839" result="Failed" site="Child" start-time="2026-10-06 03:03:25Z" end-time="2026-10-06 03:04:03Z" duration="37.897744" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="6568" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3249" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1839" result="Failed" site="Child" start-time="2026-10-06 03:03:25Z" end-time="2026-10-06 03:04:03Z" duration="37.870094" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3252" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1837" result="Failed" site="Child" start-time="2026-10-06 03:03:25Z" end-time="2026-10-06 03:04:03Z" duration="37.842281" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2868" name="SpectatorExchangeTests" fullname="TumbangPreso.PlayTests.SpectatorExchangeTests" classname="TumbangPreso.PlayTests.SpectatorExchangeTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-06 03:03:25Z" end-time="2026-10-06 03:04:03Z" duration="37.511643" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2870" name="CatchStopsTrackingTheVictimsTeleportWhileTheTayaCanContinue" fullname="TumbangPreso.PlayTests.SpectatorExchangeTests.CatchStopsTrackingTheVictimsTeleportWhileTheTayaCanContinue" methodname="CatchStopsTrackingTheVictimsTeleportWhileTheTayaCanContinue" classname="TumbangPreso.PlayTests.SpectatorExchangeTests" runstate="Runnable" seed="1994585611" result="Passed" start-time="2026-10-06 03:03:25Z" end-time="2026-10-06 03:03:45Z" duration="19.568450" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="2869" name="DownCanRecoveryFramesTheOwnerAndTheirActualShoe" fullname="TumbangPreso.PlayTests.SpectatorExchangeTests.DownCanRecoveryFramesTheOwnerAndTheirActualShoe" methodname="DownCanRecoveryFramesTheOwnerAndTheirActualShoe" classname="TumbangPreso.PlayTests.SpectatorExchangeTests" runstate="Runnable" seed="221832741" result="Failed" start-time="2026-10-06 03:03:45Z" end-time="2026-10-06 03:04:03Z" duration="17.927139" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SpectatorExchangeTests+<DownCanRecoveryFramesTheOwnerAndTheirActualShoe>d__2.MoveNext () [0x0021f] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\SpectatorExchangeTests.cs:25
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2884" name="SpectatorUltimateEventTests" fullname="TumbangPreso.PlayTests.SpectatorUltimateEventTests" classname="TumbangPreso.PlayTests.SpectatorUltimateEventTests" runstate="Runnable" testcasecount="14" result="Passed" start-time="2026-10-06 03:04:03Z" end-time="2026-10-06 03:04:03Z" duration="0.117338" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2898" name="ADelayedDecisionKeepsTheOriginalEventClock" fullname="TumbangPreso.PlayTests.SpectatorUltimateEventTests.ADelayedDecisionKeepsTheOriginalEventClock" methodname="ADelayedDecisionKeepsTheOriginalEventClock" classname="TumbangPreso.PlayTests.SpectatorUltimateEventTests" runstate="Runnable" seed="923353277" result="Passed" start-time="2026-10-06 03:04:03Z" end-time="2026-10-06 03:04:03Z" duration="0.073712" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2899" name="UnhookRetiresThePresentationPulse" fullname="TumbangPreso.PlayTests.SpectatorUltimateEventTests.UnhookRetiresThePresentationPulse" methodname="UnhookRetiresThePresentationPulse" classname="TumbangPreso.PlayTests.SpectatorUltimateEventTests" runstate="Runnable" seed="127279066" result="Passed" start-time="2026-10-06 03:04:03Z" end-time="2026-10-06 03:04:03Z" duration="0.040389" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

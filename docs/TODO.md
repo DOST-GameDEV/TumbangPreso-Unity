@@ -23,6 +23,10 @@
   mouse cursor lock; preserve chosen view after release. Final7 native cases plus
   release control1 pass; physical/touch/operator feel remains open.
   [Evidence](reports/reliability-2026-10-06/spectator-stick-look/README.md).
+- [x] Retain short accepted ultimate presentation events until the next decision.
+  Nine original hero failures become passes with expiry/round/kit controls;
+  original-clock/unhook checks pass. Separate down-can setup failure retained.
+  [Evidence](reports/reliability-2026-10-06/spectator-ultimate-event/README.md).
 - [ ] Plan and validate cinematic coverage while the match is happening for every
   individual character and map, including Classic/Hero Strike and Arena as a
   particular priority. Review subject selection, ability/contact timing, framing,

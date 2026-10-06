@@ -1,3 +1,15 @@
+## Current Root ultimate event unit terminal
+
+SpectatorInterest now reads the previously unused accepted-presentation pulse
+when no live ultimate remains. Original6228/89918 nine hero casesFAIL and three
+scope/expiry controlsPASS; candidate4308/11958 all12PASS. Additional6568/18357
+original-clock/unhook/catch3PASS; down-can setupFAIL atline25 before interest.
+Original-source17680/68916 same down-can setupFAIL retained, not camera acceptance.
+Allfour21148inputs,216native deltas each,prefs/quality/seed restored; no jobs live.
+Preserve Auditor/private voxel dirt. Laptop owns Director/map and natural roster
+coverage; Root Interest/camera UI/control. Next publish scoped event fix and send
+ref, then natural spectator readability and complete coverage. Bots after spectator.
+
 ## Current Root spectator stick unit terminal
 
 Existing Look action bound; radial/squared stick response, unscaled rotation and
