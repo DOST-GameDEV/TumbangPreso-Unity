@@ -168,6 +168,7 @@ namespace TumbangPreso.UI
             var box = OwnerMenuArt.Image(hit, "OriginalCheckbox", "login3-checkbox");
             OwnerUiLayout.Place(box.rectTransform, 2, 2, 38, 38);
             var check = OwnerMenuArt.Image(hit, "AcceptedCheck", "login3-accepted-tick");
+            check.color = theme.Paper;
             OwnerUiLayout.Place(check.rectTransform, 7, 7, 28, 28);
             _ownerTerms.graphic = check;
             _ownerTerms.isOn = false;

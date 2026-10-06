@@ -113,3 +113,12 @@ frames remain historical evidence. The new temporary fixture is removed.
 Room-arrow prototypes were present as frozen compilation inputs but were not
 exercised by these two cases. Desktop770 is still unchanged; owner approval is
 separate from these scoped native results.
+
+Owner further requests that the check feel native to the painted checkbox. Its
+latest SVG is smaller with a softly curved tapered stroke and uses the existing
+OwnerUiTheme.Paper tint. Pill artwork stays at the bottom-shadow correction.
+Native11236 passes the same two render/consent cases with21232 inputs and shared
+preferences restored. Latest unique frames are
+[1080](native-painted-tick1007/boot-1080.png) and
+[720](native-painted-tick1007/boot-720.png). Sprite import metadata receives only
+trailing-whitespace cleanup after restoration; importer settings are unchanged.
