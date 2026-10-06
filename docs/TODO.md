@@ -8,9 +8,13 @@
   relocation. Tore climbs to1.15m; roof Land/loose and floating recovery controls
   remain valid. Earlier weak pickup-only pass remains explicitly unqualified.
   [Evidence](reports/laptop-validation-2026-10-06/arena-supported-shoes/README.md).
-- [ ] Between-ramp starts, general navigation, natural full matches and current
-  peers. Laptop owns the next runtime investigation; this narrow pass does not
-  close the full bot-refinement requirement.
+- [x] Five controlled starts between ramps retrieve with no body recovery or shoe
+  relocation. Root verified eight raw Git hashes, exact fixture/meta and the
+  native one-case/five-scenario pass with21194 restored inputs/13 preferences.
+  No further AI change was needed. [Follow-up](reports/laptop-validation-2026-10-06/arena-between-ramps/README.md).
+- [ ] General navigation, moving layouts, bonus-pad routes, hostile pressure,
+  natural full matches and current peers. Laptop owns the next runtime work;
+  controlled route passes do not close the full bot-refinement requirement.
 
 ### HOST-FAILURE-RECOVERY-1006: established listen-host recovery
 

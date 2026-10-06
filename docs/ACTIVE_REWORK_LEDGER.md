@@ -22,9 +22,12 @@ Unity54752 has0PASS/2FAIL; candidate51796 has2PASS/0FAIL with identical fixtures
 Root verified17 raw Git hashes, exact Slipper/test/meta, both21192 inputs/13
 preferences restored and all five controlled ramp2 routes retrieving with
 movedLoose0.000. Roof Land/loose and floating controls remain true. The earlier
-weak pickup-only pass is retained as unqualified. Current laptop next unit is
-approaches starting between ramps; general navigation/full matches/peers remain
-open. Root must not edit Slipper, AIController or these fixtures concurrently.
+weak pickup-only pass is retained as unqualified. Follow-up80440c18e has one
+passed native case/five controlled between-ramp scenarios, no body recovery and
+movedLoose0.000. Root verified eight raw hashes, exact fixture/meta and21194/13
+restoration. No AI change was justified. Laptop next uses its existing full-match
+Arena probe; fixed-frame simulation scope must stay separate from normal-clock,
+physical operator and peer acceptance. Root must not edit runtime or fixtures.
 
 Owner reiterated: a Codex Bad Request banner is not permission to cancel work or
 pause the goal. Preserve live jobs, handles and source; verify actual process and
@@ -51,8 +54,9 @@ ASTRAReworks43229b93bcd7f01a4bd8513d0acc5c7497729763 at the latest read-only che
 Preserve its pre-existing
 composition metadata and private notes. Engineering checkout:
 C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i, detached at
-438fcac65dc977e463859599f08a39336899318d, including both checked host fixes and
-the supported Arena shoe correction.
+cfa220cde13508f53d5ee190088cc688c765c19b before this status update, including
+both host fixes, supported shoes and the between-ramp receipts. Incoming Claude
+UI1856ea1a0 was normally merged; Root did not author or qualify its UI behavior.
 Preserve dirty ProjectAuditorSettings.asset
 and private tools/build_yasmin_benguet_voxel.py. Sole commit identity is
 M4tyu633 <matthewtlabrador@gmail.com>; explicit paths, commit -F and normal pushes.
