@@ -1,0 +1,260 @@
+{
+  "fresh-original": {
+    "sourceCommit": "30f29ee5a2c20ab3c0f470ee919ba4b057a52153",
+    "qualifiedSourceSha256": "c7886cf1ed1b757c2b4803326c2af3db61c281ff083a0624308bc3dbe0c2da4e",
+    "identity": {
+      "schemaVersion": 1,
+      "workerId": "qa-a-be075dcdfa07",
+      "validationOnly": true,
+      "projectRoot": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a",
+      "sourceProject": "C:\\Users\\Matthew\\dev\\tump-integration1003",
+      "sourceCommit": "8e7cfc7feb4eee614d456347ccbb26ad962d1714",
+      "companyName": "BH Studios Validation",
+      "productName": "TumpWorker-qa-a-be075dcdfa07",
+      "editorVersion": "6000.5.8f1",
+      "guardVersion": 1,
+      "guardSha256": "65b69c94b83cfe306293fec69649d2846f122fc083007c5d1bf64d3849dc4f90",
+      "libraryPath": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Library",
+      "libraryPhysical": true,
+      "libraryCopyFrom": "C:\\Users\\Matthew\\dev\\tump-laptop-native1003\\Library",
+      "requiredProfile": "validation-qa-a-be075dcdfa07",
+      "shippingBuildsAllowed": false,
+      "warmupRequired": true,
+      "editorValidation": "not_run",
+      "state": "ready"
+    },
+    "packet": {
+      "base": "30f29ee5a2c20ab3c0f470ee919ba4b057a52153",
+      "filter": "TumbangPreso.PlayTests.FreshFocusEdgeTests",
+      "expected": 2,
+      "scope": "RealInputSystem LateUpdate queues before/after focuscallback;firstresumedUpdate nextframe,virtualdevice/noOS-hardware claim"
+    },
+    "result": {
+      "pid": 37984,
+      "terminal": true,
+      "exitCode": 2,
+      "passed": 1,
+      "failed": 1,
+      "expected": 2,
+      "inputCount": 21138,
+      "allInputsRestored": true,
+      "existingPrefsRestored": 13
+    },
+    "generatedDeltaCount": 279
+  },
+  "timestamp-candidate": {
+    "sourceCommit": "30f29ee5a2c20ab3c0f470ee919ba4b057a52153",
+    "qualifiedSourceSha256": "17b66285ba5fb307515ea0d66557c94bbadd283766ac88eccab52c4a8a7a482d",
+    "identity": {
+      "schemaVersion": 1,
+      "workerId": "qa-a-be075dcdfa07",
+      "validationOnly": true,
+      "projectRoot": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a",
+      "sourceProject": "C:\\Users\\Matthew\\dev\\tump-integration1003",
+      "sourceCommit": "8e7cfc7feb4eee614d456347ccbb26ad962d1714",
+      "companyName": "BH Studios Validation",
+      "productName": "TumpWorker-qa-a-be075dcdfa07",
+      "editorVersion": "6000.5.8f1",
+      "guardVersion": 1,
+      "guardSha256": "65b69c94b83cfe306293fec69649d2846f122fc083007c5d1bf64d3849dc4f90",
+      "libraryPath": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Library",
+      "libraryPhysical": true,
+      "libraryCopyFrom": "C:\\Users\\Matthew\\dev\\tump-laptop-native1003\\Library",
+      "requiredProfile": "validation-qa-a-be075dcdfa07",
+      "shippingBuildsAllowed": false,
+      "warmupRequired": true,
+      "editorValidation": "not_run",
+      "state": "ready"
+    },
+    "packet": {
+      "base": "30f29ee5a2c20ab3c0f470ee919ba4b057a52153",
+      "filter": "TumbangPreso.PlayTests.FreshFocusEdgeTests",
+      "expected": 2,
+      "scope": "RealInputSystem LateUpdate queues before/after focuscallback;firstresumedUpdate nextframe,virtualdevice/noOS-hardware claim"
+    },
+    "result": {
+      "pid": 45072,
+      "terminal": true,
+      "exitCode": 0,
+      "passed": 2,
+      "failed": 0,
+      "expected": 2,
+      "inputCount": 21138,
+      "allInputsRestored": true,
+      "existingPrefsRestored": 13
+    },
+    "generatedDeltaCount": 279
+  },
+  "timestamp-adjacent": {
+    "sourceCommit": "30f29ee5a2c20ab3c0f470ee919ba4b057a52153",
+    "qualifiedSourceSha256": "e8ac3fb39cb47980e26de343b008330fa8ce378febad51c10273bc1d37dc03f0",
+    "identity": {
+      "schemaVersion": 1,
+      "workerId": "qa-a-be075dcdfa07",
+      "validationOnly": true,
+      "projectRoot": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a",
+      "sourceProject": "C:\\Users\\Matthew\\dev\\tump-integration1003",
+      "sourceCommit": "8e7cfc7feb4eee614d456347ccbb26ad962d1714",
+      "companyName": "BH Studios Validation",
+      "productName": "TumpWorker-qa-a-be075dcdfa07",
+      "editorVersion": "6000.5.8f1",
+      "guardVersion": 1,
+      "guardSha256": "65b69c94b83cfe306293fec69649d2846f122fc083007c5d1bf64d3849dc4f90",
+      "libraryPath": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Library",
+      "libraryPhysical": true,
+      "libraryCopyFrom": "C:\\Users\\Matthew\\dev\\tump-laptop-native1003\\Library",
+      "requiredProfile": "validation-qa-a-be075dcdfa07",
+      "shippingBuildsAllowed": false,
+      "warmupRequired": true,
+      "editorValidation": "not_run",
+      "state": "ready"
+    },
+    "packet": {
+      "base": "30f29ee5a2c20ab3c0f470ee919ba4b057a52153",
+      "filter": "TumbangPreso.PlayTests.QueuedFocusReturnTests;TumbangPreso.PlayTests.ReaderBackgroundFocusTests;TumbangPreso.PlayTests.InputFocusLifetimeTests",
+      "expected": 12,
+      "scope": "Necessary regression of previous5queuedfocus+7adjacentcontrols aftertimestampcandidatechanged;virtualdevice/notphysicalclaim"
+    },
+    "result": {
+      "pid": 45168,
+      "terminal": true,
+      "exitCode": 0,
+      "passed": 12,
+      "failed": 0,
+      "expected": 12,
+      "inputCount": 21138,
+      "allInputsRestored": true,
+      "existingPrefsRestored": 13
+    },
+    "generatedDeltaCount": 279
+  },
+  "pulse-original": {
+    "sourceCommit": "30f29ee5a2c20ab3c0f470ee919ba4b057a52153",
+    "qualifiedSourceSha256": "5e660895519cd481f0b52dd4bd55607995b7a6caea3476eaf68c377aabe9e843",
+    "identity": {
+      "schemaVersion": 1,
+      "workerId": "qa-a-be075dcdfa07",
+      "validationOnly": true,
+      "projectRoot": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a",
+      "sourceProject": "C:\\Users\\Matthew\\dev\\tump-integration1003",
+      "sourceCommit": "8e7cfc7feb4eee614d456347ccbb26ad962d1714",
+      "companyName": "BH Studios Validation",
+      "productName": "TumpWorker-qa-a-be075dcdfa07",
+      "editorVersion": "6000.5.8f1",
+      "guardVersion": 1,
+      "guardSha256": "65b69c94b83cfe306293fec69649d2846f122fc083007c5d1bf64d3849dc4f90",
+      "libraryPath": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Library",
+      "libraryPhysical": true,
+      "libraryCopyFrom": "C:\\Users\\Matthew\\dev\\tump-laptop-native1003\\Library",
+      "requiredProfile": "validation-qa-a-be075dcdfa07",
+      "shippingBuildsAllowed": false,
+      "warmupRequired": true,
+      "editorValidation": "not_run",
+      "state": "ready"
+    },
+    "packet": {
+      "base": "30f29ee5a2c20ab3c0f470ee919ba4b057a52153",
+      "filter": "TumbangPreso.PlayTests.FocusPulseBoundaryTests",
+      "expected": 2,
+      "scope": "Changed timestamp candidate:new shortdown/up Jump timing boundaries viarealInputSystem inLateUpdate,notphysicaldevice"
+    },
+    "result": {
+      "pid": 46112,
+      "terminal": true,
+      "exitCode": 2,
+      "passed": 1,
+      "failed": 1,
+      "expected": 2,
+      "inputCount": 21140,
+      "allInputsRestored": true,
+      "existingPrefsRestored": 13
+    },
+    "generatedDeltaCount": 279
+  },
+  "pulse-candidate": {
+    "sourceCommit": "30f29ee5a2c20ab3c0f470ee919ba4b057a52153",
+    "qualifiedSourceSha256": "b53a7935cedb1c9bb963d1cbb9c50be8cdbebc88443d655c78783628b156dca7",
+    "identity": {
+      "schemaVersion": 1,
+      "workerId": "qa-a-be075dcdfa07",
+      "validationOnly": true,
+      "projectRoot": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a",
+      "sourceProject": "C:\\Users\\Matthew\\dev\\tump-integration1003",
+      "sourceCommit": "8e7cfc7feb4eee614d456347ccbb26ad962d1714",
+      "companyName": "BH Studios Validation",
+      "productName": "TumpWorker-qa-a-be075dcdfa07",
+      "editorVersion": "6000.5.8f1",
+      "guardVersion": 1,
+      "guardSha256": "65b69c94b83cfe306293fec69649d2846f122fc083007c5d1bf64d3849dc4f90",
+      "libraryPath": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Library",
+      "libraryPhysical": true,
+      "libraryCopyFrom": "C:\\Users\\Matthew\\dev\\tump-laptop-native1003\\Library",
+      "requiredProfile": "validation-qa-a-be075dcdfa07",
+      "shippingBuildsAllowed": false,
+      "warmupRequired": true,
+      "editorValidation": "not_run",
+      "state": "ready"
+    },
+    "packet": {
+      "base": "30f29ee5a2c20ab3c0f470ee919ba4b057a52153",
+      "filter": "TumbangPreso.PlayTests.FocusPulseBoundaryTests",
+      "expected": 2,
+      "scope": "Changed timestamp candidate:new shortdown/up Jump timing boundaries viarealInputSystem inLateUpdate,notphysicaldevice"
+    },
+    "result": {
+      "pid": 42188,
+      "terminal": true,
+      "exitCode": 0,
+      "passed": 2,
+      "failed": 0,
+      "expected": 2,
+      "inputCount": 21140,
+      "allInputsRestored": true,
+      "existingPrefsRestored": 13
+    },
+    "generatedDeltaCount": 279
+  },
+  "final16": {
+    "sourceCommit": "30f29ee5a2c20ab3c0f470ee919ba4b057a52153",
+    "qualifiedSourceSha256": "a879be8a77f723f4ec98d1984ce340991e8ddfb2f942cfa06c1fd71722d39f37",
+    "identity": {
+      "schemaVersion": 1,
+      "workerId": "qa-a-be075dcdfa07",
+      "validationOnly": true,
+      "projectRoot": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a",
+      "sourceProject": "C:\\Users\\Matthew\\dev\\tump-integration1003",
+      "sourceCommit": "8e7cfc7feb4eee614d456347ccbb26ad962d1714",
+      "companyName": "BH Studios Validation",
+      "productName": "TumpWorker-qa-a-be075dcdfa07",
+      "editorVersion": "6000.5.8f1",
+      "guardVersion": 1,
+      "guardSha256": "65b69c94b83cfe306293fec69649d2846f122fc083007c5d1bf64d3849dc4f90",
+      "libraryPath": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Library",
+      "libraryPhysical": true,
+      "libraryCopyFrom": "C:\\Users\\Matthew\\dev\\tump-laptop-native1003\\Library",
+      "requiredProfile": "validation-qa-a-be075dcdfa07",
+      "shippingBuildsAllowed": false,
+      "warmupRequired": true,
+      "editorValidation": "not_run",
+      "state": "ready"
+    },
+    "packet": {
+      "base": "30f29ee5a2c20ab3c0f470ee919ba4b057a52153",
+      "filter": "TumbangPreso.PlayTests.FreshFocusEdgeTests;TumbangPreso.PlayTests.FocusPulseBoundaryTests;TumbangPreso.PlayTests.QueuedFocusReturnTests;TumbangPreso.PlayTests.ReaderBackgroundFocusTests;TumbangPreso.PlayTests.InputFocusLifetimeTests",
+      "expected": 16,
+      "scope": "Final timestamp and Jump buffer correction, all five focused native lifetime classes"
+    },
+    "result": {
+      "pid": 48664,
+      "terminal": true,
+      "exitCode": 0,
+      "passed": 16,
+      "failed": 0,
+      "expected": 16,
+      "inputCount": 21140,
+      "allInputsRestored": true,
+      "existingPrefsRestored": 13
+    },
+    "generatedDeltaCount": 279
+  }
+}

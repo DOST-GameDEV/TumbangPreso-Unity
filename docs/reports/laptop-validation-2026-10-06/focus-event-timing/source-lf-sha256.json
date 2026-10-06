@@ -1,0 +1,13 @@
+{
+  "Assets/TumbangPreso/Runtime/PlayerInputReader.cs": "8f281039c901d9f4045b41093fcb7b135a9893be5c372b4744b62ca2abde2e97",
+  "Assets/TumbangPreso/Tests/PlayMode/FreshFocusEdgeTests.cs": "5f70f0028a8940340b906fc5e5ac7029b513149f8fa6f9f607da33b204b59b42",
+  "Assets/TumbangPreso/Tests/PlayMode/FreshFocusEdgeTests.cs.meta": "bc868bd6c4ac53233241d06c2a656751e9da451ac159675c12937f87acaac0d8",
+  "Assets/TumbangPreso/Tests/PlayMode/FocusPulseBoundaryTests.cs": "dd1d260c556495c9582f579b33e5b4206696b8b70d3c41d7cc293963cd466872",
+  "Assets/TumbangPreso/Tests/PlayMode/FocusPulseBoundaryTests.cs.meta": "8722382669a623fa2255ed4d262509fe3ffb56f34327839de43bfd392cd92f39",
+  "Assets/TumbangPreso/Tests/PlayMode/QueuedFocusReturnTests.cs": "6ea75b35ce4023b5b6e17f72c1e5d09486aa07552994056ccdd7fb6c3286551e",
+  "Assets/TumbangPreso/Tests/PlayMode/QueuedFocusReturnTests.cs.meta": "95ad3902912aefc279ceff010109f1b805cda3e0d13f06a3cdae28ac05404734",
+  "Assets/TumbangPreso/Tests/PlayMode/ReaderBackgroundFocusTests.cs": "9d6e2e6a6883a8e34739673c2cacb8aa15b5302eebee02a7d5ba63c74cb10f2d",
+  "Assets/TumbangPreso/Tests/PlayMode/ReaderBackgroundFocusTests.cs.meta": "732faaff5d5a3b262698b2155a1b1d32af438cc8ec6ac7463717d05df19481a3",
+  "Assets/TumbangPreso/Tests/PlayMode/InputFocusLifetimeTests.cs": "4425d71f47b838232b13eb689b8638529a5b32e9729804f2b4fb5a5c0372835c",
+  "Assets/TumbangPreso/Tests/PlayMode/InputFocusLifetimeTests.cs.meta": "f819f28277b42e657bc9d0fa443b612e6da96b98c453c6f3417881e33d9560eb"
+}

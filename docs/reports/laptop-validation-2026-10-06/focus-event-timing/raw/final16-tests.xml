@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="16" result="Passed" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.9060886">
+  <test-suite type="TestSuite" id="3226" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1812" result="Passed" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.906089" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3218" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1812" result="Passed" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.895468" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="48664" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3219" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1812" result="Passed" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.890775" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3222" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1810" result="Passed" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.885585" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1606" name="FocusPulseBoundaryTests" fullname="TumbangPreso.PlayTests.FocusPulseBoundaryTests" classname="TumbangPreso.PlayTests.FocusPulseBoundaryTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.208050" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1607" name="BackgroundRecoveryTapDoesNotBufferAfterFocusReturn" fullname="TumbangPreso.PlayTests.FocusPulseBoundaryTests.BackgroundRecoveryTapDoesNotBufferAfterFocusReturn" methodname="BackgroundRecoveryTapDoesNotBufferAfterFocusReturn" classname="TumbangPreso.PlayTests.FocusPulseBoundaryTests" runstate="Runnable" seed="1990172836" result="Passed" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.163405" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1608" name="FreshFocusedRecoveryTapStillBuffersForPhysics" fullname="TumbangPreso.PlayTests.FocusPulseBoundaryTests.FreshFocusedRecoveryTapStillBuffersForPhysics" methodname="FreshFocusedRecoveryTapStillBuffersForPhysics" classname="TumbangPreso.PlayTests.FocusPulseBoundaryTests" runstate="Runnable" seed="22176152" result="Passed" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.033805" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1625" name="FreshFocusEdgeTests" fullname="TumbangPreso.PlayTests.FreshFocusEdgeTests" classname="TumbangPreso.PlayTests.FreshFocusEdgeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.075343" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1627" name="BackgroundThrowBeforeLateFocusCallbackStillWaitsForRelease" fullname="TumbangPreso.PlayTests.FreshFocusEdgeTests.BackgroundThrowBeforeLateFocusCallbackStillWaitsForRelease" methodname="BackgroundThrowBeforeLateFocusCallbackStillWaitsForRelease" classname="TumbangPreso.PlayTests.FreshFocusEdgeTests" runstate="Runnable" seed="547704807" result="Passed" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.036383" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1626" name="FreshThrowAfterFocusCallbackBeforeFirstReadRemainsAvailable" fullname="TumbangPreso.PlayTests.FreshFocusEdgeTests.FreshThrowAfterFocusCallbackBeforeFirstReadRemainsAvailable" methodname="FreshThrowAfterFocusCallbackBeforeFirstReadRemainsAvailable" classname="TumbangPreso.PlayTests.FreshFocusEdgeTests" runstate="Runnable" seed="876642628" result="Passed" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.037510" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1786" name="InputFocusLifetimeTests" fullname="TumbangPreso.PlayTests.InputFocusLifetimeTests" classname="TumbangPreso.PlayTests.InputFocusLifetimeTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.106258" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1788" name="LosingFocusRetiresBufferedRecoveryInput" fullname="TumbangPreso.PlayTests.InputFocusLifetimeTests.LosingFocusRetiresBufferedRecoveryInput" methodname="LosingFocusRetiresBufferedRecoveryInput" classname="TumbangPreso.PlayTests.InputFocusLifetimeTests" runstate="Runnable" seed="1357987284" result="Passed" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.035182" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1787" name="LosingFocusRetiresTheLatchedSprintWithoutParkingTheOwner" fullname="TumbangPreso.PlayTests.InputFocusLifetimeTests.LosingFocusRetiresTheLatchedSprintWithoutParkingTheOwner" methodname="LosingFocusRetiresTheLatchedSprintWithoutParkingTheOwner" classname="TumbangPreso.PlayTests.InputFocusLifetimeTests" runstate="Runnable" seed="225031481" result="Passed" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.034985" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1789" name="OrdinaryReleaseKeepsTheConfiguredSprintToggle" fullname="TumbangPreso.PlayTests.InputFocusLifetimeTests.OrdinaryReleaseKeepsTheConfiguredSprintToggle" methodname="OrdinaryReleaseKeepsTheConfiguredSprintToggle" classname="TumbangPreso.PlayTests.InputFocusLifetimeTests" runstate="Runnable" seed="1163681419" result="Passed" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.034159" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2459" name="QueuedFocusReturnTests" fullname="TumbangPreso.PlayTests.QueuedFocusReturnTests" classname="TumbangPreso.PlayTests.QueuedFocusReturnTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.194617" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2461" name="ABackgroundQueuedRecoveryCannotAppearAfterFocusReturn" fullname="TumbangPreso.PlayTests.QueuedFocusReturnTests.ABackgroundQueuedRecoveryCannotAppearAfterFocusReturn" methodname="ABackgroundQueuedRecoveryCannotAppearAfterFocusReturn" classname="TumbangPreso.PlayTests.QueuedFocusReturnTests" runstate="Runnable" seed="1488432525" result="Passed" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.033782" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2460" name="ABackgroundQueuedThrowCannotStartAfterFocusReturn" fullname="TumbangPreso.PlayTests.QueuedFocusReturnTests.ABackgroundQueuedThrowCannotStartAfterFocusReturn" methodname="ABackgroundQueuedThrowCannotStartAfterFocusReturn" classname="TumbangPreso.PlayTests.QueuedFocusReturnTests" runstate="Runnable" seed="92441213" result="Passed" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.036987" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2463" name="AFreshThrowAfterFocusSettlesStillChargesAndReleases" fullname="TumbangPreso.PlayTests.QueuedFocusReturnTests.AFreshThrowAfterFocusSettlesStillChargesAndReleases" methodname="AFreshThrowAfterFocusSettlesStillChargesAndReleases" classname="TumbangPreso.PlayTests.QueuedFocusReturnTests" runstate="Runnable" seed="173841676" result="Passed" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.052436" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2462" name="AnAlreadyProcessedBackgroundHoldStillWaitsForRelease" fullname="TumbangPreso.PlayTests.QueuedFocusReturnTests.AnAlreadyProcessedBackgroundHoldStillWaitsForRelease" methodname="AnAlreadyProcessedBackgroundHoldStillWaitsForRelease" classname="TumbangPreso.PlayTests.QueuedFocusReturnTests" runstate="Runnable" seed="600448364" result="Passed" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.033795" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2464" name="RecoveryRetirementDoesNotBlockRecoveredMovement" fullname="TumbangPreso.PlayTests.QueuedFocusReturnTests.RecoveryRetirementDoesNotBlockRecoveredMovement" methodname="RecoveryRetirementDoesNotBlockRecoveredMovement" classname="TumbangPreso.PlayTests.QueuedFocusReturnTests" runstate="Runnable" seed="395773838" result="Passed" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.035373" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2509" name="ReaderBackgroundFocusTests" fullname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests" classname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.138824" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2510" name="BackgroundFramesCannotRestoreHeldMovement" fullname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests.BackgroundFramesCannotRestoreHeldMovement" methodname="BackgroundFramesCannotRestoreHeldMovement" classname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests" runstate="Runnable" seed="1024274735" result="Passed" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.036988" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2513" name="FocusedHardwareAndRecoveredMovementRemainAvailable" fullname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests.FocusedHardwareAndRecoveredMovementRemainAvailable" methodname="FocusedHardwareAndRecoveredMovementRemainAvailable" classname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests" runstate="Runnable" seed="1979623279" result="Passed" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.033557" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2512" name="FocusReturnWaitsForBackgroundHeldButtonRelease" fullname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests.FocusReturnWaitsForBackgroundHeldButtonRelease" methodname="FocusReturnWaitsForBackgroundHeldButtonRelease" classname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests" runstate="Runnable" seed="1448960458" result="Passed" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.033803" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2511" name="NewBackgroundButtonCannotBufferRecovery" fullname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests.NewBackgroundButtonCannotBufferRecovery" methodname="NewBackgroundButtonCannotBufferRecovery" classname="TumbangPreso.PlayTests.ReaderBackgroundFocusTests" runstate="Runnable" seed="483183134" result="Passed" start-time="2026-10-06 01:05:14Z" end-time="2026-10-06 01:05:14Z" duration="0.031984" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
