@@ -1,0 +1,18 @@
+{
+  "raw/original1-launch.json": "35b2b888c4d896bc14da692efea0e8a37b536ef4e521117fb74755144c727e36",
+  "raw/original1-classified-result.json": "8ef6905b3607237294802a8eaa8b6dc1f79342402a05a448234578f596926cff",
+  "raw/original1-tests.xml": "1bc707c24209f7e4d8ae6b31c108d37b7fdafd89e6ba0b85ec283ed973e4b17b",
+  "raw/original2-launch.json": "561d4b4521235a5edeb5f9827df18aaa12d81f959aebef433bdce4118868cdc6",
+  "raw/original2-classified-result.json": "776388fa4c542d18249633be898a5480e9d4bda57df377e46d30ee9f3cae4713",
+  "raw/original2-tests.xml": "de00da37a2e58e5330141de9289fafbcb8a257eb0be1b4f44b3075b872a47817",
+  "raw/original3-launch.json": "5bf91363c2604fd315dc30ab2725105c2dc20546aab24eeab140af158c3c9861",
+  "raw/original3-classified-result.json": "21f63daaa446cd5c76ef4d0a9f81c7a8323e83558666d366a7a22383f4950042",
+  "raw/original3-tests.xml": "20002ab243ed279c81d3bbeac1ec309c9f8fd5a944dfd2c78358117bbf6cc5b0",
+  "raw/candidate1-launch.json": "74474f4ef95e10b2712938ff0edd08e7c87ac35256b47f5cccb9c8e1811ce1a7",
+  "raw/candidate1-classified-result.json": "997716a5f6d13176a1c048bcc0a488c14a7e8ccf953d7aeed22aff51451fbac8",
+  "raw/candidate1-tests.xml": "d3839980e67ae547cb43081f2331a9715b5c54b3ac7b4f344436c376921d956c",
+  "raw/original1-fixture.cs": "e9f7b9149117b686401112f3cc88d561896982fc1963a3309048c87d5b3d1872",
+  "raw/original2-fixture.cs": "58aaa85d18433a3e43006c54afdd4bb947418d664895fb4c243dce11fbb47af8",
+  "raw/original3-fixture.cs": "c60ae39bd1f08e241586184a34f5b3e732dbc6acc620319da0abebe47a486dbe",
+  "raw/candidate-director.cs": "31ad7df3057a941a72d30f6296d1de974e066e58bb72c48438786d025fd2515c"
+}

@@ -1,4 +1,6 @@
 using TumbangPreso.Core;
+using TumbangPreso.Visual;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace TumbangPreso.CameraSystem
@@ -569,7 +571,8 @@ namespace TumbangPreso.CameraSystem
             Vector3 nextPosition = Vector3.SmoothDamp(transform.position, wantPos,
                                                      ref _posVelocity, PositionSmoothTime,
                                                      Mathf.Infinity, dt);
-            if (!TransitIsClear(transform.position, nextPosition))
+            if (!TransitIsClear(transform.position, nextPosition)
+                || !BodyLensIsClear(nextPosition))
             {
                 // A clear destination does not make the glide through scenery safe.
                 // Cut to a freshly validated shot instead of rendering that crossing.
@@ -862,6 +865,37 @@ namespace TumbangPreso.CameraSystem
 
         private static Collider[] Overlap = new Collider[8];
         private static RaycastHit[] TransitHits = new RaycastHit[8];
+        private readonly List<Renderer> _bodyRenderers = new List<Renderer>();
+        private readonly List<Renderer> _modelRenderers = new List<Renderer>();
+        private int _bodyRendererFrame = -1;
+
+        private bool BodyLensIsClear(Vector3 position)
+        {
+            if (_bodyRendererFrame != Time.frameCount)
+            {
+                _bodyRendererFrame = Time.frameCount;
+                _bodyRenderers.Clear();
+                foreach (var visual in FindObjectsByType<CharacterVisual>(FindObjectsSortMode.None))
+                {
+                    // The installed model excludes nameplates, companion pets and skill VFX.
+                    if (visual.Model == null || visual.GetComponent<CharacterMotor>() == null) continue;
+                    _modelRenderers.Clear();
+                    visual.Model.GetComponentsInChildren(false, _modelRenderers);
+                    foreach (var renderer in _modelRenderers)
+                        if (renderer is MeshRenderer || renderer is SkinnedMeshRenderer)
+                            _bodyRenderers.Add(renderer);
+                }
+            }
+            foreach (var renderer in _bodyRenderers)
+            {
+                if (renderer == null || !renderer.enabled || !renderer.gameObject.activeInHierarchy) continue;
+                // A conservative enclosure keeps the eye out of the rendered body even when
+                // that body extends beyond its gameplay capsule. Sightline crossings remain
+                // eligible: this does not treat the whole actor as opaque scenery.
+                if (renderer.bounds.Contains(position)) return false;
+            }
+            return true;
+        }
 
         private static bool TransitIsClear(Vector3 from, Vector3 to)
         {
@@ -884,6 +918,7 @@ namespace TumbangPreso.CameraSystem
         private bool ValidatePose(Vector3 position, Vector3 focus,
                                   bool requireSecondary = true)
         {
+            if (!BodyLensIsClear(position)) return false;
             // Inside a wall, a building, a pillar, a vehicle or a prop?
             int hits;
             while (true)
