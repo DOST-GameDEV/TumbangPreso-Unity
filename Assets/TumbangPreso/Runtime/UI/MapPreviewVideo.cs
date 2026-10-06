@@ -71,7 +71,7 @@ namespace TumbangPreso.UI
 
         void Prepare(VideoClip clip)
         {
-            if(_player!=null||_failed)return;
+            if(_player!=null||_failed||!isActiveAndEnabled||!_visible)return;
             _target=new RenderTexture((int)clip.width,(int)clip.height,0,RenderTextureFormat.ARGB32){name="RecordedMapPreview"};_target.Create();
             _player=gameObject.AddComponent<VideoPlayer>();_player.playOnAwake=false;_player.isLooping=true;
             _player.timeUpdateMode=VideoTimeUpdateMode.UnscaledGameTime;
@@ -81,7 +81,7 @@ namespace TumbangPreso.UI
             _prepareStarted=Time.realtimeSinceStartup;_player.Prepare();
         }
 
-        void Prepared(VideoPlayer player){if(player==_player&&!_failed&&_visible)player.Play();}
+        void Prepared(VideoPlayer player){if(player==_player&&!_failed&&_visible&&isActiveAndEnabled&&player.isActiveAndEnabled)player.Play();}
         void FirstFrame(VideoPlayer player,long frame)
         {
             if(player!=_player||_failed)return;
@@ -101,6 +101,7 @@ namespace TumbangPreso.UI
             bool resumed=visible&&!_visible;
             _visible=visible;
             if(!visible){if(_player!=null)_player.Pause();return;}
+            if(!isActiveAndEnabled)return;
             if(resumed&&!_firstFrame)_prepareStarted=Time.realtimeSinceStartup;
             if(Settings.SettingsStore.Current.ReducedUiMotion){if(_player!=null)_player.Pause();if(_image!=null)_image.texture=_poster;return;}
             if(_player!=null&&_player.isPrepared&&!_failed){if(_firstFrame&&_image!=null)_image.texture=_target;_player.Play();}
