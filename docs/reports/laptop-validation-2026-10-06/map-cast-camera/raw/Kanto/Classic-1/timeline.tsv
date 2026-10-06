@@ -1,0 +1,30 @@
+0.000	89.980	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.480	Quiet	QuietEstablish	the street	1	0
+1.003	88.980	Quiet	QuietEstablish	the street	1	0
+1.504	88.480	Quiet	QuietEstablish	the street	1	0
+2.005	87.980	Quiet	QuietEstablish	the street	1	0
+2.506	87.480	Quiet	QuietEstablish	the street	1	0
+3.006	86.981	SlipperLanded	Objective	the can	2	0
+3.508	86.481	SlipperLanded	Objective	the can	2	0
+4.008	85.981	SlipperLanded	Objective	the can	2	0
+4.508	85.481	SlipperLanded	Objective	the can	2	0
+5.426	84.561	Quiet	QuietEstablish	the street	4	0
+5.927	84.061	Quiet	QuietEstablish	the street	4	0
+6.428	83.561	Quiet	QuietEstablish	the street	4	0
+6.928	83.121	Quiet	QuietEstablish	the street	4	0
+7.428	82.621	Tag	Defender	tag · TOTOY	5	0
+7.928	82.121	Tag	Defender	tag · TOTOY	5	0
+8.430	81.621	Tag	Defender	tag · TOTOY	5	0
+8.931	81.121	Tag	Defender	tag · TOTOY	5	0
+9.432	80.622	Downed	Recovery	down · MANG KANOR	6	0
+9.933	80.122	Downed	Recovery	down · MANG KANOR	7	0
+10.433	79.622	Downed	Recovery	down · MANG KANOR	7	0
+10.934	79.102	Downed	Recovery	down · MANG KANOR	7	0
+11.434	78.602	Downed	Recovery	down · MANG KANOR	7	0
+11.936	78.102	Retrieval	Chase	retrieval · BEBANG	8	0
+12.438	77.602	Retrieval	Chase	retrieval · BEBANG	8	0
+12.939	77.102	ThrowPrep	Objective	throw · BEBANG	9	0
+13.439	76.602	ThrowPrep	Objective	throw · BEBANG	9	0
+13.941	76.102	Quiet	QuietEstablish	the street	11	0
+14.442	75.602	Quiet	QuietEstablish	the street	11	0
+14.945	75.103	Quiet	QuietEstablish	the street	11	0

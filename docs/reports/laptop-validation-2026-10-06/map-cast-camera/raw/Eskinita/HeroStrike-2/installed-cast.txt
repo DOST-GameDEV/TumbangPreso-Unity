@@ -1,0 +1,4 @@
+0 zack IsBot=True
+1 sean IsBot=False
+2 paete IsBot=True
+3 zack IsBot=True

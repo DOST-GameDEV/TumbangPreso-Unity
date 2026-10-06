@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.500	89.500	Quiet	QuietEstablish	the street	1	0
+1.002	89.000	Quiet	QuietEstablish	the street	1	0
+1.502	88.500	Quiet	QuietEstablish	the street	1	0
+2.003	88.000	Quiet	QuietEstablish	the street	1	0
+2.503	87.500	ThrowPrep	Objective	throw · ALING NENA	2	0
+3.004	87.001	ThrowPrep	Objective	throw · ALING NENA	2	0
+3.504	86.501	ThrowPrep	Objective	throw · ALING NENA	2	0
+4.005	86.001	SlipperLanded	Objective	the can	2	0
+4.506	85.501	SlipperLanded	Objective	the can	2	0
+5.207	84.801	SlipperLanded	Objective	the can	2	0
+5.707	84.301	ThrowPrep	Objective	throw · JUN-JUN	2	0
+6.208	83.801	ThrowPrep	Objective	throw · JUN-JUN	2	0
+6.708	83.301	Quiet	QuietEstablish	the street	3	0
+7.208	82.801	Quiet	QuietEstablish	the street	3	0
+7.709	82.301	Quiet	QuietEstablish	the street	3	0
+8.214	81.781	Quiet	QuietEstablish	the street	3	0
+8.715	81.281	Quiet	QuietEstablish	the street	3	0
+9.217	80.782	Retrieval	RetrievalTwoShot	retrieval · JUN-JUN	4	0
+9.718	80.282	Retrieval	RetrievalTwoShot	retrieval · JUN-JUN	4	0
+10.227	79.782	Retrieval	RetrievalTwoShot	retrieval · JUN-JUN	4	0
+10.727	79.282	Retrieval	RetrievalTwoShot	retrieval · JUN-JUN	4	0
+11.227	78.782	Retrieval	RetrievalTwoShot	retrieval · JUN-JUN	4	0
+11.728	78.282	Retrieval	RetrievalTwoShot	retrieval · JUN-JUN	4	0
+12.229	77.782	Retrieval	Chase	retrieval · JUN-JUN	4	0
+12.731	77.322	Tag	Defender	tag · INDAY	5	0
+13.231	76.822	Tag	Defender	tag · INDAY	5	0
+13.731	76.322	Tag	Defender	tag · INDAY	5	0
+14.232	75.822	Tag	Defender	tag · INDAY	5	0
+14.733	75.322	Tag	Defender	tag · INDAY	5	0

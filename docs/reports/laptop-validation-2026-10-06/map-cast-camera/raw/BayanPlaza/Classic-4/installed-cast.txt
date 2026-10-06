@@ -1,0 +1,4 @@
+0 ate_girlie IsBot=True
+1 kuya_boy IsBot=False
+2 mang_kanor IsBot=True
+3 maring IsBot=True

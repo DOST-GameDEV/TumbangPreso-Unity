@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.500	Quiet	QuietEstablish	the street	1	0
+1.002	89.000	Quiet	QuietEstablish	the street	1	0
+1.503	88.500	Quiet	QuietEstablish	the street	1	0
+2.003	88.000	Quiet	QuietEstablish	the street	1	0
+2.505	87.500	LataHit	Objective	the can · LOLA PACING	2	0
+3.006	87.001	LataHit	Objective	the can · LOLA PACING	2	0
+3.506	86.501	LataHit	Objective	the can · LOLA PACING	2	0
+4.006	86.001	LataHit	Objective	the can · LOLA PACING	2	0
+4.507	85.501	Retrieval	Chase	retrieval · LOLA PACING	3	0
+5.416	84.641	Tag	Defender	tag · MARING	4	0
+5.916	84.141	Tag	Defender	tag · MARING	4	0
+6.416	83.641	Tag	Defender	tag · MARING	4	0
+6.917	83.141	Tag	Defender	tag · MARING	4	0
+7.418	82.641	Tag	Defender	tag · MARING	4	0
+7.919	82.141	Downed	Recovery	down · LOLA PACING	5	0
+8.420	81.641	Downed	Recovery	down · LOLA PACING	5	0
+8.922	81.141	Downed	Recovery	down · LOLA PACING	5	0
+9.423	80.642	Downed	Recovery	down · LOLA PACING	5	0
+9.924	80.142	Quiet	QuietEstablish	the street	6	0
+10.426	79.642	Quiet	QuietEstablish	the street	7	0
+10.927	79.142	Quiet	QuietEstablish	the street	7	0
+11.427	78.642	Quiet	QuietEstablish	the street	7	0
+11.927	78.142	Quiet	QuietEstablish	the street	7	0
+12.427	77.702	Tag	Defender	tag · MARING	8	0
+12.929	77.182	Tag	Defender	tag · MARING	8	0
+13.431	76.682	Tag	Defender	tag · MARING	8	0
+13.932	76.182	Tag	Defender	tag · MARING	8	0
+14.434	75.682	Tag	Defender	tag · MARING	8	0
+14.935	75.202	LataHit	Objective	the can · LOLA PACING	11	0

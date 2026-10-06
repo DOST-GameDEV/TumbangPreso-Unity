@@ -1,0 +1,30 @@
+0.000	89.980	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.480	Quiet	QuietEstablish	the street	1	0
+1.002	88.980	Quiet	QuietEstablish	the street	1	0
+1.502	88.480	Quiet	QuietEstablish	the street	1	0
+2.002	87.980	Quiet	QuietEstablish	the street	1	0
+2.502	87.480	ThrowPrep	Objective	throw · PAETE	2	0
+3.003	86.981	ThrowPrep	Objective	throw · PAETE	2	0
+3.503	86.481	ThrowPrep	Objective	throw · PAETE	2	0
+4.004	85.981	SlipperLanded	Objective	the can	2	0
+4.504	85.481	SlipperLanded	Objective	the can	2	0
+5.214	84.761	Quiet	QuietEstablish	the street	3	0
+5.715	84.261	Quiet	QuietEstablish	the street	4	0
+6.218	83.761	Quiet	QuietEstablish	the street	4	0
+6.718	83.261	Quiet	QuietEstablish	the street	4	0
+7.219	82.761	Quiet	QuietEstablish	the street	4	0
+7.720	82.261	ThrowPrep	Objective	throw · ISAGANI	5	0
+8.221	81.761	ThrowPrep	Objective	throw · ISAGANI	5	0
+8.721	81.261	ThrowPrep	Objective	throw · ISAGANI	5	0
+9.222	80.762	SlipperLanded	Objective	the can	6	0
+9.722	80.262	SlipperLanded	Objective	the can	6	0
+10.223	79.762	SlipperLanded	Objective	the can	6	0
+10.723	79.262	SlipperLanded	Objective	the can	6	0
+11.224	78.762	SlipperLanded	Objective	the can	6	0
+11.724	78.262	SlipperLanded	Objective	the can	6	0
+12.225	77.762	ThrowPrep	Objective	throw · PAETE	6	0
+12.725	77.262	ThrowPrep	Objective	throw · PAETE	6	0
+13.226	76.762	Retrieval	RetrievalTwoShot	retrieval · PAETE	7	0
+13.726	76.262	Retrieval	RetrievalTwoShot	retrieval · PAETE	7	0
+14.228	75.822	Retrieval	Chase	retrieval · PAETE	10	0
+14.728	75.322	Retrieval	Chase	retrieval · PAETE	10	0

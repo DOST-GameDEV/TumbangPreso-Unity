@@ -1,0 +1,30 @@
+0.000	89.980	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.480	Quiet	QuietEstablish	the street	1	0
+1.001	88.980	Quiet	QuietEstablish	the street	1	0
+1.503	88.480	Quiet	QuietEstablish	the street	1	0
+2.004	87.980	Quiet	QuietEstablish	the street	1	0
+2.505	87.480	ThrowPrep	Objective	throw · AMIHAN	2	0
+3.005	86.981	ThrowPrep	Objective	throw · AMIHAN	2	0
+3.505	86.481	ThrowPrep	Objective	throw · AMIHAN	2	0
+4.007	85.981	Retrieval	Chase	retrieval · RAGO	5	0
+4.508	85.481	Retrieval	Chase	retrieval · RAGO	5	0
+5.214	84.781	Quiet	QuietEstablish	the street	6	0
+5.714	84.281	Quiet	QuietEstablish	the street	7	0
+6.224	83.761	Quiet	QuietEstablish	the street	7	0
+6.724	83.261	Quiet	QuietEstablish	the street	7	0
+7.224	82.761	ThrowPrep	Objective	throw · AMIHAN	8	0
+7.725	82.261	ThrowPrep	Objective	throw · AMIHAN	8	0
+8.225	81.761	ThrowPrep	Objective	throw · AMIHAN	8	0
+8.726	81.261	SlipperLanded	Objective	the can	8	0
+9.226	80.762	SlipperLanded	Objective	the can	8	0
+9.727	80.262	SlipperLanded	Objective	the can	8	0
+10.228	79.762	Retrieval	Chase	retrieval · AMIHAN	9	0
+10.728	79.262	Retrieval	Chase	retrieval · AMIHAN	9	0
+11.228	78.762	Retrieval	RetrievalTwoShot	retrieval · RAGO	10	0
+11.729	78.262	Retrieval	RetrievalTwoShot	retrieval · RAGO	10	0
+12.229	77.762	Retrieval	RetrievalTwoShot	retrieval · RAGO	10	0
+12.729	77.262	ThrowPrep	Objective	throw · AMIHAN	11	0
+13.230	76.762	ThrowPrep	Objective	throw · AMIHAN	11	0
+13.731	76.262	Quiet	QuietEstablish	the street	13	0
+14.232	75.762	Quiet	QuietEstablish	the street	13	0
+14.732	75.262	Quiet	QuietEstablish	the street	13	0

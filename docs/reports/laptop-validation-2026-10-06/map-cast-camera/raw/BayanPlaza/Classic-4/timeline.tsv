@@ -1,0 +1,30 @@
+0.000	89.980	Quiet	QuietEstablish	finding a shot	0	0
+0.500	89.480	Quiet	QuietEstablish	the street	1	0
+1.000	88.980	Quiet	QuietEstablish	the street	1	0
+1.500	88.480	Quiet	QuietEstablish	the street	1	0
+2.001	87.980	Quiet	QuietEstablish	the street	1	0
+2.502	87.480	SlipperLanded	Objective	the can	2	0
+3.003	86.981	SlipperLanded	Objective	the can	2	0
+3.504	86.481	SlipperLanded	Objective	the can	2	0
+4.005	85.981	SlipperLanded	Objective	the can	2	0
+4.505	85.481	Quiet	QuietEstablish	the street	4	0
+5.200	84.781	Quiet	QuietEstablish	the street	4	0
+5.701	84.281	Quiet	QuietEstablish	the street	4	0
+6.202	83.841	Quiet	QuietEstablish	the street	4	0
+6.703	83.341	Quiet	QuietEstablish	the street	4	0
+7.203	82.841	Tag	Defender	tag · ATE GIRLIE	5	0
+7.704	82.341	Tag	Defender	tag · ATE GIRLIE	5	0
+8.204	81.841	Tag	Defender	tag · ATE GIRLIE	5	0
+8.704	81.341	Downed	Recovery	down · MARING	6	0
+9.205	80.842	Downed	Recovery	down · MARING	7	0
+9.706	80.342	Downed	Recovery	down · MARING	7	0
+10.206	79.842	Downed	Recovery	down · MARING	7	0
+10.707	79.342	Downed	Recovery	down · MARING	7	0
+11.207	78.842	Quiet	QuietEstablish	the street	8	0
+11.708	78.342	Quiet	QuietEstablish	the street	9	0
+12.209	77.902	Quiet	QuietEstablish	the street	9	0
+12.709	77.402	Quiet	QuietEstablish	the street	9	0
+13.210	76.902	Quiet	QuietEstablish	the street	9	0
+13.711	76.402	Tag	Defender	tag · ATE GIRLIE	10	0
+14.212	75.902	Tag	Defender	tag · ATE GIRLIE	10	0
+14.713	75.382	Tag	Defender	tag · ATE GIRLIE	10	0

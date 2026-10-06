@@ -1,0 +1,30 @@
+0.000	89.980	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.480	Quiet	QuietEstablish	the street	1	0
+1.002	88.980	Quiet	QuietEstablish	the street	1	0
+1.503	88.480	Quiet	QuietEstablish	the street	1	0
+2.003	87.980	Quiet	QuietEstablish	the street	2	0
+2.503	87.480	ThrowPrep	Objective	throw · ILYAS	3	0
+3.004	86.981	ThrowPrep	Objective	throw · ILYAS	3	0
+3.504	86.481	ThrowPrep	Objective	throw · ILYAS	3	0
+4.005	85.981	SlipperLanded	Objective	the can	3	0
+4.505	85.481	SlipperLanded	Objective	the can	3	0
+5.197	84.781	SlipperLanded	Objective	the can	3	0
+5.697	84.281	Quiet	QuietEstablish	the street	5	0
+6.198	83.781	Quiet	QuietEstablish	the street	5	0
+6.699	83.281	Quiet	QuietEstablish	the street	5	0
+7.200	82.781	Quiet	QuietEstablish	the street	5	0
+7.700	82.341	Tag	Defender	tag · YASMIN	6	0
+8.201	81.841	Tag	Defender	tag · YASMIN	6	0
+8.703	81.401	Tag	Defender	tag · YASMIN	6	0
+9.203	80.902	Tag	Defender	tag · YASMIN	6	0
+9.704	80.402	Tag	Defender	tag · YASMIN	6	0
+10.205	79.902	Tag	Defender	tag · YASMIN	6	0
+10.705	79.402	Tag	Defender	tag · YASMIN	6	0
+11.206	78.902	Tag	Defender	tag · YASMIN	6	0
+11.706	78.402	Downed	Recovery	down · ILYAS	7	0
+12.207	77.902	Downed	Recovery	down · ILYAS	7	0
+12.708	77.402	Downed	Recovery	down · ILYAS	7	0
+13.209	76.902	Downed	Recovery	down · ILYAS	7	0
+13.709	76.402	Quiet	QuietEstablish	the street	8	0
+14.210	75.902	Quiet	QuietEstablish	the street	9	0
+14.710	75.402	Quiet	QuietEstablish	the street	9	0

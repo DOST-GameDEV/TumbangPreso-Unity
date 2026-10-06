@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.500	89.500	Quiet	QuietEstablish	the street	1	0
+1.002	89.000	Quiet	QuietEstablish	the street	1	0
+1.503	88.500	Quiet	QuietEstablish	the street	1	0
+2.004	88.000	Quiet	QuietEstablish	the street	1	0
+2.505	87.480	ThrowPrep	Objective	throw · JUN-JUN	2	0
+3.005	86.981	ThrowPrep	Objective	throw · JUN-JUN	2	0
+3.505	86.481	ThrowPrep	Objective	throw · JUN-JUN	2	0
+4.008	85.981	SlipperLanded	Objective	the can	2	0
+4.509	85.481	SlipperLanded	Objective	the can	2	0
+5.411	84.581	SlipperLanded	Objective	the can	2	0
+5.912	84.081	Quiet	QuietEstablish	the street	4	0
+6.413	83.581	Quiet	QuietEstablish	the street	4	0
+6.914	83.081	Quiet	QuietEstablish	the street	4	0
+7.414	82.641	Quiet	QuietEstablish	the street	4	0
+7.915	82.141	Tag	Defender	tag · INDAY	5	0
+8.416	81.641	Tag	Defender	tag · INDAY	5	0
+8.916	81.141	Tag	Defender	tag · INDAY	5	0
+9.417	80.642	Tag	Defender	tag · INDAY	5	0
+9.917	80.142	LataHit	Objective	the can · ALING NENA	6	0
+10.419	79.642	LataHit	Objective	the can · ALING NENA	6	0
+10.919	79.142	LataHit	Objective	the can · ALING NENA	6	0
+11.420	78.642	LataHit	Objective	the can · ALING NENA	6	0
+11.923	78.142	Retrieval	Chase	retrieval · ALING NENA	7	0
+12.424	77.622	Retrieval	Chase	retrieval · ALING NENA	7	0
+12.924	77.122	Retrieval	Chase	retrieval · ALING NENA	7	0
+13.426	76.622	Retrieval	Chase	retrieval · ALING NENA	7	0
+13.927	76.122	Retrieval	Chase	retrieval · JUN-JUN	8	0
+14.429	75.622	Retrieval	Chase	retrieval · JUN-JUN	8	0
+14.929	75.123	ThrowPrep	Objective	throw · JUN-JUN	8	0

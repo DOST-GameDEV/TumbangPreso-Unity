@@ -1,0 +1,4 @@
+0 inday IsBot=True
+1 totoy IsBot=False
+2 jun_jun IsBot=True
+3 aling_nena IsBot=True

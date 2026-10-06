@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.500	Quiet	QuietEstablish	the street	1	0
+1.002	89.000	Quiet	QuietEstablish	the street	1	0
+1.503	88.500	Quiet	QuietEstablish	the street	1	0
+2.003	88.000	Quiet	QuietEstablish	the street	1	0
+2.504	87.500	ThrowPrep	Objective	throw · ISAGANI	2	0
+3.004	87.001	ThrowPrep	Objective	throw · ISAGANI	2	0
+3.505	86.501	ThrowPrep	Objective	throw · ISAGANI	2	0
+4.005	86.001	Quiet	QuietEstablish	the street	3	0
+4.505	85.501	Quiet	QuietEstablish	the street	3	0
+5.288	84.701	Quiet	QuietEstablish	the street	3	0
+5.789	84.201	Quiet	QuietEstablish	the street	3	0
+6.291	83.701	Quiet	QuietEstablish	the street	3	0
+6.792	83.201	Quiet	QuietEstablish	the street	3	0
+7.293	82.701	Quiet	QuietEstablish	the street	3	0
+7.795	82.201	Quiet	QuietEstablish	the street	3	0
+8.295	81.701	Quiet	QuietEstablish	the street	3	0
+8.796	81.201	Quiet	QuietEstablish	the street	3	0
+9.297	80.762	Quiet	QuietEstablish	the street	3	0
+9.798	80.262	Quiet	QuietEstablish	the street	3	0
+10.337	79.722	Quiet	QuietEstablish	the street	3	0
+10.839	79.222	Quiet	QuietEstablish	the street	3	0
+11.341	78.722	LataHit	Objective	the can · ISAGANI	4	0
+11.842	78.222	LataHit	Objective	the can · ISAGANI	4	0
+12.342	77.722	LataHit	Objective	the can · ISAGANI	4	0
+12.843	77.222	LataHit	Objective	the can · ISAGANI	4	0
+13.344	76.722	Downed	Recovery	down · ISAGANI	5	0
+13.844	76.202	Downed	Recovery	down · ISAGANI	5	0
+14.345	75.702	Downed	Recovery	down · ISAGANI	5	0
+14.845	75.202	ThrowPrep	Objective	throw · PAETE	6	0
