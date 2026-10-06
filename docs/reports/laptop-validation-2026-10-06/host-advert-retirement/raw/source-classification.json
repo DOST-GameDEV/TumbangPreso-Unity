@@ -1,0 +1,21 @@
+{
+  "original": {
+    "sourceCommit": "3216e1b0ac8dc3acc027f0fdbd32c2cf1966e5dd",
+    "baselineManifest": "../circle-native-integration/raw/qualified-source.json",
+    "inputCount": 21186,
+    "unchangedFiles": 21185,
+    "changesFromBaseline": {
+      "Assets/TumbangPreso/Tests/PlayMode/NetShutdownOriginTests.cs": "1879c2fc9905fafd69ea62f4fee2ba4bc7abb00a291ad4723a5bb1b1eca44613"
+    }
+  },
+  "candidate": {
+    "sourceCommit": "3216e1b0ac8dc3acc027f0fdbd32c2cf1966e5dd",
+    "baselineManifest": "../circle-native-integration/raw/qualified-source.json",
+    "inputCount": 21186,
+    "unchangedFiles": 21184,
+    "changesFromBaseline": {
+      "Assets/TumbangPreso/Runtime/Net/NetSession.cs": "588e8c1591f3b5a33d3ffe668db193d725cb2045972e6be350375c257c872dbd",
+      "Assets/TumbangPreso/Tests/PlayMode/NetShutdownOriginTests.cs": "1879c2fc9905fafd69ea62f4fee2ba4bc7abb00a291ad4723a5bb1b1eca44613"
+    }
+  }
+}

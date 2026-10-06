@@ -1,0 +1,16 @@
+{
+  "raw/candidate/classified-result.json": "2b7501613ea9e0c68ee8f09693d0a2f79d2b7df81b670c4af3b688f99f401ab7",
+  "raw/candidate/launch.json": "af67dc4dd7a9761456d4bd32be70d1130c8c0a027b16c0568569e85727354c6b",
+  "raw/candidate/profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+  "raw/candidate/tests.xml": "92916fb88563828362a06764dc37b39589df2b53cc567f1ba8e8e1c8dbdded23",
+  "raw/candidate/unity.log": "14cb389a822ff9ef8216ad7966af2f0c21bd5253b9d5d3b57c2a344b443a855f",
+  "raw/NetSession-candidate.cs": "588e8c1591f3b5a33d3ffe668db193d725cb2045972e6be350375c257c872dbd",
+  "raw/NetSession-original.cs": "45040f56cac1b1eb3839569996cb98a40b83f3f46034706b30d0e5f200b760ae",
+  "raw/NetShutdownOriginTests.cs": "1879c2fc9905fafd69ea62f4fee2ba4bc7abb00a291ad4723a5bb1b1eca44613",
+  "raw/original/classified-result.json": "c1f7514f5796eb837f3c89da13c68e4934f2c0ea9fef6b41ed671fc171a79247",
+  "raw/original/launch.json": "7ea7f47516c68bfda4718e3204a4b7b788fff39401325df758a4ddeee3ab5e9e",
+  "raw/original/profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+  "raw/original/tests.xml": "54cf810daa97259894ba47e8f244bd6f37af30a902bd2bcb640c2497144114ce",
+  "raw/original/unity.log": "fc1fe3a2e2369100cc926af1e8931843bdcadc8c83514bb4cc00288f15cf05ad",
+  "raw/source-classification.json": "b0690e7697fa47426e828eb3187e9df402cb2e4dfbd3dd2053027314030cdb0a"
+}
