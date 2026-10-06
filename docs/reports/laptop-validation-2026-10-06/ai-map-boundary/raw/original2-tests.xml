@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 07:19:32Z" end-time="2026-10-06 07:19:32Z" duration="0.1947924">
+  <test-suite type="TestSuite" id="3322" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1891" result="Failed" site="Child" start-time="2026-10-06 07:19:32Z" end-time="2026-10-06 07:19:32Z" duration="0.194792" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3314" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1891" result="Failed" site="Child" start-time="2026-10-06 07:19:32Z" end-time="2026-10-06 07:19:32Z" duration="0.188405" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="49440" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3315" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1891" result="Failed" site="Child" start-time="2026-10-06 07:19:32Z" end-time="2026-10-06 07:19:32Z" duration="0.187109" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3318" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1889" result="Failed" site="Child" start-time="2026-10-06 07:19:32Z" end-time="2026-10-06 07:19:32Z" duration="0.186446" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1045" name="AiMapBoundaryTargetTests" fullname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests" classname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-06 07:19:32Z" end-time="2026-10-06 07:19:32Z" duration="0.161693" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1049" name="ChaseRanksActualEscapeDepthAtEqualObservedDistance" fullname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests.ChaseRanksActualEscapeDepthAtEqualObservedDistance" classname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-06 07:19:32Z" end-time="2026-10-06 07:19:32Z" duration="0.158717" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1046" name="ChaseRanksActualEscapeDepthAtEqualObservedDistance(True,7.0f)" fullname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests.ChaseRanksActualEscapeDepthAtEqualObservedDistance(True,7.0f)" methodname="ChaseRanksActualEscapeDepthAtEqualObservedDistance" classname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests" runstate="Runnable" seed="821724483" result="Failed" start-time="2026-10-06 07:19:32Z" end-time="2026-10-06 07:19:32Z" duration="0.084946" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  At equal perceived chase distance, prefer the rival farther from this map's actual safe boundary.
+  Expected: same as <Boundary target seat 2 (TumbangPreso.CharacterMotor)>
+  But was:  <Boundary target seat 1 (TumbangPreso.CharacterMotor)>
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.AiMapBoundaryTargetTests.ChaseRanksActualEscapeDepthAtEqualObservedDistance (System.Boolean roundBox, System.Single radius) [0x0027a] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\AiMapBoundaryTargetTests.cs:55
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1047" name="ChaseRanksActualEscapeDepthAtEqualObservedDistance(True,9.0f)" fullname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests.ChaseRanksActualEscapeDepthAtEqualObservedDistance(True,9.0f)" methodname="ChaseRanksActualEscapeDepthAtEqualObservedDistance" classname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests" runstate="Runnable" seed="991593904" result="Failed" start-time="2026-10-06 07:19:32Z" end-time="2026-10-06 07:19:32Z" duration="0.031847" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  At equal perceived chase distance, prefer the rival farther from this map's actual safe boundary.
+  Expected: same as <Boundary target seat 2 (TumbangPreso.CharacterMotor)>
+  But was:  <Boundary target seat 1 (TumbangPreso.CharacterMotor)>
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.AiMapBoundaryTargetTests.ChaseRanksActualEscapeDepthAtEqualObservedDistance (System.Boolean roundBox, System.Single radius) [0x0027a] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\AiMapBoundaryTargetTests.cs:55
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1048" name="ChaseRanksActualEscapeDepthAtEqualObservedDistance(False,7.0f)" fullname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests.ChaseRanksActualEscapeDepthAtEqualObservedDistance(False,7.0f)" methodname="ChaseRanksActualEscapeDepthAtEqualObservedDistance" classname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests" runstate="Runnable" seed="950781143" result="Passed" start-time="2026-10-06 07:19:32Z" end-time="2026-10-06 07:19:32Z" duration="0.033559" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
