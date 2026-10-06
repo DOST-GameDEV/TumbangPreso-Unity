@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Explicit bot policy and the full automatic arrival path: [native preview/confirmation/start and no-bots admission control](reports/arrival-policy-2026-10-07/README.md).
+
 Grounded tags through adopted elbow rigs: [real contact, footwear and recovery checks](reports/tag-rig-contact-2026-10-07/README.md).
 
 Settled all-map preview recordings: [lighting-flash correction, source matches, native loops and remaining seams](reports/settled-map-previews-2026-10-07/README.md).
