@@ -1,3 +1,14 @@
+## Current Root recovery threat unit terminal
+
+Original22896/85465 two recovery-priority causesFAIL/twocontrolsPASS; candidate
+21672/70223 allfourPASS. Ownshoe recovery candidate andheldcommitment nowrequire
+actingdefender, consistentwithordinarychase; live-threat retrievalpriority intact.
+Both21162inputs/216deltas/prefs/Quality/seed restored. NoRootnativejobs.
+Next publish/verify/cleanup then current spectator UI/operator acceptance or exact
+Arena actor/pose cause, while laptop eventgeometry staysfrozenbd6. NoDirector/
+hero/wirechange. Footprint482ce publishedbd6; previouspitframe remainsunclosed.
+Keep originalfailure evidence and all newer source identities distinct.
+
 ## Current Root ultimate shot choice terminal
 
 Original23996/25006 threecourt-effect choicesFAIL/floodPASS, Overclockwrongclose

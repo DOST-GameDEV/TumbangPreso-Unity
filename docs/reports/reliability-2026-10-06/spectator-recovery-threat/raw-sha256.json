@@ -1,0 +1,11 @@
+{
+  "raw/fixture.cs": "0222dfa1c127ff757a49ff98ecb0f361a8531667b43d441dca4b14fa4cf9cc88",
+  "raw/fixture.cs.meta": "052e2f5a8f55e7846f6a8a61c410f542be673e664be9e839a33f46d1132b6a97",
+  "raw/Interest-original.cs": "a65cd5a5ef1022cf6761507681c5c90f1768cfecb8ed756adf482e03974101f5",
+  "raw/candidate-native/classification.json": "2cd1f7dbabcb2a08abd928ab2102e2d185d2dcd15bc816409d61a2136941fc0e",
+  "raw/candidate-native/launch.json": "aac7ceb9eb669ed394e4424db773b9ac447fd7adf4be2995c07d3acff287d887",
+  "raw/candidate-native/results.xml": "c50da67fc6fb0471ac07af40c3a93eb766a8bd8fd42320704b7854f32fc88f4e",
+  "raw/original-native/classification.json": "2cd1f7dbabcb2a08abd928ab2102e2d185d2dcd15bc816409d61a2136941fc0e",
+  "raw/original-native/launch.json": "4311bdf0d003aa930590ffc088d4ee7a26897dbaee97a7fc46480f7a0fb414b4",
+  "raw/original-native/results.xml": "cb5e54d195b7b747230732cc0c774167b4e3099d827a59de64dddd4fc398539d"
+}

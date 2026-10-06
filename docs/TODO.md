@@ -39,6 +39,10 @@
   ultimates without circular telegraphs. Three native causes reproduce; final5
   cases pass with Baha/Overclock choices preserved. Full framing stays open.
   [Evidence](reports/reliability-2026-10-06/spectator-ultimate-footprint/README.md).
+- [x] Retire own-slipper recovery selection and commitment when the defender
+  cannot act. Original2 causes fail/two controls pass; candidate4 native passes
+  preserve live-defender priority and completed pickup retirement.
+  [Evidence](reports/reliability-2026-10-06/spectator-recovery-threat/README.md).
 - [ ] Plan and validate cinematic coverage while the match is happening for every
   individual character and map, including Classic/Hero Strike and Arena as a
   particular priority. Review subject selection, ability/contact timing, framing,

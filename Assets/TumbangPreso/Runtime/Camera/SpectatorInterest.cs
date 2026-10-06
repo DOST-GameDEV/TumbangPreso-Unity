@@ -558,7 +558,8 @@ namespace TumbangPreso.CameraSystem
                     // consequence, never drag the broadcast camera to that teleport.
                     if(interest.Main.IsStunned||interest.Main.IsTripped)return false;
                     if(interest.RetrievalShoe!=null)
-                        return !interest.Main.HoldingSlipper&&interest.RetrievalShoe.State==SlipperState.Loose
+                        return interest.Secondary!=null&&interest.Secondary.CanAct()
+                            &&!interest.Main.HoldingSlipper&&interest.RetrievalShoe.State==SlipperState.Loose
                             &&interest.RetrievalShoe.OwnerSlot==interest.Main.PlayerSlot
                             &&Flat(interest.Main.transform.position,interest.RetrievalShoe.transform.position)<7;
                     if(round.Lata==null||!round.Lata.IsUpright||interest.Secondary==null||!interest.Secondary.CanAct())return false;
@@ -649,7 +650,7 @@ namespace TumbangPreso.CameraSystem
             // Show a real own-shoe recovery near the taya's reset. Can restore
             // protection prevents another knockdown, not a tag on a shoe holder;
             // legal chases above still take priority during that protection.
-            if(round.Lata!=null&&(!round.Lata.IsUpright||round.Lata.IsProtected)&&taya!=null
+            if(round.Lata!=null&&(!round.Lata.IsUpright||round.Lata.IsProtected)&&taya!=null&&taya.CanAct()
                 &&Flat(taya.transform.position,LataPoint(round))<=NearLata&&_slippers!=null)
             {
                 Slipper nearest=null;CharacterMotor retriever=null;float gap=6;
