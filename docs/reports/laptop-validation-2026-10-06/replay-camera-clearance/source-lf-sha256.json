@@ -1,0 +1,9 @@
+{
+  "Assets/TumbangPreso/Runtime/Camera/RecordedWorldView.cs": "eb573b4af4ae0fb22ff1871036dd80a9f809f0a534a2b05f18ed66fb1df37710",
+  "Assets/TumbangPreso/Tests/ReplayCameraClearanceTests.cs": "510c00cdf9cb314e986478ed4eefd372d7cb4f7f9cea899193a5930c049e3df4",
+  "Assets/TumbangPreso/Tests/ReplayCameraClearanceTests.cs.meta": "e03d47bb2db883c1397ea52f833bab7b3333427785aa6177c254cecd3db5aef5",
+  "Assets/TumbangPreso/Tests/PlayMode/RecordedWorldOwnerSpaceTests.cs": "cad01a44ddf3973f0e3dc58e431fff244534780ef9ba3eff3d772639754409ae",
+  "Assets/TumbangPreso/Tests/PlayMode/RecordedWorldOwnerSpaceTests.cs.meta": "cc816b022acf6e45f77195ccfc73732713a7267a0719876c95385ca8f0928458",
+  "Assets/TumbangPreso/Tests/PlayMode/ReplayVisibilityRecoveryTests.cs": "13a4049185aaf611f2c2c628dc29ba5fb63b9de9525a80c4ee3242b6c8129bc9",
+  "Assets/TumbangPreso/Tests/PlayMode/ReplayVisibilityRecoveryTests.cs.meta": "85e2edc65300a895e0e5e89ecfd9c8058c0b3afae6ebb8015a46eaee5e86286a"
+}

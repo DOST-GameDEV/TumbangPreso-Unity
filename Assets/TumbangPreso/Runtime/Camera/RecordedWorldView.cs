@@ -104,17 +104,20 @@ namespace TumbangPreso.CameraSystem
                 Vector3 centre=(a+b)*.5f+Vector3.up*.6f;
                 float distance=Mathf.Clamp(Vector3.Distance(a,b)*1.05f+4,5,17);
                 Vector3 side=Vector3.Cross((b-a).normalized,Vector3.up);if(side.sqrMagnitude<.1f)side=Vector3.right;
+                int width=Mathf.Clamp(Screen.width,960,1920),height=Mathf.Max(540,Mathf.RoundToInt(width*Screen.height/(float)Mathf.Max(1,Screen.width)));
+                float aspect=Mathf.Max(_camera.aspect,width/(float)height);
+                float tangent=Mathf.Tan(_camera.fieldOfView*.5f*Mathf.Deg2Rad);
+                float lensRadius=_camera.nearClipPlane*Mathf.Sqrt(1+tangent*tangent*(1+aspect*aspect));
                 // A stable broad camera preserves the whole actual throw/chase.
                 Vector3 eye=default;bool clear=false;
                 for(int shot=0;shot<8;shot++)
                 {
                     eye=centre+(Quaternion.AngleAxis(shot*45,Vector3.up)*side)*distance+Vector3.up*(distance*.6f);
-                    if(Clear(centre,eye)){clear=true;break;}
+                    if(Clear(centre,eye,lensRadius)){clear=true;break;}
                 }
                 if(!clear){UnavailableReason="No clear replay angle";return;}
                 _camera.transform.position=eye;_camera.transform.LookAt(centre);
-                int width=Mathf.Clamp(Screen.width,960,1920),height=Mathf.RoundToInt(width*Screen.height/(float)Mathf.Max(1,Screen.width));
-                _target=new RenderTexture(width,Mathf.Max(540,height),24,RenderTextureFormat.ARGB32){name="RetainedMatchFrame"};_target.Create();_camera.targetTexture=_target;
+                _target=new RenderTexture(width,height,24,RenderTextureFormat.ARGB32){name="RetainedMatchFrame"};_target.Create();_camera.targetTexture=_target;
                 _canvas=OwnerUiLayout.Canvas(owner,"CanonicalReplayCanvas",240);
                 var input=_canvas.GetComponent<InputLayer.ScreenFocus>();if(input!=null)input.enabled=false;
                 var picture=OwnerUiLayout.Rect(_canvas.transform,"RecordedWorldFrame").gameObject.AddComponent<RawImage>();
@@ -170,12 +173,17 @@ namespace TumbangPreso.CameraSystem
             foreach(var shoe in Object.FindObjectsByType<Slipper>(FindObjectsInactive.Include))if(shoe.SeatOfOrigin==track.Seat)return MatchReplayArchive.PropModel(shoe.gameObject);
             return null;
         }
-        private static bool Clear(Vector3 centre,Vector3 eye)
+        private static bool Clear(Vector3 centre,Vector3 eye,float lensRadius)
         {
+            // A clear central ray can still leave a near-plane corner inside scenery.
+            // Enclose the lens plane conservatively before accepting this replay angle.
+            foreach(var collider in Physics.OverlapSphere(eye,lensRadius,~0,QueryTriggerInteraction.Ignore))
+                if(IsReplayScenery(collider))return false;
             foreach(var hit in Physics.RaycastAll(centre,(eye-centre).normalized,Vector3.Distance(centre,eye),~0,QueryTriggerInteraction.Ignore))
-                if(hit.collider.GetComponentInParent<CharacterMotor>()==null&&hit.collider.GetComponentInParent<Slipper>()==null&&hit.collider.GetComponentInParent<Lata>()==null)return false;
+                if(IsReplayScenery(hit.collider))return false;
             return true;
         }
+        private static bool IsReplayScenery(Collider collider)=>collider.GetComponentInParent<CharacterMotor>()==null&&collider.GetComponentInParent<Slipper>()==null&&collider.GetComponentInParent<Lata>()==null;
         public void Draw(float time,bool audible=true)
         {
             if(!Ready)return;

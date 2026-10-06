@@ -1,0 +1,28 @@
+{
+  "pid": 38780,
+  "source": "082146af4eb68679053dd53733cac4df9c05e061",
+  "kind": "integration",
+  "out": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\replay-camera-clearance-integration1-direct1006",
+  "command": [
+    "C:\\Program Files\\Unity\\Hub\\Editor\\6000.5.8f1\\Editor\\Unity.exe",
+    "-projectPath",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a",
+    "-batchmode",
+    "-force-d3d11",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.RecordedWorldOwnerSpaceTests;TumbangPreso.PlayTests.ReplayVisibilityRecoveryTests",
+    "-testResults",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\replay-camera-clearance-integration1-direct1006\\tests.xml",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\replay-camera-clearance-integration1-direct1006\\unity.log",
+    "-tp-profile",
+    "validation-qa-a-be075dcdfa07",
+    "-job-worker-count",
+    "1",
+    "-gc-helper-count",
+    "1"
+  ]
+}
