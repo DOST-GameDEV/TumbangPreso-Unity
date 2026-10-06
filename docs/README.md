@@ -2,6 +2,8 @@
 
 Grounded tags through adopted elbow rigs: [real contact, footwear and recovery checks](reports/tag-rig-contact-2026-10-07/README.md).
 
+Settled all-map preview recordings: [lighting-flash correction, source matches, native loops and remaining seams](reports/settled-map-previews-2026-10-07/README.md).
+
 Results court preview before confirmation: [native focus, seat identity, cancellation and paused playback checks](reports/result-court-preview-2026-10-07/README.md).
 
 Recorded preview interruption recovery and regeneration: [native failures, source receipts and normal vote deadline](reports/map-preview-lifetime-2026-10-07/README.md), [map-maker recording method](MAP_PREVIEW_RECORDING.md).

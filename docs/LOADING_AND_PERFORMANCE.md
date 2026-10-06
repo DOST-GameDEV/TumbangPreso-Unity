@@ -24,6 +24,9 @@ recovery and original captured-source receipts against the current integration.
 The [recording method](MAP_PREVIEW_RECORDING.md) regenerates true1080p footage
 without retaining the previous capture's live scene. [Exact evidence and limits](reports/map-preview-lifetime-2026-10-07/README.md).
 Packaged performance, loop seams, portable codecs and actual peers remain open.
+Fresh all-map recordings now wait for the actual world-look ground update before
+frame0, correcting Eskinita's dark poster/loop flash while retaining capture
+quality. [Native source/decode/loop checks and remaining traffic seam](reports/settled-map-previews-2026-10-07/README.md).
 
 Arena map selection uses recorded output of the existing preview camera; the live
 lobby remains a real scene. Login warms map poster/clip metadata and only the

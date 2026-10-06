@@ -26,6 +26,8 @@ namespace TumbangPreso.EditorTools
             "Assets/TumbangPreso/Runtime/Visual/WorldOutline.cs",
             "Assets/TumbangPreso/Runtime/Visual/ColourGrade.cs",
             "Assets/TumbangPreso/Runtime/Visual/MapCameraRange.cs"
+            ,"Assets/TumbangPreso/Runtime/Visual/WorldCueProfile.cs"
+            ,"Assets/TumbangPreso/Runtime/Settings/LightingStyles.cs"
         };
         public static string SourceFingerprint(string map)
         {
@@ -46,8 +48,9 @@ namespace TumbangPreso.EditorTools
             foreach(string resource in new[]{"Map/JumpPad/jump_pad","Map/JumpPad/jump_pad_paint"})
                 AddResource(files,resource);
             if(map==SceneFlow.Arena)AddResource(files,"UI/brand/tump_logo");
+            AddResource(files,"WorldCueProfile");AddResource(files,"WorldLookProfile");
             foreach(string setting in new[]{"ProjectSettings/GraphicsSettings.asset","ProjectSettings/QualitySettings.asset"})if(File.Exists(setting))files.Add(setting);
-            var builder=new StringBuilder("1920x1080;30fps;780frames;HDR;MSAA4;camera-sway\n");
+            var builder=new StringBuilder("1920x1080;30fps;780frames;HDR;MSAA4;camera-sway;settled-ground\n");
             foreach(string path in files.ToArray())if(File.Exists(path+".meta"))files.Add(path+".meta");
             foreach(string path in files)
             {

@@ -54,6 +54,12 @@ namespace TumbangPreso.PlayTests
     Assert.IsTrue(media.HasFirstFrame,map+" failed to decode");
     Assert.IsFalse(UnityEngine.SceneManagement.SceneManager.GetSceneByName(map).isLoaded,map+" unnecessarily loaded live");
     var player=root.GetComponent<VideoPlayer>();Assert.AreEqual(1920,player.clip.width);Assert.AreEqual(1080,player.clip.height);
+    Assert.AreEqual(780UL,player.clip.frameCount);Assert.That(player.clip.frameRate,Is.EqualTo(30).Within(.01));
+    bool looped=false;VideoPlayer.EventHandler loop=p=>looped=true;player.loopPointReached+=loop;
+    player.time=player.clip.length-.3;until=Time.realtimeSinceStartup+8;
+    while(!looped&&Time.realtimeSinceStartup<until)yield return null;
+    player.loopPointReached-=loop;Assert.IsTrue(looped,map+" failed to loop after seeking its final frames");
+    Assert.IsNotNull(root.GetComponent<RawImage>().texture);
     media.Stop();yield return null;Assert.IsNull(root.GetComponent<VideoPlayer>());
    }
   }
