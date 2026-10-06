@@ -1,0 +1,321 @@
+{
+  "natural": {
+    "sourceCommit": "bd6d4551ae127300cfcc17945ccbedc29da18a90",
+    "qualifiedManifestSha256": "6e200d43a9949cafaeb26f5ef17c7b262ce686185a9d4de640a942c332b1790f",
+    "fixtureSha256": "ed5f33fb558ffd8f37c57f339e191e3f85a2a71e0c31ed0f4a3c233fed6ba8c0",
+    "profile": "validation-qa-a-be075dcdfa07",
+    "generatedDeltaCount": 279,
+    "result": {
+      "pid": 47284,
+      "terminal": true,
+      "exitCode": 2,
+      "passed": 0,
+      "failed": 1,
+      "inputCount": 21162,
+      "allInputsRestored": true,
+      "existingPrefsRestored": 13
+    }
+  },
+  "corrected": {
+    "sourceCommit": "e3364a2c0cff26626e1c4113f0077ba098cfe8a9",
+    "qualifiedManifestSha256": "56d62050f2c1a6f1233dc3dbfa434c8cdf7823280442bda2ee5b7adc8b98a52b",
+    "fixtureSha256": "3ba2a52b98d38b67f468653614a2d676bfa68e4df58da307196bbd053e347d1f",
+    "profile": "validation-qa-a-be075dcdfa07",
+    "generatedDeltaCount": 279,
+    "result": {
+      "pid": 49728,
+      "terminal": true,
+      "exitCode": 0,
+      "passed": 1,
+      "failed": 0,
+      "inputCount": 21164,
+      "allInputsRestored": true,
+      "existingPrefsRestored": 13
+    }
+  },
+  "observations": {
+    "stop": {
+      "round": 2,
+      "elapsed": 185.379,
+      "presentations": 2
+    },
+    "wanted": {
+      "yasmin": true,
+      "basilio": true
+    },
+    "presentationRows": [
+      [
+        "92.231",
+        "1",
+        "0",
+        "cheska",
+        "ABSOLUTE ZERO",
+        "Tag",
+        "False"
+      ],
+      [
+        "177.377",
+        "2",
+        "1",
+        "dante",
+        "CONTINENTAL DRIFT",
+        "Tag",
+        "False"
+      ]
+    ],
+    "wideTimelineRows": [
+      [
+        "92.365",
+        "1",
+        "1.603",
+        "Ultimate",
+        "UltimateWide",
+        "ultimate \u00b7 YASMIN",
+        "41",
+        "9"
+      ],
+      [
+        "92.866",
+        "1",
+        "1.103",
+        "Ultimate",
+        "UltimateWide",
+        "ultimate \u00b7 YASMIN",
+        "41",
+        "9"
+      ],
+      [
+        "93.368",
+        "1",
+        "0.583",
+        "Ultimate",
+        "UltimateWide",
+        "ultimate \u00b7 YASMIN",
+        "41",
+        "9"
+      ],
+      [
+        "93.868",
+        "1",
+        "0.083",
+        "Ultimate",
+        "UltimateWide",
+        "ultimate \u00b7 YASMIN",
+        "41",
+        "9"
+      ],
+      [
+        "94.369",
+        "1",
+        "0.000",
+        "Ultimate",
+        "UltimateWide",
+        "ultimate \u00b7 YASMIN",
+        "41",
+        "9"
+      ],
+      [
+        "94.869",
+        "1",
+        "0.000",
+        "Ultimate",
+        "UltimateWide",
+        "ultimate \u00b7 YASMIN",
+        "41",
+        "9"
+      ],
+      [
+        "95.370",
+        "1",
+        "0.000",
+        "Ultimate",
+        "UltimateWide",
+        "ultimate \u00b7 YASMIN",
+        "41",
+        "9"
+      ],
+      [
+        "95.871",
+        "1",
+        "0.000",
+        "Ultimate",
+        "UltimateWide",
+        "ultimate \u00b7 YASMIN",
+        "41",
+        "9"
+      ],
+      [
+        "96.371",
+        "1",
+        "0.000",
+        "Ultimate",
+        "UltimateWide",
+        "ultimate \u00b7 YASMIN",
+        "41",
+        "9"
+      ],
+      [
+        "96.872",
+        "1",
+        "0.000",
+        "Ultimate",
+        "UltimateWide",
+        "ultimate \u00b7 YASMIN",
+        "41",
+        "9"
+      ],
+      [
+        "97.372",
+        "1",
+        "0.000",
+        "Ultimate",
+        "UltimateWide",
+        "ultimate \u00b7 YASMIN",
+        "41",
+        "9"
+      ],
+      [
+        "97.873",
+        "1",
+        "0.000",
+        "Ultimate",
+        "UltimateWide",
+        "ultimate \u00b7 YASMIN",
+        "41",
+        "9"
+      ],
+      [
+        "98.374",
+        "1",
+        "0.000",
+        "Ultimate",
+        "UltimateWide",
+        "ultimate \u00b7 YASMIN",
+        "41",
+        "9"
+      ],
+      [
+        "98.875",
+        "1",
+        "0.000",
+        "Ultimate",
+        "UltimateWide",
+        "ultimate \u00b7 YASMIN",
+        "41",
+        "9"
+      ],
+      [
+        "99.375",
+        "1",
+        "0.000",
+        "Ultimate",
+        "UltimateWide",
+        "ultimate \u00b7 YASMIN",
+        "41",
+        "9"
+      ],
+      [
+        "99.876",
+        "1",
+        "0.000",
+        "Ultimate",
+        "UltimateWide",
+        "ultimate \u00b7 YASMIN",
+        "41",
+        "9"
+      ],
+      [
+        "100.376",
+        "1",
+        "0.000",
+        "Ultimate",
+        "UltimateWide",
+        "ultimate \u00b7 YASMIN",
+        "41",
+        "9"
+      ],
+      [
+        "100.877",
+        "1",
+        "0.000",
+        "Ultimate",
+        "UltimateWide",
+        "ultimate \u00b7 YASMIN",
+        "41",
+        "9"
+      ],
+      [
+        "101.378",
+        "1",
+        "0.000",
+        "Ultimate",
+        "UltimateWide",
+        "ultimate \u00b7 YASMIN",
+        "41",
+        "9"
+      ],
+      [
+        "101.880",
+        "1",
+        "0.000",
+        "Ultimate",
+        "UltimateWide",
+        "ultimate \u00b7 YASMIN",
+        "41",
+        "9"
+      ],
+      [
+        "178.352",
+        "2",
+        "18.123",
+        "Ultimate",
+        "UltimateWide",
+        "ultimate \u00b7 OWNER UPDATED",
+        "73",
+        "9"
+      ],
+      [
+        "178.854",
+        "2",
+        "17.623",
+        "Ultimate",
+        "UltimateWide",
+        "ultimate \u00b7 OWNER UPDATED",
+        "73",
+        "9"
+      ],
+      [
+        "179.356",
+        "2",
+        "17.123",
+        "Ultimate",
+        "UltimateWide",
+        "ultimate \u00b7 OWNER UPDATED",
+        "73",
+        "9"
+      ],
+      [
+        "179.856",
+        "2",
+        "16.623",
+        "Ultimate",
+        "UltimateWide",
+        "ultimate \u00b7 OWNER UPDATED",
+        "73",
+        "9"
+      ],
+      [
+        "180.356",
+        "2",
+        "16.123",
+        "Ultimate",
+        "UltimateWide",
+        "ultimate \u00b7 OWNER UPDATED",
+        "73",
+        "9"
+      ]
+    ],
+    "originalPngCount": 9,
+    "correctedPngCount": 12
+  }
+}
