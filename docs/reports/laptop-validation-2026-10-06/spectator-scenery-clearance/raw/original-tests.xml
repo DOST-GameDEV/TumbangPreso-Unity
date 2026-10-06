@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 01:45:44Z" end-time="2026-10-06 01:45:44Z" duration="0.1151704">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1403" result="Failed" site="Child" start-time="2026-10-06 01:45:44Z" end-time="2026-10-06 01:45:44Z" duration="0.115170" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2730" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1403" result="Failed" site="Child" start-time="2026-10-06 01:45:44Z" end-time="2026-10-06 01:45:44Z" duration="0.097054" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="48608" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2731" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1403" result="Failed" site="Child" start-time="2026-10-06 01:45:44Z" end-time="2026-10-06 01:45:44Z" duration="0.085767" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2732" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1403" result="Failed" site="Child" start-time="2026-10-06 01:45:44Z" end-time="2026-10-06 01:45:44Z" duration="0.074696" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2585" name="SpectatorSceneryClearanceTests" fullname="TumbangPreso.Tests.SpectatorSceneryClearanceTests" classname="TumbangPreso.Tests.SpectatorSceneryClearanceTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-06 01:45:44Z" end-time="2026-10-06 01:45:44Z" duration="0.056504" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2587" name="AnOrdinarySceneryOverlapRejectsTheEye" fullname="TumbangPreso.Tests.SpectatorSceneryClearanceTests.AnOrdinarySceneryOverlapRejectsTheEye" methodname="AnOrdinarySceneryOverlapRejectsTheEye" classname="TumbangPreso.Tests.SpectatorSceneryClearanceTests" runstate="Runnable" seed="1521858300" result="Passed" start-time="2026-10-06 01:45:44Z" end-time="2026-10-06 01:45:44Z" duration="0.026220" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2586" name="ClearSpaceWithManyIgnoredCollidersRemainsAvailable" fullname="TumbangPreso.Tests.SpectatorSceneryClearanceTests.ClearSpaceWithManyIgnoredCollidersRemainsAvailable" methodname="ClearSpaceWithManyIgnoredCollidersRemainsAvailable" classname="TumbangPreso.Tests.SpectatorSceneryClearanceTests" runstate="Runnable" seed="757406977" result="Passed" start-time="2026-10-06 01:45:44Z" end-time="2026-10-06 01:45:44Z" duration="0.004209" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2588" name="SceneryCannotDisappearBehindASaturatedIgnoredColliderQuery" fullname="TumbangPreso.Tests.SpectatorSceneryClearanceTests.SceneryCannotDisappearBehindASaturatedIgnoredColliderQuery" methodname="SceneryCannotDisappearBehindASaturatedIgnoredColliderQuery" classname="TumbangPreso.Tests.SpectatorSceneryClearanceTests" runstate="Runnable" seed="968941116" result="Failed" start-time="2026-10-06 01:45:44Z" end-time="2026-10-06 01:45:44Z" duration="0.014074" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Scenery was missed with insertion index 8
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.SpectatorSceneryClearanceTests.SceneryCannotDisappearBehindASaturatedIgnoredColliderQuery () [0x0009c] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\SpectatorSceneryClearanceTests.cs:77
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

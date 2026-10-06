@@ -850,14 +850,22 @@ namespace TumbangPreso.CameraSystem
         // camera that cut every time somebody walked past would cut constantly.
         // -------------------------------------------------------------------
 
-        private static readonly Collider[] Overlap = new Collider[8];
+        private static Collider[] Overlap = new Collider[8];
 
         private bool ValidatePose(Vector3 position, Vector3 focus,
                                   bool requireSecondary = true)
         {
             // Inside a wall, a building, a pillar, a vehicle or a prop?
-            int hits = Physics.OverlapSphereNonAlloc(position, ClearanceRadius, Overlap, ~0,
+            int hits;
+            while (true)
+            {
+                hits = Physics.OverlapSphereNonAlloc(position, ClearanceRadius, Overlap, ~0,
                                                      QueryTriggerInteraction.Ignore);
+                // A full buffer may omit scenery behind ignored body/can/shoe colliders.
+                // Complete the query before deciding that this pose is clear.
+                if (hits < Overlap.Length) break;
+                System.Array.Resize(ref Overlap, Overlap.Length * 2);
+            }
 
             for (int i = 0; i < hits; i++)
             {
