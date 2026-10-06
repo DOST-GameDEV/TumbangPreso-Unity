@@ -818,6 +818,8 @@ namespace TumbangPreso.CameraSystem
                 // carried item and viewmodel borrowed by the previous POV cut.
                 StepPovArms(delta);
                 Vector2 dir = _move != null ? _move.ReadValue<Vector2>() : Vector2.zero;
+                if (InputLayer.TouchInput.Active && InputLayer.TouchInput.Move.sqrMagnitude > .0001f)
+                    dir = InputLayer.TouchInput.Move;
                 Vector3 move = transform.forward * dir.y + transform.right * dir.x;
 
                 if (_jump != null && _jump.IsPressed()) move += Vector3.up;
@@ -866,6 +868,11 @@ namespace TumbangPreso.CameraSystem
         private void StepLook()
         {
             Vector2 delta = SpectatorStickLook() * (150.0f * Time.unscaledDeltaTime);
+            if (InputLayer.TouchInput.Active)
+            {
+                delta += InputLayer.TouchInput.LookDelta;
+                InputLayer.TouchInput.LookDelta = Vector2.zero;
+            }
             // Only relative mouse look needs a locked cursor. The existing Update
             // overlay gate keeps pad look out of menus, too.
             if (Cursor.lockState == CursorLockMode.Locked)
@@ -2339,6 +2346,8 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private bool ManualTakeover()
         {
+            if (InputLayer.TouchInput.Active && (InputLayer.TouchInput.Move.sqrMagnitude > .0001f
+                || InputLayer.TouchInput.LookDelta.sqrMagnitude > .0001f)) return true;
             if (SpectatorStickLook().sqrMagnitude > 0) return true;
             if (Cursor.lockState == CursorLockMode.Locked)
             {

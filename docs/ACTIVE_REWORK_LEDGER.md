@@ -1,3 +1,14 @@
+## Current Root touch consumer terminal
+
+Original24412/29120 fourconsumer causesFAIL/inactivedataPASS; candidate5744/89335
+allfivePASS. ActiveTouch axes releaseautopilot/movefreeview, dragconsumedonce.
+Both21164inputs/216deltas/prefs/Quality/seed/cursor/touchstate restored. NoRootjobs.
+TouchUI availability/commands remainopen, no mobile/physical acceptanceclaim.
+Next publish then actual public-watch inactive FPP rig EndEmoteView restoration.
+Laptop no-override framehasBasilio oncourt/inview butbodyabsent; initialSetActive
+restoresbody, laterdirectApplyFppSelfHide lacks_active gate. Qualifycause first.
+Preserve authoredArena fall/drone; lowY alone isnotbug. Directorreservedlaptop.
+
 ## Current Root recovery threat unit terminal
 
 Original22896/85465 two recovery-priority causesFAIL/twocontrolsPASS; candidate

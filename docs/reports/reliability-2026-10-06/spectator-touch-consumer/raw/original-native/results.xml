@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 05:38:53Z" end-time="2026-10-06 05:38:54Z" duration="0.7179127">
+  <test-suite type="TestSuite" id="3299" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1873" result="Failed" site="Child" start-time="2026-10-06 05:38:53Z" end-time="2026-10-06 05:38:54Z" duration="0.717913" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3291" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1873" result="Failed" site="Child" start-time="2026-10-06 05:38:53Z" end-time="2026-10-06 05:38:54Z" duration="0.683126" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24412" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3292" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1873" result="Failed" site="Child" start-time="2026-10-06 05:38:53Z" end-time="2026-10-06 05:38:54Z" duration="0.657271" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3295" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1871" result="Failed" site="Child" start-time="2026-10-06 05:38:53Z" end-time="2026-10-06 05:38:54Z" duration="0.631972" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2914" name="SpectatorTouchConsumerTests" fullname="TumbangPreso.PlayTests.SpectatorTouchConsumerTests" classname="TumbangPreso.PlayTests.SpectatorTouchConsumerTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-06 05:38:53Z" end-time="2026-10-06 05:38:54Z" duration="0.582812" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2919" name="InactiveTouchDataDoesNotTakeOverOrRotateTheView" fullname="TumbangPreso.PlayTests.SpectatorTouchConsumerTests.InactiveTouchDataDoesNotTakeOverOrRotateTheView" methodname="InactiveTouchDataDoesNotTakeOverOrRotateTheView" classname="TumbangPreso.PlayTests.SpectatorTouchConsumerTests" runstate="Runnable" seed="30847281" result="Passed" start-time="2026-10-06 05:38:53Z" end-time="2026-10-06 05:38:54Z" duration="0.381253" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2918" name="ThumbMovementMovesTheFreeFlightTarget" fullname="TumbangPreso.PlayTests.SpectatorTouchConsumerTests.ThumbMovementMovesTheFreeFlightTarget" methodname="ThumbMovementMovesTheFreeFlightTarget" classname="TumbangPreso.PlayTests.SpectatorTouchConsumerTests" runstate="Runnable" seed="2119455765" result="Failed" start-time="2026-10-06 05:38:54Z" end-time="2026-10-06 05:38:54Z" duration="0.057755" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: greater than 9.99999975E-05f
+  But was:  0.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SpectatorTouchConsumerTests.ThumbMovementMovesTheFreeFlightTarget () [0x00053] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\SpectatorTouchConsumerTests.cs:40
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2915" name="ThumbMovementTakesOverTheAutomaticCamera" fullname="TumbangPreso.PlayTests.SpectatorTouchConsumerTests.ThumbMovementTakesOverTheAutomaticCamera" methodname="ThumbMovementTakesOverTheAutomaticCamera" classname="TumbangPreso.PlayTests.SpectatorTouchConsumerTests" runstate="Runnable" seed="706160214" result="Failed" start-time="2026-10-06 05:38:54Z" end-time="2026-10-06 05:38:54Z" duration="0.041979" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SpectatorTouchConsumerTests.ThumbMovementTakesOverTheAutomaticCamera () [0x0000a] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\SpectatorTouchConsumerTests.cs:29
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2917" name="TouchDragRotatesOnceAndDoesNotRepeatWithoutAnotherDrag" fullname="TumbangPreso.PlayTests.SpectatorTouchConsumerTests.TouchDragRotatesOnceAndDoesNotRepeatWithoutAnotherDrag" methodname="TouchDragRotatesOnceAndDoesNotRepeatWithoutAnotherDrag" classname="TumbangPreso.PlayTests.SpectatorTouchConsumerTests" runstate="Runnable" seed="1622272736" result="Failed" start-time="2026-10-06 05:38:54Z" end-time="2026-10-06 05:38:54Z" duration="0.045301" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: greater than 0.00999999978f
+  But was:  0.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SpectatorTouchConsumerTests.TouchDragRotatesOnceAndDoesNotRepeatWithoutAnotherDrag () [0x00040] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\SpectatorTouchConsumerTests.cs:35
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2916" name="TouchDragTakesOverTheAutomaticCamera" fullname="TumbangPreso.PlayTests.SpectatorTouchConsumerTests.TouchDragTakesOverTheAutomaticCamera" methodname="TouchDragTakesOverTheAutomaticCamera" classname="TumbangPreso.PlayTests.SpectatorTouchConsumerTests" runstate="Runnable" seed="1387525950" result="Failed" start-time="2026-10-06 05:38:54Z" end-time="2026-10-06 05:38:54Z" duration="0.039509" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SpectatorTouchConsumerTests.TouchDragTakesOverTheAutomaticCamera () [0x00014] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\SpectatorTouchConsumerTests.cs:31
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

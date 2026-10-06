@@ -1,0 +1,11 @@
+{
+  "raw/Camera-original.cs": "a4e5ef52733239f154ee629917d28f2a8ed0982f936d804f5a8bb981cf53df59",
+  "raw/fixture.cs": "31a18542d4bf1527310fb8a05d02996a8b7652279a40456f7590d1ff51797df6",
+  "raw/fixture.cs.meta": "83279ddc8671d040674b70ff3e3df70c9f783db8f0b4af9cc20eebee91999161",
+  "raw/candidate-native/classification.json": "18e94b233f2a0403e1a054c5103a4fca5877571e992355c5d759937a5414476f",
+  "raw/candidate-native/launch.json": "275d5fd4e5ce9ea4e608739f9aec8d0595619607935b42eccfb06e08fbb26c93",
+  "raw/candidate-native/results.xml": "0bbc1211264802cdd3b4c38a2ed7fe07d850bb3fb866c080aa51762fbf2e5e87",
+  "raw/original-native/classification.json": "18e94b233f2a0403e1a054c5103a4fca5877571e992355c5d759937a5414476f",
+  "raw/original-native/launch.json": "5cceca4be83e7e50ed80266b63a544b8f22ab22e5bb5bfbb37873ad563fc6dd2",
+  "raw/original-native/results.xml": "58955a9c6491ff8980cba47810ccbf1fae58ce1038b12caddf74727045d213c2"
+}

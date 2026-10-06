@@ -43,6 +43,10 @@
   cannot act. Original2 causes fail/two controls pass; candidate4 native passes
   preserve live-defender priority and completed pickup retirement.
   [Evidence](reports/reliability-2026-10-06/spectator-recovery-threat/README.md).
+- [x] Consume active spectator touch movement/drag and retire drag after one
+  use. Original4 consumer failures/one control become5 native passes.
+  Physical touch and spectator touch UI availability/commands remain open.
+  [Evidence](reports/reliability-2026-10-06/spectator-touch-consumer/README.md).
 - [ ] Plan and validate cinematic coverage while the match is happening for every
   individual character and map, including Classic/Hero Strike and Arena as a
   particular priority. Review subject selection, ability/contact timing, framing,
