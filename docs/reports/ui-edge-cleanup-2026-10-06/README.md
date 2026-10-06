@@ -1,5 +1,12 @@
 # Original UI edge cleanup
 
+Current consent mark follows the latest October7 owner request for a bold,
+noticeable painted check, superseding earlier thin/light versions. Latest native
+frames are [1080](native-bold-tick1007/boot-1080.png) and
+[720](native-bold-tick1007/boot-720.png). The original-green pill cap and trimmed
+bottom shadow remain intact. The following entries retain the change evidence;
+earlier frames and rejected tick styles are historical.
+
 The owner requested smoothing existing UI edges, preserving authored shapes,
 colours, shading and layout. Manual vector plate replacements were rejected and
 fully removed. The original runtime art builders remain; source curves are fitted
@@ -122,3 +129,9 @@ preferences restored. Latest unique frames are
 [1080](native-painted-tick1007/boot-1080.png) and
 [720](native-painted-tick1007/boot-720.png). Sprite import metadata receives only
 trailing-whitespace cleanup after restoration; importer settings are unchanged.
+
+Latest owner override: make the check chunky and fat so it is noticeable.
+The current tapered SVG has a broader body and larger silhouette in the same
+28-unit layer, retaining the theme.Paper tint and original checkbox. Native27720
+passes both current render/consent cases at1080/720 and restores21232 inputs and
+shared preferences. XML and restoration evidence are in native-bold-tick1007.
