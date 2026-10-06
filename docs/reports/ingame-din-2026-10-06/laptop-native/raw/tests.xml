@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 13:29:33Z" end-time="2026-10-06 13:29:51Z" duration="18.0557857">
+  <test-suite type="TestSuite" id="3398" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1950" result="Passed" start-time="2026-10-06 13:29:33Z" end-time="2026-10-06 13:29:51Z" duration="18.055786" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3390" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1950" result="Passed" start-time="2026-10-06 13:29:33Z" end-time="2026-10-06 13:29:51Z" duration="18.045151" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="51668" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3391" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1950" result="Passed" start-time="2026-10-06 13:29:33Z" end-time="2026-10-06 13:29:51Z" duration="18.039601" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3394" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1948" result="Passed" start-time="2026-10-06 13:29:33Z" end-time="2026-10-06 13:29:51Z" duration="18.034631" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1619" name="DinFontReviewShots" fullname="TumbangPreso.PlayTests.DinFontReviewShots" classname="TumbangPreso.PlayTests.DinFontReviewShots" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-06 13:29:33Z" end-time="2026-10-06 13:29:51Z" duration="18.006313" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1621" name="ArenaCrowdedHud" fullname="TumbangPreso.PlayTests.DinFontReviewShots.ArenaCrowdedHud" methodname="ArenaCrowdedHud" classname="TumbangPreso.PlayTests.DinFontReviewShots" runstate="Runnable" seed="1654524858" result="Passed" start-time="2026-10-06 13:29:33Z" end-time="2026-10-06 13:29:51Z" duration="17.994284" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="300000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/din-font-review/arena-quiet-1920x1080.png
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_2 at 0.45 of full scale before the sliders (excitement 0.60, ambience slider).
+[Play] wrote Logs/din-font-review/arena-crowded-1280x720.png
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt at 0.45 of full scale before the sliders (excitement 1.00, ambience slider).
+[Play] wrote Logs/din-font-review/arena-crowded-1920x1080.png
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_3 at 0.45 of full scale before the sliders (excitement 1.00, ambience slider).
+[Play] wrote Logs/din-font-review/arena-accessible-1280x720.png
+[Play] wrote Logs/din-font-review/arena-moment-big-1920x1080.png
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 1.00, announcer slider).
+[Play] wrote Logs/din-font-review/arena-moment-legendary-1920x1080.png
+[Play] wrote Logs/din-font-review/arena-pause-1920x1080.png
+[Play] wrote Logs/din-font-review/arena-pause-1280x720.png
+[Play] wrote Logs/din-font-review/arena-settings-1920x1080.png
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
