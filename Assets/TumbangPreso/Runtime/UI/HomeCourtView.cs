@@ -63,31 +63,15 @@ namespace TumbangPreso.UI
 
             var design=OwnerUiLayout.DesignArea(canvas.transform,"OwnerMainMenuComposition");
 
-            // ⚠️ THE PRESS TARGET COVERS THE CANVAS, NOT THE DESIGN AREA. The design
-            // area is a fixed 1920x1080 rect in the middle of a canvas that is wider
-            // than that on his window, so a press in the outer band would land on
-            // nothing on the one screen whose entire instruction is "tap anywhere".
-            var surface=OwnerUiLayout.Rect(canvas.transform,"StartButton");
-            OwnerUiLayout.Fill(surface);
-            var hit=surface.gameObject.AddComponent<Image>();hit.color=Color.clear;
-            var press=surface.gameObject.AddComponent<Button>();
-            press.targetGraphic=hit;press.transition=Selectable.Transition.None;
-            // ⚠️ UX-1, 2026-09-23: TAP TO START OPENS HOME, and this destination is the only thing
-            // on the title screen that changed. The owner: "DO NOT TOUCH LOGIN AND MAIN MENU", and
-            // "the NEW HOME opens from the existing main menu TAP TO START action" (`intake.md`).
-
-            var prompt=OwnerUiLayout.Text(design,"ContinuePrompt","",CaptionSize,OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(prompt.rectTransform,Caption.x,Caption.y,Caption.width,Caption.height);
-            prompt.alignment=TextAnchor.MiddleCenter;prompt.color=Color.white;prompt.raycastTarget=false;
-            prompt.horizontalOverflow=HorizontalWrapMode.Overflow;prompt.verticalOverflow=VerticalWrapMode.Overflow;
-            // Her caption is white on a sunlit road. A soft ink shadow under it is
-            // the difference between readable and nearly readable, and it is the
-            // same warm ink the rest of the front end uses rather than black.
-            var shade=prompt.gameObject.AddComponent<Shadow>();
-            shade.effectColor=new Color32(28,15,6,150);shade.effectDistance=new Vector2(2,-2);
-            var continuePrompt=prompt.gameObject.AddComponent<OwnerMenuPrompt>();
-            continuePrompt.Press=press;
-            press.onClick.AddListener(continuePrompt.ContinueToHome);
+            // The supplied title is the automatic Home-loading surface. Its small
+            // progress rail replaces the previous full-screen continuation target.
+            var rail=OwnerUiLayout.Rect(design,"LoadingProgressTrack").gameObject.AddComponent<Image>();
+            OwnerUiLayout.Place(rail.rectTransform,775,1018,370,7);
+            rail.color=new Color(1,1,1,.24f);rail.raycastTarget=false;
+            var progress=OwnerUiLayout.Rect(design,"ActualProgress").gameObject.AddComponent<Image>();
+            OwnerUiLayout.Place(progress.rectTransform,775,1018,370,7);
+            progress.color=Color.white;progress.raycastTarget=false;
+            progress.rectTransform.sizeDelta=new Vector2(0,7);
 
             canvas.GetComponent<InputLayer.ScreenFocus>().Rebuild();
             return canvas;

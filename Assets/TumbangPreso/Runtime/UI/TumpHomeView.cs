@@ -11,8 +11,19 @@ namespace TumbangPreso.UI
         private Canvas _canvas;
         private bool _musicStarted;
         private bool _loading;
+        private Image _progress;
         public void Build(Transform owner, Action settings, Action credits)
-            => _canvas=HomeCourtView.Build(owner,settings,credits);
+        {
+            _canvas=HomeCourtView.Build(owner,settings,credits);
+            _progress=_canvas.transform.Find("OwnerMainMenuComposition/ActualProgress")?.GetComponent<Image>();
+            SetLoading(true);
+        }
+
+        internal void SetLoadingProgress(float value)
+        {
+            if(_progress!=null)
+                _progress.rectTransform.sizeDelta=new Vector2(370*Mathf.Clamp01(value),7);
+        }
 
         private void BuildPrevious(Transform owner, Action settings, Action credits)
         {

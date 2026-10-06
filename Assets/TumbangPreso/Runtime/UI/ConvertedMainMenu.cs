@@ -1,5 +1,7 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace TumbangPreso.UI
@@ -33,6 +35,13 @@ namespace TumbangPreso.UI
         private TumpHomeView _nativeHome;
         private TumpCreditsView _nativeCredits;
         private bool _bootLoading;
+        private AsyncOperation _homePreload;
+        private bool _homeAssetsStarted, _homeAssetsReady;
+        private float _homeAssetsProgress;
+        private readonly List<Object> _homeAssets = new List<Object>();
+        private bool _homeArrival;
+        private ThreadPriority _previousLoadingPriority;
+        private bool _ownsLoadingPriority;
         public bool IsPrepared { get; private set; }
 
         /// <summary>
@@ -74,7 +83,7 @@ namespace TumbangPreso.UI
             });
             var signIn = GetComponent<SignInScreen>();
             if (signIn == null) signIn = gameObject.AddComponent<SignInScreen>();
-            signIn.Opened += open => { if (open) _nativeHome.Suspend(); else _nativeHome.Resume(); };
+            signIn.Opened += OnLoginVisibility;
             Cursor.lockState = CursorLockMode.None; Cursor.visible = true;
             _bootLoading = SplashScreen.MenuActivationPending;
             if (_bootLoading)
@@ -84,15 +93,94 @@ namespace TumbangPreso.UI
             }
             else OfferTheLoginStep();
             IsPrepared = true;
+            if(!_bootLoading && !signIn.IsOpen) BeginHomeArrival();
         }
 
         internal void CompleteBootLoading()
         {
             if (!_bootLoading) return;
             _bootLoading = false;
-            _nativeHome.SetLoading(false);
+            _nativeHome.SetLoading(true);
             // Install ran behind loading; the welcome timer starts only when revealed.
             OfferTheLoginStep();
+            var signIn=GetComponent<SignInScreen>();
+            if(signIn==null || !signIn.IsOpen) BeginHomeArrival();
+        }
+
+        private void OnLoginVisibility(bool open)
+        {
+            if(open)
+            {
+                _nativeHome.Suspend();
+                BeginHomePreload();
+            }
+            else
+            {
+                _nativeHome.Resume();
+                BeginHomeArrival();
+            }
+        }
+
+        private void BeginHomePreload()
+        {
+            if(_homeAssetsStarted) return;
+            _homeAssetsStarted=true;
+            // Resource requests leave Unity's scene queue free while login is open.
+            // Defer scene activation and its component work until login completes.
+            _previousLoadingPriority=Application.backgroundLoadingPriority;
+            _ownsLoadingPriority=true;
+            Application.backgroundLoadingPriority=ThreadPriority.Low;
+            StartCoroutine(PreloadHomeAssets());
+        }
+
+        private IEnumerator PreloadHomeAssets()
+        {
+            var heroes=Hub.HubSceneVideo.Heroes;
+            for(int i=0;i<heroes.Length;i++)
+            {
+                var poster=Resources.LoadAsync<Texture2D>(Hub.HubSceneVideo.PosterPathFor(heroes[i]));
+                yield return poster;
+                if(poster.asset!=null) _homeAssets.Add(poster.asset);
+                var clip=Resources.LoadAsync<UnityEngine.Video.VideoClip>(Hub.HubSceneVideo.ClipPathFor(heroes[i]));
+                yield return clip;
+                if(clip.asset!=null) _homeAssets.Add(clip.asset);
+                _homeAssetsProgress=(i+1f)/Mathf.Max(1,heroes.Length);
+                yield return null;
+            }
+            _homeAssetsReady=true;
+        }
+
+        private void BeginHomeArrival()
+        {
+            if(_homeArrival) return;
+            _homeArrival=true;
+            _nativeHome.SetLoading(true);
+            BeginHomePreload();
+            StartCoroutine(ArriveHome());
+        }
+
+        private IEnumerator ArriveHome()
+        {
+            while(!_homeAssetsReady)
+            {
+                _nativeHome.SetLoadingProgress(_homeAssetsProgress*.2f);
+                yield return null;
+            }
+            SceneFlow.Networked=false;
+            PlaySelectionScreen.RequestedLobbyMode=null;
+            Hub.TumpHub.PendingEntry=Hub.HubEntry.Home;
+            _homePreload=SceneManager.LoadSceneAsync(SceneFlow.MatchSetup,LoadSceneMode.Single);
+            while(_homePreload!=null && !_homePreload.isDone)
+            {
+                _nativeHome.SetLoadingProgress(.2f+.8f*_homePreload.progress);
+                yield return null;
+            }
+            _nativeHome.SetLoadingProgress(1);
+        }
+
+        private void OnDestroy()
+        {
+            if(_ownsLoadingPriority) Application.backgroundLoadingPriority=_previousLoadingPriority;
         }
 
         private void WireLegacyReference()
