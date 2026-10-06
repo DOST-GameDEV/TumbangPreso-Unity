@@ -1,0 +1,30 @@
+0.000	89.980	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.480	Quiet	QuietEstablish	the street	1	0
+1.001	88.980	Quiet	QuietEstablish	the street	1	0
+1.501	88.480	Quiet	QuietEstablish	the street	1	0
+2.002	87.980	Quiet	QuietEstablish	the street	1	0
+2.503	87.480	SlipperLanded	Objective	the can	2	0
+3.003	86.981	SlipperLanded	Objective	the can	2	0
+3.505	86.481	SlipperLanded	Objective	the can	2	0
+4.005	85.981	SlipperLanded	Objective	the can	2	0
+4.506	85.481	SlipperLanded	Objective	the can	2	0
+5.210	84.761	SlipperLanded	Objective	the can	2	0
+5.711	84.261	Downed	Recovery	down · OWNER UPDATED	3	0
+6.212	83.761	Downed	Recovery	down · OWNER UPDATED	3	0
+6.714	83.261	Downed	Recovery	down · OWNER UPDATED	3	0
+7.214	82.761	Downed	Recovery	down · OWNER UPDATED	3	0
+7.714	82.261	Downed	Recovery	down · OWNER UPDATED	3	0
+8.215	81.761	Downed	Recovery	down · OWNER UPDATED	3	0
+8.716	81.261	Downed	Recovery	down · OWNER UPDATED	3	0
+9.217	80.762	Downed	Recovery	down · OWNER UPDATED	3	0
+9.717	80.262	Downed	Recovery	down · OWNER UPDATED	3	0
+10.219	79.902	Downed	Recovery	down · OWNER UPDATED	3	0
+10.721	79.402	Tag	Defender	tag · YASMIN	4	0
+11.221	78.902	Tag	Defender	tag · YASMIN	4	0
+11.722	78.402	Tag	Defender	tag · YASMIN	4	0
+12.222	77.882	Tag	Defender	tag · YASMIN	4	0
+12.723	77.382	Retrieval	Chase	retrieval · YASMIN	4	0
+13.223	76.942	Tag	Defender	tag · YASMIN	5	0
+13.724	76.442	Tag	Defender	tag · YASMIN	5	0
+14.224	75.942	Tag	Defender	tag · YASMIN	5	0
+14.725	75.442	Tag	Defender	tag · YASMIN	5	0

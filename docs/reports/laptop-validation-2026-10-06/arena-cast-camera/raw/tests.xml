@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Passed" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 03:11:18Z" end-time="2026-10-06 03:15:52Z" duration="273.9491139">
+  <test-suite type="TestSuite" id="3265" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1847" result="Passed" start-time="2026-10-06 03:11:18Z" end-time="2026-10-06 03:15:52Z" duration="273.949114" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3257" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1847" result="Passed" start-time="2026-10-06 03:11:18Z" end-time="2026-10-06 03:15:52Z" duration="273.928986" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="9068" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3258" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1847" result="Passed" start-time="2026-10-06 03:11:18Z" end-time="2026-10-06 03:15:52Z" duration="273.916435" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3261" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1845" result="Passed" start-time="2026-10-06 03:11:18Z" end-time="2026-10-06 03:15:52Z" duration="273.902759" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2864" name="SpectatorArenaCastProbe" fullname="TumbangPreso.PlayTests.SpectatorArenaCastProbe" classname="TumbangPreso.PlayTests.SpectatorArenaCastProbe" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-06 03:11:18Z" end-time="2026-10-06 03:15:52Z" duration="273.878857" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2865" name="ClassicGroup0" fullname="TumbangPreso.PlayTests.SpectatorArenaCastProbe.ClassicGroup0" methodname="ClassicGroup0" classname="TumbangPreso.PlayTests.SpectatorArenaCastProbe" runstate="Runnable" seed="791097657" result="Passed" start-time="2026-10-06 03:11:18Z" end-time="2026-10-06 03:12:02Z" duration="43.675365" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.60, announcer slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 0.85, ambience slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_3 at 0.31 of full scale before the sliders (excitement 0.91, ambience slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.55, ambience slider).
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_3 at 0.38 of full scale before the sliders (excitement 0.84, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-cast-arena1006/Classic-0/cast-natural-0.png
+[ArenaCrowd] block: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.70, announcer slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_3 at 0.45 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 1.00, ambience slider).
+[Play] wrote Logs/spectator-cast-arena1006/Classic-0/cast-natural-1.png
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.70, announcer slider).
+[Play] wrote Logs/spectator-cast-arena1006/Classic-0/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2866" name="ClassicGroup1" fullname="TumbangPreso.PlayTests.SpectatorArenaCastProbe.ClassicGroup1" methodname="ClassicGroup1" classname="TumbangPreso.PlayTests.SpectatorArenaCastProbe" runstate="Runnable" seed="989294643" result="Passed" start-time="2026-10-06 03:12:02Z" end-time="2026-10-06 03:12:35Z" duration="32.840831" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 1.00, announcer slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_3 at 0.31 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.55, ambience slider).
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_3 at 0.38 of full scale before the sliders (excitement 0.88, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-cast-arena1006/Classic-2/cast-natural-0.png
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.70, announcer slider).
+[Play] wrote Logs/spectator-cast-arena1006/Classic-2/cast-natural-1.png
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.60, announcer slider).
+[Play] wrote Logs/spectator-cast-arena1006/Classic-2/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2867" name="ClassicGroup2" fullname="TumbangPreso.PlayTests.SpectatorArenaCastProbe.ClassicGroup2" methodname="ClassicGroup2" classname="TumbangPreso.PlayTests.SpectatorArenaCastProbe" runstate="Runnable" seed="560407303" result="Passed" start-time="2026-10-06 03:12:35Z" end-time="2026-10-06 03:13:08Z" duration="32.824789" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 1.00, announcer slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_3 at 0.31 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.55, ambience slider).
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_3 at 0.38 of full scale before the sliders (excitement 0.89, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-cast-arena1006/Classic-4/cast-natural-0.png
+[ArenaCrowd] block: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.70, announcer slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] near miss: sfx_arena_crowd_aww_3 at 0.35 of full scale before the sliders (excitement 0.70, ambience slider).
+[Play] wrote Logs/spectator-cast-arena1006/Classic-4/cast-natural-1.png
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.57, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.60, announcer slider).
+[Play] wrote Logs/spectator-cast-arena1006/Classic-4/cast-natural-2.png
+[ArenaCrowd] chant, throw being charged: sfx_arena_chant_ooh_hey at 0.28 of full scale before the sliders (excitement 0.01, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.35, ambience slider).
+]]></output>
+            </test-case>
+            <test-case id="2868" name="ClassicGroup3" fullname="TumbangPreso.PlayTests.SpectatorArenaCastProbe.ClassicGroup3" methodname="ClassicGroup3" classname="TumbangPreso.PlayTests.SpectatorArenaCastProbe" runstate="Runnable" seed="2082337459" result="Passed" start-time="2026-10-06 03:13:08Z" end-time="2026-10-06 03:13:40Z" duration="32.768701" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 1.00, announcer slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_3 at 0.31 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.55, ambience slider).
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_3 at 0.38 of full scale before the sliders (excitement 0.89, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-cast-arena1006/Classic-1/cast-natural-0.png
+[ArenaCrowd] block: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.70, announcer slider).
+[ArenaCrowd] near miss: sfx_arena_crowd_aww_3 at 0.35 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.70, ambience slider).
+[Play] wrote Logs/spectator-cast-arena1006/Classic-1/cast-natural-1.png
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] near miss: sfx_arena_crowd_aww at 0.35 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.70, announcer slider).
+[Play] wrote Logs/spectator-cast-arena1006/Classic-1/cast-natural-2.png
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.26 of full scale before the sliders (excitement 0.54, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.54, ambience slider).
+]]></output>
+            </test-case>
+            <test-case id="2869" name="HeroGroup0" fullname="TumbangPreso.PlayTests.SpectatorArenaCastProbe.HeroGroup0" methodname="HeroGroup0" classname="TumbangPreso.PlayTests.SpectatorArenaCastProbe" runstate="Runnable" seed="1670709611" result="Passed" start-time="2026-10-06 03:13:40Z" end-time="2026-10-06 03:14:13Z" duration="33.016783" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 1.00, announcer slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_3 at 0.31 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.55, ambience slider).
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_3 at 0.38 of full scale before the sliders (excitement 0.89, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-cast-arena1006/HeroStrike-0/cast-natural-0.png
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.70, announcer slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.70, ambience slider).
+[Play] wrote Logs/spectator-cast-arena1006/HeroStrike-0/cast-natural-1.png
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.00, announcer slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[Play] wrote Logs/spectator-cast-arena1006/HeroStrike-0/cast-natural-2.png
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.55, ambience slider).
+]]></output>
+            </test-case>
+            <test-case id="2870" name="HeroGroup1" fullname="TumbangPreso.PlayTests.SpectatorArenaCastProbe.HeroGroup1" methodname="HeroGroup1" classname="TumbangPreso.PlayTests.SpectatorArenaCastProbe" runstate="Runnable" seed="216514980" result="Passed" start-time="2026-10-06 03:14:13Z" end-time="2026-10-06 03:14:46Z" duration="32.949437" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 1.00, announcer slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_3 at 0.31 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.55, ambience slider).
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_3 at 0.38 of full scale before the sliders (excitement 0.89, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-cast-arena1006/HeroStrike-2/cast-natural-0.png
+[ArenaCrowd] block: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.70, announcer slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.70, ambience slider).
+[Play] wrote Logs/spectator-cast-arena1006/HeroStrike-2/cast-natural-1.png
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.39, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.33, announcer slider).
+[Play] wrote Logs/spectator-cast-arena1006/HeroStrike-2/cast-natural-2.png
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.57, ambience slider).
+]]></output>
+            </test-case>
+            <test-case id="2871" name="HeroGroup2" fullname="TumbangPreso.PlayTests.SpectatorArenaCastProbe.HeroGroup2" methodname="HeroGroup2" classname="TumbangPreso.PlayTests.SpectatorArenaCastProbe" runstate="Runnable" seed="1724048293" result="Passed" start-time="2026-10-06 03:14:46Z" end-time="2026-10-06 03:15:19Z" duration="32.900447" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 1.00, announcer slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_3 at 0.31 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.55, ambience slider).
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_3 at 0.38 of full scale before the sliders (excitement 0.89, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-cast-arena1006/HeroStrike-4/cast-natural-0.png
+[ArenaCrowd] block: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.70, announcer slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.70, ambience slider).
+[Play] wrote Logs/spectator-cast-arena1006/HeroStrike-4/cast-natural-1.png
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.38, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.38, announcer slider).
+[Play] wrote Logs/spectator-cast-arena1006/HeroStrike-4/cast-natural-2.png
+[ArenaCrowd] chant, throw being charged: sfx_arena_chant_ooh_hey at 0.28 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.21 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt at 0.45 of full scale before the sliders (excitement 0.35, ambience slider).
+]]></output>
+            </test-case>
+            <test-case id="2872" name="HeroGroup3" fullname="TumbangPreso.PlayTests.SpectatorArenaCastProbe.HeroGroup3" methodname="HeroGroup3" classname="TumbangPreso.PlayTests.SpectatorArenaCastProbe" runstate="Runnable" seed="836847914" result="Passed" start-time="2026-10-06 03:15:19Z" end-time="2026-10-06 03:15:52Z" duration="32.890818" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 1.00, announcer slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_3 at 0.31 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.55, ambience slider).
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_3 at 0.38 of full scale before the sliders (excitement 0.89, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-cast-arena1006/HeroStrike-1/cast-natural-0.png
+[ArenaCrowd] block: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.70, announcer slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.26 of full scale before the sliders (excitement 0.70, ambience slider).
+[Play] wrote Logs/spectator-cast-arena1006/HeroStrike-1/cast-natural-1.png
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.60, announcer slider).
+[Play] wrote Logs/spectator-cast-arena1006/HeroStrike-1/cast-natural-2.png
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.26 of full scale before the sliders (excitement 0.57, ambience slider).
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

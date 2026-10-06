@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.500	89.500	Quiet	QuietEstablish	the street	1	0
+1.002	89.000	Quiet	QuietEstablish	the street	1	0
+1.502	88.500	Quiet	QuietEstablish	the street	1	0
+2.004	88.000	Quiet	QuietEstablish	the street	1	0
+2.504	87.500	ThrowPrep	Objective	throw · YASMIN	2	0
+3.004	87.001	ThrowPrep	Objective	throw · YASMIN	2	0
+3.505	86.501	ThrowPrep	Objective	throw · YASMIN	2	0
+4.006	86.001	Quiet	QuietEstablish	the street	3	0
+4.507	85.481	Quiet	QuietEstablish	the street	3	0
+5.211	84.841	Quiet	QuietEstablish	the street	3	0
+5.711	84.341	Quiet	QuietEstablish	the street	3	0
+6.212	83.841	Tag	Defender	tag · SORAYA	4	0
+6.712	83.341	Tag	Defender	tag · SORAYA	4	0
+7.213	82.841	Tag	Defender	tag · SORAYA	4	0
+7.713	82.341	Downed	Recovery	down · OWNER UPDATED	4	0
+8.213	81.841	Downed	Recovery	down · OWNER UPDATED	4	0
+8.715	81.341	Downed	Recovery	down · OWNER UPDATED	4	0
+9.216	80.842	Downed	Recovery	down · OWNER UPDATED	4	0
+9.718	80.342	Downed	Recovery	down · OWNER UPDATED	4	0
+10.218	79.842	SlipperLanded	Objective	the can	5	0
+10.719	79.342	SlipperLanded	Objective	the can	5	0
+11.220	78.842	Downed	Recovery	down · OWNER UPDATED	6	0
+11.721	78.342	Downed	Recovery	down · OWNER UPDATED	6	0
+12.221	77.842	Downed	Recovery	down · OWNER UPDATED	6	0
+12.722	77.342	Downed	Recovery	down · OWNER UPDATED	6	0
+13.224	76.842	Downed	Recovery	down · OWNER UPDATED	6	0
+13.726	76.322	LataHit	Objective	the can · SORAYA	7	0
+14.227	75.822	LataHit	Objective	the can · SORAYA	7	0
+14.729	75.322	LataHit	Objective	the can · SORAYA	7	0
