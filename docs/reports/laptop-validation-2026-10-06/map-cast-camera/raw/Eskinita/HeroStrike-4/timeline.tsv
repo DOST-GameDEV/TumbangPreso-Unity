@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.500	89.500	Quiet	QuietEstablish	the street	1	0
+1.000	89.000	Quiet	QuietEstablish	the street	1	0
+1.501	88.500	Quiet	QuietEstablish	the street	1	0
+2.003	88.000	Quiet	QuietEstablish	the street	1	0
+2.504	87.500	ThrowPrep	Objective	throw · SORAYA	2	0
+3.004	87.001	ThrowPrep	Objective	throw · SORAYA	2	0
+3.504	86.501	ThrowPrep	Objective	throw · SORAYA	2	0
+4.005	86.001	Retrieval	Chase	retrieval · YASMIN	4	0
+4.505	85.501	Retrieval	Chase	retrieval · YASMIN	4	0
+5.218	84.781	ThrowPrep	Objective	throw · YASMIN	5	0
+5.719	84.281	ThrowPrep	Objective	throw · YASMIN	5	0
+6.220	83.781	ThrowPrep	Objective	throw · YASMIN	5	0
+6.721	83.281	Quiet	QuietEstablish	the street	6	0
+7.223	82.781	Quiet	QuietEstablish	the street	6	0
+7.724	82.281	Quiet	QuietEstablish	the street	6	0
+8.225	81.781	Quiet	QuietEstablish	the street	6	0
+8.727	81.281	Quiet	QuietEstablish	the street	6	0
+9.228	80.782	Retrieval	RetrievalTwoShot	retrieval · SORAYA	7	0
+9.728	80.282	Retrieval	RetrievalTwoShot	retrieval · SORAYA	7	0
+10.230	79.762	Retrieval	RetrievalTwoShot	retrieval · SORAYA	7	0
+10.733	79.262	Retrieval	RetrievalTwoShot	retrieval · SORAYA	7	0
+11.234	78.762	Retrieval	RetrievalTwoShot	retrieval · YASMIN	8	0
+11.735	78.262	LataHit	Objective	the can · YASMIN	9	0
+12.235	77.762	Retrieval	Chase	retrieval · SORAYA	10	0
+12.736	77.262	Retrieval	Chase	retrieval · SORAYA	10	0
+13.237	76.762	Retrieval	RetrievalTwoShot	retrieval · YASMIN	12	0
+13.738	76.262	Retrieval	RetrievalTwoShot	retrieval · YASMIN	12	0
+14.238	75.762	Retrieval	RetrievalTwoShot	retrieval · YASMIN	12	0
+14.739	75.262	ThrowPrep	Objective	throw · YASMIN	12	0

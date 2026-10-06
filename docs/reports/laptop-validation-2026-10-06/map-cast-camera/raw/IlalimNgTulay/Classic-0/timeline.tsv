@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.502	89.500	Quiet	QuietEstablish	the street	1	0
+1.002	89.000	Quiet	QuietEstablish	the street	1	0
+1.504	88.480	Quiet	QuietEstablish	the street	1	0
+2.005	87.980	Quiet	QuietEstablish	the street	1	0
+2.508	87.480	LataHit	Objective	the can · LOLA PACING	2	0
+3.010	86.981	LataHit	Objective	the can · LOLA PACING	2	0
+3.510	86.481	LataHit	Objective	the can · LOLA PACING	2	0
+4.010	85.981	LataHit	Objective	the can · LOLA PACING	2	0
+4.513	85.481	Retrieval	Chase	retrieval · LOLA PACING	3	0
+5.236	84.861	Retrieval	RetrievalTwoShot	retrieval · TIKBOY	4	0
+5.738	84.361	Retrieval	Chase	retrieval · TIKBOY	4	0
+6.238	83.861	Retrieval	Chase	retrieval · TIKBOY	4	0
+6.739	83.361	Retrieval	Chase	retrieval · TIKBOY	4	0
+7.239	82.861	Tag	Defender	tag · MARING	4	0
+7.741	82.361	Tag	Defender	tag · MARING	4	0
+8.243	81.861	Downed	Recovery	down · LOLA PACING	5	0
+8.745	81.361	Downed	Recovery	down · LOLA PACING	5	0
+9.247	80.862	Downed	Recovery	down · LOLA PACING	5	0
+9.747	80.362	Downed	Recovery	down · LOLA PACING	5	0
+10.370	79.722	Retrieval	RetrievalTwoShot	retrieval · TIKBOY	6	0
+10.870	79.222	Retrieval	Chase	retrieval · TIKBOY	8	0
+11.371	78.722	Retrieval	Chase	retrieval · TIKBOY	8	0
+11.872	78.222	Retrieval	Chase	retrieval · TIKBOY	8	0
+12.372	77.722	ThrowPrep	Objective	throw · TIKBOY	9	0
+12.872	77.222	ThrowPrep	Objective	throw · TIKBOY	9	0
+13.372	76.722	LataHit	Objective	the can · LOLA PACING	10	0
+13.873	76.222	LataHit	Objective	the can · LOLA PACING	10	0
+14.373	75.722	LataHit	Objective	the can · LOLA PACING	10	0
+14.876	75.222	Retrieval	Chase	retrieval · LOLA PACING	11	0

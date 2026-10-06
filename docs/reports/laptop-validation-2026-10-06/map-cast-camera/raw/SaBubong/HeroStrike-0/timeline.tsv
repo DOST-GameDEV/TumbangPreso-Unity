@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.500	89.500	Quiet	QuietEstablish	the street	1	0
+1.002	89.000	Quiet	QuietEstablish	the street	1	0
+1.503	88.500	Quiet	QuietEstablish	the street	1	0
+2.003	88.000	Quiet	QuietEstablish	the street	1	0
+2.504	87.500	ThrowPrep	Objective	throw · YASMIN	2	0
+3.005	87.001	ThrowPrep	Objective	throw · YASMIN	2	0
+3.506	86.501	ThrowPrep	Objective	throw · YASMIN	2	0
+4.007	86.001	Quiet	QuietEstablish	the street	3	0
+4.507	85.501	Quiet	QuietEstablish	the street	3	0
+5.256	84.741	Quiet	QuietEstablish	the street	3	0
+5.757	84.241	Quiet	QuietEstablish	the street	3	0
+6.257	83.741	ThrowPrep	Objective	throw · ILYAS	4	0
+6.759	83.241	ThrowPrep	Objective	throw · ILYAS	4	0
+7.259	82.741	LataHit	Objective	the can · ILYAS	4	0
+7.760	82.241	LataHit	Objective	the can · ILYAS	4	0
+8.267	81.741	LataHit	Objective	the can · ILYAS	4	0
+8.768	81.221	Retrieval	RetrievalTwoShot	retrieval · ILYAS	5	0
+9.269	80.722	Retrieval	RetrievalTwoShot	retrieval · ILYAS	5	0
+9.771	80.222	Retrieval	RetrievalTwoShot	retrieval · ILYAS	5	0
+10.272	79.722	Retrieval	RetrievalTwoShot	retrieval · ILYAS	5	0
+10.773	79.222	Retrieval	RetrievalTwoShot	retrieval · ILYAS	5	0
+11.273	78.722	Retrieval	RetrievalTwoShot	retrieval · ILYAS	5	0
+11.774	78.222	Retrieval	RetrievalTwoShot	retrieval · ILYAS	5	0
+12.275	77.782	Tag	Defender	tag · YASMIN	6	0
+12.775	77.342	Tag	Defender	tag · YASMIN	6	0
+13.275	76.842	Tag	Defender	tag · YASMIN	6	0
+13.776	76.342	Tag	Defender	tag · YASMIN	6	0
+14.276	75.842	Tag	Defender	tag · YASMIN	6	0
+14.777	75.342	Tag	Defender	tag · YASMIN	6	0

@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.500	Quiet	QuietEstablish	the street	1	0
+1.002	89.000	Quiet	QuietEstablish	the street	1	0
+1.502	88.500	Quiet	QuietEstablish	the street	1	0
+2.004	88.000	Quiet	QuietEstablish	the street	1	0
+2.505	87.500	ThrowPrep	Objective	throw · MANG KANOR	2	0
+3.006	87.001	ThrowPrep	Objective	throw · MANG KANOR	2	0
+3.507	86.501	ThrowPrep	Objective	throw · MANG KANOR	2	0
+4.008	86.001	LataHit	Objective	the can · MARING	2	0
+4.509	85.501	LataHit	Objective	the can · MARING	2	0
+5.291	84.701	LataHit	Objective	the can · MARING	2	0
+5.792	84.261	Retrieval	Chase	retrieval · MANG KANOR	3	0
+6.293	83.821	Tag	Defender	tag · ATE GIRLIE	4	0
+6.794	83.321	Tag	Defender	tag · ATE GIRLIE	4	0
+7.294	82.821	Tag	Defender	tag · ATE GIRLIE	4	0
+7.795	82.321	Tag	Defender	tag · ATE GIRLIE	4	0
+8.296	81.821	Tag	Defender	tag · ATE GIRLIE	4	0
+8.797	81.321	Tag	Defender	tag · ATE GIRLIE	4	0
+9.299	80.822	Downed	Recovery	down · MANG KANOR	5	0
+9.800	80.322	Downed	Recovery	down · MANG KANOR	5	0
+10.301	79.822	Downed	Recovery	down · MANG KANOR	5	0
+10.802	79.322	Downed	Recovery	down · MANG KANOR	5	0
+11.303	78.822	Quiet	QuietEstablish	the street	6	0
+11.804	78.322	Quiet	QuietEstablish	the street	6	0
+12.306	77.802	Quiet	QuietEstablish	the street	6	0
+12.809	77.302	Quiet	QuietEstablish	the street	6	0
+13.311	76.802	Quiet	QuietEstablish	the street	6	0
+13.811	76.302	ThrowPrep	Objective	throw · MANG KANOR	7	0
+14.312	75.802	ThrowPrep	Objective	throw · MANG KANOR	7	0
+14.813	75.302	SlipperLanded	Objective	the can	7	0

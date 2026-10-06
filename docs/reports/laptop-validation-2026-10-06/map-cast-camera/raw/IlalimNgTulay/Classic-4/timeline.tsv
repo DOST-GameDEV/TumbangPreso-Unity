@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.500	Quiet	QuietEstablish	the street	1	0
+1.003	89.000	Quiet	QuietEstablish	the street	1	0
+1.503	88.500	Quiet	QuietEstablish	the street	1	0
+2.005	88.000	Quiet	QuietEstablish	the street	1	0
+2.509	87.480	LataHit	Objective	the can · MARING	2	0
+3.009	86.981	LataHit	Objective	the can · MARING	2	0
+3.510	86.481	LataHit	Objective	the can · MARING	2	0
+4.012	85.981	LataHit	Objective	the can · MARING	2	0
+4.513	85.481	Retrieval	Chase	retrieval · MARING	3	0
+5.341	84.721	Retrieval	Chase	retrieval · MANG KANOR	4	0
+5.842	84.261	Tag	Defender	tag · ATE GIRLIE	5	0
+6.343	83.761	Tag	Defender	tag · ATE GIRLIE	5	0
+6.845	83.261	Tag	Defender	tag · ATE GIRLIE	5	0
+7.345	82.761	Tag	Defender	tag · ATE GIRLIE	5	0
+7.846	82.261	Tag	Defender	tag · ATE GIRLIE	5	0
+8.347	81.761	Downed	Recovery	down · MANG KANOR	6	0
+8.849	81.261	Downed	Recovery	down · MANG KANOR	6	0
+9.350	80.762	Downed	Recovery	down · MANG KANOR	6	0
+9.851	80.262	Downed	Recovery	down · MANG KANOR	6	0
+10.352	79.762	Downed	Recovery	down · MANG KANOR	6	0
+10.853	79.262	Quiet	QuietEstablish	the street	7	0
+11.353	78.762	Quiet	QuietEstablish	the street	7	0
+11.853	78.262	Quiet	QuietEstablish	the street	7	0
+12.354	77.762	Quiet	QuietEstablish	the street	7	0
+12.856	77.262	Quiet	QuietEstablish	the street	7	0
+13.357	76.762	LataHit	Objective	the can · MARING	8	0
+13.858	76.262	LataHit	Objective	the can · MARING	8	0
+14.359	75.762	Retrieval	Chase	retrieval · MARING	9	0
+14.860	75.302	LataHit	Objective	the can · MARING	10	0

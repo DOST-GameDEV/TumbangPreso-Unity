@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.500	Quiet	QuietEstablish	the street	1	0
+1.005	89.000	Quiet	QuietEstablish	the street	1	0
+1.505	88.500	Quiet	QuietEstablish	the street	1	0
+2.007	88.000	Quiet	QuietEstablish	the street	1	0
+2.508	87.500	LataHit	Objective	the can · ALING NENA	2	0
+3.008	87.001	LataHit	Objective	the can · ALING NENA	2	0
+3.510	86.501	LataHit	Objective	the can · ALING NENA	2	0
+4.011	85.981	LataHit	Objective	the can · ALING NENA	2	0
+4.512	85.481	Retrieval	Chase	retrieval · JUN-JUN	3	0
+5.327	84.681	Retrieval	Chase	retrieval · JUN-JUN	3	0
+5.829	84.221	Retrieval	Chase	retrieval · JUN-JUN	3	0
+6.330	83.781	Tag	Defender	tag · INDAY	4	0
+6.831	83.281	Tag	Defender	tag · INDAY	4	0
+7.332	82.781	Tag	Defender	tag · INDAY	4	0
+7.833	82.281	Tag	Defender	tag · INDAY	4	0
+8.333	81.781	Tag	Defender	tag · INDAY	4	0
+8.834	81.281	Tag	Defender	tag · INDAY	4	0
+9.335	80.782	Downed	Recovery	down · JUN-JUN	5	0
+9.835	80.282	Downed	Recovery	down · JUN-JUN	5	0
+10.336	79.782	Downed	Recovery	down · JUN-JUN	5	0
+10.836	79.282	Downed	Recovery	down · JUN-JUN	5	0
+11.337	78.782	Quiet	QuietEstablish	the street	6	0
+11.838	78.282	Quiet	QuietEstablish	the street	6	0
+12.339	77.782	Quiet	QuietEstablish	the street	6	0
+12.839	77.282	Quiet	QuietEstablish	the street	6	0
+13.340	76.782	Quiet	QuietEstablish	the street	6	0
+13.842	76.282	LataHit	Objective	the can · ALING NENA	7	0
+14.342	75.782	LataHit	Objective	the can · ALING NENA	7	0
+14.844	75.282	LataHit	Objective	the can · ALING NENA	7	0

@@ -1,0 +1,763 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="48" result="Passed" total="48" passed="48" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 03:24:31Z" end-time="2026-10-06 03:47:38Z" duration="1387.1523035">
+  <test-suite type="TestSuite" id="3314" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1895" result="Passed" start-time="2026-10-06 03:24:31Z" end-time="2026-10-06 03:47:38Z" duration="1387.152304" total="48" passed="48" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3306" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1895" result="Passed" start-time="2026-10-06 03:24:31Z" end-time="2026-10-06 03:47:38Z" duration="1387.133590" total="48" passed="48" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="48900" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3307" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1895" result="Passed" start-time="2026-10-06 03:24:31Z" end-time="2026-10-06 03:47:38Z" duration="1387.119797" total="48" passed="48" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3310" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1893" result="Passed" start-time="2026-10-06 03:24:31Z" end-time="2026-10-06 03:47:38Z" duration="1387.107247" total="48" passed="48" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2880" name="SpectatorMapCastProbe" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" testcasecount="48" result="Passed" start-time="2026-10-06 03:24:31Z" end-time="2026-10-06 03:47:38Z" duration="1387.081748" total="48" passed="48" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2889" name="BayanPlaza_Classic_Group0" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.BayanPlaza_Classic_Group0" methodname="BayanPlaza_Classic_Group0" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="2071535729" result="Passed" start-time="2026-10-06 03:24:31Z" end-time="2026-10-06 03:25:01Z" duration="30.192274" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/BayanPlaza/Classic-0/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/BayanPlaza/Classic-0/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/BayanPlaza/Classic-0/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2890" name="BayanPlaza_Classic_Group1" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.BayanPlaza_Classic_Group1" methodname="BayanPlaza_Classic_Group1" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="1241177783" result="Passed" start-time="2026-10-06 03:25:01Z" end-time="2026-10-06 03:25:29Z" duration="27.713572" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/BayanPlaza/Classic-2/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/BayanPlaza/Classic-2/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/BayanPlaza/Classic-2/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2891" name="BayanPlaza_Classic_Group2" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.BayanPlaza_Classic_Group2" methodname="BayanPlaza_Classic_Group2" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="450121426" result="Passed" start-time="2026-10-06 03:25:29Z" end-time="2026-10-06 03:25:56Z" duration="27.693539" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/BayanPlaza/Classic-4/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/BayanPlaza/Classic-4/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/BayanPlaza/Classic-4/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2892" name="BayanPlaza_Classic_Group3" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.BayanPlaza_Classic_Group3" methodname="BayanPlaza_Classic_Group3" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="251200477" result="Passed" start-time="2026-10-06 03:25:56Z" end-time="2026-10-06 03:26:24Z" duration="27.666223" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/BayanPlaza/Classic-1/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/BayanPlaza/Classic-1/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/BayanPlaza/Classic-1/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2893" name="BayanPlaza_HeroStrike_Group0" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.BayanPlaza_HeroStrike_Group0" methodname="BayanPlaza_HeroStrike_Group0" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="628253491" result="Passed" start-time="2026-10-06 03:26:24Z" end-time="2026-10-06 03:26:52Z" duration="27.811941" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/BayanPlaza/HeroStrike-0/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/BayanPlaza/HeroStrike-0/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/BayanPlaza/HeroStrike-0/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2894" name="BayanPlaza_HeroStrike_Group1" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.BayanPlaza_HeroStrike_Group1" methodname="BayanPlaza_HeroStrike_Group1" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="2042309452" result="Passed" start-time="2026-10-06 03:26:52Z" end-time="2026-10-06 03:27:19Z" duration="27.787359" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/BayanPlaza/HeroStrike-2/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/BayanPlaza/HeroStrike-2/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/BayanPlaza/HeroStrike-2/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2895" name="BayanPlaza_HeroStrike_Group2" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.BayanPlaza_HeroStrike_Group2" methodname="BayanPlaza_HeroStrike_Group2" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="1568971307" result="Passed" start-time="2026-10-06 03:27:19Z" end-time="2026-10-06 03:27:47Z" duration="27.767500" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/BayanPlaza/HeroStrike-4/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/BayanPlaza/HeroStrike-4/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/BayanPlaza/HeroStrike-4/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2896" name="BayanPlaza_HeroStrike_Group3" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.BayanPlaza_HeroStrike_Group3" methodname="BayanPlaza_HeroStrike_Group3" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="1497145610" result="Passed" start-time="2026-10-06 03:27:47Z" end-time="2026-10-06 03:28:15Z" duration="27.775998" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/BayanPlaza/HeroStrike-1/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/BayanPlaza/HeroStrike-1/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/BayanPlaza/HeroStrike-1/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2881" name="Eskinita_Classic_Group0" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.Eskinita_Classic_Group0" methodname="Eskinita_Classic_Group0" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="367997536" result="Passed" start-time="2026-10-06 03:28:15Z" end-time="2026-10-06 03:28:44Z" duration="28.558214" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/Eskinita/Classic-0/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/Eskinita/Classic-0/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/Eskinita/Classic-0/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2882" name="Eskinita_Classic_Group1" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.Eskinita_Classic_Group1" methodname="Eskinita_Classic_Group1" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="730937900" result="Passed" start-time="2026-10-06 03:28:44Z" end-time="2026-10-06 03:29:11Z" duration="27.798130" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/Eskinita/Classic-2/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/Eskinita/Classic-2/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/Eskinita/Classic-2/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2883" name="Eskinita_Classic_Group2" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.Eskinita_Classic_Group2" methodname="Eskinita_Classic_Group2" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="962801640" result="Passed" start-time="2026-10-06 03:29:11Z" end-time="2026-10-06 03:29:39Z" duration="27.809131" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/Eskinita/Classic-4/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/Eskinita/Classic-4/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/Eskinita/Classic-4/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2884" name="Eskinita_Classic_Group3" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.Eskinita_Classic_Group3" methodname="Eskinita_Classic_Group3" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="30992685" result="Passed" start-time="2026-10-06 03:29:39Z" end-time="2026-10-06 03:30:07Z" duration="27.873070" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/Eskinita/Classic-1/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/Eskinita/Classic-1/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/Eskinita/Classic-1/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2885" name="Eskinita_HeroStrike_Group0" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.Eskinita_HeroStrike_Group0" methodname="Eskinita_HeroStrike_Group0" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="681846056" result="Passed" start-time="2026-10-06 03:30:07Z" end-time="2026-10-06 03:30:35Z" duration="27.849898" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/Eskinita/HeroStrike-0/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/Eskinita/HeroStrike-0/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/Eskinita/HeroStrike-0/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2886" name="Eskinita_HeroStrike_Group1" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.Eskinita_HeroStrike_Group1" methodname="Eskinita_HeroStrike_Group1" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="1631082861" result="Passed" start-time="2026-10-06 03:30:35Z" end-time="2026-10-06 03:31:03Z" duration="27.843499" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/Eskinita/HeroStrike-2/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/Eskinita/HeroStrike-2/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/Eskinita/HeroStrike-2/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2887" name="Eskinita_HeroStrike_Group2" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.Eskinita_HeroStrike_Group2" methodname="Eskinita_HeroStrike_Group2" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="1023342453" result="Passed" start-time="2026-10-06 03:31:03Z" end-time="2026-10-06 03:31:31Z" duration="27.841387" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/Eskinita/HeroStrike-4/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/Eskinita/HeroStrike-4/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/Eskinita/HeroStrike-4/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2888" name="Eskinita_HeroStrike_Group3" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.Eskinita_HeroStrike_Group3" methodname="Eskinita_HeroStrike_Group3" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="1894106867" result="Passed" start-time="2026-10-06 03:31:31Z" end-time="2026-10-06 03:31:58Z" duration="27.845242" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/Eskinita/HeroStrike-1/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/Eskinita/HeroStrike-1/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/Eskinita/HeroStrike-1/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2897" name="IlalimNgTulay_Classic_Group0" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.IlalimNgTulay_Classic_Group0" methodname="IlalimNgTulay_Classic_Group0" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="1747431056" result="Passed" start-time="2026-10-06 03:31:58Z" end-time="2026-10-06 03:32:44Z" duration="45.293215" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/IlalimNgTulay/Classic-0/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/IlalimNgTulay/Classic-0/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/IlalimNgTulay/Classic-0/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2898" name="IlalimNgTulay_Classic_Group1" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.IlalimNgTulay_Classic_Group1" methodname="IlalimNgTulay_Classic_Group1" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="1324017961" result="Passed" start-time="2026-10-06 03:32:44Z" end-time="2026-10-06 03:33:13Z" duration="29.227314" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/IlalimNgTulay/Classic-2/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/IlalimNgTulay/Classic-2/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/IlalimNgTulay/Classic-2/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2899" name="IlalimNgTulay_Classic_Group2" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.IlalimNgTulay_Classic_Group2" methodname="IlalimNgTulay_Classic_Group2" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="1183223515" result="Passed" start-time="2026-10-06 03:33:13Z" end-time="2026-10-06 03:33:42Z" duration="29.171617" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/IlalimNgTulay/Classic-4/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/IlalimNgTulay/Classic-4/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/IlalimNgTulay/Classic-4/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2900" name="IlalimNgTulay_Classic_Group3" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.IlalimNgTulay_Classic_Group3" methodname="IlalimNgTulay_Classic_Group3" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="91608177" result="Passed" start-time="2026-10-06 03:33:42Z" end-time="2026-10-06 03:34:11Z" duration="29.180131" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/IlalimNgTulay/Classic-1/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/IlalimNgTulay/Classic-1/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/IlalimNgTulay/Classic-1/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2901" name="IlalimNgTulay_HeroStrike_Group0" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.IlalimNgTulay_HeroStrike_Group0" methodname="IlalimNgTulay_HeroStrike_Group0" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="1286967957" result="Passed" start-time="2026-10-06 03:34:11Z" end-time="2026-10-06 03:34:41Z" duration="29.219000" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/IlalimNgTulay/HeroStrike-0/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/IlalimNgTulay/HeroStrike-0/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/IlalimNgTulay/HeroStrike-0/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2902" name="IlalimNgTulay_HeroStrike_Group1" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.IlalimNgTulay_HeroStrike_Group1" methodname="IlalimNgTulay_HeroStrike_Group1" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="303312705" result="Passed" start-time="2026-10-06 03:34:41Z" end-time="2026-10-06 03:35:10Z" duration="29.188846" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/IlalimNgTulay/HeroStrike-2/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/IlalimNgTulay/HeroStrike-2/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/IlalimNgTulay/HeroStrike-2/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2903" name="IlalimNgTulay_HeroStrike_Group2" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.IlalimNgTulay_HeroStrike_Group2" methodname="IlalimNgTulay_HeroStrike_Group2" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="210522756" result="Passed" start-time="2026-10-06 03:35:10Z" end-time="2026-10-06 03:35:39Z" duration="29.195122" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/IlalimNgTulay/HeroStrike-4/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/IlalimNgTulay/HeroStrike-4/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/IlalimNgTulay/HeroStrike-4/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2904" name="IlalimNgTulay_HeroStrike_Group3" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.IlalimNgTulay_HeroStrike_Group3" methodname="IlalimNgTulay_HeroStrike_Group3" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="1862848162" result="Passed" start-time="2026-10-06 03:35:39Z" end-time="2026-10-06 03:36:08Z" duration="29.384522" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/IlalimNgTulay/HeroStrike-1/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/IlalimNgTulay/HeroStrike-1/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/IlalimNgTulay/HeroStrike-1/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2921" name="Kanto_Classic_Group0" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.Kanto_Classic_Group0" methodname="Kanto_Classic_Group0" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="1419881531" result="Passed" start-time="2026-10-06 03:36:08Z" end-time="2026-10-06 03:36:39Z" duration="30.934139" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/Kanto/Classic-0/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/Kanto/Classic-0/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/Kanto/Classic-0/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2922" name="Kanto_Classic_Group1" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.Kanto_Classic_Group1" methodname="Kanto_Classic_Group1" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="1496545776" result="Passed" start-time="2026-10-06 03:36:39Z" end-time="2026-10-06 03:37:07Z" duration="28.189108" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/Kanto/Classic-2/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/Kanto/Classic-2/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/Kanto/Classic-2/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2923" name="Kanto_Classic_Group2" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.Kanto_Classic_Group2" methodname="Kanto_Classic_Group2" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="1044189028" result="Passed" start-time="2026-10-06 03:37:07Z" end-time="2026-10-06 03:37:36Z" duration="28.202846" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/Kanto/Classic-4/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/Kanto/Classic-4/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/Kanto/Classic-4/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2924" name="Kanto_Classic_Group3" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.Kanto_Classic_Group3" methodname="Kanto_Classic_Group3" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="864200964" result="Passed" start-time="2026-10-06 03:37:36Z" end-time="2026-10-06 03:38:04Z" duration="28.194747" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/Kanto/Classic-1/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/Kanto/Classic-1/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/Kanto/Classic-1/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2925" name="Kanto_HeroStrike_Group0" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.Kanto_HeroStrike_Group0" methodname="Kanto_HeroStrike_Group0" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="1605483310" result="Passed" start-time="2026-10-06 03:38:04Z" end-time="2026-10-06 03:38:32Z" duration="28.200397" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/Kanto/HeroStrike-0/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/Kanto/HeroStrike-0/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/Kanto/HeroStrike-0/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2926" name="Kanto_HeroStrike_Group1" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.Kanto_HeroStrike_Group1" methodname="Kanto_HeroStrike_Group1" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="174418764" result="Passed" start-time="2026-10-06 03:38:32Z" end-time="2026-10-06 03:39:00Z" duration="28.221407" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/Kanto/HeroStrike-2/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/Kanto/HeroStrike-2/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/Kanto/HeroStrike-2/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2927" name="Kanto_HeroStrike_Group2" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.Kanto_HeroStrike_Group2" methodname="Kanto_HeroStrike_Group2" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="55548129" result="Passed" start-time="2026-10-06 03:39:00Z" end-time="2026-10-06 03:39:28Z" duration="28.193734" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/Kanto/HeroStrike-4/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/Kanto/HeroStrike-4/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/Kanto/HeroStrike-4/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2928" name="Kanto_HeroStrike_Group3" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.Kanto_HeroStrike_Group3" methodname="Kanto_HeroStrike_Group3" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="1959894388" result="Passed" start-time="2026-10-06 03:39:28Z" end-time="2026-10-06 03:39:57Z" duration="28.188578" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/Kanto/HeroStrike-1/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/Kanto/HeroStrike-1/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/Kanto/HeroStrike-1/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2913" name="LagoonCove_Classic_Group0" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.LagoonCove_Classic_Group0" methodname="LagoonCove_Classic_Group0" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="1243180430" result="Passed" start-time="2026-10-06 03:39:57Z" end-time="2026-10-06 03:40:30Z" duration="33.843860" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/LagoonCove/Classic-0/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/LagoonCove/Classic-0/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/LagoonCove/Classic-0/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2914" name="LagoonCove_Classic_Group1" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.LagoonCove_Classic_Group1" methodname="LagoonCove_Classic_Group1" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="520214829" result="Passed" start-time="2026-10-06 03:40:30Z" end-time="2026-10-06 03:40:59Z" duration="28.477244" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/LagoonCove/Classic-2/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/LagoonCove/Classic-2/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/LagoonCove/Classic-2/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2915" name="LagoonCove_Classic_Group2" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.LagoonCove_Classic_Group2" methodname="LagoonCove_Classic_Group2" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="2058475099" result="Passed" start-time="2026-10-06 03:40:59Z" end-time="2026-10-06 03:41:28Z" duration="28.556121" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/LagoonCove/Classic-4/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/LagoonCove/Classic-4/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/LagoonCove/Classic-4/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2916" name="LagoonCove_Classic_Group3" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.LagoonCove_Classic_Group3" methodname="LagoonCove_Classic_Group3" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="1804163390" result="Passed" start-time="2026-10-06 03:41:28Z" end-time="2026-10-06 03:41:56Z" duration="28.454965" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/LagoonCove/Classic-1/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/LagoonCove/Classic-1/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/LagoonCove/Classic-1/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2917" name="LagoonCove_HeroStrike_Group0" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.LagoonCove_HeroStrike_Group0" methodname="LagoonCove_HeroStrike_Group0" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="1583990309" result="Passed" start-time="2026-10-06 03:41:56Z" end-time="2026-10-06 03:42:25Z" duration="28.558711" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/LagoonCove/HeroStrike-0/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/LagoonCove/HeroStrike-0/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/LagoonCove/HeroStrike-0/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2918" name="LagoonCove_HeroStrike_Group1" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.LagoonCove_HeroStrike_Group1" methodname="LagoonCove_HeroStrike_Group1" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="1935378082" result="Passed" start-time="2026-10-06 03:42:25Z" end-time="2026-10-06 03:42:53Z" duration="28.521118" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/LagoonCove/HeroStrike-2/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/LagoonCove/HeroStrike-2/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/LagoonCove/HeroStrike-2/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2919" name="LagoonCove_HeroStrike_Group2" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.LagoonCove_HeroStrike_Group2" methodname="LagoonCove_HeroStrike_Group2" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="171960039" result="Passed" start-time="2026-10-06 03:42:53Z" end-time="2026-10-06 03:43:22Z" duration="28.531497" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/LagoonCove/HeroStrike-4/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/LagoonCove/HeroStrike-4/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/LagoonCove/HeroStrike-4/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2920" name="LagoonCove_HeroStrike_Group3" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.LagoonCove_HeroStrike_Group3" methodname="LagoonCove_HeroStrike_Group3" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="1478422077" result="Passed" start-time="2026-10-06 03:43:22Z" end-time="2026-10-06 03:43:50Z" duration="28.564075" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/LagoonCove/HeroStrike-1/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/LagoonCove/HeroStrike-1/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/LagoonCove/HeroStrike-1/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2905" name="SaBubong_Classic_Group0" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.SaBubong_Classic_Group0" methodname="SaBubong_Classic_Group0" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="395481925" result="Passed" start-time="2026-10-06 03:43:50Z" end-time="2026-10-06 03:44:23Z" duration="33.167665" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 297 renderers, 0 with a roof variant.
+[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/SaBubong/Classic-0/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/SaBubong/Classic-0/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/SaBubong/Classic-0/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2906" name="SaBubong_Classic_Group1" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.SaBubong_Classic_Group1" methodname="SaBubong_Classic_Group1" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="1459693654" result="Passed" start-time="2026-10-06 03:44:23Z" end-time="2026-10-06 03:44:51Z" duration="27.767173" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 297 renderers, 0 with a roof variant.
+[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/SaBubong/Classic-2/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/SaBubong/Classic-2/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/SaBubong/Classic-2/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2907" name="SaBubong_Classic_Group2" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.SaBubong_Classic_Group2" methodname="SaBubong_Classic_Group2" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="160783472" result="Passed" start-time="2026-10-06 03:44:51Z" end-time="2026-10-06 03:45:19Z" duration="27.760884" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 297 renderers, 0 with a roof variant.
+[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/SaBubong/Classic-4/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/SaBubong/Classic-4/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/SaBubong/Classic-4/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2908" name="SaBubong_Classic_Group3" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.SaBubong_Classic_Group3" methodname="SaBubong_Classic_Group3" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="1687381973" result="Passed" start-time="2026-10-06 03:45:19Z" end-time="2026-10-06 03:45:47Z" duration="27.749058" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 297 renderers, 0 with a roof variant.
+[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/SaBubong/Classic-1/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/SaBubong/Classic-1/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/SaBubong/Classic-1/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2909" name="SaBubong_HeroStrike_Group0" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.SaBubong_HeroStrike_Group0" methodname="SaBubong_HeroStrike_Group0" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="789819978" result="Passed" start-time="2026-10-06 03:45:47Z" end-time="2026-10-06 03:46:14Z" duration="27.760588" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 297 renderers, 0 with a roof variant.
+[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/SaBubong/HeroStrike-0/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/SaBubong/HeroStrike-0/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/SaBubong/HeroStrike-0/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2910" name="SaBubong_HeroStrike_Group1" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.SaBubong_HeroStrike_Group1" methodname="SaBubong_HeroStrike_Group1" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="1688861409" result="Passed" start-time="2026-10-06 03:46:14Z" end-time="2026-10-06 03:46:42Z" duration="27.777071" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 297 renderers, 0 with a roof variant.
+[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/SaBubong/HeroStrike-2/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/SaBubong/HeroStrike-2/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/SaBubong/HeroStrike-2/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2911" name="SaBubong_HeroStrike_Group2" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.SaBubong_HeroStrike_Group2" methodname="SaBubong_HeroStrike_Group2" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="651004932" result="Passed" start-time="2026-10-06 03:46:42Z" end-time="2026-10-06 03:47:10Z" duration="27.790882" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 297 renderers, 0 with a roof variant.
+[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/SaBubong/HeroStrike-4/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/SaBubong/HeroStrike-4/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/SaBubong/HeroStrike-4/cast-natural-2.png
+]]></output>
+            </test-case>
+            <test-case id="2912" name="SaBubong_HeroStrike_Group3" fullname="TumbangPreso.PlayTests.SpectatorMapCastProbe.SaBubong_HeroStrike_Group3" methodname="SaBubong_HeroStrike_Group3" classname="TumbangPreso.PlayTests.SpectatorMapCastProbe" runstate="Runnable" seed="2143588515" result="Passed" start-time="2026-10-06 03:47:10Z" end-time="2026-10-06 03:47:38Z" duration="27.771800" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 297 renderers, 0 with a roof variant.
+[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-map-cast1006/SaBubong/HeroStrike-1/cast-natural-0.png
+[Play] wrote Logs/spectator-map-cast1006/SaBubong/HeroStrike-1/cast-natural-1.png
+[Play] wrote Logs/spectator-map-cast1006/SaBubong/HeroStrike-1/cast-natural-2.png
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

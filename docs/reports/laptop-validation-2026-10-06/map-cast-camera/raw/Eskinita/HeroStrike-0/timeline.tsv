@@ -1,0 +1,30 @@
+0.000	89.980	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.480	Quiet	QuietEstablish	the street	1	0
+1.001	88.980	Quiet	QuietEstablish	the street	1	0
+1.502	88.480	Quiet	QuietEstablish	the street	1	0
+2.003	87.980	Quiet	QuietEstablish	the street	1	0
+2.504	87.480	SlipperLanded	Objective	the can	2	0
+3.006	86.981	SlipperLanded	Objective	the can	2	0
+3.507	86.481	SlipperLanded	Objective	the can	2	0
+4.007	85.981	SlipperLanded	Objective	the can	2	0
+4.508	85.481	ThrowPrep	Objective	throw · ILYAS	2	0
+5.220	84.821	ThrowPrep	Objective	throw · ILYAS	2	0
+5.720	84.321	ThrowPrep	Objective	throw · ILYAS	2	0
+6.222	83.821	ThrowPrep	Objective	throw · ILYAS	2	0
+6.724	83.321	Tag	Defender	tag · YASMIN	3	0
+7.224	82.821	Tag	Defender	tag · YASMIN	3	0
+7.725	82.321	Downed	Recovery	down · YASMIN	4	0
+8.225	81.821	Downed	Recovery	down · YASMIN	4	0
+8.726	81.321	Downed	Recovery	down · YASMIN	4	0
+9.228	80.822	Downed	Recovery	down · YASMIN	4	0
+9.728	80.322	ThrowPrep	Objective	throw · ILYAS	5	0
+10.229	79.822	ThrowPrep	Objective	throw · ILYAS	5	0
+10.731	79.322	ThrowPrep	Objective	throw · ILYAS	5	0
+11.231	78.822	Quiet	QuietEstablish	the street	6	0
+11.732	78.322	Quiet	QuietEstablish	the street	6	0
+12.233	77.802	Quiet	QuietEstablish	the street	6	0
+12.734	77.302	Quiet	QuietEstablish	the street	6	0
+13.235	76.802	Quiet	QuietEstablish	the street	6	0
+13.736	76.302	Quiet	QuietEstablish	the street	6	0
+14.236	75.802	ThrowPrep	Objective	throw · YASMIN	7	0
+14.738	75.302	ThrowPrep	Objective	throw · YASMIN	7	0

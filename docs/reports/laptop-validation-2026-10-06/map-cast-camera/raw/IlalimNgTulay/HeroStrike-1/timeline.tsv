@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.500	Quiet	QuietEstablish	the street	1	0
+1.001	89.000	Quiet	QuietEstablish	the street	1	0
+1.502	88.500	Quiet	QuietEstablish	the street	1	0
+2.004	88.000	Quiet	QuietEstablish	the street	1	0
+2.505	87.500	Quiet	QuietEstablish	the street	1	0
+3.005	87.001	SlipperLanded	Objective	the can	2	0
+3.507	86.501	SlipperLanded	Objective	the can	2	0
+4.007	86.001	SlipperLanded	Objective	the can	2	0
+4.508	85.501	SlipperLanded	Objective	the can	2	0
+5.292	84.701	Quiet	QuietEstablish	the street	3	0
+5.797	84.201	Quiet	QuietEstablish	the street	3	0
+6.299	83.761	Quiet	QuietEstablish	the street	3	0
+6.801	83.261	Quiet	QuietEstablish	the street	3	0
+7.304	82.761	Tag	Defender	tag · RAGO	4	0
+7.805	82.261	Tag	Defender	tag · RAGO	4	0
+8.306	81.761	Tag	Defender	tag · RAGO	6	0
+8.807	81.321	Tag	Defender	tag · RAGO	6	0
+9.308	80.802	Tag	Defender	tag · RAGO	6	0
+9.811	80.302	Tag	Defender	tag · RAGO	6	0
+10.367	79.742	Tag	Defender	tag · RAGO	6	0
+10.868	79.242	Tag	Defender	tag · RAGO	6	0
+11.370	78.742	Downed	Recovery	down · RAGO	6	0
+11.871	78.242	Downed	Recovery	down · RAGO	6	0
+12.372	77.742	Downed	Recovery	down · RAGO	6	0
+12.874	77.242	Downed	Recovery	down · RAGO	6	0
+13.375	76.742	ThrowPrep	Objective	throw · AMIHAN	7	0
+13.875	76.242	ThrowPrep	Objective	throw · AMIHAN	7	0
+14.375	75.742	ThrowPrep	Objective	throw · AMIHAN	7	0
+14.875	75.242	Retrieval	Chase	retrieval · RAGO	8	0

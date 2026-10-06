@@ -1,0 +1,7 @@
+{
+  "Assets/TumbangPreso/Runtime/Camera/SpectatorDirector.cs": "3528c496176bb98f32b2d1d49483783d166a7c598c358dea39bbe492e103bd6e",
+  "Assets/TumbangPreso/Runtime/Camera/SpectatorCamera.cs": "6270b8f8c4ee9c06cee39af355cfa2bd82bf58b290de2da42962edc8525ec999",
+  "Assets/TumbangPreso/Runtime/Camera/SpectatorInterest.cs": "156ca5373a0dd784c070f1ba33c751b5102c2ecb23c7874d5c790952654a27b0",
+  "Assets/TumbangPreso/Runtime/MatchInstaller.cs": "18569f22981f7249cfb10295eb54bdd28a834474fec881352d1eba8b85ae5863",
+  "Packages/com.tumbangpreso.core/Runtime/Roster.cs": "9b11082a0f0056afe189a7c916926ad831ad4b26df740d15c9275d83e09ccaae"
+}

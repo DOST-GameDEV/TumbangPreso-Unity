@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.500	89.500	Quiet	QuietEstablish	the street	1	0
+1.001	89.000	Quiet	QuietEstablish	the street	1	0
+1.502	88.500	Quiet	QuietEstablish	the street	1	0
+2.002	88.000	Quiet	QuietEstablish	the street	1	0
+2.502	87.500	Quiet	QuietEstablish	the street	1	0
+3.002	87.001	Quiet	QuietEstablish	the street	1	0
+3.503	86.501	Quiet	QuietEstablish	the street	1	0
+4.003	86.001	Quiet	QuietEstablish	the street	1	0
+4.503	85.501	Quiet	QuietEstablish	the street	1	0
+5.255	84.741	Quiet	QuietEstablish	the street	1	0
+5.755	84.241	Quiet	QuietEstablish	the street	1	0
+6.256	83.741	Quiet	QuietEstablish	the street	1	0
+6.757	83.241	Quiet	QuietEstablish	the street	1	0
+7.258	82.741	Quiet	QuietEstablish	the street	1	0
+7.759	82.241	Retrieval	Chase	retrieval · SORAYA	2	0
+8.260	81.801	Tag	Defender	tag · SORAYA	3	0
+8.762	81.341	Tag	Defender	tag · SORAYA	3	0
+9.262	80.842	Tag	Defender	tag · SORAYA	3	0
+9.763	80.342	Tag	Defender	tag · SORAYA	3	0
+10.273	79.842	Tag	Defender	tag · SORAYA	3	0
+10.773	79.342	Tag	Defender	tag · SORAYA	3	0
+11.273	78.842	Tag	Defender	tag · SORAYA	3	0
+11.774	78.342	Downed	Recovery	down · YASMIN	4	0
+12.275	77.842	Downed	Recovery	down · YASMIN	4	0
+12.776	77.342	Downed	Recovery	down · YASMIN	4	0
+13.277	76.842	Downed	Recovery	down · YASMIN	4	0
+13.778	76.342	Quiet	QuietEstablish	the street	5	0
+14.278	75.842	Quiet	QuietEstablish	the street	5	0
+14.779	75.342	Quiet	QuietEstablish	the street	5	0

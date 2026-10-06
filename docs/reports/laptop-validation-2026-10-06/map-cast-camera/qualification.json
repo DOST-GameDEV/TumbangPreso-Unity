@@ -1,0 +1,960 @@
+{
+  "source": "c2120970ae958e09465b1cdf5d987a95b36f9de8",
+  "manifestSha256": "a07c52e67a6404a9439d4aa08cb5c27ed4d6042c09c91ffb568cbf070c11a8eb",
+  "result": {
+    "pid": 48900,
+    "terminal": true,
+    "exitCode": 0,
+    "passed": 48,
+    "failed": 0,
+    "inputCount": 21152,
+    "allInputsRestored": true,
+    "existingPrefsRestored": 13
+  },
+  "groups": {
+    "BayanPlaza/Classic-0": {
+      "ids": [
+        "maring",
+        "bayan",
+        "tikboy",
+        "lola_pacing"
+      ],
+      "samples": 30,
+      "clockLast": 75.462,
+      "cutsLast": 7,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "Tag",
+        "ThrowPrep"
+      ]
+    },
+    "BayanPlaza/Classic-1": {
+      "ids": [
+        "totoy",
+        "maring",
+        "bebang",
+        "mang_kanor"
+      ],
+      "samples": 30,
+      "clockLast": 75.422,
+      "cutsLast": 8,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "SlipperLanded",
+        "Tag"
+      ]
+    },
+    "BayanPlaza/Classic-2": {
+      "ids": [
+        "inday",
+        "totoy",
+        "jun_jun",
+        "aling_nena"
+      ],
+      "samples": 30,
+      "clockLast": 75.362,
+      "cutsLast": 9,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "SlipperLanded",
+        "Tag",
+        "ThrowPrep"
+      ]
+    },
+    "BayanPlaza/Classic-4": {
+      "ids": [
+        "ate_girlie",
+        "kuya_boy",
+        "mang_kanor",
+        "maring"
+      ],
+      "samples": 30,
+      "clockLast": 75.382,
+      "cutsLast": 10,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "Quiet",
+        "SlipperLanded",
+        "Tag"
+      ]
+    },
+    "BayanPlaza/HeroStrike-0": {
+      "ids": [
+        "cheska",
+        "dante",
+        "rafi",
+        "cheska"
+      ],
+      "samples": 30,
+      "clockLast": 75.402,
+      "cutsLast": 9,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "Quiet",
+        "SlipperLanded",
+        "Tag",
+        "ThrowPrep"
+      ]
+    },
+    "BayanPlaza/HeroStrike-1": {
+      "ids": [
+        "sean",
+        "cheska",
+        "amihan",
+        "sean"
+      ],
+      "samples": 30,
+      "clockLast": 75.262,
+      "cutsLast": 13,
+      "fallbacksLast": 0,
+      "beats": [
+        "Quiet",
+        "Retrieval",
+        "SlipperLanded",
+        "ThrowPrep"
+      ]
+    },
+    "BayanPlaza/HeroStrike-2": {
+      "ids": [
+        "zack",
+        "sean",
+        "paete",
+        "zack"
+      ],
+      "samples": 30,
+      "clockLast": 75.322,
+      "cutsLast": 10,
+      "fallbacksLast": 0,
+      "beats": [
+        "Quiet",
+        "Retrieval",
+        "SlipperLanded",
+        "ThrowPrep"
+      ]
+    },
+    "BayanPlaza/HeroStrike-4": {
+      "ids": [
+        "phaister",
+        "nemu",
+        "cheska",
+        "phaister"
+      ],
+      "samples": 30,
+      "clockLast": 75.262,
+      "cutsLast": 10,
+      "fallbacksLast": 0,
+      "beats": [
+        "Quiet",
+        "Retrieval",
+        "SlipperLanded",
+        "ThrowPrep"
+      ]
+    },
+    "Eskinita/Classic-0": {
+      "ids": [
+        "maring",
+        "bayan",
+        "tikboy",
+        "lola_pacing"
+      ],
+      "samples": 30,
+      "clockLast": 75.342,
+      "cutsLast": 10,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "SlipperLanded",
+        "Tag",
+        "ThrowPrep"
+      ]
+    },
+    "Eskinita/Classic-1": {
+      "ids": [
+        "totoy",
+        "maring",
+        "bebang",
+        "mang_kanor"
+      ],
+      "samples": 30,
+      "clockLast": 75.402,
+      "cutsLast": 8,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "Tag"
+      ]
+    },
+    "Eskinita/Classic-2": {
+      "ids": [
+        "inday",
+        "totoy",
+        "jun_jun",
+        "aling_nena"
+      ],
+      "samples": 30,
+      "clockLast": 75.342,
+      "cutsLast": 11,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "SlipperLanded",
+        "Tag"
+      ]
+    },
+    "Eskinita/Classic-4": {
+      "ids": [
+        "ate_girlie",
+        "kuya_boy",
+        "mang_kanor",
+        "maring"
+      ],
+      "samples": 30,
+      "clockLast": 75.402,
+      "cutsLast": 10,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "Tag"
+      ]
+    },
+    "Eskinita/HeroStrike-0": {
+      "ids": [
+        "cheska",
+        "dante",
+        "rafi",
+        "cheska"
+      ],
+      "samples": 30,
+      "clockLast": 75.302,
+      "cutsLast": 7,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "Quiet",
+        "SlipperLanded",
+        "Tag",
+        "ThrowPrep"
+      ]
+    },
+    "Eskinita/HeroStrike-1": {
+      "ids": [
+        "sean",
+        "cheska",
+        "amihan",
+        "sean"
+      ],
+      "samples": 30,
+      "clockLast": 75.302,
+      "cutsLast": 12,
+      "fallbacksLast": 0,
+      "beats": [
+        "LataHit",
+        "Quiet",
+        "Retrieval"
+      ]
+    },
+    "Eskinita/HeroStrike-2": {
+      "ids": [
+        "zack",
+        "sean",
+        "paete",
+        "zack"
+      ],
+      "samples": 30,
+      "clockLast": 75.302,
+      "cutsLast": 10,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "SlipperLanded",
+        "ThrowPrep"
+      ]
+    },
+    "Eskinita/HeroStrike-4": {
+      "ids": [
+        "phaister",
+        "nemu",
+        "cheska",
+        "phaister"
+      ],
+      "samples": 30,
+      "clockLast": 75.262,
+      "cutsLast": 12,
+      "fallbacksLast": 0,
+      "beats": [
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "ThrowPrep"
+      ]
+    },
+    "IlalimNgTulay/Classic-0": {
+      "ids": [
+        "maring",
+        "bayan",
+        "tikboy",
+        "lola_pacing"
+      ],
+      "samples": 30,
+      "clockLast": 75.222,
+      "cutsLast": 11,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "Tag",
+        "ThrowPrep"
+      ]
+    },
+    "IlalimNgTulay/Classic-1": {
+      "ids": [
+        "totoy",
+        "maring",
+        "bebang",
+        "mang_kanor"
+      ],
+      "samples": 30,
+      "clockLast": 75.222,
+      "cutsLast": 11,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "Tag"
+      ]
+    },
+    "IlalimNgTulay/Classic-2": {
+      "ids": [
+        "inday",
+        "totoy",
+        "jun_jun",
+        "aling_nena"
+      ],
+      "samples": 30,
+      "clockLast": 75.202,
+      "cutsLast": 8,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "Tag",
+        "ThrowPrep"
+      ]
+    },
+    "IlalimNgTulay/Classic-4": {
+      "ids": [
+        "ate_girlie",
+        "kuya_boy",
+        "mang_kanor",
+        "maring"
+      ],
+      "samples": 30,
+      "clockLast": 75.302,
+      "cutsLast": 10,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "Tag"
+      ]
+    },
+    "IlalimNgTulay/HeroStrike-0": {
+      "ids": [
+        "cheska",
+        "dante",
+        "rafi",
+        "cheska"
+      ],
+      "samples": 30,
+      "clockLast": 75.242,
+      "cutsLast": 7,
+      "fallbacksLast": 0,
+      "beats": [
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "SlipperLanded",
+        "Tag"
+      ]
+    },
+    "IlalimNgTulay/HeroStrike-1": {
+      "ids": [
+        "sean",
+        "cheska",
+        "amihan",
+        "sean"
+      ],
+      "samples": 30,
+      "clockLast": 75.242,
+      "cutsLast": 8,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "Quiet",
+        "Retrieval",
+        "SlipperLanded",
+        "Tag",
+        "ThrowPrep"
+      ]
+    },
+    "IlalimNgTulay/HeroStrike-2": {
+      "ids": [
+        "zack",
+        "sean",
+        "paete",
+        "zack"
+      ],
+      "samples": 30,
+      "clockLast": 75.182,
+      "cutsLast": 8,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "Tag",
+        "ThrowPrep"
+      ]
+    },
+    "IlalimNgTulay/HeroStrike-4": {
+      "ids": [
+        "phaister",
+        "nemu",
+        "cheska",
+        "phaister"
+      ],
+      "samples": 30,
+      "clockLast": 75.182,
+      "cutsLast": 12,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "SlipperLanded",
+        "Tag",
+        "ThrowPrep"
+      ]
+    },
+    "Kanto/Classic-0": {
+      "ids": [
+        "maring",
+        "bayan",
+        "tikboy",
+        "lola_pacing"
+      ],
+      "samples": 30,
+      "clockLast": 75.202,
+      "cutsLast": 11,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "Tag"
+      ]
+    },
+    "Kanto/Classic-1": {
+      "ids": [
+        "totoy",
+        "maring",
+        "bebang",
+        "mang_kanor"
+      ],
+      "samples": 30,
+      "clockLast": 75.103,
+      "cutsLast": 11,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "Quiet",
+        "Retrieval",
+        "SlipperLanded",
+        "Tag",
+        "ThrowPrep"
+      ]
+    },
+    "Kanto/Classic-2": {
+      "ids": [
+        "inday",
+        "totoy",
+        "jun_jun",
+        "aling_nena"
+      ],
+      "samples": 30,
+      "clockLast": 75.123,
+      "cutsLast": 8,
+      "fallbacksLast": 0,
+      "beats": [
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "SlipperLanded",
+        "Tag",
+        "ThrowPrep"
+      ]
+    },
+    "Kanto/Classic-4": {
+      "ids": [
+        "ate_girlie",
+        "kuya_boy",
+        "mang_kanor",
+        "maring"
+      ],
+      "samples": 30,
+      "clockLast": 75.322,
+      "cutsLast": 12,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "Quiet",
+        "Retrieval",
+        "SlipperLanded",
+        "Tag"
+      ]
+    },
+    "Kanto/HeroStrike-0": {
+      "ids": [
+        "cheska",
+        "dante",
+        "rafi",
+        "cheska"
+      ],
+      "samples": 30,
+      "clockLast": 75.103,
+      "cutsLast": 12,
+      "fallbacksLast": 1,
+      "beats": [
+        "Quiet",
+        "Retrieval",
+        "ThrowPrep"
+      ]
+    },
+    "Kanto/HeroStrike-1": {
+      "ids": [
+        "sean",
+        "cheska",
+        "amihan",
+        "sean"
+      ],
+      "samples": 30,
+      "clockLast": 75.162,
+      "cutsLast": 11,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "Quiet",
+        "Retrieval",
+        "SlipperLanded",
+        "Tag",
+        "ThrowPrep"
+      ]
+    },
+    "Kanto/HeroStrike-2": {
+      "ids": [
+        "zack",
+        "sean",
+        "paete",
+        "zack"
+      ],
+      "samples": 30,
+      "clockLast": 75.262,
+      "cutsLast": 6,
+      "fallbacksLast": 0,
+      "beats": [
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "SlipperLanded",
+        "Tag"
+      ]
+    },
+    "Kanto/HeroStrike-4": {
+      "ids": [
+        "phaister",
+        "nemu",
+        "cheska",
+        "phaister"
+      ],
+      "samples": 30,
+      "clockLast": 75.402,
+      "cutsLast": 11,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "Quiet",
+        "Retrieval",
+        "Tag",
+        "ThrowPrep"
+      ]
+    },
+    "LagoonCove/Classic-0": {
+      "ids": [
+        "maring",
+        "bayan",
+        "tikboy",
+        "lola_pacing"
+      ],
+      "samples": 30,
+      "clockLast": 75.282,
+      "cutsLast": 7,
+      "fallbacksLast": 0,
+      "beats": [
+        "Quiet",
+        "Retrieval",
+        "SlipperLanded",
+        "Tag",
+        "ThrowPrep"
+      ]
+    },
+    "LagoonCove/Classic-1": {
+      "ids": [
+        "totoy",
+        "maring",
+        "bebang",
+        "mang_kanor"
+      ],
+      "samples": 30,
+      "clockLast": 75.282,
+      "cutsLast": 7,
+      "fallbacksLast": 0,
+      "beats": [
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "Tag"
+      ]
+    },
+    "LagoonCove/Classic-2": {
+      "ids": [
+        "inday",
+        "totoy",
+        "jun_jun",
+        "aling_nena"
+      ],
+      "samples": 30,
+      "clockLast": 75.282,
+      "cutsLast": 7,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "Tag"
+      ]
+    },
+    "LagoonCove/Classic-4": {
+      "ids": [
+        "ate_girlie",
+        "kuya_boy",
+        "mang_kanor",
+        "maring"
+      ],
+      "samples": 30,
+      "clockLast": 75.302,
+      "cutsLast": 7,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "SlipperLanded",
+        "Tag",
+        "ThrowPrep"
+      ]
+    },
+    "LagoonCove/HeroStrike-0": {
+      "ids": [
+        "cheska",
+        "dante",
+        "rafi",
+        "cheska"
+      ],
+      "samples": 30,
+      "clockLast": 75.103,
+      "cutsLast": 7,
+      "fallbacksLast": 0,
+      "beats": [
+        "LataHit",
+        "Quiet",
+        "Reset",
+        "Retrieval",
+        "ThrowPrep"
+      ]
+    },
+    "LagoonCove/HeroStrike-1": {
+      "ids": [
+        "sean",
+        "cheska",
+        "amihan",
+        "sean"
+      ],
+      "samples": 30,
+      "clockLast": 75.123,
+      "cutsLast": 6,
+      "fallbacksLast": 0,
+      "beats": [
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "SlipperLanded",
+        "ThrowPrep"
+      ]
+    },
+    "LagoonCove/HeroStrike-2": {
+      "ids": [
+        "zack",
+        "sean",
+        "paete",
+        "zack"
+      ],
+      "samples": 30,
+      "clockLast": 75.202,
+      "cutsLast": 6,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "ThrowPrep"
+      ]
+    },
+    "LagoonCove/HeroStrike-4": {
+      "ids": [
+        "phaister",
+        "nemu",
+        "cheska",
+        "phaister"
+      ],
+      "samples": 30,
+      "clockLast": 75.262,
+      "cutsLast": 7,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "Quiet",
+        "SlipperLanded",
+        "Tag"
+      ]
+    },
+    "SaBubong/Classic-0": {
+      "ids": [
+        "maring",
+        "bayan",
+        "tikboy",
+        "lola_pacing"
+      ],
+      "samples": 30,
+      "clockLast": 75.382,
+      "cutsLast": 7,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Tag",
+        "ThrowPrep"
+      ]
+    },
+    "SaBubong/Classic-1": {
+      "ids": [
+        "totoy",
+        "maring",
+        "bebang",
+        "mang_kanor"
+      ],
+      "samples": 30,
+      "clockLast": 75.362,
+      "cutsLast": 8,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "Tag"
+      ]
+    },
+    "SaBubong/Classic-2": {
+      "ids": [
+        "inday",
+        "totoy",
+        "jun_jun",
+        "aling_nena"
+      ],
+      "samples": 30,
+      "clockLast": 75.322,
+      "cutsLast": 5,
+      "fallbacksLast": 0,
+      "beats": [
+        "Quiet",
+        "Retrieval",
+        "SlipperLanded",
+        "Tag",
+        "ThrowPrep"
+      ]
+    },
+    "SaBubong/Classic-4": {
+      "ids": [
+        "ate_girlie",
+        "kuya_boy",
+        "mang_kanor",
+        "maring"
+      ],
+      "samples": 30,
+      "clockLast": 75.382,
+      "cutsLast": 5,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "Quiet",
+        "SlipperLanded",
+        "Tag",
+        "ThrowPrep"
+      ]
+    },
+    "SaBubong/HeroStrike-0": {
+      "ids": [
+        "cheska",
+        "dante",
+        "rafi",
+        "cheska"
+      ],
+      "samples": 30,
+      "clockLast": 75.342,
+      "cutsLast": 6,
+      "fallbacksLast": 0,
+      "beats": [
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "Tag",
+        "ThrowPrep"
+      ]
+    },
+    "SaBubong/HeroStrike-1": {
+      "ids": [
+        "sean",
+        "cheska",
+        "amihan",
+        "sean"
+      ],
+      "samples": 30,
+      "clockLast": 75.242,
+      "cutsLast": 9,
+      "fallbacksLast": 0,
+      "beats": [
+        "LataHit",
+        "Quiet",
+        "Retrieval"
+      ]
+    },
+    "SaBubong/HeroStrike-2": {
+      "ids": [
+        "zack",
+        "sean",
+        "paete",
+        "zack"
+      ],
+      "samples": 30,
+      "clockLast": 75.322,
+      "cutsLast": 9,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "Tag",
+        "ThrowPrep"
+      ]
+    },
+    "SaBubong/HeroStrike-4": {
+      "ids": [
+        "phaister",
+        "nemu",
+        "cheska",
+        "phaister"
+      ],
+      "samples": 30,
+      "clockLast": 75.342,
+      "cutsLast": 5,
+      "fallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "Quiet",
+        "Retrieval",
+        "Tag"
+      ]
+    }
+  },
+  "installedUnion": {
+    "Classic": [
+      "aling_nena",
+      "ate_girlie",
+      "bayan",
+      "bebang",
+      "inday",
+      "jun_jun",
+      "kuya_boy",
+      "lola_pacing",
+      "mang_kanor",
+      "maring",
+      "tikboy",
+      "totoy"
+    ],
+    "HeroStrike": [
+      "amihan",
+      "cheska",
+      "dante",
+      "nemu",
+      "paete",
+      "phaister",
+      "rafi",
+      "sean",
+      "zack"
+    ]
+  }
+}

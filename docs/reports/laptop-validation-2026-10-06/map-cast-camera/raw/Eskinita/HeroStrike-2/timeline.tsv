@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.480	Quiet	QuietEstablish	the street	1	0
+1.001	88.980	Quiet	QuietEstablish	the street	1	0
+1.502	88.480	Quiet	QuietEstablish	the street	1	0
+2.004	87.980	Quiet	QuietEstablish	the street	1	0
+2.505	87.480	SlipperLanded	Objective	the can	2	0
+3.005	86.981	SlipperLanded	Objective	the can	2	0
+3.506	86.481	SlipperLanded	Objective	the can	2	0
+4.007	85.981	SlipperLanded	Objective	the can	2	0
+4.507	85.481	SlipperLanded	Objective	the can	2	0
+5.237	84.761	Quiet	QuietEstablish	the street	3	0
+5.738	84.261	Quiet	QuietEstablish	the street	3	0
+6.238	83.821	Quiet	QuietEstablish	the street	3	0
+6.738	83.321	Quiet	QuietEstablish	the street	3	0
+7.239	82.801	Quiet	QuietEstablish	the street	3	0
+7.741	82.301	Retrieval	Chase	retrieval · PAETE	5	0
+8.242	81.801	Retrieval	Chase	retrieval · PAETE	5	0
+8.744	81.301	Downed	Recovery	down · ISAGANI	7	0
+9.245	80.802	Downed	Recovery	down · ISAGANI	7	0
+9.745	80.302	Downed	Recovery	down · ISAGANI	7	0
+10.247	79.802	Downed	Recovery	down · ISAGANI	7	0
+10.748	79.302	Downed	Recovery	down · ISAGANI	7	0
+11.249	78.802	Retrieval	RetrievalTwoShot	retrieval · PAETE	9	0
+11.750	78.302	Retrieval	Chase	retrieval · PAETE	9	0
+12.253	77.802	Retrieval	Chase	retrieval · PAETE	9	0
+12.753	77.302	ThrowPrep	Objective	throw · PAETE	10	0
+13.253	76.802	ThrowPrep	Objective	throw · PAETE	10	0
+13.755	76.302	LataHit	Objective	the can · ISAGANI	10	0
+14.255	75.802	LataHit	Objective	the can · ISAGANI	10	0
+14.755	75.302	LataHit	Objective	the can · ISAGANI	10	0

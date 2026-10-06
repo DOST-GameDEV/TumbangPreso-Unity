@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.500	89.500	Quiet	QuietEstablish	the street	1	0
+1.001	89.000	Quiet	QuietEstablish	the street	1	0
+1.502	88.500	Quiet	QuietEstablish	the street	1	0
+2.002	88.000	Quiet	QuietEstablish	the street	1	0
+2.502	87.500	LataHit	Objective	the can · RAGO	2	0
+3.003	87.001	LataHit	Objective	the can · RAGO	2	0
+3.504	86.501	LataHit	Objective	the can · RAGO	2	0
+4.004	86.001	LataHit	Objective	the can · RAGO	2	0
+4.505	85.501	Retrieval	RetrievalTwoShot	retrieval · RAGO	3	0
+5.242	84.761	Retrieval	RetrievalTwoShot	retrieval · RAGO	3	0
+5.742	84.261	Retrieval	RetrievalTwoShot	retrieval · RAGO	3	0
+6.243	83.761	Retrieval	RetrievalTwoShot	retrieval · RAGO	3	0
+6.744	83.261	Retrieval	RetrievalTwoShot	retrieval · RAGO	3	0
+7.245	82.761	Retrieval	RetrievalTwoShot	retrieval · RAGO	3	0
+7.746	82.261	Quiet	QuietEstablish	the street	5	0
+8.247	81.741	Quiet	QuietEstablish	the street	5	0
+8.748	81.241	Quiet	QuietEstablish	the street	5	0
+9.250	80.742	Quiet	QuietEstablish	the street	5	0
+9.750	80.242	Quiet	QuietEstablish	the street	5	0
+10.250	79.742	Retrieval	Chase	retrieval · RAGO	6	0
+10.751	79.242	Retrieval	Chase	retrieval · RAGO	6	0
+11.252	78.742	Retrieval	Chase	retrieval · AMIHAN	7	0
+11.752	78.242	Retrieval	Chase	retrieval · AMIHAN	7	0
+12.253	77.742	Quiet	QuietEstablish	the street	8	0
+12.753	77.242	Quiet	QuietEstablish	the street	8	0
+13.254	76.742	Quiet	QuietEstablish	the street	8	0
+13.755	76.242	Quiet	QuietEstablish	the street	8	0
+14.256	75.742	Quiet	QuietEstablish	the street	8	0
+14.757	75.242	LataHit	Objective	the can · RAGO	9	0
