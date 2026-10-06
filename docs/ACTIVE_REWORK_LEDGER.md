@@ -25,9 +25,13 @@ movedLoose0.000. Roof Land/loose and floating controls remain true. The earlier
 weak pickup-only pass is retained as unqualified. Follow-up80440c18e has one
 passed native case/five controlled between-ramp scenarios, no body recovery and
 movedLoose0.000. Root verified eight raw hashes, exact fixture/meta and21194/13
-restoration. No AI change was justified. Laptop next uses its existing full-match
-Arena probe; fixed-frame simulation scope must stay separate from normal-clock,
-physical operator and peer acceptance. Root must not edit runtime or fixtures.
+restoration. No AI change was justified. Existing full-match Arena probe40648 is
+terminal1PASS on80440c18e:8x60 HeroStrike/all five layouts/seven breaks/65 tags and
+four recovered falls, no errors/stall-threshold failures. Root verified seven raw
+hashes and21194/13 restoration. Fixed1/60 capture frames run about4.1x real time;
+stamina pickup was not seen. This predates Claude UI1856 and does not qualify
+normal-clock, operator, current UI or peer acceptance. Laptop prepares a clean
+current-source checkout while preserving old UI WIP; Root never edits runtime.
 
 Owner reiterated: a Codex Bad Request banner is not permission to cancel work or
 pause the goal. Preserve live jobs, handles and source; verify actual process and

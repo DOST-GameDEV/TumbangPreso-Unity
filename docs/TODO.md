@@ -15,6 +15,13 @@
 - [ ] General navigation, moving layouts, bonus-pad routes, hostile pressure,
   natural full matches and current peers. Laptop owns the next runtime work;
   controlled route passes do not close the full bot-refinement requirement.
+- [x] Existing native ArenaMatchProbe completes eight60s HeroStrike rounds on
+  source80440c18e: all five layouts/seven breaks,65 tags and four recovered falls.
+  Root verified seven raw hashes, one passed case and21194/13 input restoration.
+  Fixed1/60 capture frames ran about4.1x real time; this is simulation evidence.
+  Stamina-pickup use was not observed. [Full simulation](reports/laptop-validation-2026-10-06/arena-fullmatch-post438/README.md).
+- [ ] Current Claude UI, normal-clock operator and actual peer acceptance. The
+  simulation predates UI1856 and does not close the natural-play requirement.
 
 ### HOST-FAILURE-RECOVERY-1006: established listen-host recovery
 
