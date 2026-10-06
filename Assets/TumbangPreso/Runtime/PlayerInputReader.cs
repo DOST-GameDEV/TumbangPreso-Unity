@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
 
 namespace TumbangPreso
 {
@@ -46,7 +47,8 @@ namespace TumbangPreso
         private int _menuClosedFrame=-1;
         private bool _loadingInputHeld, _chatInputHeld;
         private bool _focused = true;
-        private bool _captureButtonsAfterFocus;
+        private double _focusReturnedAt = double.NegativeInfinity;
+        private readonly Dictionary<InputAction, Verb> _focusButtons = new();
         private readonly Core.ToggleControl _sprintToggle = new();
         private readonly Core.ToggleControl _restoreToggle = new();
         private Carrier _carrier;
@@ -125,9 +127,24 @@ namespace TumbangPreso
         private void OnEnable()
         {
             InputSystem.onDeviceChange += DeviceChanged;
+            foreach (var button in _focusButtons.Keys) button.performed += FocusButtonPerformed;
             // Actions keep receiving device events while this producer is disabled.
             // Retire presses from that interval before the resumed owner reads them.
             DiscardMenuButtonsUntilRelease();
+        }
+
+        private void FocusButtonPerformed(InputAction.CallbackContext context)
+        {
+            // Callback time is the source event time, not when the queued event is processed.
+            // Keep background presses retired without discarding a new focused press.
+            if ((!_focused || context.time <= _focusReturnedAt) && context.ReadValueAsButton()
+                && _focusButtons.TryGetValue(context.action, out var verb))
+                _menuButtons.Add(verb);
+        }
+
+        private void TrackFocusButton(InputAction action, Verb verb)
+        {
+            if (action != null) _focusButtons[action] = verb;
         }
 
         private void DeviceChanged(InputDevice device, InputDeviceChange change)
@@ -261,6 +278,12 @@ namespace TumbangPreso
             // rather than throwing on every seat in every match.
             _look = map.FindAction("Look", false);
 
+            TrackFocusButton(_jump, Verb.Jump); TrackFocusButton(_special, Verb.SpecialAbility);
+            TrackFocusButton(_grab, Verb.Grab); TrackFocusButton(_lunge, Verb.Lunge);
+            TrackFocusButton(_sprint, Verb.Sprint); TrackFocusButton(_emote, Verb.EmoteWheel);
+            TrackFocusButton(_skill1, Verb.Skill1); TrackFocusButton(_skill2, Verb.Skill2);
+            TrackFocusButton(_ultimate, Verb.Ultimate); TrackFocusButton(_interact, Verb.Interact);
+
             // Button bindings otherwise lose their held phase during a device
             // re-resolution until another hardware event arrives.
             _special.wantsInitialStateCheck = true;
@@ -290,13 +313,6 @@ namespace TumbangPreso
                 _motor.Intent.Clear();
                 _motor.Intent.CommitFrame();
                 return;
-            }
-            if (_captureButtonsAfterFocus)
-            {
-                // Focus can return before queued background device events reach the actions.
-                // Capture their held state after the Input System update, before gameplay reads it.
-                _captureButtonsAfterFocus = false;
-                DiscardMenuButtonsUntilRelease();
             }
             ReconcileDeviceInput();
 
@@ -341,9 +357,10 @@ namespace TumbangPreso
 
             // Recovery and hero controls still belong to the human while Kuro
             // owns movement. Preserve quick Jump taps until the physics consumer.
+            bool recoveryBlocked = Time.frameCount == _menuClosedFrame || _menuButtons.Contains(Verb.Jump);
             intent.Set(Verb.Jump, ReadButton(_jump,Verb.Jump));
             bool touchRecovery=InputLayer.TouchInput.ConsumeRecoveryPress();
-            if (Time.frameCount!=_menuClosedFrame && !_menuButtons.Contains(Verb.Jump) && (_jump.WasPressedThisFrame()||touchRecovery)) intent.BufferPress(Verb.Jump);
+            if (!recoveryBlocked && (_jump.WasPressedThisFrame()||touchRecovery)) intent.BufferPress(Verb.Jump);
             if (_skill1 != null) ReadHeroButton(intent, _skill1, Verb.Skill1);
             if (_skill2 != null) ReadHeroButton(intent, _skill2, Verb.Skill2);
             if (_ultimate != null) ReadHeroButton(intent, _ultimate, Verb.Ultimate);
@@ -573,13 +590,13 @@ namespace TumbangPreso
         private void OnApplicationFocus(bool focused)
         {
             _focused = focused;
+            if (focused) _focusReturnedAt = InputState.currentTime;
             if (!focused)
             {
                 CancelPendingInput();
             }
             // Buttons pressed while away also need an observed release on return.
             DiscardMenuButtonsUntilRelease();
-            _captureButtonsAfterFocus = focused;
         }
 
         private void CancelPendingInput()
@@ -602,6 +619,7 @@ namespace TumbangPreso
         private void OnDisable()
         {
             InputSystem.onDeviceChange -= DeviceChanged;
+            foreach (var button in _focusButtons.Keys) button.performed -= FocusButtonPerformed;
             _throwDevice = _lungeDevice = null;
             _throwDeviceLost = _lungeDeviceLost = false;
             CancelPendingInput();
