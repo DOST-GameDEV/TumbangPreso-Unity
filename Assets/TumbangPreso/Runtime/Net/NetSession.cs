@@ -701,8 +701,13 @@ namespace TumbangPreso.Net
         private bool _stopWasRequested;
         private void OnTransportFailure() => Debug.LogWarning(
             $"[NetLifecycle] transport-failure server={_nm?.IsServer} relay={IsRelay} requestedStop={_stopWasRequested}");
-        private void OnServerStopped(bool wasHost) => Debug.Log(
-            $"[NetLifecycle] server-stopped wasHost={wasHost} requestedStop={_stopWasRequested}");
+        private void OnServerStopped(bool wasHost)
+        {
+            Debug.Log($"[NetLifecycle] server-stopped wasHost={wasHost} requestedStop={_stopWasRequested}");
+            if (_stopWasRequested) return;
+            _beacon?.StopAll();
+            if (Query != null) _ = Query.DeleteHostedLobbyAsync();
+        }
 
         /// <summary>
         /// ⚠️⚠️ THE LAST RESORT FOR A WEDGED NETWORKMANAGER (QA, 2026-09-26; `PrepareManagerForStart` has the whole story). When a

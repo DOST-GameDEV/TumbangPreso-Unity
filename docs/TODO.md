@@ -12,13 +12,18 @@
 
 ### HOST-ADVERT-RETIREMENT-1006: stopped hosts stop advertising
 
-- [ ] Reproduce unexpected host shutdown leaving a LAN beacon or hosted online
-  lobby alive. Root prepared two native cause cases and a requested-stop/restart
-  control; direct fixture compilation passes. Laptop original/candidate check
-  pending, with isolated service dispatch and actual UDP/NGO shutdown.
-- [ ] If reproduced, retire adverts through the existing shutdown callback and
-  validate the same cases. This does not resolve the reported host kick, Relay
-  timeout or non-host delay; their actual peer acceptance remains open.
+- [x] Laptop original native3 reproduced both failures: LAN advertising remains
+  active and the fake online lobby receives no deletion. Requested-stop/restart
+  control passes; no setup exceptions. Unity52536/session84607 used unchanged
+  runtime and the frozen fixture.
+- [x] Retire adverts through the existing shutdown callback when no Stop was
+  requested. Candidate native3 pass on Unity35720. Root verified14 committed
+  raw hashes, exact original/candidate fixture and runtime bytes, matching XML
+  cases and restored21186 inputs/13 preferences in both phases.
+  [Evidence](reports/laptop-validation-2026-10-06/host-advert-retirement/README.md).
+- [ ] Actual live UGS deletion and packaged failure recovery. This does not
+  resolve the reported host kick, Relay timeout or non-host delay; their actual
+  peer acceptance remains open.
 
 ### CHALK-CIRCLE-1006: contact matches the drawn boundary
 
