@@ -23,6 +23,87 @@ namespace TumbangPreso.UI
         public static readonly Color Plate = new Color32(35, 29, 33, 235);
         public static readonly Color Shadow = new Color32(18, 9, 4, 255);
 
+        // ⚠️ THE TOY PALETTE (UI revamp, 2026-10-06, owner-chosen "Toy Block" direction). Every
+        // in-match surface is a TOY TILE: a flat warm face, one bevelled cut per corner, a solid
+        // extruded side underneath and a soft contact shadow, the way the cast and the street are
+        // built from chunky blocks. Words are dark brown on cream, cream on brown, white on red.
+        public static readonly Color Cream = new Color32(255, 245, 224, 255);
+        public static readonly Color CreamSide = new Color32(214, 184, 138, 255);
+        public static readonly Color Brown = new Color32(56, 33, 20, 255);
+        public static readonly Color BrownSide = new Color32(28, 15, 8, 255);
+        public static readonly Color BrownMuted = new Color32(128, 94, 70, 255);
+        public static readonly Color Honey = new Color32(255, 196, 64, 255);
+        public static readonly Color HoneySide = new Color32(200, 140, 30, 255);
+        /// <summary>Refusal and earned-moment red. White Nunito Bold on it is above 4.5:1.</summary>
+        public static readonly Color Alarm = new Color32(214, 38, 46, 255);
+        public static readonly Color AlarmSide = new Color32(140, 22, 28, 255);
+        public static readonly Color AlarmDeep = new Color32(150, 28, 34, 255);
+        // Older names kept so existing callers read the toy palette.
+        public static readonly Color Ink = Brown;
+        public static readonly Color Paper = Cream;
+        public static readonly Color PaperMuted = new Color32(255, 245, 224, 210);
+        public static readonly Color Rim = Cream;
+        public static readonly Color Cheer = Alarm;
+
+        /// <summary>A rectangle with one 45-degree cut at each corner.</summary>
+        public static void Bevelled(VertexHelper vh, Rect r, float cut, Color c)
+        {
+            if (r.width <= 0 || r.height <= 0 || c.a <= 0) return;
+            cut = Mathf.Clamp(cut, 0, Mathf.Min(r.width, r.height) * .5f);
+            Fan(vh, r.center, BevelPoints(r, cut), c);
+        }
+
+        public static void BevelledFrame(VertexHelper vh, Rect r, float cut, float width, Color c)
+        {
+            if (width <= 0 || c.a <= 0) return;
+            var outer = BevelPoints(r, cut);
+            var inner = BevelPoints(Inset(r, width), Mathf.Max(0, cut - width * .41f));
+            int first = vh.currentVertCount;
+            for (int i = 0; i < outer.Length; i++) { vh.AddVert(outer[i], c, Vector2.zero); vh.AddVert(inner[i], c, Vector2.zero); }
+            for (int i = 0; i < outer.Length; i++)
+            {
+                int a = first + i * 2, b = first + ((i + 1) % outer.Length) * 2;
+                vh.AddTriangle(a, b, b + 1); vh.AddTriangle(a, b + 1, a + 1);
+            }
+        }
+
+        private static Vector2[] BevelPoints(Rect r, float c) => new[]
+        {
+            new Vector2(r.xMax - c, r.yMax), new Vector2(r.xMin + c, r.yMax), new Vector2(r.xMin, r.yMax - c), new Vector2(r.xMin, r.yMin + c),
+            new Vector2(r.xMin + c, r.yMin), new Vector2(r.xMax - c, r.yMin), new Vector2(r.xMax, r.yMin + c), new Vector2(r.xMax, r.yMax - c),
+        };
+
+        /// <summary>A regular-looking octagon inside <paramref name="r"/>: the toy family's bead and medallion.</summary>
+        public static void Octagon(VertexHelper vh, Rect r, Color c) => Bevelled(vh, r, Mathf.Min(r.width, r.height) * .29f, c);
+
+        /// <summary>A hexagonal token: a rectangle whose left and right ends are cut to a point.</summary>
+        public static void Chamfered(VertexHelper vh, Rect r, float cut, Color c)
+        {
+            if (r.width <= 0 || r.height <= 0 || c.a <= 0) return;
+            cut = Mathf.Clamp(cut, 0, r.width * .5f);
+            Fan(vh, r.center, ChamferPoints(r, cut), c);
+        }
+
+        public static void ChamferedFrame(VertexHelper vh, Rect r, float cut, float width, Color c)
+        {
+            if (width <= 0 || c.a <= 0) return;
+            var outer = ChamferPoints(r, cut);
+            var inner = ChamferPoints(Inset(r, width), Mathf.Max(0, cut - width * .5f));
+            int first = vh.currentVertCount;
+            for (int i = 0; i < outer.Length; i++) { vh.AddVert(outer[i], c, Vector2.zero); vh.AddVert(inner[i], c, Vector2.zero); }
+            for (int i = 0; i < outer.Length; i++)
+            {
+                int a = first + i * 2, b = first + ((i + 1) % outer.Length) * 2;
+                vh.AddTriangle(a, b, b + 1); vh.AddTriangle(a, b + 1, a + 1);
+            }
+        }
+
+        private static Vector2[] ChamferPoints(Rect r, float cut) => new[]
+        {
+            new Vector2(r.xMax - cut, r.yMax), new Vector2(r.xMin + cut, r.yMax), new Vector2(r.xMin, r.center.y),
+            new Vector2(r.xMin + cut, r.yMin), new Vector2(r.xMax - cut, r.yMin), new Vector2(r.xMax, r.center.y),
+        };
+
         public static void RoundedRect(VertexHelper vh, Rect r, float radius, Color c, int steps = 5)
         {
             if (r.width <= 0 || r.height <= 0 || c.a <= 0) return;

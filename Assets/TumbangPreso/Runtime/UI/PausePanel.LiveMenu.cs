@@ -5,50 +5,75 @@ namespace TumbangPreso.UI
 {
     public sealed partial class PausePanel
     {
+        private Text _statePill;
+        private HudCard _statePlate;
+
         protected override Canvas CreateCanvas()
         {
             var canvas = OwnerUiLayout.Canvas(transform, "OwnerPauseCanvas", 500);
             var dim = OwnerUiLayout.Rect(canvas.transform, "MatchDim").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Fill(dim.rectTransform); dim.color = new Color(0, 0, 0, .28f);
+            OwnerUiLayout.Fill(dim.rectTransform);
+            dim.color = new Color(.08f, .04f, .02f, .45f);
             return canvas;
         }
+
         /// <summary>
-        /// The live match menu: a warm ink card over the running match, three actions.
+        /// The live match menu, in the match HUD's toy family (UI revamp 2026-10-06).
         ///
-        /// ⚠️ ONE KIND OF OBJECT FOR THREE ACTIONS (2026-09-23 UI review). RESUME was a flat lime
-        /// rectangle with no focus or press state, SETTINGS and LEAVE MATCH were floating words, so
-        /// the card showed three different kinds of thing for three choices, and the column was a
-        /// cold dark green (29,46,35, blue over red: `CLAUDE.md` § 6.4). The actions are now the
-        /// front end's stickers (`HubKit.Button`: one focus ring, one lift, one press, one hatch),
-        /// ranked by colour: chartreuse RESUME is the one primary, honey SETTINGS is ordinary, deep
-        /// red LEAVE MATCH is the one destructive control, which is exactly the logo palette's role
-        /// table. The card is the in-match card family's warm ink. Names and callbacks are unchanged,
-        /// so every diagnostic route that clicks `ResumeMatch` or `LeaveMatch` still finds them.
-        /// The notice reflects whether this is a paused offline game or a live network match.
+        /// ⚠️ NOT THE FRONT END'S STICKERS. The owner rejected basing the match on the current
+        /// home screen, so this card is the HUD's cream toy tile, sitting at the left so a live
+        /// match stays visible on the right. A small state pill answers the
+        /// first question anyone opening it has (is the game stopped?), the title names the
+        /// menu, and three `MatchMenuButton`s rank the choices: honey RESUME is the one primary,
+        /// SETTINGS is ordinary, and the red LEAVE MATCH is the one destructive choice, set
+        /// apart by space as well as colour. Object names and callbacks are unchanged, so every
+        /// route that clicks `ResumeMatch`, `PauseSettings` or `LeaveMatch` still finds them.
         /// </summary>
         protected override void Build()
         {
             if (PracticeRange.Requested && PracticeRange.Instance != null) { BuildTrainingRange(); return; }
             var design = OwnerUiLayout.DesignArea(Canvas.transform, "LiveMenuComposition");
-            var holder = OwnerUiLayout.Rect(design, "LiveMenuColumn"); OwnerUiLayout.Place(holder, 96, 182, 662, 756);
-            var card = Hub.HubKit.Plate(holder, "LiveMenuCard", new Color(Hub.HubStyle.Night.r, Hub.HubStyle.Night.g, Hub.HubStyle.Night.b, 0.95f), 41, 5.0f);
-            card.ShadowOffset = new Vector2(8, -9); card.raycastTarget = true;
-            _title = OwnerUiLayout.Text(holder, "PauseTitle", "MATCH MENU", 64, OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(_title.rectTransform, 44, 40, 580, 104); _title.color = Hub.HubStyle.Honey;
-            var notice = OwnerUiLayout.Text(holder, "LiveNotice", "The match keeps playing while this menu is open.", 30);
-            _notice = notice;
-            OwnerUiLayout.Place(notice.rectTransform, 46, 150, 570, 92); notice.color = Hub.HubStyle.HoneySoft;
-            notice.font = Hub.HubStyle.ReadingFont;
-            var rule = OwnerUiLayout.Rect(holder, "PauseRule").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Place(rule.rectTransform, 46, 262, 570, 4); rule.color = new Color(Hub.HubStyle.Honey.r, Hub.HubStyle.Honey.g, Hub.HubStyle.Honey.b, 0.22f); rule.raycastTarget = false;
-            Action("ResumeMatch", "RESUME", Hub.HubStyle.Chartreuse, () => Resume(), 312, 116, Hub.HubStyle.Title);
-            Action("PauseSettings", "SETTINGS", Hub.HubStyle.Honey, OpenSettings, 466, 96, Hub.HubStyle.Label);
-            Action("LeaveMatch", "LEAVE MATCH", Hub.HubStyle.DeepRed, SceneFlow.LeaveMatchToMainMenu, 600, 96, Hub.HubStyle.Label);
-            void Action(string name, string words, Color fill, System.Action press, float y, float height, int step)
+            var holder = OwnerUiLayout.Rect(design, "LiveMenuColumn"); OwnerUiLayout.Place(holder, 96, 196, 620, 700);
+            var card = holder.gameObject.AddComponent<HudCard>();
+            card.Toy(HudDraw.Cream, HudDraw.CreamSide, 12, 30, .5f).raycastTarget = true; card.FollowContrast = false;
+
+            _statePlate = OwnerUiLayout.Rect(holder, "PauseState").gameObject.AddComponent<HudCard>();
+            OwnerUiLayout.Place(_statePlate.rectTransform, 44, 44, 150, 44);
+            _statePlate.Toy(HudDraw.Honey, HudDraw.HoneySide, 4, 9, .3f).raycastTarget = false; _statePlate.Sheen = false; _statePlate.FollowContrast = false;
+            _statePill = OwnerUiLayout.Text(_statePlate.transform, "PauseStateLabel", "", 28, OwnerUiLayout.TypeRole.Reading);
+            OwnerUiLayout.Fill(_statePill.rectTransform); _statePill.alignment = TextAnchor.MiddleCenter;
+            _statePill.horizontalOverflow = HorizontalWrapMode.Overflow;
+
+            _title = OwnerUiLayout.Text(holder, "PauseTitle", "Match Menu", 66, OwnerUiLayout.TypeRole.Display);
+            OwnerUiLayout.Place(_title.rectTransform, 44, 100, 540, 92); _title.color = HudDraw.Brown;
+            _title.horizontalOverflow = HorizontalWrapMode.Overflow;
+            var notice = OwnerUiLayout.Text(holder, "LiveNotice", "The match keeps playing while this menu is open.", 32);
+            _notice = notice; notice.color = HudDraw.BrownMuted;
+            OwnerUiLayout.Place(notice.rectTransform, 46, 194, 530, 84);
+            notice.verticalOverflow = VerticalWrapMode.Overflow;
+
+            Action("ResumeMatch", "Resume", MatchMenuButton.Kind.Primary, () => Resume(), 318, 104, 50);
+            Action("PauseSettings", "Settings", MatchMenuButton.Kind.Ordinary, OpenSettings, 446, 88, 40);
+            Action("LeaveMatch", "Leave match", MatchMenuButton.Kind.Destructive, SceneFlow.LeaveMatchToMainMenu, 572, 80, 36);
+            void Action(string name, string words, MatchMenuButton.Kind kind, System.Action press, float y, float height, int size)
             {
-                var button = Hub.HubKit.Button(holder, name, words, fill, press, step);
-                OwnerUiLayout.Place((RectTransform)button.transform, 46, y, 570, height);
+                var button = MatchMenuButton.Create(holder, name, words, kind, press, size);
+                OwnerUiLayout.Place((RectTransform)button.transform, 46, y, 528, height);
             }
+        }
+
+        /// <summary>Paused, live or ended: the pill and the notice always agree.</summary>
+        private void PaintPauseState()
+        {
+            if (_statePlate == null) return;
+            bool ended = GameServices.Match?.HasCompleted == true;
+            string words = ended ? "Ended" : _pausedOffline ? "Paused" : "Live";
+            _statePill.text = words;
+            _statePlate.color = ended ? HudDraw.CreamSide : _pausedOffline ? HudDraw.Honey : HudDraw.Alarm;
+            _statePlate.Side = ended ? HudDraw.BrownMuted : _pausedOffline ? HudDraw.HoneySide : HudDraw.AlarmSide; _statePlate.SetVerticesDirty();
+            _statePill.color = ended || _pausedOffline ? HudDraw.Brown : Color.white;
+            var size = _statePlate.rectTransform.sizeDelta; size.x = _statePill.preferredWidth + 40;
+            _statePlate.rectTransform.sizeDelta = size;
         }
     }
 }

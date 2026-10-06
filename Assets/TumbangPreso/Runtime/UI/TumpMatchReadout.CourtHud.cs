@@ -16,16 +16,18 @@ namespace TumbangPreso.UI
             BuildMatchBar(); BuildCourtCan(); BuildCourtPersonal(); BuildStaminaArc(); BuildCourtPrompts();
             BuildStatusChips(); BuildWarnings();
             MatchEventFeed.Create(_root);
-            MatchMomentBanner.Create(_root);
+            _momentBanner = MatchMomentBanner.Create(_root);
             _powers = gameObject.AddComponent<TumpPowerReadout>(); _powers.Build(_root);
-            // VISUAL-1.4: the toast sits under the bar on the halftime banner's brush shape in
-            // the clock's plate colour, so a rare call-out is one family with the bar and the
-            // popup instead of loose outlined words over the sky.
-            _toastPlate = OwnerUiLayout.Rect(_root, "MatchToastPlate").gameObject.AddComponent<CourtPopupGraphic>();
-            _toastPlate.Brush = true; _toastPlate.color = HudDraw.Plate; _toastPlate.raycastTarget = false; _toastPlate.enabled = false;
-            Pin(_toastPlate.rectTransform, new Vector2(.5f, 1), new Vector2(0, -176), new Vector2(400, 64));
-            _toast = Ink(_root, "MatchToast", "", 36, true);
-            Pin(_toast.rectTransform, new Vector2(.5f, 1), new Vector2(0, -176), new Vector2(1080, 64)); _toast.enabled = false;
+            // ⚠️ UI REVAMP 2026-10-06: an announcement is a cream toy tile with brown display words
+            // that lands with a short pop; the earned moment beside it is the red one.
+            _toastPlate = OwnerUiLayout.Rect(_root, "MatchToastPlate").gameObject.AddComponent<HudCard>();
+            _toastPlate.Toy(HudDraw.Cream, HudDraw.CreamSide, 8, 16, .42f).raycastTarget = false; _toastPlate.enabled = false;
+            Pin(_toastPlate.rectTransform, new Vector2(.5f, 1), new Vector2(0, -196), new Vector2(400, ToastHeight));
+            _toastPlate.rectTransform.localRotation = Quaternion.Euler(0, 0, ToastTilt);
+            _toast = OwnerUiLayout.Text(_root, "MatchToast", "", 44, OwnerUiLayout.TypeRole.Display); _toast.color = HudDraw.Brown;
+            _toast.alignment = TextAnchor.MiddleCenter; _toast.verticalOverflow = VerticalWrapMode.Overflow;
+            Pin(_toast.rectTransform, new Vector2(.5f, 1), new Vector2(0, -196), new Vector2(1080, ToastHeight)); _toast.enabled = false;
+            _toast.rectTransform.localRotation = Quaternion.Euler(0, 0, ToastTilt);
             BuildScorePops();
             _countdown = Ink(_root, "Countdown", "", 108, true);
             Pin(_countdown.rectTransform, new Vector2(.5f, .58f), Vector2.zero, new Vector2(740, 180)); _countdown.enabled = false;
@@ -115,19 +117,23 @@ namespace TumbangPreso.UI
         {
             _promptRoot = OwnerUiLayout.Rect(_root, "ContextualAction");
             Pin(_promptRoot, new Vector2(.5f, .28f), Vector2.zero, new Vector2(1100, 174));
-            // VISUAL-1.4: the verb sits on a dark pill sized to its own words, the same plate as
-            // the clock, so it reads over sky, chalk and asphalt alike.
+            // ⚠️ UI REVAMP 2026-10-06 (guide p.13): the one straight-edged surface in the match. A
+            // 60% ink band sized to its words with a chalk line down each side, the same white
+            // as the court's own lines, so an action reads as "here, now" without becoming
+            // another card. Nunito, because it is an instruction, not an event.
             _promptPlate = OwnerUiLayout.Rect(_promptRoot, "PromptPlate").gameObject.AddComponent<HudCard>();
-            _promptPlate.color = HudDraw.Plate; _promptPlate.Radius = 22; _promptPlate.raycastTarget = false;
+            _promptPlate.Toy(HudDraw.Cream, HudDraw.CreamSide, 7, 14, .42f).raycastTarget = false;
             _promptPlate.enabled = false;
-            _prompt = Ink(_promptRoot, "ActionPrompt", "", 32, true); OwnerUiLayout.Place(_prompt.rectTransform, 0, 0, 1100, 74);
+            _prompt = OwnerUiLayout.Text(_promptRoot, "ActionPrompt", "", 38, OwnerUiLayout.TypeRole.Reading);
+            OwnerUiLayout.Place(_prompt.rectTransform, 0, 0, 1100, 74);
+            _prompt.alignment = TextAnchor.MiddleLeft; _prompt.verticalOverflow = VerticalWrapMode.Overflow; _prompt.color = HudDraw.Brown;
             _bindingGlyph = OwnerUiLayout.Rect(_promptRoot, "ActionBindingGlyph").gameObject.AddComponent<Image>();
             _bindingGlyph.preserveAspect = true; _bindingGlyph.raycastTarget = false; _bindingGlyph.enabled = false;
             _context = Ink(_promptRoot, "ActionDetail", "", 28, false); OwnerUiLayout.Place(_context.rectTransform, 0, 77, 1100, 66);
             var track = OwnerUiLayout.Rect(_promptRoot, "RecoveryProgress").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Place(track.rectTransform, 320, 154, 460, 10); track.color = new Color32(35, 29, 33, 230); track.raycastTarget = false;
+            OwnerUiLayout.Place(track.rectTransform, 320, 154, 460, 10); track.color = HudDraw.CreamSide; track.raycastTarget = false;
             _progress = OwnerUiLayout.Rect(track.transform, "ProgressFill").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Fill(_progress.rectTransform); _progress.color = CourtPresentationPalette.Gold; _progress.raycastTarget = false;
+            OwnerUiLayout.Fill(_progress.rectTransform); _progress.color = UiTheme.Offense; _progress.raycastTarget = false;
             track.gameObject.SetActive(false);
         }
     }

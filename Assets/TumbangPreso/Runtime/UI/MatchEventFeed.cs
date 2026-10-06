@@ -38,8 +38,9 @@ namespace TumbangPreso.UI
             public Image[] Portrait = new Image[2];
             public Text[] Tag = new Text[2];
             public HudBadge Glyph;
+            public Text Points;
         }
-        private struct Item { public string Words; public int Actor, Other; public HudBadge.Glyph Glyph; public Color Accent; public float Expires, Born, StackFromY, StackMovedAt; }
+        private struct Item { public string Words; public int Actor, Other, Points; public HudBadge.Glyph Glyph; public Color Accent; public float Expires, Born, StackFromY, StackMovedAt; }
 
         private readonly Row[] _rows = new Row[Capacity];
         private readonly Item[] _items = new Item[Capacity];
@@ -71,11 +72,11 @@ namespace TumbangPreso.UI
             row.Group = row.Root.gameObject.AddComponent<CanvasGroup>();
             row.Group.blocksRaycasts = false; row.Group.interactable = false; row.Group.alpha = 0;
             row.Plate = OwnerUiLayout.Rect(row.Root, "EventPlate").gameObject.AddComponent<HudCard>();
-            row.Plate.color = HudDraw.Plate; row.Plate.Radius = 14; row.Plate.raycastTarget = false;
+            row.Plate.Toy(HudDraw.Cream, HudDraw.CreamSide, 5, 12, .38f).raycastTarget = false;
             for (int k = 0; k < 2; k++)
             {
                 var swatch = OwnerUiLayout.Rect(row.Root, k == 0 ? "ActorChip" : "OtherChip").gameObject.AddComponent<HudCard>();
-                swatch.Radius = 10; swatch.ShadowAlpha = 0; swatch.FollowContrast = false; swatch.raycastTarget = false;
+                swatch.Toy(Color.white, Color.clear, 0, 8, 0); swatch.Sheen = false; swatch.FollowContrast = false; swatch.raycastTarget = false;
                 row.Swatch[k] = swatch;
                 row.Portrait[k] = OwnerPortraitArt.Create(swatch.transform, "Portrait", "");
                 OwnerUiLayout.Place(row.Portrait[k].rectTransform, 2, 2, Chip - 4, Chip - 4);
@@ -86,7 +87,11 @@ namespace TumbangPreso.UI
                 row.Tag[k] = tag;
             }
             row.Glyph = OwnerUiLayout.Rect(row.Root, "EventGlyph").gameObject.AddComponent<HudBadge>();
-            row.Glyph.Detail = HudDraw.Plate; row.Glyph.raycastTarget = false;
+            row.Glyph.Detail = HudDraw.Cream; row.Glyph.raycastTarget = false;
+            // The score feed says what the event was worth, in the same face as the totals.
+            row.Points = OwnerUiLayout.Text(row.Root, "EventPoints", "", 36, OwnerUiLayout.TypeRole.Display);
+            row.Points.color = HudDraw.Brown; row.Points.alignment = TextAnchor.MiddleRight; row.Points.raycastTarget = false;
+            row.Points.horizontalOverflow = HorizontalWrapMode.Overflow; row.Points.verticalOverflow = VerticalWrapMode.Overflow;
             return row;
         }
 
@@ -117,7 +122,7 @@ namespace TumbangPreso.UI
                              GameServices.Match != null && !GameServices.Match.IsWarmupBuffer;
         private void OnCanState(bool upright)
         {
-            if (upright && Live) Add(GameServices.Match.DefenderSlot, -1, "RESTORED LATA", "restore", HudBadge.Glyph.Restore, UiTheme.Defense);
+            if (upright && Live) Add(GameServices.Match.DefenderSlot, -1, "RESTORED LATA", "restore", HudBadge.Glyph.Restore, UiTheme.Defense, 0);
         }
         private void OnMoment(MatchFlair.Kind kind, int actor, int subject, Vector3 at, float strength)
         {
@@ -125,15 +130,17 @@ namespace TumbangPreso.UI
             if (!Live) return;
             switch (kind)
             {
-                case MatchFlair.Kind.LataDown: Add(actor, -1, "DOWNED LATA", "can", HudBadge.Glyph.Knock, UiTheme.Offense); break;
-                case MatchFlair.Kind.Tag: Add(actor, subject, "CAUGHT " + PlayerIdentity.Label(subject), "tag" + subject, HudBadge.Glyph.Tag, UiTheme.Defense); break;
+                case MatchFlair.Kind.LataDown: Add(actor, -1, "DOWNED LATA", "can", HudBadge.Glyph.Knock, UiTheme.Offense,
+                    MatchRules.PointsFor(ScoreEvent.LataKnocked)); break;
+                case MatchFlair.Kind.Tag: Add(actor, subject, "CAUGHT " + PlayerIdentity.Label(subject), "tag" + subject, HudBadge.Glyph.Tag, UiTheme.Defense,
+                    MatchRules.PointsFor(ScoreEvent.Tag)); break;
                 case MatchFlair.Kind.Block:
                     Add(subject, actor, actor >= 0 ? "BLOCKED " + PlayerIdentity.Label(actor) : "DEFLECTED SLIPPER", "block" + actor,
-                        HudBadge.Glyph.Block, UiTheme.Offense);
+                        HudBadge.Glyph.Block, UiTheme.Offense, 0);
                     break;
             }
         }
-        private void Add(int actor, int other, string words, string kind, HudBadge.Glyph glyph, Color accent)
+        private void Add(int actor, int other, string words, string kind, HudBadge.Glyph glyph, Color accent, int points)
         {
             if (actor < 0 || actor >= Core.Balance.PlayerCount) return;
             float now = Time.unscaledTime; string key = actor + ":" + kind;
@@ -149,7 +156,7 @@ namespace TumbangPreso.UI
             {
                 Words = PlayerIdentity.Label(actor) + "  " + words, Actor = actor,
                 Other = other >= 0 && other < Core.Balance.PlayerCount ? other : -1,
-                Glyph = glyph, Accent = accent, Expires = now + Lifetime, Born = now,
+                Glyph = glyph, Accent = accent, Points = points, Expires = now + Lifetime, Born = now,
                 StackFromY = RowStep * .35f, StackMovedAt = now,
             };
             Count = Mathf.Min(Capacity, Count + 1);
@@ -161,15 +168,19 @@ namespace TumbangPreso.UI
         private static void Layout(Row row, Item item)
         {
             bool two = item.Other >= 0;
-            float width = Pad * 2 + Chip + Gap + GlyphSize + (two ? Gap + Chip : 0);
+            row.Points.text = item.Points > 0 ? "+" + item.Points : item.Points < 0 ? item.Points.ToString() : "";
+            float points = string.IsNullOrEmpty(row.Points.text) ? 0 : row.Points.preferredWidth + Gap + 4;
+            float width = Pad * 2 + Chip + Gap + GlyphSize + (two ? Gap + Chip : 0) + points;
             float x = Width - width;
             OwnerUiLayout.Place(row.Plate.rectTransform, x, 0, width, RowHeight);
             float y = (RowHeight - Chip) * .5f;
             Seat(row, 0, item.Actor, x + Pad, y);
             OwnerUiLayout.Place(row.Glyph.rectTransform, x + Pad + Chip + Gap, (RowHeight - GlyphSize) * .5f, GlyphSize, GlyphSize);
-            row.Glyph.Show(item.Glyph, CourtPresentationPalette.Paper, Color.clear, item.Accent);
+            row.Glyph.Show(item.Glyph, HudDraw.Brown, Color.clear, item.Accent);
             row.Swatch[1].gameObject.SetActive(two);
             if (two) Seat(row, 1, item.Other, x + Pad + Chip + Gap + GlyphSize + Gap, y);
+            float label = Mathf.Max(0, points - Gap - 4);
+            OwnerUiLayout.Place(row.Points.rectTransform, Width - Pad - 6 - label, 0, label, RowHeight);
         }
 
         private static void Seat(Row row, int k, int slot, float x, float y)
