@@ -1,3 +1,17 @@
+### ARENA-SUPPORTED-SHOES-1006: retain reachable deck slippers
+
+- [x] Real Land and loose Update recalled supported Tore/Entablado shoes to their
+  owner. Original native2 fails both cases; candidate2 passes after checking
+  actual nearby upward-facing support in the active Arena layout. Root verified
+  all17 raw Git hashes, exact source/test/meta and21192 restored inputs/13 preferences.
+- [x] Five controlled ordinary-AI ramp2 approaches retrieve without shoe
+  relocation. Tore climbs to1.15m; roof Land/loose and floating recovery controls
+  remain valid. Earlier weak pickup-only pass remains explicitly unqualified.
+  [Evidence](reports/laptop-validation-2026-10-06/arena-supported-shoes/README.md).
+- [ ] Between-ramp starts, general navigation, natural full matches and current
+  peers. Laptop owns the next runtime investigation; this narrow pass does not
+  close the full bot-refinement requirement.
+
 ### HOST-FAILURE-RECOVERY-1006: established listen-host recovery
 
 - [x] Original native2 on Unity52488 reproduces the established listen host

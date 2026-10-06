@@ -14,14 +14,17 @@ All27 laptop UI draft paths, references and the8PASS/1FAIL dense-tooltip case
 are preserved for the Claude handoff. No new UI agent or source disposal.
 
 Root goal resumed ACTIVE at1791286138 after the earlier unexpected blocked state.
-No native job was cancelled for Bad Request. Current Root source/remote43229b93b
+No native job was cancelled for Bad Request. Current Root runtime source438fcac65
 contains both checked host fixes; only protected Auditor/voxel work stays dirty.
-The laptop's current Slipper.cs Arena recovery unit owns its native slot. Its
-original reports supported shoes moving4.755m on Tore and4.380m on Entablado in
-landing and loose-shoe recovery, with roof/floating controls passing. Original
-restoration then the narrow actual-ground-support candidate are laptop-owned;
-exact new handles and raw cause/candidate receipts are pending. Root must not
-overlap these inputs or claim this correction is shipped yet.
+Laptop published438fcac65dc977e463859599f08a39336899318d. Supported shoes moved
+4.755m on Tore and4.380m on Entablado in original landing/loose recovery. Original
+Unity54752 has0PASS/2FAIL; candidate51796 has2PASS/0FAIL with identical fixtures.
+Root verified17 raw Git hashes, exact Slipper/test/meta, both21192 inputs/13
+preferences restored and all five controlled ramp2 routes retrieving with
+movedLoose0.000. Roof Land/loose and floating controls remain true. The earlier
+weak pickup-only pass is retained as unqualified. Current laptop next unit is
+approaches starting between ramps; general navigation/full matches/peers remain
+open. Root must not edit Slipper, AIController or these fixtures concurrently.
 
 Owner reiterated: a Codex Bad Request banner is not permission to cancel work or
 pause the goal. Preserve live jobs, handles and source; verify actual process and
@@ -44,10 +47,12 @@ Cleanup receipt: primary Logs/owner-demo-cleanup1006.json. Do not reopen the gam
 or resume Root input without a new owner instruction.
 
 Primary checkout: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks,
-ASTRAReworks4e0bdcadaac4bb576a9269b1ce2c7bc7690bab47. Preserve its pre-existing
+ASTRAReworks43229b93bcd7f01a4bd8513d0acc5c7497729763 at the latest read-only check.
+Preserve its pre-existing
 composition metadata and private notes. Engineering checkout:
 C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i, detached at
-43229b93bcd7f01a4bd8513d0acc5c7497729763, including the checked host-recovery commit.
+438fcac65dc977e463859599f08a39336899318d, including both checked host fixes and
+the supported Arena shoe correction.
 Preserve dirty ProjectAuditorSettings.asset
 and private tools/build_yasmin_benguet_voxel.py. Sole commit identity is
 M4tyu633 <matthewtlabrador@gmail.com>; explicit paths, commit -F and normal pushes.
