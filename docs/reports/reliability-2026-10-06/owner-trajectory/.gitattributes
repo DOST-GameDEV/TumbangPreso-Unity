@@ -1,2 +1,2 @@
-raw/* -text
-SHA256SUMS.json -text
+raw/* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+SHA256SUMS.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
