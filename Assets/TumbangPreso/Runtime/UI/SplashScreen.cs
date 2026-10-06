@@ -475,15 +475,8 @@ namespace TumbangPreso.UI
             // Home's clips, poster and decoder prepare while the login form is
             // already usable. ConvertedMainMenu owns that asynchronous stage.
 
-            // 7. Every ability glyph.
-            SetLoadingStage("loading abilities", 0.61f);
-            yield return AbilityIcons.Warmup(done =>
-                SetLoadingStage("loading abilities", Mathf.Lerp(.61f, .63f, done)));
-            yield return StatusIcons.Warmup();
-            yield return Visual.VfxFlipbook.Warmup();
-            yield return Visual.CheskaIceVisuals.Warmup();
-            yield return Visual.HeroPropAssets.Warmup(done =>
-                SetLoadingStage("loading ability props", Mathf.Lerp(0.63f, 0.66f, done)));
+            // Gameplay-only caches prepare while login is usable. Shader and
+            // map scene activation stay here because their Awake work is indivisible.
 
             // 8. Both arenas, as a dependency load rather than a scene load.
             //
@@ -509,38 +502,44 @@ namespace TumbangPreso.UI
             yield return WarmMapAssets();
             Debug.Log($"[Splash] map asset warmup completed in {Time.realtimeSinceStartupAsDouble - mapWarmBegan:0.00} s.");
 
-            // 9. The hero ability layer.
-            //
-            // Construct kits and parse their cached ultimate introductions before first use.
-            // The held variant is a separate authored table for heroes that have one.
-            SetLoadingStage("preparing hero abilities", 0.84f);
-            yield return Visual.AbilityVfx.WarmupAssets();
-            foreach (string heroId in Roster.HeroPeople != null
-                         ? HeroIdsFrom(Roster.HeroPeople)
-                         : new string[0])
-            {
-                var kit = Abilities.HeroAbilitySystem.CreateKitFor(heroId);
-                _ = kit?.Skill1?.Name;
-                _ = kit?.Skill2?.Name;
-                _ = kit?.Ultimate?.Name;
-                _ = Visual.UltimatePerformance.For(heroId);
-                _ = Visual.UltimatePerformance.For(heroId, holdingSlipper: true);
-                yield return null;
-            }
-            yield return null;
-
             WarmAssetCache.CaptureLoadedAssets();
             Debug.Log($"[Splash] preload retained {WarmAssetCache.Count} assets in memory.");
             _ = Net.SkillContractFingerprint.Current;
 
             // This must remain the final scene operation in the preload chain. Once activation is
             // held, Unity will not complete an additive load or unload queued behind this one.
-            // ⚠️ 0.88 RATHER THAN 0.92, BECAUSE SIGN-IN NOW OWNS THE TAIL. `SignInSpan` is 0.92
-            // and the account barrier is announced above it, so the scene load has to finish
-            // below that or the two stages would fight over the same eight per cent.
             SetLoadingStage("opening main menu", 0.88f);
             BeginMenuPreload();
             _assetsPreloaded = true;
+        }
+
+        internal static IEnumerator WarmGameplayAssets(System.Action<float> completed)
+        {
+            yield return AbilityIcons.Warmup(done=>completed?.Invoke(.2f*done));
+            yield return StatusIcons.Warmup();
+            completed?.Invoke(.25f);
+            yield return Visual.VfxFlipbook.Warmup();
+            completed?.Invoke(.4f);
+            yield return Visual.CheskaIceVisuals.Warmup();
+            yield return Visual.HeroPropAssets.Warmup(done=>completed?.Invoke(.4f+.25f*done));
+            yield return Visual.AbilityVfx.WarmupAssets();
+            completed?.Invoke(.7f);
+            string[] heroes = Roster.HeroPeople != null
+                         ? HeroIdsFrom(Roster.HeroPeople)
+                         : new string[0];
+            for (int i=0;i<heroes.Length;i++)
+            {
+                string heroId=heroes[i];
+                var kit = Abilities.HeroAbilitySystem.CreateKitFor(heroId);
+                _ = kit?.Skill1?.Name;
+                _ = kit?.Skill2?.Name;
+                _ = kit?.Ultimate?.Name;
+                _ = Visual.UltimatePerformance.For(heroId);
+                _ = Visual.UltimatePerformance.For(heroId, holdingSlipper: true);
+                completed?.Invoke(.7f+.3f*(i+1)/heroes.Length);
+                yield return null;
+            }
+            completed?.Invoke(1f);
         }
 
         private static string[] HeroIdsFrom(System.Collections.Generic.IReadOnlyList<RosterEntry> people)
