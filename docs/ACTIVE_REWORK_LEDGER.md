@@ -5,6 +5,24 @@ work-status queue. Reports retain historical evidence; this file records the
 current execution state. The goal remains active and competition readiness is
 not established.
 
+Latest owner takeover is verified in the existing laptop chat: the laptop now
+owns all remaining non-UI runtime engineering. Root will not make overlapping
+runtime or fixture edits. Root may verify published evidence and maintain this
+checkpoint/TODO; the laptop confirmed these two documents are not being edited.
+Claude owns UI on a different PC; its exact project/Editor remains unknown.
+All27 laptop UI draft paths, references and the8PASS/1FAIL dense-tooltip case
+are preserved for the Claude handoff. No new UI agent or source disposal.
+
+Root goal resumed ACTIVE at1791286138 after the earlier unexpected blocked state.
+No native job was cancelled for Bad Request. Current Root source/remote43229b93b
+contains both checked host fixes; only protected Auditor/voxel work stays dirty.
+The laptop's current Slipper.cs Arena recovery unit owns its native slot. Its
+original reports supported shoes moving4.755m on Tore and4.380m on Entablado in
+landing and loose-shoe recovery, with roof/floating controls passing. Original
+restoration then the narrow actual-ground-support candidate are laptop-owned;
+exact new handles and raw cause/candidate receipts are pending. Root must not
+overlap these inputs or claim this correction is shipped yet.
+
 Owner reiterated: a Codex Bad Request banner is not permission to cancel work or
 pause the goal. Preserve live jobs, handles and source; verify actual process and
 resume after reconnection. A reader timeout/error does not prove a job died.
@@ -29,7 +47,7 @@ Primary checkout: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRARework
 ASTRAReworks4e0bdcadaac4bb576a9269b1ce2c7bc7690bab47. Preserve its pre-existing
 composition metadata and private notes. Engineering checkout:
 C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i, detached at
-d4c517c431ea05c759ae3c40981138ac13a5ea8c before the checked host-recovery commit.
+43229b93bcd7f01a4bd8513d0acc5c7497729763, including the checked host-recovery commit.
 Preserve dirty ProjectAuditorSettings.asset
 and private tools/build_yasmin_benguet_voxel.py. Sole commit identity is
 M4tyu633 <matthewtlabrador@gmail.com>; explicit paths, commit -F and normal pushes.
@@ -39,7 +57,8 @@ Existing authorized laptop chat: Fix gameplay interruption recovery,
 01a0ffab-10a0-70d0-9270-07e171c1613b on
 remote-control:env_e_6aa6c4fde2dc83218a0722e34ac3face. Check its current ownership
 before reassignment. Root owns NetSession and non-UI network engineering.
-Laptop owns all UI implementation, AI traversal and native validation. Preserve
+Laptop owns non-UI runtime engineering and native validation. Claude owns UI on
+a separate PC; preserve the existing laptop draft for its handoff. Preserve
 adopted QoL models including current Yasmin and finalized Paete/Soraya designs.
 
 ## Checked host-advert retirement unit
@@ -78,17 +97,18 @@ same2 passing and all21192 inputs/13 preferences restored after279 native deltas
 Its exact Runtime LF69a6 hash was printed by the launcher. Earlier anchor
 preparation fault had zero cases and is retained separately. Raw report d4c517c43
 is merged; Root verified all15 Git byte hashes, exact tested Runtime/fixture/meta
-equality and both case sets/restoration. The local admission correction is ready
-for checked publication with the fixture/meta.
-Typography Unity45272/parent96086 is terminal/restored; the laptop's next layout
-Unity38980/session62645 owns its separate UI lane. The checked one-line correction
+equality and both case sets/restoration. The local admission correction and
+fixture/meta are published in43229b93b. Typography Unity45272/parent96086 and
+layout Unity38980/session62645 are terminal/restored; UI38980 has8PASS/1FAIL and
+its dense-tooltip failure remains open in the preserved Claude handoff. The checked one-line correction
 marks the local listen host _everConnected after successful Lobby.Admit. Original
 runtime blob66f6e3fe03ae7aea17c96a88f3b30f95b428991f is preserved; candidate LF
 SHA69a6f014819c6d8924c6a0e37b7cc6c1c1e6250695b547709f31c142e63e9a43.
 Both actual original/candidate phases are complete. Empty synthetic MatchSetup
 avoids navigation; event/authority ordering scope only, no actual Home acceptance.
-Next after publication: coordinate actual current player failure recovery and
-LAN/online acceptance when the laptop's UI unit finishes. Stale-advert retirement
+Next: laptop finishes its supported Arena slipper cause/candidate unit, then
+coordinates actual current player failure recovery and LAN/online acceptance.
+Root verifies published receipts without taking runtime ownership. Stale-advert retirement
 and listen-host recovery do not explain or close the QA
 host kick, Relay request timeout or non-host delay.
 
@@ -104,8 +124,9 @@ all28 committed raw hashes, four causal/candidate XML case sets and retained
 earlier setup failures. Seven superseded own candidates were preserved with
 hashes before integrating the laptop's corrected fixture. No primary owner game
 source or controls changed. The UI fix is published; no Root UI dirt remains.
-Laptop's separate21-file HUD/pause/settings/profile/selection draft is compilation
-only; native visual/interaction acceptance follows. Root must not edit its UI lane.
+Laptop's separate UI draft is preserved and unaccepted for Claude. Later
+typography/layout native results do not establish approved final UI quality.
+The UI agent is retired by owner instruction. Root must not edit this lane.
 
 Actual circle-helper native integration on source3216 is30PASS: familiar9,
 chalk19 and two existing Nemu chase controls. Root verified all six committed raw

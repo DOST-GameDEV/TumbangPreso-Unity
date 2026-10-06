@@ -163,9 +163,11 @@
 - [ ] Split concrete PC/laptop tasks after preceding current work is complete and
   current ownership is confirmed; keep shared network tests coordinated.
 
-Current integration evidence: the full engine-free suite passes 729 tests with
-zero failures/skips on source30ff. Unity rendering, input and live transport
-requirements below stay open. [Core gate](reports/reliability-2026-10-06/core-integration/README.md).
+Qualified engine-free evidence: the full Core suite passed731 tests with zero
+failures/skips on source8b5655e1. Current Core project/test and embedded package
+trees are unchanged, so this receipt is reused without rerunning the suite.
+Unity rendering, input and live transport requirements remain separate.
+[Core gate](reports/reliability-2026-10-06/qol-arena-153/README.md).
 
 ### UI-LAN-MAP-1006: distinguish missing map information
 
