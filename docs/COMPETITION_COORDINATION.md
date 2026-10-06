@@ -105,3 +105,16 @@ between machines. Measure player first-use/frame behavior, identify the expensiv
 work, and move appropriate assets/shaders into existing loading/prewarm hooks.
 Do not lower authored quality or invent preload work without evidence. Keep
 tests/builds/real peers/physical devices separate and record unavailable gates.
+
+## October 6 owner order: spectator then bots
+
+Finish the active pickup/result-saving correction and its meaningful validation
+and publication first. Next, undertake a thorough spectator/automatic-camera
+refinement, including cinematic coverage during real gameplay for every character
+and every map, especially Arena. After that, thoroughly refine bot decisions,
+character-specific skill use and unnatural staring/idle behavior. These are full
+quality passes; isolated checks do not establish completion. Split concrete work
+between the existing PC/laptop chats only after current units finish and current
+task/file ownership is confirmed. Preserve finalized hero direction and keep
+joint network acceptance coordinated. TODO owns progress; the ledger records the
+current unit and exact next action.

@@ -1,3 +1,27 @@
+### SPECTATOR-REFINE-1006: owner next pass after current pickup/result unit
+
+- [ ] Finish the current pickup accounting correction, meaningful validation and
+  publication first. Then refine spectator and the automatic camera thoroughly.
+- [ ] Plan and validate cinematic coverage while the match is happening for every
+  individual character and map, including Classic/Hero Strike and Arena as a
+  particular priority. Review subject selection, ability/contact timing, framing,
+  map obstructions, transitions, readable outcomes and manual-camera takeover.
+- [ ] Preserve shared gameplay authority and finalized hero direction. Camera
+  refinement must improve actual viewing, with native/live sequences as evidence.
+- [ ] Once current PC/laptop fixes are done, confirm task/file ownership and split
+  concrete independent spectator work between the existing two chats.
+
+### BOT-REFINE-1006: owner full behavior pass after spectator
+
+- [ ] Thoroughly refine bots' decisions and skill use. Investigate unnatural
+  staring/idle behavior, missed or inappropriate abilities and mechanical action
+  timing. Treat each character's kit, role and each map's movement/objective
+  constraints deliberately; broad quality is required, not a generic skill spammer.
+- [ ] Validate meaningful scenarios and actual play before claiming improvement.
+  Bots should read as convincing rivals and preserve the street game's rules.
+- [ ] Split concrete PC/laptop tasks after preceding current work is complete and
+  current ownership is confirmed; keep shared network tests coordinated.
+
 Current integration evidence: the full engine-free suite passes 729 tests with
 zero failures/skips on source30ff. Unity rendering, input and live transport
 requirements below stay open. [Core gate](reports/reliability-2026-10-06/core-integration/README.md).
