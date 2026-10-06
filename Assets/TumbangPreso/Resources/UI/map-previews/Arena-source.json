@@ -1,8 +1,8 @@
 {
     "map": "Arena",
-    "sourceFingerprint": "3d9de122f0a5e74b805cd8d32abbe013508c55eadbdf2f89300cb67c988a7679",
-    "videoSha256": "a9f81a786432f69b2146e866f62bf0c19b9cb8f76d4dc83827ad5757c0b9172f",
-    "posterSha256": "66c6170cf8102a9a96c4e4a352660d1ed45366fe2a8ffab56945a83276230fe3",
+    "sourceFingerprint": "0f79bfd91d9258cdbac3c4f34482fe2f8fb489ad9720faf87649271e73501425",
+    "videoSha256": "615b0a18e26a663ab9661cac0996a83132c8194f7bf8774ac70f27dc96d434c8",
+    "posterSha256": "5e077bba0e810d0bfa33a71f7732c316694536a1e091f0046c5ba24bf2b7b80d",
     "width": 1920,
     "height": 1080,
     "fps": 30,

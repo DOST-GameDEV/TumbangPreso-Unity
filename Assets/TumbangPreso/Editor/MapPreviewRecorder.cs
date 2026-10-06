@@ -79,6 +79,14 @@ namespace TumbangPreso.EditorTools
             string fingerprint=MapPreviewFreshness.SourceFingerprint(map);
             var root=new GameObject("Capture "+map,typeof(RectTransform),typeof(RawImage));var view=root.AddComponent<MapPreviewSurface>();view.PreferRecordedPreview=false;view.Show(map);
             while(view.Showing!=map||view.Camera==null)yield return null;
+            // The look discovers and lifts court ground in its first Update,
+            // after EnvColourPass.Start. Capturing immediately records one dark
+            // startup frame which flashes again at every loop boundary.
+            var look=Object.FindFirstObjectByType<TumbangPreso.Visual.WorldLookPresentation>();
+            var pending=typeof(TumbangPreso.Visual.WorldLookPresentation).GetField("_groundPending",BindingFlags.Instance|BindingFlags.NonPublic);
+            Debug.Log("[MapPreviewRecorder] "+map+" ground pending before settling="+(look!=null&&((bool)pending.GetValue(look))));
+            yield return null;yield return null;
+            Debug.Log("[MapPreviewRecorder] "+map+" ground pending after settling="+(look!=null&&((bool)pending.GetValue(look)))+" look weight="+TumbangPreso.Visual.WorldCueProfile.LightingWeight);
             const int width=1920,height=1080,fps=30,frames=780;
             var source=view.Camera.targetTexture;var descriptor=source.descriptor;descriptor.width=width;descriptor.height=height;
             var target=new RenderTexture(descriptor){name=source.name,filterMode=source.filterMode};target.Create();

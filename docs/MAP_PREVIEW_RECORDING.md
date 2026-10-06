@@ -40,6 +40,13 @@ unloads its owned scene before the next map. It writes a loop, poster, encoder
 log and capture-source fingerprint per map. A successful exit is recording
 evidence, not a gameplay test.
 
+Before frame0 the recorder yields two frames for EnvColourPass.Start and the
+world look's first ground-discovery Update. Starting sooner records a dark
+startup frame that flashes again on every loop. Check the log's ground-ready
+transition and captured look weight, rather than treating scene-load completion
+as visual readiness. Current captures use look weight1; changing a player's
+live lighting preference does not recolour an already-recorded movie.
+
 Inspect the native frames, first/last-frame seam and a complete normal-speed loop.
 Use ffprobe to check1920x1080,30/1 fps,780 frames and26 seconds. Test actual Unity
 decoding, immediate poster display, map switching, hidden/reopened previews and
@@ -74,7 +81,8 @@ This explicit check validates all registered map receipts without recording
 footage, loading arena scenes or adding a build execution barrier. Fingerprints
 include scene dependencies/import settings, attached map scripts and their
 partials, shared look code, dynamic visual resources and the preview's
-camera/environment methods. Git's CRLF
+camera/environment methods, including world-look/cue profiles and lighting-style
+definitions. Git's CRLF
 conversion is ignored for code/YAML; binary assets and media remain byte-exact.
 
 Windows native H.264 playback is checked. Linux currently retains the same sharp
