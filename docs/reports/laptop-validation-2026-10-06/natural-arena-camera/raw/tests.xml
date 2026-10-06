@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 02:04:36Z" end-time="2026-10-06 02:05:08Z" duration="32.1608224">
+  <test-suite type="TestSuite" id="3233" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1818" result="Passed" start-time="2026-10-06 02:04:36Z" end-time="2026-10-06 02:05:08Z" duration="32.160822" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3225" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1818" result="Passed" start-time="2026-10-06 02:04:36Z" end-time="2026-10-06 02:05:08Z" duration="32.141483" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23316" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3226" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1818" result="Passed" start-time="2026-10-06 02:04:36Z" end-time="2026-10-06 02:05:08Z" duration="32.128266" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3229" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1816" result="Passed" start-time="2026-10-06 02:04:36Z" end-time="2026-10-06 02:05:08Z" duration="32.115909" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2871" name="SpectatorNaturalArenaProbe" fullname="TumbangPreso.PlayTests.SpectatorNaturalArenaProbe" classname="TumbangPreso.PlayTests.SpectatorNaturalArenaProbe" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-06 02:04:36Z" end-time="2026-10-06 02:05:08Z" duration="32.092056" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2872" name="ObserveNaturalArenaHeroStrikeThroughTheActualDirector" fullname="TumbangPreso.PlayTests.SpectatorNaturalArenaProbe.ObserveNaturalArenaHeroStrikeThroughTheActualDirector" methodname="ObserveNaturalArenaHeroStrikeThroughTheActualDirector" classname="TumbangPreso.PlayTests.SpectatorNaturalArenaProbe" runstate="Runnable" seed="1601841249" result="Passed" start-time="2026-10-06 02:04:36Z" end-time="2026-10-06 02:05:08Z" duration="32.081974" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.60, announcer slider).
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/natural-spectator-arena-1006/arena-natural-0.png
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.23 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.60, announcer slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.60, ambience slider).
+[Play] wrote Logs/natural-spectator-arena-1006/arena-natural-1.png
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt at 0.45 of full scale before the sliders (excitement 0.60, ambience slider).
+[Play] wrote Logs/natural-spectator-arena-1006/arena-natural-2.png
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.26 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_3 at 0.45 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 1.00, ambience slider).
+Natural Arena capture completed: 3 actual rendered frames, 6 cuts, 0 fallbacks.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,11 @@
+# Natural Arena camera sample after the clearance corrections
+
+One graphics-enabled native PlayMode case loads actual Arena Hero Strike, enables the existing four-bot spectator route and begins through public SliceRunner.Begin. It waits for the ordinary arrival/countdown, then observes fifteen seconds of active simulation. No skill, throw, outcome, character or bot decision is forced. Three1600x900 frames use the existing GameplayShots.Render path, with actual director/cast/clock samples every half second.
+
+The three images were inspected: a court establishment followed by live objective/player compositions. The can and nearby actors are visible in the later sampled frames. Scores and clock advance. The timeline ends with six cuts and zero safe-pose fallbacks. It records the default installed stable IDs dante/Basilio, zack/Isagani and rafi/Ilyas, with Basilio occupying two seats. Three stills and sparse metrics do not establish every transition's continuity, ability timing or subjective viewing quality.
+
+Unity23316/parent81673 exits0, one actual case passes. All21146 frozen inputs restore after279 known importer/ProjectAuditor deltas, and thirteen existing isolated editor preference values restore. Four pre-existing isolated profile files are snapshotted and restored; the receipt records zero generated file changes. Private profile/pref snapshots remain local. Ten exact raw files include the original frames, timeline, launch/XML/classification/restoration receipt and the temporary reproducible fixture/meta. The full input manifest remains local with an exact SHA256 and selected source LF hashes.
+
+This run uses source7bed9ddb4 with the two Director clearance fixes. It predates the later2966 spectator pad/control contribution; its exact historical source is retained in qualification. It is Unity Editor graphics, not physical desktop/player pixels, controller hardware, a packaged LAN pair or a full match. No newer player build was launched.
+
+The remaining six playable maps, Classic cast, six unobserved Hero Strike characters, broader Arena stages, natural ability/contact outcomes, continuous motion and manual takeover remain open. This is the first Arena sample in the requested full spectator pass, not completion of that pass. Finalized cast direction and private artwork are unchanged.
