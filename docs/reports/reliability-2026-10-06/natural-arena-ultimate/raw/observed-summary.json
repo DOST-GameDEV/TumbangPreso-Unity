@@ -1,0 +1,37 @@
+{
+  "cases": 1,
+  "passed": 1,
+  "stop": {
+    "round": 8,
+    "elapsed": 703.33,
+    "presentations": 1
+  },
+  "acceptedAnswers": 59,
+  "refusals": 6,
+  "ultimateAnswers": [
+    {
+      "elapsed": "673.685",
+      "round": "7",
+      "slot": "2",
+      "hero": "rafi",
+      "abilitySlot": "Ultimate",
+      "ability": "BAHA",
+      "answer": "Cast",
+      "charge": "0.000",
+      "cost": "15",
+      "beat": "ThrowPrep",
+      "shot": "Objective",
+      "caption": "throw \u00b7 CAREERORDERFIX"
+    }
+  ],
+  "presentationText": "677.096\t7\t2\trafi\tBAHA\tThrowPrep\tFalse\n",
+  "finalCharges": "0\tcheska\t12\t12\n1\tdante\t12\t12\n2\trafi\t4\t15\n3\tcheska\t12\t12",
+  "cameraUltimateTimeline": [
+    "678.386\t7\t16.763\tUltimate\tUltimateWide\tultimate \u00b7 ILYAS\t307\t34",
+    "678.888\t7\t16.323\tUltimate\tUltimateWide\tultimate \u00b7 ILYAS\t307\t34",
+    "679.388\t7\t15.823\tUltimate\tUltimateWide\tultimate \u00b7 ILYAS\t307\t34",
+    "679.901\t7\t15.303\tUltimate\tUltimateWide\tultimate \u00b7 ILYAS\t307\t34",
+    "680.402\t7\t14.803\tUltimate\tUltimateWide\tultimate \u00b7 ILYAS\t307\t34"
+  ],
+  "limits": "one Ilyas event; sparse witness render with optional body visibility overrides; no continuous film, every-hero, or every-map acceptance"
+}

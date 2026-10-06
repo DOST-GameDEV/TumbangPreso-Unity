@@ -1,3 +1,16 @@
+## Current Root natural ultimate observation terminal
+
+16144/83789 onePASS703.330unscaledseconds throughsevenrounds; stoppedentry8,
+no completedresult/upload. Finalreceipt correctspremature noUlt update: IlyasBaha
+answer673.685/presentation677.096, naturalDirectorUltimateWide678.386-680.402.
+Neither retainedframe sampleslaterwideinterval.59accepted/sixrefusals; Yasmin/
+Basilio end12/12nocast. StaticAI WouldCatch rejects theirzero-circle currentults;
+next focusednative decision cause/controls before correctingdependency. All21154
+inputs/216deltas/prefs/Quality/seed restored; tempfixture/metaremoved. NoRootjobs.
+Twenty prioraccepted frames reviewed; witnessrendereroverride clearlyqualified.
+Laptop Director/bodyclearance reserved; Root AIController/Interest/Camera/UI.
+Next publish then original currentkit AI decision reproduction. Fullpass open.
+
 ## Current Root debug-strip visibility terminal
 
 DebugBar hides its diagnosticcanvas for launch/HUD spectator state ornetworked

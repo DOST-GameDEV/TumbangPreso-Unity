@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 04:09:47Z" end-time="2026-10-06 04:22:05Z" duration="737.9309087">
+  <test-suite type="TestSuite" id="3267" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1847" result="Passed" start-time="2026-10-06 04:09:47Z" end-time="2026-10-06 04:22:05Z" duration="737.930909" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3259" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1847" result="Passed" start-time="2026-10-06 04:09:47Z" end-time="2026-10-06 04:22:05Z" duration="737.896338" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="16144" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3260" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1847" result="Passed" start-time="2026-10-06 04:09:47Z" end-time="2026-10-06 04:22:05Z" duration="737.871131" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3263" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1845" result="Passed" start-time="2026-10-06 04:09:47Z" end-time="2026-10-06 04:22:05Z" duration="737.841295" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2875" name="SpectatorNaturalUltimateProbe" fullname="TumbangPreso.PlayTests.SpectatorNaturalUltimateProbe" classname="TumbangPreso.PlayTests.SpectatorNaturalUltimateProbe" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-06 04:09:47Z" end-time="2026-10-06 04:22:05Z" duration="737.792734" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Timeout" value="1000000" />
+            </properties>
+            <test-case id="2876" name="HeroGroup0" fullname="TumbangPreso.PlayTests.SpectatorNaturalUltimateProbe.HeroGroup0" methodname="HeroGroup0" classname="TumbangPreso.PlayTests.SpectatorNaturalUltimateProbe" runstate="Runnable" seed="1628746150" result="Passed" start-time="2026-10-06 04:09:47Z" end-time="2026-10-06 04:22:05Z" duration="737.776500" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.60, announcer slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 0.85, ambience slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_3 at 0.31 of full scale before the sliders (excitement 0.91, ambience slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.55, ambience slider).
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_3 at 0.38 of full scale before the sliders (excitement 0.85, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-natural-ultimate1006/observations/HeroStrike-0/cast-natural-0.png
+[ArenaCrowd] block: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.70, announcer slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.26 of full scale before the sliders (excitement 0.70, ambience slider).
+[Play] wrote Logs/spectator-natural-ultimate1006/observations/HeroStrike-0/cast-natural-1.png
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.60, announcer slider).
+[Play] wrote Logs/spectator-natural-ultimate1006/observations/HeroStrike-0/cast-natural-2.png
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.57, ambience slider).
+[Play] wrote Logs/spectator-natural-ultimate1006/observations/HeroStrike-0/accepted-cheska-0.png
+[Play] wrote Logs/spectator-natural-ultimate1006/observations/HeroStrike-0/accepted-rafi-1.png
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.26 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.60, ambience slider).
+[Play] wrote Logs/spectator-natural-ultimate1006/observations/HeroStrike-0/accepted-cheska-1.png
+[ArenaCrowd] chant, throw being charged: sfx_arena_chant_ooh_hey at 0.28 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.22 of full scale before the sliders (excitement 0.21, ambience slider).
+[ArenaCrowd] hero power landed: sfx_arena_crowd_cheer at 0.30 of full scale before the sliders (excitement 0.17, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.50, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.57, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.23 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.24 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.48, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.25 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.23 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.23 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_3 at 0.45 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] hero power landed: sfx_arena_crowd_cheer_2 at 0.30 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] chant, after the can went down (in place of sfx_arena_chant_tumbang_preso, which is not recorded): sfx_arena_chant_claps at 0.30 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.64, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.58, announcer slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.57, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt at 0.45 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.26 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] round over: sfx_arena_crowd_cheer_2 at 0.40 of full scale before the sliders (excitement 0.78, ambience slider).
+[ArenaCrowd] stage call: sfx_arena_pa_chime at 0.23 of full scale before the sliders (excitement 0.35, announcer slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.69, ambience slider).
+[ArenaCrowd] round 2 begins: sfx_arena_crowd_cheer at 0.38 of full scale before the sliders (excitement 1.00, ambience slider).
+[Slice] round 2 begins, taya is seat 1
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.23 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt at 0.45 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] chant, after the can went down (in place of sfx_arena_chant_tumbang_preso, which is not recorded): sfx_arena_chant_claps at 0.30 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.53, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.53, announcer slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.53, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.21 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.00, announcer slider).
+[ArenaCrowd] chant, throw being charged: sfx_arena_chant_ooh_hey at 0.28 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.22 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.57, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.25 of full scale before the sliders (excitement 0.32, ambience slider).
+[ArenaCrowd] chant, throw being charged: sfx_arena_chant_ooh_hey at 0.28 of full scale before the sliders (excitement 0.01, ambience slider).
+[Play] wrote Logs/spectator-natural-ultimate1006/observations/HeroStrike-0/accepted-dante-1.png
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.23 of full scale before the sliders (excitement 0.05, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.30, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.26 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] chant, throw being charged: sfx_arena_chant_ooh_hey at 0.28 of full scale before the sliders (excitement 0.56, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.54, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.22 of full scale before the sliders (excitement 0.50, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.50, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.27 of full scale before the sliders (excitement 0.27, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_2 at 0.45 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] chant, the round's last seconds (in place of sfx_arena_chant_tumba, which is not recorded): sfx_arena_chant_claps_fast at 0.30 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] chant, after the can went down (in place of sfx_arena_chant_tumbang_preso, which is not recorded): sfx_arena_chant_claps at 0.30 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.43, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.57, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.25 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt at 0.45 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_2 at 0.45 of full scale before the sliders (excitement 0.85, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.24 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] round over: sfx_arena_crowd_cheer_3 at 0.40 of full scale before the sliders (excitement 0.79, ambience slider).
+[ArenaCrowd] stage call: sfx_arena_pa_chime at 0.23 of full scale before the sliders (excitement 0.35, announcer slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt_3 at 0.56 of full scale before the sliders (excitement 0.69, ambience slider).
+[ArenaCrowd] round 3 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 1.00, ambience slider).
+[Slice] round 3 begins, taya is seat 2
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.26 of full scale before the sliders (excitement 0.77, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.37, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.37, announcer slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.25 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.50, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.24 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.56, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.22 of full scale before the sliders (excitement 0.24, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.50, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.50, announcer slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.26 of full scale before the sliders (excitement 0.46, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.46, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.24 of full scale before the sliders (excitement 0.20, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.26 of full scale before the sliders (excitement 0.50, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 0.50, ambience slider).
+[ArenaCrowd] chant, throw being charged: sfx_arena_chant_ooh_hey at 0.28 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.21 of full scale before the sliders (excitement 0.34, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_2 at 0.45 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.21 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.65, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.65, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.65, announcer slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.58, ambience slider).
+[ArenaCrowd] chant, throw being charged: sfx_arena_chant_ooh_hey at 0.28 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.24 of full scale before the sliders (excitement 0.11, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt at 0.45 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.27 of full scale before the sliders (excitement 0.38, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.38, ambience slider).
+[ArenaCrowd] chant, the round's last seconds (in place of sfx_arena_chant_tumba, which is not recorded): sfx_arena_chant_claps_fast at 0.30 of full scale before the sliders (excitement 0.50, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.25 of full scale before the sliders (excitement 0.49, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.38, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.23 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] chant, throw being charged: sfx_arena_chant_ooh_hey at 0.28 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_2 at 0.45 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.25 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] round over: sfx_arena_crowd_cheer at 0.40 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] stage call: sfx_arena_pa_chime at 0.23 of full scale before the sliders (excitement 0.35, announcer slider).
+[ArenaCrowd] chant, after the can went down (in place of sfx_arena_chant_tumbang_preso, which is not recorded): sfx_arena_chant_claps at 0.30 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt_3 at 0.56 of full scale before the sliders (excitement 0.69, ambience slider).
+[ArenaCrowd] round 4 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 1.00, ambience slider).
+[Slice] round 4 begins, taya is seat 3
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.24 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.57, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.59, announcer slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.57, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.24 of full scale before the sliders (excitement 0.25, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] hero power landed: sfx_arena_crowd_cheer at 0.30 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.50, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.22 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.22 of full scale before the sliders (excitement 0.15, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.21 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.14, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.07, announcer slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.24 of full scale before the sliders (excitement 0.06, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt at 0.45 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.25 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.78, ambience slider).
+[Play] wrote Logs/spectator-natural-ultimate1006/observations/HeroStrike-0/accepted-rafi-0.png
+[ArenaCrowd] chant, after the can went down (in place of sfx_arena_chant_tumbang_preso, which is not recorded): sfx_arena_chant_claps at 0.30 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.55, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.43, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.55, announcer slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.25 of full scale before the sliders (excitement 0.41, ambience slider).
+[ArenaCrowd] hero power landed: sfx_arena_crowd_cheer_2 at 0.30 of full scale before the sliders (excitement 0.30, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.26 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.48, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.60, announcer slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.22 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.39, ambience slider).
+[ArenaCrowd] chant, the round's last seconds (in place of sfx_arena_chant_tumba, which is not recorded): sfx_arena_chant_claps_fast at 0.30 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.60, announcer slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.26 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.21 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] round over: sfx_arena_crowd_cheer_3 at 0.40 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] stage call: sfx_arena_pa_chime at 0.23 of full scale before the sliders (excitement 0.00, announcer slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt_3 at 0.56 of full scale before the sliders (excitement 0.24, ambience slider).
+[ArenaCrowd] round 5 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 1.00, ambience slider).
+[Slice] round 5 begins, taya is seat 0
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.26 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 0.08, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.02, announcer slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.23 of full scale before the sliders (excitement 0.58, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.58, ambience slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.22, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.23 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] hero power landed: sfx_arena_crowd_cheer_2 at 0.30 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.21 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.60, announcer slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.22 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] chant, a lull: sfx_arena_chant_drums at 0.27 of full scale before the sliders (excitement 0.30, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_2 at 0.45 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 1.00, announcer slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.83, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.22 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_3 at 0.45 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.22 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt at 0.45 of full scale before the sliders (excitement 0.72, ambience slider).
+[ArenaCrowd] chant, after the can went down (in place of sfx_arena_chant_tumbang_preso, which is not recorded): sfx_arena_chant_claps at 0.30 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.24 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.97, announcer slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_3 at 0.45 of full scale before the sliders (excitement 0.72, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.66, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.63, ambience slider).
+[ArenaCrowd] hero power landed: sfx_arena_crowd_cheer at 0.30 of full scale before the sliders (excitement 0.15, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.50, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.21 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt at 0.45 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] chant, the round's last seconds: sfx_arena_chant_stomp at 0.30 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] chant, after the can went down (in place of sfx_arena_chant_tumbang_preso, which is not recorded): sfx_arena_chant_claps at 0.30 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.23 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_2 at 0.45 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.22 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.22 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.57, ambience slider).
+[ArenaCrowd] round over: sfx_arena_crowd_cheer at 0.40 of full scale before the sliders (excitement 0.41, ambience slider).
+[ArenaCrowd] stage call: sfx_arena_pa_chime at 0.23 of full scale before the sliders (excitement 0.35, announcer slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt_3 at 0.56 of full scale before the sliders (excitement 0.69, ambience slider).
+[ArenaCrowd] round 6 begins: sfx_arena_crowd_cheer_3 at 0.38 of full scale before the sliders (excitement 1.00, ambience slider).
+[Slice] round 6 begins, taya is seat 1
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.22 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.57, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.27 of full scale before the sliders (excitement 0.17, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.26 of full scale before the sliders (excitement 0.01, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.57, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.22 of full scale before the sliders (excitement 0.34, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.22 of full scale before the sliders (excitement 0.37, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.26 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.50, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.21 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.57, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.20, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.26 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt at 0.45 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] chant, the round's last seconds (in place of sfx_arena_chant_tumba, which is not recorded): sfx_arena_chant_claps_fast at 0.30 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.22 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.68, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.22 of full scale before the sliders (excitement 0.68, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.68, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.23 of full scale before the sliders (excitement 0.68, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_2 at 0.45 of full scale before the sliders (excitement 0.63, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.83, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.25 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.26 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt at 0.45 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.25 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] round over: sfx_arena_crowd_cheer_3 at 0.40 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] stage call: sfx_arena_pa_chime at 0.23 of full scale before the sliders (excitement 0.35, announcer slider).
+[ArenaCrowd] chant, after the can went down (in place of sfx_arena_chant_tumbang_preso, which is not recorded): sfx_arena_chant_claps at 0.30 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.69, ambience slider).
+[ArenaCrowd] round 7 begins: sfx_arena_crowd_cheer at 0.38 of full scale before the sliders (excitement 1.00, ambience slider).
+[Slice] round 7 begins, taya is seat 2
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.26 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.00, announcer slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.30, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.24, announcer slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.22 of full scale before the sliders (excitement 0.08, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.59, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.59, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_3 at 0.45 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.24 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.78, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] chant, after the can went down (in place of sfx_arena_chant_tumbang_preso, which is not recorded): sfx_arena_chant_claps at 0.30 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.24 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.40, announcer slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.24 of full scale before the sliders (excitement 0.27, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.25 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.21, ambience slider).
+[ArenaCrowd] chant, the round's last seconds (in place of sfx_arena_chant_tumba, which is not recorded): sfx_arena_chant_claps_fast at 0.30 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.25 of full scale before the sliders (excitement 0.00, ambience slider).
+[Play] wrote Logs/spectator-natural-ultimate1006/observations/HeroStrike-0/accepted-rafi-2.png
+[Play] wrote Logs/spectator-natural-ultimate1006/observations/HeroStrike-0/presented-rafi-1.png
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.57, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.25 of full scale before the sliders (excitement 0.21, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.57, ambience slider).
+[ArenaCrowd] round over: sfx_arena_crowd_cheer_3 at 0.40 of full scale before the sliders (excitement 0.39, ambience slider).
+[ArenaCrowd] stage call: sfx_arena_pa_chime at 0.23 of full scale before the sliders (excitement 0.35, announcer slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.68, ambience slider).
+[ArenaCrowd] round 8 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 1.00, ambience slider).
+[Slice] round 8 begins, taya is seat 3
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

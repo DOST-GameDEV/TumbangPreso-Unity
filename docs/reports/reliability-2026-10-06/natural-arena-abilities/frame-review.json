@@ -1,0 +1,37 @@
+{
+  "reviewed": [
+    "HeroStrike-0/accepted-cheska-0.png",
+    "HeroStrike-0/accepted-cheska-1.png",
+    "HeroStrike-0/accepted-dante-1.png",
+    "HeroStrike-0/accepted-rafi-1.png",
+    "HeroStrike-1/accepted-amihan-0.png",
+    "HeroStrike-1/accepted-amihan-1.png",
+    "HeroStrike-1/accepted-cheska-0.png",
+    "HeroStrike-1/accepted-cheska-1.png",
+    "HeroStrike-1/accepted-sean-0.png",
+    "HeroStrike-1/accepted-sean-1.png",
+    "HeroStrike-2/accepted-paete-0.png",
+    "HeroStrike-2/accepted-paete-1.png",
+    "HeroStrike-2/accepted-sean-0.png",
+    "HeroStrike-2/accepted-sean-1.png",
+    "HeroStrike-2/accepted-zack-0.png",
+    "HeroStrike-2/accepted-zack-1.png",
+    "HeroStrike-4/accepted-cheska-0.png",
+    "HeroStrike-4/accepted-nemu-1.png",
+    "HeroStrike-4/accepted-phaister-0.png",
+    "HeroStrike-4/accepted-phaister-1.png"
+  ],
+  "findings": [
+    "Yasmin wall sample shows downed Basilio beside Yasmin; skill caster not labeled by the priority caption",
+    "Paete signature sample includes full-tree body, objective and other actors; wide bloom sample includes plant and group",
+    "Nemu accepted-role sample follows Soraya/objective; Nemu is not identifiable in the visible frame",
+    "Amihan is visible in both drift/updraft samples while another current beat stays selected",
+    "Soraya hex sample is a quiet wide with effect at the platform edge; protection sample has a bright foreground body/effect that reduces subject readability",
+    "All20 accepted-slot witness images inspected. Some follow objective/retrieval/downed subjects instead of the caster; no every-skill cinematic claim",
+    "Rago attacking-role frame includes bright flame/empowered body near foreground; skill-form readability cannot be established from isolated frame",
+    "Yasmin wall examples include small model overlap/clear ice geometry; far/wide ColdFeet sample shows effect while priority caption remains street"
+  ],
+  "limits": "Sparse frames; do not equate accepted skill answer with selected caster coverage or effect correctness",
+  "rendererLimit": "observedSubject optionally restores ShadowsOnly body renderers for synchronous witness and disables private view arms, then restores; not physical framebuffer equivalence",
+  "reviewedCount": 20
+}
