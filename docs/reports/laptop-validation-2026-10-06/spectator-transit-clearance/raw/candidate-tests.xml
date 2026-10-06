@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Passed" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 01:55:11Z" end-time="2026-10-06 01:55:12Z" duration="0.1360602">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1407" result="Passed" start-time="2026-10-06 01:55:11Z" end-time="2026-10-06 01:55:12Z" duration="0.136060" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2736" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1407" result="Passed" start-time="2026-10-06 01:55:11Z" end-time="2026-10-06 01:55:12Z" duration="0.117913" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="48792" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2737" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1407" result="Passed" start-time="2026-10-06 01:55:11Z" end-time="2026-10-06 01:55:12Z" duration="0.102497" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2738" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1407" result="Passed" start-time="2026-10-06 01:55:11Z" end-time="2026-10-06 01:55:12Z" duration="0.092338" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2585" name="SpectatorSceneryClearanceTests" fullname="TumbangPreso.Tests.SpectatorSceneryClearanceTests" classname="TumbangPreso.Tests.SpectatorSceneryClearanceTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-06 01:55:11Z" end-time="2026-10-06 01:55:12Z" duration="0.047576" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2587" name="AnOrdinarySceneryOverlapRejectsTheEye" fullname="TumbangPreso.Tests.SpectatorSceneryClearanceTests.AnOrdinarySceneryOverlapRejectsTheEye" methodname="AnOrdinarySceneryOverlapRejectsTheEye" classname="TumbangPreso.Tests.SpectatorSceneryClearanceTests" runstate="Runnable" seed="636922234" result="Passed" start-time="2026-10-06 01:55:12Z" end-time="2026-10-06 01:55:12Z" duration="0.023215" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2586" name="ClearSpaceWithManyIgnoredCollidersRemainsAvailable" fullname="TumbangPreso.Tests.SpectatorSceneryClearanceTests.ClearSpaceWithManyIgnoredCollidersRemainsAvailable" methodname="ClearSpaceWithManyIgnoredCollidersRemainsAvailable" classname="TumbangPreso.Tests.SpectatorSceneryClearanceTests" runstate="Runnable" seed="1636619062" result="Passed" start-time="2026-10-06 01:55:12Z" end-time="2026-10-06 01:55:12Z" duration="0.003662" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2588" name="SceneryCannotDisappearBehindASaturatedIgnoredColliderQuery" fullname="TumbangPreso.Tests.SpectatorSceneryClearanceTests.SceneryCannotDisappearBehindASaturatedIgnoredColliderQuery" methodname="SceneryCannotDisappearBehindASaturatedIgnoredColliderQuery" classname="TumbangPreso.Tests.SpectatorSceneryClearanceTests" runstate="Runnable" seed="70950832" result="Passed" start-time="2026-10-06 01:55:12Z" end-time="2026-10-06 01:55:12Z" duration="0.009921" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2589" name="SpectatorTransitClearanceTests" fullname="TumbangPreso.Tests.SpectatorTransitClearanceTests" classname="TumbangPreso.Tests.SpectatorTransitClearanceTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-06 01:55:12Z" end-time="2026-10-06 01:55:12Z" duration="0.014278" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2591" name="AClearDestinationDoesNotPermitAnIntermediateEyeInsideScenery" fullname="TumbangPreso.Tests.SpectatorTransitClearanceTests.AClearDestinationDoesNotPermitAnIntermediateEyeInsideScenery" methodname="AClearDestinationDoesNotPermitAnIntermediateEyeInsideScenery" classname="TumbangPreso.Tests.SpectatorTransitClearanceTests" runstate="Runnable" seed="420317117" result="Passed" start-time="2026-10-06 01:55:12Z" end-time="2026-10-06 01:55:12Z" duration="0.010207" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2590" name="AnUnobstructedShortReframeStillGlidesWithoutCutting" fullname="TumbangPreso.Tests.SpectatorTransitClearanceTests.AnUnobstructedShortReframeStillGlidesWithoutCutting" methodname="AnUnobstructedShortReframeStillGlidesWithoutCutting" classname="TumbangPreso.Tests.SpectatorTransitClearanceTests" runstate="Runnable" seed="1023593089" result="Passed" start-time="2026-10-06 01:55:12Z" end-time="2026-10-06 01:55:12Z" duration="0.000758" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2594" name="IgnoredGeometryDoesNotInterruptTheShortGlide" fullname="TumbangPreso.Tests.SpectatorTransitClearanceTests.IgnoredGeometryDoesNotInterruptTheShortGlide" classname="TumbangPreso.Tests.SpectatorTransitClearanceTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-06 01:55:12Z" end-time="2026-10-06 01:55:12Z" duration="0.002062" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2592" name="IgnoredGeometryDoesNotInterruptTheShortGlide(True)" fullname="TumbangPreso.Tests.SpectatorTransitClearanceTests.IgnoredGeometryDoesNotInterruptTheShortGlide(True)" methodname="IgnoredGeometryDoesNotInterruptTheShortGlide" classname="TumbangPreso.Tests.SpectatorTransitClearanceTests" runstate="Runnable" seed="2084216508" result="Passed" start-time="2026-10-06 01:55:12Z" end-time="2026-10-06 01:55:12Z" duration="0.000886" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2593" name="IgnoredGeometryDoesNotInterruptTheShortGlide(False)" fullname="TumbangPreso.Tests.SpectatorTransitClearanceTests.IgnoredGeometryDoesNotInterruptTheShortGlide(False)" methodname="IgnoredGeometryDoesNotInterruptTheShortGlide" classname="TumbangPreso.Tests.SpectatorTransitClearanceTests" runstate="Runnable" seed="436131206" result="Passed" start-time="2026-10-06 01:55:12Z" end-time="2026-10-06 01:55:12Z" duration="0.000332" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
