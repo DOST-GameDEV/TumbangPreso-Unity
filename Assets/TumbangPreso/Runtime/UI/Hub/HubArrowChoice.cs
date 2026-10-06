@@ -35,8 +35,23 @@ namespace TumbangPreso.UI.Hub
 
         private static HubButton Arrow(Transform parent,string name,HubGlyph.Mark mark,Action clicked,int seed)
         {
-            // Standard HubButton keeps pointer/touch/Submit, sounds and focus feedback.
-            return HubKit.IconButton(parent,name,mark,HubStyle.Honey,clicked,seed);
+            // An inline chevron keeps the existing field as one surface. The
+            // standard button still owns pointer/touch/Submit and menu sounds.
+            var root=HubKit.Rect(parent,name);
+            var hit=root.gameObject.AddComponent<Image>(); hit.color=Color.clear;
+            var button=root.gameObject.AddComponent<HubButton>();
+            button.Body=HubKit.Stretch(HubKit.Rect(root,"Body"));
+            var arrow=HubKit.Glyph(button.Body,"Arrow",mark,Color.white,.12f);
+            HubKit.Place(arrow.rectTransform,HubKit.Centre,Vector2.zero,new Vector2(42,42));
+            button.targetGraphic=arrow; button.transition=Selectable.Transition.ColorTint;
+            var colours=button.colors;
+            colours.normalColor=HubStyle.Ink;
+            colours.highlightedColor=colours.selectedColor=Color.Lerp(HubStyle.Persimmon,HubStyle.Ink,.45f);
+            colours.pressedColor=HubStyle.Ink;
+            var disabled=HubStyle.Ink; disabled.a=.35f; colours.disabledColor=disabled;
+            colours.fadeDuration=.08f; button.colors=colours;
+            button.onClick.AddListener(()=>clicked());
+            return button;
         }
 
         private void Step(int direction)
