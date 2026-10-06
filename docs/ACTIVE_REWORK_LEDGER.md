@@ -9,7 +9,8 @@ map intros/poses/arrivals and slipper/reliability fixes. Do not mark it complete
 after a passing unit. The laptop was asked to verify its own goal and checkpoint.
 
 Worktree: C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i.
-Integration: origin/ASTRAReworks, protocol153, published c0b087438a62a947be7f09d8cc22877fc64d5449.
+Integration: origin/ASTRAReworks, protocol153. Inspect current Git HEAD and remote
+before resuming; startup package identity remains separate below.
 PC owns CatchReconstruction, AI/bots/navigation, shared map intros/cameras/arrivals
 and slipper reliability. Laptop chat01a0ffab-10a0-70d0-9270-07e171c1613b on
 remote-control:env_e_6aa6c4fde2dc83218a0722e34ac3face retains MapPreviewSurface,
@@ -25,30 +26,31 @@ Home with first-arrival video frame4to40. All21277 frozen build inputs restored.
 All261 package files were verified before replacement. Evidence:
 reports/startup-order-2026-10-07/packaged. Keep current Desktop and needed backups.
 
-Current uncommitted unit: CatchReconstruction victim-centered bounds/frustum
-framing and CatchReplayCompositionTests.cs/meta. Baseline31908 clips the victim
-at6m/10m; candidate32920 passes all3distance cases. Actual PlayMode20420 passes
-continuous motion and held-frame/fade controls but fails authored far-tag skin
-contact (gap0.24448435) and blocked-both-sides fallback. Unchanged published
-baseline34180 also fails both controls: hand bounds gap0.3130138 and skin gap0.7049553,
-plus the same fallback assertion. All21279 inputs restored and candidate bytes
-reinstated exactly. Candidate34288 adds frozen-shot obstruction checks and
-near-plane sphere clearance; motion/freeze still pass but fallback still fails.
-This has not fixed that control. All21279 inputs/prefs/profile restored again;
-no PC Unity/compiler/helper job remains. These failures remain unresolved.
-Raw evidence and preservation helpers: Logs/catch-framing1007. Private unrelated
-dirt: ProjectAuditorSettings.asset and tools/build_yasmin_benguet_voxel.py.
+Current coherent unit: caught-player bounds/frustum framing and real touch-peak
+retention, with accepted victim identity in bounded local pose history. Native
+11300 passes8 geometry/identity cases;34564 passes11 map-framing/contact/motion/
+freeze/clearance cases. Seven actual map captures were inspected. Final15820
+passes10 controls including shaders and four match-identity cases, but8 hero
+pairings fail reach/surface contact or limb restoration. Unchanged published
+baseline32968 reproduces the same8 failures. These are existing rig defects,
+not closed acceptance. All21279 inputs/preferences restore after every run;
+all3 candidate runtime files restore exactly after baseline comparison.
+Evidence: reports/catch-framing-2026-10-07 and Logs/catch-framing1007.
+No owned Unity/compiler/python helper remains. Desktop still has startup9ab;
+this camera change is source-only until a later qualified package. Goal ACTIVE.
 
-Exact next action: instrument actual contact/camera/wall/freeze state in the
-fallback control and ensure its assertion runs after the camera LateUpdate;
-compare baseline and candidate without weakening the blocked-shot requirement.
-Retained pose timing also identifies a real sampling issue: baseline tag peak
-at2.818911/tagTime0.171762 is replaced by clipEnd2.968705/tagTime0.321556 on the
-return gesture when the first post-follow-through sample arrives late. Preserve
-the actual recorded contact peak rather than a returning hand; no invented poses
-or gameplay retuning. Then qualify actual map framing and publish this
-coherent camera unit before AI/intro/slipper work. Inspect live processes and
-checkpoint before any launch; never duplicate a live job after compaction.
+Owned source: CatchReconstruction.cs, MatchPoseHistory.cs, the read-only contact
+metadata in CharacterAnimator.TagBody.cs, CatchReplayCompositionTests.cs/meta
+and CatchReconstructionTests.cs. Private Auditor/voxel dirt stays excluded.
+Next action after publishing this unit: inspect actual rendered Isagani-to-Nemu
+contact and foot support. Both baseline/candidate show about0.43m hand bounds
+gap. Diagnose the capsule-assumed target surface and0.5m visual-step cap before
+changing shared reach presentation; keep actual soles supported and limb scale
+restored. Other failing pairs: Basilio/Yasmin, Yasmin/Rago, Nemu/Soraya,
+Soraya/Ilyas, Ilyas/Amihan, Amihan/Paete and Paete/Bayan. Preserve strict tests,
+hit/score/recovery rules and finalized designs. Then continue meaningful natural
+camera/bot/navigation work, per-map authored intros/arrivals and slipper fixes.
+Inspect exact live processes/checkpoint before launching; never duplicate a job.
 
 No foreground PC control, reset, clean, stash, force-push, unrelated chats/new
 workers or unapproved paid services. Stage explicit owned paths and immediately

@@ -1,0 +1,33 @@
+{
+  "sourceRef": "c0b087438a62a947be7f09d8cc22877fc64d5449",
+  "profile": "pc-catch-framing-original11006",
+  "filter": "TumbangPreso.Tests.CatchReplayCompositionTests",
+  "expectedCases": 3,
+  "execution": "direct; no memory/admission/timeout guard",
+  "pid": 31908,
+  "exitCode": 2,
+  "cases": [
+    {
+      "name": "TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent(1.0f)",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent(6.0f)",
+      "result": "Failed",
+      "message": "  Victim clips horizontally during recorded approach\n  Expected: in range (0.05,0.95)\n  But was:  1.00190771f\n"
+    },
+    {
+      "name": "TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent(10.0f)",
+      "result": "Failed",
+      "message": "  Victim clips horizontally during recorded approach\n  Expected: in range (0.05,0.95)\n  But was:  1.591681f\n"
+    }
+  ],
+  "exactCaseCount": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "protectedCount": 21279,
+  "terminal": true
+}

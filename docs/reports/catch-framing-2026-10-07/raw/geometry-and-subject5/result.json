@@ -1,0 +1,58 @@
+{
+  "sourceRef": "8978e05fd9eb193db1b8158f46ce4364e3a7085e",
+  "profile": "pc-catch-framing-geometry-and-subject51006",
+  "filter": "TumbangPreso.Tests.CatchReplayCompositionTests",
+  "expectedCases": 8,
+  "execution": "direct; no memory/admission/timeout guard",
+  "pid": 11300,
+  "exitCode": 0,
+  "cases": [
+    {
+      "name": "TumbangPreso.Tests.CatchReplayCompositionTests.AReplayLensRejectsNearPlaneSceneryEvenWithAClearCenterRay",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent(1.0f,1.777778f)",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent(6.0f,1.777778f)",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent(10.0f,1.777778f)",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent(1.0f,1.333333f)",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent(6.0f,1.333333f)",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent(10.0f,1.333333f)",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.CatchReplayCompositionTests.RetainedTouchCannotUseAnotherVictimsPeakOrTheReturningHand",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "exactCaseCount": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "protectedCount": 21279,
+  "terminal": true
+}

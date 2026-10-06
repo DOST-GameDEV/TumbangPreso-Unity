@@ -27,6 +27,7 @@ namespace TumbangPreso.CameraSystem
         private Text _caption;
         private float _contact, _began, _duration;
         private float _shotSide;
+        private Vector3 _shotFocus;
         private readonly RaycastHit[] _shotHits = new RaycastHit[32];
         private int _round;
         private long _matchId, _pendingMatchId;
@@ -232,16 +233,25 @@ namespace TumbangPreso.CameraSystem
             _picture.color = new Color(1, 1, 1, Mathf.Clamp01((_duration - elapsed) / FadeDuration));
             // Hold the complete captured image, including its background. All
             // interruption guards above still run; the live match never pauses.
-            if (_freezeCaptured) return;
+            if (_freezeCaptured)
+            {
+                // Keep the captured image still, but never keep an obstructed
+                // shot covering the live recovery view after the world changes.
+                Vector3 frozenOffset = _camera.transform.position - _shotFocus;
+                if (ShotDistance(_shotFocus, frozenOffset) < frozenOffset.magnitude - .05f) End();
+                return;
+            }
             // Capture the short, real follow-through once it has happened. Detached
             // frames keep this catch intact even as the live history ring wraps.
             if (!_followthroughCaptured && _actorTrack.Newest >= _clipEnd && _victimTrack.Newest >= _clipEnd)
             {
                 _followthroughCaptured = true;
-                // Retain the first actual sample past follow-through. At low
-                // frame rates, trimming between samples can erase the one real
-                // contact pose and freeze an interpolated half-reach instead.
-                _clipEnd = Mathf.Min(_actorTrack.Newest, _victimTrack.Newest);
+                // A late sample may already show the hand coming home. Hold
+                // the strongest actual accepted-contact pose, never that return
+                // or a synthetic interpolation between touch and recovery.
+                float available = Mathf.Min(_actorTrack.Newest, _victimTrack.Newest);
+                _clipEnd = _actorTrack.TryTagContactFrame(_contact, available, _victim.PlayerSlot, _contact + Followthrough, out float peak)
+                    ? peak : available;
                 if (!RetainClip(_clipEnd))
                     _clipEnd = Mathf.Min(_actorClip.End, _victimClip.End);
             }
@@ -255,22 +265,68 @@ namespace TumbangPreso.CameraSystem
                 // step and hand follow-through must remain in the recorded pose.
                 _victimCopy.Root.transform.SetPositionAndRotation(_victimContact, _victimFacing);
             }
-            Vector3 a = _actorCopy.Root.transform.position, b = _victimCopy.Root.transform.position;
-            Vector3 forward = b - a; forward.y = 0;
-            if (forward.sqrMagnitude < .01f) forward = _victimCopy.Root.transform.forward;
-            forward.Normalize();
-            Vector3 focus = (a + b) * .5f + Vector3.up * .9f;
-            Vector3 offset = ShotOffset(forward, _shotSide);
-            float distance = ShotDistance(focus, offset);
-            if (distance < 1.65f) { End(); return; }
-            _camera.transform.position = focus + offset.normalized * distance;
-            _camera.transform.LookAt(focus);
+            if (!PlaceShotCamera()) { End(); return; }
             try
             {
                 RenderOnlyCopies();
                 _freezeCaptured = elapsed >= AnimationDuration;
             }
             catch (System.Exception error) { End(); Debug.LogException(error); }
+        }
+        private bool PlaceShotCamera()
+        {
+            Vector3 a = _actorCopy.Root.transform.position, b = _victimCopy.Root.transform.position;
+            Vector3 forward = b - a; forward.y = 0;
+            if (forward.sqrMagnitude < .01f) forward = _victimCopy.Root.transform.forward;
+            forward.Normalize();
+            Bounds victimBounds = RecordedBounds(_victimCopy);
+            Bounds actorBounds = RecordedBounds(_actorCopy);
+            // The penalized player is the subject. A distant approach must not
+            // drag the lens halfway into empty space and crop that player.
+            Vector3 towardTagger = actorBounds.center - victimBounds.center;
+            Vector3 focus = victimBounds.center + Vector3.ClampMagnitude(towardTagger * .18f, .65f);
+            Vector3 offset = ShotOffset(forward, _shotSide);
+            Quaternion rotation = Quaternion.LookRotation(-offset.normalized, Vector3.up);
+            float desired = Mathf.Max(offset.magnitude, RequiredFrameDistance(victimBounds, focus, rotation));
+            // Include the tagger where it does not shrink the victim into a
+            // distant speck. Close contact naturally gives a clear two-shot.
+            float paired = Mathf.Max(desired, RequiredFrameDistance(actorBounds, focus, rotation));
+            float prominent = victimBounds.size.y / (2 * Mathf.Tan(_camera.fieldOfView * .5f * Mathf.Deg2Rad) * paired);
+            if (prominent >= .26f) desired = paired;
+            float distance = ShotDistance(focus, offset.normalized * desired);
+            if (distance < desired - .05f) return false;
+            _camera.transform.position = focus + offset.normalized * distance;
+            _camera.transform.rotation = rotation;
+            _shotFocus = focus;
+            return true;
+        }
+        private static Bounds RecordedBounds(MatchPoseHistory.Copy copy)
+        {
+            var bounds = new Bounds(copy.Root.transform.position + Vector3.up * .85f, new Vector3(.65f, 1.7f, .65f));
+            bool found = false;
+            foreach (var renderer in copy.Renderers)
+            {
+                if (renderer == null || !renderer.enabled || renderer.GetComponent<VfxRenderTag>() != null) continue;
+                if (!found) { bounds = renderer.bounds; found = true; }
+                else bounds.Encapsulate(renderer.bounds);
+            }
+            return bounds;
+        }
+        private float RequiredFrameDistance(Bounds bounds, Vector3 focus, Quaternion rotation)
+        {
+            float vertical = Mathf.Tan(_camera.fieldOfView * .5f * Mathf.Deg2Rad) * .86f;
+            float horizontal = vertical * _camera.aspect;
+            float required = 1.65f;
+            Quaternion inverse = Quaternion.Inverse(rotation);
+            for (int i = 0; i < 8; i++)
+            {
+                Vector3 point = bounds.center + Vector3.Scale(bounds.extents,
+                    new Vector3((i & 1) == 0 ? -1 : 1, (i & 2) == 0 ? -1 : 1, (i & 4) == 0 ? -1 : 1));
+                Vector3 local = inverse * (point - focus);
+                required = Mathf.Max(required, Mathf.Max(Mathf.Abs(local.x) / horizontal - local.z,
+                    Mathf.Abs(local.y) / vertical - local.z));
+            }
+            return required + .12f;
         }
         private bool RetainClip(float end)
         {
@@ -286,7 +342,10 @@ namespace TumbangPreso.CameraSystem
         private float ShotDistance(Vector3 focus, Vector3 offset)
         {
             float distance = offset.magnitude;
-            int count = Physics.RaycastNonAlloc(focus, offset.normalized, _shotHits, distance, ~0, QueryTriggerInteraction.Ignore);
+            // A clear center ray can still put the near-plane corner into a wall.
+            float radius = _camera == null ? .18f : .08f + _camera.nearClipPlane *
+                Mathf.Tan(_camera.fieldOfView * .5f * Mathf.Deg2Rad) * Mathf.Sqrt(1 + _camera.aspect * _camera.aspect);
+            int count = Physics.SphereCastNonAlloc(focus, radius, offset.normalized, _shotHits, distance, ~0, QueryTriggerInteraction.Ignore);
             if (count == _shotHits.Length) return 0; // Unknown occlusion is not a clear shot.
             for (int i = 0; i < count; i++)
             {

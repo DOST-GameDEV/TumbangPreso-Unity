@@ -205,7 +205,10 @@ namespace TumbangPreso.PlayTests
         [UnityTest]
         public IEnumerator CatchChoosesTheOpenSideAndAvoidsAForcedFaceCloseup()
         {
-            yield return Open(); Stage(); yield return new WaitForSeconds(.4f);
+            yield return Open(); Stage();
+            // The whole retained approach must be inside the staged corridor.
+            // Earlier spawn frames are outside these contact-local test walls.
+            yield return new WaitForSeconds(CatchReconstruction.AnimationDuration + .1f);
             var taya = GameServices.Round.PlayerAt(0);
             var victim = GameServices.Round.PlayerAt(1);
             var view = Object.FindAnyObjectByType<CatchReconstruction>();
@@ -221,10 +224,85 @@ namespace TumbangPreso.PlayTests
             Assert.Less(camera.transform.position.x, -.5f, "The wall-facing side must not force a tight camera through the bodies.");
             var otherWall = Object.Instantiate(wall);
             otherWall.transform.position = new Vector3(-1.25f, 1.2f, -2.2f);
-            Physics.SyncTransforms(); yield return null;
+            // Resume after the camera's LateUpdate has observed the new collider.
+            Physics.SyncTransforms(); yield return null; yield return null;
             Assert.IsFalse(view.Playing, "If neither shot is clear, keep the live recovery view.");
             Assert.IsFalse(victim.CanAct(), "Occlusion fallback cannot alter the tag penalty.");
             Object.Destroy(wall); Object.Destroy(otherWall);
+        }
+
+        [UnityTest] public IEnumerator VictimFraming_Arena() => CheckVictimFraming("Arena");
+        [UnityTest] public IEnumerator VictimFraming_Eskinita() => CheckVictimFraming("Eskinita");
+        [UnityTest] public IEnumerator VictimFraming_Kanto() => CheckVictimFraming("Kanto");
+        [UnityTest] public IEnumerator VictimFraming_LagoonCove() => CheckVictimFraming("LagoonCove");
+        [UnityTest] public IEnumerator VictimFraming_BayanPlaza() => CheckVictimFraming("BayanPlaza");
+        [UnityTest] public IEnumerator VictimFraming_SaBubong() => CheckVictimFraming("SaBubong");
+        [UnityTest] public IEnumerator VictimFraming_IlalimNgTulay() => CheckVictimFraming("IlalimNgTulay");
+        private static IEnumerator CheckVictimFraming(string map)
+        {
+            const string key = "TUMP_CATCH_REVIEW_MAP";
+            string previousMap = System.Environment.GetEnvironmentVariable(key);
+            int previousMips = QualitySettings.globalTextureMipmapLimit;
+            CatchReconstruction view = null;
+            try
+            {
+                QualitySettings.globalTextureMipmapLimit = 2;
+                System.Environment.SetEnvironmentVariable(key, map);
+                yield return Open(); Stage();
+                yield return new WaitForSeconds(CatchReconstruction.AnimationDuration + .1f);
+                view = Object.FindAnyObjectByType<CatchReconstruction>();
+                var actor = GameServices.Round.PlayerAt(0);
+                Assert.IsTrue(actor.GetComponent<CombatVerbs>().HostResolvePunch(actor.transform.position, actor.transform.forward));
+                Assert.IsTrue(view.Playing, map + " contact must have a usable replay angle");
+                var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+                object Field(string name) => typeof(CatchReconstruction).GetField(name, flags).GetValue(view);
+                var camera = (Camera)Field("_camera");
+                var copy = (MatchPoseHistory.Copy)Field("_victimCopy");
+                var target = (RenderTexture)Field("_target");
+                int frames = 0;
+                float began = Time.unscaledTime;
+                while (Time.unscaledTime - began < CatchReconstruction.AnimationDuration + .15f)
+                {
+                    yield return new WaitForSecondsRealtime(.12f);
+                    Assert.IsTrue(view.Playing, map + " must retain its clear contact shot");
+                    float bottom = 1, top = 0;
+                    foreach (var renderer in copy.Renderers)
+                    {
+                        if (renderer == null || !renderer.enabled || renderer.GetComponent<VfxRenderTag>() != null) continue;
+                        var bounds = renderer.bounds;
+                        for (int i = 0; i < 8; i++)
+                        {
+                            Vector3 corner = bounds.center + Vector3.Scale(bounds.extents,
+                                new Vector3((i & 1) == 0 ? -1 : 1, (i & 2) == 0 ? -1 : 1, (i & 4) == 0 ? -1 : 1));
+                            Vector3 p = camera.WorldToViewportPoint(corner);
+                            Assert.Greater(p.z, camera.nearClipPlane, map + " victim behind lens");
+                            Assert.That(p.x, Is.InRange(.025f, .975f), map + " victim clips horizontally");
+                            Assert.That(p.y, Is.InRange(.025f, .975f), map + " victim clips vertically");
+                            bottom = Mathf.Min(bottom, p.y); top = Mathf.Max(top, p.y);
+                        }
+                    }
+                    Assert.Greater(top - bottom, .22f, map + " victim becomes too small to read");
+                    frames++;
+                }
+                Assert.Greater(frames, 4, "Must inspect actual rendered approach and held contact");
+                string folder = "Logs/catch-framing1007/map-captures/" + map;
+                System.IO.Directory.CreateDirectory(folder);
+                var before = RenderTexture.active;
+                var image = new Texture2D(target.width, target.height, TextureFormat.RGB24, false);
+                try
+                {
+                    RenderTexture.active = target; image.ReadPixels(new Rect(0, 0, target.width, target.height), 0, 0); image.Apply();
+                    System.IO.File.WriteAllBytes(folder + "/held-contact.png", image.EncodeToPNG());
+                    System.IO.File.WriteAllText(folder + "/frames.txt", frames.ToString());
+                }
+                finally { RenderTexture.active = before; Object.Destroy(image); }
+            }
+            finally
+            {
+                if (view != null) view.End();
+                System.Environment.SetEnvironmentVariable(key, previousMap);
+                QualitySettings.globalTextureMipmapLimit = previousMips;
+            }
         }
 
         [UnityTest, Timeout(360000)]

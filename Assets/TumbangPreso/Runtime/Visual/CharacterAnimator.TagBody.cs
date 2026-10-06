@@ -31,6 +31,12 @@ namespace TumbangPreso.Visual
         private Transform _tgRoot, _tgTorso, _tgHead, _tgArmR, _tgArmL, _tgLegR, _tgLegL;
         private Vector3 _tgAlongR = Vector3.right, _tgAlongL = Vector3.left;
         private bool _tgResolved, _tgApplied;
+        private float _tagRenderedWeight;
+        private int _tagContactSubject = -1;
+        // History reads the pose that was actually displayed, including a peak
+        // preserved across a slow frame. This never drives the live gesture.
+        internal float RecordedTagContactWeight => _tgApplied && _tagContactValid ? _tagRenderedWeight : 0;
+        internal int RecordedTagContactSubject => _tgApplied && _tagContactValid ? _tagContactSubject : -1;
         private Vector3 _tgRootPositionRest;
         private Quaternion _tgRootRotationRest;
         private Vector3 _tgPalmR, _tgArmScaleRest, _tagContact;
@@ -70,6 +76,7 @@ namespace TumbangPreso.Visual
                 || float.IsNaN(at.x) || float.IsNaN(at.y) || float.IsNaN(at.z)
                 || float.IsInfinity(at.x) || float.IsInfinity(at.y) || float.IsInfinity(at.z)) return;
             var capsule = victim.GetComponent<CharacterController>();
+            _tagContactSubject = victim.PlayerSlot;
             var torso = victim.GetComponent<CharacterVisual>()?.TorsoBone;
             float height = torso != null ? torso.position.y - victim.transform.position.y + .12f
                 : capsule != null ? capsule.center.y : .8f;
@@ -176,6 +183,7 @@ namespace TumbangPreso.Visual
             if (_tgLegR != null) _tgLegRRest = _tgLegR.localRotation;
             if (_tgLegL != null) _tgLegLRest = _tgLegL.localRotation;
             _tgApplied = true;
+            _tagRenderedWeight = w;
 
             ToBind(_tgRoot, w, true);
             ToBind(_tgTorso, w, false); ToBind(_tgHead, w, false);

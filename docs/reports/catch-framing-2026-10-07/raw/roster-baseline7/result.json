@@ -1,0 +1,63 @@
+{
+  "sourceRef": "8978e05fd9eb193db1b8158f46ce4364e3a7085e",
+  "profile": "pc-catch-framing-roster-baseline71006",
+  "filter": "TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_dante_To_cheska;TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_cheska_To_sean;TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_sean_To_zack;TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_zack_To_nemu;TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_nemu_To_phaister;TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_phaister_To_rafi;TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_rafi_To_amihan;TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_amihan_To_paete;TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_paete_To_bayan",
+  "expectedCases": 9,
+  "execution": "direct; no memory/admission/timeout guard",
+  "pid": 32968,
+  "exitCode": 2,
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_amihan_To_paete",
+      "result": "Failed",
+      "message": "  A bounding-box overlap is not visible contact with the actual skin.\n  Expected: less than 0.0799999982f\n  But was:  0.258299112f\n"
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_cheska_To_sean",
+      "result": "Failed",
+      "message": "  The actual rendered reaching hand must reach the accepted victim's visible body bounds.\n  Expected: less than 0.0799999982f\n  But was:  0.150309801f\n"
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_dante_To_cheska",
+      "result": "Failed",
+      "message": "  The actual rendered reaching hand must reach the accepted victim's visible body bounds.\n  Expected: less than 0.0799999982f\n  But was:  0.16547966f\n"
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_nemu_To_phaister",
+      "result": "Failed",
+      "message": "  A bounding-box overlap is not visible contact with the actual skin.\n  Expected: less than 0.0799999982f\n  But was:  0.297501981f\n"
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_paete_To_bayan",
+      "result": "Failed",
+      "message": "  Temporary limb extension must restore.\n  Expected: less than 0.00100000005f\n  But was:  0.0195144415f\n"
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_phaister_To_rafi",
+      "result": "Failed",
+      "message": "  The actual rendered reaching hand must reach the accepted victim's visible body bounds.\n  Expected: less than 0.0799999982f\n  But was:  0.117211342f\n"
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_rafi_To_amihan",
+      "result": "Failed",
+      "message": "  The actual rendered reaching hand must reach the accepted victim's visible body bounds.\n  Expected: less than 0.0799999982f\n  But was:  0.189975977f\n"
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_sean_To_zack",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_zack_To_nemu",
+      "result": "Failed",
+      "message": "  The actual rendered reaching hand must reach the accepted victim's visible body bounds.\n  Expected: less than 0.0799999982f\n  But was:  0.427679539f\n"
+    }
+  ],
+  "exactCaseCount": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "protectedCount": 21279,
+  "terminal": true
+}

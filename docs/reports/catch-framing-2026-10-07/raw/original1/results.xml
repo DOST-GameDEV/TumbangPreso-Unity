@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 18:57:25Z" end-time="2026-10-06 18:57:25Z" duration="0.1620298">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1432" result="Failed" site="Child" start-time="2026-10-06 18:57:25Z" end-time="2026-10-06 18:57:25Z" duration="0.162030" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2768" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1432" result="Failed" site="Child" start-time="2026-10-06 18:57:25Z" end-time="2026-10-06 18:57:25Z" duration="0.146956" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="31908" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2769" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1432" result="Failed" site="Child" start-time="2026-10-06 18:57:25Z" end-time="2026-10-06 18:57:25Z" duration="0.141956" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2770" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1432" result="Failed" site="Child" start-time="2026-10-06 18:57:25Z" end-time="2026-10-06 18:57:25Z" duration="0.137460" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1306" name="CatchReplayCompositionTests" fullname="TumbangPreso.Tests.CatchReplayCompositionTests" classname="TumbangPreso.Tests.CatchReplayCompositionTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-06 18:57:25Z" end-time="2026-10-06 18:57:25Z" duration="0.090247" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1310" name="RecordedApproachKeepsTheVictimWholeAndProminent" fullname="TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent" classname="TumbangPreso.Tests.CatchReplayCompositionTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-06 18:57:25Z" end-time="2026-10-06 18:57:25Z" duration="0.083396" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1307" name="RecordedApproachKeepsTheVictimWholeAndProminent(1.0f)" fullname="TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent(1.0f)" methodname="RecordedApproachKeepsTheVictimWholeAndProminent" classname="TumbangPreso.Tests.CatchReplayCompositionTests" runstate="Runnable" seed="445716206" result="Passed" start-time="2026-10-06 18:57:25Z" end-time="2026-10-06 18:57:25Z" duration="0.060464" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1308" name="RecordedApproachKeepsTheVictimWholeAndProminent(6.0f)" fullname="TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent(6.0f)" methodname="RecordedApproachKeepsTheVictimWholeAndProminent" classname="TumbangPreso.Tests.CatchReplayCompositionTests" runstate="Runnable" seed="1949363744" result="Failed" start-time="2026-10-06 18:57:25Z" end-time="2026-10-06 18:57:25Z" duration="0.006366" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Victim clips horizontally during recorded approach
+  Expected: in range (0.05,0.95)
+  But was:  1.00190771f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent (System.Single separation) [0x00155] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\CatchReplayCompositionTests.cs:50
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1309" name="RecordedApproachKeepsTheVictimWholeAndProminent(10.0f)" fullname="TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent(10.0f)" methodname="RecordedApproachKeepsTheVictimWholeAndProminent" classname="TumbangPreso.Tests.CatchReplayCompositionTests" runstate="Runnable" seed="1190941683" result="Failed" start-time="2026-10-06 18:57:25Z" end-time="2026-10-06 18:57:25Z" duration="0.001116" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Victim clips horizontally during recorded approach
+  Expected: in range (0.05,0.95)
+  But was:  1.591681f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent (System.Single separation) [0x00155] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\CatchReplayCompositionTests.cs:50
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

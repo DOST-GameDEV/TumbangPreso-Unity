@@ -63,6 +63,7 @@ namespace TumbangPreso.CameraSystem
             private int _cursor, _count;
             private int _lastMovementEpoch = int.MinValue, _lastTeleportSerial = int.MinValue;
             private int _recordedEpoch;
+            private CharacterAnimator _tagAnimator;
             public bool Ready => _count >= 2;
             public float Newest => _count > 0 ? _frames[(_cursor + Samples - 1) % Samples].Time : 0;
             public float Oldest => _count > 0 ? _frames[(_cursor + Samples - _count) % Samples].Time : 0;
@@ -77,6 +78,9 @@ namespace TumbangPreso.CameraSystem
             {
                 if (Source == null || _frames.Length == 0) return;
                 var frame = _frames[_cursor]; frame.Time = time;ReadState(out frame.State,out frame.Holder);
+                if (_tagAnimator == null && Actor != null) _tagAnimator = Actor.GetComponentInChildren<CharacterAnimator>();
+                frame.TagContactWeight = _tagAnimator != null ? _tagAnimator.RecordedTagContactWeight : 0;
+                frame.TagContactSubject = _tagAnimator != null ? _tagAnimator.RecordedTagContactSubject : -1;
                 frame.HasCoat=ReadCoat(out frame.Frost,out frame.Flash,out frame.Element);frame.Epoch=ReadEpoch();frame.HasAccent=ReadAccent(out frame.RimStrength,out frame.RimColour);
                 for (int i = 0; i < _bones.Length; i++)
                 {
@@ -87,6 +91,21 @@ namespace TumbangPreso.CameraSystem
                     frame.Active[i] = bone.gameObject.activeSelf;
                 }
                 _cursor = (_cursor + 1) % Samples; _count = Mathf.Min(Samples, _count + 1);
+            }
+            internal bool TryTagContactFrame(float start, float end, int subject, float preferred, out float time)
+            {
+                time = preferred;
+                float best = 0;
+                int oldest = (_cursor + Samples - _count) % Samples;
+                for (int i = 0; i < _count; i++)
+                {
+                    var frame = _frames[(oldest + i) % Samples];
+                    if (frame.Time < start || frame.Time > end || frame.TagContactSubject != subject || frame.TagContactWeight <= .001f) continue;
+                    if (frame.TagContactWeight > best + .001f ||
+                        (Mathf.Abs(frame.TagContactWeight - best) <= .001f && Mathf.Abs(frame.Time - preferred) < Mathf.Abs(time - preferred)))
+                    { best = frame.TagContactWeight; time = frame.Time; }
+                }
+                return best > .001f;
             }
             public RecordedPoseTrack.Sample Capture(float time)
             {
@@ -290,6 +309,8 @@ namespace TumbangPreso.CameraSystem
         private sealed class Frame
         {
             public float Time;
+            public float TagContactWeight;
+            public int TagContactSubject = -1;
             public int State,Holder=-1,Epoch=-1;
             public bool HasCoat,HasAccent;public float Frost,Flash,RimStrength;public StunElement Element;public Color RimColour;
             public readonly Vector3[] Position, Scale;

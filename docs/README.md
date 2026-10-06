@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Caught-player framing and recorded touch: [native map frames and remaining hero-contact failures](reports/catch-framing-2026-10-07/README.md).
+
 Corrected startup order and first Home playback: [cold native evidence and package gate](reports/startup-order-2026-10-07/README.md).
 Background map voting and all-map recordings: [native browse/confirm evidence](reports/map-vote-background-2026-10-07/README.md).
 
