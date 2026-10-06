@@ -359,6 +359,13 @@ namespace TumbangPreso.UI
         public void Show(string map)
         {
             if (_retiring || string.IsNullOrEmpty(map)) return;
+            if (!(_cache.TryGetValue(map, out var cached) && cached.IsValid() && cached.isLoaded)
+                && !Application.CanStreamedLevelBeLoaded(map))
+            {
+                Debug.LogWarning($"[MapPreview] '{map}' is not in the build settings; " +
+                                 "the setup screen keeps its backdrop.");
+                return;
+            }
             if (_busy) { _wantedMap = map; return; }
             if (map == _showing) return;
             StartCoroutine(Swap(map));
@@ -396,14 +403,6 @@ namespace TumbangPreso.UI
                 }
                 else
                 {
-                    if (!Application.CanStreamedLevelBeLoaded(map))
-                    {
-                        Debug.LogWarning($"[MapPreview] '{map}' is not in the build settings; " +
-                                         "the setup screen keeps its backdrop.");
-                        _busy = false;
-                        yield break;
-                    }
-
                     // ⚠️⚠️ SET BEFORE THE LOAD, NOT AFTER. `MatchInstaller.Start` runs the instant
                     // the additive scene finishes loading, and by the time this coroutine resumes it
                     // has already spawned four characters, the can and the directors. Stripping them

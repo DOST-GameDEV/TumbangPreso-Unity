@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Map preview pixels and failed-selection recovery: [native checks](reports/laptop-validation-2026-10-06/preview-selection-recovery/README.md).
+
 Gameplay preload during usable login: [native cache and interruption checks](reports/laptop-validation-2026-10-06/login-gameplay-preload/README.md).
 
 Responsive login and automatic Home loading: [native preparation evidence](reports/laptop-validation-2026-10-06/login-video-preload/README.md).
