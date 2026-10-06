@@ -2308,6 +2308,40 @@ namespace TumbangPreso.CameraSystem
         private SpectatorDirector _director;
 
         public bool AutopilotEngaged => _director != null && _director.Engaged;
+        public bool HasFollowTarget => _follow != null;
+
+        public enum ViewCommand { Autopilot, FollowNext, Pov, FreeFlight, CleanFeed, Controls }
+
+        /// <summary>Local view controls shared by the touch strip and operator UI.</summary>
+        public bool ExecuteViewCommand(ViewCommand command)
+        {
+            if (!isActiveAndEnabled || PresentationClock.BlocksInput || UI.Panel.AnyOpen
+                || UI.ScreenTakeover.AnyOpenOutside(transform)) return false;
+            if ((uint)command > (uint)ViewCommand.Controls) return false;
+            if (command == ViewCommand.CleanFeed)
+            {
+                var hud = UI.Hud.Instance; if (hud == null || !hud.Spectating) return false;
+                hud.SetCleanFeed(!hud.IsCleanFeed); return true;
+            }
+            if (command == ViewCommand.Controls)
+            {
+                var hud = UI.Hud.Instance; if (hud == null || !hud.Spectating) return false;
+                hud.SetSpectatorControlsVisible(!hud.SpectatorControlsVisible); return true;
+            }
+            EnsureDirector();
+            InputLayer.TouchInput.ReleaseAll();
+            if (command == ViewCommand.Autopilot) { _director.Toggle(); return true; }
+            if (command == ViewCommand.Pov && _follow == null) return false;
+            _director.Engaged = false;
+            if (command == ViewCommand.FollowNext) CycleFollow();
+            else if (command == ViewCommand.Pov) _pov = !_pov;
+            else if (command == ViewCommand.FreeFlight)
+            {
+                _follow = null; _followIndex = -1; _pov = false;
+                _targetPosition = transform.position;
+            }
+            return true;
+        }
 
         /// <summary>
         /// Writes a pose the director computed back into this class's own state.
@@ -2406,8 +2440,7 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private void StepAutopilotKey()
         {
-            if (_director == null) _director = GetComponent<SpectatorDirector>();
-            if (_director == null) _director = gameObject.AddComponent<SpectatorDirector>();
+            EnsureDirector();
 
             if (_autopilotToggle != null && _autopilotToggle.WasPressedThisFrame())
             {
@@ -2416,6 +2449,12 @@ namespace TumbangPreso.CameraSystem
                     _director.Engaged ? "AUTOPILOT ON  ·  MOVE TO TAKE OVER" : "AUTOPILOT OFF",
                     1.2f);
             }
+        }
+
+        private void EnsureDirector()
+        {
+            if (_director == null) _director = GetComponent<SpectatorDirector>();
+            if (_director == null) _director = gameObject.AddComponent<SpectatorDirector>();
         }
 
         private InputAction _autopilotToggle;

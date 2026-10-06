@@ -1,0 +1,3 @@
+Assets\TumbangPreso\Tests\PlayMode\SpectatorTouchUiTests.cs(27,29): error CS0117: 'TouchHud' does not contain a definition for 'Ensure'
+Assets\TumbangPreso\Tests\PlayMode\SpectatorTouchUiTests.cs(27,29): error CS0117: 'TouchHud' does not contain a definition for 'Ensure'
+Assets\TumbangPreso\Tests\PlayMode\SpectatorTouchUiTests.cs(27,29): error CS0117: 'TouchHud' does not contain a definition for 'Ensure'

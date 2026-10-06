@@ -51,6 +51,11 @@
   body. Native2 cause failures/three controls become5 passes; authored shadow
   mode and active FPP preserved. Natural installed-model visibility stays open.
   [Evidence](reports/reliability-2026-10-06/spectator-body-restore/README.md).
+- [x] Expose spectator thumb/look and seven view/menu controls in the existing
+  touch surface. Final5 native interactions and three-aspect raycast/pointer
+  case pass; revised portrait/landscape renders inspected. Physical phone and
+  natural background acceptance remain open.
+  [Evidence](reports/reliability-2026-10-06/spectator-touch-ui/README.md).
 - [ ] Plan and validate cinematic coverage while the match is happening for every
   individual character and map, including Classic/Hero Strike and Arena as a
   particular priority. Review subject selection, ability/contact timing, framing,

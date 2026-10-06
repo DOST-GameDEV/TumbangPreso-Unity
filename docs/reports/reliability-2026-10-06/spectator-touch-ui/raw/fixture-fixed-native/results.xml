@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 06:15:23Z" end-time="2026-10-06 06:15:25Z" duration="1.6283171">
+  <test-suite type="TestSuite" id="3311" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1883" result="Failed" site="Child" start-time="2026-10-06 06:15:23Z" end-time="2026-10-06 06:15:25Z" duration="1.628317" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3303" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1883" result="Failed" site="Child" start-time="2026-10-06 06:15:23Z" end-time="2026-10-06 06:15:25Z" duration="1.590925" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="2888" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3304" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1883" result="Failed" site="Child" start-time="2026-10-06 06:15:23Z" end-time="2026-10-06 06:15:25Z" duration="1.562723" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3307" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1881" result="Failed" site="Child" start-time="2026-10-06 06:15:23Z" end-time="2026-10-06 06:15:25Z" duration="1.535725" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2926" name="SpectatorTouchUiTests" fullname="TumbangPreso.PlayTests.SpectatorTouchUiTests" classname="TumbangPreso.PlayTests.SpectatorTouchUiTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-06 06:15:23Z" end-time="2026-10-06 06:15:25Z" duration="1.482872" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2929" name="CleanFeedAndControlHintsCanBeRestoredFromTouch" fullname="TumbangPreso.PlayTests.SpectatorTouchUiTests.CleanFeedAndControlHintsCanBeRestoredFromTouch" methodname="CleanFeedAndControlHintsCanBeRestoredFromTouch" classname="TumbangPreso.PlayTests.SpectatorTouchUiTests" runstate="Runnable" seed="430358467" result="Failed" label="Error" start-time="2026-10-06 06:15:23Z" end-time="2026-10-06 06:15:24Z" duration="1.053997" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.InvalidOperationException : Sequence contains no matching element]]></message>
+                <stack-trace><![CDATA[  at System.Linq.Enumerable.Single[TSource] (System.Collections.Generic.IEnumerable`1[T] source, System.Func`2[T,TResult] predicate) [0x00070] in <fe644d7ad1cf499ebe4e7ad937bc03bf>:0 
+  at TumbangPreso.PlayTests.SpectatorTouchUiTests.Button (System.String name) [0x0000d] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\SpectatorTouchUiTests.cs:35 
+  at TumbangPreso.PlayTests.SpectatorTouchUiTests+<CleanFeedAndControlHintsCanBeRestoredFromTouch>d__18.MoveNext () [0x00029] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\SpectatorTouchUiTests.cs:55 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44 ]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2928" name="FollowPovFreeAndAutoUseTheExistingCamera" fullname="TumbangPreso.PlayTests.SpectatorTouchUiTests.FollowPovFreeAndAutoUseTheExistingCamera" methodname="FollowPovFreeAndAutoUseTheExistingCamera" classname="TumbangPreso.PlayTests.SpectatorTouchUiTests" runstate="Runnable" seed="1099451656" result="Failed" label="Error" start-time="2026-10-06 06:15:24Z" end-time="2026-10-06 06:15:25Z" duration="0.104802" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.InvalidOperationException : Sequence contains no matching element]]></message>
+                <stack-trace><![CDATA[  at System.Linq.Enumerable.Single[TSource] (System.Collections.Generic.IEnumerable`1[T] source, System.Func`2[T,TResult] predicate) [0x00070] in <fe644d7ad1cf499ebe4e7ad937bc03bf>:0 
+  at TumbangPreso.PlayTests.SpectatorTouchUiTests.Button (System.String name) [0x0000d] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\SpectatorTouchUiTests.cs:35 
+  at TumbangPreso.PlayTests.SpectatorTouchUiTests+<FollowPovFreeAndAutoUseTheExistingCamera>d__17.MoveNext () [0x00029] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\SpectatorTouchUiTests.cs:47 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44 ]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2930" name="MenuRetiresTouchAxesAndRestoresTheStripAfterResume" fullname="TumbangPreso.PlayTests.SpectatorTouchUiTests.MenuRetiresTouchAxesAndRestoresTheStripAfterResume" methodname="MenuRetiresTouchAxesAndRestoresTheStripAfterResume" classname="TumbangPreso.PlayTests.SpectatorTouchUiTests" runstate="Runnable" seed="194282350" result="Failed" label="Error" start-time="2026-10-06 06:15:25Z" end-time="2026-10-06 06:15:25Z" duration="0.100476" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.InvalidOperationException : Sequence contains no matching element]]></message>
+                <stack-trace><![CDATA[  at System.Linq.Enumerable.Single[TSource] (System.Collections.Generic.IEnumerable`1[T] source, System.Func`2[T,TResult] predicate) [0x00070] in <fe644d7ad1cf499ebe4e7ad937bc03bf>:0 
+  at TumbangPreso.PlayTests.SpectatorTouchUiTests.Button (System.String name) [0x0000d] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\SpectatorTouchUiTests.cs:35 
+  at TumbangPreso.PlayTests.SpectatorTouchUiTests+<MenuRetiresTouchAxesAndRestoresTheStripAfterResume>d__19.MoveNext () [0x00047] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\SpectatorTouchUiTests.cs:62 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44 ]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2931" name="ReSeatingReturnsGameplayControlsAndRetiresCameraCommands" fullname="TumbangPreso.PlayTests.SpectatorTouchUiTests.ReSeatingReturnsGameplayControlsAndRetiresCameraCommands" methodname="ReSeatingReturnsGameplayControlsAndRetiresCameraCommands" classname="TumbangPreso.PlayTests.SpectatorTouchUiTests" runstate="Runnable" seed="2130555913" result="Failed" start-time="2026-10-06 06:15:25Z" end-time="2026-10-06 06:15:25Z" duration="0.108001" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SpectatorTouchUiTests+<ReSeatingReturnsGameplayControlsAndRetiresCameraCommands>d__20.MoveNext () [0x00084] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\SpectatorTouchUiTests.cs:71
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2927" name="WatcherHasViewControlsAndNoGameplayButtons" fullname="TumbangPreso.PlayTests.SpectatorTouchUiTests.WatcherHasViewControlsAndNoGameplayButtons" methodname="WatcherHasViewControlsAndNoGameplayButtons" classname="TumbangPreso.PlayTests.SpectatorTouchUiTests" runstate="Runnable" seed="426362854" result="Failed" label="Error" start-time="2026-10-06 06:15:25Z" end-time="2026-10-06 06:15:25Z" duration="0.098857" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.InvalidOperationException : Sequence contains no matching element]]></message>
+                <stack-trace><![CDATA[  at System.Linq.Enumerable.Single[TSource] (System.Collections.Generic.IEnumerable`1[T] source, System.Func`2[T,TResult] predicate) [0x00070] in <fe644d7ad1cf499ebe4e7ad937bc03bf>:0 
+  at TumbangPreso.PlayTests.SpectatorTouchUiTests.get_Canvas () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\SpectatorTouchUiTests.cs:36 
+  at TumbangPreso.PlayTests.SpectatorTouchUiTests+<WatcherHasViewControlsAndNoGameplayButtons>d__16.MoveNext () [0x00039] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\SpectatorTouchUiTests.cs:39 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44 ]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
