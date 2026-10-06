@@ -1,3 +1,13 @@
+## Current Root spectator restore hint terminal
+
+Original18732/82112 hidden-control hintFAIL withtwo controlsPASS; candidate9268/
+25701 all3PASS, actual960x540/1600x680 isolated UI renders inspected. Readout keeps
+bound show-controls line only when collapsed; Clean Feed wholecanvas unchanged.
+Both21150inputs/216native deltas/prefs/Quality/seed restored; no Root jobs live.
+Next publish hint then investigate laptop F1-F4 spectator/gameplay switcher lead
+using actual public watch handoff. Laptop owns Director and allmap roster captures.
+Ultimate event already85448 integratedbf1393; natural ultimate acceptance open.
+
 ## Current Root ultimate event unit terminal
 
 SpectatorInterest now reads the previously unused accepted-presentation pulse

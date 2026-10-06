@@ -27,6 +27,10 @@
   Nine original hero failures become passes with expiry/round/kit controls;
   original-clock/unhook checks pass. Separate down-can setup failure retained.
   [Evidence](reports/reliability-2026-10-06/spectator-ultimate-event/README.md).
+- [x] Keep the native spectator restore-controls hint discoverable after hiding
+  controls. Original cause fails/two controls pass; candidate3 pass with two
+  native window renders. Clean Feed still hides the whole canvas.
+  [Evidence](reports/reliability-2026-10-06/spectator-controls-hint/README.md).
 - [ ] Plan and validate cinematic coverage while the match is happening for every
   individual character and map, including Classic/Hero Strike and Arena as a
   particular priority. Review subject selection, ability/contact timing, framing,

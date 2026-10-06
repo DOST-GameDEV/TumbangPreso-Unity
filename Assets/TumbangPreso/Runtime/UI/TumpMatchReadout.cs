@@ -209,12 +209,14 @@ namespace TumbangPreso.UI
             Warnings(local, spectating);
             _powers.Tick(local != null ? local.GetComponent<Abilities.HeroAbilitySystem>() : null,
                 !spectating && !hidePowers && SceneFlow.SelectedMode == GameMode.HeroStrike);
-            _spectator.enabled = spectating && spectatorControls;
+            _spectator.enabled = spectating;
             if (_spectator.enabled)
             {
                 if (_spectatorCamera == null) _spectatorCamera = FindFirstObjectByType<CameraSystem.SpectatorCamera>();
-                _spectator.text = (_spectatorCamera != null ? _spectatorCamera.StatusText() : "Spectating")
-                    + "\n" + Hud.KeyLabelFor("SpectatorControls") + " hide controls · " + Hud.KeyLabelFor("CleanFeed") + " clean feed";
+                _spectator.text = spectatorControls
+                    ? (_spectatorCamera != null ? _spectatorCamera.StatusText() : "Spectating")
+                        + "\n" + Hud.KeyLabelFor("SpectatorControls") + " hide controls · " + Hud.KeyLabelFor("CleanFeed") + " clean feed"
+                    : Hud.KeyLabelFor("SpectatorControls") + " show controls";
             }
             Sandbox();
         }
