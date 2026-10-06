@@ -1953,8 +1953,10 @@ namespace TumbangPreso
                 // a step past the line from a stand over the lata; the one with further to run
                 // back out is the one this chase can actually catch.
                 Vector3 observed = At(who).Value;
-                float depth = Confinement.Radius
-                              - Mathf.Max(Mathf.Abs(observed.x), Mathf.Abs(observed.z));
+                float boundaryReach = Confinement.Round
+                    ? Mathf.Sqrt(observed.x * observed.x + observed.z * observed.z)
+                    : Mathf.Max(Mathf.Abs(observed.x), Mathf.Abs(observed.z));
+                float depth = Confinement.Radius - boundaryReach;
                 if (depth > 0.0f) score += AiTuning.TagDepthWeight * depth;
 
                 // ⚠️ OFF THE OBSERVED POSITION, NOT THE TRUE ONE. Every other read of a rival in

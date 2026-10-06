@@ -1,0 +1,15 @@
+{
+  "raw/original1-launch.json": "719e3b09eb39a8904cda6d71e7dc1369186e725b344f61615627fb6f487a8bf7",
+  "raw/original1-classified-result.json": "2d76cad12c82c79efbb297b91fb9afa348e1d8bdee6a11af4add4dfca7367964",
+  "raw/original1-tests.xml": "0582658f040e7e2980f2928e091339704a3b1239052f10db827f0296773fde47",
+  "raw/original2-launch.json": "374e61031c2046d2bcc22969edfa61f2684cec7810d3418b1c11006e8f3971c9",
+  "raw/original2-classified-result.json": "0162bed88edd66649e79cdfb59273c2728cf7cf263b1e3382e404b37916ee59f",
+  "raw/original2-tests.xml": "5ff80841bfe166cb8917907d2ef119d29dcf9d755ef9b31eb6bc39ff0453f729",
+  "raw/candidate1-launch.json": "058f1529f7f4dc73f0c36b023c15064b4039e33759dfa6a97a5d0d467555c28d",
+  "raw/candidate1-classified-result.json": "e8897b5a475910371133ff4360f9bc372eba40c36b3859ff78a96ef9757a2305",
+  "raw/candidate1-tests.xml": "5b4e0d9357a13dc53efec5178ef8492bb690380dd2affbf6abc4c386cd9c8aea",
+  "raw/original1-fixture.cs": "a088198bb977dc6035bb577e7574a60fda676712b2ef15dbd95cffe7b44aa245",
+  "raw/original2-fixture.cs": "45b023aff00d741b5232eb4d6c25175a063a45065ac6a1d991fa6da820b98753",
+  "raw/AIController-original.cs": "276f14d77137ea6578c2611bdf1d63c19f4d982c9289fbfe34be897ad886f182",
+  "raw/candidate-fixture.cs": "3416ff007d690f410e8fa5615af809550fb8ba0db1eef636b1e4e426dbb938a9"
+}
