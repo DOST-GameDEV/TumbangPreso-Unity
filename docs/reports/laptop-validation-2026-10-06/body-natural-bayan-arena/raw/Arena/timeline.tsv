@@ -1,0 +1,40 @@
+0.000	89.980	Quiet	QuietEstablish	finding a shot	0	0
+0.502	89.480	Quiet	QuietEstablish	the street	1	0
+1.003	88.980	Quiet	QuietEstablish	the street	1	0
+1.504	88.480	Quiet	QuietEstablish	the street	1	0
+2.005	87.980	Quiet	QuietEstablish	the street	1	0
+2.506	87.480	ThrowPrep	Objective	throw · PAETE	2	0
+3.007	86.981	ThrowPrep	Objective	throw · PAETE	2	0
+3.507	86.481	ThrowPrep	Objective	throw · PAETE	2	0
+4.008	85.981	Quiet	QuietEstablish	the street	3	0
+4.508	85.481	Quiet	QuietEstablish	the street	3	0
+5.204	84.781	Quiet	QuietEstablish	the street	3	0
+5.705	84.281	Quiet	QuietEstablish	the street	3	0
+6.206	83.781	Downed	Recovery	down · OWNER UPDATED	4	0
+6.713	83.281	Downed	Recovery	down · OWNER UPDATED	4	0
+7.214	82.781	Downed	Recovery	down · OWNER UPDATED	4	0
+7.715	82.281	Downed	Recovery	down · OWNER UPDATED	4	0
+8.215	81.841	Downed	Recovery	down · OWNER UPDATED	4	0
+8.716	81.341	Tag	Defender	tag · ISAGANI	5	0
+9.237	80.802	Tag	Defender	tag · ISAGANI	5	0
+9.738	80.302	Tag	Defender	tag · ISAGANI	5	0
+10.240	79.802	Tag	Defender	tag · ISAGANI	5	0
+10.743	79.302	Downed	Recovery	down · OWNER UPDATED	7	0
+11.245	78.802	Downed	Recovery	down · OWNER UPDATED	7	0
+11.745	78.302	Downed	Recovery	down · OWNER UPDATED	7	0
+12.245	77.802	Downed	Recovery	down · OWNER UPDATED	7	0
+12.748	77.302	Downed	Recovery	down · OWNER UPDATED	7	0
+13.248	76.802	Retrieval	Chase	retrieval · PAETE	8	0
+13.749	76.362	Tag	Defender	tag · ISAGANI	10	0
+14.250	75.862	Tag	Defender	tag · ISAGANI	10	0
+14.751	75.362	Tag	Defender	tag · ISAGANI	10	0
+15.252	74.863	Tag	Defender	tag · ISAGANI	10	0
+15.753	74.363	Tag	Defender	tag · ISAGANI	10	0
+16.253	73.863	LataHit	Objective	the can · ISAGANI	11	0
+16.754	73.363	LataHit	Objective	the can · ISAGANI	11	0
+17.254	72.863	LataHit	Objective	the can · ISAGANI	11	0
+17.756	72.343	LataHit	Objective	the can · ISAGANI	11	0
+18.259	71.843	Retrieval	RetrievalTwoShot	retrieval · ISAGANI	12	0
+18.760	71.343	Retrieval	RetrievalTwoShot	retrieval · ISAGANI	12	0
+19.261	70.843	Retrieval	RetrievalTwoShot	retrieval · ISAGANI	12	0
+19.762	70.343	Retrieval	RetrievalTwoShot	retrieval · ISAGANI	12	0

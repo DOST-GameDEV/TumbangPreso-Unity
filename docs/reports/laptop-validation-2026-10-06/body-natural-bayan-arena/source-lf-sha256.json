@@ -1,0 +1,8 @@
+{
+  "Assets/TumbangPreso/Runtime/Camera/SpectatorDirector.cs": "e4f2fde0cf31d6d88720ed209c534cf788dcb13f556c49644ac460a1b5a29b29",
+  "Assets/TumbangPreso/Runtime/Camera/SpectatorCamera.cs": "0e749190ef829481fe92aab5b48814ee2e538c03e7e51fd8312773d1289c6666",
+  "Assets/TumbangPreso/Runtime/Camera/SpectatorInterest.cs": "156ca5373a0dd784c070f1ba33c751b5102c2ecb23c7874d5c790952654a27b0",
+  "Assets/TumbangPreso/Runtime/Visual/CharacterVisual.cs": "e9f0994b7b45c9e614d59c87376f956858c547456d4ed76bb54c3d16078e22f0",
+  "Assets/TumbangPreso/Runtime/AIController.cs": "005864b68fc92454be45cb6bc9ce309d53a107b36effc50c6249e4760d6b7826",
+  "Assets/TumbangPreso/Tests/PlayMode/GameplayShots.cs": "9dc32c778bb77951c5944642e2957d9fb831674a13354e1dd571648cc0fbb4a2"
+}
