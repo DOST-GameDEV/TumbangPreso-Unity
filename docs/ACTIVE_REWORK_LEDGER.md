@@ -1,3 +1,16 @@
+## Current Root spectator stick unit terminal
+
+Existing Look action bound; radial/squared stick response, unscaled rotation and
+manual director takeover. Cursor lock still guards mouse only; overlay gate intact.
+Original8596/50263 twoFAIL/centerPASS (pause-name initiallynotpaused, explicitlimit).
+Intermediate24360/28594 takeover/centerPASS, pausedrotationFAIL. Final14756/19787
+7PASS plus unchangedproduction release11316/41640 1PASS. Allfour21146inputs/prefs/
+seed/Quality restored216metadata. PrepUTF8 error beforefinal job retained. Nojobs.
+Laptop naturalArena ea7 inspected3frames/15s only3HeroIDs; remaining5maps captured,
+aggregate builtin180s timeout beforeKanto; Kanto separatelyqualifying. No fullmap/
+roster/perceived-quality claim. Next Root actual readout and hero-event/shot coverage;
+laptop map/framing/director work. Preserve scope and shared-file coordination.
+
 ## Current Root spectator pad control unit terminal
 
 SpectatorCamera.StepKeys no longer requires keyboard presence for bound pad

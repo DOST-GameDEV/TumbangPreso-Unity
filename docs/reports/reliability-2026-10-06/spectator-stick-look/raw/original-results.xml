@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 02:10:47Z" end-time="2026-10-06 02:10:48Z" duration="0.8096568">
+  <test-suite type="TestSuite" id="3239" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1824" result="Failed" site="Child" start-time="2026-10-06 02:10:47Z" end-time="2026-10-06 02:10:48Z" duration="0.809657" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3231" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1824" result="Failed" site="Child" start-time="2026-10-06 02:10:47Z" end-time="2026-10-06 02:10:48Z" duration="0.772071" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="8596" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3232" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1824" result="Failed" site="Child" start-time="2026-10-06 02:10:47Z" end-time="2026-10-06 02:10:48Z" duration="0.743217" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3235" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1822" result="Failed" site="Child" start-time="2026-10-06 02:10:47Z" end-time="2026-10-06 02:10:48Z" duration="0.714458" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2871" name="SpectatorPadControlsTests" fullname="TumbangPreso.PlayTests.SpectatorPadControlsTests" classname="TumbangPreso.PlayTests.SpectatorPadControlsTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-10-06 02:10:47Z" end-time="2026-10-06 02:10:48Z" duration="0.500682" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2874" name="CenteredStickDoesNotRequestTakeoverOrRotate" fullname="TumbangPreso.PlayTests.SpectatorPadControlsTests.CenteredStickDoesNotRequestTakeoverOrRotate" methodname="CenteredStickDoesNotRequestTakeoverOrRotate" classname="TumbangPreso.PlayTests.SpectatorPadControlsTests" runstate="Runnable" seed="135627554" result="Passed" start-time="2026-10-06 02:10:47Z" end-time="2026-10-06 02:10:48Z" duration="0.389188" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2873" name="RightStickRotatesTheSpectatorDuringARequestedPause" fullname="TumbangPreso.PlayTests.SpectatorPadControlsTests.RightStickRotatesTheSpectatorDuringARequestedPause" methodname="RightStickRotatesTheSpectatorDuringARequestedPause" classname="TumbangPreso.PlayTests.SpectatorPadControlsTests" runstate="Runnable" seed="142591366" result="Failed" start-time="2026-10-06 02:10:48Z" end-time="2026-10-06 02:10:48Z" duration="0.055416" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Bound right-stick look was not consumed by the spectator.
+  Expected: greater than 0.00999999978f
+  But was:  0.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SpectatorPadControlsTests.RightStickRotatesTheSpectatorDuringARequestedPause () [0x000b0] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\SpectatorPadControlsTests.cs:91
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2872" name="RightStickTakesTheDirectorWheelWithoutMouseMovement" fullname="TumbangPreso.PlayTests.SpectatorPadControlsTests.RightStickTakesTheDirectorWheelWithoutMouseMovement" methodname="RightStickTakesTheDirectorWheelWithoutMouseMovement" classname="TumbangPreso.PlayTests.SpectatorPadControlsTests" runstate="Runnable" seed="536738829" result="Failed" start-time="2026-10-06 02:10:48Z" end-time="2026-10-06 02:10:48Z" duration="0.039056" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A deliberate pad look request never released automatic directing.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SpectatorPadControlsTests.RightStickTakesTheDirectorWheelWithoutMouseMovement () [0x00040] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\SpectatorPadControlsTests.cs:79
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

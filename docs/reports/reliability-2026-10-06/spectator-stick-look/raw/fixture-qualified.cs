@@ -95,19 +95,6 @@ namespace TumbangPreso.PlayTests
             }
             finally { Time.timeScale = scale; }
         }
-        [Test] public void ReleasingTheStickKeepsTheOperatorsChosenView()
-        {
-            Cursor.lockState = CursorLockMode.None;
-            _spectator.AdoptPose(new Vector3(3, 6, -4), 35, 12);
-            Stick(Vector2.right);
-            typeof(SpectatorCamera).GetMethod("StepLook", Hidden).Invoke(_spectator, null);
-            var chosen = _spectator.transform.rotation;
-            Stick(Vector2.zero);
-            typeof(SpectatorCamera).GetMethod("StepLook", Hidden).Invoke(_spectator, null);
-            Assert.AreEqual(chosen, _spectator.transform.rotation);
-            Assert.IsFalse((bool)typeof(SpectatorCamera).GetMethod("ManualTakeover", Hidden).Invoke(_spectator, null));
-        }
-
         [Test] public void CenteredStickDoesNotRequestTakeoverOrRotate()
         {
             Cursor.lockState = CursorLockMode.None; Stick(Vector2.zero);

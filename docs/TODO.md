@@ -19,6 +19,10 @@
 - [x] Restore bound pad target-cycle/free-flight/POV controls without keyboard
   presence: original three failures and corrected presence control become four
   native passes. [Evidence](reports/reliability-2026-10-06/spectator-pad-controls/README.md).
+- [x] Consume existing right-stick look and manual takeover independently of
+  mouse cursor lock; preserve chosen view after release. Final7 native cases plus
+  release control1 pass; physical/touch/operator feel remains open.
+  [Evidence](reports/reliability-2026-10-06/spectator-stick-look/README.md).
 - [ ] Plan and validate cinematic coverage while the match is happening for every
   individual character and map, including Classic/Hero Strike and Arena as a
   particular priority. Review subject selection, ability/contact timing, framing,

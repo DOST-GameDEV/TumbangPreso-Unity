@@ -201,7 +201,7 @@ namespace TumbangPreso.CameraSystem
         /// not re-press V at every one.
         private bool _pov;
 
-        private InputAction _move, _jump, _sprint, _down;
+        private InputAction _move, _jump, _sprint, _down, _look;
 
         // -------------------------------------------------------------------
         // § THE REPLAY BUFFER, AND WHAT IT COSTS
@@ -622,6 +622,7 @@ namespace TumbangPreso.CameraSystem
             if (map == null) return;
 
             _move = map.FindAction("Move", false);
+            _look = map.FindAction("Look", false);
             _jump = map.FindAction("Jump", false);
             _sprint = map.FindAction("Sprint", false);
             // ⚠️ `SpectatorDown`, NOT a gameplay action. In Godot this read `guard_dash`,
@@ -853,15 +854,28 @@ namespace TumbangPreso.CameraSystem
         /// <see cref="CameraRig.StepLook"/> — a spectator whose look speed disagrees with
         /// the game's reads as a different game.
         /// </summary>
+        // Match the gameplay stick response, but spectator control keeps working
+        // when the operator requests a paused match.
+        private Vector2 SpectatorStickLook()
+        {
+            Vector2 stick = _look != null ? _look.ReadValue<Vector2>() : Vector2.zero;
+            if (stick.sqrMagnitude <= 0.16f * 0.16f) return Vector2.zero;
+            return new Vector2(stick.x * Mathf.Abs(stick.x), stick.y * Mathf.Abs(stick.y));
+        }
+
         private void StepLook()
         {
-            if (Cursor.lockState != CursorLockMode.Locked) return;
+            Vector2 delta = SpectatorStickLook() * (150.0f * Time.unscaledDeltaTime);
+            // Only relative mouse look needs a locked cursor. The existing Update
+            // overlay gate keeps pad look out of menus, too.
+            if (Cursor.lockState == CursorLockMode.Locked)
+                delta += new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
+            if (delta.sqrMagnitude <= 0) return;
 
             var s = Settings.SettingsStore.Current;
             float sens = CameraRig.BaseSensitivity * s.MouseSensitivity;
-
-            float dx = Input.GetAxisRaw("Mouse X") * sens;
-            float dy = Input.GetAxisRaw("Mouse Y") * sens;
+            float dx = delta.x * sens;
+            float dy = delta.y * sens;
             if (s.InvertY) dy = -dy;
 
             // ⚠️ YAW ADDS HERE AND SUBTRACTS IN THE .gd. Same handedness flip as the start
@@ -2349,6 +2363,7 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private bool ManualTakeover()
         {
+            if (SpectatorStickLook().sqrMagnitude > 0) return true;
             if (Cursor.lockState == CursorLockMode.Locked)
             {
                 float dx = Mathf.Abs(Input.GetAxisRaw("Mouse X"));
