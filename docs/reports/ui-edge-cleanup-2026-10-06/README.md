@@ -51,3 +51,65 @@ frozen inputs and shared input preferences after their actual parent terminates.
 Fresh XML and restoration evidence are in native-final; original failure evidence
 remains in local Logs/ui-edge-smoothing1006/finalpill. Temporary capture fixture
 is removed. Caret/selection and missing-terms correction checks are the next unit.
+
+Owner feedback after these frames rejects the selected pill's torn right cap.
+The render test passes but that visual requirement is reopened. Preserve the
+accepted Create/Guest art and repair only the damaged pill cap from source.
+
+## Bounded input and corrected refusal
+
+OwnerLoginInputAcceptanceTests on published45e976b62 reproduce a stale terms
+instruction after accepting consent. The caret/selection case passes all ten
+empty, typed, password, long-text and select-all states at1080/720. Real meshes
+remain inside the existing editable gray rectangle and passwords stay masked;
+the fonts, layout and InputField behavior are unchanged.
+
+SignInScreen.OwnerState now owns its local refusal summary, refreshes only that
+summary as requirements are corrected and clears the consent pulse on mode
+changes. Field/service verdict routing remains intact. Original native2 has
+1PASS/1FAIL; the same candidate2 passes both cases, including simultaneous
+username/password/confirmation/terms highlighting, correction clearing and
+steady reduced-motion tint. Invalid local submissions never dispatch account
+requests. UGS is also disabled in batch mode. Both runs restore all21224 frozen
+inputs and shared preferences after termination. XML, restoration receipts and
+selected actual input frames are in [native-input](native-input). Current source
+qualification does not update the Desktop770 release or approve the pill cap.
+
+## Owner cap and tick correction
+
+The previous pill trace included crimson track matte in the opacity boundary.
+Recolouring it green hid the foreign colour but retained a torn squared cap.
+Only original source coordinatesx160..187 are now retraced from green paint,
+excluding track matte; the existing left paint/shading and3colour palette remain.
+The editable SVG and748x252 export retain the same187x63 layout footprint.
+FineCheck now draws two faces sharing a single joined contour with a thin
+coverage skirt, removing independent-stroke overlap. The checkbox artwork,
+44-unit hitbox, toggle and consent gate are unchanged.
+
+Hidden graphics Unity27416 passes the current boot/checked/unchecked capture
+case at1080/720 with no Back button. All21226 input bytes and shared preferences
+restore after termination. [Current1080](native-cap-tick/boot-1080.png) and
+[current720](native-cap-tick/boot-720.png) replace the earlier rejected cap/tick
+frames for this correction. XML, restoration and original-cap source receipt
+are in native-cap-tick. This is native visual/source qualification, not owner
+approval or an updated Desktop package. Temporary capture fixture is removed.
+
+## October7 bottom shadow and tick
+
+Owner follow-up identifies the remaining protruding bottom shadow and rejects
+the procedural tick. The right shade now follows the original face curve at its
+existing13-source-pixel depth, removing the squared spur without changing the
+left artwork, paint palette or layout. The consent mark is now an editable SVG
+white curved stroke with rounded ends exported at224px into the existing28-unit
+rectangle. Original checkbox artwork, hitbox and toggle behavior are preserved.
+
+Current hidden native12116 passes boot/checked/unchecked render at1080/720 and
+the invalid-field/consent/correction/reduced-motion case, with no account-service
+dispatch. All21232 frozen inputs and shared preferences restore. Use the unique
+[current1080 frame](native-bottom-tick1007/boot-1080.png) and
+[current720 frame](native-bottom-tick1007/boot-720.png); earlier same-named captures
+were reused in chat and must not be mistaken for this revision. Earlier rejected
+frames remain historical evidence. The new temporary fixture is removed.
+Room-arrow prototypes were present as frozen compilation inputs but were not
+exercised by these two cases. Desktop770 is still unchanged; owner approval is
+separate from these scoped native results.

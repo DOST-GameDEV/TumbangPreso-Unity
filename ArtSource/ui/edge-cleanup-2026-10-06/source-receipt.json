@@ -87,9 +87,20 @@
     "method": "Fit curves to original opacity/core colours; no new template geometry; edge RGB from nearest opaque original paint.",
     "boundaryDeviationPx": 2.0,
     "coverageAgreement": 0.9805619217383923,
-    "currentSha256": "c2e3b8d99653153c25a81a6f9b515701344838c8de21f85c2ea4d567088fb89b",
+    "currentSha256": "6c23e9e10a29ae7aed2a5645bc1e5e60f29915e5f65c9b70afde6fba122f6c1d",
     "laterCorrection": "Remove foreign crimson/track matte patches using original green3paint colours; native follow-up pending.",
-    "latestCorrection": "Source pill colours limited to original187/208/69 green,92/119/80 shade and215/236/101 highlight; crimson matte contamination removed. Native follow-up pending."
+    "latestCorrection": "Owner bottom-spur correction: right-cap shade bounded by original front-face curve at existing13pixel depth. Hidden native12116 boot1080/720 and consent cases2PASS, all21232 inputs restored. Tick replaced by original28-unit SVG white rounded stroke224px export.",
+    "currentSvgPaths": 6,
+    "currentCapCorrection": {
+      "sourceCapX": [
+        160,
+        187
+      ],
+      "greenMask": "G-R >8 and G-B >15 and alpha >32",
+      "trace": "binary spline, speckle4, corner90, length4, iterations10, splice45, precision3",
+      "nativeEvidence": "docs/reports/ui-edge-cleanup-2026-10-06/native-bottom-tick1007",
+      "shadowDepthSourcePixels": 13
+    }
   },
   {
     "path": "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-primary.png",

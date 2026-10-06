@@ -1,15 +1,24 @@
 ### UI-LOGIN-FEEDBACK-1006: caret and actionable refusal
 
-- [ ] Native-check OwnerBoundedInputField caret/selection inside the existing
+- [x] Native-check OwnerBoundedInputField caret/selection inside the existing
   editable44-unit rectangle at1080p/720p, empty/typed/password/select-all states.
-  Source compiles; no native acceptance yet.
-- [ ] Native-check missing-terms pulse together with invalid fields, instruction,
+  Native ten-state mesh/capture check passes including long text and masking.
+- [x] Native-check missing-terms pulse together with invalid fields, instruction,
   correction clearing and reduced-motion behavior. Existing field pulses remain.
+  Original native catches stale consent instruction; candidate2PASS fixes its
+  live summary. All21224 inputs/preferences restored; no live account requests.
 - [x] Inspect final pill correction removing foreign crimson matte islands. Keep
   accepted Create/Guest treatment, original silhouettes and original layout.
   Current hidden native boot frames pass1080/720 with no Back button and checked
   FineCheck. All21222 source inputs/preferences restored. Scope is the rendered
   login state, not whole UI approval or Desktop publication.
+  Owner rejected that torn cap and earlier tick. Original-green-only cap trace
+  and joined tick now pass native27416 at1080/720, all21226 inputs restored.
+  Current images are in the edge-cleanup report; owner approval remains separate.
+  October7 owner identifies bottom shade spur and rejects procedural tick.
+  Original-curve shade cap plus SVG rounded check pass native12116 render and
+  consent cases2/2, all21232 inputs restored. Unique native-bottom-tick1007 frames
+  supersede the earlier same-named chat captures for this revision.
 
 ### UI-EDGE-QUALITY-1006: owner sharpness critique
 

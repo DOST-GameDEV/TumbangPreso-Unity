@@ -14,7 +14,7 @@ namespace TumbangPreso.UI
         };
         private static readonly string[] PaintedPieces = {
             "login3-logo", "login3-tabs-track", "login3-tabs-pill", "login3-field-user",
-            "login3-field-pass", "login3-field-confirm", "login3-checkbox", "login3-key",
+            "login3-field-pass", "login3-field-confirm", "login3-checkbox", "login3-accepted-tick", "login3-key",
             "login3-primary", "login3-guest", "login3-google", "login3-rule-left",
             "login3-rule-right", "login3-eye-open", "login3-eye-shut", "login3-invalid"
         };

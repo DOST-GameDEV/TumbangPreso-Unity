@@ -26,8 +26,7 @@ namespace TumbangPreso.UI
             }
             else if(Shape==Mark.FineCheck)
             {
-                Stroke(helper,rect,new Vector2(.18f,.50f),new Vector2(.39f,.29f),.09f,.026f);
-                Stroke(helper,rect,new Vector2(.39f,.29f),new Vector2(.84f,.77f),.09f,.026f);
+                FineTick(helper,rect);
             }
             else if(Shape==Mark.Check)
             {
@@ -80,6 +79,31 @@ namespace TumbangPreso.UI
         }
         /// <summary>One pixel of fade at her 29x30 mark box, in rect widths.</summary>
         private const float Rim=1f/29f;
+
+        private static Vector2[] TickContour(float half)
+        {
+            var a=new Vector2(.19f,.49f); var b=new Vector2(.40f,.29f); var c=new Vector2(.82f,.77f);
+            var first=(b-a).normalized; var last=(c-b).normalized;
+            var n0=new Vector2(-first.y,first.x); var n1=new Vector2(-last.y,last.x);
+            var bisector=(n0+n1).normalized;
+            var joint=bisector*(half/Vector2.Dot(bisector,n0));
+            return new[]{a-n0*half,b-joint,c-n1*half,c+n1*half,b+joint,a+n0*half};
+        }
+
+        private void FineTick(UnityEngine.UI.VertexHelper h,Rect r)
+        {
+            // One shared joint avoids the overlap and notch of two independent strokes.
+            // A narrow coverage skirt keeps the small tick crisp at both login resolutions.
+            var inner=TickContour(.047f); var outer=TickContour(.060f);
+            Poly(h,r,color,inner[0],inner[1],inner[4],inner[5]);
+            Poly(h,r,color,inner[1],inner[2],inner[3],inner[4]);
+            var clear=new Color(color.r,color.g,color.b,0);
+            for(int i=0;i<6;i++)
+            {
+                int next=(i+1)%6;
+                Poly(h,r,color,inner[i],inner[next],outer[next],outer[i],clear);
+            }
+        }
 
         private void Quad(UnityEngine.UI.VertexHelper h,Rect r,float x0,float y0,float x1,float y1)
             =>Poly(h,r,color,new Vector2(x0,y0),new Vector2(x1,y0),new Vector2(x1,y1),new Vector2(x0,y1));
