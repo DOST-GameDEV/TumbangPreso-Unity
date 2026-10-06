@@ -1,0 +1,26 @@
+{
+  "source": "4b679b0a8fd9ea882ede486d32513ca8293334d9",
+  "protocol": 152,
+  "profile": "lpt-arrival152-1006g",
+  "profilePath": "C:\\Users\\Matthew\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\a0ca98940b49f659e5cb0aa03679ec02f603c6a414ac84c5a976c981da38062a",
+  "command": [
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Builds\\current-laptop-4b679b0a8-1005\\TumbangPreso.exe",
+    "-force-d3d11",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1280",
+    "-screen-height",
+    "720",
+    "-tp-framecap",
+    "60",
+    "-tp-profile",
+    "lpt-arrival152-1006g",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Logs\\arrival-host152-1006g\\player.log"
+  ],
+  "manifestSha256": "2a258217bd64c108c545ae39067f9b038da84dbb190c41c364ac01e542f65462",
+  "route": "normal visible boot; actual UI clicks; no network bootstrap",
+  "scope": "One normal same-artifact LAN arrival-only retry with calibrated foreground capture; no Relay/whole match/input/latency qualification",
+  "pid": 45104
+}

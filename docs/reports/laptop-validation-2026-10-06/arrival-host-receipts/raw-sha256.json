@@ -1,0 +1,13 @@
+{
+  "raw/01-host-rules-normal-4x90.json": "0caa2f8ca5a346a914db7e1e429acbbc8f13076784779d16c5425e3294cb0d45",
+  "raw/01-host-rules-normal-4x90.png": "3491744de75fa2eeac68511c8aa6584c9f8541f84e7091cc74986cdad2bf2bed",
+  "raw/02-host-lan-xrd3.json": "a8ea2adfb98b71412853dfedc9b5203c3d2ce2cdc995f9b46a672c32b506e507",
+  "raw/02-host-lan-xrd3.png": "bac5ae97e97b90dfa72d0d38db92338c4ef406be579f8a33eab36fd77b78eba6",
+  "raw/03-host-early-leave-home.json": "b0f99f6b204f88e39bd0672d7b459b0b2008cf9a61d5b4d6ea28708fe741f03a",
+  "raw/03-host-early-leave-home.png": "5cbf3fe0256bcc1b1b7394ee92b7d82872b6abbbe841677c081734aa7883d505",
+  "raw/04-host-own-quit.json": "41d2a70ee8fe9934b269fcf39d56f8400932ed8c742e52620326a6b7926b8b3c",
+  "raw/04-host-own-quit.png": "e9abc25a38443218a54af963730781e7e482fa947e4ff848ce647f1d045e1cf4",
+  "raw/launch.json": "5995a12ef247f0ca690befc3f88480cfd01fb1b2e3f5497db5fa073b28574aed",
+  "raw/direct-result.json": "67509febe3ac00cc4eb909b0af7162cedc206a1e49d2a68ce0b6d85784c0e5cd",
+  "raw/player.log": "10fca040989b3e19c520b3ec9680b2af50dddd3d3bcd4b74327138a82d281aa4"
+}

@@ -1,0 +1,28 @@
+{
+  "pid": 45104,
+  "window": 7996936,
+  "foregroundBeforeAndAfter": true,
+  "physicalClientRect": [
+    160,
+    104,
+    1760,
+    1004
+  ],
+  "physicalClientWidth": 1600,
+  "physicalClientHeight": 900,
+  "physicalWindowRect": [
+    151,
+    66,
+    1769,
+    1013
+  ],
+  "windowDpi": 120,
+  "dpiAwareness": 2,
+  "observerDpiContext": "PerMonitorV2 for read-only coordinates; restored afterward",
+  "image": "C:\\Users\\Matthew\\Documents\\Codex\\2026-10-03\\continue-competition-readiness-engineering-for-dost\\work\\lossless-capture1005\\arrival152-retry\\02-host-lan-xrd3.png",
+  "format": "PNG",
+  "sha256": "bac5ae97e97b90dfa72d0d38db92338c4ef406be579f8a33eab36fd77b78eba6",
+  "resampling": false,
+  "jpegConversion": false,
+  "scope": "Physical foreground desktop client pixels; not engine backbuffer/audio/input acceptance"
+}

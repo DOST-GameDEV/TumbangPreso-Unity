@@ -1,0 +1,124 @@
+Mono path[0] = 'C:/Users/Matthew/dev/tump-integration1003/Builds/current-laptop-4b679b0a8-1005/TumbangPreso_Data/Managed'
+Mono config path = 'C:/Users/Matthew/dev/tump-integration1003/Builds/current-laptop-4b679b0a8-1005/MonoBleedingEdge/etc'
+CodeReloadManager initialized
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+Initialize engine version: 6000.5.8f1 (5cb7df797b7d)
+[Subsystems] Discovering subsystems at path C:/Users/Matthew/dev/tump-integration1003/Builds/current-laptop-4b679b0a8-1005/TumbangPreso_Data/UnitySubsystems
+Forcing GfxDevice: Direct3D 11
+GfxDevice: creating device client; kGfxThreadingModeClientWorkerJobs
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: NVIDIA GeForce RTX 4050 Laptop GPU (ID=0x28a1)
+    Vendor:   NVIDIA
+    VRAM:     5936 MB
+    Driver:   31.0.15.4618
+Begin MonoManager ReloadAssembly
+- Finished resetting the current domain, in  0.031 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+<RI> Initializing input.
+Using Windows.Gaming.Input
+<RI> Input initialized.
+[Audio] loaded 122 of 122 cues.
+UnloadTime: 0.774500 ms
+[Build] TUMBANG PRESO 1.0.0 | 4b679b0a8fd9+dirty | protocol 152 | StandaloneWindows64
+[NetIdentity] Signed in to UGS as LIXE8CHsUQibiPSfdZBzdcQgizH5 on profile lpt-arrival152-1006g. Relay and Lobby are available.
+Unexpected timestamp values detected. This can occur in H.264 videos not encoded with the baseline profile. Timestamps will be skewed to correct the playback for C:/Users/Matthew/dev/tump-integration1003/Builds/current-laptop-4b679b0a8-1005/TumbangPreso_Data/sharedassets0.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/Matthew/dev/tump-integration1003/Builds/current-laptop-4b679b0a8-1005/TumbangPreso_Data/sharedassets0.resource
+[SplashShaders] shaders=82 variants=156 warmed=156 complete=True calls=156 frames=16 budget_ms=2.0 elapsed_ms=252.757 max_slice_ms=2.124
+[Splash] preload exceeded six seconds; keeping the loading screen visible until it is ready.
+First video frame not zero: 2 (0.066667s). Result may be out of sync. Please make sure tracks all start at 0 in C:/Users/Matthew/dev/tump-integration1003/Builds/current-laptop-4b679b0a8-1005/TumbangPreso_Data/resources.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/Matthew/dev/tump-integration1003/Builds/current-laptop-4b679b0a8-1005/TumbangPreso_Data/resources.resource
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Env] repainted 0 of 297 renderers, 0 with a roof variant.
+[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.
+[Splash] map asset warmup completed in 2.37 s.
+[Splash] preload retained 10067 assets in memory.
+Unloading 9 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 1.566200 ms
+Unloading 384 unused Assets to reduce memory usage. Loaded Objects now: 13289.
+Total: 7.035400 ms (FindLiveObjects: 0.791700 ms CreateObjectMapping: 1.421200 ms MarkObjects: 4.691900 ms  DeleteObjects: 0.130300 ms)
+
+[Splash] boot loading finished after 20.26 s (work-driven, no reading window).
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 1.611800 ms
+Unloading 32 unused Assets to reduce memory usage. Loaded Objects now: 12830.
+Total: 8.684400 ms (FindLiveObjects: 1.338200 ms CreateObjectMapping: 1.248800 ms MarkObjects: 6.022500 ms  DeleteObjects: 0.074600 ms)
+
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code XRD3
+[NetApproval] peer=1 approved=True reason=
+[NetArrival] peer=1 seat=1 replaces=-1
+[Link] Good at 50 ms round trip (host, worst peer).
+[Net] 2 connected, seat 1
+[NetReady] peer 1 seat 1 ready=True -> 1 of 1
+[NetReady] peer 0 seat 0 ready=True -> 0 of 1
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 10.245600 ms
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[NetSeat] arena installed: LocalSlot=0 spectator=False host=True allBots=False | s0:reader+sim+live+act | s1:-+live+act | s2:-+ai+sim+bot+live+act | s3:-+ai+sim+bot+live+act
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[AA] mode requested 0x MSAA + FXAA on; QualitySettings.antiAliasing 0; camera 'Main Camera' allowMSAA True, allowHDR True, path Forward; target delivered 1 sample(s), format ARGBHalf; device supportsMultisampledTextures 1
+Unloading 87 unused Assets to reduce memory usage. Loaded Objects now: 20958.
+Total: 9.383500 ms (FindLiveObjects: 1.646800 ms CreateObjectMapping: 2.588700 ms MarkObjects: 5.031000 ms  DeleteObjects: 0.116700 ms)
+
+[ArenaPrewarm] drew 20 views in 0.35 s.
+[HubLoading] Eskinita ready after 1.00 s.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 2 begins, taya is seat 1
+[NetDisconnect] peer=1 local=0 server=True connected=True
+[Handover] seat 1 was rated 1500; a Normal bot is finishing it.
+[Net] 1 connected
+[Link] Unknown at 0 ms round trip (host, worst peer).
+[Slice] round 3 begins, taya is seat 2
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00000] in <c94bb42ee4de42f8947fb43ab5d993c3>:0 
+  at TumbangPreso.UI.SceneFlow.LeaveMatchToMainMenu () [0x00000] in <c94bb42ee4de42f8947fb43ab5d993c3>:0 
+  at TumbangPreso.UI.Hub.HubKit+<>c__DisplayClass22_0.<Button>b__0 () [0x00000] in <c94bb42ee4de42f8947fb43ab5d993c3>:0 
+  at UnityEngine.Events.InvokableCall.Invoke () [0x00000] in <78b8abfe2cc94360809513165a28ff6a>:0 
+  at UnityEngine.Events.UnityEvent.Invoke () [0x00000] in <78b8abfe2cc94360809513165a28ff6a>:0 
+  at UnityEngine.UI.Button.Press () [0x00000] in <af44bdfb03f9418ab767fd5f280e14db>:0 
+  at UnityEngine.UI.Button.OnPointerClick (UnityEngine.EventSystems.PointerEventData eventData) [0x00000] in <af44bdfb03f9418ab767fd5f280e14db>:0 
+  at TumbangPreso.UI.Hub.HubButton.OnPointerClick (UnityEngine.EventSystems.PointerEventData eventData) [0x00000] in <c94bb42ee4de42f8947fb43ab5d993c3>:0 
+  at UnityEngine.EventSystems.ExecuteEvents.Execute (UnityEngine.EventSystems.IPointerClickHandler handler, UnityEngine.EventSystems.BaseEventData eventData) [0x00000] in <af44bdfb03f9418ab767fd5f280e14db>:0 
+  at UnityEngine.EventSystems.ExecuteEvents.Execute[T] (UnityEngine.GameObject target, UnityEngine.EventSystems.BaseEventData eventData, UnityEngine.EventSystems.ExecuteEvents+EventFunction`1[T1] functor) [0x00000] in <af44bdfb03f9418ab767fd5f280e14db>:0 
+  at UnityEngine.InputSystem.UI.InputSystemUIInputModule.ProcessPointerButton (UnityEngine.InputSystem.UI.PointerModel+ButtonState& button, UnityEngine.EventSystems.PointerEventData eventData) [0x00000] in <00da4731018f46d3a57c27840d155b32>:0 
+  at UnityEngine.InputSystem.UI.InputSystemUIInputModule.ProcessPointer (UnityEngine.InputSystem.UI.PointerModel& state) [0x00000] in <00da4731018f46d3a57c27840d155b32>:0 
+  at UnityEngine.InputSystem.UI.InputSystemUIInputModule.Process () [0x00000] in <00da4731018f46d3a57c27840d155b32>:0 
+  at UnityEngine.EventSystems.EventSystem.Update () [0x00000] in <af44bdfb03f9418ab767fd5f280e14db>:0 
+[Net] offline
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+UnloadTime: 17.034600 ms
+Unloading 467 unused Assets to reduce memory usage. Loaded Objects now: 12950.
+Total: 16.227500 ms (FindLiveObjects: 1.278300 ms CreateObjectMapping: 2.475000 ms MarkObjects: 11.878500 ms  DeleteObjects: 0.595000 ms)
+
+First video frame not zero: 2 (0.066667s). Result may be out of sync. Please make sure tracks all start at 0 in C:/Users/Matthew/dev/tump-integration1003/Builds/current-laptop-4b679b0a8-1005/TumbangPreso_Data/resources.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/Matthew/dev/tump-integration1003/Builds/current-laptop-4b679b0a8-1005/TumbangPreso_Data/resources.resource
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+CodeReloadManager destroyed
