@@ -19,7 +19,11 @@ import run_unity_job as jobs
 from run_ui_player_review import read_input_preferences
 
 ROOT = Path(__file__).resolve().parents[1]
-WIRE = arrival.WIRE + '|0'  # Current canonical wire explicitly disables map voting.
+# Two humans need filler seats under the actual custom-room start policy.
+# Keep this first gate's existing ready flow and explicitly disable map voting.
+_wire_fields = (arrival.WIRE + '|0').split('|')
+_wire_fields[6] = '3'
+WIRE = '|'.join(_wire_fields)
 
 
 def file_sha256(path):

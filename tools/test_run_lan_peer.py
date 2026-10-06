@@ -101,6 +101,7 @@ class ArtifactChecks(unittest.TestCase):
         wire = peer.WIRE
         self.assertEqual(11, len(wire.split('|')))
         self.assertEqual('0', wire.split('|')[10])
+        self.assertEqual('3', wire.split('|')[6], 'Two humans must request filler seats through room rules.')
         answer = json.dumps(dict(wire=wire, rounds=1, seconds=30, manual=True))
         with mock.patch.object(peer.arrival.shutil, 'which', return_value='pwsh'), mock.patch.object(
                 peer.arrival.subprocess, 'run', return_value=mock.Mock(stdout=answer)) as run:
