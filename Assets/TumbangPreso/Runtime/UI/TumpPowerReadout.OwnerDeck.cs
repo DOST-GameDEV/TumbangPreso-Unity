@@ -65,11 +65,11 @@ namespace TumbangPreso.UI
                 _symbols[i].rectTransform.offsetMin = new Vector2(inset, inset); _symbols[i].rectTransform.offsetMax = new Vector2(-inset, -inset);
                 _symbols[i].raycastTarget = false;
                 _states[i] = OwnerUiLayout.Text(_ownerDials[i].transform, "PowerState", "", 28, OwnerUiLayout.TypeRole.Display);
-                _states[i].color = CourtPresentationPalette.Paper; _states[i].alignment = TextAnchor.MiddleCenter;
+                _states[i].color = HudDraw.Paper; _states[i].alignment = TextAnchor.MiddleCenter;
                 _states[i].verticalOverflow = VerticalWrapMode.Overflow; OwnerUiLayout.Fill(_states[i].rectTransform);
 
                 _ownerKeycaps[i] = OwnerUiLayout.Rect(_deck, "KeyboardCap" + i).gameObject.AddComponent<HudCard>();
-                _ownerKeycaps[i].color = CourtPresentationPalette.Paper; _ownerKeycaps[i].Radius = 7; _ownerKeycaps[i].ShadowOffset = new Vector2(0, -2);
+                _ownerKeycaps[i].Toy(HudDraw.Cream, HudDraw.CreamSide, 4, 7, .35f); _ownerKeycaps[i].Sheen = false;
                 _ownerKeycaps[i].raycastTarget = false; OwnerUiLayout.Place(_ownerKeycaps[i].rectTransform, x + size - 34, y + size - 30, 40, 34);
                 // ⚠️⚠️ CHARGES ARE A PIP, NOT A NUMBER OVER THE ICON (2026-09-23 UI review). "2" was drawn
                 // across the middle of the power with the icon faded to 22 per cent, so a player saw a
@@ -77,10 +77,10 @@ namespace TumbangPreso.UI
                 // icon whole and count charges at its edge; the pip sits at the bottom left, opposite
                 // the keycap, in the ready gold.
                 _chargePips[i] = OwnerUiLayout.Rect(_deck, "ChargePip" + i).gameObject.AddComponent<HudCard>();
-                _chargePips[i].color = CourtPresentationPalette.Gold; _chargePips[i].Radius = 17; _chargePips[i].ShadowOffset = new Vector2(0, -2);
+                _chargePips[i].Toy(HudDraw.Honey, HudDraw.HoneySide, 4, 9, .35f); _chargePips[i].Sheen = false;
                 _chargePips[i].raycastTarget = false; OwnerUiLayout.Place(_chargePips[i].rectTransform, x - 4, y + size - 34, 36, 36);
                 _chargeCounts[i] = OwnerUiLayout.Text(_chargePips[i].transform, "ChargeCount", "", 28, OwnerUiLayout.TypeRole.Display);
-                _chargeCounts[i].color = HudDraw.CardInk; _chargeCounts[i].alignment = TextAnchor.MiddleCenter;
+                _chargeCounts[i].color = HudDraw.Ink; _chargeCounts[i].alignment = TextAnchor.MiddleCenter;
                 _chargeCounts[i].horizontalOverflow = HorizontalWrapMode.Overflow; _chargeCounts[i].verticalOverflow = VerticalWrapMode.Overflow;
                 OwnerUiLayout.Fill(_chargeCounts[i].rectTransform);
                 _chargePips[i].gameObject.SetActive(false);
@@ -135,7 +135,7 @@ namespace TumbangPreso.UI
                 bool ready = !kit.PracticeMode && !system.GetComponent<CharacterMotor>().IsZapped && (i == 2 ? kit.IsUltimateReady : actionReady);
                 float ratio = skill.IsActive ? skill.DurationRatio : i == 2 ? kit.UltimateRatio : 1 - skill.CooldownRatio;
                 _ownerDials[i].State(ratio, ready, skill.IsActive, i == 2);
-                _symbols[i].color = ready ? CourtPresentationPalette.Gold : CourtPresentationPalette.Paper;
+                _symbols[i].color = ready ? HudDraw.Honey : HudDraw.Paper;
                 if (_symbols[i].Muted == ready) { _symbols[i].Muted = !ready; _symbols[i].SetVerticesDirty(); }
                 string state = kit.PracticeMode ? "Wait" : skill.IsPersistentActive ? "Active" : skill.IsActive ? skill.CanReactivate
                     ? (skill.ReactivateReady ? "Again" : AbilityDeckHud.CooldownLabel(skill.ReactivateReadyIn)) + "\n" + skill.DurationRemaining.ToString("0.0") + "s"
@@ -165,7 +165,7 @@ namespace TumbangPreso.UI
                 _keyGlyphs[i].rectTransform.offsetMax = new Vector2(extraWidth, 3);
                 bool cap = !Hud.OnTouch && !pad && !_keyGlyphs[i].enabled && binding.Length <= 3;
                 _ownerKeycaps[i].gameObject.SetActive(cap);
-                _keys[i].color = _keyGlyphs[i].enabled ? Color.clear : cap ? HudDraw.CardInk : CourtPresentationPalette.Paper;
+                _keys[i].color = _keyGlyphs[i].enabled ? Color.clear : cap ? HudDraw.Ink : HudDraw.Paper;
                 var edge = _keys[i].GetComponent<Outline>(); if (edge != null) edge.enabled = !cap && !_keyGlyphs[i].enabled;
             }
             if (kit.IsUltimateReady && !kit.PracticeMode && !_ultimateReady) GameServices.Audio?.PlayUi("sfx_super_ready");

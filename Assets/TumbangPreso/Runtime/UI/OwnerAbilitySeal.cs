@@ -34,18 +34,21 @@ namespace TumbangPreso.UI
             var rect = GetPixelAdjustedRect();
             float radius = Mathf.Min(rect.width, rect.height) * .5f - 6;
             var centre = rect.center;
-            var gold = CourtPresentationPalette.Gold;
-            if (_ready)
-            {
-                var halo = gold; halo.a = .30f;
-                HudDraw.Disc(helper, centre, radius + 6, halo, 48);
-            }
-            var shadow = HudDraw.Shadow; shadow.a = .35f;
-            HudDraw.Disc(helper, centre + new Vector2(0, -3), radius, shadow, 48);
-            HudDraw.Disc(helper, centre, radius, HudDraw.Plate, 48);
+            var gold = HudDraw.Honey;
+            // A toy tile: cream (honey when ready) with an extruded side, a brown face inset into
+            // it, and the timer ring inside the face. The bevel matches every other match tile.
+            var tile = new Rect(rect.xMin + 3, rect.yMin + 9, rect.width - 6, rect.height - 12);
+            float cut = tile.width * .2f;
+            var shadow = HudDraw.Shadow; shadow.a = .32f;
+            HudDraw.Bevelled(helper, new Rect(tile.xMin + 2, tile.yMin - 13, tile.width, tile.height), cut + 2, shadow);
+            HudDraw.Bevelled(helper, new Rect(tile.xMin, tile.yMin - 8, tile.width, tile.height), cut, _ready ? HudDraw.HoneySide : HudDraw.CreamSide);
+            HudDraw.Bevelled(helper, tile, cut, _ready ? gold : HudDraw.Cream);
+            var face = HudDraw.Inset(tile, tile.width * .09f);
+            HudDraw.Bevelled(helper, face, cut * .75f, HudDraw.Brown);
+            centre = face.center; radius = face.width * .5f + 2;
             float outer = radius - 3, inner = radius - 9;
             var track = new Color(1, 1, 1, .14f);
-            Color ink = _active ? OwnerUiTheme.Current.Orange : _ready ? gold : CourtPresentationPalette.Paper;
+            Color ink = _active ? UiTheme.Offense : _ready ? gold : HudDraw.Cream;
             if (!_ultimate)
             {
                 HudDraw.Arc(helper, centre, outer, inner, 90, 360, track);

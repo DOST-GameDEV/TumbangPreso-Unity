@@ -828,7 +828,8 @@ namespace TumbangPreso.PlayTests
                     Assert.AreEqual("DO NOT IDLE - RETRIEVE YOUR SLIPPER",view.WarningText);
                     Assert.AreEqual(3,root.GetComponentsInChildren<RectTransform>().Count(x=>x.name.StartsWith("StatusChip")));
                     Assert.AreEqual(106,((RectTransform)root.Find("RoundClock/RoundTrack")).rect.width,.1f);
-                    Assert.AreEqual(1.1f*size,root.Find("MatchScores").localScale.x,.001f);
+                    // The bar is authored at its real size (UI revamp 2026-10-06); only the reading scale enlarges it.
+                    Assert.AreEqual(size,root.Find("MatchScores").localScale.x,.001f);
                     Assert.IsFalse(root.GetComponentsInChildren<Text>(true).First(x=>x.name=="PowerInfoBinding").enabled);
                     foreach(var viewport in new[]{new Vector2Int(960,540),new Vector2Int(1600,680)})
                     {
@@ -1010,7 +1011,7 @@ namespace TumbangPreso.PlayTests
                 local.ClearStatuses(); local.ClearStun(); local.ApplyWhirled(3); local.ApplyChilled(3); local.ApplyHaunted(1);
                 settings.HudScale=1; settings.ReducedUiMotion=false;
                 view.Tick(local,false,false,false,false); yield return new WaitForSecondsRealtime(.22f); view.Tick(local,false,false,false,false);
-                var haunted = root.GetComponentsInChildren<Text>().First(x=>x.name=="StatusName"&&x.text=="HAUNTED").transform.parent as RectTransform;
+                var haunted = root.GetComponentsInChildren<Text>().First(x=>x.name=="StatusName"&&x.text=="Haunted").transform.parent as RectTransform;
                 var before = haunted.anchoredPosition;
                 local.ApplyHaunted(1); view.Tick(local,false,false,false,false);
                 Assert.AreEqual(before,haunted.anchoredPosition,"Refreshing the same effect must not restart entry animation");
@@ -1059,16 +1060,18 @@ namespace TumbangPreso.PlayTests
                     {
                         Canvas.ForceUpdateCanvases();
                         var warning = (RectTransform)root.Find("WarningMessage");
-                        Assert.LessOrEqual(warning.rect.height, 64, "Ordinary warnings should be a thin strip.");
+                        // Guide p.12: a thin opaque title strip, with its reason on its own line beneath.
+                        var title = (RectTransform)warning.Find("WarningText");
+                        Assert.LessOrEqual(title.rect.height, 64, "Ordinary warnings should be a thin strip.");
+                        Assert.AreEqual("Must be outside danger zone", warning.Find("WarningReasonPlate/WarningReason").GetComponent<Text>().text);
                         yield return TumpUiCapture.Capture("Warning-strip-" + scale + "-" + size.x,
                             view.Canvas, size.x, size.y, false, false, inspectViewport: () =>
                             {
-                                var text = warning.GetComponentInChildren<Text>();
+                                var text = title.GetComponentInChildren<Text>();
                                 Assert.AreEqual(1, text.cachedTextGenerator.lineCount, "The warning should fit one readable line.");
                                 Assert.GreaterOrEqual(text.fontSize, 28);
                                 Assert.LessOrEqual(text.preferredWidth, text.rectTransform.rect.width + 1);
-                                var action = root.Find("ContextualAction/PromptPlate").GetComponent<HudCard>();
-                                Assert.AreEqual(action.color.a, warning.GetComponent<HudCard>().color.a, .001f);
+                                Assert.AreEqual(1, warning.Find("WarningTitlePlate").GetComponent<HudCard>().color.a, .001f, "The refusal tile is fully opaque.");
                                 var bounds = HudRevisionBounds(root, warning);
                                 Assert.GreaterOrEqual(bounds.xMin, root.rect.xMin);
                                 Assert.LessOrEqual(bounds.xMax, root.rect.xMax);

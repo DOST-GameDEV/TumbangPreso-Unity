@@ -24,7 +24,9 @@ namespace TumbangPreso.UI
     /// </summary>
     public sealed partial class TumpMatchReadout
     {
-        private CourtPopupGraphic _toastPlate;
+        private HudCard _toastPlate;
+        private const float ToastHeight = 76, ToastTilt = 0f;
+        private float _toastBorn = -10;
         private HudBadge _hitMark;
         private const float HitLife = .28f, PopLife = .85f;
         private readonly Text[] _scorePops = new Text[4];
@@ -89,15 +91,72 @@ namespace TumbangPreso.UI
             var c = _hitMark.color; c.a = u < .6f ? 1 : Mathf.Clamp01((1 - u) / .4f); _hitMark.color = c;
         }
 
-        /// <summary>Fits the brush plate to the toast's words; hidden with them.</summary>
+        /// <summary>Fits the sticker to the toast's words; hidden with them.</summary>
         private void SizeToastPlate()
         {
             if (_toastPlate == null || _toast == null) return;
             bool show = _toast.enabled && !string.IsNullOrEmpty(_toast.text);
             _toastPlate.enabled = show;
             if (!show) return;
-            float width = Mathf.Min(1080, _toast.preferredWidth + 90);
-            _toastPlate.rectTransform.sizeDelta = new Vector2(width, 64);
+            float width = Mathf.Min(1080, _toast.preferredWidth + 84);
+            _toastPlate.rectTransform.sizeDelta = new Vector2(width, ToastHeight);
+        }
+
+        /// <summary>The sticker lands: a short overshoot from 112% unless Reduced UI Motion is on.</summary>
+        private void PaintToast()
+        {
+            if (_toastPlate == null || !_toastPlate.enabled) return;
+            float u = Mathf.Clamp01((Time.unscaledTime - _toastBorn) / .18f);
+            var settings = Settings.SettingsStore.Current;
+            float pop = settings.ReducedUiMotion ? 1 : 1 + .12f * (1 - u) * (1 - u);
+            // HudReadingLayout owns the accessibility size; the pop rides on top of it.
+            float reading = Mathf.Max(Settings.GameSettings.ValidHudScale(settings.HudScale), settings.LargerText ? 1.2f : 1f);
+            var scale = Vector3.one * (pop * reading);
+            if (_toastPlate.rectTransform.localScale != scale) { _toastPlate.rectTransform.localScale = scale; _toast.rectTransform.localScale = scale; }
+        }
+
+        private MatchMomentBanner _momentBanner;
+
+        /// <summary>
+        /// ⚠️ ONE OWNER FOR THE CENTRAL MESSAGE LANES (guide p.6). An announcement, an earned moment
+        /// and a refusal come from three independent sources and can all be live at once. They
+        /// stack under the match bar in that order by their actual scaled heights; the refusal
+        /// keeps its own height on screen unless something above needs the room, and is pushed
+        /// down rather than drawn over. Only vertical placement is decided here.
+        /// </summary>
+        private void ArrangeMessageLanes()
+        {
+            if (_root == null) return;
+            var settings = Settings.SettingsStore.Current;
+            float s = Mathf.Max(Settings.GameSettings.ValidHudScale(settings.HudScale), settings.LargerText ? 1.2f : 1f);
+            float height = _root.rect.height;
+            float y = BarTop + 130 * s + 22;
+            if (_toast != null && _toast.enabled && !string.IsNullOrEmpty(_toast.text))
+            {
+                float centre = y + ToastHeight * s * .5f;
+                SetLaneY(_toast.rectTransform, -centre); SetLaneY(_toastPlate.rectTransform, -centre);
+                y += (ToastHeight + 8 + 6) * s + 16; // face, extruded side, shadow
+            }
+            if (_momentBanner != null && _momentBanner.Showing)
+            {
+                float h = _momentBanner.LaneHeight;
+                y += 28 * s; // the bonus badge rides 26 units above the tile
+                _momentBanner.Rest = new Vector2(0, height * (1 - .79f) - (y + h * .5f));
+                y += h + (9 + 6) * s + 16;
+            }
+            else if (_momentBanner != null) _momentBanner.Rest = Vector2.zero;
+            if (_warningRoot != null && _warningRoot.gameObject.activeSelf)
+            {
+                float h = _warningRoot.rect.height * _warningRoot.localScale.y;
+                float centre = Mathf.Max(height * .34f, y + h * .5f);
+                SetLaneY(_warningRoot, height * .34f - centre);
+            }
+        }
+
+        private static void SetLaneY(RectTransform rect, float y)
+        {
+            var at = rect.anchoredPosition;
+            if (Mathf.Abs(at.y - y) > .01f) { at.y = y; rect.anchoredPosition = at; }
         }
     }
 }

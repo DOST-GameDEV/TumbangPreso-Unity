@@ -151,7 +151,7 @@ namespace TumbangPreso.UI
             track.gameObject.SetActive(false);
         }
         public void Toast(string words, float duration)
-        { _toast.text = words; _toastLeft = duration; _toast.enabled = true; SizeToastPlate(); }
+        { if (!_toast.enabled || _toast.text != words) _toastBorn = Time.unscaledTime; _toast.text = words; _toastLeft = duration; _toast.enabled = true; SizeToastPlate(); }
         public void Countdown(string words) { _countdown.text = words; _countdown.enabled = !string.IsNullOrEmpty(words); }
         /// <summary>
         /// The two things `RoundLabel` can ever say, and the widest form of each.
@@ -225,6 +225,8 @@ namespace TumbangPreso.UI
         {
             PaintScoreMoments();
             SizePromptPlate();
+            PaintToast();
+            ArrangeMessageLanes();
             PaintHitMark();
             PaintScorePops();
             PaintRecede();
@@ -257,8 +259,6 @@ namespace TumbangPreso.UI
             {
                 int slot = i; _scoreRowSeats[i] = slot; var actor = GameServices.Round.PlayerAt(slot);
                 _scoreRows[i].gameObject.SetActive(actor != null); if (actor == null) continue;
-                _names[i].text = SeatLabel.WithIdentity(slot);
-                _names[i].color = PlayerIdentity.Colour(slot);
                 int score = match.ScoreFor(slot);
                 if (!_hasScoreValue[i] || _lastScoreValues[i] != score)
                 {
@@ -369,7 +369,7 @@ namespace TumbangPreso.UI
             if (local == null || spectating) return;
             _prompt.text = ""; _context.text = ""; _progress.transform.parent.gameObject.SetActive(false);
             if (_bindingGlyph != null) _bindingGlyph.enabled = false;
-            _prompt.color = OwnerUiTheme.Current.Pale;
+            _prompt.color = HudDraw.Brown;
             if(HalftimePresentation.Playing){_prompt.text="HALFTIME";_context.text="Next round in "+Mathf.CeilToInt(HalftimePresentation.Instance.Remaining)+"s";return;}
             var carrier = local.GetComponent<Carrier>(); var round = GameServices.Round;
             if (local.IsTripped)
@@ -444,7 +444,7 @@ namespace TumbangPreso.UI
             // ⚠️ VISUAL-1.1: DANGER IS THE SCREEN-EDGE FRAME (`HudDangerFrame`), NOT A SENTENCE.
             // The older builders, which have no frame, keep the words.
             if (_reticle == null && local.IsTaggable() && round.Lata != null && round.Lata.IsUpright) { _prompt.text = "You can be tagged"; _prompt.color = OwnerUiTheme.Current.Orange; }
-            else _prompt.color = OwnerUiTheme.Current.Pale;
+            else _prompt.color = HudDraw.Brown;
             if (!local.IsDefender && !local.HoldingSlipper)
             {
                 if (Time.time >= _scanAt) { _scanAt = Time.time + .2f; _slippers = FindObjectsByType<Slipper>(FindObjectsInactive.Include, FindObjectsSortMode.None); }

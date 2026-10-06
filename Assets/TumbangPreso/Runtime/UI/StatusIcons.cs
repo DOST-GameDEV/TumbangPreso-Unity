@@ -58,6 +58,9 @@ namespace TumbangPreso.UI
             if (body.IsDrained) into.Add(StatusKind.Drained);
             if (body.IsHexed) into.Add(StatusKind.Hexed);
             if (body.IsHaunted) into.Add(StatusKind.Haunted);
+            // Catalogued and applied in play, but never listed, so a zapped player saw locked
+            // powers with no reason or timer. Appended to keep every existing entry's order.
+            if (body.IsZapped) into.Add(StatusKind.Zapped);
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]

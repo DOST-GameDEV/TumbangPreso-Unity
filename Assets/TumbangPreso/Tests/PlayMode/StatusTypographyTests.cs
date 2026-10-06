@@ -42,6 +42,35 @@ namespace TumbangPreso.PlayTests
             yield return PlayModeWorld.Reset();
         }
         private void Paint() => typeof(TumpMatchReadout).GetMethod("PaintStatusChips", Private).Invoke(_view, new object[] { _actor, true });
+        [UnityTest] public IEnumerator ZappedStatusShowsItsOwnLabelAndRemainingTime()
+        {
+            _actor.ClearStatuses(); _actor.ApplyZapped(2.5f);
+            Assert.IsTrue(_actor.IsZapped);
+            Paint(); yield return null; Canvas.ForceUpdateCanvases();
+            var name = _canvas.GetComponentsInChildren<Text>().SingleOrDefault(t => t.name == "StatusName" && t.text == "Zapped");
+            Assert.IsNotNull(name, "An active ability lock needs its visible status explanation.");
+            var texts = name.transform.parent.GetComponentsInChildren<Text>();
+            Assert.AreEqual(StatusRules.For(StatusKind.Zapped).Tooltip, texts.Single(t => t.name == "StatusTooltip").text);
+            Assert.AreEqual("2.5s", texts.Single(t => t.name == "StatusTime").text);
+            Assert.Greater(name.cachedTextGenerator.vertexCount, 0, "The status label must actually render.");
+            var icon = name.transform.parent.Find("StatusIcon").GetComponent<Image>();
+            var fallback = name.transform.parent.Find("StatusLock").GetComponent<OwnerUiGlyph>();
+            Assert.IsTrue((icon.isActiveAndEnabled && icon.sprite != null) || fallback.isActiveAndEnabled,
+                "An ability lock must retain a visible icon when its sprite is unavailable.");
+        }
+
+        [UnityTest] public IEnumerator UnzappedAndExpiredStatusDoNotLeaveAChip()
+        {
+            _actor.ClearStatuses(); Paint(); yield return null;
+            Assert.IsFalse(_canvas.GetComponentsInChildren<Text>().Any(t => t.name == "StatusName"));
+            _actor.ApplyZapped(1);
+            Assert.IsTrue(_actor.IsZapped);
+            typeof(CharacterMotor).GetMethod("StepStatuses", Private).Invoke(_actor, new object[] { 1.1f });
+            Assert.IsFalse(_actor.IsZapped);
+            Paint(); yield return null;
+            Assert.IsFalse(_canvas.GetComponentsInChildren<Text>().Any(t => t.name == "StatusName"));
+        }
+
         [UnityTest] public IEnumerator ChilledDescriptionStaysOnOneReadableLine()
         {
             Paint(); yield return null; Canvas.ForceUpdateCanvases();
