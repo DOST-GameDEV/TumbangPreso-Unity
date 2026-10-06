@@ -176,7 +176,8 @@ namespace TumbangPreso.UI
             float y = (RowHeight - Chip) * .5f;
             Seat(row, 0, item.Actor, x + Pad, y);
             OwnerUiLayout.Place(row.Glyph.rectTransform, x + Pad + Chip + Gap, (RowHeight - GlyphSize) * .5f, GlyphSize, GlyphSize);
-            row.Glyph.Show(item.Glyph, HudDraw.Brown, Color.clear, item.Accent);
+            // The event's burst takes the acting player's own colour; no team colours in the HUD.
+            row.Glyph.Show(item.Glyph, HudDraw.Brown, Color.clear, PlayerIdentity.Colour(item.Actor));
             row.Swatch[1].gameObject.SetActive(two);
             if (two) Seat(row, 1, item.Other, x + Pad + Chip + Gap + GlyphSize + Gap, y);
             float label = Mathf.Max(0, points - Gap - 4);

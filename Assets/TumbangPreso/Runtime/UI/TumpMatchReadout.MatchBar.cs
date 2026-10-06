@@ -158,15 +158,15 @@ namespace TumbangPreso.UI
             _seatTags[i].alignment = TextAnchor.MiddleCenter; _seatTags[i].color = PlayerIdentity.Colour(i);
             _seatTags[i].verticalOverflow = VerticalWrapMode.Overflow; _seatTags[i].horizontalOverflow = HorizontalWrapMode.Overflow;
 
-            // The role chip: the guide's role colour as one solid toy chip holding the state icon,
-            // blue for the taya with the can, orange for a thrower with the slipper.
+            // The role chip: the player's own colour holding the role's own object, the can for the
+            // taya and the slipper for a thrower (whole when held or upright, faded when not).
             var well = _roleChips[i] = OwnerUiLayout.Rect(row, "StateWell").gameObject.AddComponent<HudCard>();
             OwnerUiLayout.Place(well.rectTransform, ChipWidth - 52, (ChipHeight - 46) * .5f - 2, 42, 46);
-            well.Toy(HudDraw.ThrowerOrange, new Color32(150, 60, 14, 255), 4, 10, .3f).raycastTarget = false; well.Sheen = false;
+            well.Toy(PlayerIdentity.Colour(i), Color.Lerp(PlayerIdentity.Colour(i), Color.black, .4f), 4, 10, .3f).raycastTarget = false; well.Sheen = false;
             well.FollowContrast = false;
             _stateBadges[i] = OwnerUiLayout.Rect(row, "StateBadge").gameObject.AddComponent<HudBadge>();
             OwnerUiLayout.Place(_stateBadges[i].rectTransform, ChipWidth - 46, (ChipHeight - 34) * .5f - 2, 30, 34);
-            _stateBadges[i].Detail = HudDraw.Cream; _stateBadges[i].Rim = Color.clear; _stateBadges[i].raycastTarget = false;
+            _stateBadges[i].Detail = PlayerIdentity.Colour(i); _stateBadges[i].Rim = Color.clear; _stateBadges[i].raycastTarget = false;
 
             _names[i] = OwnerUiLayout.Text(row, "PlayerName", "", 28, OwnerUiLayout.TypeRole.Reading);
             OwnerUiLayout.Place(_names[i].rectTransform, 80, 1, ChipWidth - 80 - 56, 30);
@@ -311,7 +311,7 @@ namespace TumbangPreso.UI
         {
             if (lata == null) { _canGlyph.Show(HudBadge.Glyph.None, Color.clear, Color.clear); _canRing.Set(0); return; }
             if (lata.IsUpright) _canGlyph.Show(HudBadge.Glyph.Can, HudDraw.Cream, Color.clear);
-            else _canGlyph.Show(HudBadge.Glyph.CanDown, UiTheme.Offense, Color.clear);
+            else _canGlyph.Show(HudBadge.Glyph.CanDown, HudDraw.Alarm, Color.clear);
             _canRing.Set(lata.IsProtected ? lata.ProtectionLeft / Mathf.Max(.01f, Balance.ThrowRestoreCooldown) : 0);
         }
 
@@ -321,10 +321,9 @@ namespace TumbangPreso.UI
             _seatTags[i].text = PlayerIdentity.Label(slot);
             if (_seatTags[i].color != seat) _seatTags[i].color = seat;
             _names[i].enabled = true; PaintCardName(i, slot);
-            var role = defender ? HudDraw.TayaBlue : HudDraw.ThrowerOrange;
-            if (_roleChips[i] != null && _roleChips[i].color != role)
+            if (_roleChips[i] != null && _roleChips[i].color != seat)
             {
-                _roleChips[i].color = role; _roleChips[i].Side = Color.Lerp(role, Color.black, .4f); _roleChips[i].SetVerticesDirty();
+                _roleChips[i].color = seat; _roleChips[i].Side = Color.Lerp(seat, Color.black, .4f); _roleChips[i].SetVerticesDirty();
             }
             if (_localMarks[i] != null && _localMarks[i].gameObject.activeSelf != mine) _localMarks[i].gameObject.SetActive(mine);
             if (_chipSwatches[i].color != seat) _chipSwatches[i].color = seat;
@@ -335,7 +334,7 @@ namespace TumbangPreso.UI
             // can is whole upright and half when down. A stun or a swim overrides both, because
             // a player who cannot act is the more urgent fact about that seat.
             var lata = GameServices.Round != null ? GameServices.Round.Lata : null;
-            var ink = HudDraw.Cream; var faded = ink; faded.a = .42f;
+            var ink = HudDraw.Brown; var faded = ink; faded.a = .38f;
             if (actor.IsSwimming) _stateBadges[i].Show(HudBadge.Glyph.Wave, ink, Color.clear);
             else if (actor.IsTripped || actor.IsStunned) _stateBadges[i].Show(HudBadge.Glyph.Star, HudDraw.Honey, Color.clear);
             else if (defender) _stateBadges[i].Show(lata == null || lata.IsUpright ? HudBadge.Glyph.Can : HudBadge.Glyph.CanDown,

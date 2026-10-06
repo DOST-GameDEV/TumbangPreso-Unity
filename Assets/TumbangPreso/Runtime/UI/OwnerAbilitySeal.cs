@@ -21,6 +21,8 @@ namespace TumbangPreso.UI
         private bool _ready, _active, _ultimate;
         /// <summary>The copy drawn over the art: only the drain, the jar level and the active level.</summary>
         public bool Overlay;
+        /// <summary>The local player's own colour: the rim and level of a power while it runs.</summary>
+        public Color Accent = HudDraw.Honey;
         
 
         public void State(float fill, bool ready, bool active, bool ultimate)
@@ -48,8 +50,8 @@ namespace TumbangPreso.UI
             // level rising in it like a jar. Both follow the tile's own bevelled corners.
             var tile = new Rect(rect.xMin + 3, rect.yMin + 9, rect.width - 6, rect.height - 12);
             float cut = tile.width * .2f;
-            Color rim = _active ? UiTheme.Offense : _ready ? HudDraw.Honey : HudDraw.Cream;
-            Color side = _active ? new Color32(176, 70, 14, 255) : _ready ? HudDraw.HoneySide : HudDraw.CreamSide;
+            Color rim = _active ? Accent : _ready ? HudDraw.Honey : HudDraw.Cream;
+            Color side = _active ? Color.Lerp(Accent, Color.black, .4f) : _ready ? HudDraw.HoneySide : HudDraw.CreamSide;
             var face = HudDraw.Inset(tile, 5);
             float faceCut = cut - 2;
             if (!Overlay)
@@ -85,7 +87,7 @@ namespace TumbangPreso.UI
             else if (_active)
             {
                 // An active power counts its own time down as an orange level.
-                var level = UiTheme.Offense; level.a = .38f;
+                var level = Accent; level.a = .42f;
                 HudDraw.BevelledBand(helper, face, faceCut, face.yMin, face.yMin + face.height * _fill, level);
             }
         }

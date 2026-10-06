@@ -40,6 +40,7 @@ namespace TumbangPreso.UI
         // and touch all read this same tile; touch's thumb button reads `kit.Skill2` too.
         private HudBadge _roleBadge;
         private HudCard _roleChip;
+        private HeroAbilitySystem _system;
         private HeroAbility _shownRoleSkill;
         private float _roleSwappedAt = -10;
         public const float RoleSwapSeconds = 0.45f;
@@ -104,7 +105,7 @@ namespace TumbangPreso.UI
             // The role is a small toy chip in the side's own colour on the swapping power's corner.
             _roleChip = OwnerUiLayout.Rect(_deck, "RoleChip").gameObject.AddComponent<HudCard>();
             OwnerUiLayout.Place(_roleChip.rectTransform, 102 + 90 - 30, OwnerDeckHeight - 90 - 4 - 8, 38, 38);
-            _roleChip.Toy(UiTheme.Offense, HudDraw.BrownSide, 3, 9, .3f).raycastTarget = false; _roleChip.Sheen = false; _roleChip.FollowContrast = false;
+            _roleChip.Toy(HudDraw.Honey, HudDraw.BrownSide, 3, 9, .3f).raycastTarget = false; _roleChip.Sheen = false; _roleChip.FollowContrast = false;
             _roleChip.gameObject.SetActive(false);
             _roleBadge = OwnerUiLayout.Rect(_deck, "RoleBadge").gameObject.AddComponent<HudBadge>();
             _roleBadge.raycastTarget = false; _roleBadge.RimWidth = 2;
@@ -131,6 +132,7 @@ namespace TumbangPreso.UI
 
         public void Tick(HeroAbilitySystem system, bool visible)
         {
+            _system = system;
             var kit = system != null ? system.Kit : null; visible &= kit != null; _deck.gameObject.SetActive(visible);
             if (!visible) { _detail.gameObject.SetActive(false); return; }
             PlaceDeck(Hud.OnTouch);
@@ -145,6 +147,8 @@ namespace TumbangPreso.UI
                 bool actionReady = skill.IsActive && skill.CanReactivate ? skill.ReactivateReady : skill.IsReady;
                 bool ready = !kit.PracticeMode && !system.GetComponent<CharacterMotor>().IsZapped && (i == 2 ? kit.IsUltimateReady : actionReady);
                 float ratio = skill.IsActive ? skill.DurationRatio : i == 2 ? kit.UltimateRatio : 1 - skill.CooldownRatio;
+                var mine = system.GetComponent<CharacterMotor>();
+                _ownerDials[i].Accent = _drains[i].Accent = mine != null ? PlayerIdentity.Colour(mine.PlayerSlot) : HudDraw.Honey;
                 _ownerDials[i].State(ratio, ready, skill.IsActive, i == 2);
                 _drains[i].State(ratio, ready, skill.IsActive, i == 2);
                 _symbols[i].color = ready ? HudDraw.Honey : HudDraw.Paper;
@@ -198,8 +202,9 @@ namespace TumbangPreso.UI
             if (_shownRoleSkill != null && _shownRoleSkill != kit.Skill2) _roleSwappedAt = Time.unscaledTime;
             _shownRoleSkill = kit.Skill2;
             bool defending = kit.IsDefending;
-            _roleBadge.Show(defending ? HudBadge.Glyph.Tag : HudBadge.Glyph.Slipper, HudDraw.Cream, Color.clear);
-            var chip = defending ? UiTheme.Defense : UiTheme.Offense;
+            _roleBadge.Show(defending ? HudBadge.Glyph.Tag : HudBadge.Glyph.Slipper, HudDraw.Brown, Color.clear);
+            var owner = kit != null && _system != null ? _system.GetComponent<CharacterMotor>() : null;
+            var chip = owner != null ? PlayerIdentity.Colour(owner.PlayerSlot) : HudDraw.Honey;
             if (_roleChip.color != chip) { _roleChip.color = chip; _roleChip.SetVerticesDirty(); }
             float t = Mathf.Clamp01((Time.unscaledTime - _roleSwappedAt) / RoleSwapSeconds);
             // A flip: the power squashes to its edge and turns over into the new one, then settles

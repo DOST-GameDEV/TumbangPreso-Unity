@@ -133,7 +133,7 @@ namespace TumbangPreso.UI
             var track = OwnerUiLayout.Rect(_promptRoot, "RecoveryProgress").gameObject.AddComponent<Image>();
             OwnerUiLayout.Place(track.rectTransform, 320, 154, 460, 10); track.color = HudDraw.CreamSide; track.raycastTarget = false;
             _progress = OwnerUiLayout.Rect(track.transform, "ProgressFill").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Fill(_progress.rectTransform); _progress.color = UiTheme.Offense; _progress.raycastTarget = false;
+            OwnerUiLayout.Fill(_progress.rectTransform); _progress.color = HudDraw.Brown; _progress.raycastTarget = false;
             track.gameObject.SetActive(false);
         }
     }

@@ -183,12 +183,15 @@ by the display. Do not replace authored rough silhouettes merely to smooth edges
 Owner-locked direction (2026-10-06): cream faces, one bevelled cut per corner,
 a solid extruded side, a soft contact shadow, brown Darumadrop for numbers and
 events, brown Nunito Bold for words. Honey means ready, leader or you; red means
-a refusal or an earned moment; blue and orange are only ever taya and thrower.
+a refusal or an earned moment. Owner, 2026-10-06: no team colours in the HUD.
+Each player number has one colour everywhere, from the guide's palette (P1
+Strawberry Red, P2 Honey Bronze, P3 Light Green, P4 Cool Horizon); the role is
+the can (taya) or slipper (thrower) icon on that player's chip.
 The home screen is not a reference. Each element is designed for its own job:
 
 | Element | Job, read in order | Form and states |
 |---|---|---|
-| Player card | role, who, score, carry state, name | Figurine tile rises out of the card; role is the card's extruded base; slipper/can in a recessed well, whole or faded; crown for a unique leader; honey You chip; stunned star; score bump on events |
+| Player card | role, who, score, carry state, name | Figurine tile rises out of the card on the family's tan base; a chip in the player's own colour holds the can (taya) or slipper (thrower), whole or faded; crown for a unique leader; honey You chip; stunned star; score bump on events |
 | Clock | time, can, round | Brown tile, cream Darumadrop; honey and one pulse per second for the last ten; can glyph with honey protection ring; octagon beads in a tray, current bead collared, halftime gap |
 | Announcement | game-state notice | Cream plaque, brown display words, short pop; text is the caller's own |
 | Earned moment | who earned what, how big | One tile with the scorer's portrait and a honey bonus badge; tier 1 red, tier 2 red with wings and sunburst, tier 3 gold with crown, turning sunburst and confetti |
