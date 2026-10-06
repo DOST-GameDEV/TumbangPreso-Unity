@@ -16,6 +16,9 @@
 
 - [ ] Finish the current pickup accounting correction, meaningful validation and
   publication first. Then refine spectator and the automatic camera thoroughly.
+- [x] Restore bound pad target-cycle/free-flight/POV controls without keyboard
+  presence: original three failures and corrected presence control become four
+  native passes. [Evidence](reports/reliability-2026-10-06/spectator-pad-controls/README.md).
 - [ ] Plan and validate cinematic coverage while the match is happening for every
   individual character and map, including Classic/Hero Strike and Arena as a
   particular priority. Review subject selection, ability/contact timing, framing,

@@ -1,3 +1,15 @@
+## Current Root spectator pad control unit terminal
+
+SpectatorCamera.StepKeys no longer requires keyboard presence for bound pad
+cycle/free/POV actions. Original12812/51130 three causeFAIL, keyboardcontrol wrong
+missingdeviceFAIL. Correct virtualpresence original10804/84802 controlPASS;
+candidate21912/89691 actual4PASS, allthree21144inputs/prefs/seed/Quality restored
+216metadata each, no physicalkeyboard device removed. No Root jobs live.
+Laptop director overlap b375 and transit7bed receipts verified6/7rawGit and3/5LF
+at exact refs; defer source merge until current Root restoration/publish complete.
+Next Root right-stick look/manual takeover and actual spectator readout coverage;
+laptop owns natural per-map/hero directing/clearance, Arena first. Fullpass open.
+
 ## Current pickup/result queue unit qualified, ready for camera split
 
 Known retrieval-count upload refusal added locally without rewriting history.

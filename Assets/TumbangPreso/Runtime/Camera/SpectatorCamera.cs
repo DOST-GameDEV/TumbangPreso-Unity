@@ -2660,9 +2660,7 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private void StepKeys()
         {
-            var kb = Keyboard.current;
-            if (kb == null) return;
-
+            // These actions include pad bindings; no keyboard device is required.
             if (Fired(_cycleTarget)) CycleFollow();
 
             if (Fired(_freeFly))
