@@ -87,9 +87,9 @@
     "method": "Fit curves to original opacity/core colours; no new template geometry; edge RGB from nearest opaque original paint.",
     "boundaryDeviationPx": 2.0,
     "coverageAgreement": 0.9805619217383923,
-    "currentSha256": "33e4cc49c7ac88a313999a018a9d980c6090a631a0e7b334d168384e59ec276c",
+    "currentSha256": "6c23e9e10a29ae7aed2a5645bc1e5e60f29915e5f65c9b70afde6fba122f6c1d",
     "laterCorrection": "Remove foreign crimson/track matte patches using original green3paint colours; native follow-up pending.",
-    "latestCorrection": "Right source cap x160..187 retraced from original green paint only, excluding crimson track matte. Left art and existing3paint palette preserved. Hidden native27416 boot1080/720 and consent render pass; owner approval separate.",
+    "latestCorrection": "Owner bottom-spur correction: right-cap shade bounded by original front-face curve at existing13pixel depth. Hidden native12116 boot1080/720 and consent cases2PASS, all21232 inputs restored. Tick replaced by original28-unit SVG white rounded stroke224px export.",
     "currentSvgPaths": 6,
     "currentCapCorrection": {
       "sourceCapX": [
@@ -98,7 +98,8 @@
       ],
       "greenMask": "G-R >8 and G-B >15 and alpha >32",
       "trace": "binary spline, speckle4, corner90, length4, iterations10, splice45, precision3",
-      "nativeEvidence": "docs/reports/ui-edge-cleanup-2026-10-06/native-cap-tick"
+      "nativeEvidence": "docs/reports/ui-edge-cleanup-2026-10-06/native-bottom-tick1007",
+      "shadowDepthSourcePixels": 13
     }
   },
   {

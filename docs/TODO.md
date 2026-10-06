@@ -15,6 +15,10 @@
   Owner rejected that torn cap and earlier tick. Original-green-only cap trace
   and joined tick now pass native27416 at1080/720, all21226 inputs restored.
   Current images are in the edge-cleanup report; owner approval remains separate.
+  October7 owner identifies bottom shade spur and rejects procedural tick.
+  Original-curve shade cap plus SVG rounded check pass native12116 render and
+  consent cases2/2, all21232 inputs restored. Unique native-bottom-tick1007 frames
+  supersede the earlier same-named chat captures for this revision.
 
 ### UI-EDGE-QUALITY-1006: owner sharpness critique
 

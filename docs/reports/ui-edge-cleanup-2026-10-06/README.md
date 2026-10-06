@@ -93,3 +93,23 @@ restore after termination. [Current1080](native-cap-tick/boot-1080.png) and
 frames for this correction. XML, restoration and original-cap source receipt
 are in native-cap-tick. This is native visual/source qualification, not owner
 approval or an updated Desktop package. Temporary capture fixture is removed.
+
+## October7 bottom shadow and tick
+
+Owner follow-up identifies the remaining protruding bottom shadow and rejects
+the procedural tick. The right shade now follows the original face curve at its
+existing13-source-pixel depth, removing the squared spur without changing the
+left artwork, paint palette or layout. The consent mark is now an editable SVG
+white curved stroke with rounded ends exported at224px into the existing28-unit
+rectangle. Original checkbox artwork, hitbox and toggle behavior are preserved.
+
+Current hidden native12116 passes boot/checked/unchecked render at1080/720 and
+the invalid-field/consent/correction/reduced-motion case, with no account-service
+dispatch. All21232 frozen inputs and shared preferences restore. Use the unique
+[current1080 frame](native-bottom-tick1007/boot-1080.png) and
+[current720 frame](native-bottom-tick1007/boot-720.png); earlier same-named captures
+were reused in chat and must not be mistaken for this revision. Earlier rejected
+frames remain historical evidence. The new temporary fixture is removed.
+Room-arrow prototypes were present as frozen compilation inputs but were not
+exercised by these two cases. Desktop770 is still unchanged; owner approval is
+separate from these scoped native results.
