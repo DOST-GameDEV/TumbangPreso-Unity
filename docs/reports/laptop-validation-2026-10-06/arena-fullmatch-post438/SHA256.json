@@ -1,0 +1,9 @@
+{
+  "raw/classified-result.json": "50612fcbcb80b498538e06f19618e49ea2502da87ae3bf4d92154fca385f8929",
+  "raw/launch.json": "f797fdb4ddcc03520a5df9918fcb4671a41aedd25c361bf771727d38648dad4e",
+  "raw/local-capture-manifest.json": "53d5645cd32da454e8314a35016fbfc15c1d45aa5a033eade77df47bc316295b",
+  "raw/match-report.txt": "1e47393cd66a0937a71273406b6b57f9a83d2cf766748dd7ecdd9cb409624641",
+  "raw/profile-restoration.json": "d6a7193566a4d40c9ed99497fc412c5766b974e7f27ba82f1e632b405358590c",
+  "raw/source-equivalence.json": "e5e4e4945ab216008964f6f118831d86695db69a73cc9e1ff6cd5352b6c48d93",
+  "raw/tests.xml": "1a877c263842c827331953f5e5bc87bfe7c6e6f7c318ca451af47989f8fedca5"
+}
