@@ -1,0 +1,26 @@
+{
+  "sourceRef": "0789ee09ab4fe0a1d47758ccf3021ace20013f16",
+  "profile": "pc-spectator-touch-ui-fixed1006",
+  "filter": "TumbangPreso.PlayTests.SpectatorTouchUiTests",
+  "expectedCases": 5,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-spectator-touch-ui-fixed1006",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.SpectatorTouchUiTests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\spectator-touch-ui1006\\fixture-fixed-native\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\spectator-touch-ui1006\\fixture-fixed-native\\editor.log"
+  ],
+  "pid": 2888
+}

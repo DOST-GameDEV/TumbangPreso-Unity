@@ -403,7 +403,7 @@ namespace TumbangPreso.InputLayer
         {
             if (_sandboxRoot == null) return;
 
-            bool allowed = PracticeSandbox.Allowed;
+            bool allowed = PracticeSandbox.Allowed && !SpectatorMode;
             if (_sandboxRoot.activeSelf != allowed) _sandboxRoot.SetActive(allowed);
 
             if (!allowed || _sandboxLabel == null) return;
@@ -597,9 +597,9 @@ namespace TumbangPreso.InputLayer
         // ⚠️ INTERACT IS HERO STRIKE ONLY, LIKE THE SKILL RAIL: everything it does today (pull out a
         // plant, break out of roots) is a hero power, and Classic has none (VISION § 1.1).
         private bool VisibleInMode(VerbInput entry)
-            => TouchButton.Customising
-               || (entry.Zone != TouchZone.SkillRail && entry.Verb != Verb.Interact)
-               || SceneFlow.SelectedMode == Core.GameMode.HeroStrike;
+            => TouchButton.Customising || (!SpectatorMode &&
+               ((entry.Zone != TouchZone.SkillRail && entry.Verb != Verb.Interact)
+               || SceneFlow.SelectedMode == Core.GameMode.HeroStrike));
 
         // ⚠️ AND WHILE A STREET CHARACTER OFFERS SOMETHING (`StreetInteractions`, the Ilalim
         // rebuild's beggar), in Classic too: the offer is taken with INTERACT on every device, so a
@@ -632,7 +632,11 @@ namespace TumbangPreso.InputLayer
         /// ⚠️ THE SAME CALL `Hud.Bind` TAKES, from the same line of `MatchInstaller`, so the two
         /// cannot disagree about who the local player is.
         /// </summary>
-        public void Bind(CharacterMotor local) => _local = local;
+        public void Bind(CharacterMotor local)
+        {
+            if (_local != local) TouchInput.ReleaseAll();
+            _local = local;
+        }
 
         /// <summary>
         /// Ask the control for <paramref name="verb"/> to draw attention to itself this frame.
@@ -677,10 +681,11 @@ namespace TumbangPreso.InputLayer
         /// layer with no match running, and both say so explicitly.
         /// </summary>
         public bool ShouldBeOnScreen
-            => ForceVisible || (_local != null && !_local.Intent.Parked);
+            => ForceVisible || (SpectatorMode ? SpectatorCanOperate : (_local != null && !_local.Intent.Parked));
 
         private void Update()
         {
+            RefreshSpectatorControls();
             // ⚠️ THE CANVAS IS DISABLED, NOT THE OBJECT. Disabling the GameObject would run
             // `OnDisable` and release every held verb, which is right for a teardown and wrong
             // for a pause: a player who was sprinting when they opened the menu should still be

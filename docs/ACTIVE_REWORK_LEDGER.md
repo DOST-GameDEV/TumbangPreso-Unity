@@ -1,3 +1,16 @@
+## Current Root spectator touch UI terminal
+
+New seven-command strip plus existingstick/look, hidesgameplay/sandbox, menu/
+presentation axeswithdrawal, re-seatreturn. Native7504 compilefixtureEnsure/Install
+error;2888 fivewrongcomponenthierarchyFAIL retained. ActualCanvas15320 fivePASS;
+renderreviewfourcolportrait/sandboxfault ->final13328 fivePASS, twoframesinspected.
+Unchangedproduction7856 native top-raycast/pointerAuto callback atthreeaspectsPASS.
+Allfive21170inputs/prefs/Quality/seed restored; compilezeroMetadata/subsequent216
+native deltas each. NoRootjobs. Noactionasset/wire/herochange. Physicalphone/
+naturalbackground acceptance remainsopen. Next publish then actual arrivalcached
+_rigActive return reactivatesgameplay afterpublicwatch handoff; nativecausefirst.
+Laptop rendererflag/selectedWide evidence remainsactualfailureafter592a guard.
+
 ## Current Root inactive FPP body restoration terminal
 
 Original24360/43228 two public-watch/emote-release rendererFAIL(On/Off->ShadowsOnly),

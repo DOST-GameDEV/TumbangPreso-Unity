@@ -1160,6 +1160,7 @@ namespace TumbangPreso.UI
         private CameraSystem.SpectatorCamera _spectatorCamera;
         private string _spectatorStatusShown = "";
         private bool _spectatorControlsVisible = true;
+        public bool SpectatorControlsVisible => _spectatorControlsVisible;
 
         /// <summary>
         /// The two lines along the bottom of a spectator's screen.
