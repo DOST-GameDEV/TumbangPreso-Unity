@@ -1,0 +1,26 @@
+{
+  "sourceRef": "65bc449b98bdaafc544ac9a573721f5f3490d51c",
+  "profile": "pc-spectator-overclock-original1006",
+  "filter": "TumbangPreso.PlayTests.SpectatorUltimateFootprintTests.ExistingOverclockZapRetainsItsWideShot",
+  "expectedCases": 1,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-spectator-overclock-original1006",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.SpectatorUltimateFootprintTests.ExistingOverclockZapRetainsItsWideShot",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\spectator-ultimate-footprint1006\\overclock-original-native\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\spectator-ultimate-footprint1006\\overclock-original-native\\editor.log"
+  ],
+  "pid": 22816
+}

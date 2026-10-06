@@ -680,11 +680,18 @@ namespace TumbangPreso.CameraSystem
                 var kit = casting.AbilitySystem != null ? casting.AbilitySystem.Kit : null;
                 var ult = kit != null ? kit.Ultimate : null;
                 float footprint = ult != null && ult.HasTelegraph ? ult.TelegraphRadius : 0.0f;
+                // No circle is drawn for the global freeze or the court-wide
+                // wave/fan. Their affected space still needs the wide composition.
+                bool courtEffect = kit is Abilities.CheskaHeroKit || kit is Abilities.DanteHeroKit
+                    || kit is Abilities.AmihanHeroKit;
+                if (courtEffect)
+                    footprint = Mathf.Max(AIController.PlayableMaxX - AIController.PlayableMinX,
+                        AIController.PlayableMaxZ - AIController.PlayableMinZ) * .5f;
 
                 return new SpectatorInterest(
                     SpectatorBeat.Ultimate, casting, NearestOther(round, casting),
                     casting.transform.position, true,
-                    footprint >= 3.0f ? ShotType.UltimateWide : ShotType.UltimateHero,
+                    courtEffect || footprint >= 3.0f ? ShotType.UltimateWide : ShotType.UltimateHero,
                     fromPulse ? _ultimateAt : now, UltimateSeconds, MinCommit,
                     $"ultimate {(ult != null ? ult.Name : "?")}, footprint {footprint:0.0} m");
             }

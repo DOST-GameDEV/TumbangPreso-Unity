@@ -1,3 +1,15 @@
+## Current Root ultimate shot choice terminal
+
+Original23996/25006 threecourt-effect choicesFAIL/floodPASS, Overclockwrongclose
+fixtureFAIL. Correctedexpectedwide22816/4146 unchangedsourcecontrolPASS. Candidate
+6244/70100 allfivePASS. Interest onlychoosesexistingWide for globalfreeze/forward
+Drift/mapfan; Baha/Overclock radiuschoices unchanged. Allthree21160inputs216deltas/
+prefs/Quality/seed restored; noRootnativejobs. NoDirector/enum/hero/artchange.
+Lens/cache ac441+ddd integratedandverified16/12rawGit7/9LF. Correctednaturalf171
+verified17raw; Yasmin/Basilio naturallycast, butBasilio pitframe unclear retained.
+Next publish then combined-source natural actor/selected/camera event geometry,
+coordinate laptopDirector-owned observer. Fullvisual/operator/botquality open.
+
 ## Current Root corrected natural casts terminal
 
 16456/54191 onePASS632.533unscaledseconds/stoppedround7 beforecompletedupload.
