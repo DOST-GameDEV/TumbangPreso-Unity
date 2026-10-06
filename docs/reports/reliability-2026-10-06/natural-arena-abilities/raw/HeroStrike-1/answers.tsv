@@ -1,0 +1,20 @@
+elapsed	round	slot	hero	abilitySlot	ability	answer	charge	cost	beat	shot	caption
+5.651	1	3	sean	Skill1	STOKE STEP	Cast	1.000	15	Retrieval	RetrievalTwoShot	retrieval · RAGO
+8.954	1	2	amihan	Skill1	DRIFT	Cast	0.000	15	Retrieval	Chase	retrieval · RAGO
+9.203	1	0	sean	Skill2	CINDER GATE	Cast	1.000	15	Retrieval	Chase	retrieval · RAGO
+10.194	1	0	sean	Skill1	STOKE STEP	Cast	1.000	15	Retrieval	Chase	retrieval · RAGO
+14.288	1	1	cheska	Skill1	COLD FEET	Cast	0.000	12	LataHit	Objective	the can · AMIHAN
+28.111	1	2	amihan	Skill2	FEATHERFALL	Cast	1.000	15	Downed	Recovery	down · RAGO
+44.777	1	3	sean	Skill1	STOKE STEP	Cast	2.000	15	LataHit	Objective	the can · RAGO
+45.183	1	0	sean	Skill2	CINDER GATE	Cast	6.000	15	Retrieval	Chase	retrieval · RAGO
+46.799	1	2	amihan	Skill1	DRIFT	Cast	1.000	15	Tag	Defender	tag · RAGO
+67.610	1	0	sean	Skill1	STOKE STEP	Cast	8.000	15	Retrieval	RetrievalTwoShot	retrieval · RAGO
+75.858	1	3	sean	Skill2	EMPOWERED THROW	Cast	3.000	15	Tag	Defender	tag · RAGO
+77.846	1	1	cheska	Skill1	COLD FEET	Cast	0.000	12	Retrieval	RetrievalTwoShot	retrieval · RAGO
+86.002	1	0	sean	Skill2	CINDER GATE	Cast	11.000	15	Retrieval	Chase	retrieval · CAREERORDERFIX
+88.614	1	3	sean	Skill1	STOKE STEP	Cast	4.000	15	Quiet	QuietEstablish	the street
+104.228	2	2	amihan	Skill1	DRIFT	Cast	3.000	15	Retrieval	Chase	retrieval · AMIHAN
+104.376	2	3	sean	Skill1	STOKE STEP	Cast	4.000	15	Retrieval	Chase	retrieval · AMIHAN
+108.011	2	1	cheska	Skill1	COLD FEET	Cast	2.000	12	LataHit	Objective	the can · AMIHAN
+109.734	2	1	cheska	Skill2	GLACIAL WALL	Cast	2.000	12	Retrieval	RetrievalTwoShot	retrieval · AMIHAN
+118.030	2	0	sean	Skill2	EMPOWERED THROW	Cast	12.000	15	Quiet	QuietEstablish	the street
