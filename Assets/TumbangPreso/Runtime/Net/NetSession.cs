@@ -2293,6 +2293,8 @@ namespace TumbangPreso.Net
 
             var record = Lobby.Admit((int)clientId, hello.Token, hello.Name,
                                      out int replacedPeerId);
+            // An admitted listen host has an established session too.
+            if (clientId == _nm.LocalClientId) _everConnected = true;
             record.AccountPlayerId = hello.AccountPlayerId ?? "";
             Debug.Log($"[NetArrival] peer={clientId} seat={record.Seat} replaces={replacedPeerId}");
 

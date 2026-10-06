@@ -5,23 +5,31 @@ work-status queue. Reports retain historical evidence; this file records the
 current execution state. The goal remains active and competition readiness is
 not established.
 
+Owner reiterated: a Codex Bad Request banner is not permission to cancel work or
+pause the goal. Preserve live jobs, handles and source; verify actual process and
+resume after reconnection. A reader timeout/error does not prove a job died.
+Goal status was verified active. Root diagnosed desktop request errors separately
+without restarting the app, changing models or cancelling native jobs.
+
 ## Owner control and source boundaries
 
 Latest October 6 instruction: Root alone must stop taking control of the PC.
 The owner explicitly permits the existing laptop chat to continue computer
-control and testing; do not transfer Root's restriction to that chat. Leave the owner's
-Unity Editor9172 and running game open in the primary ASTRA checkout. No PC
+control and testing; do not transfer Root's restriction to that chat. The owner
+closed Unity9172. Root verified no Editor remained and removed only the unchanged
+owned launch helper/meta using its launch receipt. Primary source/profiles and
+other metadata remain. No PC
 foreground activation, input, new player, build or heavy Unity job. Root continues
 background source work in candidate1003i; laptop handles native testing. The game
 launch request was answered; the later personal-use restriction takes precedence.
-Remove only the owned OwnerDemoLaunchOnce1006 editor helper and meta after the
-owner finishes Play mode, since changing it now would trigger reimport.
+Cleanup receipt: primary Logs/owner-demo-cleanup1006.json. Do not reopen the game
+or resume Root input without a new owner instruction.
 
 Primary checkout: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks,
 ASTRAReworks4e0bdcadaac4bb576a9269b1ce2c7bc7690bab47. Preserve its pre-existing
 composition metadata and private notes. Engineering checkout:
 C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i, detached at
-4e91dbf5b46d9b793079222b1bd44d67433b5354 before the checked Net callback commit.
+d4c517c431ea05c759ae3c40981138ac13a5ea8c before the checked host-recovery commit.
 Preserve dirty ProjectAuditorSettings.asset
 and private tools/build_yasmin_benguet_voxel.py. Sole commit identity is
 M4tyu633 <matthewtlabrador@gmail.com>; explicit paths, commit -F and normal pushes.
@@ -61,8 +69,27 @@ candidate callback are in the laptop chat. Local preflight and original checkpoi
 backup are in Logs/host-advert-retirement1006. Next after publication: investigate
 unexpected listen-host authority/return behavior. Source sets _everConnected
 only for remote clients, so host-local disconnect may skip MatchAbandon and the
-existing recovery event. This is an unqualified hypothesis; reproduce before
-another correction. Stale-advert retirement does not explain or close the QA
+existing recovery event. New HostFailureRecoveryTests plus meta are prepared:
+SHA745eb9b222f9e823b9b0f8f9e36a0ee257cf6b854c89f18168040b88ec384be8,
+GUID1c4808363bd24c6fa44afe8bdb163def. Original Unity52488/session8040 is terminal
+with one real missing-recovery-event failure and one requested Stop control pass;
+all21192 inputs/13 preferences restore. Candidate Unity51164 is terminal0 with
+same2 passing and all21192 inputs/13 preferences restored after279 native deltas.
+Its exact Runtime LF69a6 hash was printed by the launcher. Earlier anchor
+preparation fault had zero cases and is retained separately. Raw report d4c517c43
+is merged; Root verified all15 Git byte hashes, exact tested Runtime/fixture/meta
+equality and both case sets/restoration. The local admission correction is ready
+for checked publication with the fixture/meta.
+Typography Unity45272/parent96086 is terminal/restored; the laptop's next layout
+Unity38980/session62645 owns its separate UI lane. The checked one-line correction
+marks the local listen host _everConnected after successful Lobby.Admit. Original
+runtime blob66f6e3fe03ae7aea17c96a88f3b30f95b428991f is preserved; candidate LF
+SHA69a6f014819c6d8924c6a0e37b7cc6c1c1e6250695b547709f31c142e63e9a43.
+Both actual original/candidate phases are complete. Empty synthetic MatchSetup
+avoids navigation; event/authority ordering scope only, no actual Home acceptance.
+Next after publication: coordinate actual current player failure recovery and
+LAN/online acceptance when the laptop's UI unit finishes. Stale-advert retirement
+and listen-host recovery do not explain or close the QA
 host kick, Relay request timeout or non-host delay.
 
 ## UI handoff and qualified integration
@@ -99,8 +126,8 @@ QA host-loss/Relay timeout, impaired owner movement, results upload, natural
 spectator wide-body/framing, all-map bot behavior and physical controls remain
 open as recorded in TODO. Do not repeat unchanged passes or build solely for docs.
 
-No Root compiler, player, share helper or browser was left by this unit. Owner
-Editor9172 and its import workers are active and must remain. Existing deletion
+No Root compiler, player, share helper or browser was left by this unit. The
+owner demo helper/meta were retired only after all Editors closed. Existing deletion
 rejections for16 old builds and current-net153 build/source-original are protected
 from alternate-method retries; the temporary LAN share-server launch was also
 rejected before execution. Exact local receipts remain in Logs/arrival-pan-review1004

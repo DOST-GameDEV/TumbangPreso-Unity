@@ -1,3 +1,17 @@
+### HOST-FAILURE-RECOVERY-1006: established listen-host recovery
+
+- [x] Original native2 on Unity52488 reproduces the established listen host
+  skipping recovery: expected event1, actual0. Requested Stop control passes.
+  All21192 inputs and13 preferences restored. Source sets _everConnected only
+  in the non-host callback.
+- [x] Mark the admitted local listen host as established and preserve normal Quit.
+  Candidate Unity51164 passes the same two cases. Root verified all15 committed
+  raw hashes, exact original/candidate/test/meta equality and21192 restored inputs/
+  13 preferences. Authority is revoked before the single recovery event.
+  [Evidence](reports/laptop-validation-2026-10-06/listen-host-recovery/README.md).
+- [ ] Actual Home recovery and live network failure acceptance. The synthetic
+  lobby context qualifies event/latch order, not the full user-facing journey.
+
 ### UI-LOBBY-RULE-CONTROLS-1006: seats and visible arrows follow live rules
 
 - [x] Custom lobby seats read live room bot rules before Start; human-only vacant
