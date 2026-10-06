@@ -38,7 +38,6 @@ namespace TumbangPreso.UI
         private AsyncOperation _homePreload;
         private bool _homeAssetsStarted, _homeAssetsReady;
         private float _homeAssetsProgress;
-        private readonly List<Object> _homeAssets = new List<Object>();
         private bool _homeArrival;
         private ThreadPriority _previousLoadingPriority;
         private bool _ownsLoadingPriority;
@@ -135,18 +134,9 @@ namespace TumbangPreso.UI
 
         private IEnumerator PreloadHomeAssets()
         {
-            var heroes=Hub.HubSceneVideo.Heroes;
-            for(int i=0;i<heroes.Length;i++)
-            {
-                var poster=Resources.LoadAsync<Texture2D>(Hub.HubSceneVideo.PosterPathFor(heroes[i]));
-                yield return poster;
-                if(poster.asset!=null) _homeAssets.Add(poster.asset);
-                var clip=Resources.LoadAsync<UnityEngine.Video.VideoClip>(Hub.HubSceneVideo.ClipPathFor(heroes[i]));
-                yield return clip;
-                if(clip.asset!=null) _homeAssets.Add(clip.asset);
-                _homeAssetsProgress=(i+1f)/Mathf.Max(1,heroes.Length);
-                yield return null;
-            }
+            // Reuse the existing caches and decoder preparation rather than
+            // making a second copy of the Home resource set.
+            yield return Hub.HubSceneVideo.Warmup(done=>_homeAssetsProgress=done);
             _homeAssetsReady=true;
         }
 

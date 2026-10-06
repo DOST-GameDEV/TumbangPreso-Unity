@@ -1,0 +1,13 @@
+{
+  "base": "770e32219d090ff963a6e359f3c4e62608f187c5",
+  "testedPaths": {
+    "Assets/TumbangPreso/Runtime/UI/ConvertedMainMenu.cs": "fa68b37e5578693351afd3726480f70cd989bf9a757ed651efeb8815c1a7cf69",
+    "Assets/TumbangPreso/Runtime/UI/SplashScreen.cs": "6134fdb7d17c306a1d79f0e796ebebda895012b5a2b13338e8e912e2ae142591",
+    "Assets/TumbangPreso/Runtime/UI/TumpHomeView.cs": "a7e7043d433cbb6228612d8d014a08ab8e6c3af65e819cacf2cda94695197b87",
+    "Assets/TumbangPreso/Runtime/UI/HomeCourtView.cs": "c3790d2546c9425209a2669cfcaabf67c5f816743041f6870586ebaa856e71e3",
+    "Assets/TumbangPreso/Tests/PlayMode/LoginHomePreloadTests.cs": "be04878e554272d0d80b84c7029a3c0f0c4e0a706de2509a18cfd28ec2900d29",
+    "Assets/TumbangPreso/Tests/PlayMode/LoginHomePreloadTests.cs.meta": "8c5298f74846561470a79bf519404c00e07c91ff6b10dfc7b4120d2def75a12d"
+  },
+  "qualifiedManifestSha256": "14902a9aedaab22e85509634b7faaac9312dde6425424e9d6779f72553d46f3c",
+  "note": "Frozen native worker inputs. No claim that concurrent desktop visual changes were tested."
+}

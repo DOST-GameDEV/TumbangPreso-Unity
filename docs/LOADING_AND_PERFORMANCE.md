@@ -40,7 +40,7 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 | Arrival cancellation | MatchArrivalPresentation.Run is generation-owned and finally-cleaned even when another component drives its iterator; cancelled/disabled/replaced runs cannot reacquire the camera or hold after loading |
 | Title/login art and avatars | UI/OwnerMenuArt.cs,Avatars.cs; async cold reads awaited per item,then existing retained texture/sprite caches; supplied pixels and fallback policy unchanged |
 | Hub/HUD portraits and mode cards | UI/OwnerPortraitArt.cs; async roster-driven warmup and shared cache used by HubKit/TumpUiFactory |
-| First HOME loop | UI/Hub/HubSceneVideo.Warmup.cs; async metadata/selected poster,explicit prepare/play until frameReady then pause behind boot,adopting the same player/target; paused preparation alone timed out on Windows |
+| First HOME loop | ConvertedMainMenu starts UI/Hub/HubSceneVideo.Warmup.cs during usable login; async clips/selected poster and hidden decoder until frameReady, adopting the same player/target. Scene activation begins after login ends; low background priority is restored on menu destruction |
 | Hidden HOME background | HubSceneVideo binds MapPreviewSurface rendering visibility; opaque media suspends the covered court camera/surface without discarding prepared scenes or the fallback |
 | Ability prop source prefabs | Visual/HeroPropAssets.cs; current Paete/Rework/Phaister folders,no gameplay spawn during asset preload |
 | Supplementary baked motion | Visual/GeneratedMotionAssets.cs; yielded per-rig data preload shared by CharacterAnimator and rooted introduction lookups,no clip/graph generation |
@@ -64,8 +64,10 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 
 ## Rules For Changes
 
-- ONE loading screen before the title (the boot splash) and none between menus; asset
-  and shader loading belongs there (TODO LOAD-1.4). Arena entry keeps its curtain.
+- Latest owner startup flow: usable login overlaps asynchronous Home preparation,
+  then supplied title art becomes a noninteractive loading surface with a small
+  actual progress bar and automatic Home arrival. Arena entry keeps its curtain.
+  [Native login preparation](reports/laptop-validation-2026-10-06/login-video-preload/README.md).
 - Owner permits loading screens wherever substantial initialization needs one.
   Reuse the existing surface,cover the actual work,keep feedback responsive and
   provide failure/exit behavior. Do not add timed waits to cheap interactions.

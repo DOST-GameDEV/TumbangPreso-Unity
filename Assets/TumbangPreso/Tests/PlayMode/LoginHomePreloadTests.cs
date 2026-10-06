@@ -40,13 +40,14 @@ namespace TumbangPreso.PlayTests
    Assert.IsNull(typeof(ConvertedMainMenu).GetField("_homePreload",Hidden).GetValue(menu),"Login must not hold a scene operation.");
    Assert.AreEqual(ThreadPriority.Low,Application.backgroundLoadingPriority);
    var username=(InputField)typeof(SignInScreen).GetField("_username",Hidden).GetValue(signIn);Assert.IsNotNull(username);
-   var frames=new List<float>();float previous=Time.realtimeSinceStartup;
-   for(int i=0;i<90;i++)
+   var frames=new List<float>();float previous=Time.realtimeSinceStartup;float began=previous;
+   for(int i=0; i<90 || (!(bool)typeof(ConvertedMainMenu).GetField("_homeAssetsReady",Hidden).GetValue(menu) && Time.realtimeSinceStartup-began<40); i++)
    {
     username.text="Login_"+i;Assert.AreEqual("Login_"+i,username.text);Assert.IsTrue(signIn.IsOpen);
     Assert.AreEqual(SceneFlow.MainMenu,SceneManager.GetActiveScene().name);
     yield return null;float now=Time.realtimeSinceStartup;frames.Add((now-previous)*1000);previous=now;
    }
+   Assert.IsTrue((bool)typeof(ConvertedMainMenu).GetField("_homeAssetsReady",Hidden).GetValue(menu),"Home preparation did not finish while login remained open.");
    Directory.CreateDirectory("Logs/login-preload");File.WriteAllLines("Logs/login-preload/frames-ms.txt",frames.ConvertAll(v=>v.ToString("F3",System.Globalization.CultureInfo.InvariantCulture)));
    Assert.IsNull(typeof(ConvertedMainMenu).GetField("_homePreload",Hidden).GetValue(menu));
    typeof(SignInScreen).GetMethod("Close",Hidden).Invoke(signIn,null);yield return null;

@@ -472,8 +472,8 @@ namespace TumbangPreso.UI
             SetLoadingStage("building interface", 0.52f);
             WarmSprites();
             yield return null;
-            yield return Hub.HubSceneVideo.Warmup(done =>
-                SetLoadingStage("preparing home", Mathf.Lerp(.52f, .6f, done)));
+            // Home's clips, poster and decoder prepare while the login form is
+            // already usable. ConvertedMainMenu owns that asynchronous stage.
 
             // 7. Every ability glyph.
             SetLoadingStage("loading abilities", 0.61f);
