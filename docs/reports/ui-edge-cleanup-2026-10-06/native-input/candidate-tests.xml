@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 15:54:38Z" end-time="2026-10-06 15:54:43Z" duration="5.1645991">
+  <test-suite type="TestSuite" id="3406" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1955" result="Passed" start-time="2026-10-06 15:54:38Z" end-time="2026-10-06 15:54:43Z" duration="5.164599" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3398" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1955" result="Passed" start-time="2026-10-06 15:54:38Z" end-time="2026-10-06 15:54:43Z" duration="5.131362" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27872" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3399" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1955" result="Passed" start-time="2026-10-06 15:54:38Z" end-time="2026-10-06 15:54:43Z" duration="5.104170" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3402" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1953" result="Passed" start-time="2026-10-06 15:54:38Z" end-time="2026-10-06 15:54:43Z" duration="5.081920" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2315" name="OwnerLoginInputAcceptanceTests" fullname="TumbangPreso.PlayTests.OwnerLoginInputAcceptanceTests" classname="TumbangPreso.PlayTests.OwnerLoginInputAcceptanceTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-06 15:54:38Z" end-time="2026-10-06 15:54:43Z" duration="5.016122" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2317" name="AllInvalidRequirementsHighlightTogetherAndClearAfterCorrection" fullname="TumbangPreso.PlayTests.OwnerLoginInputAcceptanceTests.AllInvalidRequirementsHighlightTogetherAndClearAfterCorrection" methodname="AllInvalidRequirementsHighlightTogetherAndClearAfterCorrection" classname="TumbangPreso.PlayTests.OwnerLoginInputAcceptanceTests" runstate="Runnable" seed="199546039" result="Passed" start-time="2026-10-06 15:54:38Z" end-time="2026-10-06 15:54:39Z" duration="1.287829" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2316" name="CaretAndSelectionStayInsideThePaintedEditableArea" fullname="TumbangPreso.PlayTests.OwnerLoginInputAcceptanceTests.CaretAndSelectionStayInsideThePaintedEditableArea" methodname="CaretAndSelectionStayInsideThePaintedEditableArea" classname="TumbangPreso.PlayTests.OwnerLoginInputAcceptanceTests" runstate="Runnable" seed="931796173" result="Passed" start-time="2026-10-06 15:54:39Z" end-time="2026-10-06 15:54:43Z" duration="3.709701" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[LoginInput1006] LoginInput1006-empty-1920 editable=(x:-200.00, y:-22.00, width:400.00, height:44.00) rendered=Center: (-199.50, 4.50, 0.00), Extents: (0.50, 14.50, 0.00) focused=True
+[TumpUiCapture] LoginInput1006-empty-1920 cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+[LoginInput1006] LoginInput1006-typed-1920 editable=(x:-200.00, y:-22.00, width:400.00, height:44.00) rendered=Center: (-55.50, 1.00, 0.00), Extents: (0.50, 18.00, 0.00) focused=True
+[TumpGeometry] LoginInput1006-typed-1920/Disc: vertices=384, cull=False, alpha=0.659, depth=13, material=1
+[TumpGeometry] LoginInput1006-typed-1920/Tick: vertices=24, cull=False, alpha=0.659, depth=14, material=1
+[TumpUiCapture] LoginInput1006-typed-1920 cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+[LoginInput1006] LoginInput1006-password-1920 editable=(x:-200.00, y:-22.00, width:400.00, height:44.00) rendered=Center: (-68.50, -1.00, 0.00), Extents: (0.50, 18.00, 0.00) focused=True
+[TumpGeometry] LoginInput1006-password-1920/Disc: vertices=384, cull=False, alpha=0.973, depth=13, material=1
+[TumpGeometry] LoginInput1006-password-1920/Tick: vertices=24, cull=False, alpha=0.973, depth=14, material=1
+[TumpUiCapture] LoginInput1006-password-1920 cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+[LoginInput1006] LoginInput1006-long-1920 editable=(x:-200.00, y:-22.00, width:400.00, height:44.00) rendered=Center: (173.50, -0.50, 0.00), Extents: (0.50, 18.50, 0.00) focused=True
+[TumpGeometry] LoginInput1006-long-1920/Disc: vertices=384, cull=False, alpha=0.336, depth=13, material=1
+[TumpGeometry] LoginInput1006-long-1920/Tick: vertices=24, cull=False, alpha=0.336, depth=14, material=1
+[TumpUiCapture] LoginInput1006-long-1920 cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+[LoginInput1006] LoginInput1006-select-all-1920 editable=(x:-200.00, y:-22.00, width:400.00, height:44.00) rendered=Center: (-13.00, -0.50, 0.00), Extents: (186.00, 18.50, 0.00) focused=True
+[TumpGeometry] LoginInput1006-select-all-1920/Disc: vertices=384, cull=False, alpha=0.031, depth=13, material=1
+[TumpGeometry] LoginInput1006-select-all-1920/Tick: vertices=24, cull=False, alpha=0.031, depth=14, material=1
+[TumpUiCapture] LoginInput1006-select-all-1920 cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+[LoginInput1006] LoginInput1006-empty-1280 editable=(x:-200.00, y:-22.00, width:400.00, height:44.00) rendered=Center: (-199.00, 5.00, 0.00), Extents: (0.50, 14.00, 0.00) focused=True
+[TumpGeometry] LoginInput1006-empty-1280/Disc: vertices=384, cull=False, alpha=0.003, depth=13, material=1
+[TumpGeometry] LoginInput1006-empty-1280/Tick: vertices=24, cull=False, alpha=0.003, depth=14, material=1
+[TumpUiCapture] LoginInput1006-empty-1280 cream source=252,211,159 pixel=242,142,106; isolated UI camera, no ColourGrade.
+[LoginInput1006] LoginInput1006-typed-1280 editable=(x:-200.00, y:-22.00, width:400.00, height:44.00) rendered=Center: (-58.00, 1.25, 0.00), Extents: (0.50, 17.75, 0.00) focused=True
+[TumpGeometry] LoginInput1006-typed-1280/Disc: vertices=384, cull=False, alpha=0.651, depth=13, material=1
+[TumpGeometry] LoginInput1006-typed-1280/Tick: vertices=24, cull=False, alpha=0.651, depth=14, material=1
+[TumpUiCapture] LoginInput1006-typed-1280 cream source=252,211,159 pixel=242,142,106; isolated UI camera, no ColourGrade.
+[LoginInput1006] LoginInput1006-password-1280 editable=(x:-200.00, y:-22.00, width:400.00, height:44.00) rendered=Center: (-77.50, -1.25, 0.00), Extents: (0.50, 17.75, 0.00) focused=True
+[TumpGeometry] LoginInput1006-password-1280/Disc: vertices=384, cull=False, alpha=0.956, depth=13, material=1
+[TumpGeometry] LoginInput1006-password-1280/Tick: vertices=24, cull=False, alpha=0.956, depth=14, material=1
+[TumpUiCapture] LoginInput1006-password-1280 cream source=252,211,159 pixel=242,142,106; isolated UI camera, no ColourGrade.
+[LoginInput1006] LoginInput1006-long-1280 editable=(x:-200.00, y:-22.00, width:400.00, height:44.00) rendered=Center: (192.50, 0.00, 0.00), Extents: (0.50, 18.00, 0.00) focused=True
+[TumpGeometry] LoginInput1006-long-1280/Disc: vertices=384, cull=False, alpha=0.328, depth=13, material=1
+[TumpGeometry] LoginInput1006-long-1280/Tick: vertices=24, cull=False, alpha=0.328, depth=14, material=1
+[TumpUiCapture] LoginInput1006-long-1280 cream source=252,211,159 pixel=242,142,106; isolated UI camera, no ColourGrade.
+[LoginInput1006] LoginInput1006-select-all-1280 editable=(x:-200.00, y:-22.00, width:400.00, height:44.00) rendered=Center: (-3.50, -0.50, 0.00), Extents: (195.00, 18.00, 0.00) focused=True
+[TumpGeometry] LoginInput1006-select-all-1280/Disc: vertices=384, cull=False, alpha=0.049, depth=13, material=1
+[TumpGeometry] LoginInput1006-select-all-1280/Tick: vertices=24, cull=False, alpha=0.049, depth=14, material=1
+[TumpUiCapture] LoginInput1006-select-all-1280 cream source=252,211,159 pixel=242,142,106; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

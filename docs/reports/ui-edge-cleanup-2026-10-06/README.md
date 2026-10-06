@@ -51,3 +51,26 @@ frozen inputs and shared input preferences after their actual parent terminates.
 Fresh XML and restoration evidence are in native-final; original failure evidence
 remains in local Logs/ui-edge-smoothing1006/finalpill. Temporary capture fixture
 is removed. Caret/selection and missing-terms correction checks are the next unit.
+
+Owner feedback after these frames rejects the selected pill's torn right cap.
+The render test passes but that visual requirement is reopened. Preserve the
+accepted Create/Guest art and repair only the damaged pill cap from source.
+
+## Bounded input and corrected refusal
+
+OwnerLoginInputAcceptanceTests on published45e976b62 reproduce a stale terms
+instruction after accepting consent. The caret/selection case passes all ten
+empty, typed, password, long-text and select-all states at1080/720. Real meshes
+remain inside the existing editable gray rectangle and passwords stay masked;
+the fonts, layout and InputField behavior are unchanged.
+
+SignInScreen.OwnerState now owns its local refusal summary, refreshes only that
+summary as requirements are corrected and clears the consent pulse on mode
+changes. Field/service verdict routing remains intact. Original native2 has
+1PASS/1FAIL; the same candidate2 passes both cases, including simultaneous
+username/password/confirmation/terms highlighting, correction clearing and
+steady reduced-motion tint. Invalid local submissions never dispatch account
+requests. UGS is also disabled in batch mode. Both runs restore all21224 frozen
+inputs and shared preferences after termination. XML, restoration receipts and
+selected actual input frames are in [native-input](native-input). Current source
+qualification does not update the Desktop770 release or approve the pill cap.
