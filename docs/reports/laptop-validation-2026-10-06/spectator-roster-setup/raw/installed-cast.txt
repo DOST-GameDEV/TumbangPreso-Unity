@@ -1,0 +1,4 @@
+0 sean IsBot=True AI=True
+1 cheska IsBot=False AI=True
+2 amihan IsBot=True AI=True
+3 sean IsBot=True AI=True

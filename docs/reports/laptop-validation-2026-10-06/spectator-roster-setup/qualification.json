@@ -1,0 +1,31 @@
+{
+  "source": "7589683f85eeb623f4cd9bb14001bdf63e1c82a4",
+  "runs": {
+    "setup": {
+      "manifestSha256": "25c57d6b5eef69c5468aff2c736c77b0d363ab15c61bce147fecb30a85756917",
+      "result": {
+        "pid": 46208,
+        "terminal": true,
+        "exitCode": 2,
+        "passed": 0,
+        "failed": 1,
+        "inputCount": 21148,
+        "allInputsRestored": true,
+        "existingPrefsRestored": 13
+      }
+    },
+    "lifecycle": {
+      "manifestSha256": "d478ea53360c9ff03c045cd129e299492c2c6b32aa332c958880f34fc8fcb640",
+      "result": {
+        "pid": 47108,
+        "terminal": true,
+        "exitCode": 0,
+        "passed": 1,
+        "failed": 0,
+        "inputCount": 21148,
+        "allInputsRestored": true,
+        "existingPrefsRestored": 13
+      }
+    }
+  }
+}
