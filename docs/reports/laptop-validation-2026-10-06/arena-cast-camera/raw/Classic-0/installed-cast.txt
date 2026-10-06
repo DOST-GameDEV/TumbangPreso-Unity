@@ -1,0 +1,4 @@
+0 maring IsBot=True
+1 bayan IsBot=False
+2 tikboy IsBot=True
+3 lola_pacing IsBot=True
