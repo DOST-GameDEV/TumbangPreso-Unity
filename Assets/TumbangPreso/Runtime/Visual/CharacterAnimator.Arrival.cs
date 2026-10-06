@@ -10,6 +10,7 @@ namespace TumbangPreso.Visual
         private bool _arrivalApplied;
         private int _arrivalSlot;
         private float _arrivalWeight;
+        private bool _arrivalWalking;
 
         // A presentation-only greeting. No gameplay action, emote RPC or physical root movement.
         public void SetArrivalPose(int slot, float weight)
@@ -40,7 +41,23 @@ namespace TumbangPreso.Visual
             }
             _arrivalSlot = Mathf.Clamp(slot, 0, 3);
             _arrivalWeight = Mathf.Clamp01(weight);
-            if (_arrivalWeight == 0) RestoreArrivalPose();
+            if (_arrivalWeight == 0) { RestoreArrivalPose(); _arrivalWalking = false; }
+        }
+
+        /// <summary>
+        /// The held body walks, or stands again: the character's OWN walk clip in place of its idle, for a film
+        /// that moves the body itself (the Arena's opening walks the cast out of a tunnel). Run it on with
+        /// `AdvanceHeld`. Nothing outside an arrival pose.
+        /// </summary>
+        public void SetArrivalGait(bool walking)
+        {
+            if (_arrivalWeight <= 0 || !_graph.IsValid() || walking == _arrivalWalking) return;
+            _arrivalWalking = walking;
+            RestoreArrivalPose();
+            Play(walking ? Walk : Idle, loop: true, force: true);
+            _weight = 1; _mixer.SetInputWeight(0, 0); _mixer.SetInputWeight(1, 1);
+            RetireOutgoing(); _gaitWeight = 0; _layers.SetInputWeight(1, 0);
+            _graph.Evaluate(0);
         }
 
         /// <summary>

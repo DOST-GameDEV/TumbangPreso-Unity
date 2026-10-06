@@ -135,6 +135,8 @@ namespace TumbangPreso.Map
         /// 2026-10-05, of four abreast: "the hall is too crowded. split the characters into 2 lines like the
         /// bluelock reference"): the taya's seat leads the left file, the camera follows the rear pair.</summary>
         private static readonly float[] LaneX = { -0.85f, 0.85f, -0.85f, 0.85f }, LaneZ = { 1.9f, 1.65f, 0.1f, -0.12f };
+        /// <summary>How big each seat walks (bounce, roll and twist), and how fast its walk clip runs: no two alike.</summary>
+        private static readonly float[] Swagger = { 1.25f, 0.9f, 1.05f, 1.15f }, Pace = { 1.15f, 1.3f, 1.05f, 1.22f };
         /// <summary>Each seat's place across once the files have opened into one line: the taya's and the next in the middle.</summary>
         private static readonly float[] AbreastX = { -1.05f, 1.05f, -3.15f, 3.15f };
         private const int Seats = Core.Balance.PlayerCount, MaxTicks = 72;
@@ -495,7 +497,17 @@ namespace TumbangPreso.Map
                 float x = Mathf.Lerp(LaneX[s] * spread, AbreastX[s], form);
                 stride = Mathf.Max(stride, move);
                 float phase = ((walked + form * 2.4f) / Stride + s * 0.31f) * Mathf.PI * 2.0f;
-                float bob = Mathf.Abs(Mathf.Sin(phase)) * 0.035f * stride;
+                // ⚠️ A WALK WITH SOME LIFE IN IT (owner, 2026-10-06: "the walking looks too linear and unnatural,
+                // lacking character and poppyness and excitement"). It was four limbs swung on a sine over a body
+                // that slid. Now the body walks in the character's OWN walk clip (`SetArrivalGait`, below), each at
+                // their own pace and out of step with the others, and over it: a real bounce on every footfall, a
+                // roll of the shoulders and a twist of the hips with the stride, a lean into the walk, and, as each
+                // one steps out under the lights, a hop of their own.
+                float swagger = Swagger[s];
+                float bob = Mathf.Abs(Mathf.Sin(phase)) * 0.075f * swagger * stride;
+                float out_ = line + LaneZ[s] - MouthZ;                                  // metres past the tunnel's mouth
+                float hopAt = Mathf.Clamp01((out_ - 0.6f - 0.35f * s) / 1.5f);
+                bob += _still ? 0.0f : Mathf.Sin(hopAt * Mathf.PI) * 0.38f * (hopAt > 0.0f && hopAt < 1.0f ? 1.0f : 0.0f);
                 Vector3 at = _centre + new Vector3(x, Ground + bob, z);
                 _stand[s] = _centre + new Vector3(x, Ground, z);
 
@@ -504,7 +516,9 @@ namespace TumbangPreso.Map
                 Quaternion parentTurn = parent != null ? parent.rotation : Quaternion.identity;
                 Vector3 offset = at - body.transform.position;
                 root.localPosition = _rest[s] + (parent != null ? parent.InverseTransformVector(offset) : offset);
-                root.localRotation = Quaternion.Inverse(parentTurn) * Quaternion.Euler(0.0f, -body.transform.eulerAngles.y, 0.0f) * parentTurn * _restTurn[s];
+                float roll = Mathf.Sin(phase) * 4.5f * swagger * stride, twist = Mathf.Sin(phase + 1.2f) * 7.0f * swagger * stride;
+                float lean = 5.0f * stride - 9.0f * Mathf.Sin(hopAt * Mathf.PI) * (hopAt > 0.0f && hopAt < 1.0f ? 1.0f : 0.0f);
+                root.localRotation = Quaternion.Inverse(parentTurn) * Quaternion.Euler(lean, twist - body.transform.eulerAngles.y, roll) * parentTurn * _restTurn[s];
 
                 // The walk: legs and arms swung about the model's own side axis, opposite pairs
                 // together. Written whole each frame from the rest pose, after the animator
@@ -515,8 +529,10 @@ namespace TumbangPreso.Map
                     // ⚠️ THE IDLE STARTS AT THE CUT TO THE PLAYERS, NOT AT THE FILM'S START (owner, 2026-10-06: "the idle
                     // animations play too early so it ends when the camera cuts to the player"). Until then the pose is
                     // held at its first frame under the walk; from just before the spotlight's shot it runs.
-                    _anim[s].AdvanceHeld(age >= t.Spot - 0.15f ? Time.unscaledDeltaTime : 0.0f);
-                    for (int k = 0; k < 4; k++) if (_limb[s * 4 + k] != null) _limbRest[s * 4 + k] = _limb[s * 4 + k].localRotation;
+                    bool walking = stride > 0.05f;
+                    _anim[s].SetArrivalGait(walking);
+                    _anim[s].AdvanceHeld(walking ? Time.unscaledDeltaTime * Pace[s] : age >= t.Spot - 0.15f ? Time.unscaledDeltaTime : 0.0f);
+                    continue;   // the clip moves the limbs: the swing below is only for a body with no animator
                 }
                 if (stride <= 0.001f) continue;
                 Vector3 side = root.right;
