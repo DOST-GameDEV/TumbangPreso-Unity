@@ -402,6 +402,10 @@ Handoff: [CHARACTER_REDESIGN_DANTE.md](CHARACTER_REDESIGN_DANTE.md).
   TEXT rather than key-state events. Native producer-to-consumer checks pass13/13;
   physical and paired skill effects remain unqualified.
   [Input evidence](reports/laptop-validation-2026-10-05/editor151-network-input/README.md).
+  Retired Stomp/Carapace/Fissure matrix cases now refuse launch before profiles
+  or players are touched: six refusals and four supported argument controls.
+  This does not qualify current Basilio skills.
+  [Runner evidence](reports/reliability-2026-10-06/current-skill-matrix/README.md).
 - [x] Retire E/Q presses received while the player input reader is disabled.
   Original actual-consumer cases cast the15s signature or imbue the owned slipper
   without a fresh press; fresh-E control passes. Existing release-before-use on

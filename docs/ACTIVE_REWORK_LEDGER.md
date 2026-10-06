@@ -1,3 +1,15 @@
+## Current Root skill runner guard and owner game
+
+net_dante_matrix.py refuses retired Basilio cases before output/profile/player
+mutation. Six actual CLI refusals, help and four supported argument controls
+verified. No native/runtime skill pass or gameplay/wire change. E/Q report open.
+Owner game8204/parent3740/session19499 remains live on matched4b package; preserve
+Arena display and isolated profile/shared-input restoration until normal exit.
+Owner reauthorized ongoing work after temporary Escape and withdrew selector
+complaint as fixed; do not ship an invented controls correction. Laptop Reader
+reservation remains, final16 publication not verified. Next source investigation:
+preview edge sampling and actual owner/host movement; no obsolete Basilio matrix.
+
 ## Current Root movement unit terminal
 
 Continuous motor/controller trajectory: original 9496/89632 expected 1FAIL,
