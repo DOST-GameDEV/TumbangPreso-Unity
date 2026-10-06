@@ -1,0 +1,172 @@
+{
+  "source": "ea7f5aed53a0f1c4e36929d4f4ad5c216f048855",
+  "runs": {
+    "aggregate": {
+      "manifestSha256": "41a5a227c6c37b6aacb3ff491d421b3e2fb6d01e811dc7a1411a5c04f5c5c557",
+      "result": {
+        "pid": 41664,
+        "terminal": true,
+        "exitCode": 2,
+        "passed": 0,
+        "failed": 1,
+        "inputCount": 21148,
+        "allInputsRestored": true,
+        "existingPrefsRestored": 13
+      },
+      "generatedDeltaCount": 279,
+      "profile": {
+        "profile": "validation-qa-a-be075dcdfa07",
+        "originalFileCount": 4,
+        "generatedChangesPreserved": 0,
+        "originalFilesRestored": true
+      }
+    },
+    "kanto": {
+      "manifestSha256": "5f18512696cd184956778e8ab789caf694ec724b06e51b48ed914e0f540200eb",
+      "result": {
+        "pid": 27460,
+        "terminal": true,
+        "exitCode": 0,
+        "passed": 1,
+        "failed": 0,
+        "inputCount": 21148,
+        "allInputsRestored": true,
+        "existingPrefsRestored": 13
+      },
+      "generatedDeltaCount": 279,
+      "profile": {
+        "profile": "validation-qa-a-be075dcdfa07",
+        "originalFileCount": 4,
+        "generatedChangesPreserved": 0,
+        "originalFilesRestored": true
+      }
+    }
+  },
+  "maps": {
+    "BayanPlaza": {
+      "samples": 30,
+      "elapsedLast": 14.836,
+      "clockInitial": 90.0,
+      "clockLast": 75.282,
+      "cutsLast": 5,
+      "safePoseFallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "Tag",
+        "ThrowPrep"
+      ],
+      "castIds": [
+        "dante",
+        "rafi",
+        "zack"
+      ]
+    },
+    "Eskinita": {
+      "samples": 30,
+      "elapsedLast": 14.758,
+      "clockInitial": 90.0,
+      "clockLast": 75.362,
+      "cutsLast": 8,
+      "safePoseFallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "SlipperLanded",
+        "Tag"
+      ],
+      "castIds": [
+        "dante",
+        "rafi",
+        "zack"
+      ]
+    },
+    "IlalimNgTulay": {
+      "samples": 25,
+      "elapsedLast": 14.836,
+      "clockInitial": 90.0,
+      "clockLast": 77.982,
+      "cutsLast": 5,
+      "safePoseFallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "Quiet",
+        "SlipperLanded",
+        "Tag",
+        "ThrowPrep"
+      ],
+      "castIds": [
+        "dante",
+        "rafi",
+        "zack"
+      ]
+    },
+    "Kanto": {
+      "samples": 30,
+      "elapsedLast": 14.87,
+      "clockInitial": 90.0,
+      "clockLast": 75.222,
+      "cutsLast": 10,
+      "safePoseFallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "Tag",
+        "ThrowPrep"
+      ],
+      "castIds": [
+        "dante",
+        "rafi",
+        "zack"
+      ]
+    },
+    "LagoonCove": {
+      "samples": 27,
+      "elapsedLast": 14.812,
+      "clockInitial": 90.0,
+      "clockLast": 76.782,
+      "cutsLast": 6,
+      "safePoseFallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Tag",
+        "ThrowPrep"
+      ],
+      "castIds": [
+        "dante",
+        "rafi",
+        "zack"
+      ]
+    },
+    "SaBubong": {
+      "samples": 30,
+      "elapsedLast": 14.774,
+      "clockInitial": 90.0,
+      "clockLast": 75.282,
+      "cutsLast": 8,
+      "safePoseFallbacksLast": 0,
+      "beats": [
+        "Downed",
+        "LataHit",
+        "Quiet",
+        "Retrieval",
+        "SlipperLanded",
+        "Tag",
+        "ThrowPrep"
+      ],
+      "castIds": [
+        "dante",
+        "rafi",
+        "zack"
+      ]
+    }
+  }
+}
