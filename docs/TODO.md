@@ -1,3 +1,16 @@
+### QOL-ARENA-153-1006: combined adoption and acceptance
+
+- [x] Merge QoL0d47 normally while preserving ASTRA AI, replay and view ownership.
+  Core731 and combined native28Play plus7Edit pass.
+- [x] Actual full opening lands on correct taya/layout, restores bodies to supported
+  marks and releases input/clock into live round. Corrected lifecycle1PASS.
+- [ ] Fix cold opening visual staging: inspected camera-only walk/spotlight lacks
+  intended cast while models remain grouped near centre. Lifecycle PASS does not
+  close this defect. Trace captured and current model roots before fixing.
+- [ ] Fresh matching protocol153 packaged LAN/public/code joins and actual peer
+  gameplay acceptance. Historical152 results remain historical.
+  [Evidence](reports/reliability-2026-10-06/qol-arena-153/README.md).
+
 ### PICKUP-ACCOUNTING-1006: actual Arena result rejection
 
 - [x] Forward the qualified own-throw pickup episode to retrieval counters.

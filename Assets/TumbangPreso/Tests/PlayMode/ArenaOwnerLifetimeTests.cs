@@ -14,12 +14,14 @@ namespace TumbangPreso.PlayTests
         private Scene _inactiveScene;
         private bool _edgeSense;
         private float _floor;
+        private bool _roundBox; private float _boxRadius;
         private CharacterMotor.FallRule _fall;
         private PaeteVine.CatchRule _catch;
 
         [UnitySetUp] public IEnumerator Before()
         {
             yield return PlayModeWorld.Reset();
+            _roundBox = Core.Confinement.Round; _boxRadius = Core.Confinement.Radius;
             _edgeSense = AIController.EdgeSense;
             _floor = Net.MatchRpc.MoveFloorY;
             _fall = CharacterMotor.MapFall; _catch = PaeteVine.MapCatch;
@@ -33,6 +35,7 @@ namespace TumbangPreso.PlayTests
             if (_inactiveScene.IsValid() && _inactiveScene.isLoaded)
                 yield return SceneManager.UnloadSceneAsync(_inactiveScene);
             yield return PlayModeWorld.Reset();
+            Core.Confinement.Use(_roundBox, _boxRadius);
             AIController.EdgeSense = _edgeSense;
             Net.MatchRpc.MoveFloorY = _floor;
             CharacterMotor.MapFall = _fall; PaeteVine.MapCatch = _catch;
@@ -49,30 +52,36 @@ namespace TumbangPreso.PlayTests
         {
             Stage(ref _old, "Retired Arena owner", -40);
             var current = Stage(ref _current, "Current Arena owner", -44);
+            Core.Confinement.Use(true, 9.3f);
             Assert.AreSame(current, ArenaStage.Instance); Assert.IsTrue(AIController.EdgeSense);
             Assert.AreEqual(-44, Net.MatchRpc.MoveFloorY);
             _old.SetActive(false); yield return null;
             Assert.AreSame(current, ArenaStage.Instance);
             Assert.IsTrue(AIController.EdgeSense, "Retired stage disabled the current owner's edge sensing.");
             Assert.AreEqual(-44, Net.MatchRpc.MoveFloorY, "Retired stage reset the current owner's movement floor.");
+            Assert.IsTrue(Core.Confinement.Round); Assert.AreEqual(9.3f, Core.Confinement.Radius);
         }
 
         [UnityTest] public IEnumerator DestroyingRetiredStagePreservesCurrentOwnerGlobals()
         {
             Stage(ref _old, "Retired Arena destroy owner", -40);
             var current = Stage(ref _current, "Current Arena destroy owner", -44);
+            Core.Confinement.Use(true, 8.6f);
             Object.Destroy(_old); yield return null;
             Assert.AreSame(current, ArenaStage.Instance);
             Assert.IsTrue(AIController.EdgeSense);
             Assert.AreEqual(-44, Net.MatchRpc.MoveFloorY);
+            Assert.IsTrue(Core.Confinement.Round); Assert.AreEqual(8.6f, Core.Confinement.Radius);
         }
 
         [UnityTest] public IEnumerator DisablingCurrentStageRestoresOrdinaryMapGlobals()
         {
             Stage(ref _current, "Sole Arena owner", -44);
+            Core.Confinement.Use(true, 7.5f);
             _current.SetActive(false); yield return null;
             Assert.IsNull(ArenaStage.Instance); Assert.IsFalse(AIController.EdgeSense);
             Assert.AreEqual(Net.MatchRpc.DefaultMoveFloorY, Net.MatchRpc.MoveFloorY);
+            Assert.IsFalse(Core.Confinement.Round); Assert.AreEqual(Core.Balance.ConfinementRadius, Core.Confinement.Radius);
         }
 
         [UnityTest] public IEnumerator DisablingRetiredRecoveryPreservesCurrentOwnerHooks()

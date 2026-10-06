@@ -1,3 +1,17 @@
+## Current Root QoL153 combined validation terminal
+
+QoL8b5655 published; Core731 pass. Native22292 all28Play pass, requested35 excluded
+Editor-only replay7; separate25096 all7Edit pass. Both21180inputs216deltas restored.
+Opening22888 unsupported batch EndOfFrame harness error interrupted/restored;
+corrected8756 lifecycle1PASS38.55s/full24.05 opening and supported first live round.
+Both21182inputs216deltas/prefs/quality/profile restored. Nine selected camera-only
+frames reviewed: VISUAL FAILURE, empty early spotlight/walk cast stays near centre.
+No renderer visibility override. Fourteen frames retained; next trace ArenaIntro
+TakeModels capture/current installed ModelRoot during cold arrival. NoRootjobs.
+Laptop published AI radial depth16200, merge after this coherent publication; owns
+AI/map traversal. Current153 packaged LAN/online acceptance pending. Private
+Auditor/voxel work preserved. Temporary corrected observer archived then removed.
+
 ## Current Root checked QoL Arena merge
 
 QoL0d47 merged normally with no conflicts; bot current-ult gate, replay nearplane
