@@ -566,9 +566,19 @@ namespace TumbangPreso.CameraSystem
                 return;
             }
 
-            transform.position = Vector3.SmoothDamp(transform.position, wantPos,
-                                                    ref _posVelocity, PositionSmoothTime,
-                                                    Mathf.Infinity, dt);
+            Vector3 nextPosition = Vector3.SmoothDamp(transform.position, wantPos,
+                                                     ref _posVelocity, PositionSmoothTime,
+                                                     Mathf.Infinity, dt);
+            if (!TransitIsClear(transform.position, nextPosition))
+            {
+                // A clear destination does not make the glide through scenery safe.
+                // Cut to a freshly validated shot instead of rendering that crossing.
+                _validatedAt = float.NegativeInfinity;
+                CutNow();
+                Cuts++;
+                return;
+            }
+            transform.position = nextPosition;
 
             _yawDeg = Mathf.SmoothDampAngle(_yawDeg, wantYaw, ref _yawVelocity, AimSmoothTime,
                                             Mathf.Infinity, dt);
@@ -851,6 +861,25 @@ namespace TumbangPreso.CameraSystem
         // -------------------------------------------------------------------
 
         private static Collider[] Overlap = new Collider[8];
+        private static RaycastHit[] TransitHits = new RaycastHit[8];
+
+        private static bool TransitIsClear(Vector3 from, Vector3 to)
+        {
+            Vector3 delta = to - from;
+            float length = delta.magnitude;
+            if (length < .0001f) return true;
+            int hits;
+            while (true)
+            {
+                hits = Physics.SphereCastNonAlloc(from, ClearanceRadius, delta / length,
+                    TransitHits, length, ~0, QueryTriggerInteraction.Ignore);
+                if (hits < TransitHits.Length) break;
+                System.Array.Resize(ref TransitHits, TransitHits.Length * 2);
+            }
+            for (int i = 0; i < hits; i++)
+                if (!IsSceneryFree(TransitHits[i].collider)) return false;
+            return true;
+        }
 
         private bool ValidatePose(Vector3 position, Vector3 focus,
                                   bool requireSecondary = true)
