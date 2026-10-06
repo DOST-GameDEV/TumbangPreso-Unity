@@ -1,0 +1,17 @@
+elapsed	round	slot	hero	abilitySlot	ability	answer	charge	cost	beat	shot	caption
+3.411	1	3	cheska	Skill1	COLD FEET	Cast	0.000	12	ThrowPrep	Objective	throw · ILYAS
+5.525	1	2	rafi	Skill2	SKIM	CannotAct	0.000	15	Retrieval	RetrievalTwoShot	retrieval · ILYAS
+14.835	1	0	cheska	Skill2	GLACIAL WALL	Cast	3.000	12	LataHit	Objective	the can · YASMIN
+18.840	1	2	rafi	Skill2	SKIM	Cast	1.000	15	Retrieval	RetrievalTwoShot	retrieval · YASMIN
+26.464	1	0	cheska	Skill1	COLD FEET	Cast	5.000	12	Tag	Defender	tag · YASMIN
+43.878	1	3	cheska	Skill1	COLD FEET	Cast	1.000	12	Downed	Recovery	down · YASMIN
+72.691	1	0	cheska	Skill2	GLACIAL WALL	Cast	11.000	12	Downed	Recovery	down · YASMIN
+77.509	1	2	rafi	Skill2	SKIM	CannotAct	2.000	15	SlipperLanded	Objective	the can
+81.308	1	3	cheska	Skill1	COLD FEET	Cast	1.000	12	ThrowPrep	Objective	throw · OWNER UPDATED
+83.908	1	0	cheska	Ultimate	ABSOLUTE ZERO	Cast	0.000	12	Tag	Defender	tag · YASMIN
+105.365	2	3	cheska	Skill1	COLD FEET	Cast	2.000	12	ThrowPrep	Objective	throw · ILYAS
+112.355	2	0	cheska	Skill1	COLD FEET	Cast	1.000	12	Downed	Recovery	down · YASMIN
+112.768	2	1	dante	Skill2	BASTION	Cast	2.000	12	Downed	Recovery	down · YASMIN
+113.413	2	2	rafi	Skill2	SKIM	CannotAct	3.000	15	Downed	Recovery	down · YASMIN
+124.953	2	2	rafi	Skill2	SKIM	CannotAct	3.000	15	Quiet	QuietEstablish	the street
+148.478	2	0	cheska	Skill1	COLD FEET	Cast	2.000	12	Retrieval	Chase	retrieval · YASMIN
