@@ -1,0 +1,10 @@
+{
+  "source": "Actual current match-record.js normaliseRecord and sanityFault",
+  "fault": "MoreRetrievalsThanThrows",
+  "map": "Arena",
+  "rounds": 8,
+  "duration": 719.9221801757812,
+  "humanThrows": 0,
+  "humanRetrievals": 1,
+  "scope": "Exact saved match metrics with only IDs/handles anonymized. Local VM only; no Cloud Save or live endpoint calls. Live HTTP422 reason was not captured by the existing client."
+}

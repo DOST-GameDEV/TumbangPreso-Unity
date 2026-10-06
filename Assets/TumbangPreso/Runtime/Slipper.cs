@@ -825,7 +825,7 @@ namespace TumbangPreso
             who.HoldingSlipper = true;
             _velocity = Vector3.zero;
 
-            who.GetComponent<Carrier>()?.NotifyHolding(this);
+            who.GetComponent<Carrier>()?.NotifyHolding(this, retrievedOwnThrow);
             if (retrievedOwnThrow && who.Mode == GameMode.HeroStrike)
                 who.AbilitySystem?.Kit?.OnManualOwnThrowRetrieved(new Abilities.AbilityContext(
                     who,who.GetComponent<Carrier>(),who.GetComponent<CombatVerbs>()));

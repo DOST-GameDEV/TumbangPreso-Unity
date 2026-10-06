@@ -93,10 +93,7 @@ namespace TumbangPreso.PlayTests
         }
         [Test] public void UnownedSparePickupRemainsAvailableWithoutRetrievalCredit()
         {
-            // Ownerless equipment is an explicit one-human training exception.
-            GameLaunch.TrainingRange = true;
-            GameServices.Round.Register(_motor);
-            var stats = InstallAccounting(); _shoe.OwnerSlot = -1; _shoe.SeatOfOrigin = 2;
+            var stats = InstallAccounting(); _shoe.OwnerSlot = -1;
             Assert.IsTrue(_shoe.HostGrab(_motor));
             Assert.AreSame(_shoe, _carrier.Held);
             Assert.AreEqual(0, AccountingLine(stats).Retrievals);

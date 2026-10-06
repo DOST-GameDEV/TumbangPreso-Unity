@@ -1,0 +1,6 @@
+{
+  "originalFault": "MoreRetrievalsThanThrows",
+  "hypotheticalCorrectCounterFault": "",
+  "untouchedKnockdownGuardFault": "MoreKnockdownsThanThrows",
+  "scope": "Local actual validator; only hypothetical sanitized record adjusted. Original queued record and live profile unchanged; no service calls or deployed-server proof."
+}

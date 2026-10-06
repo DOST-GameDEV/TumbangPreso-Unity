@@ -1,3 +1,18 @@
+## Current pickup accounting corrected and native terminal
+
+Actual owner Arena8x90 record HTTP422 queued,0throws/1retrieval; local current
+server validator rejects MoreRetrievalsThanThrows. Original record/profile retained.
+Native original3640/20203 two counter causes fail, three press controls pass;
+initial spare fixture wrongcontext fails, corrected original12404/43480 passes.
+Candidate24504/28955 allsixPASS; allthree21140inputs/prefs/seed/Quality restored216
+metadata each. Carrier/Slipper onlyforward existing own-throw eligibility to stats;
+pickup/recharge/wire unchanged. Root game8204 ownQuit0 and profile preserved.
+Reader d230 integrated; Root verified18rawGit/11LF/actual16PASS. Owner directives
+committed: finish current pickup/results first, full spectator/camera each hero/map
+especiallyArena next, full bots after; split onlyafter current units/ownership ACK.
+Next: qualify recovery of permanently invalid upload head while retaining local
+history and ordinary transient-retry/owner-lifetime behavior. No native jobs live.
+
 ## Current Core integration gate terminal
 
 Actual current30ff source full Core suite729PASS/0FAIL/0SKIP, fresh TRX729 results.

@@ -1,3 +1,14 @@
+### PICKUP-ACCOUNTING-1006: actual Arena result rejection
+
+- [x] Forward the qualified own-throw pickup episode to retrieval counters.
+  Two native original counter failures become passes; existing press controls and
+  corrected one-human training-spare control remain valid. Candidate six pass.
+  [Evidence](reports/reliability-2026-10-06/pickup-accounting/README.md).
+- [ ] Preserve and recover the older rejected-record queue without losing local
+  history or letting a permanently invalid head block later valid records.
+- [ ] Current corrected player/live result upload acceptance. Local server
+  validation and native accounting do not establish deployed acceptance.
+
 ### SPECTATOR-REFINE-1006: owner next pass after current pickup/result unit
 
 - [ ] Finish the current pickup accounting correction, meaningful validation and

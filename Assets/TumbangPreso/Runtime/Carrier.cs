@@ -354,7 +354,7 @@ namespace TumbangPreso
         /// emphatically not a "return" mechanic: nothing in this game hands a slipper back,
         /// and a label implying otherwise promised a mechanic that does not exist.
         /// </summary>
-        public void NotifyHolding(Slipper what)
+        public void NotifyHolding(Slipper what, bool retrievedOwnThrow = false)
         {
             // ⚠️ IDEMPOTENT, BECAUSE THERE ARE NOW TWO CALLERS ON ONE PICKUP. `Slipper.HostGrab`
             // tells this component itself (see its own note on owning the relationship) and
@@ -403,8 +403,10 @@ namespace TumbangPreso
             // twice by the double call that guard exists for. The distance to the taya is taken
             // NOW: it is what decides whether this was a run under pressure or a walk, and one
             // frame later the defender has moved.
+            // HostGrab captures the own-throw episode before Held consumes it.
+            // Ownership alone also matches a dropped, unthrown shoe.
             GameServices.Stats?.NoteRetrieval(
-                _motor.PlayerSlot, what.OwnerSlot == _motor.PlayerSlot, DistanceToTaya());
+                _motor.PlayerSlot, retrievedOwnThrow && what.OwnerSlot == _motor.PlayerSlot, DistanceToTaya());
 
             if (what.OwnerSlot == _motor.PlayerSlot)
                 _motor.AbilitySystem?.OnOwnSlipperRetrieved();
