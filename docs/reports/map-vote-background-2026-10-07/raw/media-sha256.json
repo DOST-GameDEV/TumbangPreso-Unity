@@ -1,0 +1,58 @@
+{
+  "Assets/TumbangPreso/Resources/UI/map-previews/Arena-loop.mp4": {
+    "bytes": 92608587,
+    "sha256": "a9f81a786432f69b2146e866f62bf0c19b9cb8f76d4dc83827ad5757c0b9172f"
+  },
+  "Assets/TumbangPreso/Resources/UI/map-previews/Arena-poster.png": {
+    "bytes": 2706743,
+    "sha256": "66c6170cf8102a9a96c4e4a352660d1ed45366fe2a8ffab56945a83276230fe3"
+  },
+  "Assets/TumbangPreso/Resources/UI/map-previews/Eskinita-loop.mp4": {
+    "bytes": 64086616,
+    "sha256": "eb4020e0db118136a2ebcc60413f696e18c9de578f7afb99f90d0837d55bed52"
+  },
+  "Assets/TumbangPreso/Resources/UI/map-previews/Eskinita-poster.png": {
+    "bytes": 2394959,
+    "sha256": "d320c6b843ab597c6c690dc3cdf541ae3aa2695b3d0113e0d2e560198f96f92b"
+  },
+  "Assets/TumbangPreso/Resources/UI/map-previews/BayanPlaza-loop.mp4": {
+    "bytes": 55766553,
+    "sha256": "df5cd3137a0e74d3a38f663a21cb185553eb725844729582c664f9214bb52624"
+  },
+  "Assets/TumbangPreso/Resources/UI/map-previews/BayanPlaza-poster.png": {
+    "bytes": 2299171,
+    "sha256": "cf308b4fb15f59c4ce95a5436d93a1414843733ba016697c377d95f73accf708"
+  },
+  "Assets/TumbangPreso/Resources/UI/map-previews/IlalimNgTulay-loop.mp4": {
+    "bytes": 73832452,
+    "sha256": "f4d8b653443da436342affcf704467c0065f4c7793859964a62fa0b23f4e0760"
+  },
+  "Assets/TumbangPreso/Resources/UI/map-previews/IlalimNgTulay-poster.png": {
+    "bytes": 1929455,
+    "sha256": "b62a942aa99687de7ef073cb8610d8d192e87de1d9a28b476133c8f336e408da"
+  },
+  "Assets/TumbangPreso/Resources/UI/map-previews/SaBubong-loop.mp4": {
+    "bytes": 53516034,
+    "sha256": "a78b33f42d12dc37379aca909a840fd27e69d696ba8e58e460c8470df569a488"
+  },
+  "Assets/TumbangPreso/Resources/UI/map-previews/SaBubong-poster.png": {
+    "bytes": 2555515,
+    "sha256": "687216621bdffffea0c8495a7425b7382d84098bc6ac437cef739ef0a63acdb4"
+  },
+  "Assets/TumbangPreso/Resources/UI/map-previews/LagoonCove-loop.mp4": {
+    "bytes": 72012419,
+    "sha256": "4d8e74674148e488da256a75e8027cb7a07759d1d07a0ce4b4322f6d6ef3d250"
+  },
+  "Assets/TumbangPreso/Resources/UI/map-previews/LagoonCove-poster.png": {
+    "bytes": 2370769,
+    "sha256": "857cb65ae800fe30c276ec03eb9752bfd294c985070d74d4d17ab3c33580b857"
+  },
+  "Assets/TumbangPreso/Resources/UI/map-previews/Kanto-loop.mp4": {
+    "bytes": 100275542,
+    "sha256": "a1aa02e487c846974399bedbb08090b451172155cf0b3d1a5782aaa7e81c9b2b"
+  },
+  "Assets/TumbangPreso/Resources/UI/map-previews/Kanto-poster.png": {
+    "bytes": 2967212,
+    "sha256": "1eac778a5ad163d09bda701ad741c01a3a47f05ecdab501465b3b73b3134f063"
+  }
+}

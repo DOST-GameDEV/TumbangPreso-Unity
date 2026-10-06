@@ -16,6 +16,10 @@ media has a bounded fallback. [Native evidence](reports/studio-intro-2026-10-02/
 
 ## Current Entry Points
 
+All seven maps have recorded map-selection backgrounds and matching posters.
+Voting previews the highlighted court in the full background; browsing is local,
+LOCK VOTE submits explicitly. [Native flow and media evidence](reports/map-vote-background-2026-10-07/README.md). Source freshness, normal vote pacing and packaged/peer acceptance remain open.
+
 Arena map selection uses recorded output of the existing preview camera; the live
 lobby remains a real scene. Login warms map poster/clip metadata and only the
 shown view decodes. [Native playback and map-vote evidence](reports/recorded-map-preview-2026-10-07/README.md). Other maps/regeneration/player acceptance remain open.
