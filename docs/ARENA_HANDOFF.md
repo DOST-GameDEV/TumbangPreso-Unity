@@ -1,4 +1,4 @@
-# The Arena map: HANDOFF (written 2026-10-05)
+# The Arena map: HANDOFF (written 2026-10-05, brought up to date 2026-10-06 when the work paused)
 
 Read this first. It is the current state of the Arena map (TODO ARENA-1) and stands alone.
 Detail lives in [ARENA_MAP_BRIEF](ARENA_MAP_BRIEF.md) (gameplay design and every system, sections
@@ -98,59 +98,92 @@ own capsule), `CameraRig`, `SpectatorCamera`, `MapCameraRange` (far plane 1300 m
 `CharacterMotor` (speed boost, map fall rule, haul), `BlockyClouds`/`BlockyCloud.shader`,
 `TumpRoundSwapView.CourtBreak`, `RecordedWorldView`, `VoiceDirector` (captions), `PostAntiAlias`.
 
-## IN FLIGHT when this was written (three background agents; check what landed)
+## STATE AT THE PAUSE, 2026-10-06 (read this before anything below it)
 
-1. **Real crowd recordings.** The owner rejected the synthesized crowd ("just sounds like noise",
-   no chants, no reactions heard) and APPROVED downloading 28 named CC0 files (about 80 MB) from
-   Freesound's preview CDN and Wikimedia Commons. Raw files go to
-   `C:/Users/StarX/.cache/tump-audio/crowd-src/` (outside the repo); provenance in
-   `Resources/Sfx/ARENA_CROWD_SOURCES.md` and `tools/arena_crowd_sources.json`; builder
-   `tools/build_arena_crowd_from_recordings.py`; cues keep their names (`sfx_arena_crowd_*`,
-   `sfx_arena_chant_*`). The three chants of the game's own words (TUM-BANG PRE-SO, TA-YA, TUM-BA)
-   are to be removed from rotation until the TEAM RECORDS them. The same agent makes reactions
-   audible (levels, lazy clip loading, chances) and gives a self-save its own cheer. Nobody can
-   listen: the owner must audition, flagged cuts first.
-2. **Announcer voice clone.** The announcer is a teammate who AGREED to cloning; the owner approved
-   the Chatterbox model (MIT) locally. Environment at `C:/Users/StarX/.cache/tump-voice/venv`
-   (outside the repo). Script `tools/clone_announcer_lines.py`, lines in
-   `tools/arena_announcer_lines.json`, takes to `Resources/Vo/vo_<id>_<n>.wav`, candidates in
-   `Logs/arena/voice/`, PA versions baked by `py -3 tools/synth_arena_crowd_sfx.py --no-vo --only
-   pa`, and every generated file labelled AI-cloned in `docs/HUMAN.md` and
-   `Resources/Vo/AI_CLONED_LINES.md`. `--no-vo` must stay: the coordinator chose not to grain the
-   real takes into the crowd.
-3. **Match-start cinematic** (owner's request with a Blue Lock frame): tunnel, walk out into the
-   floodlights' glare with the crowd drowning out, the bowl revealed and the roar, the screens
-   flickering through the four characters and landing on the TAYA, then the arena gets built. New
-   files (`Runtime/Map/ArenaIntro.cs` and helpers), a probe `ArenaIntroProbe.cs`; it must not edit
-   `ArenaCrowdAudio.cs`, `VoiceDirector.cs` or `AudioCues.cs`.
+The owner paused map work here ("we'll take a pause from map making for now") to work on the
+character redesigns' first-person hand effects. The three jobs that were in flight on 2026-10-05
+are all resolved, the branch was merged with ASTRAReworks and the redesigns, and it was played
+online once.
 
-If their work is in the tree but uncommitted, read it, compile-check, and commit it; if an agent
-died half way (a session restart killed three earlier), restart it from its files.
+**Branch.** `QoLUpdates`, pushed at `0d47e76df`; one commit after it is local
+(`d06fa5125`, the screens' replay trigger). It CONTAINS all of `origin/ASTRAReworks` as of
+2026-10-05 (merge `36877565f`) and the character redesigns (merge `f6f79319a`). ASTRAReworks itself
+was NOT pushed to: the owner chose to push QoLUpdates only. **Protocol 153.**
 
-## OPEN, in the order to take them
+**What happened to the three jobs.**
+- Crowd from real CC0 recordings: landed (`05ddd36d1`). The owner has not said whether it reacts
+  properly since the mixing fault below was fixed.
+- Announcer voice clone: CANCELLED by the owner ("i plan to just replace it"; and of the Filipino
+  lines: "why is it in tagalog? just make it english lines.. like Lata is down"). The cloned takes
+  are deleted. The lines are English now and wired (`tools/arena_announcer_lines.json`,
+  `ArenaCrowdAudio.Lines`, `VoiceDirector.CaptionFor`); he will record them himself as
+  `Resources/Vo/vo_<id>_1.wav`, then `py -3 tools/synth_arena_crowd_sfx.py --no-vo --only pa`.
+  `tools/clone_announcer_lines.py` is still in the tree, untracked and dead.
+- Match-start cinematic: landed and then reworked heavily with him over a dozen rounds (next list).
 
-1. Land and commit the three agents above; tell the owner what needs a scene rebuild.
-2. **Close-editor checks.** Nothing since `8d8d10fd2` has been run in batch: rebuild the scene, run
-   all five probes plus the intro probe, render in play, and look. Then the tests most likely
-   touched (the list in the brief's ARENA-1.5 report: MatchLoadingReadiness, MapExperience,
-   CurrentPauseExit, the Ilalim probes).
-3. **Known faults not yet fixed:** the taya's chalk box floats over the gaps on tore, entablado and
-   hukay; replays do not record the drone, and show the crowd, screens and balloon in their present
-   state; a held slipper lost in a fall still returns to the owner's mark after 8 s (the owner was
-   asked whether he wants the fast rule); three RooftopRecoveryProbe cases fail and whether an
-   Arena change caused it is not established; NationalsHardeningTests wants `AIController.EdgeSense`
-   in its switch list; the pickup's taken state has no message.
-4. **Owner decisions pending:** the glow at 0.16/1.9; the balloon (he chose option A, the seated
-   mascot; the rotating slipper HOLOGRAM is still in the scene to compare); whether the eight soft
-   discs at the spot beams' ends come back; the dense downtown from the air (open sky fell from 171
-   to 75 degrees when the towers were enlarged at his request); real recordings of the game's own
-   chants and of the nine arena announcer lines if the clone is not good enough; whether to push.
-5. **Never done:** an online match with a second player and a late joiner (layout, carry, balloon,
-   deep fall, 18 s halftime); a friend's weaker PC (from the can: 0.8 to 1.7 M triangles, about
-   850 to 1030 set-pass calls before the holograms and effects were added); LODs (none; the
-   candidates are the bowl's seat profile, the roof's truss steel, the hull body).
-6. Ilalim's open list is unchanged (the Ilalim guide's HANDOFF): not played as a full match since
-   the court moved; friends' frame rate unmeasured.
+**Built since, in the order he asked.**
+- THE OPENING (`ArenaIntro.cs`, `ArenaIntroScreen.cs`): 3 s of black with heartbeats; the picture
+  comes up on the cast already walking, in TWO FILES, in each character's own walk clip with
+  bounce, sway and a hop into the lights; the tunnel's glare builds with the walk and the white
+  lands as they reach the mouth; the bowl; the screens roll the cast and land on the taya; the
+  camera cuts back to the taya under a spot and draws back as the files open into ONE LINE
+  ABREAST, the walk crossfading into the idle; then the stage is built. About 24 s full, 15 s
+  short (every opening after the first in a session). The game's UI is hidden for it.
+- GLARE (`ArenaGlare.cs`): a painted starburst over the screen in two turning layers, added as
+  light (`Resources/Shaders/ArenaLensFlare.shader`), for the show spots, the opening's light and
+  the floodlight banks; in the opening it dims behind the walkers' heads, with a pool of light on
+  the tunnel floor and shafts in its air.
+- THE TAYA'S BOX IS ROUND ON THIS MAP, sized per layout (`Core.Confinement.Use`,
+  `ArenaStage.BoxRadiusFor`: plaza 6.4, tore 8.6, krus 7.9, hukay 9.3, entablado 7.5), its chalk a
+  circle drawn only where there is deck. Every radius keeps 1.6 m clear of jump pads and 1.2 m of
+  speed pads. Every other map keeps the square of 7.
+- THE BIG SCREENS IN PLAY (`ArenaScreens.cs`): a card on all eight for the can going down, a tag,
+  a fall, a block, a near miss; and sometimes a replay of a recorded moment
+  (`RecordedWorldView` drawn into the card). The card is drawn once to a texture and shown through
+  `Resources/Shaders/ArenaScreen.shader` (a line-by-line wave).
+- Sounds of their own for the jump pad, speed pad, boost and stamina orb
+  (`tools/synth_arena_pad_sfx.py`).
+- Character AO: a wider bias and "Full" at 0.6 of what it was, against stripes on the redesigns.
+- Replay copies no longer inherit the live body's hit flash (they were white in the tag replay).
+
+**Two bugs worth knowing, both mine and both found only by running.**
+- `Mathf.SmoothStep(from, to, t)` is NOT a shader's `smoothstep(edge0, edge1, x)`. The glare's and
+  the crowd's code used it with edges first: every lamp's glare came out at zero (four redraws of
+  the look could never have shown), and the crowd's roar layer never fell under half. Use a local
+  `Ramp`. This was found by writing a trace to a file from the owner's own play session.
+- Online, the host could stamp a match id of its own before the transport was ready, and every
+  client took the transport's: the host played one layout and the others another. The layouts now
+  read `MatchRpc.PresentationMatchId` online (`ArenaStage.MatchId`).
+
+## OPEN when map work resumes, in order
+
+1. **Unverified by anyone but the owner's eye, and some not even that.** No batch probe has run
+   since `8d8d10fd2`. `ArenaIntroProbe` does not work in batch (it yields `WaitForEndOfFrame`,
+   which batch mode never fires, and then hangs): fix it first. Then rebuild the scene and run all
+   six probes. The rule tests (`ConfinementTests` and whatever asserts the box) have not been run
+   against the round box.
+2. **Waiting on the owner's word:** whether the screens' replays now appear (the console prints
+   `[ArenaScreens] replay: ...` with the reason for each one that did not play); whether the crowd
+   reacts; whether the glare with the can down is right; Paete's first-person hands (put back on
+   the OLD model's arms through `RosterEntryAsset.ArmModel`; the cut from a redesign's `arm-`
+   bone misses the forearm and hand, and Rafi is cut the same way); whether the stage matched for
+   every player after the id fix; one teammate whose build kept the old models.
+3. **Online, played once and not again since the fixes:** the layout id fix, the round box
+   (protocol 153), pad sounds on other peers, a client's opening (each peer starts it when its own
+   loading ends; one host stamp would make it frame-equal and is his to approve).
+4. **Known faults not yet fixed:** replays do not record the drone; a held slipper lost in a fall
+   returns after 8 s; three RooftopRecoveryProbe cases; the pickup's taken state has no message;
+   `NationalsHardeningTests` still names five older switches unrelated to this map
+   (`AudioCues.SkillSfxOn`, `GameLaunch.TrainingRange`, `KantoTraffic.Covered`, two in
+   `SidewalkLife`). Tore leaves the taya only 0.6 m of ring because its jump pads sit mid-ring:
+   more needs the pads moved (layout data and a scene rebuild).
+5. **Never done:** a weaker PC; LODs; the game's own word chants and the English announcer lines
+   recorded by the team.
+6. Not this map's, but in this worktree: a first-person arms rework for the redesigns is
+   UNCOMMITTED here (new `dante-redesign-fpv-arms.*`, `FpvNaturalArmProbe.cs`, rebuilt
+   `RosterArms/*`, changes to `ViewmodelArms.cs`, `GaitStyles.cs`, `RosterBookBuilder.cs`,
+   `ViewmodelArmAuthor.cs`, `person_paete.asset`). It belongs to the redesign work: never sweep it
+   into an Arena commit.
 
 ## The owner's direction, in his words (so it is not relitigated)
 
@@ -201,3 +234,16 @@ died half way (a session restart killed three earlier), restart it from its file
   confirm.
 - A concurrent commit can sweep up another agent's half-finished files: commit by path while agents
   are running.
+
+- An agent's probe was committed without ever having been run, and failed the first time it was
+  (the opening's). A probe is not evidence until it has run once.
+- Four redraws of an effect that was never being drawn. When the owner says "nothing" twice, stop
+  tuning and find out whether the code runs at all: write what it decides to a file he can
+  produce by playing, and read that.
+- A commit run in the same command as its compile check went in with a compile error while the
+  owner's editor was live. Check, read the result, then commit.
+- "Fetch" is not "pull": a teammate who only fetched kept the old build. Give the three commands
+  and the commit hash to look for.
+- An uncommitted other session's work in the same worktree (the redesign's) was committed at the
+  owner's word before its own handoff was read; the handoff warned about some of those files.
+  Read the other session's handoff first, then commit.
