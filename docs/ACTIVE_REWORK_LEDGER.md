@@ -11,7 +11,12 @@ runtime or fixture edits. Root may verify published evidence and maintain this
 checkpoint/TODO; the laptop confirmed these two documents are not being edited.
 Claude owns UI on a different PC; its exact project/Editor remains unknown.
 All27 laptop UI draft paths, references and the8PASS/1FAIL dense-tooltip case
-are preserved for the Claude handoff. No new UI agent or source disposal.
+are preserved for the Claude handoff. New Claude UI1856 selected native checks
+have now passed7/7 on canonical3a9f source without old draft inputs. Root verified
+five raw Git hashes and24 changed-input hashes against current Git or only CRLF
+conversion, plus21198/13 restoration. This closes the tested dense-tooltip/text/
+timer/reflow/warning behavior for this source, not visual approval, full UI,
+font-sharpness, operator/device or actual peers. No new UI agent or source disposal.
 
 Root goal resumed ACTIVE at1791286138 after the earlier unexpected blocked state.
 No native job was cancelled for Bad Request. Current Root runtime source438fcac65
@@ -32,6 +37,9 @@ hashes and21194/13 restoration. Fixed1/60 capture frames run about4.1x real time
 stamina pickup was not seen. This predates Claude UI1856 and does not qualify
 normal-clock, operator, current UI or peer acceptance. Laptop prepares a clean
 current-source checkout while preserving old UI WIP; Root never edits runtime.
+The laptop's next network unit uses a real local listen host, public Arena-to-Home
+paths and offline liveness after unexpected stop. This is pending actual native
+acceptance, not closed by the earlier synthetic MatchSetup event/latch test.
 
 Owner reiterated: a Codex Bad Request banner is not permission to cancel work or
 pause the goal. Preserve live jobs, handles and source; verify actual process and

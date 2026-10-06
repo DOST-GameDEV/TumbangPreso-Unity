@@ -1,3 +1,15 @@
+### UI-POSTCLAUDE-1856-1006: selected HUD behavior
+
+- [x] Canonical Claude UI1856 source passes seven native status-text, dense-row,
+  expiry, score-feed and warning checks. Root verified five raw Git hashes and
+  all24 changed-input hashes against current Git bytes or CRLF conversion only.
+  All21198 inputs/13 preferences restore; old27 UI draft paths are excluded.
+  The dense Rooted tooltip passes on this distinct new source.
+  [Evidence](reports/laptop-validation-2026-10-06/ui-postclaude1856/README.md).
+- [ ] Owner visual approval, actual font-sharpness/window measurements, full
+  menus/profile/selection, pointer/submit/device and actual peer acceptance.
+  These selected native checks do not approve the whole UI.
+
 ### ARENA-SUPPORTED-SHOES-1006: retain reachable deck slippers
 
 - [x] Real Land and loose Update recalled supported Tore/Entablado shoes to their
