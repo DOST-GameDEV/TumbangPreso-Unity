@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Skill HUD reference: [native circles, bindings, fonts and timed-state evidence](reports/skill-hud-reference-2026-10-07/README.md).
+
 Conditional login terms spacing: [native feedback and position evidence](reports/login-terms-spacing-2026-10-07/README.md).
 
 Custom-room choice arrows: [native selector and input evidence](reports/room-arrows-2026-10-07/README.md).
