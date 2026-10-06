@@ -29,16 +29,24 @@ Current uncommitted unit: CatchReconstruction victim-centered bounds/frustum
 framing and CatchReplayCompositionTests.cs/meta. Baseline31908 clips the victim
 at6m/10m; candidate32920 passes all3distance cases. Actual PlayMode20420 passes
 continuous motion and held-frame/fade controls but fails authored far-tag skin
-contact (gap0.24448435) and blocked-both-sides fallback. These are unresolved,
-not acceptance. All21279 inputs/prefs/profile restored; no PC Unity job remains.
+contact (gap0.24448435) and blocked-both-sides fallback. Unchanged published
+baseline34180 also fails both controls: hand bounds gap0.3130138 and skin gap0.7049553,
+plus the same fallback assertion. All21279 inputs restored and candidate bytes
+reinstated exactly. Candidate34288 adds frozen-shot obstruction checks and
+near-plane sphere clearance; motion/freeze still pass but fallback still fails.
+This has not fixed that control. All21279 inputs/prefs/profile restored again;
+no PC Unity/compiler/helper job remains. These failures remain unresolved.
 Raw evidence and preservation helpers: Logs/catch-framing1007. Private unrelated
 dirt: ProjectAuditorSettings.asset and tools/build_yasmin_benguet_voxel.py.
 
-Exact next action: retain candidate bytes, run only the two failing PlayMode
-controls against unchanged published CatchReconstruction in a fresh named
-profile, restore frozen inputs after terminal receipt then restore candidate
-bytes exactly. Classify baseline defects versus camera regression and fix the
-causes without weakening tests. Then qualify actual map framing and publish this
+Exact next action: instrument actual contact/camera/wall/freeze state in the
+fallback control and ensure its assertion runs after the camera LateUpdate;
+compare baseline and candidate without weakening the blocked-shot requirement.
+Retained pose timing also identifies a real sampling issue: baseline tag peak
+at2.818911/tagTime0.171762 is replaced by clipEnd2.968705/tagTime0.321556 on the
+return gesture when the first post-follow-through sample arrives late. Preserve
+the actual recorded contact peak rather than a returning hand; no invented poses
+or gameplay retuning. Then qualify actual map framing and publish this
 coherent camera unit before AI/intro/slipper work. Inspect live processes and
 checkpoint before any launch; never duplicate a live job after compaction.
 
