@@ -46,6 +46,12 @@
 
 ### BOT-REFINE-1006: owner full behavior pass after spectator
 
+- [x] Resolve the demonstrated prerequisite preventing current Yasmin/Basilio
+  ultimate decisions. Native original cause failures become final9 passes,
+  with a neighboring value-control regression found and corrected. Hero effects
+  and casting cadence unchanged. Natural corrected casting remains required.
+  [Evidence](reports/reliability-2026-10-06/ai-current-ultimate/README.md).
+
 - [ ] Thoroughly refine bots' decisions and skill use. Investigate unnatural
   staring/idle behavior, missed or inappropriate abilities and mechanical action
   timing. Treat each character's kit, role and each map's movement/objective
