@@ -531,7 +531,9 @@ namespace TumbangPreso.Map
                     // held at its first frame under the walk; from just before the spotlight's shot it runs.
                     bool walking = stride > 0.05f;
                     _anim[s].SetArrivalGait(walking);
-                    _anim[s].AdvanceHeld(walking ? Time.unscaledDeltaTime * Pace[s] : age >= t.Spot - 0.15f ? Time.unscaledDeltaTime : 0.0f);
+                    // Standing, the idle runs at its own speed; it begins afresh, blended in, each time the walk stops,
+                    // and the last time is the cut back to the players.
+                    _anim[s].AdvanceHeld(Time.unscaledDeltaTime * (walking ? Pace[s] : 1.0f));
                     continue;   // the clip moves the limbs: the swing below is only for a body with no animator
                 }
                 if (stride <= 0.001f) continue;

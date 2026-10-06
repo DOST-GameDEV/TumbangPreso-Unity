@@ -54,9 +54,12 @@ namespace TumbangPreso.Visual
             if (_arrivalWeight <= 0 || !_graph.IsValid() || walking == _arrivalWalking) return;
             _arrivalWalking = walking;
             RestoreArrivalPose();
+            // ⚠️ A CROSSFADE, NOT A CUT (owner, 2026-10-06: "immediately goes A-pose before starting the idle
+            // animation. it should flow instead of snapping"). `Play` sets the blend up (the clip being left on
+            // input 0, the new one on input 1, weight 0); the weight is normally run on by the game's clock, which
+            // is held here, so this used to jump it straight to the new clip's first frame. `AdvanceHeld` runs it.
             Play(walking ? Walk : Idle, loop: true, force: true);
-            _weight = 1; _mixer.SetInputWeight(0, 0); _mixer.SetInputWeight(1, 1);
-            RetireOutgoing(); _gaitWeight = 0; _layers.SetInputWeight(1, 0);
+            _gaitWeight = 0; _layers.SetInputWeight(1, 0);
             _graph.Evaluate(0);
         }
 
@@ -69,7 +72,16 @@ namespace TumbangPreso.Visual
         {
             if (_arrivalWeight <= 0 || !_graph.IsValid()) return;
             RestoreArrivalPose();
-            _graph.Evaluate(Mathf.Clamp(seconds, 0f, 0.1f));
+            seconds = Mathf.Clamp(seconds, 0f, 0.1f);
+            // The crossfade a change of gait began, over 0.4 s of this film's own time.
+            if (_weight < 1f && _mixer.IsValid())
+            {
+                _weight = Mathf.Min(1f, _weight + seconds / 0.4f);
+                float eased = _weight * _weight * (3f - 2f * _weight);
+                _mixer.SetInputWeight(0, 1f - eased); _mixer.SetInputWeight(1, eased);
+                if (_weight >= 1f) RetireOutgoing();
+            }
+            _graph.Evaluate(seconds);
         }
 
         private void RestoreArrivalPose()
