@@ -1,0 +1,62 @@
+elapsed	round	slot	hero	abilitySlot	ability	answer	charge	cost	beat	shot	caption
+6.029	1	0	cheska	Skill2	GLACIAL WALL	Cast	1.000	12	Downed	Recovery	down · OWNER UPDATED
+12.134	1	3	cheska	Skill1	COLD FEET	Cast	0.000	12	Downed	Recovery	down · OWNER UPDATED
+26.380	1	2	rafi	Skill2	SKIM	CannotAct	1.000	15	Downed	Recovery	down · OWNER UPDATED
+37.611	1	0	cheska	Skill1	COLD FEET	Cast	5.000	12	ThrowPrep	Objective	throw · OWNER UPDATED
+47.892	1	2	rafi	Skill2	SKIM	Cast	2.000	15	ThrowPrep	Objective	throw · OWNER UPDATED
+49.665	1	0	cheska	Skill2	GLACIAL WALL	Cast	7.000	12	ThrowPrep	Objective	throw · OWNER UPDATED
+57.684	1	2	rafi	Skill1	CROSSCURRENT	Cast	2.000	15	ThrowPrep	Objective	throw · OWNER UPDATED
+61.575	1	3	cheska	Skill1	COLD FEET	Cast	0.000	12	ThrowPrep	Objective	throw · OWNER UPDATED
+77.479	1	0	cheska	Skill1	COLD FEET	Cast	9.000	12	Tag	Defender	tag · YASMIN
+89.575	1	0	cheska	Skill2	GLACIAL WALL	Cast	11.000	12	Tag	Defender	tag · YASMIN
+101.988	2	3	cheska	Skill1	COLD FEET	Cast	0.000	12	Tag	Defender	tag · OWNER UPDATED
+102.936	2	1	dante	Skill2	BASTION	Cast	2.000	12	Retrieval	Chase	retrieval · YASMIN
+107.337	2	0	cheska	Skill1	COLD FEET	Cast	11.000	12	SlipperLanded	Objective	the can
+121.053	2	0	cheska	Ultimate	ABSOLUTE ZERO	Cast	0.000	12	ThrowPrep	Objective	throw · YASMIN
+133.844	2	2	rafi	Skill2	SKIM	CannotAct	2.000	15	Retrieval	RetrievalTwoShot	retrieval · ILYAS
+140.683	2	3	cheska	Skill1	COLD FEET	Cast	0.000	12	Downed	Recovery	down · ILYAS
+141.824	2	1	dante	Skill2	BASTION	Cast	5.000	12	Tag	Defender	tag · OWNER UPDATED
+148.145	2	2	rafi	Skill2	SKIM	CannotAct	2.000	15	Retrieval	Chase	retrieval · YASMIN
+150.313	2	0	cheska	Skill1	COLD FEET	Cast	1.000	12	Retrieval	Chase	retrieval · ILYAS
+164.593	2	2	rafi	Skill2	SKIM	Cast	2.000	15	Retrieval	RetrievalTwoShot	retrieval · ILYAS
+176.780	2	3	cheska	Skill1	COLD FEET	Cast	2.000	12	SlipperLanded	Objective	the can
+177.344	2	1	dante	Skill2	BASTION	Cast	7.000	12	SlipperLanded	Objective	the can
+189.016	2	0	cheska	Skill1	COLD FEET	Cast	2.000	12	ThrowPrep	Objective	throw · ILYAS
+204.439	3	3	cheska	Skill1	COLD FEET	Cast	3.000	12	Quiet	QuietEstablish	the street
+209.359	3	0	cheska	Skill1	COLD FEET	Cast	2.000	12	Downed	Recovery	down · OWNER UPDATED
+245.453	3	3	cheska	Skill1	COLD FEET	Cast	3.000	12	Downed	Recovery	down · YASMIN
+247.468	3	0	cheska	Skill1	COLD FEET	Cast	2.000	12	Tag	Defender	tag · ILYAS
+251.160	3	2	rafi	Skill2	WATER WALL	Cast	12.000	15	Retrieval	Chase	retrieval · YASMIN
+285.386	3	3	cheska	Skill1	COLD FEET	Cast	3.000	12	LataHit	Objective	the can · YASMIN
+285.430	3	0	cheska	Skill1	COLD FEET	Cast	6.000	12	LataHit	Objective	the can · YASMIN
+305.476	4	0	cheska	Skill1	COLD FEET	Cast	7.000	12	Downed	Recovery	down · OWNER UPDATED
+309.936	4	2	rafi	Ultimate	BAHA	Cast	0.000	15	Tag	Defender	tag · YASMIN
+319.417	4	3	cheska	Skill2	GLACIAL WALL	Cast	6.000	12	ThrowPrep	Objective	throw · YASMIN
+325.193	4	2	rafi	Skill2	SKIM	CannotAct	0.000	15	Quiet	QuietEstablish	the street
+334.581	4	3	cheska	Skill1	COLD FEET	Cast	8.000	12	Downed	Recovery	down · OWNER UPDATED
+336.795	4	2	rafi	Skill2	SKIM	Cast	1.000	15	LataHit	Objective	the can · ILYAS
+337.022	4	1	dante	Skill2	BOULDER	CannotAct	8.000	12	Downed	Recovery	down · YASMIN
+347.518	4	0	cheska	Skill1	COLD FEET	Cast	7.000	12	ThrowPrep	Objective	throw · YASMIN
+355.794	4	3	cheska	Skill2	GLACIAL WALL	Cast	10.000	12	Tag	Defender	tag · YASMIN
+378.146	4	3	cheska	Skill1	COLD FEET	Cast	11.000	12	Quiet	QuietEstablish	the street
+379.207	4	1	dante	Skill2	BOULDER	CannotAct	8.000	12	Tag	Defender	tag · YASMIN
+382.917	4	3	cheska	Ultimate	ABSOLUTE ZERO	Cast	0.000	12	Tag	Defender	tag · YASMIN
+386.657	4	0	cheska	Skill1	COLD FEET	Cast	8.000	12	Ultimate	UltimateWide	ultimate · YASMIN
+391.563	4	1	dante	Skill2	BOULDER	Cast	8.000	12	ThrowPrep	Objective	throw · ILYAS
+394.104	4	2	rafi	Skill2	SKIM	CannotAct	4.000	15	Retrieval	RetrievalTwoShot	retrieval · ILYAS
+395.022	4	3	cheska	Skill2	GLACIAL WALL	Cast	0.000	12	Retrieval	RetrievalTwoShot	retrieval · ILYAS
+421.802	5	3	cheska	Skill1	COLD FEET	Cast	1.000	12	Downed	Recovery	down · OWNER UPDATED
+426.699	5	0	cheska	Ultimate	ABSOLUTE ZERO	Cast	0.000	12	Tag	Defender	tag · YASMIN
+445.321	5	0	cheska	Skill2	GLACIAL WALL	Cast	3.000	12	Downed	Recovery	down · ILYAS
+450.391	5	0	cheska	Skill1	COLD FEET	Cast	3.000	12	Downed	Recovery	down · OWNER UPDATED
+458.137	5	1	dante	Skill2	BOULDER	CannotAct	9.000	12	Retrieval	Chase	retrieval · YASMIN
+467.252	5	3	cheska	Skill1	COLD FEET	Cast	2.000	12	Downed	Recovery	down · ILYAS
+481.606	5	0	cheska	Skill2	GLACIAL WALL	Cast	9.000	12	Retrieval	RetrievalTwoShot	retrieval · YASMIN
+486.686	5	0	cheska	Skill1	COLD FEET	Cast	10.000	12	Downed	Recovery	down · YASMIN
+495.015	5	2	rafi	Skill2	SKIM	CannotAct	4.000	15	Retrieval	RetrievalTwoShot	retrieval · ILYAS
+506.611	5	2	rafi	Skill2	SKIM	CannotAct	4.000	15	ThrowPrep	Objective	throw · OWNER UPDATED
+507.564	5	0	cheska	Ultimate	ABSOLUTE ZERO	Cast	0.000	12	Retrieval	Chase	retrieval · ILYAS
+525.126	6	3	cheska	Skill1	COLD FEET	Cast	4.000	12	Quiet	QuietEstablish	the street
+527.762	6	1	dante	Skill2	BASTION	Cast	10.000	12	Retrieval	Chase	retrieval · YASMIN
+529.407	6	0	cheska	Skill1	COLD FEET	Cast	0.000	12	Tag	Defender	tag · OWNER UPDATED
+534.870	6	1	dante	Ultimate	CONTINENTAL DRIFT	Cast	0.000	12	Quiet	QuietEstablish	the street
