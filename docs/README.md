@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Full-resolution packaged map previews: [actual host-screen playback, first/repeat timings and batch-route controls](reports/fullhd-map-preview-player-2026-10-07/README.md).
+
 Inactive map-view preparation: [native allocation failures and activation recovery](reports/inactive-map-preview-2026-10-07/README.md).
 
 Current combined Desktop package: [startup, exact files and two-machine result parity](reports/combined-desktop-2026-10-07/README.md).

@@ -175,7 +175,8 @@ namespace TumbangPreso.Net
             bool isDedicated = Has(args, DedicatedSwitch) || Has(args, "-dedicated") ||
                                Has(args, "--dedicated") ||
                                (Application.isBatchMode && !Application.isEditor &&
-                                !explicitJoin && !explicitHost && !Has(args, "-tp-startup-order-probe"));
+                                !explicitJoin && !explicitHost && !Has(args, "-tp-startup-order-probe") &&
+                                !Has(args, "-tp-map-preview-probe"));
             bool isHost = explicitHost || isDedicated;
 
             if (isHost)
