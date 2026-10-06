@@ -71,8 +71,8 @@ namespace TumbangPreso.UI
         private Button _rematch;
 
         /// <summary>
-        /// PHASE 12's map ballot: one chip naming the map the next match will play, and pressing
-        /// it casts this seat's vote for the next map in the list. `docs/TODO.md` § 130.18.
+        /// Map ballot summary. Pressing opens a local preview; explicit
+        /// confirmation submits this seat's choice. `docs/TODO.md` § 130.18.
         /// </summary>
         private Button _mapVote;
 
@@ -143,6 +143,7 @@ namespace TumbangPreso.UI
 
         private void OnDisable()
         {
+            CloseCourtPicker();
             _rematchPending = false;
             if (_nativeResult && _canvas != null) _canvas.gameObject.SetActive(false);
             if (GameServices.Match != null) GameServices.Match.MatchEnded -= OnMatchWon;
@@ -184,6 +185,7 @@ namespace TumbangPreso.UI
         /// <summary>Shown when the match ends. -1 is a genuine draw, not an error.</summary>
         public void OnMatchWon(int winningSlot)
         {
+            CloseCourtPicker();
             _canvas.gameObject.SetActive(true);
 
             if (winningSlot < 0)
@@ -1450,36 +1452,13 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>
-        /// ⚠️⚠️ A PRESS CYCLES **THIS SEAT'S BALLOT**, NOT THE MAP. The chip shows where the
-        /// rotation currently points, so the first press has to move away from that and every
-        /// press after it moves one more, which is why the cycle starts from this seat's own
-        /// standing vote and falls back to the projection only when there is not one yet.
-        /// Cycling the PROJECTION instead would skip a step the moment somebody else's vote
-        /// changed the answer between two of your presses.
+        /// Open a local court preview. Browsing and cancellation preserve this
+        /// seat's ballot; only explicit confirmation submits it to the host.
         /// </summary>
         private void OnMapVotePressed()
         {
             if (IsSpectator || SceneFlow.Maps.Length < 2) return;
-
-            int seat = NetAuthority.LocalSlot;
-            if (seat < 0 || seat >= _mapVotes.Length) return;
-
-            int from = _mapVotes[seat] != Core.MapRotationRules.NoVote
-                ? _mapVotes[seat]
-                : ProjectedNextMap();
-
-            if (from < 0 || from >= SceneFlow.Maps.Length) from = 0;
-
-            int choice = Core.MapRotationRules.NextInRotation(from, SceneFlow.Maps.Length);
-
-            // ⚠️ THE LOCAL BOARD IS UPDATED FIRST AND THE HOST CORRECTS IT. A chip that waited
-            // for a round trip before changing its own label is a control that feels broken on
-            // any connection worse than a LAN, and the host's tally overwrites this within a
-            // frame or two on a good one. `HostReceiveMapVote` is the authority either way.
-            _mapVotes[seat] = choice;
-            RefreshMapVote();
-
-            if (NetAuthority.IsNetworked) Net.MatchRpc.Instance?.SelectMapVoteServerRpc(choice);
+            OpenCourtPicker();
         }
 
         /// <summary>
@@ -1519,6 +1498,7 @@ namespace TumbangPreso.UI
 
         private void BeginRematchNow()
         {
+            CloseCourtPicker();
             if (_rematchStarting) return;
             _rematchStarting = true; _rematchPending = false;
             RestoreTime();
@@ -1592,6 +1572,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private void OnMenuPressed()
         {
+            CloseCourtPicker();
             RestoreTime();
             SceneFlow.LeaveMatchToMainMenu();
         }

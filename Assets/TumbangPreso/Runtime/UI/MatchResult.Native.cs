@@ -190,7 +190,8 @@ namespace TumbangPreso.UI
             TickRematchVote();
             TickFinishPerformance();
             if(!_nativeResult||!NativeVisible||!MenuNav.CancelPressed||ScreenTakeover.EscapeIsSpokenExcept(this))return;
-            ScreenTakeover.ConsumeEscape();OnMenuPressed();
+            ScreenTakeover.ConsumeEscape();
+            if(_courtPicker!=null)CloseCourtPicker();else OnMenuPressed();
         }
     }
 }
