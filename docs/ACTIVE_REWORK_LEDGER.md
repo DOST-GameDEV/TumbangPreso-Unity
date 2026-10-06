@@ -1,4 +1,53 @@
-# Immediate owner-authorized UI continuation
+# Current PC competition checkpoint, October 7
+
+This is the authoritative resume entry. Older entries below are history, including
+the paused font goal, old Desktop paths and former laptop startup reservations.
+The owner resumed the full competition assignment and requested autonomous work
+while sleeping. PC goal is ACTIVE in chat01a111dd-2637-7d73-8690-9373c48fdda9.
+It covers startup, first Home animation, bots/navigation, taya replay, distinct
+map intros/poses/arrivals and slipper/reliability fixes. Do not mark it complete
+after a passing unit. The laptop was asked to verify its own goal and checkpoint.
+
+Worktree: C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i.
+Integration: origin/ASTRAReworks, protocol153, published c0b087438a62a947be7f09d8cc22877fc64d5449.
+PC owns CatchReconstruction, AI/bots/navigation, shared map intros/cameras/arrivals
+and slipper reliability. Laptop chat01a0ffab-10a0-70d0-9270-07e171c1613b on
+remote-control:env_e_6aa6c4fde2dc83218a0722e34ac3face retains MapPreviewSurface,
+MapPreviewVideo, preview media/import/freshness and HubMapVote/result preview.
+Startup files were released to PC. Check reservations before taking another lane.
+
+Completed: original login art edges, bold painted tick, refusal/caret feedback,
+terms raised12units unless feedback is visible, inline room-choice arrows and
+skill-only HUD reference. Exact corrected startup source9abeced612db23da52b63a520755c8d219a52287
+is built and installed at Desktop/TumbangPreso-UI-2026-10-07/TumbangPreso.exe.
+Actual native player25832 showed logos then login, title for5.74095seconds then
+Home with first-arrival video frame4to40. All21277 frozen build inputs restored.
+All261 package files were verified before replacement. Evidence:
+reports/startup-order-2026-10-07/packaged. Keep current Desktop and needed backups.
+
+Current uncommitted unit: CatchReconstruction victim-centered bounds/frustum
+framing and CatchReplayCompositionTests.cs/meta. Baseline31908 clips the victim
+at6m/10m; candidate32920 passes all3distance cases. Actual PlayMode20420 passes
+continuous motion and held-frame/fade controls but fails authored far-tag skin
+contact (gap0.24448435) and blocked-both-sides fallback. These are unresolved,
+not acceptance. All21279 inputs/prefs/profile restored; no PC Unity job remains.
+Raw evidence and preservation helpers: Logs/catch-framing1007. Private unrelated
+dirt: ProjectAuditorSettings.asset and tools/build_yasmin_benguet_voxel.py.
+
+Exact next action: retain candidate bytes, run only the two failing PlayMode
+controls against unchanged published CatchReconstruction in a fresh named
+profile, restore frozen inputs after terminal receipt then restore candidate
+bytes exactly. Classify baseline defects versus camera regression and fix the
+causes without weakening tests. Then qualify actual map framing and publish this
+coherent camera unit before AI/intro/slipper work. Inspect live processes and
+checkpoint before any launch; never duplicate a live job after compaction.
+
+No foreground PC control, reset, clean, stash, force-push, unrelated chats/new
+workers or unapproved paid services. Stage explicit owned paths and immediately
+push each coherent commit as M4tyu633. Cleanup only verified terminal owned
+helpers/obsolete outputs; preserve private source, profiles, saves and evidence.
+
+# Historical UI continuation
 
 October7 current continuation: original green pill cap/bottom shadow are corrected.
 Latest owner overrides request a bold noticeable painted tick and inline room
