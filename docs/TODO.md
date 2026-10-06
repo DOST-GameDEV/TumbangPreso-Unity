@@ -46,8 +46,14 @@
   raw hashes, exact original/candidate/test/meta equality and21192 restored inputs/
   13 preferences. Authority is revoked before the single recovery event.
   [Evidence](reports/laptop-validation-2026-10-06/listen-host-recovery/README.md).
-- [ ] Actual Home recovery and live network failure acceptance. The synthetic
-  lobby context qualifies event/latch order, not the full user-facing journey.
+- [x] Actual localhost listen host in a live Arena round returns to the hub scene
+  after unrequested transport shutdown, without auto-hosting or a manufactured
+  result; a controlled fresh offline Arena clock and authority work. Root verified
+  eight raw hashes, exact fixture/meta and21200 restored inputs/13 preferences.
+  [Scene recovery](reports/laptop-validation-2026-10-06/host-arena-hub-offline/README.md).
+- [ ] Visible Home view, normal menu re-entry, physical controls, actual peers,
+  Relay/UGS and outage-timeout acceptance. Manual offline flags/public scene calls
+  are not a full user-flow proof; scene name alone does not prove Home content.
 
 ### UI-LOBBY-RULE-CONTROLS-1006: seats and visible arrows follow live rules
 

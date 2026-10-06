@@ -19,7 +19,7 @@ timer/reflow/warning behavior for this source, not visual approval, full UI,
 font-sharpness, operator/device or actual peers. No new UI agent or source disposal.
 
 Root goal resumed ACTIVE at1791286138 after the earlier unexpected blocked state.
-No native job was cancelled for Bad Request. Current Root runtime source438fcac65
+No native job was cancelled for Bad Request. Current Root integrated source53d79142b
 contains both checked host fixes; only protected Auditor/voxel work stays dirty.
 Laptop published438fcac65dc977e463859599f08a39336899318d. Supported shoes moved
 4.755m on Tore and4.380m on Entablado in original landing/loose recovery. Original
@@ -37,9 +37,16 @@ hashes and21194/13 restoration. Fixed1/60 capture frames run about4.1x real time
 stamina pickup was not seen. This predates Claude UI1856 and does not qualify
 normal-clock, operator, current UI or peer acceptance. Laptop prepares a clean
 current-source checkout while preserving old UI WIP; Root never edits runtime.
-The laptop's next network unit uses a real local listen host, public Arena-to-Home
-paths and offline liveness after unexpected stop. This is pending actual native
-acceptance, not closed by the earlier synthetic MatchSetup event/latch test.
+Laptop published53d79142b actual local host recovery on d107 source. Native50488
+passes one case: live Arena clock, one unrequested shutdown event, actual hub scene
+without auto-hosting, retired directors/no manufactured completion, then controlled
+offline Arena authority/clock. Root verified eight raw hashes, exact fixture/meta
+and21200/13 restoration. Visible Home content/menu entry/physical/peers/Relay are
+explicitly unqualified; the fresh offline flags were selected manually.
+New Claude UIca477/03141 arrived after these tests, so older UI7/recovery receipts
+stay source-pinned. Root found HudConfetti.Burst consumes UnityEngine.Random used
+by bot decisions. Laptop reserves HudConfetti.cs for a focused RNG-state check;
+no Root UI/runtime edits and no claimed RNG regression until native reproduction.
 
 Owner reiterated: a Codex Bad Request banner is not permission to cancel work or
 pause the goal. Preserve live jobs, handles and source; verify actual process and
