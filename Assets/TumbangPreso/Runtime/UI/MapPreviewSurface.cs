@@ -184,12 +184,15 @@ namespace TumbangPreso.UI
         private RawImage _surface;
         private RenderTexture _target;
         private Camera _camera;
+        private MapPreviewVideo _recorded;
+        private Coroutine _swap;
         private bool _renderingEnabled = true;
 
         public void SetRenderingEnabled(bool visible)
         {
             _renderingEnabled = visible;
-            if (_camera != null) _camera.enabled = visible && !_busy;
+            if(_recorded!=null&&_recorded.Map!=null)_recorded.SetVisible(visible);
+            if (_camera != null) _camera.enabled = visible && !_busy && (_recorded==null||_recorded.Map==null);
             if (_surface != null && _surface.enabled != visible) _surface.enabled = visible;
         }
         private string _showing;
@@ -255,14 +258,14 @@ namespace TumbangPreso.UI
         /// `Swap`, after the scene load, so a caller that reads this from its own `Start` gets
         /// nothing. Wait for <see cref="MapShown"/>.
         /// </summary>
-        public Camera Camera => _camera;
+        public Camera Camera => _recorded!=null&&_recorded.Map!=null?null:_camera;
 
         /// <summary>Where the play area is, in world space: the average of the map's spawn
         /// markers. See <see cref="AimAt"/>.</summary>
         public Vector3 Pivot => _pivot;
 
         /// <summary>The map currently in the surface, or null before the first swap.</summary>
-        public string Showing => _showing;
+        public string Showing => _recorded!=null&&_recorded.Map!=null?_recorded.Map:_showing;
 
         /// <summary>The tuned angle, without the sway. A caller placing something in front of
         /// the camera wants the shot's yaw, not this frame's wobble.</summary>
@@ -295,6 +298,10 @@ namespace TumbangPreso.UI
                 if (_lobbyShot == value) return;
 
                 _lobbyShot = value;
+                if(value&&_recorded!=null&&_recorded.Map!=null)
+                {
+                    string map=_recorded.Map;_recorded.Stop();_showing=null;Show(map);
+                }
 
                 // ⚠️ THE PRACTICE SCREEN GETS THE WHOLE STREET BACK. See `ClearSightlines`: what
                 // it hides is hidden so a FACE can be seen, and the map shot has no faces in it,
@@ -359,6 +366,16 @@ namespace TumbangPreso.UI
         public void Show(string map)
         {
             if (_retiring || string.IsNullOrEmpty(map)) return;
+            if(!_lobbyShot&&MapPreviewVideo.PosterFor(map)!=null)
+            {
+                if(_swap!=null){StopCoroutine(_swap);_swap=null;_busy=false;EndPreviewLoad();}
+                _wantedMap=null;ReleasePreviewLook();Park(_showing);
+                if(_camera!=null)_camera.enabled=false;
+                if(_recorded==null)_recorded=gameObject.AddComponent<MapPreviewVideo>();
+                _recorded.SetVisible(_renderingEnabled);_recorded.Show(map);
+                return;
+            }
+            if(_recorded!=null)_recorded.Stop();
             if (!(_cache.TryGetValue(map, out var cached) && cached.IsValid() && cached.isLoaded)
                 && !Application.CanStreamedLevelBeLoaded(map))
             {
@@ -368,7 +385,7 @@ namespace TumbangPreso.UI
             }
             if (_busy) { _wantedMap = map; return; }
             if (map == _showing) return;
-            StartCoroutine(Swap(map));
+            _swap=StartCoroutine(Swap(map));
         }
 
         // ⚠️⚠️ THERE IS NO `PrepareAll` ANY MORE, AND NO HUB LOADING SCREEN IN FRONT OF IT.
@@ -936,6 +953,7 @@ namespace TumbangPreso.UI
 
         public void ReapplyEnvironment()
         {
+            if(_recorded!=null&&_recorded.Map!=null)return;
             if (!string.IsNullOrEmpty(_showing))
                 ApplyMapEnvironment(_showing);
         }
@@ -1291,6 +1309,7 @@ namespace TumbangPreso.UI
 
         private void Update()
         {
+            if(_recorded!=null&&_recorded.Map!=null)return;
             if (!Application.isPlaying || _camera == null || _showing == null) return;
 
             _time += Time.unscaledDeltaTime;

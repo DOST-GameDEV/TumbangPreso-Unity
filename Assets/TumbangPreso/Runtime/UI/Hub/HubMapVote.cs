@@ -18,6 +18,9 @@ namespace TumbangPreso.UI.Hub
         private HubButton[] _cards;
         private Text[] _counts, _names;
         private Image[,] _faces;
+        private RawImage[] _pictures;
+        private MapPreviewVideo _activePreview;
+        private int _previewIndex=-1;
         private Text _clock, _heading, _instruction;
         private string _drawn = "";
 
@@ -36,13 +39,15 @@ namespace TumbangPreso.UI.Hub
 
             int count = SceneFlow.MapRegistry.Length;
             _cards = new HubButton[count]; _counts = new Text[count]; _names = new Text[count]; _faces = new Image[count, Balance.PlayerCount];
-            var row = HubKit.Place(HubKit.Rect(Root, "MapChoices"), HubKit.Centre, new Vector2(0, -15), new Vector2(count * 340 - 24, 480));
+            _pictures=new RawImage[count];
+            int columns=Mathf.Min(4,count),rows=Mathf.CeilToInt(count/(float)columns);
+            var row = HubKit.Place(HubKit.Rect(Root, "MapChoices"), HubKit.Centre, new Vector2(0, -54), new Vector2(columns*430-20,rows*350-20));
             // ⚠️ THE ROW FITS THE NARROWEST SCREEN, WHATEVER THE COURT COUNT (2026-09-27: a sixth
             // court made the row 2016 units wide and pushed the first card 24 units off a 960 px
             // screen, MatchArrivalFlowTests). The canvas is at least 1920 units wide; the row keeps
             // RowRoom of it and scales down as a whole, so every card keeps its own layout.
             const float RowRoom = 1800f;
-            float rowWidth = count * 340 - 24;
+            float rowWidth = columns * 430 - 20;
             if (rowWidth > RowRoom) row.localScale = Vector3.one * (RowRoom / rowWidth);
             for (int i = 0; i < count; i++)
             {
@@ -50,20 +55,22 @@ namespace TumbangPreso.UI.Hub
                 var map = SceneFlow.MapRegistry[i];
                 var card = HubKit.Button(row, "VoteMap" + i, null, HubStyle.Night, () => Hub.Host.VoteMap(index), 0, 1110 + i);
                 _cards[i] = card;
-                HubKit.Place((RectTransform)card.transform, HubKit.TopLeft, new Vector2(i * 340, 0), new Vector2(316, 480));
+                card.Attention+=attended=>{if(attended)Preview(index);};
+                HubKit.Place((RectTransform)card.transform, HubKit.TopLeft, new Vector2((i%columns)*430,-(i/columns)*350), new Vector2(410,330));
                 var picture = HubKit.Rect(card.Body, "CourtImage").gameObject.AddComponent<RawImage>();
-                picture.texture = Resources.Load<Texture2D>("UI/map-cards/" + map.Id);
+                _pictures[i]=picture;
+                picture.texture = MapPreviewVideo.PosterFor(SceneFlow.Maps[i])??Resources.Load<Texture2D>("UI/map-cards/" + map.Id);
                 picture.raycastTarget = false;
-                HubKit.Place(picture.rectTransform, HubKit.TopLeft, new Vector2(16, -16), new Vector2(284, 160));
-                var name = HubKit.Text(card.Body, "CourtName", map.Name.ToUpperInvariant(), HubStyle.Title, true, HubStyle.Honey, TextAnchor.MiddleLeft);
+                HubKit.Place(picture.rectTransform, HubKit.TopLeft, new Vector2(16, -16), new Vector2(378,212.625f));
+                var name = HubKit.Text(card.Body, "CourtName", map.Name.ToUpperInvariant(), HubStyle.Label, true, HubStyle.Honey, TextAnchor.MiddleLeft);
                 _names[i] = name;
-                HubKit.Place(name.rectTransform, HubKit.TopLeft, new Vector2(22, -186), new Vector2(272, 132));
+                HubKit.Place(name.rectTransform, HubKit.TopLeft, new Vector2(20,-232), new Vector2(370,46));
                 _counts[i] = HubKit.Text(card.Body, "Votes", "", HubStyle.Floor, false, HubStyle.Honey, TextAnchor.MiddleLeft);
-                HubKit.Place(_counts[i].rectTransform, HubKit.TopLeft, new Vector2(24, -330), new Vector2(268, 52));
+                HubKit.Place(_counts[i].rectTransform, HubKit.TopLeft, new Vector2(20,-278), new Vector2(184,40));
                 for (int seat = 0; seat < Balance.PlayerCount; seat++)
                 {
                     var face = HubKit.Picture(card.Body, "Voter" + seat, null);
-                    HubKit.Place(face.rectTransform, HubKit.BottomLeft, new Vector2(24 + seat * 64, 34), new Vector2(58, 58));
+                    HubKit.Place(face.rectTransform, HubKit.BottomLeft, new Vector2(220+seat*42,14), new Vector2(36,36));
                     face.gameObject.SetActive(false);
                     _faces[i, seat] = face;
                 }
@@ -72,6 +79,17 @@ namespace TumbangPreso.UI.Hub
             var tie = HubKit.Text(Root, "TieRule", "A tied vote favours a different court from the last one.", HubStyle.Floor, false, HubStyle.HoneySoft, TextAnchor.MiddleCenter);
             HubKit.Place(tie.rectTransform, HubKit.Bottom, new Vector2(0, HubKit.Margin), new Vector2(1600, 60));
             Draw();
+        }
+
+        private void Preview(int index)
+        {
+            if(index==_previewIndex)return;
+            if(_activePreview!=null)_activePreview.Stop();
+            _previewIndex=index;
+            if(MapPreviewVideo.PosterFor(SceneFlow.Maps[index])==null)return;
+            _activePreview=_pictures[index].GetComponent<MapPreviewVideo>();
+            if(_activePreview==null)_activePreview=_pictures[index].gameObject.AddComponent<MapPreviewVideo>();
+            _activePreview.Show(SceneFlow.Maps[index]);
         }
 
         public override void Tick()
@@ -104,7 +122,7 @@ namespace TumbangPreso.UI.Hub
                     votes++; mine |= seat.Mine;
                     face.sprite = HubKit.Portrait(Roster.At(Roster.GetPeople(SceneFlow.SelectedMode), Mathf.Max(0, seat.CharacterPick))?.Id);
                 }
-                _counts[map].text = winner == map ? "NEXT UP" : mine ? "YOUR VOTE" : votes + (votes == 1 ? " VOTE" : " VOTES");
+                _counts[map].text = winner == map ? "NEXT UP · "+votes : mine ? "YOU · "+votes+(votes==1?" VOTE":" VOTES") : votes + (votes == 1 ? " VOTE" : " VOTES");
                 HubKit.SetFill(_cards[map], winner == map ? HubStyle.Persimmon : mine ? HubStyle.Golden : HubStyle.Night);
                 _counts[map].color = winner == map || mine ? HubStyle.Ink : HubStyle.Honey;
                 _names[map].color = _counts[map].color;

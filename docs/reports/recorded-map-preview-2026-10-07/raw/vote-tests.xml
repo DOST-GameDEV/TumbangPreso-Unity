@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 17:10:12Z" end-time="2026-10-06 17:10:17Z" duration="4.4745238">
+  <test-suite type="TestSuite" id="3422" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1967" result="Passed" start-time="2026-10-06 17:10:12Z" end-time="2026-10-06 17:10:17Z" duration="4.474524" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3414" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1967" result="Passed" start-time="2026-10-06 17:10:12Z" end-time="2026-10-06 17:10:17Z" duration="4.461075" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="57380" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3415" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1967" result="Passed" start-time="2026-10-06 17:10:12Z" end-time="2026-10-06 17:10:17Z" duration="4.453835" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3418" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1965" result="Passed" start-time="2026-10-06 17:10:12Z" end-time="2026-10-06 17:10:17Z" duration="4.446336" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2097" name="MapVotePreviewTests" fullname="TumbangPreso.PlayTests.MapVotePreviewTests" classname="TumbangPreso.PlayTests.MapVotePreviewTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-06 17:10:12Z" end-time="2026-10-06 17:10:17Z" duration="4.421589" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2098" name="LiveHostBallotHasReadablePreviewsAndOneAttendedDecoder" fullname="TumbangPreso.PlayTests.MapVotePreviewTests.LiveHostBallotHasReadablePreviewsAndOneAttendedDecoder" methodname="LiveHostBallotHasReadablePreviewsAndOneAttendedDecoder" classname="TumbangPreso.PlayTests.MapVotePreviewTests" runstate="Runnable" seed="499646810" result="Passed" start-time="2026-10-06 17:10:12Z" end-time="2026-10-06 17:10:17Z" duration="4.412157" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code X45Z
+[TumpUiCapture] MapVote-preview-1920x1080 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpUiCapture] MapVote-preview-1280x720 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <04ca1495b8724a0bb39d1381fb439df5>:0 
+  at TumbangPreso.PlayTests.MapVotePreviewTests+<After>d__1.MoveNext () [0x00017] in <fb91f91cd655411e9740d44708ed75ba>:0 
+  at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x0043e] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.EnumerableApplyChangesToContextCommand+<ExecuteEnumerable>d__1.MoveNext () [0x00091] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

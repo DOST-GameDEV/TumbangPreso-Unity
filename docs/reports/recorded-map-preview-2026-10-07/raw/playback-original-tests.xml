@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 16:42:29Z" end-time="2026-10-06 16:42:29Z" duration="0.5169988">
+  <test-suite type="TestSuite" id="3411" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1958" result="Failed" site="Child" start-time="2026-10-06 16:42:29Z" end-time="2026-10-06 16:42:29Z" duration="0.516999" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3403" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1958" result="Failed" site="Child" start-time="2026-10-06 16:42:29Z" end-time="2026-10-06 16:42:29Z" duration="0.498669" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="46540" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3404" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1958" result="Failed" site="Child" start-time="2026-10-06 16:42:29Z" end-time="2026-10-06 16:42:29Z" duration="0.487378" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3407" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1956" result="Failed" site="Child" start-time="2026-10-06 16:42:29Z" end-time="2026-10-06 16:42:29Z" duration="0.475472" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2671" name="RecordedMapPreviewTests" fullname="TumbangPreso.PlayTests.RecordedMapPreviewTests" classname="TumbangPreso.PlayTests.RecordedMapPreviewTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-06 16:42:29Z" end-time="2026-10-06 16:42:29Z" duration="0.449333" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2672" name="RecordedArenaPlaysWithoutALiveMapAndHandsOffToLobby" fullname="TumbangPreso.PlayTests.RecordedMapPreviewTests.RecordedArenaPlaysWithoutALiveMapAndHandsOffToLobby" methodname="RecordedArenaPlaysWithoutALiveMapAndHandsOffToLobby" classname="TumbangPreso.PlayTests.RecordedMapPreviewTests" runstate="Runnable" seed="1386840669" result="Failed" start-time="2026-10-06 16:42:29Z" end-time="2026-10-06 16:42:29Z" duration="0.408621" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.RecordedMapPreviewTests+<RecordedArenaPlaysWithoutALiveMapAndHandsOffToLobby>d__5.MoveNext () [0x00305] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\RecordedMapPreviewTests.cs:33
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2673" name="ReducedMotionUsesTheMatchingPosterWithoutADecoder" fullname="TumbangPreso.PlayTests.RecordedMapPreviewTests.ReducedMotionUsesTheMatchingPosterWithoutADecoder" methodname="ReducedMotionUsesTheMatchingPosterWithoutADecoder" classname="TumbangPreso.PlayTests.RecordedMapPreviewTests" runstate="Runnable" seed="321638777" result="Passed" start-time="2026-10-06 16:42:29Z" end-time="2026-10-06 16:42:29Z" duration="0.030322" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

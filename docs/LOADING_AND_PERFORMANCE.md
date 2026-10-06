@@ -16,6 +16,10 @@ media has a bounded fallback. [Native evidence](reports/studio-intro-2026-10-02/
 
 ## Current Entry Points
 
+Arena map selection uses recorded output of the existing preview camera; the live
+lobby remains a real scene. Login warms map poster/clip metadata and only the
+shown view decodes. [Native playback and map-vote evidence](reports/recorded-map-preview-2026-10-07/README.md). Other maps/regeneration/player acceptance remain open.
+
 Login-time gameplay assets: [native responsiveness and interruption checks](reports/laptop-validation-2026-10-06/login-gameplay-preload/README.md).
 
 Bot rival-spacing queries reuse per-brain scratch storage. A calibrated native

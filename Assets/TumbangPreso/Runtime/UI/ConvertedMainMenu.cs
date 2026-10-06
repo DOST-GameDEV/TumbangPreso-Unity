@@ -134,7 +134,8 @@ namespace TumbangPreso.UI
 
         private IEnumerator PreloadHomeAssets()
         {
-            yield return SplashScreen.WarmGameplayAssets(done=>_homeAssetsProgress=.8f*done);
+            yield return MapPreviewVideo.Warmup(done=>_homeAssetsProgress=.15f*done);
+            yield return SplashScreen.WarmGameplayAssets(done=>_homeAssetsProgress=.15f+.65f*done);
             // Reuse the existing caches and decoder preparation rather than
             // making a second copy of the Home resource set.
             yield return Hub.HubSceneVideo.Warmup(done=>_homeAssetsProgress=.8f+.2f*done);

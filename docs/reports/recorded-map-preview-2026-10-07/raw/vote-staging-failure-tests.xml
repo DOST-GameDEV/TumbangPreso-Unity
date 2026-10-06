@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 16:52:22Z" end-time="2026-10-06 16:52:33Z" duration="10.6380818">
+  <test-suite type="TestSuite" id="3420" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1966" result="Failed" site="Child" start-time="2026-10-06 16:52:22Z" end-time="2026-10-06 16:52:33Z" duration="10.638082" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3412" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1966" result="Failed" site="Child" start-time="2026-10-06 16:52:22Z" end-time="2026-10-06 16:52:33Z" duration="10.624181" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="57236" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3413" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1966" result="Failed" site="Child" start-time="2026-10-06 16:52:22Z" end-time="2026-10-06 16:52:33Z" duration="10.614958" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3416" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1964" result="Failed" site="Child" start-time="2026-10-06 16:52:22Z" end-time="2026-10-06 16:52:33Z" duration="10.605825" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2097" name="MapVoteVideoFlowTests" fullname="TumbangPreso.PlayTests.MapVoteVideoFlowTests" classname="TumbangPreso.PlayTests.MapVoteVideoFlowTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-06 16:52:22Z" end-time="2026-10-06 16:52:33Z" duration="10.576242" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2102" name="CustomStartSelectsVotesLoadsAndBeginsWithoutSecondReady" fullname="TumbangPreso.PlayTests.MapVoteVideoFlowTests.CustomStartSelectsVotesLoadsAndBeginsWithoutSecondReady" methodname="CustomStartSelectsVotesLoadsAndBeginsWithoutSecondReady" classname="TumbangPreso.PlayTests.MapVoteVideoFlowTests" runstate="Runnable" seed="212078301" result="Failed" start-time="2026-10-06 16:52:22Z" end-time="2026-10-06 16:52:33Z" duration="10.565833" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: instance of <TumbangPreso.UI.Hub.HubCharacterSelect>
+  But was:  <TumbangPreso.UI.Hub.HubLobby>
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.MapVoteVideoFlowTests+<StartFlow>d__11.MoveNext () [0x001c7] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\MapVoteVideoFlowTests.cs:265
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code XYJM
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <ab2e0cffbea94cff8a895105adc73b04>:0 
+  at TumbangPreso.PlayTests.MapVoteVideoFlowTests+<After>d__7.MoveNext () [0x0001e] in <8a597aff4e694d74aab7c029371cd064>:0 
+  at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x0043e] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.EnumerableApplyChangesToContextCommand+<ExecuteEnumerable>d__1.MoveNext () [0x00091] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
