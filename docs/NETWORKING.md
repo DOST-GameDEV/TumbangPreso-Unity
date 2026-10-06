@@ -1,6 +1,6 @@
 # Networking: Where To Work
 
-Current source contract is protocol152 (`NetSession.ProtocolVersion`). Use matching
+Current source contract is protocol153 (`NetSession.ProtocolVersion`). Use matching
 packages for actual peers; branch names are not compatibility identifiers. The
 work-status queue is [TODO](TODO.md), not the older evidence narrative below.
 

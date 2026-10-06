@@ -1,16 +1,42 @@
+### UI-LOBBY-RULE-CONTROLS-1006: seats and visible arrows follow live rules
+
+- [x] Custom lobby seats read live room bot rules before Start; human-only vacant
+  rooms disable Start with a reason. Queue policy and four-human Start remain.
+- [x] Keep the mirrored Next glyph inside its existing pointer hit target.
+  Original native Play9 has3 real failures/6 controls and corrected Edit9 has
+  1 real failure/8 controls; the same candidate cases pass all18. Root verified
+  all28 committed raw hashes and XML after integrating d9bd84650.
+  [Evidence](reports/laptop-validation-2026-10-06/lobby-rule-and-arrow/README.md).
+- [ ] Packaged normal Rules return and physical pointer/device acceptance.
+  The separate visual revamp and current networking acceptance remain open.
+
+### HOST-ADVERT-RETIREMENT-1006: stopped hosts stop advertising
+
+- [ ] Reproduce unexpected host shutdown leaving a LAN beacon or hosted online
+  lobby alive. Root prepared two native cause cases and a requested-stop/restart
+  control; direct fixture compilation passes. Laptop original/candidate check
+  pending, with isolated service dispatch and actual UDP/NGO shutdown.
+- [ ] If reproduced, retire adverts through the existing shutdown callback and
+  validate the same cases. This does not resolve the reported host kick, Relay
+  timeout or non-host delay; their actual peer acceptance remains open.
+
 ### CHALK-CIRCLE-1006: contact matches the drawn boundary
 
 - [x] Reproduce10 circular geometry failures with5 controls; source-linked
   candidate19 pass. Round segment contact follows actual map radius; square and
   sound behavior preserved.
-- [ ] Laptop native geometry/integration and packaged audible contact acceptance.
+- [x] Laptop native geometry/integration: actual ChalkCircleCrossing19 pass within
+  the combined30-case job. [Native receipt](reports/laptop-validation-2026-10-06/circle-native-integration/README.md).
+- [ ] Packaged audible contact acceptance.
   [Evidence](reports/reliability-2026-10-06/chalk-circle/README.md).
 
 ### FAMILIAR-CONFINEMENT-1006: respect circular Arena boundary
 
 - [x] Five original diagonal circle failures become passes; four controls remain
   valid with the actual helper/Core source-linked check. Delegate to map clamp.
-- [ ] Laptop native nine-case integration and actual familiar movement/recall.
+- [x] Laptop native nine-case integration plus two existing Nemu chase controls
+  pass within the combined30-case job. [Native receipt](reports/laptop-validation-2026-10-06/circle-native-integration/README.md).
+- [ ] Actual familiar movement/recall.
   Current1538bd package predates this fix; fresh packaged acceptance needed.
   [Evidence](reports/reliability-2026-10-06/familiar-confinement/README.md).
 
