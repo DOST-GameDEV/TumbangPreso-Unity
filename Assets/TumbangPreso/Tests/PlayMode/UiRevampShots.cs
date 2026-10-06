@@ -87,8 +87,22 @@ namespace TumbangPreso.PlayTests
                 yield return null; yield return null; Canvas.ForceUpdateCanvases();
                 AssertLanes(root);
 
+                // The grander earned moments, caught mid-landing with motion on.
+                settings.HudScale = 1; settings.LargerText = false; settings.HighContrastHud = false; settings.ReducedUiMotion = false;
+                local.ClearStatuses(); GameServices.Round.ApplyNetworkTournamentState(0, new float[4]); view.Toast("", 0);
+                foreach (var (kind, label) in new[] { (MatchMomentKind.DoubleCatch, "big"), (MatchMomentKind.MultiKnockdown, "legendary") })
+                {
+                    var banner = Object.FindFirstObjectByType<MatchMomentBanner>();
+                    typeof(MatchMomentBanner).GetMethod("Hide", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(banner, null);
+                    yield return null;
+                    typeof(MatchDirector).GetMethod("PresentHostMoment", BindingFlags.Instance | BindingFlags.NonPublic)
+                        .Invoke(GameServices.Match, new object[] { local.PlayerSlot, kind, 2, 50 });
+                    yield return new WaitForSecondsRealtime(.45f);
+                    yield return GameplayShots.Render(Camera.main, tag + "-moment-" + label + "-1920x1080", true, Out, null, 1920, 1080);
+                }
+                settings.ReducedUiMotion = true;
+
                 // The match menu over the same live scene, normal size, with pad focus on a choice.
-                settings.HudScale = 1; settings.LargerText = false; settings.HighContrastHud = false;
                 local.ClearStatuses(); view.Toast("", 0);
                 var watcher = Object.FindFirstObjectByType<PauseWatcher>();
                 Assert.IsNotNull(watcher, "The match needs its pause watcher.");
@@ -103,6 +117,13 @@ namespace TumbangPreso.PlayTests
                 yield return new WaitForSecondsRealtime(.25f);
                 yield return GameplayShots.Render(Camera.main, tag + "-pause-1920x1080", true, Out, null, 1920, 1080);
                 yield return GameplayShots.Render(Camera.main, tag + "-pause-1280x720", true, Out, null, 1280, 720);
+                // Settings through the pause menu's own Settings choice, then back out the same way.
+                menu.GetComponentsInChildren<Button>(true).Single(b => b.name == "PauseSettings").onClick.Invoke();
+                yield return new WaitForSecondsRealtime(.5f);
+                Assert.IsNotNull(GameObject.Find("OwnerSettingsCanvas"), "Settings must open from the match menu.");
+                yield return GameplayShots.Render(Camera.main, tag + "-settings-1920x1080", true, Out, null, 1920, 1080);
+                var back = GameObject.Find("OwnerSettingsCanvas").GetComponentsInChildren<Button>(true).Single(b => b.name == "TumpSettingsBack");
+                back.onClick.Invoke(); yield return new WaitForSecondsRealtime(.3f);
                 pause.Close(); yield return null;
             }
             finally
@@ -139,6 +160,7 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(moment.Overlaps(warning), "Earned moment overlaps the refusal.");
             Assert.IsFalse(toast.Overlaps(warning), "Announcement overlaps the refusal.");
             Assert.IsFalse(warning.Overlaps(action), "Refusal overlaps the action.");
+            Assert.IsFalse(toast.Overlaps(action), "System notice overlaps the action.");
             foreach (var chip in root.GetComponentsInChildren<RectTransform>().Where(t => t.name.StartsWith("StatusChip")))
             {
                 var b = Bounds(root, chip);

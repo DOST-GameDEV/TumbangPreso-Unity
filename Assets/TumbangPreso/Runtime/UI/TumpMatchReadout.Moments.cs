@@ -25,7 +25,7 @@ namespace TumbangPreso.UI
     public sealed partial class TumpMatchReadout
     {
         private HudCard _toastPlate;
-        private const float ToastHeight = 76, ToastTilt = 0f;
+        private const float ToastHeight = 62, ToastTilt = 0f;
         private float _toastBorn = -10;
         private HudBadge _hitMark;
         private const float HitLife = .28f, PopLife = .85f;
@@ -130,26 +130,43 @@ namespace TumbangPreso.UI
             var settings = Settings.SettingsStore.Current;
             float s = Mathf.Max(Settings.GameSettings.ValidHudScale(settings.HudScale), settings.LargerText ? 1.2f : 1f);
             float height = _root.rect.height;
-            float y = BarTop + 130 * s + 22;
-            if (_toast != null && _toast.enabled && !string.IsNullOrEmpty(_toast.text))
-            {
-                float centre = y + ToastHeight * s * .5f;
-                SetLaneY(_toast.rectTransform, -centre); SetLaneY(_toastPlate.rectTransform, -centre);
-                y += (ToastHeight + 8 + 6) * s + 16; // face, extruded side, shadow
-            }
-            if (_momentBanner != null && _momentBanner.Showing)
+            // Directly under the round beads: the clock tile, its tray and a small breath.
+            float y = BarTop + (ClockHeight + 14 + 24 + 10) * s;
+            bool toast = _toast != null && _toast.enabled && !string.IsNullOrEmpty(_toast.text);
+            bool moment = _momentBanner != null && _momentBanner.Showing;
+            bool warning = _warningRoot != null && _warningRoot.gameObject.activeSelf;
+            float reticleTop = height * .5f - 58 * s, gap = 10 * s;
+            // Owner, 2026-10-06: the earned moment is directly under the match bar. Refusals and
+            // system notices (do not idle, out of bounds, tagged, camera notes) share one lane
+            // under it and stack, refusal first; the stack rises rather than reach the aim point.
+            if (moment)
             {
                 float h = _momentBanner.LaneHeight;
-                y += 28 * s; // the bonus badge rides 26 units above the tile
+                y += (_momentBanner.HasBadge ? 26 : 6) * s; // the bonus badge rides above the tile
                 _momentBanner.Rest = new Vector2(0, height * (1 - .79f) - (y + h * .5f));
-                y += h + (9 + 6) * s + 16;
+                y += h + (9 + 4) * s + 8;
             }
             else if (_momentBanner != null) _momentBanner.Rest = Vector2.zero;
-            if (_warningRoot != null && _warningRoot.gameObject.activeSelf)
+            float warningHeight = warning ? _warningRoot.rect.height * _warningRoot.localScale.y + 6 * s : 0;
+            float toastHeight = toast ? (ToastHeight + 8) * s : 0;
+            float stack = warningHeight + toastHeight + (warning && toast ? gap : 0);
+            float top = Mathf.Max(y, height * .34f - (warning ? warningHeight : toastHeight) * .5f);
+            if (top + stack > reticleTop) top = Mathf.Max(y, reticleTop - stack);
+            if (warning)
             {
-                float h = _warningRoot.rect.height * _warningRoot.localScale.y;
-                float centre = Mathf.Max(height * .34f, y + h * .5f);
-                SetLaneY(_warningRoot, height * .34f - centre);
+                float h = warningHeight - 6 * s;
+                SetLaneY(_warningRoot, height * .34f - (top + h * .5f));
+                top += warningHeight + gap;
+                // A refused input shakes its head once: three quick swings that die out in .3 s.
+                float age = Time.unscaledTime - _warningShookAt;
+                float swing = settings.ReducedUiMotion || age > .3f ? 0 : Mathf.Sin(age * 62f) * 9f * (1 - age / .3f);
+                var at = _warningRoot.anchoredPosition;
+                if (Mathf.Abs(at.x - swing) > .01f) { at.x = swing; _warningRoot.anchoredPosition = at; }
+            }
+            if (toast)
+            {
+                float centre = top + ToastHeight * s * .5f;
+                SetLaneY(_toast.rectTransform, -centre); SetLaneY(_toastPlate.rectTransform, -centre);
             }
         }
 

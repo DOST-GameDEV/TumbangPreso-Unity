@@ -11,11 +11,12 @@ namespace TumbangPreso.UI
         {
             if (_save == null || _saveDirty == dirty) return;
             _saveDirty = dirty;
-            var face = _save.transform.Find("SaveFace")?.GetComponent<Image>();
+            var face = _save.transform.Find("SaveFace")?.GetComponent<HudCard>();
             if (face != null)
             {
-                face.color = dirty ? SettingsPalette.Accent : new Color(0, 0, 0, 0);
-                face.GetComponent<Outline>().effectColor = dirty ? SettingsPalette.OnAccent : SettingsPalette.Rule;
+                // A honey toy slab while there is something to save; a sunk, quiet tile when not.
+                face.color = dirty ? HudDraw.Honey : SettingsPalette.Control; face.Side = dirty ? HudDraw.HoneySide : SettingsPalette.Background;
+                face.Depth = dirty ? 7 : 2; face.SetVerticesDirty();
             }
             var colours = _save.colors;
             colours.normalColor = colours.highlightedColor = colours.selectedColor = dirty ? SettingsPalette.OnAccent : SettingsPalette.Muted;
@@ -38,7 +39,8 @@ namespace TumbangPreso.UI
             back.GetComponentInChildren<Text>().text="";
             var backIcon=OwnerUiGlyph.Create(back.transform,"BackIcon",OwnerUiGlyph.Mark.Back,Color.white);
             OwnerUiLayout.Place(backIcon.rectTransform,30,14,58,45);back.targetGraphic=backIcon;
-            var title = OwnerUiLayout.Text(root, "SettingsTitle", "SETTINGS", 64, OwnerUiLayout.TypeRole.Display);
+            var title = OwnerUiLayout.Text(root, "SettingsTitle", "Settings", 72, OwnerUiLayout.TypeRole.Display);
+            title.verticalOverflow = VerticalWrapMode.Overflow;
             OwnerUiLayout.Place(title.rectTransform, 80, 130, 410, 130); title.color = SettingsPalette.Ink;
             for (int i = 0; i < Sections.Length; i++)
             {
@@ -46,6 +48,9 @@ namespace TumbangPreso.UI
                 var tab = SettingsWorkspaceRows.Action(root, "SettingsSection" + i, Sections[i], () => ShowSection(index), 407);
                 OwnerUiLayout.Place((RectTransform)tab.transform, 71, 336 + i * 110, 407, 86);
                 var label = tab.GetComponentInChildren<Text>(); label.fontSize = 33;label.font=OwnerUiTheme.Current.Display;
+                var tabFace = OwnerUiLayout.Rect(tab.transform, "TabFace").gameObject.AddComponent<HudCard>();
+                tabFace.rectTransform.SetAsFirstSibling(); OwnerUiLayout.Place(tabFace.rectTransform, 0, 4, 407, 74);
+                tabFace.Toy(HudDraw.Honey, HudDraw.HoneySide, 7, 14, .35f).raycastTarget = false; tabFace.FollowContrast = false; tabFace.enabled = false;
                 var mark = OwnerUiLayout.Rect(tab.transform, "SelectedSection").gameObject.AddComponent<Image>();
                 OwnerUiLayout.Place(mark.rectTransform, 18, 75, 286, 5); mark.color = SettingsPalette.Accent; mark.raycastTarget = false;
                 _tabs.Add(tab);
@@ -76,12 +81,9 @@ namespace TumbangPreso.UI
             // changes when you're ready" that used to explain it is gone: the button says it.
             _save = SettingsWorkspaceRows.Action(root, "TumpSaveSettings", "SAVE CHANGES", () => _session.Save(), 474);
             OwnerUiLayout.Place((RectTransform)_save.transform, 1361, 954, 474, 82);
-            var saveFace = OwnerUiLayout.Rect(_save.transform, "SaveFace").gameObject.AddComponent<Image>();
+            var saveFace = OwnerUiLayout.Rect(_save.transform, "SaveFace").gameObject.AddComponent<HudCard>();
             saveFace.rectTransform.SetAsFirstSibling(); OwnerUiLayout.Fill(saveFace.rectTransform); saveFace.raycastTarget = false;
-            // ⚠️ `useGraphicAlpha` OFF: a Unity Outline multiplies its colour by the face's alpha, so
-            // on the transparent resting face the frame drew nothing and SAVE was floating words again.
-            var saveEdge = saveFace.gameObject.AddComponent<Outline>();
-            saveEdge.effectDistance = new Vector2(3, -3); saveEdge.useGraphicAlpha = false;
+            saveFace.Toy(SettingsPalette.Control, SettingsPalette.Background, 2, 14, .35f); saveFace.FollowContrast = false;
             var saveLabel = _save.GetComponentInChildren<Text>(); saveLabel.font = OwnerUiTheme.Current.Display; saveLabel.fontSize = 39;
             saveLabel.alignment = TextAnchor.MiddleCenter;
             _unsaved = OwnerUiLayout.Text(root, "UnsavedMarker", "UNSAVED", 28, OwnerUiLayout.TypeRole.Reading);

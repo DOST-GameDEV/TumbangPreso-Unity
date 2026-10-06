@@ -38,6 +38,10 @@ namespace TumbangPreso.UI
         public static readonly Color Alarm = new Color32(214, 38, 46, 255);
         public static readonly Color AlarmSide = new Color32(140, 22, 28, 255);
         public static readonly Color AlarmDeep = new Color32(150, 28, 34, 255);
+        /// <summary>The taya's blue in the toy palette: deeper and warmer than the rule blue so it
+        /// sits with cream and brown instead of glowing cyan against them.</summary>
+        public static readonly Color TayaBlue = new Color32(44, 96, 206, 255);
+        public static readonly Color ThrowerOrange = new Color32(236, 104, 28, 255);
         // Older names kept so existing callers read the toy palette.
         public static readonly Color Ink = Brown;
         public static readonly Color Paper = Cream;
@@ -72,6 +76,32 @@ namespace TumbangPreso.UI
             new Vector2(r.xMax - c, r.yMax), new Vector2(r.xMin + c, r.yMax), new Vector2(r.xMin, r.yMax - c), new Vector2(r.xMin, r.yMin + c),
             new Vector2(r.xMin + c, r.yMin), new Vector2(r.xMax - c, r.yMin), new Vector2(r.xMax, r.yMin + c), new Vector2(r.xMax, r.yMax - c),
         };
+
+        /// <summary>The part of a bevelled tile between two heights: a cooldown shade or a charge
+        /// level that keeps the tile's own cut corners. Convex, so a fan from its centroid fills it.</summary>
+        public static void BevelledBand(VertexHelper vh, Rect r, float cut, float yLow, float yHigh, Color c)
+        {
+            if (c.a <= 0 || yHigh <= yLow) return;
+            cut = Mathf.Clamp(cut, 0, Mathf.Min(r.width, r.height) * .5f);
+            var poly = new System.Collections.Generic.List<Vector2>(BevelPoints(r, cut));
+            poly = ClipY(poly, yLow, true); poly = ClipY(poly, yHigh, false);
+            if (poly.Count < 3) return;
+            var centre = Vector2.zero; foreach (var p in poly) centre += p; centre /= poly.Count;
+            Fan(vh, centre, poly.ToArray(), c);
+        }
+
+        private static System.Collections.Generic.List<Vector2> ClipY(System.Collections.Generic.List<Vector2> poly, float y, bool keepAbove)
+        {
+            var result = new System.Collections.Generic.List<Vector2>(poly.Count + 2);
+            for (int i = 0; i < poly.Count; i++)
+            {
+                var a = poly[i]; var b = poly[(i + 1) % poly.Count];
+                bool ina = keepAbove ? a.y >= y : a.y <= y, inb = keepAbove ? b.y >= y : b.y <= y;
+                if (ina) result.Add(a);
+                if (ina != inb) { float t = (y - a.y) / (b.y - a.y); result.Add(Vector2.Lerp(a, b, t)); }
+            }
+            return result;
+        }
 
         /// <summary>A regular-looking octagon inside <paramref name="r"/>: the toy family's bead and medallion.</summary>
         public static void Octagon(VertexHelper vh, Rect r, Color c) => Bevelled(vh, r, Mathf.Min(r.width, r.height) * .29f, c);

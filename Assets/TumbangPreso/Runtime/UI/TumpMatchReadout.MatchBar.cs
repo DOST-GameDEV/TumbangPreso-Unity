@@ -78,13 +78,13 @@ namespace TumbangPreso.UI
         // reads from the colour under every card without four outlined boxes. One state icon at
         // the right: the slipper (whole in hand, faded away) or the can (whole upright, faded down).
         // The local player's card carries a honey "You" chip underneath.
-        private const float ChipWidth = 266, ChipHeight = 78, ClockWidth = 256, ClockHeight = 80, BarTop = 18;
-        private const float CardDepth = 8, CardBevel = 12;
-        private const int ScoreFont = 40, ScoreFontFloor = 28;
-        private static readonly float[] ChipX = { 0, 282, 840, 1122 };
-        private const float BarWidth = 1388;
+        private const float ChipWidth = 250, ChipHeight = 68, ClockWidth = 232, ClockHeight = 72, BarTop = 24;
+        private const float CardDepth = 9, CardBevel = 12, Pop = 8;
+        private const int ScoreFont = 42, ScoreFontFloor = 28;
+        private static readonly float[] ChipX = { 0, 264, 792, 1056 };
+        private const float BarWidth = 1306;
         private readonly HudCard[] _portraitTiles = new HudCard[4];
-        private readonly HudCard[] _localMarks = new HudCard[4];
+        private readonly HudCard[] _localMarks = new HudCard[4], _roleChips = new HudCard[4];
         private readonly string[] _barNames = new string[4], _barNameLabels = new string[4];
 
         private void BuildMatchBar()
@@ -100,15 +100,15 @@ namespace TumbangPreso.UI
             plate.Toy(HudDraw.Brown, HudDraw.BrownSide, CardDepth, 14, .45f).raycastTarget = false;
 
             _canRing = OwnerUiLayout.Rect(_clockRoot, "CanProtection").gameObject.AddComponent<HudRing>();
-            OwnerUiLayout.Place(_canRing.rectTransform, 18, 17, 46, 46);
+            OwnerUiLayout.Place(_canRing.rectTransform, 13, 11, 50, 50);
             _canRing.Thickness = 3; _canRing.Track = Color.clear; _canRing.color = HudDraw.Honey;
             _canRing.Fill = 0; _canRing.raycastTarget = false;
             _canGlyph = OwnerUiLayout.Rect(_clockRoot, "CanStateIcon").gameObject.AddComponent<HudBadge>();
-            OwnerUiLayout.Place(_canGlyph.rectTransform, 23, 22, 36, 36);
+            OwnerUiLayout.Place(_canGlyph.rectTransform, 18, 16, 40, 40);
             _canGlyph.Detail = HudDraw.Brown; _canGlyph.raycastTarget = false;
 
-            _clock = OwnerUiLayout.Text(_clockRoot, "TimeLeft", "", 56, OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(_clock.rectTransform, 66, 4, 176, 70);
+            _clock = OwnerUiLayout.Text(_clockRoot, "TimeLeft", "", 50, OwnerUiLayout.TypeRole.Display);
+            OwnerUiLayout.Place(_clock.rectTransform, 60, 4, 162, 64);
             _clock.alignment = TextAnchor.MiddleCenter; _clock.verticalOverflow = VerticalWrapMode.Overflow;
             _clock.horizontalOverflow = HorizontalWrapMode.Overflow;
             _clock.color = HudDraw.Cream;
@@ -130,50 +130,59 @@ namespace TumbangPreso.UI
             var row = OwnerUiLayout.Rect(_scoreRoot, "ScoreRow" + i);
             OwnerUiLayout.Place(row, ChipX[i], 0, ChipWidth, ChipHeight); _scoreRows[i] = row;
             var card = row.gameObject.AddComponent<HudCard>();
-            card.Toy(HudDraw.Cream, UiTheme.Offense, CardDepth, CardBevel, .4f).raycastTarget = false; _chipCards[i] = card;
+            card.Toy(HudDraw.Cream, HudDraw.CreamSide, CardDepth, CardBevel, .4f).raycastTarget = false; _chipCards[i] = card;
 
+            // The figurine: the player's tile rises out of the card on a cream die-cut edge, so each
+            // card reads as a person standing on their plate rather than a picture in a box.
             var swatch = OwnerUiLayout.Rect(row, "SeatSwatch").gameObject.AddComponent<HudCard>();
-            OwnerUiLayout.Place(swatch.rectTransform, 8, 8, 62, 62);
-            swatch.Toy(PlayerIdentity.Colour(i), Color.clear, 0, 10, 0); swatch.Sheen = false; swatch.FollowContrast = false;
+            OwnerUiLayout.Place(swatch.rectTransform, 7, -Pop, 66, ChipHeight + Pop - 7);
+            swatch.Toy(PlayerIdentity.Colour(i), Color.Lerp(PlayerIdentity.Colour(i), Color.black, .35f), 4, 11, .35f);
+            swatch.Border = HudDraw.Cream; swatch.BorderWidth = 3; swatch.Sheen = false; swatch.FollowContrast = false;
             swatch.raycastTarget = false; _chipSwatches[i] = swatch; _portraitTiles[i] = swatch;
             _portraits[i] = OwnerPortraitArt.Create(row, "PlayerPortrait", "");
-            OwnerUiLayout.Place(_portraits[i].rectTransform, 10, 10, 58, 58);
+            OwnerUiLayout.Place(_portraits[i].rectTransform, 10, -Pop + 4, 60, 60);
 
             // Kept for the probes; the role lives on the extruded base and the state icon.
             _roleBadges[i] = OwnerUiLayout.Rect(row, "RoleBadge").gameObject.AddComponent<HudBadge>();
             OwnerUiLayout.Place(_roleBadges[i].rectTransform, 56, 50, 28, 28);
             _roleBadges[i].Detail = UiTheme.Defense; _roleBadges[i].raycastTarget = false;
             _crowns[i] = OwnerUiLayout.Rect(row, "LeaderCrown").gameObject.AddComponent<HudBadge>();
-            OwnerUiLayout.Place(_crowns[i].rectTransform, 46, -16, 32, 26); _crowns[i].raycastTarget = false;
+            OwnerUiLayout.Place(_crowns[i].rectTransform, 52, -Pop - 18, 34, 28); _crowns[i].raycastTarget = false;
 
             // The seat tag ties this card to its round bead: seat colour on a small brown chip.
             var tagPlate = OwnerUiLayout.Rect(row, "SeatTagPlate").gameObject.AddComponent<HudCard>();
-            OwnerUiLayout.Place(tagPlate.rectTransform, 3, 55, 36, 22);
+            OwnerUiLayout.Place(tagPlate.rectTransform, 0, ChipHeight - 28, 46, 30);
             tagPlate.Toy(HudDraw.Brown, Color.clear, 0, 5, 0).raycastTarget = false; tagPlate.Sheen = false;
-            _seatTags[i] = OwnerUiLayout.Text(row, "SeatTag", "", 19, OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(_seatTags[i].rectTransform, 3, 54, 36, 24);
+            _seatTags[i] = OwnerUiLayout.Text(row, "SeatTag", "", 28, OwnerUiLayout.TypeRole.Display);
+            OwnerUiLayout.Place(_seatTags[i].rectTransform, 0, ChipHeight - 29, 46, 30);
             _seatTags[i].alignment = TextAnchor.MiddleCenter; _seatTags[i].color = PlayerIdentity.Colour(i);
             _seatTags[i].verticalOverflow = VerticalWrapMode.Overflow; _seatTags[i].horizontalOverflow = HorizontalWrapMode.Overflow;
 
+            // The role chip: the guide's role colour as one solid toy chip holding the state icon,
+            // blue for the taya with the can, orange for a thrower with the slipper.
+            var well = _roleChips[i] = OwnerUiLayout.Rect(row, "StateWell").gameObject.AddComponent<HudCard>();
+            OwnerUiLayout.Place(well.rectTransform, ChipWidth - 52, (ChipHeight - 46) * .5f - 2, 42, 46);
+            well.Toy(HudDraw.ThrowerOrange, new Color32(150, 60, 14, 255), 4, 10, .3f).raycastTarget = false; well.Sheen = false;
+            well.FollowContrast = false;
             _stateBadges[i] = OwnerUiLayout.Rect(row, "StateBadge").gameObject.AddComponent<HudBadge>();
-            OwnerUiLayout.Place(_stateBadges[i].rectTransform, ChipWidth - 40, 20, 30, 38);
+            OwnerUiLayout.Place(_stateBadges[i].rectTransform, ChipWidth - 46, (ChipHeight - 34) * .5f - 2, 30, 34);
             _stateBadges[i].Detail = HudDraw.Cream; _stateBadges[i].Rim = Color.clear; _stateBadges[i].raycastTarget = false;
 
             _names[i] = OwnerUiLayout.Text(row, "PlayerName", "", 28, OwnerUiLayout.TypeRole.Reading);
-            OwnerUiLayout.Place(_names[i].rectTransform, 82, 5, ChipWidth - 82 - 44, 32);
+            OwnerUiLayout.Place(_names[i].rectTransform, 80, 1, ChipWidth - 80 - 56, 30);
             _names[i].alignment = TextAnchor.MiddleLeft; _names[i].color = new Color32(96, 64, 44, 255);
             _names[i].horizontalOverflow = HorizontalWrapMode.Overflow; _names[i].verticalOverflow = VerticalWrapMode.Overflow;
 
             _scores[i] = OwnerUiLayout.Text(row, "Score", "", ScoreFont, OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(_scores[i].rectTransform, 82, 30, ChipWidth - 82 - 44, 44);
+            OwnerUiLayout.Place(_scores[i].rectTransform, 76, 22, ChipWidth - 76 - 52, 46);
             _scores[i].alignment = TextAnchor.MiddleLeft; _scores[i].color = HudDraw.Brown;
             _scores[i].horizontalOverflow = HorizontalWrapMode.Overflow;
             _scores[i].verticalOverflow = VerticalWrapMode.Overflow;
 
             var mark = _localMarks[i] = OwnerUiLayout.Rect(row, "LocalMark").gameObject.AddComponent<HudCard>();
-            OwnerUiLayout.Place(mark.rectTransform, (ChipWidth - 66) * .5f, ChipHeight + CardDepth + 2, 66, 28);
+            OwnerUiLayout.Place(mark.rectTransform, (ChipWidth - 78) * .5f + 20, ChipHeight + CardDepth + 2, 78, 34);
             mark.Toy(HudDraw.Honey, HudDraw.HoneySide, 4, 7, .3f).raycastTarget = false; mark.Sheen = false;
-            var you = OwnerUiLayout.Text(mark.transform, "LocalMarkLabel", "You", 24, OwnerUiLayout.TypeRole.Display);
+            var you = OwnerUiLayout.Text(mark.transform, "LocalMarkLabel", "You", 28, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Fill(you.rectTransform); you.alignment = TextAnchor.MiddleCenter; you.color = HudDraw.Brown;
             you.horizontalOverflow = HorizontalWrapMode.Overflow; you.verticalOverflow = VerticalWrapMode.Overflow;
             mark.gameObject.SetActive(false);
@@ -284,7 +293,11 @@ namespace TumbangPreso.UI
 
         private void MatchBarClock(MatchDirector match, RoundDirector round, int time)
         {
-            _clock.color = time <= 10 && round.RoundActive ? HudDraw.Honey : HudDraw.Cream;
+            bool urgent = time <= 10 && round.RoundActive;
+            _clock.color = urgent ? HudDraw.Honey : HudDraw.Cream;
+            float tick = urgent && !Settings.SettingsStore.Current.ReducedUiMotion ? 1 - Mathf.Repeat(round.TimeLeft, 1f) : 1;
+            float pulse = 1 + .14f * (1 - Mathf.Clamp01(tick / .25f)) * (urgent ? 1 : 0);
+            _clock.rectTransform.localScale = Vector3.one * pulse;
             _pips.Set(Mathf.Max(1, match.TotalRounds), match.IsWarmupBuffer ? 0 : match.RoundNumber);
             float gap = _pips.Count >= 4 && _pips.Count % 2 == 0 ? _pips.Gap : 0;
             float width = _pips.Count * _pips.Diameter + (_pips.Count - 1) * _pips.Gap + gap + 18;
@@ -308,8 +321,11 @@ namespace TumbangPreso.UI
             _seatTags[i].text = PlayerIdentity.Label(slot);
             if (_seatTags[i].color != seat) _seatTags[i].color = seat;
             _names[i].enabled = true; PaintCardName(i, slot);
-            var role = defender ? UiTheme.Defense : UiTheme.Offense;
-            if (_chipCards[i].Side != role) { _chipCards[i].Side = role; _chipCards[i].SetVerticesDirty(); }
+            var role = defender ? HudDraw.TayaBlue : HudDraw.ThrowerOrange;
+            if (_roleChips[i] != null && _roleChips[i].color != role)
+            {
+                _roleChips[i].color = role; _roleChips[i].Side = Color.Lerp(role, Color.black, .4f); _roleChips[i].SetVerticesDirty();
+            }
             if (_localMarks[i] != null && _localMarks[i].gameObject.activeSelf != mine) _localMarks[i].gameObject.SetActive(mine);
             if (_chipSwatches[i].color != seat) _chipSwatches[i].color = seat;
             _roleBadges[i].Show(HudBadge.Glyph.None, Color.clear, Color.clear);
@@ -319,9 +335,9 @@ namespace TumbangPreso.UI
             // can is whole upright and half when down. A stun or a swim overrides both, because
             // a player who cannot act is the more urgent fact about that seat.
             var lata = GameServices.Round != null ? GameServices.Round.Lata : null;
-            var ink = Settings.SettingsStore.Current.HighContrastHud ? Color.white : HudDraw.Brown; var faded = ink; faded.a = .4f;
+            var ink = HudDraw.Cream; var faded = ink; faded.a = .42f;
             if (actor.IsSwimming) _stateBadges[i].Show(HudBadge.Glyph.Wave, ink, Color.clear);
-            else if (actor.IsTripped || actor.IsStunned) _stateBadges[i].Show(HudBadge.Glyph.Star, UiTheme.Offense, Color.clear);
+            else if (actor.IsTripped || actor.IsStunned) _stateBadges[i].Show(HudBadge.Glyph.Star, HudDraw.Honey, Color.clear);
             else if (defender) _stateBadges[i].Show(lata == null || lata.IsUpright ? HudBadge.Glyph.Can : HudBadge.Glyph.CanDown,
                 lata == null || lata.IsUpright ? ink : faded, Color.clear);
             else _stateBadges[i].Show(HudBadge.Glyph.Slipper, actor.HoldingSlipper ? ink : faded, Color.clear);

@@ -19,13 +19,21 @@ namespace TumbangPreso.UI
     {
         private float _fill;
         private bool _ready, _active, _ultimate;
-        private const int UltimateNotches = 10;
+        /// <summary>The copy drawn over the art: only the drain, the jar level and the active level.</summary>
+        public bool Overlay;
+        
 
         public void State(float fill, bool ready, bool active, bool ultimate)
         {
             fill = Mathf.Clamp01(fill);
             if (Mathf.Abs(fill - _fill) < .002f && _ready == ready && _active == active && _ultimate == ultimate) return;
             _fill = fill; _ready = ready; _active = active; _ultimate = ultimate; SetVerticesDirty();
+            if (Overlay)
+            {
+                // Nothing to cover (a ready power) means nothing drawn and nothing claiming to be drawn.
+                bool band = ultimate ? fill > .001f : active || (!ready && fill < .999f);
+                canvasRenderer.SetAlpha(band ? 1 : 0);
+            }
         }
 
         protected override void OnPopulateMesh(VertexHelper helper)
@@ -34,34 +42,51 @@ namespace TumbangPreso.UI
             var rect = GetPixelAdjustedRect();
             float radius = Mathf.Min(rect.width, rect.height) * .5f - 6;
             var centre = rect.center;
-            var gold = HudDraw.Honey;
-            // A toy tile: cream (honey when ready) with an extruded side, a brown face inset into
-            // it, and the timer ring inside the face. The bevel matches every other match tile.
+            // ⚠️ UI REVAMP 2026-10-06: THE FACE IS THE BUTTON. A thin rim in the state colour (honey
+            // ready, cream cooling, orange active) round a brown face the art fills; a cooldown is
+            // a shade over the face that drains away from the top, and the ultimate is a honey
+            // level rising in it like a jar. Both follow the tile's own bevelled corners.
             var tile = new Rect(rect.xMin + 3, rect.yMin + 9, rect.width - 6, rect.height - 12);
             float cut = tile.width * .2f;
-            var shadow = HudDraw.Shadow; shadow.a = .32f;
-            HudDraw.Bevelled(helper, new Rect(tile.xMin + 2, tile.yMin - 13, tile.width, tile.height), cut + 2, shadow);
-            HudDraw.Bevelled(helper, new Rect(tile.xMin, tile.yMin - 8, tile.width, tile.height), cut, _ready ? HudDraw.HoneySide : HudDraw.CreamSide);
-            HudDraw.Bevelled(helper, tile, cut, _ready ? gold : HudDraw.Cream);
-            var face = HudDraw.Inset(tile, tile.width * .09f);
-            HudDraw.Bevelled(helper, face, cut * .75f, HudDraw.Brown);
-            centre = face.center; radius = face.width * .5f + 2;
-            float outer = radius - 3, inner = radius - 9;
-            var track = new Color(1, 1, 1, .14f);
-            Color ink = _active ? UiTheme.Offense : _ready ? gold : HudDraw.Cream;
-            if (!_ultimate)
+            Color rim = _active ? UiTheme.Offense : _ready ? HudDraw.Honey : HudDraw.Cream;
+            Color side = _active ? new Color32(176, 70, 14, 255) : _ready ? HudDraw.HoneySide : HudDraw.CreamSide;
+            var face = HudDraw.Inset(tile, 5);
+            float faceCut = cut - 2;
+            if (!Overlay)
             {
-                HudDraw.Arc(helper, centre, outer, inner, 90, 360, track);
-                HudDraw.Arc(helper, centre, outer, inner, 90, 360 * _fill, ink);
+                var shadow = HudDraw.Shadow; shadow.a = .32f;
+                HudDraw.Bevelled(helper, new Rect(tile.xMin + 2, tile.yMin - 13, tile.width, tile.height), cut + 2, shadow);
+                HudDraw.Bevelled(helper, new Rect(tile.xMin, tile.yMin - 8, tile.width, tile.height), cut, side);
+                HudDraw.Bevelled(helper, tile, cut, rim);
+                HudDraw.Bevelled(helper, face, faceCut, HudDraw.Brown);
+                if (_ready && !_ultimate)
+                {
+                    var sheen = Color.Lerp(HudDraw.Honey, Color.white, .5f); sheen.a = .7f;
+                    HudDraw.Bevelled(helper, new Rect(tile.xMin + cut + 3, tile.yMax - 5, tile.width - cut * 2 - 6, 2.5f), 1, sheen);
+                }
                 return;
             }
-            float each = 360f / UltimateNotches, gap = 7;
-            for (int i = 0; i < UltimateNotches; i++)
+            if (_ultimate)
             {
-                float start = 90 - i * each - gap * .5f, span = each - gap;
-                float lit = Mathf.Clamp01(_fill * UltimateNotches - i);
-                HudDraw.Arc(helper, centre, outer, inner, start, span, track, 96);
-                HudDraw.Arc(helper, centre, outer, inner, start, span * lit, ink, 96);
+                // The jar: honey rises from the bottom; a full jar glows with the whole face.
+                var level = HudDraw.Honey; level.a = _ready ? .5f : .32f;
+                HudDraw.BevelledBand(helper, face, faceCut, face.yMin, face.yMin + face.height * _fill, level);
+                if (_fill > .001f && _fill < .999f)
+                    HudDraw.BevelledBand(helper, face, faceCut, face.yMin + face.height * _fill - 2, face.yMin + face.height * _fill + 1, HudDraw.Honey);
+            }
+            else if (!_ready && !_active)
+            {
+                // The drain: what is left of the cooldown shades the top of the face.
+                var shade = new Color(0, 0, 0, .5f);
+                HudDraw.BevelledBand(helper, face, faceCut, face.yMin + face.height * _fill, face.yMax, shade);
+                if (_fill > .001f && _fill < .999f)
+                    HudDraw.BevelledBand(helper, face, faceCut, face.yMin + face.height * _fill - 1, face.yMin + face.height * _fill + 1.5f, HudDraw.Cream);
+            }
+            else if (_active)
+            {
+                // An active power counts its own time down as an orange level.
+                var level = UiTheme.Offense; level.a = .38f;
+                HudDraw.BevelledBand(helper, face, faceCut, face.yMin, face.yMin + face.height * _fill, level);
             }
         }
     }

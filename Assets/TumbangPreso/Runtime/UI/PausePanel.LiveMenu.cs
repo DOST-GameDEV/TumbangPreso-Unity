@@ -46,7 +46,7 @@ namespace TumbangPreso.UI
 
             _title = OwnerUiLayout.Text(holder, "PauseTitle", "Match Menu", 66, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(_title.rectTransform, 44, 100, 540, 92); _title.color = HudDraw.Brown;
-            _title.horizontalOverflow = HorizontalWrapMode.Overflow;
+            _title.horizontalOverflow = HorizontalWrapMode.Overflow; _title.verticalOverflow = VerticalWrapMode.Overflow;
             var notice = OwnerUiLayout.Text(holder, "LiveNotice", "The match keeps playing while this menu is open.", 32);
             _notice = notice; notice.color = HudDraw.BrownMuted;
             OwnerUiLayout.Place(notice.rectTransform, 46, 194, 530, 84);

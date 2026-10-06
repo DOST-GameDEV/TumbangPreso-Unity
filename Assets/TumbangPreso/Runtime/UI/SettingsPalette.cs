@@ -16,17 +16,19 @@ namespace TumbangPreso.UI
     /// </summary>
     public static class SettingsPalette
     {
-        public static readonly Color Background = new Color32(34, 31, 29, 255);
-        public static readonly Color Surface = new Color32(47, 43, 40, 255);
-        public static readonly Color Control = new Color32(64, 59, 55, 255);
-        public static readonly Color Ink = new Color32(242, 237, 228, 255);
-        public static readonly Color Muted = new Color32(194, 186, 176, 255);
-        public static readonly Color Accent = new Color32(194, 211, 106, 255);
-        public static readonly Color Rule = new Color32(106, 99, 92, 255);
-        public static readonly Color Pressed = new Color32(221, 231, 158, 255);
+        // UI revamp 2026-10-06: the match HUD's toy family. The owner's dark workspace stays dark,
+        // now the warm brown of the clock tile; cream words and honey for the live choice.
+        public static readonly Color Background = new Color32(44, 27, 17, 255);
+        public static readonly Color Surface = new Color32(58, 37, 24, 255);
+        public static readonly Color Control = new Color32(80, 53, 35, 255);
+        public static readonly Color Ink = new Color32(255, 245, 224, 255);
+        public static readonly Color Muted = new Color32(214, 190, 160, 255);
+        public static readonly Color Accent = new Color32(255, 196, 64, 255);
+        public static readonly Color Rule = new Color32(112, 80, 56, 255);
+        public static readonly Color Pressed = new Color32(255, 222, 150, 255);
 
         /// <summary>The dark lettering drawn ON the accent (the filled SAVE, a listening keycap).</summary>
-        public static readonly Color OnAccent = new Color32(34, 31, 18, 255);
+        public static readonly Color OnAccent = new Color32(56, 33, 20, 255);
 
         /// <summary>The live row's band: accent at 18 per cent over the surface (see
         /// `SettingsControlFocus` for why 9 per cent was not enough).</summary>

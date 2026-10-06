@@ -81,8 +81,11 @@ namespace TumbangPreso.UI
                 _chipName[i] = OwnerUiLayout.Text(chip, "StatusName", StatusTitle(StatusIcons.Name(kind)), 34, OwnerUiLayout.TypeRole.Display);
                 _chipName[i].color = HudDraw.Brown; _chipName[i].alignment = TextAnchor.MiddleLeft;
                 _chipName[i].horizontalOverflow = HorizontalWrapMode.Overflow; _chipName[i].verticalOverflow = VerticalWrapMode.Overflow;
-                _chipTime[i] = OwnerUiLayout.Text(chip, "StatusTime", "", 28, OwnerUiLayout.TypeRole.Display);
-                _chipTime[i].alignment = TextAnchor.MiddleRight; _chipTime[i].color = Color.Lerp(StatusColour(kind), HudDraw.Brown, .55f);
+                var timeChip = OwnerUiLayout.Rect(chip, "StatusTimeChip").gameObject.AddComponent<HudCard>();
+                Pin(timeChip.rectTransform, new Vector2(0, .5f), new Vector2(Medal * .5f, -Medal * .5f + 6), new Vector2(78, 32));
+                timeChip.Toy(HudDraw.Brown, HudDraw.BrownSide, 3, 7, .3f).raycastTarget = false; timeChip.Sheen = false;
+                _chipTime[i] = OwnerUiLayout.Text(timeChip.transform, "StatusTime", "", 28, OwnerUiLayout.TypeRole.Display);
+                _chipTime[i].alignment = TextAnchor.MiddleCenter; _chipTime[i].color = StatusColour(kind);
                 _chipTime[i].horizontalOverflow = HorizontalWrapMode.Overflow; _chipTime[i].verticalOverflow = VerticalWrapMode.Overflow;
                 _chipTenths[i] = -1;
                 _chipTip[i] = OwnerUiLayout.Text(chip, "StatusTooltip", StatusIcons.Tooltip(kind), 28, OwnerUiLayout.TypeRole.Reading);
@@ -91,7 +94,7 @@ namespace TumbangPreso.UI
                 _chipTip[i].lineSpacing = .95f;
 
                 // Measure this status's own tab once: name line, then its real explanation.
-                const float nameHeight = 40, timeWidth = 70;
+                const float nameHeight = 40, timeWidth = 0;
                 Pin(_chipTip[i].rectTransform, new Vector2(0, .5f), Vector2.zero, new Vector2(TipWrap, 40));
                 float tipWidth = Mathf.Min(TipWrap, Mathf.Ceil(_chipTip[i].preferredWidth) + 12);
                 _chipTip[i].rectTransform.sizeDelta = new Vector2(tipWidth, 40);
@@ -104,8 +107,7 @@ namespace TumbangPreso.UI
                 float top = height * .5f - 10;
                 Pin(_chipName[i].rectTransform, new Vector2(0, .5f), new Vector2(TabLeft + (content - timeWidth - 8) * .5f, top - nameHeight * .5f),
                     new Vector2(content - timeWidth - 8, nameHeight));
-                Pin(_chipTime[i].rectTransform, new Vector2(0, .5f), new Vector2(TabLeft + content - timeWidth * .5f, top - nameHeight * .5f),
-                    new Vector2(timeWidth, nameHeight));
+                OwnerUiLayout.Fill(_chipTime[i].rectTransform);
                 Pin(_chipTip[i].rectTransform, new Vector2(0, .5f), new Vector2(TabLeft + tipWidth * .5f, top - nameHeight - 2 - tipHeight * .5f),
                     new Vector2(tipWidth, tipHeight));
                 _chip[i] = chip; chip.gameObject.SetActive(false);
@@ -168,6 +170,9 @@ namespace TumbangPreso.UI
                 _chipRing[i].Set(Mathf.Clamp01(left / total));
                 _chipRing[i].Paint(StatusColour(kind), new Color(1, 1, 1, .16f));
                 // Rewritten only when the shown tenth changes, never every frame.
+                bool ending = left < 1f && left > 0 && !settings.ReducedUiMotion;
+                var timeColour = ending && Mathf.Repeat(Time.unscaledTime * 6f, 1) < .5f ? HudDraw.Cream : StatusColour(kind);
+                if (_chipTime[i].color != timeColour) _chipTime[i].color = timeColour;
                 int tenths = Mathf.CeilToInt(left * 10);
                 if (_chipTenths[i] != tenths)
                 {

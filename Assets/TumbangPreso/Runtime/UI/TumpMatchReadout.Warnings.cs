@@ -13,7 +13,7 @@ namespace TumbangPreso.UI
         private HudCard _warningPlate, _reasonPlate;
         private CharacterMotor _warningOwner;
         private string _recentWarning, _warningWords;
-        private float _warningUntil, _titleWidth, _reasonWidth;
+        private float _warningUntil, _titleWidth, _reasonWidth, _warningShookAt = -10;
         /// <summary>The exact refusal sentence the rules produced, whatever the two lines draw.</summary>
         public string WarningText => _warningRoot != null && _warningRoot.gameObject.activeSelf ? _warningWords ?? "" : "";
         private const float WarningTitleHeight = 48, WarningReasonHeight = 38, WarningInset = 7, TextSlack = 12;
@@ -128,7 +128,7 @@ namespace TumbangPreso.UI
             if(!show)return;
             if(_warningWords!=text)
             {
-                _warningWords=text;
+                _warningWords=text;_warningShookAt=Time.unscaledTime;
                 int split=text.IndexOf(" - ",System.StringComparison.Ordinal);
                 _warningText.text=WarningSentence(split>=0?text.Substring(0,split):text);
                 _warningReason.text=split>=0?WarningSentence(text.Substring(split+3)):"";

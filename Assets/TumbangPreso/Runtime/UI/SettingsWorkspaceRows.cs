@@ -40,7 +40,7 @@ namespace TumbangPreso.UI
             var slider = root.gameObject.AddComponent<Slider>(); slider.minValue = minimum; slider.maxValue = maximum;
             root.gameObject.AddComponent<SettingsControlFocus>();
             var track = OwnerUiLayout.Rect(root, "Track").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Place(track.rectTransform, 17, 33, 360, 10); track.color = SettingsPalette.Rule; track.raycastTarget = false;
+            OwnerUiLayout.Place(track.rectTransform, 17, 31, 360, 14); track.color = SettingsPalette.Background; track.raycastTarget = false;
             var fill = OwnerUiLayout.Rect(track.transform, "Fill").gameObject.AddComponent<Image>();
             OwnerUiLayout.Fill(fill.rectTransform); fill.color = SettingsPalette.Accent; fill.raycastTarget = false; slider.fillRect = fill.rectTransform;
             var handles = OwnerUiLayout.Rect(root, "HandleArea"); OwnerUiLayout.Place(handles, 17, 17, 360, 44);
@@ -89,21 +89,17 @@ namespace TumbangPreso.UI
         public static void Chip(Button button, bool keycap)
         {
             var label = button.GetComponentInChildren<Text>();
-            var face = OwnerUiLayout.Rect(button.transform, "ChipFace").gameObject.AddComponent<Image>();
-            face.rectTransform.SetAsFirstSibling(); face.raycastTarget = false;
-            face.color = keycap ? SettingsPalette.Control : new Color(0, 0, 0, 0);
-            var edge = face.gameObject.AddComponent<Outline>();
-            edge.effectColor = keycap ? SettingsPalette.Rule : SettingsPalette.Accent; edge.effectDistance = new Vector2(2, -2);
-            edge.useGraphicAlpha = false;   // the pill's face is transparent; see `TumpSettingsView.Build`
-            if (keycap)
-            {
-                // The keycap's lower lip: a darker strip that makes it read as a key sitting up.
-                var lip = OwnerUiLayout.Rect(face.transform, "KeyLip").gameObject.AddComponent<Image>();
-                lip.rectTransform.anchorMin = Vector2.zero; lip.rectTransform.anchorMax = new Vector2(1, 0);
-                lip.rectTransform.offsetMin = Vector2.zero; lip.rectTransform.offsetMax = new Vector2(0, 6);
-                lip.color = SettingsPalette.Background; lip.raycastTarget = false;
-            }
+            // UI revamp 2026-10-06: a keycap is a real cream toy key on a tan side; a command is the
+            // same toy tile with a honey face, so both look pressable at a glance.
+            var face = OwnerUiLayout.Rect(button.transform, "ChipFace").gameObject.AddComponent<HudCard>();
+            face.rectTransform.SetAsFirstSibling(); face.raycastTarget = false; face.FollowContrast = false;
+            if (keycap) face.Toy(HudDraw.Cream, HudDraw.CreamSide, 6, 10, .35f);
+            else face.Toy(HudDraw.Honey, HudDraw.HoneySide, 6, 12, .35f);
             label.alignment = TextAnchor.MiddleCenter; label.font = OwnerUiTheme.Current.Display;
+            var colours = button.colors;
+            colours.normalColor = HudDraw.Brown; colours.highlightedColor = colours.selectedColor = new Color32(176, 70, 14, 255);
+            colours.pressedColor = HudDraw.BrownSide; colours.disabledColor = new Color32(128, 94, 70, 160);
+            button.colors = colours;
             FitChip(button);
         }
 
@@ -112,21 +108,16 @@ namespace TumbangPreso.UI
         public static void Slab(Button button, bool primary)
         {
             var label = button.GetComponentInChildren<Text>();
-            var face = OwnerUiLayout.Rect(button.transform, "SlabFace").gameObject.AddComponent<Image>();
-            face.rectTransform.SetAsFirstSibling(); OwnerUiLayout.Fill(face.rectTransform); face.raycastTarget = false;
-            face.color = primary ? SettingsPalette.Accent : new Color(0, 0, 0, 0);
-            var edge = face.gameObject.AddComponent<Outline>();
-            edge.effectColor = primary ? SettingsPalette.OnAccent : SettingsPalette.Rule;
-            edge.effectDistance = new Vector2(3, -3); edge.useGraphicAlpha = false;
+            var face = OwnerUiLayout.Rect(button.transform, "SlabFace").gameObject.AddComponent<HudCard>();
+            face.rectTransform.SetAsFirstSibling(); OwnerUiLayout.Fill(face.rectTransform); face.raycastTarget = false; face.FollowContrast = false;
+            if (primary) face.Toy(HudDraw.Honey, HudDraw.HoneySide, 7, 14, .38f);
+            else face.Toy(HudDraw.Cream, HudDraw.CreamSide, 7, 14, .38f);
             label.alignment = TextAnchor.MiddleCenter; label.font = OwnerUiTheme.Current.Display;
             OwnerUiLayout.Fill(label.rectTransform);
-            if (primary)
-            {
-                var colours = button.colors;
-                colours.normalColor = colours.highlightedColor = colours.selectedColor = SettingsPalette.OnAccent;
-                colours.pressedColor = SettingsPalette.Background;
-                button.colors = colours;
-            }
+            var colours = button.colors;
+            colours.normalColor = HudDraw.Brown; colours.highlightedColor = colours.selectedColor = new Color32(176, 70, 14, 255);
+            colours.pressedColor = HudDraw.BrownSide;
+            button.colors = colours;
             button.gameObject.AddComponent<SettingsControlFocus>();
         }
 

@@ -24,7 +24,7 @@ namespace TumbangPreso.UI
             _toastPlate.Toy(HudDraw.Cream, HudDraw.CreamSide, 8, 16, .42f).raycastTarget = false; _toastPlate.enabled = false;
             Pin(_toastPlate.rectTransform, new Vector2(.5f, 1), new Vector2(0, -196), new Vector2(400, ToastHeight));
             _toastPlate.rectTransform.localRotation = Quaternion.Euler(0, 0, ToastTilt);
-            _toast = OwnerUiLayout.Text(_root, "MatchToast", "", 44, OwnerUiLayout.TypeRole.Display); _toast.color = HudDraw.Brown;
+            _toast = OwnerUiLayout.Text(_root, "MatchToast", "", 36, OwnerUiLayout.TypeRole.Display); _toast.color = HudDraw.Brown;
             _toast.alignment = TextAnchor.MiddleCenter; _toast.verticalOverflow = VerticalWrapMode.Overflow;
             Pin(_toast.rectTransform, new Vector2(.5f, 1), new Vector2(0, -196), new Vector2(1080, ToastHeight)); _toast.enabled = false;
             _toast.rectTransform.localRotation = Quaternion.Euler(0, 0, ToastTilt);

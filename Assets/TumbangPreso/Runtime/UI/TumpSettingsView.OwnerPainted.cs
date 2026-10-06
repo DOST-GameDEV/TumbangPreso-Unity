@@ -53,7 +53,8 @@ namespace TumbangPreso.UI
             for(int i=0;i<_tabs.Count;i++)
             {
                 _tabs[i].transform.Find("SelectedSection").gameObject.SetActive(i==_tab);
-                var colours=_tabs[i].colors; colours.normalColor=i==_tab?SettingsPalette.Accent:SettingsPalette.Ink;
+                var tabFace=_tabs[i].transform.Find("TabFace")?.GetComponent<HudCard>();if(tabFace!=null)tabFace.enabled=i==_tab;
+                var colours=_tabs[i].colors; colours.normalColor=i==_tab?(tabFace!=null?SettingsPalette.OnAccent:SettingsPalette.Accent):SettingsPalette.Ink;
                 _tabs[i].colors=colours;
             }
             _heading.text=Sections[_tab];

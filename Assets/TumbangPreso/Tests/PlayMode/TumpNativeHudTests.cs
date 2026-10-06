@@ -263,7 +263,7 @@ namespace TumbangPreso.PlayTests
             var hud = Hud.Instance; var canvas = GameObject.Find("OwnerMatchCanvas").GetComponent<Canvas>();
             var local = Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None).First(m => m.PlayerSlot == GameLaunch.SoloSeat);
             Assert.IsTrue(canvas.transform.Find("PowerSeals").gameObject.activeSelf);
-            Assert.AreEqual(3, canvas.GetComponentsInChildren<OwnerAbilitySeal>().Length);
+            Assert.AreEqual(3, canvas.GetComponentsInChildren<OwnerAbilitySeal>().Count(seal => !seal.Overlay), "The deck holds three powers.");
             float share = 1; string detail = "";
             yield return TumpUiCapture.Capture("OwnerHud-Hero-v1", canvas, 1920, 1080, false, true,
                 inspectViewport: () => share = TumpUiCapture.HudShare(canvas, out detail));
