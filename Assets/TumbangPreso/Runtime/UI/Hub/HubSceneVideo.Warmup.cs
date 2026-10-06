@@ -92,6 +92,16 @@ namespace TumbangPreso.UI.Hub
             video.gameObject.layer = scene.gameObject.layer;
             video.GetComponent<AspectRatioFitter>().enabled = true;
             video._preloading = false;
+            // Windows can retain a paused first-frame decoder as "playing"
+            // after scene adoption without advancing its frame. Reprepare the
+            // same player/target; keep its poster visible until a fresh frame.
+            if (video.Player != null && !Settings.SettingsStore.Current.ReducedUiMotion)
+            {
+                video.Player.Stop();
+                video.Prepared = false; video.FirstFrameReady = false;
+                video.Player.sendFrameReadyEvents = true;
+                video.Player.Prepare();
+            }
             return video;
         }
     }

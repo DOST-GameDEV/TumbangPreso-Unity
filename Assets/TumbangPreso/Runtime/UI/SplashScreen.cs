@@ -126,6 +126,20 @@ namespace TumbangPreso.UI
 
         private IEnumerator Run()
         {
+            // Startup is logos only. Preparation belongs to the visible title
+            // after account admission, never to an illustrated screen before login.
+            GameServices.Music?.StopNow();
+            yield return PlayStudioIntro();
+            ReleaseStudioIntro();
+            BootSting.Stop();
+            SceneFlow.BootedThroughSplash = true;
+            SceneFlow.LoginStepOffered = false;
+            _menu = SceneManager.LoadSceneAsync(SceneFlow.MainMenu);
+            while (_menu != null && !_menu.isDone) yield return null;
+        }
+
+        private IEnumerator RunLegacyPreparation()
+        {
             GameServices.Music?.StopNow();
             yield return PlayStudioIntro();
             BuildSurface();

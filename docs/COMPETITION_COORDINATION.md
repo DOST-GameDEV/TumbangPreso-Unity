@@ -1,5 +1,19 @@
 # Competition engineering coordination
 
+October7 latest owner priority: correct startup to Unity/BH logos, LOGIN, supplied
+main/title used as loading for at least5seconds and until lobby preparation is
+ready, then Home/lobby. No old illustrated startup loading screen. PC owns this
+correction and first-arrival Home playback; laptop released startup files.
+Both chats have active goals and concise task-local checkpoints. After current
+units finish they may take the other's work only after checking file ownership.
+PC's following scope is humanlike all-feature/all-map bots, clear taya replay
+framing, distinct authored pre-match map cameras/poses/arrivals at Arena quality
+and slipper floating/attachment/reliability fixes. Laptop retains map-video,
+MapPreviewSurface/MapPreviewVideo, media/import/freshness and map-vote/result
+preview work. Owner authorizes autonomous work while sleeping; preserve data,
+profiles and separate machine/source ownership, with no unrelated workers or
+unapproved paid services. Compaction resumes exact refs/jobs and one next action.
+
 Owner directives confirmed October 3, 2026. These govern the ongoing competition
 engineering assignment. They are persistent instructions, not a work-status queue.
 Work status belongs in TODO; current execution belongs in ACTIVE_REWORK_LEDGER.

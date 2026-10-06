@@ -90,6 +90,8 @@ namespace TumbangPreso.PlayTests
                 Assert.IsFalse(prepared.GetComponent<UnityEngine.UI.RawImage>().enabled);
                 parent = new GameObject("HomeWarmupAdoption", typeof(RectTransform));
                 var adopted = HubSceneVideo.Install((RectTransform)parent.transform);
+                float preparedUntil = Time.realtimeSinceStartup + 15;
+                while ((!adopted.FirstFrameReady || !adopted.Player.isPlaying) && Time.realtimeSinceStartup < preparedUntil) yield return null;
                 Assert.AreSame(prepared, adopted); Assert.AreSame(player, adopted.Player);
                 Assert.AreSame(target, adopted.Player.targetTexture);
                 yield return null;

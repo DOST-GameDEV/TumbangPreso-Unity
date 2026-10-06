@@ -39,6 +39,8 @@ namespace TumbangPreso.UI
         private bool _homeAssetsStarted, _homeAssetsReady;
         private float _homeAssetsProgress;
         private bool _homeArrival;
+        public const float MinimumLoadingViewSeconds = 5;
+        private float _loadingViewBegan;
         private ThreadPriority _previousLoadingPriority;
         private bool _ownsLoadingPriority;
         public bool IsPrepared { get; private set; }
@@ -84,13 +86,8 @@ namespace TumbangPreso.UI
             if (signIn == null) signIn = gameObject.AddComponent<SignInScreen>();
             signIn.Opened += OnLoginVisibility;
             Cursor.lockState = CursorLockMode.None; Cursor.visible = true;
-            _bootLoading = SplashScreen.MenuActivationPending;
-            if (_bootLoading)
-            {
-                _nativeHome.SetLoading(true);
-                signIn.Install();
-            }
-            else OfferTheLoginStep();
+            _bootLoading = false;
+            OfferTheLoginStep();
             IsPrepared = true;
             if(!_bootLoading && !signIn.IsOpen) BeginHomeArrival();
         }
@@ -134,11 +131,11 @@ namespace TumbangPreso.UI
 
         private IEnumerator PreloadHomeAssets()
         {
-            yield return MapPreviewVideo.Warmup(done=>_homeAssetsProgress=.15f*done);
-            yield return SplashScreen.WarmGameplayAssets(done=>_homeAssetsProgress=.15f+.65f*done);
+            yield return null;
+            yield return MapPreviewVideo.Warmup(done=>_homeAssetsProgress=.35f*done);
             // Reuse the existing caches and decoder preparation rather than
             // making a second copy of the Home resource set.
-            yield return Hub.HubSceneVideo.Warmup(done=>_homeAssetsProgress=.8f+.2f*done);
+            yield return Hub.HubSceneVideo.Warmup(done=>_homeAssetsProgress=.35f+.65f*done);
             _homeAssetsReady=true;
         }
 
@@ -146,6 +143,7 @@ namespace TumbangPreso.UI
         {
             if(_homeArrival) return;
             _homeArrival=true;
+            _loadingViewBegan=Time.realtimeSinceStartup;
             _nativeHome.SetLoading(true);
             BeginHomePreload();
             StartCoroutine(ArriveHome());
@@ -153,7 +151,7 @@ namespace TumbangPreso.UI
 
         private IEnumerator ArriveHome()
         {
-            while(!_homeAssetsReady)
+            while(!_homeAssetsReady || Time.realtimeSinceStartup-_loadingViewBegan<MinimumLoadingViewSeconds)
             {
                 _nativeHome.SetLoadingProgress(_homeAssetsProgress*.65f);
                 yield return null;
