@@ -46,6 +46,13 @@ input/focus behavior would be lost if the rectangle were removed.
 
 ## Training Controls
 
+Custom-room MAP, GAME MODE and VISIBILITY use previous/current/next arrows in
+their existing form rectangles. No list popup is opened. Keep the registered
+options, live map callback, room creation indices and standard HubButton input
+paths. [Native selector evidence](reports/room-arrows-2026-10-07/README.md) covers
+cycling, pointer/Submit, navigation and1080/720 bounds; recorded map backgrounds
+are the independent preview work.
+
 PRACTICE-1 uses the existing pause entry and `PausePanel.TrainingRange.cs` for the
 offline range, with `PracticeRange.cs` owning gameplay changes. `Panel.Prepare`
 builds without entering; the owner must hide its root-level canvas until opening.

@@ -30,8 +30,11 @@
 - [ ] Clean pale edge sampling at field transparency boundaries without changing
   opaque artwork or its authored palette. Retain before/after captures at1080p
   and720p and inspect current screens before closing this critique.
-- [ ] After the coherent sharpness unit, replace create-room map/mode/visibility
+- [x] After the coherent sharpness unit, replace create-room map/mode/visibility
   dropdowns with previous/next arrows, keeping options and room behavior.
+  Native31336 cycles all options, validates callbacks, pointer/Submit/navigation,
+  no popup and Back at1080/720. Two cases pass; all21230 inputs/prefs restored.
+  Physical devices, actual room creation and recorded preview playback are separate.
 - [ ] Apply the owner's separate skill-UI-only reference from the laptop chat,
   preserving all other HUD fonts, controls and skill behavior. No broad rollback.
 

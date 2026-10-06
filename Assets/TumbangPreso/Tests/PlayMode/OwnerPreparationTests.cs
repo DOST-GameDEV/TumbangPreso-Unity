@@ -35,9 +35,10 @@ namespace TumbangPreso.PlayTests
                 yield return HubFlowTests.Press("ModeCard");
                 yield return HubFlowTests.Press("CustomCard");
                 yield return HubFlowTests.Press("HostDoor");
-                yield return HubFlowTests.Press("MapDropdown");
-                yield return HubFlowTests.Press("Option1");
-                Assert.AreEqual(SceneFlow.MapRegistry[1].Id, SceneFlow.SelectedMap);
+                int nextMap = (System.Array.FindIndex(SceneFlow.MapRegistry,x=>x.Id==SceneFlow.SelectedMap)+1)%SceneFlow.MapRegistry.Length;
+                yield return HubFlowTests.Press("MapNext");
+                Assert.IsInstanceOf<HubHost>(TumpHub.Current.Top);
+                Assert.AreEqual(SceneFlow.MapRegistry[nextMap].Id, SceneFlow.SelectedMap);
                 TumpHub.Current.Home();
                 yield return HubFlowTests.Press("MenuButton");
                 yield return HubFlowTests.Press("MenuMATCHRULES");

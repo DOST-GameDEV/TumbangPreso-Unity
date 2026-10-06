@@ -1,0 +1,9 @@
+{
+  "Assets/TumbangPreso/Runtime/UI/Hub/HubArrowChoice.cs": "79448a7bed78523af595ce9a29fd050a682eefb290d30c01a287d8a9eec9d487",
+  "Assets/TumbangPreso/Runtime/UI/Hub/HubArrowChoice.cs.meta": "6aa92f736b44803d2d5d98da08eb8a3215d1c12a7961d9cf858abb1c0817ab56",
+  "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs": "7a07e7e48bc9894330f72a55b28152ffc0f95677f4a3d3fdeb38b948091648c4",
+  "Assets/TumbangPreso/Tests/PlayMode/RoomArrowChoiceTests.cs": "12f9d64aebf2d6280dc03b0d50e4478d109efbf9bb1efcdd2ecde394d428c6ea",
+  "Assets/TumbangPreso/Tests/PlayMode/RoomArrowChoiceTests.cs.meta": "6598d9dffdbd841338a39de1fd9051c60fe58b0067d2ac456b4b9efd707fcd78",
+  "Assets/TumbangPreso/Tests/PlayMode/HubFlowTests.cs": "110f3e675e250f278825ae20e07de3d1b207594ddc114eb69600eb90739510b7",
+  "Assets/TumbangPreso/Tests/PlayMode/OwnerPreparationTests.cs": "cc1d3c1b468a416e6d63fc41b2ce3f0d9dca8ac3d956181176d0e14f56a38f8b"
+}

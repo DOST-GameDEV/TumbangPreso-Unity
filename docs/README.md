@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Custom-room choice arrows: [native selector and input evidence](reports/room-arrows-2026-10-07/README.md).
+
 Automatic startup and Home doors: [full boot and pointer-flow checks](reports/laptop-validation-2026-10-06/startup-auto-home-flow/README.md).
 
 Map preview pixels and failed-selection recovery: [native checks](reports/laptop-validation-2026-10-06/preview-selection-recovery/README.md).
