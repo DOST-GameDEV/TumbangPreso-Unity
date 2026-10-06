@@ -187,6 +187,8 @@ namespace TumbangPreso.UI
         private MapPreviewVideo _recorded;
         private Coroutine _swap;
         private bool _renderingEnabled = true;
+        /// <summary>Offline recorder uses the exact live camera even when media already exists.</summary>
+        public bool PreferRecordedPreview { get; set; } = true;
 
         public void SetRenderingEnabled(bool visible)
         {
@@ -366,7 +368,7 @@ namespace TumbangPreso.UI
         public void Show(string map)
         {
             if (_retiring || string.IsNullOrEmpty(map)) return;
-            if(!_lobbyShot&&MapPreviewVideo.PosterFor(map)!=null)
+            if(PreferRecordedPreview&&!_lobbyShot&&MapPreviewVideo.PosterFor(map)!=null)
             {
                 if(_swap!=null){StopCoroutine(_swap);_swap=null;_busy=false;EndPreviewLoad();}
                 _wantedMap=null;ReleasePreviewLook();Park(_showing);

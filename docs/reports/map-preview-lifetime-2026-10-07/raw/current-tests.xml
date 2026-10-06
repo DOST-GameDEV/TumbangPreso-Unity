@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 20:28:13Z" end-time="2026-10-06 20:29:17Z" duration="64.6567728">
+  <test-suite type="TestSuite" id="3435" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1975" result="Passed" start-time="2026-10-06 20:28:13Z" end-time="2026-10-06 20:29:17Z" duration="64.656773" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3427" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1975" result="Passed" start-time="2026-10-06 20:28:13Z" end-time="2026-10-06 20:29:17Z" duration="64.640720" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="59044" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3428" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1975" result="Passed" start-time="2026-10-06 20:28:13Z" end-time="2026-10-06 20:29:17Z" duration="64.631641" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3431" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1973" result="Passed" start-time="2026-10-06 20:28:13Z" end-time="2026-10-06 20:29:17Z" duration="64.622985" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2061" name="MapPreviewFreshnessTests" fullname="TumbangPreso.PlayTests.MapPreviewFreshnessTests" classname="TumbangPreso.PlayTests.MapPreviewFreshnessTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-06 20:28:13Z" end-time="2026-10-06 20:29:00Z" duration="46.755946" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2063" name="ExistingCapturedReceiptsMatchCurrentIntegration" fullname="TumbangPreso.PlayTests.MapPreviewFreshnessTests.ExistingCapturedReceiptsMatchCurrentIntegration" methodname="ExistingCapturedReceiptsMatchCurrentIntegration" classname="TumbangPreso.PlayTests.MapPreviewFreshnessTests" runstate="Runnable" seed="123738357" result="Passed" start-time="2026-10-06 20:28:13Z" end-time="2026-10-06 20:29:00Z" duration="46.745797" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[MapPreviewFreshness] All registered map source/media receipts match.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2073" name="MapPreviewVisibilityTests" fullname="TumbangPreso.PlayTests.MapPreviewVisibilityTests" classname="TumbangPreso.PlayTests.MapPreviewVisibilityTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-06 20:29:00Z" end-time="2026-10-06 20:29:00Z" duration="0.779369" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2074" name="HiddenPreparationRetainsItsPosterAndResumesDecoding" fullname="TumbangPreso.PlayTests.MapPreviewVisibilityTests.HiddenPreparationRetainsItsPosterAndResumesDecoding" methodname="HiddenPreparationRetainsItsPosterAndResumesDecoding" classname="TumbangPreso.PlayTests.MapPreviewVisibilityTests" runstate="Runnable" seed="1376583130" result="Passed" start-time="2026-10-06 20:29:00Z" end-time="2026-10-06 20:29:00Z" duration="0.778027" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2110" name="MapVotePreviewTests" fullname="TumbangPreso.PlayTests.MapVotePreviewTests" classname="TumbangPreso.PlayTests.MapVotePreviewTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-06 20:29:00Z" end-time="2026-10-06 20:29:17Z" duration="16.956060" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2111" name="NormalHostBallotSupportsPreviewThenLock" fullname="TumbangPreso.PlayTests.MapVotePreviewTests.NormalHostBallotSupportsPreviewThenLock" methodname="NormalHostBallotSupportsPreviewThenLock" classname="TumbangPreso.PlayTests.MapVotePreviewTests" runstate="Runnable" seed="1236529097" result="Passed" start-time="2026-10-06 20:29:00Z" end-time="2026-10-06 20:29:04Z" duration="3.659847" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code KZ2V
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <df5a90e102624fcabfa0630476b21047>:0 
+  at TumbangPreso.PlayTests.MapVotePreviewTests+<After>d__1.MoveNext () [0x00017] in <3a4223116703432dad19c03088160cd3>:0 
+  at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x0043e] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.EnumerableApplyChangesToContextCommand+<ExecuteEnumerable>d__1.MoveNext () [0x00091] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+]]></output>
+            </test-case>
+            <test-case id="2112" name="UnansweredBallotResolvesAtTheNormalDeadline" fullname="TumbangPreso.PlayTests.MapVotePreviewTests.UnansweredBallotResolvesAtTheNormalDeadline" methodname="UnansweredBallotResolvesAtTheNormalDeadline" classname="TumbangPreso.PlayTests.MapVotePreviewTests" runstate="Runnable" seed="604665246" result="Passed" start-time="2026-10-06 20:29:04Z" end-time="2026-10-06 20:29:17Z" duration="13.293137" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code R47J
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <df5a90e102624fcabfa0630476b21047>:0 
+  at TumbangPreso.PlayTests.MapVotePreviewTests+<After>d__1.MoveNext () [0x00017] in <3a4223116703432dad19c03088160cd3>:0 
+  at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x0043e] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.EnumerableApplyChangesToContextCommand+<ExecuteEnumerable>d__1.MoveNext () [0x00091] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

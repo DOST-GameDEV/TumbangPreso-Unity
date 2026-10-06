@@ -74,6 +74,7 @@ namespace TumbangPreso.UI
             if(_player!=null||_failed)return;
             _target=new RenderTexture((int)clip.width,(int)clip.height,0,RenderTextureFormat.ARGB32){name="RecordedMapPreview"};_target.Create();
             _player=gameObject.AddComponent<VideoPlayer>();_player.playOnAwake=false;_player.isLooping=true;
+            _player.timeUpdateMode=VideoTimeUpdateMode.UnscaledGameTime;
             _player.skipOnDrop=true;_player.waitForFirstFrame=true;_player.audioOutputMode=VideoAudioOutputMode.None;
             _player.renderMode=VideoRenderMode.RenderTexture;_player.targetTexture=_target;_player.clip=clip;
             _player.sendFrameReadyEvents=true;_player.prepareCompleted+=Prepared;_player.frameReady+=FirstFrame;_player.errorReceived+=Failed;
@@ -97,8 +98,10 @@ namespace TumbangPreso.UI
         }
         public void SetVisible(bool visible)
         {
+            bool resumed=visible&&!_visible;
             _visible=visible;
             if(!visible){if(_player!=null)_player.Pause();return;}
+            if(resumed&&!_firstFrame)_prepareStarted=Time.realtimeSinceStartup;
             if(Settings.SettingsStore.Current.ReducedUiMotion){if(_player!=null)_player.Pause();if(_image!=null)_image.texture=_poster;return;}
             if(_player!=null&&_player.isPrepared&&!_failed){if(_firstFrame&&_image!=null)_image.texture=_target;_player.Play();}
             else if(_player!=null&&!_failed&&_player.isActiveAndEnabled)
@@ -111,11 +114,11 @@ namespace TumbangPreso.UI
         void Update()
         {
             if(_resumeRequested){_resumeRequested=false;SetVisible(_visible);}
-            if(_player!=null&&!_firstFrame&&!_failed&&Time.realtimeSinceStartup-_prepareStarted>=30)
+            if(_visible&&_player!=null&&_player.isActiveAndEnabled&&!_firstFrame&&!_failed&&Time.realtimeSinceStartup-_prepareStarted>=30)
                 Failed(_player,"Decoder did not provide its first frame");
         }
         void OnDisable(){if(_player!=null)_player.Pause();}
-        void OnEnable(){_resumeRequested=true;}
+        void OnEnable(){if(!_firstFrame)_prepareStarted=Time.realtimeSinceStartup;_resumeRequested=true;}
         public void Stop()
         {
             if(_player!=null){_player.prepareCompleted-=Prepared;_player.frameReady-=FirstFrame;_player.errorReceived-=Failed;_player.Stop();_player.targetTexture=null;Destroy(_player);_player=null;}

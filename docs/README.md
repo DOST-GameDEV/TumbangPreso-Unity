@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Recorded preview interruption recovery and regeneration: [native failures, source receipts and normal vote deadline](reports/map-preview-lifetime-2026-10-07/README.md), [map-maker recording method](MAP_PREVIEW_RECORDING.md).
+
 Caught-player framing and recorded touch: [native map frames and remaining hero-contact failures](reports/catch-framing-2026-10-07/README.md).
 
 Corrected startup order and first Home playback: [cold native evidence and package gate](reports/startup-order-2026-10-07/README.md).

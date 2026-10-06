@@ -1,0 +1,45 @@
+{
+  "capturedMapRevision": "6778c2144eeed47414e37f4943326d641b5f4250",
+  "currentComparedRevision": "ced3fa7612b55666ce30e48970c793e18a1c74cb",
+  "cameraContractEqual": {
+    "private void AimAt(": true,
+    "private void ApplyCamera(": true,
+    "private void AdoptRange(": true,
+    "private void EnsureCamera(": true,
+    "private void EnsureWorldOutline(": true,
+    "private void ApplyMapEnvironment(": true,
+    "constants": true
+  },
+  "maps": {
+    "Arena": {
+      "serializedDependencyCount": 547,
+      "changedDependencies": []
+    },
+    "BayanPlaza": {
+      "serializedDependencyCount": 297,
+      "changedDependencies": []
+    },
+    "Eskinita": {
+      "serializedDependencyCount": 517,
+      "changedDependencies": []
+    },
+    "IlalimNgTulay": {
+      "serializedDependencyCount": 1919,
+      "changedDependencies": []
+    },
+    "Kanto": {
+      "serializedDependencyCount": 274,
+      "changedDependencies": []
+    },
+    "LagoonCove": {
+      "serializedDependencyCount": 443,
+      "changedDependencies": []
+    },
+    "SaBubong": {
+      "serializedDependencyCount": 334,
+      "changedDependencies": []
+    }
+  },
+  "changedExtraVisualInputs": [],
+  "limit": "Dependency/camera equivalence plus original capture receipts; not a new all-seven capture or visual acceptance."
+}

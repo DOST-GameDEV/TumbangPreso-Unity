@@ -18,11 +18,18 @@ media has a bounded fallback. [Native evidence](reports/studio-intro-2026-10-02/
 
 All seven maps have recorded map-selection backgrounds and matching posters.
 Voting previews the highlighted court in the full background; browsing is local,
-LOCK VOTE submits explicitly. [Native flow and media evidence](reports/map-vote-background-2026-10-07/README.md). Source freshness, normal vote pacing and packaged/peer acceptance remain open.
+LOCK VOTE submits explicitly. [Native flow and media evidence](reports/map-vote-background-2026-10-07/README.md).
+Native checks cover the normal12-second ballot deadline, interrupted decoder
+recovery and original captured-source receipts against the current integration.
+The [recording method](MAP_PREVIEW_RECORDING.md) regenerates true1080p footage
+without retaining the previous capture's live scene. [Exact evidence and limits](reports/map-preview-lifetime-2026-10-07/README.md).
+Packaged performance, loop seams, portable codecs and actual peers remain open.
 
 Arena map selection uses recorded output of the existing preview camera; the live
 lobby remains a real scene. Login warms map poster/clip metadata and only the
-shown view decodes. [Native playback and map-vote evidence](reports/recorded-map-preview-2026-10-07/README.md). Other maps/regeneration/player acceptance remain open.
+shown view decodes. [Native playback and map-vote evidence](reports/recorded-map-preview-2026-10-07/README.md).
+All seven maps now have checked recordings and a reusable regeneration path;
+player/device acceptance remains separate.
 
 Login-time gameplay assets: [native responsiveness and interruption checks](reports/laptop-validation-2026-10-06/login-gameplay-preload/README.md).
 
