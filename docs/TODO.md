@@ -47,6 +47,10 @@
   use. Original4 consumer failures/one control become5 native passes.
   Physical touch and spectator touch UI availability/commands remain open.
   [Evidence](reports/reliability-2026-10-06/spectator-touch-consumer/README.md).
+- [x] Prevent inactive first-person emote release from re-hiding a spectated
+  body. Native2 cause failures/three controls become5 passes; authored shadow
+  mode and active FPP preserved. Natural installed-model visibility stays open.
+  [Evidence](reports/reliability-2026-10-06/spectator-body-restore/README.md).
 - [ ] Plan and validate cinematic coverage while the match is happening for every
   individual character and map, including Classic/Hero Strike and Arena as a
   particular priority. Review subject selection, ability/contact timing, framing,

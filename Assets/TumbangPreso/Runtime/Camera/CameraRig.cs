@@ -1153,7 +1153,7 @@ namespace TumbangPreso.CameraSystem
         {
             RestoreSelfHide();
 
-            if (_character == null || _mode != CameraMode.Fpp || MatchArrivalPresentation.OwnsCamera) return;
+            if (!_active || _character == null || _mode != CameraMode.Fpp || MatchArrivalPresentation.OwnsCamera) return;
 
             var visual = _visual != null ? _visual : _character.GetComponent<Visual.CharacterVisual>();
             _hiddenModelInstance = visual != null ? visual.Model : null;

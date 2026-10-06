@@ -1,3 +1,15 @@
+## Current Root inactive FPP body restoration terminal
+
+Original24360/43228 two public-watch/emote-release rendererFAIL(On/Off->ShadowsOnly),
+three active/immediate/inactiveFollowcontrolsPASS. Candidate20244/95695 allfive
+PASS withcentral!_active hideguard afterrestore. Both21166inputs216deltas/prefs/
+Quality/seed/provider/cursor/launchstate restored. NoRootnativejobs. Noart/model/
+skill/Directorchange. Confirmscallbackdefect, notexactcauseofalloldmissingframes.
+Next publishthen laptop natural no-override selectedWide event window withactual
+modelroot/bounds/enabled/active/shadow/culling flags. Root completes operatorUI/
+touchavailability, currentpackaged/player acceptance pending. Keep Arena authored
+fall/recovery unchanged. Fullspectator/bots/network readiness notcomplete.
+
 ## Current Root touch consumer terminal
 
 Original24412/29120 fourconsumer causesFAIL/inactivedataPASS; candidate5744/89335
