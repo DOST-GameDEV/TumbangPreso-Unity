@@ -1,6 +1,7 @@
 # Documentation: Start Here
 
 Corrected startup order and first Home playback: [cold native evidence and package gate](reports/startup-order-2026-10-07/README.md).
+Background map voting and all-map recordings: [native browse/confirm evidence](reports/map-vote-background-2026-10-07/README.md).
 
 Recorded Arena preview and map voting: [native playback/layout evidence](reports/recorded-map-preview-2026-10-07/README.md).
 Skill HUD reference: [native circles, bindings, fonts and timed-state evidence](reports/skill-hud-reference-2026-10-07/README.md).
@@ -232,4 +233,3 @@ First PC/laptop LAN match: [actual paired baseline evidence](reports/reliability
 Ice diagnostic admission timing: [native setup evidence](reports/reliability-2026-10-03/ice-admission-role/README.md).
 
 Current full managed Core integration: [704-case gate and retained contract failure](reports/reliability-2026-10-03/managed-integration/README.md).
-

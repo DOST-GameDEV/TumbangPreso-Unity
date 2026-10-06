@@ -1,0 +1,44 @@
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from 'C:/Users/Matthew/dev/tump-workers1003/qa-a/Logs/map-video/Kanto-loop.mp4':
+  Metadata:
+    major_brand     : isom
+    minor_version   : 512
+    compatible_brands: isomiso2avc1mp41
+    encoder         : Lavf63.1.102
+  Duration: 00:00:26.00, start: 0.000000, bitrate: 33399 kb/s
+  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 1920x1080, 33395 kb/s, 30 fps, 30 tbr, 15360 tbn (default)
+    Metadata:
+      handler_name    : VideoHandler
+      encoder         : Lavc63.1.102 libx264
+Input #1, mov,mp4,m4a,3gp,3g2,mj2, from 'C:/Users/Matthew/dev/tump-workers1003/qa-a/Logs/map-video/Kanto-loop-efficient.mp4':
+  Metadata:
+    major_brand     : isom
+    minor_version   : 512
+    compatible_brands: isomiso2avc1mp41
+    encoder         : Lavf63.1.102
+  Duration: 00:00:26.00, start: 0.000000, bitrate: 30854 kb/s
+  Stream #1:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 1920x1080, 30850 kb/s, 30 fps, 30 tbr, 15360 tbn (default)
+    Metadata:
+      handler_name    : VideoHandler
+      encoder         : Lavc63.1.102 libx264
+Stream mapping:
+  Stream #0:0 (h264) -> psnr
+  Stream #1:0 (h264) -> psnr
+  psnr:default -> Stream #0:0 (wrapped_avframe)
+Press [q] to stop, [?] for help
+Output #0, null, to 'pipe:':
+  Metadata:
+    major_brand     : isom
+    minor_version   : 512
+    compatible_brands: isomiso2avc1mp41
+    encoder         : Lavf63.1.102
+  Stream #0:0: Video: wrapped_avframe, yuv420p(progressive), 1920x1080, q=2-31, 200 kb/s, 30 fps, 30 tbn
+    Metadata:
+      encoder         : Lavc63.1.102 wrapped_avframe
+frame=   84 fps=0.0 q=-0.0 size=N/A time=00:00:02.80 bitrate=N/A speed=5.37x elapsed=0:00:00.52    
+frame=  248 fps=241 q=-0.0 size=N/A time=00:00:08.26 bitrate=N/A speed=8.02x elapsed=0:00:01.03    
+frame=  382 fps=248 q=-0.0 size=N/A time=00:00:12.73 bitrate=N/A speed=8.26x elapsed=0:00:01.54    
+frame=  519 fps=251 q=-0.0 size=N/A time=00:00:17.30 bitrate=N/A speed=8.37x elapsed=0:00:02.06    
+frame=  687 fps=267 q=-0.0 size=N/A time=00:00:22.90 bitrate=N/A speed=8.89x elapsed=0:00:02.57    
+[Parsed_psnr_0 @ 000002622d0e7080] PSNR y:47.217913 u:51.070471 v:51.773837 average:48.221414 min:45.998349 max:57.377066
+[out#0/null @ 000002622d17e600] video:323KiB audio:0KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: unknown
+frame=  780 fps=269 q=-0.0 Lsize=N/A time=00:00:26.00 bitrate=N/A speed=8.96x elapsed=0:00:02.90    
