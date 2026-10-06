@@ -4,12 +4,14 @@ Run host and client separately on their own machines. Compare terminal result.js
 files afterward; this runner does not control or message another agent or machine.
 """
 import argparse
+from datetime import datetime, timezone
 import hashlib
 import json
 import os
 from pathlib import Path
 import re
 import subprocess
+import time
 import uuid
 
 import net_matrix
@@ -78,6 +80,21 @@ def profile_seed(token, role, character_pick):
                            HubQueueChoice=2, GraphicsQuality=0, MatchDefaultsRevision=1)).encode()
 
 
+def wait_for_start(start_file, ready_file, details):
+    prepared = datetime.now(timezone.utc)
+    receipt = dict(details, preparedAtUtc=prepared.isoformat(),
+                   startFile=str(start_file) if start_file else None)
+    if ready_file is not None:
+        ready_file.parent.mkdir(parents=True, exist_ok=True)
+        with ready_file.open('x', encoding='utf-8') as file:
+            json.dump(receipt, file, indent=2)
+    print(json.dumps(receipt), flush=True)
+    if start_file is not None:
+        while not start_file.is_file():
+            time.sleep(.25)
+    return receipt
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--role', choices=('host', 'client'), required=True)
@@ -94,7 +111,14 @@ def main():
     parser.add_argument('--character-pick', type=int, default=0, help='Valid Hero roster index for normal lobby selection')
     parser.add_argument('--runtime-sha256', required=True,
                         help='Pinned Runtime hash from the checked shared artifact receipt')
+    parser.add_argument('--start-file', type=Path, help='After preflight readiness, wait for this fresh task-owned local start signal')
+    parser.add_argument('--ready-file', type=Path, help='Write a fresh coordination receipt after artifact and profile preparation')
     args = parser.parse_args()
+    if args.start_file is not None and args.ready_file is None:
+        parser.error('A coordinated start signal requires a ready receipt.')
+    start_file = args.start_file.resolve() if args.start_file else None
+    if start_file is not None and start_file.exists():
+        parser.error('Use a fresh task-owned start signal path; existing work is preserved.')
     if (not 1 <= args.port < 65535 or not args.seconds >= 90 or not 0 <= args.wait_seconds <= 600
             or not 1 <= args.protocol <= 65535 or not 0 <= args.character_pick <= 2147483647):
         parser.error('Require valid port/protocol, nonnegative character pick,at least90 scenario seconds and0..600 pool wait seconds.')
@@ -127,6 +151,11 @@ def main():
         before = read_input_preferences()
         profile.mkdir(parents=True, exist_ok=False); profile_created = True
         (profile / 'settings.json').write_bytes(seed)
+        result['preparation'] = wait_for_start(start_file,
+            args.ready_file.resolve() if args.ready_file else None,
+            dict(role=args.role, sourceCommit=source_commit, runtimeSha256=expected,
+                 artifactManifestSha256=result['artifactManifestSha256'], profile=args.profile,
+                 wire=WIRE, artifactVerified=True))
         route = ['-tp-lobby', '-tp-lobbyport', str(port)] if args.role == 'host' else [
             '-tp-lobbyjoin', args.host + ':' + str(args.port), '-tp-lobbyport', str(port)]
         command = [str(exe), '-batchmode', '-screen-fullscreen', '0', '-screen-width', '640',
@@ -136,6 +165,7 @@ def main():
         startup = subprocess.STARTUPINFO(); startup.dwFlags |= subprocess.STARTF_USESHOWWINDOW; startup.wShowWindow = 0
         child = subprocess.Popen(command, cwd=ROOT, env=guard.unity_environment(), startupinfo=startup)
         result['pid'] = child.pid
+        result['playerStartedAtUtc'] = datetime.now(timezone.utc).isoformat()
         (out / 'launch.json').write_text(json.dumps(result, indent=2), encoding='utf-8')
         result['exitCode'] = child.wait() if args.direct else child.wait(timeout=args.seconds + 35)
         text = (out / 'state.txt').read_text(encoding='utf-8-sig')

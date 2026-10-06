@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Actual two-machine LAN completion and observation timing: [matching saved records, retained failures and coordinated launch](reports/two-machine-lan-cb5f-2026-10-07/README.md).
+
 Explicit bot policy and the full automatic arrival path: [native preview/confirmation/start and no-bots admission control](reports/arrival-policy-2026-10-07/README.md).
 
 Grounded tags through adopted elbow rigs: [real contact, footwear and recovery checks](reports/tag-rig-contact-2026-10-07/README.md).

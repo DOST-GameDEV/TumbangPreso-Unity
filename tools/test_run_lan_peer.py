@@ -116,6 +116,23 @@ class ArtifactChecks(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, 'parser rejected'):
                 peer.arrival.validate_rules(self.core, wire=peer.WIRE)
 
+    def test_prepared_receipt_precedes_wait_and_default_does_not_wait(self):
+        ready = self.root / 'prepared.json'
+        receipt = peer.wait_for_start(None, ready, {'artifactVerified': True, 'role': 'client'})
+        self.assertTrue(json.loads(ready.read_text())['artifactVerified'])
+        self.assertIsNotNone(receipt['preparedAtUtc'])
+        with self.assertRaises(FileExistsError):
+            peer.wait_for_start(None, ready, {'artifactVerified': True})
+
+    def test_coordinated_signal_wait_starts_only_after_ready_is_written(self):
+        ready = self.root / 'prepared.json'; signal = self.root / 'start.signal'
+        def signal_after_readiness(seconds):
+            self.assertTrue(json.loads(ready.read_text())['artifactVerified'])
+            signal.write_text('start')
+        with mock.patch.object(peer.time, 'sleep', side_effect=signal_after_readiness) as sleep:
+            peer.wait_for_start(signal, ready, {'artifactVerified': True})
+        sleep.assert_called_once_with(.25)
+
 
 if __name__ == '__main__':
     unittest.main()
