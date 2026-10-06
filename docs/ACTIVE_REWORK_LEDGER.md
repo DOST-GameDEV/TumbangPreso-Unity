@@ -1,3 +1,16 @@
+## Current Root corrected natural casts terminal
+
+16456/54191 onePASS632.533unscaledseconds/stoppedround7 beforecompletedupload.
+61accepted/sevenrefusals; six actualults/presentations: fourYasmin/oneIlyas/
+oneBasilio. BothcorrectedAI kitsnaturallycast. All21156inputs/216deltas/prefs/
+Quality/seed restored; temporaryobserver/meta removed. NoRootnative jobs.
+Camera selectedUltimateHero for global/forward effects; actualBasilio witness
+pointsdownArena pit/casterwave unreadable, exactactor/eye causepending. Original
+retrieval prioritysuppressessomeYasmincoverage. Retainfailure, no qualityclosure.
+Next publish receipts, integrate laptop ac441/ddd bodylens+modelcache afterproof,
+then Root controlled shot-footprint choice and state/priority/caster coverage.
+Laptop ownsDirector/modelbounds/pose, Root Interest/Camera/UI/AI. Fullbotslater.
+
 ## Current Root bot ultimate decision correction terminal
 
 Original8176/49978 threecauseFAIL/fourcontrolsPASS pluswrong-role canfixtureFAIL.
