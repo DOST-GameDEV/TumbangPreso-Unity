@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 04:56:58Z" end-time="2026-10-06 04:56:59Z" duration="0.2946645">
+  <test-suite type="TestSuite" id="3281" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1859" result="Failed" site="Child" start-time="2026-10-06 04:56:58Z" end-time="2026-10-06 04:56:59Z" duration="0.294665" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3273" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1859" result="Failed" site="Child" start-time="2026-10-06 04:56:58Z" end-time="2026-10-06 04:56:59Z" duration="0.275489" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="47220" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3274" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1859" result="Failed" site="Child" start-time="2026-10-06 04:56:58Z" end-time="2026-10-06 04:56:59Z" duration="0.262079" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3277" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1857" result="Failed" site="Child" start-time="2026-10-06 04:56:58Z" end-time="2026-10-06 04:56:59Z" duration="0.249826" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2875" name="SpectatorBodyModelLifetimeTests" fullname="TumbangPreso.PlayTests.SpectatorBodyModelLifetimeTests" classname="TumbangPreso.PlayTests.SpectatorBodyModelLifetimeTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-06 04:56:58Z" end-time="2026-10-06 04:56:59Z" duration="0.225550" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2877" name="ABodyEnabledWithinTheFrameCannotBeMissingFromCachedRenderers" fullname="TumbangPreso.PlayTests.SpectatorBodyModelLifetimeTests.ABodyEnabledWithinTheFrameCannotBeMissingFromCachedRenderers" methodname="ABodyEnabledWithinTheFrameCannotBeMissingFromCachedRenderers" classname="TumbangPreso.PlayTests.SpectatorBodyModelLifetimeTests" runstate="Runnable" seed="969794670" result="Failed" start-time="2026-10-06 04:56:58Z" end-time="2026-10-06 04:56:58Z" duration="0.115535" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A newly visible installed mesh must participate immediately.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SpectatorBodyModelLifetimeTests.ABodyEnabledWithinTheFrameCannotBeMissingFromCachedRenderers () [0x0007e] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\SpectatorBodyModelLifetimeTests.cs:67
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Anim] Registered body has no clips. Check the model's animationType is Generic and importAnimation is on.
+]]></output>
+            </test-case>
+            <test-case id="2878" name="MovingABodyReadsCurrentBoundsWithoutChangingModelIdentity" fullname="TumbangPreso.PlayTests.SpectatorBodyModelLifetimeTests.MovingABodyReadsCurrentBoundsWithoutChangingModelIdentity" methodname="MovingABodyReadsCurrentBoundsWithoutChangingModelIdentity" classname="TumbangPreso.PlayTests.SpectatorBodyModelLifetimeTests" runstate="Runnable" seed="641225436" result="Passed" start-time="2026-10-06 04:56:58Z" end-time="2026-10-06 04:56:59Z" duration="0.034970" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Anim] Registered body has no clips. Check the model's animationType is Generic and importAnimation is on.
+]]></output>
+            </test-case>
+            <test-case id="2879" name="RepeatedWarmPoseChecksAllocateNoManagedMemory" fullname="TumbangPreso.PlayTests.SpectatorBodyModelLifetimeTests.RepeatedWarmPoseChecksAllocateNoManagedMemory" methodname="RepeatedWarmPoseChecksAllocateNoManagedMemory" classname="TumbangPreso.PlayTests.SpectatorBodyModelLifetimeTests" runstate="Runnable" seed="985945144" result="Passed" start-time="2026-10-06 04:56:59Z" end-time="2026-10-06 04:56:59Z" duration="0.031422" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Anim] Registered body has no clips. Check the model's animationType is Generic and importAnimation is on.
+]]></output>
+            </test-case>
+            <test-case id="2876" name="ReplacingAModelWithinTheFrameInvalidatesItsOldEnclosure" fullname="TumbangPreso.PlayTests.SpectatorBodyModelLifetimeTests.ReplacingAModelWithinTheFrameInvalidatesItsOldEnclosure" methodname="ReplacingAModelWithinTheFrameInvalidatesItsOldEnclosure" classname="TumbangPreso.PlayTests.SpectatorBodyModelLifetimeTests" runstate="Runnable" seed="1577189663" result="Failed" start-time="2026-10-06 04:56:59Z" end-time="2026-10-06 04:56:59Z" duration="0.032630" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The newly installed body cannot be absent from lens validation until the next frame.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SpectatorBodyModelLifetimeTests.ReplacingAModelWithinTheFrameInvalidatesItsOldEnclosure () [0x000b3] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\SpectatorBodyModelLifetimeTests.cs:57
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Anim] Registered body has no clips. Check the model's animationType is Generic and importAnimation is on.
+[Anim] Registered body has no clips. Check the model's animationType is Generic and importAnimation is on.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

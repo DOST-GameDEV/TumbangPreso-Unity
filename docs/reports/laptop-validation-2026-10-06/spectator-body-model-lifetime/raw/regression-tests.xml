@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="14" result="Passed" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 05:00:30Z" end-time="2026-10-06 05:00:30Z" duration="0.2395566">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1414" result="Passed" start-time="2026-10-06 05:00:30Z" end-time="2026-10-06 05:00:30Z" duration="0.239557" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2745" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1414" result="Passed" start-time="2026-10-06 05:00:30Z" end-time="2026-10-06 05:00:30Z" duration="0.221221" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="48948" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2746" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1414" result="Passed" start-time="2026-10-06 05:00:30Z" end-time="2026-10-06 05:00:30Z" duration="0.208799" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2747" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1414" result="Passed" start-time="2026-10-06 05:00:30Z" end-time="2026-10-06 05:00:30Z" duration="0.196593" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2578" name="SpectatorBodyLensContractTests" fullname="TumbangPreso.Tests.SpectatorBodyLensContractTests" classname="TumbangPreso.Tests.SpectatorBodyLensContractTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-06 05:00:30Z" end-time="2026-10-06 05:00:30Z" duration="0.107979" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2580" name="ABodyCrossingOnlyTheSightlineRemainsAllowed" fullname="TumbangPreso.Tests.SpectatorBodyLensContractTests.ABodyCrossingOnlyTheSightlineRemainsAllowed" methodname="ABodyCrossingOnlyTheSightlineRemainsAllowed" classname="TumbangPreso.Tests.SpectatorBodyLensContractTests" runstate="Runnable" seed="2131623810" result="Passed" start-time="2026-10-06 05:00:30Z" end-time="2026-10-06 05:00:30Z" duration="0.074104" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Anim] Body whose render model extends beyond its rules capsule has no clips. Check the model's animationType is Generic and importAnimation is on.
+]]></output>
+            </test-case>
+            <test-case id="2581" name="AnEyeClearOfBothBodyAndSightlineRemainsAllowed" fullname="TumbangPreso.Tests.SpectatorBodyLensContractTests.AnEyeClearOfBothBodyAndSightlineRemainsAllowed" methodname="AnEyeClearOfBothBodyAndSightlineRemainsAllowed" classname="TumbangPreso.Tests.SpectatorBodyLensContractTests" runstate="Runnable" seed="487783442" result="Passed" start-time="2026-10-06 05:00:30Z" end-time="2026-10-06 05:00:30Z" duration="0.002686" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Anim] Body whose render model extends beyond its rules capsule has no clips. Check the model's animationType is Generic and importAnimation is on.
+]]></output>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2586" name="AShortGlideCannotRenderAnEyeInsideABody" fullname="TumbangPreso.Tests.SpectatorBodyLensContractTests.AShortGlideCannotRenderAnEyeInsideABody" classname="TumbangPreso.Tests.SpectatorBodyLensContractTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-06 05:00:30Z" end-time="2026-10-06 05:00:30Z" duration="0.010233" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2584" name="AShortGlideCannotRenderAnEyeInsideABody(False)" fullname="TumbangPreso.Tests.SpectatorBodyLensContractTests.AShortGlideCannotRenderAnEyeInsideABody(False)" methodname="AShortGlideCannotRenderAnEyeInsideABody" classname="TumbangPreso.Tests.SpectatorBodyLensContractTests" runstate="Runnable" seed="1732317499" result="Passed" start-time="2026-10-06 05:00:30Z" end-time="2026-10-06 05:00:30Z" duration="0.006272" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Anim] Body whose render model extends beyond its rules capsule has no clips. Check the model's animationType is Generic and importAnimation is on.
+]]></output>
+              </test-case>
+              <test-case id="2585" name="AShortGlideCannotRenderAnEyeInsideABody(True)" fullname="TumbangPreso.Tests.SpectatorBodyLensContractTests.AShortGlideCannotRenderAnEyeInsideABody(True)" methodname="AShortGlideCannotRenderAnEyeInsideABody" classname="TumbangPreso.Tests.SpectatorBodyLensContractTests" runstate="Runnable" seed="1071458753" result="Passed" start-time="2026-10-06 05:00:30Z" end-time="2026-10-06 05:00:30Z" duration="0.001828" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Anim] Body whose render model extends beyond its rules capsule has no clips. Check the model's animationType is Generic and importAnimation is on.
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-case id="2579" name="EyeInsideAnOpaqueRenderBodyIsNotAValidPose" fullname="TumbangPreso.Tests.SpectatorBodyLensContractTests.EyeInsideAnOpaqueRenderBodyIsNotAValidPose" methodname="EyeInsideAnOpaqueRenderBodyIsNotAValidPose" classname="TumbangPreso.Tests.SpectatorBodyLensContractTests" runstate="Runnable" seed="764578702" result="Passed" start-time="2026-10-06 05:00:30Z" end-time="2026-10-06 05:00:30Z" duration="0.005842" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Anim] Body whose render model extends beyond its rules capsule has no clips. Check the model's animationType is Generic and importAnimation is on.
+Physics.ClosestPoint can only be used with a BoxCollider, SphereCollider, CapsuleCollider and a convex MeshCollider.
+]]></output>
+            </test-case>
+            <test-case id="2583" name="HiddenRenderBodiesDoNotBlockTheEye" fullname="TumbangPreso.Tests.SpectatorBodyLensContractTests.HiddenRenderBodiesDoNotBlockTheEye" methodname="HiddenRenderBodiesDoNotBlockTheEye" classname="TumbangPreso.Tests.SpectatorBodyLensContractTests" runstate="Runnable" seed="2138561133" result="Passed" start-time="2026-10-06 05:00:30Z" end-time="2026-10-06 05:00:30Z" duration="0.001806" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Anim] Body whose render model extends beyond its rules capsule has no clips. Check the model's animationType is Generic and importAnimation is on.
+]]></output>
+            </test-case>
+            <test-case id="2582" name="NameplateOrEffectOutsideTheInstalledModelDoesNotBlockTheEye" fullname="TumbangPreso.Tests.SpectatorBodyLensContractTests.NameplateOrEffectOutsideTheInstalledModelDoesNotBlockTheEye" methodname="NameplateOrEffectOutsideTheInstalledModelDoesNotBlockTheEye" classname="TumbangPreso.Tests.SpectatorBodyLensContractTests" runstate="Runnable" seed="640919570" result="Passed" start-time="2026-10-06 05:00:30Z" end-time="2026-10-06 05:00:30Z" duration="0.001923" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Anim] Body whose render model extends beyond its rules capsule has no clips. Check the model's animationType is Generic and importAnimation is on.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2594" name="SpectatorSceneryClearanceTests" fullname="TumbangPreso.Tests.SpectatorSceneryClearanceTests" classname="TumbangPreso.Tests.SpectatorSceneryClearanceTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-06 05:00:30Z" end-time="2026-10-06 05:00:30Z" duration="0.023045" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2596" name="AnOrdinarySceneryOverlapRejectsTheEye" fullname="TumbangPreso.Tests.SpectatorSceneryClearanceTests.AnOrdinarySceneryOverlapRejectsTheEye" methodname="AnOrdinarySceneryOverlapRejectsTheEye" classname="TumbangPreso.Tests.SpectatorSceneryClearanceTests" runstate="Runnable" seed="3083270" result="Passed" start-time="2026-10-06 05:00:30Z" end-time="2026-10-06 05:00:30Z" duration="0.008497" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2595" name="ClearSpaceWithManyIgnoredCollidersRemainsAvailable" fullname="TumbangPreso.Tests.SpectatorSceneryClearanceTests.ClearSpaceWithManyIgnoredCollidersRemainsAvailable" methodname="ClearSpaceWithManyIgnoredCollidersRemainsAvailable" classname="TumbangPreso.Tests.SpectatorSceneryClearanceTests" runstate="Runnable" seed="1201348240" result="Passed" start-time="2026-10-06 05:00:30Z" end-time="2026-10-06 05:00:30Z" duration="0.001952" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2597" name="SceneryCannotDisappearBehindASaturatedIgnoredColliderQuery" fullname="TumbangPreso.Tests.SpectatorSceneryClearanceTests.SceneryCannotDisappearBehindASaturatedIgnoredColliderQuery" methodname="SceneryCannotDisappearBehindASaturatedIgnoredColliderQuery" classname="TumbangPreso.Tests.SpectatorSceneryClearanceTests" runstate="Runnable" seed="1252715495" result="Passed" start-time="2026-10-06 05:00:30Z" end-time="2026-10-06 05:00:30Z" duration="0.010603" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2598" name="SpectatorTransitClearanceTests" fullname="TumbangPreso.Tests.SpectatorTransitClearanceTests" classname="TumbangPreso.Tests.SpectatorTransitClearanceTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-06 05:00:30Z" end-time="2026-10-06 05:00:30Z" duration="0.007540" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2600" name="AClearDestinationDoesNotPermitAnIntermediateEyeInsideScenery" fullname="TumbangPreso.Tests.SpectatorTransitClearanceTests.AClearDestinationDoesNotPermitAnIntermediateEyeInsideScenery" methodname="AClearDestinationDoesNotPermitAnIntermediateEyeInsideScenery" classname="TumbangPreso.Tests.SpectatorTransitClearanceTests" runstate="Runnable" seed="484823632" result="Passed" start-time="2026-10-06 05:00:30Z" end-time="2026-10-06 05:00:30Z" duration="0.002956" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2599" name="AnUnobstructedShortReframeStillGlidesWithoutCutting" fullname="TumbangPreso.Tests.SpectatorTransitClearanceTests.AnUnobstructedShortReframeStillGlidesWithoutCutting" methodname="AnUnobstructedShortReframeStillGlidesWithoutCutting" classname="TumbangPreso.Tests.SpectatorTransitClearanceTests" runstate="Runnable" seed="48502810" result="Passed" start-time="2026-10-06 05:00:30Z" end-time="2026-10-06 05:00:30Z" duration="0.000520" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2603" name="IgnoredGeometryDoesNotInterruptTheShortGlide" fullname="TumbangPreso.Tests.SpectatorTransitClearanceTests.IgnoredGeometryDoesNotInterruptTheShortGlide" classname="TumbangPreso.Tests.SpectatorTransitClearanceTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-06 05:00:30Z" end-time="2026-10-06 05:00:30Z" duration="0.002396" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2601" name="IgnoredGeometryDoesNotInterruptTheShortGlide(True)" fullname="TumbangPreso.Tests.SpectatorTransitClearanceTests.IgnoredGeometryDoesNotInterruptTheShortGlide(True)" methodname="IgnoredGeometryDoesNotInterruptTheShortGlide" classname="TumbangPreso.Tests.SpectatorTransitClearanceTests" runstate="Runnable" seed="475189808" result="Passed" start-time="2026-10-06 05:00:30Z" end-time="2026-10-06 05:00:30Z" duration="0.000954" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2602" name="IgnoredGeometryDoesNotInterruptTheShortGlide(False)" fullname="TumbangPreso.Tests.SpectatorTransitClearanceTests.IgnoredGeometryDoesNotInterruptTheShortGlide(False)" methodname="IgnoredGeometryDoesNotInterruptTheShortGlide" classname="TumbangPreso.Tests.SpectatorTransitClearanceTests" runstate="Runnable" seed="232873446" result="Passed" start-time="2026-10-06 05:00:30Z" end-time="2026-10-06 05:00:30Z" duration="0.000458" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
