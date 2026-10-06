@@ -1,0 +1,17 @@
+{
+  "raw/candidate/classified-result.json": "a551be9592f4c5f55353a6fc6696e3c2057d4d21ba3a02f4f10859080bd081d0",
+  "raw/candidate/launch.json": "aba796f400edb08ce013ae2a28c7d8d6c52fdbf1eafc28c504afbcfd68a37a57",
+  "raw/candidate/profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+  "raw/candidate/tests.xml": "a4808542a9009e1dcf0665877dde2a610adea1559c7b8dc0468a47e102ed1742",
+  "raw/candidate/unity.log": "5fe3bd0cf9604db94d99d2fe705ebafb30b85d191b05672b1290adfdf5d5cace",
+  "raw/HostFailureRecoveryTests.cs": "745eb9b222f9e823b9b0f8f9e36a0ee257cf6b854c89f18168040b88ec384be8",
+  "raw/HostFailureRecoveryTests.cs.meta": "a3a22e28717f84551e63b439b742bb8d7eb0ea65de573486d11ac96db06920b6",
+  "raw/NetSession-candidate.cs": "dee8034540ad11810150b28868eb8f18f320bc91caa1dc921492e80a28d4958e",
+  "raw/NetSession-original-shipped.cs": "588e8c1591f3b5a33d3ffe668db193d725cb2045972e6be350375c257c872dbd",
+  "raw/original/classified-result.json": "95e1002f0d05602ce10043515fd5f59146f72cfb0d5db18a684ffa4d535528ab",
+  "raw/original/launch.json": "5123eda347b5c2673507e8a122b9b81806e7f6cb819a58733ad3d30ae8a398ac",
+  "raw/original/profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+  "raw/original/tests.xml": "784396dcf4319c4a3048d0b2d26a36853394c49351863d4209117f291d487f5c",
+  "raw/original/unity.log": "11be801e231c27fb11e5c043c137960ea973bd7c683000a1e932bff6cb117645",
+  "raw/source-classification.json": "fb8e9fff5c687c41aac3d5efc50ad3bf009f91930f1ec53767227faa5c9eb0b4"
+}
