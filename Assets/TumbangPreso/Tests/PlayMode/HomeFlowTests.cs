@@ -13,8 +13,20 @@ namespace TumbangPreso.PlayTests
 {
     public sealed class HomeFlowTests
     {
-        [UnitySetUp] public IEnumerator Before() => PlayModeWorld.Reset();
-        [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
+        private bool _boot,_offered;
+        private Settings.GameSettings _settings;
+        [UnitySetUp] public IEnumerator Before()
+        {
+            _boot=SceneFlow.BootedThroughSplash;_offered=SceneFlow.LoginStepOffered;_settings=Settings.SettingsStore.Current;
+            yield return PlayModeWorld.Reset();GameServices.Ensure();
+            Settings.SettingsStore.OverrideForTests(new Settings.GameSettings{PlayerName="Startup flow guest",AccountHasPassword=false});
+            SceneFlow.BootedThroughSplash=true;SceneFlow.LoginStepOffered=false;
+        }
+        [UnityTearDown] public IEnumerator After()
+        {
+            yield return PlayModeWorld.Reset();Settings.SettingsStore.OverrideForTests(_settings);
+            SceneFlow.BootedThroughSplash=_boot;SceneFlow.LoginStepOffered=_offered;
+        }
 
         /// <summary>
         /// ⚠️⚠️ THIS FIXTURE WAS ASSERTING A SCREEN THE GAME HAD ALREADY STOPPED BUILDING.
@@ -30,20 +42,21 @@ namespace TumbangPreso.PlayTests
         /// `TumpNativeFrontEndTests` walks to settings and credits through the lobby.
         /// </summary>
         [UnityTest]
-        public IEnumerator TitleKeepsSuppliedPaintingSharpAndOneContinueTarget()
+        public IEnumerator LoadingTitleKeepsSuppliedPaintingAndHasNoContinueTarget()
         {
-            yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu);
-            yield return new WaitForSecondsRealtime(0.5f);
+            // Inspect the loading composition independently of the automatic
+            // scene arrival so the control cannot disappear mid-capture.
+            var root=new GameObject("Loading title art control");
+            root.AddComponent<TumpHomeView>().Build(root.transform,null,null);
+            yield return null;
             var canvas = GameObject.Find("OwnerHomeCanvas").GetComponent<Canvas>();
             Assert.IsNotNull(canvas);
 
             var buttons = canvas.GetComponentsInChildren<Button>().Where(b => b.isActiveAndEnabled).ToArray();
-            CollectionAssert.AreEquivalent(new[] { "StartButton" }, buttons.Select(b => b.name));
-
-            var prompt = canvas.GetComponentsInChildren<Text>().Single(t => t.name == "ContinuePrompt");
-            StringAssert.Contains("to continue", prompt.text);
-            Assert.AreEqual(OwnerUiTheme.Current.Display, prompt.font,
-                "Her caption is Darumadrop; Paalalabas is the caption face on the login.");
+            Assert.IsEmpty(buttons,"The loading title must not ask for another click.");
+            Assert.IsFalse(canvas.GetComponentsInChildren<Text>().Any(t=>t.name=="ContinuePrompt"));
+            var progress=canvas.transform.Find("OwnerMainMenuComposition/ActualProgress").GetComponent<Image>();
+            Assert.IsNotNull(progress);Assert.IsFalse(progress.raycastTarget);
 
             var picture=canvas.GetComponentsInChildren<RawImage>().Single(i=>i.name=="OwnerMainMenuBackground");
             Assert.AreEqual(OwnerMenuArt.Texture("main2-background"),picture.texture);
@@ -68,11 +81,10 @@ namespace TumbangPreso.PlayTests
         /// raycast, so a covered door fails here.
         /// </summary>
         [UnityTest]
-        public IEnumerator TapToStartOpensHomeWhoseDoorsReachProfileAndLoadout()
+        public IEnumerator LoginArrivesAtHomeWhoseDoorsReachProfileAndLoadout()
         {
             yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu);
-            yield return new WaitForSecondsRealtime(.3f);
-            yield return PressWhen("StartButton");
+            yield return PressWhen("GuestAccount");
             yield return WaitForScene(SceneFlow.MatchSetup);
             yield return WaitForButton("PlayButton");
             Assert.IsInstanceOf<UI.Hub.HubHome>(UI.Hub.TumpHub.Current.Top);
@@ -133,7 +145,7 @@ namespace TumbangPreso.PlayTests
         // machine rather than the flow.
         private static IEnumerator WaitForScene(string name)
         {
-            float end = Time.realtimeSinceStartup + 20f;
+            float end = Time.realtimeSinceStartup + 60f;
             while (SceneManager.GetActiveScene().name != name && Time.realtimeSinceStartup < end) yield return null;
             Assert.AreEqual(name, SceneManager.GetActiveScene().name);
         }
@@ -249,7 +261,8 @@ namespace TumbangPreso.PlayTests
         public IEnumerator LoadingTipsStayInlineAndReadinessStillGatesTheTitle()
         {
             yield return SceneManager.LoadSceneAsync(SceneFlow.Splash);
-            yield return new WaitForSecondsRealtime(0.6f);
+            float surfaceUntil=Time.realtimeSinceStartup+30;
+            while(GameObject.Find("OwnerLoadingCanvas")==null&&Time.realtimeSinceStartup<surfaceUntil)yield return null;
             Assert.IsNotNull(Object.FindFirstObjectByType<SplashScreen>());
             var loadingCanvas = GameObject.Find("OwnerLoadingCanvas").GetComponent<Canvas>();
             Assert.IsNotNull(loadingCanvas.GetComponentInChildren<LoadingArtwork>());
@@ -268,7 +281,9 @@ namespace TumbangPreso.PlayTests
             // player walks, so the loading test now ends where a player ends: on her street.
             yield return WaitForButton("GuestAccount");
             yield return PressWhen("GuestAccount");
-            yield return WaitForButton("StartButton");
+            yield return WaitForScene(SceneFlow.MatchSetup);
+            yield return WaitForButton("PlayButton");
+            Assert.IsTrue(UI.Hub.TumpHub.Current.AtHome);
         }
     }
 }

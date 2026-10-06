@@ -1,0 +1,6 @@
+{
+  "base": "270f98d756060053211c05afbbe9d2cc2dcae82c",
+  "fixture": "23f9274ff58e55efa3a3ce4f872b5dd7ebf7f39fce5526ce64207504e350c000",
+  "fullManifestSha256": "ac14a0b16188609bb2a247d930285c0b4bb81ec6bcdf49811ad141015caca3a6",
+  "sourceOverlayOnly": "Assets/TumbangPreso/Tests/PlayMode/HomeFlowTests.cs"
+}

@@ -92,6 +92,10 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 
 ## Current Qualification Boundary
 
+The current automatic startup route passes three native painting/real-pointer/
+full-boot checks on270f98d75. Map warmup took41.53s of45.62s total in that editor
+run; packaged/device timing remains open. [Exact evidence](reports/laptop-validation-2026-10-06/startup-auto-home-flow/README.md).
+
 The latest [focused native integration](reports/stability-2026-09-27/input-integration.md)
 passes loading-readiness and supplementary-data retention cases alongside five
 state/presentation cases. The subsequent [UI/audio pass](reports/stability-2026-09-27/loading-audit.md#ui-flow-native-qualification)

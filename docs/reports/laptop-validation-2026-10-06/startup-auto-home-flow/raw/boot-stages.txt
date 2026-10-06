@@ -1,0 +1,5 @@
+[Splash] no 'ShaderWarmup' variant collection, so shaders will compile at first use. Run TumbangPreso.EditorTools.ShaderWarmupCollection.RebuildForBuild.
+[Splash] preload exceeded six seconds; keeping the loading screen visible until it is ready.
+[Splash] map asset warmup completed in 41.53 s.
+[Splash] preload retained 23067 assets in memory.
+[Splash] boot loading finished after 45.62 s (work-driven, no reading window).
