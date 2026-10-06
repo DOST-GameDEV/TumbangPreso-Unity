@@ -55,6 +55,10 @@
   The two-human LAN flow does not qualify those scenarios.
 - [ ] Tester Relay timeout/host kick, physical skill input and non-host movement
   delay acceptance remain open. These completed matches do not close those reports.
+  Continuous actual motor steps with modeled half-second accepted-pose echoes
+  reproduce 2.5000m rollback on the old path and zero with the current fix. Final
+  native case asserts all 75 receiver serials. Real sockets, host budgets and
+  physical feel remain open. [Evidence](reports/reliability-2026-10-06/owner-trajectory/README.md).
 
 ### UI-REMOTE-RULES-1006: current values in an already-open client panel
 

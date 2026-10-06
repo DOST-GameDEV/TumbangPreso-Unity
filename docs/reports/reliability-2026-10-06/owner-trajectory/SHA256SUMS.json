@@ -1,0 +1,14 @@
+{
+  "raw/candidate-classification.json": "c8300f5c10faa7d1ad38449a8302b359248c0a6e19160db8a0095e938224feff",
+  "raw/candidate-result.json": "9f119d2d8814b61e59457ceb565452d5dc1b53d007f62b4215d395f79afa638b",
+  "raw/candidate-results.xml": "e0a1439bf31e60b9ff84238f52e419ae64b81e21252e59f29d9235643afb66c1",
+  "raw/fixture.cs": "40421c8f5499a3b28326f3bd1e593a51d7748fba3d4ac390b8c72f51ff979bd7",
+  "raw/original-classification.json": "c8300f5c10faa7d1ad38449a8302b359248c0a6e19160db8a0095e938224feff",
+  "raw/original-reconciliation.patch": "0ab627ba238e4ccf2e9afc6045076db15582e6f06dc7301846949d78732fa134",
+  "raw/original-result.json": "5074c78a95396154f646e6c3f5e5d42b870f2b6d1e6a0cb643da96d539a8e1d2",
+  "raw/original-results.xml": "e4cc940f3b7846a04fa8fc105916f65f250fb9e9ca97aa8300eaf4e7048152dc",
+  "raw/qualified-fixture.cs": "e962d21c9047258b62a4607d69a1246e0348ff62f65d56298f18a72ff03934b8",
+  "raw/receipt-classification.json": "c8300f5c10faa7d1ad38449a8302b359248c0a6e19160db8a0095e938224feff",
+  "raw/receipt-result.json": "c04a1472a30c024b2c45fd9e3ce780925ac150518586216158d54473e6a65b9c",
+  "raw/receipt-results.xml": "a8cb55514e3f9645ffa7d0ec39dd3221a48d044d8e65ad4c40b87735a306f08d"
+}

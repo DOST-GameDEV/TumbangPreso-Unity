@@ -1,0 +1,4 @@
+The baseline removes only this current early return:
+-            if (acceptedOwnerPose && !force) return;
++            // Original reconciliation path: accepted echoes still reconcile.
+The wire remains protocol152 and the actual SyncUnit receiver is unchanged.

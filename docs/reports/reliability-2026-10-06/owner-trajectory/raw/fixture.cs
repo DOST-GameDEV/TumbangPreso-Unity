@@ -74,8 +74,6 @@ namespace TumbangPreso.PlayTests
             using var reader = new FastBufferReader(writer, Allocator.Temp);
             typeof(MatchRpc).GetMethod("OnSyncUnitMsg", Hidden).Invoke(_rpc, new object[] { NetworkManager.ServerClientId, reader });
             Assert.AreEqual(42f, _motor.Stamina.Current, "The actual packet must be accepted, not rejected by the fixture.");
-            Assert.AreEqual(serial, (ulong)typeof(CharacterMotor).GetField("_lastNetworkPoseSerial", Hidden).GetValue(_motor),
-                "Every delayed packet must advance the actual receiver serial.");
         }
 
         private IEnumerator AcceptedEcho(float travelled)

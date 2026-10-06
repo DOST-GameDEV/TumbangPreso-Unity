@@ -1,3 +1,15 @@
+## Current Root movement unit terminal
+
+Continuous motor/controller trajectory: original 9496/89632 expected 1FAIL,
+2.5000m maximum rollback; current 13268/25542 same 1PASS/zero rollback. Final
+17912/75138 adds all 75 receiver serial assertions and passes. Modeled half-second
+p152 echoes across 100 fixed steps; not sockets, host validation or physical input.
+Production motor bytes restored; only OwnerPoseFeedbackTests regression added.
+All three 21,136 inputs/prefs/seed/Quality restored 216 metadata each; no Root jobs live.
+Laptop PlayerInputReader stays reserved, final 16/publication not yet verified.
+Next: integrate its checked Reader publication, coordinate ordinary owner movement
+on both hosts with measured impaired transport; keep original QA acceptance open.
+
 ## Current performance baseline terminal, preload remains intact
 
 Root actualWarmMapAssets measured19180/93944 native1PASS:23.119seconds/all7maps,
