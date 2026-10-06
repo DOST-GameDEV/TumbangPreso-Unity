@@ -315,7 +315,7 @@ namespace TumbangPreso.Map
             var go = new GameObject(name);
             go.transform.SetParent(parent, false);
             var text = go.AddComponent<Text>();
-            text.font = UI.MenuKit.Font;
+            text.font = UI.InGameTypography.Resolve(UI.MenuKit.Font, true, text);
             text.fontSize = size;
             text.fontStyle = FontStyle.Bold;
             text.color = colour;

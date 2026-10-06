@@ -1,5 +1,22 @@
 # Active competition checkpoint
 
+## Latest owner override: in-game DIN, October 6
+
+The owner explicitly paused Root's competition goal for a separate font change.
+Root's goal is PAUSED by request, unrelated to the Bad Request interruptions.
+Root owns only supplied DIN Light/Bold assets and scoped match typography routing.
+The central TimeLeft clock keeps Darumadrop; front-end themes stay unchanged.
+The laptop confirmed no typography paths reserved and its pre-DIN505 build is
+terminal with source/preferences/profiles restored. It owns a separate local
+pair check before native validation of the new font candidate. No Root PC
+control, new Unity launch or cancellation of laptop jobs. Current font source
+compiles across805 runtime files with zero errors against retained player
+references; supplied bytes, HUD glyph coverage and dynamic metadata pass.
+Next: publish the scoped font candidate, then laptop checks imported faces and
+actual HUD/pause/results fit at1920x1080 and1280x720. Native rendering remains
+unverified until its exact-source receipt arrives. Protected Auditor/voxel dirt
+is excluded. Do not resume competition work from older ACTIVE text below.
+
 Read AGENTS, COMPETITION_COORDINATION and the current TODO. TODO is the only
 work-status queue. Reports retain historical evidence; this file records the
 current execution state. The goal remains active and competition readiness is

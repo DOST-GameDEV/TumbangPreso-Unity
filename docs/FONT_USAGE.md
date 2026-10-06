@@ -26,6 +26,27 @@ Loading tips
 already used Nunito Bold through HubStyle. Existing Work Sans reading routes,
 display/accent fonts, source Lydian files, GUIDs and permission records remain.
 
+## October 6 in-game DIN override
+
+The owner supplied DIN Next LT Arabic Light and Bold and requested DIN throughout
+in-game interface text. Bold carries headings, scores, status names and actions;
+Light carries descriptions and reading text. Only the central match clock named
+TimeLeft (TimerLabel in the legacy HUD) keeps Darumadrop One. Front-end typography
+retains its existing roles. Font-drawn reticle and offscreen direction symbols
+retain their symbol-capable face. World TextMesh nameplates are separate from
+the interface.
+
+InGameTypography selects by the label's owning map scene, including prefetched
+maps and persistent UI opened during a match. Common factories and direct match
+label builders use the same routing, including pause settings, results, replay
+and training UI. The supplied font binaries are unchanged and dynamic imports
+include font data. The Light file's embedded family is ntaqat; its importer uses
+that actual family while the asset path identifies the supplied DIN file.
+Existing font assets and front-end theme references are preserved.
+
+The scoped implementation and validation limits are recorded in
+[the DIN report](reports/ingame-din-2026-10-06/README.md).
+
 ## Sources and permission
 
 - Darumadrop One was already in the repository under the SIL Open Font License.

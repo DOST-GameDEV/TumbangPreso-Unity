@@ -95,7 +95,7 @@ namespace TumbangPreso.UI
             face.rectTransform.SetAsFirstSibling(); face.raycastTarget = false; face.FollowContrast = false;
             if (keycap) face.Toy(HudDraw.Cream, HudDraw.CreamSide, 6, 10, .35f);
             else face.Toy(HudDraw.Honey, HudDraw.HoneySide, 6, 12, .35f);
-            label.alignment = TextAnchor.MiddleCenter; label.font = OwnerUiTheme.Current.Display;
+            label.alignment = TextAnchor.MiddleCenter; label.font = InGameTypography.Resolve(OwnerUiTheme.Current.Display, true, label);
             var colours = button.colors;
             colours.normalColor = HudDraw.Brown; colours.highlightedColor = colours.selectedColor = new Color32(176, 70, 14, 255);
             colours.pressedColor = HudDraw.BrownSide; colours.disabledColor = new Color32(128, 94, 70, 160);
@@ -112,7 +112,7 @@ namespace TumbangPreso.UI
             face.rectTransform.SetAsFirstSibling(); OwnerUiLayout.Fill(face.rectTransform); face.raycastTarget = false; face.FollowContrast = false;
             if (primary) face.Toy(HudDraw.Honey, HudDraw.HoneySide, 7, 14, .38f);
             else face.Toy(HudDraw.Cream, HudDraw.CreamSide, 7, 14, .38f);
-            label.alignment = TextAnchor.MiddleCenter; label.font = OwnerUiTheme.Current.Display;
+            label.alignment = TextAnchor.MiddleCenter; label.font = InGameTypography.Resolve(OwnerUiTheme.Current.Display, true, label);
             OwnerUiLayout.Fill(label.rectTransform);
             var colours = button.colors;
             colours.normalColor = HudDraw.Brown; colours.highlightedColor = colours.selectedColor = new Color32(176, 70, 14, 255);

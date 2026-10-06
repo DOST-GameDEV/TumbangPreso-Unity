@@ -58,7 +58,7 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Place(_ownerUnlock.rectTransform, 820, 936, 513, 116);
             _ownerUnlock.alignment = TextAnchor.UpperLeft; _ownerUnlock.color = OwnerUiTheme.Current.EnteredInk;
             _ownerEquip = GuideLink(_content, "TumpEquipSkill", "EQUIP", EquipOwnerChoice, 1395, 966, 405, 84);
-            var equipLabel = _ownerEquip.GetComponentInChildren<Text>(); equipLabel.font = OwnerUiTheme.Current.Display; equipLabel.fontSize = 43;
+            var equipLabel = _ownerEquip.GetComponentInChildren<Text>(); equipLabel.font = InGameTypography.Resolve(OwnerUiTheme.Current.Display, true, equipLabel); equipLabel.fontSize = 43;
         }
 
         private static Button GuideLink(Transform parent, string name, string words, Action action,
@@ -73,7 +73,7 @@ namespace TumbangPreso.UI
             var button = GuideLink(_ownerOptions, "TumpVariant_" + option.Id, option.Name,
                 () => { _selected = option.Id; Build(); }, 0, index * 172, 636, 154);
             var label = button.GetComponentInChildren<Text>(); OwnerUiLayout.Place(label.rectTransform, 20, 7, 599, 81);
-            label.alignment = TextAnchor.MiddleLeft; label.font = OwnerUiTheme.Current.Display; label.fontSize = 35;
+            label.alignment = TextAnchor.MiddleLeft; label.font = InGameTypography.Resolve(OwnerUiTheme.Current.Display, true, label); label.fontSize = 35;
             var status = OwnerUiLayout.Text(button.transform, "Status", "", 28);
             OwnerUiLayout.Place(status.rectTransform, 23, 90, 589, 52); status.color = OwnerUiTheme.Current.EnteredInk;
             var mark = OwnerUiLayout.Rect(button.transform, "SelectedVariant").gameObject.AddComponent<Image>();

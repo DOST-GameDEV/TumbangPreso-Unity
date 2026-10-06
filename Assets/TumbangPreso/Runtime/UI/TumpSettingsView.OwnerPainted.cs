@@ -191,7 +191,7 @@ namespace TumbangPreso.UI
             }
             var controller=ActionRow("ControllerMap","Controller map","OPEN",()=>
             { _device=InputDeviceKind.Gamepad;Suspend();_controller?.Invoke(); });
-            controller.GetComponentInChildren<Text>().font=OwnerUiTheme.Current.Display;
+            controller.GetComponentInChildren<Text>().font = InGameTypography.Resolve(OwnerUiTheme.Current.Display, true, controller.GetComponentInChildren<Text>());
             if(ControllerWatch.HasUnrecognised)
             {
                 Toggle("GenericController","Unrecognised controllers",GenericPadBridge.Enabled,v=>GenericPadBridge.Enabled=v);

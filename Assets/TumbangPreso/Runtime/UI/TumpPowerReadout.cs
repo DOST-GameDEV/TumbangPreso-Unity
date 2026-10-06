@@ -67,7 +67,7 @@ namespace TumbangPreso.UI
                 _keys[i] = TumpUiFactory.Text(_deck, "LiveBinding" + i, "", 28, true);
                 _keys[i].color = f.Cream; _keys[i].alignment = TextAnchor.MiddleCenter;
                 TumpUiFactory.Place(_keys[i].rectTransform, 16 + i * 144, 120, 132, 52);
-                _keys[i].font = f.Bold; _keys[i].fontSize = 30;
+                _keys[i].font = InGameTypography.Resolve(f.Bold, true, _keys[i]); _keys[i].fontSize = 30;
                 _keycaps[i] = TumpUiFactory.Surface(_deck, "KeyboardCap" + i, TumpSurface.Form.Ticket, f.Cream);
                 TumpUiFactory.Place(_keycaps[i].rectTransform, 52 + i * 144, 122, 60, 48);
                 _keycaps[i].transform.SetSiblingIndex(_keys[i].transform.GetSiblingIndex());

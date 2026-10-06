@@ -1881,7 +1881,7 @@ namespace TumbangPreso.CameraSystem
             BuildReplayBand(panelGo.transform, "ReplayHeadingBand", true, 76);
             labelGo.transform.SetParent(panelGo.transform, false);
             _replayLabel = labelGo.AddComponent<Text>();
-            _replayLabel.font = UI.OwnerUiTheme.Current.Display;
+            _replayLabel.font = UI.InGameTypography.Resolve(UI.OwnerUiTheme.Current.Display, true, _replayLabel);
             _replayLabel.fontSize = 36;
             _replayLabel.alignment = TextAnchor.MiddleLeft;
             _replayLabel.color = UI.OwnerUiTheme.Current.Pale;
@@ -1926,7 +1926,7 @@ namespace TumbangPreso.CameraSystem
             BuildReplayBand(panelGo.transform, "ReplayFooterBand", false, 72);
             exitGo.transform.SetParent(panelGo.transform, false);
             _replayExitLabel = exitGo.AddComponent<Text>();
-            _replayExitLabel.font = UI.OwnerUiTheme.Current.Reading;
+            _replayExitLabel.font = UI.InGameTypography.Resolve(UI.OwnerUiTheme.Current.Reading, false, _replayExitLabel);
             _replayExitLabel.fontSize = 26;
             _replayExitLabel.alignment = TextAnchor.MiddleRight;
             _replayExitLabel.color = UI.OwnerUiTheme.Current.Pale;

@@ -1968,7 +1968,7 @@ namespace TumbangPreso
             var text = new GameObject("Cap");
             text.transform.SetParent(go.transform, false);
             var label = text.AddComponent<Text>();
-            label.font = MenuKit.Font;
+            label.font = InGameTypography.Resolve(MenuKit.Font, true, label);
             label.fontSize = 20;
             label.fontStyle = FontStyle.Bold;
             label.color = UiTheme.Ink;
@@ -1993,7 +1993,7 @@ namespace TumbangPreso
             go.transform.SetParent(parent, false);
 
             var label = go.AddComponent<Text>();
-            label.font = MenuKit.Font;
+            label.font = InGameTypography.Resolve(MenuKit.Font, false, label);
             label.fontSize = 19;
             label.color = colour ?? UiTheme.CreamMuted;
             label.alignment = TextAnchor.MiddleCenter;
@@ -2051,7 +2051,7 @@ namespace TumbangPreso
             go.transform.SetParent(parent, false);
 
             var text = go.AddComponent<Text>();
-            text.font = MenuKit.Font;
+            text.font = InGameTypography.Resolve(MenuKit.Font, false, text);
             text.fontSize = size;
             text.color = colour;
             text.alignment = align;
@@ -2077,7 +2077,7 @@ namespace TumbangPreso
             go.transform.SetParent(parent, false);
 
             var text = go.AddComponent<Text>();
-            text.font = MenuKit.Font;
+            text.font = InGameTypography.Resolve(MenuKit.Font, true, text);
             text.fontSize = size;
             text.color = colour;
             text.alignment = TextAnchor.MiddleCenter;

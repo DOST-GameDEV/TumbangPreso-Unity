@@ -1,3 +1,13 @@
+### UI-INGAME-DIN-1006: supplied match typography
+
+- [x] Integrate supplied DIN Next LT Arabic Light/Bold for in-game interface
+  reading/emphasis, preserving original binaries and dynamic font data. Only
+  central TimeLeft keeps Darumadrop; front-end and symbolic glyph faces retain
+  existing roles. Full runtime compiler preflight reports zero errors.
+- [ ] Laptop native import, actual HUD/status/announcement/pause/result fit at
+  1920x1080 and1280x720, front-end control and map-prefetch context. Compilation
+  does not establish rendered quality. [Scope and evidence](reports/ingame-din-2026-10-06/README.md).
+
 ### UI-POSTCLAUDE-1856-1006: selected HUD behavior
 
 - [x] Canonical Claude UI1856 source passes seven native status-text, dense-row,

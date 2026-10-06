@@ -47,7 +47,7 @@ namespace TumbangPreso.UI
                 int index = i;
                 var tab = SettingsWorkspaceRows.Action(root, "SettingsSection" + i, Sections[i], () => ShowSection(index), 407);
                 OwnerUiLayout.Place((RectTransform)tab.transform, 71, 336 + i * 110, 407, 86);
-                var label = tab.GetComponentInChildren<Text>(); label.fontSize = 33;label.font=OwnerUiTheme.Current.Display;
+                var label = tab.GetComponentInChildren<Text>(); label.fontSize = 33;label.font = InGameTypography.Resolve(OwnerUiTheme.Current.Display, true, label);
                 var tabFace = OwnerUiLayout.Rect(tab.transform, "TabFace").gameObject.AddComponent<HudCard>();
                 tabFace.rectTransform.SetAsFirstSibling(); OwnerUiLayout.Place(tabFace.rectTransform, 0, 4, 407, 74);
                 tabFace.Toy(HudDraw.Honey, HudDraw.HoneySide, 7, 14, .35f).raycastTarget = false; tabFace.FollowContrast = false; tabFace.enabled = false;
@@ -65,7 +65,7 @@ namespace TumbangPreso.UI
                 view.Open(transform,Resume);
             },407);
             OwnerUiLayout.Place((RectTransform)credits.transform,71,870,407,70);
-            credits.GetComponentInChildren<Text>().font=OwnerUiTheme.Current.Display;
+            credits.GetComponentInChildren<Text>().font = InGameTypography.Resolve(OwnerUiTheme.Current.Display, true, credits.GetComponentInChildren<Text>());
             _heading = OwnerUiLayout.Text(root, "Heading", "", 62, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(_heading.rectTransform, 572, 104, 1238, 113); _heading.color = SettingsPalette.Ink;
             _list = OwnerScrollColumn.Build(root, "SettingsList", new Rect(577, 255, 1240, 633), out var scroll);
@@ -84,7 +84,7 @@ namespace TumbangPreso.UI
             var saveFace = OwnerUiLayout.Rect(_save.transform, "SaveFace").gameObject.AddComponent<HudCard>();
             saveFace.rectTransform.SetAsFirstSibling(); OwnerUiLayout.Fill(saveFace.rectTransform); saveFace.raycastTarget = false;
             saveFace.Toy(SettingsPalette.Control, SettingsPalette.Background, 2, 14, .35f); saveFace.FollowContrast = false;
-            var saveLabel = _save.GetComponentInChildren<Text>(); saveLabel.font = OwnerUiTheme.Current.Display; saveLabel.fontSize = 39;
+            var saveLabel = _save.GetComponentInChildren<Text>(); saveLabel.font = InGameTypography.Resolve(OwnerUiTheme.Current.Display, true, saveLabel); saveLabel.fontSize = 39;
             saveLabel.alignment = TextAnchor.MiddleCenter;
             _unsaved = OwnerUiLayout.Text(root, "UnsavedMarker", "UNSAVED", 28, OwnerUiLayout.TypeRole.Reading);
             OwnerUiLayout.Place(_unsaved.rectTransform, 1120, 970, 220, 50); _unsaved.alignment = TextAnchor.MiddleRight;

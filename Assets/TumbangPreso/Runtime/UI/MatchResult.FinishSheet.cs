@@ -68,7 +68,7 @@ namespace TumbangPreso.UI
                 var line = OwnerUiLayout.Rect(tab.transform, "SelectedPage").gameObject.AddComponent<Image>();
                 OwnerUiLayout.Place(line.rectTransform, 50, 58, 180, 5); line.color = CourtPresentationPalette.Gold; line.raycastTarget = false;
                 Sticker((RectTransform)tab.transform, HubStyle.Honey, 930 + i);
-                tab.GetComponentInChildren<Text>().font = OwnerUiTheme.Current.Display;
+                tab.GetComponentInChildren<Text>().font = InGameTypography.Resolve(OwnerUiTheme.Current.Display, true, tab.GetComponentInChildren<Text>());
                 _nativeTabs[i] = tab;
             }
             BuildFinishStandings(root);
@@ -103,17 +103,17 @@ namespace TumbangPreso.UI
             // The one obvious next action, then the two quiet ones.
             _rematch = OwnerTextAction.Create(root, "ResultRematch", "REMATCH", OnRematchPressed, 100, 912, 480, 96, 46);
             Sticker((RectTransform)_rematch.transform, HubStyle.Chartreuse, 940);
-            _rematch.GetComponentInChildren<Text>().font = OwnerUiTheme.Current.Display;
+            _rematch.GetComponentInChildren<Text>().font = InGameTypography.Resolve(OwnerUiTheme.Current.Display, true, _rematch.GetComponentInChildren<Text>());
             _rematchTally = OwnerUiLayout.Text(root, "RematchTally", "", 28);
             OwnerUiLayout.Place(_rematchTally.rectTransform, 100, 1014, 480, 52); _rematchTally.alignment = TextAnchor.MiddleCenter; Keel(_rematchTally);
             _mapVote = OwnerTextAction.Create(root, "ResultNextMap", "NEXT MAP", OnMapVotePressed, 660, 920, 740, 80, 31);
             Sticker((RectTransform)_mapVote.transform, HubStyle.Honey, 941);
-            _mapVote.GetComponentInChildren<Text>().font = OwnerUiTheme.Current.Display;
+            _mapVote.GetComponentInChildren<Text>().font = InGameTypography.Resolve(OwnerUiTheme.Current.Display, true, _mapVote.GetComponentInChildren<Text>());
             _mapVoteTally = OwnerUiLayout.Text(root, "MapVoteTally", "", 28);
             OwnerUiLayout.Place(_mapVoteTally.rectTransform, 660, 1010, 740, 56); _mapVoteTally.alignment = TextAnchor.MiddleCenter; Keel(_mapVoteTally);
             _menu = OwnerTextAction.Create(root, "ResultMainMenu", "MAIN MENU", OnMenuPressed, 1470, 920, 350, 80, 31);
             Sticker((RectTransform)_menu.transform, HubStyle.Honey, 942);
-            _menu.GetComponentInChildren<Text>().font = OwnerUiTheme.Current.Display;
+            _menu.GetComponentInChildren<Text>().font = InGameTypography.Resolve(OwnerUiTheme.Current.Display, true, _menu.GetComponentInChildren<Text>());
             NativePage(0); NativeProgression(null, null); ScreenTakeover.Register(this, () => NativeVisible);
         }
 

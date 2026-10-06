@@ -615,7 +615,7 @@ namespace TumbangPreso.UI
             go.transform.SetParent(parent, false);
 
             var t = go.AddComponent<Text>();
-            t.font = MenuKit.Font;
+            t.font = InGameTypography.Resolve(MenuKit.Font, name == "Title" || name == "Name" || name == "Key", t);
             t.fontSize = size;
             t.color = colour;
             t.alignment = align;
