@@ -254,6 +254,10 @@ namespace TumbangPreso.UI
             bool live = IsLive;
             int local = live ? NetAuthority.LocalSlot : GameLaunch.SoloSeat;
             var settings = Settings.SettingsStore.Current;
+            // Custom room seats reflect their live rules before Start applies global AI policy.
+            // Queued rooms keep the explicit accepted-bot policy.
+            bool fillBots = HubQueueWatch.QueueRoom ? AIController.BotsEnabled
+                : SceneFlow.SelectedRules != null && SceneFlow.SelectedRules.Bots > 0;
             for (int i = 0; i < seats.Length; i++)
             {
                 var info = live ? MatchRpc.Instance?.GetSeatInfo(i) : null;
@@ -266,7 +270,7 @@ namespace TumbangPreso.UI
                     Mine = mine,
                     Host = live && occupied && (mine ? NetAuthority.IsHost : info != null && info.PeerId == 0),
                     Ready = mine ? _localReady : info != null && info.Ready,
-                    Bot = !occupied && AIController.BotsEnabled,
+                    Bot = !occupied && fillBots,
                     Name = mine ? "YOU" : info != null && !string.IsNullOrEmpty(info.Name) ? info.Name : "PLAYER " + (i + 1),
                     CharacterPick = mine ? settings.CharacterPick : info?.CharacterPick ?? -1,
                 };

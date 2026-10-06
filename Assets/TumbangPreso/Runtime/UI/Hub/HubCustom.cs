@@ -492,7 +492,7 @@ namespace TumbangPreso.UI.Hub
             }
 
             var seats = host.Seats();
-            string key = host.RoomTitle + host.RoomCode + host.IsHost + host.LocalReady + SceneFlow.SelectedMap + SceneFlow.SelectedMode + host.Spectating + host.MatchInProgress + host.SeatSwapOffer?.Id + host.SeatSwapResult;
+            string key = host.RoomTitle + host.RoomCode + host.IsHost + host.LocalReady + SceneFlow.SelectedMap + SceneFlow.SelectedMode + host.Spectating + host.MatchInProgress + host.SeatSwapOffer?.Id + host.SeatSwapResult + HubQueueWatch.QueueRoom;
             foreach (var s in seats) key += s.Occupied + ":" + s.Name + ":" + s.CharacterPick + ":" + s.Ready + ":" + s.Bot + ":" + host.CanTakeSeat(s.Slot) + "|";
             if (!force && key == _drawn) return;
             _drawn = key;
@@ -511,7 +511,12 @@ namespace TumbangPreso.UI.Hub
                             (host.RoomOnline ? "ONLINE" : "LAN");
 
             int occupied = 0;
-            foreach (var s in seats) if (s.Occupied) occupied++;
+            bool fillBots = HubQueueWatch.QueueRoom; // Start retains queued-room bot acceptance.
+            foreach (var s in seats)
+            {
+                if (s.Occupied) occupied++;
+                else if (s.Bot) fillBots = true;
+            }
             _count.text = "PLAYERS  " + occupied + " / " + Balance.PlayerCount;
 
             for (int i = _rows.childCount - 1; i >= 0; i--) Destroy(_rows.GetChild(i).gameObject);
@@ -559,8 +564,10 @@ namespace TumbangPreso.UI.Hub
             if (host.IsHost)
             {
                 HubKit.SetLabel(_primary, "START GAME");
-                _primary.interactable = true;
-                _status.text = occupied < Balance.PlayerCount ? "Empty seats are filled by bots." : "Everyone is here.";
+                _primary.interactable = occupied >= Balance.PlayerCount || fillBots;
+                _status.text = occupied >= Balance.PlayerCount ? "Everyone is here." : fillBots
+                    ? "Empty seats are filled by bots."
+                    : "Bots are off. Fill all four seats or change RULES.";
             }
             else
             {

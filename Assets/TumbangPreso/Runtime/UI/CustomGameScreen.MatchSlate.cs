@@ -97,7 +97,9 @@ namespace TumbangPreso.UI
                 OwnerUiLayout.Place(root, delta < 0 ? 394 : 918, 12, 60, 61);
                 var hit = root.gameObject.AddComponent<Image>(); hit.color = Color.clear;
                 var arrow = OwnerUiGlyph.Create(root, "Arrow", OwnerUiGlyph.Mark.Back, Color.white);
-                OwnerUiLayout.Place(arrow.rectTransform, 15, 14, 32, 31);
+                // Mirroring a top-left-pivot glyph moves it left by its width.
+                // Offset the mirrored origin so the drawn arrow stays inside its button.
+                OwnerUiLayout.Place(arrow.rectTransform, delta > 0 ? 47 : 15, 14, 32, 31);
                 if (delta > 0) arrow.rectTransform.localScale = new Vector3(-1, 1, 1);
                 var button = root.gameObject.AddComponent<Button>(); button.targetGraphic = arrow;
                 var colours = button.colors; colours.normalColor = HubStyle.Golden; colours.highlightedColor = colours.selectedColor = HubStyle.Persimmon;

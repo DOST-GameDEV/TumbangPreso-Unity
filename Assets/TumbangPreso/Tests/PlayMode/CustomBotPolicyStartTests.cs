@@ -61,6 +61,20 @@ namespace TumbangPreso.PlayTests
             rules.Bots=bots; rules.BotDifficulty=(int)difficulty;
             SceneFlow.AdoptRemoteRules(rules);
         }
+        [UnityTest] public IEnumerator NoneRulesShowOpenSeatsBeforeStartDespiteEnabledSavedPolicy()
+        {
+            Rules(0);AIController.ApplyDifficulty((int)Difficulty.Normal);
+            var seats=_controller.Seats();int vacant=0;
+            foreach(var seat in seats)if(!seat.Occupied){vacant++;Assert.IsFalse(seat.Bot,"NONE rule advertised a bot before Start.");}
+            Assert.Greater(vacant,0);yield return null;
+        }
+        [UnityTest] public IEnumerator EnabledRulesShowBotSeatsBeforeStartDespiteDisabledSavedPolicy()
+        {
+            Rules(CustomGameRules.MaxBots);AIController.ApplyDifficulty(AIController.NoBotsIndex);
+            var seats=_controller.Seats();int vacant=0;
+            foreach(var seat in seats)if(!seat.Occupied){vacant++;Assert.IsTrue(seat.Bot,"Enabled room advertised OPEN before Start.");}
+            Assert.Greater(vacant,0);yield return null;
+        }
         [UnityTest] public IEnumerator NoneRulesRefuseVacantSeatsDespiteEnabledSavedPolicy()
         {
             Rules(0); AIController.ApplyDifficulty((int)Difficulty.Normal);
