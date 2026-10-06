@@ -1,0 +1,22 @@
+{
+  "historyCount": 1,
+  "queueCount": 1,
+  "queueWitnessCount": 1,
+  "rounds": 1,
+  "mode": "HeroStrike",
+  "online": true,
+  "scores": [
+    100,
+    0,
+    150,
+    0
+  ],
+  "humanSlots": [
+    0,
+    1
+  ],
+  "matchIdSha256": "f45f1aa16cb55b90b2390fdef3b2262e7ff5ed65a06a8d674b00ab9fa8d4de9b",
+  "recordCanonicalSha256": "94008d90b2b3862605da39afce6e2bb13f8ef6daff42115c68024331c0bbfdcb",
+  "markerCleared": true,
+  "scope": "Saved after strict client terminal PASS and restored preferences/profile/artifact."
+}
