@@ -46,7 +46,7 @@ namespace TumbangPreso.Map
         private int _rank;
 
         // The replay.
-        private const float ReplayGap = 25.0f, ReplayChance = 0.5f;
+        private const float ReplayGap = 18.0f, ReplayChance = 0.75f;
         private CameraSystem.MatchReplayArchive _archive;
         private CameraSystem.RecordedMatchClip _pending, _clip;
         private CameraSystem.RecordedWorldView _view;
@@ -58,7 +58,7 @@ namespace TumbangPreso.Map
         private void OnDisable()
         {
             MatchFlair.Presented -= OnFlair;
-            if (_archive != null) _archive.RetainedClip -= OnRetained;
+            if (_archive != null) _archive.RecordedClip -= OnRetained;
             _archive = null; _pending = null;
             EndReplay();
             _screens.Destroy();
@@ -109,9 +109,15 @@ namespace TumbangPreso.Map
         {
             if (kept == null || kept.Clip == null) return;
             _dice ^= _dice << 13; _dice ^= _dice >> 17; _dice ^= _dice << 5;
-            if ((_dice & 0xFFFF) / 65536.0f > ReplayChance || Time.unscaledTime - _lastReplay < ReplayGap) return;
+            if ((_dice & 0xFFFF) / 65536.0f > ReplayChance || Time.unscaledTime - _lastReplay < ReplayGap)
+            { Say("a moment was recorded and passed over (the dice, or one played inside the last " + ReplayGap + " s)"); return; }
             _pending = kept.Clip;
+            Say("a moment is queued for the screens: " + kept.Clip.Reason + ", round " + kept.Clip.Round + ", " + kept.Clip.Duration.ToString("0.0") + " s");
         }
+
+        /// <summary>One line to the console in the editor, so a replay that did not play says why.</summary>
+        [System.Diagnostics.Conditional("UNITY_EDITOR")]
+        private static void Say(string what) => Debug.Log("[ArenaScreens] replay: " + what);
 
         /// <summary>Whether a replay may have the screens now: nothing else holds the picture or the stage.</summary>
         private static bool Free()
@@ -127,16 +133,20 @@ namespace TumbangPreso.Map
         {
             var clip = _pending; _pending = null;
             var match = GameServices.Match;
-            if (clip == null || match == null || clip.Round != match.RoundNumber || clip.MatchId != match.PresentationMatchId || !EnsureBuilt()) return;
+            if (clip == null || match == null) return;
+            if (clip.Round != match.RoundNumber || clip.MatchId != match.PresentationMatchId)
+            { Say("not played: the clip is round " + clip.Round + " of match " + clip.MatchId + ", this is round " + match.RoundNumber + " of " + match.PresentationMatchId); return; }
+            if (!EnsureBuilt()) { Say("not played: the screens could not be built"); return; }
             try
             {
                 _view = new CameraSystem.RecordedWorldView(transform, clip);
                 _view.ShowOnScreen(false);
-                if (!_view.Ready) { EndReplay(); return; }
+                if (!_view.Ready) { Say("not played: " + (_view.UnavailableReason ?? "the replay view is not ready")); EndReplay(); return; }
             }
             catch (System.Exception failure) { Debug.LogWarning("[ArenaScreens] replay unavailable: " + failure.Message); EndReplay(); return; }
             _clip = clip; _replayBegan = _lastReplay = Time.unscaledTime;
             _screens.Feed(_view.Target, "REPLAY");
+            Say("playing on the screens");
         }
 
         private void EndReplay()
@@ -170,7 +180,7 @@ namespace TumbangPreso.Map
             if (_archive == null)
             {
                 _archive = FindAnyObjectByType<CameraSystem.MatchReplayArchive>();
-                if (_archive != null) _archive.RetainedClip += OnRetained;
+                if (_archive != null) _archive.RecordedClip += OnRetained;
             }
 
             // A fall down the shaft, seen from the bodies themselves.
@@ -187,7 +197,7 @@ namespace TumbangPreso.Map
             // A kept moment waits for the screens to be free of a card, then plays.
             if (_view == null && _pending != null && now >= _until + FadeOut)
             {
-                if (Free()) BeginReplay(); else _pending = null;
+                if (Free()) BeginReplay(); else { Say("dropped: the screens were not free (a break, a hold or the round was over)"); _pending = null; }
             }
             if (Replaying()) return;
 

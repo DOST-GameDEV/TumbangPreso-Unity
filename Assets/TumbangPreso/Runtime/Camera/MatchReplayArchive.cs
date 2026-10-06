@@ -44,6 +44,10 @@ namespace TumbangPreso.CameraSystem
         private float _unsafeAt=-100,_propsScanAt;
         public IReadOnlyList<Retained> Clips=>_clips;
         public event Action<Retained> RetainedClip;
+        /// <summary>Every moment that was recorded whole, whether or not it is one of the `Capacity` the match keeps
+        /// for halftime: for a watcher that plays a moment straight back (the Arena's screens, `Map.ArenaScreens`).
+        /// `RetainedClip` fires only for the three the match keeps, so after the third almost nothing reached them.</summary>
+        public event Action<Retained> RecordedClip;
         public string LastSkip {get;private set;}
         public void Bind(MatchPoseHistory history)
         {
@@ -197,6 +201,7 @@ namespace TumbangPreso.CameraSystem
             try
             {
                 var retained=new Retained(clip,clip.Encode(),pending.Importance);
+                RecordedClip?.Invoke(retained);
                 _clips.Add(retained);_clips.Sort((a,b)=>b.Importance!=a.Importance?b.Importance.CompareTo(a.Importance):b.Clip.Id.CompareTo(a.Clip.Id));
                 if(_clips.Count>Capacity)_clips.RemoveAt(_clips.Count-1);
                 LastSkip=null;if(_clips.Contains(retained)){RetainedClip?.Invoke(retained);Net.MatchRpc.Instance?.StageReplay(retained);}
