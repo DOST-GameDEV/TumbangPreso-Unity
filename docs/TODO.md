@@ -5,8 +5,11 @@
   Source compiles; no native acceptance yet.
 - [ ] Native-check missing-terms pulse together with invalid fields, instruction,
   correction clearing and reduced-motion behavior. Existing field pulses remain.
-- [ ] Inspect final pill correction removing foreign crimson matte islands. Keep
+- [x] Inspect final pill correction removing foreign crimson matte islands. Keep
   accepted Create/Guest treatment, original silhouettes and original layout.
+  Current hidden native boot frames pass1080/720 with no Back button and checked
+  FineCheck. All21222 source inputs/preferences restored. Scope is the rendered
+  login state, not whole UI approval or Desktop publication.
 
 ### UI-EDGE-QUALITY-1006: owner sharpness critique
 
