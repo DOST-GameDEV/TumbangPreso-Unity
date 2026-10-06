@@ -4951,12 +4951,52 @@ namespace TumbangPreso
 
         /// <summary>Would this power's own footprint, cast right now, land on anybody?</summary>
         private bool WouldCatch(Abilities.HeroAbility ability, bool stunPayload)
-        {
-            if (ability == null || !ability.HasTelegraph) return false;
+            => VictimsForAbility(ability, stunPayload) > 0;
 
-            return VictimsUnder(FootprintOf(ability),
-                                ability.TelegraphRadius + AiTuning.AbilityVictimMargin,
-                                stunPayload) > 0;
+        private int VictimsForAbility(Abilities.HeroAbility ability, bool stunPayload, bool requireTelegraph = true)
+        {
+            if (ability == null) return 0;
+            var kit = _motor.AbilitySystem != null ? _motor.AbilitySystem.Kit : null;
+            bool globalFreeze = kit is Abilities.CheskaHeroKit && ability == kit.Ultimate;
+            bool drift = kit is Abilities.DanteHeroKit && ability == kit.Ultimate;
+            if (!globalFreeze && !drift)
+                return !requireTelegraph || ability.HasTelegraph
+                    ? VictimsUnder(FootprintOf(ability), ability.TelegraphRadius + AiTuning.AbilityVictimMargin, stunPayload)
+                    : 0;
+
+            var round = GameServices.Round;
+            if (round == null) return 0;
+            Vector3 origin = transform.position;
+            Vector3 forward = transform.forward; forward.y = 0;
+            forward = forward.sqrMagnitude > .001f ? forward.normalized : Vector3.forward;
+            Vector3 right = Vector3.Cross(Vector3.up, forward);
+            float reach = .1f, width = .1f;
+            if (drift)
+            {
+                // Match the court-spanning bands resolved by DanteDriftWave.
+                for (int x = 0; x < 2; x++)
+                    for (int z = 0; z < 2; z++)
+                    {
+                        Vector3 delta = new Vector3(x == 0 ? PlayableMinX : PlayableMaxX, origin.y,
+                            z == 0 ? PlayableMinZ : PlayableMaxZ) - origin;
+                        reach = Mathf.Max(reach, Vector3.Dot(delta, forward));
+                        width = Mathf.Max(width, Mathf.Abs(Vector3.Dot(delta, right)));
+                    }
+            }
+            int found = 0;
+            foreach (var who in Perceived(round.Players))
+            {
+                if (who == null || who == _motor || !who.RoundActive) continue;
+                if (stunPayload && (who.IsStunned || who.IsTripped)) continue;
+                if (drift)
+                {
+                    Vector3 delta = At(who).Value - origin;
+                    float along = Vector3.Dot(delta, forward);
+                    if (along < 0 || along > reach || Mathf.Abs(Vector3.Dot(delta, right)) > width) continue;
+                }
+                found++;
+            }
+            return found;
         }
 
         /// <summary>
@@ -5225,9 +5265,7 @@ namespace TumbangPreso
 
             if (kit.IsUltimateReady && kit.Ultimate != null)
             {
-                int underIt = VictimsUnder(FootprintOf(kit.Ultimate),
-                                           kit.Ultimate.TelegraphRadius + AiTuning.AbilityVictimMargin,
-                                           stunPayload: false);
+                int underIt = VictimsForAbility(kit.Ultimate, stunPayload: false, requireTelegraph: false);
 
                 ultimateWorthIt =
                     underIt >= AiTuning.UltimateWantsVictims
@@ -5243,18 +5281,13 @@ namespace TumbangPreso
             {
                 if (kit is Abilities.DanteHeroKit)
                 {
-                    // ⚠️ THE FISSURE IS DIRECTIONAL: a 4.5 m circle centred 2.2 m in FRONT of
-                    // him. The old 9.0 m gate had no direction in it at all, so half of every
-                    // cast opened the ground behind his back. It launches rather than stuns, so
-                    // a body already down is still worth catching.
-                    bool safeForOwnCan = !_motor.IsDefender || lataDistance > 10.0f;
-                    if (safeForOwnCan && WouldCatch(kit.Ultimate, stunPayload: false))
+                    // Continental Drift affects forward court bands and never the can.
+                    if (WouldCatch(kit.Ultimate, stunPayload: false))
                         Consider(intent, Verb.Ultimate, dt);
                 }
                 else if (kit is Abilities.CheskaHeroKit)
                 {
-                    // Glacial Shatter freezes what it catches, so somebody already frozen is
-                    // not a reason to spend it.
+                    // Absolute Zero reaches the map; already helpless bodies do not justify it.
                     if (WouldCatch(kit.Ultimate, stunPayload: true)) Consider(intent, Verb.Ultimate, dt);
                 }
                 else if (kit is Abilities.SeanHeroKit)

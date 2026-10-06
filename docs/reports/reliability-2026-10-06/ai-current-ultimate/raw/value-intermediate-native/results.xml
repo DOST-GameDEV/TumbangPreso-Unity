@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 04:40:25Z" end-time="2026-10-06 04:40:26Z" duration="0.3031771">
+  <test-suite type="TestSuite" id="3276" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1855" result="Failed" site="Child" start-time="2026-10-06 04:40:25Z" end-time="2026-10-06 04:40:26Z" duration="0.303177" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3268" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1855" result="Failed" site="Child" start-time="2026-10-06 04:40:25Z" end-time="2026-10-06 04:40:26Z" duration="0.292667" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="20504" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3269" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1855" result="Failed" site="Child" start-time="2026-10-06 04:40:25Z" end-time="2026-10-06 04:40:26Z" duration="0.290876" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3272" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1853" result="Failed" site="Child" start-time="2026-10-06 04:40:25Z" end-time="2026-10-06 04:40:26Z" duration="0.289013" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1027" name="AiCurrentUltimateTests" fullname="TumbangPreso.PlayTests.AiCurrentUltimateTests" classname="TumbangPreso.PlayTests.AiCurrentUltimateTests" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-10-06 04:40:25Z" end-time="2026-10-06 04:40:26Z" duration="0.233534" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1037" name="OtherNonCircularUltimateKeepsItsExistingValueCount" fullname="TumbangPreso.PlayTests.AiCurrentUltimateTests.OtherNonCircularUltimateKeepsItsExistingValueCount" methodname="OtherNonCircularUltimateKeepsItsExistingValueCount" classname="TumbangPreso.PlayTests.AiCurrentUltimateTests" runstate="Runnable" seed="2088475727" result="Failed" start-time="2026-10-06 04:40:25Z" end-time="2026-10-06 04:40:26Z" duration="0.212494" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 1
+  But was:  0
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.AiCurrentUltimateTests.OtherNonCircularUltimateKeepsItsExistingValueCount () [0x0012b] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\AiCurrentUltimateTests.cs:85
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,3 +1,15 @@
+## Current Root bot ultimate decision correction terminal
+
+Original8176/49978 threecauseFAIL/fourcontrolsPASS pluswrong-role canfixtureFAIL.
+Correctedonlyrole9368/77002 actual missingcan-sidedecisionFAIL. Candidate24396/
+56224 eightPASS. Neighborvaluecontrol20504/54191 FAIL fromnewhelperfallback;
+final17396/83083 ninePASS afteroldfallbackretained. Allfive21154inputs/216deltas/
+prefs/Quality/seed restored, noRootjobs. AI onlymapscurrentAbsoluteZero global
+andContinentalDrift forwardcourtgeometry, perceivedpositions/cadence preserved.
+Nohero/wire/artchange. Controlleddecisionproof, naturalnewcasts stillpending.
+Next publish and repeatone ordinarylater-roundArena setup toobserve corrected
+casts/camera, finishspectator pass thenfullbots. Laptop ownsDirector/bodyclearance.
+
 ## Current Root natural ultimate observation terminal
 
 16144/83789 onePASS703.330unscaledseconds throughsevenrounds; stoppedentry8,
