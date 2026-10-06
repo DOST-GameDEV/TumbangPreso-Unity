@@ -1,0 +1,365 @@
+{
+  "sourceCommit": "090a3ed0e979f656b7f8bae4243e0d8f82efec56",
+  "qualifiedManifestSha256": "579d349d2930052cf8effb909dccdde2af7f6ca7f1b9ae9de7cf46bdc4d4be1d",
+  "profile": "validation-qa-a-be075dcdfa07",
+  "result": {
+    "pid": 48088,
+    "terminal": true,
+    "exitCode": 0,
+    "passed": 1,
+    "failed": 0,
+    "inputCount": 21168,
+    "allInputsRestored": true,
+    "existingPrefsRestored": 13
+  },
+  "generatedDeltaCount": 279,
+  "stop": {
+    "round": 6,
+    "elapsed": 546.675,
+    "presentations": 6
+  },
+  "wanted": {
+    "yasmin": true,
+    "basilio": true
+  },
+  "presentationRows": [
+    [
+      "124.256",
+      "2",
+      "0",
+      "cheska",
+      "ABSOLUTE ZERO",
+      "ThrowPrep",
+      "False"
+    ],
+    [
+      "313.340",
+      "4",
+      "2",
+      "rafi",
+      "BAHA",
+      "Tag",
+      "False"
+    ],
+    [
+      "386.118",
+      "4",
+      "3",
+      "cheska",
+      "ABSOLUTE ZERO",
+      "Tag",
+      "False"
+    ],
+    [
+      "429.900",
+      "5",
+      "0",
+      "cheska",
+      "ABSOLUTE ZERO",
+      "Tag",
+      "False"
+    ],
+    [
+      "510.766",
+      "5",
+      "0",
+      "cheska",
+      "ABSOLUTE ZERO",
+      "Retrieval",
+      "False"
+    ],
+    [
+      "538.674",
+      "6",
+      "1",
+      "dante",
+      "CONTINENTAL DRIFT",
+      "Quiet",
+      "False"
+    ]
+  ],
+  "selectedWideEvents": [
+    [
+      "125.782",
+      "cheska",
+      "1"
+    ],
+    [
+      "313.478",
+      "rafi",
+      "2"
+    ],
+    [
+      "386.258",
+      "cheska",
+      "3"
+    ],
+    [
+      "430.144",
+      "cheska",
+      "4"
+    ],
+    [
+      "539.842",
+      "dante",
+      "6"
+    ]
+  ],
+  "qualifiedKeyFrames": {
+    "selected-wide-cheska-1": {
+      "lastActualActorRows": [
+        [
+          "125.827",
+          "81493",
+          "2",
+          "rt-active-selected-wide-cheska-1",
+          "Ultimate",
+          "UltimateWide",
+          "ultimate \u00b7 YASMIN",
+          "0",
+          "0",
+          "(18.4071, 6.4000, -0.4698)",
+          "(19.6485, 277.3320, 0.0000)",
+          "78.000",
+          "False",
+          "0",
+          "cheska",
+          "(7.3981, 0.0800, 1.4048)",
+          "(0.0000, -2.0000, 5.0000)",
+          "True",
+          "True",
+          "False"
+        ],
+        [
+          "125.827",
+          "81493",
+          "2",
+          "rt-active-selected-wide-cheska-1",
+          "Ultimate",
+          "UltimateWide",
+          "ultimate \u00b7 YASMIN",
+          "0",
+          "0",
+          "(18.4071, 6.4000, -0.4698)",
+          "(19.6485, 277.3320, 0.0000)",
+          "78.000",
+          "False",
+          "1",
+          "dante",
+          "(0.3960, 0.0800, 1.4158)",
+          "(0.0000, -2.0000, 0.0000)",
+          "True",
+          "True",
+          "True"
+        ],
+        [
+          "125.827",
+          "81493",
+          "2",
+          "rt-active-selected-wide-cheska-1",
+          "Ultimate",
+          "UltimateWide",
+          "ultimate \u00b7 YASMIN",
+          "0",
+          "0",
+          "(18.4071, 6.4000, -0.4698)",
+          "(19.6485, 277.3320, 0.0000)",
+          "78.000",
+          "False",
+          "2",
+          "rafi",
+          "(3.2293, 0.0800, 7.8249)",
+          "(0.0000, -2.0000, 0.0000)",
+          "True",
+          "True",
+          "False"
+        ],
+        [
+          "125.827",
+          "81493",
+          "2",
+          "rt-active-selected-wide-cheska-1",
+          "Ultimate",
+          "UltimateWide",
+          "ultimate \u00b7 YASMIN",
+          "0",
+          "0",
+          "(18.4071, 6.4000, -0.4698)",
+          "(19.6485, 277.3320, 0.0000)",
+          "78.000",
+          "False",
+          "3",
+          "cheska",
+          "(-1.2401, 0.0800, 2.1075)",
+          "(0.0000, -2.0000, 0.0000)",
+          "True",
+          "True",
+          "False"
+        ]
+      ],
+      "lastBasilioModelRows": [
+        [
+          "125.827",
+          "81493",
+          "1",
+          "(0.3960, 0.0800, 1.4158)",
+          "(0.3960, 0.0033, 1.4158)",
+          "(0.3960, 0.0033, 1.4158)",
+          "body-mesh",
+          "(-0.2652, 0.0010, 1.0097)",
+          "(1.1022, 0.9951, 1.8592)",
+          "True",
+          "True",
+          "ShadowsOnly",
+          "0",
+          "-1"
+        ],
+        [
+          "125.827",
+          "81493",
+          "1",
+          "(0.3960, 0.0800, 1.4158)",
+          "(0.3960, 0.0033, 1.4158)",
+          "(0.3960, 0.0033, 1.4158)",
+          "head-mesh",
+          "(-0.2471, 0.7573, 0.9952)",
+          "(0.8276, 1.6943, 1.9021)",
+          "True",
+          "True",
+          "ShadowsOnly",
+          "0",
+          "-1"
+        ]
+      ],
+      "visualReview": "Actual ultimate wide caption/court/other bodies visible; Basilio body absent with recorded ShadowsOnly, including in his own selected-wide frame."
+    },
+    "selected-wide-dante-6": {
+      "lastActualActorRows": [
+        [
+          "539.880",
+          "282727",
+          "6",
+          "rt-active-selected-wide-dante-6",
+          "Ultimate",
+          "UltimateWide",
+          "ultimate \u00b7 OWNER UPDATED",
+          "1",
+          "1",
+          "(8.1440, 6.4000, -3.6060)",
+          "(18.0982, 298.0007, 0.0000)",
+          "78.000",
+          "False",
+          "0",
+          "cheska",
+          "(-1.8000, 1.2200, 9.0000)",
+          "(0.0000, -2.0000, 0.0000)",
+          "True",
+          "True",
+          "False"
+        ],
+        [
+          "539.880",
+          "282727",
+          "6",
+          "rt-active-selected-wide-dante-6",
+          "Ultimate",
+          "UltimateWide",
+          "ultimate \u00b7 OWNER UPDATED",
+          "1",
+          "1",
+          "(8.1440, 6.4000, -3.6060)",
+          "(18.0982, 298.0007, 0.0000)",
+          "78.000",
+          "False",
+          "1",
+          "dante",
+          "(-1.6805, 0.0800, 1.9242)",
+          "(0.0000, -2.0000, 0.0000)",
+          "True",
+          "True",
+          "True"
+        ],
+        [
+          "539.880",
+          "282727",
+          "6",
+          "rt-active-selected-wide-dante-6",
+          "Ultimate",
+          "UltimateWide",
+          "ultimate \u00b7 OWNER UPDATED",
+          "1",
+          "1",
+          "(8.1440, 6.4000, -3.6060)",
+          "(18.0982, 298.0007, 0.0000)",
+          "78.000",
+          "False",
+          "2",
+          "rafi",
+          "(-7.8431, 1.2800, 4.2749)",
+          "(0.0000, -2.0000, -0.6250)",
+          "True",
+          "True",
+          "False"
+        ],
+        [
+          "539.880",
+          "282727",
+          "6",
+          "rt-active-selected-wide-dante-6",
+          "Ultimate",
+          "UltimateWide",
+          "ultimate \u00b7 OWNER UPDATED",
+          "1",
+          "1",
+          "(8.1440, 6.4000, -3.6060)",
+          "(18.0982, 298.0007, 0.0000)",
+          "78.000",
+          "False",
+          "3",
+          "cheska",
+          "(4.1803, 1.2800, 7.7322)",
+          "(0.4419, -2.0000, 0.4419)",
+          "True",
+          "True",
+          "False"
+        ]
+      ],
+      "lastBasilioModelRows": [
+        [
+          "539.880",
+          "282727",
+          "1",
+          "(-1.6805, 0.0800, 1.9242)",
+          "(-1.6805, 0.0033, 1.9242)",
+          "(-1.6805, 0.0033, 1.9242)",
+          "body-mesh",
+          "(-2.3249, -0.0029, 1.5452)",
+          "(-1.0043, 0.9836, 2.2706)",
+          "True",
+          "True",
+          "ShadowsOnly",
+          "0",
+          "-1"
+        ],
+        [
+          "539.880",
+          "282727",
+          "1",
+          "(-1.6805, 0.0800, 1.9242)",
+          "(-1.6805, 0.0033, 1.9242)",
+          "(-1.6805, 0.0033, 1.9242)",
+          "head-mesh",
+          "(-2.3156, 0.7927, 1.4524)",
+          "(-1.2543, 1.7591, 2.3499)",
+          "True",
+          "True",
+          "ShadowsOnly",
+          "0",
+          "-1"
+        ]
+      ],
+      "visualReview": "Actual ultimate wide caption/court/other bodies visible; Basilio body absent with recorded ShadowsOnly, including in his own selected-wide frame."
+    }
+  },
+  "pngCount": 22
+}

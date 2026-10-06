@@ -944,7 +944,9 @@ namespace TumbangPreso.CameraSystem
             }
             foreach (var renderer in body.Renderers)
             {
-                if (renderer == null || !renderer.enabled || !renderer.gameObject.activeInHierarchy) continue;
+                if (renderer == null || !renderer.enabled || renderer.forceRenderingOff
+                    || !renderer.gameObject.activeInHierarchy
+                    || renderer.shadowCastingMode == UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly) continue;
                 // A conservative enclosure keeps the eye out of the rendered body even when
                 // that body extends beyond its gameplay capsule. Sightline crossings remain
                 // eligible: this does not treat the whole actor as opaque scenery.

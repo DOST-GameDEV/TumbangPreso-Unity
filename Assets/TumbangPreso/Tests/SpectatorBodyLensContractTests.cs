@@ -82,6 +82,26 @@ namespace TumbangPreso.Tests
             visual.Model.GetComponent<Renderer>().enabled=false;
             Assert.IsTrue(Accepts(eye,eye+Vector3.forward*5));
         }
+        [TestCase(UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly,false,true)]
+        [TestCase(UnityEngine.Rendering.ShadowCastingMode.On,true,true)]
+        [TestCase(UnityEngine.Rendering.ShadowCastingMode.Off,true,true)]
+        [TestCase(UnityEngine.Rendering.ShadowCastingMode.Off,false,false)]
+        public void LensContainmentUsesActualBodyVisibility(UnityEngine.Rendering.ShadowCastingMode mode,bool forcedOff,bool expectedClear)
+        {
+            var body=visual.Model.GetComponent<Renderer>();
+            Vector3 eye=body.bounds.center;
+            body.shadowCastingMode=mode;body.forceRenderingOff=forcedOff;
+            Assert.AreEqual(expectedClear,Accepts(eye,eye+Vector3.forward*5),
+                "Only a body that actually renders may exclude its enclosure; authored shadowless bodies still draw.");
+        }
+        [Test] public void HidingAnAlreadyCachedBodyTakesEffectWithinTheFrame()
+        {
+            var body=visual.Model.GetComponent<Renderer>();Vector3 eye=body.bounds.center;
+            Assert.IsFalse(Accepts(eye,eye+Vector3.forward*5));
+            body.forceRenderingOff=true;
+            Assert.IsTrue(Accepts(eye,eye+Vector3.forward*5),
+                "Cached model identity does not make old visibility flags authoritative.");
+        }
         [TestCase(false)] [TestCase(true)]
         public void AShortGlideCannotRenderAnEyeInsideABody(bool startInside)
         {

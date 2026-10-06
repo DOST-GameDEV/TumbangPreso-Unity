@@ -1,0 +1,10 @@
+{
+  "Assets/TumbangPreso/Runtime/Camera/SpectatorDirector.cs": "0570352245259c338bcbbf5b186447c5065476f6f465c9eb9d3a83fd43aa4d49",
+  "Assets/TumbangPreso/Runtime/Camera/SpectatorInterest.cs": "354a47155c3f62d1d2e6d02118ecb4594cf3cf82ed1e8f853902f89ec343c452",
+  "Assets/TumbangPreso/Runtime/Camera/SpectatorCamera.cs": "e2377be1ffca81413726f1f8e40e42085a7ab6c8205d2bb494ac06687c2c0e39",
+  "Assets/TumbangPreso/Runtime/Camera/CameraRig.cs": "3761f95bcac1a003ac41576a7c28f580667006b309ce9a4aa2b9eeab8a8e507e",
+  "Assets/TumbangPreso/Runtime/Visual/CharacterVisual.cs": "e9f0994b7b45c9e614d59c87376f956858c547456d4ed76bb54c3d16078e22f0",
+  "Assets/TumbangPreso/Runtime/MatchInstaller.cs": "18569f22981f7249cfb10295eb54bdd28a834474fec881352d1eba8b85ae5863",
+  "Assets/TumbangPreso/Runtime/MatchArrivalPresentation.cs": "bfa8ced683857a2fdbebe672c4cff37e5b2a9af16a1e97a69a9632c77d233e63",
+  "Assets/TumbangPreso/Tests/PlayMode/GameplayShots.cs": "9dc32c778bb77951c5944642e2957d9fb831674a13354e1dd571648cc0fbb4a2"
+}

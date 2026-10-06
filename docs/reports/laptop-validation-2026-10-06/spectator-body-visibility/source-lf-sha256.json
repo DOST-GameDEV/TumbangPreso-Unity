@@ -1,0 +1,11 @@
+{
+  "Assets/TumbangPreso/Runtime/Camera/SpectatorDirector.cs": "0570352245259c338bcbbf5b186447c5065476f6f465c9eb9d3a83fd43aa4d49",
+  "Assets/TumbangPreso/Tests/SpectatorBodyLensContractTests.cs": "d2a6f196677687d2ab70134bc4a726e4f643c9233b51476adf84005b2fe5ef63",
+  "Assets/TumbangPreso/Tests/SpectatorBodyLensContractTests.cs.meta": "df2a90ec8dcb956e6d3d459e78e5f85f927dc2ed383ce70957879af982f5006c",
+  "Assets/TumbangPreso/Tests/PlayMode/SpectatorBodyModelLifetimeTests.cs": "c3c63e882f7cb147546803ffc16101e5d66347e1ff57aa4e664fd78677075168",
+  "Assets/TumbangPreso/Tests/PlayMode/SpectatorBodyModelLifetimeTests.cs.meta": "7d368a261f4979da7662410e60c1fc3b6c31c78b97d9f61fc054eee1fc32387b",
+  "Assets/TumbangPreso/Tests/SpectatorSceneryClearanceTests.cs": "5403a8809306fea2d27d4b5e1a0a7a0f594c0d36c18efb584d008119687190a1",
+  "Assets/TumbangPreso/Tests/SpectatorSceneryClearanceTests.cs.meta": "d1c15a201e5f11da2358689237465c77e367cb6216b683df73f37ee063718f64",
+  "Assets/TumbangPreso/Tests/SpectatorTransitClearanceTests.cs": "2b4c9867609a8030fb63100a93b8fd5a4d5c0086c67c5b22ed3d630613a27603",
+  "Assets/TumbangPreso/Tests/SpectatorTransitClearanceTests.cs.meta": "e60f5df2e4140d2d503249b106f3321b123ea547814832a14d039ca6d2440cdb"
+}
