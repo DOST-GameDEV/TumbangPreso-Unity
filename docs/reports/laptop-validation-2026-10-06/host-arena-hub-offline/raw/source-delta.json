@@ -1,0 +1,30 @@
+{
+  "sourceCommit": "d107ef7b9b348dcf9646c2acd08b88a9970604a1",
+  "previousQualifiedManifest": "../ui-postclaude1856/raw/source-delta.json plus linked qualified input chain",
+  "changedOrAddedInputs": {
+    "Assets/TumbangPreso/Tests/PlayMode/HostArenaHomeRecoveryTests.cs": "6efc944afb3df1ab76d13b5f29199634405e09fd6149d6b67babc408c098f49c",
+    "Assets/TumbangPreso/Tests/PlayMode/HostArenaHomeRecoveryTests.cs.meta": "737f390af117bfbad847e2d5de8d650bfbc00fac0ef8e4a7cc18af4158b07bc3"
+  },
+  "unchangedInputs": 21198,
+  "identity": {
+    "schemaVersion": 1,
+    "workerId": "qa-a-be075dcdfa07",
+    "validationOnly": true,
+    "projectRoot": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a",
+    "sourceProject": "C:\\Users\\Matthew\\dev\\tump-integration1003",
+    "sourceCommit": "8e7cfc7feb4eee614d456347ccbb26ad962d1714",
+    "companyName": "BH Studios Validation",
+    "productName": "TumpWorker-qa-a-be075dcdfa07",
+    "editorVersion": "6000.5.8f1",
+    "guardVersion": 1,
+    "guardSha256": "65b69c94b83cfe306293fec69649d2846f122fc083007c5d1bf64d3849dc4f90",
+    "libraryPath": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Library",
+    "libraryPhysical": true,
+    "libraryCopyFrom": "C:\\Users\\Matthew\\dev\\tump-laptop-native1003\\Library",
+    "requiredProfile": "validation-qa-a-be075dcdfa07",
+    "shippingBuildsAllowed": false,
+    "warmupRequired": true,
+    "editorValidation": "not_run",
+    "state": "ready"
+  }
+}

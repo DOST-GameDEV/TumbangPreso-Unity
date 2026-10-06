@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 12:32:31Z" end-time="2026-10-06 12:33:31Z" duration="59.6263709">
+  <test-suite type="TestSuite" id="3392" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1946" result="Passed" start-time="2026-10-06 12:32:31Z" end-time="2026-10-06 12:33:31Z" duration="59.626371" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3384" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1946" result="Passed" start-time="2026-10-06 12:32:31Z" end-time="2026-10-06 12:33:31Z" duration="59.615097" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="50488" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3385" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1946" result="Passed" start-time="2026-10-06 12:32:31Z" end-time="2026-10-06 12:33:31Z" duration="59.609224" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3388" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1944" result="Passed" start-time="2026-10-06 12:32:31Z" end-time="2026-10-06 12:33:31Z" duration="59.603763" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1798" name="HostArenaHomeRecoveryTests" fullname="TumbangPreso.PlayTests.HostArenaHomeRecoveryTests" classname="TumbangPreso.PlayTests.HostArenaHomeRecoveryTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-06 12:32:31Z" end-time="2026-10-06 12:33:31Z" duration="59.575887" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1799" name="LiveListenHostLossReturnsHomeAndTheNextOfflineMatchRuns" fullname="TumbangPreso.PlayTests.HostArenaHomeRecoveryTests.LiveListenHostLossReturnsHomeAndTheNextOfflineMatchRuns" methodname="LiveListenHostLossReturnsHomeAndTheNextOfflineMatchRuns" classname="TumbangPreso.PlayTests.HostArenaHomeRecoveryTests" runstate="Runnable" seed="1913013516" result="Passed" start-time="2026-10-06 12:32:31Z" end-time="2026-10-06 12:33:31Z" duration="59.565808" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="240000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18776, join code CQGQ
+[NetSeat] arena installed: LocalSlot=0 spectator=False host=True allBots=False | s0:reader+sim+live+act | s1:-+ai+sim+bot+live+act | s2:-+ai+sim+bot+live+act | s3:-+ai+sim+bot+live+act
+[ArenaPrewarm] drew 20 views in 0.42 s.
+[HubLoading] Arena ready after 7.73 s.
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.85, ambience slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_3 at 0.31 of full scale before the sliders (excitement 0.91, ambience slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 0.55, ambience slider).
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_3 at 0.38 of full scale before the sliders (excitement 0.86, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-0][TransportShutdown] NetworkConnectionManager was shutdown. The transport was shutdown.
+[Abandon] HostLost: ABANDONED at round 1 of 3; this peer may no longer resolve anything
+[NetLifecycle] server-stopped wasHost=True requestedStop=False
+[ArenaPrewarm] drew 20 views in 0.26 s.
+[HubLoading] Arena ready after 0.76 s.
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_3 at 0.31 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 0.55, ambience slider).
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_3 at 0.38 of full scale before the sliders (excitement 0.89, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[Net] offline
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
