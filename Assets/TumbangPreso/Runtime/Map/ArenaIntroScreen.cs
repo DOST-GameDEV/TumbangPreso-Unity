@@ -40,13 +40,15 @@ namespace TumbangPreso.Map
 
         /// <summary>The portrait's square, canvas units.</summary>
         private const float Frame = 440.0f;
-        private static readonly Color Ground = new Color(0.02f, 0.03f, 0.09f, 0.97f);
+        private static readonly Color Ground = new Color(0.03f, 0.05f, 0.15f, 1.0f);
         private static readonly Color Plate = new Color(0.10f, 0.16f, 0.42f, 1.0f);
 
         private sealed class Face
         {
             public CanvasGroup Group;
             public Image Portrait, PlateImage, Flash, BarA, BarB, Rule;
+            public RawImage Roll, Lines, Feed;
+            public Text FeedLabel;
             public Text Initial, Header, Name, Sub, Stamp;
         }
 
@@ -86,14 +88,54 @@ namespace TumbangPreso.Map
             _root = new GameObject("Arena opening screens").transform;
             _root.SetParent(parent, false);
             _root.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+            // ⚠️ ONE CARD, DRAWN TO A TEXTURE, ON EIGHT SCREENS (2026-10-06). The card is laid out once, far under
+            // the map, in front of a camera of its own that draws only it into `_picture`; each screen in the
+            // bowl is a quad wearing that picture through `ArenaScreen.shader`, which bends it line by line (the
+            // owner's "wave distort": moving the card's rows about in code only read as the words sliding). With
+            // the shader missing the eight screens are eight cards again, as they were, with no wave.
+            var shader = Resources.Load<Shader>("Shaders/ArenaScreen");
+            bool pictured = shader != null && shader.isSupported;
+            if (pictured)
+            {
+                _picture = new RenderTexture(1300, 573, 16, RenderTextureFormat.ARGB32) { name = "Arena opening screen", hideFlags = HideFlags.DontSave };
+                _picture.wrapMode = TextureWrapMode.Clamp;
+                var eye = new GameObject("Screen camera");
+                eye.transform.SetParent(_root, false);
+                eye.transform.SetPositionAndRotation(centre + Vector3.down * 4000.0f, Quaternion.identity);
+                var camera = eye.AddComponent<Camera>();
+                camera.clearFlags = CameraClearFlags.SolidColor; camera.backgroundColor = Ground;
+                camera.cullingMask = 1 << UiLayer; camera.nearClipPlane = 0.1f; camera.farClipPlane = 20.0f;
+                camera.allowHDR = false; camera.allowMSAA = false; camera.depth = -60; camera.targetTexture = _picture;
+
+                _faces[0] = BuildFace(_root, "Screen card", eye.transform.position + Vector3.forward * 5.0f, Quaternion.identity, 1.0f);
+                var canvas = _faces[0].Group.GetComponent<Canvas>();
+                canvas.renderMode = RenderMode.ScreenSpaceCamera; canvas.worldCamera = camera; canvas.planeDistance = 5.0f;
+                var scaler = _faces[0].Group.GetComponent<CanvasScaler>();
+                scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+                scaler.referenceResolution = new Vector2(Wide, Tall); scaler.matchWidthOrHeight = 0.5f;
+                foreach (var t in _faces[0].Group.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = UiLayer;
+
+                _glass = new Material(shader) { name = "Arena opening screen", hideFlags = HideFlags.DontSave, mainTexture = _picture };
+                _quad = Quad();
+            }
             for (int k = 0; k < Faces; k++)
             {
                 bool board = k >= 4;
                 Vector3 outward = ArenaStageMesh.Direction(board ? 90.0f * k : 45.0f + 90.0f * k);
                 // A corner screen is read from the can, so its card faces inward; the scoreboard's face outward.
                 Vector3 at = board ? centre + outward * BoardRadius + Vector3.up * BoardHeight : CornerCentre(centre, k);
-                _faces[k] = BuildFace(_root, board ? "Scoreboard card" : "Corner screen card", at,
-                                      Quaternion.LookRotation(board ? -outward : outward, Vector3.up), board ? BoardScale : CornerScale);
+                Quaternion turn = Quaternion.LookRotation(board ? -outward : outward, Vector3.up);
+                float scale = board ? BoardScale : CornerScale;
+                if (!pictured) { _faces[k] = BuildFace(_root, board ? "Scoreboard card" : "Corner screen card", at, turn, scale); continue; }
+
+                var screen = new GameObject(board ? "Scoreboard screen" : "Corner screen");
+                screen.transform.SetParent(_root, false);
+                screen.transform.SetPositionAndRotation(at, turn);
+                screen.transform.localScale = new Vector3(Wide * scale, Tall * scale, 1.0f);
+                screen.AddComponent<MeshFilter>().sharedMesh = _quad;
+                var drawn = screen.AddComponent<MeshRenderer>();
+                drawn.sharedMaterial = _glass;
+                drawn.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; drawn.receiveShadows = false;
             }
 
             _root.gameObject.SetActive(false);
@@ -105,6 +147,22 @@ namespace TumbangPreso.Map
             var people = Core.Roster.GetPeople(who.Mode);
             int pick = who.CharacterIndex;
             return pick >= 0 && pick < people.Count ? UI.OwnerPortraitArt.Get("UI/portraits/" + people[pick].Id) : null;
+        }
+
+        private const int UiLayer = 5;
+        private RenderTexture _picture;
+        private Material _glass;
+        private Mesh _quad;
+
+        /// <summary>A unit quad seen as a canvas is seen (from its -z side), its picture the right way round.</summary>
+        private static Mesh Quad()
+        {
+            var mesh = new Mesh { name = "Arena opening screen quad", hideFlags = HideFlags.DontSave };
+            mesh.SetVertices(new[] { new Vector3(-0.5f, -0.5f, 0), new Vector3(0.5f, -0.5f, 0), new Vector3(0.5f, 0.5f, 0), new Vector3(-0.5f, 0.5f, 0) });
+            mesh.SetUVs(0, new[] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1) });
+            mesh.SetTriangles(new[] { 0, 2, 1, 0, 3, 2 }, 0);
+            mesh.RecalculateBounds();
+            return mesh;
         }
 
         private static Face BuildFace(Transform parent, string name, Vector3 at, Quaternion rotation, float scale)
@@ -122,7 +180,19 @@ namespace TumbangPreso.Map
             var face = new Face { Group = go.AddComponent<CanvasGroup>() };
             face.Group.blocksRaycasts = false; face.Group.interactable = false;
 
+            // ⚠️ A SCREEN, NOT A CARD HELD UP TO ONE (owner, 2026-10-06: "tv needs to look more screen like").
+            // It was a flat panel 3 per cent see-through, so the screen's own logo showed through it and
+            // nothing said it was lit. Now: an opaque ground lit from its middle (a deep blue that falls
+            // to near black at the edges, as a panel's backlight does), and over everything on it the
+            // LED grid (`Pixels`: every cell a lit dot with dark gaps, 244 across) and a slow bright band
+            // rolling down it. The words and the portrait are drawn UNDER the grid, so they are made of
+            // its dots too.
             Fill(go.transform, "Ground", Vector2.zero, new Vector2(Wide, Tall), Ground);
+            Picture(go.transform, "Backlight", Backlight(), new Vector2(Wide, Tall), new Color(0.22f, 0.24f, 0.80f, 0.60f), new Rect(0, 0, 1, 1));
+            // The comic's dots, behind everything drawn on the screen: 75 across, in a lighter blue.
+            Picture(go.transform, "Dots", Pixels(), new Vector2(Wide, Tall), new Color(0.45f, 0.55f, 1.0f, 0.20f), new Rect(0, 0, Wide / 26.0f, Tall / 26.0f));
+            // A chunky ink-and-light border, as a panel in the game's UI has.
+            Border(go.transform, 12.0f, 12.0f, ArenaFx.Cyan);
             // ⚠️ ONE COLUMN, CENTRED (owner, 2026-10-05, drawing over the first card, which had the
             // portrait at the left, the text at the right and TAYA stamped askew in the bottom corner:
             // "idk about the taya text.. its so off-layout"). His drawing: a line of text at the top,
@@ -138,18 +208,108 @@ namespace TumbangPreso.Map
 
             face.Header = Label(go.transform, "Header", 92, new Vector2(0.0f, 334.0f), new Vector2(1700.0f, 130.0f), ArenaFx.Cyan);
             face.Header.text = "WHO'S THE TAYA?";
-            face.Name = Label(go.transform, "Name", 128, new Vector2(0.0f, -302.0f), new Vector2(1700.0f, 150.0f), ArenaFx.White);
+            face.Name = Label(go.transform, "Name", 128, new Vector2(0.0f, -288.0f), new Vector2(1700.0f, 150.0f), ArenaFx.White);
             face.Name.resizeTextForBestFit = true; face.Name.resizeTextMinSize = 60; face.Name.resizeTextMaxSize = 128;
             face.Name.horizontalOverflow = HorizontalWrapMode.Wrap; face.Name.verticalOverflow = VerticalWrapMode.Truncate;
-            face.Sub = Label(go.transform, "Sub", 52, new Vector2(0.0f, -394.0f), new Vector2(1700.0f, 64.0f), ArenaFx.Cyan);
+            face.Sub = Label(go.transform, "Sub", 52, new Vector2(0.0f, -374.0f), new Vector2(1700.0f, 64.0f), ArenaFx.Cyan);
             face.Stamp = Label(go.transform, "Stamp", 150, new Vector2(0.0f, 334.0f), new Vector2(1700.0f, 170.0f), ArenaFx.Gold);
             face.Stamp.text = "TAYA";
             face.Stamp.gameObject.SetActive(false);
 
+            // A camera's picture over the whole card, with its own small label (`Feed`): off until asked for.
+            face.Feed = Picture(go.transform, "Feed", null, new Vector2(Wide - 48.0f, Tall - 48.0f), Color.white, new Rect(0, 0, 1, 1));
+            face.Feed.enabled = false;
+            face.FeedLabel = Label(go.transform, "Feed label", 64, new Vector2(-Wide * 0.5f + 250.0f, Tall * 0.5f - 86.0f), new Vector2(420.0f, 90.0f), Color.white);
+            face.FeedLabel.enabled = false;
+            face.Roll = Picture(go.transform, "Roll", Backlight(), new Vector2(Wide * 1.6f, 220.0f), new Color(0.6f, 0.85f, 1.0f, 0.10f), new Rect(0, 0, 1, 1));
+            face.Lines = Picture(go.transform, "Scanlines", Lines(), new Vector2(Wide, Tall), new Color(1.0f, 1.0f, 1.0f, 0.30f), new Rect(0, 0, 1, Tall / 40.0f));
             face.BarA = Fill(go.transform, "Scan A", Vector2.zero, new Vector2(Wide, 26.0f), new Color(1.0f, 1.0f, 1.0f, 0.0f));
             face.BarB = Fill(go.transform, "Scan B", Vector2.zero, new Vector2(Wide, 10.0f), new Color(1.0f, 1.0f, 1.0f, 0.0f));
             face.Flash = Fill(go.transform, "Flash", Vector2.zero, new Vector2(Wide, Tall), new Color(1.0f, 1.0f, 1.0f, 0.0f));
             return face;
+        }
+
+        private static Texture2D _pixels, _backlight, _lines;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics() { _pixels = null; _backlight = null; _lines = null; }
+
+        /// <summary>One halftone dot, tiled: white in a round dot at the middle of the cell, nothing round it.</summary>
+        private static Texture2D Pixels()
+        {
+            if (_pixels != null) return _pixels;
+            const int n = 16;
+            var pixels = new Color32[n * n];
+            for (int y = 0; y < n; y++)
+                for (int x = 0; x < n; x++)
+                {
+                    float dx = (x + 0.5f) / n - 0.5f, dy = (y + 0.5f) / n - 0.5f;
+                    // ⚠️ A HALFTONE DOT, NOT RGB SUB-PIXELS (owner, 2026-10-06, of red, green and blue stripes in
+                    // every cell: "it looks weird.. the green and blue and its lacking our cartoony and stylized
+                    // artstyle"). At the distance the screen is seen the stripes averaged to a green haze over a
+                    // blue one. The game draws in flat fills and print dots, so the screen's texture is a comic's:
+                    // one round dot a cell, in the ground's own lighter blue, BEHIND the words and the portrait.
+                    float dot = Mathf.Clamp01((0.34f - Mathf.Sqrt(dx * dx + dy * dy)) / 0.07f);
+                    pixels[y * n + x] = new Color32(255, 255, 255, (byte)(dot * 255.0f));
+                }
+            _pixels = new Texture2D(n, n, TextureFormat.RGBA32, true) { name = "Arena screen LED cell", wrapMode = TextureWrapMode.Repeat, filterMode = FilterMode.Trilinear, hideFlags = HideFlags.DontSave };
+            _pixels.SetPixels32(pixels); _pixels.Apply(true, true);
+            return _pixels;
+        }
+
+        private static void Border(Transform parent, float inset, float thick, Color colour)
+        {
+            float w = Wide - inset * 2.0f, h = Tall - inset * 2.0f;
+            Fill(parent, "Border top", new Vector2(0.0f, h * 0.5f), new Vector2(w, thick), colour);
+            Fill(parent, "Border bottom", new Vector2(0.0f, -h * 0.5f), new Vector2(w, thick), colour);
+            Fill(parent, "Border left", new Vector2(-w * 0.5f, 0.0f), new Vector2(thick, h + thick), colour);
+            Fill(parent, "Border right", new Vector2(w * 0.5f, 0.0f), new Vector2(thick, h + thick), colour);
+        }
+
+        private static void Slide(Text text, float x, float y)
+        {
+            if (text != null) text.rectTransform.anchoredPosition = new Vector2(x, y);
+        }
+
+        /// <summary>Scanlines, tiled down the screen: one dark line in every four rows.</summary>
+        private static Texture2D Lines()
+        {
+            if (_lines != null) return _lines;
+            var pixels = new Color32[8];
+            for (int y = 0; y < 8; y++) pixels[y] = new Color32(0, 0, 6, (byte)(y < 2 ? 150 : y == 2 || y == 7 ? 60 : 0));
+            _lines = new Texture2D(1, 8, TextureFormat.RGBA32, true) { name = "Arena screen scanlines", wrapMode = TextureWrapMode.Repeat, filterMode = FilterMode.Trilinear, hideFlags = HideFlags.DontSave };
+            _lines.SetPixels32(pixels); _lines.Apply(true, true);
+            return _lines;
+        }
+
+        /// <summary>A soft white blob, whole at the middle and nothing at the rim: the backlight, and the rolling band.</summary>
+        private static Texture2D Backlight()
+        {
+            if (_backlight != null) return _backlight;
+            const int n = 64;
+            var pixels = new Color32[n * n];
+            for (int y = 0; y < n; y++)
+                for (int x = 0; x < n; x++)
+                {
+                    float dx = (x + 0.5f) / n * 2.0f - 1.0f, dy = (y + 0.5f) / n * 2.0f - 1.0f;
+                    float a = Mathf.Clamp01(1.0f - (dx * dx * 0.75f + dy * dy));
+                    pixels[y * n + x] = new Color32(255, 255, 255, (byte)(a * a * 255.0f));
+                }
+            _backlight = new Texture2D(n, n, TextureFormat.RGBA32, false) { name = "Arena screen backlight", wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear, hideFlags = HideFlags.DontSave };
+            _backlight.SetPixels32(pixels); _backlight.Apply(false, true);
+            return _backlight;
+        }
+
+        private static RawImage Picture(Transform parent, string name, Texture texture, Vector2 size, Color colour, Rect uv)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+            var image = go.AddComponent<RawImage>();
+            image.texture = texture; image.color = colour; image.uvRect = uv; image.raycastTarget = false;
+            var rect = image.rectTransform;
+            rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchoredPosition = Vector2.zero; rect.sizeDelta = size;
+            return image;
         }
 
         private static Image Fill(Transform parent, string name, Vector2 at, Vector2 size, Color colour)
@@ -186,6 +346,44 @@ namespace TumbangPreso.Map
             return text;
         }
 
+        /// <summary>
+        /// Put a camera's picture on the screens in place of the card (null takes it off): a replay, for
+        /// `ArenaScreens`. The picture is the screen's shape cut from the middle of `picture` (a camera's frame
+        /// is taller than these screens), under a small label.
+        /// </summary>
+        public void Feed(Texture picture, string label)
+        {
+            if (_root == null) return;
+            for (int k = 0; k < Faces; k++)
+            {
+                var face = _faces[k];
+                if (face == null || face.Feed == null) continue;
+                bool on = picture != null;
+                face.Feed.enabled = on; face.FeedLabel.enabled = on;
+                if (!on) { face.Feed.texture = null; continue; }
+                face.Feed.texture = picture;
+                float shown = Mathf.Clamp01((Tall / Wide) / (picture.height / (float)Mathf.Max(1, picture.width)));
+                face.Feed.uvRect = new Rect(0.0f, (1.0f - shown) * 0.5f, 1.0f, shown);
+                face.FeedLabel.text = label; face.FeedLabel.color = ArenaFx.Gold;
+            }
+        }
+
+        /// <summary>The words that land over the portrait (TAYA in the opening), and their colour. For `ArenaScreens`.</summary>
+        public void Headline(string text, Color colour)
+        {
+            if (_root == null) return;
+            for (int k = 0; k < Faces; k++)
+            {
+                var face = _faces[k];
+                if (face == null) continue;
+                face.Stamp.text = text; face.Stamp.color = colour;
+                face.Stamp.resizeTextForBestFit = true; face.Stamp.resizeTextMinSize = 60; face.Stamp.resizeTextMaxSize = 150;
+            }
+            _accent = colour;
+        }
+
+        private Color _accent = ArenaFx.Gold;
+
         /// <summary>Put the cards up at `alpha` (0 takes them down). Nothing is drawn while they are down.</summary>
         public void SetVisible(float alpha)
         {
@@ -194,7 +392,9 @@ namespace TumbangPreso.Map
             bool on = alpha > 0.004f;
             if (_root.gameObject.activeSelf != on) _root.gameObject.SetActive(on);
             if (!on) return;
-            for (int k = 0; k < Faces; k++) _faces[k].Group.alpha = alpha;
+            // The picture's screens fade as one material; the card itself stays whole for its camera.
+            if (_glass != null) { _glass.SetFloat("_Alpha", alpha); return; }
+            for (int k = 0; k < Faces; k++) if (_faces[k] != null) _faces[k].Group.alpha = alpha;
         }
 
         /// <summary>Show one seat's card on every face. A change only: the same seat again costs nothing.</summary>
@@ -207,6 +407,7 @@ namespace TumbangPreso.Map
             for (int k = 0; k < Faces; k++)
             {
                 var face = _faces[k];
+                if (face == null) continue;
                 if (changed)
                 {
                     bool painted = _portraits[seat] != null;
@@ -240,6 +441,16 @@ namespace TumbangPreso.Map
             for (int k = 0; k < Faces; k++)
             {
                 var face = _faces[k];
+                if (face == null) continue;
+                float clock = Time.unscaledTime;
+                if (_glass != null && k == 0)
+                {
+                    _glass.SetFloat("_Clock", clock % 600.0f);
+                    _glass.SetFloat("_Wave", Settings.SettingsStore.Current.ReducedUiMotion ? 0.0f : 1.0f);
+                }
+                if (face.Lines != null) face.Lines.uvRect = new Rect(0, clock * 0.35f, 1, Tall / 40.0f);
+                // No wave: the rows sliding sideways read as the words moving, not as a screen (owner, 2026-10-06).
+                if (face.Roll != null) face.Roll.rectTransform.anchoredPosition = new Vector2(0.0f, (0.5f - Mathf.Repeat(Time.unscaledTime * 0.22f + k * 0.13f, 1.0f)) * (Tall + 220.0f));
                 face.BarA.rectTransform.anchoredPosition = new Vector2(0.0f, (a - 0.5f) * (Tall - 40.0f));
                 face.BarB.rectTransform.anchoredPosition = new Vector2(0.0f, (b - 0.5f) * (Tall - 40.0f));
                 face.BarA.color = new Color(1.0f, 1.0f, 1.0f, 0.16f * glitch);
@@ -247,13 +458,18 @@ namespace TumbangPreso.Map
                 face.Portrait.rectTransform.anchoredPosition = new Vector2((a - 0.5f) * 36.0f * glitch, 0.0f);
                 face.Flash.color = new Color(1.0f, 1.0f, 1.0f, Mathf.Clamp01(flash));
                 if (_stamped) face.Stamp.rectTransform.localScale = Vector3.one * size;
-                face.Rule.color = _stamped ? ArenaFx.Gold : ArenaFx.Cyan;
+                face.Rule.color = _stamped ? _accent : ArenaFx.Cyan;
             }
         }
 
         public void Destroy()
         {
             if (_root != null) Object.Destroy(_root.gameObject);
+            if (_glass != null) Object.Destroy(_glass);
+            if (_quad != null) Object.Destroy(_quad);
+            if (_picture != null) { _picture.Release(); Object.Destroy(_picture); }
+            _glass = null; _quad = null; _picture = null;
+            for (int k = 0; k < Faces; k++) _faces[k] = null;
             _root = null; _shown = -2; _stamped = false;
         }
     }

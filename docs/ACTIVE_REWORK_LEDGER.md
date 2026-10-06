@@ -1,3 +1,12 @@
+## Current Root checked QoL Arena merge
+
+QoL0d47 merged normally with no conflicts; bot current-ult gate, replay nearplane
+Clear, active-scene stage ownership and arrival return guards preserved. Core731
+pass on combined source. Incoming protocol153 intentional for circular layout
+confinement. Native combined checks and authored Arena opening review next; fresh
+matching153 peers pending. Laptop AI/Arena lane held until checked integration.
+Private Auditor/voxel work untouched. No heavy Root job currently live.
+
 ## Current Root arrival view ownership terminal
 
 Original two watch-return failures and two gameplay controls; candidate four pass.

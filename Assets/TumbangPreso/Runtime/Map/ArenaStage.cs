@@ -303,6 +303,43 @@ namespace TumbangPreso.Map
             ShowApplied();
         }
 
+        /// <summary>
+        /// ⚠️ THE TAYA'S BOX IS ROUND HERE, AND EACH LAYOUT HAS ITS OWN (owner, 2026-10-06: "we'll do round
+        /// bounds.. because you're able to stand on one spot of a circular platform ring and not be able to throw,
+        /// but also move to another spot on the same ring and shoot. same for tagging"; "should depend on the area
+        /// that the specific stage has"). The game's box is a square of 7 m (`Core.Confinement`), which cut this
+        /// stage's rings into arcs you could throw from and arcs you could not. Here it is a circle whose line lies
+        /// 0.3 m onto the first deck beyond the middle one, so the middle (the drum and its ramps) is the box and a
+        /// whole ring is either in it or out of it; on PLAZA, whose middle is one wide disc, it is drawn on the disc.
+        /// Radii from `tools/arena_layouts.json`: tore's and hukay's ring begins at 8.0, krus's apron at 7.6,
+        /// entablado's at 7.2; plaza's disc is 11.5 across. By name, so a scene built earlier needs no rebuild.
+        /// Every peer applies the same layout and so the same box: nothing is sent.
+        /// </summary>
+        public static float BoxRadiusFor(string layout)
+        {
+            switch ((layout ?? "").ToLowerInvariant())
+            {
+                // ⚠️ THE LINE KEEPS CLEAR OF EVERY PAD (owner, 2026-10-06: "the rings were extended too much to the point
+                // where it interferes as the player tries to jump shoot on the pad. need you to ensure the rings dont
+                // interfere like that for all stages"). A pad the line runs through is half in the box, and a throw from
+                // a jump off it is refused or allowed by which side the feet left from. Each radius below is at least
+                // 1.6 m from the centre of every jump pad and 1.2 m from every speed pad of its layout
+                // (tools/arena_layouts.json), on the INSIDE, so the pads are outside the box:
+                //   plaza      jump pads at 8.0                 -> 6.4, on the wide middle disc
+                //   tore       jump pads at 10.25 on the ring   -> 8.6: the taya keeps the ring's inner 0.6 m
+                //   hukay      speed pads at 10.5 on the ring   -> 9.3: the taya keeps the ring's inner 1.3 m
+                //   krus       nearest pad at 16.25             -> 7.9, just onto the apron
+                //   entablado  nearest pad at 10.35             -> 7.5, just onto the raised apron
+                // (hukay's two jump pads are down in the pit at 3.7, inside any box: as they were under the square.)
+                case "plaza": return 6.4f;
+                case "tore": return 8.6f;
+                case "krus": return 7.9f;
+                case "hukay": return 9.3f;
+                case "entablado": return 7.5f;
+                default: return Core.Balance.ConfinementRadius;
+            }
+        }
+
         private void OnEnable()
         {
             if (gameObject.scene != UnityEngine.SceneManagement.SceneManager.GetActiveScene()) return;
@@ -315,6 +352,7 @@ namespace TumbangPreso.Map
         {
             if (Instance != this) return;
             AIController.EdgeSense = false;
+            Core.Confinement.Reset();
             Net.MatchRpc.MoveFloorY = Net.MatchRpc.DefaultMoveFloorY;
             Instance = null;
         }
@@ -454,6 +492,9 @@ namespace TumbangPreso.Map
             }
 
             Physics.SyncTransforms();
+            // The taya's box on this layout: round, and as wide as this layout's middle (`BoxRadiusFor`).
+            Core.Confinement.Use(true, BoxRadiusFor(Layouts[layout] != null ? Layouts[layout].Name : null));
+            Core.Confinement.Touch();
             LayoutApplied?.Invoke(layout);
 
             // ⚠️ BEFORE A MATCH, THE BODIES ARE SEATED AGAIN (owner, 2026-10-05: "on entablado sometimes
@@ -470,7 +511,12 @@ namespace TumbangPreso.Map
 
         /// <summary>The map's effects (`ArenaFx`, and with it the show and the ambience) install
         /// themselves here if the scene was built before they existed.</summary>
-        private void Start() => ArenaFx.Ensure();
+        private void Start()
+        {
+            ArenaFx.Ensure();
+            // The screens' cards in play install themselves too, so a scene built earlier has them.
+            if (GetComponent<ArenaScreens>() == null) gameObject.AddComponent<ArenaScreens>();
+        }
 
         private void Update()
         {

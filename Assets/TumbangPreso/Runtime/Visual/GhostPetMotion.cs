@@ -11,7 +11,7 @@ namespace TumbangPreso.Visual
             // 2026-09-27 (`AIController.PlayableMinX`), so a familiar can scout to a shore the far wall allows.
             if(owner!=null && owner.IsDefender)
             {
-                float r=Core.Balance.ConfinementRadius;
+                float r=Core.Confinement.Radius;
                 position.x=Mathf.Clamp(position.x,-r,r);position.z=Mathf.Clamp(position.z,-r,r);
                 return position;
             }

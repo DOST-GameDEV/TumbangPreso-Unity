@@ -1,3 +1,11 @@
+## Current protocol153: Arena layout confinement
+
+Arena uses a circular danger zone sized by its shared layout; other maps retain
+the square default. Every peer derives the same shape/radius from layout state.
+Protocol153 intentionally rejects152 peers whose throw/tag boundaries disagree.
+Fresh matching153 player/host acceptance remains required; older152 evidence is
+historical. No new packet is added by this boundary change.
+
 # Skill Networking Contract
 
 ## Paete delayed player vine, protocol151
@@ -46,8 +54,8 @@ but arc-wall data requires format14. See reports/glacial-restore-2026-10-04.
 ## Fifteen-second imbuements, protocol147
 
 Frostbite remains active for15seconds and coats every throw in that window;
-throwing does not consume or refresh it. Cold Feet uses radius2.5m, range0.5â€“5m
-and a1second aim ramp. Glacial Wall lasts10seconds with range1.5â€“4m and a1second
+throwing does not consume or refresh it. Cold Feet uses radius2.5m, range0.5–5m
+and a1second aim ramp. Glacial Wall lasts10seconds with range1.5–4m and a1second
 aim ramp; its compact5m arc retains radius3m and three slipper hits still shatter it. Boulder now has a
 15second host-owned deadline on the exact loaded slipper. Dropping/retrieving
 it does not refresh that deadline; replacing its affinity retires the old timer.

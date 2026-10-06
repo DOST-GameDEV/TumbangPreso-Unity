@@ -93,8 +93,8 @@ namespace TumbangPreso.Map
         public const float Dark = 3.0f;
 
         public static Times TimesFor(bool full) => full
-            ? new Times { Full = true, Black = Dark, Walk = Dark + 0.6f, Glare = Dark + 1.6f, Peak = Dark + 3.7f, Reveal = Dark + 3.95f, Taya = Dark + 6.8f, Land = Dark + 10.1f, Spot = Dark + 12.2f, Build = Dark + 12.85f, Handoff = Dark + 12.85f + BuildSeconds, End = Dark + 12.85f + BuildSeconds + 0.8f }
-            : new Times { Full = false, Walk = -1.0f, Glare = -1.0f, Peak = -1.0f, Reveal = 0.0f, Taya = 2.0f, Land = 4.7f, Spot = 6.6f, Build = 7.2f, Handoff = 7.2f + BuildSeconds, End = 7.2f + BuildSeconds + 0.8f };
+            ? new Times { Full = true, Black = Dark, Walk = Dark + 0.6f, Glare = Dark + 1.6f, Peak = Dark + 3.7f, Reveal = Dark + 3.95f, Taya = Dark + 6.8f, Land = Dark + 10.1f, Spot = Dark + 12.2f, Build = Dark + 14.85f, Handoff = Dark + 14.85f + BuildSeconds, End = Dark + 14.85f + BuildSeconds + 0.8f }
+            : new Times { Full = false, Walk = -1.0f, Glare = -1.0f, Peak = -1.0f, Reveal = 0.0f, Taya = 2.0f, Land = 4.7f, Spot = 6.6f, Build = 9.0f, Handoff = 9.0f + BuildSeconds, End = 9.0f + BuildSeconds + 0.8f };
 
         public static ArenaIntro Instance { get; private set; }
 
@@ -135,6 +135,10 @@ namespace TumbangPreso.Map
         /// 2026-10-05, of four abreast: "the hall is too crowded. split the characters into 2 lines like the
         /// bluelock reference"): the taya's seat leads the left file, the camera follows the rear pair.</summary>
         private static readonly float[] LaneX = { -0.85f, 0.85f, -0.85f, 0.85f }, LaneZ = { 1.9f, 1.65f, 0.1f, -0.12f };
+        /// <summary>How big each seat walks (bounce, roll and twist), and how fast its walk clip runs: no two alike.</summary>
+        private static readonly float[] Swagger = { 1.25f, 0.9f, 1.05f, 1.15f }, Pace = { 1.15f, 1.3f, 1.05f, 1.22f };
+        /// <summary>Each seat's place across once the files have opened into one line: the taya's and the next in the middle.</summary>
+        private static readonly float[] AbreastX = { -1.05f, 1.05f, -3.15f, 3.15f };
         private const int Seats = Core.Balance.PlayerCount, MaxTicks = 72;
         private const string WelcomeLine = "arena_welcome";
 
@@ -157,6 +161,7 @@ namespace TumbangPreso.Map
         private readonly Quaternion[] _restTurn = new Quaternion[Seats];
         private readonly Transform[] _limb = new Transform[Seats * 4];
         private readonly Quaternion[] _limbRest = new Quaternion[Seats * 4];
+        private readonly CharacterAnimator[] _anim = new CharacterAnimator[Seats];
         private static readonly string[] LimbNames = { "leg-left", "leg-right", "arm-left", "arm-right" };
         private bool _posing;
 
@@ -431,6 +436,14 @@ namespace TumbangPreso.Map
 
                 _body[s] = body; _root[s] = root;
                 _rest[s] = root.localPosition; _restTurn[s] = root.localRotation;
+                // ⚠️ THE BODY IS PUT IN ITS IDLE, AND KEPT BREATHING (owner, 2026-10-06, of the cut to the taya:
+                // "the idle animations arent playing on any of the characters so theyre just A-posing"). The
+                // arrival this film replaced asked each animator for its idle (`SetArrivalPose`); the film did
+                // not, so a body whose graph had not yet run stood in its bind pose, and the game's clock is
+                // held for the whole film, so nothing would have moved it on. The idle is asked for here and
+                // run on each frame (`Models`).
+                _anim[s] = body.GetComponent<CharacterAnimator>();
+                if (_anim[s] != null) _anim[s].SetArrivalPose(s, 0.001f);
                 if (visual.Model == null) continue;
                 foreach (var bone in visual.Model.GetComponentsInChildren<Transform>(true))
                     for (int k = 0; k < 4; k++)
@@ -472,23 +485,58 @@ namespace TumbangPreso.Map
                 if (body == null || root == null) continue;
 
                 // Two files in the tunnel, spreading once they are out on the turf.
-                float z = line + LaneZ[s];
-                float spread = Mathf.Lerp(1.0f, 1.9f, Smooth((z - MouthZ - 1.0f) / 6.0f));
-                float phase = (walked / Stride + s * 0.31f) * Mathf.PI * 2.0f;
-                float bob = Mathf.Abs(Mathf.Sin(phase)) * 0.035f * stride;
-                Vector3 at = _centre + new Vector3(LaneX[s] * spread, Ground + bob, z);
-                _stand[s] = _centre + new Vector3(LaneX[s] * spread, Ground, z);
+                // ⚠️ THE TWO FILES OPEN INTO ONE LINE ABREAST (owner, 2026-10-06, of the cut back to the players: "the
+                // players are still in 2 lines, make it so it looks like theyre walking to a horizontal line"). From
+                // a little before that cut to a second into it, the rear pair comes up level and all four step out
+                // to their places across (the taya's seat and the next in the middle), still walking, so the camera
+                // arrives on the last steps of it and then on four standing in a row.
+                float form = t.Full || !_still ? Smooth((age - (t.Spot - 1.3f)) / 2.3f) : 1.0f;
+                float move = Mathf.Sin(form * Mathf.PI);
+                float z = line + Mathf.Lerp(LaneZ[s], 1.9f, form);
+                float spread = Mathf.Lerp(1.0f, 1.9f, Smooth((line + LaneZ[s] - MouthZ - 1.0f) / 6.0f));
+                float x = Mathf.Lerp(LaneX[s] * spread, AbreastX[s], form);
+                stride = Mathf.Max(stride, move);
+                float phase = ((walked + form * 2.4f) / Stride + s * 0.31f) * Mathf.PI * 2.0f;
+                // ⚠️ A WALK WITH SOME LIFE IN IT (owner, 2026-10-06: "the walking looks too linear and unnatural,
+                // lacking character and poppyness and excitement"). It was four limbs swung on a sine over a body
+                // that slid. Now the body walks in the character's OWN walk clip (`SetArrivalGait`, below), each at
+                // their own pace and out of step with the others, and over it: a real bounce on every footfall, a
+                // roll of the shoulders and a twist of the hips with the stride, a lean into the walk, and, as each
+                // one steps out under the lights, a hop of their own.
+                float swagger = Swagger[s];
+                float bob = Mathf.Abs(Mathf.Sin(phase)) * 0.075f * swagger * stride;
+                float out_ = line + LaneZ[s] - MouthZ;                                  // metres past the tunnel's mouth
+                float hopAt = Mathf.Clamp01((out_ - 0.6f - 0.35f * s) / 1.5f);
+                bob += _still ? 0.0f : Mathf.Sin(hopAt * Mathf.PI) * 0.38f * (hopAt > 0.0f && hopAt < 1.0f ? 1.0f : 0.0f);
+                Vector3 at = _centre + new Vector3(x, Ground + bob, z);
+                _stand[s] = _centre + new Vector3(x, Ground, z);
 
                 // ONLY the drawn model moves: its root's rest pose plus the offset, turned to face the field.
                 var parent = root.parent;
                 Quaternion parentTurn = parent != null ? parent.rotation : Quaternion.identity;
                 Vector3 offset = at - body.transform.position;
                 root.localPosition = _rest[s] + (parent != null ? parent.InverseTransformVector(offset) : offset);
-                root.localRotation = Quaternion.Inverse(parentTurn) * Quaternion.Euler(0.0f, -body.transform.eulerAngles.y, 0.0f) * parentTurn * _restTurn[s];
+                float roll = Mathf.Sin(phase) * 4.5f * swagger * stride, twist = Mathf.Sin(phase + 1.2f) * 7.0f * swagger * stride;
+                float lean = 5.0f * stride - 9.0f * Mathf.Sin(hopAt * Mathf.PI) * (hopAt > 0.0f && hopAt < 1.0f ? 1.0f : 0.0f);
+                root.localRotation = Quaternion.Inverse(parentTurn) * Quaternion.Euler(lean, twist - body.transform.eulerAngles.y, roll) * parentTurn * _restTurn[s];
 
                 // The walk: legs and arms swung about the model's own side axis, opposite pairs
                 // together. Written whole each frame from the rest pose, after the animator
                 // (which holds its idle through the arrival), so nothing accumulates.
+                // The idle, a frame on; the limbs' rest is what it has just written, so the walk is laid over it.
+                if (_anim[s] != null)
+                {
+                    // ⚠️ THE IDLE STARTS AT THE CUT TO THE PLAYERS, NOT AT THE FILM'S START (owner, 2026-10-06: "the idle
+                    // animations play too early so it ends when the camera cuts to the player"). Until then the pose is
+                    // held at its first frame under the walk; from just before the spotlight's shot it runs.
+                    bool walking = stride > 0.05f;
+                    _anim[s].SetArrivalGait(walking);
+                    // Standing, the idle runs at its own speed; it begins afresh, blended in, each time the walk stops,
+                    // and the last time is the cut back to the players.
+                    _anim[s].AdvanceHeld(Time.unscaledDeltaTime * (walking ? Pace[s] : 1.0f));
+                    continue;   // the clip moves the limbs: the swing below is only for a body with no animator
+                }
+                if (stride <= 0.001f) continue;
                 Vector3 side = root.right;
                 float leg = Mathf.Sin(phase) * 27.0f * stride, arm = Mathf.Sin(phase) * 19.0f * stride;
                 Swing(s * 4, side, leg); Swing(s * 4 + 1, side, -leg);
@@ -515,6 +563,7 @@ namespace TumbangPreso.Map
                 if (_root[s] != null) { _root[s].localPosition = _rest[s]; _root[s].localRotation = _restTurn[s]; }
                 for (int k = 0; k < 4; k++)
                     if (_limb[s * 4 + k] != null) _limb[s * 4 + k].localRotation = _limbRest[s * 4 + k];
+                if (_anim[s] != null) { _anim[s].SetArrivalPose(s, 0.0f); _anim[s] = null; }
             }
         }
 
@@ -578,9 +627,18 @@ namespace TumbangPreso.Map
             else if (age < t.Build)
             {
                 // The spot on the taya: low on the turf in front of the line, looking back at them.
+                // ⚠️ AND THEN THE OTHER THREE (owner, 2026-10-06: "need you to extend when it cuts back to the player, so
+                // it also shows the other players"). It was 0.65 s on the taya alone. Now about 2.6 s: it holds on
+                // the taya for the first third, then draws back and across until all four stand in the frame.
                 float p = _still ? 0.5f : (age - t.Spot) / (t.Build - t.Spot);
                 Vector3 who = _root[_taya] != null ? _stand[_taya] : _centre + new Vector3(0.0f, Ground, LineEnd);
-                Pose(who + new Vector3(2.3f - 0.3f * p, 1.0f, 5.2f - 0.5f * p), who + Vector3.up * 1.25f, 38.0f);
+                Vector3 all = Vector3.zero; int counted = 0;
+                for (int s = 0; s < Seats; s++) if (_root[s] != null) { all += _stand[s]; counted++; }
+                all = counted > 0 ? all / counted : who;
+                float wide = _still ? 1.0f : Smooth((p - 0.3f) / 0.6f);
+                Vector3 from = Vector3.Lerp(who + new Vector3(2.3f - 0.3f * p, 1.0f, 5.2f - 0.5f * p), all + new Vector3(0.9f, 1.7f, 8.6f), wide);
+                Vector3 look = Vector3.Lerp(who + Vector3.up * 1.25f, all + Vector3.up * 1.1f, wide);
+                Pose(from, look, Mathf.Lerp(38.0f, 44.0f, wide));
             }
             else if (build < ArenaStage.OpeningUndock)
             {

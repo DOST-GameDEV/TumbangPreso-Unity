@@ -577,7 +577,9 @@ namespace TumbangPreso.Net
         // host-to-all message, `ArenaBalloon`, the Arena's slipper balloon (hits, popped, its last event),
         // also sent to a joining peer. (This was 146 on QoLUpdates before the two branches met:
         // ASTRAReworks had taken 146 to 151 for other things.)
-        public const int ProtocolVersion = 152;
+        // 153: the Arena's taya box is round and sized by its layout (`Core.Confinement.Use`). Nothing new is sent,
+        // but a peer on 152 would judge throws and tags by the square, so the two may not meet.
+        public const int ProtocolVersion = 153;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
