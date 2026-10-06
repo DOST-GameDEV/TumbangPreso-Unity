@@ -320,7 +320,12 @@ namespace TumbangPreso.CameraSystem
 
         private void Awake() => _camera = GetComponent<SpectatorCamera>();
 
-        private void OnDisable() => _interest.Unhook();
+        private void OnDisable()
+        {
+            _interest.Unhook();
+            _bodyModels.Clear();
+            _bodyRendererFrame = -1;
+        }
 
         /// <summary>
         /// ⚠️ `LateUpdate`, NOT `Update`, AND THE ORDER IS THE POINT. `SpectatorCamera.Update`
@@ -865,28 +870,79 @@ namespace TumbangPreso.CameraSystem
 
         private static Collider[] Overlap = new Collider[8];
         private static RaycastHit[] TransitHits = new RaycastHit[8];
-        private readonly List<Renderer> _bodyRenderers = new List<Renderer>();
+        private sealed class BodyModel
+        {
+            public GameObject Model;
+            public int Version;
+            public readonly List<Renderer> Renderers = new List<Renderer>();
+        }
+        private readonly Dictionary<CharacterVisual, BodyModel> _bodyModels =
+            new Dictionary<CharacterVisual, BodyModel>();
+        private readonly List<CharacterVisual> _retiredBodyVisuals = new List<CharacterVisual>();
         private readonly List<Renderer> _modelRenderers = new List<Renderer>();
+        private CharacterVisual[] _standaloneBodyVisuals;
+        private RoundDirector _bodyRound;
         private int _bodyRendererFrame = -1;
 
         private bool BodyLensIsClear(Vector3 position)
         {
+            var round = GameServices.Round;
+            if (_bodyRound != round)
+            {
+                _bodyRound = round;
+                _bodyModels.Clear();
+                _bodyRendererFrame = -1;
+            }
             if (_bodyRendererFrame != Time.frameCount)
             {
                 _bodyRendererFrame = Time.frameCount;
-                _bodyRenderers.Clear();
-                foreach (var visual in FindObjectsByType<CharacterVisual>(FindObjectsSortMode.None))
-                {
-                    // The installed model excludes nameplates, companion pets and skill VFX.
-                    if (visual.Model == null || visual.GetComponent<CharacterMotor>() == null) continue;
-                    _modelRenderers.Clear();
-                    visual.Model.GetComponentsInChildren(false, _modelRenderers);
-                    foreach (var renderer in _modelRenderers)
-                        if (renderer is MeshRenderer || renderer is SkinnedMeshRenderer)
-                            _bodyRenderers.Add(renderer);
-                }
+                _retiredBodyVisuals.Clear();
+                foreach (var entry in _bodyModels)
+                    if (entry.Key == null) _retiredBodyVisuals.Add(entry.Key);
+                foreach (var visual in _retiredBodyVisuals) _bodyModels.Remove(visual);
+                // Standalone/editor scenes have no registered round. Live matches use the
+                // existing body registry, avoiding a scene search allocation each frame.
+                if (round == null)
+                    _standaloneBodyVisuals = FindObjectsByType<CharacterVisual>(FindObjectsSortMode.None);
             }
-            foreach (var renderer in _bodyRenderers)
+            if (round != null)
+            {
+                var bodies = round.Bodies;
+                for (int i = 0; i < bodies.Count; i++)
+                    if (bodies[i] != null && !ModelLensIsClear(bodies[i].GetComponent<CharacterVisual>(), position))
+                        return false;
+            }
+            else
+            {
+                foreach (var visual in _standaloneBodyVisuals)
+                    if (!ModelLensIsClear(visual, position)) return false;
+            }
+            return true;
+        }
+
+        private bool ModelLensIsClear(CharacterVisual visual, Vector3 position)
+        {
+            if (visual == null || !visual.gameObject.activeInHierarchy
+                || visual.GetComponent<CharacterMotor>() == null || visual.Model == null) return true;
+            if (!_bodyModels.TryGetValue(visual, out var body))
+            {
+                body = new BodyModel();
+                _bodyModels.Add(visual, body);
+            }
+            if (body.Model != visual.Model || body.Version != visual.ModelVersion)
+            {
+                body.Model = visual.Model;
+                body.Version = visual.ModelVersion;
+                body.Renderers.Clear();
+                _modelRenderers.Clear();
+                // Include inactive meshes so activation needs no model rebuild. Visibility
+                // and live bounds are checked below, on every pose, including within a frame.
+                visual.Model.GetComponentsInChildren(true, _modelRenderers);
+                foreach (var renderer in _modelRenderers)
+                    if (renderer is MeshRenderer || renderer is SkinnedMeshRenderer)
+                        body.Renderers.Add(renderer);
+            }
+            foreach (var renderer in body.Renderers)
             {
                 if (renderer == null || !renderer.enabled || !renderer.gameObject.activeInHierarchy) continue;
                 // A conservative enclosure keeps the eye out of the rendered body even when

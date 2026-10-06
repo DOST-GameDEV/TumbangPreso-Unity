@@ -1,0 +1,59 @@
+{
+  "original": {
+    "sourceCommit": "2a54f71cfcdf4ce670f986900cd60752963326bc",
+    "qualifiedManifestSha256": "88c6b81ddf0fec1b804afd2b3da030a76ede7a8ce9a80f548b4ce0c40bbfe9c5",
+    "profile": "validation-qa-a-be075dcdfa07",
+    "directorSha256": "0efd65ef7b9a9666f3dbb9f6c5f373058ca0ae01cc8974178b78e69580e89a55",
+    "fixtureSha256": "7e5f8c629b9f1676a549beda366acd34a8e86d96541b1792d49bb0d99a0aff6e",
+    "generatedDeltaCount": 279,
+    "result": {
+      "pid": 47220,
+      "terminal": true,
+      "exitCode": 2,
+      "passed": 2,
+      "failed": 2,
+      "expected": 4,
+      "inputCount": 21158,
+      "allInputsRestored": true,
+      "existingPrefsRestored": 13
+    }
+  },
+  "candidate": {
+    "sourceCommit": "2a54f71cfcdf4ce670f986900cd60752963326bc",
+    "qualifiedManifestSha256": "299bc7019303b5353cb25439bac86b1f2f8050cda100e27744f4fde61fbae919",
+    "profile": "validation-qa-a-be075dcdfa07",
+    "directorSha256": "7df283e6a26de7eb74598a530bc871a3e742122867a01ce29b519dc31f3e709d",
+    "fixtureSha256": "7e5f8c629b9f1676a549beda366acd34a8e86d96541b1792d49bb0d99a0aff6e",
+    "generatedDeltaCount": 279,
+    "result": {
+      "pid": 42704,
+      "terminal": true,
+      "exitCode": 0,
+      "passed": 4,
+      "failed": 0,
+      "expected": 4,
+      "inputCount": 21158,
+      "allInputsRestored": true,
+      "existingPrefsRestored": 13
+    }
+  },
+  "regression": {
+    "sourceCommit": "2a54f71cfcdf4ce670f986900cd60752963326bc",
+    "qualifiedManifestSha256": "f3a403a60aad48bafc6c3b84cc966fb596f9fa7f0e284c96bdf471d278a0d9d4",
+    "profile": "validation-qa-a-be075dcdfa07",
+    "directorSha256": "7df283e6a26de7eb74598a530bc871a3e742122867a01ce29b519dc31f3e709d",
+    "fixtureSha256": "7e5f8c629b9f1676a549beda366acd34a8e86d96541b1792d49bb0d99a0aff6e",
+    "generatedDeltaCount": 280,
+    "result": {
+      "pid": 48948,
+      "terminal": true,
+      "exitCode": 0,
+      "passed": 14,
+      "failed": 0,
+      "expected": 14,
+      "inputCount": 21158,
+      "allInputsRestored": true,
+      "existingPrefsRestored": 13
+    }
+  }
+}

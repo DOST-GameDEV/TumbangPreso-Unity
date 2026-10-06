@@ -1,0 +1,14 @@
+{
+  "raw/original-launch.json": "c7c9c8e3a601d0b380d036d05b87c97e10bfade9bc7479313d1701520d9e2473",
+  "raw/original-classified-result.json": "11f23852174a8a1a757ba2d9046e54f2b71e19063407e71249d4680fb5a5a6c1",
+  "raw/original-tests.xml": "950bdc76c2ae4434ac95ec3fb9eb471db53ed378ab560c7c9ea545751ece7303",
+  "raw/candidate-launch.json": "0b167db890a5f6272c4867dab479a5103d11615fb8cce5d724c8ad49bf31d05d",
+  "raw/candidate-classified-result.json": "700fe3a7c6474614f95d28a799c496fbec3f391df25cc5060a781d6bd2a44730",
+  "raw/candidate-tests.xml": "406a2dc13fcf984c284a9e2672c839071f8eb579c47f74d7fa97342528e11e1b",
+  "raw/regression-launch.json": "76c26f19fa7da16e5e28f6ec9b932132644b57d0511e5eb77158624b83b26109",
+  "raw/regression-classified-result.json": "966d71c86e44c6e46e9e56c1ae3b590a4fb3c3f663dcc94d1c5cbc7963764738",
+  "raw/regression-tests.xml": "396737831668b2d210d010c348d9c72dbfeab7bbcd594caf9818f92a2d76f67b",
+  "raw/original-director.cs": "0efd65ef7b9a9666f3dbb9f6c5f373058ca0ae01cc8974178b78e69580e89a55",
+  "raw/tested-fixture.cs": "7e5f8c629b9f1676a549beda366acd34a8e86d96541b1792d49bb0d99a0aff6e",
+  "raw/candidate-director.cs": "7df283e6a26de7eb74598a530bc871a3e742122867a01ce29b519dc31f3e709d"
+}
