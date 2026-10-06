@@ -1,0 +1,19 @@
+{
+  "raw/ArenaAiObjectiveApproachTests.cs": "c249d54c2898860b24f69a994d7870f4d5bb6393fb723c4e91155faa7cd62d50",
+  "raw/ArenaAiObjectiveApproachTests.cs.meta": "83cc09ca4cda577e1055d4a4a87768475a92f3630f6adc2476d1ce948b53a24f",
+  "raw/candidate-classified-result.json": "51f23c162a0f16a2c762f8980e1a34172af02364c65920a88dc14945870818f2",
+  "raw/candidate-launch.json": "f7ba9ba059b1ce2b754b0d1bd4fa8d965ff6d4093c75593809687ee90409ec4f",
+  "raw/candidate-profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+  "raw/candidate-ramp-approaches.txt": "f66fb8988078345898fb76f8b70ce6325c7dd9afcacd454bb19b90d4fa61edc2",
+  "raw/candidate-Slipper.cs": "4df28ab4ed17ae0ac00d2170653c473c2029f6e3c9a3a2166f9a889d3d0632da",
+  "raw/candidate-source-delta.json": "6b2e286ace73231c438cc7072741f5203875c5241429c4c8381e7878ad28f227",
+  "raw/candidate-supported-recovery.txt": "c3b3a9f880ef5a2ea512b92d8ba632e3f01bedea4bac904f693f55b9c0db35e5",
+  "raw/candidate-tests.xml": "448cbd7cd25f5c9344237214277d25958572feb63f147ffe2ab8fa14de7e71ed",
+  "raw/original-classified-result.json": "a52b9e8ae9322991e5e5e6f628be34a0f222184bee7a54cdc484a34a4b17b992",
+  "raw/original-launch.json": "ec8bd0d567a9801dc9f614dfa59edb1d80c78bbf924951f1e78d7c81c9739ee4",
+  "raw/original-profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+  "raw/original-qualified-source.json": "39b8cb3a5b72657561c75f78e2dea80ed99b59ef370bef8ff1019507b5f13b80",
+  "raw/original-Slipper.cs": "ab45cc74522a570d7d9e87ceedeb0807a905063867aff197c0d8f27a6a4361ba",
+  "raw/original-tests.xml": "1ec80e6a866ca0f9221a58a5efb885b48ceaa24acb1c001089e6504441df71f1",
+  "raw/original-weak-qualification-tests.xml": "df913396709a18f66e338619ba376261c5525faf47224b7a16316205e4ef1361"
+}

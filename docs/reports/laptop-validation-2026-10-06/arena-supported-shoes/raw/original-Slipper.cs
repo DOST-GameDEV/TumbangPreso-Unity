@@ -1012,7 +1012,7 @@ namespace TumbangPreso
         /// The same return, to a place the MAP chose rather than to the owner's mark: the Arena sets
         /// a slipper that left its stage back down at the nearest standable point to where it left
         /// (`Map.ArenaFallRecovery`). Only that map calls it. `Land` still applies its own rules to
-        /// the resting place (the walls and recovery for inaccessible or unsupported heights).
+        /// the resting place (the walls, and a slipper out of its owner's reach goes to the owner).
         /// </summary>
         public void HostFinishMapRecoveryAt(Vector3 at)
         {
@@ -2107,7 +2107,7 @@ namespace TumbangPreso
             // it inside whatever it landed on top of, and the void branch above already declares
             // the intended rule for ammunition that leaves play: give it back rather than let
             // the round quietly lose a piece of itself.
-            if (NeedsHeightRecovery(new Vector3(p.x, rest, p.z)))
+            if (rest > ReachablePlaneY() + Balance.SlipperMaxRestReach)
             {
                 p = OwnerMark();
                 rest = GroundY(p) + RestHeight;
@@ -2151,41 +2151,6 @@ namespace TumbangPreso
             // clears the flag on any move out of Loose, so setting it first would be undone by
             // the very transition that brought us here.
             SetLandedHighlight(fromFlight);
-        }
-
-        private bool NeedsHeightRecovery(Vector3 resting)
-        {
-            if (resting.y <= ReachablePlaneY() + Balance.SlipperMaxRestReach) return false;
-
-            // The Arena's raised decks and ramps are playable even while the owner is
-            // below them. Only actual support in the active layout exempts a shoe:
-            // roofs above a deck and shoes left floating still recover normally.
-            var stage = Map.ArenaStage.Instance;
-            if (stage != null && stage.Applied >= 0 && stage.Applied < stage.Layouts.Length)
-            {
-                var layout = stage.Layouts[stage.Applied];
-                var support = layout != null ? layout.Colliders : null;
-                if (support != null)
-                {
-                    Vector3 from = resting + Vector3.up * 0.1f;
-                    var hits = GroundHits;
-                    int count = Physics.RaycastNonAlloc(from, Vector3.down, hits,
-                        RestHeight + 0.2f, ~0, QueryTriggerInteraction.Ignore);
-                    if (count == hits.Length)
-                    {
-                        hits = Physics.RaycastAll(from, Vector3.down, RestHeight + 0.2f,
-                            ~0, QueryTriggerInteraction.Ignore);
-                        count = hits.Length;
-                    }
-                    for (int i = 0; i < count; i++)
-                    {
-                        var hit = hits[i];
-                        if (hit.normal.y >= 0.707f && hit.collider.transform.IsChildOf(support.transform))
-                            return false;
-                    }
-                }
-            }
-            return true;
         }
 
         /// <summary>
@@ -2243,7 +2208,7 @@ namespace TumbangPreso
             if (_reachSweepAccum < 0.5f) return;
             _reachSweepAccum = 0.0f;
 
-            if (!NeedsHeightRecovery(transform.position)) return;
+            if (transform.position.y <= ReachablePlaneY() + Balance.SlipperMaxRestReach) return;
 
             Vector3 mark = OwnerMark();
             transform.position = new Vector3(mark.x, GroundY(mark) + RestHeight, mark.z);
