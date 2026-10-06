@@ -56,6 +56,8 @@ namespace TumbangPreso.Diagnostics
             _receipt.studioSeen|=GameObject.Find("StudioIntroCanvas")!=null;
             var login=UnityEngine.Object.FindFirstObjectByType<SignInScreen>();
             var title=CanvasNamed("OwnerHomeCanvas");
+            if(_phase==3 && SceneManager.GetActiveScene().name==SceneFlow.MainMenu)
+                Require(title!=null && title.gameObject.activeInHierarchy,"Main/title loading stopped being visible before lobby arrival");
             if(_phase==0 && login!=null && login.IsOpen)
             {
                 Require(_receipt.studioSeen,"BH studio stage was not observed before login");
