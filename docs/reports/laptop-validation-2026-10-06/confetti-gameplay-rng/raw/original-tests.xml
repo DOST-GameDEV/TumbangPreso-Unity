@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 12:56:45Z" end-time="2026-10-06 12:56:46Z" duration="1.4188711">
+  <test-suite type="TestSuite" id="3395" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1948" result="Failed" site="Child" start-time="2026-10-06 12:56:45Z" end-time="2026-10-06 12:56:46Z" duration="1.418871" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3387" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1948" result="Failed" site="Child" start-time="2026-10-06 12:56:45Z" end-time="2026-10-06 12:56:46Z" duration="1.407891" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="55016" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3388" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1948" result="Failed" site="Child" start-time="2026-10-06 12:56:45Z" end-time="2026-10-06 12:56:46Z" duration="1.401618" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3391" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1946" result="Failed" site="Child" start-time="2026-10-06 12:56:45Z" end-time="2026-10-06 12:56:46Z" duration="1.395244" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1829" name="HudConfettiRandomTests" fullname="TumbangPreso.PlayTests.HudConfettiRandomTests" classname="TumbangPreso.PlayTests.HudConfettiRandomTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-06 12:56:45Z" end-time="2026-10-06 12:56:46Z" duration="1.368952" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1830" name="CosmeticBurstLeavesTheGameplayRandomSequenceUntouched" fullname="TumbangPreso.PlayTests.HudConfettiRandomTests.CosmeticBurstLeavesTheGameplayRandomSequenceUntouched" methodname="CosmeticBurstLeavesTheGameplayRandomSequenceUntouched" classname="TumbangPreso.PlayTests.HudConfettiRandomTests" runstate="Runnable" seed="740458769" result="Failed" start-time="2026-10-06 12:56:45Z" end-time="2026-10-06 12:56:45Z" duration="0.063075" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A HUD celebration consumed the random sequence used by ordinary bot choices.
+  Expected and actual are both <System.Single[4]>
+  Values differ at index [0]
+  Expected: 0.566583812f
+  But was:  0.668526351f
+]]></message>
+                <stack-trace><![CDATA[at NUnit.Framework.CollectionAssert.AreEqual (System.Collections.IEnumerable expected, System.Collections.IEnumerable actual, System.String message, System.Object[] args) [0x00008] in <8b63e8ac0a4746599ed207982825ae6c>:0
+at TumbangPreso.PlayTests.HudConfettiRandomTests.CosmeticBurstLeavesTheGameplayRandomSequenceUntouched () [0x00033] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\HudConfettiRandomTests.cs:30
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1831" name="TheVisualPoolStillDrawsAndExpires" fullname="TumbangPreso.PlayTests.HudConfettiRandomTests.TheVisualPoolStillDrawsAndExpires" methodname="TheVisualPoolStillDrawsAndExpires" classname="TumbangPreso.PlayTests.HudConfettiRandomTests" runstate="Runnable" seed="1552702950" result="Passed" start-time="2026-10-06 12:56:45Z" end-time="2026-10-06 12:56:46Z" duration="1.296246" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

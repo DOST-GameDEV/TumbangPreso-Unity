@@ -27,24 +27,15 @@ namespace TumbangPreso.UI
         public void Burst(Color a, Color b, Color c)
         {
             var rect = rectTransform.rect;
-            // Cosmetic rolls must not advance the stream used by bot decisions.
-            var gameplayRandom = Random.state;
-            try
+            for (int i = 0; i < Count; i++)
             {
-                for (int i = 0; i < Count; i++)
-                {
-                    float angle = Random.Range(15f, 165f) * Mathf.Deg2Rad;
-                    float speed = Random.Range(380f, 820f);
-                    _at[i] = new Vector2(Random.Range(-rect.width * .3f, rect.width * .3f), 0);
-                    _velocity[i] = new Vector2(Mathf.Cos(angle) * speed * 1.3f, Mathf.Sin(angle) * speed);
-                    _spin[i] = Random.Range(-540f, 540f); _angle[i] = Random.Range(0f, 90f);
-                    _size[i] = Random.Range(9f, 17f);
-                    _colour[i] = i % 3 == 0 ? a : i % 3 == 1 ? b : c;
-                }
-            }
-            finally
-            {
-                Random.state = gameplayRandom;
+                float angle = Random.Range(15f, 165f) * Mathf.Deg2Rad;
+                float speed = Random.Range(380f, 820f);
+                _at[i] = new Vector2(Random.Range(-rect.width * .3f, rect.width * .3f), 0);
+                _velocity[i] = new Vector2(Mathf.Cos(angle) * speed * 1.3f, Mathf.Sin(angle) * speed);
+                _spin[i] = Random.Range(-540f, 540f); _angle[i] = Random.Range(0f, 90f);
+                _size[i] = Random.Range(9f, 17f);
+                _colour[i] = i % 3 == 0 ? a : i % 3 == 1 ? b : c;
             }
             _age = 0; SetVerticesDirty();
         }

@@ -1,0 +1,28 @@
+{
+  "pid": 35876,
+  "source": "53d79142b2fa3ac85dc5c802ab0525b23967ffd9",
+  "kind": "candidate",
+  "out": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\confetti-rng-candidate1-direct1006",
+  "command": [
+    "C:\\Program Files\\Unity\\Hub\\Editor\\6000.5.8f1\\Editor\\Unity.exe",
+    "-projectPath",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a",
+    "-batchmode",
+    "-force-d3d11",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.HudConfettiRandomTests",
+    "-testResults",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\confetti-rng-candidate1-direct1006\\tests.xml",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\confetti-rng-candidate1-direct1006\\unity.log",
+    "-tp-profile",
+    "validation-qa-a-be075dcdfa07",
+    "-job-worker-count",
+    "1",
+    "-gc-helper-count",
+    "1"
+  ]
+}

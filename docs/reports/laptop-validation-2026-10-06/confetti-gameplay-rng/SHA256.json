@@ -1,0 +1,18 @@
+{
+  "raw/candidate-classified-result.json": "3398aeaf7d82f7b288b45fca0b6dffaf1ab129d54c87694784ea591dfa6d5894",
+  "raw/candidate-HudConfetti.cs": "2ce7a00e612551462dcd6469d418059fabd1161c5e14c28944e9cff1b05476d0",
+  "raw/candidate-launch.json": "2d2e992fc257ab62b391eb562b7759998bbf5797a5c8c3d1d92d1131cd85bccd",
+  "raw/candidate-profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+  "raw/candidate-source-delta.json": "92bd874674d928e7acce8bf4bef50a2db0e13a0b680800487374eafda6036fcb",
+  "raw/candidate-tests.xml": "f511a2fb440faaa17518edabab2406aa04397728757d4879db174ef875d2dd83",
+  "raw/HudConfettiRandomTests.cs": "4b32e6b84882fadefc029a51abd30cf30270ad2f1059aca134bc53dc9a0c0128",
+  "raw/HudConfettiRandomTests.cs.meta": "1ef81d957f356d72bce5c090268311373c7c2389f326f94e6f64b81d897cc4b6",
+  "raw/initial-fixture-classified-result.json": "dcf298bcf3aed71b666cfcb349941b8171b388bc5e79f381d720e166bf2c8129",
+  "raw/initial-fixture-tests.xml": "9cbf99f0d4686199cc7b88385ae1a1565aba2128b2143ab100ab30bcea9314c2",
+  "raw/original-classified-result.json": "cccdbb6d0430325248a542af866a7b25eaffda7d59fd02374829b118abecad37",
+  "raw/original-HudConfetti.cs": "40ca6c4b2cc60f7110c799c074446307378ecd4d322e3218b83a49798867c941",
+  "raw/original-launch.json": "e7284c3bd45870e46853c1e4ec0e2e5bcee4af33ec0443fede1911f0d09e2665",
+  "raw/original-profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+  "raw/original-source-delta.json": "dc89c157eeee5cf345c96c95a3bb301e88824df27a2b06caa07bad11293dc9c5",
+  "raw/original-tests.xml": "bb5bfe96042c5232e86c687e4699a6faa585f152ee621071b2d0d085bcd9b148"
+}
