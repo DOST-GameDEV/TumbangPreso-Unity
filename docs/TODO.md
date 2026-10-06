@@ -49,7 +49,8 @@
 - [x] Resolve the demonstrated prerequisite preventing current Yasmin/Basilio
   ultimate decisions. Native original cause failures become final9 passes,
   with a neighboring value-control regression found and corrected. Hero effects
-  and casting cadence unchanged. Natural corrected casting remains required.
+  and casting cadence unchanged. Corrected natural Arena play now records both
+  Yasmin and Basilio casts; full bot quality remains open.
   [Evidence](reports/reliability-2026-10-06/ai-current-ultimate/README.md).
 
 - [ ] Thoroughly refine bots' decisions and skill use. Investigate unnatural

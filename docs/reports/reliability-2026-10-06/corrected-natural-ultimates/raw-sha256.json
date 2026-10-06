@@ -1,0 +1,19 @@
+{
+  "raw/accepted-cheska-2.png": "9e645752c76e9a1489c9472a13196724e21d99d256ca6001c14a1d6c4a6dc303",
+  "raw/accepted-dante-2.png": "da279e453bb49ec2faa0fefc06bfceb81be89229a97744378ae8a7bf5a567822",
+  "raw/answers.tsv": "a0c25367a8bc3baece1bc938bc19f0f21ff4c2c40e363a247f31f2a470e398fa",
+  "raw/classification.json": "68bcbd6ee43a482802f8046ff74fb09ee14577d18ac3d47fe0bf50634ffd730b",
+  "raw/final-charges.tsv": "3917b8f78d594cfc4778e2f66184102c646f65e9cf6357549dec98f72691f2aa",
+  "raw/fixture.cs": "85524290b6f0d52ec0a718fe0960f5ecf5216a4328fe3d25cb272b09ec078c4a",
+  "raw/fixture.cs.meta": "4f506383597bef316a390fe88a8fbd4f66935847483a8d98950203a60db57283",
+  "raw/installed-cast.txt": "5f8c63bad5931cb04f3a4c37690a4514a5cb06d031da53980a3b1e92fb06d323",
+  "raw/launch.json": "9e8082d27c3626b1a78384ec698a0218cff5b5676d73962bf2fb7a23c62e8717",
+  "raw/observed-summary.json": "8704efb0c291c2954fde957c7ac94cb7ffa0e27280fa04805beb3276fea35072",
+  "raw/presented-cheska-1.png": "e01f3d12840f32ffbfe56f6022f24939ea69966365660c80f010742f4fd3b3e6",
+  "raw/presented-cheska-3.png": "67655adfc3e24d1d99c770460a25ea625b8ae9b0545db2007a34f7f967dc0486",
+  "raw/presented-dante-6.png": "eb9aee05159006fc02b886802b884b29e78c72939bd1994836643b87688c0413",
+  "raw/results.xml": "880e81692630cd124e6dee7f96d9d0879073552c9432de487cbaaf134a426c54",
+  "raw/stop.json": "88e33f8150cc7448b2ed0b3f9a89b318427953fd58146612ee3c5b2107cee36a",
+  "raw/timeline.tsv": "1d24795a59da29cc9e6db253da47128bc393f9a6af86332f9422ddb3a383861b",
+  "raw/ultimate-presentations.tsv": "c69704b0df85a972cf5c55365fe49c2ab72f62b28314901b76d36d3494d5537e"
+}

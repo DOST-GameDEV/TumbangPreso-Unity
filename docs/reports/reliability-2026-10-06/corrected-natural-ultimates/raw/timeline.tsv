@@ -1,0 +1,1257 @@
+0.000	1	89.960	Quiet	QuietEstablish	finding a shot	0	0
+0.502	1	89.460	Quiet	QuietEstablish	the street	1	0
+1.004	1	88.960	Quiet	QuietEstablish	the street	1	0
+1.506	1	88.460	Quiet	QuietEstablish	the street	1	0
+2.008	1	87.960	Quiet	QuietEstablish	the street	1	0
+2.510	1	87.460	ThrowPrep	Objective	throw · ILYAS	3	0
+3.012	1	86.961	ThrowPrep	Objective	throw · ILYAS	3	0
+3.514	1	86.441	ThrowPrep	Objective	throw · ILYAS	3	0
+4.016	1	85.941	Quiet	QuietEstablish	the street	4	0
+4.519	1	85.441	Quiet	QuietEstablish	the street	4	0
+5.413	1	84.521	Quiet	QuietEstablish	the street	4	0
+5.938	1	84.041	Quiet	QuietEstablish	the street	4	0
+6.439	1	83.541	LataHit	Objective	the can · YASMIN	6	0
+6.961	1	83.021	LataHit	Objective	the can · YASMIN	6	0
+7.819	1	82.161	LataHit	Objective	the can · YASMIN	6	0
+8.320	1	81.661	Retrieval	Chase	retrieval · ILYAS	6	0
+8.823	1	81.161	Retrieval	Chase	retrieval · ILYAS	6	0
+9.325	1	80.662	Downed	Recovery	down · CAREERORDERFIX	6	0
+9.826	1	80.162	Downed	Recovery	down · CAREERORDERFIX	6	0
+10.327	1	79.662	Downed	Recovery	down · CAREERORDERFIX	6	0
+10.827	1	79.162	Downed	Recovery	down · CAREERORDERFIX	6	0
+11.328	1	78.662	Downed	Recovery	down · CAREERORDERFIX	6	0
+11.828	1	78.162	Downed	Recovery	down · CAREERORDERFIX	6	0
+12.329	1	77.642	Downed	Recovery	down · CAREERORDERFIX	6	0
+12.830	1	77.142	Downed	Recovery	down · CAREERORDERFIX	6	0
+13.330	1	76.642	Downed	Recovery	down · CAREERORDERFIX	6	0
+13.836	1	76.142	ThrowPrep	Objective	throw · ILYAS	8	0
+14.338	1	75.642	ThrowPrep	Objective	throw · ILYAS	8	0
+14.839	1	75.142	Quiet	QuietEstablish	the street	9	0
+15.341	1	74.643	Quiet	QuietEstablish	the street	9	0
+15.843	1	74.143	Quiet	QuietEstablish	the street	9	0
+16.346	1	73.643	Quiet	QuietEstablish	the street	9	0
+16.847	1	73.143	Quiet	QuietEstablish	the street	9	0
+17.348	1	72.643	ThrowPrep	Objective	throw · CAREERORDERFIX	11	0
+17.849	1	72.123	ThrowPrep	Objective	throw · CAREERORDERFIX	11	0
+18.355	1	71.623	Retrieval	RetrievalTwoShot	retrieval · YASMIN	12	0
+18.856	1	71.123	Retrieval	RetrievalTwoShot	retrieval · YASMIN	12	0
+19.358	1	70.623	Retrieval	RetrievalTwoShot	retrieval · YASMIN	12	0
+19.858	1	70.123	Retrieval	RetrievalTwoShot	retrieval · YASMIN	12	0
+20.361	1	69.623	Retrieval	RetrievalTwoShot	retrieval · YASMIN	12	0
+20.862	1	69.124	Retrieval	RetrievalTwoShot	retrieval · YASMIN	12	0
+21.364	1	68.624	Retrieval	RetrievalTwoShot	retrieval · YASMIN	12	0
+21.866	1	68.124	Retrieval	RetrievalTwoShot	retrieval · YASMIN	12	0
+22.366	1	67.664	Tag	Defender	tag · YASMIN	12	0
+22.870	1	67.164	Tag	Defender	tag · YASMIN	12	0
+23.372	1	66.664	Tag	Defender	tag · YASMIN	12	0
+23.872	1	66.164	Tag	Defender	tag · YASMIN	12	0
+24.373	1	65.724	Tag	Defender	tag · YASMIN	12	0
+24.874	1	65.224	Tag	Defender	tag · YASMIN	12	0
+25.375	1	64.724	Tag	Defender	tag · YASMIN	12	0
+25.879	1	64.224	Tag	Defender	tag · YASMIN	12	0
+26.380	1	63.724	Tag	Defender	tag · YASMIN	12	0
+26.881	1	63.224	Downed	Recovery	down · CAREERORDERFIX	13	0
+27.382	1	62.724	Downed	Recovery	down · CAREERORDERFIX	14	0
+27.884	1	62.204	Downed	Recovery	down · CAREERORDERFIX	14	0
+28.384	1	61.704	Downed	Recovery	down · CAREERORDERFIX	14	0
+28.885	1	61.204	Downed	Recovery	down · CAREERORDERFIX	14	0
+29.387	1	60.704	Downed	Recovery	down · CAREERORDERFIX	14	0
+29.889	1	60.204	Downed	Recovery	down · CAREERORDERFIX	14	0
+30.389	1	59.764	Downed	Recovery	down · CAREERORDERFIX	14	0
+30.890	1	59.264	Downed	Recovery	down · CAREERORDERFIX	14	0
+31.392	1	58.764	Tag	Defender	tag · YASMIN	15	0
+31.892	1	58.264	Tag	Defender	tag · YASMIN	15	0
+32.392	1	57.764	Tag	Defender	tag · YASMIN	15	0
+32.892	1	57.264	Tag	Defender	tag · YASMIN	15	0
+33.394	1	56.764	Downed	Recovery	down · ILYAS	17	0
+33.895	1	56.264	Downed	Recovery	down · ILYAS	17	0
+34.396	1	55.764	Downed	Recovery	down · ILYAS	17	0
+34.896	1	55.264	Downed	Recovery	down · ILYAS	17	0
+35.399	1	54.764	Quiet	QuietEstablish	the street	18	0
+35.901	1	54.264	Quiet	QuietEstablish	the street	18	0
+36.404	1	53.744	Quiet	QuietEstablish	the street	18	0
+36.905	1	53.244	Quiet	QuietEstablish	the street	18	0
+37.408	1	52.744	Quiet	QuietEstablish	the street	18	0
+37.909	1	52.244	ThrowPrep	Objective	throw · CAREERORDERFIX	20	0
+38.410	1	51.744	ThrowPrep	Objective	throw · CAREERORDERFIX	20	0
+38.911	1	51.244	Retrieval	RetrievalTwoShot	retrieval · ILYAS	21	0
+39.412	1	50.744	LataHit	Objective	the can · ILYAS	23	0
+39.913	1	50.244	LataHit	Objective	the can · ILYAS	23	0
+40.416	1	49.744	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	23	0
+40.918	1	49.244	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	23	0
+41.421	1	48.744	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	23	0
+41.924	1	48.224	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	23	0
+42.428	1	47.724	SlipperLanded	Objective	the can	24	0
+42.929	1	47.224	SlipperLanded	Objective	the can	25	0
+43.431	1	46.724	SlipperLanded	Objective	the can	25	0
+43.932	1	46.224	Quiet	QuietEstablish	the street	26	0
+44.435	1	45.724	Quiet	QuietEstablish	the street	26	0
+44.936	1	45.224	Quiet	QuietEstablish	the street	26	0
+45.437	1	44.724	Quiet	QuietEstablish	the street	26	0
+45.938	1	44.224	Quiet	QuietEstablish	the street	26	0
+46.440	1	43.724	ThrowPrep	Objective	throw · CAREERORDERFIX	28	0
+46.941	1	43.224	ThrowPrep	Objective	throw · CAREERORDERFIX	28	0
+47.442	1	42.724	ThrowPrep	Objective	throw · CAREERORDERFIX	28	0
+47.943	1	42.204	ThrowPrep	Objective	throw · CAREERORDERFIX	28	0
+48.447	1	41.704	ThrowPrep	Objective	throw · CAREERORDERFIX	28	0
+48.948	1	41.204	Retrieval	Chase	retrieval · YASMIN	29	0
+49.451	1	40.704	Retrieval	Chase	retrieval · YASMIN	29	0
+49.953	1	40.204	ThrowPrep	Objective	throw · CAREERORDERFIX	31	0
+50.454	1	39.704	ThrowPrep	Objective	throw · CAREERORDERFIX	31	0
+50.954	1	39.204	ThrowPrep	Objective	throw · CAREERORDERFIX	31	0
+51.457	1	38.704	LataHit	Objective	the can · ILYAS	33	0
+51.959	1	38.204	LataHit	Objective	the can · ILYAS	33	0
+52.461	1	37.704	LataHit	Objective	the can · ILYAS	33	0
+52.964	1	37.184	Retrieval	Chase	retrieval · ILYAS	33	0
+53.464	1	36.684	Retrieval	Chase	retrieval · ILYAS	33	0
+53.967	1	36.184	Quiet	QuietEstablish	the street	34	0
+54.469	1	35.684	Quiet	QuietEstablish	the street	34	0
+54.971	1	35.184	Quiet	QuietEstablish	the street	34	0
+55.474	1	34.684	Quiet	QuietEstablish	the street	34	0
+55.977	1	34.184	Quiet	QuietEstablish	the street	34	0
+56.479	1	33.684	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	35	0
+56.981	1	33.184	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	35	0
+57.484	1	32.664	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	35	0
+57.984	1	32.164	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	35	0
+58.487	1	31.664	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	35	0
+58.988	1	31.164	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	35	0
+59.491	1	30.664	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	35	0
+59.991	1	30.164	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	35	0
+60.494	1	29.664	Quiet	QuietEstablish	the street	36	0
+60.997	1	29.164	Quiet	QuietEstablish	the street	36	0
+61.497	1	28.664	Quiet	QuietEstablish	the street	36	0
+61.998	1	28.164	Quiet	QuietEstablish	the street	36	0
+62.500	1	27.664	Quiet	QuietEstablish	the street	36	0
+63.002	1	27.144	Quiet	QuietEstablish	the street	36	0
+63.505	1	26.644	Quiet	QuietEstablish	the street	36	0
+64.008	1	26.144	Quiet	QuietEstablish	the street	36	0
+64.508	1	25.643	Quiet	QuietEstablish	the street	36	0
+65.008	1	25.143	Retrieval	Chase	retrieval · ILYAS	37	0
+65.511	1	24.643	Retrieval	Chase	retrieval · ILYAS	37	0
+66.011	1	24.143	ThrowPrep	Objective	throw · ILYAS	39	0
+66.513	1	23.643	ThrowPrep	Objective	throw · ILYAS	39	0
+67.016	1	23.203	ThrowPrep	Objective	throw · ILYAS	39	0
+67.518	1	22.703	Tag	Defender	tag · YASMIN	39	0
+68.020	1	22.203	Tag	Defender	tag · YASMIN	39	0
+68.520	1	21.703	Tag	Defender	tag · YASMIN	39	0
+69.021	1	21.203	Tag	Defender	tag · YASMIN	39	0
+69.522	1	20.703	Tag	Defender	tag · YASMIN	39	0
+70.023	1	20.183	Retrieval	Chase	retrieval · YASMIN	40	0
+70.524	1	19.683	Retrieval	Chase	retrieval · YASMIN	40	0
+71.027	1	19.183	Downed	Recovery	down · ILYAS	41	0
+71.529	1	18.683	Downed	Recovery	down · ILYAS	41	0
+72.031	1	18.183	ThrowPrep	Objective	throw · ILYAS	42	0
+72.534	1	17.683	ThrowPrep	Objective	throw · ILYAS	43	0
+73.034	1	17.183	ThrowPrep	Objective	throw · ILYAS	43	0
+73.535	1	16.683	LataHit	Objective	the can · YASMIN	44	0
+74.038	1	16.183	LataHit	Objective	the can · YASMIN	45	0
+74.539	1	15.683	LataHit	Objective	the can · YASMIN	45	0
+75.040	1	15.183	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	46	0
+75.541	1	14.683	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	46	0
+76.042	1	14.163	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	46	0
+76.545	1	13.663	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	46	0
+77.049	1	13.163	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	46	0
+77.552	1	12.663	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	46	0
+78.054	1	12.163	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	46	0
+78.556	1	11.663	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	46	0
+79.059	1	11.163	LataHit	Objective	the can · YASMIN	48	0
+79.562	1	10.663	ThrowPrep	Objective	throw · ILYAS	50	0
+80.063	1	10.143	ThrowPrep	Objective	throw · ILYAS	50	0
+80.566	1	9.643	ThrowPrep	Objective	throw · ILYAS	50	0
+81.069	1	9.143	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	53	0
+81.571	1	8.643	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	53	0
+82.072	1	8.143	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	53	0
+82.574	1	7.643	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	53	0
+83.075	1	7.143	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	53	0
+83.577	1	6.643	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	53	0
+84.077	1	6.143	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	53	0
+84.579	1	5.643	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	53	0
+85.079	1	5.143	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	53	0
+85.579	1	4.643	Quiet	QuietEstablish	the street	54	0
+86.080	1	4.143	Quiet	QuietEstablish	the street	54	0
+86.581	1	3.643	Quiet	QuietEstablish	the street	54	0
+87.083	1	3.123	Quiet	QuietEstablish	the street	54	0
+87.585	1	2.623	Quiet	QuietEstablish	the street	54	0
+88.087	1	2.123	Quiet	QuietEstablish	the street	55	0
+88.588	1	1.623	Quiet	QuietEstablish	the street	56	0
+89.092	1	1.123	Quiet	QuietEstablish	the street	56	0
+89.595	1	0.623	ThrowPrep	Objective	throw · YASMIN	59	1
+90.097	1	0.123	ThrowPrep	Objective	throw · YASMIN	59	1
+90.600	1	0.000	ThrowPrep	Objective	throw · YASMIN	59	1
+91.102	1	0.000	ThrowPrep	Objective	throw · YASMIN	59	1
+91.604	1	0.000	ThrowPrep	Objective	throw · YASMIN	59	1
+92.106	1	0.000	ThrowPrep	Objective	throw · YASMIN	59	1
+92.608	1	0.000	ThrowPrep	Objective	throw · YASMIN	59	1
+93.110	1	0.000	ThrowPrep	Objective	throw · YASMIN	59	1
+93.612	1	0.000	ThrowPrep	Objective	throw · YASMIN	59	1
+94.113	1	0.000	ThrowPrep	Objective	throw · YASMIN	59	1
+94.613	1	0.000	ThrowPrep	Objective	throw · YASMIN	59	1
+95.114	1	0.000	ThrowPrep	Objective	throw · YASMIN	59	1
+95.616	1	0.000	ThrowPrep	Objective	throw · YASMIN	59	1
+96.118	1	0.000	ThrowPrep	Objective	throw · YASMIN	59	1
+96.621	1	0.000	ThrowPrep	Objective	throw · YASMIN	59	1
+97.124	1	0.000	ThrowPrep	Objective	throw · YASMIN	59	1
+97.626	1	0.000	ThrowPrep	Objective	throw · YASMIN	59	1
+98.127	1	0.000	ThrowPrep	Objective	throw · YASMIN	59	1
+98.631	2	89.600	Quiet	QuietEstablish	the street	60	1
+99.131	2	89.100	Quiet	QuietEstablish	the street	60	1
+99.633	2	88.600	Quiet	QuietEstablish	the street	60	1
+100.134	2	88.220	Quiet	QuietEstablish	the street	60	1
+100.634	2	87.720	Tag	Defender	tag · CAREERORDERFIX	61	1
+101.137	2	87.220	Tag	Defender	tag · CAREERORDERFIX	61	1
+101.637	2	86.721	Tag	Defender	tag · CAREERORDERFIX	61	1
+102.140	2	86.221	Tag	Defender	tag · CAREERORDERFIX	61	1
+102.640	2	85.721	Tag	Defender	tag · CAREERORDERFIX	61	1
+103.142	2	85.221	SlipperLanded	Objective	the can	62	1
+103.642	2	84.721	SlipperLanded	Objective	the can	62	1
+104.143	2	84.221	Downed	Recovery	down · YASMIN	63	1
+104.646	2	83.701	Downed	Recovery	down · YASMIN	63	1
+105.146	2	83.201	Downed	Recovery	down · YASMIN	63	1
+105.647	2	82.701	Quiet	QuietEstablish	the street	64	1
+106.147	2	82.201	Quiet	QuietEstablish	the street	64	1
+106.651	2	81.701	Quiet	QuietEstablish	the street	64	1
+107.153	2	81.201	Quiet	QuietEstablish	the street	64	1
+107.654	2	80.702	Retrieval	RetrievalTwoShot	retrieval · YASMIN	65	1
+108.295	2	80.062	LataHit	Objective	the can · YASMIN	66	1
+108.797	2	79.562	LataHit	Objective	the can · YASMIN	66	1
+109.300	2	79.062	Retrieval	Chase	retrieval · ILYAS	66	1
+109.803	2	78.562	Retrieval	Chase	retrieval · ILYAS	66	1
+110.304	2	78.102	Retrieval	RetrievalTwoShot	retrieval · YASMIN	67	1
+110.805	2	77.602	Retrieval	RetrievalTwoShot	retrieval · YASMIN	67	1
+111.305	2	77.102	Retrieval	RetrievalTwoShot	retrieval · YASMIN	67	1
+111.807	2	76.602	Retrieval	RetrievalTwoShot	retrieval · YASMIN	67	1
+112.308	2	76.102	Retrieval	RetrievalTwoShot	retrieval · YASMIN	67	1
+112.809	2	75.602	Retrieval	Chase	retrieval · YASMIN	67	1
+113.310	2	75.162	Tag	Defender	tag · CAREERORDERFIX	68	1
+113.812	2	74.663	Tag	Defender	tag · CAREERORDERFIX	68	1
+114.313	2	74.163	Tag	Defender	tag · CAREERORDERFIX	68	1
+114.814	2	73.663	Tag	Defender	tag · CAREERORDERFIX	68	1
+115.317	2	73.163	Tag	Defender	tag · CAREERORDERFIX	68	1
+115.819	2	72.663	Downed	Recovery	down · YASMIN	69	1
+116.319	2	72.163	Downed	Recovery	down · YASMIN	69	1
+116.819	2	71.663	Downed	Recovery	down · YASMIN	69	1
+117.321	2	71.163	Downed	Recovery	down · YASMIN	69	1
+117.822	2	70.663	Downed	Recovery	down · YASMIN	69	1
+118.323	2	70.163	Retrieval	Chase	retrieval · YASMIN	70	1
+118.824	2	69.643	Retrieval	Chase	retrieval · YASMIN	70	1
+119.327	2	69.144	Retrieval	Chase	retrieval · YASMIN	70	1
+119.832	2	68.644	Retrieval	Chase	retrieval · YASMIN	70	1
+120.334	2	68.144	Retrieval	Chase	retrieval · YASMIN	70	1
+120.836	2	67.644	Retrieval	Chase	retrieval · YASMIN	70	1
+121.337	2	67.144	Retrieval	Chase	retrieval · YASMIN	70	1
+121.837	2	66.644	Retrieval	Chase	retrieval · ILYAS	71	1
+122.339	2	66.144	Retrieval	Chase	retrieval · ILYAS	71	1
+122.840	2	65.644	Retrieval	Chase	retrieval · ILYAS	71	1
+123.340	2	65.144	Retrieval	Chase	retrieval · ILYAS	71	1
+123.842	2	64.644	Retrieval	Chase	retrieval · YASMIN	72	1
+124.344	2	64.124	Retrieval	Chase	retrieval · YASMIN	72	1
+124.846	2	63.624	Retrieval	Chase	retrieval · YASMIN	72	1
+125.346	2	63.124	Retrieval	Chase	retrieval · YASMIN	72	1
+125.847	2	62.624	SlipperLanded	Objective	the can	73	1
+126.350	2	62.124	SlipperLanded	Objective	the can	73	1
+126.851	2	61.624	SlipperLanded	Objective	the can	73	1
+127.353	2	61.124	SlipperLanded	Objective	the can	73	1
+127.855	2	60.624	Retrieval	RetrievalTwoShot	retrieval · ILYAS	75	1
+128.357	2	60.124	LataHit	Objective	the can · YASMIN	76	1
+128.858	2	59.624	LataHit	Objective	the can · YASMIN	76	1
+129.359	2	59.124	LataHit	Objective	the can · YASMIN	76	1
+129.859	2	58.624	Retrieval	Chase	retrieval · YASMIN	77	1
+130.360	2	58.124	Retrieval	Chase	retrieval · YASMIN	77	1
+130.861	2	57.624	Retrieval	Chase	retrieval · YASMIN	77	1
+131.362	2	57.124	Quiet	QuietEstablish	the street	78	1
+131.863	2	56.604	Quiet	QuietEstablish	the street	78	1
+132.365	2	56.104	Quiet	QuietEstablish	the street	78	1
+132.868	2	55.604	Quiet	QuietEstablish	the street	78	1
+133.370	2	55.104	LataHit	Objective	the can · YASMIN	79	1
+133.871	2	54.604	Retrieval	Chase	retrieval · YASMIN	80	1
+134.373	2	54.104	Retrieval	Chase	retrieval · YASMIN	80	1
+134.875	2	53.604	ThrowPrep	Objective	throw · YASMIN	81	1
+135.375	2	53.104	ThrowPrep	Objective	throw · YASMIN	81	1
+135.878	2	52.604	LataHit	Objective	the can · YASMIN	82	1
+136.379	2	52.104	LataHit	Objective	the can · YASMIN	82	1
+136.881	2	51.604	LataHit	Objective	the can · YASMIN	82	1
+137.382	2	51.104	LataHit	Objective	the can · YASMIN	82	1
+137.886	2	50.584	Retrieval	Chase	retrieval · ILYAS	83	1
+138.388	2	50.084	Retrieval	Chase	retrieval · ILYAS	83	1
+138.889	2	49.584	Retrieval	Chase	retrieval · ILYAS	83	1
+139.389	2	49.084	Retrieval	Chase	retrieval · ILYAS	83	1
+139.890	2	48.584	ThrowPrep	Objective	throw · YASMIN	84	1
+140.391	2	48.084	ThrowPrep	Objective	throw · YASMIN	84	1
+140.893	2	47.584	LataHit	Objective	the can · YASMIN	84	1
+141.393	2	47.084	LataHit	Objective	the can · YASMIN	84	1
+141.897	2	46.584	Retrieval	RetrievalTwoShot	retrieval · YASMIN	85	1
+142.400	2	46.084	Retrieval	RetrievalTwoShot	retrieval · YASMIN	85	1
+142.902	2	45.584	Retrieval	RetrievalTwoShot	retrieval · YASMIN	85	1
+143.405	2	45.064	Retrieval	RetrievalTwoShot	retrieval · YASMIN	85	1
+143.905	2	44.564	Retrieval	RetrievalTwoShot	retrieval · YASMIN	85	1
+144.408	2	44.064	Retrieval	RetrievalTwoShot	retrieval · YASMIN	85	1
+144.910	2	43.564	Retrieval	RetrievalTwoShot	retrieval · ILYAS	86	1
+145.414	2	43.064	Retrieval	RetrievalTwoShot	retrieval · ILYAS	86	1
+145.916	2	42.564	Retrieval	RetrievalTwoShot	retrieval · ILYAS	86	1
+146.416	2	42.064	Retrieval	RetrievalTwoShot	retrieval · ILYAS	86	1
+146.920	2	41.564	Retrieval	RetrievalTwoShot	retrieval · ILYAS	86	1
+147.420	2	41.064	Retrieval	RetrievalTwoShot	retrieval · ILYAS	86	1
+147.922	2	40.564	Retrieval	RetrievalTwoShot	retrieval · ILYAS	86	1
+148.423	2	40.044	Retrieval	RetrievalTwoShot	retrieval · ILYAS	86	1
+148.925	2	39.544	Retrieval	RetrievalTwoShot	retrieval · ILYAS	86	1
+149.429	2	39.044	Retrieval	RetrievalTwoShot	retrieval · ILYAS	86	1
+149.929	2	38.544	Retrieval	RetrievalTwoShot	retrieval · YASMIN	88	1
+150.431	2	38.044	Retrieval	Chase	retrieval · ILYAS	90	1
+150.933	2	37.544	Retrieval	Chase	retrieval · ILYAS	90	1
+151.435	2	37.044	Retrieval	Chase	retrieval · ILYAS	90	1
+151.939	2	36.544	Retrieval	Chase	retrieval · ILYAS	90	1
+152.440	2	36.044	Retrieval	Chase	retrieval · ILYAS	90	1
+152.940	2	35.544	Quiet	QuietEstablish	the street	91	1
+153.442	2	35.044	Quiet	QuietEstablish	the street	91	1
+153.944	2	34.524	Quiet	QuietEstablish	the street	91	1
+154.444	2	34.024	Quiet	QuietEstablish	the street	91	1
+154.947	2	33.524	Quiet	QuietEstablish	the street	91	1
+155.449	2	33.024	Retrieval	RetrievalTwoShot	retrieval · YASMIN	92	1
+155.951	2	32.524	Retrieval	RetrievalTwoShot	retrieval · YASMIN	92	1
+156.452	2	32.024	Retrieval	RetrievalTwoShot	retrieval · YASMIN	92	1
+156.955	2	31.524	Retrieval	RetrievalTwoShot	retrieval · YASMIN	92	1
+157.457	2	31.024	Retrieval	RetrievalTwoShot	retrieval · YASMIN	92	1
+157.958	2	30.524	Retrieval	Chase	retrieval · YASMIN	92	1
+158.460	2	30.024	Retrieval	Chase	retrieval · YASMIN	92	1
+158.963	2	29.504	Retrieval	Chase	retrieval · YASMIN	92	1
+159.465	2	29.004	Retrieval	Chase	retrieval · YASMIN	92	1
+159.967	2	28.564	Tag	Defender	tag · CAREERORDERFIX	92	1
+160.468	2	28.064	Tag	Defender	tag · CAREERORDERFIX	92	1
+160.970	2	27.564	Tag	Defender	tag · CAREERORDERFIX	92	1
+161.470	2	27.064	Tag	Defender	tag · CAREERORDERFIX	92	1
+161.972	2	26.564	Tag	Defender	tag · CAREERORDERFIX	92	1
+162.473	2	26.064	Downed	Recovery	down · YASMIN	93	1
+162.975	2	25.563	Downed	Recovery	down · YASMIN	93	1
+163.477	2	25.063	Downed	Recovery	down · YASMIN	93	1
+163.977	2	24.563	Downed	Recovery	down · YASMIN	93	1
+164.479	2	24.063	Downed	Recovery	down · YASMIN	93	1
+164.980	2	23.563	Retrieval	Chase	retrieval · YASMIN	94	1
+165.481	2	23.063	Retrieval	Chase	retrieval · YASMIN	94	1
+165.981	2	22.563	SlipperLanded	Objective	the can	95	1
+166.481	2	22.063	SlipperLanded	Objective	the can	95	1
+166.981	2	21.563	SlipperLanded	Objective	the can	95	1
+167.481	2	21.063	Retrieval	Chase	retrieval · ILYAS	96	1
+167.982	2	20.563	Retrieval	Chase	retrieval · ILYAS	96	1
+168.483	2	20.043	Retrieval	Chase	retrieval · ILYAS	96	1
+168.984	2	19.543	SlipperLanded	Objective	the can	97	1
+169.486	2	19.043	SlipperLanded	Objective	the can	97	1
+169.987	2	18.543	SlipperLanded	Objective	the can	97	1
+170.488	2	18.103	Quiet	QuietEstablish	the street	98	1
+170.992	2	17.603	Quiet	QuietEstablish	the street	98	1
+171.709	2	16.883	Quiet	QuietEstablish	the street	98	1
+172.209	2	16.383	Quiet	QuietEstablish	the street	98	1
+172.711	2	15.883	Tag	Defender	tag · CAREERORDERFIX	99	1
+173.214	2	15.383	Downed	Recovery	down · YASMIN	99	1
+173.716	2	14.883	Downed	Recovery	down · YASMIN	99	1
+174.218	2	14.383	Downed	Recovery	down · YASMIN	99	1
+174.719	2	13.883	Downed	Recovery	down · YASMIN	99	1
+175.221	2	13.383	Downed	Recovery	down · YASMIN	99	1
+175.722	2	12.883	Retrieval	Chase	retrieval · YASMIN	100	1
+176.225	2	12.363	Retrieval	Chase	retrieval · YASMIN	100	1
+176.728	2	11.863	Retrieval	Chase	retrieval · ILYAS	101	1
+177.229	2	11.363	Retrieval	Chase	retrieval · ILYAS	101	1
+177.731	2	10.863	ThrowPrep	Objective	throw · YASMIN	102	1
+178.232	2	10.363	ThrowPrep	Objective	throw · YASMIN	102	1
+178.735	2	9.863	ThrowPrep	Objective	throw · YASMIN	102	1
+179.236	2	9.363	SlipperLanded	Objective	the can	102	1
+179.739	2	8.863	SlipperLanded	Objective	the can	102	1
+180.240	2	8.363	Retrieval	RetrievalTwoShot	retrieval · YASMIN	103	1
+180.740	2	7.863	LataHit	Objective	the can · YASMIN	104	1
+181.242	2	7.363	Retrieval	Chase	retrieval · YASMIN	105	1
+181.743	2	6.843	Retrieval	Chase	retrieval · YASMIN	105	1
+182.249	2	6.343	Retrieval	RetrievalTwoShot	retrieval · ILYAS	106	1
+182.750	2	5.843	Retrieval	RetrievalTwoShot	retrieval · ILYAS	106	1
+183.252	2	5.343	Retrieval	RetrievalTwoShot	retrieval · ILYAS	106	1
+183.755	2	4.843	LataHit	Objective	the can · YASMIN	107	1
+184.258	2	4.343	LataHit	Objective	the can · YASMIN	107	1
+184.760	2	3.843	LataHit	Objective	the can · YASMIN	107	1
+185.260	2	3.343	LataHit	Objective	the can · YASMIN	107	1
+185.763	2	2.823	Retrieval	Chase	retrieval · YASMIN	108	1
+186.263	2	2.323	Retrieval	Chase	retrieval · YASMIN	108	1
+186.764	2	1.823	Retrieval	Chase	retrieval · YASMIN	109	1
+187.264	2	1.323	Retrieval	Chase	retrieval · YASMIN	109	1
+187.766	2	0.823	Retrieval	Chase	retrieval · YASMIN	109	1
+188.269	2	0.383	Tag	Defender	tag · CAREERORDERFIX	110	1
+188.769	2	0.000	Tag	Defender	tag · CAREERORDERFIX	110	1
+189.271	2	0.000	Tag	Defender	tag · CAREERORDERFIX	110	1
+189.774	2	0.000	Tag	Defender	tag · CAREERORDERFIX	110	1
+190.275	2	0.000	Tag	Defender	tag · CAREERORDERFIX	110	1
+190.776	2	0.000	Tag	Defender	tag · CAREERORDERFIX	110	1
+191.276	2	0.000	Tag	Defender	tag · CAREERORDERFIX	110	1
+191.778	2	0.000	Tag	Defender	tag · CAREERORDERFIX	110	1
+192.278	2	0.000	Tag	Defender	tag · CAREERORDERFIX	110	1
+192.779	2	0.000	Tag	Defender	tag · CAREERORDERFIX	110	1
+193.280	2	0.000	Tag	Defender	tag · CAREERORDERFIX	110	1
+193.782	2	0.000	Tag	Defender	tag · CAREERORDERFIX	110	1
+194.284	2	0.000	Tag	Defender	tag · CAREERORDERFIX	110	1
+194.786	2	0.000	Tag	Defender	tag · CAREERORDERFIX	110	1
+195.288	2	0.000	Tag	Defender	tag · CAREERORDERFIX	110	1
+195.790	2	0.000	Tag	Defender	tag · CAREERORDERFIX	110	1
+196.291	2	0.000	Tag	Defender	tag · CAREERORDERFIX	110	1
+196.794	3	89.880	Quiet	QuietEstablish	the street	111	1
+197.295	3	89.380	Quiet	QuietEstablish	the street	111	1
+197.796	3	88.880	Quiet	QuietEstablish	the street	111	1
+198.297	3	88.380	Quiet	QuietEstablish	the street	111	1
+198.799	3	87.940	Quiet	QuietEstablish	the street	111	1
+199.302	3	87.440	Tag	Defender	tag · ILYAS	112	1
+199.804	3	86.941	Tag	Defender	tag · ILYAS	112	1
+200.306	3	86.421	Tag	Defender	tag · ILYAS	112	1
+200.806	3	85.921	Tag	Defender	tag · ILYAS	112	1
+201.310	3	85.421	Downed	Recovery	down · YASMIN	113	1
+201.812	3	84.921	Downed	Recovery	down · YASMIN	113	1
+202.313	3	84.421	Downed	Recovery	down · YASMIN	113	1
+202.813	3	83.921	Downed	Recovery	down · YASMIN	113	1
+203.314	3	83.421	Downed	Recovery	down · YASMIN	113	1
+203.815	3	82.921	Downed	Recovery	down · CAREERORDERFIX	114	1
+204.316	3	82.421	Downed	Recovery	down · CAREERORDERFIX	114	1
+204.816	3	81.921	Downed	Recovery	down · CAREERORDERFIX	114	1
+205.319	3	81.421	Downed	Recovery	down · CAREERORDERFIX	114	1
+205.821	3	80.922	Downed	Recovery	down · CAREERORDERFIX	114	1
+206.323	3	80.422	Retrieval	Chase	retrieval · YASMIN	115	1
+206.826	3	79.902	Retrieval	Chase	retrieval · YASMIN	115	1
+207.327	3	79.402	Downed	Recovery	down · CAREERORDERFIX	115	1
+207.829	3	78.902	Downed	Recovery	down · CAREERORDERFIX	115	1
+208.329	3	78.402	Downed	Recovery	down · CAREERORDERFIX	115	1
+208.831	3	77.902	Downed	Recovery	down · CAREERORDERFIX	115	1
+209.332	3	77.402	Downed	Recovery	down · CAREERORDERFIX	115	1
+209.835	3	76.902	Downed	Recovery	down · CAREERORDERFIX	115	1
+210.335	3	76.402	Downed	Recovery	down · CAREERORDERFIX	115	1
+210.836	3	75.902	Downed	Recovery	down · CAREERORDERFIX	115	1
+211.338	3	75.402	Downed	Recovery	down · CAREERORDERFIX	115	1
+211.838	3	74.903	Quiet	QuietEstablish	the street	116	1
+212.341	3	74.403	Quiet	QuietEstablish	the street	116	1
+212.841	3	73.963	Quiet	QuietEstablish	the street	116	1
+213.342	3	73.463	Quiet	QuietEstablish	the street	116	1
+213.844	3	72.943	Quiet	QuietEstablish	the street	116	1
+214.348	3	72.443	Tag	Defender	tag · ILYAS	117	1
+214.849	3	71.943	Tag	Defender	tag · ILYAS	117	1
+215.352	3	71.503	Tag	Defender	tag · ILYAS	117	1
+215.855	3	71.003	Tag	Defender	tag · ILYAS	117	1
+216.357	3	70.503	Tag	Defender	tag · ILYAS	117	1
+216.858	3	70.003	Tag	Defender	tag · ILYAS	117	1
+217.361	3	69.503	Tag	Defender	tag · ILYAS	117	1
+217.861	3	69.004	Downed	Recovery	down · YASMIN	118	1
+218.362	3	68.504	Downed	Recovery	down · YASMIN	118	1
+218.862	3	68.004	Downed	Recovery	down · YASMIN	118	1
+219.363	3	67.504	Downed	Recovery	down · YASMIN	118	1
+219.865	3	66.984	Downed	Recovery	down · YASMIN	118	1
+220.366	3	66.484	ThrowPrep	Objective	throw · CAREERORDERFIX	118	1
+220.869	3	65.984	ThrowPrep	Objective	throw · CAREERORDERFIX	118	1
+221.371	3	65.484	ThrowPrep	Objective	throw · CAREERORDERFIX	118	1
+221.873	3	64.984	ThrowPrep	Objective	throw · CAREERORDERFIX	118	1
+222.376	3	64.484	LataHit	Objective	the can · YASMIN	119	1
+222.877	3	63.984	LataHit	Objective	the can · YASMIN	119	1
+223.379	3	63.484	LataHit	Objective	the can · YASMIN	119	1
+223.881	3	62.984	LataHit	Objective	the can · YASMIN	119	1
+224.382	3	62.484	Retrieval	Chase	retrieval · YASMIN	120	1
+224.885	3	61.964	Retrieval	Chase	retrieval · YASMIN	120	1
+225.386	3	61.464	Quiet	QuietEstablish	the street	121	1
+225.887	3	60.964	Quiet	QuietEstablish	the street	121	1
+226.391	3	60.464	Quiet	QuietEstablish	the street	121	1
+226.891	3	59.964	Quiet	QuietEstablish	the street	121	1
+227.394	3	59.464	Quiet	QuietEstablish	the street	121	1
+227.895	3	58.964	Downed	Recovery	down · CAREERORDERFIX	122	1
+228.398	3	58.464	Downed	Recovery	down · CAREERORDERFIX	122	1
+228.900	3	57.964	Downed	Recovery	down · CAREERORDERFIX	122	1
+229.401	3	57.464	Downed	Recovery	down · CAREERORDERFIX	122	1
+229.903	3	56.964	Retrieval	Chase	retrieval · YASMIN	123	1
+230.407	3	56.504	Retrieval	Chase	retrieval · YASMIN	124	1
+230.908	3	56.064	Tag	Defender	tag · ILYAS	125	1
+231.409	3	55.564	Tag	Defender	tag · ILYAS	125	1
+231.911	3	55.064	Tag	Defender	tag · ILYAS	125	1
+232.412	3	54.564	Tag	Defender	tag · ILYAS	125	1
+232.915	3	54.064	Tag	Defender	tag · ILYAS	125	1
+233.417	3	53.564	Downed	Recovery	down · YASMIN	126	1
+233.917	3	53.064	Downed	Recovery	down · YASMIN	126	1
+234.418	3	52.564	Downed	Recovery	down · YASMIN	126	1
+234.920	3	52.064	Downed	Recovery	down · YASMIN	126	1
+235.421	3	51.544	Downed	Recovery	down · YASMIN	127	1
+235.921	3	51.044	Downed	Recovery	down · YASMIN	127	1
+236.425	3	50.544	Retrieval	Chase	retrieval · YASMIN	128	1
+236.925	3	50.044	Retrieval	Chase	retrieval · YASMIN	128	1
+237.428	3	49.544	Retrieval	Chase	retrieval · YASMIN	128	1
+237.928	3	49.044	ThrowPrep	Objective	throw · YASMIN	129	1
+238.429	3	48.544	ThrowPrep	Objective	throw · YASMIN	129	1
+238.930	3	48.044	Quiet	QuietEstablish	the street	130	1
+239.430	3	47.544	Quiet	QuietEstablish	the street	130	1
+239.930	3	47.044	Quiet	QuietEstablish	the street	130	1
+240.433	3	46.544	Quiet	QuietEstablish	the street	130	1
+240.937	3	46.044	Quiet	QuietEstablish	the street	130	1
+241.439	3	45.544	Retrieval	Chase	retrieval · YASMIN	131	1
+241.940	3	45.044	Retrieval	Chase	retrieval · YASMIN	131	1
+242.444	3	44.584	Tag	Defender	tag · ILYAS	131	1
+242.946	3	44.084	Tag	Defender	tag · ILYAS	131	1
+243.448	3	43.584	Tag	Defender	tag · ILYAS	131	1
+243.949	3	43.084	Tag	Defender	tag · ILYAS	131	1
+244.452	3	42.584	Tag	Defender	tag · ILYAS	131	1
+244.954	3	42.084	SlipperLanded	Objective	the can	132	1
+245.455	3	41.584	SlipperLanded	Objective	the can	132	1
+245.957	3	41.084	SlipperLanded	Objective	the can	132	1
+246.459	3	40.564	Downed	Recovery	down · CAREERORDERFIX	133	1
+246.961	3	40.064	Downed	Recovery	down · CAREERORDERFIX	133	1
+247.463	3	39.564	Downed	Recovery	down · CAREERORDERFIX	133	1
+247.967	3	39.064	Quiet	QuietEstablish	the street	134	1
+248.467	3	38.564	Quiet	QuietEstablish	the street	134	1
+248.968	3	38.064	Quiet	QuietEstablish	the street	134	1
+249.469	3	37.564	Quiet	QuietEstablish	the street	134	1
+249.971	3	37.064	ThrowPrep	Objective	throw · CAREERORDERFIX	135	1
+250.471	3	36.564	ThrowPrep	Objective	throw · CAREERORDERFIX	135	1
+250.974	3	36.104	ThrowPrep	Objective	throw · CAREERORDERFIX	135	1
+251.474	3	35.624	ThrowPrep	Objective	throw · CAREERORDERFIX	135	1
+251.975	3	35.124	ThrowPrep	Objective	throw · CAREERORDERFIX	135	1
+252.477	3	34.624	Tag	Defender	tag · ILYAS	136	1
+252.979	3	34.124	Tag	Defender	tag · ILYAS	136	1
+253.479	3	33.604	Tag	Defender	tag · ILYAS	136	1
+253.981	3	33.104	Downed	Recovery	down · YASMIN	137	1
+254.484	3	32.604	Downed	Recovery	down · YASMIN	137	1
+254.987	3	32.104	Downed	Recovery	down · YASMIN	137	1
+255.489	3	31.604	Downed	Recovery	down · YASMIN	137	1
+255.990	3	31.104	ThrowPrep	Objective	throw · CAREERORDERFIX	137	1
+256.493	3	30.604	ThrowPrep	Objective	throw · CAREERORDERFIX	137	1
+256.995	3	30.104	ThrowPrep	Objective	throw · CAREERORDERFIX	137	1
+257.497	3	29.604	ThrowPrep	Objective	throw · CAREERORDERFIX	137	1
+257.999	3	29.084	ThrowPrep	Objective	throw · CAREERORDERFIX	137	1
+258.500	3	28.584	ThrowPrep	Objective	throw · YASMIN	138	1
+259.004	3	28.084	ThrowPrep	Objective	throw · YASMIN	138	1
+259.504	3	27.584	ThrowPrep	Objective	throw · YASMIN	138	1
+260.004	3	27.084	SlipperLanded	Objective	the can	138	1
+260.505	3	26.584	SlipperLanded	Objective	the can	138	1
+261.007	3	26.084	SlipperLanded	Objective	the can	138	1
+261.510	3	25.583	ThrowPrep	Objective	throw · CAREERORDERFIX	139	1
+262.011	3	25.083	ThrowPrep	Objective	throw · CAREERORDERFIX	139	1
+262.512	3	24.583	ThrowPrep	Objective	throw · CAREERORDERFIX	139	1
+263.015	3	24.083	ThrowPrep	Objective	throw · CAREERORDERFIX	139	1
+263.516	3	23.583	ThrowPrep	Objective	throw · CAREERORDERFIX	139	1
+264.020	3	23.143	Tag	Defender	tag · ILYAS	141	1
+264.520	3	22.683	Tag	Defender	tag · ILYAS	141	1
+265.022	3	22.183	Tag	Defender	tag · ILYAS	141	1
+265.523	3	21.683	Tag	Defender	tag · ILYAS	141	1
+266.024	3	21.183	Tag	Defender	tag · ILYAS	141	1
+266.525	3	20.683	Tag	Defender	tag · ILYAS	141	1
+267.028	3	20.183	Downed	Recovery	down · YASMIN	142	1
+267.530	3	19.683	Downed	Recovery	down · YASMIN	142	1
+268.031	3	19.183	Downed	Recovery	down · YASMIN	142	1
+268.532	3	18.683	Downed	Recovery	down · YASMIN	142	1
+269.033	3	18.183	Downed	Recovery	down · YASMIN	143	1
+269.534	3	17.683	Downed	Recovery	down · YASMIN	143	1
+270.036	3	17.163	Retrieval	Chase	retrieval · YASMIN	144	1
+270.537	3	16.663	Retrieval	Chase	retrieval · YASMIN	144	1
+271.040	3	16.163	Retrieval	Chase	retrieval · YASMIN	144	1
+271.541	3	15.663	ThrowPrep	Objective	throw · CAREERORDERFIX	145	1
+272.325	3	15.303	ThrowPrep	Objective	throw · CAREERORDERFIX	145	1
+272.833	3	15.303	ThrowPrep	Objective	throw · CAREERORDERFIX	145	1
+273.339	3	15.303	ThrowPrep	Objective	throw · CAREERORDERFIX	145	1
+273.848	3	15.303	ThrowPrep	Objective	throw · CAREERORDERFIX	145	1
+274.352	3	15.303	ThrowPrep	Objective	throw · CAREERORDERFIX	145	1
+274.859	3	15.303	ThrowPrep	Objective	throw · CAREERORDERFIX	145	1
+275.379	3	15.043	Retrieval	RetrievalTwoShot	retrieval · YASMIN	146	1
+275.879	3	14.543	Retrieval	RetrievalTwoShot	retrieval · YASMIN	146	1
+276.381	3	14.023	Retrieval	RetrievalTwoShot	retrieval · YASMIN	146	1
+276.881	3	13.523	Retrieval	RetrievalTwoShot	retrieval · YASMIN	146	1
+277.384	3	13.023	Retrieval	RetrievalTwoShot	retrieval · YASMIN	146	1
+277.885	3	12.523	Retrieval	RetrievalTwoShot	retrieval · YASMIN	146	1
+278.386	3	12.023	Retrieval	RetrievalTwoShot	retrieval · YASMIN	146	1
+278.886	3	11.523	Retrieval	RetrievalTwoShot	retrieval · YASMIN	146	1
+279.388	3	11.023	Downed	Recovery	down · YASMIN	146	1
+279.889	3	10.523	Downed	Recovery	down · YASMIN	146	1
+280.393	3	10.083	Tag	Defender	tag · ILYAS	146	1
+280.893	3	9.583	Tag	Defender	tag · ILYAS	146	1
+281.393	3	9.083	Tag	Defender	tag · ILYAS	146	1
+281.895	3	8.583	Tag	Defender	tag · ILYAS	146	1
+282.396	3	8.083	Tag	Defender	tag · ILYAS	146	1
+282.898	3	7.563	Tag	Defender	tag · ILYAS	146	1
+283.399	3	7.063	SlipperLanded	Objective	the can	147	1
+283.901	3	6.563	SlipperLanded	Objective	the can	147	1
+284.403	3	6.063	Downed	Recovery	down · CAREERORDERFIX	148	1
+284.905	3	5.563	Downed	Recovery	down · CAREERORDERFIX	148	1
+285.405	3	5.063	Downed	Recovery	down · CAREERORDERFIX	148	1
+285.909	3	4.563	Downed	Recovery	down · CAREERORDERFIX	148	1
+286.410	3	4.123	Downed	Recovery	down · CAREERORDERFIX	148	1
+286.912	3	3.623	Tag	Defender	tag · ILYAS	149	1
+287.414	3	3.123	Tag	Defender	tag · ILYAS	149	1
+287.917	3	2.603	Tag	Defender	tag · ILYAS	149	1
+288.419	3	2.103	Tag	Defender	tag · ILYAS	149	1
+288.919	3	1.603	Downed	Recovery	down · YASMIN	150	1
+289.421	3	1.103	Downed	Recovery	down · YASMIN	150	1
+289.923	3	0.603	Downed	Recovery	down · YASMIN	150	1
+290.425	3	0.103	Downed	Recovery	down · YASMIN	150	1
+290.926	3	0.000	Downed	Recovery	down · YASMIN	150	1
+291.426	3	0.000	Downed	Recovery	down · YASMIN	150	1
+291.928	3	0.000	Downed	Recovery	down · YASMIN	150	1
+292.429	3	0.000	Downed	Recovery	down · YASMIN	150	1
+292.930	3	0.000	Downed	Recovery	down · YASMIN	150	1
+293.432	3	0.000	Downed	Recovery	down · YASMIN	150	1
+293.933	3	0.000	Downed	Recovery	down · YASMIN	150	1
+294.434	3	0.000	Downed	Recovery	down · YASMIN	150	1
+294.935	3	0.000	Downed	Recovery	down · YASMIN	150	1
+295.438	3	0.000	Downed	Recovery	down · YASMIN	150	1
+295.939	3	0.000	Downed	Recovery	down · YASMIN	150	1
+296.441	3	0.000	Downed	Recovery	down · YASMIN	150	1
+296.943	3	0.000	Downed	Recovery	down · YASMIN	150	1
+297.443	3	0.000	Downed	Recovery	down · YASMIN	150	1
+297.944	3	0.000	Downed	Recovery	down · YASMIN	150	1
+298.446	3	0.000	Downed	Recovery	down · YASMIN	150	1
+298.946	4	89.600	Quiet	QuietEstablish	the street	151	1
+299.449	4	89.100	Quiet	QuietEstablish	the street	151	1
+299.949	4	88.600	Quiet	QuietEstablish	the street	151	1
+300.452	4	88.100	Quiet	QuietEstablish	the street	151	1
+300.954	4	87.600	ThrowPrep	Objective	throw · ILYAS	152	1
+301.456	4	87.100	ThrowPrep	Objective	throw · ILYAS	152	1
+301.957	4	86.601	ThrowPrep	Objective	throw · ILYAS	152	1
+302.459	4	86.101	Retrieval	RetrievalTwoShot	retrieval · YASMIN	153	1
+302.960	4	85.581	LataHit	Objective	the can · YASMIN	154	1
+303.462	4	85.081	LataHit	Objective	the can · YASMIN	154	1
+303.964	4	84.581	Retrieval	Chase	retrieval · YASMIN	155	1
+304.465	4	84.081	Retrieval	Chase	retrieval · YASMIN	155	1
+305.164	4	83.741	ThrowPrep	Objective	throw · YASMIN	156	1
+305.666	4	83.741	ThrowPrep	Objective	throw · YASMIN	156	1
+306.174	4	83.741	ThrowPrep	Objective	throw · YASMIN	156	1
+306.678	4	83.741	ThrowPrep	Objective	throw · YASMIN	156	1
+307.183	4	83.741	ThrowPrep	Objective	throw · YASMIN	156	1
+307.689	4	83.741	ThrowPrep	Objective	throw · YASMIN	156	1
+308.191	4	83.741	ThrowPrep	Objective	throw · YASMIN	156	1
+308.693	4	83.261	Ultimate	UltimateWide	ultimate · ILYAS	157	1
+309.196	4	82.761	Ultimate	UltimateWide	ultimate · ILYAS	157	1
+309.698	4	82.261	Ultimate	UltimateWide	ultimate · ILYAS	157	1
+310.201	4	81.761	Ultimate	UltimateWide	ultimate · ILYAS	157	1
+310.701	4	81.261	Ultimate	UltimateWide	ultimate · ILYAS	157	1
+311.201	4	80.762	Ultimate	UltimateWide	ultimate · ILYAS	157	1
+311.703	4	80.242	Downed	Recovery	down · CAREERORDERFIX	158	1
+312.204	4	79.742	Downed	Recovery	down · CAREERORDERFIX	158	1
+312.705	4	79.242	Downed	Recovery	down · CAREERORDERFIX	158	1
+313.205	4	78.742	Downed	Recovery	down · CAREERORDERFIX	158	1
+313.708	4	78.242	Downed	Recovery	down · CAREERORDERFIX	158	1
+314.208	4	77.742	Downed	Recovery	down · CAREERORDERFIX	158	1
+314.710	4	77.242	Downed	Recovery	down · CAREERORDERFIX	158	1
+315.213	4	76.742	Downed	Recovery	down · CAREERORDERFIX	158	1
+315.714	4	76.242	Downed	Recovery	down · CAREERORDERFIX	158	1
+316.215	4	75.742	Downed	Recovery	down · CAREERORDERFIX	158	1
+316.721	4	75.282	Retrieval	Chase	retrieval · YASMIN	159	1
+317.221	4	74.843	Tag	Defender	tag · YASMIN	160	1
+317.722	4	74.343	Tag	Defender	tag · YASMIN	160	1
+318.224	4	73.843	Tag	Defender	tag · YASMIN	160	1
+318.726	4	73.343	Tag	Defender	tag · YASMIN	160	1
+319.229	4	72.843	Tag	Defender	tag · YASMIN	160	1
+319.731	4	72.343	Tag	Defender	tag · YASMIN	160	1
+320.232	4	71.843	Downed	Recovery	down · YASMIN	161	1
+320.732	4	71.343	Downed	Recovery	down · YASMIN	161	1
+321.232	4	70.843	Downed	Recovery	down · YASMIN	161	1
+321.736	4	70.343	Downed	Recovery	down · YASMIN	161	1
+322.237	4	69.843	Quiet	QuietEstablish	the street	163	1
+322.737	4	69.343	Quiet	QuietEstablish	the street	163	1
+323.238	4	68.844	Quiet	QuietEstablish	the street	163	1
+323.738	4	68.344	Quiet	QuietEstablish	the street	163	1
+324.238	4	67.844	Quiet	QuietEstablish	the street	163	1
+324.739	4	67.344	Downed	Recovery	down · CAREERORDERFIX	164	1
+325.241	4	66.824	Downed	Recovery	down · CAREERORDERFIX	164	2
+325.744	4	66.324	Downed	Recovery	down · CAREERORDERFIX	164	3
+326.245	4	65.824	Downed	Recovery	down · CAREERORDERFIX	164	3
+326.747	4	65.324	Downed	Recovery	down · CAREERORDERFIX	164	3
+327.248	4	64.824	SlipperLanded	Objective	the can	165	3
+327.749	4	64.324	SlipperLanded	Objective	the can	165	3
+328.251	4	63.824	SlipperLanded	Objective	the can	165	3
+328.754	4	63.324	Downed	Recovery	down · CAREERORDERFIX	166	3
+329.254	4	62.884	Downed	Recovery	down · CAREERORDERFIX	166	3
+329.756	4	62.384	Downed	Recovery	down · CAREERORDERFIX	166	3
+330.257	4	61.884	Downed	Recovery	down · CAREERORDERFIX	166	3
+330.760	4	61.424	Tag	Defender	tag · YASMIN	167	3
+331.265	4	60.924	Tag	Defender	tag · YASMIN	167	3
+331.765	4	60.424	Tag	Defender	tag · YASMIN	167	3
+332.267	4	59.924	Tag	Defender	tag · YASMIN	167	3
+332.768	4	59.424	Tag	Defender	tag · YASMIN	167	3
+333.269	4	58.924	Tag	Defender	tag · YASMIN	167	3
+333.771	4	58.424	Downed	Recovery	down · YASMIN	168	3
+334.273	4	57.924	Downed	Recovery	down · YASMIN	168	3
+334.775	4	57.424	Downed	Recovery	down · ILYAS	169	3
+335.275	4	56.924	Downed	Recovery	down · ILYAS	169	3
+335.777	4	56.424	Quiet	QuietEstablish	the street	170	3
+336.279	4	55.904	Quiet	QuietEstablish	the street	170	3
+336.779	4	55.404	Quiet	QuietEstablish	the street	170	3
+337.281	4	54.904	Quiet	QuietEstablish	the street	170	3
+337.784	4	54.404	Quiet	QuietEstablish	the street	170	3
+338.286	4	53.904	Downed	Recovery	down · CAREERORDERFIX	170	3
+338.786	4	53.404	Downed	Recovery	down · CAREERORDERFIX	170	4
+339.288	4	52.904	Downed	Recovery	down · CAREERORDERFIX	170	5
+339.790	4	52.404	Downed	Recovery	down · CAREERORDERFIX	170	6
+340.291	4	51.904	Downed	Recovery	down · CAREERORDERFIX	170	6
+340.793	4	51.404	Retrieval	Chase	retrieval · ILYAS	171	6
+341.294	4	50.904	Retrieval	Chase	retrieval · ILYAS	171	6
+341.795	4	50.404	Downed	Recovery	down · CAREERORDERFIX	171	6
+342.297	4	49.904	Downed	Recovery	down · CAREERORDERFIX	171	6
+342.799	4	49.384	Downed	Recovery	down · CAREERORDERFIX	171	6
+343.304	4	48.884	Downed	Recovery	down · CAREERORDERFIX	171	6
+343.805	4	48.784	Downed	Recovery	down · CAREERORDERFIX	171	6
+344.308	4	48.784	Downed	Recovery	down · CAREERORDERFIX	171	6
+344.809	4	48.784	Downed	Recovery	down · CAREERORDERFIX	171	6
+345.313	4	48.784	Downed	Recovery	down · CAREERORDERFIX	171	6
+345.817	4	48.784	Downed	Recovery	down · CAREERORDERFIX	171	6
+346.318	4	48.784	Downed	Recovery	down · CAREERORDERFIX	171	6
+346.944	4	48.444	Retrieval	RetrievalTwoShot	retrieval · ILYAS	171	6
+347.447	4	47.944	Ultimate	UltimateHero	ultimate · YASMIN	171	6
+347.950	4	47.444	Ultimate	UltimateHero	ultimate · YASMIN	171	6
+348.452	4	46.944	Ultimate	UltimateHero	ultimate · YASMIN	171	6
+348.956	4	46.444	Ultimate	UltimateHero	ultimate · YASMIN	171	6
+349.456	4	45.944	Ultimate	UltimateHero	ultimate · YASMIN	171	6
+349.956	4	45.444	Ultimate	UltimateHero	ultimate · YASMIN	171	6
+350.459	4	44.924	Ultimate	UltimateHero	ultimate · YASMIN	171	6
+350.961	4	44.424	Reset	Defender	reset · YASMIN	173	6
+351.462	4	43.924	Reset	Defender	reset · YASMIN	173	6
+351.965	4	43.424	Reset	Defender	reset · YASMIN	173	6
+352.468	4	42.924	Retrieval	Chase	retrieval · ILYAS	174	6
+352.969	4	42.424	Retrieval	Chase	retrieval · ILYAS	174	6
+353.471	4	41.924	ThrowPrep	Objective	throw · YASMIN	175	6
+353.971	4	41.424	ThrowPrep	Objective	throw · YASMIN	175	6
+354.472	4	40.924	ThrowPrep	Objective	throw · YASMIN	175	6
+354.974	4	40.424	ThrowPrep	Objective	throw · ILYAS	175	6
+355.477	4	39.924	ThrowPrep	Objective	throw · ILYAS	175	6
+355.977	4	39.404	SlipperLanded	Objective	the can	175	6
+356.478	4	38.904	SlipperLanded	Objective	the can	175	6
+356.978	4	38.404	SlipperLanded	Objective	the can	175	6
+357.481	4	37.904	Quiet	QuietEstablish	the street	176	6
+357.984	4	37.404	Quiet	QuietEstablish	the street	176	6
+358.485	4	36.904	Quiet	QuietEstablish	the street	176	6
+358.987	4	36.404	Quiet	QuietEstablish	the street	176	6
+359.489	4	35.904	Quiet	QuietEstablish	the street	176	6
+359.991	4	35.404	Retrieval	Chase	retrieval · YASMIN	177	6
+360.493	4	34.904	Retrieval	Chase	retrieval · YASMIN	177	6
+360.995	4	34.404	Retrieval	Chase	retrieval · YASMIN	177	6
+361.496	4	33.904	Retrieval	Chase	retrieval · YASMIN	177	6
+361.999	4	33.384	Retrieval	Chase	retrieval · ILYAS	178	6
+362.500	4	32.884	Retrieval	Chase	retrieval · ILYAS	178	6
+363.000	4	32.384	ThrowPrep	Objective	throw · YASMIN	179	6
+363.503	4	31.884	ThrowPrep	Objective	throw · YASMIN	179	6
+364.004	4	31.384	ThrowPrep	Objective	throw · ILYAS	179	6
+364.504	4	30.884	ThrowPrep	Objective	throw · ILYAS	180	6
+365.005	4	30.384	SlipperLanded	Objective	the can	181	6
+365.505	4	29.884	SlipperLanded	Objective	the can	181	7
+366.006	4	29.384	SlipperLanded	Objective	the can	181	7
+366.510	4	28.884	Downed	Recovery	down · CAREERORDERFIX	182	7
+367.010	4	28.384	Downed	Recovery	down · CAREERORDERFIX	182	7
+367.512	4	27.884	Downed	Recovery	down · CAREERORDERFIX	182	8
+368.014	4	27.384	Downed	Recovery	down · CAREERORDERFIX	182	8
+368.516	4	26.884	Downed	Recovery	down · CAREERORDERFIX	182	8
+369.019	4	26.424	Downed	Recovery	down · CAREERORDERFIX	182	8
+369.522	4	25.923	Downed	Recovery	down · CAREERORDERFIX	182	8
+370.023	4	25.423	Downed	Recovery	down · CAREERORDERFIX	182	8
+370.523	4	24.923	Downed	Recovery	down · CAREERORDERFIX	182	8
+371.026	4	24.423	Downed	Recovery	down · CAREERORDERFIX	182	8
+371.528	4	23.923	Retrieval	Chase	retrieval · ILYAS	184	8
+372.030	4	23.423	Retrieval	Chase	retrieval · ILYAS	184	8
+372.532	4	22.923	Retrieval	Chase	retrieval · ILYAS	184	8
+373.035	4	22.463	Tag	Defender	tag · YASMIN	185	8
+373.536	4	21.963	Tag	Defender	tag · YASMIN	185	8
+374.040	4	21.463	Tag	Defender	tag · YASMIN	185	8
+374.540	4	20.963	Tag	Defender	tag · YASMIN	185	8
+375.041	4	20.463	Tag	Defender	tag · YASMIN	185	8
+375.542	4	19.963	Tag	Defender	tag · YASMIN	185	8
+376.045	4	19.463	Downed	Recovery	down · ILYAS	186	8
+376.548	4	18.963	Downed	Recovery	down · ILYAS	186	8
+377.048	4	18.463	Downed	Recovery	down · ILYAS	186	8
+377.550	4	17.963	Downed	Recovery	down · ILYAS	186	8
+378.052	4	17.463	Quiet	QuietEstablish	the street	187	8
+378.553	4	16.963	Quiet	QuietEstablish	the street	187	8
+379.053	4	16.463	Quiet	QuietEstablish	the street	187	8
+379.554	4	15.963	Quiet	QuietEstablish	the street	187	8
+380.056	4	15.443	Quiet	QuietEstablish	the street	187	8
+380.559	4	14.943	Downed	Recovery	down · CAREERORDERFIX	188	8
+381.060	4	14.443	Downed	Recovery	down · CAREERORDERFIX	188	8
+381.561	4	13.943	Downed	Recovery	down · CAREERORDERFIX	188	8
+382.062	4	13.443	Downed	Recovery	down · CAREERORDERFIX	188	8
+382.566	4	12.943	Downed	Recovery	down · CAREERORDERFIX	188	8
+383.069	4	12.443	Retrieval	Chase	retrieval · YASMIN	189	8
+383.571	4	11.943	Retrieval	Chase	retrieval · YASMIN	189	8
+384.072	4	11.443	Downed	Recovery	down · CAREERORDERFIX	190	8
+384.572	4	10.943	Downed	Recovery	down · CAREERORDERFIX	190	8
+385.074	4	10.443	Downed	Recovery	down · CAREERORDERFIX	190	8
+385.574	4	9.943	Downed	Recovery	down · CAREERORDERFIX	190	8
+386.077	4	9.423	Downed	Recovery	down · CAREERORDERFIX	190	8
+386.577	4	8.923	LataHit	Objective	the can · YASMIN	190	8
+387.078	4	8.423	LataHit	Objective	the can · YASMIN	190	8
+387.578	4	7.923	LataHit	Objective	the can · YASMIN	190	8
+388.081	4	7.423	LataHit	Objective	the can · YASMIN	190	8
+388.582	4	6.923	Reset	Defender	reset · YASMIN	191	8
+389.085	4	6.423	Reset	Defender	reset · YASMIN	191	8
+389.586	4	5.923	ThrowPrep	Objective	throw · CAREERORDERFIX	192	8
+390.088	4	5.423	ThrowPrep	Objective	throw · CAREERORDERFIX	192	8
+390.588	4	4.923	Quiet	QuietEstablish	the street	193	8
+391.089	4	4.423	Quiet	QuietEstablish	the street	193	8
+391.590	4	3.923	Quiet	QuietEstablish	the street	193	8
+392.093	4	3.423	Quiet	QuietEstablish	the street	193	8
+392.595	4	2.903	Quiet	QuietEstablish	the street	193	8
+393.097	4	2.403	Retrieval	Chase	retrieval · ILYAS	194	8
+393.599	4	1.903	Retrieval	Chase	retrieval · ILYAS	194	8
+394.100	4	1.403	Downed	Recovery	down · CAREERORDERFIX	195	8
+394.601	4	0.903	Downed	Recovery	down · CAREERORDERFIX	195	9
+395.103	4	0.403	Downed	Recovery	down · CAREERORDERFIX	195	10
+395.605	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+396.116	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+396.627	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+397.128	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+397.637	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+398.140	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+398.650	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+399.162	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+399.666	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+400.177	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+400.679	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+401.180	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+401.682	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+402.183	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+402.685	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+403.185	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+403.685	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+404.185	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+404.686	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+405.188	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+405.691	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+406.192	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+406.694	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+407.194	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+407.697	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+408.199	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+408.700	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+409.200	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+409.701	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+410.202	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+410.702	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+411.202	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+411.703	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+412.204	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+412.705	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+413.205	4	0.000	Downed	Recovery	down · CAREERORDERFIX	195	10
+413.708	5	89.820	Quiet	QuietEstablish	the street	196	10
+414.209	5	89.320	Quiet	QuietEstablish	the street	196	10
+414.709	5	88.820	Quiet	QuietEstablish	the street	196	10
+415.210	5	88.320	Quiet	QuietEstablish	the street	196	10
+415.712	5	87.820	Quiet	QuietEstablish	the street	196	10
+416.214	5	87.320	ThrowPrep	Objective	throw · ILYAS	197	10
+416.716	5	86.821	ThrowPrep	Objective	throw · ILYAS	197	10
+417.219	5	86.301	Quiet	QuietEstablish	the street	198	10
+417.721	5	85.801	Quiet	QuietEstablish	the street	198	10
+418.223	5	85.301	Quiet	QuietEstablish	the street	198	10
+418.724	5	84.801	Quiet	QuietEstablish	the street	198	10
+419.226	5	84.301	Quiet	QuietEstablish	the street	198	10
+419.726	5	83.801	Downed	Recovery	down · CAREERORDERFIX	199	10
+420.226	5	83.301	Downed	Recovery	down · CAREERORDERFIX	199	10
+420.727	5	82.801	Downed	Recovery	down · CAREERORDERFIX	199	10
+421.228	5	82.301	Downed	Recovery	down · CAREERORDERFIX	199	10
+421.730	5	81.801	Downed	Recovery	down · CAREERORDERFIX	199	10
+422.231	5	81.301	Downed	Recovery	down · CAREERORDERFIX	199	10
+422.733	5	80.802	Downed	Recovery	down · CAREERORDERFIX	199	10
+423.235	5	80.302	Downed	Recovery	down · CAREERORDERFIX	199	10
+423.738	5	79.782	Downed	Recovery	down · CAREERORDERFIX	199	10
+424.241	5	79.282	Downed	Recovery	down · CAREERORDERFIX	199	10
+424.744	5	78.782	Downed	Recovery	down · CAREERORDERFIX	199	10
+425.247	5	78.282	Downed	Recovery	down · CAREERORDERFIX	199	10
+425.748	5	77.782	Downed	Recovery	down · CAREERORDERFIX	199	10
+426.250	5	77.282	Downed	Recovery	down · CAREERORDERFIX	199	10
+426.751	5	76.782	Quiet	QuietEstablish	the street	200	10
+427.252	5	76.282	Quiet	QuietEstablish	the street	200	10
+427.752	5	75.782	Quiet	QuietEstablish	the street	200	10
+428.254	5	75.282	Quiet	QuietEstablish	the street	200	10
+428.755	5	74.783	Quiet	QuietEstablish	the street	200	10
+429.256	5	74.283	ThrowPrep	Objective	throw · CAREERORDERFIX	201	10
+429.758	5	73.763	ThrowPrep	Objective	throw · CAREERORDERFIX	201	10
+430.259	5	73.323	Tag	Defender	tag · YASMIN	203	10
+430.760	5	72.823	Tag	Defender	tag · YASMIN	204	10
+431.261	5	72.323	Tag	Defender	tag · YASMIN	204	10
+431.765	5	71.823	Tag	Defender	tag · YASMIN	204	10
+432.265	5	71.323	Tag	Defender	tag · YASMIN	204	10
+432.765	5	70.823	Tag	Defender	tag · YASMIN	204	10
+433.267	5	70.323	Downed	Recovery	down · ILYAS	205	10
+433.767	5	69.823	Downed	Recovery	down · ILYAS	205	10
+434.270	5	69.323	Downed	Recovery	down · ILYAS	205	10
+434.772	5	68.824	Downed	Recovery	down · ILYAS	205	10
+435.274	5	68.324	Downed	Recovery	down · CAREERORDERFIX	205	10
+435.776	5	67.824	Downed	Recovery	down · CAREERORDERFIX	206	10
+436.278	5	67.304	Downed	Recovery	down · CAREERORDERFIX	206	10
+436.779	5	66.804	Downed	Recovery	down · CAREERORDERFIX	206	10
+437.281	5	66.304	Downed	Recovery	down · CAREERORDERFIX	206	10
+437.784	5	65.804	SlipperLanded	Objective	the can	207	10
+438.287	5	65.364	SlipperLanded	Objective	the can	207	10
+438.789	5	64.864	SlipperLanded	Objective	the can	207	10
+439.291	5	64.364	Tag	Defender	tag · YASMIN	207	10
+439.793	5	63.864	Tag	Defender	tag · YASMIN	207	10
+440.294	5	63.364	Tag	Defender	tag · YASMIN	207	10
+440.795	5	62.864	Tag	Defender	tag · YASMIN	207	10
+441.297	5	62.344	Downed	Recovery	down · CAREERORDERFIX	208	10
+441.798	5	61.844	Downed	Recovery	down · CAREERORDERFIX	208	10
+442.299	5	61.344	Downed	Recovery	down · YASMIN	209	10
+442.799	5	60.844	Downed	Recovery	down · YASMIN	209	10
+443.302	5	60.344	Quiet	QuietEstablish	the street	210	10
+443.805	5	59.844	Quiet	QuietEstablish	the street	210	10
+444.307	5	59.344	Quiet	QuietEstablish	the street	210	10
+444.810	5	58.844	Quiet	QuietEstablish	the street	210	10
+445.310	5	58.344	Quiet	QuietEstablish	the street	210	10
+445.813	5	57.884	Tag	Defender	tag · YASMIN	212	10
+446.315	5	57.384	Tag	Defender	tag · YASMIN	212	10
+446.816	5	56.884	Tag	Defender	tag · YASMIN	212	10
+447.318	5	56.384	Tag	Defender	tag · YASMIN	212	10
+447.819	5	55.884	Tag	Defender	tag · YASMIN	212	10
+448.321	5	55.384	Tag	Defender	tag · YASMIN	212	10
+448.822	5	54.884	SlipperLanded	Objective	the can	213	10
+449.324	5	54.384	Downed	Recovery	down · ILYAS	214	10
+449.825	5	53.884	Downed	Recovery	down · ILYAS	214	10
+450.328	5	53.384	Downed	Recovery	down · ILYAS	214	10
+450.830	5	52.884	ThrowPrep	Objective	throw · CAREERORDERFIX	215	10
+451.331	5	52.384	ThrowPrep	Objective	throw · CAREERORDERFIX	215	10
+451.832	5	51.944	ThrowPrep	Objective	throw · CAREERORDERFIX	215	10
+452.333	5	51.444	ThrowPrep	Objective	throw · CAREERORDERFIX	215	10
+452.836	5	50.924	ThrowPrep	Objective	throw · CAREERORDERFIX	215	10
+453.338	5	50.424	Tag	Defender	tag · YASMIN	216	10
+453.838	5	49.924	Tag	Defender	tag · YASMIN	216	10
+454.338	5	49.424	Downed	Recovery	down · YASMIN	217	10
+454.840	5	48.924	Downed	Recovery	down · YASMIN	217	10
+455.343	5	48.424	Downed	Recovery	down · YASMIN	217	10
+455.844	5	47.924	Downed	Recovery	down · YASMIN	217	10
+456.346	5	47.424	Downed	Recovery	down · YASMIN	217	10
+456.848	5	46.924	ThrowPrep	Objective	throw · CAREERORDERFIX	218	10
+457.349	5	46.424	ThrowPrep	Objective	throw · CAREERORDERFIX	218	10
+457.851	5	45.924	ThrowPrep	Objective	throw · CAREERORDERFIX	218	10
+458.352	5	45.424	ThrowPrep	Objective	throw · CAREERORDERFIX	218	10
+458.855	5	44.904	ThrowPrep	Objective	throw · CAREERORDERFIX	218	10
+459.357	5	44.404	ThrowPrep	Objective	throw · CAREERORDERFIX	218	10
+459.859	5	43.904	ThrowPrep	Objective	throw · CAREERORDERFIX	218	10
+460.361	5	43.404	Retrieval	RetrievalTwoShot	retrieval · ILYAS	218	10
+460.864	5	42.904	LataHit	Objective	the can · YASMIN	218	10
+461.365	5	42.404	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	219	10
+461.869	5	41.904	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	219	10
+462.371	5	41.404	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	219	10
+462.873	5	40.904	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	219	10
+463.375	5	40.384	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	219	10
+463.878	5	39.884	Retrieval	Chase	retrieval · YASMIN	220	10
+464.381	5	39.384	Retrieval	Chase	retrieval · YASMIN	220	10
+464.882	5	38.884	Retrieval	Chase	retrieval · YASMIN	220	10
+465.382	5	38.384	Downed	Recovery	down · CAREERORDERFIX	221	10
+465.885	5	37.884	Downed	Recovery	down · CAREERORDERFIX	221	10
+466.386	5	37.384	Downed	Recovery	down · CAREERORDERFIX	221	10
+466.886	5	36.884	Downed	Recovery	down · CAREERORDERFIX	221	10
+467.389	5	36.384	Downed	Recovery	down · CAREERORDERFIX	221	10
+467.891	5	35.884	Retrieval	Chase	retrieval · ILYAS	222	10
+468.396	5	35.364	Retrieval	Chase	retrieval · ILYAS	222	10
+468.899	5	34.864	SlipperLanded	Objective	the can	223	10
+469.402	5	34.364	SlipperLanded	Objective	the can	223	11
+469.904	5	33.864	Downed	Recovery	down · CAREERORDERFIX	224	12
+470.405	5	33.364	Downed	Recovery	down · CAREERORDERFIX	224	12
+470.905	5	32.864	Downed	Recovery	down · CAREERORDERFIX	224	12
+471.408	5	32.364	Downed	Recovery	down · CAREERORDERFIX	224	12
+471.908	5	31.864	Downed	Recovery	down · CAREERORDERFIX	224	12
+472.412	5	31.364	Quiet	QuietEstablish	the street	225	12
+472.914	5	30.844	Quiet	QuietEstablish	the street	225	12
+473.417	5	30.344	Quiet	QuietEstablish	the street	225	12
+473.918	5	29.844	Quiet	QuietEstablish	the street	225	12
+474.421	5	29.344	Quiet	QuietEstablish	the street	225	12
+474.923	5	28.844	Retrieval	Chase	retrieval · YASMIN	226	12
+475.424	5	28.404	Tag	Defender	tag · YASMIN	227	12
+475.927	5	27.904	Tag	Defender	tag · YASMIN	227	12
+476.428	5	27.404	Tag	Defender	tag · YASMIN	227	12
+476.929	5	26.904	Tag	Defender	tag · YASMIN	227	12
+477.430	5	26.404	Tag	Defender	tag · YASMIN	227	12
+477.930	5	25.903	LataHit	Objective	the can · CAREERORDERFIX	230	12
+478.432	5	25.403	Retrieval	Chase	retrieval · ILYAS	231	13
+478.935	5	24.943	Tag	Defender	tag · YASMIN	232	13
+479.439	5	24.443	Tag	Defender	tag · YASMIN	232	13
+479.941	5	23.943	Tag	Defender	tag · YASMIN	232	13
+480.442	5	23.443	Tag	Defender	tag · YASMIN	232	13
+480.943	5	22.943	Tag	Defender	tag · YASMIN	232	13
+481.443	5	22.443	Tag	Defender	tag · YASMIN	232	13
+481.945	5	21.943	Downed	Recovery	down · CAREERORDERFIX	233	13
+482.447	5	21.443	Downed	Recovery	down · CAREERORDERFIX	233	13
+482.947	5	20.943	Downed	Recovery	down · CAREERORDERFIX	233	13
+483.448	5	20.443	Downed	Recovery	down · CAREERORDERFIX	233	13
+483.950	5	19.943	Downed	Recovery	down · CAREERORDERFIX	233	13
+484.452	5	19.443	Downed	Recovery	down · CAREERORDERFIX	233	13
+484.953	5	18.943	Downed	Recovery	down · CAREERORDERFIX	233	13
+485.454	5	18.443	Downed	Recovery	down · CAREERORDERFIX	233	13
+485.955	5	17.923	Downed	Recovery	down · CAREERORDERFIX	233	13
+486.455	5	17.423	Downed	Recovery	down · CAREERORDERFIX	233	13
+486.959	5	16.923	SlipperLanded	Objective	the can	234	13
+487.459	5	16.423	Downed	Recovery	down · CAREERORDERFIX	235	13
+487.960	5	15.923	Downed	Recovery	down · CAREERORDERFIX	235	13
+488.460	5	15.423	Downed	Recovery	down · CAREERORDERFIX	235	13
+488.960	5	14.923	Downed	Recovery	down · CAREERORDERFIX	235	13
+489.461	5	14.423	LataHit	Objective	the can · ILYAS	236	13
+489.963	5	13.923	LataHit	Objective	the can · ILYAS	236	13
+490.468	5	13.483	LataHit	Objective	the can · ILYAS	236	13
+490.972	5	12.983	Tag	Defender	tag · YASMIN	237	13
+491.473	5	12.483	Tag	Defender	tag · YASMIN	237	13
+491.973	5	11.983	Tag	Defender	tag · YASMIN	237	13
+492.473	5	11.483	Tag	Defender	tag · YASMIN	237	13
+492.975	5	10.963	Downed	Recovery	down · YASMIN	238	13
+493.476	5	10.463	Downed	Recovery	down · YASMIN	238	13
+493.979	5	9.963	Downed	Recovery	down · YASMIN	238	13
+494.479	5	9.523	Downed	Recovery	down · YASMIN	238	13
+494.980	5	9.023	Downed	Recovery	down · YASMIN	238	13
+495.480	5	8.523	Tag	Defender	tag · YASMIN	239	13
+495.981	5	8.023	Tag	Defender	tag · YASMIN	239	13
+496.483	5	7.523	Tag	Defender	tag · YASMIN	239	13
+496.984	5	7.023	Retrieval	Chase	retrieval · YASMIN	240	13
+497.486	5	6.523	Retrieval	Chase	retrieval · YASMIN	240	13
+497.987	5	6.023	Downed	Recovery	down · ILYAS	240	13
+498.490	5	5.523	Downed	Recovery	down · ILYAS	240	13
+498.991	5	5.023	Downed	Recovery	down · ILYAS	240	13
+499.493	5	4.503	SlipperLanded	Objective	the can	241	13
+499.994	5	4.003	SlipperLanded	Objective	the can	241	13
+500.495	5	3.503	SlipperLanded	Objective	the can	241	15
+500.996	5	3.003	SlipperLanded	Objective	the can	241	16
+501.497	5	2.503	ThrowPrep	Objective	throw · CAREERORDERFIX	241	16
+501.998	5	2.003	ThrowPrep	Objective	throw · CAREERORDERFIX	241	16
+502.501	5	1.503	ThrowPrep	Objective	throw · CAREERORDERFIX	241	16
+503.002	5	1.003	ThrowPrep	Objective	throw · CAREERORDERFIX	241	16
+503.503	5	0.503	ThrowPrep	Objective	throw · CAREERORDERFIX	241	16
+504.005	5	0.003	ThrowPrep	Objective	throw · CAREERORDERFIX	241	16
+504.505	5	0.000	ThrowPrep	Objective	throw · CAREERORDERFIX	241	16
+505.008	5	0.000	ThrowPrep	Objective	throw · CAREERORDERFIX	241	16
+505.510	5	0.000	ThrowPrep	Objective	throw · CAREERORDERFIX	241	16
+506.012	5	0.000	ThrowPrep	Objective	throw · CAREERORDERFIX	241	16
+506.515	5	0.000	ThrowPrep	Objective	throw · CAREERORDERFIX	241	16
+507.018	5	0.000	ThrowPrep	Objective	throw · CAREERORDERFIX	241	16
+507.520	5	0.000	ThrowPrep	Objective	throw · CAREERORDERFIX	241	16
+508.021	5	0.000	ThrowPrep	Objective	throw · CAREERORDERFIX	241	16
+508.521	5	0.000	ThrowPrep	Objective	throw · CAREERORDERFIX	241	16
+509.022	5	0.000	ThrowPrep	Objective	throw · CAREERORDERFIX	241	16
+509.522	5	0.000	ThrowPrep	Objective	throw · CAREERORDERFIX	241	16
+510.023	5	0.000	ThrowPrep	Objective	throw · CAREERORDERFIX	241	16
+510.524	5	0.000	ThrowPrep	Objective	throw · CAREERORDERFIX	241	16
+511.025	5	0.000	ThrowPrep	Objective	throw · CAREERORDERFIX	241	16
+511.525	5	0.000	ThrowPrep	Objective	throw · CAREERORDERFIX	241	16
+512.029	6	90.000	Quiet	QuietEstablish	the street	242	16
+512.531	6	89.500	Quiet	QuietEstablish	the street	242	16
+513.032	6	89.000	Quiet	QuietEstablish	the street	242	16
+513.534	6	88.500	Quiet	QuietEstablish	the street	242	16
+514.035	6	88.000	Quiet	QuietEstablish	the street	242	16
+514.537	6	87.480	ThrowPrep	Objective	throw · YASMIN	244	16
+515.039	6	86.981	ThrowPrep	Objective	throw · YASMIN	244	16
+515.540	6	86.481	ThrowPrep	Objective	throw · YASMIN	244	16
+516.041	6	85.981	Quiet	QuietEstablish	the street	245	16
+516.542	6	85.481	Quiet	QuietEstablish	the street	245	16
+517.043	6	84.981	Quiet	QuietEstablish	the street	245	16
+517.544	6	84.481	Quiet	QuietEstablish	the street	245	16
+518.044	6	83.981	Quiet	QuietEstablish	the street	245	16
+518.546	6	83.481	ThrowPrep	Objective	throw · YASMIN	247	16
+519.046	6	82.981	ThrowPrep	Objective	throw · YASMIN	247	16
+519.546	6	82.481	ThrowPrep	Objective	throw · YASMIN	247	16
+520.049	6	81.981	Quiet	QuietEstablish	the street	248	16
+520.552	6	81.481	Quiet	QuietEstablish	the street	248	16
+521.054	6	80.982	Quiet	QuietEstablish	the street	248	16
+521.555	6	80.482	Quiet	QuietEstablish	the street	248	16
+522.058	6	79.962	Quiet	QuietEstablish	the street	248	16
+522.558	6	79.462	Retrieval	Chase	retrieval · ILYAS	249	16
+523.058	6	78.962	Retrieval	Chase	retrieval · ILYAS	249	16
+523.561	6	78.462	Quiet	QuietEstablish	the street	250	16
+524.064	6	77.962	Quiet	QuietEstablish	the street	250	16
+524.564	6	77.462	Quiet	QuietEstablish	the street	250	16
+525.066	6	76.962	Quiet	QuietEstablish	the street	250	16
+525.569	6	76.462	Quiet	QuietEstablish	the street	250	16
+526.071	6	75.962	ThrowPrep	Objective	throw · YASMIN	252	16
+526.573	6	75.462	ThrowPrep	Objective	throw · YASMIN	252	16
+527.074	6	74.963	ThrowPrep	Objective	throw · YASMIN	252	16
+527.575	6	74.463	ThrowPrep	Objective	throw · ILYAS	254	16
+528.078	6	73.943	ThrowPrep	Objective	throw · ILYAS	254	16
+528.579	6	73.443	LataHit	Objective	the can · YASMIN	257	16
+529.081	6	72.943	LataHit	Objective	the can · YASMIN	257	16
+529.583	6	72.443	LataHit	Objective	the can · YASMIN	257	16
+530.085	6	71.943	LataHit	Objective	the can · YASMIN	257	16
+530.586	6	71.443	ThrowPrep	Objective	throw · YASMIN	259	16
+531.088	6	70.943	ThrowPrep	Objective	throw · YASMIN	259	16
+531.590	6	70.443	LataHit	Objective	the can · ILYAS	261	16
+532.092	6	69.943	LataHit	Objective	the can · ILYAS	261	16
+532.593	6	69.443	LataHit	Objective	the can · ILYAS	261	16
+533.094	6	68.944	LataHit	Objective	the can · ILYAS	261	16
+533.594	6	68.444	Retrieval	Chase	retrieval · ILYAS	262	16
+534.096	6	67.944	Retrieval	Chase	retrieval · ILYAS	262	16
+534.598	6	67.424	ThrowPrep	Objective	throw · ILYAS	264	16
+535.099	6	66.924	ThrowPrep	Objective	throw · ILYAS	264	16
+535.603	6	66.424	LataHit	Objective	the can · YASMIN	264	16
+536.106	6	65.924	LataHit	Objective	the can · YASMIN	265	16
+536.606	6	65.424	LataHit	Objective	the can · YASMIN	265	16
+537.108	6	64.924	LataHit	Objective	the can · YASMIN	265	16
+537.608	6	64.424	Retrieval	Chase	retrieval · ILYAS	266	16
+538.110	6	63.924	Retrieval	Chase	retrieval · ILYAS	266	16
+538.612	6	63.424	Retrieval	Chase	retrieval · ILYAS	266	16
+539.117	6	62.904	Quiet	QuietEstablish	the street	267	16
+539.621	6	62.404	Quiet	QuietEstablish	the street	267	16
+540.123	6	61.904	Quiet	QuietEstablish	the street	267	16
+540.625	6	61.404	Quiet	QuietEstablish	the street	267	16
+541.128	6	60.904	Quiet	QuietEstablish	the street	267	16
+541.630	6	60.404	ThrowPrep	Objective	throw · YASMIN	271	16
+542.132	6	59.904	ThrowPrep	Objective	throw · YASMIN	271	16
+542.633	6	59.404	ThrowPrep	Objective	throw · YASMIN	271	16
+543.133	6	58.904	ThrowPrep	Objective	throw · ILYAS	273	16
+543.634	6	58.404	ThrowPrep	Objective	throw · ILYAS	273	16
+544.136	6	57.904	LataHit	Objective	the can · YASMIN	274	16
+544.638	6	57.384	LataHit	Objective	the can · YASMIN	274	16
+545.139	6	56.884	LataHit	Objective	the can · YASMIN	274	16
+545.639	6	56.384	LataHit	Objective	the can · YASMIN	274	16
+546.141	6	55.884	ThrowPrep	Objective	throw · ILYAS	276	16
+546.641	6	55.384	ThrowPrep	Objective	throw · ILYAS	276	16
+547.141	6	54.884	Quiet	QuietEstablish	the street	277	16
+547.643	6	54.384	Quiet	QuietEstablish	the street	277	16
+548.143	6	53.884	Quiet	QuietEstablish	the street	277	16
+548.644	6	53.384	Quiet	QuietEstablish	the street	277	16
+549.144	6	52.884	Quiet	QuietEstablish	the street	277	16
+549.649	6	52.384	Quiet	QuietEstablish	the street	277	16
+550.151	6	51.884	ThrowPrep	Objective	throw · YASMIN	279	16
+550.653	6	51.384	ThrowPrep	Objective	throw · YASMIN	279	16
+551.154	6	50.884	Quiet	QuietEstablish	the street	280	16
+551.658	6	50.404	Quiet	QuietEstablish	the street	280	16
+552.164	6	50.404	Quiet	QuietEstablish	the street	280	16
+552.671	6	50.404	Quiet	QuietEstablish	the street	280	16
+553.172	6	50.404	Quiet	QuietEstablish	the street	280	16
+553.680	6	50.404	Quiet	QuietEstablish	the street	280	16
+554.181	6	50.404	Quiet	QuietEstablish	the street	280	16
+554.686	6	50.404	Quiet	QuietEstablish	the street	280	16
+555.187	6	50.044	Ultimate	UltimateHero	ultimate · YASMIN	282	16
+555.690	6	49.544	Ultimate	UltimateHero	ultimate · YASMIN	282	16
+556.192	6	49.044	Ultimate	UltimateHero	ultimate · YASMIN	282	16
+556.693	6	48.544	Ultimate	UltimateHero	ultimate · YASMIN	282	16
+557.195	6	48.044	Ultimate	UltimateHero	ultimate · YASMIN	282	16
+557.698	6	47.524	Ultimate	UltimateHero	ultimate · YASMIN	282	16
+558.200	6	47.024	Ultimate	UltimateHero	ultimate · YASMIN	282	16
+558.702	6	46.524	Downed	Recovery	down · YASMIN	284	16
+559.204	6	46.024	Downed	Recovery	down · YASMIN	284	16
+559.706	6	45.524	Reset	Defender	reset · CAREERORDERFIX	285	16
+560.208	6	45.024	Reset	Defender	reset · CAREERORDERFIX	285	16
+560.710	6	44.524	ThrowPrep	Objective	throw · ILYAS	287	16
+561.213	6	44.024	ThrowPrep	Objective	throw · ILYAS	287	16
+561.715	6	43.524	ThrowPrep	Objective	throw · ILYAS	287	16
+562.217	6	43.024	ThrowPrep	Objective	throw · ILYAS	287	16
+562.720	6	42.504	LataHit	Objective	the can · YASMIN	289	16
+563.224	6	42.004	LataHit	Objective	the can · YASMIN	289	16
+563.726	6	41.504	LataHit	Objective	the can · YASMIN	289	16
+564.228	6	41.004	LataHit	Objective	the can · YASMIN	289	16
+564.729	6	40.504	Retrieval	Chase	retrieval · YASMIN	290	16
+565.231	6	40.004	Retrieval	Chase	retrieval · YASMIN	290	16
+565.732	6	39.504	ThrowPrep	Objective	throw · YASMIN	292	16
+566.234	6	39.004	ThrowPrep	Objective	throw · YASMIN	292	16
+566.735	6	38.504	SlipperLanded	Objective	the can	293	16
+567.237	6	38.004	SlipperLanded	Objective	the can	293	16
+567.740	6	37.484	SlipperLanded	Objective	the can	293	16
+568.241	6	36.984	Retrieval	Chase	retrieval · YASMIN	294	16
+568.746	6	36.484	Retrieval	Chase	retrieval · YASMIN	294	16
+569.247	6	35.984	Retrieval	Chase	retrieval · YASMIN	294	16
+569.750	6	35.484	ThrowPrep	Objective	throw · ILYAS	296	16
+570.250	6	34.984	ThrowPrep	Objective	throw · ILYAS	296	16
+570.751	6	34.484	ThrowPrep	Objective	throw · ILYAS	296	16
+571.254	6	33.984	SlipperLanded	Objective	the can	297	16
+571.755	6	33.484	SlipperLanded	Objective	the can	298	16
+572.257	6	32.984	SlipperLanded	Objective	the can	298	16
+572.757	6	32.484	SlipperLanded	Objective	the can	298	16
+573.257	6	31.984	Retrieval	Chase	retrieval · YASMIN	299	16
+573.760	6	31.464	Retrieval	Chase	retrieval · YASMIN	299	16
+574.261	6	31.024	Tag	Defender	tag · CAREERORDERFIX	300	16
+574.764	6	30.524	Tag	Defender	tag · CAREERORDERFIX	300	16
+575.265	6	30.024	Tag	Defender	tag · CAREERORDERFIX	300	16
+575.765	6	29.524	Tag	Defender	tag · CAREERORDERFIX	300	16
+576.268	6	29.024	Tag	Defender	tag · CAREERORDERFIX	300	16
+576.770	6	28.524	LataHit	Objective	the can · YASMIN	300	16
+577.273	6	28.264	LataHit	Objective	the can · YASMIN	300	16
+577.777	6	28.264	LataHit	Objective	the can · YASMIN	300	16
+578.284	6	28.264	LataHit	Objective	the can · YASMIN	300	16
+578.785	6	28.264	LataHit	Objective	the can · YASMIN	300	16
+579.288	6	28.264	LataHit	Objective	the can · YASMIN	300	16
+579.797	6	28.264	LataHit	Objective	the can · YASMIN	300	16
+580.544	6	27.944	Retrieval	RetrievalTwoShot	retrieval · YASMIN	301	16
+581.046	6	27.444	Retrieval	RetrievalTwoShot	retrieval · YASMIN	301	16
+581.549	6	26.944	Retrieval	RetrievalTwoShot	retrieval · YASMIN	301	16
+582.050	6	26.444	Retrieval	RetrievalTwoShot	retrieval · YASMIN	301	16
+582.552	6	25.943	Retrieval	RetrievalTwoShot	retrieval · YASMIN	301	16
+583.054	6	25.443	Ultimate	UltimateHero	ultimate · YASMIN	301	16
+583.555	6	24.943	Ultimate	UltimateHero	ultimate · YASMIN	301	16
+584.056	6	24.443	Downed	Recovery	down · CAREERORDERFIX	302	16
+584.557	6	23.943	Downed	Recovery	down · CAREERORDERFIX	302	16
+585.058	6	23.443	Reset	Defender	reset · CAREERORDERFIX	303	16
+585.560	6	22.923	Reset	Defender	reset · CAREERORDERFIX	303	16
+586.063	6	22.423	Quiet	QuietEstablish	the street	304	16
+586.564	6	21.923	Quiet	QuietEstablish	the street	304	16
+587.064	6	21.423	Quiet	QuietEstablish	the street	304	16
+587.567	6	20.923	Quiet	QuietEstablish	the street	304	16
+588.068	6	20.423	Quiet	QuietEstablish	the street	304	16
+588.568	6	19.923	Retrieval	Chase	retrieval · YASMIN	305	16
+589.072	6	19.423	Retrieval	Chase	retrieval · YASMIN	305	16
+589.574	6	18.923	ThrowPrep	Objective	throw · YASMIN	306	16
+590.075	6	18.423	ThrowPrep	Objective	throw · YASMIN	307	16
+590.577	6	17.923	ThrowPrep	Objective	throw · YASMIN	307	16
+591.079	6	17.403	Quiet	QuietEstablish	the street	308	16
+591.583	6	16.903	Quiet	QuietEstablish	the street	308	16
+592.084	6	16.403	Quiet	QuietEstablish	the street	308	16
+592.586	6	15.903	Quiet	QuietEstablish	the street	308	16
+593.087	6	15.403	ThrowPrep	Objective	throw · ILYAS	309	16
+593.590	6	14.903	ThrowPrep	Objective	throw · ILYAS	310	16
+594.092	6	14.403	ThrowPrep	Objective	throw · ILYAS	310	16
+594.596	6	13.903	Quiet	QuietEstablish	the street	311	16
+595.098	6	13.403	Quiet	QuietEstablish	the street	311	16
+595.600	6	12.883	Quiet	QuietEstablish	the street	311	16
+596.100	6	12.383	Quiet	QuietEstablish	the street	311	16
+596.606	6	11.883	SlipperLanded	Objective	the can	312	16
+597.108	6	11.383	ThrowPrep	Objective	throw · ILYAS	315	16
+597.609	6	10.883	ThrowPrep	Objective	throw · ILYAS	315	16
+598.111	6	10.383	ThrowPrep	Objective	throw · YASMIN	316	16
+598.613	6	9.883	ThrowPrep	Objective	throw · YASMIN	317	16
+599.114	6	9.383	ThrowPrep	Objective	throw · YASMIN	317	16
+599.616	6	8.883	Quiet	QuietEstablish	the street	318	16
+600.117	6	8.383	Quiet	QuietEstablish	the street	318	16
+600.621	6	7.863	Quiet	QuietEstablish	the street	318	16
+601.122	6	7.363	Quiet	QuietEstablish	the street	318	16
+601.625	6	6.923	Tag	Defender	tag · CAREERORDERFIX	319	16
+602.128	6	6.423	Tag	Defender	tag · CAREERORDERFIX	319	16
+602.633	6	5.923	Tag	Defender	tag · CAREERORDERFIX	319	16
+603.135	6	5.423	Tag	Defender	tag · CAREERORDERFIX	319	16
+603.636	6	4.923	Tag	Defender	tag · CAREERORDERFIX	319	16
+604.138	6	4.403	Tag	Defender	tag · CAREERORDERFIX	319	16
+604.641	6	3.903	Downed	Recovery	down · YASMIN	320	16
+605.141	6	3.403	Downed	Recovery	down · YASMIN	320	16
+605.642	6	2.903	Downed	Recovery	down · YASMIN	320	16
+606.143	6	2.403	Downed	Recovery	down · YASMIN	320	16
+606.645	6	1.903	Retrieval	RetrievalTwoShot	retrieval · ILYAS	321	16
+607.148	6	1.403	Retrieval	RetrievalTwoShot	retrieval · ILYAS	321	16
+607.649	6	0.903	ThrowPrep	Objective	throw · ILYAS	322	16
+608.151	6	0.403	ThrowPrep	Objective	throw · ILYAS	323	16
+608.651	6	0.000	ThrowPrep	Objective	throw · ILYAS	323	16
+609.153	6	0.000	ThrowPrep	Objective	throw · ILYAS	323	16
+609.654	6	0.000	ThrowPrep	Objective	throw · ILYAS	323	16
+610.156	6	0.000	ThrowPrep	Objective	throw · ILYAS	323	16
+610.658	6	0.000	ThrowPrep	Objective	throw · ILYAS	323	16
+611.161	6	0.000	ThrowPrep	Objective	throw · ILYAS	323	16
+611.662	6	0.000	ThrowPrep	Objective	throw · ILYAS	323	16
+612.163	6	0.000	ThrowPrep	Objective	throw · ILYAS	323	16
+612.664	6	0.000	ThrowPrep	Objective	throw · ILYAS	323	16
+613.167	6	0.000	ThrowPrep	Objective	throw · ILYAS	323	16
+613.669	6	0.000	ThrowPrep	Objective	throw · ILYAS	323	16
+614.170	6	0.000	ThrowPrep	Objective	throw · ILYAS	323	16
+614.672	6	0.000	ThrowPrep	Objective	throw · ILYAS	323	16
+615.174	6	0.000	ThrowPrep	Objective	throw · ILYAS	323	16
+615.677	6	0.000	ThrowPrep	Objective	throw · ILYAS	323	16
+616.177	6	0.000	ThrowPrep	Objective	throw · ILYAS	323	16
+616.680	7	89.900	Quiet	QuietEstablish	the street	324	16
+617.182	7	89.380	Quiet	QuietEstablish	the street	324	16
+617.683	7	88.880	Quiet	QuietEstablish	the street	324	16
+618.186	7	88.380	Quiet	QuietEstablish	the street	324	16
+618.687	7	87.880	Quiet	QuietEstablish	the street	324	16
+619.190	7	87.380	SlipperLanded	Objective	the can	325	16
+619.692	7	86.881	SlipperLanded	Objective	the can	325	16
+620.192	7	86.381	SlipperLanded	Objective	the can	325	16
+620.694	7	85.881	SlipperLanded	Objective	the can	325	16
+621.201	7	85.841	SlipperLanded	Objective	the can	325	16
+621.708	7	85.841	SlipperLanded	Objective	the can	325	16
+622.210	7	85.841	SlipperLanded	Objective	the can	325	16
+622.711	7	85.841	SlipperLanded	Objective	the can	325	16
+623.212	7	85.841	SlipperLanded	Objective	the can	325	16
+623.718	7	85.841	SlipperLanded	Objective	the can	325	16
+624.223	7	85.841	SlipperLanded	Objective	the can	325	16
+624.760	7	85.621	Ultimate	UltimateHero	ultimate · CAREERORDERFIX	326	16
+625.262	7	85.121	Ultimate	UltimateHero	ultimate · CAREERORDERFIX	326	16
+625.763	7	84.601	Ultimate	UltimateHero	ultimate · CAREERORDERFIX	326	16
+626.266	7	84.101	Ultimate	UltimateHero	ultimate · CAREERORDERFIX	326	16
+626.771	7	83.601	Ultimate	UltimateHero	ultimate · CAREERORDERFIX	326	16
+627.272	7	83.161	Ultimate	UltimateHero	ultimate · CAREERORDERFIX	328	16
+627.772	7	82.661	Ultimate	UltimateHero	ultimate · CAREERORDERFIX	329	16
+628.274	7	82.161	Tag	Defender	tag · ILYAS	330	16
+628.775	7	81.661	Tag	Defender	tag · ILYAS	330	16
+629.276	7	81.161	Tag	Defender	tag · ILYAS	330	16
+629.779	7	80.662	Tag	Defender	tag · ILYAS	330	16
+630.282	7	80.142	Downed	Recovery	down · CAREERORDERFIX	330	16
+630.785	7	79.642	Downed	Recovery	down · CAREERORDERFIX	330	16
+631.286	7	79.202	Downed	Recovery	down · CAREERORDERFIX	330	16
+631.786	7	78.702	Downed	Recovery	down · CAREERORDERFIX	330	16
+632.286	7	78.202	Downed	Recovery	down · CAREERORDERFIX	330	16
