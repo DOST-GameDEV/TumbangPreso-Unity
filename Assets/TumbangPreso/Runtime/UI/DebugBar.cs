@@ -23,6 +23,7 @@ namespace TumbangPreso.UI
 
         private Text _slots;
         private Text _keys;
+        private Canvas _canvas;
 
         private void Awake()
         {
@@ -50,6 +51,14 @@ namespace TumbangPreso.UI
 
         private void OnRoundStarted(int roundNumber, int defenderSlot) => RefreshFromSwitcher();
 
+        private void Update()
+        {
+            // Gameplay seat shortcuts do not belong over a spectator broadcast.
+            if (_canvas != null)
+                _canvas.enabled = !NetAuthority.IsNetworked && !GameLaunch.Spectator
+                    && (Hud.Instance == null || !Hud.Instance.Spectating);
+        }
+
         /// <summary>Called by the switcher. Debug registers with debug; no gameplay script
         /// names either one.</summary>
         public void Refresh(string drivenText)
@@ -68,7 +77,7 @@ namespace TumbangPreso.UI
             var canvasGo = new GameObject("DebugBarCanvas");
             canvasGo.transform.SetParent(transform, false);
 
-            var canvas = canvasGo.AddComponent<Canvas>();
+            var canvas = _canvas = canvasGo.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.sortingOrder = 500;   // over everything, including the pause overlay
 

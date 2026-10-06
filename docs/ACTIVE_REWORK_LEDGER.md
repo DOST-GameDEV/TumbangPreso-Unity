@@ -1,3 +1,14 @@
+## Current Root debug-strip visibility terminal
+
+DebugBar hides its diagnosticcanvas for launch/HUD spectator state ornetworked
+play; ordinarysolo UI/restoredgameplay and release selfremoval intact. Original
+naturalArena capture showsblackbar. Native9024/79560 oneactual role/render case
+PASS;960x540gameplay/watching images inspected.21154inputs/216native deltas/prefs/
+Quality/seed restored; temporaryAssets capturefixture/meta removed afterrawcopy.
+Next publish then Root longerArena natural abilities/ultimate event observation.
+Laptop remainsfrozen48map matrixandthen owns Director/body-lensclearance. No Root
+jobs live. Fullquality/bots/network acceptance remainsopen, no readinessclaim.
+
 ## Current Root spectator POV ownership terminal
 
 Original22256/75797 two public-watch key-theftFAIL/gameplaycontrolPASS. Switcher
