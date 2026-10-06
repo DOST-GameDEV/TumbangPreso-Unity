@@ -16,6 +16,12 @@ namespace TumbangPreso.UI
         private bool _focused, _pressed;
         private StreetIcon _focusMark;
         public bool Entering=>isActiveAndEnabled && Time.unscaledTime<_started+EntryDelay+OwnerUiTheme.Current.EnterSeconds;
+        public void SetRestPosition(Vector2 position)
+        {
+            if(_rect==null) _rect=(RectTransform)transform;
+            if(_ready) { _rect.anchoredPosition+=position-_rest; _rest=position; }
+            else _rect.anchoredPosition=position;
+        }
         public void SetState(bool focused,bool pressed,bool disabled)
         {
             _disabled=disabled;

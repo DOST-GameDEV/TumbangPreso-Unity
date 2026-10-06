@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 17:01:16Z" end-time="2026-10-06 17:01:32Z" duration="16.6438223">
+  <test-suite type="TestSuite" id="3412" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1958" result="Passed" start-time="2026-10-06 17:01:16Z" end-time="2026-10-06 17:01:32Z" duration="16.643822" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3404" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1958" result="Passed" start-time="2026-10-06 17:01:16Z" end-time="2026-10-06 17:01:32Z" duration="16.615917" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="21092" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3405" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1958" result="Passed" start-time="2026-10-06 17:01:16Z" end-time="2026-10-06 17:01:32Z" duration="16.589589" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3408" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1956" result="Passed" start-time="2026-10-06 17:01:16Z" end-time="2026-10-06 17:01:32Z" duration="16.570513" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2361" name="OwnerSkillHudReferenceTests" fullname="TumbangPreso.PlayTests.OwnerSkillHudReferenceTests" classname="TumbangPreso.PlayTests.OwnerSkillHudReferenceTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-06 17:01:16Z" end-time="2026-10-06 17:01:32Z" duration="15.933375" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2362" name="CircularSkillDeckKeepsFontsBindingsAndCurrentMatchHud" fullname="TumbangPreso.PlayTests.OwnerSkillHudReferenceTests.CircularSkillDeckKeepsFontsBindingsAndCurrentMatchHud" methodname="CircularSkillDeckKeepsFontsBindingsAndCurrentMatchHud" classname="TumbangPreso.PlayTests.OwnerSkillHudReferenceTests" runstate="Runnable" seed="363112457" result="Passed" start-time="2026-10-06 17:01:16Z" end-time="2026-10-06 17:01:32Z" duration="15.917146" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] SkillHudReference1007-1920/Power0: vertices=3747, cull=False, alpha=1, depth=124, material=1
+[TumpGeometry] SkillHudReference1007-1920/PowerIcon: vertices=4, cull=False, alpha=1, depth=125, material=1
+[TumpGeometry] SkillHudReference1007-1920/Power1: vertices=3747, cull=False, alpha=1, depth=129, material=1
+[TumpGeometry] SkillHudReference1007-1920/PowerIcon: vertices=4, cull=False, alpha=1, depth=130, material=1
+[TumpGeometry] SkillHudReference1007-1920/Power2: vertices=1922, cull=False, alpha=1, depth=134, material=1
+[TumpGeometry] SkillHudReference1007-1920/PowerIcon: vertices=4, cull=False, alpha=1, depth=135, material=1
+[TumpUiCapture] SkillHudReference1007-1920 cream source=252,211,159 pixel=71,85,118; isolated UI camera, no ColourGrade.
+[TumpGeometry] SkillHudReference1007-1280/Power0: vertices=3747, cull=False, alpha=1, depth=124, material=1
+[TumpGeometry] SkillHudReference1007-1280/PowerIcon: vertices=4, cull=False, alpha=1, depth=125, material=1
+[TumpGeometry] SkillHudReference1007-1280/Power1: vertices=3747, cull=False, alpha=1, depth=129, material=1
+[TumpGeometry] SkillHudReference1007-1280/PowerIcon: vertices=4, cull=False, alpha=1, depth=130, material=1
+[TumpGeometry] SkillHudReference1007-1280/Power2: vertices=1922, cull=False, alpha=1, depth=134, material=1
+[TumpGeometry] SkillHudReference1007-1280/PowerIcon: vertices=4, cull=False, alpha=1, depth=135, material=1
+[TumpUiCapture] SkillHudReference1007-1280 cream source=252,211,159 pixel=71,86,119; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="3113" name="TimedPowerUiTests" fullname="TumbangPreso.PlayTests.TimedPowerUiTests" classname="TumbangPreso.PlayTests.TimedPowerUiTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-06 17:01:32Z" end-time="2026-10-06 17:01:32Z" duration="0.535195" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="3114" name="ActiveTimersDrainForBasicRecastAndUltimateThenDisappear" fullname="TumbangPreso.PlayTests.TimedPowerUiTests.ActiveTimersDrainForBasicRecastAndUltimateThenDisappear" methodname="ActiveTimersDrainForBasicRecastAndUltimateThenDisappear" classname="TumbangPreso.PlayTests.TimedPowerUiTests" runstate="Runnable" seed="1098063564" result="Passed" start-time="2026-10-06 17:01:32Z" end-time="2026-10-06 17:01:32Z" duration="0.477440" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpGeometry] Timed-powers-960x540/Power0: vertices=3459, cull=False, alpha=1, depth=0, material=1
+[TumpGeometry] Timed-powers-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=1, material=1
+[TumpGeometry] Timed-powers-960x540/Power1: vertices=3459, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] Timed-powers-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=6, material=1
+[TumpGeometry] Timed-powers-960x540/Power2: vertices=2642, cull=False, alpha=1, depth=10, material=1
+[TumpGeometry] Timed-powers-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=11, material=1
+[TumpUiCapture] Timed-powers-960x540 cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+[TumpGeometry] Timed-powers-1600x680/Power0: vertices=3459, cull=False, alpha=1, depth=0, material=1
+[TumpGeometry] Timed-powers-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=1, material=1
+[TumpGeometry] Timed-powers-1600x680/Power1: vertices=3459, cull=False, alpha=1, depth=5, material=1
+[TumpGeometry] Timed-powers-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=6, material=1
+[TumpGeometry] Timed-powers-1600x680/Power2: vertices=2642, cull=False, alpha=1, depth=10, material=1
+[TumpGeometry] Timed-powers-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=11, material=1
+[TumpUiCapture] Timed-powers-1600x680 cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="3115" name="PermanentOverclockShowsActiveAndZappedCrossesExistingLogos" fullname="TumbangPreso.PlayTests.TimedPowerUiTests.PermanentOverclockShowsActiveAndZappedCrossesExistingLogos" methodname="PermanentOverclockShowsActiveAndZappedCrossesExistingLogos" classname="TumbangPreso.PlayTests.TimedPowerUiTests" runstate="Runnable" seed="2121513872" result="Passed" start-time="2026-10-06 17:01:32Z" end-time="2026-10-06 17:01:32Z" duration="0.055160" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,6 +1,9 @@
 # Documentation: Start Here
 
 Recorded Arena preview and map voting: [native playback/layout evidence](reports/recorded-map-preview-2026-10-07/README.md).
+Skill HUD reference: [native circles, bindings, fonts and timed-state evidence](reports/skill-hud-reference-2026-10-07/README.md).
+
+Conditional login terms spacing: [native feedback and position evidence](reports/login-terms-spacing-2026-10-07/README.md).
 
 Custom-room choice arrows: [native selector and input evidence](reports/room-arrows-2026-10-07/README.md).
 
@@ -227,3 +230,4 @@ First PC/laptop LAN match: [actual paired baseline evidence](reports/reliability
 Ice diagnostic admission timing: [native setup evidence](reports/reliability-2026-10-03/ice-admission-role/README.md).
 
 Current full managed Core integration: [704-case gate and retained contract failure](reports/reliability-2026-10-03/managed-integration/README.md).
+

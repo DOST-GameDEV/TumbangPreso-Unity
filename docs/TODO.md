@@ -1,5 +1,10 @@
 ### UI-LOGIN-FEEDBACK-1006: caret and actionable refusal
 
+- [x] Raise terms12 units normally and lower to the original position only while
+  visible field/status feedback exists. Native29796 cases2PASS at1080/720 check
+  typed text, mismatch, correction, consent and unchanged Create placement;
+  all21232 inputs/preferences restored. Current tick is bold by owner request.
+
 - [x] Native-check OwnerBoundedInputField caret/selection inside the existing
   editable44-unit rectangle at1080p/720p, empty/typed/password/select-all states.
   Native ten-state mesh/capture check passes including long text and masking.
@@ -35,8 +40,11 @@
   Native31336 cycles all options, validates callbacks, pointer/Submit/navigation,
   no popup and Back at1080/720. Two cases pass; all21230 inputs/prefs restored.
   Physical devices, actual room creation and recorded preview playback are separate.
-- [ ] Apply the owner's separate skill-UI-only reference from the laptop chat,
+- [x] Apply the owner's separate skill-UI-only reference from the laptop chat,
   preserving all other HUD fonts, controls and skill behavior. No broad rollback.
+  Circular gold rims and compact saved bindings pass native21092 cases3/3 at
+  1080/720, including DIN/clock and current timed/permanent/zapped states.
+  All21234 inputs/preferences restored. Owner/physical/peer gates remain separate.
 
 ### UI-INGAME-DIN-1006: supplied match typography
 

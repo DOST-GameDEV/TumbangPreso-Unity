@@ -102,7 +102,8 @@ namespace TumbangPreso.PlayTests
                     Assert.AreEqual("Enter a password.",Text(canvas,"PasswordFault"));
                     Assert.AreEqual("Confirm your password.",Text(canvas,"ConfirmFault"));
                     StringAssert.Contains("terms checkbox",Text(canvas,"AccountStatus"));
-                    Assert.AreEqual(position,rect.anchoredPosition); Assert.AreEqual(size,rect.sizeDelta); Assert.AreEqual(scale,rect.localScale);
+                    Assert.AreEqual(position+Vector2.down*12,rect.anchoredPosition,"Feedback reserves space below the fields");
+                    Assert.AreEqual(size,rect.sizeDelta); Assert.AreEqual(scale,rect.localScale);
                     if(reducedMode)
                     {
                         var ink=pulse.GetComponentsInChildren<Graphic>().Select(x=>x.color).ToArray();
@@ -114,6 +115,7 @@ namespace TumbangPreso.PlayTests
                     Assert.IsFalse(Text(canvas,"AccountStatus").Contains("terms"),"Accepted terms must clear its instruction");
                     user.text="feedback.fixture"; pass.text=confirm.text="Test-only1"; yield return null; yield return null;
                     foreach(string fault in new[]{"UsernameFault","PasswordFault","ConfirmFault","AccountStatus"}) Assert.IsEmpty(Text(canvas,fault),fault+" must clear after correction");
+                    Assert.AreEqual(position,rect.anchoredPosition,"Terms rise again after messages clear");
                     foreach(var f in new[]{user,pass,confirm}) Assert.IsFalse(f.GetComponent<OwnerFieldPulse>().IsPulsing);
                     terms.isOn=false; submit.onClick.Invoke();
                     Assert.IsTrue(pulse.IsPulsing);

@@ -156,7 +156,7 @@ namespace TumbangPreso.UI
 
             // ---- terms, sign-up only ----------------------------------------
             _ownerTermsRow = OwnerUiLayout.Rect(_ownerForm, "TermsRow").gameObject;
-            OwnerUiLayout.Place((RectTransform)_ownerTermsRow.transform, TermsRow.x, TermsRow.y, TermsRow.width, TermsRow.height);
+            OwnerUiLayout.Place((RectTransform)_ownerTermsRow.transform, TermsRow.x, TermsRow.y - TermsRestLift, TermsRow.width, TermsRow.height);
             var hit = OwnerUiLayout.Rect(_ownerTermsRow.transform, "TermsAcceptance");
             OwnerUiLayout.Place(hit, 0, -2, 44, 44);
             var hitImage = hit.gameObject.AddComponent<Image>();

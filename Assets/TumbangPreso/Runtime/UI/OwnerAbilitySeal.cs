@@ -44,51 +44,64 @@ namespace TumbangPreso.UI
             var rect = GetPixelAdjustedRect();
             float radius = Mathf.Min(rect.width, rect.height) * .5f - 6;
             var centre = rect.center;
-            // ⚠️ UI REVAMP 2026-10-06: THE FACE IS THE BUTTON. A thin rim in the state colour (honey
-            // ready, cream cooling, orange active) round a brown face the art fills; a cooldown is
-            // a shade over the face that drains away from the top, and the ultimate is a honey
-            // level rising in it like a jar. Both follow the tile's own bevelled corners.
-            var tile = new Rect(rect.xMin + 3, rect.yMin + 9, rect.width - 6, rect.height - 12);
-            float cut = tile.width * .2f;
-            Color rim = _active ? Accent : _ready ? HudDraw.Honey : HudDraw.Cream;
-            Color side = _active ? Color.Lerp(Accent, Color.black, .4f) : _ready ? HudDraw.HoneySide : HudDraw.CreamSide;
-            var face = HudDraw.Inset(tile, 5);
-            float faceCut = cut - 2;
-            if (!Overlay)
+            if (Overlay) return;
+            var gold = CourtPresentationPalette.Gold;
+            if (_ready) { var halo = gold; halo.a = .24f; Disc(helper, centre, radius + 5, halo); }
+            var shadow = HudDraw.Shadow; shadow.a = .35f;
+            Disc(helper, centre + Vector2.down * 3, radius, shadow);
+            Disc(helper, centre, radius, HudDraw.Plate);
+            float outer = radius - 3, inner = radius - 9;
+            var track = gold; track.a = .22f;
+            Color ink = _active ? OwnerUiTheme.Current.Orange : gold;
+            if (!_ultimate)
             {
-                var shadow = HudDraw.Shadow; shadow.a = .32f;
-                HudDraw.Bevelled(helper, new Rect(tile.xMin + 2, tile.yMin - 13, tile.width, tile.height), cut + 2, shadow);
-                HudDraw.Bevelled(helper, new Rect(tile.xMin, tile.yMin - 8, tile.width, tile.height), cut, side);
-                HudDraw.Bevelled(helper, tile, cut, rim);
-                HudDraw.Bevelled(helper, face, faceCut, HudDraw.Brown);
-                if (_ready && !_ultimate)
-                {
-                    var sheen = Color.Lerp(HudDraw.Honey, Color.white, .5f); sheen.a = .7f;
-                    HudDraw.Bevelled(helper, new Rect(tile.xMin + cut + 3, tile.yMax - 5, tile.width - cut * 2 - 6, 2.5f), 1, sheen);
-                }
+                Arc(helper, centre, outer, inner, 90, 360, track);
+                Arc(helper, centre, outer, inner, 90, 360 * _fill, ink);
                 return;
             }
-            if (_ultimate)
+            const int notches = 10;
+            float each = 360f / notches, gap = 7;
+            for (int i = 0; i < notches; i++)
             {
-                // The jar: honey rises from the bottom; a full jar glows with the whole face.
-                var level = HudDraw.Honey; level.a = _ready ? .5f : .32f;
-                HudDraw.BevelledBand(helper, face, faceCut, face.yMin, face.yMin + face.height * _fill, level);
-                if (_fill > .001f && _fill < .999f)
-                    HudDraw.BevelledBand(helper, face, faceCut, face.yMin + face.height * _fill - 2, face.yMin + face.height * _fill + 1, HudDraw.Honey);
+                float start = 90 - i * each - gap * .5f, span = each - gap;
+                float lit = Mathf.Clamp01(_fill * notches - i);
+                Arc(helper, centre, outer, inner, start, span, track);
+                Arc(helper, centre, outer, inner, start, span * lit, ink);
             }
-            else if (!_ready && !_active)
+        }
+
+        private float Edge => .7f / Mathf.Max(.01f, canvas.scaleFactor *
+            Mathf.Abs(rectTransform.lossyScale.x / canvas.rootCanvas.transform.lossyScale.x));
+
+        private void Disc(VertexHelper h, Vector2 centre, float radius, Color ink)
+        {
+            HudDraw.Disc(h, centre, radius - Edge, ink, 96);
+            var clear = ink; clear.a = 0;
+            Band(h, centre, radius, radius - Edge, 90, 360, ink, clear);
+        }
+
+        private void Arc(VertexHelper h, Vector2 centre, float outer, float inner, float start, float span, Color ink)
+        {
+            if (span <= .01f) return;
+            float edge = Mathf.Min(Edge, (outer - inner) * .25f);
+            HudDraw.Arc(h, centre, outer - edge, inner + edge, start, span, ink, 96);
+            var clear = ink; clear.a = 0;
+            Band(h, centre, outer, outer - edge, start, span, ink, clear);
+            Band(h, centre, inner + edge, inner, start, span, clear, ink);
+        }
+
+        private static void Band(VertexHelper h, Vector2 centre, float outer, float inner, float start, float span, Color innerInk, Color outerInk)
+        {
+            int count = Mathf.Max(2, Mathf.CeilToInt(96 * span / 360));
+            for (int i = 0; i < count; i++)
             {
-                // The drain: what is left of the cooldown shades the top of the face.
-                var shade = new Color(0, 0, 0, .5f);
-                HudDraw.BevelledBand(helper, face, faceCut, face.yMin + face.height * _fill, face.yMax, shade);
-                if (_fill > .001f && _fill < .999f)
-                    HudDraw.BevelledBand(helper, face, faceCut, face.yMin + face.height * _fill - 1, face.yMin + face.height * _fill + 1.5f, HudDraw.Cream);
-            }
-            else if (_active)
-            {
-                // An active power counts its own time down as an orange level.
-                var level = Accent; level.a = .42f;
-                HudDraw.BevelledBand(helper, face, faceCut, face.yMin, face.yMin + face.height * _fill, level);
+                float a = (start - span * i / count) * Mathf.Deg2Rad;
+                float b = (start - span * (i + 1) / count) * Mathf.Deg2Rad;
+                var first = new Vector2(Mathf.Cos(a), Mathf.Sin(a)); var last = new Vector2(Mathf.Cos(b), Mathf.Sin(b));
+                int at = h.currentVertCount;
+                h.AddVert(centre + first * inner, innerInk, Vector2.zero); h.AddVert(centre + first * outer, outerInk, Vector2.zero);
+                h.AddVert(centre + last * outer, outerInk, Vector2.zero); h.AddVert(centre + last * inner, innerInk, Vector2.zero);
+                h.AddTriangle(at, at + 1, at + 2); h.AddTriangle(at, at + 2, at + 3);
             }
         }
     }
