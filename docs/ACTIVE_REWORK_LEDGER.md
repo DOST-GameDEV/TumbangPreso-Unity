@@ -1,3 +1,16 @@
+## Current Root round chalk contact source fix terminal
+
+Actual MotionFoley static source reproduces10 misses/phantom square contacts,
+5 controls pass; round segment intersection candidate19 pass with4 edge controls.
+Square path/audio/random/cadence/network untouched. Pure method source-linked
+with non-invoked actor/audio shims, not native/device/audio acceptance. Native
+ChalkCircleCrossingTests19 prepared for laptop combined run with familiar9 and
+existing Nemu chase/saturated sweep; after current8bd visible UI coherent unit.
+Root MotionFoley/GhostPetMotion reservation ends after native handoff. No PC
+foreground/player/heavy Unity while owner studies; goal active. Laptop build/
+UI progressing; independent artifact hashes retained. Current packaged1538bd
+predates both fixes. Preserve private work and blocked backup/share actions.
+
 ## Current Root familiar circle fix ready for laptop native validation
 
 GhostPetMotion defender ClampToCourt delegates Core.Confinement shape/radius,

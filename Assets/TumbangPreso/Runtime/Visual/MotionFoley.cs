@@ -69,6 +69,23 @@ namespace TumbangPreso.Visual
         public static bool TryChalkCrossing(Vector3 from,Vector3 to,out Vector3 at)
         {
             float radius=Core.Confinement.Radius,first=2;at=to;
+            if(Core.Confinement.Round)
+            {
+                // Intersect the travelled segment with the same circular chalk the map draws.
+                // Use double precision for short steps near the line; Y follows the contact time.
+                double dx=(double)to.x-from.x,dz=(double)to.z-from.z;
+                double a=dx*dx+dz*dz;
+                if(a<=1e-10)return false;
+                double b=2*((double)from.x*dx+(double)from.z*dz);
+                double c=(double)from.x*from.x+(double)from.z*from.z-(double)radius*radius;
+                double discriminant=b*b-4*a*c;
+                if(discriminant<=0)return false; // A tangent touches the line without crossing it.
+                double root=System.Math.Sqrt(discriminant);
+                double t=(-b-root)/(2*a);
+                if(t<=0 || t>1)t=(-b+root)/(2*a);
+                if(t<=0 || t>1)return false;
+                at=Vector3.Lerp(from,to,(float)t);return true;
+            }
             for(int axis=0;axis<2;axis++)for(int side=-1;side<=1;side+=2)
             {
                 float a=axis==0?from.x:from.z,b=axis==0?to.x:to.z;

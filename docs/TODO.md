@@ -1,3 +1,11 @@
+### CHALK-CIRCLE-1006: contact matches the drawn boundary
+
+- [x] Reproduce10 circular geometry failures with5 controls; source-linked
+  candidate19 pass. Round segment contact follows actual map radius; square and
+  sound behavior preserved.
+- [ ] Laptop native geometry/integration and packaged audible contact acceptance.
+  [Evidence](reports/reliability-2026-10-06/chalk-circle/README.md).
+
 ### FAMILIAR-CONFINEMENT-1006: respect circular Arena boundary
 
 - [x] Five original diagonal circle failures become passes; four controls remain
