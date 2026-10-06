@@ -28,3 +28,25 @@ first decoded-frame advancement in a built player. It is never installed in
 ordinary play. Packaged qualification and replacement remain pending until the
 probe is run against the exact new executable; this report does not approve the
 old4ba Desktop package or claim physical/peer acceptance.
+
+## Packaged acceptance and Desktop replacement
+
+Exact Windows source9abeced612db23da52b63a520755c8d219a52287 builds successfully,
+restoring21277 frozen inputs and shared preferences. The first3826 package probe
+was routed to the automatic dedicated server by batch mode and timed out without
+testing startup. The opt-in startup-probe switch now excludes only that automatic
+dedicated route; explicit hosts/servers and ordinary launches retain their paths.
+
+Hidden D3D11 player25832 exits0 with actual startup receiptPASS: studio observed,
+login at4.254s, main loading at4.784s, lobby at10.525s. The supplied main view
+remains visible5.741s. First lobby playback advances frame4 to40 and time0.133s
+to1.333s without leaving/reentering. The retired loading canvases are checked
+throughout the route. Input preferences and the named profile restore after
+termination. This is synthetic UI raycast/decoder evidence, not physical input.
+
+All261 package files verify against hashes before replacing Desktop
+TumbangPreso-UI-2026-10-07/TumbangPreso.exe. Package size3582887449bytes/protocol153,
+runtime SHA8790f73062bfd8ddcb68473c90e4836f8ff38057a942fb7ccc13af4f504948d8.
+The previous4ba package remains recoverable outside Desktop. No foreground
+window or OS mouse/keyboard action was used. Packaged receipts are in packaged;
+this closes the scoped startup/replacement gate, not tournament readiness.

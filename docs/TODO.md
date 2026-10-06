@@ -1,9 +1,11 @@
 ### UI-LOGIN-FEEDBACK-1006: caret and actionable refusal
 
-- [ ] October7 urgent startup correction: logos -> login -> main/title loading
+- [x] October7 urgent startup correction: logos -> login -> main/title loading
   >=5s and until ready -> lobby, no old illustrated loading before login.
   Native cold flow passes after reproducing/fixing first Home frame freeze;
-  all9 playback controls pass. Exact packaged qualification/replacement pending.
+  all9 playback controls pass. Exact player25832 passes with5.741s main visibility
+  and first Home frames4->40. Desktop source9ab replaces rejected4ba after261 file
+  hashes verify; all21277 build inputs/preferences restored. Broader gates remain.
   [Current evidence](reports/startup-order-2026-10-07/README.md).
 
 - [x] Raise terms12 units normally and lower to the original position only while
