@@ -238,6 +238,23 @@ during long runs, rather than leaving stale processes or branches behind.
 
 ## Product And Authored Work
 
+### October 7 owner directive: recorded map-selection previews
+
+- Map-selection backgrounds should use prerecorded footage of the actual map,
+  avoiding a live arena render while players browse maps. Keep live rendering
+  where interactive lobby characters or gameplay require it.
+- Every map maker must regenerate its preview video and first-frame poster when
+  map geometry, materials, lighting, ambient motion or preview framing changes.
+  Record the source dependency hash and capture settings so stale footage can be
+  detected. A map change is incomplete while its preview depicts an older map.
+- Preserve authored map quality and the existing camera composition. Check the
+  loop, sharpness and playback on the supported player platforms. Keep the poster
+  visible during preparation and failures; changing screens must release or reuse
+  the owned player safely. Do not preload full arena scenes solely for these clips.
+- This is the owner-approved direction. Implementation and native playback
+  acceptance remain open until their exact evidence is recorded; this rule alone
+  does not establish that the video preview system is already installed.
+
 - Both Classic and Hero Strike ship, defaulting to eight rounds. Classic people
   are cosmetic/neutral. No Street Hype. Preserve the retrieval-centered game.
 - Keep the cute blocky cast, flat faces, simple hands, rig paths, action names and
