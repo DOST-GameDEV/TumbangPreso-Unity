@@ -1,0 +1,78 @@
+{
+  "sourceRef": "67d1f69c68d2fc10e1f55ba4c34d3fcddd76c7ae",
+  "profile": "pc-catch-framing-tag-controls121006",
+  "filter": "TumbangPreso.PlayTests.CatchReconstructionTests.CatchChoosesTheOpenSideAndAvoidsAForcedFaceCloseup;TumbangPreso.PlayTests.CatchReconstructionTests.IsolatedNativeCatchRetainsContinuousMotion;TumbangPreso.PlayTests.CatchReconstructionTests.ReplayHoldsOneCapturedTagFrameThenFadesWithoutPausingPlay;TumbangPreso.PlayTests.CatchReconstructionTests.AuthoredMapFarTagRetainsVisibleWholeBodyContact;TumbangPreso.PlayTests.CatchReconstructionTests.ContactCameraShowsTheActualReachingHand;TumbangPreso.PlayTests.CatchReconstructionTests.FarAcceptedTagHasVisibleHandContact;TumbangPreso.PlayTests.CatchReconstructionTests.TagContactMetadataCannotAimTheNextMissOrCreateScores;TumbangPreso.PlayTests.CatchReconstructionTests.CatchCameraAdoptsGameplayShaderContextAndRestoresGlobals;TumbangPreso.PlayTests.CatchMatchLifetimeTests",
+  "expectedCases": 12,
+  "execution": "direct; no memory/admission/timeout guard",
+  "pid": 36800,
+  "exitCode": 2,
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.CatchMatchLifetimeTests.AnOldPlayingCatchCannotSuppressANewMatchTagEvent",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchMatchLifetimeTests.FreshSameRoundIdentityCannotUseAPendingOldContactForLaterState",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchMatchLifetimeTests.FreshSameRoundIdentityRetiresAnActiveCatchBeforeOldRecoveryArrives",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchMatchLifetimeTests.SameIdentityKeepsAnAlreadyAcceptedCatchAndRecovery",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.AuthoredMapFarTagRetainsVisibleWholeBodyContact",
+      "result": "Failed",
+      "message": "  A bounding-box overlap is not visible contact with the actual skin.\n  Expected: less than 0.0799999982f\n  But was:  0.0910978541f\n"
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.CatchCameraAdoptsGameplayShaderContextAndRestoresGlobals",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.CatchChoosesTheOpenSideAndAvoidsAForcedFaceCloseup",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.ContactCameraShowsTheActualReachingHand",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.FarAcceptedTagHasVisibleHandContact",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.IsolatedNativeCatchRetainsContinuousMotion",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.ReplayHoldsOneCapturedTagFrameThenFadesWithoutPausingPlay",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.TagContactMetadataCannotAimTheNextMissOrCreateScores",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "exactCaseCount": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "protectedCount": 21303,
+  "terminal": true
+}

@@ -1,0 +1,1 @@
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0 frames=46 bodyShift=0.7880631 torsoLean=27.9304 armStretch=1 skinSurfaceGap=0.009133577 soleY=0.004999923

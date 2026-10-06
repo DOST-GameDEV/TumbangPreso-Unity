@@ -51,7 +51,8 @@ Map frames: [Arena](maps/Arena/held-contact.png),
 [Sa Bubong](maps/SaBubong/held-contact.png) and
 [Ilalim Ng Tulay](maps/IlalimNgTulay/held-contact.png).
 
-Remaining acceptance includes the eight hero-contact failures, natural catches
+The eight hero-contact failures have a [qualified follow-up](../tag-rig-contact-2026-10-07/README.md).
+Remaining acceptance includes natural catches
 at varied map positions, final camera feel, current peers and a later packaged
 release of this camera change. Desktop still contains the separately qualified
 startup source9ab. Bots, map intros/arrivals and slipper reliability remain active.

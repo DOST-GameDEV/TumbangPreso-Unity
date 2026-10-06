@@ -93,5 +93,26 @@ namespace TumbangPreso.Tests
             Assert.IsTrue((bool)choose.Invoke(track,args));
             Assert.That((float)args[4],Is.EqualTo(100.1f).Within(.0001f),"Retain the accepted victim's full touch");
         }
+        [Test] public void DestroyedVictimRigRetiresItsSkinSampleWithoutChangingTheAcceptedPoint()
+        {
+            var owner=Own("Contact owner");var animator=owner.AddComponent<TumbangPreso.Visual.CharacterAnimator>();animator.enabled=false;
+            var target=Own("Contact victim").AddComponent<CharacterMotor>();target.enabled=false;
+            var type=animator.GetType();
+            type.GetField("_tagContactValid",Private).SetValue(animator,true);
+            type.GetField("_tagSkinContact",Private).SetValue(animator,true);
+            type.GetField("_tagSkinVictim",Private).SetValue(animator,target);
+            Vector3 accepted=new(1,.7f,2);type.GetField("_tagContact",Private).SetValue(animator,accepted);
+            var bone=Own("Victim rig bone").transform;
+            var vertexType=type.GetNestedType("TagSoleVertex",BindingFlags.NonPublic);
+            var vertex=System.Activator.CreateInstance(vertexType,new object[]{Vector3.zero,
+                new BoneWeight{boneIndex0=0,weight0=1},new[]{bone},new[]{Matrix4x4.identity}});
+            foreach(var name in new[]{"_tagSkinA","_tagSkinB","_tagSkinC"})type.GetField(name,Private).SetValue(animator,vertex);
+            Assert.IsTrue((bool)vertexType.GetProperty("Valid").GetValue(vertex));
+            Object.DestroyImmediate(bone.gameObject);
+            Assert.DoesNotThrow(()=>type.GetMethod("RefreshTagSkinContact",Private).Invoke(animator,null));
+            Assert.IsFalse((bool)type.GetField("_tagSkinContact",Private).GetValue(animator));
+            Assert.AreEqual(accepted,type.GetField("_tagContact",Private).GetValue(animator));
+            Assert.IsTrue((bool)type.GetField("_tagContactValid",Private).GetValue(animator),"Rig loss cannot manufacture or remove an accepted receipt");
+        }
     }
 }

@@ -218,10 +218,13 @@
   peak. Native geometry8PASS and seven-map framing/controls11PASS; final shader,
   recovery/motion/freeze and match-identity controls pass. All21279 inputs restore.
   [Evidence and limits](reports/catch-framing-2026-10-07/README.md).
-- [ ] Resolve eight hero-rig touch/restoration failures reproduced on both the
-  published baseline and camera candidate. Preserve strict skin-contact and limb
-  restoration assertions, accepted hit rules and finalized designs. Qualify
-  natural catches, varied map positions, peers and later package/camera feel.
+- [x] Resolve the adopted elbow-rig reach mismatch and unsupported tag soles.
+  Final nine roster contacts/footwear/recovery checks and twelve broader native
+  controls pass, with current-clip scale reference and real skin targeting.
+  Geometry/identity9 and actual-bone destruction1 pass; all21309 inputs restore.
+  [Evidence](reports/tag-rig-contact-2026-10-07/README.md).
+- [ ] Qualify natural moving/airborne catches, varied map/ground positions,
+  physical camera feel, current peers and the combined packaged release.
 - [x] Restore bound pad target-cycle/free-flight/POV controls without keyboard
   presence: original three failures and corrected presence control become four
   native passes. [Evidence](reports/reliability-2026-10-06/spectator-pad-controls/README.md).

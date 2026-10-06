@@ -1,0 +1,23 @@
+{
+  "sourceRef": "04913d693202a4a72e1e3b0bf2699849bfdbd6f4",
+  "profile": "pc-catch-framing-destroyed-rig161006",
+  "filter": "TumbangPreso.Tests.CatchReplayCompositionTests.DestroyedVictimRigRetiresItsSkinSampleWithoutChangingTheAcceptedPoint",
+  "expectedCases": 1,
+  "execution": "direct; no memory/admission/timeout guard",
+  "pid": 37544,
+  "exitCode": 0,
+  "cases": [
+    {
+      "name": "TumbangPreso.Tests.CatchReplayCompositionTests.DestroyedVictimRigRetiresItsSkinSampleWithoutChangingTheAcceptedPoint",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "exactCaseCount": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "protectedCount": 21309,
+  "terminal": true
+}

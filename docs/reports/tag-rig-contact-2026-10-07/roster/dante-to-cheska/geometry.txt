@@ -1,0 +1,14 @@
+hand=(-0.00046, 0.53829, -2.49610) acceptedAim=(0.00000, 0.49635, -2.46437) aimGap=0.05258787
+actorRoot=(0.00000, 0.00326, -3.85000) victimRoot=(0.00000, 0.00280, -2.20000)
+skin=body-mesh scale=(2.30, 2.30, 2.54) rendererBounds=Center: (-0.15, 0.58, -2.69), Extents: (0.59, 0.58, 0.66)
+bakeScale=False worldBounds=Center: (-0.41, 1.30, -0.89), Extents: (1.10, 1.29, 1.34) sole=0.007265568
+bakeScale=True worldBounds=Center: (-0.18, 0.57, -2.68), Extents: (0.48, 0.56, 0.53) sole=0.004999936
+skin=head-mesh scale=(2.30, 2.30, 2.54) rendererBounds=Center: (-0.41, 1.25, -2.57), Extents: (0.72, 0.64, 0.69)
+bakeScale=False worldBounds=Center: (-0.86, 2.96, -0.50), Extents: (1.35, 1.13, 1.47) sole=1.834702
+bakeScale=True worldBounds=Center: (-0.37, 1.29, -2.53), Extents: (0.59, 0.49, 0.58) sole=0.7993693
+skin=body-mesh scale=(2.55, 2.04, 2.55) rendererBounds=Center: (-0.05, 0.37, -2.13), Extents: (0.63, 0.37, 0.34)
+bakeScale=False worldBounds=Center: (-0.14, 0.75, -2.05), Extents: (1.54, 0.75, 0.83) sole=0.002802372
+bakeScale=True worldBounds=Center: (-0.05, 0.37, -2.14), Extents: (0.60, 0.37, 0.33) sole=0.002802402
+skin=head-mesh scale=(2.55, 2.04, 2.55) rendererBounds=Center: (0.00, 0.89, -2.23), Extents: (0.54, 0.58, 0.57)
+bakeScale=False worldBounds=Center: (0.00, 1.82, -2.27), Extents: (1.38, 1.18, 1.44) sole=0.6396053
+bakeScale=True worldBounds=Center: (0.00, 0.89, -2.23), Extents: (0.54, 0.58, 0.57) sole=0.3156605

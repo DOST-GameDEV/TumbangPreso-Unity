@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="9" result="Failed(Child)" total="9" passed="3" failed="6" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 20:32:17Z" end-time="2026-10-06 20:32:59Z" duration="42.1536628">
+  <test-suite type="TestSuite" id="3429" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1971" result="Failed" site="Child" start-time="2026-10-06 20:32:17Z" end-time="2026-10-06 20:32:59Z" duration="42.153663" total="9" passed="3" failed="6" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3421" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1971" result="Failed" site="Child" start-time="2026-10-06 20:32:17Z" end-time="2026-10-06 20:32:59Z" duration="42.139438" total="9" passed="3" failed="6" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23268" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3422" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1971" result="Failed" site="Child" start-time="2026-10-06 20:32:17Z" end-time="2026-10-06 20:32:59Z" duration="42.133715" total="9" passed="3" failed="6" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3425" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1969" result="Failed" site="Child" start-time="2026-10-06 20:32:17Z" end-time="2026-10-06 20:32:59Z" duration="42.127650" total="9" passed="3" failed="6" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1311" name="CatchReconstructionTests" fullname="TumbangPreso.PlayTests.CatchReconstructionTests" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" testcasecount="49" result="Failed" site="Child" start-time="2026-10-06 20:32:17Z" end-time="2026-10-06 20:32:59Z" duration="41.600631" total="9" passed="3" failed="6" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1352" name="RosterTag_amihan_To_paete" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_amihan_To_paete" methodname="RosterTag_amihan_To_paete" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1216101811" result="Failed" start-time="2026-10-06 20:32:17Z" end-time="2026-10-06 20:32:23Z" duration="5.407656" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Temporary limb extension must restore.
+  Expected: less than 0.00100000005f
+  But was:  0.393104434f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CatchReconstructionTests+<CheckContactReach>d__49.MoveNext () [0x01060] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\CatchReconstructionTests.cs:549
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[TagGeometry] amihan torso=(0.00, 0.41, -3.92) hand=(0.49, 0.44, -3.86) victimTorso=(0.00, 0.72, -2.29) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0 frames=45 bodyShift=0.8527002 torsoLean=28 armStretch=1 skinSurfaceGap=0.001144409 soleY=0.004999883
+]]></output>
+            </test-case>
+            <test-case id="1346" name="RosterTag_cheska_To_sean" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_cheska_To_sean" methodname="RosterTag_cheska_To_sean" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1703075092" result="Failed" start-time="2026-10-06 20:32:23Z" end-time="2026-10-06 20:32:27Z" duration="4.537194" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Temporary limb extension must restore.
+  Expected: less than 0.00100000005f
+  But was:  0.00720059872f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CatchReconstructionTests+<CheckContactReach>d__49.MoveNext () [0x01060] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\CatchReconstructionTests.cs:549
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[TagGeometry] cheska torso=(0.00, 0.37, -3.92) hand=(0.52, 0.42, -3.83) victimTorso=(0.00, 0.52, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0 frames=52 bodyShift=0.856441 torsoLean=28 armStretch=1 skinSurfaceGap=0.0124467 soleY=0.00499989
+]]></output>
+            </test-case>
+            <test-case id="1345" name="RosterTag_dante_To_cheska" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_dante_To_cheska" methodname="RosterTag_dante_To_cheska" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="188550983" result="Passed" start-time="2026-10-06 20:32:27Z" end-time="2026-10-06 20:32:32Z" duration="4.538788" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TagGeometry] dante torso=(0.00, 0.37, -3.92) hand=(0.44, 0.46, -3.86) victimTorso=(0.00, 0.37, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0 frames=52 bodyShift=1.203604 torsoLean=28 armStretch=1 skinSurfaceGap=0.0180134 soleY=0.004999897
+]]></output>
+            </test-case>
+            <test-case id="1349" name="RosterTag_nemu_To_phaister" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_nemu_To_phaister" methodname="RosterTag_nemu_To_phaister" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1385695755" result="Passed" start-time="2026-10-06 20:32:32Z" end-time="2026-10-06 20:32:36Z" duration="4.594458" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TagGeometry] nemu torso=(0.00, 0.36, -3.92) hand=(0.45, 0.33, -4.08) victimTorso=(0.00, 0.40, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0 frames=52 bodyShift=0.8796493 torsoLean=28 armStretch=1 skinSurfaceGap=0.001126427 soleY=0.00499994
+]]></output>
+            </test-case>
+            <test-case id="1353" name="RosterTag_paete_To_bayan" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_paete_To_bayan" methodname="RosterTag_paete_To_bayan" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="2019657963" result="Failed" start-time="2026-10-06 20:32:36Z" end-time="2026-10-06 20:32:41Z" duration="4.461975" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The actual recorded footwear must stay on the test court.
+  Expected: in range (-0.015,0.03)
+  But was:  -0.045949351f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CatchReconstructionTests+<CheckContactReach>d__49.MoveNext () [0x0100e] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\CatchReconstructionTests.cs:547
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[TagGeometry] paete torso=(0.00, 0.72, -3.94) hand=(1.73, 0.56, -3.70) victimTorso=(0.00, 0.37, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0 frames=52 bodyShift=0.2233131 torsoLean=28 armStretch=1 skinSurfaceGap=0.008708298 soleY=-0.04594935
+]]></output>
+            </test-case>
+            <test-case id="1350" name="RosterTag_phaister_To_rafi" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_phaister_To_rafi" methodname="RosterTag_phaister_To_rafi" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="86811878" result="Failed" start-time="2026-10-06 20:32:41Z" end-time="2026-10-06 20:32:45Z" duration="4.513271" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Temporary limb extension must restore.
+  Expected: less than 0.00100000005f
+  But was:  0.087131381f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CatchReconstructionTests+<CheckContactReach>d__49.MoveNext () [0x01060] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\CatchReconstructionTests.cs:549
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[TagGeometry] phaister torso=(0.02, 0.39, -3.92) hand=(0.48, 0.46, -3.81) victimTorso=(0.00, 0.37, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0 frames=52 bodyShift=1.10794 torsoLean=28 armStretch=1 skinSurfaceGap=0.02305508 soleY=0.004999846
+]]></output>
+            </test-case>
+            <test-case id="1351" name="RosterTag_rafi_To_amihan" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_rafi_To_amihan" methodname="RosterTag_rafi_To_amihan" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1194500049" result="Failed" start-time="2026-10-06 20:32:45Z" end-time="2026-10-06 20:32:50Z" duration="4.480788" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Temporary limb extension must restore.
+  Expected: less than 0.00100000005f
+  But was:  0.228421092f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CatchReconstructionTests+<CheckContactReach>d__49.MoveNext () [0x01060] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\CatchReconstructionTests.cs:549
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[TagGeometry] rafi torso=(0.00, 0.37, -3.92) hand=(0.68, 0.62, -3.82) victimTorso=(0.00, 0.40, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0 frames=52 bodyShift=0.8568273 torsoLean=28 armStretch=1 skinSurfaceGap=0.02230906 soleY=0.004999976
+]]></output>
+            </test-case>
+            <test-case id="1347" name="RosterTag_sean_To_zack" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_sean_To_zack" methodname="RosterTag_sean_To_zack" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="946800510" result="Passed" start-time="2026-10-06 20:32:50Z" end-time="2026-10-06 20:32:54Z" duration="4.515604" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TagGeometry] sean torso=(0.00, 0.52, -3.92) hand=(0.97, 0.75, -3.78) victimTorso=(0.00, 0.37, -2.28) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0 frames=46 bodyShift=1.010566 torsoLean=28 armStretch=1 skinSurfaceGap=0.03012478 soleY=0.004999978
+]]></output>
+            </test-case>
+            <test-case id="1348" name="RosterTag_zack_To_nemu" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_zack_To_nemu" methodname="RosterTag_zack_To_nemu" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="25303532" result="Failed" start-time="2026-10-06 20:32:54Z" end-time="2026-10-06 20:32:59Z" duration="4.502135" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Temporary limb extension must restore.
+  Expected: less than 0.00100000005f
+  But was:  0.0984511375f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CatchReconstructionTests+<CheckContactReach>d__49.MoveNext () [0x01060] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\CatchReconstructionTests.cs:549
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[TagGeometry] zack torso=(0.00, 0.37, -3.93) hand=(0.48, 0.45, -3.86) victimTorso=(0.00, 0.36, -2.27) victim=(0.00, 0.08, -2.20)
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0 frames=52 bodyShift=1.177149 torsoLean=28 armStretch=1 skinSurfaceGap=0.006757847 soleY=0.004999855
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

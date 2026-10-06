@@ -8,6 +8,8 @@ using TumbangPreso.CameraSystem;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+using UnityEngine.Animations;
+using UnityEngine.Playables;
 
 namespace TumbangPreso.PlayTests
 {
@@ -468,7 +470,7 @@ namespace TumbangPreso.PlayTests
                 };
                 Camera.onPostRender += rendered;
                 float next = 0, bestDistance = float.MaxValue, bestGap = float.MaxValue, bestAlpha = 0;
-                float bestShift = 0, bestLean = 0, bestStretch = 0, bestSurfaceGap = float.MaxValue;
+                float bestShift = 0, bestLean = 0, bestStretch = 0, bestSurfaceGap = float.MaxValue, bestTagSole = float.PositiveInfinity;
                 int frames = 0;
                 var times = new System.Collections.Generic.List<string>();
                 while (view.Playing && Time.unscaledTime - began < duration + .5f)
@@ -493,6 +495,41 @@ namespace TumbangPreso.PlayTests
                             bestDistance = proximity; bestGap = lastGap; bestAlpha = lastAlpha;
                             bestShift = lastShift; bestLean = lastLean; bestStretch = lastStretch;
                             if (authoredMap || actorArt != null) bestSurfaceGap = SkinSurfaceDistance(hand.position, victimCopy.Renderers);
+                            if (actorArt != null)
+                            {
+                                var detail = new System.Text.StringBuilder();
+                                bestTagSole = float.PositiveInfinity;
+                                Vector3 aim = (Vector3)typeof(CharacterAnimator).GetField("_tagContact", flags).GetValue(actor.GetComponent<CharacterAnimator>());
+                                detail.AppendLine("hand=" + hand.position.ToString("F5") + " acceptedAim=" + aim.ToString("F5") + " aimGap=" + Vector3.Distance(hand.position, aim));
+                                detail.AppendLine("actorRoot=" + copy.Root.transform.position.ToString("F5") + " victimRoot=" + victimCopy.Root.transform.position.ToString("F5"));
+                                foreach (var body in new[] { copy, victimCopy })
+                                    foreach (var renderer in body.Renderers)
+                                    {
+                                        if (!(renderer is SkinnedMeshRenderer skin) || !skin.enabled) continue;
+                                        var baked = new Mesh();
+                                        try
+                                        {
+                                            detail.AppendLine("skin=" + skin.name + " scale=" + skin.transform.lossyScale + " rendererBounds=" + skin.bounds);
+                                            foreach (bool includeScale in new[] { false, true })
+                                            {
+                                                skin.BakeMesh(baked, includeScale);
+                                                var points = baked.vertices;
+                                                var bounds = new Bounds(skin.transform.TransformPoint(points[0]), Vector3.zero);
+                                                foreach (var point in points) bounds.Encapsulate(skin.transform.TransformPoint(point));
+                                                if (body == copy && includeScale)
+                                                {
+                                                    var weights = skin.sharedMesh.boneWeights; var bones = skin.bones;
+                                                    for (int i = 0; i < weights.Length; i++)
+                                                        if (weights[i].weight0 >= .5f && bones[weights[i].boneIndex0].name.StartsWith("leg-"))
+                                                            bestTagSole = Mathf.Min(bestTagSole, skin.transform.TransformPoint(points[i]).y);
+                                                }
+                                                detail.AppendLine("bakeScale=" + includeScale + " worldBounds=" + bounds + " sole=" + bounds.min.y);
+                                            }
+                                        }
+                                        finally { Object.Destroy(baked); }
+                                    }
+                                System.IO.File.WriteAllText(directory + "/geometry.txt", detail.ToString());
+                            }
                             System.IO.File.WriteAllBytes(directory + "/contact.png", bytes);
                         }
                         frames++;
@@ -503,14 +540,16 @@ namespace TumbangPreso.PlayTests
                 System.IO.File.WriteAllLines(directory + "/pose-timing.csv", poseTiming);
                 string values = "distance=" + distance + " contactGap=" + bestGap + " contactAlpha=" + bestAlpha
                     + " sampleError=" + bestDistance + " frames=" + frames
-                    + " bodyShift=" + bestShift + " torsoLean=" + bestLean + " armStretch=" + bestStretch + " skinSurfaceGap=" + bestSurfaceGap;
+                    + " bodyShift=" + bestShift + " torsoLean=" + bestLean + " armStretch=" + bestStretch + " skinSurfaceGap=" + bestSurfaceGap + " soleY=" + bestTagSole;
                 System.IO.File.WriteAllText(directory + "/measurements.txt", values); Debug.Log(values);
                 Assert.That(frames, Is.GreaterThan(8));
                 Assert.That(bestDistance, Is.LessThan(.09f));
                 Assert.That(bestGap, Is.LessThan(.08f), "The actual rendered reaching hand must reach the accepted victim's visible body bounds.");
                 if (authoredMap || actorArt != null) Assert.That(bestSurfaceGap, Is.LessThan(.08f), "A bounding-box overlap is not visible contact with the actual skin.");
+                if (actorArt != null) Assert.That(bestTagSole, Is.InRange(-.015f, .03f), "The actual recorded footwear must stay on the test court.");
                 Assert.That(bestAlpha, Is.GreaterThan(.95f), "Do not fade out while the hand first reaches the target.");
-                Assert.That(Vector3.Distance(restScale, sourceHand.parent.localScale), Is.LessThan(.001f), "Temporary limb extension must restore.");
+                if (sourceHand.parent.name.StartsWith("forearm-")) AssertCurrentClipScale(actor, track, sourceHand.parent);
+                else Assert.That(Vector3.Distance(restScale, sourceHand.parent.localScale), Is.LessThan(.001f), "Temporary limb extension must restore.");
                 Assert.That(bestShift, Is.GreaterThan(.1f), "The hips must transfer weight into the step.");
                 Assert.That(bestLean, Is.GreaterThan(distance > 1.5f ? 25f : 18f), "The chest must commit to the reach.");
                 if (distance < 1.1f) Assert.That(bestLean, Is.LessThan(30f), "Close tags should not dive through the target.");
@@ -527,6 +566,33 @@ namespace TumbangPreso.PlayTests
             }
         }
 
+        private static void AssertCurrentClipScale(CharacterMotor actor, MatchPoseHistory.Track track, Transform sourceBone)
+        {
+            var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var animator = actor.GetComponent<CharacterAnimator>();
+            var front = (AnimationClipPlayable)typeof(CharacterAnimator).GetMethod("Front", flags).Invoke(animator, null);
+            Assert.IsTrue(front.IsValid());
+            // Elbow rigs intentionally animate idle forearm scale (up to1.7).
+            // Compare the current authored clip, not an earlier idle phase.
+            front.GetGraph().Evaluate(0);
+            var stage = new GameObject("Tag scale reference"); stage.SetActive(false);
+            try
+            {
+                var reference = track.Clone(stage.transform); Assert.IsNotNull(reference);
+                var referenceBone = track.CopiedBone(reference, sourceBone); Assert.IsNotNull(referenceBone);
+                var sourceAnimator = actor.GetComponentInChildren<Animator>();
+                var parts = new System.Collections.Generic.List<string>();
+                for (var node = sourceAnimator.transform; node != track.Source.transform; node = node.parent)
+                { Assert.IsNotNull(node); parts.Add(node.name); }
+                parts.Reverse(); string path = string.Join("/", parts);
+                var target = path.Length == 0 ? reference.Root.transform : reference.Root.transform.Find(path);
+                Assert.IsNotNull(target);
+                front.GetAnimationClip().SampleAnimation(target.gameObject, (float)front.GetTime());
+                Assert.That(Vector3.Distance(referenceBone.localScale, sourceBone.localScale), Is.LessThan(.001f),
+                    "Tag recovery must restore the current authored limb scale.");
+            }
+            finally { Object.Destroy(stage); }
+        }
         private static float SkinSurfaceDistance(Vector3 point, Renderer[] renderers)
         {
             float squared = float.PositiveInfinity;

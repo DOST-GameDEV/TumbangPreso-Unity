@@ -1,5 +1,27 @@
 # Current PC competition checkpoint, October 7
 
+## Latest tag-rig unit, October 7
+
+Own grounded elbow-aware tag correction is ready to publish. Final native20040
+passes9 actual roster contacts/soles/recovery cases;34896 passes12 classic,
+metadata/score/motion/freeze/shader/match-lifetime controls. Geometry32316 passes9;
+actual-bone destruction37544 passes1. All21309 inputs/preferences restored after
+terminal jobs, no owned Unity/compiler/helper remains. Source: TagBody and two
+catch test files. No authored hero assets, hit rules or Core/network schema change.
+Evidence: reports/tag-rig-contact-2026-10-07. Private Auditor/voxel dirt excluded.
+
+Next action: publish this unit immediately as M4tyu633, integrate laptop verified
+d66 settled media normally, then prepare the combined qualified internal Windows
+package and identical-artifact LAN gate. Laptop192.168.1.144, PC192.168.1.7,
+existing run_lan_peer.py --direct hidden isolated profiles, PC host port49153,
+short natural Hero match and saved-result parity. Laptop owns preview/media/vote
+and MatchResult/picker; no transfer/shared package test started yet. Coordinate
+host/client start only after exact package/manifest/runtime hashes agree.
+Continue remaining bot/navigation, map intros/arrivals and slipper requirements
+through passing batches and compaction. Goal ACTIVE. Current Desktop remains
+startup9ab until an owner-authorized qualified replacement. Never duplicate jobs.
+Prior output-pruning policy rejection persists; do not bypass it.
+
 This is the authoritative resume entry. Older entries below are history, including
 the paused font goal, old Desktop paths and former laptop startup reservations.
 The owner resumed the full competition assignment and requested autonomous work

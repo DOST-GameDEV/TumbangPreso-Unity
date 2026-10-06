@@ -1,0 +1,63 @@
+{
+  "sourceRef": "04913d693202a4a72e1e3b0bf2699849bfdbd6f4",
+  "profile": "pc-catch-framing-skin-rig-lifetime151006",
+  "filter": "TumbangPreso.Tests.CatchReplayCompositionTests",
+  "expectedCases": 9,
+  "execution": "direct; no memory/admission/timeout guard",
+  "pid": 32316,
+  "exitCode": 0,
+  "cases": [
+    {
+      "name": "TumbangPreso.Tests.CatchReplayCompositionTests.AReplayLensRejectsNearPlaneSceneryEvenWithAClearCenterRay",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.CatchReplayCompositionTests.DestroyedVictimRigRetiresItsSkinSampleWithoutChangingTheAcceptedPoint",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent(1.0f,1.777778f)",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent(6.0f,1.777778f)",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent(10.0f,1.777778f)",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent(1.0f,1.333333f)",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent(6.0f,1.333333f)",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent(10.0f,1.333333f)",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.Tests.CatchReplayCompositionTests.RetainedTouchCannotUseAnotherVictimsPeakOrTheReturningHand",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "exactCaseCount": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "protectedCount": 21309,
+  "terminal": true
+}
