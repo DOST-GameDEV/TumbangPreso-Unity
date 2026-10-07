@@ -169,8 +169,13 @@ namespace TumbangPreso.PlayTests
             timer.Restart();var decoded=TumbangPreso.CameraSystem.LocalReplayEffectsCodec.Decode(encoded,10,13);timer.Stop();
             Assert.AreEqual(frames,decoded.Frames.Count);Assert.AreEqual(count,decoded.Frames[179].Quads.Length);
             for(int f=0;f<frames;f++)for(int q=0;q<count;q++)
-            {Assert.AreEqual(source.Frames[f].Quads[q].A,decoded.Frames[f].Quads[q].A);Assert.AreEqual(source.Frames[f].Quads[q].Colour,decoded.Frames[f].Quads[q].Colour);}
-            Debug.Log("[FullPoolFxCodec] frames="+frames+" quadsPerFrame="+count+" bytes="+encoded.Length+" encodeMs="+write+" decodeMs="+timer.Elapsed.TotalMilliseconds);
+            Assert.AreEqual(source.Frames[f].Quads[q],decoded.Frames[f].Quads[q],"Every saved geometric, facing, atlas and colour value must round-trip exactly.");
+            double decode=timer.Elapsed.TotalMilliseconds;
+            using var zip=new System.IO.Compression.GZipStream(new System.IO.MemoryStream(encoded),System.IO.Compression.CompressionMode.Decompress);
+            using var raw=new System.IO.MemoryStream();zip.CopyTo(raw);
+            using var sha=System.Security.Cryptography.SHA256.Create();
+            string rawHash=System.BitConverter.ToString(sha.ComputeHash(raw.ToArray())).Replace("-","").ToLowerInvariant();
+            Debug.Log("[FullPoolFxCodec] frames="+frames+" quadsPerFrame="+count+" bytes="+encoded.Length+" encodeMs="+write+" decodeMs="+decode+" rawSha256="+rawHash);
         }
         [Test]public void CompressedTimelineKeepsSingleFrameFlashesAndRejectsDamage()
         {

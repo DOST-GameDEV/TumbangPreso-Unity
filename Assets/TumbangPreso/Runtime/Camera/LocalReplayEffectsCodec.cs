@@ -21,7 +21,10 @@ namespace TumbangPreso.CameraSystem
             if(decodedSize>MaxDecodedBytes)throw new InvalidDataException("Recorded effects exceed the decoded format limit.");
             using var encoded=new MemoryStream();
             using(var zip=new GZipStream(encoded,System.IO.Compression.CompressionLevel.Fastest,true))
-            using(var writer=new BinaryWriter(zip))
+            // Feed the compressor blocks rather than millions of scalar writes.
+            // The version, payload order and exact recorded values stay intact.
+            using(var buffered=new BufferedStream(zip,64*1024))
+            using(var writer=new BinaryWriter(buffered))
             {
                 writer.Write(0x46505854);writer.Write(1);writer.Write(segment.Frames.Count);
                 foreach(var frame in segment.Frames)

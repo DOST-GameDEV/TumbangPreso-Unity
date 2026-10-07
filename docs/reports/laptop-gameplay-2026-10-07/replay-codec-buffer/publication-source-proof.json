@@ -1,0 +1,22 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayEffectsCodec.cs",
+    "nativeSha256": "7ac182bff1eea4dd4042fb81a3c71894a72b61831ceb6d3d26b0d4d6c317bae1",
+    "normalizedGitSha256": "b22ccc20dfba9f2f107a466b8a87447d56e1a8bf4c619679b4c6159ce9aa53ab",
+    "nativeSourceFile": "native28-source/LocalReplayEffectsCodec.cs",
+    "normalizedNativeSha256": "b22ccc20dfba9f2f107a466b8a87447d56e1a8bf4c619679b4c6159ce9aa53ab",
+    "normalization": "CRLF to LF only; preserve all other bytes",
+    "crlfCount": 72,
+    "bareLfCount": 6
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/ArenaFxRecordedTests.cs",
+    "nativeSha256": "5a7cddb067112c0be35a3f488e07d799a4a70dbde34a33e2ebe2fe60fb06f1ca",
+    "normalizedGitSha256": "6fe5a7d7a4bd0966640dff8d07c3aa47e624f8041482552bf860c2166694c277",
+    "nativeSourceFile": "native28-source/ArenaFxRecordedTests.cs",
+    "normalizedNativeSha256": "6fe5a7d7a4bd0966640dff8d07c3aa47e624f8041482552bf860c2166694c277",
+    "normalization": "CRLF to LF only; preserve all other bytes",
+    "crlfCount": 123,
+    "bareLfCount": 91
+  }
+]
