@@ -134,5 +134,44 @@ class ArtifactChecks(unittest.TestCase):
         sleep.assert_called_once_with(.25)
 
 
+class HostLossChecks(unittest.TestCase):
+    def setUp(self):
+        self.report = dict(role='HOST', networked='False', slot='0', protocol='153',
+                           map='MatchSetup', round='0', active='False')
+        self.log = ('[NetAuto] READY submitted from a client peer.\n'
+                    '[Slice] round 1 begins, taya is seat 0\n'
+                    '[Abandon] HostLost: ABANDONED at round 1 of 1; '
+                    'this peer may no longer resolve anything\n')
+
+    def evaluate(self, cache=None, log=None, report=None, exit_code=0):
+        return peer.evaluate_host_loss(self.report if report is None else report,
+            self.log if log is None else log, {} if cache is None else cache, 153, exit_code)
+
+    def test_active_loss_without_career_file_is_valid_client_evidence(self):
+        evidence, errors = self.evaluate()
+        self.assertEqual([], errors)
+        self.assertTrue(evidence['admissionBeforeLoss'])
+
+    def test_lobby_loss_or_loss_before_actual_admission_cannot_pass(self):
+        for log in [self.log.replace('[Slice] round 1 begins', 'never began'),
+                    self.log.replace('at round 1 of 1', 'at round 0 of 0'),
+                    '\n'.join(reversed(self.log.splitlines()))]:
+            self.assertTrue(self.evaluate(log=log)[1])
+
+    def test_completed_event_or_any_saved_result_cannot_pass(self):
+        self.assertTrue(self.evaluate(log=self.log+'[Slice] match over\n')[1])
+        for field in ('History', 'Queue', 'QueueWitness'):
+            self.assertTrue(self.evaluate(cache={field: [{}]})[1], field)
+
+    def test_replacement_network_host_or_live_arena_cannot_pass(self):
+        for change in [dict(networked='True'), dict(active='True'),
+                       dict(map='Eskinita'), dict(round='1'), dict(role='CLIENT'),
+                       dict(slot='1'), dict(protocol='145')]:
+            self.assertTrue(self.evaluate(report=dict(self.report, **change))[1], change)
+
+    def test_client_crash_cannot_pass(self):
+        self.assertTrue(self.evaluate(exit_code=1)[1])
+
+
 if __name__ == '__main__':
     unittest.main()
