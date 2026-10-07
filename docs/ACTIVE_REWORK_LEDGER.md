@@ -1,3 +1,9 @@
+# Natural four-bot checkpoint, October 7
+
+AiDiagnosticProbe now waits actualReadyGate once/clockreleased, fourexisting normalinput writers,40live seconds, teardownrestoresrules/pin/allbots. Native39376 Classic/Hero Lagoon2PASS:13/12throws,4/3lunges,1/2countedhits, no bounds/stranding/pursuit failures. Original3bot/manualstartbridge47404 2PASS retainedlimited. Bothall21327 exactinputs/preferences restored afterterminal. Report: reports/natural-four-bot-decisions-2026-10-07. Counts short/unseeded, no statistical/allmap/allkit/physical-humanclaim.
+
+Next investigate remaining consumer-charge vs full-speed prediction mismatch at longframe boundaries, then true mapnavigation and releaseintegration. AIproductb818/10lifetime+14capsule+6widthstep checks published. Laptop previews/fullreplay reserved pendingcheckedrefs. Desktopcb5/internal120d older. NoLAN, noownednative/helper/tab remains. Goal ACTIVE.
+
 # Charged bot obstruction checkpoint, October 7
 
 Original39196 1FAIL/2PASS releasesfull2.5s dash againstwall1.2m ahead. Capsule-path to firstpossiblecontact correction: candidate41260 passes10/fails3 legacybarecapsule floor fixture controls; failures retained. Actualgamecapsules/floor-control43680 passes14 unchangedassertions. Finalwidth/kerb45336 passes6 includingnarrowpostblock and15cmstepallow. All21327 frozen inputs/preferences restored after everyterminalrun. Report: reports/bot-lunge-obstacles-2026-10-07. This is consumer/physics scope, not allmapnavigation/performance/naturalhitproof.

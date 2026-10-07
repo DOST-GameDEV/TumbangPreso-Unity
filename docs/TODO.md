@@ -1,3 +1,8 @@
+### AI-NATURAL-DECISIONS-1007: actual single-start live window
+
+- [x] Remove diagnostic manual start competing with ReadyGate. Explicit4bot input writers and40live seconds after one real automatic start; Classic/Hero Lagoon native2PASS,13/12throws and4/3lunges with1/2countedhits. Preserve complete traces and controls. [Evidence](reports/natural-four-bot-decisions-2026-10-07/README.md).
+- [ ] All-map/all-kit decisions, remaining misses, navigation/performance and combined packaged acceptance.
+
 ### AI-LUNGE-OBSTACLES-1007: body path before charged release
 
 - [x] Reject a charged release whose actual body path is blocked before tag contact. Original wall-ahead failure retained; native14 aim/lifetime/game-capsule controls and6 final obstacle/width/kerb controls pass. [Evidence](reports/bot-lunge-obstacles-2026-10-07/README.md).

@@ -1,0 +1,26 @@
+{
+  "capsule-bridge-realclock/ai-diagnostic-Classic-IlalimNgTulay.txt": {
+    "throws": 8,
+    "lunges": 0,
+    "countedHits": 0,
+    "naturalOneStart": false
+  },
+  "capsule-bridge-realclock/ai-diagnostic-HeroStrike-IlalimNgTulay.txt": {
+    "throws": 7,
+    "lunges": 0,
+    "countedHits": 0,
+    "naturalOneStart": false
+  },
+  "natural-four-cove/ai-diagnostic-Classic-LagoonCove.txt": {
+    "throws": 13,
+    "lunges": 4,
+    "countedHits": 1,
+    "naturalOneStart": true
+  },
+  "natural-four-cove/ai-diagnostic-HeroStrike-LagoonCove.txt": {
+    "throws": 12,
+    "lunges": 3,
+    "countedHits": 2,
+    "naturalOneStart": true
+  }
+}

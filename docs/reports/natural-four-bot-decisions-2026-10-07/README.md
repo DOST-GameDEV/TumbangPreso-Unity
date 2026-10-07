@@ -1,0 +1,9 @@
+# Four bot decisions after a single real opening
+
+The earlier bridge diagnostic47404 passes Classic/Hero bounds, loose-slipper and pursuit controls on b818. Its manual SliceRunner.Begin overlaps the normal ReadyGate start and its40second window includes opening time with only three bot writers. Original traces/results are retained in capsule-bridge-realclock with explicit limited scope.
+
+AiDiagnosticProbe now pins explicit automatic rules with three bot-filled chairs and the existing allbots driver for the human-owned chair. It waits for ReadyGate to begin once and release the presentation clock, then measures40live seconds at1x with four normal AI input writers. It does not call SliceRunner.Begin. Rules, pin and allbots state restore on teardown. Gameplay, authored maps and hero kits are unchanged.
+
+Native39376 passes Classic and Hero on LagoonCove. Both observe one automatic start/four writers. Classic records13throws/four completed lunges/one counted hit; Hero records12throws/three lunges/two counted hits. Full traces show ordinary movement, retrieval, can-reset and tag decisions. Existing bounds, stranded-slipper and pursuit assertions pass. These are short unseeded samples; counts are not a statistically established improvement, all-kit/all-map coverage or physical-human-input acceptance. Lunge reason/victim associations remain diagnostic; accepted-contact identity and broader efficacy need separate evidence.
+
+After terminal native and preservation jobs, all21327 source inputs and isolated preferences restore for both runs. No owned native/player/helper remains. Desktopcb5 and internal120d predate the latest AI fixes. Laptop new-map preview media and full local replay publication are pending for combined release. No LAN, paid service, worker or foreground OS controls were used. Raw evidence is preserved byte-for-byte with SHA receipts.

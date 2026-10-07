@@ -29,6 +29,8 @@ namespace TumbangPreso.PlayTests
     [Category(WallClock)]
     public class AiDiagnosticProbe
     {
+        private CustomRules _priorRules;
+        private bool _priorRulesPinned, _priorAllBots;
         /// <summary>
         /// ⚠️⚠️ THE PAIR THAT MAKES A FULL-SUITE RESULT MEAN ANYTHING. `docs/TODO.md` § 126.8:
         /// the full PlayMode run came back 42, 41 and then 56 red with the red set moving, and a
@@ -36,10 +38,21 @@ namespace TumbangPreso.PlayTests
         /// mechanism and why BOTH hooks are needed rather than one.
         /// </summary>
         [UnitySetUp]
-        public IEnumerator ResetWorldBefore() => PlayModeWorld.Reset();
+        public IEnumerator ResetWorldBefore()
+        {
+            _priorRules = UI.SceneFlow.SelectedRules.Clone();
+            _priorRulesPinned = UI.SceneFlow.RulesPinned; _priorAllBots = GameLaunch.AllBots;
+            yield return PlayModeWorld.Reset();
+        }
 
         [UnityTearDown]
-        public IEnumerator ResetWorldAfter() => PlayModeWorld.Reset();
+        public IEnumerator ResetWorldAfter()
+        {
+            yield return PlayModeWorld.Reset();
+            UI.SceneFlow.AdoptRemoteRules(_priorRules);
+            if (_priorRulesPinned) UI.SceneFlow.PinSelectedRules(_priorRules); else UI.SceneFlow.UnpinSelectedRules();
+            GameLaunch.AllBots = _priorAllBots;
+        }
 
         /// <summary>
         /// The category that keeps this class out of the default PlayMode run.
@@ -193,7 +206,9 @@ namespace TumbangPreso.PlayTests
         private IEnumerator Diagnose(GameMode mode, float seconds)
         {
             var previousMode = UI.SceneFlow.SelectedMode;
-            UI.SceneFlow.SelectedMode = mode;
+            var rules = CustomGameRules.Defaults(mode);
+            rules.Bots = CustomGameRules.MaxBots; rules.ManualReady = false;
+            UI.SceneFlow.PinSelectedRules(rules); GameLaunch.AllBots = true;
             // Reuse the same decision trace for map-specific stall reports.
             // The default and its historic filenames remain Eskinita.
             string map = System.Environment.GetEnvironmentVariable("TUMP_AI_MAP");
@@ -212,13 +227,28 @@ namespace TumbangPreso.PlayTests
 
             var runner = Object.FindFirstObjectByType<SliceRunner>();
             Assert.IsNotNull(runner);
-            runner.Begin();
+            var match = GameServices.Match; Assert.IsNotNull(match);
+            int starts = 0;
+            void Started(int number, int defender) => starts++;
+            match.RoundStarted += Started;
+            try
+            {
+                float until = Time.realtimeSinceStartup + 45;
+                while (!round.RoundActive && Time.realtimeSinceStartup < until) yield return null;
+                yield return null;
+                Assert.IsTrue(round.RoundActive, "The actual automatic ReadyGate did not begin the match.");
+                Assert.AreEqual(1, starts, "The diagnostic must observe one natural start without calling SliceRunner.Begin.");
+                Assert.IsFalse(PresentationClock.Held, "Live decision time must begin after the opening releases the clock.");
+            }
+            finally { match.RoundStarted -= Started; }
 
             var bots = Object.FindObjectsByType<AIController>(FindObjectsSortMode.None);
+            Assert.AreEqual(Balance.PlayerCount, bots.Length, "All four seats must have their real bot input writer.");
             var planTime = new Dictionary<string, float>();
             var log = new StringBuilder();
 
             log.AppendLine($"ai diagnostic  ·  {mode}  ·  {map}  ·  {bots.Length} bots  ·  1x");
+            log.AppendLine($"natural automatic starts={starts}; decision window begins after the opening; allbots={GameLaunch.AllBots}");
 
             var lunges = new LungeTracker();
             int lungeFrame = 0;

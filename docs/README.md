@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Four-bot natural decision window: [actual one-start readiness, live40second samples and retained legacy limits](reports/natural-four-bot-decisions-2026-10-07/README.md).
+
 Bot charged travel around world obstacles: [original wall failure, actual capsule clearance and post/kerb controls](reports/bot-lunge-obstacles-2026-10-07/README.md).
 
 Bot charge ownership on target/plan loss: [original four failures, legal reset and10 native controls](reports/bot-lunge-plan-lifetime-2026-10-07/README.md).
