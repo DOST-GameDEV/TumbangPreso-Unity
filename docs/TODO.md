@@ -1,3 +1,10 @@
+### SLIPPER-CONTACT-1008: current rig and cinematic grip
+
+- [x] Replace obsolete fixed palm lift with actual weighted hand surface contact; all23 art entries pass independent triangle checks. Preserve authored models and ability behavior.
+- [x] Refit ultimate and catch-replay shoe copies without baking a stale live carry transform. Final native4PASS includes21-body replay-copy coverage and repeated Paete/Bayan swaps; original0.4908m copy error retained.
+- [x] Retain focused movement/emote, nine-ultimate, first-person and five carry-lifecycle evidence with explicit limits. [Evidence](reports/slipper-contact-2026-10-08/README.md).
+- [ ] Full-map catch shader rendering timed out; existing head-clearance fixture fails on both original and candidate. Full current-package, separate-device, long-session and remaining interrupted-view acceptance stays open. No Human Verified or universal no-float completion claimed.
+
 ### REJOIN-START-HOLD-1007: release the obsolete opening gate
 
 - [x] Reproduce four late-join/rebind/intermission failures with one pre-start control, then fix ReadyGate adoption of an already-confirmed host match. Final eighteen native controls pass, including actual owner movement, pause/Frozen/ultimate preservation and existing countdown/completed-arrival behavior. Retain the original failures and separately reproduced stale five-count test expectation. [Evidence](reports/late-join-start-hold-2026-10-07/README.md).

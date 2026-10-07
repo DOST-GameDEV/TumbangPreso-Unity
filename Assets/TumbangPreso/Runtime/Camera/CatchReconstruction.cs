@@ -167,10 +167,7 @@ namespace TumbangPreso.CameraSystem
                 if (source.GetComponent<VfxRenderTag>() != null) continue;
                 var mesh = source.GetComponent<MeshFilter>(); if (mesh == null || mesh.sharedMesh == null) continue;
                 var go = new GameObject("RecordedHeldSlipper"); go.transform.SetParent(anchor, false);
-                go.transform.localPosition = visual.HandAnchor.InverseTransformPoint(source.transform.position);
-                go.transform.localRotation = Quaternion.Inverse(visual.HandAnchor.rotation) * source.transform.rotation;
-                Vector3 parentScale = visual.HandAnchor.lossyScale, scale = source.transform.lossyScale;
-                go.transform.localScale = new Vector3(scale.x / parentScale.x, scale.y / parentScale.y, scale.z / parentScale.z);
+                held.FitCarriedSurface(source.transform, visual.HandAnchor, go.transform);
                 go.AddComponent<MeshFilter>().sharedMesh = mesh.sharedMesh;
                 var renderer = go.AddComponent<MeshRenderer>(); renderer.sharedMaterials = source.sharedMaterials;
                 var block = new MaterialPropertyBlock(); source.GetPropertyBlock(block); renderer.SetPropertyBlock(block);

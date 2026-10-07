@@ -68,23 +68,9 @@ namespace TumbangPreso.PlayTests
             var hand = visual.HandAnchor;
             Assert.IsNotNull(hand);
             var skin = visual.Model.GetComponentInChildren<SkinnedMeshRenderer>();
-            int bone = Array.IndexOf(skin.bones, hand.parent);
-            Assert.GreaterOrEqual(bone, 0);
-            var mesh = skin.sharedMesh; var vertices = mesh.vertices; var weights = mesh.boneWeights;
-            float top = float.NegativeInfinity; int sampled = 0;
-            for (int i = 0; i < vertices.Length; i++)
-            {
-                var w = weights[i];
-                float influence = (w.boneIndex0 == bone ? w.weight0 : 0) + (w.boneIndex1 == bone ? w.weight1 : 0)
-                    + (w.boneIndex2 == bone ? w.weight2 : 0) + (w.boneIndex3 == bone ? w.weight3 : 0);
-                if (influence < .5f) continue;
-                var p = mesh.bindposes[bone].MultiplyPoint3x4(vertices[i]);
-                if (Mathf.Abs(p.x - hand.localPosition.x) > .06f || Mathf.Abs(p.z - hand.localPosition.z) > .06f) continue;
-                top = Mathf.Max(top, p.y); sampled++;
-            }
-            Assert.Greater(sampled, 8, "Measure the actual weighted distal branch surface.");
-            float gap = (hand.localPosition.y - top) * hand.parent.TransformVector(Vector3.up).magnitude;
-            Note("paete_palm_support_gap", gap); Note("paete_palm_top_local", top); Note("paete_palm_anchor", hand.localPosition);
+            float gap=SlipperContactTests.MeasurePalmGap(skin,hand,out int sampled);
+            Assert.Greater(sampled,0,"Measure actual projected hand triangles, not unrelated nearby fingers.");
+            Note("paete_palm_support_gap",gap);Note("paete_palm_anchor",hand.localPosition);
             Assert.That(gap, Is.InRange(-.005f, .03f), "The carried sole support must rest on the branch palm, not a human-hand-height offset above it.");
         }
 
@@ -135,9 +121,10 @@ namespace TumbangPreso.PlayTests
                 else
                 {
                     var skin = visual.Model.GetComponentInChildren<SkinnedMeshRenderer>();
-                    Assert.IsTrue(CharacterVisual.PalmCentre(skin, Array.IndexOf(skin.bones, hand.parent), out var palm));
-                    Assert.Less(Vector3.Distance(palm + Vector3.up * CharacterVisual.HandTopLift, hand.localPosition), .0001f,
-                        "A Paete kit must not apply branch-palm placement to a different visible model.");
+                    float gap=SlipperContactTests.MeasurePalmGap(skin,hand,out int samples);
+                    Assert.Greater(samples,0);
+                    Assert.That(gap,Is.InRange(.002f,.004f),
+                        "A swapped human model must use its own visible hand surface.");
                 }
                 Assert.AreSame(shoe, who.GetComponent<Carrier>().Held);
             }

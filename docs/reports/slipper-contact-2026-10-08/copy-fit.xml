@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 15:11:30Z" end-time="2026-10-07 15:11:35Z" duration="5.3388465">
+  <test-suite type="TestSuite" id="3615" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2116" result="Failed" site="Child" start-time="2026-10-07 15:11:30Z" end-time="2026-10-07 15:11:35Z" duration="5.338847" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3607" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2116" result="Failed" site="Child" start-time="2026-10-07 15:11:30Z" end-time="2026-10-07 15:11:35Z" duration="5.311740" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="42191" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3608" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2116" result="Failed" site="Child" start-time="2026-10-07 15:11:30Z" end-time="2026-10-07 15:11:35Z" duration="5.294037" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3611" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2114" result="Failed" site="Child" start-time="2026-10-07 15:11:30Z" end-time="2026-10-07 15:11:35Z" duration="5.275785" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="3149" name="SlipperContactTests" fullname="TumbangPreso.PlayTests.SlipperContactTests" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-07 15:11:30Z" end-time="2026-10-07 15:11:35Z" duration="5.238370" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="3150" name="EveryRosterPalmAnchorTouchesItsVisibleHandSurface" fullname="TumbangPreso.PlayTests.SlipperContactTests.EveryRosterPalmAnchorTouchesItsVisibleHandSurface" methodname="EveryRosterPalmAnchorTouchesItsVisibleHandSurface" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" seed="836146" result="Failed" start-time="2026-10-07 15:11:30Z" end-time="2026-10-07 15:11:35Z" duration="4.908880" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  bayan: gap 0.0353m (2 vertices)
+maring: gap 0.0353m (2 vertices)
+totoy: gap 0.0353m (2 vertices)
+inday: gap 0.0332m (2 vertices)
+kuya_boy: gap 0.0353m (2 vertices)
+ate_girlie: gap 0.0353m (2 vertices)
+tikboy: gap 0.0353m (2 vertices)
+bebang: gap 0.0353m (2 vertices)
+jun_jun: gap 0.0353m (2 vertices)
+lola_pacing: gap 0.0353m (2 vertices)
+mang_kanor: gap 0.0332m (2 vertices)
+aling_nena: gap 0.0332m (2 vertices)
+dante: gap -0.1159m (2 vertices)
+cheska: gap -0.0916m (2 vertices)
+zack: gap -0.1511m (4 vertices)
+nemu: gap -0.0488m (4 vertices)
+phaister: gap -0.2493m (4 vertices)
+rafi: gap 0.1312m (4 vertices)
+amihan: gap -0.1177m (2 vertices)
+paete: gap Infinitym (0 vertices)
+  Expected: <empty>
+  But was:  < "bayan: gap 0.0353m (2 vertices)", "maring: gap 0.0353m (2 vertices)", "totoy: gap 0.0353m (2 vertices)", "inday: gap 0.0332m (2 vertices)", "kuya_boy: gap 0.0353m (2 vertices)", "ate_girlie: gap 0.0353m (2 vertices)", "tikboy: gap 0.0353m (2 vertices)", "bebang: gap 0.0353m (2 vertices)", "jun_jun: gap 0.0353m (2 vertices)", "lola_pacing: gap 0.0353m (2 vertices)"... >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SlipperContactTests+<EveryRosterPalmAnchorTouchesItsVisibleHandSurface>d__4.MoveNext () [0x00618] in /workspace/scratch/0ed9da4aed7f/TumbangPreso-Unity/Assets/TumbangPreso/Tests/PlayMode/SlipperContactTests.cs:78
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="3151" name="UltimateCopyDoesNotBakeAStaleLiveCarryPose" fullname="TumbangPreso.PlayTests.SlipperContactTests.UltimateCopyDoesNotBakeAStaleLiveCarryPose" methodname="UltimateCopyDoesNotBakeAStaleLiveCarryPose" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" seed="970838353" result="Passed" start-time="2026-10-07 15:11:35Z" end-time="2026-10-07 15:11:35Z" duration="0.311346" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-Z80puu/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
