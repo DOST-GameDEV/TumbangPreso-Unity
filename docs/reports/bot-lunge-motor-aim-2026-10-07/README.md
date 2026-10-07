@@ -1,0 +1,11 @@
+# Bounded point aiming for charged bot pursuit
+
+Natural Arena native41544 passes its existing checks but records two long held lunges, both misses, with off-axis bearings around19 and23degrees. Eleven throws, retrieval activity and one sabotage shove show participation; the pass does not establish that every attack decision is effective.
+
+The charged-pursuit correction asked only for an eight-way movement heading. Parallel runners can preserve a target bearing between those headings while its lateral offset remains outside the actual tag corridor. Original46724 reproduces this at20 and22degrees: both cases keep the charge and never complete an aimed release. The fixture uses the actual bounded CharacterMotor.Steer method and physical CharacterController.Move for common parallel movement, without directly rotating the actor after setup. It steps producer/consumer methods at20ms and seeds common velocity and an existing full charge; this is a component/physics scenario rather than a complete natural match. Initial43808 fails compilation because the test used nonexistent balance constant names; that attempt is retained.
+
+StepLungeIntent now writes a normal point-aim request toward the perceived short-horizon target while holding its charge. Movement keeps its ordinary keyboard headings and the motor owns the bounded turn. Release still requires the existing facing, consumer charge, predicted reach, obstacle and edge checks. No direct rotation, consumer cancellation, dash retune or authored hero/old-map presentation change is added.
+
+Candidate33276 passes21cases: the two real motor-turn scenarios plus nineteen existing aim/close-tag, charge-power, obstruction/capsule/kerb and charge-lifetime controls. All21367 frozen inputs and preferences restore after the native and preservation parent terminate. The preceding natural Arena job restores all21365 inputs. A fresh natural follow-up is still required; this does not establish improved hit rate, all-map navigation, every-kit efficacy or tournament readiness.
+
+Desktop725e remains its independently qualified release. The laptop owns the recorded GPU-clock fix and separate effects/Archive work. No LAN, new worker, paid service or foreground PC control was used.

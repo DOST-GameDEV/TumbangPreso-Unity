@@ -1,0 +1,26 @@
+{
+  "sourceRef": "5c73d8ba0a331c6621c1d137e011f18cc22f6083",
+  "profile": "pc-humanlike-ai-motor-aim-original-compiled1006",
+  "filter": "TumbangPreso.PlayTests.AiLungeMotorAimTests",
+  "expectedCases": 2,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-humanlike-ai-motor-aim-original-compiled1006",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.AiLungeMotorAimTests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\bot-lunge-aim1007\\motor-aim-original-compiled\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\bot-lunge-aim1007\\motor-aim-original-compiled\\editor.log"
+  ],
+  "pid": 46724
+}

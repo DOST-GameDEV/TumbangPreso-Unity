@@ -1,0 +1,6 @@
+Assets\TumbangPreso\Tests\PlayMode\AiLungeMotorAimTests.cs(41,25): error CS0117: 'Balance' does not contain a definition for 'TagRadius'
+Assets\TumbangPreso\Tests\PlayMode\AiLungeMotorAimTests.cs(41,63): error CS0117: 'Balance' does not contain a definition for 'PlayerRadius'
+Assets\TumbangPreso\Tests\PlayMode\AiLungeMotorAimTests.cs(41,25): error CS0117: 'Balance' does not contain a definition for 'TagRadius'
+Assets\TumbangPreso\Tests\PlayMode\AiLungeMotorAimTests.cs(41,63): error CS0117: 'Balance' does not contain a definition for 'PlayerRadius'
+Assets\TumbangPreso\Tests\PlayMode\AiLungeMotorAimTests.cs(41,25): error CS0117: 'Balance' does not contain a definition for 'TagRadius'
+Assets\TumbangPreso\Tests\PlayMode\AiLungeMotorAimTests.cs(41,63): error CS0117: 'Balance' does not contain a definition for 'PlayerRadius'
