@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 170b529f7dd44a3fab64a4d738adf881, type: 3}
+  m_Name: SceneryTextureIdentities
+  m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.CameraSystem.SceneryTextureIdentities
+  Entries: []
+  WhiteHash: 06f1823c819835032fb367776dd33816
+  BlackHash: 42a284fb2547d1067b345d5858d8bcfc
+  GrayHash: b9373118c30f4ea6d643a7f87a47ba17
+  NormalHash: c192349631ecae12d5acf59e4b47c4dc

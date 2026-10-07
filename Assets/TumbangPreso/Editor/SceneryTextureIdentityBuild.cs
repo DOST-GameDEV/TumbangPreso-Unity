@@ -32,14 +32,21 @@ namespace TumbangPreso.EditorTools
                     if(material!=null)foreach(var property in material.GetTexturePropertyNames())
                     {var texture=material.GetTexture(property);if(texture!=null)textures.Add(texture);}
             }
-            textures.Add(Texture2D.whiteTexture);textures.Add(Texture2D.blackTexture);
-            textures.Add(Texture2D.grayTexture);textures.Add(Texture2D.normalTexture);
+            textures.Remove(Texture2D.whiteTexture);textures.Remove(Texture2D.blackTexture);
+            textures.Remove(Texture2D.grayTexture);textures.Remove(Texture2D.normalTexture);
             var book=AssetDatabase.LoadAssetAtPath<SceneryTextureIdentities>(AssetPath);
             if(book==null){book=ScriptableObject.CreateInstance<SceneryTextureIdentities>();AssetDatabase.CreateAsset(book,AssetPath);}
+            book.WhiteHash=Texture2D.whiteTexture.imageContentsHash.ToString();
+            book.BlackHash=Texture2D.blackTexture.imageContentsHash.ToString();
+            book.GrayHash=Texture2D.grayTexture.imageContentsHash.ToString();
+            book.NormalHash=Texture2D.normalTexture.imageContentsHash.ToString();
             book.Entries=textures.OrderBy(t=>t.name,StringComparer.Ordinal).ThenBy(t=>t.width).ThenBy(t=>t.height)
                 .Select(t=>new SceneryTextureIdentities.Entry{Texture=t,Hash=t.imageContentsHash.ToString()}).ToArray();
             EditorUtility.SetDirty(book);AssetDatabase.SaveAssets();
-            Debug.Log("[SceneryTextureIdentities] prepared "+book.Entries.Length+" exact imported/builtin texture identities; no scene, model, texture or material was modified.");
+            if(book.Entries.Any(e=>e.Texture==null||string.IsNullOrEmpty(e.Hash)))throw new BuildFailedException("Scenery texture identity has a missing imported reference.");
+            foreach(var texture in new[]{Texture2D.whiteTexture,Texture2D.blackTexture,Texture2D.grayTexture,Texture2D.normalTexture})
+                if(SceneryTextureIdentities.ResolvePrepared(texture,book)!=texture.imageContentsHash.ToString())throw new BuildFailedException("Builtin texture fingerprint changed during preparation.");
+            Debug.Log("[SceneryTextureIdentities] prepared "+book.Entries.Length+" exact imported textures and 4 builtin scalar identities; no scene, model, texture or material was modified.");
         }
     }
 }

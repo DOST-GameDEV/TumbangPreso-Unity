@@ -21,3 +21,16 @@ A new ordinary player build and prepared-asset check remain next.
 
 [Unity texture identity documentation](https://docs.unity3d.com/es/2020.2/ScriptReference/Texture-imageContentsHash.html)
 identifies the property as Editor-only. No payload, art or kit changes were made.
+
+The first compiled playerF exposed four null builtin Texture object references
+in the generated asset and was rejected before acceptance. That asset and build
+receipt remain retained. Builtin hashes now serialize as four scalar fields;
+only imported asset textures use exact references. Cache publication is atomic
+so an invalid table cannot leave a partly initialized lookup. Producer2460
+regenerated the owned asset without touching other source/art/preferences.
+
+Corrected native61436 passes seven cases, including scalar serialization and
+both actual GPU scenery comparisons. All21411inputs restored. The exact
+[correction evidence](builtin-correction/evidence.json) retains the stale-table
+failure and the current generated asset. A new ordinary player build and replay
+reopen remain pending; compiledF was not released toDesktop.

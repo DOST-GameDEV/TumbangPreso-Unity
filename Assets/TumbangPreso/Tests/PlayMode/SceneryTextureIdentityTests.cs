@@ -45,6 +45,21 @@ namespace TumbangPreso.PlayTests
             try{texture.Apply(false,true);Assert.Throws<InvalidOperationException>(()=>SceneryTextureIdentities.ResolvePrepared(texture,book));}
             finally{Object.DestroyImmediate(book);Object.DestroyImmediate(texture);}
         }
+        [Test]public void BuiltinScalarHashesSurviveSerializationWithoutBuiltinObjectReferences()
+        {
+            var book=ScriptableObject.CreateInstance<SceneryTextureIdentities>();var copy=ScriptableObject.CreateInstance<SceneryTextureIdentities>();
+            try
+            {
+                book.WhiteHash="white-content";book.BlackHash="black-content";book.GrayHash="gray-content";book.NormalHash="normal-content";
+                JsonUtility.FromJsonOverwrite(JsonUtility.ToJson(book),copy);
+                Assert.AreEqual("white-content",SceneryTextureIdentities.ResolvePrepared(Texture2D.whiteTexture,copy));
+                Assert.AreEqual("black-content",SceneryTextureIdentities.ResolvePrepared(Texture2D.blackTexture,copy));
+                Assert.AreEqual("gray-content",SceneryTextureIdentities.ResolvePrepared(Texture2D.grayTexture,copy));
+                Assert.AreEqual("normal-content",SceneryTextureIdentities.ResolvePrepared(Texture2D.normalTexture,copy));
+                Assert.AreEqual(0,copy.Entries.Length);
+            }
+            finally{Object.DestroyImmediate(book);Object.DestroyImmediate(copy);}
+        }
         [Test]public void NullTextureHasTheExistingEmptyIdentity()
         {Assert.AreEqual("",SceneryTextureIdentities.Resolve(null));Assert.AreEqual("",SceneryTextureIdentities.ResolvePrepared(null,null));}
     }
