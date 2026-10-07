@@ -28,7 +28,10 @@ Replay data itself is not an MP4 export.
 three-second segments on the main thread, then compresses and writes managed
 values on one background task chain. It keeps the existing bounded pose ring,
 with at most two outstanding writes. It does not retain a whole match in RAM or
-resimulate inputs. The viewer retains one segment and one pending disk read.
+resimulate inputs. The viewer retains the current segment, one prepared next
+segment and one pending disk read. It starts lookahead while drawing the current
+segment, then installs prepared data at the timeline edge. Loading-induced
+seam pauses are not treated as normal playback.
 
 Each `TUMP-<date>-<unique-id>` folder contains `manifest.json` and numbered `.tps`
 segments, with optional numbered `.scene.json` sidecars for recorded map state.
@@ -44,6 +47,11 @@ sidecar are committed atomically before their manifest entry. SHA-256,
 identity/window validation, bounded decoding and a local-only short-tail decoder
 prevent damaged data from becoming plausible footage. The existing network
 highlight decoder and wire version remain unchanged.
+
+A seek supersedes an earlier read without installing its stale view or error.
+Only the requested segment can report a read failure; prefetch failures wait
+until that segment is selected. Closing releases owned views and cached data,
+and any unfinished managed read cannot recreate the closed viewer.
 
 The manifest preserves match identity, map, mode, custom rules, time offsets and
 rounds. Only active gameplay is on the replay timeline; loading, ready countdowns

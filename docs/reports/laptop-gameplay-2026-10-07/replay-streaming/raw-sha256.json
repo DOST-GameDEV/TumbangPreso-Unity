@@ -1,0 +1,21 @@
+{
+  ".gitattributes": "85e48d232edc7b02f6cecf8fbbf905f3b126c467b594d8dd16c4f8fa283a8320",
+  "candidate30/classified-result.json": "74a97901a47910f6b05931eca8080c3f18ca2943ac2453805462254796a4f5fe",
+  "candidate30/launch.json": "35dddfeeca1efc7c58ce7ee9e3136e063a2994748299ff7538f023e819c16471",
+  "candidate30/measurements.txt": "57360cb42f4ffd67b73742ab99fbe24c147d011683211f3e807d4ee06f29d33e",
+  "candidate30/profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+  "candidate30/tested-source.json": "2894ff02774e493ebcd1ad4761736f723e73d2c06ea5157a58f531e8b253e9be",
+  "candidate30/tests.xml": "a7ae2d5943c7ca07bde4e98bc2b3a1114e3c347b0036ecd10481ebc869b2db1e",
+  "comparison.json": "bfc3fb4cee7978e18ed2490aa50b24451984ca3ad30c839c3ce70d88d10eabf7",
+  "native30-source/LocalReplayPlayback.cs": "15030aeceffa7eb346036c3ae1e7ab501df29a8431825b7d6826405aa9c658a5",
+  "native30-source/LocalReplayStreamingTests.cs": "7001d9e26cd825f91614793da10188a1bfb51afef38724b2d6d90a9ba0c97405",
+  "native30-source/LocalReplayStreamingTests.cs.meta": "d0c1129848a58179c6f6e4395352d1c5a4bb06c2d653e2ef94b81422205d4a77",
+  "original29/classified-result.json": "eced8383d6f6f7048fc4aec2e8fe036e6f9b56407971b5503308d28f52bbc129",
+  "original29/launch.json": "60f241e80d941083012479f10909ab73ceeab1653ffa7765f65a797bb3f2c985",
+  "original29/measurements.txt": "fdb85f0cf6cfa599e1a10455696415ee245e6d7921912d7e8c2711bf5d9e94d7",
+  "original29/profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+  "original29/tested-source.json": "0a57d8986ffc52fea47e5f4015c7fdcf45c7917f8aec15f280e2eab9e0726ede",
+  "original29/tests.xml": "16e2b571bb489d06251688811afa0797b123c0cc02a6281af9be1fb74c2ff974",
+  "publication-source-proof.json": "effdecd71e1a93c3dd87c7a3def417a8f5ffd752f0df83e4ffb6ea25693ecd3d",
+  "README.md": "5040356dfa57c28285e453917b2ba3f0a5296bda610b289e5aecc6b8606d48a6"
+}

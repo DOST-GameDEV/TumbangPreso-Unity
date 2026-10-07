@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 11:15:59Z" end-time="2026-10-07 11:16:28Z" duration="28.4911552">
+  <test-suite type="TestSuite" id="3587" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="2092" result="Failed" site="Child" start-time="2026-10-07 11:15:59Z" end-time="2026-10-07 11:16:28Z" duration="28.491155" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3579" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2092" result="Failed" site="Child" start-time="2026-10-07 11:15:59Z" end-time="2026-10-07 11:16:28Z" duration="28.477328" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="51468" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3580" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2092" result="Failed" site="Child" start-time="2026-10-07 11:15:59Z" end-time="2026-10-07 11:16:28Z" duration="28.469776" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3583" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2090" result="Failed" site="Child" start-time="2026-10-07 11:15:59Z" end-time="2026-10-07 11:16:28Z" duration="28.461060" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2087" name="LocalReplayStreamingTests" fullname="TumbangPreso.PlayTests.LocalReplayStreamingTests" classname="TumbangPreso.PlayTests.LocalReplayStreamingTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-07 11:15:59Z" end-time="2026-10-07 11:16:28Z" duration="28.433059" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2090" name="AFailedObsoleteSeekCannotPoisonTheLatestValidPosition" fullname="TumbangPreso.PlayTests.LocalReplayStreamingTests.AFailedObsoleteSeekCannotPoisonTheLatestValidPosition" methodname="AFailedObsoleteSeekCannotPoisonTheLatestValidPosition" classname="TumbangPreso.PlayTests.LocalReplayStreamingTests" runstate="Runnable" seed="320662767" result="Failed" start-time="2026-10-07 11:15:59Z" end-time="2026-10-07 11:16:09Z" duration="9.991974" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  An obsolete failed read must not override the latest valid seek.
+  Expected: null
+  But was:  "Replay segment is damaged or incompatible."
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.LocalReplayStreamingTests+<AFailedObsoleteSeekCannotPoisonTheLatestValidPosition>d__10.MoveNext () [0x00185] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\LocalReplayStreamingTests.cs:72
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[LocalReplay] Replay segment is damaged or incompatible.
+]]></output>
+            </test-case>
+            <test-case id="2091" name="ClosingDuringARealReadCannotRestoreTheOldViewer" fullname="TumbangPreso.PlayTests.LocalReplayStreamingTests.ClosingDuringARealReadCannotRestoreTheOldViewer" methodname="ClosingDuringARealReadCannotRestoreTheOldViewer" classname="TumbangPreso.PlayTests.LocalReplayStreamingTests" runstate="Runnable" seed="1502433978" result="Passed" start-time="2026-10-07 11:16:09Z" end-time="2026-10-07 11:16:11Z" duration="1.607030" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2089" name="ContinuousFourTimesPlaybackDoesNotFreezeAtSavedSegmentSeams" fullname="TumbangPreso.PlayTests.LocalReplayStreamingTests.ContinuousFourTimesPlaybackDoesNotFreezeAtSavedSegmentSeams" methodname="ContinuousFourTimesPlaybackDoesNotFreezeAtSavedSegmentSeams" classname="TumbangPreso.PlayTests.LocalReplayStreamingTests" runstate="Runnable" seed="1040021087" result="Failed" start-time="2026-10-07 11:16:11Z" end-time="2026-10-07 11:16:16Z" duration="4.955026" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Continuous viewing must not lose hundreds of milliseconds at disk/decode seams.
+  Expected: less than 0.100000001f
+  But was:  1.53150189f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.LocalReplayStreamingTests+<Continuous>d__9.MoveNext () [0x00276] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\LocalReplayStreamingTests.cs:60
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[ReplayStreaming] speed=4 position=9.200253 missingWallSeconds=1.531502 largest=0.0429707 frozenFrames=2526
+]]></output>
+            </test-case>
+            <test-case id="2088" name="ContinuousOneTimesPlaybackDoesNotFreezeAtSavedSegmentSeams" fullname="TumbangPreso.PlayTests.LocalReplayStreamingTests.ContinuousOneTimesPlaybackDoesNotFreezeAtSavedSegmentSeams" methodname="ContinuousOneTimesPlaybackDoesNotFreezeAtSavedSegmentSeams" classname="TumbangPreso.PlayTests.LocalReplayStreamingTests" runstate="Runnable" seed="2146169601" result="Failed" start-time="2026-10-07 11:16:16Z" end-time="2026-10-07 11:16:28Z" duration="11.867380" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Continuous viewing must not lose hundreds of milliseconds at disk/decode seams.
+  Expected: less than 0.100000001f
+  But was:  1.50208056f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.LocalReplayStreamingTests+<Continuous>d__9.MoveNext () [0x00276] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\LocalReplayStreamingTests.cs:60
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[ReplayStreaming] speed=1 position=9.188823 missingWallSeconds=1.502081 largest=0.0114039 frozenFrames=1994
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

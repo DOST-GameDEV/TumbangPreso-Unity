@@ -1,0 +1,34 @@
+{
+  "original29": [
+    {
+      "speed": 4.0,
+      "position": 9.200253,
+      "missingWallSeconds": 1.531502,
+      "largestMissingFrame": 0.0429707,
+      "frozenFrames": 2526
+    },
+    {
+      "speed": 1.0,
+      "position": 9.188823,
+      "missingWallSeconds": 1.502081,
+      "largestMissingFrame": 0.0114039,
+      "frozenFrames": 1994
+    }
+  ],
+  "candidate30": [
+    {
+      "speed": 4.0,
+      "position": 9.189467,
+      "missingWallSeconds": 5.141832e-06,
+      "largestMissingFrame": 1.117587e-07,
+      "frozenFrames": 0
+    },
+    {
+      "speed": 1.0,
+      "position": 9.188061,
+      "missingWallSeconds": 9.204401e-05,
+      "largestMissingFrame": 4.763715e-07,
+      "frozenFrames": 0
+    }
+  ]
+}

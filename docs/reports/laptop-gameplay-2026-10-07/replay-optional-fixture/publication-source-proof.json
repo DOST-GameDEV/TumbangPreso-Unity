@@ -1,0 +1,9 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/LocalReplayStreamingTests.cs",
+    "nativeSha256": "1749ddfd01acb5456ea2611912fa5f74583ae1a5b149cdadbb7436ab9f3430dd",
+    "normalizedGitSha256": "1749ddfd01acb5456ea2611912fa5f74583ae1a5b149cdadbb7436ab9f3430dd",
+    "normalization": "CRLF to LF only; preserve all other bytes",
+    "nativeSourceFile": "native32-source.cs"
+  }
+]

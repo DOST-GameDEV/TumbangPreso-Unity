@@ -29,6 +29,9 @@ namespace TumbangPreso.CameraSystem
         private Text _timeHint;
         private sealed class LoadedSegment { public RecordedMatchClip Clip; public LocalReplaySceneSegment Scene; public LocalReplayFxSegment Effects; }
         private Task<LoadedSegment> _loading;
+        private LoadedSegment _prepared;
+        private int _preparedIndex=-1;
+        private string _preparedError;
         private int _loaded = -1, _requested = -1, _follow = -1;
         private float _time, _speed = 1;
         private bool _paused = true, _clean, _seeking, _silentNextFrame, _continuousRead;
@@ -194,7 +197,8 @@ namespace TumbangPreso.CameraSystem
             if (float.IsNaN(value) || float.IsInfinity(value)) return;
             _time = Mathf.Clamp(value, 0, _entry.Manifest.Duration);
             int index=SegmentAt(_time);
-            if (index != _loaded && _loading == null) Request(index);
+            _continuousRead=false;
+            if(index!=_loaded&&index!=_preparedIndex&&_loading==null)Request(index);
             GameServices.Audio?.StopReplayCues();
             _silentNextFrame=true;
         }
@@ -214,30 +218,53 @@ namespace TumbangPreso.CameraSystem
             var entry = _entry;
             _loading = Task.Run(() => new LoadedSegment{Clip=LocalReplayStore.Read(entry,index),Scene=LocalReplayStore.ReadScene(entry,index),Effects=LocalReplayStore.ReadEffects(entry,index)});
         }
+        private bool UseSegment(int index,bool continuous)
+        {
+            if(index==_loaded)return true;
+            if(index!=_preparedIndex)
+            {if(_loading==null)Request(index,continuous);return false;}
+            if(_preparedError!=null){Fail(_preparedError);return false;}
+            var segment=_prepared;_prepared=null;_preparedIndex=-1;
+            try
+            {
+                Vector3 eye=_view?.CameraTransform.position??new Vector3(0,10,-15);
+                Quaternion rotation=_view?.CameraTransform.rotation??Quaternion.identity;
+                bool existing=_view!=null;
+                if(_view==null||!_view.UseClip(segment.Clip,continuous))
+                {
+                    _view?.Dispose();_view=new RecordedWorldView(transform,segment.Clip,true);
+                    if(!_view.Ready){Fail(_view.UnavailableReason??"The recorded world could not be opened.");return false;}
+                    if(existing)_view.CameraTransform.SetPositionAndRotation(eye,rotation);
+                    _view.ShowLabels(false);
+                }
+                _view.RecordedScene=segment.Scene;_view.RecordedEffects=segment.Effects;
+                _loaded=index;_continuousRead=false;return true;
+            }
+            catch(Exception error){Fail(error.Message);return false;}
+        }
+        private void LookAhead()
+        {
+            int next=_loaded+1;
+            if(_loading==null&&_preparedIndex!=next&&next<_entry.Manifest.Segments.Count)
+            { _prepared=null;_preparedError=null;_preparedIndex=-1;Request(next,true); }
+        }
         private void Update()
         {
             if (_entry == null || _bar == null) return;
             if (_loading != null && _loading.IsCompleted)
             {
-                var task = _loading; _loading = null;
-                if (task.IsFaulted) { Fail(task.Exception.GetBaseException().Message); return; }
-                try
+                var task=_loading;int index=_requested;_loading=null;
+                int wanted=SegmentAt(_time);
+                // A seek can supersede a read before it finishes. Obsolete data
+                // and failures never replace or poison the final requested view.
+                bool relevant=index==wanted||(wanted==_loaded&&index==_loaded+1);
+                if(relevant)
                 {
-                    Vector3 eye = _view?.CameraTransform.position ?? new Vector3(0, 10, -15);
-                    Quaternion rotation = _view?.CameraTransform.rotation ?? Quaternion.identity;
-                    bool existing = _view != null;
-                    if (_view == null || !_view.UseClip(task.Result.Clip,_continuousRead))
-                    {
-                        _view?.Dispose(); _view = new RecordedWorldView(transform, task.Result.Clip, true);
-                        if (!_view.Ready) { Fail(_view.UnavailableReason ?? "The recorded world could not be opened."); return; }
-                        if (existing) _view.CameraTransform.SetPositionAndRotation(eye, rotation);
-                        _view.ShowLabels(false);
-                    }
-                    _view.RecordedScene=task.Result.Scene;_view.RecordedEffects=task.Result.Effects;
-                    _loaded = _requested;
-                    int wanted=SegmentAt(_time);if(wanted!=_loaded)Request(wanted);
+                    _preparedIndex=index;
+                    _preparedError=task.IsFaulted?task.Exception.GetBaseException().Message:task.IsCanceled?"The replay read was cancelled.":null;
+                    _prepared=_preparedError==null?task.Result:null;
                 }
-                catch (Exception error) { Fail(error.Message); return; }
+                else if(task.IsFaulted){var observed=task.Exception;}
             }
             var keyboard = Keyboard.current; var mouse = Mouse.current;
             var selected=UnityEngine.EventSystems.EventSystem.current?.currentSelectedGameObject;
@@ -252,16 +279,19 @@ namespace TumbangPreso.CameraSystem
             if (!editingTime&&keyboard?.hKey.wasPressedThisFrame == true) SetClean(!_clean);
             bool aiming = mouse?.rightButton.isPressed == true && _view?.Ready == true;
             Cursor.lockState = aiming ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !aiming;
-            if (_view?.Ready != true || _loading != null || Error != null) return;
+            if(Error!=null||!UseSegment(SegmentAt(_time),_continuousRead)||_view?.Ready!=true)return;
+            LookAhead();
             _view.ResizeForScreen();
             if (!_paused)
             {
                 _time = Mathf.Min(_entry.Manifest.Duration, _time + Time.unscaledDeltaTime * _speed);
-                // Segment boundaries are loaded lazily; keep at most one detached
-                // segment in the view and one pending read, not the whole match.
-                var segment = _entry.Manifest.Segments[_loaded];
-                if (_time >= segment.Offset + segment.End - segment.Start && _loaded + 1 < _entry.Manifest.Segments.Count)
-                { Request(_loaded + 1,true); return; }
+                int wanted=SegmentAt(_time);
+                if(wanted!=_loaded)
+                {
+                    _continuousRead=wanted==_loaded+1;
+                    if(!UseSegment(wanted,_continuousRead))return;
+                    LookAhead();
+                }
                 if (_time >= _entry.Manifest.Duration) { _paused = true; HubKit.SetLabel(_play, "PLAY"); }
             }
             if (aiming)
@@ -304,6 +334,9 @@ namespace TumbangPreso.CameraSystem
         }
         private void OnDestroy()
         {
+            var pending=_loading;_loading=null;_prepared=null;_preparedError=null;_preparedIndex=-1;_entry=null;
+            if(pending!=null)pending.ContinueWith(task=>{var observed=task.Exception;},System.Threading.CancellationToken.None,
+                TaskContinuationOptions.OnlyOnFaulted|TaskContinuationOptions.ExecuteSynchronously,TaskScheduler.Default);
             _view?.Dispose(); _view = null;
             if (_canvas != null) Destroy(_canvas.gameObject);
             Cursor.lockState = CursorLockMode.None; Cursor.visible = true;
