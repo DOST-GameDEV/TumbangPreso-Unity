@@ -45,3 +45,11 @@ Full visual parity remains open for drones, ambient wildlife, remaining transien
 states and all kits/maps. Long-session capture performance, disk interruption,
 physical viewer controls and the next combined package remain separate gates.
 No finalized hero art, network protocol, AI or reserved startup/history source changed.
+
+The native26-source folder preserves the exact three tested source byte streams.
+Publication proof records raw SHA, CRLF/bare-LF counts and normalized native SHA.
+Normalization replaces CRLF with LF only and preserves all other bytes, including
+any BOM; the normalized digest equals the source blob in checked121713972.
+Mixed line endings explain why converting a uniformly LF Git blob to uniformly
+CRLF cannot reproduce the original native digest. No semantic source change is
+needed or hidden.
