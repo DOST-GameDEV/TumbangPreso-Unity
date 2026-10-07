@@ -157,7 +157,7 @@ namespace TumbangPreso.UI
             // The rebuilt court is below an 8 m soffit. Look down the street under it,
             // rather than through the viaduct deck and the adjacent shop roofs.
             new MapEntry(IlalimNgTulay, "PADRE FAURA, MANILA",
-                         "LRT Gilmore strip. Viaduct pillars, PC Express, pisonet.", 0.0f, 22.0f, 5.5f),
+                         "Manila street court. Viaduct pillars and neighbourhood shops.", 0.0f, 22.0f, 5.5f),
             new MapEntry(SaBubong,"SA BUBONG",
                          "Condo roofdeck. Watch the edge; lost slippers return after 10s.",35,30,22),
             // ⚠️ THE LAGOON COURT IS THE REWORKED COVE NOW, and Kanto joins the list (owner,

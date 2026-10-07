@@ -44,7 +44,7 @@ namespace TumbangPreso
             new MapEntry("bayan_plaza", "BAYAN PLAZA",
                 "Barangay plaza. Church, basketball ring, acacia.", SceneFlow.BayanPlaza),
             new MapEntry("ilalim_ng_tulay", "PADRE FAURA, MANILA",
-                "LRT Gilmore strip. Viaduct pillars, PC Express, pisonet.", SceneFlow.IlalimNgTulay),
+                "Manila street court. Viaduct pillars and neighbourhood shops.", SceneFlow.IlalimNgTulay),
             new MapEntry("sa_bubong","SA BUBONG",
                 "Condo roofdeck. Watch the edge; lost slippers return after 10s.",SceneFlow.SaBubong),
             // "lagoon" keeps its id so a saved preference follows the Lagoon Court to its reworked
