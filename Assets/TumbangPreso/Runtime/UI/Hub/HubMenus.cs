@@ -22,18 +22,19 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
-            float rowH = 84, gap = 12;
+            float rowH = 76, gap = 10;
             // ⚠️ MATCH RULES is the old preparation board's rules sheet and bot difficulty, re-homed:
             // PRACTICE starts at once from GAMEMODE SELECT, so its rules have to be reachable from
             // somewhere a player goes first. A custom room's host reaches the same sheet from RULES.
-            string[] names = { "SETTINGS", "PARTY", "CAREER HUB", "MATCH RULES", "LEARN TO PLAY", "CREDITS", "BACK TO TITLE" };
-            HubGlyph.Mark[] marks = { HubGlyph.Mark.Gear, HubGlyph.Mark.Party, HubGlyph.Mark.Trophy, HubGlyph.Mark.Pencil,
+            string[] names = { "SETTINGS", "PARTY", "CAREER HUB", "REPLAYS", "MATCH RULES", "LEARN TO PLAY", "CREDITS", "BACK TO TITLE" };
+            HubGlyph.Mark[] marks = { HubGlyph.Mark.Gear, HubGlyph.Mark.Party, HubGlyph.Mark.Trophy, HubGlyph.Mark.Book, HubGlyph.Mark.Pencil,
                                       HubGlyph.Mark.Book, HubGlyph.Mark.Info, HubGlyph.Mark.Exit };
             System.Action[] actions =
             {
                 () => { Close(); Hub.Host.OpenSettings(); },
                 () => { Close(); Hub.Host.OpenParty(); },
                 () => { Close(); Hub.Host.OpenCareer(); },
+                () => Hub.Push<HubReplays>(),
                 () => { Close(); Hub.Host.OpenCustomRules(); },
                 () => { Hub.Host.LeaveRoom(); SceneFlow.StartTraining(); },
                 () => { Close(); HubCredits.Open(Hub); },

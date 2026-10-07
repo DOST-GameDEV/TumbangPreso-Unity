@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 04:26:59Z" end-time="2026-10-07 04:28:30Z" duration="90.9053525">
+  <test-suite type="TestSuite" id="3474" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="2006" result="Failed" site="Child" start-time="2026-10-07 04:26:59Z" end-time="2026-10-07 04:28:30Z" duration="90.905353" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3466" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2006" result="Failed" site="Child" start-time="2026-10-07 04:26:59Z" end-time="2026-10-07 04:28:30Z" duration="90.892475" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="55728" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3467" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2006" result="Failed" site="Child" start-time="2026-10-07 04:26:59Z" end-time="2026-10-07 04:28:30Z" duration="90.884669" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3470" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2004" result="Failed" site="Child" start-time="2026-10-07 04:26:59Z" end-time="2026-10-07 04:28:30Z" duration="90.876562" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1995" name="LocalReplayTests" fullname="TumbangPreso.PlayTests.LocalReplayTests" classname="TumbangPreso.PlayTests.LocalReplayTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-07 04:26:59Z" end-time="2026-10-07 04:27:41Z" duration="41.756586" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2000" name="HeroReplayKeepsWorldFieldsAndBothSidesOfARoundBoundary" fullname="TumbangPreso.PlayTests.LocalReplayTests.HeroReplayKeepsWorldFieldsAndBothSidesOfARoundBoundary" methodname="HeroReplayKeepsWorldFieldsAndBothSidesOfARoundBoundary" classname="TumbangPreso.PlayTests.LocalReplayTests" runstate="Runnable" seed="307296184" result="Passed" start-time="2026-10-07 04:26:59Z" end-time="2026-10-07 04:27:39Z" duration="40.294292" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 2 begins, taya is seat 1
+[Slice] match over. scores: 80 / 60 / 0 / 0. seat 0 wins
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+]]></output>
+            </test-case>
+            <test-case id="1998" name="RetainedNativeCustomRecordingCanBeViewedAndScrubbedThroughActualControls" fullname="TumbangPreso.PlayTests.LocalReplayTests.RetainedNativeCustomRecordingCanBeViewedAndScrubbedThroughActualControls" methodname="RetainedNativeCustomRecordingCanBeViewedAndScrubbedThroughActualControls" classname="TumbangPreso.PlayTests.LocalReplayTests" runstate="Runnable" seed="1332337620" result="Failed" start-time="2026-10-07 04:27:39Z" end-time="2026-10-07 04:27:41Z" duration="1.451865" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  local-replay-toolbar1080/LocalReplayControls/ReplayToolbar/CameraHelp clips its content.
+  Expected: less than or equal to 37.0f
+  But was:  41.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpUiCapture+<Capture>d__6.MoveNext () [0x0094c] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\TumpUiCapture.cs:222
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2754" name="ReplayArchiveRecoveryTests" fullname="TumbangPreso.PlayTests.ReplayArchiveRecoveryTests" classname="TumbangPreso.PlayTests.ReplayArchiveRecoveryTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-07 04:27:41Z" end-time="2026-10-07 04:28:30Z" duration="48.994203" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2757" name="DisabledArchiveDoesNotRecordEvenWhenRebound" fullname="TumbangPreso.PlayTests.ReplayArchiveRecoveryTests.DisabledArchiveDoesNotRecordEvenWhenRebound" methodname="DisabledArchiveDoesNotRecordEvenWhenRebound" classname="TumbangPreso.PlayTests.ReplayArchiveRecoveryTests" runstate="Runnable" seed="1746881619" result="Passed" start-time="2026-10-07 04:27:41Z" end-time="2026-10-07 04:27:55Z" duration="13.860267" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="2755" name="ReenabledArchiveRetainsANewActualCatch" fullname="TumbangPreso.PlayTests.ReplayArchiveRecoveryTests.ReenabledArchiveRetainsANewActualCatch" methodname="ReenabledArchiveRetainsANewActualCatch" classname="TumbangPreso.PlayTests.ReplayArchiveRecoveryTests" runstate="Runnable" seed="779363667" result="Passed" start-time="2026-10-07 04:27:55Z" end-time="2026-10-07 04:28:12Z" duration="17.576736" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Could not find a part of the path "C:\Users\Matthew\AppData\LocalLow\BH Studios Validation\TumpWorker-qa-a-be075dcdfa07\profiles\5ea766ec85930e6cc20f41616fe43942359d92bf0e02688d9e4b12caa9ef0045\Replays\TUMP-20261007-042808-620dcbfc08bf4ce7971bfa6078027835\000000.tps.cbbcbc014512464f81c1f5d18dd7be89.tmp"
+]]></output>
+            </test-case>
+            <test-case id="2756" name="UninterruptedArchiveStillRetainsANewActualCatch" fullname="TumbangPreso.PlayTests.ReplayArchiveRecoveryTests.UninterruptedArchiveStillRetainsANewActualCatch" methodname="UninterruptedArchiveStillRetainsANewActualCatch" classname="TumbangPreso.PlayTests.ReplayArchiveRecoveryTests" runstate="Runnable" seed="153004882" result="Passed" start-time="2026-10-07 04:28:12Z" end-time="2026-10-07 04:28:30Z" duration="17.555440" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Could not find a part of the path "C:\Users\Matthew\AppData\LocalLow\BH Studios Validation\TumpWorker-qa-a-be075dcdfa07\profiles\5ea766ec85930e6cc20f41616fe43942359d92bf0e02688d9e4b12caa9ef0045\Replays\TUMP-20261007-042825-209ac76ee88345398174dd4f18bb399f\000000.tps.4befcbc6f50d47c1ab80cdf5e0975851.tmp"
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,60 @@
+# Local match replays
+
+The owner's October 7 request is a saved, explorable match rather than a fixed
+camera movie or a three-highlight shortlist. Standard and Custom matches use
+the same local recording path. Career reward eligibility does not control saves.
+
+Open **Menu → Replays** to browse recordings. The same screen displays the save
+folder, opens it in the operating system, and accepts another absolute folder
+path. Changing the destination affects future recordings and the folder being
+browsed; it does not move or delete footage already saved elsewhere. The default
+is `Replays` inside the current local profile directory. Named validation profiles
+have separate destinations and preferences.
+
+The viewer provides a seek bar, pause/play, five-second backward/forward jumps,
+0.25×–4× speed, free camera and P1–P4 follow. Right mouse steers the camera; WASD
+flies, Q/E changes height, and Shift speeds movement. Space toggles playback,
+arrow keys seek, H hides/shows the interface, and Escape returns to Home. Hide UI
+for clean gameplay footage captured with the owner's preferred video recorder.
+Replay data itself is not an MP4 export.
+
+## Data and lifetime
+
+`LocalReplayRecorder` consumes the existing actual pose/world history. It detaches
+three-second segments on the main thread, then compresses and writes managed
+values on one background task chain. It keeps the existing bounded pose ring,
+with at most two outstanding writes. It does not retain a whole match in RAM or
+resimulate inputs. The viewer retains one segment and one pending disk read.
+
+Each `TUMP-<date>-<unique-id>` folder contains `manifest.json` and numbered `.tps`
+segments. A segment is committed atomically before its manifest entry. SHA-256,
+identity/window validation, bounded decoding and a local-only short-tail decoder
+prevent damaged data from becoming plausible footage. The existing network
+highlight decoder and wire version remain unchanged.
+
+The manifest preserves match identity, map, mode, custom rules, time offsets and
+rounds. Only active gameplay is on the replay timeline; loading, ready countdowns
+and intermissions are not video recordings. A completed capture is distinguished
+from an interrupted or incomplete one. Recording failure never awards a result
+or silently labels missing footage as a complete match. Changing scenes flushes
+the final available segment. A process crash can leave the most recent uncommitted
+segment absent, while earlier committed segments remain browseable.
+
+Playback loads map geometry through a replay-only `MatchInstaller` route. It
+creates no live players, bots, match runner or score/reward flow. Recorded render
+copies, lighting, fields, props and cues are drawn at the chosen replay time.
+Current compatible game art is required; changed or missing recorded art fails
+with an explanation. Keep the tournament build alongside its replay folders
+when preserving footage across future map or character revisions.
+
+## Acceptance
+
+Native storage, natural short Custom capture, two-round Hero field/seek,
+all-nine-hero/familiar catalog binding, same-menu folder changes, actual viewer
+controls, 1080p/720p UI fit and continuous-segment audio checks pass. Compilation
+is separate from input/device, full-effect fidelity and packaged acceptance.
+Evidence and any reproduced failures belong in the dated laptop report, not in
+an assertion that the entire game is tournament ready. Real peer recordings, full effect/prop transitions, dynamic map scenery timing,
+long-session performance and physical viewer controls remain separate acceptance.
+The current viewer reconstructs recorded gameplay and supported effects; ambient
+scenery is supplied by the compatible map, not a full saved map simulation.

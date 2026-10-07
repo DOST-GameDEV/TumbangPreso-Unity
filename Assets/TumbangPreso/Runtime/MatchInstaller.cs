@@ -431,6 +431,13 @@ namespace TumbangPreso
 
         private void Start()
         {
+            if(CameraSystem.LocalReplayPlayback.Active)
+            {
+                CameraSystem.LocalReplayPlayback.PrepareCourt(transform);
+                _installed=true;
+                enabled=false;
+                return;
+            }
             if (PreviewOnly)
             {
                 enabled = false;

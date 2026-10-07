@@ -34,7 +34,11 @@ namespace TumbangPreso.CameraSystem
         public RecordedFieldFrame[] FieldFrames=Array.Empty<RecordedFieldFrame>();
         public RecordedWorldCue[] Sounds=Array.Empty<RecordedWorldCue>();
         public float Duration=>End-Start;
-        public byte[] Encode()
+        public byte[] Encode()=>Encode(false);
+        // A final local segment can be shorter than a highlight. The network
+        // decoder keeps its original minimum and transport contract unchanged.
+        public byte[] EncodeLocal()=>Encode(true);
+        private byte[] Encode(bool local)
         {
             using var raw=new MemoryStream();using(var writer=new BinaryWriter(raw,Encoding.UTF8,true))
             {
@@ -87,10 +91,14 @@ namespace TumbangPreso.CameraSystem
             {raw.Position=0;raw.CopyTo(deflate);}
             if(packed.Length>ByteLimit)throw new InvalidDataException("Recorded clip exceeds its transport budget");
             var result=packed.ToArray();
-            if(!TryDecode(result,out _,out string error))throw new InvalidDataException(error);
+            if(!TryDecode(result,local,out _,out string error))throw new InvalidDataException(error);
             return result;
         }
         public static bool TryDecode(byte[] bytes,out RecordedMatchClip clip,out string error)
+            =>TryDecode(bytes,false,out clip,out error);
+        public static bool TryDecodeLocal(byte[] bytes,out RecordedMatchClip clip,out string error)
+            =>TryDecode(bytes,true,out clip,out error);
+        private static bool TryDecode(byte[] bytes,bool local,out RecordedMatchClip clip,out string error)
         {
             clip=null;error=null;
             if(bytes==null||bytes.Length<8||bytes.Length>ByteLimit){error="Invalid clip byte length";return false;}
@@ -111,7 +119,7 @@ namespace TumbangPreso.CameraSystem
                 result.Start=reader.ReadSingle();result.End=reader.ReadSingle();result.Contact=reader.ReadSingle();
                 if(result.MatchId<=0||result.Id<=0||result.Round<1||result.Round>64||result.Actor<0||result.Actor>=4||result.Subject< -1||result.Subject>=4
                     ||!Enum.IsDefined(typeof(GameMode),result.Mode)||!Finite(result.Start)||!Finite(result.End)||!Finite(result.Contact)
-                    ||result.Duration<.5f||result.Duration>8.1f||result.Contact<result.Start||result.Contact>result.End)throw new InvalidDataException("Invalid clip identity/window");
+                    ||result.Duration<(local?.00001f:.5f)||result.Duration>8.1f||result.Contact<result.Start||result.Contact>result.End)throw new InvalidDataException("Invalid clip identity/window");
                 int count=Count(reader,1,13);result.Objects=new RecordedObjectTrack[count];
                 int totalSamples=0;
                 for(int i=0;i<count;i++)

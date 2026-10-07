@@ -42,17 +42,21 @@ namespace TumbangPreso.CameraSystem
         private long _match,_sequence;
         private int _round;
         private float _unsafeAt=-100,_propsScanAt;
+        private LocalReplayRecorder _local;
+        public string SessionCaptureError { get; private set; }
         public IReadOnlyList<Retained> Clips=>_clips;
         public event Action<Retained> RetainedClip;
         public string LastSkip {get;private set;}
         public void Bind(MatchPoseHistory history)
         {
+            _local ??= new LocalReplayRecorder(this);
             if(_history!=null)_history.Sampled-=Sample;
             _history=history;if(_history!=null&&isActiveAndEnabled)_history.Sampled+=Sample;
         }
         private void OnEnable(){Bind(_history);MatchFlair.Presented+=Moment;AudioDirector.WorldCuePlayed+=RecordSound;}
         private void OnDisable()
         {
+            _local?.Finish(false);
             MatchFlair.Presented-=Moment;AudioDirector.WorldCuePlayed-=RecordSound;
             // Keep the selected history owner for recovery, but consume no samples
             // while disabled. A new capture window must not bridge the missing time.
@@ -61,7 +65,7 @@ namespace TumbangPreso.CameraSystem
             _sounds.Clear();_fields.Clear();_fieldIds.Clear();_fieldSequence=0;
             _match=0;_round=0;_unsafeAt=-100;_propsScanAt=0;
         }
-        private void Update()=>CheckIdentity();
+        private void Update(){_local?.Tick();CheckIdentity();}
         private void CheckIdentity()
         {
             var match=GameServices.Match;
@@ -72,7 +76,7 @@ namespace TumbangPreso.CameraSystem
         }
         private void RecordSound(string id,Vector3 position,float pitch,float gain)
         {
-            if(!NetAuthority.ShouldResolve()||PresentationClock.Held||GameServices.Round?.RoundActive!=true)return;
+            if(PresentationClock.Held||GameServices.Round?.RoundActive!=true)return;
             float now=Time.time;_sounds.RemoveAll(c=>c.Time<now-8);
             if(_sounds.Count>=RecordedMatchClip.SoundCueLimit)_sounds.RemoveAt(0);
             _sounds.Add(new RecordedWorldCue{Time=now,Id=id,Position=position,Pitch=pitch,Gain=gain});
@@ -80,7 +84,7 @@ namespace TumbangPreso.CameraSystem
         private void Sample(float time)
         {
             CheckIdentity();
-            if(!NetAuthority.ShouldResolve()||_history==null||_match<=0||GameServices.Round==null)return;
+            if(_history==null||_match<=0||GameServices.Round==null)return;
             if(_props.Count==0||time>=_propsScanAt){_propsScanAt=time+.2f;BindProps();}
             foreach(var prop in _props)if(prop.Source!=null)prop.Track.Record(time);
             _fields.Add(CaptureFields(time));if(_fields.Count>MatchPoseHistory.Samples)_fields.RemoveAt(0);
@@ -98,6 +102,40 @@ namespace TumbangPreso.CameraSystem
                 var pending=_pending[i];if(time<pending.End){i++;continue;}
                 _pending.RemoveAt(i);Retain(pending);
             }
+            _local?.Sample(time);
+        }
+        public bool TryCaptureSession(float start,float end,long sequence,out RecordedMatchClip clip,out string error)
+        {
+            clip=null;error=null;
+            if(_unsafeAt>=start)error="The recorded world changed within this segment.";
+            var objects=new List<RecordedObjectTrack>(13);
+            var round=GameServices.Round;
+            for(int seat=0;error==null&&seat<4;seat++)
+            {
+                var track=_history?.ForSeat(seat);var actor=round?.PlayerAt(seat);
+                var pose=track?.Retain(start,end);
+                if(actor==null||pose==null){error="Player pose history is incomplete.";break;}
+                objects.Add(new RecordedObjectTrack{Kind=RecordedObjectKind.Player,Seat=seat,Skin=actor.CharacterIndex,
+                    Person=Roster.PersonIdAt(actor.Mode,actor.CharacterIndex),DisplayName=UI.SeatLabel.Raw(seat),
+                    VisualKey=VisualKey(track.Source),Pose=pose});
+            }
+            foreach(var prop in _props)
+            {
+                if(error!=null)break;
+                var pose=prop.Track.Retain(start,end);
+                if(pose==null){error="Prop pose history is incomplete.";break;}
+                objects.Add(new RecordedObjectTrack{Kind=prop.Kind,Seat=prop.Seat,Skin=prop.Skin,Person=prop.Person,
+                    VisualKey=VisualKey(prop.Track.Source),Pose=pose});
+            }
+            int from=_fields.FindLastIndex(f=>f.Time<=start),to=_fields.FindIndex(f=>f.Time>=end);
+            if(error==null&&(from<0||to<from))error="World history is incomplete.";
+            SessionCaptureError=error;
+            if(error!=null)return false;
+            clip=new RecordedMatchClip{MatchId=_match,Id=sequence,Round=_round,Actor=0,Subject=-1,
+                Mode=UI.SceneFlow.SelectedMode,Map=SceneManager.GetActiveScene().name,Reason="MATCH",
+                Start=start,End=end,Contact=start,Objects=objects.ToArray(),FieldFrames=_fields.GetRange(from,to-from+1).ToArray(),
+                Sounds=_sounds.Where(c=>(sequence==1?c.Time>=start:c.Time>start)&&c.Time<=end).ToArray()};
+            return true;
         }
         public static string VisualKey(GameObject root)
         {

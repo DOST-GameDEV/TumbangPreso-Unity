@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 04:05:37Z" end-time="2026-10-07 04:06:30Z" duration="52.6682806">
+  <test-suite type="TestSuite" id="3472" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="2004" result="Failed" site="Child" start-time="2026-10-07 04:05:37Z" end-time="2026-10-07 04:06:30Z" duration="52.668281" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3464" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2004" result="Failed" site="Child" start-time="2026-10-07 04:05:37Z" end-time="2026-10-07 04:06:30Z" duration="52.655827" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="43472" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3465" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2004" result="Failed" site="Child" start-time="2026-10-07 04:05:37Z" end-time="2026-10-07 04:06:30Z" duration="52.648893" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3468" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2002" result="Failed" site="Child" start-time="2026-10-07 04:05:37Z" end-time="2026-10-07 04:06:30Z" duration="52.642433" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1995" name="LocalReplayTests" fullname="TumbangPreso.PlayTests.LocalReplayTests" classname="TumbangPreso.PlayTests.LocalReplayTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-07 04:05:37Z" end-time="2026-10-07 04:06:30Z" duration="52.616601" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1998" name="ActualShortCustomMatchIsSavedAndCanBeReopenedPausedSeekedAndFollowedWithoutNewGameplay" fullname="TumbangPreso.PlayTests.LocalReplayTests.ActualShortCustomMatchIsSavedAndCanBeReopenedPausedSeekedAndFollowedWithoutNewGameplay" methodname="ActualShortCustomMatchIsSavedAndCanBeReopenedPausedSeekedAndFollowedWithoutNewGameplay" classname="TumbangPreso.PlayTests.LocalReplayTests" runstate="Runnable" seed="536345164" result="Failed" start-time="2026-10-07 04:05:37Z" end-time="2026-10-07 04:06:30Z" duration="52.458310" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Recorded pose binding changed: Player
+  Expected: null
+  But was:  "Recorded pose binding changed: Player"
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.LocalReplayTests+<ActualShortCustomMatchIsSavedAndCanBeReopenedPausedSeekedAndFollowedWithoutNewGameplay>d__9.MoveNext () [0x0035a] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\LocalReplayTests.cs:111
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] match over. scores: 910 / 0 / 300 / 0. seat 0 wins
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[LocalReplay] Recorded pose binding changed: Player
+]]></output>
+            </test-case>
+            <test-case id="1996" name="DiskRoundTripSupportsCustomMultipleRoundsAndShortTailWithoutChangingWireMinimum" fullname="TumbangPreso.PlayTests.LocalReplayTests.DiskRoundTripSupportsCustomMultipleRoundsAndShortTailWithoutChangingWireMinimum" methodname="DiskRoundTripSupportsCustomMultipleRoundsAndShortTailWithoutChangingWireMinimum" classname="TumbangPreso.PlayTests.LocalReplayTests" runstate="Runnable" seed="1714400454" result="Passed" start-time="2026-10-07 04:06:30Z" end-time="2026-10-07 04:06:30Z" duration="0.084248" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1997" name="InterruptedRecordingRemainsBrowseableAndFolderChangeDoesNotMoveExistingFootage" fullname="TumbangPreso.PlayTests.LocalReplayTests.InterruptedRecordingRemainsBrowseableAndFolderChangeDoesNotMoveExistingFootage" methodname="InterruptedRecordingRemainsBrowseableAndFolderChangeDoesNotMoveExistingFootage" classname="TumbangPreso.PlayTests.LocalReplayTests" runstate="Runnable" seed="1055215869" result="Passed" start-time="2026-10-07 04:06:30Z" end-time="2026-10-07 04:06:30Z" duration="0.063490" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

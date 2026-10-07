@@ -267,3 +267,5 @@ First PC/laptop LAN match: [actual paired baseline evidence](reports/reliability
 Ice diagnostic admission timing: [native setup evidence](reports/reliability-2026-10-03/ice-admission-role/README.md).
 
 Current full managed Core integration: [704-case gate and retained contract failure](reports/reliability-2026-10-03/managed-integration/README.md).
+
+Local match replays, library/folder controls and explorable playback: [method](LOCAL_REPLAYS.md) and [native evidence](reports/laptop-gameplay-2026-10-07/local-replays/README.md).
