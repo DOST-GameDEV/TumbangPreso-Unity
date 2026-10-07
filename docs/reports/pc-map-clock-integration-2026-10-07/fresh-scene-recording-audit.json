@@ -1,0 +1,123 @@
+{
+  "folder": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\local-replay1007\\c937a96dfd92409d9a3769b4dd90b97a\\TUMP-20261007-085638-490134bc386240dc8bfbf8058b3d6bff",
+  "matchId": 639269601986254878,
+  "map": "Eskinita",
+  "completed": true,
+  "custom": true,
+  "warning": "",
+  "segments": [
+    {
+      "file": "000000.scene.json",
+      "frames": 60,
+      "firstPoseTime": 3.4750804901123047,
+      "lastPoseTime": 6.512583255767822,
+      "firstShaderTime": 0.0,
+      "lastShaderTime": 3.0375027656555176,
+      "clockOffsetVariation": 5.960464477539062e-07
+    },
+    {
+      "file": "000001.scene.json",
+      "frames": 60,
+      "firstPoseTime": 6.512583255767822,
+      "lastPoseTime": 9.563407897949219,
+      "firstShaderTime": 3.0375027656555176,
+      "lastShaderTime": 6.088327407836914,
+      "clockOffsetVariation": 9.5367431640625e-07
+    },
+    {
+      "file": "000002.scene.json",
+      "frames": 60,
+      "firstPoseTime": 9.563407897949219,
+      "lastPoseTime": 12.599250793457031,
+      "firstShaderTime": 6.088327407836914,
+      "lastShaderTime": 9.124170303344727,
+      "clockOffsetVariation": 9.5367431640625e-07
+    },
+    {
+      "file": "000003.scene.json",
+      "frames": 60,
+      "firstPoseTime": 12.599250793457031,
+      "lastPoseTime": 15.644061088562012,
+      "firstShaderTime": 9.124170303344727,
+      "lastShaderTime": 12.168980598449707,
+      "clockOffsetVariation": 9.5367431640625e-07
+    },
+    {
+      "file": "000004.scene.json",
+      "frames": 59,
+      "firstPoseTime": 15.644061088562012,
+      "lastPoseTime": 18.646760940551758,
+      "firstShaderTime": 12.168980598449707,
+      "lastShaderTime": 15.171680450439453,
+      "clockOffsetVariation": 1.9073486328125e-06
+    },
+    {
+      "file": "000005.scene.json",
+      "frames": 59,
+      "firstPoseTime": 18.646760940551758,
+      "lastPoseTime": 21.658849716186523,
+      "firstShaderTime": 15.171680450439453,
+      "lastShaderTime": 18.18376922607422,
+      "clockOffsetVariation": 2.86102294921875e-06
+    },
+    {
+      "file": "000006.scene.json",
+      "frames": 59,
+      "firstPoseTime": 21.658849716186523,
+      "lastPoseTime": 24.665346145629883,
+      "firstShaderTime": 18.18376922607422,
+      "lastShaderTime": 21.190265655517578,
+      "clockOffsetVariation": 1.9073486328125e-06
+    },
+    {
+      "file": "000007.scene.json",
+      "frames": 60,
+      "firstPoseTime": 24.665346145629883,
+      "lastPoseTime": 27.702733993530273,
+      "firstShaderTime": 21.190265655517578,
+      "lastShaderTime": 24.22765350341797,
+      "clockOffsetVariation": 1.9073486328125e-06
+    },
+    {
+      "file": "000008.scene.json",
+      "frames": 60,
+      "firstPoseTime": 27.702733993530273,
+      "lastPoseTime": 30.72895622253418,
+      "firstShaderTime": 24.22765350341797,
+      "lastShaderTime": 27.253875732421875,
+      "clockOffsetVariation": 1.9073486328125e-06
+    },
+    {
+      "file": "000009.scene.json",
+      "frames": 54,
+      "firstPoseTime": 30.72895622253418,
+      "lastPoseTime": 33.44697570800781,
+      "firstShaderTime": 27.253875732421875,
+      "lastShaderTime": 29.97189712524414,
+      "clockOffsetVariation": 3.814697265625e-06
+    }
+  ],
+  "files": {
+    "manifest.json": "fc74301afffc4d424670b141eced7d475bd1bb0b6231ea2fc75e2d3fcc2daf89",
+    "000000.tps": "277ccd64c4d6c525a74ae6cfffeba5836e6507b98baef4495ed83f52c16366c4",
+    "000000.scene.json": "f469aabc1091f7a6efbce49cccc2b1def88da4e7ac8182c15d9e7b9c0b2a4ed1",
+    "000001.tps": "bc94c0fd20017d657fd1990c9b65ee4558430d331f94a16d61fde954739d7d46",
+    "000001.scene.json": "fdea49e8f5e6adadb43656206604f1f6cce15623b1f4f549b8befc4f6bdbc501",
+    "000002.tps": "5b5007ecf02807d7ee45dd266e965e579d4aa022da26fd673a0fc4cddbd3b823",
+    "000002.scene.json": "e6f75c8965e22a0af901d5f5b6986d4ee2e0970edbd32b67739ee3bc586c2b29",
+    "000003.tps": "ce7e85975b2cfa5c4516c7d7244341fdd4a09717cdac2b45fad04101b7157a01",
+    "000003.scene.json": "85dfaf32b0083d84607f94afa19c78c57c1e922e197fff855c91095b5cbbf962",
+    "000004.tps": "dfbda2a21ccd72035d97a2eb78ec2bf42eb8009e57a34e610ae3453777a25b96",
+    "000004.scene.json": "a3f77d82bd9794c47c7d83c848550ee8fcd3193dbce4ae386760a1e9a6ae8cac",
+    "000005.tps": "67d8199705e1525c74edfdd7f7ca00fc1a83eda224193871e24fcab34999a50e",
+    "000005.scene.json": "69a933c183d26bf1b2e5b7d9e5f6d4b64d77cfb7336a4900fc259cd73551e078",
+    "000006.tps": "8597e6a144ae071f73fde5fb7ddf8886bb9bd879095efa13683da3f9c350dbf3",
+    "000006.scene.json": "936debdaf5c5a45a550d1a882013323f3ece0ea651964dcb39b23c894e42b5cc",
+    "000007.tps": "90b75cba49c9abdcfb74e6ed9a79dd2144ca78bcf462d3799cdb639d0fbf4111",
+    "000007.scene.json": "5c310275b89ef928dd1de96ab6f6e8be2303a2cf82f1601f8a71aad6ec276a6e",
+    "000008.tps": "3bc1eac5ca8cbc9611901c0e90f5f43025e4d683eed3c83e5d918c082ffe6580",
+    "000008.scene.json": "572810738091946290743147b23b468e8a6f88551191faa66668e2f6af7e7e09",
+    "000009.tps": "82228e8779ff0b46a74ca9a5e0f507004e1506622463f3935f10bf4184f3e149",
+    "000009.scene.json": "79eb157210361275e91fbda4a6cc158058e05301af04963e94b655d68cc63f81"
+  }
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplaySceneState.cs",
+    "nativeRawSha256": "95c79887c9a93d6542378677b6df09477ce0cdc5a9b07cb7b2bfe96c5af23968",
+    "stagedGitSha256": "6fe5a79c0af29fd0eaf4256f3195efb6533cbe43ab5fa22bebbda73de8605147",
+    "normalisedTextMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayStore.cs",
+    "nativeRawSha256": "ae216b2baeb190e204cb0b2de079a6631a4769058ef851fb953dd9bc72d770f3",
+    "stagedGitSha256": "8d54608a66950584b880ce622f4056f9ac2eca00760c3993cf40e1ff588a47b4",
+    "normalisedTextMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/RecordedWorldView.cs",
+    "nativeRawSha256": "4357a2ad86a25193360166e22313286475aca5fb393acdbd2870ffd56651e417",
+    "stagedGitSha256": "96651d9e36dc380da0d44cd0f8476a0f93df72c8b33fe5aab9958ce39ab90584",
+    "normalisedTextMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/RecordedShaderClockTests.cs",
+    "nativeRawSha256": "2b9896d82bb6b44ce4acb9275e2dfc2e4e5b4cf29e26f71c9c290597e88ca8b1",
+    "stagedGitSha256": "a4d296045ef74f04ee522726c366c29acb37afab7bf3918e9de3b3a912b3a54f",
+    "normalisedTextMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/AiDiagnosticProbe.cs",
+    "nativeRawSha256": "bbee98fc9b5b6283694b8dfe198df236db8e4ad1896dce48e68d8daed9ed6c2e",
+    "stagedGitSha256": "0b5d2ede982b2bb711a9d0af2ac30ea5a7a6295aadd8466322f7029b925fa331",
+    "normalisedTextMatches": true
+  }
+]

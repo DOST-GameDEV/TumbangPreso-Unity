@@ -21,8 +21,9 @@
 ### REPLAY-SCENE-FIDELITY-1007: recorded world and clocks
 
 - [x] Integrate checked laptop a39/c533 traffic, crowd, water and shader adapter source; verify43native/source paths and54raw receipts. PC native12of14controls pass with full21363restoration, and both remaining failures are retained. [Integration scope](reports/ai-skill-deliberation-2026-10-07/README.md).
-- [ ] Laptop-owned correction for multi-scene GPU shader time: native_Time.y followsTime.timeSinceLevelLoad rather than absolute clipTime.time in the failing PC case. Qualify recorded clock identity and actual replay pixels after scene changes.
-- [ ] Supply fresh automatic-recording fixture for its complete scene-window check, then qualify wider effects fidelity, performance and current package. The PC runner's missing fixture is not a product failure or pass.
+- [x] Merge checked331ce8356 clock identity correction. Native PC49400passes3 map/disk/natural-recording/independentGPU/pixel controls; all21367inputs/preferences restore. [Evidence](reports/pc-map-clock-integration-2026-10-07/README.md).
+- [x] Supply actual fresh30-second Custom fixture; ten complete scene windows/591finite shader-clock frames and all file hashes verify, native41908 scene reader passes. Original missing-input failure remains retained.
+- [ ] Qualify wider effects fidelity, performance and current package; legacy absent clock data cannot be recreated retroactively.
 
 ### COMBINED-REPLAY-DESKTOP-1007: current Windows replacement
 

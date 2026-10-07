@@ -293,6 +293,7 @@ namespace TumbangPreso.PlayTests
             float elapsed = 0.0f;
             float nextSample = 0.0f;
             int throws = 0;
+            float nextLungeGate = 0;
             var wasFlying = new HashSet<Slipper>();
             var escaped = new HashSet<Slipper>();
             var strayed = new HashSet<CharacterMotor>();
@@ -310,6 +311,27 @@ namespace TumbangPreso.PlayTests
                 float dt = Time.unscaledDeltaTime;
                 elapsed += dt;
                 lunges.Sample(round, GameServices.Match, ++lungeFrame, Time.deltaTime);
+                if (elapsed >= nextLungeGate)
+                {
+                    nextLungeGate = elapsed + .25f;
+                    const System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+                    foreach (var bot in bots)
+                    {
+                        var body = bot.GetComponent<CharacterMotor>(); var verbs = body.GetComponent<CombatVerbs>();
+                        if (!body.IsDefender || verbs == null || verbs.ObservedLungeCharge <= 0) continue;
+                        // Read the planner's chosen actor; never call TagTarget and
+                        // mutate its selection memory from an observer.
+                        var target = (CharacterMotor)typeof(AIController).GetField("_lastTagTarget", hidden).GetValue(bot);
+                        bool? facing = target != null ? (bool)typeof(AIController).GetMethod("Facing", hidden).Invoke(bot,
+                            new object[] { target, AiTuning.EffectiveLungeCone(AIController.ActiveDifficulty) }) : (bool?)null;
+                        bool? reach = target != null ? (bool)typeof(AIController).GetMethod("LungeCanReach", hidden).Invoke(bot,
+                            new object[] { target, verbs.LungeChargeRatio }) : (bool?)null;
+                        bool edge = (bool)typeof(AIController).GetMethod("EdgeLungeClear", hidden).Invoke(bot, new object[] { body.transform.forward });
+                        var held = typeof(AIController).GetField("_lungeHeld", hidden).GetValue(bot);
+                        log.AppendLine($"lunge-gate t={elapsed:F2} plan={bot.Plan} actor={body.PlayerSlot} held={held} target={target?.PlayerSlot} taggable={target?.IsTaggable()} facing={facing} reach={reach} edge={edge} canAct={body.CanAct()} canMove={body.CanMove()} facePoint={body.Intent.FaceAimPoint}/{body.Intent.HasAimPoint} aim={body.Intent.AimPoint} forward={body.transform.forward} at={body.transform.position} velocity={body.Velocity} targetAt={target?.transform.position} targetVelocity={target?.Velocity}");
+                    }
+                }
+
 
                 foreach (var bot in bots)
                 {
