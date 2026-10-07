@@ -50,6 +50,12 @@
     "Assets/TumbangPreso/Runtime/Camera/RecordedSceneryView.cs": "08b11530229d211a8d79182bf0f3c1cadad5f722893ab5a904460cd517bfeb27",
     "Assets/TumbangPreso/Runtime/Camera/RecordedSceneryView.cs.meta": "8c9160ee3c1e21edbebcafb907c0643cbdefd9e0bc126f6c4bce56e12dd63989",
     "Assets/TumbangPreso/Tests/PlayMode/RecordedSceneryTests.cs": "11873c01ad4e9dfaf7c85c058a6129ecbb638db894ae82bf269393c3e273589b",
-    "Assets/TumbangPreso/Tests/PlayMode/RecordedSceneryTests.cs.meta": "08f1d110bdef3bcde69281d5b923fb2a52deff27fc73c9ee7b04ad0c6fa104f9"
+    "Assets/TumbangPreso/Tests/PlayMode/RecordedSceneryTests.cs.meta": "08f1d110bdef3bcde69281d5b923fb2a52deff27fc73c9ee7b04ad0c6fa104f9",
+    "Assets/TumbangPreso/Runtime/Map/ArenaDrone.Recorded.cs": "f3535cf0b76a83aad0e189d27612469b1957cdb00689f05bc47ac07a7341f453"
+  },
+  "checklistCorrection": {
+    "source": "Retained native42 qualified-source.json full input snapshot",
+    "sourceSnapshotSha256": "bbc4dac7ef2bcd463d70991d3690fb2d6664ff65a664bce639e5814e28f1a890",
+    "reason": "The report filter included Scenery names and ArenaDrone.cs but omitted ArenaDrone.Recorded.cs; no tested input changed."
   }
 }
