@@ -103,6 +103,15 @@ mark completion merely to stop a turn or because context is nearly full.
 
 ## Current test and hitch directive
 
+October7 owner specifically requested one GPT-6 Astra xhigh subagent in the PC
+chat to review and refine both work streams. This authorizes that reviewer only;
+it begins read-only, confirms concrete file ownership before implementation and
+shares the PC's single heavy-job slot. No new unrelated chats or paid services.
+After current assigned fixes, prioritize optimization and loading placement.
+Noticeable random stutters are unacceptable tournament behavior. Measure actual
+frame pacing, first-use work, recording backpressure and continuous replay seams;
+do not trade away authored quality or call short synthetic checks full readiness.
+
 October4 owner override: remove self-created execution barriers. Do not treat
 estimated RAM/admission budgets, fixed free-memory reserves, retry ceilings or
 external execution deadlines as reasons to stop this engineering workflow.
