@@ -1,0 +1,29 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayPlayback.cs",
+    "nativeSourceFile": "native30-source/LocalReplayPlayback.cs",
+    "nativeSha256": "15030aeceffa7eb346036c3ae1e7ab501df29a8431825b7d6826405aa9c658a5",
+    "normalizedGitSha256": "c72b8d9be94443a6031dcee5f3a6fc74db2747dcddd61a3c8e56986679322a60",
+    "normalization": "Replace CRLF with LF only; preserve all other bytes",
+    "crlfCount": 293,
+    "bareLfCount": 69
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/LocalReplayStreamingTests.cs",
+    "nativeSourceFile": "native30-source/LocalReplayStreamingTests.cs",
+    "nativeSha256": "7001d9e26cd825f91614793da10188a1bfb51afef38724b2d6d90a9ba0c97405",
+    "normalizedGitSha256": "7001d9e26cd825f91614793da10188a1bfb51afef38724b2d6d90a9ba0c97405",
+    "normalization": "Replace CRLF with LF only; preserve all other bytes",
+    "crlfCount": 0,
+    "bareLfCount": 89
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/LocalReplayStreamingTests.cs.meta",
+    "nativeSourceFile": "native30-source/LocalReplayStreamingTests.cs.meta",
+    "nativeSha256": "d0c1129848a58179c6f6e4395352d1c5a4bb06c2d653e2ef94b81422205d4a77",
+    "normalizedGitSha256": "d0c1129848a58179c6f6e4395352d1c5a4bb06c2d653e2ef94b81422205d4a77",
+    "normalization": "Replace CRLF with LF only; preserve all other bytes",
+    "crlfCount": 0,
+    "bareLfCount": 2
+  }
+]
