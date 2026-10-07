@@ -483,18 +483,12 @@ namespace TumbangPreso.Visual
                 return;
             }
 
-            // Paete's thin branch palm is not the original human hand box for
-            // which HandTopLift was authored. Use its actual distal surface;
-            // keep the approved carry placement of all other models unchanged.
-            var paete = RosterBook.Load()?.FindPersonArt("paete");
-            bool branchPalm = SourceModel != null && paete != null && SourceModel == paete.Model;
-            if (!PalmCentre(skinned, bone, out Vector3 palm, branchPalm)) return;
-
-            // The shoe rests ON the hand. See HandTopLift.
-            if (!branchPalm) palm.y += HandTopLift;
-            // One centimetre of world-space clearance over the irregular twig
-            // surface avoids small intersections as the branch hand rotates.
-            else palm.y += .01f / Mathf.Max(.001f, skinned.bones[bone].TransformVector(Vector3.up).magnitude);
+            // Every current rig has a different hand thickness and some have
+            // separated fingers. Fit the support to actual weighted triangles,
+            // not a height copied from an older human model.
+            if (!PalmCentre(skinned, bone, out Vector3 palm)) return;
+            if (!PalmSurface(skinned, bone, palm, out palm)) return;
+            palm.y += .003f / Mathf.Max(.001f, skinned.bones[bone].TransformVector(Vector3.up).magnitude);
 
             var anchorGo = new GameObject("HandAnchor");
             anchorGo.transform.SetParent(skinned.bones[bone], false);
@@ -602,6 +596,56 @@ namespace TumbangPreso.Visual
             }
 
             return true;
+        }
+
+        private static bool PalmSurface(SkinnedMeshRenderer skin, int bone, Vector3 target, out Vector3 surface)
+        {
+            var mesh = skin.sharedMesh; var vertices = mesh.vertices;
+            var weights = mesh.boneWeights; var triangles = mesh.triangles;
+            var local = new Vector3[vertices.Length]; var valid = new bool[vertices.Length];
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                var w = weights[i];
+                float influence = (w.boneIndex0 == bone ? w.weight0 : 0) + (w.boneIndex1 == bone ? w.weight1 : 0)
+                    + (w.boneIndex2 == bone ? w.weight2 : 0) + (w.boneIndex3 == bone ? w.weight3 : 0);
+                valid[i] = influence >= .5f;
+                local[i] = mesh.bindposes[bone].MultiplyPoint3x4(vertices[i]);
+            }
+            surface = target; float nearest = float.PositiveInfinity; bool found = false;
+            for (int i = 0; i < triangles.Length; i += 3)
+            {
+                int ia = triangles[i], ib = triangles[i + 1], ic = triangles[i + 2];
+                if (!valid[ia] || !valid[ib] || !valid[ic]) continue;
+                Vector3 a = local[ia], b = local[ib], c = local[ic];
+                float den = (b.z-c.z)*(a.x-c.x)+(c.x-b.x)*(a.z-c.z);
+                if (Mathf.Abs(den) < .00000001f) continue;
+                float u = ((b.z-c.z)*(target.x-c.x)+(c.x-b.x)*(target.z-c.z))/den;
+                float v = ((c.z-a.z)*(target.x-c.x)+(a.x-c.x)*(target.z-c.z))/den;
+                Vector3 hit;
+                if (u >= 0 && v >= 0 && u+v <= 1) hit = u*a+v*b+(1-u-v)*c;
+                else
+                {
+                    hit = PalmEdge(a,b,target);
+                    var bc = PalmEdge(b,c,target); var ca = PalmEdge(c,a,target);
+                    if (PalmDistance(bc,target) < PalmDistance(hit,target)) hit = bc;
+                    if (PalmDistance(ca,target) < PalmDistance(hit,target)) hit = ca;
+                }
+                float distance = PalmDistance(hit,target);
+                if (distance > nearest + .00000001f) continue;
+                if (Mathf.Abs(distance-nearest) <= .00000001f && found && hit.y <= surface.y) continue;
+                nearest = distance; surface = hit; found = true;
+            }
+            return found;
+        }
+
+        private static float PalmDistance(Vector3 a, Vector3 b)
+            => (a.x-b.x)*(a.x-b.x)+(a.z-b.z)*(a.z-b.z);
+
+        private static Vector3 PalmEdge(Vector3 a, Vector3 b, Vector3 target)
+        {
+            var d = b-a; float length = d.x*d.x+d.z*d.z;
+            float t = length > .00000001f ? Mathf.Clamp01(((target.x-a.x)*d.x+(target.z-a.z)*d.z)/length) : 0;
+            return Vector3.Lerp(a,b,t);
         }
 
         /// <summary>

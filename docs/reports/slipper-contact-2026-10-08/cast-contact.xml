@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 16:04:25Z" end-time="2026-10-07 16:04:30Z" duration="4.8066086">
+  <test-suite type="TestSuite" id="3619" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2120" result="Failed" site="Child" start-time="2026-10-07 16:04:25Z" end-time="2026-10-07 16:04:30Z" duration="4.806609" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3611" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2120" result="Failed" site="Child" start-time="2026-10-07 16:04:25Z" end-time="2026-10-07 16:04:30Z" duration="4.767819" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="50048" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3612" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2120" result="Failed" site="Child" start-time="2026-10-07 16:04:25Z" end-time="2026-10-07 16:04:30Z" duration="4.738444" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3615" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2118" result="Failed" site="Child" start-time="2026-10-07 16:04:25Z" end-time="2026-10-07 16:04:30Z" duration="4.708741" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="3149" name="SlipperContactTests" fullname="TumbangPreso.PlayTests.SlipperContactTests" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-07 16:04:25Z" end-time="2026-10-07 16:04:30Z" duration="4.526423" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="3153" name="AcceptedThrowShowsTheActualCarriedShoe" fullname="TumbangPreso.PlayTests.SlipperContactTests.AcceptedThrowShowsTheActualCarriedShoe" methodname="AcceptedThrowShowsTheActualCarriedShoe" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" seed="1500940972" result="Failed" start-time="2026-10-07 16:04:25Z" end-time="2026-10-07 16:04:27Z" duration="1.361765" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  bayan must be actually charging
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SlipperContactTests+<AcceptedThrowShowsTheActualCarriedShoe>d__10.MoveNext () [0x00243] in /workspace/scratch/0ed9da4aed7f/TumbangPreso-Unity/Assets/TumbangPreso/Tests/PlayMode/SlipperContactTests.cs:181
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="3154" name="AllUltimateTimelinesRetainTheirFittedSlipper" fullname="TumbangPreso.PlayTests.SlipperContactTests.AllUltimateTimelinesRetainTheirFittedSlipper" methodname="AllUltimateTimelinesRetainTheirFittedSlipper" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" seed="129571690" result="Passed" start-time="2026-10-07 16:04:27Z" end-time="2026-10-07 16:04:30Z" duration="3.150633" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Can not play a disabled audio source
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-Z80puu/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -610,6 +610,21 @@ namespace TumbangPreso
             }
         }
 
+        /// <summary>Fit a render-copy surface to its hand without sampling a stale live carry pose.</summary>
+        public void FitCarriedSurface(Transform source, Transform hand, Transform copy)
+        {
+            // A cast/replay may begin before Carrier.LateUpdate, or while the
+            // live shoe is stowed. Reconstruct the grip from mesh-relative data.
+            Quaternion correction = hand.rotation * CarryRotation * Quaternion.Inverse(transform.rotation);
+            float support = CarrySupportExtent(Quaternion.Inverse(correction) * hand.up);
+            Vector3 centre = transform.position + DrawnCentreOffset;
+            Vector3 fitted = hand.position + hand.up * support + correction * (source.position - centre);
+            copy.localPosition = hand.InverseTransformPoint(fitted);
+            copy.localRotation = Quaternion.Inverse(hand.rotation) * correction * source.rotation;
+            Vector3 scale = source.lossyScale, parentScale = hand.lossyScale;
+            copy.localScale = new Vector3(scale.x / parentScale.x, scale.y / parentScale.y, scale.z / parentScale.z);
+        }
+
         public float CarrySupportExtent(Vector3 palmNormal)
         {
             var renderer=GetComponentInChildren<Renderer>();

@@ -139,10 +139,7 @@ namespace TumbangPreso.Visual
                 var mesh = source.GetComponent<MeshFilter>();
                 if (mesh == null || mesh.sharedMesh == null) continue;
                 var go = new GameObject("HeldShoeSurface"); go.transform.SetParent(_heldItem.transform, false);
-                go.transform.localPosition = liveHand.InverseTransformPoint(source.transform.position);
-                go.transform.localRotation = Quaternion.Inverse(liveHand.rotation) * source.transform.rotation;
-                Vector3 scale = source.transform.lossyScale, parentScale = liveHand.lossyScale;
-                go.transform.localScale = new Vector3(scale.x / parentScale.x, scale.y / parentScale.y, scale.z / parentScale.z);
+                held.FitCarriedSurface(source.transform, liveHand, go.transform);
                 go.AddComponent<MeshFilter>().sharedMesh = mesh.sharedMesh;
                 var copy = go.AddComponent<MeshRenderer>(); copy.sharedMaterials = source.sharedMaterials;
                 var properties = new MaterialPropertyBlock(); source.GetPropertyBlock(properties); copy.SetPropertyBlock(properties);

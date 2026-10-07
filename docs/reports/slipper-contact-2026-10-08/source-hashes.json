@@ -1,0 +1,9 @@
+{
+  "base": "1570d5de6598cf112adb8d929facae8f008012b3",
+  "files": {
+    "Assets/TumbangPreso/Runtime/Slipper.cs": "0b620adb885d47d45b9a3f0edda36b99dada75d4c7c7bd5b990c14f2bc6e98c5",
+    "Assets/TumbangPreso/Runtime/Visual/CharacterVisual.cs": "e7ac0ec76d6c0f170f50a473dd101546e0c36dcc20da9dfe9e13a61a3020d84e",
+    "Assets/TumbangPreso/Runtime/Visual/HeroIntroductionScene.cs": "e8f6f223979b9812c4192fd4d891b65af2639c2e120cc11f7631f95b19d0a70d",
+    "Assets/TumbangPreso/Runtime/Camera/CatchReconstruction.cs": "6c16c729f30183b8a84b060fc3f3db8f0ef68f8134ef7c20627283df8ef6bea0"
+  }
+}

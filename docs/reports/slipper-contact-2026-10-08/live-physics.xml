@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 15:22:33Z" end-time="2026-10-07 15:25:19Z" duration="165.948538">
+  <test-suite type="TestSuite" id="3617" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2118" result="Passed" start-time="2026-10-07 15:22:33Z" end-time="2026-10-07 15:25:19Z" duration="165.948538" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3609" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2118" result="Passed" start-time="2026-10-07 15:22:33Z" end-time="2026-10-07 15:25:19Z" duration="165.918931" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="44690" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3610" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2118" result="Passed" start-time="2026-10-07 15:22:33Z" end-time="2026-10-07 15:25:19Z" duration="165.897845" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3613" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2116" result="Passed" start-time="2026-10-07 15:22:33Z" end-time="2026-10-07 15:25:19Z" duration="165.878987" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="3149" name="SlipperContactTests" fullname="TumbangPreso.PlayTests.SlipperContactTests" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-07 15:22:33Z" end-time="2026-10-07 15:25:19Z" duration="165.716448" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="3151" name="ClassicCarriesThroughLocomotionAndEveryEmote" fullname="TumbangPreso.PlayTests.SlipperContactTests.ClassicCarriesThroughLocomotionAndEveryEmote" methodname="ClassicCarriesThroughLocomotionAndEveryEmote" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" seed="1242240151" result="Passed" start-time="2026-10-07 15:22:33Z" end-time="2026-10-07 15:24:31Z" duration="117.775101" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="600000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="3152" name="HeroesCarryThroughLocomotionAndEveryEmote" fullname="TumbangPreso.PlayTests.SlipperContactTests.HeroesCarryThroughLocomotionAndEveryEmote" methodname="HeroesCarryThroughLocomotionAndEveryEmote" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" seed="509098285" result="Passed" start-time="2026-10-07 15:24:31Z" end-time="2026-10-07 15:25:19Z" duration="47.926488" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="600000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-Z80puu/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

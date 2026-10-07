@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 15:20:06Z" end-time="2026-10-07 15:20:17Z" duration="11.2261396">
+  <test-suite type="TestSuite" id="3617" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2118" result="Failed" site="Child" start-time="2026-10-07 15:20:06Z" end-time="2026-10-07 15:20:17Z" duration="11.226140" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3609" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2118" result="Failed" site="Child" start-time="2026-10-07 15:20:06Z" end-time="2026-10-07 15:20:17Z" duration="11.200634" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="44140" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3610" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2118" result="Failed" site="Child" start-time="2026-10-07 15:20:06Z" end-time="2026-10-07 15:20:17Z" duration="11.181635" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3613" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2116" result="Failed" site="Child" start-time="2026-10-07 15:20:06Z" end-time="2026-10-07 15:20:17Z" duration="11.162232" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="3149" name="SlipperContactTests" fullname="TumbangPreso.PlayTests.SlipperContactTests" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-07 15:20:06Z" end-time="2026-10-07 15:20:17Z" duration="11.018235" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="3151" name="ClassicCarriesThroughLocomotionAndEveryEmote" fullname="TumbangPreso.PlayTests.SlipperContactTests.ClassicCarriesThroughLocomotionAndEveryEmote" methodname="ClassicCarriesThroughLocomotionAndEveryEmote" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" seed="374733903" result="Failed" start-time="2026-10-07 15:20:06Z" end-time="2026-10-07 15:20:14Z" duration="7.937489" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="600000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  cheska run did not move
+sean walk did not move
+zack walk did not move
+nemu walk did not move
+phaister walk did not move
+rafi run did not move
+amihan run did not move
+  Expected: <empty>
+  But was:  < "cheska run did not move", "sean walk did not move", "zack walk did not move", "nemu walk did not move", "phaister walk did not move", "rafi run did not move", "amihan run did not move" >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SlipperContactTests+<LiveMotion>d__8.MoveNext () [0x007c8] in /workspace/scratch/0ed9da4aed7f/TumbangPreso-Unity/Assets/TumbangPreso/Tests/PlayMode/SlipperContactTests.cs:143
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="3152" name="HeroesCarryThroughLocomotionAndEveryEmote" fullname="TumbangPreso.PlayTests.SlipperContactTests.HeroesCarryThroughLocomotionAndEveryEmote" methodname="HeroesCarryThroughLocomotionAndEveryEmote" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" seed="1719631978" result="Failed" start-time="2026-10-07 15:20:14Z" end-time="2026-10-07 15:20:17Z" duration="3.065928" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="600000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  dante walk did not move
+dante run did not move
+cheska walk did not move
+cheska run did not move
+zack run did not move
+nemu walk did not move
+nemu run did not move
+phaister walk did not move
+  Expected: <empty>
+  But was:  < "dante walk did not move", "dante run did not move", "cheska walk did not move", "cheska run did not move", "zack run did not move", "nemu walk did not move", "nemu run did not move", "phaister walk did not move" >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SlipperContactTests+<LiveMotion>d__8.MoveNext () [0x007c8] in /workspace/scratch/0ed9da4aed7f/TumbangPreso-Unity/Assets/TumbangPreso/Tests/PlayMode/SlipperContactTests.cs:143
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-Z80puu/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
