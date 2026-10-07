@@ -223,8 +223,12 @@ namespace TumbangPreso
             }
             else
             {
-                eye = Vector3.Lerp(eye, _position, handoff); rotation = Quaternion.Slerp(rotation, _rotation, handoff);
-                fov = Mathf.Lerp(fov, _fov, handoff);
+                // Finish the camera path before the existing rig ownership return.
+                // Orbit the look target instead of crossing through it while
+                // turning away from the cast toward an opposite-facing wide shot.
+                float viewProgress = Mathf.SmoothStep(0, 1, Mathf.Clamp01(handoff / .7f));
+                ReturnDirectionView(eye, focus, viewProgress, out eye, out rotation);
+                fov = Mathf.Lerp(fov, _fov, viewProgress);
             }
             if (handoff >= .7f && MayReturnToGameplay()) { _returningToGameplay = true; _rig.SetActive(true); }
             if (!motion) { eye = _position; rotation = _rotation; fov = _fov; }
@@ -240,6 +244,38 @@ namespace TumbangPreso
             _ink.color = new Color(UI.Hub.HubStyle.Ink.r, UI.Hub.HubStyle.Ink.g, UI.Hub.HubStyle.Ink.b, ink);
             _captionGroup.alpha = (1 - ink) * (1 - handoff);
             Caption(reduced ? (age >= _direction.Spotlight ? Core.MatchRules.DefenderSlotFor(1) : -1) : beat, map);
+        }
+
+        private void ReturnDirectionView(Vector3 portraitEye, Vector3 portraitFocus, float progress,
+            out Vector3 eye, out Quaternion rotation)
+        {
+            if (progress >= 1) { eye = _position; rotation = _rotation; return; }
+            Vector3 returningForward = _rotation * Vector3.forward;
+            Vector3 returningFocus = _position + returningForward
+                * Mathf.Max(2, Vector3.Dot(_centre - _position, returningForward));
+            Vector3 from = portraitEye - portraitFocus, to = _position - returningFocus;
+            float fromRadius = new Vector2(from.x, from.z).magnitude;
+            float toRadius = new Vector2(to.x, to.z).magnitude;
+            float fromYaw = Mathf.Atan2(from.x, from.z) * Mathf.Rad2Deg;
+            float toYaw = Mathf.Atan2(to.x, to.z) * Mathf.Rad2Deg;
+            if (fromRadius < .001f) fromYaw = toYaw;
+            if (toRadius < .001f) toYaw = fromYaw;
+            // Both offsets are stable for this shot. DeltaAngle gives a stable
+            // shortest arc across the wrap, including its180-degree tie.
+            float yaw = (fromYaw + Mathf.DeltaAngle(fromYaw, toYaw) * progress) * Mathf.Deg2Rad;
+            float radius = Mathf.Lerp(fromRadius, toRadius, progress);
+            Vector3 focus = Vector3.Lerp(portraitFocus, returningFocus, progress);
+            eye = focus + new Vector3(Mathf.Sin(yaw) * radius,
+                Mathf.Lerp(from.y, to.y, progress), Mathf.Cos(yaw) * radius);
+            eye = ClearEye(focus, eye);
+            Vector3 look = focus - eye;
+            if (new Vector2(look.x, look.z).sqrMagnitude < .0001f)
+            {
+                Vector3 horizontal = Vector3.ProjectOnPlane(returningForward, Vector3.up);
+                if (horizontal.sqrMagnitude < .0001f) horizontal = Vector3.forward;
+                look += horizontal.normalized * .01f;
+            }
+            rotation = Quaternion.LookRotation(look, Vector3.up);
         }
 
         private void EstablishDirection(float p, SceneFlow.MapEntry map, out Vector3 eye, out Vector3 focus)

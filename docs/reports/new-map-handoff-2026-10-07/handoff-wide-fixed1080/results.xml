@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 11:10:58Z" end-time="2026-10-07 11:12:02Z" duration="64.5658417">
+  <test-suite type="TestSuite" id="3595" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2099" result="Passed" start-time="2026-10-07 11:10:58Z" end-time="2026-10-07 11:12:02Z" duration="64.565842" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3587" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2099" result="Passed" start-time="2026-10-07 11:10:58Z" end-time="2026-10-07 11:12:02Z" duration="64.535878" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="47708" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3588" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2099" result="Passed" start-time="2026-10-07 11:10:58Z" end-time="2026-10-07 11:12:02Z" duration="64.514771" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3591" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2097" result="Passed" start-time="2026-10-07 11:10:58Z" end-time="2026-10-07 11:12:02Z" duration="64.491606" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2440" name="NewMapOpeningVisualCaptureTests" fullname="TumbangPreso.PlayTests.NewMapOpeningVisualCaptureTests" classname="TumbangPreso.PlayTests.NewMapOpeningVisualCaptureTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-07 11:10:58Z" end-time="2026-10-07 11:12:02Z" duration="64.428729" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2441" name="BridgeHeldOpeningAt1080" fullname="TumbangPreso.PlayTests.NewMapOpeningVisualCaptureTests.BridgeHeldOpeningAt1080" methodname="BridgeHeldOpeningAt1080" classname="TumbangPreso.PlayTests.NewMapOpeningVisualCaptureTests" runstate="Runnable" seed="804149939" result="Passed" start-time="2026-10-07 11:10:58Z" end-time="2026-10-07 11:11:23Z" duration="25.396861" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="2442" name="CoveHeldOpeningAt1080" fullname="TumbangPreso.PlayTests.NewMapOpeningVisualCaptureTests.CoveHeldOpeningAt1080" methodname="CoveHeldOpeningAt1080" classname="TumbangPreso.PlayTests.NewMapOpeningVisualCaptureTests" runstate="Runnable" seed="507084607" result="Passed" start-time="2026-10-07 11:11:23Z" end-time="2026-10-07 11:11:44Z" duration="21.035303" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="2443" name="KantoHeldOpeningAt1080" fullname="TumbangPreso.PlayTests.NewMapOpeningVisualCaptureTests.KantoHeldOpeningAt1080" methodname="KantoHeldOpeningAt1080" classname="TumbangPreso.PlayTests.NewMapOpeningVisualCaptureTests" runstate="Runnable" seed="605567432" result="Passed" start-time="2026-10-07 11:11:44Z" end-time="2026-10-07 11:12:02Z" duration="17.978440" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

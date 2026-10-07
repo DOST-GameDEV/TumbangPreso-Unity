@@ -1,0 +1,22 @@
+frame=0 time=37.369 eye=(-3.75, 2.25, -12.51) forward=(0.29, -0.10, 0.95) fov=55.00 aspect=1.7778 screen=640x480 held=True title=LAGOON COURT detail=ROUND 1  ·  HERO STRIKE
+frame=1 time=37.932 eye=(-3.44, 2.48, -12.51) forward=(0.26, -0.11, 0.96) fov=55.00 aspect=1.7778 screen=640x480 held=True title=LAGOON COURT detail=ROUND 1  ·  HERO STRIKE
+frame=2 time=38.554 eye=(-2.70, 3.01, -12.51) forward=(0.21, -0.16, 0.97) fov=55.00 aspect=1.7778 screen=640x480 held=True title=LAGOON COURT detail=ROUND 1  ·  HERO STRIKE
+frame=3 time=39.150 eye=(-1.72, 3.72, -12.51) forward=(0.13, -0.21, 0.97) fov=55.00 aspect=1.7778 screen=640x480 held=True title=LAGOON COURT detail=ROUND 1  ·  HERO STRIKE
+frame=4 time=39.664 eye=(-0.69, 4.46, -12.51) forward=(0.05, -0.27, 0.96) fov=55.00 aspect=1.7778 screen=640x480 held=True title=LAGOON COURT detail=ROUND 1  ·  HERO STRIKE
+frame=5 time=40.364 eye=(0.28, 5.16, -12.52) forward=(-0.02, -0.32, 0.95) fov=55.00 aspect=1.7778 screen=640x480 held=True title=LAGOON COURT detail=ROUND 1  ·  HERO STRIKE
+frame=6 time=40.956 eye=(1.06, 5.72, -12.52) forward=(-0.08, -0.35, 0.93) fov=55.00 aspect=1.7778 screen=640x480 held=True title=LAGOON COURT detail=ROUND 1  ·  HERO STRIKE
+frame=7 time=41.468 eye=(1.57, 6.10, -12.52) forward=(-0.12, -0.37, 0.92) fov=55.00 aspect=1.7778 screen=640x480 held=True title=LAGOON COURT detail=ROUND 1  ·  HERO STRIKE
+frame=8 time=42.056 eye=(-1.87, 1.83, 2.66) forward=(0.01, -0.06, 1.00) fov=50.00 aspect=1.7778 screen=640x480 held=True title=ISAGANI detail=PLAYER 2  ·  ATTACKER
+frame=9 time=42.738 eye=(-1.87, 1.81, 2.95) forward=(0.01, -0.06, 1.00) fov=50.00 aspect=1.7778 screen=640x480 held=True title=ISAGANI detail=PLAYER 2  ·  ATTACKER
+frame=10 time=43.373 eye=(-1.56, 2.40, 1.88) forward=(0.21, -0.06, 0.98) fov=50.00 aspect=1.7778 screen=640x480 held=True title=ILYAS detail=PLAYER 3  ·  ATTACKER
+frame=11 time=43.862 eye=(-1.49, 2.38, 2.21) forward=(0.21, -0.06, 0.98) fov=50.00 aspect=1.7778 screen=640x480 held=True title=ILYAS detail=PLAYER 3  ·  ATTACKER
+frame=12 time=44.590 eye=(-1.16, 2.37, 2.20) forward=(0.39, -0.06, 0.92) fov=50.00 aspect=1.7778 screen=640x480 held=True title=BASILIO detail=PLAYER 4  ·  ATTACKER
+frame=13 time=45.112 eye=(1.58, 2.39, 4.70) forward=(-0.21, -0.07, -0.98) fov=50.00 aspect=1.7778 screen=640x480 held=True title=BASILIO detail=PLAYER 1  ·  TAYA
+frame=14 time=45.827 eye=(1.51, 2.36, 4.34) forward=(-0.21, -0.07, -0.98) fov=50.00 aspect=1.7778 screen=640x480 held=True title=BASILIO detail=PLAYER 1  ·  TAYA
+frame=15 time=46.318 eye=(1.58, 2.39, 4.70) forward=(-0.21, -0.07, -0.98) fov=46.00 aspect=1.7778 screen=640x480 held=True title=BASILIO detail=PLAYER 1  ·  TAYA
+frame=16 time=46.994 eye=(1.54, 2.37, 4.51) forward=(-0.21, -0.07, -0.98) fov=46.00 aspect=1.7778 screen=640x480 held=True title=BASILIO detail=PLAYER 1  ·  TAYA
+frame=17 time=47.535 eye=(1.51, 2.36, 4.35) forward=(-0.21, -0.07, -0.98) fov=46.00 aspect=1.7778 screen=640x480 held=True title=BASILIO detail=PLAYER 1  ·  TAYA
+frame=18 time=48.141 eye=(1.50, 2.36, 4.32) forward=(-0.21, -0.07, -0.98) fov=46.00 aspect=1.7778 screen=640x480 held=True title=BASILIO detail=PLAYER 1  ·  TAYA
+frame=19 time=48.728 eye=(1.50, 2.36, 4.32) forward=(-0.21, -0.07, -0.98) fov=46.00 aspect=1.7778 screen=640x480 held=True title=BASILIO detail=PLAYER 1  ·  TAYA
+frame=20 time=49.329 eye=(1.08, 4.25, -0.88) forward=(-0.84, -0.14, -0.52) fov=55.09 aspect=1.7778 screen=640x480 held=True title=BASILIO detail=PLAYER 1  ·  TAYA
+frame=21 time=49.918 eye=(0.19, 8.18, -11.74) forward=(-0.34, -0.42, 0.84) fov=74.05 aspect=1.7778 screen=640x480 held=True title=BASILIO detail=PLAYER 1  ·  TAYA

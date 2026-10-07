@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="10" result="Failed(Child)" total="10" passed="7" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 10:54:32Z" end-time="2026-10-07 10:57:50Z" duration="197.6252193">
+  <test-suite type="TestSuite" id="3595" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2099" result="Failed" site="Child" start-time="2026-10-07 10:54:32Z" end-time="2026-10-07 10:57:50Z" duration="197.625219" total="10" passed="7" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3587" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2099" result="Failed" site="Child" start-time="2026-10-07 10:54:32Z" end-time="2026-10-07 10:57:50Z" duration="197.596500" total="10" passed="7" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="50808" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3588" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2099" result="Failed" site="Child" start-time="2026-10-07 10:54:32Z" end-time="2026-10-07 10:57:50Z" duration="197.576577" total="10" passed="7" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3591" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2097" result="Failed" site="Child" start-time="2026-10-07 10:54:32Z" end-time="2026-10-07 10:57:50Z" duration="197.556078" total="10" passed="7" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2429" name="NewMapHandoffVisibilityTests" fullname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests" classname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-10-07 10:54:32Z" end-time="2026-10-07 10:57:50Z" duration="197.497907" total="10" passed="7" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2430" name="BridgeHandoff" fullname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.BridgeHandoff" methodname="BridgeHandoff" classname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests" runstate="Runnable" seed="2023121332" result="Failed" start-time="2026-10-07 10:54:33Z" end-time="2026-10-07 10:55:06Z" duration="33.003551" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The return must keep a player or the can in the frame instead of looking at empty scenery.
+  Expected: 0
+  But was:  96
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NewMapHandoffVisibilityTests+<Flow>d__19.MoveNext () [0x002fa] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\NewMapHandoffVisibilityTests.cs:91
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[NewMapHandoff] map=IlalimNgTulay reduced=False motion=True bots=True frames=237 empty=96 banked=176 maxBank=0.17421
+]]></output>
+            </test-case>
+            <test-case id="2433" name="BridgeHumanRigHandoff" fullname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.BridgeHumanRigHandoff" methodname="BridgeHumanRigHandoff" classname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests" runstate="Runnable" seed="807117732" result="Passed" start-time="2026-10-07 10:55:06Z" end-time="2026-10-07 10:55:24Z" duration="18.809060" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Slice] round 1 begins, taya is seat 0
+[NewMapHandoff] map=IlalimNgTulay reduced=False motion=True bots=False frames=240 empty=0 banked=0 maxBank=0.00332
+]]></output>
+            </test-case>
+            <test-case id="2437" name="BridgeMotionOff" fullname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.BridgeMotionOff" methodname="BridgeMotionOff" classname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests" runstate="Runnable" seed="1254063961" result="Passed" start-time="2026-10-07 10:55:24Z" end-time="2026-10-07 10:55:43Z" duration="18.291721" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[NewMapHandoff] map=IlalimNgTulay reduced=False motion=False bots=True frames=249 empty=0 banked=0 maxBank=0.00000
+]]></output>
+            </test-case>
+            <test-case id="2434" name="BridgeReduced" fullname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.BridgeReduced" methodname="BridgeReduced" classname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests" runstate="Runnable" seed="1114814839" result="Passed" start-time="2026-10-07 10:55:43Z" end-time="2026-10-07 10:56:01Z" duration="18.314436" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[NewMapHandoff] map=IlalimNgTulay reduced=True motion=True bots=True frames=247 empty=0 banked=0 maxBank=0.00000
+]]></output>
+            </test-case>
+            <test-case id="2431" name="CoveHandoff" fullname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.CoveHandoff" methodname="CoveHandoff" classname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests" runstate="Runnable" seed="1367346007" result="Failed" start-time="2026-10-07 10:56:01Z" end-time="2026-10-07 10:56:23Z" duration="21.961991" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The return must keep a player or the can in the frame instead of looking at empty scenery.
+  Expected: 0
+  But was:  109
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NewMapHandoffVisibilityTests+<Flow>d__19.MoveNext () [0x002fa] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\NewMapHandoffVisibilityTests.cs:91
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[NewMapHandoff] map=LagoonCove reduced=False motion=True bots=True frames=280 empty=109 banked=201 maxBank=0.17421
+]]></output>
+            </test-case>
+            <test-case id="2438" name="CoveMotionOff" fullname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.CoveMotionOff" methodname="CoveMotionOff" classname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests" runstate="Runnable" seed="2143213632" result="Passed" start-time="2026-10-07 10:56:23Z" end-time="2026-10-07 10:56:42Z" duration="18.745366" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[NewMapHandoff] map=LagoonCove reduced=False motion=False bots=True frames=287 empty=0 banked=0 maxBank=0.00000
+]]></output>
+            </test-case>
+            <test-case id="2435" name="CoveReduced" fullname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.CoveReduced" methodname="CoveReduced" classname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests" runstate="Runnable" seed="3922562" result="Passed" start-time="2026-10-07 10:56:42Z" end-time="2026-10-07 10:57:00Z" duration="18.731752" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[NewMapHandoff] map=LagoonCove reduced=True motion=True bots=True frames=279 empty=0 banked=0 maxBank=0.00000
+]]></output>
+            </test-case>
+            <test-case id="2432" name="KantoHandoff" fullname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.KantoHandoff" methodname="KantoHandoff" classname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests" runstate="Runnable" seed="1592343347" result="Failed" start-time="2026-10-07 10:57:00Z" end-time="2026-10-07 10:57:18Z" duration="17.776825" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The return must keep a player or the can in the frame instead of looking at empty scenery.
+  Expected: 0
+  But was:  113
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NewMapHandoffVisibilityTests+<Flow>d__19.MoveNext () [0x002fa] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\NewMapHandoffVisibilityTests.cs:91
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[NewMapHandoff] map=Kanto reduced=False motion=True bots=True frames=281 empty=113 banked=205 maxBank=0.17421
+]]></output>
+            </test-case>
+            <test-case id="2439" name="KantoMotionOff" fullname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.KantoMotionOff" methodname="KantoMotionOff" classname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests" runstate="Runnable" seed="1390228226" result="Passed" start-time="2026-10-07 10:57:18Z" end-time="2026-10-07 10:57:34Z" duration="15.915499" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[NewMapHandoff] map=Kanto reduced=False motion=False bots=True frames=287 empty=0 banked=0 maxBank=0.00000
+]]></output>
+            </test-case>
+            <test-case id="2436" name="KantoReduced" fullname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.KantoReduced" methodname="KantoReduced" classname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests" runstate="Runnable" seed="1988940981" result="Passed" start-time="2026-10-07 10:57:34Z" end-time="2026-10-07 10:57:50Z" duration="15.928479" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[NewMapHandoff] map=Kanto reduced=True motion=True bots=True frames=275 empty=0 banked=0 maxBank=0.00000
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
