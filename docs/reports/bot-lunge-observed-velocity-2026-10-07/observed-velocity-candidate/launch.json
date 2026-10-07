@@ -1,0 +1,26 @@
+{
+  "sourceRef": "dd436cc36dcd55a68ef6189628f38fa9d7e559ba",
+  "profile": "pc-humanlike-ai-observed-velocity-candidate1006",
+  "filter": "TumbangPreso.PlayTests.AiLungeObservedVelocityTests;TumbangPreso.PlayTests.AiLungeChargeContinuityTests;TumbangPreso.PlayTests.AiLungeMotorAimTests;TumbangPreso.PlayTests.AiTagCommitmentTests;TumbangPreso.PlayTests.AiLungeChargePowerTests;TumbangPreso.PlayTests.AiLungeObstacleTests;TumbangPreso.PlayTests.AiLungePlanLifetimeTests",
+  "expectedCases": 28,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-humanlike-ai-observed-velocity-candidate1006",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.AiLungeObservedVelocityTests;TumbangPreso.PlayTests.AiLungeChargeContinuityTests;TumbangPreso.PlayTests.AiLungeMotorAimTests;TumbangPreso.PlayTests.AiTagCommitmentTests;TumbangPreso.PlayTests.AiLungeChargePowerTests;TumbangPreso.PlayTests.AiLungeObstacleTests;TumbangPreso.PlayTests.AiLungePlanLifetimeTests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\bot-observed-velocity1007\\observed-velocity-candidate\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\bot-observed-velocity1007\\observed-velocity-candidate\\editor.log"
+  ],
+  "pid": 46708
+}
