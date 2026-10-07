@@ -1,0 +1,26 @@
+{
+  "sourceRef": "aea2774dfc6896a7ddeebc49954a112810fcf188",
+  "profile": "pc-map-direction-merged-map-clock1006",
+  "filter": "TumbangPreso.PlayTests.RecordedShaderClockTests.AuthoredWaterRewindsItsShaderClockAndRestoresLiveTime;TumbangPreso.PlayTests.LocalReplaySceneStateTests.ActualKantoRoadCanBeSavedReloadedSeekedAndRestored;TumbangPreso.PlayTests.LocalReplayTests.ActualShortCustomMatchIsSavedAndCanBeReopenedPausedSeekedAndFollowedWithoutNewGameplay",
+  "expectedCases": 3,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-map-direction-merged-map-clock1006",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.RecordedShaderClockTests.AuthoredWaterRewindsItsShaderClockAndRestoresLiveTime;TumbangPreso.PlayTests.LocalReplaySceneStateTests.ActualKantoRoadCanBeSavedReloadedSeekedAndRestored;TumbangPreso.PlayTests.LocalReplayTests.ActualShortCustomMatchIsSavedAndCanBeReopenedPausedSeekedAndFollowedWithoutNewGameplay",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\replay-integration1007\\merged-map-clock\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\replay-integration1007\\merged-map-clock\\editor.log"
+  ],
+  "pid": 49400
+}

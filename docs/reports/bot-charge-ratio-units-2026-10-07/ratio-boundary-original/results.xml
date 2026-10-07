@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 09:34:54Z" end-time="2026-10-07 09:34:55Z" duration="0.3913657">
+  <test-suite type="TestSuite" id="3558" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2070" result="Failed" site="Child" start-time="2026-10-07 09:34:54Z" end-time="2026-10-07 09:34:55Z" duration="0.391366" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3550" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2070" result="Failed" site="Child" start-time="2026-10-07 09:34:54Z" end-time="2026-10-07 09:34:55Z" duration="0.379660" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="48184" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3551" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2070" result="Failed" site="Child" start-time="2026-10-07 09:34:54Z" end-time="2026-10-07 09:34:55Z" duration="0.377372" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3554" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2068" result="Failed" site="Child" start-time="2026-10-07 09:34:54Z" end-time="2026-10-07 09:34:55Z" duration="0.375495" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1069" name="AiLungeChargeContinuityTests" fullname="TumbangPreso.PlayTests.AiLungeChargeContinuityTests" classname="TumbangPreso.PlayTests.AiLungeChargeContinuityTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-07 09:34:54Z" end-time="2026-10-07 09:34:55Z" duration="0.319873" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1074" name="ReturningToHuntUsesChargeHeldDuringThePlannerGap" fullname="TumbangPreso.PlayTests.AiLungeChargeContinuityTests.ReturningToHuntUsesChargeHeldDuringThePlannerGap" classname="TumbangPreso.PlayTests.AiLungeChargeContinuityTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-07 09:34:54Z" end-time="2026-10-07 09:34:55Z" duration="0.315421" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1070" name="ReturningToHuntUsesChargeHeldDuringThePlannerGap(0.45f,4.4f,False)" fullname="TumbangPreso.PlayTests.AiLungeChargeContinuityTests.ReturningToHuntUsesChargeHeldDuringThePlannerGap(0.45f,4.4f,False)" methodname="ReturningToHuntUsesChargeHeldDuringThePlannerGap" classname="TumbangPreso.PlayTests.AiLungeChargeContinuityTests" runstate="Runnable" seed="1933830968" result="Passed" start-time="2026-10-07 09:34:54Z" end-time="2026-10-07 09:34:55Z" duration="0.174327" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1071" name="ReturningToHuntUsesChargeHeldDuringThePlannerGap(0.45f,3.5f,True)" fullname="TumbangPreso.PlayTests.AiLungeChargeContinuityTests.ReturningToHuntUsesChargeHeldDuringThePlannerGap(0.45f,3.5f,True)" methodname="ReturningToHuntUsesChargeHeldDuringThePlannerGap" classname="TumbangPreso.PlayTests.AiLungeChargeContinuityTests" runstate="Runnable" seed="1392657889" result="Passed" start-time="2026-10-07 09:34:55Z" end-time="2026-10-07 09:34:55Z" duration="0.045125" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1072" name="ReturningToHuntUsesChargeHeldDuringThePlannerGap(1.0f,4.4f,True)" fullname="TumbangPreso.PlayTests.AiLungeChargeContinuityTests.ReturningToHuntUsesChargeHeldDuringThePlannerGap(1.0f,4.4f,True)" methodname="ReturningToHuntUsesChargeHeldDuringThePlannerGap" classname="TumbangPreso.PlayTests.AiLungeChargeContinuityTests" runstate="Runnable" seed="900732057" result="Passed" start-time="2026-10-07 09:34:55Z" end-time="2026-10-07 09:34:55Z" duration="0.038605" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1073" name="ReturningToHuntUsesChargeHeldDuringThePlannerGap(0.25f,1.7f,False)" fullname="TumbangPreso.PlayTests.AiLungeChargeContinuityTests.ReturningToHuntUsesChargeHeldDuringThePlannerGap(0.25f,1.7f,False)" methodname="ReturningToHuntUsesChargeHeldDuringThePlannerGap" classname="TumbangPreso.PlayTests.AiLungeChargeContinuityTests" runstate="Runnable" seed="1307911108" result="Failed" start-time="2026-10-07 09:34:55Z" end-time="2026-10-07 09:34:55Z" duration="0.042426" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The planner used full-power travel before the consumer had accumulated full charge.
+  Expected: 0
+  But was:  0.961538494f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.AiLungeChargeContinuityTests.ReturningToHuntUsesChargeHeldDuringThePlannerGap (System.Single charge, System.Single distance, System.Boolean reachable) [0x00231] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\AiLungeChargeContinuityTests.cs:52
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

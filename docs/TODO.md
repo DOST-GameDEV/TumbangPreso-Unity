@@ -3,6 +3,10 @@
 - [ ] October7 owner: bots must not randomly stare or stop doing anything. Reproduce and fix eligible-player stalls, lost decisions, unfinished aimed inputs and unreachable goals; confirm useful responses to the round and threats across every map.
 - [x] Fix demonstrated competing-power deliberation starvation, stale Crosscurrent aim and interrupted acquired holds. Original failures retained; fourteen current/Skim/ultimate controls plus corrected actual-ramp hold/ownership control pass on identical production AI bytes. [Evidence and limits](reports/ai-skill-deliberation-2026-10-07/README.md).
 - [x] Fix charged pursuit unable to align between digital movement headings. Original20/22degree motor scenarios fail;21actual motor/aim/power/obstruction/lifetime controls pass with all21367inputs/preferences restored. [Evidence](reports/bot-lunge-motor-aim-2026-10-07/README.md).
+- [x] Synchronize planner hold age from the charge accumulated by the normal consumer during other plans. Original3failures retained;24continuity/aim/power/obstacle/lifetime controls pass, all21369inputs/preferences restore. [Evidence](reports/bot-lunge-charge-continuity-2026-10-07/README.md).
+- [x] Correct the subsequent observed-ratio/seconds mistake caught by a nearby half-charge boundary. Original3PASS/1FAIL spends0.961538cooldown early; corrected25controls pass/all21369restore. Old24-green evidence remains limited. [Correction](reports/bot-charge-ratio-units-2026-10-07/README.md).
+- [x] Stop physical lunge reach from reducing a measured retreat velocity by the tier's movement-lead multiplier. Original1FAIL/2PASS;28velocity/charge/aim/obstruction/lifetime controls pass/all21371restore. [Evidence](reports/bot-lunge-observed-velocity-2026-10-07/README.md).
+- [x] Observe14 fresh natural40-second map/mode baseline windows; current bounds/retrieval/pursuit assertions pass/all21369restore. Misses, held-shoe warnings and unreliable old charge labels retained; this pre-unit-correction baseline does not close quality. [Baseline](reports/all-map-bot-baseline-2026-10-07/README.md).
 - [ ] Measure actual movement and completed gameplay actions during natural1x matches. Keep charging, channels, forced pauses and legal guarding explicit; tiny fidgets or a nonzero requested axis do not prove useful progress.
 - [ ] Complete feature/role/map coverage and current packaged acceptance. Short roster samples and staged consumer checks do not close this requirement.
 
@@ -21,8 +25,9 @@
 ### REPLAY-SCENE-FIDELITY-1007: recorded world and clocks
 
 - [x] Integrate checked laptop a39/c533 traffic, crowd, water and shader adapter source; verify43native/source paths and54raw receipts. PC native12of14controls pass with full21363restoration, and both remaining failures are retained. [Integration scope](reports/ai-skill-deliberation-2026-10-07/README.md).
-- [ ] Laptop-owned correction for multi-scene GPU shader time: native_Time.y followsTime.timeSinceLevelLoad rather than absolute clipTime.time in the failing PC case. Qualify recorded clock identity and actual replay pixels after scene changes.
-- [ ] Supply fresh automatic-recording fixture for its complete scene-window check, then qualify wider effects fidelity, performance and current package. The PC runner's missing fixture is not a product failure or pass.
+- [x] Merge checked331ce8356 clock identity correction. Native PC49400passes3 map/disk/natural-recording/independentGPU/pixel controls; all21367inputs/preferences restore. [Evidence](reports/pc-map-clock-integration-2026-10-07/README.md).
+- [x] Supply actual fresh30-second Custom fixture; ten complete scene windows/591finite shader-clock frames and all file hashes verify, native41908 scene reader passes. Original missing-input failure remains retained.
+- [ ] Qualify wider effects fidelity, performance and current package; legacy absent clock data cannot be recreated retroactively.
 
 ### COMBINED-REPLAY-DESKTOP-1007: current Windows replacement
 

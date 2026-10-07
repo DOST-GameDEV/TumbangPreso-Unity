@@ -1,0 +1,16 @@
+{
+  "observed-velocity-original/launch.json": "961b15a2cded0b689143f05cfba84de3ba6f4c90d85721e5e362f5f6c0eaed48",
+  "observed-velocity-original/result.json": "ee81df6f74507dd231e708371da5b9e6c01c87c863b32d3870d1e7b43051a7a8",
+  "observed-velocity-original/results.xml": "ad7d174fedbec80a7738e91d88c0e0b5c1b6f1f3a65abcb821ca94047ab569b0",
+  "observed-velocity-original/source-restoration.json": "3647c1a837fec73584547ba805a376bfb7340f145b6cdc3572d0c11d854b7552",
+  "observed-velocity-candidate/launch.json": "5394d8d732a511e4c77ed9a82f35f5079e8413aca27ff230c45585520d1e541e",
+  "observed-velocity-candidate/result.json": "797e288c10c295589be0a43448d39cb43d1eac3187ff9f13ef47d7bc3eb6ad08",
+  "observed-velocity-candidate/results.xml": "61be63532d971559b1127d4d1bbf4c6782bee2044bf78d5cf859e9242538d5fa",
+  "observed-velocity-candidate/source-restoration.json": "908d411a1263f47c9a9c727a3391491c61874012fa798800c7ab746872a70dd1",
+  "preceding-natural-arena/launch.json": "3636c9ec54b7dca8428ea3328e98f1f6ca3e9fb4f4170ee803ee9980aba6108f",
+  "preceding-natural-arena/result.json": "e612839a90fe62187f324cbd3f4031d9ca196fb001998ac863b9dd056984d04d",
+  "preceding-natural-arena/results.xml": "a424d03026e7f1265d563718683a8b95151e5d91ebcbf2bac1c43c1c7de3bf1f",
+  "preceding-natural-arena/source-restoration.json": "e21fc2176f4269f5b68f04dbf4676af73956a3a33e9266cd0d0252dc2f85d67c",
+  "preceding-natural-arena/ai-diagnostic-Classic-Arena.txt": "2cc412ce11977b6c0220ecffcfe6694cd72b7e3c734ec23c1fa3a4e307bc8bf2",
+  "preceding-natural-arena/ai-diagnostic-HeroStrike-Arena.txt": "d6e4ddc65849831b4c1b3d194af3c00a2dfb5c0f6c1147d74fdc103766a3ec92"
+}

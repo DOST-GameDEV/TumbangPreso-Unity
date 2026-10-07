@@ -2704,7 +2704,9 @@ namespace TumbangPreso
                 _lungeHeld = 0.0f;
             }
 
-            _lungeHeld += dt;
+            // Other plans preserve the held button while the normal consumer
+            // continues charging. Rejoining the hunt must use that real age.
+            _lungeHeld = Mathf.Max(_lungeHeld, verbs.ObservedLungeCharge * Balance.LungeChargeTime) + dt;
 
             // Movement stays on the bot's ordinary keyboard headings. The
             // attack needs the motor's bounded point aim: two parallel runners
@@ -2763,7 +2765,11 @@ namespace TumbangPreso
             Vector3 start = transform.position;
             Vector3 previousBody = start;
             Vector3 dash = Vector3.zero;
-            Vector3 previous = AheadOf(victim, 0).Value - start;
+            Vector3 targetStart = At(victim).Value;
+            Vector3 targetVelocity = HasBelief(victim) && _seenVel.TryGetValue(victim.PlayerSlot, out Vector3 measuredVelocity)
+                ? measuredVelocity : Vector3.zero;
+            targetVelocity.y = 0;
+            Vector3 previous = targetStart - start;
             previous.y = 0;
             // AI advances before the consumer. Releasing this frame spends the
             // charge already accumulated, without adding the planner's new dt.
@@ -2780,7 +2786,9 @@ namespace TumbangPreso
                 speed = Mathf.Max(0, speed - Balance.Friction * dt);
                 dash += forward * speed * dt;
                 Vector3 body = start + dash + walk * age;
-                Vector3 relative = AheadOf(victim, age).Value - body;
+                // Reach is a physical question. The tier's willingness to lead
+                // movement cannot make a measured fleeing actor run more slowly.
+                Vector3 relative = targetStart + targetVelocity * age - body;
                 relative.y = 0;
                 Vector3 segment = relative - previous;
                 float along = segment.sqrMagnitude > .0001f

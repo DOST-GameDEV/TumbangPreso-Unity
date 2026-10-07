@@ -1,0 +1,10 @@
+{
+  "continuity-original/launch.json": "69ef9ff4a4c347369aaff14e2df6798ad976059b181dcfee8f83bd539618c344",
+  "continuity-original/result.json": "986e72ff78c5fb3075df24599d2765d3814f8f58e357e85b4763785710d9d7cf",
+  "continuity-original/results.xml": "c6e4ba41b7965ee36cc951615e85f4d4027acbbe7b83eb21baf9419a9ce75da2",
+  "continuity-original/source-restoration.json": "44d7fe485410741a352ed791b8567aff63d1379919380e3d4b7f5c39694fe654",
+  "continuity-candidate/launch.json": "d3fb7bbf45ec0604b3393356e88ac4ae1de425bcfe82631189043bc8c27d35d9",
+  "continuity-candidate/result.json": "88ca581df04164c8a1b0aa3197f98708ba2e8706a03b826672dfd283b869b82d",
+  "continuity-candidate/results.xml": "6229332a3c706810d7d32cb46ce27b928d3634c7b4fea0075c1c62f38f79cb15",
+  "continuity-candidate/source-restoration.json": "309b5ccd314a76360c1ca25d21e33774afc99b2a2a3a71f06c326afcced7c18d"
+}

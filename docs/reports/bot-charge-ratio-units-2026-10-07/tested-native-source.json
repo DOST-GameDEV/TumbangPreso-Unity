@@ -1,0 +1,17 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Runtime/AIController.cs",
+    "nativeRawSha256": "35844e2a1adbc8a7cd86c604ecf7237fba95e141ed5d99d0a73f3f7a1b1ec9aa",
+    "verifiedAgainstFrozenInput": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/AiLungeChargeContinuityTests.cs",
+    "nativeRawSha256": "4e11d7a26c3a0738259637902e7604dd300a62472fdeaf31dc08090333ac1eb5",
+    "verifiedAgainstFrozenInput": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/AiDiagnosticProbe.cs",
+    "nativeRawSha256": "7f94871cbf84ac53b71293282759160bb6596fc890ea3730bf05c768eddbbefa",
+    "verifiedAgainstFrozenInput": true
+  }
+]

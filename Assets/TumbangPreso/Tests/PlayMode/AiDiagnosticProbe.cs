@@ -115,6 +115,14 @@ namespace TumbangPreso.PlayTests
         [UnityTest] public IEnumerator HeroBridgeLiveDecisions() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.IlalimNgTulay);
         [UnityTest] public IEnumerator ClassicKantoLiveDecisions() => Diagnose(GameMode.Classic, 40, UI.SceneFlow.Kanto);
         [UnityTest] public IEnumerator HeroKantoLiveDecisions() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.Kanto);
+        [UnityTest] public IEnumerator ClassicCoveLiveDecisions() => Diagnose(GameMode.Classic, 40, UI.SceneFlow.LagoonCove);
+        [UnityTest] public IEnumerator HeroCoveLiveDecisions() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.LagoonCove);
+        [UnityTest] public IEnumerator ClassicEskinitaLiveDecisions() => Diagnose(GameMode.Classic, 40, UI.SceneFlow.Eskinita);
+        [UnityTest] public IEnumerator HeroEskinitaLiveDecisions() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.Eskinita);
+        [UnityTest] public IEnumerator ClassicPlazaLiveDecisions() => Diagnose(GameMode.Classic, 40, UI.SceneFlow.BayanPlaza);
+        [UnityTest] public IEnumerator HeroPlazaLiveDecisions() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.BayanPlaza);
+        [UnityTest] public IEnumerator ClassicRoofLiveDecisions() => Diagnose(GameMode.Classic, 40, UI.SceneFlow.SaBubong);
+        [UnityTest] public IEnumerator HeroRoofLiveDecisions() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.SaBubong);
         [UnityTest] public IEnumerator HeroRosterPickZero() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.LagoonCove, 0);
         [UnityTest] public IEnumerator HeroRosterPickOne() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.LagoonCove, 1);
         [UnityTest] public IEnumerator HeroRosterPickTwo() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.LagoonCove, 2);
@@ -293,6 +301,7 @@ namespace TumbangPreso.PlayTests
             float elapsed = 0.0f;
             float nextSample = 0.0f;
             int throws = 0;
+            float nextLungeGate = 0;
             var wasFlying = new HashSet<Slipper>();
             var escaped = new HashSet<Slipper>();
             var strayed = new HashSet<CharacterMotor>();
@@ -310,6 +319,27 @@ namespace TumbangPreso.PlayTests
                 float dt = Time.unscaledDeltaTime;
                 elapsed += dt;
                 lunges.Sample(round, GameServices.Match, ++lungeFrame, Time.deltaTime);
+                if (elapsed >= nextLungeGate)
+                {
+                    nextLungeGate = elapsed + .25f;
+                    const System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+                    foreach (var bot in bots)
+                    {
+                        var body = bot.GetComponent<CharacterMotor>(); var verbs = body.GetComponent<CombatVerbs>();
+                        if (!body.IsDefender || verbs == null || verbs.ObservedLungeCharge <= 0) continue;
+                        // Read the planner's chosen actor; never call TagTarget and
+                        // mutate its selection memory from an observer.
+                        var target = (CharacterMotor)typeof(AIController).GetField("_lastTagTarget", hidden).GetValue(bot);
+                        bool? facing = target != null ? (bool)typeof(AIController).GetMethod("Facing", hidden).Invoke(bot,
+                            new object[] { target, AiTuning.EffectiveLungeCone(AIController.ActiveDifficulty) }) : (bool?)null;
+                        bool? reach = target != null ? (bool)typeof(AIController).GetMethod("LungeCanReach", hidden).Invoke(bot,
+                            new object[] { target, verbs.LungeChargeRatio }) : (bool?)null;
+                        bool edge = (bool)typeof(AIController).GetMethod("EdgeLungeClear", hidden).Invoke(bot, new object[] { body.transform.forward });
+                        var held = typeof(AIController).GetField("_lungeHeld", hidden).GetValue(bot);
+                        log.AppendLine($"lunge-gate t={elapsed:F2} plan={bot.Plan} actor={body.PlayerSlot} held={held} consumerRatio={verbs.ObservedLungeCharge:F3} consumerChargeSeconds={typeof(CombatVerbs).GetField("_lungeCharge", hidden).GetValue(verbs)} target={target?.PlayerSlot} taggable={target?.IsTaggable()} facing={facing} reach={reach} edge={edge} canAct={body.CanAct()} canMove={body.CanMove()} facePoint={body.Intent.FaceAimPoint}/{body.Intent.HasAimPoint} aim={body.Intent.AimPoint} forward={body.transform.forward} at={body.transform.position} velocity={body.Velocity} targetAt={target?.transform.position} targetVelocity={target?.Velocity}");
+                    }
+                }
+
 
                 foreach (var bot in bots)
                 {
@@ -581,7 +611,7 @@ namespace TumbangPreso.PlayTests
                 public string Reason, Plan, Victim;
                 public CharacterMotor VictimBody;
                 public Vector3 From, Forward, VictimAt, VictimVel;
-                public float Power, Distance, Bearing, Lateral, Time;
+                public float Power, ChargeSeconds, Distance, Bearing, Lateral, Time;
                 public bool VictimTaggable, AnyTaggable;
                 public float MinVictim = float.MaxValue, MinVictimTaggable = float.MaxValue, MinAnyTaggable = float.MaxValue;
                 public bool VictimLeftTaggable, Hit;
@@ -595,6 +625,7 @@ namespace TumbangPreso.PlayTests
             }
 
             private readonly Dictionary<int, int> _charging = new Dictionary<int, int>();
+            private readonly Dictionary<int, float> _consumerChargeSeconds = new Dictionary<int, float>();
             private readonly Dictionary<int, bool> _cooling = new Dictionary<int, bool>();
             private readonly Dictionary<int, string> _planAtCharge = new Dictionary<int, string>();
             private readonly Dictionary<int, string> _startAtCharge = new Dictionary<int, string>();
@@ -673,6 +704,7 @@ namespace TumbangPreso.PlayTests
                     _charging[slot] = charging ? heldFrames : 0;
                     if (charging)
                     {
+                        _consumerChargeSeconds[slot] = (float)typeof(CombatVerbs).GetField("_lungeCharge", Private).GetValue(verbs);
                         _hitsWhileCharging[slot] = LungeHits(slot);
                         _tagsWhileCharging[slot] = _tagsBySlot.TryGetValue(slot, out int tw) ? tw : 0;
                     }
@@ -690,7 +722,8 @@ namespace TumbangPreso.PlayTests
                 };
                 l.From = (Vector3)(typeof(CombatVerbs).GetField("_lungeFrom", Private)?.GetValue(verbs) ?? taya.transform.position);
                 l.Forward = taya.transform.forward; l.Forward.y = 0.0f; l.Forward.Normalize();
-                float charge = chargeFrames * dt;
+                float charge = _consumerChargeSeconds.TryGetValue(taya.PlayerSlot, out float measured) ? measured : 0;
+                l.ChargeSeconds = charge;
                 l.Power = Mathf.Clamp(charge / Balance.LungeChargeTime, Balance.LungeMinPower, 1.0f);
 
                 var victim = ai != null ? typeof(AIController).GetField("_lastTagTarget", Private)?.GetValue(ai) as CharacterMotor : null;
@@ -766,7 +799,7 @@ namespace TumbangPreso.PlayTests
                 int hits = LungeHits(l.Slot) - l.HitsBefore;
                 string outcome = hits > 0 ? "HIT" : "miss";
                 Lines.Add($"frame={l.Frame} round={l.Round} left={l.Time:F1} taya={l.Slot} plan={l.Plan} reason={l.Reason} " +
-                          $"charge={l.ChargeFrames} power={l.Power:F2} victim={l.Victim} victimTaggable={l.VictimTaggable} anyTaggable={l.AnyTaggable} " +
+                          $"chargeFrames={l.ChargeFrames} chargeSeconds={l.ChargeSeconds:F3} power={l.Power:F2} victim={l.Victim} victimTaggable={l.VictimTaggable} anyTaggable={l.AnyTaggable} " +
                           $"dist={l.Distance:F2} bearing={l.Bearing:F1} lateral={l.Lateral:F2} victimSpeed={l.VictimVel.magnitude:F2} " +
                           $"minVictim={Fmt(l.MinVictim)} minVictimWhileTaggable={Fmt(l.MinVictimTaggable)} minAnyTaggable={Fmt(l.MinAnyTaggable)} " +
                           $"victimLeftTaggable={l.VictimLeftTaggable} heldAfterRelease={l.HeldAfter:F3} punchCooldown={l.PunchCooldown:F2} tagsDuringCharge={l.TagsDuringCharge} start=[{l.Start}] outcome={outcome}");
