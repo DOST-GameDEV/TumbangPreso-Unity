@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Current PC AI/replay integration: [exact tested-source proof, actual archive/viewer controls and retained fixture failure](reports/pc-local-replay-integration-2026-10-07/README.md).
+
 Bot consumer charge timing: [long-frame release failure and19 native power/obstacle/lifetime controls](reports/bot-lunge-consumer-power-2026-10-07/README.md).
 
 Four-bot natural decision window: [actual one-start readiness, live40second samples and retained legacy limits](reports/natural-four-bot-decisions-2026-10-07/README.md).

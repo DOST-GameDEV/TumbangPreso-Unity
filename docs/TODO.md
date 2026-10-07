@@ -1,3 +1,8 @@
+### REPLAY-PC-INTEGRATION-1007: current AI plus local playback
+
+- [x] Merge checked laptop local replay feature with current AI, verify20tested source paths and93raw evidence SHA. CurrentPC3archive+2viewer/audio controls pass after correcting owned fixture directory name; all21339 source/preferences restore. [Evidence](reports/pc-local-replay-integration-2026-10-07/README.md).
+- [ ] Laptop additional controls/new-map preview qualification, packaged current Windows and Desktop replacement plus broader replay/effect/scene/performance acceptance.
+
 ### AI-LUNGE-CONSUMER-POWER-1007: real accumulated charge
 
 - [x] Predict release travel using the consumer's actual charge rather than full-power impulse at the planner deadline. Original450ms+50ms boundary failure retained;19 native charge/obstacle/lifetime/aim controls pass. [Evidence](reports/bot-lunge-consumer-power-2026-10-07/README.md).

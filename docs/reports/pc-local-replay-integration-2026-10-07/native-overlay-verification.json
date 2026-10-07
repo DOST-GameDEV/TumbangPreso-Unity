@@ -1,0 +1,112 @@
+{
+  "source": "cf5460d22e212802fda2e72706ceee7aca3952df",
+  "count": 15,
+  "paths": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayPlayback.cs",
+      "nativeRaw": "c55c99525f2d3b90cb5c7021323f8debc6326bee87fa19095e92fa3e7d329862",
+      "currentLF": "c55c99525f2d3b90cb5c7021323f8debc6326bee87fa19095e92fa3e7d329862",
+      "qualified": true,
+      "mixedEndingProofUsed": false
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayPlayback.cs.meta",
+      "nativeRaw": "1299b293fe73d67a8c6eb11d921d77c29603ed850ec6f0bb4ab0b9b206e2d52e",
+      "currentLF": "af7e0f7a306ba357e5cd3bae9f03403508aa61067f9d83c9a81480a8bcd33d97",
+      "qualified": true,
+      "mixedEndingProofUsed": false
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayRecorder.cs",
+      "nativeRaw": "04953c4f33a6c68885756d808d631815ab9b7414ab40ca75ffe5fcb7ef12cbcf",
+      "currentLF": "04953c4f33a6c68885756d808d631815ab9b7414ab40ca75ffe5fcb7ef12cbcf",
+      "qualified": true,
+      "mixedEndingProofUsed": false
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayRecorder.cs.meta",
+      "nativeRaw": "6017b0af08a46723852111d855cf4ba089e36c70821705d88d32c2b29ee61ed9",
+      "currentLF": "27cd0426620ed1d4e765eb4d03e73cb3ae0e8b68d7800c6a612e2c4dbce649ea",
+      "qualified": true,
+      "mixedEndingProofUsed": false
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayStore.cs",
+      "nativeRaw": "94bbb97091688323804b2412c3ae4d755190836138ec8b6538a0c2947d97eaf1",
+      "currentLF": "94bbb97091688323804b2412c3ae4d755190836138ec8b6538a0c2947d97eaf1",
+      "qualified": true,
+      "mixedEndingProofUsed": false
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayStore.cs.meta",
+      "nativeRaw": "be01043d641802818f43d85bcbee98a5c919647b732e3dffb9c937582b909434",
+      "currentLF": "d7d3e117ff1e32f8bec4eca06ee477e1c40fba1cb44e0a56ddd94a07f7ec5808",
+      "qualified": true,
+      "mixedEndingProofUsed": false
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/MatchReplayArchive.cs",
+      "nativeRaw": "5ef4f56ee83371e4e5c748aff9e1b0430d86d4ab8dc4be5c1324ce46f93d8083",
+      "currentLF": "8993ccd41b65e8db1d7e57cb8e23513a44c842ee570783e68e855ee3b113f179",
+      "qualified": true,
+      "mixedEndingProofUsed": true
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/RecordedMatchClip.cs",
+      "nativeRaw": "bd0461bd1017ff99ce7170db877195f733530632729dfc0cd47e40ede4ca5abc",
+      "currentLF": "3bec4e01729831f32893293758111013628705a0423f24f62556e415582d3f4b",
+      "qualified": true,
+      "mixedEndingProofUsed": true
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/RecordedWorldView.cs",
+      "nativeRaw": "b7bd859d5b91e1d70bc1b5972872982ed7cdf188444f4855f6a4a8527cab3f4b",
+      "currentLF": "f7869b42a55ef5afa8aa2543b6acf06aa7cdb5c71af01f274489097682ff6354",
+      "qualified": true,
+      "mixedEndingProofUsed": true
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/MatchInstaller.cs",
+      "nativeRaw": "7d902e4c57900f9a6cdd5cbdb5d2da62035a090dca1ecdc9a3400bed646f68c2",
+      "currentLF": "70596b294d97c42f31e47987ad138dee2cba1862ee1932a1f55ec21bc6803cc7",
+      "qualified": true,
+      "mixedEndingProofUsed": true
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubMenus.cs",
+      "nativeRaw": "1a87160605e4e9499cd07bb460dab1e842773fa4b9d39c7dfc6394b9a7a3511c",
+      "currentLF": "6749681c42f4a38cab3095710642f9d950be8b1221dfa6eeb2874db650942554",
+      "qualified": true,
+      "mixedEndingProofUsed": true
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubReplays.cs",
+      "nativeRaw": "b012a76747b6c225047ce014d265efd62106578afca22addb2b63110e246e34d",
+      "currentLF": "b012a76747b6c225047ce014d265efd62106578afca22addb2b63110e246e34d",
+      "qualified": true,
+      "mixedEndingProofUsed": false
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubReplays.cs.meta",
+      "nativeRaw": "d88c3f5330334b51699f6eb9db832c97210bbf4ba8c99156d066abdab18ae775",
+      "currentLF": "8a7f6c967d48691632e38f3798aa63ad3654f1c998e14468ba025ce722fd66f4",
+      "qualified": true,
+      "mixedEndingProofUsed": false
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/LocalReplayTests.cs",
+      "nativeRaw": "66eddc6213f7bd73331fa992e092e9e2cbde5a3be6a5ff0e8e8b78392fc310e6",
+      "currentLF": "66eddc6213f7bd73331fa992e092e9e2cbde5a3be6a5ff0e8e8b78392fc310e6",
+      "qualified": true,
+      "mixedEndingProofUsed": false
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/LocalReplayTests.cs.meta",
+      "nativeRaw": "edfd691f87c48e7e492aead5b5833eb35e9935bd4a1e6ee7bed960fab540cf3b",
+      "currentLF": "e351f5896aed787f65329dff7d3393d4f64c7d763a9e7343d6ba9c68d6db3730",
+      "qualified": true,
+      "mixedEndingProofUsed": false
+    }
+  ],
+  "allQualified": true
+}

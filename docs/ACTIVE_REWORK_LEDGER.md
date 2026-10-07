@@ -1,3 +1,9 @@
+# PC replay integration checkpoint, October 7
+
+429c/cf546 normalmerges integratechecked578 replayproduct/cb1/2d9/4dc evidence withlatestPC48consumercharge/2f9mapmatrix. All20overlay paths verified; five mixedCRLF/LF originals haveexactnativeRaw SHA andnormalizedtested/currentcodeproof, no blindrestamp. All93rawevidenceSHA verified. PC44716 archive3PASS/viewer2fixtureFAIL(TUMP-*discovery); onlyownedfixture dirnamecorrected/all11dataSHAunchanged. PC48244 actualviewer/scrub/audio2PASS, unchangedproduct, archive3notrepeated. Bothall21339 frozen inputs/preferences restored afterterminal. Report: pc-local-replay-integration-2026-10-07.
+
+LAPTOP ONLINE, activelycoordinating. Noofflineblocker. NoLAN underpreviousmobiledata/differenthouse instruction. LaptopownsadditionalreplayUIcontrols andnew3preview Start-guard bugfix/pixelidentity/native qualification; do notpullunqualifiedWIP. PCretainsAI/newopenings/CatchReconstruction/MatchPoseHistory/TagBody/slippers. CombinedWindows runnerpreparedLogs/replay-desktop1007 NOTlaunchedbeforecheckednewmedia/controls. Desktopcb5/internal120d remainolder. Noownednative/helper/tab remains. Goal ACTIVE.
+
 # New-map live bot checkpoint, October 7
 
 Native45696 fourPASS Bridge/Kanto xClassic/Hero on48d83 actualconsumercharge source. Each one actualReadyGate start/four normalinputwriters/40live seconds. Throws ClassicBridge12/Kanto20 and HeroBridge16/Kanto16; countedlunges/hits2/2,1/0,2/0,1/0 respectively. Bounds/stranding/pursuit controls pass; misses retained, no statistical/fullmatch/allroster/performance claim. All21329 frozen source/preferences restored after terminal native and preservation. Report: natural-four-bot-decisions/new-map-matrix.

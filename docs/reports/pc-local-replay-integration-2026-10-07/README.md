@@ -1,0 +1,9 @@
+# Current AI and local replay integration on the PC
+
+Checked laptop replay product578f with native evidencecb1 and exact mixed-source/attribute metadata2d9/4dc merges normally into ASTRA429c/cf546. Current replay overlay20paths match native10 tested source, using raw-source-matched normalizedLF proof for five mixed-ending existing files. The other15new files match exact or whole-file newline variants. All93 committed evidence SHA values are independently verified; source, native evidence and current product comparisons are distinct.
+
+Actual merged native44716 passes three existing archive recovery controls but the two viewer cases fail before playback. The PC fixture copy was named saved-native-custom while the normal library enumerates TUMP-* directories. Original failure is retained. After terminal/source restoration, only that task-owned fixture directory is renamed to TUMP-native-custom with all11 recording-file hashes unchanged. No production or data-byte changes are made.
+
+Native48244 then passes both actual retained Custom viewer/scrub and continuous-audio/manual-seek controls on the unchanged merged product. The three already-passing archive cases are not repeated. All21339 frozen inputs/preferences restore exactly after both terminal native/preservation runs. All11 retained recording-file hashes remain unchanged after playback. No native/player/helper/tab remains.
+
+This is native current integration scope, not packaged, physical-input, full-effect, exact ambient scenery or tournament acceptance. Laptop retains additional replay-control UI changes and new-map preview source/media qualification. Desktopcb5/internal120d remain older; combined Windows/Desktop replacement follows checked current source/media and actual package acceptance. The laptop is ONLINE and coordinating through chat/Git. LAN remains off under the owner's mobile-data instruction; this is not an offline-host condition.
