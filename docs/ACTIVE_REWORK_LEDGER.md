@@ -1,5 +1,41 @@
 # Current PC competition checkpoint, October 7
 
+## Active handoff after compaction, October 7 at 00:37 UTC
+
+PC goal is verified ACTIVE. Preserve the full assignment across compaction:
+AI and all-map navigation, distinct map intros/poses/arrivals, caught-player
+camera and slipper reliability. Startup/UI and the scoped fixes below are
+checked; the whole game is not yet qualified. Do not stop after a passing unit.
+
+Current source pulled normally to 512529d9c; inspect the live full ref on resume.
+Desktop and the shared peer artifact remain cb5f4ad9, protocol153 and Runtime
+e9b69cf6d8c86a4a15cc2fbb16947312153209be5cd677e1383becf87c06cdd4.
+Newer source fixes are not part of that installed package. Private Auditor
+settings and tools/build_yasmin_benguet_voxel.py remain untouched.
+
+PC owns AIController/tag tests, intros/cameras/arrivals, slippers and Net/startup.
+Laptop owns map-preview/video/media/vote/results and the host-loss client runner.
+Laptop is finishing a reproduced preview preparation/reduced-motion race.
+No reassignment or overlap is authorized without confirming current ownership.
+
+PC host-loss preflight is READY, Python38440 and exec session29986; no player
+launched. Fresh profile pc-hostloss-cb5f1007a, port49157, duration360 seconds.
+Output Logs/combined-peer1007/pc-laptop-hostloss1007a-host; ready receipt
+Logs/combined-peer1007/hostloss-a-ready.json. It waits for the fresh local file
+Logs/combined-peer1007/hostloss-a-start.signal. Never duplicate this runner.
+Next: await laptop native restoration and client log/launch read-only endpoint,
+then signal this retained host and coordinate client start. Before stopping only
+the exact owned host, retain BOTH peers' actual READY/round1/no-match-over logs
+and process identity. Intentional host termination is scenario evidence, not a
+normal host-completion PASS. Check terminal runner preservation and client
+abandoned/offline Home/no fabricated finished record afterward.
+
+After this gate, resume charged-target loss and dash interception investigation
+with a focused real-consumer reproduction. Do not infer improved bot hit rate
+from the short unseeded traces. No unused PC helpers or tabs exist; the current
+preflight is needed. Preserve prior policy-rejected pruning/HTTP evidence and
+do not retry those actions through another tool.
+
 ## Current qualified package and next gameplay unit
 
 Combined sourcecb5 is installed at Desktop/TumbangPreso-UI-2026-10-07/TumbangPreso.exe:
