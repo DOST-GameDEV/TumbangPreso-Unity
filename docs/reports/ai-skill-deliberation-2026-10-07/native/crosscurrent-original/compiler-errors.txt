@@ -1,0 +1,3 @@
+Assets\TumbangPreso\Tests\PlayMode\AiCrosscurrentDecisionTests.cs(59,73): error CS0103: The name 'WorldEffectSnapshot' does not exist in the current context
+Assets\TumbangPreso\Tests\PlayMode\AiCrosscurrentDecisionTests.cs(59,73): error CS0103: The name 'WorldEffectSnapshot' does not exist in the current context
+Assets\TumbangPreso\Tests\PlayMode\AiCrosscurrentDecisionTests.cs(59,73): error CS0103: The name 'WorldEffectSnapshot' does not exist in the current context

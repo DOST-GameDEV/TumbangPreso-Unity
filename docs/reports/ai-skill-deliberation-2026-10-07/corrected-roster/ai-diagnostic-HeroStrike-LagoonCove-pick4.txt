@@ -1,0 +1,270 @@
+ai diagnostic  ·  HeroStrike  ·  LagoonCove  ·  4 bots  ·  1x
+natural automatic starts=1; decision window begins after the opening; allbots=False
+roster seat=2 character=1 hero=cheska defender=False origin=Bot
+roster seat=0 character=5 hero=phaister defender=True origin=Bot
+roster seat=1 character=4 hero=nemu defender=False origin=Human
+roster seat=3 character=5 hero=phaister defender=False origin=Bot
+kit t=0.1 seat=2 hero=cheska skill1=0.000/False skill2=0.000/False ultimate=0.00/False
+t=0.1 seat=2 plan=Stalk def=False act=True held=True charging=False charge=0.00 canThrow=True axis=(-1.00, 0.00) pos=(0.00, 0.02, 9.00)
+kit t=0.1 seat=0 hero=phaister skill1=0.000/False skill2=0.000/False ultimate=1.00/False
+t=0.1 seat=0 plan=Guard def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 1.00) pos=(0.00, 0.02, -2.50)
+kit t=0.1 seat=1 hero=nemu skill1=0.000/False skill2=0.000/False ultimate=0.00/False
+t=0.1 seat=1 plan=Position def=False act=True held=True charging=False charge=0.00 canThrow=True axis=(0.71, -0.71) pos=(-1.80, 0.02, 9.00)
+kit t=0.1 seat=3 hero=phaister skill1=0.000/False skill2=0.000/False ultimate=0.00/False
+t=0.1 seat=3 plan=Stalk def=False act=True held=True charging=False charge=0.00 canThrow=True axis=(0.71, -0.71) pos=(1.80, 0.02, 9.00)
+    lataUpright=True throws=0 roundActive=True
+    slippers: [own=2 Held at -0.49,0.48,8.98 d3=0.67 grabbable=False] [own=3 Held at 1.40,0.51,9.07 d3=0.64 grabbable=False] [own=1 Held at -2.26,0.39,9.13 d3=0.61 grabbable=False] 
+kit t=2.0 seat=2 hero=cheska skill1=0.000/False skill2=0.000/False ultimate=0.00/False
+t=2.0 seat=2 plan=Windup def=False act=True held=True charging=True charge=0.81 canThrow=True axis=(0.00, 0.00) pos=(-0.05, 0.08, 8.65)
+kit t=2.0 seat=0 hero=phaister skill1=0.000/False skill2=0.000/False ultimate=1.00/False
+t=2.0 seat=0 plan=Guard def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(0.00, 0.08, 1.92)
+kit t=2.0 seat=1 hero=nemu skill1=0.000/False skill2=0.000/False ultimate=0.00/False
+t=2.0 seat=1 plan=Position def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(-0.40, 0.08, 8.01)
+kit t=2.0 seat=3 hero=phaister skill1=0.000/False skill2=0.000/False ultimate=0.00/False
+t=2.0 seat=3 plan=Windup def=False act=True held=True charging=True charge=0.52 canThrow=True axis=(0.00, 0.00) pos=(0.43, 0.08, 8.12)
+    lataUpright=True throws=1 roundActive=True
+    slippers: [own=2 Held at -0.29,0.66,9.25 d3=0.87 grabbable=False] [own=3 Held at -0.06,0.66,8.41 d3=0.82 grabbable=False] [own=1 InFlight at -0.58,1.63,5.47 d3=2.98 grabbable=False] 
+kit t=4.0 seat=2 hero=cheska skill1=0.000/False skill2=0.000/False ultimate=0.00/False
+t=4.0 seat=2 plan=Position def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(1.00, 0.00) pos=(-1.79, 0.08, 7.66)
+kit t=4.0 seat=0 hero=phaister skill1=0.000/False skill2=0.000/False ultimate=1.00/False
+t=4.0 seat=0 plan=Intercept def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.71, -0.71) pos=(-0.48, 0.08, 6.54)
+kit t=4.0 seat=1 hero=nemu skill1=0.000/False skill2=0.000/False ultimate=0.00/False
+t=4.0 seat=1 plan=Stalk def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(1.00, 0.00) pos=(0.31, 0.08, 6.81)
+kit t=4.0 seat=3 hero=phaister skill1=0.000/False skill2=0.000/False ultimate=0.00/False
+t=4.0 seat=3 plan=Fetch def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.71, -0.71) pos=(2.84, 0.08, 5.41)
+    lataUpright=True throws=3 roundActive=True
+    slippers: [own=2 InFlight at 0.26,2.23,6.14 d3=3.34 grabbable=False] [own=3 Loose at 3.88,0.09,3.65 d3=2.04 grabbable=False] [own=1 Loose at -3.75,0.07,3.54 d3=5.21 grabbable=False] 
+kit t=6.0 seat=2 hero=cheska skill1=34.809/False skill2=0.000/False ultimate=0.00/False
+t=6.0 seat=2 plan=Position def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(3.06, 0.08, 7.66)
+kit t=6.0 seat=0 hero=phaister skill1=0.000/False skill2=0.000/False ultimate=1.00/False
+t=6.0 seat=0 plan=Hunt def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(3.61, 0.08, 3.94)
+kit t=6.0 seat=1 hero=nemu skill1=0.000/False skill2=0.000/False ultimate=0.00/False
+t=6.0 seat=1 plan=Fetch def=False act=True held=True charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(-2.32, 0.08, 4.23)
+kit t=6.0 seat=3 hero=phaister skill1=0.000/False skill2=0.000/False ultimate=0.00/False
+t=6.0 seat=3 plan=Windup def=False act=True held=True charging=True charge=0.40 canThrow=True axis=(0.00, 0.00) pos=(5.74, 0.08, 7.81)
+    lataUpright=True throws=3 roundActive=True
+    slippers: [own=2 Loose at 5.00,0.08,5.13 d3=3.18 grabbable=False] [own=3 Held at 5.62,0.67,8.35 d3=0.81 grabbable=False] [own=1 Held at -2.69,0.18,4.51 d3=0.47 grabbable=False] 
+kit t=8.0 seat=2 hero=cheska skill1=32.808/False skill2=0.000/False ultimate=0.00/False
+t=8.0 seat=2 plan=Windup def=False act=True held=True charging=True charge=0.37 canThrow=True axis=(0.00, 0.00) pos=(5.10, 0.08, 8.02)
+kit t=8.0 seat=0 hero=phaister skill1=0.000/False skill2=0.000/False ultimate=1.00/False
+t=8.0 seat=0 plan=Cover def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.71, -0.71) pos=(1.84, 0.08, 0.84)
+kit t=8.0 seat=1 hero=nemu skill1=0.000/False skill2=0.000/False ultimate=0.00/False
+t=8.0 seat=1 plan=Windup def=False act=True held=True charging=True charge=0.39 canThrow=True axis=(0.00, 0.00) pos=(-5.93, 0.08, 7.84)
+kit t=8.0 seat=3 hero=phaister skill1=34.934/True skill2=0.000/False ultimate=0.00/False
+t=8.0 seat=3 plan=Stalk def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, -1.00) pos=(5.81, 0.08, 3.91)
+    lataUpright=True throws=4 roundActive=True
+    slippers: [own=3 Loose at 0.98,0.09,-0.46 d3=6.51 grabbable=False] [own=1 Held at -6.47,0.42,8.10 d3=0.69 grabbable=False] [own=2 Held at 5.06,0.68,8.66 d3=0.88 grabbable=False] 
+kit t=10.0 seat=2 hero=cheska skill1=30.811/False skill2=0.000/False ultimate=0.00/False
+t=10.0 seat=2 plan=Fetch def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(-0.71, -0.71) pos=(2.21, 0.08, 5.78)
+kit t=10.0 seat=0 hero=phaister skill1=0.000/False skill2=0.000/False ultimate=1.00/False
+t=10.0 seat=0 plan=Reset def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(1.41, 0.08, 0.37)
+kit t=10.0 seat=1 hero=nemu skill1=0.000/False skill2=0.000/False ultimate=1.00/False
+t=10.0 seat=1 plan=Fetch def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.71, -0.71) pos=(-4.27, 0.08, 5.08)
+kit t=10.0 seat=3 hero=phaister skill1=32.937/False skill2=0.000/False ultimate=0.00/False
+t=10.0 seat=3 plan=Fetch def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(-0.71, -0.71) pos=(2.87, 0.08, 0.07)
+    lataUpright=False throws=6 roundActive=True
+    slippers: [own=3 Loose at 0.98,0.09,-0.46 d3=1.96 grabbable=False] [own=1 Loose at -0.66,0.07,0.38 d3=5.92 grabbable=False] [own=2 Loose at 0.00,0.08,0.08 d3=6.11 grabbable=False] 
+kit t=12.0 seat=2 hero=cheska skill1=28.870/False skill2=0.000/False ultimate=0.00/False
+t=12.0 seat=2 plan=Withdraw def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(0.00, 0.02, 9.00)
+kit t=12.0 seat=0 hero=phaister skill1=0.000/False skill2=0.000/False ultimate=2.00/False
+t=12.0 seat=0 plan=Hunt def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(-0.71, 0.71) pos=(0.19, 0.08, 2.95)
+kit t=12.0 seat=1 hero=nemu skill1=23.220/False skill2=23.220/False ultimate=1.00/False
+t=12.0 seat=1 plan=Withdraw def=False act=True held=True charging=False charge=0.00 canThrow=False axis=(-0.71, 0.71) pos=(-4.87, 0.08, 5.68)
+kit t=12.0 seat=3 hero=phaister skill1=30.995/False skill2=0.000/False ultimate=0.00/False
+t=12.0 seat=3 plan=Windup def=False act=True held=True charging=True charge=0.14 canThrow=True axis=(0.00, 0.00) pos=(7.77, 0.08, 0.07)
+    lataUpright=True throws=6 roundActive=True
+    slippers: [own=3 Held at 7.28,0.67,0.25 d3=0.79 grabbable=False] [own=1 Held at -4.48,0.36,5.99 d3=0.57 grabbable=False] [own=2 Held at -0.16,0.65,9.43 d3=0.78 grabbable=False] 
+kit t=14.0 seat=2 hero=cheska skill1=26.871/False skill2=0.000/False ultimate=0.00/False
+t=14.0 seat=2 plan=Withdraw def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(0.00, 0.02, 9.00)
+kit t=14.0 seat=0 hero=phaister skill1=0.000/False skill2=0.000/False ultimate=2.00/False
+t=14.0 seat=0 plan=Reset def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.71, -0.71) pos=(-0.92, 0.08, 1.72)
+kit t=14.0 seat=1 hero=nemu skill1=21.222/False skill2=21.222/False ultimate=1.00/False
+t=14.0 seat=1 plan=Position def=False act=True held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(-7.05, 0.08, 7.86)
+kit t=14.0 seat=3 hero=phaister skill1=28.997/False skill2=0.000/False ultimate=1.00/False
+t=14.0 seat=3 plan=Fetch def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(-1.00, 0.00) pos=(5.48, 0.08, -0.09)
+    lataUpright=False throws=7 roundActive=True
+    slippers: [own=3 Loose at 1.04,0.09,-0.05 d3=4.44 grabbable=False] [own=1 Held at -6.77,0.58,8.32 d3=0.74 grabbable=False] [own=2 Held at -0.17,0.72,9.45 d3=0.85 grabbable=False] 
+kit t=16.0 seat=2 hero=cheska skill1=24.866/False skill2=0.000/False ultimate=0.00/False
+t=16.0 seat=2 plan=Withdraw def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(0.00, 0.02, 9.00)
+kit t=16.0 seat=0 hero=phaister skill1=0.000/False skill2=33.397/True ultimate=2.00/False
+t=16.0 seat=0 plan=Hunt def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(1.00, 0.00) pos=(1.12, 0.08, 1.40)
+kit t=16.0 seat=1 hero=nemu skill1=19.217/False skill2=19.217/False ultimate=1.00/False
+t=16.0 seat=1 plan=Windup def=False act=True held=True charging=True charge=0.24 canThrow=True axis=(0.00, 0.00) pos=(-7.16, 0.08, 7.74)
+kit t=16.0 seat=3 hero=phaister skill1=26.992/False skill2=33.818/True ultimate=1.00/False
+t=16.0 seat=3 plan=Withdraw def=False act=True held=True charging=False charge=0.00 canThrow=False axis=(1.00, 0.00) pos=(5.58, 0.08, -0.09)
+    lataUpright=True throws=7 roundActive=True
+    slippers: [own=3 Held at 5.88,0.54,-0.06 d3=0.55 grabbable=False] [own=1 Held at -7.69,0.45,8.03 d3=0.71 grabbable=False] [own=2 Held at -0.17,0.72,9.45 d3=0.85 grabbable=False] 
+kit t=18.0 seat=2 hero=cheska skill1=22.928/False skill2=0.000/False ultimate=0.00/False
+t=18.0 seat=2 plan=Position def=False act=True held=True charging=False charge=0.00 canThrow=True axis=(0.00, 1.00) pos=(-1.98, 0.08, 7.37)
+kit t=18.0 seat=0 hero=phaister skill1=0.000/False skill2=13.959/False ultimate=3.00/False
+t=18.0 seat=0 plan=Guard def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(0.59, 0.08, 2.07)
+kit t=18.0 seat=1 hero=nemu skill1=17.279/False skill2=17.279/False ultimate=1.00/False
+t=18.0 seat=1 plan=Position def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, -1.00) pos=(-5.24, 0.08, 6.85)
+kit t=18.0 seat=3 hero=phaister skill1=25.054/False skill2=14.380/False ultimate=1.00/False
+t=18.0 seat=3 plan=Withdraw def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(1.80, 0.02, 9.00)
+    lataUpright=True throws=8 roundActive=True
+    slippers: [own=3 Held at 1.69,0.66,9.39 d3=0.76 grabbable=False] [own=1 InFlight at -2.03,0.75,0.33 d3=7.30 grabbable=False] [own=2 Held at -2.00,0.33,7.72 d3=0.43 grabbable=False] 
+kit t=20.0 seat=2 hero=cheska skill1=20.929/False skill2=0.000/False ultimate=0.00/False
+t=20.0 seat=2 plan=Stalk def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(-0.71, -0.71) pos=(-2.69, 0.08, 7.01)
+kit t=20.0 seat=0 hero=phaister skill1=0.000/False skill2=11.960/False ultimate=3.00/False
+t=20.0 seat=0 plan=Cover def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(-2.84, 0.08, 1.11)
+kit t=20.0 seat=1 hero=nemu skill1=15.280/False skill2=15.280/False ultimate=1.00/False
+t=20.0 seat=1 plan=Stalk def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, -1.00) pos=(-4.07, 0.08, 0.52)
+kit t=20.0 seat=3 hero=phaister skill1=23.055/False skill2=12.381/False ultimate=1.00/False
+t=20.0 seat=3 plan=Withdraw def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(1.80, 0.02, 9.00)
+    lataUpright=True throws=9 roundActive=True
+    slippers: [own=3 Held at 1.69,0.66,9.39 d3=0.76 grabbable=False] [own=1 Loose at -2.68,0.07,0.08 d3=1.46 grabbable=True] [own=2 Loose at -1.75,0.08,0.31 d3=6.77 grabbable=False] 
+kit t=22.0 seat=2 hero=cheska skill1=18.928/False skill2=0.000/False ultimate=0.00/False
+t=22.0 seat=2 plan=Stalk def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(-0.71, 0.71) pos=(-4.60, 0.08, 5.77)
+kit t=22.0 seat=0 hero=phaister skill1=0.000/False skill2=9.959/False ultimate=3.00/False
+t=22.0 seat=0 plan=Cover def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(-2.41, 0.08, -0.21)
+kit t=22.0 seat=1 hero=nemu skill1=13.279/False skill2=13.279/False ultimate=1.00/False
+t=22.0 seat=1 plan=Fetch def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(-3.95, 0.08, -4.66)
+kit t=22.0 seat=3 hero=phaister skill1=21.054/False skill2=10.380/False ultimate=1.00/False
+t=22.0 seat=3 plan=Position def=False act=True held=True charging=False charge=0.00 canThrow=False axis=(0.00, -1.00) pos=(1.80, 0.08, 6.80)
+    lataUpright=True throws=9 roundActive=True
+    slippers: [own=3 Held at 1.46,0.49,6.66 d3=0.55 grabbable=False] [own=1 Loose at -2.68,0.07,0.08 d3=4.90 grabbable=False] [own=2 Loose at -1.75,0.08,0.31 d3=6.16 grabbable=False] 
+kit t=24.0 seat=2 hero=cheska skill1=17.786/False skill2=0.000/False ultimate=0.00/False
+t=24.0 seat=2 plan=Stalk def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(-6.55, 0.40, 7.22)
+kit t=24.0 seat=0 hero=phaister skill1=0.000/False skill2=8.817/False ultimate=4.00/False
+t=24.0 seat=0 plan=Cover def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(-0.71, 0.71) pos=(-2.04, 0.08, 0.48)
+kit t=24.0 seat=1 hero=nemu skill1=12.137/False skill2=12.137/False ultimate=1.00/False
+t=24.0 seat=1 plan=Fetch def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(-1.80, 0.02, 9.00)
+kit t=24.0 seat=3 hero=phaister skill1=19.912/False skill2=9.238/False ultimate=1.00/False
+t=24.0 seat=3 plan=Windup def=False act=True held=True charging=True charge=0.41 canThrow=True axis=(0.00, 0.00) pos=(1.80, 0.08, 7.75)
+    lataUpright=True throws=9 roundActive=True
+    slippers: [own=3 Held at 1.51,0.67,8.22 d3=0.81 grabbable=False] [own=1 Held at -1.28,0.44,8.77 d3=0.70 grabbable=False] [own=2 Loose at -1.75,0.08,0.31 d3=8.42 grabbable=False] 
+kit t=26.0 seat=2 hero=cheska skill1=15.845/False skill2=0.000/False ultimate=0.00/False
+t=26.0 seat=2 plan=Fetch def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(0.00, 0.02, 9.00)
+kit t=26.0 seat=0 hero=phaister skill1=0.000/False skill2=6.876/False ultimate=5.00/False
+t=26.0 seat=0 plan=Hunt def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(-1.91, 0.08, 1.06)
+kit t=26.0 seat=1 hero=nemu skill1=10.196/False skill2=10.196/False ultimate=1.00/False
+t=26.0 seat=1 plan=Fetch def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(-1.80, 0.02, 9.00)
+kit t=26.0 seat=3 hero=phaister skill1=17.971/False skill2=7.297/False ultimate=1.00/False
+t=26.0 seat=3 plan=Stalk def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.71, -0.71) pos=(4.78, 0.08, 5.77)
+    lataUpright=True throws=10 roundActive=True
+    slippers: [own=3 Loose at 0.49,0.09,0.48 d3=6.82 grabbable=False] [own=1 Held at -1.27,0.58,8.90 d3=0.78 grabbable=False] [own=2 Held at -0.38,0.36,8.57 d3=0.67 grabbable=False] 
+kit t=28.0 seat=2 hero=cheska skill1=13.846/False skill2=0.000/False ultimate=0.00/False
+t=28.0 seat=2 plan=Fetch def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(0.00, 0.02, 9.00)
+kit t=28.0 seat=0 hero=phaister skill1=0.000/False skill2=4.877/False ultimate=5.00/False
+t=28.0 seat=0 plan=Cover def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(1.79, 0.08, 1.43)
+kit t=28.0 seat=1 hero=nemu skill1=8.197/False skill2=8.197/False ultimate=1.00/False
+t=28.0 seat=1 plan=Fetch def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(-1.80, 0.02, 9.00)
+kit t=28.0 seat=3 hero=phaister skill1=15.972/False skill2=5.298/False ultimate=1.00/False
+t=28.0 seat=3 plan=Stalk def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, -1.00) pos=(6.65, 0.08, 1.55)
+    lataUpright=True throws=10 roundActive=True
+    slippers: [own=3 Loose at 0.49,0.09,0.48 d3=6.26 grabbable=False] [own=1 Held at -1.27,0.58,8.90 d3=0.78 grabbable=False] [own=2 Held at -0.29,0.72,8.61 d3=0.85 grabbable=False] 
+kit t=30.0 seat=2 hero=cheska skill1=11.849/False skill2=0.000/False ultimate=0.00/False
+t=30.0 seat=2 plan=Fetch def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(0.00, 0.02, 9.00)
+kit t=30.0 seat=0 hero=phaister skill1=0.000/False skill2=2.879/False ultimate=5.00/False
+t=30.0 seat=0 plan=Hunt def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(-0.71, 0.71) pos=(1.05, 0.08, 2.02)
+kit t=30.0 seat=1 hero=nemu skill1=6.199/False skill2=6.199/False ultimate=1.00/False
+t=30.0 seat=1 plan=Withdraw def=False act=True held=True charging=False charge=0.00 canThrow=False axis=(0.00, 1.00) pos=(-1.80, 0.08, 6.36)
+kit t=30.0 seat=3 hero=phaister skill1=13.974/False skill2=3.300/False ultimate=1.00/False
+t=30.0 seat=3 plan=Fetch def=False act=True held=True charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(2.22, 0.08, 0.38)
+    lataUpright=True throws=10 roundActive=True
+    slippers: [own=3 Held at 2.17,0.41,0.76 d3=0.51 grabbable=False] [own=1 Held at -1.99,0.28,5.94 d3=0.50 grabbable=False] [own=2 Held at -0.29,0.72,8.61 d3=0.85 grabbable=False] 
+kit t=32.0 seat=2 hero=cheska skill1=9.907/False skill2=0.000/False ultimate=0.00/False
+t=32.0 seat=2 plan=Withdraw def=False act=True held=True charging=False charge=0.00 canThrow=False axis=(0.00, 1.00) pos=(0.00, 0.08, 6.00)
+kit t=32.0 seat=0 hero=phaister skill1=0.000/False skill2=0.938/False ultimate=6.00/False
+t=32.0 seat=0 plan=Hunt def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(-0.71, 0.71) pos=(1.48, 0.08, 2.87)
+kit t=32.0 seat=1 hero=nemu skill1=4.258/False skill2=4.258/False ultimate=1.00/False
+t=32.0 seat=1 plan=Idle def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(-1.99, 0.08, 7.76)
+kit t=32.0 seat=3 hero=phaister skill1=12.033/False skill2=1.359/False ultimate=1.00/False
+t=32.0 seat=3 plan=Evade def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(1.80, 0.02, 9.00)
+    lataUpright=True throws=11 roundActive=True
+    slippers: [own=3 Held at 2.18,0.66,8.86 d3=0.76 grabbable=False] [own=1 InFlight at -1.76,1.47,6.54 d3=1.87 grabbable=False] [own=2 Held at -0.38,0.65,5.72 d3=0.74 grabbable=False] 
+kit t=34.0 seat=2 hero=cheska skill1=7.906/False skill2=0.000/False ultimate=0.00/False
+t=34.0 seat=2 plan=Position def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(-0.56, 0.08, 7.64)
+kit t=34.0 seat=0 hero=phaister skill1=0.000/False skill2=0.000/False ultimate=6.00/False
+t=34.0 seat=0 plan=Cover def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(-0.97, 0.08, 1.78)
+kit t=34.0 seat=1 hero=nemu skill1=2.256/False skill2=2.256/False ultimate=1.00/False
+t=34.0 seat=1 plan=Stalk def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.71, 0.71) pos=(-0.20, 0.08, 4.98)
+kit t=34.0 seat=3 hero=phaister skill1=10.032/False skill2=0.000/False ultimate=1.00/False
+t=34.0 seat=3 plan=Evade def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(1.80, 0.02, 9.00)
+    lataUpright=True throws=12 roundActive=True
+    slippers: [own=3 Held at 2.18,0.66,8.86 d3=0.76 grabbable=False] [own=1 Loose at -0.55,0.07,0.32 d3=4.67 grabbable=False] [own=2 InFlight at 0.19,1.21,2.66 d3=5.17 grabbable=False] 
+kit t=36.0 seat=2 hero=cheska skill1=5.905/False skill2=0.000/False ultimate=0.00/False
+t=36.0 seat=2 plan=Stalk def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(-1.00, 0.00) pos=(-2.01, 0.08, 6.44)
+kit t=36.0 seat=0 hero=phaister skill1=0.000/False skill2=0.000/False ultimate=6.00/False
+t=36.0 seat=0 plan=Cover def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(-1.00, 0.00) pos=(-0.41, 0.08, 2.36)
+kit t=36.0 seat=1 hero=nemu skill1=0.256/False skill2=0.256/False ultimate=1.00/False
+t=36.0 seat=1 plan=Stalk def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(1.00, 0.00) pos=(4.95, 0.08, 5.84)
+kit t=36.0 seat=3 hero=phaister skill1=8.031/False skill2=0.000/False ultimate=1.00/False
+t=36.0 seat=3 plan=Position def=False act=True held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(1.62, 0.08, 9.18)
+    lataUpright=True throws=12 roundActive=True
+    slippers: [own=3 Held at 2.02,0.61,9.25 d3=0.67 grabbable=False] [own=1 Loose at -0.55,0.07,0.32 d3=7.79 grabbable=False] [own=2 Loose at 2.44,0.08,3.95 d3=5.10 grabbable=False] 
+kit t=38.0 seat=2 hero=cheska skill1=3.963/False skill2=0.000/False ultimate=0.00/False
+t=38.0 seat=2 plan=Withdraw def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(0.00, 0.02, 9.00)
+kit t=38.0 seat=0 hero=phaister skill1=0.000/False skill2=0.000/False ultimate=7.00/False
+t=38.0 seat=0 plan=Cover def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, -1.00) pos=(-0.80, 0.08, 5.70)
+kit t=38.0 seat=1 hero=nemu skill1=0.000/False skill2=0.000/False ultimate=1.00/False
+t=38.0 seat=1 plan=Fetch def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(-0.71, -0.71) pos=(1.63, 0.08, 1.81)
+kit t=38.0 seat=3 hero=phaister skill1=6.089/False skill2=0.000/False ultimate=1.00/False
+t=38.0 seat=3 plan=Windup def=False act=True held=True charging=True charge=0.37 canThrow=True axis=(0.00, 0.00) pos=(1.69, 0.08, 7.85)
+    lataUpright=True throws=12 roundActive=True
+    slippers: [own=3 Held at 1.40,0.67,8.32 d3=0.81 grabbable=False] [own=1 Loose at -0.55,0.07,0.32 d3=2.64 grabbable=False] [own=2 Held at 0.50,0.66,9.02 d3=0.81 grabbable=False] 
+kit t=40.0 seat=2 hero=cheska skill1=1.965/False skill2=0.000/False ultimate=0.00/False
+t=40.0 seat=2 plan=Withdraw def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(0.00, 0.02, 9.00)
+kit t=40.0 seat=0 hero=phaister skill1=0.000/False skill2=0.000/False ultimate=7.00/False
+t=40.0 seat=0 plan=Intercept def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.71, 0.71) pos=(2.74, 0.08, 7.00)
+kit t=40.0 seat=1 hero=nemu skill1=0.000/False skill2=0.000/False ultimate=1.00/False
+t=40.0 seat=1 plan=Withdraw def=False act=True held=True charging=False charge=0.00 canThrow=False axis=(0.71, 0.71) pos=(5.13, 0.08, 5.16)
+kit t=40.0 seat=3 hero=phaister skill1=4.091/False skill2=0.000/False ultimate=1.00/False
+t=40.0 seat=3 plan=Position def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(3.52, 0.08, 7.33)
+    lataUpright=True throws=13 roundActive=True
+    slippers: [own=3 InFlight at 3.90,1.35,7.10 d3=1.34 grabbable=False] [own=1 Held at 5.43,0.42,4.74 d3=0.62 grabbable=False] [own=2 Held at 0.48,0.72,9.04 d3=0.85 grabbable=False] 
+
+worst continuous LOOSE spell per slipper:
+  5.9s  own=1 plan=Fetch ownerAct=True d3=1.77 grabbable=False slipperY=0.07
+  5.2s  own=3 plan=Fetch ownerAct=True d3=1.78 grabbable=False slipperY=0.09
+  6.2s  own=2 plan=Fetch ownerAct=True d3=1.76 grabbable=False slipperY=0.08
+
+plan occupancy (seconds):
+  2:Stalk                  5.6s
+  0:Guard                  5.7s
+  1:Position               8.8s
+  3:Stalk                  5.4s
+  2:Position               9.5s
+  3:Position               8.2s
+  2:Windup                 4.5s
+  1:Windup                 4.3s
+  3:Windup                 5.7s
+  1:Idle                   0.7s
+  3:Idle                   0.6s
+  2:Idle                   0.3s
+  0:Intercept              5.3s
+  1:Stalk                  7.5s
+  3:Fetch                  5.0s
+  1:Fetch                  13.4s
+  3:Withdraw               9.7s
+  0:Hunt                   8.8s
+  2:Fetch                  10.8s
+  1:Withdraw               5.2s
+  2:Withdraw               9.2s
+  0:Cover                  16.4s
+  0:Reset                  3.8s
+  3:Evade                  5.3s
+
+sabotage ledger:
+  seat 2  plans 0  shoves 0  longest pursuit 0.00s  time pursuing 0.0s  last veto PushesAwayFromTaya
+  seat 0  plans 0  shoves 0  longest pursuit 0.00s  time pursuing 0.0s  last veto None
+  seat 1  plans 0  shoves 0  longest pursuit 0.00s  time pursuing 0.0s  last veto VictimNotVulnerable
+  seat 3  plans 0  shoves 0  longest pursuit 0.00s  time pursuing 0.0s  last veto OutOfApproachRange
+  TOTAL  plans 0  shoves 0  longest pursuit 0.00s  time pursuing 0.0s
+  bounds: max pursuit 1.92s  max approach 3.20m  danger radius 7.14m  min closure 1.50m
+  candidate shoves projected: 1302
+    None                   7
+    VictimIsDefender       434
+    VictimNotVulnerable    350
+    OutOfApproachRange     365
+    PushesAwayFromTaya     126
+    NegligibleClosure      20
+
+lunge trace: 4 completed lunges, 1 hits
+  cone-release                 0/3
+  no-taggable-victim           1/1
+  frame=2743 round=1 left=78.2 taya=0 plan=Hunt reason=no-taggable-victim charge=160 power=1.00 victim=2 victimTaggable=False anyTaggable=True dist=7.49 bearing=50.8 lateral=5.80 victimSpeed=0.00 minVictim=4.91 minVictimWhileTaggable=- minAnyTaggable=2.02 victimLeftTaggable=False heldAfterRelease=-1.000 punchCooldown=0.00 tagsDuringCharge=0 start=[held=0.004 victim=3 dist=4.57 taggable=True range=5.1] outcome=HIT
+  frame=3563 round=1 left=74.0 taya=0 plan=Hunt reason=cone-release charge=93 power=1.00 victim=3 victimTaggable=True anyTaggable=True dist=4.65 bearing=3.0 lateral=0.24 victimSpeed=2.50 minVictim=1.71 minVictimWhileTaggable=1.71 minAnyTaggable=1.71 victimLeftTaggable=True heldAfterRelease=-1.000 punchCooldown=0.00 tagsDuringCharge=0 start=[held=0.005 victim=3 dist=5.25 taggable=True range=5.1] outcome=miss
+  frame=6385 round=1 left=60.4 taya=0 plan=Hunt reason=cone-release charge=152 power=1.00 victim=3 victimTaggable=True anyTaggable=True dist=2.85 bearing=18.7 lateral=0.91 victimSpeed=5.00 minVictim=1.79 minVictimWhileTaggable=1.79 minAnyTaggable=1.79 victimLeftTaggable=True heldAfterRelease=-1.000 punchCooldown=0.00 tagsDuringCharge=0 start=[held=0.004 victim=1 dist=5.09 taggable=True range=5.1] outcome=miss
+  frame=7827 round=1 left=53.5 taya=0 plan=Hunt reason=cone-release charge=204 power=1.00 victim=2 victimTaggable=True anyTaggable=True dist=1.66 bearing=38.1 lateral=1.03 victimSpeed=5.00 minVictim=3.40 minVictimWhileTaggable=- minAnyTaggable=- victimLeftTaggable=True heldAfterRelease=-1.000 punchCooldown=0.00 tagsDuringCharge=0 start=[held=0.006 victim=3 dist=4.66 taggable=True range=5.1] outcome=miss

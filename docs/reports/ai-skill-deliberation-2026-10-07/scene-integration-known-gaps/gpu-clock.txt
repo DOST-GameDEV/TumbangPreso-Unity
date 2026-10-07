@@ -1,0 +1,1 @@
+[ShaderClockGPU] cpu=11.33624 level=2.498576 real=209.1708 editor=277.4962346 global=(0.00, 0.00, 0.00, 0.00) gpu=RGBA(0.125, 2.499, 4.997, 7.496)

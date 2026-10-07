@@ -1,0 +1,26 @@
+{
+  "sourceRef": "1f626bb63b23c38399a6a0a3d28532fb045c8ce9",
+  "profile": "pc-humanlike-ai-crosscurrent-original1006",
+  "filter": "TumbangPreso.PlayTests.AiCrosscurrentDecisionTests",
+  "expectedCases": 2,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-humanlike-ai-crosscurrent-original1006",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.AiCrosscurrentDecisionTests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\bot-current1007\\crosscurrent-original\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\bot-current1007\\crosscurrent-original\\editor.log"
+  ],
+  "pid": 39276
+}

@@ -5295,11 +5295,12 @@ namespace TumbangPreso
             // ⚠️ A RELEASED HOLD LEAVES ITS KEY IN THE TABLE WITH -1 IN IT (`HoldAim` writes
             // -1.0 rather than removing the entry), so `_aimHeld.Count` latches true after the
             // first blink of the match and would have held this gate open for the rest of it.
-            bool holding = false;
-            foreach (var held in _aimHeld.Values)
+            Verb? heldSlot = null;
+            foreach (var held in _aimHeld)
             {
-                if (held >= 0.0f) { holding = true; break; }
+                if (held.Value >= 0.0f) { heldSlot = held.Key; break; }
             }
+            bool holding = heldSlot.HasValue;
 
             // ⚠️⚠️ THE OPENING GATE IS PER SEAT NOW, NOT ONE CONSTANT FOUR BOTS SHARE. See
             // `AiTuning.AbilityOpeningJitterSeconds`: a single number means all four unlock on
@@ -5330,6 +5331,10 @@ namespace TumbangPreso
             }
 
             _weighedThisFrame = false;
+            // One opportunity owns this frame. An acquired aim hold keeps its
+            // slot so another ready power cannot replace its point or release it.
+            bool MayConsider(Verb slot) => !_weighedThisFrame
+                && (!heldSlot.HasValue || heldSlot.Value == slot);
 
             Vector3 myPos = transform.position;
             CharacterMotor target = _motor.IsDefender ? TagTarget() : DefenderOf(round);
@@ -5381,7 +5386,7 @@ namespace TumbangPreso
                     || (kit is Abilities.ZackHeroKit zack && !zack.IsOverclocked);
             }
 
-            if (kit.IsUltimateReady && kit.Ultimate != null && ultimateWorthIt)
+            if (MayConsider(Verb.Ultimate) && kit.IsUltimateReady && kit.Ultimate != null && ultimateWorthIt)
             {
                 if (kit is Abilities.DanteHeroKit)
                 {
@@ -5454,12 +5459,12 @@ namespace TumbangPreso
             // telegraph radius is 0 and "victims under the footprint" is always nobody. The wind is
             // a map-wide fan in front of her, so the count is the fan's: two bodies in it is worth
             // the meter, and one is worth it once the ordinary hold runs out.
-            if (kit is Abilities.AmihanHeroKit && kit.IsUltimateReady && kit.Ultimate != null
+            if (MayConsider(Verb.Ultimate) && kit is Abilities.AmihanHeroKit && kit.IsUltimateReady && kit.Ultimate != null
                 && !ultimateWorthIt && AmihanFanCount(round) >= 1
                 && (_ultimateReadyFor >= AiTuning.UltimateHoldSeconds || round.TimeLeft <= AiTuning.UltimateDumpWindowSeconds))
                 Consider(intent, Verb.Ultimate, dt);
 
-            if (SlotIsSpendable(kit.Skill1))
+            if (MayConsider(Verb.Skill1) && SlotIsSpendable(kit.Skill1))
             {
                 if (kit is Abilities.DanteHeroKit)
                 {
@@ -5540,11 +5545,15 @@ namespace TumbangPreso
                     foreach(var shoe in PerceivedSlippers)
                         if(shoe.State==SlipperState.InFlight && Flat(myPos,shoe.transform.position)<5
                             && Vector3.Dot(shoe.Velocity,myPos-shoe.transform.position)>0)
-                        { Consider(intent,Verb.Skill1,dt);break; }
+                        {
+                            intent.AimPoint=shoe.transform.position;
+                            intent.FaceAimPoint=true;
+                            Consider(intent,Verb.Skill1,dt);break;
+                        }
                 }
             }
 
-            if (SlotIsSpendable(kit.Skill2))
+            if (MayConsider(Verb.Skill2) && SlotIsSpendable(kit.Skill2))
             {
                 if (kit is Abilities.DanteHeroKit)
                 {
@@ -5808,6 +5817,7 @@ namespace TumbangPreso
         /// </summary>
         private bool Weighed(Verb verb, float dt)
         {
+            if (_weighedThisFrame) return false;
             _weighedThisFrame = true;
 
             if (_weighing != verb)
@@ -5943,9 +5953,16 @@ namespace TumbangPreso
         /// again.</summary>
         private void Consider(InputIntent intent, Verb verb, float dt)
         {
+            var ability = AbilityForVerb(verb);
+            if (ability != null && ability.HoldToAim
+                && _aimHeld.TryGetValue(verb, out float held) && held >= 0)
+            {
+                _weighedThisFrame = true;
+                HoldAim(intent, verb, ability, dt);
+                return;
+            }
             if (!Weighed(verb, dt)) return;
 
-            var ability = AbilityForVerb(verb);
             if (ability != null && ability.HoldToAim) HoldAim(intent, verb, ability, dt);
             else Tap(intent, verb);
         }

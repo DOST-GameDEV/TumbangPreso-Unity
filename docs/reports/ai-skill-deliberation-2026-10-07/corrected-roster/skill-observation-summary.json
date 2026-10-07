@@ -1,0 +1,262 @@
+{
+  "sourceRef": "1f626bb63b23c38399a6a0a3d28532fb045c8ce9",
+  "actualHeroIds": [
+    "amihan",
+    "cheska",
+    "dante",
+    "nemu",
+    "paete",
+    "phaister",
+    "rafi",
+    "sean",
+    "zack"
+  ],
+  "cases": [
+    {
+      "file": "ai-diagnostic-HeroStrike-LagoonCove-pick0.txt",
+      "selected": [
+        "1",
+        "0",
+        "dante",
+        "False",
+        "Human"
+      ],
+      "roster": [
+        "rafi",
+        "cheska",
+        "dante",
+        "cheska"
+      ],
+      "maxObservedThrows": 15,
+      "lungeAttempts": 3,
+      "countedHits": 1,
+      "escapeWarnings": 0,
+      "skills": {
+        "rafi": {
+          "samples": 21,
+          "skill1CoolingSamples": 0,
+          "skill2CoolingSamples": 17,
+          "skill1ActiveSamples": 0,
+          "skill2ActiveSamples": 0,
+          "ultimateActiveSamples": 0,
+          "maxMeter": 3.0
+        },
+        "cheska": {
+          "samples": 42,
+          "skill1CoolingSamples": 24,
+          "skill2CoolingSamples": 17,
+          "skill1ActiveSamples": 0,
+          "skill2ActiveSamples": 0,
+          "ultimateActiveSamples": 0,
+          "maxMeter": 7.0
+        },
+        "dante": {
+          "samples": 21,
+          "skill1CoolingSamples": 0,
+          "skill2CoolingSamples": 6,
+          "skill1ActiveSamples": 0,
+          "skill2ActiveSamples": 0,
+          "ultimateActiveSamples": 0,
+          "maxMeter": 0
+        }
+      }
+    },
+    {
+      "file": "ai-diagnostic-HeroStrike-LagoonCove-pick1.txt",
+      "selected": [
+        "1",
+        "1",
+        "cheska",
+        "False",
+        "Human"
+      ],
+      "roster": [
+        "sean",
+        "amihan",
+        "sean",
+        "cheska"
+      ],
+      "maxObservedThrows": 12,
+      "lungeAttempts": 3,
+      "countedHits": 3,
+      "escapeWarnings": 0,
+      "skills": {
+        "sean": {
+          "samples": 42,
+          "skill1CoolingSamples": 27,
+          "skill2CoolingSamples": 27,
+          "skill1ActiveSamples": 0,
+          "skill2ActiveSamples": 2,
+          "ultimateActiveSamples": 0,
+          "maxMeter": 9.0
+        },
+        "amihan": {
+          "samples": 21,
+          "skill1CoolingSamples": 13,
+          "skill2CoolingSamples": 7,
+          "skill1ActiveSamples": 1,
+          "skill2ActiveSamples": 2,
+          "ultimateActiveSamples": 0,
+          "maxMeter": 0
+        },
+        "cheska": {
+          "samples": 21,
+          "skill1CoolingSamples": 15,
+          "skill2CoolingSamples": 0,
+          "skill1ActiveSamples": 0,
+          "skill2ActiveSamples": 0,
+          "ultimateActiveSamples": 0,
+          "maxMeter": 2.0
+        }
+      }
+    },
+    {
+      "file": "ai-diagnostic-HeroStrike-LagoonCove-pick2.txt",
+      "selected": [
+        "1",
+        "2",
+        "sean",
+        "False",
+        "Human"
+      ],
+      "roster": [
+        "paete",
+        "sean",
+        "zack",
+        "zack"
+      ],
+      "maxObservedThrows": 17,
+      "lungeAttempts": 3,
+      "countedHits": 1,
+      "escapeWarnings": 0,
+      "skills": {
+        "paete": {
+          "samples": 21,
+          "skill1CoolingSamples": 15,
+          "skill2CoolingSamples": 17,
+          "skill1ActiveSamples": 0,
+          "skill2ActiveSamples": 11,
+          "ultimateActiveSamples": 0,
+          "maxMeter": 1.0
+        },
+        "sean": {
+          "samples": 21,
+          "skill1CoolingSamples": 12,
+          "skill2CoolingSamples": 14,
+          "skill1ActiveSamples": 0,
+          "skill2ActiveSamples": 0,
+          "ultimateActiveSamples": 0,
+          "maxMeter": 2.0
+        },
+        "zack": {
+          "samples": 42,
+          "skill1CoolingSamples": 7,
+          "skill2CoolingSamples": 17,
+          "skill1ActiveSamples": 0,
+          "skill2ActiveSamples": 1,
+          "ultimateActiveSamples": 0,
+          "maxMeter": 5.0
+        }
+      }
+    },
+    {
+      "file": "ai-diagnostic-HeroStrike-LagoonCove-pick3.txt",
+      "selected": [
+        "1",
+        "3",
+        "zack",
+        "False",
+        "Human"
+      ],
+      "roster": [
+        "zack",
+        "nemu",
+        "nemu",
+        "dante"
+      ],
+      "maxObservedThrows": 14,
+      "lungeAttempts": 1,
+      "countedHits": 0,
+      "escapeWarnings": 0,
+      "skills": {
+        "zack": {
+          "samples": 21,
+          "skill1CoolingSamples": 11,
+          "skill2CoolingSamples": 13,
+          "skill1ActiveSamples": 0,
+          "skill2ActiveSamples": 1,
+          "ultimateActiveSamples": 0,
+          "maxMeter": 2.0
+        },
+        "nemu": {
+          "samples": 42,
+          "skill1CoolingSamples": 12,
+          "skill2CoolingSamples": 12,
+          "skill1ActiveSamples": 0,
+          "skill2ActiveSamples": 0,
+          "ultimateActiveSamples": 0,
+          "maxMeter": 7.0
+        },
+        "dante": {
+          "samples": 21,
+          "skill1CoolingSamples": 0,
+          "skill2CoolingSamples": 10,
+          "skill1ActiveSamples": 0,
+          "skill2ActiveSamples": 0,
+          "ultimateActiveSamples": 0,
+          "maxMeter": 2.0
+        }
+      }
+    },
+    {
+      "file": "ai-diagnostic-HeroStrike-LagoonCove-pick4.txt",
+      "selected": [
+        "1",
+        "4",
+        "nemu",
+        "False",
+        "Human"
+      ],
+      "roster": [
+        "cheska",
+        "phaister",
+        "nemu",
+        "phaister"
+      ],
+      "maxObservedThrows": 13,
+      "lungeAttempts": 4,
+      "countedHits": 1,
+      "escapeWarnings": 0,
+      "skills": {
+        "cheska": {
+          "samples": 21,
+          "skill1CoolingSamples": 18,
+          "skill2CoolingSamples": 0,
+          "skill1ActiveSamples": 0,
+          "skill2ActiveSamples": 0,
+          "ultimateActiveSamples": 0,
+          "maxMeter": 0
+        },
+        "phaister": {
+          "samples": 42,
+          "skill1CoolingSamples": 17,
+          "skill2CoolingSamples": 18,
+          "skill1ActiveSamples": 1,
+          "skill2ActiveSamples": 2,
+          "ultimateActiveSamples": 0,
+          "maxMeter": 7.0
+        },
+        "nemu": {
+          "samples": 21,
+          "skill1CoolingSamples": 13,
+          "skill2CoolingSamples": 13,
+          "skill1ActiveSamples": 0,
+          "skill2ActiveSamples": 0,
+          "ultimateActiveSamples": 0,
+          "maxMeter": 1.0
+        }
+      }
+    }
+  ],
+  "limits": "Five unseeded40-second windows at1x after natural opening; unscaled observer time includes ordinary pauses. Two-second samples can miss transient skill state and are not accepted-cast counts, mastery or statistical efficacy."
+}

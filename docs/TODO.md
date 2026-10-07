@@ -1,3 +1,10 @@
+### AI-ACTIVE-ENGAGEMENT-1007: no unexplained idle or staring
+
+- [ ] October7 owner: bots must not randomly stare or stop doing anything. Reproduce and fix eligible-player stalls, lost decisions, unfinished aimed inputs and unreachable goals; confirm useful responses to the round and threats across every map.
+- [x] Fix demonstrated competing-power deliberation starvation, stale Crosscurrent aim and interrupted acquired holds. Original failures retained; fourteen current/Skim/ultimate controls plus corrected actual-ramp hold/ownership control pass on identical production AI bytes. [Evidence and limits](reports/ai-skill-deliberation-2026-10-07/README.md).
+- [ ] Measure actual movement and completed gameplay actions during natural1x matches. Keep charging, channels, forced pauses and legal guarding explicit; tiny fidgets or a nonzero requested axis do not prove useful progress.
+- [ ] Complete feature/role/map coverage and current packaged acceptance. Short roster samples and staged consumer checks do not close this requirement.
+
 ### AI-ILYAS-SKIM-1007: coating before throwing
 
 - [x] Replace obsolete attacker movement/near-pursuer gate with actualHeld+Windup consideration. Originalheld failure retained; actualnormalInputIntent/HeroAbilitySystem coat and opening/active/nextthrow controls pass, all21349 source/prefs restore. [Evidence](reports/ai-skim-prethrow-2026-10-07/README.md).
@@ -7,7 +14,14 @@
 ### AI-HERO-ROSTER-1007: actual kit participation
 
 - [x] Observe all nine current hero IDs through normal character selection and normal AI input writers over five40live-second Lagoon runs. Native5PASS preserves invariant checks; originalAllBots fixture onlythree IDs retained. [Evidence and limits](reports/hero-bot-roster-2026-10-07/README.md).
-- [ ] Repeat selected-chair behavioral observations with corrected movement-aim diagnostic setup, then review skill/ultimate decisions, accepted use/role efficacy, all maps/full matches/performance; earlier roster IDs remain valid but selected-chair movement was mouse-relative.
+- [x] Repeat five selected-chair windows with corrected movement-aim setup: all nine IDs,15/12/17/14/13throws and zero escape-warning lines; all21363source/preferences restored. [Scoped observations](reports/ai-skill-deliberation-2026-10-07/README.md).
+- [ ] Review accepted skill/ultimate use, role efficacy, all maps/full matches and performance; roster presence and short observations do not establish mastery.
+
+### REPLAY-SCENE-FIDELITY-1007: recorded world and clocks
+
+- [x] Integrate checked laptop a39/c533 traffic, crowd, water and shader adapter source; verify43native/source paths and54raw receipts. PC native12of14controls pass with full21363restoration, and both remaining failures are retained. [Integration scope](reports/ai-skill-deliberation-2026-10-07/README.md).
+- [ ] Laptop-owned correction for multi-scene GPU shader time: native_Time.y followsTime.timeSinceLevelLoad rather than absolute clipTime.time in the failing PC case. Qualify recorded clock identity and actual replay pixels after scene changes.
+- [ ] Supply fresh automatic-recording fixture for its complete scene-window check, then qualify wider effects fidelity, performance and current package. The PC runner's missing fixture is not a product failure or pass.
 
 ### COMBINED-REPLAY-DESKTOP-1007: current Windows replacement
 
@@ -17,7 +31,8 @@
 ### REPLAY-PC-INTEGRATION-1007: current AI plus local playback
 
 - [x] Merge checked laptop local replay feature with current AI, verify20tested source paths and93raw evidence SHA. CurrentPC3archive+2viewer/audio controls pass after correcting owned fixture directory name; all21339 source/preferences restore. [Evidence](reports/pc-local-replay-integration-2026-10-07/README.md).
-- [ ] Laptop additional controls/new-map preview qualification, packaged current Windows and Desktop replacement plus broader replay/effect/scene/performance acceptance.
+- [x] Saved controls, new-map preview qualification and verified725eDesktop replacement are recorded in the combined release receipt above.
+- [ ] Broader replay/effect/scene/performance acceptance and subsequent current-source package remain open.
 
 ### AI-LUNGE-CONSUMER-POWER-1007: real accumulated charge
 

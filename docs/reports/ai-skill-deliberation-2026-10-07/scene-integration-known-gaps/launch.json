@@ -1,0 +1,26 @@
+{
+  "sourceRef": "1f626bb63b23c38399a6a0a3d28532fb045c8ce9",
+  "profile": "pc-map-direction-merged-scene-shader-crowd1006",
+  "filter": "TumbangPreso.PlayTests.LocalReplaySceneStateTests;TumbangPreso.PlayTests.LocalReplaySceneShaderTests;TumbangPreso.PlayTests.RecordedShaderClockTests;TumbangPreso.PlayTests.MapPreviewFreshnessTests.ReplayOnlyShaderClockKeepsPreviewProvenanceAndDetectsLiveFallbackChanges;TumbangPreso.PlayTests.LocalReplayTests.RetainedNativeCustomRecordingCanBeViewedAndScrubbedThroughActualControls;TumbangPreso.PlayTests.LocalReplayTests.ContinuousSegmentKeepsPlayingAudioWhileSeekStopsPastCues",
+  "expectedCases": 14,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-map-direction-merged-scene-shader-crowd1006",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.LocalReplaySceneStateTests;TumbangPreso.PlayTests.LocalReplaySceneShaderTests;TumbangPreso.PlayTests.RecordedShaderClockTests;TumbangPreso.PlayTests.MapPreviewFreshnessTests.ReplayOnlyShaderClockKeepsPreviewProvenanceAndDetectsLiveFallbackChanges;TumbangPreso.PlayTests.LocalReplayTests.RetainedNativeCustomRecordingCanBeViewedAndScrubbedThroughActualControls;TumbangPreso.PlayTests.LocalReplayTests.ContinuousSegmentKeepsPlayingAudioWhileSeekStopsPastCues",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\replay-integration1007\\merged-scene-shader-crowd\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\replay-integration1007\\merged-scene-shader-crowd\\editor.log"
+  ],
+  "pid": 48916
+}

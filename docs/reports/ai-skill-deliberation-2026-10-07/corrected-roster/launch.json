@@ -1,0 +1,26 @@
+{
+  "sourceRef": "1f626bb63b23c38399a6a0a3d28532fb045c8ce9",
+  "profile": "pc-humanlike-ai-hero-roster-world-input1006",
+  "filter": "TumbangPreso.PlayTests.AiDiagnosticProbe.HeroRosterPickZero;TumbangPreso.PlayTests.AiDiagnosticProbe.HeroRosterPickOne;TumbangPreso.PlayTests.AiDiagnosticProbe.HeroRosterPickTwo;TumbangPreso.PlayTests.AiDiagnosticProbe.HeroRosterPickThree;TumbangPreso.PlayTests.AiDiagnosticProbe.HeroRosterPickFour",
+  "expectedCases": 5,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-humanlike-ai-hero-roster-world-input1006",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.AiDiagnosticProbe.HeroRosterPickZero;TumbangPreso.PlayTests.AiDiagnosticProbe.HeroRosterPickOne;TumbangPreso.PlayTests.AiDiagnosticProbe.HeroRosterPickTwo;TumbangPreso.PlayTests.AiDiagnosticProbe.HeroRosterPickThree;TumbangPreso.PlayTests.AiDiagnosticProbe.HeroRosterPickFour",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\ai-humanlike1007\\hero-roster-world-input\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\ai-humanlike1007\\hero-roster-world-input\\editor.log"
+  ],
+  "pid": 50920
+}
