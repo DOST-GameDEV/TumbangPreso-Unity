@@ -1,10 +1,15 @@
 ### TOURNAMENT-FRAME-PACING-1007: optimization and loading
 
 - [ ] October7 owner: after current assigned fixes, optimize the current game and loading placement. Noticeable random stutters are unacceptable; measure actual frame pacing during natural matches, recording, replay, map transitions and repeated use before declaring readiness.
-- [ ] Owner-requested GPT-6 Astra xhigh reviewer in this PC chat reviews both streams and proposes concrete refinements. Start read-only, respect existing file reservations and coordinate before edits. This explicit request authorizes this reviewer despite older no-new-worker wording.
+- [x] Owner-requested GPT-6 Astra xhigh reviewer reviewed both streams, reproduced/fixed the held-chase sprint defect and independently critiqued new-map handoffs. Separate file ownership preserved; optimization and full acceptance remain open below. [Bot evidence](reports/bot-held-chase-sprint-2026-10-07/README.md).
 - [ ] Fix and qualify actual replay frame-boundary loss. Combined source6c9 native49600 records7714 effects frames versus7719 observed;7705 unique timestamps and29.955s clip. Six other passing controls do not close this failure. Recorder/Archive/effects remain laptop-owned.
 - [ ] Qualify bounded replay segment lookahead, write backpressure and allocation behavior. Current playback requests the next segment at the seam and waits during loading; full-pool decoding can take hundreds of milliseconds. Continuous multi-segment1x/4x play and stale seek/close controls must accompany the fix.
 - [ ] Verify loading happens under the requested login -> existing main menu preparation -> lobby flow and does not create avoidable gameplay hitches. Preserve the qualified Desktop until a current package passes meaningful checks.
+
+### NEW-MAP-HANDOFF-1007: retain subjects during the return
+
+- [x] Fix reproduced empty/banked returns in Bridge, Cove and Kanto. Original7PASS/3FAIL; candidate10PASS with0empty/banked frames across2623samples, post-fix16:9world capture3PASS and independent pixel critique. All21385inputs/preferences restored. Old-map presentation preserved. [Evidence](reports/new-map-handoff-2026-10-07/README.md).
+- [ ] Finish continuous motion, overlay, stronger individual portrait composition and current packaged presentation acceptance; sparse world-camera snapshots do not close these requirements.
 
 ### AI-ACTIVE-ENGAGEMENT-1007: no unexplained idle or staring
 
