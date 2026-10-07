@@ -1,3 +1,9 @@
+# Charged bot obstruction checkpoint, October 7
+
+Original39196 1FAIL/2PASS releasesfull2.5s dash againstwall1.2m ahead. Capsule-path to firstpossiblecontact correction: candidate41260 passes10/fails3 legacybarecapsule floor fixture controls; failures retained. Actualgamecapsules/floor-control43680 passes14 unchangedassertions. Finalwidth/kerb45336 passes6 includingnarrowpostblock and15cmstepallow. All21327 frozen inputs/preferences restored after everyterminalrun. Report: reports/bot-lunge-obstacles-2026-10-07. This is consumer/physics scope, not allmapnavigation/performance/naturalhitproof.
+
+Next continue actual map navigation/obstacle behavior and combinedrelease after laptop newpreview/fullreplay checks. PC ownsAIController/newopening/caught/slipper lanes; laptoppreview/localReplay/selectedMatchInstaller+HubMenus routes unchanged. NoLAN/mobiledata. Desktopcb5/internal120d older. Noownedheavy/helper/tab remains. SevenCove rawreceiptGit normalization mismatches repairedc1e0973bc; committedbytesnowexactoriginalSHA. Goal ACTIVE.
+
 # Lagoon bot trace checkpoint, October 7
 
 Normal1x Classic/Hero LagoonCove44984 passes2 on f617, all21325 frozen inputs/preferences restored after native/preservation terminal. Actual throws/retrieval decisions occur; zero completed lunges in both samples. Existing diagnostic SliceRunner.Begin overlaps later ReadyGate.Begin, so this is scoped decision/bounds/stranding regression evidence, not improved lunge rate or natural single-start arrival. Complete traces and counts under bot-lunge-plan-lifetime report/cove-realclock. Next reproduce obstacle-blocked bot charged release, then address navigation using actual map failures. Laptop replay candidate/pending newpreviewpublication retains its lanes. No LAN; Desktopcb5/internal120d remain older. Goal ACTIVE.

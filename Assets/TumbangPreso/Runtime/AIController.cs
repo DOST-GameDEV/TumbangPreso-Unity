@@ -2754,6 +2754,7 @@ namespace TumbangPreso
             Vector3 walk = _motor.Velocity;
             walk.y = 0;
             Vector3 start = transform.position;
+            Vector3 previousBody = start;
             Vector3 dash = Vector3.zero;
             Vector3 previous = AheadOf(victim, 0).Value - start;
             previous.y = 0;
@@ -2769,15 +2770,64 @@ namespace TumbangPreso
                 age += dt;
                 speed = Mathf.Max(0, speed - Balance.Friction * dt);
                 dash += forward * speed * dt;
-                Vector3 relative = AheadOf(victim, age).Value - (start + dash + walk * age);
+                Vector3 body = start + dash + walk * age;
+                Vector3 relative = AheadOf(victim, age).Value - body;
                 relative.y = 0;
                 Vector3 segment = relative - previous;
                 float along = segment.sqrMagnitude > .0001f
                     ? Mathf.Clamp01(-Vector3.Dot(previous, segment) / segment.sqrMagnitude) : 0;
-                if ((previous + segment * along).sqrMagnitude <= radius * radius) return true;
+                if ((previous + segment * along).sqrMagnitude <= radius * radius)
+                {
+                    // Ask only for travel up to the first possible contact. A wall
+                    // farther along the dash must not forbid a tag already in reach.
+                    float first = 0;
+                    float outside = previous.sqrMagnitude - radius * radius;
+                    if (outside > 0 && segment.sqrMagnitude > .0001f)
+                    {
+                        float dot = Vector3.Dot(previous, segment);
+                        float discriminant = Mathf.Max(0, dot * dot - segment.sqrMagnitude * outside);
+                        first = Mathf.Clamp01((-dot - Mathf.Sqrt(discriminant)) / segment.sqrMagnitude);
+                    }
+                    return LungeTravelClear(previousBody, Vector3.Lerp(previousBody, body, first));
+                }
+                if (!LungeTravelClear(previousBody, body)) return false;
+                previousBody = body;
                 previous = relative;
             }
             return false;
+        }
+
+        private bool LungeTravelClear(Vector3 from, Vector3 to)
+        {
+            Vector3 delta = to - from;
+            float distance = delta.magnitude;
+            if (distance < .0001f) return true;
+            var capsule = GetComponent<CharacterController>();
+            if (capsule == null) return false;
+            Vector3 scale = transform.lossyScale;
+            float radius = capsule.radius * Mathf.Max(Mathf.Abs(scale.x), Mathf.Abs(scale.z));
+            float half = Mathf.Max(radius, capsule.height * Mathf.Abs(scale.y) * .5f);
+            Vector3 centre = from + transform.TransformVector(capsule.center);
+            Vector3 top = centre + Vector3.up * (half - radius);
+            // The motor may step over small kerbs. Probe the body above its legal
+            // step height so floor trim does not count as a wall across the route.
+            Vector3 bottom = centre - Vector3.up * (half - radius)
+                + Vector3.up * Mathf.Min(capsule.stepOffset * Mathf.Abs(scale.y), 2 * (half - radius));
+            var hits = _shoveRouteHits;
+            int count = Physics.CapsuleCastNonAlloc(bottom, top, radius, delta / distance,
+                hits, distance, ~0, QueryTriggerInteraction.Ignore);
+            if (count == hits.Length)
+            { hits = Physics.CapsuleCastAll(bottom, top, radius, delta / distance, distance, ~0, QueryTriggerInteraction.Ignore); count = hits.Length; }
+            for (int i = 0; i < count; i++)
+            {
+                var collider = hits[i].collider;
+                if (collider == null || hits[i].normal.y > .65f) continue;
+                if (collider.GetComponentInParent<CharacterMotor>() != null
+                    || collider.GetComponentInParent<Slipper>() != null
+                    || collider.GetComponentInParent<Lata>() != null) continue;
+                return false;
+            }
+            return true;
         }
 
         // ---- THE THROW SOLVE ------------------------------------------------

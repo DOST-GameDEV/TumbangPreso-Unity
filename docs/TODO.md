@@ -1,3 +1,8 @@
+### AI-LUNGE-OBSTACLES-1007: body path before charged release
+
+- [x] Reject a charged release whose actual body path is blocked before tag contact. Original wall-ahead failure retained; native14 aim/lifetime/game-capsule controls and6 final obstacle/width/kerb controls pass. [Evidence](reports/bot-lunge-obstacles-2026-10-07/README.md).
+- [ ] Actual all-map navigation, natural lunge efficacy and performance plus combined Windows release.
+
 ### AI-LUNGE-PLAN-LIFETIME-1007: targetless charge ownership
 
 - [x] Fix blind charged releases when Guard/Intercept/Reset/Hunt loses its target. Original4FAIL/1PASS; candidate10PASS through actual consumers and existing aimed/reach controls. Preserve the legal can-reset cancellation and ordinary input path.

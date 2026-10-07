@@ -28,6 +28,7 @@ namespace TumbangPreso.PlayTests
             CharacterMotor Seat(int slot,Vector3 at)
             {
                 var go=new GameObject("Lunge aim seat"+slot,typeof(CharacterController));
+                var cc=go.GetComponent<CharacterController>();cc.height=1.6f;cc.radius=.35f;cc.center=Vector3.up*.8f;
                 var motor=go.AddComponent<CharacterMotor>();motor.enabled=false;motor.PlayerSlot=slot;motor.Mode=GameMode.Classic;motor.SpawnPosition=at;
                 go.AddComponent<Carrier>();go.AddComponent<CombatVerbs>().enabled=false;GameServices.Round.Register(motor);return motor;
             }
@@ -72,6 +73,7 @@ namespace TumbangPreso.PlayTests
             CharacterMotor Seat(int slot, Vector3 position)
             {
                 var go = new GameObject("Bot tag seat " + slot, typeof(CharacterController));
+                var cc = go.GetComponent<CharacterController>(); cc.height = 1.6f; cc.radius = .35f; cc.center = Vector3.up * .8f;
                 var motor = go.AddComponent<CharacterMotor>(); motor.enabled = false;
                 motor.PlayerSlot = slot; motor.Mode = GameMode.Classic; motor.SpawnPosition = position;
                 go.AddComponent<Carrier>(); go.AddComponent<CombatVerbs>().enabled = false;
