@@ -42,3 +42,16 @@ ColourGrade9.847ms. These nested values are not additive to their parents.
 All current build/player/export inputs/preferences restored. Ordinary-release
 benefit and the remaining noticeable first-render spike are still unqualified.
 Desktop remains unchanged; this does not close tournament smoothness.
+
+Candidate3 prepares the actual hidden ModelPreview target and its first camera
+render before revealing Hero. Inactive model binding now leaves global ambient
+lighting alone; the hidden render temporarily applies its lighting and restores
+it in finally. Activation applies the preview lighting and deactivation restores
+the previous settings. This keeps Home lighting stable during preparation.
+
+Native56940 passes all four graphical controls, including actual nonempty GPU
+pixels, camera disabled while hidden, ambient restoration and the existing
+completion/focus/cancel/alternate-route controls. All21,425 frozen inputs and
+preferences restore. Exact tested source and receipts are retained under
+candidate3-source and candidate3-native. Actual player latency remains pending;
+Desktop stays on the qualified ordinary release. Future builds replace G only.

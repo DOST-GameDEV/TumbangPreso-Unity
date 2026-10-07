@@ -136,6 +136,9 @@ namespace TumbangPreso.UI.Hub
             yield return null;
             ShowPreview();
             yield return null;
+            var firstFrame=_preview.PrepareHiddenFrame();
+            while(firstFrame.MoveNext())yield return firstFrame.Current;
+            yield return null;
             var abilityBuild=BuildAbilitiesOverFrames(Heroes[_index].Id);
             while(abilityBuild.MoveNext())yield return abilityBuild.Current;
             RefreshAction(Heroes[_index].Id);

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 23:21:13Z" end-time="2026-10-07 23:21:21Z" duration="7.9687974">
+  <test-suite type="TestSuite" id="3653" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2147" result="Passed" start-time="2026-10-07 23:21:13Z" end-time="2026-10-07 23:21:21Z" duration="7.968797" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3645" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2147" result="Passed" start-time="2026-10-07 23:21:13Z" end-time="2026-10-07 23:21:21Z" duration="7.950230" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="56940" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3646" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2147" result="Passed" start-time="2026-10-07 23:21:13Z" end-time="2026-10-07 23:21:21Z" duration="7.940109" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3649" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2145" result="Passed" start-time="2026-10-07 23:21:13Z" end-time="2026-10-07 23:21:21Z" duration="7.929990" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1711" name="DeferredHeroViewTests" fullname="TumbangPreso.PlayTests.DeferredHeroViewTests" classname="TumbangPreso.PlayTests.DeferredHeroViewTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-07 23:21:13Z" end-time="2026-10-07 23:21:21Z" duration="7.706754" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1714" name="AnotherRouteCancelsPreparationAndRepeatedHeroPressDoesNotDuplicate" fullname="TumbangPreso.PlayTests.DeferredHeroViewTests.AnotherRouteCancelsPreparationAndRepeatedHeroPressDoesNotDuplicate" methodname="AnotherRouteCancelsPreparationAndRepeatedHeroPressDoesNotDuplicate" classname="TumbangPreso.PlayTests.DeferredHeroViewTests" runstate="Runnable" seed="140590587" result="Passed" start-time="2026-10-07 23:21:13Z" end-time="2026-10-07 23:21:18Z" duration="4.564954" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1713" name="BackCancelsPendingHeroWithoutLeavingItsPreview" fullname="TumbangPreso.PlayTests.DeferredHeroViewTests.BackCancelsPendingHeroWithoutLeavingItsPreview" methodname="BackCancelsPendingHeroWithoutLeavingItsPreview" classname="TumbangPreso.PlayTests.DeferredHeroViewTests" runstate="Runnable" seed="1415517330" result="Passed" start-time="2026-10-07 23:21:18Z" end-time="2026-10-07 23:21:19Z" duration="1.557333" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="1712" name="HomeStaysVisibleUntilCompleteHeroAndThenFocusesPrimary" fullname="TumbangPreso.PlayTests.DeferredHeroViewTests.HomeStaysVisibleUntilCompleteHeroAndThenFocusesPrimary" methodname="HomeStaysVisibleUntilCompleteHeroAndThenFocusesPrimary" classname="TumbangPreso.PlayTests.DeferredHeroViewTests" runstate="Runnable" seed="358308087" result="Passed" start-time="2026-10-07 23:21:19Z" end-time="2026-10-07 23:21:21Z" duration="1.566324" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1896" name="HiddenPreviewFrameTests" fullname="TumbangPreso.PlayTests.HiddenPreviewFrameTests" classname="TumbangPreso.PlayTests.HiddenPreviewFrameTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-07 23:21:21Z" end-time="2026-10-07 23:21:21Z" duration="0.111920" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1897" name="HiddenModelBindingAndFirstRenderRestoreAmbientAndKeepCameraDisabled" fullname="TumbangPreso.PlayTests.HiddenPreviewFrameTests.HiddenModelBindingAndFirstRenderRestoreAmbientAndKeepCameraDisabled" methodname="HiddenModelBindingAndFirstRenderRestoreAmbientAndKeepCameraDisabled" classname="TumbangPreso.PlayTests.HiddenPreviewFrameTests" runstate="Runnable" seed="1969241438" result="Passed" start-time="2026-10-07 23:21:21Z" end-time="2026-10-07 23:21:21Z" duration="0.109492" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

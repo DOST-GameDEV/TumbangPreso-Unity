@@ -5,13 +5,13 @@ transferred its work here. The requested Astra reviewer is finished and retired.
 Do not wake either or create agents/chats. No LAN, foreground control, resets,
 cleans, stashes or force pushes. Preserve finalized kits and old-map art.
 
-Current Desktop and ordinary candidate are source `effe0fbed9`, protocol 153,
-runtime `0898acb7`. The candidate replaced the existing G folder; Desktop was
+Current Desktop is source `effe0fbed9`, protocol 153,
+runtime `0898acb7`. Its candidate replaced the existing G folder; Desktop was
 updated in place with 34 changed files and all 261 file hashes verified. No new
 build/Desktop folder or profile/save change. Build/native runs restored all
 21,415 frozen inputs/preferences. Evidence: reports/windows-replacement-2026-10-08.
 
-Current G completed the 191-window controlled release route: 74 accepted actions,
+That ordinary candidate completed the 191-window controlled release route: 74 accepted actions,
 26 required consequences and two distinct natural custom one-round/30-second
 completion records. Rago's two owned empowered throws include load, flight,
 matched contact, consumption and 2.291 m movement. Both completed recordings
@@ -39,10 +39,16 @@ identities match. Actual Windows values match the saved Windows recording;
 strict validation/serialization are unchanged. Two independent editor processes
 match each other. Future engine/shader compatibility remains unproven.
 
-Next profile and fix the noticeable first-Hero/preload stalls using a Development
-diagnostic that replaces the existing candidate only. Preserve the qualified
-Desktop. Previous ordinary first-Hero134.53ms/preload877.67ms remain failures;
-do not claim that a passing functional route closes performance or AI quality.
+Current internal G is the Development diagnostic at `431417448`, runtime
+`fe5e396b`, 403 files and 3,647,234,856 bytes. Deferred Hero preparation reduced
+its measured first-open peak from118.399ms to50.302ms CPU, still a noticeable
+spike. The method-entry experiment worsened the peak and stays off. Candidate3
+now renders the actual hidden preview before reveal and preserves Home ambient
+lighting. Native56940 passes four graphical/lifecycle/routing controls and all
+21,425 frozen inputs/preferences restore. Player latency remains pending.
+Next replace G only to measure this change, then qualify an ordinary release.
+Preserve Desktop. Previous ordinary first-Hero134.53ms/preload877.67ms remain
+failures; functional checks alone do not close performance or AI quality.
 
 Only replace the existing G build folder for future builds. No additional named
 or numbered output directories. The cleanup of 38 verified superseded internal

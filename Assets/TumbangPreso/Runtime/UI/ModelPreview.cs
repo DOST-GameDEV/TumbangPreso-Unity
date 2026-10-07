@@ -836,7 +836,7 @@ namespace TumbangPreso.UI
             PlayIdle(clips);
             double idleMs=measure?LoadElapsedMs(idleBegan):0;
             IsolateFromForeignLights();
-            ApplyPreviewAmbient();
+            if(isActiveAndEnabled)ApplyPreviewAmbient();
 
             // A new subject gets a fresh sweep: the player picked this one to look at, and the
             // arc's phase carrying over means one pick greets you front-on and the next shows
@@ -1141,6 +1141,15 @@ namespace TumbangPreso.UI
             if (_camera != null) _camera.Render();
         }
 
+        public System.Collections.IEnumerator PrepareHiddenFrame()
+        {
+            if(isActiveAndEnabled||_camera==null)yield break;
+            Step(settleImmediately:true);
+            yield return null;
+            try{ApplyPreviewAmbient();_camera.Render();}
+            finally{RestoreAmbient();_camera.enabled=false;}
+        }
+
         private void Step(bool settleImmediately = false)
         {
             if (_camera == null) return;
@@ -1328,6 +1337,7 @@ namespace TumbangPreso.UI
 
         private void OnEnable()
         {
+            if(_model!=null)ApplyPreviewAmbient();
             if(_camera!=null)_camera.enabled=true;
         }
 
