@@ -1,0 +1,21 @@
+{
+  "hostPid": 40372,
+  "clientPid": 59804,
+  "hostStartedUtc": "2026-10-07T00:40:18.740082+00:00",
+  "clientStartedUtc": "2026-10-07T00:40:46.646170+00:00",
+  "beforeStopUtc": "2026-10-07T00:41:50.1956542Z",
+  "stoppedUtc": "2026-10-07T00:41:50.3057485Z",
+  "bothReadyLiveNoMatchOverReportedByPC": true,
+  "sourceThread": "01a111dd-2637-7d73-8690-9373c48fdda9",
+  "hostRestorationReportedTrue": [
+    "profileSeeds",
+    "input",
+    "runtime",
+    "manifest",
+    "all261files"
+  ],
+  "hostExitCode": 4294967295,
+  "hostNormalRunnerPassed": false,
+  "intentionalStopExpectedNoState": true,
+  "scope": "Coordination receipt only; combine with independently saved PC raw stop/log receipts before accepting the paired gate."
+}
