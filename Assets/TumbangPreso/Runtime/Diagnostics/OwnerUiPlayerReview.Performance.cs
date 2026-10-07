@@ -166,8 +166,11 @@ namespace TumbangPreso.Diagnostics
                 throw new InvalidOperationException("Binary profiler capture is not supported by this player.");
             // Routine timing keeps CSV evidence without the profiler's collection cost.
             // Large binary traces require an explicit, separately budgeted diagnostic.
-            Profiler.enabled = false;
-            Profiler.enableBinaryLog = false;
+            if (Profiler.supported)
+            {
+                Profiler.enabled = false;
+                Profiler.enableBinaryLog = false;
+            }
             if (!_performanceBinary) return;
             Profiler.logFile = Path.Combine(_folder, name + ".raw");
             Profiler.enableBinaryLog = true;
@@ -273,14 +276,13 @@ namespace TumbangPreso.Diagnostics
         private IEnumerator PerformanceHomeEntry()
         {
             Settings.SettingsStore.Current.Fullscreen = false;
-            Settings.SettingsStore.Current.GraphicsQuality = 2;
-            Settings.GraphicsProfiles.Apply(2);
-            Screen.SetResolution(1280, 720, FullScreenMode.Windowed);
-            yield return WaitFor(() => Screen.width == 1280 && Screen.height == 720, 8);
+            Screen.SetResolution(1920, 1080, FullScreenMode.Windowed);
+            yield return WaitFor(() => Screen.width == 1920 && Screen.height == 1080, 8);
             if (Find("GuestAccount") != null) yield return Click("GuestAccount");
             else if (Find("ContinueAccount") != null) yield return Click("ContinueAccount");
-            if (TumpHub.Current == null) yield return Click("StartButton");
-            yield return WaitFor(() => TumpHub.Current != null && TumpHub.Current.Top is HubHome, 45);
+            // Login already opens the existing preparation view and then Home.
+            // Observe that arrival rather than click its retired title action.
+            yield return WaitFor(() => TumpHub.Current != null && TumpHub.Current.ShowingHome, 45);
             yield return new WaitForSecondsRealtime(1);
         }
 
@@ -465,7 +467,7 @@ namespace TumbangPreso.Diagnostics
         private IEnumerator PerformanceReturnHome()
         {
             SceneFlow.LeaveMatchToMainMenu();
-            yield return WaitFor(() => TumpHub.Current != null && TumpHub.Current.Top is HubHome, 45);
+            yield return WaitFor(() => TumpHub.Current != null && TumpHub.Current.ShowingHome, 45);
             yield return new WaitForSecondsRealtime(.5f);
         }
 

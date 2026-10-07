@@ -123,7 +123,7 @@ namespace TumbangPreso.Diagnostics
             string mode=_frameMode;_frameMode=null;
             double elapsedMs=(System.Diagnostics.Stopwatch.GetTimestamp()-_windowTick)*1000.0/System.Diagnostics.Stopwatch.Frequency;
             long managedEnd=GC.GetTotalMemory(false),allocatedBytes=AllocationBytesSinceStart();
-            if(_performanceReview)UnityEngine.Profiling.Profiler.enabled=false;
+            if(_performanceReview&&UnityEngine.Profiling.Profiler.supported)UnityEngine.Profiling.Profiler.enabled=false;
             var window=new FrameWindow{mode=mode,width=Screen.width,height=Screen.height,samples=_frameTimes.Count,
                 duration=_performanceReview?(float)(elapsedMs/1000):Time.realtimeSinceStartup-_frameStarted,gpu=SystemInfo.graphicsDeviceName,cpu=SystemInfo.processorType,
                 realtimeAtStart=_frameStarted,realtimeAtEnd=Time.realtimeSinceStartup,
