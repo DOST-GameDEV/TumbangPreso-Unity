@@ -30,3 +30,7 @@ docs/reports/reliability-2026-10-05/current-ui-online151/host-lifecycle.txt -tex
 docs/reports/two-machine-host-loss-cb5f-2026-10-07/*.json -text -whitespace
 docs/reports/two-machine-host-loss-cb5f-2026-10-07/*.log -text -whitespace
 docs/reports/two-machine-host-loss-cb5f-2026-10-07/client-state.txt -text -whitespace
+
+docs/reports/bot-lunge-reach-2026-10-07/raw/*.json -text -whitespace
+docs/reports/bot-lunge-reach-2026-10-07/raw/*.xml -text -whitespace
+docs/reports/bot-lunge-reach-2026-10-07/*-trace.txt -text -whitespace

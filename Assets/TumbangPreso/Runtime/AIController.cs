@@ -2712,7 +2712,8 @@ namespace TumbangPreso
             // `LungeConeFloor`, so a tighter tier value would ask for an angle the bot has no
             // key for and the release would never pass its own test.
             if (_lungeHeld >= AiTuning.LungeHoldTime
-                && Facing(victim, AiTuning.EffectiveLungeCone(EffectiveDifficulty)))
+                && Facing(victim, AiTuning.EffectiveLungeCone(EffectiveDifficulty))
+                && LungeCanReach(victim))
             {
                 _lungeHeld = -1.0f;
                 Press(intent, Verb.Lunge, false);   // the release edge is what fires it
@@ -2732,6 +2733,42 @@ namespace TumbangPreso
             }
 
             Press(intent, Verb.Lunge, true);
+        }
+
+        private bool LungeCanReach(CharacterMotor victim)
+        {
+            if (victim == null || !ActorIsVisible(victim)) return false;
+            Vector3 forward = transform.forward;
+            forward.y = 0;
+            if (forward.sqrMagnitude < .0001f) return false;
+            forward.Normalize();
+            Vector3 walk = _motor.Velocity;
+            walk.y = 0;
+            Vector3 start = transform.position;
+            Vector3 dash = Vector3.zero;
+            Vector3 previous = AheadOf(victim, 0).Value - start;
+            previous.y = 0;
+            float speed = Balance.LungeSpeed;
+            float radius = Balance.LungeTagRadius * victim.TagReachScale;
+            float step = Mathf.Max(.005f, Time.fixedDeltaTime);
+            // Use the consumer's friction and the body's current walking velocity.
+            // A cone alone admits distant targets outside the dash; conversely,
+            // walking during a dash can reach somebody outside its static line.
+            for (float age = 0; age < Balance.LungeActiveTime;)
+            {
+                float dt = Mathf.Min(step, Balance.LungeActiveTime - age);
+                age += dt;
+                speed = Mathf.Max(0, speed - Balance.Friction * dt);
+                dash += forward * speed * dt;
+                Vector3 relative = AheadOf(victim, age).Value - (start + dash + walk * age);
+                relative.y = 0;
+                Vector3 segment = relative - previous;
+                float along = segment.sqrMagnitude > .0001f
+                    ? Mathf.Clamp01(-Vector3.Dot(previous, segment) / segment.sqrMagnitude) : 0;
+                if ((previous + segment * along).sqrMagnitude <= radius * radius) return true;
+                previous = relative;
+            }
+            return false;
         }
 
         // ---- THE THROW SOLVE ------------------------------------------------

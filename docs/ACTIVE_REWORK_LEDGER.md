@@ -1,5 +1,35 @@
 # Current PC competition checkpoint, October 7
 
+## Next action after the reachable-lunge unit, October 7
+
+Goal ACTIVE; all broad assignments remain in scope. Native original38712
+reproduces25degree/3.5m charged release outside actual tag corridor,1FAIL and
+3controlsPASS. Candidate41292 passes4 and final40812 passes5 including walking
+velocity that makes the otherwise unreachable static dash valid. Actual1x
+Classic/Hero39504 passes2, throws6/9, sampled lunges2/0 and counted hits1/0.
+Unseeded short traces do not establish better full-match hit rate. All21315
+inputs/preferences restore after each terminal job. No PC heavy job remains.
+Source paths: AIController.cs and AiTagCommitmentTests.cs; report
+reports/bot-lunge-reach-2026-10-07. Desktop/shared artifact remains oldercb5.
+
+Paired active host-loss evidence is published and exact receipt bytes repaired
+ate764ee332: all11 recorded original hashes match committed blobs. Both peers
+restore whole261-file artifact/settings; strict client PASS offline Home and no
+fabricated completed match. Host intentional stop is retained as nonnormal exit.
+Laptop closed its exact read-only receipt helper after independent PC copy.
+
+NEXT concrete lane: directed openings for the six non-Arena maps, currently
+the same wide/four-portrait sequence. Keep Arena authored sequence unchanged.
+Build map-specific camera beats and supported visual arrivals with grounded
+gait/idle progression, cancellation/restoration and reduced-motion controls;
+preserve gameplay roots, input ownership, final marks and finalized hero art.
+First inspect actual map court/support geometry and existing arrival controls
+before staging travel. PC owns MatchArrivalPresentation/shared arrival/camera;
+laptop retains preview/video/media/vote/results. Charged-target loss and broader
+interception, all-map navigation/kit decisions and slipper reliability remain
+open. Keep one meaningful next command, short updates and exact jobs/checkpoints.
+Private Auditor settings/voxel script remain untouched. No new helpers/tabs.
+
 ## Active handoff after compaction, October 7 at 00:37 UTC
 
 Update00:45UTC: paired active host loss is COMPLETE within its stated scope.

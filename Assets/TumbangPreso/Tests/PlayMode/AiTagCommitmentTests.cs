@@ -16,8 +16,8 @@ namespace TumbangPreso.PlayTests
         private static void Call(object owner, string method, params object[] args)
             => owner.GetType().GetMethod(method, Hidden).Invoke(owner, args);
 
-        [Test]
-        public void ChargedLungeWaitsForAimInsteadOfFiringAtTheTimeout()
+        [TestCase(90f, 3f, 0f), TestCase(25f, 3.5f, 0f), TestCase(25f, 3.5f, 4f)]
+        public void ChargedLungeWaitsForAReachableAim(float angle, float distance, float walkingRight)
         {
             UI.SceneFlow.Networked=false;
             UI.SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
@@ -31,14 +31,26 @@ namespace TumbangPreso.PlayTests
                 var motor=go.AddComponent<CharacterMotor>();motor.enabled=false;motor.PlayerSlot=slot;motor.Mode=GameMode.Classic;motor.SpawnPosition=at;
                 go.AddComponent<Carrier>();go.AddComponent<CombatVerbs>().enabled=false;GameServices.Round.Register(motor);return motor;
             }
-            var actor=Seat(0,new Vector3(0,.1f,-3));var victim=Seat(1,new Vector3(3,.1f,-3));
+            var actor=Seat(0,new Vector3(0,.1f,-3));
+            Vector3 offset=Quaternion.Euler(0,angle,0)*Vector3.forward*distance;
+            var victim=Seat(1,actor.SpawnPosition+offset);
             GameServices.Match.StartMatch();GameServices.Round.BeginRound();actor.IsDefender=true;victim.IsDefender=false;victim.HoldingSlipper=true;
             actor.transform.position=actor.SpawnPosition;victim.transform.position=victim.SpawnPosition;actor.transform.forward=Vector3.forward;
             var ai=actor.gameObject.AddComponent<AIController>();ai.enabled=false;typeof(AIController).GetProperty("Plan").SetValue(ai,AiPlan.Hunt);
             var verbs=actor.GetComponent<CombatVerbs>();actor.Intent.Set(Verb.Lunge,true);Call(verbs,"StepLunge",1f);
             typeof(AIController).GetField("_lungeHeld",Hidden).SetValue(ai,1f);actor.Intent.CommitFrame();Physics.SyncTransforms();
-            Assert.IsTrue(victim.IsTaggable());Assert.Greater(Vector3.Angle(actor.transform.forward,victim.transform.position-actor.transform.position),80);
+            typeof(CharacterMotor).GetField("_velocity",Hidden).SetValue(actor,Vector3.right*walkingRight);
+            Assert.IsTrue(victim.IsTaggable());
+            Assert.Greater(Mathf.Abs(offset.x),Balance.LungeTagRadius*victim.TagReachScale,
+                "Even an angle inside the planner cone can miss the real lunge corridor");
             Call(ai,"StepLungeIntent",actor.Intent,victim,.016f);Call(verbs,"StepLunge",.016f);
+            if (walkingRight > 0)
+            {
+                Assert.Greater(verbs.LungeCooldownLeft,0,
+                    "Current walking travel makes this dash reachable despite the static corridor");
+                Assert.That(verbs.PunchCooldownLeft,Is.EqualTo(0));
+                return;
+            }
             Assert.That(verbs.LungeCooldownLeft,Is.EqualTo(0),"A full charge cannot justify a dash aimed away from the visible target");
             Assert.Greater(verbs.ObservedLungeCharge,0,"The real held input must retain the charge while the body turns");
             Assert.Greater(actor.Intent.MoveAxis.x,.7f,"The bot must actively turn toward the target rather than hold forever");

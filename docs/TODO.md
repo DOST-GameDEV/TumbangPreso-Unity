@@ -289,6 +289,13 @@
 
 ### BOT-REFINE-1006: owner full behavior pass after spectator
 
+- [x] Charged lunge release checks predicted reachable travel as well as angle:
+  original25degree/3.5m consumer case1FAIL with3controlsPASS, candidate4PASS and
+  final5PASS including walking velocity making the dash reachable. Actual1x
+  Classic/Hero short diagnostics2PASS, all21315 inputs/preferences restored.
+  Full target-loss, interception and all-map/all-kit quality remain open.
+  [Scoped evidence](reports/bot-lunge-reach-2026-10-07/README.md).
+
 - [x] Resolve the demonstrated prerequisite preventing current Yasmin/Basilio
   ultimate decisions. Native original cause failures become final9 passes,
   with a neighboring value-control regression found and corrected. Hero effects
