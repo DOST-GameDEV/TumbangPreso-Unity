@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Hidden-Canvas map playback: [native decoder failures and pause/resume correction](reports/map-preview-canvas-visibility-2026-10-07/README.md).
+
 Reduced motion during native video preparation: [callback race, original failure and restored native controls](reports/map-preview-prepare-motion-2026-10-07/README.md).
 
 Actual active host-loss client: [strict recovery, preserved results and paired stop scope](reports/lan-host-loss-2026-10-07/README.md).

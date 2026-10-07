@@ -14,13 +14,15 @@ namespace TumbangPreso.UI
         static readonly Dictionary<string,VideoClip> Clips=new Dictionary<string,VideoClip>();
         static readonly Dictionary<string,ResourceRequest> Pending=new Dictionary<string,ResourceRequest>();
         RawImage _image;
+        Canvas _canvas;
         VideoPlayer _player;
         RenderTexture _target;
         Texture2D _poster;
-        bool _visible=true,_firstFrame,_failed,_resumeRequested,_reducedMotion;
+        bool _visible=true,_drawing=true,_firstFrame,_failed,_resumeRequested,_reducedMotion;
         float _prepareStarted;
         public string Map { get; private set; }
         public bool HasFirstFrame=>_firstFrame;
+        bool Drawing=>_visible&&(_canvas==null||_canvas.isActiveAndEnabled);
 
         static string ClipPath(string map)
         {
@@ -63,6 +65,9 @@ namespace TumbangPreso.UI
             var poster=PosterFor(map);if(poster==null)return false;
             if(Map==map){SetVisible(_visible);return true;}
             Stop();Map=map;_poster=poster;_image=GetComponent<RawImage>();
+            // Graphic.canvas ignores disabled canvases. Retain the actual owner
+            // so an overlay can pause work without disabling this component.
+            _canvas=GetComponentInParent<Canvas>(true);
             _image.texture=poster;_image.color=Color.white;_image.raycastTarget=false;
             if(!Clips.TryGetValue(map,out var clip)||clip==null)Clips[map]=clip=Resources.Load<VideoClip>(ClipPath(map));
             if(clip!=null&&!Settings.SettingsStore.Current.ReducedUiMotion&&_visible)Prepare(clip);
@@ -71,7 +76,7 @@ namespace TumbangPreso.UI
 
         void Prepare(VideoClip clip)
         {
-            if(_player!=null||_failed||!isActiveAndEnabled||!_visible)return;
+            if(_player!=null||_failed||!isActiveAndEnabled||!Drawing)return;
             _target=new RenderTexture((int)clip.width,(int)clip.height,0,RenderTextureFormat.ARGB32){name="RecordedMapPreview"};_target.Create();
             _player=gameObject.AddComponent<VideoPlayer>();_player.playOnAwake=false;_player.isLooping=true;
             _player.timeUpdateMode=VideoTimeUpdateMode.UnscaledGameTime;
@@ -81,14 +86,14 @@ namespace TumbangPreso.UI
             _prepareStarted=Time.realtimeSinceStartup;_player.Prepare();
         }
 
-        void Prepared(VideoPlayer player){if(player==_player&&!_failed&&_visible&&isActiveAndEnabled&&player.isActiveAndEnabled&&!Settings.SettingsStore.Current.ReducedUiMotion)player.Play();}
+        void Prepared(VideoPlayer player){if(player==_player&&!_failed&&Drawing&&isActiveAndEnabled&&player.isActiveAndEnabled&&!Settings.SettingsStore.Current.ReducedUiMotion)player.Play();}
         void FirstFrame(VideoPlayer player,long frame)
         {
             if(player!=_player||_failed)return;
             _firstFrame=true;player.sendFrameReadyEvents=false;
             bool reduced=Settings.SettingsStore.Current.ReducedUiMotion;
             if(_image!=null)_image.texture=reduced?_poster:_target;
-            if(!_visible||reduced)player.Pause();
+            if(!Drawing||reduced)player.Pause();
         }
         void Failed(VideoPlayer player,string message)
         {
@@ -101,7 +106,7 @@ namespace TumbangPreso.UI
         {
             bool resumed=visible&&!_visible;
             _visible=visible;
-            if(!visible){if(_player!=null)_player.Pause();return;}
+            if(!Drawing){if(_player!=null)_player.Pause();return;}
             if(!isActiveAndEnabled)return;
             if(resumed&&!_firstFrame)_prepareStarted=Time.realtimeSinceStartup;
             if(Settings.SettingsStore.Current.ReducedUiMotion){if(_player!=null)_player.Pause();if(_image!=null)_image.texture=_poster;return;}
@@ -115,10 +120,17 @@ namespace TumbangPreso.UI
         }
         void Update()
         {
+            bool drawing=Drawing;
+            if(drawing!=_drawing)
+            {
+                _drawing=drawing;
+                if(drawing&&!_firstFrame)_prepareStarted=Time.realtimeSinceStartup;
+                SetVisible(_visible);
+            }
             bool reduced=Settings.SettingsStore.Current.ReducedUiMotion;
             if(reduced!=_reducedMotion){_reducedMotion=reduced;SetVisible(_visible);}
             if(_resumeRequested){_resumeRequested=false;SetVisible(_visible);}
-            if(_visible&&_player!=null&&_player.isActiveAndEnabled&&!_firstFrame&&!_failed&&Time.realtimeSinceStartup-_prepareStarted>=30)
+            if(drawing&&_player!=null&&_player.isActiveAndEnabled&&!_firstFrame&&!_failed&&Time.realtimeSinceStartup-_prepareStarted>=30)
                 Failed(_player,"Decoder did not provide its first frame");
         }
         void OnDisable(){if(_player!=null)_player.Pause();}

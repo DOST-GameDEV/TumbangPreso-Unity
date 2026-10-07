@@ -1,0 +1,35 @@
+{
+  "rawFiles": {
+    "original1-tests.xml": "a2cada75154a6f6309d8b0c7044a2e39da8f02c436b7eb150539edd85f65145c",
+    "original1-launch.json": "08c6bb31d7bf2235b0dd6632d539450603d8c18ec415d1f9bbc89a56a0f1e727",
+    "original1-classified-result.json": "17bdfb802f80b9480070d6591543dc74842ced1ac859fd33a5fe4bab6c0104ec",
+    "original1-profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+    "original1-qualified-source.json.gz": "6286eb3c17c0eae7f7cc13a4eff31ee05085489f01824ecf5ccb90f2c81b0881",
+    "original2-tests.xml": "7405bbb5b9c26d9d00b57390b6e2074857eae905d539e69706abf6b113505ff9",
+    "original2-launch.json": "89c03b9323ece752813d8e5f0b4c1726077d9562b6a7156ec0b2d65a98048763",
+    "original2-classified-result.json": "4ab4df91a800453b017bf3e8b68c043dc9bfb51e5f06e264decae00bf86221d2",
+    "original2-profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+    "original2-qualified-source.json.gz": "61e9cc59cac16d1cc1503ac98d0c5f9f424aea393a37b083c08c8bcd2b523acd",
+    "candidate-tests.xml": "3bd19644960b73f5705bf3c0e2e1a26de03ecb5acb82b3f3d4f8cc45209ee9c6",
+    "candidate-launch.json": "84e201656c9cba2001f868295455abdccdbff06de8d2066324a959e7e5df6179",
+    "candidate-classified-result.json": "c000e689ba6175928a1b17b0d6de320a3f03b7c1f12182aeefcf2f11260e6011",
+    "candidate-profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+    "candidate-qualified-source.json.gz": "62bd9f35ef337357c0a7fb422762a1eb85fa5f82a59e75a51cc08570ad723d1a"
+  },
+  "sourceReceipts": {
+    "original1": "51ddf7a7221a7a97003be59a69c31aaee0d4c7954fce1174d3ba7ac9846ee953",
+    "original2": "c7c48f8bb72f90da92bd2c55df0bdf95d6bfec8803d7446520397d271065238d",
+    "candidate": "dcea2b02c52a2aed05f725d1dfdf63df51d6376f9cf087225c522bbda059906b"
+  },
+  "candidateOutcome": {
+    "pid": 59936,
+    "terminal": true,
+    "exitCode": 0,
+    "passed": 6,
+    "failed": 0,
+    "expected": 6,
+    "inputCount": 21317,
+    "allInputsRestored": true,
+    "existingPrefsRestored": 13
+  }
+}
