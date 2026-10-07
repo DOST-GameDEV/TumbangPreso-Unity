@@ -66,6 +66,8 @@ namespace TumbangPreso.EditorTools
             // source unchanged. Any change to its live fallback invalidates footage.
             if(ReplayClockKeepsLiveTime())
             {files.Remove(ReplayClockSource);files.Remove(ReplayClockSource+".meta");}
+            if(ArenaFxBookkeepingOnly())
+            {files.Remove(ArenaFxRecordedSource);files.Remove(ArenaFxRecordedSource+".meta");}
             var builder=new StringBuilder("1920x1080;30fps;780frames;HDR;MSAA4;camera-sway;settled-ground;camera-entry-v3\n");
             var entry=SceneFlow.PreviewFor(map);
             builder.Append(map).Append(':').Append(entry.Yaw.ToString("R",CultureInfo.InvariantCulture)).Append(':')
@@ -111,9 +113,29 @@ namespace TumbangPreso.EditorTools
                 if(extension==".shader"&&ReplayClockKeepsLiveTime())
                     source=string.Join("\n",source.Split('\n').Where(line=>line.Trim()!="#include \"RecordedShaderTime.cginc\""&&
                         line.Trim()!="#include \"../Resources/Shaders/RecordedShaderTime.cginc\"")).Replace("TumpShaderTime()","_Time.y");
+                if(path=="Assets/TumbangPreso/Runtime/Map/ArenaFx.cs"&&ArenaFxBookkeepingOnly())source=ArenaFxLiveSource(source);
                 bytes=Encoding.UTF8.GetBytes(source);
             }
             using(var sha=SHA256.Create())return Hex(sha.ComputeHash(bytes));
+        }
+        const string ArenaFxRecordedSource="Assets/TumbangPreso/Runtime/Map/ArenaFx.Recorded.cs";
+        static bool ArenaFxBookkeepingOnly()
+        {
+            // Only this verified read-only adapter may be omitted from preview
+            // appearance provenance. Any adapter change hashes the real inputs.
+            if(!File.Exists(ArenaFxRecordedSource))return false;
+            string text=File.ReadAllText(ArenaFxRecordedSource).Replace("\r\n","\n");
+            using(var sha=SHA256.Create())return Hex(sha.ComputeHash(Encoding.UTF8.GetBytes(text)))=="a4e6261539c0ef360f4722502e1a3c03bdef2ed263748e571495d98dc594e77f";
+        }
+        static string ArenaFxLiveSource(string source)
+        {
+            source=source.Replace("public sealed partial class ArenaFx","public sealed class ArenaFx")
+                .Replace(", RecordedFacing facing = RecordedFacing.Fixed)",")")
+                .Replace("            _recordedFacing[v / 4] = facing;\n","")
+                .Replace("            _recordedEye[v / 4] = _eye; _recordedRight[v / 4] = _right; _recordedUp[v / 4] = _up;\n","")
+                .Replace("            FrameRendered?.Invoke(Time.time);\n","")
+                .Replace(", RecordedFacing.Billboard);",");").Replace(", RecordedFacing.Beam);",");");
+            return source.Replace("p.Cell, p.Colour, alpha,\n                p.Mode == Mode.Flat ? RecordedFacing.Fixed : p.Mode == Mode.Stretch ? RecordedFacing.Stretch :\n                p.Mode == Mode.Upright ? RecordedFacing.Upright : RecordedFacing.Billboard);","p.Cell, p.Colour, alpha);");
         }
         const string ReplayClockSource="Assets/TumbangPreso/Resources/Shaders/RecordedShaderTime.cginc";
         static bool ReplayClockKeepsLiveTime()

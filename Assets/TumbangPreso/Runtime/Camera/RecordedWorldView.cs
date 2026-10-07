@@ -23,6 +23,8 @@ namespace TumbangPreso.CameraSystem
         private RecordedMatchClip _clip;
         private readonly bool _standalone;
         public LocalReplaySceneSegment RecordedScene { get; set; }
+        public LocalReplayFxSegment RecordedEffects { get; set; }
+        private RecordedArenaEffects _arenaEffects;
         private int _followSeat=-1;
         private Vector3 _followOffset;
         private GameObject _stage;
@@ -376,6 +378,13 @@ namespace TumbangPreso.CameraSystem
                 view.Sample(state,time-frame.Time);
             }
             foreach(int id in _fields.Keys.ToArray())if(!_visibleFields.Contains(id)){_fields[id].Dispose();_fields.Remove(id);}
+            if(RecordedEffects!=null)
+            {
+                var material=Map.ArenaFx.Instance?.RecordedMaterial;
+                if(material==null)throw new InvalidOperationException("Recorded Arena effect art is unavailable.");
+                if(_arenaEffects==null)_arenaEffects=new RecordedArenaEffects(_stage.transform,material);
+                _arenaEffects.Draw(LocalReplayEffectsCodec.At(RecordedEffects,time),_camera);_arenaEffects.Visible(false);
+            }
             // Preparation also hides live objects and may lose its world owner.
             // Restore visibility even when playback fails before Camera.Render.
             try
@@ -392,6 +401,7 @@ namespace TumbangPreso.CameraSystem
                 if(Map.ArenaFx.Instance!=null)Hide(Map.ArenaFx.Instance.gameObject);
                 foreach(var drone in Object.FindObjectsByType<Map.ArenaDrone>())Hide(drone.gameObject);
             }
+            _arenaEffects?.Visible(RecordedEffects!=null);
             foreach(var field in _fields.Values)field.Visible(true);
             foreach(var trail in _trails.Values)trail.Visible(true);
             if(!_standalone)
@@ -419,7 +429,7 @@ namespace TumbangPreso.CameraSystem
             using var sceneState=LocalReplaySceneState.Apply(RecordedScene,time,UnityEngine.SceneManagement.SceneManager.GetActiveScene());
             using var shaderTime=RecordedShaderClock.At(LocalReplaySceneState.ShaderTimeAt(RecordedScene,time));using var skyTime=NeighbourhoodSkyMotion.At(time);using var lighting=frame!=null?frame.Lighting.Use(_grade,_sky,_skyFill):null;_camera.Render();
             }
-            finally{foreach(var dust in _contactDust.Values)if(dust!=null)dust.ShowForCapture(false);_court.ShowForCapture(false);_lataClock.ShowForCapture(false);foreach(var puff in _escapePuffs.Values)puff.ShowForCapture(false);for(int i=0;i<_hiddenCanvases.Count;i++)if(_hiddenCanvases[i]!=null)_hiddenCanvases[i].enabled=_canvasWasEnabled[i];foreach(var trail in _trails.Values)trail.Visible(false);for(int i=0;i<_hiddenLights.Count;i++)if(_hiddenLights[i]!=null)_hiddenLights[i].enabled=_lightWasEnabled[i];foreach(var field in _fields.Values)field.Visible(false);foreach(var item in _items){item.Copy.ShowOnlyForCapture(false);item.Contact?.Visible(false);}_canLanding.Visible(false);for(int i=0;i<_hidden.Count;i++)if(_hidden[i]!=null)_hidden[i].forceRenderingOff=_previous[i];}
+            finally{_arenaEffects?.Visible(false);foreach(var dust in _contactDust.Values)if(dust!=null)dust.ShowForCapture(false);_court.ShowForCapture(false);_lataClock.ShowForCapture(false);foreach(var puff in _escapePuffs.Values)puff.ShowForCapture(false);for(int i=0;i<_hiddenCanvases.Count;i++)if(_hiddenCanvases[i]!=null)_hiddenCanvases[i].enabled=_canvasWasEnabled[i];foreach(var trail in _trails.Values)trail.Visible(false);for(int i=0;i<_hiddenLights.Count;i++)if(_hiddenLights[i]!=null)_hiddenLights[i].enabled=_lightWasEnabled[i];foreach(var field in _fields.Values)field.Visible(false);foreach(var item in _items){item.Copy.ShowOnlyForCapture(false);item.Contact?.Visible(false);}_canLanding.Visible(false);for(int i=0;i<_hidden.Count;i++)if(_hidden[i]!=null)_hidden[i].forceRenderingOff=_previous[i];}
         }
         private void Hide(GameObject root)
         {
@@ -429,6 +439,7 @@ namespace TumbangPreso.CameraSystem
         }
         public void Dispose()
         {
+            _arenaEffects?.Dispose();_arenaEffects=null;
             Ready=false;GameServices.Audio?.StopReplayCues();_audioMix?.Dispose();_audioMix=null;
             if(_camera!=null)_camera.targetTexture=null;
             if(_target!=null){_target.Release();Object.Destroy(_target);}_target=null;

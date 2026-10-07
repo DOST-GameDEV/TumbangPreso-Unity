@@ -1,0 +1,110 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Editor/MapPreviewFreshness.cs",
+    "testedRawSha256": "6ef123966a28137b049e902093864ab08d3f7a30c5dcba559fe5cfde01e9154b",
+    "stagedGitSha256": "4bfab5c1d3f02ce3175b8dc4fd84d12d1f9b0b2c69e381a17203085c25c3456d",
+    "normalisedCodeMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayPlayback.cs",
+    "testedRawSha256": "3e19f8df65bd4cc7d23a8c7ef0e2efe622563346edb7990c128f19734678c1ae",
+    "stagedGitSha256": "6680fa0d479a8b4085b23b6759b63658f2568ac146b7e900cbce961ea6130653",
+    "normalisedCodeMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayRecorder.cs",
+    "testedRawSha256": "c23250448206f4e4f4a4b3f135e112738770ea6158e3bb5a399d03ab8be077c7",
+    "stagedGitSha256": "85c6e6436e3d369c71e6dfcdfdb611919774d5f34468c8ce6d8f3812aca8be74",
+    "normalisedCodeMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayStore.cs",
+    "testedRawSha256": "99c6326340a8da9d8fad8bdfdf4a9b844f9c34a982b37b14d7124403e33b7957",
+    "stagedGitSha256": "b021305ab28dfa62d53a7cccfd09b73ee900327e15059469eaf1b94e15c274ea",
+    "normalisedCodeMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/MatchReplayArchive.cs",
+    "testedRawSha256": "e06f62df39a0f586e1b23ec98ba65cb4bf1c70864f1fe99e7b3e6d66395e5569",
+    "stagedGitSha256": "bc15829fb123b922d0925ec55a0f4bbd968585840fe0375bf59c579db27df517",
+    "normalisedCodeMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/RecordedWorldView.cs",
+    "testedRawSha256": "dc4090031f21bfddcda4a796a0aa8ad224fe28882cdddf70d35674f904271217",
+    "stagedGitSha256": "847a96474bd62508a44ed1a2296734c1a1bd07cdc316d900362d6e05acb793eb",
+    "normalisedCodeMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Map/ArenaFx.cs",
+    "testedRawSha256": "8e2795e0284d8f8af342c66215d9af3de85029af32b5d18eee3699b377518cf7",
+    "stagedGitSha256": "85bc860b562b580d7d133c308b5ce8bef70c88a0e33813598005898faf2c7793",
+    "normalisedCodeMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/MapPreviewFreshnessTests.cs",
+    "testedRawSha256": "33402252a699df4009bfe50fa7025c08f1dddf9ff2285f2fc2e07367835ff9ea",
+    "stagedGitSha256": "0867c2035a75a76419a720b38bcaa7424f0185e0fa4efdbcf3af3c50499c8026",
+    "normalisedCodeMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayEffectsCodec.cs",
+    "testedRawSha256": "44dc1006098a5a02722fe710c3c6fb47f025fa7faad88917c1188529d57c326a",
+    "stagedGitSha256": "fb1156f9505430ae1699c55fc7827c0ae08766afd3f99448b0ee2e784438baf0",
+    "normalisedCodeMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayEffectsCodec.cs.meta",
+    "testedRawSha256": "a6c0bc2880eda672ccaf45b92d6109e3e30a476ffffaf86df9167a2dd4be439e",
+    "stagedGitSha256": "1ef8993723959fa5f15095dde362fb77b26a6379dcabe103237485cb89061fbb",
+    "normalisedCodeMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/RecordedArenaEffects.cs",
+    "testedRawSha256": "691f4cf3189e8f6ab2339397cd91c0a8ca7d9f0baaf6c48994ebe17591f3afdd",
+    "stagedGitSha256": "4d830746cf7f4b5a32a5caf66f45bf02085fcb0d51afe42c12ba1dac71b5d572",
+    "normalisedCodeMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/RecordedArenaEffects.cs.meta",
+    "testedRawSha256": "96eee47c230c2422a4620841da750ddcf7c5bfea2aa6998d0c4a8a9cda2cb648",
+    "stagedGitSha256": "b7fc2db5cdb078e5223b815fc387f06f0c6bf6f83280973f21c608dbd79279e6",
+    "normalisedCodeMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Map/ArenaFx.Recorded.cs",
+    "testedRawSha256": "713e28587145757f6e5e0d112250d08829e180e1c264cdde04c5f1ca54426b7c",
+    "stagedGitSha256": "a4e6261539c0ef360f4722502e1a3c03bdef2ed263748e571495d98dc594e77f",
+    "normalisedCodeMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Map/ArenaFx.Recorded.cs.meta",
+    "testedRawSha256": "0bb74ef039f5e980b899638f85e7319edd880301c3d3ddc0a1773f7272fb4b6a",
+    "stagedGitSha256": "9b24a598e9fb1fb15c74b868048796d60e2c3d5ac3a33144c1cf3e95fbad0317",
+    "normalisedCodeMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/ArenaFxRecordedTests.cs",
+    "testedRawSha256": "6485e09c847c780d239c8c22207de859ddf826a661bc1561888db223bf6550fa",
+    "stagedGitSha256": "a5b951f486e3205eab2a9ed762d348dd72e04ad06c5d96c41b5e96a9c0f63661",
+    "normalisedCodeMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/ArenaFxRecordedTests.cs.meta",
+    "testedRawSha256": "9a0ad945a9c14e7a2316da442cf64fc072a803cf3c669f1cba747ee33bb92339",
+    "stagedGitSha256": "d1b78a590d3e77eba532842a6a349d6f0ee18bd70954cb31ca5069b0fb0b968b",
+    "normalisedCodeMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Editor/MapPreviewFreshness.cs",
+    "testedRawSha256": "6ef123966a28137b049e902093864ab08d3f7a30c5dcba559fe5cfde01e9154b",
+    "stagedGitSha256": "4bfab5c1d3f02ce3175b8dc4fd84d12d1f9b0b2c69e381a17203085c25c3456d",
+    "normalisedCodeMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/MapPreviewFreshnessTests.cs",
+    "testedRawSha256": "33402252a699df4009bfe50fa7025c08f1dddf9ff2285f2fc2e07367835ff9ea",
+    "stagedGitSha256": "0867c2035a75a76419a720b38bcaa7424f0185e0fa4efdbcf3af3c50499c8026",
+    "normalisedCodeMatches": true
+  }
+]

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 07:47:19Z" end-time="2026-10-07 07:48:20Z" duration="60.7607164">
+  <test-suite type="TestSuite" id="3528" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="2047" result="Failed" site="Child" start-time="2026-10-07 07:47:19Z" end-time="2026-10-07 07:48:20Z" duration="60.760716" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3520" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2047" result="Failed" site="Child" start-time="2026-10-07 07:47:19Z" end-time="2026-10-07 07:48:20Z" duration="60.753135" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="64048" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3521" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2047" result="Failed" site="Child" start-time="2026-10-07 07:47:19Z" end-time="2026-10-07 07:48:20Z" duration="60.751408" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3524" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2045" result="Failed" site="Child" start-time="2026-10-07 07:47:19Z" end-time="2026-10-07 07:48:20Z" duration="60.749578" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1170" name="ArenaFxRecordedTests" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-07 07:47:19Z" end-time="2026-10-07 07:48:20Z" duration="60.717502" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1172" name="NaturalArenaMatchWritesRenderFrameEffectsAndActualViewerSeeksThem" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests.NaturalArenaMatchWritesRenderFrameEffectsAndActualViewerSeeksThem" methodname="NaturalArenaMatchWritesRenderFrameEffectsAndActualViewerSeeksThem" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" seed="132372244" result="Failed" start-time="2026-10-07 07:47:19Z" end-time="2026-10-07 07:48:20Z" duration="60.706542" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ArenaFxRecordedTests+<NaturalArenaMatchWritesRenderFrameEffectsAndActualViewerSeeksThem>d__5.MoveNext () [0x00280] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\ArenaFxRecordedTests.cs:62
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.26 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.60, announcer slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.24 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.60, ambience slider).
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.22 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] chant, the round's last seconds: sfx_arena_chant_stomp at 0.30 of full scale before the sliders (excitement 0.30, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.26 of full scale before the sliders (excitement 0.07, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt at 0.45 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.22 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_2 at 0.45 of full scale before the sliders (excitement 0.76, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.25 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt at 0.45 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] chant, after the can went down (in place of sfx_arena_chant_tumbang_preso, which is not recorded): sfx_arena_chant_claps at 0.30 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] match over: sfx_arena_crowd_erupt_3 at 0.56 of full scale before the sliders (excitement 1.00, ambience slider).
+[Slice] match over. scores: 665 / 150 / 250 / 150. seat 0 wins
+[ArenaCrowd] chant, after the match: sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 1.00, ambience slider).
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

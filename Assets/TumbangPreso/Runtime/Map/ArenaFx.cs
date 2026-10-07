@@ -34,7 +34,7 @@ namespace TumbangPreso.Map
     /// it existed has it too; `ArenaSceneBuilder` adds it plainly.
     /// </summary>
     [DefaultExecutionOrder(1000)]
-    public sealed class ArenaFx : MonoBehaviour
+    public sealed partial class ArenaFx : MonoBehaviour
     {
         public static ArenaFx Instance { get; private set; }
 
@@ -506,7 +506,7 @@ namespace TumbangPreso.Map
         {
             if (alpha <= 0.002f || !Reserve(out int v)) return;
             Vector3 right = _right * (size * 0.5f), up = _up * (size * 0.5f);
-            Write(v, centre - right - up, centre + right - up, centre + right + up, centre - right + up, cell, colour, alpha);
+            Write(v, centre - right - up, centre + right - up, centre + right + up, centre - right + up, cell, colour, alpha, RecordedFacing.Billboard);
         }
 
         /// <summary>For this frame only: a quad facing the eye, turned `degrees` about the line of sight (a target closing, a tumbling star).</summary>
@@ -515,7 +515,7 @@ namespace TumbangPreso.Map
             if (alpha <= 0.002f || !Reserve(out int v)) return;
             float rad = degrees * Mathf.Deg2Rad, c = Mathf.Cos(rad) * size * 0.5f, s = Mathf.Sin(rad) * size * 0.5f;
             Vector3 right = _right * c + _up * s, up = _up * c - _right * s;
-            Write(v, centre - right - up, centre + right - up, centre + right + up, centre - right + up, cell, colour, alpha);
+            Write(v, centre - right - up, centre + right - up, centre + right + up, centre - right + up, cell, colour, alpha, RecordedFacing.Billboard);
         }
 
         /// <summary>For this frame only: a beam of light from one point to another, turned to
@@ -528,7 +528,7 @@ namespace TumbangPreso.Map
             if (side.sqrMagnitude < 1e-8f) side = Vector3.Cross(along, Vector3.up);
             if (side.sqrMagnitude < 1e-8f) side = Vector3.right;
             side.Normalize();
-            Write(v, from - side * (width0 * 0.5f), from + side * (width0 * 0.5f), to + side * (width1 * 0.5f), to - side * (width1 * 0.5f), cell, colour, alpha);
+            Write(v, from - side * (width0 * 0.5f), from + side * (width0 * 0.5f), to + side * (width1 * 0.5f), to - side * (width1 * 0.5f), cell, colour, alpha, RecordedFacing.Beam);
         }
 
         /// <summary>For this frame only: a quad standing where it is told to (a screen's flash).</summary>
@@ -546,8 +546,10 @@ namespace TumbangPreso.Map
             return true;
         }
 
-        private void Write(int v, Vector3 a, Vector3 b, Vector3 c, Vector3 d, Cell cell, Color colour, float alpha)
+        private void Write(int v, Vector3 a, Vector3 b, Vector3 c, Vector3 d, Cell cell, Color colour, float alpha, RecordedFacing facing = RecordedFacing.Fixed)
         {
+            _recordedFacing[v / 4] = facing;
+            _recordedEye[v / 4] = _eye; _recordedRight[v / 4] = _right; _recordedUp[v / 4] = _up;
             _vertices[v] = a; _vertices[v + 1] = b; _vertices[v + 2] = c; _vertices[v + 3] = d;
 
             alpha = Mathf.Clamp01(alpha * _light);
@@ -620,6 +622,7 @@ namespace TumbangPreso.Map
                 _mesh.SetUVs(0, _uvs, 0, _uvs.Length, keep);
             }
             if (_renderer.enabled != any) _renderer.enabled = any;
+            FrameRendered?.Invoke(Time.time);
         }
 
         private int _lastImmediate;
@@ -670,7 +673,9 @@ namespace TumbangPreso.Map
                     break;
             }
 
-            Write(index * 4, at - a - b, at + a - b, at + a + b, at - a + b, p.Cell, p.Colour, alpha);
+            Write(index * 4, at - a - b, at + a - b, at + a + b, at - a + b, p.Cell, p.Colour, alpha,
+                p.Mode == Mode.Flat ? RecordedFacing.Fixed : p.Mode == Mode.Stretch ? RecordedFacing.Stretch :
+                p.Mode == Mode.Upright ? RecordedFacing.Upright : RecordedFacing.Billboard);
         }
     }
 }
