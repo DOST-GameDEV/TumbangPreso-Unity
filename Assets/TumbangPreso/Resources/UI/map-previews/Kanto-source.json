@@ -1,10 +1,10 @@
 {
-    "map": "Kanto",
-    "sourceFingerprint": "56de081ab3a44b3115f14bce48628c3f4d797af75c66cbce5176de32b6445d5e",
-    "videoSha256": "de7f25ece745550cdf5d06e27345e8e964f58d0899bfce73c4b51f9e6c21b384",
-    "posterSha256": "339bdd552054f7b1f7ab8f29e5a1d62f5d3323767e950f5c4da237fc97d99ae0",
-    "width": 1920,
-    "height": 1080,
-    "fps": 30,
-    "frames": 780
+  "map": "Kanto",
+  "sourceFingerprint": "f3a1767336d01afff2cc4b79e55e8ef678dfd8a2344b3c3dd6da6363748d36a0",
+  "videoSha256": "843cf719e62cbb041691a125b42cb29c14871e45834af74459d08dabf691885c",
+  "posterSha256": "d9f29b5b5ffe7322c7c42d31df50440d318178069ec515ae24b27940e762bb3c",
+  "width": 1920,
+  "height": 1080,
+  "fps": 30,
+  "frames": 780
 }

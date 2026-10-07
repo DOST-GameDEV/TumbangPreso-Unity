@@ -361,7 +361,7 @@ namespace TumbangPreso.UI
             if (!Application.isPlaying) return;
             // A caller may already have selected this surface's map before
             // Start. Do not queue the global default over that explicit request.
-            if (!_busy && _showing == null && _wantedMap == null)
+            if (!_busy && Showing == null && _wantedMap == null)
                 Show(SceneFlow.SelectedMap);
         }
 
@@ -844,6 +844,18 @@ namespace TumbangPreso.UI
             }
 
             if (count > 0) _pivot = sum / count;
+
+            // Selection footage should describe the court, rather than the
+            // near-side arrival line. Keep interactive lobby shots unchanged.
+            if (!_lobbyShot && map == SceneFlow.IlalimNgTulay)
+            {
+                _pivot.x = 0; _pivot.z = 0;
+                _distance = 16; _height = 6.4f;
+            }
+            if (!_lobbyShot && map == SceneFlow.LagoonCove)
+            {
+                _yaw = -35; _distance = 32; _height = 22;
+            }
         }
 
         private static Transform FindByName(Transform root, string name)

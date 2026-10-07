@@ -1,0 +1,290 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Editor/MapPreviewFreshness.cs",
+    "testedRawSha256": "f9d11ebbd49cbc7faf3d68ca65af7d8f06539d7ba3358827fadeacf4150a3da8",
+    "committedSha256": "f9d11ebbd49cbc7faf3d68ca65af7d8f06539d7ba3358827fadeacf4150a3da8",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/UI/MapPreviewSurface.cs",
+    "testedRawSha256": "f77691e54517df73192ecba0ab268a13f670e3c06d662c830ecca7bc33e3d820",
+    "committedSha256": "0f81cbc4ff6afb4407764a7d7d2a244a95b1f490d0ffbe44275b9f5e312583d7",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/MapPreviewCameraEntryTests.cs",
+    "testedRawSha256": "25f18f19c0d00428b85e3364f3fc6d84b95e931278bc19e8e0e86e6724656fab",
+    "committedSha256": "25f18f19c0d00428b85e3364f3fc6d84b95e931278bc19e8e0e86e6724656fab",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/MapPreviewCameraEntryTests.cs.meta",
+    "testedRawSha256": "03a42f6dd1daabf751539f90f364cf3ca7c085df67059d5edec35c8b89953dd8",
+    "committedSha256": "3ff7e199a16ed83d94446060ea93d04b4b90dbc2392ee8b8519fb2b1ec828eb0",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/NewThreeRecordedPreviewTests.cs",
+    "testedRawSha256": "38ab08613c76b36c61574e7a8351408be855077e6b1fd104ea6dca516360177f",
+    "committedSha256": "38ab08613c76b36c61574e7a8351408be855077e6b1fd104ea6dca516360177f",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/NewThreeRecordedPreviewTests.cs.meta",
+    "testedRawSha256": "2f2d17861fd048450651c7a63e229e738e670593c30607e708a7cd92c03e3a5b",
+    "committedSha256": "2f2d17861fd048450651c7a63e229e738e670593c30607e708a7cd92c03e3a5b",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Arena-loop.mp4",
+    "testedRawSha256": "615b0a18e26a663ab9661cac0996a83132c8194f7bf8774ac70f27dc96d434c8",
+    "committedSha256": "615b0a18e26a663ab9661cac0996a83132c8194f7bf8774ac70f27dc96d434c8",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Arena-loop.mp4.meta",
+    "testedRawSha256": "8fbdee3e30c8baa311df61eb3192d1f2edeba0899eddab83681b5238c90ebf68",
+    "committedSha256": "8fbdee3e30c8baa311df61eb3192d1f2edeba0899eddab83681b5238c90ebf68",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Arena-poster.png",
+    "testedRawSha256": "5e077bba0e810d0bfa33a71f7732c316694536a1e091f0046c5ba24bf2b7b80d",
+    "committedSha256": "5e077bba0e810d0bfa33a71f7732c316694536a1e091f0046c5ba24bf2b7b80d",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Arena-poster.png.meta",
+    "testedRawSha256": "c5cd311ba2fd8c9fd36cc46c4f6153ac6d8b5b37184a6ca98eb18e112e4e950c",
+    "committedSha256": "c5cd311ba2fd8c9fd36cc46c4f6153ac6d8b5b37184a6ca98eb18e112e4e950c",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Arena-source.json",
+    "testedRawSha256": "e897747b4a62850c6c6b158e6699d860f9d8009b9e9e01d77162f7eb96c116f2",
+    "committedSha256": "e897747b4a62850c6c6b158e6699d860f9d8009b9e9e01d77162f7eb96c116f2",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Arena-source.json.meta",
+    "testedRawSha256": "e90f5ddd8b3a89abb86df7abdb10fec367c8ab9f98ebc40f5ada3479e45b8950",
+    "committedSha256": "e90f5ddd8b3a89abb86df7abdb10fec367c8ab9f98ebc40f5ada3479e45b8950",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/BayanPlaza-loop.mp4",
+    "testedRawSha256": "7bef620e67fdc4444196f12b38f4d12fb062ccfc3a4cfb22af5e4fe7b991087a",
+    "committedSha256": "7bef620e67fdc4444196f12b38f4d12fb062ccfc3a4cfb22af5e4fe7b991087a",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/BayanPlaza-loop.mp4.meta",
+    "testedRawSha256": "1f4f9c70232d3bc400f7154b7dc052cab116c9d1f393da5f77a498425a5aab49",
+    "committedSha256": "1f4f9c70232d3bc400f7154b7dc052cab116c9d1f393da5f77a498425a5aab49",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/BayanPlaza-poster.png",
+    "testedRawSha256": "cfe80d6b31802a5c6c337583f8dd97f7b82ccd848f60cb1ef5429a37449aee5f",
+    "committedSha256": "cfe80d6b31802a5c6c337583f8dd97f7b82ccd848f60cb1ef5429a37449aee5f",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/BayanPlaza-poster.png.meta",
+    "testedRawSha256": "ecc17bc41e932a0a2b09f714ba1cd41529e28e9f9aa3184baf4eb460dae6d964",
+    "committedSha256": "ecc17bc41e932a0a2b09f714ba1cd41529e28e9f9aa3184baf4eb460dae6d964",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/BayanPlaza-source.json",
+    "testedRawSha256": "e3ae5e844f7dc3acc9a8c620372079403ff68529f6ab328dc7ae7c069ed2c2d6",
+    "committedSha256": "e3ae5e844f7dc3acc9a8c620372079403ff68529f6ab328dc7ae7c069ed2c2d6",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/BayanPlaza-source.json.meta",
+    "testedRawSha256": "856dd59376ce06074604116c1a70228e7554092d52889903045aeef822131b5d",
+    "committedSha256": "856dd59376ce06074604116c1a70228e7554092d52889903045aeef822131b5d",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Eskinita-loop.mp4",
+    "testedRawSha256": "05c6996ff5097bc2c33e89abe69c14995a16395153779339a83c45456250c574",
+    "committedSha256": "05c6996ff5097bc2c33e89abe69c14995a16395153779339a83c45456250c574",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Eskinita-loop.mp4.meta",
+    "testedRawSha256": "c6e8a0ccd75fcc0269e4b2609a9ad63a3e651f7b67bc32999e0a5e486b53e32f",
+    "committedSha256": "c6e8a0ccd75fcc0269e4b2609a9ad63a3e651f7b67bc32999e0a5e486b53e32f",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Eskinita-poster.png",
+    "testedRawSha256": "435d04be2769357f12991ac578932f26339f7d0024670398d2a933c81908fdb2",
+    "committedSha256": "435d04be2769357f12991ac578932f26339f7d0024670398d2a933c81908fdb2",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Eskinita-poster.png.meta",
+    "testedRawSha256": "a9b8799c5ac6ab87b6124fb3c49ebc960160d33242a2d66540331d5f538754c5",
+    "committedSha256": "a9b8799c5ac6ab87b6124fb3c49ebc960160d33242a2d66540331d5f538754c5",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Eskinita-source.json",
+    "testedRawSha256": "c926e8291fe55aa61cf75d1468b768d98e5c4e513de40801063ede5d098c2dba",
+    "committedSha256": "c926e8291fe55aa61cf75d1468b768d98e5c4e513de40801063ede5d098c2dba",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Eskinita-source.json.meta",
+    "testedRawSha256": "c7c4a908ce0241c0e5b7e7072de70716158dd01fc0dc56ba5378e10fd3f436c9",
+    "committedSha256": "c7c4a908ce0241c0e5b7e7072de70716158dd01fc0dc56ba5378e10fd3f436c9",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/IlalimNgTulay-loop.mp4",
+    "testedRawSha256": "31c8fc6d2649590b133ef6f1e79ad669fe641c71f64c2d4556137e82da4a7fe6",
+    "committedSha256": "31c8fc6d2649590b133ef6f1e79ad669fe641c71f64c2d4556137e82da4a7fe6",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/IlalimNgTulay-loop.mp4.meta",
+    "testedRawSha256": "afab21a26882428b91bc4c90943765391fe11abe466a8e82978c6233bacd5e98",
+    "committedSha256": "afab21a26882428b91bc4c90943765391fe11abe466a8e82978c6233bacd5e98",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/IlalimNgTulay-poster.png",
+    "testedRawSha256": "2182bb115b875da2e0119ae910f378ed74b26d4aad36c273d969d849f9569ba1",
+    "committedSha256": "2182bb115b875da2e0119ae910f378ed74b26d4aad36c273d969d849f9569ba1",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/IlalimNgTulay-poster.png.meta",
+    "testedRawSha256": "34086e8afc602deb6821e17cb09ae0dfe26887d21260351b456e3b8e3025b249",
+    "committedSha256": "34086e8afc602deb6821e17cb09ae0dfe26887d21260351b456e3b8e3025b249",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/IlalimNgTulay-source.json",
+    "testedRawSha256": "c718ae7cf46a2ea24cffd9920c679f57c6801d45392c4663e65e6249164a5ba4",
+    "committedSha256": "c718ae7cf46a2ea24cffd9920c679f57c6801d45392c4663e65e6249164a5ba4",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/IlalimNgTulay-source.json.meta",
+    "testedRawSha256": "a459a91be88228301edc4f4e36aa8c998b13a254f4555be5a3ff79c133438c10",
+    "committedSha256": "a459a91be88228301edc4f4e36aa8c998b13a254f4555be5a3ff79c133438c10",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Kanto-loop.mp4",
+    "testedRawSha256": "843cf719e62cbb041691a125b42cb29c14871e45834af74459d08dabf691885c",
+    "committedSha256": "843cf719e62cbb041691a125b42cb29c14871e45834af74459d08dabf691885c",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Kanto-loop.mp4.meta",
+    "testedRawSha256": "71ecc9f7794f059aa21830a383ed0c9cb13de23d9fb1a7e35bfca71266c03f0f",
+    "committedSha256": "71ecc9f7794f059aa21830a383ed0c9cb13de23d9fb1a7e35bfca71266c03f0f",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Kanto-poster.png",
+    "testedRawSha256": "d9f29b5b5ffe7322c7c42d31df50440d318178069ec515ae24b27940e762bb3c",
+    "committedSha256": "d9f29b5b5ffe7322c7c42d31df50440d318178069ec515ae24b27940e762bb3c",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Kanto-poster.png.meta",
+    "testedRawSha256": "cae030669c3c260968acc8b54457376177eca8808819b5321a5efc7e36c2cba8",
+    "committedSha256": "cae030669c3c260968acc8b54457376177eca8808819b5321a5efc7e36c2cba8",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Kanto-source.json",
+    "testedRawSha256": "2d42676158058a2478630e2ec71951d0ba861e8b896d69fcd1bcd06336b6b1ee",
+    "committedSha256": "2d42676158058a2478630e2ec71951d0ba861e8b896d69fcd1bcd06336b6b1ee",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/Kanto-source.json.meta",
+    "testedRawSha256": "2c82646e4d8a761b89eeb5d0445041fad706924754f6aa0a86187110c13a02d5",
+    "committedSha256": "2c82646e4d8a761b89eeb5d0445041fad706924754f6aa0a86187110c13a02d5",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/LagoonCove-loop.mp4",
+    "testedRawSha256": "28087f4a9abae4785ae36b263507d1f82d6c4769831b4d8a7a5f286359ce90e7",
+    "committedSha256": "28087f4a9abae4785ae36b263507d1f82d6c4769831b4d8a7a5f286359ce90e7",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/LagoonCove-loop.mp4.meta",
+    "testedRawSha256": "2ee614bb688229af7cf19af0ac85d7396722404f6dc9ceb270b3582c2e45c74c",
+    "committedSha256": "2ee614bb688229af7cf19af0ac85d7396722404f6dc9ceb270b3582c2e45c74c",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/LagoonCove-poster.png",
+    "testedRawSha256": "05691bd9ac202473950e500d7ebe7d675890f3c94418b47eba73f8c1a10626a9",
+    "committedSha256": "05691bd9ac202473950e500d7ebe7d675890f3c94418b47eba73f8c1a10626a9",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/LagoonCove-poster.png.meta",
+    "testedRawSha256": "d91557c186b8345691cfc7ef323c6ba4e5f7ca274c65b19965703934d6b72ddd",
+    "committedSha256": "d91557c186b8345691cfc7ef323c6ba4e5f7ca274c65b19965703934d6b72ddd",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/LagoonCove-source.json",
+    "testedRawSha256": "322716a6585e040cb751246e0da35fc4eda31d54fac7a1bf98b9d118b3728ce9",
+    "committedSha256": "322716a6585e040cb751246e0da35fc4eda31d54fac7a1bf98b9d118b3728ce9",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/LagoonCove-source.json.meta",
+    "testedRawSha256": "c9ffa06b360063c72d8d14d61724774e4ab45412c3236c9f3da9cda75b708046",
+    "committedSha256": "c9ffa06b360063c72d8d14d61724774e4ab45412c3236c9f3da9cda75b708046",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/SaBubong-loop.mp4",
+    "testedRawSha256": "f5ee2b8886d905dc1d1840faf17a70552acfbcdb5be95dc342e8b011222f486b",
+    "committedSha256": "f5ee2b8886d905dc1d1840faf17a70552acfbcdb5be95dc342e8b011222f486b",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/SaBubong-loop.mp4.meta",
+    "testedRawSha256": "7daa3ff1541bbd189260df7e20d9302158c2574bd9c8b1c7e968b377229e9fa3",
+    "committedSha256": "7daa3ff1541bbd189260df7e20d9302158c2574bd9c8b1c7e968b377229e9fa3",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/SaBubong-poster.png",
+    "testedRawSha256": "cb4b8792553768d592f375a1ff5407f370ce0cb8b8759314719817e77e0db735",
+    "committedSha256": "cb4b8792553768d592f375a1ff5407f370ce0cb8b8759314719817e77e0db735",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/SaBubong-poster.png.meta",
+    "testedRawSha256": "c2ee8691d3ba19995b9f7619811206a9d2ca2d50bb1fbcfa8a80dcb199b77237",
+    "committedSha256": "c2ee8691d3ba19995b9f7619811206a9d2ca2d50bb1fbcfa8a80dcb199b77237",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/SaBubong-source.json",
+    "testedRawSha256": "068a1528b1953c7dcddbddec61c259c9e66e4ec197c5d754199038c2472473e2",
+    "committedSha256": "068a1528b1953c7dcddbddec61c259c9e66e4ec197c5d754199038c2472473e2",
+    "equalExceptTextLineEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-previews/SaBubong-source.json.meta",
+    "testedRawSha256": "0513d564233fc8d2432f73f2d583bdeeecc7d5adc3a2a2a51b373c19b0092d67",
+    "committedSha256": "0513d564233fc8d2432f73f2d583bdeeecc7d5adc3a2a2a51b373c19b0092d67",
+    "equalExceptTextLineEndings": true
+  }
+]

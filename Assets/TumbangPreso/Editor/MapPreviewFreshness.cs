@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -21,7 +22,6 @@ namespace TumbangPreso.EditorTools
             public int width=1920,height=1080,fps=30,frames=780;
         }
         static readonly string[] PreviewSources={
-            "Assets/TumbangPreso/Runtime/UI/SceneFlow.cs",
             "Assets/TumbangPreso/Runtime/Visual/WorldLookPresentation.cs",
             "Assets/TumbangPreso/Runtime/Visual/WorldOutline.cs",
             "Assets/TumbangPreso/Runtime/Visual/ColourGrade.cs",
@@ -30,6 +30,10 @@ namespace TumbangPreso.EditorTools
             ,"Assets/TumbangPreso/Runtime/Settings/LightingStyles.cs"
         };
         public static string SourceFingerprint(string map)
+        {
+            using(var sha=SHA256.Create())return Hex(sha.ComputeHash(Encoding.UTF8.GetBytes(SourceDescription(map))));
+        }
+        public static string SourceDescription(string map)
         {
             string scene="Assets/TumbangPreso/Scenes/Maps/"+map+".unity";
             var files=new SortedSet<string>(AssetDatabase.GetDependencies(scene,true),StringComparer.Ordinal);
@@ -50,7 +54,19 @@ namespace TumbangPreso.EditorTools
             if(map==SceneFlow.Arena)AddResource(files,"UI/brand/tump_logo");
             AddResource(files,"WorldCueProfile");AddResource(files,"WorldLookProfile");
             foreach(string setting in new[]{"ProjectSettings/GraphicsSettings.asset","ProjectSettings/QualitySettings.asset"})if(File.Exists(setting))files.Add(setting);
-            var builder=new StringBuilder("1920x1080;30fps;780frames;HDR;MSAA4;camera-sway;settled-ground\n");
+            // Names and descriptions are UI copy. Capture the effective map
+            // camera values instead of invalidating every movie on a rename.
+            files.Remove("Assets/TumbangPreso/Runtime/UI/SceneFlow.cs");
+            files.Remove("Assets/TumbangPreso/Runtime/UI/SceneFlow.cs.meta");
+            // MapPreviewSurface holds PreviewOnly while a map loads, so the
+            // installer never builds gameplay or replay services in a capture.
+            files.Remove("Assets/TumbangPreso/Runtime/MatchInstaller.cs");
+            files.Remove("Assets/TumbangPreso/Runtime/MatchInstaller.cs.meta");
+            var builder=new StringBuilder("1920x1080;30fps;780frames;HDR;MSAA4;camera-sway;settled-ground;camera-entry-v3\n");
+            var entry=SceneFlow.PreviewFor(map);
+            builder.Append(map).Append(':').Append(entry.Yaw.ToString("R",CultureInfo.InvariantCulture)).Append(':')
+                .Append(entry.Distance.ToString("R",CultureInfo.InvariantCulture)).Append(':')
+                .Append(entry.Height.ToString("R",CultureInfo.InvariantCulture)).Append('\n');
             foreach(string path in files.ToArray())if(File.Exists(path+".meta"))files.Add(path+".meta");
             foreach(string path in files)
             {
@@ -62,7 +78,7 @@ namespace TumbangPreso.EditorTools
             foreach(string name in new[]{"private void AimAt(","private void ApplyCamera(","private void AdoptRange(","private void EnsureCamera(","private void EnsureWorldOutline(","private void ApplyMapEnvironment("})
                 builder.Append(MethodBody(preview,name));
             foreach(string line in preview.Split('\n'))if(line.Contains(" const "))builder.Append(line.Trim()).Append('\n');
-            using(var sha=SHA256.Create())return Hex(sha.ComputeHash(Encoding.UTF8.GetBytes(builder.ToString())));
+            return builder.ToString();
         }
         static void AddResource(SortedSet<string> files,string resource)
         {

@@ -1,0 +1,29 @@
+{
+  "pid": 62392,
+  "source": "f7530a561456ab732fb8232869cf4e33bd25dc5d",
+  "kind": "candidate",
+  "out": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\new3-preview-recording1-direct1007",
+  "command": [
+    "C:\\Program Files\\Unity\\Hub\\Editor\\6000.5.8f1\\Editor\\Unity.exe",
+    "-projectPath",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a",
+    "-batchmode",
+    "-force-d3d11",
+    "-executeMethod",
+    "TumbangPreso.EditorTools.MapPreviewRecorder.Record",
+    "-tp-preview-maps",
+    "IlalimNgTulay,LagoonCove,Kanto",
+    "-tp-preview-output",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\new3-preview-recordings1007",
+    "-tp-preview-encoder",
+    "C:\\Users\\Matthew\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-9.0.2-full_build\\bin\\ffmpeg.exe",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\new3-preview-recording1-direct1007\\unity.log",
+    "-tp-profile",
+    "validation-qa-a-be075dcdfa07",
+    "-job-worker-count",
+    "1",
+    "-gc-helper-count",
+    "1"
+  ]
+}

@@ -1,10 +1,10 @@
 {
-    "map": "SaBubong",
-    "sourceFingerprint": "4adc66dcb1f76e1c1e1db102205e7dab9e604a5da8b4f97cabf1c80e370c8845",
-    "videoSha256": "f5ee2b8886d905dc1d1840faf17a70552acfbcdb5be95dc342e8b011222f486b",
-    "posterSha256": "cb4b8792553768d592f375a1ff5407f370ce0cb8b8759314719817e77e0db735",
-    "width": 1920,
-    "height": 1080,
-    "fps": 30,
-    "frames": 780
+  "map": "SaBubong",
+  "sourceFingerprint": "5c67b90af2b57547677d66ee8c90d43f776e24c4c4ae95f268ef6a565efb8a15",
+  "videoSha256": "f5ee2b8886d905dc1d1840faf17a70552acfbcdb5be95dc342e8b011222f486b",
+  "posterSha256": "cb4b8792553768d592f375a1ff5407f370ce0cb8b8759314719817e77e0db735",
+  "width": 1920,
+  "height": 1080,
+  "fps": 30,
+  "frames": 780
 }

@@ -1,0 +1,38 @@
+[
+  {
+    "map": "IlalimNgTulay",
+    "bytes": 78248411,
+    "width": 1920,
+    "height": 1080,
+    "rate": "30/1",
+    "frames": "780",
+    "duration": "26.000000",
+    "codec": "h264",
+    "pixelFormat": "yuv420p",
+    "streamCount": 1
+  },
+  {
+    "map": "LagoonCove",
+    "bytes": 91699273,
+    "width": 1920,
+    "height": 1080,
+    "rate": "30/1",
+    "frames": "780",
+    "duration": "26.000000",
+    "codec": "h264",
+    "pixelFormat": "yuv420p",
+    "streamCount": 1
+  },
+  {
+    "map": "Kanto",
+    "bytes": 96256157,
+    "width": 1920,
+    "height": 1080,
+    "rate": "30/1",
+    "frames": "780",
+    "duration": "26.000000",
+    "codec": "h264",
+    "pixelFormat": "yuv420p",
+    "streamCount": 1
+  }
+]

@@ -1,0 +1,23 @@
+[
+  {
+    "map": "IlalimNgTulay",
+    "captured": "9e4a3e03131b6a482114e7a540e27b7b6320441d1ade634ffe48e2eacd98a48a",
+    "reconstructedOriginal": "9e4a3e03131b6a482114e7a540e27b7b6320441d1ade634ffe48e2eacd98a48a",
+    "same": true,
+    "currentWithoutSuppressedInstaller": "388d8c6583af3f34927572312681109a6c1e7f2dbd64367c2ceb7ab26fa3353c"
+  },
+  {
+    "map": "LagoonCove",
+    "captured": "10605debc60fb2b1c34814c64d089557a815028c49b5be4ee6856e7b5792481a",
+    "reconstructedOriginal": "10605debc60fb2b1c34814c64d089557a815028c49b5be4ee6856e7b5792481a",
+    "same": true,
+    "currentWithoutSuppressedInstaller": "48916e86577d1fe379c5f5ad1f5abd05d4b3f9045d80a9fcc92d2cf90e60f2c7"
+  },
+  {
+    "map": "Kanto",
+    "captured": "bcaf2aaf0280957d99b785702655916c2a635866f605baaa1d287ec13dea22bd",
+    "reconstructedOriginal": "bcaf2aaf0280957d99b785702655916c2a635866f605baaa1d287ec13dea22bd",
+    "same": true,
+    "currentWithoutSuppressedInstaller": "f3a1767336d01afff2cc4b79e55e8ef678dfd8a2344b3c3dd6da6363748d36a0"
+  }
+]
