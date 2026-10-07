@@ -127,6 +127,64 @@ def evaluate_host_loss(report, log, cache, protocol, exit_code):
     return evidence, errors
 
 
+def evaluate_rematch(report, report_text, log, cache, own_id, role, protocol, exit_code):
+    """Two natural completions, with a real result-board rematch between them."""
+    errors = []
+    history = cache.get('History', [])
+    queue = cache.get('Queue', [])
+    evidence = dict(historyCount=len(history), queueCount=len(queue),
+                    witnessCount=len(cache.get('QueueWitness', [])),
+                    completedMatchEvents=log.count('[Slice] match over'),
+                    markerCleared=not cache.get('InMatchSinceUtc'),
+                    recordSha256ByMatchIdSha256={})
+    expected = dict(role='HOST' if role == 'host' else 'CLIENT',
+                    slot='0' if role == 'host' else '1', protocol=str(protocol),
+                    networked='True', mode='HeroStrike', map='BayanPlaza',
+                    round='1', active='False')
+    if exit_code != 0 or not report or any(report.get(k) != v for k, v in expected.items()):
+        errors.append('Rematch terminal report lacks normal connected role, seat and completed next court.')
+    if (evidence['completedMatchEvents'] != 2 or log.count('[NetAuto] READY submitted') < 2
+            or '[NetAuto] REMATCH vote submitted from the result board.' not in log
+            or '[NetAuto] REMATCH began after the peer vote.' not in log):
+        errors.append('Require two natural completions and the actual result-board rematch/ready flow.')
+    if not re.search(r'^selected rules\s*:\s*' + re.escape(WIRE) + r'\s*$', report_text, re.MULTILINE):
+        errors.append('Rematch changed the agreed room rules.')
+    if not (len(history) == len(queue) == evidence['witnessCount'] == 2 and evidence['markerCleared']):
+        errors.append('Require two saved/queued/witnessed completions and a cleared match marker.')
+    ids = [record.get('MatchId') for record in history]
+    if len(ids) != 2 or not all(ids) or len(set(ids)) != 2:
+        errors.append('Rematch reused or omitted a completed match identity.')
+    if ({record.get('MatchId'): record for record in history}
+            != {record.get('MatchId'): record for record in queue}):
+        errors.append('History and queued records disagree; compare identities rather than opposite list order.')
+    if [record.get('MapId') for record in history] != ['BayanPlaza', 'Eskinita']:
+        errors.append('Saved rematch did not rotate from Eskinita to BayanPlaza.')
+    humans = []
+    for record in history:
+        players = sorted(record.get('Players', []), key=lambda p: p['Slot'])
+        people = [p for p in players if not p.get('IsBot', True)]
+        own = [p for p in people if p.get('PlayerId') == own_id]
+        humans.append({p.get('PlayerId') for p in people})
+        if (record.get('Online') is not True or record.get('Rounds') != 1
+                or record.get('Mode') != 'HeroStrike' or len(players) != 4
+                or [p['Slot'] for p in players] != [0, 1, 2, 3]
+                or [p['Slot'] for p in people] != [0, 1] or len(own) != 1
+                or own[0]['Slot'] != (0 if role == 'host' else 1)):
+            errors.append('Saved rematch lost its rules, four seats, two human origins or own identity.')
+        if record.get('MatchId'):
+            identity = hashlib.sha256(record['MatchId'].encode()).hexdigest()
+            canonical = json.dumps(record, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode()
+            evidence['recordSha256ByMatchIdSha256'][identity] = hashlib.sha256(canonical).hexdigest()
+    if len(humans) != 2 or humans[0] != humans[1] or len(humans[0]) != 2 or None in humans[0]:
+        errors.append('Rematch changed the two human identities.')
+    latest = sorted(history[0].get('Players', []), key=lambda p: p['Slot']) if history else []
+    seats = {p['seat']: p for p in report.get('seats', [])} if report else {}
+    if (set(seats) != {0, 1, 2, 3} or any(net_matrix.person_sat_here(seats[s]) is not True for s in (0, 1))
+            or [seats[s].get('score') for s in sorted(seats)] != [p.get('Score') for p in latest]):
+        errors.append('Terminal standings disagree with the latest saved rematch.')
+    return evidence, errors
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--role', choices=('host', 'client'), required=True)
@@ -147,7 +205,11 @@ def main():
     parser.add_argument('--ready-file', type=Path, help='Write a fresh coordination receipt after artifact and profile preparation')
     parser.add_argument('--expect-host-loss', action='store_true',
                         help='Client-only active host-loss gate; requires a separate PC live-stop receipt')
+    parser.add_argument('--rematch', action='store_true',
+                        help='Request one real result-board rematch and require two distinct saved completions')
     args = parser.parse_args()
+    if args.rematch and args.expect_host_loss:
+        parser.error('Rematch completion and deliberate active host loss are separate scenarios.')
     if args.expect_host_loss and args.role != 'client':
         parser.error('Host-loss recovery is observed on the client; the PC owns its host stop.')
     if args.start_file is not None and args.ready_file is None:
@@ -180,6 +242,8 @@ def main():
                   scope='Normal LAN lobby, ready, natural Hero1/30 completion and own saved career; no physical-input or current source-fix acceptance.')
     if args.expect_host_loss:
         result['scope'] = 'Actual live-round host loss, terminal Home recovery and no completed result; requires paired PC stop evidence, not intermediate-frame/input or reconnect acceptance.'
+    elif args.rematch:
+        result['scope'] = 'Normal result-board rematch, two natural Hero1/30 completions and matching saved records across court rotation; no physical or full tournament acceptance.'
     acquired = False; before = None; child = None; profile_created = False
     token = uuid.uuid4().hex
     seed = profile_seed(token, args.role, args.character_pick)
@@ -200,6 +264,9 @@ def main():
                    '-screen-height', '360', '-tp-framecap', '60', '-tp-profile', args.profile,
                    '-tp-autostart', '2', '-tp-netreport', str(out / 'state.txt'),
                    '-tp-netseconds', str(args.seconds), '-logFile', str(out / 'player.log'), *route]
+        if args.rematch:
+            command.append('-tp-autorematch')
+            if args.role == 'host': command.extend(['-tp-map', 'Eskinita'])
         startup = subprocess.STARTUPINFO(); startup.dwFlags |= subprocess.STARTF_USESHOWWINDOW; startup.wShowWindow = 0
         child = subprocess.Popen(command, cwd=ROOT, env=guard.unity_environment(), startupinfo=startup)
         result['pid'] = child.pid
@@ -214,6 +281,9 @@ def main():
         if args.expect_host_loss:
             result['recovery'], errors = evaluate_host_loss(report, log, cache, args.protocol, result['exitCode'])
             result['recovery']['careerFilePresent'] = career_path.exists()
+        elif args.rematch:
+            result['saved'], errors = evaluate_rematch(report, text, log, cache,
+                token + '_' + args.profile, args.role, args.protocol, result['exitCode'])
         else:
             errors = []
             if result['exitCode'] != 0: errors.append('Player did not exit normally.')

@@ -1,5 +1,9 @@
 # Documentation: Start Here
 
+Natural LAN rematch: [strict two-record/rotation expectations and pending paired acceptance](reports/lan-rematch-2026-10-07/README.md).
+
+Packaged preview lifetime: [actual Windows Canvas and motion controls with preserved build/profile evidence](reports/packaged-preview-lifetime-2026-10-07/README.md).
+
 Hidden-Canvas map playback: [native decoder failures and pause/resume correction](reports/map-preview-canvas-visibility-2026-10-07/README.md).
 
 Reduced motion during native video preparation: [callback race, original failure and restored native controls](reports/map-preview-prepare-motion-2026-10-07/README.md).

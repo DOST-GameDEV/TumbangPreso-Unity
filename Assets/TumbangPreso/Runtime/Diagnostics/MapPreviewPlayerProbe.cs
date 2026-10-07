@@ -25,11 +25,13 @@ namespace TumbangPreso.Diagnostics
         [Serializable] sealed class Receipt
         {
             public bool passed;
+            public bool lifetimeOnly,lifetimePassed;
             public string error,cpu,gpu;
             public int width,height;
             public List<Sample> samples=new List<Sample>();
         }
         string _folder;
+        bool _lifetimeOnly;
         readonly Receipt _receipt=new Receipt();
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -40,6 +42,7 @@ namespace TumbangPreso.Diagnostics
             Application.runInBackground=true;
             var root=new GameObject("~MapPreviewPlayerProbe");DontDestroyOnLoad(root);
             var probe=root.AddComponent<MapPreviewPlayerProbe>();probe._folder=Path.GetFullPath(args[at+1]);
+            probe._lifetimeOnly=Array.IndexOf(args,"-tp-map-preview-lifetime-only")>=0;
             Directory.CreateDirectory(probe._folder);probe.StartCoroutine(probe.Observe(probe.Run()));
         }
         IEnumerator Observe(IEnumerator work)
@@ -77,6 +80,12 @@ namespace TumbangPreso.Diagnostics
             yield return WaitFor(()=>TumpHub.Current!=null&&TumpHub.Current.Top is HubHome,"automatic Home");
             var hub=TumpHub.Current;hub.Push<HubHost>();yield return null;yield return null;
             Require(hub.Top is HubHost,"Host-game map screen is missing");
+            if(_lifetimeOnly)
+            {
+                _receipt.lifetimeOnly=true;
+                yield return Lifetime(hub.Host.Preview);
+                _receipt.lifetimePassed=true;hub.Home();yield return null;yield break;
+            }
             for(int visit=0;visit<2;visit++)foreach(string map in SceneFlow.Maps)yield return Measure(hub,map,visit);
             var view=hub.Host.Preview;var media=view.GetComponent<MapPreviewVideo>();
             view.SetRenderingEnabled(false);yield return new WaitForSecondsRealtime(.3f);view.SetRenderingEnabled(true);
@@ -86,6 +95,47 @@ namespace TumbangPreso.Diagnostics
             Settings.SettingsStore.Current.ReducedUiMotion=false;view.SetRenderingEnabled(true);yield return null;
             Require(view.GetComponent<VideoPlayer>().isPlaying,"Normal motion did not resume playback");
             hub.Home();yield return null;
+        }
+        IEnumerator Lifetime(MapPreviewSurface actualView)
+        {
+            // Pause the actual map background while one owned probe view tests
+            // the packaged decoder. This mode makes no all-map timing claim.
+            actualView.SetRenderingEnabled(false);
+            var root=new GameObject("~RecordedPreviewLifetime",typeof(RectTransform),typeof(Canvas));
+            var canvas=root.GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceOverlay;canvas.enabled=false;
+            var imageRoot=new GameObject("RecordedCourt",typeof(RectTransform),typeof(RawImage));
+            imageRoot.transform.SetParent(root.transform,false);HubKit.Stretch((RectTransform)imageRoot.transform);
+            var media=imageRoot.AddComponent<MapPreviewVideo>();var image=imageRoot.GetComponent<RawImage>();
+            try
+            {
+                Require(media.Show(SceneFlow.Arena),"Hidden Arena poster missing");
+                Require(image.texture==MapPreviewVideo.PosterFor(SceneFlow.Arena),"Hidden Canvas lost its poster");
+                Require(imageRoot.GetComponent<VideoPlayer>()==null,"Hidden Canvas opened a decoder");
+                canvas.enabled=true;yield return WaitFor(()=>media.HasFirstFrame,"Canvas first frame");
+                var player=imageRoot.GetComponent<VideoPlayer>();
+                Require(player.clip.width==1920&&player.clip.height==1080,"Lifetime clip lost capture resolution");
+                canvas.enabled=false;yield return null;yield return null;
+                Require(!player.isPlaying,"Canvas overlay kept decoding");
+                canvas.enabled=true;yield return null;yield return null;
+                Require(player.isPlaying&&player==imageRoot.GetComponent<VideoPlayer>(),"Canvas resume replaced or failed its decoder");
+                Settings.SettingsStore.Current.ReducedUiMotion=true;yield return null;yield return null;
+                Require(!player.isPlaying&&image.texture==MapPreviewVideo.PosterFor(SceneFlow.Arena),"Direct reduced-motion setting did not pause/show poster");
+                Settings.SettingsStore.Current.ReducedUiMotion=false;yield return null;yield return null;
+                Require(player.isPlaying,"Direct motion re-enable did not resume");
+                media.Stop();yield return null;
+                Require(media.Show(SceneFlow.Eskinita),"Preparation control poster missing");
+                player=imageRoot.GetComponent<VideoPlayer>();Require(player!=null&&!player.isPrepared,"Preparation control was not staged before readiness");
+                Settings.SettingsStore.Current.ReducedUiMotion=true;yield return null;yield return null;
+                yield return WaitFor(()=>player.isPrepared,"Reduced-motion native preparation");yield return null;yield return null;
+                Require(!player.isPlaying&&image.texture==MapPreviewVideo.PosterFor(SceneFlow.Eskinita),"Late preparation callback ignored reduced motion");
+                Settings.SettingsStore.Current.ReducedUiMotion=false;yield return null;yield return null;
+                yield return WaitFor(()=>media.HasFirstFrame,"Prepared movie resume");
+                Require(player.isPlaying&&image.texture is RenderTexture,"Prepared movie did not resume");
+            }
+            finally
+            {
+                Settings.SettingsStore.Current.ReducedUiMotion=false;media.Stop();Destroy(root);actualView.SetRenderingEnabled(true);
+            }
         }
         IEnumerator Measure(TumpHub hub,string map,int visit)
         {
