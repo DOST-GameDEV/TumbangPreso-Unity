@@ -1,0 +1,44 @@
+{
+  "rawFiles": {
+    "original-tests.xml": "794ac0a5dcf3fa3ca27c2dc0252886a144120a32fb10d59490479f5c31075252",
+    "original-launch.json": "1522d12d85c13b7467df80dccd7b847791363b39725aeaa62c03a7f7380a756b",
+    "original-classified-result.json": "ca07dd3ec9d129a89a4e8fd979263a796df0ef2d0b720357ad4c3f1c45f5c147",
+    "original-profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+    "original-qualified-source.json.gz": "93478f8fa222b7d8d52466b9f07c186f410f6e2725ede28e6786c181e40d05f7",
+    "candidate1-tests.xml": "11fdd70f6159f94a4ab7fb107375b19c3c100374b1ae8fa22e6c8bd50b8d895e",
+    "candidate1-launch.json": "7eb33935fe4f9b35fa17d9845df646ba73bf3e1a9fb8e30422b6de58f3b74207",
+    "candidate1-classified-result.json": "bd8a05614050dd87b32d16559abb60e32f8b62d3604e4fc33e317185e835fc45",
+    "candidate1-profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+    "candidate1-qualified-source.json.gz": "f9b9babb298a30a4aeb048c6e0ba35d278a49b0f14432fc5dfc85f668668f793",
+    "candidate2-tests.xml": "bd278bb1d61e1a5655933fe16807883ef5d82c6f848e3148f30df5918e1a5e00",
+    "candidate2-launch.json": "f524c71a539ed9a52947a659f9865cb39754cf210afc5f54db73cb7bb669fa95",
+    "candidate2-classified-result.json": "25f7d5fc7615b40a2346abea2979725cfdaea986710b2fdbe54e695aa99f6c55",
+    "candidate2-profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+    "candidate2-qualified-source.json.gz": "d261ad1b73dda590b745d2242243c8de949c7575a597bc53a8de8de94f628b5b"
+  },
+  "originalQualifiedSourceSha256": "1fd83ae5c2b9dc9b07f1f93c992be04148b3aa703dc3a88065d9d76632dc726c",
+  "candidate1QualifiedSourceSha256": "3e3e4d8d78f4cc16306ff9a9a0bed1051b11a5c14569326b396ba4b206598907",
+  "candidate1Outcome": {
+    "pid": 60092,
+    "terminal": true,
+    "exitCode": 2,
+    "passed": 1,
+    "failed": 1,
+    "expected": 2,
+    "inputCount": 21315,
+    "allInputsRestored": true,
+    "existingPrefsRestored": 13
+  },
+  "candidate2QualifiedSourceSha256": "4c78768200449532af3ae0189666818616913b1388dadf05f99e10a6f9ed188b",
+  "candidate2Outcome": {
+    "pid": 57268,
+    "terminal": true,
+    "exitCode": 0,
+    "passed": 2,
+    "failed": 0,
+    "expected": 2,
+    "inputCount": 21315,
+    "allInputsRestored": true,
+    "existingPrefsRestored": 13
+  }
+}

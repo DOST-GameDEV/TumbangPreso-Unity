@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Reduced motion during native video preparation: [callback race, original failure and restored native controls](reports/map-preview-prepare-motion-2026-10-07/README.md).
+
 Active host-loss runner: [strict recovery expectations and pending paired acceptance](reports/lan-host-loss-2026-10-07/README.md).
 
 Live map-preview motion settings: [native direct-setting failure and pause/poster/resume correction](reports/map-preview-motion-setting-2026-10-07/README.md).

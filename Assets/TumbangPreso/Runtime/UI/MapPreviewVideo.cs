@@ -81,13 +81,14 @@ namespace TumbangPreso.UI
             _prepareStarted=Time.realtimeSinceStartup;_player.Prepare();
         }
 
-        void Prepared(VideoPlayer player){if(player==_player&&!_failed&&_visible&&isActiveAndEnabled&&player.isActiveAndEnabled)player.Play();}
+        void Prepared(VideoPlayer player){if(player==_player&&!_failed&&_visible&&isActiveAndEnabled&&player.isActiveAndEnabled&&!Settings.SettingsStore.Current.ReducedUiMotion)player.Play();}
         void FirstFrame(VideoPlayer player,long frame)
         {
             if(player!=_player||_failed)return;
             _firstFrame=true;player.sendFrameReadyEvents=false;
-            if(_image!=null)_image.texture=_target;
-            if(!_visible)player.Pause();
+            bool reduced=Settings.SettingsStore.Current.ReducedUiMotion;
+            if(_image!=null)_image.texture=reduced?_poster:_target;
+            if(!_visible||reduced)player.Pause();
         }
         void Failed(VideoPlayer player,string message)
         {
