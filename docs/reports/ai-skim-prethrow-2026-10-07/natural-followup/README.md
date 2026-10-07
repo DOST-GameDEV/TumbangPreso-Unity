@@ -1,0 +1,9 @@
+# Live Ilyas input follow-up
+
+Original native25268 passes the diagnostic invariants but its selected human-origin chair retains a mouse-relative camera after receiving an AI input writer. The motor rotates world-space AI headings by the body yaw. It spends the entire40-second sample in Position, reaches the water edge and never gets a Skim opportunity. Its pass is not evidence of correct selected-chair navigation or Skim use. Full trace and result remain here.
+
+The diagnostic now switches that followed chair to the existing movement-aim mode when disabling the human reader. Production motor, camera and AI steering are unchanged. This correction also applies to the five previously published roster-selection entrypoints. Those earlier runs establish actual roster IDs but their selected-chair movement/skill behavior needs the corrected setup.
+
+Corrected native40148 passes one real automatic ReadyGate and40LIVE seconds with the selected Ilyas chair plus three ordinary bots. The chair enters Windup for5.1seconds, retrieves its slipper and later withdraws. Skill2 cooldown is zero through10seconds then34.444seconds at12seconds and decreases normally thereafter, showing an accepted use through the normal input/ability consumer. Total observed throws across all seats are16. One counted lunge misses. There are no escape-warning lines in this corrected trace. Short unseeded observations are not a statistical improvement, hit-rate, full-match, all-map or all-feature acceptance claim. Per2-second samples cannot measure every transient effect or cast.
+
+Both native/preservation parents exit before exact source restoration. All21349 frozen inputs and preferences restore for both runs. No task-owned player, compiler, server or browser remains. Desktop725e predates Skim source and remains its previously qualified release. Laptop stays online in its separate preview/replay lane; LAN is unavailable on mobile data.

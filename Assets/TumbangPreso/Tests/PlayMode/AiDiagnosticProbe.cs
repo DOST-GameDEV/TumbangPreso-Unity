@@ -120,6 +120,7 @@ namespace TumbangPreso.PlayTests
         [UnityTest] public IEnumerator HeroRosterPickTwo() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.LagoonCove, 2);
         [UnityTest] public IEnumerator HeroRosterPickThree() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.LagoonCove, 3);
         [UnityTest] public IEnumerator HeroRosterPickFour() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.LagoonCove, 4);
+        [UnityTest] public IEnumerator IlyasPrethrowLiveDecisions() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.LagoonCove, 6);
 
         /// <summary>
         /// C2: whole matches of lunges at ordinary 1x simulation speed. The world is stepped at a
@@ -248,6 +249,11 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(characterPick, chosen.CharacterIndex, "The requested hero did not enter the actual roster.");
                 foreach (var reader in Object.FindObjectsByType<PlayerInputReader>()) reader.enabled = false;
                 foreach (var switcher in Object.FindObjectsByType<DebugPlayerSwitcher>()) switcher.enabled = false;
+                // AI writes world-space keyboard headings. The selected chair's
+                // human rig otherwise rotates those headings by its mouse yaw.
+                var rig = Object.FindFirstObjectByType<CameraSystem.CameraRig>();
+                Assert.IsNotNull(rig);
+                rig.SetAimSource(CameraSystem.AimSource.Movement);
                 var brain = chosen.GetComponent<AIController>() ?? chosen.gameObject.AddComponent<AIController>();
                 brain.enabled = true;
             }

@@ -1,0 +1,26 @@
+{
+  "sourceRef": "a440d64a03fef8f7b2c45f2e5abd514db209cd40",
+  "profile": "pc-humanlike-ai-ilyas-skim-world-input1006",
+  "filter": "TumbangPreso.PlayTests.AiDiagnosticProbe.IlyasPrethrowLiveDecisions",
+  "expectedCases": 1,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-humanlike-ai-ilyas-skim-world-input1006",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.AiDiagnosticProbe.IlyasPrethrowLiveDecisions",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\ai-humanlike1007\\ilyas-skim-world-input\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\ai-humanlike1007\\ilyas-skim-world-input\\editor.log"
+  ],
+  "pid": 40148
+}

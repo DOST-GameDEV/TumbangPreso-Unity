@@ -1,3 +1,9 @@
+# Corrected selected-chair live AI checkpoint, October7
+
+Native25268 invariantPASS retained but human-origin selectedchair rig stayedMouse and rotated world-space AI headings;40sPosition/wateredge/noSkim is fixture-limited. Diagnostic nowSetAimSource Movement when replacing humanreader. Corrected40148 oneReadyGate/40LIVEseconds PASS, IlyasWindup5.1s/Skill2cooldown0->34.444 at12s,16totalthrows/1countedlunge miss. Bothall21349exactinputs/preferences restored after native+parentterminal. Natural use observed, no fullmastery/statistical efficacy. Report: ai-skim-prethrow-2026-10-07/natural-followup. Earlier ninehero IDs valid but selected-chair movement/skills need correctedfixture rerun.
+
+Next normalintegratecheckedlaptop a39/c533 after publishing diagnostic unit, then combined scene/shader/crowd controls. Sourceproof43path/nativeSHAtext+54rawreceipts verified beforeintegration. LaptopONLINE confirmedactive separate perrenderArenaFxeffects WIPexcluded. NoLAN/mobiledata. Desktop725equalified/preSkim/fidelityupdates unchanged. Noownednative/player/helper/server/tab remains. Preserve privatefiles/approvedherokits/oldmapart; fullgoalACTIVE.
+
 # Ilyas prethrow AI checkpoint, October7
 
 Original48168 heldWindupFAIL/noHeldPASS. AIController nowattackerHeld+Windup Skim consideration, preserveddefenderWaterwall/movementnear gate. Candidate38452 2PASS; stronger44388fixtureFAILdue manualStepHerowithoutAct perframetouched reset retained; corrected45032 normalinput+actualHeroSystemcoat2PASS. Final48632 opening/noHeld/alreadyloaded+authoritativeCarrierthrowtransfer/detach/loadconsumption controls2PASS. All21349 exactinputs/preferences restored aftereachterminal. Report: ai-skim-prethrow-2026-10-07. Stagedconsumer/throwproof notnaturalefficacy/fulltournament.
