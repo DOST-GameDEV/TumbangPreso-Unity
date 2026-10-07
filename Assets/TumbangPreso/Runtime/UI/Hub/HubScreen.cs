@@ -24,6 +24,8 @@ namespace TumbangPreso.UI.Hub
         public virtual float CourtShade => 0.0f;
 
         public abstract void Build();
+        public virtual bool BuildAcrossFrames=>false;
+        public virtual System.Collections.IEnumerator PrepareView(){Build();yield break;}
 
         /// <summary>
         /// Where a pad or keyboard's focus lands when this screen opens: the screen's one primary.

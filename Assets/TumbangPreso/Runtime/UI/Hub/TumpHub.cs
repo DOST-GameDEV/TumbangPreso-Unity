@@ -39,6 +39,10 @@ namespace TumbangPreso.UI.Hub
         private HubQueuePlate _plate;
         private HubToast _toast;
         private bool _wasInRoom, _lobbyEntryPending;
+        private HubScreen _pendingScreen;
+        private GameObject _pendingDock;
+        private Coroutine _preparation;
+        private System.Collections.IEnumerator _preparationWork;
 
         /// <summary>
         /// Where the next open of the hub should land. ⚠️ A SESSION FACT, CONSUMED ON INSTALL,
@@ -144,6 +148,8 @@ namespace TumbangPreso.UI.Hub
 
         public T Push<T>(System.Action<T> configure) where T : HubScreen
         {
+            if(_pendingScreen is T pending)return pending;
+            CancelPreparation();
             var host = new GameObject(typeof(T).Name, typeof(RectTransform));
             var screen = host.AddComponent<T>();
             bool popup = screen.IsPopup;
@@ -151,6 +157,17 @@ namespace TumbangPreso.UI.Hub
             rect.SetParent(popup ? _popups : _screens, false);
             host.layer = Canvas.gameObject.layer;
             HubKit.Stretch(rect);
+            if(screen.BuildAcrossFrames&&!popup)
+            {
+                screen.Hub=this;screen.Root=rect;configure?.Invoke(screen);
+                _pendingDock=new GameObject("Preparing hub view",typeof(RectTransform));
+                _pendingDock.SetActive(false);_pendingDock.transform.SetParent(Canvas.transform,false);
+                HubKit.Stretch((RectTransform)_pendingDock.transform);
+                rect.SetParent(_pendingDock.transform,false);HubKit.Stretch(rect);
+                _pendingScreen=screen;_preparationWork=screen.PrepareView();
+                _preparation=StartCoroutine(PrepareScreen(screen));
+                return screen;
+            }
             if (popup)
             {
                 // A popup's root is the scrim and owns a focus path of its own (HubKit.Modal).
@@ -175,9 +192,7 @@ namespace TumbangPreso.UI.Hub
                 foreach (var below in _stack) if (!below.IsPopup) below.gameObject.SetActive(false);
             }
 
-            screen.Hub = this;
-            screen.Root = rect;
-            configure?.Invoke(screen);
+            screen.Hub=this;screen.Root=rect;configure?.Invoke(screen);
             _stack.Add(screen);
             screen.Build();
             RefreshChrome();
@@ -188,8 +203,40 @@ namespace TumbangPreso.UI.Hub
             return screen;
         }
 
+        private System.Collections.IEnumerator PrepareScreen(HubScreen screen)
+        {
+            while(_pendingScreen==screen)
+            {
+                bool moved;object current=null;
+                try{moved=_preparationWork.MoveNext();if(moved)current=_preparationWork.Current;}
+                catch(System.Exception error){Debug.LogException(error);CancelPreparation();yield break;}
+                if(!moved)break;
+                yield return current;
+            }
+            if(_pendingScreen!=screen)yield break;
+            (_preparationWork as System.IDisposable)?.Dispose();_preparationWork=null;_preparation=null;
+            _pendingScreen=null;
+            while(Top!=null&&Top.IsPopup){var gone=Top;_stack.RemoveAt(_stack.Count-1);Destroy(gone.gameObject);}
+            foreach(var below in _stack)if(!below.IsPopup)below.gameObject.SetActive(false);
+            screen.Root.SetParent(_screens,false);HubKit.Stretch(screen.Root);
+            Destroy(_pendingDock);_pendingDock=null;_stack.Add(screen);
+            RefreshChrome();RefreshFocus();
+            if(screen.FirstFocus!=null&&UnityEngine.EventSystems.EventSystem.current!=null)
+                UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(screen.FirstFocus.gameObject);
+        }
+
+        private bool CancelPreparation()
+        {
+            if(_pendingScreen==null)return false;
+            if(_preparation!=null)StopCoroutine(_preparation);
+            (_preparationWork as System.IDisposable)?.Dispose();_preparationWork=null;_preparation=null;
+            Destroy(_pendingDock);_pendingDock=null;_pendingScreen=null;
+            return true;
+        }
+
         public void Pop(HubScreen screen)
         {
+            CancelPreparation();
             int index = _stack.IndexOf(screen);
             if (index < 0) return;
             for (int i = _stack.Count - 1; i >= index; i--)
@@ -204,6 +251,7 @@ namespace TumbangPreso.UI.Hub
         /// <summary>Close everything above <typeparamref name="T"/>, or everything but HOME if absent.</summary>
         public void PopTo<T>() where T : HubScreen
         {
+            CancelPreparation();
             while (_stack.Count > 1 && !(Top is T))
             {
                 var gone = Top;
@@ -262,6 +310,7 @@ namespace TumbangPreso.UI.Hub
         /// <summary>BACK from any device. Always answers; HOME's own answer leaves to the title.</summary>
         public void Back()
         {
+            if(CancelPreparation()){MenuSfx.Back();return;}
             var top = Top;
             if (top == null) return;
             MenuSfx.Back();
@@ -352,6 +401,7 @@ namespace TumbangPreso.UI.Hub
 
         private void OnDestroy()
         {
+            CancelPreparation();
             if (Current == this) Current = null;
         }
     }

@@ -1,0 +1,51 @@
+{
+  "nativePid": 62780,
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.DeferredHeroViewTests.AnotherRouteCancelsPreparationAndRepeatedHeroPressDoesNotDuplicate",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.DeferredHeroViewTests.BackCancelsPendingHeroWithoutLeavingItsPreview",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.DeferredHeroViewTests.HomeStaysVisibleUntilCompleteHeroAndThenFocusesPrimary",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "protectedCount": 21423,
+  "rawSha256": {
+    "result.json": "84dab72793174f6734b263153efdff300ee0bd0d5f42c14df6c00894779ea09b",
+    "results.xml": "784bdf176184c7a99935943da9d6b1077da2c77e77e9809df986414aa13b9f30",
+    "source-restoration.json": "cbe185f089bfaa56c82664fc2697f3a6757da6a6e5c6f298526e840c0d284b0c"
+  },
+  "sourceProof": {
+    "Assets/TumbangPreso/Runtime/UI/Hub/TumpHub.cs": {
+      "testedRawSha256": "a27dfd32f7a0f6665edd89f2e01c60f3e1c9e1a69620a05ea8550f16fc9e8e4d",
+      "currentRawSha256": "a27dfd32f7a0f6665edd89f2e01c60f3e1c9e1a69620a05ea8550f16fc9e8e4d",
+      "classification": "Exact tested bytes"
+    },
+    "Assets/TumbangPreso/Runtime/UI/Hub/HubScreen.cs": {
+      "testedRawSha256": "066645f70f6dda211f8362ae78dbe647983599584741458380a629b0c95329ec",
+      "currentRawSha256": "066645f70f6dda211f8362ae78dbe647983599584741458380a629b0c95329ec",
+      "classification": "Exact tested bytes"
+    },
+    "Assets/TumbangPreso/Runtime/UI/Hub/HubHero.cs": {
+      "testedRawSha256": "561c6d282cc48be85c91414e749669267a92c6c357a569abaa9df9afcb9e9e31",
+      "currentRawSha256": "8817799cc0c1a070160528210f4d363fbe58a22c1d9a9e72f8c28e390b52cef5",
+      "classification": "Only diagnostic label corrected to coroutine wall duration after native run"
+    },
+    "Assets/TumbangPreso/Tests/PlayMode/DeferredHeroViewTests.cs": {
+      "testedRawSha256": "afa850ccbb5309457937c194f4d303b52170053b9e999bb0c760b5bef0b75e4a",
+      "currentRawSha256": "afa850ccbb5309457937c194f4d303b52170053b9e999bb0c760b5bef0b75e4a",
+      "classification": "Exact tested bytes"
+    }
+  },
+  "actualPlayerPerformanceMeasured": false,
+  "newBuildFolders": 0,
+  "desktopChanged": false
+}

@@ -53,8 +53,12 @@ namespace TumbangPreso.UI.Hub
         private HubShape _roleTag;
 
         private static System.Collections.Generic.IReadOnlyList<RosterEntry> Heroes => Roster.HeroPeople;
+        public override bool BuildAcrossFrames=>true;
 
         public override void Build()
+        {var work=PrepareView();while(work.MoveNext()){}(work as System.IDisposable)?.Dispose();}
+
+        public override System.Collections.IEnumerator PrepareView()
         {
             bool measure=ModelPreview.LoadTimingEnabled;
             long began=measure?System.Diagnostics.Stopwatch.GetTimestamp():0;
@@ -62,6 +66,7 @@ namespace TumbangPreso.UI.Hub
             // rays on the printed stage, over a halftone-printed ground, with the role on a slanted
             // red tag. The screen is about ONE person, and now it looks like it is.
             HubScenery.PosterGround(Root);
+            yield return null;
 
             // The stage: the left half, a Persimmon sticker the hero stands on.
             var stage = HubKit.Span(HubKit.Rect(Root, "Stage"), new Vector2(0, 0), new Vector2(0.46f, 1),
@@ -76,6 +81,7 @@ namespace TumbangPreso.UI.Hub
             _preview = model.gameObject.AddComponent<ModelPreview>();
             _preview.Attach(model);
             _preview.CentreSubject();
+            yield return null;
 
             var previous = HubKit.IconButton(stage, "PreviousHero", HubGlyph.Mark.Left, HubStyle.Honey, () => Step(-1), 311);
             HubKit.Place((RectTransform)previous.transform, HubKit.Left, new Vector2(-30, 0), new Vector2(96, 96));
@@ -84,6 +90,7 @@ namespace TumbangPreso.UI.Hub
 
             HubChrome.Back(Root, Hub);
             HubChrome.TopRight(Root, Hub);
+            yield return null;
 
             // The right side: a column that starts at the stage's edge and ends at the margin.
             var side = HubKit.Span(HubKit.Rect(Root, "Details"), new Vector2(0.46f, 0), new Vector2(1, 1),
@@ -98,6 +105,7 @@ namespace TumbangPreso.UI.Hub
             HubKit.Place(_name.rectTransform, HubKit.TopLeft, new Vector2(-4, -56), new Vector2(820, 150));
             var nameShadow = _name.gameObject.AddComponent<Shadow>();
             nameShadow.effectColor = HubStyle.Ink; nameShadow.effectDistance = new Vector2(6, -7);
+            yield return null;
 
             _abilities = HubKit.Place(HubKit.Rect(side, "Abilities"), HubKit.TopLeft, new Vector2(0, -210), new Vector2(820, 150));
 
@@ -107,6 +115,7 @@ namespace TumbangPreso.UI.Hub
             HubKit.Place(_bio.rectTransform, HubKit.TopLeft, new Vector2(0, -456), new Vector2(780, 150));
             _story = HubKit.Button(side, "StoryButton", "READ THE STORY", HubStyle.Honey, OpenStory, HubStyle.Body, 325, HubGlyph.Mark.Book);
             HubKit.Place((RectTransform)_story.transform, HubKit.TopLeft, new Vector2(0, -606), new Vector2(360, 84));
+            yield return null;
 
             _primary = HubKit.Button(Root, "HeroPrimary", "", HubStyle.Chartreuse, Primary, HubStyle.Title, 321);
             HubKit.Place((RectTransform)_primary.transform, HubKit.BottomRight, new Vector2(-HubKit.Margin, HubKit.Margin), new Vector2(460, 124));
@@ -120,6 +129,7 @@ namespace TumbangPreso.UI.Hub
             // STORY DOOR the first capture drew it across. Shown only when the hero is not owned.
             HubKit.Place(_status.rectTransform, HubKit.BottomRight, new Vector2(-HubKit.Margin, HubKit.Margin + 132), new Vector2(460, 120));
             _status.alignment = TextAnchor.LowerRight;
+            yield return null;
 
             _index = StartIndex();
             Show();
@@ -127,7 +137,7 @@ namespace TumbangPreso.UI.Hub
             HubSlap.On(side, 0.08f, 1);
             if (GameServices.Wallet != null) GameServices.Wallet.Changed += RefreshWallet;
             if(measure)
-                Debug.Log(System.FormattableString.Invariant($"[HeroMenuLoad] stage=build cpu_ms={ModelPreview.LoadElapsedMs(began):F3} scope=opt-in-cpu-includes-preview-excludes-canvas-gpu-present"));
+                Debug.Log(System.FormattableString.Invariant($"[HeroMenuLoad] stage=prepare wall_ms={ModelPreview.LoadElapsedMs(began):F3} scope=coroutine-total-includes-yields-preview-excludes-canvas-gpu-present"));
         }
 
         private void OnDestroy()
