@@ -1,0 +1,24 @@
+{
+  "nativePid": 49880,
+  "exitCode": 0,
+  "cases": [
+    {
+      "name": "TumbangPreso.Tests.PerformanceTimingCaptureTests.RoutineTimingWritesSamplesWithoutBinaryProfilerCapture",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "protectedCount": 21387,
+  "sourceHashes": {
+    "Assets/TumbangPreso/Runtime/Diagnostics/OwnerUiPlayerReview.Performance.cs": "cec2213e432e0f3a419e888b4bf70531d010dcc0cf6e5127f5849d3b59cb3643",
+    "Assets/TumbangPreso/Runtime/Diagnostics/OwnerUiPlayerReview.cs": "5513a0974b7107f504ca7e16073c0e932c7375f4e98927d6595ea3910851d27d",
+    "Assets/TumbangPreso/Tests/PerformanceTimingCaptureTests.cs": "1bc89b7eeaf6de8c13b52fe01ff9f3f673997c7eac98a16189b5d448f82dfe2d"
+  },
+  "copiedRawSha256": {
+    "result.json": "e5fae4637fc54a9f9f70d39b41b30494bb75f055acd952e33d9ba0edb13094fc",
+    "results.xml": "f2821f1f19d9939598322df080f5aaae198c551620a162711144f098376eba5e",
+    "source-restoration.json": "b59801c2f7bca9b1e0f452eca2cf69e6852568f15f157e008c828c2ff726c979"
+  },
+  "scope": "Unitysemanticcompile andexistingtiming1control; legal4seat/actions/naturalresult actualplayeracceptancepending",
+  "originalFailedRoute": "source140175windows/74actions, trainingrange path; preservedinLogs/release-ui-perf1007b/release-performance-ui"
+}

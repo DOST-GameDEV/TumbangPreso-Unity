@@ -1,6 +1,6 @@
 # Active PC competition checkpoint, October 7
 
-Goal ACTIVE. Public source is c378cff76843c1e0e737439ac4f2c5c1689926e1; runtime unit is6e8e7b89e. The qualified
+Goal ACTIVE. Public source is bcfc7cf8ad2f2b0f65fc0701b22b13cef4cd2ffb; current Desktop725e remains older. The qualified
 Desktop remains725e/protocol153. Current performance work is not installed there.
 The owner requested the existing GPT-6 Astra xhigh reviewer and continued
 optimization/loading placement with no noticeable random stutters. No additional
@@ -10,8 +10,9 @@ PC owns AI/navigation, new3 arrivals, CatchReconstruction/History/TagBody,
 slippers, Net/startup and qualified release. Laptop owns previews/media/voting,
 results and replay persistence/playback/codec plus its proposed render-only
 scenery sidecars. No LAN after the mobile-data/house move. Old-map presentation
-and authored hero kits/assets remain protected. Current laptop connectivity is
-unverified after a failed compact snapshot, not established offline.
+and authored hero kits/assets remain protected. The existing laptop chat is online/active again andcurrentownership confirmed.
+Its41attempt wasinterruptedbeforetests; preservation precedes42capacity/codec
+retry. Scenery isunpublished, sharedHistoryunchanged andallwildlife/perf open.
 
 The finalized source140 ordinary-release UI performance walk retained175windows
 and74actions, then failed normal results because its probe called StartPractice.
@@ -40,8 +41,11 @@ max860ms, ModeCard180ms and settings91ms; readiness remains open. Primary now
 owns bounded six-mode-poster async preparation and whole-Hero-build attribution
 candidate in Main/OwnerPortraitArt/HubHero now passes native46372/session23100
 three existing controls with all21387inputs restored and five-source exact proof. Reviewer owns only Performance.cs legal
-recipe implementation, with no heavy jobs. Reviewer saved draft SHA4878d2aa underLogs and restored AssetPerformance exacte7f7
-for this native freeze; next source apply requires explicit release. Do not call moved stalls solved.
+recipe implementation, with no heavy jobs. Reviewer completed and released sole Performance.cs SHAcec2213e. Unitysemantic
+compile and existingtiming control pass native49880/session42108 with exact21387
+restoration. Three exactsource/raw proofs are in theperformance-fixture report;
+actuallegalactions/freshnaturalresults remain open. NextReleaseD combines current
+posters and this opt-in fixture. No source/heavy job remains until new build. Do not call moved stalls solved.
 
 The requested reviewer has the single-file opt-in Performance.cs implementation lane. Confirmed stale recipes:
 Zack BankShot needs a held slipper, Overclock persists across round resets,
