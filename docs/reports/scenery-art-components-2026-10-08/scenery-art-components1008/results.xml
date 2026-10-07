@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 17:35:05Z" end-time="2026-10-07 17:35:30Z" duration="25.0605597">
+  <test-suite type="TestSuite" id="3645" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2142" result="Passed" start-time="2026-10-07 17:35:05Z" end-time="2026-10-07 17:35:30Z" duration="25.060560" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3637" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2142" result="Passed" start-time="2026-10-07 17:35:05Z" end-time="2026-10-07 17:35:30Z" duration="25.024340" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25528" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3638" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2142" result="Passed" start-time="2026-10-07 17:35:05Z" end-time="2026-10-07 17:35:30Z" duration="24.996647" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3641" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2140" result="Passed" start-time="2026-10-07 17:35:05Z" end-time="2026-10-07 17:35:30Z" duration="24.968890" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2863" name="RecordedSceneryTests" fullname="TumbangPreso.PlayTests.RecordedSceneryTests" classname="TumbangPreso.PlayTests.RecordedSceneryTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-07 17:35:05Z" end-time="2026-10-07 17:35:30Z" duration="24.784389" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2866" name="SavedAnimalAndNewLineStayVisibleWhenTheirLiveRootIsInactive" fullname="TumbangPreso.PlayTests.RecordedSceneryTests.SavedAnimalAndNewLineStayVisibleWhenTheirLiveRootIsInactive" methodname="SavedAnimalAndNewLineStayVisibleWhenTheirLiveRootIsInactive" classname="TumbangPreso.PlayTests.RecordedSceneryTests" runstate="Runnable" seed="22432" result="Passed" start-time="2026-10-07 17:35:05Z" end-time="2026-10-07 17:35:28Z" duration="23.221237" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[SceneryArtProof] root=Ambient aspin-tan renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part0 mesh=Tapered aspin body_part0 vertices=982 stream=0 stride=24 bytes=23568 sha256=2D3CF8AC27598E3F19EA61C4843A0F25FD5F8984DB80158986DDA833B4FF91D5
+[SceneryArtProof] root=Ambient aspin-tan renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part0 mesh=Tapered aspin body_part0 vertices=982 stream=1 stride=8 bytes=7856 sha256=4BCD2FFF3721E0AE0305D8AB8B76B3F0216235B14E0AB5C2D2896EC8A4EE3C58
+[SceneryArtProof] root=Ambient aspin-tan renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part0 mesh=Tapered aspin body_part0 vertices=982 stream=2 stride=32 bytes=31424 sha256=E6C102E8AC1273A634627EDEBBAF813D0758F974B23874D43E86CDF156511567
+[SceneryArtProof] root=Ambient aspin-tan mesh=Tapered aspin body_part0 indexFormat=UInt32 indices=89A64324C46489CA3623652EC7D7E620A93C5BCFF233466BAA5EB8F4C3EE161E
+[SceneryArtProof] root=Ambient aspin-tan material=Coat_NearFade crc=-34512217 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient aspin-tan textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient aspin-tan textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient aspin-tan renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part1 mesh=Tapered aspin body_part1 vertices=504 stream=0 stride=24 bytes=12096 sha256=6A20554530FD61922F710DF9BBF7369D521CFCC2AD81C311F722B6061E27C706
+[SceneryArtProof] root=Ambient aspin-tan renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part1 mesh=Tapered aspin body_part1 vertices=504 stream=1 stride=8 bytes=4032 sha256=6CCA8517187D45F27EF77F05A5C4668D65EB93D1FF036E11148DA38B96AE3E9C
+[SceneryArtProof] root=Ambient aspin-tan renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part1 mesh=Tapered aspin body_part1 vertices=504 stream=2 stride=32 bytes=16128 sha256=A4740A832EA85A0D2FC87709961C88A2C4111FF880B17E0FC5C6C8257FB0E2B4
+[SceneryArtProof] root=Ambient aspin-tan mesh=Tapered aspin body_part1 indexFormat=UInt32 indices=D7CF0740DFDD9F536649EE8FE37FF4E3B5C5F717CA9B5419A161B06601A90219
+[SceneryArtProof] root=Ambient aspin-tan material=Cream markings_NearFade crc=-1021046204 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient aspin-tan textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient aspin-tan textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient aspin-tan renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part2 mesh=Tapered aspin body_part2 vertices=216 stream=0 stride=24 bytes=5184 sha256=173448E3B59B0F2A04BE09A53C0D7DA6E8653DEE8372C373CD58E7691073E908
+[SceneryArtProof] root=Ambient aspin-tan renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part2 mesh=Tapered aspin body_part2 vertices=216 stream=1 stride=8 bytes=1728 sha256=7636C9F8DA9A82F9A9FCD804A25795A9C900E1C7E19F7442A7B113C8CCD64EB2
+[SceneryArtProof] root=Ambient aspin-tan renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part2 mesh=Tapered aspin body_part2 vertices=216 stream=2 stride=32 bytes=6912 sha256=1B41CC7018A805EDE2AE4635F999472A59FF629020B7BB0041747168E1D7EDE5
+[SceneryArtProof] root=Ambient aspin-tan mesh=Tapered aspin body_part2 indexFormat=UInt32 indices=16A60B18100B6C6624538136F31B46B7B362FD7D7317C1ECF7B1CFDE7D5A9422
+[SceneryArtProof] root=Ambient aspin-tan material=Graphic features_NearFade crc=-1643724036 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient aspin-tan textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient aspin-tan textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient aspin-tan renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part3 mesh=Tapered aspin body_part3 vertices=18 stream=0 stride=24 bytes=432 sha256=0B8FF9A03F95C3623E8F8270E1BA25A43A71A9923D27B05EA7C1F285501E931A
+[SceneryArtProof] root=Ambient aspin-tan renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part3 mesh=Tapered aspin body_part3 vertices=18 stream=1 stride=8 bytes=144 sha256=81C611F35BFF79491538B2F7CF201C7597A661A5C549633541C62BDC8AF1613F
+[SceneryArtProof] root=Ambient aspin-tan renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part3 mesh=Tapered aspin body_part3 vertices=18 stream=2 stride=32 bytes=576 sha256=A96BCB0CDCEB8019129CA60BF28F75CBA46D0A4C3018BADC31223D9D6506315F
+[SceneryArtProof] root=Ambient aspin-tan mesh=Tapered aspin body_part3 indexFormat=UInt32 indices=F0F3C9633718B4B273F16E8409395F4A9919086AB770145524E7FCBC2241A350
+[SceneryArtProof] root=Ambient aspin-tan material=Inner ear_NearFade crc=-338868660 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient aspin-tan textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient aspin-tan textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient aspin-tan renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part4 mesh=Tapered aspin body_part4 vertices=84 stream=0 stride=24 bytes=2016 sha256=5EAA2B1455B1FAE85CDA2910CA7ADF1848E3C4917BC7FD8ABA13B7BFB63D1008
+[SceneryArtProof] root=Ambient aspin-tan renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part4 mesh=Tapered aspin body_part4 vertices=84 stream=1 stride=8 bytes=672 sha256=F792B7F860BB94E55760C0DAA727D58D13BA96276A2B52F29A645C8E08E73EC1
+[SceneryArtProof] root=Ambient aspin-tan renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part4 mesh=Tapered aspin body_part4 vertices=84 stream=2 stride=32 bytes=2688 sha256=C46F0D583352A88AF68B90D6B2A697F93CA30583B72F7400E4894054FE098DE0
+[SceneryArtProof] root=Ambient aspin-tan mesh=Tapered aspin body_part4 indexFormat=UInt32 indices=317593E30E3204201AE9437668FB49B32D6D7FE51559677C6BA3071204C172FE
+[SceneryArtProof] root=Ambient aspin-tan material=Quiet coat patches_NearFade crc=1979462079 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient aspin-tan textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient aspin-tan textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient aspin-tan aggregate=0F756E3EABE235A1CDA03398CE6E18C5DC8580942067A6E7E08B5CE01D7937F8
+[SceneryArtProof] root=Ambient pusakal-tabby renderer=pusakal-tabby/StreetAnimalRig/pusakal-tabby/pusakal-tabby_part0 mesh=Compact feline body_part0 vertices=1168 stream=0 stride=24 bytes=28032 sha256=DAB8CBA148BBD8AA443A3DBCC399FC80A261890837EDCEE4AE2E2DFC70FD48C4
+[SceneryArtProof] root=Ambient pusakal-tabby renderer=pusakal-tabby/StreetAnimalRig/pusakal-tabby/pusakal-tabby_part0 mesh=Compact feline body_part0 vertices=1168 stream=1 stride=8 bytes=9344 sha256=FA2BCDC39EF717B1AB7AD383C93833C115806B60BB2B33D97E4FB12656BC4C35
+[SceneryArtProof] root=Ambient pusakal-tabby renderer=pusakal-tabby/StreetAnimalRig/pusakal-tabby/pusakal-tabby_part0 mesh=Compact feline body_part0 vertices=1168 stream=2 stride=32 bytes=37376 sha256=B7F8C525751B48ACCBC91F583CACBCDCF6A734C24616A48CF736F083FB4071D9
+[SceneryArtProof] root=Ambient pusakal-tabby mesh=Compact feline body_part0 indexFormat=UInt32 indices=6505AFEF9FF563B65193FF5D99B6F9EE021CE67AF4FA807A1894E7D3C2797929
+[SceneryArtProof] root=Ambient pusakal-tabby material=Coat.003_NearFade crc=1348283388 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient pusakal-tabby textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient pusakal-tabby textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient pusakal-tabby renderer=pusakal-tabby/StreetAnimalRig/pusakal-tabby/pusakal-tabby_part1 mesh=Compact feline body_part1 vertices=408 stream=0 stride=24 bytes=9792 sha256=EEF7A4EAC317F7A807D8C4C3692B57511A7DC5FE7F5AE4DDD0D5DFFDA18DEE25
+[SceneryArtProof] root=Ambient pusakal-tabby renderer=pusakal-tabby/StreetAnimalRig/pusakal-tabby/pusakal-tabby_part1 mesh=Compact feline body_part1 vertices=408 stream=1 stride=8 bytes=3264 sha256=D5DE5C02FDF404EDC3B79F4A83B0C5217BA2A9EF320F4BFFC859D66EB530410F
+[SceneryArtProof] root=Ambient pusakal-tabby renderer=pusakal-tabby/StreetAnimalRig/pusakal-tabby/pusakal-tabby_part1 mesh=Compact feline body_part1 vertices=408 stream=2 stride=32 bytes=13056 sha256=1B68036C488A0D006C03A824D577F60C2FE779CC2D1ED8B3D21D8120DD8C37FD
+[SceneryArtProof] root=Ambient pusakal-tabby mesh=Compact feline body_part1 indexFormat=UInt32 indices=3A2A9D53C21F29CB139A7AD73B81F55530486C36554D754D8D915F51499CA7D0
+[SceneryArtProof] root=Ambient pusakal-tabby material=Cream markings.003_NearFade crc=-1021046204 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient pusakal-tabby textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient pusakal-tabby textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient pusakal-tabby renderer=pusakal-tabby/StreetAnimalRig/pusakal-tabby/pusakal-tabby_part2 mesh=Compact feline body_part2 vertices=54 stream=0 stride=24 bytes=1296 sha256=1370D6A04FCE9BAD43FAC04C315E44214663B6FE15261FC7E8B2537F4612B957
+[SceneryArtProof] root=Ambient pusakal-tabby renderer=pusakal-tabby/StreetAnimalRig/pusakal-tabby/pusakal-tabby_part2 mesh=Compact feline body_part2 vertices=54 stream=1 stride=8 bytes=432 sha256=1FE2373734955E60C172999142934B52E69BA7AB9039B3C18EA54082BA32AFCD
+[SceneryArtProof] root=Ambient pusakal-tabby renderer=pusakal-tabby/StreetAnimalRig/pusakal-tabby/pusakal-tabby_part2 mesh=Compact feline body_part2 vertices=54 stream=2 stride=32 bytes=1728 sha256=3603D0100A061EFC83BE0334956DD04BBAF2F32E0C3D268927B1696AD3322D40
+[SceneryArtProof] root=Ambient pusakal-tabby mesh=Compact feline body_part2 indexFormat=UInt32 indices=69313882F769987D79D8A6E9DB4DDC43EE4039B0908BFE01F4669D0AAB739CD6
+[SceneryArtProof] root=Ambient pusakal-tabby material=Inner ear.003_NearFade crc=-338868660 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient pusakal-tabby textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient pusakal-tabby textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient pusakal-tabby renderer=pusakal-tabby/StreetAnimalRig/pusakal-tabby/pusakal-tabby_part3 mesh=Compact feline body_part3 vertices=156 stream=0 stride=24 bytes=3744 sha256=4C9A9C6637C6A66AEA45472D6F44991AA9734E1B7038590F9C7AB34EC1B1D190
+[SceneryArtProof] root=Ambient pusakal-tabby renderer=pusakal-tabby/StreetAnimalRig/pusakal-tabby/pusakal-tabby_part3 mesh=Compact feline body_part3 vertices=156 stream=1 stride=8 bytes=1248 sha256=2C253D268F274610134A7A0131FBF74A507BB6726C1B2C37193EFE293C352E2C
+[SceneryArtProof] root=Ambient pusakal-tabby renderer=pusakal-tabby/StreetAnimalRig/pusakal-tabby/pusakal-tabby_part3 mesh=Compact feline body_part3 vertices=156 stream=2 stride=32 bytes=4992 sha256=7A26A62F13867D4F050271AC6AC8F2A73109AB8F3F8EA2B39636B3D8E4630525
+[SceneryArtProof] root=Ambient pusakal-tabby mesh=Compact feline body_part3 indexFormat=UInt32 indices=1A466721D5F12A7F49FF2543DF7B14CFB19585F59D1EA1802F20850B1C28653F
+[SceneryArtProof] root=Ambient pusakal-tabby material=Graphic features.003_NearFade crc=-1643724036 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient pusakal-tabby textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient pusakal-tabby textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient pusakal-tabby renderer=pusakal-tabby/StreetAnimalRig/pusakal-tabby/pusakal-tabby_part4 mesh=Compact feline body_part4 vertices=156 stream=0 stride=24 bytes=3744 sha256=65AD4D7D647512CDBF647F47FB9D661B3C268EDF5C8F801DFA729E4D6A6C1171
+[SceneryArtProof] root=Ambient pusakal-tabby renderer=pusakal-tabby/StreetAnimalRig/pusakal-tabby/pusakal-tabby_part4 mesh=Compact feline body_part4 vertices=156 stream=1 stride=8 bytes=1248 sha256=DC7CE89C302BA871C661F45F92108BA9C0B8A23E6471799655470095114A5125
+[SceneryArtProof] root=Ambient pusakal-tabby renderer=pusakal-tabby/StreetAnimalRig/pusakal-tabby/pusakal-tabby_part4 mesh=Compact feline body_part4 vertices=156 stream=2 stride=32 bytes=4992 sha256=C932623E9BAD429552664E4702C8C34052CB45AEA7DF7EE3B777EF51E53C9BB1
+[SceneryArtProof] root=Ambient pusakal-tabby mesh=Compact feline body_part4 indexFormat=UInt32 indices=EDB5EDFE2722D3BDAF997A018A751964F9C16D7F3AA47153BC50C03CD0FA6972
+[SceneryArtProof] root=Ambient pusakal-tabby material=Quiet coat patches.003_NearFade crc=-556671276 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient pusakal-tabby textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient pusakal-tabby textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient pusakal-tabby aggregate=5ECF4B67CEEB244F08EAB90A9BB5ABDF5BABF555615FADB987E57B06A92FA36D
+[SceneryArtProof] root=Ambient maya renderer=maya/BirdRig/maya/maya_part0 mesh=Cube.001_part0 vertices=192 stream=0 stride=24 bytes=4608 sha256=DB0C60A39233DC19B90524E0D01EC14BC8697C7E779CA74797317B53318052B3
+[SceneryArtProof] root=Ambient maya renderer=maya/BirdRig/maya/maya_part0 mesh=Cube.001_part0 vertices=192 stream=1 stride=8 bytes=1536 sha256=C92B65439D99AEF55695F0EAB398C361ADAECBA693EDAFFCCF592C199755940E
+[SceneryArtProof] root=Ambient maya renderer=maya/BirdRig/maya/maya_part0 mesh=Cube.001_part0 vertices=192 stream=2 stride=32 bytes=6144 sha256=0E59B4CA143761D4010328254555FF89CB231CBC2C60C9F5E1F7D33623AB7FF4
+[SceneryArtProof] root=Ambient maya mesh=Cube.001_part0 indexFormat=UInt32 indices=D37B15DEAB860C501B9E55BA126C4FA17B131EBBE308D90A1933C1A355EC3720
+[SceneryArtProof] root=Ambient maya material=Body_NearFade crc=-1466422681 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient maya textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient maya textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient maya renderer=maya/BirdRig/maya/maya_part1 mesh=Cube.001_part1 vertices=264 stream=0 stride=24 bytes=6336 sha256=B59E89683D17D4B4FCBFC7E7BB3B42E2571FF030B376CBFD6806D8F9B58B51E3
+[SceneryArtProof] root=Ambient maya renderer=maya/BirdRig/maya/maya_part1 mesh=Cube.001_part1 vertices=264 stream=1 stride=8 bytes=2112 sha256=F3EA55E7AC078A9E97C04EBB2D9E94B521D62C4131CFE475787B3192CC6C8322
+[SceneryArtProof] root=Ambient maya renderer=maya/BirdRig/maya/maya_part1 mesh=Cube.001_part1 vertices=264 stream=2 stride=32 bytes=8448 sha256=3E28C9927A82DFA20EEE3EAF72728F0A530201549775C374DB2EE6CC088CA636
+[SceneryArtProof] root=Ambient maya mesh=Cube.001_part1 indexFormat=UInt32 indices=6CBB87C1D0F27586B7D915F5D2993D78E9F952B0CCBD7B2791EB15A060528E3F
+[SceneryArtProof] root=Ambient maya material=Breast_NearFade crc=-903195036 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient maya textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient maya textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient maya renderer=maya/BirdRig/maya/maya_part2 mesh=Cube.001_part2 vertices=276 stream=0 stride=24 bytes=6624 sha256=0D8C7317F9CC84651BD2D3352713BC44607E3FFB14F6BBAC79DE145A0342817B
+[SceneryArtProof] root=Ambient maya renderer=maya/BirdRig/maya/maya_part2 mesh=Cube.001_part2 vertices=276 stream=1 stride=8 bytes=2208 sha256=1D6E31832D9071605D363C7344999572381F5516D57058BC11A6A63291CD9EAC
+[SceneryArtProof] root=Ambient maya renderer=maya/BirdRig/maya/maya_part2 mesh=Cube.001_part2 vertices=276 stream=2 stride=32 bytes=8832 sha256=E7093A323EBAE3EEDB9B2D9B20F304C05F7D109DE84D90C25698D75C3733EB33
+[SceneryArtProof] root=Ambient maya mesh=Cube.001_part2 indexFormat=UInt32 indices=6F53357FFBC2F543D1603566D29861DD871842E75F6C1AEBE08C4E3EC8CF2819
+[SceneryArtProof] root=Ambient maya material=Wing_NearFade crc=1230226362 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient maya textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient maya textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient maya renderer=maya/BirdRig/maya/maya_part3 mesh=Cube.001_part3 vertices=192 stream=0 stride=24 bytes=4608 sha256=A37297D818DA806920CA83B0919291B2AD9841B59CE1B8B68597C2F21761B04D
+[SceneryArtProof] root=Ambient maya renderer=maya/BirdRig/maya/maya_part3 mesh=Cube.001_part3 vertices=192 stream=1 stride=8 bytes=1536 sha256=7340E96D31963087308982301AE201F530B9D46911C4791F2183F9CEF664D638
+[SceneryArtProof] root=Ambient maya renderer=maya/BirdRig/maya/maya_part3 mesh=Cube.001_part3 vertices=192 stream=2 stride=32 bytes=6144 sha256=D3A024CC3AE1D5A9C6C546EA4EFF4890D7251D627405C4A83617E85680DFE396
+[SceneryArtProof] root=Ambient maya mesh=Cube.001_part3 indexFormat=UInt32 indices=D37B15DEAB860C501B9E55BA126C4FA17B131EBBE308D90A1933C1A355EC3720
+[SceneryArtProof] root=Ambient maya material=Graphic eye_NearFade crc=1665653971 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient maya textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient maya textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient maya renderer=maya/BirdRig/maya/maya_part4 mesh=Cube.001_part4 vertices=108 stream=0 stride=24 bytes=2592 sha256=38E4E03ADBC67FB19AFB44039EF5EC5FE90B3B550FCB0291B80867BEFD31A120
+[SceneryArtProof] root=Ambient maya renderer=maya/BirdRig/maya/maya_part4 mesh=Cube.001_part4 vertices=108 stream=1 stride=8 bytes=864 sha256=B400EA33622B9D7D3E3E5AEE482838A64D39DE7F4593C6C42BB218A51A62A2CA
+[SceneryArtProof] root=Ambient maya renderer=maya/BirdRig/maya/maya_part4 mesh=Cube.001_part4 vertices=108 stream=2 stride=32 bytes=3456 sha256=238CEBF12D5CE0B41C6771086FE882CC99948DD02ABAB6BC1387F635E2DF2C12
+[SceneryArtProof] root=Ambient maya mesh=Cube.001_part4 indexFormat=UInt32 indices=C9FADFDCE5303965329F9364D43FCFEBB36827A7B5BA3980A19341F8DBC2AA3D
+[SceneryArtProof] root=Ambient maya material=Feet_NearFade crc=1975416013 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient maya textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient maya textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient maya renderer=maya/BirdRig/maya/maya_part5 mesh=Cube.001_part5 vertices=18 stream=0 stride=24 bytes=432 sha256=CF74066D17AA75D47F7C0B054567AC416C6950EBC2E60E96661AA9EF7697A0EA
+[SceneryArtProof] root=Ambient maya renderer=maya/BirdRig/maya/maya_part5 mesh=Cube.001_part5 vertices=18 stream=1 stride=8 bytes=144 sha256=81C611F35BFF79491538B2F7CF201C7597A661A5C549633541C62BDC8AF1613F
+[SceneryArtProof] root=Ambient maya renderer=maya/BirdRig/maya/maya_part5 mesh=Cube.001_part5 vertices=18 stream=2 stride=32 bytes=576 sha256=291DBD30A4B36A10AB6A42C8197384AD3E94E3C88B5416C18FFF86DDD7A56ABD
+[SceneryArtProof] root=Ambient maya mesh=Cube.001_part5 indexFormat=UInt32 indices=07EFBEC1EFED486D6A036C91883BFF75B38FCBE78545BD8697EC8878D06F43CE
+[SceneryArtProof] root=Ambient maya material=Small bill_NearFade crc=-897117180 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient maya textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient maya textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient maya aggregate=B07E8F9A8E2C0552A4019D834A594AAA25E7D86226FBD7F554518EDE3D9D513E
+[SceneryArtProof] root=Ambient kalapati renderer=kalapati/BirdRig/kalapati/kalapati_part0 mesh=Cube.012_part0 vertices=192 stream=0 stride=24 bytes=4608 sha256=1F6643F75680285CB64651E15DD8730D2792CB1D88E47254406A33F38469F270
+[SceneryArtProof] root=Ambient kalapati renderer=kalapati/BirdRig/kalapati/kalapati_part0 mesh=Cube.012_part0 vertices=192 stream=1 stride=8 bytes=1536 sha256=004DB1F2B78FEEDEFFD6C3C82F9905FA3F253946A5F0D122D8E2E1AB2D3C4BF7
+[SceneryArtProof] root=Ambient kalapati renderer=kalapati/BirdRig/kalapati/kalapati_part0 mesh=Cube.012_part0 vertices=192 stream=2 stride=32 bytes=6144 sha256=0E59B4CA143761D4010328254555FF89CB231CBC2C60C9F5E1F7D33623AB7FF4
+[SceneryArtProof] root=Ambient kalapati mesh=Cube.012_part0 indexFormat=UInt32 indices=D37B15DEAB860C501B9E55BA126C4FA17B131EBBE308D90A1933C1A355EC3720
+[SceneryArtProof] root=Ambient kalapati material=Body.001_NearFade crc=-571815355 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient kalapati textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient kalapati textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient kalapati renderer=kalapati/BirdRig/kalapati/kalapati_part1 mesh=Cube.012_part1 vertices=96 stream=0 stride=24 bytes=2304 sha256=B57C26C6E052C4BB3641D1D0DFE3674B90AE6496D9DE335851DC1AC1601E07AE
+[SceneryArtProof] root=Ambient kalapati renderer=kalapati/BirdRig/kalapati/kalapati_part1 mesh=Cube.012_part1 vertices=96 stream=1 stride=8 bytes=768 sha256=EEC50C092553E717AC86DB8D8438AEF67172A1A95527A79D9F25386188404F95
+[SceneryArtProof] root=Ambient kalapati renderer=kalapati/BirdRig/kalapati/kalapati_part1 mesh=Cube.012_part1 vertices=96 stream=2 stride=32 bytes=3072 sha256=187F05600F4E5D04880C58FEA7B90E373F2E26EFA7EDDB6994DD78D789168DE6
+[SceneryArtProof] root=Ambient kalapati mesh=Cube.012_part1 indexFormat=UInt32 indices=D5F7478973844F41AD0FE414B949C16AE043A0684957497BEB6EBCCC3ACA8AD3
+[SceneryArtProof] root=Ambient kalapati material=Breast.001_NearFade crc=1157222574 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient kalapati textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient kalapati textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient kalapati renderer=kalapati/BirdRig/kalapati/kalapati_part2 mesh=Cube.012_part2 vertices=96 stream=0 stride=24 bytes=2304 sha256=7CFE407872F0878E177320D264B0A1A6874243339C59B6472A58A713E0CBCE9E
+[SceneryArtProof] root=Ambient kalapati renderer=kalapati/BirdRig/kalapati/kalapati_part2 mesh=Cube.012_part2 vertices=96 stream=1 stride=8 bytes=768 sha256=64A16DAC974ACEDB245AD3535CEF34DD27156E03D9044B21C8347BC0F2F8DEF6
+[SceneryArtProof] root=Ambient kalapati renderer=kalapati/BirdRig/kalapati/kalapati_part2 mesh=Cube.012_part2 vertices=96 stream=2 stride=32 bytes=3072 sha256=4C5893236960A99F55E625902A1DFFC409EA260F5B3E88A1A1FCCD0D4494F5AE
+[SceneryArtProof] root=Ambient kalapati mesh=Cube.012_part2 indexFormat=UInt32 indices=D5F7478973844F41AD0FE414B949C16AE043A0684957497BEB6EBCCC3ACA8AD3
+[SceneryArtProof] root=Ambient kalapati material=Neck_NearFade crc=860943142 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient kalapati textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient kalapati textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient kalapati renderer=kalapati/BirdRig/kalapati/kalapati_part3 mesh=Cube.012_part3 vertices=240 stream=0 stride=24 bytes=5760 sha256=B81BA899653F6ECE85192F6FBB32B4E4F1A196E592EA392138CE60A2E8613C6A
+[SceneryArtProof] root=Ambient kalapati renderer=kalapati/BirdRig/kalapati/kalapati_part3 mesh=Cube.012_part3 vertices=240 stream=1 stride=8 bytes=1920 sha256=52E558089A4E296E33B75061FF4E3E90D3337ADFA1E60876EC33E543F606F5DA
+[SceneryArtProof] root=Ambient kalapati renderer=kalapati/BirdRig/kalapati/kalapati_part3 mesh=Cube.012_part3 vertices=240 stream=2 stride=32 bytes=7680 sha256=B09F76C39E2D0CA56563D0E811BA2D6293A8D33D7147F2D1C53188F00C6127C0
+[SceneryArtProof] root=Ambient kalapati mesh=Cube.012_part3 indexFormat=UInt32 indices=050148401374C69D1ED919B00A3BADCAD304C26F4286DF3D7C0F2ADAC39CFFE9
+[SceneryArtProof] root=Ambient kalapati material=Graphic eye.001_NearFade crc=1665653971 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient kalapati textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient kalapati textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient kalapati renderer=kalapati/BirdRig/kalapati/kalapati_part4 mesh=Cube.012_part4 vertices=108 stream=0 stride=24 bytes=2592 sha256=2B16C7859401A00C3ECC9E9989B4D3907735A31CA57E858B35F65629561A59C2
+[SceneryArtProof] root=Ambient kalapati renderer=kalapati/BirdRig/kalapati/kalapati_part4 mesh=Cube.012_part4 vertices=108 stream=1 stride=8 bytes=864 sha256=B400EA33622B9D7D3E3E5AEE482838A64D39DE7F4593C6C42BB218A51A62A2CA
+[SceneryArtProof] root=Ambient kalapati renderer=kalapati/BirdRig/kalapati/kalapati_part4 mesh=Cube.012_part4 vertices=108 stream=2 stride=32 bytes=3456 sha256=238CEBF12D5CE0B41C6771086FE882CC99948DD02ABAB6BC1387F635E2DF2C12
+[SceneryArtProof] root=Ambient kalapati mesh=Cube.012_part4 indexFormat=UInt32 indices=C9FADFDCE5303965329F9364D43FCFEBB36827A7B5BA3980A19341F8DBC2AA3D
+[SceneryArtProof] root=Ambient kalapati material=Feet.001_NearFade crc=1975416013 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient kalapati textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient kalapati textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient kalapati renderer=kalapati/BirdRig/kalapati/kalapati_part5 mesh=Cube.012_part5 vertices=84 stream=0 stride=24 bytes=2016 sha256=2F654FBCB9CD8F57F149C4C5620FE9C8E0439033CAD1329D72A539BACC52F148
+[SceneryArtProof] root=Ambient kalapati renderer=kalapati/BirdRig/kalapati/kalapati_part5 mesh=Cube.012_part5 vertices=84 stream=1 stride=8 bytes=672 sha256=F792B7F860BB94E55760C0DAA727D58D13BA96276A2B52F29A645C8E08E73EC1
+[SceneryArtProof] root=Ambient kalapati renderer=kalapati/BirdRig/kalapati/kalapati_part5 mesh=Cube.012_part5 vertices=84 stream=2 stride=32 bytes=2688 sha256=D63C78F1764D29C4C85E73920B6999874CC2E87272FB4CEAA03DE4750E1801B6
+[SceneryArtProof] root=Ambient kalapati mesh=Cube.012_part5 indexFormat=UInt32 indices=463A037CB33DA067DAF9ED321E85DA14054E192C4CE4F6D25DF9F56D49F1EFA7
+[SceneryArtProof] root=Ambient kalapati material=Wing.001_NearFade crc=-428586657 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient kalapati textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient kalapati textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient kalapati renderer=kalapati/BirdRig/kalapati/kalapati_part6 mesh=Cube.012_part6 vertices=18 stream=0 stride=24 bytes=432 sha256=499EA7E77ACCB4A34443D36C15881095649179C2529E5E56D57F721CD7152CFA
+[SceneryArtProof] root=Ambient kalapati renderer=kalapati/BirdRig/kalapati/kalapati_part6 mesh=Cube.012_part6 vertices=18 stream=1 stride=8 bytes=144 sha256=81C611F35BFF79491538B2F7CF201C7597A661A5C549633541C62BDC8AF1613F
+[SceneryArtProof] root=Ambient kalapati renderer=kalapati/BirdRig/kalapati/kalapati_part6 mesh=Cube.012_part6 vertices=18 stream=2 stride=32 bytes=576 sha256=291DBD30A4B36A10AB6A42C8197384AD3E94E3C88B5416C18FFF86DDD7A56ABD
+[SceneryArtProof] root=Ambient kalapati mesh=Cube.012_part6 indexFormat=UInt32 indices=07EFBEC1EFED486D6A036C91883BFF75B38FCBE78545BD8697EC8878D06F43CE
+[SceneryArtProof] root=Ambient kalapati material=Small bill.001_NearFade crc=-2114005768 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient kalapati textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient kalapati textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient kalapati aggregate=F28F0A9EFC00475F34B6B02FEE771700169A5616DAC5F0F9E7E8102A8B064BC9
+[SceneryArtProof] root=Ambient fantail renderer=fantail/BirdRig/fantail/fantail_part0 mesh=Cube.020_part0 vertices=192 stream=0 stride=24 bytes=4608 sha256=85FFE931B51D4C511507DA96E06D1E7B09667FE30B0173DF66E150E0C40B123F
+[SceneryArtProof] root=Ambient fantail renderer=fantail/BirdRig/fantail/fantail_part0 mesh=Cube.020_part0 vertices=192 stream=1 stride=8 bytes=1536 sha256=C92B65439D99AEF55695F0EAB398C361ADAECBA693EDAFFCCF592C199755940E
+[SceneryArtProof] root=Ambient fantail renderer=fantail/BirdRig/fantail/fantail_part0 mesh=Cube.020_part0 vertices=192 stream=2 stride=32 bytes=6144 sha256=0E59B4CA143761D4010328254555FF89CB231CBC2C60C9F5E1F7D33623AB7FF4
+[SceneryArtProof] root=Ambient fantail mesh=Cube.020_part0 indexFormat=UInt32 indices=D37B15DEAB860C501B9E55BA126C4FA17B131EBBE308D90A1933C1A355EC3720
+[SceneryArtProof] root=Ambient fantail material=Body.002_NearFade crc=-200401895 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient fantail textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient fantail textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient fantail renderer=fantail/BirdRig/fantail/fantail_part1 mesh=Cube.020_part1 vertices=216 stream=0 stride=24 bytes=5184 sha256=826A2496C548F84B05F426D3D65766083B3DB9FC65964947320FB57C3DBFCE24
+[SceneryArtProof] root=Ambient fantail renderer=fantail/BirdRig/fantail/fantail_part1 mesh=Cube.020_part1 vertices=216 stream=1 stride=8 bytes=1728 sha256=EBC294BCB3A03AB2AC64A4E8BDBF6680B8CA04F2A9BE36B25B6639C3A940174A
+[SceneryArtProof] root=Ambient fantail renderer=fantail/BirdRig/fantail/fantail_part1 mesh=Cube.020_part1 vertices=216 stream=2 stride=32 bytes=6912 sha256=E0AACA2F9C0C5DEAED77AB5823B875C274CE0F4B39F236828CF3B12E9D6F1DCB
+[SceneryArtProof] root=Ambient fantail mesh=Cube.020_part1 indexFormat=UInt32 indices=3C5AF0FAD82183AEC831B5B2D5BFE20932E4D7AA0DCFCC4A5122F5BB4E30F97B
+[SceneryArtProof] root=Ambient fantail material=Breast.002_NearFade crc=876818228 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient fantail textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient fantail textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient fantail renderer=fantail/BirdRig/fantail/fantail_part2 mesh=Cube.020_part2 vertices=192 stream=0 stride=24 bytes=4608 sha256=6DF63BE0E0B9EF34066177523C25C72B08886269A7C227FDD377D52EBBBAE7B4
+[SceneryArtProof] root=Ambient fantail renderer=fantail/BirdRig/fantail/fantail_part2 mesh=Cube.020_part2 vertices=192 stream=1 stride=8 bytes=1536 sha256=EA4C0424642EAEE3A142C2E0C6BBDF2C4CCD58FCE68819CC9559476852096DA6
+[SceneryArtProof] root=Ambient fantail renderer=fantail/BirdRig/fantail/fantail_part2 mesh=Cube.020_part2 vertices=192 stream=2 stride=32 bytes=6144 sha256=D3A024CC3AE1D5A9C6C546EA4EFF4890D7251D627405C4A83617E85680DFE396
+[SceneryArtProof] root=Ambient fantail mesh=Cube.020_part2 indexFormat=UInt32 indices=D37B15DEAB860C501B9E55BA126C4FA17B131EBBE308D90A1933C1A355EC3720
+[SceneryArtProof] root=Ambient fantail material=Graphic eye.002_NearFade crc=1665653971 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient fantail textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient fantail textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient fantail renderer=fantail/BirdRig/fantail/fantail_part3 mesh=Cube.020_part3 vertices=108 stream=0 stride=24 bytes=2592 sha256=CEB80B895D070B94CBC9C6E37C3FE4BBF5E687E084EA905C018FBB6F8364D319
+[SceneryArtProof] root=Ambient fantail renderer=fantail/BirdRig/fantail/fantail_part3 mesh=Cube.020_part3 vertices=108 stream=1 stride=8 bytes=864 sha256=B400EA33622B9D7D3E3E5AEE482838A64D39DE7F4593C6C42BB218A51A62A2CA
+[SceneryArtProof] root=Ambient fantail renderer=fantail/BirdRig/fantail/fantail_part3 mesh=Cube.020_part3 vertices=108 stream=2 stride=32 bytes=3456 sha256=238CEBF12D5CE0B41C6771086FE882CC99948DD02ABAB6BC1387F635E2DF2C12
+[SceneryArtProof] root=Ambient fantail mesh=Cube.020_part3 indexFormat=UInt32 indices=C9FADFDCE5303965329F9364D43FCFEBB36827A7B5BA3980A19341F8DBC2AA3D
+[SceneryArtProof] root=Ambient fantail material=Feet.002_NearFade crc=1975416013 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient fantail textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient fantail textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient fantail renderer=fantail/BirdRig/fantail/fantail_part4 mesh=Cube.020_part4 vertices=150 stream=0 stride=24 bytes=3600 sha256=B308391A740BD45D99B86A2DCB3D3179916FEE26C0FA99A633B66904B49D11E4
+[SceneryArtProof] root=Ambient fantail renderer=fantail/BirdRig/fantail/fantail_part4 mesh=Cube.020_part4 vertices=150 stream=1 stride=8 bytes=1200 sha256=655A3EF0465A9F30FDDF25F4DDE0C19A05C6F9069B83961800C1944165955273
+[SceneryArtProof] root=Ambient fantail renderer=fantail/BirdRig/fantail/fantail_part4 mesh=Cube.020_part4 vertices=150 stream=2 stride=32 bytes=4800 sha256=FF6389E92B50B590BE03EACB9B2F906F765E28ADEFFF4B9942F7019E38860A2C
+[SceneryArtProof] root=Ambient fantail mesh=Cube.020_part4 indexFormat=UInt32 indices=9DD3BF4DE1307EDD3F5A8422D20326D9BD5F7C46155C4FF1C6B0DFECBD2FB2F3
+[SceneryArtProof] root=Ambient fantail material=Wing.002_NearFade crc=151429667 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient fantail textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient fantail textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient fantail renderer=fantail/BirdRig/fantail/fantail_part5 mesh=Cube.020_part5 vertices=18 stream=0 stride=24 bytes=432 sha256=017624C0F7D2CBC17C382E189D18285AAABF7B12D7A1902F0F5FE239674AAE77
+[SceneryArtProof] root=Ambient fantail renderer=fantail/BirdRig/fantail/fantail_part5 mesh=Cube.020_part5 vertices=18 stream=1 stride=8 bytes=144 sha256=81C611F35BFF79491538B2F7CF201C7597A661A5C549633541C62BDC8AF1613F
+[SceneryArtProof] root=Ambient fantail renderer=fantail/BirdRig/fantail/fantail_part5 mesh=Cube.020_part5 vertices=18 stream=2 stride=32 bytes=576 sha256=291DBD30A4B36A10AB6A42C8197384AD3E94E3C88B5416C18FFF86DDD7A56ABD
+[SceneryArtProof] root=Ambient fantail mesh=Cube.020_part5 indexFormat=UInt32 indices=07EFBEC1EFED486D6A036C91883BFF75B38FCBE78545BD8697EC8878D06F43CE
+[SceneryArtProof] root=Ambient fantail material=Small bill.002_NearFade crc=-2114005768 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=Ambient fantail textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=Ambient fantail textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=Ambient fantail aggregate=C72689CAA20FC5E9DFD0CDC35A999B6B55A8AF9845F1FD0D3D5D22758B1EE75E
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part0 mesh=Tapered aspin body_part0 vertices=982 stream=0 stride=24 bytes=23568 sha256=2D3CF8AC27598E3F19EA61C4843A0F25FD5F8984DB80158986DDA833B4FF91D5
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part0 mesh=Tapered aspin body_part0 vertices=982 stream=1 stride=8 bytes=7856 sha256=4BCD2FFF3721E0AE0305D8AB8B76B3F0216235B14E0AB5C2D2896EC8A4EE3C58
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part0 mesh=Tapered aspin body_part0 vertices=982 stream=2 stride=32 bytes=31424 sha256=E6C102E8AC1273A634627EDEBBAF813D0758F974B23874D43E86CDF156511567
+[SceneryArtProof] root=RecordedBody-P0 mesh=Tapered aspin body_part0 indexFormat=UInt32 indices=89A64324C46489CA3623652EC7D7E620A93C5BCFF233466BAA5EB8F4C3EE161E
+[SceneryArtProof] root=RecordedBody-P0 material=Coat_NearFade crc=-34512217 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=RecordedBody-P0 textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=RecordedBody-P0 textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part1 mesh=Tapered aspin body_part1 vertices=504 stream=0 stride=24 bytes=12096 sha256=6A20554530FD61922F710DF9BBF7369D521CFCC2AD81C311F722B6061E27C706
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part1 mesh=Tapered aspin body_part1 vertices=504 stream=1 stride=8 bytes=4032 sha256=6CCA8517187D45F27EF77F05A5C4668D65EB93D1FF036E11148DA38B96AE3E9C
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part1 mesh=Tapered aspin body_part1 vertices=504 stream=2 stride=32 bytes=16128 sha256=A4740A832EA85A0D2FC87709961C88A2C4111FF880B17E0FC5C6C8257FB0E2B4
+[SceneryArtProof] root=RecordedBody-P0 mesh=Tapered aspin body_part1 indexFormat=UInt32 indices=D7CF0740DFDD9F536649EE8FE37FF4E3B5C5F717CA9B5419A161B06601A90219
+[SceneryArtProof] root=RecordedBody-P0 material=Cream markings_NearFade crc=-1021046204 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=RecordedBody-P0 textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=RecordedBody-P0 textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part2 mesh=Tapered aspin body_part2 vertices=216 stream=0 stride=24 bytes=5184 sha256=173448E3B59B0F2A04BE09A53C0D7DA6E8653DEE8372C373CD58E7691073E908
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part2 mesh=Tapered aspin body_part2 vertices=216 stream=1 stride=8 bytes=1728 sha256=7636C9F8DA9A82F9A9FCD804A25795A9C900E1C7E19F7442A7B113C8CCD64EB2
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part2 mesh=Tapered aspin body_part2 vertices=216 stream=2 stride=32 bytes=6912 sha256=1B41CC7018A805EDE2AE4635F999472A59FF629020B7BB0041747168E1D7EDE5
+[SceneryArtProof] root=RecordedBody-P0 mesh=Tapered aspin body_part2 indexFormat=UInt32 indices=16A60B18100B6C6624538136F31B46B7B362FD7D7317C1ECF7B1CFDE7D5A9422
+[SceneryArtProof] root=RecordedBody-P0 material=Graphic features_NearFade crc=-1643724036 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=RecordedBody-P0 textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=RecordedBody-P0 textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part3 mesh=Tapered aspin body_part3 vertices=18 stream=0 stride=24 bytes=432 sha256=0B8FF9A03F95C3623E8F8270E1BA25A43A71A9923D27B05EA7C1F285501E931A
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part3 mesh=Tapered aspin body_part3 vertices=18 stream=1 stride=8 bytes=144 sha256=81C611F35BFF79491538B2F7CF201C7597A661A5C549633541C62BDC8AF1613F
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part3 mesh=Tapered aspin body_part3 vertices=18 stream=2 stride=32 bytes=576 sha256=A96BCB0CDCEB8019129CA60BF28F75CBA46D0A4C3018BADC31223D9D6506315F
+[SceneryArtProof] root=RecordedBody-P0 mesh=Tapered aspin body_part3 indexFormat=UInt32 indices=F0F3C9633718B4B273F16E8409395F4A9919086AB770145524E7FCBC2241A350
+[SceneryArtProof] root=RecordedBody-P0 material=Inner ear_NearFade crc=-338868660 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=RecordedBody-P0 textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=RecordedBody-P0 textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part4 mesh=Tapered aspin body_part4 vertices=84 stream=0 stride=24 bytes=2016 sha256=5EAA2B1455B1FAE85CDA2910CA7ADF1848E3C4917BC7FD8ABA13B7BFB63D1008
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part4 mesh=Tapered aspin body_part4 vertices=84 stream=1 stride=8 bytes=672 sha256=F792B7F860BB94E55760C0DAA727D58D13BA96276A2B52F29A645C8E08E73EC1
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part4 mesh=Tapered aspin body_part4 vertices=84 stream=2 stride=32 bytes=2688 sha256=C46F0D583352A88AF68B90D6B2A697F93CA30583B72F7400E4894054FE098DE0
+[SceneryArtProof] root=RecordedBody-P0 mesh=Tapered aspin body_part4 indexFormat=UInt32 indices=317593E30E3204201AE9437668FB49B32D6D7FE51559677C6BA3071204C172FE
+[SceneryArtProof] root=RecordedBody-P0 material=Quiet coat patches_NearFade crc=1979462079 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=RecordedBody-P0 textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=RecordedBody-P0 textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=RecordedBody-P0 aggregate=0F756E3EABE235A1CDA03398CE6E18C5DC8580942067A6E7E08B5CE01D7937F8
+[RecordedSceneryPixels] animalAndLine=0
+]]></output>
+            </test-case>
+            <test-case id="2868" name="SavedSceneryRenderingErrorPausesWithoutRepeatedExceptions" fullname="TumbangPreso.PlayTests.RecordedSceneryTests.SavedSceneryRenderingErrorPausesWithoutRepeatedExceptions" methodname="SavedSceneryRenderingErrorPausesWithoutRepeatedExceptions" classname="TumbangPreso.PlayTests.RecordedSceneryTests" runstate="Runnable" seed="944514318" result="Passed" start-time="2026-10-07 17:35:28Z" end-time="2026-10-07 17:35:30Z" duration="1.545522" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part0 mesh=Tapered aspin body_part0 vertices=982 stream=0 stride=24 bytes=23568 sha256=2D3CF8AC27598E3F19EA61C4843A0F25FD5F8984DB80158986DDA833B4FF91D5
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part0 mesh=Tapered aspin body_part0 vertices=982 stream=1 stride=8 bytes=7856 sha256=4BCD2FFF3721E0AE0305D8AB8B76B3F0216235B14E0AB5C2D2896EC8A4EE3C58
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part0 mesh=Tapered aspin body_part0 vertices=982 stream=2 stride=32 bytes=31424 sha256=E6C102E8AC1273A634627EDEBBAF813D0758F974B23874D43E86CDF156511567
+[SceneryArtProof] root=RecordedBody-P0 mesh=Tapered aspin body_part0 indexFormat=UInt32 indices=89A64324C46489CA3623652EC7D7E620A93C5BCFF233466BAA5EB8F4C3EE161E
+[SceneryArtProof] root=RecordedBody-P0 material=Coat_NearFade crc=-34512217 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=RecordedBody-P0 textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=RecordedBody-P0 textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part1 mesh=Tapered aspin body_part1 vertices=504 stream=0 stride=24 bytes=12096 sha256=6A20554530FD61922F710DF9BBF7369D521CFCC2AD81C311F722B6061E27C706
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part1 mesh=Tapered aspin body_part1 vertices=504 stream=1 stride=8 bytes=4032 sha256=6CCA8517187D45F27EF77F05A5C4668D65EB93D1FF036E11148DA38B96AE3E9C
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part1 mesh=Tapered aspin body_part1 vertices=504 stream=2 stride=32 bytes=16128 sha256=A4740A832EA85A0D2FC87709961C88A2C4111FF880B17E0FC5C6C8257FB0E2B4
+[SceneryArtProof] root=RecordedBody-P0 mesh=Tapered aspin body_part1 indexFormat=UInt32 indices=D7CF0740DFDD9F536649EE8FE37FF4E3B5C5F717CA9B5419A161B06601A90219
+[SceneryArtProof] root=RecordedBody-P0 material=Cream markings_NearFade crc=-1021046204 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=RecordedBody-P0 textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=RecordedBody-P0 textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part2 mesh=Tapered aspin body_part2 vertices=216 stream=0 stride=24 bytes=5184 sha256=173448E3B59B0F2A04BE09A53C0D7DA6E8653DEE8372C373CD58E7691073E908
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part2 mesh=Tapered aspin body_part2 vertices=216 stream=1 stride=8 bytes=1728 sha256=7636C9F8DA9A82F9A9FCD804A25795A9C900E1C7E19F7442A7B113C8CCD64EB2
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part2 mesh=Tapered aspin body_part2 vertices=216 stream=2 stride=32 bytes=6912 sha256=1B41CC7018A805EDE2AE4635F999472A59FF629020B7BB0041747168E1D7EDE5
+[SceneryArtProof] root=RecordedBody-P0 mesh=Tapered aspin body_part2 indexFormat=UInt32 indices=16A60B18100B6C6624538136F31B46B7B362FD7D7317C1ECF7B1CFDE7D5A9422
+[SceneryArtProof] root=RecordedBody-P0 material=Graphic features_NearFade crc=-1643724036 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=RecordedBody-P0 textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=RecordedBody-P0 textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part3 mesh=Tapered aspin body_part3 vertices=18 stream=0 stride=24 bytes=432 sha256=0B8FF9A03F95C3623E8F8270E1BA25A43A71A9923D27B05EA7C1F285501E931A
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part3 mesh=Tapered aspin body_part3 vertices=18 stream=1 stride=8 bytes=144 sha256=81C611F35BFF79491538B2F7CF201C7597A661A5C549633541C62BDC8AF1613F
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part3 mesh=Tapered aspin body_part3 vertices=18 stream=2 stride=32 bytes=576 sha256=A96BCB0CDCEB8019129CA60BF28F75CBA46D0A4C3018BADC31223D9D6506315F
+[SceneryArtProof] root=RecordedBody-P0 mesh=Tapered aspin body_part3 indexFormat=UInt32 indices=F0F3C9633718B4B273F16E8409395F4A9919086AB770145524E7FCBC2241A350
+[SceneryArtProof] root=RecordedBody-P0 material=Inner ear_NearFade crc=-338868660 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=RecordedBody-P0 textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=RecordedBody-P0 textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part4 mesh=Tapered aspin body_part4 vertices=84 stream=0 stride=24 bytes=2016 sha256=5EAA2B1455B1FAE85CDA2910CA7ADF1848E3C4917BC7FD8ABA13B7BFB63D1008
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part4 mesh=Tapered aspin body_part4 vertices=84 stream=1 stride=8 bytes=672 sha256=F792B7F860BB94E55760C0DAA727D58D13BA96276A2B52F29A645C8E08E73EC1
+[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part4 mesh=Tapered aspin body_part4 vertices=84 stream=2 stride=32 bytes=2688 sha256=C46F0D583352A88AF68B90D6B2A697F93CA30583B72F7400E4894054FE098DE0
+[SceneryArtProof] root=RecordedBody-P0 mesh=Tapered aspin body_part4 indexFormat=UInt32 indices=317593E30E3204201AE9437668FB49B32D6D7FE51559677C6BA3071204C172FE
+[SceneryArtProof] root=RecordedBody-P0 material=Quiet coat patches_NearFade crc=1979462079 shader=TumbangPreso/NearFade queue=2000 keywords=
+[SceneryArtProof] root=RecordedBody-P0 textureProperty=_MainTex texture= identity=
+[SceneryArtProof] root=RecordedBody-P0 textureProperty=_BumpMap texture= identity=
+[SceneryArtProof] root=RecordedBody-P0 aggregate=0F756E3EABE235A1CDA03398CE6E18C5DC8580942067A6E7E08B5CE01D7937F8
+[LocalReplay] Recorded scenery art content changed.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -40,6 +40,8 @@ namespace TumbangPreso.CameraSystem
         {
             foreach(var dead in _art.Keys.Where(k=>k==null).ToArray()){_art.Remove(dead);_generations.Remove(dead);}
             if(_art.TryGetValue(root,out var known))return known;
+            bool proof=Environment.GetEnvironmentVariable("TUMP_SCENERY_ART_PROOF")=="1"
+                ||Array.IndexOf(Environment.GetCommandLineArgs(),"-tp-scenery-art-proof")>=0;
             using var bytes=new System.IO.MemoryStream();using(var writer=new System.IO.BinaryWriter(bytes,System.Text.Encoding.UTF8,true))
             foreach(var renderer in root.GetComponentsInChildren<Renderer>(true))
             {
@@ -50,19 +52,29 @@ namespace TumbangPreso.CameraSystem
                 {
                     writer.Write(mesh.name);writer.Write(mesh.vertexCount);writer.Write(mesh.subMeshCount);
                     using var acquired=Mesh.AcquireReadOnlyMeshData(mesh);var data=acquired[0];
-                    for(int stream=0;stream<mesh.vertexBufferCount;stream++)writer.Write(data.GetVertexData<byte>(stream).ToArray());
-                    writer.Write(data.GetIndexData<byte>().ToArray());
+                    for(int stream=0;stream<mesh.vertexBufferCount;stream++)
+                    {
+                        var raw=data.GetVertexData<byte>(stream).ToArray();writer.Write(raw);
+                        if(proof)Debug.Log($"[SceneryArtProof] root={root.name} renderer={Relative(root.transform,renderer.transform)} mesh={mesh.name} vertices={mesh.vertexCount} stream={stream} stride={mesh.GetVertexBufferStride(stream)} bytes={raw.Length} sha256={Digest(raw)}");
+                    }
+                    var indices=data.GetIndexData<byte>().ToArray();writer.Write(indices);
+                    if(proof)Debug.Log($"[SceneryArtProof] root={root.name} mesh={mesh.name} indexFormat={mesh.indexFormat} indices={Digest(indices)}");
                     foreach(var bind in mesh.bindposes)for(int n=0;n<16;n++)writer.Write(bind[n]);
                 }
                 foreach(var material in renderer.sharedMaterials)
                 {
-                    if(material==null){writer.Write(0u);continue;}writer.Write(material.ComputeCRC());writer.Write(material.shader.name);
+                    if(material==null){writer.Write(0u);continue;}int crc=material.ComputeCRC();writer.Write(crc);writer.Write(material.shader.name);
+                    if(proof)Debug.Log($"[SceneryArtProof] root={root.name} material={material.name} crc={crc} shader={material.shader.name} queue={material.renderQueue} keywords={string.Join(",",material.shaderKeywords)}");
                     foreach(string property in material.GetTexturePropertyNames())
-                    {writer.Write(property);var texture=material.GetTexture(property);writer.Write(SceneryTextureIdentities.Resolve(texture));}
+                    {writer.Write(property);var texture=material.GetTexture(property);var identity=SceneryTextureIdentities.Resolve(texture);writer.Write(identity);
+                        if(proof)Debug.Log($"[SceneryArtProof] root={root.name} textureProperty={property} texture={texture?.name} identity={identity}");}
                 }
             }
-            using var sha=System.Security.Cryptography.SHA256.Create();known=BitConverter.ToString(sha.ComputeHash(bytes.ToArray())).Replace("-","");_art[root]=known;return known;
+            known=Digest(bytes.ToArray());_art[root]=known;
+            if(proof)Debug.Log($"[SceneryArtProof] root={root.name} aggregate={known}");return known;
         }
+        private static string Digest(byte[] bytes)
+        {using var sha=System.Security.Cryptography.SHA256.Create();return BitConverter.ToString(sha.ComputeHash(bytes)).Replace("-","");}
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]private static void Reset(){_art.Clear();_generations.Clear();_generation=0;}
         internal static string Relative(Transform root,Transform node)
         {
