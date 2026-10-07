@@ -1,0 +1,6 @@
+Assets\TumbangPreso\Tests\PlayMode\RecordedSceneryTests.cs(84,123): error CS0117: 'LocalReplaySceneState' does not contain a definition for 'PathOf'
+Assets\TumbangPreso\Tests\PlayMode\RecordedSceneryTests.cs(89,122): error CS0117: 'LocalReplaySceneState' does not contain a definition for 'PathOf'
+Assets\TumbangPreso\Tests\PlayMode\RecordedSceneryTests.cs(84,123): error CS0117: 'LocalReplaySceneState' does not contain a definition for 'PathOf'
+Assets\TumbangPreso\Tests\PlayMode\RecordedSceneryTests.cs(89,122): error CS0117: 'LocalReplaySceneState' does not contain a definition for 'PathOf'
+Assets\TumbangPreso\Tests\PlayMode\RecordedSceneryTests.cs(84,123): error CS0117: 'LocalReplaySceneState' does not contain a definition for 'PathOf'
+Assets\TumbangPreso\Tests\PlayMode\RecordedSceneryTests.cs(89,122): error CS0117: 'LocalReplaySceneState' does not contain a definition for 'PathOf'

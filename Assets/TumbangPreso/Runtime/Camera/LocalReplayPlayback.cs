@@ -27,7 +27,7 @@ namespace TumbangPreso.CameraSystem
         private Slider _seek;
         private InputField _jumpField;
         private Text _timeHint;
-        private sealed class LoadedSegment { public RecordedMatchClip Clip; public LocalReplaySceneSegment Scene; public LocalReplayFxSegment Effects; }
+        private sealed class LoadedSegment { public RecordedMatchClip Clip; public LocalReplaySceneSegment Scene; public LocalReplayFxSegment Effects;public LocalReplayScenerySegment Scenery; }
         private Task<LoadedSegment> _loading;
         private LoadedSegment _prepared;
         private int _preparedIndex=-1;
@@ -216,7 +216,7 @@ namespace TumbangPreso.CameraSystem
         {
             _requested = index;_continuousRead=continuous;
             var entry = _entry;
-            _loading = Task.Run(() => new LoadedSegment{Clip=LocalReplayStore.Read(entry,index),Scene=LocalReplayStore.ReadScene(entry,index),Effects=LocalReplayStore.ReadEffects(entry,index)});
+            _loading = Task.Run(() => new LoadedSegment{Clip=LocalReplayStore.Read(entry,index),Scene=LocalReplayStore.ReadScene(entry,index),Effects=LocalReplayStore.ReadEffects(entry,index),Scenery=LocalReplayStore.ReadScenery(entry,index)});
         }
         private bool UseSegment(int index,bool continuous)
         {
@@ -238,6 +238,7 @@ namespace TumbangPreso.CameraSystem
                     _view.ShowLabels(false);
                 }
                 _view.RecordedScene=segment.Scene;_view.RecordedEffects=segment.Effects;
+                _view.RecordedScenery=segment.Scenery;
                 _loaded=index;_continuousRead=false;return true;
             }
             catch(Exception error){Fail(error.Message);return false;}

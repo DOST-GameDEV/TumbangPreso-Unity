@@ -1,0 +1,144 @@
+using System;
+using TumbangPreso.Core;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+namespace TumbangPreso.CameraSystem
+{
+    // Samples are detached on the main thread, then encoded/written off-thread.
+    // Keep the existing eight-second ring; never retain an entire match in RAM.
+    internal sealed class LocalReplayRecorder
+    {
+        private readonly MatchReplayArchive _archive;
+        private LocalReplayStore.Writer _writer;
+        private MatchDirector _match;
+        private long _identity, _sequence;
+        private int _round;
+        private float _start = -1, _last;
+        private string _warning;
+        private Map.ArenaFx _fx;
+        private LocalReplayFxFrame _lastFx;
+        private readonly System.Collections.Generic.List<LocalReplayFxFrame> _fxFrames=new System.Collections.Generic.List<LocalReplayFxFrame>();
+        private readonly System.Collections.Generic.List<LocalReplaySceneFrame> _sceneFrames=new System.Collections.Generic.List<LocalReplaySceneFrame>(64);
+        private readonly System.Collections.Generic.List<LocalReplaySceneryFrame> _sceneryFrames=new System.Collections.Generic.List<LocalReplaySceneryFrame>();
+        private LocalReplaySceneryFrame _lastScenery;
+        public LocalReplayRecorder(MatchReplayArchive archive) { _archive = archive; }
+        public void Tick()
+        {
+            var currentFx=Map.ArenaFx.Instance;
+            if(_fx!=currentFx){if(_fx!=null)_fx.FrameRendered-=EffectFrame;_fx=currentFx;if(_fx!=null)_fx.FrameRendered+=EffectFrame;}
+            var match = GameServices.Match;
+            if (_writer != null && (match != _match || match.PresentationMatchId != _identity || !match.MatchInProgress))
+                Finish(_match != null && _match.HasCompleted);
+            else if (_writer != null && match.RoundNumber != _round)
+            { Flush(); _start = -1; _round = match.RoundNumber; _sceneFrames.Clear();_fxFrames.Clear();_lastFx=null; }
+        }
+        private void EffectFrame(float time)
+        {
+            var match=GameServices.Match;
+            if(_fx==null||LocalReplayPlayback.Active||match==null||!match.MatchInProgress||GameServices.Round?.RoundActive!=true||
+                match.IsWarmupBuffer||PracticeRange.Active||GameLaunch.GuidedTutorial)return;
+            if(_lastFx!=null&&time<=_lastFx.Time)return;
+            _lastFx=new LocalReplayFxFrame{Time=time,Quads=_fx.CaptureRecordedQuads()};
+            if(_writer!=null)_fxFrames.Add(_lastFx);
+        }
+        public void SceneryFrame(float time)
+        {
+            var match=GameServices.Match;
+            if(_writer==null||LocalReplayPlayback.Active||match==null||!match.MatchInProgress||GameServices.Round?.RoundActive!=true||
+                match.IsWarmupBuffer||PracticeRange.Active||GameLaunch.GuidedTutorial||(_lastScenery!=null&&time<=_lastScenery.Time))return;
+            _lastScenery=new LocalReplaySceneryFrame{Time=time,Roots=LocalReplaySceneryState.Capture()};_sceneryFrames.Add(_lastScenery);
+        }
+        public void Sample(float time)
+        {
+            var match = GameServices.Match;
+            if (LocalReplayPlayback.Active || match == null || !match.MatchInProgress || match.IsWarmupBuffer ||
+                PracticeRange.Active || GameLaunch.GuidedTutorial) return;
+            Tick();
+            if (_writer == null)
+            {
+                _match = match; _identity = match.PresentationMatchId; _round = match.RoundNumber; _sequence = 0;
+                _warning = match.RoundNumber>1 || UI.SceneFlow.SelectedRoundSeconds-GameServices.Round.TimeLeft>1
+                    ? "Recording began after the match started." : null;
+                var net = Net.NetSession.Instance;
+                _writer = new LocalReplayStore.Writer(LocalReplayStore.Folder, new LocalReplayManifest {
+                    MatchId = _identity, CreatedUtc = DateTime.UtcNow.ToString("O"),
+                    Map = SceneManager.GetActiveScene().name, Mode = UI.SceneFlow.SelectedMode.ToString(),
+                    Rules = CustomGameRules.ToWire(UI.SceneFlow.SelectedRules), Build = BuildIdentity.OneLine(),
+                    Custom = (net != null && net.IsNetworked && !UI.Hub.HubQueueWatch.QueueRoom) ||
+                        CustomGameRules.ToWire(UI.SceneFlow.SelectedRules) != CustomGameRules.ToWire(CustomGameRules.Defaults(UI.SceneFlow.SelectedMode)) });
+                _match.MatchEnded += Completed;
+                _match.RoundStarted += RoundStarted;
+                _match.IntermissionStarted += IntermissionStarted;
+            }
+            if (_start < 0) _start = time;
+            if(_fxFrames.Count==0&&_lastFx!=null&&_lastFx.Time>=_start)_fxFrames.Add(_lastFx);
+            _last = time;
+            _sceneFrames.Add(LocalReplaySceneState.Capture(time));
+            if (_last - _start >= 3) Flush();
+        }
+        private void Completed(int winner) => Finish(true);
+        private void RoundStarted(int number,int taya)
+        {
+            // Flush before MatchPoseHistory's next LateUpdate clears its ring.
+            // Polling in Update can miss a transition started by a coroutine.
+            Flush();_start=-1;_round=number;_sceneFrames.Clear();_fxFrames.Clear();_lastFx=null;_sceneryFrames.Clear();_lastScenery=null;
+        }
+        private void IntermissionStarted(int number,int taya){Flush(true);_start=-1;_sceneFrames.Clear();_fxFrames.Clear();_lastFx=null;_sceneryFrames.Clear();_lastScenery=null;}
+        private void Flush(bool closing=false)
+        {
+            if (_writer == null || _start < 0) return;
+            var current=GameServices.Match;
+            bool endpoint=closing&&current!=null&&current==_match&&current.PresentationMatchId==_identity&&current.RoundNumber==_round&&Time.time>_last;
+            float end=endpoint?Time.time:_last;
+            if(end<=_start)return;
+            if (_writer.CanAppend && _archive.TryCaptureSession(_start, end, ++_sequence, out var clip, out string error,endpoint))
+            {
+                // The closing boundary can fall after the final 20 Hz pose
+                // sample. Capture its actual scene state alongside the detached
+                // body endpoint, so later rendered FX remain inside the clip.
+                if(endpoint)_sceneFrames.Add(LocalReplaySceneState.Capture(end));
+                var effects=new LocalReplayFxSegment();
+                // Preserve the latest prior state at a segment edge and every
+                // actual render-frame transition within the active timeline.
+                LocalReplayFxFrame before=null;
+                foreach(var frame in _fxFrames)
+                {if(frame.Time<clip.Start){before=frame;continue;}if(before!=null){effects.Frames.Add(before);before=null;}if(frame.Time<=clip.End)effects.Frames.Add(frame);}
+                if(effects.Frames.Count==0&&before!=null)effects.Frames.Add(before);
+                var scenery=new LocalReplayScenerySegment();LocalReplaySceneryFrame prior=null;
+                foreach(var frame in _sceneryFrames)
+                {if(frame.Time<clip.Start){prior=frame;continue;}if(prior!=null){scenery.Frames.Add(prior);prior=null;}if(frame.Time<=clip.End)scenery.Frames.Add(frame);}
+                if(scenery.Frames.Count==0&&prior!=null)scenery.Frames.Add(prior);
+                _writer.Append(clip,new LocalReplaySceneSegment{Frames=new System.Collections.Generic.List<LocalReplaySceneFrame>(_sceneFrames)},effects.Frames.Count>0?effects:null,scenery.Frames.Count>0?scenery:null);
+            }
+            else
+            {
+                _warning = _writer.Error ?? "Some replay footage could not be recorded. " +
+                    (_writer.CanAppend ? _archive.SessionCaptureError : "The replay disk writer could not keep up.");
+                Debug.LogWarning("[LocalReplay] " + _warning);
+            }
+            _fxFrames.RemoveAll(frame=>frame.Time<_last);if(_lastFx!=null&&_lastFx.Time<=_last&&(_fxFrames.Count==0||_fxFrames[0]!=_lastFx))_fxFrames.Insert(0,_lastFx);
+            _start = _last;
+            _sceneryFrames.RemoveAll(frame=>frame.Time<_last);
+            if(_lastScenery!=null&&_lastScenery.Time<=_last&&(_sceneryFrames.Count==0||_sceneryFrames[0]!=_lastScenery))_sceneryFrames.Insert(0,_lastScenery);
+            var last=_sceneFrames.Count>0?_sceneFrames[_sceneFrames.Count-1]:null;
+            _sceneFrames.Clear();if(last!=null)_sceneFrames.Add(last);
+        }
+        public void Finish(bool completed)
+        {
+            if (_writer == null) return;
+            Flush(true);
+            if (_match != null)
+            {
+                _match.MatchEnded -= Completed;
+                _match.RoundStarted -= RoundStarted;
+                _match.IntermissionStarted -= IntermissionStarted;
+            }
+            _writer.Finish(completed, _warning);
+            _writer = null; _match = null; _start = -1;
+            if(_fx!=null)_fx.FrameRendered-=EffectFrame;_fx=null;_fxFrames.Clear();_lastFx=null;
+            _sceneFrames.Clear();
+            _sceneryFrames.Clear();_lastScenery=null;
+        }
+    }
+}

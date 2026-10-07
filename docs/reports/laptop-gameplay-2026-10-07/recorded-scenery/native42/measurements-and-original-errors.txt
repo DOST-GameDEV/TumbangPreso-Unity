@@ -1,0 +1,1 @@
+[SceneryPopulation] drones=12 roots=24 coldCaptureMs=25.1128 warmCaptureMs=1.15057333333333 encodedBytes=279801 encodeMs=416.0064 decodeMs=204.443

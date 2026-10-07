@@ -1,0 +1,93 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayPlayback.cs",
+    "nativeSourceFile": "native42-source/LocalReplayPlayback.cs",
+    "nativeSha256": "fd60f38c2eb8bdd63f00fc53cf8c107e3c6ee476bf05458cb5c870843893787d",
+    "normalizedGitSha256": "6b49a183ab70fc49b3e62387194ce21b7d67340a1a6025b849fb2899aebea7aa",
+    "normalization": "CRLF to LF only, preserve every other byte"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayRecorder.cs",
+    "nativeSourceFile": "native42-source/LocalReplayRecorder.cs",
+    "nativeSha256": "b1c08d21761e43ecb02329fe70246c01e647718dd8cf9abcc06739b460317db4",
+    "normalizedGitSha256": "c219e03bd167e263d60307e7cdf8efea65eb2e04498fd7cc52af4f3adb455cb4",
+    "normalization": "CRLF to LF only, preserve every other byte"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayStore.cs",
+    "nativeSourceFile": "native42-source/LocalReplayStore.cs",
+    "nativeSha256": "408b1c9ff6ce87f44657832f0a76a71adc99c6e3274eb865a7fc897eaa1c2ab5",
+    "normalizedGitSha256": "bc3384f24a4441f04a5ea0ac30ef14282417a8c6ab825bae9f7b6959993fb0f2",
+    "normalization": "CRLF to LF only, preserve every other byte"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/MatchReplayArchive.cs",
+    "nativeSourceFile": "native42-source/MatchReplayArchive.cs",
+    "nativeSha256": "a226598b5522465eea3c9eafbde4ed722730a1d968eef5a6402ee7fc4beb9935",
+    "normalizedGitSha256": "2c07c0513f86c490fcf922b5cb3ee0299388bef9cd96bfb61b010c49e8559757",
+    "normalization": "CRLF to LF only, preserve every other byte"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/RecordedWorldView.cs",
+    "nativeSourceFile": "native42-source/RecordedWorldView.cs",
+    "nativeSha256": "40542dd57242cf94b7caaf43498b380842980ce5bd735f6bed6c5705513ffa90",
+    "normalizedGitSha256": "7e6401907b942bd37fc194a6ab8167e470c8c270d646ac633a2c967754ee5f47",
+    "normalization": "CRLF to LF only, preserve every other byte"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplaySceneryState.cs",
+    "nativeSourceFile": "native42-source/LocalReplaySceneryState.cs",
+    "nativeSha256": "9fb37cd12e6ed714b521e7fa5607c3dad96aa8063f00d403ccc616516934cb9c",
+    "normalizedGitSha256": "9fb37cd12e6ed714b521e7fa5607c3dad96aa8063f00d403ccc616516934cb9c",
+    "normalization": "CRLF to LF only, preserve every other byte"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplaySceneryCodec.cs",
+    "nativeSourceFile": "native42-source/LocalReplaySceneryCodec.cs",
+    "nativeSha256": "2a5eae9a55e216c3751f330cae6ef964fcad635de812c69633a25ea021a12462",
+    "normalizedGitSha256": "2a5eae9a55e216c3751f330cae6ef964fcad635de812c69633a25ea021a12462",
+    "normalization": "CRLF to LF only, preserve every other byte"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayScenerySampler.cs",
+    "nativeSourceFile": "native42-source/LocalReplayScenerySampler.cs",
+    "nativeSha256": "4ea59dd864cf598517bb2559b77ba2c6b33d10abae563a510e605cc386b0d3f6",
+    "normalizedGitSha256": "4ea59dd864cf598517bb2559b77ba2c6b33d10abae563a510e605cc386b0d3f6",
+    "normalization": "CRLF to LF only, preserve every other byte"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/RecordedSceneryView.cs",
+    "nativeSourceFile": "native42-source/RecordedSceneryView.cs",
+    "nativeSha256": "08b11530229d211a8d79182bf0f3c1cadad5f722893ab5a904460cd517bfeb27",
+    "normalizedGitSha256": "08b11530229d211a8d79182bf0f3c1cadad5f722893ab5a904460cd517bfeb27",
+    "normalization": "CRLF to LF only, preserve every other byte"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Map/ArenaDrone.cs",
+    "nativeSourceFile": "native42-source/ArenaDrone.cs",
+    "nativeSha256": "e3559b72d909704105b0f5d952a1884eb4f94893c0f67743f52d71b0766a2e22",
+    "normalizedGitSha256": "3b607ace391297da609ab58486a835f714151d329246009422301f8d5d9feae5",
+    "normalization": "CRLF to LF only, preserve every other byte"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Map/ArenaDrone.Recorded.cs",
+    "nativeSourceFile": "native42-source/ArenaDrone.Recorded.cs",
+    "nativeSha256": "f3535cf0b76a83aad0e189d27612469b1957cdb00689f05bc47ac07a7341f453",
+    "normalizedGitSha256": "f3535cf0b76a83aad0e189d27612469b1957cdb00689f05bc47ac07a7341f453",
+    "normalization": "CRLF to LF only, preserve every other byte"
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/RecordedSceneryTests.cs",
+    "nativeSourceFile": "native42-source/RecordedSceneryTests.cs",
+    "nativeSha256": "11873c01ad4e9dfaf7c85c058a6129ecbb638db894ae82bf269393c3e273589b",
+    "normalizedGitSha256": "11873c01ad4e9dfaf7c85c058a6129ecbb638db894ae82bf269393c3e273589b",
+    "normalization": "CRLF to LF only, preserve every other byte"
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/MapPreviewFreshnessTests.cs",
+    "nativeSourceFile": "native42-source/MapPreviewFreshnessTests.cs",
+    "nativeSha256": "f9620bbb27099f57a07dbe8efe0b2261f188c27d84e99da9c7e2d319130dddc0",
+    "normalizedGitSha256": "9804deacf4e508a38245cfdde130358478e0f38d989f46b85f1f5ad02ec01a3c",
+    "normalization": "CRLF to LF only, preserve every other byte"
+  }
+]

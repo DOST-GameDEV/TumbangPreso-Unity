@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 12:17:59Z" end-time="2026-10-07 12:18:48Z" duration="49.4103288">
+  <test-suite type="TestSuite" id="3612" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="2113" result="Failed" site="Child" start-time="2026-10-07 12:17:59Z" end-time="2026-10-07 12:18:48Z" duration="49.410329" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3604" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2113" result="Failed" site="Child" start-time="2026-10-07 12:17:59Z" end-time="2026-10-07 12:18:48Z" duration="49.390443" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="44720" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3605" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2113" result="Failed" site="Child" start-time="2026-10-07 12:17:59Z" end-time="2026-10-07 12:18:48Z" duration="49.376855" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3608" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2111" result="Failed" site="Child" start-time="2026-10-07 12:17:59Z" end-time="2026-10-07 12:18:48Z" duration="49.356202" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2853" name="RecordedSceneryTests" fullname="TumbangPreso.PlayTests.RecordedSceneryTests" classname="TumbangPreso.PlayTests.RecordedSceneryTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-07 12:17:59Z" end-time="2026-10-07 12:18:48Z" duration="49.228761" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2854" name="ActualDroneAndDetachedMarkReplayUseTheSameRenderedGeometryAndMaterials" fullname="TumbangPreso.PlayTests.RecordedSceneryTests.ActualDroneAndDetachedMarkReplayUseTheSameRenderedGeometryAndMaterials" methodname="ActualDroneAndDetachedMarkReplayUseTheSameRenderedGeometryAndMaterials" classname="TumbangPreso.PlayTests.RecordedSceneryTests" runstate="Runnable" seed="213226318" result="Failed" start-time="2026-10-07 12:17:59Z" end-time="2026-10-07 12:18:21Z" duration="22.060375" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: less than 0.0799999982f
+  But was:  0.261140198f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.RecordedSceneryTests+<ActualDroneAndDetachedMarkReplayUseTheSameRenderedGeometryAndMaterials>d__9.MoveNext () [0x002e1] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\RecordedSceneryTests.cs:61
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[RecordedSceneryPixels] droneAndMark=0.2611402
+]]></output>
+            </test-case>
+            <test-case id="2858" name="ExistingSavedSceneryReopensWithValidSkinnedBindingsAndSeeks" fullname="TumbangPreso.PlayTests.RecordedSceneryTests.ExistingSavedSceneryReopensWithValidSkinnedBindingsAndSeeks" methodname="ExistingSavedSceneryReopensWithValidSkinnedBindingsAndSeeks" classname="TumbangPreso.PlayTests.RecordedSceneryTests" runstate="Runnable" seed="547516164" result="Passed" start-time="2026-10-07 12:18:21Z" end-time="2026-10-07 12:18:35Z" duration="14.197861" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+]]></output>
+            </test-case>
+            <test-case id="2856" name="SavedAnimalAndNewLineStayVisibleWhenTheirLiveRootIsInactive" fullname="TumbangPreso.PlayTests.RecordedSceneryTests.SavedAnimalAndNewLineStayVisibleWhenTheirLiveRootIsInactive" methodname="SavedAnimalAndNewLineStayVisibleWhenTheirLiveRootIsInactive" classname="TumbangPreso.PlayTests.RecordedSceneryTests" runstate="Runnable" seed="421089834" result="Passed" start-time="2026-10-07 12:18:35Z" end-time="2026-10-07 12:18:48Z" duration="12.959034" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[RecordedSceneryPixels] animalAndLine=0
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

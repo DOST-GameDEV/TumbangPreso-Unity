@@ -51,6 +51,7 @@ namespace TumbangPreso.CameraSystem
         public void Bind(MatchPoseHistory history)
         {
             _local ??= new LocalReplayRecorder(this);
+            if(GetComponent<LocalReplayScenerySampler>()==null)gameObject.AddComponent<LocalReplayScenerySampler>();
             if(_history!=null)_history.Sampled-=Sample;
             _history=history;if(_history!=null&&isActiveAndEnabled)_history.Sampled+=Sample;
         }
@@ -67,6 +68,7 @@ namespace TumbangPreso.CameraSystem
             _match=0;_round=0;_unsafeAt=-100;_propsScanAt=0;
         }
         private void Update(){_local?.Tick();CheckIdentity();}
+        internal void CaptureSceneryRenderFrame(float time)=>_local?.SceneryFrame(time);
         private void CheckIdentity()
         {
             var match=GameServices.Match;

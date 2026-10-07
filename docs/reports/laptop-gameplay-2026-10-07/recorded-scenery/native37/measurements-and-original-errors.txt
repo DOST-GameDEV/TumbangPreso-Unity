@@ -1,0 +1,11 @@
+[NaturalSceneryReplay] observed=12111 savedUnique=12111 roots=60600 poses=1090800 bytes=7856100 segments=10
+Bones do not match bindpose.
+Bones do not match bindpose.
+Bones do not match bindpose.
+Bones do not match bindpose.
+Bones do not match bindpose.
+Bones do not match bindpose.
+Bones do not match bindpose.
+Bones do not match bindpose.
+Bones do not match bindpose.
+Bones do not match bindpose.

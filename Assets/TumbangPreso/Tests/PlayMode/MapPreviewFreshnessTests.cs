@@ -88,5 +88,23 @@ namespace TumbangPreso.PlayTests
    foreach(string map in SceneFlow.Maps)Assert.IsNull(Check(map),map);
    Checker.GetMethod("Validate").Invoke(null,null);yield return null;
   }
+  [UnityTest]public IEnumerator ReadOnlyDroneSceneryAccessLeavesExistingPreviewInputsUnchanged()
+  {
+   foreach(string map in SceneFlow.Maps)Assert.IsNull(Check(map),map);
+   string source="Assets/TumbangPreso/Runtime/Map/ArenaDrone.cs",adapter="Assets/TumbangPreso/Runtime/Map/ArenaDrone.Recorded.cs";
+   byte[] before=File.ReadAllBytes(source),partial=File.ReadAllBytes(adapter);string original=Fingerprint(SceneFlow.Arena);
+   string description=(string)Checker.GetMethod("SourceDescription").Invoke(null,new object[]{SceneFlow.Arena});
+   Assert.IsFalse(description.Contains("ArenaDrone.cs"),"The existing gameplay-only drone is outside map-only preview inputs.");
+   try
+   {
+    File.WriteAllText(source,System.Text.Encoding.UTF8.GetString(before).Replace("ClawOpen=32","ClawOpen=31"));
+    Assert.AreEqual(original,Fingerprint(SceneFlow.Arena),"Gameplay-only drones are not rendered by the map-only preview.");
+    File.WriteAllBytes(source,before);
+    File.WriteAllText(adapter,System.Text.Encoding.UTF8.GetString(partial).Replace("=>_spot;","=>null;"));
+    Assert.AreEqual(original,Fingerprint(SceneFlow.Arena),"An unreferenced gameplay-only accessor cannot alter map-only footage.");
+   }
+   finally{File.WriteAllBytes(source,before);File.WriteAllBytes(adapter,partial);}
+   foreach(string map in SceneFlow.Maps)Assert.IsNull(Check(map),map);yield return null;
+  }
  }
 }

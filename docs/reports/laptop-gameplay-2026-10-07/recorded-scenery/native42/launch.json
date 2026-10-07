@@ -1,0 +1,28 @@
+{
+  "pid": 42516,
+  "source": "bcfc7cf8ad2f2b0f65fc0701b22b13cef4cd2ffb",
+  "kind": "candidate",
+  "out": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\recorded-scenery-native42-direct1007",
+  "command": [
+    "C:\\Program Files\\Unity\\Hub\\Editor\\6000.5.8f1\\Editor\\Unity.exe",
+    "-projectPath",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a",
+    "-batchmode",
+    "-force-d3d11",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.RecordedSceneryTests.ActualShowAndRecoveryPopulationHasMeasuredBoundedPayloadAndGenerationIdentity;TumbangPreso.PlayTests.RecordedSceneryTests.RenderFrameTimelineKeepsShortVisibilityEdgesAndRejectsInvalidData",
+    "-testResults",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\recorded-scenery-native42-direct1007\\tests.xml",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\recorded-scenery-native42-direct1007\\unity.log",
+    "-tp-profile",
+    "validation-qa-a-be075dcdfa07",
+    "-job-worker-count",
+    "1",
+    "-gc-helper-count",
+    "1"
+  ]
+}

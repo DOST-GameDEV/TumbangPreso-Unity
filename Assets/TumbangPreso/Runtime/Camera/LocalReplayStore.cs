@@ -12,7 +12,7 @@ namespace TumbangPreso.CameraSystem
     [Serializable] public sealed class LocalReplaySegment
     {
         public string File, Sha256;
-        public string SceneFile,SceneSha256,EffectsFile,EffectsSha256;
+        public string SceneFile,SceneSha256,EffectsFile,EffectsSha256,SceneryFile,ScenerySha256;
         public float Offset, Start, End;
         public int Round;
     }
@@ -173,6 +173,14 @@ namespace TumbangPreso.CameraSystem
             byte[] bytes=File.ReadAllBytes(path);if(Hash(bytes)!=segment.EffectsSha256)throw new InvalidDataException("Recorded effects are damaged.");
             return LocalReplayEffectsCodec.Decode(bytes,segment.Start,segment.End);
         }
+        public static LocalReplayScenerySegment ReadScenery(LocalReplayEntry entry,int index)
+        {
+            var segment=entry.Manifest.Segments[index];if(string.IsNullOrEmpty(segment.SceneryFile))return null;
+            if(segment.SceneryFile!=Path.GetFileName(segment.SceneryFile)||!segment.SceneryFile.EndsWith(".scenery.gz",StringComparison.Ordinal))throw new InvalidDataException("Invalid recorded scenery path.");
+            string path=Path.Combine(entry.Directory,segment.SceneryFile);if(new FileInfo(path).Length>LocalReplaySceneryCodec.MaxEncodedBytes)throw new InvalidDataException("Recorded scenery is too large.");
+            byte[] bytes=File.ReadAllBytes(path);if(Hash(bytes)!=segment.ScenerySha256)throw new InvalidDataException("Recorded scenery is damaged.");
+            return LocalReplaySceneryCodec.Decode(bytes,segment.Start,segment.End);
+        }
         private static bool Finite(float value)=>!float.IsNaN(value)&&!float.IsInfinity(value);
         private static bool Finite(Vector3 value)=>Finite(value.x)&&Finite(value.y)&&Finite(value.z);
         private static bool Finite(Vector4 value)=>Finite(value.x)&&Finite(value.y)&&Finite(value.z)&&Finite(value.w);
@@ -225,7 +233,7 @@ namespace TumbangPreso.CameraSystem
                 // Only managed values are used by the worker. No transforms,
                 // Resources, scene objects or simulation calls cross this boundary.
             }
-            public bool Append(RecordedMatchClip clip,LocalReplaySceneSegment scene=null,LocalReplayFxSegment effects=null)
+            public bool Append(RecordedMatchClip clip,LocalReplaySceneSegment scene=null,LocalReplayFxSegment effects=null,LocalReplayScenerySegment scenery=null)
             {
                 if (!CanAppend) return false;
                 Interlocked.Increment(ref _pending);
@@ -252,7 +260,13 @@ namespace TumbangPreso.CameraSystem
                             effectsFile=_manifest.Segments.Count.ToString("D6")+".fx.gz";byte[] effectBytes=LocalReplayEffectsCodec.Encode(effects);
                             AtomicWrite(Path.Combine(Directory,effectsFile),effectBytes);effectsHash=Hash(effectBytes);
                         }
-                        _manifest.Segments.Add(new LocalReplaySegment { File = file, Sha256 = Hash(bytes),
+                        string sceneryFile=null,sceneryHash=null;
+                        if(scenery!=null&&scenery.Frames.Count>0)
+                        {
+                            sceneryFile=_manifest.Segments.Count.ToString("D6")+".scenery.gz";byte[] sceneryBytes=LocalReplaySceneryCodec.Encode(scenery);
+                            AtomicWrite(Path.Combine(Directory,sceneryFile),sceneryBytes);sceneryHash=Hash(sceneryBytes);
+                        }
+                        _manifest.Segments.Add(new LocalReplaySegment { File = file, Sha256 = Hash(bytes),SceneryFile=sceneryFile,ScenerySha256=sceneryHash,
                             SceneFile=sceneFile,SceneSha256=sceneHash,EffectsFile=effectsFile,EffectsSha256=effectsHash,
                             Offset = _manifest.Duration, Start = clip.Start, End = clip.End, Round = clip.Round });
                         WriteManifest();

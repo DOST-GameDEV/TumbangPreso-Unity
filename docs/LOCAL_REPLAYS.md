@@ -41,6 +41,13 @@ recordings also contain optional `.fx.gz` sidecars with the actual rendered
 effect quads, atlas cells, colours and camera-facing geometry at every active
 render frame, including empty transitions. Playback uses the original material
 and atlas with an owned mesh; it does not run the live effect pool.
+New recordings also contain optional `.scenery.gz` sidecars for actual animal
+and drone render-frame poses, visibility, material colour/UV overrides, detached
+landing markers and temporary animal line geometry. Owned render copies can show
+recorded inactive birds without activating live roots or running animation graphs,
+random visits, AI or drone behavior. The compressed sidecar has its own SHA,
+version, finite-state, hierarchy and size validation; old files without it load
+with their original missing coverage.
 These sidecars are independently hashed, bounded and
 validated before use; older files without them still load. A segment and its
 sidecar are committed atomically before their manifest entry. SHA-256,
@@ -97,8 +104,11 @@ The current viewer reconstructs recorded gameplay and supported effects; ambient
 scenery is supplied by the compatible map, with the traffic timeline stored in
 new sidecars. Arena pool snapshots and their actual-material render copies have
 focused same-camera checks, with saved short flashes and free-camera facing checks.
-Full visual parity is not yet qualified: drones, ambient animals, remaining
-transient state and full kit/map coverage need further recording and
+Recorded animal/drone copies, detached markers and animal lines have focused
+same-camera zero-RGB-difference checks, actual saved render-timestamp coverage
+and disk/reopen/seek controls. Full visual parity is not yet qualified: separate
+LagoonFlocks birds/fish/feathers, remaining transient state and full kit/map
+coverage need further recording and
 same-camera/time verification. Older recordings cannot gain scene or effects state that was
 never saved. Default-material shader comparisons do not prove all live ability,
 particle or map states, and native Editor checks do not establish packaged parity.

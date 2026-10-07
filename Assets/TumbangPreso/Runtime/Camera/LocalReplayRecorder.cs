@@ -20,6 +20,8 @@ namespace TumbangPreso.CameraSystem
         private LocalReplayFxFrame _lastFx;
         private readonly System.Collections.Generic.List<LocalReplayFxFrame> _fxFrames=new System.Collections.Generic.List<LocalReplayFxFrame>();
         private readonly System.Collections.Generic.List<LocalReplaySceneFrame> _sceneFrames=new System.Collections.Generic.List<LocalReplaySceneFrame>(64);
+        private readonly System.Collections.Generic.List<LocalReplaySceneryFrame> _sceneryFrames=new System.Collections.Generic.List<LocalReplaySceneryFrame>();
+        private LocalReplaySceneryFrame _lastScenery;
         public LocalReplayRecorder(MatchReplayArchive archive) { _archive = archive; }
         public void Tick()
         {
@@ -39,6 +41,13 @@ namespace TumbangPreso.CameraSystem
             if(_lastFx!=null&&time<=_lastFx.Time)return;
             _lastFx=new LocalReplayFxFrame{Time=time,Quads=_fx.CaptureRecordedQuads()};
             if(_writer!=null)_fxFrames.Add(_lastFx);
+        }
+        public void SceneryFrame(float time)
+        {
+            var match=GameServices.Match;
+            if(_writer==null||LocalReplayPlayback.Active||match==null||!match.MatchInProgress||GameServices.Round?.RoundActive!=true||
+                match.IsWarmupBuffer||PracticeRange.Active||GameLaunch.GuidedTutorial||(_lastScenery!=null&&time<=_lastScenery.Time))return;
+            _lastScenery=new LocalReplaySceneryFrame{Time=time,Roots=LocalReplaySceneryState.Capture()};_sceneryFrames.Add(_lastScenery);
         }
         public void Sample(float time)
         {
@@ -73,9 +82,9 @@ namespace TumbangPreso.CameraSystem
         {
             // Flush before MatchPoseHistory's next LateUpdate clears its ring.
             // Polling in Update can miss a transition started by a coroutine.
-            Flush();_start=-1;_round=number;_sceneFrames.Clear();_fxFrames.Clear();_lastFx=null;
+            Flush();_start=-1;_round=number;_sceneFrames.Clear();_fxFrames.Clear();_lastFx=null;_sceneryFrames.Clear();_lastScenery=null;
         }
-        private void IntermissionStarted(int number,int taya){Flush(true);_start=-1;_sceneFrames.Clear();_fxFrames.Clear();_lastFx=null;}
+        private void IntermissionStarted(int number,int taya){Flush(true);_start=-1;_sceneFrames.Clear();_fxFrames.Clear();_lastFx=null;_sceneryFrames.Clear();_lastScenery=null;}
         private void Flush(bool closing=false)
         {
             if (_writer == null || _start < 0) return;
@@ -96,7 +105,11 @@ namespace TumbangPreso.CameraSystem
                 foreach(var frame in _fxFrames)
                 {if(frame.Time<clip.Start){before=frame;continue;}if(before!=null){effects.Frames.Add(before);before=null;}if(frame.Time<=clip.End)effects.Frames.Add(frame);}
                 if(effects.Frames.Count==0&&before!=null)effects.Frames.Add(before);
-                _writer.Append(clip,new LocalReplaySceneSegment{Frames=new System.Collections.Generic.List<LocalReplaySceneFrame>(_sceneFrames)},effects.Frames.Count>0?effects:null);
+                var scenery=new LocalReplayScenerySegment();LocalReplaySceneryFrame prior=null;
+                foreach(var frame in _sceneryFrames)
+                {if(frame.Time<clip.Start){prior=frame;continue;}if(prior!=null){scenery.Frames.Add(prior);prior=null;}if(frame.Time<=clip.End)scenery.Frames.Add(frame);}
+                if(scenery.Frames.Count==0&&prior!=null)scenery.Frames.Add(prior);
+                _writer.Append(clip,new LocalReplaySceneSegment{Frames=new System.Collections.Generic.List<LocalReplaySceneFrame>(_sceneFrames)},effects.Frames.Count>0?effects:null,scenery.Frames.Count>0?scenery:null);
             }
             else
             {
@@ -106,6 +119,8 @@ namespace TumbangPreso.CameraSystem
             }
             _fxFrames.RemoveAll(frame=>frame.Time<_last);if(_lastFx!=null&&_lastFx.Time<=_last&&(_fxFrames.Count==0||_fxFrames[0]!=_lastFx))_fxFrames.Insert(0,_lastFx);
             _start = _last;
+            _sceneryFrames.RemoveAll(frame=>frame.Time<_last);
+            if(_lastScenery!=null&&_lastScenery.Time<=_last&&(_sceneryFrames.Count==0||_sceneryFrames[0]!=_lastScenery))_sceneryFrames.Insert(0,_lastScenery);
             var last=_sceneFrames.Count>0?_sceneFrames[_sceneFrames.Count-1]:null;
             _sceneFrames.Clear();if(last!=null)_sceneFrames.Add(last);
         }
@@ -123,6 +138,7 @@ namespace TumbangPreso.CameraSystem
             _writer = null; _match = null; _start = -1;
             if(_fx!=null)_fx.FrameRendered-=EffectFrame;_fx=null;_fxFrames.Clear();_lastFx=null;
             _sceneFrames.Clear();
+            _sceneryFrames.Clear();_lastScenery=null;
         }
     }
 }
