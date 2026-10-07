@@ -2,6 +2,23 @@
 
 ## Active handoff after compaction, October 7 at 00:37 UTC
 
+Update00:45UTC: paired active host loss is COMPLETE within its stated scope.
+Both peers showed READY/round1/no-match-over before exact host40372 stopped
+at00:41:50.3057485UTC. Client59804 naturally exited0 and strict recovery PASS:
+abandoned1of1, offline Home, no completed result/history/queue/witness. Both
+profile/input and whole261-file package preservation checks pass. The host's
+intentional nonnormal exit/missing terminal report is retained, not a host PASS.
+Report: reports/two-machine-host-loss-cb5f-2026-10-07. All PC peer jobs are terminal;
+laptop was told to close its exact receipt helper after independent copy.
+
+Next AI reproduction38712 is also terminal:25degree/3.5m charge releases outside
+the1.3m actual corridor and spends2.5s cooldown; original1FAIL/3controlsPASS.
+All21315 frozen inputs restored. Owned AiTagCommitmentTests change retained;
+private Auditor/voxel dirt preserved. Next command: implement a release check
+using actual reachable sweep geometry, qualify correction and nearby/aimed
+controls with native graphics. Keep locomotion and moving-target limits explicit.
+No PC native job remains. The earlier preflight state below is historical.
+
 PC goal is verified ACTIVE. Preserve the full assignment across compaction:
 AI and all-map navigation, distinct map intros/poses/arrivals, caught-player
 camera and slipper reliability. Startup/UI and the scoped fixes below are

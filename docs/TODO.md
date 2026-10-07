@@ -1,5 +1,12 @@
 ### UI-LOGIN-FEEDBACK-1006: caret and actionable refusal
 
+- [x] Shared cb5 two-machine active host-loss gate: both live round1 before
+  exact owned host stop; client abandons1of1, returns offline Home and saves no
+  fabricated completed result. Strict client PASS and both261-file artifact/
+  isolated settings preservation. Functional640Low LAN scope only; performance,
+  physical input, reconnect and WAN remain unqualified.
+  [Paired evidence](reports/two-machine-host-loss-cb5f-2026-10-07/README.md).
+
 - [x] Combined Desktopcb5 replaces startup9ab after261 file hashes verify.
   Actual packaged startup33448 passes5.7217s title and Home4to40; build21309 inputs
   restore. Same-artifact LAN runD passes both strict terminal roles/natural end
