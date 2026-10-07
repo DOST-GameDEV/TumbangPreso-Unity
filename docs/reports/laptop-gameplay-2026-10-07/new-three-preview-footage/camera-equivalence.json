@@ -1,0 +1,8 @@
+{
+  "private void ApplyCamera(": true,
+  "private void AdoptRange(": true,
+  "private void EnsureCamera(": true,
+  "private void EnsureWorldOutline(": true,
+  "private void ApplyMapEnvironment(": true,
+  "AimAt matches actual new3 capture": true
+}

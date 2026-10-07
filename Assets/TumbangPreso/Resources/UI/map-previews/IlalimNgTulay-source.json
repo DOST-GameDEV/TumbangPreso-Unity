@@ -1,10 +1,10 @@
 {
-    "map": "IlalimNgTulay",
-    "sourceFingerprint": "45d0b51f45ce0f919ce098c1258e8423f88b26ce83f3ae40aee2642c0f78c4aa",
-    "videoSha256": "a669fc974182620e21023e0ba494ce2636085c4c0c0b138f98a6f1d1031f07fb",
-    "posterSha256": "5d5f743f382f7416bdfb757d3849650b638056dc487f0f3a8aff85732261512b",
-    "width": 1920,
-    "height": 1080,
-    "fps": 30,
-    "frames": 780
+  "map": "IlalimNgTulay",
+  "sourceFingerprint": "388d8c6583af3f34927572312681109a6c1e7f2dbd64367c2ceb7ab26fa3353c",
+  "videoSha256": "31c8fc6d2649590b133ef6f1e79ad669fe641c71f64c2d4556137e82da4a7fe6",
+  "posterSha256": "2182bb115b875da2e0119ae910f378ed74b26d4aad36c273d969d849f9569ba1",
+  "width": 1920,
+  "height": 1080,
+  "fps": 30,
+  "frames": 780
 }

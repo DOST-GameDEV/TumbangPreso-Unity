@@ -76,6 +76,15 @@ unknown old clip as current. Existing recordings may adopt a new fingerprint
 format only after the actual captured source and current dependency/camera
 contracts are proved equivalent.
 
+`MapPreviewFreshness.SourceDescription(sceneId)` exposes the canonical inputs
+behind a fingerprint for an evidence-backed comparison. Effective selection
+camera values are included; map labels/descriptions are not rendering inputs.
+The gameplay/replay installer is excluded because isolated preview capture holds
+`MatchInstaller.PreviewOnly` and begins from a fresh empty PlayMode. Attached map
+scripts and all actual visual dependencies still invalidate their footage.
+Preserve the source description and exact source revision when demonstrating a
+format migration; changing a fingerprint is not evidence of equivalent footage.
+
 Use **Tumbang Preso / Maps / Validate Recorded Previews** before publication.
 This explicit check validates all registered map receipts without recording
 footage, loading arena scenes or adding a build execution barrier. Fingerprints

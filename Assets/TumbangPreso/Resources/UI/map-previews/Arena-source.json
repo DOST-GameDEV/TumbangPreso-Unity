@@ -1,10 +1,10 @@
 {
-    "map": "Arena",
-    "sourceFingerprint": "0f79bfd91d9258cdbac3c4f34482fe2f8fb489ad9720faf87649271e73501425",
-    "videoSha256": "615b0a18e26a663ab9661cac0996a83132c8194f7bf8774ac70f27dc96d434c8",
-    "posterSha256": "5e077bba0e810d0bfa33a71f7732c316694536a1e091f0046c5ba24bf2b7b80d",
-    "width": 1920,
-    "height": 1080,
-    "fps": 30,
-    "frames": 780
+  "map": "Arena",
+  "sourceFingerprint": "8dfa9f26f28e32c754931b223438b41e492fe83aad505ea353469a7443d7aab5",
+  "videoSha256": "615b0a18e26a663ab9661cac0996a83132c8194f7bf8774ac70f27dc96d434c8",
+  "posterSha256": "5e077bba0e810d0bfa33a71f7732c316694536a1e091f0046c5ba24bf2b7b80d",
+  "width": 1920,
+  "height": 1080,
+  "fps": 30,
+  "frames": 780
 }
