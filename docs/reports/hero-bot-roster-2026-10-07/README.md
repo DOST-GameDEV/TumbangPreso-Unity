@@ -1,0 +1,9 @@
+# Live bot input across the current nine-hero roster
+
+Original native45380 passes five existing invariant cases but roster logs show onlydante/rafi/zack. AllBots deliberately removes the human seat, so changing the saved CharacterPick cannot select a different roster. Original results/traces remain here and are not nine-hero acceptance.
+
+Corrected native38236 uses the normal character-picker seat for each requested selection, asserts its actual CharacterIndex, disables the human input readers/switcher and installs the existing normal AIController writer on that chair. The other three seats remain normal bots. SeatOrigin is logged accurately: the chosen chair is human-origin with synthetic AI input; this is not physical-human input or four network-bot origins. No direct casts, scoring, teleport, kit changes or authored-hero redesign are added.
+
+All five actual ReadyGate/40live-second cases pass. Roster observations confirm all nine stable IDs: amihan,cheska,dante,nemu,paete,phaister,rafi,sean,zack. Their display names remain Amihan,Yasmin,Basilio,Nemu,Paete,Soraya,Ilyas,Rago,Isagani. Per-two-second logs expose actual skill cooldown/active state and ultimate meter. These are observations/proxies, not accepted-cast, full-effect, ultimate-use or mastery proofs. Throws9/10/9/10/7 and lunge attempts2/2/1/2/2 with countedhits0/1/1/2/1 are short unseeded samples, not statistical improvement.
+
+Both terminal runs restore all21347 frozen source inputs/preferences. CharacterPick and rules/pin/allbots state restore on fixture teardown. Current tested map is LagoonCove and observed role coverage is incomplete; all-map/full-match/each-role/feature efficacy/performance remains open. Desktop725e remains the separately qualified shipping build; this change is diagnostic-only. Laptop owns replay scene/shader fidelity work; noPC reserved-field overlap, noLAN or unapproved paid services/workers were introduced.

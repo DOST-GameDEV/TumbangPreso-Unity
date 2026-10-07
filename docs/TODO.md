@@ -1,3 +1,8 @@
+### AI-HERO-ROSTER-1007: actual kit participation
+
+- [x] Observe all nine current hero IDs through normal character selection and normal AI input writers over five40live-second Lagoon runs. Native5PASS preserves invariant checks; originalAllBots fixture onlythree IDs retained. [Evidence and limits](reports/hero-bot-roster-2026-10-07/README.md).
+- [ ] Review skill/ultimate decisions, accepted use/role efficacy, all maps/full matches/performance; roster presence does not close humanlike/all-feature requirements.
+
 ### COMBINED-REPLAY-DESKTOP-1007: current Windows replacement
 
 - [x] Install source725e combinedAI/new3preview/directedopening/fullreplay Windows release after actualstartup5.72s/firstHome/replayrealpointer and all7first-repeat1080decoder gates. Verify261fileSHA and preserve oldcb5outsideDesktop; all21347source/prefs restore. [Release receipt](reports/combined-replay-desktop-2026-10-07/README.md).

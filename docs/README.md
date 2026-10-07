@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Nine-hero live AI input coverage: [actual roster IDs, retained invalid selection coverage and remaining decisions](reports/hero-bot-roster-2026-10-07/README.md).
+
 Current combined Desktop release: [installed725e package, real startup/replay/video gates and preserved backup](reports/combined-replay-desktop-2026-10-07/README.md).
 
 Current PC AI/replay integration: [exact tested-source proof, actual archive/viewer controls and retained fixture failure](reports/pc-local-replay-integration-2026-10-07/README.md).

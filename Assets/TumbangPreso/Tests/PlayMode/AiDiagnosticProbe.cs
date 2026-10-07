@@ -31,6 +31,7 @@ namespace TumbangPreso.PlayTests
     {
         private CustomRules _priorRules;
         private bool _priorRulesPinned, _priorAllBots;
+        private int _priorCharacterPick;
         /// <summary>
         /// ⚠️⚠️ THE PAIR THAT MAKES A FULL-SUITE RESULT MEAN ANYTHING. `docs/TODO.md` § 126.8:
         /// the full PlayMode run came back 42, 41 and then 56 red with the red set moving, and a
@@ -42,6 +43,7 @@ namespace TumbangPreso.PlayTests
         {
             _priorRules = UI.SceneFlow.SelectedRules.Clone();
             _priorRulesPinned = UI.SceneFlow.RulesPinned; _priorAllBots = GameLaunch.AllBots;
+            _priorCharacterPick = Settings.SettingsStore.Current.CharacterPick;
             yield return PlayModeWorld.Reset();
         }
 
@@ -52,6 +54,7 @@ namespace TumbangPreso.PlayTests
             UI.SceneFlow.AdoptRemoteRules(_priorRules);
             if (_priorRulesPinned) UI.SceneFlow.PinSelectedRules(_priorRules); else UI.SceneFlow.UnpinSelectedRules();
             GameLaunch.AllBots = _priorAllBots;
+            Settings.SettingsStore.Current.CharacterPick = _priorCharacterPick;
         }
 
         /// <summary>
@@ -112,6 +115,11 @@ namespace TumbangPreso.PlayTests
         [UnityTest] public IEnumerator HeroBridgeLiveDecisions() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.IlalimNgTulay);
         [UnityTest] public IEnumerator ClassicKantoLiveDecisions() => Diagnose(GameMode.Classic, 40, UI.SceneFlow.Kanto);
         [UnityTest] public IEnumerator HeroKantoLiveDecisions() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.Kanto);
+        [UnityTest] public IEnumerator HeroRosterPickZero() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.LagoonCove, 0);
+        [UnityTest] public IEnumerator HeroRosterPickOne() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.LagoonCove, 1);
+        [UnityTest] public IEnumerator HeroRosterPickTwo() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.LagoonCove, 2);
+        [UnityTest] public IEnumerator HeroRosterPickThree() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.LagoonCove, 3);
+        [UnityTest] public IEnumerator HeroRosterPickFour() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.LagoonCove, 4);
 
         /// <summary>
         /// C2: whole matches of lunges at ordinary 1x simulation speed. The world is stepped at a
@@ -208,12 +216,13 @@ namespace TumbangPreso.PlayTests
                 "The lunge tracker and MatchStatsCollector disagree about how many lunges were released.");
         }
 
-        private IEnumerator Diagnose(GameMode mode, float seconds, string selectedMap = null)
+        private IEnumerator Diagnose(GameMode mode, float seconds, string selectedMap = null, int characterPick = -1)
         {
             var previousMode = UI.SceneFlow.SelectedMode;
+            if (characterPick >= 0) Settings.SettingsStore.Current.CharacterPick = characterPick;
             var rules = CustomGameRules.Defaults(mode);
             rules.Bots = CustomGameRules.MaxBots; rules.ManualReady = false;
-            UI.SceneFlow.PinSelectedRules(rules); GameLaunch.AllBots = true;
+            UI.SceneFlow.PinSelectedRules(rules); GameLaunch.AllBots = characterPick < 0;
             // Reuse the same decision trace for map-specific stall reports.
             // The default and its historic filenames remain Eskinita.
             string map = selectedMap ?? System.Environment.GetEnvironmentVariable("TUMP_AI_MAP");
@@ -229,6 +238,19 @@ namespace TumbangPreso.PlayTests
 
             var round = GameServices.Round;
             Assert.IsNotNull(round);
+            if (characterPick >= 0)
+            {
+                // Use the real human character-selection path, then replace only
+                // its input writer for unattended play. AllBots deliberately has
+                // no human seat and therefore ignores the chosen character.
+                var installer = Object.FindAnyObjectByType<MatchInstaller>();
+                var chosen = round.PlayerAt(installer.HumanSeat);
+                Assert.AreEqual(characterPick, chosen.CharacterIndex, "The requested hero did not enter the actual roster.");
+                foreach (var reader in Object.FindObjectsByType<PlayerInputReader>()) reader.enabled = false;
+                foreach (var switcher in Object.FindObjectsByType<DebugPlayerSwitcher>()) switcher.enabled = false;
+                var brain = chosen.GetComponent<AIController>() ?? chosen.gameObject.AddComponent<AIController>();
+                brain.enabled = true;
+            }
 
             var runner = Object.FindFirstObjectByType<SliceRunner>();
             Assert.IsNotNull(runner);
@@ -254,6 +276,11 @@ namespace TumbangPreso.PlayTests
 
             log.AppendLine($"ai diagnostic  ·  {mode}  ·  {map}  ·  {bots.Length} bots  ·  1x");
             log.AppendLine($"natural automatic starts={starts}; decision window begins after the opening; allbots={GameLaunch.AllBots}");
+            foreach (var bot in bots)
+            {
+                var body = bot.GetComponent<CharacterMotor>();
+                log.AppendLine($"roster seat={body.PlayerSlot} character={body.CharacterIndex} hero={body.AbilitySystem?.Kit?.HeroId} defender={body.IsDefender} origin={body.SeatOrigin}");
+            }
 
             var lunges = new LungeTracker();
             int lungeFrame = 0;
@@ -358,6 +385,8 @@ namespace TumbangPreso.PlayTests
 
                         var motor = bot.GetComponent<CharacterMotor>();
                         var carrier = motor.GetComponent<Carrier>();
+                        var kit = motor.AbilitySystem?.Kit;
+                        if (kit != null) log.AppendLine($"kit t={elapsed:F1} seat={motor.PlayerSlot} hero={kit.HeroId} skill1={kit.Skill1?.CooldownRemaining:F3}/{kit.Skill1?.IsActive} skill2={kit.Skill2?.CooldownRemaining:F3}/{kit.Skill2?.IsActive} ultimate={kit.UltimateCharge:F2}/{kit.Ultimate?.IsActive}");
 
                         log.AppendLine(
                             $"t={elapsed:F1} seat={motor.PlayerSlot} plan={bot.Plan} " +
@@ -475,6 +504,7 @@ namespace TumbangPreso.PlayTests
 
             Directory.CreateDirectory("Logs");
             string mapSuffix = map == UI.SceneFlow.Eskinita ? "" : "-" + map;
+            if (characterPick >= 0) mapSuffix += "-pick" + characterPick;
             File.WriteAllText($"Logs/ai-diagnostic-{mode}{mapSuffix}.txt", log.ToString());
             Debug.Log(log.ToString());
 

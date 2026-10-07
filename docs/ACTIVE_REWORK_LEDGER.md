@@ -1,3 +1,9 @@
+# Nine-hero input observation checkpoint, October7
+
+Original45380 fivePASS butAllBots ignoresCharacterPick/all4BotOrigin; onlydante/rafi/zack, NOTninecoverage. Corrected38236 usesactualpicker/assertCharacterIndex +normalAI writer onhumanoriginselectedchair(nohumanreader),3normalbots. Five40LIVEsecond/oneReadyGateLagoon casesPASS, actualnineIDunion verified, per2s skillcooldown/active/meter observations retained. Counts9/10/9/10/7throws and2/2/1/2/2lunges with0/1/1/2/1countedhits; short/unseeded/no masteryclaim. Bothall21347 frozen inputs/preferences restored, originalweakcoverage retained. Report: hero-bot-roster-2026-10-07.
+
+Next actualdecision/role/feature fixes fromtheseobservations plusremainingmaps/physics/camera/slippers. Desktop725e remainsqualified andunchanged; thisunitdiagnostic-only. LaptopreplaySceneState +scopedshaderclock fidelity WIPreserved/excluded, source_Time.y defaultandfinallyrestore requirements communicated. NoPCshader/History/Catch/TagBody overlap. NoLAN/laptopONLINE. Noownnative/helper/tab remains. Fullgoal ACTIVE.
+
 # Installed combined Desktop release, October7
 
 DESKTOPREPLACED verified725e/protocol153/runtime7cca2de9/261files3572266025bytes. Build43244/all21347exactinputsrestore; actualplayer47804 startup5.72179/Home4->40 +realrayreplay/seek/play2x/pausefollow/HomePASS. Actualmap41448 all7first/repeat1080/14samples/singledecoder/noarenaloadPASS. Allprofiles/input/editorprefs restored, all11fixturedataSHAsunchanged. All261stagedSHAverifiedbeforeexactDesktopfolder swap; oldcb5 onlyinternalBuilds/desktop-cb5-before-replay1007b, staginggone/no foregroundplayer. Report: combined-replay-desktop-2026-10-07.

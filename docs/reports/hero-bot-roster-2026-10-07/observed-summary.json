@@ -1,0 +1,65 @@
+{
+  "observedHeroIds": [
+    "amihan",
+    "cheska",
+    "dante",
+    "nemu",
+    "paete",
+    "phaister",
+    "rafi",
+    "sean",
+    "zack"
+  ],
+  "runs": {
+    "ai-diagnostic-HeroStrike-LagoonCove-pick0.txt": {
+      "heroes": [
+        "cheska",
+        "dante",
+        "rafi"
+      ],
+      "throws": 9,
+      "lunge": "lunge trace: 2 completed lunges, 0 hits",
+      "kitObservationRows": 84
+    },
+    "ai-diagnostic-HeroStrike-LagoonCove-pick1.txt": {
+      "heroes": [
+        "amihan",
+        "cheska",
+        "sean"
+      ],
+      "throws": 10,
+      "lunge": "lunge trace: 2 completed lunges, 1 hits",
+      "kitObservationRows": 84
+    },
+    "ai-diagnostic-HeroStrike-LagoonCove-pick2.txt": {
+      "heroes": [
+        "paete",
+        "sean",
+        "zack"
+      ],
+      "throws": 9,
+      "lunge": "lunge trace: 1 completed lunges, 1 hits",
+      "kitObservationRows": 84
+    },
+    "ai-diagnostic-HeroStrike-LagoonCove-pick3.txt": {
+      "heroes": [
+        "dante",
+        "nemu",
+        "zack"
+      ],
+      "throws": 10,
+      "lunge": "lunge trace: 2 completed lunges, 2 hits",
+      "kitObservationRows": 84
+    },
+    "ai-diagnostic-HeroStrike-LagoonCove-pick4.txt": {
+      "heroes": [
+        "cheska",
+        "nemu",
+        "phaister"
+      ],
+      "throws": 7,
+      "lunge": "lunge trace: 2 completed lunges, 1 hits",
+      "kitObservationRows": 84
+    }
+  }
+}
