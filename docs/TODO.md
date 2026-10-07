@@ -13,6 +13,11 @@
 - [ ] Measure bounded-byte residence, recording backpressure/allocation and current-player frame/GPU/GC/high-FPS/long-session performance. A prepared clip count and native timeline checks do not close these requirements.
 - [ ] Verify loading happens under the requested login -> existing main menu preparation -> lobby flow and does not create avoidable gameplay hitches. Preserve the qualified Desktop until a current package passes meaningful checks.
 
+### REPLAY-OWNER-BINDING-1008: actual saved scenery playback
+
+- [x] Implement and natively qualify shifted animal-owner binding and rendering-error pause. Current `1570` player opening its own completed recording throws 1,389 owner exceptions despite the narrow UI probe passing. Three native owner/image controls and the corrected warning-count control pass on identical production bytes. All 21,411 inputs/preferences restored; original fixture failures retained. Current package retry remains below. [Evidence and limits](reports/replay-owner-binding-2026-10-08/README.md).
+- [ ] Attribute and correct the separate editor/player art-fingerprint mismatch without weakening geometry, material or texture validation. Current package and Desktop replacement remain unqualified until actual saved recording playback is clean.
+
 ### NEW-MAP-HANDOFF-1007: retain subjects during the return
 
 - [x] Fix reproduced empty/banked returns in Bridge, Cove and Kanto. Original7PASS/3FAIL; candidate10PASS with0empty/banked frames across2623samples, post-fix16:9world capture3PASS and independent pixel critique. All21385inputs/preferences restored. Old-map presentation preserved. [Evidence](reports/new-map-handoff-2026-10-07/README.md).

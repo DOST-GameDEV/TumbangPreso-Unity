@@ -252,6 +252,11 @@ namespace TumbangPreso.CameraSystem
         private void Update()
         {
             if (_entry == null || _bar == null) return;
+            try { UpdatePlayback(); }
+            catch(Exception error) { Fail(error.Message); }
+        }
+        private void UpdatePlayback()
+        {
             if (_loading != null && _loading.IsCompleted)
             {
                 var task=_loading;int index=_requested;_loading=null;

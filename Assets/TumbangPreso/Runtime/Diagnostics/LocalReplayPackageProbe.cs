@@ -93,6 +93,7 @@ namespace TumbangPreso.Diagnostics
         private void Step()
         {
             Require(Time.realtimeSinceStartup - _started < 90, "Replay package stopping condition exceeded");
+            if(_viewer!=null)Require(_viewer.Error==null,_viewer.Error);
             if (_phase == 0)
             {
                 Require(LocalReplayStore.SetFolder(_library, out string error), error);

@@ -80,8 +80,18 @@ namespace TumbangPreso.CameraSystem
             GameObject source;
             if(root.Kind==LocalReplaySceneryKind.Animal)
             {
-                var owner=LocalReplaySceneState.Find(root.OwnerPath,SceneManager.GetActiveScene());
-                if(owner==null||owner.name!=root.OwnerName)throw new InvalidOperationException("Recorded animal owner changed.");
+                var scene=SceneManager.GetActiveScene();
+                var owner=LocalReplaySceneState.Find(root.OwnerPath,scene);
+                if(owner==null||owner.name!=root.OwnerName||owner.GetComponent<AmbientLife>()==null)
+                {
+                    // Runtime presentation children can change sibling indices
+                    // between the match and the replay-only installer. Bind the
+                    // unique authored owner, then retain the model/content checks.
+                    var matches=Object.FindObjectsByType<AmbientLife>(FindObjectsInactive.Include,FindObjectsSortMode.None)
+                        .Where(l=>l.gameObject.scene==scene&&l.name==root.OwnerName).ToArray();
+                    if(matches.Length!=1)throw new InvalidOperationException("Recorded animal owner changed or is ambiguous.");
+                    owner=matches[0].transform;
+                }
                 var life=owner.GetComponent<AmbientLife>();var animal=life?.Animals.FirstOrDefault(a=>a.Id==root.Id);
                 if(animal?.Model==null||animal.Model.name!=root.Model)throw new InvalidOperationException("Recorded animal art changed.");
                 source=owner.Find("Ambient "+root.Id)?.gameObject;

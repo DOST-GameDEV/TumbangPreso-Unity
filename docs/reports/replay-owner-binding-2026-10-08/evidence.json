@@ -1,0 +1,175 @@
+{
+  "qualifiedSource": {
+    "Assets/TumbangPreso/Runtime/Camera/RecordedSceneryView.cs": "8b7b4bfaab8e270b8e82021811fdd5bde5f9a15883407bfb0f1c8c908fe893f1",
+    "Assets/TumbangPreso/Runtime/Camera/LocalReplayPlayback.cs": "72819203a44fe183308b2849cb104bd54d5c38113517dc509274f8cfa045c4e5",
+    "Assets/TumbangPreso/Runtime/Diagnostics/LocalReplayPackageProbe.cs": "17644abe57cd4494b724985a358c3541181575ffef1f3034a424a38880cac7db",
+    "Assets/TumbangPreso/Tests/PlayMode/RecordedSceneryTests.cs": "c0f2db58bc5d12d563f215cc63878e410c55fe9a17de6ec6b284ec699b4a579a"
+  },
+  "nativeRuns": {
+    "scenery-owner-original1008": {
+      "pid": 62660,
+      "exitCode": 1,
+      "cases": [],
+      "protectedCount": 21411,
+      "productionHashes": {
+        "Assets/TumbangPreso/Runtime/Camera/RecordedSceneryView.cs": "5850f3a63fa2608140f8153fe84c83fd63944c2aa630733e53d4c521eaa9235d",
+        "Assets/TumbangPreso/Runtime/Camera/LocalReplayPlayback.cs": "dd48b755957d8792727b0ddbccdb32785b0370b6ab127087ee28424d265c54b5",
+        "Assets/TumbangPreso/Runtime/Diagnostics/LocalReplayPackageProbe.cs": "a21f64f9314f53022180d838e43daae35ae7429758eab06ba8d09358c7d6a94f"
+      },
+      "testHash": "1a26f511630c54c2622e63e320f8f9f97aeb8f58275f111e850675a541c1571e",
+      "rawSha256": {
+        "result.json": "36152396035e3c75c120ebcf710c438ab12630123b0ae8b113016c49425e7e93"
+      }
+    },
+    "scenery-owner-original2-1008": {
+      "pid": 59752,
+      "exitCode": 2,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSceneryTests.ExistingSavedSceneryReopensWithValidSkinnedBindingsAndSeeks",
+          "result": "Failed",
+          "message": "Unhandled log message: '[Exception] InvalidOperationException: Recorded scenery art content changed.'. Use UnityEngine.TestTools.LogAssert.Expect"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSceneryTests.SavedAnimalSurvivesSiblingInsertionAndRejectsAmbiguousOrChangedArt",
+          "result": "Failed",
+          "message": "  Expected: True\n  But was:  False\n"
+        }
+      ],
+      "protectedCount": 21411,
+      "productionHashes": {
+        "Assets/TumbangPreso/Runtime/Camera/RecordedSceneryView.cs": "5850f3a63fa2608140f8153fe84c83fd63944c2aa630733e53d4c521eaa9235d",
+        "Assets/TumbangPreso/Runtime/Camera/LocalReplayPlayback.cs": "dd48b755957d8792727b0ddbccdb32785b0370b6ab127087ee28424d265c54b5",
+        "Assets/TumbangPreso/Runtime/Diagnostics/LocalReplayPackageProbe.cs": "a21f64f9314f53022180d838e43daae35ae7429758eab06ba8d09358c7d6a94f"
+      },
+      "testHash": "35c63670c2597e951585b4cc09cc8fbb05f5e6f1af61377098da002a97d3062e",
+      "rawSha256": {
+        "result.json": "0c4575a1b71cf2109c4c5ab83632805e19bb1adce13667070af8bf8280c76807",
+        "source-restoration.json": "65c6c95886305a1a47e352464493a49a30d77d4eb1ff78a0e3db12309e4d3982",
+        "results.xml": "edc92da7438f7c599e9f7c7f7c2ba72f1b3ea6f59431a8f590ba442f5d8a2e9a"
+      }
+    },
+    "scenery-owner-candidate1008": {
+      "pid": 59572,
+      "exitCode": 2,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSceneryTests.ActualDroneAndDetachedMarkReplayUseTheSameRenderedGeometryAndMaterials",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSceneryTests.SavedAnimalAndNewLineStayVisibleWhenTheirLiveRootIsInactive",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSceneryTests.SavedAnimalSurvivesSiblingInsertionAndRejectsAmbiguousOrChangedArt",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSceneryTests.SavedSceneryRenderingErrorPausesWithoutRepeatedExceptions",
+          "result": "Failed",
+          "message": "Unhandled log message: '[Log] [Env] repainted 371 of 1117 renderers, 161 with a roof variant.'. Use UnityEngine.TestTools.LogAssert.Expect"
+        }
+      ],
+      "protectedCount": 21411,
+      "productionHashes": {
+        "Assets/TumbangPreso/Runtime/Camera/RecordedSceneryView.cs": "8b7b4bfaab8e270b8e82021811fdd5bde5f9a15883407bfb0f1c8c908fe893f1",
+        "Assets/TumbangPreso/Runtime/Camera/LocalReplayPlayback.cs": "72819203a44fe183308b2849cb104bd54d5c38113517dc509274f8cfa045c4e5",
+        "Assets/TumbangPreso/Runtime/Diagnostics/LocalReplayPackageProbe.cs": "17644abe57cd4494b724985a358c3541181575ffef1f3034a424a38880cac7db"
+      },
+      "testHash": "499aeecebbf64e8246538bcc668a7d7afbcac2c4e0c0a0dffeffb4bd8f0875ea",
+      "rawSha256": {
+        "result.json": "022972465581d9660ce131c632af2d99dd1ee57642f106484c49a5c3da030716",
+        "source-restoration.json": "62e7657b9dbc08f78ff071f2f352f5471703ebb113a0be7b439007b64ec8b925",
+        "results.xml": "4b06b4dea87bdfce0d383c02ff41cc87be440e7ad0af7f7f2417bdd889970d79"
+      }
+    },
+    "scenery-owner-error-candidate2-1008": {
+      "pid": 52464,
+      "exitCode": 0,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSceneryTests.SavedSceneryRenderingErrorPausesWithoutRepeatedExceptions",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "protectedCount": 21411,
+      "productionHashes": {
+        "Assets/TumbangPreso/Runtime/Camera/RecordedSceneryView.cs": "8b7b4bfaab8e270b8e82021811fdd5bde5f9a15883407bfb0f1c8c908fe893f1",
+        "Assets/TumbangPreso/Runtime/Camera/LocalReplayPlayback.cs": "72819203a44fe183308b2849cb104bd54d5c38113517dc509274f8cfa045c4e5",
+        "Assets/TumbangPreso/Runtime/Diagnostics/LocalReplayPackageProbe.cs": "17644abe57cd4494b724985a358c3541181575ffef1f3034a424a38880cac7db"
+      },
+      "testHash": "c0f2db58bc5d12d563f215cc63878e410c55fe9a17de6ec6b284ec699b4a579a",
+      "rawSha256": {
+        "result.json": "bd45065cc31934dae3b0458d086b86bcbbaa7353a344b47ef883c31384b2a009",
+        "source-restoration.json": "f4a38c3180b3822afe12b7362c989bba97e2a9766d4504827784cc2888c5bf05",
+        "results.xml": "efddd233c924dd15ec8f33c541fed3338edaa98fb362b28faba846cfa83d32ba"
+      }
+    }
+  },
+  "packageRuns": {
+    "release-performance-full": {
+      "pid": 57852,
+      "exitCode": 0,
+      "startupOrUiPassed": true,
+      "replayUiPassed": null,
+      "rawSha256": {
+        "runner-result.json": "c1e4ee187221d2f00eaa37b1db725ea43cc5b6e62b8a88b5414ae3b38e82d66b",
+        "player.log": "41751f5d8feefa78fb0ff3437ca8bc23161d569622754651d4f397d16cb33b31",
+        "result.json": "9611ad8e5f442de800b945d75b811830e485af61dfe514e3de60c319ed762120"
+      }
+    },
+    "player-order": {
+      "pid": 63192,
+      "exitCode": 0,
+      "startupOrUiPassed": true,
+      "replayUiPassed": true,
+      "rawSha256": {
+        "runner-result.json": "cb916c37704709b7197aecbd90376cc13ceb64bf9b1d79f5d6bae1a758daec03",
+        "player.log": "8b640ed0ff57a852c576ea6abaa06d7df4f622500c9a0c460580ece910a866b3",
+        "result.json": "4bee022f8623810db260b74919089c77d9a5d49fd96a6efd920385de7037d9a0"
+      }
+    },
+    "player-fresh-effects": {
+      "pid": 50412,
+      "exitCode": 0,
+      "startupOrUiPassed": true,
+      "replayUiPassed": true,
+      "rawSha256": {
+        "runner-result.json": "fc084bbc04527edf11f325da1647870ba63bd433bddd1840d3b1d3d79f9ac453",
+        "player.log": "a2ab54091d631a3edc72edff25fcfd8712aac71538fadb992cd5b1c1e21a9b86",
+        "result.json": "61dbba0fc0efafe820fb0a3bc1c3829e4130085bfd8afb5e42455447db767a85"
+      }
+    },
+    "player-maps": {
+      "pid": 63016,
+      "exitCode": 0,
+      "startupOrUiPassed": true,
+      "replayUiPassed": null,
+      "rawSha256": {
+        "runner-result.json": "103d53ac718f1686be975e7feba45147d180c6c0ebe03d6a7fe234b59e60b516",
+        "player.log": "1b29baaa824d97614dd3a2992fd84d5531b6e07943474ddae993f3d93851ea87",
+        "result.json": "65870c2a76b449e855db17db39f710d13d2d59a029d4186aa80608eb970e4995"
+      }
+    },
+    "player-current-scenery": {
+      "pid": 63060,
+      "exitCode": 0,
+      "startupOrUiPassed": true,
+      "replayUiPassed": true,
+      "rawSha256": {
+        "runner-result.json": "263d001810c6b83b477cc2363fbe6ddc74f1f6c491cdb5c800d3ea29f67ab700",
+        "player.log": "b53591043bcf1077b278241042869cd877b6ef98969f1580a159cbe8155f39c4",
+        "result.json": "b54e87ce09b964c66ecaeb8dcd094441573563da833d15012e6f67388a512ec1"
+      }
+    }
+  },
+  "packageAccepted": false,
+  "desktopChanged": false,
+  "newBuilds": 0,
+  "remaining": "Actual saved-recording material fingerprint mismatch and current package rerun, performance, all-map/default-match/peer/human acceptance remain open."
+}

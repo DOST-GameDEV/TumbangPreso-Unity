@@ -120,6 +120,69 @@ namespace TumbangPreso.PlayTests
                 if(lineMaterial!=null)Object.Destroy(lineMaterial);camera.targetTexture=null;target.Release();Object.Destroy(target);Object.Destroy(camera.gameObject);Object.Destroy(owner);
             }
         }
+        [UnityTest]public IEnumerator SavedAnimalSurvivesSiblingInsertionAndRejectsAmbiguousOrChangedArt()
+        {
+            GameLaunch.AllBots=true;
+            yield return UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(SceneFlow.Eskinita);
+            yield return null;
+            var life=Object.FindObjectsByType<AmbientLife>(FindObjectsSortMode.None).First(l=>l.Animals.Length>0);
+            var frame=LocalReplaySceneryState.Capture().Single(r=>r.Kind==LocalReplaySceneryKind.Animal
+                &&r.OwnerName==life.name&&r.Id==life.Animals[0].Id);
+            var saved=new LocalReplaySceneryFrame{Time=1,Roots=new List<LocalReplaySceneryRoot>{frame}};
+            var insertion=new GameObject("Owned runtime sibling insertion");
+            var replay=new GameObject("Owned shifted scenery replay");
+            GameObject duplicate=null;
+            try
+            {
+                insertion.transform.SetParent(life.transform.parent,false);
+                insertion.transform.SetSiblingIndex(life.transform.GetSiblingIndex());
+                Assert.AreNotEqual(frame.OwnerPath,LocalReplaySceneryState.Capture().Single(r=>r.Kind==LocalReplaySceneryKind.Animal
+                    &&r.OwnerName==life.name&&r.Id==life.Animals[0].Id).OwnerPath);
+                using(var view=new RecordedSceneryView(replay.transform))
+                {
+                    Assert.DoesNotThrow(()=>view.Draw(saved));
+                    Assert.Greater(replay.GetComponentsInChildren<Renderer>(true).Length,0);
+                    Assert.AreEqual(0,replay.GetComponentsInChildren<AmbientLife>(true).Length);
+                }
+                duplicate=new GameObject(life.name);duplicate.transform.SetParent(life.transform.parent,false);
+                duplicate.AddComponent<AmbientLife>();
+                using(var view=new RecordedSceneryView(replay.transform))
+                    Assert.Throws<System.InvalidOperationException>(()=>view.Draw(saved),"A name collision must never select an arbitrary owner.");
+                Object.DestroyImmediate(duplicate);duplicate=null;
+                frame.Art=new string('0',64);
+                using(var view=new RecordedSceneryView(replay.transform))
+                    Assert.Throws<System.InvalidOperationException>(()=>view.Draw(saved),"A shifted path must not bypass actual art provenance.");
+            }
+            finally
+            {
+                if(duplicate!=null)Object.DestroyImmediate(duplicate);
+                Object.DestroyImmediate(insertion);Object.DestroyImmediate(replay);
+            }
+        }
+        [UnityTest]public IEnumerator SavedSceneryRenderingErrorPausesWithoutRepeatedExceptions()
+        {
+            string path=System.Environment.GetEnvironmentVariable("TUMP_SCENERY_INCOMPATIBLE");
+            if(string.IsNullOrEmpty(path))Assert.Ignore("Set TUMP_SCENERY_INCOMPATIBLE to the retained incompatible recording.");
+            var entry=LocalReplayStore.List(Path.GetDirectoryName(path)).Single(e=>e.Directory==path);
+            LogAssert.Expect(LogType.Warning,"[LocalReplay] Recorded scenery art content changed.");
+            int warnings=0;
+            Application.LogCallback log=(message,stack,type)=>
+            {if(type==LogType.Warning&&message=="[LocalReplay] Recorded scenery art content changed.")warnings++;};
+            Application.logMessageReceived+=log;
+            LocalReplayPlayback viewer=null;
+            try
+            {
+                Assert.IsTrue(LocalReplayPlayback.Open(entry));viewer=Object.FindAnyObjectByType<LocalReplayPlayback>();
+                float until=Time.realtimeSinceStartup+25;
+                while(viewer.Error==null&&Time.realtimeSinceStartup<until)yield return null;
+                Assert.AreEqual("Recorded scenery art content changed.",viewer.Error);
+                Assert.IsTrue(viewer.Paused);float stoppedAt=viewer.Position;
+                for(int n=0;n<10;n++)yield return null;
+                Assert.AreEqual(stoppedAt,viewer.Position);
+                Assert.AreEqual(1,warnings,"The failed render must report once and stop drawing.");
+            }
+            finally{Application.logMessageReceived-=log;if(viewer!=null)Object.DestroyImmediate(viewer.gameObject);}
+        }
         [UnityTest]public IEnumerator NaturalCustomMatchSavesEverySceneryRenderFrameAndReopensIt()
         {
             string preference=Path.Combine(ProfilePaths.Root,"replay-folder.txt");byte[] before=File.Exists(preference)?File.ReadAllBytes(preference):null;

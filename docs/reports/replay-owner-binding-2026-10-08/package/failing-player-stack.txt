@@ -1,0 +1,11 @@
+InvalidOperationException: Recorded animal owner changed.
+  at TumbangPreso.CameraSystem.RecordedSceneryView.Create (TumbangPreso.CameraSystem.LocalReplaySceneryRoot root) [0x00057] in <3ae5819d09c64234b73d17409a3df388>:0 
+  at TumbangPreso.CameraSystem.RecordedSceneryView.Draw (TumbangPreso.CameraSystem.LocalReplaySceneryFrame frame) [0x0007d] in <3ae5819d09c64234b73d17409a3df388>:0 
+  at TumbangPreso.CameraSystem.RecordedWorldView.Draw (System.Single time, System.Boolean audible) [0x00dfe] in <3ae5819d09c64234b73d17409a3df388>:0 
+  at TumbangPreso.CameraSystem.LocalReplayPlayback.Update () [0x00558] in <3ae5819d09c64234b73d17409a3df388>:0 
+
+[ReplayPackage] seek-17
+InvalidOperationException: Recorded animal owner changed.
+  at TumbangPreso.CameraSystem.RecordedSceneryView.Create (TumbangPreso.CameraSystem.LocalReplaySceneryRoot root) [0x00057] in <3ae5819d09c64234b73d17409a3df388>:0 
+  at TumbangPreso.CameraSystem.RecordedSceneryView.Draw (TumbangPreso.CameraSystem.LocalReplaySceneryFrame frame) [0x0007d] in <3ae5819d09c64234b73d17409a3df388>:0 
+  at TumbangPreso.CameraSystem.RecordedWorldView.Draw (System.Single time, System.Boolean audible) [0x00dfe] in <3ae5819d09c64234b73d1740

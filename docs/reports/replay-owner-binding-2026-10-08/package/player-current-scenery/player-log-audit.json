@@ -1,0 +1,11 @@
+{
+  "playerLogPassed": false,
+  "exceptionCount": 1389,
+  "messages": [
+    "InvalidOperationException: Recorded animal owner changed."
+  ],
+  "uiProbePassed": true,
+  "replayUiPassed": true,
+  "scopedGatePassed": false,
+  "rawPlayerLogSha256": "b53591043bcf1077b278241042869cd877b6ef98969f1580a159cbe8155f39c4"
+}
