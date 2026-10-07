@@ -17,7 +17,7 @@ namespace TumbangPreso.UI
         VideoPlayer _player;
         RenderTexture _target;
         Texture2D _poster;
-        bool _visible=true,_firstFrame,_failed,_resumeRequested;
+        bool _visible=true,_firstFrame,_failed,_resumeRequested,_reducedMotion;
         float _prepareStarted;
         public string Map { get; private set; }
         public bool HasFirstFrame=>_firstFrame;
@@ -114,6 +114,8 @@ namespace TumbangPreso.UI
         }
         void Update()
         {
+            bool reduced=Settings.SettingsStore.Current.ReducedUiMotion;
+            if(reduced!=_reducedMotion){_reducedMotion=reduced;SetVisible(_visible);}
             if(_resumeRequested){_resumeRequested=false;SetVisible(_visible);}
             if(_visible&&_player!=null&&_player.isActiveAndEnabled&&!_firstFrame&&!_failed&&Time.realtimeSinceStartup-_prepareStarted>=30)
                 Failed(_player,"Decoder did not provide its first frame");
