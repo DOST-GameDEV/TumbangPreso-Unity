@@ -1,0 +1,23 @@
+{
+  "originalCommit": "6e8e7b89e17d2b1a18c779607498df80edb73dc5",
+  "originalProblem": "Git text normalization changed the stored native proof bytes while local raw files remained exact",
+  "repair": "Narrow report-local -text attributes preserve original native-source and raw evidence bytes",
+  "stagedExactChecks": [
+    "docs/reports/active-menu-preload-2026-10-07/hero-preload-controls/native-source/ConvertedMainMenu.cs",
+    "docs/reports/active-menu-preload-2026-10-07/hero-preload-controls/native-source/ModelPreview.cs",
+    "docs/reports/active-menu-preload-2026-10-07/hero-preload-controls/native-source/OwnerUiPlayerReview.Performance.cs",
+    "docs/reports/active-menu-preload-2026-10-07/hero-preload-controls/native-source/SplashScreen.cs",
+    "docs/reports/active-menu-preload-2026-10-07/hero-preload-controls/result.json",
+    "docs/reports/active-menu-preload-2026-10-07/hero-preload-controls/results.xml",
+    "docs/reports/active-menu-preload-2026-10-07/hero-preload-controls/source-restoration.json",
+    "docs/reports/active-menu-preload-2026-10-07/hero-preload-controls2/native-source/ConvertedMainMenu.cs",
+    "docs/reports/active-menu-preload-2026-10-07/hero-preload-controls2/native-source/ModelPreview.cs",
+    "docs/reports/active-menu-preload-2026-10-07/hero-preload-controls2/native-source/OwnerUiPlayerReview.Performance.cs",
+    "docs/reports/active-menu-preload-2026-10-07/hero-preload-controls2/native-source/SplashScreen.cs",
+    "docs/reports/active-menu-preload-2026-10-07/hero-preload-controls2/result.json",
+    "docs/reports/active-menu-preload-2026-10-07/hero-preload-controls2/results.xml",
+    "docs/reports/active-menu-preload-2026-10-07/hero-preload-controls2/source-restoration.json"
+  ],
+  "exactCount": 14,
+  "runtimeSourceChange": false
+}
