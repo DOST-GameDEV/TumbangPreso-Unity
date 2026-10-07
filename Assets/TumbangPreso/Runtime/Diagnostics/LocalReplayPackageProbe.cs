@@ -74,6 +74,10 @@ namespace TumbangPreso.Diagnostics
             {
                 var field = GameObject.Find("ReplayFolder").GetComponent<InputField>();
                 Require(Path.GetFullPath(field.text) == _library, "Library shows another save folder");
+                Stage("recording-row-created"); _phase = 7;
+            }
+            else if (_phase == 7 && Time.realtimeSinceStartup - _phaseAt > .2f)
+            {
                 Click("Replay0"); Stage("recording-open"); _phase = 3;
             }
             else if (_phase == 3)
