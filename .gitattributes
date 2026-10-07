@@ -42,3 +42,5 @@ docs/reports/new-map-openings-2026-10-07/raw/*.json -text -whitespace
 docs/reports/new-map-openings-2026-10-07/raw/*.xml -text -whitespace
 docs/reports/new-map-openings-2026-10-07/*-composition.txt -text -whitespace
 docs/reports/new-map-openings-2026-10-07/*-flow.txt -text -whitespace
+
+docs/reports/new-openings-package-2026-10-07/* -text -whitespace

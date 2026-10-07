@@ -1,3 +1,9 @@
+# Actual package checkpoint, October 7
+
+Windows120d internal candidate builds0/261files/3535838735bytes with all21323 frozen inputs/preferences restored. Actual startup46364 passes login-first, main5.67095seconds and first Home video4->40. Actual single-local-host new3 openings43440/45888/43096 reach real arrival/automatic countdown/active round without diagnostic READY or exceptions. All jobs terminal/profiles restored. Original UTF-8 runner-read failure retained and bridge reclassified without rerun. Four-active-bot criteria fail because explicit review roomBots=0; this is opening-flow acceptance only. Report: reports/new-openings-package-2026-10-07.
+
+Laptop is active in reserved preview/media and full local saved replay lane; agreed MatchInstaller replay-only hook and HubMenus REPLAYS route belong to it. No LAN on mobile data. Desktop remainscb5 pending combined release integration. PC next reproduces AI held-lunge loss on target/plan change through the real consumer. Broad goal remains ACTIVE; old-map presentation excluded.
+
 # Current PC competition checkpoint, October 7
 
 ## Current checked opening unit

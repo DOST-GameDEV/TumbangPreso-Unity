@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Actual new-opening Windows package: [startup order, first Home frames and three automatic map flows](reports/new-openings-package-2026-10-07/README.md).
+
 Natural LAN rematch: [strict two-record/rotation expectations and pending paired acceptance](reports/lan-rematch-2026-10-07/README.md).
 
 Packaged preview lifetime: [actual Windows Canvas and motion controls with preserved build/profile evidence](reports/packaged-preview-lifetime-2026-10-07/README.md).
