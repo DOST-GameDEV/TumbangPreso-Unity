@@ -108,6 +108,11 @@ namespace TumbangPreso.PlayTests
             yield return Diagnose(GameMode.HeroStrike, 40.0f);
         }
 
+        [UnityTest] public IEnumerator ClassicBridgeLiveDecisions() => Diagnose(GameMode.Classic, 40, UI.SceneFlow.IlalimNgTulay);
+        [UnityTest] public IEnumerator HeroBridgeLiveDecisions() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.IlalimNgTulay);
+        [UnityTest] public IEnumerator ClassicKantoLiveDecisions() => Diagnose(GameMode.Classic, 40, UI.SceneFlow.Kanto);
+        [UnityTest] public IEnumerator HeroKantoLiveDecisions() => Diagnose(GameMode.HeroStrike, 40, UI.SceneFlow.Kanto);
+
         /// <summary>
         /// C2: whole matches of lunges at ordinary 1x simulation speed. The world is stepped at a
         /// fixed 1/60 s with time scale 1, so every bot decision sees exactly the frame time a
@@ -203,7 +208,7 @@ namespace TumbangPreso.PlayTests
                 "The lunge tracker and MatchStatsCollector disagree about how many lunges were released.");
         }
 
-        private IEnumerator Diagnose(GameMode mode, float seconds)
+        private IEnumerator Diagnose(GameMode mode, float seconds, string selectedMap = null)
         {
             var previousMode = UI.SceneFlow.SelectedMode;
             var rules = CustomGameRules.Defaults(mode);
@@ -211,7 +216,7 @@ namespace TumbangPreso.PlayTests
             UI.SceneFlow.PinSelectedRules(rules); GameLaunch.AllBots = true;
             // Reuse the same decision trace for map-specific stall reports.
             // The default and its historic filenames remain Eskinita.
-            string map = System.Environment.GetEnvironmentVariable("TUMP_AI_MAP");
+            string map = selectedMap ?? System.Environment.GetEnvironmentVariable("TUMP_AI_MAP");
             if (string.IsNullOrEmpty(map)) map = UI.SceneFlow.Eskinita;
             Assert.Contains(map, UI.SceneFlow.Maps, "Unknown diagnostic map");
 

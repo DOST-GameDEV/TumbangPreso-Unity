@@ -1,3 +1,9 @@
+# New-map live bot checkpoint, October 7
+
+Native45696 fourPASS Bridge/Kanto xClassic/Hero on48d83 actualconsumercharge source. Each one actualReadyGate start/four normalinputwriters/40live seconds. Throws ClassicBridge12/Kanto20 and HeroBridge16/Kanto16; countedlunges/hits2/2,1/0,2/0,1/0 respectively. Bounds/stranding/pursuit controls pass; misses retained, no statistical/fullmatch/allroster/performance claim. All21329 frozen source/preferences restored after terminal native and preservation. Report: natural-four-bot-decisions/new-map-matrix.
+
+Next all-hero bot-feature/role coverage and remaining-map navigation plus combinedrelease afterlaptopcheckedpreview/replay refs. LatestQoLUpdates0d47 unchanged/integrated. Desktopcb5/internal120d older. NoLAN/mobiledata, oldmapartuntouched, ownership unchanged. Noownednative/helper/tab remains. Goal ACTIVE.
+
 # Bot consumer power checkpoint, October 7
 
 Original48352 1FAIL/2PASS:450ms consumerhold+50ms planner reachesrelease threshold butactual90%power spends2.1923s against4.4m unreachabletarget. AIController predictor now usesactualCombatVerbs.LungeChargeRatio withnormalconsumerclamp. Candidate47728 passes19 charge/obstacle/lifetime/aim controls; original/candidate all21329 frozen inputs/preferences restored afterterminal. Report: reports/bot-lunge-consumer-power-2026-10-07.
