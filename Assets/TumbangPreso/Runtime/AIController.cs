@@ -5634,9 +5634,16 @@ namespace TumbangPreso
                         if (worth) Consider(intent, Verb.Skill2, dt);
                     }
                 }
-                else if (kit is Abilities.RafiHeroKit && _driving && targetDistance < 5
-                    && (Plan == AiPlan.Withdraw || Plan == AiPlan.Fetch || _motor.IsDefender))
-                    Consider(intent,Verb.Skill2,dt);
+                else if (kit is Abilities.RafiHeroKit)
+                {
+                    // Skim coats the slipper for its next throw. A movement/near-
+                    // pursuer gate misses the armed windup and asks while fetching
+                    // an unheld shoe. Keep Waterwall's existing defender decision.
+                    bool coatNextThrow = !_motor.IsDefender && _carrier != null
+                        && _carrier.Held != null && Plan == AiPlan.Windup;
+                    bool defend = _motor.IsDefender && _driving && targetDistance < 5;
+                    if (coatNextThrow || defend) Consider(intent, Verb.Skill2, dt);
+                }
                 else if (kit is Abilities.PaeteHeroKit paete)
                 {
                     if (paete.IsDefending)

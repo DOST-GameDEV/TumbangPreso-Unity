@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Ilyas prethrow Skim AI: [original missed opportunity and actual input/load/throw controls](reports/ai-skim-prethrow-2026-10-07/README.md).
+
 Nine-hero live AI input coverage: [actual roster IDs, retained invalid selection coverage and remaining decisions](reports/hero-bot-roster-2026-10-07/README.md).
 
 Current combined Desktop release: [installed725e package, real startup/replay/video gates and preserved backup](reports/combined-replay-desktop-2026-10-07/README.md).

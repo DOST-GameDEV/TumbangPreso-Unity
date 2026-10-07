@@ -1,3 +1,8 @@
+### AI-ILYAS-SKIM-1007: coating before throwing
+
+- [x] Replace obsolete attacker movement/near-pursuer gate with actualHeld+Windup consideration. Originalheld failure retained; actualnormalInputIntent/HeroAbilitySystem coat and opening/active/nextthrow controls pass, all21349 source/prefs restore. [Evidence](reports/ai-skim-prethrow-2026-10-07/README.md).
+- [ ] Natural Ilyas opportunity/efficacy and full roles/maps/features/performance plus future combined package.
+
 ### AI-HERO-ROSTER-1007: actual kit participation
 
 - [x] Observe all nine current hero IDs through normal character selection and normal AI input writers over five40live-second Lagoon runs. Native5PASS preserves invariant checks; originalAllBots fixture onlythree IDs retained. [Evidence and limits](reports/hero-bot-roster-2026-10-07/README.md).

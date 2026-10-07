@@ -1,3 +1,9 @@
+# Ilyas prethrow AI checkpoint, October7
+
+Original48168 heldWindupFAIL/noHeldPASS. AIController nowattackerHeld+Windup Skim consideration, preserveddefenderWaterwall/movementnear gate. Candidate38452 2PASS; stronger44388fixtureFAILdue manualStepHerowithoutAct perframetouched reset retained; corrected45032 normalinput+actualHeroSystemcoat2PASS. Final48632 opening/noHeld/alreadyloaded+authoritativeCarrierthrowtransfer/detach/loadconsumption controls2PASS. All21349 exactinputs/preferences restored aftereachterminal. Report: ai-skim-prethrow-2026-10-07. Stagedconsumer/throwproof notnaturalefficacy/fulltournament.
+
+Next natural selectedIlyas live trace andremainingkit/role/map/physics/camera/slipper work; laptopcheckedc533/a39 replayfidelity source integrationafterjobsfree, WIPArenaFx captureexcluded. Desktop725e qualified/preSkimsource unchanged. Noownednative/helper/tab remains. FullgoalACTIVE/laptopONLINE/noLAN; preserveherokit/art/noreset/clean/stash/forcepush.
+
 # Nine-hero input observation checkpoint, October7
 
 Original45380 fivePASS butAllBots ignoresCharacterPick/all4BotOrigin; onlydante/rafi/zack, NOTninecoverage. Corrected38236 usesactualpicker/assertCharacterIndex +normalAI writer onhumanoriginselectedchair(nohumanreader),3normalbots. Five40LIVEsecond/oneReadyGateLagoon casesPASS, actualnineIDunion verified, per2s skillcooldown/active/meter observations retained. Counts9/10/9/10/7throws and2/2/1/2/2lunges with0/1/1/2/1countedhits; short/unseeded/no masteryclaim. Bothall21347 frozen inputs/preferences restored, originalweakcoverage retained. Report: hero-bot-roster-2026-10-07.
