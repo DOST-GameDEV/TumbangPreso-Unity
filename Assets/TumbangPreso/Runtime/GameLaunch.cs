@@ -43,7 +43,7 @@ namespace TumbangPreso
                 "Urban side street. Sari-sari, sampay, kanal.", SceneFlow.Eskinita),
             new MapEntry("bayan_plaza", "BAYAN PLAZA",
                 "Barangay plaza. Church, basketball ring, acacia.", SceneFlow.BayanPlaza),
-            new MapEntry("ilalim_ng_tulay", "ILALIM NG TULAY",
+            new MapEntry("ilalim_ng_tulay", "PADRE FAURA, MANILA",
                 "LRT Gilmore strip. Viaduct pillars, PC Express, pisonet.", SceneFlow.IlalimNgTulay),
             new MapEntry("sa_bubong","SA BUBONG",
                 "Condo roofdeck. Watch the edge; lost slippers return after 10s.",SceneFlow.SaBubong),
