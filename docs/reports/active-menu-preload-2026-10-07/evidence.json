@@ -65,6 +65,41 @@
         "results.xml": "feefe45cfb2cfeb85d6353db426ca5156c7ca00d5e9a1b8760e3d1df78c654d6",
         "source-restoration.json": "f95c634a7eb33912382966dee934dca9f36966ad929fd33f6a9e73799e6b2300"
       }
+    },
+    "hero-preload-controls3": {
+      "pid": 46372,
+      "exitCode": 0,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.LoginHomePreloadTests.LeavingDuringPreparationRestoresBackgroundPriority",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.LoginHomePreloadTests.LoginRemainsEditableWhileHomeStreamsThenArrivesWithoutClick",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.StartupOrder1007Tests.LogosLoginFiveSecondMainThenFirstHomeAnimation",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "protectedCount": 21387,
+      "sourceHashes": {
+        "Assets/TumbangPreso/Runtime/UI/ConvertedMainMenu.cs": "2de05e6c518ca3a2b1e6d6ca0695e902553006cb44cb4d2295e5effda0d4fb65",
+        "Assets/TumbangPreso/Runtime/UI/OwnerPortraitArt.cs": "9bcb64cbb3e3184599e0d0bc510d60352f1426af1829f14a1b3753642e4364e8",
+        "Assets/TumbangPreso/Runtime/UI/Hub/HubHero.cs": "ce7f28d63aea79495bf8dae945ca1a015a7e446a55195fa7f2ae6286a6655f61",
+        "Assets/TumbangPreso/Runtime/UI/ModelPreview.cs": "ee0357113b2b44bbd93b23cc8ce761799efd21fbe153de47c892686a4a79ac1a",
+        "Assets/TumbangPreso/Runtime/Diagnostics/OwnerUiPlayerReview.Performance.cs": "e7f7c0223a0fe4e135910b4716a4bea29ec41e315b92340104f5deaff9e72075"
+      },
+      "copiedRawSha256": {
+        "result.json": "c75221654102baf0cf35fd4b0a371582bae44b6a78eea97f0c01a468fc5ee013",
+        "results.xml": "a1969d0a7f3008e85caf6480dd4dc1becf6d80694a41db6f159492682eb1545e",
+        "source-restoration.json": "9cda0a1bb891d28304141135579be861bd8c45bad8731dade2760ac2ccc622e7"
+      },
+      "scope": "Bounded six-mode-poster async cache preparation and CPU attribution; current prior diagnostic e7f7, not the reviewer fullgame draft"
     }
   },
   "scope": "Existing three native startup controls; exact frozen-source preservation. Actual release cost comparison pending."

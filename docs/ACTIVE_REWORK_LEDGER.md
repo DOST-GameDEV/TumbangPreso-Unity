@@ -38,9 +38,10 @@ build54092 and preservation are terminal, all21387inputs restored. Hidden player
 profile/preferences. First HERO max4532->118ms, repeat16.6ms. Main loading has
 max860ms, ModeCard180ms and settings91ms; readiness remains open. Primary now
 owns bounded six-mode-poster async preparation and whole-Hero-build attribution
-WIP in Main/OwnerPortraitArt/HubHero. Reviewer owns only Performance.cs legal
-recipe implementation, with no heavy jobs. Await source handback before native
-compilation/next release freeze. Do not call moved stalls solved.
+candidate in Main/OwnerPortraitArt/HubHero now passes native46372/session23100
+three existing controls with all21387inputs restored and five-source exact proof. Reviewer owns only Performance.cs legal
+recipe implementation, with no heavy jobs. Reviewer saved draft SHA4878d2aa underLogs and restored AssetPerformance exacte7f7
+for this native freeze; next source apply requires explicit release. Do not call moved stalls solved.
 
 The requested reviewer has the single-file opt-in Performance.cs implementation lane. Confirmed stale recipes:
 Zack BankShot needs a held slipper, Overclock persists across round resets,

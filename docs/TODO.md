@@ -3166,6 +3166,8 @@ The ordinary release comparison reduces the first HERO frame from4532ms to118ms
 and same-button repeat peaks at16.6ms, with14explicit menu-only windows. Remaining
 loading, mode and settings stalls still need work; full gameplay/results are
 separate and its legal fixture correction remains in progress.
+Bounded six-mode-poster preparation passes the same three native startup checks;
+its release timing improvement remains pending.
 
 **Loading/optimization, OPEN:** yielded shader/art/avatar/portrait preparation,
 retained ability props/effect data and actual menu activation readiness are implemented.

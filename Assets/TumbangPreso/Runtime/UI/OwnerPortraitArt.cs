@@ -20,6 +20,20 @@ namespace TumbangPreso.UI
                     if (entry != null && seen.Add(entry.Id)) paths.Add("UI/portraits/" + entry.Id);
             foreach (var card in ModeCards) paths.Add("UI/mode-cards/" + card);
 
+            yield return WarmupPaths(paths, completed);
+        }
+
+        // These six authored posters are the next mode-selection click's inputs.
+        // Reuse the existing cache without preparing unrelated portraits or UI.
+        public static IEnumerator WarmupModeCards(System.Action<float> completed = null)
+        {
+            var paths = new string[ModeCards.Length];
+            for (int i = 0; i < paths.Length; i++) paths[i] = "UI/mode-cards/" + ModeCards[i];
+            yield return WarmupPaths(paths, completed);
+        }
+
+        private static IEnumerator WarmupPaths(IReadOnlyList<string> paths, System.Action<float> completed)
+        {
             for (int i = 0; i < paths.Count; i++)
             {
                 string path = paths[i];
@@ -54,6 +68,8 @@ namespace TumbangPreso.UI
             if(string.IsNullOrEmpty(resource))return null;
             if(!Cache.TryGetValue(resource,out var sprite) || sprite==null)
             {
+                bool measure=ModelPreview.LoadTimingEnabled;
+                long began=measure?System.Diagnostics.Stopwatch.GetTimestamp():0;
                 sprite=Resources.Load<Sprite>(resource);
                 if(sprite==null)
                 {
@@ -61,6 +77,8 @@ namespace TumbangPreso.UI
                     sprite=FromTexture(texture);
                 }
                 Cache[resource]=sprite;
+                if(measure)
+                    Debug.Log(System.FormattableString.Invariant($"[MenuAssetLoad] resource={resource} synchronous_cpu_ms={ModelPreview.LoadElapsedMs(began):F3} scope=opt-in-cpu-not-gpu-or-present"));
             }
             return sprite;
         }

@@ -45,3 +45,11 @@ Measurements use hidden graphics without OS input or foreground control. Release
 allocation counters are unavailable after their known-allocation calibration.
 Wall-clock frames include probe overhead and do not isolate GPU duration. Focused
 human/device acceptance and full tournament readiness remain separate.
+
+The next candidate preloads only the six existing mode-selection posters through
+the same asynchronous sprite/texture cache. The legacy full portrait warmup uses
+the same extracted loader. No pictures, sampling, dimensions or UI composition
+change. Native46372 passes the three existing startup controls with exact21387
+input restoration; [evidence](evidence.json) records five source hashes. Actual
+release mode-selection benefit is pending. Opt-in cold menu-asset and whole-HERO
+build CPU markers will help attribute the remaining first-use cost.

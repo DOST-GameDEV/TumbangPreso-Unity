@@ -20,7 +20,8 @@ a bounded fallback. [Startup evidence](reports/startup-order-2026-10-07/README.m
 The current login/main-menu route now prepares the shared asynchronous roster
 catalogue and existing yielded gameplay icon, prop and effect-data caches before
 map and Home media. This restores preparation skipped when the retired splash
-route was removed. No additional models or preview cameras are created. Native
+route was removed. No additional models or preview cameras are created. The six existing mode-selection
+posters also preload through their shared asynchronous cache before Home media. Native
 and actual release timing evidence stays distinct in the
 [active-route preparation report](reports/active-menu-preload-2026-10-07/README.md).
 

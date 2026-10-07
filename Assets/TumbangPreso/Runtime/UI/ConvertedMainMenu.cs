@@ -145,10 +145,14 @@ namespace TumbangPreso.UI
             yield return SplashScreen.WarmGameplayAssets(done=>_homeAssetsProgress=.2f+.3f*done);
             if(ModelPreview.LoadTimingEnabled)
                 Debug.Log(System.FormattableString.Invariant($"[HomeAssetTiming] stage=gameplay-preparation wall_ms={ModelPreview.LoadElapsedMs(gameplayBegan):F3} scope=coroutine-total-includes-yields"));
-            yield return MapPreviewVideo.Warmup(done=>_homeAssetsProgress=.5f+.2f*done);
+            long postersBegan=ModelPreview.LoadTimingEnabled?System.Diagnostics.Stopwatch.GetTimestamp():0;
+            yield return OwnerPortraitArt.WarmupModeCards(done=>_homeAssetsProgress=.5f+.1f*done);
+            if(ModelPreview.LoadTimingEnabled)
+                Debug.Log(System.FormattableString.Invariant($"[HomeAssetTiming] stage=mode-posters wall_ms={ModelPreview.LoadElapsedMs(postersBegan):F3} scope=async-wait-includes-yields"));
+            yield return MapPreviewVideo.Warmup(done=>_homeAssetsProgress=.6f+.15f*done);
             // Reuse the existing caches and decoder preparation rather than
             // making a second copy of the Home resource set.
-            yield return Hub.HubSceneVideo.Warmup(done=>_homeAssetsProgress=.7f+.3f*done);
+            yield return Hub.HubSceneVideo.Warmup(done=>_homeAssetsProgress=.75f+.25f*done);
             _homeAssetsReady=true;
         }
 

@@ -56,6 +56,8 @@ namespace TumbangPreso.UI.Hub
 
         public override void Build()
         {
+            bool measure=ModelPreview.LoadTimingEnabled;
+            long began=measure?System.Diagnostics.Stopwatch.GetTimestamp():0;
             // ⚠️ A COLLECTOR'S POSTER (`HubScenery`, 2026-09-24): the hero stands in a burst of
             // rays on the printed stage, over a halftone-printed ground, with the role on a slanted
             // red tag. The screen is about ONE person, and now it looks like it is.
@@ -124,6 +126,8 @@ namespace TumbangPreso.UI.Hub
             HubSlap.On(stage, 0, -1.5f);
             HubSlap.On(side, 0.08f, 1);
             if (GameServices.Wallet != null) GameServices.Wallet.Changed += RefreshWallet;
+            if(measure)
+                Debug.Log(System.FormattableString.Invariant($"[HeroMenuLoad] stage=build cpu_ms={ModelPreview.LoadElapsedMs(began):F3} scope=opt-in-cpu-includes-preview-excludes-canvas-gpu-present"));
         }
 
         private void OnDestroy()
