@@ -1,0 +1,33 @@
+{
+  "base": "913134715803a7894952318c71e8c7c0bf328dc2",
+  "paths": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplaySceneState.cs",
+      "testedRawSha256": "8a21b1b538bcca253eaa951f771bf14d39b54baeb2bebac29170be91df39e2d2"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayStore.cs",
+      "testedRawSha256": "59a6e4ca458eba70579d78280499d01c58497b8ac488185a544b17a27ec53856"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplaySceneShaderState.cs",
+      "testedRawSha256": "2e53d9e41539e848878e5fd9f46422630ade64a47a9efbe53f1b08dcc35727bd"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplaySceneShaderState.cs.meta",
+      "testedRawSha256": "dc147bec8850f372715d07eff007ac23f425bb6ef23677b7e286960e26e82fce"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/LocalReplaySceneStateTests.cs",
+      "testedRawSha256": "d99aec0a2bdfd2ab951475a57c7a49f2e6f3fd53e9e4acb73e2c652abec49737"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/LocalReplaySceneShaderTests.cs",
+      "testedRawSha256": "ead608c6b4fd57dbef6dd7f6a5eba542af230b88304f057590f35f7312c08103"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/LocalReplaySceneShaderTests.cs.meta",
+      "testedRawSha256": "2b43061bba77f5304a888a52e863ee32d76f38a7dc7ce7fe7ad74983c629e2e9"
+    }
+  ]
+}

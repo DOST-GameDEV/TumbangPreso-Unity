@@ -1,0 +1,44 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplaySceneState.cs",
+    "nativeRawSha256": "8a21b1b538bcca253eaa951f771bf14d39b54baeb2bebac29170be91df39e2d2",
+    "stagedGitSha256": "b87d736f90a04d5db97641d7dfb47194a0f3c2cb710b6cd11531a24ba5efba5f",
+    "normalisedTextMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayStore.cs",
+    "nativeRawSha256": "59a6e4ca458eba70579d78280499d01c58497b8ac488185a544b17a27ec53856",
+    "stagedGitSha256": "fdcc1aa7097a6404a6bb2561178c081d7a003bb1a27e7a9608bfcbbeacd32307",
+    "normalisedTextMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplaySceneShaderState.cs",
+    "nativeRawSha256": "2e53d9e41539e848878e5fd9f46422630ade64a47a9efbe53f1b08dcc35727bd",
+    "stagedGitSha256": "5f1abe374d0d5bf6c40674308d4de7c304170ed5c78f020d2d5c2f92f8e4dce0",
+    "normalisedTextMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplaySceneShaderState.cs.meta",
+    "nativeRawSha256": "dc147bec8850f372715d07eff007ac23f425bb6ef23677b7e286960e26e82fce",
+    "stagedGitSha256": "b5ac29c6b1658fa1c7b392a9ac19dd17888fecaabb46ebafacdabd79a1438418",
+    "normalisedTextMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/LocalReplaySceneStateTests.cs",
+    "nativeRawSha256": "d99aec0a2bdfd2ab951475a57c7a49f2e6f3fd53e9e4acb73e2c652abec49737",
+    "stagedGitSha256": "93db6d086f15076159513d75339e598d324571622394e92e5eb34ea6c90ca9d2",
+    "normalisedTextMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/LocalReplaySceneShaderTests.cs",
+    "nativeRawSha256": "ead608c6b4fd57dbef6dd7f6a5eba542af230b88304f057590f35f7312c08103",
+    "stagedGitSha256": "af2f26c9caa74d4fc1b8b9576acd34d42ad1a3248f7a9636790a7d2ae609e5f0",
+    "normalisedTextMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/LocalReplaySceneShaderTests.cs.meta",
+    "nativeRawSha256": "2b43061bba77f5304a888a52e863ee32d76f38a7dc7ce7fe7ad74983c629e2e9",
+    "stagedGitSha256": "82eae04ace2cf43767da73dd88dde7f2824e397c3ba5c68efed970c62f726342",
+    "normalisedTextMatches": true
+  }
+]

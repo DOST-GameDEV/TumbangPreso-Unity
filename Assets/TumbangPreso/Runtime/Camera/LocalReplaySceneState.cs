@@ -19,9 +19,19 @@ namespace TumbangPreso.CameraSystem
         public Color Colour,Emission;
         public bool HasColour,HasEmission;
     }
+    [Serializable] public sealed class LocalReplayWaterSurface
+    {
+        public string Path,Name,Shader;
+        public float WakeStrength;
+        public Vector4[] Swimmers;
+    }
     [Serializable] public sealed class LocalReplaySceneFrame
     {
         public float Time;
+        public bool HasCrowd;
+        public float CrowdClock,CrowdCheer,CrowdGroan;
+        public Vector4 CrowdWave;
+        public List<LocalReplayWaterSurface> Water=new List<LocalReplayWaterSurface>();
         public List<LocalReplayScenePose> Poses=new List<LocalReplayScenePose>();
         public List<LocalReplaySceneSurface> Surfaces=new List<LocalReplaySceneSurface>();
     }
@@ -35,13 +45,13 @@ namespace TumbangPreso.CameraSystem
     public static class LocalReplaySceneState
     {
         private static readonly int ColourId=Shader.PropertyToID("_Color"),EmissionId=Shader.PropertyToID("_EmissionColor");
-        private static string PathOf(Transform transform)
+        internal static string PathOf(Transform transform)
         {
             var parts=new List<string>();
             for(var current=transform;current!=null;current=current.parent)parts.Add(current.GetSiblingIndex().ToString());
             parts.Reverse();return string.Join("/",parts);
         }
-        private static Transform Find(string path,Scene scene)
+        internal static Transform Find(string path,Scene scene)
         {
             var parts=path.Split('/');var roots=scene.GetRootGameObjects();
             if(parts.Length==0||!int.TryParse(parts[0],out int root)||root<0||root>=roots.Length)return null;
@@ -77,6 +87,7 @@ namespace TumbangPreso.CameraSystem
                     }
                 }
             }
+            LocalReplaySceneShaderState.Capture(frame);
             return frame;
         }
         public static IDisposable Apply(LocalReplaySceneSegment segment,float time,Scene scene)
@@ -88,6 +99,7 @@ namespace TumbangPreso.CameraSystem
         }
         private sealed class Restore:IDisposable
         {
+            private IDisposable _shaderState;
             private readonly List<(Transform target,Vector3 position,Quaternion rotation,Vector3 scale)> _poses=new List<(Transform,Vector3,Quaternion,Vector3)>();
             private readonly List<(Renderer target,bool hidden)> _visibility=new List<(Renderer,bool)>();
             private readonly List<(Renderer target,int slot,MaterialPropertyBlock block)> _surfaces=new List<(Renderer,int,MaterialPropertyBlock)>();
@@ -96,6 +108,7 @@ namespace TumbangPreso.CameraSystem
                 try
                 {
                     float blend=right.Time>left.Time?Mathf.Clamp01((time-left.Time)/(right.Time-left.Time)):0;
+                    _shaderState=LocalReplaySceneShaderState.Apply(left,right,blend,scene);
                     foreach(var pose in left.Poses)
                     {
                         var target=Find(pose.Path,scene);if(target==null||target.name!=pose.Name)throw new InvalidOperationException("Recorded traffic hierarchy changed.");
@@ -131,6 +144,7 @@ namespace TumbangPreso.CameraSystem
                 foreach(var state in _poses)if(state.target!=null)
                 {state.target.SetPositionAndRotation(state.position,state.rotation);state.target.localScale=state.scale;}
                 _poses.Clear();
+                _shaderState?.Dispose();_shaderState=null;
             }
         }
     }

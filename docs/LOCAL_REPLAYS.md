@@ -70,12 +70,14 @@ camera render. Ordinary authored shader time, shader assets and shared globals
 are restored afterward, including on failure. The replay adapter leaves the
 ordinary game's material appearance unchanged. Seek and pause apply to water,
 hologram, frost-band and supported spirit shader motion as well as poses.
+Actual Arena crowd response uniforms and authored pool swimmer/wake parameters
+are now saved in optional sidecars, applied at replay time, and restored afterward.
 Traffic pose/property overrides are also scoped to that render; they do not call
 road clocks, routes, hits or activate scene objects.
 The current viewer reconstructs recorded gameplay and supported effects; ambient
 scenery is supplied by the compatible map, with the traffic timeline stored in
 new sidecars. Full visual parity is not yet qualified: Arena effects, drones,
-ambient animals, crowd response and water wake state need further recording and
+ambient animals and other transient state need further recording and
 same-camera/time verification. Older recordings cannot gain scene state that was
 never saved. Default-material shader comparisons do not prove all live ability,
 particle or map states, and native Editor checks do not establish packaged parity.

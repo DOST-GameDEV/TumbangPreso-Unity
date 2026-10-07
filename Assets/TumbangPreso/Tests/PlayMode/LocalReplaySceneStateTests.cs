@@ -85,6 +85,44 @@ namespace TumbangPreso.PlayTests
             }
             Assert.GreaterOrEqual(entry.Manifest.Segments.Count,9);yield return null;
         }
+        [UnityTest]public IEnumerator WaterWakeAndCrowdUniformsSeekAndRestoreWithoutRunningMapEvents()
+        {
+            var water=GameObject.CreatePrimitive(PrimitiveType.Plane);water.name="Recorded wake surface";
+            var material=new Material(Shader.Find("TumbangPreso/RoofPoolWater"));water.GetComponent<Renderer>().sharedMaterial=material;
+            int swimmers=Shader.PropertyToID("_Swimmers"),wake=Shader.PropertyToID("_WakeStrength"),clock=Shader.PropertyToID("_ArenaCrowdClock");
+            var renderer=water.GetComponent<Renderer>();var block=new MaterialPropertyBlock();
+            block.SetFloat(wake,.7f);block.SetVectorArray(swimmers,new[]{new Vector4(1,2,3,1),Vector4.zero,Vector4.zero,Vector4.zero});renderer.SetPropertyBlock(block);
+            float originalClock=Shader.GetGlobalFloat(clock);var first=LocalReplaySceneState.Capture(10);
+            Assert.AreEqual(1,first.Water.Count);Assert.AreEqual(.7f,first.Water[0].WakeStrength);Assert.AreEqual(new Vector4(1,2,3,1),first.Water[0].Swimmers[0]);
+            first.HasCrowd=true;first.CrowdClock=5;first.CrowdCheer=.2f;first.CrowdWave=new Vector4(.2f,.1f,.8f,0);
+            block.SetFloat(wake,.1f);block.SetVectorArray(swimmers,new[]{new Vector4(9,8,2,1),Vector4.zero,Vector4.zero,Vector4.zero});renderer.SetPropertyBlock(block);
+            var last=LocalReplaySceneState.Capture(11);last.HasCrowd=true;last.CrowdClock=6;last.CrowdCheer=.8f;last.CrowdWave=new Vector4(.3f,.1f,.9f,0);
+            var segment=new LocalReplaySceneSegment();segment.Frames.Add(first);segment.Frames.Add(last);
+            try
+            {
+                using(LocalReplaySceneState.Apply(segment,10.5f,SceneManager.GetActiveScene()))
+                {renderer.GetPropertyBlock(block);Assert.AreEqual(.7f,block.GetFloat(wake));Assert.AreEqual(new Vector4(1,2,3,1),block.GetVectorArray(swimmers)[0]);Assert.AreEqual(5.5f,Shader.GetGlobalFloat(clock));}
+                renderer.GetPropertyBlock(block);Assert.AreEqual(.1f,block.GetFloat(wake));Assert.AreEqual(originalClock,Shader.GetGlobalFloat(clock));
+                try{using(LocalReplaySceneState.Apply(segment,10,SceneManager.GetActiveScene()))throw new InvalidOperationException("failed water render");}catch(InvalidOperationException){}
+                renderer.GetPropertyBlock(block);Assert.AreEqual(.1f,block.GetFloat(wake));Assert.AreEqual(originalClock,Shader.GetGlobalFloat(clock));
+            }
+            finally{Shader.SetGlobalFloat(clock,originalClock);Object.Destroy(material);Object.Destroy(water);}
+            yield return null;
+        }
+        [UnityTest]public IEnumerator ActualArenaCrowdAndRoofWaterExposeTheirSavedRenderState()
+        {
+            yield return MapRetrievalProbe.Load(TumbangPreso.UI.SceneFlow.Arena);yield return null;
+            var arena=LocalReplaySceneState.Capture(10);Assert.IsTrue(arena.HasCrowd);Assert.Greater(arena.CrowdClock,0);
+            float now=Shader.GetGlobalFloat("_ArenaCrowdClock");var segment=new LocalReplaySceneSegment();segment.Frames.Add(arena);
+            arena.CrowdClock=now-1;
+            using(LocalReplaySceneState.Apply(segment,10,SceneManager.GetActiveScene()))Assert.AreEqual(now-1,Shader.GetGlobalFloat("_ArenaCrowdClock"));
+            Assert.AreEqual(now,Shader.GetGlobalFloat("_ArenaCrowdClock"));
+            yield return MapRetrievalProbe.Load(TumbangPreso.UI.SceneFlow.SaBubong);yield return null;
+            var roof=LocalReplaySceneState.Capture(20);Assert.Greater(roof.Water.Count,0,"The actual authored roof pool must be recorded.");
+            foreach(var surface in roof.Water){Assert.AreEqual("TumbangPreso/RoofPoolWater",surface.Shader);Assert.AreEqual(4,surface.Swimmers.Length);}
+            var waterSegment=new LocalReplaySceneSegment();waterSegment.Frames.Add(roof);
+            using(LocalReplaySceneState.Apply(waterSegment,20,SceneManager.GetActiveScene())){}
+        }
         [UnityTest]public IEnumerator ActualKantoRoadCanBeSavedReloadedSeekedAndRestored()
         {
             yield return MapRetrievalProbe.Load(TumbangPreso.UI.SceneFlow.Kanto);

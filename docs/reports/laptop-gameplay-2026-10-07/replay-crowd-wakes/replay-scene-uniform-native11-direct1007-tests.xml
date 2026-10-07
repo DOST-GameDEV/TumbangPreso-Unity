@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 07:11:20Z" end-time="2026-10-07 07:11:51Z" duration="31.5147597">
+  <test-suite type="TestSuite" id="3523" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="2043" result="Passed" start-time="2026-10-07 07:11:20Z" end-time="2026-10-07 07:11:51Z" duration="31.514760" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3515" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2043" result="Passed" start-time="2026-10-07 07:11:20Z" end-time="2026-10-07 07:11:51Z" duration="31.501629" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="57956" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3516" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2043" result="Passed" start-time="2026-10-07 07:11:20Z" end-time="2026-10-07 07:11:51Z" duration="31.492732" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3519" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2041" result="Passed" start-time="2026-10-07 07:11:20Z" end-time="2026-10-07 07:11:51Z" duration="31.484831" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2019" name="LocalReplaySceneShaderTests" fullname="TumbangPreso.PlayTests.LocalReplaySceneShaderTests" classname="TumbangPreso.PlayTests.LocalReplaySceneShaderTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-07 07:11:20Z" end-time="2026-10-07 07:11:51Z" duration="31.454042" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2020" name="ActualArenaCrowdSavedUniformsRestoreTheOriginalRenderedFrame" fullname="TumbangPreso.PlayTests.LocalReplaySceneShaderTests.ActualArenaCrowdSavedUniformsRestoreTheOriginalRenderedFrame" methodname="ActualArenaCrowdSavedUniformsRestoreTheOriginalRenderedFrame" classname="TumbangPreso.PlayTests.LocalReplaySceneShaderTests" runstate="Runnable" seed="552227316" result="Passed" start-time="2026-10-07 07:11:20Z" end-time="2026-10-07 07:11:51Z" duration="31.444261" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.85, ambience slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_3 at 0.31 of full scale before the sliders (excitement 0.91, ambience slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 0.55, ambience slider).
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_3 at 0.38 of full scale before the sliders (excitement 0.88, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.70, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ReplayCrowdPixels] control=1.38296 rewind=0
+[ReplayCrowdCaptureCost] averageMs=0.092973
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

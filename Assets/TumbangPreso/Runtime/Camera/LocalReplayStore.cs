@@ -141,6 +141,17 @@ namespace TumbangPreso.CameraSystem
                 if(frame==null||float.IsNaN(frame.Time)||float.IsInfinity(frame.Time)||frame.Time<=previous||
                     frame.Poses==null||frame.Poses.Count>256||frame.Surfaces==null||frame.Surfaces.Count>512)
                     throw new InvalidDataException("Invalid replay scene frame.");
+                if(frame.HasCrowd&&(!Finite(frame.CrowdClock)||!Finite(frame.CrowdCheer)||!Finite(frame.CrowdGroan)||!Finite(frame.CrowdWave)))
+                    throw new InvalidDataException("Invalid recorded crowd state.");
+                if(frame.Water!=null)
+                {
+                    if(frame.Water.Count>8)throw new InvalidDataException("Too many recorded water surfaces.");
+                    foreach(var water in frame.Water)
+                        if(water==null||string.IsNullOrEmpty(water.Path)||water.Path.Length>1024||string.IsNullOrEmpty(water.Name)||
+                            water.Shader!="TumbangPreso/RoofPoolWater"||!Finite(water.WakeStrength)||
+                            water.Swimmers==null||water.Swimmers.Length!=4||Array.Exists(water.Swimmers,v=>!Finite(v)))
+                            throw new InvalidDataException("Invalid recorded water state.");
+                }
                 previous=frame.Time;
                 foreach(var pose in frame.Poses)
                     if(pose==null||string.IsNullOrEmpty(pose.Path)||pose.Path.Length>1024||string.IsNullOrEmpty(pose.Name)||
@@ -155,6 +166,7 @@ namespace TumbangPreso.CameraSystem
         }
         private static bool Finite(float value)=>!float.IsNaN(value)&&!float.IsInfinity(value);
         private static bool Finite(Vector3 value)=>Finite(value.x)&&Finite(value.y)&&Finite(value.z);
+        private static bool Finite(Vector4 value)=>Finite(value.x)&&Finite(value.y)&&Finite(value.z)&&Finite(value.w);
         private static bool Finite(Quaternion value)=>Finite(value.x)&&Finite(value.y)&&Finite(value.z)&&Finite(value.w);
         private static bool Finite(Color value)=>Finite(value.r)&&Finite(value.g)&&Finite(value.b)&&Finite(value.a);
         internal static string Hash(byte[] bytes)
