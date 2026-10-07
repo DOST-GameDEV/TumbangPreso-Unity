@@ -1,0 +1,21 @@
+{
+  "sourceRef": "04664cfd1fbb014b4e1119bcd141fc824b05c9c9",
+  "sourceHashes": {
+    "Assets/TumbangPreso/Runtime/Camera/LocalReplayRecorder.cs": "114f9895d6059a3aeed513e5b7b9349bd2c89a646d3656b52b57080858e4dd80",
+    "Assets/TumbangPreso/Runtime/Camera/MatchReplayArchive.cs": "93517e39cc303410ca65066301ea4260a69bcdbb74fe677f649f70a9dfb01af8",
+    "Assets/TumbangPreso/Runtime/Camera/LocalReplayEffectsCodec.cs": "d723e5826d060b31d877a4789d217b43729e73e14d0b601f883c2c794573d462",
+    "Assets/TumbangPreso/Tests/PlayMode/ArenaFxRecordedTests.cs": "b85a16033aa766c13285acb8ffe4c9b8f06e67efa97e0f7adfd018a8a3fc7fc0"
+  },
+  "nativePid": 51348,
+  "passed": 9,
+  "protectedCount": 21385,
+  "rawReceipts": {
+    "result.json": "c8ecfaa52a5074322d90d0f3d7aac9088566e12f95a7ddbbc7afe9368b508fb1",
+    "results.xml": "8a2f6dd4446056cfd2216cf62b9a9f200d905bdc7cd6ae68a032f48d64e9904a",
+    "source-restoration.json": "d4b354506c0b14aa82bd2323dcb50f640f67960ad0d3a9582a6c00a5309ced91",
+    "endpoint-source-proof.json": "7771e3130b2e4b694010c794ec90ab37730e7f8e96d6d2847efcadc633ae4f44",
+    "codec-source-proof.json": "200a0c2c9fe416cbcb8a2120eb1882a6361efe37ab342f595c55e4a31d0f6c2f",
+    "current-full-effects-proof.json": "9749a4d8e0dbc9a26522085390d4800bdb5516392f633bc079ece18e0197a0ba"
+  },
+  "scope": "Actual merged native gate, not packaged/performance/full-visual acceptance"
+}
