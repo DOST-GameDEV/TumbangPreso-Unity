@@ -22,3 +22,14 @@ Actual player frame benefit, first canvas/preview render costs, input responsive
 and ordinary-release acceptance are still pending. Do not infer performance
 approval from these behavior controls. No new build/Desktop folder was created
 and the qualified Desktop release remains unchanged.
+
+The first actual Development candidate completed14windows but still reached
+118.399ms CPU in its worst Hero frame. The final PrepareScreen callback consumed
+67.036ms and303 Mono.JIT samples totaled62.188ms; canvas pre-render17.033ms and
+ColourGrade11.577ms followed. This is still a smoothness failure. All21,423
+player/export/build inputs and preferences restored; exact receipts are retained.
+
+Candidate2 separates description, model binding, kit preparation and each ability
+tile into additional yielded stages before revealing the view. Native24100
+passes the same three behavior controls on those exact bytes with all21,423
+inputs/preferences restored. Its actual player comparison remains pending.

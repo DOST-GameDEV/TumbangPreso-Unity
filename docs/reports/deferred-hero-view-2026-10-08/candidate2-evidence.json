@@ -1,0 +1,34 @@
+{
+  "nativePid": 24100,
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.DeferredHeroViewTests.AnotherRouteCancelsPreparationAndRepeatedHeroPressDoesNotDuplicate",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.DeferredHeroViewTests.BackCancelsPendingHeroWithoutLeavingItsPreview",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.DeferredHeroViewTests.HomeStaysVisibleUntilCompleteHeroAndThenFocusesPrimary",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "protectedCount": 21423,
+  "rawSha256": {
+    "result.json": "24289a49fda8b29cbd465cf7b969e5a832d3579024f7ab9069163d38cc759b38",
+    "source-restoration.json": "5d8ab282dc1d21191b634f5bc0edbc09007cd6475f363fba3b04a3d0f1f4a14e",
+    "results.xml": "ff564d94b818cac8693fff54e9afc5057b47e3190adaa832b6bdd46c688d7e3a"
+  },
+  "sourceHashes": {
+    "Assets/TumbangPreso/Runtime/UI/Hub/HubHero.cs": "9c545b9a6c822aa93c461010c2171d8b5ca7fcc42de0918dcfd6776891803a83",
+    "Assets/TumbangPreso/Runtime/UI/Hub/TumpHub.cs": "a27dfd32f7a0f6665edd89f2e01c60f3e1c9e1a69620a05ea8550f16fc9e8e4d",
+    "Assets/TumbangPreso/Runtime/UI/Hub/HubScreen.cs": "066645f70f6dda211f8362ae78dbe647983599584741458380a629b0c95329ec",
+    "Assets/TumbangPreso/Tests/PlayMode/DeferredHeroViewTests.cs": "afa850ccbb5309457937c194f4d303b52170053b9e999bb0c760b5bef0b75e4a"
+  },
+  "actualPlayerPerformanceMeasured": false,
+  "candidate1StillFailedSmoothness": true
+}

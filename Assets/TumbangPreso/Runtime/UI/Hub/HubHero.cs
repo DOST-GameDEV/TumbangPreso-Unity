@@ -132,7 +132,14 @@ namespace TumbangPreso.UI.Hub
             yield return null;
 
             _index = StartIndex();
-            Show();
+            ShowDescription();
+            yield return null;
+            ShowPreview();
+            yield return null;
+            var abilityBuild=BuildAbilitiesOverFrames(Heroes[_index].Id);
+            while(abilityBuild.MoveNext())yield return abilityBuild.Current;
+            RefreshAction(Heroes[_index].Id);
+            yield return null;
             HubSlap.On(stage, 0, -1.5f);
             HubSlap.On(side, 0.08f, 1);
             if (GameServices.Wallet != null) GameServices.Wallet.Changed += RefreshWallet;
@@ -165,6 +172,9 @@ namespace TumbangPreso.UI.Hub
         }
 
         private void Show()
+        {ShowDescription();ShowPreview();BuildAbilities(Heroes[_index].Id);RefreshAction(Heroes[_index].Id);}
+
+        private void ShowDescription()
         {
             if (_name == null) return;
             var hero = Heroes[_index];
@@ -189,20 +199,26 @@ namespace TumbangPreso.UI.Hub
             _story.gameObject.SetActive(story != null);
             _bio.text = bio;
             _bio.fontSize = HubStyle.Size(HubStyle.Body);
+        }
 
+        private void ShowPreview()
+        {
+            var hero=Heroes[_index];
             var art = RosterBook.Load().FindPersonArt(hero.Id);
             if (art != null) _preview.Show(art.Model, art.Clips, art.Palette, art.PetModel);
             _preview.SetTileFraming(hero.Id == "paete" ? 0.86f : 0.92f);
 
-            BuildAbilities(hero.Id);
-            RefreshAction(hero.Id);
         }
 
         private void BuildAbilities(string heroId)
+        {var work=BuildAbilitiesOverFrames(heroId);while(work.MoveNext()){}(work as System.IDisposable)?.Dispose();}
+
+        private System.Collections.IEnumerator BuildAbilitiesOverFrames(string heroId)
         {
             for (int i = _abilities.childCount - 1; i >= 0; i--) Destroy(_abilities.GetChild(i).gameObject);
             var kit = HeroAbilitySystem.CreateKitFor(heroId);
-            if (kit == null) return;
+            if (kit == null) yield break;
+            yield return null;
             // Four role captions need the available row width; legacy three-slot tiles keep their layout.
             var screenSlots = kit.ScreenSlots;
             bool four = screenSlots.Length == 4;
@@ -231,6 +247,7 @@ namespace TumbangPreso.UI.Hub
                              new Vector2(keyWidth, four ? 40 : 36));
                 HubKit.Fit(key, keyWidth);
                 HubSlap.On(tile.transform, 0.04f * i, 2 - i * 2);
+                yield return null;
             }
         }
 
