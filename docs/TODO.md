@@ -1,3 +1,8 @@
+### AI-LUNGE-PLAN-LIFETIME-1007: targetless charge ownership
+
+- [x] Fix blind charged releases when Guard/Intercept/Reset/Hunt loses its target. Original4FAIL/1PASS; candidate10PASS through actual consumers and existing aimed/reach controls. Preserve the legal can-reset cancellation and ordinary input path.
+- [ ] Natural1x follow-up, all-map/kit quality and combined packaged acceptance. [Evidence and limits](reports/bot-lunge-plan-lifetime-2026-10-07/README.md).
+
 ### UI-LOGIN-FEEDBACK-1006: caret and actionable refusal
 
 - [x] Shared cb5 two-machine active host-loss gate: both live round1 before
