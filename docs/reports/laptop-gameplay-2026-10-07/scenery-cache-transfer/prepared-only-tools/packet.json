@@ -1,0 +1,6 @@
+{
+  "base": "3dac5c7ae0d5cc10aaa4ffc876b32367131c32cc",
+  "filter": "TumbangPreso.PlayTests.RecordedSceneryTests.ActualShowAndRecoveryPopulationHasMeasuredBoundedPayloadAndGenerationIdentity;TumbangPreso.PlayTests.RecordedSceneryTests.CachedSceneryDescriptorKeepsDetachedFramesAndDetectsBornOrReparentedRenderers;TumbangPreso.PlayTests.RecordedSceneryTests.SavedAnimalAndNewLineStayVisibleWhenTheirLiveRootIsInactive",
+  "expected": 3,
+  "purpose": "Final descriptor cache: measured actual12models, detached snapshots/hierarchy/render births andactualanimal-line pixels; countercalibrated unavailable=-1"
+}

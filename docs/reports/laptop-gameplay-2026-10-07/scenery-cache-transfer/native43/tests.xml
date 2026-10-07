@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 14:24:00Z" end-time="2026-10-07 14:24:23Z" duration="23.3802471">
+  <test-suite type="TestSuite" id="3613" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="2114" result="Passed" start-time="2026-10-07 14:24:00Z" end-time="2026-10-07 14:24:23Z" duration="23.380247" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3605" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2114" result="Passed" start-time="2026-10-07 14:24:00Z" end-time="2026-10-07 14:24:23Z" duration="23.360861" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="14320" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3606" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2114" result="Passed" start-time="2026-10-07 14:24:00Z" end-time="2026-10-07 14:24:23Z" duration="23.343361" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3609" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2112" result="Passed" start-time="2026-10-07 14:24:00Z" end-time="2026-10-07 14:24:23Z" duration="23.329241" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2853" name="RecordedSceneryTests" fullname="TumbangPreso.PlayTests.RecordedSceneryTests" classname="TumbangPreso.PlayTests.RecordedSceneryTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-07 14:24:00Z" end-time="2026-10-07 14:24:23Z" duration="23.296342" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2859" name="ActualShowAndRecoveryPopulationHasMeasuredBoundedPayloadAndGenerationIdentity" fullname="TumbangPreso.PlayTests.RecordedSceneryTests.ActualShowAndRecoveryPopulationHasMeasuredBoundedPayloadAndGenerationIdentity" methodname="ActualShowAndRecoveryPopulationHasMeasuredBoundedPayloadAndGenerationIdentity" classname="TumbangPreso.PlayTests.RecordedSceneryTests" runstate="Runnable" seed="2070914858" result="Passed" start-time="2026-10-07 14:24:00Z" end-time="2026-10-07 14:24:23Z" duration="23.286095" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[SceneryPopulation] drones=12 roots=24 coldCaptureMs=23.9053 warmCaptureMs=0.928453333333333 captureBytes=0 encodedBytes=280532 encodeMs=343.5938 decodeMs=201.5134
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
