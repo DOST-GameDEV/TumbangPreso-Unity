@@ -1,0 +1,33 @@
+{
+  "sourceRef": "02f2b985ecdb18ae1de0696df01112844c238a14",
+  "profile": "pc-humanlike-ai-lunge-aim-original1006",
+  "filter": "TumbangPreso.PlayTests.AiTagCommitmentTests",
+  "expectedCases": 3,
+  "execution": "direct; no memory/admission/timeout guard",
+  "pid": 28976,
+  "exitCode": 2,
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.AiTagCommitmentTests.ChargedLungeWaitsForAimInsteadOfFiringAtTheTimeout",
+      "result": "Failed",
+      "message": "  A full charge cannot justify a dash aimed away from the visible target\n  Expected: 0\n  But was:  2.5f\n"
+    },
+    {
+      "name": "TumbangPreso.PlayTests.AiTagCommitmentTests.NearTargetUsesOneTagCommitment(False)",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.AiTagCommitmentTests.NearTargetUsesOneTagCommitment(True)",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "exactCaseCount": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "protectedCount": 21309,
+  "terminal": true
+}

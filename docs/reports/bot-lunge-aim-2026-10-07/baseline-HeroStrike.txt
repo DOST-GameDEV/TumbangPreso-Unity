@@ -1,0 +1,145 @@
+ai diagnostic  ·  HeroStrike  ·  Eskinita  ·  3 bots  ·  1x
+t=0.0 seat=0 plan=Guard def=True act=False held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(0.00, 0.12, -2.50)
+t=0.0 seat=2 plan=Stalk def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(0.00, 0.12, 9.00)
+t=0.0 seat=3 plan=Stalk def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(1.80, 0.12, 9.00)
+    lataUpright=True throws=0 roundActive=True
+    slippers: [own=1 Held at -2.20,0.60,8.92 d3=0.63 grabbable=False] [own=3 Held at 1.41,0.62,9.09 d3=0.64 grabbable=False] [own=2 Held at -0.65,0.80,8.97 d3=0.94 grabbable=False] 
+t=2.0 seat=0 plan=Guard def=True act=False held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(0.00, 0.12, -2.50)
+t=2.0 seat=2 plan=Stalk def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(0.00, 0.12, 9.00)
+t=2.0 seat=3 plan=Stalk def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(1.80, 0.12, 9.00)
+    lataUpright=True throws=0 roundActive=True
+    slippers: [own=1 Held at -2.20,0.60,8.92 d3=0.63 grabbable=False] [own=3 Held at 1.41,0.62,9.09 d3=0.64 grabbable=False] [own=2 Held at -0.65,0.80,8.97 d3=0.94 grabbable=False] 
+t=4.0 seat=0 plan=Guard def=True act=False held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(0.00, 0.12, -2.50)
+t=4.0 seat=2 plan=Stalk def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(0.00, 0.12, 9.00)
+t=4.0 seat=3 plan=Stalk def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(1.80, 0.12, 9.00)
+    lataUpright=True throws=0 roundActive=True
+    slippers: [own=1 Held at -2.25,0.67,8.87 d3=0.72 grabbable=False] [own=3 Held at 1.41,0.62,9.09 d3=0.64 grabbable=False] [own=2 Held at -0.65,0.80,8.97 d3=0.94 grabbable=False] 
+t=6.0 seat=0 plan=Guard def=True act=False held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(0.00, 0.12, -2.50)
+t=6.0 seat=2 plan=Stalk def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(0.00, 0.12, 9.00)
+t=6.0 seat=3 plan=Stalk def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(1.80, 0.12, 9.00)
+    lataUpright=True throws=0 roundActive=True
+    slippers: [own=1 Held at -2.20,0.60,8.92 d3=0.63 grabbable=False] [own=3 Held at 1.39,0.64,9.12 d3=0.67 grabbable=False] [own=2 Held at -0.65,0.80,8.97 d3=0.94 grabbable=False] 
+t=8.0 seat=0 plan=Guard def=True act=False held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(0.00, 0.12, -2.50)
+t=8.0 seat=2 plan=Stalk def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(0.00, 0.12, 9.00)
+t=8.0 seat=3 plan=Stalk def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(1.80, 0.12, 9.00)
+    lataUpright=True throws=0 roundActive=True
+    slippers: [own=1 Held at -2.20,0.60,8.92 d3=0.63 grabbable=False] [own=3 Held at 1.40,0.63,9.10 d3=0.66 grabbable=False] [own=2 Held at -0.65,0.80,8.97 d3=0.94 grabbable=False] 
+t=10.0 seat=0 plan=Guard def=True act=False held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(0.00, 0.12, -2.50)
+t=10.0 seat=2 plan=Stalk def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(0.00, 0.12, 9.00)
+t=10.0 seat=3 plan=Stalk def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(1.80, 0.12, 9.00)
+    lataUpright=True throws=0 roundActive=True
+    slippers: [own=1 Held at -2.20,0.60,8.92 d3=0.63 grabbable=False] [own=3 Held at 1.41,0.62,9.09 d3=0.64 grabbable=False] [own=2 Held at -0.65,0.80,8.97 d3=0.94 grabbable=False] 
+t=12.0 seat=0 plan=Guard def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 1.00) pos=(0.00, 0.18, -2.20)
+t=12.0 seat=2 plan=Stalk def=False act=True held=True charging=False charge=0.00 canThrow=True axis=(-1.00, 0.00) pos=(-0.20, 0.18, 9.00)
+t=12.0 seat=3 plan=Stalk def=False act=True held=True charging=False charge=0.00 canThrow=True axis=(0.71, -0.71) pos=(1.94, 0.18, 8.86)
+    lataUpright=True throws=0 roundActive=True
+    slippers: [own=1 Held at -2.23,0.77,8.80 d3=0.81 grabbable=False] [own=3 Held at 1.55,0.70,8.66 d3=0.68 grabbable=False] [own=2 Held at -0.79,0.94,9.07 d3=0.96 grabbable=False] 
+t=14.0 seat=0 plan=Guard def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(0.00, 0.18, 1.92)
+t=14.0 seat=2 plan=Position def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.71, -0.71) pos=(0.40, 0.18, 8.15)
+t=14.0 seat=3 plan=Position def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, -1.00) pos=(2.96, 0.18, 7.49)
+    lataUpright=True throws=2 roundActive=True
+    slippers: [own=1 Held at -2.11,0.80,8.73 d3=0.79 grabbable=False] [own=3 InFlight at 0.92,1.59,2.68 d3=5.41 grabbable=False] [own=2 InFlight at 0.47,1.28,2.92 d3=5.35 grabbable=False] 
+t=16.0 seat=0 plan=Cover def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(3.98, 0.18, 4.21)
+t=16.0 seat=2 plan=Stalk def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(-1.00, 0.00) pos=(-0.06, 0.18, 6.31)
+t=16.0 seat=3 plan=Stalk def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.71, -0.71) pos=(5.35, 0.18, 4.30)
+    lataUpright=True throws=2 roundActive=True
+    slippers: [own=1 Held at -2.11,0.80,8.73 d3=0.79 grabbable=False] [own=3 Loose at 3.92,0.19,3.34 d3=1.72 grabbable=True] [own=2 Loose at 2.37,0.18,5.36 d3=2.61 grabbable=False] 
+t=18.0 seat=0 plan=Cover def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(4.77, 0.18, 2.85)
+t=18.0 seat=2 plan=Fetch def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(1.00, 0.00) pos=(-2.98, 0.18, 7.33)
+t=18.0 seat=3 plan=Stalk def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.71, -0.71) pos=(6.30, 0.18, -0.30)
+    lataUpright=True throws=2 roundActive=True
+    slippers: [own=1 Held at -2.11,0.80,8.73 d3=0.79 grabbable=False] [own=3 Loose at 3.92,0.19,3.34 d3=4.35 grabbable=False] [own=2 Loose at 2.37,0.18,5.36 d3=5.71 grabbable=False] 
+t=20.0 seat=0 plan=Hunt def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(5.32, 0.18, 1.79)
+t=20.0 seat=2 plan=Windup def=False act=True held=True charging=True charge=0.04 canThrow=True axis=(0.00, 0.00) pos=(0.84, 0.18, 7.80)
+t=20.0 seat=3 plan=Withdraw def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(1.80, 0.12, 9.00)
+    lataUpright=True throws=2 roundActive=True
+    slippers: [own=1 Held at -2.11,0.80,8.73 d3=0.79 grabbable=False] [own=3 Held at 1.84,0.49,8.66 d3=0.50 grabbable=False] [own=2 Held at 1.29,1.08,7.63 d3=1.03 grabbable=False] 
+t=22.0 seat=0 plan=Intercept def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(-0.03, 0.18, 2.72)
+t=22.0 seat=2 plan=Position def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, -1.00) pos=(1.05, 0.18, 7.49)
+t=22.0 seat=3 plan=Withdraw def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(1.80, 0.12, 9.00)
+    lataUpright=True throws=3 roundActive=True
+    slippers: [own=1 Held at -2.11,0.80,8.73 d3=0.79 grabbable=False] [own=3 Held at 1.98,0.79,8.63 d3=0.78 grabbable=False] [own=2 Loose at 0.48,0.18,5.80 d3=1.78 grabbable=False] 
+t=24.0 seat=0 plan=Cover def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(-0.11, 0.18, 6.17)
+t=24.0 seat=2 plan=Stalk def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(-0.71, -0.71) pos=(-3.25, 0.18, 6.38)
+t=24.0 seat=3 plan=Withdraw def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(1.80, 0.12, 9.00)
+    lataUpright=True throws=3 roundActive=True
+    slippers: [own=1 Held at -2.11,0.80,8.73 d3=0.79 grabbable=False] [own=3 Held at 1.98,0.79,8.63 d3=0.78 grabbable=False] [own=2 Loose at 0.48,0.18,5.80 d3=3.78 grabbable=False] 
+t=26.0 seat=0 plan=Cover def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(-0.27, 0.18, 6.01)
+t=26.0 seat=2 plan=Fetch def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(-7.28, 0.18, 4.51)
+t=26.0 seat=3 plan=Windup def=False act=True held=True charging=True charge=0.10 canThrow=True axis=(0.00, 0.00) pos=(0.38, 0.18, 8.43)
+    lataUpright=True throws=3 roundActive=True
+    slippers: [own=1 Held at -2.11,0.80,8.73 d3=0.79 grabbable=False] [own=3 Held at 0.01,0.78,8.77 d3=0.78 grabbable=False] [own=2 Loose at 0.48,0.18,5.80 d3=7.86 grabbable=False] 
+t=28.0 seat=0 plan=Hunt def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(-1.00, 0.00) pos=(0.11, 0.18, 5.86)
+t=28.0 seat=2 plan=Withdraw def=False act=True held=True charging=False charge=0.00 canThrow=False axis=(0.00, 1.00) pos=(-1.19, 0.18, 6.47)
+t=28.0 seat=3 plan=Fetch def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, -1.00) pos=(1.12, 0.18, 5.34)
+    lataUpright=True throws=4 roundActive=True
+    slippers: [own=1 Held at -2.11,0.80,8.73 d3=0.79 grabbable=False] [own=3 Loose at 0.62,0.19,-0.01 d3=5.38 grabbable=False] [own=2 Held at -0.60,0.76,6.17 d3=0.89 grabbable=False] 
+t=30.0 seat=0 plan=Cover def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.71, -0.71) pos=(1.84, 0.18, 1.67)
+t=30.0 seat=2 plan=Position def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, -1.00) pos=(-1.19, 0.18, 7.39)
+t=30.0 seat=3 plan=Stalk def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.71, -0.71) pos=(2.54, 0.18, 0.58)
+    lataUpright=True throws=5 roundActive=True
+    slippers: [own=1 Held at -2.11,0.80,8.73 d3=0.79 grabbable=False] [own=3 Loose at 0.62,0.19,-0.01 d3=2.01 grabbable=False] [own=2 InFlight at -0.57,2.36,4.00 d3=4.08 grabbable=False] 
+t=32.0 seat=0 plan=Cover def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(-1.47, 0.18, -5.02)
+t=32.0 seat=2 plan=Position def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 1.00) pos=(-1.19, 0.18, 2.99)
+t=32.0 seat=3 plan=Withdraw def=False act=True held=True charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(2.19, 0.18, -0.76)
+    lataUpright=True throws=5 roundActive=True
+    slippers: [own=1 Held at -2.11,0.80,8.73 d3=0.79 grabbable=False] [own=3 Held at 1.95,0.56,-0.33 d3=0.61 grabbable=False] [own=2 Loose at -2.12,0.18,-5.36 d3=8.40 grabbable=False] 
+t=34.0 seat=0 plan=Cover def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(-0.71, -0.71) pos=(2.13, 0.18, -2.17)
+t=34.0 seat=2 plan=Fetch def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, -1.00) pos=(-1.19, 0.18, -3.06)
+t=34.0 seat=3 plan=Withdraw def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(1.80, 0.12, 9.00)
+    lataUpright=True throws=5 roundActive=True
+    slippers: [own=1 Held at -2.11,0.80,8.73 d3=0.79 grabbable=False] [own=3 Held at 1.98,0.78,8.63 d3=0.78 grabbable=False] [own=2 Loose at -2.12,0.18,-5.36 d3=2.48 grabbable=False] 
+t=36.0 seat=0 plan=Guard def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(-0.59, 0.18, -2.72)
+t=36.0 seat=2 plan=Windup def=False act=True held=True charging=True charge=0.44 canThrow=True axis=(0.00, 0.00) pos=(-1.51, 0.18, -7.81)
+t=36.0 seat=3 plan=Withdraw def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(1.80, 0.12, 9.00)
+    lataUpright=True throws=5 roundActive=True
+    slippers: [own=1 Held at -2.11,0.80,8.73 d3=0.79 grabbable=False] [own=3 Held at 1.98,0.79,8.63 d3=0.78 grabbable=False] [own=2 Held at -1.42,0.96,-8.47 d3=1.03 grabbable=False] 
+t=38.0 seat=0 plan=Guard def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 1.00) pos=(-0.58, 0.18, -0.47)
+t=38.0 seat=2 plan=Position def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(-1.51, 0.18, -6.91)
+t=38.0 seat=3 plan=Withdraw def=False act=False held=True charging=False charge=0.00 canThrow=True axis=(0.00, 0.00) pos=(1.80, 0.12, 9.00)
+    lataUpright=True throws=6 roundActive=True
+    slippers: [own=1 Held at -2.11,0.80,8.73 d3=0.79 grabbable=False] [own=3 Held at 1.98,0.79,8.63 d3=0.78 grabbable=False] [own=2 InFlight at -0.78,1.38,-4.08 d3=3.16 grabbable=False] 
+t=40.0 seat=0 plan=Guard def=True act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, 0.00) pos=(-0.58, 0.18, 0.06)
+t=40.0 seat=2 plan=Windup def=False act=True held=True charging=True charge=0.47 canThrow=True axis=(0.00, 0.00) pos=(-1.37, 0.18, -7.05)
+t=40.0 seat=3 plan=Position def=False act=True held=False charging=False charge=0.00 canThrow=False axis=(0.00, -1.00) pos=(0.38, 0.18, 8.28)
+    lataUpright=True throws=7 roundActive=True
+    slippers: [own=1 Held at -2.11,0.80,8.73 d3=0.79 grabbable=False] [own=3 InFlight at 0.38,1.49,6.88 d3=1.92 grabbable=False] [own=2 Held at -1.30,0.96,-7.72 d3=1.03 grabbable=False] 
+
+worst continuous LOOSE spell per slipper:
+  5.8s  own=2 plan=Fetch ownerAct=True d3=1.81 grabbable=False slipperY=0.18
+  4.6s  own=3 plan=Fetch ownerAct=True d3=1.83 grabbable=False slipperY=0.19
+
+plan occupancy (seconds):
+  0:Guard                  20.1s
+  2:Stalk                  18.5s
+  3:Stalk                  17.7s
+  2:Position               8.3s
+  3:Position               4.0s
+  2:Windup                 5.8s
+  3:Windup                 2.8s
+  3:Idle                   0.2s
+  2:Idle                   0.4s
+  0:Intercept              2.5s
+  0:Cover                  13.9s
+  2:Fetch                  5.7s
+  3:Fetch                  3.2s
+  2:Withdraw               1.4s
+  0:Hunt                   3.5s
+  3:Withdraw               12.1s
+
+sabotage ledger:
+  seat 0  plans 0  shoves 0  longest pursuit 0.00s  time pursuing 0.0s  last veto None
+  seat 2  plans 0  shoves 0  longest pursuit 0.00s  time pursuing 0.0s  last veto VictimNotVulnerable
+  seat 3  plans 0  shoves 0  longest pursuit 0.00s  time pursuing 0.0s  last veto OutOfApproachRange
+  TOTAL  plans 0  shoves 0  longest pursuit 0.00s  time pursuing 0.0s
+  bounds: max pursuit 1.92s  max approach 3.20m  danger radius 7.14m  min closure 1.50m
+  candidate shoves projected: 741
+    VictimIsDefender       247
+    VictimNotVulnerable    114
+    OutOfApproachRange     241
+    PushesAwayFromTaya     137
+    NegligibleClosure      2
+
+lunge trace: 1 completed lunges, 0 hits
+  short-release                0/1
+  frame=12106 round=1 left=69.1 taya=0 plan=Hunt reason=short-release charge=171 power=0.94 victim=3 victimTaggable=True anyTaggable=True dist=3.22 bearing=25.3 lateral=1.38 victimSpeed=2.50 minVictim=1.76 minVictimWhileTaggable=1.76 minAnyTaggable=1.76 victimLeftTaggable=True heldAfterRelease=-1.000 punchCooldown=0.00 tagsDuringCharge=0 start=[held=0.003 victim=3 dist=5.28 taggable=True range=5.1] outcome=miss

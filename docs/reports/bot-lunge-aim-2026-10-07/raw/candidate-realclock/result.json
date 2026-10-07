@@ -1,0 +1,28 @@
+{
+  "sourceRef": "02f2b985ecdb18ae1de0696df01112844c238a14",
+  "profile": "pc-humanlike-ai-candidate-realclock1006",
+  "filter": "TumbangPreso.PlayTests.AiDiagnosticProbe.OneClassicRoundAtRealSpeedIsFullyExplained;TumbangPreso.PlayTests.AiDiagnosticProbe.OneHeroRoundAtRealSpeedIsFullyExplained",
+  "expectedCases": 2,
+  "execution": "direct; no memory/admission/timeout guard",
+  "pid": 39568,
+  "exitCode": 0,
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.AiDiagnosticProbe.OneClassicRoundAtRealSpeedIsFullyExplained",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.AiDiagnosticProbe.OneHeroRoundAtRealSpeedIsFullyExplained",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "exactCaseCount": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "protectedCount": 21309,
+  "terminal": true
+}

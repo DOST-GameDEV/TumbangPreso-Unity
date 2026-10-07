@@ -2,6 +2,8 @@
 
 Live map-preview motion settings: [native direct-setting failure and pause/poster/resume correction](reports/map-preview-motion-setting-2026-10-07/README.md).
 
+Charged bot lunge aiming: [original blind-release failure and consumer/native traces](reports/bot-lunge-aim-2026-10-07/README.md).
+
 Full-resolution packaged map previews: [actual host-screen playback, first/repeat timings and batch-route controls](reports/fullhd-map-preview-player-2026-10-07/README.md).
 
 Inactive map-view preparation: [native allocation failures and activation recovery](reports/inactive-map-preview-2026-10-07/README.md).

@@ -293,6 +293,12 @@
   staring/idle behavior, missed or inappropriate abilities and mechanical action
   timing. Treat each character's kit, role and each map's movement/objective
   constraints deliberately; broad quality is required, not a generic skill spammer.
+- [x] Prevent a committed bot lunge from firing outside its aim cone merely
+  because the planner hold timer expires. Original90degree cause fails; final3
+  input-consumer/close-tag controls pass and real-clock traces remain retained.
+  All21309 inputs restore. [Evidence and limits](reports/bot-lunge-aim-2026-10-07/README.md).
+- [ ] Improve charged-target loss and dash interception. Short real-clock
+  candidate rounds still miss; no higher hit-rate or all-map approval claimed.
 - [ ] Validate meaningful scenarios and actual play before claiming improvement.
   Bots should read as convincing rivals and preserve the street game's rules.
 - [ ] Split concrete PC/laptop tasks after preceding current work is complete and

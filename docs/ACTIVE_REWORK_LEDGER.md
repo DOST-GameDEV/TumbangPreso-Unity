@@ -16,11 +16,18 @@ this pinned package. No PC player/compiler/helper/server/tab remains.
 Evidence: reports/combined-desktop-2026-10-07 and two-machine-lan-cb5f report.
 Old9ab Desktop backup stays outside Desktop at Builds/desktop-ui9ab-before-combined1007.
 
-Next concrete action: run the existing real-clock Classic/Hero AI diagnostic
-rounds and inspect actual decision/movement/feature counters before the next
-focused bot/navigation fix. PC owns AI/bots/navigation, shared map intros/
-cameras/arrivals and slipper reliability. Laptop retains preview/video/media/
-vote and MatchResult/picker; coordinate new peer recovery gates only when needed.
+Current bot unit2c1c: remove the forced blind charged-lunge timeout. Original28976
+fails90degree release/cooldown cause whiletwo close-tag controls pass; final30320
+passes3 including retained charge/corrective movement then legal aligned release.
+Real-clock Classic/Hero before/after2 cases pass with throws/retrieval preserved;
+misses/target-loss releases remain. All21309 inputs/preferences restored, no job.
+Evidence: reports/bot-lunge-aim-2026-10-07. This is source-only afterDesktopcb5.
+Next concrete action: inspect charged-target loss and actual dash interception/
+sweep before next focused bot fix, then all-map/kit/natural behavior. Do not infer
+better hit rate from unseeded short rounds. PC ownsAIController/tag tests,
+shared map intros/cameras/arrivals and slipper reliability. Laptop retains
+preview/video/media/vote/results. Its checked reviewflag registrationd279 returns
+NetBootstrap exception-list ownershipPC, normalserver behavior preserved.
 Goal ACTIVE: broad AI/all-map behavior, distinct authored intros/poses/arrivals,
 natural camera/ground/slipper interactions and tournament/device/WAN/recovery
 acceptance remain unfinished. Preserve finalized heroes and all private dirt.
