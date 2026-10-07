@@ -1,0 +1,18 @@
+{
+  "nativePid": 50640,
+  "passed": 6,
+  "protectedCount": 21409,
+  "sourceHashes": {
+    "Assets/TumbangPreso/Runtime/Camera/LocalReplaySceneryState.cs": "2f172e2fe842ae1461edbbf6f7ab31dc1725855f5042985d140e977b33bc2a3f",
+    "Assets/TumbangPreso/Runtime/Camera/SceneryTextureIdentities.cs": "8a0642e6d25148c839eb79a344d410014eb9b540350b32a83fc5837efca1635e",
+    "Assets/TumbangPreso/Editor/SceneryTextureIdentityBuild.cs": "31589cbc0494b35e75cf771ad026661a901ddd40d86f734184f6198c7fcc1a42",
+    "Assets/TumbangPreso/Tests/PlayMode/SceneryTextureIdentityTests.cs": "46e7c878d0f5b6d62f32fd81e55f22a1abfa10679e80fe199fafb4f09cd44dce"
+  },
+  "copiedRawSha256": {
+    "result.json": "d895e1e17b0c056ff5de40c8b4b2affff7f16177df78d608a2d8f06e7ffc022a",
+    "results.xml": "11ca4c9a1baf0722b6f202c9036a9b63b18b15bbfd84de26c97e5671bb432329",
+    "source-restoration.json": "c39c6027c853953b0b886a2eb1b7a99db09c2a1b5ea17fafeefd97ffbccdb508"
+  },
+  "originalFailure": "ordinaryReleaseE11528 failed CS1061 Texture.imageContentsHash; actualplayercompile andcatalog generation pending",
+  "scope": "same-size reference/content, pixelmutation, failclosed identity and2GPU animal/droneparity; no currentplayer/build/hitch closure"
+}

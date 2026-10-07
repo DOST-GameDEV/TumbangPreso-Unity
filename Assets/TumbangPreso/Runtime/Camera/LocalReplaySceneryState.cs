@@ -58,7 +58,7 @@ namespace TumbangPreso.CameraSystem
                 {
                     if(material==null){writer.Write(0u);continue;}writer.Write(material.ComputeCRC());writer.Write(material.shader.name);
                     foreach(string property in material.GetTexturePropertyNames())
-                    {writer.Write(property);var texture=material.GetTexture(property);writer.Write(texture!=null?texture.imageContentsHash.ToString():"");}
+                    {writer.Write(property);var texture=material.GetTexture(property);writer.Write(SceneryTextureIdentities.Resolve(texture));}
                 }
             }
             using var sha=System.Security.Cryptography.SHA256.Create();known=BitConverter.ToString(sha.ComputeHash(bytes.ToArray())).Replace("-","");_art[root]=known;return known;

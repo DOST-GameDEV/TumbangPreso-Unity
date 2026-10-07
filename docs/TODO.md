@@ -3184,6 +3184,9 @@ controls. [Evidence and remaining package gates](reports/seismic-replay-boundary
 Combined current Windows readiness/arrival and seismic integration passes25cases
 with exact21403input restoration. [Evidence](reports/windows-readiness-integration-2026-10-07/README.md).
 Fresh release-player and performance checks remain open.
+The player build exposed Editor-only texture provenance. A build-prepared exact
+reference/hash lookup passes six content/GPU controls; current table generation
+and player compile/reopen remain [pending](reports/scenery-texture-runtime-2026-10-07/README.md).
 
 **Loading/optimization, OPEN:** yielded shader/art/avatar/portrait preparation,
 retained ability props/effect data and actual menu activation readiness are implemented.
