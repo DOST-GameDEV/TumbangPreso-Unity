@@ -33,6 +33,7 @@ Shader "TumbangPreso/VoodooGhost"
             Blend SrcAlpha OneMinusSrcAlpha
 
             CGPROGRAM
+            #include "RecordedShaderTime.cginc"
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
@@ -61,7 +62,7 @@ Shader "TumbangPreso/VoodooGhost"
                 float3 pull = normalize(_Pull.xyz + float3(0, 1e-4, 0));
                 // How far toward her this point already is (-1 the back of the body, +1 the side facing her).
                 float side = dot(normalize(world - _Origin.xyz + 1e-4), pull);
-                float torn = noise(world * 3.1 + _Time.y * 1.3);
+                float torn = noise(world * 3.1 + TumpShaderTime() * 1.3);
                 float smear = _Stretch * saturate(side * 0.5 + 0.5) * (0.35 + 0.65 * torn);
                 world += pull * smear;
                 o.world = world;
@@ -75,8 +76,8 @@ Shader "TumbangPreso/VoodooGhost"
             {
                 float3 view = normalize(_WorldSpaceCameraPos - i.world);
                 float rim = pow(1.0 - saturate(abs(dot(normalize(i.normal), view))), 1.5);
-                float bands = 0.5 + 0.5 * sin(i.along * 9.0 - _Time.y * _Flow * 6.0);
-                float grain = noise(i.world * 7.0 - _Time.y * 0.9);
+                float bands = 0.5 + 0.5 * sin(i.along * 9.0 - TumpShaderTime() * _Flow * 6.0);
+                float grain = noise(i.world * 7.0 - TumpShaderTime() * 0.9);
                 // Eaten away from the far end when it is yanked in (or lets go).
                 float keep = step(_Dissolve, saturate(0.55 - i.along * 0.35 + grain * 0.45));
                 float a = (0.07 + rim * 0.95 + bands * 0.1) * _Alpha * keep;

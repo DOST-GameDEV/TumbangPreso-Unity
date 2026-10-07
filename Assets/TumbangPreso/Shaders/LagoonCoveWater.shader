@@ -86,6 +86,7 @@ Shader "TumbangPreso/LagoonCoveWater"
         {
             Tags { "LightMode" = "ForwardBase" }
             CGPROGRAM
+            #include "../Resources/Shaders/RecordedShaderTime.cginc"
             #pragma vertex vert
             #pragma fragment frag
             #pragma multi_compile_fog
@@ -212,7 +213,7 @@ Shader "TumbangPreso/LagoonCoveWater"
             {
                 v2f o;
                 float3 w = mul(unity_ObjectToWorld, v.vertex).xyz;
-                float3 s = swell(w.xz, _Time.y);
+                float3 s = swell(w.xz, TumpShaderTime());
                 w.y += s.x;
                 o.world = w;
                 o.pos = mul(UNITY_MATRIX_VP, float4(w, 1));
@@ -225,7 +226,7 @@ Shader "TumbangPreso/LagoonCoveWater"
 
             fixed4 frag(v2f i) : SV_Target
             {
-                float t = _Time.y;
+                float t = TumpShaderTime();
                 float3 toCam = _WorldSpaceCameraPos - i.world;
                 float dist = length(toCam);
                 float3 view = toCam / dist;

@@ -125,6 +125,7 @@ Shader "TumbangPreso/SpiritGhost"
             Blend One OneMinusSrcAlpha
 
             CGPROGRAM
+            #include "RecordedShaderTime.cginc"
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
@@ -175,7 +176,7 @@ Shader "TumbangPreso/SpiritGhost"
 
                 // The mist takes her from the feet up; a slow shimmer runs up her.
                 float up = i.world.y - _BaseY;
-                float there = smoothstep(_FadeLow, _FadeHigh, up) * (0.9 + 0.1 * sin(_Time.y * 2.6 + up * 5.0)) * _Presence;
+                float there = smoothstep(_FadeLow, _FadeHigh, up) * (0.9 + 0.1 * sin(TumpShaderTime() * 2.6 + up * 5.0)) * _Presence;
                 alpha = saturate(alpha) * there;
                 fixed4 ghost = fixed4(body * alpha + added * there, alpha);
 

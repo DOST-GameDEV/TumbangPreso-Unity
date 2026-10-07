@@ -62,6 +62,10 @@ namespace TumbangPreso.EditorTools
             // installer never builds gameplay or replay services in a capture.
             files.Remove("Assets/TumbangPreso/Runtime/MatchInstaller.cs");
             files.Remove("Assets/TumbangPreso/Runtime/MatchInstaller.cs.meta");
+            // An exact, replay-only clock adapter leaves the ordinary preview shader
+            // source unchanged. Any change to its live fallback invalidates footage.
+            if(ReplayClockKeepsLiveTime())
+            {files.Remove(ReplayClockSource);files.Remove(ReplayClockSource+".meta");}
             var builder=new StringBuilder("1920x1080;30fps;780frames;HDR;MSAA4;camera-sway;settled-ground;camera-entry-v3\n");
             var entry=SceneFlow.PreviewFor(map);
             builder.Append(map).Append(':').Append(entry.Yaw.ToString("R",CultureInfo.InvariantCulture)).Append(':')
@@ -101,8 +105,22 @@ namespace TumbangPreso.EditorTools
             byte[] bytes=File.ReadAllBytes(path);string extension=Path.GetExtension(path);
             bool text=extension==".cs"||extension==".meta"||extension==".shader"||extension==".cginc"||extension==".hlsl"||extension==".compute";
             if(!text&&bytes.Length>=5)text=Encoding.UTF8.GetString(bytes,0,5)=="%YAML";
-            if(text)bytes=Encoding.UTF8.GetBytes(Encoding.UTF8.GetString(bytes).Replace("\r\n","\n"));
+            if(text)
+            {
+                string source=Encoding.UTF8.GetString(bytes).Replace("\r\n","\n");
+                if(extension==".shader"&&ReplayClockKeepsLiveTime())
+                    source=string.Join("\n",source.Split('\n').Where(line=>line.Trim()!="#include \"RecordedShaderTime.cginc\""&&
+                        line.Trim()!="#include \"../Resources/Shaders/RecordedShaderTime.cginc\"")).Replace("TumpShaderTime()","_Time.y");
+                bytes=Encoding.UTF8.GetBytes(source);
+            }
             using(var sha=SHA256.Create())return Hex(sha.ComputeHash(bytes));
+        }
+        const string ReplayClockSource="Assets/TumbangPreso/Resources/Shaders/RecordedShaderTime.cginc";
+        static bool ReplayClockKeepsLiveTime()
+        {
+            if(!File.Exists(ReplayClockSource))return false;
+            string source=string.Concat(File.ReadAllText(ReplayClockSource).Where(c=>!char.IsWhiteSpace(c)));
+            return source=="#ifndefTUMP_RECORDED_SHADER_TIME_INCLUDED#defineTUMP_RECORDED_SHADER_TIME_INCLUDED#include\"UnityCG.cginc\"float4_TumpRecordedClock;floatTumpShaderTime(){return_TumpRecordedClock.y>0.5?_TumpRecordedClock.x:_Time.y;}#endif";
         }
         static string Hex(byte[] bytes)=>string.Concat(bytes.Select(b=>b.ToString("x2")));
         public static void WriteReceipt(string map,string capturedFingerprint)

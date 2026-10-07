@@ -1,0 +1,86 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Resources/Shaders/MoonShaft.shader",
+    "originalNormalisedSha256": "5e058bcfdf27acc241bfa73c89aa65af8e2522f16fdbbf7ed950e99e809f96e2",
+    "candidateNormalisedSha256": "a159a48f0462952da16b6aa736f8a23cabf77b1757892f6f6fc535df8a4d1c2f",
+    "ordinarySourceExactlyUnchanged": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/Shaders/OmenVeil.shader",
+    "originalNormalisedSha256": "4be6486f921c0f42081be64a067937a3aaf8c0529df6d23ebb078c78c3997b2b",
+    "candidateNormalisedSha256": "1d12e86a5f07ea735f7d2e0404daace7a80b60a26775bea685a7f8d5e920e673",
+    "ordinarySourceExactlyUnchanged": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/Shaders/RoofPoolWater.shader",
+    "originalNormalisedSha256": "502fc170e5239f4aef8adcd298676239bb24674dbdd470f79155e4ff957431e8",
+    "candidateNormalisedSha256": "09f7f6772434bdaae6f258783de6222ead499fc5f56072855edd141f1287b46e",
+    "ordinarySourceExactlyUnchanged": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/Shaders/SoulGlow.shader",
+    "originalNormalisedSha256": "1ac3e4ac5c2ffb70f1d6c4d50f9baf4c742fc630478aa7283a64efb0e3be2dd5",
+    "candidateNormalisedSha256": "c63ef99edf3a5dd2d6f7ac7bb1a4a3a55da7652658acc436d612e434d2c32105",
+    "ordinarySourceExactlyUnchanged": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/Shaders/SoulSpill.shader",
+    "originalNormalisedSha256": "8c972a5af72ef7f05bcbef2c3baa1b56741f9e057b4adf7c660a61b359ebf53c",
+    "candidateNormalisedSha256": "6256694251359772d97d0c7d4eea41f09f10fd16199a8b2a48f4f5ae497a17cb",
+    "ordinarySourceExactlyUnchanged": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/Shaders/SpiritGhost.shader",
+    "originalNormalisedSha256": "4858e25a58fa2478074f7049f71286e5d2fa43cc4faaf43fdebe62c6f290e5c3",
+    "candidateNormalisedSha256": "ec6147be37a440572e63ed5adf4a3eb40019f7128df283799e27dbd27967207d",
+    "ordinarySourceExactlyUnchanged": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/Shaders/VoodooGhost.shader",
+    "originalNormalisedSha256": "3e4a0cf33fa6ebd0a75e4036752a00f96bd20116003a6fe3873b80727f3cd551",
+    "candidateNormalisedSha256": "822c5cbaf4236f04eeb35daf315d4cb611410c0dc3fae2646f53ee61ef3caba2",
+    "ordinarySourceExactlyUnchanged": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/Shaders/VoodooThread.shader",
+    "originalNormalisedSha256": "f2a67f846c3e86b66bb8f08d9857075c93f7f26d376c8eb4b0e5661086925075",
+    "candidateNormalisedSha256": "52b8828ff5cc2bdb0ae05b0c764d7a2cf8a05c9a534782943167ba4df049c560",
+    "ordinarySourceExactlyUnchanged": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/Shaders/VoodooWisp.shader",
+    "originalNormalisedSha256": "175a121cd05b7c89525594914af01efac3b910010e313caff1188a3f0407aacf",
+    "candidateNormalisedSha256": "ac88ea2d1c6eabd14610948595210beee1ca95c145d15ad8a3c4cc85cb178f49",
+    "ordinarySourceExactlyUnchanged": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Shaders/ArenaHologram.shader",
+    "originalNormalisedSha256": "3be73005d6cbcc29fb5d4d759f620de6b1cf2009ce2dfd8b271c019b102cb25a",
+    "candidateNormalisedSha256": "366871d1b25061572af367d5cfbe96804cfbd23cfbe22827cc6c89d028613420",
+    "ordinarySourceExactlyUnchanged": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Shaders/LagoonCoveWater.shader",
+    "originalNormalisedSha256": "66c36d0ed073909c23a9cb570c1eda36ae859cc5be4395fb312b94e96947fc05",
+    "candidateNormalisedSha256": "886c1981844f0745474c8218b577e1c5511b921aca318185135270a202a743c2",
+    "ordinarySourceExactlyUnchanged": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Shaders/SlipperBeam.shader",
+    "originalNormalisedSha256": "2b5af52b523caefc2bf2a51dc52a2c04d7386984fecdd40fdb6965819765851e",
+    "candidateNormalisedSha256": "1c18579c46ae0c7f359aad709142b47cc9fa3a34926060ad14426da1c1219ed1",
+    "ordinarySourceExactlyUnchanged": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Shaders/Toon.shader",
+    "originalNormalisedSha256": "3806c454ea9da7c2719bd75e2d488519f0ad715dcc2c113539a7bb99bb5f1fd9",
+    "candidateNormalisedSha256": "95d48d95968f9ee46178b186a1715846ba0ef51deb0de528eb1f0e2ae0cdcdca",
+    "ordinarySourceExactlyUnchanged": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Shaders/VolcanicRock.shader",
+    "originalNormalisedSha256": "ef47900958a69bd8c69a9b6656c10101b93901a629d171e7e75332e81f9d5a3d",
+    "candidateNormalisedSha256": "e06ce7276f6c7a7fc9fc599b32e6ced074a9768dced6bde27763cef32140bf3c",
+    "ordinarySourceExactlyUnchanged": true
+  }
+]

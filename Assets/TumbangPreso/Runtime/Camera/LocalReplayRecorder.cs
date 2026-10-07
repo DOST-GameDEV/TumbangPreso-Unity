@@ -16,6 +16,7 @@ namespace TumbangPreso.CameraSystem
         private int _round;
         private float _start = -1, _last;
         private string _warning;
+        private readonly System.Collections.Generic.List<LocalReplaySceneFrame> _sceneFrames=new System.Collections.Generic.List<LocalReplaySceneFrame>(64);
         public LocalReplayRecorder(MatchReplayArchive archive) { _archive = archive; }
         public void Tick()
         {
@@ -23,7 +24,7 @@ namespace TumbangPreso.CameraSystem
             if (_writer != null && (match != _match || match.PresentationMatchId != _identity || !match.MatchInProgress))
                 Finish(_match != null && _match.HasCompleted);
             else if (_writer != null && match.RoundNumber != _round)
-            { Flush(); _start = -1; _round = match.RoundNumber; }
+            { Flush(); _start = -1; _round = match.RoundNumber; _sceneFrames.Clear(); }
         }
         public void Sample(float time)
         {
@@ -49,6 +50,7 @@ namespace TumbangPreso.CameraSystem
             }
             if (_start < 0) _start = time;
             _last = time;
+            _sceneFrames.Add(LocalReplaySceneState.Capture(time));
             if (_last - _start >= 3) Flush();
         }
         private void Completed(int winner) => Finish(true);
@@ -56,14 +58,14 @@ namespace TumbangPreso.CameraSystem
         {
             // Flush before MatchPoseHistory's next LateUpdate clears its ring.
             // Polling in Update can miss a transition started by a coroutine.
-            Flush();_start=-1;_round=number;
+            Flush();_start=-1;_round=number;_sceneFrames.Clear();
         }
-        private void IntermissionStarted(int number,int taya){Flush();_start=-1;}
+        private void IntermissionStarted(int number,int taya){Flush();_start=-1;_sceneFrames.Clear();}
         private void Flush()
         {
             if (_writer == null || _start < 0 || _last <= _start) return;
             if (_writer.CanAppend && _archive.TryCaptureSession(_start, _last, ++_sequence, out var clip, out string error))
-                _writer.Append(clip);
+                _writer.Append(clip,new LocalReplaySceneSegment{Frames=new System.Collections.Generic.List<LocalReplaySceneFrame>(_sceneFrames)});
             else
             {
                 _warning = _writer.Error ?? "Some replay footage could not be recorded. " +
@@ -71,6 +73,8 @@ namespace TumbangPreso.CameraSystem
                 Debug.LogWarning("[LocalReplay] " + _warning);
             }
             _start = _last;
+            var last=_sceneFrames.Count>0?_sceneFrames[_sceneFrames.Count-1]:null;
+            _sceneFrames.Clear();if(last!=null)_sceneFrames.Add(last);
         }
         public void Finish(bool completed)
         {
@@ -84,6 +88,7 @@ namespace TumbangPreso.CameraSystem
             }
             _writer.Finish(completed, _warning);
             _writer = null; _match = null; _start = -1;
+            _sceneFrames.Clear();
         }
     }
 }

@@ -27,7 +27,8 @@ namespace TumbangPreso.CameraSystem
         private Slider _seek;
         private InputField _jumpField;
         private Text _timeHint;
-        private Task<RecordedMatchClip> _loading;
+        private sealed class LoadedSegment { public RecordedMatchClip Clip; public LocalReplaySceneSegment Scene; }
+        private Task<LoadedSegment> _loading;
         private int _loaded = -1, _requested = -1, _follow = -1;
         private float _time, _speed = 1;
         private bool _paused = true, _clean, _seeking, _silentNextFrame, _continuousRead;
@@ -204,7 +205,7 @@ namespace TumbangPreso.CameraSystem
         {
             _requested = index;_continuousRead=continuous;
             var entry = _entry;
-            _loading = Task.Run(() => LocalReplayStore.Read(entry, index));
+            _loading = Task.Run(() => new LoadedSegment{Clip=LocalReplayStore.Read(entry,index),Scene=LocalReplayStore.ReadScene(entry,index)});
         }
         private void Update()
         {
@@ -218,13 +219,14 @@ namespace TumbangPreso.CameraSystem
                     Vector3 eye = _view?.CameraTransform.position ?? new Vector3(0, 10, -15);
                     Quaternion rotation = _view?.CameraTransform.rotation ?? Quaternion.identity;
                     bool existing = _view != null;
-                    if (_view == null || !_view.UseClip(task.Result,_continuousRead))
+                    if (_view == null || !_view.UseClip(task.Result.Clip,_continuousRead))
                     {
-                        _view?.Dispose(); _view = new RecordedWorldView(transform, task.Result, true);
+                        _view?.Dispose(); _view = new RecordedWorldView(transform, task.Result.Clip, true);
                         if (!_view.Ready) { Fail(_view.UnavailableReason ?? "The recorded world could not be opened."); return; }
                         if (existing) _view.CameraTransform.SetPositionAndRotation(eye, rotation);
                         _view.ShowLabels(false);
                     }
+                    _view.RecordedScene=task.Result.Scene;
                     _loaded = _requested;
                     int wanted=SegmentAt(_time);if(wanted!=_loaded)Request(wanted);
                 }

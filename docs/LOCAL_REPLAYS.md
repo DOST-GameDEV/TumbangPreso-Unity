@@ -31,7 +31,11 @@ with at most two outstanding writes. It does not retain a whole match in RAM or
 resimulate inputs. The viewer retains one segment and one pending disk read.
 
 Each `TUMP-<date>-<unique-id>` folder contains `manifest.json` and numbered `.tps`
-segments. A segment is committed atomically before its manifest entry. SHA-256,
+segments, with optional numbered `.scene.json` sidecars for recorded map state.
+Sidecars capture actual BGC traffic poses, visibility and signal material-slot
+colour/emission at the same samples. They are independently hashed, bounded and
+validated before use; older files without them still load. A segment and its
+sidecar are committed atomically before their manifest entry. SHA-256,
 identity/window validation, bounded decoding and a local-only short-tail decoder
 prevent damaged data from becoming plausible footage. The existing network
 highlight decoder and wire version remain unchanged.
@@ -60,5 +64,18 @@ is separate from input/device, full-effect fidelity and packaged acceptance.
 Evidence and any reproduced failures belong in the dated laptop report, not in
 an assertion that the entire game is tournament ready. Real peer recordings, full effect/prop transitions, dynamic map scenery timing,
 long-session performance and physical viewer controls remain separate acceptance.
+
+Replay shader animation uses recorded scaled game time only during the replay
+camera render. Ordinary authored shader time, shader assets and shared globals
+are restored afterward, including on failure. The replay adapter leaves the
+ordinary game's material appearance unchanged. Seek and pause apply to water,
+hologram, frost-band and supported spirit shader motion as well as poses.
+Traffic pose/property overrides are also scoped to that render; they do not call
+road clocks, routes, hits or activate scene objects.
 The current viewer reconstructs recorded gameplay and supported effects; ambient
-scenery is supplied by the compatible map, not a full saved map simulation.
+scenery is supplied by the compatible map, with the traffic timeline stored in
+new sidecars. Full visual parity is not yet qualified: Arena effects, drones,
+ambient animals, crowd response and water wake state need further recording and
+same-camera/time verification. Older recordings cannot gain scene state that was
+never saved. Default-material shader comparisons do not prove all live ability,
+particle or map states, and native Editor checks do not establish packaged parity.

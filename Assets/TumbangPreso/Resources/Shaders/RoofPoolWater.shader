@@ -11,6 +11,7 @@ Shader "TumbangPreso/RoofPoolWater"
         Tags { "RenderType"="Transparent" "Queue"="Transparent" }
         LOD 200
         CGPROGRAM
+        #include "RecordedShaderTime.cginc"
         #pragma surface surf Standard alpha:fade
         #pragma target 3.0
         fixed4 _Color;
@@ -21,7 +22,7 @@ Shader "TumbangPreso/RoofPoolWater"
         void surf(Input IN,inout SurfaceOutputStandard o)
         {
             float2 p=IN.worldPos.xz;
-            float t=_Time.y;
+            float t=TumpShaderTime();
             float a=dot(p,float2(1.4,0.8))+t*0.48;
             float b=dot(p,float2(-0.7,1.65))-t*0.34;
             float ripple=sin(a)*cos(b);
