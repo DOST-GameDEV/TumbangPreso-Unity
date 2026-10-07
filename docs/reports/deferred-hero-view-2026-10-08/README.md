@@ -32,4 +32,13 @@ player/export/build inputs and preferences restored; exact receipts are retained
 Candidate2 separates description, model binding, kit preparation and each ability
 tile into additional yielded stages before revealing the view. Native24100
 passes the same three behavior controls on those exact bytes with all21,423
-inputs/preferences restored. Its actual player comparison remains pending.
+inputs/preferences restored.
+
+Its actual Development player58944 completes14windows and reduces the Hero
+maximum to50.435ms wall/50.302ms CPU, with zero frames over100ms in that
+transition. The previous staged118.399ms CPU peak is retained. The new worst
+frame has74 Mono.JIT samples/18.256ms sum, canvas pre-render16.822ms and
+ColourGrade9.847ms. These nested values are not additive to their parents.
+All current build/player/export inputs/preferences restored. Ordinary-release
+benefit and the remaining noticeable first-render spike are still unqualified.
+Desktop remains unchanged; this does not close tournament smoothness.

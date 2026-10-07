@@ -29,6 +29,17 @@
     "Assets/TumbangPreso/Runtime/UI/Hub/HubScreen.cs": "066645f70f6dda211f8362ae78dbe647983599584741458380a629b0c95329ec",
     "Assets/TumbangPreso/Tests/PlayMode/DeferredHeroViewTests.cs": "afa850ccbb5309457937c194f4d303b52170053b9e999bb0c760b5bef0b75e4a"
   },
-  "actualPlayerPerformanceMeasured": false,
-  "candidate1StillFailedSmoothness": true
+  "actualPlayerPerformanceMeasured": true,
+  "candidate1StillFailedSmoothness": true,
+  "ordinaryReleaseMeasured": false,
+  "developmentPlayerRawSha256": {
+    "candidate2-player-cpu-worst.json": "ce34f8efe86778d5f44e948740cb60419a3625abc8c11bd32b016985ceb7a1eb",
+    "candidate2-player-result.json": "785e6ac01d92301e339914ebea27b7335eba0813126fd8495d83ab7b0099b3b0",
+    "candidate2-export-result.json": "7bd23ec7a7857401e3588efe36d3db5f18ae2c252618ebdd4a5448a715afaeaf",
+    "candidate2-export-restoration.json": "6f6f46d645255d528920d633c43866a41bb1871caf14b2387b920495c4f9ee37",
+    "candidate2-build-restoration.json": "af336158a33a65a04d23832d99af45ac0d7bb994694e16c55ee34301354a78ba"
+  },
+  "developmentFirstHeroWallMaxMs": 50.43519973754883,
+  "developmentFirstHeroCpuMaxMs": 50.3018,
+  "smoothnessGoalAchieved": false
 }
