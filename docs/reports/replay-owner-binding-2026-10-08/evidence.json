@@ -171,5 +171,31 @@
   "packageAccepted": false,
   "desktopChanged": false,
   "newBuilds": 0,
-  "remaining": "Actual saved-recording material fingerprint mismatch and current package rerun, performance, all-map/default-match/peer/human acceptance remain open."
+  "remaining": "Actual saved-recording material fingerprint mismatch and current package rerun, performance, all-map/default-match/peer/human acceptance remain open.",
+  "publishedSourceProof": {
+    "Assets/TumbangPreso/Runtime/Camera/RecordedSceneryView.cs": {
+      "testedRawSha256": "8b7b4bfaab8e270b8e82021811fdd5bde5f9a15883407bfb0f1c8c908fe893f1",
+      "publishedBlobSha256": "c43a64ab1bb172e016b9cc0969af59ab55de60616654b8b056a4186d35885e04",
+      "lfSha256": "c43a64ab1bb172e016b9cc0969af59ab55de60616654b8b056a4186d35885e04",
+      "classification": "Only CRLF/LF normalization; exact native source bytes are retained under native-source."
+    },
+    "Assets/TumbangPreso/Runtime/Camera/LocalReplayPlayback.cs": {
+      "testedRawSha256": "72819203a44fe183308b2849cb104bd54d5c38113517dc509274f8cfa045c4e5",
+      "publishedBlobSha256": "90aadb19e7f4d1bb949d838afcfab43689866db683f8e4458cbb3a62e9c5af07",
+      "lfSha256": "90aadb19e7f4d1bb949d838afcfab43689866db683f8e4458cbb3a62e9c5af07",
+      "classification": "Only CRLF/LF normalization; exact native source bytes are retained under native-source."
+    },
+    "Assets/TumbangPreso/Runtime/Diagnostics/LocalReplayPackageProbe.cs": {
+      "testedRawSha256": "17644abe57cd4494b724985a358c3541181575ffef1f3034a424a38880cac7db",
+      "publishedBlobSha256": "17644abe57cd4494b724985a358c3541181575ffef1f3034a424a38880cac7db",
+      "lfSha256": "17644abe57cd4494b724985a358c3541181575ffef1f3034a424a38880cac7db",
+      "classification": "Only CRLF/LF normalization; exact native source bytes are retained under native-source."
+    },
+    "Assets/TumbangPreso/Tests/PlayMode/RecordedSceneryTests.cs": {
+      "testedRawSha256": "c0f2db58bc5d12d563f215cc63878e410c55fe9a17de6ec6b284ec699b4a579a",
+      "publishedBlobSha256": "0029ee33af3b2b3968596a85d64fec16fd9399fd17329d763e9f355280193f75",
+      "lfSha256": "0029ee33af3b2b3968596a85d64fec16fd9399fd17329d763e9f355280193f75",
+      "classification": "Only CRLF/LF normalization; exact native source bytes are retained under native-source."
+    }
+  }
 }
