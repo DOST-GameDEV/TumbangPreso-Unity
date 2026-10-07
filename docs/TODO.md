@@ -3168,6 +3168,9 @@ loading, mode and settings stalls still need work; full gameplay/results are
 separate and its legal fixture correction remains in progress.
 Bounded six-mode-poster preparation passes the same three native startup checks;
 its release timing improvement remains pending.
+The opt-in full performance fixture now uses normal four-seat matches and legal
+kit recipes; Unity compilation/timing control passes. Required effects and fresh
+natural results remain [actual-player gates](reports/performance-fixture-2026-10-07/README.md).
 
 **Loading/optimization, OPEN:** yielded shader/art/avatar/portrait preparation,
 retained ability props/effect data and actual menu activation readiness are implemented.
