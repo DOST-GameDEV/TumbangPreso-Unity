@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Skipped:Ignored" total="4" passed="0" failed="0" inconclusive="0" skipped="4" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 11:34:03Z" end-time="2026-10-07 11:34:03Z" duration="0.2081291">
+  <test-suite type="TestSuite" id="3605" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="2107" result="Skipped" label="Ignored" start-time="2026-10-07 11:34:03Z" end-time="2026-10-07 11:34:03Z" duration="0.208129" total="4" passed="0" failed="0" inconclusive="0" skipped="4" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <reason>
+      <message><![CDATA[One or more child tests were ignored]]></message>
+    </reason>
+    <test-suite type="Assembly" id="3597" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2107" result="Skipped" label="Ignored" start-time="2026-10-07 11:34:03Z" end-time="2026-10-07 11:34:03Z" duration="0.195250" total="4" passed="0" failed="0" inconclusive="0" skipped="4" asserts="0">
+      <properties>
+        <property name="_PID" value="70276" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <reason>
+        <message><![CDATA[One or more child tests were ignored]]></message>
+      </reason>
+      <test-suite type="TestSuite" id="3598" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2107" result="Skipped" label="Ignored" start-time="2026-10-07 11:34:03Z" end-time="2026-10-07 11:34:03Z" duration="0.187890" total="4" passed="0" failed="0" inconclusive="0" skipped="4" asserts="0">
+        <properties />
+        <reason>
+          <message><![CDATA[One or more child tests were ignored]]></message>
+        </reason>
+        <test-suite type="TestSuite" id="3601" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2105" result="Skipped" label="Ignored" start-time="2026-10-07 11:34:03Z" end-time="2026-10-07 11:34:03Z" duration="0.180421" total="4" passed="0" failed="0" inconclusive="0" skipped="4" asserts="0">
+          <properties />
+          <reason>
+            <message><![CDATA[One or more child tests were ignored]]></message>
+          </reason>
+          <test-suite type="TestFixture" id="2087" name="LocalReplayStreamingTests" fullname="TumbangPreso.PlayTests.LocalReplayStreamingTests" classname="TumbangPreso.PlayTests.LocalReplayStreamingTests" runstate="Runnable" testcasecount="4" result="Skipped" label="Ignored" start-time="2026-10-07 11:34:03Z" end-time="2026-10-07 11:34:03Z" duration="0.152165" total="4" passed="0" failed="0" inconclusive="0" skipped="4" asserts="0">
+            <properties />
+            <reason>
+              <message><![CDATA[One or more child tests were ignored]]></message>
+            </reason>
+            <test-case id="2090" name="AFailedObsoleteSeekCannotPoisonTheLatestValidPosition" fullname="TumbangPreso.PlayTests.LocalReplayStreamingTests.AFailedObsoleteSeekCannotPoisonTheLatestValidPosition" methodname="AFailedObsoleteSeekCannotPoisonTheLatestValidPosition" classname="TumbangPreso.PlayTests.LocalReplayStreamingTests" runstate="Runnable" seed="1613520803" result="Skipped" label="Ignored" start-time="2026-10-07 11:34:03Z" end-time="2026-10-07 11:34:03Z" duration="0.048552" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <reason>
+                <message><![CDATA[Set TUMP_REPLAY_STREAM to an actual completed Arena replay fixture.]]></message>
+              </reason>
+            </test-case>
+            <test-case id="2091" name="ClosingDuringARealReadCannotRestoreTheOldViewer" fullname="TumbangPreso.PlayTests.LocalReplayStreamingTests.ClosingDuringARealReadCannotRestoreTheOldViewer" methodname="ClosingDuringARealReadCannotRestoreTheOldViewer" classname="TumbangPreso.PlayTests.LocalReplayStreamingTests" runstate="Runnable" seed="509622952" result="Skipped" label="Ignored" start-time="2026-10-07 11:34:03Z" end-time="2026-10-07 11:34:03Z" duration="0.031507" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <reason>
+                <message><![CDATA[Set TUMP_REPLAY_STREAM to an actual completed Arena replay fixture.]]></message>
+              </reason>
+            </test-case>
+            <test-case id="2089" name="ContinuousFourTimesPlaybackDoesNotFreezeAtSavedSegmentSeams" fullname="TumbangPreso.PlayTests.LocalReplayStreamingTests.ContinuousFourTimesPlaybackDoesNotFreezeAtSavedSegmentSeams" methodname="ContinuousFourTimesPlaybackDoesNotFreezeAtSavedSegmentSeams" classname="TumbangPreso.PlayTests.LocalReplayStreamingTests" runstate="Runnable" seed="1503135035" result="Skipped" label="Ignored" start-time="2026-10-07 11:34:03Z" end-time="2026-10-07 11:34:03Z" duration="0.030879" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <reason>
+                <message><![CDATA[Set TUMP_REPLAY_STREAM to an actual completed Arena replay fixture.]]></message>
+              </reason>
+            </test-case>
+            <test-case id="2088" name="ContinuousOneTimesPlaybackDoesNotFreezeAtSavedSegmentSeams" fullname="TumbangPreso.PlayTests.LocalReplayStreamingTests.ContinuousOneTimesPlaybackDoesNotFreezeAtSavedSegmentSeams" methodname="ContinuousOneTimesPlaybackDoesNotFreezeAtSavedSegmentSeams" classname="TumbangPreso.PlayTests.LocalReplayStreamingTests" runstate="Runnable" seed="2094106490" result="Skipped" label="Ignored" start-time="2026-10-07 11:34:03Z" end-time="2026-10-07 11:34:03Z" duration="0.030938" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <reason>
+                <message><![CDATA[Set TUMP_REPLAY_STREAM to an actual completed Arena replay fixture.]]></message>
+              </reason>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
