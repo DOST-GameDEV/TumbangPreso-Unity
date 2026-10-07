@@ -1,0 +1,17 @@
+{
+  "rawFiles": {
+    "build-result.json": "d509c9bf65ae4229dc07075623772010e0514d701a2b85162a621626f9b5f3d5",
+    "build-launch.json": "4755e65f8f84d209aa47eb3aa53d2e7a1c6545c4bb95217ef03518961b9346aa",
+    "build-profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+    "artifact-manifest.json": "252ed78fa4bb870d44d7be71d64fcd20dd64cb1c6dd280a0b11546b487b66fe4",
+    "player-result.json": "ea0906360c2b4d88cdd8bb003e35703ff6cc837acf1a11e0b4a9a1b7895f7633",
+    "player-launch.json": "f889d68bfc8b6ea9b42bfecc41d8111b963b50d27efc4d377703205731b91c88",
+    "player-probe.json": "9aaf571f199496a222b70fcacf31661b9aafb59bbd7f908af73c74d727555067",
+    "player.log": "7a0d08f2de2c7252e65443e8368eff118f251bf84ba267f433ca9b0edd0309df",
+    "build-qualified-source.json.gz": "7418a29463545d32f94a666ce6c2cb081eb6cd11fff825fed8e213fb4a9a70cb"
+  },
+  "qualifiedSourceSha256": "a107635f689d26892b4307852c042a27cdb08cc208da8729e4889b54211a6e86",
+  "runtimeSha256": "cf5d053a954b5d2f02c1009763208cd2690a1515241ae1e64435c75bc054645a",
+  "coreSha256": "ec2a39b30a3dadb3e39de1ef24ce1b959342798526d42ec7f08f29869449c4c1",
+  "probeSourceSha256": "307e92a8332d96a21f3bd686feb1cf7a2ffb110a01be0b1f26f5f90db25fa29d"
+}
