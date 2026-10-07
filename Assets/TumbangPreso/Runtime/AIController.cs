@@ -2706,6 +2706,13 @@ namespace TumbangPreso
 
             _lungeHeld += dt;
 
+            // Movement stays on the bot's ordinary keyboard headings. The
+            // attack needs the motor's bounded point aim: two parallel runners
+            // can keep an off-axis bearing that no digital heading can resolve.
+            Vector3 lungeAim = AheadOf(victim, .12f).Value;
+            intent.AimPoint = lungeAim;
+            intent.FaceAimPoint = true;
+
             // ⚠️ AND THE RELEASE IS HELD BACK WHILE THE FACING POINTS OFF THE STAGE. The body
             // has walked and turned since the charge began, and letting go is what fires it.
             // Holding costs nothing but the tag; the hunt keeps walking and the key comes up
@@ -2734,7 +2741,7 @@ namespace TumbangPreso
                 // A full charge still needs an aimed release. Finish turning
                 // through the same movement input instead of spending the dash
                 // sideways just because a planner timer expired.
-                Vector3 aim = AheadOf(victim, .12f).Value - transform.position;
+                Vector3 aim = lungeAim - transform.position;
                 if (EdgeSense) _edgeGoalDistance = aim.magnitude;
                 Drive(intent, aim, false, pausesOnTurn: false);
                 Press(intent, Verb.Lunge, true);

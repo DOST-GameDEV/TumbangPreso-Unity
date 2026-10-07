@@ -2,6 +2,7 @@
 
 - [ ] October7 owner: bots must not randomly stare or stop doing anything. Reproduce and fix eligible-player stalls, lost decisions, unfinished aimed inputs and unreachable goals; confirm useful responses to the round and threats across every map.
 - [x] Fix demonstrated competing-power deliberation starvation, stale Crosscurrent aim and interrupted acquired holds. Original failures retained; fourteen current/Skim/ultimate controls plus corrected actual-ramp hold/ownership control pass on identical production AI bytes. [Evidence and limits](reports/ai-skill-deliberation-2026-10-07/README.md).
+- [x] Fix charged pursuit unable to align between digital movement headings. Original20/22degree motor scenarios fail;21actual motor/aim/power/obstruction/lifetime controls pass with all21367inputs/preferences restored. [Evidence](reports/bot-lunge-motor-aim-2026-10-07/README.md).
 - [ ] Measure actual movement and completed gameplay actions during natural1x matches. Keep charging, channels, forced pauses and legal guarding explicit; tiny fidgets or a nonzero requested axis do not prove useful progress.
 - [ ] Complete feature/role/map coverage and current packaged acceptance. Short roster samples and staged consumer checks do not close this requirement.
 

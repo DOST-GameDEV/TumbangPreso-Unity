@@ -1,0 +1,23 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Runtime/AIController.cs",
+    "nativeRawSha256": "9d1ea257436fa8dc034ae847ed8b1dc97a7906a68caeb0c4779ef7d688d2920f",
+    "verifiedAgainstFrozenInput": true,
+    "stagedGitSha256": "6a35139c88c7090c08dceb8095b215f5f97c41bde1bc976b393734ddc60b2ab3",
+    "normalisedTextMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/AiLungeMotorAimTests.cs",
+    "nativeRawSha256": "0975b02ecad9b5b15fc15da6f472b0e70c77bb6dab889760321980c865499fac",
+    "verifiedAgainstFrozenInput": true,
+    "stagedGitSha256": "0975b02ecad9b5b15fc15da6f472b0e70c77bb6dab889760321980c865499fac",
+    "normalisedTextMatches": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/AiLungeMotorAimTests.cs.meta",
+    "nativeRawSha256": "a85c2b236e37af996057f05e7613ebb4d87041672f13a59fcaed1780be4fac8e",
+    "verifiedAgainstFrozenInput": true,
+    "stagedGitSha256": "800bb12e099a4f7c0c0f42b9490d4293ad2ed54917b0abec11a28adf2d4f32cd",
+    "normalisedTextMatches": true
+  }
+]
