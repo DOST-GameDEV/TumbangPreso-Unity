@@ -20,6 +20,7 @@ namespace TumbangPreso.CameraSystem
             public int Seat,Skin;
             public string Person;
             public MatchPoseHistory.Track Track;
+            public readonly List<(float time,bool visible)> Visibility=new List<(float,bool)>();
         }
         private struct Pending
         {public float Contact,Start,End;public int Actor,Subject,Importance;public string Reason;public Dictionary<MatchPoseHistory.Track,RecordedPoseTrack.Sample> ContactPoses;public RecordedFieldFrame ContactFields;}
@@ -86,7 +87,8 @@ namespace TumbangPreso.CameraSystem
             CheckIdentity();
             if(_history==null||_match<=0||GameServices.Round==null)return;
             if(_props.Count==0||time>=_propsScanAt){_propsScanAt=time+.2f;BindProps();}
-            foreach(var prop in _props)if(prop.Source!=null)prop.Track.Record(time);
+            foreach(var prop in _props)if(prop.Source!=null)
+            {prop.Track.Record(time);prop.Visibility.Add((time,prop.Source.activeInHierarchy));if(prop.Visibility.Count>MatchPoseHistory.Samples)prop.Visibility.RemoveAt(0);}
             _fields.Add(CaptureFields(time));if(_fields.Count>MatchPoseHistory.Samples)_fields.RemoveAt(0);
             // The shipped kits have recorded body/prop, status, weather,
             // persistent field and distinctive held/flight presentation paths.
@@ -122,7 +124,7 @@ namespace TumbangPreso.CameraSystem
             foreach(var prop in _props)
             {
                 if(error!=null)break;
-                var pose=prop.Track.Retain(start,end);
+                var pose=RetainProp(prop,start,end);
                 if(pose==null){error="Prop pose history is incomplete.";break;}
                 objects.Add(new RecordedObjectTrack{Kind=prop.Kind,Seat=prop.Seat,Skin=prop.Skin,Person=prop.Person,
                     VisualKey=VisualKey(prop.Track.Source),Pose=pose});
@@ -136,6 +138,16 @@ namespace TumbangPreso.CameraSystem
                 Start=start,End=end,Contact=start,Objects=objects.ToArray(),FieldFrames=_fields.GetRange(from,to-from+1).ToArray(),
                 Sounds=_sounds.Where(c=>(sequence==1?c.Time>=start:c.Time>start)&&c.Time<=end).ToArray()};
             return true;
+        }
+        private static RecordedPoseTrack RetainProp(Prop prop,float start,float end)
+        {
+            var pose=prop.Track.Retain(start,end);if(pose==null)return null;
+            foreach(var sample in pose.Samples)
+            {
+                int at=prop.Visibility.FindLastIndex(v=>v.time<=sample.Time+.00001f);
+                if(at>=0&&sample.Active.Length>0)sample.Active[0]&=prop.Visibility[at].visible;
+            }
+            return pose;
         }
         public static string VisualKey(GameObject root)
         {
@@ -169,7 +181,7 @@ namespace TumbangPreso.CameraSystem
         private void BindProps()
         {
             var round=GameServices.Round;_desiredProps.Clear();bool changed=false;
-            foreach(var shoe in FindObjectsByType<Slipper>())AddProp(round,shoe.gameObject,RecordedObjectKind.Slipper,shoe.SeatOfOrigin,shoe.SkinIndex,null,PropModel(shoe.gameObject),ref changed);
+            foreach(var shoe in FindObjectsByType<Slipper>(FindObjectsInactive.Include))AddProp(round,shoe.gameObject,RecordedObjectKind.Slipper,shoe.SeatOfOrigin,shoe.SkinIndex,null,PropModel(shoe.gameObject),ref changed);
             if(round.Lata!=null)AddProp(round,round.Lata.gameObject,RecordedObjectKind.Can,-1,round.Lata.SkinIndex,null,PropModel(round.Lata.gameObject),ref changed);
             foreach(var actor in round.Players)
             {

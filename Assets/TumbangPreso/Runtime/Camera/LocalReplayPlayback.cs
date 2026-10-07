@@ -27,7 +27,7 @@ namespace TumbangPreso.CameraSystem
         private Slider _seek;
         private InputField _jumpField;
         private Text _timeHint;
-        private sealed class LoadedSegment { public RecordedMatchClip Clip; public LocalReplaySceneSegment Scene; }
+        private sealed class LoadedSegment { public RecordedMatchClip Clip; public LocalReplaySceneSegment Scene; public LocalReplayFxSegment Effects; }
         private Task<LoadedSegment> _loading;
         private int _loaded = -1, _requested = -1, _follow = -1;
         private float _time, _speed = 1;
@@ -85,7 +85,14 @@ namespace TumbangPreso.CameraSystem
             }
             if(UnityEngine.Object.FindAnyObjectByType<AudioListener>()==null)Camera.main.gameObject.AddComponent<AudioListener>();
             float floor=0;
-            Visual.WorldGround.TryBelow(Vector3.up*.5f,.5f,3.5f,out floor);
+            // A miss returns negative infinity, not the initialized fallback.
+            // Arena can have an open centre; inspect nearby real support too.
+            if(Visual.WorldGround.TryBelow(Vector3.up*50,0,100,out float found)&&!float.IsNaN(found)&&!float.IsInfinity(found))floor=found;
+            else
+            {
+                foreach(var point in new[]{new Vector3(3,50,0),new Vector3(-3,50,0),new Vector3(0,50,3),new Vector3(0,50,-3)})
+                    if(Visual.WorldGround.TryBelow(point,0,100,out found)&&!float.IsNaN(found)&&!float.IsInfinity(found)){floor=found;break;}
+            }
             var worldLook=Visual.WorldLookPresentation.Install(owner,floor);
             Visual.CourtSurfacePresentation.Install(owner,worldLook);
             Visual.LagoonDeckPresentation.Install(owner);
@@ -205,7 +212,7 @@ namespace TumbangPreso.CameraSystem
         {
             _requested = index;_continuousRead=continuous;
             var entry = _entry;
-            _loading = Task.Run(() => new LoadedSegment{Clip=LocalReplayStore.Read(entry,index),Scene=LocalReplayStore.ReadScene(entry,index)});
+            _loading = Task.Run(() => new LoadedSegment{Clip=LocalReplayStore.Read(entry,index),Scene=LocalReplayStore.ReadScene(entry,index),Effects=LocalReplayStore.ReadEffects(entry,index)});
         }
         private void Update()
         {
@@ -226,7 +233,7 @@ namespace TumbangPreso.CameraSystem
                         if (existing) _view.CameraTransform.SetPositionAndRotation(eye, rotation);
                         _view.ShowLabels(false);
                     }
-                    _view.RecordedScene=task.Result.Scene;
+                    _view.RecordedScene=task.Result.Scene;_view.RecordedEffects=task.Result.Effects;
                     _loaded = _requested;
                     int wanted=SegmentAt(_time);if(wanted!=_loaded)Request(wanted);
                 }

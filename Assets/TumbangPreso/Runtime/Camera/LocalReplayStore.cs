@@ -12,7 +12,7 @@ namespace TumbangPreso.CameraSystem
     [Serializable] public sealed class LocalReplaySegment
     {
         public string File, Sha256;
-        public string SceneFile,SceneSha256;
+        public string SceneFile,SceneSha256,EffectsFile,EffectsSha256;
         public float Offset, Start, End;
         public int Round;
     }
@@ -165,6 +165,14 @@ namespace TumbangPreso.CameraSystem
                 throw new InvalidDataException("Incomplete recorded scene window.");
             return result;
         }
+        public static LocalReplayFxSegment ReadEffects(LocalReplayEntry entry,int index)
+        {
+            var segment=entry.Manifest.Segments[index];if(string.IsNullOrEmpty(segment.EffectsFile))return null;
+            if(segment.EffectsFile!=Path.GetFileName(segment.EffectsFile)||!segment.EffectsFile.EndsWith(".fx.gz",StringComparison.Ordinal))throw new InvalidDataException("Invalid recorded effects path.");
+            string path=Path.Combine(entry.Directory,segment.EffectsFile);if(new FileInfo(path).Length>LocalReplayEffectsCodec.MaxEncodedBytes)throw new InvalidDataException("Recorded effects file is too large.");
+            byte[] bytes=File.ReadAllBytes(path);if(Hash(bytes)!=segment.EffectsSha256)throw new InvalidDataException("Recorded effects are damaged.");
+            return LocalReplayEffectsCodec.Decode(bytes,segment.Start,segment.End);
+        }
         private static bool Finite(float value)=>!float.IsNaN(value)&&!float.IsInfinity(value);
         private static bool Finite(Vector3 value)=>Finite(value.x)&&Finite(value.y)&&Finite(value.z);
         private static bool Finite(Vector4 value)=>Finite(value.x)&&Finite(value.y)&&Finite(value.z)&&Finite(value.w);
@@ -217,7 +225,7 @@ namespace TumbangPreso.CameraSystem
                 // Only managed values are used by the worker. No transforms,
                 // Resources, scene objects or simulation calls cross this boundary.
             }
-            public bool Append(RecordedMatchClip clip,LocalReplaySceneSegment scene=null)
+            public bool Append(RecordedMatchClip clip,LocalReplaySceneSegment scene=null,LocalReplayFxSegment effects=null)
             {
                 if (!CanAppend) return false;
                 Interlocked.Increment(ref _pending);
@@ -238,8 +246,14 @@ namespace TumbangPreso.CameraSystem
                             if(sceneBytes.Length>4*1024*1024)throw new InvalidDataException("Replay scene capture exceeds its budget.");
                             AtomicWrite(Path.Combine(Directory,sceneFile),sceneBytes);sceneHash=Hash(sceneBytes);
                         }
+                        string effectsFile=null,effectsHash=null;
+                        if(effects!=null&&effects.Frames.Count>0)
+                        {
+                            effectsFile=_manifest.Segments.Count.ToString("D6")+".fx.gz";byte[] effectBytes=LocalReplayEffectsCodec.Encode(effects);
+                            AtomicWrite(Path.Combine(Directory,effectsFile),effectBytes);effectsHash=Hash(effectBytes);
+                        }
                         _manifest.Segments.Add(new LocalReplaySegment { File = file, Sha256 = Hash(bytes),
-                            SceneFile=sceneFile,SceneSha256=sceneHash,
+                            SceneFile=sceneFile,SceneSha256=sceneHash,EffectsFile=effectsFile,EffectsSha256=effectsHash,
                             Offset = _manifest.Duration, Start = clip.Start, End = clip.End, Round = clip.Round });
                         WriteManifest();
                     }

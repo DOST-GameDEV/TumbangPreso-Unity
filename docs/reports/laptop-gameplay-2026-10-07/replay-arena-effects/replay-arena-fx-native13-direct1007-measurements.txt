@@ -1,0 +1,1 @@
+[RecordedArenaFxPixels] sameCamera=0

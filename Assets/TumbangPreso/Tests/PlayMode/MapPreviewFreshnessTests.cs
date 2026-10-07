@@ -63,6 +63,26 @@ namespace TumbangPreso.PlayTests
    foreach(string map in SceneFlow.Maps)Assert.IsNull(Check(map),map);
    yield return null;
   }
+  [UnityTest]public IEnumerator RecordedEffectBookkeepingKeepsPreviewButLiveAtlasChangesInvalidateIt()
+  {
+   foreach(string map in SceneFlow.Maps)Assert.IsNull(Check(map),map);
+   string path="Assets/TumbangPreso/Runtime/Map/ArenaFx.cs";byte[] original=File.ReadAllBytes(path);
+   try
+   {
+    string source=System.Text.Encoding.UTF8.GetString(original);StringAssert.Contains("private const float Hard = 40.0f;",source);
+    File.WriteAllText(path,source.Replace("private const float Hard = 40.0f;","private const float Hard = 35.0f;"));
+    StringAssert.Contains("look changed",Check(SceneFlow.Arena),"A real shape/atlas appearance change must invalidate captured footage.");
+   }
+   finally{File.WriteAllBytes(path,original);}
+   path="Assets/TumbangPreso/Runtime/Map/ArenaFx.Recorded.cs";original=File.ReadAllBytes(path);
+   try
+   {
+    File.WriteAllText(path,System.Text.Encoding.UTF8.GetString(original)+"\n// changed adapter control\n");
+    StringAssert.Contains("look changed",Check(SceneFlow.Arena),"An unqualified adapter change must not silently reuse provenance.");
+   }
+   finally{File.WriteAllBytes(path,original);}
+   foreach(string map in SceneFlow.Maps)Assert.IsNull(Check(map),map);yield return null;
+  }
   [UnityTest]public IEnumerator ExistingCapturedReceiptsMatchCurrentIntegration()
   {
    foreach(string map in SceneFlow.Maps)Assert.IsNull(Check(map),map);
