@@ -2721,10 +2721,13 @@ namespace TumbangPreso
 
             if (_lungeHeld >= AiTuning.LungeHoldTime + 0.45f)
             {
-                // Fully charged and still not lined up. Let it go rather than hold a dash for
-                // ever: the cooldown is 1.5 s and the attacker is leaving.
-                _lungeHeld = -1.0f;
-                Press(intent, Verb.Lunge, false);
+                // A full charge still needs an aimed release. Finish turning
+                // through the same movement input instead of spending the dash
+                // sideways just because a planner timer expired.
+                Vector3 aim = AheadOf(victim, .12f).Value - transform.position;
+                if (EdgeSense) _edgeGoalDistance = aim.magnitude;
+                Drive(intent, aim, false, pausesOnTurn: false);
+                Press(intent, Verb.Lunge, true);
                 return;
             }
 

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 23:53:19Z" end-time="2026-10-06 23:53:20Z" duration="0.5341845">
+  <test-suite type="TestSuite" id="3440" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1979" result="Passed" start-time="2026-10-06 23:53:19Z" end-time="2026-10-06 23:53:20Z" duration="0.534185" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3432" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1979" result="Passed" start-time="2026-10-06 23:53:19Z" end-time="2026-10-06 23:53:20Z" duration="0.523778" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="30320" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3433" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1979" result="Passed" start-time="2026-10-06 23:53:19Z" end-time="2026-10-06 23:53:20Z" duration="0.521900" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3436" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1977" result="Passed" start-time="2026-10-06 23:53:19Z" end-time="2026-10-06 23:53:20Z" duration="0.520575" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1063" name="AiTagCommitmentTests" fullname="TumbangPreso.PlayTests.AiTagCommitmentTests" classname="TumbangPreso.PlayTests.AiTagCommitmentTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-06 23:53:19Z" end-time="2026-10-06 23:53:20Z" duration="0.469226" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1064" name="ChargedLungeWaitsForAimInsteadOfFiringAtTheTimeout" fullname="TumbangPreso.PlayTests.AiTagCommitmentTests.ChargedLungeWaitsForAimInsteadOfFiringAtTheTimeout" methodname="ChargedLungeWaitsForAimInsteadOfFiringAtTheTimeout" classname="TumbangPreso.PlayTests.AiTagCommitmentTests" runstate="Runnable" seed="1174441735" result="Passed" start-time="2026-10-06 23:53:19Z" end-time="2026-10-06 23:53:19Z" duration="0.156963" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1067" name="NearTargetUsesOneTagCommitment" fullname="TumbangPreso.PlayTests.AiTagCommitmentTests.NearTargetUsesOneTagCommitment" classname="TumbangPreso.PlayTests.AiTagCommitmentTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-06 23:53:19Z" end-time="2026-10-06 23:53:20Z" duration="0.297915" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1065" name="NearTargetUsesOneTagCommitment(False)" fullname="TumbangPreso.PlayTests.AiTagCommitmentTests.NearTargetUsesOneTagCommitment(False)" methodname="NearTargetUsesOneTagCommitment" classname="TumbangPreso.PlayTests.AiTagCommitmentTests" runstate="Runnable" seed="862697666" result="Passed" start-time="2026-10-06 23:53:19Z" end-time="2026-10-06 23:53:20Z" duration="0.261653" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1066" name="NearTargetUsesOneTagCommitment(True)" fullname="TumbangPreso.PlayTests.AiTagCommitmentTests.NearTargetUsesOneTagCommitment(True)" methodname="NearTargetUsesOneTagCommitment" classname="TumbangPreso.PlayTests.AiTagCommitmentTests" runstate="Runnable" seed="1678404385" result="Passed" start-time="2026-10-06 23:53:20Z" end-time="2026-10-06 23:53:20Z" duration="0.033160" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Charged bot lunge aiming: [original blind-release failure and consumer/native traces](reports/bot-lunge-aim-2026-10-07/README.md).
+
 Current combined Desktop package: [startup, exact files and two-machine result parity](reports/combined-desktop-2026-10-07/README.md).
 
 Actual two-machine LAN completion and observation timing: [matching saved records, retained failures and coordinated launch](reports/two-machine-lan-cb5f-2026-10-07/README.md).

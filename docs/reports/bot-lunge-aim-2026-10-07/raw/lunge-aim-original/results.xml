@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 23:28:39Z" end-time="2026-10-06 23:28:40Z" duration="0.5732586">
+  <test-suite type="TestSuite" id="3440" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1979" result="Failed" site="Child" start-time="2026-10-06 23:28:39Z" end-time="2026-10-06 23:28:40Z" duration="0.573259" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3432" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1979" result="Failed" site="Child" start-time="2026-10-06 23:28:39Z" end-time="2026-10-06 23:28:40Z" duration="0.562466" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28976" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3433" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1979" result="Failed" site="Child" start-time="2026-10-06 23:28:39Z" end-time="2026-10-06 23:28:40Z" duration="0.560561" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3436" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1977" result="Failed" site="Child" start-time="2026-10-06 23:28:39Z" end-time="2026-10-06 23:28:40Z" duration="0.558987" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1063" name="AiTagCommitmentTests" fullname="TumbangPreso.PlayTests.AiTagCommitmentTests" classname="TumbangPreso.PlayTests.AiTagCommitmentTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-06 23:28:39Z" end-time="2026-10-06 23:28:40Z" duration="0.506634" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1064" name="ChargedLungeWaitsForAimInsteadOfFiringAtTheTimeout" fullname="TumbangPreso.PlayTests.AiTagCommitmentTests.ChargedLungeWaitsForAimInsteadOfFiringAtTheTimeout" methodname="ChargedLungeWaitsForAimInsteadOfFiringAtTheTimeout" classname="TumbangPreso.PlayTests.AiTagCommitmentTests" runstate="Runnable" seed="37717983" result="Failed" start-time="2026-10-06 23:28:39Z" end-time="2026-10-06 23:28:39Z" duration="0.156391" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A full charge cannot justify a dash aimed away from the visible target
+  Expected: 0
+  But was:  2.5f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.AiTagCommitmentTests.ChargedLungeWaitsForAimInsteadOfFiringAtTheTimeout () [0x00255] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\AiTagCommitmentTests.cs:42
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1067" name="NearTargetUsesOneTagCommitment" fullname="TumbangPreso.PlayTests.AiTagCommitmentTests.NearTargetUsesOneTagCommitment" classname="TumbangPreso.PlayTests.AiTagCommitmentTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-06 23:28:39Z" end-time="2026-10-06 23:28:40Z" duration="0.335096" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1065" name="NearTargetUsesOneTagCommitment(False)" fullname="TumbangPreso.PlayTests.AiTagCommitmentTests.NearTargetUsesOneTagCommitment(False)" methodname="NearTargetUsesOneTagCommitment" classname="TumbangPreso.PlayTests.AiTagCommitmentTests" runstate="Runnable" seed="1111584784" result="Passed" start-time="2026-10-06 23:28:39Z" end-time="2026-10-06 23:28:40Z" duration="0.296226" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1066" name="NearTargetUsesOneTagCommitment(True)" fullname="TumbangPreso.PlayTests.AiTagCommitmentTests.NearTargetUsesOneTagCommitment(True)" methodname="NearTargetUsesOneTagCommitment" classname="TumbangPreso.PlayTests.AiTagCommitmentTests" runstate="Runnable" seed="1431989666" result="Passed" start-time="2026-10-06 23:28:40Z" end-time="2026-10-06 23:28:40Z" duration="0.035531" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
