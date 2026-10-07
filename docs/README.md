@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Bot consumer charge timing: [long-frame release failure and19 native power/obstacle/lifetime controls](reports/bot-lunge-consumer-power-2026-10-07/README.md).
+
 Four-bot natural decision window: [actual one-start readiness, live40second samples and retained legacy limits](reports/natural-four-bot-decisions-2026-10-07/README.md).
 
 Bot charged travel around world obstacles: [original wall failure, actual capsule clearance and post/kerb controls](reports/bot-lunge-obstacles-2026-10-07/README.md).

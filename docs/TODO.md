@@ -1,3 +1,8 @@
+### AI-LUNGE-CONSUMER-POWER-1007: real accumulated charge
+
+- [x] Predict release travel using the consumer's actual charge rather than full-power impulse at the planner deadline. Original450ms+50ms boundary failure retained;19 native charge/obstacle/lifetime/aim controls pass. [Evidence](reports/bot-lunge-consumer-power-2026-10-07/README.md).
+- [ ] Natural all-map/all-kit efficacy/performance and combined packaged acceptance.
+
 ### AI-NATURAL-DECISIONS-1007: actual single-start live window
 
 - [x] Remove diagnostic manual start competing with ReadyGate. Explicit4bot input writers and40live seconds after one real automatic start; Classic/Hero Lagoon native2PASS,13/12throws and4/3lunges with1/2countedhits. Preserve complete traces and controls. [Evidence](reports/natural-four-bot-decisions-2026-10-07/README.md).

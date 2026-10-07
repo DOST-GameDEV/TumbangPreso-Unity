@@ -2722,7 +2722,7 @@ namespace TumbangPreso
             // key for and the release would never pass its own test.
             if (_lungeHeld >= AiTuning.LungeHoldTime
                 && Facing(victim, AiTuning.EffectiveLungeCone(EffectiveDifficulty))
-                && LungeCanReach(victim))
+                && LungeCanReach(victim, verbs.LungeChargeRatio))
             {
                 _lungeHeld = -1.0f;
                 Press(intent, Verb.Lunge, false);   // the release edge is what fires it
@@ -2744,7 +2744,7 @@ namespace TumbangPreso
             Press(intent, Verb.Lunge, true);
         }
 
-        private bool LungeCanReach(CharacterMotor victim)
+        private bool LungeCanReach(CharacterMotor victim, float chargeRatio)
         {
             if (victim == null || !ActorIsVisible(victim)) return false;
             Vector3 forward = transform.forward;
@@ -2758,7 +2758,9 @@ namespace TumbangPreso
             Vector3 dash = Vector3.zero;
             Vector3 previous = AheadOf(victim, 0).Value - start;
             previous.y = 0;
-            float speed = Balance.LungeSpeed;
+            // AI advances before the consumer. Releasing this frame spends the
+            // charge already accumulated, without adding the planner's new dt.
+            float speed = Balance.LungeSpeed * Mathf.Clamp(chargeRatio, Balance.LungeMinPower, 1);
             float radius = Balance.LungeTagRadius * victim.TagReachScale;
             float step = Mathf.Max(.005f, Time.fixedDeltaTime);
             // Use the consumer's friction and the body's current walking velocity.

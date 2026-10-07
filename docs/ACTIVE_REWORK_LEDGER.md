@@ -1,3 +1,9 @@
+# Bot consumer power checkpoint, October 7
+
+Original48352 1FAIL/2PASS:450ms consumerhold+50ms planner reachesrelease threshold butactual90%power spends2.1923s against4.4m unreachabletarget. AIController predictor now usesactualCombatVerbs.LungeChargeRatio withnormalconsumerclamp. Candidate47728 passes19 charge/obstacle/lifetime/aim controls; original/candidate all21329 frozen inputs/preferences restored afterterminal. Report: reports/bot-lunge-consumer-power-2026-10-07.
+
+Next native40LIVEsecond four-bot/oneReadyGate Bridge and Kanto Classic/Hero, then allremainingmap/kit/nav/performance and combinedrelease afterlaptopcheckedmedia/replays. LatestnaturalCove onpriorproductb818:13/12throws,4/3lunges,1/2hits; notstatisticalimprovement. Desktopcb5/internal120d remainolder. Laptopreservationsunchanged/noLAN. Noownednative/helper/tab remains. Goal ACTIVE.
+
 # Natural four-bot checkpoint, October 7
 
 AiDiagnosticProbe now waits actualReadyGate once/clockreleased, fourexisting normalinput writers,40live seconds, teardownrestoresrules/pin/allbots. Native39376 Classic/Hero Lagoon2PASS:13/12throws,4/3lunges,1/2countedhits, no bounds/stranding/pursuit failures. Original3bot/manualstartbridge47404 2PASS retainedlimited. Bothall21327 exactinputs/preferences restored afterterminal. Report: reports/natural-four-bot-decisions-2026-10-07. Counts short/unseeded, no statistical/allmap/allkit/physical-humanclaim.
