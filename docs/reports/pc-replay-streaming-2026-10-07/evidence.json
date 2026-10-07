@@ -1,0 +1,25 @@
+{
+  "sourceRef": "87e5e7b8a56d380242afe3f41ee2edc970e7f7ee",
+  "nativePid": 51548,
+  "sourceHashes": {
+    "Assets/TumbangPreso/Runtime/Camera/LocalReplayPlayback.cs": "2338b817f67a7729da1ee26e38839d6a1e57153e3905c468acbd19245d7f0995",
+    "Assets/TumbangPreso/Tests/PlayMode/LocalReplayStreamingTests.cs": "7866275441b0e1e072eb87f7633a967332f0fa7f0781804de12ff095120eb252",
+    "Assets/TumbangPreso/Tests/PlayMode/LocalReplayStreamingTests.cs.meta": "959c556cf4b6a4fed33ce47d809cad9e007901dc19d0e005d66ad071b90998c4"
+  },
+  "rawReceipts": {
+    "result.json": "cad3a71c9c0057a80172a12bc45d78a3f7962b2b132f6d2fb3b49da9e28ba71b",
+    "results.xml": "bc908158a91b530c0fb27a48b49abae1945a1988f1bde4bae5ff9c881f8ff16a",
+    "source-restoration.json": "4f364d1476d2c7b9e12267c4d14a52d1fd12f5a015852287acead282706e97ac",
+    "stream-source-proof.json": "eca087e6699ed77d8e3476e5a4825e62f778f7ea15b2eb1d1ed57b2f3777fb9b",
+    "stream-guard-proof.json": "11f9334ae6f50dbd85276ce8f2ed88fc4fb5f47dc0320e204cf426115fb09183"
+  },
+  "passed": 4,
+  "protectedCount": 21387,
+  "originalFixtureUnchanged": true,
+  "fixtureMatchId": 639269691070870733,
+  "measurements": [
+    "[ReplayStreaming] speed=4 position=9.20438 missingWallSeconds=3.196299E-06 largest=1.15484E-07 frozenFrames=0",
+    "[ReplayStreaming] speed=1 position=9.186153 missingWallSeconds=4.40795E-05 largest=4.759058E-07 frozenFrames=0"
+  ],
+  "scope": "Actual current native streaming on completed full-effects fixture, not broad GPU/GC/package/long-session acceptance"
+}

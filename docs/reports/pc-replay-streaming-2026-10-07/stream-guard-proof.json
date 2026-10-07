@@ -1,0 +1,8 @@
+{
+  "ref": "fe539a66db2c87ad6d7a49f25eb7ceef57aecea1",
+  "exactNativeSourceCount": 1,
+  "rawReceiptCount": 8,
+  "onlyAbsentEnvironmentGuardChanged": true,
+  "nativeOutcome": "4 skipped,0failed; not4gameplaypasses",
+  "sourceHashesVerified": true
+}

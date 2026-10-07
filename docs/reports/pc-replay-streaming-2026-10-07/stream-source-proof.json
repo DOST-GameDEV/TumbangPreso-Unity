@@ -1,0 +1,62 @@
+{
+  "ref": "fb7bfb45d7b9803e1e164346ca454eb9e2523027",
+  "exactNativeSourceCount": 3,
+  "rawReceiptCount": 19,
+  "allRawHashesVerified": true,
+  "identicalActiveFixture": true,
+  "absentEnvSuiteGuardPending": true,
+  "original29": {
+    "pid": 51468,
+    "terminal": true,
+    "exitCode": 2,
+    "passed": 1,
+    "failed": 3,
+    "expected": 4,
+    "allInputsRestored": true,
+    "cases": [
+      {
+        "name": "AFailedObsoleteSeekCannotPoisonTheLatestValidPosition",
+        "result": "Failed"
+      },
+      {
+        "name": "ClosingDuringARealReadCannotRestoreTheOldViewer",
+        "result": "Passed"
+      },
+      {
+        "name": "ContinuousFourTimesPlaybackDoesNotFreezeAtSavedSegmentSeams",
+        "result": "Failed"
+      },
+      {
+        "name": "ContinuousOneTimesPlaybackDoesNotFreezeAtSavedSegmentSeams",
+        "result": "Failed"
+      }
+    ]
+  },
+  "candidate30": {
+    "pid": 63212,
+    "terminal": true,
+    "exitCode": 0,
+    "passed": 4,
+    "failed": 0,
+    "expected": 4,
+    "allInputsRestored": true,
+    "cases": [
+      {
+        "name": "AFailedObsoleteSeekCannotPoisonTheLatestValidPosition",
+        "result": "Passed"
+      },
+      {
+        "name": "ClosingDuringARealReadCannotRestoreTheOldViewer",
+        "result": "Passed"
+      },
+      {
+        "name": "ContinuousFourTimesPlaybackDoesNotFreezeAtSavedSegmentSeams",
+        "result": "Passed"
+      },
+      {
+        "name": "ContinuousOneTimesPlaybackDoesNotFreezeAtSavedSegmentSeams",
+        "result": "Passed"
+      }
+    ]
+  }
+}
