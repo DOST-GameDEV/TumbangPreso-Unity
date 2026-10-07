@@ -1,0 +1,7 @@
+{
+  "actualCaseCount": 12,
+  "allPassed": true,
+  "originalExpectedCount": 11,
+  "originalCountMismatchRetained": true,
+  "reason": "Current source includes the additional existing reseating control; no game assertion changed."
+}

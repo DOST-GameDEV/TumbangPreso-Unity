@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="12" result="Passed" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 02:48:16Z" end-time="2026-10-07 02:48:18Z" duration="1.8252886">
+  <test-suite type="TestSuite" id="3468" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2001" result="Passed" start-time="2026-10-07 02:48:16Z" end-time="2026-10-07 02:48:18Z" duration="1.825289" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3460" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2001" result="Passed" start-time="2026-10-07 02:48:16Z" end-time="2026-10-07 02:48:18Z" duration="1.812188" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="44808" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3461" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2001" result="Passed" start-time="2026-10-07 02:48:16Z" end-time="2026-10-07 02:48:18Z" duration="1.808980" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3464" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1999" result="Passed" start-time="2026-10-07 02:48:16Z" end-time="2026-10-07 02:48:18Z" duration="1.805885" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1164" name="ArrivalHandoffTests" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-07 02:48:16Z" end-time="2026-10-07 02:48:17Z" duration="0.819720" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1168" name="ArrivalCancellationStillRestoresGameplayHands" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.ArrivalCancellationStillRestoresGameplayHands" methodname="ArrivalCancellationStillRestoresGameplayHands" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="416027133" result="Passed" start-time="2026-10-07 02:48:16Z" end-time="2026-10-07 02:48:16Z" duration="0.343653" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Flow] unknown map 'PlayModeWorldReset_10', falling back to 'Eskinita'.
+]]></output>
+            </test-case>
+            <test-case id="1169" name="EntryIsOpaqueBeforeTheFirstYieldAndCancellationClearsIt" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.EntryIsOpaqueBeforeTheFirstYieldAndCancellationClearsIt" methodname="EntryIsOpaqueBeforeTheFirstYieldAndCancellationClearsIt" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="225194894" result="Passed" start-time="2026-10-07 02:48:16Z" end-time="2026-10-07 02:48:16Z" duration="0.046418" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1171" name="HeldRigResolvesPlayerEyeInsteadOfInheritedUnderMapPose" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.HeldRigResolvesPlayerEyeInsteadOfInheritedUnderMapPose" methodname="HeldRigResolvesPlayerEyeInsteadOfInheritedUnderMapPose" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="1784875375" result="Passed" start-time="2026-10-07 02:48:16Z" end-time="2026-10-07 02:48:16Z" duration="0.099103" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Flow] unknown map 'PlayModeWorldReset_31', falling back to 'Eskinita'.
+]]></output>
+            </test-case>
+            <test-case id="1165" name="LateActivationDuringArrivalKeepsGameplayHandsHidden" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.LateActivationDuringArrivalKeepsGameplayHandsHidden" methodname="LateActivationDuringArrivalKeepsGameplayHandsHidden" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="1299016506" result="Passed" start-time="2026-10-07 02:48:16Z" end-time="2026-10-07 02:48:16Z" duration="0.037825" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1166" name="LateFollowDuringArrivalKeepsGameplayHandsHidden" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.LateFollowDuringArrivalKeepsGameplayHandsHidden" methodname="LateFollowDuringArrivalKeepsGameplayHandsHidden" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="1006089656" result="Passed" start-time="2026-10-07 02:48:16Z" end-time="2026-10-07 02:48:16Z" duration="0.040153" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1172" name="NameplatesHideDuringIntroductionAndReturnAfterCancellation" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.NameplatesHideDuringIntroductionAndReturnAfterCancellation" methodname="NameplatesHideDuringIntroductionAndReturnAfterCancellation" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="449399702" result="Passed" start-time="2026-10-07 02:48:16Z" end-time="2026-10-07 02:48:17Z" duration="0.152435" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1167" name="NormalFppActivationStillShowsGameplayHands" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.NormalFppActivationStillShowsGameplayHands" methodname="NormalFppActivationStillShowsGameplayHands" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="39051566" result="Passed" start-time="2026-10-07 02:48:17Z" end-time="2026-10-07 02:48:17Z" duration="0.038630" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1170" name="OpeningTakesCameraBeforeLoadingCurtainDisappears" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.OpeningTakesCameraBeforeLoadingCurtainDisappears" methodname="OpeningTakesCameraBeforeLoadingCurtainDisappears" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="2141282489" result="Passed" start-time="2026-10-07 02:48:17Z" end-time="2026-10-07 02:48:17Z" duration="0.043036" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Flow] unknown map 'PlayModeWorldReset_87', falling back to 'Eskinita'.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1173" name="ArrivalViewOwnershipTests" fullname="TumbangPreso.PlayTests.ArrivalViewOwnershipTests" classname="TumbangPreso.PlayTests.ArrivalViewOwnershipTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-07 02:48:17Z" end-time="2026-10-07 02:48:18Z" duration="0.871489" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1174" name="ArrivalCancellationDoesNotReclaimTheSpectatorsGameplayBody" fullname="TumbangPreso.PlayTests.ArrivalViewOwnershipTests.ArrivalCancellationDoesNotReclaimTheSpectatorsGameplayBody" methodname="ArrivalCancellationDoesNotReclaimTheSpectatorsGameplayBody" classname="TumbangPreso.PlayTests.ArrivalViewOwnershipTests" runstate="Runnable" seed="2111108827" result="Passed" start-time="2026-10-07 02:48:17Z" end-time="2026-10-07 02:48:17Z" duration="0.535750" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Flow] unknown map 'PlayModeWorldReset_99', falling back to 'Eskinita'.
+]]></output>
+            </test-case>
+            <test-case id="1175" name="ArrivalFinalHandoffHonorsLiveWatchOwnershipWithoutALaunchFlag" fullname="TumbangPreso.PlayTests.ArrivalViewOwnershipTests.ArrivalFinalHandoffHonorsLiveWatchOwnershipWithoutALaunchFlag" methodname="ArrivalFinalHandoffHonorsLiveWatchOwnershipWithoutALaunchFlag" classname="TumbangPreso.PlayTests.ArrivalViewOwnershipTests" runstate="Runnable" seed="573764827" result="Passed" start-time="2026-10-07 02:48:17Z" end-time="2026-10-07 02:48:17Z" duration="0.106084" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Flow] unknown map 'PlayModeWorldReset_108', falling back to 'Eskinita'.
+]]></output>
+            </test-case>
+            <test-case id="1176" name="NormalGameplayCancellationStillRestoresTheActiveFppView" fullname="TumbangPreso.PlayTests.ArrivalViewOwnershipTests.NormalGameplayCancellationStillRestoresTheActiveFppView" methodname="NormalGameplayCancellationStillRestoresTheActiveFppView" classname="TumbangPreso.PlayTests.ArrivalViewOwnershipTests" runstate="Runnable" seed="1997644894" result="Passed" start-time="2026-10-07 02:48:17Z" end-time="2026-10-07 02:48:17Z" duration="0.105875" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Flow] unknown map 'PlayModeWorldReset_117', falling back to 'Eskinita'.
+]]></output>
+            </test-case>
+            <test-case id="1177" name="ReseatingBeforeArrivalReturnKeepsTheCurrentGameplayView" fullname="TumbangPreso.PlayTests.ArrivalViewOwnershipTests.ReseatingBeforeArrivalReturnKeepsTheCurrentGameplayView" methodname="ReseatingBeforeArrivalReturnKeepsTheCurrentGameplayView" classname="TumbangPreso.PlayTests.ArrivalViewOwnershipTests" runstate="Runnable" seed="1303367520" result="Passed" start-time="2026-10-07 02:48:17Z" end-time="2026-10-07 02:48:18Z" duration="0.121041" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Flow] unknown map 'PlayModeWorldReset_126', falling back to 'Eskinita'.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

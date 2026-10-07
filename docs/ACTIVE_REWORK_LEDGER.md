@@ -1,5 +1,40 @@
 # Current PC competition checkpoint, October 7
 
+## Current checked opening unit
+
+New-map openings only: Padre Faura, Manila/IlalimNgTulay, LagoonCove and
+BGC, Taguig/Kanto. Registry labels are current; stable map IDs remain unchanged.
+Normal dense actual-render paths45948 pass3 after original15540 crosses all3.
+Motion43820 passes9 normal/reduced/camera-off. Actual Hero ReadyGate flow42316
+passes3,1980/2639/2113 observed frames, all4 arrivals, one3/2/1/GO and active
+actors after clock release. Ownership44808 passes12 existing controls; runner
+expected11 and its original mismatch remains with explicit XML classification.
+All21323 source inputs/preferences restored after terminal jobs. No owned PC
+native/player/helper remains; unrelated STATtransfer45552 must be preserved.
+Report: reports/new-map-openings-2026-10-07. Source is not yet in Desktopcb5.
+
+Next: coordinated new-map footage/source reconciliation remains laptop-owned.
+Keep its preview/replay persistence work moving while LAN is unavailable.
+PC continues visible quality/roster coverage and release integration for these
+new openings plus remaining bot/navigation, caught-camera and slipper defects.
+Old map presentation is excluded per owner, authored Arena unchanged. Replay
+full-match storage/export/menu/folder selection is now laptop-owned; PC retains
+CatchReconstruction, MatchPoseHistory and CharacterAnimator.TagBody reservations.
+Full tournament and packaged/current-source acceptance remain open. Goal ACTIVE.
+
+## Latest network and work split, October 7
+
+Owner is moving the laptop to mobile data and another house. LAN is unavailable;
+do not launch paired LAN jobs or keep waiting on local-network reachability.
+The laptop was told to cancel its prepared rematch runner without starting a
+player, verify exact process ownership and restore its isolated profile/input
+state. Keep both goals and independent engineering work ACTIVE. Laptop owns
+recorded previews for IlalimNgTulay/LagoonCove/Kanto; PC owns those maps' opening
+cutscenes/arrival support and remaining AI/replay/slipper/gameplay work. Coordinate
+source through the existing authorized chats/Git when connectivity permits.
+This change does not authorize paid services or automatically expand to WAN tests.
+Earlier LAN receipts remain scoped historical evidence, not a current topology.
+
 ## Owner scope correction: new maps only
 
 October7 owner: focus previews of IlalimNgTulay, LagoonCove and Kanto; leave the

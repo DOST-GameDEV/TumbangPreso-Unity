@@ -1,0 +1,1 @@
+actualFrames=1980 maxTravel=3.229693,3.253003,3.20015,3.255911 ticks=3,2,1,GO! liveRound=True

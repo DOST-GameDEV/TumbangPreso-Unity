@@ -1,0 +1,40 @@
+preparedPathLengths=3.257299,3.257299,1,3.257299
+seat=0 root=Visual mark=(0.00, 0.17, -2.50) focus=(0.00, 1.94, -2.51) eye=(1.45, 2.39, 4.29)
+seat=1 root=Visual mark=(-1.80, 0.17, 9.00) focus=(-1.83, 2.21, 9.23) eye=(-1.93, 2.74, 0.67)
+seat=2 root=Visual mark=(0.00, 0.17, 9.00) focus=(0.00, 2.26, 8.76) eye=(-1.74, 2.80, 0.56)
+seat=3 root=Visual mark=(1.80, 0.17, 9.00) focus=(1.83, 2.21, 9.23) eye=(-1.56, 2.74, 1.37)
+arrivalAge=0 closestPair=4.9
+arrivalAge=0.1416667 closestPair=4.899458
+arrivalAge=0.2833333 closestPair=4.870222
+arrivalAge=0.425 closestPair=4.799778
+arrivalAge=0.5666667 closestPair=4.692779
+arrivalAge=0.7083334 closestPair=4.553885
+arrivalAge=0.85 closestPair=4.387755
+arrivalAge=0.9916667 closestPair=4.199052
+arrivalAge=1.133333 closestPair=3.992441
+arrivalAge=1.275 closestPair=3.772588
+arrivalAge=1.416667 closestPair=3.54416
+arrivalAge=1.558333 closestPair=3.311825
+arrivalAge=1.7 closestPair=3.080253
+arrivalAge=1.841667 closestPair=2.854111
+arrivalAge=1.983333 closestPair=2.638071
+arrivalAge=2.125 closestPair=2.4368
+arrivalAge=2.266667 closestPair=2.254968
+arrivalAge=2.408333 closestPair=2.097243
+arrivalAge=2.55 closestPair=1.968292
+arrivalAge=2.691667 closestPair=1.872779
+arrivalAge=2.833333 closestPair=1.815371
+arrivalAge=2.975 closestPair=1.8
+arrivalAge=3.116667 closestPair=1.8
+arrivalAge=3.258333 closestPair=1.8
+arrivalAge=3.4 closestPair=1.8
+age=0.06 eye=(-12.57, 8.27, -7.86) beat=-1
+age=1.19 eye=(-12.59, 8.42, -11.17) beat=-1
+age=2.55 eye=(-7.05, 5.77, -12.55) beat=-1
+age=3.8 eye=(-1.93, 2.73, 0.90) beat=1
+age=7.3 eye=(1.43, 2.39, 4.22) beat=0
+age=9.1 eye=(1.36, 2.37, 3.89) beat=0
+age=11 eye=(-1.80, 1.42, 9.00) beat=0
+maxTravel=3.253346,3.257334,1.000113,3.257334
+maxTravel=3.253346,3.257334,1.000113,3.257334
+minimumSoleAboveFloor=0.004999846,0.004999846,0.004999846,0.004999846

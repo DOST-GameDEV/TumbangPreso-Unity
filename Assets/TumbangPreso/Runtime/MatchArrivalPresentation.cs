@@ -12,13 +12,14 @@ namespace TumbangPreso
     /// then return the camera for the shared countdown. No model or physical spawn is moved.
     /// This owns only the pre-round hold and restores every camera setting if loading is interrupted.
     /// </summary>
-    public sealed class MatchArrivalPresentation : MonoBehaviour
+    public sealed partial class MatchArrivalPresentation : MonoBehaviour
     {
         private static MatchArrivalPresentation _active;
         public static bool Active => _active != null;
         public static bool OwnsCamera => Active && !_active._returningToGameplay
             && Settings.SettingsStore.Current.CinematicCameraMotion;
         public const float Seconds = 8.6f;
+        public float Duration => _directed ? _direction.End : Seconds;
         private const float EstablishSeconds = 2.8f, PortraitSeconds = 1.1f;
         private const float HandoffStart = 7.2f, PortraitFov = 50;
         private readonly Vector3[] _focus = new Vector3[4];
@@ -113,10 +114,11 @@ namespace TumbangPreso
                 yield break;
             }
             // ARENA-INTRO end.
+            PrepareDirection(map, reduced);
             Sample(0, reduced, map);
             // Loading can now fade onto the already-prepared opening curtain/shot.
             while (HubLoading.Visible) { if (!Current(generation)) yield break; yield return null; }
-            for (float age = 0; age < Seconds; age += Time.unscaledDeltaTime)
+            for (float age = 0; age < Duration; age += Time.unscaledDeltaTime)
             {
                 if (!Current(generation)) yield break;
                 Sample(age, reduced, map);
@@ -202,6 +204,7 @@ namespace TumbangPreso
         // A deterministic sample shared by playback and native composition checks.
         private void Sample(float age, bool reduced, SceneFlow.MapEntry map)
         {
+            if (_directed) { SampleDirection(age, reduced, map); return; }
             age = Mathf.Clamp(age, 0, Seconds);
             int beat = reduced || age < EstablishSeconds ? -1 :
                 Mathf.Clamp((int)((age - EstablishSeconds) / PortraitSeconds), 0, 3);
@@ -319,6 +322,7 @@ namespace TumbangPreso
         {
             // ARENA-INTRO: the Arena's opening, if one is up, puts back everything it posed. A no-op elsewhere.
             Map.ArenaIntro.Stop();
+            RestoreDirection();
             if (_active == this) _active = null;
             for (int i = 0; i < _poses.Length; i++)
             {

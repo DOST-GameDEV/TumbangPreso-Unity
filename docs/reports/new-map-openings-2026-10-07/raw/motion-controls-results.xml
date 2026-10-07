@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="9" result="Passed" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 02:03:41Z" end-time="2026-10-07 02:04:32Z" duration="50.5759643">
+  <test-suite type="TestSuite" id="3465" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1998" result="Passed" start-time="2026-10-07 02:03:41Z" end-time="2026-10-07 02:04:32Z" duration="50.575964" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3457" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1998" result="Passed" start-time="2026-10-07 02:03:41Z" end-time="2026-10-07 02:04:32Z" duration="50.557594" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="43820" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3458" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1998" result="Passed" start-time="2026-10-07 02:03:41Z" end-time="2026-10-07 02:04:32Z" duration="50.548161" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3461" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1996" result="Passed" start-time="2026-10-07 02:03:41Z" end-time="2026-10-07 02:04:32Z" duration="50.539058" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1630" name="DirectedMapArrivalTests" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-07 02:03:41Z" end-time="2026-10-07 02:04:32Z" duration="50.485067" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1637" name="BridgeCameraMotionOff" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.BridgeCameraMotionOff" methodname="BridgeCameraMotionOff" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="380498214" result="Passed" start-time="2026-10-07 02:03:41Z" end-time="2026-10-07 02:03:53Z" duration="11.803942" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+]]></output>
+            </test-case>
+            <test-case id="1631" name="BridgeLowArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.BridgeLowArrival" methodname="BridgeLowArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="88881675" result="Passed" start-time="2026-10-07 02:03:53Z" end-time="2026-10-07 02:04:01Z" duration="7.920928" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1634" name="BridgeReducedMotionArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.BridgeReducedMotionArrival" methodname="BridgeReducedMotionArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="1374632762" result="Passed" start-time="2026-10-07 02:04:01Z" end-time="2026-10-07 02:04:06Z" duration="4.514735" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+]]></output>
+            </test-case>
+            <test-case id="1638" name="CoveCameraMotionOff" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.CoveCameraMotionOff" methodname="CoveCameraMotionOff" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="509427904" result="Passed" start-time="2026-10-07 02:04:06Z" end-time="2026-10-07 02:04:11Z" duration="5.650241" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1632" name="CoveCurvedArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.CoveCurvedArrival" methodname="CoveCurvedArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="1131422271" result="Passed" start-time="2026-10-07 02:04:11Z" end-time="2026-10-07 02:04:17Z" duration="5.678820" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1635" name="CoveReducedMotionArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.CoveReducedMotionArrival" methodname="CoveReducedMotionArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="2081311283" result="Passed" start-time="2026-10-07 02:04:17Z" end-time="2026-10-07 02:04:20Z" duration="3.087024" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1639" name="KantoCameraMotionOff" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoCameraMotionOff" methodname="KantoCameraMotionOff" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="915035908" result="Passed" start-time="2026-10-07 02:04:20Z" end-time="2026-10-07 02:04:24Z" duration="3.771704" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1633" name="KantoCrossingArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoCrossingArrival" methodname="KantoCrossingArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="53452030" result="Passed" start-time="2026-10-07 02:04:24Z" end-time="2026-10-07 02:04:29Z" duration="5.578056" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1636" name="KantoReducedMotionArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoReducedMotionArrival" methodname="KantoReducedMotionArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="303799290" result="Passed" start-time="2026-10-07 02:04:29Z" end-time="2026-10-07 02:04:32Z" duration="2.460823" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

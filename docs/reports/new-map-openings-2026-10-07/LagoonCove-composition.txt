@@ -1,0 +1,40 @@
+preparedPathLengths=3.310901,3.3109,2.5,3.3109
+seat=0 root=Visual mark=(0.00, 0.02, -2.50) focus=(0.00, 1.79, -2.51) eye=(1.45, 2.24, 4.29)
+seat=1 root=Visual mark=(-1.80, 0.02, 9.00) focus=(-1.83, 2.06, 9.23) eye=(-1.93, 2.59, 0.67)
+seat=2 root=Visual mark=(0.00, 0.02, 9.00) focus=(0.00, 2.11, 8.76) eye=(-1.74, 2.65, 0.56)
+seat=3 root=Visual mark=(1.80, 0.02, 9.00) focus=(1.83, 2.06, 9.23) eye=(-1.56, 2.59, 1.37)
+arrivalAge=0 closestPair=3.6
+arrivalAge=0.2 closestPair=3.6
+arrivalAge=0.4 closestPair=3.6
+arrivalAge=0.6 closestPair=3.6
+arrivalAge=0.8 closestPair=3.6
+arrivalAge=1 closestPair=3.6
+arrivalAge=1.2 closestPair=3.6
+arrivalAge=1.4 closestPair=3.6
+arrivalAge=1.6 closestPair=3.592485
+arrivalAge=1.8 closestPair=3.548581
+arrivalAge=2 closestPair=3.47784
+arrivalAge=2.2 closestPair=3.369499
+arrivalAge=2.4 closestPair=3.229767
+arrivalAge=2.6 closestPair=3.062583
+arrivalAge=2.8 closestPair=2.87525
+arrivalAge=3 closestPair=2.677531
+arrivalAge=3.2 closestPair=2.475939
+arrivalAge=3.4 closestPair=2.285159
+arrivalAge=3.6 closestPair=2.117614
+arrivalAge=3.8 closestPair=1.976905
+arrivalAge=4 closestPair=1.874109
+arrivalAge=4.2 closestPair=1.814066
+arrivalAge=4.4 closestPair=1.8
+arrivalAge=4.6 closestPair=1.8
+arrivalAge=4.8 closestPair=1.8
+age=0.06 eye=(-3.75, 2.25, -12.51) beat=-1
+age=1.68 eye=(-2.00, 3.52, -12.51) beat=-1
+age=3.6 eye=(1.00, 5.69, -12.52) beat=-1
+age=5.2 eye=(-1.93, 2.58, 0.87) beat=1
+age=9.1 eye=(1.43, 2.24, 4.23) beat=0
+age=11.1 eye=(1.36, 2.22, 3.89) beat=0
+age=13 eye=(-1.80, 1.27, 9.00) beat=0
+maxTravel=3.079509,3.080584,2.5,3.080584
+maxTravel=3.079509,3.080584,2.5,3.080584
+minimumSoleAboveFloor=0.001282239,0.0007185936,0.001282233,0.001282233

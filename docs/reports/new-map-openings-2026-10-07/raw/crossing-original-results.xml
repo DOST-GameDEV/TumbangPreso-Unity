@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 01:54:02Z" end-time="2026-10-07 01:54:38Z" duration="35.9938848">
+  <test-suite type="TestSuite" id="3459" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1992" result="Failed" site="Child" start-time="2026-10-07 01:54:02Z" end-time="2026-10-07 01:54:38Z" duration="35.993885" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3451" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1992" result="Failed" site="Child" start-time="2026-10-07 01:54:02Z" end-time="2026-10-07 01:54:38Z" duration="35.975236" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15540" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3452" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1992" result="Failed" site="Child" start-time="2026-10-07 01:54:02Z" end-time="2026-10-07 01:54:38Z" duration="35.965908" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3455" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1990" result="Failed" site="Child" start-time="2026-10-07 01:54:02Z" end-time="2026-10-07 01:54:38Z" duration="35.956654" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1630" name="DirectedMapArrivalTests" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-07 01:54:02Z" end-time="2026-10-07 01:54:38Z" duration="35.902271" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1631" name="BridgeLowArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.BridgeLowArrival" methodname="BridgeLowArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="967779304" result="Failed" start-time="2026-10-07 01:54:02Z" end-time="2026-10-07 01:54:26Z" duration="24.360646" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Entrance routes crossed through another character
+  Expected: greater than or equal to 1.39999998f
+  But was:  0.599999905f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DirectedMapArrivalTests+<Inspect>d__14.MoveNext () [0x00a42] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\DirectedMapArrivalTests.cs:129
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+]]></output>
+            </test-case>
+            <test-case id="1632" name="CoveCurvedArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.CoveCurvedArrival" methodname="CoveCurvedArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="556588337" result="Failed" start-time="2026-10-07 01:54:26Z" end-time="2026-10-07 01:54:33Z" duration="6.606277" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Entrance routes crossed through another character
+  Expected: greater than or equal to 1.39999998f
+  But was:  1.30587184f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DirectedMapArrivalTests+<Inspect>d__14.MoveNext () [0x00a42] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\DirectedMapArrivalTests.cs:129
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1633" name="KantoCrossingArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoCrossingArrival" methodname="KantoCrossingArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="1730676418" result="Failed" start-time="2026-10-07 01:54:33Z" end-time="2026-10-07 01:54:38Z" duration="4.917907" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Entrance routes crossed through another character
+  Expected: greater than or equal to 1.39999998f
+  But was:  1.32496643f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DirectedMapArrivalTests+<Inspect>d__14.MoveNext () [0x00a42] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\DirectedMapArrivalTests.cs:129
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
