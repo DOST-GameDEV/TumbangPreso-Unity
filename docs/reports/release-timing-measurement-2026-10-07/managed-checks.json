@@ -1,0 +1,11 @@
+{
+  "guardCases": 4,
+  "calibrationSignalCases": 5,
+  "realCounterAvailable": true,
+  "calibrationOnce": true,
+  "retainedBytes": 4096,
+  "calibrationBytes": 4120,
+  "observedManagedAllocationBytes": 8216,
+  "unavailableSentinel": -1,
+  "scope": "Actual source methods compiled in PowerShell .NET; Unity/player backend coverage is separate."
+}

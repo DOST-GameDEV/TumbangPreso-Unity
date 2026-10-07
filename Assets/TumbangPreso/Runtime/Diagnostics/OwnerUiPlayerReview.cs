@@ -25,13 +25,21 @@ namespace TumbangPreso.Diagnostics
             public bool includesMenus;
             public double elapsedMs;
             public long managedBytesBefore,managedBytesAfter,mainThreadAllocatedBytes;
+            public bool allocationCounterAvailable,profilerEnabledAtStart,binaryProfilerEnabledAtStart;
+            public string allocationCounterStatus;
             public string graphicsApi,quality,unityQuality;
             public int targetFrameRate,vSyncCount,unfocusedFrames;
         }
         private struct FrameContext
-        { public float real,simulation,left;public int gc0,gc1,gc2;public long allocatedBytes; }
+        { public float real,simulation,left;public int gc0,gc1,gc2;public long allocatedBytes;public bool allocationCounterAvailable; }
         [Serializable]private sealed class Report
-        { public bool passed;public string error;public List<string> stages=new List<string>();public List<FrameWindow> frameWindows=new List<FrameWindow>(); }
+        {
+            public bool passed;public string error;
+            public string measurementMode,scriptingBackend,buildFlagsEvidence,allocationScope,allocationCounterStatus;
+            public bool developmentBuild,editor,binaryProfilerRequested,profilerSupported,allocationCounterAvailable;
+            public long allocationCalibrationBytes;
+            public List<string> stages=new List<string>();public List<FrameWindow> frameWindows=new List<FrameWindow>();
+        }
         private readonly Report _report=new Report();
         private string _folder;
         private float _deadline;
@@ -46,6 +54,7 @@ namespace TumbangPreso.Diagnostics
         private bool _performanceReview;
         private long _frameTick,_windowTick,_allocatedStart,_managedStart;
         private int _unfocusedFrames;
+        private bool _windowProfilerEnabled,_windowBinaryProfilerEnabled;
         private readonly Core.FrameRateHistogram _frameHistogram=new Core.FrameRateHistogram();
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Install()
@@ -84,10 +93,11 @@ namespace TumbangPreso.Diagnostics
                 if(_performanceReview&&!Application.isFocused)_unfocusedFrames++;
                 _frameHistogram.Add(seconds);
                 _frameTimes.Add((float)(seconds*1000));
+                long allocated = _performanceReview ? AllocationBytesSinceStart() : -1;
                 _frameContexts.Add(new FrameContext{real=Time.realtimeSinceStartup-_frameStarted,
                     simulation=Time.time,left=GameServices.Round!=null?GameServices.Round.TimeLeft:0,
                     gc0=GC.CollectionCount(0),gc1=GC.CollectionCount(1),gc2=GC.CollectionCount(2),
-                    allocatedBytes=_performanceReview?GC.GetAllocatedBytesForCurrentThread()-_allocatedStart:0});
+                    allocatedBytes=allocated,allocationCounterAvailable=allocated>=0});
             }
             if(!_finished && Time.realtimeSinceStartup>_deadline)Finish(false,"UI review timed out after "+_report.stages.LastOrDefault());
         }
@@ -96,18 +106,23 @@ namespace TumbangPreso.Diagnostics
             _frameTimes.Clear();_frameContexts.Clear();_resultPolls=0;
             _unfocusedFrames=0;
             _frameHistogram.Clear();
+            ConfigureMeasurementReport();
             if(_performanceReview)BeginPerformanceProfile(mode);
+            // The retained known allocation calibrates once, before window time/bytes begin.
+            CalibrateAllocationCounter();
+            _windowProfilerEnabled=UnityEngine.Profiling.Profiler.enabled;
+            _windowBinaryProfilerEnabled=UnityEngine.Profiling.Profiler.enableBinaryLog;
             _gc0Start=GC.CollectionCount(0);_gc1Start=GC.CollectionCount(1);_gc2Start=GC.CollectionCount(2);
             _frameStarted=Time.realtimeSinceStartup;_frameMode=mode;
             _windowTick=_frameTick=System.Diagnostics.Stopwatch.GetTimestamp();
-            _allocatedStart=GC.GetAllocatedBytesForCurrentThread();_managedStart=GC.GetTotalMemory(false);
+            _allocatedStart=ReadAllocationCounter();_managedStart=GC.GetTotalMemory(false);
         }
         private void StopFrameWindow()
         {
             if(_frameMode==null)return;
             string mode=_frameMode;_frameMode=null;
             double elapsedMs=(System.Diagnostics.Stopwatch.GetTimestamp()-_windowTick)*1000.0/System.Diagnostics.Stopwatch.Frequency;
-            long managedEnd=GC.GetTotalMemory(false),allocatedEnd=GC.GetAllocatedBytesForCurrentThread();
+            long managedEnd=GC.GetTotalMemory(false),allocatedBytes=AllocationBytesSinceStart();
             if(_performanceReview)UnityEngine.Profiling.Profiler.enabled=false;
             var window=new FrameWindow{mode=mode,width=Screen.width,height=Screen.height,samples=_frameTimes.Count,
                 duration=_performanceReview?(float)(elapsedMs/1000):Time.realtimeSinceStartup-_frameStarted,gpu=SystemInfo.graphicsDeviceName,cpu=SystemInfo.processorType,
@@ -117,7 +132,9 @@ namespace TumbangPreso.Diagnostics
                 includesMenus=_measureMenus,histogramMaxMs=_frameHistogram.MaxSeconds*1000,
                 framesOver50Ms=_frameHistogram.LongFrames(.05),framesOver100Ms=_frameHistogram.LongFrames(.1),
                 elapsedMs=elapsedMs,managedBytesBefore=_managedStart,managedBytesAfter=managedEnd,
-                mainThreadAllocatedBytes=allocatedEnd-_allocatedStart,
+                mainThreadAllocatedBytes=allocatedBytes,allocationCounterAvailable=allocatedBytes>=0,
+                allocationCounterStatus=_allocationCounterStatus,profilerEnabledAtStart=_windowProfilerEnabled,
+                binaryProfilerEnabledAtStart=_windowBinaryProfilerEnabled,
                 graphicsApi=SystemInfo.graphicsDeviceType.ToString(),quality=Settings.GraphicsProfiles.Of(Settings.GraphicsProfiles.Current).Label,
                 unityQuality=QualitySettings.names[QualitySettings.GetQualityLevel()],
                 targetFrameRate=Application.targetFrameRate,vSyncCount=QualitySettings.vSyncCount,unfocusedFrames=_unfocusedFrames};
@@ -131,8 +148,8 @@ namespace TumbangPreso.Diagnostics
             _report.frameWindows.Add(window);
             File.WriteAllLines(Path.Combine(_folder,mode+"-frame-times.csv"),new[]{"sample,frame_ms"}.Concat(
                 _frameTimes.Select((value,index)=>FormattableString.Invariant($"{index},{value:F6}"))));
-            File.WriteAllLines(Path.Combine(_folder,mode+"-frame-context.csv"),new[]{"sample,real_seconds,simulation_seconds,round_left,gc0,gc1,gc2,main_thread_allocated_bytes"}.Concat(
-                _frameContexts.Select((v,i)=>FormattableString.Invariant($"{i},{v.real:F6},{v.simulation:F6},{v.left:F6},{v.gc0},{v.gc1},{v.gc2},{v.allocatedBytes}"))));
+            File.WriteAllLines(Path.Combine(_folder,mode+"-frame-context.csv"),new[]{"sample,real_seconds,simulation_seconds,round_left,gc0,gc1,gc2,main_thread_allocated_bytes,allocation_counter_available"}.Concat(
+                _frameContexts.Select((v,i)=>FormattableString.Invariant($"{i},{v.real:F6},{v.simulation:F6},{v.left:F6},{v.gc0},{v.gc1},{v.gc2},{v.allocatedBytes},{(v.allocationCounterAvailable?1:0)}"))));
             if(_performanceReview)
             {
                 File.WriteAllText(Path.Combine(_folder,"result.json"),JsonUtility.ToJson(_report,true));

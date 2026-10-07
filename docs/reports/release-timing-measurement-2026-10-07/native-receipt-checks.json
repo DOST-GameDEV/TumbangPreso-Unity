@@ -1,0 +1,31 @@
+{
+  "checks": {
+    "nativeFreshCapture": true,
+    "nonBinaryMode": true,
+    "binaryNotRequested": true,
+    "profilerOff": true,
+    "oneFrameContext": true,
+    "buildFlagsExplicit": true,
+    "calibrationSignalHonest": true,
+    "windowSentinelHonest": true,
+    "frameSentinelHonest": true,
+    "noBinaryTrace": true
+  },
+  "passed": true,
+  "sourceCapture": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\performance-timing-capture\\c8fe18b7c2b545d6b92265efa2d138f0\\result.json",
+  "mode": "wall-clock-no-binary-profiler",
+  "developmentBuild": true,
+  "editor": true,
+  "backend": "Mono",
+  "allocationCounterAvailable": false,
+  "allocationCounterStatus": "unavailable-no-valid-allocation-signal",
+  "allocationCalibrationBytes": 0,
+  "mainThreadAllocatedBytes": -1,
+  "rawHashes": {
+    "Logs\\tournament-review1007\\release-timing\\native-timing-receipt\\performance-actions.json": "5c6f065bee7851bbaef7077965cac4a08a5947da7259db39d1500c4b32e507b1",
+    "Logs\\tournament-review1007\\release-timing\\native-timing-receipt\\result.json": "b0813b07b4b051e87b573e0751c285030e18ac68cccc53d002c83ba361c642b2",
+    "Logs\\tournament-review1007\\release-timing\\native-timing-receipt\\routine-frame-context.csv": "fd7f11e20585aeb1dd4143be18d83ff7be0e4fdb4cedfd30aa53bde8f4bec5c8",
+    "Logs\\tournament-review1007\\release-timing\\native-timing-receipt\\routine-frame-times.csv": "a47e8e8c40e35ab3ab8b056227c8f12da7895599aa0d0db57b56e5910183925a"
+  },
+  "scope": "Native Unity Editor timing/receipt semantics; actual release-player route remains for matching Windows build."
+}

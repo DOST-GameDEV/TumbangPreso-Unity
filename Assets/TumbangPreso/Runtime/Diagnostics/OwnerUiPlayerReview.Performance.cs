@@ -34,6 +34,91 @@ namespace TumbangPreso.Diagnostics
         private float _performanceDiskCheckAt;
         private bool _performanceBinary;
         private const long PerformanceTraceBudget = 512L * 1024 * 1024;
+        private const int AllocationCalibrationSize = 4096;
+        private bool _allocationCounterChecked, _allocationCounterAvailable;
+        private long _allocationCalibrationBytes = -1;
+        private string _allocationCounterStatus = "not-calibrated";
+        private byte[] _allocationCalibrationRetained;
+
+        private static void ValidatePerformanceCaptureMode(bool binary, bool development)
+        {
+            if (binary && !development)
+                throw new InvalidOperationException("Binary profiler capture requires a Development player. Ordinary wall-clock timing supports release players.");
+        }
+
+        private static bool AllocationCalibrationPassed(long before, long after)
+            => before >= 0 && after >= before && after - before >= AllocationCalibrationSize;
+
+        private void CalibrateAllocationCounter()
+        {
+            if (_allocationCounterChecked) return;
+            _allocationCounterChecked = true;
+            try
+            {
+                long before = GC.GetAllocatedBytesForCurrentThread();
+                _allocationCalibrationRetained = new byte[AllocationCalibrationSize];
+                _allocationCalibrationRetained[0] = 1;
+                long after = GC.GetAllocatedBytesForCurrentThread();
+                GC.KeepAlive(_allocationCalibrationRetained);
+                _allocationCalibrationBytes = after >= before ? after - before : -1;
+                _allocationCounterAvailable = AllocationCalibrationPassed(before, after);
+                _allocationCounterStatus = _allocationCounterAvailable ? "calibrated-main-thread-managed-bytes" : "unavailable-no-valid-allocation-signal";
+            }
+            catch (Exception error) when (error is NotSupportedException || error is NotImplementedException)
+            {
+                _allocationCounterStatus = "unavailable-" + error.GetType().Name;
+            }
+            ReportAllocationCounter();
+        }
+
+        private void ReportAllocationCounter()
+        {
+            _report.allocationCounterAvailable = _allocationCounterAvailable;
+            _report.allocationCounterStatus = _allocationCounterStatus;
+            _report.allocationCalibrationBytes = _allocationCalibrationBytes;
+        }
+
+        private long ReadAllocationCounter()
+        {
+            if (!_allocationCounterAvailable) return -1;
+            try
+            {
+                long current = GC.GetAllocatedBytesForCurrentThread();
+                if (current >= 0) return current;
+                _allocationCounterAvailable = false; _allocationCounterStatus = "unavailable-negative-counter";
+                ReportAllocationCounter(); return -1;
+            }
+            catch (Exception error) when (error is NotSupportedException || error is NotImplementedException)
+            {
+                _allocationCounterAvailable = false; _allocationCounterStatus = "unavailable-" + error.GetType().Name;
+                ReportAllocationCounter(); return -1;
+            }
+        }
+
+        private long AllocationBytesSinceStart()
+        {
+            long current = ReadAllocationCounter();
+            if (current < 0 || _allocatedStart < 0) return -1;
+            if (current >= _allocatedStart) return current - _allocatedStart;
+            _allocationCounterAvailable = false; _allocationCounterStatus = "unavailable-counter-regressed";
+            ReportAllocationCounter(); return -1;
+        }
+
+        private void ConfigureMeasurementReport()
+        {
+            _report.measurementMode = _performanceReview ? (_performanceBinary ? "wall-clock-with-binary-profiler" : "wall-clock-no-binary-profiler") : "unity-unscaled-delta";
+            _report.developmentBuild = Debug.isDebugBuild; _report.editor = Application.isEditor;
+            _report.binaryProfilerRequested = _performanceReview && _performanceBinary;
+            _report.profilerSupported = Profiler.supported;
+            _report.buildFlagsEvidence = "Runtime development/editor/profiler flags; complete BuildOptions including ConnectWithProfiler require the matching build receipt.";
+            _report.allocationScope = "Current-thread managed bytes including probe overhead; excludes worker/native/GPU allocations. -1 means unavailable or not sampled. Collection counts are raw runtime deltas; no forced collection.";
+#if ENABLE_IL2CPP
+            _report.scriptingBackend = "IL2CPP";
+#else
+            _report.scriptingBackend = "Mono";
+#endif
+            ReportAllocationCounter();
+        }
 
         private bool PerformanceHasHeadroom()
         {
@@ -66,12 +151,19 @@ namespace TumbangPreso.Diagnostics
             probe._performanceReview = probe._measureMenus = true;
             probe._performanceBinary = args.Contains("-tp-performance-binary");
             probe._deadline = Time.realtimeSinceStartup + 1500;
-            probe.StartFrameWindow("00-boot-to-title");
-            probe.StartCoroutine(probe.Guard(probe.Walk()));
+            try
+            {
+                probe.StartFrameWindow("00-boot-to-title");
+                probe.StartCoroutine(probe.Guard(probe.Walk()));
+            }
+            catch (Exception error) { probe.Finish(false, error.ToString()); }
         }
 
         private void BeginPerformanceProfile(string name)
         {
+            ValidatePerformanceCaptureMode(_performanceBinary, Debug.isDebugBuild);
+            if (_performanceBinary && !Profiler.supported)
+                throw new InvalidOperationException("Binary profiler capture is not supported by this player.");
             // Routine timing keeps CSV evidence without the profiler's collection cost.
             // Large binary traces require an explicit, separately budgeted diagnostic.
             Profiler.enabled = false;
@@ -96,7 +188,6 @@ namespace TumbangPreso.Diagnostics
 
         private IEnumerator PerformanceOnly()
         {
-            if (!Debug.isDebugBuild) throw new InvalidOperationException("Performance review requires the Development player.");
             yield return WaitFor(() => Find("GuestAccount") != null || Find("ContinueAccount") != null || Find("StartButton") != null, 150);
             StopFrameWindow();
             yield return MeasurePerformance("01-title-to-home", PerformanceHomeEntry());

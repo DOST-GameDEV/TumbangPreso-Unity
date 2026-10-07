@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using TumbangPreso.CameraSystem;
 using TumbangPreso.UI.Hub;
 using UnityEngine;
@@ -16,6 +17,9 @@ namespace TumbangPreso.Diagnostics
         {
             public bool passed;
             public string error;
+            public bool requiredRecordedEffects;
+            public int recordedEffectFrames, recordedQuads, meshVertices;
+            public string effectsTexture;
             public List<string> stages = new List<string>();
         }
         private readonly Receipt _receipt = new Receipt();
@@ -24,6 +28,7 @@ namespace TumbangPreso.Diagnostics
         private float _started, _phaseAt, _playingAt;
         private bool _finished;
         private LocalReplayPlayback _viewer;
+        private bool _requireEffects;
 
         internal static bool TryBegin(string output)
         {
@@ -33,6 +38,8 @@ namespace TumbangPreso.Diagnostics
             var root = new GameObject("~LocalReplayPackageProbe"); DontDestroyOnLoad(root);
             var probe = root.AddComponent<LocalReplayPackageProbe>();
             probe._folder = output; probe._library = Path.GetFullPath(args[at + 1]);
+            probe._requireEffects = Array.IndexOf(args, "-tp-replay-effects-required") >= 0;
+            probe._receipt.requiredRecordedEffects = probe._requireEffects;
             probe._started = Time.realtimeSinceStartup;
             return true;
         }
@@ -40,6 +47,29 @@ namespace TumbangPreso.Diagnostics
         { if (!condition) throw new InvalidOperationException(error); }
         private void Stage(string stage)
         { _receipt.stages.Add(stage); _phaseAt = Time.realtimeSinceStartup; Debug.Log("[ReplayPackage] " + stage); }
+        private void CheckRecordedEffects()
+        {
+            const BindingFlags hidden = BindingFlags.Instance | BindingFlags.NonPublic;
+            var view = (RecordedWorldView)typeof(LocalReplayPlayback).GetField("_view", hidden).GetValue(_viewer);
+            Require(view?.RecordedEffects != null && view.RecordedEffects.Frames.Count > 0,
+                "The required fresh recording has no decoded render-frame effects.");
+            var entry = (LocalReplayEntry)typeof(LocalReplayPlayback).GetField("_entry", hidden).GetValue(_viewer);
+            int loaded = (int)typeof(LocalReplayPlayback).GetField("_loaded", hidden).GetValue(_viewer);
+            Require(loaded >= 0 && loaded < entry.Manifest.Segments.Count, "Effects have no actual loaded segment.");
+            var segment = entry.Manifest.Segments[loaded];
+            float sourceTime = segment.Start + Mathf.Clamp(_viewer.Position - segment.Offset, 0, segment.End - segment.Start);
+            var quads = LocalReplayEffectsCodec.At(view.RecordedEffects, sourceTime);
+            var owned = (RecordedArenaEffects)typeof(RecordedWorldView).GetField("_arenaEffects", hidden).GetValue(view);
+            Require(owned != null && quads != null && quads.Length > 0, "Seek did not reconstruct recorded effects.");
+            var mesh = (Mesh)typeof(RecordedArenaEffects).GetField("_mesh", hidden).GetValue(owned);
+            var renderer = (MeshRenderer)typeof(RecordedArenaEffects).GetField("_renderer", hidden).GetValue(owned);
+            Require(mesh != null && mesh.vertexCount == quads.Length * 4, "The owned mesh differs from the recorded quad count.");
+            Require(renderer?.sharedMaterial?.mainTexture != null, "The actual recorded-effects atlas is missing.");
+            _receipt.recordedEffectFrames = view.RecordedEffects.Frames.Count;
+            _receipt.recordedQuads = quads.Length; _receipt.meshVertices = mesh.vertexCount;
+            _receipt.effectsTexture = renderer.sharedMaterial.mainTexture.name;
+            Stage("fresh-effects-decoded-and-owned-mesh-bound");
+        }
         private static Button ButtonNamed(string name)
         { var root = GameObject.Find(name); return root == null ? null : root.GetComponent<Button>(); }
         private static void Click(string name)
@@ -94,6 +124,7 @@ namespace TumbangPreso.Diagnostics
             else if (_phase == 4 && Time.realtimeSinceStartup - _phaseAt > 1)
             {
                 Require(Mathf.Abs(_viewer.Position - 17) < .05f, "Actual slider did not seek");
+                if (_requireEffects) CheckRecordedEffects();
                 Click("Rewind"); Require(Mathf.Abs(_viewer.Position - 12) < .05f, "Rewind did not move five seconds");
                 Click("Forward"); Require(Mathf.Abs(_viewer.Position - 17) < .05f, "Forward did not restore time");
                 _viewer.SetSpeed(2); Click("PlayPause");
