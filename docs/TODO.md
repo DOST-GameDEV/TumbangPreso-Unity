@@ -3171,6 +3171,10 @@ its release timing improvement remains pending.
 The opt-in full performance fixture now uses normal four-seat matches and legal
 kit recipes; Unity compilation/timing control passes. Required effects and fresh
 natural results remain [actual-player gates](reports/performance-fixture-2026-10-07/README.md).
+The current191-window release run passes both fresh one-round natural results;
+two Rago contact observations remain failed and preserved. The real zero-radius
+fissure replay boundary now passes six native capture/codec/render and invalid
+controls. [Evidence and remaining package gates](reports/seismic-replay-boundary-2026-10-07/README.md).
 
 **Loading/optimization, OPEN:** yielded shader/art/avatar/portrait preparation,
 retained ability props/effect data and actual menu activation readiness are implemented.

@@ -1,0 +1,271 @@
+{
+  "native": {
+    "seismic-original": {
+      "pid": 55064,
+      "exitCode": 2,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.RecordedEffectsTests.RecordedHeroVisualsCannotCreateHazardsActorsScoresOrGameplayRandomness",
+          "result": "Failed",
+          "message": "  Missing actual effect 101\n  Expected: True\n  But was:  False\n"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.ActualZeroRadiusFissureWarningSurvivesTheStrictCodecAndRenderOnlyView",
+          "result": "Failed",
+          "message": "  The real accepted-cast feedback shape must be recordable.\n  Expected: True\n  But was:  False\n"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(-1.0f,True)",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(0.0f,False)",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(16.0f,True)",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(float.NaN,True)",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "protectedCount": 21401,
+      "copiedRawSha256": {
+        "result.json": "f018f50c315da44753510bc022e1501f02a49285f2c0511239f27b0193e2f8c4",
+        "results.xml": "6e3779b1753a71a1d8c462b0d4269212601f4b4a6dd062f3dde647bc7f45de43",
+        "source-restoration.json": "59b93808953271d1f5026c73a8d8a25146de8cd120c8de8d5ac09173d8df3609"
+      }
+    },
+    "seismic-candidate": {
+      "pid": 35960,
+      "exitCode": 2,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.ActualPositiveRadiusStompStillRoundTrips",
+          "result": "Failed",
+          "message": "System.IO.InvalidDataException : Invalid clip identity/window"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.ActualZeroRadiusFissureWarningSurvivesTheStrictCodecAndRenderOnlyView",
+          "result": "Failed",
+          "message": "System.IO.InvalidDataException : Invalid clip identity/window"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(-1.0f,True)",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(0.0f,False)",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(16.0f,True)",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(float.NaN,True)",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "protectedCount": 21401,
+      "copiedRawSha256": {
+        "result.json": "a6836baf2fd7c8e34d9024d05b7c6a0859e4d63ff51a21e2c807b60134a49f70",
+        "results.xml": "fda456ef9ea7d8b223ecdadc77a32dc993ad8367813cf5c18ddcfbe01c203596",
+        "source-restoration.json": "7b6060c9e0aa6e7e30418a047f572f754b8e8b18ac8cdedde20e6c47cad3b50e"
+      }
+    },
+    "seismic-original2": {
+      "pid": 35772,
+      "exitCode": 2,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.ActualPositiveRadiusStompStillRoundTrips",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.ActualZeroRadiusFissureWarningSurvivesTheStrictCodecAndRenderOnlyView",
+          "result": "Failed",
+          "message": "  The real accepted-cast feedback shape must be recordable.\n  Expected: True\n  But was:  False\n"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(-1.0f,True)",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(0.0f,False)",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(16.0f,True)",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(float.NaN,True)",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "protectedCount": 21401,
+      "copiedRawSha256": {
+        "result.json": "5644a2cad06c3b93297a0028c65aa7ab1b4fe22433c0f58957d04e0d65b5ac91",
+        "results.xml": "3bb715e5c40b6af2fa71cad4a09912643a006080089e0513ac8c2d1ae50364ba",
+        "source-restoration.json": "9b0f2906e8860b17ec8fb281c10634d79c7d1ade7527fc78374ae6a2b6a151fa"
+      },
+      "sourceHashes": {
+        "Assets/TumbangPreso/Runtime/Camera/RecordedSpecialFields.cs": "2998cf7add50df5ce94935844cc69cbd8f41bc335335c98c70957aeef9567000",
+        "Assets/TumbangPreso/Tests/PlayMode/RecordedSeismicBoundaryTests.cs": "45767ca89b246f7ad29f1db63b697aca0d9ddcbec37f1959d019fa5b81b2edf2",
+        "Assets/TumbangPreso/Runtime/Camera/RecordedMatchClip.cs": "3184fd36dcd555651657f2705a16ef9673b8d4f34b4d08b2411de61983290c16",
+        "Assets/TumbangPreso/Runtime/Camera/RecordedFieldView.cs": "e790590a526c19514839955cd09d8b0a04951c4384105df0aaa4a70c114583d8",
+        "Assets/TumbangPreso/Runtime/Diagnostics/OwnerUiPlayerReview.Performance.cs": "cdb32717b8a1ea7de3a9a2d5768e83b248b601490336f283575efaafe84f01d0"
+      }
+    },
+    "seismic-candidate2": {
+      "pid": 11588,
+      "exitCode": 2,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.ActualPositiveRadiusStompStillRoundTrips",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.ActualZeroRadiusFissureWarningSurvivesTheStrictCodecAndRenderOnlyView",
+          "result": "Failed",
+          "message": "  Expected: False\n  But was:  True\n"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(-1.0f,True)",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(0.0f,False)",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(16.0f,True)",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(float.NaN,True)",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "protectedCount": 21401,
+      "copiedRawSha256": {
+        "result.json": "e93a3d5b805e61531586182fe810c58149bf8c217aeee9246f60585607140d99",
+        "results.xml": "a5c0724dfc477bfffd09ca7c38493795991d74081c7c3d35773b8848b12d9a6c",
+        "source-restoration.json": "5937ef80696c298470b7a5191988e656ecc49a27ab42b20c45b8dd486534f703"
+      }
+    },
+    "seismic-candidate3": {
+      "pid": 49560,
+      "exitCode": 2,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.ActualPositiveRadiusStompStillRoundTrips",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.ActualZeroRadiusFissureWarningSurvivesTheStrictCodecAndRenderOnlyView",
+          "result": "Failed",
+          "message": "  Only the render material owner may remain enabled: GeneratedMeshOwner,VfxRenderTag,GeneratedMeshOwner,VfxRenderTag,GeneratedMeshOwner,VfxRenderTag\n  Expected: True\n  But was:  False\n"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(-1.0f,True)",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(0.0f,False)",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(16.0f,True)",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(float.NaN,True)",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "protectedCount": 21401,
+      "copiedRawSha256": {
+        "result.json": "2be434b31d4e8391db91efd143fd92be12aa6a0431cad09b31bc0614ece48cbc",
+        "results.xml": "bfe73e3f01c44e79ce0c4480619db730be02cb31464220c68c0276a727318bc7",
+        "source-restoration.json": "6241b5316978bfa88d578a27e1ddad9c23f7c16aaf3183d6d7d7dfcab7c603f7"
+      }
+    },
+    "seismic-candidate4": {
+      "pid": 52708,
+      "exitCode": 0,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.ActualPositiveRadiusStompStillRoundTrips",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.ActualZeroRadiusFissureWarningSurvivesTheStrictCodecAndRenderOnlyView",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(-1.0f,True)",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(0.0f,False)",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(16.0f,True)",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(float.NaN,True)",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "protectedCount": 21401,
+      "copiedRawSha256": {
+        "result.json": "3a6d2453bd2d046b759007710e16a3389fc1cd425ad9d4904e26f2c290ba2159",
+        "results.xml": "6031331700c6e4a8d6bf683b01e5e153c24f8914228d77bff1d59dbae307f4e0",
+        "source-restoration.json": "b84de4a8c0ef964be72ee6057cfce9515fd8351765782e2ffe5f0ad87ae0a38a"
+      },
+      "sourceHashes": {
+        "Assets/TumbangPreso/Runtime/Camera/RecordedSpecialFields.cs": "beef265714d7358b0083fb7d2509bc0cf813cf0b7ba4eabf13fd0d239d420c1c",
+        "Assets/TumbangPreso/Tests/PlayMode/RecordedSeismicBoundaryTests.cs": "bdaaa1a0f1d14feadc020e639d360cac908fcd2f3ec5385567937d51405186db",
+        "Assets/TumbangPreso/Runtime/Camera/RecordedMatchClip.cs": "3184fd36dcd555651657f2705a16ef9673b8d4f34b4d08b2411de61983290c16",
+        "Assets/TumbangPreso/Runtime/Camera/RecordedFieldView.cs": "e790590a526c19514839955cd09d8b0a04951c4384105df0aaa4a70c114583d8",
+        "Assets/TumbangPreso/Runtime/Diagnostics/OwnerUiPlayerReview.Performance.cs": "cdb32717b8a1ea7de3a9a2d5768e83b248b601490336f283575efaafe84f01d0"
+      }
+    }
+  },
+  "scope": "Realzero-fissure originalfailure to strictcodec/render/currentnegative-control6PASS; actualnewrelease/fullRagoobserver acceptancepending"
+}

@@ -26,7 +26,7 @@ namespace TumbangPreso.Diagnostics
             public long presentationMatchId;
             public string recipe,firstAnswer;
             public bool preconditionsPassed,anchorObserved,recastDelivered,matchedTargetStatus,effectStateObserved;
-            public bool loadedSourceObserved,sourceImpactObserved;
+            public bool loadedSourceObserved,ownedPowerFlightObserved,sourceImpactObserved;
             public float targetDisplacement;
             public List<string> statuses = new List<string>();
         }
@@ -615,8 +615,13 @@ namespace TumbangPreso.Diagnostics
                 else if (hero == "sean" && slot == 1)
                 {
                     receipt.loadedSourceObserved |= ownedShoe.Holder == actor && ownedShoe.Affinity == SlipperAffinity.FireExplosive;
-                    receipt.sourceImpactObserved |= receipt.loadedSourceObserved && receipt.throws > 0
-                        && ownedShoe.ThrowerSlot == actor.PlayerSlot && ownedShoe.Affinity == SlipperAffinity.Normal;
+                    receipt.ownedPowerFlightObserved |= ownedShoe.State == SlipperState.InFlight
+                        && ownedShoe.ThrowerSlot == actor.PlayerSlot && ownedShoe.Affinity == SlipperAffinity.FireExplosive;
+                    // A blocked contact clears thrower credit in the same physics
+                    // step that spends the power. Retain the observed owned flight,
+                    // then require its matched contact and consumed affinity.
+                    receipt.sourceImpactObserved |= receipt.loadedSourceObserved && receipt.ownedPowerFlightObserved
+                        && receipt.throws > 0 && receipt.hits > 0 && ownedShoe.Affinity == SlipperAffinity.Normal;
                     Vector3 moved = target.transform.position - targetBefore; moved.y = 0;
                     receipt.targetDisplacement = Mathf.Max(receipt.targetDisplacement, moved.magnitude);
                     // Empowered Throw deliberately nudges rather than applying a

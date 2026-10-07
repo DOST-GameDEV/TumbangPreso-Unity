@@ -1,0 +1,524 @@
+Mono path[0] = 'C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1007d/TumbangPreso_Data/Managed'
+Mono config path = 'C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1007d/MonoBleedingEdge/etc'
+CodeReloadManager initialized
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+Initialize engine version: 6000.5.8f1 (5cb7df797b7d)
+[Subsystems] Discovering subsystems at path C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1007d/TumbangPreso_Data/UnitySubsystems
+Forcing GfxDevice: Direct3D 11
+GfxDevice: creating device client; kGfxThreadingModeClientWorkerJobs
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: AMD Radeon RX 6600 (ID=0x73ff)
+    Vendor:   ATI
+    VRAM:     8147 MB
+    Driver:   32.0.21043.19003
+Begin MonoManager ReloadAssembly
+- Finished resetting the current domain, in  0.049 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+D3D11 device created for Microsoft Media Foundation video decoding.
+<RI> Initializing input.
+Using Windows.Gaming.Input
+<RI> Input initialized.
+[Audio] loaded 122 of 122 cues.
+[NetIdentity] Online sign-in is disabled for this local UI review.
+UnloadTime: 1.144700 ms
+[Build] TUMBANG PRESO 1.0.0 | f3e4c013dfc0+dirty | protocol 153 | StandaloneWindows64
+Unexpected timestamp values detected. This can occur in H.264 videos not encoded with the baseline profile. Timestamps will be skewed to correct the playback for C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1007d/TumbangPreso_Data/sharedassets0.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1007d/TumbangPreso_Data/sharedassets0.resource
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 2.040600 ms
+[OwnerUiReview] 01-title-to-home
+Unloading 19 unused Assets to reduce memory usage. Loaded Objects now: 4684.
+Total: 2.767900 ms (FindLiveObjects: 0.405100 ms CreateObjectMapping: 0.504800 ms MarkObjects: 1.786200 ms  DeleteObjects: 0.071300 ms)
+
+[HomeAssetTiming] stage=roster-resource-wait wall_ms=3113.284 scope=async-wait-not-main-thread-cost
+[HomeAssetTiming] stage=gameplay-preparation wall_ms=2053.714 scope=coroutine-total-includes-yields
+[HomeAssetTiming] stage=mode-posters wall_ms=223.311 scope=async-wait-includes-yields
+First video frame not zero: 4 (0.133333s). Result may be out of sync. Please make sure tracks all start at 0 in C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1007d/TumbangPreso_Data/resources.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1007d/TumbangPreso_Data/resources.resource
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 2.986900 ms
+Unexpected timestamp values detected. This can occur in H.264 videos not encoded with the baseline profile. Timestamps will be skewed to correct the playback for C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1007d/TumbangPreso_Data/resources.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1007d/TumbangPreso_Data/resources.resource
+[MenuAssetLoad] resource=UI/portraits/bayan synchronous_cpu_ms=1.429 scope=opt-in-cpu-not-gpu-or-present
+[MenuAssetLoad] resource=UI/portraits/dante synchronous_cpu_ms=0.471 scope=opt-in-cpu-not-gpu-or-present
+[MenuAssetLoad] resource=UI/portraits/tsinelas synchronous_cpu_ms=0.535 scope=opt-in-cpu-not-gpu-or-present
+[MenuAssetLoad] resource=UI/portraits/pasip synchronous_cpu_ms=2.092 scope=opt-in-cpu-not-gpu-or-present
+First video frame not zero: 4 (0.133333s). Result may be out of sync. Please make sure tracks all start at 0 in C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1007d/TumbangPreso_Data/resources.resource
+Unloading 73 unused Assets to reduce memory usage. Loaded Objects now: 9875.
+Total: 6.800100 ms (FindLiveObjects: 0.859000 ms CreateObjectMapping: 1.517900 ms MarkObjects: 4.292800 ms  DeleteObjects: 0.130100 ms)
+
+[OwnerUiReview] 02-home-idle
+[OwnerUiReview] menu-AvatarButton
+[OwnerUiReview] menu-HeroButton
+[ModelPreviewLoad] model=dante-redesign stage=prepare instantiate_ms=0.864 toon_ms=16.011 pet_ms=0.001 idle_bind_ms=0.315 prepare_cpu_ms=18.244 scope=opt-in-cpu-includes-probe-overhead
+[HeroMenuLoad] stage=build cpu_ms=70.341 scope=opt-in-cpu-includes-preview-excludes-canvas-gpu-present
+[ModelPreviewLoad] model=dante-redesign stage=first-step texture_cpu_ms=0.010 sample_cpu_ms=0.838 framing_cpu_ms=3.543 step_cpu_ms=4.904 scope=cpu-only-not-gpu-or-present
+[OwnerUiReview] menu-HeroButton-repeat
+[ModelPreviewLoad] model=dante-redesign stage=prepare instantiate_ms=0.057 toon_ms=0.407 pet_ms=0.000 idle_bind_ms=0.017 prepare_cpu_ms=0.505 scope=opt-in-cpu-includes-probe-overhead
+[HeroMenuLoad] stage=build cpu_ms=4.859 scope=opt-in-cpu-includes-preview-excludes-canvas-gpu-present
+[ModelPreviewLoad] model=dante-redesign stage=first-step texture_cpu_ms=0.004 sample_cpu_ms=0.020 framing_cpu_ms=0.012 step_cpu_ms=0.038 scope=cpu-only-not-gpu-or-present
+[OwnerUiReview] menu-LoadoutButton
+[MenuAssetLoad] resource=UI/portraits/crocs synchronous_cpu_ms=0.529 scope=opt-in-cpu-not-gpu-or-present
+[MenuAssetLoad] resource=UI/portraits/pantulog synchronous_cpu_ms=0.428 scope=opt-in-cpu-not-gpu-or-present
+[MenuAssetLoad] resource=UI/portraits/sike synchronous_cpu_ms=0.296 scope=opt-in-cpu-not-gpu-or-present
+[MenuAssetLoad] resource=UI/portraits/spartan synchronous_cpu_ms=1.033 scope=opt-in-cpu-not-gpu-or-present
+[MenuAssetLoad] resource=UI/portraits/alpombra synchronous_cpu_ms=0.426 scope=opt-in-cpu-not-gpu-or-present
+[MenuAssetLoad] resource=UI/portraits/pambahay synchronous_cpu_ms=0.298 scope=opt-in-cpu-not-gpu-or-present
+[MenuAssetLoad] resource=UI/portraits/heels synchronous_cpu_ms=0.870 scope=opt-in-cpu-not-gpu-or-present
+[MenuAssetLoad] resource=UI/portraits/sandals synchronous_cpu_ms=0.388 scope=opt-in-cpu-not-gpu-or-present
+[MenuAssetLoad] resource=UI/portraits/loafers synchronous_cpu_ms=0.390 scope=opt-in-cpu-not-gpu-or-present
+[OwnerUiReview] menu-ShopButton
+[MenuAssetLoad] resource=UI/mode-cards/HeroShopDoor synchronous_cpu_ms=0.168 scope=opt-in-cpu-not-gpu-or-present
+[MenuAssetLoad] resource=UI/portraits/rafi synchronous_cpu_ms=1.243 scope=opt-in-cpu-not-gpu-or-present
+[MenuAssetLoad] resource=UI/portraits/phaister synchronous_cpu_ms=0.362 scope=opt-in-cpu-not-gpu-or-present
+[MenuAssetLoad] resource=UI/portraits/nemu synchronous_cpu_ms=0.326 scope=opt-in-cpu-not-gpu-or-present
+[MenuAssetLoad] resource=UI/mode-cards/ItemShopDoor synchronous_cpu_ms=0.004 scope=opt-in-cpu-not-gpu-or-present
+[MenuAssetLoad] resource=UI/portraits/karne synchronous_cpu_ms=1.104 scope=opt-in-cpu-not-gpu-or-present
+[OwnerUiReview] menu-TaskButton
+[OwnerUiReview] menu-MenuButton
+[OwnerUiReview] menu-ModeCard
+[OwnerUiReview] menu-profile
+[OwnerUiReview] menu-settings
+[OwnerUiReview] menu-hero-selection
+[MenuAssetLoad] resource=UI/portraits/cheska synchronous_cpu_ms=0.514 scope=opt-in-cpu-not-gpu-or-present
+[MenuAssetLoad] resource=UI/portraits/sean synchronous_cpu_ms=0.987 scope=opt-in-cpu-not-gpu-or-present
+[MenuAssetLoad] resource=UI/portraits/zack synchronous_cpu_ms=0.452 scope=opt-in-cpu-not-gpu-or-present
+[MenuAssetLoad] resource=UI/portraits/amihan synchronous_cpu_ms=0.315 scope=opt-in-cpu-not-gpu-or-present
+[MenuAssetLoad] resource=UI/portraits/paete synchronous_cpu_ms=0.967 scope=opt-in-cpu-not-gpu-or-present
+[ModelPreviewLoad] model=dante-redesign stage=prepare instantiate_ms=0.066 toon_ms=0.023 pet_ms=0.000 idle_bind_ms=0.016 prepare_cpu_ms=0.131 scope=opt-in-cpu-includes-probe-overhead
+[ModelPreviewLoad] model=dante-redesign stage=first-step texture_cpu_ms=0.004 sample_cpu_ms=0.022 framing_cpu_ms=0.015 step_cpu_ms=0.045 scope=cpu-only-not-gpu-or-present
+[OwnerUiReview] lobby-local-host
+[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code 87KQ
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00000] in <761abeb7f88d4c0b92cfd90ee359ea96>:0 
+  at TumbangPreso.UI.ConvertedMatchSetup.LeaveRoom () [0x00000] in <761abeb7f88d4c0b92cfd90ee359ea96>:0 
+  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<PerformanceLobby>d__50.MoveNext () [0x00000] in <761abeb7f88d4c0b92cfd90ee359ea96>:0 
+  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<Guard>d__104.MoveNext () [0x00000] in <761abeb7f88d4c0b92cfd90ee359ea96>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <78b8abfe2cc94360809513165a28ff6a>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+[OwnerUiReview] classic-match-entry-and-round-start
+[Net] offline
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+Cannot Pause a disabled VideoPlayer
+UnloadTime: 9.081800 ms
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[MenuAssetLoad] resource=UI/portraits/maring synchronous_cpu_ms=0.588 scope=opt-in-cpu-not-gpu-or-present
+[MenuAssetLoad] resource=UI/portraits/tikboy synchronous_cpu_ms=1.216 scope=opt-in-cpu-not-gpu-or-present
+[MenuAssetLoad] resource=UI/portraits/lola_pacing synchronous_cpu_ms=0.341 scope=opt-in-cpu-not-gpu-or-present
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[AA] mode requested 0x MSAA + FXAA on; QualitySettings.antiAliasing 0; camera 'Main Camera' allowMSAA True, allowHDR True, path Forward; target delivered 1 sample(s), format ARGBHalf; device supportsMultisampledTextures 1
+Unloading 453 unused Assets to reduce memory usage. Loaded Objects now: 16959.
+Total: 6.030100 ms (FindLiveObjects: 1.000300 ms CreateObjectMapping: 1.348800 ms MarkObjects: 3.385200 ms  DeleteObjects: 0.295500 ms)
+
+[ArenaPrewarm] drew 20 views in 0.21 s.
+[HubLoading] Eskinita ready after 3.60 s.
+[Slice] round 1 begins, taya is seat 0
+[OwnerUiReview] classic-first-throw-and-hit
+[OwnerUiReview] classic-return-to-home
+[Net] offline
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+UnloadTime: 15.007500 ms
+Unloading 661 unused Assets to reduce memory usage. Loaded Objects now: 8743.
+Total: 8.910900 ms (FindLiveObjects: 0.858600 ms CreateObjectMapping: 1.821100 ms MarkObjects: 4.905500 ms  DeleteObjects: 1.325300 ms)
+
+Unexpected timestamp values detected. This can occur in H.264 videos not encoded with the baseline profile. Timestamps will be skewed to correct the playback for C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1007d/TumbangPreso_Data/resources.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1007d/TumbangPreso_Data/resources.resource
+First video frame not zero: 4 (0.133333s). Result may be out of sync. Please make sure tracks all start at 0 in C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1007d/TumbangPreso_Data/resources.resource
+[OwnerUiReview] hero-match-entry-and-round-start
+[Net] offline
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 2.473300 ms
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+Unloading 60 unused Assets to reduce memory usage. Loaded Objects now: 17451.
+Total: 11.817600 ms (FindLiveObjects: 1.630300 ms CreateObjectMapping: 2.123500 ms MarkObjects: 4.478700 ms  DeleteObjects: 3.584700 ms)
+
+[ArenaPrewarm] drew 20 views in 0.22 s.
+[HubLoading] Eskinita ready after 0.93 s.
+[Slice] round 1 begins, taya is seat 0
+[OwnerUiReview] first-throw-and-hit
+[OwnerUiReview] dante-first-model-and-kit
+[OwnerUiReview] dante-0-prepare-1
+[OwnerUiReview] dante-dante_skill1-cast-1
+[OwnerUiReview] dante-0-prepare-2
+[OwnerUiReview] dante-dante_skill1-cast-2
+[OwnerUiReview] dante-1-prepare-1
+[OwnerUiReview] dante-dante_skill2-cast-1
+[OwnerUiReview] dante-1-prepare-2
+[OwnerUiReview] dante-dante_skill2-cast-2
+[OwnerUiReview] dante-2-role-model-and-kit
+[OwnerUiReview] dante-2-prepare-1
+[OwnerUiReview] dante-dante_skill2d-cast-1
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+[OwnerUiReview] dante-2-prepare-2
+[OwnerUiReview] dante-dante_skill2d-cast-2
+[OwnerUiReview] dante-3-prepare-1
+[OwnerUiReview] dante-dante_ultimate-cast-1
+[OwnerUiReview] dante-3-prepare-2
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] dante-dante_ultimate-cast-2
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] cheska-first-model-and-kit
+[OwnerUiReview] cheska-0-prepare-1
+[OwnerUiReview] cheska-cheska_skill1-cast-1
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] cheska-0-prepare-2
+[OwnerUiReview] cheska-cheska_skill1-cast-2
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] cheska-1-prepare-1
+[OwnerUiReview] cheska-cheska_skill2-cast-1
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] cheska-1-prepare-2
+[OwnerUiReview] cheska-cheska_skill2-cast-2
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] cheska-2-role-model-and-kit
+[OwnerUiReview] cheska-2-prepare-1
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] cheska-cheska_skill2d-cast-1
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] cheska-2-prepare-2
+[OwnerUiReview] cheska-cheska_skill2d-cast-2
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] cheska-3-prepare-1
+[OwnerUiReview] cheska-cheska_ultimate-cast-1
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] cheska-3-prepare-2
+[OwnerUiReview] cheska-cheska_ultimate-cast-2
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] sean-first-model-and-kit
+[OwnerUiReview] sean-0-prepare-1
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] sean-sean_skill1-cast-1
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] sean-0-prepare-2
+[OwnerUiReview] sean-sean_skill1-cast-2
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] sean-1-prepare-1
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] sean-sean_skill2-cast-1
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] sean-1-prepare-2
+[OwnerUiReview] sean-sean_skill2-cast-2
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] sean-2-role-model-and-kit
+[OwnerUiReview] sean-2-prepare-1
+[OwnerUiReview] sean-sean_skill2d-cast-1
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] sean-2-prepare-2
+[OwnerUiReview] sean-sean_skill2d-cast-2
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] sean-3-prepare-1
+[OwnerUiReview] sean-sean_ultimate-cast-1
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] sean-3-prepare-2
+[OwnerUiReview] sean-sean_ultimate-cast-2
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] zack-first-model-and-kit
+[OwnerUiReview] zack-0-prepare-1
+[OwnerUiReview] zack-zack_skill1-cast-1
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] zack-0-prepare-2
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] zack-zack_skill1-cast-2
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] zack-1-prepare-1
+[OwnerUiReview] zack-zack_skill2-cast-1
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] zack-1-prepare-2
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] zack-zack_skill2-cast-2
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] zack-2-role-model-and-kit
+[OwnerUiReview] zack-2-prepare-1
+[OwnerUiReview] zack-zack_skill2d-cast-1
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] zack-2-prepare-2
+[OwnerUiReview] zack-zack_skill2d-cast-2
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] zack-3-prepare-1
+[OwnerUiReview] zack-zack_ultimate-cast-1
+[LocalReplay] Invalid recorded field
+[LocalReplay] Invalid recorded field
+[OwnerUiReview] zack-persistent-return
+[Net] offline
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+[LocalReplay] Invalid recorded field
+UnloadTime: 6.434500 ms
+Unloading 776 unused Assets to reduce memory usage. Loaded Objects now: 8855.
+Total: 6.626000 ms (FindLiveObjects: 0.502300 ms CreateObjectMapping: 1.096900 ms MarkObjects: 4.018700 ms  DeleteObjects: 1.007700 ms)
+
+First video frame not zero: 4 (0.133333s). Result may be out of sync. Please make sure tracks all start at 0 in C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1007d/TumbangPreso_Data/resources.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1007d/TumbangPreso_Data/resources.resource
+Unexpected timestamp values detected. This can occur in H.264 videos not encoded with the baseline profile. Timestamps will be skewed to correct the playback for C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1007d/TumbangPreso_Data/resources.resource
+[OwnerUiReview] zack-persistent-fresh-match
+[Net] offline
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 3.133200 ms
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+Unloading 60 unused Assets to reduce memory usage. Loaded Objects now: 17512.
+Total: 10.639600 ms (FindLiveObjects: 1.378000 ms CreateObjectMapping: 1.431400 ms MarkObjects: 4.076700 ms  DeleteObjects: 3.753300 ms)
+
+[ArenaPrewarm] drew 20 views in 0.23 s.
+[HubLoading] Eskinita ready after 0.47 s.
+[Slice] round 1 begins, taya is seat 0
+[OwnerUiReview] zack-persistent-rebind
+[OwnerUiReview] zack-3-prepare-2
+[OwnerUiReview] zack-zack_ultimate-cast-2
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+[OwnerUiReview] nemu-first-model-and-kit
+[OwnerUiReview] nemu-0-prepare-1
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+[OwnerUiReview] nemu-nemu_skill1-cast-1
+[OwnerUiReview] nemu-0-prepare-2
+[OwnerUiReview] nemu-nemu_skill1-cast-2
+[OwnerUiReview] nemu-1-prepare-1
+[OwnerUiReview] nemu-nemu_skill2-cast-1
+[OwnerUiReview] nemu-1-prepare-2
+[OwnerUiReview] nemu-nemu_skill2-cast-2
+[OwnerUiReview] nemu-2-role-model-and-kit
+[OwnerUiReview] nemu-2-prepare-1
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+[OwnerUiReview] nemu-nemu_skill2d-cast-1
+[OwnerUiReview] nemu-2-prepare-2
+[OwnerUiReview] nemu-nemu_skill2d-cast-2
+[OwnerUiReview] nemu-3-prepare-1
+[OwnerUiReview] nemu-nemu_ultimate-cast-1
+[OwnerUiReview] nemu-3-prepare-2
+[OwnerUiReview] nemu-nemu_ultimate-cast-2
+[OwnerUiReview] phaister-first-model-and-kit
+[OwnerUiReview] phaister-0-prepare-1
+[OwnerUiReview] phaister-phaister_skill1-cast-1
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+[OwnerUiReview] phaister-0-prepare-2
+[OwnerUiReview] phaister-phaister_skill1-cast-2
+[OwnerUiReview] phaister-1-prepare-1
+[OwnerUiReview] phaister-phaister_skill2-cast-1
+[OwnerUiReview] phaister-1-prepare-2
+[OwnerUiReview] phaister-phaister_skill2-cast-2
+[OwnerUiReview] phaister-2-role-model-and-kit
+[OwnerUiReview] phaister-2-prepare-1
+[OwnerUiReview] phaister-phaister_skill2d-cast-1
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+[OwnerUiReview] phaister-2-prepare-2
+[OwnerUiReview] phaister-phaister_skill2d-cast-2
+[OwnerUiReview] phaister-3-prepare-1
+[OwnerUiReview] phaister-phaister_ultimate-cast-1
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+[OwnerUiReview] phaister-3-prepare-2
+[OwnerUiReview] phaister-phaister_ultimate-cast-2
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] rafi-first-model-and-kit
+[OwnerUiReview] rafi-0-prepare-1
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] rafi-rafi_skill1-cast-1
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] rafi-0-prepare-2
+[OwnerUiReview] rafi-rafi_skill1-cast-2
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] rafi-1-prepare-1
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] rafi-rafi_skill2-cast-1
+[LocalReplay] Invalid recorded object
+[LocalReplay] Invalid recorded object
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] rafi-1-prepare-2
+[OwnerUiReview] rafi-rafi_skill2-cast-2
+[LocalReplay] Invalid recorded object
+[LocalReplay] Invalid recorded object
+[LocalReplay] Invalid recorded object
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] rafi-2-role-model-and-kit
+[OwnerUiReview] rafi-2-prepare-1
+[OwnerUiReview] rafi-rafi_skill2d-cast-1
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] rafi-2-prepare-2
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] rafi-rafi_skill2d-cast-2
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] rafi-3-prepare-1
+[OwnerUiReview] rafi-rafi_ultimate-cast-1
+[LocalReplay] Invalid recorded object
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] rafi-3-prepare-2
+[OwnerUiReview] rafi-rafi_ultimate-cast-2
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] amihan-first-model-and-kit
+[OwnerUiReview] amihan-0-prepare-1
+[OwnerUiReview] amihan-amihan_skill1-cast-1
+[LocalReplay] Invalid recorded object
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] amihan-0-prepare-2
+[OwnerUiReview] amihan-amihan_skill1-cast-2
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] amihan-1-prepare-1
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] amihan-amihan_skill2-cast-1
+[LocalReplay] Invalid recorded object
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] amihan-1-prepare-2
+[OwnerUiReview] amihan-amihan_skill2-cast-2
+[LocalReplay] Invalid recorded object
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] amihan-2-role-model-and-kit
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] amihan-2-prepare-1
+[OwnerUiReview] amihan-amihan_skill2d-cast-1
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] amihan-2-prepare-2
+[OwnerUiReview] amihan-amihan_skill2d-cast-2
+[LocalReplay] Invalid recorded object
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] amihan-3-prepare-1
+[OwnerUiReview] amihan-amihan_ultimate-cast-1
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] amihan-3-prepare-2
+[OwnerUiReview] amihan-amihan_ultimate-cast-2
+[LocalReplay] Invalid recorded object
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] paete-first-model-and-kit
+[OwnerUiReview] paete-0-prepare-1
+[OwnerUiReview] paete-paete_skill1-cast-1
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] paete-0-prepare-2
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] paete-paete_skill1-cast-2
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] paete-1-prepare-1
+[OwnerUiReview] paete-paete_skill2-cast-1
+[LocalReplay] Invalid recorded object
+[LocalReplay] Invalid recorded object
+[LocalReplay] Invalid recorded object
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] paete-1-prepare-2
+[OwnerUiReview] paete-paete_skill2-cast-2
+[LocalReplay] Invalid recorded object
+[LocalReplay] Invalid recorded object
+[LocalReplay] Invalid recorded object
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] paete-2-role-model-and-kit
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] paete-2-prepare-1
+[OwnerUiReview] paete-paete_skill2d-cast-1
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] paete-2-prepare-2
+[OwnerUiReview] paete-paete_skill2d-cast-2
+[LocalReplay] Invalid recorded object
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] paete-3-prepare-1
+[OwnerUiReview] paete-paete_ultimate-cast-1
+[LocalReplay] Invalid recorded object
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] paete-3-prepare-2
+[OwnerUiReview] paete-paete_ultimate-cast-2
+[LocalReplay] Invalid recorded object
+[OwnerUiReview] return-to-home
+[Net] offline
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+[LocalReplay] Invalid recorded object
+UnloadTime: 6.837100 ms
+Unloading 985 unused Assets to reduce memory usage. Loaded Objects now: 9131.
+Total: 8.607100 ms (FindLiveObjects: 0.537200 ms CreateObjectMapping: 1.321100 ms MarkObjects: 4.635100 ms  DeleteObjects: 2.113300 ms)
+
+Unexpected timestamp values detected. This can occur in H.264 videos not encoded with the baseline profile. Timestamps will be skewed to correct the playback for C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1007d/TumbangPreso_Data/resources.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1007d/TumbangPreso_Data/resources.resource
+First video frame not zero: 4 (0.133333s). Result may be out of sync. Please make sure tracks all start at 0 in C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1007d/TumbangPreso_Data/resources.resource
+[OwnerUiReview] Classic-result-match-entry
+[Net] offline
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 2.882300 ms
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+Unloading 60 unused Assets to reduce memory usage. Loaded Objects now: 17349.
+Total: 7.554700 ms (FindLiveObjects: 1.371900 ms CreateObjectMapping: 1.462000 ms MarkObjects: 4.537400 ms  DeleteObjects: 0.183000 ms)
+
+[ArenaPrewarm] drew 20 views in 0.22 s.
+[HubLoading] Eskinita ready after 0.46 s.
+[Slice] round 1 begins, taya is seat 0
+[OwnerUiReview] Classic-natural-custom-round-and-match-end
+[ModelPreviewLoad] model=character-female-f stage=prepare instantiate_ms=0.074 toon_ms=0.024 pet_ms=0.000 idle_bind_ms=0.012 prepare_cpu_ms=0.138 scope=opt-in-cpu-includes-probe-overhead
+[Slice] match over. scores: 420 / 0 / 250 / 250. seat 0 wins
+[ModelPreviewLoad] model=character-female-f stage=first-step texture_cpu_ms=0.005 sample_cpu_ms=0.023 framing_cpu_ms=0.017 step_cpu_ms=0.048 scope=cpu-only-not-gpu-or-present
+[OwnerUiReview] classic-result-return
+[Net] offline
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 5.295400 ms
+Unloading 661 unused Assets to reduce memory usage. Loaded Objects now: 9114.
+Total: 6.359800 ms (FindLiveObjects: 0.466100 ms CreateObjectMapping: 1.071900 ms MarkObjects: 3.998800 ms  DeleteObjects: 0.822800 ms)
+
+Unexpected timestamp values detected. This can occur in H.264 videos not encoded with the baseline profile. Timestamps will be skewed to correct the playback for C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1007d/TumbangPreso_Data/resources.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1007d/TumbangPreso_Data/resources.resource
+First video frame not zero: 4 (0.133333s). Result may be out of sync. Please make sure tracks all start at 0 in C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1007d/TumbangPreso_Data/resources.resource
+[OwnerUiReview] HeroStrike-result-match-entry
+[Net] offline
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 2.905700 ms
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+Unloading 60 unused Assets to reduce memory usage. Loaded Objects now: 17770.
+Total: 17.675400 ms (FindLiveObjects: 1.345900 ms CreateObjectMapping: 1.798900 ms MarkObjects: 4.190800 ms  DeleteObjects: 10.339400 ms)
+
+[ArenaPrewarm] drew 20 views in 0.24 s.
+[HubLoading] Eskinita ready after 0.55 s.
+[Slice] round 1 begins, taya is seat 0
+[OwnerUiReview] HeroStrike-natural-custom-round-and-match-end
+[ModelPreviewLoad] model=cheska-redesign stage=prepare instantiate_ms=0.107 toon_ms=0.023 pet_ms=0.000 idle_bind_ms=0.014 prepare_cpu_ms=0.175 scope=opt-in-cpu-includes-probe-overhead
+[Slice] match over. scores: 380 / 0 / 0 / 200. seat 0 wins
+[ModelPreviewLoad] model=cheska-redesign stage=first-step texture_cpu_ms=0.004 sample_cpu_ms=0.023 framing_cpu_ms=0.018 step_cpu_ms=0.048 scope=cpu-only-not-gpu-or-present
+[OwnerUiReview] FAIL System.InvalidOperationException: Some first-use actions were refused or missed their required consequence; see performance-actions.json. Their timings do not qualify those effects.
+  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<PerformanceOnly>d__43.MoveNext () [0x00b3b] in <761abeb7f88d4c0b92cfd90ee359ea96>:0 
+  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<Guard>d__104.MoveNext () [0x00054] in <761abeb7f88d4c0b92cfd90ee359ea96>:0 
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+CodeReloadManager destroyed

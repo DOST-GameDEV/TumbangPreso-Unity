@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 14:31:50Z" end-time="2026-10-07 14:32:29Z" duration="39.7858214">
+  <test-suite type="TestSuite" id="3617" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2117" result="Failed" site="Child" start-time="2026-10-07 14:31:50Z" end-time="2026-10-07 14:32:29Z" duration="39.785821" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3609" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2117" result="Failed" site="Child" start-time="2026-10-07 14:31:50Z" end-time="2026-10-07 14:32:29Z" duration="39.750993" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="55064" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3610" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2117" result="Failed" site="Child" start-time="2026-10-07 14:31:50Z" end-time="2026-10-07 14:32:29Z" duration="39.725097" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3613" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2115" result="Failed" site="Child" start-time="2026-10-07 14:31:50Z" end-time="2026-10-07 14:32:29Z" duration="39.699698" total="6" passed="4" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2838" name="RecordedEffectsTests" fullname="TumbangPreso.PlayTests.RecordedEffectsTests" classname="TumbangPreso.PlayTests.RecordedEffectsTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-10-07 14:31:50Z" end-time="2026-10-07 14:32:15Z" duration="25.209942" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2841" name="RecordedHeroVisualsCannotCreateHazardsActorsScoresOrGameplayRandomness" fullname="TumbangPreso.PlayTests.RecordedEffectsTests.RecordedHeroVisualsCannotCreateHazardsActorsScoresOrGameplayRandomness" methodname="RecordedHeroVisualsCannotCreateHazardsActorsScoresOrGameplayRandomness" classname="TumbangPreso.PlayTests.RecordedEffectsTests" runstate="Runnable" seed="569346080" result="Failed" start-time="2026-10-07 14:31:50Z" end-time="2026-10-07 14:32:15Z" duration="25.190155" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Missing actual effect 101
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.RecordedEffectsTests+<RecordedHeroVisualsCannotCreateHazardsActorsScoresOrGameplayRandomness>d__6.MoveNext () [0x00295] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\RecordedEffectsTests.cs:131
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2860" name="RecordedSeismicBoundaryTests" fullname="TumbangPreso.PlayTests.RecordedSeismicBoundaryTests" classname="TumbangPreso.PlayTests.RecordedSeismicBoundaryTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-07 14:32:15Z" end-time="2026-10-07 14:32:29Z" duration="14.303552" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2861" name="ActualZeroRadiusFissureWarningSurvivesTheStrictCodecAndRenderOnlyView" fullname="TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.ActualZeroRadiusFissureWarningSurvivesTheStrictCodecAndRenderOnlyView" methodname="ActualZeroRadiusFissureWarningSurvivesTheStrictCodecAndRenderOnlyView" classname="TumbangPreso.PlayTests.RecordedSeismicBoundaryTests" runstate="Runnable" seed="1055189508" result="Failed" start-time="2026-10-07 14:32:15Z" end-time="2026-10-07 14:32:29Z" duration="14.133911" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The real accepted-cast feedback shape must be recordable.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.RecordedSeismicBoundaryTests+<ActualZeroRadiusFissureWarningSurvivesTheStrictCodecAndRenderOnlyView>d__2.MoveNext () [0x0011a] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\RecordedSeismicBoundaryTests.cs:34
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2866" name="StrictCodecStillRejectsInvalidRadialState" fullname="TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState" classname="TumbangPreso.PlayTests.RecordedSeismicBoundaryTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-07 14:32:29Z" end-time="2026-10-07 14:32:29Z" duration="0.167817" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2862" name="StrictCodecStillRejectsInvalidRadialState(-1.0f,True)" fullname="TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(-1.0f,True)" methodname="StrictCodecStillRejectsInvalidRadialState" classname="TumbangPreso.PlayTests.RecordedSeismicBoundaryTests" runstate="Runnable" seed="618829579" result="Passed" start-time="2026-10-07 14:32:29Z" end-time="2026-10-07 14:32:29Z" duration="0.049509" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2863" name="StrictCodecStillRejectsInvalidRadialState(0.0f,False)" fullname="TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(0.0f,False)" methodname="StrictCodecStillRejectsInvalidRadialState" classname="TumbangPreso.PlayTests.RecordedSeismicBoundaryTests" runstate="Runnable" seed="147296293" result="Passed" start-time="2026-10-07 14:32:29Z" end-time="2026-10-07 14:32:29Z" duration="0.038145" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2864" name="StrictCodecStillRejectsInvalidRadialState(16.0f,True)" fullname="TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(16.0f,True)" methodname="StrictCodecStillRejectsInvalidRadialState" classname="TumbangPreso.PlayTests.RecordedSeismicBoundaryTests" runstate="Runnable" seed="991047749" result="Passed" start-time="2026-10-07 14:32:29Z" end-time="2026-10-07 14:32:29Z" duration="0.039387" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2865" name="StrictCodecStillRejectsInvalidRadialState(float.NaN,True)" fullname="TumbangPreso.PlayTests.RecordedSeismicBoundaryTests.StrictCodecStillRejectsInvalidRadialState(float.NaN,True)" methodname="StrictCodecStillRejectsInvalidRadialState" classname="TumbangPreso.PlayTests.RecordedSeismicBoundaryTests" runstate="Runnable" seed="1664681191" result="Passed" start-time="2026-10-07 14:32:29Z" end-time="2026-10-07 14:32:29Z" duration="0.038707" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
