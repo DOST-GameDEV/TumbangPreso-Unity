@@ -1,0 +1,425 @@
+using System;
+using System.Collections;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+namespace TumbangPreso
+{
+    /// <summary>
+    /// The pre-round free-roam window and the 3 · 2 · 1 that follows it, converted from the
+    /// ready-phase half of `main.gd` (roughly lines 1036-1195).
+    ///
+    /// 2026-07-28: *"add a 3 2 1 timer before each match starts too."* Everyone is already
+    /// spawned and free to wander; pressing READY starts a countdown, and the round only
+    /// actually begins when the countdown finishes — not on the press itself. Whoever
+    /// wandered off gets teleported back to their role spawn the instant the round begins,
+    /// the same way an ordinary intermission between rounds already does.
+    ///
+    /// ⚠️ THE COUNTDOWN GUARD IS NOT COSMETIC. Without <see cref="_countingDown"/>, a second
+    /// READY press mid-count restarts it, and a player mashing R never starts the round at all.
+    ///
+    /// ⚠️⚠️ THE NETWORKED GATE COUNTS PEERS, NEVER CHARACTERS. A match always has four
+    /// characters — the empty seats are bot-filled — and an AI cannot press R, so counting
+    /// characters leaves a solo host waiting forever for three bots to agree. Spectators are
+    /// excluded for the same reason: they hold no seat and can never press. The count comes
+    /// from the same seated-peer membership used to accept the votes.
+    ///
+    /// ⚠️ A SECOND PRESS IS IDEMPOTENT. Votes go into a set, so mashing R cannot ready you
+    /// twice or start the countdown early.
+    /// </summary>
+    public sealed class ReadyGate : MonoBehaviour
+    {
+        /// <summary>Raised when the countdown completes and the round should actually start.
+        /// In Godot this called `MatchManager.begin_next_round()`.</summary>
+        public event Action RoundShouldBegin;
+
+        /// <summary>Ticks as they should appear on the HUD: "3", "2", "1", then "GO!".</summary>
+        public event Action<string> CountdownTick;
+
+        /// <summary>Raised when the countdown display should clear.</summary>
+        public event Action CountdownHidden;
+
+        /// <summary>Raised with true when the "press READY" prompt should show.</summary>
+        public event Action<bool> ReadyPromptChanged;
+
+        /// <summary>The body-language read on the ready press. Purely visual: the countdown
+        /// and the round start are unchanged, this just means the OTHER players can see it
+        /// happen in the world instead of only on a HUD.</summary>
+        public event Action<CharacterMotor> ReadyGestureRequested;
+
+        public const float TickSeconds = 1.0f;
+        public const float GoSeconds = 0.5f;
+
+        private bool _awaitingLocalReady;
+        private bool _countingDown;
+        private bool _countdownConsumed;
+        private bool _automatic, _introductionDone;
+        private float _nextAutomaticReady;
+        private Coroutine _arrival;
+
+        /// <summary>Peers that have declared ready. Host-side; a set, so a second press from
+        /// the same peer changes nothing.</summary>
+        private readonly System.Collections.Generic.HashSet<int> _netReady =
+            new System.Collections.Generic.HashSet<int>();
+
+        /// <summary>Raised with (ready, expected) whenever the tally moves, so a screen can
+        /// show "2 / 3 ready" without polling.</summary>
+        public event Action<int, int> NetReadyChanged;
+
+        public bool AwaitingNetReady { get; private set; }
+
+        /// <summary>HOST ONLY. Opens the networked phase and clears any stale votes.</summary>
+        public void OpenNetworked()
+        {
+            if (!NetAuthority.IsHost) return;
+
+            _netReady.Clear();
+            AwaitingNetReady = true;
+            _awaitingLocalReady = true;
+            _countingDown = false;
+
+            ReadyPromptChanged?.Invoke(!_automatic);
+            RaiseNetReady();
+        }
+
+        /// <summary>
+        /// Any peer to the host: "I am ready."
+        ///
+        /// ⚠️⚠️ THE ID IS A TRANSPORT PEER ID, NEVER A SEAT. NGO client id 0 is the host's real
+        /// identity. Remapping it to `LocalSlot` makes a host in seat 1 collide with client 1,
+        /// so two ready peers occupy one set entry and the countdown never opens.
+        /// </summary>
+        public void DeclareReady(int peerId)
+        {
+            if (!NetAuthority.IsHost || !AwaitingNetReady || !EligiblePeer(peerId)) return;
+
+            if (!_netReady.Add(peerId)) return;   // idempotent
+
+            RaiseNetReady();
+
+            TryBeginNetCountdown();
+        }
+
+        /// <summary>
+        /// ⚠️ RE-CHECKED WHENEVER A PEER LEAVES, NOT ONLY WHEN ONE PRESSES. A peer that
+        /// disconnects mid-vote drops the expected count, and if nobody re-evaluates, the
+        /// remaining players sit on a gate that is already satisfied.
+        /// </summary>
+        public void OnPeerLeft(int peerId)
+        {
+            if (!NetAuthority.IsHost || !AwaitingNetReady) return;
+
+            _netReady.Remove(peerId);
+            RaiseNetReady();
+
+            TryBeginNetCountdown();
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ `PlayingPeerCount` TOOK A PEER ID AND WAS ONCE HANDED A SEAT, AND THE ARGUMENT
+        /// IS GONE NOW. It existed so the local peer counted while its own spectator flag was
+        /// in flight; it compared against `PeerRecord.PeerId`, and passing `LocalSlot` made the
+        /// comparison land on whichever CLIENT happened to share a number with this peer's
+        /// chair, so a host in seat 1 forgave a spectating client 1 and a spectating host in
+        /// seat 1 was itself dropped from its own quorum. Same fault class as the peer-versus-seat
+        /// collision in `DeclareReady` above, one call frame further out.
+        ///
+        /// ⚠️ THE EXEMPTION ITSELF THEN TURNED OUT TO BE THE BUG — it could only ever count a
+        /// peer already flagged a spectator, which is the one peer `Update` below refuses to
+        /// vote for — so a spectating HOST hung its own gate. `LobbySession.PlayingPeerCount`
+        /// carries the report and the arithmetic. **Do not reintroduce the argument**: this note
+        /// is kept only so the seat-versus-peer collision above is not rediscovered from scratch.
+        /// </summary>
+        private int ExpectedReadyCount()
+        {
+            var lobby = Net.NetSession.Instance?.Lobby;
+            return NetAuthority.IsNetworked ? lobby?.SeatedPeerCount() ?? 0 : 1;
+        }
+
+        private bool EligiblePeer(int peerId)
+            => NetAuthority.IsNetworked
+                ? Net.NetSession.Instance?.Lobby.IsSeatedPeer(peerId) == true
+                : peerId == NetAuthority.LocalPeerId && !GameLaunch.Spectator;
+
+        private int CurrentReadyCount()
+        {
+            int count = 0;
+            foreach (int peer in _netReady) if (EligiblePeer(peer)) count++;
+            return count;
+        }
+
+        private void RaiseNetReady()
+            => NetReadyChanged?.Invoke(CurrentReadyCount(), ExpectedReadyCount());
+
+        private void TryBeginNetCountdown()
+        {
+            if (!NetAuthority.IsHost || !AwaitingNetReady || UI.Hub.HubLoading.Visible ||
+                (_automatic && !_introductionDone) ||
+                (NetAuthority.IsNetworked && Net.NetSession.Instance == null)) return;
+            if (CurrentReadyCount() >= ExpectedReadyCount()) BeginNetCountdown();
+        }
+
+        private void BeginNetCountdown()
+        {
+            if (_countingDown || _countdownConsumed || UI.Hub.HubLoading.Visible) return;
+            if (_automatic && !_introductionDone) return;
+
+            AwaitingNetReady = false;
+
+            // Last-chance pick sweep before match starts: broadcast full table to late joiners and peers
+            Net.MatchRpc.Instance?.BroadcastPicks();
+            Net.MatchRpc.Instance?.BeginCountdownClientRpc();
+
+            StartCoroutine(RunReadyCountdown());
+        }
+
+        /// <summary>Starts the 3, 2, 1, GO countdown locally on clients.</summary>
+        public void StartLocalCountdown()
+        {
+            if (_countingDown || _countdownConsumed) return;
+            // A host countdown wins over a delayed local introduction. Never keep the player's
+            // camera or input held after the network has advanced into the playable round.
+            if (_arrival != null)
+            {
+                StopCoroutine(_arrival); _arrival = null;
+                var presentation = GetComponent<MatchArrivalPresentation>();
+                if (presentation != null) { presentation.Cancel(); Destroy(presentation); }
+                _introductionDone = true;
+            }
+            _awaitingLocalReady = false;
+            AwaitingNetReady = false;
+            StartCoroutine(RunReadyCountdown());
+        }
+
+        private InputAction _readyUp;
+        private bool _countdownHold;
+        private void HoldUntilStart()
+        {
+            if (_countdownHold) return;
+            PresentationClock.Hold(); _countdownHold = true;
+        }
+        private void ReleaseStartHold()
+        {
+            if (!_countdownHold) return;
+            _countdownHold = false; PresentationClock.Release();
+            _local?.Intent.RequireFreshActions();
+        }
+        private void OnDisable()
+        {
+            StopAllCoroutines(); _arrival = null;
+            GetComponent<MatchArrivalPresentation>()?.Cancel();
+            ReleaseStartHold();
+        }
+        private void OnDestroy() => OnDisable();
+        private CharacterMotor _local;
+
+        public bool AwaitingReady => _awaitingLocalReady;
+        public bool CountingDown => _countingDown;
+
+        /// <summary>Open the automatic court introduction and loaded-peer barrier.</summary>
+        public void Open(CharacterMotor local)
+        {
+            StopAllCoroutines(); _arrival = null;
+            GetComponent<MatchArrivalPresentation>()?.Cancel();
+            ReleaseStartHold();
+            _local = local;
+            _awaitingLocalReady = true;
+            _countingDown = false;
+            _countdownConsumed = false;
+            _automatic = true; // Lobby lock-in is the only player-facing ready step.
+            _introductionDone = !_automatic;
+            _readySendPending = false;
+            ReadyPromptChanged?.Invoke(!_automatic);
+            if (AdoptStartedMatch()) return;
+            if (_automatic && _arrival == null) _arrival = StartCoroutine(PrepareAutomaticArrival());
+        }
+
+        // A late join never receives the countdown that already finished on the host.
+        // Retire only this gate's presentation; snapshots remain the round-state owner.
+        private bool AdoptStartedMatch()
+        {
+            var match = GameServices.Match;
+            if (!NetAuthority.ShouldRequest() || match == null ||
+                !match.HostConfirmedInProgress) return false;
+            if (!_awaitingLocalReady && !_countingDown && _arrival == null && !_countdownHold)
+                return true;
+
+            StopAllCoroutines(); _arrival = null;
+            var presentation = GetComponent<MatchArrivalPresentation>();
+            if (presentation != null) { presentation.Cancel(); Destroy(presentation); }
+            ReleaseStartHold();
+            // An ultimate snapshot can arrive while the old opening still owns its hold.
+            // Retiring the opening must not release that accepted shared cinematic.
+            if (SharedUltimatePhase.Instance?.Active == true) PresentationClock.Hold();
+            _readySendPending = false;
+            _awaitingLocalReady = false;
+            AwaitingNetReady = false;
+            _countingDown = false;
+            _countdownConsumed = true;
+            _introductionDone = true;
+            ReadyPromptChanged?.Invoke(false);
+            CountdownHidden?.Invoke();
+            return true;
+        }
+
+        private IEnumerator PrepareAutomaticArrival()
+        {
+            var presentation = gameObject.AddComponent<MatchArrivalPresentation>();
+            yield return presentation.Run();
+            if (presentation != null) Destroy(presentation);
+            HoldUntilStart();
+            _introductionDone = true;
+            _nextAutomaticReady = 0;
+            _arrival = null;
+        }
+
+        private void Awake()
+        {
+            var asset = Resources.Load<InputActionAsset>("TumbangPreso");
+            var map = asset != null ? asset.FindActionMap("Player", false) : null;
+            _readyUp = map != null ? map.FindAction("ReadyUp", false) : null;
+            map?.Enable();
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ A READY PRESS IS HELD UNTIL IT IS ACTUALLY DELIVERED. `NetAuthority.IsNetworked`
+        /// is `NetworkManager.IsListening`, which goes true the moment `StartClient` is called
+        /// and not when the connection is approved, so a press made during the join window was
+        /// written to a transport with nowhere to send it. The prompt cleared, the gesture
+        /// played, and the host never heard about it. Nothing retried, so the player sat in a
+        /// lobby that was waiting for them.
+        ///
+        /// ⚠️ RESENDING IS FREE BECAUSE THE HOST'S SET IS IDEMPOTENT (`DeclareReady` above), so
+        /// the worst case of a retry that was not needed is one extra `Add` that changes nothing.
+        /// </summary>
+        private bool _readySendPending;
+        private float _nextReadySend;
+
+        private void Update()
+        {
+            if (AdoptStartedMatch()) return;
+            // Manual READY reads its action directly, outside PlayerInputReader's
+            // loading guard. Do not spend a press or start a hidden countdown.
+            if (UI.Hub.HubLoading.Visible) return;
+            TryBeginNetCountdown();
+
+            if (_readySendPending && Time.unscaledTime >= _nextReadySend)
+            {
+                // A successful transport send is not host acceptance. Keep the
+                // idempotent vote until the scoped countdown acknowledges it.
+                _nextReadySend = Time.unscaledTime + .5f;
+                Net.MatchRpc.Instance?.DeclareReadyServerRpc();
+            }
+
+            if (_countingDown || !_awaitingLocalReady) return;
+
+            if (_automatic)
+            {
+                if (!_introductionDone) return;
+                if (!NetAuthority.IsNetworked) { StartCoroutine(RunReadyCountdown()); return; }
+                if (NetAuthority.IsHost && ExpectedReadyCount() == 0) { BeginNetCountdown(); return; }
+                if (GameLaunch.Spectator || Time.unscaledTime < _nextAutomaticReady) return;
+                // The host can finish loading after this client. Repeat until the host's countdown
+                // acknowledges the quorum; the existing peer set makes each repeat idempotent.
+                _nextAutomaticReady = Time.unscaledTime + .5f;
+                Net.MatchRpc.Instance?.DeclareReadyServerRpc();
+                return;
+            }
+
+            // ⚠️⚠️ A SPECTATOR'S R IS THE REPLAY KEY AND MUST NOT ALSO BE THE READY KEY.
+            // 🧑 2026-08-29: *"r for spectatotr does ready and replay, conflict"*.
+            //
+            // `CLAUDE.md` § 4 permits the spectator set to reuse gameplay keys, and the whole
+            // permission rests on one sentence: *"a spectator has no body, no seat and no
+            // `CharacterMotor`, so while watching every gameplay action is inert"*. READY was the
+            // exception nobody checked. This method reads the `ReadyUp` action directly off the
+            // input asset rather than through a body, so the press fired for a watcher too and R
+            // rolled the replay AND submitted a vote in the same frame.
+            //
+            // ⚠️⚠️ AND IT WAS A CORRECTNESS BUG, NOT ONLY A CONTROL ONE, WHICH IS WHY THE GATE
+            // IS HERE RATHER THAN IN THE BINDING TABLE. `ExpectedReadyCount` counts
+            // `LobbySession.PlayingPeerCount`, which EXCLUDES spectators by construction — but
+            // `DeclareReady` keyed the set on the sender's peer id and asked no such question, so
+            // a watcher's vote was added to a quorum that had never counted them. Three people
+            // watching a two-player lobby could therefore start the match on their own, and the
+            // two who were actually playing never pressed anything. The set and the total have to
+            // be drawn from the same population.
+            //
+            // ⚠️ IT IS THE SAME TEST `MatchInstaller` USES FOR THE CAMERA, and deliberately not
+            // `_local == null`: under `GameLaunch.AllBots` the gate is handed seat 0 as a stand-in
+            // `local` (`seats[Mathf.Max(0, HumanSeat)]`), so a null check would let an all-bots
+            // run vote with a body nobody is driving. `docs/TODO.md` § 34 is that same clamp
+            // causing a different fault one surface over.
+            //
+            // ⚠️ THE PROBE PATH IS UNAFFECTED. `NetAutomationProbe` calls
+            // `MatchRpc.DeclareReadyServerRpc` itself rather than pressing this action, which is
+            // what keeps `-tp-autostart` working on an all-bots peer that this gate now ignores.
+            if (GameLaunch.Spectator) return;
+
+            // This action bypasses PlayerInputReader, so it must respect the same chat
+            // context. Previously submitted votes and automatic readiness still run above.
+            if (UI.LobbyChat.AnyTyping) return;
+
+            if (_readyUp == null || !_readyUp.WasPressedThisFrame()) return;
+
+            if (_local != null) ReadyGestureRequested?.Invoke(_local);
+
+            // Networked: the press is a VOTE, and the countdown waits for everyone. Solo: the
+            // press IS the start.
+            if (NetAuthority.IsNetworked)
+            {
+                _readySendPending = true;
+                _nextReadySend = 0;
+            }
+            else
+            {
+                StartCoroutine(RunReadyCountdown());
+            }
+        }
+
+        /// <summary>
+        /// Runs once, between the ready press and the round actually starting.
+        ///
+        /// ⚠️ EVERY PEER RUNS THIS, NOT JUST THE HOST, once netcode lands. The round start is
+        /// host-gated downstream, so a client running the same countdown gets the 3 · 2 · 1
+        /// for free; syncing only the finished result would give a client no countdown at all.
+        /// </summary>
+        private IEnumerator RunReadyCountdown()
+        {
+            HoldUntilStart();
+            _countdownConsumed = true;
+            _readySendPending = false;
+            _countingDown = true;
+            ReadyPromptChanged?.Invoke(false);
+
+            foreach (var tick in new[] { "3", "2", "1" })
+            {
+                if (MatchAbandon.AuthorityRevoked) { CancelAbandonedCountdown(); yield break; }
+                CountdownTick?.Invoke(tick);
+                yield return new WaitForSecondsRealtime(TickSeconds);
+            }
+
+            if (MatchAbandon.AuthorityRevoked) { CancelAbandonedCountdown(); yield break; }
+            CountdownTick?.Invoke("GO!");
+            yield return new WaitForSecondsRealtime(GoSeconds);
+
+            if (MatchAbandon.AuthorityRevoked) { CancelAbandonedCountdown(); yield break; }
+            CountdownHidden?.Invoke();
+            _awaitingLocalReady = false;
+            _countingDown = false;
+
+            ReleaseStartHold();
+            RoundShouldBegin?.Invoke();
+        }
+
+        private void CancelAbandonedCountdown()
+        {
+            ReleaseStartHold();
+            _readySendPending = false;
+            _awaitingLocalReady = false;
+            AwaitingNetReady = false;
+            _countingDown = false;
+            CountdownHidden?.Invoke();
+        }
+    }
+}

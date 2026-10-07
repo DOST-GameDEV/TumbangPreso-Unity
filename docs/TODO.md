@@ -3181,6 +3181,9 @@ The current191-window release run passes both fresh one-round natural results;
 two Rago contact observations remain failed and preserved. The real zero-radius
 fissure replay boundary now passes six native capture/codec/render and invalid
 controls. [Evidence and remaining package gates](reports/seismic-replay-boundary-2026-10-07/README.md).
+Combined current Windows readiness/arrival and seismic integration passes25cases
+with exact21403input restoration. [Evidence](reports/windows-readiness-integration-2026-10-07/README.md).
+Fresh release-player and performance checks remain open.
 
 **Loading/optimization, OPEN:** yielded shader/art/avatar/portrait preparation,
 retained ability props/effect data and actual menu activation readiness are implemented.
