@@ -141,6 +141,7 @@ namespace TumbangPreso.CameraSystem
                 if(frame==null||float.IsNaN(frame.Time)||float.IsInfinity(frame.Time)||frame.Time<=previous||
                     frame.Poses==null||frame.Poses.Count>256||frame.Surfaces==null||frame.Surfaces.Count>512)
                     throw new InvalidDataException("Invalid replay scene frame.");
+                if(frame.HasShaderTime&&!Finite(frame.ShaderTime))throw new InvalidDataException("Invalid recorded shader clock.");
                 if(frame.HasCrowd&&(!Finite(frame.CrowdClock)||!Finite(frame.CrowdCheer)||!Finite(frame.CrowdGroan)||!Finite(frame.CrowdWave)))
                     throw new InvalidDataException("Invalid recorded crowd state.");
                 if(frame.Water!=null)

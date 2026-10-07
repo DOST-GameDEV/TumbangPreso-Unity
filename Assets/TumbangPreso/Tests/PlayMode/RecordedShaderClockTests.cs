@@ -80,6 +80,15 @@ namespace TumbangPreso.PlayTests
             long delta=0;for(int i=0;i<a.Length;i++)delta+=System.Math.Abs(a[i].r-b[i].r)+System.Math.Abs(a[i].g-b[i].g)+System.Math.Abs(a[i].b-b[i].b);
             return delta/(a.Length*3f);
         }
+        [UnityTest]public IEnumerator AfterTwoMapLoadsTheSavedSceneClockMatchesGpuAndRewindPixels()
+        {
+            yield return UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(TumbangPreso.UI.SceneFlow.Eskinita);yield return null;
+            yield return new WaitForSeconds(.3f);
+            yield return UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(TumbangPreso.UI.SceneFlow.Kanto);yield return new WaitForSeconds(.3f);
+            Assert.Greater(Time.time-Time.timeSinceLevelLoad,.1f,"This control must distinguish the application and level clocks.");
+            Assert.Greater(Time.timeSinceLevelLoad,.1f,"The regression must test an advancing clock, not only the map-load zero.");
+            yield return AuthoredWaterRewindsItsShaderClockAndRestoresLiveTime();
+        }
         [UnityTest]public IEnumerator AuthoredWaterRewindsItsShaderClockAndRestoresLiveTime()
         {
             var shader=Shader.Find("TumbangPreso/RoofPoolWater");Assert.IsNotNull(shader);Assert.IsTrue(shader.isSupported);
@@ -97,10 +106,11 @@ namespace TumbangPreso.PlayTests
                 yield return null;
 #if UNITY_EDITOR
                 float gpu=LiveShaderSeconds(camera,water.GetComponent<Renderer>());
-                Assert.AreEqual(Time.time,gpu,.0001f,"The production clip clock must match the actual GPU clock.");
-                float recorded=Time.time;
+                var captured=LocalReplaySceneState.Capture(Time.time);var segment=new LocalReplaySceneSegment();segment.Frames.Add(captured);
+                float recorded=LocalReplaySceneState.ShaderTimeAt(segment,captured.Time);
+                Assert.AreEqual(gpu,recorded,.0001f,"The separately recorded scene clock must match the actual GPU clock.");
 #else
-                float recorded=Time.time;
+                float recorded=Time.timeSinceLevelLoad;
 #endif
                 var live=Pixels(camera,target,"live-original");
                 yield return new WaitForSeconds(.7f);var present=Pixels(camera,target,"live-later");float animation=Difference(live,present);
