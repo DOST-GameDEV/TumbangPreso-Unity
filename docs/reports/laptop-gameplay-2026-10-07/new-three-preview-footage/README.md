@@ -1,7 +1,7 @@
 # New-three court footage and capture provenance
 
-In progress: native authoring source/media validation passes; current-source
-native decoder/loop acceptance and publication are pending.
+Native authoring and final current-source visual/decoder gates pass. Full
+tournament and shipping-package acceptance remain open.
 
 Owner scope: Padre Faura, Manila (IlalimNgTulay), LagoonCove and BGC, Taguig
 (Kanto). Eskinita/BayanPlaza/SaBubong are being remade and are not redesigned or
@@ -62,3 +62,5 @@ which includes the recorded choice. This preserves the live guard and prevents
 fresh map-vote/results/selection surfaces from changing their selected picture.
 The candidate also compares actual post-seek decoded pixels with the matching
 poster instead of treating clock/loop callbacks as visual identity proof.
+
+Final64332: all3casesPASS, actualcorrectclip+pixels+1080/30/780+seek/loop/noarena/release. MeanRGB5.0783/5.8140/5.7968 outof255 againstmatchingposters; correctdecodedimagesinspected. All21345sourceinputs/13prefs4originalprofilefilesrestored. ExacttestedpacketrawSHAverifiedbeforetextnormalization; committedcode/mediaequalsraworLF-normalizedtestedbytes. All8oldmovie/posterGitblobSHAunchanged. No shippingGPU/physical/peer/portable/seamless-loop claim.
