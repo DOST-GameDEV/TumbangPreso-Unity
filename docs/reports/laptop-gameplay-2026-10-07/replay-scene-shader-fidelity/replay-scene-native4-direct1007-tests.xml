@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 06:35:16Z" end-time="2026-10-07 06:35:39Z" duration="22.5712927">
+  <test-suite type="TestSuite" id="3514" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="2035" result="Failed" site="Child" start-time="2026-10-07 06:35:16Z" end-time="2026-10-07 06:35:39Z" duration="22.571293" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3506" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2035" result="Failed" site="Child" start-time="2026-10-07 06:35:16Z" end-time="2026-10-07 06:35:39Z" duration="22.558227" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="63368" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3507" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2035" result="Failed" site="Child" start-time="2026-10-07 06:35:16Z" end-time="2026-10-07 06:35:39Z" duration="22.550255" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3510" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2033" result="Failed" site="Child" start-time="2026-10-07 06:35:16Z" end-time="2026-10-07 06:35:39Z" duration="22.542290" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2019" name="LocalReplaySceneStateTests" fullname="TumbangPreso.PlayTests.LocalReplaySceneStateTests" classname="TumbangPreso.PlayTests.LocalReplaySceneStateTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-07 06:35:16Z" end-time="2026-10-07 06:35:38Z" duration="21.724023" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2022" name="ActualKantoRoadCanBeSavedReloadedSeekedAndRestored" fullname="TumbangPreso.PlayTests.LocalReplaySceneStateTests.ActualKantoRoadCanBeSavedReloadedSeekedAndRestored" methodname="ActualKantoRoadCanBeSavedReloadedSeekedAndRestored" classname="TumbangPreso.PlayTests.LocalReplaySceneStateTests" runstate="Runnable" seed="755604787" result="Passed" start-time="2026-10-07 06:35:16Z" end-time="2026-10-07 06:35:38Z" duration="21.713529" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2766" name="RecordedShaderClockTests" fullname="TumbangPreso.PlayTests.RecordedShaderClockTests" classname="TumbangPreso.PlayTests.RecordedShaderClockTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-07 06:35:38Z" end-time="2026-10-07 06:35:39Z" duration="0.762147" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2767" name="AuthoredWaterRewindsItsShaderClockAndRestoresLiveTime" fullname="TumbangPreso.PlayTests.RecordedShaderClockTests.AuthoredWaterRewindsItsShaderClockAndRestoresLiveTime" methodname="AuthoredWaterRewindsItsShaderClockAndRestoresLiveTime" classname="TumbangPreso.PlayTests.RecordedShaderClockTests" runstate="Runnable" seed="1379423130" result="Failed" start-time="2026-10-07 06:35:38Z" end-time="2026-10-07 06:35:39Z" duration="0.760791" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A recorded water frame must reproduce the same camera/time pixels.
+  Expected: less than 0.0799999982f
+  But was:  0.358688354f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.RecordedShaderClockTests+<AuthoredWaterRewindsItsShaderClockAndRestoresLiveTime>d__4.MoveNext () [0x00321] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\RecordedShaderClockTests.cs:45
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[RecordedShaderClock] animation=0.3586884 rewind=0.3586884
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

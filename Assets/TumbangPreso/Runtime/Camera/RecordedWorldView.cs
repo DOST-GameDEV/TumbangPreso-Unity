@@ -22,6 +22,7 @@ namespace TumbangPreso.CameraSystem
         private readonly List<bool> _lightWasEnabled=new List<bool>();
         private RecordedMatchClip _clip;
         private readonly bool _standalone;
+        public LocalReplaySceneSegment RecordedScene { get; set; }
         private int _followSeat=-1;
         private Vector3 _followOffset;
         private GameObject _stage;
@@ -415,7 +416,8 @@ namespace TumbangPreso.CameraSystem
                     _escapePuffs[i]=puff=CourtEscapePuff.Play(cue.Position,WorldCueProfile.Current.Escape,_stage.transform);
                 puff.Sample(age);puff.ShowForCapture(true);
             }
-            using var skyTime=NeighbourhoodSkyMotion.At(time);using var lighting=frame!=null?frame.Lighting.Use(_grade,_sky,_skyFill):null;_camera.Render();
+            using var sceneState=LocalReplaySceneState.Apply(RecordedScene,time,UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+            using var shaderTime=RecordedShaderClock.At(time);using var skyTime=NeighbourhoodSkyMotion.At(time);using var lighting=frame!=null?frame.Lighting.Use(_grade,_sky,_skyFill):null;_camera.Render();
             }
             finally{foreach(var dust in _contactDust.Values)if(dust!=null)dust.ShowForCapture(false);_court.ShowForCapture(false);_lataClock.ShowForCapture(false);foreach(var puff in _escapePuffs.Values)puff.ShowForCapture(false);for(int i=0;i<_hiddenCanvases.Count;i++)if(_hiddenCanvases[i]!=null)_hiddenCanvases[i].enabled=_canvasWasEnabled[i];foreach(var trail in _trails.Values)trail.Visible(false);for(int i=0;i<_hiddenLights.Count;i++)if(_hiddenLights[i]!=null)_hiddenLights[i].enabled=_lightWasEnabled[i];foreach(var field in _fields.Values)field.Visible(false);foreach(var item in _items){item.Copy.ShowOnlyForCapture(false);item.Contact?.Visible(false);}_canLanding.Visible(false);for(int i=0;i<_hidden.Count;i++)if(_hidden[i]!=null)_hidden[i].forceRenderingOff=_previous[i];}
         }

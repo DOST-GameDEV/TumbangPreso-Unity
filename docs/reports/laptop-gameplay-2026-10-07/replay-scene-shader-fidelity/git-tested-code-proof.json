@@ -1,0 +1,218 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplaySceneState.cs",
+    "nativeRawSha256": "2649d9924903704989290085a928ebc96db20764d08f3a6d13741eae39009aed",
+    "stagedGitSha256": "e3729e3471f2463ff1e0b782a314965e7d04e866826db0433bde7557f8406946",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplaySceneState.cs.meta",
+    "nativeRawSha256": "d66afdff24162eee6f6c017e52a6dfa12abf6f9e04e32e7e5067cf8c76401acd",
+    "stagedGitSha256": "d66afdff24162eee6f6c017e52a6dfa12abf6f9e04e32e7e5067cf8c76401acd",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayStore.cs",
+    "nativeRawSha256": "9f4bf26e654dc9d2c70a5e2219458fdecbd52107a423163ab13daab58a07ba7f",
+    "stagedGitSha256": "9f4bf26e654dc9d2c70a5e2219458fdecbd52107a423163ab13daab58a07ba7f",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayStore.cs.meta",
+    "nativeRawSha256": "be01043d641802818f43d85bcbee98a5c919647b732e3dffb9c937582b909434",
+    "stagedGitSha256": "d7d3e117ff1e32f8bec4eca06ee477e1c40fba1cb44e0a56ddd94a07f7ec5808",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayRecorder.cs",
+    "nativeRawSha256": "3b3b6abe2e601a67ab46774f596562a2660f2cc8436fe8ed1f52ee1677a38ed0",
+    "stagedGitSha256": "3b3b6abe2e601a67ab46774f596562a2660f2cc8436fe8ed1f52ee1677a38ed0",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayRecorder.cs.meta",
+    "nativeRawSha256": "6017b0af08a46723852111d855cf4ba089e36c70821705d88d32c2b29ee61ed9",
+    "stagedGitSha256": "27cd0426620ed1d4e765eb4d03e73cb3ae0e8b68d7800c6a612e2c4dbce649ea",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayPlayback.cs",
+    "nativeRawSha256": "442cd928da1279aa49d20c9041d3b1a1337d9bd8263156a3645cf5a4de61d759",
+    "stagedGitSha256": "442cd928da1279aa49d20c9041d3b1a1337d9bd8263156a3645cf5a4de61d759",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayPlayback.cs.meta",
+    "nativeRawSha256": "1299b293fe73d67a8c6eb11d921d77c29603ed850ec6f0bb4ab0b9b206e2d52e",
+    "stagedGitSha256": "af7e0f7a306ba357e5cd3bae9f03403508aa61067f9d83c9a81480a8bcd33d97",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/RecordedWorldView.cs",
+    "nativeRawSha256": "d5800bf8529d434314a29cfa5a848cdfcb9e34802390b6a44a56923726824a37",
+    "stagedGitSha256": "50643a7a1e9e83cd804eeb612073a44b1dbc670fe539634784fb41e510708ebd",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/RecordedWorldView.cs.meta",
+    "nativeRawSha256": "26853ce3e1fedb572529c0a24c35cfd3185163f9c966c10866fca42eb3efb03e",
+    "stagedGitSha256": "910d3bb1ad50a15ba63772fad6a7d05ccca51f85fc671113da1177fbc6376d82",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/LocalReplaySceneStateTests.cs",
+    "nativeRawSha256": "8458a8a328f2438a15a9d1d4c50bd46ca92aa6f7102768418a731b82f7baebc7",
+    "stagedGitSha256": "1b4f43109c0cebbb164fa6c1282852803674f66034683cf8c0aeedfadf3d454a",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/LocalReplaySceneStateTests.cs.meta",
+    "nativeRawSha256": "12827ae0463c6159fa38b34cc73f537b960fadb991ad8bd51c295b55d382cd39",
+    "stagedGitSha256": "12827ae0463c6159fa38b34cc73f537b960fadb991ad8bd51c295b55d382cd39",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/RecordedShaderClock.cs",
+    "nativeRawSha256": "011c26ec4ab2e5d15a571184f845e15ed9ea3ec8a6b503f4b22b4a0bccccfa02",
+    "stagedGitSha256": "916e8ccb16b9e7ceefd5bc7658389aa1a753d4a5faffaf7c66cc4aedbef048cf",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/RecordedShaderClock.cs.meta",
+    "nativeRawSha256": "e93c46fdd318e1965d974bfc27934b2a4542149f8c324d20e8ffedab778b2410",
+    "stagedGitSha256": "adee6bba30d944e5fb0023c27de53d280cbb3d6628c797db4316d668d478459d",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/RecordedShaderClockTests.cs",
+    "nativeRawSha256": "cf333fca9fe1957d5fe480b3074695e27ec766606bfb0ee2e9e79d9d5b245afa",
+    "stagedGitSha256": "c885d4c4a9d78a4b85f7d877af4eaa70e975bb5c09b8b55de39d0878ba0352a0",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/RecordedShaderClockTests.cs.meta",
+    "nativeRawSha256": "18326f8a2157b03910b79e9ffedbd262d53b4f13064a883b65b1f1425d63ccaf",
+    "stagedGitSha256": "d764705568eefc443fa153c7487e22177547fdcfdc43ed8c18648ec107eb3593",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/Shaders/MoonShaft.shader",
+    "nativeRawSha256": "a159a48f0462952da16b6aa736f8a23cabf77b1757892f6f6fc535df8a4d1c2f",
+    "stagedGitSha256": "a159a48f0462952da16b6aa736f8a23cabf77b1757892f6f6fc535df8a4d1c2f",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/Shaders/OmenVeil.shader",
+    "nativeRawSha256": "1d12e86a5f07ea735f7d2e0404daace7a80b60a26775bea685a7f8d5e920e673",
+    "stagedGitSha256": "1d12e86a5f07ea735f7d2e0404daace7a80b60a26775bea685a7f8d5e920e673",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/Shaders/RoofPoolWater.shader",
+    "nativeRawSha256": "09f7f6772434bdaae6f258783de6222ead499fc5f56072855edd141f1287b46e",
+    "stagedGitSha256": "09f7f6772434bdaae6f258783de6222ead499fc5f56072855edd141f1287b46e",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/Shaders/SoulGlow.shader",
+    "nativeRawSha256": "0a240d63e189eb398fc26f8bcd22c762b0d6d1031d24555d49f7a5465d8fd6bf",
+    "stagedGitSha256": "c63ef99edf3a5dd2d6f7ac7bb1a4a3a55da7652658acc436d612e434d2c32105",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/Shaders/SoulSpill.shader",
+    "nativeRawSha256": "6256694251359772d97d0c7d4eea41f09f10fd16199a8b2a48f4f5ae497a17cb",
+    "stagedGitSha256": "6256694251359772d97d0c7d4eea41f09f10fd16199a8b2a48f4f5ae497a17cb",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/Shaders/SpiritGhost.shader",
+    "nativeRawSha256": "ec6147be37a440572e63ed5adf4a3eb40019f7128df283799e27dbd27967207d",
+    "stagedGitSha256": "ec6147be37a440572e63ed5adf4a3eb40019f7128df283799e27dbd27967207d",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/Shaders/VoodooGhost.shader",
+    "nativeRawSha256": "822c5cbaf4236f04eeb35daf315d4cb611410c0dc3fae2646f53ee61ef3caba2",
+    "stagedGitSha256": "822c5cbaf4236f04eeb35daf315d4cb611410c0dc3fae2646f53ee61ef3caba2",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/Shaders/VoodooThread.shader",
+    "nativeRawSha256": "52b8828ff5cc2bdb0ae05b0c764d7a2cf8a05c9a534782943167ba4df049c560",
+    "stagedGitSha256": "52b8828ff5cc2bdb0ae05b0c764d7a2cf8a05c9a534782943167ba4df049c560",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/Shaders/VoodooWisp.shader",
+    "nativeRawSha256": "ac88ea2d1c6eabd14610948595210beee1ca95c145d15ad8a3c4cc85cb178f49",
+    "stagedGitSha256": "ac88ea2d1c6eabd14610948595210beee1ca95c145d15ad8a3c4cc85cb178f49",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Shaders/ArenaHologram.shader",
+    "nativeRawSha256": "366871d1b25061572af367d5cfbe96804cfbd23cfbe22827cc6c89d028613420",
+    "stagedGitSha256": "366871d1b25061572af367d5cfbe96804cfbd23cfbe22827cc6c89d028613420",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Shaders/LagoonCoveWater.shader",
+    "nativeRawSha256": "886c1981844f0745474c8218b577e1c5511b921aca318185135270a202a743c2",
+    "stagedGitSha256": "886c1981844f0745474c8218b577e1c5511b921aca318185135270a202a743c2",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Shaders/SlipperBeam.shader",
+    "nativeRawSha256": "1c18579c46ae0c7f359aad709142b47cc9fa3a34926060ad14426da1c1219ed1",
+    "stagedGitSha256": "1c18579c46ae0c7f359aad709142b47cc9fa3a34926060ad14426da1c1219ed1",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Shaders/Toon.shader",
+    "nativeRawSha256": "95d48d95968f9ee46178b186a1715846ba0ef51deb0de528eb1f0e2ae0cdcdca",
+    "stagedGitSha256": "95d48d95968f9ee46178b186a1715846ba0ef51deb0de528eb1f0e2ae0cdcdca",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Shaders/VolcanicRock.shader",
+    "nativeRawSha256": "e06ce7276f6c7a7fc9fc599b32e6ced074a9768dced6bde27763cef32140bf3c",
+    "stagedGitSha256": "e06ce7276f6c7a7fc9fc599b32e6ced074a9768dced6bde27763cef32140bf3c",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/Shaders/RecordedShaderTime.cginc",
+    "nativeRawSha256": "87afb5a87d3ee794bccd6641817b3e94cda64435616ed47e7de8cc84b926e8be",
+    "stagedGitSha256": "dab428b5f01f9fa443b0a1de8ceefb003702a542aa3ccedf9b23ec6d6b33e5cc",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/Shaders/RecordedShaderTime.cginc.meta",
+    "nativeRawSha256": "57d5f22f5b202dc9a10a9353e7ee223d2cc32cdc644407017ba2f7c5ba120897",
+    "stagedGitSha256": "f6649780c9b505815d6c87b9b1d1433b6e91b6d42c79ef43edd618e6c92bd0dd",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Editor/MapPreviewFreshness.cs",
+    "nativeRawSha256": "6e65c1117f930663e2cadca16293c558aadb0166a6b4eaeaeb9774a1947ded53",
+    "stagedGitSha256": "659808a7c03628300f481586bee7700ce0cbf8138252d2ea4c88d2274f95c758",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Editor/MapPreviewFreshness.cs.meta",
+    "nativeRawSha256": "053f4d753878bc138e4a131c21db9eb4b4b71d2cb8b9d16766f9492cae0c72f3",
+    "stagedGitSha256": "8f1f14cd8f23a84265edce7d0eb57d0ac6d88f010c41d65d0b5a83dec21c0b74",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/MapPreviewFreshnessTests.cs",
+    "nativeRawSha256": "b4d36305ee20529fbb46329bc21f91dec4fd582ea4c6ccc6c99649c0cc9412f7",
+    "stagedGitSha256": "d2a793a6cdf905929bfc0f342cdb84761cda7e2b972a840ee259a0776a4ffda9",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/MapPreviewFreshnessTests.cs.meta",
+    "nativeRawSha256": "eac0afdd4f5d6d5689f5a2331df96dc0911635f0b5126218e84391115c8ccbb7",
+    "stagedGitSha256": "250cad7f4eb5d3baef98fcc2a57ec60ec7dafa603d26354821738fbeb1e83a8c",
+    "codeMatchesIgnoringWindowsTextEndings": true
+  }
+]

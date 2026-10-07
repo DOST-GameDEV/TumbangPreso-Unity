@@ -190,6 +190,7 @@ Shader "TumbangPreso/VolcanicRock"
             Lighting Off
 
             CGPROGRAM
+            #include "../Resources/Shaders/RecordedShaderTime.cginc"
             #pragma vertex vert
             #pragma fragment frag
             #pragma target 3.0
@@ -318,7 +319,7 @@ Shader "TumbangPreso/VolcanicRock"
             float veinField(float3 p)
             {
                 float3 q = p * _VeinScale;
-                q.x += _Time.y * _Flow;   // heat crawls; the crust does not
+                q.x += TumpShaderTime() * _Flow;   // heat crawls; the crust does not
 
                 float n = fbm(q);
                 float ridge = 1.0 - abs(n * 2.0 - 1.0);
@@ -509,7 +510,7 @@ Shader "TumbangPreso/VolcanicRock"
 
                 // Breathing, so a live zone is never a still image. Amplitude is small because
                 // this is convection under rock, not a flame.
-                float pulse = 0.88 + 0.12 * sin(_Time.y * (_Pulse * 6.2831853) + h * 8.0);
+                float pulse = 0.88 + 0.12 * sin(TumpShaderTime() * (_Pulse * 6.2831853) + h * 8.0);
 
                 // ⚠️ COOLING GOES OUT FROM THE EDGES OF A VEIN INWARD, WHICH IS HOW ROCK COOLS.
                 // Raising the threshold with `_Cool` narrows the network before it dims it, so

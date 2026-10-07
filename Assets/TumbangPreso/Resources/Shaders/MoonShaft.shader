@@ -30,6 +30,7 @@ Shader "TumbangPreso/MoonShaft"
             Blend SrcAlpha OneMinusSrcAlpha
 
             CGPROGRAM
+            #include "RecordedShaderTime.cginc"
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
@@ -61,7 +62,7 @@ Shader "TumbangPreso/MoonShaft"
                 float up = i.uv.y;
                 // Brightest at the court, easing off up the shaft, gone by its top.
                 float height = pow(saturate(1.0 - up), 1.6) * 0.85 + 0.15 * saturate(1.0 - up * 1.1);
-                float fall = frac(up * 6.0 + _Time.y * 0.55 + i.uv.x * 0.7);
+                float fall = frac(up * 6.0 + TumpShaderTime() * 0.55 + i.uv.x * 0.7);
                 float streak = 1.0 + _Streaks * (smoothstep(0.0, 0.08, fall) * smoothstep(0.35, 0.1, fall) - 0.3);
                 float foot = smoothstep(0.12, 0.0, up);
                 float3 c = lerp(_Color.rgb, _Rim.rgb, foot * 0.6);

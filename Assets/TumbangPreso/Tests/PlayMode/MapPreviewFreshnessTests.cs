@@ -47,6 +47,22 @@ namespace TumbangPreso.PlayTests
    finally{File.WriteAllBytes(receipt,original);}
    File.WriteAllLines("Logs/map-preview-freshness2/source-fingerprints.txt",rows);yield return null;
   }
+  [UnityTest]public IEnumerator ReplayOnlyShaderClockKeepsPreviewProvenanceAndDetectsLiveFallbackChanges()
+  {
+   foreach(string map in SceneFlow.Maps)Assert.IsNull(Check(map),map);
+   string path="Assets/TumbangPreso/Resources/Shaders/RecordedShaderTime.cginc";byte[] original=File.ReadAllBytes(path);
+   string before=Fingerprint(SceneFlow.Arena);
+   try
+   {
+    string source=System.Text.Encoding.UTF8.GetString(original);StringAssert.Contains(": _Time.y;",source);
+    File.WriteAllText(path,source.Replace(": _Time.y;",": _Time.y + 1;"));
+    Assert.AreNotEqual(before,Fingerprint(SceneFlow.Arena),"A change to ordinary animation must invalidate recorded previews.");
+    StringAssert.Contains("look changed",Check(SceneFlow.Arena));
+   }
+   finally{File.WriteAllBytes(path,original);}
+   foreach(string map in SceneFlow.Maps)Assert.IsNull(Check(map),map);
+   yield return null;
+  }
   [UnityTest]public IEnumerator ExistingCapturedReceiptsMatchCurrentIntegration()
   {
    foreach(string map in SceneFlow.Maps)Assert.IsNull(Check(map),map);

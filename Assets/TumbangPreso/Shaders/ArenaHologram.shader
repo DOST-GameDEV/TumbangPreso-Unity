@@ -51,6 +51,7 @@ Shader "TumbangPreso/ArenaHologram"
         Pass
         {
             CGPROGRAM
+            #include "../Resources/Shaders/RecordedShaderTime.cginc"
             #pragma vertex vert
             #pragma fragment frag
             #pragma multi_compile_instancing
@@ -104,7 +105,7 @@ Shader "TumbangPreso/ArenaHologram"
                 half4 holo = tex2D(_HoloTex, uv);
                 half3 deck = tex2D(_DeckTex, uv).rgb * _DeckGain;
 
-                float lines = 0.55 + 0.45 * sin((i.world.y - _Time.y * _LineSpeed) * _LineDensity * 6.2831853);
+                float lines = 0.55 + 0.45 * sin((i.world.y - TumpShaderTime() * _LineSpeed) * _LineDensity * 6.2831853);
                 float rim = pow(1.0 - saturate(dot(n, view)), 2.0) * _Rim;
 
                 // The hologram itself: the hexagon lines on a deck, scan lines and edge glow elsewhere.

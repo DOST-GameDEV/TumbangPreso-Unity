@@ -30,6 +30,7 @@ Shader "TumbangPreso/OmenVeil"
             Blend SrcAlpha OneMinusSrcAlpha
 
             CGPROGRAM
+            #include "RecordedShaderTime.cginc"
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
@@ -68,7 +69,7 @@ Shader "TumbangPreso/OmenVeil"
                 float within = frac(ang * 46.0);
                 float width = 0.12 + 0.18 * hash(spoke);
                 float stroke = smoothstep(width, 0.0, abs(within - 0.5));
-                float slide = frac(dist * (0.9 + 0.5 * hash(spoke + 7.0)) + _Time.y * (0.8 + 0.6 * hash(spoke + 3.0)));
+                float slide = frac(dist * (0.9 + 0.5 * hash(spoke + 7.0)) + TumpShaderTime() * (0.8 + 0.6 * hash(spoke + 3.0)));
                 float dash = smoothstep(0.0, 0.1, slide) * smoothstep(0.55, 0.2, slide);
                 float live = step(0.45, hash(spoke + 11.0));
                 float streak = stroke * dash * live * edge * _Pull;

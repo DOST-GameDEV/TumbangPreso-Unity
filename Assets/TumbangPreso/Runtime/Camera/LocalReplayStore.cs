@@ -12,6 +12,7 @@ namespace TumbangPreso.CameraSystem
     [Serializable] public sealed class LocalReplaySegment
     {
         public string File, Sha256;
+        public string SceneFile,SceneSha256;
         public float Offset, Start, End;
         public int Round;
     }
@@ -123,6 +124,51 @@ namespace TumbangPreso.CameraSystem
                 throw new InvalidDataException("Replay segment identity changed.");
             return clip;
         }
+        public static LocalReplaySceneSegment ReadScene(LocalReplayEntry entry,int index)
+        {
+            var segment=entry.Manifest.Segments[index];if(string.IsNullOrEmpty(segment.SceneFile))return null;
+            if(segment.SceneFile!=Path.GetFileName(segment.SceneFile)||!segment.SceneFile.EndsWith(".scene.json",StringComparison.Ordinal))
+                throw new InvalidDataException("Invalid replay scene path.");
+            string path=Path.Combine(entry.Directory,segment.SceneFile);
+            if(new FileInfo(path).Length>4*1024*1024)throw new InvalidDataException("Replay scene data exceeds its budget.");
+            byte[] bytes=File.ReadAllBytes(path);if(Hash(bytes)!=segment.SceneSha256)throw new InvalidDataException("Replay scene data is damaged.");
+            var result=JsonUtility.FromJson<LocalReplaySceneSegment>(Encoding.UTF8.GetString(bytes));
+            if(result==null||result.Version!=1||result.Frames==null||result.Frames.Count<2||result.Frames.Count>MatchPoseHistory.Samples)
+                throw new InvalidDataException("Replay scene data is incompatible.");
+            float previous=float.NegativeInfinity;
+            foreach(var frame in result.Frames)
+            {
+                if(frame==null||float.IsNaN(frame.Time)||float.IsInfinity(frame.Time)||frame.Time<=previous||
+                    frame.Poses==null||frame.Poses.Count>256||frame.Surfaces==null||frame.Surfaces.Count>512)
+                    throw new InvalidDataException("Invalid replay scene frame.");
+                if(frame.HasCrowd&&(!Finite(frame.CrowdClock)||!Finite(frame.CrowdCheer)||!Finite(frame.CrowdGroan)||!Finite(frame.CrowdWave)))
+                    throw new InvalidDataException("Invalid recorded crowd state.");
+                if(frame.Water!=null)
+                {
+                    if(frame.Water.Count>8)throw new InvalidDataException("Too many recorded water surfaces.");
+                    foreach(var water in frame.Water)
+                        if(water==null||string.IsNullOrEmpty(water.Path)||water.Path.Length>1024||string.IsNullOrEmpty(water.Name)||
+                            water.Shader!="TumbangPreso/RoofPoolWater"||!Finite(water.WakeStrength)||
+                            water.Swimmers==null||water.Swimmers.Length!=4||Array.Exists(water.Swimmers,v=>!Finite(v)))
+                            throw new InvalidDataException("Invalid recorded water state.");
+                }
+                previous=frame.Time;
+                foreach(var pose in frame.Poses)
+                    if(pose==null||string.IsNullOrEmpty(pose.Path)||pose.Path.Length>1024||string.IsNullOrEmpty(pose.Name)||
+                        !Finite(pose.Position)||!Finite(pose.Scale)||!Finite(pose.Rotation))throw new InvalidDataException("Invalid recorded traffic pose.");
+                foreach(var surface in frame.Surfaces)
+                    if(surface==null||string.IsNullOrEmpty(surface.Path)||surface.Path.Length>1024||string.IsNullOrEmpty(surface.Name)||
+                        surface.Slot<0||surface.Slot>256||!Finite(surface.Colour)||!Finite(surface.Emission))throw new InvalidDataException("Invalid recorded traffic surface.");
+            }
+            if(result.Frames[0].Time>segment.Start+.001f||result.Frames[result.Frames.Count-1].Time<segment.End-.001f)
+                throw new InvalidDataException("Incomplete recorded scene window.");
+            return result;
+        }
+        private static bool Finite(float value)=>!float.IsNaN(value)&&!float.IsInfinity(value);
+        private static bool Finite(Vector3 value)=>Finite(value.x)&&Finite(value.y)&&Finite(value.z);
+        private static bool Finite(Vector4 value)=>Finite(value.x)&&Finite(value.y)&&Finite(value.z)&&Finite(value.w);
+        private static bool Finite(Quaternion value)=>Finite(value.x)&&Finite(value.y)&&Finite(value.z)&&Finite(value.w);
+        private static bool Finite(Color value)=>Finite(value.r)&&Finite(value.g)&&Finite(value.b)&&Finite(value.a);
         internal static string Hash(byte[] bytes)
         {
             using var sha = SHA256.Create();
@@ -170,7 +216,7 @@ namespace TumbangPreso.CameraSystem
                 // Only managed values are used by the worker. No transforms,
                 // Resources, scene objects or simulation calls cross this boundary.
             }
-            public bool Append(RecordedMatchClip clip)
+            public bool Append(RecordedMatchClip clip,LocalReplaySceneSegment scene=null)
             {
                 if (!CanAppend) return false;
                 Interlocked.Increment(ref _pending);
@@ -183,7 +229,16 @@ namespace TumbangPreso.CameraSystem
                         System.IO.Directory.CreateDirectory(Directory);
                         string file = _manifest.Segments.Count.ToString("D6") + ".tps";
                         AtomicWrite(Path.Combine(Directory, file), bytes);
+                        string sceneFile=null,sceneHash=null;
+                        if(scene!=null&&scene.Frames.Count>=2)
+                        {
+                            sceneFile=_manifest.Segments.Count.ToString("D6")+".scene.json";
+                            byte[] sceneBytes=Encoding.UTF8.GetBytes(JsonUtility.ToJson(scene));
+                            if(sceneBytes.Length>4*1024*1024)throw new InvalidDataException("Replay scene capture exceeds its budget.");
+                            AtomicWrite(Path.Combine(Directory,sceneFile),sceneBytes);sceneHash=Hash(sceneBytes);
+                        }
                         _manifest.Segments.Add(new LocalReplaySegment { File = file, Sha256 = Hash(bytes),
+                            SceneFile=sceneFile,SceneSha256=sceneHash,
                             Offset = _manifest.Duration, Start = clip.Start, End = clip.End, Round = clip.Round });
                         WriteManifest();
                     }

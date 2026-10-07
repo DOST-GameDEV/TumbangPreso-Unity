@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 06:23:04Z" end-time="2026-10-07 06:23:25Z" duration="21.1583154">
+  <test-suite type="TestSuite" id="3512" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="2034" result="Passed" start-time="2026-10-07 06:23:04Z" end-time="2026-10-07 06:23:25Z" duration="21.158315" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3504" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2034" result="Passed" start-time="2026-10-07 06:23:04Z" end-time="2026-10-07 06:23:25Z" duration="21.144559" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="62020" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3505" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2034" result="Passed" start-time="2026-10-07 06:23:04Z" end-time="2026-10-07 06:23:25Z" duration="21.135491" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3508" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2032" result="Passed" start-time="2026-10-07 06:23:04Z" end-time="2026-10-07 06:23:25Z" duration="21.128094" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2019" name="LocalReplaySceneStateTests" fullname="TumbangPreso.PlayTests.LocalReplaySceneStateTests" classname="TumbangPreso.PlayTests.LocalReplaySceneStateTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-07 06:23:04Z" end-time="2026-10-07 06:23:25Z" duration="21.098139" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2022" name="ActualKantoRoadCanBeSavedReloadedSeekedAndRestored" fullname="TumbangPreso.PlayTests.LocalReplaySceneStateTests.ActualKantoRoadCanBeSavedReloadedSeekedAndRestored" methodname="ActualKantoRoadCanBeSavedReloadedSeekedAndRestored" classname="TumbangPreso.PlayTests.LocalReplaySceneStateTests" runstate="Runnable" seed="981333976" result="Passed" start-time="2026-10-07 06:23:04Z" end-time="2026-10-07 06:23:25Z" duration="20.983145" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2020" name="RecordedRoadPoseIsSeekableAndScopeRestoresPresentState" fullname="TumbangPreso.PlayTests.LocalReplaySceneStateTests.RecordedRoadPoseIsSeekableAndScopeRestoresPresentState" methodname="RecordedRoadPoseIsSeekableAndScopeRestoresPresentState" classname="TumbangPreso.PlayTests.LocalReplaySceneStateTests" runstate="Runnable" seed="1786155277" result="Passed" start-time="2026-10-07 06:23:25Z" end-time="2026-10-07 06:23:25Z" duration="0.053641" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2021" name="RecordedVisibilityNeverActivatesAnInactiveVehicle" fullname="TumbangPreso.PlayTests.LocalReplaySceneStateTests.RecordedVisibilityNeverActivatesAnInactiveVehicle" methodname="RecordedVisibilityNeverActivatesAnInactiveVehicle" classname="TumbangPreso.PlayTests.LocalReplaySceneStateTests" runstate="Runnable" seed="1893683001" result="Passed" start-time="2026-10-07 06:23:25Z" end-time="2026-10-07 06:23:25Z" duration="0.049875" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
