@@ -26,8 +26,20 @@ icons. This exposed the missing active-route gameplay preparation. That original
 failure is retained. The corrected candidate41768 passes the same three native controls with all
 21387 frozen inputs and preferences restored. [Exact evidence](evidence.json)
 checks four native source files in each run and retains the original failure.
-Fresh ordinary release comparison remains pending; source placement and native
-checks alone do not establish a reduced stall.
+The actual ordinary release c completes an explicit 14-window menu-only route.
+First HERO opening falls from4531.743ms to118.279ms; immediate same-button
+reopening peaks at16.641ms. First preview preparation is18.198ms CPU, including
+15.917ms toon setup, followed by5.164ms first-step CPU. That leaves an unqualified
+first-use hitch; these stages do not explain the entire presented frame.
+
+The main preparation window has a859.876ms maximum and twelve frames over50ms.
+Mode selection still peaks at179.768ms and settings at90.872ms. Roster wait is
+3366.666ms and gameplay preparation2067.019ms including yields, not CPU totals.
+The [release comparison](release-menu-comparison.json) retains exact raw timing
+and log evidence plus the source6e/runtime301db008 build identity. The player,
+runner and all21387 build inputs/preferences are restored. This is a single
+hidden release comparison and demonstrates improvement without closing all
+hitch or gameplay gates.
 
 Measurements use hidden graphics without OS input or foreground control. Release
 allocation counters are unavailable after their known-allocation calibration.

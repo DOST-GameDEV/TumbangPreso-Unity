@@ -3162,8 +3162,10 @@ Current login/main-menu preparation restores the shared roster and gameplay
 caches omitted by the retired splash route. The first existing native check
 exposed zero of 51 expected icons; corrected native three-case startup controls
 pass with exact-input preservation. Release measurements remain pending in the [active-route preparation report](reports/active-menu-preload-2026-10-07/README.md).
-The source140 release's 4.5-second first HERO frame remains unqualified until
-fresh cold/repeat measurement; its full gameplay fixture also needs correction.
+The ordinary release comparison reduces the first HERO frame from4532ms to118ms
+and same-button repeat peaks at16.6ms, with14explicit menu-only windows. Remaining
+loading, mode and settings stalls still need work; full gameplay/results are
+separate and its legal fixture correction remains in progress.
 
 **Loading/optimization, OPEN:** yielded shader/art/avatar/portrait preparation,
 retained ability props/effect data and actual menu activation readiness are implemented.

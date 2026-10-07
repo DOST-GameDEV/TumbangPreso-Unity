@@ -1,6 +1,6 @@
 # Active PC competition checkpoint, October 7
 
-Goal ACTIVE. Public source is140a25523fac68c200d85ca4a3e1198b37035578. The qualified
+Goal ACTIVE. Public source is c378cff76843c1e0e737439ac4f2c5c1689926e1; runtime unit is6e8e7b89e. The qualified
 Desktop remains725e/protocol153. Current performance work is not installed there.
 The owner requested the existing GPT-6 Astra xhigh reviewer and continued
 optimization/loading placement with no noticeable random stutters. No additional
@@ -32,11 +32,17 @@ Original native52884 passed order/firstHome and priority cancellation but failed
 native41768 has3fresh passing cases; runner and exact21387-input restoration
 are terminal. Four exact native source files per run and copied raw proofs are
 in reports/active-menu-preload-2026-10-07/evidence.json.
-Next publish this coherent unit after exact preservation, build fresh ordinary
-release c and compare cold/repeat HERO plus startup frames. Do not call moved
-or unmeasured stalls solved. Full game probe corrections are a separate next unit.
+Ordinary release c source6e/runtime301db008 has261files and3572305081bytes;
+build54092 and preservation are terminal, all21387inputs restored. Hidden player
+53088/session29675 passes an explicit14-window menu-only route and restores its
+profile/preferences. First HERO max4532->118ms, repeat16.6ms. Main loading has
+max860ms, ModeCard180ms and settings91ms; readiness remains open. Primary now
+owns bounded six-mode-poster async preparation and whole-Hero-build attribution
+WIP in Main/OwnerPortraitArt/HubHero. Reviewer owns only Performance.cs legal
+recipe implementation, with no heavy jobs. Await source handback before native
+compilation/next release freeze. Do not call moved stalls solved.
 
-The requested reviewer is read-only on fixture legality. Confirmed stale recipes:
+The requested reviewer has the single-file opt-in Performance.cs implementation lane. Confirmed stale recipes:
 Zack BankShot needs a held slipper, Overclock persists across round resets,
 Nemu defender needs an upright can, Nemu signature uses anchor/reactivation
 rather than enemy contact and Soraya Hex needs its authored arming/recast phase.
