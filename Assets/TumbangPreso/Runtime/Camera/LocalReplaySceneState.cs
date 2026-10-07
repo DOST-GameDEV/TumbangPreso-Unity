@@ -28,6 +28,8 @@ namespace TumbangPreso.CameraSystem
     [Serializable] public sealed class LocalReplaySceneFrame
     {
         public float Time;
+        public bool HasShaderTime;
+        public float ShaderTime;
         public bool HasCrowd;
         public float CrowdClock,CrowdCheer,CrowdGroan;
         public Vector4 CrowdWave;
@@ -62,7 +64,7 @@ namespace TumbangPreso.CameraSystem
         }
         public static LocalReplaySceneFrame Capture(float time)
         {
-            var frame=new LocalReplaySceneFrame{Time=time};var block=new MaterialPropertyBlock();
+            var frame=new LocalReplaySceneFrame{Time=time,HasShaderTime=true,ShaderTime=UnityEngine.Time.timeSinceLevelLoad};var block=new MaterialPropertyBlock();
             foreach(var traffic in UnityEngine.Object.FindObjectsByType<KantoTraffic>())
             {
                 foreach(var driver in traffic.Drivers)
@@ -89,6 +91,15 @@ namespace TumbangPreso.CameraSystem
             }
             LocalReplaySceneShaderState.Capture(frame);
             return frame;
+        }
+        public static float ShaderTimeAt(LocalReplaySceneSegment segment,float time)
+        {
+            if(segment==null||segment.Frames.Count==0)return time; // legacy did not capture this clock
+            var left=segment.Frames[0];var right=left;
+            for(int i=1;i<segment.Frames.Count;i++){right=segment.Frames[i];if(right.Time>=time)break;left=right;}
+            if(!left.HasShaderTime)return time;
+            float blend=right.Time>left.Time?Mathf.Clamp01((time-left.Time)/(right.Time-left.Time)):0;
+            return right.HasShaderTime?Mathf.Lerp(left.ShaderTime,right.ShaderTime,blend):left.ShaderTime;
         }
         public static IDisposable Apply(LocalReplaySceneSegment segment,float time,Scene scene)
         {
