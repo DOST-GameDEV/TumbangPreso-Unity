@@ -25,3 +25,8 @@ docs/reports/reliability-2026-10-05/network-shutdown-origin/lifecycle-events.txt
 
 docs/reports/reliability-2026-10-05/browser-and-editable-text/*.xml -text -whitespace
 docs/reports/reliability-2026-10-05/current-ui-online151/host-lifecycle.txt -text -whitespace
+
+# Paired host-loss receipts retain the exact independently verified native bytes.
+docs/reports/two-machine-host-loss-cb5f-2026-10-07/*.json -text -whitespace
+docs/reports/two-machine-host-loss-cb5f-2026-10-07/*.log -text -whitespace
+docs/reports/two-machine-host-loss-cb5f-2026-10-07/client-state.txt -text -whitespace
