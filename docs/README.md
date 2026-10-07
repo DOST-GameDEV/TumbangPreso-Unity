@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Current combined Desktop release: [installed725e package, real startup/replay/video gates and preserved backup](reports/combined-replay-desktop-2026-10-07/README.md).
+
 Current PC AI/replay integration: [exact tested-source proof, actual archive/viewer controls and retained fixture failure](reports/pc-local-replay-integration-2026-10-07/README.md).
 
 Bot consumer charge timing: [long-frame release failure and19 native power/obstacle/lifetime controls](reports/bot-lunge-consumer-power-2026-10-07/README.md).

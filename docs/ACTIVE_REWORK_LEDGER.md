@@ -1,3 +1,9 @@
+# Installed combined Desktop release, October7
+
+DESKTOPREPLACED verified725e/protocol153/runtime7cca2de9/261files3572266025bytes. Build43244/all21347exactinputsrestore; actualplayer47804 startup5.72179/Home4->40 +realrayreplay/seek/play2x/pausefollow/HomePASS. Actualmap41448 all7first/repeat1080/14samples/singledecoder/noarenaloadPASS. Allprofiles/input/editorprefs restored, all11fixturedataSHAsunchanged. All261stagedSHAverifiedbeforeexactDesktopfolder swap; oldcb5 onlyinternalBuilds/desktop-cb5-before-replay1007b, staginggone/no foregroundplayer. Report: combined-replay-desktop-2026-10-07.
+
+Next ALLremaininggoalassignments: allhero/features/mapsAI, naturalcaught/air/slopes/slipperreliability, newmapcreative/fullresolution/roster, longsession/device/peer/effectfidelity. LaptopONLINE optionalrecordedscene-state adapter UNQUALIFIED/excluded, reservedLocalReplay files. PCretainsAI/newopening/CatchReconstruction/History/TagBody/KantoTraffic/slippers. NoLAN/mobileinstruction, oldmapartunchanged, noownednative/helper/tab remains. Goal ACTIVE; do notclaimwhole readiness.
+
 # Combined package preparation, October7
 
 5376bb901 normally integratescheckednew3preview204/087: originalexplicit-recorded-Show/Start override fixed, actualrequestedclip+posterdecodedpixel checks3PASS onlaptop; old8movie/posterbytes unchanged. Additionalreplaycontrols stilllaptopWIP/native2case gate. PCpreparedLocalReplayPackageProbe afterexistingStartupOrder opt-in via-tp-replay-package; realmenu/replayUIraycast/seek/play/speed/follow/Home, no ordinaryplayerinstallation. Current shippingRuntimeRoslyn compiles0 aftercorrectingcachedsource listomitting4newreplayfiles; firsttoolingerrors retained. Actualpackageexecutionpending, notclaimed. Report: packaged-replay-probe-2026-10-07.

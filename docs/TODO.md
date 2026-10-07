@@ -1,3 +1,8 @@
+### COMBINED-REPLAY-DESKTOP-1007: current Windows replacement
+
+- [x] Install source725e combinedAI/new3preview/directedopening/fullreplay Windows release after actualstartup5.72s/firstHome/replayrealpointer and all7first-repeat1080decoder gates. Verify261fileSHA and preserve oldcb5outsideDesktop; all21347source/prefs restore. [Release receipt](reports/combined-replay-desktop-2026-10-07/README.md).
+- [ ] Full remaining tournament acceptance stays open; packaged checks do not establish all-map/all-kit efficacy, creative approval, physical/device/peer/performance or full replay scene/effect fidelity.
+
 ### REPLAY-PC-INTEGRATION-1007: current AI plus local playback
 
 - [x] Merge checked laptop local replay feature with current AI, verify20tested source paths and93raw evidence SHA. CurrentPC3archive+2viewer/audio controls pass after correcting owned fixture directory name; all21339 source/preferences restore. [Evidence](reports/pc-local-replay-integration-2026-10-07/README.md).
