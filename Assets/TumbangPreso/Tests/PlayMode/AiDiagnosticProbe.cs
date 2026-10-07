@@ -608,7 +608,7 @@ namespace TumbangPreso.PlayTests
             private sealed class Live
             {
                 public int Slot, Frame, Round, ChargeFrames;
-                public string Reason, Plan, Victim;
+                public string PostReleaseState, Plan, Victim;
                 public CharacterMotor VictimBody;
                 public Vector3 From, Forward, VictimAt, VictimVel;
                 public float Power, ChargeSeconds, Distance, Bearing, Lateral, Time;
@@ -744,12 +744,15 @@ namespace TumbangPreso.PlayTests
                 }
 
                 string planAtCharge = _planAtCharge.TryGetValue(taya.PlayerSlot, out var p0) ? p0 : "-";
-                if (ai == null) l.Reason = "human";
-                else if (l.Plan != "Hunt") l.Reason = $"released-by-plan-change({planAtCharge}->{l.Plan})";
-                else if (victim == null || !l.VictimTaggable) l.Reason = "no-taggable-victim";
-                else if (charge >= AiTuning.LungeHoldTime + 0.45f - dt * 0.5f) l.Reason = "hold-timeout";
-                else if (charge >= AiTuning.LungeHoldTime - dt * 0.5f) l.Reason = "cone-release";
-                else l.Reason = "short-release";
+                // This observer runs after the consumer can resolve a tag. It
+                // describes the resulting state and measured duration, not the
+                // producer's release cause (which may already have changed).
+                if (ai == null) l.PostReleaseState = "human-input-writer";
+                else if (l.Plan != "Hunt") l.PostReleaseState = $"current-plan({planAtCharge}->{l.Plan})";
+                else if (victim == null || !l.VictimTaggable) l.PostReleaseState = "target-absent-or-untaggable-after-release";
+                else if (charge >= AiTuning.LungeHoldTime + 0.45f - dt * 0.5f) l.PostReleaseState = "long-held-release";
+                else if (charge >= AiTuning.LungeHoldTime - dt * 0.5f) l.PostReleaseState = "charged-release";
+                else l.PostReleaseState = "short-charge-release";
 
                 l.HitsBefore = _hitsWhileCharging.TryGetValue(taya.PlayerSlot, out int hb) ? hb : LungeHits(taya.PlayerSlot);
                 l.Start = _startAtCharge.TryGetValue(taya.PlayerSlot, out var s0) ? s0 : "-";
@@ -798,7 +801,7 @@ namespace TumbangPreso.PlayTests
             {
                 int hits = LungeHits(l.Slot) - l.HitsBefore;
                 string outcome = hits > 0 ? "HIT" : "miss";
-                Lines.Add($"frame={l.Frame} round={l.Round} left={l.Time:F1} taya={l.Slot} plan={l.Plan} reason={l.Reason} " +
+                Lines.Add($"frame={l.Frame} round={l.Round} left={l.Time:F1} taya={l.Slot} plan={l.Plan} postReleaseState={l.PostReleaseState} " +
                           $"chargeFrames={l.ChargeFrames} chargeSeconds={l.ChargeSeconds:F3} power={l.Power:F2} victim={l.Victim} victimTaggable={l.VictimTaggable} anyTaggable={l.AnyTaggable} " +
                           $"dist={l.Distance:F2} bearing={l.Bearing:F1} lateral={l.Lateral:F2} victimSpeed={l.VictimVel.magnitude:F2} " +
                           $"minVictim={Fmt(l.MinVictim)} minVictimWhileTaggable={Fmt(l.MinVictimTaggable)} minAnyTaggable={Fmt(l.MinAnyTaggable)} " +
@@ -834,17 +837,18 @@ namespace TumbangPreso.PlayTests
             {
                 var sb = new StringBuilder();
                 int hits = 0;
-                var byReason = new SortedDictionary<string, int[]>();
+                var byState = new SortedDictionary<string, int[]>();
                 foreach (var l in _done)
                 {
                     bool hit = l.Hit;
                     if (hit) hits++;
-                    string key = l.Reason.StartsWith("released-by-plan-change") ? "released-by-plan-change" : l.Reason;
-                    if (!byReason.TryGetValue(key, out var c)) byReason[key] = c = new int[2];
+                    string key = l.PostReleaseState.StartsWith("current-plan") ? "current-plan" : l.PostReleaseState;
+                    if (!byState.TryGetValue(key, out var c)) byState[key] = c = new int[2];
                     c[0]++; if (hit) c[1]++;
                 }
                 sb.AppendLine($"lunge trace: {_done.Count} completed lunges, {hits} hits");
-                foreach (var kv in byReason) sb.AppendLine($"  {kv.Key,-28} {kv.Value[1]}/{kv.Value[0]}");
+                sb.AppendLine("  Categories describe post-release state and duration, not release causes.");
+                foreach (var kv in byState) sb.AppendLine($"  {kv.Key,-28} {kv.Value[1]}/{kv.Value[0]}");
                 foreach (var line in Lines) sb.AppendLine("  " + line);
                 return sb.ToString();
             }
