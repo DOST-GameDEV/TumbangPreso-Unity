@@ -55,3 +55,19 @@ completion/focus/cancel/alternate-route controls. All21,425 frozen inputs and
 preferences restore. Exact tested source and receipts are retained under
 candidate3-source and candidate3-native. Actual player latency remains pending;
 Desktop stays on the qualified ordinary release. Future builds replace G only.
+
+Actual Development candidate3 player43760 passes14 timing windows
+and reduces the first-Hero maximum to36.968ms wall/36.883ms CPU.
+There are no Hero frames over50ms and1 over33ms. It replaces only
+existing G, still403files/3,647,235,596bytes; no new build directory.
+Player preferences restore and the completed14-trace exporter restores all
+21,425 frozen inputs/preferences. Exact small receipts and nested worst-frame
+attribution are retained. Diagnostic overhead and cold/repeated page costs
+remain explicit. Ordinary release and tournament smoothness remain open.
+
+The worst current Hero frame is34.735ms inside PrepareScreen, including120
+retained Mono.JIT samples totaling24.882ms. These rows come from the exporter
+threshold of0.05ms, not an exhaustive count of compiled methods. Nested values
+are not additive to the coroutine or frame. The next change should follow this
+remaining construction cost; the measured improvement does not prove that all
+first-canvas, selection, loading or gameplay stalls are solved.

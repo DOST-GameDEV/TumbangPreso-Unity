@@ -39,14 +39,20 @@ identities match. Actual Windows values match the saved Windows recording;
 strict validation/serialization are unchanged. Two independent editor processes
 match each other. Future engine/shader compatibility remains unproven.
 
-Current internal G is the Development diagnostic at `431417448`, runtime
-`fe5e396b`, 403 files and 3,647,234,856 bytes. Deferred Hero preparation reduced
+Current internal G is the Development diagnostic at `cf9afad38`, runtime
+`df1e584b`, 403 files and 3,647,235,596 bytes. Deferred Hero preparation reduced
 its measured first-open peak from118.399ms to50.302ms CPU, still a noticeable
 spike. The method-entry experiment worsened the peak and stays off. Candidate3
 now renders the actual hidden preview before reveal and preserves Home ambient
 lighting. Native56940 passes four graphical/lifecycle/routing controls and all
-21,425 frozen inputs/preferences restore. Player latency remains pending.
-Next replace G only to measure this change, then qualify an ordinary release.
+21,425 frozen inputs/preferences restore. Actual player43760 completes14 timing
+windows: first Hero now36.968ms wall/36.883ms CPU with no frame over50ms and one
+over33ms. Its worst frame is still34.735ms inside PrepareScreen, with120 retained
+Mono.JIT samples totaling24.882ms; nested samples are not additive. The completed
+14-trace exporter also restores all21,425 inputs/preferences. These diagnostics
+include collection overhead and do not establish ordinary-release smoothness.
+Next resolve the measured remaining construction cost, batch qualified source
+changes and qualify an ordinary release by replacing G only.
 Preserve Desktop. Previous ordinary first-Hero134.53ms/preload877.67ms remain
 failures; functional checks alone do not close performance or AI quality.
 
