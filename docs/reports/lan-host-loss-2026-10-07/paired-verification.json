@@ -1,0 +1,16 @@
+{
+  "verifiedPcPublication": "e764ee332ba4e3050e7d7c1890c8ed326f921a39",
+  "hostEvidenceCommit": "02944bd7e9a5a179bf1247918d9cd492368ab176",
+  "verifiedCommittedReceiptCount": 11,
+  "independentClientFilesByteEqual": [
+    "launch.json",
+    "result.json",
+    "state.txt",
+    "player.log"
+  ],
+  "bothActualReadyLiveBeforeControlledStop": true,
+  "samePinnedArtifactAndAllPreservation": true,
+  "hostDeliberateNonNormalExitRetained": true,
+  "clientStrictTerminalPassed": true,
+  "scope": "One Hero1/30 active host-loss LAN case, not complete tournament acceptance."
+}

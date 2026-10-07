@@ -58,3 +58,15 @@ loading/arrival before the live Good17ms sample, so this is not hitch-free
 performance acceptance. The short live sample510frames/8.505seconds averages
 59.96fps with18.51ms worst at Low/640; it is not a full-resolution tournament
 benchmark. Broader remaining gates above stay open.
+
+
+The independently owned [PC paired report](../two-machine-host-loss-cb5f-2026-10-07/README.md)
+is now published in02944bd7e and its exact-byte receipt correctione764ee332.
+The laptop independently verifies all11 committed raw receipt hashes, exact byte
+equality of all four independently copied client files, both pre-stop live logs,
+retained PIDs/time/artifact identities and both preservation outcomes. Git had
+normalized CRLF in the PC's first publication; scoped receipt attributes and
+re-adding retained originals restore every recorded hash without changing the
+hash expectations or rerunning gameplay. `paired-verification.json` records
+these checks. This closes the agreed functional active-host-loss gate within
+the stated scope; broader acceptance remains open.
