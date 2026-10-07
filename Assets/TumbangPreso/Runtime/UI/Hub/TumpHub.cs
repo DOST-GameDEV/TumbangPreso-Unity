@@ -41,6 +41,9 @@ namespace TumbangPreso.UI.Hub
         private bool _wasInRoom, _lobbyEntryPending;
         private HubScreen _pendingScreen;
         private GameObject _pendingDock;
+        private static readonly Unity.Profiling.ProfilerMarker PrepareNextMarker=new("Hub.PrepareView.MoveNext");
+        private static readonly Unity.Profiling.ProfilerMarker PrepareRevealMarker=new("Hub.PrepareView.Reveal");
+        private static readonly Unity.Profiling.ProfilerMarker PrepareFocusMarker=new("Hub.PrepareView.Focus");
         private Coroutine _preparation;
         private System.Collections.IEnumerator _preparationWork;
 
@@ -160,8 +163,10 @@ namespace TumbangPreso.UI.Hub
             if(screen.BuildAcrossFrames&&!popup)
             {
                 screen.Hub=this;screen.Root=rect;configure?.Invoke(screen);
-                _pendingDock=new GameObject("Preparing hub view",typeof(RectTransform));
-                _pendingDock.SetActive(false);_pendingDock.transform.SetParent(Canvas.transform,false);
+                _pendingDock=new GameObject("Preparing hub view",typeof(RectTransform),typeof(CanvasGroup));
+                var hidden=_pendingDock.GetComponent<CanvasGroup>();
+                hidden.alpha=0;hidden.interactable=false;hidden.blocksRaycasts=false;
+                _pendingDock.transform.SetParent(Canvas.transform,false);
                 HubKit.Stretch((RectTransform)_pendingDock.transform);
                 rect.SetParent(_pendingDock.transform,false);HubKit.Stretch(rect);
                 _pendingScreen=screen;_preparationWork=screen.PrepareView();
@@ -208,7 +213,7 @@ namespace TumbangPreso.UI.Hub
             while(_pendingScreen==screen)
             {
                 bool moved;object current=null;
-                try{moved=_preparationWork.MoveNext();if(moved)current=_preparationWork.Current;}
+                try{using(PrepareNextMarker.Auto()){moved=_preparationWork.MoveNext();if(moved)current=_preparationWork.Current;}}
                 catch(System.Exception error){Debug.LogException(error);CancelPreparation();yield break;}
                 if(!moved)break;
                 yield return current;
@@ -217,12 +222,19 @@ namespace TumbangPreso.UI.Hub
             (_preparationWork as System.IDisposable)?.Dispose();_preparationWork=null;_preparation=null;
             _pendingScreen=null;
             while(Top!=null&&Top.IsPopup){var gone=Top;_stack.RemoveAt(_stack.Count-1);Destroy(gone.gameObject);}
-            foreach(var below in _stack)if(!below.IsPopup)below.gameObject.SetActive(false);
-            screen.Root.SetParent(_screens,false);HubKit.Stretch(screen.Root);
-            Destroy(_pendingDock);_pendingDock=null;_stack.Add(screen);
-            RefreshChrome();RefreshFocus();
-            if(screen.FirstFocus!=null&&UnityEngine.EventSystems.EventSystem.current!=null)
-                UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(screen.FirstFocus.gameObject);
+            using(PrepareRevealMarker.Auto())
+            {
+                foreach(var below in _stack)if(!below.IsPopup)below.gameObject.SetActive(false);
+                screen.Root.SetParent(_screens,false);HubKit.Stretch(screen.Root);
+                screen.RevealPreparedView();
+                Destroy(_pendingDock);_pendingDock=null;_stack.Add(screen);
+            }
+            using(PrepareFocusMarker.Auto())
+            {
+                RefreshChrome();RefreshFocus();
+                if(screen.FirstFocus!=null&&UnityEngine.EventSystems.EventSystem.current!=null)
+                    UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(screen.FirstFocus.gameObject);
+            }
         }
 
         private bool CancelPreparation()

@@ -71,3 +71,27 @@ threshold of0.05ms, not an exhaustive count of compiled methods. Nested values
 are not additive to the coroutine or frame. The next change should follow this
 remaining construction cost; the measured improvement does not prove that all
 first-canvas, selection, loading or gameplay stalls are solved.
+
+Candidate4 moves hidden UI preparation under an active transparent CanvasGroup.
+It blocks pointer input and interaction while allowing OnEnable/layout work to
+run at each existing construction stage. The ModelPreview component and camera
+stay disabled until reveal; its explicit hidden render still applies/restores
+ambient lighting. Reveal enables the preview and restarts the authored sticker
+entrances. Direct synchronous Build also completes that reveal lifecycle.
+Bounded profiler markers now separate coroutine work, reveal and focus.
+
+Native49756 passes all four graphical controls on these exact bytes, including
+zero inherited visual alpha, exclusion from actual UI pointer raycasts, disabled
+preview camera, final primary focus, restarted entrance and cancellation/route
+cleanup. All21,425 frozen inputs/preferences restore. Player latency is pending;
+the current G and Desktop are unchanged. No player build was made for this unit.
+
+The existing candidate3 raw trace was also imported by native61388 through the
+new Editor metadata exporter. Every Mono.JIT row has metadata_count=0. It proves
+the recorded trace contains no method names; do not infer a compiled-method list
+or a confirmed activation root cause from that trace. The public API is documented
+in [Unity6.5](https://docs.unity.com/en-us/engine/6000.5/script-reference/unityeditor/profiling/rawframedataview/getsamplemetadataasstring).
+This activation change remains a measured-cost hypothesis until a later batched
+replacement build is compared. New3 preview posters were visually inspected;
+their courts are legible, while continuous motion/loop/overlay quality remains
+open. Old-map art and presentation were not modified.

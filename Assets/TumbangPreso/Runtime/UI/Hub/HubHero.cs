@@ -56,7 +56,13 @@ namespace TumbangPreso.UI.Hub
         public override bool BuildAcrossFrames=>true;
 
         public override void Build()
-        {var work=PrepareView();while(work.MoveNext()){}(work as System.IDisposable)?.Dispose();}
+        {var work=PrepareView();while(work.MoveNext()){}(work as System.IDisposable)?.Dispose();RevealPreparedView();}
+
+        public override void RevealPreparedView()
+        {
+            if(_preview!=null)_preview.enabled=true;
+            foreach(var slap in GetComponentsInChildren<HubSlap>(true))slap.Replay();
+        }
 
         public override System.Collections.IEnumerator PrepareView()
         {
@@ -79,6 +85,7 @@ namespace TumbangPreso.UI.Hub
             HubKit.Place(burst.rectTransform, HubKit.Bottom, new Vector2(0, 90), new Vector2(40, 40));
             var model = HubKit.Stretch(HubKit.Rect(stage, "Model"), 10);
             _preview = model.gameObject.AddComponent<ModelPreview>();
+            _preview.enabled=false;
             _preview.Attach(model);
             _preview.CentreSubject();
             yield return null;
@@ -147,7 +154,7 @@ namespace TumbangPreso.UI.Hub
             HubSlap.On(side, 0.08f, 1);
             if (GameServices.Wallet != null) GameServices.Wallet.Changed += RefreshWallet;
             if(measure)
-                Debug.Log(System.FormattableString.Invariant($"[HeroMenuLoad] stage=prepare wall_ms={ModelPreview.LoadElapsedMs(began):F3} scope=coroutine-total-includes-yields-preview-excludes-canvas-gpu-present"));
+                Debug.Log(System.FormattableString.Invariant($"[HeroMenuLoad] stage=prepare wall_ms={ModelPreview.LoadElapsedMs(began):F3} scope=coroutine-wall-includes-yields-and-hidden-render-not-cpu-or-gpu-duration"));
         }
 
         private void OnDestroy()

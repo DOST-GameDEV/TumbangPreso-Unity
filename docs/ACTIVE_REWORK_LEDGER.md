@@ -51,8 +51,16 @@ over33ms. Its worst frame is still34.735ms inside PrepareScreen, with120 retaine
 Mono.JIT samples totaling24.882ms; nested samples are not additive. The completed
 14-trace exporter also restores all21,425 inputs/preferences. These diagnostics
 include collection overhead and do not establish ordinary-release smoothness.
-Next resolve the measured remaining construction cost, batch qualified source
-changes and qualify an ordinary release by replacing G only.
+Candidate4 source prepares UI under an active transparent CanvasGroup, with input
+blocked and the preview component/camera disabled. It replays the authored
+entrance at reveal. Native49756 passes all four graphical/input/focus/lifetime
+controls and all21,425 inputs/preferences restore. The completed trace's199
+Mono.JIT rows have no method metadata; the metadata exporter is qualified but
+the remaining activation cause is still a hypothesis. Separate MoveNext, Reveal
+and Focus profiler markers will resolve it in the next batched comparison.
+No player build for this unit; G remains candidate3. Next inspect continuous
+new3 previews/openings, batch qualified source and qualify an ordinary release
+by replacing G only. Old-map art/presentation remains untouched.
 Preserve Desktop. Previous ordinary first-Hero134.53ms/preload877.67ms remain
 failures; functional checks alone do not close performance or AI quality.
 

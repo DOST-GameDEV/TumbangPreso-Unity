@@ -26,6 +26,7 @@ namespace TumbangPreso.UI.Hub
         public abstract void Build();
         public virtual bool BuildAcrossFrames=>false;
         public virtual System.Collections.IEnumerator PrepareView(){Build();yield break;}
+        public virtual void RevealPreparedView(){ }
 
         /// <summary>
         /// Where a pad or keyboard's focus lands when this screen opens: the screen's one primary.
