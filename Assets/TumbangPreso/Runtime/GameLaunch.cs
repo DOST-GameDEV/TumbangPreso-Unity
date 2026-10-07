@@ -51,7 +51,7 @@ namespace TumbangPreso
             // scene; the first Lagoon is vaulted (SceneFlow.Lagoon).
             new MapEntry("lagoon","LAGOON COURT",
                 "A cove court in the rocks. Stilt village, reefs and a sunset sea.",SceneFlow.LagoonCove),
-            new MapEntry("kanto","KANTO",
+            new MapEntry("kanto","BGC, TAGUIG",
                 "City park block. Jeepney stop, traffic lights, busy streets.",SceneFlow.Kanto),
             new MapEntry("arena","ARENA",
                 "Game-show stage. It rebuilds each round; mind the edges.",SceneFlow.Arena),

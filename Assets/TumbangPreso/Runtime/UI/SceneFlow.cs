@@ -167,8 +167,8 @@ namespace TumbangPreso.UI
             // angle), Kanto from over the park's corner so the facades and streets frame the court.
             new MapEntry(LagoonCove,"LAGOON COURT",
                          "A cove court in the rocks. Stilt village, reefs and a sunset sea.",0,40,24),
-            new MapEntry(Kanto,"KANTO",
-                         "City park block. Jeepney stop, traffic lights, busy streets.",45,24,16),
+            new MapEntry(Kanto,"BGC, TAGUIG",
+                         "Taguig city park. Jeepney stop, traffic lights, busy streets.",45,24,16),
             // The Arena is LAST: maps travel as an index, so a new one is appended (protocol 152).
             // Preview: high over a corner, so the whole stage and its shaft are in frame. The
             // stage is 43 m across (walking radius 21.5), not the 28 m the first shot was framed
