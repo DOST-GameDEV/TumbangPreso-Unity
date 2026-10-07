@@ -1,3 +1,11 @@
+### TOURNAMENT-FRAME-PACING-1007: optimization and loading
+
+- [ ] October7 owner: after current assigned fixes, optimize the current game and loading placement. Noticeable random stutters are unacceptable; measure actual frame pacing during natural matches, recording, replay, map transitions and repeated use before declaring readiness.
+- [ ] Owner-requested GPT-6 Astra xhigh reviewer in this PC chat reviews both streams and proposes concrete refinements. Start read-only, respect existing file reservations and coordinate before edits. This explicit request authorizes this reviewer despite older no-new-worker wording.
+- [ ] Fix and qualify actual replay frame-boundary loss. Combined source6c9 native49600 records7714 effects frames versus7719 observed;7705 unique timestamps and29.955s clip. Six other passing controls do not close this failure. Recorder/Archive/effects remain laptop-owned.
+- [ ] Qualify bounded replay segment lookahead, write backpressure and allocation behavior. Current playback requests the next segment at the seam and waits during loading; full-pool decoding can take hundreds of milliseconds. Continuous multi-segment1x/4x play and stale seek/close controls must accompany the fix.
+- [ ] Verify loading happens under the requested login -> existing main menu preparation -> lobby flow and does not create avoidable gameplay hitches. Preserve the qualified Desktop until a current package passes meaningful checks.
+
 ### AI-ACTIVE-ENGAGEMENT-1007: no unexplained idle or staring
 
 - [ ] October7 owner: bots must not randomly stare or stop doing anything. Reproduce and fix eligible-player stalls, lost decisions, unfinished aimed inputs and unreachable goals; confirm useful responses to the round and threats across every map.
@@ -6,6 +14,7 @@
 - [x] Synchronize planner hold age from the charge accumulated by the normal consumer during other plans. Original3failures retained;24continuity/aim/power/obstacle/lifetime controls pass, all21369inputs/preferences restore. [Evidence](reports/bot-lunge-charge-continuity-2026-10-07/README.md).
 - [x] Correct the subsequent observed-ratio/seconds mistake caught by a nearby half-charge boundary. Original3PASS/1FAIL spends0.961538cooldown early; corrected25controls pass/all21369restore. Old24-green evidence remains limited. [Correction](reports/bot-charge-ratio-units-2026-10-07/README.md).
 - [x] Stop physical lunge reach from reducing a measured retreat velocity by the tier's movement-lead multiplier. Original1FAIL/2PASS;28velocity/charge/aim/obstruction/lifetime controls pass/all21371restore. [Evidence](reports/bot-lunge-observed-velocity-2026-10-07/README.md).
+- [x] Preserve ordinary legal sprint and its commitment during long-held lunge aim correction. Corrected-original12PASS/2FAIL; candidate14PASS, defender closes on legal5m/s runner instead of falling behind; all21383inputs/preferences restored. Initial walking-target fixture mistake retained. [Evidence and limits](reports/bot-held-chase-sprint-2026-10-07/README.md).
 - [x] Observe14 fresh natural40-second map/mode baseline windows; current bounds/retrieval/pursuit assertions pass/all21369restore. Misses, held-shoe warnings and unreliable old charge labels retained; this pre-unit-correction baseline does not close quality. [Baseline](reports/all-map-bot-baseline-2026-10-07/README.md).
 - [ ] Measure actual movement and completed gameplay actions during natural1x matches. Keep charging, channels, forced pauses and legal guarding explicit; tiny fidgets or a nonzero requested axis do not prove useful progress.
 - [ ] Complete feature/role/map coverage and current packaged acceptance. Short roster samples and staged consumer checks do not close this requirement.

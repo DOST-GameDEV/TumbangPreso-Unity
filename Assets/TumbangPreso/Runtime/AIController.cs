@@ -2745,7 +2745,9 @@ namespace TumbangPreso
                 // sideways just because a planner timer expired.
                 Vector3 aim = lungeAim - transform.position;
                 if (EdgeSense) _edgeGoalDistance = aim.magnitude;
-                Drive(intent, aim, false, pausesOnTurn: false);
+                // Keep the ordinary chase's sprint request while finishing aim.
+                // Clearing it here also prevents the normal sprint commitment.
+                Drive(intent, aim, MaySprint() && aim.magnitude > 1.5f, pausesOnTurn: false);
                 Press(intent, Verb.Lunge, true);
                 return;
             }
