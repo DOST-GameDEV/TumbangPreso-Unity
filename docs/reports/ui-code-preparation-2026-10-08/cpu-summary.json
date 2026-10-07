@@ -1,0 +1,1407 @@
+{
+  "01-title-to-home": {
+    "frame": "21",
+    "cpuMs": 909.0921,
+    "monoJitMsSum": 0,
+    "slowMainSamples": [
+      {
+        "frame": "21",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "0",
+        "parent": "-1",
+        "depth": "0",
+        "inclusive_ms": "909.0921",
+        "name": "Main Thread"
+      },
+      {
+        "frame": "21",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "1",
+        "parent": "0",
+        "depth": "1",
+        "inclusive_ms": "909.0329",
+        "name": "PlayerLoop"
+      },
+      {
+        "frame": "21",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "330",
+        "parent": "1",
+        "depth": "2",
+        "inclusive_ms": "865.763733",
+        "name": "PostLateUpdate.FinishFrameRendering"
+      },
+      {
+        "frame": "21",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "336",
+        "parent": "330",
+        "depth": "3",
+        "inclusive_ms": "865.4317",
+        "name": "Gfx.WaitForPresentOnGfxThread"
+      },
+      {
+        "frame": "21",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "337",
+        "parent": "336",
+        "depth": "4",
+        "inclusive_ms": "865.4311",
+        "name": "Semaphore.WaitForSignal"
+      },
+      {
+        "frame": "21",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "630",
+        "parent": "1",
+        "depth": "2",
+        "inclusive_ms": "42.7943",
+        "name": "TimeUpdate.WaitForLastPresentationAndUpdateTime"
+      },
+      {
+        "frame": "21",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "632",
+        "parent": "630",
+        "depth": "3",
+        "inclusive_ms": "42.7872",
+        "name": "WaitForTargetFPS"
+      },
+      {
+        "frame": "21",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "634",
+        "parent": "632",
+        "depth": "4",
+        "inclusive_ms": "42.7219",
+        "name": "DXGI.WaitOnSwapChain"
+      },
+      {
+        "frame": "21",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "340",
+        "parent": "330",
+        "depth": "3",
+        "inclusive_ms": "0.2298",
+        "name": "Camera.Render"
+      },
+      {
+        "frame": "21",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "476",
+        "parent": "1",
+        "depth": "2",
+        "inclusive_ms": "0.1107",
+        "name": "PostLateUpdate.ProfilerEndFrame"
+      },
+      {
+        "frame": "21",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "477",
+        "parent": "476",
+        "depth": "3",
+        "inclusive_ms": "0.1094",
+        "name": "Profiler.FlushCounters"
+      },
+      {
+        "frame": "21",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "341",
+        "parent": "340",
+        "depth": "4",
+        "inclusive_ms": "0.1011",
+        "name": "Culling"
+      },
+      {
+        "frame": "21",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "164",
+        "parent": "1",
+        "depth": "2",
+        "inclusive_ms": "0.0624",
+        "name": "Update.ScriptRunBehaviourUpdate"
+      },
+      {
+        "frame": "21",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "165",
+        "parent": "164",
+        "depth": "3",
+        "inclusive_ms": "0.0618",
+        "name": "BehaviourUpdate"
+      },
+      {
+        "frame": "21",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "593",
+        "parent": "477",
+        "depth": "4",
+        "inclusive_ms": "0.0595",
+        "name": "Profiler.FlushMemoryCounters"
+      },
+      {
+        "frame": "21",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "355",
+        "parent": "341",
+        "depth": "5",
+        "inclusive_ms": "0.053799998",
+        "name": "SceneCulling"
+      },
+      {
+        "frame": "21",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "636",
+        "parent": "0",
+        "depth": "1",
+        "inclusive_ms": "0.0432",
+        "name": "CollectGPUSamples"
+      }
+    ]
+  },
+  "menu-HeroButton": {
+    "frame": "9",
+    "cpuMs": 123.737106,
+    "monoJitMsSum": 68.614499901,
+    "slowMainSamples": [
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "0",
+        "parent": "-1",
+        "depth": "0",
+        "inclusive_ms": "123.737106",
+        "name": "Main Thread"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "1",
+        "parent": "0",
+        "depth": "1",
+        "inclusive_ms": "123.7122",
+        "name": "PlayerLoop"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "169",
+        "parent": "1",
+        "depth": "2",
+        "inclusive_ms": "77.9554",
+        "name": "Update.ScriptRunDelayedDynamicFrameRate"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "170",
+        "parent": "169",
+        "depth": "3",
+        "inclusive_ms": "77.9546",
+        "name": "CoroutinesDelayedCalls"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "171",
+        "parent": "170",
+        "depth": "4",
+        "inclusive_ms": "77.95",
+        "name": "TumbangPreso.Runtime.dll!TumbangPreso.Diagnostics::OwnerUiPlayerReview.Guard() [Coroutine: MoveNext] [Invoke]"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "9559",
+        "parent": "1",
+        "depth": "2",
+        "inclusive_ms": "18.0272",
+        "name": "PostLateUpdate.PlayerUpdateCanvases"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "9563",
+        "parent": "9559",
+        "depth": "3",
+        "inclusive_ms": "18.0171",
+        "name": "UIEvents.WillRenderCanvases"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "9564",
+        "parent": "9563",
+        "depth": "4",
+        "inclusive_ms": "18.0164",
+        "name": "UGUI.Rendering.UpdateBatches"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "9566",
+        "parent": "9564",
+        "depth": "5",
+        "inclusive_ms": "17.696",
+        "name": "UnityEngine.UIModule.dll!UnityEngine::Canvas.SendWillRenderCanvases() [Invoke]"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "10182",
+        "parent": "1",
+        "depth": "2",
+        "inclusive_ms": "17.6625",
+        "name": "PostLateUpdate.FinishFrameRendering"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "9571",
+        "parent": "9566",
+        "depth": "6",
+        "inclusive_ms": "17.662199",
+        "name": "Render"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "9575",
+        "parent": "9571",
+        "depth": "7",
+        "inclusive_ms": "17.6135",
+        "name": "CanvasUpdate.PreRender"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "10185",
+        "parent": "10182",
+        "depth": "3",
+        "inclusive_ms": "17.3347",
+        "name": "Camera.Render"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "10514",
+        "parent": "10185",
+        "depth": "4",
+        "inclusive_ms": "10.0586",
+        "name": "Camera.ImageEffects"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "10515",
+        "parent": "10514",
+        "depth": "5",
+        "inclusive_ms": "10.0574",
+        "name": "Camera.ImageEffects"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "10516",
+        "parent": "10515",
+        "depth": "6",
+        "inclusive_ms": "10.0124",
+        "name": "ColourGrade"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "10518",
+        "parent": "10516",
+        "depth": "7",
+        "inclusive_ms": "9.9823",
+        "name": "TumbangPreso.Runtime.dll!TumbangPreso.Visual::ColourGrade.OnRenderImage() [Invoke]"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "9389",
+        "parent": "1",
+        "depth": "2",
+        "inclusive_ms": "5.7712",
+        "name": "PreLateUpdate.ScriptRunBehaviourLateUpdate"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "9390",
+        "parent": "9389",
+        "depth": "3",
+        "inclusive_ms": "5.7704",
+        "name": "LateBehaviourUpdate"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "9400",
+        "parent": "9390",
+        "depth": "4",
+        "inclusive_ms": "5.6791",
+        "name": "TumbangPreso.Runtime.dll!TumbangPreso.UI::ModelPreview.LateUpdate() [Invoke]"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "10375",
+        "parent": "10185",
+        "depth": "4",
+        "inclusive_ms": "3.9637",
+        "name": "Drawing"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "10377",
+        "parent": "10375",
+        "depth": "5",
+        "inclusive_ms": "3.9309",
+        "name": "Render.OpaqueGeometry"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "10409",
+        "parent": "10377",
+        "depth": "6",
+        "inclusive_ms": "3.8585",
+        "name": "RenderForwardOpaque.Render"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "11020",
+        "parent": "1",
+        "depth": "2",
+        "inclusive_ms": "3.0896",
+        "name": "TimeUpdate.WaitForLastPresentationAndUpdateTime"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "11022",
+        "parent": "11020",
+        "depth": "3",
+        "inclusive_ms": "3.0837",
+        "name": "WaitForTargetFPS"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "10590",
+        "parent": "10518",
+        "depth": "8",
+        "inclusive_ms": "3.0332",
+        "name": "Loading.ReadObject"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "10591",
+        "parent": "10590",
+        "depth": "9",
+        "inclusive_ms": "3.022",
+        "name": "Loading.ReadObjectThreaded"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "10186",
+        "parent": "10185",
+        "depth": "4",
+        "inclusive_ms": "2.76",
+        "name": "Culling"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "10594",
+        "parent": "10591",
+        "depth": "10",
+        "inclusive_ms": "2.5993",
+        "name": "TumbangPreso.Runtime.dll!TumbangPreso.Visual::WorldLookProfile..ctor() [Invoke]"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "10187",
+        "parent": "10186",
+        "depth": "5",
+        "inclusive_ms": "2.4359",
+        "name": "TumbangPreso.Runtime.dll!TumbangPreso.Visual::ColourGrade.OnPreCull() [Invoke]"
+      }
+    ]
+  },
+  "menu-HeroButton-repeat": {
+    "frame": "64",
+    "cpuMs": 31.976799,
+    "monoJitMsSum": 0,
+    "slowMainSamples": [
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "0",
+        "parent": "-1",
+        "depth": "0",
+        "inclusive_ms": "31.976799",
+        "name": "Main Thread"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "1",
+        "parent": "0",
+        "depth": "1",
+        "inclusive_ms": "31.9525",
+        "name": "PlayerLoop"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "1081",
+        "parent": "1",
+        "depth": "2",
+        "inclusive_ms": "29.8789",
+        "name": "TimeUpdate.WaitForLastPresentationAndUpdateTime"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "1083",
+        "parent": "1081",
+        "depth": "3",
+        "inclusive_ms": "29.8739",
+        "name": "WaitForTargetFPS"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "1085",
+        "parent": "1083",
+        "depth": "4",
+        "inclusive_ms": "29.7573",
+        "name": "DXGI.WaitOnSwapChain"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "512",
+        "parent": "1",
+        "depth": "2",
+        "inclusive_ms": "0.7011",
+        "name": "PostLateUpdate.FinishFrameRendering"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "246",
+        "parent": "1",
+        "depth": "2",
+        "inclusive_ms": "0.6124",
+        "name": "Update.ScriptRunBehaviourUpdate"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "247",
+        "parent": "246",
+        "depth": "3",
+        "inclusive_ms": "0.612",
+        "name": "BehaviourUpdate"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "515",
+        "parent": "512",
+        "depth": "3",
+        "inclusive_ms": "0.4644",
+        "name": "Camera.Render"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "269",
+        "parent": "247",
+        "depth": "4",
+        "inclusive_ms": "0.324799985",
+        "name": "TumbangPreso.Runtime.dll!TumbangPreso.UI.Hub::TumpHub.Update() [Invoke]"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "927",
+        "parent": "1",
+        "depth": "2",
+        "inclusive_ms": "0.1905",
+        "name": "PostLateUpdate.ProfilerEndFrame"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "928",
+        "parent": "927",
+        "depth": "3",
+        "inclusive_ms": "0.1896",
+        "name": "Profiler.FlushCounters"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "1044",
+        "parent": "928",
+        "depth": "4",
+        "inclusive_ms": "0.1593",
+        "name": "Profiler.FlushMemoryCounters"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "649",
+        "parent": "515",
+        "depth": "4",
+        "inclusive_ms": "0.1409",
+        "name": "Drawing"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "516",
+        "parent": "515",
+        "depth": "4",
+        "inclusive_ms": "0.1386",
+        "name": "Culling"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "758",
+        "parent": "512",
+        "depth": "3",
+        "inclusive_ms": "0.1269",
+        "name": "Camera.Render"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "651",
+        "parent": "649",
+        "depth": "5",
+        "inclusive_ms": "0.1266",
+        "name": "Render.OpaqueGeometry"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "279",
+        "parent": "247",
+        "depth": "4",
+        "inclusive_ms": "0.1257",
+        "name": "TumbangPreso.Runtime.dll!TumbangPreso.UI.Hub::HubQueuePlate.Update() [Invoke]"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "393",
+        "parent": "1",
+        "depth": "2",
+        "inclusive_ms": "0.1062",
+        "name": "PostLateUpdate.PlayerUpdateCanvases"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "396",
+        "parent": "393",
+        "depth": "3",
+        "inclusive_ms": "0.100999996",
+        "name": "UIEvents.WillRenderCanvases"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "397",
+        "parent": "396",
+        "depth": "4",
+        "inclusive_ms": "0.1008",
+        "name": "UGUI.Rendering.UpdateBatches"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "683",
+        "parent": "651",
+        "depth": "6",
+        "inclusive_ms": "0.0938",
+        "name": "RenderForwardOpaque.Render"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "351",
+        "parent": "1",
+        "depth": "2",
+        "inclusive_ms": "0.0782",
+        "name": "PreLateUpdate.ScriptRunBehaviourLateUpdate"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "352",
+        "parent": "351",
+        "depth": "3",
+        "inclusive_ms": "0.0778",
+        "name": "LateBehaviourUpdate"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "399",
+        "parent": "397",
+        "depth": "5",
+        "inclusive_ms": "0.0604",
+        "name": "UnityEngine.UIModule.dll!UnityEngine::Canvas.SendWillRenderCanvases() [Invoke]"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "216",
+        "parent": "1",
+        "depth": "2",
+        "inclusive_ms": "0.0579",
+        "name": "PreUpdate.UpdateVideo"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "536",
+        "parent": "516",
+        "depth": "5",
+        "inclusive_ms": "0.0566",
+        "name": "SceneCulling"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "404",
+        "parent": "399",
+        "depth": "6",
+        "inclusive_ms": "0.0565",
+        "name": "Render"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "362",
+        "parent": "352",
+        "depth": "4",
+        "inclusive_ms": "0.0535",
+        "name": "TumbangPreso.Runtime.dll!TumbangPreso.UI::ModelPreview.LateUpdate() [Invoke]"
+      },
+      {
+        "frame": "64",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "1087",
+        "parent": "0",
+        "depth": "1",
+        "inclusive_ms": "0.0041",
+        "name": "CollectGPUSamples"
+      }
+    ]
+  },
+  "menu-LoadoutButton": {
+    "frame": "9",
+    "cpuMs": 40.6178,
+    "monoJitMsSum": 16.587199994,
+    "slowMainSamples": [
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "0",
+        "parent": "-1",
+        "depth": "0",
+        "inclusive_ms": "40.6178",
+        "name": "Main Thread"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "1",
+        "parent": "0",
+        "depth": "1",
+        "inclusive_ms": "40.5965",
+        "name": "PlayerLoop"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "249",
+        "parent": "1",
+        "depth": "2",
+        "inclusive_ms": "22.1748",
+        "name": "Update.ScriptRunDelayedDynamicFrameRate"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "250",
+        "parent": "249",
+        "depth": "3",
+        "inclusive_ms": "22.1741",
+        "name": "CoroutinesDelayedCalls"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "251",
+        "parent": "250",
+        "depth": "4",
+        "inclusive_ms": "22.1693",
+        "name": "TumbangPreso.Runtime.dll!TumbangPreso.Diagnostics::OwnerUiPlayerReview.Guard() [Coroutine: MoveNext] [Invoke]"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "7050",
+        "parent": "1",
+        "depth": "2",
+        "inclusive_ms": "16.1733",
+        "name": "PreLateUpdate.ScriptRunBehaviourLateUpdate"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "7051",
+        "parent": "7050",
+        "depth": "3",
+        "inclusive_ms": "16.1724",
+        "name": "LateBehaviourUpdate"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "7062",
+        "parent": "7051",
+        "depth": "4",
+        "inclusive_ms": "16.0836",
+        "name": "UnityEngine.UI.dll!UnityEngine.UI::ScrollRect.LateUpdate() [Invoke]"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "7280",
+        "parent": "7062",
+        "depth": "5",
+        "inclusive_ms": "7.1182",
+        "name": "Render"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "7318",
+        "parent": "7280",
+        "depth": "6",
+        "inclusive_ms": "7.0188",
+        "name": "CanvasUpdate.PreRender"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "7066",
+        "parent": "7062",
+        "depth": "5",
+        "inclusive_ms": "6.7705",
+        "name": "Layout"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "7072",
+        "parent": "7066",
+        "depth": "6",
+        "inclusive_ms": "4.3712",
+        "name": "CanvasUpdate.Layout"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "7275",
+        "parent": "7066",
+        "depth": "6",
+        "inclusive_ms": "1.8268",
+        "name": "CanvasUpdate.PostLayout"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "3452",
+        "parent": "251",
+        "depth": "5",
+        "inclusive_ms": "1.4942",
+        "name": "Mono.JIT"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "7063",
+        "parent": "7062",
+        "depth": "5",
+        "inclusive_ms": "1.3222",
+        "name": "Mono.JIT"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "7401",
+        "parent": "7318",
+        "depth": "7",
+        "inclusive_ms": "1.2575",
+        "name": "Font.CacheFontForText"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "434",
+        "parent": "251",
+        "depth": "5",
+        "inclusive_ms": "1.251",
+        "name": "Mono.JIT"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "7276",
+        "parent": "7275",
+        "depth": "7",
+        "inclusive_ms": "1.2238",
+        "name": "Mono.JIT"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "7080",
+        "parent": "7072",
+        "depth": "7",
+        "inclusive_ms": "1.1968",
+        "name": "Mono.JIT"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "6396",
+        "parent": "251",
+        "depth": "5",
+        "inclusive_ms": "1.1756",
+        "name": "Loading.ReadObject"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "6410",
+        "parent": "6396",
+        "depth": "6",
+        "inclusive_ms": "1.1383",
+        "name": "IntegrateAllThreadedObjects"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "6412",
+        "parent": "6410",
+        "depth": "7",
+        "inclusive_ms": "1.1348",
+        "name": "Loading.AwakeFromLoad"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "7078",
+        "parent": "7072",
+        "depth": "7",
+        "inclusive_ms": "0.7388",
+        "name": "Mono.JIT"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "7365",
+        "parent": "7318",
+        "depth": "7",
+        "inclusive_ms": "0.6722",
+        "name": "Mono.JIT"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "7266",
+        "parent": "7072",
+        "depth": "7",
+        "inclusive_ms": "0.5763",
+        "name": "Mono.JIT"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "7403",
+        "parent": "7401",
+        "depth": "8",
+        "inclusive_ms": "0.5674",
+        "name": "UnityEngine.TextRenderingModule.dll!UnityEngine::Font.InvokeTextureRebuilt_Internal() [Invoke]"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "4097",
+        "parent": "251",
+        "depth": "5",
+        "inclusive_ms": "0.5318",
+        "name": "Loading.ReadObject"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "192",
+        "parent": "1",
+        "depth": "2",
+        "inclusive_ms": "0.5278",
+        "name": "Update.ScriptRunBehaviourUpdate"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "193",
+        "parent": "192",
+        "depth": "3",
+        "inclusive_ms": "0.5275",
+        "name": "BehaviourUpdate"
+      },
+      {
+        "frame": "9",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "7323",
+        "parent": "7318",
+        "depth": "7",
+        "inclusive_ms": "0.5121",
+        "name": "Mono.JIT"
+      }
+    ]
+  },
+  "menu-settings": {
+    "frame": "0",
+    "cpuMs": 77.3284,
+    "monoJitMsSum": 28.0459999853,
+    "slowMainSamples": [
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "0",
+        "parent": "-1",
+        "depth": "0",
+        "inclusive_ms": "77.3284",
+        "name": "Main Thread"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "7283",
+        "parent": "0",
+        "depth": "1",
+        "inclusive_ms": "66.1541",
+        "name": "PostLateUpdate.ScriptRunDelayedDynamicFrameRate"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "7284",
+        "parent": "7283",
+        "depth": "2",
+        "inclusive_ms": "66.1534",
+        "name": "CoroutinesDelayedCalls"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "7285",
+        "parent": "7284",
+        "depth": "3",
+        "inclusive_ms": "66.151",
+        "name": "TumbangPreso.Runtime.dll!TumbangPreso.UI::ConvertedScreen.Start() [Invoke]"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "24852",
+        "parent": "7285",
+        "depth": "4",
+        "inclusive_ms": "11.3393",
+        "name": "Render"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "24854",
+        "parent": "24852",
+        "depth": "5",
+        "inclusive_ms": "11.1662",
+        "name": "CanvasUpdate.PreRender"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "24901",
+        "parent": "24854",
+        "depth": "6",
+        "inclusive_ms": "3.6326",
+        "name": "Font.CacheFontForText"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "24",
+        "parent": "0",
+        "depth": "1",
+        "inclusive_ms": "3.4568",
+        "name": "Loading.ReadObject"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "41",
+        "parent": "24",
+        "depth": "2",
+        "inclusive_ms": "3.1769",
+        "name": "Loading.LoadRemainingPreallocatedObjects"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "24903",
+        "parent": "24901",
+        "depth": "7",
+        "inclusive_ms": "2.8967",
+        "name": "UnityEngine.TextRenderingModule.dll!UnityEngine::Font.InvokeTextureRebuilt_Internal() [Invoke]"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "4788",
+        "parent": "0",
+        "depth": "1",
+        "inclusive_ms": "2.5275",
+        "name": "Instantiate"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "23242",
+        "parent": "7285",
+        "depth": "4",
+        "inclusive_ms": "2.3048",
+        "name": "Mono.JIT"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "7609",
+        "parent": "7285",
+        "depth": "4",
+        "inclusive_ms": "2.0386",
+        "name": "Mono.JIT"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "9868",
+        "parent": "7285",
+        "depth": "4",
+        "inclusive_ms": "1.932",
+        "name": "GameObject.AddComponent"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "9876",
+        "parent": "9868",
+        "depth": "5",
+        "inclusive_ms": "1.8889",
+        "name": "TumbangPreso.Runtime.dll!TumbangPreso.UI::CrispUiText..ctor() [Invoke]"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "7894",
+        "parent": "7285",
+        "depth": "4",
+        "inclusive_ms": "1.7555",
+        "name": "Mono.JIT"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "9887",
+        "parent": "9876",
+        "depth": "6",
+        "inclusive_ms": "1.6744",
+        "name": "GC.Collect"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "31390",
+        "parent": "0",
+        "depth": "1",
+        "inclusive_ms": "1.4082",
+        "name": "PostLateUpdate.PlayerUpdateCanvases"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "31394",
+        "parent": "31390",
+        "depth": "2",
+        "inclusive_ms": "1.39689994",
+        "name": "UIEvents.WillRenderCanvases"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "31395",
+        "parent": "31394",
+        "depth": "3",
+        "inclusive_ms": "1.3967",
+        "name": "UGUI.Rendering.UpdateBatches"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "11130",
+        "parent": "7285",
+        "depth": "4",
+        "inclusive_ms": "1.254",
+        "name": "GameObject.AddComponent"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "11138",
+        "parent": "11130",
+        "depth": "5",
+        "inclusive_ms": "1.1327",
+        "name": "TumbangPreso.Runtime.dll!TumbangPreso.UI::SettingsControlFocus.Awake() [Invoke]"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "6454",
+        "parent": "4788",
+        "depth": "2",
+        "inclusive_ms": "1.0428",
+        "name": "Instantiate.Copy"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "25274",
+        "parent": "7285",
+        "depth": "4",
+        "inclusive_ms": "0.9832",
+        "name": "Mono.JIT"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "22769",
+        "parent": "7285",
+        "depth": "4",
+        "inclusive_ms": "0.978",
+        "name": "GameObject.AddComponent"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "15759",
+        "parent": "7285",
+        "depth": "4",
+        "inclusive_ms": "0.9684",
+        "name": "GameObject.AddComponent"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "24884",
+        "parent": "24854",
+        "depth": "6",
+        "inclusive_ms": "0.9235",
+        "name": "Mono.JIT"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "28225",
+        "parent": "7285",
+        "depth": "4",
+        "inclusive_ms": "0.9173",
+        "name": "GC.Collect"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "10654",
+        "parent": "7285",
+        "depth": "4",
+        "inclusive_ms": "0.8849",
+        "name": "Mono.JIT"
+      },
+      {
+        "frame": "0",
+        "thread": "0",
+        "thread_name": "Main Thread",
+        "sample": "24587",
+        "parent": "7285",
+        "depth": "4",
+        "inclusive_ms": "0.8847",
+        "name": "Layout"
+      }
+    ]
+  }
+}

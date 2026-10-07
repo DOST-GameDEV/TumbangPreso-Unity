@@ -1,0 +1,137 @@
+{
+  "nativeRuns": {
+    "cpu-exporter-compile1008": {
+      "pid": 61344,
+      "exitCode": 0,
+      "cases": [
+        {
+          "name": "TumbangPreso.Tests.PerformanceTimingCaptureTests.RoutineTimingWritesSamplesWithoutBinaryProfilerCapture",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "protectedCount": 21417,
+      "rawSha256": {
+        "result.json": "ebd518c815708288e7d2fcde066180be17d955d4f54f353fb033f2532c3fef9b",
+        "source-restoration.json": "137f9c8d79856bba892d2344953b0f7168bfe37455a0179dc5d8d5741c334f9f",
+        "results.xml": "a74b8bd4b4a4f826826fe6af6dc3bde9c2465ad986e85c29084d78ea9edfab5c"
+      }
+    },
+    "cpu-trace-export1008": {
+      "pid": 57376,
+      "exitCode": 0,
+      "cases": [],
+      "protectedCount": 21417,
+      "rawSha256": {
+        "result.json": "7e223595be0757def229389557694e73b2e52c39307c863066d90ed3ac82c8bb",
+        "source-restoration.json": "8200ea93c1cfee5dba503950d35a894e0b8633062ed11d033cc6a2d51ad092fa"
+      }
+    },
+    "ui-code-prepare-candidate1008": {
+      "pid": 63644,
+      "exitCode": 1,
+      "cases": [],
+      "protectedCount": 21421,
+      "rawSha256": {
+        "result.json": "2f4b4b8fa68fe274f21c8d38e63e71a5c631ba7ad170eb638ee87044e6e0223e",
+        "source-restoration.json": "e3ae19ff0667ef7b4d06069ca8bb71c7d176c19a6bc6b9806435bbb7e964e99c"
+      }
+    },
+    "ui-code-prepare-candidate2-1008": {
+      "pid": 63880,
+      "exitCode": 1,
+      "cases": [],
+      "protectedCount": 21421,
+      "rawSha256": {
+        "result.json": "b480c51623dfe5b6655a32e75ed6b500c35b5d27bd5acef7d0e5865aa787a381",
+        "source-restoration.json": "322c89b9b2d3bc49df36cd2786f8d6c173367dcdef9a5b5f43a54b5f92a29f4a"
+      }
+    },
+    "ui-code-prepare-candidate3-1008": {
+      "pid": 63968,
+      "exitCode": 0,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.UiCodePreparationTests.PreparingCodeDoesNotConstructViewsModelsOrInvokeMenuActions",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "protectedCount": 21421,
+      "rawSha256": {
+        "result.json": "22d87bd603777f581be6b7a2b3b945552b521d0933561b042b9af7c001f1fc4a",
+        "source-restoration.json": "831513ad26b5c8bf4928421ea22ec9b1eee35258c83860078c07e7b39b6a1f7e",
+        "results.xml": "aff9bd79e883f9dd5ff584b7979502cbeca39471f1833176abbc3d5de8eb1d5d"
+      }
+    }
+  },
+  "testedSourceHashes": {
+    "Assets/TumbangPreso/Runtime/UI/UiCodePreparation.cs": "53e2c6d95f3e6f9eaa3ea76ca0b1868487790835c3d40bc6662b0863dc2c2299",
+    "Assets/TumbangPreso/Runtime/UI/ConvertedMainMenu.cs": "6c97248aadd8b804e077dedff0d59264af7a5f8fbba1634b8151064b83599881",
+    "Assets/TumbangPreso/Tests/PlayMode/UiCodePreparationTests.cs": "f77578845f47be84511c74ec79b3d9ce5a44cc5b9ab273c2490aa567cbc206b6"
+  },
+  "developmentSource": "88322714947356db72816e026b0971161dbaf85d",
+  "rawTraces": {
+    "00-boot-to-title.raw": {
+      "bytes": 273416342,
+      "sha256": "c3c7e536c9056b0c1a87e40fe0348bce7ad53df2728d91e7693d773a051bb744"
+    },
+    "01-title-to-home.raw": {
+      "bytes": 25020891,
+      "sha256": "4bcc99fa50f5084e07d4881657e056108bebd11dbad62c3199715e20bed9637e"
+    },
+    "02-home-idle.raw": {
+      "bytes": 10116032,
+      "sha256": "59326acf22cb53686f5f77859949eff61e5abd4aa701c146360398737a87c0ff"
+    },
+    "menu-AvatarButton.raw": {
+      "bytes": 5656121,
+      "sha256": "9614e76f3f6ddb55e5e3c749cca4fa5659ab65a238c08c15aa1c0f1d196622ff"
+    },
+    "menu-hero-selection.raw": {
+      "bytes": 6410448,
+      "sha256": "3eedda887e625fca8445f3ed4b030de801501c2958704a7f3e9c82d55f920244"
+    },
+    "menu-HeroButton-repeat.raw": {
+      "bytes": 7190717,
+      "sha256": "99ac7e3f6cb266254a14a44ab8a9963cb11571d388e953953e10d023aef74279"
+    },
+    "menu-HeroButton.raw": {
+      "bytes": 7296715,
+      "sha256": "c6168859597bf37260dd0a0bfbb83dda5b9bff759b4eeb011b98c9f3c7a056e1"
+    },
+    "menu-LoadoutButton.raw": {
+      "bytes": 5523471,
+      "sha256": "0249085eeb0028be11d431c51d0aef5cc9953e5e98d9eb98d1d9b51632dce63b"
+    },
+    "menu-MenuButton.raw": {
+      "bytes": 5497503,
+      "sha256": "768f61ed388d37130d902291802ca8c3f8500e58c8c03e107f1a5496dff5691f"
+    },
+    "menu-ModeCard.raw": {
+      "bytes": 5291872,
+      "sha256": "d6ab1927c04803752871cd5057b0db44c24ea9fcfa024614048ed4126114bbe8"
+    },
+    "menu-profile.raw": {
+      "bytes": 7189314,
+      "sha256": "24a68530c2e20c8034de9629b023f2b04d1f4c22570bd71288b33db91ec16a98"
+    },
+    "menu-settings.raw": {
+      "bytes": 6566641,
+      "sha256": "dcd6d66ab76e19ae0873171e13a4bdffc177f77cb2ca62ea1971239cb1f7cf46"
+    },
+    "menu-ShopButton.raw": {
+      "bytes": 5343376,
+      "sha256": "878d1778fc3319813bea6989efef3312d6f1a1ec9c0e2e4c80aa88d1bfca0322"
+    },
+    "menu-TaskButton.raw": {
+      "bytes": 5597369,
+      "sha256": "c04334d9d345bd3a9975716099ffcc7e0e24c920af21079e61ecdfbf1add943b"
+    }
+  },
+  "traceBytes": 376116812,
+  "codePreparationPlayerImprovementMeasured": false,
+  "productionDefaultEnabled": false,
+  "newBuildDirectories": 0,
+  "desktopSource": "effe0fbed9dcc1abd3e3b710eeca40b0b42a939a"
+}

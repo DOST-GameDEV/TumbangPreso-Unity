@@ -136,6 +136,8 @@ namespace TumbangPreso.UI
             // while the existing login/title surface owns the loading work.
             long rosterBegan=ModelPreview.LoadTimingEnabled?System.Diagnostics.Stopwatch.GetTimestamp():0;
             yield return RosterBook.Warmup();
+            if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-tp-ui-code-warmup")>=0)
+                yield return UiCodePreparation.Prepare();
             _homeAssetsProgress=.2f;
             if(ModelPreview.LoadTimingEnabled)
                 Debug.Log(System.FormattableString.Invariant($"[HomeAssetTiming] stage=roster-resource-wait wall_ms={ModelPreview.LoadElapsedMs(rosterBegan):F3} scope=async-wait-not-main-thread-cost"));

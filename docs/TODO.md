@@ -1,3 +1,9 @@
+### UI-FIRST-USE-CPU-1008: measured compilation and presentation stalls
+
+- [x] Import the actual Development player traces and retain nested CPU attribution. First Hero callback77.950ms includes a frame with343 Mono.JIT samples/68.614ms; canvas/image-effect costs are separate. Largest preload frame is dominated by a graphics/presentation wait, not proved to be resource integration. All21,417 build/export inputs/preferences restored. [Evidence and scopes](reports/ui-code-preparation-2026-10-08/README.md).
+- [x] Qualify opt-in method-entry preparation without executing UI actions or constructing views/models. Native63968 passes object/settings/map/mode/rules/idempotency control and all21,421 inputs/preferences restore; fixture compiler failures retained.
+- [ ] Measure candidate benefit in a fresh player, then qualify normal preparation and ordinary-release improvement. Presentation waits, first canvas/image effects and broader tournament frame pacing remain open.
+
 ### WINDOWS-REPLACEMENT-1008: existing Desktop package
 
 - [x] Replace the existing internal G candidate and Desktop folder with tested `effe0fbed9`/protocol153/runtime0898. All261 file hashes verify,34 Desktop files replaced and no extra build/Desktop folder created. Actual graphical startup5.693s, firstHome4to40, old own-recording/legacy/freshFX replay and all7 first/repeat1080p movie gates pass. Windows4 authored hand/copy controls pass and all21,415inputs/prefs restore. [Evidence and limitations](reports/windows-replacement-2026-10-08/README.md).

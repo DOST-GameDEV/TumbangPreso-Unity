@@ -1,0 +1,18 @@
+frame,thread,thread_name,sample,parent,depth,inclusive_ms,name
+21,0,Main Thread,0,-1,0,909.0921,Main Thread
+21,0,Main Thread,1,0,1,909.0329,PlayerLoop
+21,0,Main Thread,164,1,2,0.0624,Update.ScriptRunBehaviourUpdate
+21,0,Main Thread,165,164,3,0.0618,BehaviourUpdate
+21,0,Main Thread,330,1,2,865.763733,PostLateUpdate.FinishFrameRendering
+21,0,Main Thread,336,330,3,865.4317,Gfx.WaitForPresentOnGfxThread
+21,0,Main Thread,337,336,4,865.4311,Semaphore.WaitForSignal
+21,0,Main Thread,340,330,3,0.2298,Camera.Render
+21,0,Main Thread,341,340,4,0.1011,Culling
+21,0,Main Thread,355,341,5,0.053799998,SceneCulling
+21,0,Main Thread,476,1,2,0.1107,PostLateUpdate.ProfilerEndFrame
+21,0,Main Thread,477,476,3,0.1094,Profiler.FlushCounters
+21,0,Main Thread,593,477,4,0.0595,Profiler.FlushMemoryCounters
+21,0,Main Thread,630,1,2,42.7943,TimeUpdate.WaitForLastPresentationAndUpdateTime
+21,0,Main Thread,632,630,3,42.7872,WaitForTargetFPS
+21,0,Main Thread,634,632,4,42.7219,DXGI.WaitOnSwapChain
+21,0,Main Thread,636,0,1,0.0432,CollectGPUSamples

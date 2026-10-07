@@ -1,0 +1,31 @@
+frame,thread,thread_name,sample,parent,depth,inclusive_ms,name
+64,0,Main Thread,0,-1,0,31.976799,Main Thread
+64,0,Main Thread,1,0,1,31.9525,PlayerLoop
+64,0,Main Thread,216,1,2,0.0579,PreUpdate.UpdateVideo
+64,0,Main Thread,246,1,2,0.6124,Update.ScriptRunBehaviourUpdate
+64,0,Main Thread,247,246,3,0.612,BehaviourUpdate
+64,0,Main Thread,269,247,4,0.324799985,TumbangPreso.Runtime.dll!TumbangPreso.UI.Hub::TumpHub.Update() [Invoke]
+64,0,Main Thread,279,247,4,0.1257,TumbangPreso.Runtime.dll!TumbangPreso.UI.Hub::HubQueuePlate.Update() [Invoke]
+64,0,Main Thread,351,1,2,0.0782,PreLateUpdate.ScriptRunBehaviourLateUpdate
+64,0,Main Thread,352,351,3,0.0778,LateBehaviourUpdate
+64,0,Main Thread,362,352,4,0.0535,TumbangPreso.Runtime.dll!TumbangPreso.UI::ModelPreview.LateUpdate() [Invoke]
+64,0,Main Thread,393,1,2,0.1062,PostLateUpdate.PlayerUpdateCanvases
+64,0,Main Thread,396,393,3,0.100999996,UIEvents.WillRenderCanvases
+64,0,Main Thread,397,396,4,0.1008,UGUI.Rendering.UpdateBatches
+64,0,Main Thread,399,397,5,0.0604,UnityEngine.UIModule.dll!UnityEngine::Canvas.SendWillRenderCanvases() [Invoke]
+64,0,Main Thread,404,399,6,0.0565,Render
+64,0,Main Thread,512,1,2,0.7011,PostLateUpdate.FinishFrameRendering
+64,0,Main Thread,515,512,3,0.4644,Camera.Render
+64,0,Main Thread,516,515,4,0.1386,Culling
+64,0,Main Thread,536,516,5,0.0566,SceneCulling
+64,0,Main Thread,649,515,4,0.1409,Drawing
+64,0,Main Thread,651,649,5,0.1266,Render.OpaqueGeometry
+64,0,Main Thread,683,651,6,0.0938,RenderForwardOpaque.Render
+64,0,Main Thread,758,512,3,0.1269,Camera.Render
+64,0,Main Thread,927,1,2,0.1905,PostLateUpdate.ProfilerEndFrame
+64,0,Main Thread,928,927,3,0.1896,Profiler.FlushCounters
+64,0,Main Thread,1044,928,4,0.1593,Profiler.FlushMemoryCounters
+64,0,Main Thread,1081,1,2,29.8789,TimeUpdate.WaitForLastPresentationAndUpdateTime
+64,0,Main Thread,1083,1081,3,29.8739,WaitForTargetFPS
+64,0,Main Thread,1085,1083,4,29.7573,DXGI.WaitOnSwapChain
+64,0,Main Thread,1087,0,1,0.0041,CollectGPUSamples
