@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 01:46:09Z" end-time="2026-10-07 01:46:36Z" duration="27.2548035">
+  <test-suite type="TestSuite" id="3459" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1992" result="Passed" start-time="2026-10-07 01:46:09Z" end-time="2026-10-07 01:46:36Z" duration="27.254804" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3451" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1992" result="Passed" start-time="2026-10-07 01:46:09Z" end-time="2026-10-07 01:46:36Z" duration="27.225219" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="38864" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3452" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1992" result="Passed" start-time="2026-10-07 01:46:09Z" end-time="2026-10-07 01:46:36Z" duration="27.204943" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3455" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1990" result="Passed" start-time="2026-10-07 01:46:09Z" end-time="2026-10-07 01:46:36Z" duration="27.184851" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1630" name="DirectedMapArrivalTests" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-07 01:46:09Z" end-time="2026-10-07 01:46:36Z" duration="26.979803" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1631" name="BridgeLowArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.BridgeLowArrival" methodname="BridgeLowArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="2059604263" result="Passed" start-time="2026-10-07 01:46:09Z" end-time="2026-10-07 01:46:27Z" duration="18.111495" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+]]></output>
+            </test-case>
+            <test-case id="1632" name="CoveCurvedArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.CoveCurvedArrival" methodname="CoveCurvedArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="834790303" result="Passed" start-time="2026-10-07 01:46:27Z" end-time="2026-10-07 01:46:33Z" duration="5.314191" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1633" name="KantoCrossingArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoCrossingArrival" methodname="KantoCrossingArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="649269982" result="Passed" start-time="2026-10-07 01:46:33Z" end-time="2026-10-07 01:46:36Z" duration="3.537070" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1634" name="PausedRoadSolidTests" fullname="TumbangPreso.PlayTests.PausedRoadSolidTests" classname="TumbangPreso.PlayTests.PausedRoadSolidTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-07 01:46:36Z" end-time="2026-10-07 01:46:36Z" duration="0.089586" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1635" name="InitialVehicleSolidIsQueryableDuringTheHold" fullname="TumbangPreso.PlayTests.PausedRoadSolidTests.InitialVehicleSolidIsQueryableDuringTheHold" methodname="InitialVehicleSolidIsQueryableDuringTheHold" classname="TumbangPreso.PlayTests.PausedRoadSolidTests" runstate="Runnable" seed="1956570063" result="Passed" start-time="2026-10-07 01:46:36Z" end-time="2026-10-07 01:46:36Z" duration="0.048046" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1636" name="MovedVehicleSolidIsQueryableDuringTheHold" fullname="TumbangPreso.PlayTests.PausedRoadSolidTests.MovedVehicleSolidIsQueryableDuringTheHold" methodname="MovedVehicleSolidIsQueryableDuringTheHold" classname="TumbangPreso.PlayTests.PausedRoadSolidTests" runstate="Runnable" seed="162255690" result="Passed" start-time="2026-10-07 01:46:36Z" end-time="2026-10-07 01:46:36Z" duration="0.039801" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

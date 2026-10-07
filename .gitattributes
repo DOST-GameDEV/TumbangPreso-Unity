@@ -34,3 +34,6 @@ docs/reports/two-machine-host-loss-cb5f-2026-10-07/client-state.txt -text -white
 docs/reports/bot-lunge-reach-2026-10-07/raw/*.json -text -whitespace
 docs/reports/bot-lunge-reach-2026-10-07/raw/*.xml -text -whitespace
 docs/reports/bot-lunge-reach-2026-10-07/*-trace.txt -text -whitespace
+
+docs/reports/paused-road-queries-2026-10-07/raw/*.json -text -whitespace
+docs/reports/paused-road-queries-2026-10-07/raw/*.xml -text -whitespace

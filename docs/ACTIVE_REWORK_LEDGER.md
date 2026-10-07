@@ -1,5 +1,32 @@
 # Current PC competition checkpoint, October 7
 
+## Owner scope correction: new maps only
+
+October7 owner: focus previews of IlalimNgTulay, LagoonCove and Kanto; leave the
+old maps alone because they will be remade. This overrides the earlier all-map
+presentation pass. New directed opening code is now gated only to those three;
+Eskinita, BayanPlaza, SaBubong and authored Arena keep their current presentation.
+Do not restore the abandoned six-map draft from historical checkpoints.
+
+Laptop owns actual MapPreviewSurface/Video/Freshness/recording producer/media/
+vote/results and is focusing those three new-map previews. PC owns new-map
+pre-match direction/shared arrival support and a demonstrated paused-traffic
+query defect in KantoTraffic. A source-only collider change can affect recording
+fingerprints: send the exact coherent delta to the laptop for affected-source
+equivalence or recapture; never blindly stamp old footage as current.
+
+Current unpublished direction: native actual-render observer41956 passes5maps,
+Bridge fails due phantom road solids at origin. Original paused-query35232
+fails2: visible initial/moved vehicle cannot be queried while its stale origin
+can. Candidate38864 passes all5: same2 physics cases plus actual3new-map walks,
+sole support, held shoe attachment, whole taya framing, unchanged gameplay roots
+and cancellation. All21321 source/prefs restored after terminal jobs. No PC
+native process remains; task-local checkpoint records the exact next action.
+Do not launch duplicate jobs or claim full visual/natural flow acceptance yet.
+Next publish the coherent collider fix separately, reconcile preview source with
+laptop and continue actual motion/ownership/hero/flow and visual direction checks.
+All broad AI/slipper/replay/tournament work remains active. Desktop remainscb5.
+
 ## Next action after the reachable-lunge unit, October 7
 
 Goal ACTIVE; all broad assignments remain in scope. Native original38712
