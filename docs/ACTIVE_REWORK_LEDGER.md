@@ -1,17 +1,52 @@
 # Active PC competition checkpoint, October 7
 
-Goal ACTIVE. Public camera source867f265a7 is normally merged locally with checked replay units as04664cfd1fbb014b4e1119bcd141fc824b05c9c9; current integration qualification is complete and being published. The qualified Desktop remains725e/protocol153; current camera/replay/performance work is not yet a replacement release. The owner explicitly requested one GPT-6 Astra xhigh reviewer in this chat and optimization/loading placement/no noticeable random stutters. That reviewer exception does not authorize more workers or paid services.
+Goal ACTIVE. Public source is140a25523fac68c200d85ca4a3e1198b37035578. The qualified
+Desktop remains725e/protocol153. Current performance work is not installed there.
+The owner requested the existing GPT-6 Astra xhigh reviewer and continued
+optimization/loading placement with no noticeable random stutters. No additional
+workers or paid services are authorized.
 
-PC owns AI/navigation, new3 arrivals and Direction, CatchReconstruction/History/TagBody, slippers, Net/startup and qualified release. Laptop ONLINE owns previews/media/voting/results, replay persistence/Archive/Playback/codec and proposed read-only Drone/AmbientLife replay rendering. Existing PC/laptop coordination is authorized. No LAN after mobile-data/house move. Old-map art/presentation and finalized hero assets stay protected.
+PC owns AI/navigation, new3 arrivals, CatchReconstruction/History/TagBody,
+slippers, Net/startup and qualified release. Laptop owns previews/media/voting,
+results and replay persistence/playback/codec plus its proposed render-only
+scenery sidecars. No LAN after the mobile-data/house move. Old-map presentation
+and authored hero kits/assets remain protected. Current laptop connectivity is
+unverified after a failed compact snapshot, not established offline.
 
-Current camera unit is qualified and awaiting coherent publication. Direction-only upright polar return preserves subjects and exact gameplay endpoint before the existing0.7 rig return. Original50808 is7PASS/3FAIL: empty Bridge96/Cove109/Kanto113 frames, bank176/201/205. Candidate49576 is10PASS with2623handoff samples and0empty/banked frames, including human-rig/reduced/off controls. Post-fix world capture47708 is3PASS; root/independent reviewer inspect Bridge18/Cove20/Kanto17 and confirm visible cast/can, upright unobstructed views and exact stored endpoints. All21385inputs/preferences restored after each terminal run. Source5/raw42 proof: reports/new-map-handoff-2026-10-07/evidence.json. Overlay/continuous-motion/portrait/player/performance acceptance remains open. The corrected16:9 lens/1920x1080RT runs in a640x480 hidden batch GameView; do not call it a full packaged UI capture.
+The finalized source140 ordinary-release UI performance walk retained175windows
+and74actions, then failed normal results because its probe called StartPractice.
+That route sets TrainingRange, removes other actors and resets the clock to30.
+Absent required consequences stay failed; the data is not a full flow pass.
+First HERO opening includes a4531.743ms frame; Home idle max17.077ms. These are
+hidden1080p Balanced wall-clock measurements, not focused human/device approval.
+Allocation calibration found no usable release signal, so allocations are-1.
+The entire original player receipt and action/CSV evidence are retained.
 
-Published held-chase sprint fix61214: corrected original12PASS/2FAIL, candidate14PASS/all21383restored. Normal5m/s runner is now pursued at legal7.5m/s, gap6.6->6.4 instead of defender3.75/gap6.7. Source3/raw9 verified. Natural efficacy/whole-AI claim remains open. Earlier reach/charge/skill corrections are preserved in their reports; diagnostic long-hold labels still infer/postdate release rather than establish causes.
+Current WIP restores asynchronous roster plus the existing yielded gameplay
+cache preparation to active ConvertedMainMenu login/title preparation before
+map/Home media. ModelPreview adds opt-in CPU stages and the diagnostic adds an
+immediate same-HERO-button repeat with an explicit menu-only mode. No additional
+preview instances, gameplay casts or authored quality changes are introduced.
+Original native52884 passed order/firstHome and priority cancellation but failed
+51expected icons versus0cached, exposing omitted gameplay preparation. Corrected
+native41768 has3fresh passing cases; runner and exact21387-input restoration
+are terminal. Four exact native source files per run and copied raw proofs are
+in reports/active-menu-preload-2026-10-07/evidence.json.
+Next publish this coherent unit after exact preservation, build fresh ordinary
+release c and compare cold/repeat HERO plus startup frames. Do not call moved
+or unmeasured stalls solved. Full game probe corrections are a separate next unit.
 
-Replay integration next: checked laptop6a4c5b4f69bd22e74546c59a1b9e55980e660500 includes121 endpoint fix,0833 exact native source proof and64KiB codec buffer. Root verified endpoint3 exact native sources/31 raw receipts and codec2/18; mixed CRLF/bareLF proof gap is repaired with retained raw native copies, not relaxed matching. Original closing2FAIL -> candidate2PASS; unchanged source natural30s Arena retains all15149 unique observed render times, strict readers and actual viewer17/2. Codec measured1255.76->875.21ms encode in controlled runs, identical raw payload/compressed size; no live300Hz/performance claim. Original PCcombined49600 failure remains6PASS/1FAIL until current merged gate is rerun. Laptop next owns bounded Playback lookahead and continuous1x/4x/seek/close acceptance; Drone/Ambient implementation paths still proposed later.
+The requested reviewer is read-only on fixture legality. Confirmed stale recipes:
+Zack BankShot needs a held slipper, Overclock persists across round resets,
+Nemu defender needs an upright can, Nemu signature uses anchor/reactivation
+rather than enemy contact and Soraya Hex needs its authored arming/recast phase.
+Required consequences must be updated to the actual legal action, not waived.
 
-Current merged native51348 is9PASS, including closing2, actualnatural7483unique saved=observed/7492including9edges, fullpoolexactpayload/geometry/material, shaderclock andfreshness. Independent stored audit verifies30payloadSHA andcopied31file fixture: Logs/replay-integration1007/fixtures-current-full-effects/TUMP-20261007-112507-6e06c8ac73414e1782d2389efb835916. Native,parent50033 andrestorer8018 terminal/all21385restored. Evidence: reports/pc-replay-endpoint-codec-2026-10-07. This closes the prior PCboundary gate, not wholeperformance/player/fullvisual readiness.
-
-Immediate next: publish qualified integration; verify/integrate checkedstreamingfb7 actualnative3/raw19 and the requested absent-env fixture guard (laptopownerqualifying4Skip whenTUMP_REPLAY_STREAMabsent). Runactual1x/4x/seek/close onfreshPCFXfixture, thencurrentWindows build/player/performancechecks. Release timing probe's Development-only restriction needs a measured approach; binary profiling remains separate. Also perform targeted natural Bridge AI follow-up; full features/roles/maps/default matches, natural caught framing/air/slope/slipper stability and creative quality remain open. TODO is the only work-status queue. Historical checkpoint: reports/new-map-handoff-2026-10-07/previous-active-ledger.md.
-
-Exact live jobs, source identity and commands: Logs/catch-framing1007/active-checkpoint.json. Camera47708,parent53356 and verifier36781 are terminal/all21385restored. No unused task-owned Unity/player/server/browser remains at this checkpoint. Preserve private ProjectAuditorSettings.asset, tools/build_yasmin_benguet_voxel.py and ArrivalViewOwnershipTests.cs status-only work. Never kill oldPID49208: it was reused by unrelated SearchFilterHost.exe. No reset/clean/stash/force-push/foreground control. Preserve Desktop, essential evidence and previously blocked deletion targets.
+Published AI sprint/charge/aim and new-map handoff controls plus saved scene/FX
+replay endpoint, codec and bounded lookahead proofs remain in their dated reports.
+Full natural roles/features/maps, camera/slipper stability, presentation quality,
+focused high-refresh performance and long-session readiness remain open.
+TODO is the only status queue. Exact live jobs, frozen inputs and next commands:
+Logs/catch-framing1007/active-checkpoint.json. Preserve privateAuditor/voxel and
+ArrivalViewOwnershipTests status-only work. No reset/clean/stash/force-push or
+foreground control. PID49208 belongs to unrelated SearchFilterHost; never stop it.

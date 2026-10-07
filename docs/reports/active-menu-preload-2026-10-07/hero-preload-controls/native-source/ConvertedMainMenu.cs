@@ -139,16 +139,10 @@ namespace TumbangPreso.UI
             _homeAssetsProgress=.2f;
             if(ModelPreview.LoadTimingEnabled)
                 Debug.Log(System.FormattableString.Invariant($"[HomeAssetTiming] stage=roster-resource-wait wall_ms={ModelPreview.LoadElapsedMs(rosterBegan):F3} scope=async-wait-not-main-thread-cost"));
-            // The retired splash preparation no longer runs on this route.
-            // Keep its yielded shared icons, props and effect data ready here.
-            long gameplayBegan=ModelPreview.LoadTimingEnabled?System.Diagnostics.Stopwatch.GetTimestamp():0;
-            yield return SplashScreen.WarmGameplayAssets(done=>_homeAssetsProgress=.2f+.3f*done);
-            if(ModelPreview.LoadTimingEnabled)
-                Debug.Log(System.FormattableString.Invariant($"[HomeAssetTiming] stage=gameplay-preparation wall_ms={ModelPreview.LoadElapsedMs(gameplayBegan):F3} scope=coroutine-total-includes-yields"));
-            yield return MapPreviewVideo.Warmup(done=>_homeAssetsProgress=.5f+.2f*done);
+            yield return MapPreviewVideo.Warmup(done=>_homeAssetsProgress=.2f+.28f*done);
             // Reuse the existing caches and decoder preparation rather than
             // making a second copy of the Home resource set.
-            yield return Hub.HubSceneVideo.Warmup(done=>_homeAssetsProgress=.7f+.3f*done);
+            yield return Hub.HubSceneVideo.Warmup(done=>_homeAssetsProgress=.48f+.52f*done);
             _homeAssetsReady=true;
         }
 

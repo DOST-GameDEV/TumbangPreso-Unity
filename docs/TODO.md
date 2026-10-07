@@ -3158,6 +3158,13 @@ preserving host lifetime sequence. Local teardown cancels presentation holds and
 hitstop; cancelled arrival iterators cannot resume later. Two new native lifecycle
 cases pass; actual reconnect/socket/camera-hardware qualification remains OPEN.
 
+Current login/main-menu preparation restores the shared roster and gameplay
+caches omitted by the retired splash route. The first existing native check
+exposed zero of 51 expected icons; corrected native three-case startup controls
+pass with exact-input preservation. Release measurements remain pending in the [active-route preparation report](reports/active-menu-preload-2026-10-07/README.md).
+The source140 release's 4.5-second first HERO frame remains unqualified until
+fresh cold/repeat measurement; its full gameplay fixture also needs correction.
+
 **Loading/optimization, OPEN:** yielded shader/art/avatar/portrait preparation,
 retained ability props/effect data and actual menu activation readiness are implemented.
 Instance/material/GPU first use and measured player hitch qualification are not all

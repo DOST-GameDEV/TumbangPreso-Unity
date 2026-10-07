@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 13:09:09Z" end-time="2026-10-07 13:09:27Z" duration="17.6268157">
+  <test-suite type="TestSuite" id="3602" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2105" result="Failed" site="Child" start-time="2026-10-07 13:09:09Z" end-time="2026-10-07 13:09:27Z" duration="17.626816" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3594" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2105" result="Failed" site="Child" start-time="2026-10-07 13:09:09Z" end-time="2026-10-07 13:09:27Z" duration="17.602020" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="52884" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3595" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2105" result="Failed" site="Child" start-time="2026-10-07 13:09:09Z" end-time="2026-10-07 13:09:27Z" duration="17.586124" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3598" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2103" result="Failed" site="Child" start-time="2026-10-07 13:09:09Z" end-time="2026-10-07 13:09:27Z" duration="17.570623" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2104" name="LoginHomePreloadTests" fullname="TumbangPreso.PlayTests.LoginHomePreloadTests" classname="TumbangPreso.PlayTests.LoginHomePreloadTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-07 13:09:09Z" end-time="2026-10-07 13:09:13Z" duration="3.728179" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2106" name="LeavingDuringPreparationRestoresBackgroundPriority" fullname="TumbangPreso.PlayTests.LoginHomePreloadTests.LeavingDuringPreparationRestoresBackgroundPriority" methodname="LeavingDuringPreparationRestoresBackgroundPriority" classname="TumbangPreso.PlayTests.LoginHomePreloadTests" runstate="Runnable" seed="1131530208" result="Passed" start-time="2026-10-07 13:09:09Z" end-time="2026-10-07 13:09:11Z" duration="2.363444" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2105" name="LoginRemainsEditableWhileHomeStreamsThenArrivesWithoutClick" fullname="TumbangPreso.PlayTests.LoginHomePreloadTests.LoginRemainsEditableWhileHomeStreamsThenArrivesWithoutClick" methodname="LoginRemainsEditableWhileHomeStreamsThenArrivesWithoutClick" classname="TumbangPreso.PlayTests.LoginHomePreloadTests" runstate="Runnable" seed="877019205" result="Failed" start-time="2026-10-07 13:09:12Z" end-time="2026-10-07 13:09:13Z" duration="1.348552" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A skill icon was left for first use.
+  Expected: 51
+  But was:  0
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.LoginHomePreloadTests+<LoginRemainsEditableWhileHomeStreamsThenArrivesWithoutClick>d__7.MoveNext () [0x003ef] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\LoginHomePreloadTests.cs:58
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="3241" name="StartupOrder1007Tests" fullname="TumbangPreso.PlayTests.StartupOrder1007Tests" classname="TumbangPreso.PlayTests.StartupOrder1007Tests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-07 13:09:13Z" end-time="2026-10-07 13:09:27Z" duration="13.730513" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="3242" name="LogosLoginFiveSecondMainThenFirstHomeAnimation" fullname="TumbangPreso.PlayTests.StartupOrder1007Tests.LogosLoginFiveSecondMainThenFirstHomeAnimation" methodname="LogosLoginFiveSecondMainThenFirstHomeAnimation" classname="TumbangPreso.PlayTests.StartupOrder1007Tests" runstate="Runnable" seed="540682860" result="Passed" start-time="2026-10-07 13:09:13Z" end-time="2026-10-07 13:09:27Z" duration="13.728807" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] StartupLoginFirst1007-1920 cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupLoginFirst1007-1280 cream source=252,211,159 pixel=242,142,106; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupMainLoading1007-1920 cream source=252,211,159 pixel=248,198,142; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupMainLoading1007-1280 cream source=252,211,159 pixel=245,182,120; isolated UI camera, no ColourGrade.
+[StartupOrder1007] studio->login->main-loading->home; loadingSeconds=7.628437 firstFrames=4->40
+[TumpUiCapture] StartupFirstHomePlaying1007-1920 cream source=252,211,159 pixel=45,27,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupFirstHomePlaying1007-1280 cream source=252,211,159 pixel=47,30,19; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

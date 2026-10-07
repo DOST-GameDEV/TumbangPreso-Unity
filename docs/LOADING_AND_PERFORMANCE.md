@@ -7,14 +7,22 @@ Read the current queue,[loading evidence](reports/stability-2026-09-27/loading-a
 
 ## Studio intro before boot work
 
-SplashScreen first plays the existing BH Studios clip on a lightweight surface.
-Fresh keyboard/mouse/controller/touch input skips only that clip through white;
-the usual loading UI, asset/account work and menu-ready barrier follow unchanged.
-Linux uses an explicitly bound VP8 derivative because H264 VideoClip import is
-unsupported there; the original MP4 and authored sequence remain. Missing/failed
-media has a bounded fallback. [Native evidence](reports/studio-intro-2026-10-02/README.md).
+Unity branding and the existing BH Studios clip precede login. The retired
+illustrated loading screen is absent from this startup route. After login, the
+existing main-menu loading view stays for at least five seconds and until its
+required preparation completes, then enters Home. Fresh input skips only the
+studio clip. Linux uses an explicitly bound VP8 derivative because H264 VideoClip
+import is unsupported there; the original MP4 remains. Missing/failed media has
+a bounded fallback. [Startup evidence](reports/startup-order-2026-10-07/README.md).
 
 ## Current Entry Points
+
+The current login/main-menu route now prepares the shared asynchronous roster
+catalogue and existing yielded gameplay icon, prop and effect-data caches before
+map and Home media. This restores preparation skipped when the retired splash
+route was removed. No additional models or preview cameras are created. Native
+and actual release timing evidence stays distinct in the
+[active-route preparation report](reports/active-menu-preload-2026-10-07/README.md).
 
 All seven maps have recorded map-selection backgrounds and matching posters.
 Voting previews the highlighted court in the full background; browsing is local,
@@ -52,7 +60,7 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 | Responsibility | Source |
 |---|---|
 | Boot stages and progress | UI/SplashScreen.cs keeps shader slices,rosters,audio,menu art,input and retained map dependencies. ConvertedMainMenu overlaps gameplay icon/VFX/prop/hero-data and Home-video preparation with usable login before automatic Home arrival |
-| Roster catalogue handoff | RosterBook.Warmup shares one async catalogue request before SplashScreen iterates its referenced art/clips. Load adopts a completed cancelled request and retains direct synchronous fallback plus the once-only missing warning; no roster IDs/order or serialized art changes |
+| Roster catalogue handoff | RosterBook.Warmup shares one async catalogue request on the current ConvertedMainMenu preparation route; the retained legacy SplashScreen consumer uses the same cache. Load adopts a completed cancelled request and retains direct synchronous fallback plus the once-only missing warning; no roster IDs/order or serialized art changes |
 | Shader preparation turns | SplashScreen calls WarmUpProgressively(1),checks a2ms elapsed target between calls and caps10variants/turn; one indivisible native compile may overrun,so this is not a hard frame guarantee |
 | Deferred SFX/voice samples | UI/SplashScreen.WarmAudioAssets; yielded sample loading and retention,not just clip references; music/streaming policy unchanged |
 | Real menu activation barrier | UI/SplashScreen.MenuActivation.cs and ConvertedMainMenu.IsPrepared; retain existing canvas through Wire/layout,then reveal login/input |

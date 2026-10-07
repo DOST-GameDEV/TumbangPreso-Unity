@@ -1,0 +1,71 @@
+{
+  "native": {
+    "hero-preload-controls": {
+      "pid": 52884,
+      "exitCode": 2,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.LoginHomePreloadTests.LeavingDuringPreparationRestoresBackgroundPriority",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.LoginHomePreloadTests.LoginRemainsEditableWhileHomeStreamsThenArrivesWithoutClick",
+          "result": "Failed",
+          "message": "  A skill icon was left for first use.\n  Expected: 51\n  But was:  0\n"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.StartupOrder1007Tests.LogosLoginFiveSecondMainThenFirstHomeAnimation",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "protectedCount": 21387,
+      "sourceHashes": {
+        "Assets/TumbangPreso/Runtime/UI/ConvertedMainMenu.cs": "020e288051923fa13a944a55424c3a900a99d63024455015c813c0f356c5978c",
+        "Assets/TumbangPreso/Runtime/UI/ModelPreview.cs": "ee0357113b2b44bbd93b23cc8ce761799efd21fbe153de47c892686a4a79ac1a",
+        "Assets/TumbangPreso/Runtime/Diagnostics/OwnerUiPlayerReview.Performance.cs": "e7f7c0223a0fe4e135910b4716a4bea29ec41e315b92340104f5deaff9e72075",
+        "Assets/TumbangPreso/Runtime/UI/SplashScreen.cs": "4e4583bdfe11cdccb78e7c98e0a846ebfef380161731419eec942378f889ca2e"
+      },
+      "copiedRawSha256": {
+        "result.json": "b22205b9b94b74929ee6716a14d77654a025a3c349d7d954b59a4893d4682cf2",
+        "results.xml": "d59eaafe761afd08f575685bcf7d12ea7425fa79a4fff110e8dbd69ebfed8a75",
+        "source-restoration.json": "78c1a0e5bb42a8e92c1b0f334744e0f6fdd10ff43e52ade056b6860b8afde2a6"
+      }
+    },
+    "hero-preload-controls2": {
+      "pid": 41768,
+      "exitCode": 0,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.LoginHomePreloadTests.LeavingDuringPreparationRestoresBackgroundPriority",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.LoginHomePreloadTests.LoginRemainsEditableWhileHomeStreamsThenArrivesWithoutClick",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.StartupOrder1007Tests.LogosLoginFiveSecondMainThenFirstHomeAnimation",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "protectedCount": 21387,
+      "sourceHashes": {
+        "Assets/TumbangPreso/Runtime/UI/ConvertedMainMenu.cs": "f7263cdc58ad169b2c40a48a287a8a2c12ed8b0864a63a30dc353bc3d95e77bf",
+        "Assets/TumbangPreso/Runtime/UI/ModelPreview.cs": "ee0357113b2b44bbd93b23cc8ce761799efd21fbe153de47c892686a4a79ac1a",
+        "Assets/TumbangPreso/Runtime/Diagnostics/OwnerUiPlayerReview.Performance.cs": "e7f7c0223a0fe4e135910b4716a4bea29ec41e315b92340104f5deaff9e72075",
+        "Assets/TumbangPreso/Runtime/UI/SplashScreen.cs": "4e4583bdfe11cdccb78e7c98e0a846ebfef380161731419eec942378f889ca2e"
+      },
+      "copiedRawSha256": {
+        "result.json": "d3b6f9ab35b4ae62ad0aea0c952d7037b77ab8ac263bafacc9e2b65651027df4",
+        "results.xml": "feefe45cfb2cfeb85d6353db426ca5156c7ca00d5e9a1b8760e3d1df78c654d6",
+        "source-restoration.json": "f95c634a7eb33912382966dee934dca9f36966ad929fd33f6a9e73799e6b2300"
+      }
+    }
+  },
+  "scope": "Existing three native startup controls; exact frozen-source preservation. Actual release cost comparison pending."
+}
