@@ -20,7 +20,10 @@ namespace TumbangPreso.CameraSystem
         private readonly List<bool> _canvasWasEnabled=new List<bool>();
         private readonly List<Light> _hiddenLights=new List<Light>();
         private readonly List<bool> _lightWasEnabled=new List<bool>();
-        private readonly RecordedMatchClip _clip;
+        private RecordedMatchClip _clip;
+        private readonly bool _standalone;
+        private int _followSeat=-1;
+        private Vector3 _followOffset;
         private GameObject _stage;
         private IDisposable _audioMix;
         private Canvas _canvas;
@@ -47,12 +50,51 @@ namespace TumbangPreso.CameraSystem
         public bool Ready {get;private set;}
         public string UnavailableReason {get;private set;}
         public RenderTexture Target=>_target;
+        public Transform CameraTransform=>_camera!=null?_camera.transform:null;
+        public void ResizeForScreen()
+        {
+            if(!_standalone||!Ready||Screen.width<=0||Screen.height<=0)return;
+            int width=Mathf.Clamp(Screen.width,960,3840),height=Mathf.Max(540,Mathf.RoundToInt(width*Screen.height/(float)Screen.width));
+            int samples=Mathf.Max(1,QualitySettings.antiAliasing);
+            if(_target.width==width&&_target.height==height&&_target.antiAliasing==samples)return;
+            var target=new RenderTexture(width,height,24,RenderTextureFormat.ARGB32){name="LocalReplayFrame",antiAliasing=samples};
+            target.Create();var previous=_target;_target=target;_camera.targetTexture=target;
+            var picture=_canvas.GetComponentInChildren<RawImage>(true);if(picture!=null)picture.texture=target;
+            previous.Release();Object.Destroy(previous);
+        }
+        public void FollowCamera(int seat,Vector3 offset){_followSeat=seat;_followOffset=offset;}
+        public bool TryPlayerPosition(int seat,out Vector3 position)
+        {
+            var item=_items.FirstOrDefault(i=>i.Track.Kind==RecordedObjectKind.Player&&i.Track.Seat==seat);
+            position=item!=null?item.Bones[0].position:Vector3.zero;return item!=null;
+        }
+        public void ShowLabels(bool visible)
+        {
+            if(_canvas==null)return;
+            foreach(Transform child in _canvas.transform)if(child.name!="RecordedWorldFrame")child.gameObject.SetActive(visible);
+        }
+        public bool UseClip(RecordedMatchClip clip,bool continuous=false)
+        {
+            if(!Ready||clip.Map!=_clip.Map||clip.MatchId!=_clip.MatchId||clip.Objects.Length!=_items.Count)return false;
+            for(int i=0;i<_items.Count;i++)
+            {
+                var a=_items[i].Track;var b=clip.Objects[i];
+                if(a.Kind!=b.Kind||a.Seat!=b.Seat||a.VisualKey!=b.VisualKey||!a.Pose.Paths.SequenceEqual(b.Pose.Paths))return false;
+            }
+            if(_arena!=null&&clip.Round!=_clip.Round)_arena.BeginReplay(clip.MatchId,clip.Round);
+            for(int i=0;i<_items.Count;i++)_items[i].Track=clip.Objects[i];
+            foreach(var field in _fields.Values)field.Dispose();_fields.Clear();
+            foreach(var trail in _trails.Values)trail.Dispose();_trails.Clear();
+            foreach(var dust in _contactDust.Values)if(dust!=null)Object.Destroy(dust.gameObject);_contactDust.Clear();
+            foreach(var puff in _escapePuffs.Values)if(puff!=null)Object.Destroy(puff.gameObject);_escapePuffs.Clear();
+            _clip=clip;_sound=0;_lastTime=clip.Start;if(!continuous)GameServices.Audio?.StopReplayCues();return true;
+        }
         /// <summary>Whether this view's own full-screen picture is shown. Off for a replay that is watched somewhere
         /// else (the Arena's big screens, `Map.ArenaScreens`): `Target` is still drawn by `Draw`.</summary>
         public void ShowOnScreen(bool visible){if(_canvas!=null)_canvas.enabled=visible;}
-        public RecordedWorldView(Transform owner,RecordedMatchClip clip)
+        public RecordedWorldView(Transform owner,RecordedMatchClip clip,bool standalone=false)
         {
-            _clip=clip;_lastTime=clip.Start;
+            _clip=clip;_lastTime=clip.Start;_standalone=standalone;
             try
             {
                 if(SystemInfo.graphicsDeviceType==UnityEngine.Rendering.GraphicsDeviceType.Null){UnavailableReason="No rendering device";return;}
@@ -63,23 +105,43 @@ namespace TumbangPreso.CameraSystem
                 // Root pose samples and fields use world coordinates. Keep this owned
                 // stage at world identity even when the overlay owner is transformed.
                 _stage=new GameObject("~RecordedWorld");_stage.SetActive(false);
-                _court=CourtBoundaryPresentation.CreateRecorded(_stage.transform,GameServices.Round?.Lata);
+                _court=CourtBoundaryPresentation.CreateRecorded(_stage.transform,standalone?null:GameServices.Round?.Lata);
                 _lataClock=LataClockPresentation.Install(_stage.transform,null,true);_lataClock.ShowForCapture(false);
                 _canLanding=new GroundContactVisual(_stage.transform,"Recorded can footprint",true);
                 foreach(var track in clip.Objects)
                 {
-                    GameObject source=Source(track);
+                    GameObject source=standalone?CataloguedObject(track,clip.Mode):Source(track);
                     var highlightSource=track.Kind==RecordedObjectKind.Slipper?source?.GetComponentInParent<Slipper>():null;
                     if((source==null||MatchReplayArchive.VisualKey(source)!=track.VisualKey)&&
                         (track.Kind==RecordedObjectKind.Can||track.Kind==RecordedObjectKind.Slipper))source=CataloguedProp(track);
                     if(source==null){UnavailableReason="Missing recorded art: "+track.Kind+" P"+(track.Seat+1)+" skin="+track.Skin+" person="+track.Person;return;}
                     string visualKey=MatchReplayArchive.VisualKey(source);
                     if(visualKey!=track.VisualKey){UnavailableReason="Changed recorded art: "+track.Kind+" P"+(track.Seat+1)+" expected="+track.VisualKey+" actual="+visualKey;return;}
-                    var history=new MatchPoseHistory.Track(GameServices.Round.PlayerAt(Mathf.Clamp(track.Seat,0,3)),source);
+                    var history=new MatchPoseHistory.Track(standalone?null:GameServices.Round.PlayerAt(Mathf.Clamp(track.Seat,0,3)),source);
                     history.Record(Time.time);history.Record(Time.time+.05f);
                     var copy=history.Clone(_stage.transform);if(copy==null){UnavailableReason="Render copy failed: "+track.Kind;return;}
-                    var bones=track.Pose.Bind(copy.Root);if(bones==null){UnavailableReason="Recorded pose binding changed: "+track.Kind;return;}
-                    if(!source.scene.IsValid())ToonSkin.Apply(copy.Root,ToonSkin.PropOutlineWidth);
+                    if(standalone&&track.Kind==RecordedObjectKind.Player)
+                    {
+                        // CharacterVisual adds this non-rendering carry anchor
+                        // to the live rig. Its exact transform is in the poses,
+                        // but the catalog prefab intentionally has no runtime
+                        // anchor. Recreate only that known node, never a missing
+                        // model bone or an unknown changed-art hierarchy.
+                        foreach(string path in track.Pose.Paths)
+                        {
+                            if(!path.EndsWith("/HandAnchor",StringComparison.Ordinal)||copy.Root.transform.Find(path)!=null)continue;
+                            string parentPath=path.Substring(0,path.Length-"/HandAnchor".Length);
+                            var parent=copy.Root.transform.Find(parentPath);
+                            if(parent!=null)new GameObject("HandAnchor").transform.SetParent(parent,false);
+                        }
+                    }
+                    var bones=track.Pose.Bind(copy.Root);if(bones==null)
+                    {
+                        string missing=track.Pose.Paths.FirstOrDefault(path=>path.Length>0&&copy.Root.transform.Find(path)==null);
+                        UnavailableReason="Recorded pose binding changed: "+track.Kind+" P"+(track.Seat+1)+" missing="+missing;return;
+                    }
+                    if(!source.scene.IsValid())ToonSkin.Apply(copy.Root,track.Kind==RecordedObjectKind.Player?ToonSkin.PersonOutlineWidth:ToonSkin.PropOutlineWidth,
+                        track.Kind==RecordedObjectKind.Player?RosterBook.Load()?.PersonArt(track.Skin,clip.Mode)?.Palette:null);
                     MaterialPropertyBlock[] highlightDefaults=null;
                     if(track.Kind==RecordedObjectKind.Slipper)
                     {
@@ -107,7 +169,7 @@ namespace TumbangPreso.CameraSystem
                 Vector3 centre=(a+b)*.5f+Vector3.up*.6f;
                 float distance=Mathf.Clamp(Vector3.Distance(a,b)*1.05f+4,5,17);
                 Vector3 side=Vector3.Cross((b-a).normalized,Vector3.up);if(side.sqrMagnitude<.1f)side=Vector3.right;
-                int width=Mathf.Clamp(Screen.width,960,1920),height=Mathf.Max(540,Mathf.RoundToInt(width*Screen.height/(float)Mathf.Max(1,Screen.width)));
+                int width=Mathf.Clamp(Screen.width,960,standalone?3840:1920),height=Mathf.Max(540,Mathf.RoundToInt(width*Screen.height/(float)Mathf.Max(1,Screen.width)));
                 float aspect=Mathf.Max(_camera.aspect,width/(float)height);
                 float tangent=Mathf.Tan(_camera.fieldOfView*.5f*Mathf.Deg2Rad);
                 float lensRadius=_camera.nearClipPlane*Mathf.Sqrt(1+tangent*tangent*(1+aspect*aspect));
@@ -120,7 +182,8 @@ namespace TumbangPreso.CameraSystem
                 }
                 if(!clear){UnavailableReason="No clear replay angle";return;}
                 _camera.transform.position=eye;_camera.transform.LookAt(centre);
-                _target=new RenderTexture(width,height,24,RenderTextureFormat.ARGB32){name="RetainedMatchFrame"};_target.Create();_camera.targetTexture=_target;
+                _target=new RenderTexture(width,height,24,RenderTextureFormat.ARGB32){name="RetainedMatchFrame",
+                    antiAliasing=standalone?Mathf.Max(1,QualitySettings.antiAliasing):1};_target.Create();_camera.targetTexture=_target;
                 _canvas=OwnerUiLayout.Canvas(owner,"CanonicalReplayCanvas",240);
                 var input=_canvas.GetComponent<InputLayer.ScreenFocus>();if(input!=null)input.enabled=false;
                 var picture=OwnerUiLayout.Rect(_canvas.transform,"RecordedWorldFrame").gameObject.AddComponent<RawImage>();
@@ -164,6 +227,13 @@ namespace TumbangPreso.CameraSystem
             foreach(var entry in entries)
                 if(entry!=null&&entry.Model!=null&&MatchReplayArchive.VisualKey(entry.Model)==track.VisualKey)return entry.Model;
             return null;
+        }
+        private static GameObject CataloguedObject(RecordedObjectTrack track,Core.GameMode mode)
+        {
+            var book=RosterBook.Load();if(book==null)return null;
+            if(track.Kind==RecordedObjectKind.Player)return book.PersonArt(track.Skin,mode)?.Model;
+            if(track.Kind==RecordedObjectKind.Familiar)return book.People.FirstOrDefault(p=>p!=null&&p.Id==track.Person)?.PetModel;
+            return CataloguedProp(track);
         }
         private static GameObject Source(RecordedObjectTrack track)
         {
@@ -264,6 +334,7 @@ namespace TumbangPreso.CameraSystem
                     surface.SetPropertyBlock(_coatBlock);
                 }
             }
+            if(_followSeat>=0&&TryPlayerPosition(_followSeat,out var followed))_camera.transform.position=followed+_followOffset;
             if(time<_lastTime){_sound=0;GameServices.Audio?.StopReplayCues();}
             while(_sound<_clip.Sounds.Length&&_clip.Sounds[_sound].Time<=time)
             {
@@ -322,9 +393,10 @@ namespace TumbangPreso.CameraSystem
             }
             foreach(var field in _fields.Values)field.Visible(true);
             foreach(var trail in _trails.Values)trail.Visible(true);
+            if(!_standalone)
             foreach(var actor in GameServices.Round.Players)if(actor!=null){Hide(actor.gameObject);var pet=actor.GetComponent<CharacterVisual>()?.Companion;if(pet!=null)Hide(pet.gameObject);}
             foreach(var shoe in Object.FindObjectsByType<Slipper>())Hide(shoe.gameObject);
-            if(GameServices.Round.Lata!=null)Hide(GameServices.Round.Lata.gameObject);
+            if(!_standalone&&GameServices.Round.Lata!=null)Hide(GameServices.Round.Lata.gameObject);
             foreach(var arms in Object.FindObjectsByType<ViewmodelArms>())Hide(arms.gameObject);
             foreach(var item in _items){item.Copy.ShowOnlyForCapture(true);item.Contact?.Visible(true);}
             _canLanding.Visible(true);

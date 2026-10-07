@@ -1,0 +1,214 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using UnityEngine;
+
+namespace TumbangPreso.CameraSystem
+{
+    [Serializable] public sealed class LocalReplaySegment
+    {
+        public string File, Sha256;
+        public float Offset, Start, End;
+        public int Round;
+    }
+    [Serializable] public sealed class LocalReplayManifest
+    {
+        public int Version = 1;
+        public long MatchId;
+        public string CreatedUtc, Map, Mode, Rules, Build;
+        public bool Custom, Completed;
+        public string Warning;
+        public List<LocalReplaySegment> Segments = new List<LocalReplaySegment>();
+        public float Duration => Segments.Count == 0 ? 0 : Segments[Segments.Count - 1].Offset +
+            Segments[Segments.Count - 1].End - Segments[Segments.Count - 1].Start;
+    }
+    public sealed class LocalReplayEntry
+    {
+        public string Directory;
+        public LocalReplayManifest Manifest;
+    }
+
+    // Local replay data is separate from career/reward eligibility. Custom rooms
+    // use exactly the same recorder. Each immutable segment is committed before
+    // its manifest entry, so an interrupted write never advertises missing data.
+    public static class LocalReplayStore
+    {
+        public static string DefaultFolder => Path.Combine(ProfilePaths.Root, "Replays");
+        private static string LocationFile => Path.Combine(ProfilePaths.Root, "replay-folder.txt");
+        public static string Folder
+        {
+            get
+            {
+                try { if (File.Exists(LocationFile)) return Path.GetFullPath(File.ReadAllText(LocationFile).Trim()); }
+                catch (Exception e) when (e is IOException || e is ArgumentException || e is UnauthorizedAccessException) { }
+                return DefaultFolder;
+            }
+        }
+        public static bool SetFolder(string folder, out string error)
+        {
+            error = null;
+            try
+            {
+                if (string.IsNullOrWhiteSpace(folder) || !Path.IsPathRooted(folder))
+                    throw new ArgumentException("Choose an absolute folder path.");
+                folder = Path.GetFullPath(folder.Trim());
+                Directory.CreateDirectory(folder);
+                string probe = Path.Combine(folder, ".tump-write-" + Guid.NewGuid().ToString("N"));
+                using (var stream = new FileStream(probe, FileMode.CreateNew, FileAccess.Write, FileShare.None)) stream.WriteByte(0);
+                File.Delete(probe);
+                Directory.CreateDirectory(ProfilePaths.Root);
+                AtomicWrite(LocationFile, Encoding.UTF8.GetBytes(folder));
+                return true;
+            }
+            catch (Exception e) when (e is IOException || e is ArgumentException || e is UnauthorizedAccessException || e is NotSupportedException)
+            { error = "Cannot save replays here: " + e.Message; return false; }
+        }
+        public static List<LocalReplayEntry> List(string folder)
+        {
+            var entries = new List<LocalReplayEntry>();
+            if (!Directory.Exists(folder)) return entries;
+            foreach (string directory in Directory.EnumerateDirectories(folder, "TUMP-*"))
+            {
+                try
+                {
+                    string path = Path.Combine(directory, "manifest.json");
+                    if (!File.Exists(path) || new FileInfo(path).Length > 4 * 1024 * 1024) continue;
+                    // Browsing and the background recorder can overlap. Allow
+                    // atomic rename while this reader holds the previous file.
+                    using var stream = new FileStream(path,FileMode.Open,FileAccess.Read,FileShare.ReadWrite|FileShare.Delete);
+                    using var reader = new StreamReader(stream,Encoding.UTF8);
+                    var manifest = JsonUtility.FromJson<LocalReplayManifest>(reader.ReadToEnd());
+                    if (!ValidManifest(manifest)) continue;
+                    entries.Add(new LocalReplayEntry { Directory = directory, Manifest = manifest });
+                }
+                catch (Exception e) when (e is IOException || e is ArgumentException || e is UnauthorizedAccessException) { }
+            }
+            entries.Sort((a, b) => string.CompareOrdinal(b.Manifest.CreatedUtc, a.Manifest.CreatedUtc));
+            return entries;
+        }
+        private static bool ValidManifest(LocalReplayManifest manifest)
+        {
+            if(manifest==null||manifest.Version!=1||manifest.MatchId<=0||
+                !Enum.TryParse(manifest.Mode,out Core.GameMode mode)||!Enum.IsDefined(typeof(Core.GameMode),mode)||
+                manifest.Segments==null||manifest.Segments.Count==0||manifest.Segments.Count>10000)return false;
+            float offset=0;int round=0;
+            foreach(var segment in manifest.Segments)
+            {
+                if(segment==null||float.IsNaN(segment.Start)||float.IsInfinity(segment.Start)||
+                    float.IsNaN(segment.End)||float.IsInfinity(segment.End)||
+                    float.IsNaN(segment.Offset)||float.IsInfinity(segment.Offset)||
+                    segment.End<=segment.Start||segment.End-segment.Start>8.1f||Math.Abs(segment.Offset-offset)>.001f||
+                    segment.Round<1||segment.Round>64||segment.Round<round||string.IsNullOrEmpty(segment.File))return false;
+                offset+=segment.End-segment.Start;round=segment.Round;
+            }
+            return true;
+        }
+        public static RecordedMatchClip Read(LocalReplayEntry entry, int index)
+        {
+            var segment = entry.Manifest.Segments[index];
+            // Never follow a path from a replay manifest outside its owned folder.
+            if (segment.File != Path.GetFileName(segment.File) || !segment.File.EndsWith(".tps", StringComparison.Ordinal))
+                throw new InvalidDataException("Invalid replay segment path.");
+            string path = Path.Combine(entry.Directory, segment.File);
+            if (new FileInfo(path).Length > RecordedMatchClip.ByteLimit) throw new InvalidDataException("Replay segment is too large.");
+            byte[] bytes = File.ReadAllBytes(path);
+            if (Hash(bytes) != segment.Sha256 || !RecordedMatchClip.TryDecodeLocal(bytes, out var clip, out string error))
+                throw new InvalidDataException("Replay segment is damaged or incompatible.");
+            if (clip.MatchId != entry.Manifest.MatchId || clip.Map != entry.Manifest.Map ||
+                clip.Round != segment.Round || clip.Start != segment.Start || clip.End != segment.End)
+                throw new InvalidDataException("Replay segment identity changed.");
+            return clip;
+        }
+        internal static string Hash(byte[] bytes)
+        {
+            using var sha = SHA256.Create();
+            return BitConverter.ToString(sha.ComputeHash(bytes)).Replace("-", "").ToLowerInvariant();
+        }
+        internal static void AtomicWrite(string path, byte[] bytes)
+        {
+            string temporary = path + "." + Guid.NewGuid().ToString("N") + ".tmp";
+            using (var stream = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+            { stream.Write(bytes, 0, bytes.Length); stream.Flush(true); }
+            for(int attempt=0;;attempt++)
+            {
+                try
+                {
+                    if (File.Exists(path)) File.Replace(temporary, path, null);
+                    else File.Move(temporary, path);
+                    break;
+                }
+                catch(IOException error)
+                {
+                    // Windows indexers/readers can briefly hold a rename target.
+                    // Retry the same committed bytes on the disk worker; never
+                    // truncate the previous manifest or claim a failed save.
+                    if(attempt>=4)throw new IOException("Cannot commit "+Path.GetFileName(path)+": "+error.Message,error);
+                    Thread.Sleep(20);
+                }
+            }
+        }
+
+        public sealed class Writer
+        {
+            public readonly string Directory;
+            private readonly LocalReplayManifest _manifest;
+            private Task _tail = Task.CompletedTask;
+            private int _pending;
+            private bool _finished;
+            private string _error;
+            public string Error => Volatile.Read(ref _error);
+            public bool CanAppend => !_finished && Error == null && Volatile.Read(ref _pending) < 2;
+            public Task Completion => _tail;
+            public Writer(string folder, LocalReplayManifest manifest)
+            {
+                _manifest = manifest;
+                Directory = Path.Combine(folder, "TUMP-" + DateTime.UtcNow.ToString("yyyyMMdd-HHmmss") + "-" + Guid.NewGuid().ToString("N"));
+                // Only managed values are used by the worker. No transforms,
+                // Resources, scene objects or simulation calls cross this boundary.
+            }
+            public bool Append(RecordedMatchClip clip)
+            {
+                if (!CanAppend) return false;
+                Interlocked.Increment(ref _pending);
+                _tail = _tail.ContinueWith(_ =>
+                {
+                    try
+                    {
+                        if (Error != null) return;
+                        byte[] bytes = clip.EncodeLocal();
+                        System.IO.Directory.CreateDirectory(Directory);
+                        string file = _manifest.Segments.Count.ToString("D6") + ".tps";
+                        AtomicWrite(Path.Combine(Directory, file), bytes);
+                        _manifest.Segments.Add(new LocalReplaySegment { File = file, Sha256 = Hash(bytes),
+                            Offset = _manifest.Duration, Start = clip.Start, End = clip.End, Round = clip.Round });
+                        WriteManifest();
+                    }
+                    catch (Exception e) { Volatile.Write(ref _error, e.Message); }
+                    finally { Interlocked.Decrement(ref _pending); }
+                }, TaskScheduler.Default);
+                return true;
+            }
+            public void Finish(bool completed, string warning = null)
+            {
+                if (_finished) return;
+                _finished = true;
+                _tail = _tail.ContinueWith(_ =>
+                {
+                    try
+                    {
+                        _manifest.Completed = completed && Error == null && string.IsNullOrEmpty(warning);
+                        _manifest.Warning = Error ?? warning;
+                        System.IO.Directory.CreateDirectory(Directory);
+                        WriteManifest();
+                    }
+                    catch (Exception e) { Volatile.Write(ref _error, e.Message); }
+                }, TaskScheduler.Default);
+            }
+            private void WriteManifest() => AtomicWrite(Path.Combine(Directory, "manifest.json"), Encoding.UTF8.GetBytes(JsonUtility.ToJson(_manifest, true)));
+        }
+    }
+}
