@@ -1,3 +1,9 @@
+# Bot charge lifetime checkpoint, October 7
+
+Original37668 has4FAIL/1PASS: targetless Guard/Intercept/Reset/Hunt spend2.5s cooldown by blind release. Candidate34904 passes10 including legal channel cancellation and all5 existing aimed/reach/near-tag controls. All21325 candidate frozen inputs/preferences restore. Earlier restoration-order mistake retained: original verifier sees only intentional AI edit; candidate baseline proves other21324 hashes identical. Scoped report: reports/bot-lunge-plan-lifetime-2026-10-07. Product fix preserves ordinary held input and normal can-reset cancellation, no direct consumer bypass.
+
+Next natural1x bot trace on checked source and combined release after laptop media/replay acceptance. Desktopcb5 and internal120d predate this fix. No owned native/job/helper remains. Goal ACTIVE, no LAN, newmap-only presentation, reservations unchanged.
+
 # Actual package checkpoint, October 7
 
 Windows120d internal candidate builds0/261files/3535838735bytes with all21323 frozen inputs/preferences restored. Actual startup46364 passes login-first, main5.67095seconds and first Home video4->40. Actual single-local-host new3 openings43440/45888/43096 reach real arrival/automatic countdown/active round without diagnostic READY or exceptions. All jobs terminal/profiles restored. Original UTF-8 runner-read failure retained and bridge reclassified without rerun. Four-active-bot criteria fail because explicit review roomBots=0; this is opening-flow acceptance only. Report: reports/new-openings-package-2026-10-07.

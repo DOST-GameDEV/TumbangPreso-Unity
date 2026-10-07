@@ -1,0 +1,10 @@
+{
+  "error": "Candidate AI edit started before restoration verification parent finished; final baseline verifier rejected only AIController source delta. Original failure retained; no reset or source discard.",
+  "sourceDelta": [
+    "Assets/TumbangPreso/Runtime/AIController.cs"
+  ],
+  "candidateInputsFrozen": true,
+  "expectedAiOriginal": "cc2b3ded91a4f38fa4be1c04f3649ceb1159a057a0b52ea48054ec1bba8817f7",
+  "expectedAiCandidate": "f966fd671260c30bcb52a2fb090169370814b2f3718942e23110aeac38a6be1b",
+  "allOtherOriginalInputsMatchCandidateBefore": true
+}

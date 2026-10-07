@@ -2062,6 +2062,12 @@ namespace TumbangPreso
         {
             _touched.Clear();
 
+            // A plan change is not a release decision. Only the real reset channel
+            // or a retired defender action may cancel this producer's pending charge.
+            if (_lungeHeld >= 0 && (!_motor.IsDefender || !_motor.CanAct()
+                || (_carrier != null && _carrier.ChannelRatio > 0)))
+                _lungeHeld = -1.0f;
+
             // ⚠️ THE STICK IS CLEARED FIRST, THE VERBS ARE NOT. Every branch below either
             // drives or stops, exactly as the .gd's do, and clearing here makes "the plan
             // forgot to move" a stand rather than the last plan's heading held forever. The
@@ -2091,8 +2097,11 @@ namespace TumbangPreso
 
             if (!_touched.Contains(Verb.SpecialAbility)) Press(intent, Verb.SpecialAbility, false);
             if (Plan != AiPlan.Windup) _windup = false;
+            // Losing the target can fall back to Guard, Intercept or Reset. Releasing
+            // here would fire the stored dash at nobody; retain the human held input
+            // until Hunt supplies an aimed release or Carrier starts a legal reset.
+            if (_lungeHeld >= 0 && !_touched.Contains(Verb.Lunge)) Press(intent, Verb.Lunge, true);
             if (!_touched.Contains(Verb.Lunge)) Press(intent, Verb.Lunge, false);
-            if (Plan != AiPlan.Hunt) _lungeHeld = -1.0f;
             if (!_touched.Contains(Verb.Grab)) Press(intent, Verb.Grab, false);
         }
 
