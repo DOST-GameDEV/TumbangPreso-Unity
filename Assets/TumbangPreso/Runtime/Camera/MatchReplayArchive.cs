@@ -106,16 +106,21 @@ namespace TumbangPreso.CameraSystem
             }
             _local?.Sample(time);
         }
-        public bool TryCaptureSession(float start,float end,long sequence,out RecordedMatchClip clip,out string error)
+        public bool TryCaptureSession(float start,float end,long sequence,out RecordedMatchClip clip,out string error,bool captureEndpoint=false)
         {
             clip=null;error=null;
+            // A closing local segment may extend beyond the scheduled pose
+            // sample only by capturing the actual current state. Do not append
+            // to the shared catch-history ring or relabel a stale pose.
+            if(captureEndpoint&&(end!=Time.time||GameServices.Match?.PresentationMatchId!=_match||GameServices.Match.RoundNumber!=_round))
+                error="The closing replay identity changed.";
             if(_unsafeAt>=start)error="The recorded world changed within this segment.";
             var objects=new List<RecordedObjectTrack>(13);
             var round=GameServices.Round;
             for(int seat=0;error==null&&seat<4;seat++)
             {
                 var track=_history?.ForSeat(seat);var actor=round?.PlayerAt(seat);
-                var pose=track?.Retain(start,end);
+                var pose=RetainSession(track,start,end,captureEndpoint);
                 if(actor==null||pose==null){error="Player pose history is incomplete.";break;}
                 objects.Add(new RecordedObjectTrack{Kind=RecordedObjectKind.Player,Seat=seat,Skin=actor.CharacterIndex,
                     Person=Roster.PersonIdAt(actor.Mode,actor.CharacterIndex),DisplayName=UI.SeatLabel.Raw(seat),
@@ -124,28 +129,46 @@ namespace TumbangPreso.CameraSystem
             foreach(var prop in _props)
             {
                 if(error!=null)break;
-                var pose=RetainProp(prop,start,end);
+                var pose=RetainProp(prop,start,end,captureEndpoint);
                 if(pose==null){error="Prop pose history is incomplete.";break;}
                 objects.Add(new RecordedObjectTrack{Kind=prop.Kind,Seat=prop.Seat,Skin=prop.Skin,Person=prop.Person,
                     VisualKey=VisualKey(prop.Track.Source),Pose=pose});
             }
             int from=_fields.FindLastIndex(f=>f.Time<=start),to=_fields.FindIndex(f=>f.Time>=end);
+            if(captureEndpoint&&to<0)to=_fields.Count-1;
             if(error==null&&(from<0||to<from))error="World history is incomplete.";
             SessionCaptureError=error;
             if(error!=null)return false;
+            var fields=_fields.GetRange(from,to-from+1);
+            if(captureEndpoint&&fields[fields.Count-1].Time<end)fields.Add(CaptureFields(end));
+            if(_unsafeAt>=start){SessionCaptureError=error="The recorded world changed within this segment.";return false;}
             clip=new RecordedMatchClip{MatchId=_match,Id=sequence,Round=_round,Actor=0,Subject=-1,
                 Mode=UI.SceneFlow.SelectedMode,Map=SceneManager.GetActiveScene().name,Reason="MATCH",
-                Start=start,End=end,Contact=start,Objects=objects.ToArray(),FieldFrames=_fields.GetRange(from,to-from+1).ToArray(),
+                Start=start,End=end,Contact=start,Objects=objects.ToArray(),FieldFrames=fields.ToArray(),
                 Sounds=_sounds.Where(c=>(sequence==1?c.Time>=start:c.Time>start)&&c.Time<=end).ToArray()};
             return true;
         }
-        private static RecordedPoseTrack RetainProp(Prop prop,float start,float end)
+        private static RecordedPoseTrack RetainSession(MatchPoseHistory.Track track,float start,float end,bool captureEndpoint)
         {
-            var pose=prop.Track.Retain(start,end);if(pose==null)return null;
+            if(track==null)return null;
+            if(!captureEndpoint||end<=track.Newest)return track.Retain(start,end);
+            float last=track.Newest;
+            float lead=start==last?Mathf.Max(track.Oldest,last-MatchPoseHistory.Interval):start;
+            var pose=track.Retain(lead,last);var endpoint=track.Capture(end);
+            if(pose==null||endpoint==null)return null;
+            var samples=new RecordedPoseTrack.Sample[pose.Samples.Length+1];
+            Array.Copy(pose.Samples,samples,pose.Samples.Length);samples[samples.Length-1]=endpoint;
+            return new RecordedPoseTrack(pose.Paths,samples);
+        }
+        private static RecordedPoseTrack RetainProp(Prop prop,float start,float end,bool captureEndpoint=false)
+        {
+            var pose=RetainSession(prop.Track,start,end,captureEndpoint);if(pose==null)return null;
             foreach(var sample in pose.Samples)
             {
                 int at=prop.Visibility.FindLastIndex(v=>v.time<=sample.Time+.00001f);
-                if(at>=0&&sample.Active.Length>0)sample.Active[0]&=prop.Visibility[at].visible;
+                if(sample.Active.Length>0)
+                {if(captureEndpoint&&sample.Time==end)sample.Active[0]&=prop.Source!=null&&prop.Source.activeInHierarchy;
+                 else if(at>=0)sample.Active[0]&=prop.Visibility[at].visible;}
             }
             return pose;
         }

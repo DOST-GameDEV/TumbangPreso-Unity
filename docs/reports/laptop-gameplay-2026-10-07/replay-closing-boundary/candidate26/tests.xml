@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 10:48:24Z" end-time="2026-10-07 10:49:00Z" duration="36.2251397">
+  <test-suite type="TestSuite" id="3572" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="2081" result="Passed" start-time="2026-10-07 10:48:24Z" end-time="2026-10-07 10:49:00Z" duration="36.225140" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3564" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2081" result="Passed" start-time="2026-10-07 10:48:24Z" end-time="2026-10-07 10:49:00Z" duration="36.217628" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="33504" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3565" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2081" result="Passed" start-time="2026-10-07 10:48:24Z" end-time="2026-10-07 10:49:00Z" duration="36.215431" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3568" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2079" result="Passed" start-time="2026-10-07 10:48:24Z" end-time="2026-10-07 10:49:00Z" duration="36.212800" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1209" name="ArenaFxRecordedTests" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-07 10:48:24Z" end-time="2026-10-07 10:49:00Z" duration="36.150950" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1212" name="ClosingBetweenPoseSamplesRetainsTheFinalRenderedFrameAndActualEndpoint" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests.ClosingBetweenPoseSamplesRetainsTheFinalRenderedFrameAndActualEndpoint" methodname="ClosingBetweenPoseSamplesRetainsTheFinalRenderedFrameAndActualEndpoint" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" seed="596938125" result="Passed" start-time="2026-10-07 10:48:24Z" end-time="2026-10-07 10:48:47Z" duration="22.697850" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ReplayClosingBoundary] match=639269669141627769 justFlushed=False pose=0.7880111 finalRendered=0.795543 closed=0.7969709 clipEnd=0.7969709 saved=8
+]]></output>
+            </test-case>
+            <test-case id="1213" name="ClosingImmediatelyAfterSegmentFlushRetainsTheFinalRenderedFrameAndActualEndpoint" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests.ClosingImmediatelyAfterSegmentFlushRetainsTheFinalRenderedFrameAndActualEndpoint" methodname="ClosingImmediatelyAfterSegmentFlushRetainsTheFinalRenderedFrameAndActualEndpoint" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" seed="759541430" result="Passed" start-time="2026-10-07 10:48:47Z" end-time="2026-10-07 10:49:00Z" duration="13.441366" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ReplayClosingBoundary] match=639269669405750956 justFlushed=True pose=1.488883 finalRendered=1.498237 closed=1.499998 clipEnd=1.499998 saved=5
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

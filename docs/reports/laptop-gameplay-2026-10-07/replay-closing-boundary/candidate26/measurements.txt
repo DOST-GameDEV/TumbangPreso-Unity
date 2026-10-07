@@ -1,0 +1,2 @@
+[ReplayClosingBoundary] match=639269669141627769 justFlushed=False pose=0.7880111 finalRendered=0.795543 closed=0.7969709 clipEnd=0.7969709 saved=8
+[ReplayClosingBoundary] match=639269669405750956 justFlushed=True pose=1.488883 finalRendered=1.498237 closed=1.499998 clipEnd=1.499998 saved=5
