@@ -54,27 +54,98 @@ namespace TumbangPreso.PlayTests
                 var custom=Core.CustomGameRules.Defaults(Core.GameMode.Classic);custom.Rounds=1;custom.RoundSeconds=30;
                 TumbangPreso.UI.SceneFlow.PinSelectedRules(custom);GameLaunch.AllBots=true;
                 yield return UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(TumbangPreso.UI.SceneFlow.Arena);yield return null;
-                int observed=0;var liveFx=TumbangPreso.Map.ArenaFx.Instance;System.Action<float> counted=time=>{if(GameServices.Round?.RoundActive==true)observed++;};liveFx.FrameRendered+=counted;
+                int observed=0;var observedTimes=new System.Collections.Generic.HashSet<float>();
+                var liveFx=TumbangPreso.Map.ArenaFx.Instance;System.Action<float> counted=time=>{if(GameServices.Round?.RoundActive==true){observed++;observedTimes.Add(time);}};liveFx.FrameRendered+=counted;
                 float until=Time.realtimeSinceStartup+60;while(!GameServices.Match.HasCompleted&&Time.realtimeSinceStartup<until)yield return null;liveFx.FrameRendered-=counted;
                 Assert.IsTrue(GameServices.Match.HasCompleted);long identity=GameServices.Match.PresentationMatchId;
                 TumbangPreso.CameraSystem.LocalReplayEntry entry=null;until=Time.realtimeSinceStartup+8;
                 while(entry==null&&Time.realtimeSinceStartup<until){entry=TumbangPreso.CameraSystem.LocalReplayStore.List(folder).Find(e=>e.Manifest.MatchId==identity&&e.Manifest.Completed);yield return null;}
-                Assert.IsNotNull(entry);int frames=0,quads=0;
+                Assert.IsNotNull(entry);int frames=0,quads=0;var savedTimes=new System.Collections.Generic.HashSet<float>();
                 for(int n=0;n<entry.Manifest.Segments.Count;n++)
                 {
+                    Assert.IsNotNull(TumbangPreso.CameraSystem.LocalReplayStore.Read(entry,n),"Saved body and field windows must remain complete.");
+                    Assert.IsNotNull(TumbangPreso.CameraSystem.LocalReplayStore.ReadScene(entry,n),"Saved scene windows must reach the closing boundary.");
                     var effects=TumbangPreso.CameraSystem.LocalReplayStore.ReadEffects(entry,n);Assert.IsNotNull(effects,"Each actual Arena gameplay segment needs its effect timeline.");frames+=effects.Frames.Count;
-                    foreach(var frame in effects.Frames)quads+=frame.Quads.Length;
+                    foreach(var frame in effects.Frames){quads+=frame.Quads.Length;savedTimes.Add(frame.Time);}
                 }
                 Assert.Greater(observed,0);Assert.GreaterOrEqual(frames,observed-3,"Actual render frames must survive regardless of this machine's frame rate.");Assert.Greater(quads,0,"Natural Arena effects must reach disk.");
+                float first=entry.Manifest.Segments[0].Start,last=entry.Manifest.Segments[entry.Manifest.Segments.Count-1].End;
+                foreach(float time in observedTimes)if(time>=first)
+                {Assert.LessOrEqual(time,last,"Every observed gameplay render frame must fit inside the saved match window.");Assert.IsTrue(savedTimes.Contains(time),"Missing actual rendered FX time "+time);}
+                Assert.IsTrue(string.IsNullOrEmpty(entry.Manifest.Warning),entry.Manifest.Warning);
                 Assert.IsTrue(TumbangPreso.CameraSystem.LocalReplayPlayback.Open(entry));var viewer=Object.FindAnyObjectByType<TumbangPreso.CameraSystem.LocalReplayPlayback>();until=Time.realtimeSinceStartup+20;
                 while(viewer.Frame==null&&viewer.Error==null&&Time.realtimeSinceStartup<until)yield return null;Assert.IsNull(viewer.Error,viewer.Error);Assert.IsNotNull(viewer.Frame);
                 viewer.Seek(17);for(int n=0;n<20;n++)yield return null;Assert.IsNull(viewer.Error,viewer.Error);
                 viewer.Seek(2);for(int n=0;n<20;n++)yield return null;Assert.IsNull(viewer.Error,viewer.Error);
-                Object.Destroy(viewer.gameObject);yield return null;Debug.Log("[NaturalArenaReplayEffects] frames="+frames+" totalQuads="+quads+" segments="+entry.Manifest.Segments.Count);
+                Object.Destroy(viewer.gameObject);yield return null;Debug.Log("[NaturalArenaReplayEffects] observed="+observed+" observedUnique="+observedTimes.Count+" savedUnique="+savedTimes.Count+" frames="+frames+" totalQuads="+quads+" segments="+entry.Manifest.Segments.Count);
             }
             finally
             {
                 var active=Object.FindAnyObjectByType<TumbangPreso.CameraSystem.LocalReplayPlayback>();if(active!=null)Object.DestroyImmediate(active.gameObject);
+                GameLaunch.AllBots=bots;TumbangPreso.UI.SceneFlow.AdoptRemoteRules(rules);if(pinned)TumbangPreso.UI.SceneFlow.PinSelectedRules(rules);else TumbangPreso.UI.SceneFlow.UnpinSelectedRules();
+                if(old!=null)System.IO.File.WriteAllBytes(preference,old);else if(System.IO.File.Exists(preference))System.IO.File.Delete(preference);
+            }
+        }
+        [UnityTest]public IEnumerator ClosingBetweenPoseSamplesRetainsTheFinalRenderedFrameAndActualEndpoint()=>ClosingBoundary(false);
+        [UnityTest]public IEnumerator ClosingImmediatelyAfterSegmentFlushRetainsTheFinalRenderedFrameAndActualEndpoint()=>ClosingBoundary(true);
+        private static IEnumerator ClosingBoundary(bool justFlushed)
+        {
+            var rules=TumbangPreso.UI.SceneFlow.SelectedRules.Clone();bool pinned=TumbangPreso.UI.SceneFlow.RulesPinned,bots=GameLaunch.AllBots;
+            string preference=System.IO.Path.Combine(ProfilePaths.Root,"replay-folder.txt");
+            byte[] old=System.IO.File.Exists(preference)?System.IO.File.ReadAllBytes(preference):null;
+            string folder=System.IO.Path.GetFullPath("Logs/replay-arena-boundary1007/"+System.Guid.NewGuid().ToString("N"));
+            var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+            try
+            {
+                Assert.IsTrue(TumbangPreso.CameraSystem.LocalReplayStore.SetFolder(folder,out string error),error);
+                var custom=Core.CustomGameRules.Defaults(Core.GameMode.Classic);custom.Rounds=1;custom.RoundSeconds=30;
+                TumbangPreso.UI.SceneFlow.PinSelectedRules(custom);GameLaunch.AllBots=true;
+                yield return UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(TumbangPreso.UI.SceneFlow.Arena);yield return null;
+                var history=Object.FindAnyObjectByType<TumbangPreso.CameraSystem.MatchPoseHistory>();
+                var archive=Object.FindAnyObjectByType<TumbangPreso.CameraSystem.MatchReplayArchive>();
+                float until=Time.realtimeSinceStartup+45;
+                while((!GameServices.Round.RoundActive||history.ForSeat(0)?.Ready!=true)&&Time.realtimeSinceStartup<until)yield return null;
+                Assert.IsTrue(GameServices.Round.RoundActive);Assert.IsTrue(history.ForSeat(0).Ready);
+                float newest=history.ForSeat(0).Newest;
+                var recorder=typeof(TumbangPreso.CameraSystem.MatchReplayArchive).GetField("_local",flags).GetValue(archive);
+                if(justFlushed)
+                {
+                    var flush=recorder.GetType().GetMethod("Flush",flags);
+                    flush.Invoke(recorder,flush.GetParameters().Length==0?null:new object[]{false});
+                }
+                // Hold only the diagnostic pose scheduler, leaving live rendering
+                // and gameplay running. This makes the closing gap deterministic.
+                typeof(TumbangPreso.CameraSystem.MatchPoseHistory).GetField("_next",flags).SetValue(history,Time.time+1);
+                var fx=TumbangPreso.Map.ArenaFx.Instance;float rendered=-1;
+                System.Action<float> counted=time=>rendered=time;fx.FrameRendered+=counted;
+                for(int n=0;n<4;n++)yield return null;
+                fx.FrameRendered-=counted;
+                Assert.Greater(rendered,newest);
+                var source=history.ForSeat(0).Source;source.transform.position+=Vector3.up*.125f;
+                Vector3 position=source.transform.position;float closed=Time.time;
+                long identity=GameServices.Match.PresentationMatchId;
+                var writer=(TumbangPreso.CameraSystem.LocalReplayStore.Writer)recorder.GetType().GetField("_writer",flags).GetValue(recorder);
+                Assert.IsNotNull(writer);
+                recorder.GetType().GetMethod("Finish").Invoke(recorder,new object[]{false});
+                Assert.AreEqual(newest,history.ForSeat(0).Newest,"Local recording must not mutate the shared catch-history ring.");
+                TumbangPreso.CameraSystem.LocalReplayEntry entry=null;until=Time.realtimeSinceStartup+8;
+                var completion=writer.Completion;while(!completion.IsCompleted&&Time.realtimeSinceStartup<until)yield return null;
+                Assert.IsTrue(completion.IsCompleted);Assert.IsNull(writer.Error,writer.Error);
+                entry=TumbangPreso.CameraSystem.LocalReplayStore.List(folder).Find(e=>e.Manifest.MatchId==identity&&e.Manifest.Segments.Count>0);
+                Assert.IsNotNull(entry);
+                int last=entry.Manifest.Segments.Count-1;
+                var clip=TumbangPreso.CameraSystem.LocalReplayStore.Read(entry,last);
+                var effects=TumbangPreso.CameraSystem.LocalReplayStore.ReadEffects(entry,last);
+                Debug.Log("[ReplayClosingBoundary] match="+identity+" justFlushed="+justFlushed+" pose="+newest+" finalRendered="+rendered+" closed="+closed+" clipEnd="+clip.End+" saved="+effects.Frames.Count);
+                Assert.IsTrue(effects.Frames.Exists(frame=>frame.Time==rendered),"The final actual render frame must reach disk.");
+                Assert.AreEqual(closed,clip.End);Assert.LessOrEqual(rendered,clip.End);
+                var player=System.Array.Find(clip.Objects,item=>item.Kind==TumbangPreso.CameraSystem.RecordedObjectKind.Player&&item.Seat==0);
+                Assert.AreEqual(closed,player.Pose.End);Assert.AreEqual(position,player.Pose.Samples[player.Pose.Samples.Length-1].Positions[0]);
+                var scene=TumbangPreso.CameraSystem.LocalReplayStore.ReadScene(entry,last);
+                Assert.AreEqual(closed,scene.Frames[scene.Frames.Count-1].Time);
+            }
+            finally
+            {
                 GameLaunch.AllBots=bots;TumbangPreso.UI.SceneFlow.AdoptRemoteRules(rules);if(pinned)TumbangPreso.UI.SceneFlow.PinSelectedRules(rules);else TumbangPreso.UI.SceneFlow.UnpinSelectedRules();
                 if(old!=null)System.IO.File.WriteAllBytes(preference,old);else if(System.IO.File.Exists(preference))System.IO.File.Delete(preference);
             }

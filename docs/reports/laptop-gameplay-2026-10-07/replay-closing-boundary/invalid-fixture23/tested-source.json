@@ -1,0 +1,44 @@
+{
+  "base": "a81faed3e7a9ece1eb55e1b56658c95ee74816c3",
+  "purpose": {
+    "base": "a81faed3e7a9ece1eb55e1b56658c95ee74816c3",
+    "filter": "TumbangPreso.PlayTests.ArenaFxRecordedTests.ClosingBetweenPoseSamplesRetainsTheFinalRenderedFrameAndActualEndpoint",
+    "expected": 1,
+    "purpose": "Original deterministic closing boundary, unchanged production recorder"
+  },
+  "identity": {
+    "schemaVersion": 1,
+    "workerId": "qa-a-be075dcdfa07",
+    "validationOnly": true,
+    "projectRoot": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a",
+    "sourceProject": "C:\\Users\\Matthew\\dev\\tump-integration1003",
+    "sourceCommit": "8e7cfc7feb4eee614d456347ccbb26ad962d1714",
+    "companyName": "BH Studios Validation",
+    "productName": "TumpWorker-qa-a-be075dcdfa07",
+    "editorVersion": "6000.5.8f1",
+    "guardVersion": 1,
+    "guardSha256": "65b69c94b83cfe306293fec69649d2846f122fc083007c5d1bf64d3849dc4f90",
+    "libraryPath": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Library",
+    "libraryPhysical": true,
+    "libraryCopyFrom": "C:\\Users\\Matthew\\dev\\tump-laptop-native1003\\Library",
+    "requiredProfile": "validation-qa-a-be075dcdfa07",
+    "shippingBuildsAllowed": false,
+    "warmupRequired": true,
+    "editorValidation": "not_run",
+    "state": "ready"
+  },
+  "files": {
+    "Assets/TumbangPreso/Runtime/AIController.cs": "183cbc054f48f5ddb9dc44e65086a72379a74582816b3226ea2a25bca12c754b",
+    "Assets/TumbangPreso/Runtime/Camera/LocalReplayPlayback.cs": "3e19f8df65bd4cc7d23a8c7ef0e2efe622563346edb7990c128f19734678c1ae",
+    "Assets/TumbangPreso/Runtime/Camera/LocalReplayRecorder.cs": "c23250448206f4e4f4a4b3f135e112738770ea6158e3bb5a399d03ab8be077c7",
+    "Assets/TumbangPreso/Runtime/Camera/LocalReplaySceneShaderState.cs": "2e53d9e41539e848878e5fd9f46422630ade64a47a9efbe53f1b08dcc35727bd",
+    "Assets/TumbangPreso/Runtime/Camera/LocalReplaySceneState.cs": "95c79887c9a93d6542378677b6df09477ce0cdc5a9b07cb7b2bfe96c5af23968",
+    "Assets/TumbangPreso/Runtime/Camera/LocalReplayStore.cs": "99c6326340a8da9d8fad8bdfdf4a9b844f9c34a982b37b14d7124403e33b7957",
+    "Assets/TumbangPreso/Runtime/Camera/MatchPoseHistory.cs": "e6698d1f396ca5d4f4b4dc2dfe528f5cbffe1cc075877ea63617f93eb98877c4",
+    "Assets/TumbangPreso/Runtime/Camera/MatchReplayArchive.cs": "e06f62df39a0f586e1b23ec98ba65cb4bf1c70864f1fe99e7b3e6d66395e5569",
+    "Assets/TumbangPreso/Runtime/Map/ArenaFx.cs": "8e2795e0284d8f8af342c66215d9af3de85029af32b5d18eee3699b377518cf7",
+    "Assets/TumbangPreso/Runtime/Map/ArenaFx.Recorded.cs": "713e28587145757f6e5e0d112250d08829e180e1c264cdde04c5f1ca54426b7c",
+    "Assets/TumbangPreso/Tests/PlayMode/ArenaFxRecordedTests.cs": "e5c0d3c3f5c62e8868bc85cc0a93929feb9588469081d75c1fc5540aac6457e5",
+    "Assets/TumbangPreso/Runtime/Camera/LocalReplayEffectsCodec.cs": "44dc1006098a5a02722fe710c3c6fb47f025fa7faad88917c1188529d57c326a"
+  }
+}

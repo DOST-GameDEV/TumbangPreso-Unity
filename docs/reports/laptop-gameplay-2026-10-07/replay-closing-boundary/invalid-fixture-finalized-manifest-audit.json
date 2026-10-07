@@ -1,0 +1,83 @@
+[
+  {
+    "fixtureFolder": "6e6edbfba2f24b4d9a8fed2f29e9d62d",
+    "entries": [
+      {
+        "directory": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\replay-arena-boundary1007\\6e6edbfba2f24b4d9a8fed2f29e9d62d\\TUMP-20261007-103616-4c9d641e75b9468c8546d963b4b2a6c7",
+        "matchId": 639269661482158362,
+        "completed": false,
+        "warning": "",
+        "segments": 1,
+        "start": 0.7089422345161438,
+        "end": 0.9663479328155518,
+        "lastEffectTime": 0.9663479328155518,
+        "fxFrames": 93
+      },
+      {
+        "directory": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\replay-arena-boundary1007\\6e6edbfba2f24b4d9a8fed2f29e9d62d\\TUMP-20261007-103616-53021a108c3c43d6a1fdf44236472801",
+        "matchId": 639269661769669035,
+        "completed": false,
+        "warning": "",
+        "segments": 1,
+        "start": 1.0099738836288452,
+        "end": 1.2667396068572998,
+        "lastEffectTime": 1.2667396068572998,
+        "fxFrames": 119
+      }
+    ]
+  },
+  {
+    "fixtureFolder": "532ca55715a84c04841a9c45aa6dd078",
+    "entries": [
+      {
+        "directory": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\replay-arena-boundary1007\\532ca55715a84c04841a9c45aa6dd078\\TUMP-20261007-104029-739fa965a1164256ae38ae0a65d63d80",
+        "matchId": 639269664009129283,
+        "completed": false,
+        "warning": "",
+        "segments": 1,
+        "start": 0.8962290287017822,
+        "end": 1.1727687120437622,
+        "lastEffectTime": 1.1727687120437622,
+        "fxFrames": 98
+      },
+      {
+        "directory": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\replay-arena-boundary1007\\532ca55715a84c04841a9c45aa6dd078\\TUMP-20261007-104029-dba3c00f3a554cef8b7840379431c1da",
+        "matchId": 639269664297553879,
+        "completed": false,
+        "warning": "",
+        "segments": 1,
+        "start": 1.1977920532226562,
+        "end": 1.511541485786438,
+        "lastEffectTime": 1.51005220413208,
+        "fxFrames": 130
+      }
+    ]
+  },
+  {
+    "fixtureFolder": "eae1dafb1a484aff8525849ae18172bb",
+    "entries": [
+      {
+        "directory": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\replay-arena-boundary1007\\eae1dafb1a484aff8525849ae18172bb\\TUMP-20261007-104049-a7ad41603c044d19bcf93f9267744323",
+        "matchId": 639269664309813180,
+        "completed": false,
+        "warning": "",
+        "segments": 1,
+        "start": 1.983824372291565,
+        "end": 2.236943006515503,
+        "lastEffectTime": 2.236943006515503,
+        "fxFrames": 131
+      },
+      {
+        "directory": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\replay-arena-boundary1007\\eae1dafb1a484aff8525849ae18172bb\\TUMP-20261007-104050-71d86a4eb44d4f7d8622dea63b6109e6",
+        "matchId": 639269664500150825,
+        "completed": false,
+        "warning": "",
+        "segments": 2,
+        "start": 2.5393471717834473,
+        "end": 2.598918914794922,
+        "lastEffectTime": 2.595928430557251,
+        "fxFrames": 31
+      }
+    ]
+  }
+]

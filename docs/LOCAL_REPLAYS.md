@@ -33,7 +33,12 @@ resimulate inputs. The viewer retains one segment and one pending disk read.
 Each `TUMP-<date>-<unique-id>` folder contains `manifest.json` and numbered `.tps`
 segments, with optional numbered `.scene.json` sidecars for recorded map state.
 Sidecars capture actual BGC traffic poses, visibility and signal material-slot
-colour/emission at the same samples. They are independently hashed, bounded and
+colour/emission, Arena crowd response and pool swimmer/wake state. New Arena
+recordings also contain optional `.fx.gz` sidecars with the actual rendered
+effect quads, atlas cells, colours and camera-facing geometry at every active
+render frame, including empty transitions. Playback uses the original material
+and atlas with an owned mesh; it does not run the live effect pool.
+These sidecars are independently hashed, bounded and
 validated before use; older files without them still load. A segment and its
 sidecar are committed atomically before their manifest entry. SHA-256,
 identity/window validation, bounded decoding and a local-only short-tail decoder
@@ -65,7 +70,7 @@ Evidence and any reproduced failures belong in the dated laptop report, not in
 an assertion that the entire game is tournament ready. Real peer recordings, full effect/prop transitions, dynamic map scenery timing,
 long-session performance and physical viewer controls remain separate acceptance.
 
-Replay shader animation uses recorded scaled game time only during the replay
+Replay shader animation uses recorded scaled time since the map loaded during the replay
 camera render. Ordinary authored shader time, shader assets and shared globals
 are restored afterward, including on failure. The replay adapter leaves the
 ordinary game's material appearance unchanged. Seek and pause apply to water,
@@ -74,10 +79,21 @@ Actual Arena crowd response uniforms and authored pool swimmer/wake parameters
 are now saved in optional sidecars, applied at replay time, and restored afterward.
 Traffic pose/property overrides are also scoped to that render; they do not call
 road clocks, routes, hits or activate scene objects.
+Closing a segment captures a detached current body, prop, field and scene endpoint
+when the final rendered frames extend beyond the last scheduled pose sample.
+The shared catch-history ring remains unchanged. Final effects belong inside the
+saved clip window, rather than being accepted outside it or discarded. A small
+tail immediately after a periodic segment flush follows the same path.
+
 The current viewer reconstructs recorded gameplay and supported effects; ambient
 scenery is supplied by the compatible map, with the traffic timeline stored in
-new sidecars. Full visual parity is not yet qualified: Arena effects, drones,
-ambient animals and other transient state need further recording and
-same-camera/time verification. Older recordings cannot gain scene state that was
+new sidecars. Arena pool snapshots and their actual-material render copies have
+focused same-camera checks, with saved short flashes and free-camera facing checks.
+Full visual parity is not yet qualified: drones, ambient animals, remaining
+transient state and full kit/map coverage need further recording and
+same-camera/time verification. Older recordings cannot gain scene or effects state that was
 never saved. Default-material shader comparisons do not prove all live ability,
 particle or map states, and native Editor checks do not establish packaged parity.
+Capture size depends on actual rendered frames and visible effect density.
+The uncapped Editor's short-match measurements are evidence for that run, not a
+promise about tournament storage or long-session performance.

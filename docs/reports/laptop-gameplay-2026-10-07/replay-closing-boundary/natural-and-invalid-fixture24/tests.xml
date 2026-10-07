@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 10:39:53Z" end-time="2026-10-07 10:41:40Z" duration="107.4298242">
+  <test-suite type="TestSuite" id="3572" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="2081" result="Failed" site="Child" start-time="2026-10-07 10:39:53Z" end-time="2026-10-07 10:41:40Z" duration="107.429824" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3564" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2081" result="Failed" site="Child" start-time="2026-10-07 10:39:53Z" end-time="2026-10-07 10:41:40Z" duration="107.421827" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="66012" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3565" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2081" result="Failed" site="Child" start-time="2026-10-07 10:39:53Z" end-time="2026-10-07 10:41:40Z" duration="107.419493" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3568" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2079" result="Failed" site="Child" start-time="2026-10-07 10:39:53Z" end-time="2026-10-07 10:41:40Z" duration="107.417121" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1209" name="ArenaFxRecordedTests" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-10-07 10:39:53Z" end-time="2026-10-07 10:41:40Z" duration="107.314765" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1212" name="ClosingBetweenPoseSamplesRetainsTheFinalRenderedFrameAndActualEndpoint" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests.ClosingBetweenPoseSamplesRetainsTheFinalRenderedFrameAndActualEndpoint" methodname="ClosingBetweenPoseSamplesRetainsTheFinalRenderedFrameAndActualEndpoint" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" seed="1027676177" result="Failed" start-time="2026-10-07 10:39:53Z" end-time="2026-10-07 10:40:30Z" duration="36.694826" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The final actual render frame must reach disk.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ArenaFxRecordedTests+<ClosingBoundary>d__8.MoveNext () [0x00497] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\ArenaFxRecordedTests.cs:132
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.85, ambience slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_3 at 0.31 of full scale before the sliders (excitement 0.94, ambience slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 0.55, ambience slider).
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_3 at 0.38 of full scale before the sliders (excitement 0.88, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.70, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1213" name="ClosingImmediatelyAfterSegmentFlushRetainsTheFinalRenderedFrameAndActualEndpoint" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests.ClosingImmediatelyAfterSegmentFlushRetainsTheFinalRenderedFrameAndActualEndpoint" methodname="ClosingImmediatelyAfterSegmentFlushRetainsTheFinalRenderedFrameAndActualEndpoint" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" seed="1182118980" result="Failed" start-time="2026-10-07 10:40:30Z" end-time="2026-10-07 10:40:50Z" duration="20.258611" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The final actual render frame must reach disk.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ArenaFxRecordedTests+<ClosingBoundary>d__8.MoveNext () [0x00497] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\ArenaFxRecordedTests.cs:132
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_3 at 0.31 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 0.55, ambience slider).
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_3 at 0.38 of full scale before the sliders (excitement 0.88, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.70, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1211" name="NaturalArenaMatchWritesRenderFrameEffectsAndActualViewerSeeksThem" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests.NaturalArenaMatchWritesRenderFrameEffectsAndActualViewerSeeksThem" methodname="NaturalArenaMatchWritesRenderFrameEffectsAndActualViewerSeeksThem" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" seed="720767751" result="Passed" start-time="2026-10-07 10:40:50Z" end-time="2026-10-07 10:41:40Z" duration="50.340719" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.26 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.60, announcer slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt at 0.45 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] chant, the round's last seconds (in place of sfx_arena_chant_tumba, which is not recorded): sfx_arena_chant_claps_fast at 0.30 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.70, announcer slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.26 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] near miss: sfx_arena_crowd_aww_2 at 0.35 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.23 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] chant, throw being charged: sfx_arena_chant_ooh_hey at 0.28 of full scale before the sliders (excitement 0.58, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.22 of full scale before the sliders (excitement 0.27, ambience slider).
+[ArenaCrowd] near miss: sfx_arena_crowd_aww at 0.35 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] match over: sfx_arena_crowd_erupt_3 at 0.56 of full scale before the sliders (excitement 0.55, ambience slider).
+[Slice] match over. scores: 605 / 0 / 0 / 150. seat 0 wins
+[NaturalArenaReplayEffects] observed=15149 observedUnique=15149 savedUnique=15149 frames=15158 totalQuads=3333954 segments=10
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

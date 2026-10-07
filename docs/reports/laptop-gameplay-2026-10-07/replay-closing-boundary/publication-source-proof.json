@@ -1,0 +1,17 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/LocalReplayRecorder.cs",
+    "nativeSha256": "62e90b8f078f9098963b52fb7cb5cf4482ea2ba75f423f8376844a52f91cb399",
+    "normalizedGitSha256": "01c36c446cf3fce59c672274c495c1f3f099a45542baae1c8dc89b1facc0796e"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Camera/MatchReplayArchive.cs",
+    "nativeSha256": "e8b62f48f3231e4a8daaf7c30234b06b96521962d68bb9cb42129a742f5856fb",
+    "normalizedGitSha256": "fddc2187487369a896ce787cba5d86318e309dc3f87b04cbe30e2445fd4a6fe7"
+  },
+  {
+    "path": "Assets/TumbangPreso/Tests/PlayMode/ArenaFxRecordedTests.cs",
+    "nativeSha256": "db1ab7fcaf8fdaacac9c2cd6616134bf65e4f0d1ce8f94dda89f80d28d148045",
+    "normalizedGitSha256": "e26718ddd828e05bf4c802b9539486d8813fdbfb531578997ae16068a9c8849f"
+  }
+]

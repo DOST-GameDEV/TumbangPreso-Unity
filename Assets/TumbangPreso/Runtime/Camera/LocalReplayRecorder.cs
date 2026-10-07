@@ -75,12 +75,20 @@ namespace TumbangPreso.CameraSystem
             // Polling in Update can miss a transition started by a coroutine.
             Flush();_start=-1;_round=number;_sceneFrames.Clear();_fxFrames.Clear();_lastFx=null;
         }
-        private void IntermissionStarted(int number,int taya){Flush();_start=-1;_sceneFrames.Clear();_fxFrames.Clear();_lastFx=null;}
-        private void Flush()
+        private void IntermissionStarted(int number,int taya){Flush(true);_start=-1;_sceneFrames.Clear();_fxFrames.Clear();_lastFx=null;}
+        private void Flush(bool closing=false)
         {
-            if (_writer == null || _start < 0 || _last <= _start) return;
-            if (_writer.CanAppend && _archive.TryCaptureSession(_start, _last, ++_sequence, out var clip, out string error))
+            if (_writer == null || _start < 0) return;
+            var current=GameServices.Match;
+            bool endpoint=closing&&current!=null&&current==_match&&current.PresentationMatchId==_identity&&current.RoundNumber==_round&&Time.time>_last;
+            float end=endpoint?Time.time:_last;
+            if(end<=_start)return;
+            if (_writer.CanAppend && _archive.TryCaptureSession(_start, end, ++_sequence, out var clip, out string error,endpoint))
             {
+                // The closing boundary can fall after the final 20 Hz pose
+                // sample. Capture its actual scene state alongside the detached
+                // body endpoint, so later rendered FX remain inside the clip.
+                if(endpoint)_sceneFrames.Add(LocalReplaySceneState.Capture(end));
                 var effects=new LocalReplayFxSegment();
                 // Preserve the latest prior state at a segment edge and every
                 // actual render-frame transition within the active timeline.
@@ -104,7 +112,7 @@ namespace TumbangPreso.CameraSystem
         public void Finish(bool completed)
         {
             if (_writer == null) return;
-            Flush();
+            Flush(true);
             if (_match != null)
             {
                 _match.MatchEnded -= Completed;
