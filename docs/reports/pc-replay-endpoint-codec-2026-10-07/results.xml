@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="9" result="Passed" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 11:24:12Z" end-time="2026-10-07 11:28:38Z" duration="265.2729312">
+  <test-suite type="TestSuite" id="3597" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2101" result="Passed" start-time="2026-10-07 11:24:12Z" end-time="2026-10-07 11:28:38Z" duration="265.272931" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3589" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2101" result="Passed" start-time="2026-10-07 11:24:12Z" end-time="2026-10-07 11:28:38Z" duration="265.259956" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="51348" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3590" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2101" result="Passed" start-time="2026-10-07 11:24:12Z" end-time="2026-10-07 11:28:38Z" duration="265.256054" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3593" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2099" result="Passed" start-time="2026-10-07 11:24:12Z" end-time="2026-10-07 11:28:38Z" duration="265.252157" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1219" name="ArenaFxRecordedTests" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-07 11:24:12Z" end-time="2026-10-07 11:26:34Z" duration="141.806943" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1222" name="ClosingBetweenPoseSamplesRetainsTheFinalRenderedFrameAndActualEndpoint" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests.ClosingBetweenPoseSamplesRetainsTheFinalRenderedFrameAndActualEndpoint" methodname="ClosingBetweenPoseSamplesRetainsTheFinalRenderedFrameAndActualEndpoint" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" seed="1558800793" result="Passed" start-time="2026-10-07 11:24:12Z" end-time="2026-10-07 11:24:36Z" duration="23.407781" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ReplayClosingBoundary] match=639269690628100564 justFlushed=False pose=1.066472 finalRendered=1.115347 closed=1.118032 clipEnd=1.118032 saved=6
+]]></output>
+            </test-case>
+            <test-case id="1223" name="ClosingImmediatelyAfterSegmentFlushRetainsTheFinalRenderedFrameAndActualEndpoint" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests.ClosingImmediatelyAfterSegmentFlushRetainsTheFinalRenderedFrameAndActualEndpoint" methodname="ClosingImmediatelyAfterSegmentFlushRetainsTheFinalRenderedFrameAndActualEndpoint" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" seed="283460351" result="Passed" start-time="2026-10-07 11:24:36Z" end-time="2026-10-07 11:24:49Z" duration="13.411448" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ReplayClosingBoundary] match=639269690896126613 justFlushed=True pose=1.871316 finalRendered=1.890136 closed=1.893271 clipEnd=1.893271 saved=5
+]]></output>
+            </test-case>
+            <test-case id="1225" name="CompressedTimelineKeepsSingleFrameFlashesAndRejectsDamage" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests.CompressedTimelineKeepsSingleFrameFlashesAndRejectsDamage" methodname="CompressedTimelineKeepsSingleFrameFlashesAndRejectsDamage" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" seed="926780054" result="Passed" start-time="2026-10-07 11:24:49Z" end-time="2026-10-07 11:24:49Z" duration="0.045577" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1224" name="FullPoolThreeSecondStreamIsLosslessAndMeasured" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests.FullPoolThreeSecondStreamIsLosslessAndMeasured" methodname="FullPoolThreeSecondStreamIsLosslessAndMeasured" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" seed="765587226" result="Passed" start-time="2026-10-07 11:24:49Z" end-time="2026-10-07 11:24:53Z" duration="3.938728" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[FullPoolFxCodec] frames=180 quadsPerFrame=1664 bytes=3085394 encodeMs=1418.6724 decodeMs=418.6884 rawSha256=b0e083f696f670dcfd7e1c57bdb1fcb40ff25547c8ddcaed941e0604310f6c5d
+]]></output>
+            </test-case>
+            <test-case id="1221" name="NaturalArenaMatchWritesRenderFrameEffectsAndActualViewerSeeksThem" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests.NaturalArenaMatchWritesRenderFrameEffectsAndActualViewerSeeksThem" methodname="NaturalArenaMatchWritesRenderFrameEffectsAndActualViewerSeeksThem" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" seed="898248386" result="Passed" start-time="2026-10-07 11:24:53Z" end-time="2026-10-07 11:25:44Z" duration="50.683530" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.26 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.60, announcer slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.24 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_3 at 0.45 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_2 at 0.45 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] chant, the round's last seconds (in place of sfx_arena_chant_tumba, which is not recorded): sfx_arena_chant_claps_fast at 0.30 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.25 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] chant, after the can went down (in place of sfx_arena_chant_tumbang_preso, which is not recorded): sfx_arena_chant_claps at 0.30 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] near miss: sfx_arena_crowd_aww_3 at 0.35 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.67, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt at 0.45 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.23 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_3 at 0.45 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] match over: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 1.00, ambience slider).
+[Slice] match over. scores: 780 / 250 / 0 / 300. seat 0 wins
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 1.00, ambience slider).
+[NaturalArenaReplayEffects] observed=7483 observedUnique=7483 savedUnique=7483 frames=7492 totalQuads=1890208 segments=10
+]]></output>
+            </test-case>
+            <test-case id="1220" name="OwnedReplayMeshUsesTheActualMaterialAndCameraFacingGeometry" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests.OwnedReplayMeshUsesTheActualMaterialAndCameraFacingGeometry" methodname="OwnedReplayMeshUsesTheActualMaterialAndCameraFacingGeometry" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" seed="1755692297" result="Passed" start-time="2026-10-07 11:25:44Z" end-time="2026-10-07 11:26:14Z" duration="29.655775" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.85, ambience slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_3 at 0.31 of full scale before the sliders (excitement 0.91, ambience slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 0.55, ambience slider).
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_3 at 0.38 of full scale before the sliders (excitement 0.89, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.70, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[RecordedArenaFxPixels] sameCamera=0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="1226" name="SnapshotContainsTheActualPoolGeometryWithoutSteppingIt" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests.SnapshotContainsTheActualPoolGeometryWithoutSteppingIt" methodname="SnapshotContainsTheActualPoolGeometryWithoutSteppingIt" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" seed="288979281" result="Passed" start-time="2026-10-07 11:26:14Z" end-time="2026-10-07 11:26:34Z" duration="20.641877" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_3 at 0.31 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 0.55, ambience slider).
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_3 at 0.38 of full scale before the sliders (excitement 0.89, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.70, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2185" name="MapPreviewFreshnessTests" fullname="TumbangPreso.PlayTests.MapPreviewFreshnessTests" classname="TumbangPreso.PlayTests.MapPreviewFreshnessTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-07 11:26:34Z" end-time="2026-10-07 11:28:36Z" duration="122.204173" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2188" name="RecordedEffectBookkeepingKeepsPreviewButLiveAtlasChangesInvalidateIt" fullname="TumbangPreso.PlayTests.MapPreviewFreshnessTests.RecordedEffectBookkeepingKeepsPreviewButLiveAtlasChangesInvalidateIt" methodname="RecordedEffectBookkeepingKeepsPreviewButLiveAtlasChangesInvalidateIt" classname="TumbangPreso.PlayTests.MapPreviewFreshnessTests" runstate="Runnable" seed="1833713026" result="Passed" start-time="2026-10-07 11:26:34Z" end-time="2026-10-07 11:28:36Z" duration="122.201736" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2847" name="RecordedShaderClockTests" fullname="TumbangPreso.PlayTests.RecordedShaderClockTests" classname="TumbangPreso.PlayTests.RecordedShaderClockTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-07 11:28:36Z" end-time="2026-10-07 11:28:38Z" duration="1.058085" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2850" name="AuthoredWaterRewindsItsShaderClockAndRestoresLiveTime" fullname="TumbangPreso.PlayTests.RecordedShaderClockTests.AuthoredWaterRewindsItsShaderClockAndRestoresLiveTime" methodname="AuthoredWaterRewindsItsShaderClockAndRestoresLiveTime" classname="TumbangPreso.PlayTests.RecordedShaderClockTests" runstate="Runnable" seed="1180951480" result="Passed" start-time="2026-10-07 11:28:36Z" end-time="2026-10-07 11:28:38Z" duration="1.056034" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[ShaderClockGPU] cpu=38.00032 level=1.041751 real=266.4607 editor=329.8848599 global=(0.00, 0.00, 0.00, 0.00) gpu=RGBA(0.052, 1.042, 2.084, 3.125)
+[RecordedShaderClock] animation=0.3594564 rewind=0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
