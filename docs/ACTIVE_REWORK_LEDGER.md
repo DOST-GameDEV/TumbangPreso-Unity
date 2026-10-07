@@ -1,3 +1,7 @@
+# Lagoon bot trace checkpoint, October 7
+
+Normal1x Classic/Hero LagoonCove44984 passes2 on f617, all21325 frozen inputs/preferences restored after native/preservation terminal. Actual throws/retrieval decisions occur; zero completed lunges in both samples. Existing diagnostic SliceRunner.Begin overlaps later ReadyGate.Begin, so this is scoped decision/bounds/stranding regression evidence, not improved lunge rate or natural single-start arrival. Complete traces and counts under bot-lunge-plan-lifetime report/cove-realclock. Next reproduce obstacle-blocked bot charged release, then address navigation using actual map failures. Laptop replay candidate/pending newpreviewpublication retains its lanes. No LAN; Desktopcb5/internal120d remain older. Goal ACTIVE.
+
 # Bot charge lifetime checkpoint, October 7
 
 Original37668 has4FAIL/1PASS: targetless Guard/Intercept/Reset/Hunt spend2.5s cooldown by blind release. Candidate34904 passes10 including legal channel cancellation and all5 existing aimed/reach/near-tag controls. All21325 candidate frozen inputs/preferences restore. Earlier restoration-order mistake retained: original verifier sees only intentional AI edit; candidate baseline proves other21324 hashes identical. Scoped report: reports/bot-lunge-plan-lifetime-2026-10-07. Product fix preserves ordinary held input and normal can-reset cancellation, no direct consumer bypass.
