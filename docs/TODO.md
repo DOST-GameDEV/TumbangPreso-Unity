@@ -2,7 +2,8 @@
 
 - [x] Import the actual Development player traces and retain nested CPU attribution. First Hero callback77.950ms includes a frame with343 Mono.JIT samples/68.614ms; canvas/image-effect costs are separate. Largest preload frame is dominated by a graphics/presentation wait, not proved to be resource integration. All21,417 build/export inputs/preferences restored. [Evidence and scopes](reports/ui-code-preparation-2026-10-08/README.md).
 - [x] Qualify opt-in method-entry preparation without executing UI actions or constructing views/models. Native63968 passes object/settings/map/mode/rules/idempotency control and all21,421 inputs/preferences restore; fixture compiler failures retained.
-- [ ] Measure candidate benefit in a fresh player, then qualify normal preparation and ordinary-release improvement. Presentation waits, first canvas/image effects and broader tournament frame pacing remain open.
+- [x] Measure the gated candidate in a fresh player and reject normal activation: Hero CPU123.737->173.472ms despite343->315 Mono.JIT samples. Callback77.950->121.836ms; current capture/export/settings/source restore verified. Keep the flag off in normal launches.
+- [ ] Implement a different measured first-use solution and qualify ordinary-release improvement. Presentation waits, first canvas/image effects and broader tournament frame pacing remain open.
 
 ### WINDOWS-REPLACEMENT-1008: existing Desktop package
 

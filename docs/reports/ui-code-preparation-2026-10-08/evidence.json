@@ -130,8 +130,130 @@
     }
   },
   "traceBytes": 376116812,
-  "codePreparationPlayerImprovementMeasured": false,
+  "codePreparationPlayerImprovementMeasured": true,
   "productionDefaultEnabled": false,
   "newBuildDirectories": 0,
-  "desktopSource": "effe0fbed9dcc1abd3e3b710eeca40b0b42a939a"
+  "desktopSource": "effe0fbed9dcc1abd3e3b710eeca40b0b42a939a",
+  "optimizationAccepted": false,
+  "warmRawSha256": {
+    "warm-player-result.json": "0c5d971554e2c4e8c3570a3a97ab6e11debb67d252c10572619ebb5d2f792dc1",
+    "warm-export-result.json": "36e34150c7b1ceff619c722f2328b5d03650437268555f5653e2197c217363c3",
+    "warm-export-restoration.json": "9746aa0578e36f84d85f9caa646521a197e1108bb3de8f3d5455f975b52afcff",
+    "warm-build-restoration.json": "553537ca7775bf4d7132ddec77e3ee9e6cca2bedfad7bff67d3b64fc614084ce"
+  },
+  "warmPlayerRuntimeSha256": "2e3b20fb63d836da5a93acc82300e612b7650340364eee20df77ab9883b6de05",
+  "comparison": {
+    "baseline": {
+      "cpuMs": 123.737106,
+      "frame": "9",
+      "jitCalls": 343,
+      "jitSumMs": 68.614499901,
+      "top": [
+        {
+          "ms": 123.737106,
+          "name": "Main Thread"
+        },
+        {
+          "ms": 123.7122,
+          "name": "PlayerLoop"
+        },
+        {
+          "ms": 77.9554,
+          "name": "Update.ScriptRunDelayedDynamicFrameRate"
+        },
+        {
+          "ms": 77.9546,
+          "name": "CoroutinesDelayedCalls"
+        },
+        {
+          "ms": 77.95,
+          "name": "TumbangPreso.Runtime.dll!TumbangPreso.Diagnostics::OwnerUiPlayerReview.Guard() [Coroutine: MoveNext] [Invoke]"
+        },
+        {
+          "ms": 18.0272,
+          "name": "PostLateUpdate.PlayerUpdateCanvases"
+        },
+        {
+          "ms": 18.0171,
+          "name": "UIEvents.WillRenderCanvases"
+        },
+        {
+          "ms": 18.0164,
+          "name": "UGUI.Rendering.UpdateBatches"
+        },
+        {
+          "ms": 17.696,
+          "name": "UnityEngine.UIModule.dll!UnityEngine::Canvas.SendWillRenderCanvases() [Invoke]"
+        },
+        {
+          "ms": 17.6625,
+          "name": "PostLateUpdate.FinishFrameRendering"
+        },
+        {
+          "ms": 17.662199,
+          "name": "Render"
+        },
+        {
+          "ms": 17.6135,
+          "name": "CanvasUpdate.PreRender"
+        }
+      ]
+    },
+    "warm": {
+      "cpuMs": 173.4716,
+      "frame": "9",
+      "jitCalls": 315,
+      "jitSumMs": 58.3022998961,
+      "top": [
+        {
+          "ms": 173.4716,
+          "name": "Main Thread"
+        },
+        {
+          "ms": 173.4375,
+          "name": "PlayerLoop"
+        },
+        {
+          "ms": 121.8411,
+          "name": "Update.ScriptRunDelayedDynamicFrameRate"
+        },
+        {
+          "ms": 121.8404,
+          "name": "CoroutinesDelayedCalls"
+        },
+        {
+          "ms": 121.8361,
+          "name": "TumbangPreso.Runtime.dll!TumbangPreso.Diagnostics::OwnerUiPlayerReview.Guard() [Coroutine: MoveNext] [Invoke]"
+        },
+        {
+          "ms": 24.73,
+          "name": "PostLateUpdate.FinishFrameRendering"
+        },
+        {
+          "ms": 24.3845,
+          "name": "Camera.Render"
+        },
+        {
+          "ms": 16.4723,
+          "name": "PostLateUpdate.PlayerUpdateCanvases"
+        },
+        {
+          "ms": 16.4609,
+          "name": "UIEvents.WillRenderCanvases"
+        },
+        {
+          "ms": 16.4599,
+          "name": "UGUI.Rendering.UpdateBatches"
+        },
+        {
+          "ms": 16.1246,
+          "name": "UnityEngine.UIModule.dll!UnityEngine::Canvas.SendWillRenderCanvases() [Invoke]"
+        },
+        {
+          "ms": 16.0835,
+          "name": "Render"
+        }
+      ]
+    }
+  }
 }

@@ -31,8 +31,14 @@ inputs/preferences were restored. The initial malformed GUID and obsolete
 GetInstanceID fixture compiler failures remain retained. They are not game
 performance evidence. Exact tested source and hashes are in this report.
 
-Next build by replacing existing G and compare fresh first-Hero CPU samples
-with the candidate enabled. Enable normal preparation only after actual benefit
-and startup/input/art/data behavior are qualified. Performance, all-map AI,
-default full matches, replay/camera/slipper edge cases and tournament readiness
-remain open. No new build or Desktop directory was created.
+The actual fresh warm candidate completed 14 windows. First Hero CPU worsened
+from123.737 to173.472ms; the callback grew77.950 to121.836ms. Mono.JIT samples
+fell343 to315 and their sum68.614 to58.302ms, but this did not produce a useful
+overall result. Do not enable this preparation in normal startup. It remains
+flag-only while a different implementation is selected. Desktop is unchanged.
+
+Both player/export runners are terminal and all21,421 current inputs/preferences
+restored. The strict result is a rejected optimization experiment, not a passing
+performance change. Performance, all-map AI, default full matches,
+replay/camera/slipper edge cases and tournament readiness remain open.
+No new build or Desktop directory was created.
