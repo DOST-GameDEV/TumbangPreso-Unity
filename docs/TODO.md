@@ -1,3 +1,8 @@
+### WINDOWS-REPLACEMENT-1008: existing Desktop package
+
+- [x] Replace the existing internal G candidate and Desktop folder with tested `effe0fbed9`/protocol153/runtime0898. All261 file hashes verify,34 Desktop files replaced and no extra build/Desktop folder created. Actual graphical startup5.693s, firstHome4to40, old own-recording/legacy/freshFX replay and all7 first/repeat1080p movie gates pass. Windows4 authored hand/copy controls pass and all21,415inputs/prefs restore. [Evidence and limitations](reports/windows-replacement-2026-10-08/README.md).
+- [ ] Continue remaining tournament performance, full default matches, all-map/feature/hero bot efficacy, camera/slipper edge cases, creative and actual peer/device acceptance. This replacement does not close them.
+
 ### SLIPPER-CONTACT-1008: current rig and cinematic grip
 
 - [x] Replace obsolete fixed palm lift with actual weighted hand surface contact; all23 art entries pass independent triangle checks. Preserve authored models and ability behavior.
@@ -23,7 +28,7 @@
 ### REPLAY-OWNER-BINDING-1008: actual saved scenery playback
 
 - [x] Implement and natively qualify shifted animal-owner binding and rendering-error pause. Current `1570` player opening its own completed recording throws 1,389 owner exceptions despite the narrow UI probe passing. Three native owner/image controls and the corrected warning-count control pass on identical production bytes. All 21,411 inputs/preferences restored; original fixture failures retained. Current package retry remains below. [Evidence and limits](reports/replay-owner-binding-2026-10-08/README.md).
-- [ ] Attribute and correct the separate editor/player art-fingerprint mismatch without weakening geometry, material or texture validation. Current package and Desktop replacement remain unqualified until actual saved recording playback is clean.
+- [x] Attribute the editor/player mismatch within 28 distinct component rows: five material CRC values and the aggregate differ; the other inputs match. Actual Windows old saved-recording playback matches all five stored animal fingerprints with zero exceptions, then Desktop is replaced after the other current gates pass. Strict validation unchanged. Compatibility with future engine revisions remains unproven. [Windows evidence](reports/windows-replacement-2026-10-08/README.md).
 
 ### NEW-MAP-HANDOFF-1007: retain subjects during the return
 

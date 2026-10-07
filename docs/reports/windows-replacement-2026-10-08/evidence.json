@@ -1,0 +1,56 @@
+{
+  "sourceCommit": "effe0fbed9dcc1abd3e3b710eeca40b0b42a939a",
+  "runtimeSha256": "0898acb7c45682f0f7bce0a022f6e76f40266589b29b83caef778b544ed174b7",
+  "fileCount": 261,
+  "totalBytes": 3572346902,
+  "desktopInstalled": true,
+  "changedFiles": 34,
+  "newBuildDirectories": 0,
+  "newDesktopDirectories": 0,
+  "packages": {
+    "player-replacement-scenery": {
+      "pid": 63076,
+      "passed": true,
+      "mainVisibleSeconds": 5.69337797164917,
+      "runnerSha256": "0036e3a29221072b623b59b620cf7c3e128d34a4e37a4b6124fdcee530179dc5",
+      "playerLogSha256": "5b6321495c11459564c412d3f21109d894ec769ad5bd58bb1b3b49cee85d0caa"
+    },
+    "replacement-fresh-effects": {
+      "pid": 55616,
+      "passed": true,
+      "mainVisibleSeconds": 5.722379684448242,
+      "runnerSha256": "0fc2be2ef269021a0bd443da3611d3f497e4be9a82fff1164f8a71428497f0cf",
+      "playerLogSha256": "abc69512424324d3c6b1af12bb0839ee73f4b23b29230d1d975adbff69525219"
+    },
+    "replacement-legacy": {
+      "pid": 64972,
+      "passed": true,
+      "mainVisibleSeconds": 5.501596927642822,
+      "runnerSha256": "a2a3502d001af84b5b80018bba98dc6fdbd0cf9a24642f7d5962a97f4ac47566",
+      "playerLogSha256": "0882d7e30a11e35eff084a9365eecb5ba03d2de6f034df4b08c11a7c4c760ad3"
+    },
+    "replacement-maps": {
+      "pid": 59104,
+      "passed": true,
+      "mainVisibleSeconds": null,
+      "runnerSha256": "32db6296605d7fd2afddc42629483bdbeeedc175bb4cb36262c73588ddd805f4",
+      "playerLogSha256": "1bfc0700f935ffa864c573a4ac02fa2663f48bcaf1877ec8b6d1f99dc94a3126"
+    }
+  },
+  "rawSha256": {
+    "player-replacement-scenery/result.json": "52a79b4a32be12e74a495e9d34191312096b692af0eb9459c843b7bbc86205d2",
+    "player-replacement-scenery/replay-result.json": "05aa6ebe81bb07ed5443890b45e9952e1f3c15a3e3c82f58fcff00c499fafebd",
+    "replacement-fresh-effects/result.json": "4b155310cab011810684248407551f1edbecfd3db12eaf4f4e29cb43ac8870ad",
+    "replacement-fresh-effects/replay-result.json": "ad1b8f61e42dea98285d15d579f536bd4530bad5f4ec54ac84681456521f67da",
+    "replacement-legacy/result.json": "1438d81e8f1a9d6b5fdfc79072aa1d7b884fe3da811ef88914b9277ff7dfb3dd",
+    "replacement-legacy/replay-result.json": "05aa6ebe81bb07ed5443890b45e9952e1f3c15a3e3c82f58fcff00c499fafebd",
+    "replacement-maps/result.json": "a25ff627fe71ccc0965961554ae2529d4c87cdab76a87b1b7bf6c0f437571736",
+    "source-classification.json": "5d33b05d7240c32f12fd03072c2547bff379c7d935882a2cb7f12bdf119e7328",
+    "desktop-installation.json": "026752a23139b72fbde83d41ebef9bb77876a9150768ccf0265400df1ded70e2",
+    "component-comparison.json": "d4f20403ef6011aac3e4adba098c55d3dbfbc8f0dfe42cc7ef5522cce28f602b",
+    "slipper-contact-result.json": "c19af96fe5ff297e7557be3fcfb919f246f501d54c4edd949e87cd8fb5665f53",
+    "slipper-contact-restoration.json": "61b06e22bb402fff1e18c3d7e7ee66b74f30c3d49331d7c00b786e4b748ba5b5",
+    "slipper-contact-results.xml": "41d11d9d57bfac169db0faf50e296dc8adda5858b7bd35b8e9bb13079aaf2f47"
+  },
+  "tournamentReady": false
+}

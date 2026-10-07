@@ -5,10 +5,11 @@ transferred its work here. The requested Astra reviewer is finished and retired.
 Do not wake either or create agents/chats. No LAN, foreground control, resets,
 cleans, stashes or force pushes. Preserve finalized kits and old-map art.
 
-Published source before this unit is `1570d5de6`, protocol 153. The ordinary
-current candidate is `Builds/release-ui-perf1008g`, runtime `c4559a0b`. Its build
-restored all 21,411 frozen inputs/preferences. The qualified Desktop remains
-`725e28f13` in `Desktop/TumbangPreso-UI-2026-10-07`.
+Current Desktop and ordinary candidate are source `effe0fbed9`, protocol 153,
+runtime `0898acb7`. The candidate replaced the existing G folder; Desktop was
+updated in place with 34 changed files and all 261 file hashes verified. No new
+build/Desktop folder or profile/save change. Build/native runs restored all
+21,415 frozen inputs/preferences. Evidence: reports/windows-replacement-2026-10-08.
 
 Current G completed the 191-window controlled release route: 74 accepted actions,
 26 required consequences and two distinct natural custom one-round/30-second
@@ -17,10 +18,12 @@ matched contact, consumption and 2.291 m movement. Both completed recordings
 contain ten scenery segments without recorder warnings. This does not establish
 full default matches, all-map/kit efficacy or tournament performance.
 
-The same artifact passed startup order, first Home video, legacy and fresh-effect
-replay UI checks and all seven map previews on first/repeat 1080p visits. Actual
-self-recorded scenery playback nevertheless throws 1,389 animal-owner exceptions
-while its narrow UI probe reports success. Package gate FAILED; do not install G.
+Original G at1570 failed actual self-recorded scenery playback with 1,389 owner
+exceptions despite its narrow UI probe passing. This failure is retained. The
+replacement passes actual old-recording playback with all five animal hashes
+matching and zero exceptions, startup5.693s/firstHome4to40, legacy/fresh-effect
+replay and all seven first/repeat1080p previews. Windows four hand/copy controls
+also pass. These graphical/native checks do not establish human or peer quality.
 
 This unit binds a shifted sibling path to a unique matching authored AmbientLife
 owner, retaining model/art checks and rejecting ambiguity. Rendering exceptions
@@ -30,10 +33,16 @@ identical production bytes across two runs. All 21,411 inputs/preferences restor
 Compiler-helper, unrelated round-start and informational-log fixture failures
 are retained. Exact evidence: reports/replay-owner-binding-2026-10-08.
 
-Next diagnose the separate editor/player art-fingerprint mismatch before a
-replacement build and actual saved-recording retry. Do not assume Material CRC
-is the cause without component evidence or weaken provenance. Current first Hero
-134.53 ms and preload 877.67 ms still need CPU attribution and optimization.
+Editor/player art mismatch is attributed: 28 distinct aspin component rows agree
+except five material CRC values and aggregate. Mesh streams, indices and texture
+identities match. Actual Windows values match the saved Windows recording;
+strict validation/serialization are unchanged. Two independent editor processes
+match each other. Future engine/shader compatibility remains unproven.
+
+Next profile and fix the noticeable first-Hero/preload stalls using a Development
+diagnostic that replaces the existing candidate only. Preserve the qualified
+Desktop. Previous ordinary first-Hero134.53ms/preload877.67ms remain failures;
+do not claim that a passing functional route closes performance or AI quality.
 
 Only replace the existing G build folder for future builds. No additional named
 or numbered output directories. The cleanup of 38 verified superseded internal

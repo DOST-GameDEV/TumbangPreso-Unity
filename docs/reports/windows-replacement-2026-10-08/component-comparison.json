@@ -1,0 +1,38 @@
+{
+  "source": "effe0fbed9dcc1abd3e3b710eeca40b0b42a939a",
+  "runtimeSha256": "0898acb7c45682f0f7bce0a022f6e76f40266589b29b83caef778b544ed174b7",
+  "componentRows": 28,
+  "onlyMaterialCrcAndAggregateDiffer": true,
+  "differentRows": [
+    {
+      "editor": "[SceneryArtProof] root=RecordedBody-P0 material=Coat_NearFade crc=-34512217 shader=TumbangPreso/NearFade queue=2000 keywords=",
+      "player": "[SceneryArtProof] root=RecordedBody-P0 material=Coat_NearFade crc=-500702897 shader=TumbangPreso/NearFade queue=2000 keywords="
+    },
+    {
+      "editor": "[SceneryArtProof] root=RecordedBody-P0 material=Cream markings_NearFade crc=-1021046204 shader=TumbangPreso/NearFade queue=2000 keywords=",
+      "player": "[SceneryArtProof] root=RecordedBody-P0 material=Cream markings_NearFade crc=-588082772 shader=TumbangPreso/NearFade queue=2000 keywords="
+    },
+    {
+      "editor": "[SceneryArtProof] root=RecordedBody-P0 material=Graphic features_NearFade crc=-1643724036 shader=TumbangPreso/NearFade queue=2000 keywords=",
+      "player": "[SceneryArtProof] root=RecordedBody-P0 material=Graphic features_NearFade crc=-2117058284 shader=TumbangPreso/NearFade queue=2000 keywords="
+    },
+    {
+      "editor": "[SceneryArtProof] root=RecordedBody-P0 material=Inner ear_NearFade crc=-338868660 shader=TumbangPreso/NearFade queue=2000 keywords=",
+      "player": "[SceneryArtProof] root=RecordedBody-P0 material=Inner ear_NearFade crc=-199506524 shader=TumbangPreso/NearFade queue=2000 keywords="
+    },
+    {
+      "editor": "[SceneryArtProof] root=RecordedBody-P0 material=Quiet coat patches_NearFade crc=1979462079 shader=TumbangPreso/NearFade queue=2000 keywords=",
+      "player": "[SceneryArtProof] root=RecordedBody-P0 material=Quiet coat patches_NearFade crc=1781183063 shader=TumbangPreso/NearFade queue=2000 keywords="
+    },
+    {
+      "editor": "[SceneryArtProof] root=RecordedBody-P0 aggregate=0F756E3EABE235A1CDA03398CE6E18C5DC8580942067A6E7E08B5CE01D7937F8",
+      "player": "[SceneryArtProof] root=RecordedBody-P0 aggregate=D612662E2F7ACEAC6E4C00317E9126EFC0477859AFBA0381D7644CB64E0D311F"
+    }
+  ],
+  "matchedPlayerFingerprint": "D612662E2F7ACEAC6E4C00317E9126EFC0477859AFBA0381D7644CB64E0D311F",
+  "allFiveActualSavedAnimalFingerprintsMatched": true,
+  "startupReplayGatePassed": true,
+  "exceptions": 0,
+  "inputEditorProfileRestored": true,
+  "scope": "One actually saved completed Eskinita HeroStrike recording, five animal roots. Actual graphical Windows playback controls; no human visual approval or all-map claim."
+}

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 18:00:46Z" end-time="2026-10-07 18:00:52Z" duration="6.4358971">
+  <test-suite type="TestSuite" id="3645" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2142" result="Passed" start-time="2026-10-07 18:00:46Z" end-time="2026-10-07 18:00:52Z" duration="6.435897" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3637" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2142" result="Passed" start-time="2026-10-07 18:00:46Z" end-time="2026-10-07 18:00:52Z" duration="6.331073" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="64128" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3638" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2142" result="Passed" start-time="2026-10-07 18:00:46Z" end-time="2026-10-07 18:00:52Z" duration="6.295462" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3641" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2140" result="Passed" start-time="2026-10-07 18:00:46Z" end-time="2026-10-07 18:00:52Z" duration="6.263316" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="3173" name="SlipperContactTests" fullname="TumbangPreso.PlayTests.SlipperContactTests" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-07 18:00:46Z" end-time="2026-10-07 18:00:52Z" duration="6.022691" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="3174" name="EveryRosterPalmAnchorTouchesItsVisibleHandSurface" fullname="TumbangPreso.PlayTests.SlipperContactTests.EveryRosterPalmAnchorTouchesItsVisibleHandSurface" methodname="EveryRosterPalmAnchorTouchesItsVisibleHandSurface" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" seed="545240267" result="Passed" start-time="2026-10-07 18:00:46Z" end-time="2026-10-07 18:00:50Z" duration="4.167594" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="3175" name="ModelSwapsRefitSurfaceWithoutReplacingHeldShoe" fullname="TumbangPreso.PlayTests.SlipperContactTests.ModelSwapsRefitSurfaceWithoutReplacingHeldShoe" methodname="ModelSwapsRefitSurfaceWithoutReplacingHeldShoe" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" seed="837560908" result="Passed" start-time="2026-10-07 18:00:50Z" end-time="2026-10-07 18:00:51Z" duration="0.472534" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="3176" name="ReplayCopyRefitsStalePoseAndRetainsLiveShoe" fullname="TumbangPreso.PlayTests.SlipperContactTests.ReplayCopyRefitsStalePoseAndRetainsLiveShoe" methodname="ReplayCopyRefitsStalePoseAndRetainsLiveShoe" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" seed="813471582" result="Passed" start-time="2026-10-07 18:00:51Z" end-time="2026-10-07 18:00:52Z" duration="1.256109" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="3181" name="UltimateCopyDoesNotBakeAStaleLiveCarryPose" fullname="TumbangPreso.PlayTests.SlipperContactTests.UltimateCopyDoesNotBakeAStaleLiveCarryPose" methodname="UltimateCopyDoesNotBakeAStaleLiveCarryPose" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" seed="1659299392" result="Passed" start-time="2026-10-07 18:00:52Z" end-time="2026-10-07 18:00:52Z" duration="0.108065" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
