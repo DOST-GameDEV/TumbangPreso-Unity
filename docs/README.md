@@ -287,3 +287,5 @@ Ice diagnostic admission timing: [native setup evidence](reports/reliability-202
 Current full managed Core integration: [704-case gate and retained contract failure](reports/reliability-2026-10-03/managed-integration/README.md).
 
 Local match replays, library/folder controls and explorable playback: [method](LOCAL_REPLAYS.md) and [native evidence](reports/laptop-gameplay-2026-10-07/local-replays/README.md).
+
+Late-join opening hold: [native failure, corrected adoption and countdown regression evidence](reports/late-join-start-hold-2026-10-07/README.md).

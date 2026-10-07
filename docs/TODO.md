@@ -1,3 +1,9 @@
+### REJOIN-START-HOLD-1007: release the obsolete opening gate
+
+- [x] Reproduce four late-join/rebind/intermission failures with one pre-start control, then fix ReadyGate adoption of an already-confirmed host match. Final eighteen native controls pass, including actual owner movement, pause/Frozen/ultimate preservation and existing countdown/completed-arrival behavior. Retain the original failures and separately reproduced stale five-count test expectation. [Evidence](reports/late-join-start-hold-2026-10-07/README.md).
+- [x] Internal Linux player built and separate local host/client late join plus same-profile reconnect retain active rounds and accept normal keyboard movement. Original failed/inconclusive attempts preserved.
+- [ ] Refreshed Windows/cross-machine/WAN and human acceptance remain open.
+
 ### TOURNAMENT-FRAME-PACING-1007: optimization and loading
 
 - [ ] October7 owner: after current assigned fixes, optimize the current game and loading placement. Noticeable random stutters are unacceptable; measure actual frame pacing during natural matches, recording, replay, map transitions and repeated use before declaring readiness.
