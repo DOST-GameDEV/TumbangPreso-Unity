@@ -106,6 +106,7 @@ namespace TumbangPreso.Diagnostics
         {
             _finished=true; _receipt.passed=passed; _receipt.error=error;
             File.WriteAllText(Path.Combine(_folder,"result.json"),JsonUtility.ToJson(_receipt,true));
+            if (passed && LocalReplayPackageProbe.TryBegin(_folder)) return;
             Application.Quit(passed?0:1);
         }
     }

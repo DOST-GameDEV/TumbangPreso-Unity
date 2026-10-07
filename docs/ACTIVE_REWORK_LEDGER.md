@@ -1,3 +1,9 @@
+# Combined package preparation, October7
+
+5376bb901 normally integratescheckednew3preview204/087: originalexplicit-recorded-Show/Start override fixed, actualrequestedclip+posterdecodedpixel checks3PASS onlaptop; old8movie/posterbytes unchanged. Additionalreplaycontrols stilllaptopWIP/native2case gate. PCpreparedLocalReplayPackageProbe afterexistingStartupOrder opt-in via-tp-replay-package; realmenu/replayUIraycast/seek/play/speed/follow/Home, no ordinaryplayerinstallation. Current shippingRuntimeRoslyn compiles0 aftercorrectingcachedsource listomitting4newreplayfiles; firsttoolingerrors retained. Actualpackageexecutionpending, notclaimed. Report: packaged-replay-probe-2026-10-07.
+
+Next integrateONLYcheckedextra-controltip thenlaunchLogs/replay-desktop1007/build-direct.py onfinalcombinedsource. Oneheavyjob/PC. Awaitbuildparentterminal thenverify-and-restore.py ANDWAITterminal; adaptedhiddenStartupOrder runner with-tp-replay-package ownedfixtures library, actualnew3MapPreviewPlayerProbe. Desktopcb5/internal120dolder; replaceatomicallyonlyafterartifactchecks. LAPTOPONLINE/noLAN/mobileinstruction. PCremainingallhero/allmapAI/physics/creative/fulltournamentacceptance ACTIVE.
+
 # PC replay integration checkpoint, October 7
 
 429c/cf546 normalmerges integratechecked578 replayproduct/cb1/2d9/4dc evidence withlatestPC48consumercharge/2f9mapmatrix. All20overlay paths verified; five mixedCRLF/LF originals haveexactnativeRaw SHA andnormalizedtested/currentcodeproof, no blindrestamp. All93rawevidenceSHA verified. PC44716 archive3PASS/viewer2fixtureFAIL(TUMP-*discovery); onlyownedfixture dirnamecorrected/all11dataSHAunchanged. PC48244 actualviewer/scrub/audio2PASS, unchangedproduct, archive3notrepeated. Bothall21339 frozen inputs/preferences restored afterterminal. Report: pc-local-replay-integration-2026-10-07.
