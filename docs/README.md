@@ -1,5 +1,15 @@
 # Documentation: Start Here
 
+Bot consumer charge timing: [long-frame release failure and19 native power/obstacle/lifetime controls](reports/bot-lunge-consumer-power-2026-10-07/README.md).
+
+Four-bot natural decision window: [actual one-start readiness, live40second samples and retained legacy limits](reports/natural-four-bot-decisions-2026-10-07/README.md).
+
+Bot charged travel around world obstacles: [original wall failure, actual capsule clearance and post/kerb controls](reports/bot-lunge-obstacles-2026-10-07/README.md).
+
+Bot charge ownership on target/plan loss: [original four failures, legal reset and10 native controls](reports/bot-lunge-plan-lifetime-2026-10-07/README.md).
+
+Actual new-opening Windows package: [startup order, first Home frames and three automatic map flows](reports/new-openings-package-2026-10-07/README.md).
+
 Natural LAN rematch: [strict two-record/rotation expectations and pending paired acceptance](reports/lan-rematch-2026-10-07/README.md).
 
 Packaged preview lifetime: [actual Windows Canvas and motion controls with preserved build/profile evidence](reports/packaged-preview-lifetime-2026-10-07/README.md).

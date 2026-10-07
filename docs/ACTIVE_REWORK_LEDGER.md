@@ -1,3 +1,43 @@
+# New-map live bot checkpoint, October 7
+
+Native45696 fourPASS Bridge/Kanto xClassic/Hero on48d83 actualconsumercharge source. Each one actualReadyGate start/four normalinputwriters/40live seconds. Throws ClassicBridge12/Kanto20 and HeroBridge16/Kanto16; countedlunges/hits2/2,1/0,2/0,1/0 respectively. Bounds/stranding/pursuit controls pass; misses retained, no statistical/fullmatch/allroster/performance claim. All21329 frozen source/preferences restored after terminal native and preservation. Report: natural-four-bot-decisions/new-map-matrix.
+
+Next all-hero bot-feature/role coverage and remaining-map navigation plus combinedrelease afterlaptopcheckedpreview/replay refs. LatestQoLUpdates0d47 unchanged/integrated. Desktopcb5/internal120d older. NoLAN/mobiledata, oldmapartuntouched, ownership unchanged. Noownednative/helper/tab remains. Goal ACTIVE.
+
+# Bot consumer power checkpoint, October 7
+
+Original48352 1FAIL/2PASS:450ms consumerhold+50ms planner reachesrelease threshold butactual90%power spends2.1923s against4.4m unreachabletarget. AIController predictor now usesactualCombatVerbs.LungeChargeRatio withnormalconsumerclamp. Candidate47728 passes19 charge/obstacle/lifetime/aim controls; original/candidate all21329 frozen inputs/preferences restored afterterminal. Report: reports/bot-lunge-consumer-power-2026-10-07.
+
+Next native40LIVEsecond four-bot/oneReadyGate Bridge and Kanto Classic/Hero, then allremainingmap/kit/nav/performance and combinedrelease afterlaptopcheckedmedia/replays. LatestnaturalCove onpriorproductb818:13/12throws,4/3lunges,1/2hits; notstatisticalimprovement. Desktopcb5/internal120d remainolder. Laptopreservationsunchanged/noLAN. Noownednative/helper/tab remains. Goal ACTIVE.
+
+# Natural four-bot checkpoint, October 7
+
+AiDiagnosticProbe now waits actualReadyGate once/clockreleased, fourexisting normalinput writers,40live seconds, teardownrestoresrules/pin/allbots. Native39376 Classic/Hero Lagoon2PASS:13/12throws,4/3lunges,1/2countedhits, no bounds/stranding/pursuit failures. Original3bot/manualstartbridge47404 2PASS retainedlimited. Bothall21327 exactinputs/preferences restored afterterminal. Report: reports/natural-four-bot-decisions-2026-10-07. Counts short/unseeded, no statistical/allmap/allkit/physical-humanclaim.
+
+Next investigate remaining consumer-charge vs full-speed prediction mismatch at longframe boundaries, then true mapnavigation and releaseintegration. AIproductb818/10lifetime+14capsule+6widthstep checks published. Laptop previews/fullreplay reserved pendingcheckedrefs. Desktopcb5/internal120d older. NoLAN, noownednative/helper/tab remains. Goal ACTIVE.
+
+# Charged bot obstruction checkpoint, October 7
+
+Original39196 1FAIL/2PASS releasesfull2.5s dash againstwall1.2m ahead. Capsule-path to firstpossiblecontact correction: candidate41260 passes10/fails3 legacybarecapsule floor fixture controls; failures retained. Actualgamecapsules/floor-control43680 passes14 unchangedassertions. Finalwidth/kerb45336 passes6 includingnarrowpostblock and15cmstepallow. All21327 frozen inputs/preferences restored after everyterminalrun. Report: reports/bot-lunge-obstacles-2026-10-07. This is consumer/physics scope, not allmapnavigation/performance/naturalhitproof.
+
+Next continue actual map navigation/obstacle behavior and combinedrelease after laptop newpreview/fullreplay checks. PC ownsAIController/newopening/caught/slipper lanes; laptoppreview/localReplay/selectedMatchInstaller+HubMenus routes unchanged. NoLAN/mobiledata. Desktopcb5/internal120d older. Noownedheavy/helper/tab remains. SevenCove rawreceiptGit normalization mismatches repairedc1e0973bc; committedbytesnowexactoriginalSHA. Goal ACTIVE.
+
+# Lagoon bot trace checkpoint, October 7
+
+Normal1x Classic/Hero LagoonCove44984 passes2 on f617, all21325 frozen inputs/preferences restored after native/preservation terminal. Actual throws/retrieval decisions occur; zero completed lunges in both samples. Existing diagnostic SliceRunner.Begin overlaps later ReadyGate.Begin, so this is scoped decision/bounds/stranding regression evidence, not improved lunge rate or natural single-start arrival. Complete traces and counts under bot-lunge-plan-lifetime report/cove-realclock. Next reproduce obstacle-blocked bot charged release, then address navigation using actual map failures. Laptop replay candidate/pending newpreviewpublication retains its lanes. No LAN; Desktopcb5/internal120d remain older. Goal ACTIVE.
+
+# Bot charge lifetime checkpoint, October 7
+
+Original37668 has4FAIL/1PASS: targetless Guard/Intercept/Reset/Hunt spend2.5s cooldown by blind release. Candidate34904 passes10 including legal channel cancellation and all5 existing aimed/reach/near-tag controls. All21325 candidate frozen inputs/preferences restore. Earlier restoration-order mistake retained: original verifier sees only intentional AI edit; candidate baseline proves other21324 hashes identical. Scoped report: reports/bot-lunge-plan-lifetime-2026-10-07. Product fix preserves ordinary held input and normal can-reset cancellation, no direct consumer bypass.
+
+Next natural1x bot trace on checked source and combined release after laptop media/replay acceptance. Desktopcb5 and internal120d predate this fix. No owned native/job/helper remains. Goal ACTIVE, no LAN, newmap-only presentation, reservations unchanged.
+
+# Actual package checkpoint, October 7
+
+Windows120d internal candidate builds0/261files/3535838735bytes with all21323 frozen inputs/preferences restored. Actual startup46364 passes login-first, main5.67095seconds and first Home video4->40. Actual single-local-host new3 openings43440/45888/43096 reach real arrival/automatic countdown/active round without diagnostic READY or exceptions. All jobs terminal/profiles restored. Original UTF-8 runner-read failure retained and bridge reclassified without rerun. Four-active-bot criteria fail because explicit review roomBots=0; this is opening-flow acceptance only. Report: reports/new-openings-package-2026-10-07.
+
+Laptop is active in reserved preview/media and full local saved replay lane; agreed MatchInstaller replay-only hook and HubMenus REPLAYS route belong to it. No LAN on mobile data. Desktop remainscb5 pending combined release integration. PC next reproduces AI held-lunge loss on target/plan change through the real consumer. Broad goal remains ACTIVE; old-map presentation excluded.
+
 # Current PC competition checkpoint, October 7
 
 ## Current checked opening unit

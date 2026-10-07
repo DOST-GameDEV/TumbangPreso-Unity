@@ -42,3 +42,15 @@ docs/reports/new-map-openings-2026-10-07/raw/*.json -text -whitespace
 docs/reports/new-map-openings-2026-10-07/raw/*.xml -text -whitespace
 docs/reports/new-map-openings-2026-10-07/*-composition.txt -text -whitespace
 docs/reports/new-map-openings-2026-10-07/*-flow.txt -text -whitespace
+
+docs/reports/new-openings-package-2026-10-07/* -text -whitespace
+
+docs/reports/bot-lunge-plan-lifetime-2026-10-07/* -text -whitespace
+
+docs/reports/bot-lunge-plan-lifetime-2026-10-07/cove-realclock/** -text -whitespace
+
+docs/reports/bot-lunge-obstacles-2026-10-07/** -text -whitespace
+
+docs/reports/natural-four-bot-decisions-2026-10-07/** -text -whitespace
+
+docs/reports/bot-lunge-consumer-power-2026-10-07/** -text -whitespace

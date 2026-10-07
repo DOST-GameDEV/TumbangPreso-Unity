@@ -1,3 +1,25 @@
+### AI-LUNGE-CONSUMER-POWER-1007: real accumulated charge
+
+- [x] Predict release travel using the consumer's actual charge rather than full-power impulse at the planner deadline. Original450ms+50ms boundary failure retained;19 native charge/obstacle/lifetime/aim controls pass. [Evidence](reports/bot-lunge-consumer-power-2026-10-07/README.md).
+- [ ] Natural all-map/all-kit efficacy/performance and combined packaged acceptance.
+
+### AI-NATURAL-DECISIONS-1007: actual single-start live window
+
+- [x] Remove diagnostic manual start competing with ReadyGate. Explicit4bot input writers and40live seconds after one real automatic start; Classic/Hero Lagoon native2PASS,13/12throws and4/3lunges with1/2countedhits. Preserve complete traces and controls. [Evidence](reports/natural-four-bot-decisions-2026-10-07/README.md).
+- [x] Additional Bridge/Kanto Classic/Hero native4PASS on actual consumer-charge source, one automatic start/four input writers and40live seconds each; existing bounds/stranding/pursuit controls pass, misses and limited sample scope retained.
+- [ ] Remaining maps/all-kit decisions, remaining misses, navigation/performance and combined packaged acceptance.
+
+### AI-LUNGE-OBSTACLES-1007: body path before charged release
+
+- [x] Reject a charged release whose actual body path is blocked before tag contact. Original wall-ahead failure retained; native14 aim/lifetime/game-capsule controls and6 final obstacle/width/kerb controls pass. [Evidence](reports/bot-lunge-obstacles-2026-10-07/README.md).
+- [ ] Actual all-map navigation, natural lunge efficacy and performance plus combined Windows release.
+
+### AI-LUNGE-PLAN-LIFETIME-1007: targetless charge ownership
+
+- [x] Fix blind charged releases when Guard/Intercept/Reset/Hunt loses its target. Original4FAIL/1PASS; candidate10PASS through actual consumers and existing aimed/reach controls. Preserve the legal can-reset cancellation and ordinary input path.
+- [x] Normal1x LagoonCove Classic/Hero diagnostic follow-up passes2; both samples have zero completed lunges and include the existing diagnostic opening overlap, so no hit-rate or single-start gate claim.
+- [ ] All-map/kit quality, natural lunge efficacy and combined packaged acceptance. [Evidence and limits](reports/bot-lunge-plan-lifetime-2026-10-07/README.md).
+
 ### UI-LOGIN-FEEDBACK-1006: caret and actionable refusal
 
 - [x] Shared cb5 two-machine active host-loss gate: both live round1 before
