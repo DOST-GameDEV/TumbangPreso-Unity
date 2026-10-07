@@ -1,0 +1,2 @@
+Latejoin normal PlayerInputReader: 13:38:34 UTC screenshot live round1 00:18, localP2 attacker, forwardlookingstreet. Held D using native keyboard five seconds, postinput screenshot inspected. This is actual OS input, no diagnostic intent injection.
+Rejoin same profile/seat: 13:39:33 UTC screenshot live round2 00:51, localP2 defender. Held W nativekeyboard five seconds, then inspected changed forward position in same round. No gameplay intent injection or gate bypass.

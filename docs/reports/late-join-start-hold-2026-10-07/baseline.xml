@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 12:33:57Z" end-time="2026-10-07 12:33:58Z" duration="0.7037405">
+  <test-suite type="TestSuite" id="3608" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2110" result="Failed" site="Child" start-time="2026-10-07 12:33:57Z" end-time="2026-10-07 12:33:58Z" duration="0.703741" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3600" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2110" result="Failed" site="Child" start-time="2026-10-07 12:33:57Z" end-time="2026-10-07 12:33:58Z" duration="0.682529" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="7670" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3601" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2110" result="Failed" site="Child" start-time="2026-10-07 12:33:57Z" end-time="2026-10-07 12:33:58Z" duration="0.670942" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3604" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2108" result="Failed" site="Child" start-time="2026-10-07 12:33:57Z" end-time="2026-10-07 12:33:58Z" duration="0.661026" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2038" name="LateJoinReadyGateTests" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-07 12:33:57Z" end-time="2026-10-07 12:33:58Z" duration="0.623558" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2043" name="IntermissionArrivalReleasesOnlyTheOpeningAndKeepsGameplayInactive" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.IntermissionArrivalReleasesOnlyTheOpeningAndKeepsGameplayInactive" methodname="IntermissionArrivalReleasesOnlyTheOpeningAndKeepsGameplayInactive" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="1589562846" result="Failed" start-time="2026-10-07 12:33:57Z" end-time="2026-10-07 12:33:58Z" duration="0.252240" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.LateJoinReadyGateTests+<IntermissionArrivalReleasesOnlyTheOpeningAndKeepsGameplayInactive>d__16.MoveNext () [0x00048] in /workspace/scratch/0ed9da4aed7f/TumbangPreso-Unity/Assets/TumbangPreso/Tests/PlayMode/LateJoinReadyGateTests.cs:135
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2042" name="PrestartSnapshotDoesNotReleaseTheRealStartBarrier" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.PrestartSnapshotDoesNotReleaseTheRealStartBarrier" methodname="PrestartSnapshotDoesNotReleaseTheRealStartBarrier" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="1776532480" result="Passed" start-time="2026-10-07 12:33:58Z" end-time="2026-10-07 12:33:58Z" duration="0.119174" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2041" name="RebindingDuringAnExistingRoundDoesNotReplayTheOpening" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.RebindingDuringAnExistingRoundDoesNotReplayTheOpening" methodname="RebindingDuringAnExistingRoundDoesNotReplayTheOpening" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="904842189" result="Failed" start-time="2026-10-07 12:33:58Z" end-time="2026-10-07 12:33:58Z" duration="0.079266" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.LateJoinReadyGateTests+<RebindingDuringAnExistingRoundDoesNotReplayTheOpening>d__14.MoveNext () [0x0004e] in /workspace/scratch/0ed9da4aed7f/TumbangPreso-Unity/Assets/TumbangPreso/Tests/PlayMode/LateJoinReadyGateTests.cs:111
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2040" name="RunningSnapshotCancelsAnIntroductionStillInFlight" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.RunningSnapshotCancelsAnIntroductionStillInFlight" methodname="RunningSnapshotCancelsAnIntroductionStillInFlight" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="560022014" result="Failed" start-time="2026-10-07 12:33:58Z" end-time="2026-10-07 12:33:58Z" duration="0.090685" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.LateJoinReadyGateTests+<RunningSnapshotCancelsAnIntroductionStillInFlight>d__13.MoveNext () [0x0006e] in /workspace/scratch/0ed9da4aed7f/TumbangPreso-Unity/Assets/TumbangPreso/Tests/PlayMode/LateJoinReadyGateTests.cs:100
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2039" name="RunningSnapshotReleasesMissedCountdownHoldWithoutStartingAnotherRound" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.RunningSnapshotReleasesMissedCountdownHoldWithoutStartingAnotherRound" methodname="RunningSnapshotReleasesMissedCountdownHoldWithoutStartingAnotherRound" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="36366765" result="Failed" start-time="2026-10-07 12:33:58Z" end-time="2026-10-07 12:33:58Z" duration="0.068560" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A late join missed the one-time countdown and remains frozen.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.LateJoinReadyGateTests+<RunningSnapshotReleasesMissedCountdownHoldWithoutStartingAnotherRound>d__12.MoveNext () [0x00048] in /workspace/scratch/0ed9da4aed7f/TumbangPreso-Unity/Assets/TumbangPreso/Tests/PlayMode/LateJoinReadyGateTests.cs:83
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-Z80puu/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,2 @@
+78fd4776b65e70e3e0ac9e2daf7af26b8c94372247ceaf0dd4edf8b1bb4d4096  TumbangPreso-Unity/Builds/cloud-rejoin1007/TumbangPreso.x86_64
+d3272a3ba36fbe577122dc350a1ac13eeeefe32bf14181128c185e2ac3befe75  TumbangPreso-Unity/Builds/cloud-rejoin1007/TumbangPreso_Data/Managed/TumbangPreso.Runtime.dll
