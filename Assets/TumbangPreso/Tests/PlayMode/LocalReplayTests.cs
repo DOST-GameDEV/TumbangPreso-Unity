@@ -102,13 +102,27 @@ namespace TumbangPreso.PlayTests
             slider.value=2;for(int i=0;i<25;i++)yield return null;
             Assert.AreEqual(2,viewer.Position,.001f);Capture(viewer.Frame,"rewind-2");
             GameObject.Find("CameraMode").GetComponent<UnityEngine.UI.Button>().onClick.Invoke();Assert.AreEqual(0,viewer.FollowSeat);
-            GameObject.Find("Speed").GetComponent<UnityEngine.UI.Button>().onClick.Invoke();Assert.AreEqual(2,viewer.Speed);
+            GameObject.Find("Faster").GetComponent<UnityEngine.UI.Button>().onClick.Invoke();Assert.AreEqual(2,viewer.Speed);
+            GameObject.Find("Slower").GetComponent<UnityEngine.UI.Button>().onClick.Invoke();Assert.AreEqual(1,viewer.Speed);
+            GameObject.Find("Slower").GetComponent<UnityEngine.UI.Button>().onClick.Invoke();Assert.AreEqual(.5f,viewer.Speed);
+            GameObject.Find("Faster").GetComponent<UnityEngine.UI.Button>().onClick.Invoke();
+            GameObject.Find("Faster").GetComponent<UnityEngine.UI.Button>().onClick.Invoke();Assert.AreEqual(2,viewer.Speed);
             GameObject.Find("PlayPause").GetComponent<UnityEngine.UI.Button>().onClick.Invoke();float began=viewer.Position;
             yield return new WaitForSecondsRealtime(.2f);
             GameObject.Find("PlayPause").GetComponent<UnityEngine.UI.Button>().onClick.Invoke();
             Assert.IsTrue(viewer.Paused);Assert.Greater(viewer.Position,began);Assert.Less(viewer.Position-began,.7f);
             viewer.SetClean(true);Assert.IsFalse(GameObject.Find("LocalReplayControls").transform.Find("ReplayToolbar").gameObject.activeSelf);
             viewer.SetClean(false);Assert.IsNull(viewer.Error,viewer.Error);
+            GameObject.Find("JumpStart").GetComponent<UnityEngine.UI.Button>().onClick.Invoke();Assert.AreEqual(0,viewer.Position);
+            GameObject.Find("StepForward").GetComponent<UnityEngine.UI.Button>().onClick.Invoke();Assert.IsTrue(viewer.Paused);Assert.AreEqual(MatchPoseHistory.Interval,viewer.Position,.001f);
+            GameObject.Find("StepBack").GetComponent<UnityEngine.UI.Button>().onClick.Invoke();Assert.AreEqual(0,viewer.Position,.001f);
+            var timeField=GameObject.Find("ExactTime").GetComponent<UnityEngine.UI.InputField>();timeField.text="00:17.25";
+            GameObject.Find("JumpTime").GetComponent<UnityEngine.UI.Button>().onClick.Invoke();Assert.AreEqual(17.25f,viewer.Position,.001f);
+            Assert.IsFalse(viewer.SeekText("00:99"));Assert.AreEqual(17.25f,viewer.Position,.001f);
+            Assert.IsFalse(viewer.SeekText("NaN"));Assert.AreEqual(17.25f,viewer.Position,.001f);
+            Assert.IsTrue(viewer.SeekText("2.25"));Assert.AreEqual(2.25f,viewer.Position,.001f);
+            GameObject.Find("JumpEnd").GetComponent<UnityEngine.UI.Button>().onClick.Invoke();Assert.AreEqual(entry.Manifest.Duration,viewer.Position,.001f);
+            Assert.IsTrue(viewer.SeekText("2"));for(int i=0;i<20;i++)yield return null;
             var controls=GameObject.Find("LocalReplayControls").GetComponent<Canvas>();
             viewer.SetSpeed(.25f);
             var picture=GameObject.Find("CanonicalReplayCanvas").GetComponent<Canvas>();
@@ -154,6 +168,24 @@ namespace TumbangPreso.PlayTests
             for(int i=0;i<10;i++)yield return null;
             yield return TumpUiCapture.Capture("local-replay-library1080",hub.Canvas,1920,1080,false,checkActionBounds:true);
             yield return TumpUiCapture.Capture("local-replay-library720",hub.Canvas,1280,720,false,checkActionBounds:true);
+        }
+        [UnityTest] public IEnumerator SavedRoundNavigationAndExactTimeUseTheActualReplayTimeline()
+        {
+            string folder=Environment.GetEnvironmentVariable("TUMP_REPLAY_ROUNDS");
+            if(string.IsNullOrEmpty(folder))Assert.Ignore("Set TUMP_REPLAY_ROUNDS to a retained two-round recording.");
+            var entry=LocalReplayStore.List(Path.GetDirectoryName(folder)).Single(e=>e.Directory==folder);
+            Assert.IsTrue(LocalReplayPlayback.Open(entry));var viewer=Object.FindAnyObjectByType<LocalReplayPlayback>();
+            float deadline=Time.realtimeSinceStartup+15;
+            while(viewer.Frame==null&&viewer.Error==null&&Time.realtimeSinceStartup<deadline)yield return null;
+            Assert.IsNull(viewer.Error,viewer.Error);
+            GameObject.Find("NextRound").GetComponent<UnityEngine.UI.Button>().onClick.Invoke();
+            Assert.AreEqual(entry.Manifest.Segments.First(s=>s.Round==2).Offset,viewer.Position,.001f);
+            for(int i=0;i<20;i++)yield return null;Assert.IsNull(viewer.Error,viewer.Error);
+            GameObject.Find("PreviousRound").GetComponent<UnityEngine.UI.Button>().onClick.Invoke();Assert.AreEqual(0,viewer.Position,.001f);
+            Assert.IsTrue(viewer.SeekText("00:03.125"));Assert.AreEqual(3.125f,viewer.Position,.001f);
+            Assert.IsFalse(viewer.SeekText("1:60"));Assert.IsFalse(viewer.SeekText("-2"));
+            Assert.IsFalse(viewer.SeekText("999999999999999999"));Assert.AreEqual(3.125f,viewer.Position,.001f);
+            for(int i=0;i<20;i++)yield return null;Assert.IsNull(viewer.Error,viewer.Error);
         }
         [UnityTest] public IEnumerator ContinuousSegmentKeepsPlayingAudioWhileSeekStopsPastCues()
         {

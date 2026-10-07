@@ -12,9 +12,13 @@ is `Replays` inside the current local profile directory. Named validation profil
 have separate destinations and preferences.
 
 The viewer provides a seek bar, pause/play, five-second backward/forward jumps,
-0.25×–4× speed, free camera and P1–P4 follow. Right mouse steers the camera; WASD
+separate Slower/Faster buttons (0.25×–4×), reset to1×, start/end jumps,
+20Hz pose stepping, previous/next round, exact-time entry, free camera and P1–P4 follow. Right mouse steers the camera; WASD
 flies, Q/E changes height, and Shift speeds movement. Space toggles playback,
-arrow keys seek, H hides/shows the interface, and Escape returns to Home. Hide UI
+arrow keys seek, comma/period step while paused, H hides/shows the interface,
+and Escape returns to Home. Enter a time as seconds or MM:SS with optional decimal
+seconds, then press GO. Invalid/out-of-range times leave the current position
+unchanged. Typing a time does not trigger playback hotkeys. Hide UI
 for clean gameplay footage captured with the owner's preferred video recorder.
 Replay data itself is not an MP4 export.
 

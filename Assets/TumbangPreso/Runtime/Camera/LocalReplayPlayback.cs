@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Threading.Tasks;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
@@ -24,6 +25,8 @@ namespace TumbangPreso.CameraSystem
         private Text _status;
         private HubButton _play, _followButton, _speedButton;
         private Slider _seek;
+        private InputField _jumpField;
+        private Text _timeHint;
         private Task<RecordedMatchClip> _loading;
         private int _loaded = -1, _requested = -1, _follow = -1;
         private float _time, _speed = 1;
@@ -90,7 +93,7 @@ namespace TumbangPreso.CameraSystem
         private void BuildControls()
         {
             _bar = HubKit.Span(HubKit.Rect(_canvas.transform, "ReplayToolbar"), Vector2.zero, new Vector2(1, 0),
-                new Vector2(32, 24), new Vector2(32, -220));
+                new Vector2(32, 24), new Vector2(32, -310));
             HubKit.Plate(_bar, "Plate", HubStyle.Night, 1400);
             _seek = HubKit.Rect(_bar, "Timeline").gameObject.AddComponent<ReplayTimelineSlider>();
             HubKit.Span((RectTransform)_seek.transform, new Vector2(0, 1), Vector2.one, new Vector2(28, -54), new Vector2(28, 14));
@@ -103,27 +106,67 @@ namespace TumbangPreso.CameraSystem
             _seek.handleRect = handle.rectTransform; _seek.targetGraphic = handle;
             _seek.minValue = 0; _seek.maxValue = _entry.Manifest.Duration;
             _seek.onValueChanged.AddListener(value => { if (!_seeking) Seek(value); });
-            _play = Control("PlayPause", "PLAY", 28, 170, TogglePause);
-            Control("Rewind", "−5 SEC", 214, 166, () => Seek(_time - 5));
-            Control("Forward", "+5 SEC", 396, 166, () => Seek(_time + 5));
-            _speedButton = Control("Speed", "1x", 578, 170, () => SetSpeed(_speed >= 4 ? .25f : _speed * 2));
-            _followButton = Control("CameraMode", "FREE CAMERA", 764, 270, () => Follow(_follow >= 3 ? -1 : _follow + 1));
-            Control("CleanPicture", "HIDE UI", 1050, 230, () => SetClean(!_clean));
-            Control("CloseReplay", "BACK", 1296, 170, Close);
-            var help = HubKit.Text(_bar, "CameraHelp", "Right mouse + WASD: fly · Q/E: down/up · Shift: faster · Space: play/pause · ←/→: seek · H: hide UI · Esc: back", HubStyle.Body, false, HubStyle.Paper);
+            _play = Control("PlayPause", "PLAY", 28, 150, TogglePause,140);
+            Control("Rewind", "−5 SEC", 194, 150, () => Seek(_time - 5),140);
+            Control("Forward", "+5 SEC", 360, 150, () => Seek(_time + 5),140);
+            Control("Slower", "SLOWER", 526, 150, () => SetSpeed(_speed*.5f),140);
+            _speedButton = Control("Speed", "1x", 692, 150, () => SetSpeed(1),140);
+            Control("Faster", "FASTER", 858, 150, () => SetSpeed(_speed*2),140);
+            _followButton = Control("CameraMode", "FREE CAMERA", 1024, 240, () => Follow(_follow >= 3 ? -1 : _follow + 1),140);
+            Control("CleanPicture", "HIDE UI", 1280, 210, () => SetClean(!_clean),140);
+            Control("CloseReplay", "BACK", 1506, 150, Close,140);
+            Control("JumpStart", "START",28,150,()=>Seek(0));
+            Control("JumpEnd", "END",194,150,()=>{Pause();Seek(_entry.Manifest.Duration);});
+            Control("StepBack", "STEP −",360,150,()=>Step(-1));
+            Control("StepForward", "STEP +",526,150,()=>Step(1));
+            _jumpField=HubField.Build(_bar,"ExactTime","","MM:SS or seconds",24,1401);
+            HubKit.Place((RectTransform)_jumpField.transform,HubKit.BottomLeft,new Vector2(692,60),new Vector2(280,64));
+            Control("JumpTime","GO",988,150,()=>SeekText(_jumpField.text));
+            Control("PreviousRound","PREV ROUND",1154,230,()=>JumpRound(-1));
+            Control("NextRound","NEXT ROUND",1400,230,()=>JumpRound(1));
+            _timeHint=HubKit.Text(_bar,"TimeFeedback","",HubStyle.Body,false,HubStyle.Paper);
+            HubKit.Place(_timeHint.rectTransform,HubKit.BottomLeft,new Vector2(1650,60),new Vector2(180,64));
+            var help = HubKit.Text(_bar, "CameraHelp", "Right mouse: look · WASD: fly · Q/E: height · Space: pause · Arrows: seek · ,/.: step · H: hide UI · Esc: back", HubStyle.Body, false, HubStyle.Paper);
             HubKit.Place(help.rectTransform, HubKit.BottomLeft, new Vector2(28, 4), new Vector2(1730, 46));
         }
-        private HubButton Control(string name, string label, float x, float width, Action action)
+        private HubButton Control(string name, string label, float x, float width, Action action,float y=60)
         {
             var button = HubKit.Button(_bar, name, label, HubStyle.Honey, action, HubStyle.Label);
-            HubKit.Place((RectTransform)button.transform, HubKit.BottomLeft, new Vector2(x, 60), new Vector2(width, 64));
+            HubKit.Place((RectTransform)button.transform, HubKit.BottomLeft, new Vector2(x, y), new Vector2(width, 64));
+            HubKit.Fit(HubKit.LabelOf(button),width-36);
             return button;
         }
         public void TogglePause() { _paused = !_paused; HubKit.SetLabel(_play, _paused ? "PLAY" : "PAUSE"); }
+        private void Pause(){_paused=true;HubKit.SetLabel(_play,"PLAY");GameServices.Audio?.StopReplayCues();}
+        public void Step(int direction){Pause();Seek(_time+Mathf.Sign(direction)*MatchPoseHistory.Interval);}
+        public void JumpRound(int direction)
+        {
+            int round=_entry.Manifest.Segments[SegmentAt(_time)].Round;
+            int target=round+(direction<0?-1:1);
+            foreach(var segment in _entry.Manifest.Segments)if(segment.Round==target){Seek(segment.Offset);return;}
+            Seek(direction<0?0:_entry.Manifest.Duration);
+        }
+        public bool SeekText(string text)
+        {
+            string[] parts=(text??"").Trim().Split(':');double seconds=0;
+            bool valid=parts.Length>=1&&parts.Length<=3;
+            for(int i=0;valid&&i<parts.Length;i++)
+            {
+                valid=double.TryParse(parts[i],NumberStyles.AllowDecimalPoint,CultureInfo.InvariantCulture,out double value)&&
+                    !double.IsNaN(value)&&!double.IsInfinity(value)&&value>=0;
+                if(valid&&i<parts.Length-1)valid=value==Math.Floor(value);
+                if(valid&&parts.Length>1&&i>0)valid=value<60;
+                if(valid)seconds=seconds*60+value;
+            }
+            valid=valid&&seconds<=_entry.Manifest.Duration;
+            if(!valid){if(_timeHint!=null)_timeHint.text="INVALID TIME";return false;}
+            if(_timeHint!=null)_timeHint.text="";Seek((float)seconds);return true;
+        }
         public void SetSpeed(float speed)
         {
             if (float.IsNaN(speed) || float.IsInfinity(speed)) return;
             _speed = Mathf.Clamp(speed, .25f, 4); HubKit.SetLabel(_speedButton, _speed.ToString("0.##") + "x");
+            HubKit.Fit(HubKit.LabelOf(_speedButton),114);
         }
         public void Follow(int seat)
         {
@@ -188,13 +231,16 @@ namespace TumbangPreso.CameraSystem
                 catch (Exception error) { Fail(error.Message); return; }
             }
             var keyboard = Keyboard.current; var mouse = Mouse.current;
-            if (keyboard?.escapeKey.wasPressedThisFrame == true) { Close(); return; }
-            if (keyboard?.spaceKey.wasPressedThisFrame == true) TogglePause();
             var selected=UnityEngine.EventSystems.EventSystem.current?.currentSelectedGameObject;
+            bool editingTime=selected!=null&&selected.GetComponent<InputField>()!=null;
+            if (keyboard?.escapeKey.wasPressedThisFrame == true) { Close(); return; }
+            if (!editingTime&&keyboard?.spaceKey.wasPressedThisFrame == true) TogglePause();
             bool timelineFocused=selected!=null&&selected.GetComponent<Slider>()!=null;
-            if (!timelineFocused&&keyboard?.leftArrowKey.wasPressedThisFrame == true) Seek(_time - 5);
-            if (!timelineFocused&&keyboard?.rightArrowKey.wasPressedThisFrame == true) Seek(_time + 5);
-            if (keyboard?.hKey.wasPressedThisFrame == true) SetClean(!_clean);
+            if (!editingTime&&!timelineFocused&&keyboard?.leftArrowKey.wasPressedThisFrame == true) Seek(_time - 5);
+            if (!editingTime&&!timelineFocused&&keyboard?.rightArrowKey.wasPressedThisFrame == true) Seek(_time + 5);
+            if (!editingTime&&keyboard?.commaKey.wasPressedThisFrame==true)Step(-1);
+            if (!editingTime&&keyboard?.periodKey.wasPressedThisFrame==true)Step(1);
+            if (!editingTime&&keyboard?.hKey.wasPressedThisFrame == true) SetClean(!_clean);
             bool aiming = mouse?.rightButton.isPressed == true && _view?.Ready == true;
             Cursor.lockState = aiming ? CursorLockMode.Locked : CursorLockMode.None; Cursor.visible = !aiming;
             if (_view?.Ready != true || _loading != null || Error != null) return;
