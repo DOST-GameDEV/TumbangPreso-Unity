@@ -1,5 +1,7 @@
 # Charged pursuit retains actual consumer age
 
+Subsequent correction: this original implementation misread the public observed charge ratio as seconds. Its24controls missed a nearby half-charge boundary. See the [ratio-units correction](../bot-charge-ratio-units-2026-10-07/README.md); the original receipts below remain historical evidence rather than final qualification.
+
 The natural Arena gate trace in the PC map-clock report shows planner hold age0.057998 remaining unchanged through Cover while the normal consumer continues charging. On returning to Hunt, the producer timer could be younger than the charge it was controlling and delay a ready aimed release.
 
 Original native49736 reproduces the mismatch with producer age0.05 and actual consumer charge0.45 or1.0. Three cases fail. The underpowered4.4m case correctly holds its first attempt but still delays the next one after the consumer reaches full power; the reachable3.5m partial and4.4m full cases also fail to release. Full original receipts are retained.

@@ -2706,7 +2706,7 @@ namespace TumbangPreso
 
             // Other plans preserve the held button while the normal consumer
             // continues charging. Rejoining the hunt must use that real age.
-            _lungeHeld = Mathf.Max(_lungeHeld, verbs.ObservedLungeCharge) + dt;
+            _lungeHeld = Mathf.Max(_lungeHeld, verbs.ObservedLungeCharge * Balance.LungeChargeTime) + dt;
 
             // Movement stays on the bot's ordinary keyboard headings. The
             // attack needs the motor's bounded point aim: two parallel runners

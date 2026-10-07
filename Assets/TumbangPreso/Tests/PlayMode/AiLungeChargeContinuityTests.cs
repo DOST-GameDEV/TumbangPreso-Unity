@@ -16,6 +16,7 @@ namespace TumbangPreso.PlayTests
             => owner.GetType().GetMethod(method, Hidden).Invoke(owner, args);
 
         [TestCase(.45f, 4.4f, false), TestCase(.45f, 3.5f, true), TestCase(1f, 4.4f, true)]
+        [TestCase(.25f, 1.7f, false)]
         public void ReturningToHuntUsesChargeHeldDuringThePlannerGap(float charge, float distance, bool reachable)
         {
             UI.SceneFlow.Networked = false; UI.SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
@@ -50,9 +51,13 @@ namespace TumbangPreso.PlayTests
             {
                 Assert.Zero(verbs.LungeCooldownLeft, "The planner used full-power travel before the consumer had accumulated full charge.");
                 Assert.IsTrue(actor.Intent.Pressed(Verb.Lunge));
-                // The held consumer now owns full power; ordinary release must work.
-                actor.Intent.CommitFrame(); Call(brain, "StepLungeIntent", actor.Intent, victim, .016f); Call(verbs, "StepLunge", .016f);
-                Assert.Greater(verbs.LungeCooldownLeft, 0);
+                // Only the existing .45s case reaches full power in this step.
+                // A .25s half-charge must keep the normal minimum hold intact.
+                if (charge + .05f >= Balance.LungeChargeTime)
+                {
+                    actor.Intent.CommitFrame(); Call(brain, "StepLungeIntent", actor.Intent, victim, .016f); Call(verbs, "StepLunge", .016f);
+                    Assert.Greater(verbs.LungeCooldownLeft, 0);
+                }
             }
         }
     }
