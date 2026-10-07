@@ -1,0 +1,9 @@
+{
+    "passed": false,
+    "error": "System.InvalidOperationException: usable login did not become ready\r\n  at TumbangPreso.Diagnostics.MapPreviewPlayerProbe+<WaitFor>d__7.MoveNext () [0x0007d] in <4c872bab82de4da7a8e54cbb0f9e3a0c>:0 \r\n  at TumbangPreso.Diagnostics.MapPreviewPlayerProbe+<Observe>d__5.MoveNext () [0x00050] in <4c872bab82de4da7a8e54cbb0f9e3a0c>:0 ",
+    "cpu": "13th Gen Intel(R) Core(TM) i5-13420H",
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "width": 1920,
+    "height": 1080,
+    "samples": []
+}

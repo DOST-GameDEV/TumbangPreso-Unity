@@ -1,0 +1,20 @@
+[
+  {
+    "name": "ordinary-batch",
+    "pid": 58064,
+    "terminal": true,
+    "exitCode": 0,
+    "passed": true,
+    "profileSeedRestored": true,
+    "existingPrefsRestored": 0
+  },
+  {
+    "name": "explicit-dedicated-with-review",
+    "pid": 57244,
+    "terminal": true,
+    "exitCode": 0,
+    "passed": true,
+    "profileSeedRestored": true,
+    "existingPrefsRestored": 0
+  }
+]
