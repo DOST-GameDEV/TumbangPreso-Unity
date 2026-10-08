@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-08 16:27:58Z" end-time="2026-10-08 16:28:08Z" duration="9.3221648">
+  <test-suite type="TestSuite" id="3663" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2154" result="Failed" site="Child" start-time="2026-10-08 16:27:58Z" end-time="2026-10-08 16:28:08Z" duration="9.322165" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3655" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2154" result="Failed" site="Child" start-time="2026-10-08 16:27:58Z" end-time="2026-10-08 16:28:08Z" duration="9.299548" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="78552" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3656" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2154" result="Failed" site="Child" start-time="2026-10-08 16:27:58Z" end-time="2026-10-08 16:28:08Z" duration="9.286086" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3659" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2152" result="Failed" site="Child" start-time="2026-10-08 16:27:58Z" end-time="2026-10-08 16:28:08Z" duration="9.272319" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1861" name="HeldSlipperSurfaceTests" fullname="TumbangPreso.PlayTests.HeldSlipperSurfaceTests" classname="TumbangPreso.PlayTests.HeldSlipperSurfaceTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-08 16:27:58Z" end-time="2026-10-08 16:28:08Z" duration="9.208129" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1862" name="CurrentHeroesHoldEverySelectableShoeOnTheirVisiblePalmSurface" fullname="TumbangPreso.PlayTests.HeldSlipperSurfaceTests.CurrentHeroesHoldEverySelectableShoeOnTheirVisiblePalmSurface" methodname="CurrentHeroesHoldEverySelectableShoeOnTheirVisiblePalmSurface" classname="TumbangPreso.PlayTests.HeldSlipperSurfaceTests" runstate="Runnable" seed="1779302045" result="Failed" start-time="2026-10-08 16:27:58Z" end-time="2026-10-08 16:28:08Z" duration="9.192197" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  dante/tsinelas: actual sole gap 0.007870m (31145 vertices)
+cheska/tsinelas: actual sole gap 0.007870m (31145 vertices)
+sean/tsinelas: actual sole gap 0.007870m (31145 vertices)
+zack/tsinelas: actual sole gap 0.007870m (31145 vertices)
+nemu/tsinelas: actual sole gap 0.007870m (31145 vertices)
+phaister/tsinelas: actual sole gap 0.007870m (31145 vertices)
+rafi/tsinelas: actual sole gap 0.007870m (31145 vertices)
+amihan/tsinelas: actual sole gap 0.007870m (31145 vertices)
+paete/tsinelas: actual sole gap 0.007870m (31145 vertices)
+  Expected: <empty>
+  But was:  < "dante/tsinelas: actual sole gap 0.007870m (31145 vertices)", "cheska/tsinelas: actual sole gap 0.007870m (31145 vertices)", "sean/tsinelas: actual sole gap 0.007870m (31145 vertices)", "zack/tsinelas: actual sole gap 0.007870m (31145 vertices)", "nemu/tsinelas: actual sole gap 0.007870m (31145 vertices)", "phaister/tsinelas: actual sole gap 0.007870m (31145 vertices)", "rafi/tsinelas: actual sole gap 0.007870m (31145 vertices)", "amihan/tsinelas: actual sole gap 0.007870m (31145 vertices)", "paete/tsinelas: actual sole gap 0.007870m (31145 vertices)" >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.HeldSlipperSurfaceTests+<CurrentHeroesHoldEverySelectableShoeOnTheirVisiblePalmSurface>d__3.MoveNext () [0x00609] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\HeldSlipperSurfaceTests.cs:99
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -5,16 +5,22 @@ transferred its work here. The requested Astra reviewer is finished and retired.
 Do not wake either or create agents/chats. No LAN, foreground control, resets,
 cleans, stashes or force pushes. Preserve finalized kits and old-map art.
 
-Current G is ordinary source1d052767f/runtimea26c in the same existing folder.
-The current-UI Windows study69652 sampled28copied-rooted clips across7rigs with
-zero sampling warnings then failed the unchanged Amihan authored arm assertion.
-Keep this art failure open. The opt-in copied-rooted observer now independently
-requires9rigs/36moving clips, two-frame pose retention and no gameplay scripts.
-Native68548 passes the copied-rig control once and all21,447 frozen inputs restore.
-Publish this coherent diagnostic before one SAME G replacement and actual Windows
-qualification. Desktop001d/runtime2005 remains installed. All slipper grip,
-pickup/throw/catch, hero-transition and replay attachment acceptance stays open.
-No active jobs. Evidence: render-copy-sampling-2026-10-08/isolated-player-gate.
+Current G is ordinary source4d0a78924/runtimea60c,261files in the same folder.
+Actual Windows9536 passes36 distinct copied-rooted clips across9rigs with zero
+sampling warnings and two-frame pose retention. Deliberate model swaps make this
+a diagnostic with a recorded-world-change warning, not clean natural footage.
+Original Amihan introduction arm assertion remains a separate failed art gate.
+
+The held default tsinelas gap is now reproduced and fixed in source: the45mm
+carry floor added7.87mm above an anchor already3mm above the palm. Native strict
+78552 fails the9tsinelas pairs. Candidate71516 passes6controls; all90combinations
+of9heroes and10selectable shoes now have zero extra mesh-to-anchor gap. Live
+movement/missing-anchor,FPP possession,model-swap,replay andultimate copies pass.
+All21,449 frozen inputs/prefs restore. Publish this unit then replace SAME G and
+qualify actual Windows/startup/replay/previews before Desktop replacement.
+Desktop001d/runtime2005 preserved. Ground/air/hero-transition and full natural
+attachment quality remain open. No active jobs. See held-slipper-surface-2026-10-09
+and render-copy-sampling-2026-10-08/isolated-player-gate/actual-windows.
 
 ba28 ordinaryWindows G/runtimeea534 is REJECTED after actual191route/74accepted/
 26required consequences:1,991 new nonlegacy sampling warnings in Amihan copied

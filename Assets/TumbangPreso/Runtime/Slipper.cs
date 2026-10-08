@@ -639,7 +639,9 @@ namespace TumbangPreso
             float extent=Mathf.Abs(Vector3.Dot(normal,matrix.MultiplyVector(Vector3.right)))*extents.x
                 +Mathf.Abs(Vector3.Dot(normal,matrix.MultiplyVector(Vector3.up)))*extents.y
                 +Mathf.Abs(Vector3.Dot(normal,matrix.MultiplyVector(Vector3.forward)))*extents.z;
-            return Mathf.Max(Balance.SlipperRestHeight,extent);
+            // Ground/flight clearance is not a palm spacer. The thin tsinelas
+            // needs less than that minimum; its anchor already clears the skin.
+            return Mathf.Max(.001f,extent);
         }
 
         public float RestHeight

@@ -11,6 +11,13 @@
   "previousWindowsPassed": false,
   "previousFailure": "Unchanged Amihan authored introduction arm assertion blocks the last two rigs before copied-rooted sampling.",
   "change": "The existing opt-in flag now runs an independent actual Windows copied-rooted sampling observer through current Home and normal scored entry. It requires all9 rigs and36 clips to move copied bones, two-frame retained poses and disabled controller-free Animator endpoints without gameplay scripts. Original introduction assertions remain unchanged.",
-  "actualNewWindowsObserverValidated": false,
-  "desktopUpdated": false
+  "actualNewWindowsObserverValidated": true,
+  "desktopUpdated": false,
+  "actualWindowsSource": "4d0a78924b28d963aff344c50983d8d01e15d3e2",
+  "actualWindowsPid": 9536,
+  "sampledWindowsClips": 36,
+  "windowsRigs": 9,
+  "windowsSamplingWarnings": 0,
+  "automaticPoseOverwrites": 0,
+  "diagnosticReplayWarning": "Deliberate model replacements change the recorded world within a segment; the observer is not a clean natural recording gate."
 }

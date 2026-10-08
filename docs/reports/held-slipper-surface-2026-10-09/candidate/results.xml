@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-08 16:32:31Z" end-time="2026-10-08 16:33:25Z" duration="53.1458538">
+  <test-suite type="TestSuite" id="3663" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2154" result="Passed" start-time="2026-10-08 16:32:31Z" end-time="2026-10-08 16:33:25Z" duration="53.145854" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3655" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2154" result="Passed" start-time="2026-10-08 16:32:31Z" end-time="2026-10-08 16:33:25Z" duration="53.123281" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="71516" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3656" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2154" result="Passed" start-time="2026-10-08 16:32:31Z" end-time="2026-10-08 16:33:25Z" duration="53.109794" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3659" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2152" result="Passed" start-time="2026-10-08 16:32:31Z" end-time="2026-10-08 16:33:25Z" duration="53.095738" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1383" name="CarryTests" fullname="TumbangPreso.PlayTests.CarryTests" classname="TumbangPreso.PlayTests.CarryTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-08 16:32:32Z" end-time="2026-10-08 16:33:13Z" duration="41.624403" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1385" name="AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor" fullname="TumbangPreso.PlayTests.CarryTests.AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor" methodname="AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor" classname="TumbangPreso.PlayTests.CarryTests" runstate="Runnable" seed="609081043" result="Passed" start-time="2026-10-08 16:32:32Z" end-time="2026-10-08 16:32:56Z" duration="23.949219" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="1386" name="TheViewmodelCarriesItsOwnSlipperInFirstPerson" fullname="TumbangPreso.PlayTests.CarryTests.TheViewmodelCarriesItsOwnSlipperInFirstPerson" methodname="TheViewmodelCarriesItsOwnSlipperInFirstPerson" classname="TumbangPreso.PlayTests.CarryTests" runstate="Runnable" seed="1527439734" result="Passed" start-time="2026-10-08 16:32:56Z" end-time="2026-10-08 16:33:13Z" duration="17.656962" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1861" name="HeldSlipperSurfaceTests" fullname="TumbangPreso.PlayTests.HeldSlipperSurfaceTests" classname="TumbangPreso.PlayTests.HeldSlipperSurfaceTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-08 16:33:13Z" end-time="2026-10-08 16:33:22Z" duration="8.892579" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1862" name="CurrentHeroesHoldEverySelectableShoeOnTheirVisiblePalmSurface" fullname="TumbangPreso.PlayTests.HeldSlipperSurfaceTests.CurrentHeroesHoldEverySelectableShoeOnTheirVisiblePalmSurface" methodname="CurrentHeroesHoldEverySelectableShoeOnTheirVisiblePalmSurface" classname="TumbangPreso.PlayTests.HeldSlipperSurfaceTests" runstate="Runnable" seed="84253022" result="Passed" start-time="2026-10-08 16:33:13Z" end-time="2026-10-08 16:33:22Z" duration="8.891394" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="3189" name="SlipperContactTests" fullname="TumbangPreso.PlayTests.SlipperContactTests" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-08 16:33:22Z" end-time="2026-10-08 16:33:25Z" duration="2.167433" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="3191" name="ModelSwapsRefitSurfaceWithoutReplacingHeldShoe" fullname="TumbangPreso.PlayTests.SlipperContactTests.ModelSwapsRefitSurfaceWithoutReplacingHeldShoe" methodname="ModelSwapsRefitSurfaceWithoutReplacingHeldShoe" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" seed="983781719" result="Passed" start-time="2026-10-08 16:33:22Z" end-time="2026-10-08 16:33:23Z" duration="0.586141" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="3192" name="ReplayCopyRefitsStalePoseAndRetainsLiveShoe" fullname="TumbangPreso.PlayTests.SlipperContactTests.ReplayCopyRefitsStalePoseAndRetainsLiveShoe" methodname="ReplayCopyRefitsStalePoseAndRetainsLiveShoe" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" seed="1862267679" result="Passed" start-time="2026-10-08 16:33:23Z" end-time="2026-10-08 16:33:24Z" duration="1.471938" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="3197" name="UltimateCopyDoesNotBakeAStaleLiveCarryPose" fullname="TumbangPreso.PlayTests.SlipperContactTests.UltimateCopyDoesNotBakeAStaleLiveCarryPose" methodname="UltimateCopyDoesNotBakeAStaleLiveCarryPose" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" seed="391174444" result="Passed" start-time="2026-10-08 16:33:24Z" end-time="2026-10-08 16:33:25Z" duration="0.104019" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

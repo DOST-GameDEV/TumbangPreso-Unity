@@ -1,0 +1,193 @@
+{
+  "source": "4d0a78924b28d963aff344c50983d8d01e15d3e2",
+  "pid": 9536,
+  "actualPlayer": true,
+  "rigs": 9,
+  "sampledClips": 36,
+  "allClipsMoveCopiedBones": true,
+  "samplingWarnings": 0,
+  "disabledControllerFree": true,
+  "rows": [
+    {
+      "hero": "dante",
+      "clip": "rooted-struggle",
+      "movedBones": 7
+    },
+    {
+      "hero": "dante",
+      "clip": "plant-heave",
+      "movedBones": 7
+    },
+    {
+      "hero": "dante",
+      "clip": "root-breakout",
+      "movedBones": 7
+    },
+    {
+      "hero": "dante",
+      "clip": "feared-flee",
+      "movedBones": 7
+    },
+    {
+      "hero": "cheska",
+      "clip": "rooted-struggle",
+      "movedBones": 7
+    },
+    {
+      "hero": "cheska",
+      "clip": "plant-heave",
+      "movedBones": 7
+    },
+    {
+      "hero": "cheska",
+      "clip": "root-breakout",
+      "movedBones": 7
+    },
+    {
+      "hero": "cheska",
+      "clip": "feared-flee",
+      "movedBones": 7
+    },
+    {
+      "hero": "sean",
+      "clip": "rooted-struggle",
+      "movedBones": 7
+    },
+    {
+      "hero": "sean",
+      "clip": "plant-heave",
+      "movedBones": 7
+    },
+    {
+      "hero": "sean",
+      "clip": "root-breakout",
+      "movedBones": 7
+    },
+    {
+      "hero": "sean",
+      "clip": "feared-flee",
+      "movedBones": 7
+    },
+    {
+      "hero": "zack",
+      "clip": "rooted-struggle",
+      "movedBones": 7
+    },
+    {
+      "hero": "zack",
+      "clip": "plant-heave",
+      "movedBones": 7
+    },
+    {
+      "hero": "zack",
+      "clip": "root-breakout",
+      "movedBones": 7
+    },
+    {
+      "hero": "zack",
+      "clip": "feared-flee",
+      "movedBones": 7
+    },
+    {
+      "hero": "nemu",
+      "clip": "rooted-struggle",
+      "movedBones": 7
+    },
+    {
+      "hero": "nemu",
+      "clip": "plant-heave",
+      "movedBones": 7
+    },
+    {
+      "hero": "nemu",
+      "clip": "root-breakout",
+      "movedBones": 7
+    },
+    {
+      "hero": "nemu",
+      "clip": "feared-flee",
+      "movedBones": 7
+    },
+    {
+      "hero": "phaister",
+      "clip": "rooted-struggle",
+      "movedBones": 7
+    },
+    {
+      "hero": "phaister",
+      "clip": "plant-heave",
+      "movedBones": 7
+    },
+    {
+      "hero": "phaister",
+      "clip": "root-breakout",
+      "movedBones": 7
+    },
+    {
+      "hero": "phaister",
+      "clip": "feared-flee",
+      "movedBones": 7
+    },
+    {
+      "hero": "rafi",
+      "clip": "rooted-struggle",
+      "movedBones": 7
+    },
+    {
+      "hero": "rafi",
+      "clip": "plant-heave",
+      "movedBones": 7
+    },
+    {
+      "hero": "rafi",
+      "clip": "root-breakout",
+      "movedBones": 7
+    },
+    {
+      "hero": "rafi",
+      "clip": "feared-flee",
+      "movedBones": 7
+    },
+    {
+      "hero": "amihan",
+      "clip": "rooted-struggle",
+      "movedBones": 7
+    },
+    {
+      "hero": "amihan",
+      "clip": "plant-heave",
+      "movedBones": 7
+    },
+    {
+      "hero": "amihan",
+      "clip": "root-breakout",
+      "movedBones": 7
+    },
+    {
+      "hero": "amihan",
+      "clip": "feared-flee",
+      "movedBones": 7
+    },
+    {
+      "hero": "paete",
+      "clip": "rooted-struggle",
+      "movedBones": 7
+    },
+    {
+      "hero": "paete",
+      "clip": "plant-heave",
+      "movedBones": 7
+    },
+    {
+      "hero": "paete",
+      "clip": "root-breakout",
+      "movedBones": 7
+    },
+    {
+      "hero": "paete",
+      "clip": "feared-flee",
+      "movedBones": 7
+    }
+  ],
+  "scope": "Actual Windows copied-rig serialized clip sampling; intro art studies, accepted ultimate phases, carry/replay and full tournament performance remain separate gates."
+}
