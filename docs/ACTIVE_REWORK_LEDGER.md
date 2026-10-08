@@ -1,3 +1,16 @@
+# Current PC unit, October9
+
+Companion recording source is ready for publication: actual original fifth-seat
+slipper1FAIL, candidate/final3PASS PlayMode plus separate connection admission1PASS.
+Format15 records doll bodies/holders; protocol154 excludes old decoders. All21,451
+source inputs/preferences restore. No active Unity/player/helper remains.
+Desktop001d/runtime2005 and internalG0e98/runtime3e6b remain unchanged.
+Next publish this coherent unit, replace SAME G only including ef6 title timer,
+then qualify actual Windows startup/replays/previews before Desktop replacement.
+Natural doll birth/despawn/all-companion/peer and full tournament acceptance stay
+open. Root owns work; laptop human-paused and reviewer retired. Preserve private
+3files and old-map art. No reset/clean/stash/force/newagents/foreground control.
+
 # Active competition checkpoint, October 8
 
 Goal ACTIVE. Root is the sole owner after the human paused the laptop and

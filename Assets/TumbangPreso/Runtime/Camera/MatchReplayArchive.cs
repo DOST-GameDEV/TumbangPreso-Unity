@@ -117,7 +117,7 @@ namespace TumbangPreso.CameraSystem
             if(captureEndpoint&&(end!=Time.time||GameServices.Match?.PresentationMatchId!=_match||GameServices.Match.RoundNumber!=_round))
                 error="The closing replay identity changed.";
             if(_unsafeAt>=start)error="The recorded world changed within this segment.";
-            var objects=new List<RecordedObjectTrack>(13);
+            var objects=new List<RecordedObjectTrack>(RecordedMatchClip.ObjectLimit);
             var round=GameServices.Round;
             for(int seat=0;error==null&&seat<4;seat++)
             {
@@ -134,6 +134,7 @@ namespace TumbangPreso.CameraSystem
                 var pose=RetainProp(prop,start,end,captureEndpoint);
                 if(pose==null){error="Prop pose history is incomplete.";break;}
                 objects.Add(new RecordedObjectTrack{Kind=prop.Kind,Seat=prop.Seat,Skin=prop.Skin,Person=prop.Person,
+                    DisplayName=prop.Kind==RecordedObjectKind.Companion?Abilities.VoodooDollBody.DisplayName:null,
                     VisualKey=VisualKey(prop.Track.Source),Pose=pose});
             }
             int from=_fields.FindLastIndex(f=>f.Time<=start),to=_fields.FindIndex(f=>f.Time>=end);
@@ -213,6 +214,12 @@ namespace TumbangPreso.CameraSystem
                 var pet=actor.GetComponent<CharacterVisual>()?.Companion;if(pet==null)continue;
                 AddProp(round,pet.gameObject,RecordedObjectKind.Familiar,actor.PlayerSlot,0,actor.AbilitySystem?.HeroId,pet.gameObject,ref changed);
             }
+            foreach(var actor in round.Bodies)
+            {
+                if(actor==null||actor.GetComponent<Abilities.VoodooDollBody>()==null)continue;
+                var model=actor.GetComponent<CharacterVisual>()?.Model;if(model==null)continue;
+                AddProp(round,actor.gameObject,RecordedObjectKind.Companion,actor.PlayerSlot,-1,PhaisterDollArt.Id,model,ref changed);
+            }
             if(_props.Count>0&&(changed||_desiredProps.Count!=_props.Count))_unsafeAt=Time.time;
             _props.Clear();_props.AddRange(_desiredProps);
             _desiredProps.Clear();
@@ -223,7 +230,7 @@ namespace TumbangPreso.CameraSystem
             for(int i=0;i<_props.Count;i++)
                 if(_props[i].Source==source&&_props[i].Track.Source==model){entry=_props[i];break;}
             if(entry==null){changed=true;entry=new Prop{Source=source,Kind=kind,Seat=seat,Skin=skin,Person=person,
-                Track=new MatchPoseHistory.Track(round.PlayerAt(Mathf.Clamp(seat,0,3)),model)};}
+                Track=new MatchPoseHistory.Track(round.BodyAt(seat)??round.PlayerAt(0),model)};}
             _desiredProps.Add(entry);
         }
         private void Moment(MatchFlair.Kind kind,int actor,int subject,Vector3 at,float strength)
@@ -231,7 +238,7 @@ namespace TumbangPreso.CameraSystem
             CheckIdentity();
             if(!NetAuthority.ShouldResolve()||_match<=0||GameServices.Round?.RoundActive!=true||GameServices.Match.IsWarmupBuffer)return;
             if(kind!=MatchFlair.Kind.Tag&&kind!=MatchFlair.Kind.LataDown)return;
-            if(actor<0||actor>=4)return;
+            if(!CompanionSeats.IsBody(actor))return;
             float now=Time.time;
             if(_pending.Any(p=>Mathf.Abs(p.Contact-now)<.03f&&p.Actor==actor&&p.Subject==subject))return;
             if(_pending.Count>=Capacity)_pending.RemoveAt(0);
@@ -244,7 +251,7 @@ namespace TumbangPreso.CameraSystem
         private void Retain(Pending pending)
         {
             if(_unsafeAt>=pending.Start){LastSkip="Ability visual track incomplete for this window";return;}
-            var objects=new List<RecordedObjectTrack>(13);var round=GameServices.Round;
+            var objects=new List<RecordedObjectTrack>(RecordedMatchClip.ObjectLimit);var round=GameServices.Round;
             for(int seat=0;seat<4;seat++)
             {
                 var actor=round.PlayerAt(seat);var track=_history.ForSeat(seat);
@@ -259,7 +266,9 @@ namespace TumbangPreso.CameraSystem
                 var pose=prop.Track.Retain(pending.Start,pending.End);
                 if(pose!=null&&pending.ContactPoses.TryGetValue(prop.Track,out var key))pose=pose.WithKey(key);
                 if(pose==null){LastSkip=$"Incomplete {prop.Kind} P{prop.Seat+1}: source={prop.Source!=null}, ready={prop.Track.Ready}, recorded={prop.Track.Oldest:F3}..{prop.Track.Newest:F3}, needed={pending.Start:F3}..{pending.End:F3}";return;}
-                objects.Add(new RecordedObjectTrack{Kind=prop.Kind,Seat=prop.Seat,Skin=prop.Skin,Person=prop.Person,VisualKey=VisualKey(prop.Track.Source),Pose=pose});
+                objects.Add(new RecordedObjectTrack{Kind=prop.Kind,Seat=prop.Seat,Skin=prop.Skin,Person=prop.Person,
+                    DisplayName=prop.Kind==RecordedObjectKind.Companion?Abilities.VoodooDollBody.DisplayName:null,
+                    VisualKey=VisualKey(prop.Track.Source),Pose=pose});
             }
             int from=_fields.FindLastIndex(f=>f.Time<=pending.Start),to=_fields.FindIndex(f=>f.Time>=pending.End);
             if(from<0||to<from){LastSkip="Incomplete field history";return;}

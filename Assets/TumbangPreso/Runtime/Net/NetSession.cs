@@ -579,7 +579,9 @@ namespace TumbangPreso.Net
         // ASTRAReworks had taken 146 to 151 for other things.)
         // 153: the Arena's taya box is round and sized by its layout (`Core.Confinement.Use`). Nothing new is sent,
         // but a peer on 152 would judge throws and tags by the square, so the two may not meet.
-        public const int ProtocolVersion = 153;
+        // 154: replay clip15 preserves companion bodies, seats and held slippers.
+        // Older peers cannot decode these new highlight payloads.
+        public const int ProtocolVersion = 154;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

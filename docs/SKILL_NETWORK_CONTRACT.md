@@ -1,4 +1,16 @@
-## Current protocol153: Arena layout confinement
+## Current protocol154: companion replay bodies
+
+Clip format15 adds summoned doll body tracks and permits companion seats4-7
+for recorded slippers and holder identities. Player tracks remain bounded to
+seats0-3. Clip size and pose allocation limits are retained; the bounded object
+limit is21 for four players, shoes, pets, dolls, doll shoes and one can.
+Connection admission rejects153 peers whose replay decoder cannot read these
+payloads. Saved formats10-14 retain their prior four-player bounds.
+Native capture and standalone playback use a real summoned doll and its held
+slipper. Actual matching rebuilt peers and natural birth/despawn recording
+acceptance remain pending.
+
+## Protocol153: Arena layout confinement
 
 Arena uses a circular danger zone sized by its shared layout; other maps retain
 the square default. Every peer derives the same shape/radius from layout state.

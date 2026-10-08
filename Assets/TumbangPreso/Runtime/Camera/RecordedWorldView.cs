@@ -28,6 +28,7 @@ namespace TumbangPreso.CameraSystem
         private RecordedSceneryView _scenery;
         private RecordedArenaEffects _arenaEffects;
         private int _followSeat=-1;
+        private static bool IsBody(RecordedObjectTrack track)=>track.Kind==RecordedObjectKind.Player||track.Kind==RecordedObjectKind.Companion;
         private Vector3 _followOffset;
         private GameObject _stage;
         private IDisposable _audioMix;
@@ -70,7 +71,7 @@ namespace TumbangPreso.CameraSystem
         public void FollowCamera(int seat,Vector3 offset){_followSeat=seat;_followOffset=offset;}
         public bool TryPlayerPosition(int seat,out Vector3 position)
         {
-            var item=_items.FirstOrDefault(i=>i.Track.Kind==RecordedObjectKind.Player&&i.Track.Seat==seat);
+            var item=_items.FirstOrDefault(i=>IsBody(i.Track)&&i.Track.Seat==seat);
             position=item!=null?item.Bones[0].position:Vector3.zero;return item!=null;
         }
         public void ShowLabels(bool visible)
@@ -122,10 +123,10 @@ namespace TumbangPreso.CameraSystem
                     if(source==null){UnavailableReason="Missing recorded art: "+track.Kind+" P"+(track.Seat+1)+" skin="+track.Skin+" person="+track.Person;return;}
                     string visualKey=MatchReplayArchive.VisualKey(source);
                     if(visualKey!=track.VisualKey){UnavailableReason="Changed recorded art: "+track.Kind+" P"+(track.Seat+1)+" expected="+track.VisualKey+" actual="+visualKey;return;}
-                    var history=new MatchPoseHistory.Track(standalone?null:GameServices.Round.PlayerAt(Mathf.Clamp(track.Seat,0,3)),source);
+                    var history=new MatchPoseHistory.Track(standalone?null:GameServices.Round.BodyAt(track.Seat),source);
                     history.Record(Time.time);history.Record(Time.time+.05f);
                     var copy=history.Clone(_stage.transform);if(copy==null){UnavailableReason="Render copy failed: "+track.Kind;return;}
-                    if(standalone&&track.Kind==RecordedObjectKind.Player)
+                    if(standalone&&IsBody(track))
                     {
                         // CharacterVisual adds this non-rendering carry anchor
                         // to the live rig. Its exact transform is in the poses,
@@ -145,8 +146,13 @@ namespace TumbangPreso.CameraSystem
                         string missing=track.Pose.Paths.FirstOrDefault(path=>path.Length>0&&copy.Root.transform.Find(path)==null);
                         UnavailableReason="Recorded pose binding changed: "+track.Kind+" P"+(track.Seat+1)+" missing="+missing;return;
                     }
-                    if(!source.scene.IsValid())ToonSkin.Apply(copy.Root,track.Kind==RecordedObjectKind.Player?ToonSkin.PersonOutlineWidth:ToonSkin.PropOutlineWidth,
-                        track.Kind==RecordedObjectKind.Player?RosterBook.Load()?.PersonArt(track.Skin,clip.Mode)?.Palette:null);
+                    if(!source.scene.IsValid())
+                    {
+                        var art=track.Kind==RecordedObjectKind.Companion?PhaisterDollArt.LoadArt():
+                            track.Kind==RecordedObjectKind.Player?RosterBook.Load()?.PersonArt(track.Skin,clip.Mode):null;
+                        ToonSkin.Apply(copy.Root,IsBody(track)?ToonSkin.PersonOutlineWidth:ToonSkin.PropOutlineWidth,art?.Palette);
+                        if(track.Kind==RecordedObjectKind.Companion)PhaisterDollArt.ApplyGlow(copy.Root);
+                    }
                     MaterialPropertyBlock[] highlightDefaults=null;
                     if(track.Kind==RecordedObjectKind.Slipper)
                     {
@@ -167,8 +173,8 @@ namespace TumbangPreso.CameraSystem
                 if(RenderSettings.skybox!=null)_sky=new Material(RenderSettings.skybox){name="RecordedSky"};
                 var fill=new GameObject("RecordedWeatherFill");fill.transform.SetParent(_stage.transform,false);_skyFill=fill.AddComponent<Light>();
                 _skyFill.type=LightType.Point;_skyFill.shadows=LightShadows.None;_skyFill.enabled=false;
-                var focus=_items.FirstOrDefault(i=>i.Track.Kind==RecordedObjectKind.Player&&i.Track.Seat==clip.Actor);
-                var subject=_items.FirstOrDefault(i=>clip.Subject>=0?i.Track.Kind==RecordedObjectKind.Player&&i.Track.Seat==clip.Subject:i.Track.Kind==RecordedObjectKind.Can);
+                var focus=_items.FirstOrDefault(i=>IsBody(i.Track)&&i.Track.Seat==clip.Actor);
+                var subject=_items.FirstOrDefault(i=>clip.Subject>=0?IsBody(i.Track)&&i.Track.Seat==clip.Subject:i.Track.Kind==RecordedObjectKind.Can);
                 if(focus==null||subject==null)return;
                 Vector3 a=focus.Bones[0].position,b=subject.Bones[0].position;
                 Vector3 centre=(a+b)*.5f+Vector3.up*.6f;
@@ -209,7 +215,7 @@ namespace TumbangPreso.CameraSystem
                 var credit=OwnerUiLayout.Rect(_canvas.transform,"RecordedCredit");credit.anchorMin=credit.anchorMax=new Vector2(0,1);credit.pivot=new Vector2(0,1);
                 credit.anchoredPosition=new Vector2(48,-96);credit.sizeDelta=new Vector2(980,44);
                 var words=OwnerUiLayout.Text(credit,"ReplayOutcome",PlayerIdentity.Label(clip.Actor)+" · "+(focus.Track.DisplayName??"PLAYER")+
-                    (clip.Subject>=0?" CAUGHT "+PlayerIdentity.Label(clip.Subject)+" · "+(_items.FirstOrDefault(i=>i.Track.Kind==RecordedObjectKind.Player&&i.Track.Seat==clip.Subject)?.Track.DisplayName??"PLAYER"):" / "+clip.Reason),28,OwnerUiLayout.TypeRole.Display);
+                    (clip.Subject>=0?" CAUGHT "+PlayerIdentity.Label(clip.Subject)+" · "+(_items.FirstOrDefault(i=>IsBody(i.Track)&&i.Track.Seat==clip.Subject)?.Track.DisplayName??"PLAYER"):" / "+clip.Reason),28,OwnerUiLayout.TypeRole.Display);
                 OwnerUiLayout.Fill(words.rectTransform);words.color=CourtPresentationPalette.Paper;
                 var outline=words.gameObject.AddComponent<Outline>();outline.effectColor=UI.UiTheme.InGameOutline;outline.effectDistance=new Vector2(1.5f,-1.5f);
                 var footer=OwnerUiLayout.Rect(_canvas.transform,"ReplayState");footer.anchorMin=footer.anchorMax=Vector2.zero;footer.pivot=Vector2.zero;
@@ -236,6 +242,7 @@ namespace TumbangPreso.CameraSystem
         private static GameObject CataloguedObject(RecordedObjectTrack track,Core.GameMode mode)
         {
             var book=RosterBook.Load();if(book==null)return null;
+            if(track.Kind==RecordedObjectKind.Companion)return track.Person==PhaisterDollArt.Id?PhaisterDollArt.LoadArt()?.Model:null;
             if(track.Kind==RecordedObjectKind.Player)return book.PersonArt(track.Skin,mode)?.Model;
             if(track.Kind==RecordedObjectKind.Familiar)return book.People.FirstOrDefault(p=>p!=null&&p.Id==track.Person)?.PetModel;
             return CataloguedProp(track);
@@ -243,7 +250,9 @@ namespace TumbangPreso.CameraSystem
         private static GameObject Source(RecordedObjectTrack track)
         {
             var round=GameServices.Round;if(round==null)return null;
-            var actor=round.PlayerAt(track.Seat);
+            var actor=round.BodyAt(track.Seat);
+            if(track.Kind==RecordedObjectKind.Companion)
+                return actor?.GetComponent<Abilities.VoodooDollBody>()!=null?actor.GetComponent<CharacterVisual>()?.Model:null;
             if(track.Kind==RecordedObjectKind.Player)
                 return actor!=null&&actor.CharacterIndex==track.Skin&&Core.Roster.PersonIdAt(actor.Mode,actor.CharacterIndex)==track.Person?actor.GetComponent<CharacterVisual>()?.Model:null;
             if(track.Kind==RecordedObjectKind.Familiar)return actor?.GetComponent<CharacterVisual>()?.Companion?.gameObject;
@@ -293,7 +302,7 @@ namespace TumbangPreso.CameraSystem
                 item.Track.Pose.Apply(item.Bones,time);var state=item.Track.Pose.StateAt(time);
                 if(item.Contact!=null)
                 {
-                    bool player=item.Track.Kind==RecordedObjectKind.Player,shoe=item.Track.Kind==RecordedObjectKind.Slipper;
+                    bool player=IsBody(item.Track),shoe=item.Track.Kind==RecordedObjectKind.Slipper;
                     if(shoe && (state.State&255)!=(int)SlipperState.Loose)item.Contact.Hide();
                     else
                     {
@@ -318,7 +327,7 @@ namespace TumbangPreso.CameraSystem
                     if(item.HighlightDefaults!=null)surface.SetPropertyBlock(item.HighlightDefaults[surfaceIndex]);
                     surface.GetPropertyBlock(_coatBlock);_coatBlock.SetFloat("_TayaCue",0);
                     _coatBlock.SetFloat("_DepthReadability",item.Track.Kind==RecordedObjectKind.Slipper?0:WorldCueProfile.Current.DistanceReadability);
-                    if(item.Track.Kind==RecordedObjectKind.Player)
+                    if(IsBody(item.Track))
                         _coatBlock.SetVector("_WorldBody",new Vector4(item.Bones[0].position.y,1.6f,1,0));
                     if(item.Track.Kind==RecordedObjectKind.Can)
                     {Vector3 axis=item.Bones[0].up;_coatBlock.SetVector("_WorldMetalAxis",new Vector4(axis.x,axis.y,axis.z,1));}
@@ -365,7 +374,7 @@ namespace TumbangPreso.CameraSystem
                 _visibleFields.Add(field.Id);
                 if(_fields.TryGetValue(field.Id,out var existing)&&!existing.Matches(field.State)){existing.Dispose();_fields.Remove(field.Id);}
                 if(!_fields.TryGetValue(field.Id,out var view))
-                    _fields[field.Id]=view=new RecordedFieldView(_stage.transform,field.State,_items.FirstOrDefault(i=>i.Track.Kind==RecordedObjectKind.Player&&i.Track.Seat==field.State.Owner)?.Copy.Root,_items.FirstOrDefault(i=>i.Track.Kind==RecordedObjectKind.Slipper&&i.Track.Seat==field.State.Owner)?.Copy.Root);
+                    _fields[field.Id]=view=new RecordedFieldView(_stage.transform,field.State,_items.FirstOrDefault(i=>IsBody(i.Track)&&i.Track.Seat==field.State.Owner)?.Copy.Root,_items.FirstOrDefault(i=>i.Track.Kind==RecordedObjectKind.Slipper&&i.Track.Seat==field.State.Owner)?.Copy.Root);
                 var state=field.State;
                 if(nextFrame!=null&&(state.Type==RecordedSpecialFields.Kuro||state.Type==RecordedSpecialFields.Ward))
                 {
@@ -410,7 +419,7 @@ namespace TumbangPreso.CameraSystem
             foreach(var field in _fields.Values)field.Visible(true);
             foreach(var trail in _trails.Values)trail.Visible(true);
             if(!_standalone)
-            foreach(var actor in GameServices.Round.Players)if(actor!=null){Hide(actor.gameObject);var pet=actor.GetComponent<CharacterVisual>()?.Companion;if(pet!=null)Hide(pet.gameObject);}
+            foreach(var actor in GameServices.Round.Bodies)if(actor!=null){Hide(actor.gameObject);var pet=actor.GetComponent<CharacterVisual>()?.Companion;if(pet!=null)Hide(pet.gameObject);}
             foreach(var shoe in Object.FindObjectsByType<Slipper>())Hide(shoe.gameObject);
             if(!_standalone&&GameServices.Round.Lata!=null)Hide(GameServices.Round.Lata.gameObject);
             foreach(var arms in Object.FindObjectsByType<ViewmodelArms>())Hide(arms.gameObject);

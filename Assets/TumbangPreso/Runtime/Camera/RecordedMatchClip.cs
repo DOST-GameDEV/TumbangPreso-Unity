@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace TumbangPreso.CameraSystem
 {
-    public enum RecordedObjectKind : byte { Player, Slipper, Can, Familiar }
+    public enum RecordedObjectKind : byte { Player, Slipper, Can, Familiar, Companion }
     public sealed class RecordedObjectTrack
     {
         public RecordedObjectKind Kind;
@@ -20,8 +20,10 @@ namespace TumbangPreso.CameraSystem
     { public float Time,Pitch,Gain;public Vector3 Position;public string Id; }
     public sealed class RecordedMatchClip
     {
+        //15: companion bodies/slippers retain their own bounded seats and holders.
         //14: barricade fields preserve curved-wall geometry and remaining hits.
-        public const int WireVersion=14;
+        public const int WireVersion=15;
+        public const int ObjectLimit=21; // Four players, shoes, pets, dolls, doll shoes and one can.
         public const int ByteLimit=2*1024*1024;
         public const int RawByteLimit=12*1024*1024;
         public const int SoundCueLimit=512;
@@ -113,19 +115,22 @@ namespace TumbangPreso.CameraSystem
                 int version=reader.ReadInt32();
                 // Retain earlier field layouts for saved clips. Arc walls require14;
                 // live network admission separately requires the current protocol.
-                if(version!=WireVersion&&version!=13&&version!=12&&version!=11&&version!=10)throw new InvalidDataException("Unsupported clip schema");
+                if(version!=WireVersion&&version!=14&&version!=13&&version!=12&&version!=11&&version!=10)throw new InvalidDataException("Unsupported clip schema");
+                int bodies=version>=15?CompanionSeats.BodyCount:Balance.PlayerCount;
                 var result=new RecordedMatchClip{MatchId=reader.ReadInt64(),Id=reader.ReadInt64(),Round=reader.ReadInt32(),Actor=reader.ReadInt32(),Subject=reader.ReadInt32(),Mode=(GameMode)reader.ReadByte()};
                 result.Map=ReadText(reader,64);result.Reason=ReadText(reader,96);
                 result.Start=reader.ReadSingle();result.End=reader.ReadSingle();result.Contact=reader.ReadSingle();
-                if(result.MatchId<=0||result.Id<=0||result.Round<1||result.Round>64||result.Actor<0||result.Actor>=4||result.Subject< -1||result.Subject>=4
+                if(result.MatchId<=0||result.Id<=0||result.Round<1||result.Round>64||result.Actor<0||result.Actor>=bodies||result.Subject< -1||result.Subject>=bodies
                     ||!Enum.IsDefined(typeof(GameMode),result.Mode)||!Finite(result.Start)||!Finite(result.End)||!Finite(result.Contact)
                     ||result.Duration<(local?.00001f:.5f)||result.Duration>8.1f||result.Contact<result.Start||result.Contact>result.End)throw new InvalidDataException("Invalid clip identity/window");
-                int count=Count(reader,1,13);result.Objects=new RecordedObjectTrack[count];
+                int count=Count(reader,1,version>=15?ObjectLimit:13);result.Objects=new RecordedObjectTrack[count];
                 int totalSamples=0;
                 for(int i=0;i<count;i++)
                 {
                     var item=new RecordedObjectTrack{Kind=(RecordedObjectKind)reader.ReadByte(),Seat=reader.ReadInt32(),Skin=reader.ReadInt32(),Person=ReadText(reader,64),VisualKey=ReadText(reader,64),DisplayName=ReadText(reader,96)};
-                    if(!Enum.IsDefined(typeof(RecordedObjectKind),item.Kind)||item.Seat< -1||item.Seat>=4||item.Skin< -1||item.Skin>128)throw new InvalidDataException("Invalid recorded object");
+                    if(!Enum.IsDefined(typeof(RecordedObjectKind),item.Kind)||item.Seat< -1||item.Seat>=bodies||item.Skin< -1||item.Skin>128
+                        ||(item.Kind==RecordedObjectKind.Player&&!CompanionSeats.IsPlayer(item.Seat))
+                        ||(item.Kind==RecordedObjectKind.Companion&&(version<15||!CompanionSeats.IsCompanion(item.Seat))))throw new InvalidDataException("Invalid recorded object");
                     int bones=Count(reader,1,MatchPoseHistory.TransformLimit),frames=Count(reader,2,MatchPoseHistory.Samples);
                     totalSamples+=bones*frames;if(totalSamples>RawByteLimit/41)throw new InvalidDataException("Pose allocation exceeds its budget");
                     var paths=new string[bones];
@@ -140,7 +145,7 @@ namespace TumbangPreso.CameraSystem
                         if(!Finite(rim)||rim<0||rim>10)throw new InvalidDataException("Invalid recorded rim");
                         bool coat=reader.ReadBoolean();float frost=reader.ReadSingle(),flash=reader.ReadSingle();var element=(StunElement)reader.ReadByte();
                         if(!Finite(frost)||!Finite(flash)||frost<0||frost>1||flash<0||flash>1||!Enum.IsDefined(typeof(StunElement),element))throw new InvalidDataException("Invalid recorded body coat");
-                        if(state<0||state>2048||holder< -1||holder>=4||epoch< -1)throw new InvalidDataException("Invalid recorded prop state");
+                        if(state<0||state>2048||holder< -1||holder>=bodies||epoch< -1)throw new InvalidDataException("Invalid recorded prop state");
                         if(!Finite(time)||time<=previous||time<result.Start-.3f||time>result.End+.3f)throw new InvalidDataException("Invalid pose time");
                         previous=time;var sample=new RecordedPoseTrack.Sample{Time=time,State=state,Holder=holder,Epoch=epoch,HasCoat=coat,HasAccent=accent,RimStrength=rim,RimColour=rimColour,Frost=frost,Flash=flash,Element=element,Positions=new Vector3[bones],Rotations=new Quaternion[bones],Scales=new Vector3[bones],Active=new bool[bones]};
                         for(int b=0;b<bones;b++)

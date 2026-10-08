@@ -24,6 +24,14 @@ Replay data itself is not an MP4 export.
 
 ## Data and lifetime
 
+Clip format15 records summoned doll bodies in their companion seats4-7 and
+records their slippers with the same holder identity. Playback copies the
+authored doll model, poses and glow without running its AI or gameplay scripts.
+Player seats remain0-3. Earlier formats10-14 remain readable under their original
+four-player bounds. New network highlights require protocol154 because earlier
+peers cannot decode the companion tracks. Full natural spawn/despawn seams and
+matching rebuilt peer acceptance remain separate validation requirements.
+
 `LocalReplayRecorder` consumes the existing actual pose/world history. It detaches
 three-second segments on the main thread, then compresses and writes managed
 values on one background task chain. It keeps the existing bounded pose ring,

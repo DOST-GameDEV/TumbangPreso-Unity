@@ -1,0 +1,6 @@
+TumbangPreso.PlayTests.RecordedCompanionTests
+   groupNames = TumbangPreso.PlayTests.RecordedCompanionTests
+[RecordedCompanion] seat=5 bytes=4973 objects=11 held samples=21
+TumbangPreso.PlayTests.RecordedCompanionTests/<ARealSummonedDollAndItsHeldSlipperRecordAndPlayWithoutGameplayCopies>d__6:MoveNext () (at Assets/TumbangPreso/Tests/PlayMode/RecordedCompanionTests.cs:110)
+(Filename: Assets/TumbangPreso/Tests/PlayMode/RecordedCompanionTests.cs Line: 110)
+Test run completed. Exiting with code 0 (Ok). Run completed.

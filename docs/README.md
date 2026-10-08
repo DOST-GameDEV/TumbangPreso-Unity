@@ -295,3 +295,5 @@ Current full managed Core integration: [704-case gate and retained contract fail
 Local match replays, library/folder controls and explorable playback: [method](LOCAL_REPLAYS.md) and [native evidence](reports/laptop-gameplay-2026-10-07/local-replays/README.md).
 
 Late-join opening hold: [native failure, corrected adoption and countdown regression evidence](reports/late-join-start-hold-2026-10-07/README.md).
+
+Summoned doll replay bodies and held slippers: [original failure, native capture, codec bounds and admission evidence](reports/recorded-companion-2026-10-09/README.md).
