@@ -9,7 +9,17 @@ Current Desktop and internal G are ordinary source `001d80b568`, protocol 153,
 runtime `2005a5d0`. G replaced the previous diagnostic in the same folder; Desktop was
 updated in place with 34 changed files and all 261 file hashes verified. No new
 build/Desktop folder or profile/save change. Build/native runs restored all
-21,415 frozen inputs/preferences. Evidence: reports/windows-replacement-2026-10-08.
+21,425 frozen inputs/preferences. Evidence: reports/windows-batched-replacement-2026-10-08.
+
+Current same-binary native menu ABA runs66940/28080/53308 are all terminal0,
+14PASS and preferences restored. Actual logs confirm normal ClientWorkerJobs,
+experimental Direct and normal again. Loading maxima1099.490/818.523/832.293ms
+and fresh first-Hero39.683/44.624/73.407ms reject adopting Direct as a remedy.
+No production/settings/build/Desktop mutation; prior35.362ms is not a consistent
+upper bound. Older Development Render Thread has individual215-218ms texture
+uploads, but main/render frame indices and current resource identity remain
+unproved. Next isolate preload resources/upload paths; all tournament scope stays
+open. Evidence: reports/loading-render-modes-2026-10-08.
 
 That ordinary candidate completed the 191-window controlled release route: 74 accepted actions,
 26 required consequences and two distinct natural custom one-round/30-second

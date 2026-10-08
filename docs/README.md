@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Current ordinary Windows loading: [same-binary graphics-thread comparison, retained repeat variation and rejected setting change](reports/loading-render-modes-2026-10-08/README.md).
+
 Ilyas prethrow Skim AI: [original missed opportunity and actual input/load/throw controls](reports/ai-skim-prethrow-2026-10-07/README.md).
 
 Nine-hero live AI input coverage: [actual roster IDs, retained invalid selection coverage and remaining decisions](reports/hero-bot-roster-2026-10-07/README.md).
