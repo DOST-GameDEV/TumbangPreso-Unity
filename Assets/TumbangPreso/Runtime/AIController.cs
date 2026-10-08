@@ -676,6 +676,17 @@ namespace TumbangPreso
 
             if (!SafeToEmote() || !emotes.CanEmote()) return false;
 
+            // A request with unavailable rig motion cannot start a clip. Do not
+            // release gameplay keys or spend the network startup grace on it.
+            if (!emotes.HasEmoteClip(_wantedEmote))
+            {
+                _wantedEmote = null;
+                _wantedFor = 0.0f;
+                _emoteCooldown = UnityEngine.Random.Range(AiTuning.EmoteCooldownMin,
+                                                          AiTuning.EmoteCooldownMax);
+                return false;
+            }
+
             // ⚠️⚠️ THE KEYS GO DOWN BEFORE THE REQUEST, NOT AFTER IT, AND THAT ORDER IS THE FIX.
             // `EmotePlayer.Update` runs later this same frame and reads the axis this controller
             // has already written; asking first and clearing the axis afterwards would leave one

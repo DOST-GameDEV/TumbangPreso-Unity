@@ -303,3 +303,5 @@ Summoned doll replay bodies and held slippers: [original failure, native capture
 Current ordinary Desktop e1c1/protocol154: [actual startup, replay/preview/controlled gameplay and exact in-place installation](reports/companion-title-windows-2026-10-09/README.md).
 
 Loose footwear floor support: [actual30pair float, upright-pivot correction and12 scoped native controls](reports/loose-slipper-surface-2026-10-09/README.md).
+
+Bot social clip availability: [unavailable-rig pause, preserved playable delivery grace and6 native consumer controls](reports/ai-unavailable-emote-2026-10-09/README.md).

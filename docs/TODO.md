@@ -1,3 +1,8 @@
+### AI-UNAVAILABLE-EMOTE-1009: no pause for unavailable motion
+
+- [x] Reproduce actual StepSocial consuming the frame/clearing movement while EmotePlayer refuses unavailable rig motion. Preflight clip availability before holding; native6 controls pass for missing/playable/pending delivery and3 lesson eligibility cases, all21,455 inputs/preferences restore. Existing250ms playable network grace and authored clips remain. [Original failure and scoped evidence](reports/ai-unavailable-emote-2026-10-09/README.md).
+- [ ] Actual current-player rig availability and natural eligible movement/actions plus all-map/full-match and peer acceptance remain open. Batch source with the ground support correction in the next existing-G/Desktop replacement; current Desktop remains e1c1.
+
 ### LOOSE-SLIPPER-SURFACE-1009: rendered soles and floor support
 
 - [x] Reproduce45-91.8mm actual mesh/collider gap on30new3/10shoe pairs. Correct sole-pivot support and its held-rotation dependence; final12 native controls pass with1mm floor contact,3rotations/10shoes,8prediction/Skim cases and2actual Arena retrieval/recovery cases. All21,453 inputs/preferences restore. Preserve the incorrect initial selector and first9PASS1FAIL. [Evidence and scoped source](reports/loose-slipper-surface-2026-10-09/README.md).

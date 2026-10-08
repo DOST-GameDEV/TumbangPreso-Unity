@@ -1,3 +1,17 @@
+# Current AI social source unit, October9
+
+Original69472 reproduces unavailable-rig StepSocial frame consumed/no animation.
+Preflight now preserves movement/gameplay keys and retires missing motion with
+normal cooldown. Candidate66348passes6/6: unavailable, actual Rafi dance, bounded
+pending delivery and3lesson gates. All21,455inputs/prefs restore. Existing250ms
+playable grace, authored motion and network contract unchanged. No player/peer/
+all-natural-rig claim. Source pending immediate publication; ground1fbc already
+published/12nativePASS. Desktop/G still e1c1 ordinary/protocol154/runtime4a315c5e.
+Next batch actual-player surface/social observation using existing normal entry,
+qualify then replace SAME G/Desktop only. Continue all natural AI/camera/lifecycle/
+stutter work. No newworkers/chats/paidservices/reset/clean/force/foreground control.
+Root soleowner; humanpaused laptop and retired reviewer stay undisturbed.
+
 # Current ground-support source unit, October9
 
 Native final74308 passes12:30new3/10shoe mesh-floor contacts at1mm,10shoe/3rotation
