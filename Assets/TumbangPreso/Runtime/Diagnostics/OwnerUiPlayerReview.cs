@@ -582,6 +582,8 @@ namespace TumbangPreso.Diagnostics
             {yield return LiveUltimatesOnly();yield break;}
             if(Environment.GetCommandLineArgs().Contains("-tp-busy-exchange-only"))
             {yield return BusyExchangeOnly();yield break;}
+            if(Environment.GetCommandLineArgs().Contains("-tp-copy-rooted-sampling"))
+            {yield return RootedCopySamplesOnly();yield break;}
             if(Environment.GetCommandLineArgs().Contains("-tp-introduction-bodies-only"))
             {yield return IntroductionBodiesOnly();yield break;}
             if(Environment.GetCommandLineArgs().Contains("-tp-sean-visual-review-only"))

@@ -1,0 +1,27 @@
+{
+    "passed": false,
+    "error": "System.InvalidOperationException: amihan native curve did not animate its arm\r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<IntroductionBodiesOnly>d__11.MoveNext () [0x00601] in <db5e34c241854b13878b9b56360d0b9a>:0 \r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<Guard>d__104.MoveNext () [0x00054] in <db5e34c241854b13878b9b56360d0b9a>:0 ",
+    "measurementMode": "",
+    "scriptingBackend": "",
+    "buildFlagsEvidence": "",
+    "allocationScope": "",
+    "allocationCounterStatus": "",
+    "developmentBuild": false,
+    "editor": false,
+    "binaryProfilerRequested": false,
+    "profilerSupported": false,
+    "allocationCounterAvailable": false,
+    "allocationCalibrationBytes": 0,
+    "stages": [
+        "native render-only introduction scene study, not a live cinematic phase",
+        "dante native introduction body",
+        "cheska native introduction body",
+        "sean native introduction body",
+        "zack native introduction body",
+        "nemu native introduction body",
+        "phaister native introduction body",
+        "rafi native introduction body",
+        "amihan native introduction body"
+    ],
+    "frameWindows": []
+}

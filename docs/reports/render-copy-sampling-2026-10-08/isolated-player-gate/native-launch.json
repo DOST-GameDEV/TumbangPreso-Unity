@@ -1,0 +1,26 @@
+{
+  "sourceRef": "1d052767f24d1683fd44f8a7bea6cffc87a30b80",
+  "profile": "pc-scenery-owner-render-copy-isolated-compile1008",
+  "filter": "TumbangPreso.PlayTests.RenderCopyAnimationSamplingTests.CurrentRigCopiesSampleRootedClipsWithoutAutomaticPoseChangesOrGameplayComponents",
+  "expectedCases": 1,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-scenery-owner-render-copy-isolated-compile1008",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.RenderCopyAnimationSamplingTests.CurrentRigCopiesSampleRootedClipsWithoutAutomaticPoseChangesOrGameplayComponents",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\release-ui-perf1008g\\render-copy-isolated-compile1008\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\release-ui-perf1008g\\render-copy-isolated-compile1008\\editor.log"
+  ],
+  "pid": 68548
+}

@@ -1,0 +1,16 @@
+{
+  "nativePid": 68548,
+  "nativePassed": 1,
+  "protectedInputsRestored": 21447,
+  "testedSourceSha256": {
+    "Assets/TumbangPreso/Runtime/Diagnostics/OwnerUiPlayerReview.cs": "fbcb3b5d871dc4dc1167b4473c8cde15724918903945fe5f48dbc7f91e2763b5",
+    "Assets/TumbangPreso/Runtime/Diagnostics/OwnerUiPlayerReview.Introductions.cs": "c59dc528164f8756cdeb1b22a0d270ee706bccbb3249a3e33f443d5711f185e8"
+  },
+  "previousWindowsSamples": 28,
+  "previousWindowsRigs": 7,
+  "previousWindowsPassed": false,
+  "previousFailure": "Unchanged Amihan authored introduction arm assertion blocks the last two rigs before copied-rooted sampling.",
+  "change": "The existing opt-in flag now runs an independent actual Windows copied-rooted sampling observer through current Home and normal scored entry. It requires all9 rigs and36 clips to move copied bones, two-frame retained poses and disabled controller-free Animator endpoints without gameplay scripts. Original introduction assertions remain unchanged.",
+  "actualNewWindowsObserverValidated": false,
+  "desktopUpdated": false
+}
