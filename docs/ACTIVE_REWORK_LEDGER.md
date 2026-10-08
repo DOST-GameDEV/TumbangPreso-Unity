@@ -5,6 +5,17 @@ transferred its work here. The requested Astra reviewer is finished and retired.
 Do not wake either or create agents/chats. No LAN, foreground control, resets,
 cleans, stashes or force pushes. Preserve finalized kits and old-map art.
 
+New source/data unit restores omitted yielded roster outline/motion preparation
+before Home readiness and adds9 absent RootedAnimation sets using existing
+authoring code. All23 previous sets retain exact bytes. Original68016 reproduces
+ready-before-outline failure; candidate48600 retains2PASS2FAIL for missing motion.
+Candidate70708 and final timing-enabled69820 each pass5 native controls:41models,
+145readablemeshes,84retainedmotion sets,no actors/graphs/material changes,36actual
+current-rig pose samples and actualstartup5secondgate/firstHome4to40. Final native
+inputs21,445 restore; no new build/Desktop update. Qualify current-player latency,
+natural status/carry/replay and remaining fullscope before next existing-G release.
+Evidence: reports/home-roster-preparation-2026-10-08.
+
 Current Desktop and internal G are ordinary source `001d80b568`, protocol 153,
 runtime `2005a5d0`. G replaced the previous diagnostic in the same folder; Desktop was
 updated in place with 34 changed files and all 261 file hashes verified. No new

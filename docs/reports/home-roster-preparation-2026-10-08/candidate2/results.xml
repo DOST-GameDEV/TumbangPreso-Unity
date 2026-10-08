@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-08 02:56:29Z" end-time="2026-10-08 02:56:49Z" duration="19.873194">
+  <test-suite type="TestSuite" id="3659" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2152" result="Passed" start-time="2026-10-08 02:56:29Z" end-time="2026-10-08 02:56:49Z" duration="19.873194" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3651" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2152" result="Passed" start-time="2026-10-08 02:56:29Z" end-time="2026-10-08 02:56:49Z" duration="19.840047" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="70708" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3652" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2152" result="Passed" start-time="2026-10-08 02:56:29Z" end-time="2026-10-08 02:56:49Z" duration="19.782382" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3655" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2150" result="Passed" start-time="2026-10-08 02:56:29Z" end-time="2026-10-08 02:56:49Z" duration="19.766783" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1843" name="GeneratedMotionAssetsTests" fullname="TumbangPreso.PlayTests.GeneratedMotionAssetsTests" classname="TumbangPreso.PlayTests.GeneratedMotionAssetsTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-08 02:56:30Z" end-time="2026-10-08 02:56:31Z" duration="0.769304" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1844" name="BakedMotionWarmupRetainsTheExactAssetsWithoutCreatingActors" fullname="TumbangPreso.PlayTests.GeneratedMotionAssetsTests.BakedMotionWarmupRetainsTheExactAssetsWithoutCreatingActors" methodname="BakedMotionWarmupRetainsTheExactAssetsWithoutCreatingActors" classname="TumbangPreso.PlayTests.GeneratedMotionAssetsTests" runstate="Runnable" seed="407102533" result="Passed" start-time="2026-10-08 02:56:30Z" end-time="2026-10-08 02:56:31Z" duration="0.753053" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1912" name="HomeRosterPreparationTests" fullname="TumbangPreso.PlayTests.HomeRosterPreparationTests" classname="TumbangPreso.PlayTests.HomeRosterPreparationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-08 02:56:31Z" end-time="2026-10-08 02:56:34Z" duration="3.751381" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1914" name="ActualHomePreloadPreparesRosterMeshesAndMotionBeforeReadyWithoutSpawningActors" fullname="TumbangPreso.PlayTests.HomeRosterPreparationTests.ActualHomePreloadPreparesRosterMeshesAndMotionBeforeReadyWithoutSpawningActors" methodname="ActualHomePreloadPreparesRosterMeshesAndMotionBeforeReadyWithoutSpawningActors" classname="TumbangPreso.PlayTests.HomeRosterPreparationTests" runstate="Runnable" seed="1708346016" result="Passed" start-time="2026-10-08 02:56:31Z" end-time="2026-10-08 02:56:34Z" duration="3.665832" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[HomeRosterPreparation] models=41 readableMeshes=145 retainedMotion=84 ready=true spawnedActors=0 unchangedAuthoredMaterials=true
+]]></output>
+            </test-case>
+            <test-case id="1913" name="EveryCurrentHeroRootedSetSamplesItsActualRig" fullname="TumbangPreso.PlayTests.HomeRosterPreparationTests.EveryCurrentHeroRootedSetSamplesItsActualRig" methodname="EveryCurrentHeroRootedSetSamplesItsActualRig" classname="TumbangPreso.PlayTests.HomeRosterPreparationTests" runstate="Runnable" seed="1690336174" result="Passed" start-time="2026-10-08 02:56:34Z" end-time="2026-10-08 02:56:34Z" duration="0.083271" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RootedCurrentRig] hero=dante rig=dante-redesign sampledClips=4 nonBindPoses=4
+[RootedCurrentRig] hero=cheska rig=cheska-redesign sampledClips=4 nonBindPoses=4
+[RootedCurrentRig] hero=sean rig=sean-redesign sampledClips=4 nonBindPoses=4
+[RootedCurrentRig] hero=zack rig=zack-redesign sampledClips=4 nonBindPoses=4
+[RootedCurrentRig] hero=nemu rig=nemu-redesign sampledClips=4 nonBindPoses=4
+[RootedCurrentRig] hero=phaister rig=phaister-redesign sampledClips=4 nonBindPoses=4
+[RootedCurrentRig] hero=rafi rig=rafi-redesign sampledClips=4 nonBindPoses=4
+[RootedCurrentRig] hero=amihan rig=amihan-redesign sampledClips=4 nonBindPoses=4
+[RootedCurrentRig] hero=paete rig=paete-redesign sampledClips=4 nonBindPoses=4
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2514" name="OwnerMenuEditsTests" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" testcasecount="15" result="Passed" start-time="2026-10-08 02:56:34Z" end-time="2026-10-08 02:56:34Z" duration="0.060501" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2524" name="OutlineWarmupSurvivesSceneNotificationsWithoutSpawningOrDressingModels" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests.OutlineWarmupSurvivesSceneNotificationsWithoutSpawningOrDressingModels" methodname="OutlineWarmupSurvivesSceneNotificationsWithoutSpawningOrDressingModels" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" seed="1996862579" result="Passed" start-time="2026-10-08 02:56:34Z" end-time="2026-10-08 02:56:34Z" duration="0.052558" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[OutlineWarmupCheck] meshes=2 vertices=4667 coldMs=1.375 maxStepMs=0.793 reusedMs=0.074
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="3296" name="StartupOrder1007Tests" fullname="TumbangPreso.PlayTests.StartupOrder1007Tests" classname="TumbangPreso.PlayTests.StartupOrder1007Tests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-08 02:56:34Z" end-time="2026-10-08 02:56:49Z" duration="14.874743" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="3297" name="LogosLoginFiveSecondMainThenFirstHomeAnimation" fullname="TumbangPreso.PlayTests.StartupOrder1007Tests.LogosLoginFiveSecondMainThenFirstHomeAnimation" methodname="LogosLoginFiveSecondMainThenFirstHomeAnimation" classname="TumbangPreso.PlayTests.StartupOrder1007Tests" runstate="Runnable" seed="687707438" result="Passed" start-time="2026-10-08 02:56:34Z" end-time="2026-10-08 02:56:49Z" duration="14.873151" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] StartupLoginFirst1007-1920 cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupLoginFirst1007-1280 cream source=252,211,159 pixel=242,142,106; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupMainLoading1007-1920 cream source=252,211,159 pixel=248,197,141; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupMainLoading1007-1280 cream source=252,211,159 pixel=245,182,120; isolated UI camera, no ColourGrade.
+[StartupOrder1007] studio->login->main-loading->home; loadingSeconds=7.760936 firstFrames=4->40
+[TumpUiCapture] StartupFirstHomePlaying1007-1920 cream source=252,211,159 pixel=45,27,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupFirstHomePlaying1007-1280 cream source=252,211,159 pixel=47,30,19; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

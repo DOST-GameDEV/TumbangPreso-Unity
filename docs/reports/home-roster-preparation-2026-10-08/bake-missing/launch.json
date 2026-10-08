@@ -1,0 +1,21 @@
+{
+  "sourceRef": "cf7eb3c57b49c36699c0de1b087951bda7036ce3",
+  "profile": "pc-scenery-owner-home-roster-preparation-bake-missing1008",
+  "filter": "TumbangPreso.PlayTests.HomeRosterPreparationTests.ActualHomePreloadPreparesRosterMeshesAndMotionBeforeReadyWithoutSpawningActors",
+  "expectedCases": 1,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-scenery-owner-home-roster-preparation-bake-missing1008",
+    "-executeMethod",
+    "TumbangPreso.EditorTools.RootedAnimationAuthor.RunMissing",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\release-ui-perf1008g\\home-roster-preparation-bake-missing1008\\editor.log"
+  ],
+  "pid": 52720
+}

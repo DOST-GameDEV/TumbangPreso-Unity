@@ -1,0 +1,27 @@
+{
+  "sourceRef": "cf7eb3c57b49c36699c0de1b087951bda7036ce3",
+  "profile": "pc-scenery-owner-home-roster-preparation-candidate31008",
+  "filter": "TumbangPreso.PlayTests.HomeRosterPreparationTests.ActualHomePreloadPreparesRosterMeshesAndMotionBeforeReadyWithoutSpawningActors;TumbangPreso.PlayTests.StartupOrder1007Tests.LogosLoginFiveSecondMainThenFirstHomeAnimation;TumbangPreso.PlayTests.OwnerMenuEditsTests.OutlineWarmupSurvivesSceneNotificationsWithoutSpawningOrDressingModels;TumbangPreso.PlayTests.GeneratedMotionAssetsTests.BakedMotionWarmupRetainsTheExactAssetsWithoutCreatingActors;TumbangPreso.PlayTests.HomeRosterPreparationTests.EveryCurrentHeroRootedSetSamplesItsActualRig",
+  "expectedCases": 5,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-scenery-owner-home-roster-preparation-candidate31008",
+    "-tp-performance-only",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.HomeRosterPreparationTests.ActualHomePreloadPreparesRosterMeshesAndMotionBeforeReadyWithoutSpawningActors;TumbangPreso.PlayTests.StartupOrder1007Tests.LogosLoginFiveSecondMainThenFirstHomeAnimation;TumbangPreso.PlayTests.OwnerMenuEditsTests.OutlineWarmupSurvivesSceneNotificationsWithoutSpawningOrDressingModels;TumbangPreso.PlayTests.GeneratedMotionAssetsTests.BakedMotionWarmupRetainsTheExactAssetsWithoutCreatingActors;TumbangPreso.PlayTests.HomeRosterPreparationTests.EveryCurrentHeroRootedSetSamplesItsActualRig",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\release-ui-perf1008g\\home-roster-preparation-candidate31008\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\release-ui-perf1008g\\home-roster-preparation-candidate31008\\editor.log"
+  ],
+  "pid": 69820
+}

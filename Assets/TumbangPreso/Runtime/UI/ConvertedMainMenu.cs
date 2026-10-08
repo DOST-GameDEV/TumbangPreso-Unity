@@ -138,24 +138,62 @@ namespace TumbangPreso.UI
             yield return RosterBook.Warmup();
             if(System.Array.IndexOf(System.Environment.GetCommandLineArgs(),"-tp-ui-code-warmup")>=0)
                 yield return UiCodePreparation.Prepare();
-            _homeAssetsProgress=.2f;
             if(ModelPreview.LoadTimingEnabled)
                 Debug.Log(System.FormattableString.Invariant($"[HomeAssetTiming] stage=roster-resource-wait wall_ms={ModelPreview.LoadElapsedMs(rosterBegan):F3} scope=async-wait-not-main-thread-cost"));
+            long visualsBegan=ModelPreview.LoadTimingEnabled?System.Diagnostics.Stopwatch.GetTimestamp():0;
+            yield return PreloadRosterVisuals(RosterBook.Load());
+            if(ModelPreview.LoadTimingEnabled)
+                Debug.Log(System.FormattableString.Invariant($"[HomeAssetTiming] stage=roster-visual-preparation wall_ms={ModelPreview.LoadElapsedMs(visualsBegan):F3} scope=coroutine-total-includes-yields"));
+            _homeAssetsProgress=.3f;
             // The retired splash preparation no longer runs on this route.
             // Keep its yielded shared icons, props and effect data ready here.
             long gameplayBegan=ModelPreview.LoadTimingEnabled?System.Diagnostics.Stopwatch.GetTimestamp():0;
-            yield return SplashScreen.WarmGameplayAssets(done=>_homeAssetsProgress=.2f+.3f*done);
+            yield return SplashScreen.WarmGameplayAssets(done=>_homeAssetsProgress=.3f+.25f*done);
             if(ModelPreview.LoadTimingEnabled)
                 Debug.Log(System.FormattableString.Invariant($"[HomeAssetTiming] stage=gameplay-preparation wall_ms={ModelPreview.LoadElapsedMs(gameplayBegan):F3} scope=coroutine-total-includes-yields"));
             long postersBegan=ModelPreview.LoadTimingEnabled?System.Diagnostics.Stopwatch.GetTimestamp():0;
-            yield return OwnerPortraitArt.WarmupModeCards(done=>_homeAssetsProgress=.5f+.1f*done);
+            yield return OwnerPortraitArt.WarmupModeCards(done=>_homeAssetsProgress=.55f+.1f*done);
             if(ModelPreview.LoadTimingEnabled)
                 Debug.Log(System.FormattableString.Invariant($"[HomeAssetTiming] stage=mode-posters wall_ms={ModelPreview.LoadElapsedMs(postersBegan):F3} scope=async-wait-includes-yields"));
-            yield return MapPreviewVideo.Warmup(done=>_homeAssetsProgress=.6f+.15f*done);
+            yield return MapPreviewVideo.Warmup(done=>_homeAssetsProgress=.65f+.15f*done);
             // Reuse the existing caches and decoder preparation rather than
             // making a second copy of the Home resource set.
-            yield return Hub.HubSceneVideo.Warmup(done=>_homeAssetsProgress=.75f+.25f*done);
+            yield return Hub.HubSceneVideo.Warmup(done=>_homeAssetsProgress=.8f+.2f*done);
             _homeAssetsReady=true;
+        }
+
+        private IEnumerator PreloadRosterVisuals(RosterBook book)
+        {
+            if(book==null) yield break;
+            // These session caches used to be prepared by the retired splash.
+            // Preserve that first-use work behind the current loading view without
+            // creating actors, animation graphs or changing authored materials.
+            var models=new HashSet<GameObject>();
+            if(book.People!=null)
+                for(int index=0;index<book.People.Count;index++)
+                {
+                    var person=book.People[index];
+                    if(person!=null)
+                    {
+                        if(person.Model!=null) models.Add(person.Model);
+                        if(person.ArmModel!=null) models.Add(person.ArmModel);
+                        if(person.PetModel!=null) models.Add(person.PetModel);
+                        yield return Visual.GeneratedMotionAssets.Warmup(person.Model);
+                    }
+                    _homeAssetsProgress=.2f+.04f*(index+1)/Mathf.Max(1,book.People.Count);
+                }
+            if(book.Cans!=null)
+                foreach(var can in book.Cans)
+                    if(can!=null && can.Model!=null) models.Add(can.Model);
+            if(book.Slippers!=null)
+                foreach(var slipper in book.Slippers)
+                    if(slipper!=null && slipper.Model!=null) models.Add(slipper.Model);
+            int prepared=0;
+            foreach(var model in models)
+            {
+                yield return Visual.OutlineNormals.Warmup(model);
+                _homeAssetsProgress=.24f+.06f*(++prepared)/Mathf.Max(1,models.Count);
+            }
         }
 
         private void BeginHomeArrival()

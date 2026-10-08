@@ -199,6 +199,13 @@ done: the owner's bar is *"atleast same level or EVEN better"*.
 
 ## 6 · Shipping it into the game
 
+The current login/main-menu preparation route also warms generated motion and
+welded outlines for the retained roster before Home readiness. Keep body,
+alternate-arm, pet and equipment preparation yielded and free of actor/graph
+creation. Rig replacements need serialized rooted sets under their current
+binding key; `RootedAnimationAuthor.RunMissing` adds absent sets without rebuilding
+existing authored assets. [Native preparation and current-rig evidence](reports/home-roster-preparation-2026-10-08/README.md).
+
 - HOME picks one hero's loop AT RANDOM (🧑 2026-09-24): ship `Resources/UI/home/<hero>-home-loop.mp4`
   and `<hero>-home-poster.png` (`npm run ship:<hero>`), then add the id to `HubSceneVideo.Heroes`.
 - Boot's shared HubSceneVideo warmup reads that same hero list and prepares the first
