@@ -5,8 +5,8 @@ transferred its work here. The requested Astra reviewer is finished and retired.
 Do not wake either or create agents/chats. No LAN, foreground control, resets,
 cleans, stashes or force pushes. Preserve finalized kits and old-map art.
 
-Current Desktop is source `effe0fbed9`, protocol 153,
-runtime `0898acb7`. Its candidate replaced the existing G folder; Desktop was
+Current Desktop and internal G are ordinary source `001d80b568`, protocol 153,
+runtime `2005a5d0`. G replaced the previous diagnostic in the same folder; Desktop was
 updated in place with 34 changed files and all 261 file hashes verified. No new
 build/Desktop folder or profile/save change. Build/native runs restored all
 21,415 frozen inputs/preferences. Evidence: reports/windows-replacement-2026-10-08.
@@ -39,7 +39,7 @@ identities match. Actual Windows values match the saved Windows recording;
 strict validation/serialization are unchanged. Two independent editor processes
 match each other. Future engine/shader compatibility remains unproven.
 
-Current internal G is the Development diagnostic at `cf9afad38`, runtime
+The earlier G Development diagnostic was `cf9afad38`, runtime
 `df1e584b`, 403 files and 3,647,235,596 bytes. Deferred Hero preparation reduced
 its measured first-open peak from118.399ms to50.302ms CPU, still a noticeable
 spike. The method-entry experiment worsened the peak and stays off. Candidate3
@@ -58,9 +58,17 @@ controls and all21,425 inputs/preferences restore. The completed trace's199
 Mono.JIT rows have no method metadata; the metadata exporter is qualified but
 the remaining activation cause is still a hypothesis. Separate MoveNext, Reveal
 and Focus profiler markers will resolve it in the next batched comparison.
-No player build for this unit; G remains candidate3. Next inspect continuous
-new3 previews/openings, batch qualified source and qualify an ordinary release
-by replacing G only. Old-map art/presentation remains untouched.
+These changes are now in the batched ordinary release. Player60716 completes191
+controlled timing windows with74 accepted actions and26 required consequences.
+Hero first opening35.362ms and loading919.843ms remain smoothness failures.
+The startup/old-scenery, legacy, fresh-FX, current new natural-Hero playback and
+all7 first/repeat1080p movie gates pass. The fresh Classic/Hero records each have
+ten scenery segments and no warnings; controlled-rebind warnings remain separate.
+Main loading view5.651s and first Home video4to40 frames are observed. All current
+jobs/preferences restore; build restores21,425 frozen inputs. Desktop is replaced
+after those gates pass. Evidence: reports/windows-batched-replacement-2026-10-08.
+Continue loading/frame pacing, continuous new3 previews/openings and broader goal
+acceptance. Old-map art/presentation remains untouched.
 Preserve Desktop. Previous ordinary first-Hero134.53ms/preload877.67ms remain
 failures; functional checks alone do not close performance or AI quality.
 

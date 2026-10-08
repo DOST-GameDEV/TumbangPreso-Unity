@@ -1,0 +1,17 @@
+{
+    "passed": true,
+    "studioSeen": true,
+    "error": "",
+    "mainVisibleSeconds": 5.651187896728516,
+    "firstFrame": 4,
+    "lastFrame": 40,
+    "firstVideoTime": 0.13333333333333334,
+    "lastVideoTime": 1.3333333333333333,
+    "stages": [
+        "login-first at 3.674s",
+        "main-loading-visible at 4.206s",
+        "lobby-arrived at 9.858s",
+        "first-home-video-playing at 10.071s",
+        "first-home-decoded-frames-advance at 11.271s"
+    ]
+}

@@ -12,6 +12,8 @@
 
 ### WINDOWS-REPLACEMENT-1008: existing Desktop package
 
+- [x] Batched ordinary001d/2005 release replaces existing G and Desktop in place,34 Desktop files changed/all261 SHA verified. Actual191 controlled windows/74 accepted actions/26 required consequences, startup5.651s/firstHome4to40, old/current natural-Hero/legacy/freshFX replay and all7first-repeat1080movies pass. Current freshClassic/Hero recordings each complete10scenerysegments withoutwarnings. Allcurrentjobs/prefs restore and build restores21,425inputs. Native4UI+6new3 source controls stay scoped. [Exact receipts and limits](reports/windows-batched-replacement-2026-10-08/README.md).
+- [ ] Ordinary firstHero35.362ms and loading919.843ms still fail tournament smoothness. Controlled rebind recorder warnings remain separate from clean short natural results; full default matches/AI efficacy/creative/peer acceptance remain open.
 - [x] Replace the existing internal G candidate and Desktop folder with tested `effe0fbed9`/protocol153/runtime0898. All261 file hashes verify,34 Desktop files replaced and no extra build/Desktop folder created. Actual graphical startup5.693s, firstHome4to40, old own-recording/legacy/freshFX replay and all7 first/repeat1080p movie gates pass. Windows4 authored hand/copy controls pass and all21,415inputs/prefs restore. [Evidence and limitations](reports/windows-replacement-2026-10-08/README.md).
 - [ ] Continue remaining tournament performance, full default matches, all-map/feature/hero bot efficacy, camera/slipper edge cases, creative and actual peer/device acceptance. This replacement does not close them.
 
