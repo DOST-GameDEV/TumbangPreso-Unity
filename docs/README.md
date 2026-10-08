@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Player render-copy sampling: [actual Windows rejection, inert Animator endpoints and scoped native controls](reports/render-copy-sampling-2026-10-08/README.md).
+
 Current roster preparation: [ready-state regression, missing rooted sets, 36 actual current-rig samples and preserved startup](reports/home-roster-preparation-2026-10-08/README.md).
 
 Current ordinary Windows loading: [same-binary graphics-thread comparison, retained repeat variation and rejected setting change](reports/loading-render-modes-2026-10-08/README.md).

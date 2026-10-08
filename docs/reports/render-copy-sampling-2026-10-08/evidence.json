@@ -1,0 +1,20 @@
+{
+  "rejectedSource": "ba28d4e0fb586db23d64daf619aaa4fe2e6e1dee",
+  "windowsSamplingWarnings": 1991,
+  "previousOrdinarySource": "001d80b568fc0a13fb3603a8ccc23123a61f9a42",
+  "previousWarnings": 0,
+  "nativePid": 65784,
+  "nativePassed": 9,
+  "sampledCurrentRigClips": 36,
+  "automaticPoseChanges": 0,
+  "gameplayMonoBehavioursCopied": 0,
+  "protectedInputsRestored": 21447,
+  "testedSourceSha256": {
+    "Assets/TumbangPreso/Runtime/Camera/MatchPoseHistory.cs": "7bd114c3a9b627648027376272fb0b8b81e8755cb3b762484106d1ba6efdf786",
+    "Assets/TumbangPreso/Tests/PlayMode/RenderCopyAnimationSamplingTests.cs": "7e8198c940b33e927d9f543f8aadff37eb4e3001ba78414fe2f883675613ef34",
+    "Assets/TumbangPreso/Tests/PlayMode/RenderCopyAnimationSamplingTests.cs.meta": "6c14fe4611c3450e753e47ce1daf40e257d50fa6af662001cb9824d84f3cc07e"
+  },
+  "currentWindowsFixValidated": false,
+  "desktopUpdated": false,
+  "scope": "Actual Windows failure retained. Native current9rig/36clip inert endpoint sampling and8live/retained pose-history controls pass; actual fixed-player sampling/ultimate/carry/replay and performance acceptance pending."
+}

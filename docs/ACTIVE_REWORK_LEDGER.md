@@ -5,6 +5,16 @@ transferred its work here. The requested Astra reviewer is finished and retired.
 Do not wake either or create agents/chats. No LAN, foreground control, resets,
 cleans, stashes or force pushes. Preserve finalized kits and old-map art.
 
+ba28 ordinaryWindows G/runtimeea534 is REJECTED after actual191route/74accepted/
+26required consequences:1,991 new nonlegacy sampling warnings in Amihan copied
+victims, versus0previous001d. Desktop001d/runtime2005 remains installed. Focused
+Track.Clone fix retains only disabled controller-free Animator endpoints at the
+source sampling roots. Native65784 passes9controls/36current-rig copied clip
+samples/noautomatic pose changes/no gameplay scripts; all21,447inputs restore.
+Actual fixed-player zero warnings and moving bones plus status/carry/replay and
+package performance remain pending before another SAME G replacement/installation.
+No active Unity/player/helper remains. Evidence: reports/render-copy-sampling-2026-10-08.
+
 New source/data unit restores omitted yielded roster outline/motion preparation
 before Home readiness and adds9 absent RootedAnimation sets using existing
 authoring code. All23 previous sets retain exact bytes. Original68016 reproduces

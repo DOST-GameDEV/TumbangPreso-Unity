@@ -1,0 +1,14 @@
+{
+  "nonLegacyCopySamplingWarnings": 1991,
+  "previousSameRouteWarnings": 0,
+  "required": 26,
+  "candidateAccepted": false,
+  "source": "ba28d4e0fb586db23d64daf619aaa4fe2e6e1dee",
+  "accepted": 74,
+  "terminal": true,
+  "observed": 26,
+  "exitCode": 0,
+  "routeProbePassed": true,
+  "reason": "Actual Windows nonlegacy clip sampling fails on render-only Amihan ultimate copies without Animator; nativeEditor samples did not expose platform requirement. Preserve currentDesktop001d/runtime2005.",
+  "windows": 191
+}

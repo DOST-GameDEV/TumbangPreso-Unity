@@ -232,6 +232,15 @@ namespace TumbangPreso.CameraSystem
                 foreach (var bone in _bones)
                 {
                     var target = map[bone].gameObject;
+                    if (bone.GetComponent<Animator>() != null)
+                    {
+                        // Non-legacy SampleAnimation needs an Animator in players.
+                        // Keep only an inert sampling endpoint at the same root:
+                        // no controller, graph, root motion or gameplay behaviour.
+                        var sampler = target.AddComponent<Animator>();
+                        sampler.enabled = false;
+                        sampler.applyRootMotion = false;
+                    }
                     var skin = bone.GetComponent<SkinnedMeshRenderer>();
                     if (skin != null)
                     {
