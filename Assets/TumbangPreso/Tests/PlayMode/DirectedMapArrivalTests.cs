@@ -10,6 +10,7 @@ using TumbangPreso.UI.Hub;
 using TumbangPreso.Visual;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Playables;
 using UnityEngine.TestTools;
 using Object = UnityEngine.Object;
 
@@ -63,8 +64,11 @@ namespace TumbangPreso.PlayTests
         [UnityTest] public IEnumerator BridgeNaturalHeroCountdown() => NaturalFlow(SceneFlow.IlalimNgTulay);
         [UnityTest] public IEnumerator CoveNaturalHeroCountdown() => NaturalFlow(SceneFlow.LagoonCove);
         [UnityTest] public IEnumerator KantoNaturalHeroCountdown() => NaturalFlow(SceneFlow.Kanto);
+        [UnityTest] public IEnumerator BridgeNaturalHeroWalkCadence() => NaturalFlow(SceneFlow.IlalimNgTulay, true);
+        [UnityTest] public IEnumerator CoveNaturalHeroWalkCadence() => NaturalFlow(SceneFlow.LagoonCove, true);
+        [UnityTest] public IEnumerator KantoNaturalHeroWalkCadence() => NaturalFlow(SceneFlow.Kanto, true);
 
-        private IEnumerator NaturalFlow(string mapId)
+        private IEnumerator NaturalFlow(string mapId, bool checkCadence=false)
         {
             SceneFlow.Networked = false;
             var rules = CustomGameRules.Defaults(GameMode.HeroStrike); rules.ManualReady = false;
@@ -85,6 +89,12 @@ namespace TumbangPreso.PlayTests
             var maximumTravel = new float[4]; var baseline = new Vector3[4]; bool capturedBaseline = false, sawDirection = false;
             int frame = 0; float until = Time.realtimeSinceStartup + 45;
             var folder = Path.Combine("Logs", "directed-map-arrivals", mapId + "-natural-hero"); Directory.CreateDirectory(folder);
+            var lastPositions=new Vector3[4];var lastTimes=new double[4];var lastWalking=new bool[4];
+            var cadenceSamples=new int[4];var maximumMismatch=new float[4];
+            var rootMetres=new float[4];var animatedMetres=new float[4];
+            var cadence=new System.Text.StringBuilder("frame,seat,root_metres,animated_metres,error_metres\n");
+            var walkField=typeof(CharacterAnimator).GetField("_arrivalWalking",Hidden);
+            var frontMethod=typeof(CharacterAnimator).GetMethod("Front",Hidden);
             while (GameServices.Round?.RoundActive != true && Time.realtimeSinceStartup < until)
             {
                 var presentation = Object.FindAnyObjectByType<MatchArrivalPresentation>();
@@ -104,6 +114,21 @@ namespace TumbangPreso.PlayTests
                             var root = player.GetComponent<CharacterVisual>()?.ModelRoot;
                             if (root != null) maximumTravel[player.PlayerSlot] = Mathf.Max(maximumTravel[player.PlayerSlot],
                                 Vector3.Distance(baseline[player.PlayerSlot], root.localPosition));
+                            if(!checkCadence||root==null)continue;
+                            int seat=player.PlayerSlot;var pose=player.GetComponent<CharacterAnimator>();
+                            bool walking=(bool)walkField.GetValue(pose);
+                            var front=(UnityEngine.Animations.AnimationClipPlayable)frontMethod.Invoke(pose,null);
+                            if(!front.IsValid())continue;
+                            double clipTime=UnityEngine.Playables.PlayableExtensions.GetTime(front);
+                            if(walking&&lastWalking[seat])
+                            {
+                                float metres=Vector3.ProjectOnPlane(root.position-lastPositions[seat],Vector3.up).magnitude;
+                                float animated=(float)(clipTime-lastTimes[seat])*pose.FootfallCycleMetres/front.GetAnimationClip().length;
+                                float error=Mathf.Abs(animated-metres);maximumMismatch[seat]=Mathf.Max(maximumMismatch[seat],error);
+                                rootMetres[seat]+=metres;animatedMetres[seat]+=animated;
+                                cadenceSamples[seat]++;cadence.AppendLine(System.FormattableString.Invariant($"{frame},{seat},{metres:R},{animated:R},{error:R}"));
+                            }
+                            lastPositions[seat]=root.position;lastTimes[seat]=clipTime;lastWalking[seat]=walking;
                         }
                     };
                     frame++;
@@ -111,6 +136,21 @@ namespace TumbangPreso.PlayTests
                 yield return null;
             }
             gate.CountdownTick -= ticks.Add; Object.Destroy(observer.gameObject);
+            if(checkCadence)
+            {
+                string output=System.Environment.GetEnvironmentVariable("TUMP_ARRIVAL_CADENCE_OUTPUT");
+                Assert.IsFalse(string.IsNullOrEmpty(output),"Use a dedicated cadence evidence folder.");
+                Directory.CreateDirectory(output);File.WriteAllText(Path.Combine(output,mapId+"-cadence.csv"),cadence.ToString());
+                File.WriteAllText(Path.Combine(output,mapId+"-cadence-summary.txt"),"samples="+string.Join(",",cadenceSamples)+" maximumMismatchMetres="+string.Join(",",maximumMismatch)
+                    +" rootMetres="+string.Join(",",rootMetres)+" animatedMetres="+string.Join(",",animatedMetres));
+                for(int seat=0;seat<4;seat++)
+                {
+                    Assert.Greater(cadenceSamples[seat],10,mapId+" seat"+seat+": observe actual continuous walking");
+                    Assert.Less(maximumMismatch[seat],.03f,mapId+" seat"+seat+": walk clip distance diverged from actual root travel");
+                    Assert.Greater(rootMetres[seat],.8f,mapId+" seat"+seat+": observe the complete moving arrival");
+                    Assert.Less(Mathf.Abs(animatedMetres[seat]-rootMetres[seat]),.05f,mapId+" seat"+seat+": whole-path gait drift must not hide in tiny per-frame errors");
+                }
+            }
             Assert.IsTrue(sawDirection && frame > 10, "Observe the actual automatic opening, not manual samples");
             Assert.AreEqual(4, maximumTravel.Count(v => v > .8f), "All real Hero actors must visibly arrive");
             Assert.IsTrue(GameServices.Round.RoundActive, "No input was pressed; the automatic opening must release into play");

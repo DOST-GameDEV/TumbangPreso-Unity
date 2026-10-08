@@ -44,6 +44,8 @@
 
 ### NEW-MAP-HANDOFF-1007: retain subjects during the return
 
+- [x] Match new3 eased entrance walking to actual planar travel and existing per-body stride calibration. Original CSV totals show1.06–4.27m drift on all twelve actor paths despite two weak per-frame greens; original compiler-fixture error is retained. Candidate50836 passes three actual automatic Hero openings and22380 passes three existing posed-renderer support/grip/Taya-framing/return/cancel controls. All21,425 inputs/preferences restore; old-map/Arena presentation unchanged and no new build. [Exact source and scoped evidence](reports/new-map-walk-cadence-2026-10-08/README.md).
+- [ ] Qualify current-player continuous motion, stance-foot contact, every roster, overlay/creative composition and performance. Calibrated clip/root travel agreement alone does not close them.
 - [x] Fix reproduced empty/banked returns in Bridge, Cove and Kanto. Original7PASS/3FAIL; candidate10PASS with0empty/banked frames across2623samples, post-fix16:9world capture3PASS and independent pixel critique. All21385inputs/preferences restored. Old-map presentation preserved. [Evidence](reports/new-map-handoff-2026-10-07/README.md).
 - [ ] Finish continuous motion, overlay, stronger individual portrait composition and current packaged presentation acceptance; sparse world-camera snapshots do not close these requirements.
 

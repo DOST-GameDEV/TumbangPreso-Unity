@@ -70,6 +70,15 @@ builds, 103.71 GiB, was rejected by tool policy: deleted zero, reclaimed zero.
 Do not bypass the rejection. Preserve G and Desktop until a qualified swap.
 
 The unqualified laptop cache snapshot `455444bc` is preserved and unmerged.
+New3 entrance cadence now follows actual visual-root travel using the existing
+body stride calibration, fixing measured cumulative overstepping on all twelve
+observed paths. Candidate50836 passes three automatic Hero openings and22380
+passes three existing rendered support/grip/Taya-framing/return/cancel controls.
+All21,425 frozen inputs/preferences restore. Original2green/1red per-frame checks
+were too weak; the original CSV totals expose1.06–4.27m drift on all twelve paths.
+The compiler-fixture failure is retained. Old-map/Arena presentation is untouched.
+No build for this unit; full stance-foot, roster, continuous taste and current
+player/performance acceptance remain open. See reports/new-map-walk-cadence-2026-10-08.
 Continue AI engagement, every role/feature/map, natural slipper/air/slope and taya
 camera behavior, creative new-map openings and preview work. TODO is the only
 status queue. Exact refs, jobs, dirty work and next action remain in

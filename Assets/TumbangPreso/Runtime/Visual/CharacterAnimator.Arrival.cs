@@ -119,6 +119,22 @@ namespace TumbangPreso.Visual
             _graph.Evaluate(seconds);
         }
 
+        // The new-map visual root follows an eased entrance path. Match the
+        // walk's calibrated stride to that travel while its crossfade uses time.
+        public void AdvanceHeldTravel(float seconds, float planarMetres)
+        {
+            if(_arrivalWalking&&_current==Walk&&_graph.IsValid())
+            {
+                var front=Front();
+                if(front.IsValid()&&float.IsFinite(planarMetres))
+                {
+                    front.SetSpeed(0);
+                    front.SetTime(front.GetTime()+Mathf.Max(0,planarMetres)/Mathf.Max(.05f,_walkReference));
+                }
+            }
+            AdvanceHeld(seconds);
+        }
+
         private void RestoreArrivalPose()
         {
             if (!_arrivalApplied || _arrivalBones == null) return;

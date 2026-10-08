@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-08 00:15:36Z" end-time="2026-10-08 00:16:06Z" duration="30.1782481">
+  <test-suite type="TestSuite" id="3656" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2150" result="Passed" start-time="2026-10-08 00:15:36Z" end-time="2026-10-08 00:16:06Z" duration="30.178248" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3648" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2150" result="Passed" start-time="2026-10-08 00:15:36Z" end-time="2026-10-08 00:16:06Z" duration="30.157442" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22380" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3649" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2150" result="Passed" start-time="2026-10-08 00:15:36Z" end-time="2026-10-08 00:16:06Z" duration="30.145906" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3652" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2148" result="Passed" start-time="2026-10-08 00:15:36Z" end-time="2026-10-08 00:16:06Z" duration="30.134157" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1715" name="DirectedMapArrivalTests" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" testcasecount="15" result="Passed" start-time="2026-10-08 00:15:36Z" end-time="2026-10-08 00:16:06Z" duration="29.877471" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1716" name="BridgeLowArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.BridgeLowArrival" methodname="BridgeLowArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="60058980" result="Passed" start-time="2026-10-08 00:15:36Z" end-time="2026-10-08 00:15:50Z" duration="14.186632" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="1717" name="CoveCurvedArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.CoveCurvedArrival" methodname="CoveCurvedArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="136169889" result="Passed" start-time="2026-10-08 00:15:50Z" end-time="2026-10-08 00:15:59Z" duration="8.790691" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1718" name="KantoCrossingArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoCrossingArrival" methodname="KantoCrossingArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="1219335865" result="Passed" start-time="2026-10-08 00:15:59Z" end-time="2026-10-08 00:16:06Z" duration="6.879330" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
