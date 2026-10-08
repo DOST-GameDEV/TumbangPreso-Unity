@@ -1,0 +1,19 @@
+{
+    "passed": false,
+    "error": "System.InvalidOperationException: Expected UI state did not arrive. Scene=MatchSetup; controls=HeroButton,ShopButton,CloseChatButton,ChatInput,EarnButton,ModeCard,LoadoutButton,MenuButton,PlayButton,AvatarButton,TaskButton,NamePlate,ChatHistoryButton; preview=False; roundActive=False\r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<WaitFor>d__111.MoveNext () [0x0012a] in <13ac7a2979024670b56e73f6449b5146>:0 \r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<Guard>d__104.MoveNext () [0x00054] in <13ac7a2979024670b56e73f6449b5146>:0 ",
+    "measurementMode": "",
+    "scriptingBackend": "",
+    "buildFlagsEvidence": "",
+    "allocationScope": "",
+    "allocationCounterStatus": "",
+    "developmentBuild": false,
+    "editor": false,
+    "binaryProfilerRequested": false,
+    "profilerSupported": false,
+    "allocationCounterAvailable": false,
+    "allocationCalibrationBytes": 0,
+    "stages": [
+        "native render-only introduction scene study, not a live cinematic phase"
+    ],
+    "frameWindows": []
+}

@@ -5,6 +5,14 @@ transferred its work here. The requested Astra reviewer is finished and retired.
 Do not wake either or create agents/chats. No LAN, foreground control, resets,
 cleans, stashes or force pushes. Preserve finalized kits and old-map art.
 
+CurrentG367/runtime7649 ordinaryWindows replaces rejectedba28 in the samefolder.
+TargetAmihan69344 completes44windows/twoacceptedultimates/zero1991warnings and
+restoresprefs. Explicitstudy46664 failsbefore0samples atobsoleteStartButton;
+diagnostic entry now uses currentHome and normal-scored route. Native68952compile/
+copiedclip control passes/all21,447inputs restore. ActualcorrectedWindows9rig36bone
+gate andfullcurrentreleasegates remainpending; Desktop001d/runtime2005 preserved.
+No activejobs. Evidence: render-copy-sampling-2026-10-08/current-ui-entry.
+
 ba28 ordinaryWindows G/runtimeea534 is REJECTED after actual191route/74accepted/
 26required consequences:1,991 new nonlegacy sampling warnings in Amihan copied
 victims, versus0previous001d. Desktop001d/runtime2005 remains installed. Focused
