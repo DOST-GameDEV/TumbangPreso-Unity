@@ -1,3 +1,20 @@
+# Current Desktop and next PC unit, October9
+
+Desktop and SAME internalG now ordinarye1c1/protocol154/runtime4a315c5e,
+261files/3,572,707,876bytes. Only17 Desktop files changed, all261SHA verified.
+Actual startup5.725s/firstHome4to40, all7 first/repeat previews, rooted36/9,
+old/scenery/FX/fresh replays and full191windows/74accepted/26consequences pass.
+Actual saved doll seat5 body+shoe11objects/48held samples,0invalid object warnings.
+Controlled record incomplete/staged player-history warnings stay explicit.
+Two completed short natural records have10segments each/no warnings.
+All21,451 build/source inputs and player preferences restore; jobs all terminal.
+Performance remains open: loading peaks646/873ms, firstHero35ms. No tournament claim.
+Next import the prepared actual-mesh/new3 loose-shoe contact probe from Logs,
+run baseline then fix only a demonstrated ground float. Preserve old-map art,
+finalized heroes, private3files, profiles/saves and current Desktop. Natural doll
+lifecycle/Windows doll-phase drawing, bot efficacy/camera/full-match/peer/pacing
+remain open. Root soleowner, laptop humanpaused/reviewer retired. No newworkers.
+
 # Current PC unit, October9
 
 Companion recording source is ready for publication: actual original fifth-seat

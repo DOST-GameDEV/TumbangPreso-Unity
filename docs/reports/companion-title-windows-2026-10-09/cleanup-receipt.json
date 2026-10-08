@@ -1,0 +1,23 @@
+{
+  "utc": "2026-10-08T21:40:10.608419+00:00",
+  "unit": "companion/title existing-G + Desktop replacement",
+  "completedJobs": [
+    72060,
+    70040,
+    67068,
+    70728,
+    29480,
+    8564,
+    76720,
+    69040,
+    73532
+  ],
+  "installationHelper": 77136,
+  "allJobsTerminal": true,
+  "taskBrowserTabsOpened": 0,
+  "serversStarted": 0,
+  "newBuildDirectories": 0,
+  "privateWorkAndProfilesPreserved": true,
+  "obsoleteBuildDeletionRejection": "Not retried or bypassed",
+  "receipt": "Owned native/player helpers exited. Same candidate and Desktop updated, essential original/acceptance evidence preserved."
+}

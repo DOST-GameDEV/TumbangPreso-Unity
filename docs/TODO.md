@@ -1,7 +1,8 @@
 ### REPLAY-COMPANION-1009: summoned doll recording
 
 - [x] Reproduce actual fifth-seat doll slipper rejection, add companion body/holder tracks and preserve bounded legacy decoding. Native final3 PlayMode controls plus1 separate EditMode connection admission pass; all21,451 inputs/preferences restore. Protocol154 is required for new highlights. [Original failure and scoped evidence](reports/recorded-companion-2026-10-09/README.md).
-- [ ] Replace existing G once with this unit and the visible-title timer fix, then qualify actual Windows startup, older/fresh recordings and preview routes before Desktop replacement. Natural companion birth/despawn, maximum simultaneous dolls and matching rebuilt peers remain open.
+- [x] Replace SAME G and Desktop in place with e1c1 source/protocol154: actual startup5.725s/firstHome4to40, all7 first/repeat previews, rooted36/9, old/scenery/FX/fresh playback and191 controlled windows/74accepted/26required consequences pass. All261 Desktop hashes match with17changed files. Actual saved seat5 doll/held-shoe48samples prove format15 capture; natural lifecycle/full-match/performance/peer acceptance stays open. [Current player and installation receipts](reports/companion-title-windows-2026-10-09/README.md).
+- [ ] Natural companion birth/despawn, maximum simultaneous dolls, actual Windows replay during the doll phase and matching rebuilt peers remain open.
 
 ### UI-FIRST-USE-CPU-1008: measured compilation and presentation stalls
 

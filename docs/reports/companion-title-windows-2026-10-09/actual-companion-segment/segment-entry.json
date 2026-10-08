@@ -1,0 +1,14 @@
+{
+  "File": "000050.tps",
+  "Sha256": "c4c258b4469fd52ebd9749d4f5e28130042829f6f5a4d84ad668acba719ca188",
+  "SceneFile": "000050.scene.json",
+  "SceneSha256": "b037430232d7d4da00f11883235145e15bc1d13ae831703397743bd13ac263ce",
+  "EffectsFile": "",
+  "EffectsSha256": "",
+  "SceneryFile": "000050.scenery.gz",
+  "ScenerySha256": "7ed227d3c864c9a6df7ba2b0f95ad62876a98f332c3469102f476a66ce646f81",
+  "Offset": 151.51901245117188,
+  "Start": 463.57598876953125,
+  "End": 466.59918212890625,
+  "Round": 1
+}

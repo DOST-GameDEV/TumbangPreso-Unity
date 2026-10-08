@@ -1,0 +1,76 @@
+{
+  "sourceCommit": "e1c1fd0fee188e8f41b2b30efe914aac7b29e766",
+  "protocol": 154,
+  "profile": "pc-combined-replay-startup-e1c1fd0fe-companion-title1009-scenery",
+  "exe": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\release-ui-perf1008g\\TumbangPreso.exe",
+  "command": [
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\release-ui-perf1008g\\TumbangPreso.exe",
+    "-batchmode",
+    "-force-d3d11",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1920",
+    "-screen-height",
+    "1080",
+    "-tp-profile",
+    "pc-combined-replay-startup-e1c1fd0fe-companion-title1009-scenery",
+    "-tp-scenery-art-proof",
+    "-tp-startup-order-probe",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\release-ui-perf1008g\\companion-title1009-scenery",
+    "-tp-replay-package",
+    "C:\\Users\\matth\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\660a49fae2d94768eb749ba30ac1fc1f498b24756bd87d0c2e3e72456e974560\\Replays",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\release-ui-perf1008g\\companion-title1009-scenery\\player.log"
+  ],
+  "execution": "hidden graphics batch, synthetic UI raycast only, no OS mouse/keyboard/foreground interaction",
+  "pid": 29480,
+  "exitCode": 0,
+  "replayProbe": {
+    "passed": true,
+    "error": "",
+    "requiredRecordedEffects": false,
+    "recordedEffectFrames": 0,
+    "recordedQuads": 0,
+    "meshVertices": 0,
+    "effectsTexture": "",
+    "stages": [
+      "menu-open",
+      "replays-route",
+      "recording-row-created",
+      "recording-open",
+      "seek-17",
+      "playing-2x",
+      "paused-follow",
+      "returned-home"
+    ]
+  },
+  "probe": {
+    "passed": true,
+    "studioSeen": true,
+    "error": "",
+    "mainVisibleSeconds": 5.6591949462890625,
+    "firstFrame": 4,
+    "lastFrame": 40,
+    "firstVideoTime": 0.13333333333333333,
+    "lastVideoTime": 1.3333333333333333,
+    "stages": [
+      "login-first at 3.673s",
+      "main-loading-visible at 4.448s",
+      "lobby-arrived at 10.107s",
+      "first-home-video-playing at 10.313s",
+      "first-home-decoded-frames-advance at 11.513s"
+    ]
+  },
+  "playerLogAcceptance": {
+    "passed": true,
+    "exceptionCount": 0,
+    "messages": []
+  },
+  "scopedGatePassed": true,
+  "inputRestored": true,
+  "editorInputRestored": true,
+  "taskOwnedReplayPreferenceCreated": true,
+  "profileRestored": true,
+  "terminal": true
+}
