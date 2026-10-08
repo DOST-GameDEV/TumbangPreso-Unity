@@ -1,0 +1,14 @@
+{
+    "passed": false,
+    "studioSeen": true,
+    "error": "System.InvalidOperationException: Main/title did not remain visible five seconds\r\n  at TumbangPreso.Diagnostics.StartupOrderPlayerProbe.Step () [0x00491] in <d7a40e5e4d8f4bc2811403bf1fdb641a>:0 \r\n  at TumbangPreso.Diagnostics.StartupOrderPlayerProbe.Update () [0x0000a] in <d7a40e5e4d8f4bc2811403bf1fdb641a>:0 ",
+    "mainVisibleSeconds": 4.788572311401367,
+    "firstFrame": 0,
+    "lastFrame": 0,
+    "firstVideoTime": 0.0,
+    "lastVideoTime": 0.0,
+    "stages": [
+        "login-first at 4.063s",
+        "main-loading-visible at 5.463s"
+    ]
+}

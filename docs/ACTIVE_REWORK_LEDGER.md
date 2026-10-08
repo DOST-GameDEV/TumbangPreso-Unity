@@ -5,22 +5,25 @@ transferred its work here. The requested Astra reviewer is finished and retired.
 Do not wake either or create agents/chats. No LAN, foreground control, resets,
 cleans, stashes or force pushes. Preserve finalized kits and old-map art.
 
-Current G is ordinary source4d0a78924/runtimea60c,261files in the same folder.
-Actual Windows9536 passes36 distinct copied-rooted clips across9rigs with zero
-sampling warnings and two-frame pose retention. Deliberate model swaps make this
-a diagnostic with a recorded-world-change warning, not clean natural footage.
-Original Amihan introduction arm assertion remains a separate failed art gate.
+Current G is ordinary0e98b4721/runtime3e6b,261files in the same folder.
+Current Windows69040 passes36copied-rooted clips/9rigs/no sampling warnings.
+Full44388 passes191windows/74accepted/26required effects/zero sampling warnings.
+FreshHero639270754435174732 andClassic639270754060454868 each have10clean scenery
+segments. Controlled invalid-recorded-object warnings also occur in older routes;
+source identifies a fifth-seat doll slipper incompatible with four-seat codec.
+Qualify and repair that recording path; do not redesign Soraya's authored kit.
 
-The held default tsinelas gap is now reproduced and fixed in source: the45mm
-carry floor added7.87mm above an anchor already3mm above the palm. Native strict
-78552 fails the9tsinelas pairs. Candidate71516 passes6controls; all90combinations
-of9heroes and10selectable shoes now have zero extra mesh-to-anchor gap. Live
-movement/missing-anchor,FPP possession,model-swap,replay andultimate copies pass.
-All21,449 frozen inputs/prefs restore. Publish this unit then replace SAME G and
-qualify actual Windows/startup/replay/previews before Desktop replacement.
-Desktop001d/runtime2005 preserved. Ground/air/hero-transition and full natural
-attachment quality remain open. No active jobs. See held-slipper-surface-2026-10-09
-and render-copy-sampling-2026-10-08/isolated-player-gate/actual-windows.
+Currentstartup72768 FAILS before fresh playback: main visible only4.788572seconds.
+Desktop001d/runtime2005 is preserved. Timer now starts after the admission frame;
+native66104 passes2normal/500ms-delayed admission controls and first-Home4to40.
+All21,449 inputs/prefs restore. Five-second constant/assertion tolerance unchanged.
+Publish this source unit; ordinary Windows rerun and current replay/previews plus
+Desktop replacement remain pending. See visible-title-admission-2026-10-09.
+
+Held tsinelas source0e98 fixes the7.87mm extra spacer. Native71516passes6controls
+and90pairs/9heroes/10selectable shoes have0extra mesh-to-anchor gap. Ground/air/all
+kit transitions, full natural attachment, AI/cameras/creative new3 and stutter
+acceptance remain open. Old-map art/private3files are untouched. No activejobs.
 
 ba28 ordinaryWindows G/runtimeea534 is REJECTED after actual191route/74accepted/
 26required consequences:1,991 new nonlegacy sampling warnings in Amihan copied

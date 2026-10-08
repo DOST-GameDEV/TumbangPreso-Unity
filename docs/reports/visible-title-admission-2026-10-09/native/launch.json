@@ -1,0 +1,26 @@
+{
+  "sourceRef": "0e98b47216bae8620155a1ad35612f39f47c3f12",
+  "profile": "pc-scenery-owner-visible-title-admission1009",
+  "filter": "TumbangPreso.PlayTests.StartupOrder1007Tests",
+  "expectedCases": 2,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-scenery-owner-visible-title-admission1009",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.StartupOrder1007Tests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\release-ui-perf1008g\\visible-title-admission1009\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\release-ui-perf1008g\\visible-title-admission1009\\editor.log"
+  ],
+  "pid": 66104
+}

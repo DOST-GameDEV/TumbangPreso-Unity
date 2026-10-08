@@ -200,7 +200,6 @@ namespace TumbangPreso.UI
         {
             if(_homeArrival) return;
             _homeArrival=true;
-            _loadingViewBegan=Time.realtimeSinceStartup;
             _nativeHome.SetLoading(true);
             BeginHomePreload();
             StartCoroutine(ArriveHome());
@@ -208,6 +207,10 @@ namespace TumbangPreso.UI
 
         private IEnumerator ArriveHome()
         {
+            // Admission callbacks and first canvas work can occupy this frame.
+            // Give the revealed title a rendered frame before its visible-time gate.
+            yield return null;
+            _loadingViewBegan=Time.realtimeSinceStartup;
             while(!_homeAssetsReady || Time.realtimeSinceStartup-_loadingViewBegan<MinimumLoadingViewSeconds)
             {
                 _nativeHome.SetLoadingProgress(_homeAssetsProgress*.65f);

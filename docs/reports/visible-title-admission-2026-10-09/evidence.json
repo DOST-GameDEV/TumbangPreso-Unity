@@ -1,0 +1,18 @@
+{
+  "originalWindowsSource": "0e98b47216bae8620155a1ad35612f39f47c3f12",
+  "originalWindowsPid": 72768,
+  "originalMainVisibleSeconds": 4.788572311401367,
+  "nativePid": 66104,
+  "nativePassed": 2,
+  "slowAdmissionTailMilliseconds": 500,
+  "fiveSecondMinimumUnchanged": true,
+  "assertionThresholdSecondsUnchanged": 4.95,
+  "protectedInputsRestored": 21449,
+  "testedSourceSha256": {
+    "Assets/TumbangPreso/Runtime/UI/ConvertedMainMenu.cs": "b0fd9b189bbe54d2127032987bb0bb2f6e6276a5a5ee0776c6591a6521c53325",
+    "Assets/TumbangPreso/Tests/PlayMode/StartupOrder1007Tests.cs": "62445fd935b3015727fb6e9408cd4b3c025f31ff7e7d31c9bcc6524f8bc890cf"
+  },
+  "currentWindowsFixValidated": false,
+  "desktopUpdated": false,
+  "scope": "Normal and slow-admission native graphics startup/first-Home playback. Fresh ordinary Windows visible-duration acceptance remains pending; full tournament scope not qualified."
+}
