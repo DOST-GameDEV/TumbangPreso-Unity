@@ -1,3 +1,16 @@
+# Current ground-support source unit, October9
+
+Native final74308 passes12:30new3/10shoe mesh-floor contacts at1mm,10shoe/3rotation
+support invariance,8prediction/Skim and2Arena ramp/recovery controls. All21,453
+inputs/preferences restore. Original30pairs fail45-91.8mm; firstgetter candidate
+30pairs pass but broader9PASS1FAIL exposes held-rotation dependence. Final projects
+mesh support into upright root space. Initial wrong3companion selector excluded.
+No map/hero art/kit change or new build. Desktop/G still ordinarye1c1/protocol154.
+Publish ground source/proof immediately, then investigate missing-emote/social
+holds as a concrete AI idle hypothesis before the next batched build. Actual
+Windows/slope/natural attachment, bots/cameras/lifecycle/stutter acceptance open.
+Root soleowner; laptop humanpaused/reviewer retired. Private3files preserved.
+
 # Current Desktop and next PC unit, October9
 
 Desktop and SAME internalG now ordinarye1c1/protocol154/runtime4a315c5e,

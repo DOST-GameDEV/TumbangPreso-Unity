@@ -1,3 +1,8 @@
+### LOOSE-SLIPPER-SURFACE-1009: rendered soles and floor support
+
+- [x] Reproduce45-91.8mm actual mesh/collider gap on30new3/10shoe pairs. Correct sole-pivot support and its held-rotation dependence; final12 native controls pass with1mm floor contact,3rotations/10shoes,8prediction/Skim cases and2actual Arena retrieval/recovery cases. All21,453 inputs/preferences restore. Preserve the incorrect initial selector and first9PASS1FAIL. [Evidence and scoped source](reports/loose-slipper-surface-2026-10-09/README.md).
+- [ ] Batch this source unit into the next existing-G/Desktop replacement with actual Windows contact, inclined/irregular surfaces and natural attachment acceptance. Current installed Desktop remains e1c1; no build is made for this native unit.
+
 ### REPLAY-COMPANION-1009: summoned doll recording
 
 - [x] Reproduce actual fifth-seat doll slipper rejection, add companion body/holder tracks and preserve bounded legacy decoding. Native final3 PlayMode controls plus1 separate EditMode connection admission pass; all21,451 inputs/preferences restore. Protocol154 is required for new highlights. [Original failure and scoped evidence](reports/recorded-companion-2026-10-09/README.md).

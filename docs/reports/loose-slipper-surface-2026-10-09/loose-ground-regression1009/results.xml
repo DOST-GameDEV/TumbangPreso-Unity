@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="10" result="Failed(Child)" total="10" passed="9" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-08 22:01:39Z" end-time="2026-10-08 22:02:26Z" duration="46.6329149">
+  <test-suite type="TestSuite" id="3670" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2159" result="Failed" site="Child" start-time="2026-10-08 22:01:39Z" end-time="2026-10-08 22:02:26Z" duration="46.632915" total="10" passed="9" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3662" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2159" result="Failed" site="Child" start-time="2026-10-08 22:01:39Z" end-time="2026-10-08 22:02:26Z" duration="46.618457" total="10" passed="9" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="13636" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3663" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2159" result="Failed" site="Child" start-time="2026-10-08 22:01:39Z" end-time="2026-10-08 22:02:26Z" duration="46.613253" total="10" passed="9" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3666" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2157" result="Failed" site="Child" start-time="2026-10-08 22:01:39Z" end-time="2026-10-08 22:02:26Z" duration="46.608082" total="10" passed="9" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1199" name="ArenaAiObjectiveApproachTests" fullname="TumbangPreso.PlayTests.ArenaAiObjectiveApproachTests" classname="TumbangPreso.PlayTests.ArenaAiObjectiveApproachTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-08 22:01:39Z" end-time="2026-10-08 22:02:25Z" duration="46.123716" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1200" name="OrdinaryBotRetrievesAcrossEachAuthoredRamp" fullname="TumbangPreso.PlayTests.ArenaAiObjectiveApproachTests.OrdinaryBotRetrievesAcrossEachAuthoredRamp" methodname="OrdinaryBotRetrievesAcrossEachAuthoredRamp" classname="TumbangPreso.PlayTests.ArenaAiObjectiveApproachTests" runstate="Runnable" seed="1115994087" result="Passed" start-time="2026-10-08 22:01:39Z" end-time="2026-10-08 22:02:07Z" duration="27.980484" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="300000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.60, announcer slider).
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="1201" name="SupportedDecksKeepShoesButRoofsAndFloatingShoesRecover" fullname="TumbangPreso.PlayTests.ArenaAiObjectiveApproachTests.SupportedDecksKeepShoesButRoofsAndFloatingShoesRecover" methodname="SupportedDecksKeepShoesButRoofsAndFloatingShoesRecover" classname="TumbangPreso.PlayTests.ArenaAiObjectiveApproachTests" runstate="Runnable" seed="848327208" result="Failed" start-time="2026-10-08 22:02:07Z" end-time="2026-10-08 22:02:25Z" duration="18.124576" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  plaza: landingMoved=0.062 looseMoved=0.000 ownerY=0.000 deckY=0.000 rest=0.001
+tore: landingMoved=0.061 looseMoved=0.000 ownerY=0.000 deckY=1.500 rest=0.001
+krus: landingMoved=0.065 looseMoved=0.000 ownerY=0.000 deckY=0.000 rest=0.001
+hukay: landingMoved=0.061 looseMoved=0.000 ownerY=0.000 deckY=-1.200 rest=0.001
+entablado: landingMoved=0.060 looseMoved=0.000 ownerY=0.000 deckY=1.200 rest=0.001
+  Expected: <empty>
+  But was:  < "plaza: landingMoved=0.062 looseMoved=0.000 ownerY=0.000 deckY=0.000 rest=0.001", "tore: landingMoved=0.061 looseMoved=0.000 ownerY=0.000 deckY=1.500 rest=0.001", "krus: landingMoved=0.065 looseMoved=0.000 ownerY=0.000 deckY=0.000 rest=0.001", "hukay: landingMoved=0.061 looseMoved=0.000 ownerY=0.000 deckY=-1.200 rest=0.001", "entablado: landingMoved=0.060 looseMoved=0.000 ownerY=0.000 deckY=1.200 rest=0.001" >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ArenaAiObjectiveApproachTests+<SupportedDecksKeepShoesButRoofsAndFloatingShoesRecover>d__15.MoveNext () [0x009b7] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\ArenaAiObjectiveApproachTests.cs:149
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.60, announcer slider).
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1305" name="BotLandingPredictionTests" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-08 22:02:25Z" end-time="2026-10-08 22:02:26Z" duration="0.363770" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1312" name="ALoadedSkimPredictionIncludesItsRealGroundContinuation" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.ALoadedSkimPredictionIncludesItsRealGroundContinuation" methodname="ALoadedSkimPredictionIncludesItsRealGroundContinuation" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="1693726608" result="Passed" start-time="2026-10-08 22:02:25Z" end-time="2026-10-08 22:02:25Z" duration="0.069885" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Skim predicted=(0.00, 0.02, 0.60) actual=(0.00, 0.02, 0.60)
+]]></output>
+            </test-case>
+            <test-case id="1313" name="ASkimmingSlipperPredictsOnlyItsRemainingContinuation" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.ASkimmingSlipperPredictsOnlyItsRemainingContinuation" methodname="ASkimmingSlipperPredictsOnlyItsRemainingContinuation" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="740198446" result="Passed" start-time="2026-10-08 22:02:25Z" end-time="2026-10-08 22:02:25Z" duration="0.041660" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Skim predicted=(0.00, 0.02, 0.60) actual=(0.00, 0.02, 0.60)
+]]></output>
+            </test-case>
+            <test-case id="1306" name="AThrowFromRaisedTerrainPredictsTheActualLowerFloorLanding" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.AThrowFromRaisedTerrainPredictsTheActualLowerFloorLanding" methodname="AThrowFromRaisedTerrainPredictsTheActualLowerFloorLanding" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="646728111" result="Passed" start-time="2026-10-08 22:02:25Z" end-time="2026-10-08 22:02:25Z" duration="0.042699" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Predicted=(0.00, 0.02, 4.58) actual=(0.00, 0.05, 4.58)
+]]></output>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1310" name="BotPredictionRetainsFlatCurvedAndBankedWorldFlight" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.BotPredictionRetainsFlatCurvedAndBankedWorldFlight" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-08 22:02:25Z" end-time="2026-10-08 22:02:26Z" duration="0.123297" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1307" name="BotPredictionRetainsFlatCurvedAndBankedWorldFlight(0.0f,0.0f,False)" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.BotPredictionRetainsFlatCurvedAndBankedWorldFlight(0.0f,0.0f,False)" methodname="BotPredictionRetainsFlatCurvedAndBankedWorldFlight" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="967954710" result="Passed" start-time="2026-10-08 22:02:25Z" end-time="2026-10-08 22:02:26Z" duration="0.040358" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1308" name="BotPredictionRetainsFlatCurvedAndBankedWorldFlight(0.6f,0.65f,False)" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.BotPredictionRetainsFlatCurvedAndBankedWorldFlight(0.6f,0.65f,False)" methodname="BotPredictionRetainsFlatCurvedAndBankedWorldFlight" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="842239984" result="Passed" start-time="2026-10-08 22:02:26Z" end-time="2026-10-08 22:02:26Z" duration="0.042573" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1309" name="BotPredictionRetainsFlatCurvedAndBankedWorldFlight(0.0f,0.9f,True)" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.BotPredictionRetainsFlatCurvedAndBankedWorldFlight(0.0f,0.9f,True)" methodname="BotPredictionRetainsFlatCurvedAndBankedWorldFlight" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="1051279729" result="Passed" start-time="2026-10-08 22:02:26Z" end-time="2026-10-08 22:02:26Z" duration="0.038674" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1311" name="RetrievalPredictionRefreshesAtThinkCadenceAndRetiresOldSources" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.RetrievalPredictionRefreshesAtThinkCadenceAndRetiresOldSources" methodname="RetrievalPredictionRefreshesAtThinkCadenceAndRetiresOldSources" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="1986324540" result="Passed" start-time="2026-10-08 22:02:26Z" end-time="2026-10-08 22:02:26Z" duration="0.044557" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1314" name="SkimPredictionStopsAtTheSameSolidWorldCover" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.SkimPredictionStopsAtTheSameSolidWorldCover" methodname="SkimPredictionStopsAtTheSameSolidWorldCover" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="416192011" result="Passed" start-time="2026-10-08 22:02:26Z" end-time="2026-10-08 22:02:26Z" duration="0.038779" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Skim predicted=(0.00, 0.02, -0.20) actual=(0.00, 0.02, -0.20)
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

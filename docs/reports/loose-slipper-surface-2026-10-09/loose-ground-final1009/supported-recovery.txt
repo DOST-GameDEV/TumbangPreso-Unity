@@ -1,0 +1,7 @@
+plaza: landingMoved=0.000 looseMoved=0.000 ownerY=0.000 deckY=0.000 rest=0.001
+tore: landingMoved=0.000 looseMoved=0.000 ownerY=0.000 deckY=1.500 rest=0.001
+krus: landingMoved=0.000 looseMoved=0.000 ownerY=0.000 deckY=0.000 rest=0.001
+hukay: landingMoved=0.000 looseMoved=0.000 ownerY=0.000 deckY=-1.200 rest=0.001
+entablado: landingMoved=0.000 looseMoved=0.000 ownerY=0.000 deckY=1.200 rest=0.001
+floatingRecovered=True
+roofLandRecovered=True roofLooseRecovered=True

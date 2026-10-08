@@ -1,0 +1,5 @@
+plaza: retrieved=True movedLoose=0.000 seconds=0.602 start=(14.00, 0.00, 0.00) target=(10.90, 0.00, 0.00) heights=0.000/0.000 final=(12.60, 0.08, 0.00) best3d=1.700 lowY=0.040 plan=Fetch
+tore: retrieved=True movedLoose=0.000 seconds=1.200 start=(8.50, 0.00, 0.00) target=(4.00, 0.00, 0.00) heights=0.000/1.500 final=(5.60, 1.17, 0.00) best3d=1.651 lowY=0.040 plan=Fetch
+krus: retrieved=True movedLoose=0.000 seconds=2.491 start=(14.50, 0.00, 0.00) target=(4.40, 0.00, 0.00) heights=0.000/0.000 final=(6.10, 0.08, 0.00) best3d=1.700 lowY=0.040 plan=Fetch
+hukay: retrieved=True movedLoose=0.000 seconds=0.941 start=(8.50, 0.00, 0.00) target=(4.60, 0.00, 0.00) heights=0.000/-1.200 final=(6.25, -0.64, 0.00) best3d=1.719 lowY=-0.639 plan=Fetch
+entablado: retrieved=True movedLoose=0.000 seconds=1.141 start=(2.76, 0.00, 2.31) target=(5.98, 0.00, 5.01) heights=0.000/1.200 final=(4.56, 0.89, 4.12) best3d=1.720 lowY=0.040 plan=Fetch

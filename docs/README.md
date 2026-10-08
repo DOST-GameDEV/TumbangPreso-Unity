@@ -10,7 +10,9 @@ Ilyas prethrow Skim AI: [original missed opportunity and actual input/load/throw
 
 Nine-hero live AI input coverage: [actual roster IDs, retained invalid selection coverage and remaining decisions](reports/hero-bot-roster-2026-10-07/README.md).
 
-Current combined Desktop release: [installed725e package, real startup/replay/video gates and preserved backup](reports/combined-replay-desktop-2026-10-07/README.md).
+Current ordinary Desktop release: [installede1c1/protocol154, actual startup/replay/preview acceptance and remaining performance scope](reports/companion-title-windows-2026-10-09/README.md).
+
+Previous October7 combined release: [installed725e package and historical acceptance](reports/combined-replay-desktop-2026-10-07/README.md).
 
 Current PC AI/replay integration: [exact tested-source proof, actual archive/viewer controls and retained fixture failure](reports/pc-local-replay-integration-2026-10-07/README.md).
 
@@ -299,3 +301,5 @@ Late-join opening hold: [native failure, corrected adoption and countdown regres
 Summoned doll replay bodies and held slippers: [original failure, native capture, codec bounds and admission evidence](reports/recorded-companion-2026-10-09/README.md).
 
 Current ordinary Desktop e1c1/protocol154: [actual startup, replay/preview/controlled gameplay and exact in-place installation](reports/companion-title-windows-2026-10-09/README.md).
+
+Loose footwear floor support: [actual30pair float, upright-pivot correction and12 scoped native controls](reports/loose-slipper-surface-2026-10-09/README.md).

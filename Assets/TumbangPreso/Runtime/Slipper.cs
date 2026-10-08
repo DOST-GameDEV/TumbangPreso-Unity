@@ -649,8 +649,19 @@ namespace TumbangPreso
             get
             {
                 var r = GetComponentInChildren<Renderer>();
-                return r != null ? Mathf.Max(Balance.SlipperRestHeight, r.bounds.extents.y)
-                                 : Balance.SlipperRestHeight;
+                if (r == null) return Balance.SlipperRestHeight;
+                var filter = r.GetComponent<MeshFilter>();
+                if (filter == null || filter.sharedMesh == null)
+                    return Mathf.Max(Balance.SlipperRestHeight, r.bounds.extents.y);
+                // Rest support is measured with the shoe root upright, even
+                // when callers ask while it is held or tumbling. Authored
+                // sole pivots must not be lifted by half the mesh's height.
+                var mesh = filter.sharedMesh.bounds;
+                var local = transform.worldToLocalMatrix * filter.transform.localToWorldMatrix;
+                float centre = local.MultiplyPoint3x4(mesh.center).y;
+                float extent = Mathf.Abs(local.m10) * mesh.extents.x
+                    + Mathf.Abs(local.m11) * mesh.extents.y + Mathf.Abs(local.m12) * mesh.extents.z;
+                return Mathf.Max(.001f, (extent - centre) * Mathf.Abs(transform.lossyScale.y));
             }
         }
 
