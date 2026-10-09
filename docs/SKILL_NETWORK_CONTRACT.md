@@ -832,6 +832,6 @@ Known gaps of this revision, not yet sent or enforced:
 - The host does not see a crouch. Contact is resolved against the standing capsule.
 - Hopping blocks the stamina refill on the owner only. The host's count for a remote player
   (`CharacterMotor.NetworkStamina`) may run ahead of that player's bar.
-- Crouch and slide have no replicated state, so other screens do not show them.
-- Crouch is keyboard only (Left Ctrl or C). No controller or touch entry exists yet.
+- Crouch and slide are shown on other screens since 2026-10-09: two spare bits (16 crouched, 32 sliding) of the effort byte that already rides every pose, set by the owner, kept and passed on by the host, read by replicas (`CharacterMotor.ApplyNetworkMovePose`). Presentation only; a peer that does not know the bits ignores them, so no protocol bump.
+- Crouch is on all three devices since 2026-10-09 (Left Ctrl, B on a pad shared with Ready Up, a touch button), as `Verb.Crouch`. It is still not sent to the host.
 Remote-peer qualification for this revision has not been run.

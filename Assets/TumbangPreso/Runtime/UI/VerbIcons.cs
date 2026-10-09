@@ -120,6 +120,9 @@ namespace TumbangPreso.UI
         /// picture, not a hand (GRAB already is one).
         /// </summary>
         Interact,
+
+        /// <summary>CROUCH (2026-10-09): a chevron pressing down onto a ground line. JUMP's picture, turned over.</summary>
+        Crouch,
     }
 
     /// <summary>
@@ -177,6 +180,7 @@ namespace TumbangPreso.UI
                 case VerbGlyph.Lunge: return "FORWARD THRUST";
                 case VerbGlyph.Emote: return "FACE";
                 case VerbGlyph.Interact: return "PULL UP";
+                case VerbGlyph.Crouch: return "PRESS DOWN ON A LINE";
                 case VerbGlyph.SkillPrimary: return "SKILL PLATE";
                 case VerbGlyph.SkillSecondary: return "SKILL PLATE";
                 default: return "STAR";
@@ -272,6 +276,16 @@ namespace TumbangPreso.UI
                         Mathf.Max(Segment(u, v, 0.0f, 0.18f, 0.0f, 0.78f, Stroke * 0.70f),
                                   Mathf.Max(Segment(u, v, -0.26f, 0.52f, 0.0f, 0.78f, Stroke * 0.70f),
                                             Segment(u, v, 0.26f, 0.52f, 0.0f, 0.78f, Stroke * 0.70f))));
+
+                // A chevron pointing down, onto the line it is pressing into, a short bar above it.
+                case VerbGlyph.Crouch:
+                    return Mathf.Max(
+                        Mathf.Max(
+                            Segment(u, v, -0.52f, 0.34f, 0.0f, -0.24f, Stroke * 0.9f),
+                            Segment(u, v, 0.0f, -0.24f, 0.52f, 0.34f, Stroke * 0.9f)),
+                        Mathf.Max(
+                            Segment(u, v, -0.30f, 0.70f, 0.30f, 0.70f, Stroke * 0.55f),
+                            Segment(u, v, -0.62f, -0.64f, 0.62f, -0.64f, Stroke * 0.75f)));
 
                 case VerbGlyph.SkillPrimary:
                     return Mathf.Max(Plate(u, v),

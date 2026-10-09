@@ -118,6 +118,9 @@ namespace TumbangPreso.InputLayer
         // The arcs, in degrees from the +x axis. 90 is straight up, 180 is straight left.
         private const float InnerArcFrom = 60.0f;
         private const float InnerArcTo = 160.0f;
+        /// <summary>How many controls the inner arc spreads, and how far past its low end each later one sits. See `ClusterOffset`.</summary>
+        private const int InnerArcSlots = 3;
+        private const float InnerArcBelowStep = 47.0f;
         private const float OuterArcFrom = 75.0f;
         private const float OuterArcTo = 149.0f;
 
@@ -877,7 +880,14 @@ namespace TumbangPreso.InputLayer
         {
             if (slot == 0) return Vector2.zero;
 
-            int others = Mathf.Max(1, InputCatalogue.InZone(TouchZone.ActionCluster).Count - 1);
+            // ⚠️ THE ARC HOLDS THREE AND NO MORE. Four medium controls across its hundred degrees are 144 units apart
+            // centre to centre and 173 wide: they overlap. So the first three slots keep the spacing they have always
+            // had, and a later one (CROUCH, slot 4, 2026-10-09) goes BELOW the arc's low end, left of and under the
+            // thumb's rest, `InnerArcBelowStep` degrees on for each: 199 units from its neighbour at the arc's end
+            // and 52 clear of THROW.
+            if (slot > InnerArcSlots) return OnArc(InnerRadius, InnerArcTo + InnerArcBelowStep * (slot - InnerArcSlots));
+
+            int others = Mathf.Max(1, Mathf.Min(InnerArcSlots, InputCatalogue.InZone(TouchZone.ActionCluster).Count - 1));
             return OnArc(InnerRadius, Spread(slot - 1, others, InnerArcFrom, InnerArcTo));
         }
 

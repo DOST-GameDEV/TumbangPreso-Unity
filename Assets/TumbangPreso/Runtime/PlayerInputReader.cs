@@ -70,6 +70,7 @@ namespace TumbangPreso
             CaptureMenuButton(_sprint,Verb.Sprint);CaptureMenuButton(_emote,Verb.EmoteWheel);
             CaptureMenuButton(_skill1,Verb.Skill1);CaptureMenuButton(_skill2,Verb.Skill2);CaptureMenuButton(_ultimate,Verb.Ultimate);
             CaptureMenuButton(_interact,Verb.Interact);
+            CaptureMenuButton(_crouch,Verb.Crouch);
             InputLayer.TouchInput.ConsumeRecoveryPress();
             InputLayer.TouchInput.LookDelta = Vector2.zero;
             _motor?.Intent.Clear();_motor?.Intent.CommitFrame();
@@ -123,7 +124,7 @@ namespace TumbangPreso
         [SerializeField] private CharacterMotor _motor;
         [SerializeField] private Camera _aimCamera;
 
-        private InputAction _move, _sprint, _jump, _special, _grab, _lunge, _emote, _skill1, _skill2, _ultimate, _interact;
+        private InputAction _move, _sprint, _jump, _special, _grab, _lunge, _emote, _skill1, _skill2, _ultimate, _interact, _crouch;
         private InputDevice _throwDevice, _lungeDevice;
         private bool _throwDeviceLost, _lungeDeviceLost;
         private bool _throwHardwareHeld, _lungeHardwareHeld;
@@ -176,7 +177,7 @@ namespace TumbangPreso
         /// </summary>
         private InputAction _curveLeft, _curveRight;
         private InputAction _readyUp;
-        private bool _readyUseHeld, _readyInteractHeld;
+        private bool _readyUseHeld, _readyInteractHeld, _readyCrouchHeld;
 
         /// <summary>One wheel notch (or one tap) of curve, and the turn rate while a key is held.</summary>
         private const float CurveStep = 0.35f, CurveRate = 2.5f;
@@ -253,6 +254,8 @@ namespace TumbangPreso
             _skill2 = map.FindAction("Skill2", false);
             _ultimate = map.FindAction("Ultimate", false);
             _interact = map.FindAction("Interact", false);
+            // Optional like the others: an asset from before 2026-10-09 has no Crouch action, and then the two keys are read.
+            _crouch = map.FindAction("Crouch", false);
             _curveLeft = map.FindAction("CurveLeft", false);
             _curveRight = map.FindAction("CurveRight", false);
 
@@ -395,7 +398,7 @@ namespace TumbangPreso
             if (visual != null && visual.Companion != null && visual.Companion.IsPossessed)
             {
                 ResetToggleControls();
-                intent.Set(Verb.Sprint, false); intent.Set(Verb.Grab, false);
+                intent.Set(Verb.Sprint, false); intent.Set(Verb.Grab, false); intent.Set(Verb.Crouch, false);
                 // Human controls Kuro the companion pet.
                 //
                 // ⚠️ THE THUMB STICK AND THE LOOK DELTA REACH KURO TOO. This branch returns
@@ -433,10 +436,15 @@ namespace TumbangPreso
             bool sprintDown = ReadButton(_sprint, Verb.Sprint);
             bool sprint = _sprintToggle.Read(sprintDown, settings.ToggleSprint, controlsAllowed);
             intent.Set(Verb.Sprint, settings.ToggleSprint ? sprint : sprintDown);
-            // The movement rework's crouch: a debug read of two keyboard keys while its switch is on (`InputIntent.Crouch`).
-            var keyboard = UnityEngine.InputSystem.Keyboard.current;
-            intent.Crouch = MovementRework.Active && controlsAllowed && keyboard != null
-                && (keyboard.leftCtrlKey.isPressed || keyboard.cKey.isPressed);
+            // ⚠️ CROUCH, ON EVERY DEVICE (owner, 2026-10-09: "add controller and touch support for crouch"). It was a
+            // read of two keyboard keys. It is an action now (Left Ctrl, B on a pad, its own button on a phone) and a
+            // verb like the rest. On a pad it shares B with the ready: while the ready window or the skip vote is up
+            // that press is the ready's and never a crouch (`ConsumeReadyControl`, as F is for Interact).
+            bool crouchDown = _crouch != null
+                ? !ConsumeReadyControl(_crouch, ref _readyCrouchHeld) && ReadButton(_crouch, Verb.Crouch)
+                : ReadButton(null, Verb.Crouch) || (Keyboard.current != null
+                    && (Keyboard.current.leftCtrlKey.isPressed || Keyboard.current.cKey.isPressed));
+            intent.Set(Verb.Crouch, MovementRework.Active && controlsAllowed && crouchDown);
             intent.Set(Verb.SpecialAbility, ReadButton(_special,Verb.SpecialAbility));
             bool grabDown = ReadButton(_grab, Verb.Grab);
             if (_carrier == null) _carrier = GetComponent<Carrier>();
@@ -651,7 +659,7 @@ namespace TumbangPreso
             _throwDeviceLost = _lungeDeviceLost = false;
             CancelPendingInput();
             _readyUseHeld = false;
-            _readyInteractHeld = false;
+            _readyInteractHeld = false; _readyCrouchHeld = false;
             // ⚠️ RELEASE EVERYTHING ON THE WAY OUT. A verb held across a disable stays held
             // in the intent table forever, and the player walks back in already sprinting.
             DiscardMenuButtonsUntilRelease();

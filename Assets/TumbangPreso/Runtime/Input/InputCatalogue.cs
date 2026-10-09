@@ -199,6 +199,16 @@ namespace TumbangPreso.InputLayer
             Verb.Interact => new VerbInput(
                 Verb.Interact, "Interact", "<Gamepad>/rightStickPress",
                 TouchZone.MoveStick, 1, TouchSize.Medium, "INTERACT", UI.VerbGlyph.Interact),
+
+            // ⚠️ CROUCH (2026-10-09), and the slide it becomes at a sprint. THE PAD HAS NO FREE CONTROL, so it takes B
+            // and SHARES it with `ReadyUp`: the ready only exists while the ready window or the skip vote is on screen,
+            // before a round, and the reader gives the press to the ready then and to nothing else
+            // (`PlayerInputReader.ConsumeReadyControl`, the arrangement F already has for Interact). B is also where
+            // every shooter on a console puts it. ON A PHONE IT IS THE RIGHT THUMB'S, low and left of THROW: a slide
+            // is entered while RUNNING, so the left thumb is on the stick and cannot be the one to press it.
+            Verb.Crouch => new VerbInput(
+                Verb.Crouch, "Crouch", "<Gamepad>/buttonEast",
+                TouchZone.ActionCluster, 4, TouchSize.Medium, "CROUCH", UI.VerbGlyph.Crouch),
         };
 
         /// <summary>Every verb's entry, in enum order.</summary>

@@ -25,6 +25,12 @@ namespace TumbangPreso
         // *"i suggest the general interact button"*. F on a keyboard, beside `Grab`
         // (`Settings.Rebinding.IsOneUseKey`).
         Interact,
+
+        // ⚠️ CROUCH, a verb of its own since 2026-10-09 (owner: "add controller and touch support for crouch"). Hold to
+        // crouch; pressed at a sprint it is the slide (`MovementRework`, `CharacterMotor.MovementRework.cs`). Left Ctrl
+        // on a keyboard, B on a pad (shared with Ready Up, which only exists before a round:
+        // `Settings.Rebinding.IsOneUseKey`), a button of its own on a phone. It began as a debug key read.
+        Crouch,
     }
 
     /// <summary>
@@ -131,11 +137,10 @@ namespace TumbangPreso
         public bool Parked { get; set; }
 
         /// <summary>
-        /// ⚠️ A DEBUG INPUT, NOT A VERB YET. Held crouch for the movement rework prototype (`MovementRework`, owner
-        /// 2026-10-07): only `PlayerInputReader` writes it, only while that switch is on, and only from the keyboard.
-        /// If the rework ships it becomes a real `Verb` with its pad and touch answers (`InputCatalogue`).
+        /// Crouch held, for the movement rework (`MovementRework`). It was a debug field of its own, written from two
+        /// keyboard keys; since 2026-10-09 it is `Verb.Crouch`, on all three devices, and this is only its reading.
         /// </summary>
-        public bool Crouch { get; set; }
+        public bool Crouch => Pressed(Verb.Crouch);
 
         public void Set(Verb v, bool pressed)
         {
@@ -170,7 +175,6 @@ namespace TumbangPreso
             SpinInput = 0.0f;
             HasAimPoint = false;
             FaceAimPoint = false;
-            Crouch = false;
         }
 
         /// <summary>Clears producer-owned aiming state without releasing held verbs.</summary>
@@ -178,7 +182,6 @@ namespace TumbangPreso
         {
             HasAimPoint = false;
             FaceAimPoint = false;
-            Crouch = false;
         }
 
         /// <summary>

@@ -74,7 +74,7 @@ namespace TumbangPreso.Settings
         public static readonly string[] RebindableActions =
         {
             "MoveForward", "MoveBackward", "MoveLeft", "MoveRight",
-            "Sprint", "Jump",
+            "Sprint", "Jump", "Crouch",
             "SpecialAbility", "Grab", "Lunge", "CurveLeft", "CurveRight",
             "Skill1", "Skill2", "Ultimate", "Interact",
             "ReadyUp", "CleanFeed", "AbilityInfo",
@@ -141,7 +141,10 @@ namespace TumbangPreso.Settings
         public static bool IsOneUseKey(string a, string b)
             => (a == "Grab" && b == "Interact") || (a == "Interact" && b == "Grab")
                || (a == "Lunge" && b == "ReadyUp") || (a == "ReadyUp" && b == "Lunge")
-               || (a == "Interact" && b == "ReadyUp") || (a == "ReadyUp" && b == "Interact");
+               || (a == "Interact" && b == "ReadyUp") || (a == "ReadyUp" && b == "Interact")
+               // Crouch and the ready share B on a pad (2026-10-09): the ready is only live before a round, and the
+               // reader gives the press to it alone then (`InputCatalogue`, the Crouch row).
+               || (a == "Crouch" && b == "ReadyUp") || (a == "ReadyUp" && b == "Crouch");
 
         /// <summary>True when binding one control to both actions would be two things on one press.</summary>
         public static bool WouldClash(string a, string b) => ShareAContext(a, b) && !IsOneUseKey(a, b);
@@ -172,6 +175,7 @@ namespace TumbangPreso.Settings
             { "CurveRight", "Curve Throw Right" },
             { "Jump", "Jump" },
             { "Sprint", "Run" },
+            { "Crouch", "Crouch / Slide" },
             { "Skill1", "Signature Ability" },
             { "Skill2", "Role Ability" },
             { "Ultimate", "Ultimate Ability" },
@@ -222,7 +226,7 @@ namespace TumbangPreso.Settings
         /// </summary>
         public static readonly (string Title, string[] Actions)[] Groups =
         {
-            ("MOVEMENT", new[] { "MoveForward", "MoveBackward", "MoveLeft", "MoveRight", "Sprint", "Jump" }),
+            ("MOVEMENT", new[] { "MoveForward", "MoveBackward", "MoveLeft", "MoveRight", "Sprint", "Jump", "Crouch" }),
             ("ACTIONS", new[] { "SpecialAbility", "Lunge", "Grab", "CurveLeft", "CurveRight", "Interact" }),
             ("ABILITIES", new[] { "Skill1", "Skill2", "Ultimate" }),
             ("INTERFACE", new[] { "AbilityInfo", "CleanFeed", "Pause",

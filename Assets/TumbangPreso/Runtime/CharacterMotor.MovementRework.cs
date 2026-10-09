@@ -31,8 +31,9 @@ namespace TumbangPreso
         private bool ReworkDrivesThisBody => MovementRework.Active && IsLocalHuman && !IsSwimming && !IsFlying;
 
         /// <summary>True while the rework has this body crouched or sliding (the animator and the camera read these).</summary>
-        public bool ReworkCrouched => _rwCrouched;
-        public bool ReworkSliding => _rwSliding;
+        // (On a body this peer does not simulate, what its owner last reported: `CharacterMotor.NetworkStamina.cs`.)
+        public bool ReworkCrouched => _rwCrouched || NetCrouched;
+        public bool ReworkSliding => _rwSliding || NetSliding;
         /// <summary>How far the first-person eye sits below standing, metres; the camera eases toward it.</summary>
         public float ReworkEyeDropTarget => _rwSliding ? MovementRework.SlideEyeDrop : _rwCrouched ? MovementRework.CrouchEyeDrop : 0f;
         /// <summary>Flat speed, metres a second, for the prototype map's readout.</summary>

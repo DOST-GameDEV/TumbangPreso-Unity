@@ -2707,6 +2707,8 @@ namespace TumbangPreso.Net
                                    recoveryEpisode,recoveryAcknowledged);
             unit.ApplyNetworkStatuses(whirledLeft, chilledLeft, rootedLeft, hauntedLeft, zappedLeft);
             unit.ApplyNetworkEffort((effort & 1) != 0, pull / 255f);
+            // The movement rework's crouch and slide, for this body's pose on a screen that does not simulate it.
+            unit.ApplyNetworkMovePose(effort);
             unit.ApplyNetworkReworkStatuses(concussedLeft, fearedLeft, disorientedLeft, vulnerableLeft, fearFrom);
             unit.AbilitySystem?.ApplyNetworkAim(aim);
         }
