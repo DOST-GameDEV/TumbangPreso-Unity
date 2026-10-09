@@ -130,6 +130,13 @@ namespace TumbangPreso
         /// </summary>
         public bool Parked { get; set; }
 
+        /// <summary>
+        /// ⚠️ A DEBUG INPUT, NOT A VERB YET. Held crouch for the movement rework prototype (`MovementRework`, owner
+        /// 2026-10-07): only `PlayerInputReader` writes it, only while that switch is on, and only from the keyboard.
+        /// If the rework ships it becomes a real `Verb` with its pad and touch answers (`InputCatalogue`).
+        /// </summary>
+        public bool Crouch { get; set; }
+
         public void Set(Verb v, bool pressed)
         {
             if (!pressed) _releaseRequired.Remove(v);
@@ -163,6 +170,7 @@ namespace TumbangPreso
             SpinInput = 0.0f;
             HasAimPoint = false;
             FaceAimPoint = false;
+            Crouch = false;
         }
 
         /// <summary>Clears producer-owned aiming state without releasing held verbs.</summary>
@@ -170,6 +178,7 @@ namespace TumbangPreso
         {
             HasAimPoint = false;
             FaceAimPoint = false;
+            Crouch = false;
         }
 
         /// <summary>

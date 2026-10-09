@@ -42,6 +42,41 @@ namespace TumbangPreso.Visual
         // shoulders and her face looks down on him from the top of the frame: the spirit over the guardian, centred, not beside him.
         private static readonly Vector3 MakilingClose = new Vector3(0.05f, 0f, -1.15f);
         private const float MakilingYaw = -14f, MakilingScale = 1.1f;
+        // ⚠️⚠️ v9 (2026-10-08), SHE FILLS THE SKY. The owner on the remodelled cutscene: *"this is essentially just the same cutscene
+        // textured better ... it could use some more creativity on it"*; offered her at a mountain's size rising behind him, he
+        // answered *"if she's the size of the mountain- maybe instead she could fill up the sky or something like a god visible in
+        // the sky"*. So she is no longer a figure beside him. She stands `MakilingSky` away behind him, `MakilingSkyScale` times
+        // her own size (her head is 23 m tall), sunk to her breast under the court's level, so from there up she is in the sky
+        // over whatever the map has there, and the map hides the rest of her as it would a mountain. Her spot beside him
+        // (`MakilingStand`) is still where her MEADOW grows and her mist and fireflies rise: her presence on the ground.
+        // The CALL and ROOT shots (`tools/author_ultimate_intros.py`) look up past him to her.
+        // ⚠️ Film sk1 (40 times, sunk to her hips, leaning 14 degrees): her head left the top of both shots and her hands with the
+        // light were hidden behind his head. She LEANS about her feet, which are far under the court, so every degree of lean
+        // brings her head metres nearer and higher in the frame: the lean is small now. Film sk2 (26 times): she fitted, and
+        // read as a tall woman standing behind him, not as someone in the sky. So she is 50 times her size and sunk to her
+        // BREAST: what is over the horizon is her hands, her shoulders, her face and her hair, and her face alone is a
+        // sixth of the frame's height. (Those sizes are for an open court, 72 m: see `PaeteSkyRoom` below.)
+        // ⚠️ SHE STANDS ON THE LINE STRAIGHT BEHIND HIM (x = 0, where both shots look), and that is deliberate: the phase camera
+        // may MIRROR a blocked shot about that line (`UltimatePhaseView.ChooseShot`), and a figure on it keeps her place in the
+        // frame, mirrored with the rest. Both shots stand a little to his side, so she is beside him in the frame, not behind him.
+        // Film sk3 (50 times, sunk to 1.8): right, but her wreath left the top of the frame; 44 and 1.7 keep it in, and stand
+        // her face higher over whatever a map has on its skyline.
+        private const float MakilingSkyFarthest = 72f, MakilingSkyYaw = 0f, MakilingSkySunk = 1.7f;
+        // Her size while she is far and whole, as a share of that: 37 m of her, all of it over the horizon.
+        private const float MakilingSkyFar = 0.30f;
+        // ⚠️⚠️ SHE IS FAR, AND THE MAP IS OPENED TO HER (owner, 2026-10-08, after playing it: *"its hard to see her especially when
+        // its in an enclosed area, for example in the prototype map, the walls cover most of her body, and this can be the same
+        // for other maps like the cities or the arena. so think of a way to counterract that"*). ⚠️ REFUSED: the first answer
+        // measured the clear air behind him and stood her in it, as near as 6 m and sized to look the same from the two shots
+        // (`PaeteSkyRoom`); he: *"we have a distance fade effect for objects near the camera.. maybe you could apply that?"*,
+        // *"because its weird that shes so close"*. So she stays 72 m off, and for the two shots that look at her the map's own
+        // screen-door dissolve takes the walls and roofs out of a window of sky round her (`NearFade.OpenSky`, set in
+        // `SamplePaeteSky`, closed in `Dispose`). It reaches every surface on `TumbangPreso/NearFade`, which is the dressed map.
+        private const float MakilingSkyScale = 44f;
+        // Her sky's metres are typed for that distance; kept as a share so a later change of distance is one number.
+        private const float _paeteSkyShare = 1f;
+        private static readonly Vector3 MakilingSky = new Vector3(0f, -MakilingSkySunk * MakilingSkyScale, -MakilingSkyFarthest);
+
         // The guardian faces out toward the rise shot's camera, a little more than a quarter turn from him, so its hollows are seen lighting.
         private const float PaeteTreeYaw = 105f;
         // The beats (direction.md 5.14, re-timed for v7 in 5.16).
@@ -60,10 +95,39 @@ namespace TumbangPreso.Visual
         // is happening"*; asked, he chose 6.5 s). Every beat in these files is still typed on the 5.0 s clock the direction was written
         // on; the shared clock is divided by this where it comes in (`Sample`, `Shake`, `GradeAt`, `PaeteFrame`) and shots are looked
         // up at it times this (`PaeteShotAt`). The authored table (`tools/author_ultimate_intros.py`) and the theme run the same factor.
-        private const float PaeteStretch = 1.3f;
+        // ⚠️⚠️ v9 (2026-10-08): 9.0 S, AND NOT EVENLY. The owner on the first cut with her in the sky and the dive under the court,
+        // both squeezed into v8's 6.5 s: *"it looks like its sped up. theres not much weight to the timing of things"*; asked, he
+        // chose "Lengthen to about 9 s". An even stretch would have slowed the blows as much as the arrivals, and a blow that is
+        // slow has no weight either. So the 5.0 s clock every beat in these files is typed on is now mapped to real time by a
+        // TABLE (straight lines between its points): her arrival in the sky (0 to 0.55) and the dive (1.93 to 2.70) get the time,
+        // the light given gets a breath, and the slam, the hauls and THE TAKE keep close to the pace they had.
+        //     her arrival 2.00 s (was 0.72)   the light 0.70 (0.39)   to the drop 0.40 (0.33)   the slam and the channel 1.24 (1.08)
+        //     the dive 1.60 (1.00)            the rise 1.50 (1.43)    THE TAKE 1.56 (1.56)
+        // ⚠️ THE SAME TABLE IS IN THREE PLACES and they must agree: here, `tools/author_ultimate_intros.py` (`PAETE_CLOCK`,
+        // `PAETE_REAL`: his body's keys and the shots) and `tools/build_paete_audio.py` (`theme`). ⚠️ The LENGTH is network timing
+        // (every peer holds the match for the longest accepted performance): `UltimatePerformance.MaxSeconds` went from 6.5 to 9.0
+        // with it and `NetSession.ProtocolVersion` to 155. The staged tree's clock is typed on the 5.0 one, so where it stands at
+        // the end, and `PaeteSentry.BodyLead`, do not change.
+        private static readonly float[] PaeteClockAt = { 0f, .55f, .85f, 1.10f, 1.93f, 2.70f, 3.80f, 5.0f };
+        private static readonly float[] PaeteRealAt = { 0f, 2.00f, 2.70f, 3.10f, 4.34f, 5.94f, 7.44f, 9.0f };
+
+        /// <summary>The 5.0 s clock these files are typed on, at this many real seconds of the performance.</summary>
+        private static float PaeteClock(float real) => PaeteMap(PaeteRealAt, PaeteClockAt, real);
+        /// <summary>The real second of the performance at which the 5.0 s clock reads this.</summary>
+        private static float PaeteReal(float clock) => PaeteMap(PaeteClockAt, PaeteRealAt, clock);
+
+        private static float PaeteMap(float[] from, float[] to, float x)
+        {
+            int last = from.Length - 1;
+            if (x <= from[0]) return to[0] + (x - from[0]) * (to[1] - to[0]) / (from[1] - from[0]);
+            for (int i = 0; i < last; i++)
+                if (x <= from[i + 1]) return to[i] + (x - from[i]) * (to[i + 1] - to[i]) / (from[i + 1] - from[i]);
+            return to[last] + (x - from[last]) * (to[last] - to[last - 1]) / (from[last] - from[last - 1]);
+        }
+
         /// <summary>The end of the performance on the 5.0 s clock these files are typed on.</summary>
-        private float PaeteEnd => Seconds / PaeteStretch;
-        private int PaeteShotAt(float t) => ShotIndexAt(t * PaeteStretch);
+        private float PaeteEnd => PaeteClock(Seconds);
+        private int PaeteShotAt(float t) => ShotIndexAt(PaeteReal(t));
         private static readonly float[] PaeteHauls = { 2.78f, 3.05f, 3.33f };
         private const float PaeteTopOutAt = 3.53f, PaeteWakeAt = 3.71f;
 
@@ -75,9 +139,10 @@ namespace TumbangPreso.Visual
         private MakilingSpirit _makilingSpirit;
         private PaeteMeadow _paeteMeadow;
         private PaeteGroundRoots _paeteRoots;
-        private PaeteChannelGlow _paeteGlow;
+        private PaeteChannelGlow _paeteGlow, _paeteGrownGlow;
         private PaeteRootRidge _paeteRidge;
         private PaeteSentryBody _paeteTree;
+        private float _paeteFxClock = -1f;
         private readonly List<int> _mist = new List<int>(8);
         private readonly List<int> _fireflies = new List<int>(8);
         private readonly List<int> _motes = new List<int>(10);
@@ -161,17 +226,21 @@ namespace TumbangPreso.Visual
             _paeteLeftPalm.y = _paeteRightPalm.y = _paeteCourt + .03f;
             // HER MEADOW first, so she rises out of it (direction.md 5.13).
             _paeteMeadow = new PaeteMeadow(_root.transform, MakilingStand, PaeteHandsMid, _paeteCourt);
-            // MARIANG MAKILING, behind his RIGHT shoulder, turned a little toward him.
-            _makilingSpirit = new MakilingSpirit(_root.transform, MakilingStand, MakilingYaw, MakilingScale);
+            // MARIANG MAKILING, in the sky behind him (v9), turned to look down on him. The mist takes her at the horizon; she is
+            // only ever whole from her breast up ("She turns solid only around her face and hands as they come close").
+            _makilingSpirit = new MakilingSpirit(_root.transform, MakilingSky + Vector3.up * _paeteCourt, MakilingSkyYaw, MakilingSkyScale)
+            { MistFrom = MakilingSkySunk, MistTo = MakilingSkySunk + 0.20f, FormFloor = 1.88f };
             for (int i = 0; i < MistRows.Length; i++)
                 _mist.Add(AddGlow("MakilingMist" + i, new Color(0.80f, 1.0f, 0.86f, 1f), billboard: i >= 3, falloff: 1.6f, core: 0f));
             for (int i = 0; i < FireflyRows.Length; i++)
                 _fireflies.Add(AddGlow("MakilingFirefly" + i, MakilingJade, falloff: 2.4f, core: 0.8f));
 
             // THE LIGHT she gives him, its halo, and the short trail it leaves as it falls.
-            _giftLight = AddGlow("PaeteGiftLight", PaeteHot, falloff: 2.0f, core: 1.2f, lift: .05f);
-            _giftHalo = AddGlow("PaeteGiftHalo", PaeteLight, falloff: 1.4f, core: 0f, lift: .05f);
-            for (int i = 0; i < 5; i++) _giftTrail.Add(AddGlow("PaeteGiftTrail" + i, PaeteLight, falloff: 2.2f, core: 0.4f));
+            // ⚠️ Drawn well toward the lens (`lift`): the light comes down behind him from the sky, and at 5 cm his own body hid it
+            // and its trail (owner, 2026-10-08: "its not obvious because the particles get hidden/blocked by paete himself").
+            _giftLight = AddGlow("PaeteGiftLight", PaeteHot, falloff: 2.0f, core: 1.2f, lift: .9f);
+            _giftHalo = AddGlow("PaeteGiftHalo", PaeteLight, falloff: 1.4f, core: 0f, lift: .9f);
+            for (int i = 0; i < 5; i++) _giftTrail.Add(AddGlow("PaeteGiftTrail" + i, PaeteLight, falloff: 2.2f, core: 0.4f, lift: .9f));
             _palmGlow = AddGlow("PaetePalmGlow", PaeteLight, falloff: 1.8f, core: 0.8f, lift: .06f);
 
             // HIS EYES: a hot core, a soft halo and an anamorphic streak for each, found on his own face.
@@ -199,6 +268,16 @@ namespace TumbangPreso.Visual
 
             // HIS ROOTS INTO THE COURT (from his hands and his knee; his own bark).
             _paeteRoots = new PaeteGroundRoots(_root.transform, PaeteProp.Palette);
+            // ⚠️ HIS ARMS THEMSELVES GO INTO THE COURT, and the vines on him move (owner, 2026-10-08: *"instead of keeping the same
+            // length, do the same thing you did with the fpv arms and the leap swing where the arms grow out. his live character's
+            // vines and twisting branches should be animated in a way thats more organic and fluid"*). The body here is this
+            // scene's own copy, so its mesh may be swapped for one whose vines move; the glow's shells then take that mesh too.
+            if (_paeteRoots.BindBody(skins, PaeteProp.Palette, living: true)) _paeteGlow?.Rebind();
+            // ⚠️ THE ARMS HE PLANTS GLOW WITH HIM (owner, 2026-10-08: "glow isnt applying to his vine extensions", "i was referring
+            // to the planted arms in the cutscene"). They are a mesh of their own, built after his body's glow was hung, so
+            // they get one too, driven by the same numbers (`SamplePaeteGlow`).
+            if (_paeteRoots.ArmsRenderer != null)
+                _paeteGrownGlow = PaeteChannelGlow.Attach(new Renderer[] { _paeteRoots.ArmsRenderer }, _root.transform, ownPalette: true, effects: true)?.Flat(.7f);
 
             // HIS ROOTS RACING TO THE SPOT, staged: posed from this clock only.
             _paeteRidge = PaeteRootRidge.Race(_root.transform, new Vector3(PaeteHandsMid.x, _paeteCourt, PaeteHandsMid.z + 0.15f),
@@ -219,15 +298,23 @@ namespace TumbangPreso.Visual
             _paeteTree = PaeteSentryBody.Build(_root.transform);
             _paeteTree.transform.localPosition = _pvLanding + Vector3.up * _paeteCourt;
             _paeteTree.Staged = true;
+            // The rise's own effects (the breach, the claws, each haul, the crown shaken, the wake), made on this stage and
+            // stepped by this clock below: the rise is seen nowhere else in the game (`PaeteSentryBody.StageFx`).
+            _paeteTree.StageFx = _root.transform;
+            _paeteFxClock = -1f;
             _paeteTree.SetFacing(_root.transform.TransformDirection(Quaternion.Euler(0f, PaeteTreeYaw, 0f) * Vector3.forward));
             var lata = GameServices.Round?.Lata;
             if (lata != null) _paeteTree.AvoidPoint(lata.transform.position);
 
             // v6: the leaves, the petals, the mark, the streaks, the brush stroke (direction.md 5.15).
             BuildPaeteVfx();
+            // v9: the sky she stands in (her halo, the dusk round her, the clouds, the shafts).
+            BuildPaeteSky();
             // v7: the burst layer (sparkles, rings, rays, pillars, rising light, the veil) and THE TAKE (direction.md 5.16).
             BuildPaeteBurst();
             BuildPaeteTake();
+            // v9: THE DIVE, the set under the court the lens rides his root through (`HeroIntroductionScene.PaeteUnder.cs`).
+            BuildPaeteUnder();
         }
 
         /// <summary>The camera's shake for Paete's blows: the slam, each pulse, the send, the court bulging, each haul (harder each time), the top-out.</summary>
@@ -251,30 +338,47 @@ namespace TumbangPreso.Visual
             float leave = 1 - Ease(PaeteEnd - .16f, PaeteEnd, t);
 
             // ---------------------------------------------------------------- MAKILING, watching over him.
-            float rise = Ease(.03f, .45f, t);
-            // For the ROOT shot she comes in close behind him and bends over him; for the RISE she stands back to watch the tree.
-            float close = Ease(1.0f, 1.3f, t) * (1f - Ease(PaeteSendAt, PaeteArriveAt, t));
-            float watchTree = Ease(PaeteArriveAt, 2.95f, t);
+            // v9: she is in the sky. ⚠️ SHE IS SEEN WHOLE FIRST (owner, 2026-10-08, of a first cut in which only her head and
+            // shoulders ever stood over the horizon: "you should also make it so we can see her full dress, even for just a short
+            // time"). She comes up over the horizon far off and whole, her dress and its wisp and all her hair in her own colours
+            // (0.02 to 0.30); then she comes to the court (0.30 to 0.52): in a sky nothing says how far a thing is, so she GROWS,
+            // and sinks as she grows until only her breast, her hands and her face are over the horizon, bent over him with the
+            // light. Then she watches from there: him while he channels, the tree while it rises.
+            float rise = Ease(.02f, .20f, t);
+            float whole = 1f - Ease(.30f, .52f, t);
+            float give = Ease(.34f, .54f, t), given = Ease(.72f, 1.05f, t);
+            if (_makilingSpirit != null)
+            {
+                // The mist that hides her under the horizon, and the height below which she is never whole, are her hem's while
+                // she is far and her breast's once she is close.
+                _makilingSpirit.MistFrom = Mathf.Lerp(MakilingSkySunk, 0.10f, whole);
+                _makilingSpirit.MistTo = Mathf.Lerp(MakilingSkySunk + 0.20f, 0.55f, whole);
+                _makilingSpirit.FormFloor = Mathf.Lerp(1.88f, 0.02f, whole);
+            }
             var look = new MakilingSpirit.Look
             {
                 Presence = rise,
-                Drift = (MakilingClose - MakilingStand) * close + new Vector3(0f, 0.18f, 0f) * watchTree,
-                Lean = 10f + 8f * Ease(.25f, .55f, t) + 6f * close - 12f * watchTree * (1f - close),
-                Bow = 20f * Ease(.25f, .55f, t) + 10f * close - 34f * watchTree,
-                Turn = -12f * Ease(.25f, .55f, t) + 10f * watchTree,
-                // Her arms: raised over him with the light (0.3 to 0.6), lowering after she lets it fall, then over his shoulders.
-                Reach = Mathf.Lerp(Mathf.Lerp(0.5f * Ease(.30f, .52f, t), 0.30f, Ease(.72f, 1.05f, t)), 0.34f, close) * (1f - watchTree) + 0.30f * watchTree,
-                Open = Mathf.Lerp(Ease(.54f, .62f, t) * (1f - 0.5f * Ease(.78f, 1.05f, t)), 0.15f, close) * (1f - watchTree) + watchTree,
+                Size = Mathf.Lerp(1f, MakilingSkyFar, whole),
+                // Far off she floats clear of the horizon; close, she is sunk to her breast. And a slow drift toward the court
+                // the whole way through, so the sky is never still.
+                Drift = new Vector3(0f, (MakilingSkySunk * MakilingSkyScale + 4f * _paeteSkyShare) * whole, 1.4f * t * _paeteSkyShare),
+                Lean = 1f + 2f * give - 1f * given,
+                Bow = 6f + 20f * give - 6f * Ease(PaeteArriveAt, 2.95f, t),
+                Turn = 0f,
+                // Her arms: held out over the court with the light as she comes close, parted as she lets it fall, lowered after.
+                Reach = Mathf.Lerp(0.55f * give, 0.22f, given),
+                Open = Ease(.50f, .58f, t) * (1f - 0.6f * given),
                 Wind = 0.3f + 0.9f * Decay(t - PaeteSlamAt, 0.6f) + 0.5f * Ease(1.5f, PaeteSendAt, t) * (1f - Ease(PaeteSendAt, PaeteArriveAt, t)) + 0.8f * Decay(t - PaeteHauls[2], 0.9f),
                 // v7: she lets go as its eyes open; the TAKE is the tree's, and her mist has taken her by then.
                 Fade = Ease(3.30f, 3.95f, t),
-                Light = Ease(.12f, .35f, t) * (1f - Ease(.56f, .60f, t)),
-                // HER FULL FORM, BRIEFLY: she forms while she holds the light over him and turns back to spirit as it passes into him.
-                Form = Ease(.30f, .50f, t),
+                Light = Ease(.08f, .24f, t) * (1f - Ease(.50f, .54f, t)),
+                // HER FULL FORM, BRIEFLY: all of her while she is far, and only her breast, her hands and her face once she is
+                // close; it goes as the light passes into him.
+                Form = Ease(.06f, .22f, t),
                 Unform = Ease(.82f, 1.08f, t),
             };
             _makilingSpirit?.Pose(t, look);
-            var her = MakilingStand + look.Drift;
+            var her = MakilingStand;
             float herHere = rise * (1f - look.Fade) * leave;
             // Her mist: pools on the court at her hem and puffs round it, turning slowly.
             for (int i = 0; i < _mist.Count; i++)
@@ -304,20 +408,37 @@ namespace TumbangPreso.Visual
             // ---------------------------------------------------------------- THE LIGHT, from her hands into his.
             var hands = _makilingSpirit != null ? _root.transform.InverseTransformPoint(_makilingSpirit.HandsWorld) : her + new Vector3(0f, 2.2f, 0.4f);
             var palm = FreePalm + new Vector3(0f, .07f, .04f);
-            float fall = Ease(.58f, .70f, t);
-            Vector3 lightAt = t < .58f ? hands : Vector3.Lerp(hands, palm, fall) + Vector3.up * 0.35f * Mathf.Sin(fall * Mathf.PI);
+            // v9: it falls out of the SKY, so it is on its way longer (0.50 to 0.70) and is large while it is far: a falling star
+            // that comes down to the size of his hand.
+            const float fallFrom = .53f;
+            float fall = Ease(fallFrom, .70f, t);
+            float far = 1f - fall;
+            // ⚠️ IT COMES OVER HIM AND IN AT THE TIP OF HIS ARM, FROM OUTSIDE (owner, 2026-10-08, drawing over a frame: a red line
+            // straight from her to his hand, which is what it flew and which passes behind his head, and a blue one arching
+            // high over him and curling back in to his fingertips). A curve through four points: her hands, high over the
+            // middle, out beyond his hand and above it, then in to the tip.
+            var outward = new Vector3(palm.x, 0f, palm.z); outward = outward.sqrMagnitude > .01f ? outward.normalized : Vector3.right;
+            var tipAt = palm + outward * .16f;
+            var over = Vector3.Lerp(hands, palm, .55f) + Vector3.up * (5.5f + .06f * Vector3.Distance(hands, palm));
+            var beyond = palm + outward * 2.6f + Vector3.up * 1.5f;
+            Vector3 GiftAt(float u)
+            {
+                float v = 1f - u;
+                return v * v * v * hands + 3f * v * v * u * over + 3f * v * u * u * beyond + u * u * u * tipAt;
+            }
+            Vector3 lightAt = t < fallFrom ? hands : GiftAt(fall);
             // It glows in her hands until it falls, sits in his palm, FLARES as it goes into him (0.78), then is his.
-            float held = t < .58f ? Ease(.12f, .35f, t) : 1f;
+            float held = t < fallFrom ? Ease(.08f, .24f, t) : 1f;
             float into = Ease(.78f, .88f, t);
             float flare = 1f + 0.9f * Mathf.Clamp01(1f - Mathf.Abs(t - .79f) / .05f);
-            bool lightOn = t > .58f && t < .88f;
-            PlaceGlow(_giftLight, lightAt, Vector3.one * 0.28f * flare * (1f - 0.7f * into), Quaternion.identity, lightOn ? held * (1f - into) : 0f);
-            PlaceGlow(_giftHalo, lightAt, Vector3.one * 0.95f * flare * (1f - 0.5f * into), Quaternion.identity, lightOn ? 0.45f * (1f - into) : 0f);
+            bool lightOn = t > fallFrom && t < .88f;
+            PlaceGlow(_giftLight, lightAt, Vector3.one * (0.28f + 2.6f * far * _paeteSkyShare) * flare * (1f - 0.7f * into), Quaternion.identity, lightOn ? held * (1f - into) : 0f);
+            PlaceGlow(_giftHalo, lightAt, Vector3.one * (0.95f + 7.5f * far * _paeteSkyShare) * flare * (1f - 0.5f * into), Quaternion.identity, lightOn ? 0.45f * (1f - into) : 0f);
             for (int i = 0; i < _giftTrail.Count; i++)
             {
-                float back = Ease(.58f, .70f, t - 0.02f * (i + 1));
-                var p = Vector3.Lerp(hands, palm, back) + Vector3.up * 0.35f * Mathf.Sin(back * Mathf.PI);
-                PlaceGlow(_giftTrail[i], p, Vector3.one * (0.16f - 0.022f * i), Quaternion.identity, t > .58f && t < .74f ? 0.7f - 0.12f * i : 0f);
+                float back = Ease(fallFrom, .70f, t - 0.022f * (i + 1));
+                var p = GiftAt(back);
+                PlaceGlow(_giftTrail[i], p, Vector3.one * (0.16f - 0.022f * i) * (1f + 8f * (1f - back) * _paeteSkyShare), Quaternion.identity, t > fallFrom && t < .74f ? 0.7f - 0.12f * i : 0f);
             }
             // The light that stays in his palm after it has gone into him, and flares as his palms hit the court.
             float palmOn = Ease(.70f, .78f, t) * (1f - 0.55f * Ease(.78f, .92f, t)) * (1f - Ease(PaeteSlamAt + .02f, PaeteSlamAt + .12f, t));
@@ -351,6 +472,16 @@ namespace TumbangPreso.Visual
             foreach (float h in PaeteHauls) haulTaut = Mathf.Max(haulTaut, GrowthVfx.Envelope(t, h - 0.04f, 0.08f, h + 0.3f, 0.18f));
             float channel = Ease(1.42f, 1.58f, t) * leave;
             var knee = PaeteKnee + Vector3.up * (_paeteCourt + 0.04f);
+            // His arms strain on the send too (2.10), as on each haul; they are driven in on the slam (`dig`) and then grow on
+            // slowly under the court while he channels, and his vines creep down his arms to it (2026-10-08).
+            haulTaut = Mathf.Max(haulTaut, GrowthVfx.Envelope(t, PaeteSendAt - 0.03f, 0.06f, PaeteSendAt + 0.24f, 0.2f));
+            if (_paeteRoots != null)
+            {
+                _paeteRoots.Spread = Ease(PaeteSlamAt + 0.05f, 2.0f, t); _paeteRoots.Creep = Ease(PaeteSlamAt + 0.06f, 2.45f, t);
+                _paeteRoots.DropAt = 1.10f; _paeteRoots.SlamAt = PaeteSlamAt;
+                // THE DIVE's lens is through the court from 2.025 until it bursts up at the spot (`HeroIntroductionScene.PaeteUnder`).
+                _paeteRoots.LensUnder = t > 2.02f && t < PuUpAt;
+            }
             // ⚠️ The roots stay in the court to the very end: play picks up from this pose with his roots still in (`PaeteGroundCall`).
             _paeteRoots?.Pose(t, _paeteLeftPalm, _paeteRightPalm, knee, 0f, _paeteCourt, dig, haulTaut, 0f, channel, _paetePulseList);
             SamplePaeteGlow(t, leave);
@@ -398,12 +529,21 @@ namespace TumbangPreso.Visual
             // ---------------------------------------------------------------- THE GUARDIAN crawls out of the court.
             // v7: on its own faster clock (`PaeteTreePace`), so its eyes open at 3.71 and the TAKE has the rest.
             if (_paeteTree != null) _paeteTree.Pose((t - PaeteArriveAt) * PaeteTreePace, _paeteTree.transform.position);
+            // Its effects move by this scene's clock, in real seconds (`PaeteReal`: the clock here is not the real one).
+            if (_root != null)
+            {
+                float step = _paeteFxClock < 0f ? 0f : Mathf.Clamp(PaeteReal(t) - PaeteReal(_paeteFxClock), 0f, 0.13f);
+                _paeteFxClock = t;
+                PaeteFx.StepStage(_root.transform, step);
+            }
 
             // ---------------------------------------------------------------- v6: the leaves, petals, mark, streaks and the brush stroke.
             SamplePaeteVfx(t, leave);
+            SamplePaeteSky(t, leave);
             // ---------------------------------------------------------------- v7: the burst layer, and THE TAKE.
             SamplePaeteBurst(t, leave);
             SamplePaeteTake(t, leave);
+            SamplePaeteUnder(t, leave);
         }
 
         /// <summary>
@@ -434,7 +574,18 @@ namespace TumbangPreso.Visual
                 float s = (t - PaeteSendAt) / 0.22f;
                 if (s >= 0f && s <= 1f) { pulseY = rootY + Mathf.Lerp(headY - 0.35f, courtY + 0.05f, s); pulseStrength = 2.1f * Mathf.Sin(s * Mathf.PI); }
             }
+            // ⚠️ HER LIGHT GOES IN AT THE TIP OF HIS ARM AND RUNS ACROSS HIM IN WAVES (owner, 2026-10-08: "it seems like glowing orbs
+            // of power from makiling are flowing through his arm, but its not obvious ... i'd also prefer if they came in through
+            // the tip of his arm, causing pulsing light waves across his body"). Three rings from his raised hand, the first as
+            // the light lands (0.70), each running the length of him; his eyes take light as the first reaches his head (0.78).
+            var tip = _root.transform.TransformPoint(FreePalm);
+            // Slow and broad enough to be read as waves leaving his hand (the second picture he drew: arcs stepping from his
+            // fingertips across his chest to his far arm and his feet).
+            float Ring(float from) { float u = (t - from) / .30f; return u <= 0f || u >= 1f ? 0f : 3.0f * u; }
+            float waves = Ease(.69f, .71f, t) * (1f - Ease(1.10f, 1.18f, t)) * leave;
+            _paeteGlow?.Waves(tip, new Vector3(Ring(.70f), Ring(.78f), Ring(.86f)), .13f, (_reducedEffects ? 1.2f : 2.6f) * waves);
             _paeteGlow?.Set(strength, rootY + sweep, pulseY, pulseStrength);
+            _paeteGrownGlow?.Set(strength, rootY + sweep, pulseY, pulseStrength);
             // The motes: the light leaving him upward off his shoulders and back while it pours down into the ground.
             float motes = Ease(1.5f, 1.68f, t) * (1f - Ease(2.4f, 3.0f, t)) * leave;
             for (int i = 0; i < _motes.Count; i++)

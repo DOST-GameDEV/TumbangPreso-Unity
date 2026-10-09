@@ -452,38 +452,65 @@ def sprout_ready():
 
 
 def theme():
-    """HIS THEME, under the introduction (6.5 s, beat for beat with it): wooden bars over the mountain.
+    """HIS THEME, under the introduction (9.0 s, beat for beat with it): wooden bars over the mountain.
 
     Paete is the carving town, so the lead is carved wood: an ORIGINAL pentatonic figure on the bar model
     (`knock`), the register of a bamboo or narra xylophone, with no sample and no borrowed melody. Under it
     the mountain: a low bowed-wood drone that thickens and a leaf bed that swells as the ground answers."""
     # ⚠️⚠️ v8 (2026-09-27): 6.5 S. The owner on v7: *"lowk slow down ult a bit i cant comprehend wtf is happening"*; he chose 6.5 s.
-    # The cutscene is stretched evenly by 1.3 (`HeroIntroductionScene.Paete.cs` `PaeteStretch`, `tools/author_ultimate_intros.py`
-    # `_stretch`), so every EVENT below is typed on the 5.0 s clock the direction was written on and placed through `T` (x 1.3).
-    # WHEN a sound happens stretches; what it IS does not (a bar's ring, a pitch, a decay are its own), so the motif keeps its notes.
-    # The beats, on the 5.0 s clock (x 1.3 for the film): her rise 0.03 to 0.45, her full form 0.30 to 0.50, the light falling 0.58
-    # to 0.70, his eyes 0.78, the drop 1.08 to 1.22, the slam 1.22, the roots digging 1.25 to 1.50, the channel 1.45 to 2.10 with
-    # heartbeats at 1.62, 1.80 and 1.95, the send 2.10, the race to 2.50, the court bulging 2.50, the hauls 2.78, 3.05 and 3.33, the
-    # top-out 3.53, its eyes 3.71, THE TAKE: the lash 3.80 to 4.10, the cinch, the yank 4.18, the thud 4.50, the struggle to the end.
-    K = 1.3
-    s = 5.0 * K
+    # The cutscene was stretched evenly by 1.3, so every EVENT below is typed on the 5.0 s clock the direction was written on and
+    # placed in real time through `T`. WHEN a sound happens stretches; what it IS does not (a bar's ring, a pitch, a decay are its
+    # own), so the motif keeps its notes.
+    # ⚠️⚠️ v9 (2026-10-08): 9.0 S, AND NOT EVENLY. The owner on the first cut with her in the sky and the dive under the court, both
+    # squeezed into 6.5 s: *"looks like its sped up. theres not much weight to the timing of things"*; he chose 9.0 s. `T` is no
+    # longer a factor but a TABLE, straight lines between its points: her arrival (0 to 0.55) and the dive (1.93 to 2.70) get the
+    # time, the blows keep close to the pace they had, and THE TAKE (3.80 on) keeps exactly 1.3. THE SAME TABLE IS TYPED IN THREE
+    # PLACES and they must agree: here, `tools/author_ultimate_intros.py` (`PAETE_CLOCK`, `PAETE_REAL`) and
+    # `HeroIntroductionScene.Paete.cs` (`PaeteClockAt`, `PaeteRealAt`).
+    # ⚠️ A LENGTH IS NEVER `T(length)` NOW. v8 wrote `T(0.25)` for "0.25 of the clock long", which was right for a factor and is
+    # wrong for a table (it would give the first 0.25 of the film, 0.91 s, to a dig that lasts 0.37 s). A span is `D(from, to)`,
+    # the real time between two clock points, so a bed that lies across a stretched window neither stops early nor overruns it.
+    # The beats, on the 5.0 s clock: her rise over the horizon 0.02 to 0.20 (v8: 0.03 to 0.45), in her full form by 0.22 (the form
+    # 0.06 to 0.22; v8: 0.30 to 0.50), far off and whole to 0.30, close and vast 0.30 to 0.52, the light falling 0.53 to 0.70
+    # (v8: from 0.58), his eyes 0.78, the drop 1.08 to 1.22, the slam 1.22, the roots digging 1.25 to 1.50, the channel 1.45 to 2.10
+    # with heartbeats at 1.62, 1.80 and 1.95, the send 2.10, THE DIVE 1.93 to 2.70 (new: the camera goes under the court and rides
+    # his roots through the soil, then bursts out; the race to 2.50 plays under it), the court bulging 2.50, the hauls 2.78, 3.05
+    # and 3.33, the top-out 3.53, its eyes 3.71, THE TAKE: the lash 3.80 to 4.10, the cinch, the yank 4.18, the thud 4.50, the
+    # struggle to the end.
+    # ⚠️ NOTHING WAS COMPOSED FOR THE DIVE, ON PURPOSE: the owner picks its sounds himself, by ear, later. What plays under it is
+    # what played over the roots crossing the court (the send, the crackle and grind of the race, the bulge), only longer.
+    # ⚠️ THE GUST'S COLUMN AND ITS BURST (0.12 to 0.47, 0.44) WERE NOT MOVED: `HeroIntroductionScene.PaeteVfx.cs` still bursts the
+    # leaves at 0.44, so the whirl, the breath out, the chimes and the first tinkles stay on that frame. If the picture moves the
+    # burst to where she now forms (0.22), move those four with it.
+    CLOCK = (0.00, 0.55, 0.85, 1.10, 1.93, 2.70, 3.80, 5.00)
+    REAL = (0.00, 2.00, 2.70, 3.10, 4.34, 5.94, 7.44, 9.00)
 
     def T(x):
-        return x * K
+        """WHEN: a point on the 5.0 s clock, in real seconds."""
+        return float(np.interp(x, CLOCK, REAL))
 
+    def D(a, b):
+        """HOW LONG: the real time between two points on the clock."""
+        return T(b) - T(a)
+
+    s = T(5.0)
     t = times(s)
     pulses = tuple(T(x) for x in (1.62, 1.80, 1.95))
     hauls_at = tuple(T(x) for x in (2.78, 3.05, 3.33))
     send_at, arrive_at, topout_at, wake_at = T(2.10), T(2.50), T(3.53), T(3.71)
     yank_at, thud_at = T(4.18), T(4.50)
     slam = T(1.22)
-    # Her rise, soft and climbing.
-    bars = sum(knock(t, T(at), p, 0.28, 0.55) for at, p in [(0.08, 261.6), (0.20, 293.7), (0.32, 349.2), (0.44, 392.0)])
-    # Her full form: a warm held chord swelling in and thinning away as she turns back to spirit.
+    # Her rise, soft and climbing. v9: she is over the horizon by 0.20, not 0.45, so the four bars sit at the same shares of the
+    # new rise (0.02 to 0.20) as they did of the old one; in real time they are 0.18 s apart, where v8 had 0.16.
+    bars = sum(knock(t, T(at), p, 0.28, 0.55) for at, p in [(0.04, 261.6), (0.09, 293.7), (0.145, 349.2), (0.195, 392.0)])
+    # Her full form: a warm held chord swelling in and thinning away as she turns back to spirit. v9: it swells as she takes her
+    # form (0.06 to 0.22) and holds while she hangs in the sky and comes close. Its two ramps were 0.26 and 0.39, v8's 0.2 and 0.3
+    # of the clock times 1.3 by hand: they are spans of the picture (the form, and his eyes to the drop), so they are `D` now.
     form = (np.sin(2 * np.pi * 261.6 * t) + 0.7 * np.sin(2 * np.pi * 329.6 * t) + 0.5 * np.sin(2 * np.pi * 392.0 * t)) \
-        * window(t, T(0.30), T(1.05), 0.2) * np.clip((t - T(0.3)) / 0.26, 0, 1) * np.clip((T(1.08) - t) / 0.39, 0, 1) * 0.07
-    # The light falls: a quick run down the bars, a tap where it lands in his hand.
-    drop = sum(knock(t, T(at), p, 0.12, 0.5) for at, p in [(0.58, 784.0), (0.61, 659.3), (0.64, 523.3), (0.67, 440.0)]) \
+        * window(t, T(0.06), T(1.05), 0.2) * np.clip((t - T(0.06)) / D(0.06, 0.22), 0, 1) * np.clip((T(1.08) - t) / D(0.78, 1.08), 0, 1) * 0.07
+    # The light falls: a quick run down the bars, a tap where it lands in his hand. v9: it leaves her hands at 0.53, not 0.58, and
+    # still lands at 0.70, so the run is spread over the longer fall.
+    drop = sum(knock(t, T(at), p, 0.12, 0.5) for at, p in [(0.53, 784.0), (0.573, 659.3), (0.615, 523.3), (0.658, 440.0)]) \
         + knock(t, T(0.70), 392.0, 0.35, 0.8)
     # IGNITION: a low bloom under a bright struck chord.
     ignite = thump(t, T(0.78), 70, 0.45) * 0.9 + knock(t, T(0.78), 523.3, 0.9, 0.9) + knock(t, T(0.78), 784.0, 0.7, 0.55) \
@@ -493,15 +520,20 @@ def theme():
     # The slam: soil crunch, a felt thump, the court answering like a struck log.
     press = snap(t, 8403, slam, 40, 0.10, 900, 0.9) + thump(t, slam, 55, 0.35) * 1.3 + knock(t, slam, 98, 0.25, 0.9)
     # His roots dig in: wood creaking DOWN into soil (the slips slow as they go deeper).
-    dig = creak(t, 8404, sweep(t - T(1.25), 120, 45, T(0.25)), 0.5, [(300, 1.0), (700, 0.4)], 8.0, window(t, T(1.25), T(1.5), 0.05)) * 1.6 \
+    dig = creak(t, 8404, sweep(t - T(1.25), 120, 45, D(1.25, 1.5)), 0.5, [(300, 1.0), (700, 0.4)], 8.0, window(t, T(1.25), T(1.5), 0.05)) * 1.6 \
         + rustle(t, 8412, 1600 * window(t, T(1.25), T(1.5), 0.08), 1500, q=1.1) * 0.6
-    # The channel: a hum rising under three quickening heartbeats.
-    hum = creak(t, 8405, 60 + 90 * np.clip((t - T(1.45)) / T(0.6), 0, 1), 0.2, [(130.8, 1.0), (196.0, 0.6), (261.6, 0.3)], 18.0,
-                window(t, T(1.45), T(2.16), 0.08) * np.clip((t - T(1.45)) / T(0.6), 0.25, 1)) * 1.8
+    # The channel: a hum rising under three quickening heartbeats. It climbs for 0.6 of the clock from 1.45, so to 2.05.
+    hum = creak(t, 8405, 60 + 90 * np.clip((t - T(1.45)) / D(1.45, 2.05), 0, 1), 0.2, [(130.8, 1.0), (196.0, 0.6), (261.6, 0.3)], 18.0,
+                window(t, T(1.45), T(2.16), 0.08) * np.clip((t - T(1.45)) / D(1.45, 2.05), 0.25, 1)) * 1.8
     beats = sum(thump(t, at, 58, 0.16) * 1.2 + knock(t, at, 196.0, 0.14, 0.45) for at in pulses)
     # The send: one big pulse, then the roots race off: a crackle running away and rising, a grind under it, a pop as the court bulges.
+    # ⚠️ v9: THE RACE IS UNDER THE DIVE NOW AND LASTS 0.83 s, NOT 0.52. The crackle and the grind already took their length from
+    # the send and the arrival, so they neither stop short nor run over. The one thing that would have thinned is the crackle:
+    # 150 breaks over 0.81 s is 185 a second where v8 had 300, so the COUNT follows the length (300 a second, v8's own density;
+    # a crackle's grain is what it IS). Nothing else was done for the dive.
     send = thump(t, send_at, 50, 0.25) * 1.3 + knock(t, send_at, 261.6, 0.5, 0.8)
-    race = snap(t, 8406, send_at + 0.02, 150, arrive_at - send_at - 0.02, 1400, 1.2) * window(t, send_at, arrive_at + 0.01, 0.04)
+    race_for = arrive_at - send_at - 0.02
+    race = snap(t, 8406, send_at + 0.02, int(round(300 * race_for)), race_for, 1400, 1.2) * window(t, send_at, arrive_at + 0.01, 0.04)
     grind = creak(t, 8413, sweep(t - send_at, 60, 170, arrive_at - send_at), 0.5, [(220, 1.0), (520, 0.4)], 8.0,
                   window(t, send_at, arrive_at + 0.03, 0.05)) * 1.8
     bulge = one_pole_low(one_pole_low(noise(len(t), 8407), 80), 80) * env_ar(np.maximum(0, t - arrive_at), 0.1, 0.35, 0.12) * (t >= arrive_at) * 14.0 \
@@ -517,15 +549,15 @@ def theme():
         + np.sin(2 * np.pi * 784.0 * t) * window(t, wake_at, wake_at + 0.6, 0.15) * env_ar(np.maximum(0, t - wake_at), 0.02, 0.45) * (t >= wake_at) * 0.08
     drone = creak(t, 8401, 110 + 0 * t, 0.05, [(130.8, 1.0), (196.0, 0.6)], 30.0, np.clip(t / T(2.6), 0, 1) ** 1.4 * window(t, 0, s - 0.05, 0.3)) * 1.0
 
-    # ---- v6 layers, each on the frame of its picture.
-    gust = whoosh(t, 8440, 0.0, T(0.52), 480, 2400, 0.9, attack=0.6) \
+    # ---- v6 layers, each on the frame of its picture. (The gust and the drone start on frame 0, so their `T(x)` is also a length.)
+    gust =whoosh(t, 8440, 0.0, T(0.52), 480, 2400, 0.9, attack=0.6) \
         + rustle(t, 8441, 2600 * np.clip(t / T(0.4), 0, 1) * window(t, 0, T(0.5), 0.06), 3800) * 0.55 \
         + rustle(t, 8449, 3200 * np.exp(-t / 0.08) * window(t, 0, 0.3, 0.002), 4400) * 0.5  # the cut-in: leaves already flying on frame 0
-    spin_rate = 4.0 + 5.0 * np.clip((t - T(0.12)) / T(0.34), 0, 1)
+    spin_rate = 4.0 + 5.0 * np.clip((t - T(0.12)) / D(0.12, 0.46), 0, 1)
     whirl = rustle(t, 8442, 2400 * (0.5 + 0.5 * np.sin(2 * np.pi * np.cumsum(spin_rate) / RATE)) * window(t, T(0.12), T(0.47), 0.05), 3000) * 0.45
     chimes = sum(knock(t, T(at), p, 0.35, 0.28) for at, p in ((0.460, 1568.0), (0.474, 1975.5), (0.489, 1318.5), (0.508, 2349.3),
                                                               (0.529, 1760.0), (0.556, 2093.0), (0.590, 1568.0)))
-    burst = whoosh(t, 8443, T(0.44), T(0.36), 2800, 900, 0.7, attack=0.12) + chimes
+    burst = whoosh(t, 8443, T(0.44), D(0.44, 0.80), 2800, 900, 0.7, attack=0.12) + chimes
     rise0, rise1 = T(0.6), T(0.78)
     riser = svf(noise(len(t), 8444), 900 + 2100 * np.clip((t - rise0) / (rise1 - rise0), 0, 1), 1.4) \
         * np.clip((t - rise0) / (rise1 - rise0), 0, 1) ** 3 * window(t, rise0, rise1, 0.004) * 0.5
@@ -540,7 +572,8 @@ def theme():
         (1.62, 700, 1500), (1.64, 760, 1620), (1.80, 680, 1480), (1.82, 820, 1700), (1.84, 740, 1560), (1.95, 720, 1600),
         (1.96, 800, 1760), (1.98, 660, 1440), (1.99, 780, 1680), (2.10, 600, 1500), (2.11, 700, 1650), (2.13, 640, 1560)))
     slash = whoosh(t, 8447, send_at - 0.02, 0.3, 3400, 800, 1.2, attack=0.2)
-    shafts = glide(t, arrive_at - 0.04, 380, 1150, 0.55, 0.07) + glide(t, arrive_at + 0.01, 460, 1300, 0.5, 0.05) + glide(t, arrive_at + 0.06, 540, 1480, 0.48, 0.04)
+    # The three shafts fire 0.03 before, 0.01 after and 0.05 after the arrival ON THE CLOCK (v8 typed those times 1.3 by hand).
+    shafts = glide(t, T(2.47), 380, 1150, 0.55, 0.07) + glide(t, T(2.51), 460, 1300, 0.5, 0.05) + glide(t, T(2.55), 540, 1480, 0.48, 0.04)
     spirals = sum(rustle(t, 8448 + k, 2800 * np.exp(-np.maximum(0, t - at) / 0.35) * (t >= at) * window(t, at, at + 0.75, 0.03), 3600) * 0.45
                   for k, at in enumerate(hauls_at))
     shimmer = np.sin(2 * np.pi * 1568.0 * t) * window(t, wake_at, wake_at + 0.55, 0.15) * env_ar(np.maximum(0, t - wake_at), 0.03, 0.45) * (t >= wake_at) * 0.05

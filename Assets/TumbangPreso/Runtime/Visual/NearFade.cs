@@ -70,6 +70,65 @@ namespace TumbangPreso.Visual
         public const string ShaderName = "TumbangPreso/NearFade";
 
         /// <summary>
+        /// ⚠️ THE SKY, OPENED THROUGH THE MAP (2026-10-08; `NearFade.shader`, § THE SKY, OPENED). Two shader GLOBALS that
+        /// make every surface on this shader dissolve inside a cone from the eye toward a point, so a cutscene can show
+        /// something far off in the sky (Paete's Makiling) through the walls of an enclosed map. Zero strength is off.
+        /// </summary>
+        /// <summary>
+        /// How far the first-person eye is below a standing one, metres (`NearFade.shader`, `belowFeet`): `CameraRig` sets it
+        /// every frame, so a crouch, a slide, a squat or a kneel does not turn the floor into something to dissolve.
+        /// </summary>
+        public static readonly int EyeDropId = Shader.PropertyToID("_NearFadeEyeDrop");
+
+        public static readonly int SkyRevealId = Shader.PropertyToID("_SkyReveal"), SkyRevealShapeId = Shader.PropertyToID("_SkyRevealShape");
+
+        /// <summary>
+        /// Open the sky round <paramref name="toward"/> (world), by <paramref name="strength"/> 0 to 1: everything goes within
+        /// <paramref name="inside"/> degrees of the line to it and nothing beyond <paramref name="outside"/>; nothing nearer the
+        /// eye than <paramref name="nearest"/> metres or lower than world height <paramref name="floor"/> goes.
+        /// </summary>
+        public static void OpenSky(Vector3 toward, float strength, float inside, float outside, float nearest, float floor)
+        {
+            Shader.SetGlobalVector(SkyRevealId, new Vector4(toward.x, toward.y, toward.z, Mathf.Clamp01(strength)));
+            Shader.SetGlobalVector(SkyRevealShapeId, new Vector4(Mathf.Cos(inside * Mathf.Deg2Rad), Mathf.Cos(outside * Mathf.Deg2Rad), nearest, floor));
+            _skyOpenFrame = strength > 0f ? Time.frameCount : -1;
+        }
+
+        /// <summary>Close it again. Safe to call when it was never opened.</summary>
+        public static void CloseSky() { Shader.SetGlobalVector(SkyRevealId, Vector4.zero); _skyOpenFrame = -1; }
+
+        // ⚠️⚠️ IT CLOSES ITSELF, AND IT MUST (owner, 2026-10-08, with a screenshot of ordinary play in which a great round window of
+        // the walls and the floor was stippled away: "distance fade isnt just happening in the floor, but also the walls, outside
+        // of the cutscene"). A shader GLOBAL outlives whatever set it: the cutscene that opened the sky had ended without its
+        // `Dispose` (a round reset, a script reload while he was in Play, leaving Play mid-cutscene), and the window stayed open
+        // over the whole game, in the editor even across Play sessions. So an open sky has to be asked for again EVERY FRAME:
+        // any camera about to draw closes it if the last `OpenSky` is more than two frames old, and it is closed whenever the
+        // game or the editor's scripts start.
+        private static int _skyOpenFrame = -1;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void StartWithTheSkyClosed()
+        {
+            CloseSky();
+            Camera.onPreCull -= CloseAStaleSky;
+            Camera.onPreCull += CloseAStaleSky;
+        }
+
+        private static void CloseAStaleSky(Camera camera)
+        {
+            if (_skyOpenFrame >= 0 && Time.frameCount - _skyOpenFrame > 2) CloseSky();
+        }
+
+#if UNITY_EDITOR
+        [UnityEditor.InitializeOnLoadMethod]
+        private static void StartTheEditorWithTheSkyClosed()
+        {
+            CloseSky();
+            UnityEditor.EditorApplication.playModeStateChanged += _ => CloseSky();
+        }
+#endif
+
+        /// <summary>
         /// The generator's own names for the tall thin props, exactly as
         /// <see cref="EnvColourPass.FacadeGroups"/> lists layer names. `Poste` is Eskinita's
         /// twelve electric posts, under `Dressing/Kable`; `SidewalkPole` is Ilalim ng Tulay's

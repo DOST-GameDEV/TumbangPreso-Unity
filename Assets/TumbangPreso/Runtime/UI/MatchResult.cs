@@ -235,8 +235,7 @@ namespace TumbangPreso.UI
 
             // The cursor has been locked for the whole match; the board is the first thing
             // since the menu that wants a pointer.
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            CursorMode.Release();
 
             // ⚠️ SINGLE PLAYER PAUSES, NETWORKED DOES NOT. A networked peer that froze its own
             // time would stop answering the host.
@@ -1524,8 +1523,7 @@ namespace TumbangPreso.UI
             RestoreTime();
             if (_canvas != null) _canvas.gameObject.SetActive(false);
             if (_rematch != null) _rematch.interactable = true;
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            CursorMode.Capture();
 
             // ⚠️ THE HOST STOPS ASSERTING "NO MATCH RUNNING" ACROSS ITS OWN RELOAD. See
             // `Net.MatchRpc.HostBeginningArenaLoad` and `docs/TODO.md` § 82.3: the rematch

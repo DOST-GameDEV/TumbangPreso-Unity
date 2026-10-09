@@ -249,9 +249,11 @@ namespace TumbangPreso.Visual
         /// </summary>
         private void PaeteFrame(int index, float t, ref Vector3 eye, ref Vector3 look, ref float fov)
         {
+            // v9, THE DIVE (1.93 to 2.70): the lens goes under the court and rides his root (`PuCamera`, `HeroIntroductionScene.PaeteUnder.cs`).
+            if (PuCamera(PaeteClock(t), out var underEye, out var underLook, out var underFov)) { eye = underEye; look = underLook; fov = underFov; return; }
             // `t` and the table's shot times are on the shared (stretched) clock; the TAKE's camera is typed on the 5.0 s one.
-            if (_performance == null || index < 0 || _performance.Shots[index].Start < PaeteSendAt * PaeteStretch - .01f) return;
-            if (_performance.Shots[index].Start >= PtLashAt * PaeteStretch - .01f && PtCamera(t / PaeteStretch, out var takeEye, out var takeLook, out var takeFov))
+            if (_performance == null || index < 0 || _performance.Shots[index].Start < PaeteReal(PaeteSendAt) - .01f) return;
+            if (_performance.Shots[index].Start >= PaeteReal(PtLashAt) - .01f && PtCamera(PaeteClock(t), out var takeEye, out var takeLook, out var takeFov))
             { eye = takeEye; look = takeLook; fov = takeFov; return; }
             var shift = _pvLanding - PaeteLanding;
             look += shift; eye += shift * .5f;
@@ -278,8 +280,8 @@ namespace TumbangPreso.Visual
         {
             eye = look = Vector3.zero; fov = 50f;
             if (_performance == null || shot < 0) return false;
-            _performance.Shot(shot, t * PaeteStretch, out eye, out look, out fov);
-            PaeteFrame(shot, t * PaeteStretch, ref eye, ref look, ref fov);
+            _performance.Shot(shot, PaeteReal(t), out eye, out look, out fov);
+            PaeteFrame(shot, PaeteReal(t), ref eye, ref look, ref fov);
             return true;
         }
 
@@ -289,7 +291,12 @@ namespace TumbangPreso.Visual
         {
             float court = _paeteCourt;
             var up = Vector3.up;
-            var her = MakilingStand + up * court;
+            // ⚠️ v9 (2026-10-08): THE LEAVES AND THE WIND TURN ROUND HIM (owner, circling the column of leaves and ribbons standing
+            // on bare court between her and him: "who are the leaves and vfx supposed to be orienting here? if its paete, make
+            // it align, if its makiling, make it align"). They were round the spot she used to rise from beside him; she
+            // is in the sky now and that spot is empty. He is the one being lifted, so the column is his: the gust winds
+            // in round him, turns about him as he hangs, and is flung out as his eyes take the light.
+            var her = up * court;
 
             // ---------------------------------------------------------------- THE OPENING GUST, the column round her, the burst as she forms.
             for (int i = 0; i < _pvGust.Count; i++)

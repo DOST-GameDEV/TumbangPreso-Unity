@@ -49,6 +49,13 @@ namespace TumbangPreso
         private readonly Core.ToggleControl _sprintToggle = new();
         private readonly Core.ToggleControl _restoreToggle = new();
         private Carrier _carrier;
+        private Vector2 _pointerLast;
+        private bool _mouseLost;
+        private int _mouseTakenFrame = -10, _mouseRetakeFrame = -1;
+        /// <summary>How long after the game takes the mouse a moving pointer is not read as the mouse being lost.</summary>
+        private const float MouseSettleSeconds = 0.5f;
+        private float _mouseSettleUntil;
+        private bool _mouseWanted;
         private int _toggleRound;
         private bool _toggleDefender, _toggleRoundActive, _toggleContextKnown;
 
@@ -266,6 +273,54 @@ namespace TumbangPreso
 
         private void Update()
         {
+            // A mouse the editor or the OS took away is taken back on the next click in the window (`UI.CursorMode.Recapture`).
+            // LOST is seen here, not read from `Cursor.lockState` (the editor goes on reporting a freed mouse as locked):
+            // a held mouse sits on one pixel, so a pointer that MOVES while the game wants it is not held; so is one
+            // after Escape. ⚠️ THE CLICK THAT TAKES IT BACK IS AN ORDINARY CLICK (owner, 2026-10-09: "it eats my first click..
+            // and now i havce to click twice to charge my slipper throw.. its annoying can you get rid of it"). It used to
+            // be swallowed, and since a pointer that so much as twitched counted as a lost mouse, ordinary throws were
+            // swallowed too. Nothing is discarded now: the click takes the mouse AND does what a click does.
+            if (Mouse.current != null)
+            {
+                Vector2 pointer = Mouse.current.position.ReadValue();
+                // ⚠️ IN THE EDITOR ONLY. A build loses the mouse by losing the window (`OnApplicationFocus`), and if some
+                // platform reported a held pointer as moving, this would swallow every click of a match.
+                // ⚠️ AND NOT WHILE THE LOCK IS STILL SETTLING (owner, 2026-10-07: "i cant throw the slipper for some reason").
+                // Taking the mouse moves the pointer to the middle of the window, and the editor does that a few frames
+                // late, not the next frame. That jump read as "the pointer moved, so the mouse is lost", the next click
+                // was spent taking it back, which moved the pointer again: every click was swallowed and none threw.
+                // So for `MouseSettleSeconds` after the game takes the mouse (here, or anywhere: the wish turning on is
+                // seen too) a moving pointer means nothing.
+                bool wants = UI.CursorMode.WantsCapture;
+                if (wants && !_mouseWanted) _mouseSettleUntil = Time.unscaledTime + MouseSettleSeconds;
+                _mouseWanted = wants;
+                bool settling = Time.unscaledTime < _mouseSettleUntil;
+                if (Application.isEditor && wants && !settling
+                    && (pointer != _pointerLast || (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)))
+                    _mouseLost = true;
+                if (settling) _mouseLost = false;
+                _pointerLast = pointer;
+                // The second half of taking the mouse back: the lock was dropped on the click, and is taken a frame later
+                // (`UI.CursorMode.Recapture`: dropped and taken in one frame, the editor never sees it change).
+                if (_mouseRetakeFrame >= 0 && Time.frameCount >= _mouseRetakeFrame)
+                {
+                    _mouseRetakeFrame = -1;
+                    if (UI.CursorMode.WantsCapture) UI.CursorMode.Capture();
+                    _mouseLost = false;
+                    _pointerLast = Mouse.current.position.ReadValue();
+                    _mouseTakenFrame = Time.frameCount;
+                    _mouseSettleUntil = Time.unscaledTime + MouseSettleSeconds;
+                }
+                else if (_mouseRetakeFrame < 0 && _mouseLost && _focused && Mouse.current.leftButton.wasPressedThisFrame && UI.CursorMode.Recapture())
+                {
+                    _mouseLost = false;
+                    _pointerLast = Mouse.current.position.ReadValue();
+                    _mouseTakenFrame = Time.frameCount;
+                    _mouseRetakeFrame = Time.frameCount + 1;
+                }
+                // The lock moves the pointer to the middle of the window a frame later: that jump is not the mouse being lost.
+                else if (Time.frameCount <= _mouseTakenFrame + 2) _mouseLost = false;
+            }
             // ⚠️ SAMPLED BEFORE EVERY EARLY RETURN BELOW, AND THAT IS DELIBERATE. A player typing
             // in chat or driving Kuro is still holding a device, and the prompts on screen still
             // have to name the right control for it. Putting this after the chat guard would
@@ -378,6 +433,10 @@ namespace TumbangPreso
             bool sprintDown = ReadButton(_sprint, Verb.Sprint);
             bool sprint = _sprintToggle.Read(sprintDown, settings.ToggleSprint, controlsAllowed);
             intent.Set(Verb.Sprint, settings.ToggleSprint ? sprint : sprintDown);
+            // The movement rework's crouch: a debug read of two keyboard keys while its switch is on (`InputIntent.Crouch`).
+            var keyboard = UnityEngine.InputSystem.Keyboard.current;
+            intent.Crouch = MovementRework.Active && controlsAllowed && keyboard != null
+                && (keyboard.leftCtrlKey.isPressed || keyboard.cKey.isPressed);
             intent.Set(Verb.SpecialAbility, ReadButton(_special,Verb.SpecialAbility));
             bool grabDown = ReadButton(_grab, Verb.Grab);
             if (_carrier == null) _carrier = GetComponent<Carrier>();
@@ -559,6 +618,7 @@ namespace TumbangPreso
         private void OnApplicationFocus(bool focused)
         {
             _focused = focused;
+            if (!focused) _mouseLost = true;
             if (!focused)
             {
                 CancelPendingInput();

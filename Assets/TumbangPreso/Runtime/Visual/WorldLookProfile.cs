@@ -327,7 +327,8 @@ namespace TumbangPreso.Visual
             new MapLook("BayanPlaza",new Color(.5f,.47f,.64f),new Color(.6f,.5f,.5f),new Color(.58f,.42f,.3f),new Color(.86f,.8f,1.1f),38,210,0,true)
                 .Air(new Color(.74f,.85f,.94f),new Color(.44f,.7f,.88f),new Color(.76f,.87f,.95f),new Color(1,.96f,.9f),new Color(.72f,.7f,.86f))
                 .Key(new Color(1,.9f,.76f),1.08f,52,.76f,new Color(.045f,.03f,.065f)),
-            new MapLook("Eskinita",new Color(.52f,.46f,.62f),new Color(.64f,.5f,.46f),new Color(.62f,.42f,.28f),new Color(.9f,.78f,1.06f),34,190,1,false)
+            // The OLD Eskinita's look, kept under another name since the stepped alley took the map's (2026-10-09).
+            new MapLook("EskinitaClassic",new Color(.52f,.46f,.62f),new Color(.64f,.5f,.46f),new Color(.62f,.42f,.28f),new Color(.9f,.78f,1.06f),34,190,1,false)
                 .Air(new Color(.95f,.9f,.8f),new Color(.42f,.69f,.88f),new Color(.97f,.93f,.82f),new Color(1,.93f,.84f),new Color(.76f,.7f,.84f))
                 .Key(new Color(1,.86f,.68f),1.1f,50,.74f,new Color(.055f,.03f,.06f)).Floor(1.6f),
             // ⚠️ ILALIM NG TULAY: THE BLENDER REBUILD, LATE AFTERNOON ON TAFT (owner, 2026-09-30, on the sample
@@ -364,6 +365,21 @@ namespace TumbangPreso.Visual
             new MapLook("LagoonCove",new Color(.44f,.42f,.64f),new Color(.66f,.52f,.54f),new Color(.62f,.46f,.34f),new Color(.9f,.8f,1.1f),70,340,4,false)
                 .Air(new Color(.98f,.78f,.64f),new Color(.3f,.46f,.72f),new Color(1,.74f,.54f),new Color(1,.8f,.64f),new Color(.62f,.54f,.74f))
                 .Key(new Color(1,.8f,.56f),1.25f,6,.7f,new Color(.05f,.03f,.06f)),
+            // ⚠️ ESKINITA ALLEY: THE BLENDER REBUILD OF ESKINITA, A WARM LATE AFTERNOON (the owner's
+            // standing ask for this map: warm late afternoon, terracotta and tin roofs, cream and
+            // painted walls). Its own row, so the shipped Eskinita keeps its look; the scene is an
+            // unregistered sample (Editor/MapKit/EskinitaAlleySceneBuilder.cs) and wears this in Play
+            // by its scene name. A GOLDEN, LOW-ISH KEY (32 degrees: long shadows across a narrow,
+            // stepped alley; the builder turns it to rake along and a little across the alley, and
+            // only the elevation is taken from here). ⚠️ THE SHADE IS BRIGHTER THAN THE OTHER ROWS',
+            // ON PURPOSE: between walls a few metres apart most of the frame is in shade, and in
+            // this pipeline the trilight IS the shade, so the sky term is a light lilac-blue and
+            // the equator a rose mauve, with a terracotta bounce off the floor. The air is a gentle
+            // warm haze that starts past the play area (60 m). Cream horizon under a cyan-leaning
+            // zenith (the sky rule above); the violet stays in the cloud shade. Light chalk.
+            new MapLook("Eskinita",new Color(.58f,.56f,.78f),new Color(.7f,.58f,.58f),new Color(.66f,.48f,.34f),new Color(.9f,.8f,1.08f),60,320,1,false)
+                .Air(new Color(.98f,.88f,.74f),new Color(.4f,.66f,.86f),new Color(.99f,.91f,.76f),new Color(1,.9f,.76f),new Color(.74f,.68f,.84f))
+                .Key(new Color(1,.82f,.58f),1.2f,32,.68f,new Color(.055f,.032f,.065f)),
             // ⚠️ ARENA: A NIGHT MATCH (docs/ARENA_ART_BRIEF.md: a stadium floating in the night sky, owner:
             // "bluelock/rocketleague stadium in aesthetic ... night time"). The one row that is NOT daylight, so
             // it reads the rules above for a night: the key is the floodlights, a cool white from high up
@@ -419,6 +435,10 @@ namespace TumbangPreso.Visual
             // (Art/MapAtmosphere/IlalimRebuildSky.mat) on it, and MapAtmosphereAuthor.Apply looks the
             // name up here: it gets the IlalimNgTulay row, which is the rebuild's look.
             if(map=="IlalimRebuild")return Find("IlalimNgTulay");
+            // The character reworks' test scene (`Editor/CharacterPrototypeMap.cs`, editor only, in no build and in no
+            // map list) wears Ilalim's look, so the cast is drawn there with the outline and the ambient occlusion it
+            // has in a match. Without a row a scene gets no look at all.
+            if(map=="CharacterPrototype")return Find("IlalimNgTulay");
             return null;
         }
         private static WorldLookProfile _current;

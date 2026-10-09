@@ -195,6 +195,13 @@ namespace TumbangPreso.Abilities
         public bool ReservedForIntroduction => _reservedForIntroduction;
         protected bool HadSharedIntroduction { get; private set; }
         /// <summary>
+        /// ⚠️ AN ULTIMATE WHOSE CUTSCENE ALREADY SHOWS IT LAND releases with no wind-up after that cutscene: the cutscene was
+        /// the warning. Cheska's shows every player frozen (owner 2026-10-08: "post-cutscene the players should be frozen";
+        /// asked whether the cutscene counts as her 1.5 s delay, "i pick 1"). False everywhere else, and a cast that did not
+        /// go through an introduction keeps its wind-up whatever this says.
+        /// </summary>
+        protected virtual bool IntroductionIsTheWindup => false;
+        /// <summary>
         /// ⚠️ THE HERO'S OWN LINE ALREADY PLAYED INSIDE THE INTRODUCTION (REFINE-2.11: Phaister laughs
         /// while she laughs). The live activation must not say it a second time. Set per peer by
         /// `SharedUltimatePhase.Complete` from what that peer's view actually played, so a peer whose
@@ -806,7 +813,7 @@ namespace TumbangPreso.Abilities
             // ⚠️ NO MOTOR MEANS NO WIND-UP. The EditMode ability tests drive `Activate(null)` and
             // assert the effect synchronously, and a headless harness has nothing to root and no
             // `Tick` loop to finish the cast. Falling straight through keeps those honest.
-            if (Windup > 0.0f && ctx != null && ctx.Motor != null)
+            if (Windup > 0.0f && ctx != null && ctx.Motor != null && !(HadSharedIntroduction && IntroductionIsTheWindup))
             {
                 WindupRemaining = Windup;
                 // Hold the accepted release aim through the delay. A replica's live

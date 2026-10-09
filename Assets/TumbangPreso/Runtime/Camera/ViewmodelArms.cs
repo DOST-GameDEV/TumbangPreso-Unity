@@ -1631,6 +1631,78 @@ namespace TumbangPreso.CameraSystem
         /// the scale that is actually applied.
         /// </summary>
         public const float PaeteArmBulk = 1.45f;
+        /// <summary>Paete's NEW braids in first person (the natural arms): how much wider and longer than they are cut.</summary>
+        /// ⚠️ BACK AT HIS OLD BULK. They were tried at 2.0 across and a fifth longer (owner: "paetes needs to be bigger
+        /// yea"), and of that, seen in play: "can we also revert the size change for paete, the previous size worked
+        /// better" (2026-10-06). So 1.45 across, his own length.
+        public const float PaeteNaturalBulk = PaeteArmBulk, PaeteNaturalLength = 1.0f;
+
+        /// <summary>
+        /// ⚠️⚠️ THE NATURAL ARMS: A HERO'S OWN ARMS, CUT FROM THE LIVE MODEL AND NOT SQUEEZED, HELD WIDE AND LOW.
+        /// Owner, 2026-10-06, of the first-person hands after the character redesign: *"we need something that looks more
+        /// natural, like how minecraft does it"*, *"i think we should just take it directly from the live model"*, *"the
+        /// squeeze looks bad"*, and of the old placement with those arms *"too close to each other and the screen, making
+        /// it look big and taking up space"*. He then chose a placement from rendered sheets
+        /// (`Logs/character-redesign-dante/fpvcut04_placement_tilt_variants.png`, tile T2): fists about a fifth of the
+        /// screen high in the bottom corners, a third of the width apart, the forearms swung outward so they run up the
+        /// screen instead of leaning in. The numbers below are that tile's, in the pivots' own local space.
+        ///
+        /// A hero listed in `NaturalArmHeroes` gets both: the cut arm at its own proportions (`UseRosterArms` with
+        /// `natural`) and this rest placement. Everyone else keeps the shared block arm where it has always been.
+        /// ⚠️ DANTE FIRST, AS THE TRIAL. Every throw, cast and grab is posed from the OLD rest, and has not been checked
+        /// from this one; add a hero here only after looking at theirs.
+        /// </summary>
+        // Paete with him since the same day (owner: "we need to fix paete's new model arms for fpv"): his braids are cut
+        // from his redesign, elbow and all, at their own proportions, so the old 1.45 bulk is not applied to them.
+        // ⚠️ ALL NINE HEROES since the owner saw Dante's and Paete's in a real render (2026-10-06: "roll the arms rework to
+        // the other heroes"). The Classic cast keeps the block arm: their bodies are not redesigned.
+        // ⚠️ AND THE CLASSIC TWELVE since 2026-10-07 (owner, of the first-person hands once their bodies were redesigned
+        // too: "u should also fix the fpv hands btw"). Their arms are cut from their redesigns when the roster book is
+        // rebuilt (`ViewmodelArmAuthor.Bake`); until it is, `UseRosterArms` finds no cut arm of theirs and they keep the
+        // block arm, as before.
+        private static readonly string[] NaturalArmHeroes =
+        {
+            "sean", "zack", "dante", "cheska", "nemu", "phaister", "rafi", "amihan", "paete",
+            "bayan", "maring", "totoy", "inday", "kuya_boy", "ate_girlie", "tikboy", "bebang", "jun_jun", "lola_pacing", "mang_kanor", "aling_nena",
+        };
+        private static readonly Vector3 NaturalRightPosition = new Vector3(1.0820f, -0.8561f, 0.3384f);
+        private static readonly Vector3 NaturalRightUp = new Vector3(-0.06305f, 0.39908f, 0.91474f);
+        private static readonly Vector3 NaturalRightForward = new Vector3(-0.64607f, 0.68227f, -0.34220f);
+        private Vector3 _builtRightPos, _builtLeftPos;
+        private Quaternion _builtRightRot, _builtLeftRot;
+        private bool _builtPlacementKept;
+        /// <summary>True while the natural arms and their placement are on (diagnostics and probes).</summary>
+        public bool NaturalArms { get; private set; }
+
+        /// <summary>Puts both pivots at the natural rest or back at the built one, and makes that the idle's rest.</summary>
+        private void SetRestPlacement(bool natural)
+        {
+            if (_rightPivot == null || _leftPivot == null) return;
+            if (!_builtPlacementKept)
+            {
+                _builtRightPos = _rightRestPos; _builtRightRot = _rightRest;
+                _builtLeftPos = _leftPivot.localPosition; _builtLeftRot = _leftRest;
+                _builtPlacementKept = true;
+            }
+            if (natural == NaturalArms) return;
+            NaturalArms = natural;
+            if (natural)
+            {
+                // The left is the right mirrored across the view's middle.
+                var mirror = new Vector3(-1f, 1f, 1f);
+                _rightPivot.localPosition = NaturalRightPosition;
+                _rightPivot.localRotation = Quaternion.LookRotation(NaturalRightForward, NaturalRightUp);
+                _leftPivot.localPosition = Vector3.Scale(NaturalRightPosition, mirror);
+                _leftPivot.localRotation = Quaternion.LookRotation(Vector3.Scale(NaturalRightForward, mirror), Vector3.Scale(NaturalRightUp, mirror));
+            }
+            else
+            {
+                _rightPivot.localPosition = _builtRightPos; _rightPivot.localRotation = _builtRightRot;
+                _leftPivot.localPosition = _builtLeftPos; _leftPivot.localRotation = _builtLeftRot;
+            }
+            _rightRest = _rightPivot.localRotation; _leftRest = _leftPivot.localRotation;
+            _rightRestPos = _rightPivot.localPosition;
+        }
 
         private void ApplyCharacterStyle(string characterId)
         {
@@ -1640,6 +1712,23 @@ namespace TumbangPreso.CameraSystem
             // would otherwise keep the last hero's, and Paete's are 1.45 across.
             if(_rightArm!=null)_rightArm.localScale=Vector3.one;
             if(_leftArm!=null)_leftArm.localScale=Vector3.one;
+            // The natural arms and their placement, for the heroes on them; the built placement for everyone else.
+            bool natural = System.Array.IndexOf(NaturalArmHeroes, characterId) >= 0 && UseRosterArms(characterId, true);
+            SetRestPlacement(natural);
+            if(natural)
+            {
+                // ⚠️ PAETE'S BRAIDS ARE LONG AND THIN ON HIS BODY, so at their own proportions they came out about half as
+                // wide as the other heroes' arms (0.36 across against Dante's 0.58) and read small in the corners (owner,
+                // 2026-10-06: "fix paete's arm size"). His old first-person bulk went back on them, and of that he said
+                // "paetes needs to be bigger yea": so `PaeteNaturalBulk` across and a fifth longer, the whole arm bigger.
+                if(characterId=="paete")
+                {
+                    var bulk=new Vector3(PaeteNaturalBulk,PaeteNaturalLength,PaeteNaturalBulk);
+                    if(_rightArm!=null)_rightArm.localScale=bulk;
+                    if(_leftArm!=null)_leftArm.localScale=bulk;
+                }
+                return;
+            }
             if(characterId=="inday" && UseIndaySourceArms())return;
             // Rafi has simple source hands/sleeves. Keep their exact palette and
             // geometry instead of giving this new hero the generic wrist kit.
@@ -1739,7 +1828,7 @@ namespace TumbangPreso.CameraSystem
             return true;
         }
 
-        private bool UseRosterArms(string characterId)
+        private bool UseRosterArms(string characterId, bool natural = false)
         {
             var actual = _characterMotor != null ? _characterMotor.GetComponent<Visual.CharacterVisual>() : null;
             if (actual != null && actual.SourceModel != null)
@@ -1759,8 +1848,9 @@ namespace TumbangPreso.CameraSystem
             var palette = _characterMotor != null
                 ? _characterMotor.GetComponent<Visual.CharacterVisual>()?.AppliedPalette : null;
             if (palette == null || palette.Length == 0) palette = entry.Palette;
-            ApplyRosterArm(_rightArm, _rightArmRenderer, right, source.sharedMaterial, palette);
-            ApplyRosterArm(_leftArm, _leftArmRenderer, left, source.sharedMaterial, palette);
+            // `natural` keeps the cut arm's own proportions: no squeeze to the block hand's width.
+            ApplyRosterArm(_rightArm, _rightArmRenderer, right, source.sharedMaterial, palette, natural);
+            ApplyRosterArm(_leftArm, _leftArmRenderer, left, source.sharedMaterial, palette, natural);
             return true;
         }
 
@@ -1774,7 +1864,13 @@ namespace TumbangPreso.CameraSystem
             arm.localScale = preserveProportions?Vector3.one:new Vector3(width,1f,width);
             renderer.enabled = true;
             renderer.GetComponent<MeshFilter>().sharedMesh = mesh;
-            renderer.sharedMaterial = source;
+            // ⚠️ EVERY SLOT, NOT THE FIRST. The shared block arm this renderer wore a moment ago has more material slots
+            // than a cut arm has submeshes, and `sharedMaterial = source` replaces only slot 0: the leftover slot then
+            // draws the whole cut arm AGAIN in the block arm's plain white, over its own paint (found 2026-10-06 with
+            // `FpvNaturalArmProbe`: Dante's, Paete's and Rafi's arms came out white with the atlas correctly bound).
+            var slots = new Material[Mathf.Max(1, mesh.subMeshCount)];
+            for (int i = 0; i < slots.Length; i++) slots[i] = source;
+            renderer.sharedMaterials = slots;
             renderer.SetPropertyBlock(null);
             // The close camera needs the same cloth and hand geometry with a finer
             // contour than a two-metre body. The mesh cache owns these shared working copies;
@@ -2861,7 +2957,7 @@ namespace TumbangPreso.CameraSystem
         /// The idle breathe. Two arms, slightly different swings and the same period, so they
         /// move together without moving identically.
         /// </summary>
-        private void LateUpdate() => StepVisuals(Time.deltaTime);
+        private void LateUpdate() { StepVisuals(Time.deltaTime); StepWorldShade(Time.deltaTime); }
 
         private Visual.CharacterAnimator _swimAnimator;
         private bool _swimApplied;
@@ -2930,11 +3026,13 @@ namespace TumbangPreso.CameraSystem
 
         public void StepVisuals(float dt, bool snap = false)
         {
+            RestoreHandLife();
             RestoreReleaseSweep();
             RestoreThrowReach();
             RestoreTagReach();
             RestoreCastGesture();
             RestoreRaiseCan();
+            RestoreAirMotion();
             RestoreRunSway();
             RestoreFeatherfall();
             RestoreHeldProp();
@@ -2978,10 +3076,12 @@ namespace TumbangPreso.CameraSystem
                 ApplyFeatherfall();
                 ApplyHeldProp();
                 ApplyRunSway(dt);
+                ApplyAirMotion(dt);
                 ApplyRaiseCan(dt);
                 ApplyTagReach();
                 ApplyCastGesture();
                 ApplyReleaseSweep();
+                StepHandLife(dt);
                 return;
             }
 
@@ -3025,10 +3125,12 @@ namespace TumbangPreso.CameraSystem
             ApplyFeatherfall();
             ApplyHeldProp();
             ApplyRunSway(dt);
+            ApplyAirMotion(dt);
             ApplyThrowReach();
             ApplyTagReach();
             ApplyCastGesture();
             ApplyReleaseSweep();
+            StepHandLife(dt);
         }
 
         private void StepToward(Vector3 position, Quaternion rotation, Vector3 scale, float dt)

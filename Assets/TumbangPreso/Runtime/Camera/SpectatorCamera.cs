@@ -605,8 +605,7 @@ namespace TumbangPreso.CameraSystem
 
             // Mouse-look needs the cursor locked, exactly as the gameplay rigs do.
             // Re-asserting is harmless and covers being created from a screen that released it.
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            UI.CursorMode.Capture();
         }
 
         private void BindActions()

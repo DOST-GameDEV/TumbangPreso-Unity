@@ -16,6 +16,7 @@ namespace TumbangPreso.Visual
     /// the CONTACT is the knot that wraps the anchor with a burst of leaves, the LINGER is the taut
     /// line, the DISSIPATE is the return into the forearm with a few leaves falling.
     /// </summary>
+    [DefaultExecutionOrder(600)]
     public sealed class PaeteVineReach : MonoBehaviour
     {
         private Transform _left, _right, _torso;
@@ -51,7 +52,27 @@ namespace TumbangPreso.Visual
         private readonly List<Transform> _leaves = new List<Transform>();
         private readonly List<float> _leafAt = new List<float>();
         private Transform _knot;
-        private bool _burst;
+        private readonly List<Transform> _knotLoops = new List<Transform>();
+        private readonly List<Quaternion> _knotRest = new List<Quaternion>();
+        private Transform _blossom;
+        private bool _burst, _landed;
+
+        // ⚠️⚠️ v4 (2026-10-07): HIS ARMS ARE THE VINE. Owner, of the leap on the redesigned body: *"in game the actual vine
+        // is still made separately from his arms.. i need the arms to stretch to form the leap's vine"*. On a rig with
+        // forearm bones each arm is turned so its own line runs THROUGH the point its vine catches, the forearm straight
+        // (`LateUpdate`, after the body's clip has posed him), and the strands leave from the braid's very tip along
+        // that line: the limb goes on from the arm with no bend at the wrist. In his own eyes there are no strands at
+        // all: his first-person arms grow the limb themselves (`CameraSystem.PaeteVineHands.ReachTo`).
+        // ⚠️ THE FOREARM IS NOT SCALED. That was tried the same day (the bone grown until its tip was at the catch) and it
+        // smeared the arm's paint and flattened its strands: *"textures get really distorted and the mesh gets really
+        // weird"*. New wood is built on from the tip; the arm keeps its own shape.
+        private readonly Transform[] _upper = new Transform[2], _fore = new Transform[2];
+        private readonly Quaternion[] _foreRestTurn = new Quaternion[2];
+        private readonly Vector3[] _foreRestSize = new Vector3[2], _tipNow = new Vector3[2];
+        private readonly List<SkinnedMeshRenderer> _skins = new List<SkinnedMeshRenderer>();
+        private readonly List<bool> _skinsOffscreen = new List<bool>();
+        private bool _armsAreVines;
+        private float _armWeight;
 
         public static PaeteVineReach Build(CharacterMotor caster, Vector3 anchor, float reachSeconds, float reelSeconds)
         {
@@ -67,6 +88,17 @@ namespace TumbangPreso.Visual
             fx._left = FindBone(caster.transform, "forearm-left") ?? FindBone(caster.transform, "arm-left");
             fx._right = FindBone(caster.transform, "forearm-right") ?? FindBone(caster.transform, "arm-right");
             fx._torso = FindBone(caster.transform, "torso") ?? caster.transform;
+            fx._upper[0] = FindBone(caster.transform, "arm-left"); fx._upper[1] = FindBone(caster.transform, "arm-right");
+            fx._fore[0] = FindBone(caster.transform, "forearm-left"); fx._fore[1] = FindBone(caster.transform, "forearm-right");
+            fx._armsAreVines = fx._upper[0] != null && fx._upper[1] != null && fx._fore[0] != null && fx._fore[1] != null;
+            if (fx._armsAreVines)
+            {
+                // The rest is the modelled forearm: no turn, its own size (`HeroAbilityClips`, THE ELBOWS).
+                for (int i = 0; i < 2; i++) { fx._foreRestTurn[i] = Quaternion.identity; fx._foreRestSize[i] = Vector3.one; }
+                // An arm eight metres long leaves the body's own bounds: keep it drawn while it is out.
+                foreach (var skin in caster.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+                { fx._skins.Add(skin); fx._skinsOffscreen.Add(skin.updateWhenOffscreen); skin.updateWhenOffscreen = true; }
+            }
             // Two thick bark limbs, two thin dark vines coiled round them, one lit lime strand.
             // ⚠️ The lit strand is LEAF GREEN, not the eye light: on the asphalt the eye light's
             // yellow read as "yellow shit" to the owner (2026-09-26), not as a living vine.
@@ -93,7 +125,63 @@ namespace TumbangPreso.Visual
                 fx._leaves.Add(leaf);
                 fx._leafAt.Add(at[i]);
             }
-            fx._knot = GrowthVfx.Block(go.transform, "anchor-knot", new Vector3(0.22f, 0.22f, 0.22f), GrowthVfx.Vine).transform;
+            // ⚠️ THE CATCH IS A KNOT OF WOUND VINE (2026-10-07; owner: *"you havent actually reworked the effect it casts"*). It
+            // was one green cube, spinning. Now three loops of vine in the cast's ink line, each in its own plane and its own
+            // wood, are thrown round the point wide and CINCH tight (`Step`), with two loose ends curling off.
+            fx._knot = new GameObject("anchor-knot").transform;
+            fx._knot.SetParent(go.transform, false);
+            Color[] wood = { GrowthVfx.Vine, GrowthVfx.BarkLit, GrowthVfx.Moss };
+            Vector3[] plane = { new Vector3(18f, 0f, 8f), new Vector3(74f, 40f, 0f), new Vector3(-58f, -30f, 20f) };
+            float[] round = { .17f, .15f, .16f }, fat = { .042f, .036f, .032f };
+            var ring = new List<Vector3>(20); var ringFat = new List<float>(20);
+            for (int i = 0; i < 3; i++)
+            {
+                ring.Clear(); ringFat.Clear();
+                // A loop that does not quite close on itself: it overlaps its own start, as a wound vine does.
+                for (int k = 0; k <= 18; k++)
+                {
+                    float a = k / 18f * Mathf.PI * 2.25f;
+                    ring.Add(new Vector3(Mathf.Cos(a) * round[i], Mathf.Sin(a) * round[i], (k / 18f - .5f) * .07f + Mathf.Sin(a * 3f + i) * .012f));
+                    ringFat.Add(fat[i] * (k == 0 || k == 18 ? .35f : 1f));
+                }
+                var loop = new Mesh { name = "PaeteKnotLoop" };
+                PaeteInk.Tube(loop, ring, ringFat, 6);
+                var part = PaeteInk.Part(fx._knot, "knot-loop-" + i, loop, wood[i]).transform;
+                part.localRotation = Quaternion.Euler(plane[i]);
+                fx._knotLoops.Add(part);
+            }
+            // ⚠️ MORE OF AN EVENT (owner, 2026-10-07, of the first knot: "i wish the vine cluster at the end had a bit more
+            // pzazz on it"). Five loose ends now, whipping out all round it; the loops SPIN shut as they cinch; a sampaguita
+            // bursts open on its face a beat after the bite; the knot swells well past its size before it settles; and twice
+            // the leaves are thrown, harder.
+            for (int i = 0; i < 5; i++)
+            {
+                ring.Clear(); ringFat.Clear();
+                // A loose end: out from the knot and curling over.
+                for (int k = 0; k <= 8; k++)
+                {
+                    float t = k / 8f;
+                    ring.Add(new Vector3(.12f + t * (.16f + .03f * i), .04f + Mathf.Sin(t * 2.4f) * (.10f + .02f * (i % 3)), (i % 2 == 0 ? .05f : -.05f) * t));
+                    ringFat.Add(Mathf.Lerp(.03f, .006f, t));
+                }
+                var end = new Mesh { name = "PaeteKnotEnd" };
+                PaeteInk.Tube(end, ring, ringFat, 5);
+                var endPart = PaeteInk.Part(fx._knot, "knot-end-" + i, end, i % 2 == 0 ? GrowthVfx.LeafDark : GrowthVfx.Vine).transform;
+                endPart.localRotation = Quaternion.Euler(0f, 0f, i * 72f + 14f);
+                fx._knotLoops.Add(endPart);
+            }
+            // The sampaguita: five white petals round a yellow heart, on the knot's face.
+            fx._blossom = new GameObject("anchor-blossom").transform;
+            fx._blossom.SetParent(go.transform, false);
+            var petal = GrowthVfx.Leaf(0.15f, 0.10f, 0.018f);
+            for (int i = 0; i < 5; i++)
+            {
+                var part = PaeteInk.Part(fx._blossom, "blossom-petal-" + i, petal, new Color(0.98f, 0.97f, 0.90f)).transform;
+                part.localRotation = Quaternion.Euler(0f, 0f, i * 72f) * Quaternion.Euler(-62f, 0f, 0f);
+                part.localPosition = part.localRotation * new Vector3(0f, 0f, 0.03f);
+            }
+            GrowthVfx.Block(fx._blossom, "blossom-heart", new Vector3(0.055f, 0.055f, 0.055f), new Color(1f, 0.82f, 0.22f));
+            fx._blossom.gameObject.SetActive(false);
             fx._knot.gameObject.SetActive(false);
             // The anchor mark (Kinich's glyph, research.md § 2): six leaves opening round the knot
             // in a rosette, so the catch point reads from across the court.
@@ -149,6 +237,12 @@ namespace TumbangPreso.Visual
         {
             CameraSystem.CameraRig.SetViewmodelReachStretch(_caster,0f);
             foreach(var mesh in _meshes)if(mesh!=null)Destroy(mesh);
+            // His forearms go back to what they are: no later clip keys them, so nothing else would.
+            if (_armsAreVines)
+            {
+                for (int i = 0; i < 2; i++) if (_fore[i] != null) { _fore[i].localRotation = _foreRestTurn[i]; _fore[i].localScale = _foreRestSize[i]; }
+                for (int i = 0; i < _skins.Count; i++) if (_skins[i] != null) _skins[i].updateWhenOffscreen = _skinsOffscreen[i];
+            }
         }
 
         /// <summary>
@@ -171,6 +265,27 @@ namespace TumbangPreso.Visual
                 Vector3 offset = _centre[k] - straight;
                 float u = 1f - t;
                 _centre[k] = u * u * from + 2f * u * t * control + t * t * tip + offset;
+            }
+        }
+
+        /// <summary>
+        /// The body's arms, grown to the catch. After the body's own clip has posed him this frame: each upper arm is
+        /// turned so its line runs through the point its vine has reached, the forearm is straightened and made as
+        /// long as it takes for the braid's tip to be AT that point. `_armWeight` eases the clip's pose into this over
+        /// the first third of the reach, and out of it over the last of the return.
+        /// </summary>
+        private void LateUpdate()
+        {
+            if (!_armsAreVines || _armWeight <= 0f) return;
+            for (int i = 0; i < 2; i++)
+            {
+                Transform upper = _upper[i], fore = _fore[i];
+                if (upper == null || fore == null) continue;
+                Vector3 line = fore.position - upper.position, wanted = _tipNow[i] - upper.position;
+                if (line.sqrMagnitude < 1e-8f || wanted.sqrMagnitude < 1e-6f) continue;
+                upper.rotation = Quaternion.Slerp(upper.rotation, Quaternion.FromToRotation(line.normalized, wanted.normalized) * upper.rotation, _armWeight);
+                fore.localRotation = Quaternion.Slerp(fore.localRotation, _foreRestTurn[i], _armWeight);
+                fore.localScale = Vector3.Lerp(fore.localScale, _foreRestSize[i], _armWeight);
             }
         }
 
@@ -205,7 +320,9 @@ namespace TumbangPreso.Visual
             // hand as it is drawn, as two thick planks crossing his view. Now his first-person forearms lengthen 45 % with the
             // reach (`ViewmodelArms.SetReachStretch`), and each braid starts INSIDE the drawn forearm, 30 % of the way back from the
             // hand, as thick as the arm's own strands, so they pour out of the end of his own arm. Every other screen is unchanged.
-            CameraSystem.CameraRig.SetViewmodelReachStretch(_caster, FirstPersonStretch * extend);
+            // (The old 45 % swell of the whole first-person arm is off where the arms themselves are the vine.)
+            CameraSystem.CameraRig.SetViewmodelReachStretch(_caster, _armsAreVines ? 0f : FirstPersonStretch * extend);
+            _armWeight = Mathf.Clamp01(extend * 3f);
 
             for (int i = 0; i < 2; i++)
             {
@@ -216,6 +333,8 @@ namespace TumbangPreso.Visual
                 // The two vines meet the anchor a hand apart, so it reads as two arms reaching.
                 Vector3 to = _anchor + (i == 0 ? Vector3.left : Vector3.right) * 0.08f;
                 Vector3 tip = Vector3.Lerp(from, to, extend);
+                _tipNow[i] = to;
+                if (_armsAreVines && own) CameraSystem.PaeteVineHands.ReachTo(_caster, i == 0, to, extend);
                 GrowthVfx.Curve(_centre, from, tip, 18, taut * Vector3.Distance(from, tip) * 0.25f, 0.06f * (1f - extend * 0.6f), i * 1.7f + _age * 6f);
                 // ⚠️ IN HIS OWN EYES THE VINE LEAVES ALONG HIS FOREARM, THEN BENDS TO THE ANCHOR (owner, 2026-09-26, on film c4's
                 // first-person frame: *"it doesnt bend with arms tho"*). The line from the hand straight to the anchor left each
@@ -248,7 +367,8 @@ namespace TumbangPreso.Visual
                         // In his own eyes the strands keep the arm's thickness longer as they leave it (the taper eases in).
                         _radii.Add(Mathf.Lerp(0.06f * thick, 0.011f, own ? Mathf.Pow(t, 0.7f) : t) * StrandThick[s2]);
                     }
-                    GrowthVfx.Tube(_meshes[i * Strands + s2], _points, _radii, 4);
+                    // His own arm is the vine: no strands are drawn beside it.
+                    if (_armsAreVines && own) _meshes[i * Strands + s2].Clear(); else GrowthVfx.Tube(_meshes[i * Strands + s2], _points, _radii, 6);
                 }
                 (i == 0 ? _twigsLeft : _twigsRight).Place(_centre, extend, 0.9f + 0.3f * (1f - loose), true);
                 // Leaves ride the braid: the first vine carries four, the second three.
@@ -272,9 +392,48 @@ namespace TumbangPreso.Visual
             {
                 _knot.position = _anchor;
                 float k = Mathf.Clamp01((_age - _reach) / 0.12f);
-                _knot.localScale = Vector3.one * (0.10f + 0.14f * GrowthVfx.Pop(k));
-                _knot.rotation = Quaternion.Euler(0f, _age * 90f, 18f);
-                if (!_burst) { _burst = true; PaeteLeafBurst.Spawn(_anchor, 6, 1.4f); }
+                // Thrown wide, cinched tight, and a shudder as it bites: each loop a beat after the last.
+                float since = _age - _reach;
+                _knot.localScale = Vector3.one * (0.95f + 0.75f * GrowthVfx.Pop(k) - 0.35f * Mathf.Clamp01((since - .16f) / .25f));
+                if (_knotRest.Count == 0) foreach (var loop in _knotLoops) _knotRest.Add(loop.localRotation);
+                _knot.rotation = Quaternion.LookRotation((_torso != null ? _torso.position : transform.position) - _anchor + Vector3.up * .001f, Vector3.up)
+                    * Quaternion.Euler(0f, 0f, Mathf.Sin(since * 26f) * 14f * Mathf.Exp(-since * 7f));
+                for (int i = 0; i < _knotLoops.Count; i++)
+                {
+                    float mine = Mathf.Clamp01((since - i * .035f) / .16f);
+                    // Wide at 1.7, through tight at 0.86, home at 1.
+                    float cinch = mine < .7f ? Mathf.Lerp(1.7f, .86f, mine / .7f) : Mathf.Lerp(.86f, 1f, (mine - .7f) / .3f);
+                    // A loop spins shut as it tightens; an end whips out past its length and settles.
+                    float whip = mine < .6f ? Mathf.Lerp(0f, 1.45f, mine / .6f) : Mathf.Lerp(1.45f, 1f, (mine - .6f) / .4f);
+                    _knotLoops[i].localScale = Vector3.one * (i < 3 ? cinch : whip);
+                    _knotLoops[i].localRotation = _knotRest[i] * Quaternion.Euler(0f, 0f, (i < 3 ? 240f : 90f) * (1f - mine) * (i % 2 == 0 ? 1f : -1f));
+                }
+                if (!_burst)
+                {
+                    _burst = true; PaeteLeafBurst.Spawn(_anchor, 12, 2.1f);
+                    // The rope going taut, where it bites. Each peer plays it from its own vine: nothing is sent.
+                    GameServices.Audio?.PlayAtVaried("sfx_paete_vine_catch", _anchor, 0.97f, 1.04f, 1.0f);
+                }
+            }
+            // The blossom: shut until a beat after the bite, then open past full and settling, turning a little as it does.
+            if (_blossom != null)
+            {
+                float open = arrived ? GrowthVfx.Pop(Mathf.Clamp01((_age - _reach - .09f) / .2f)) : 0f;
+                _blossom.gameObject.SetActive(arrived && open > 0f);
+                if (arrived && open > 0f)
+                {
+                    Vector3 toward = (_torso != null ? _torso.position : transform.position) - _anchor;
+                    if (toward.sqrMagnitude < 1e-4f) toward = Vector3.back;
+                    var look = Quaternion.LookRotation(toward.normalized, Vector3.up);
+                    _blossom.SetPositionAndRotation(_anchor + look * new Vector3(0f, 0f, 0.2f), look * Quaternion.Euler(0f, 0f, (1f - open) * 90f));
+                    _blossom.localScale = Vector3.one * (1.25f * open);
+                }
+            }
+            // The landing, as the reel ends: the thump and the leaves settling, where he is.
+            if (!_landed && _earlyReturnAge < 0 && _age >= _reach + _reel)
+            {
+                _landed = true;
+                if (_caster != null) GameServices.Audio?.PlayAtVaried("sfx_paete_vine_land", _caster.transform.position, 0.96f, 1.04f, 1.0f);
             }
             // The rosette opens with the catch and closes as the vines let go.
             float bloom = arrived ? GrowthVfx.Pop(Mathf.Clamp01((_age - _reach) / 0.16f)) : 0f;
@@ -288,7 +447,7 @@ namespace TumbangPreso.Visual
                 if (!arrived) continue;
                 var petal = facing * Quaternion.Euler(0f, 0f, i * 60f) * Quaternion.Euler(-90f + 55f * bloom, 0f, 0f);
                 leaf.SetPositionAndRotation(_anchor + petal * new Vector3(0f, 0f, 0.14f), petal);
-                leaf.localScale = Vector3.one * bloom;
+                leaf.localScale = Vector3.one * (bloom * 1.3f);
             }
         }
     }
@@ -301,7 +460,7 @@ namespace TumbangPreso.Visual
     /// shrink into the road. The seedling, THORN HARVEST's thorns and the sentry all break the road with this
     /// before they rise, so none of them appears at size.
     /// </summary>
-    public sealed class PaeteGroundBreak : MonoBehaviour
+    public sealed class PaeteGroundBreak : PaeteFx
     {
         private float _age, _size;
         private readonly List<Transform> _cracks = new List<Transform>();
@@ -317,9 +476,9 @@ namespace TumbangPreso.Visual
 
         public static PaeteGroundBreak Spawn(Vector3 at, float size)
         {
-            var go = new GameObject("PaeteGroundBreak");
+            var fx = Make<PaeteGroundBreak>("PaeteGroundBreak");
+            var go = fx.gameObject;
             go.transform.position = at;
-            var fx = go.AddComponent<PaeteGroundBreak>();
             fx._size = size;
             float[] crackYaw = { 15f, 85f, 160f, 230f, 300f };
             float[] crackLen = { 0.8f, 0.6f, 0.9f, 0.55f, 0.75f };
@@ -344,10 +503,10 @@ namespace TumbangPreso.Visual
             return fx;
         }
 
-        private void Update()
+        protected override void Step(float dt)
         {
-            _age += Time.deltaTime;
-            if (_age >= Life) { Destroy(gameObject); return; }
+            _age += dt;
+            if (_age >= Life) { Finish(); return; }
             StepTo(_age);
         }
 
@@ -371,7 +530,7 @@ namespace TumbangPreso.Visual
     /// growth effect (direction.md § 2), with narra's disc-shaped seed pods among them. Each leaf's
     /// throw is set from its own index, so two bursts never repeat one pattern.
     /// </summary>
-    public sealed class PaeteLeafBurst : MonoBehaviour
+    public sealed class PaeteLeafBurst : PaeteFx
     {
         private readonly List<Transform> _bits = new List<Transform>();
         private readonly List<Vector3> _velocity = new List<Vector3>();
@@ -381,9 +540,9 @@ namespace TumbangPreso.Visual
         public static PaeteLeafBurst Spawn(Vector3 at, int count, float strength)
         {
             if (GrowthVfx.Reduced) count = Mathf.Max(2, count / 2);
-            var go = new GameObject("PaeteLeafBurst");
+            var fx = Make<PaeteLeafBurst>("PaeteLeafBurst");
+            var go = fx.gameObject;
             go.transform.position = at;
-            var fx = go.AddComponent<PaeteLeafBurst>();
             fx._life = 1.4f;
             for (int i = 0; i < count; i++)
             {
@@ -400,11 +559,10 @@ namespace TumbangPreso.Visual
             return fx;
         }
 
-        private void Update()
+        protected override void Step(float dt)
         {
-            float dt = Time.deltaTime;
             _age += dt;
-            if (_age >= _life) { Destroy(gameObject); return; }
+            if (_age >= _life) { Finish(); return; }
             for (int i = 0; i < _bits.Count; i++)
             {
                 // Leaves fall slowly (drag), which is the whole read: a leaf, not a chip.
@@ -469,7 +627,7 @@ namespace TumbangPreso.Visual
     /// A seed thrown in an arc from his hand to where it lands (the seedling's and the sentry's
     /// throw: *"seeds are thrown and pop up"*, research.md § 3). It spins, and lands on its clock.
     /// </summary>
-    public sealed class PaeteSeedArc : MonoBehaviour
+    public sealed class PaeteSeedArc : PaeteFx
     {
         private Vector3 _from, _to;
         private float _age, _flight, _height;
@@ -477,13 +635,18 @@ namespace TumbangPreso.Visual
 
         public static PaeteSeedArc Throw(Vector3 from, Vector3 to, float flightSeconds, float size, bool glowing)
         {
-            var go = new GameObject("PaeteSeedArc");
-            var fx = go.AddComponent<PaeteSeedArc>();
+            var fx = Make<PaeteSeedArc>("PaeteSeedArc");
+            var go = fx.gameObject;
             fx._from = from; fx._to = to; fx._flight = Mathf.Max(0.1f, flightSeconds);
             fx._height = 0.6f + 0.12f * Vector3.Distance(from, to);
             if (!glowing)
             {
-                fx._seed = GrowthVfx.Part(go.transform, "seed", GrowthVfx.Leaf(size, size * 0.7f, size * 0.55f), GrowthVfx.Seed).transform;
+                // ⚠️ THE SEED'S LOOK IS `PaeteSeedFlight` NOW (2026-10-07; it was one brown prism 14 cm long, a speck from
+                // across a court): a sprouting seed with a leaf tail and a drawn ribbon, flying this same arc from these
+                // same numbers. This keeps the clock and an empty node for `Step` to turn.
+                fx._seed = new GameObject("seed").transform;
+                fx._seed.SetParent(go.transform, false);
+                PaeteSeedFlight.Throw(from, to, fx._flight, fx._height, size);
             }
             else
             {
@@ -525,18 +688,18 @@ namespace TumbangPreso.Visual
                 }
                 fx._seed.localScale = Vector3.one * (size / 0.26f);
             }
-            fx.Update();
+            fx.Step(0f);
             return fx;
         }
 
-        private void Update()
+        protected override void Step(float dt)
         {
-            _age += Time.deltaTime;
+            _age += dt;
             float t = Mathf.Clamp01(_age / _flight);
             transform.position = Vector3.Lerp(_from, _to, t) + Vector3.up * _height * 4f * t * (1f - t);
             // A seed spins fast; the heavy cluster tumbles.
             _seed.localRotation = _seed.childCount > 1 ? Quaternion.Euler(_age * 240f, _age * 120f, 0f) : Quaternion.Euler(_age * 720f, _age * 300f, 0f);
-            if (_age >= _flight) Destroy(gameObject);
+            if (_age >= _flight) Finish();
         }
     }
 
@@ -553,7 +716,7 @@ namespace TumbangPreso.Visual
     /// the line it stands, how far off the line, how tall, which way it leans and which cane it is. The table is fractions of
     /// the line, so a short cast packs the same ten shoots closer together.
     /// </summary>
-    public sealed class PaeteThornTrail : MonoBehaviour
+    public sealed class PaeteThornTrail : PaeteFx
     {
         // Fraction of the way from his foot to the spot, metres off the line (+ is right of travel), height, lean along the
         // travel and lean sideways (degrees), and cane colour (the rattan's slot: 0 blade, 4 sheath).
@@ -579,8 +742,8 @@ namespace TumbangPreso.Visual
 
         public static PaeteThornTrail Build(Vector3 from, Vector3 to, float travel)
         {
-            var go = new GameObject("PaeteThornTrail");
-            var fx = go.AddComponent<PaeteThornTrail>();
+            var fx = Make<PaeteThornTrail>("PaeteThornTrail");
+            var go = fx.gameObject;
             fx._travel = Mathf.Max(0.01f, travel);
             Vector3 run = to - from; run.y = 0f;
             Vector3 dir = run.sqrMagnitude > 1e-4f ? run.normalized : Vector3.forward;
@@ -620,13 +783,18 @@ namespace TumbangPreso.Visual
                 pivot.localScale = new Vector3(1f, 1f, 0.001f);
                 fx._grooves.Add(pivot);
             }
+            // ⚠️ THE SHOOTS NO LONGER RUN ALONE (2026-10-07, the ability rework). His stamp kicks an inked ring and leaves out
+            // of the court where the line starts, and a spined ridge runs the line ahead of the shoots, drawing a streak and
+            // kicking clods out at each one (`PaeteThornFx.cs`). Both are their own effects on this trail's clock.
+            PaeteThornStamp.Spawn(new Vector3(from.x, VfxShapes.GroundAt(from, from.y), from.z), dir);
+            PaeteThornRunner.Build(from, to, fx._travel, Along, Off);
             return fx;
         }
 
-        private void Update()
+        protected override void Step(float dt)
         {
-            _age += Time.deltaTime;
-            if (_age >= _travel + StandSeconds + SinkSeconds + 0.1f) { Destroy(gameObject); return; }
+            _age += dt;
+            if (_age >= _travel + StandSeconds + SinkSeconds + 0.1f) { Finish(); return; }
             for (int i = 0; i < _shoots.Count; i++)
             {
                 float t = _age - Along[i] * _travel;

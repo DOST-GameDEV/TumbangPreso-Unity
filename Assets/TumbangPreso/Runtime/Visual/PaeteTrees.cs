@@ -88,6 +88,9 @@ namespace TumbangPreso.Visual
             if (model == null) return;
             foreach (var r in model.GetComponentsInChildren<Renderer>(true))
             {
+                // A piece built in code and hung on the prop (the carved clog in the pitcher: `PaeteInk.Part`) wears its own
+                // colour, not a palette cell: re-dressing it with the prop's palette painted it black (2026-10-07 film).
+                if (r.GetComponent<GrowthMeshOwner>() != null) continue;
                 var rest = r.GetComponent<PaeteOutlineRest>();
                 if (rest == null || rest.Scale <= 0.0001f) { ToonSkin.Apply(r, ToonSkin.PersonOutlineWidth, palette); continue; }
                 // Scaled by now / rest, so `Apply`'s `width / now` lands on the spawn's `width / rest`.
@@ -147,9 +150,19 @@ namespace TumbangPreso.Visual
         /// </summary>
         public static readonly Color[] Palette =
         {
-            Hex(0x231A17), Hex(0x4A382E), Hex(0xC98E68), Hex(0xA8704F), Hex(0xE6DDCC), Hex(0xC9BEA9), Hex(0xFBF8EF), Hex(0xE8D8A0),
-            Hex(0x1E140C), Hex(0x6A962E), Hex(0xD8FF6A), Hex(0xFFFDF6), Hex(0xEDE6D8), Hex(0xCFC4AE), Hex(0x3F5F2C), Hex(0x8FB06A),
+            // 2026-10-08, the diwata (`tools/build_paete_makiling.py`): 0 is her hair's own black, 5 her blush and 13 gold now.
+            Hex(0x1B1A16), Hex(0x4A382E), Hex(0xC98E68), Hex(0xA8704F), Hex(0xF1ECE0), Hex(0xE7968A), Hex(0xFBF8EF), Hex(0xE8D8A0),
+            Hex(0x1E140C), Hex(0x6A962E), Hex(0xD8FF6A), Hex(0xFFFDF6), Hex(0xEDE6D8), Hex(0xE2B84A), Hex(0x3F5F2C), Hex(0x8FB06A),
         };
+
+        /// <summary>
+        /// ⚠️ IN THE SKY (2026-10-08, owner: "she could fill up the sky or something like a god visible in the sky"). She was a
+        /// figure of a person's size beside him; the cutscene now stands her far off and vast, sunk to her hips under the
+        /// horizon. These say, in HER OWN metres above her feet, where the mist that hides her ends while she is there
+        /// (`MistFrom` nothing, `MistTo` all of her), and the height below which she never takes her full form
+        /// (`FormFloor`: "She turns solid only around her face and hands"). The defaults are the figure beside him.
+        /// </summary>
+        public float MistFrom = 0.12f, MistTo = 1.0f, FormFloor = -0.2f;
 
         /// <summary>One frame of her, filled by the cutscene. Every field has a neutral default of 0.</summary>
         public struct Look
@@ -181,6 +194,11 @@ namespace TumbangPreso.Visual
             public float Form;
             /// <summary>0 to 1: how far the spirit has come back up her after it, from the feet (1 is all ghost again).</summary>
             public float Unform;
+            /// <summary>
+            /// Her size as a share of the size she was made at; 0 means 1. ⚠️ In the sky nothing says how far away she is, so
+            /// a figure growing IS a figure coming nearer: this is how she arrives (`HeroIntroductionScene.Paete.cs`).
+            /// </summary>
+            public float Size;
         }
 
         public readonly GameObject Model;
@@ -199,12 +217,23 @@ namespace TumbangPreso.Visual
 
         private static Color Hex(int rgb) => new Color(((rgb >> 16) & 255) / 255f, ((rgb >> 8) & 255) / 255f, (rgb & 255) / 255f, 1f);
 
+        /// <summary>World point at the middle of her face (her halo stands behind it).</summary>
+        public Vector3 HeadWorld => _head != null ? _head.TransformPoint(new Vector3(0f, 0.24f, 0f)) : HandsWorld;
+        /// <summary>Her size on the last frame posed (made size times `Look.Size`).</summary>
+        public float SizeNow { get; private set; }
+        /// <summary>How brightly her edges shine as a ghost (the shader's own are 0.45 and 0.55), and the rim of light on her full form.</summary>
+        public void Shine(float rimAlpha, float rimGlow, float formRim)
+        {
+            if (_ghost == null) return;
+            _ghost.SetFloat("_RimAlpha", rimAlpha); _ghost.SetFloat("_Glow", rimGlow); _ghost.SetFloat("_FormRim", formRim);
+        }
+
         /// <summary>World point between her hands: where the light is held, and where it falls from.</summary>
         public Vector3 HandsWorld => _seed != null ? _seed.position : (Model != null ? Model.transform.position + Vector3.up * 2f * _scale : Vector3.zero);
 
         public MakilingSpirit(Transform parent, Vector3 at, float yaw, float scale)
         {
-            _at = at; _scale = scale; _yaw = yaw;
+            _at = at; _scale = scale; _yaw = yaw; SizeNow = scale;
             Model = PaeteProp.SpawnRaw("makiling", parent);
             if (Model == null) return;
             Model.transform.localPosition = at;
@@ -218,9 +247,25 @@ namespace TumbangPreso.Visual
                 for (int i = 0; i < 16; i++) slots[i] = Palette[i].linear;
                 _ghost.SetVectorArray("_Palette", slots);
                 _ghost.SetFloat(LightRadiusId, 0.95f * scale);
+                // Her face's part of the atlas (`R_FACE` in `tools/build_paete_makiling.py`, with Unity's v): its dark pixels are her eyes and mouth.
+                _ghost.SetVector("_FaceRect", new Vector4(0.25f, 0.75f, 0.5f, 0.875f));
                 VfxRenderTag.Own(Model, _ghost);
             }
             else Debug.LogWarning("[MakilingSpirit] Shaders/SpiritGhost is missing.");
+            // Her painted atlas (`makiling-atlas.png`, beside the model) rides on the importer's material: hand it to the ghost
+            // before that material is replaced (`SpiritGhost.shader` samples it for a UV in the atlas's upper half).
+            if (_ghost != null)
+                foreach (var r in Model.GetComponentsInChildren<Renderer>(true))
+                {
+                    var from = r.sharedMaterial;
+                    Texture paint = null;
+                    if (from != null)
+                        foreach (string name in new[] { "_BaseMap", "_MainTex", "baseColorTexture" })
+                            if (paint == null && from.HasProperty(name)) paint = from.GetTexture(name);
+                    if (paint == null) continue;
+                    _ghost.SetTexture("_MainTex", paint);
+                    break;
+                }
             foreach (var r in Model.GetComponentsInChildren<Renderer>(true))
             {
                 r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
@@ -253,7 +298,10 @@ namespace TumbangPreso.Visual
             if (Model.activeSelf != seen) Model.SetActive(seen);
             if (!seen) return;
             // Up out of the mist, floating: a slow bob, and she comes up from under the court as she arrives.
-            Model.transform.localPosition = _at + look.Drift + Vector3.up * (-1.3f * _scale * (1f - rise) + 0.045f * Mathf.Sin(t * 1.6f));
+            float scale = _scale * (look.Size > 0f ? look.Size : 1f);
+            SizeNow = scale;
+            Model.transform.localScale = Vector3.one * scale;
+            Model.transform.localPosition = _at + look.Drift + Vector3.up * (-1.3f * scale * (1f - rise) + 0.041f * scale * Mathf.Sin(t * 1.6f));
             Model.transform.localRotation = Quaternion.Euler(0f, _yaw, 0f) * Quaternion.Euler(look.Lean, 0f, 0f);
 
             // The head: bowed toward him, turned, and a slow tilt as she watches.
@@ -282,16 +330,18 @@ namespace TumbangPreso.Visual
                 _ghost.SetFloat(PresenceId, rise);
                 // Her hem is always mist; the Fade raises the mist line up her until it has her whole.
                 float fade = Mathf.SmoothStep(0f, 1f, look.Fade);
-                _ghost.SetFloat(FadeLowId, Mathf.Lerp(0.12f, 3.2f, fade) * _scale);
-                _ghost.SetFloat(FadeHighId, Mathf.Lerp(1.0f, 3.45f, fade) * _scale);
+                _ghost.SetFloat(FadeLowId, Mathf.Lerp(MistFrom, 3.2f, fade) * scale);
+                _ghost.SetFloat(FadeHighId, Mathf.Lerp(MistTo, 3.45f, fade) * scale);
                 _ghost.SetVector(LightPosId, HandsWorld);
                 _ghost.SetFloat(LightStrengthId, 1.1f * Mathf.Clamp01(look.Light));
+                _ghost.SetFloat(LightRadiusId, 0.95f * scale);
                 // HER FULL FORM (v4): the solid band runs from `_SolidFrom` to `_SolidTo`, metres above her feet. Forming sweeps the top
                 // line up her from below her feet; turning back sweeps the bottom line up after it, so she rises into her form and out.
-                float top = FormHeight * _scale;
-                _ghost.SetFloat(SolidToId, Mathf.Lerp(-0.2f, top, Mathf.SmoothStep(0f, 1f, look.Form)));
-                _ghost.SetFloat(SolidFromId, Mathf.Lerp(-0.2f, top, Mathf.SmoothStep(0f, 1f, look.Unform)));
-                _ghost.SetFloat(InkWidthId, 0.013f * _scale);
+                float top = FormHeight * scale;
+                float floor = FormFloor > 0f ? FormFloor * scale : FormFloor;
+                _ghost.SetFloat(SolidToId, Mathf.Lerp(floor, top, Mathf.SmoothStep(0f, 1f, look.Form)));
+                _ghost.SetFloat(SolidFromId, Mathf.Lerp(floor, top, Mathf.SmoothStep(0f, 1f, look.Unform)));
+                _ghost.SetFloat(InkWidthId, 0.013f * scale);
             }
         }
     }
@@ -449,100 +499,39 @@ namespace TumbangPreso.Visual
     // leads them.
 
     /// <summary>
-    /// Bark breaking: chunks thrown out from a point that fall, bounce once and shrink away. The
-    /// break-out (direction.md section 5.6): the shin branches and the waist band cracking apart. Each
-    /// chunk's throw is typed.
+    /// Bark breaking where his own roots snap out of the court (`PaeteGroundCall`, when he walks out of the call). It was
+    /// eight bark cubes on its own `Update`; it is `PaeteEmbraceFx.BarkShatter` now: inked chips of his bark and splinters of
+    /// the pale wood under it, thrown as one `PaeteBits` handful. The prisoners' break-out no longer comes here: it has a
+    /// burst of its own (`PaeteEmbraceFx.BreakOut`).
     /// </summary>
-    public sealed class PaeteBarkShatter : MonoBehaviour
+    public static class PaeteBarkShatter
     {
-        private static readonly float[] Yaw = { 12f, 64f, 118f, 161f, 205f, 250f, 296f, 338f };
-        private static readonly float[] Out = { 2.1f, 1.6f, 2.5f, 1.8f, 2.3f, 1.5f, 2.0f, 2.6f };
-        private static readonly float[] Up = { 2.6f, 3.2f, 2.2f, 3.0f, 2.4f, 3.4f, 2.8f, 2.0f };
-        private static readonly float[] Size = { 0.09f, 0.07f, 0.11f, 0.06f, 0.10f, 0.08f, 0.07f, 0.09f };
-        private readonly List<Transform> _bits = new List<Transform>();
-        private readonly List<Vector3> _v = new List<Vector3>();
-        private float _age;
-        private const float Life = 0.9f;
-
-        public static void Spawn(Vector3 at, int count)
-        {
-            if (GrowthVfx.Reduced) count = Mathf.Max(3, count / 2);
-            var go = new GameObject("PaeteBarkShatter");
-            go.transform.position = at;
-            var fx = go.AddComponent<PaeteBarkShatter>();
-            for (int i = 0; i < Mathf.Min(count, Yaw.Length); i++)
-            {
-                Color c = i % 3 == 0 ? GrowthVfx.BarkDark : i % 3 == 1 ? GrowthVfx.Bark : GrowthVfx.BarkLit;
-                var bit = GrowthVfx.Block(go.transform, "bark-chunk", new Vector3(Size[i], Size[i] * 0.55f, Size[i] * 1.6f), c).transform;
-                bit.localRotation = Quaternion.Euler(20f * i, Yaw[i], 0f);
-                float y = Yaw[i] * Mathf.Deg2Rad;
-                fx._bits.Add(bit);
-                fx._v.Add(new Vector3(Mathf.Sin(y) * Out[i], Up[i], Mathf.Cos(y) * Out[i]));
-            }
-        }
-
-        private void Update()
-        {
-            float dt = Time.deltaTime;
-            _age += dt;
-            if (_age >= Life) { Destroy(gameObject); return; }
-            for (int i = 0; i < _bits.Count; i++)
-            {
-                var v = _v[i];
-                v.y -= 14f * dt;
-                var p = _bits[i].localPosition + v * dt;
-                // One bounce off the road, then it skids.
-                if (p.y < -transform.position.y + Slipper.GroundY(transform.position) + 0.02f && v.y < 0f) { v.y *= -0.3f; v.x *= 0.5f; v.z *= 0.5f; }
-                _v[i] = v;
-                _bits[i].localPosition = p;
-                _bits[i].Rotate(new Vector3(500f + 40f * i, 200f - 30f * i, 0f) * dt, Space.Self);
-                _bits[i].localScale = new Vector3(Size[i], Size[i] * 0.55f, Size[i] * 1.6f) * Mathf.Clamp01((Life - _age) / 0.35f);
-            }
-        }
+        public static void Spawn(Vector3 at, int count) => PaeteEmbraceFx.BarkShatter(at, count);
     }
 
     /// <summary>
-    /// ⚠️⚠️ ROOTED'S BODY TELL, AS WOVEN ROOT-BRANCHES (direction.md section 5.8). Owner: *"characters
-    /// should look tied to the tree"*, *"dont use vines use woven tree branches"*. Three bark branches
-    /// climb the shins out of the road, each on its own typed path round the legs (not one shape turned
-    /// three times), a knot where they meet at the knee and a leaf at one tip. They grow up over 0.6 s,
-    /// creak and shake when the player struggles, and on release they CRACK: bark chunks, a few leaves
-    /// and `sfx_paete_root_break`. Attached to any body that gains Rooted, on every peer.
+    /// ⚠️⚠️ ROOTED'S BODY TELL: THE ROOTS ROUND A HELD PLAYER'S LEGS (direction.md section 5.8). Owner: *"characters
+    /// should look tied to the tree"*, *"dont use vines use woven tree branches"*, then (2026-09-26) *"make it seem more
+    /// apparent that the people tied to the tree are actually TIED bcz they look like theyre js standing"*. Attached to any
+    /// body that gains Rooted, on every peer.
+    ///
+    /// ⚠️ 2026-10-07, THE LOOK IS `PaeteRootBands` (`PaeteEmbraceFx.cs`); THIS IS ONLY ITS LIFE ON A BODY. v2's four dark
+    /// bands on circles ran inside the redesigned bodies' legs and stood out front and back as a brown mass; why, and what
+    /// replaced them, is written on `PaeteRootBands` and `PaeteEmbraceFx.LegHalfWidth`. This reads the body (rooted,
+    /// straining), plays the two sounds it always played, and says which way the hold ended:
+    ///  * TORN FREE (the prisoner was straining within the last third of a second, which is the 7 s hold finishing; every
+    ///    peer knows it, because the strain is on the wire): the bands SNAP (`PaeteEmbraceFx.BreakOut`);
+    ///  * LET GO (the tree sleeping, a tag): they slacken and draw back into the court (`PaeteEmbraceFx.LetGo`).
     /// </summary>
     public sealed class PaeteRootCoil : MonoBehaviour
     {
-        // Each branch: keys of (angle round the legs in degrees, height, distance out, girth).
-        // ⚠️⚠️ v2, TIED, NOT DECORATED (owner, 2026-09-26: *"make it seem more apparent that the people tied to the
-        // tree are actually TIED bcz they look like theyre js standing"*). v1 was three branches 2 to 7 cm thick
-        // spiralling loosely 30 to 46 cm out round the shins only, up to 0.58 m: from any distance they vanished.
-        // Now four thick bands (6 to 11 cm) come up out of the road and wind TIGHT round the legs (24 to 29 cm out,
-        // on the trousers) all the way to the hips (0.98 m), crossing each other, so the legs read as lashed
-        // together; the embrace limb from the trunk wraps the waist above them. Each band typed on its own path.
-        private static readonly Vector4[][] Branches =
-        {
-            new[] { new Vector4(-20f, -0.06f, 0.40f, 0.110f), new Vector4(30f, 0.08f, 0.29f, 0.100f), new Vector4(110f, 0.20f, 0.26f, 0.094f),
-                    new Vector4(200f, 0.33f, 0.25f, 0.088f), new Vector4(290f, 0.48f, 0.26f, 0.080f), new Vector4(372f, 0.62f, 0.27f, 0.072f),
-                    new Vector4(450f, 0.78f, 0.28f, 0.062f), new Vector4(505f, 0.90f, 0.29f, 0.040f) },
-            new[] { new Vector4(110f, -0.06f, 0.42f, 0.104f), new Vector4(160f, 0.06f, 0.30f, 0.096f), new Vector4(230f, 0.16f, 0.26f, 0.090f),
-                    new Vector4(310f, 0.28f, 0.25f, 0.084f), new Vector4(395f, 0.42f, 0.26f, 0.078f), new Vector4(470f, 0.56f, 0.27f, 0.070f),
-                    new Vector4(540f, 0.72f, 0.28f, 0.058f), new Vector4(590f, 0.84f, 0.29f, 0.036f) },
-            new[] { new Vector4(232f, -0.06f, 0.41f, 0.106f), new Vector4(275f, 0.10f, 0.29f, 0.098f), new Vector4(200f, 0.24f, 0.26f, 0.090f),
-                    new Vector4(120f, 0.38f, 0.25f, 0.084f), new Vector4(40f, 0.52f, 0.26f, 0.076f), new Vector4(-40f, 0.68f, 0.27f, 0.066f),
-                    new Vector4(-115f, 0.84f, 0.28f, 0.054f), new Vector4(-160f, 0.96f, 0.29f, 0.034f) },
-            new[] { new Vector4(350f, -0.06f, 0.43f, 0.096f), new Vector4(300f, 0.12f, 0.29f, 0.090f), new Vector4(225f, 0.30f, 0.25f, 0.084f),
-                    new Vector4(150f, 0.46f, 0.25f, 0.078f), new Vector4(75f, 0.62f, 0.26f, 0.070f), new Vector4(0f, 0.78f, 0.27f, 0.060f),
-                    new Vector4(-70f, 0.92f, 0.28f, 0.048f), new Vector4(-110f, 0.98f, 0.29f, 0.030f) },
-        };
-        // v9: no lit bark in the shin bands (they blended into warm skin in film r16); dark and mid alternate so each band reads.
-        private static readonly Color[] Shade = { PaeteSentryBody.BarkDark, PaeteSentryBody.Bark, PaeteSentryBody.BarkDark, PaeteSentryBody.Bark };
-
         private CharacterMotor _body;
-        private readonly Mesh[] _meshes = new Mesh[4];
-        private Transform _knot, _leaf;
-        private readonly List<Vector3> _points = new List<Vector3>();
-        private readonly List<float> _radii = new List<float>();
-        private float _age;
+        private PaeteRootBands _bands;
+        private float _age, _strainedAt = -9f;
         private bool _facingEstablished, _retiring;
+
+        /// <summary>The film's stand-in for a held Interact (`PaeteAbilityFilm.Sentry`): nothing in play sets it.</summary>
+        public bool Strain { get; set; }
 
         /// <summary>
         /// ⚠️ CAUGHT FACING OUT, BACK TO THE TRUNK (owner, 2026-09-27: *"make everyone get caught in opposite direction (they should
@@ -575,16 +564,7 @@ namespace TumbangPreso.Visual
             go.transform.SetParent(body.transform, false);
             var fx = go.AddComponent<PaeteRootCoil>();
             fx._body = body;
-            for (int i = 0; i < fx._meshes.Length; i++)
-            {
-                fx._meshes[i] = new Mesh { name = "PaeteShinBranch" };
-                fx._meshes[i].MarkDynamic();
-                PaeteInk.Part(go.transform, "shin-branch-" + i, fx._meshes[i], Shade[i]);
-            }
-            var knotMesh = new Mesh { name = "PaeteShinKnot" };
-            PaeteInk.Tube(knotMesh, new List<Vector3> { new Vector3(-0.05f, 0f, 0f), new Vector3(0.05f, 0.01f, 0f) }, new List<float> { 0.10f, 0.09f }, 5);
-            fx._knot = PaeteInk.Part(go.transform, "shin-knot", knotMesh, PaeteSentryBody.BarkDark).transform;
-            fx._leaf = PaeteInk.Part(go.transform, "shin-leaf", PaeteInk.Leaf(0.20f, 0.11f, 0.016f), PaeteSentryBody.Leaf).transform;
+            fx._bands = new PaeteRootBands(go.transform);
             return fx;
         }
 
@@ -601,17 +581,20 @@ namespace TumbangPreso.Visual
             if (Application.isPlaying && (_body == null || !_body.gameObject.activeInHierarchy)) Retire();
         }
 
-        /// <summary>The break-out (direction.md section 5.6): chunks, leaves and the snap, on every peer.</summary>
-        public static void Break(Vector3 feet)
+        /// <summary>The break-out (direction.md section 5.6): the bands snapping and the snap's sound, on every peer.</summary>
+        public static void Break(Vector3 feet) => Break(feet, Quaternion.identity, true);
+
+        /// <summary>The hold ending at <paramref name="feet"/>: torn free (the burst), or let go (the roots drawing back).</summary>
+        public static void Break(Vector3 feet, Quaternion facing, bool tornFree)
         {
-            PaeteBarkShatter.Spawn(feet + Vector3.up * 0.35f, 8);
-            PaeteLeafBurst.Spawn(feet + Vector3.up * 0.45f, 4, 1.3f);
+            if (tornFree) PaeteEmbraceFx.BreakOut(feet, facing);
+            else PaeteEmbraceFx.LetGo(feet, facing);
             GameServices.Audio?.PlayAtVaried("sfx_paete_root_break", feet, 0.95f, 1.05f, 0.8f);
         }
 
         private void Update() => Step(Time.deltaTime);
 
-        /// <summary>One step of the growth (the review probe drives this in edit mode).</summary>
+        /// <summary>One step of the roots (the film drives this outside Play).</summary>
         public void Step(float dt)
         {
             if (_retiring) return;
@@ -619,44 +602,18 @@ namespace TumbangPreso.Visual
             {
                 // The roots letting go: the hold finished, a tag landed or the sentry slept. Local on
                 // every peer off the replicated state, like the gain below.
-                if (_body != null) Break(_body.transform.position);
+                if (_body != null) Break(_body.transform.position, _body.transform.rotation, _age - _strainedAt < 0.35f);
                 Retire(); return;
             }
-            if (_age <= 0f) GameServices.Audio?.PlayAtVaried("sfx_status_rooted", _body.transform.position, 0.95f, 1.05f, 0.8f);
-            _age += dt;
-            float grow = GrowthVfx.Pop(_age / 0.6f);
-            bool fighting = _body.IsStruggling;
-            // ⚠️ ALIVE ALL THE TIME (owner: *"animate taht shit"*): the bands SQUEEZE in a slow breath, tightening
-            // a few centimetres on the legs, and when the player fights they judder and strain against them.
-            float squeeze = 1f - 0.05f * (0.5f + 0.5f * Mathf.Sin(_age * 2.4f));
-            for (int b = 0; b < Branches.Length; b++)
+            if (_age <= 0f)
             {
-                var keys = Branches[b];
-                _points.Clear(); _radii.Clear();
-                // The typed keys, eased between: four samples a span, growing up from the road.
-                int shown = Mathf.Clamp(Mathf.CeilToInt(grow * (keys.Length - 1) * 4f), 1, (keys.Length - 1) * 4);
-                for (int s = 0; s <= shown; s++)
-                {
-                    float f = s / 4f;
-                    int k = Mathf.Min(keys.Length - 2, Mathf.FloorToInt(f));
-                    float t = f - k;
-                    Vector4 a = Vector4.Lerp(keys[k], keys[k + 1], t);
-                    float ang = a.x * Mathf.Deg2Rad;
-                    float r = a.y > 0.05f ? a.z * squeeze : a.z;
-                    float shake = fighting ? Mathf.Sin(_age * 34f + b * 2f + s) * 0.035f * Mathf.Clamp01(a.y + 0.2f) : 0f;
-                    _points.Add(new Vector3(Mathf.Sin(ang) * r + shake, a.y + (fighting ? Mathf.Sin(_age * 27f + b) * 0.01f : 0f), Mathf.Cos(ang) * r));
-                    _radii.Add(a.w * (fighting ? 1.08f : 1f));
-                }
-                PaeteInk.Tube(_meshes[b], _points, _radii, 6);
+                GameServices.Audio?.PlayAtVaried("sfx_status_rooted", _body.transform.position, 0.95f, 1.05f, 0.8f);
+                PaeteEmbraceFx.Bind(_body.transform.position, _body.transform.rotation);
             }
-            // The knot at the knee where two meet, and a leaf on the tallest tip.
-            _knot.localPosition = new Vector3(0.02f, 0.62f, 0.27f * squeeze);
-            _knot.localScale = Vector3.one * Mathf.Clamp01((grow - 0.7f) * 3.3f);
-            var tip = Branches[2][7];
-            float ta = tip.x * Mathf.Deg2Rad;
-            _leaf.localPosition = new Vector3(Mathf.Sin(ta) * tip.z, tip.y + 0.04f, Mathf.Cos(ta) * tip.z);
-            _leaf.localRotation = Quaternion.Euler(-35f, tip.x, 0f);
-            _leaf.localScale = Vector3.one * Mathf.Clamp01((grow - 0.85f) * 6f);
+            _age += dt;
+            bool fighting = _body.IsStruggling || Strain;
+            if (fighting) _strainedAt = _age;
+            _bands.Draw(_age, 0f, fighting);
         }
     }
 }

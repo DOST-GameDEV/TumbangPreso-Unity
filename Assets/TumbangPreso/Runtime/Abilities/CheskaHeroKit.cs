@@ -188,9 +188,12 @@ namespace TumbangPreso.Abilities
         private sealed class AbsoluteZero : HeroAbility
         {
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
+            // Her cutscene ends on everyone frozen, so the freeze lands as play resumes (`HeroAbility.IntroductionIsTheWindup`).
+            // `CryoRules.AbsoluteZeroDelay` is still the wind-up of a cast that had no cutscene.
+            protected override bool IntroductionIsTheWindup => true;
             public AbsoluteZero()
                 : base("cheska_ultimate", "ABSOLUTE ZERO",
-                       "After 1.5 s, every player is Frozen for 2.5 s, then Chilled for 5 s as they thaw.",
+                       "Every other player is Frozen for 2.5 s, then Chilled for 5 s as they thaw.",
                        0.0f, 0.0f, AbilityGlyph.CheskaNova,
                        summary: "Freeze every player on the map, then chill them.",
                        castAction: "hero-cheska-nova", viewmodelAction: "nova-burst",

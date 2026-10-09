@@ -91,7 +91,7 @@ MonoBehaviour:
     CloudShade: {r: 0.72, g: 0.7, b: 0.86, a: 1}
     Lift: {r: 0.045, g: 0.03, b: 0.065, a: 1}
     GroundLift: 1
-  - Map: Eskinita
+  - Map: EskinitaClassic
     Sky: {r: 0.52, g: 0.46, b: 0.62, a: 1}
     Equator: {r: 0.64, g: 0.5, b: 0.46, a: 1}
     Ground: {r: 0.62, g: 0.42, b: 0.28, a: 1}
@@ -195,6 +195,27 @@ MonoBehaviour:
     CloudLight: {r: 1, g: 0.8, b: 0.64, a: 1}
     CloudShade: {r: 0.62, g: 0.54, b: 0.74, a: 1}
     Lift: {r: 0.05, g: 0.03, b: 0.06, a: 1}
+    GroundLift: 1
+  - Map: Eskinita
+    Sky: {r: 0.58, g: 0.56, b: 0.78, a: 1}
+    Equator: {r: 0.7, g: 0.58, b: 0.58, a: 1}
+    Ground: {r: 0.66, g: 0.48, b: 0.34, a: 1}
+    ShadowTint: {r: 0.9, g: 0.8, b: 1.08, a: 1}
+    Chalk: {r: 0.96, g: 0.92, b: 0.81, a: 1}
+    ChalkEdge: {r: 0.14, g: 0.11, b: 0.075, a: 1}
+    FogStart: 60
+    FogEnd: 320
+    WearKind: 1
+    Sun: {r: 1, g: 0.82, b: 0.58, a: 1}
+    SunIntensity: 1.2
+    SunElevation: 32
+    ShadowStrength: 0.68
+    Fog: {r: 0.98, g: 0.88, b: 0.74, a: 1}
+    Zenith: {r: 0.4, g: 0.66, b: 0.86, a: 1}
+    Horizon: {r: 0.99, g: 0.91, b: 0.76, a: 1}
+    CloudLight: {r: 1, g: 0.9, b: 0.76, a: 1}
+    CloudShade: {r: 0.74, g: 0.68, b: 0.84, a: 1}
+    Lift: {r: 0.055, g: 0.032, b: 0.065, a: 1}
     GroundLift: 1
   - Map: Arena
     Sky: {r: 0.3, g: 0.34, b: 0.52, a: 1}

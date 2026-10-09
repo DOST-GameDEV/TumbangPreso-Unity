@@ -29,7 +29,12 @@ namespace TumbangPreso.Visual
         public const float ReturnSeconds = .12f;
         // ⚠️ 6.5 s (was 5, 2026-09-27): the owner on Paete's v7, *"lowk slow down ult a bit i cant comprehend wtf is happening"*, chose
         // 6.5 s over his own earlier *"dont go past 5 seconds"*. The cap is the longest any introduction may run; a longer table is clamped.
-        public const float MinSeconds = 2.4f, MaxSeconds = 6.5f;
+        // 2026-10-08: 9.0 (was 6.5). Paete's is 9.0 now (owner: "Lengthen to about 9 s"); protocol 155 goes with it.
+        // 2026-10-08, later: 12.0 (was 9.0). Cheska's is 11.5 now. The owner, of her restaged cutscene at 9.0 with a skated heart in
+        // it whose turns were still too quick: "ykw we can extend the ult cutscene until everything looks smooth". It rides on
+        // protocol 156 with the other new lengths, which has not gone out. (The phase header itself allows up to 30 s.)
+        // And 13.0 the same day: hers is 12.6, for the fingertip blow to end unhurried ("its ending too fast").
+        public const float MinSeconds = 2.4f, MaxSeconds = 13.0f;
 
         public readonly struct Key
         {

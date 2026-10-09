@@ -28,7 +28,9 @@ namespace TumbangPreso.Visual
 
         private string _tagAction;
         private float _tagTime = -1;
-        private Transform _tgRoot, _tgTorso, _tgHead, _tgArmR, _tgArmL, _tgLegR, _tgLegL;
+        private Transform _tgRoot, _tgTorso, _tgHead, _tgArmR, _tgArmL, _tgLegR, _tgLegL, _tgForeR, _tgForeL;
+        private Vector3 _tgForeAlongL = Vector3.left;
+        private Quaternion _tgForeRRest, _tgForeLRest;
         private Vector3 _tgAlongR = Vector3.right, _tgAlongL = Vector3.left;
         private bool _tgResolved, _tgApplied;
         private Vector3 _tgRootPositionRest;
@@ -57,10 +59,12 @@ namespace TumbangPreso.Visual
             if (_tgHead != null) _tgHead.localRotation = _tgHeadRest;
             if (_tgLegR != null) _tgLegR.localRotation = _tgLegRRest;
             if (_tgLegL != null) _tgLegL.localRotation = _tgLegLRest;
+            if (_tgForeR != null) _tgForeR.localRotation = _tgForeRRest;
+            if (_tgForeL != null) _tgForeL.localRotation = _tgForeLRest;
             _tgApplied = false;
         }
 
-        private void ClearTagBody() { RestoreTagBody(); _tgRoot = _tgTorso = _tgHead = _tgArmR = _tgArmL = _tgLegR = _tgLegL = null; _tgResolved = false; _tagTime = -1; _tagContactValid = _tagContactPending = false; _tagStartedAt = -100f; }
+        private void ClearTagBody() { RestoreTagBody(); _tgRoot = _tgTorso = _tgHead = _tgArmR = _tgArmL = _tgLegR = _tgLegL = _tgForeR = _tgForeL = null; _tgResolved = false; _tagTime = -1; _tagContactValid = _tagContactPending = false; _tagStartedAt = -100f; }
 
         // The already accepted, replicated tag supplies the contact. Misses keep
         // the ordinary reach; this cannot award a hit or move either live motor.
@@ -140,6 +144,8 @@ namespace TumbangPreso.Visual
                             case "head": if (_tgHead == null) _tgHead = b; break;
                             case "arm-right": if (_tgArmR == null) { _tgArmR = b; _tgAlongR = AlongArm(binds, i, _tgAlongR); } break;
                             case "arm-left": if (_tgArmL == null) { _tgArmL = b; _tgAlongL = AlongArm(binds, i, _tgAlongL); } break;
+                            case "forearm-right": if (_tgForeR == null) _tgForeR = b; break;
+                            case "forearm-left": if (_tgForeL == null) { _tgForeL = b; _tgForeAlongL = AlongArm(binds, i, _tgForeAlongL); } break;
                             case "leg-right": if (_tgLegR == null) _tgLegR = b; break;
                             case "leg-left": if (_tgLegL == null) _tgLegL = b; break;
                         }
@@ -175,12 +181,18 @@ namespace TumbangPreso.Visual
             if (_tgHead != null) _tgHeadRest = _tgHead.localRotation;
             if (_tgLegR != null) _tgLegRRest = _tgLegR.localRotation;
             if (_tgLegL != null) _tgLegLRest = _tgLegL.localRotation;
+            if (_tgForeR != null) _tgForeRRest = _tgForeR.localRotation;
+            if (_tgForeL != null) _tgForeLRest = _tgForeL.localRotation;
             _tgApplied = true;
 
             ToBind(_tgRoot, w, true);
             ToBind(_tgTorso, w, false); ToBind(_tgHead, w, false);
             ToBind(_tgArmR, w, false); ToBind(_tgArmL, w, false);
             ToBind(_tgLegR, w, false); ToBind(_tgLegL, w, false);
+            // ⚠️ THE ELBOWS (owner, 2026-10-07: "all characters will have elbows"). The reaching arm is a straight line
+            // to the touch, so its forearm goes to its bind (in line with the upper arm) whatever the clip left in it;
+            // the off arm's is folded below, after its upper arm is placed.
+            ToBind(_tgForeR, w, false);
 
             var up = transform.up; var right = transform.right;
             // Weight moves over the forward foot. The rear sole stays planted:
@@ -214,6 +226,8 @@ namespace TumbangPreso.Visual
             else PointArm(_tgArmR, _tgAlongR, new Vector3(reach.x * side, reach.y, reach.z), w, 0);
             // The off arm swings back for balance.
             PointArm(_tgArmL, _tgAlongL, new Vector3(-.35f * side, -.75f, -.55f), w * .9f, 0);
+            // Its elbow bent, the fist carried forward of the elbow: a runner's back arm, not a stick.
+            if (_tgForeL != null) PointArm(_tgForeL, _tgForeAlongL, new Vector3(-.42f * side, -.62f, .66f), w * .9f, 0);
             // The free foot steps ahead as the opposite foot pushes off. The
             // reaching-side shoulder rolls forward while the off arm balances.
             if (_tgLegR != null && _tgLegL != null)

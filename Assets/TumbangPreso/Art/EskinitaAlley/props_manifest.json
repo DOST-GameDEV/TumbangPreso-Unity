@@ -1,0 +1,829 @@
+{
+ "axes": "Blender metres: size = [x width, y depth, z height]; front faces -Y; in Unity (glTFast) a Blender point (x, y, z) lands at (-x, z, -y)",
+ "anchors": {
+  "ground": "stands on z=0",
+  "wall": "back sits 2 cm behind y=0: put y=0 on the wall face",
+  "hang": "end points at x=-L/2 and +L/2, z=0; hangs below"
+ },
+ "props": [
+  {
+   "name": "prop_sarisari_front",
+   "size": [
+    2.86,
+    0.85,
+    2.48
+   ],
+   "note": "Store front against a wall: back on y=0, counter and awning reach -0.8. Sign reads ALING NENA'S SARI-SARI STORE.",
+   "anchor": "wall",
+   "min": [
+    -1.43,
+    -0.8,
+    0.0
+   ],
+   "max": [
+    1.43,
+    0.05,
+    2.48
+   ],
+   "triangles": 9088
+  },
+  {
+   "name": "prop_basketball_hoop",
+   "size": [
+    1.2,
+    1.042,
+    3.913
+   ],
+   "note": "Home-made hoop on a post in a tire of concrete; rim at 3.05 m, backboard faces -Y.",
+   "anchor": "ground",
+   "min": [
+    -0.6,
+    -0.656,
+    0.006
+   ],
+   "max": [
+    0.6,
+    0.386,
+    3.92
+   ],
+   "triangles": 2608
+  },
+  {
+   "name": "prop_poste",
+   "size": [
+    2.0,
+    1.848,
+    7.0
+   ],
+   "note": "7 m electric post: crossarms along X, transformer, meters, looped wires, lamp arm reaching -Y.",
+   "anchor": "ground",
+   "min": [
+    -1.0,
+    -1.57,
+    0.0
+   ],
+   "max": [
+    1.0,
+    0.278,
+    7.0
+   ],
+   "triangles": 5208
+  },
+  {
+   "name": "prop_poste_short",
+   "size": [
+    0.396,
+    1.618,
+    5.0
+   ],
+   "note": "5 m concrete lamp post, lamp arm reaching -Y.",
+   "anchor": "ground",
+   "min": [
+    -0.198,
+    -1.42,
+    0.0
+   ],
+   "max": [
+    0.198,
+    0.198,
+    5.0
+   ],
+   "triangles": 2104
+  },
+  {
+   "name": "prop_banderitas_8m",
+   "size": [
+    8.005,
+    0.144,
+    0.892
+   ],
+   "note": "Fiesta bunting. End points exactly at x=-4 and x=+4, z=0; sags 0.52 m, flags hang 0.36 below the line.",
+   "anchor": "hang",
+   "min": [
+    -4.002,
+    -0.074,
+    -0.88
+   ],
+   "max": [
+    4.002,
+    0.07,
+    0.012
+   ],
+   "triangles": 382
+  },
+  {
+   "name": "prop_banderitas_17m",
+   "size": [
+    17.005,
+    0.146,
+    1.477
+   ],
+   "note": "Fiesta bunting. End points exactly at x=-8.5 and x=+8.5, z=0; sags 1.1 m, flags hang 0.36 below the line.",
+   "anchor": "hang",
+   "min": [
+    -8.502,
+    -0.073,
+    -1.465
+   ],
+   "max": [
+    8.502,
+    0.073,
+    0.012
+   ],
+   "triangles": 828
+  },
+  {
+   "name": "prop_laundry_line_6m",
+   "size": [
+    6.002,
+    0.106,
+    1.307
+   ],
+   "note": "Clothesline. End points at x=-3 and x=+3, z=0; sags 0.26 m, the blanket hangs 1.3 m below the ends.",
+   "anchor": "hang",
+   "min": [
+    -3.001,
+    -0.045,
+    -1.298
+   ],
+   "max": [
+    3.001,
+    0.061,
+    0.009
+   ],
+   "triangles": 1850
+  },
+  {
+   "name": "prop_water_drum",
+   "size": [
+    0.62,
+    0.62,
+    1.038
+   ],
+   "note": "Plastic drum, teal-green, with a lid and a tabo.",
+   "anchor": "ground",
+   "min": [
+    -0.31,
+    -0.31,
+    0.0
+   ],
+   "max": [
+    0.31,
+    0.31,
+    1.038
+   ],
+   "triangles": 2048
+  },
+  {
+   "name": "prop_water_drum_yellow",
+   "size": [
+    0.62,
+    0.62,
+    1.038
+   ],
+   "note": "Plastic drum, sun yellow.",
+   "anchor": "ground",
+   "min": [
+    -0.31,
+    -0.31,
+    0.0
+   ],
+   "max": [
+    0.31,
+    0.31,
+    1.038
+   ],
+   "triangles": 2048
+  },
+  {
+   "name": "prop_pail_stack",
+   "size": [
+    0.81,
+    0.61,
+    0.475
+   ],
+   "note": "Three nested pails, a loose pail with a tabo, a bar of soap.",
+   "anchor": "ground",
+   "min": [
+    -0.195,
+    -0.42,
+    -0.005
+   ],
+   "max": [
+    0.615,
+    0.19,
+    0.47
+   ],
+   "triangles": 3160
+  },
+  {
+   "name": "prop_batya",
+   "size": [
+    1.432,
+    0.985,
+    0.536
+   ],
+   "note": "Laundry basin with clothes, suds, a washboard and a paddle.",
+   "anchor": "ground",
+   "min": [
+    -0.555,
+    -0.492,
+    0.0
+   ],
+   "max": [
+    0.877,
+    0.492,
+    0.536
+   ],
+   "triangles": 2700
+  },
+  {
+   "name": "prop_jerrycans",
+   "size": [
+    1.04,
+    0.32,
+    0.48
+   ],
+   "note": "Three water containers.",
+   "anchor": "ground",
+   "min": [
+    -0.457,
+    -0.19,
+    0.0
+   ],
+   "max": [
+    0.583,
+    0.13,
+    0.48
+   ],
+   "triangles": 1104
+  },
+  {
+   "name": "prop_plant_pots_a",
+   "size": [
+    1.268,
+    0.795,
+    0.889
+   ],
+   "note": "Croton in clay, snake plant in a paint can, a small can.",
+   "anchor": "ground",
+   "min": [
+    -0.618,
+    -0.449,
+    -0.003
+   ],
+   "max": [
+    0.65,
+    0.346,
+    0.886
+   ],
+   "triangles": 3066
+  },
+  {
+   "name": "prop_plant_pots_b",
+   "size": [
+    1.346,
+    0.956,
+    1.29
+   ],
+   "note": "Gumamela in a cooking-oil tin, snake plant, small pots, a cut bottle.",
+   "anchor": "ground",
+   "min": [
+    -0.662,
+    -0.549,
+    0.0
+   ],
+   "max": [
+    0.684,
+    0.407,
+    1.29
+   ],
+   "triangles": 3858
+  },
+  {
+   "name": "prop_plant_pots_c",
+   "size": [
+    1.62,
+    0.441,
+    0.685
+   ],
+   "note": "A plank on two hollow blocks with five small pots; long axis X.",
+   "anchor": "ground",
+   "min": [
+    -0.82,
+    -0.231,
+    0.0
+   ],
+   "max": [
+    0.8,
+    0.209,
+    0.685
+   ],
+   "triangles": 3860
+  },
+  {
+   "name": "prop_plant_tall",
+   "size": [
+    2.707,
+    2.677,
+    3.1
+   ],
+   "note": "A young banana in a cut drum, about 3 m.",
+   "anchor": "ground",
+   "min": [
+    -1.374,
+    -1.53,
+    0.0
+   ],
+   "max": [
+    1.333,
+    1.148,
+    3.1
+   ],
+   "triangles": 1732
+  },
+  {
+   "name": "prop_monobloc",
+   "size": [
+    0.548,
+    0.547,
+    0.901
+   ],
+   "note": "Plastic chair with a towel over the back; sits facing -Y.",
+   "anchor": "ground",
+   "min": [
+    -0.274,
+    -0.263,
+    -0.003
+   ],
+   "max": [
+    0.274,
+    0.284,
+    0.898
+   ],
+   "triangles": 1588
+  },
+  {
+   "name": "prop_bench_wood",
+   "size": [
+    1.855,
+    0.676,
+    0.471
+   ],
+   "note": "Long papag bench, long axis X, with a pair of slippers in front.",
+   "anchor": "ground",
+   "min": [
+    -0.924,
+    -0.462,
+    -0.002
+   ],
+   "max": [
+    0.931,
+    0.213,
+    0.469
+   ],
+   "triangles": 1644
+  },
+  {
+   "name": "prop_table_dama",
+   "size": [
+    1.54,
+    0.62,
+    0.467
+   ],
+   "note": "Low table with a painted dama board and bottle-cap pieces, a stool each side along X.",
+   "anchor": "ground",
+   "min": [
+    -0.77,
+    -0.31,
+    -0.002
+   ],
+   "max": [
+    0.77,
+    0.31,
+    0.465
+   ],
+   "triangles": 2724
+  },
+  {
+   "name": "prop_roof_tire",
+   "size": [
+    0.71,
+    0.71,
+    0.164
+   ],
+   "note": "Roof weight: an old tire lying flat. Put z=0 on the roof sheet.",
+   "anchor": "ground",
+   "min": [
+    -0.355,
+    -0.355,
+    0.004
+   ],
+   "max": [
+    0.355,
+    0.355,
+    0.168
+   ],
+   "triangles": 406
+  },
+  {
+   "name": "prop_roof_blocks",
+   "size": [
+    0.707,
+    0.43,
+    0.15
+   ],
+   "note": "Roof weight: two hollow blocks.",
+   "anchor": "ground",
+   "min": [
+    -0.209,
+    -0.275,
+    0.0
+   ],
+   "max": [
+    0.498,
+    0.155,
+    0.15
+   ],
+   "triangles": 1188
+  },
+  {
+   "name": "prop_water_tank",
+   "size": [
+    1.071,
+    1.12,
+    1.903
+   ],
+   "note": "Rooftop tank on a steel stand, feet 1 m apart.",
+   "anchor": "ground",
+   "min": [
+    -0.536,
+    -0.584,
+    -0.003
+   ],
+   "max": [
+    0.536,
+    0.536,
+    1.9
+   ],
+   "triangles": 3492
+  },
+  {
+   "name": "prop_antenna",
+   "size": [
+    1.01,
+    1.3,
+    2.5
+   ],
+   "note": "Old TV antenna on a 2.5 m pole set in a tin of concrete; points -Y.",
+   "anchor": "ground",
+   "min": [
+    -0.505,
+    -0.65,
+    0.0
+   ],
+   "max": [
+    0.505,
+    0.65,
+    2.5
+   ],
+   "triangles": 1540
+  },
+  {
+   "name": "prop_satellite_dish",
+   "size": [
+    0.88,
+    0.771,
+    1.039
+   ],
+   "note": "Small dish on a base plate; looks up towards -Y.",
+   "anchor": "ground",
+   "min": [
+    -0.44,
+    -0.541,
+    0.0
+   ],
+   "max": [
+    0.44,
+    0.23,
+    1.039
+   ],
+   "triangles": 1068
+  },
+  {
+   "name": "prop_ac_unit",
+   "size": [
+    0.79,
+    0.545,
+    0.708
+   ],
+   "note": "Window air-conditioner: back on y=0, body from z=0.2 on two struts down to z=0.",
+   "anchor": "wall",
+   "min": [
+    -0.395,
+    -0.505,
+    -0.013
+   ],
+   "max": [
+    0.395,
+    0.04,
+    0.695
+   ],
+   "triangles": 1394
+  },
+  {
+   "name": "prop_meter_box",
+   "size": [
+    0.56,
+    0.169,
+    1.31
+   ],
+   "note": "Meter board with two meters, a breaker and conduits: back on y=0.",
+   "anchor": "wall",
+   "min": [
+    -0.28,
+    -0.149,
+    0.0
+   ],
+   "max": [
+    0.28,
+    0.02,
+    1.31
+   ],
+   "triangles": 964
+  },
+  {
+   "name": "prop_mailbox",
+   "size": [
+    0.34,
+    0.178,
+    0.635
+   ],
+   "note": "Mailbox with a house-number plate under it: back on y=0.",
+   "anchor": "wall",
+   "min": [
+    -0.17,
+    -0.168,
+    0.015
+   ],
+   "max": [
+    0.17,
+    0.01,
+    0.65
+   ],
+   "triangles": 512
+  },
+  {
+   "name": "prop_tricycle",
+   "size": [
+    2.06,
+    1.982,
+    1.809
+   ],
+   "note": "Passenger tricycle, front towards -Y, sidecar on +X.",
+   "anchor": "ground",
+   "min": [
+    -0.96,
+    -1.046,
+    0.004
+   ],
+   "max": [
+    1.1,
+    0.936,
+    1.812
+   ],
+   "triangles": 5288
+  },
+  {
+   "name": "prop_kariton",
+   "size": [
+    1.073,
+    1.94,
+    0.856
+   ],
+   "note": "Wooden pushcart with sacks; handles towards +Y.",
+   "anchor": "ground",
+   "min": [
+    -0.536,
+    -0.635,
+    -0.002
+   ],
+   "max": [
+    0.536,
+    1.305,
+    0.854
+   ],
+   "triangles": 4344
+  },
+  {
+   "name": "prop_crates_stack",
+   "size": [
+    0.527,
+    0.397,
+    0.777
+   ],
+   "note": "Three softdrink crates.",
+   "anchor": "ground",
+   "min": [
+    -0.267,
+    -0.199,
+    0.0
+   ],
+   "max": [
+    0.26,
+    0.199,
+    0.777
+   ],
+   "triangles": 1764
+  },
+  {
+   "name": "prop_sacks",
+   "size": [
+    1.795,
+    0.821,
+    0.801
+   ],
+   "note": "Rice sacks: four stacked, one standing.",
+   "anchor": "ground",
+   "min": [
+    -0.572,
+    -0.489,
+    -0.015
+   ],
+   "max": [
+    1.223,
+    0.332,
+    0.786
+   ],
+   "triangles": 1348
+  },
+  {
+   "name": "prop_tires_stack",
+   "size": [
+    0.933,
+    0.78,
+    0.659
+   ],
+   "note": "Three stacked tires and one leaning.",
+   "anchor": "ground",
+   "min": [
+    -0.36,
+    -0.405,
+    -0.007
+   ],
+   "max": [
+    0.573,
+    0.375,
+    0.652
+   ],
+   "triangles": 1600
+  },
+  {
+   "name": "prop_cat_sit",
+   "size": [
+    0.327,
+    0.34,
+    0.492
+   ],
+   "note": "A calico cat sitting, facing -Y.",
+   "anchor": "ground",
+   "min": [
+    -0.135,
+    -0.143,
+    -0.002
+   ],
+   "max": [
+    0.192,
+    0.197,
+    0.49
+   ],
+   "triangles": 2760
+  },
+  {
+   "name": "prop_cat_loaf",
+   "size": [
+    0.307,
+    0.499,
+    0.3
+   ],
+   "note": "A dark cat loafing asleep, facing -Y.",
+   "anchor": "ground",
+   "min": [
+    -0.125,
+    -0.268,
+    -0.005
+   ],
+   "max": [
+    0.182,
+    0.231,
+    0.295
+   ],
+   "triangles": 1744
+  },
+  {
+   "name": "prop_manok_cage",
+   "size": [
+    0.867,
+    0.788,
+    0.699
+   ],
+   "note": "A fighting cock's tin tepee stand and feed tin (no bird: the live chickens are chicken_*.glb).",
+   "anchor": "ground",
+   "min": [
+    -0.167,
+    -0.368,
+    -0.014
+   ],
+   "max": [
+    0.7,
+    0.42,
+    0.685
+   ],
+   "triangles": 1240
+  },
+  {
+   "name": "prop_street_lamp_wall",
+   "size": [
+    0.37,
+    0.845,
+    0.52
+   ],
+   "note": "Wall lamp: plate on y=0, shade 0.64 m out.",
+   "anchor": "wall",
+   "min": [
+    -0.185,
+    -0.825,
+    0.0
+   ],
+   "max": [
+    0.185,
+    0.02,
+    0.52
+   ],
+   "triangles": 1024
+  },
+  {
+   "name": "prop_sign_brgy",
+   "size": [
+    1.019,
+    0.075,
+    0.8
+   ],
+   "note": "Hand-painted reminder board (PAALALA: BAWAL MAGKALAT SA ESKINITA): back on y=0.",
+   "anchor": "wall",
+   "min": [
+    -0.509,
+    -0.055,
+    0.0
+   ],
+   "max": [
+    0.509,
+    0.02,
+    0.8
+   ],
+   "triangles": 596
+  },
+  {
+   "name": "prop_shrine",
+   "size": [
+    0.74,
+    0.345,
+    1.2
+   ],
+   "note": "Wall grotto niche with a simple figure, candles and flowers: back on y=0.",
+   "anchor": "wall",
+   "min": [
+    -0.37,
+    -0.315,
+    0.0
+   ],
+   "max": [
+    0.37,
+    0.03,
+    1.2
+   ],
+   "triangles": 3516
+  },
+  {
+   "name": "prop_gate_arch",
+   "size": [
+    9.16,
+    0.695,
+    6.12
+   ],
+   "note": "Barangay arch: posts centred at x=-4.25 and +4.25 (8 m clear), 3.42 m clear height, board reads MABUHAY! ESKINITA SAMPAGUITA on both sides, a globe lamp on each post.",
+   "anchor": "ground",
+   "min": [
+    -4.58,
+    -0.365,
+    0.0
+   ],
+   "max": [
+    4.58,
+    0.33,
+    6.12
+   ],
+   "triangles": 7308
+  }
+ ]
+}

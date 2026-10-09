@@ -77,9 +77,19 @@ namespace TumbangPreso.Visual
         // Retained for Rafi's authored live casts (`HeroAbilityClips.Rafi.cs`), which still key
         // in this shape. The introductions above take raw values from their tables instead.
         private static Vector3 V(float x, float y, float z) => new Vector3(x, y, z);
+        //
+        // The last two are the elbows, for the rigs that have them (see THE ELBOWS in
+        // `HeroAbilityClips.cs`): `Fore(fold, stretch)`, fold in degrees from the straight forearm,
+        // stretch a scale along it. Left out, a pose says nothing about that forearm, and a clip
+        // that never mentions one writes no forearm curve at all. A 60 degree fold stretched to
+        // 1.3 on the left: `PoseKey(b, t, y, torso, head, left, right, legL, legR, Fore(60, 1.3f))`,
+        // or `leftFore: Fore(60, 1.3f)` after the arms when the legs are left out.
         private static void PoseKey(ClipBuilder b, float t, float y, Vector3 torso, Vector3 head,
-            Vector3 left, Vector3 right, Vector3 leftLeg = default, Vector3 rightLeg = default)
+            Vector3 left, Vector3 right, Vector3 leftLeg = default, Vector3 rightLeg = default,
+            Forearm leftFore = default, Forearm rightFore = default)
         {
+            b.KeyForearm(false, t, leftFore);
+            b.KeyForearm(true, t, rightFore);
             b.KeyPos(t, 0, y, 0);
             b.KeyRot("torso", t, torso.x, torso.y, torso.z); b.KeyRot("head", t, head.x, head.y, head.z);
             // The retained GLB rigs are authored in a T-pose. Drop the shoulder

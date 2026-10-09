@@ -50,6 +50,14 @@ Shader "TumbangPreso/SpiritVeins"
 
             fixed4 _GlowColor, _RimColor;
             float _Strength, _Rim, _SweepY, _SweepSoft, _PulseY, _PulseStrength, _PulseWidth;
+            // ⚠️ WAVES OF LIGHT ACROSS HIM FROM ONE POINT (owner, 2026-10-08, of her light given to him: "i'd also prefer if they
+            // came in through the tip of his arm, causing pulsing light waves across his body"). `_WaveFrom` xyz is that
+            // point (world), w how bright; `_WaveRadii` is how far each of three rings has run from it (metres; 0 or less is
+            // no ring), w how thick a ring is. They are drawn whether or not the rest of his glow is on.
+            float4 _WaveFrom, _WaveRadii;
+            // The least any surface glows, whatever its palette cell: for what he GROWS (its paint is his wood's, which the cells
+            // weigh at nothing, so his planted arms stayed dark beside his lit body; owner 2026-10-08).
+            float _FlatWeight;
             float4 _SlotGlow0, _SlotGlow1, _SlotGlow2, _SlotGlow3;
 
             struct appdata { float4 vertex : POSITION; float3 normal : NORMAL; float2 uv : TEXCOORD0; };
@@ -74,11 +82,11 @@ Shader "TumbangPreso/SpiritVeins"
 
             fixed4 frag(v2f i) : SV_Target
             {
-                if (_Strength <= 0.001) discard;
+                if (_Strength <= 0.001 && _WaveFrom.w <= 0.001) discard;
                 float2 cell = floor(clamp(i.uv, 0.0, 0.9999) * 16.0);
                 int col = (int)cell.x, row = (int)cell.y;
                 int slot = (col / 2) + (row <= 3 ? 8 : 0);
-                float w = SlotWeight(slot);
+                float w = max(SlotWeight(slot), _FlatWeight);
 
                 float3 n = normalize(i.normal);
                 float3 v = normalize(_WorldSpaceCameraPos - i.world);
@@ -93,7 +101,10 @@ Shader "TumbangPreso/SpiritVeins"
 
                 float3 c = _GlowColor.rgb * (w * (0.85 * lit + front) + pulse * (0.35 + w))
                          + _RimColor.rgb * rim * _Rim * (0.35 + 0.65 * lit);
-                return fixed4(c * _Strength, 0.0);
+                float reach = distance(i.world, _WaveFrom.xyz);
+                float3 rings = (reach - _WaveRadii.xyz) / max(0.02, _WaveRadii.w);
+                float wave = dot(exp(-rings * rings) * step(0.001, _WaveRadii.xyz), float3(1.0, 1.0, 1.0)) * _WaveFrom.w;
+                return fixed4(c * _Strength + _GlowColor.rgb * wave * (0.45 + w) + _RimColor.rgb * wave * rim * 0.6, 0.0);
             }
             ENDCG
         }

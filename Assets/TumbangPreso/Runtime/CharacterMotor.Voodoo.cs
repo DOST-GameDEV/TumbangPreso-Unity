@@ -194,7 +194,9 @@ namespace TumbangPreso
         {
             if (_drainedLeft > 0.0f) _drainedLeft = Mathf.Max(0.0f, _drainedLeft - dt);
             if (_hexedLeft > 0.0f) _hexedLeft = Mathf.Max(0.0f, _hexedLeft - dt);
-            Stamina.RecoveryBlocked = IsDrained;
+            // (And while the movement rework prototype's hop chain is running, a debug switch that is false with it off:
+            // hopping does not rest the bar. `CharacterMotor.MovementRework.cs`.)
+            Stamina.RecoveryBlocked = IsDrained || ReworkBlocksRecovery;
             if (_markKind != VoodooMarkKind.None) _markAge += dt;
             if (IsVoodooReaching) { _reachElapsed += dt; _stowLeft = Mathf.Max(_stowLeft, StowAfterReach); }
             else if (_stowLeft > 0.0f) _stowLeft = Mathf.Max(0.0f, _stowLeft - dt);

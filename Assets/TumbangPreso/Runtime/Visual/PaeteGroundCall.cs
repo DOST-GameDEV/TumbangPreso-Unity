@@ -178,6 +178,8 @@ namespace TumbangPreso.Visual
         // In play each shell follows its source (first person hides his own body); in the cutscene the stage's capture switch owns them.
         private bool _follow = true;
         public Material Material => _material;
+        /// <summary>The least any of it glows, whatever its paint (`SpiritVeins.shader`, `_FlatWeight`): for the limbs he grows.</summary>
+        public PaeteChannelGlow Flat(float weight) { if (_material != null) _material.SetFloat("_FlatWeight", weight); return this; }
 
         private PaeteChannelGlow(Material material) { _material = material; }
 
@@ -187,7 +189,7 @@ namespace TumbangPreso.Visual
         /// <paramref name="ownPalette"/> false (the custom character borrowing his kit) keeps only the edge light: its palette slots
         /// are not his, and slot 4 on a person is not a vine.
         /// </summary>
-        public static PaeteChannelGlow Attach(IEnumerable<Renderer> sources, Transform parent = null, bool ownPalette = true)
+        public static PaeteChannelGlow Attach(IEnumerable<Renderer> sources, Transform parent = null, bool ownPalette = true, bool effects = false)
         {
             var shader = Resources.Load<Shader>("Shaders/SpiritVeins");
             if (shader == null || sources == null) return null;
@@ -201,7 +203,9 @@ namespace TumbangPreso.Visual
             foreach (var source in sources)
             {
                 if (source == null || source.GetComponent<PaeteGlowShellTag>() != null || source is ParticleSystemRenderer) continue;
-                if (source.gameObject.GetComponent<VfxRenderTag>() != null) continue;
+                // An effect's own piece is skipped (a glow on a glow), unless it is asked for by name: the arms he grows are
+                // tagged as effects and are still his body (`effects`; they stayed dark until this was added).
+                if (!effects && source.gameObject.GetComponent<VfxRenderTag>() != null) continue;
                 Renderer shell = null;
                 if (source is SkinnedMeshRenderer skin && skin.sharedMesh != null)
                 {
@@ -211,6 +215,11 @@ namespace TumbangPreso.Visual
                     var s = go.AddComponent<SkinnedMeshRenderer>();
                     s.sharedMesh = skin.sharedMesh; s.bones = skin.bones; s.rootBone = skin.rootBone;
                     s.localBounds = skin.localBounds; s.updateWhenOffscreen = true; s.quality = skin.quality;
+                    // ⚠️ SKINNED AGAIN FOR EVERY RENDER, AS THE BODY IT COPIES IS (owner, 2026-10-08, circling him in the wide shot after
+                    // the dive: "his ghost and his main body arent aligned"). The cutscene poses his body and renders it at once, by
+                    // hand, with the world paused; the body's own renderers are told to re-skin per render for that, and this
+                    // shell was not, so it was drawn in the pose of the last engine update: a pose behind whenever he moved.
+                    s.forceMatrixRecalculationPerRender = true;
                     shell = s;
                 }
                 else if (source is MeshRenderer && source.GetComponent<MeshFilter>()?.sharedMesh != null)
@@ -236,6 +245,20 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>The light on him: <paramref name="strength"/> 0 is off; lit above <paramref name="sweepY"/> (world metres); a pulse band at <paramref name="pulseY"/>.</summary>
+        private float _wave;
+
+        /// <summary>
+        /// Rings of light running across him from one point (`SpiritVeins.shader`, `_WaveFrom`): the point (world), how far
+        /// each of three rings has run from it (metres; 0 is none), how thick they are, how bright. Call before `Set`.
+        /// </summary>
+        public void Waves(Vector3 from, Vector3 radii, float thick, float strength)
+        {
+            if (_material == null) return;
+            _wave = Mathf.Max(0f, strength);
+            _material.SetVector("_WaveFrom", new Vector4(from.x, from.y, from.z, _wave));
+            _material.SetVector("_WaveRadii", new Vector4(radii.x, radii.y, radii.z, thick));
+        }
+
         public void Set(float strength, float sweepY, float pulseY, float pulseStrength)
         {
             if (_material == null) return;
@@ -243,7 +266,7 @@ namespace TumbangPreso.Visual
             _material.SetFloat(SweepId, sweepY);
             _material.SetFloat(PulseId, pulseY);
             _material.SetFloat(PulseStrengthId, Mathf.Max(0f, pulseStrength));
-            for (int i = 0; i < _shells.Count; i++) if (_shells[i] != null) _shells[i].enabled = strength > 0.002f && (!_follow || Shown(i));
+            for (int i = 0; i < _shells.Count; i++) if (_shells[i] != null) _shells[i].enabled = (strength > 0.002f || _wave > 0.002f) && (!_follow || Shown(i));
         }
 
         private bool Shown(int i)
@@ -258,6 +281,17 @@ namespace TumbangPreso.Visual
 
         /// <summary>For the cutscene's capture toggle: its own copy's renderers are forced off outside the capture.</summary>
         public IEnumerable<Renderer> Shells => _shells;
+
+        /// <summary>
+        /// Each shell takes the mesh its source wears NOW. `PaeteLivingBody` gives his body a private mesh whose vines and
+        /// branches move, and a shell left on the first one would light where a vine used to be.
+        /// </summary>
+        public void Rebind()
+        {
+            for (int i = 0; i < _shells.Count; i++)
+                if (_shells[i] is SkinnedMeshRenderer shell && _sources[i] is SkinnedMeshRenderer source && source.sharedMesh != null)
+                    shell.sharedMesh = source.sharedMesh;
+        }
 
         public void Dispose()
         {
@@ -308,6 +342,41 @@ namespace TumbangPreso.Visual
         /// view three times in a row, where from across the court it is a small bright pulse. `PaeteGroundCall` sets 0.45 and 0.35.
         /// </summary>
         public float RingSize = 1f, RingStrength = 1f;
+
+        // ⚠️⚠️ HIS ARMS ARE PLANTED IN THE COURT (owner, 2026-10-08, on a frame of him kneeling with his arms their modelled length
+        // and these roots lying at his hands as thin separate pieces: *"instead of keeping the same length, do the same thing you
+        // did with the fpv arms and the leap swing where the arms grow out"*, and of what that means here: *"make it so it really
+        // looks like his arms are being planted into the ground"*). When his body is bound (`BindBody`), the eight roots typed
+        // from his hands above are not drawn: `PaeteRootArms` grows new wood on from the eight strands of his own braided
+        // forearms, in his body's own material and paint, straight down into the court at one mouth an arm, and on under it.
+        // What this class adds round each mouth is THE COURT GIVING WAY: six slabs of it tipped up by what went in, on a mound of
+        // turned soil. They jump as the arms are driven in, settle, and lift again on each of the tree's hauls, as if something
+        // under them were pulling. The roots from his knee, the hairline cracks, the beads of light and the rings are as before.
+        private PaeteBodyWood _wood;
+        private PaeteRootArms _arms;
+        private PaeteLivingBody _living;
+        /// <summary>False on his own first-person screen, where his body is not drawn (`PaeteGroundCall`).</summary>
+        public bool BodyShown = true;
+        /// <summary>
+        /// The slow growth after the drive (0 to 1: the roots running on under the court and surfacing), how far his vines have
+        /// crept down his arms (0 to 1), and when on the caller's clock he began to drop and his palms hit. Play leaves them
+        /// alone: it picks up with his roots in and his vines down.
+        /// </summary>
+        public float Spread = 1f, Creep = 1f, DropAt = -99f, SlamAt = -99f;
+        /// <summary>The cutscene's lens is under the court: his limbs, which run on under it, are not drawn there (`PaeteRootArms.Under`).</summary>
+        public bool LensUnder { set { if (_arms != null) _arms.Under = value; } }
+        /// <summary>The arms grown into the court, once his body is bound: their renderer, so his glow can light them too.</summary>
+        public Renderer ArmsRenderer => _arms != null ? _arms.Renderer : null;
+        // The slabs round each mouth, six an arm (his left's first): where round the mouth (degrees), how far out (m), width and
+        // length (m), how far it tips (degrees), its skew (degrees), which earth, and how late it jumps (of the dig).
+        private static readonly (float round, float far, float width, float length, float tilt, float skew, int earth, float late)[] SlabRows =
+        {
+            (18f, 0.17f, 0.20f, 0.16f, 34f, 9f, 0, 0.00f), (74f, 0.20f, 0.15f, 0.21f, 27f, -14f, 1, 0.03f), (131f, 0.16f, 0.22f, 0.14f, 41f, 6f, 2, 0.01f),
+            (188f, 0.19f, 0.17f, 0.19f, 30f, -8f, 0, 0.05f), (247f, 0.15f, 0.19f, 0.15f, 38f, 17f, 1, 0.02f), (306f, 0.21f, 0.14f, 0.22f, 24f, -11f, 2, 0.04f),
+            (-27f, 0.18f, 0.18f, 0.18f, 36f, -7f, 1, 0.01f), (39f, 0.15f, 0.21f, 0.15f, 29f, 12f, 2, 0.04f), (102f, 0.20f, 0.16f, 0.20f, 43f, -16f, 0, 0.00f),
+            (163f, 0.17f, 0.20f, 0.17f, 26f, 5f, 1, 0.03f), (221f, 0.21f, 0.15f, 0.23f, 33f, -10f, 2, 0.05f), (283f, 0.16f, 0.23f, 0.14f, 39f, 15f, 0, 0.02f),
+        };
+        private readonly Transform[] _slabs = new Transform[SlabRows.Length], _mounds = new Transform[2];
         private readonly List<Vector3> _points = new List<Vector3>(20);
         private readonly List<float> _radii = new List<float>(20);
         private readonly List<Vector3> _line = new List<Vector3>(4);
@@ -346,6 +415,46 @@ namespace TumbangPreso.Visual
         public Transform Root => _root;
 
         /// <summary>
+        /// Bind his body (its skinned renderers), so his arms themselves grow into the court. False, and the roots typed from his
+        /// hands are drawn as before, when the body has no braided forearms to grow from (the custom character borrowing his kit)
+        /// or its mesh cannot be read. <paramref name="living"/> also sets the vines and branches of his own mesh moving
+        /// (`PaeteLivingBody`): for a body that is this effect's alone to change, which the cutscene's copy is.
+        /// </summary>
+        public bool BindBody(IList<Renderer> body, Color[] palette, bool living)
+        {
+            if (_root == null || _arms != null) return _arms != null;
+            _wood = PaeteBodyWood.Read(body);
+            if (_wood == null || !_wood.HasArms) { _wood = null; return false; }
+            _arms = new PaeteRootArms(_root, _wood, palette);
+            if (living)
+            {
+                _living = PaeteLivingBody.Attach(_wood);
+                if (_living != null) _root.gameObject.AddComponent<PaeteLivingBodyGuard>().Body = _living;
+            }
+            var earth = new[] { new Color(0.36f, 0.27f, 0.18f, 1f), new Color(0.30f, 0.22f, 0.15f, 1f), GrowthVfx.Seed };
+            var soil = new[] { new Color(0.24f, 0.17f, 0.11f, 1f), new Color(0.21f, 0.15f, 0.10f, 1f) };
+            for (int i = 0; i < _slabs.Length; i++)
+            {
+                _slabs[i] = GrowthVfx.Block(_root, "mouth-slab-" + i, Vector3.one, earth[SlabRows[i].earth]).transform;
+                _slabs[i].localScale = Vector3.zero;
+            }
+            for (int i = 0; i < _mounds.Length; i++)
+            {
+                var mound = GrowthVfx.Part(_root, "mouth-mound-" + i, VfxShapes.Prism(7, 0.5f, 0.55f, 0.12f, 25f * i + 10f, 71 + i), soil[i]);
+                mound.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                _mounds[i] = mound.transform;
+                _mounds[i].localScale = Vector3.zero;
+            }
+            return true;
+        }
+
+        /// <summary>His arms are bound and drawn into the court now (not on his own first-person screen).</summary>
+        public bool ArmsPlanted => _arms != null && _arms.Planted;
+
+        /// <summary>Where arm <paramref name="arm"/> (0 his left) goes into the court, in the parent's space.</summary>
+        public Vector3 Mouth(int arm) => _arms != null ? _arms.Entry(arm) : Vector3.zero;
+
+        /// <summary>
         /// Pose at <paramref name="t"/> (seconds, the caller's clock). Hands and knee in the parent's space; <paramref name="facingYaw"/>
         /// the way he faces (degrees, parent space); <paramref name="court"/> the court's height there; <paramref name="grow"/> 0 to 1 how
         /// far the roots have dug in; <paramref name="taut"/> 0 to 1 pulled straight (a heave); <paramref name="retract"/> 0 to 1 drawn back
@@ -357,11 +466,38 @@ namespace TumbangPreso.Visual
         {
             if (_root == null) return;
             var face = Quaternion.Euler(0f, facingYaw, 0f);
+            // HIS ARMS INTO THE COURT (`BindBody`). On his own first-person screen his body is not drawn, so the limbs begin at
+            // the court, at the hands handed in, and his first-person arms reach down to them (`PaeteGroundCall`).
+            bool arms = _arms != null;
+            if (arms)
+            {
+                _arms.Pose(t, left, right, facingYaw, court, grow, Spread, taut, retract, channel, pulses, Creep, BodyShown);
+                if (_arms.Planted) { left = _arms.Entry(0) + Vector3.up * 0.03f; right = _arms.Entry(1) + Vector3.up * 0.03f; }
+                PoseMouths(t, face, court, grow, taut, retract, pulses, channel);
+            }
+            _living?.Pose(t, DropAt, SlamAt, taut, channel, pulses, retract);
             for (int i = 0; i < Rows.Length; i++)
             {
                 var row = Rows[i];
                 Vector3 from = row.from == 0 ? left : row.from == 1 ? right : knee;
                 float g = Mathf.Clamp01((grow * 1.15f - row.delay * 2.2f)) * (1f - Mathf.Clamp01(retract * 1.2f - row.delay));
+                if (arms && row.from != 2)
+                {
+                    // This root is one of his arm's limbs now; the bead of light runs down that instead.
+                    _meshes[i].Clear();
+                    float lit = 0f, far = 0f;
+                    if (pulses != null)
+                        foreach (float p in pulses)
+                        {
+                            float s = (t - p - row.delay * 0.5f) / 0.28f;
+                            if (s < 0f || s > 1f) continue;
+                            lit = Mathf.Max(lit, Mathf.Sin(s * Mathf.PI)); far = s;
+                        }
+                    if (lit > 0.01f && channel > 0.01f && _arms.LimbGrown(i) > 0.3f)
+                        _beads[i].Set(_arms.LimbPoint(i, far) + Vector3.up * 0.04f, Vector3.one * (0.16f + 0.05f * lit), Quaternion.identity, 1.4f * lit * channel);
+                    else _beads[i].Hide();
+                    continue;
+                }
                 if (g <= 0.01f) { _meshes[i].Clear(); _beads[i].Hide(); continue; }
                 var dir = face * Quaternion.Euler(0f, row.compass, 0f) * Vector3.forward;
                 var side = Vector3.Cross(Vector3.up, dir);
@@ -407,11 +543,14 @@ namespace TumbangPreso.Visual
                     var row = CrackRows[c];
                     var dir = face * Quaternion.Euler(0f, row.compass + (h == 0 ? -8f : 8f), 0f) * Vector3.forward;
                     _line.Clear();
-                    var p0 = new Vector3(hand.x, court, hand.z) + dir * 0.10f;
+                    var p0 = new Vector3(hand.x, court, hand.z) + dir * (arms ? 0.24f : 0.10f);
                     _line.Add(p0);
-                    _line.Add(p0 + dir * row.length * open * 0.5f + Vector3.Cross(Vector3.up, dir) * 0.03f);
-                    _line.Add(p0 + dir * row.length * open);
-                    PaeteBands.Flat(_crackMeshes[index], _line, 0.035f, court + 0.012f);
+                    float length = row.length * (arms ? 0.55f : 1f);
+                    _line.Add(p0 + dir * length * open * 0.5f + Vector3.Cross(Vector3.up, dir) * 0.03f);
+                    _line.Add(p0 + dir * length * open);
+                    // With his arms in the court these start at the rim of the broken ground and are finer: at their old width
+                    // they were the thin dark roots lying at his hands that the owner's frame showed (2026-10-08).
+                    PaeteBands.Flat(_crackMeshes[index], _line, arms ? 0.02f : 0.035f, court + 0.012f);
                     float flicker = 0.85f + 0.15f * Mathf.Sin(t * 17f + index * 1.7f);
                     _crackGlow[index].Set(Vector3.up * 0.004f, Vector3.one, Quaternion.identity, 1.1f * channel * open * flicker);
                 }
@@ -428,7 +567,49 @@ namespace TumbangPreso.Visual
             }
         }
 
-        public void Dispose() { if (_root != null) PaeteProp.Kill(_root.gameObject); }
+        /// <summary>
+        /// THE COURT GIVING WAY ROUND EACH ARM. Six slabs an arm stand round its mouth, each tipped up on its inner edge by what
+        /// went in, on a low mound of turned soil. They jump as the arms are driven in (out past their rest and back: the ground
+        /// gives), ride each heartbeat a little, and lift again on each haul and settle, each a moment after the one before it.
+        /// </summary>
+        private void PoseMouths(float t, Quaternion face, float court, float grow, float taut, float retract, IList<float> pulses, float channel)
+        {
+            float gone = 1f - Mathf.Clamp01(retract * 1.3f);
+            float throb = 0f;
+            if (pulses != null) foreach (float p in pulses) throb = Mathf.Max(throb, GrowthVfx.Envelope(t, p + 0.04f, 0.05f, p + 0.26f, 0.16f));
+            for (int i = 0; i < _slabs.Length; i++)
+            {
+                var row = SlabRows[i];
+                int arm = i / 6;
+                float up = GrowthVfx.Pop(Mathf.Clamp01((grow - row.late * 2f) / 0.24f));
+                if (up <= 0.001f || gone <= 0.001f || !_arms.Planted) { _slabs[i].localScale = Vector3.zero; continue; }
+                // Settled it leans three quarters of its tip; a haul lifts it past that, a heartbeat a little.
+                float heave = up * (0.75f + 0.45f * taut + 0.10f * throb * channel) * gone;
+                var radial = face * Quaternion.Euler(0f, row.round, 0f) * Vector3.forward;
+                float tip = row.tilt * heave;
+                _slabs[i].localPosition = _arms.Entry(arm) + radial * (row.far + 0.02f * taut)
+                                          + Vector3.up * (0.005f + 0.3f * row.length * Mathf.Sin(tip * Mathf.Deg2Rad) + 0.02f * taut);
+                // Its inner edge up, its outer edge in the court.
+                _slabs[i].localRotation = Quaternion.LookRotation(radial, Vector3.up) * Quaternion.Euler(tip, row.skew, (i % 2 == 0 ? 5f : -7f) * heave);
+                _slabs[i].localScale = new Vector3(row.width, 0.05f, row.length) * Mathf.Clamp01(up * 2f) * Mathf.Clamp01(gone * 2f);
+            }
+            for (int arm = 0; arm < _mounds.Length; arm++)
+            {
+                float up = GrowthVfx.Pop(Mathf.Clamp01(grow / 0.2f)) * gone;
+                if (up <= 0.001f || !_arms.Planted) { _mounds[arm].localScale = Vector3.zero; continue; }
+                _mounds[arm].localPosition = _arms.Entry(arm) + Vector3.up * 0.002f;
+                _mounds[arm].localRotation = Quaternion.Euler(0f, arm == 0 ? 20f : 205f, 0f);
+                _mounds[arm].localScale = new Vector3(0.27f, (0.22f + 0.10f * taut + 0.03f * throb) * up, 0.25f) * (arm == 0 ? 1f : 0.92f);
+            }
+        }
+
+        public void Dispose()
+        {
+            // His body first: the private mesh his vines moved in goes back before anything else is torn down.
+            _living?.Dispose(); _living = null;
+            _arms?.Dispose(); _arms = null;
+            if (_root != null) PaeteProp.Kill(_root.gameObject);
+        }
     }
 
     /// <summary>Flat band and ring meshes laid on the court (uv v runs across, for `SpiritGlow`'s band).</summary>
@@ -737,13 +918,16 @@ namespace TumbangPreso.Visual
         private CharacterMotor _caster;
         private CharacterAnimator _animator;
         private PaeteGroundRoots _roots;
-        private PaeteChannelGlow _glow, _armGlow;
+        private PaeteChannelGlow _glow, _armGlow, _grownGlow;
+        private int _grownCount;
         private PaeteEyeLight _eyes;
         private readonly PaeteLight[] _eyeLights = new PaeteLight[2];
         private Transform _stage, _head;
         private Renderer _headRenderer;
         private float _age, _cancelledAt = -1f, _yaw;
         private Vector3 _feet;
+        // His body's own arms are bound to the roots (`PaeteGroundRoots.BindBody`): they grow into the court themselves.
+        private bool _bound;
 
         /// <summary>
         /// Start it on <paramref name="caster"/>, facing <paramref name="landing"/>. Returns the court point between his hands, where the
@@ -818,6 +1002,10 @@ namespace TumbangPreso.Visual
                 foreach (var t in model.GetComponentsInChildren<Transform>(true)) if (t.name == "head") _head = t;
                 if (paete) _eyes = PaeteEyeLight.Find(renderers, _head);
                 foreach (var r in renderers) { _headRenderer = r; break; }
+                // His arms themselves go into the court (not the custom character's: it has no braid to grow from). ⚠️ Not
+                // `living`: that swaps his body's mesh for a private one, and the live body is not this effect's alone (a
+                // replay may copy it mid-kneel and be left holding a mesh that is destroyed when he stands).
+                if (paete) _bound = _roots.BindBody(renderers, PaeteProp.Palette, living: false);
             }
             // On HIS screen, his own first-person hands glow too.
             if (CameraSystem.CameraRig.TryViewmodelArmRenderers(_caster, out var left, out var right))
@@ -865,8 +1053,12 @@ namespace TumbangPreso.Visual
         {
             // His roots: from his own first-person hands on his screen, from his body's hands everywhere else.
             var face = Facing;
-            Vector3 left = _feet + face * new Vector3(-0.40f, 0f, 0.98f), right = _feet + face * new Vector3(0.38f, 0f, 1.0f);
-            if (CameraSystem.CameraRig.TryViewmodelHand(_caster, true, out var vl) && CameraSystem.CameraRig.TryViewmodelHand(_caster, false, out var vr))
+            // Where his straight arms come down (they were 0.40 and 0.38 out, under arms held wide).
+            Vector3 left = _feet + face * new Vector3(-0.27f, 0f, 1.0f), right = _feet + face * new Vector3(0.25f, 0f, 1.02f);
+            // ⚠️ With his arms bound (2026-10-08) the roots no longer leave his first-person hands, wherever his view has them:
+            // his arms are PLANTED, at two places in the court that do not move when he looks about, and on his own screen it
+            // is his first-person arms that reach down to those places (below, `PaeteVineHands.ReachTo`, the leap's own limbs).
+            if (!_bound && CameraSystem.CameraRig.TryViewmodelHand(_caster, true, out var vl) && CameraSystem.CameraRig.TryViewmodelHand(_caster, false, out var vr))
             { left = vl; right = vr; }
             else
             {
@@ -887,7 +1079,22 @@ namespace TumbangPreso.Visual
             bool ownView = _headRenderer != null && _headRenderer.shadowCastingMode == UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
             _roots.RingSize = ownView ? 0.45f : 1f;
             _roots.RingStrength = ownView ? 0.35f : 1f;
+            _roots.BodyShown = !ownView;
+            // His vines and branches strain while he is down with his arms in the court (`PaeteVineBones`, the bones of 2026-10-08).
+            PaeteVineBones.Strain(_caster.transform, (1f - retract) * (0.7f + 0.3f * taut));
             _roots.Pose(_age, left, right, knee, _yaw, court, grow, taut, retract, channel, Pulses);
+            // On his own screen: each first-person arm grows its limbs (the leap's, `PaeteVineHands.BuildReach`) down to where
+            // that arm goes into the court, and 45 cm under it (a limb comes to a point over its last stretch, and that point
+            // should be under the court, the limb still stout where it passes the surface). ⚠️ NOT SEEN: nothing films his own
+            // view outside Play. The
+            // call is good for one frame, so when this ends his arms are his own again.
+            if (_bound && ownView && _roots.ArmsPlanted)
+                for (int arm = 0; arm < 2; arm++)
+                    // ⚠️ TO THE MOUTH ITSELF, NOT UNDER IT (owner, 2026-10-08, in first person: "fpv planted arms dont align with the
+                    // ground hole stamps"). They were aimed 45 cm under the court so the limb would still be stout at the surface;
+                    // but his first-person arms are drawn OVER the world, the court hides none of them, and a point under the
+                    // court is seen nearer his feet than the hole is: the limbs ended on bare court short of both holes.
+                    CameraSystem.PaeteVineHands.ReachTo(_caster, arm == 0, _roots.Mouth(arm) + Vector3.up * 0.04f, Mathf.Clamp01(grow * (1f - retract)));
             // The light in him: all of him lit, flaring on each haul; a pulse down his arms as the roots leave and at the grip.
             float flare = 0f;
             foreach (float h in Heaves) flare = Mathf.Max(flare, GrowthVfx.Envelope(_age, h, 0.05f, h + 0.35f, 0.25f));
@@ -902,6 +1109,21 @@ namespace TumbangPreso.Visual
             }
             _glow?.Set(strength, -1000f, pulseY, pulseStrength);
             _glow?.Sync(strength);
+            // ⚠️ WHAT HE HAS GROWN GLOWS WITH HIM (owner, 2026-10-08, looking down in first person at lit arms ending in unlit
+            // limbs: "glow isnt applying to his vine extensions"). The arms planted in the court and the first-person limbs
+            // that reach down to them are built after the glow was hung on his body and his hands, and the first-person ones
+            // only when they first reach; so they get a glow of their own, made again whenever one more of them exists.
+            var grown = new List<Renderer>();
+            if (_roots != null && _roots.ArmsRenderer != null) grown.Add(_roots.ArmsRenderer);
+            foreach (var reach in CameraSystem.PaeteVineHands.ReachRenderers) if (reach != null) grown.Add(reach);
+            if (grown.Count != _grownCount)
+            {
+                _grownGlow?.Dispose();
+                _grownGlow = grown.Count > 0 ? PaeteChannelGlow.Attach(grown, null, true, effects: true)?.Flat(.7f) : null;
+                _grownCount = grown.Count;
+            }
+            _grownGlow?.Set(strength * 0.9f, -1000f, pulseY, pulseStrength);
+            _grownGlow?.Sync(strength * 0.9f);
             if (_armGlow != null)
             {
                 var eye = Camera.main != null ? Camera.main.transform.position.y : feetY + 1.2f;
@@ -928,13 +1150,14 @@ namespace TumbangPreso.Visual
             _roots?.Dispose(); _roots = null;
             _glow?.Dispose(); _glow = null;
             _armGlow?.Dispose(); _armGlow = null;
+            _grownGlow?.Dispose(); _grownGlow = null; _grownCount = 0;
             if (_stage != null) PaeteProp.Kill(_stage.gameObject);
             PaeteProp.Kill(this);
         }
 
         private void OnDestroy()
         {
-            _roots?.Dispose(); _glow?.Dispose(); _armGlow?.Dispose();
+            _roots?.Dispose(); _glow?.Dispose(); _armGlow?.Dispose(); _grownGlow?.Dispose();
             if (_stage != null) PaeteProp.Kill(_stage.gameObject);
         }
     }

@@ -279,6 +279,7 @@ namespace TumbangPreso
             _hauntedLeft = 0.0f;
             _carryLeft = 0.0f;
             EndHaul();
+            EndSwing();
             ClearSpeedBoost();
             ClearReworkStatuses();
             ClearVoodoo();
@@ -390,7 +391,10 @@ namespace TumbangPreso
         // ------------------------------------------------------------------ THE CARRY
 
         private Vector3 _carryVelocity;
-        private float _carryLeft;
+        private float _carryLeft, _keepMomentumUntil;
+
+        /// <summary>A carry that ends within <paramref name="seconds"/> from now is this body's own leap: see `StepCarry`.</summary>
+        public void KeepCarryMomentumFor(float seconds) => _keepMomentumUntil = Time.time + Mathf.Clamp(seconds, 0.0f, 4.0f);
 
         /// <summary>True while the wind (or a dash) is holding this body at a set speed.</summary>
         public bool IsCarried => _carryLeft > 0.0f;
@@ -415,6 +419,14 @@ namespace TumbangPreso
             _carryVelocity = flat;
             // Scaling both held speed and time halves held travel and its friction tail.
             _carryLeft = Mathf.Clamp(seconds, 0.0f, 3.0f)*scale;
+            // ⚠️ A LEAP THAT KEEPS ITS MOMENTUM IS HELD THE WHOLE WAY (owner, 2026-10-07, of the first cut: "trying to leap on
+            // the ground immediately stops me like 25% of the way to the cluster"). A carry's time is solved so that the
+            // hold PLUS its slide-out against `Friction` (v squared over 2 x Friction, 3.3 m at the vines' 14 m/s) is the
+            // written distance. Handing the speed to the body at the end of the hold swapped that slide-out for the
+            // rework's own ground friction, which stops far sooner. So the slide-out's distance is held at full speed
+            // instead, and the hand-over happens where the leap was always going to end.
+            if (Time.time < _keepMomentumUntil && ReworkDrivesThisBody && _carryLeft > 0.0f)
+                _carryLeft += flat.magnitude / (2.0f * Balance.Friction);
             _externalVelocity = flat;
             if (velocity.y > 0.0f) _velocity.y = Mathf.Min(velocity.y, Balance.MaxKnockbackLift);
             // A carried body is not steering where it chose, and must not out-walk the wind.
@@ -443,6 +455,21 @@ namespace TumbangPreso
             _carryLeft = Mathf.Max(0.0f, _carryLeft - dt);
             _externalVelocity.x = _carryVelocity.x;
             _externalVelocity.z = _carryVelocity.z;
+            // ⚠️ THE LEAP KEEPS ITS MOMENTUM (owner, 2026-10-07: "does the leap let you keep your momentum? i'm trying to
+            // leap on the ground then slide, but i immediately slow down"). A carry ends into `Friction`, 30 m/s a second:
+            // half a second and it is gone, and none of it was ever the body's own speed, so the movement rework's slide
+            // saw a body standing still. Where the rework drives this body and the carry was his own leap
+            // (`KeepCarryMomentumFor`), the speed is handed to the body as the carry ends, and the rework's own ground
+            // friction, slide and air rules take it from there. Everywhere else a carry ends as it always did.
+            if (_carryLeft <= 0.0f && Time.time < _keepMomentumUntil && ReworkDrivesThisBody)
+            {
+                Vector3 kept = Vector3.ClampMagnitude(new Vector3(_carryVelocity.x, 0.0f, _carryVelocity.z), MovementRework.MaxSpeed);
+                _velocity.x = kept.x; _velocity.z = kept.z;
+                _externalVelocity = Vector3.zero;
+                _keepMomentumUntil = 0.0f;
+                _rwLeapHandedOverUntil = Time.time + 0.5f;
+                ReleaseCommitment();
+            }
         }
 
         // ------------------------------------------------------------------ THE HAUL

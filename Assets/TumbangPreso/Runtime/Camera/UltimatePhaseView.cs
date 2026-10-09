@@ -44,6 +44,9 @@ namespace TumbangPreso.CameraSystem
         private int[] _useShot;
         private bool _safeShot = true, _stillMirror, _stillSafe;
         private float _duration = UltimatePerformance.DefaultSeconds;
+        // The seat this screen is watching, and the live camera: a stage may bring the picture home to it (`HandBackView`).
+        private int _watching = -1;
+        private Camera _live;
         public bool SoundPlayed { get; private set; }
         /// <summary>Seats whose own voice line already played inside this introduction.</summary>
         public IEnumerable<int> VoicedSeats { get { foreach (var entry in _actors) if (entry.Scene != null && entry.Scene.VoicePlayed) yield return entry.Actor.PlayerSlot; } }
@@ -55,6 +58,7 @@ namespace TumbangPreso.CameraSystem
             {
                 var liveCamera = Camera.main;
                 int watching = liveCamera?.GetComponent<CameraRig>()?.Following?.PlayerSlot ?? NetAuthority.LocalSlot;
+                _watching = watching; _live = liveCamera;
                 _stage = new GameObject("~UltimateRenderCopies");
                 _stage.transform.SetParent(owner, false);
                 foreach (var commit in commits)
@@ -190,6 +194,8 @@ namespace TumbangPreso.CameraSystem
                 _primary.Scene.ShotAt(use,age,out eye,out target,out fov,_camera.aspect);
                 if(_mirror!=null&&use>=0&&_mirror[use])eye=target+Vector3.Reflect(eye-target,_primary.Actor.transform.right);
                 if(_pull!=null&&use>=0)eye=target+(eye-target)*_pull[use];
+                // On the caster's own screen a stage may end by bringing the lens to where their first-person view will be.
+                if(_live!=null&&_primary.Actor.PlayerSlot==_watching)_primary.Scene.HandBackView(age,_duration,_live,ref eye,ref target,ref fov);
             }
             else
             {

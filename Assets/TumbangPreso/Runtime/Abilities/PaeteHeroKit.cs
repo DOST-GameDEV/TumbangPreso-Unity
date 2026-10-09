@@ -52,6 +52,11 @@ namespace TumbangPreso.Abilities
             _receivedVine=PaeteVineReach.Build(caster,state.Anchor,PaeteRules.VineReachSeconds,
                 Mathf.Max(.05f,state.Duration-PaeteRules.VineReachSeconds));
             _receivedVine.FollowPlayer(target);_receivedVine.Step(age);
+            // A swing is walked by the peer that simulates him: this one, if he is ours (`BeginSwing` refuses elsewhere).
+            // His own leap, about to carry him: the speed is his to keep (`CharacterMotor.KeepCarryMomentumFor`).
+            if(state.Phase!=PaeteVinePhase.Player&&caster.IsLocallySimulated())caster.KeepCarryMomentumFor(state.Duration-age+0.5f);
+            var swing=PaeteVine.SwingOf(state.Phase);
+            if(swing!=VineSwing.Reel)caster.BeginSwing(state.Anchor,swing,Mathf.Max(0,PaeteRules.VineReachSeconds-age));
             _receivedPull?.BindVisual(_receivedVine,false);
             return true;
         }
@@ -81,6 +86,7 @@ namespace TumbangPreso.Abilities
             private Vector3 _anchor;
             private float _elapsed;
             private bool _reeled;
+            private VineSwing _swing;
             private PaetePlayerPull _playerPull;
 
             public KapitBaging()
@@ -118,6 +124,7 @@ namespace TumbangPreso.Abilities
                 _caster = ctx.Motor;
                 _elapsed = 0.0f;
                 _reeled = false;
+                _swing = VineSwing.Reel;
                 var target=PaeteVine.FindPlayer(_caster,ctx.Position,ctx.Forward,ctx.AimPoint);
                 _playerPull=target!=null?PaetePlayerPull.Begin(_caster,target):null;
                 if(_playerPull!=null)
@@ -134,12 +141,15 @@ namespace TumbangPreso.Abilities
                 }
                 // A visible body that cannot be pulled still blocks this cast's reel.
                 if(target!=null){_reeled=true;return;}
-                _anchor = PaeteVine.FindAnchor(ctx.Position, ctx.Forward, ctx.AimPoint);
+                _anchor = PaeteVine.FindCatch(ctx.Position, ctx.Forward, ctx.AimPoint, out _swing);
                 float distance = Flat(_anchor - ctx.Position).magnitude;
-                float reel = PaeteRules.VineHoldSeconds(distance) + PaeteRules.VineReelSpeed / (2f * Balance.Friction);
+                // ⚠️ A SWING (owner, 2026-10-07): the vines last as long as the path does, which every peer is told.
+                float reel = _swing != VineSwing.Reel
+                    ? Mathf.Max(0.1f, PaeteSwing.Seconds(_swing, distance, _anchor.y - ctx.Position.y))
+                    : PaeteRules.VineHoldSeconds(distance) + PaeteRules.VineReelSpeed / (2f * Balance.Friction);
                 PaeteVineReach.Build(_caster, _anchor, PaeteRules.VineReachSeconds, reel);
                 MatchRpc.Instance?.BroadcastPaeteVine(new PaeteVineState {Owner=_caster.PlayerSlot,Target=-1,
-                    Phase=PaeteVinePhase.Terrain,Anchor=_anchor,Duration=PaeteRules.VineReachSeconds+reel});
+                    Phase=PaeteVine.PhaseOf(_swing),Anchor=_anchor,Duration=PaeteRules.VineReachSeconds+reel});
                 _caster.GetComponentInChildren<CharacterSquashStretch>()?.Stretch(0.14f);
             }
 
@@ -155,9 +165,13 @@ namespace TumbangPreso.Abilities
                 if (PaeteVine.MapCatch != null
                     && PaeteVine.MapCatch(_caster.transform.position, _anchor, true, out Vector3 via, out Vector3 landing)
                     && _caster.BeginHaul(via, landing, PaeteRules.VineReelSpeed)) return;
+                // ⚠️ A SWING IS THE OWNER'S TO WALK. Here if this peer simulates him; if a client does, its own
+                // `ReceiveVine` began it from the state above, and the host sends no carry.
+                if (_swing != VineSwing.Reel) { _caster.BeginSwing(_anchor, _swing, 0.0f); return; }
                 // His own body: the owner simulates it (BeginCarry refuses anywhere else).
                 Vector3 d = Flat(_anchor - _caster.transform.position);
                 if (d.magnitude <= PaeteRules.VineStopShort) return;
+                _caster.KeepCarryMomentumFor(PaeteRules.VineHoldSeconds(d.magnitude) + 0.5f);
                 _caster.ApplyResolvedCarry(d.normalized * PaeteRules.VineReelSpeed + Vector3.up * PaeteRules.VineLift,
                                    PaeteRules.VineHoldSeconds(d.magnitude));
             }

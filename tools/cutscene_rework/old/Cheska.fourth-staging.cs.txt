@@ -1,0 +1,316 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace TumbangPreso.Visual
+{
+    public sealed partial class HeroIntroductionScene
+    {
+        // =========================================================================================
+        // YASMIN, ABSOLUTE ZERO, 6.5 s (was 3.2 s; plan.md § 6 is the first one, staged as GLACIAL NOVA).
+        //
+        // ⚠️ THE FOURTH STAGING, 2026-10-08, and the tone is the owner's: "cheeky but surprisingly strong".
+        // What came before, each filmed and refused: a crystal with the court in miniature in it ("cheska's is just
+        // boring overall"); she taps the lens, the screen frosts and breaks, and the court is a gallery of ice statues
+        // ("the whole animation just feels dead. there's no pzazz or character to it. it just shows everyone frozen. i
+        // need something with more charm, pop, and stylistic intent"). In both she did one small thing and the lens
+        // then LOOKED at a result. Here she does things, on a beat:
+        //   1. LAZY (0 to 1.0): close on her, weight on one leg, a hand idling by her face.
+        //   2. SNAP, SNAP, SNAP (1.0, 1.6, 2.2): each snap of her fingers is a hard cut to one other player in a flat
+        //      colour panel, a star burst behind them, and a block of ice slammed down over them. A punch-in each time.
+        //   3. THE STOMP (2.9 to 4.7): back to her, wide and low. She stretches, bored, and puts one foot down. The whole
+        //      court goes up in ice: three rings of spires racing outward and a crown of them, nine metres tall, behind her.
+        //   4. THE BLOW (4.7 to 5.9): she blows the frost off her fingertip.
+        //   5. THE SNAP (5.9 to 6.5), high and wide: her hands snap apart, the glacier bursts, and what is left is
+        //      everyone standing in their block of ice. That is the frame play resumes from, and since 2026-10-08 play
+        //      resumes with them frozen (`HeroAbility.IntroductionIsTheWindup`).
+        //
+        // Kept of her first cutscene: the cold breath, the pale highland world with its pines (it arrives with the
+        // glacier now), the frost plates at her feet, shards from her hands on the snap, and the frame PALING where
+        // every other stage darkens. Gone: her stillness. He asked for that in September and has now asked for this.
+        //
+        // ⚠️ BLOCKING: every shape here is a plain one. ⚠️ The panels are stood behind each player for the AUTHORED lens;
+        // a shot the game mirrors or pushes in on a real map (`UltimatePhaseView.ChooseShot`) would see past their edge.
+        // ⚠️ EVERY TIME IS ON THE TABLE'S CLOCK (`tools/author_ultimate_intros.py`, `_cheska`). The last pose is `snap`.
+        // =========================================================================================
+        private const float CkPanelsTo = 2.90f, CkStomp = 3.60f, CkBlow = 5.10f, CkSnap = 6.15f;
+        private static readonly float[] CkSnaps = { 1.00f, 1.60f, 2.20f };
+        private static readonly Color CheskaIce = new Color(.62f, .9f, 1, .9f);
+        // Each panel: its flat colour, and where the lens stands from that player (degrees round from straight out, height, distance it ends at).
+        private static readonly Color[] CkPanelColour = { new Color(.30f, .78f, .95f, 1), new Color(.98f, .96f, .86f, 1), new Color(.16f, .40f, .62f, 1) };
+        private static readonly Vector3[] CkPanelLens = { new Vector3(34f, 1.15f, 2.45f), new Vector3(-46f, 1.95f, 2.6f), new Vector3(12f, .5f, 2.3f) };
+        // The crown behind her: (x, z, height, lean), typed, the middle one the tallest.
+        private static readonly Vector4[] CkCrown =
+        {
+            new Vector4(-3.6f, -2.6f, 4.6f, 12f), new Vector4(-1.7f, -3.5f, 7.2f, 5f), new Vector4(.2f, -3.9f, 9.0f, -2f),
+            new Vector4(2.1f, -3.4f, 6.6f, -7f), new Vector4(3.9f, -2.4f, 4.1f, -13f),
+        };
+        // The rings that race out from her foot: (distance, how many, height).
+        private static readonly Vector3[] CkRings = { new Vector3(3.3f, 7, 1.5f), new Vector3(5.8f, 10, 2.3f), new Vector3(8.5f, 13, 3.2f) };
+        private static readonly Vector3[] CkMotes =
+        {
+            new Vector3(-1.6f, 1.9f, 2.2f), new Vector3(1.1f, 2.6f, 3.4f), new Vector3(2.8f, 1.2f, 1.6f), new Vector3(-3.4f, 2.3f, 4.6f),
+            new Vector3(.4f, 3.1f, 5.8f), new Vector3(3.9f, 1.7f, 5.1f), new Vector3(-2.2f, 1.1f, 6.9f), new Vector3(1.9f, 2.2f, 7.8f),
+            new Vector3(-4.8f, 1.6f, 2.1f), new Vector3(5.2f, 2.8f, 3.0f), new Vector3(-.8f, 1.5f, 9.2f), new Vector3(3.1f, 3.3f, 9.9f),
+            new Vector3(-3.9f, 2.9f, 8.4f), new Vector3(.9f, 1.0f, 4.4f), new Vector3(-5.6f, 2.0f, 6.0f), new Vector3(4.6f, 1.3f, 7.2f),
+            new Vector3(-1.3f, 2.7f, -1.8f), new Vector3(2.2f, 1.8f, -2.6f), new Vector3(-3.0f, 1.4f, -3.4f), new Vector3(.3f, 3.4f, 1.0f),
+        };
+
+        private sealed class CkStatue
+        {
+            public Other Body;          // null for the can
+            public int Cube;
+            public Vector3 Home; public float Height, FrozenAt = float.MaxValue;
+        }
+
+        private sealed class CkSpire
+        {
+            public int Piece;
+            public Vector3 At; public float Height, Width, Lean, Turn, From;
+        }
+
+        private int _ckMistLow, _ckMistHigh, _ckBreath, _ckPlates, _ckFloor, _ckBackdrop, _ckBackFloor, _ckBurst;
+        // Which side of her the wide shot is taken from: the side with nobody standing in the lens (`CheskaWideSide`).
+        private float _ckWideSide = 1f;
+        private readonly List<int> _ckPines = new List<int>(10), _ckShards = new List<int>(6), _ckMoteGlows = new List<int>(20);
+        private readonly List<CkStatue> _ckStatues = new List<CkStatue>(5);
+        // Who each snap cuts to, in order.
+        private readonly List<CkStatue> _ckPanels = new List<CkStatue>(3);
+        private readonly List<CkSpire> _ckSpires = new List<CkSpire>(40);
+
+        private void BuildCheska()
+        {
+            _ckMistLow = Wall("HighlandMistGround", 0, 1.4f, new Color(.6f, .66f, .64f, .55f), radius: 14.5f, emission: .2f);
+            _ckMistHigh = Wall("HighlandMistSky", 1.4f, 30, new Color(.8f, .86f, .88f, .5f), radius: 14.5f, emission: .3f, cap: true);
+            for (int i = 0; i < 10; i++)
+                _ckPines.Add(AddSolid("RidgePine" + i, VfxShapes.Spire(6, .08f, .25f, 120 + i), new Color(.26f, .34f, .31f, 1)));
+            _ckBreath = Add("ColdBreath", VfxShapes.TwoSided(VfxShapes.Splat(10, .3f, 5)), new Color(.95f, .98f, 1, .5f), .4f);
+            _ckFloor = Add("FrozenCourt", VfxShapes.Prism(36, .012f, 1f), new Color(.82f, .95f, 1, .4f), .35f);
+            _ckPlates = Add("FrostPlates", VfxShapes.Wedges(8, .14f, 9, .05f, .25f, 33), new Color(.78f, .95f, 1, .8f), .5f);
+            for (int i = 0; i < 6; i++) _ckShards.Add(Add("SnapShard" + i, YasminGatheredCrystal(), CheskaIce, .9f));
+
+            // Everyone else, where they stand, and the can.
+            StageOthers(3.0f, 9.5f);
+            foreach (var other in _others) _ckStatues.Add(CheskaStatue(other, other.Home, 1.75f));
+            var seen = new List<CkStatue>(_ckStatues);
+            seen.Sort((a, b) => Mathf.Atan2(a.Home.x, a.Home.z).CompareTo(Mathf.Atan2(b.Home.x, b.Home.z)));
+            var can = CheskaStatue(null, _hasCan ? _canAt : new Vector3(0, 0, 4.5f), .62f);
+            _ckStatues.Add(can);
+            // Three snaps. With fewer than three other players the can takes one, then they go round again.
+            if (seen.Count < CkSnaps.Length) seen.Add(can);
+            for (int snap = 0; snap < CkSnaps.Length; snap++)
+            {
+                var caught = seen[snap % seen.Count];
+                _ckPanels.Add(caught);
+                caught.FrozenAt = Mathf.Min(caught.FrozenAt, CkSnaps[snap] + .05f);
+            }
+            // Anyone no snap reached is taken by the stomp.
+            foreach (var statue in _ckStatues) if (statue.FrozenAt > CkStomp) statue.FrozenAt = CkStomp + .08f;
+
+            // A panel is ONE flat colour, so these are unlit (film c5 drew them through the glowing ghost material and every
+            // panel came out white): a sheet behind the player, a sheet under them, and the burst between.
+            _ckBackdrop = Add("PanelBackdrop", VfxShapes.TwoSided(GlowQuad()), Color.white, 1f, plain: true);
+            _ckBackFloor = Add("PanelFloor", VfxShapes.TwoSided(GlowQuad()), Color.white, 1f, plain: true);
+            _ckBurst = Add("PanelBurst", VfxShapes.TwoSided(VfxShapes.Star(14, .34f, 3)), Color.white, 1f, plain: true);
+            RagoUnlitBackdrop(_ckBackdrop); RagoUnlitBackdrop(_ckBackFloor); RagoUnlitBackdrop(_ckBurst);
+            _ckWideSide = CheskaWideSide();
+
+            // The glacier: the crown behind her, then the rings, each spire off any body or can it would stand on.
+            foreach (var row in CkCrown)
+                _ckSpires.Add(new CkSpire { At = new Vector3(row.x, 0, row.y), Height = row.z, Width = .5f + row.z * .11f, Lean = row.w, Turn = row.x * 31f, From = CkStomp + .04f + Mathf.Abs(row.x) * .012f });
+            for (int ring = 0; ring < CkRings.Length; ring++)
+            {
+                int count = (int)CkRings[ring].y;
+                for (int i = 0; i < count; i++)
+                {
+                    // Uneven round the ring: every spire a little off its place, its own height and lean.
+                    float angle = (i + .5f * (ring % 2) + Mathf.Sin(i * 2.7f + ring) * .22f) * Mathf.PI * 2 / count;
+                    float reach = CkRings[ring].x + Mathf.Sin(i * 1.9f + ring * 2) * .55f;
+                    var at = new Vector3(Mathf.Sin(angle) * reach, 0, Mathf.Cos(angle) * reach);
+                    // Not in front of her face, and not through anyone.
+                    if (at.z > 0 && Mathf.Abs(at.x) < 1.6f && ring == 0) continue;
+                    bool clear = true;
+                    foreach (var statue in _ckStatues) if ((statue.Home - at).magnitude < 1.35f) clear = false;
+                    if (!clear) continue;
+                    float tall = CkRings[ring].z * (.7f + .6f * Mathf.Abs(Mathf.Sin(i * 3.3f + ring)));
+                    _ckSpires.Add(new CkSpire { At = at, Height = tall, Width = .3f + tall * .1f, Lean = Mathf.Sin(i * 4.1f) * 11f, Turn = i * 47f, From = CkStomp + .10f + ring * .13f + (i % 3) * .02f });
+                }
+            }
+            for (int i = 0; i < _ckSpires.Count; i++)
+                _ckSpires[i].Piece = Add("GlacierSpire" + i, VfxShapes.Spire(6, .1f, .2f, 140 + i), new Color(.66f, .92f, 1, .86f), .5f);
+
+            for (int i = 0; i < CkMotes.Length; i++)
+                _ckMoteGlows.Add(AddGlow("HangingMote" + i, new Color(.9f, .97f, 1, 1), falloff: 2.4f, core: .7f));
+        }
+
+        private CkStatue CheskaStatue(Other body, Vector3 home, float height)
+        {
+            var statue = new CkStatue { Body = body, Home = home, Height = height };
+            statue.Cube = Add("IceBlock", VfxShapes.Prism(4, 1f, .94f, 0, 0, 40 + _ckStatues.Count), new Color(.7f, .93f, 1, .5f), .55f);
+            return statue;
+        }
+
+        // A held crystal needs volume. VfxShapes.Crystal is a flat ground fan,
+        // which disappeared edge-on in the low gather shot.
+        private static Mesh YasminGatheredCrystal()
+        {
+            var top = Vector3.up;
+            var bottom = Vector3.down * .65f;
+            var front = Vector3.forward;
+            var right = Vector3.right;
+            var back = Vector3.back;
+            var left = Vector3.left;
+            var mesh = new Mesh { name = "Yasmin gathered ice crystal" };
+            mesh.vertices = new[] {
+                top, front, right, top, right, back,
+                top, back, left, top, left, front,
+                bottom, right, front, bottom, back, right,
+                bottom, left, back, bottom, front, left
+            };
+            mesh.triangles = new[] { 0,1,2,3,4,5,6,7,8,9,10,11,
+                12,13,14,15,16,17,18,19,20,21,22,23 };
+            mesh.RecalculateNormals(); mesh.RecalculateBounds();
+            return mesh;
+        }
+
+        private Vector3 CheskaGather => (_heldItem != null ? FreePalm : BothPalms) + new Vector3(0, .1f, .12f);
+
+        /// <summary>
+        /// The wide shot stands low in front of her, to one side. The others stand wherever they stood, so the side is chosen:
+        /// whichever keeps every body furthest from the lens and from its line to her (film c5 had one a metre from the lens
+        /// and the glacier went up behind a block of ice). +1 is the authored side.
+        /// </summary>
+        private float CheskaWideSide()
+        {
+            if (_performance == null || _performance.Shots.Count < 5) return 1f;
+            var shot = _performance.Shots[4];
+            float best = -1f, side = 1f;
+            foreach (float tried in new[] { 1f, -1f })
+            {
+                float clear = float.MaxValue;
+                foreach (var eye in new[] { shot.EyeFrom, shot.EyeTo })
+                {
+                    var lens = new Vector3(eye.x * tried, 0, eye.z);
+                    foreach (var statue in _ckStatues)
+                    {
+                        // Distance from this body to the line from the lens to her.
+                        float along = Mathf.Clamp01(Vector3.Dot(statue.Home - lens, -lens) / Mathf.Max(.01f, lens.sqrMagnitude));
+                        clear = Mathf.Min(clear, (statue.Home - (lens - lens * along)).magnitude);
+                    }
+                }
+                if (clear > best) { best = clear; side = tried; }
+            }
+            return side;
+        }
+
+        /// <summary>Which snap's panel this moment is in, or -1.</summary>
+        private static int CheskaPanelAt(float t)
+            => t < CkSnaps[0] || t >= CkPanelsTo ? -1 : t < CkSnaps[1] ? 0 : t < CkSnaps[2] ? 1 : 2;
+
+        /// <summary>Shots 1 to 3 are the three panels: the lens is put by whoever that snap caught, and punches in as the ice lands.</summary>
+        private void CheskaFrame(int index, float t, ref Vector3 eye, ref Vector3 look, ref float fov)
+        {
+            if (index == 4) { eye.x *= _ckWideSide; look.x *= _ckWideSide; return; }
+            int panel = index - 1;
+            if (panel < 0 || panel >= _ckPanels.Count) return;
+            var caught = _ckPanels[panel]; var lens = CkPanelLens[panel];
+            var outward = caught.Home.sqrMagnitude > .01f ? caught.Home.normalized : Vector3.forward;
+            var way = Quaternion.Euler(0, lens.x, 0) * outward;
+            float since = t - CkSnaps[panel], punch = Ease(.03f, .15f, since);
+            float distance = Mathf.Lerp(lens.z + 1.1f, lens.z, punch) - .12f * Mathf.Max(0, since - .15f);
+            look = caught.Home + Vector3.up * caught.Height * .56f;
+            eye = caught.Home + way * distance + Vector3.up * lens.y;
+            fov = 40f;
+        }
+
+        /// <summary>Each block of ice landing, the stomp, and the glacier bursting.</summary>
+        private Vector3 CheskaShake(float t)
+        {
+            float size = DanteKick(t, CkStomp, .15f, .55f) + DanteKick(t, CkSnap, .06f, .25f);
+            foreach (float snap in CkSnaps) size += DanteKick(t, snap + .09f, .06f, .2f);
+            return new Vector3(Mathf.Sin(t * 67f), Mathf.Sin(t * 89f + 1.1f), 0) * size;
+        }
+
+        private void SampleCheska(float t)
+        {
+            float leave = 1 - Ease(Seconds - .45f, Seconds - .05f, t);
+
+            // A cold breath while she idles, and the frost blown off her fingertip.
+            float puff = Ease(.1f, .3f, t) * (1 - Ease(.35f, .8f, t)), blown = Ease(CkBlow, CkBlow + .1f, t) * (1 - Ease(CkBlow + .25f, CkBlow + .7f, t));
+            float carried = blown > puff ? Ease(CkBlow, CkBlow + .7f, t) : Ease(.1f, .8f, t);
+            Place(_ckBreath, HeadPoint + new Vector3(0, blown > puff ? -.3f : -.2f, .35f + carried * (blown > puff ? .9f : .3f)), Vector3.one * Mathf.Lerp(.08f, .34f, carried),
+                Quaternion.Euler(-90, 0, 0), Mathf.Max(puff, blown) * leave);
+
+            // Her world arrives with the glacier: the pale sky, the pines, the frozen ground.
+            float world = Ease(CkStomp, CkStomp + .22f, t) * leave;
+            Tint(_ckMistLow, world); Tint(_ckMistHigh, world);
+            for (int i = 0; i < _ckPines.Count; i++)
+            {
+                float angle = (180 - 95 + i * 21) * Mathf.Deg2Rad;
+                var at = new Vector3(Mathf.Sin(angle) * 13.4f, 0, Mathf.Cos(angle) * 13.4f);
+                Place(_ckPines[i], at, new Vector3(.9f, 3.4f + (i * 41 % 5) * .5f, .9f), Quaternion.identity, world > .01f ? 1 : 0);
+            }
+            Place(_ckFloor, Vector3.up * .035f, Vector3.one * 13.5f * Ease(CkStomp, CkStomp + .4f, t) + Vector3.up, Quaternion.identity, world);
+            Place(_ckPlates, Vector3.up * .05f, Vector3.one * Mathf.Lerp(.4f, 2.6f, Ease(CkStomp, CkStomp + .18f, t)), Quaternion.Euler(0, 15, 0), world);
+
+            // Everyone else: loose until their snap, then a block of ice comes down over them and they are done.
+            foreach (var statue in _ckStatues)
+            {
+                float age = t - statue.FrozenAt; bool caught = age >= 0;
+                if (statue.Body != null)
+                {
+                    float sway = caught || _reducedEffects ? 0 : Mathf.Sin(t * 3.1f + statue.Body.Reach) * 3.5f;
+                    statue.Body.Holder.transform.localRotation = Quaternion.Euler(0, statue.Body.Yaw + sway, sway * .5f);
+                    // ⚠️ NOT FADED AT THE END: play resumes with them frozen, so they are frozen on the last frame.
+                    FrostOther(statue.Body.Renderers, caught ? 1 : 0);
+                }
+                // Down in two frames, squashed where it lands, then standing.
+                float fallen = Mathf.Clamp01(age / .07f), settle = Mathf.Clamp01((age - .07f) / .16f);
+                float tall = caught ? Mathf.Lerp(.72f, 1f, settle * settle * (3 - 2 * settle)) : 1, wide = 1 + (1 - tall) * .7f;
+                Place(statue.Cube, statue.Home + Vector3.up * (1 - fallen) * 3.2f, new Vector3(.74f * wide, statue.Height * 1.14f * tall, .74f * wide),
+                    Quaternion.Euler(0, 45 + statue.Home.x * 17, 0), caught ? 1 : 0);
+            }
+
+            // The panel behind whoever this snap caught: one flat colour over the whole frame, and a burst.
+            int panel = CheskaPanelAt(t);
+            if (panel >= 0 && _performance != null && ShotCount > panel + 1)
+            {
+                var caught = _ckPanels[panel];
+                _performance.Shot(panel + 1, t, out var eye, out var look, out float fov);
+                CheskaFrame(panel + 1, t, ref eye, ref look, ref fov);
+                var forward = (look - eye).normalized; var facing = Quaternion.LookRotation(forward, Vector3.up);
+                float since = t - CkSnaps[panel], pop = Mathf.Clamp01(since / .1f) * (1 + .3f * Mathf.Clamp01(1 - Mathf.Abs(since - .12f) / .08f));
+                var middle = caught.Home + Vector3.up * caught.Height * .56f;
+                Place(_ckBackdrop, middle + forward * 2.6f, new Vector3(26f, 15f, 1), facing, 1);
+                Tint(_ckBackdrop, 1, CkPanelColour[panel]);
+                Place(_ckBackFloor, caught.Home + Vector3.up * .06f, new Vector3(40f, 40f, 1), Quaternion.Euler(90, 0, 0), 1);
+                Tint(_ckBackFloor, 1, CkPanelColour[panel] * .9f + new Color(0, 0, 0, 1));
+                Place(_ckBurst, middle + forward * 1.9f, Vector3.one * 2.9f * pop, facing * Quaternion.Euler(-90, since * 55f, 0), since >= .04f ? 1 : 0);
+                Tint(_ckBurst, since >= .04f ? 1 : 0, panel == 1 ? new Color(.30f, .78f, .95f, 1) : Color.white);
+            }
+            else { Tint(_ckBackdrop, 0); Tint(_ckBackFloor, 0); Tint(_ckBurst, 0); }
+
+            // The glacier: every spire up in three frames with a kick past its height, standing, and gone on her snap.
+            float burst = Ease(CkSnap, CkSnap + .14f, t);
+            foreach (var spire in _ckSpires)
+            {
+                float age = t - spire.From;
+                float up = age < 0 ? 0 : Mathf.Clamp01(age / .1f) * (1 + .25f * Mathf.Clamp01(1 - Mathf.Abs(age - .12f) / .08f));
+                Place(spire.Piece, spire.At, new Vector3(spire.Width, Mathf.Max(.01f, spire.Height * up * (1 - burst)), spire.Width),
+                    Quaternion.Euler(spire.Lean * .4f, spire.Turn, spire.Lean), age >= 0 && burst < .99f ? leave : 0);
+            }
+            for (int i = 0; i < _ckMoteGlows.Count; i++)
+                PlaceGlow(_ckMoteGlows[i], CkMotes[i] + Vector3.up * Flash(t, CkSnap + .2f, .5f) * .5f, Vector3.one * (.09f + (i % 3) * .03f) * (1 + 2.5f * Flash(t, CkSnap + .12f, .3f)),
+                    Quaternion.identity, world * .9f);
+
+            // Shards from her hands as they snap apart.
+            Vector3 gather = CheskaGather;
+            for (int i = 0; i < _ckShards.Count; i++)
+            {
+                float age = t - CkSnap, u = Mathf.Clamp01(age / .3f);
+                float angle = i * Mathf.PI * 2 / _ckShards.Count;
+                var at = gather + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle) * .7f, .3f) * u * .9f;
+                Place(_ckShards[i], at, Vector3.one * .06f * (1 - u * .5f), Quaternion.Euler(angle * 57, 0, 90), age >= 0 ? (1 - u) * leave : 0);
+            }
+        }
+    }
+}

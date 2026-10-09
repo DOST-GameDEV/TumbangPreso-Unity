@@ -592,6 +592,44 @@ namespace TumbangPreso.Visual
             foreach(var face in pet.GetComponentsInChildren<Renderer>(true))
                 if(face.name.Contains("eye")||face.name.Contains("mouth"))
                     ToonSkin.Apply(face,0,restored!=null&&face.transform.IsChildOf(restored)?ownerPalette:null);
+            DressTail(pet);
+        }
+
+        // ⚠️⚠️ HIS TAIL FADES OUT (owner, 2026-10-06: "i think the ghost tail models should fade out"). The parts named
+        // `ghost-tail*` leave the cast's shader for `Shaders/KuroTail`, which thins them to nothing down their length in
+        // halftone dots (the mesh's vertex alpha says how much is left; `tools/kubo_kuro.py` bakes it). They keep the
+        // palette, the tint and the ink width the cast's shader had just given them, so a recolour still reaches them.
+        // One fade material for each dressed material, kept: twelve Kuros do not make twelve copies a frame.
+        private static readonly System.Collections.Generic.Dictionary<Material,Material> TailMaterials=new System.Collections.Generic.Dictionary<Material,Material>();
+        private static Shader _tailShader;
+        private static bool _tailShaderMissing;
+        private static void DressTail(GameObject pet)
+        {
+            if(_tailShaderMissing)return;
+            if(_tailShader==null)_tailShader=Resources.Load<Shader>("Shaders/KuroTail");
+            if(_tailShader==null){_tailShaderMissing=true;Debug.LogWarning("[Kuro] Shaders/KuroTail is missing; his tail stays solid.");return;}
+            var calm=FindForm(pet.transform,"RestoredCalm");
+            if(calm==null)return;
+            foreach(var renderer in calm.GetComponentsInChildren<Renderer>(true))
+            {
+                if(!renderer.name.StartsWith("ghost-tail"))continue;
+                var mesh=renderer.GetComponent<MeshFilter>()?.sharedMesh;
+                // An older model has no alpha down its tail: every point would read as "all there" or, unset, as nothing.
+                if(mesh==null||mesh.colors32==null||mesh.colors32.Length==0)continue;
+                var dressed=renderer.sharedMaterial;
+                if(dressed==null||dressed.shader==_tailShader)continue;
+                if(!TailMaterials.TryGetValue(dressed,out var fade)||fade==null)
+                {
+                    fade=new Material(_tailShader){name=dressed.name+" (tail fade)"};
+                    if(dressed.HasProperty("_Color"))fade.SetColor("_Color",dressed.GetColor("_Color"));
+                    if(dressed.HasProperty("_OutlineColor"))fade.SetColor("_OutlineColor",dressed.GetColor("_OutlineColor"));
+                    if(dressed.HasProperty("_OutlineWidth"))fade.SetFloat("_OutlineWidth",dressed.GetFloat("_OutlineWidth"));
+                    var palette=dressed.GetVectorArray("_Palette");
+                    if(palette!=null&&palette.Length==16)fade.SetVectorArray("_Palette",palette);
+                    TailMaterials[dressed]=fade;
+                }
+                renderer.sharedMaterial=fade;
+            }
         }
 
         private void FindFace()
@@ -1197,6 +1235,7 @@ namespace TumbangPreso.Visual
             // is ridden or devoured. Those are precisely the two states the player is looking
             // straight at him in. It is local rotation on child transforms, so it composes with
             // whatever the branch below then does to the body.
+            StepOwnerView(dt);
             StepTail(time);
             // The familiar is the committed ultimate target. Keep it still during
             // invocation on every peer; cancellation automatically releases this.
@@ -1376,6 +1415,51 @@ namespace TumbangPreso.Visual
             float pulse = 1.0f + Mathf.Sin(time * _pulseSpeed) * _pulseAmount;
             transform.localScale = _baseScale * _errandScaleNow * pulse;
             _lastTargetPos = _target != null ? _target.position : _lastTargetPos;
+        }
+
+        // ⚠️⚠️ FOR HER OWN FIRST-PERSON VIEW HE IS ON HER SLEEVE, NOT BEHIND HER (`CameraSystem.NemuKuroHand`; owner,
+        // 2026-10-06: "make it so that the fpv only sees the hand kuro. and then when casting her E ability to place kuro,
+        // it looks like it moves from her hand for fpv only"). On the machine of the player who IS Nemu, in first
+        // person: while he is at her side he is not drawn here at all; when a skill sends him out, his calm form is
+        // drawn starting AT the sleeve, at the sleeve's size, and reaches his real place in a quarter of a second; when
+        // he is released he is drawn back into the sleeve and stops being drawn here.
+        // ⚠️ ONLY WHAT IS DRAWN MOVES. `transform` (his real place, which the kit reads: `ErrandArrived`, the fetch) is
+        // never touched; the offset is on the `CalmForm` child. Every other player, and she herself in third person,
+        // sees him exactly as before. Nothing is sent.
+        private CharacterMotor _ownerMotor;
+        private Transform _ownerCalm;
+        private Vector3 _ownerCalmPosition,_ownerCalmScale;
+        private float _inWorld=1f;
+        private bool _ownerHidden,_ownerOffset;
+        private readonly System.Collections.Generic.List<Renderer> _ownerRenderers=new System.Collections.Generic.List<Renderer>();
+        private void StepOwnerView(float dt)
+        {
+            if(_ownerMotor==null&&_target!=null)_ownerMotor=_target.GetComponentInParent<CharacterMotor>();
+            var hand=CameraSystem.NemuKuroHand.For(_ownerMotor);
+            bool atHerSide=_errand==null&&!IsPossessed&&_devourLeft<=0f&&_returnLeft<=0f&&!IsRageFormVisible
+                &&_nemuMotor?.AbilitySystem?.Kit?.Ultimate?.IsWindingUp!=true;
+            float want=hand!=null&&atHerSide?0f:1f;
+            _inWorld=hand==null?1f:Mathf.MoveTowards(_inWorld,want,dt/(want>_inWorld?.26f:.38f));
+            if(hand!=null&&_inWorld>0f)hand.MarkAway();
+            bool hide=_inWorld<=0f;
+            if(hide!=_ownerHidden)
+            {
+                _ownerHidden=hide;
+                GetComponentsInChildren(true,_ownerRenderers);
+                foreach(var r in _ownerRenderers)if(r!=null)r.forceRenderingOff=hide;
+            }
+            if(_ownerCalm==null){_ownerCalm=FindForm(transform,"CalmForm");if(_ownerCalm==null)return;_ownerCalmPosition=_ownerCalm.localPosition;_ownerCalmScale=_ownerCalm.localScale;}
+            if(hand!=null&&_inWorld>0f&&_inWorld<1f)
+            {
+                // Out of the sleeve in an arc: fast at first, a little hop on the way.
+                float u=1f-(1f-_inWorld)*(1f-_inWorld);
+                Vector3 home=transform.TransformPoint(_ownerCalmPosition);
+                _ownerCalm.position=Vector3.Lerp(hand.WorldPosition,home,u)+Vector3.up*(Mathf.Sin(u*Mathf.PI)*.18f);
+                float small=hand.WorldScale/Mathf.Max(.0001f,transform.lossyScale.x);
+                _ownerCalm.localScale=_ownerCalmScale*Mathf.Lerp(small,1f,u);
+                _ownerOffset=true;
+            }
+            else if(_ownerOffset){_ownerCalm.localPosition=_ownerCalmPosition;_ownerCalm.localScale=_ownerCalmScale;_ownerOffset=false;}
         }
 
         private void MirrorOwnerVisibility(bool visible)

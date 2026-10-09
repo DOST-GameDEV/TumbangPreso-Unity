@@ -42,7 +42,7 @@ namespace TumbangPreso.Visual
             float court = _paeteCourt;
             switch (anchor)
             {
-                case 0: return MakilingStand + Vector3.up * court;
+                case 0: return Vector3.up * court;   // v9: what was hers on the court is round him now (`SamplePaeteVfx`)
                 case 1: return PaeteHandsMid;
                 case 2: return _pvLanding + Vector3.up * court;
                 case 3:
@@ -268,7 +268,9 @@ namespace TumbangPreso.Visual
                 else
                 {
                     PbRays(_pbHerRayMesh, PbHerRayRows, s, 18f, .35f, 1f + .25f * s);
-                    PlaceGlow(_pbHerRays, MakilingStand + up * (court + 1.95f * MakilingScale), Vector3.one, Quaternion.identity, 1.2f * strength * light * leave);
+                    // v9: she is in the sky, so her rays are too: behind her hands and the light, at her size.
+                    var herLight = _makilingSpirit != null ? _root.transform.InverseTransformPoint(_makilingSpirit.HandsWorld) : MakilingStand + up * (court + 1.95f * MakilingScale);
+                    PlaceGlow(_pbHerRays, herLight, Vector3.one * (_makilingSpirit != null ? MakilingSkyScale * .5f : 1f), Quaternion.identity, 1.2f * strength * light * leave);
                 }
             }
             // ---------------------------------------------------------------- RAYS out of the crown as it wakes, and again as they hit it.

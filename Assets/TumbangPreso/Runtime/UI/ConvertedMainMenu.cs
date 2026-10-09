@@ -75,7 +75,7 @@ namespace TumbangPreso.UI
             var signIn = GetComponent<SignInScreen>();
             if (signIn == null) signIn = gameObject.AddComponent<SignInScreen>();
             signIn.Opened += open => { if (open) _nativeHome.Suspend(); else _nativeHome.Resume(); };
-            Cursor.lockState = CursorLockMode.None; Cursor.visible = true;
+            CursorMode.Release();
             _bootLoading = SplashScreen.MenuActivationPending;
             if (_bootLoading)
             {
@@ -145,8 +145,7 @@ namespace TumbangPreso.UI
             Overlay("CreditsButton", "CreditsPanel");
 
             // The title screen is where the mouse comes back. A match captures it.
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            CursorMode.Release();
 
             GameServices.Music?.Play("menu", GameServices.MenuTrack);
 

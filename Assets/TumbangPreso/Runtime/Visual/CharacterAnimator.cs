@@ -893,6 +893,9 @@ namespace TumbangPreso.Visual
             // ⚠️ IT OUTRANKS WALK AND SPRINT, NOT STUN OR AIRBORNE. A fatigued player is still
             // moving, at three-quarter speed, and the whole point is that the state is legible
             // to the three people deciding whether to chase them.
+            // The movement rework's crouch and slide (a debug switch, `MovementRework`): the bent-over clip stands in for
+            // both until they have poses of their own.
+            if (_motor.ReworkCrouched) return Crouch;
             if (_motor.Stamina.IsFatigued) return Crouch;
 
             // ⚠️ The historical fix below still owns the UPPER BODY. BuildGaitLayer now

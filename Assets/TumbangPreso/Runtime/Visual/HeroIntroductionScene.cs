@@ -41,6 +41,8 @@ namespace TumbangPreso.Visual
         private readonly Vector3 _leftPalm;
         private Renderer[] _renderers;
         private readonly Renderer[] _bodyRenderers;
+        // The caster's own copy, for a stage that shows them a second time (Cheska's miniature court).
+        private readonly GameObject _bodyRoot;
         private GameObject _heldItem;
         private Renderer[] _heldRenderers;
         private AudioSource _sound, _voice;
@@ -62,6 +64,7 @@ namespace TumbangPreso.Visual
             _source = source;
             _aim = aim ?? (source != null && source.Intent != null ? source.Intent.AimPoint : Vector3.zero);
             _bodyRenderers = body.Root.GetComponentsInChildren<Renderer>(true);
+            _bodyRoot = body.Root;
             foreach (var bone in body.Bones)
             {
                 if (bone.name == "HandAnchor") _rightHand = bone;
@@ -385,7 +388,7 @@ namespace TumbangPreso.Visual
                 case "cheska": SampleCheska(t); break;
                 case "rafi": SampleRafi(t); break;
                 case "amihan": SampleAmihan(t); break;
-                case "paete": SamplePaete(t / PaeteStretch); break;
+                case "paete": SamplePaete(PaeteClock(t)); break;
             }
         }
 
@@ -414,14 +417,21 @@ namespace TumbangPreso.Visual
             if (_hero == "phaister") PhaisterFrame(index, Local(seconds), ref eye, ref look, ref fov);
             // Amihan's OPEN whip pan, CATCH orbit and high HIT finish are computed from the scene (`HeroIntroductionScene.Amihan.cs`).
             if (_hero == "amihan") AmihanFrame(index, Local(seconds), ref eye, ref look, ref fov);
+            // Cheska's three looks are shot through her eyes at whoever she turns to (`HeroIntroductionScene.Cheska.cs`).
+            if (_hero == "cheska") CheskaFrame(index, Local(seconds), ref eye, ref look, ref fov);
+            // Sean's RISE looks at his lantern wherever it has climbed to (`HeroIntroductionScene.Sean.cs`).
+            if (_hero == "sean") SeanFrame(index, Local(seconds), ref eye, ref look, ref fov);
+            // Nemu's last shot is kept off the other players and trembles as Kuro comes at it (`HeroIntroductionScene.Nemu.cs`).
+            if (_hero == "nemu") NemuFrame(index, Local(seconds), ref eye, ref look, ref fov);
+            if (_hero == "rafi") RafiFrame(index, Local(seconds), ref eye, ref look, ref fov);
             // A hero's own blows shake the lens (Paete's palm and eruption); reduced effects keep it still.
             if (!_reducedEffects) { var shake = Shake(Local(seconds)); eye += shake; look += shake * .5f; }
             position = _ground + _facing * eye; focus = _ground + _facing * look;
             if (_performance.Shots[index].Fit) FitBodies(ref position, ref focus, fov, aspect, seconds);
         }
 
-        private Vector3 Shake(float t) => _hero == "paete" ? PaeteShake(t / PaeteStretch) : _hero == "phaister" ? PhaisterShake(t)
-            : _hero == "amihan" ? AmihanShake(t) : Vector3.zero;
+        private Vector3 Shake(float t) => _hero == "paete" ? PaeteShake(PaeteClock(t)) : _hero == "phaister" ? PhaisterShake(t)
+            : _hero == "amihan" ? AmihanShake(t) : _hero == "dante" ? DanteShake(t) : _hero == "cheska" ? CheskaShake(t) : _hero == "rafi" ? RafiShake(t) : Vector3.zero;
 
         /// <summary>
         /// ⚠️ THE STAGE'S OWN GRADE ON THE PHASE CAMERA (v6, 2026-09-27): a whole-frame brightness and saturation multiplier for this
@@ -432,9 +442,12 @@ namespace TumbangPreso.Visual
         public void GradeAt(float seconds, out float brightness, out float saturation)
         {
             brightness = 1f; saturation = 1f;
-            if (_hero == "paete") PaeteGrade(Local(seconds) / PaeteStretch, out brightness, out saturation);
+            if (_hero == "paete") PaeteGrade(PaeteClock(Local(seconds)), out brightness, out saturation);
             if (_hero == "phaister") PhaisterGrade(Local(seconds), out brightness, out saturation);
             if (_hero == "amihan") AmihanGrade(Local(seconds), out brightness, out saturation);
+            if (_hero == "sean") SeanGrade(Local(seconds), out brightness, out saturation);
+            if (_hero == "nemu") NemuGrade(Local(seconds), out brightness, out saturation);
+            if (_hero == "zack") ZackGrade(Local(seconds), out brightness, out saturation);
         }
 
         /// <summary>
@@ -446,6 +459,18 @@ namespace TumbangPreso.Visual
         {
             if (frame == null || camera == null) return;
             if (_hero == "phaister") PhaisterPostProcess(frame, camera, Local(seconds));
+        }
+
+        /// <summary>
+        /// ⚠️ THE LAST MOVE ON THE CASTER'S OWN SCREEN (2026-10-09, for Sean). `UltimatePhaseView` calls this only for the peer
+        /// that is watching this caster, after the shot is chosen: a stage may bring the lens from its last shot to where that
+        /// player's own first-person view will be when play resumes, so they arrive in their own eyes instead of being cut
+        /// to them. Everyone else's picture is left alone and ends on the ordinary quick dissolve, which reads as a cut.
+        /// Positions are world ones here. Every hero but Sean returns at once.
+        /// </summary>
+        public void HandBackView(float seconds, float duration, Camera live, ref Vector3 eye, ref Vector3 target, ref float fov)
+        {
+            if (_hero == "sean" && live != null) SeanHandBack(Local(seconds), live, ref eye, ref target, ref fov);
         }
 
         /// <summary>The single locked shot for reduced motion: no cut and no camera move.</summary>
@@ -507,6 +532,8 @@ namespace TumbangPreso.Visual
         {
             if (_sound != null) _sound.Stop();
             if (_voice != null) _voice.Stop();
+            // Paete's opens the sky through the map for her (`NearFade.OpenSky`); it must never outlive him.
+            if (_hero == "paete") NearFade.CloseSky();
             _rage?.Dispose(); _rage = null;
             _amFace?.Dispose(); _amFace = null;
             if (_heldItem != null) { _heldItem.SetActive(false); ObjectDestroy(_heldItem); }

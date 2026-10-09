@@ -2951,6 +2951,30 @@ namespace TumbangPreso
 
             _goal = point;
 
+            // ⚠️ A MAP WITH ROUTES IS ASKED THE WAY (`MapRoutes`; owner, 2026-10-09, of the stepped alley: "the bot ais struggle
+            // to get around this map", then "give them a route graph"). Where the straight line to the goal can be walked
+            // the answer IS the goal and nothing below changes. Where it cannot (the goal is up a stair, on a roof, past
+            // a tarp, behind a stair's flank) the body walks to the first way point instead, and is not "arrived" for
+            // standing under the thing it wants. A map without routes has no `Current` and this is one null test.
+            var routes = MapRoutes.Current;
+            if (routes != null)
+            {
+                Vector3 via = routes.Via(_motor.GetHashCode(), transform.position, point, _motor.IsGrounded, out bool routeHold);
+                if (routeHold) { _arrived = false; Stop(intent); return false; }
+                Vector3 toVia = via - transform.position; toVia.y = 0.0f;
+                if ((via - point).sqrMagnitude > 0.0004f && toVia.sqrMagnitude <= 0.42f)
+                {
+                    // The routes say this is as near as a body gets (the goal is inside a wall): it has arrived.
+                    _arrived = true; Stop(intent); return true;
+                }
+                if ((via - point).sqrMagnitude > 0.0004f)
+                {
+                    _arrived = false;
+                    Drive(intent, toVia.normalized + Separation() * AiTuning.SeparationWeight, sprint);
+                    return false;
+                }
+            }
+
             Vector3 delta = point - transform.position;
             delta.y = 0.0f;
 

@@ -579,7 +579,35 @@ namespace TumbangPreso.Net
         // ASTRAReworks had taken 146 to 151 for other things.)
         // 153: the Arena's taya box is round and sized by its layout (`Core.Confinement.Use`). Nothing new is sent,
         // but a peer on 152 would judge throws and tags by the square, so the two may not meet.
-        public const int ProtocolVersion = 153;
+        // 154: Paete's LIANA LEAP swings (owner 2026-10-07). `PaeteVineState.Phase` gains three values, and on them the
+        // caster's own peer swings itself (`CharacterMotor.BeginSwing`) where the host used to send a flat `Carry`. A
+        // peer on 153 would refuse the state and never move.
+        // 155: Paete's ultimate performance is 9.0 s (owner 2026-10-08, of the 6.5 s one with a goddess in the sky and a dive
+        // under the court in it: "it looks like its sped up"; asked, "Lengthen to about 9 s"). Nothing new is sent, but
+        // every peer holds the match for the longest accepted performance's length (`UltimatePerformance.MaxSeconds`, 6.5 to
+        // 9.0), read off its own copy of the table: a peer on 154 would resume play 2.5 s before the others.
+        // 156: three more ultimate performances are longer (owner 2026-10-08, restaged the way Paete's was; asked for a length
+        // each): Dante's 3.8 to 7.0 s, Cheska's 3.2 to 11.9 s, Sean's 3.4 to 7.0 s (8.4 since 2026-10-09). Nothing new is sent, but the cap
+        // (`UltimatePerformance.MaxSeconds`) goes from 9.0 to 13.0 for hers ("we can extend the ult cutscene until everything
+        // looks smooth"), and as with 155 every peer holds the match for the longest accepted performance off its own table.
+        // Also in 156: ABSOLUTE ZERO released after its cutscene freezes at once (owner: the cutscene counts as its 1.5 s
+        // delay, `HeroAbility.IntroductionIsTheWindup`). A peer on 155 would hold the freeze 1.5 s longer than the host.
+        // And SUPERNOVA released after its cutscene starts at the top of its leap (the cutscene is the leap): no wind-up, no
+        // launch, the caster put `SeanHeroKit.SupernovaApexRise` up by the motor's own teleport, then the dive. A peer on 155
+        // would launch him from the ground 0.4 s later.
+        // And Nemu's performance is 3.8 to 7.2 s, Zack's 2.8 to 6.4 s and Rafi's 3.4 to 8.6 s (2026-10-09, restaged; under the same cap and the same
+        // standing answer on length).
+        // 157: THE MOVEMENT REWORK IS ON IN NETWORKED MATCHES (owner 2026-10-09: "lets push the movement rework to the main
+        // gameplay for this build", then "yes" to online). Nothing new is sent: a player still simulates their own body
+        // and submits its pose, and the speeds stay inside `MoveBudget`. But the body now moves by
+        // `CharacterMotor.MovementRework.cs` (acceleration, kept air speed, crouch, slide, the hop), and a peer on 156
+        // would be playing a different game from the same seat: the two may not meet. KNOWN AND NOT YET SENT: the host
+        // does not see a crouch (it judges a thrown slipper against a standing capsule), and its count of a remote
+        // player's stamina does not know hopping stops the refill (`CharacterMotor.NetworkStamina`).
+        // ⚠️ 158 (2026-10-09): ESKINITA IS A DIFFERENT MAP UNDER THE SAME NAME (the stepped alley replaced it, at the owner's word:
+        // "push this to the map pool, replace the old eskinita"). Nothing new is sent, but a peer on 157 would load the old flat
+        // street for the same map id and stand inside the new one's houses: the two may not meet.
+        public const int ProtocolVersion = 158;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

@@ -50,15 +50,120 @@ namespace TumbangPreso.Visual
 
         private static Dictionary<string, string> ResolvePaths(Transform animatorRoot)
         {
-            var paths = new Dictionary<string, string>();
+            // A `RigPaths` so the elbows can ride along without changing what any builder is handed.
+            // The dictionary itself holds the same seven entries as before.
+            var paths = new RigPaths();
             foreach (string bone in Bones)
             {
                 var t = FindDeep(animatorRoot, bone);
                 if (t == null) return null;
                 paths[bone] = RelativePath(animatorRoot, t);
             }
+            // The elbows are optional. A rig without them resolves exactly as it always did.
+            paths.Left = ResolveForearm(animatorRoot, "arm-left", "forearm-left", -1f);
+            paths.Right = ResolveForearm(animatorRoot, "arm-right", "forearm-right", 1f);
             return paths;
         }
+
+        // -------------------------------------------------------------------
+        // THE ELBOWS (2026-10-07). The redesign rigs carry `forearm-left` and `forearm-right` under
+        // the arm bones (`tools/author_character_redesign_paete.py`, `EXTRA_BONES`); the Classic
+        // cast and the old models do not. A clip may key them, and a clip that does not is built
+        // exactly as before: no forearm curve is written unless a key asks for one, and never on a
+        // rig that has no such bone.
+        //
+        // A key carries two numbers per forearm (`Fore(fold, stretch)`, see `PoseKey`):
+        //  * FOLD, in degrees. 0 is the straight forearm every clip has had until now. Positive
+        //    closes the elbow the way a real one closes: the fist comes toward the FRONT of the
+        //    upper arm. With the arm hanging that is forward, with the arm pointed ahead it is up
+        //    toward the face, in the T-pose it is forward. It is the same forward the arm tables'
+        //    negative pitch swings to (the rig's +Z; `CharacterVisual.PersonModelYaw` is 0).
+        //  * STRETCH, a scale along the forearm. 1 is the modelled length. Paete's vines stretch.
+        //
+        // WHICH AXIS, AND WHICH WAY. The author script lays every joint down with no rotation and
+        // the arms T-posed along X, the elbow at (+-0.360, 0.470, 0), so the forearm's own axes are
+        // the model's axes at rest and the forearm runs along its local X. Forward is +Z, so the
+        // hinge that carries the fist forward is the local Y axis: the curve written is
+        // `localEulerAnglesRaw.y`, with x and z held at 0. The stretch is `localScale.x`.
+        //
+        // The SIGN of that y angle depends on which way along X the forearm runs, and that is not
+        // knowable from the bone's name: the importer mirrors glTF's X, which is why
+        // `CharacterAnimator.AlongArm` measures it off the bind pose instead of assuming it. The
+        // same is done here, from the rig itself: the elbow joint sits further along the arm than
+        // the shoulder, so the sign of the forearm's rest `localPosition.x` IS the direction from
+        // shoulder to fist in the bone's own frame. A positive turn about Y carries +X toward -Z,
+        // so a forearm running along +X needs a NEGATIVE y to fold forward and one running along
+        // -X needs a positive y: y = -sign(localPosition.x) * fold. On today's import the left
+        // forearm runs along -X (y = +fold) and the right along +X (y = -fold), which is also the
+        // fallback by name if a rig gives no usable offset. A table never writes a sign: it writes
+        // the fold, for the left or the right forearm, and both close the same way.
+        //
+        // This is a plain hinge in the upper arm's frame. The walk's `PoseElbow` also splays the
+        // forearm 30 degrees outward in the character's frame; a cast gets that from the upper
+        // arm's twist instead, because a curve cannot see the character's frame.
+        //
+        // A forearm that does not sit directly under its arm bone, or does not rest unrotated, is
+        // treated as absent, so "fold 0" can never mean anything but the forearm as modelled.
+        // -------------------------------------------------------------------
+
+        private struct ForearmBone
+        {
+            /// <summary>The curve path, or null on a rig with no elbow.</summary>
+            public string Path;
+            /// <summary>Degrees of `localEulerAnglesRaw.y` per degree of fold: +1 or -1, measured off the rest pose.</summary>
+            public float FoldSign;
+            /// <summary>The bone's rest scale, which a stretch multiplies along X.</summary>
+            public Vector3 RestScale;
+        }
+
+        private sealed class RigPaths : Dictionary<string, string>
+        {
+            public ForearmBone Left, Right;
+        }
+
+        /// <summary>One forearm's part of a pose: how far the elbow is closed and how long the forearm is.</summary>
+        private readonly struct Forearm
+        {
+            public readonly float Fold, Stretch;
+            /// <summary>False for `default`, which is how a pose says nothing about this forearm.</summary>
+            public readonly bool Keyed;
+            public Forearm(float fold, float stretch) { Fold = fold; Stretch = stretch; Keyed = true; }
+        }
+
+        /// <summary>A forearm folded `fold` degrees (0 straight) and `stretch` times its modelled length (1 as modelled).</summary>
+        private static Forearm Fore(float fold, float stretch = 1f) => new Forearm(fold, stretch);
+
+        private static ForearmBone ResolveForearm(Transform animatorRoot, string armName, string forearmName, float alongByName)
+        {
+            var none = new ForearmBone();
+            // Under the arm this clip already drives, not anywhere in the hierarchy: a body can carry
+            // a second, hidden rig with the same bone names (`CharacterAnimator.ResolveSwingBones`).
+            var arm = FindDeep(animatorRoot, armName);
+            if (arm == null) return none;
+            Transform fore = null;
+            for (int i = 0; i < arm.childCount && fore == null; i++)
+                if (arm.GetChild(i).name == forearmName) fore = arm.GetChild(i);
+            if (fore == null || Quaternion.Angle(fore.localRotation, Quaternion.identity) > 0.05f) return none;
+            float along = fore.localPosition.x;
+            float direction = Mathf.Abs(along) > 1e-4f ? Mathf.Sign(along) : alongByName;
+            return new ForearmBone
+            {
+                Path = RelativePath(animatorRoot, fore),
+                FoldSign = -direction,
+                RestScale = fore.localScale,
+            };
+        }
+
+#if UNITY_EDITOR
+        private static readonly Dictionary<string, float[]> PunchTimes = new Dictionary<string, float[]>();
+
+        /// <summary>
+        /// The instants the last built clip of this name lands on (`ClipBuilder.PunchAt`), for the editor's review
+        /// filmstrips, which show those frames as well as the evenly spaced ones. Empty for a clip that has none.
+        /// </summary>
+        public static float[] PunchTimesOf(string clipName) =>
+            clipName != null && PunchTimes.TryGetValue(clipName, out var times) ? (float[])times.Clone() : new float[0];
+#endif
 
         // -------------------------------------------------------------------
         // § TIMING: why fifteen different poses read as one animation.
@@ -123,10 +228,18 @@ namespace TumbangPreso.Visual
 
             private readonly List<float> _punches = new List<float>();
 
+            // The elbows, left then right: time in x, fold degrees in y, stretch in z, and whether the
+            // pose said anything about this forearm at all. Nothing is written from these unless at
+            // least one entry was keyed and the rig has the bone (`BuildForearm`).
+            private readonly List<Vector3>[] _fore = { new List<Vector3>(), new List<Vector3>() };
+            private readonly List<bool>[] _foreKeyed = { new List<bool>(), new List<bool>() };
+            private readonly RigPaths _rig;
+
             public ClipBuilder(string name, Dictionary<string, string> paths)
             {
                 _name = name;
                 _paths = paths;
+                _rig = paths as RigPaths;
                 foreach (string bone in Bones)
                 {
                     _rot[bone] = new[]
@@ -148,6 +261,49 @@ namespace TumbangPreso.Visual
                 _rot[bone][0].Add(new Vector2(time, x));
                 _rot[bone][1].Add(new Vector2(time, y));
                 _rot[bone][2].Add(new Vector2(time, z));
+            }
+
+            /// <summary>
+            /// One forearm's part of a pose. A pose that passes `default` says nothing, and in a clip that
+            /// keys this forearm anywhere such a pose means the forearm as modelled (straight, length 1),
+            /// the same way a pose that leaves out a leg means the leg at rest. So a clip that ends on a
+            /// rest pose ends with its elbows open without saying so.
+            /// </summary>
+            public void KeyForearm(bool right, float time, Forearm pose)
+            {
+                int side = right ? 1 : 0;
+                _fore[side].Add(pose.Keyed ? new Vector3(time, pose.Fold, pose.Stretch) : new Vector3(time, 0f, 1f));
+                _foreKeyed[side].Add(pose.Keyed);
+            }
+
+            /// <summary>
+            /// Writes one forearm's curves, or nothing. Nothing is the case for every clip that keys no
+            /// forearm and for every rig without the bone, so those clips are the curves they always were.
+            /// All three channels of the rotation and of the scale are written on the same key times,
+            /// because a clip binds each as one vector (`GroundIntroduction` has the incident).
+            /// </summary>
+            private void BuildForearm(AnimationClip clip, int side)
+            {
+                if (_rig == null || !_foreKeyed[side].Contains(true)) return;
+                var bone = side == 0 ? _rig.Left : _rig.Right;
+                if (string.IsNullOrEmpty(bone.Path)) return;
+
+                var fold = new List<Vector2>(); var flat = new List<Vector2>();
+                var length = new List<Vector2>(); var thickY = new List<Vector2>(); var thickZ = new List<Vector2>();
+                foreach (var key in _fore[side])
+                {
+                    fold.Add(new Vector2(key.x, key.y * bone.FoldSign));
+                    flat.Add(new Vector2(key.x, 0f));
+                    length.Add(new Vector2(key.x, bone.RestScale.x * Mathf.Max(0.01f, key.z)));
+                    thickY.Add(new Vector2(key.x, bone.RestScale.y));
+                    thickZ.Add(new Vector2(key.x, bone.RestScale.z));
+                }
+                clip.SetCurve(bone.Path, typeof(Transform), "localEulerAnglesRaw.x", Curve(flat));
+                clip.SetCurve(bone.Path, typeof(Transform), "localEulerAnglesRaw.y", Curve(fold));
+                clip.SetCurve(bone.Path, typeof(Transform), "localEulerAnglesRaw.z", Curve(flat));
+                clip.SetCurve(bone.Path, typeof(Transform), "localScale.x", Curve(length));
+                clip.SetCurve(bone.Path, typeof(Transform), "localScale.y", Curve(thickY));
+                clip.SetCurve(bone.Path, typeof(Transform), "localScale.z", Curve(thickZ));
             }
 
             /// <summary>
@@ -275,6 +431,13 @@ namespace TumbangPreso.Visual
                     clip.SetCurve(_paths[bone], typeof(Transform), "localEulerAnglesRaw.y", Curve(_rot[bone][1]));
                     clip.SetCurve(_paths[bone], typeof(Transform), "localEulerAnglesRaw.z", Curve(_rot[bone][2]));
                 }
+
+                // The elbows last, and only if this clip keyed one on a rig that has it.
+                BuildForearm(clip, 0);
+                BuildForearm(clip, 1);
+#if UNITY_EDITOR
+                PunchTimes[_name] = _punches.ToArray();
+#endif
 
                 return clip;
             }

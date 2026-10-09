@@ -150,6 +150,15 @@ namespace TumbangPreso.Visual
         /// </summary>
         public bool Floats;
 
+        /// <summary>
+        /// ⚠️ WHERE THE ARMS HANG WHEN HE STANDS STILL, for a body whose idle clip holds them out. Degrees out from the
+        /// body's centre line, degrees ahead of hanging, and degrees the elbow folds (a rig with forearm bones). 0 spread
+        /// leaves the idle clip's own arms alone, which is every character but the one that sets it. Paete, owner
+        /// 2026-10-07, with a picture of his standing shadow, arms out like a scarecrow's: *"paete's idle animation just
+        /// makes him look like he's a-posing all the time.. bring his arms down"*.
+        /// </summary>
+        public float IdleArmSpread, IdleArmForward, IdleElbow;
+
         /// <summary>The metres one full cycle (two steps) covers, for a leg of `reach` metres: the no-slide stride times `Glide`.</summary>
         public float CycleMetres(float reach, float run)
         {

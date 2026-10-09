@@ -155,6 +155,15 @@ was NOT pushed to: the owner chose to push QoLUpdates only. **Protocol 153.**
   client took the transport's: the host played one layout and the others another. The layouts now
   read `MatchRpc.PresentationMatchId` online (`ArenaStage.MatchId`).
 
+**Still paused on 2026-10-08** (the session spent 10-07 and 10-08 on Paete's kit: the leap's swing, and every ability's plant remodelled, painted and given new effects; `docs/CHARACTER_REDESIGN_DANTE.md` 15.11). What follows was written on 10-07 and still holds.
+
+**Still paused on 2026-10-07.** This session spent 10-06 and 10-07 on the redesigned heroes' first-person hands and on
+Paete's ability rework instead (all of it recorded in `docs/CHARACTER_REDESIGN_DANTE.md` 15.9 and 15.10, all
+uncommitted on this same branch). Nothing below has moved. Two things from that work touch this map and want a look
+when it resumes: the first-person hands are now shaded by a ray to the sun (`ViewmodelArms.WorldShade.cs`: under the
+Arena's roof and floodlights, check they are not left dark or bright), and the view model is drawn pulled toward the
+eye (`Framing.DepthPull`).
+
 ## OPEN when map work resumes, in order
 
 1. **Unverified by anyone but the owner's eye, and some not even that.** No batch probe has run

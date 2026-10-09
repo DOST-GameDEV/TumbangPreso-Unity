@@ -4,7 +4,9 @@ using UnityEngine;
 
 namespace TumbangPreso.Net
 {
-    public enum PaeteVinePhase : byte { Terrain, Player, Ended }
+    // ⚠️ APPENDED, NEVER REORDERED: the byte travels. The three swings (protocol 154) are terrain catches whose owner
+    // swings on them instead of being reeled flat (`Abilities.VineSwing`, `CharacterMotor.BeginSwing`).
+    public enum PaeteVinePhase : byte { Terrain, Player, Ended, SwingOver, SwingWall, SwingUnder }
     // Host decision, not a client-selected victim. Epochs bind both bodies.
     public struct PaeteVineState : INetworkSerializable
     {
@@ -18,7 +20,8 @@ namespace TumbangPreso.Net
         private static bool Point(Vector3 p)=>!float.IsNaN(p.x)&&!float.IsNaN(p.y)&&!float.IsNaN(p.z)&&p.sqrMagnitude<100000000f;
         public bool IsValid=>Scope.IsValid&&Sequence>0&&Owner>=0&&Owner<Balance.PlayerCount
             &&Target>=-1&&Target<Balance.PlayerCount&&Target!=Owner&&TargetEpoch>=0
-            &&Phase>=PaeteVinePhase.Terrain&&Phase<=PaeteVinePhase.Ended
+            &&Phase>=PaeteVinePhase.Terrain&&Phase<=PaeteVinePhase.SwingUnder
+            &&(Phase<PaeteVinePhase.SwingOver||Target==-1)
             &&(Phase!=PaeteVinePhase.Player||Target>=0)
             &&(Phase!=PaeteVinePhase.Terrain||Target==-1)
             &&Point(Anchor)&&Point(CasterEnd)&&Point(TargetEnd)

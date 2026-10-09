@@ -171,6 +171,27 @@ Shader "TumbangPreso/NearFade"
         half _Glossiness;
         half _Metallic;
 
+        // ⚠️⚠️ § THE SKY, OPENED (2026-10-08). Paete's ultimate stands Mariang Makiling vast in the sky behind him, and the owner,
+        // having played it: *"its hard to see her especially when its in an enclosed area, for example in the prototype map, the
+        // walls cover most of her body, and this can be the same for other maps like the cities or the arena"*; then, of a first
+        // answer that stood her nearer, in front of the wall: *"we have a distance fade effect for objects near the camera.. maybe
+        // you could apply that?"*, *"because its weird that shes so close"*. So this shader, which the whole dressed map wears
+        // and which already knows how to screen-door a surface out of the way, also does it for a window of SKY: while a
+        // cutscene sets these two GLOBALS, every fragment inside a cone from the eye toward `_SkyReveal.xyz` dissolves by the
+        // same dither, so the walls and roofs between the lens and her are not there and she stays as far off as she is.
+        //   _SkyReveal       xyz the world point the window is opened round; w how open (0, the default, is not at all)
+        //   _SkyRevealShape  x the cosine of the angle inside which everything goes, y the cosine where nothing does;
+        //                    z metres from the eye nearer than which nothing goes (the players, the court, what is at the lens);
+        //                    w the world height under which nothing goes (the ground stays down)
+        // ⚠️ They are globals, not properties, on purpose: one `Shader.SetGlobalVector` reaches every material on the map and
+        // none has to be touched or restored. ⚠️ `WorldOutline.shader`'s mask pass carries the same rule, or the ink would
+        // still trace the walls that are gone. The shadow caster is the Fallback's, so the walls keep their shadows.
+        float4 _SkyReveal;
+        float4 _SkyRevealShape;
+        // ⚠️ HOW FAR THE FIRST-PERSON EYE IS BELOW A STANDING ONE, metres (a GLOBAL, set by `CameraRig.ApplyFpp`; 0 when nobody
+        // sets it and for every other camera). See `belowFeet` in `surf`: the ground is spared for being a standing eye's
+        // height under the lens, and a crouch, a slide, the taya's squat and Paete's kneel all bring the lens down.
+        float _NearFadeEyeDrop;
         float _NearFadeStart;
         float _NearFadeEnd;
         float _NearFadeCell;
@@ -327,12 +348,29 @@ Shader "TumbangPreso/NearFade"
             // pavement, a bridge deck or a slope has floor at many different world heights, and
             // Ilalim ng Tulay has a viaduct over the street. What is constant is the player's own
             // geometry: whatever you are standing on is a fixed distance beneath your eye.
-            float belowFeet = smoothstep(0.80, 1.10, _WorldSpaceCameraPos.y - IN.worldPos.y);
+            // ⚠️⚠️ ...AND "BELOW YOUR FEET" IS MEASURED FROM WHERE YOUR EYE WOULD BE STANDING (owner, 2026-10-08, crouched on the
+            // character prototype map with the floor stippling away round him: "why is the distance fade happening", and of the
+            // note that the movement rework's crouch had met this rule: "fix that"). The 0.80 to 1.10 below assumed the eye is
+            // always a standing height over the floor. A crouch drops it 0.55 m and a slide 0.70 (`MovementRework`), the
+            // taya's squat and Paete's kneel drop it too, and then the floor is only half a metre under the lens: it failed
+            // this test, counted as a thing you walk INTO, and dissolved. `CameraRig` says how far it has lowered the eye
+            // (`_NearFadeEyeDrop`) and that is added back, so the floor is judged as if he stood. A barrel's lid is still
+            // nearer the standing eye than the floor is, so it still goes.
+            float belowFeet = smoothstep(0.80, 1.10, _WorldSpaceCameraPos.y - IN.worldPos.y + _NearFadeEyeDrop);
             float isGround = smoothstep(0.45, 0.55, upness) * belowFeet;
 
             float faceable = 1.0 - isGround;
 
             visible = lerp(1.0, visible, faceable);
+
+            // § THE SKY, OPENED (see the globals' note above). After the ground guard on purpose: a roof faces up and must go too.
+            float3 toFragment = IN.worldPos - _WorldSpaceCameraPos;
+            float fragmentDistance = max(length(toFragment), 1e-4);
+            float inWindow = smoothstep(_SkyRevealShape.y, _SkyRevealShape.x,
+                                        dot(toFragment / fragmentDistance, normalize(_SkyReveal.xyz - _WorldSpaceCameraPos)));
+            float opened = _SkyReveal.w * inWindow * smoothstep(_SkyRevealShape.z, _SkyRevealShape.z + 2.0, fragmentDistance)
+                           * smoothstep(_SkyRevealShape.w, _SkyRevealShape.w + 1.2, IN.worldPos.y);
+            visible = min(visible, 1.0 - opened);
 
             // ⚠️ THE `max` ON w GUARDS A DIVIDE BY ZERO ON THE CAMERA PLANE. A fragment exactly at
             // w = 0 is behind the eye and about to be clipped anyway, but NaN propagates into the

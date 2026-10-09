@@ -19,7 +19,10 @@ Liana Leap keeps its predicted tell and cooldown, but only the host chooses the
 player or terrain endpoint. A reliable81byte PaeteVine state carries match, round,
 owner movement epoch, sequence, target identity/epoch, endpoints, simulation clock
 and duration. Each peer integrates only its own motor through CharacterController;
-terrain reels use the existing owner-delivered Carry result. Duplicate, foreign,
+terrain reels use the existing owner-delivered Carry result. Since protocol 154 a
+high catch is a swing instead (phases SwingOver, SwingWall, SwingUnder): the host
+sends no Carry, and the caster's own peer walks `Abilities.PaeteSwing`'s path
+(`CharacterMotor.BeginSwing`) from the same vine state. Duplicate, foreign,
 wrong-round and wrong-body messages cannot restart a pull. End state retires it;
 late snapshots age the original deadline rather than refreshing it.
 
@@ -813,3 +816,22 @@ arrivals do not restart or extend it. Protocol133 separates this timing from
 older clients that would independently wait5seconds. Break packet fields and
 recording format13 remain unchanged. Gameplay/UI input stays frozen until the
 shared boundary. Actual remote-peer qualification for this revision is separate.
+
+## Movement rework, protocol157
+
+Owner, 2026-10-09: the movement rework (`MovementRework`, `CharacterMotor.MovementRework.cs`) is on for the whole
+game, networked matches included. Each peer moves ITS OWN player by it: ground acceleration and friction, air speed
+kept and steered, a held jump with jump fatigue, a crouch, a slide entered by crouching at a sprint, and a hop chain
+whose strafe can build speed to 1.2 times the body's run. Bots and replicas are unchanged.
+
+No packet field is added. The owner still submits its pose and the host still checks only distance and velocity
+(`MatchRpc.AcceptMove`); the fastest legitimate speed (a taya's hop, 9 m/s) is inside the existing budget. Protocol157
+exists because a peer on 156 would move by the old rules from the same seat.
+
+Known gaps of this revision, not yet sent or enforced:
+- The host does not see a crouch. Contact is resolved against the standing capsule.
+- Hopping blocks the stamina refill on the owner only. The host's count for a remote player
+  (`CharacterMotor.NetworkStamina`) may run ahead of that player's bar.
+- Crouch and slide have no replicated state, so other screens do not show them.
+- Crouch is keyboard only (Left Ctrl or C). No controller or touch entry exists yet.
+Remote-peer qualification for this revision has not been run.

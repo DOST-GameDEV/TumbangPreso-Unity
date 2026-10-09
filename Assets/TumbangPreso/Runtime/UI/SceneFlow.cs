@@ -711,8 +711,7 @@ namespace TumbangPreso.UI
                 match != null && match.MatchInProgress ? match.RoundNumber : 0);
 
             PresentationClock.RequestScale(1.0f);
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            CursorMode.Release();
 
             Net.NetSession.Instance?.Stop();
 
