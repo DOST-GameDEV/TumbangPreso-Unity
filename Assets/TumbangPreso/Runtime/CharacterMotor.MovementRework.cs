@@ -42,11 +42,17 @@ namespace TumbangPreso
         private bool ReworkJumpQueued => _rwJumpQueued;
         /// <summary>Read by `ApplyGravity`: how much of the jump a tired body gets (1 with the switch off).</summary>
         private float ReworkJumpScale => _rwJumpScale;
-        private float _rwJumpScale = 1f, _rwJumpFatigue, _rwFloorTime, _rwRecoveryBlockedUntil;
+        private float _rwJumpScale = 1f, _rwJumpFatigue, _rwFloorTime, _rwRecoveryBlockedUntil, _rwTakeoffOffset;
         /// <summary>True while hopping keeps the stamina bar from refilling (`CharacterMotor.Voodoo.cs`, where recovery is gated).</summary>
         public bool ReworkBlocksRecovery => MovementRework.Active && Time.time < _rwRecoveryBlockedUntil;
         /// <summary>Which side this airtime's strafe is earning on, and which side the airtime before earned on (0 none).</summary>
         private int _rwGainSide, _rwLastGainSide;
+        private bool _rwChainSpent;
+        private float _rwChainPeak, _rwBlocked, _rwTurnSum;
+        private readonly System.Collections.Generic.Queue<(float at, float degrees)> _rwTurns = new System.Collections.Generic.Queue<(float, float)>();
+        private Vector3 _rwLastPosition;
+        /// <summary>True while a hop chain has dropped too slow to be strafed back up, for the prototype map's readout.</summary>
+        public bool ReworkChainSpent => _rwChainSpent;
         /// <summary>0 rested to 1 spent, for the prototype map's readout.</summary>
         public float ReworkJumpFatigue => _rwJumpFatigue;
 
@@ -91,6 +97,16 @@ namespace TumbangPreso
             float yaw = transform.eulerAngles.y;
             float yawRate = dt > 0f ? Mathf.DeltaAngle(_rwYawPrev, yaw) / dt : 0f;
             _rwYawPrev = yaw;
+            // How far the view has turned, net, over the last second (for the air brake).
+            // Only turning done in the air or between hops counts: standing on the ground wipes it, and a step too big to
+            // be a hand on a mouse (a respawn, a teleport, the first step of all) is not a turn.
+            float yawStep = Mathf.Abs(yawRate) > 3000f ? 0f : yawRate * dt;
+            if (_grounded && !groundJump) { _rwTurns.Clear(); _rwTurnSum = 0f; yawStep = 0f; }
+            _rwTurns.Enqueue((Time.time, yawStep)); _rwTurnSum += yawStep;
+            while (_rwTurns.Count > 0 && Time.time - _rwTurns.Peek().at > MovementRework.AirTurnWindowSeconds)
+                _rwTurnSum -= _rwTurns.Dequeue().degrees;
+            float turnedLately = Mathf.Abs(_rwTurnSum);
+
             float strafe = Intent.MoveAxis.x;
             float strafeSync = 0f;
             if (Mathf.Abs(strafe) > 0.3f && strafe * yawRate > 0f)
@@ -144,6 +160,38 @@ namespace TumbangPreso
                 // left-right left right". Off, any strafe in time with the view earns, on either side, hop after hop.)
                 if (_rwGainSide == side || !MovementRework.StrafeMustAlternate) gainSync = strafeSync;
             }
+            // ⚠️ A CHAIN THAT HAS DROPPED TOO SLOW IS OVER UNTIL THE LEGS HAVE RESTED (owner, 2026-10-09: "when under a certain
+            // velocity, jump fatigue should kick in, so that way you cant just do the 180, take the slow down, then start
+            // air strafing again without letting the jump fatigue reset"). Tired legs in the air under
+            // `ChainMinSpeedScale` of the run cannot strafe speed back: the chain is SPENT, and stays spent until the
+            // jump debt has drained to `ChainRestedFatigue`, which takes about a second without jumping. So speed is
+            // built by running into the first hop and kept by strafing, never rebuilt from a crawl mid-chain.
+            //
+            // ⚠️ IT IS A LOSS THAT SPENDS IT, NOT A LOW SPEED (owner, same day, of the line above as first written, a flat
+            // speed under which no strafe earned: "now the issue is you cant gain speed when starting a strafe because
+            // the jump fatigue kicks in immediately. i think it should only be after losing a lot of speed, which
+            // happens when you turn too much or hit something"). The chain remembers the best speed it has had
+            // (`_rwChainPeak`); it is spent when the body is down to `ChainLossScale` of that. A chain being built is
+            // at its own best the whole way up, so it is never spent by starting slow. A wall counts: a body in the
+            // air that the world has stopped has its carried speed cut to what it is really doing.
+            Vector3 here = transform.position;
+            float moved = dt > 0f ? new Vector2(here.x - _rwLastPosition.x, here.z - _rwLastPosition.z).magnitude / dt : flat;
+            _rwLastPosition = here;
+            if (!_grounded && flat > 1f && moved < flat * 0.5f)
+            {
+                _rwBlocked += dt;
+                if (_rwBlocked > 0.08f) { v = v.normalized * Mathf.Max(moved, 0.2f); flat = v.magnitude; }
+            }
+            else _rwBlocked = 0f;
+
+            if (_rwJumpFatigue <= MovementRework.ChainRestedFatigue) { _rwChainSpent = false; _rwChainPeak = flat; }
+            else
+            {
+                if (flat > _rwChainPeak) _rwChainPeak = flat;
+                if (!_grounded && _rwChainPeak > 1f && flat < _rwChainPeak * MovementRework.ChainLossScale) _rwChainSpent = true;
+            }
+            if (_rwChainSpent) gainSync = 0f;
+
             // ⚠️⚠️ THE HOP IS WHAT A BODY WITH NO STAMINA HAS LEFT (owner, 2026-10-09: "the point of the bhopping was for another
             // way players can move when the stamina is gone.. how can we adjust for that?"). So it no longer COSTS the bar
             // (the cut before this drained it at the sprint's rate, which made the hop useless exactly when it was
@@ -255,6 +303,21 @@ namespace TumbangPreso
                     }
                     v = mag > 1e-4f ? v.normalized * mag : Vector2.zero;
                 }
+                // Facing well away from the travel: the travel is shed (`MovementRework.AirBrakeFromDegrees`), keys or no keys.
+                float carried = v.magnitude;
+                if (carried > 0.5f)
+                {
+                    // ⚠️ MEASURED OVER THE LAST SECOND, NOT OVER ONE HOP (owner, 2026-10-09: "i think a single hop is too small
+                    // of a window to catch jump fatigue, maybe turn too fast in 1 second? i also think a 180 to trigger
+                    // gives too much leeway, maybe if you turn more than 90 degrees it starts slowing down, ramping up
+                    // the decceleration if you turn even more"). It was the angle since take-off, which every landing
+                    // set back to nothing, so a turn spread over two hops was never seen. Now it is how far the view
+                    // has turned, net, in the last `AirTurnWindowSeconds` (`turnedLately`, kept below): left then right
+                    // cancels, so a strafe that swings side to side is free and a turn that keeps going is not.
+                    float off = turnedLately;
+                    float brake = Mathf.InverseLerp(MovementRework.AirBrakeFromDegrees, MovementRework.AirBrakeFullDegrees, off);
+                    if (brake > 0f) v *= Mathf.Max(0f, 1f - MovementRework.AirBrakePerSecond * brake * dt);
+                }
             }
 
             // ⚠️ JUMP FATIGUE (owner, 2026-10-07: "there should be jump fatigue ... its the reason why airstrafe movement is a
@@ -284,6 +347,10 @@ namespace TumbangPreso
                 float mag = v.magnitude;
                 if (mag > speed) v = v.normalized * (speed + (mag - speed) * (1f - MovementRework.HopLoss));
             }
+
+            // How the body faces its travel as it leaves the ground (read by the air brake, above).
+            if (_grounded && v.sqrMagnitude > 0.01f)
+                _rwTakeoffOffset = Vector2.SignedAngle(v, new Vector2(transform.forward.x, transform.forward.z));
 
             if (v.magnitude > cap) v = v.normalized * cap;
             _velocity.x = v.x; _velocity.z = v.y;

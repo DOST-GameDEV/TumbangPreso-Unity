@@ -260,7 +260,7 @@ namespace TumbangPreso.Diagnostics
             if (body != null)
                 Shadowed(new Rect(0, 90, Screen.width, 30), "movement rework (F9) " + (MovementRework.Active ? "ON" : "off")
                     + "   speed " + body.ReworkFlatSpeed.ToString("F1") + " m/s"
-                    + "   jump fatigue " + Mathf.RoundToInt(body.ReworkJumpFatigue * 100f) + "%"
+                    + "   jump fatigue " + Mathf.RoundToInt(body.ReworkJumpFatigue * 100f) + "%" + (body.ReworkChainSpent ? "   CHAIN SPENT (rest to hop again)" : "")
                     + (body.ReworkSliding ? "   SLIDE" : body.ReworkCrouched ? "   crouch" : "") + (body.IsGrounded ? "" : "   air"));
         }
 

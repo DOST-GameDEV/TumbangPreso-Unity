@@ -32,7 +32,7 @@ namespace TumbangPreso.Visual
                 // Spawn can precede the first grounded physics sample. Do not freeze the
                 // fall/landing clip underneath the greetings while the presentation clock holds.
                 RestoreArrivalPose(); RestoreEdgeRecoveryPose(); RestoreIntroductionPose();
-                RestoreTagBody(); RestoreResetRaise(); RestoreLocomotionArms();
+                RestoreTagBody(); RestoreSlideBody(); RestoreResetRaise(); RestoreLocomotionArms();
                 RestoreThrowBody(); RestoreLocomotionWeight(); RestoreChargeOffsets();
                 Play(Idle, loop: true, force: true);
                 _weight = 1; _mixer.SetInputWeight(0, 0); _mixer.SetInputWeight(1, 1);

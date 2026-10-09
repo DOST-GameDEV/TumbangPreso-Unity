@@ -79,6 +79,18 @@ namespace TumbangPreso
         // turn keeps about half of it, a 90 degree turn about a sixth). `HopLoss`: the share lost at each hop.
         // The turn's loss is not charged while the strafe is in time with the view.
         public static float AirTurnLoss = 1.2f, HopLoss = 0f;
+        // ⚠️ TURNING AWAY FROM THE TRAVEL IN THE AIR SHEDS IT (owner, 2026-10-09: "when bhopping, turning a full 180 or just a
+        // large amount preserves the momentum, so u just continue in the direction you were going. this makes it harder
+        // to turn at large speeds. there should be a threshold for turning radiuses where you just end up losing
+        // momentum"). While the body FACES more than `AirBrakeFromDegrees` off the way it is travelling, it loses a
+        // share of its speed a second, rising to `AirBrakePerSecond` at `AirBrakeFullDegrees` and beyond. A gentle
+        // curve costs nothing; a half turn drops most of the speed inside one hop, so the new direction can be taken.
+        // ⚠️ RETUNED THE SAME DAY at his word: the turn is counted over the last `AirTurnWindowSeconds` (net: left then
+        // right cancels), not from the last take-off; it starts to cost past 90 degrees in that second and the cost
+        // climbs to its full rate at 180.
+        // (And again: "the slow is too harsh. and maybe 0.5s instead of 1s". The rate was 4.5 a second and the window 1.0.)
+        public static float AirBrakeFromDegrees = 90f, AirBrakeFullDegrees = 180f, AirBrakePerSecond = 2.0f;
+        public static float AirTurnWindowSeconds = 0.5f;
 
         // Jump. A press this long before landing still jumps; a step off a ledge may still jump this long after.
         // ⚠️ THE WINDOW IS SHORT AND THE JUMP DOES NOT REPEAT WHILE HELD (owner, 2026-10-09: "all you have to do is hold jump
@@ -96,6 +108,13 @@ namespace TumbangPreso
         /// word (2026-10-09), to try the chain without it: any strafe in time with the view earns.
         /// </summary>
         public static bool StrafeMustAlternate = false;
+        /// <summary>
+        /// A chain that has LOST a lot of its speed is spent: down to `ChainLossScale` of the best speed it has had, by a
+        /// sharp turn (the air brake) or a wall. Its strafe then earns nothing until the jump debt is down to
+        /// `ChainRestedFatigue` (about a second of not jumping). A chain being built is never spent by starting slow.
+        /// See `CharacterMotor.MovementRework.cs`.
+        /// </summary>
+        public static float ChainLossScale = 0.6f, ChainRestedFatigue = 0.1f;
         /// <summary>This long on the ground ends a chain, and the next hop's strafe may earn on either side.</summary>
         public static float ChainResetSeconds = 0.35f;
         // THE HOP AND THE STAMINA BAR (owner, 2026-10-09: the hop is "another way players can move when the stamina is
@@ -135,7 +154,8 @@ namespace TumbangPreso
         // over when it is down to a crouch walk (about a second and four metres from an attacker's sprint).
         // `SlideMaxSeconds` is only a backstop now.
         public static float SlideEntryScale = 0.85f, SlideBoostScale = 1.30f, SlideSteer = 2.0f;
-        public static float SlideDragStart = 2.0f, SlideDragEnd = 9.0f, SlideDragRamp = 0.9f;
+        // (Half as long again since 2026-10-09, the owner: "make it 1.5x longer". The three were 2.0, 9.0 and 0.9.)
+        public static float SlideDragStart = 1.33f, SlideDragEnd = 6.0f, SlideDragRamp = 1.35f;
         public static float SlideMaxSeconds = 4.0f, SlideBoostCooldown = 0.9f;
 
         /// <summary>
