@@ -73,6 +73,9 @@ namespace TumbangPreso.Core
         Haunted = 12,
         /// <summary>Electro. Ability casts disabled for five seconds; movement and ordinary actions remain.</summary>
         Zapped = 13,
+        /// <summary>Nemu's PRUSISYON (owner 2026-10-11): a ghost rides the body for 15 s and contests its steering
+        /// (`NemuRules`). Control is kept: no stun, no lost actions, the camera stays the player's.</summary>
+        Possessed = 14,
     }
 
     /// <summary>One row of the owner's status table.</summary>
@@ -161,6 +164,7 @@ namespace TumbangPreso.Core
         /// <summary>*"Hallucinations of slippers randomly appear on your screen for 7.5 seconds."*</summary>
         public const float HexedSeconds = 7.5f;
         public const float HauntedSeconds = 7.5f;
+        public const float PossessedSeconds = NemuRules.PossessedSeconds;
 
         private static readonly StatusRule[] Table =
         {
@@ -231,6 +235,12 @@ namespace TumbangPreso.Core
             new StatusRule(StatusKind.Zapped, "ZAPPED",
                 "Prevents ability casts for 5 seconds.", "Disabled Ability Cast",
                 ZappedSeconds, 1, blocksMovement: false, blocksInteraction: false,
+                blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
+            // ⚠️ APPENDED (the enum's note). Nemu's PRUSISYON, `docs/reports/nemu-ultimate-2026-10-11/direction.md`.
+            new StatusRule(StatusKind.Possessed, "POSSESSED",
+                "For 15 seconds a ghost rides you and drags your steering toward danger. Push against it to hold your ground; fighting wears its grip down.",
+                "Possessed: Fight the Pull",
+                PossessedSeconds, 1, blocksMovement: false, blocksInteraction: false,
                 blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
         };
 

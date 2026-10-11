@@ -43,7 +43,15 @@ namespace TumbangPreso.Core.Tests
             // Haunted and then Zapped were appended; existing wire IDs stay unchanged.
             Assert.Equal(12, (int)StatusKind.Haunted);
             Assert.Equal(13, (int)StatusKind.Zapped);
-            Assert.Equal(13, StatusRules.All.Count);
+            Assert.Equal(14, (int)StatusKind.Possessed);
+            Assert.Equal(14, StatusRules.All.Count);
+            // Nemu's PRUSISYON (owner 2026-10-11): 15 s, control kept, cleansable.
+            var possessed = StatusRules.For(StatusKind.Possessed);
+            Assert.Equal(15.0f, possessed.Seconds);
+            Assert.Equal(1.0f, possessed.SpeedScale);
+            Assert.False(possessed.BlocksMovement || possessed.BlocksInteraction
+                || possessed.BlocksSlipperRetrieval || possessed.DropsHeldSlipper);
+            Assert.True(possessed.Removable && possessed.ImmunityApplies);
             var zapped = StatusRules.For(StatusKind.Zapped);
             Assert.Equal(5.0f, zapped.Seconds);
             Assert.Equal(1.0f, zapped.SpeedScale);
