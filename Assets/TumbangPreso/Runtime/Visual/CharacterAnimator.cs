@@ -520,6 +520,7 @@ namespace TumbangPreso.Visual
             RestoreArrivalPose(); _arrivalWeight = 0; _arrivalBones = null;
             ClearIntroductionPose();
             ClearTagBody();
+            ClearSlideBody();
             ClearResetRaise();
             ClearLocomotionArms();
             ClearThrowBody();
@@ -558,6 +559,7 @@ namespace TumbangPreso.Visual
             RestoreEdgeRecoveryPose();
             RestoreIntroductionPose();
             RestoreTagBody();
+            RestoreSlideBody();
             RestoreResetRaise();
             RestoreLocomotionArms();
             RestoreThrowBody();
@@ -893,6 +895,9 @@ namespace TumbangPreso.Visual
             // ⚠️ IT OUTRANKS WALK AND SPRINT, NOT STUN OR AIRBORNE. A fatigued player is still
             // moving, at three-quarter speed, and the whole point is that the state is legible
             // to the three people deciding whether to chase them.
+            // The movement rework's crouch and slide (a debug switch, `MovementRework`): the bent-over clip stands in for
+            // both until they have poses of their own.
+            if (_motor.ReworkCrouched) return Crouch;
             if (_motor.Stamina.IsFatigued) return Crouch;
 
             // ⚠️ The historical fix below still owns the UPPER BODY. BuildGaitLayer now
@@ -1006,6 +1011,7 @@ namespace TumbangPreso.Visual
             RestoreEdgeRecoveryPose();
             RestoreIntroductionPose();
             RestoreTagBody();
+            RestoreSlideBody();
             RestoreResetRaise();
             RestoreLocomotionArms();
             RestoreThrowBody();
@@ -1050,7 +1056,7 @@ namespace TumbangPreso.Visual
                 _chargeOffsetsApplied=true;_lastThrowPose=pose;
                 ApplyThrowBody(throwing);
             }
-            finally { ApplyLocomotionWeight(); ApplyLocomotionArms(); ApplyResetRaise(); ApplyTagBody(); ApplyIntroductionPose(); ApplyEdgeRecoveryPose(); ApplyArrivalPose(); }
+            finally { ApplyLocomotionWeight(); ApplyLocomotionArms(); ApplyResetRaise(); ApplyTagBody(); ApplySlideBody(); ApplyIntroductionPose(); ApplyEdgeRecoveryPose(); ApplyArrivalPose(); }
         }
 
         private void RestoreChargeOffsets()

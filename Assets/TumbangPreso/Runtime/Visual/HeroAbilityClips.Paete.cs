@@ -69,31 +69,43 @@ namespace TumbangPreso.Visual
 
         /// <summary>
         /// LIANA LEAP, 1.0 s, over the 0.12 s tell, the 0.14 s reach and the reel (about 0.28 s at
-        /// full range). A tree being DRAGGED, not a hero flying:
-        ///  * tell (0 to 0.12): the root sinks, the trunk coils back, both fists pulled in low at the
-        ///    hips, the palms glowing (`PaetePalmGlow`);
-        ///  * release (0.14, punch): both arms thrown straight along the aim TOGETHER, locked, the
-        ///    braids unravelling off them; the trunk only follows a beat later (arms first here,
-        ///    because the vines are what pull);
-        ///  * reel (0.3 to 0.56): hauled nearly flat, the trunk pitched 44 degrees, legs dragging
-        ///    behind like roots torn out of the ground;
-        ///  * arrival (0.70, punch): the legs swing through and plant, a heavy squash, and the arms
-        ///    FOLD BACK IN across the chest as the vines reel into the forearms;
+        /// full range). A tree being DRAGGED, not a hero flying.
+        ///
+        /// ⚠️ v2 (2026-10-07), FOR THE REDESIGN'S ELBOWS. Owner: *"rework all abilities to look more poppy,
+        /// lively and fit our current style"*, the concept kept. v1 was made for arms with no elbow: two
+        /// straight poles thrown out at one angle and held there. Every time below is v1's (the vines,
+        /// the reel and the network follow the rules' clock, not this clip); what changed is what the
+        /// body does inside them:
+        ///  * tell (0 to 0.12): a real COIL. He drops, the trunk winds back and round over his right
+        ///    side, both elbows fold tight and the fists come in to the chest, the head already on
+        ///    the target. A quarter of a second, so it is one big readable shape;
+        ///  * release (0.14, punch): a WHIP, not a push, and not both at once. The right arm cracks
+        ///    out first and the forearm grows with it (the vine leaving); the left follows a beat
+        ///    later (0.19) and both overshoot long before they settle;
+        ///  * reel (0.3 to 0.56): hauled nearly flat, legs flailing behind like roots torn out of the
+        ///    ground, and the elbows start to FOLD as the vines reel in: he is pulling himself along;
+        ///  * arrival (0.70, punch): the legs swing through and plant wide, a deep squash, the arms
+        ///    thrown down and back for balance;
+        ///  * rebound (0.80): up past standing, the arms hugged in as the last of the vine winds home;
         ///  * settle: he straightens like a trunk after the wind.
         /// </summary>
         private static AnimationClip BuildPaeteVine(Dictionary<string, string> paths)
         {
             var b = new ClipBuilder("hero-paete-vine", paths);
             PoseKey(b, 0, 0, V(0, 0, 0), V(0, 0, 0), PaeteRestLeft, PaeteRestRight);
-            PoseKey(b, .11f, -.07f, V(-10, 0, 0), V(-6, 0, 0), V(28, 8, 30), V(28, -8, -30), V(-10, 0, 6), V(10, 0, -6));
+            PoseKey(b, .05f, -.04f, V(-6, 6, 0), V(-2, -4, 0), V(16, 8, 26), V(22, -10, -30), V(-6, 0, 6), V(8, 0, -6), Fore(60), Fore(70));
+            PoseKey(b, .11f, -.10f, V(-16, 16, 0), V(-4, -12, 0), V(32, 12, 36), V(44, -14, -40), V(-16, 0, 8), V(18, 0, -8), Fore(112), Fore(124));
             b.PunchAt(.14f);
-            PoseKey(b, .14f, -.03f, V(6, 0, 0), V(-12, 0, 0), V(-108, 0, 5), V(-108, 0, -5), V(-6, 0, 6), V(12, 0, -6));
-            PoseKey(b, .30f, .07f, V(34, 0, 0), V(-24, 0, 0), V(-112, 0, 6), V(-112, 0, -6), V(34, 0, 6), V(44, 0, -6));
-            PoseKey(b, .56f, .09f, V(44, 0, 2), V(-30, 0, 0), V(-116, 2, 7), V(-116, -2, -7), V(46, 0, 8), V(54, 0, -8));
+            PoseKey(b, .14f, -.02f, V(8, -14, 0), V(-12, 6, 0), V(-36, 10, 22), V(-106, 0, -4), V(-8, 0, 6), V(14, 0, -6), Fore(76), Fore(6, 1.28f));
+            PoseKey(b, .19f, .02f, V(18, 4, 0), V(-18, 0, 0), V(-114, 0, 6), V(-120, 0, -6), V(4, 0, 6), V(22, 0, -6), Fore(0, 1.32f), Fore(0, 1.38f));
+            PoseKey(b, .30f, .08f, V(36, 0, 0), V(-26, 0, 0), V(-116, 0, 6), V(-114, 0, -6), V(40, 0, 8), V(52, 0, -8), Fore(4, 1.2f), Fore(4, 1.2f));
+            PoseKey(b, .43f, .10f, V(46, 0, 3), V(-30, 0, 0), V(-112, 4, 8), V(-116, -4, -8), V(54, 0, 10), V(38, 0, -10), Fore(30, 1.08f), Fore(24, 1.1f));
+            PoseKey(b, .56f, .08f, V(40, 0, -2), V(-24, 0, 0), V(-98, 8, 10), V(-102, -8, -10), V(12, 0, 8), V(-18, 0, -8), Fore(64), Fore(58));
             b.PunchAt(.70f);
             b.HoldAt(.70f, .06f);
-            PoseKey(b, .70f, -.09f, V(18, 0, 0), V(6, 0, 0), V(-60, 20, -10), V(-60, -20, 10), V(-22, 0, 8), V(14, 0, -8));
-            PoseKey(b, .84f, -.03f, V(-4, 0, 0), V(-2, 0, 0), V(-20, 8, 6), V(-20, -8, -6), V(-6, 0, 6), V(4, 0, -6));
+            PoseKey(b, .70f, -.13f, V(24, 0, 0), V(10, 0, 0), V(30, 24, 42), V(30, -24, -42), V(-32, 0, 12), V(24, 0, -12), Fore(38), Fore(38));
+            PoseKey(b, .80f, .03f, V(-9, 0, 0), V(-6, 0, 0), V(-12, 10, 24), V(-12, -10, -24), V(-6, 0, 7), V(4, 0, -7), Fore(58), Fore(58));
+            PoseKey(b, .90f, -.012f, V(3, 0, 0), V(1, 0, 0), V(4, 4, 18), V(4, -4, -18), V(-2, 0, 6), V(2, 0, -6), Fore(22), Fore(22));
             PoseKey(b, 1.0f, 0, V(0, 0, 0), V(0, 0, 0), PaeteRestLeft, PaeteRestRight);
             return b.Build();
         }
@@ -185,8 +197,10 @@ namespace TumbangPreso.Visual
         {
             var b = new ClipBuilder("hero-paete-sentry", paths);
             var legL = V(-54, 0, 7); var legR = V(30, 0, -7);
-            Vector3 L(float raise) => V(-raise, 14, 5);
-            Vector3 R(float raise) => V(-raise, -14, -5);
+            // 2026-10-08: straight down in front of him, as the cutscene's kneel now is (owner: "his arms are bent outwards");
+            // they were 14 and 5.
+            Vector3 L(float raise) => V(-raise, 2, 1);
+            Vector3 R(float raise) => V(-raise, -2, -1);
             PoseKey(b, 0, 0, V(20, 0, 0), V(-36, 0, 0), L(60), R(60), legL, legR);
             b.PunchAt(.05f);
             PoseKey(b, .05f, 0, V(38, 0, 0), V(18, 0, 0), L(82), R(82), legL, legR);

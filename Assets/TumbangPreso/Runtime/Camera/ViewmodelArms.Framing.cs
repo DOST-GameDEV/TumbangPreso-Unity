@@ -10,6 +10,23 @@ namespace TumbangPreso.CameraSystem
     public sealed partial class ViewmodelArms
     {
         public const float FixedViewmodelFov=95;
+        /// <summary>
+        /// ⚠️⚠️ THE HANDS ARE DRAWN OVER THE WORLD: THEY NEVER SINK INTO A WALL. Owner, 2026-10-06, with a picture of both arms
+        /// cut off by the wall he was facing: *"youre supposed to render separately and then overlay the hands"*. The arms
+        /// taken from the live models reach about 0.8 m ahead of the eye, further than the body keeps a wall away (its
+        /// capsule is 0.35 m), so against a wall the forearms were inside it.
+        ///
+        /// For its own camera the whole view model is therefore shrunk TOWARD THE EYE by this factor while it is drawn (the
+        /// lens it hangs from sits at the eye, so every point keeps its place on the screen exactly: a thing a third as far
+        /// and a third the size looks the same). Its furthest point is then about 0.33 m out, inside the body's own radius,
+        /// in front of anything the player can stand against, and the hands still hide each other and the held slipper
+        /// correctly because their own depth order is kept. No second camera, no layer, no change to the shaders; the
+        /// transforms are put back after the frame like the rest of the framing, so everything that reads where a hand IS
+        /// (a soul thread's start, Paete's lianas, Kuro leaving the sleeve) reads what it always did.
+        /// ⚠️ NOT SMALLER THAN THIS: the camera's near plane is 0.05 m, so a point nearer than 0.05 / DepthPull (0.12 m)
+        /// before the shrink is cut off. That is the arms' elbows, below the bottom of the screen.
+        /// </summary>
+        public const float DepthPull=.42f;
         private sealed class ViewSurface
         {
             public Renderer Renderer;public MaterialPropertyBlock Block;
@@ -134,6 +151,27 @@ namespace TumbangPreso.CameraSystem
             return left != null && right != null && left.gameObject.activeInHierarchy && right.gameObject.activeInHierarchy;
         }
 
+        /// <summary>
+        /// Where, in this view model's own space, a point must be for it to be DRAWN over the world point `world`. The view
+        /// model is not drawn where it stands: for its own camera it is lowered, shrunk, squeezed to a fixed lens and pulled
+        /// toward the eye (`BeginViewFrame`), so a hand that should reach a place in the world (Paete's arm growing to the
+        /// point his vine catches) has to be asked for through the same sums, backwards. Depth is kept true before the
+        /// pull, so nearer things in the view model still hide further ones.
+        /// </summary>
+        public Vector3 DrawnFromWorld(Vector3 world)
+        {
+            if(_viewCamera==null)_viewCamera=GetComponentInParent<Camera>();
+            if(_viewCamera==null)return transform.InverseTransformPoint(world);
+            float weight=Mathf.Clamp01(WorldCueProfile.Current.ViewmodelFraming);
+            float compensate=Mathf.Tan(_viewCamera.fieldOfView*Mathf.Deg2Rad*.5f)/Mathf.Tan(FixedViewmodelFov*Mathf.Deg2Rad*.5f);
+            float squeeze=Mathf.Lerp(1,compensate,weight);
+            Vector3 seen=_viewCamera.transform.InverseTransformPoint(world);
+            var lens=new Vector3(seen.x/Mathf.Max(.01f,squeeze),seen.y/Mathf.Max(.01f,squeeze),seen.z);
+            Vector3 at=transform.localPosition+Vector3.down*(.08f*weight);
+            float size=transform.localScale.x*Mathf.Lerp(1,.64f/CameraRig.ViewmodelScale,weight);
+            return Quaternion.Inverse(transform.localRotation)*((lens-at)/Mathf.Max(.0001f,size));
+        }
+
         private void OnEnable(){Camera.onPreCull+=BeginViewFrame;Camera.onPostRender+=EndViewFrame;}
         private void OnDisable()
         {
@@ -163,7 +201,7 @@ namespace TumbangPreso.CameraSystem
             {
                 float compensate=Mathf.Tan(camera.fieldOfView*Mathf.Deg2Rad*.5f)/Mathf.Tan(FixedViewmodelFov*Mathf.Deg2Rad*.5f);
                 float scale=Mathf.Lerp(1,compensate,weight);
-                _viewLens.localScale=Vector3.Scale(basis.LensScale,new Vector3(scale,scale,1));
+                _viewLens.localScale=Vector3.Scale(basis.LensScale,new Vector3(scale,scale,1))*DepthPull;
                 transform.localPosition=basis.Position+Vector3.down*(.08f*weight);
                 transform.localScale=basis.Scale*Mathf.Lerp(1,.64f/CameraRig.ViewmodelScale,weight);
             }

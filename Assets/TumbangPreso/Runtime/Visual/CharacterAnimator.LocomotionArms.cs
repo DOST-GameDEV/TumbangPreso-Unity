@@ -112,6 +112,7 @@ namespace TumbangPreso.Visual
                 switch (bone.name)
                 {
                     case "root": case "torso": case "head": case "arm-left": case "arm-right": case "leg-left": case "leg-right":
+                    case "forearm-left": case "forearm-right":
                         _bind[bone] = (bone.localRotation, bone.localPosition); break;
                 }
         }
@@ -129,6 +130,37 @@ namespace TumbangPreso.Visual
             if (_swingHead != null) _swingHead.localRotation = _swingHeadRest;
             if (_swingTorso != null) _swingTorso.localRotation = _swingTorsoRest;
             _swingApplied = false;
+        }
+
+        private float _idleArms;
+
+        /// <summary>Remembers where the clip left every bone the gait may pose, so `RestoreLocomotionArms` can put them back.</summary>
+        private void CaptureSwingRests()
+        {
+            _swingArmLRest = _swingArmL.localRotation; _swingArmRRest = _swingArmR.localRotation;
+            _swingLegLRest = _swingLegL.localRotation; _swingLegRRest = _swingLegR.localRotation;
+            if (_swingForeL != null) _swingForeLRest = _swingForeL.localRotation;
+            if (_swingForeR != null) _swingForeRRest = _swingForeR.localRotation;
+            if (_swingTorso != null) _swingTorsoRest = _swingTorso.localRotation;
+            if (_swingHead != null) _swingHeadRest = _swingHead.localRotation;
+            if (_swingRoot != null) { _swingRootPosRest = _swingRoot.localPosition; _swingRootRotRest = _swingRoot.localRotation; }
+            _swingApplied = true;
+        }
+
+        /// <summary>
+        /// The standing arms: hung at the style's spread with a slow breath in them, each arm on its own beat, over
+        /// whatever the idle clip did with them. The carrying arm is left to its carry pose.
+        /// </summary>
+        private void PoseIdleArms(bool carrying)
+        {
+            float weight = _idleArms * .9f;
+            float sideL = SideOf(_swingArmL, -1f), sideR = SideOf(_swingArmR, 1f);
+            float breathL = Mathf.Sin(Time.time * .9f) * 1.6f, breathR = Mathf.Sin(Time.time * .9f + 1.4f) * 1.6f;
+            PoseLimb(_swingArmL, _alongL, sideL, _gaitStyle.IdleArmForward + breathL, _gaitStyle.IdleArmSpread + breathL * .6f, weight);
+            PoseElbow(_swingForeL, _foreAlongL, _swingArmL, _alongL, sideL, _gaitStyle.IdleElbow + breathL * 2f, weight);
+            if (carrying) return;
+            PoseLimb(_swingArmR, _alongR, sideR, _gaitStyle.IdleArmForward + breathR, _gaitStyle.IdleArmSpread + breathR * .6f, weight);
+            PoseElbow(_swingForeR, _foreAlongR, _swingArmR, _alongR, sideR, _gaitStyle.IdleElbow + breathR * 2f, weight);
         }
 
         private void ClearLocomotionArms()
@@ -158,7 +190,21 @@ namespace TumbangPreso.Visual
             float target = ordinary ? Mathf.Clamp01((FlatSpeed - WalkSpeedThreshold) / .8f) : 0f;
             // Handing over to an authored action is quick; easing back in takes a moment.
             _armSwingAmount = Mathf.MoveTowards(_armSwingAmount, target, dt / (ordinary ? .15f : HandOverSeconds));
-            if (_armSwingAmount <= .001f) { StrideSwing = 0; StanceSide = 0; FootPlantDrop = 0; return; }
+            // STANDING: the arms brought down from the idle clip's pose (`GaitStyle.IdleArmSpread`), eased in and out so
+            // the first step and the stop are not a jump.
+            bool standing = _current == Idle && _gaitStyle.IdleArmSpread > 0f && _motor.IsGrounded && !_motor.IsSwimming && !_motor.IsStunned
+                && !_motor.IsTripped && _oneShotLeft <= 0 && !_chargePosing && _throwReleaseTime < 0 && _throwCancelTime < 0
+                && _introductionBones == null && (_emote == null || !_emote.IsEmoting)
+                && (_carrier == null || _carrier.ChannelRatio <= 0) && !_motor.IsEdgeRecovering;
+            _idleArms = Mathf.MoveTowards(_idleArms, standing ? 1f : 0f, dt / .3f);
+            if (_armSwingAmount <= .001f)
+            {
+                StrideSwing = 0; StanceSide = 0; FootPlantDrop = 0;
+                if (_idleArms <= .001f) return;
+                CaptureSwingRests();
+                PoseIdleArms(_motor.HoldingSlipper);
+                return;
+            }
 
             float cycleRate = FlatSpeed / Mathf.Max(.1f, FootfallCycleMetres);
             var pose = _gaitStyle.Evaluate(_gaitPhase, _runWeight, Time.time, cycleRate);
@@ -167,15 +213,9 @@ namespace TumbangPreso.Visual
             StanceSide = pose.Stance * amount;
             bool carrying = _motor.HoldingSlipper;
 
-            _swingArmLRest = _swingArmL.localRotation; _swingArmRRest = _swingArmR.localRotation;
-            _swingLegLRest = _swingLegL.localRotation; _swingLegRRest = _swingLegR.localRotation;
-            if (_swingForeL != null) _swingForeLRest = _swingForeL.localRotation;
-            if (_swingForeR != null) _swingForeRRest = _swingForeR.localRotation;
-            if (_swingTorso != null) _swingTorsoRest = _swingTorso.localRotation;
-            if (_swingHead != null) _swingHeadRest = _swingHead.localRotation;
-            if (_swingRoot != null) { _swingRootPosRest = _swingRoot.localPosition; _swingRootRotRest = _swingRoot.localRotation; }
-            _swingApplied = true;
+            CaptureSwingRests();
 
+            if (_idleArms > .001f) PoseIdleArms(carrying);
             // Back to the bind pose first, so nothing the shared clip keyed (its lean, its chest yaw, its root lift) survives
             // under the character's own gait. The body's answer to acceleration (`_locomotionLean`, the weight layer) is kept.
             ToBind(_swingRoot, amount, true);

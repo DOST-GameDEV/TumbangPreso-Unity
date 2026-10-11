@@ -1,3 +1,8 @@
+### QOL-INTEGRATION-1011: combined authored and engineering work
+
+- [x] Integrate QoLUpdates eb2dc1556 into ASTRAReworks with combined protocol159, retained login timing, pose/replay/AI/ground fixes and incoming movement/map/character/Paete work. Native21/21 targeted controls pass; all22,351 inputs/preferences restore and private3files remain unchanged. [Exact integration evidence](reports/qol-integration-2026-10-11/README.md).
+- [ ] Combined player/peer/full-match and performance acceptance remain open; this merge creates no extra build or Desktop replacement.
+
 ### AI-UNAVAILABLE-EMOTE-1009: no pause for unavailable motion
 
 - [x] Reproduce actual StepSocial consuming the frame/clearing movement while EmotePlayer refuses unavailable rig motion. Preflight clip availability before holding; native6 controls pass for missing/playable/pending delivery and3 lesson eligibility cases, all21,455 inputs/preferences restore. Existing250ms playable network grace and authored clips remain. [Original failure and scoped evidence](reports/ai-unavailable-emote-2026-10-09/README.md).

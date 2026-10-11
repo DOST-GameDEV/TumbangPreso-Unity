@@ -1,0 +1,172 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace TumbangPreso.Visual
+{
+    public sealed partial class HeroIntroductionScene
+    {
+        // =========================================================================================
+        // ILYAS, BREAKWATER, 3.4 s. plan.md § 7.
+        //
+        // "Draws you into the wrong current. Leaves with his slipper." He grew up in a Sama Dilaut
+        // community in Tawi-Tawi where the playing deck was also the way home (BADJAO_EXPANSION.md),
+        // and he likes making a rival commit too early. So the stage is his sea: a turquoise horizon
+        // with stilt houses standing over the water, a ripple at his feet on each feint (the false
+        // step), currents gathering at his palms when he drops into the boat-deck crouch, and a
+        // wave that climbs up behind him and pitches forward over his shoulders on the send.
+        //
+        // ⚠️ THE STILT HOUSES DO NOT BOB. Fixed houses stand on piles; only boats float (owner's
+        // lagoon correction, AGENTS.md). They are silhouettes on the far wall, nothing more.
+        // =========================================================================================
+        private int _seaLow, _foamLine, _seaSky, _wave, _waveCrest;
+        private readonly List<int> _stilts = new List<int>(16), _ripples = new List<int>(3), _currents = new List<int>(4), _spray = new List<int>(6);
+        private static readonly float[] RafiSteps = { .16f, .46f, 1.12f };
+
+        private void BuildRafi()
+        {
+            _seaLow = Wall("SeaGround", 0, 1.0f, new Color(.04f, .22f, .25f, .88f), emission: .1f);
+            _foamLine = Wall("SeaHorizonFoam", 1.0f, 1.07f, new Color(.9f, .97f, .95f, .85f), emission: .5f);
+            _seaSky = Wall("SeaSky", 1.07f, 11, new Color(.55f, .78f, .76f, .6f), emission: .3f, cap: true);
+            for (int i = 0; i < 4; i++)
+            {
+                _stilts.Add(Add("StiltHouse" + i, VfxShapes.Prism(4, 1, .8f), new Color(.10f,.28f,.28f,.62f), emission:0, plain:true));
+                _stilts.Add(Add("StiltRoof" + i, VfxShapes.Prism(4, 1, .05f), new Color(.08f,.22f,.23f,.68f), emission:0, plain:true));
+                _stilts.Add(Add("StiltPileA" + i, VfxShapes.Prism(4, 1, 1), new Color(.08f,.22f,.23f,.68f), emission:0, plain:true));
+                _stilts.Add(Add("StiltPileB" + i, VfxShapes.Prism(4, 1, 1), new Color(.08f,.22f,.23f,.68f), emission:0, plain:true));
+            }
+            for (int i = 0; i < 3; i++) _ripples.Add(Add("FalseStepRipple" + i, VfxShapes.Collar(24, .02f, .82f), new Color(.6f, .9f, .92f, .7f)));
+            for (int i = 0; i < 4; i++) _currents.Add(Add("GatheredCurrent" + i, WaterRibbon(), new Color(.25f, .67f, .78f, .5f)));
+            _wave = Add("BreakwaterWave", ArcWallMesh(18, 120), Color.white);
+            _pieces[_wave].Renderer.sharedMaterial.SetFloat("_UseVertexColour", 1);
+            _pieces[_wave].Renderer.sharedMaterial.SetFloat("_UseVertexTint", 1);
+            _waveCrest = Add("BreakwaterCrest", ArcCrestMesh(18, 120), new Color(.88f, .97f, .96f, .9f));
+            _pieces[_waveCrest].Renderer.sharedMaterial.SetFloat("_UseVertexTint", 1);
+            for (int i = 0; i < 6; i++) _spray.Add(Add("SendSpray" + i, VfxShapes.TwoSided(VfxShapes.Splat(8, .3f, 60 + i)), new Color(.85f, .96f, .95f, .85f), plain: true));
+        }
+
+        /// <summary>An arc of wall behind the hero, open toward the camera side: the wave's face.</summary>
+        private static Mesh ArcWallMesh(int sides, float arcDegrees)
+        {
+            var mesh=new Mesh {name="Ilyas rolled wave"};
+            float[] heights={0,.34f,.70f,.94f,1,.93f,.79f};
+            float[] radii={1,.99f,.90f,.74f,.53f,.45f,.56f};
+            Color[] bands={new Color(.10f,.34f,.38f,.08f),new Color(.12f,.45f,.49f,.25f),
+                new Color(.16f,.58f,.61f,.40f),new Color(.35f,.73f,.72f,.50f),
+                new Color(.72f,.91f,.84f,.72f),new Color(.48f,.79f,.76f,.48f),new Color(.16f,.53f,.57f,.18f)};
+            const int rows=7;
+            var vertices=new Vector3[(sides+1)*rows];var uv=new Vector2[vertices.Length];var colours=new Color[vertices.Length];
+            var triangles=new int[sides*(rows-1)*6];int at=0;
+            for(int i=0;i<=sides;i++)
+            {
+                float u=i/(float)sides,a=Mathf.Deg2Rad*(180-arcDegrees*.5f+arcDegrees*u);
+                var rim=new Vector3(Mathf.Sin(a),0,Mathf.Cos(a));
+                for(int row=0;row<rows;row++)
+                {
+                    vertices[i*rows+row]=rim*radii[row]+Vector3.up*(heights[row]*WaveLipHeight(u));
+                    uv[i*rows+row]=new Vector2(u,heights[row]);
+                    colours[i*rows+row]=bands[row];
+                    colours[i*rows+row].a*=Mathf.Sin(Mathf.PI*u);
+                    if(i==sides||row==rows-1)continue;
+                    int n=i*rows+row,w=n+rows;
+                    // RafiWater is Cull Off: one winding, not two coplanar draws.
+                    triangles[at++]=n;triangles[at++]=w;triangles[at++]=n+1;
+                    triangles[at++]=w;triangles[at++]=w+1;triangles[at++]=n+1;
+                }
+            }
+            mesh.vertices=vertices;mesh.colors=colours;mesh.uv=uv;mesh.triangles=triangles;
+            mesh.RecalculateNormals();mesh.RecalculateBounds();return mesh;
+        }
+        private static float WaveLipHeight(float u)
+            => 1-.44f*Mathf.Pow(Mathf.Abs(2*u-1),1.5f)+.045f*Mathf.Sin(u*Mathf.PI*5);
+
+        private static Mesh ArcCrestMesh(int sides,float arcDegrees)
+        {
+            var mesh=new Mesh {name="Ilyas rolled crest"};
+            var vertices=new Vector3[(sides+1)*2];var triangles=new int[sides*6];var colours=new Color[vertices.Length];
+            for(int i=0;i<=sides;i++)
+            {
+                float a=Mathf.Deg2Rad*(180-arcDegrees*.5f+arcDegrees*i/sides);
+                var rim=new Vector3(Mathf.Sin(a),0,Mathf.Cos(a));
+                float u=i/(float)sides,height=WaveLipHeight(u);
+                colours[i*2]=colours[i*2+1]=new Color(1,1,1,Mathf.Sin(Mathf.PI*u));
+                vertices[i*2]=rim*.55f+Vector3.up*(height*.998f);
+                vertices[i*2+1]=rim*.49f+Vector3.up*(height*.97f);
+                if(i==sides)continue;int n=i*2,t=i*6;
+                triangles[t]=n;triangles[t+1]=n+2;triangles[t+2]=n+1;
+                triangles[t+3]=n+2;triangles[t+4]=n+3;triangles[t+5]=n+1;
+            }
+            mesh.vertices=vertices;mesh.colors=colours;mesh.triangles=triangles;mesh.RecalculateNormals();mesh.RecalculateBounds();return mesh;
+        }
+
+        private void SampleRafi(float t)
+        {
+            float leave = 1 - Ease(Seconds - .45f, Seconds - .05f, t);
+            // The sea comes in with the beckon: he is inviting you onto his water.
+            float sea = Ease(.85f, 1.5f, t) * leave;
+            Tint(_seaLow, sea); Tint(_foamLine, sea); Tint(_seaSky, sea);
+            for (int i = 0; i < 4; i++)
+            {
+                float angle = (180 - 55 + i * 34) * Mathf.Deg2Rad;
+                var at = new Vector3(Mathf.Sin(angle) * 7.3f, 0, Mathf.Cos(angle) * 7.3f);
+                var face = Quaternion.LookRotation(-at.normalized, Vector3.up);
+                float stand = sea;
+                // Two piles from the water up to the floor, the house, then a hipped roof. The first
+                // pass started the piles 0.6 m above the water; the stage sketch caught it.
+                var across = face * Vector3.right * .45f;
+                Place(_stilts[i * 4 + 2], at - across, new Vector3(.07f, 1.3f, .07f), face, stand);
+                Place(_stilts[i * 4 + 3], at + across, new Vector3(.07f, 1.3f, .07f), face, stand);
+                Place(_stilts[i * 4], at + Vector3.up * 1.3f, new Vector3(.8f, .6f, .6f), face * Quaternion.Euler(0, 45, 0), stand);
+                Place(_stilts[i * 4 + 1], at + Vector3.up * 1.9f, new Vector3(.9f, .42f, .68f), face * Quaternion.Euler(0, 45, 0), stand);
+            }
+
+            // Every false step leaves a ripple at his feet.
+            for (int i = 0; i < _ripples.Count; i++)
+            {
+                float age = t - RafiSteps[i], u = Mathf.Clamp01(age / .5f);
+                Place(_ripples[i], Vector3.up * .02f, Vector3.one * Mathf.Lerp(.3f, 1.3f, u), Quaternion.identity, age >= 0 ? (1 - u) * .8f * leave : 0);
+            }
+
+            // Currents gather at his palms in the deck crouch.
+            float current = Ease(1.55f, 1.9f, t) * (1 - Ease(2.3f, 2.5f, t));
+            for (int i = 0; i < _currents.Count; i++)
+            {
+                float angle = i * Mathf.PI * .5f + t * 2.2f;
+                var palm = i % 2 == 0 ? FreePalm : RightPalm;
+                var origin = palm + new Vector3(Mathf.Cos(angle) * .12f, .02f + i * .02f, Mathf.Sin(angle) * .12f);
+                Place(_currents[i], origin, Vector3.one * Mathf.Lerp(.25f, .7f, current), Quaternion.Euler(8, i * 90 + t * 60, 18), current * leave);
+            }
+
+            // The wave climbs behind him as he lifts his arms, then pitches over on the send.
+            float climb = Ease(2.0f, 2.75f, t);
+            float pitch = Ease(2.88f, 3.2f, t);
+            float height = Mathf.Lerp(.05f, 2.7f, climb);
+            var waveTilt = Quaternion.Euler(-pitch * 28, 0, 0);
+            var wavePos = new Vector3(0, 0, -.2f + pitch * .8f);
+            Place(_wave, wavePos, new Vector3(2.4f, height, 2.4f), waveTilt, climb * leave * (1 - pitch * .35f));
+            Place(_waveCrest, wavePos, new Vector3(2.4f, height, 2.4f), waveTilt,
+                climb * leave);
+            for (int i = 0; i < _spray.Count; i++)
+            {
+                float age = t - 2.92f, u = Mathf.Clamp01(age / .4f);
+                float x = (i - 2.5f) * .45f;
+                var at = new Vector3(x, 2.2f + u * .4f - u * u * .9f, .2f + u * 2.4f);
+                Place(_spray[i], at, Vector3.one * (.18f + u * .12f), Quaternion.Euler(-70, i * 30, 0), age >= 0 ? (1 - u) * leave : 0);
+            }
+        }
+
+        private static Mesh WaterRibbon()
+        {
+            var mesh = new Mesh { name = "Ilyas cupped current ribbon" }; var vertices = new Vector3[26]; var triangles = new int[72];
+            for (int i = 0; i < 13; i++)
+            {
+                float t = i / 12f, a = t * 2.1f;
+                var point = new Vector3(Mathf.Sin(a) * .28f, t * .4f, Mathf.Cos(a) * .28f);
+                vertices[i * 2] = point - Vector3.up * .035f; vertices[i * 2 + 1] = point + Vector3.up * .035f;
+                if (i == 12) continue; int n = i * 2, j = i * 6;
+                int[] faces = { n, n + 2, n + 1, n + 2, n + 3, n + 1 };
+                for (int k = 0; k < 6; k++) triangles[j + k] = faces[k];
+            }
+            mesh.vertices = vertices; mesh.triangles = triangles; mesh.RecalculateNormals(); mesh.RecalculateBounds(); return mesh;
+        }
+    }
+}

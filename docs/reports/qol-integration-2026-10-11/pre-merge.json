@@ -1,0 +1,13 @@
+{
+  "head": "a77301ae5d5d6f357b61221a9d27c3d91f64d07b",
+  "astra": "a77301ae5d5d6f357b61221a9d27c3d91f64d07b",
+  "qol": "eb2dc155664cbbf778da34dff57706f045429998",
+  "base": "0d47e76df7af09f41d7c01b7b5811edf4c04b8f2",
+  "changedFiles": 1503,
+  "dirtyHashes": {
+    "Assets/TumbangPreso/Tests/PlayMode/ArrivalViewOwnershipTests.cs": "c75ee419a0c1ebb8055ab3beb98869a84483802803efca8f7db17f5bfcb06995",
+    "ProjectSettings/ProjectAuditorSettings.asset": "22c699d7b424bd59053e552e6c358d9cca02d0663c276ec46ea0d0bd96651d85",
+    "tools/build_yasmin_benguet_voxel.py": "927efb43646ccc9193733de5e5709d92ec8653649111ecf047e8ed6841a6da39"
+  },
+  "incomingDirtyOverlap": []
+}

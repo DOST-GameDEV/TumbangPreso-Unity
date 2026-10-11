@@ -28,6 +28,23 @@ namespace TumbangPreso.Visual
             string name = string.IsNullOrEmpty(modelName) ? "" : modelName.Replace("(Clone)", "").Trim();
             // ⚠️ A REDESIGN PROTOTYPE WALKS AS ITS HERO. Its glb is `<id>-redesign`, which matched nothing below, so all seven
             // redesigned heroes fell through to `Custom` and walked the same walk (found 2026-10-05).
+            // The Classic redesigns are named by the PERSON (`bayan-redesign`), where their old rigs were named by the
+            // shared body (`character-male-f`): each goes to its own entry here, or it would walk the `Custom` gait.
+            switch (name)
+            {
+                case "bayan-redesign": return Bayan;
+                case "maring-redesign": return Maring;
+                case "totoy-redesign": return Totoy;
+                case "inday-redesign": return Inday;
+                case "kuya_boy-redesign": return KuyaBoy;
+                case "ate_girlie-redesign": return AteGirlie;
+                case "tikboy-redesign": return Tikboy;
+                case "bebang-redesign": return Bebang;
+                case "jun_jun-redesign": return JunJun;
+                case "lola_pacing-redesign": return LolaPacing;
+                case "mang_kanor-redesign": return MangKanor;
+                case "aling_nena-redesign": return AlingNena;
+            }
             if (name.EndsWith("-redesign")) name = "team-" + name.Substring(0, name.Length - "-redesign".Length);
             switch (name)
             {
@@ -375,13 +392,18 @@ namespace TumbangPreso.Visual
         public static readonly GaitStyle Paete = new GaitStyle
         {
             Name = "paete",
+            // Standing: the long arms hang close, heavy, a little ahead of him and bent at the elbow, not held out.
+            IdleArmSpread = 11, IdleArmForward = 6, IdleElbow = 20,
             Walk = new Gait
             {
                 LegForward = 38, LegBack = 34, LegSnap = .6f, Stance = 5,
                 ArmSpread = 15, ArmForward = 18, ArmBack = 16, ArmCarry = 3, ArmSnap = .8f, ArmLag = .1f,
                 Lean = 4, LeanPulse = 2.5f, Roll = 5.5f, RollDelay = .1f, Twist = 2,
                 HeadPitch = 2, HeadNod = 3, HeadSteady = .4f, Sway = .075f, Stomp = .07f, Glide = 1.02f,
-                Elbow = 6, ElbowPump = 6,   // elbows (redesign rig only): long heavy boughs that hardly fold
+                // Elbows (redesign rig only). 6 and 6 at first, as boughs that hardly fold: with arms this long that left two
+                // straight poles held out from the trunk. Owner, 2026-10-06: "paete's walk/run looks like he's A-posing all
+                // the time". So they hang BENT, heavy from the elbow, and pump as each comes forward.
+                Elbow = 24, ElbowPump = 12,
             },
             Run = new Gait
             {
@@ -389,7 +411,7 @@ namespace TumbangPreso.Visual
                 ArmSpread = 16, ArmForward = 30, ArmBack = 28, ArmCarry = 4, ArmSnap = .85f, ArmLag = .09f,
                 Lean = 9, LeanPulse = 3, Roll = 4, RollDelay = .08f, Twist = 3,
                 HeadPitch = 1, HeadNod = 3, HeadSteady = .5f, Bounce = .02f, Sway = .05f, Stomp = .07f, Glide = 1.05f,
-                Elbow = 20, ElbowPump = 8,
+                Elbow = 42, ElbowPump = 16,
             },
             Quirk = (ref GaitPose p, in GaitMoment m) =>
             {
@@ -535,12 +557,14 @@ namespace TumbangPreso.Visual
                 LegForward = 42, LegBack = 38, LegSnap = 1, Stance = 2,
                 ArmSpread = 18, ArmForward = 30, ArmBack = 22, ArmCarry = 2, ArmSnap = 1, ArmLag = 0.114f,
                 Lean = 3, Roll = 3, Twist = 5, HeadSteady = .8f, Bounce = .02f, Sway = .03f, Glide = 1.37f,
+                Elbow = 14, ElbowPump = 6,   // elbows (redesign rig only): a heavy man's arms, low fists when he runs
             },
             Run = new Gait
             {
                 LegForward = 54, LegBack = 50, LegSnap = 1, Stance = 1,
                 ArmSpread = 16, ArmForward = 58, ArmBack = 42, ArmCarry = 12, ArmSnap = 1, ArmLag = 0.076f,
                 Lean = 12, Roll = 1.5f, Twist = 8, HeadPitch = -2, HeadSteady = .8f, Bounce = .045f, BounceDelay = .05f, Sway = .015f, Glide = 1.4f,
+                Elbow = 58, ElbowPump = 10,
             },
         };
 
@@ -553,12 +577,14 @@ namespace TumbangPreso.Visual
                 LegForward = 38, LegBack = 34, LegSnap = 1.15f, Stance = -1,
                 ArmSpread = 17, ArmForward = 28, ArmBack = 18, ArmCarry = 5, ArmSnap = 1, ArmLag = 0.114f,
                 Lean = 2, Roll = 3.5f, Twist = 5, HeadTilt = 2, HeadNod = 1.5f, HeadSteady = .5f, Bounce = .035f, Sway = .05f, Glide = 1.39f,
+                Elbow = 20, ElbowPump = 16,   // elbows (redesign rig only): brisk and bouncy; a runner's tight arms
             },
             Run = new Gait
             {
                 LegForward = 50, LegBack = 46, LegSnap = 1.2f, Stance = 0,
                 ArmSpread = 20, ArmForward = 44, ArmBack = 34, ArmCarry = 6, ArmSnap = 1, ArmLag = 0.095f,
                 Lean = 9, Roll = 2, Twist = 6, HeadSteady = .6f, Bounce = .07f, BounceDelay = .06f, Sway = .02f, Glide = 1.39f,
+                Elbow = 78, ElbowPump = 16,
             },
         };
 
@@ -571,12 +597,14 @@ namespace TumbangPreso.Visual
                 LegForward = 40, LegBack = 38, LegSnap = 1.3f, Stance = 2,
                 ArmSpread = 20, ArmForward = 40, ArmBack = 34, ArmCarry = 0, ArmSnap = 1.1f, ArmLag = 0.057f,
                 Lean = 3, Roll = 3, Twist = 7, HeadNod = 4, HeadSteady = .3f, Bounce = .06f, Sway = .03f, Glide = 1.15f,
+                Elbow = 16, ElbowPump = 20,   // elbows (redesign rig only): all energy; the run flails
             },
             Run = new Gait
             {
                 LegForward = 54, LegBack = 52, LegSnap = 1.3f, Stance = 3,
                 ArmSpread = 26, ArmForward = 60, ArmBack = 56, ArmCarry = 4, ArmSnap = 1.2f, ArmLag = 0.038f,
                 Lean = 10, Roll = 3, Twist = 10, HeadNod = 3, HeadSteady = .3f, Bounce = .08f, BounceDelay = .04f, Sway = .03f, Glide = 1.19f,
+                Elbow = 60, ElbowPump = 30,
             },
         };
 
@@ -589,12 +617,14 @@ namespace TumbangPreso.Visual
                 LegForward = 36, LegBack = 34, LegSnap = 1.2f, Stance = -2,
                 ArmSpread = 16, ArmForward = 30, ArmBack = 24, ArmCarry = 3, ArmSnap = 1, ArmLag = 0.095f,
                 Lean = 2, Roll = 2.5f, Twist = 4, HeadTilt = 4, HeadNod = 2, HeadSteady = .5f, Bounce = .05f, BounceDelay = .03f, Sway = .03f, Glide = 1.35f,
+                Elbow = 22, ElbowPump = 16,   // elbows (redesign rig only): a skip in it, hands light
             },
             Run = new Gait
             {
                 LegForward = 50, LegBack = 48, LegSnap = 1.2f, Stance = 0,
                 ArmSpread = 18, ArmForward = 46, ArmBack = 40, ArmCarry = 6, ArmSnap = 1, ArmLag = 0.076f,
                 Lean = 10, Roll = 1.5f, Twist = 6, HeadTilt = 2, HeadSteady = .6f, Bounce = .075f, BounceDelay = .05f, Sway = .015f, Glide = 1.37f,
+                Elbow = 64, ElbowPump = 14,
             },
         };
 
@@ -607,12 +637,14 @@ namespace TumbangPreso.Visual
                 LegForward = 40, LegBack = 36, LegSnap = .95f, Stance = 3,
                 ArmSpread = 18, ArmForward = 20, ArmBack = 18, ArmCarry = -2, ArmSnap = .9f, ArmLag = 0.12f,
                 Lean = -1.5f, Roll = 4, RollDelay = .05f, Twist = 4, HeadTilt = -3, HeadSteady = .6f, Sway = .05f, Glide = 1.52f,
+                Elbow = 10, ElbowPump = 6,   // elbows (redesign rig only): laid back, arms loose and late
             },
             Run = new Gait
             {
                 LegForward = 52, LegBack = 48, LegSnap = 1, Stance = 2,
                 ArmSpread = 18, ArmForward = 48, ArmBack = 38, ArmCarry = 8, ArmSnap = 1, ArmLag = 0.114f,
                 Lean = 10, Roll = 2, Twist = 7, HeadTilt = -1, HeadSteady = .7f, Bounce = .03f, Sway = .02f, Glide = 1.51f,
+                Elbow = 48, ElbowPump = 10,
             },
         };
 
@@ -625,12 +657,14 @@ namespace TumbangPreso.Visual
                 LegForward = 38, LegBack = 32, LegSnap = 1.1f, Stance = -2.5f,
                 ArmSpread = 15, ArmForward = 20, ArmBack = 14, ArmCarry = 4, ArmSnap = 1, ArmLag = 0.12f,
                 Lean = 0, Roll = 3.5f, RollDelay = .04f, Twist = 4, HeadPitch = -3, HeadSteady = .8f, Bounce = .01f, Sway = .06f, Glide = 1.5f,
+                Elbow = 18, ElbowPump = 8,   // elbows (redesign rig only): composed and neat, elbows tucked
             },
             Run = new Gait
             {
                 LegForward = 48, LegBack = 44, LegSnap = 1.1f, Stance = -1,
                 ArmSpread = 18, ArmForward = 40, ArmBack = 30, ArmCarry = 6, ArmSnap = 1, ArmLag = 0.095f,
                 Lean = 9, Roll = 2, Twist = 5, HeadPitch = -3, HeadSteady = .8f, Bounce = .04f, Sway = .02f, Glide = 1.54f,
+                Elbow = 70, ElbowPump = 10,
             },
         };
 
@@ -643,12 +677,14 @@ namespace TumbangPreso.Visual
                 LegForward = 34, LegBack = 34, LegSnap = 1.2f, Stance = 3,
                 ArmSpread = 18, ArmForward = 24, ArmBack = 24, ArmCarry = 6, ArmSnap = 1.1f, ArmLag = 0.076f,
                 Lean = 7, Roll = 2.5f, Twist = 5, HeadPitch = -6, HeadSteady = .5f, Bounce = .02f, Sway = .03f, Glide = 1.23f,
+                Elbow = 26, ElbowPump = 10,   // elbows (redesign rig only): a hunched sneak, fists carried forward
             },
             Run = new Gait
             {
                 LegForward = 48, LegBack = 46, LegSnap = 1.3f, Stance = 3,
                 ArmSpread = 20, ArmForward = 44, ArmBack = 40, ArmCarry = 6, ArmSnap = 1.2f, ArmLag = 0.057f,
                 Lean = 15, Roll = 2, Twist = 7, HeadPitch = -8, HeadSteady = .6f, Bounce = .05f, BounceDelay = .03f, Sway = .02f, Glide = 1.25f,
+                Elbow = 40, ElbowPump = 12,
             },
         };
 
@@ -661,12 +697,14 @@ namespace TumbangPreso.Visual
                 LegForward = 42, LegBack = 38, LegSnap = 1.1f, Stance = 2,
                 ArmSpread = 18, ArmForward = 32, ArmBack = 26, ArmCarry = 3, ArmSnap = 1, ArmLag = 0.095f,
                 Lean = 3, Roll = 3, Twist = 7, HeadSteady = .7f, Bounce = .03f, Sway = .035f, Glide = 1.3f,
+                Elbow = 16, ElbowPump = 10,   // elbows (redesign rig only): springy stomp, square elbows flat out
             },
             Run = new Gait
             {
                 LegForward = 56, LegBack = 52, LegSnap = 1.1f, Stance = 1,
                 ArmSpread = 16, ArmForward = 58, ArmBack = 46, ArmCarry = 12, ArmSnap = 1.1f, ArmLag = 0.057f,
                 Lean = 13, Roll = 1.5f, Twist = 9, HeadPitch = -2, HeadSteady = .8f, Bounce = .05f, BounceDelay = .05f, Sway = .015f, Glide = 1.34f,
+                Elbow = 72, ElbowPump = 14,
             },
         };
 
@@ -679,12 +717,14 @@ namespace TumbangPreso.Visual
                 LegForward = 36, LegBack = 34, LegSnap = .95f, Stance = 2,
                 ArmSpread = 15, ArmForward = 12, ArmBack = 10, ArmCarry = 0, ArmSnap = .9f, ArmLag = 0.12f,
                 Lean = 3, Roll = 3.5f, RollDelay = .08f, Twist = 2, HeadPitch = 6, HeadSteady = .3f, Sway = .04f, Glide = 1.63f,
+                Elbow = 6, ElbowPump = 4,   // elbows (redesign rig only): the sleepy kid, arms hanging and left behind
             },
             Run = new Gait
             {
                 LegForward = 52, LegBack = 48, LegSnap = 1, Stance = 2,
                 ArmSpread = 18, ArmForward = 32, ArmBack = 28, ArmCarry = 2, ArmSnap = 1, ArmLag = 0.12f,
                 Lean = 8, Roll = 2.5f, Twist = 4, HeadPitch = 3, HeadSteady = .4f, Bounce = .02f, Sway = .03f, Glide = 1.59f,
+                Elbow = 30, ElbowPump = 16,
             },
         };
 
@@ -700,12 +740,14 @@ namespace TumbangPreso.Visual
                 LegForward = 30, LegBack = 28, LegSnap = .9f, Stance = 3,
                 ArmSpread = 14, ArmForward = 10, ArmBack = 8, ArmCarry = 8, ArmSnap = 1, ArmLag = 0.12f,
                 Lean = 11, Roll = 2, Twist = 2, HeadPitch = -9, HeadSteady = .3f, Sway = .035f, Glide = 1.53f,
+                Elbow = 28, ElbowPump = 6,   // elbows (redesign rig only): hands carried, a tucked-elbow hustle
             },
             Run = new Gait
             {
                 LegForward = 44, LegBack = 40, LegSnap = 1, Stance = 3,
                 ArmSpread = 16, ArmForward = 26, ArmBack = 20, ArmCarry = 12, ArmSnap = 1, ArmLag = 0.114f,
                 Lean = 15, Roll = 2, Twist = 3, HeadPitch = -11, HeadSteady = .3f, Bounce = .01f, Sway = .03f, Glide = 1.54f,
+                Elbow = 52, ElbowPump = 8,
             },
         };
 
@@ -718,12 +760,14 @@ namespace TumbangPreso.Visual
                 LegForward = 40, LegBack = 36, LegSnap = .8f, Stance = 5,
                 ArmSpread = 22, ArmForward = 20, ArmBack = 16, ArmCarry = 0, ArmSnap = .9f, ArmLag = 0.12f,
                 Lean = -3, Roll = 4.5f, RollDelay = .05f, Twist = 3, HeadPitch = -1, HeadSteady = .6f, Sway = .06f, Stomp = .015f, Glide = 1.52f,
+                Elbow = 12, ElbowPump = 8,   // elbows (redesign rig only): belly first, loose late arms; a huffing jog
             },
             Run = new Gait
             {
                 LegForward = 44, LegBack = 40, LegSnap = .9f, Stance = 5,
                 ArmSpread = 24, ArmForward = 36, ArmBack = 30, ArmCarry = 6, ArmSnap = 1, ArmLag = 0.12f,
                 Lean = 6, Roll = 3.5f, Twist = 4, HeadPitch = -2, HeadNod = 2, HeadSteady = .5f, Bounce = .03f, Sway = .045f, Stomp = .02f, Glide = 1.69f,
+                Elbow = 62, ElbowPump = 12,
             },
         };
 
@@ -736,12 +780,14 @@ namespace TumbangPreso.Visual
                 LegForward = 36, LegBack = 34, LegSnap = 1.1f, Stance = 1,
                 ArmSpread = 17, ArmForward = 26, ArmBack = 20, ArmCarry = 5, ArmSnap = 1.1f, ArmLag = 0.076f,
                 Lean = 5, Roll = 2.5f, Twist = 5, HeadPitch = -1, HeadSteady = .8f, Bounce = .015f, Sway = .03f, Glide = 1.38f,
+                Elbow = 24, ElbowPump = 8,   // elbows (redesign rig only): brisk on an errand, fists like pistons
             },
             Run = new Gait
             {
                 LegForward = 48, LegBack = 46, LegSnap = 1.1f, Stance = 1,
                 ArmSpread = 18, ArmForward = 42, ArmBack = 34, ArmCarry = 10, ArmSnap = 1.1f, ArmLag = 0.057f,
                 Lean = 10, Roll = 2, Twist = 6, HeadPitch = -2, HeadSteady = .8f, Bounce = .03f, Sway = .02f, Glide = 1.41f,
+                Elbow = 66, ElbowPump = 10,
             },
         };
 

@@ -145,8 +145,7 @@ namespace TumbangPreso
                 hud.ExitSpectatorMode();
             }
 
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            UI.CursorMode.Capture();
         }
 
         public bool IsSpectating => _spectator != null;

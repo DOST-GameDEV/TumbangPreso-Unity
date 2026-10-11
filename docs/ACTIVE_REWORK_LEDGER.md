@@ -1,3 +1,21 @@
+# Latest integration and owner scope, October11
+
+Owner requests QoLUpdates merge then finish/push primary checkout's219 local
+entries and provide a short chat prompt for Opus5.5 Nemu redesign on this PC.
+Only Nemu ultimate+cutscene now: thorough research/direction first then implementation;
+ghost parade, grey/muted world, all-player POSSESSED15gameplay seconds, retained
+agency against ghost steering and eerie HUD/audio. Soraya/Paete quality benchmark.
+Prompt already delivered for research; code editing begins after merged primary pull.
+
+Resolved QoL eb2dc1556 + ASTRAa773 into protocol159. Native14876passes21/21;
+22,351 inputs/preferences restored and private3files unchanged. No build/Desktop
+replacement. Primary219 status entries expand224files:202format-only metadata,
+14meaningful map/mode importer settings,1material and7historical review files.
+202 whitespace-only files normalized with exact originals archived in localLogs.
+Next publish merge immediately, fast-forward primary preserving its22 remaining
+known files then commit/push substantive local changes and label historical evidence.
+No new agents/chats/paid services, reset, clean, force push or old deletion retry.
+
 # Current AI social source unit, October9
 
 Original69472 reproduces unavailable-rig StepSocial frame consumed/no animation.

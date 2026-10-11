@@ -30,6 +30,7 @@ namespace TumbangPreso.Visual
         private float _tagTime = -1;
         private Transform _tgRoot, _tgTorso, _tgHead, _tgArmR, _tgArmL, _tgForeR, _tgForeL, _tgLegR, _tgLegL;
         private Vector3 _tgAlongR = Vector3.right, _tgAlongL = Vector3.left;
+        private Vector3 _tgForeAlongL = Vector3.left;
         private bool _tgResolved, _tgApplied;
         private TagSoleVertex[] _tgSoleL, _tgSoleR;
         private float _tagRenderedWeight;
@@ -150,7 +151,7 @@ namespace TumbangPreso.Visual
                             case "arm-right": if (_tgArmR == null) { _tgArmR = b; _tgAlongR = AlongArm(binds, i, _tgAlongR); } break;
                             case "arm-left": if (_tgArmL == null) { _tgArmL = b; _tgAlongL = AlongArm(binds, i, _tgAlongL); } break;
                             case "forearm-right": if (_tgForeR == null) _tgForeR = b; break;
-                            case "forearm-left": if (_tgForeL == null) _tgForeL = b; break;
+                            case "forearm-left": if (_tgForeL == null) { _tgForeL = b; _tgForeAlongL = AlongArm(binds, i, _tgForeAlongL); } break;
                             case "leg-right": if (_tgLegR == null) _tgLegR = b; break;
                             case "leg-left": if (_tgLegL == null) _tgLegL = b; break;
                         }
@@ -248,6 +249,8 @@ namespace TumbangPreso.Visual
             else PointArm(_tgArmR, _tgAlongR, new Vector3(reach.x * side, reach.y, reach.z), w, 0);
             // The off arm swings back for balance.
             PointArm(_tgArmL, _tgAlongL, new Vector3(-.35f * side, -.75f, -.55f), w * .9f, 0);
+            // Keep the incoming bent off elbow while retaining settled-palm contact and planted soles.
+            if (_tgForeL != null) PointArm(_tgForeL, _tgForeAlongL, new Vector3(-.42f * side, -.62f, .66f), w * .9f, 0);
         }
         private readonly struct TagSoleVertex
         {

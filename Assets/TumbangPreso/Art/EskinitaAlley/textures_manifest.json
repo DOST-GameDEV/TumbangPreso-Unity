@@ -1,0 +1,277 @@
+{
+  "textures": [
+    {
+      "name": "chb",
+      "tile_m": 2.0,
+      "kind": "tile",
+      "source": "painted",
+      "file": "chb_albedo.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "normal": null,
+      "alpha": false
+    },
+    {
+      "name": "plaster",
+      "tile_m": 3.0,
+      "kind": "tile",
+      "source": "copied from Assets/TumbangPreso/Art/Kanto/Textures/plaster_albedo.png",
+      "file": "plaster_albedo.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "normal": "plaster_normal.png",
+      "alpha": false
+    },
+    {
+      "name": "tin",
+      "tile_m": 2.0,
+      "kind": "tile",
+      "source": "painted",
+      "file": "tin_albedo.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "normal": null,
+      "alpha": false
+    },
+    {
+      "name": "tin_rust",
+      "tile_m": 2.0,
+      "kind": "tile",
+      "source": "painted",
+      "file": "tin_rust_albedo.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "normal": null,
+      "alpha": false
+    },
+    {
+      "name": "planks",
+      "tile_m": 2.0,
+      "kind": "tile",
+      "source": "painted",
+      "file": "planks_albedo.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "normal": null,
+      "alpha": false
+    },
+    {
+      "name": "floor",
+      "tile_m": 4.0,
+      "kind": "tile",
+      "source": "painted",
+      "file": "floor_albedo.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "normal": null,
+      "alpha": false
+    },
+    {
+      "name": "concrete",
+      "tile_m": 2.0,
+      "kind": "tile",
+      "source": "painted",
+      "file": "concrete_albedo.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "normal": null,
+      "alpha": false
+    },
+    {
+      "name": "tiles_clay",
+      "tile_m": 2.0,
+      "kind": "tile",
+      "source": "copied from Assets/TumbangPreso/Art/Kanto/Textures/tiles_clay_albedo.png",
+      "file": "tiles_clay_albedo.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "normal": "tiles_clay_normal.png",
+      "alpha": false
+    },
+    {
+      "name": "wood",
+      "tile_m": 2.0,
+      "kind": "tile",
+      "source": "copied from Assets/TumbangPreso/Art/Kanto/Textures/timber_albedo.png",
+      "file": "wood_albedo.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "normal": "wood_normal.png",
+      "alpha": false
+    },
+    {
+      "name": "paint",
+      "tile_m": 2.0,
+      "kind": "tile",
+      "source": "copied from Assets/TumbangPreso/Art/Kanto/Textures/paint_albedo.png",
+      "file": "paint_albedo.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "normal": "paint_normal.png",
+      "alpha": false
+    },
+    {
+      "name": "trapal_teal",
+      "tile_m": 1.0,
+      "kind": "tile",
+      "source": "painted",
+      "file": "trapal_teal_albedo.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "normal": null,
+      "alpha": false
+    },
+    {
+      "name": "trapal_red",
+      "tile_m": 1.0,
+      "kind": "tile",
+      "source": "painted",
+      "file": "trapal_red_albedo.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "normal": null,
+      "alpha": false
+    },
+    {
+      "name": "trapal_yellow",
+      "tile_m": 1.0,
+      "kind": "tile",
+      "source": "painted",
+      "file": "trapal_yellow_albedo.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "normal": null,
+      "alpha": false
+    },
+    {
+      "name": "sawali",
+      "tile_m": 2.0,
+      "kind": "tile",
+      "source": "copied from Assets/TumbangPreso/Art/LagoonCove/Textures/sawali_a_albedo.png",
+      "file": "sawali_albedo.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "normal": "sawali_normal.png",
+      "alpha": false
+    },
+    {
+      "name": "jalousie",
+      "tile_m": null,
+      "kind": "card",
+      "source": "copied from Assets/TumbangPreso/Art/IlalimRebuild/Textures/heritage_window_jal_albedo.png",
+      "file": "jalousie_albedo.png",
+      "size": [
+        512,
+        512
+      ],
+      "normal": null,
+      "alpha": false
+    },
+    {
+      "name": "window_slide",
+      "tile_m": null,
+      "kind": "card",
+      "source": "painted",
+      "file": "window_slide_albedo.png",
+      "size": [
+        512,
+        512
+      ],
+      "normal": null,
+      "alpha": false
+    },
+    {
+      "name": "door_wood",
+      "tile_m": null,
+      "kind": "card",
+      "source": "painted",
+      "file": "door_wood_albedo.png",
+      "size": [
+        512,
+        1024
+      ],
+      "normal": null,
+      "alpha": false
+    },
+    {
+      "name": "gate",
+      "tile_m": null,
+      "kind": "card",
+      "source": "painted",
+      "file": "gate_albedo.png",
+      "size": [
+        512,
+        1024
+      ],
+      "normal": null,
+      "alpha": false
+    },
+    {
+      "name": "grille",
+      "tile_m": null,
+      "kind": "card",
+      "source": "painted",
+      "file": "grille_albedo.png",
+      "size": [
+        512,
+        512
+      ],
+      "normal": null,
+      "alpha": true
+    },
+    {
+      "name": "leaf",
+      "tile_m": null,
+      "kind": "card",
+      "source": "copied from Assets/TumbangPreso/Art/Kanto/Textures/leaf_albedo.png",
+      "file": "leaf_albedo.png",
+      "size": [
+        256,
+        256
+      ],
+      "normal": null,
+      "alpha": true
+    },
+    {
+      "name": "chalk",
+      "tile_m": null,
+      "kind": "card",
+      "source": "painted",
+      "file": "chalk_albedo.png",
+      "size": [
+        512,
+        512
+      ],
+      "normal": null,
+      "alpha": true
+    }
+  ]
+}

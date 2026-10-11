@@ -47,18 +47,23 @@ namespace TumbangPreso.EditorTools
         private static readonly Dictionary<string, string> PersonModels = new Dictionary<string, string>
         {
             // Classic roster. Unity retains the network-stable "bayan" id for BERTO.
-            { "bayan",       "characters/persons/character-male-f.glb" },
-            { "maring",      "characters/persons/character-female-f.glb" },
-            { "totoy",       "characters/persons/character-male-a.glb" },
-            { "inday",       "characters/persons/character-female-a.glb" },
-            { "kuya_boy",    "characters/persons/character-male-b.glb" },
-            { "ate_girlie",  "characters/persons/character-female-b.glb" },
-            { "tikboy",      "characters/persons/character-male-c.glb" },
-            { "bebang",      "characters/persons/character-female-c.glb" },
-            { "jun_jun",     "characters/persons/character-male-d.glb" },
-            { "lola_pacing", "characters/persons/character-female-d.glb" },
-            { "mang_kanor",  "characters/persons/character-male-e.glb" },
-            { "aling_nena",  "characters/persons/character-female-e.glb" },
+            // ⚠️⚠️ THE TWELVE CLASSIC CHARACTERS ON THEIR REDESIGNS, 2026-10-06. Each was redrawn as if they were one
+            // of the nine heroes (docs/CHARACTER_REDESIGN_DANTE.md section 15.9 D and G), and the owner said of the
+            // twelve together: "they all look good". The old shared rigs (`characters/persons/character-<sex>-<a..f>.glb`,
+            // recoloured by each person's palette) are untouched on disk; putting a row back and rebuilding the
+            // roster book undoes it. DO NOT MERGE THIS BLOCK without the owner's word.
+            { "bayan",       "CharacterRedesign/bayan/bayan-redesign.glb" },
+            { "maring",      "CharacterRedesign/maring/maring-redesign.glb" },
+            { "totoy",       "CharacterRedesign/totoy/totoy-redesign.glb" },
+            { "inday",       "CharacterRedesign/inday/inday-redesign.glb" },
+            { "kuya_boy",    "CharacterRedesign/kuya_boy/kuya_boy-redesign.glb" },
+            { "ate_girlie",  "CharacterRedesign/ate_girlie/ate_girlie-redesign.glb" },
+            { "tikboy",      "CharacterRedesign/tikboy/tikboy-redesign.glb" },
+            { "bebang",      "CharacterRedesign/bebang/bebang-redesign.glb" },
+            { "jun_jun",     "CharacterRedesign/jun_jun/jun_jun-redesign.glb" },
+            { "lola_pacing", "CharacterRedesign/lola_pacing/lola_pacing-redesign.glb" },
+            { "mang_kanor",  "CharacterRedesign/mang_kanor/mang_kanor-redesign.glb" },
+            { "aling_nena",  "CharacterRedesign/aling_nena/aling_nena-redesign.glb" },
 
             // Hero Strike Roster (6 action heroes)
             // ⚠️⚠️ PROTOTYPE SWAP, THIS BRANCH ONLY, 2026-10-05. The owner asked to SEE the character
@@ -104,7 +109,9 @@ namespace TumbangPreso.EditorTools
         /// </summary>
         private static readonly Dictionary<string, string> FirstPersonArmModels = new Dictionary<string, string>
         {
-            { "paete", "characters/persons/team-paete.glb" },
+            // (Paete was here, on `characters/persons/team-paete.glb`, from 2026-10-05 to 2026-10-06. The cut follows
+            // the elbow now (`ViewmodelArmAuthor.Extract`), and the owner asked for his new model arms: "we need to
+            // fix paete's new model arms for fpv".)
         };
 
         private static readonly Dictionary<string, string> PersonPalettes = new Dictionary<string, string>

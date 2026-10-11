@@ -25,6 +25,12 @@ namespace TumbangPreso
         // *"i suggest the general interact button"*. F on a keyboard, beside `Grab`
         // (`Settings.Rebinding.IsOneUseKey`).
         Interact,
+
+        // ⚠️ CROUCH, a verb of its own since 2026-10-09 (owner: "add controller and touch support for crouch"). Hold to
+        // crouch; pressed at a sprint it is the slide (`MovementRework`, `CharacterMotor.MovementRework.cs`). Left Ctrl
+        // on a keyboard, B on a pad (shared with Ready Up, which only exists before a round:
+        // `Settings.Rebinding.IsOneUseKey`), a button of its own on a phone. It began as a debug key read.
+        Crouch,
     }
 
     /// <summary>
@@ -129,6 +135,12 @@ namespace TumbangPreso
         /// stays held forever and the player walks out of the pause menu already sprinting.
         /// </summary>
         public bool Parked { get; set; }
+
+        /// <summary>
+        /// Crouch held, for the movement rework (`MovementRework`). It was a debug field of its own, written from two
+        /// keyboard keys; since 2026-10-09 it is `Verb.Crouch`, on all three devices, and this is only its reading.
+        /// </summary>
+        public bool Crouch => Pressed(Verb.Crouch);
 
         public void Set(Verb v, bool pressed)
         {

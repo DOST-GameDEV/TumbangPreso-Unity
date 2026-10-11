@@ -1,0 +1,174 @@
+{
+ "tint_space": "sRGB 0..1, flat colours (no textures)",
+ "parts": "root pet_<name> (origin on the ground) > trunk (empty, hip centre) > body, head (neck), tail (base), leg_fl, leg_fr (shoulders), leg_bl, leg_br (hips). Unity: faces +Z, leg_fl is on -X.",
+ "materials": [
+  {
+   "name": "ekpet_black",
+   "texture": "",
+   "tint": [
+    0.1686,
+    0.1647,
+    0.1804
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "ekpet_calico",
+   "texture": "",
+   "tint": [
+    0.851,
+    0.6275,
+    0.3686
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "ekpet_cream",
+   "texture": "",
+   "tint": [
+    0.9412,
+    0.8627,
+    0.7059
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "ekpet_eye",
+   "texture": "",
+   "tint": [
+    0.1333,
+    0.1255,
+    0.1216
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "ekpet_eye_cat",
+   "texture": "",
+   "tint": [
+    0.6235,
+    0.749,
+    0.2902
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "ekpet_grey",
+   "texture": "",
+   "tint": [
+    0.5608,
+    0.549,
+    0.5412
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "ekpet_nose",
+   "texture": "",
+   "tint": [
+    0.1647,
+    0.1412,
+    0.1333
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "ekpet_patch",
+   "texture": "",
+   "tint": [
+    0.5412,
+    0.3529,
+    0.2275
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "ekpet_pink",
+   "texture": "",
+   "tint": [
+    0.9059,
+    0.6039,
+    0.6275
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "ekpet_tan",
+   "texture": "",
+   "tint": [
+    0.7882,
+    0.5608,
+    0.3333
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "ekpet_tan_dark",
+   "texture": "",
+   "tint": [
+    0.6039,
+    0.3922,
+    0.2118
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "ekpet_white",
+   "texture": "",
+   "tint": [
+    0.9608,
+    0.9412,
+    0.902
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  }
+ ]
+}

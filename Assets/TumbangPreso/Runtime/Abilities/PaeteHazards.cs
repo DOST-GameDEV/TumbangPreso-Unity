@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TumbangPreso.Core;
 using TumbangPreso.InputLayer;
+using TumbangPreso.Net;
 using TumbangPreso.Visual;
 using UnityEngine;
 
@@ -8,8 +9,12 @@ namespace TumbangPreso.Abilities
 {
     /// <summary>
     /// Where LIANA LEAP's vines catch: the first wall or prop along his aim within
-    /// `PaeteRules.VineRange`, else the ground at full range. It always finds somewhere (research.md
-    /// § 2, Kinich: the grapple never visibly fails). Bodies, slippers and the can are not scenery.
+    /// `PaeteRules.VineRange`, else (aimed up) the nearest edge under that aim, else the ground at full
+    /// range. It always finds somewhere (research.md § 2, Kinich: the grapple never visibly fails).
+    /// Bodies, slippers and the can are not scenery.
+    ///
+    /// ⚠️⚠️ AND WHAT KIND OF LEAP IT IS (owner, 2026-10-07, <see cref="FindCatch"/>): a high catch is a SWING
+    /// (`PaeteSwing`), a low one or the ground is the flat reel it always was.
     /// </summary>
     public static class PaeteVine
     {
@@ -29,13 +34,20 @@ namespace TumbangPreso.Abilities
         public static CatchRule MapCatch;
 
         public static Vector3 FindAnchor(Vector3 feet, Vector3 forward, Vector3 aimPoint)
-        {
-            Vector3 origin = feet + Vector3.up * 1.3f;
-            Vector3 dir = aimPoint - origin;
-            if (dir.sqrMagnitude < 0.25f) dir = forward;
-            dir.Normalize();
+            => FindCatch(feet, forward, aimPoint, out _);
 
-            Vector3 anchor = origin + dir * PaeteRules.VineRange;
+        public static PaeteVinePhase PhaseOf(VineSwing swing)
+            => swing == VineSwing.Over ? PaeteVinePhase.SwingOver : swing == VineSwing.Wall ? PaeteVinePhase.SwingWall
+             : swing == VineSwing.Under ? PaeteVinePhase.SwingUnder : PaeteVinePhase.Terrain;
+
+        public static VineSwing SwingOf(PaeteVinePhase phase)
+            => phase == PaeteVinePhase.SwingOver ? VineSwing.Over : phase == PaeteVinePhase.SwingWall ? VineSwing.Wall
+             : phase == PaeteVinePhase.SwingUnder ? VineSwing.Under : VineSwing.Reel;
+
+        /// <summary>The nearest scenery along a ray within the vines' range. Bodies, slippers and the can are passed through.</summary>
+        private static bool Nearest(Vector3 origin, Vector3 dir, out RaycastHit nearest)
+        {
+            nearest = default;
             float best = float.PositiveInfinity;
             foreach (var hit in Physics.RaycastAll(origin, dir, PaeteRules.VineRange, ~0, QueryTriggerInteraction.Ignore))
             {
@@ -45,12 +57,131 @@ namespace TumbangPreso.Abilities
                 if (c.GetComponentInParent<Slipper>() != null) continue;
                 if (c.GetComponentInParent<Lata>() != null) continue;
                 best = hit.distance;
-                anchor = hit.point + hit.normal * 0.25f;
+                nearest = hit;
             }
+            return !float.IsPositiveInfinity(best);
+        }
+
+        /// <summary>A sky aim lower than this is not asking for height (the bots aim 1.2 m up at 8 m).</summary>
+        public const float SnapMinUp = 0.2f;
+        /// <summary>The snap looks this far under the aim, in steps, and this far to either side of it.</summary>
+        public const float SnapDownDegrees = 44f, SnapStepDegrees = 4f, SnapSideDegrees = 8f;
+        /// <summary>A catch this near under the top of what it hit takes the top: he goes over it.</summary>
+        public const float LipReach = 1.6f;
+
+        /// <summary>
+        /// ⚠️ THE SKY AIM SNAPS UP (owner, 2026-10-07: "lets try surfaces, sky aim snapping up first"). The aim caught
+        /// nothing, so look under it, a little lower each time, straight ahead first and then a little to each side,
+        /// for the first thing in range, and take the HIGHEST point of it that the vines can see: its edge. Until
+        /// this an aim over a roof was dropped to the ground under the point 8 m along it.
+        /// </summary>
+        private static bool SnapUp(Vector3 origin, Vector3 dir, out RaycastHit hit)
+        {
+            hit = default;
+            Vector3 flat = new Vector3(dir.x, 0f, dir.z);
+            if (flat.sqrMagnitude < 1e-4f) return false;
+            flat.Normalize();
+            float pitch = Mathf.Asin(Mathf.Clamp(dir.y, -1f, 1f)) * Mathf.Rad2Deg;
+            for (int side = 0; side < 5; side++)
+            {
+                // 0, then one step left and right, then two.
+                float yaw = ((side + 1) / 2) * SnapSideDegrees * (side % 2 == 0 ? 1f : -1f);
+                Vector3 way = Quaternion.AngleAxis(yaw, Vector3.up) * flat;
+                Vector3 across = Vector3.Cross(Vector3.up, way);
+                for (float p = pitch - SnapStepDegrees; p >= Mathf.Max(0f, pitch - SnapDownDegrees); p -= SnapStepDegrees)
+                {
+                    if (!Nearest(origin, Quaternion.AngleAxis(-p, across) * way, out RaycastHit found)) continue;
+                    // Between this (caught) and the step above it (nothing): close in on its top.
+                    float low = p, high = p + SnapStepDegrees;
+                    for (int i = 0; i < 4; i++)
+                    {
+                        float mid = (low + high) * 0.5f;
+                        if (Nearest(origin, Quaternion.AngleAxis(-mid, across) * way, out RaycastHit higher)) { low = mid; found = higher; }
+                        else high = mid;
+                    }
+                    hit = found;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// What kind of leap a catch on <paramref name="hit"/> is, and where exactly the vines take hold
+        /// (<paramref name="anchor"/> is moved to the lip for OVER).
+        ///
+        /// | The catch | The leap |
+        /// |---|---|
+        /// | On a floor, or under `PaeteSwing.MinRise` (2.6 m) with no lip to take | REEL, the flat pull |
+        /// | High, with open space under and past it (a beam, a branch, an overhang) | UNDER, swung under and flung past |
+        /// | Otherwise within `LipReach` (1.6 m) under a top he can stand on, 1.2 m or more above his feet | OVER, onto it |
+        /// | High on a face or a post, nowhere to go | WALL, up to it and off |
+        /// </summary>
+        private static VineSwing SwingFor(Vector3 feet, Vector3 origin, RaycastHit hit, ref Vector3 anchor)
+        {
+            if (hit.normal.y > 0.6f) return VineSwing.Reel;
+            float rise = hit.point.y - feet.y;
+            Vector3 way = hit.point - origin; way.y = 0f;
+            Vector3 face = new Vector3(hit.normal.x, 0f, hit.normal.z);
+            if (way.sqrMagnitude < 0.01f) way = -face;
+            way = way.sqrMagnitude > 1e-4f ? way.normalized : Vector3.forward;
+            const int solid = ~0;
+
+            // ⚠️ THE SWING COMES FIRST (owner, 2026-10-07: "when you try to go under it, it just pulls you closer to the
+            // cluster"). A beam a metre thick is all lip, so asking for the lip first sent every catch on it OVER. Open
+            // under the catch and out the far side, where the swing passes and where it lets go: he swings.
+            if (rise >= PaeteSwing.MinRise)
+            {
+                float hang = Mathf.Max(PaeteSwing.UnderMinRope, (rise - PaeteSwing.Chest) * PaeteSwing.UnderRope);
+                Vector3 low = new Vector3(hit.point.x, hit.point.y - hang - 0.2f, hit.point.z);
+                Vector3 far = low + way * (hang * 0.68f) + Vector3.up * (hang * 0.27f);
+                if (!Physics.CheckSphere(low + way * 0.2f, 0.45f, solid, QueryTriggerInteraction.Ignore)
+                    && !Physics.CheckSphere(low + way * (hang * 0.35f), 0.45f, solid, QueryTriggerInteraction.Ignore)
+                    && !Physics.CheckSphere(far, 0.45f, solid, QueryTriggerInteraction.Ignore))
+                    return VineSwing.Under;
+            }
+
+            // A lip: from above and a little inside the face, look down for the top of it.
+            if (face.sqrMagnitude > 0.2f)
+            {
+                Vector3 over = hit.point - face.normalized * 0.3f + Vector3.up * LipReach;
+                if (!Physics.CheckSphere(over, 0.05f, solid, QueryTriggerInteraction.Ignore)
+                    && Physics.Raycast(over, Vector3.down, out RaycastHit top, LipReach + 0.05f, solid, QueryTriggerInteraction.Ignore)
+                    && top.normal.y > 0.6f && top.point.y - feet.y >= PaeteSwing.MinLipRise
+                    && top.collider.GetComponentInParent<CharacterMotor>() == null
+                    // And room for him on it.
+                    && !Physics.CheckCapsule(top.point + Vector3.up * 0.5f, top.point + Vector3.up * 1.5f, 0.3f, solid, QueryTriggerInteraction.Ignore))
+                {
+                    anchor = new Vector3(hit.point.x, top.point.y, hit.point.z) + face.normalized * 0.05f;
+                    return VineSwing.Over;
+                }
+            }
+            return rise < PaeteSwing.MinRise ? VineSwing.Reel : VineSwing.Wall;
+        }
+
+        /// <summary>Where the vines catch, and what kind of leap that makes it.</summary>
+        public static Vector3 FindCatch(Vector3 feet, Vector3 forward, Vector3 aimPoint, out VineSwing swing)
+        {
+            swing = VineSwing.Reel;
+            Vector3 origin = feet + Vector3.up * PaeteSwing.Chest;
+            Vector3 dir = aimPoint - origin;
+            if (dir.sqrMagnitude < 0.25f) dir = forward;
+            dir.Normalize();
+
+            Vector3 anchor = origin + dir * PaeteRules.VineRange;
+            bool caught = Nearest(origin, dir, out RaycastHit hit);
+            if (!caught && dir.y > SnapMinUp) caught = SnapUp(origin, dir, out hit);
+            if (caught) anchor = hit.point + hit.normal * 0.25f;
             // Over a map's drop the vines take the floor he will be hauled onto, so every peer draws them to it.
-            if (MapCatch != null && MapCatch(feet, anchor, !float.IsPositiveInfinity(best), out _, out Vector3 floor)) return floor;
+            if (MapCatch != null && MapCatch(feet, anchor, caught, out _, out Vector3 floor)) return floor;
+            if (caught)
+            {
+                swing = SwingFor(feet, origin, hit, ref anchor);
+                // A swing's catch is where the vines truly are: not pulled into the court or down to the ground.
+                if (swing != VineSwing.Reel) return anchor;
+            }
             // Aimed at the sky with nothing to catch: the vines take the ground under that point.
-            if (float.IsPositiveInfinity(best)) anchor.y = Mathf.Min(anchor.y, feet.y + 0.2f);
+            if (!caught) anchor.y = Mathf.Min(anchor.y, feet.y + 0.2f);
             anchor = AIController.ClampToPlayable(anchor, 0.4f);
             anchor.y = Mathf.Max(anchor.y, feet.y + 0.05f);
             return anchor;
@@ -239,6 +370,9 @@ namespace TumbangPreso.Abilities
             _nextShot = _age + PaeteRules.PlantReloadSeconds;
             _recoil = 0f;
             Vector3 target = aimPoint;
+            // Look only: the pitcher whips round to the shot and coughs a puff out after the clog.
+            _body.AimAt(target - transform.position);
+            PaeteBloomFx.Spit(Muzzle, target);
             PaeteWoodenSlipper.Spawn(Muzzle, target, OwnerSlot);
             GameServices.Audio?.PlayAt("sfx_paete_sprout_fire", transform.position);
             return true;
@@ -313,6 +447,7 @@ namespace TumbangPreso.Abilities
             plant._pullFrom = puller != null ? puller.transform.position : plant.transform.position + Vector3.back;
             GameServices.Audio?.PlayAt("sfx_paete_sprout_uproot", plant.transform.position);
             PaeteLeafBurst.Spawn(plant.transform.position + Vector3.up * 0.4f, 7, 1.8f);
+            PaeteBloomFx.Uproot(plant.transform.position, plant._pullFrom);
             puller?.GetComponentInChildren<CharacterSquashStretch>()?.Stretch(0.22f);
         }
 
@@ -362,7 +497,9 @@ namespace TumbangPreso.Abilities
         private void Update()
         {
             float dt = PresentationClock.Held ? 0f : Time.deltaTime;
-            if (_age < 0f && _age + dt >= 0f) Visual.PaeteGroundBreak.Spawn(transform.position, 0.7f);
+            if (_age < 0f && _age + dt >= 0f) { Visual.PaeteGroundBreak.Spawn(transform.position, 0.7f); PaeteBloomFx.SeedLanding(transform.position); }
+            // The top of the pitcher's overshoot (`PaetePlantBody.Pose`: the pop peaks a third of a second in).
+            if (_age < PaeteBloomFx.RiseShakeAt && _age + dt >= PaeteBloomFx.RiseShakeAt && !_pulled) PaeteBloomFx.RiseShake(Muzzle);
             _age += dt;
             _recoil += dt;
             if (_pulled)
@@ -378,6 +515,7 @@ namespace TumbangPreso.Abilities
             // Local on every peer off the same clock, like the fire.
             if (_age >= _nextShot && _age - dt < _nextShot && _age > 0.5f)
                 GameServices.Audio?.PlayAt("sfx_paete_sprout_ready", transform.position);
+            if (_age >= _nextShot && _age - dt < _nextShot && _age > 0.5f) PaeteBloomFx.Ready(Muzzle);
             float loosen = Mathf.Clamp01((_age - PaeteRules.PlantRootedSeconds) / (PaeteRules.PlantLifeSeconds - PaeteRules.PlantRootedSeconds));
             _body.Pose(_age, loosen, Pullable, ShotReady ? 1f : ShotGrowth, _recoil);
             StepPullers(dt);
@@ -420,7 +558,7 @@ namespace TumbangPreso.Abilities
     {
         private Vector3 _velocity;
         private int _owner;
-        private bool _landed, _scored;
+        private bool _landed, _scored, _knockShown;
         private float _restAge;
         private Transform _body;
 
@@ -434,11 +572,9 @@ namespace TumbangPreso.Abilities
             s._velocity = Slipper.SolveArc(origin, target, PaeteRules.WoodenSlipperSpeed) * PaeteRules.WoodenSlipperSpeed;
             s._body = new GameObject("body").transform;
             s._body.SetParent(go.transform, false);
-            GrowthVfx.Block(s._body, "sole", new Vector3(0.12f, 0.035f, 0.28f), GrowthVfx.BarkLit);
-            var strap = GrowthVfx.Block(s._body, "strap-a", new Vector3(0.02f, 0.05f, 0.10f), GrowthVfx.Vine).transform;
-            strap.localPosition = new Vector3(0.03f, 0.03f, 0.04f); strap.localRotation = Quaternion.Euler(0, 30, 0);
-            var strap2 = GrowthVfx.Block(s._body, "strap-b", new Vector3(0.02f, 0.05f, 0.10f), GrowthVfx.Vine).transform;
-            strap2.localPosition = new Vector3(-0.03f, 0.03f, 0.04f); strap2.localRotation = Quaternion.Euler(0, -30, 0);
+            // The carved clog and its drawn spin (`Visual.PaeteBloomFx`; it was a plank and two green bricks). Look only.
+            PaeteBloomFx.BuildBakya(s._body);
+            PaeteClogTrail.Follow(go.transform);
             return s;
         }
 
@@ -448,8 +584,17 @@ namespace TumbangPreso.Abilities
             float dt = Time.fixedDeltaTime;
             _velocity.y -= Balance.Gravity * dt;
             transform.position += _velocity * dt;
-            _body.Rotate(0f, 0f, 900f * dt, Space.Self);
+            // End over end, toe over heel (it rolled about its own length, which a clog seen from the side does not show).
+            _body.Rotate(900f * dt, 0f, 0f, Space.Self);
             if (_velocity.sqrMagnitude > 0.01f) transform.rotation = Quaternion.LookRotation(_velocity);
+
+            // Look only, on every peer: the star where the clog meets the standing can, once. A client never sets `_scored`
+            // (the host alone asks the can, below), so the burst cannot wait on it there.
+            if (!_knockShown)
+            {
+                var can = GameServices.Round?.Lata;
+                if (can != null && can.IsUpright && can.Connects(transform.position)) { _knockShown = true; PaeteBloomFx.ClogKnock(transform.position, _velocity); }
+            }
 
             if (!_scored && NetAuthority.ShouldResolve())
             {
@@ -469,6 +614,9 @@ namespace TumbangPreso.Abilities
                 transform.position = new Vector3(transform.position.x, ground + 0.02f, transform.position.z);
                 transform.rotation = Quaternion.Euler(0f, transform.eulerAngles.y, 0f);
                 _body.localRotation = Quaternion.identity;
+                // The carved clog turns about its middle: lift it so it lies ON the court, and raise its dust.
+                _body.localPosition = Vector3.up * PaeteBloomFx.BakyaRest;
+                PaeteBloomFx.ClogLand(transform.position);
                 GameServices.Audio?.PlayAt("sfx_paete_sprout_land", transform.position);
             }
             if (transform.position.y < -20f) Destroy(gameObject);
@@ -511,11 +659,18 @@ namespace TumbangPreso.Abilities
 
         public static PaeteThorns Spawn(Vector3 origin, Vector3 from, int ownerSlot)
         {
+            // ⚠️ THE THORNS GROW OUT OF THE GROUND, WHEREVER HIS FEET WERE (owner, 2026-10-07: "jumping while placing thorn
+            // harvest makes the thorns float"). Both ends came in at the height of his feet, so a cast made in the air
+            // put the trail and the rattan in the air with him. Every peer puts both on the ground under them.
+            origin.y = Slipper.GroundY(origin);
+            from.y = Slipper.GroundY(from);
             var go = new GameObject("PaeteThorns");
             go.transform.position = origin;
             var t = go.AddComponent<PaeteThorns>();
             t.OwnerSlot = ownerSlot; t.Origin = origin;
             Vector3 run = origin - from; run.y = 0f;
+            // The rattan has a face now (`PaeteThornBody`, the bud): it comes up looking back at the one who called it.
+            if (run.sqrMagnitude > 0.01f) go.transform.rotation = Quaternion.LookRotation(-run.normalized, Vector3.up);
             float travel = PaeteRules.ThornTrailSeconds(run.magnitude);
             t._age = -travel;
             if (travel > 0f) Visual.PaeteThornTrail.Build(from, origin, travel);
@@ -542,6 +697,9 @@ namespace TumbangPreso.Abilities
             _body = PaeteThornBody.Build(transform, _caught);
             GameServices.Audio?.PlayAt("sfx_paete_thorn_burst", Origin);
             Visual.PaeteGroundBreak.Spawn(Origin, 1.0f);
+            // The cast's moments (the thorn ring, the bite, the yank's streaks, the landings, the clench's snap, the leaves
+            // left behind), each fired on the rules' clock. Only here: `Restore` puts a construct back silent.
+            Visual.PaeteThornShow.Spawn(transform, Origin, _caught);
         }
 
         public float Age => _age;
@@ -704,8 +862,10 @@ namespace TumbangPreso.Abilities
             s._body = PaeteSentryBody.Build(go.transform);
             s._body.LifeSeconds = PaeteRules.SentryLifeSeconds + s._lead;
             s._body.CatchLead = s._lead;
-            // Before it has anyone to look at, the tree faces along the seed's flight (direction.md 5.2).
-            s._body.SetFacing(at - from);
+            // ⚠️ IT FACES HIM WHO CALLED IT (owner, 2026-10-08: "the tree faces backwards from where i cast it"; asked which way,
+            // "Face toward me"). It faced along the seed's flight (direction.md 5.2), from the days he threw a seed: called
+            // from the ground at his aim, that showed him its back.
+            s._body.SetFacing(from - at);
             // Under a roof (Ilalim ng Tulay's deck) it stands only as tall as fits; the open sky gets it all.
             float clearance = 30f;
             foreach (var hit in Physics.RaycastAll(at + Vector3.up * 0.5f, Vector3.up, 14f, ~0, QueryTriggerInteraction.Ignore))
@@ -807,7 +967,9 @@ namespace TumbangPreso.Abilities
                 GameServices.Audio?.PlayAt("sfx_paete_sentry_burst", Centre);
                 // ⚠️ v9: sized to the 6.6 m tree and its 2.1 m roots (was 2.2 and hauls to 3.4 m for the 9 m one): the court breaks
                 // where it comes up and stops short of the can's clearance (2.4 m).
-                Visual.PaeteGroundBreak.Spawn(Centre, 1.6f);
+                // 2026-10-07: the ultimate's own breach (a thick ring of turned soil, dust, thrown lumps), not the small ground
+                // break his other skills share.
+                Visual.PaeteEmbraceFx.Breach(Centre);
                 ShakeNearby(0.22f, 0.5f);
             }
             for (int k = 0; k < PaeteSentryBody.Heaves.Length; k++)
@@ -819,13 +981,16 @@ namespace TumbangPreso.Abilities
                     // the road wider and shakes every nearby camera harder, the last hardest (the style of `HeroHazards`' blasts:
                     // the shake scales with the thing, it is never one flat number).
                     GameServices.Audio?.PlayAtVaried("sfx_paete_sentry_heave", Centre, 1.06f - 0.06f * k, 1.08f - 0.06f * k, 1f);
-                    Visual.PaeteGroundBreak.Spawn(Centre, 1.8f + 0.2f * k);
+                    Visual.PaeteEmbraceFx.Haul(Centre, k);
                     ShakeNearby(0.24f + 0.11f * k, 0.55f + 0.1f * k);
                 }
             }
             // The tree waking: the light opens in its hollows (`PaeteSentryBody`'s WAKE beat, last).
             if (grownBefore < _body.WakeAt && grown >= _body.WakeAt)
+            {
                 GameServices.Audio?.PlayAt("sfx_paete_sentry_wake", Centre);
+                Visual.PaeteEmbraceFx.Wake(_body.CrownNode, _body.EyesNode, Centre, PaeteSentryBody.Scale);
+            }
             if (_playCatchCue && !_catchCuePlayed && _age >= PaeteRules.SentryCatchSeconds &&
                 _age < PaeteRules.SentryLifeSeconds && _held.Count > 0)
             {

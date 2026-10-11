@@ -666,6 +666,10 @@ Shader "TumbangPreso/WorldOutline"
             float _MaskDepthTolerance;
             // Command-buffer global, intentionally not a Material property.
             float4 _WorldOutlineNearFadeBand;
+            // The sky opened through the map (`NearFade.shader`, § THE SKY, OPENED): the same two globals, the same rule.
+            float4 _SkyReveal;
+            float4 _SkyRevealShape;
+            float _NearFadeEyeDrop;   // `NearFade.shader`: how far the first-person eye is below a standing one
 
             struct appdata_mask
             {
@@ -727,8 +731,14 @@ Shader "TumbangPreso/WorldOutline"
                     float visible=smoothstep(_WorldOutlineNearFadeBand.y,_WorldOutlineNearFadeBand.x,
                         distance(i.world,_WorldSpaceCameraPos));
                     float ground=smoothstep(.45,.55,normalize(i.normal).y)*
-                        smoothstep(.80,1.10,_WorldSpaceCameraPos.y-i.world.y);
+                        smoothstep(.80,1.10,_WorldSpaceCameraPos.y-i.world.y+_NearFadeEyeDrop);
                     coverage=(1-visible)*(1-ground);
+                    float3 toFragment=i.world-_WorldSpaceCameraPos;
+                    float fragmentDistance=max(length(toFragment),1e-4);
+                    float inWindow=smoothstep(_SkyRevealShape.y,_SkyRevealShape.x,
+                        dot(toFragment/fragmentDistance,normalize(_SkyReveal.xyz-_WorldSpaceCameraPos)));
+                    coverage=max(coverage,_SkyReveal.w*inWindow*smoothstep(_SkyRevealShape.z,_SkyRevealShape.z+2.0,fragmentDistance)
+                        *smoothstep(_SkyRevealShape.w,_SkyRevealShape.w+1.2,i.world.y));
                     clip(coverage-.001);
                 }
                 return fixed4(coverage,coverage,coverage,coverage);
@@ -852,7 +862,14 @@ Shader "TumbangPreso/WorldOutline"
                 const float CastCeiling=.62;
                 float ao=1-min(CastCeiling,1-(1-fine*.75)*(1-broad*.6));
                 // Out by 30 m, where a body is a few pixels and the probes land inside one.
-                return lerp(ao,1,smoothstep(18,30,-p.z));
+                ao=lerp(ao,1,smoothstep(18,30,-p.z));
+                // ⚠️ AND NOT ON THE PLAYER'S OWN HANDS. The first-person arms sit 0.2 to 0.7 m from the lens, where the
+                // depth this reads (the depth-normals texture, 16 bits across the whole far plane) moves in steps of
+                // millimetres: a smooth fist then shades itself in parallel stripes, each step a line. Owner,
+                // 2026-10-06, of the new live-model arms in play: "theres some lines artifact caused by the AO effect".
+                // The arms are lit by their own shading; the cast's occlusion starts fading in at 0.8 m and is whole
+                // by 1.3 m, which is nearer than another player's body normally stands.
+                return lerp(1,ao,smoothstep(.8,1.3,-p.z));
             }
             half4 frag(v2f_img i):SV_Target
             {

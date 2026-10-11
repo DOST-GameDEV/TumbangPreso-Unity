@@ -750,11 +750,14 @@ namespace TumbangPreso.Visual
             // material/submesh bindings are cached by the normal rescan; distant
             // city geometry neither loses its ink nor adds a draw every frame.
             Vector3 eye=_camera.transform.position;
+            // While a cutscene has the sky opened through the map (`NearFade.SkyRevealId`), a wall at any distance may be
+            // dissolved, so every near-fade renderer is masked for those seconds, not only the ones at the lens.
+            bool skyOpen=Shader.GetGlobalVector(NearFade.SkyRevealId).w>.01f;
             if(FadeOccluderOutlines)foreach(var item in _nearFade)
             {
                 var renderer=item.Renderer;if(renderer==null)continue;
                 var bounds=item.Stationary?item.Bounds:renderer.bounds;
-                if(bounds.SqrDistance(eye)>item.Start*item.Start)continue;
+                if(!skyOpen&&bounds.SqrDistance(eye)>item.Start*item.Start)continue;
                 if(!renderer.enabled||!renderer.gameObject.activeInHierarchy||renderer.forceRenderingOff||
                     renderer.shadowCastingMode==ShadowCastingMode.ShadowsOnly)continue;
                 _maskBuffer.SetGlobalVector(NearFadeMaskId,new Vector4(item.Start,item.End,1,0));

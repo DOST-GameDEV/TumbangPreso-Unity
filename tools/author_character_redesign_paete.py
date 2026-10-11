@@ -90,7 +90,35 @@ BONES = ["root", "leg-left", "leg-right", "torso", "arm-left", "arm-right", "hea
 ELBOW_X = 0.360
 ARM_Y, ARM_Z = 0.0, 0.470
 EXTRA_BONES = [("forearm-left", "arm-left", 1), ("forearm-right", "arm-right", -1)]
-ALL_BONES = BONES + [name for name, _, _ in EXTRA_BONES]
+# ⚠️⚠️ THE VINE BONES (2026-10-08). The owner, of his vines and twisting branches moving: "if the vines are baked into
+# the body mesh, then rework it and add bones if needed", then "do it". Every vine, antler and leaf was rigid to one of
+# the nine bones, so nothing in the rig could move them. Eleven more, APPENDED after the elbows (no index or name
+# moves; every clip, the first-person arms and `PaeteVineReach` key the old names), each under one of the first seven,
+# each at a typed place in the table's space, every rest rotation identity like the rest of the rig. No clip keys
+# them: the game moves them (`Runtime/Visual/PaeteVineBones.cs`). NOT ONE POINT, NORMAL OR TEXEL MOVES: only which
+# bone a point rides (`REBONE`, and the soft weights of the two long vines, `vine_weights`).
+VINE_BONES = [
+    ("antler-left", "head", (0.086, 0.664, 0.000)), ("antler-right", "head", (-0.086, 0.662, 0.004)),
+    ("branch-back", "torso", (-0.010, 0.420, 0.128)),
+    ("vine-chest-a", "torso", (-0.156, 0.470, -0.080)), ("vine-chest-b", "torso", (0.030, 0.320, -0.136)),
+    ("vine-chest-c", "torso", (0.176, 0.252, 0.000)),
+    ("vine-leg-a", "leg-right", (-0.115, 0.085, -0.092)), ("vine-leg-b", "leg-right", (-0.090, 0.195, 0.085)),
+    ("leaves-collar", "torso", (0.110, 0.494, -0.080)), ("leaves-hip", "torso", (0.112, 0.262, -0.100)),
+    ("leaves-crown", "head", (0.000, 0.680, 0.020)),
+]
+# a piece whose name begins with the key rides that bone instead of the one its builder names (the longest key wins)
+REBONE = {"horn-left": "antler-left", "leaf-horn-left": "antler-left", "leaf-tine-left": "antler-left",
+          "horn-right": "antler-right", "leaf-horn-right": "antler-right", "leaf-tine-right": "antler-right",
+          "back-branch": "branch-back", "leaf-back": "branch-back", "leaf-crown": "leaves-crown",
+          "leaf-collar": "leaves-collar", "leaf-hip": "leaves-hip"}
+# ⚠️ The leaves on his shoulders stay on the arm bones: `Editor/ViewmodelArmAuthor.Extract` cuts his first-person arms from
+# the points of `arm-<side>` and `forearm-<side>`, and a re-cut would drop whatever had moved to a bone of its own.
+ALL_BONES = BONES + [name for name, _, _ in EXTRA_BONES] + [name for name, _, _ in VINE_BONES]
+
+
+def rebone(name, bone):
+    keys = [k for k in REBONE if name.startswith(k)]
+    return REBONE[max(keys, key=len)] if keys else bone
 # ⚠️ 1.0 FOR HIM, NOT THE CAST'S 0.84. Owner, 2026-10-05, on v04: the head goes back to full size.
 # The cast's heads are 53 per cent of their height and came in; his is a narrow mask on a body
 # 0.57 wide at the shoulders and at 0.84 he looked pin-headed. The mechanism is left in place.
@@ -364,6 +392,7 @@ class Part:
         """A strand, a vine, a root or an antler branch along typed TABLE points, one typed radius
         a point, ending in a POINT at the last one. `square` gives the four flat sides of a carved
         branch, one of them facing the front."""
+        bone = rebone(name, bone)
         pts = [B(p) for p in path]
         rad = list(radii)
         if smooth > 1:
@@ -394,6 +423,7 @@ class Part:
     def leaf(self, name, bone, centre, length, width, thickness, yaw, pitch, roll, kind):
         """One leaf, in the original's place and at the original's three angles: a six-sided top
         that wears the veined drawing, over a keel that comes to a ridge point underneath."""
+        bone = rebone(name, bone)
         def turn(p):
             x, y, z = p
             r = math.radians(roll)
@@ -419,6 +449,26 @@ class Part:
             self.jobs.append((f, flat(under), [(0.5, 0.5)] * 3, tri))
             faces.append(f)
         return self._done(name, faces)
+
+    def soft_vine(self, faces, path, knots):
+        """A long vine bends along its length: `knots` is [(index along the typed path, bone)], and a point between
+        two knots rides both bones, in proportion. Its ends are knots of the bone it grows from, so they stay put."""
+        pts = [B(p) for p in path]
+
+        def weights(co):
+            best, f = 1e9, 0.0
+            for i in range(len(pts) - 1):
+                a, ab = pts[i], pts[i + 1] - pts[i]
+                t = max(0.0, min(1.0, (co - a).dot(ab) / max(ab.length_squared, 1e-12)))
+                d = (co - (a + ab * t)).length
+                if d < best:
+                    best, f = d, i + t
+            for (f0, b0), (f1, b1) in zip(knots, knots[1:]):
+                if f <= f1:
+                    u = max(0.0, min(1.0, (f - f0) / (f1 - f0)))
+                    return [(b0, 1.0 - u), (b1, u)]
+            return [(knots[-1][1], 1.0)]
+        self.bend(faces, weights)
 
     def bend(self, faces, weights):
         """Make a piece soft: `weights(position)` gives [(bone, weight)] for each of its vertices."""
@@ -622,12 +672,13 @@ def build_torso(part):
     # THE TORSO VINE: over his right shoulder, down across the chest under the boss, round his left
     # side and onto the back. Thick. The original's nine points, drawn through twice as many rings,
     # with one point added at each end so it starts inside the chest and ends in a point.
-    part.tube("torso-vine", "torso",
-              [(-0.146, 0.462, 0.082), (-0.152, 0.476, 0.060), (-0.156, 0.470, -0.080), (-0.090, 0.428, -0.148), (-0.010, 0.344, -0.146),
+    chest_path = [(-0.146, 0.462, 0.082), (-0.152, 0.476, 0.060), (-0.156, 0.470, -0.080), (-0.090, 0.428, -0.148), (-0.010, 0.344, -0.146),
                (0.070, 0.296, -0.126), (0.146, 0.262, -0.088), (0.176, 0.252, 0.000), (0.150, 0.256, 0.090), (0.060, 0.272, 0.112),
-               (0.040, 0.276, 0.112)],
-              [0.013, 0.014, 0.015, 0.016, 0.016, 0.015, 0.015, 0.014, 0.013, 0.012, 0.0],
-              swatch("strand_vine", (0.0, 1.0), (0.0, 1.0), "columns"), sides=5, smooth=2)
+               (0.040, 0.276, 0.112)]
+    part.soft_vine(part.tube("torso-vine", "torso", chest_path,
+                             [0.013, 0.014, 0.015, 0.016, 0.016, 0.015, 0.015, 0.014, 0.013, 0.012, 0.0],
+                             swatch("strand_vine", (0.0, 1.0), (0.0, 1.0), "columns"), sides=5, smooth=2),
+                   chest_path, [(0.0, "torso"), (2.0, "vine-chest-a"), (4.5, "vine-chest-b"), (7.0, "vine-chest-c"), (10.0, "torso")])
     # a small branch sprouting from his back, off the spine plank, with its two leaves
     part.tube("back-branch", "torso", [(-0.010, 0.420, 0.128), (-0.030, 0.450, 0.168), (-0.070, 0.470, 0.186), (-0.084, 0.500, 0.190),
                                        (-0.086, 0.506, 0.190)], [0.016, 0.013, 0.010, 0.007, 0.0],
@@ -795,10 +846,11 @@ def build_leg_right(part):
     T("root-right-d", leg, [(-0.070, 0.030, 0.068), (-0.058, 0.016, 0.108), (-0.052, 0.010, 0.132), (-0.050, 0.005, 0.140)],
       [0.016, 0.012, 0.009, 0.0], root, square=True, start_cap=True)
     # the vine coiling up his right leg, the original's seven points
-    T("leg-vine", leg, [(-0.024, 0.016, -0.066), (-0.030, 0.040, -0.080), (-0.080, 0.070, -0.100), (-0.150, 0.100, -0.084), (-0.168, 0.140, 0.000),
-                        (-0.130, 0.180, 0.084), (-0.050, 0.210, 0.086), (-0.030, 0.240, 0.000), (-0.030, 0.250, -0.012)],
-      [0.010, 0.011, 0.012, 0.012, 0.012, 0.011, 0.011, 0.010, 0.0], swatch("strand_vine", (0.1, 0.9), (0.0, 1.0), "columns"),
-      sides=5, smooth=2)
+    leg_path = [(-0.024, 0.016, -0.066), (-0.030, 0.040, -0.080), (-0.080, 0.070, -0.100), (-0.150, 0.100, -0.084), (-0.168, 0.140, 0.000),
+                        (-0.130, 0.180, 0.084), (-0.050, 0.210, 0.086), (-0.030, 0.240, 0.000), (-0.030, 0.250, -0.012)]
+    part.soft_vine(T("leg-vine", leg, leg_path, [0.010, 0.011, 0.012, 0.012, 0.012, 0.011, 0.011, 0.010, 0.0],
+                     swatch("strand_vine", (0.1, 0.9), (0.0, 1.0), "columns"), sides=5, smooth=2),
+                   leg_path, [(0.0, leg), (2.5, "vine-leg-a"), (5.5, "vine-leg-b"), (8.0, leg)])
 
 
 # ---------------------------------------------------------------------------
@@ -892,6 +944,14 @@ def write_glb(body, head, out):
     matrices = [raw[k * 16:(k + 1) * 16] for k in range(len(BONES))]
     for name, parent, side in EXTRA_BONES:
         world = (side * ELBOW_X, ARM_Z, -ARM_Y)
+        pw = [-matrices[BONES.index(parent)][12 + a] for a in range(3)]
+        gltf["nodes"].append({"name": name, "translation": [world[a] - pw[a] for a in range(3)]})
+        gltf["nodes"][node_of[parent]].setdefault("children", []).append(len(gltf["nodes"]) - 1)
+        skin["joints"].append(len(gltf["nodes"]) - 1)
+        matrices.append((1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -world[0], -world[1], -world[2], 1))
+    # the vine bones the same way: a table point (x, y, z) is the file's (x, y, -z)
+    for name, parent, at in VINE_BONES:
+        world = (at[0], at[1], -at[2])
         pw = [-matrices[BONES.index(parent)][12 + a] for a in range(3)]
         gltf["nodes"].append({"name": name, "translation": [world[a] - pw[a] for a in range(3)]})
         gltf["nodes"][node_of[parent]].setdefault("children", []).append(len(gltf["nodes"]) - 1)
@@ -1031,6 +1091,11 @@ def main():
         eb = armature.data.edit_bones.new(name)
         eb.head = (side * ELBOW_X, ARM_Y, ARM_Z)
         eb.tail = (side * (ELBOW_X + 0.06), ARM_Y, ARM_Z)
+        eb.parent = armature.data.edit_bones[parent]
+    for name, parent, at in VINE_BONES:
+        eb = armature.data.edit_bones.new(name)
+        eb.head = B(at)
+        eb.tail = B(at) + Vector((0.0, 0.0, 0.03))
         eb.parent = armature.data.edit_bones[parent]
     bpy.ops.object.mode_set(mode="OBJECT")
     if armature.animation_data:

@@ -51,7 +51,7 @@ namespace TumbangPreso.EditorTools
         private const string SmallTag = " (redesign, small head)";
         private const string CurrentTag = " (redesign)";
 
-        private static readonly (string Id, string Name)[] Heroes =
+        internal static readonly (string Id, string Name)[] Heroes =
         {
             ("dante", "Basilio"), ("cheska", "Yasmin"), ("sean", "Rago"), ("zack", "Isagani"),
             ("nemu", "Nemu"), ("rafi", "Ilyas"), ("amihan", "Amihan"),
@@ -358,7 +358,7 @@ namespace TumbangPreso.EditorTools
                 : "CEL (the shipped two-band look)") + ".");
         }
 
-        private static GameObject Place(string path, string label, Transform parent, Vector3 at, Color[] palette)
+        internal static GameObject Place(string path, string label, Transform parent, Vector3 at, Color[] palette)
         {
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
             if (prefab == null) { Debug.LogWarning("[RedesignLineup] Missing model: " + path); return null; }

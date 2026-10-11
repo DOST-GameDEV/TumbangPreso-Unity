@@ -108,6 +108,11 @@ namespace TumbangPreso.Audio
                 { "sfx_arena_pyro", -7.0f }, { "sfx_arena_drone_ping", -7.0f }, { "sfx_arena_drone_set", -5.0f },
                 // The stage's furniture (owner 2026-10-05, `tools/synth_arena_pad_sfx.py`): events a player causes, mixed as events.
                 { "sfx_arena_pad_jump", 0.0f }, { "sfx_arena_pad_speed", 0.0f }, { "sfx_arena_boost", -1.0f }, { "sfx_arena_stamina", 0.0f },
+                // Paete's LIANA LEAP, reworked from real recordings (owner 2026-10-07, `tools/install_paete_skill_sfx.py`): a cast
+                // a player makes, mixed as an event.
+                { "sfx_cast_paete_vine", -1.0f }, { "sfx_paete_vine_catch", -1.0f }, { "sfx_paete_vine_land", -2.0f },
+                // Paete's ultimate cutscene, one 9.0 s track of real recordings (owner 2026-10-08, `tools/build_paete_ult_sfx.py` b).
+                { "sfx_ult_theme_paete", 0.0f },
                 // The rescue drone's toy voice (2026-10-05). Its hum is struck again every half second of a
                 // carry and up to four carries can run at once, so it is mixed as a bed; the rising whistle of
                 // the haul and the zip away are one each per carry and sit under the lock-on and the ding.
@@ -338,6 +343,11 @@ namespace TumbangPreso.Audio
             "sfx_arena_alarm", "sfx_arena_undock", "sfx_arena_thruster", "sfx_arena_lock", "sfx_arena_reveal",
             "sfx_arena_crowd_roar", "sfx_arena_pyro", "sfx_arena_drone_ping", "sfx_arena_drone_set",
             "sfx_arena_pad_jump", "sfx_arena_pad_speed", "sfx_arena_boost", "sfx_arena_stamina",
+            // Paete's reworked LIANA LEAP: the cast goes the way every cast cue goes; the catch and the landing are played
+            // by each peer for itself from its own vine (`Visual.PaeteVineReach`), never through `NetCue`.
+            "sfx_cast_paete_vine", "sfx_paete_vine_catch", "sfx_paete_vine_land",
+            // Paete's ultimate cutscene (`HeroIntroductionScene.StartSound` plays it on the phase's own clock, never through `NetCue`).
+            "sfx_ult_theme_paete",
             "sfx_arena_drone_hum", "sfx_arena_drone_beam", "sfx_arena_drone_zip",
             // The Arena's slipper balloon and a slipper set back on the stage (`Map.ArenaBalloon`,
             // `Map.ArenaFallRecovery`): each peer plays them for itself, never through `NetCue`.
@@ -502,7 +512,16 @@ namespace TumbangPreso.Audio
         /// </summary>
         private static readonly HashSet<string> ReworkedSkillSfx = new HashSet<string>
         {
-            // Empty again: Amihan's were removed on the owner's instruction (2026-10-03, *"i meant remove all sfx"*).
+            // Amihan's were removed on the owner's instruction (2026-10-03, *"i meant remove all sfx"*).
+            // ⚠️ THE REWORK BEGINS WITH PAETE, ONE ABILITY AT A TIME, EACH PICKED BY THE OWNER'S EAR FROM DRAFTS FIRST. LIANA
+            // LEAP, 2026-10-07: *"lets try option E"* (real CC0 recordings, `tools/build_paete_skill_sfx.py`, the sources
+            // in `tools/paete_sfx_sources.json`). Nothing else of his, and no other hero, is audible yet.
+            "sfx_cast_paete_vine", "sfx_paete_vine_catch", "sfx_paete_vine_land",
+            // MAKILING'S EMBRACE's cutscene, 2026-10-08: of three soundtracks drafted over the 9 s film he said *"B but the trunk
+            // going up sound feels so light"* (b is the physical sounds with a voice for her: a singing bowl, a choir's held
+            // note, chimes, a gong; its heaves were then given a rumble, a heavy log and a bass drum under them). One track,
+            // `tools/build_paete_ult_sfx.py`; its times are the cutscene's (`HeroIntroductionScene.Paete.cs`, `PaeteRealAt`).
+            "sfx_ult_theme_paete",
         };
 
         public static bool IsReworkedSkillSfx(string cue) => !string.IsNullOrEmpty(cue) && ReworkedSkillSfx.Contains(cue);

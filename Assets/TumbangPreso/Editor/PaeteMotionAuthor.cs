@@ -34,6 +34,9 @@ namespace TumbangPreso.EditorTools
                 for(int i=0;i<generated.Length;i++)
                 {
                     var clip=generated[i];var bindings=AnimationUtility.GetCurveBindings(clip);
+                    // 21 is the seven bones' rotations, the floor for any clip. A clip that keys an elbow carries six more
+                    // curves per forearm (`HeroAbilityClips`, THE ELBOWS), written only on a rig that has the bone, so the
+                    // path check below passes for them the same way; a clip that keys none carries none.
                     if(clip.length<=0||bindings.Length<21)throw new InvalidOperationException("Empty Paete action: "+clip.name);
                     foreach(var binding in bindings)
                         if(!string.IsNullOrEmpty(binding.path)&&root.Find(binding.path)==null)

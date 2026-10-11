@@ -442,6 +442,7 @@ namespace TumbangPreso
         {
             if (!MayMutateGameplayState()) return;
             EndHaul();
+            EndSwing();
             _paetePull?.Stop("teleport");
             if(IsEdgeRecovering)ClearTrip();
             if(_predictingAbility>=0)ExpectAbilityTeleport(_predictingAbility);
@@ -641,7 +642,13 @@ namespace TumbangPreso
             Vector3 wish = new Vector3(axis.x, 0.0f, axis.y);
             if (wish.sqrMagnitude > 1.0f) wish.Normalize();
 
-            if (MouseAimed)
+            // ⚠️ THE DEBUG THIRD PERSON'S FREE CAMERA (`CameraRig.SetDebugCameraLock`, the prototype map only): the keys
+            // walk relative to the CAMERA, and the body turns to face the way it walks, by the bounded turn below that
+            // every movement-aimed body uses. Never true outside that debug view.
+            bool freeCamera = _rig != null && _rig.DebugFreeCamera && _rig.IsFollowing(this);
+            if (freeCamera) wish = Quaternion.Euler(0.0f, _rig.DebugOrbitYaw, 0.0f) * wish;
+
+            if (MouseAimed && !freeCamera)
             {
                 if (wish.sqrMagnitude < 0.0001f) return Vector3.zero;
                 wish = transform.TransformDirection(wish);
@@ -869,6 +876,7 @@ namespace TumbangPreso
             // stack so it composes with a hazard zone rather than one silently winning.
             // HERO-10 (plan 9.5): Phaister walks while she reaches for someone with a curse, but she cannot sprint.
             Stamina.Step(dt, moving, canSteer && !IsConcussed && !IsFeared && !IsVoodooReaching
+                                                   && !ReworkCrouched
                                                    && Intent.Pressed(Verb.Sprint));
 
             // ⚠️⚠️ THE FATIGUE CUE, WHICH SHIPPED REGISTERED AND WAS NEVER FIRED ONCE.
@@ -915,14 +923,20 @@ namespace TumbangPreso
             {
                 Vector3 wish = IsFeared ? FleeWish() : Steer(axis, dt);
 
-                var target=new Vector2(wish.x*speed,wish.z*speed);
-                if (IsOnIce && _grounded)
-                    target=Vector2.MoveTowards(new Vector2(_velocity.x,_velocity.z),target,IceAcceleration()*dt);
-                _velocity.x=target.x;
-                _velocity.z=target.y;
+                // ⚠️ THE MOVEMENT REWORK PROTOTYPE takes the write for the local human while its debug switch is on
+                // (`MovementRework`, `CharacterMotor.MovementRework.cs`); otherwise this is the write it has always been.
+                if (!StepReworkVelocity(wish, speed, dt))
+                {
+                    var target=new Vector2(wish.x*speed,wish.z*speed);
+                    if (IsOnIce && _grounded)
+                        target=Vector2.MoveTowards(new Vector2(_velocity.x,_velocity.z),target,IceAcceleration()*dt);
+                    _velocity.x=target.x;
+                    _velocity.z=target.y;
+                }
             }
             else
             {
+                StepReworkIdle();
                 _velocity.x = Mathf.MoveTowards(_velocity.x, 0.0f, Balance.Friction * dt);
                 _velocity.z = Mathf.MoveTowards(_velocity.z, 0.0f, Balance.Friction * dt);
             }
@@ -945,6 +959,8 @@ namespace TumbangPreso
             ApplyGravity(dt);
             // A haul owns the whole velocity while it lasts (`CharacterMotor.Status.cs`).
             StepHaul(dt);
+            // And so does a swing on Paete's vines (`CharacterMotor.Swing.cs`).
+            StepSwing(dt);
 
             Vector3 total = _velocity + _externalVelocity;
             if (PaetePullVelocity(dt, out var vineVelocity))
@@ -954,7 +970,7 @@ namespace TumbangPreso
             }
             CollisionFlags flags = _cc.Move(total * dt);
             // Hauled up into something overhead: the line lets go rather than pin the body there.
-            if ((flags & CollisionFlags.Above) != 0) EndHaul();
+            if ((flags & CollisionFlags.Above) != 0) { EndHaul(); EndSwing(); }
 
             // ⚠️ `isGrounded` ALONE IS NOT TRUSTWORTHY. It reflects only the last Move and
             // goes false on slopes, on steps and on the frame an impulse lifts the capsule.
@@ -1379,9 +1395,10 @@ namespace TumbangPreso
                 // ⚠️ `CanMove()`, FOR THE REASON THE STEER GATE GIVES. Walking and jumping are
                 // one permission: gating them differently is how you get a player who can hop
                 // through the warmup buffer but not walk across it.
-                if (Intent.JustPressed(Verb.Jump) && CanMove())
+                // (`ReworkJumpQueued`: the movement rework's buffered or held jump, false with its switch off.)
+                if ((Intent.JustPressed(Verb.Jump) || ReworkJumpQueued) && CanMove())
                 {
-                    _velocity.y = Balance.JumpVelocity;
+                    _velocity.y = Balance.JumpVelocity * ReworkJumpScale;
                     NetCue.PlayVaried("jump", transform.position,
                                                      0.96f, 1.08f, 0.9f);
                     GetComponentInChildren<Visual.CharacterSquashStretch>()?.Stretch(0.20f);

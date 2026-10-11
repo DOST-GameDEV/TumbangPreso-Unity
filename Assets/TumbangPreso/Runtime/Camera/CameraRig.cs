@@ -955,6 +955,19 @@ namespace TumbangPreso.CameraSystem
 
             LookThisFrame(out float dx, out float dy);
 
+            // The debug third person, free: the mouse swings the camera only while the right button is down, and
+            // never turns the body (`SetDebugCameraLock`).
+            if (DebugFreeCamera)
+            {
+                var mouse = UnityEngine.InputSystem.Mouse.current;
+                if (mouse != null && mouse.rightButton.isPressed)
+                {
+                    _debugOrbitYaw += dx * 10.0f;
+                    _debugOrbitPitch = Mathf.Clamp(_debugOrbitPitch - dy * 10.0f, -35f, 75f);
+                }
+                return;
+            }
+
             // ⚠️ YAW GOES ON THE BODY, PITCH STAYS ON THE RIG. The body turning is what makes
             // a throw leave along the sight line; a rig that yawed on its own would let the
             // player look one way and throw another.
@@ -978,7 +991,7 @@ namespace TumbangPreso.CameraSystem
             return Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
         }
 
-        private float _fppSquatBlend;
+        private float _fppSquatBlend, _reworkEyeDrop;
 
         /// <summary>0 to 1: how deep the local taya is in the raise's crouch, eased in and out.</summary>
         private float FppRaiseSquat()
@@ -1002,12 +1015,24 @@ namespace TumbangPreso.CameraSystem
             float squat = FppRaiseSquat();
             eye -= Vector3.up * (Visual.CanRaiseShape.FppEyeDrop * squat);
 
+            // The movement rework's crouch and slide, from the eyes (`MovementRework`, a debug switch; zero with it off).
+            // An offset of the view like the two around it, eased so the drop is a motion and not a cut.
+            var reworkMotor = _character.GetComponent<CharacterMotor>();
+            _reworkEyeDrop = Mathf.MoveTowards(_reworkEyeDrop, reworkMotor != null ? reworkMotor.ReworkEyeDropTarget : 0f, Time.deltaTime * 4.5f);
+            eye -= Vector3.up * _reworkEyeDrop;
+
             // ⚠️ PAETE DOWN ON HIS KNEE, FROM HIS OWN EYES (HERO-9 v5, direction.md 5.14: *"HE GOES TO THE GHHROUND AND HIS ROOTS
             // CONNECT TO IT"*). While MAKILING'S EMBRACE holds him down after its cutscene his view is at kneel height and tipped a
             // little toward his hands in the court, and it lifts on each of the tree's hauls. The squat's rule exactly: an offset
             // of the view, never `_pitchDeg`, so the aim is where it was when he stands (and walking ends it at once).
             float kneel = Visual.PaeteGroundCall.KneelWeight(_character);
             eye -= Vector3.up * (Visual.PaeteGroundCall.FppEyeDrop * kneel - 0.06f * kneel * Visual.PaeteGroundCall.HeaveJolt(_character));
+
+            // How far all of that has brought the eye down from standing, for the map's near-camera dissolve: it spares the
+            // ground by its depth under a STANDING eye (`NearFade.shader`, `belowFeet`; owner 2026-10-08, crouched: "why is the
+            // distance fade happening").
+            Shader.SetGlobalFloat(Visual.NearFade.EyeDropId,
+                Mathf.Max(0f, _character.transform.position.y + PersonCapsuleHeight * 0.5f + FppEyeHeight - eye.y));
 
             // Absolute, from yaw and pitch only. The body's roll cannot reach this.
             transform.SetPositionAndRotation(eye, Quaternion.Euler(_pitchDeg + Visual.CanRaiseShape.FppLookDown * squat
@@ -1071,12 +1096,92 @@ namespace TumbangPreso.CameraSystem
             if (held != null) _arms.MatchSkin(held);
         }
 
+        private bool _debugThirdPerson;
+        private const float DebugThirdPersonPitchOffset = 12f;
+        public bool DebugThirdPerson => _debugThirdPerson && _mode == CameraMode.Tpp;
+
+        /// <summary>
+        /// ⚠️ A DEBUG VIEW, FOR LOOKING AT A BODY MOVE (owner, 2026-10-07: "add a 3rd person mode to the prototype map").
+        /// The rig has had a third-person mode since the port and nothing in the game switches to it; this does, for
+        /// the prototype map's key. The body is drawn again and the first-person arms put away; the mouse still turns
+        /// the body and now tips this camera too. Refused during an emote's own swing, which owns the mode while it runs.
+        /// </summary>
+        public bool SetDebugThirdPerson(bool on)
+        {
+            if (_emoteView || _character == null) return false;
+            _debugThirdPerson = on;
+            _mode = on ? CameraMode.Tpp : CameraMode.Fpp;
+            if (on)
+            {
+                RestoreSelfHide();
+                if (_viewmodel != null) _viewmodel.gameObject.SetActive(false);
+                // It opens free, as that game's does, behind the body.
+                _debugCameraLocked = false;
+                _debugOrbitYaw = BodyYawDeg(); _debugOrbitPitch = 18f;
+                UI.CursorMode.Release();
+            }
+            else
+            {
+                if (_viewmodel != null) _viewmodel.gameObject.SetActive(_active && !MatchArrivalPresentation.OwnsCamera);
+                ApplyFppSelfHide();
+                UI.CursorMode.Capture();
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// ⚠️ THE TWO THIRD PERSONS OF ROBLOX (owner, 2026-10-09: "can third person be like roblox. add a lock for a tpv
+        /// where the cam is off to the side, and toggling it disables the lock and you can use right click to look
+        /// around").
+        ///   * LOCKED: the camera sits over the right shoulder, the pointer is taken, and the mouse turns the BODY, as
+        ///     first person does. The body faces where the camera looks.
+        ///   * FREE (how it opens): the pointer is free. Holding the RIGHT mouse button swings the camera round the body
+        ///     and does not turn it; the movement keys walk relative to the CAMERA and the body turns to face the way
+        ///     it is walking (`CharacterMotor.Steer` asks `DebugFreeCamera` and `DebugOrbitYaw`).
+        /// </summary>
+        private bool _debugCameraLocked;
+        private float _debugOrbitYaw, _debugOrbitPitch = 18f;
+        private const float DebugShoulderOffset = 0.75f;
+        public bool DebugCameraLocked => DebugThirdPerson && _debugCameraLocked;
+        public bool DebugFreeCamera => DebugThirdPerson && !_debugCameraLocked;
+        public float DebugOrbitYaw => _debugOrbitYaw;
+
+        public bool SetDebugCameraLock(bool locked)
+        {
+            if (!DebugThirdPerson || _character == null) return false;
+            _debugCameraLocked = locked;
+            if (locked)
+            {
+                // The body turns to where the camera was looking, so locking does not swing the view.
+                _character.transform.rotation = Quaternion.Euler(0f, _debugOrbitYaw, 0f);
+                _pitchDeg = Mathf.Clamp(_debugOrbitPitch - DebugThirdPersonPitchOffset, PitchMinDeg, PitchMaxDeg);
+                UI.CursorMode.Capture();
+            }
+            else
+            {
+                _debugOrbitYaw = BodyYawDeg();
+                _debugOrbitPitch = Mathf.Clamp(_pitchDeg + DebugThirdPersonPitchOffset, -35f, 75f);
+                UI.CursorMode.Release();
+            }
+            return true;
+        }
+
         private void ApplyTpp()
         {
-            float yaw = BodyYawDeg();
+            // Third person has no lowered eye for the near dissolve's ground rule (`ApplyFpp`).
+            Shader.SetGlobalFloat(Visual.NearFade.EyeDropId, 0f);
+            // The debug third person, free: the camera's own yaw and pitch, not the body's (`SetDebugCameraLock`).
+            bool free = DebugFreeCamera;
+            float yaw = free ? _debugOrbitYaw : BodyYawDeg();
             Vector3 mount = _character.transform.position + Vector3.up * TppMountHeight;
+            // Locked: over the right shoulder.
+            if (DebugCameraLocked) mount += Quaternion.Euler(0f, yaw, 0f) * Vector3.right * DebugShoulderOffset;
 
-            var rot = Quaternion.Euler(Mathf.Max(_tppPitchDeg, TppMinPitchDeg), yaw, 0.0f);
+            // The debug third person (`SetDebugThirdPerson`) looks up and down with the mouse; the game's own keeps its fixed pitch.
+            float pitch = free ? _debugOrbitPitch
+                        : DebugThirdPerson ? Mathf.Clamp(_pitchDeg + DebugThirdPersonPitchOffset, -35f, 75f)
+                                            : Mathf.Max(_tppPitchDeg, TppMinPitchDeg);
+            var rot = Quaternion.Euler(pitch, yaw, 0.0f);
             Vector3 wanted = mount - (rot * Vector3.forward) * _tppSpringLength;
 
             // ⚠️ THE SPRING ARM EXCLUDES THE BODY IT IS WATCHING, or the cast hits the

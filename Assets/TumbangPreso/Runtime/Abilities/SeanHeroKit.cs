@@ -99,6 +99,21 @@ namespace TumbangPreso.Abilities
             var context = new AbilityContext(motor, motor.GetComponent<Carrier>(), motor.GetComponent<CombatVerbs>());
             ((IgnitionCannonAbility)AttackingSkill).RestoreCharge(context, remaining);
         }
+        /// <summary>How far up SUPERNOVA's launch has him when its dive begins: 14 m/s up for 0.55 s against `Balance.CharacterGravity`.</summary>
+        public const float SupernovaApex = 14.0f * .55f - .5f * Core.Balance.CharacterGravity * .55f * .55f;
+
+        /// <summary>
+        /// How far up he is put when SUPERNOVA is released after its cutscene, from these feet: `SupernovaApex`, or as much of it
+        /// as there is headroom for. The cutscene's last frame for his own screen is computed from the same number
+        /// (`Visual.HeroIntroductionScene.HandBackView`), so the picture and the body agree.
+        /// </summary>
+        public static float SupernovaApexRise(Vector3 feet)
+        {
+            const float head = 1.5f;
+            return Physics.Raycast(feet + Vector3.up * 1.0f, Vector3.up, out var roof, SupernovaApex + head, ~0, QueryTriggerInteraction.Ignore)
+                ? Mathf.Clamp(roof.distance + 1.0f - head, 0f, SupernovaApex) : SupernovaApex;
+        }
+
         private float _supernovaPoseTime = -1;
         public float SupernovaPoseTime => Ultimate.IsWindingUp
             ? Mathf.Lerp(0, .20f, 1 - Ultimate.WindupRemaining / Mathf.Max(.01f, Ultimate.Windup))
@@ -311,6 +326,13 @@ namespace TumbangPreso.Abilities
         private sealed class SupernovaSmashdownAbility : HeroAbility
         {
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
+            // ⚠️ THE CUTSCENE IS THE LEAP (owner 2026-10-09, of his restaged cutscene: "he should leap but then at the apex of the
+            // leap, the person playing sean should have their cam tween to their fpv. and the rest of the players cut to their
+            // fpv"). So released after its cutscene there is no wind-up and no launch: he is put at the top of the leap, where
+            // the cutscene left him, hangs a moment and dives. A cast that had no cutscene launches from the ground as before.
+            protected override bool IntroductionIsTheWindup => true;
+            private bool _fromApex;
+            private float _slamBelow;
             private float _airTimer;
             private readonly SeanHeroKit _kit;
             private float _landingAge;
@@ -356,6 +378,22 @@ namespace TumbangPreso.Abilities
                 var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
                 if (squash != null) squash.Stretch(0.06f);
 
+                _fromApex = HadSharedIntroduction;
+                if (_fromApex)
+                {
+                    // Where the launch below would have had him when its dive begins (`SupernovaApex`), or as high as the
+                    // roof over him allows. `Teleport` is the motor's own guarded, replicated move (only the peer that owns
+                    // the body moves it, and the host tells the others); it also clears his statuses, as every teleport does.
+                    float rise = SupernovaApexRise(ctx.Position);
+                    _slamBelow = ctx.Position.y + Mathf.Min(.35f, rise * .5f);
+                    ctx.Motor.Teleport(ctx.Position + Vector3.up * rise);
+                    _airTimer = .14f;
+                    _kit._supernovaPoseTime = .78f;
+                    _hasLeftGround = true;
+                    NetCue.Play("hero_sean_ult", ctx.Position);
+                    return;
+                }
+
                 // Launch upward
                 ctx.Motor.ApplyImpulse(Vector3.up * 14.0f + ctx.Forward * 4.0f);
                 NetCue.Play("hero_sean_ult", ctx.Position);
@@ -381,9 +419,12 @@ namespace TumbangPreso.Abilities
                 }
 
                 _kit._supernovaPoseTime = !_diving
-                    ? Mathf.Lerp(.20f, .78f, 1 - Mathf.Clamp01(_airTimer / .55f))
+                    ? (_fromApex ? .78f : Mathf.Lerp(.20f, .78f, 1 - Mathf.Clamp01(_airTimer / .55f)))
                     : Mathf.Lerp(.78f, 1.04f, Mathf.Clamp01(-_airTimer / .16f));
                 if (!_diving) return;
+                // Put at the top, the motor's "on the ground" is still what it was before the move until its next step: he must
+                // actually have come down before the slam, or it would go off in the air.
+                if (_fromApex && ctx.Motor.transform.position.y > _slamBelow && _airTimer > -1.5f) return;
 
                 // An interrupted leap under a low ceiling may never report an airborne
                 // frame. It may still impact while grounded, never from a timer in midair.

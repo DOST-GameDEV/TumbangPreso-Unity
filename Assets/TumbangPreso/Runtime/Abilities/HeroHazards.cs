@@ -4079,8 +4079,12 @@ namespace TumbangPreso.Abilities
                     // `docs/Asset_Sourcing.md` § 3 asks Supernova for by name: *"one main burst
                     // with shrapnel and sparse embers."* The shrapnel is wider than the burst on
                     // purpose, because pieces travel further than the flash that launched them.
-                    VfxFlipbook.Play(VfxSheets.Burst, center + Vector3.up * 0.35f, radius * 0.85f, tint: new Color(1, 1, .08f));
-                    VfxFlipbook.Play(VfxSheets.Shrapnel, center + Vector3.up * 0.30f, radius * 1.15f, tint: new Color(1, 1, .08f));
+                    // ⚠️⚠️ BOTH SHEETS ARE OFF (owner 2026-10-09, of SUPERNOVA's landing in play: "i dont like the pixel impact
+                    // effects, doesnt fit our style"; asked which, "for sean;s ultimate. landing has a pixel impact effect /
+                    // explosion"). They are flat pixel-art flipbooks drawn over a blast that is otherwise built shapes, and they
+                    // were the part that read as a different game. What is left is the faceted core, the ring and the thrown
+                    // debris below, which are this game's own. The sheets are still built and listed in `VfxSheets`; do not
+                    // hook them back here. The other styles above still play theirs: he has only named this one.
                     break;
             }
 

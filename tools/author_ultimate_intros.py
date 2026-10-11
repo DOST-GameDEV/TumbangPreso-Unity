@@ -366,7 +366,7 @@ def _sean(held):
     that is the first frame of the live leap.
     Measured on his real mesh: twist 38 brings both hands together in front of the chest.
     """
-    p = Performance("sean-held" if held else "sean", 3.4)
+    p = Performance("sean-held" if held else "sean", 8.4)
     rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
     plant = Pose(torso=(6, 8, 0), head=(16, -4, 0), left=(6, 18, 0), right=(6, 18, 0),
                  legs=((4, 7), (-4, 7)))
@@ -392,26 +392,52 @@ def _sean(held):
     rise = Pose(torso=(-8, 0, 0), head=(-14, 0, 0), left=(165, 22, 0), right=(165, 22, 0),
                 legs=((-4, 3), (-10, 3)))
 
+    # ⚠️ 7.0 s, RESTAGED (owner 2026-10-08: of three staging ideas "sean i like 1 and 2", joined, "About 7 s"). He builds
+    # the parol as before, lifts it over his head and lets it go; the lens follows it up as it grows into the giant
+    # festival lantern and lies over above the court; from above, the ring where he will land and who is in it; then the
+    # coil and the LEAP up into it, ending at the top (see the stage's header for why and how play picks it up).
+    # The stage (`HeroIntroductionScene.Sean.cs`) reads: the flame 1.75, the lift 2.25, the release 2.70, the top 4.60,
+    # the ring 4.75, the coil 5.20, the leap 6.20, the burst 6.72. The LAST pose is still `rise`.
+    free = (165, 22, 0)
+    # Lifting it over his head with both hands (the free one alone when he holds a shoe), his face following it up.
+    lift = Pose(torso=(-6, 0, 0), head=(-22, 0, 0), left=free, right=(18, 28, -6) if held else free, legs=((4, 7), (-4, 7)))
+    # Letting it go: the hands open out and stay up, as if it might come back.
+    let_go = lift.but(torso=(-10, 0, 0), head=(-34, 0, 0), left=(150, 56, 0), right=(18, 28, -6) if held else (150, 56, 0))
+    # Watching it climb: the arms come down slowly, his head stays back.
+    watch = Pose(torso=(-8, 0, 0), head=(-38, 0, 0), left=(40, 30, 0), right=(18, 28, -6) if held else (40, 30, 0), legs=((4, 7), (-4, 7)))
+
     p.key(0, rest)
     p.key(.22, plant).key(.38, roll).key(.5, plant)
     p.key(.72, cup)
     p.key(1.05, inspect_).key(1.35, inspect2).key(1.62, cup)
-    p.key(1.80, look, punch=True)
-    p.hold(1.80, 2.22, look)
-    p.key(2.55, coil)
-    p.hold(2.55, 2.78, coil)
-    p.key(2.98, rise, punch=True)
-    p.hold(2.98, 3.4, rise)
-    p.rise(0, 0).rise(2.9, 0).rise(3.1, .12).rise(3.4, .14)
+    p.hold(1.62, 2.1, cup)
+    p.key(2.5, lift)
+    p.key(2.7, let_go, punch=True)
+    p.hold(2.7, 3.3, let_go)
+    p.key(4.2, watch)
+    p.hold(4.2, 4.9, watch)
+    # ⚠️ HE LEAPS (owner 2026-10-09: "he should leap but then at the apex of the leap ... their cam tween to their fpv"). Up
+    # at 6.2, fast and then slowing, to 4.675 m at 7.0: `SeanHeroKit.SupernovaApex`, where play puts him to dive from.
+    p.key(5.3, coil)
+    p.hold(5.3, 6.02, coil)
+    p.key(6.2, rise, punch=True)
+    p.hold(6.2, 8.4, rise)
+    # 8.4 s (owner 2026-10-09: "more airtime before going to the fpv"): the same leap, slower over its top, then he HANGS there
+    # while the lens comes round behind him (`SeanFrame`), 7.15 to 7.85, and only after that goes into his eyes.
+    p.rise(0, 0).rise(6.14, 0).rise(6.36, 1.9).rise(6.62, 3.3).rise(6.95, 4.25).rise(7.35, 4.6).rise(7.7, 4.675).rise(8.4, 4.675)
 
     side = -1 if held else 1
     # A: three-quarter front medium while he plants and builds the lantern.
-    p.shot(0, 1.75, (side * 1.9, 1.35, 4.1), (0, 1.0, 0), 44, eye_to=(side * 1.6, 1.3, 3.6))
-    # B: close on the lantern and his face as the head snaps up.
-    p.shot(1.75, 2.3, (side * 1.1, 1.45, 3.1), (0, 1.25, .2), 40, eye_to=(side * 1.0, 1.45, 2.85), close=True)
-    # C: low and to his side, so the compressed coil reads, then the rise.
-    p.shot(2.3, 3.4, (-2.9, .5, 3.3), (0, 1.0, 0), 50, eye_to=(-2.6, .55, 3.4), look_to=(0, 1.35, 0))
-    p.locked((1.7, 1.15, 4.8), (0, 1.05, 0), 46)
+    p.shot(0, 1.3, (side * 1.9, 1.35, 4.1), (0, 1.0, 0), 44, eye_to=(side * 1.6, 1.3, 3.6))
+    # B: close on the lantern and his face as it fills with flame.
+    p.shot(1.3, 2.25, (side * 1.1, 1.45, 3.1), (0, 1.25, .2), 40, eye_to=(side * .95, 1.45, 2.8), close=True)
+    # C: beside and below him as he lets it go, then up after it (the stage turns the lens to the lantern as it climbs).
+    p.shot(2.25, 4.9, (side * 2.4, 3.4, 5.4), (0, 1.5, .2), 50, eye_to=(side * 3.2, 4.4, 8.6), fov_to=60)
+    # D: from over the lantern, down through its frame at the court, the ring and whoever stands in it.
+    p.shot(4.9, 6.0, (.4, 13.4, -2.2), (0, 0, .4), 58, eye_to=(.2, 12.4, -1.8))
+    # E: low in front of him: the coil with the flames at his feet, the lantern filling the sky over him, and the rise.
+    p.shot(6.0, 8.4, (side * -2.0, .3, 6.6), (0, 3.2, 0), 66, eye_to=(side * -1.6, .3, 5.4), look_to=(0, 3.8, 0))
+    p.locked((1.9, 1.6, 7.2), (0, 2.4, 0), 56)
     return p
 
 
@@ -429,29 +455,51 @@ def zack():
     Keep the existing2.8s shared-phase boundary. The carrying arm stays low;
     neither the shoe nor a distant target is the source of this self-buff.
     """
-    p = Performance("zack", 2.8)
+    # THE BOLT WAITS FOR HIM (2026-10-09, 6.4 s): the world stops with the lightning an arm's length over his hand, and he
+    # is the only thing in it that moves. The times are the stage's (`HeroIntroductionScene.Zack.cs`).
+    p = Performance("zack", 6.4)
     rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
     cocky = Pose(torso=(0, -6, 4), head=(0, 8, -6), left=(58, 32, -18), right=(8, 20, 0),
                  legs=((2, 3), (-2, 8)))
     flick = cocky.but(left=(74, 36, -18))
     point_up = Pose(torso=(-2, 6, -3), head=(-12, 10, 0), left=(148, 55, 0), right=(8, 20, 0),
                     legs=((2, 3), (-2, 8)))
+    # Stopped: the arm comes down, he looks at the lens with the bolt hanging over him.
+    aside = Pose(torso=(0, -8, 5), head=(2, 14, -8), left=(22, 26, -10), right=(8, 20, 0),
+                 legs=((2, 3), (-2, 8)))
+    # He looks up at it, lifts one hand, and pokes it.
+    eyeing = Pose(torso=(-5, 2, -2), head=(-26, 4, 0), left=(120, 22, 0), right=(8, 20, 0),
+                  legs=((2, 3), (-2, 8)))
+    poke = eyeing.but(torso=(-7, 2, -3), left=(168, 12, 0))
+    shrug = Pose(torso=(0, -4, 4), head=(-2, -10, -8), left=(26, 40, -12), right=(22, 36, 0),
+                 legs=((2, 3), (-2, 8)))
     gather = Pose(torso=(8, 4, 0), head=(-4, -6, -4), left=(60, 30, -10), right=(12, 24, 0),
                   legs=((6, 4), (-6, 4)))
     strike = Pose(torso=(-12, 0, 0), head=(8, 0, 0), left=(42, 42, -10), right=(18, 30, 0),
                   legs=((8, 4), (-8, 4)))
-    shrug = Pose(torso=(0, -4, 4), head=(-2, -10, -8), left=(6, 34, -12), right=(8, 24, 0),
-                 legs=((2, 3), (-2, 8)))
+    settle = Pose(torso=(0, -4, 4), head=(-2, -10, -8), left=(6, 34, -12), right=(8, 24, 0),
+                  legs=((2, 3), (-2, 8)))
     p.key(0, rest)
     p.key(.26, cocky).key(.40, flick, punch=True).key(.50, cocky)
-    p.key(.66, point_up).hold(.66, 1.12, point_up)
-    p.key(1.30, gather).hold(1.30, 1.74, gather)
-    p.key(1.88, strike, punch=True).hold(1.88, 2.02, strike)
-    p.key(2.32, shrug).hold(2.32, 2.8, shrug)
-    # Stay on the face's readable side instead of cutting behind his hair.
-    p.shot(0, .98, (-2.2, 1.35, 3.1), (0, 1.15, 0), 42, eye_to=(-2.05, 1.35, 2.85))
-    p.shot(.98, 1.82, (-1.5, 1.4, 2.4), (0, 1.35, .1), 40, eye_to=(-1.35, 1.4, 2.3))
-    p.shot(1.82, 2.8, (-.8, .95, 3.7), (0, 1.15, 0), 46, eye_to=(-.7, 1.0, 3.5))
+    p.key(.66, point_up).hold(.66, 1.98, point_up)
+    p.key(2.22, aside).hold(2.22, 2.66, aside)
+    p.key(2.95, eyeing)
+    p.key(3.15, poke, punch=True).hold(3.15, 3.34, poke)
+    p.key(3.5, eyeing)
+    p.key(3.82, shrug).hold(3.82, 4.42, shrug)
+    p.key(4.72, gather).hold(4.72, 5.06, gather)
+    p.key(5.2, strike, punch=True).hold(5.2, 5.5, strike)
+    p.key(5.86, settle).hold(5.86, 6.4, settle)
+    # A: the call, on the face's readable side.
+    p.shot(0, 1.2, (-2.2, 1.35, 3.1), (0, 1.15, 0), 42, eye_to=(-2.05, 1.35, 2.85))
+    # B: from low, looking up past him at the sky the bolt comes down.
+    p.shot(1.2, 1.98, (-1.4, .4, 3.5), (-.2, 2.7, 0), 62, eye_to=(-1.3, .42, 3.3))
+    # C: close, his face and the hung tip over it. The look, then the poke.
+    p.shot(1.98, 3.62, (-1.5, 1.5, 3.3), (-.2, 1.5, 0), 48, eye_to=(-1.25, 1.5, 3.0), close=True)
+    # D: wide and high, travelling round the stopped court.
+    p.shot(3.62, 4.62, (5.2, 4.0, 6.2), (0, 1.7, 0), 52, eye_to=(3.0, 4.3, 7.4))
+    # E: front and low for the let go and what he is left as.
+    p.shot(4.62, 6.4, (-.8, .95, 4.3), (0, 1.5, 0), 50, eye_to=(-.7, 1.0, 3.6))
     p.locked((-1.9, 1.15, 4.3), (0, 1.15, 0), 46)
     return p
 
@@ -466,7 +514,7 @@ def nemu(held=False):
     folded, and points him ahead.
     Kuro sits on her LEFT (hero-local -x), which the camera keeps in frame.
     """
-    p = Performance("nemu-held" if held else "nemu", 3.8)
+    p = Performance("nemu-held" if held else "nemu", 7.2)
     rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
     # Gazing away up to her right, hands clasped behind her back.
     away = Pose(torso=(-2, 8, 2), head=(-16, 30, 4), left=(-24, 8, -30), right=(-24, 8, -30))
@@ -504,17 +552,23 @@ def nemu(held=False):
     p.key(1.3, offer)
     p.hold(1.3, 1.68, offer)
     p.key(1.86, knowing, punch=True)
-    p.hold(1.86, 2.28, knowing)
-    p.key(2.5, calm).key(2.85, calm_sway).key(3.15, calm)
-    p.key(3.36, send, punch=True)
-    p.hold(3.36, 3.8, send)
+    p.hold(1.86, 2.5, knowing)
+    # LIGHTS OUT (2026-10-09): she folds her hands and sways through the dive, the rise and his looking round, never
+    # turning to him, and only then points. The times are the stage's (`HeroIntroductionScene.Nemu.cs`).
+    p.key(2.8, calm).key(3.4, calm_sway).key(4.0, calm).key(4.6, calm_sway).key(5.2, calm).key(5.55, calm_sway)
+    p.key(5.8, send, punch=True)
+    p.hold(5.8, 7.2, send)
 
     # A: from her left front so Kuro, on her left, shares the frame with her.
     p.shot(0, 1.76, (-1.5, 1.2, 3.6), (-.4, .95, 0), 46, eye_to=(-1.3, 1.15, 3.4))
     # B: straight on, close, for the knowing look into the lens.
-    p.shot(1.76, 2.26, (.05, 1.25, 3.1), (0, 1.05, 0), 40, eye_to=(.05, 1.22, 2.85), close=True)
-    # C: the retained reveal that backs out to keep both bodies as Kuro grows.
-    p.shot(2.26, 3.8, (.6, 1.5, 5.6), (-.75, 1.4, 0), 50, eye_to=(.45, 1.41, 5.26), fit=True)
+    p.shot(1.76, 2.45, (.05, 1.25, 3.1), (0, 1.05, 0), 40, eye_to=(.05, 1.22, 2.8), close=True)
+    # C: high over the court from in front of her. The ink runs out, he dives, he rises behind her, he looks round.
+    p.shot(2.45, 4.95, (1.6, 7.6, 12.5), (0, 2.4, -3.2), 56, eye_to=(1.0, 6.4, 11.2))
+    # D: low and close, looking up past her at him.
+    p.shot(4.95, 6.0, (.6, .45, 3.1), (0, 2.7, -2.6), 58, eye_to=(.5, .5, 2.8))
+    # E: back along the court for the send. He comes at this lens; x is 0 on purpose, so a mirrored shot is the same shot.
+    p.shot(6.0, 7.2, (0, 1.3, 6.5), (0, 3.0, -3.0), 52)
     p.locked((3.4, 2.4, 8.6), (-.9, 2.1, 0), 52)
     return p
 
@@ -532,6 +586,82 @@ def _dante(held):
     strike the live fissure continues. Every hold trembles slightly: effort, not stillness.
     Signs measured on the sheets: +twist brings an arm inward, +torso yaw turns to his right.
     """
+    p = Performance("dante-held" if held else "dante", 7.0)
+    return _dante_drift(p, held)
+
+
+def _dante_drift(p, held):
+    """
+    CONTINENTAL DRIFT, 7.0 s (owner 2026-10-08: of three staging ideas "dante i like 2 and 3", joined, "About 7 s").
+    He punches the court; it breaks into plates adrift on a molten sea (seen from above); the horned basalt back
+    rises under his plate and lifts him; it raises a fist as he loads both of his, they come down as one, the
+    blasts run up the court and he is set back down in the stamp the live strike starts from.
+    ⚠️ The stage (`HeroIntroductionScene.Dante.cs`) reads these times: the punch 1.10, the lift, the stamp 6.88.
+    It ends EXACTLY on the fist landing, him still up on its back (owner 2026-10-08: "the cutscene should end exactly
+    when the fist lands ... by then dante should still be on the longhorn and only then will it disappeaer into the
+    ground"). So the lift never comes back down in this table: the going under is live play's.
+    The LAST pose is still `stamp`: play resumes from it.
+    """
+    wide = ((2, 14), (-2, 14))
+    rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
+    plant = Pose(torso=(6, 0, 0), head=(18, 0, 0), left=(8, 24, 0), right=(8, 24, 0), legs=wide)
+    # The wind-up: the fist goes up behind his head, chest opened to it. Holding a shoe, the free hand does it.
+    wind = Pose(torso=(-10, -16 if held else 16, 0), head=(8, 0, 0), legs=((6, 16), (-8, 16)),
+                left=(165, 22, 0) if held else (16, 30, 0), right=(20, 42, -8) if held else (165, 22, 0))
+    # The punch: down on the front leg, the fist in the court just ahead of his feet.
+    punch = Pose(torso=(40, 8 if held else -8, 0), head=(-4, 0, 0), legs=((34, 14), (-26, 14)),
+                 left=(58, 8, 22) if held else (18, 38, 0), right=(20, 42, -8) if held else (58, 8, 22))
+    # Standing on a plate that is adrift: low, wide, arms out for balance, watching the seams.
+    adrift = Pose(torso=(14, 0, 0), head=(16, 0, 0), left=(26, 46, 0), right=(20, 42, -8) if held else (26, 46, 0),
+                  legs=((6, 18), (-6, 18)))
+    adrift_l = adrift.but(torso=(13, -6, 2), head=(18, -22, 0))
+    adrift_r = adrift.but(torso=(13, 6, -2), head=(18, 22, 0))
+    # Carried up: knees deeper, head coming up as the ground leaves.
+    ride = Pose(torso=(20, 0, 0), head=(-6, 0, 0), left=(34, 54, 0), right=(20, 42, -8) if held else (34, 54, 0),
+                legs=((12, 20), (-10, 20)))
+    ride_shake = ride.but(torso=(21, 0, 2), left=(36, 56, 0))
+    stand = Pose(torso=(-4, 0, 0), head=(-10, 0, 0), left=(18, 30, 0), right=(20, 42, -8) if held else (18, 30, 0),
+                 legs=((0, 16), (0, 16)))
+    load = Pose(torso=(-4, 22, 0), head=(0, -14, 0), left=(150, 20, 50), right=(150, 20, -8),
+                legs=((8, 12), (-10, 12)))
+    stamp = Pose(torso=(28, -10, 0), head=(-8, 6, 0), left=(72, 6, 30), right=(72, 6, 30),
+                 legs=((22, 10), (-18, 10)))
+    if held:
+        load = load.but(right=(20, 42, -8))
+        stamp = stamp.but(right=(30, 42, -8))
+    landed = stamp.but(torso=(36, -10, 0), legs=((30, 12), (-24, 12)))
+
+    p.key(0, rest)
+    p.key(.42, plant)
+    p.key(.82, wind)
+    p.hold(.82, .98, wind)
+    p.key(1.10, punch, punch=True)
+    p.hold(1.10, 1.50, punch)
+    p.key(1.95, adrift).key(2.4, adrift_l).key(2.9, adrift_r).key(3.4, adrift)
+    p.key(3.85, ride).key(4.1, ride_shake).key(4.4, ride).key(4.7, ride_shake).key(5.0, ride)
+    p.key(5.5, stand)
+    p.key(6.05, load)
+    p.hold(6.05, 6.66, load)
+    p.key(6.88, stamp, punch=True)
+    p.hold(6.88, 7.0, stamp)
+
+    # His plate is carried: a slow first heave, the long rise, a settle at the top, then down with the thing as it goes under.
+    p.rise(0, 0).rise(3.45, 0).rise(4.0, .45).rise(5.2, 3.4).rise(7.0, 3.4)
+
+    # A: low and close in front while he plants, winds and punches.
+    p.shot(0, 1.15, (1.3, .55, 3.4), (0, 1.0, 0), 46, eye_to=(1.0, .5, 2.9))
+    # B: high over him, the court in plates on the sea, rising slowly as they drift.
+    p.shot(1.15, 3.4, (.5, 7.4, -2.2), (0, 0, .5), 58, eye_to=(.9, 10.2, -3.0))
+    # C: low, wide and to his front right, looking up as it comes out of the seam under him.
+    p.shot(3.4, 5.3, (4.0, .7, 5.6), (0, 1.0, .6), 52, eye_to=(4.9, 1.1, 6.8), look_to=(0, 2.9, .6))
+    # D: low in front of its face, him on top, the raised fist over both, creeping in until the fist lands.
+    p.shot(5.3, 7.0, (-2.9, 1.3, 9.8), (.3, 3.3, .9), 46, eye_to=(-2.4, 1.1, 8.6), look_to=(.3, 3.0, 1.2))
+    p.locked((2.6, 1.8, 8.0), (0, 1.6, .5), 54)
+    return p
+
+
+def _dante_fissure(held):
+    """The first one, kept to read: TITAN FISSURE, 3.8 s (the two parted slabs). Nothing calls it."""
     p = Performance("dante-held" if held else "dante", 3.8)
     rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
     plant = Pose(torso=(6, 0, 0), head=(18, 0, 0), left=(8, 24, 0), right=(8, 24, 0),
@@ -597,6 +727,112 @@ def _cheska(held):
     Holding a slipper, the free (left) hand does the fine work and the shoe stays low and out
     of the way, and the camera takes her other side so the shoe is on the far side.
     """
+    p = Performance("cheska-held" if held else "cheska", 11.9)
+    return _cheska_breath(p, held)
+
+
+def _cheska_breath(p, held):
+    """
+    ABSOLUTE ZERO, 9.0 s, the seventh staging (owner 2026-10-08: "cheeky but surprisingly strong"; of the sixth, at 6.5 s:
+    "its a bit too sped up and linear ... the first skating part is just not graceful enough ... just use the original fpv
+    hand, instead make her whole elbow bent and then extend to point towards the person. after do a top view of her
+    skating circling around, then do the glacier stuff").
+    ⚠️ 9.0 s is to be shown to him, not yet agreed: asked for the length he said "show me the rendeer".
+    She skates one long slow loop and turns to a stop; through her own eyes she turns to each other player, her arm
+    comes up bent and drives out to point at them; from above she skates a full circle; one foot down and the court
+    goes up in ice; she blows the frost off her fingertip; her hands snap apart and the glacier bursts.
+    ⚠️ The stage (`HeroIntroductionScene.Cheska.cs`) MOVES HER BODY on the loop and the circle, and shots 1 to 3 are
+    through her eyes with her own first-person arm, her body not drawn. It reads these times: the loop .22 to 1.94, the
+    turn 1.86 to 2.26, the looks 2.30, 3.60, 4.50, the heart 5.30 to 7.92, the stomp 8.15, the last
+    snap 8.72. The LAST pose is still `snap`: play resumes from it.
+    """
+    rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
+    shoe = (18, 26, -6)  # the slipper hand, low and clear of the body
+    hip = (-8, 34, 30)   # a hand on her hip
+    lean = ((4, 3), (-2, 8))  # her weight on one leg
+    wing_l, wing_r = (8, 82, -10), (-14, 76, 10)  # her arms held out wide, one a little ahead, one a little behind
+    # The push: low over the front knee, the other leg driving back.
+    push = Pose(torso=(22, -8, 0), head=(-12, 6, 0), left=(36, 40, 0), right=shoe if held else (-26, 44, 0), legs=((30, 6), (-28, 8)))
+    # The long glide: her chest forward, her head up, one leg held out straight behind her, her arms wide.
+    glide_a = Pose(torso=(30, 6, -5), head=(-26, 0, 0), left=wing_l, right=shoe if held else wing_r, legs=((6, 3), (-62, 6)))
+    # The change of edge: both skates under her for a moment, arms coming round.
+    cross = Pose(torso=(12, 0, 0), head=(-8, 0, 0), left=(20, 60, 0), right=shoe if held else (20, 60, 0), legs=((10, 4), (-8, 4)))
+    glide_b = Pose(torso=(30, -6, 5), head=(-26, 0, 0), left=wing_r, right=shoe if held else wing_l, legs=((-62, 6), (6, 3)))
+    # The turn that stops her: drawn up tall, arms brought in and up, one foot lifted.
+    turn = Pose(torso=(-6, 0, 0), head=(-10, 0, 0), left=(150, 18, 20), right=shoe if held else (150, 18, 20), legs=((30, 2), (0, 2)))
+    if held:
+        stand = Pose(torso=(-3, -5, 4), head=(4, 0, 0), left=hip, right=shoe, legs=lean)
+        ready = Pose(torso=(-4, 0, 0), head=(2, 0, 0), left=(20, 30, 0), right=shoe, legs=((38, 6), (0, 6)))
+        stomp = Pose(torso=(8, 0, 0), head=(6, 0, 0), left=(-10, 30, 0), right=shoe, legs=((6, 8), (0, 8)))
+        blow = Pose(torso=(2, -4, 3), head=(6, 10, -6), left=(116, 8, 44), right=shoe, legs=lean)
+        show = Pose(torso=(4, -4, 0), head=(8, -8, 4), left=(84, 35, 8), right=shoe)
+        snap = Pose(torso=(-4, 0, 0), head=(-4, 0, 0), left=(72, 74, 0), right=(30, 40, 0))
+    else:
+        stand = Pose(torso=(-3, 5, -4), head=(4, 0, 0), left=hip, right=(4, 16, 0), legs=lean)
+        ready = Pose(torso=(-4, 0, 0), head=(2, 0, 0), left=(20, 30, 0), right=(20, 30, 0), legs=((38, 6), (0, 6)))
+        stomp = Pose(torso=(8, 0, 0), head=(6, 0, 0), left=(-10, 30, 0), right=(-10, 30, 0), legs=((6, 8), (0, 8)))
+        blow = Pose(torso=(2, 4, -3), head=(6, -10, 6), left=hip, right=(116, 8, 44), legs=lean)
+        show = Pose(torso=(4, 0, 0), head=(8, 0, 4), left=(84, 15, 20), right=(84, 15, 20))
+        snap = Pose(torso=(-4, 0, 0), head=(-4, 0, 0), left=(72, 74, 0), right=(72, 74, 0))
+
+    # ⚠️ 11.9 s; 11.5, then 12.6, then this (owner 2026-10-08: "ykw we can extend the ult cutscene until everything looks smooth"; it was 9.0 and the
+    # heart's turns were still too quick). The stage reads: the loop .26 to 2.33, the turn 2.24 to 2.72, the looks 2.80,
+    # 4.10, 5.00, the heart 5.80 to 9.16, the stomp 9.35, the blow 10.02, the last snap 11.58.
+    p.key(0, rest)
+    p.key(.26, push)
+    p.key(.74, glide_a)
+    p.hold(.74, 1.2, glide_a)
+    p.key(1.42, cross)
+    p.key(1.68, glide_b)
+    p.hold(1.68, 2.04, glide_b)
+    p.key(2.33, turn)
+    p.hold(2.33, 2.64, turn)
+    # Through her eyes she simply stands, a hand on her hip: nobody sees it.
+    p.key(3.0, stand)
+    p.hold(3.0, 5.7, stand)
+    # The heart, seen from above, four seconds of it: one edge in and up the right side, the change of edge down in the
+    # cleft, the other edge round the left lobe and out, and a last change in the curl of the tail.
+    p.key(5.8, glide_a)
+    p.hold(5.8, 7.0, glide_a)
+    p.key(7.25, cross)
+    p.key(7.5, glide_b)
+    p.hold(7.5, 8.4, glide_b)
+    p.key(8.85, cross)
+    p.key(9.18, stand)
+    p.key(9.27, ready)
+    p.key(9.35, stomp, punch=True)
+    p.hold(9.35, 9.75, stomp)
+    # The blow is not hurried (he, of half a second of it: "its ending too fast"): her hand comes up, she blows, holds it
+    # while the breath goes, and lets the hand down again before anything else happens.
+    p.key(10.04, blow)
+    p.hold(10.04, 10.72, blow)
+    p.key(11.16, stand)
+    p.key(11.44, show)
+    p.key(11.58, snap, punch=True)
+    p.hold(11.58, 11.9, snap)
+
+    m = -1 if held else 1  # mirror the camera so a held shoe stays on the far side
+    # The skate: in front of her and to one side, and HIGH: the others stand anywhere from 3 m out, and a lens at head
+    # height out there looks at the back of one of them (films c11, c12). From up here it looks over them.
+    p.shot(0, 2.8, (m * 2.6, 4.0, 6.2), (0, .5, 1.3), 44, eye_to=(m * 2.0, 3.2, 5.0), look_to=(0, .7, .5))
+    # Looks 1 to 3: through her eyes, computed in the stage (these numbers are only stand-ins).
+    p.shot(2.8, 4.1, (0, 1.4, .2), (-3.0, 1.0, 5.0), 60, close=True)
+    p.shot(4.1, 5.0, (0, 1.4, .2), (0, 1.0, 6.0), 60, close=True)
+    p.shot(5.0, 5.8, (0, 1.4, .2), (3.0, 1.0, 5.0), 60, close=True)
+    # The heart: from straight above (computed in the stage from the line's own size; these numbers are only stand-ins).
+    p.shot(5.8, 9.2, (-5.9, 10.0, -2.0), (-5.9, 0, -1.1), 46)
+    # The stop: low and wide in front of her: the foot, and the glacier going up behind her.
+    p.shot(9.2, 9.85, (m * 2.6, .55, 6.4), (0, 1.1, 0), 52, eye_to=(m * 3.0, .7, 7.4), look_to=(0, 2.8, -1.2), fov_to=58)
+    # Close again for the frost blown off her fingertip, the ice standing behind her.
+    p.shot(9.85, 11.2, (m * .9, 1.25, 3.0), (0, 1.1, 0), 40, eye_to=(m * .68, 1.2, 2.45), close=True)
+    # High and wide for the last snap: the glacier bursts and everyone is left in their block.
+    p.shot(11.2, 11.9, (m * 3.4, 6.4, 10.2), (0, .7, 2.6), 50, eye_to=(m * 3.0, 5.6, 9.2), look_to=(0, .8, 2.2))
+    p.locked((m * 3.2, 6.0, 9.8), (0, .8, 2.4), 52)
+    return p
+
+
+def _cheska_nova(held):
+    """The first one, kept to read: staged as GLACIAL NOVA, 3.2 s (the fingertip line of frost). Nothing calls it."""
     p = Performance("cheska-held" if held else "cheska", 3.2)
     rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
     shoe = (18, 26, -6)  # the slipper hand, low and clear of the body
@@ -652,7 +888,7 @@ def rafi():
     way, then the other, shrugs, beckons twice ("come on"), drops into a boat-deck crouch that
     rocks like a hull, lifts the wave up behind him and sends it with one sweeping arm.
     """
-    p = Performance("rafi", 3.4)
+    p = Performance("rafi", 8.6)
     rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
     feint_l = Pose(torso=(4, -12, 8), head=(0, -16, 4), left=(10, 30, 0), right=(18, 18, 0),
                    legs=((4, 10), (-4, 10)))
@@ -676,18 +912,58 @@ def rafi():
     p.key(.46, feint_r, punch=True).key(.6, feint_r)
     p.key(.8, shrug)
     p.key(1.0, beckon).key(1.12, beckon_pull).key(1.24, beckon).key(1.36, beckon_pull)
-    p.key(1.58, deck).key(1.8, deck_rock).key(2.02, deck)
-    p.key(2.28, raise_)
-    p.hold(2.28, 2.72, raise_.but(torso=(-7, 0, 0)))
-    p.key(2.9, send, punch=True)
-    p.hold(2.9, 3.4, send)
+    # THE TIDE GOES OUT, AND WHAT COMES BACK (2026-10-09, 8.6 s; the owner's shark joined to the tide going out). The times
+    # are the stage's (`HeroIntroductionScene.Rafi.cs`), which also carries his body into the wall, onto the shark and back.
+    haul = Pose(torso=(-10, -6, 0), head=(-6, -6, -4), left=(104, 16, -6), right=(96, 16, 6),
+                legs=((10, 12), (-10, 12)))
+    haul_hold = haul.but(torso=(-12, -4, 2))
+    # Head first into the wall, arms out in front.
+    dive = Pose(torso=(34, 0, 0), head=(-22, 0, 0), left=(165, 18, 0), right=(165, 18, 0),
+                legs=((-12, 4), (-16, 4)))
+    # On its back: low, knees wide, both hands forward on the fin, leaning into each bank.
+    ride = Pose(torso=(30, 0, 0), head=(-18, 0, 0), left=(64, 26, 0), right=(64, 26, 0),
+                legs=((34, 26), (34, 26)))
+    ride_left = ride.but(torso=(30, -8, 12), head=(-18, -12, 6))
+    ride_right = ride.but(torso=(30, 8, -12), head=(-18, 12, -6))
+    # Let go: open, arms and legs wide, in the air.
+    air = Pose(torso=(-12, 0, 0), head=(-4, 0, 0), left=(118, 56, 0), right=(118, 56, 0),
+               legs=((22, 16), (-22, 16)))
+    watch = Pose(torso=(-9, 0, 0), head=(-30, 0, 0), left=(12, 30, 0), right=(12, 30, 0),
+                 legs=((2, 8), (-2, 8)))
+    brace = Pose(torso=(8, 0, 0), head=(-14, 0, 0), left=(46, 44, 0), right=(46, 44, 0),
+                 legs=((8, 14), (-8, 14)))
+    found = Pose(torso=(6, 0, 0), head=(16, 0, 6), left=(14, 34, 0), right=(14, 34, 0),
+                 legs=((8, 6), (-4, 6)))
+    p.key(1.58, deck)
+    p.key(1.78, haul, punch=True)
+    p.hold(1.78, 2.6, haul_hold)
+    p.key(2.9, dive)
+    p.hold(2.9, 3.2, dive)
+    p.key(3.3, ride).key(3.75, ride_left).key(4.3, ride_right).key(4.75, ride)
+    p.hold(4.75, 5.3, ride)
+    p.key(5.5, air)
+    p.key(5.9, deck, punch=True)
+    p.hold(5.9, 6.05, deck)
+    p.key(6.3, watch)
+    p.hold(6.3, 6.95, watch)
+    p.key(7.2, brace, punch=True)
+    p.hold(7.2, 7.6, brace)
+    p.key(8.0, found)
+    p.hold(8.0, 8.6, found)
 
     # A: front medium for the feints, the shrug and the beckon: he is talking to the viewer.
     p.shot(0, 1.46, (.9, 1.35, 3.9), (0, 1.05, 0), 44, eye_to=(.78, 1.3, 3.55))
-    # B: low from his left side as he crouches on the deck and the wave climbs behind him.
-    p.shot(1.46, 2.5, (-3.1, .5, 2.3), (0, 1.2, -.6), 50, eye_to=(-3.3, .45, 2.05))
-    # C: front and low for the send, the wave coming over his shoulders toward the lens.
-    p.shot(2.5, 3.4, (1.1, .55, 4.4), (0, 1.2, 0), 50, eye_to=(1.0, .6, 4.05))
+    # B: high over the court from in front of him. The water runs off it toward him and past him.
+    p.shot(1.46, 2.75, (2.0, 7.6, 11.6), (0, .4, -1.2), 56, eye_to=(1.4, 6.6, 10.6))
+    # C: low from his side as he turns and goes into the wall.
+    p.shot(2.75, 3.2, (4.6, 1.3, 2.2), (0, 2.2, -2.0), 58, eye_to=(4.2, 1.4, 1.6))
+    # D: under. The stage puts this lens beside the shark (`RafiFrame`); these numbers are only its start.
+    p.shot(3.2, 5.0, (3.6, 60.2, -2.2), (0, 59, -4), 58)
+    # E: ONE shot from the ground, the lens not moving (owner 2026-10-09): out of the top of the wall, his landing, the shark
+    # going up into the sky as a ghost, and its fall in front of him. The stage aims it (`RafiFrame`).
+    p.shot(5.0, 7.6, (2.4, .35, 10.5), (0, 4.0, 0), 72)
+    # G: high three-quarter for the wave the hit makes, and the slipper arriving.
+    p.shot(7.6, 8.6, (6.6, 5.6, 7.4), (0, .7, 2.6), 56, eye_to=(5.6, 4.8, 8.4))
     p.locked((1.0, 1.05, 4.9), (0, 1.1, -.5), 48)
     return p
 
@@ -836,31 +1112,42 @@ def paete():
     # knees and the engine grounds every frame on the lowest vertex before adding the lift (`GroundIntroduction`), so the kneel
     # is the legs swung apart and sunk 0.34 m into the court, and each arm angle below was solved against the real glb so the
     # palms land 0 to 5 cm above the court after that sink (a first guess put them 0.3 m UNDER it).
+    # ⚠️ v9 (2026-10-08): HIS ARMS GO STRAIGHT DOWN IN FRONT OF HIM (owner, drawing over him from behind: "his arms are bent
+    # outwards. they arent bent straight to the front or inwards"). Every kneeling pose below held them 5 degrees out and
+    # turned 14, to set his palms shoulder-width apart for roots to spread round; now that the arms themselves go into
+    # the court that read as bowed elbows. 1 and 2. The live clip (`HeroAbilityClips.Paete.cs`, `BuildPaeteSentry`) matches.
     legs = ((54, 7), (-30, 7))
-    plant = Pose(torso=(28, 0, 0), head=(26, 0, 0), left=(69, 5, 14), right=(69, 5, 14), legs=legs)
+    plant = Pose(torso=(28, 0, 0), head=(26, 0, 0), left=(69, 1, 2), right=(69, 1, 2), legs=legs)
     # CONNECT: pressing down into the court while the roots dig in, the shoulders dropped, the head down to the hands.
-    press = plant.but(torso=(32, 0, 0), head=(32, 0, 0), left=(74, 5, 14), right=(74, 5, 14))
+    press = plant.but(torso=(32, 0, 0), head=(32, 0, 0), left=(74, 1, 2), right=(74, 1, 2))
     # CHANNEL: bowed over his hands. Each pulse drives the shoulders down (the punch) and lets them rise again.
-    bow = plant.but(torso=(30, 0, 0), head=(36, 0, 0), left=(72, 5, 14), right=(72, 5, 14))
-    pulse = plant.but(torso=(35, 0, 0), head=(30, 0, 0), left=(78, 5, 14), right=(78, 5, 14))
+    bow = plant.but(torso=(30, 0, 0), head=(36, 0, 0), left=(72, 1, 2), right=(72, 1, 2))
+    pulse = plant.but(torso=(35, 0, 0), head=(30, 0, 0), left=(78, 1, 2), right=(78, 1, 2))
     # SEND (2.32): one push down into the court as the roots leave; then the head lifts after them toward the spot.
-    send = plant.but(torso=(38, 0, 0), head=(18, 0, 0), left=(82, 5, 14), right=(82, 5, 14))
-    watch = plant.but(torso=(24, 0, 0), head=(-10, 0, 0), left=(64, 5, 14), right=(64, 5, 14))
+    send = plant.but(torso=(38, 0, 0), head=(18, 0, 0), left=(82, 1, 2), right=(82, 1, 2))
+    watch = plant.but(torso=(24, 0, 0), head=(-10, 0, 0), left=(64, 1, 2), right=(64, 1, 2))
     # THE HEAVES: with each haul of the tree his shoulders drive UP and back and his hands lift 12 cm, pulling on the roots
     # that are still in the court: he is lifting it up through the ground. Between hauls he sinks back onto his hands.
-    heave = plant.but(torso=(15, 0, 0), head=(-22, 0, 0), left=(59, 5, 14), right=(59, 5, 14))
-    settle = plant.but(torso=(22, 0, 0), head=(-16, 0, 0), left=(62, 5, 14), right=(62, 5, 14))
+    heave = plant.but(torso=(15, 0, 0), head=(-22, 0, 0), left=(59, 1, 2), right=(59, 1, 2))
+    settle = plant.but(torso=(22, 0, 0), head=(-16, 0, 0), left=(62, 1, 2), right=(62, 1, 2))
     # THE EYES: the head up to it, the chest lifted, still kneeling, hands still in the court.
-    awe = plant.but(torso=(20, 0, 0), head=(-36, 0, 0), left=(60, 5, 14), right=(60, 5, 14))
+    awe = plant.but(torso=(20, 0, 0), head=(-36, 0, 0), left=(60, 1, 2), right=(60, 1, 2))
 
     p.key(0, rest)
     p.key(.18, stand)
     p.hold(.18, .32, breath)
+    # ⚠️ v9 (2026-10-08): HE HANGS IN THE AIR, SO NOTHING OF HIM HANGS STILL (owner, of the first hover: "he goes up and down
+    # too fast, i'd apprecieate if his non-moving arm and legs also swiveled around slowly"). These two stretches were
+    # HOLDS: one pose frozen while he floated. They are slow drifts now: his free right arm and both legs turn a little
+    # one way and back, each on its own count and never together, as a body does with nothing under it.
     p.key(.46, offer)
-    p.hold(.46, .64, offer)
-    p.key(.70, receive)
+    p.key(.52, offer.but(right=(9, 29, 5), legs=((6, 10), (-4, 11))))
+    p.key(.58, offer.but(right=(0, 25, 9), legs=((2, 13), (3, 9))))
+    p.key(.64, offer.but(right=(7, 33, 4), legs=((-4, 11), (6, 12))))
+    p.key(.70, receive.but(right=(1, 28, 8), legs=((-1, 13), (1, 10))))
     p.key(.78, ignite, punch=True)
-    p.hold(.78, .94, ignite)
+    p.key(.86, ignite.but(right=(15, 33, 6), legs=((6, 12), (-5, 11))))
+    p.key(.94, ignite.but(right=(7, 29, 10), legs=((-3, 13), (5, 10))))
     p.key(1.08, gather)
     p.key(1.22, plant, punch=True)
     # ⚠️⚠️ v7 (2026-09-27, direction.md 5.16): THE ENDING IS NEW AND IT TOOK ITS 1.2 S FROM THE SETUP. The owner on v6: *"this felt
@@ -871,7 +1158,7 @@ def paete():
     # THE TAKE, in his body: as its limbs wrap the caught players he sinks onto his hands (gathering), and as they are yanked he
     # HAULS: shoulders driven up and back, hands lifting off the court, pulling them in through the ground with the tree. Then the
     # awe again, held into play (the live clip still starts from it).
-    haul = plant.but(torso=(8, 0, 0), head=(-30, 0, 0), left=(52, 5, 14), right=(52, 5, 14))
+    haul = plant.but(torso=(8, 0, 0), head=(-30, 0, 0), left=(52, 1, 2), right=(52, 1, 2))
     p.key(1.34, press)
     p.hold(1.34, 1.5, press)
     p.key(1.56, bow)
@@ -898,15 +1185,32 @@ def paete():
     p.key(4.64, awe)
     p.hold(4.64, 5.0, awe)
     # The body goes down onto the knee with the slam and stays down to the end (and into play).
-    p.rise(0, 0.0).rise(1.08, 0.03).rise(1.22, -0.34).rise(5.0, -0.34)
+    # ⚠️ v9 (2026-10-08): HER LIGHT LIFTS HIM, AND THE SLAM IS A FALL. He stood a hair off the court by accident (a 3 cm rise
+    # before the drop, and whatever the map's court is against his feet), and the owner, circling the gap: "is he supposed
+    # to be floating off the ground? if so can you make it more obvious? make him hover up and down or more in the air".
+    # So it is meant now: as she comes close he is drawn up off the court (0.30 to 0.55), hangs there bobbing while the
+    # light comes to him and runs through him, rises a little more as his eyes take it, and DROPS from there into the
+    # slam, which gives the slam the height it never had.
+    # One slow rise, one slow dip and a last lift (the first cut bobbed four times in a second and a half: "too fast").
+    p.rise(0, 0.0).rise(.30, 0.0).rise(.50, 0.34).rise(.62, 0.42).rise(.80, 0.36).rise(1.00, 0.46).rise(1.10, 0.50).rise(1.22, -0.34).rise(5.0, -0.34)
     # 1 CALL. Front, low three-quarter from his right, one slow push-in, her head held above his.
-    p.shot(0, 1.1, (2.1, .72, 4.8), (.45, 2.05, -.5), 44, eye_to=(1.8, .84, 4.2), look_to=(.45, 2.15, -.5), fov_to=42)
+    # ⚠️ v9 (2026-10-08): SHE IS IN THE SKY BEHIND HIM NOW (`HeroIntroductionScene.Paete.cs`, `MakilingSky`), so this shot is
+    # lower and looks UP past him: he is the bottom third of the frame, the sky she rises into is the rest.
+    p.shot(0, 1.1, (1.9, .42, 4.9), (.0, 2.2, -1.0), 48, eye_to=(1.5, .46, 4.2), look_to=(.0, 2.35, -1.0), fov_to=46)
     # 2 ROOT. Close and low on his front right at kneel height, a slow push-in toward his hands and face: the drop, the roots
     # digging in, the channel. Her reaching hands are the top of the frame; she is the light, he is the subject.
     # ⚠️ Wider than first cut (`PaeteSpiritReviewProbe` v4): she is directly behind him, bent over him, and her hands and face are
     # the top of this frame; he, his hands on the court and his roots are the bottom. It pushes in toward his hands as he channels.
     # v7: it ends at the send (2.1), 0.2 s earlier, so the push-in is a little shorter.
-    p.shot(1.1, 2.1, (2.5, 1.3, 3.6), (.05, 1.35, .2), 50, eye_to=(2.0, 1.09, 2.93), look_to=(.01, 1.18, .37), fov_to=46.7)
+    # v9 (2026-10-08): it ends at 1.93, on his third heartbeat, where the camera goes under the court (below).
+    # v9: and this one is on the court in front of his hands, looking up at him with her over him in the sky.
+    # ⚠️ v9 (2026-10-08): AN INSERT ON HIS HANDS FOR THE SLAM, 1.17 to 1.52. His arms are PLANTED in the court now (owner: "make
+    # it so it really looks like his arms are being planted into the ground"), and in the shot below his hands sit at the
+    # bottom edge behind her meadow, so none of it was seen; asked whether to add a close insert, he said it looks good. Low
+    # and close on his right, on the two mouths where his arms go in, pushing in a little as the court breaks round them.
+    p.shot(1.1, 1.17, (1.1, .34, 3.6), (.0, 1.55, .1), 52, eye_to=(1.08, .34, 3.55), look_to=(.0, 1.54, .12), fov_to=52)
+    p.shot(1.17, 1.52, (1.55, .62, 2.35), (-.02, .16, 1.0), 42, eye_to=(1.35, .52, 2.15), look_to=(-.02, .10, 1.0), fov_to=40)
+    p.shot(1.52, 1.93, (1.0, .32, 3.3), (.0, 1.48, .2), 51, eye_to=(.9, .30, 3.0), look_to=(.0, 1.42, .3), fov_to=49)
     # 3 RISE, one continuous shot in three moves (no cut): held wide and low while the roots cross the frame from him (left) to
     # the spot (right) under the brush-stroke of light; craning up through the three heaves so the whole tree is in by the time
     # it tops out; then a push IN toward its face as its eyes light (4.5).
@@ -915,9 +1219,20 @@ def paete():
     # and it closes in on the eyes rather than backing off to fit a crown that is no longer there.
     # v7: the same three moves on the faster clock (the race 2.1 to 2.5, the crane through the hauls to 3.45, the push in on the
     # eyes, which open at 3.71).
-    p.shot(2.1, 2.5, (8.2, 1.25, 5.0), (.2, .9, 3.0), 54, eye_to=(8.3, 1.3, 5.1), look_to=(.2, .95, 3.1))
-    p.shot(2.5, 3.45, (8.3, 1.3, 5.1), (.2, .95, 3.1), 54, eye_to=(8.9, 2.0, 6.2), look_to=(.1, 2.9, 3.9), fov_to=58)
-    p.shot(3.45, 3.8, (8.9, 2.0, 6.2), (.1, 2.9, 3.9), 58, eye_to=(8.3, 2.4, 6.4), look_to=(.1, 3.2, 4.3), fov_to=52)
+    # ⚠️⚠️ v9 (2026-10-08), THE DIVE, 1.93 to 2.7 (owner, choosing it from three ideas: "The camera goes underground. When he
+    # slams the court, the camera drops through it and rides his root through the dark soil, then bursts back up with the
+    # tree's first claw."). The move is COMPUTED (`HeroIntroductionScene.PaeteUnder.cs`, `PuCamera`), as THE TAKE's is; this
+    # row is the old wide hold of the roots crossing the court, used as written only by the storyboard. It is ONE shot so
+    # the phase camera judges it once (`UltimatePhaseView.ChooseShot` mirrors or pushes in per shot, at the shot's end, and
+    # by then the camera is back above the court).
+    p.shot(1.93, 2.7, (8.2, 1.25, 5.0), (.2, .9, 3.0), 54, eye_to=(8.3, 1.3, 5.1), look_to=(.2, .95, 3.1))
+    # ⚠️ v9 (2026-10-08): THE RISE IS SHOT FROM IN FRONT, WITH HER BEHIND IT. It was shot from his right side, where she and
+    # her dusk are out of frame, so the cut back from under the court went from a goddess in a dusk sky to plain daylight
+    # (owner: "you can see a mismatch when it cuts back to both paete and the tree"). The same two moves (the crane
+    # through the three heaves, the push in on its eyes) from ahead and to his right: the tree near, him beyond it, and
+    # her over them both in the sky, watching it rise.
+    p.shot(2.7, 3.45, (5.4, 1.3, 12.0), (.2, 1.1, 4.4), 54, eye_to=(5.9, 2.0, 12.8), look_to=(.1, 2.9, 4.8), fov_to=58)
+    p.shot(3.45, 3.8, (5.9, 2.0, 12.8), (.1, 2.9, 4.8), 58, eye_to=(5.3, 2.4, 12.0), look_to=(.1, 3.2, 5.0), fov_to=52)
     # 4 THE TAKE (v7), ONE CONTINUOUS MOVE, 3.8 to 5.0: the camera rides the first limb out from the trunk to the player it
     # catches, holds on them as it wraps them, then rises and swings wide as everyone is yanked in, and settles on the tree with
     # all of them bound round it. ⚠️ In a match the move is COMPUTED from where the caught players really stand
@@ -930,7 +1245,30 @@ def paete():
     # happening"*; asked, he chose 6.5 s over his earlier 5.0 cap. The table above is still typed on the 5.0 s clock the direction
     # was written on (direction.md 5.14 to 5.16), and stretched here once, evenly, so no beat is squeezed to buy another; the scene
     # (`HeroIntroductionScene.Paete.cs`, `PaeteStretch`) and the theme (`tools/build_paete_audio.py`) run the same factor.
-    return _stretch(p, 6.5)
+    # ⚠️⚠️ v9 (2026-10-08): 9.0 S, AND NOT EVENLY. The owner on the first cut with her in the sky and the dive in it, both
+    # squeezed into 6.5 s: *"it looks like its sped up. theres not much weight to the timing of things"*; asked, he chose to
+    # lengthen it to about 9 s. The 5.0 s clock is now mapped to real time by a TABLE (`PAETE_CLOCK`, `PAETE_REAL`, straight
+    # lines between the points): her arrival and the dive get the time, the blows keep close to the pace they had. The same
+    # table is in `HeroIntroductionScene.Paete.cs` (`PaeteClockAt`, `PaeteRealAt`) and `tools/build_paete_audio.py` (`theme`).
+    return _warp(p, PAETE_CLOCK, PAETE_REAL)
+
+
+PAETE_CLOCK = (0.0, 0.55, 0.85, 1.10, 1.93, 2.70, 3.80, 5.0)
+PAETE_REAL = (0.0, 2.00, 2.70, 3.10, 4.34, 5.94, 7.44, 9.0)
+
+
+def _warp(p, clock, real):
+    def at(x):
+        for i in range(len(clock) - 1):
+            if x <= clock[i + 1] or i == len(clock) - 2:
+                return round(real[i] + (x - clock[i]) * (real[i + 1] - real[i]) / (clock[i + 1] - clock[i]), 3)
+    p.seconds = real[-1]
+    p.keys = [(at(t), pose) for t, pose in p.keys]
+    p.punches = [at(t) for t in p.punches]
+    p.holds = [(at(a), at(b)) for a, b in p.holds]
+    p.lift = [(at(t), m) for t, m in p.lift]
+    p.shots = [(at(s[0]), at(s[1])) + tuple(s[2:]) for s in p.shots]
+    return p
 
 
 def _stretch(p, seconds):

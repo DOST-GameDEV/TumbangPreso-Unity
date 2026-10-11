@@ -79,6 +79,10 @@ namespace TumbangPreso
         // ordinary jump pitched down). It is not on the wire: this peer plays it for the bodies it
         // launches, and for a body another peer simulates when that body arrives on the pad here.
         private const string ArenaCue = "sfx_arena_pad_jump";
+
+        /// <summary>A pad on another map that should sound like the Arena's (owner, 2026-10-09, of the alley's bounce tarps:
+        /// "for the jump pad sfx, use the sfx from the arena"). Off by default: Ilalim's pads keep the ordinary jump.</summary>
+        public bool ArenaSound;
         private readonly HashSet<CharacterMotor> _remoteOn = new HashSet<CharacterMotor>();
         private float _rescan;
         private float _kick;        // 1 on a launch, eased to 0: the pad's answer to throwing somebody
@@ -410,7 +414,7 @@ namespace TumbangPreso
             }
 
             Vector3 here = transform.position;
-            bool arena = Map.ArenaStage.Instance != null;
+            bool arena = ArenaSound || Map.ArenaStage.Instance != null;
             foreach (var motor in _motors)
             {
                 if (motor == null) continue;
