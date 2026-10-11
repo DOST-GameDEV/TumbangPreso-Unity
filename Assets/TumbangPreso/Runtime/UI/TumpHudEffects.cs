@@ -7,7 +7,10 @@ namespace TumbangPreso.UI
     /// <summary>State-driven edge effects using the existing game shaders on new native objects.</summary>
     public sealed class TumpHudEffects : MonoBehaviour
     {
-        private Image _danger, _caught;
+        private Image _danger, _caught, _possessed;
+        private Material _possessedMaterial;
+        private float _possessedPresence;
+        private Vector2 _possessedDir = Vector2.up;
         private HudDangerFrame _frame;
         private float _frameAlpha;
         // Which state owns the frame. Kept through the fade out so the colour never swaps mid-fade.
@@ -25,6 +28,7 @@ namespace TumbangPreso.UI
         {
             _danger = Effect(root, "DangerEdges", "TumbangPreso/DownedVignette", out _dangerMaterial);
             _caught = Effect(root, "CaughtEdges", "TumbangPreso/FrostVignette", out _caughtMaterial);
+            _possessed = Effect(root, "PossessedEdges", "TumbangPreso/PossessedVignette", out _possessedMaterial);
             _frame = OwnerUiLayout.Rect(root, "DangerFrame").gameObject.AddComponent<HudDangerFrame>();
             OwnerUiLayout.Fill(_frame.rectTransform); _frame.raycastTarget = false; _frame.enabled = false;
         }
@@ -41,6 +45,7 @@ namespace TumbangPreso.UI
         public void Tick(CharacterMotor local, bool spectator)
         {
             float dt = Time.unscaledDeltaTime;
+            TickPossessed(local, spectator, dt);
             var f = OwnerUiTheme.Current;
             var round = GameServices.Round;
             bool threatened = !spectator && local != null && !local.IsDefender && local.IsTaggable()
@@ -95,8 +100,50 @@ namespace TumbangPreso.UI
             var size = _caught.rectTransform.rect.size;
             if (size.y > 0) _caughtMaterial.SetFloat("_Aspect", size.x / size.y);
         }
+        /// <summary>True while the possessed player's own hands-and-ink screen is up (Nemu's PRUSISYON).</summary>
+        public bool PossessedScreenVisible => _possessed != null && _possessed.enabled && _possessedPresence > .3f;
+
+        /// <summary>
+        /// POSSESSED, ON THE VICTIM'S OWN SCREEN (`docs/reports/nemu-ultimate-2026-10-11/direction.md` section 5): ghost hands reach
+        /// in from the edge the ghost is dragging them toward, clench before each surge, lunge during it and slip back as the player
+        /// wears its grip down, over a breathing ink vignette (`Shaders/PossessedVignette`). The direction is the same pure pull the
+        /// motor steers with (`CharacterMotor.PossessionPull`), turned into the camera's frame, so it always agrees with the body.
+        /// It is information, not a flash: Reduce visual effects keeps the shapes and stills the breathing.
+        /// </summary>
+        private void TickPossessed(CharacterMotor local, bool spectator, float dt)
+        {
+            if (_possessed == null) return;
+            bool on = !spectator && local != null && local.IsPossessed;
+            float elapsed = on ? local.PossessionElapsed : NemuRules.PossessedSeconds;
+            float target = on ? Mathf.Clamp01(elapsed / NemuRules.SettleSeconds)
+                                * Mathf.Clamp01((NemuRules.PossessedSeconds - elapsed) / NemuRules.LeaveSeconds) : 0f;
+            _possessedPresence = Mathf.MoveTowards(_possessedPresence, target, dt / (target > _possessedPresence ? .25f : .4f));
+            _possessed.enabled = _possessedPresence > .001f;
+            if (!_possessed.enabled) return;
+            var cam = Camera.main;
+            if (on && cam != null && local.PossessionPull(out var pull))
+            {
+                Vector3 right = cam.transform.right; right.y = 0f;
+                Vector3 ahead = cam.transform.forward; ahead.y = 0f;
+                var screen = new Vector2(Vector3.Dot(pull, right.normalized), Vector3.Dot(pull, ahead.normalized));
+                if (screen.sqrMagnitude > 1e-5f)
+                    _possessedDir = Vector2.Lerp(_possessedDir, screen.normalized, 1f - Mathf.Exp(-dt * 8f)).normalized;
+            }
+            int seat = local != null ? local.PlayerSlot : 0;
+            _possessedMaterial.SetVector("_PullDir", new Vector4(_possessedDir.x, _possessedDir.y, 0f, 0f));
+            _possessedMaterial.SetFloat("_Presence", _possessedPresence);
+            _possessedMaterial.SetFloat("_Tell", on ? NemuRules.TellAmount(elapsed, seat) : 0f);
+            _possessedMaterial.SetFloat("_Surge", on ? NemuRules.SurgeEnvelope(elapsed, seat) : 0f);
+            _possessedMaterial.SetFloat("_Grip", local != null ? local.PossessionGrip : 1f);
+            _possessedMaterial.SetFloat("_Calm", Settings.SettingsStore.Current.ReducedEffects ? 1f : 0f);
+            var size = _possessed.rectTransform.rect.size;
+            if (size.y > 0) _possessedMaterial.SetFloat("_Aspect", size.x / size.y);
+            _possessed.color = Color.white;
+        }
+
         private void OnDestroy()
         {
+            if (_possessedMaterial != null) Destroy(_possessedMaterial);
             if (_dangerMaterial != null) Destroy(_dangerMaterial);
             if (_caughtMaterial != null) Destroy(_caughtMaterial);
         }

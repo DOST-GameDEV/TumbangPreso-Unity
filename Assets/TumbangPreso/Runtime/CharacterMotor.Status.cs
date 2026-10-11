@@ -67,6 +67,7 @@ namespace TumbangPreso
                 case StatusKind.Hexed: return _hexedLeft;
                 case StatusKind.Haunted: return _hauntedLeft;
                 case StatusKind.Zapped: return _zappedLeft;
+                case StatusKind.Possessed: return _possessedLeft;
                 default: return 0.0f;
             }
         }
@@ -277,6 +278,7 @@ namespace TumbangPreso
             _whirledLeft = 0.0f;
             _chilledLeft = 0.0f;
             _hauntedLeft = 0.0f;
+            ClearPossession();
             _carryLeft = 0.0f;
             EndHaul();
             EndSwing();
@@ -318,6 +320,7 @@ namespace TumbangPreso
         {
             if (_zappedLeft > 0) _zappedLeft = Mathf.Max(0, _zappedLeft - dt);
             if (_hauntedLeft > 0) _hauntedLeft = Mathf.Max(0, _hauntedLeft - dt);
+            StepPossession(dt);
             if (_whirledLeft > 0.0f) _whirledLeft = Mathf.Max(0.0f, _whirledLeft - dt);
             if (_chilledLeft > 0.0f) _chilledLeft = Mathf.Max(0.0f, _chilledLeft - dt);
             if (_rootedLeft > 0.0f)

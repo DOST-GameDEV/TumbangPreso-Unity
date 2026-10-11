@@ -25,9 +25,13 @@ ultimate's cast.
 | White Lady | very tall, faceless veil, long hair, no feet | the scale of the parade; looks at the lens last | cutscene |
 | Paru-paro | black moths | the souls' messengers; the near layer at the lens and round the possessed | cutscene and play |
 
-All are blocky, typed part by part, flat-faced like the cast (two ink eyes, no mouth unless a beat
-needs one). Bodies are pale lilac grey, translucent, never pure white; eyes are her violet; flames
-are candle amber.
+Owner, 2026-10-11: *"i dont want ghosts to be too blocky kahit translucent sila or like not real
+models"*. So no ghost is a stack of cubes: each is a smooth surface turned from its own hand-typed
+profile (`Visual.ProcessionShapes`: a domed hood pinching at the neck, a sheet that flares and hangs,
+a hem that ripples unevenly), drawn as light by its own shader (`Shaders/ProcessionGhost`: only the
+front surface shows, the body veils what is behind it, the rim glows, the hem dissolves into mist).
+Faces stay the cast's: two ink eyes, set unevenly. Bodies are pale lilac grey, never pure white;
+eyes are her violet; flames are candle amber.
 
 ## 2. Mechanics (numbers live in `Core.NemuRules`; every one is asserted by `Core.Tests`)
 
@@ -178,3 +182,14 @@ Docs: TODO entry, `SKILL_NETWORK_CONTRACT.md`, `Hero_Strike_Balance.md` row, thi
   body drifts toward the lure, a resisting body holds, a stunned body does not move, cleanse clears.
 - The cutscene sampled at every beat, its length below 6 s, the clock frozen.
 - Film of the caster's screen and a possessed player's screen. Compilation is not acceptance.
+
+## 9. Evidence so far
+
+| Claim | Evidence | Level |
+|---|---|---|
+| Rules and owner numbers | `dotnet test Core.Tests` 742/742 (`NemuRulesTests` 11) | managed tests |
+| It compiles in Unity | EditMode `ChatAndLobbyChromeTests` 10/10, protocol 160 | Unity compile and EditMode |
+| Who is possessed, by whom, cleanse, wire bounds, stray Haunt receipts | PlayMode `NemuPrusisyonTests`, `NemuFamiliarPoseTests` | native PlayMode, [XML](evidence/play-possession.xml) |
+| The contest moves real bodies on Eskinita | `NemuPossessionMovementTests`: hands-off 0.71 m toward the taya in 1 s; fighting it 1.81 m of a free 2.50 m; stunned 0.00 m ([CSV](evidence/possession-movement.csv)) | native PlayMode, real physics steps |
+
+Not yet evidence: actual networked peers, the cutscene, the sound, a film, human taste.

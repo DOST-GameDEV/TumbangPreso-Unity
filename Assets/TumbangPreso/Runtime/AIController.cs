@@ -5475,15 +5475,14 @@ namespace TumbangPreso
                 }
                 else if (kit is Abilities.NemuHeroKit)
                 {
-                    // ⚠️ THE 4.5 m OFFSET AND 7.5 m RADIUS THAT USED TO BE WRITTEN HERE WERE THE
-                    // PRE-FOOTPRINT-PASS NUMBERS. The void has been 2.8 m at 3.5 m since § 8
-                    // brought the ability sizes down, so this asked about a circle nearly three
-                    // times the area of the one it casts.
-                    Vector3 voidCentre = FootprintOf(kit.Ultimate);
-                    float voidReach = kit.Ultimate.TelegraphRadius + AiTuning.AbilityVictimMargin;
-
-                    if (HasRelevantVoidTarget(voidCentre, voidReach)
-                        || VictimsUnder(voidCentre, voidReach, stunPayload: false) > 0)
+                    // PRUSISYON possesses every other player for 15 s wherever they are, so the question is WHEN, not
+                    // where: with at least two opponents on court to drag, and enough round left for the drag to matter.
+                    var live = GameServices.Round;
+                    int opponents = 0;
+                    if (live != null)
+                        foreach (var p in live.Players)
+                            if (p != null && p != _motor && p.gameObject.activeInHierarchy && !p.IsPossessed) opponents++;
+                    if (opponents >= 2 && live != null && live.TimeLeft > 8.0f)
                         Consider(intent, Verb.Ultimate, dt);
                 }
                 else if (kit is Abilities.PhaisterHeroKit)

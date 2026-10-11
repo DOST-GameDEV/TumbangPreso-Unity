@@ -61,6 +61,8 @@ namespace TumbangPreso.UI
             // Catalogued and applied in play, but never listed, so a zapped player saw locked
             // powers with no reason or timer. Appended to keep every existing entry's order.
             if (body.IsZapped) into.Add(StatusKind.Zapped);
+            // Nemu's PRUSISYON (2026-10-11).
+            if (body.IsPossessed) into.Add(StatusKind.Possessed);
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]

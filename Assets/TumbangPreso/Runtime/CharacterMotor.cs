@@ -870,7 +870,8 @@ namespace TumbangPreso
 
             // ⚠️ A FEARED BODY RUNS ON ITS OWN (the owner's flee), so it counts as moving whatever the stick says.
             Vector2 axis = canSteer ? (IsFeared ? Vector2.up : Intent.MoveAxis) : Vector2.zero;
-            bool moving = axis.sqrMagnitude > 0.0001f;
+            // A possessing ghost walks the body even with the stick at rest (`CharacterMotor.Possession.cs`).
+            bool moving = axis.sqrMagnitude > 0.0001f || (canSteer && !IsFeared && IsPossessionPulling);
 
             // The sprint multiplier. Fatigue is NOT in this value: it rides the speed-zone
             // stack so it composes with a hazard zone rather than one silently winning.
@@ -921,7 +922,7 @@ namespace TumbangPreso
 
             if (canSteer)
             {
-                Vector3 wish = IsFeared ? FleeWish() : Steer(axis, dt);
+                Vector3 wish = IsFeared ? FleeWish() : PossessedWish(Steer(axis, dt), dt);
 
                 // ⚠️ THE MOVEMENT REWORK PROTOTYPE takes the write for the local human while its debug switch is on
                 // (`MovementRework`, `CharacterMotor.MovementRework.cs`); otherwise this is the write it has always been.

@@ -10,7 +10,7 @@ namespace TumbangPreso.Abilities
     /// <summary>
     /// Nemu's current Wiki passive and Kuro: Sit signature use the shared basic
     /// cooldown and recall anchor. Catch protects the can through its owned clock.
-    /// Haunt chases visible players sequentially using the existing companion.
+    /// PRUSISYON possesses every other player for 15 s (`CharacterMotor.Possession.cs`).
     /// </summary>
     public sealed class NemuHeroKit : HeroKit
     {
@@ -46,16 +46,8 @@ namespace TumbangPreso.Abilities
 
         public void RestoreFamiliar(CharacterMotor motor, int mode, Vector3 position, float remaining, float? yaw = null)
         {
-            // Mode 1 was Astral Hijack's projection, which the new kit does not have; mode 2 is the seance.
-            if (motor == null || remaining <= 0 || mode != 2) return;
-            var ctx = new AbilityContext(motor, motor.GetComponent<Carrier>(), motor.GetComponent<CombatVerbs>());
-            using (NetCue.SuppressRelay())
-                ((NightmareSeanceVoidAbility)Ultimate).RestoreSeance(ctx, position, remaining);
-            if (yaw.HasValue && !float.IsNaN(yaw.Value) && !float.IsInfinity(yaw.Value))
-            {
-                var pet = motor.GetComponent<CharacterVisual>()?.Companion;
-                if (pet != null) pet.transform.rotation = Quaternion.Euler(0, yaw.Value, 0);
-            }
+            // Both retired familiar modes (Astral Hijack's projection, then the Haunt) have nothing to restore: PRUSISYON's
+            // state is the POSSESSED clock on each victim, which `SyncUnit` already carries.
         }
 
         public bool ReceiveHaunt(CharacterMotor motor, long phase, float clock, Vector3 position, float remaining, float yaw)
@@ -374,202 +366,55 @@ namespace TumbangPreso.Abilities
             protected override void OnCancelled(AbilityContext ctx) => OnEnd(ctx);
         }
 
+        // ================================================================== PRUSISYON (ultimate)
+
+        /// <summary>
+        /// PRUSISYON (owner brief 2026-10-11, `docs/reports/nemu-ultimate-2026-10-11/direction.md`): she hushes the world grey
+        /// and the dead she is always half-listening to file past in procession and step into every other player. Each is
+        /// POSSESSED for 15 s (`CharacterMotor.Possession.cs`): a ghost rides them and contests their steering toward the
+        /// worst place for them. The cutscene shows the entering, so play starts with the riders seated (never shown twice).
+        /// ⚠️ The ID, glyph and cost are the retired KURO: HAUNT!'s, kept for saves, mastery and the wire. Kuro no longer
+        /// chases anyone; `RestoreSeance`/`ReceiveHaunt` stay as inert endpoints for the unchanged familiar message.
+        /// </summary>
         private sealed class NightmareSeanceVoidAbility : HeroAbility
         {
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
-            private readonly RaycastHit[] _sightHits = new RaycastHit[32];
-            private readonly RaycastHit[] _moveHits = new RaycastHit[32];
-            private GhostPetCompanion _familiar;
-            private CharacterMotor _castMotor, _target;
-            private Vector3 _castAnchor, _approachStart;
-            private Quaternion _castFacing;
-            private bool _approaching;
-            private int _caughtMask;
-            private float _syncLeft, _receivedClock;
-            private long _receivedPhase;
 
             public NightmareSeanceVoidAbility()
-                : base("nemu_ultimate", "KURO: HAUNT!",
-                       "Kuro becomes a monster and chases every player he sees, one at a time. Contact inflicts Haunted for 7.5 s. He returns after chasing everyone or when the round ends.",
-                       0, CustomGameRules.MaxRoundSeconds, AbilityGlyph.NemuSeanceVoid,
-                       summary: "Kuro chases seen players and inflicts Haunted on contact.",
-                       telegraphRadius: .4f, telegraphRange: 3.5f,
+                : base("nemu_ultimate", "PRUSISYON",
+                       "Nemu hushes the world and the dead walk in procession into every other player. They are Possessed for 15 s: a ghost drags their steering toward danger. Push against it to hold your ground.",
+                       0, NemuRules.PossessedSeconds, AbilityGlyph.NemuSeanceVoid,
+                       summary: "Every other player is Possessed for 15 s.",
                        castAction: "hero-nemu-seance", viewmodelAction: "seance-channel",
                        castCue: "sfx_cast_nemu_seance")
-            { TelegraphStyle = GroundReticle.Style.Maw; Windup = UltimateWindup; }
+            { Windup = UltimateWindup; }
 
-            public override bool CanActivate(AbilityContext ctx)
-                => base.CanActivate(ctx) && !IsActive && Kuro(ctx) != null && !Kuro(ctx).IsDevouring;
+            public override bool CanActivate(AbilityContext ctx) => base.CanActivate(ctx) && !IsActive;
 
-            protected override void OnAcceptedUltimatePhase(long phase)
-            {
-                if (IsActive && _castMotor != null)
-                    Net.MatchRpc.Instance?.BroadcastFamiliarEffect(_castMotor.PlayerSlot);
-            }
+            /// <summary>Retired Haunt recovery: there is no familiar effect to restore.</summary>
+            public void RestoreSeance(AbilityContext ctx, Vector3 position, float remaining, bool smoothPose = false) { }
 
-            public void RestoreSeance(AbilityContext ctx, Vector3 position, float remaining, bool smoothPose=false)
-            {
-                var pet = Kuro(ctx); if (pet == null) return;
-                _castAnchor = position; _approaching = false; _familiar = pet;
-                // Recovery moves the existing monster and adopts its clock. It does
-                // not recreate the retired pull field or replay a hit/resource spend.
-                bool starting = !pet.IsDevouring;
-                pet.RestoreDevour(position, Duration, remaining, true, smoothPose);
-                if (starting)
-                {
-                    ctx.Motor.AbilitySystem.Kit.Skill1.EndEarly(ctx);
-                    ctx.Motor.AbilitySystem.Kit.Skill2.EndEarly(ctx);
-                }
-                RestoreLiveClock(remaining);
-            }
-
-            public override Vector3 TelegraphCentre(AbilityContext ctx)
-                => IsWindingUp || IsActive ? _castAnchor : ResolveAnchor(ctx);
-
-            private static Vector3 ResolveAnchor(AbilityContext ctx)
-            {
-                var pet = Kuro(ctx);
-                if (pet != null && pet.IsPossessed) return VfxShapes.GroundPoint(pet.transform.position);
-                return VfxShapes.GroundPoint(GhostPetMotion.Move(ctx.Motor, ctx.Position, ctx.Forward * 3.5f));
-            }
-
-            public override void Activate(AbilityContext ctx)
-            {
-                _castMotor = ctx.Motor; _castAnchor = ResolveAnchor(ctx); _familiar = Kuro(ctx);
-                _familiar?.PrepareForInvocation();
-                _approaching = _familiar != null && !_familiar.IsPossessed;
-                _approachStart = _familiar != null ? _familiar.transform.position : _castAnchor;
-                Vector3 facing = ctx.Position - _castAnchor; facing.y = 0;
-                if (facing.sqrMagnitude < .01f) facing = -ctx.Forward;
-                _castFacing = Quaternion.LookRotation(facing.normalized, Vector3.up);
-                base.Activate(ctx);
-                if (HadSharedIntroduction && _familiar != null)
-                { _approaching = false; _familiar.PreviewRevealedInvocation(_castAnchor, _castFacing); }
-            }
-
-            public override void Tick(AbilityContext ctx, float dt)
-            {
-                if (IsWindingUp && _approaching && _familiar != null)
-                {
-                    float p = Mathf.SmoothStep(0, 1, 1 - Mathf.Max(0, WindupRemaining - dt) / Windup);
-                    _familiar.ApplyCastAnchor(Vector3.Lerp(_approachStart, _castAnchor + Vector3.up * .9f, p));
-                    _familiar.transform.rotation = Quaternion.Slerp(_familiar.transform.rotation, _castFacing, p);
-                }
-                base.Tick(ctx, dt);
-            }
-
-            protected override void OnActivate(AbilityContext ctx)
-            {
-                _caughtMask = 0; _target = null; _syncLeft = 0;
-                DurationRemaining = Mathf.Min(Duration, ctx.Round?.TimeLeft ?? Duration);
-                _familiar = Kuro(ctx); _castMotor = ctx.Motor; _approaching = false;
-                NetCue.Play("hero_nemu_ult", ctx.Position);
-                ctx.Motor.AbilitySystem?.Kit?.Skill1?.EndEarly(ctx);
-                ctx.Motor.AbilitySystem?.Kit?.Skill2?.EndEarly(ctx);
-                if (_familiar != null)
-                {
-                    _familiar.ApplyCastAnchor(_castAnchor + Vector3.up * .9f);
-                    _familiar.transform.rotation = _castFacing;
-                    _familiar.Devour(DurationRemaining, HadSharedIntroduction);
-                }
-                Net.MatchRpc.Instance?.BroadcastFamiliarEffect(ctx.Motor.PlayerSlot);
-            }
+            /// <summary>Retired Haunt movement: a stray familiar message changes nothing.</summary>
+            public bool ReceiveHaunt(AbilityContext ctx, long phase, float clock, Vector3 position, float remaining, float yaw) => false;
 
             private static bool Eligible(CharacterMotor motor) => motor != null &&
                 motor.gameObject.activeInHierarchy && motor.PlayerSlot >= 0 && motor.PlayerSlot < Balance.PlayerCount;
 
-            private bool Visible(CharacterMotor motor, Vector3 ground)
+            protected override void OnActivate(AbilityContext ctx)
             {
-                Vector3 origin = ground + Vector3.up * .8f;
-                Vector3 delta = motor.transform.position + Vector3.up * .8f - origin;
-                if (delta.sqrMagnitude < .0001f) return true;
-                int count = Physics.RaycastNonAlloc(origin, delta.normalized, _sightHits, delta.magnitude,
-                    ~0, QueryTriggerInteraction.Ignore);
-                if (count == _sightHits.Length) return false;
-                for (int i = 0; i < count; i++)
-                {
-                    var collider = _sightHits[i].collider;
-                    if (collider.GetComponentInParent<CharacterMotor>() != null ||
-                        collider.GetComponentInParent<Slipper>() != null) continue;
-                    return false;
-                }
-                return true;
-            }
-
-            protected override void OnTick(AbilityContext ctx, float dt)
-            {
-                if (!NetAuthority.ShouldResolve()) return;
-                if (ctx.Round?.RoundActive != true || _familiar == null || !Eligible(ctx.Motor))
-                { DurationRemaining = 0; return; }
-                var players = ctx.Round.Players;
-                int pending = 0; float nearest = float.PositiveInfinity;
-                Vector3 ground = _familiar.DevourGround;
-                if (!Eligible(_target) || (_caughtMask & (1 << _target.PlayerSlot)) != 0 ||
-                    !Visible(_target, ground)) _target = null;
-                CharacterMotor choice = null;
+                DurationRemaining = Mathf.Min(Duration, ctx.Round?.TimeLeft ?? Duration);
+                NetCue.Play("hero_nemu_ult", ctx.Position);
+                // Only the host writes the status (`ApplyPossessed` refuses elsewhere); `SyncUnit` carries it to every peer.
+                var round = ctx.Round;
+                if (round == null || !NetAuthority.ShouldResolve()) return;
+                var players = round.Players;
                 for (int i = 0; i < players.Count; i++)
                 {
-                    var player = players[i];
-                    if (!Eligible(player) || (_caughtMask & (1 << player.PlayerSlot)) != 0) continue;
-                    pending++;
-                    if (_target != null || !Visible(player, ground)) continue;
-                    float distance = (player.transform.position - ground).sqrMagnitude;
-                    if (distance < nearest) { nearest = distance; choice = player; }
+                    var p = players[i];
+                    if (!Eligible(p) || p == ctx.Motor || p.PlayerSlot == ctx.Motor.PlayerSlot) continue;
+                    p.ApplyPossessed();
                 }
-                if (pending == 0) { DurationRemaining = 0; return; }
-                if (_target == null) _target = choice;
-                if (_target != null)
-                {
-                    Vector3 delta = _target.transform.position - ground; delta.y = 0;
-                    // The familiar uses the arena even when Nemu is the confined defender.
-                    Vector3 next = GhostPetMotion.Move(null, ground,
-                        Vector3.ClampMagnitude(delta, Mathf.Max(0, dt) * 10f), _moveHits);
-                    _familiar.MoveDevour(next);
-                    if (delta.sqrMagnitude > .0001f)
-                        _familiar.transform.rotation = Quaternion.LookRotation(delta, Vector3.up);
-                    Vector3 contact = _target.transform.position - next;
-                    if (new Vector2(contact.x, contact.z).sqrMagnitude <= 1.1f * 1.1f &&
-                        Mathf.Abs(contact.y) <= 2f && Visible(_target, next))
-                    {
-                        _target.ApplyHaunted(); _caughtMask |= 1 << _target.PlayerSlot; _target = null;
-                    }
-                }
-                _syncLeft -= dt;
-                if (_syncLeft <= 0)
-                { _syncLeft = .1f; Net.MatchRpc.Instance?.BroadcastFamiliarEffect(ctx.Motor.PlayerSlot); }
             }
-
-            public bool ReceiveHaunt(AbilityContext ctx, long phase, float clock, Vector3 position, float remaining, float yaw)
-            {
-                if (phase == AcceptedUltimatePhase && !IsActive && !IsWindingUp) return false;
-                if (phase == _receivedPhase && (clock > _receivedClock ||
-                    (clock == _receivedClock && remaining > 0))) return false;
-                bool smoothPose=remaining>0 && phase==_receivedPhase && phase==AcceptedUltimatePhase &&
-                    IsActive && !NetAuthority.ShouldResolve();
-                _receivedPhase = phase; _receivedClock = clock;
-                if (remaining <= 0)
-                { RestoreLiveClock(0); OnEnd(ctx); }
-                else RestoreSeance(ctx, position, remaining, smoothPose);
-                var pet = Kuro(ctx);
-                if (pet != null) pet.ApplyDevourFacing(yaw,smoothPose);
-                AdoptUltimatePhase(phase);
-                return true;
-            }
-
-            public override void Reset()
-            {
-                base.Reset();
-                _receivedPhase = 0; _receivedClock = 0; _caughtMask = 0; _target = null;
-            }
-
-            protected override void OnEnd(AbilityContext ctx)
-            {
-                // Publish the terminal clock before releasing the companion.
-                if (_castMotor != null) Net.MatchRpc.Instance?.BroadcastFamiliarEffect(_castMotor.PlayerSlot);
-                _familiar?.StopDevouring();
-                _familiar = null; _castMotor = null; _target = null; _approaching = false;
-            }
-            protected override void OnCancelled(AbilityContext ctx) => OnEnd(ctx);
         }
     }
 }

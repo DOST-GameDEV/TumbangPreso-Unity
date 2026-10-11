@@ -611,7 +611,9 @@ namespace TumbangPreso.Net
         // street for the same map id and stand inside the new one's houses: the two may not meet.
         // 159: integrate QoL movement/crouch, map and timed performances with ASTRA clip15 companions.
         // Neither standalone158 QoL nor154 ASTRA peers implement this combined contract.
-        public const int ProtocolVersion = 159;
+        // 160 (2026-10-11): Nemu's ultimate is PRUSISYON. `SyncUnit` appends the POSSESSED clock and the ultimate no longer
+        // sends Kuro's Haunt chase; a 159 peer would read a different unit layout and run a different ultimate.
+        public const int ProtocolVersion = 160;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

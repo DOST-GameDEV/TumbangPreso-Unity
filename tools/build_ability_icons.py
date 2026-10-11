@@ -893,11 +893,28 @@ def status_haunted(a):
     a.add(a.band([(300, 282), (790, 730)], 24), PLUM, shade=False)
 
 
+def status_possessed(a):
+    # POSSESSED (Nemu's PRUSISYON, 2026-10-11): a blocky head ridden by a little sheet ghost, its two stubby hands over the
+    # head's eyes (the Jockey's grip), its candle burning beside it. The shape is the rider on the head, so it reads at 44 px.
+    _badge(a)
+    a.add(a.rect(330, 470, 694, 800), HONEY)
+    a.add(a.poly([(300, 470), (360, 250), (512, 170), (664, 250), (724, 470), (650, 520), (600, 470), (512, 530),
+                  (424, 470), (374, 520)]), hexc("D8D0E4"))
+    for cx in (450, 574):
+        a.add(a.circle(cx, 330, 34), KURO_INK, shade=False)
+    a.add(a.rect(300, 560, 470, 650), hexc("D8D0E4"))
+    a.add(a.rect(554, 560, 724, 650), hexc("D8D0E4"))
+    a.add(a.rect(770, 380, 830, 560), CREAM)
+    a.add(a.poly([(800, 210), (850, 320), (800, 375), (750, 320)]), hexc("F2A33A"))
+    a.add(a.poly([(800, 270), (822, 325), (800, 352), (778, 325)]), LEMON, shade=False)
+
+
 STATUSES = {"StatusWhirled": status_whirled, "StatusChilled": status_chilled,
             "StatusFrozen": status_frozen, "StatusTagged": status_tagged, "StatusRooted": status_rooted,
             "StatusConcussed": status_concussed, "StatusFeared": status_feared,
             "StatusDisoriented": status_disoriented, "StatusVulnerable": status_vulnerable,
-            "StatusDrained": status_drained, "StatusHexed": status_hexed, "StatusHaunted": status_haunted}
+            "StatusDrained": status_drained, "StatusHexed": status_hexed, "StatusHaunted": status_haunted,
+            "StatusPossessed": status_possessed}
 
 
 # the nine job glyphs, for any power without a bespoke picture

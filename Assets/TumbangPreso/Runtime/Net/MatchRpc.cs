@@ -2605,6 +2605,8 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(flightEpisode);
             writer.WriteValueSafe(unit.HauntedLeft);
             writer.WriteValueSafe(unit.ZappedLeft);
+            // Nemu's PRUSISYON (protocol 160): the POSSESSED clock. The body's own peer computes the pull from it.
+            writer.WriteValueSafe(unit.PossessedLeft);
             writer.WriteNetworkSerializable(VoodooBodySnapshot.Capture(unit));
             writer.WriteNetworkSerializable(unit.AbilitySystem?.CaptureAimPresentation() ?? default(AbilityAimSnapshot));
             var delivery = reliable ? NetworkDelivery.ReliableSequenced : PoseDelivery;
@@ -2619,7 +2621,7 @@ namespace TumbangPreso.Net
             // Netcode invokes the handler locally for the listen host, so every broadcast the
             // host sent was also applied ON the host, a second time, over authoritative state it
             // had just produced. See § THE LOOPBACK.
-            if (NetAuthority.IsHost || !reader.TryBeginRead(217 + VoodooBodySnapshot.WireBytes)) return;
+            if (NetAuthority.IsHost || !reader.TryBeginRead(221 + VoodooBodySnapshot.WireBytes)) return;
 
             reader.ReadValueSafe(out int slot);
             reader.ReadNetworkSerializable(out GameplayActionScope scope);
@@ -2666,11 +2668,13 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out long flightEpisode);
             reader.ReadValueSafe(out float hauntedLeft);
             reader.ReadValueSafe(out float zappedLeft);
+            reader.ReadValueSafe(out float possessedLeft);
             if (!VoodooBodySnapshot.TryRead(ref reader, slot, out var voodoo)) return;
             if (!AbilityAimSnapshot.TryRead(ref reader, out var aim)) return;
             if(!Finite(whirledLeft) || !Finite(chilledLeft) || !Finite(rootedLeft))return;
             if (!Finite(hauntedLeft) || hauntedLeft < 0 || hauntedLeft > StatusRules.HauntedSeconds) return;
             if (!Finite(zappedLeft) || zappedLeft < 0 || zappedLeft > StatusRules.ZappedSeconds) return;
+            if (!Finite(possessedLeft) || possessedLeft < 0 || possessedLeft > StatusRules.PossessedSeconds) return;
             if(!Finite(concussedLeft) || !Finite(fearedLeft) || !Finite(disorientedLeft) || !Finite(vulnerableLeft) || !Finite(fearFrom))return;
             if(recoveryEpisode<0 || recoveryAcknowledged<0)return;
             if(edgeKind>(byte)EdgeRecoveryKind.Drone||edgePhase>2||!Finite(edgeGrip)||!Finite(edgeOutward)||!Finite(edgeRatio))return;
@@ -2714,6 +2718,7 @@ namespace TumbangPreso.Net
                                    staminaCurrent, staminaIdle, fatigueLeft,
                                    recoveryEpisode,recoveryAcknowledged);
             unit.ApplyNetworkStatuses(whirledLeft, chilledLeft, rootedLeft, hauntedLeft, zappedLeft);
+            unit.ApplyNetworkPossessed(possessedLeft);
             unit.ApplyNetworkEffort((effort & 1) != 0, pull / 255f);
             // The movement rework's crouch and slide, for this body's pose on a screen that does not simulate it.
             unit.ApplyNetworkMovePose(effort);

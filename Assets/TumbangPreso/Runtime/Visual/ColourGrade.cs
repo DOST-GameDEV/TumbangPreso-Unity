@@ -205,6 +205,10 @@ namespace TumbangPreso.Visual
 
         private Camera _camera;
         public bool HauntedSight => HauntedPerception.Applies(_camera);
+        /// <summary>Nemu's PRUSISYON: the possessed player's own world drains toward grey (`PossessedPerception`).</summary>
+        public float PossessedSight => PossessedPerception.Weight(_camera);
+        private float PossessedSaturation => Mathf.Lerp(1.0f, PossessedPerception.Saturation, PossessedSight);
+        private float PossessedBrightness => Mathf.Lerp(1.0f, PossessedPerception.Brightness, PossessedSight);
 
         private bool IsIdentity =>
             Mathf.Approximately(_brightness * _eventBrightness, 1.0f)
@@ -213,7 +217,8 @@ namespace TumbangPreso.Visual
             && _exposure <= 0.0f
             && EffectiveChromatic <= 0.0f
             && BrightLookWeight <= 0.0f
-            && !HauntedSight;
+            && !HauntedSight
+            && PossessedSight <= 0.0f;
 
         /// <summary>
         /// ⚠️ A NO-OP GRADE STILL COSTS A FULL-SCREEN BLIT, so it is skipped outright. This runs
@@ -254,9 +259,9 @@ namespace TumbangPreso.Visual
                 _material = new Material(shader) { hideFlags = HideFlags.HideAndDontSave };
             }
 
-            _material.SetFloat(BrightnessId, _brightness * _eventBrightness);
+            _material.SetFloat(BrightnessId, _brightness * _eventBrightness * PossessedBrightness);
             _material.SetFloat(ContrastId, _contrast);
-            _material.SetFloat(SaturationId, _saturation * _eventSaturation);
+            _material.SetFloat(SaturationId, _saturation * _eventSaturation * PossessedSaturation);
             _material.SetFloat(ExposureId, _exposure);
             _material.SetFloat(WhiteId, _white);
             _material.SetFloat(ChromaticId, EffectiveChromatic);

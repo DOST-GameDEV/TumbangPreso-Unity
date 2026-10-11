@@ -61,7 +61,7 @@ namespace TumbangPreso
             // the accepted owner pose, never a second physics simulation.
             bool fresh = Time.unscaledTime <= _netResourceIntentUntil;
             bool canSteer = CanMove();
-            bool moving = canSteer && (IsFeared || (fresh && _netMoveHeld));
+            bool moving = canSteer && (IsFeared || (fresh && _netMoveHeld) || IsPossessionPulling);
             Stamina.StepFatigue(dt);
             Stamina.Step(dt, moving, canSteer && !IsConcussed && !IsFeared && fresh && _netSprintHeld);
         }

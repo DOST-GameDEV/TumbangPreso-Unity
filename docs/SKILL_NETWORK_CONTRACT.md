@@ -1,3 +1,17 @@
+## Protocol160: Nemu PRUSISYON (POSSESSED)
+
+`nemu_ultimate` keeps its ID and cost but is now PRUSISYON: the host applies
+POSSESSED (status 14, appended) to every other player for 15 s. `SyncUnit`
+appends `PossessedLeft` after `ZappedLeft` (finite, 0 to 15; the minimum read is
+221 bytes plus the voodoo tail). The body's own simulating peer adds the ghost's
+pull to its steering from `NemuRules`, a pure function of seat, the replicated
+clock and replicated positions; observers draw the rider from the same function.
+Grip is local to the simulating peer and decides no outcome. Kuro no longer
+chases: `FamiliarEffect` stays on the wire and a receipt for the ultimate is
+inert. Protocol159 peers are refused. Native receiver and real-map movement
+checks pass; actual matching peers remain unqualified.
+[Direction and evidence](reports/nemu-ultimate-2026-10-11/direction.md).
+
 ## Current protocol159: combined QoL and ASTRA contract
 
 The negotiated version combines QoL movement/crouch pose support, the stepped
