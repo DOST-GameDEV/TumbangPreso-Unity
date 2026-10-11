@@ -1,0 +1,100 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-cards/Arena.png.meta",
+    "guidPreserved": true,
+    "mipsDisabled": true,
+    "nativeDimensionsPreserved": true,
+    "clampedWrap": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-cards/BayanPlaza.png.meta",
+    "guidPreserved": true,
+    "mipsDisabled": true,
+    "nativeDimensionsPreserved": true,
+    "clampedWrap": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-cards/Eskinita.png.meta",
+    "guidPreserved": true,
+    "mipsDisabled": true,
+    "nativeDimensionsPreserved": true,
+    "clampedWrap": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-cards/IlalimNgTulay.png.meta",
+    "guidPreserved": true,
+    "mipsDisabled": true,
+    "nativeDimensionsPreserved": true,
+    "clampedWrap": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-cards/Kanto.png.meta",
+    "guidPreserved": true,
+    "mipsDisabled": true,
+    "nativeDimensionsPreserved": true,
+    "clampedWrap": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-cards/Lagoon.png.meta",
+    "guidPreserved": true,
+    "mipsDisabled": true,
+    "nativeDimensionsPreserved": true,
+    "clampedWrap": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-cards/LagoonCove.png.meta",
+    "guidPreserved": true,
+    "mipsDisabled": true,
+    "nativeDimensionsPreserved": true,
+    "clampedWrap": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/map-cards/SaBubong.png.meta",
+    "guidPreserved": true,
+    "mipsDisabled": true,
+    "nativeDimensionsPreserved": true,
+    "clampedWrap": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/mode-cards/ClassicCard.png.meta",
+    "guidPreserved": true,
+    "mipsDisabled": true,
+    "nativeDimensionsPreserved": true,
+    "clampedWrap": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/mode-cards/ClassicChoice.png.meta",
+    "guidPreserved": true,
+    "mipsDisabled": true,
+    "nativeDimensionsPreserved": true,
+    "clampedWrap": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/mode-cards/CustomCard.png.meta",
+    "guidPreserved": true,
+    "mipsDisabled": true,
+    "nativeDimensionsPreserved": true,
+    "clampedWrap": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/mode-cards/HeroStrikeChoice.png.meta",
+    "guidPreserved": true,
+    "mipsDisabled": true,
+    "nativeDimensionsPreserved": true,
+    "clampedWrap": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/mode-cards/PracticeCard.png.meta",
+    "guidPreserved": true,
+    "mipsDisabled": true,
+    "nativeDimensionsPreserved": true,
+    "clampedWrap": true
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/mode-cards/RankedCard.png.meta",
+    "guidPreserved": true,
+    "mipsDisabled": true,
+    "nativeDimensionsPreserved": true,
+    "clampedWrap": true
+  }
+]
