@@ -100,7 +100,7 @@ namespace TumbangPreso.CameraSystem
         {
             var entry = RosterBook.Load()?.FindPersonArt("nemu");
             _leftArm = arms.LeftHandForProps();
-            if (!Visual.Pets.Enabled || entry == null || entry.PetModel == null || _leftArm == null) return false;
+            if (entry == null || entry.PetModel == null || _leftArm == null) return false;
 
             _arms = arms; _current = this;
             _root = new GameObject("~HandCompanion Kuro").transform;

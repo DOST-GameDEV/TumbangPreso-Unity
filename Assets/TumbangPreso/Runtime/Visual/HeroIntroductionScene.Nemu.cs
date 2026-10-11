@@ -153,8 +153,7 @@ namespace TumbangPreso.Visual
         {
             // ------------------------------------------------------------- Kuro, retained, calm and frightened
             var companion = source.GetComponent<CharacterVisual>()?.Companion ?? FilmCompanion;
-            // All pets are off (`Visual.Pets`): with no Kuro the cutscene simply has no Kuro in it.
-            if (companion == null) { BuildNemuStage(); return; }
+            if (companion == null) throw new InvalidOperationException("Nemu's introduction requires retained Kuro.");
             var track = new MatchPoseHistory.Track(source, companion.gameObject);
             track.Record(0); track.Record(.05f); _kuro = track.Clone(_root.transform);
             if (_kuro == null) throw new InvalidOperationException("Kuro exceeded the render-copy contract.");
@@ -172,11 +171,7 @@ namespace TumbangPreso.Visual
                 { bone.gameObject.SetActive(false); bone.SetParent(_root.transform, false); ObjectDestroy(bone.gameObject); }
             _rage = new KuroRagePresentation(_kuro.Root, calm, rageForm);
             _kuroRenderers = _kuro.Root.GetComponentsInChildren<Renderer>(true);
-            BuildNemuStage();
-        }
 
-        private void BuildNemuStage()
-        {
             // ------------------------------------------------------------- the hush: the world steps back
             // A dark dome closes over the stage (open sky reads as a hole in the night, Phaister's lesson) and a ring of grey
             // runs out over the court from her feet.
@@ -342,12 +337,6 @@ namespace TumbangPreso.Visual
             float present = StagePresence(t, .2f);
 
             // ------------------------------------------------------------- Kuro: at her shoulder; flinches and hides
-            if (_kuro != null) SampleNemuKuro(t);
-            SampleNemuStage(t, present);
-        }
-
-        private void SampleNemuKuro(float t)
-        {
             float bob = Mathf.Sin(t * 2.4f) * .05f;
             float hide = Ease(.68f, .9f, t);
             Vector3 hidden = new Vector3(-.35f, 1.15f, -.45f);
@@ -360,10 +349,7 @@ namespace TumbangPreso.Visual
             float shiver = _reducedEffects ? 0f : Mathf.Sin(t * 47f) * .04f * (hide + flinch);
             _kuro.Root.transform.localScale = _nmKuroScale * (1f - .18f * hide) + Vector3.one * shiver * _nmKuroScale.x;
             _rage.Sample(0, t, .12f);
-        }
 
-        private void SampleNemuStage(float t, float present)
-        {
             // ------------------------------------------------------------- the hush
             float grey = Ease(NmGrey, NmGrey + .55f, t);
             Place(_nmGreyRing, Vector3.up * .03f, Vector3.one * Mathf.Lerp(.4f, 15f, grey), Quaternion.identity, grey > 0f ? (1f - grey) * .9f : 0f);

@@ -244,7 +244,7 @@ namespace TumbangPreso.CameraSystem
             var book=RosterBook.Load();if(book==null)return null;
             if(track.Kind==RecordedObjectKind.Companion)return track.Person==PhaisterDollArt.Id?PhaisterDollArt.LoadArt()?.Model:null;
             if(track.Kind==RecordedObjectKind.Player)return book.PersonArt(track.Skin,mode)?.Model;
-            if(track.Kind==RecordedObjectKind.Familiar)return Visual.Pets.Allow(book.People.FirstOrDefault(p=>p!=null&&p.Id==track.Person)?.PetModel);
+            if(track.Kind==RecordedObjectKind.Familiar)return book.People.FirstOrDefault(p=>p!=null&&p.Id==track.Person)?.PetModel;
             return CataloguedProp(track);
         }
         private static GameObject Source(RecordedObjectTrack track)
