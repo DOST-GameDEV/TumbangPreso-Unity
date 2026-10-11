@@ -238,9 +238,9 @@ namespace TumbangPreso.Core
                 blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
             // ⚠️ APPENDED (the enum's note). Nemu's PRUSISYON, `docs/reports/nemu-ultimate-2026-10-11/direction.md`.
             new StatusRule(StatusKind.Possessed, "POSSESSED",
-                "For 15 seconds a ghost rides you and drags your steering toward danger. Push against it to hold your ground; fighting wears its grip down.",
-                "Possessed: Fight the Pull",
-                PossessedSeconds, 1, blocksMovement: false, blocksInteraction: false,
+                "For 15 seconds a ghost is inside you: 10% slower, and it drags your steering toward danger. Push against it to hold your ground; fighting wears its grip down.",
+                "Possessed: Slowed, Fight the Pull",
+                PossessedSeconds, NemuRules.PossessedSpeedScale, blocksMovement: false, blocksInteraction: false,
                 blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
         };
 

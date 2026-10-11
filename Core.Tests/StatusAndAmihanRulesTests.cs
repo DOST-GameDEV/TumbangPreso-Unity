@@ -48,7 +48,7 @@ namespace TumbangPreso.Core.Tests
             // Nemu's PRUSISYON (owner 2026-10-11): 15 s, control kept, cleansable.
             var possessed = StatusRules.For(StatusKind.Possessed);
             Assert.Equal(15.0f, possessed.Seconds);
-            Assert.Equal(1.0f, possessed.SpeedScale);
+            Assert.Equal(0.9f, possessed.SpeedScale); // owner: "maybe possessed players get 10% slow too"
             Assert.False(possessed.BlocksMovement || possessed.BlocksInteraction
                 || possessed.BlocksSlipperRetrieval || possessed.DropsHeldSlipper);
             Assert.True(possessed.Removable && possessed.ImmunityApplies);

@@ -190,6 +190,34 @@ Docs: TODO entry, `SKILL_NETWORK_CONTRACT.md`, `Hero_Strike_Balance.md` row, thi
 | Rules and owner numbers | `dotnet test Core.Tests` 742/742 (`NemuRulesTests` 11) | managed tests |
 | It compiles in Unity | EditMode `ChatAndLobbyChromeTests` 10/10, protocol 160 | Unity compile and EditMode |
 | Who is possessed, by whom, cleanse, wire bounds, stray Haunt receipts | PlayMode `NemuPrusisyonTests`, `NemuFamiliarPoseTests` | native PlayMode, [XML](evidence/play-possession.xml) |
-| The contest moves real bodies on Eskinita | `NemuPossessionMovementTests`: hands-off 0.71 m toward the taya in 1 s; fighting it 1.81 m of a free 2.50 m; stunned 0.00 m ([CSV](evidence/possession-movement.csv)) | native PlayMode, real physics steps |
+| The contest moves real bodies on Eskinita | `NemuPossessionMovementTests` (with the 10 % slow): hands-off 0.64 m toward the taya in 1 s; fighting it 1.63 m of a free 2.50 m; stunned 0.00 m ([CSV](evidence/possession-movement.csv)) | native PlayMode, real physics steps |
+| The cutscene in a match | `NemuPrusisyonFilm` on Bayan Plaza at 30 frames per game second: 5.80 s, round clock frozen (85.141 to 85.141); bots playing after the hand-back wear the grip to about 0.67 ([summary](evidence/film-v1/summary.txt), [timing](evidence/film-v1/timing.csv), [frames](evidence/film-v1/r7.jpg)) | native film, preview v1 |
 
-Not yet evidence: actual networked peers, the cutscene, the sound, a film, human taste.
+Not yet evidence: actual networked peers, the owner's verdict on the film and the draft sound, human taste.
+
+### Film review rounds (what each film showed and what changed)
+
+| Film | Seen | Changed |
+|---|---|---|
+| n1 | the dead invisible against the dome; their eyes sub-pixel; souls white blobs; the payoff wide and small; the dome faded to the plain plaza before the end | brighter edges, bigger figures and eyes, violet souls, the camera stays with the first player, the dark holds to the end |
+| n2 | the whole-frame grade at 0.14 turned violet to white glass; most of the line rose too late; Nemu blocked the procession | saturation 0.38, the mist edge at 7.2 m, the procession shot from her right-front |
+| n3 to n5 | eyes beside the face; the ink only dimmed (a linear frame) and put the eyes out | eyes along the line to her from the head bone; the ink pass keeps bright violet and goes fully black |
+| n6 | the procession lilac glass (the rim covered small bodies); her offering hand filled the lens | denser darker veils with a quiet rim; the offer kept low |
+
+
+## 10. Owner corrections, 2026-10-11 (these supersede the sections above where they differ)
+
+| The owner said | What it became |
+|---|---|
+| *"i dont want ghost to be above the person like a jockey, i js wanted u to mimic the jockey's steering effect"* | No rider. The Jockey is only the steering contest (section 2.1, unchanged). |
+| *"the ghosts will all go INSIDE the ppl and theyre gonna look possessed"*, *"some sort of purple eerie aura"* | `Visual.PossessedPresence`: a soul's sheet sized just larger than their body, mostly hidden by it, so a dark aura in a ghost's shape glows round their silhouette; violet light over their eyes; it sinks into them as it starts and climbs out as it ends. |
+| *"darker purple"*, *"ang weird ng hue of that purple"*, *"use black and purple or low opacity black"* | A smoky near-black veil (it darkens what is behind it) with a deep violet edge; the procession's flames are ghost-fire violet, not candle amber. |
+| *"the ghosts are tryna get out of the body but they get sucked in anyways"* | Between surges the trapped soul pushes a hand out through the body and is sucked back (typed escape rows); each surge it lunges half out toward the lure, dragging them, and is snapped back in. In the cutscene each soul wheels round its player fighting, then is sucked in. |
+| *"maybe possessed players get 10% slow too"* | `NemuRules.PossessedSpeedScale` 0.9 on the status (`StatusRules`, asserted). |
+| *"make it look very eerie"*, *"below 6 seconds"* | 5.8 s; the world drains grey and dark under a death bell; a dark dome closes; the dead walk in lockstep and turn to the lens together; the players turn slowly to face her with violet eyes; the ink closes. |
+| *"add a lot of cool vfx that communicates whatever is happening"* | Section 5's table, with the aura, eyes, escapes, lunges, moths and footprints. |
+
+Sound: skill sounds are off in the game until the owner picks a draft by ear, and an unapproved one has no file in the
+game. The drafts (`tools/build_nemu_ult_audio.py`) are in [audio-drafts](audio-drafts/) and mixed into the preview film;
+the in-game tell and surge hooks are wired and silent until released. The possessed player's hearing is muffled
+(not a skill sound; Haunted's filter, a little lighter).

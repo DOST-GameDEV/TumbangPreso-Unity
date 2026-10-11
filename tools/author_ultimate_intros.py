@@ -507,69 +507,83 @@ def zack():
 @performance
 def nemu(held=False):
     """
-    DEVOURING SEANCE, 3.8 s (plan.md section 4). "Looks distracted. Already knows your next
-    move." Two characters act: Nemu is gazing at nothing, hands behind her back; Kuro nudges
-    her; she turns to him and offers a hand; then she opens it and looks straight at the viewer,
-    the one beat she is fully present, while Kuro swells behind her. She stays calm, hands
-    folded, and points him ahead.
-    Kuro sits on her LEFT (hero-local -x), which the camera keeps in frame.
+    PRUSISYON, 5.8 s (owner brief 2026-10-11; `docs/reports/nemu-ultimate-2026-10-11/direction.md` section 4; the owner:
+    *"pls limit ult to below 6 seconds"*). "Looks distracted. Already knows your next move": she is half-listening to the
+    dead all the time, and this is the moment she lets them in. One sentence: she hushes the world grey, and the dead file
+    past in procession and step into every player. Three shots, one travelling light (a candle flame), always moving left
+    to right on screen (toward her LEFT, hero-local -x, while the camera is in front of her).
+      A THE HUSH 0.00-1.20: close, straight on. Gazing off; her eyes come to the lens; finger to her lips (0.40); the grey
+        sweeps out from her feet; a flame kindles at her fingertip (0.85) and drifts off screen right.
+      B THE PROCESSION 1.20-3.30: wide and low, trucking left to right with the dead walking behind her. Hands folded, calm.
+        Every head turns to the lens at 2.95.
+      C THE ENTERING 3.30-5.80: the candles snuff as she closes her hand (3.30); she opens both hands and lets them go
+        (3.42); the souls stream out to the real players. The camera is computed from them (`HeroIntroductionScene.Nemu.cs`);
+        the authored shot below is its fallback with nobody on court.
+    The stage reads these times: keep them in step with `NmHush`, `NmProcession`, `NmSnuff` and `NmRelease`.
     """
-    p = Performance("nemu-held" if held else "nemu", 7.2)
-    rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
-    # Gazing away up to her right, hands clasped behind her back.
-    away = Pose(torso=(-2, 8, 2), head=(-16, 30, 4), left=(-24, 8, -30), right=(-24, 8, -30))
-    away_sway = away.but(torso=(-2, 8, -2), head=(-18, 32, 6))
-    startle = away.but(torso=(-5, 2, 0), head=(-6, 10, 0))
-    to_kuro = Pose(torso=(0, -8, 0), head=(4, -34, 6), left=(-10, 10, -20), right=(-20, 8, -30))
-    offer = Pose(torso=(3, -12, 0), head=(6, -30, 10), left=(72, 30, -10), right=(-18, 8, -30))
-    # The knowing look, straight down the lens, the open hand still out.
-    knowing = Pose(torso=(0, 2, 0), head=(2, 0, 0), left=(48, 34, -6), right=(-10, 12, -20))
-    # Calm while the giant grows: hands folded in front, a slow sway.
-    calm = Pose(torso=(0, 0, 2), head=(0, 0, 6), left=(30, 2, 38), right=(30, 2, 38))
-    calm_sway = calm.but(torso=(0, 0, -2), head=(0, 0, -4))
-    send = Pose(torso=(4, -6, 0), head=(4, -4, 0), left=(28, 4, 36), right=(90, 6, 6),
-                legs=((6, 2), (-4, 2)))
+    p = Performance("nemu-held" if held else "nemu", 5.8)
+    # Distracted, gazing off up to her right, hands loosely behind her back.
+    away = Pose(torso=(-2, 8, 2), head=(-14, 28, 4), left=(-22, 8, -30), right=(-22, 8, -30))
+    # Her eyes come round to the lens: the one beat she is fully present.
+    present = Pose(torso=(0, 2, 0), head=(3, 0, -2), left=(-16, 10, -24), right=(-16, 10, -24))
+    # THE HUSH: a finger to her lips, head dipped a touch, the other hand still behind her.
+    hush = Pose(torso=(2, -4, 0), head=(7, 2, -3), left=(-14, 10, -22), right=(128, 4, 42))
+    # The flame at her fingertip: the hand lowers and opens toward the lens, offering it.
+    # (film n6: raised to 92 the offering hand filled the close lens as a black block; low and open, it stays in the frame.)
+    offer = Pose(torso=(3, -6, 0), head=(9, 4, -2), left=(-14, 10, -22), right=(62, 20, 26))
+    # Calm while the dead walk behind her: hands folded in front, a slow sway.
+    calm = Pose(torso=(0, 0, 2), head=(2, 0, 5), left=(30, 2, 38), right=(30, 2, 38))
+    calm_sway = calm.but(torso=(0, 0, -2), head=(2, 0, -4))
+    # The heads turn: she lifts her chin a touch, knowing.
+    knowing = calm.but(head=(-4, 0, 8))
+    # THE SNUFF: she closes her hand on the air, as if pinching out a wick.
+    snuff = Pose(torso=(4, -4, 0), head=(6, 0, 0), left=(30, 2, 38), right=(84, 20, 30))
+    # THE RELEASE: both hands open, low and outward, palms out: go.
+    release = Pose(torso=(-3, 0, 0), head=(-2, 0, 0), left=(44, 58, -6), right=(44, 58, -6), legs=((4, 3), (-3, 3)))
+    release_sway = release.but(torso=(-2, 0, 2), head=(-2, 0, 6))
+    # The last beat: her head tips, as the riders look at the lens.
+    tilt = release.but(head=(2, 0, 14))
     if held:
-        # Native review caught the fitted shoe crossing her large face during
-        # the folded-hand/send beat. Keep it loosely by her outside hip and
-        # send Kuro with the same free hand that just offered him a nuzzle.
+        # The slipper stays loosely at her outside hip; the hush and the snuff are her free (left) hand.
         shoe = (8, 26, -5)
         away = away.but(right=shoe)
-        away_sway = away_sway.but(right=shoe)
-        startle = startle.but(right=shoe)
-        to_kuro = to_kuro.but(right=shoe)
-        offer = offer.but(right=shoe)
-        knowing = knowing.but(right=shoe)
+        present = present.but(right=shoe)
+        hush = hush.but(left=(128, 4, 42), right=shoe)
+        offer = offer.but(left=(62, 20, 26), right=shoe)
         calm = calm.but(right=shoe)
         calm_sway = calm_sway.but(right=shoe)
-        send = send.but(left=(80, 30, 0), right=shoe)
+        knowing = knowing.but(right=shoe)
+        snuff = snuff.but(left=(84, 20, 30), right=shoe)
+        release = release.but(right=shoe)
+        release_sway = release_sway.but(right=shoe)
+        tilt = tilt.but(right=shoe)
 
-    p.key(0, rest)
-    p.key(.3, away).key(.55, away_sway)
-    p.key(.72, startle, punch=True)
-    p.key(.9, to_kuro)
-    p.hold(.9, 1.12, to_kuro)
-    p.key(1.3, offer)
-    p.hold(1.3, 1.68, offer)
-    p.key(1.86, knowing, punch=True)
-    p.hold(1.86, 2.5, knowing)
-    # LIGHTS OUT (2026-10-09): she folds her hands and sways through the dive, the rise and his looking round, never
-    # turning to him, and only then points. The times are the stage's (`HeroIntroductionScene.Nemu.cs`).
-    p.key(2.8, calm).key(3.4, calm_sway).key(4.0, calm).key(4.6, calm_sway).key(5.2, calm).key(5.55, calm_sway)
-    p.key(5.8, send, punch=True)
-    p.hold(5.8, 7.2, send)
+    p.key(0, away)
+    p.key(.15, present)
+    p.key(.40, hush, punch=True)
+    p.hold(.40, .82, hush)
+    p.key(1.0, offer)
+    p.hold(1.0, 1.2, offer)
+    p.key(1.5, calm).key(1.95, calm_sway).key(2.45, calm)
+    p.key(2.95, knowing, punch=True)
+    p.hold(2.95, 3.2, knowing)
+    p.key(3.30, snuff, punch=True)
+    p.key(3.42, release, punch=True)
+    p.key(4.2, release_sway).key(4.9, release)
+    p.key(5.25, tilt)
+    p.hold(5.25, 5.8, tilt)
 
-    # A: from her left front so Kuro, on her left, shares the frame with her.
-    p.shot(0, 1.76, (-1.5, 1.2, 3.6), (-.4, .95, 0), 46, eye_to=(-1.3, 1.15, 3.4))
-    # B: straight on, close, for the knowing look into the lens.
-    p.shot(1.76, 2.45, (.05, 1.25, 3.1), (0, 1.05, 0), 40, eye_to=(.05, 1.22, 2.8), close=True)
-    # C: high over the court from in front of her. The ink runs out, he dives, he rises behind her, he looks round.
-    p.shot(2.45, 4.95, (1.6, 7.6, 12.5), (0, 2.4, -3.2), 56, eye_to=(1.0, 6.4, 11.2))
-    # D: low and close, looking up past her at him.
-    p.shot(4.95, 6.0, (.6, .45, 3.1), (0, 2.7, -2.6), 58, eye_to=(.5, .5, 2.8))
-    # E: back along the court for the send. He comes at this lens; x is 0 on purpose, so a mirrored shot is the same shot.
-    p.shot(6.0, 7.2, (0, 1.3, 6.5), (0, 3.0, -3.0), 52)
-    p.locked((3.4, 2.4, 8.6), (-.9, 2.1, 0), 52)
+    # A: close and straight on, a slow push in to the hush.
+    p.shot(0, 1.2, (.1, 1.28, 2.2), (0, 1.18, 0), 36, eye_to=(.08, 1.24, 1.9), close=True)
+    # B: wide and low, trucking toward her left (screen right) with the procession walking behind her.
+    # (film n1: from 5 m out and 0.55 m up the dead were specks behind her and a prop filled the lens; closer and lower now,
+    # her small in the left foreground, the dead walking big across the frame.)
+    # (film n2: from straight in front she stood between the lens and the dead. From her right-front now, she is out of the
+    # frame as it opens and drifts in at its left edge as they turn.)
+    p.shot(1.2, 3.3, (4.2, .8, 1.2), (2.6, 1.0, -2.6), 46, eye_to=(1.2, .85, 1.6), look_to=(-.6, 1.0, -2.6))
+    # C: over her shoulder and up, out after the souls (computed from the real players in the stage).
+    p.shot(3.3, 5.8, (.8, 1.5, -1.4), (0, 1.0, 3.5), 48, eye_to=(3.2, 3.2, -3.6), look_to=(0, .9, 2.0), fov_to=56)
+    p.locked((2.6, 1.6, 5.6), (0, 1.2, -1.5), 50)
     return p
 
 

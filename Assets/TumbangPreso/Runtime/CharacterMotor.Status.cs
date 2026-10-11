@@ -89,7 +89,8 @@ namespace TumbangPreso
         /// </summary>
         public float StatusSpeedScale => IsRooted ? 0.0f
             : (IsChilled ? StatusRules.ChilledSpeedScale : 1.0f) * (IsConcussed ? StatusRules.ConcussedSpeedScale : 1.0f)
-              * VoodooSpeedScale;
+              * VoodooSpeedScale
+              * (IsPossessed ? NemuRules.PossessedSpeedScale : 1.0f);
 
         /// <summary>
         /// WHIRLED: *"Drops slipper if currently in hand. Prevents slipper retrieval for 2.5

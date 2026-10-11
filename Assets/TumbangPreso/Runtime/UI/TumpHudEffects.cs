@@ -11,6 +11,7 @@ namespace TumbangPreso.UI
         private Material _possessedMaterial;
         private float _possessedPresence;
         private Vector2 _possessedDir = Vector2.up;
+        private NemuRules.Phase _possessedPhase;
         private HudDangerFrame _frame;
         private float _frameAlpha;
         // Which state owns the frame. Kept through the fade out so the colour never swaps mid-fade.
@@ -139,6 +140,15 @@ namespace TumbangPreso.UI
             var size = _possessed.rectTransform.rect.size;
             if (size.y > 0) _possessedMaterial.SetFloat("_Aspect", size.x / size.y);
             _possessed.color = Color.white;
+            // Its breath on the victim's own ears: an inhale on the tell, a push on the surge (skill sounds: silent until the
+            // owner releases them, `AudioCues.ReworkedSkillSfx`).
+            var phase = on ? NemuRules.PhaseAt(elapsed, seat) : NemuRules.Phase.None;
+            if (phase != _possessedPhase)
+            {
+                if (phase == NemuRules.Phase.Tell) GameServices.Audio?.PlayUi("sfx_nemu_possess_tell");
+                else if (phase == NemuRules.Phase.Surge) GameServices.Audio?.PlayUi("sfx_nemu_possess_surge");
+                _possessedPhase = phase;
+            }
         }
 
         private void OnDestroy()

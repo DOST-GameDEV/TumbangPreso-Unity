@@ -50,6 +50,9 @@ def read_wav(path):
     return x
 
 
+EXTRA_SFX = []
+
+
 def mix(cues_csv, seconds, theme_gain):
     """The film's cue log mixed into one mono track. A cue's pitch plays it faster and higher, as the game does."""
     track = np.zeros(int(seconds * RATE) + RATE, dtype=np.float32)
@@ -58,6 +61,9 @@ def mix(cues_csv, seconds, theme_gain):
         for row in csv.DictReader(fh):
             stem = row["cue"].strip()
             path = SFX / (stem + ".wav")
+            for extra in EXTRA_SFX:
+                if not path.exists():
+                    path = extra / (stem + ".wav")
             if not path.exists():
                 missing.add(stem)
                 continue
@@ -101,7 +107,10 @@ def main():
     ap.add_argument("--title", default="")
     ap.add_argument("--view", nargs=2, action="append", metavar=("FOLDER", "LABEL"), required=True)
     ap.add_argument("--theme-gain", type=float, default=0.55)
+    # DRAFT sounds the owner has not released (skill sounds have no file in the game until then) are mixed from here.
+    ap.add_argument("--sfx-dir", action="append", default=[])
     args = ap.parse_args()
+    EXTRA_SFX.extend(Path(d) for d in args.sfx_dir)
     film = Path(args.film)
     ffmpeg = shutil.which("ffmpeg")
     if ffmpeg is None:

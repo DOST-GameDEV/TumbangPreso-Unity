@@ -210,7 +210,7 @@ namespace TumbangPreso.PlayTests
 
             // Hands off: the ghost walks them toward the taya.
             victim.ApplyPossessed();
-            Assert.IsNotNull(victim.GetComponentInChildren<PossessedRider>(), "Nobody can see the rider.");
+            Assert.IsNotNull(victim.GetComponentInChildren<PossessedPresence>(), "Nobody can see the rider.");
             yield return new WaitForSeconds(.6f);
             float d0 = Flat(victim.transform.position, taya.transform.position);
             yield return new WaitForSeconds(1.0f);

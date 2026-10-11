@@ -13,7 +13,7 @@ namespace TumbangPreso
     ///  * The body's own SIMULATING peer applies the contest in the motor step (`PossessedWish`), because that peer
     ///    moves the body. Bots are simulated by the host and press the same buttons, so they fight it the same way.
     ///  * Everyone else only DRAWS it: `PossessionPull` is a pure function of the seat, the replicated clock and
-    ///    replicated positions, so every screen leans the rider the same way (`Visual.PossessedRider`).
+    ///    replicated positions, so every screen leans the rider the same way (`Visual.PossessedPresence`).
     ///  * Grip is the simulating peer's own, like the stick, and never decides an outcome on the host.
     /// </summary>
     public sealed partial class CharacterMotor
@@ -23,6 +23,10 @@ namespace TumbangPreso
 
         public float PossessedLeft => _possessedLeft;
         public bool IsPossessed => _possessedLeft > 0.0f;
+
+        /// <summary>This body is the person playing on this machine (the solo seat offline, the local seat online): whose
+        /// own screen gets the possessed treatment and whose own ghost is hidden from their lens.</summary>
+        public bool IsLocalViewer => IsLocalHuman;
 
         /// <summary>Seconds into the current possession (a refresh starts it again, like its rider).</summary>
         public float PossessionElapsed => IsPossessed ? NemuRules.PossessedSeconds - _possessedLeft : -1.0f;
@@ -58,7 +62,7 @@ namespace TumbangPreso
         {
             _possessionGrip = 1.0f;
             _possessionResisting = false;
-            Visual.PossessedRider.Attach(this);
+            Visual.PossessedPresence.Attach(this);
             StatusGained?.Invoke(this, StatusKind.Possessed);
         }
 

@@ -18,6 +18,9 @@ namespace TumbangPreso.Core
         /// <summary>Owner, 2026-10-11: *"Apply POSSESSED for 15 gameplay seconds"*.</summary>
         public const float PossessedSeconds = 15.0f;
 
+        /// <summary>Owner, 2026-10-11: *"maybe possessed players get 10% slow too"*. A flat 10 % off the walk, on top of the contest.</summary>
+        public const float PossessedSpeedScale = 0.9f;
+
         /// <summary>Owner, 2026-10-11: *"pls limit ult to below 6 seconds"*. The cutscene's authored length.</summary>
         public const float ProcessionSeconds = 5.8f;
 

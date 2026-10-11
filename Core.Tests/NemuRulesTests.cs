@@ -16,6 +16,7 @@ namespace TumbangPreso.Core.Tests
         public void TheOwnersNumbersAreTheOnesInTheKit()
         {
             Assert.Equal(15.0f, NemuRules.PossessedSeconds);
+            Assert.Equal(0.9f, NemuRules.PossessedSpeedScale);
             Assert.True(NemuRules.ProcessionSeconds < 6.0f, "owner: below 6 seconds");
         }
 

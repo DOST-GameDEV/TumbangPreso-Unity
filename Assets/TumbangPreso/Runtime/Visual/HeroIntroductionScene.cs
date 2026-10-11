@@ -456,6 +456,7 @@ namespace TumbangPreso.Visual
         {
             if (frame == null || camera == null) return;
             if (_hero == "phaister") PhaisterPostProcess(frame, camera, Local(seconds));
+            if (_hero == "nemu") NemuPostProcess(frame, camera, Local(seconds));
         }
 
         /// <summary>
@@ -532,6 +533,7 @@ namespace TumbangPreso.Visual
             // Paete's opens the sky through the map for her (`NearFade.OpenSky`); it must never outlive him.
             if (_hero == "paete") NearFade.CloseSky();
             _rage?.Dispose(); _rage = null;
+            if (_nmInk != null) { ObjectDestroy(_nmInk); _nmInk = null; }
             _amFace?.Dispose(); _amFace = null;
             if (_heldItem != null) { _heldItem.SetActive(false); ObjectDestroy(_heldItem); }
             if (_root != null) { _root.SetActive(false); ObjectDestroy(_root); }

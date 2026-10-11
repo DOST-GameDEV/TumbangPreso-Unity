@@ -13,9 +13,10 @@ Shader "TumbangPreso/PossessedVignette"
     Properties
     {
         _MainTex ("Sprite Texture (unused, required by UGUI)", 2D) = "white" {}
-        _Ink ("Ink", Color) = (0.07, 0.03, 0.10, 1)
-        _Hand ("Hand", Color) = (0.82, 0.78, 0.90, 1)
-        _Flame ("Candle rim", Color) = (1.0, 0.62, 0.18, 1)
+        _Ink ("Ink", Color) = (0.03, 0.01, 0.05, 1)
+        _Hand ("Hand", Color) = (0.06, 0.02, 0.10, 1)
+        _HandRim ("Hand edge", Color) = (0.58, 0.32, 0.92, 1)
+        _Flame ("Tell rim (ghost-fire violet)", Color) = (0.62, 0.32, 0.98, 1)
         _PullDir ("Pull direction (screen, x right y up)", Vector) = (0, 1, 0, 0)
         _Presence ("Presence", Range(0, 1)) = 0
         _Tell ("Tell", Range(0, 1)) = 0
@@ -37,7 +38,7 @@ Shader "TumbangPreso/PossessedVignette"
             #include "UnityCG.cginc"
             struct appdata { float4 vertex : POSITION; float2 uv : TEXCOORD0; float4 color : COLOR; };
             struct v2f { float4 pos : SV_POSITION; float2 uv : TEXCOORD0; float4 color : COLOR; };
-            fixed4 _Ink, _Hand, _Flame;
+            fixed4 _Ink, _Hand, _HandRim, _Flame;
             float4 _PullDir;
             float _Presence, _Tell, _Surge, _Grip, _Aspect, _Calm;
 
@@ -64,8 +65,8 @@ Shader "TumbangPreso/PossessedVignette"
             {
                 float2 side = float2(inward.y, -inward.x);
                 float2 palm = base + inward * reach;
-                float d = roundBox(p, palm, inward, float2(0.062, 0.055), 0.045);
-                d = smin(d, capsule(p, base - inward * 0.2, palm, 0.05), 0.04);
+                float d = roundBox(p, palm, inward, float2(0.10, 0.088), 0.07);
+                d = smin(d, capsule(p, base - inward * 0.3, palm, 0.08), 0.06);
                 float curl = lerp(1.0, 0.55, clench);
                 float fan = spread * lerp(1.0, 0.45, clench);
                 for (int i = 0; i < 3; i++)
@@ -73,8 +74,8 @@ Shader "TumbangPreso/PossessedVignette"
                     float k = i - 1.0;
                     float len = (i == 0 ? fingers.x : (i == 1 ? fingers.y : fingers.z)) * curl;
                     float2 dir = normalize(inward + side * k * fan);
-                    float2 root = palm + inward * 0.04 + side * k * 0.038;
-                    d = smin(d, capsule(p, root, root + dir * len, 0.024), 0.02);
+                    float2 root = palm + inward * 0.065 + side * k * 0.06;
+                    d = smin(d, capsule(p, root, root + dir * len * 1.6, 0.038), 0.03);
                 }
                 return d;
             }
@@ -94,8 +95,8 @@ Shader "TumbangPreso/PossessedVignette"
                 // THE VIGNETTE: ink round the frame, heavier on the pull's side, breathing, thicker in a surge.
                 float r = length(p / float2(_Aspect, 1.0));
                 float sideWeight = saturate(dot(normalize(p + 1e-4), d)) ;
-                float ink = smoothstep(0.55 - 0.12 * _Surge - 0.05 * breathe, 1.35, r + 0.28 * sideWeight * (0.6 + 0.4 * _Surge));
-                ink *= 0.62 + 0.18 * _Surge;
+                float ink = smoothstep(0.42 - 0.12 * _Surge - 0.05 * breathe, 1.25, r + 0.32 * sideWeight * (0.6 + 0.4 * _Surge));
+                ink *= 0.8 + 0.15 * _Surge;
 
                 // THE HANDS: they slip back toward the edge as grip falls, draw back on the tell, lunge in on the surge.
                 float gripK = saturate((_Grip - 0.45) / 0.55);
@@ -106,8 +107,8 @@ Shader "TumbangPreso/PossessedVignette"
                 float dh = hand(p, baseA, normalize(inward + side * 0.18), reach, clench, float3(0.11, 0.135, 0.105), 0.42);
                 dh = min(dh, hand(p, baseB, normalize(inward - side * 0.14), reach * 0.94, clench, float3(0.10, 0.125, 0.115), 0.36));
                 float handFill = smoothstep(0.012, -0.004, dh);
-                float handEdge = smoothstep(0.02, 0.0, abs(dh) - 0.006) * (1.0 - handFill * 0.5);
-                float handAlpha = (handFill * 0.55 + handEdge * 0.35) * lerp(0.45, 1.0, gripK);
+                float handEdge = smoothstep(0.03, 0.0, abs(dh) - 0.008);
+                float handAlpha = (handFill * 0.85 + handEdge * 0.6) * lerp(0.5, 1.0, gripK);
 
                 // THE TELL: a thin candle-amber glow along the pull's edge.
                 float edgeDist = dot(edge - p, d);
@@ -115,7 +116,8 @@ Shader "TumbangPreso/PossessedVignette"
 
                 float3 colour = _Ink.rgb;
                 float alpha = ink;
-                colour = lerp(colour, _Hand.rgb, saturate(handAlpha * 1.4));
+                colour = lerp(colour, _Hand.rgb, handFill);
+                colour = lerp(colour, _HandRim.rgb, handEdge * 0.8);
                 alpha = max(alpha, handAlpha);
                 colour = lerp(colour, _Flame.rgb, saturate(rim * 0.8));
                 alpha = max(alpha, rim * 0.5);

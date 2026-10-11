@@ -23,7 +23,7 @@ namespace TumbangPreso.Visual
             var rig = camera.GetComponent<CameraRig>();
             var body = rig != null ? rig.Following : null;
             if (body == null || !body.gameObject.activeInHierarchy || !rig.IsFollowing(body) ||
-                body.PlayerSlot != NetAuthority.LocalSlot || !body.IsPossessed) return 0f;
+                !body.IsLocalViewer || !body.IsPossessed) return 0f;
             float elapsed = body.PossessionElapsed;
             return Mathf.Clamp01(elapsed / NemuRules.SettleSeconds) *
                    Mathf.Clamp01((NemuRules.PossessedSeconds - elapsed) / NemuRules.LeaveSeconds);
