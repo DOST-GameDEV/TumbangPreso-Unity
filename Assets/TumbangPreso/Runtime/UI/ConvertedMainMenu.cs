@@ -177,7 +177,7 @@ namespace TumbangPreso.UI
                     {
                         if(person.Model!=null) models.Add(person.Model);
                         if(person.ArmModel!=null) models.Add(person.ArmModel);
-                        if(person.PetModel!=null) models.Add(person.PetModel);
+                        if(Visual.Pets.Enabled&&person.PetModel!=null) models.Add(person.PetModel);
                         yield return Visual.GeneratedMotionAssets.Warmup(person.Model);
                     }
                     _homeAssetsProgress=.2f+.04f*(index+1)/Mathf.Max(1,book.People.Count);

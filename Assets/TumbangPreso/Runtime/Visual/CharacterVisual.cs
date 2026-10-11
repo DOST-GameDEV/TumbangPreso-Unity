@@ -247,6 +247,7 @@ namespace TumbangPreso.Visual
         /// </summary>
         public void ApplyModel(GameObject prefab, Color tint, AnimationClip[] clips, Color[] palette, GameObject petModel)
         {
+            petModel = Pets.Allow(petModel); // all pets are off (`Visual.Pets`)
             var motor = GetComponent<CharacterMotor>();
             bool person = motor == null || motor.IsPerson;
             // Roster snapshots repeat unchanged picks. Rebuilding those models

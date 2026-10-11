@@ -238,6 +238,16 @@ during long runs, rather than leaving stale processes or branches behind.
 
 ## Product And Authored Work
 
+### October 11 owner directive: all pets are off
+
+The owner: "can u also disable all pets for now make it a rule in agents md" and
+"turn off all pets it doesnt make sense that the ghost is there". No roster pet
+(Kuro included) is spawned beside a body, in first person, in menus, replays or
+cutscenes. `Visual.Pets.Enabled` is the single switch; every pet spawn or draw
+asks it. Do not add a pet, re-enable one, or design new work (skills, cutscenes,
+VFX) that depends on a pet until the owner turns them back on. Roster entries keep
+their `PetModel`; a pet-dependent ability refuses to cast rather than failing silently.
+
 ### October 7 owner directive: recorded map-selection previews
 
 - Map-selection backgrounds should use prerecorded footage of the actual map,

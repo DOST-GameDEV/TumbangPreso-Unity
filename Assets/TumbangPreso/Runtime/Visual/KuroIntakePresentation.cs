@@ -22,7 +22,7 @@ namespace TumbangPreso.Visual
                 effect._ghost=GameServices.Round?.PlayerAt(ownerSlot)?.GetComponent<CharacterVisual>()?.Companion;
             if (effect._ghost==null && recordedMouth==null)
             {
-                var source=Resources.Load<RosterBook>("RosterBook")?.People.FirstOrDefault(p=>p.Id=="nemu")?.PetModel;
+                var source=Pets.Allow(Resources.Load<RosterBook>("RosterBook")?.People.FirstOrDefault(p=>p.Id=="nemu")?.PetModel);
                 if (source!=null)
                 {
                     var pet=Object.Instantiate(source,parent.position,Quaternion.identity);

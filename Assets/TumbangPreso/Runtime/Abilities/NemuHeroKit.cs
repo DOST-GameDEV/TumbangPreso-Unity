@@ -196,6 +196,9 @@ namespace TumbangPreso.Abilities
             public override bool CanActivate(AbilityContext ctx)
             {
                 if (!base.CanActivate(ctx) || ctx.Motor.IsDefender || ctx.Motor.HoldingSlipper) return false;
+                // Kuro carries the slipper: with pets off (`Visual.Pets`) there is nobody to fetch it, so the cast is refused
+                // rather than spending the shared cooldown on nothing.
+                if (Kuro(ctx) == null) return false;
                 return OwnLooseSlipper(ctx.Motor) != null;
             }
 
