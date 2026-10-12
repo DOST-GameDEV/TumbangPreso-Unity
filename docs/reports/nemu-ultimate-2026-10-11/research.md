@@ -92,3 +92,44 @@ pale lilac grey, never pure white).
 "possessed-camera vignette" for the old Haunt. The 2026-10-11 owner brief asks for possession and
 for darkness HUD effects explicitly, so those rejections are superseded for the ultimate only. Its
 other rule still holds: the camera stays under the player's control.
+
+## 6. Round two, 2026-10-13: the owner rejected preview v1
+
+The owner on preview v1: *"this ult cutscene sucks wtf is that"*, *"everything about it sucks"*, *"tangina nung procession
+cringe na"*, *"fuck that name and idea"*, *"i dont like hwo the ghosts js sit inside on the ppl"*, *"hell i hate how the
+ghosts look"*, *"i wanted the ghost to go inside the ppl tapos may parang aura nalang sila that theyre nasasapian"*,
+*"HINDI UNG KITA UNG GHHOST IS IN THEM"* (it must NOT show a ghost sitting in them). Then: *"make a research and
+throoughly think abt the plan first"*.
+
+Footage was stepped in the built-in browser by drawing the paused `<video>` into a canvas at typed times (the pane could
+not screenshot while the app window was behind another one), a contact sheet per reference.
+
+### Valorant, Fade, NIGHTFALL (first person, 1 to 31 s)
+
+| What it does | What TUMP takes | What TUMP does not take |
+|---|---|---|
+| A wall of black fills the whole frame as it passes the lens; inside it, line art drawn in light: faces, eyes, coiling tendrils | The dead are not solid figures. They are black smoke with their faces and claws drawn in violet light inside it. Many of them read as a mass of faces and hands, not a row of dolls | Cyan, the tattoo line style, a full-screen wipe on every player's screen |
+| After it passes, a dim haze of the same colour hangs in the air | The court stays dark while they are in the players | The deafen and decay mechanics |
+
+### League of Legends, Viego, Sovereign's Domination (the possession, 45 to 56 s, cropped)
+
+| What it does | What TUMP takes | What TUMP does not take |
+|---|---|---|
+| A black pool with a glowing rim and a column of mist marks the body he is about to take | Where a soul is about to go in, its smoke is already gathering round the body | The target reticle |
+| He dives in as a smoky streak; one bright burst of mist on entry | The entry is a dive and a single burst at the chest, then the soul is gone from view | Green, the beam |
+| The possessed body keeps its OWN colours and shape, with a tint, a thin glow and one emblem over the head | **Possessed = the player, plus an aura.** No ghost figure is ever drawn on or in them after the entry. Their own silhouette stays readable | The crown |
+
+### Honkai: Star Rail, Black Swan, Bliss of Otherworld's Embrace (0.5 to 14.5 s)
+
+| What it does | What TUMP takes | What TUMP does not take |
+|---|---|---|
+| Opens on a black silhouette cut-in; the close shot is her face lit violet from below in a dark frame | Purple reads because the frame is near-black with ONE hot violet light, never because the frame is grey. v1's grey grade (saturation 0.38) is what turned violet to glass | The tarot cards and the stained glass |
+| The payoff: the space round the enemies erupts in dark violet grasping hands and shards | Grasping hands of smoke are the most readable "something is coming for you" picture | Magenta and pink |
+
+### What these overturn in v1
+
+1. Ghosts as lathed translucent bodies (jelly bells): replaced by smoke with faces and claws drawn in light (Fade).
+2. The procession, its cast (Lola, Sakristan, White Lady, Kandila souls), the candle: cut (owner).
+3. The grey whole-frame grade: replaced by darkness with one hot violet (Black Swan).
+4. A ghost-shaped sheet round the possessed: replaced by an aura of the player's own silhouette (Viego).
+5. The pitch-black ending: cut. The ending holds on the players fighting it (owner, 2026-10-13).

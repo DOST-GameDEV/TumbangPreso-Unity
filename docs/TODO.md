@@ -1,3 +1,11 @@
+### NEMU-ULTIMATE-1011: LET THEM IN (was PRUSISYON)
+
+- [x] PRUSISYON gameplay: POSSESSED 15 s, 10% slow, Jockey-style steering contest (`NemuRules`), protocol 160. Core.Tests 742/742; PlayMode `NemuPrusisyonTests`, `NemuPossessionMovementTests`, `NemuFamiliarPoseTests` 10/10; film v1 5.80 s with the round clock frozen. [Direction](reports/nemu-ultimate-2026-10-11/direction.md).
+- [x] Owner rejected preview v1 on 2026-10-13 (the procession, the name, the ghosts' look, a ghost visible on the possessed). Research round two (Fade NIGHTFALL, Viego possession, Black Swan) and the LET THEM IN direction written: [research](reports/nemu-ultimate-2026-10-11/research.md) section 6, [direction](reports/nemu-ultimate-2026-10-11/direction.md) section 11.
+- [ ] Owner approval of the section 11 plan, then build: smoke shader and batch, the cutscene rewrite, the in-play aura, the rename, the status icon; storyboard, film, stitched preview.
+- [ ] Real networked peers on protocol 160; the owner's verdict on the sound drafts (out of `Resources/Sfx` until approved).
+- [ ] Known stale probe: `NemuKitContractProbe` asserts the retired Seance/Kuro-possession behaviour.
+
 ### QOL-INTEGRATION-1011: combined authored and engineering work
 
 - [x] Integrate QoLUpdates eb2dc1556 into ASTRAReworks with combined protocol159, retained login timing, pose/replay/AI/ground fixes and incoming movement/map/character/Paete work. Native21/21 targeted controls pass; all22,351 inputs/preferences restore and private3files remain unchanged. [Exact integration evidence](reports/qol-integration-2026-10-11/README.md).

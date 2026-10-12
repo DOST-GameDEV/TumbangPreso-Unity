@@ -221,3 +221,119 @@ Sound: skill sounds are off in the game until the owner picks a draft by ear, an
 game. The drafts (`tools/build_nemu_ult_audio.py`) are in [audio-drafts](audio-drafts/) and mixed into the preview film;
 the in-game tell and surge hooks are wired and silent until released. The possessed player's hearing is muffled
 (not a skill sound; Haunted's filter, a little lighter).
+
+## 11. LET THEM IN (2026-10-13, the owner rejected preview v1; this section supersedes 0, 1, 4 and 5)
+
+Research round two: [research.md](research.md) section 6. Gameplay (section 2), network (3) and the victim's steering
+contest are unchanged. Only the name, the cutscene and the look of a possessed player change.
+
+### 11.1 The owner's answers (2026-10-13)
+
+| Asked | The owner said | What it becomes |
+|---|---|---|
+| What sucks about v1 | *"everything about it sucks"*: the ghosts' look, the staging and camera, too many ideas, the possession payoff | A new direction, not a fix list |
+| The procession | *"tangina nung procession cringe na"*, *"fuck that name and idea"* | No procession, no cast of named ghosts, no candles, no bell. The name is gone |
+| The name | LET THEM IN (picked from SAPI, SANIB, LET THEM IN, HOLLOW) | The display name. The ID, glyph and cost stay `nemu_ultimate` |
+| Ghost design | Smoky wraiths: low-opacity black smoke bodies, deep purple edges, violet eyes, not solid models | Section 11.3 |
+| How many, from where | A flood from her shadow: it spreads over the court and dozens claw up out of it, then race to the players | Shot B |
+| The ending | Players fighting it: the ghosts thrash half out of their bodies and are sucked back in, violet eyes snap on, hand back with no black-out | Shot C |
+| The possessed look | *"i dont like hwo the ghosts js sit inside on the ppl"*, *"i wanted the ghost to go inside the ppl tapos may parang aura nalang sila that theyre nasasapian"*, *"HINDI UNG KITA UNG GHHOST IS IN THEM"* | After the entry no ghost is drawn on or in them. They are themselves plus an aura (section 11.6) |
+| Pets | (Oct 11 brief) no pets | Kuro is not in the cutscene |
+
+### 11.2 One sentence and one travelling thing
+
+**Nemu stops holding the dead back: her shadow floods the court, the dead claw up out of it and pour into every player,
+and all that is left to see is the aura they cannot shake.**
+
+The travelling thing is **her shadow**: it leaves her feet in shot A, runs out over the court in B, and drains into the
+players in C. It always moves away from her toward them, left to right on screen.
+
+### 11.3 The look (rules, each from a reference or an owner quote)
+
+1. **Black and one violet.** Smoke is near-black and alpha-blended, so it darkens what is behind it (*"low opacity
+   black"*). The only light is one hot violet: eyes, the smoke's frayed edges, the ink's rim, embers. No candle amber, no
+   white, no lilac. (Black Swan.)
+2. **No grey grade.** The world dims (brightness to about 0.55) but keeps its colour (saturation about 0.85), and a
+   low-opacity ink vignette breathes in from the frame edges. v1's saturation 0.38 is what turned violet to glass.
+3. **The dead are smoke with a face and claws of light.** A wraith is a column of black smoke puffs: a head, shoulders,
+   a body that tears off into a long tail, two arms that end in long thin clawed fingers. On the head: two slanted violet
+   eye slits and a long open mouth of violet light, set unevenly. Nothing lathed, nothing solid, no sheet, no candle.
+   (Fade: faces and claws in light inside a wall of black.)
+4. **Many, at every scale.** About twenty, from just bigger than a player to twice their height; the nearest are big in
+   the lens so the mass reads as a crowd, not a line. Each moves on its own typed row (never a stamp), but all of them
+   turn together once (the one held beat).
+5. **After the entry there is no ghost.** Possessed = the player's own body and colours, plus the aura (Viego). Only
+   when a soul tries to get out does a CLAW show: an arm and hand of smoke pushing out of the body, yanked back in. Never
+   a face, never a body sitting on or round them.
+6. **Everything is posed from a clock** (the scene clock in the cutscene, the status clock in play), no `Random`;
+   reduced effects keeps every shape and drops flicker and flashes.
+
+### 11.4 The cutscene: 5.6 s, three shots (below 6 s; the hand-back starts at 5.2)
+
+Faster where it is setup (A), held where it is the point (C). Nobody on the court: the dead dive into the ink at three
+typed spots and it drains there.
+
+| Time | Shot | Picture | Sound | From |
+|---|---|---|---|---|
+| 0.00 | A THE HUSH (close, three-quarter from her right, slow push in) | already dark at the edges; two curls of black smoke drift across the lens; Nemu looking down and away | a low room drone | open on the element in the air |
+| 0.15 | A | her eyes come up to the lens | | her canon look: already knows |
+| 0.30 | A | finger to her lips, beside the mouth so the face stays clear (punch) | a whispered *shh* | Arlecchino |
+| 0.42 | A | her eyes ignite violet; the frame dims and the ink closes in | everything ducks | Black Swan's one hot light |
+| 0.55 | A | her shadow under her blackens and starts to spread, a violet hairline at its rim, smoke curling off the edge | a deep sub swell | the travelling thing starts |
+| 0.85 | A | a clawed hand rises out of the ink beside her and closes | a wet crackle | the tell |
+| 1.00 | A | she lets the hand fall open: go | | |
+| 1.10 | B THE FLOOD (low behind her right shoulder, craning up and forward) | the ink races out over the court toward the players | rushing low wind | |
+| 1.20 to 2.30 | B | the dead claw up out of the ink, front to back with the ink's edge: claws first, then heads (eyes ignite), then the body pulls free, writhing | whispers rising, a choir swell | Fade's wall, Black Swan's hands |
+| 2.35 | B | every head snaps round to the players at once; every eye flares (punch, held) | the swell cuts dead | the held beat |
+| 2.55 | B | they launch: bodies stretch into long smoke tails, claws ahead | a shriek, panned with them | |
+| 2.90 | C LET THEM IN (one continuous move) | the camera rides behind the lead pack out to the first player, ending beside them | | Paete's TAKE rule |
+| 3.10 to 3.75 | C | they pour into every player through the chest, five or six each, staggered: each dive spirals its tail in after it like water down a drain, a burst of black smoke and a violet flash at the chest, the player jolts (shock clip) | thumps, one per entry | Viego's dive and burst |
+| 3.80 to 4.70 | C | THEY FIGHT IT: a claw of smoke tears out of a back, a shoulder, a chest, stretches, and is yanked back in; the player jerks with each (struggle clip); their eyes snap violet (4.0) | groans under the breath, a snap per claw | the owner's *"tryna get out but they get sucked in"* |
+| 4.20 | C | the ink drains into the players' feet; what is left on each is the aura (11.6) | a low settle | the travelling thing ends in them |
+| 4.70 to 5.20 | C | the camera eases back to hold every player; they straighten, heads tipping toward the lens, eyes burning | one last whisper | |
+| 5.20 to 5.60 | C | hold; the vignette loosens; hand back to play (no black-out) | the drone releases | |
+
+Nemu's own poses: looking down, the eyes up, the hush beside the mouth, the hand falling open; in B and C she is out of
+frame or a small silhouette at the edge. Play picks up with them possessed (the cutscene showed the entry; it is never
+shown twice).
+
+### 11.5 The parts, built
+
+- `Shaders/NemuSmoke` (new): one shader for every puff and every light. Particle billboards, premultiplied: a smoke
+  puff darkens what is behind it and its frayed rim glows violet; a light (eyes, mouth, claw tips, embers) only adds
+  violet. Its noise runs on a clock the scene sets, so a paused phase still animates exactly with the scene clock.
+- `Visual/NemuSmokeBatch` (new): a particle system laid out by hand each frame from typed rows (the way
+  `VoodooSoulDraw` does), one draw for all the dead. Used by the cutscene and by the aura in play.
+- `HeroIntroductionScene.Nemu.cs`: rewritten to section 11.4. Kuro, the procession, the candles, the bell, the moths,
+  the dome and the NemuInk black-out are removed. `ProcessionShapes`, `Shaders/ProcessionGhost` and `Shaders/NemuInk`
+  go when nothing else uses them.
+- `tools/author_ultimate_intros.py` `nemu()`: new keys and shots, storyboarded with `--preview nemu` first.
+
+### 11.6 In play: the aura, and what each piece says
+
+| Question | Answer on screen | Who sees it |
+|---|---|---|
+| Who is possessed? | black smoke burning up off their silhouette like dark fire, its edges violet; a faint violet halo behind them that reads across the court; violet eyes; embers rising | everyone (not drawn in their own first person) |
+| Which way are they dragged? | the smoke streams that way, like a wind only they are in; the existing faint footprints ahead of them | everyone |
+| Is a surge coming? | the aura swells and darkens, embers quicken, the eyes flare | everyone |
+| Is it surging? | a claw of smoke reaches out of them toward where it drags them, then is yanked back in when the surge ends | everyone |
+| Is it trying to get out? | between surges, on the typed escape rows, a claw pushes out of a side and is sucked back with a puff | everyone |
+| Am I winning? | as grip falls the aura thins and flickers | everyone |
+| When does it end? | the last 1.2 s the smoke burns off upward and the eyes go out | everyone |
+
+Cut from play: the ghost-shaped sheet, the procession hands, the moths. The POSSESSED status icon (a head ridden by a
+sheet ghost) is redrawn as a head with violet eyes in a smoke aura. The victim's own screen keeps its job; its two
+hands are restyled as smoke claws with violet edges if the owner agrees (they are the old glow-stick outlines).
+
+### 11.7 Sound (drafts only, out of `Resources/Sfx` until the owner approves by ear)
+
+`tools/build_nemu_ult_audio.py` is retimed to 11.4: drone, *shh*, the duck, the ink's sub swell, crackle, wind, whispers
+and choir swelling, cut dead on the held beat, the shriek, one thump per entry, groans and snaps, the settle, a last
+whisper, the release. The tell and surge cues stay as drafts.
+
+### 11.8 Acceptance
+
+Storyboard frames from `--preview nemu` reviewed for framing first; then `NemuPrusisyonFilm` (the class keeps its name;
+only shown text changes) on Bayan Plaza: length below 6 s, round clock frozen, contact sheets reviewed at every beat
+(are the dead readable as a crowd, is violet the only light, does the entry read, is no ghost visible on a possessed
+player after it, can a claw be told from a body); then the stitched four-view preview video.
