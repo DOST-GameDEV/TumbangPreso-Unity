@@ -1,6 +1,6 @@
-## Protocol160: Nemu PRUSISYON (POSSESSED)
+## Protocol160: Nemu LET THEM IN (POSSESSED; named PRUSISYON until 2026-10-13)
 
-`nemu_ultimate` keeps its ID and cost but is now PRUSISYON: the host applies
+`nemu_ultimate` keeps its ID and cost but is now LET THEM IN: the host applies
 POSSESSED (status 14, appended) to every other player for 15 s. `SyncUnit`
 appends `PossessedLeft` after `ZappedLeft` (finite, 0 to 15; the minimum read is
 221 bytes plus the voodoo tail). The body's own simulating peer adds the ghost's

@@ -369,10 +369,11 @@ namespace TumbangPreso.Abilities
         // ================================================================== PRUSISYON (ultimate)
 
         /// <summary>
-        /// PRUSISYON (owner brief 2026-10-11, `docs/reports/nemu-ultimate-2026-10-11/direction.md`): she hushes the world grey
-        /// and the dead she is always half-listening to file past in procession and step into every other player. Each is
-        /// POSSESSED for 15 s (`CharacterMotor.Possession.cs`): a ghost rides them and contests their steering toward the
-        /// worst place for them. The cutscene shows the entering, so play starts with the riders seated (never shown twice).
+        /// LET THEM IN (owner brief 2026-10-11, renamed from PRUSISYON 2026-10-13, `docs/reports/nemu-ultimate-2026-10-11/
+        /// direction.md` section 11): she stops holding the dead back; her shadow floods the court and the dead pour into every
+        /// other player. Each is POSSESSED for 15 s (`CharacterMotor.Possession.cs`): the soul in them contests their steering
+        /// toward the worst place for them, and all anyone sees of it is their aura. The cutscene shows the entry, so play
+        /// starts with them already possessed (never shown twice).
         /// ⚠️ The ID, glyph and cost are the retired KURO: HAUNT!'s, kept for saves, mastery and the wire. Kuro no longer
         /// chases anyone; `RestoreSeance`/`ReceiveHaunt` stay as inert endpoints for the unchanged familiar message.
         /// </summary>
@@ -381,8 +382,8 @@ namespace TumbangPreso.Abilities
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
 
             public NightmareSeanceVoidAbility()
-                : base("nemu_ultimate", "PRUSISYON",
-                       "Nemu hushes the world and the dead walk in procession into every other player. They are Possessed for 15 s: a ghost drags their steering toward danger. Push against it to hold your ground.",
+                : base("nemu_ultimate", "LET THEM IN",
+                       "Nemu lets the dead out of her shadow and they pour into every other player. They are Possessed for 15 s: the soul inside drags their steering toward danger. Push against it to hold your ground.",
                        0, NemuRules.PossessedSeconds, AbilityGlyph.NemuSeanceVoid,
                        summary: "Every other player is Possessed for 15 s.",
                        castAction: "hero-nemu-seance", viewmodelAction: "seance-channel",

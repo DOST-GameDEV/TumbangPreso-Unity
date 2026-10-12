@@ -3,7 +3,7 @@ using System;
 namespace TumbangPreso.Core
 {
     /// <summary>
-    /// Nemu's ultimate, PRUSISYON (owner brief 2026-10-11, `docs/reports/nemu-ultimate-2026-10-11/direction.md`
+    /// Nemu's ultimate, LET THEM IN (owner brief 2026-10-11, `docs/reports/nemu-ultimate-2026-10-11/direction.md`
     /// section 2): every other player is POSSESSED for 15 s and a ghost contests their steering, the way a Left 4
     /// Dead 2 survivor fights a Jockey. The ghost never takes the stick. It ADDS its pull to what the player asks
     /// for and the sum is clamped to a full walk, so a player pushing straight against it keeps most of their speed
