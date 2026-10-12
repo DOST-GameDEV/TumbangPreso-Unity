@@ -275,7 +275,7 @@ typed spots and it drains there.
 
 | Time | Shot | Picture | Sound | From |
 |---|---|---|---|---|
-| 0.00 | A THE HUSH (close, three-quarter from her right, slow push in) | already dark at the edges; two curls of black smoke drift across the lens; Nemu looking down and away | a low room drone | open on the element in the air |
+| 0.00 | A THE HUSH (close, three-quarter from her LEFT so the hushing right hand is on the far side of her face, slow push in) | already dark at the edges; two curls of black smoke drift across the lens; Nemu looking down and away | a low room drone | open on the element in the air |
 | 0.15 | A | her eyes come up to the lens | | her canon look: already knows |
 | 0.30 | A | finger to her lips, beside the mouth so the face stays clear (punch) | a whispered *shh* | Arlecchino |
 | 0.42 | A | her eyes ignite violet; the frame dims and the ink closes in | everything ducks | Black Swan's one hot light |
@@ -284,7 +284,7 @@ typed spots and it drains there.
 | 1.00 | A | she lets the hand fall open: go | | |
 | 1.10 | B THE FLOOD (low behind her right shoulder, craning up and forward) | the ink races out over the court toward the players | rushing low wind | |
 | 1.20 to 2.30 | B | the dead claw up out of the ink, front to back with the ink's edge: claws first, then heads (eyes ignite), then the body pulls free, writhing | whispers rising, a choir swell | Fade's wall, Black Swan's hands |
-| 2.35 | B | every head snaps round to the players at once; every eye flares (punch, held) | the swell cuts dead | the held beat |
+| 2.35 | B | every head snaps round to the lens at once; every eye flares (punch, held) | the swell cuts dead | the held beat |
 | 2.55 | B | they launch: bodies stretch into long smoke tails, claws ahead | a shriek, panned with them | |
 | 2.90 | C LET THEM IN (one continuous move) | the camera rides behind the lead pack out to the first player, ending beside them | | Paete's TAKE rule |
 | 3.10 to 3.75 | C | they pour into every player through the chest, five or six each, staggered: each dive spirals its tail in after it like water down a drain, a burst of black smoke and a violet flash at the chest, the player jolts (shock clip) | thumps, one per entry | Viego's dive and burst |
@@ -305,8 +305,8 @@ shown twice).
 - `Visual/NemuSmokeBatch` (new): a particle system laid out by hand each frame from typed rows (the way
   `VoodooSoulDraw` does), one draw for all the dead. Used by the cutscene and by the aura in play.
 - `HeroIntroductionScene.Nemu.cs`: rewritten to section 11.4. Kuro, the procession, the candles, the bell, the moths,
-  the dome and the NemuInk black-out are removed. `ProcessionShapes`, `Shaders/ProcessionGhost` and `Shaders/NemuInk`
-  go when nothing else uses them.
+  the dome and the black-out are removed. `Shaders/NemuInk` is now only the breathing ink at the frame's edges.
+  `ProcessionShapes.Sole` and `Shaders/ProcessionGhost` stay for the footprints only.
 - `tools/author_ultimate_intros.py` `nemu()`: new keys and shots, storyboarded with `--preview nemu` first.
 
 ### 11.6 In play: the aura, and what each piece says
@@ -337,3 +337,29 @@ Storyboard frames from `--preview nemu` reviewed for framing first; then `NemuPr
 only shown text changes) on Bayan Plaza: length below 6 s, round clock frozen, contact sheets reviewed at every beat
 (are the dead readable as a crowd, is violet the only light, does the entry read, is no ghost visible on a possessed
 player after it, can a claw be told from a body); then the stitched four-view preview video.
+
+### 11.9 As built, and the film review rounds (2026-10-13)
+
+The owner approved section 11 (*"i like it goated"*) and asked for sound too (*"try mo na ren gumawa sfx"*). Mid-build,
+seeing a round-3 frame: *"i like the idea but these doesnnt read as ghosts anymroe it isnt ahhth well done"*. That changed
+the dead from columns of puffs to one ghost silhouette each (row r5 below).
+
+| Film | Seen | Changed |
+|---|---|---|
+| r1 | smoke read as glowing lavender cotton, each puff a violet ring; the close shot swallowed by smoke; the ride through her head; the aura hid the player; no eyes; the world bright; the aura fading in from zero after the hand-back | thin broken violet edge on black bodies; smoke kept below her chest in A; the camera kept off her; a smaller aura kept off the face; the world darker; the aura whole from the first frame |
+| r2 | black now, but every puff still a closed violet ring (bubbles); no lights at all | the edge lights only where the noise runs high; lights drawn as plain billboards (stretched ones on a system that never simulates drew nothing) |
+| r3 | eerie black smoke with ember edges; lights as dull lilac beads; the saturation cut turned violet lilac | darkness from brightness only (saturation 0.92); a hot glow profile; beads close enough to merge into strokes; A pulled back. **Owner: these do not read as ghosts** |
+| r4 | hush framing good; lights too tight to see | (folded into r5) |
+| r5 | ONE GHOST per wraith (`Shaders/NemuSmoke` mode 2: hood, body into a tattered swaying tail, raised hooked claws, slanted burning eyes, a long screaming mouth): the crowd reads as the dead; in flight they stretched into huge black birds | a small stretch, smaller as they close in, claws ahead |
+| r6 to r8 | eyes still missing: the face measured with the 2.38 scale applied twice, and each light a few pixels | the baked skin's own scale; a wide glow; eyes nudged toward the lens and faded when the face turns away |
+| r9, final | Nemu's slanted violet eyes in the hush; the crowd; the dive; the aura with its halo and escaping claws; the smoke claws on their own screen | the aura forced whole from the first possessed frame |
+
+| Claim | Evidence | Level |
+|---|---|---|
+| The cutscene in a match | `NemuPrusisyonFilm` on Bayan Plaza at 30 frames per game second: 5.57 s, round clock frozen ([summary](evidence/film-v2/summary.txt), [timing](evidence/film-v2/timing.csv), [beats](evidence/film-v2/owner-beats.jpg)) | native film, preview v2 |
+| The possessed look in play and on their own screen | [in play](evidence/film-v2/possessed-in-play.jpg), [their screen](evidence/film-v2/their-screen.jpg) | native film |
+| Gameplay unchanged | PlayMode `NemuPrusisyonTests`, `NemuPossessionMovementTests`, `NemuFamiliarPoseTests` and the film, 11/11 ([XML](evidence/film-v2/play-tests.xml)) | native PlayMode |
+| Sound | drafts rebuilt to 11.4; 0.1 s loudness peaks on the entries (0.29 to 0.32 RMS) over a 0.07 to 0.18 setup | numbers only; the owner's ear is the test |
+
+Known: the aura shows about 0.3 s after the hand-back, when the ability's status lands in play (unchanged gameplay
+timing). Not yet evidence: networked peers, the owner's verdict on v2 and on the sound.

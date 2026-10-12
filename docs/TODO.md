@@ -2,7 +2,8 @@
 
 - [x] PRUSISYON gameplay: POSSESSED 15 s, 10% slow, Jockey-style steering contest (`NemuRules`), protocol 160. Core.Tests 742/742; PlayMode `NemuPrusisyonTests`, `NemuPossessionMovementTests`, `NemuFamiliarPoseTests` 10/10; film v1 5.80 s with the round clock frozen. [Direction](reports/nemu-ultimate-2026-10-11/direction.md).
 - [x] Owner rejected preview v1 on 2026-10-13 (the procession, the name, the ghosts' look, a ghost visible on the possessed). Research round two (Fade NIGHTFALL, Viego possession, Black Swan) and the LET THEM IN direction written: [research](reports/nemu-ultimate-2026-10-11/research.md) section 6, [direction](reports/nemu-ultimate-2026-10-11/direction.md) section 11.
-- [ ] Owner approval of the section 11 plan, then build: smoke shader and batch, the cutscene rewrite, the in-play aura, the rename, the status icon; storyboard, film, stitched preview.
+- [x] Owner approved the plan (*"i like it goated"*). Built: the rename, `Shaders/NemuSmoke` (smoke, light and one-ghost modes) with `Visual.NemuSmokeBatch`, the 5.6 s LET THEM IN cutscene, the shared aura (`Visual.NemuAura`) in play, smoke claws on the victim's screen, the POSSESSED icon, retimed sound drafts. Film v2 5.57 s, clock frozen; Nemu PlayMode plus film 11/11. Nine film rounds and the evidence: [direction](reports/nemu-ultimate-2026-10-11/direction.md) section 11.9.
+- [ ] The owner's verdict on preview v2 (cutscene, in-play aura, victim screen) and on the sound drafts.
 - [ ] Real networked peers on protocol 160; the owner's verdict on the sound drafts (out of `Resources/Sfx` until approved).
 - [ ] Known stale probe: `NemuKitContractProbe` asserts the retired Seance/Kuro-possession behaviour.
 
