@@ -894,19 +894,19 @@ def status_haunted(a):
 
 
 def status_possessed(a):
-    # POSSESSED (Nemu's PRUSISYON, 2026-10-11): a blocky head ridden by a little sheet ghost, its two stubby hands over the
-    # head's eyes (the Jockey's grip), its candle burning beside it. The shape is the rider on the head, so it reads at 44 px.
+    # POSSESSED (Nemu's LET THEM IN, 2026-10-13, `direction.md` section 11.6): the owner does not want a ghost seen on or in
+    # them (*"HINDI UNG KITA UNG GHHOST IS IN THEM"*), only that they are nasasapian. So: a blocky head burning in black
+    # smoke-fire with violet edges, its eyes two slanted violet slits. The fire's outline is the read at 44 px.
     _badge(a)
-    a.add(a.rect(330, 470, 694, 800), HONEY)
-    a.add(a.poly([(300, 470), (360, 250), (512, 170), (664, 250), (724, 470), (650, 520), (600, 470), (512, 530),
-                  (424, 470), (374, 520)]), hexc("D8D0E4"))
-    for cx in (450, 574):
-        a.add(a.circle(cx, 330, 34), KURO_INK, shade=False)
-    a.add(a.rect(300, 560, 470, 650), hexc("D8D0E4"))
-    a.add(a.rect(554, 560, 724, 650), hexc("D8D0E4"))
-    a.add(a.rect(770, 380, 830, 560), CREAM)
-    a.add(a.poly([(800, 210), (850, 320), (800, 375), (750, 320)]), hexc("F2A33A"))
-    a.add(a.poly([(800, 270), (822, 325), (800, 352), (778, 325)]), LEMON, shade=False)
+    a.add(a.poly(flame_pts(512, 860, 640, 700, tongues=5)), hexc("8A3FE0"), shade=False)
+    a.add(a.poly(flame_pts(512, 850, 560, 600, tongues=5)), hexc("17121F"), shade=False)
+    a.add(a.rect(352, 440, 672, 800), HONEY)
+    a.add(a.rect(352, 440, 672, 520), hexc("2A1F33"))
+    for side in (-1, 1):
+        x0, x1 = 512 + side * 40, 512 + side * 140
+        a.add(a.poly([(x0, 600), (x1, 560), (x1, 610), (x0, 640)]), hexc("6A22C8"), shade=False)
+        a.add(a.poly([(x0 + side * 20, 610), (x1 - side * 10, 578), (x1 - side * 10, 600), (x0 + side * 20, 626)]), hexc("E2C8FF"), shade=False)
+    a.add(a.rect(470, 700, 554, 722), hexc("2A1F33"), shade=False)
 
 
 STATUSES = {"StatusWhirled": status_whirled, "StatusChilled": status_chilled,

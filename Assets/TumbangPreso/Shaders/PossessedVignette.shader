@@ -1,12 +1,13 @@
-// POSSESSED, THE VICTIM'S OWN SCREEN (Nemu's PRUSISYON, `docs/reports/nemu-ultimate-2026-10-11/direction.md` section 5).
+// POSSESSED, THE VICTIM'S OWN SCREEN (Nemu's LET THEM IN, `docs/reports/nemu-ultimate-2026-10-11/direction.md` sections 5 and 11.6).
 // What it must tell the possessed player, at a glance and without words:
-//  * that a ghost is on them: an ink vignette that breathes;
-//  * WHICH WAY it is dragging them: two pale ghost hands reach in from THAT edge of the screen (`_PullDir`, screen space);
-//  * that a surge is coming: the hands draw back and clench (`_Tell`), a thin candle-amber rim glows on that edge;
+//  * that something is in them: an ink vignette that breathes;
+//  * WHICH WAY it is dragging them: two claws of black smoke reach in from THAT edge of the screen (`_PullDir`, screen space);
+//  * that a surge is coming: the hands draw back and clench (`_Tell`), a thin violet rim glows on that edge;
 //  * that it is surging: the hands lunge in further and the vignette thickens on that side (`_Surge`);
 //  * that they are winning: as grip falls the hands slip back toward the edge and thin out (`_Grip`, 0.45 to 1).
-// The hands are smooth and soft-edged (signed distances: a rounded mitten palm, three rounded fingers, a wrist trailing
-// off the edge), the owner's *"not too blocky"*. The centre of the screen stays clear: the hands stop short of the
+// The claws are smoke (signed distances: a palm, three long hooked fingers, a wrist trailing off the edge, the edge frayed
+// by flowing noise), near-black with only a thin dim violet line inside the edge: v1's neon outline hands were cut with the
+// rest of the v1 look on 2026-10-13. The centre of the screen stays clear: the hands stop short of the
 // middle third, so the can, the chalk and the players are never covered.
 Shader "TumbangPreso/PossessedVignette"
 {
@@ -14,9 +15,9 @@ Shader "TumbangPreso/PossessedVignette"
     {
         _MainTex ("Sprite Texture (unused, required by UGUI)", 2D) = "white" {}
         _Ink ("Ink", Color) = (0.03, 0.01, 0.05, 1)
-        _Hand ("Hand", Color) = (0.06, 0.02, 0.10, 1)
+        _Hand ("Hand", Color) = (0.02, 0.005, 0.035, 1)
         _HandRim ("Hand edge", Color) = (0.58, 0.32, 0.92, 1)
-        _Flame ("Tell rim (ghost-fire violet)", Color) = (0.62, 0.32, 0.98, 1)
+        _Flame ("Tell rim (violet)", Color) = (0.52, 0.2, 0.95, 1)
         _PullDir ("Pull direction (screen, x right y up)", Vector) = (0, 1, 0, 0)
         _Presence ("Presence", Range(0, 1)) = 0
         _Tell ("Tell", Range(0, 1)) = 0
@@ -58,6 +59,13 @@ Shader "TumbangPreso/PossessedVignette"
                 return length(max(q, 0)) + min(max(q.x, q.y), 0) - r;
             }
             float smin(float a, float b, float k) { float h = saturate(0.5 + 0.5 * (b - a) / k); return lerp(b, a, h) - k * h * (1 - h); }
+            float hash(float2 q) { return frac(sin(dot(q, float2(127.1, 311.7))) * 43758.5453); }
+            float noise(float2 q)
+            {
+                float2 c = floor(q), f = frac(q);
+                float2 u = f * f * (3.0 - 2.0 * f);
+                return lerp(lerp(hash(c), hash(c + float2(1, 0)), u.x), lerp(hash(c + float2(0, 1)), hash(c + float2(1, 1)), u.x), u.y);
+            }
 
             // One hand: `inward` points from its edge into the screen, `base` is where its wrist leaves the edge.
             // Each hand has its own finger lengths and spread (typed), so the pair never reads as a stamp.
@@ -75,7 +83,11 @@ Shader "TumbangPreso/PossessedVignette"
                     float len = (i == 0 ? fingers.x : (i == 1 ? fingers.y : fingers.z)) * curl;
                     float2 dir = normalize(inward + side * k * fan);
                     float2 root = palm + inward * 0.065 + side * k * 0.06;
-                    d = smin(d, capsule(p, root, root + dir * len * 1.6, 0.038), 0.03);
+                    // LET THEM IN (2026-10-13): long thin claws, hooked at the tip, not v1's round mitten fingers.
+                    float2 knuckle = root + dir * len * 1.4;
+                    float2 tip = knuckle + normalize(dir - side * k * 0.6 + inward * 0.2) * len * 0.75;
+                    d = smin(d, capsule(p, root, knuckle, 0.026), 0.025);
+                    d = smin(d, capsule(p, knuckle, tip, 0.014), 0.012);
                 }
                 return d;
             }
@@ -106,9 +118,13 @@ Shader "TumbangPreso/PossessedVignette"
                 float2 baseB = edge - side * 0.31 + inward * 0.02;
                 float dh = hand(p, baseA, normalize(inward + side * 0.18), reach, clench, float3(0.11, 0.135, 0.105), 0.42);
                 dh = min(dh, hand(p, baseB, normalize(inward - side * 0.14), reach * 0.94, clench, float3(0.10, 0.125, 0.115), 0.36));
-                float handFill = smoothstep(0.012, -0.004, dh);
-                float handEdge = smoothstep(0.03, 0.0, abs(dh) - 0.008);
-                float handAlpha = (handFill * 0.85 + handEdge * 0.6) * lerp(0.5, 1.0, gripK);
+                // Smoke, not an outline (owner 2026-10-13, the v1 hands were neon glow-stick outlines): the edge frays and
+                // flows outward like smoke torn off it, the fill is near-black, the violet is only a thin dim line inside the edge.
+                float flow = noise(p * 9.0 - inward * t * 1.6) * 0.6 + noise(p * 21.0 + side * t * 0.9) * 0.4;
+                dh += (flow - 0.5) * (_Calm > 0.5 ? 0.02 : 0.05);
+                float handFill = smoothstep(0.03, -0.012, dh);
+                float handEdge = smoothstep(0.01, 0.0, abs(dh + 0.006)) * (0.5 + 0.5 * flow);
+                float handAlpha = (handFill * 0.88 + handEdge * 0.3) * lerp(0.5, 1.0, gripK);
 
                 // THE TELL: a thin candle-amber glow along the pull's edge.
                 float edgeDist = dot(edge - p, d);
@@ -117,7 +133,7 @@ Shader "TumbangPreso/PossessedVignette"
                 float3 colour = _Ink.rgb;
                 float alpha = ink;
                 colour = lerp(colour, _Hand.rgb, handFill);
-                colour = lerp(colour, _HandRim.rgb, handEdge * 0.8);
+                colour = lerp(colour, _HandRim.rgb, handEdge * 0.55);
                 alpha = max(alpha, handAlpha);
                 colour = lerp(colour, _Flame.rgb, saturate(rim * 0.8));
                 alpha = max(alpha, rim * 0.5);
