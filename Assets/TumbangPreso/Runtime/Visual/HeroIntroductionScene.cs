@@ -418,7 +418,7 @@ namespace TumbangPreso.Visual
             if (_hero == "cheska") CheskaFrame(index, Local(seconds), ref eye, ref look, ref fov);
             // Sean's RISE looks at his lantern wherever it has climbed to (`HeroIntroductionScene.Sean.cs`).
             if (_hero == "sean") SeanFrame(index, Local(seconds), ref eye, ref look, ref fov);
-            // Nemu's last shot is kept off the other players and trembles as Kuro comes at it (`HeroIntroductionScene.Nemu.cs`).
+            // Nemu's FLOOD and LET THEM IN are computed from where the players stand (`HeroIntroductionScene.Nemu.cs`).
             if (_hero == "nemu") NemuFrame(index, Local(seconds), ref eye, ref look, ref fov);
             if (_hero == "rafi") RafiFrame(index, Local(seconds), ref eye, ref look, ref fov);
             // A hero's own blows shake the lens (Paete's palm and eruption); reduced effects keep it still.
@@ -480,7 +480,7 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>
-        /// Keep every body in frame (Nemu with the growing Kuro), keeping the lens constant and
+        /// Keep every body in frame, keeping the lens constant and
         /// backing the camera out along its own line. Retained from the previous Nemu reveal.
         /// </summary>
         private void FitBodies(ref Vector3 position, ref Vector3 focus, float fov, float aspect, float seconds)
@@ -516,7 +516,7 @@ namespace TumbangPreso.Visual
                     if (!found) { result = renderer.bounds; found = true; } else result.Encapsulate(renderer.bounds);
                 }
             }
-            Include(_bodyRenderers); Include(_kuroRenderers); Include(_heldRenderers); bounds = result;
+            Include(_bodyRenderers); Include(_heldRenderers); bounds = result;
             return found;
         }
 
@@ -532,8 +532,7 @@ namespace TumbangPreso.Visual
             if (_voice != null) _voice.Stop();
             // Paete's opens the sky through the map for her (`NearFade.OpenSky`); it must never outlive him.
             if (_hero == "paete") NearFade.CloseSky();
-            _rage?.Dispose(); _rage = null;
-            if (_nmInk != null) { ObjectDestroy(_nmInk); _nmInk = null; }
+            if (_hero == "nemu") NemuDispose();
             _amFace?.Dispose(); _amFace = null;
             if (_heldItem != null) { _heldItem.SetActive(false); ObjectDestroy(_heldItem); }
             if (_root != null) { _root.SetActive(false); ObjectDestroy(_root); }

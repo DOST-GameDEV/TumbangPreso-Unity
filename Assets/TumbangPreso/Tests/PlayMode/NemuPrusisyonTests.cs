@@ -65,7 +65,7 @@ namespace TumbangPreso.PlayTests
         [Test] public void TheUltimateKeepsItsIdentityAndPossessesEveryOtherPlayerForFifteenSeconds()
         {
             Assert.AreEqual("nemu_ultimate", _kit.Ultimate.Id);
-            Assert.AreEqual("PRUSISYON", _kit.Ultimate.Name);
+            Assert.AreEqual("LET THEM IN", _kit.Ultimate.Name);
             Assert.AreEqual(15, _kit.UltimateCost);
             int gained = 0;
             foreach (var p in _players) p.StatusGained += (who, kind) => { if (kind == StatusKind.Possessed) gained++; };
