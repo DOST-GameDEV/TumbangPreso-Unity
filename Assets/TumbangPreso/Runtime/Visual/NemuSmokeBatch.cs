@@ -20,6 +20,8 @@ namespace TumbangPreso.Visual
     /// </summary>
     public sealed class NemuSmokeBatch : IDisposable
     {
+        /// <summary>A ghost's quad is this much as wide as it is tall (gaunt; the shader draws to it).</summary>
+        public const float GhostAspect = .62f;
         public static readonly Color Violet = new Color(.62f, .26f, 1f, 1f);
 
         private readonly GameObject _smokeGo, _lightGo, _ghostGo;
@@ -90,18 +92,21 @@ namespace TumbangPreso.Visual
         /// <summary>
         /// One whole ghost (`Shaders/NemuSmoke` mode 2): <paramref name="height"/> metres tall, centred on <paramref name="at"/>,
         /// turned <paramref name="screenAngle"/> degrees on the lens (0 = head up), <paramref name="face"/> 0 to 1 how much of its
-        /// burning face shows (0 seen from behind), <paramref name="arms"/> 0 low and out to 1 raised and clawing.
+        /// burning face shows (0 seen from behind), <paramref name="arms"/> 0 hanging to 1 reaching at the lens,
+        /// <paramref name="scream"/> 0 jaw shut to 1 dropped far past the chin.
         /// </summary>
-        public void Ghost(Vector3 at, float height, float stretch, float screenAngle, float density, float seed, float face, float arms)
+        public void Ghost(Vector3 at, float height, float stretch, float screenAngle, float density, float seed, float face, float arms, float scream = 0f)
         {
             if (_ghostCount >= _ghosts.Length || density <= .004f || height <= .01f) return;
+            // Arms and scream share the green byte, a nibble each (`Shaders/NemuSmoke` unpacks them).
+            int packed = Mathf.RoundToInt(Mathf.Clamp01(arms) * 15f) * 16 + Mathf.RoundToInt(Mathf.Clamp01(scream) * 15f);
             _ghosts[_ghostCount++] = new ParticleSystem.Particle
             {
                 position = at,
                 velocity = Vector3.zero,
-                startSize3D = new Vector3(height * .8f, height * (1f + stretch), 1f),
+                startSize3D = new Vector3(height * GhostAspect, height * (1f + stretch), 1f),
                 rotation = screenAngle,
-                startColor = new Color32((byte)(Mathf.Clamp01(face) * 255f), (byte)(Mathf.Clamp01(arms) * 255f),
+                startColor = new Color32((byte)(Mathf.Clamp01(face) * 255f), (byte)packed,
                                          (byte)(Mathf.Repeat(seed, 1f) * 255f), (byte)(Mathf.Clamp01(density) * 255f)),
                 remainingLifetime = 1000f,
                 startLifetime = 1000f,

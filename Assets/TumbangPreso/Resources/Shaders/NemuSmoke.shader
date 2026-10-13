@@ -2,7 +2,7 @@
 // The owner: *"use black and purple or low opacity black"*, smoky wraiths, *"hell i hate how the ghosts look"* (v1's lathed
 // translucent bodies). Fade's NIGHTFALL is the reference: black smoke with the faces and claws drawn in light inside it.
 //
-// One shader, two modes, both particles laid out by hand (`Visual.NemuSmokeBatch`):
+// One shader, three modes (the third, the whole ghost, is described above `ghost`), both particles laid out by hand (`Visual.NemuSmokeBatch`):
 //  * `_Mode` 0, SMOKE: a soft round puff with a frayed, flowing rim. PREMULTIPLIED: its body darkens what is behind it (near
 //    black, alpha = density) and its rim adds violet light, so one puff is both the black and the edge.
 //    Vertex colour: r = how much the rim glows, g = fray (0 whole, 1 gone: holes open from the rim in), b = seed (each puff its
@@ -73,64 +73,108 @@ Shader "TumbangPreso/NemuSmoke"
             }
             float smin(float a, float b, float k) { float h = saturate(0.5 + 0.5 * (b - a) / k); return lerp(b, a, h) - k * h * (1 - h); }
 
-            // GHOST (`_Mode` 2, film r3 and the owner: *"these doesnnt read as ghosts anymroe"*): ONE ghost per quad, so the
-            // silhouette is a ghost's before it is smoke. A hooded head, a body that flows down into a swaying, tattered tail,
-            // two arms raised with hooked claws, the edge frayed by flowing smoke and lit in broken violet, and the face of the
-            // dead: two slanted hollow eyes and a long screaming mouth, glowing. The quad is 0.8 as wide as it is tall (stretched
-            // longer in flight, which stretches the ghost with it).
-            // Vertex colour: r = the face (0 seen from behind), g = arms (0 low and out, 1 raised clawing), b = seed, a = density.
+            // GHOST (`_Mode` 2), ONE ghost per quad. Film r3, the owner: *"these doesnnt read as ghosts anymroe"*; preview v2, the
+            // owner: *"the ghosts dont look that scary"*. v2's hood with claws raised over it read as a cat's ears, and its filled
+            // glowing slits as an emoji. So the dead are now GAUNT AND TALL: a long skull tipped on its neck, long black hair of
+            // smoke hanging past the shoulders in strings, a starved body tearing into ragged strips, long jointed arms hanging or
+            // reaching at the lens with spindly fingers (never above the head), and a DEATH MASK: a dim violet face with two
+            // hollow black sockets, a burning pinpoint in each, and a jaw that drops far past the chin when it screams.
+            // The quad is 0.62 as wide as it is tall (`NemuSmokeBatch.GhostAspect`).
+            // Vertex colour: r = the face (0 seen from behind); g = arms (high nibble: 0 hanging, 15 reaching) and scream (low
+            // nibble: 0 shut, 15 wide); b = seed; a = density.
+            float2 rot2(float2 p, float a) { float c = cos(a), s = sin(a); return float2(p.x * c - p.y * s, p.x * s + p.y * c); }
+            float ellipse(float2 p, float2 r) { return (length(p / r) - 1.0) * min(r.x, r.y); }
+
             fixed4 ghost(float2 c, fixed4 col, float near)
             {
                 float seed = col.b * 31.0;
-                float raise = col.g;
-                float2 q = float2(c.x * 0.8, c.y);
-                float below = saturate(0.35 - q.y);
-                float sway = sin(q.y * 5.0 + _Clock * 3.2 + seed) * 0.11 * below;
-                // Head and hood.
-                float d = length(q - float2(0.0, 0.55)) - 0.27;
-                // The body: shoulders, a wider middle, then narrowing into a tail that tatters.
-                float t = saturate((0.5 - q.y) / 1.5);
-                float tatter = 0.7 + 0.6 * noise(float2(q.x * 7.0 + seed, q.y * 3.0 - _Clock * 1.5));
-                float w = lerp(0.30, 0.37, saturate(t * 3.0)) * (1.0 - smoothstep(0.32, 1.0, t)) * lerp(1.0, tatter, smoothstep(0.45, 0.8, t)) + 0.015;
-                float body = max(abs(q.x - sway) - w, q.y - 0.46);
-                d = smin(d, body, 0.12);
-                // Arms and claws.
+                float packed = floor(col.g * 255.0 + 0.5);
+                float reach = floor(packed / 16.0) / 15.0;
+                float scream = fmod(packed, 16.0) / 15.0;
+                float2 q = float2(c.x * 0.62, c.y);
+                // STOP-MOTION: the head twitches to a new tilt now and then and HOLDS it (stepped from the clock, never smooth).
+                float beat = floor(_Clock * 7.0 + seed * 3.7);
+                float twitch = hash(float2(beat, seed)) > 0.55 ? (hash(float2(seed, beat)) - 0.5) * 0.9 : 0.0;
+                float tilt = (frac(seed * 0.37) - 0.5) * 0.5 + twitch;
+                float2 neck = float2(0.0, 0.47);
+                float2 hq = rot2(q - neck, -tilt) + neck;
+                // Skull: long and narrow.
+                float d = ellipse(hq - float2(0.0, 0.67), float2(0.145, 0.205));
+                // Hair: from the crown down past the shoulders, widening, its lower edge torn into strings that sway.
+                float hy = hq.y;
+                float hx = hq.x + sin(hy * 6.0 + _Clock * 2.2 + seed) * 0.035 * saturate(0.85 - hy);
+                float hw = 0.16 + 0.11 * saturate((0.68 - hy) / 0.6);
+                float strand = 0.36 - 0.42 * noise(float2(hx * 17.0 + seed, _Clock * 0.25 + seed));
+                float hair = max(max(abs(hx) - hw, hy - 0.86), strand - hy);
+                d = min(d, hair);
+                // A starved body: narrow shoulders, a caved chest, then a tail torn into strips.
+                float below = saturate(0.4 - q.y);
+                float sway = sin(q.y * 4.0 + _Clock * 2.6 + seed) * 0.09 * below;
+                float t = saturate((0.45 - q.y) / 1.45);
+                float w = lerp(0.20, 0.15, saturate(t * 2.5)) * (1.0 - smoothstep(0.35, 1.0, t)) + 0.012;
+                float body = max(abs(q.x - sway) - w, q.y - 0.45);
+                float strips = smoothstep(0.5, 0.68, noise(float2((q.x - sway) * 11.0 + seed, q.y * 1.3 - _Clock * 1.1)));
+                body += strips * 0.14 * smoothstep(0.4, 0.75, t);
+                d = smin(d, body, 0.06);
+                // Arms: long and jointed; hanging to the thighs, or reaching at the lens with the hands either side of the face.
                 for (int s = -1; s <= 1; s += 2)
                 {
-                    float2 sh = float2(s * 0.24, 0.30);
-                    float2 hand = float2(s * lerp(0.62, 0.46, raise), lerp(0.02, 0.86, raise)) + float2(0.0, 0.03 * sin(_Clock * 4.0 + seed + s));
-                    d = smin(d, capsule(q, sh, hand, 0.06), 0.05);
-                    float2 dir = normalize(hand - sh);
-                    float2 side = float2(dir.y, -dir.x);
-                    for (int k = -1; k <= 1; k++)
+                    float2 sh = float2(s * 0.18, 0.40);
+                    float jerk = 0.025 * sin(_Clock * 11.0 + seed * 2.0 + s * 1.7) * step(0.7, hash(float2(beat, s + seed)));
+                    float2 elbow = lerp(float2(s * 0.27, 0.02), float2(s * 0.40, 0.22), reach) + float2(jerk, 0.0);
+                    float2 hand = lerp(float2(s * 0.25, -0.38), float2(s * 0.43, 0.56), reach) + float2(0.0, jerk);
+                    d = smin(d, capsule(q, sh, elbow, 0.03), 0.03);
+                    d = min(d, capsule(q, elbow, hand, 0.022));
+                    d = min(d, length(q - hand) - 0.035);
+                    float2 dir = normalize(hand - elbow);
+                    for (int k = 0; k < 4; k++)
                     {
-                        float2 knuckle = hand + normalize(dir + side * k * 0.55) * 0.08;
-                        float2 tip = knuckle + normalize(dir + side * k * 0.25 - side * s * 0.5) * 0.09;
-                        d = min(d, capsule(q, hand, knuckle, 0.024));
-                        d = min(d, capsule(q, knuckle, tip, 0.012));
+                        float off = (k - 1.5) * 0.34 + 0.07 * sin(_Clock * 9.0 + k * 1.3 + seed);
+                        float2 mid = hand + rot2(dir, off) * 0.10;
+                        float2 tip = mid + rot2(dir, off * 1.3 - s * 0.45) * 0.09;
+                        d = min(d, capsule(q, hand, mid, 0.011));
+                        d = min(d, capsule(q, mid, tip, 0.006));
                     }
                 }
                 // The edge frays like smoke torn off it.
                 float n = fbm(q * 3.4 + float2(seed, -_Clock * 1.3));
-                d += (n - 0.5) * 0.13;
+                d += (n - 0.5) * 0.09;
                 float density = col.a;
-                float fill = smoothstep(0.03, -0.03, d);
+                float fill = smoothstep(0.02, -0.02, d);
                 float a = fill * density * near;
-                float band = smoothstep(-0.075, -0.015, d) * (1.0 - smoothstep(-0.015, 0.02, d)) * smoothstep(0.42, 0.68, n);
+                float band = smoothstep(-0.06, -0.012, d) * (1.0 - smoothstep(-0.012, 0.015, d)) * smoothstep(0.42, 0.68, n);
                 float rim = band * density * near;
-                // The face: hollow slanted eyes (outer corners up) and a long open mouth, burning.
-                float face = 0.0;
+                // THE DEATH MASK. A dim violet face so the holes in it read as holes; two hollow sockets slanting down to the
+                // middle, each with a burning pinpoint; the jaw drops past the chin as it screams.
+                float2 f = hq - float2(0.0, 0.66);
+                float mask = smoothstep(0.0, -0.06, ellipse(f, float2(0.12, 0.17)));
+                float holes = 0.0, pupils = 0.0, ring = 0.0;
                 for (int e = -1; e <= 1; e += 2)
                 {
-                    float2 p = q - float2(e * 0.11, 0.585);
-                    float ang = e * 0.38;
-                    float2 r = float2(p.x * cos(ang) + p.y * sin(ang), -p.x * sin(ang) + p.y * cos(ang));
-                    face += smoothstep(1.0, 0.25, length(r / float2(0.085, 0.032)));
+                    float2 p = rot2(f - float2(e * 0.058, 0.03), e * 0.42);
+                    float sd = ellipse(p, float2(0.05, 0.034));
+                    holes = max(holes, smoothstep(0.006, -0.006, sd));
+                    ring += smoothstep(0.008, 0.0, abs(sd)) * 0.3;
+                    float2 pp = f - float2(e * 0.056, 0.022);
+                    pupils += exp(-dot(pp, pp) / 0.00007) + 0.25 * exp(-dot(pp, pp) / 0.0006);
                 }
-                float mouthOpen = 0.85 + 0.15 * sin(_Clock * 7.0 + seed);
-                face += 0.85 * smoothstep(1.0, 0.25, length((q - float2(0.0, 0.395)) / float2(0.045, 0.095 * mouthOpen)));
-                face *= col.r * near * fill;
-                float3 rgb = _Core.rgb * a + _RimColor.rgb * rim * _RimGain * 1.4 + _RimColor.rgb * face * 2.6 + float3(0.35, 0.2, 0.45) * face * face;
+                float open = 0.35 + 0.65 * scream * (0.9 + 0.1 * sin(_Clock * 23.0 + seed));
+                float jawLow = -0.09 - 0.2 * open;
+                float2 m = f - float2(0.0, (jawLow - 0.04) * 0.5);
+                float mouthD = ellipse(m, float2(0.026 + 0.022 * open, abs(jawLow + 0.04) * 0.5 + 0.01));
+                float mouth = smoothstep(0.006, -0.006, mouthD);
+                float tz = (f.y - jawLow * 0.6) / max(0.02, abs(jawLow) * 0.35);
+                float throat = mouth * exp(-tz * tz * 4.0);
+                ring += smoothstep(0.008, 0.0, abs(mouthD)) * 0.3;
+                float faceOn = col.r * near * fill;
+                // Film r10: a mask lit at 0.16 read as a flat lavender face with a glowing oval mouth (silly, not dead). The
+                // mask is now barely there and shaded like a skull (brow and cheekbones catch it), the sockets and the jaw are
+                // BLACK, and the only hot things are the two pinpoints and an ember deep in the throat.
+                float bone = saturate(1.0 - length((f - float2(0.0, 0.05)) / float2(0.13, 0.15)));
+                float lit = (mask * (0.03 + 0.07 * bone) * (1.0 - holes) * (1.0 - mouth) + ring * 0.35) * faceOn;
+                float hot = (pupils * 6.0 + throat * 0.5) * faceOn;
+                float3 rgb = _Core.rgb * a + _RimColor.rgb * rim * _RimGain * 1.4 + _RimColor.rgb * lit * 2.0
+                           + (_RimColor.rgb * 1.3 + float3(0.45, 0.35, 0.5) * saturate(pupils)) * hot;
                 return fixed4(rgb, a);
             }
 

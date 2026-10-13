@@ -19,12 +19,15 @@ namespace TumbangPreso.Visual
         //     (0.42) and the frame sinks into ink at its edges; smoke rises round her; a claw reaches up beside her (0.85); she
         //     lets her hand fall open: go (1.00).
         //   B THE FLOOD 1.10-2.90, low behind her right shoulder, craning up: the ink races out over the court; the dead claw up
-        //     out of it with its edge, claws first, then heads (eyes ignite), then bodies; every head snaps to the lens (2.35,
-        //     held); they launch (2.55).
+        //     out of it with its edge in stop-motion jerks; every head snaps to the lens, every jaw drops and every arm reaches
+        //     for it (2.35, held); they launch (2.55); one comes for the lens instead and its face fills the frame (2.47-2.88).
         //   C LET THEM IN 2.90-5.60, one continuous move riding them out: they pour into every player through the chest, five
         //     or six each, each tail spiralling in after it (3.10-3.75); the players jolt; the souls try to get out, a claw tears
-        //     out of a back or a shoulder and is yanked back (3.80-4.70); their eyes snap violet (4.00); the ink drains into
-        //     them (4.20); what is left is the aura (`NemuAura`); hold; hand back with no black-out.
+        //     out of a back or a shoulder with the soul tearing half out behind it, screaming, and is yanked back (3.80-4.70);
+        //     their eyes snap violet and they all turn to stare into the lens (4.00); the ink drains into them (4.20); what is
+        //     left is the aura (`NemuAura`); hold; hand back with no black-out.
+        // Preview v2 (owner: *"the ult cutscene looks so weird, the ghosts dont look that scary"*): the dead became gaunt and
+        // towering with death-mask faces, stop-motion, the synchronised scream, the lunge, the souls tearing out, the stare.
         //
         // The dead (Fade's NIGHTFALL, research section 6): black smoke with a face and claws drawn in violet light. Every puff
         // and light is a particle laid out by hand from the scene clock (`NemuSmokeBatch`, `Shaders/NemuSmoke`).
@@ -36,6 +39,13 @@ namespace TumbangPreso.Visual
         private const float NmFlood = 1.10f, NmFloodFull = 2.15f, NmSnap = 2.35f, NmLaunch = 2.55f, NmRide = 2.90f;
         private const float NmEnterFirst = 3.10f, NmEnterLast = 3.75f, NmFight = 3.80f, NmEyesOn = 4.00f, NmDrain = 4.20f;
         private const float NmSettle = 4.70f, NmRelease = 5.15f;
+        /// <summary>
+        /// THE LUNGE (owner on preview v2: *"the ghosts dont look that scary"*): after every head snaps to the lens, one of the
+        /// dead comes for it, slow then all at once, jaw dropping, until its face fills the frame on the cut to C.
+        /// </summary>
+        private const float NmLungeFrom = 2.47f, NmLungeHit = 2.88f;
+        /// <summary>How tall the lunging ghost is when its face fills the lens, and how far in front of the lens it stops.</summary>
+        private const float NmLungeHeight = 3.6f, NmLungeStop = .8f;
         /// <summary>How far back in time each spine puff of a flying soul samples its path: its tail.</summary>
         private const float NmTailStep = .034f;
         private const int NmSpine = 9;
@@ -85,6 +95,7 @@ namespace TumbangPreso.Visual
             public Vector3 Base;          // where it rises, scene space
             public float Scale, Height, Seed, Rise, Launch, Arrive;
             public int Target = -1;       // index into _nmVictims, or -1 - dive spot
+            public bool Lunge;            // the one that comes for the lens (`NmLungeFrom`)
         }
 
         private sealed class NmVictim
@@ -119,7 +130,7 @@ namespace TumbangPreso.Visual
 
         private void BuildNemu(CharacterMotor source)
         {
-            _nmSmoke = new NemuSmokeBatch(_root.transform, "NmDead", 1600, 2000, 24);
+            _nmSmoke = new NemuSmokeBatch(_root.transform, "NmDead", 1600, 2000, 36);
 
             // HER SHADOW: a pool of ink with a violet hairline at its rim. It leaves her feet in A and floods the court in B.
             _nmInkPool = Add("NmInkPool", VfxShapes.Splat(28, .22f, 731), new Color(.012f, .004f, .022f, .93f), .02f, plain: true);
@@ -154,7 +165,8 @@ namespace TumbangPreso.Visual
                 var dead = new NmDead
                 {
                     Base = Quaternion.Euler(0f, row.x, 0f) * _nmWay * d,
-                    Scale = row.z, Height = 1.35f * row.z, Seed = row.w,
+                    // Preview v2: at 1.35 a player's height they read as small black pets. The dead TOWER over the living.
+                    Scale = row.z, Height = 2.0f * row.z, Seed = row.w,
                 };
                 // It claws up as the ink's edge passes it.
                 dead.Rise = NmFlood + (NmFloodFull - NmFlood) * Mathf.Clamp01(d / _nmReach) + .04f;
@@ -168,6 +180,14 @@ namespace TumbangPreso.Visual
                 dead.Launch = NmLaunch + .16f * u;
                 dead.Target = _nmVictims.Count > 0 ? k % _nmVictims.Count : -1 - (k % NmEmptyDives.Length);
                 if (dead.Target >= 0) _nmVictims[dead.Target].Entries.Add(dead.Arrive);
+            }
+            // The one that comes for the lens: near the line, among the first to rise, never sent into a player.
+            {
+                float d = 3.2f * spread;
+                var lunger = new NmDead { Base = Quaternion.Euler(0f, -6f, 0f) * _nmWay * d, Scale = 1.4f, Height = 2.8f, Seed = .58f, Lunge = true };
+                lunger.Rise = NmFlood + (NmFloodFull - NmFlood) * Mathf.Clamp01(d / _nmReach) + .04f;
+                lunger.Launch = 99f; lunger.Arrive = 99f; lunger.Target = -1;
+                _nmDead.Add(lunger);
             }
         }
 
@@ -263,9 +283,11 @@ namespace TumbangPreso.Visual
                 Vector3 look = _head.rotation * _nmFaceLocal; look.y = 0f;
                 if (look.sqrMagnitude < 1e-4f) look = _root.transform.forward;
                 look.Normalize();
-                Vector3 eyes = _head.position + Vector3.up * (_nmHeadTop * .25f) + look * (_nmFaceDepth + .015f);
+                // (film r11: at a quarter of the head they sat on her bangs, above her eyes.)
+                Vector3 eyes = _head.position + Vector3.up * (_nmHeadTop * .13f) + look * (_nmFaceDepth + .015f);
                 float lit = Ease(NmIgnite, NmIgnite + .08f, t) * (1f + 1.2f * Flash(t, NmIgnite + .06f, .12f)) * (1f - Ease(NmRelease, Seconds, t));
-                NemuAura.Eyes(_nmSmoke, eyes, look, _nmHeadTop * .32f, .09f, lit * 1.8f, NmW(_nmEye));
+                // (film r10: at .09 they sat on her bangs as two big violet almonds.)
+                NemuAura.Eyes(_nmSmoke, eyes, look, _nmHeadTop * .30f, .062f, lit * 2.1f, NmW(_nmEye));
             }
 
             // ------------------------------------------------------------- the claw that rises beside her (the tell)
@@ -335,12 +357,15 @@ namespace TumbangPreso.Visual
             if (drainAll >= 1f) return;
             Vector3 up = Vector3.up;
             float s = d.Scale;
-            float emerge = Ease(d.Rise, d.Rise + .62f, t);
+            // STOP-MOTION (preview v2: smooth swaying read as calm). The dead climb out of the ink in jerks and hold, and
+            // their sway is stepped at about eight poses a second, each on its own beat; the shader twitches their heads.
+            float smooth = Ease(d.Rise, d.Rise + .62f, t);
+            float emerge = Mathf.Lerp(smooth, Mathf.Floor(smooth * 6f + .5f) / 6f, .7f);
             float fly = Ease(d.Launch, d.Launch + .2f, t);
             Vector3 target = NmTargetPoint(d.Target, out _);
 
-            // Its writhing while it stands: a slow sway down its body, every one on its own phase.
-            float writhe = Mathf.Sin(t * 1.9f + d.Seed * 17f);
+            float stepped = Mathf.Floor(t * 8f + d.Seed * 5f) / 8f;
+            float writhe = Mathf.Sin(stepped * 1.9f + d.Seed * 17f);
             Vector3 toLens = _nmEye - d.Base; toLens.y = 0f; toLens = toLens.sqrMagnitude > 1e-4f ? toLens.normalized : -_nmWay;
             // Before the snap each looks its own way (up, round, at the others); at 2.35 every head snaps to the lens at once.
             float snap = Ease(NmSnap - .03f, NmSnap + .06f, t);
@@ -360,7 +385,9 @@ namespace TumbangPreso.Visual
             float h = d.Height * Mathf.Lerp(1f, .55f, flightU * fly) * (1f - .7f * drainAll);
             // Standing: rising out of the ink (the part not risen yet is under the court, which hides it), hunched toward
             // where it looks. Flying: its head leads and the body streams behind.
-            Vector3 standCentre = d.Base + up * (d.Height * .5f - d.Height * (1f - emerge) * 1.05f) + standFace * (.08f * s);
+            // On the snap they all lurch a step toward the lens at once.
+            float lurch = Ease(NmSnap - .02f, NmSnap + .07f, t);
+            Vector3 standCentre = d.Base + up * (d.Height * .5f - d.Height * (1f - emerge) * 1.05f) + standFace * (.08f * s) + toLens * (.45f * s * lurch);
             Vector3 flyCentre = head - flightDir * (h * (1f + stretch) * .26f);
             if (drainAll > 0f) flyCentre = Vector3.Lerp(flyCentre, target, drainAll);
             Vector3 centre = Vector3.Lerp(standCentre, flyCentre, fly);
@@ -380,9 +407,31 @@ namespace TumbangPreso.Visual
             float ignite = Ease(d.Rise + .25f, d.Rise + .4f, t);
             float flare = .72f + .28f * Mathf.Max(Flash(t, NmSnap + .06f, .2f) * snap, snap * .4f);
             float shown = Mathf.Clamp01(emerge * 1.8f) * (1f - drainAll);
-            // In flight the claws reach AHEAD (film r6: spread out they read as wings).
-            float arms = Mathf.Lerp(.82f + .18f * Mathf.Sin(t * 3.3f + d.Seed * 7f), 1f, fly) * (1f - .6f * drainAll);
-            _nmSmoke.Ghost(NmW(centre), h, stretch, angle, .95f * shown, d.Seed, facing * ignite * flare, arms);
+            // Arms: clawing up out of the ink as it climbs, then hanging long at its sides; on the snap every one reaches for
+            // the lens, and in flight they reach AHEAD (film r6: spread out they read as wings). Jaws: hanging a little open,
+            // then every jaw drops at once on the held beat and stays screaming through the flight.
+            float climbing = Mathf.Clamp01(1f - emerge) * Mathf.Clamp01(emerge * 4f);
+            float hang = .1f + .1f * Mathf.Max(0f, writhe);
+            float arms = Mathf.Max(Mathf.Lerp(hang, 1f, Mathf.Max(lurch, fly)), climbing * .8f) * (1f - .6f * drainAll);
+            float scream = Mathf.Max(.15f + .15f * Mathf.Max(0f, -writhe), Mathf.Max(lurch, fly));
+            if (d.Lunge && t >= NmLungeFrom)
+            {
+                // ---- THE LUNGE: still for a beat, then all at once at the lens; its face fills the frame and it goes on
+                // THROUGH the lens into C (film r10: stopping and vanishing on the cut read as a pop, not a hit).
+                float through = Mathf.Clamp01((t - NmLungeHit) / (NmRide + .12f - NmLungeHit));
+                if (through >= 1f) return;
+                float u = Mathf.Clamp01((t - NmLungeFrom) / (NmLungeHit - NmLungeFrom));
+                float e = u * u * u;
+                Vector3 toward = (_nmLook - _nmEye); toward = toward.sqrMagnitude > 1e-4f ? toward.normalized : _nmWay;
+                float hit = Mathf.Lerp(d.Height, NmLungeHeight, e) * (1f + .3f * through);
+                Vector3 onLens = _nmEye + toward * Mathf.Lerp(NmLungeStop, .2f, through) - up * (hit * .335f);
+                Vector3 from = standCentre;
+                Vector3 at = Vector3.Lerp(from, onLens, e) + up * (Mathf.Sin(u * Mathf.PI) * .4f);
+                float twitchAngle = (Mathf.Repeat(Mathf.Floor(t * 12f) * .618f, 1f) - .5f) * 10f * (1f - e);
+                _nmSmoke.Ghost(NmW(at), hit, 0f, twitchAngle, .97f, d.Seed, 1f, 1f, 1f);
+                return;
+            }
+            _nmSmoke.Ghost(NmW(centre), h, stretch, angle, .95f * shown, d.Seed, facing * ignite * flare, arms, scream);
 
             // ---- smoke: wisps boiling off it where it stands in the ink; the trail it leaves in flight
             if (fly < 1f)
@@ -440,16 +489,19 @@ namespace TumbangPreso.Visual
                 float at = fightFrom + e.x;
                 escapeJolt = Mathf.Max(escapeJolt, Mathf.Clamp01(1f - Mathf.Abs(t - (at + .2f)) / .14f));
             }
-            float held = Ease(first + .1f, first + .35f, t) * (1f - .55f * Ease(NmSettle, NmRelease, t));
+            // THE STARE (preview v2: the close hold on a player in a haze read as nothing happening). Their eyes snap violet and
+            // in the same beat every one of them stops fighting and turns its head and body to the lens, and keeps following it.
+            float stareAt = NmEyesOn + .06f * index;
+            float stare = Ease(stareAt, stareAt + .12f, t);
+            float held = Ease(first + .1f, first + .35f, t) * (1f - .75f * stare);
             if (v.AnimRoot != null)
             {
                 if (v.Struggle != null && held > 0f) NmBlend(v, v.Struggle, Mathf.Repeat((t - first) * 1.1f + .3f * index, v.Struggle.length), Mathf.Clamp01(held * .8f + escapeJolt * .3f));
                 if (v.Shock != null && jolt > 0f) NmBlend(v, v.Shock, .12f + .015f * Mathf.Sin(t * 41f), jolt);
             }
-            // As it settles they straighten and turn partly toward her.
-            Vector3 toHer = -v.Home; toHer.y = 0f;
-            float faceYaw = Mathf.Atan2(toHer.x, toHer.z) * Mathf.Rad2Deg;
-            float yaw = Mathf.LerpAngle(v.Yaw, faceYaw, .55f * Ease(NmSettle, NmRelease, t));
+            Vector3 toLens = _nmEye - v.Home; toLens.y = 0f;
+            float lensYaw = toLens.sqrMagnitude > 1e-4f ? Mathf.Atan2(toLens.x, toLens.z) * Mathf.Rad2Deg : v.Yaw;
+            float yaw = Mathf.LerpAngle(v.Yaw, lensYaw, stare);
             v.Holder.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
             Vector3 forward = Quaternion.Euler(0f, yaw, 0f) * Vector3.forward;
 
@@ -468,13 +520,26 @@ namespace TumbangPreso.Visual
             foreach (var e in NmEscapes)
             {
                 float u = t - (fightFrom + e.x);
-                if (u < 0f || u > .36f) continue;
-                float outU = u < .26f ? Mathf.SmoothStep(0f, 1f, u / .26f) : 1f - (u - .26f) / .1f;
+                if (u < 0f || u > .46f) continue;
+                // (film r11: out in .26 s the souls were a faint smear; they strain out for .36 s now and are snapped back in .1.)
+                float outU = u < .36f ? Mathf.SmoothStep(0f, 1f, u / .36f) : 1f - (u - .36f) / .1f;
                 Vector3 dir = Quaternion.Euler(0f, e.y, 0f) * forward + Vector3.up * .25f;
                 Vector3 root = v.Home + Vector3.up * (v.Top * e.z) + Quaternion.Euler(0f, e.y, 0f) * forward * (v.Width * .2f);
                 NemuAura.Claw(_nmSmoke, NmW(root), NmWDir(dir), e.w * outU, .8f, Mathf.Clamp01(outU * 2f), t, e.y * .01f + index * .3f);
+                // ...and the soul behind it tears half out, screaming, before it is dragged back in (the owner: *"the ghosts
+                // are tryna get out of the body but they get sucked in anyways"*). Only in the cutscene, only for this instant:
+                // in play nothing but the aura and its claws is ever drawn on them.
+                Vector3 outDir = dir.normalized;
+                float soulH = v.Top * Mathf.Lerp(.7f, 1.5f, outU);
+                Vector3 soul = v.Home + Vector3.up * (v.Top * e.z) + outDir * (v.Width * .15f + outU * v.Top * .6f);
+                Vector3 vf = _nmLook - _nmEye; vf = vf.sqrMagnitude > 1e-4f ? vf.normalized : Vector3.forward;
+                Vector3 vr = Vector3.Cross(Vector3.up, vf); vr = vr.sqrMagnitude > 1e-4f ? vr.normalized : Vector3.right;
+                Vector3 vu = Vector3.Cross(vf, vr);
+                float lean = Mathf.Atan2(Vector3.Dot(outDir, vr), Vector3.Dot(outDir, vu)) * Mathf.Rad2Deg;
+                _nmSmoke.Ghost(NmW(soul), soulH, .15f * outU, lean * .6f, Mathf.Clamp01(outU * 2.5f), .2f + index * .23f + e.x,
+                               Mathf.Clamp01(outU * 2f), 1f, 1f);
                 // The snap back: a puff where it went in.
-                if (u > .26f) _nmSmoke.Puff(NmW(root + dir.normalized * (v.Width * .25f)), .35f, .6f * (1f - (u - .26f) / .1f), .3f + index * .1f, .4f, 1f, u * 400f);
+                if (u > .36f) _nmSmoke.Puff(NmW(root + dir.normalized * (v.Width * .25f)), .35f, .6f * (1f - (u - .36f) / .1f), .3f + index * .1f, .4f, 1f, u * 400f);
             }
 
             // THEIR EYES snap violet, on their own face.
@@ -552,6 +617,13 @@ namespace TumbangPreso.Visual
                     eye.y = Mathf.Max(eye.y, 1.6f);
                 }
             }
+            if (!_reducedEffects && index == 1)
+            {
+                // The lunge lands: the lens is knocked back.
+                float hit = Mathf.Clamp01(1f - Mathf.Abs(t - NmLungeHit) / .06f);
+                var knock = new Vector3(Mathf.Sin(t * 97f), Mathf.Sin(t * 89f + .7f), 0f) * (.05f * hit);
+                eye += knock; look += knock * .4f;
+            }
             if (!_reducedEffects && index == 2)
             {
                 // A tremor with each soul that goes into the first player.
@@ -592,7 +664,8 @@ namespace TumbangPreso.Visual
         private void NemuGrade(float t, out float brightness, out float saturation)
         {
             float dark = Ease(NmIgnite, NmIgnite + .4f, t) * (1f - Ease(NmRelease, Seconds, t));
-            brightness = Mathf.Lerp(1f, .34f, dark);
+            // Preview v2: at .34 the plaza still read as an afternoon. Night falls with her eyes.
+            brightness = Mathf.Lerp(1f, .22f, dark);
             saturation = Mathf.Lerp(1f, .92f, dark);
         }
 
