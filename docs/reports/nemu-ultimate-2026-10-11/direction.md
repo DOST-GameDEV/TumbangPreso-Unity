@@ -363,3 +363,27 @@ the dead from columns of puffs to one ghost silhouette each (row r5 below).
 
 Known: the aura shows about 0.3 s after the hand-back, when the ability's status lands in play (unchanged gameplay
 timing). Not yet evidence: networked peers, the owner's verdict on v2 and on the sound.
+
+### 11.10 Preview v2 refinement (2026-10-13, later)
+
+The owner on preview v2: *"REFINE MORE IT DOESNT LOOK THAT GOOD, the ult cutscene looks so weird, the ghosts dont look
+that scary"* and *"remove her fpp ghost dapat its js following her"*.
+
+| Seen in v2 | Changed |
+|---|---|
+| The dead were a player's height with claws raised over a round hood: they read as cat-eared black pets | `Shaders/NemuSmoke` mode 2 redrawn: gaunt and tall (quad 0.62 wide), a long skull tipped on its neck, long smoke hair hanging past the shoulders in strings, a starved body torn into strips, long jointed arms hanging or reaching at the lens with spindly fingers (never above the head); 2.0 times the old height |
+| Filled glowing slit eyes and mouth read as an emoji | A barely lit death mask shaded like a skull, BLACK sockets with a burning pinpoint in each, a BLACK jaw that drops past the chin, an ember deep in the throat |
+| Smooth swaying read as calm | Stop-motion: they climb out of the ink in jerks, sway on stepped poses, heads twitch and hold |
+| The held beat was only a head turn | Every jaw drops and every arm reaches for the lens at once, and they all lurch a step toward it |
+| Nothing came at the viewer | THE LUNGE (2.47 to 3.02): one of the dead holds, then rushes the lens, its face filling the frame, and carries on through it into C |
+| C's close hold on a player in a haze read as nothing happening | The soul behind each escaping claw tears half out of the player, screaming, before it is dragged back; at 4.0 every player stops fighting and turns to STARE into the lens with violet eyes, following it as it pulls back |
+| The plaza still read as an afternoon | The grade dims to 0.22 (was 0.34) |
+| Nemu's eyes in the hush sat on her bangs as two big violet almonds | smaller (0.062) and hotter |
+| Kuro on her sleeve in her own first person | Retired: the sleeve Kuro is now only behind `ViewmodelArms.UnlockedHandPets` (off), so in her first person he trails her in the world like everyone else sees him |
+
+Films r10 to r12 on Bayan Plaza: r10 the new dead read as tall wraiths but their lit masks and glowing mouths read silly,
+and the lunge vanished on the cut; r11 black sockets and jaw with pinpoint eyes, the lunge carried through the lens; r12
+the escaping souls held longer and larger. Preview v3: 5.57 s, round clock frozen; Nemu PlayMode suites plus the film
+11/11 ([XML](evidence/film-v3/play-tests.xml), [beats](evidence/film-v3/owner-beats.jpg),
+[key frames](evidence/film-v3/key-frames.jpg): the hush, the crowd screaming, the lunge, a soul tearing out, the stare,
+her first person after the hand-back with no Kuro on the sleeve). Not yet evidence: the owner's verdict on v3.
