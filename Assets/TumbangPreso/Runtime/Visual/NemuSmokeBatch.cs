@@ -16,34 +16,29 @@ namespace TumbangPreso.Visual
     ///  * A WISP is a puff drawn long and thin along a world direction (owner on v3: the round puffs looked *"chonky"*), so
     ///    smoke reads as torn strands and flame tongues rather than balls. It needs the lens (<see cref="SetView"/>, or the
     ///    main camera) to turn the strand to its direction on the screen.
-    ///  * A HAND (`Shaders/NemuSmoke` mode 3) is one long bony hand of smoke, fingers together and slightly hooked: the dead's
-    ///    hands over a player's eyes.
     ///  * A LIGHT is a soft violet glow, round, or drawn along a world direction (a slanted eye, a claw, a mouth) as a short
     ///    chain of round glows, so the shape is a direction in the world and reads the same on every camera. (Film r2:
     ///    stretched billboards on a system that never simulates drew nothing at all.)
-    /// No `Random` anywhere: the owner types every row.
+    /// No `Random` anywhere: the owner types every row. (The cutscene's dead and their hands were cards here until preview v4;
+    /// they are 3D now, `NemuDeadFigure`.)
     /// </summary>
     public sealed class NemuSmokeBatch : IDisposable
     {
-        /// <summary>A ghost's quad is this much as wide as it is tall (gaunt; the shader draws to it).</summary>
-        public const float GhostAspect = .5f;
         public static readonly Color Violet = new Color(.62f, .26f, 1f, 1f);
 
-        private readonly GameObject _smokeGo, _lightGo, _ghostGo, _handGo;
-        private readonly ParticleSystem _smoke, _light, _ghostSystem, _handSystem;
-        private readonly Material _smokeMaterial, _lightMaterial, _ghostMaterial, _handMaterial;
-        private readonly ParticleSystem.Particle[] _puffs, _lights, _ghosts, _hands;
-        private int _puffCount, _lightCount, _ghostCount, _handCount;
+        private readonly GameObject _smokeGo, _lightGo;
+        private readonly ParticleSystem _smoke, _light;
+        private readonly Material _smokeMaterial, _lightMaterial;
+        private readonly ParticleSystem.Particle[] _puffs, _lights;
+        private int _puffCount, _lightCount;
         private Vector3 _viewEye, _viewLook;
         private bool _hasView;
 
         public Renderer SmokeRenderer { get; }
         public Renderer LightRenderer { get; }
-        public Renderer GhostRenderer { get; }
 
-        public NemuSmokeBatch(Transform parent, string name, int maxPuffs, int maxLights, int maxGhosts = 1)
+        public NemuSmokeBatch(Transform parent, string name, int maxPuffs, int maxLights)
         {
-            _ghosts = new ParticleSystem.Particle[Mathf.Max(1, maxGhosts)];
             _puffs = new ParticleSystem.Particle[Mathf.Max(1, maxPuffs)];
             _lights = new ParticleSystem.Particle[Mathf.Max(1, maxLights)];
             var shader = Resources.Load<Shader>("Shaders/NemuSmoke");
@@ -51,21 +46,11 @@ namespace TumbangPreso.Visual
             _lightMaterial = shader != null ? new Material(shader) { name = name + "Light" } : null;
             if (_smokeMaterial != null) { _smokeMaterial.SetFloat("_Mode", 0f); _smokeMaterial.renderQueue = (int)RenderQueue.Transparent + 10; }
             if (_lightMaterial != null) { _lightMaterial.SetFloat("_Mode", 1f); _lightMaterial.renderQueue = (int)RenderQueue.Transparent + 14; }
-            _ghostMaterial = shader != null ? new Material(shader) { name = name + "Ghost" } : null;
-            if (_ghostMaterial != null) { _ghostMaterial.SetFloat("_Mode", 2f); _ghostMaterial.renderQueue = (int)RenderQueue.Transparent + 11; }
             _smoke = Make(parent, name + "Smoke", _puffs.Length, _smokeMaterial, ParticleSystemRenderMode.Billboard, out _smokeGo);
             _light = Make(parent, name + "Light", _lights.Length, _lightMaterial, ParticleSystemRenderMode.Billboard, out _lightGo);
             SmokeRenderer = _smokeGo.GetComponent<ParticleSystemRenderer>();
             LightRenderer = _lightGo.GetComponent<ParticleSystemRenderer>();
-            _ghostSystem = Make(parent, name + "Ghost", _ghosts.Length, _ghostMaterial, ParticleSystemRenderMode.Billboard, out _ghostGo);
-            var ghostMain = _ghostSystem.main; ghostMain.startSize3D = true;
-            GhostRenderer = _ghostGo.GetComponent<ParticleSystemRenderer>();
             var smokeMain = _smoke.main; smokeMain.startSize3D = true;
-            _hands = new ParticleSystem.Particle[16];
-            _handMaterial = shader != null ? new Material(shader) { name = name + "Hand" } : null;
-            if (_handMaterial != null) { _handMaterial.SetFloat("_Mode", 3f); _handMaterial.renderQueue = (int)RenderQueue.Transparent + 13; }
-            _handSystem = Make(parent, name + "Hand", _hands.Length, _handMaterial, ParticleSystemRenderMode.Billboard, out _handGo);
-            var handMain = _handSystem.main; handMain.startSize3D = true;
         }
 
         private static ParticleSystem Make(Transform parent, string name, int max, Material material, ParticleSystemRenderMode mode, out GameObject go)
@@ -100,9 +85,9 @@ namespace TumbangPreso.Visual
             return ps;
         }
 
-        public void Begin() { _puffCount = 0; _lightCount = 0; _ghostCount = 0; _handCount = 0; }
+        public void Begin() { _puffCount = 0; _lightCount = 0; }
 
-        /// <summary>The lens this frame's wisps and hands are turned for (world). Without it the main camera is used.</summary>
+        /// <summary>The lens this frame's wisps are turned for (world). Without it the main camera is used.</summary>
         public void SetView(Vector3 eye, Vector3 look) { _viewEye = eye; _viewLook = look; _hasView = true; }
 
         /// <summary>The angle on the lens (degrees, 0 = up) of a world direction.</summary>
@@ -135,51 +120,6 @@ namespace TumbangPreso.Visual
                 startSize3D = new Vector3(width, Mathf.Max(width, length), 1f),
                 rotation = ScreenAngle(along.sqrMagnitude > 1e-6f ? along : Vector3.up),
                 startColor = new Color32((byte)(Mathf.Clamp01(rim) * 255f), (byte)(Mathf.Clamp01(fray) * 255f),
-                                         (byte)(Mathf.Repeat(seed, 1f) * 255f), (byte)(Mathf.Clamp01(density) * 255f)),
-                remainingLifetime = 1000f,
-                startLifetime = 1000f,
-            };
-        }
-
-        /// <summary>
-        /// One hand of the dead: <paramref name="length"/> metres from wrist to fingertips, its fingers pointing along the world
-        /// direction <paramref name="fingers"/>, centred on <paramref name="at"/>. <paramref name="mirror"/> true for the other
-        /// hand (thumb on the other side); <paramref name="curl"/> 0 straight to 1 hooked.
-        /// </summary>
-        public void Hand(Vector3 at, Vector3 fingers, float length, float density, float curl, float seed, bool mirror)
-        {
-            if (_handCount >= _hands.Length || density <= .004f || length <= .001f) return;
-            _hands[_handCount++] = new ParticleSystem.Particle
-            {
-                position = at,
-                velocity = Vector3.zero,
-                startSize3D = new Vector3(length * .62f, length, 1f),
-                rotation = ScreenAngle(fingers),
-                startColor = new Color32((byte)(mirror ? 255 : 0), (byte)(Mathf.Clamp01(curl) * 255f),
-                                         (byte)(Mathf.Repeat(seed, 1f) * 255f), (byte)(Mathf.Clamp01(density) * 255f)),
-                remainingLifetime = 1000f,
-                startLifetime = 1000f,
-            };
-        }
-
-        /// <summary>
-        /// One whole ghost (`Shaders/NemuSmoke` mode 2): <paramref name="height"/> metres tall, centred on <paramref name="at"/>,
-        /// turned <paramref name="screenAngle"/> degrees on the lens (0 = head up), <paramref name="face"/> 0 to 1 how much of its
-        /// burning face shows (0 seen from behind), <paramref name="arms"/> 0 hanging to 1 reaching at the lens,
-        /// <paramref name="scream"/> 0 jaw shut to 1 dropped far past the chin.
-        /// </summary>
-        public void Ghost(Vector3 at, float height, float stretch, float screenAngle, float density, float seed, float face, float arms, float scream = 0f)
-        {
-            if (_ghostCount >= _ghosts.Length || density <= .004f || height <= .01f) return;
-            // Arms and scream share the green byte, a nibble each (`Shaders/NemuSmoke` unpacks them).
-            int packed = Mathf.RoundToInt(Mathf.Clamp01(arms) * 15f) * 16 + Mathf.RoundToInt(Mathf.Clamp01(scream) * 15f);
-            _ghosts[_ghostCount++] = new ParticleSystem.Particle
-            {
-                position = at,
-                velocity = Vector3.zero,
-                startSize3D = new Vector3(height * GhostAspect, height * (1f + stretch), 1f),
-                rotation = screenAngle,
-                startColor = new Color32((byte)(Mathf.Clamp01(face) * 255f), (byte)packed,
                                          (byte)(Mathf.Repeat(seed, 1f) * 255f), (byte)(Mathf.Clamp01(density) * 255f)),
                 remainingLifetime = 1000f,
                 startLifetime = 1000f,
@@ -241,25 +181,19 @@ namespace TumbangPreso.Visual
         {
             if (_smokeMaterial != null) _smokeMaterial.SetFloat("_Clock", clock);
             if (_lightMaterial != null) _lightMaterial.SetFloat("_Clock", clock);
-            if (_ghostMaterial != null) _ghostMaterial.SetFloat("_Clock", clock);
-            if (_handMaterial != null) _handMaterial.SetFloat("_Clock", clock);
-            _ghostSystem.SetParticles(_ghosts, _ghostCount);
-            _handSystem.SetParticles(_hands, _handCount);
             _smoke.SetParticles(_puffs, _puffCount);
             _light.SetParticles(_lights, _lightCount);
         }
 
         public bool Visible
         {
-            set { SmokeRenderer.enabled = value; LightRenderer.enabled = value; GhostRenderer.enabled = value; if (_handGo != null) _handGo.GetComponent<Renderer>().enabled = value; }
+            set { SmokeRenderer.enabled = value; LightRenderer.enabled = value; }
         }
 
         public void Dispose()
         {
             if (_smokeGo != null) Destroy(_smokeGo);
             if (_lightGo != null) Destroy(_lightGo);
-            if (_ghostGo != null) Destroy(_ghostGo);
-            if (_handGo != null) Destroy(_handGo);
         }
 
         private static void Destroy(UnityEngine.Object o)

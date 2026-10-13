@@ -454,3 +454,152 @@ Sound redrafted to 12.2 (`tools/build_nemu_ult_audio.py`: a buzzing tube cut dea
 and a groan in each, a quickening heartbeat once they are right behind, a gasp, the suck into a thump, a chime, a choir as
 they stare); still drafts out of `Resources/Sfx`. Not yet evidence: the owner's verdict on v4 and on the sound.
 
+
+## 13. SWALLOWED SKY (2026-10-13, the owner on preview v4; this section supersedes 12.1, 12.2 and 12.4 where they differ)
+
+The owner on v4: *"it feels weird and not fluid and doesnt look that well implemented"*, *"opening shot sucks ren"*. Asked
+three questions, the owner answered:
+* **The opening and the cause of the dark:** *"di naman kasi all maps have lights eh"* (not every map has lights), so the
+  failing lights are gone. Offered three map-proof causes, the owner picked **the sky is swallowed**, *"and a bit anime
+  style"*.
+* **What "fluid" means:** **anime-style cuts** (snappy, stylised cuts, each pose held long enough to read).
+* **Scope:** **everything in one film** (v5): opening, camera, players' acting, 3D ghosts and hands, the ending's grade.
+
+Online play is out of scope for this pass (the owner). What still stands from 12: Behind You, the name, black and one violet,
+no ghost drawn on a possessed player afterwards, no Kuro, below 6 s, nothing chonky, nothing flying.
+
+### 13.1 One sentence and one travelling thing
+
+**Her eyes open under her fringe, and the sky is swallowed in three gulps; after each gulp the dead stand closer behind each
+player, until their hands close over the players' eyes, they are let in, and the sky comes back.** The travelling thing is
+THE INK: a drop in the sky over her, then three gulps until the sky is gone, then it drains into the players' eyes.
+
+### 13.2 The beats (5.95 s; every cut is a smash cut on a beat)
+
+| Time | Shot | Picture | Sound |
+|---|---|---|---|
+| 0.00 | S1 THE COURT (wide, low, from among the players toward her) | bright day; the players idling, unaware (breathing, weight shifts); she is small in the distance; a slow eased push | the room |
+| 0.30 | S1 | a drop of ink appears in the sky above her and starts to bleed | a low tone |
+| 0.70 | S2 HER EYES (smash cut; extreme close-up, low, a slight Dutch tilt) | her face in the shadow under her fringe | silence |
+| 0.86 | S2 | two violet eyes ignite under the fringe, with a glint; focus lines flash at the frame's edge | *shh*; a chime |
+| 1.15 | S2 | her chin comes up a touch | |
+| 1.35 | GULP 1, S3 (impact frame, then a low wide behind the players) | the ink surges across the sky; the dead stand far behind every player on sigils, eyes burning | a gulp; a sub hit |
+| 2.05 | GULP 2, S4 (impact frame, then low in front of another player) | the sky mostly gone, night deepening; the dead halfway; eyes open all round the plaza | a gulp; whispers |
+| 2.75 | GULP 3, S5 (impact frame, then in front of the first player) | the sky gone; the dead one right behind them, peering over one shoulder | a gulp; a heartbeat |
+| 2.95 to 3.35 | S5 | they glance over the OTHER shoulder and back (a near miss) | |
+| 3.35 to 3.95 | S5, one eased push in | long 3D arms come round their head from behind; the fingers slide over their eyes | breath |
+| 3.95 | S5 | the hands close: an impact frame, focus lines, one push of the lens; they flinch | a gasp |
+| 3.95 to 4.45 | S5 | they struggle: head shaking, hands up at their face | crackle |
+| 4.25 to 4.85 | S5 | the dead one sinks into them, burning away in violet from the feet up, smoke pulled in after it | reversed swell into a thump |
+| 4.90 | S5 | their eyes open violet, with a glint | a chime |
+| 4.95 to 5.40 | S5 | their head turns to the lens first, then the chest, then the body (a possessed twist) | choir |
+| 5.00 to 5.95 | S5, one eased pull back and up | everyone staring, the aura on them; the ink drains from the sky and the night lifts over 0.8 s | release |
+
+### 13.3 What answers each part of "not fluid"
+
+| v4 | v5 |
+|---|---|
+| The opening was v1's close shot, her sleeve over her face, the eye lights on her bangs | S1 opens on the players and the sky; S2 is her eyes only (no hush pose); the eye lights are placed in the head's own frame, under the fringe |
+| Lights failing, which not every map has | the sky is swallowed (`Shaders/NemuSky`, a far-plane dome drawn only where the sky shows) |
+| Plain blackouts on fixed times | impact frames (black and violet, two frames) on each gulp, carrying the smash cut |
+| The players were statues | breathing, weight shifts, a near-miss glance, a flinch, a struggle, a head-first twist to the lens (`NmAct`) |
+| Flat ghost cards and sprite hands | 3D segmented dead (`NemuDeadFigure`): skull with a hinged jaw, hair and robe strips, long arms with jointed fingers, posed by IK so the hands wrap the head from behind; a cutout smoke shader (`Shaders/NemuDead`) with a broken violet rim and a burning dissolve |
+| Piecewise lerps, a 0.64 s whip, tremble | within a shot, one eased spline (`NmPath`); the last pull back takes 0.95 s; one low push on the hands, no tremble |
+| A 0.45 s pop back to day | the ink drains and the night lifts over 0.8 s |
+| Beats of 0.1 to 0.3 s | hands 0.6 s, the sink 0.6 s, the turn 0.45 s |
+
+### 13.4 Film rounds and evidence
+
+Iteration rounds film only her screen over the cutscene (`TUMP_NEMU_FILM_FRAMES=230 TUMP_NEMU_FILM_OWNER_ONLY=1`; the preview
+film is still the default, every view for 17 s).
+
+| Film | Seen | Changed |
+|---|---|---|
+| r18 | did not compile (`VfxRenderTag.Own` is static) | |
+| r19 | impact frames, the near miss, 3D hands over the eyes, the flinch, the head-first turn and the slow return of the sky all read; but the wides facing away from her kept a blue sky, Bayan's solid clouds stayed bright in the black sky, the drop was all spikes, her eye lights were still on her fringe, the skull read as a smooth purple egg with cartoon eyes, a player's head filled a third of the first wide, and the sinking dead one filled the lens with black | reach 2.0 and 2.9 after the first two gulps; above 10 degrees the dome is drawn at its own 45 m depth, so clouds are swallowed; a round drop with drips, tendrils growing with it; her eyes 0.095 m lower, as slits; a darker, longer skull with pinpoint eyes; the first wide behind the players and over their shoulders; it goes in through their back and burns away sooner |
+| r20 | the drop right over her, clouds gone, her eyes at the edge of her fringe; the black blob was their own hair (a 22 degree limp droop); the dead too dark against the black sky | 6 degree droop; the dead's rim 2.0, the mask a touch brighter |
+| r21, preview v5 | every beat of 13.2 | |
+
+Preview v5: 5.93 s on Bayan Plaza with the round clock frozen; Nemu PlayMode suites plus the film 11/11
+([XML](evidence/film-v5/play-tests.xml), [beats](evidence/film-v5/owner-beats.jpg), [key frames](evidence/film-v5/key-frames.jpg)).
+Sound redrafted to 13.2 (`tools/build_nemu_ult_audio.py`: the court's room cut to silence on her eyes, a *shh*, a chime, a gulp
+with a sub hit on each gulp, whispers and groans nearer each time, the heartbeat, its breath on their neck, the gasp, the struggle,
+the suck into a thump, the chime, the choir, let go with the sky); still drafts out of `Resources/Sfx`. Not yet evidence: the
+owner's verdict on v5 and on the sound.
+
+## 14. THEIR OWN SHADOWS (2026-10-13, the owner on preview v5; this section supersedes 12 and 13's story, beats and VFX)
+
+The owner on v5: *"direction still ssucks, i dont get wtf is happening"*, *"what are those purple eyes"* (the eyes of the dead
+round the plaza, 12.4, which nothing on screen explained). Why nobody could follow v3 to v5: "nearer each time" only reads in a
+repeated framing, and every gulp cut to a new player and angle; black dead on a black night; too many ideas for 6 s (ink, impact
+frames, three ghosts, sigils, the plaza's eyes, the glance, the hands, the sink); and Nemu was gone from the story after her eyes.
+Offered one fixed shot of BEHIND YOU or a new story, the owner asked for a different story; of three (THEIR OWN SHADOWS, THE
+RIPPLE FROM HER, THROUGH THEIR EYES) he picked **THEIR OWN SHADOWS**.
+
+What still stands: the name, ID, gameplay, network, black and one violet, the aura-only rule after the entry, no Kuro, below 6 s,
+nothing chonky, nothing flying, the players' acting (13: breathing, the flinch, the struggle, the head-first turn), the eased
+camera path, her eyes as slits under her fringe. Retired with BEHIND YOU and SWALLOWED SKY: the swallowed sky (`NemuSky`), the
+3D dead (`NemuDeadFigure`), the gulps and their impact frames, the eyes round the plaza, the sigils, the near-miss glance.
+
+### 14.1 One sentence and one travelling thing
+
+**Nemu whispers, and every player's own shadow peels up off the ground behind them, stands, puts its hands over their eyes and
+pours into them.** The travelling thing is a ring of black smoke from her feet: it reaches each player and their shadow wakes.
+Readability first: daylight stays (the world only steps back to 0.78), one idea per shot, and the effect is in the same frame as
+its cause (she is in the near corner of the court shot as the ring leaves her and the shadows rise).
+
+### 14.2 The beats (5.9 s)
+
+| Time | Shot | Picture | Sound |
+|---|---|---|---|
+| 0.00 | S1 HER (close, low, under her fringe, a slow push) | her face, looking down | the room |
+| 0.32 | S1 | her eyes ignite as violet slits, a glint, focus lines | her whisper; a chime |
+| 0.90 | S2 THE COURT (over her shoulder, above; a slow push) | the players in daylight, idling | |
+| 1.00 to 1.45 | S2 | a ring of black smoke rolls out from her feet across the court; as it reaches each player their shadow turns to ink on the court and twitches | a sub swell, a rush; crackle |
+| 1.55 to 2.50 | S2 | each shadow peels up off the court, hinged at their feet, and stands over their shoulder, bigger than them; its eyes open violet | a creak and a tearing whisper; a chime |
+| 2.85 | S3 TAKEN (in front of one player; one eased path) | their shadow looming over their shoulder; they shiver | a heartbeat |
+| 3.00 to 3.60 | S3, pushing in | its arms stretch round their head; its hands slide over their eyes | its breath on their neck |
+| 3.60 | S3 | an impact frame, focus lines, one push of the lens; they flinch and claw at their face | a gasp; crackle; groans |
+| 3.95 to 4.55 | S3 | it pours into them, burning away in violet from the feet up, smoke pulled in after it | a reversed swell into a thump |
+| 4.60 | S3 | their eyes open violet, with a glint | a chime |
+| 4.65 to 5.15 | S3 | the head turns to the lens first, then the chest, then the body | a choir |
+| 4.75 to 5.90 | S3, one eased pull back and up | every player staring, the aura on them | the choir, let go over 0.6 s |
+
+### 14.3 How the shadow is made (`HeroIntroductionScene.Nemu.cs`, `NmShade`)
+
+A second copy of each player's own body (so it has their hair and shape), every surface in `Shaders/NemuDead` (black smoke, a
+broken violet rim off while it lies on the court, a burning dissolve), under a hinge at their feet. Flattened to 3 per cent along
+the hinge's z and laid down 90 degrees, it is a shadow 1.6 times their height lying out to one side and back; the peel rotates it up
+while it unflattens to an even 1.35 times them, standing over one shoulder (where the lens in front can see it). It copies their
+bones until its arms reach: each arm is turned so its palm (`CharacterVisual.PalmCentre`) points at a spot on an arc round their
+head and stretched along its own length to reach it, thinner as it stretches.
+
+### 14.4 Film rounds and evidence
+
+| Film | Seen | Changed |
+|---|---|---|
+| r22 | the story reads in the close shot; in the court shot the shadows were specks hidden behind the players, the stretched arms were slabs off to the side, the ring did not show | the shadow stands over a shoulder; evenly scaled once standing (a flattened, stretched parent skewed the arm aim); thinner arms; the court shot higher and nearer |
+| r23 | the hands land over the eyes; still no shadow on the court, no ring, she was out of frame, the risen shadows were smoky lumps | the court shot over her shoulder; shadows at least as long as they are tall; a crisper outline (`_Tear` 0.38) |
+| r24, r25 | the phase lens shows no cast shadows at all, and the sun's way hid the shadow behind its player; the court stands a few centimetres above her ground point | the shadow lies out to one side and back; lifted 12 cm while lying |
+| r26, r27 | `Collar` is a rim wall, not a flat ring: the ring never showed, as a solid piece or a flat annulus | the ring is drawn as three rows of black smoke strands |
+| r28, preview v6 | every beat of 14.2 | |
+
+Preview v6: 5.90 s on Bayan Plaza with the round clock frozen; Nemu PlayMode suites plus the film 11/11
+([XML](evidence/film-v6/play-tests.xml), [beats](evidence/film-v6/owner-beats.jpg), [key frames](evidence/film-v6/key-frames.jpg)).
+Sound redrafted to 14.2 (`tools/build_nemu_ult_audio.py`: a new `peel` instrument); still drafts out of `Resources/Sfx`. Not yet
+evidence: the owner's verdict on v6 and on the sound.
+
+## 15. The owner's own picture of it (2026-10-13, on preview v6; supersedes 14's story)
+
+On v6's opening close-up (the violet glows sat on her fringe, above her real eyes, which are the two black blocks on her face):
+*"fuck what even is this"*. On the ultimate as a whole: *"i dont like how ghosts were made"*, *"ang pangit talaga"* (it is really
+ugly), and what he wants, in his words:
+
+> *"i wanted like a lot of soults to like swirl around in the map annd like some of them go inside the characters and it look
+> slike theyre being possessed"* ... *"it doesnt look like that rn at all it doesnt look eerie it doesnt look like peossession"*
+> ... *"i cannt even tell whats happening"*.
+
+So the next pass starts from that picture, not from 12 to 14: **many souls swirling round the map, some of them going into the
+players, who visibly become possessed**, and it must be eerie and readable at a glance. He asked for a handoff to refine it (given
+in chat, 2026-10-13). Uncommitted at this point: v6's code (THEIR OWN SHADOWS) plus an unfilmed fix moving her eye glows down onto
+her real eyes and widening the opening shot.

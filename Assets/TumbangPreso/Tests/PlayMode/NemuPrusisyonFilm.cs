@@ -154,7 +154,10 @@ namespace TumbangPreso.PlayTests
                 using (var film = new Film("nemu-prusisyon", "owner", "victim", "victimscreen", "wide"))
                 {
                     root = film.Root;
-                    const int frames = 30 * 17;
+                    // Iteration rounds may film fewer frames and only her screen (TUMP_NEMU_FILM_FRAMES, TUMP_NEMU_FILM_OWNER_ONLY=1);
+                    // the preview film is the default, every view for 17 s.
+                    int frames = int.TryParse(Environment.GetEnvironmentVariable("TUMP_NEMU_FILM_FRAMES"), out int asked) && asked > 0 ? asked : 30 * 17;
+                    bool ownerOnly = Environment.GetEnvironmentVariable("TUMP_NEMU_FILM_OWNER_ONLY") == "1";
                     for (int f = 0; f < frames; f++)
                     {
                         frame = f; film.Frame = f;
@@ -182,6 +185,7 @@ namespace TumbangPreso.PlayTests
                         if (overlay != null) film.Save(overlay.texture, "owner");
                         else { film.Render(Camera.main); film.Save(film.Target, "owner"); }
 
+                        if (ownerOnly) continue;
                         // Follow a player who is still possessed (a Geo shield's cleanse is real counterplay and ends it early).
                         if (!victim.IsPossessed) { var still = others.FirstOrDefault(p => p.IsPossessed); if (still != null) victim = still; }
                         // A POSSESSED PLAYER, from behind and above.

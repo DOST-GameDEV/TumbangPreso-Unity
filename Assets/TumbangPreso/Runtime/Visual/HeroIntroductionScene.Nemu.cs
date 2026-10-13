@@ -1,156 +1,146 @@
 using System.Collections.Generic;
 using TumbangPreso.CameraSystem;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace TumbangPreso.Visual
 {
     public sealed partial class HeroIntroductionScene
     {
         // =========================================================================================
-        // NEMU, LET THEM IN: BEHIND YOU, 5.9 s (owner 2026-10-13; `docs/reports/nemu-ultimate-2026-10-11/direction.md` section 12).
-        // Preview v3 was *"chonky and weird"*, *"dont make sense and lacks vfx and direction and visual communication or
-        // storytelling"*. Of three stories the owner picked BEHIND YOU, the horror reveal.
+        // NEMU, LET THEM IN: THEIR OWN SHADOWS, 5.9 s (owner 2026-10-13; `docs/reports/nemu-ultimate-2026-10-11/direction.md`
+        // section 14). On preview v5 the owner: *"direction still ssucks, i dont get wtf is happening"*, *"what are those purple
+        // eyes"*. Of three new stories offered he picked THEIR OWN SHADOWS.
         //
-        // One sentence: she whispers, the lights fail, and every time they come back the dead stand closer behind each player,
-        // until their hands close over the players' eyes and they are let in. The travelling thing is THE DARK: it leaves her
-        // eyes, takes the court in three blackouts, and ends in the players' eyes.
+        // One sentence: Nemu whispers, and every player's own shadow peels up off the ground behind them, stands, puts its
+        // hands over their eyes and pours into them. The travelling thing is a ring of dark from her feet: it reaches each
+        // player and their shadow wakes.
         //
-        //   A THE WHISPER 0.00-1.10, close from her left: she looks up (0.15); finger to her lips (0.30); her eyes ignite and a
-        //     ring of dark goes out over the court from her feet (0.42); she lets her hand fall open (1.00).
-        //   B THE FLICKER 1.10-3.80: behind her, watching the players, who do not know. The lights fail three times. In the
-        //     first blackout (1.50) a pair of violet eyes opens far behind every player; when the light comes back a tall ghost
-        //     stands there on a sigil. Second blackout (2.20): the eyes of the dead open all round the plaza, and the lens cuts
-        //     closer, low; the ghosts are halfway. Third (2.90): cut in front of a player; the ghost is right behind them,
-        //     looming over their head.
-        //   C TAKEN 3.80-5.90: still pushing in on that player, long black hands slide round their head and close over their
-        //     eyes (3.80-4.12); they jolt; the ghost sinks into them, smoke pulled in after it, a ring of dark at their feet
-        //     (4.24-4.58); their eyes open violet (4.62); everyone turns to stare into the lens as it pulls back to hold them
-        //     all, the aura on them (4.72-5.90). Hand back with no black-out.
+        //   S1 HER (0.00-0.90): close on her face under her fringe; her eyes ignite violet (0.32); a whisper.
+        //   S2 THE COURT (0.90-2.85), from beside her, in daylight: a ring of dark goes out from her feet across the court; as it
+        //     reaches each player their shadow turns ink-black and twitches, then peels up off the ground, hinged at their feet,
+        //     and stands behind them, taller than them, its eyes opening violet.
+        //   S3 TAKEN (2.85-5.90), one eased path: in front of one player, their shadow behind them; its arms stretch round their
+        //     head and its hands close over their eyes (3.00-3.60); they flinch and fight it; it pours into them (3.95-4.55);
+        //     their eyes open violet (4.60); they turn to the lens head first; the lens pulls back to hold every player staring,
+        //     the aura on them and no shadow under any of them.
         //
-        // Rules the owner set that still hold: black and one violet (no white, no candle amber); no Kuro; after the entry no
-        // ghost is drawn on a player, only the aura (`NemuAura`); below 6 s. Nothing here runs on Update and nothing is random:
-        // every row is typed, every piece posed from the scene clock (`NemuSmokeBatch`, `Shaders/NemuSmoke`).
-        // ⚠️ THE PLAYERS ARE THE REAL ONES (`StageOthers`), animated with their own rigs' clips (`RootedMotion`).
+        // Readability first (v3 to v5 the owner could not follow them): daylight, one idea per shot, the effect in the same
+        // frame as its cause, nothing on screen that the story does not explain.
+        // Rules that still hold: black and one violet (no white, no amber); no Kuro; after the entry no ghost is drawn on a
+        // player, only the aura (`NemuAura`); below 6 s; nothing chonky; nothing flies. Nothing here runs on Update and nothing
+        // is random: every piece is posed from the scene clock.
+        // ⚠️ THE PLAYERS ARE THE REAL ONES (`StageOthers`), acted by turning their own bones (`NmAct`); each one's shadow is a
+        // second copy of THEIR body in `Shaders/NemuDead` (black smoke, a broken violet rim), flattened onto the ground along
+        // the sun and stood up from it (`NmShade`).
         // =========================================================================================
-        private const float NmIgnite = .42f, NmB = 1.10f;
-        /// <summary>The three blackouts: when each starts. Each lasts <see cref="NmDark"/>, with a stutter at its start.</summary>
-        private static readonly float[] NmFlicker = { 1.50f, 2.20f, 2.90f };
-        private const float NmDark = .19f;
-        private const float NmC = 3.80f, NmHandsIn = 3.80f, NmHandsShut = 4.12f, NmSink = 4.24f, NmSunk = 4.58f, NmEyesOpen = 4.62f;
-        private const float NmStare = 4.72f, NmPullBack = 4.78f, NmWide = 5.42f;
-        /// <summary>How far behind each player the dead stand after each blackout (metres), and how tall they are (times the player).</summary>
-        // (film r13: at 5.2 and 2.5 m, 1.75 times a player, the first two were specks in the dark.)
-        private static readonly float[] NmBehind = { 3.3f, 1.6f, .42f };
-        private const float NmTall = 2.1f;
-        /// <summary>
-        /// The eyes of the dead opening all round the plaza in the second and third blackouts: (angle round the players' middle
-        /// in degrees, metres out from it, height, which blackout it opens in).
-        /// </summary>
-        private static readonly Vector4[] NmCrowdEyes =
-        {
-            new Vector4(-70f, 10.5f, 2.1f, 1), new Vector4(-52f, 12.8f, 1.6f, 1), new Vector4(-31f, 13.6f, 2.6f, 1), new Vector4(-12f, 11.9f, 1.9f, 1),
-            new Vector4(8f, 14.2f, 2.3f, 1), new Vector4(27f, 12.4f, 1.7f, 1), new Vector4(46f, 13.1f, 2.4f, 1), new Vector4(64f, 10.9f, 2.0f, 1),
-            new Vector4(-84f, 9.6f, 1.8f, 2), new Vector4(-61f, 9.1f, 2.7f, 2), new Vector4(-40f, 10.2f, 1.5f, 2), new Vector4(-20f, 9.4f, 2.2f, 2),
-            new Vector4(-3f, 10.8f, 1.6f, 2), new Vector4(17f, 9.7f, 2.5f, 2), new Vector4(36f, 10.1f, 1.9f, 2), new Vector4(55f, 9.3f, 2.2f, 2),
-            new Vector4(79f, 9.9f, 1.7f, 2), new Vector4(-95f, 12.0f, 2.4f, 2), new Vector4(92f, 12.6f, 2.0f, 2), new Vector4(-45f, 15.5f, 3.0f, 2),
-        };
-        /// <summary>How many motes of violet rise round her from the ignite.</summary>
-        private const int NmMotes = 14;
-        /// <summary>Strands of smoke drifting across the lens in the close shot: (from, screen x from, x to, y, share of eye-to-focus, length).</summary>
-        private static readonly (float From, float X0, float X1, float Y, float Near, float Length)[] NmLensSmoke =
-        {
-            (.35f, -.95f, .7f, .38f, .45f, .5f), (.6f, .95f, -.6f, -.42f, .5f, .6f),
-        };
-        /// <summary>With nobody on court the dead approach the lens at these spots instead: (angle off her facing, metres out).</summary>
-        private static readonly Vector2[] NmEmptySpots = { new Vector2(-18f, 5.5f), new Vector2(14f, 6.2f) };
+        private const float NmIgnite = .32f, NmWide = .90f, NmRingOut = 1.0f, NmRingIn = 1.45f;
+        private const float NmPeel = 1.55f, NmStood = 2.5f, NmClose = 2.85f;
+        private const float NmHandsIn = 3.0f, NmHandsShut = 3.6f, NmStruggled = 4.1f, NmPour = 3.95f, NmPoured = 4.55f;
+        private const float NmEyesOpen = 4.60f, NmTurn = 4.65f, NmPullBack = 4.75f;
+        /// <summary>How long the impact frame as the hands shut lasts: two film frames (the first inverted).</summary>
+        private const float NmImpact = .067f;
+        /// <summary>How much bigger than its player a shadow stands, how far behind them and how far off to one side (metres), so
+        /// it looms over a shoulder where the lens in front can see it (film r22: straight behind them it was hidden).</summary>
+        private const float NmShadeTall = 1.35f, NmShadeBehind = .45f, NmShadeAside = .4f;
+        /// <summary>The ring of dark from her feet: how much further than the furthest player it goes (metres).</summary>
+        private const float NmRingPast = 1.5f;
 
         /// <summary>A FILM OUTSIDE PLAY: the editor's cutscene film still names a companion here (no longer drawn by Nemu's).</summary>
         public static GhostPetCompanion FilmCompanion;
 
+        /// <summary>One of their bones and how it was when the cutscene began.</summary>
+        private struct NmBone
+        {
+            public Transform T;
+            public Quaternion Rot;
+            public Vector3 Pos, Scale;
+            public void Reset() { if (T != null) { T.localRotation = Rot; T.localPosition = Pos; T.localScale = Scale; } }
+        }
+
+        /// <summary>A player's shadow, stood up: a copy of their body in black smoke, hinged at the feet.</summary>
+        private sealed class NmShade
+        {
+            public Transform Hinge, Flat;
+            public Renderer[] Renderers;
+            public Material Skin;
+            public NmBone Root, Torso, Head, ArmL, ArmR;
+            /// <summary>Each arm's palm in its bone's space, and which local axis runs down the arm.</summary>
+            public Vector3 PalmL, PalmR;
+            public int AxisL = 1, AxisR = 1;
+            public bool HasPalmL, HasPalmR;
+            /// <summary>Its eyes, in its head's space.</summary>
+            public Vector3 EyesLocal;
+            /// <summary>Which way their shadow lies on the court (scene space, flat), and how long it is (times their height).</summary>
+            public Vector3 Lies;
+            public float Length = 1f;
+        }
+
         private sealed class NmVictim
         {
             public GameObject Holder;
-            public Transform AnimRoot, Model, Head;
-            public Transform[] Bones;
-            public Quaternion[] Tmp;
-            public Vector3[] TmpPos;
-            public AnimationClip Shock, Struggle;
+            public Renderer[] Renderers;
+            public Transform Head;
+            public NmBone Root, Torso, HeadBone, ArmL, ArmR;
+            public NmShade Shade;
             public Vector3 Home, FaceLocal, FaceAt;
-            public float Yaw, Top = 1.7f, Width = .7f, FaceDepth = .3f, FaceTop = .5f;
-            public int Seat, Sigil, Ring;
-            public bool Real = true;
+            public float Yaw, Reach, Top = 1.7f, Width = .7f, FaceDepth = .3f, FaceTop = .5f;
+            /// <summary>When the ring of dark reaches them: their shadow wakes.</summary>
+            public float Woken;
+            public int Seat;
+            public bool ShadowsOff;
         }
 
         private readonly List<NmVictim> _nmVictims = new List<NmVictim>(4);
         private NemuSmokeBatch _nmSmoke;
-        private int _nmRing;
         private Vector3 _nmWay = Vector3.forward, _nmCentre = new Vector3(0f, 0f, 6f);
         private Vector3 _nmEye = new Vector3(-.72f, 1.08f, 1.75f), _nmLook = new Vector3(0f, .98f, 0f);
-        private Vector3 _nmFaceLocal = Vector3.forward;
-        private float _nmFaceDepth = .3f, _nmHeadTop = 1.2f;
+        private Vector3 _nmFaceLocal = Vector3.forward, _nmEyesLocal;
+        private float _nmFaceDepth = .3f, _nmHeadTop = 1.2f, _nmRingReach = 8f;
         private Material _nmInk;
 
         // ------------------------------------------------------------------ build
 
         private void BuildNemu(CharacterMotor source)
         {
-            _nmSmoke = new NemuSmokeBatch(_root.transform, "NmDead", 900, 1200, 16);
-            // The ring of dark that goes out from her feet when her eyes ignite.
-            _nmRing = Add("NmRing", VfxShapes.Collar(64, .02f, .93f), new Color(.52f, .2f, .92f, .9f), 1.1f);
-            if (_head != null) NemuAura.MeasureFace(_head, _bodyRenderers, _root.transform.forward, out _nmFaceLocal, out _nmFaceDepth, out _nmHeadTop);
+            _nmSmoke = new NemuSmokeBatch(_root.transform, "NmShadows", 600, 900);
+            if (_head != null)
+            {
+                NemuAura.MeasureFace(_head, _bodyRenderers, _root.transform.forward, out _nmFaceLocal, out _nmFaceDepth, out _nmHeadTop);
+                // HER EYES, in the head's own space, so they ride its pitch. They are the two black blocks on her face just under
+                // her fringe (owner on v6, the glows sitting on the fringe above them: *"what even is this"*).
+                Vector3 face = _head.rotation * _nmFaceLocal;
+                _nmEyesLocal = _head.InverseTransformPoint(_head.position + _head.up * (_nmHeadTop * .1f - .17f) + face * (_nmFaceDepth - .01f));
+            }
 
             StageOthers(3.0f, 8.5f);
             Vector3 centre = Vector3.zero;
-            for (int i = 0; i < _others.Count; i++) { _nmVictims.Add(BuildVictim(_others[i], i)); centre += _others[i].Home; }
+            float far = 0f;
+            for (int i = 0; i < _others.Count; i++)
+            {
+                _nmVictims.Add(BuildVictim(_others[i], i));
+                centre += _others[i].Home; far = Mathf.Max(far, _others[i].Reach);
+            }
             if (_nmVictims.Count > 0)
             {
                 centre /= _nmVictims.Count; centre.y = 0f;
                 _nmCentre = centre;
                 if (centre.sqrMagnitude > .04f) _nmWay = centre.normalized;
-            }
-            else
-            {
-                // Nobody on court: two of the dead come for the lens instead.
-                for (int i = 0; i < NmEmptySpots.Length; i++)
-                {
-                    var spot = NmEmptySpots[i];
-                    var home = Quaternion.Euler(0f, spot.x, 0f) * Vector3.forward * spot.y;
-                    _nmVictims.Add(new NmVictim { Home = home, FaceAt = home + Vector3.up * 1.2f, Yaw = Mathf.Atan2(-home.x, -home.z) * Mathf.Rad2Deg, Real = false, Seat = i });
-                }
-                _nmCentre = Vector3.forward * 5.8f;
-            }
-            foreach (var v in _nmVictims)
-            {
-                v.Sigil = Add("NmSigil", VfxShapes.WardCircle(12, 4, .03f, 7 + v.Seat), new Color(.55f, .2f, .95f, .85f), 1.2f);
-                v.Ring = Add("NmSinkRing", VfxShapes.Collar(48, .02f, .9f), new Color(.5f, .18f, .9f, .9f), 1.1f);
+                _nmRingReach = far + NmRingPast;
+                // The ring reaches each player in turn, nearest first.
+                foreach (var v in _nmVictims) v.Woken = Mathf.Lerp(NmRingOut, NmRingIn, Mathf.Sqrt(Mathf.Clamp01(v.Reach / _nmRingReach)));
             }
         }
 
         private NmVictim BuildVictim(Other other, int index)
         {
-            var v = new NmVictim { Holder = other.Holder, Home = other.Home, Yaw = other.Yaw, Seat = index };
-            CharacterMotor live = null;
+            var v = new NmVictim { Holder = other.Holder, Renderers = other.Renderers, Home = other.Home, Yaw = other.Yaw, Reach = other.Reach, Seat = index };
             var round = GameServices.Round;
             if (round != null)
                 foreach (var p in round.Players)
-                    if (p != null && other.Holder.name == "IntroductionOther-P" + (p.PlayerSlot + 1)) { live = p; v.Seat = p.PlayerSlot; break; }
-            var animator = live != null ? live.GetComponent<CharacterVisual>()?.Model?.GetComponentInChildren<Animator>() : null;
-            if (animator != null)
-            {
-                foreach (var t in other.Holder.GetComponentsInChildren<Transform>(true)) if (t.name == animator.transform.name) { v.AnimRoot = t; break; }
-                var set = GeneratedMotionAssets.For(RootedMotion.Folder, DanceClip.ResourceName(animator.transform));
-                if (set != null && set.Clips != null)
-                    foreach (var clip in set.Clips)
-                    {
-                        if (clip == null) continue;
-                        if (clip.name == RootedMotion.Breakout) v.Shock = clip;
-                        else if (clip.name == RootedMotion.Struggle) v.Struggle = clip;
-                    }
-            }
-            if (other.Holder.transform.childCount > 0) v.Model = other.Holder.transform.GetChild(0);
-            foreach (var t in other.Holder.GetComponentsInChildren<Transform>(true)) if (t.name == "head") { v.Head = t; break; }
-            v.Bones = other.Holder.GetComponentsInChildren<Transform>(true);
-            v.Tmp = new Quaternion[v.Bones.Length]; v.TmpPos = new Vector3[v.Bones.Length];
+                    if (p != null && other.Holder.name == "IntroductionOther-P" + (p.PlayerSlot + 1)) { v.Seat = p.PlayerSlot; break; }
+            ReadBones(other.Holder.transform, out v.Root, out v.Torso, out v.HeadBone, out v.ArmL, out v.ArmR);
+            v.Head = v.HeadBone.T;
             bool any = false; Bounds b = default;
             foreach (var r in other.Renderers) { if (r == null) continue; if (!any) { b = r.bounds; any = true; } else b.Encapsulate(r.bounds); }
             if (any)
@@ -159,51 +149,99 @@ namespace TumbangPreso.Visual
                 v.Width = Mathf.Clamp(Mathf.Max(b.size.x, b.size.z), .4f, 1.2f);
             }
             if (v.Head != null) NemuAura.MeasureFace(v.Head, other.Renderers, other.Holder.transform.forward, out v.FaceLocal, out v.FaceDepth, out v.FaceTop);
-            // Where their eyes are, in the scene (film r13: framed from the body's height the lens sat on their hair and the hands
-            // over their eyes were under the frame).
-            v.FaceAt = v.Head != null
-                ? _root.transform.InverseTransformPoint(v.Head.position + Vector3.up * (v.FaceTop * .28f) + other.Holder.transform.forward * v.FaceDepth)
-                : v.Home + Vector3.up * (v.Top * .7f);
-            // Hidden until B: switched off at the holder (`SetVisibleForCapture` would turn renderers back on).
-            other.Holder.SetActive(false);
+            Vector3 faceWorld = v.Head != null
+                ? v.Head.position + Vector3.up * (v.FaceTop * .28f) + other.Holder.transform.forward * v.FaceDepth
+                : other.Holder.transform.position + Vector3.up * (v.Top * .7f);
+            v.FaceAt = _root.transform.InverseTransformPoint(faceWorld);
+            v.Shade = BuildShade(v, faceWorld);
             return v;
+        }
+
+        private static void ReadBones(Transform holder, out NmBone root, out NmBone torso, out NmBone head, out NmBone armL, out NmBone armR)
+        {
+            root = torso = head = armL = armR = default;
+            foreach (var t in holder.GetComponentsInChildren<Transform>(true))
+            {
+                var bone = new NmBone { T = t, Rot = t.localRotation, Pos = t.localPosition, Scale = t.localScale };
+                switch (t.name)
+                {
+                    case "root": if (root.T == null) root = bone; break;
+                    case "torso": if (torso.T == null) torso = bone; break;
+                    case "head": if (head.T == null) head = bone; break;
+                    case "arm-left": if (armL.T == null) armL = bone; break;
+                    case "arm-right": if (armR.T == null) armR = bone; break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Their shadow: a second copy of their body, in black smoke, under a hinge at their feet whose local z runs the way the
+        /// sun throws their shadow. Flattened along that z and laid down by 90 degrees, it is the shadow on the court; stood up,
+        /// it is them in black, taller.
+        /// </summary>
+        private NmShade BuildShade(NmVictim v, Vector3 faceWorld)
+        {
+            var shader = Resources.Load<Shader>("Shaders/NemuDead");
+            if (shader == null) return null;
+            var shade = new NmShade();
+            // Which way their shadow lies: out to one side and back, long, toward where it will stand over their shoulder. Not
+            // the sun's way (films r22 to r24: the phase lens shows no cast shadows, and the sun's way often hid it behind them).
+            Vector3 fwd = Quaternion.Euler(0f, v.Yaw, 0f) * Vector3.forward;
+            Vector3 aside = Vector3.Cross(Vector3.up, fwd) * ((v.Seat & 1) == 0 ? 1f : -1f);
+            shade.Lies = (aside - fwd * .5f).normalized;
+            shade.Length = 1.6f;
+
+            var hinge = new GameObject("NmShadow" + v.Seat).transform;
+            hinge.SetParent(_root.transform, false);
+            hinge.localPosition = v.Home + Vector3.up * .02f;
+            hinge.localRotation = Quaternion.LookRotation(shade.Lies, Vector3.up);
+            var flat = new GameObject("Flat").transform;
+            flat.SetParent(hinge, false);
+            var copy = Object.Instantiate(v.Holder, _root.transform, false);
+            copy.name = "Body";
+            copy.transform.SetParent(flat, true);
+            shade.Hinge = hinge; shade.Flat = flat;
+            shade.Skin = new Material(shader) { name = "NemuShadow" + v.Seat };
+            shade.Skin.SetFloat("_Seed", v.Seat * 3.1f + .7f);
+            VfxRenderTag.Own(hinge.gameObject, shade.Skin);
+            shade.Renderers = copy.GetComponentsInChildren<Renderer>(true);
+            foreach (var r in shade.Renderers)
+            {
+                var mats = new Material[r.sharedMaterials.Length];
+                for (int i = 0; i < mats.Length; i++) mats[i] = shade.Skin;
+                r.sharedMaterials = mats;
+                r.SetPropertyBlock(null);
+                r.shadowCastingMode = ShadowCastingMode.Off; r.receiveShadows = false;
+                VfxRenderTag.Attach(r.gameObject);
+            }
+            ReadBones(copy.transform, out shade.Root, out shade.Torso, out shade.Head, out shade.ArmL, out shade.ArmR);
+            shade.HasPalmL = Palm(shade.ArmL.T, shade.Renderers, out shade.PalmL, out shade.AxisL);
+            shade.HasPalmR = Palm(shade.ArmR.T, shade.Renderers, out shade.PalmR, out shade.AxisR);
+            if (shade.Head.T != null) shade.EyesLocal = shade.Head.T.InverseTransformPoint(faceWorld);
+            return shade;
+        }
+
+        /// <summary>Where an arm's palm is in its bone's space, and the bone's local axis that runs down the arm.</summary>
+        private static bool Palm(Transform arm, Renderer[] renderers, out Vector3 palm, out int axis)
+        {
+            palm = Vector3.down * .3f; axis = 1;
+            if (arm == null) return false;
+            foreach (var r in renderers)
+            {
+                if (!(r is SkinnedMeshRenderer skin) || skin.sharedMesh == null) continue;
+                int bone = System.Array.IndexOf(skin.bones, arm);
+                if (bone < 0 || !CharacterVisual.PalmCentre(skin, bone, out palm)) continue;
+                Vector3 a = new Vector3(Mathf.Abs(palm.x), Mathf.Abs(palm.y), Mathf.Abs(palm.z));
+                axis = a.x >= a.y && a.x >= a.z ? 0 : (a.y >= a.z ? 1 : 2);
+                return true;
+            }
+            return false;
         }
 
         // ------------------------------------------------------------------ the clock's shape
 
         private Vector3 NmW(Vector3 local) => _root.transform.TransformPoint(local);
         private Vector3 NmWDir(Vector3 local) => _root.transform.TransformDirection(local);
-
-        /// <summary>
-        /// 0 lights on, 1 a blackout. Each failure stutters first (out, back, out) like a dying tube, then holds dark.
-        /// Reduced effects keeps a short, soft dip instead of a stutter.
-        /// </summary>
-        private float NmBlack(float t)
-        {
-            float black = 0f;
-            foreach (float f in NmFlicker)
-            {
-                if (t < f || t > f + NmDark + .05f) continue;
-                float u = t - f;
-                float b;
-                if (_reducedEffects) b = Mathf.Sin(Mathf.Clamp01(u / (NmDark + .05f)) * Mathf.PI) * .7f;
-                else if (u < .035f) b = 1f;
-                else if (u < .065f) b = .15f;
-                else if (u < NmDark) b = 1f;
-                else b = 1f - (u - NmDark) / .05f;
-                black = Mathf.Max(black, b);
-            }
-            return black;
-        }
-
-        /// <summary>How many blackouts have reached their dark (0 to 3): which stage the dead are at.</summary>
-        private static int NmStage(float t)
-        {
-            int n = 0;
-            foreach (float f in NmFlicker) if (t >= f + .1f) n++;
-            return n;
-        }
-
         private static Vector3 NmForward(NmVictim v) => Quaternion.Euler(0f, v.Yaw, 0f) * Vector3.forward;
 
         // ------------------------------------------------------------------ sample
@@ -214,66 +252,45 @@ namespace TumbangPreso.Visual
             _nmSmoke.SetView(NmW(_nmEye), NmW(_nmLook));
             Vector3 up = Vector3.up;
 
-            // ------------------------------------------------------------- A: her eyes, the ring of dark, the motes
+            // ------------------------------------------------------------- S1: her eyes
             if (_head != null)
             {
-                Vector3 look = _head.rotation * _nmFaceLocal; look.y = 0f;
-                if (look.sqrMagnitude < 1e-4f) look = _root.transform.forward;
-                look.Normalize();
-                Vector3 eyes = _head.position + Vector3.up * (_nmHeadTop * .13f) + look * (_nmFaceDepth + .015f);
-                float lit = Ease(NmIgnite, NmIgnite + .08f, t) * (1f + 1.4f * Flash(t, NmIgnite + .06f, .12f)) * (1f - Ease(Seconds - .5f, Seconds, t));
-                NemuAura.Eyes(_nmSmoke, eyes, look, _nmHeadTop * .30f, .062f, lit * 2.1f, NmW(_nmEye));
-                // A glint as they ignite: a four-pointed star of violet light.
-                float glint = Flash(t, NmIgnite + .05f, .1f);
-                if (glint > 0f && t < NmB) Glint(eyes + look * .05f, .07f, 1.6f * glint, Vector3.Cross(Vector3.up, look), .45f * glint);
-            }
-            {
-                float u = Mathf.Clamp01((t - NmIgnite) / .7f);
-                float ring = t >= NmIgnite && t < NmIgnite + .7f ? 1f - u : 0f;
-                float r = Mathf.Lerp(.3f, 9f, 1f - (1f - u) * (1f - u));
-                Place(_nmRing, up * .03f, new Vector3(r, 1f, r), Quaternion.identity, ring);
-            }
-            for (int j = 0; j < NmMotes && t < NmB + .1f; j++)
-            {
-                float phase = Mathf.Repeat(t * (.45f + .04f * (j % 5)) + j * .371f, 1f);
-                float a = (j * 137.5f) * Mathf.Deg2Rad;
-                float rad = .35f + .25f * Mathf.Repeat(j * .53f, 1f);
-                Vector3 at = new Vector3(Mathf.Sin(a) * rad, .1f + phase * 1.9f, Mathf.Cos(a) * rad * .7f);
-                float on = Ease(NmIgnite, NmIgnite + .2f, t) * Mathf.Sin(phase * Mathf.PI);
-                _nmSmoke.Light(NmW(at), .045f, on * 1.1f, NemuSmokeBatch.Violet);
-            }
-            // Thin strands of smoke drift across the lens in the close shot.
-            foreach (var m in NmLensSmoke)
-            {
-                if (t < m.From || t > m.From + .9f || t > NmB) continue;
-                float u = (t - m.From) / .9f;
-                Vector3 toward = (_nmLook - _nmEye).normalized;
-                Vector3 right = Vector3.Cross(up, toward).normalized;
-                Vector3 at = _nmEye + toward * (Vector3.Distance(_nmEye, _nmLook) * m.Near) + right * Mathf.Lerp(m.X0, m.X1, u) * .55f + up * (m.Y * .35f);
-                _nmSmoke.Wisp(NmW(at), NmWDir(right + up * .15f), .07f, m.Length, .45f * Mathf.Sin(u * Mathf.PI), m.From, u * .5f, .8f);
+                Vector3 eyes = _head.TransformPoint(_nmEyesLocal);
+                Vector3 look = _head.rotation * _nmFaceLocal;
+                float lit = Ease(NmIgnite, NmIgnite + .06f, t) * (1f + 1.4f * Flash(t, NmIgnite + .05f, .1f)) * (1f - Ease(Seconds - .5f, Seconds, t));
+                // On her two eyes, as wide apart as they are (v6: at a quarter of the head's height they sat outside them).
+                NemuAura.Eyes(_nmSmoke, eyes, look, .2f, .03f, lit * 2.3f, NmW(_nmEye));
+                float glint = Flash(t, NmIgnite + .04f, .1f);
+                if (glint > 0f && t < NmWide) Glint(eyes + look * .05f, .06f, 1.6f * glint, Vector3.Cross(Vector3.up, look), .4f * glint);
             }
 
-            // ------------------------------------------------------------- B and C: the dead behind each player
+            // ------------------------------------------------------------- S2: the ring of dark from her feet to the players
+            // A band of black smoke rolling out over the court, its strands laid along the ring (films r22 to r26: drawn as a
+            // flat ring piece it never showed on the court at all).
+            if (t >= NmRingOut)
+            {
+                float u = Mathf.Clamp01((t - NmRingOut) / (NmRingIn - NmRingOut + .25f));
+                float on = u < 1f ? 1f - u * u : 0f;
+                float r = Mathf.Lerp(.4f, _nmRingReach, Mathf.Sqrt(u));
+                const int strands = 64;
+                for (int j = 0; j < strands && on > .01f; j++)
+                {
+                    float a = (j + .5f * (j & 1)) / strands * Mathf.PI * 2f;
+                    Vector3 round = new Vector3(Mathf.Sin(a), 0f, Mathf.Cos(a));
+                    Vector3 along = new Vector3(Mathf.Cos(a), 0f, -Mathf.Sin(a));
+                    // Three rows: the leading edge and the smoke dragging behind it (film r27: two thin rows were faint grey
+                    // scratches on a sunlit court).
+                    for (int row = 0; row < 3; row++)
+                    {
+                        float back = row * Mathf.Min(.6f, r * .12f);
+                        Vector3 at = round * Mathf.Max(.3f, r - back) + up * (.15f + .1f * row);
+                        _nmSmoke.Wisp(NmW(at), NmWDir(along), .42f - .1f * row, Mathf.Max(.45f, r * Mathf.PI * 2f / strands * 1.7f),
+                                      on * (1f - .25f * row), j * .037f + row * .33f, u * .5f, .9f);
+                    }
+                }
+            }
+
             for (int i = 0; i < _nmVictims.Count; i++) SampleVictim(_nmVictims[i], i, t);
-
-            // ------------------------------------------------------------- the eyes of the dead round the plaza
-            float black = NmBlack(t);
-            float crowdOut = 1f - Ease(NmC + .1f, NmC + .5f, t);
-            for (int k = 0; k < NmCrowdEyes.Length; k++)
-            {
-                var row = NmCrowdEyes[k];
-                float opens = NmFlicker[(int)row.w] + .04f + .006f * k;
-                if (t < opens || crowdOut <= 0f) continue;
-                // In the light they are faint; in the dark they burn.
-                float on = Ease(opens, opens + .05f, t) * crowdOut * Mathf.Lerp(.35f, 1f, black);
-                Vector3 dir = Quaternion.Euler(0f, row.x, 0f) * _nmWay;
-                Vector3 at = _nmCentre + dir * row.y + up * row.z;
-                Vector3 side = Vector3.Cross(up, -dir).normalized;
-                float blink = Mathf.Repeat(t * .7f + k * .37f, 1f) > .94f ? .1f : 1f;
-                for (int e = -1; e <= 1; e += 2)
-                    _nmSmoke.Light(NmW(at + side * (.14f * e)), .3f, on * blink * 2.5f, NemuSmokeBatch.Violet);
-            }
-
             _nmSmoke.End(t);
         }
 
@@ -288,149 +305,66 @@ namespace TumbangPreso.Visual
         private void SampleVictim(NmVictim v, int index, float t)
         {
             Vector3 up = Vector3.up;
-            bool on = t >= NmB;
-            if (v.Real && v.Holder.activeSelf != on) v.Holder.SetActive(on);
-            if (!on) return;
             Vector3 fwd = NmForward(v);
-            Vector3 side = Vector3.Cross(up, fwd);
-            float lag = .06f * index;
-            int stage = NmStage(t);
-            float h = v.Top * NmTall;
+            float lag = .05f * index;
 
-            // ---- WHERE THE DEAD ONE STANDS: frozen between blackouts, nearer after each.
-            float offSide = ((index % 3) - 1) * .35f;
-            float behind = stage > 0 ? NmBehind[stage - 1] : NmBehind[0];
-            Vector3 feet = v.Home - fwd * behind + side * (offSide * Mathf.Min(1f, behind / 2.5f));
-            // Right behind them it leans over their head.
-            float lean = stage >= 3 ? .18f : 0f;
-            Vector3 centre = feet + up * (h * .5f) + fwd * (lean * h * .2f);
+            // ---- THEY ACT FIRST: their shadow copies them, and its hands follow their head.
+            NmAct(v, index, t);
 
-            // ---- C: IT SINKS INTO THEM
-            float sink = Ease(NmSink + lag, NmSunk + lag, t);
-            Vector3 chest = v.Home + up * (v.Top * .55f);
-            Vector3 drawn = Vector3.Lerp(centre, chest, sink * sink);
-            float height = Mathf.Lerp(h, v.Top * .45f, sink);
-            bool present = stage >= 1;
-            float density = present ? (1f - sink * sink) : 0f;
-            float scream = Mathf.Max(.12f, Ease(NmHandsShut + lag, NmSink + lag, t));
-            float arms = stage >= 3 ? Mathf.Lerp(.25f, .62f, Ease(NmHandsIn - .2f + lag, NmHandsIn + lag, t)) : .15f;
-            Vector3 toEye = _nmEye - drawn; toEye.y = 0f;
-            float facing = toEye.sqrMagnitude > 1e-4f ? Mathf.Clamp01((Vector3.Dot(-fwd, toEye.normalized) + .9f) * 1.2f) : 1f;
-            // In a blackout only its eyes show (`NemuInk`'s _Black keeps bright violet and darkens everything else).
-            if (present && density > .01f)
-                _nmSmoke.Ghost(NmW(drawn), height, 0f, 0f, density, .13f + .29f * index, Mathf.Max(facing, .6f), arms, scream);
-            // ITS EYES, burning: in a blackout they are all there is of it (film r13: the shader's pinpoints alone did not survive
-            // the dark), and in the light they keep it from being a cut-out.
-            if (present && density > .01f)
+            // Their real shadow leaves them the moment the ring reaches them (and they never get it back in the cutscene).
+            bool off = t >= v.Woken;
+            if (off != v.ShadowsOff)
             {
-                float black = NmBlack(t);
-                Vector3 headAt = drawn + up * (height * .345f);
-                Vector3 toLensFlat = _nmEye - headAt; toLensFlat.y = 0f;
-                toLensFlat = toLensFlat.sqrMagnitude > 1e-4f ? toLensFlat.normalized : -fwd;
-                Vector3 eyeSide = Vector3.Cross(up, toLensFlat);
-                float burn = Mathf.Lerp(.55f, 2.5f, black) * density * Mathf.Max(facing, .6f);
-                for (int e = -1; e <= 1; e += 2)
-                    _nmSmoke.Light(NmW(headAt + toLensFlat * (height * .06f) + eyeSide * (e * height * .03f)), height * Mathf.Lerp(.045f, .07f, black), burn, NemuSmokeBatch.Violet);
+                v.ShadowsOff = off;
+                foreach (var r in v.Renderers) if (r != null) r.shadowCastingMode = off ? ShadowCastingMode.Off : ShadowCastingMode.On;
             }
 
-            // Its sigil on the court, flaring as it arrives, fading as it sinks; smoke strands rising off it.
-            if (present)
-            {
-                float arrived = NmFlicker[stage - 1] + NmDark;
-                float flare = 1f + 1.5f * Mathf.Clamp01(1f - (t - arrived) / .25f);
-                float r = .55f * h / 1.75f;
-                Place(v.Sigil, feet + up * .025f, new Vector3(r, 1f, r), Quaternion.Euler(0f, v.Yaw + 30f * stage, 0f),
-                      Mathf.Clamp01(.45f * flare) * (1f - sink));
-                for (int j = 0; j < 4; j++)
-                {
-                    float phase = Mathf.Repeat(t * .55f + j * .25f + index * .13f, 1f);
-                    float a = (j * 90f + index * 40f) * Mathf.Deg2Rad;
-                    Vector3 at = feet + new Vector3(Mathf.Cos(a), 0f, Mathf.Sin(a)) * (r * .55f) + up * (.15f + phase * h * .35f);
-                    _nmSmoke.Wisp(NmW(at), Vector3.up, .06f, .5f + phase * .4f, .5f * Mathf.Sin(phase * Mathf.PI) * (1f - sink),
-                                  index * .3f + j * .1f, phase * .6f, .9f);
-                }
-            }
-            else Place(v.Sigil, Vector3.zero, Vector3.one, Quaternion.identity, 0f);
-
-            // Smoke pulled into them after it as it sinks.
-            if (sink > 0f && sink < 1f)
-                for (int j = 0; j < 9; j++)
-                {
-                    float a = (j * 40f + index * 17f) * Mathf.Deg2Rad;
-                    Vector3 outDir = (side * Mathf.Cos(a) + up * Mathf.Sin(a) * .8f - fwd * .4f).normalized;
-                    float reach = (1.4f - 1.2f * sink) * (.7f + .3f * Mathf.Repeat(j * .41f, 1f));
-                    _nmSmoke.Wisp(NmW(chest + outDir * reach * .5f), NmWDir(outDir), .05f, reach, .7f * Mathf.Sin(sink * Mathf.PI),
-                                  j * .07f + index * .2f, sink * .5f, 1f);
-                }
-
-            // A ring of dark goes out from their feet as it is in, and a flash at the chest.
-            {
-                float u = Mathf.Clamp01((t - (NmSunk + lag)) / .45f);
-                float ring = t >= NmSunk + lag && u < 1f ? 1f - u : 0f;
-                float r = Mathf.Lerp(.3f, 2.6f, 1f - (1f - u) * (1f - u));
-                Place(v.Ring, v.Home + up * .03f, new Vector3(r, 1f, r), Quaternion.identity, ring);
-                float flash = Flash(t, NmSunk + lag, .1f);
-                if (flash > 0f) _nmSmoke.Light(NmW(chest), v.Width * 1.4f, 1.3f * flash, NemuSmokeBatch.Violet);
-            }
-
-            if (!v.Real) return;
-
-            // ---- THE HANDS over their eyes, from behind (3.80-4.12), gone into them with the rest of it.
-            Vector3 look = NmWDir(fwd), face;
+            // Their head, as it is now (it shakes and turns).
+            Vector3 look = NmWDir(fwd), face, headMid;
+            float headR;
             if (v.Head != null)
             {
                 look = v.Head.rotation * v.FaceLocal; look.y = 0f;
                 look = look.sqrMagnitude > 1e-4f ? look.normalized : NmWDir(fwd);
                 face = v.Head.position + Vector3.up * (v.FaceTop * .28f) + look * (v.FaceDepth + .015f);
+                headMid = face - look * v.FaceDepth;
+                headR = Mathf.Max(v.FaceDepth, v.Width * .42f) + .03f;
             }
-            else face = NmW(v.Home + up * (v.Top * .78f) + fwd * (v.Width * .5f));
+            else
             {
-                float reachIn = Ease(NmHandsIn + lag, NmHandsShut + lag, t);
-                float gone = Ease(NmSink + lag + .1f, NmSunk + lag, t);
-                float handOn = Ease(NmHandsIn + lag, NmHandsIn + lag + .06f, t) * (1f - gone);
-                if (handOn > .01f)
+                face = NmW(v.Home + up * (v.Top * .78f) + fwd * (v.Width * .5f));
+                headMid = face - look * .25f; headR = .3f;
+            }
+
+            float pour = Ease(NmPour + lag, NmPoured + lag, t);
+            if (v.Shade != null) SampleShade(v, index, t, face, headMid, look, headR, pour);
+
+            Vector3 chest = v.Home + up * (v.Top * .55f);
+            // Smoke pulled into them as it pours in.
+            if (pour > 0f && pour < 1f)
+            {
+                Vector3 side = Vector3.Cross(up, fwd);
+                for (int j = 0; j < 9; j++)
                 {
-                    Vector3 wSide = Vector3.Cross(Vector3.up, look).normalized;
-                    float headHalf = v.Width * .55f;
-                    float len = v.Width * .72f;
-                    for (int e = -1; e <= 1; e += 2)
-                    {
-                        // From beside the back of the head, round the side, and across the eyes, fingertips meeting.
-                        Vector3 from = face - look * (v.FaceDepth * 1.2f) + wSide * (e * (headHalf + .12f)) + Vector3.up * .06f;
-                        Vector3 to = face + look * .07f + wSide * (e * len * .3f) - Vector3.up * .02f;
-                        Vector3 at = Vector3.Lerp(from, to, reachIn) + look * (Mathf.Sin(reachIn * Mathf.PI) * .12f);
-                        Vector3 fingers = Vector3.Slerp(look, -wSide * e, reachIn).normalized + Vector3.down * .15f;
-                        _nmSmoke.Hand(at, fingers, len, handOn, Mathf.Lerp(.7f, .25f, reachIn), index * .23f, e < 0);
-                    }
+                    float a = (j * 40f + index * 17f) * Mathf.Deg2Rad;
+                    Vector3 outDir = (side * Mathf.Cos(a) + up * Mathf.Sin(a) * .8f - fwd * .5f).normalized;
+                    float reach = (1.2f - 1.0f * pour) * (.7f + .3f * Mathf.Repeat(j * .41f, 1f));
+                    _nmSmoke.Wisp(NmW(chest + outDir * reach * .5f), NmWDir(outDir), .045f, reach, .7f * Mathf.Sin(pour * Mathf.PI),
+                                  j * .07f + index * .2f, pour * .5f, 1f);
                 }
             }
-
-            // ---- THEIR BODY: still and unknowing in B; a shiver once it is right behind; a jolt as the hands close; fighting
-            // it as it sinks; then still, turned to stare into the lens.
-            float stare = Ease(NmStare + lag, NmStare + lag + .14f, t);
-            float jolt = Mathf.Clamp01(1f - Mathf.Abs(t - (NmHandsShut + lag + .03f)) / .14f);
-            float fight = Ease(NmHandsShut + lag, NmHandsShut + lag + .1f, t) * (1f - stare);
-            float shiver = stage >= 3 ? Ease(NmFlicker[2] + .3f, NmC, t) * (1f - Ease(NmHandsIn, NmHandsShut, t)) : 0f;
-            if (v.AnimRoot != null)
-            {
-                if (v.Struggle != null && (fight > 0f || shiver > 0f))
-                    NmBlend(v, v.Struggle, Mathf.Repeat((t - NmHandsShut) * 1.3f + .3f * index, v.Struggle.length), Mathf.Clamp01(fight * .9f + shiver * .18f));
-                if (v.Shock != null && jolt > 0f) NmBlend(v, v.Shock, .12f + .015f * Mathf.Sin(t * 41f), jolt);
-            }
-            Vector3 toLens = _nmEye - v.Home; toLens.y = 0f;
-            float lensYaw = toLens.sqrMagnitude > 1e-4f ? Mathf.Atan2(toLens.x, toLens.z) * Mathf.Rad2Deg : v.Yaw;
-            float yaw = Mathf.LerpAngle(v.Yaw, lensYaw, stare);
-            v.Holder.transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
-            Vector3 faceFwd = Quaternion.Euler(0f, yaw, 0f) * Vector3.forward;
+            // A flash at the chest as it is in.
+            float flash = Flash(t, NmPoured + lag, .1f);
+            if (flash > 0f) _nmSmoke.Light(NmW(chest), v.Width * 1.4f, 1.3f * flash, NemuSmokeBatch.Violet);
 
             // ---- WHAT IS LEFT: the aura (`NemuAura`, the same drawing play keeps), from the moment it is in.
-            float auraOn = Ease(NmSunk + lag - .05f, NmSunk + lag + .3f, t);
+            float auraOn = Ease(NmPoured + lag - .05f, NmPoured + lag + .3f, t);
             if (auraOn > 0f)
             {
                 var state = new NemuAura.State
                 {
-                    Feet = NmW(v.Home), Forward = NmWDir(faceFwd), Stream = Vector3.zero, Top = v.Top, Width = v.Width, Clock = t,
-                    Amount = auraOn, Swell = Flash(t, NmSunk + lag + .05f, .25f), Drag = 0f, Thin = 0f, Seat = v.Seat, Reduced = _reducedEffects,
+                    Feet = NmW(v.Home), Forward = v.Holder.transform.forward, Stream = Vector3.zero, Top = v.Top, Width = v.Width, Clock = t,
+                    Amount = auraOn, Swell = Flash(t, NmPoured + lag + .05f, .25f), Drag = 0f, Thin = 0f, Seat = v.Seat, Reduced = _reducedEffects,
                 };
                 NemuAura.Draw(_nmSmoke, state);
             }
@@ -445,111 +379,333 @@ namespace TumbangPreso.Visual
             }
         }
 
-        private static void NmBlend(NmVictim v, AnimationClip clip, float time, float weight)
+        /// <summary>
+        /// Their shadow: on the court, copying them, until the ring reaches them; ink-black and twitching; peeling up, hinged at
+        /// their feet, to stand behind them taller than them; its eyes opening; its arms stretching round their head and its hands
+        /// over their eyes; then pouring into them.
+        /// </summary>
+        private void SampleShade(NmVictim v, int index, float t, Vector3 face, Vector3 headMid, Vector3 look, float headR, float pour)
         {
-            int n = v.Bones.Length;
-            for (int i = 0; i < n; i++) { v.Tmp[i] = v.Bones[i].localRotation; v.TmpPos[i] = v.Bones[i].localPosition; }
-            var holderPos = v.Holder.transform.localPosition; var holderRot = v.Holder.transform.localRotation;
-            Vector3 modelPos = v.Model != null ? v.Model.localPosition : Vector3.zero;
-            Quaternion modelRot = v.Model != null ? v.Model.localRotation : Quaternion.identity;
-            clip.SampleAnimation(v.AnimRoot.gameObject, time);
-            v.Holder.transform.localPosition = holderPos; v.Holder.transform.localRotation = holderRot;
-            if (v.Model != null) { v.Model.localPosition = modelPos; v.Model.localRotation = modelRot; }
-            if (weight >= .999f) return;
-            for (int i = 0; i < n; i++)
+            var s = v.Shade;
+            Vector3 up = Vector3.up;
+            Vector3 fwd = NmForward(v);
+            float lag = .05f * index;
+            bool woken = t >= v.Woken;
+            // Before the ring reaches them it is their real shadow that shows; this copy waits, hidden.
+            bool shown = woken && pour < .999f;
+            foreach (var r in s.Renderers) if (r != null) r.enabled = shown;
+            if (!shown) return;
+
+            // It moves the way they move (it is their shadow); its arms are its own once they reach.
+            CopyPose(v.Root, s.Root); CopyPose(v.Torso, s.Torso); CopyPose(v.HeadBone, s.Head);
+            CopyPose(v.ArmL, s.ArmL); CopyPose(v.ArmR, s.ArmR);
+
+            // The twitch: stepped, like a frame skipping, from the ring's touch to the peel.
+            float twitch = 0f;
+            if (t < NmPeel + lag)
             {
-                v.Bones[i].localRotation = Quaternion.Slerp(v.Tmp[i], v.Bones[i].localRotation, weight);
-                v.Bones[i].localPosition = Vector3.Lerp(v.TmpPos[i], v.Bones[i].localPosition, weight);
+                float beat = Mathf.Floor(t * 14f + index * 3f);
+                twitch = (Mathf.Repeat(Mathf.Sin(beat * 12.9898f + index) * 43758.5f, 1f) - .5f) * 9f;
             }
+            // The peel: hinged at their feet, slow at first, the head coming up last.
+            float rise = Ease(NmPeel + lag, NmStood + lag, t);
+            float angle = 90f * (1f - rise) + twitch * (1f - rise);
+            // It stands behind them, over one shoulder, and pours in toward them.
+            Vector3 aside = Vector3.Cross(up, fwd) * ((v.Seat & 1) == 0 ? 1f : -1f);
+            Vector3 behind = v.Home + (-fwd * NmShadeBehind + aside * NmShadeAside) * (rise * (1f - pour));
+            // (films r24, r25: at 2 and 6 cm up the shadow lying flat was under the court.)
+            s.Hinge.localPosition = behind + up * Mathf.Lerp(.12f, .02f, rise);
+            s.Hinge.localRotation = Quaternion.LookRotation(s.Lies, up) * Quaternion.Euler(angle, 0f, 0f);
+            // Flat and as long as the sun makes it on the court; standing, a whole body, evenly bigger than them (film r22: left
+            // flattened and stretched, the skew threw its arms wide of their eyes).
+            float tall = Mathf.Lerp(s.Length, NmShadeTall, rise) * Mathf.Lerp(1f, .9f, pour);
+            float wide = Mathf.Lerp(1f, NmShadeTall, rise) * Mathf.Lerp(1f, .9f, pour);
+            float thick = Mathf.Lerp(.03f, NmShadeTall, rise * rise) * Mathf.Lerp(1f, .9f, pour);
+            s.Flat.localScale = new Vector3(wide, tall, thick);
+
+            // The skin: smoke flowing, and burning away as it pours in.
+            s.Skin.SetFloat("_Clock", t);
+            s.Skin.SetFloat("_Dissolve", pour);
+            s.Skin.SetFloat("_Base", NmW(v.Home).y);
+            s.Skin.SetFloat("_Span", v.Top * tall);
+            // While it lies on the court it is a shadow: no rim. The rim comes as it rises.
+            // Its edge only a little torn, so it keeps their outline: their hair, their shape (film r23: torn harder it was a
+            // smoky lump, not them).
+            s.Skin.SetFloat("_RimGain", Mathf.Lerp(0f, 1.4f, rise));
+            s.Skin.SetFloat("_Tear", Mathf.Lerp(.15f, .38f, rise));
+
+            // ---- ITS ARMS: round their head from behind, the hands over their eyes.
+            if (t >= NmHandsIn + lag - .2f && v.Head != null)
+            {
+                float reach = Ease(NmHandsIn + lag, NmHandsShut + lag, t);
+                Vector3 wSide = Vector3.Cross(up, look).normalized;
+                Vector3 eyeLevel = new Vector3(headMid.x, face.y, headMid.z);
+                for (int k = 0; k < 2; k++)
+                {
+                    float e = k == 0 ? -1f : 1f;
+                    var arm = k == 0 ? s.ArmL : s.ArmR;
+                    bool has = k == 0 ? s.HasPalmL : s.HasPalmR;
+                    if (arm.T == null || !has) continue;
+                    // From beside their ear (110 degrees off the face) round to over the eye (24).
+                    float phi = Mathf.Lerp(110f, 24f, reach) * Mathf.Deg2Rad;
+                    Vector3 radial = look * Mathf.Cos(phi) + wSide * (e * Mathf.Sin(phi));
+                    Vector3 target = eyeLevel + radial * (headR + .02f);
+                    // Lifted into place over a fifth of a second before it reaches.
+                    float lift = Ease(NmHandsIn + lag - .2f, NmHandsIn + lag, t);
+                    Reach(arm.T, k == 0 ? s.PalmL : s.PalmR, k == 0 ? s.AxisL : s.AxisR, target, lift);
+                }
+            }
+
+            // ---- ITS EYES, violet slits, as it stands.
+            if (s.Head.T != null)
+            {
+                float lit = Ease(NmStood + lag - .25f, NmStood + lag, t) * (1f - pour) * (1f + 1.2f * Flash(t, NmStood + lag - .1f, .12f));
+                if (lit > .01f)
+                {
+                    Vector3 eyes = s.Head.T.TransformPoint(s.EyesLocal);
+                    NemuAura.Eyes(_nmSmoke, eyes, NmWDir(fwd), v.FaceTop * .3f, .06f, lit * 1.6f, NmW(_nmEye));
+                }
+            }
+        }
+
+        private static void CopyPose(NmBone from, NmBone to)
+        {
+            if (from.T == null || to.T == null) return;
+            to.T.localRotation = from.T.localRotation; to.T.localPosition = from.T.localPosition; to.T.localScale = to.Scale;
+        }
+
+        /// <summary>Turn an arm so its palm points at <paramref name="target"/> (world) and stretch it along its own length to
+        /// reach it; <paramref name="weight"/> 0 leaves it as it was.</summary>
+        private static void Reach(Transform arm, Vector3 palmLocal, int axis, Vector3 target, float weight)
+        {
+            if (weight <= 0f) return;
+            for (int pass = 0; pass < 2; pass++)
+            {
+                Vector3 from = arm.position;
+                Vector3 palm = arm.TransformPoint(palmLocal);
+                Vector3 now = palm - from, want = target - from;
+                if (now.sqrMagnitude < 1e-6f || want.sqrMagnitude < 1e-6f) return;
+                var turn = Quaternion.Slerp(Quaternion.identity, Quaternion.FromToRotation(now, want), weight);
+                arm.rotation = turn * arm.rotation;
+                float stretch = Mathf.Lerp(1f, want.magnitude / Mathf.Max(1e-3f, now.magnitude), weight);
+                var scale = arm.localScale;
+                scale[axis] *= Mathf.Clamp(stretch, .5f, 4f);
+                // Thinner as it stretches: a shadow's arm, drawn out (film r22: at 0.7 they were slabs).
+                float thin = Mathf.Lerp(1f, .4f, Mathf.Clamp01((stretch - 1f) * .8f));
+                scale[(axis + 1) % 3] *= thin; scale[(axis + 2) % 3] *= thin;
+                arm.localScale = scale;
+                weight = 1f;
+            }
+        }
+
+        // ------------------------------------------------------------------ their acting
+
+        /// <summary>
+        /// A player who does not know, then does. Their own bones, turned in the world from the pose they had when the
+        /// cutscene began: breathing and a slow shift of weight; a shiver once their shadow stands; frozen as its hands come; a
+        /// flinch as they shut, hands up at the face and the head shaking; limp as it pours in; then the possessed turn to the
+        /// lens, head first, then the chest, then the body.
+        /// </summary>
+        private void NmAct(NmVictim v, int index, float t)
+        {
+            v.Root.Reset(); v.Torso.Reset(); v.HeadBone.Reset(); v.ArmL.Reset(); v.ArmR.Reset();
+            float lag = .05f * index;
+            float seat = v.Seat * 1.7f;
+
+            // The turn to the lens: how far round, and how much of it the body, the chest and the head have taken.
+            Vector3 fwd0 = NmWDir(NmForward(v));
+            Vector3 toLens = NmW(_nmEye) - v.Holder.transform.position; toLens.y = 0f;
+            float turn = toLens.sqrMagnitude > 1e-4f ? Vector3.SignedAngle(fwd0, toLens, Vector3.up) : 0f;
+            float headTurn = Ease(NmTurn + lag, NmTurn + lag + .25f, t);
+            float chestTurn = Ease(NmTurn + lag + .1f, NmTurn + lag + .4f, t);
+            float bodyTurn = Ease(NmTurn + lag + .2f, NmTurn + lag + .5f, t);
+            float bodyYaw = turn * .5f * bodyTurn;
+            v.Holder.transform.localRotation = Quaternion.Euler(0f, v.Yaw + bodyYaw, 0f);
+            Vector3 up = Vector3.up;
+            Vector3 fwd = v.Holder.transform.forward, right = v.Holder.transform.right;
+
+            float handsComing = Ease(NmHandsIn + lag, NmHandsIn + lag + .2f, t);
+            float shut = Ease(NmHandsShut + lag, NmHandsShut + lag + .08f, t);
+            float limp = Ease(NmPour + lag + .1f, NmPoured + lag, t);
+            float woken = Ease(NmEyesOpen + lag, NmEyesOpen + lag + .15f, t);
+            float struggle = shut * (1f - Ease(NmStruggled + lag - .1f, NmStruggled + lag + .15f, t));
+
+            // Unaware: breathing, a slow shift of weight. It stops as the hands come (they freeze).
+            float calm = 1f - handsComing;
+            float breathe = Mathf.Sin(t * 2.1f + seat) * 1.8f * calm;
+            float shift = Mathf.Sin(t * 1.3f + seat * .7f) * 1.6f * calm;
+            if (v.Root.T != null) v.Root.T.position += right * (Mathf.Sin(t * 1.3f + seat * .7f) * .02f * calm);
+            // A shiver once their shadow stands behind them.
+            float shiver = t >= NmStood + lag ? (1f - shut) * Mathf.Sin(t * 57f + seat) * .9f : 0f;
+            float flinch = Mathf.Clamp01(1f - Mathf.Abs(t - (NmHandsShut + lag + .05f)) / .18f);
+            float torsoPitch = breathe - flinch * 12f - struggle * 4f + limp * (1f - woken) * 8f;
+            float torsoTwist = struggle * Mathf.Sin(t * 19f + seat) * 6f + (turn * .8f * chestTurn - bodyYaw);
+            if (v.Torso.T != null)
+            {
+                Turn(v.Torso.T, up, torsoTwist);
+                Turn(v.Torso.T, right, torsoPitch);
+                Turn(v.Torso.T, fwd, shift + shiver);
+            }
+
+            float headYaw = struggle * Mathf.Sin(t * 25f + seat) * 16f + Mathf.Sin(t * .9f + seat) * 4f * calm
+                          + (turn * headTurn - turn * .8f * chestTurn);
+            // (film r20: drooping 22 degrees, the top of their hair filled the close lens.)
+            float headPitch = -flinch * 16f + limp * (1f - woken) * 6f - woken * 4f;
+            if (v.HeadBone.T != null)
+            {
+                Turn(v.HeadBone.T, up, headYaw);
+                Turn(v.HeadBone.T, v.HeadBone.T.parent != null ? Vector3.Cross(up, v.HeadBone.T.parent.forward).normalized : right, headPitch);
+                // The possessed tilt as they stare.
+                Turn(v.HeadBone.T, fwd, woken * 10f * ((v.Seat & 1) == 0 ? 1f : -1f));
+            }
+
+            // Hands up at their face while they fight it, falling as they go limp.
+            float armsUp = Mathf.Max(flinch, struggle) * (1f - limp) * 105f;
+            float armsOut = calm * Mathf.Sin(t * 1.7f + seat) * 2f;
+            if (v.ArmL.T != null) { Turn(v.ArmL.T, right, -armsUp); Turn(v.ArmL.T, fwd, armsOut + struggle * 10f); }
+            if (v.ArmR.T != null) { Turn(v.ArmR.T, right, -armsUp * .92f); Turn(v.ArmR.T, fwd, -armsOut - struggle * 10f); }
+        }
+
+        private static void Turn(Transform bone, Vector3 axis, float degrees)
+        {
+            if (Mathf.Abs(degrees) < .01f) return;
+            bone.rotation = Quaternion.AngleAxis(degrees, axis) * bone.rotation;
         }
 
         // ------------------------------------------------------------------ camera and grade
 
+        private struct NmKey
+        {
+            public float T, Fov;
+            public Vector3 Eye, Look;
+            public NmKey(float t, Vector3 eye, Vector3 look, float fov) { T = t; Eye = eye; Look = look; Fov = fov; }
+        }
+
         /// <summary>
-        /// B and C, computed from where the players really are. B1 behind her right shoulder, watching them (to the second
-        /// blackout); B2 low and nearer, looking up at the dead halfway to them (to the third); B3 in front of the first player
-        /// with the dead one looming over their head, pushing in; C carries on in to their face for the hands and the eyes,
-        /// then pulls back and up to hold every player staring. Every cut happens inside a blackout.
+        /// One continuous move through keys: a cubic through each (Hermite on their own times), still at its first and last
+        /// key and wherever two keys hold the same place, so speed eases in and out instead of v4's straight lines between
+        /// corners.
+        /// </summary>
+        private static void NmPath(NmKey[] keys, float t, out Vector3 eye, out Vector3 look, out float fov)
+        {
+            int n = keys.Length;
+            if (t <= keys[0].T) { eye = keys[0].Eye; look = keys[0].Look; fov = keys[0].Fov; return; }
+            if (t >= keys[n - 1].T) { eye = keys[n - 1].Eye; look = keys[n - 1].Look; fov = keys[n - 1].Fov; return; }
+            int i = 0;
+            while (i < n - 2 && t > keys[i + 1].T) i++;
+            var a = keys[i]; var b = keys[i + 1];
+            float span = Mathf.Max(1e-4f, b.T - a.T);
+            float u = (t - a.T) / span;
+            Vector3 Tan(int k, System.Func<NmKey, Vector3> f)
+            {
+                if (k <= 0 || k >= n - 1) return Vector3.zero;
+                if ((f(keys[k + 1]) - f(keys[k])).sqrMagnitude < 1e-6f || (f(keys[k]) - f(keys[k - 1])).sqrMagnitude < 1e-6f) return Vector3.zero;
+                return (f(keys[k + 1]) - f(keys[k - 1])) / Mathf.Max(1e-4f, keys[k + 1].T - keys[k - 1].T) * span;
+            }
+            Vector3 Herm(Vector3 p0, Vector3 m0, Vector3 p1, Vector3 m1)
+            {
+                float u2 = u * u, u3 = u2 * u;
+                return (2 * u3 - 3 * u2 + 1) * p0 + (u3 - 2 * u2 + u) * m0 + (-2 * u3 + 3 * u2) * p1 + (u3 - u2) * m1;
+            }
+            eye = Herm(a.Eye, Tan(i, k => k.Eye), b.Eye, Tan(i + 1, k => k.Eye));
+            look = Herm(a.Look, Tan(i, k => k.Look), b.Look, Tan(i + 1, k => k.Look));
+            fov = Mathf.Lerp(a.Fov, b.Fov, u * u * (3f - 2f * u));
+        }
+
+        /// <summary>
+        /// Three shots, computed from her face and from where the players really are. S1 her eyes; S2 from beside her, the
+        /// court in daylight, her in the near corner and every player and their shadow in frame (the effect in the same frame
+        /// as its cause); S3 one eased path in front of one player, in to their face for the hands, back out to hold everyone.
         /// </summary>
         private void NemuFrame(int index, float t, ref Vector3 eye, ref Vector3 look, ref float fov)
         {
-            if (index >= 1 && _nmVictims.Count > 0)
+            Vector3 up = Vector3.up;
+            if (t < NmWide && _head != null)
             {
-                Vector3 way = _nmWay, right = Vector3.Cross(Vector3.up, way);
+                // S1 HER: low and close under her fringe, a slow push in as her eyes ignite.
+                Vector3 eyes = _root.transform.InverseTransformPoint(_head.TransformPoint(_nmEyesLocal));
+                Vector3 face = _root.transform.InverseTransformDirection(_head.rotation * _nmFaceLocal); face.y = 0f;
+                face = face.sqrMagnitude > 1e-4f ? face.normalized : Vector3.forward;
+                Vector3 across = Vector3.Cross(up, face);
+                float u = Ease(0f, NmWide, t);
+                // Her whole head and shoulders, so she reads as a face (owner on v6: at half a metre it was a wall of blocks).
+                eye = eyes + face * Mathf.Lerp(1.6f, 1.3f, u) - up * Mathf.Lerp(.12f, .08f, u) + across * .15f;
+                look = eyes + up * .06f;
+                fov = Mathf.Lerp(32f, 29f, u);
+            }
+            else if (_nmVictims.Count > 0)
+            {
+                Vector3 way = _nmWay, right = Vector3.Cross(up, way);
                 var first = _nmVictims[0];
-                Vector3 f0 = NmForward(first), s0 = Vector3.Cross(Vector3.up, f0);
-                float cut1 = NmFlicker[1] + .1f, cut2 = NmFlicker[2] + .1f;
-                var second = _nmVictims.Count > 1 ? _nmVictims[1] : first;
-                Vector3 f1 = NmForward(second), s1 = Vector3.Cross(Vector3.up, f1);
+                Vector3 f0 = NmForward(first), s0 = Vector3.Cross(up, f0);
                 Vector3 face = first.FaceAt;
-                if (t < cut1)
+                // Backed off until every player (and the shadow standing behind them) fits across the frame at their own depth.
+                float back0 = 4.3f;
+                foreach (var v in _nmVictims)
                 {
-                    // B1: from behind her, wider (film r13: close on her shoulder her back filled half the frame).
-                    float u = Ease(NmB, cut1, t);
-                    eye = Vector3.Lerp(-way * 2.5f + right * 1.25f + Vector3.up * 1.5f, -way * 2.0f + right * 1.3f + Vector3.up * 1.45f, u);
-                    look = _nmCentre + way * 1.2f + Vector3.up * 1.2f;
-                    fov = Mathf.Lerp(50f, 46f, u);
+                    Vector3 off = v.Home - _nmCentre;
+                    back0 = Mathf.Max(back0, (Mathf.Abs(Vector3.Dot(off, right)) + 1.2f) / .66f - Vector3.Dot(off, way));
                 }
-                else if (t < cut2)
+                if (t < NmClose)
                 {
-                    // B2: low in front of another player, looking up past them at the dead one halfway to them.
-                    float u = Ease(cut1, cut2, t);
-                    eye = Vector3.Lerp(second.Home + f1 * 3.2f + s1 * 1.1f + Vector3.up * .45f, second.Home + f1 * 2.7f + s1 * .9f + Vector3.up * .5f, u);
-                    look = second.Home - f1 * 1.4f + Vector3.up * (second.Top * 1.45f);
-                    fov = 52f;
+                    // S2 THE COURT, over her shoulder and above: she is in the near corner as the ring leaves her feet (the
+                    // cause in the same frame as the effect); the shadows on the court read from up here, and as they stand they
+                    // loom over the players' shoulders toward us (films r22, r23: from further off they were specks, and she
+                    // was out of the frame).
+                    float u = Ease(NmWide, NmClose, t);
+                    Vector3 from = -way * 1.7f + right * 1.1f + up * 2.9f;
+                    eye = Vector3.Lerp(from, from + way * .9f - up * .5f, u);
+                    // (film r27: centred on the players' middle, the left one was cut by the frame's edge.)
+                    look = _nmCentre - right * .7f + up * Mathf.Lerp(.3f, 1.1f, u);
+                    fov = Mathf.Lerp(60f, 54f, u);
                 }
                 else
                 {
-                    // B3 in front of the first player, the dead one looming over them, pushing in; C on to their face for the
-                    // hands and the eyes; then back and up to hold every player staring.
-                    Vector3 b3 = first.Home + f0 * 3.3f + s0 * .5f + Vector3.up * (face.y - first.Home.y + .1f);
-                    Vector3 b3End = first.Home + f0 * 2.6f + s0 * .4f + Vector3.up * (face.y - first.Home.y + .1f);
-                    Vector3 close = face + f0 * 1.75f + s0 * .2f + Vector3.up * .08f;
-                    // The wide is backed off until every player fits across the frame (film r14: at a fixed 4.3 m two of three were off
-                    // the edges), which puts her small in the foreground from behind: she stands, they stare.
-                    // Each player must sit inside the frame's half-width at their own depth (film r15: measured from the group's
-                    // middle, the nearer players still fell off the edges).
-                    float back0 = 4.3f;
-                    foreach (var v in _nmVictims)
+                    // S3 TAKEN: one path.
+                    float faceUp = face.y - first.Home.y;
+                    Vector3 wide = _nmCentre - way * back0 + right * 2.6f + up * 3.1f;
+                    Vector3 lookWide = _nmCentre + up * .9f;
+                    Vector3 lookNear = first.Home - f0 * .25f + up * (first.Top * 1.05f);
+                    Vector3 lookFace = face + up * .1f;
+                    var keys = new[]
                     {
-                        Vector3 off = v.Home - _nmCentre;
-                        back0 = Mathf.Max(back0, (Mathf.Abs(Vector3.Dot(off, right)) + 1.0f) / .68f - Vector3.Dot(off, way));
+                        new NmKey(NmClose, first.Home + f0 * 2.9f + s0 * .5f + up * (faceUp + .25f), lookNear, 50f),
+                        new NmKey(NmHandsIn, first.Home + f0 * 2.6f + s0 * .45f + up * (faceUp + .2f), lookNear, 48f),
+                        new NmKey(NmHandsShut, face + f0 * 1.5f + s0 * .16f + up * .06f, lookFace, 40f),
+                        new NmKey(NmEyesOpen, face + f0 * 1.35f + s0 * .1f + up * .04f, face + up * .08f, 39f),
+                        new NmKey(NmPullBack, face + f0 * 1.35f + s0 * .1f + up * .04f, face + up * .08f, 39f),
+                        new NmKey(Seconds, wide, lookWide, 50f),
+                    };
+                    NmPath(keys, t, out eye, out look, out fov);
+                    // One low push of the lens as the hands shut.
+                    if (!_reducedEffects)
+                    {
+                        float push = Mathf.Clamp01((t - NmHandsShut) / .06f) * (1f - Ease(NmHandsShut + .06f, NmHandsShut + .4f, t));
+                        eye += (lookFace - eye).normalized * (.14f * push);
                     }
-                    // (film r16: at 2 m up and 1 m right her head filled the foreground.)
-                    Vector3 wide = _nmCentre - way * back0 + right * 1.7f + Vector3.up * 2.7f;
-                    Vector3 lookB3 = first.Home - f0 * .3f + Vector3.up * (first.Top * 1.3f);
-                    Vector3 lookWide = _nmCentre + Vector3.up * .9f;
-                    float push = Ease(cut2, NmC, t), inC = Ease(NmC, NmHandsShut, t), back = Ease(NmPullBack, NmWide, t);
-                    eye = Vector3.Lerp(Vector3.Lerp(Vector3.Lerp(b3, b3End, push), close, inC), wide, back);
-                    look = Vector3.Lerp(Vector3.Lerp(lookB3, face + Vector3.up * .12f, inC), lookWide, back);
-                    fov = Mathf.Lerp(Mathf.Lerp(50f, 40f, inC), 50f, back);
                 }
-                eye = KeepLensOffOthers(eye, t >= NmC && t < NmPullBack + .2f ? 1.2f : 1.5f);
+                eye = KeepLensOffOthers(eye, t >= NmHandsIn && t < NmPullBack + .2f ? 1.2f : 1.5f);
                 // Never inside her.
                 Vector3 flat = new Vector3(eye.x, 0f, eye.z);
                 if (flat.magnitude < .9f) eye += (flat.sqrMagnitude > 1e-4f ? flat.normalized : -way) * (.9f - flat.magnitude);
-            }
-            if (!_reducedEffects && index >= 1 && _nmVictims.Count > 0)
-            {
-                // The lens flinches as the hands close and as it goes in.
-                float jolt = Mathf.Max(Mathf.Clamp01(1f - Mathf.Abs(t - (NmHandsShut + .03f)) / .1f), Mathf.Clamp01(1f - Mathf.Abs(t - NmSunk) / .1f));
-                var tremble = new Vector3(Mathf.Sin(t * 71f), Mathf.Sin(t * 83f + 1.3f), 0f) * (.03f * jolt);
-                eye += tremble; look += tremble * .5f;
             }
             _nmEye = eye; _nmLook = look;
         }
 
         /// <summary>
-        /// The ink (`Shaders/NemuInk`): the frame's edges sink into near-black when her eyes ignite, and in each blackout the whole
-        /// frame goes dark except bright violet light, so only the eyes of the dead show. Lets go as play returns.
+        /// The ink (`Shaders/NemuInk`): the frame's edges sink a little into near-black from her eyes on; one impact frame as the
+        /// hands shut; focus lines as her eyes ignite, as the hands shut and as they stare. Lets go as play returns.
         /// </summary>
         private void NemuPostProcess(RenderTexture frame, Camera camera, float t)
         {
-            float ink = Ease(NmIgnite, NmIgnite + .35f, t) * .9f * (1f - Ease(NmWide, Seconds - .05f, t) * .8f);
-            float black = NmBlack(t);
-            // Night: the whole frame darkens but bright violet (film r13: the grade alone left a daylight sky).
-            float night = Ease(NmIgnite, NmIgnite + .3f, t) * .7f * (1f - Ease(Seconds - .45f, Seconds, t));
-            if (ink <= .01f && black <= .01f && night <= .01f) return;
+            float ink = Ease(NmIgnite, NmIgnite + .3f, t) * .6f * (1f - Ease(Seconds - .6f, Seconds, t));
+            float impact = !_reducedEffects && t >= NmHandsShut && t < NmHandsShut + NmImpact ? 1f : 0f;
+            bool invert = t < NmHandsShut + NmImpact * .5f;
+            float lines = _reducedEffects ? 0f : Mathf.Max(Mathf.Max(
+                Flash(t, NmIgnite + .1f, .22f),
+                Flash(t, NmHandsShut + .1f, .3f)),
+                .6f * Flash(t, NmTurn + .2f, .3f));
+            if (ink <= .01f && impact <= 0f && lines <= .01f) return;
             if (_nmInk == null)
             {
                 var shader = Resources.Load<Shader>("Shaders/NemuInk");
@@ -557,8 +713,12 @@ namespace TumbangPreso.Visual
                 _nmInk = new Material(shader) { name = "NemuInk" };
             }
             _nmInk.SetFloat("_Ink", ink);
-            _nmInk.SetFloat("_Black", black);
-            _nmInk.SetFloat("_Night", night);
+            _nmInk.SetFloat("_Black", 0f);
+            _nmInk.SetFloat("_Night", 0f);
+            _nmInk.SetFloat("_Impact", impact);
+            _nmInk.SetFloat("_Invert", impact > 0f && invert ? 1f : 0f);
+            _nmInk.SetFloat("_Lines", lines);
+            _nmInk.SetVector("_Focus", new Vector4(.5f, .55f, 0f, 0f));
             _nmInk.SetFloat("_Clock", t);
             _nmInk.SetFloat("_Aspect", frame.height > 0 ? frame.width / (float)frame.height : 16f / 9f);
             var tmp = RenderTexture.GetTemporary(frame.descriptor);
@@ -567,15 +727,12 @@ namespace TumbangPreso.Visual
             RenderTexture.ReleaseTemporary(tmp);
         }
 
-        /// <summary>
-        /// Night falls with her eyes: the world dims hard but keeps its colour (darkness from brightness alone keeps violet
-        /// violet), back to the map's own grade as play returns.
-        /// </summary>
+        /// <summary>Daylight stays (v5's black night hid everything); the world only steps back a little so the violet reads.</summary>
         private void NemuGrade(float t, out float brightness, out float saturation)
         {
-            float dark = Ease(NmIgnite, NmIgnite + .3f, t) * (1f - Ease(Seconds - .45f, Seconds, t));
-            brightness = Mathf.Lerp(1f, .26f, dark);
-            saturation = Mathf.Lerp(1f, .9f, dark);
+            float dim = Ease(NmIgnite, NmWide + .3f, t) * (1f - Ease(Seconds - .6f, Seconds, t));
+            brightness = Mathf.Lerp(1f, .78f, dim);
+            saturation = Mathf.Lerp(1f, .85f, dim);
         }
 
         private void NemuDispose()

@@ -507,55 +507,53 @@ def zack():
 @performance
 def nemu(held=False):
     """
-    LET THEM IN: BEHIND YOU, 5.9 s (owner 2026-10-13 on preview v3: *"it looks chonky and weird the ult cutscene dont make
-    sense and lacks vfx and direction and visual communication or storytelling"*; of three stories offered he picked
-    BEHIND YOU; *"pls limit ult to below 6 seconds"*). `docs/reports/nemu-ultimate-2026-10-11/direction.md` section 12.
-    One sentence: she whispers, the lights fail, and every time they come back the dead stand closer behind each player,
-    until their hands close over the players' eyes and they are let in. The travelling thing is the dark.
-      A THE WHISPER 0.00-1.10: close, three-quarter from her LEFT. Looking down and away; her eyes come up (0.15); finger to
-        her lips (0.30); her eyes ignite violet and the lights die (0.42); she lets her hand fall open (1.00).
-      B THE FLICKER 1.10-3.80: the lights fail three times (1.50, 2.20, 2.90); each blackout hides a cut closer in, and when
-        they come back a tall ghost stands closer behind every player. She is seen once, from behind, watching them.
-      C TAKEN 3.80-5.90: the hands slide over their eyes from behind; the dead sink in; their eyes open violet; wide on
-        every player, staring into the lens.
-    B and C are computed from where the players really are (`HeroIntroductionScene.Nemu.cs`); the authored shots below are
-    their fallbacks with nobody on court. The stage reads these times: keep them in step with its `Nm*` constants.
+    LET THEM IN: THEIR OWN SHADOWS, 5.9 s (owner 2026-10-13 on preview v5: *"direction still ssucks, i dont get wtf is
+    happening"*; of three new stories offered he picked THEIR OWN SHADOWS). `docs/reports/nemu-ultimate-2026-10-11/
+    direction.md` section 14.
+    One sentence: Nemu whispers, and every player's own shadow peels up off the ground behind them, stands, puts its hands over
+    their eyes and pours into them.
+      S1 HER 0.00-0.90: close on her face; her eyes ignite (0.32).
+      S2 THE COURT 0.90-2.85: from beside her, daylight; she opens her hands (1.1) and a ring of dark goes out from her feet; as
+        it reaches each player their shadow peels up off the ground and stands behind them (1.55-2.5).
+      S3 TAKEN 2.85-5.90: the shadow's hands over one player's eyes, it pours in, their eyes open violet, pull back to everyone.
+    S1 to S3 are computed from her face and from where the players really are (`HeroIntroductionScene.Nemu.cs`); the authored
+    shots below are their fallbacks with nobody on court. The stage reads these times: keep them in step with its `Nm*` constants.
     """
     p = Performance("nemu-held" if held else "nemu", 5.9)
-    # Looking down and away, hands loosely behind her back: she has not looked at you yet.
-    away = Pose(torso=(-2, 8, 2), head=(18, 26, 4), left=(-22, 8, -30), right=(-22, 8, -30))
-    # Her eyes come up to the lens: the one beat she is fully present.
-    present = Pose(torso=(0, 2, 0), head=(4, 0, -2), left=(-16, 10, -24), right=(-16, 10, -24))
-    # THE HUSH: a finger to her lips, held at the side of the mouth, head dipped a touch.
-    # (v1 film: at (128, 4, 42) the hand covered her face in the close lens.)
-    hush = Pose(torso=(2, -4, 0), head=(8, 6, -4), left=(-14, 10, -22), right=(128, 4, 36))
-    # The hand falls open, both arms low and out from her sides, palms down: let them in.
-    release = Pose(torso=(-3, 0, 0), head=(4, 0, 0), left=(40, 52, -6), right=(40, 52, -6), legs=((4, 3), (-3, 3)))
-    # Watching them from behind, head tipped: she knows what is behind them.
-    watch = release.but(torso=(-2, 0, 2), head=(6, -8, 10), left=(30, 40, -6), right=(30, 40, -6))
+    # Looking down, hands loose at her sides: she has not looked up yet. (No hush: in v1 to v4 the sleeve crossed her face.)
+    down = Pose(torso=(4, 0, 0), head=(24, 0, 2), left=(-4, 14, 0), right=(-4, 14, 0))
+    # Her eyes have opened; the chin comes up, the head tipped: she whispers.
+    up = Pose(torso=(2, 0, 0), head=(6, 0, -8), left=(-2, 16, 0), right=(-2, 16, 0))
+    # Her hands open low at her sides, palms down: let them in. Seen in the near corner of the court shot as the ring goes out.
+    release = Pose(torso=(-3, 0, 0), head=(4, 0, -6), left=(30, 44, -6), right=(30, 44, -6), legs=((4, 3), (-3, 3)))
+    # Watching them, head tipped: she knows what is behind them; then the tip goes the other way as they turn.
+    watch = release.but(torso=(-2, 0, 2), head=(6, -8, 10), left=(26, 38, -6), right=(26, 38, -6))
+    watch2 = watch.but(head=(8, 6, -12))
     if held:
-        # The slipper stays loosely at her outside hip; the hush and the release are her free (left) hand.
         shoe = (8, 26, -5)
-        away = away.but(right=shoe)
-        present = present.but(right=shoe)
-        hush = hush.but(left=(128, 4, 36), right=shoe)
+        down = down.but(right=shoe)
+        up = up.but(right=shoe)
         release = release.but(right=shoe)
         watch = watch.but(right=shoe)
+        watch2 = watch2.but(right=shoe)
 
-    p.key(0, away)
-    p.key(.15, present)
-    p.key(.30, hush, punch=True)
-    p.hold(.30, .85, hush)
-    p.key(1.0, release, punch=True)
-    p.key(1.8, watch)
-    p.hold(1.8, 5.9, watch)
+    p.key(0, down)
+    p.hold(0, .22, down)
+    p.key(.45, up)
+    p.hold(.45, .9, up)
+    p.key(1.15, release)
+    p.hold(1.15, 2.4, release)
+    p.key(2.9, watch)
+    p.hold(2.9, 4.7, watch)
+    p.key(5.1, watch2)
+    p.hold(5.1, 5.9, watch2)
 
-    # A: close, three-quarter from her left, a slow push in.
-    p.shot(0, 1.1, (-1.0, 1.05, 2.6), (0, .95, 0), 34, eye_to=(-.85, 1.0, 2.2), close=True)
-    # B: behind her right shoulder looking out at the players, creeping in.
-    p.shot(1.1, 3.8, (.9, 1.0, -1.7), (0, 1.0, 5.0), 48, eye_to=(1.2, 1.2, 1.5), look_to=(0, 1.0, 5.5), fov_to=44)
-    # C: in front of a player, then easing back to hold them all (computed from the real players in the stage).
-    p.shot(3.8, 5.9, (.6, 1.3, 3.2), (0, 1.1, 5.5), 40, eye_to=(1.5, 1.8, 1.5), look_to=(0, 1.0, 5.5), fov_to=50)
+    # S1: her face, low and close.
+    p.shot(0, .9, (-.1, .84, 1.2), (0, 1.0, 0), 34, eye_to=(-.08, .86, .95), fov_to=30, close=True)
+    # S2 fallback: from beside her, looking out over the court.
+    p.shot(.9, 2.85, (1.5, 2.1, -1.2), (0, .8, 5.0), 50, eye_to=(1.5, 1.95, -.5), look_to=(0, 1.1, 5.0))
+    # S3 fallback: out in front of her, easing back to the court.
+    p.shot(2.85, 5.9, (.6, 1.3, 3.2), (0, 1.1, 5.5), 40, eye_to=(1.5, 1.8, 1.5), look_to=(0, 1.0, 5.5), fov_to=50)
     p.locked((1.2, 2.2, -2.2), (0, .9, 4.5), 54)
     return p
 

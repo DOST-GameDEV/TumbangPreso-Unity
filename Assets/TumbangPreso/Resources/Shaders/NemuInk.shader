@@ -4,6 +4,9 @@
 // edges when her eyes ignite, its edge wavering like smoke (`_Clock`, the scene clock), and lets go as play returns. `_Black`
 // (Behind You) takes the whole frame for a blackout, keeping only bright violet light.
 // Light that is bright AND violet (eyes, claws, the halo) is kept: the ink never puts out the one hot light.
+// SWALLOWED SKY (section 13, *"a bit anime style"*): `_Impact` is an impact frame (the picture cut to two tones, its light
+// violet and the rest ink; `_Invert` 1 swaps them), carrying each smash cut; `_Lines` draws anime focus lines in from the
+// frame's edge toward `_Focus` (uv), redrawn twelve times a second like hand-drawn boil.
 Shader "TumbangPreso/NemuInk"
 {
     Properties
@@ -13,6 +16,11 @@ Shader "TumbangPreso/NemuInk"
         _Black ("Blackout", Range(0, 1)) = 0
         _Night ("Night", Range(0, 1)) = 0
         _InkColour ("Ink colour", Color) = (0.006, 0.0, 0.014, 1)
+        _Impact ("Impact frame", Range(0, 1)) = 0
+        _Invert ("Impact inverted", Float) = 0
+        _Lines ("Focus lines", Range(0, 1)) = 0
+        _Focus ("Focus (uv)", Vector) = (0.5, 0.5, 0, 0)
+        _Violet ("Violet", Color) = (0.62, 0.26, 1.0, 1)
         _Clock ("Clock (s)", Float) = 0
         _Aspect ("Aspect", Float) = 1.777
     }
@@ -26,8 +34,9 @@ Shader "TumbangPreso/NemuInk"
             #pragma fragment frag
             #include "UnityCG.cginc"
             sampler2D _MainTex;
-            float _Ink, _Black, _Night, _Clock, _Aspect;
-            fixed4 _InkColour;
+            float _Ink, _Black, _Night, _Clock, _Aspect, _Impact, _Invert, _Lines;
+            float4 _Focus;
+            fixed4 _InkColour, _Violet;
 
             float hash(float2 p) { return frac(sin(dot(p, float2(127.1, 311.7))) * 43758.5453); }
             float noise(float2 p)
@@ -57,6 +66,27 @@ Shader "TumbangPreso/NemuInk"
                 float3 nightTint = c.rgb * float3(0.42, 0.40, 0.62);
                 inked = lerp(inked, nightTint, _Night * (1.0 - keepDark) * (0.75 + 0.25 * saturate(i.uv.y * 1.6 - 0.4)));
                 inked = lerp(inked, _InkColour.rgb, _Black * (1.0 - keepDark));
+                // Focus lines: thin wedges from the edge in, thicker toward the edge, black with a violet core.
+                if (_Lines > 0.001)
+                {
+                    float2 d = (i.uv - _Focus.xy) * float2(_Aspect, 1.0);
+                    float ang = atan2(d.y, d.x);
+                    float boil = floor(_Clock * 12.0);
+                    float wedge = noise(float2(ang * 38.0, boil * 7.1)) * 0.7 + noise(float2(ang * 90.0, boil * 3.3)) * 0.3;
+                    float reach = 0.42 + 0.35 * noise(float2(ang * 21.0, boil + 9.0));
+                    float out1 = smoothstep(reach, reach + 0.35, length(d) / (0.5 * _Aspect));
+                    float lineMask = smoothstep(0.62, 0.7, wedge) * out1 * _Lines;
+                    inked = lerp(inked, _InkColour.rgb + _Violet.rgb * 0.18 * smoothstep(0.8, 0.95, wedge), lineMask);
+                }
+                // The impact frame: two tones only.
+                if (_Impact > 0.001)
+                {
+                    float luma = dot(inked, float3(0.3, 0.59, 0.11)) + violet * 0.25;
+                    float hi = smoothstep(0.16, 0.22, luma);
+                    hi = lerp(hi, 1.0 - hi, saturate(_Invert));
+                    float3 two = lerp(_InkColour.rgb, _Violet.rgb * 1.1, hi);
+                    inked = lerp(inked, two, _Impact);
+                }
                 return fixed4(inked, c.a);
             }
             ENDCG
