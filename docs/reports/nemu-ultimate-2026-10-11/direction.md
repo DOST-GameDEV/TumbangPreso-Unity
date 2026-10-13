@@ -387,3 +387,70 @@ the escaping souls held longer and larger. Preview v3: 5.57 s, round clock froze
 11/11 ([XML](evidence/film-v3/play-tests.xml), [beats](evidence/film-v3/owner-beats.jpg),
 [key frames](evidence/film-v3/key-frames.jpg): the hush, the crowd screaming, the lunge, a soul tearing out, the stare,
 her first person after the hand-back with no Kuro on the sleeve). Not yet evidence: the owner's verdict on v3.
+
+## 12. BEHIND YOU (2026-10-13, the owner on preview v3; this section supersedes 11.2, 11.4 and 11.10's staging)
+
+The owner on v3: *"refine it pa it looks chonky and weird the ult cutscene dont make sense and lacks vfx and direction and
+visual communication or storytelling"*. Offered three stories (THE DOOR, BEHIND YOU, a readable HER SHADOW) he picked
+**BEHIND YOU**, and named everything as chonky: the ghost bodies, the smoke and aura puffs, the flying smear and the lunge
+face. The name, ID, gameplay, network, the aura-only rule after the entry and black-and-one-violet all stand.
+
+### 12.1 One sentence and one travelling thing
+
+**She whispers, the lights fail, and every time they come back the dead stand closer behind each player, until their
+hands close over the players' eyes and they are let in.** The travelling thing is THE DARK: it leaves her eyes, takes
+the court in three blackouts, and ends in the players' eyes. Nothing flies; the dead never move on screen, they are only
+nearer each time the light returns (the horror of the cut, not of motion), which removes the flying smear and the lunge.
+
+### 12.2 The beats (5.9 s, below 6; the hand-back starts at 5.45)
+
+| Time | Shot | Picture | Sound |
+|---|---|---|---|
+| 0.00 | A THE WHISPER (close, from her left) | Nemu looking down and away; thin smoke strands drift across the lens | the room |
+| 0.15 / 0.30 | A | her eyes come up; finger to her lips | *shh* |
+| 0.42 | A | her eyes ignite with a glint; a ring of dark goes out over the court from her feet; night falls; violet motes rise round her | everything ducks; a chime; a sub swell |
+| 1.00 | A | her hand falls open | |
+| 1.10 | B1 (behind her, wide) | the players, unaware, under a buzzing light | a tube buzzing |
+| 1.50 | blackout 1 | the light stutters and dies: in the dark, a pair of violet eyes far behind every player | a relay clunk; a whisper; a low groan |
+| 1.70 | B1 | light back: a tall ghost stands behind each, on a violet sigil, smoke strands rising off it, frozen | the buzz returns |
+| 2.20 | blackout 2, cut to B2 (low, in front of another player) | the eyes of the dead open all round the plaza; light back: the dead are halfway | clunk, whispers all round |
+| 2.90 | blackout 3, cut to B3 (in front of the first player) | light back: the ghost is right behind them, looming over their head; they start to shiver | clunk; a quickening heartbeat |
+| 3.80 | C TAKEN (one push in to their face) | long black hands slide round their head from behind | the buzz is gone |
+| 4.12 | C | the hands close over their eyes; they jolt; the ghost's jaw drops | a gasp; a crackle; groans |
+| 4.24 to 4.58 | C | it sinks into them, smoke pulled in after it; a ring of dark at their feet, a flash at the chest | a reversed swell into a thump |
+| 4.62 | C | their eyes open violet, with a glint | a chime |
+| 4.72 to 5.42 | C | they turn to stare into the lens as it pulls back and up to hold every player, the aura on them | a choir and whispers swelling |
+| 5.45 to 5.90 | C | hold; play returns with them possessed | release |
+
+### 12.3 What answers "chonky"
+
+| Owner | Now |
+|---|---|
+| ghost bodies | quad 0.5 wide (was 0.62): a narrower skull, thinner hair, a starved body, arms and fingers half as thick, a finer fray |
+| smoke and aura puffs | a WISP (`NemuSmokeBatch.Wisp`): the same smoke drawn as a thin strand along a direction. The aura's dark fire is 22 thin tongues (was 16 round puffs); its halo is a rim at 1.45 times their width (was a 2.3 times fog); a claw's arm is two strands |
+| flying smear | nothing flies |
+| the lunge face | cut; the scare is the dead being nearer each time the light returns, and the hands over the eyes |
+
+### 12.4 VFX, by beat (black and one violet)
+
+Glints on every ignition (her eyes, their eyes); the ring of dark from her feet; motes round her; lens smoke strands; the
+blackout (`Shaders/NemuInk` `_Black`: the frame goes dark except bright violet, so only eyes burn) with a tube's stutter;
+night (`_Night`: everything but violet sinks to a blue-violet dark); a sigil under each ghost flaring as it arrives, with
+smoke strands rising; twenty pairs of eyes round the plaza; the hands (`Shaders/NemuSmoke` mode 3); smoke pulled in after
+the sinking ghost; a ring of dark and a flash at each player; the aura.
+
+### 12.5 Film rounds and evidence
+
+| Film | Seen | Changed |
+|---|---|---|
+| r13 | the story read; a daylight sky; the first two stages of the dead specks in the dark; no eyes in the blackouts; the lens on the player's hair, so the hands were under the frame; the wide lost two of three players | `_Night` in `NemuInk`; the dead nearer (3.3, 1.6, 0.42 m) and 2.1 times a player; burning eye lights on each ghost; the lens framed on each player's measured eyes |
+| r14 | night, hands over the eyes, the ghost looming; eyes in the dark dim; the wide still cropped | brighter, larger eyes in the dark; the wide backed off to fit every player |
+| r15, r16 | the wide fitted at the group's middle, then at each player's depth; her head filled the foreground | the lens higher and to her right |
+| r17, preview v4 | the whisper, the dead behind them, eyes in the dark, halfway, right behind, the hands, the eyes open, every player staring with her small in the foreground | |
+
+Preview v4: 5.90 s on Bayan Plaza with the round clock frozen; Nemu PlayMode suites plus the film 11/11
+([XML](evidence/film-v4/play-tests.xml), [beats](evidence/film-v4/owner-beats.jpg), [key frames](evidence/film-v4/key-frames.jpg)).
+Sound redrafted to 12.2 (`tools/build_nemu_ult_audio.py`: a buzzing tube cut dead in each blackout, a relay clunk, whispers
+and a groan in each, a quickening heartbeat once they are right behind, a gasp, the suck into a thump, a chime, a choir as
+they stare); still drafts out of `Resources/Sfx`. Not yet evidence: the owner's verdict on v4 and on the sound.
+
