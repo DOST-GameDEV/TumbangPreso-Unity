@@ -20,8 +20,11 @@ Instruments (each typed below, never one recipe for two cues):
   suck     a reversed swell into a low thump (a soul going in)
   groan    a body fighting it
   snap     a claw yanked back in
+  buzz     the lights: a buzzing tube, cut dead in each blackout
+  clunk    the lights failing
+  heartbeat  quickening once the dead are right behind them
   (toll, handbell, shuffle, snuff: v1's procession, kept as instruments, no longer in a cue)
-Cues: sfx_ult_theme_nemu (the 5.6 s cutscene, every beat at the stage's time), sfx_nemu_possess_tell, sfx_nemu_possess_surge.
+Cues: sfx_ult_theme_nemu (the 5.9 s BEHIND YOU cutscene, every beat at the stage's time), sfx_nemu_possess_tell, sfx_nemu_possess_surge.
 """
 import os
 import wave
@@ -234,46 +237,82 @@ def place(track, sound, at):
         track[i:j] += sound[:j - i]
 
 
-# The stage's times (`HeroIntroductionScene.Nemu.cs`): keep in step with NmHush, NmIgnite, NmSpread, NmTellClaw, NmFlood,
-# NmSnap, NmLaunch, NmEnterFirst/NmEnterLast, NmFight, NmEscapes, NmEyesOn, NmDrain, NmRelease.
-HUSH, IGNITE, SPREAD, CLAW, FLOOD, SNAP, LAUNCH = .30, .42, .55, .85, 1.10, 2.35, 2.55
-ENTER_FIRST, ENTER_LAST, FIGHT, EYES, DRAIN, RELEASE, LENGTH = 3.10, 3.75, 3.80, 4.00, 4.20, 5.15, 5.6
-ESCAPES = (.05, .30, .52, .70)
+def buzz(seconds, gain=1.0):
+    """The lights: a mains hum (a buzzing tube) with a little flutter, under the court while the lights are on."""
+    t = t_axis(seconds)
+    ph = 2 * np.pi * 120.0 * t
+    saw = 2 * ((ph / (2 * np.pi)) % 1) - 1
+    x = lowpass(saw, 900) * .5 + .25 * np.sin(2 * ph)
+    x *= .85 + .15 * np.sin(2 * np.pi * 7.3 * t)
+    return x * gain
+
+
+def clunk(gain=1.0):
+    """The lights failing: a relay's dry click and a low thump."""
+    c = bandnoise(.03, 1800, 9000) * env(int(.03 * RATE), .0005, .006)
+    tt = t_axis(.25)
+    th = np.sin(2 * np.pi * (60 - 25 * tt / .25) * tt) * np.exp(-tt / .07)
+    out = np.zeros(len(tt)); out[:len(c)] += c * .8; out += th
+    return out * gain
+
+
+def heartbeat(start, end, track, gain=1.0):
+    """A heartbeat that quickens from start to end (lub-dub)."""
+    at = start
+    period = .62
+    while at < end:
+        for k, g in ((0, 1.0), (.14, .7)):
+            tt = t_axis(.18)
+            hb = np.sin(2 * np.pi * 48 * tt) * np.exp(-tt / .05) * g
+            place(track, hb * gain, at + k)
+        at += period
+        period = max(.32, period * .82)
+
+
+# The stage's times (`HeroIntroductionScene.Nemu.cs`, BEHIND YOU): keep in step with NmIgnite, NmFlicker, NmDark, NmHandsShut,
+# NmSink, NmSunk, NmEyesOpen, NmStare, NmWide.
+HUSH, IGNITE, B = .30, .42, 1.10
+FLICKERS, DARK = (1.50, 2.20, 2.90), .19
+HANDS_IN, HANDS_SHUT, SINK, SUNK, EYES, STARE, RELEASE, LENGTH = 3.80, 4.12, 4.24, 4.58, 4.62, 4.72, 5.45, 5.9
 
 
 def theme():
-    """LET THEM IN, beat for beat (`direction.md` section 11.4)."""
+    """LET THEM IN: BEHIND YOU, beat for beat (`direction.md` section 12)."""
     track = np.zeros(int((LENGTH + 1.0) * RATE))
-    room = drone(LENGTH + .5, gain=.35)
-    # Everything ducks when her eyes ignite, then the drone comes back heavier under the flood.
+    room = drone(LENGTH + .5, gain=.3)
+    # Everything ducks when her eyes ignite, then the room comes back heavier.
     u = t_axis(len(room) / RATE)
     duck = 1 - .6 * np.exp(-((u - (IGNITE + .1)) / .18) ** 2)
-    room *= np.minimum(1, u / .25) * duck * (1 + .5 * np.clip((u - FLOOD) / 1.0, 0, 1))
+    room *= np.minimum(1, u / .25) * duck * (1 + .4 * np.clip((u - B) / 1.0, 0, 1))
     place(track, room, 0)
     place(track, breath(.5, 2000, 7000, shape="hush", gain=.6), HUSH)          # shh
     place(track, chime(.18), IGNITE)                                           # her eyes
-    place(track, sub_swell(FLOOD - SPREAD + .9, gain=.4), SPREAD)               # the shadow spreading
-    place(track, crackle(gain=.45), CLAW)                                      # a claw breaks the surface
-    place(track, wind(1.6, gain=.2), FLOOD)                                   # the ink floods the court
-    # The dead rising: whispers thickening and a choir swelling, CUT DEAD on the snap.
-    rise = SNAP - (FLOOD + .1)
-    swell = np.linspace(.15, 1, int(rise * RATE)) ** 1.1
-    place(track, whisper(rise, 8.0, 1.0) * swell, FLOOD + .1)
-    place(track, hum(rise, notes=(98.0, 116.54, 146.83, 87.31), gain=1.6) * swell, FLOOD + .1)
-    place(track, breath(.18, 800, 5000, shape="in", gain=.4), SNAP + .02)       # every head turns: one breath in
-    place(track, wail(.7, 1.0), LAUNCH)                                         # they launch
-    place(track, wind(.6, gain=.35), LAUNCH + .1)
-    for k in range(7):                                                         # into the players, one after another
-        at = ENTER_FIRST + (ENTER_LAST - ENTER_FIRST) * k / 6
-        place(track, suck(1.15 - .1 * (k % 3)), at - .4)
-    for v in range(3):                                                         # they fight it
-        place(track, groan(.9, 66.0 + 9 * v, gain=.7), FIGHT + .11 * v)
-        for e in ESCAPES:
-            place(track, snap(.75 + .15 * ((v + int(e * 10)) % 2)), FIGHT + .11 * v + e + .26)
-    place(track, chime(.3), EYES)                                              # their eyes snap on
-    tail = drone(1.6, base=36.7, gain=.3)
-    place(track, tail * np.exp(-np.linspace(0, 1.5, len(tail))), DRAIN)        # the ink drains into them
-    place(track, whisper(.5, 6.0, .3) * np.linspace(1, 0, int(.5 * RATE)), 4.75)  # one last whisper
+    place(track, sub_swell(.9, gain=.45), IGNITE)                              # the ring of dark going out
+    # The lights: a buzzing tube from B, cut dead in every blackout.
+    hum_on = buzz(LENGTH - B, gain=.12)
+    gate = np.ones(len(hum_on))
+    for f in FLICKERS:
+        i0, i1 = int((f - B) * RATE), int((f - B + DARK) * RATE)
+        gate[i0:i1] = 0
+        gate[int((f - B + .035) * RATE):int((f - B + .065) * RATE)] = .6
+    gate[int((HANDS_IN - B) * RATE):] = 0                                       # it never comes back for C
+    place(track, hum_on * gate, B)
+    for k, f in enumerate(FLICKERS):
+        place(track, clunk(.7 + .15 * k), f)                                    # the lights fail
+        place(track, whisper(DARK + .15, 9.0, .5 + .3 * k), f + .02)            # something in the dark
+        place(track, groan(.35, 55.0 - 4 * k, gain=.5 + .25 * k), f + .1)      # it is there
+    place(track, whisper(.9, 7.0, .4), FLICKERS[1] + .05)                       # the eyes all round
+    heartbeat(FLICKERS[2] + .3, HANDS_SHUT, track, gain=.8)                     # it is right behind you
+    place(track, breath(.22, 900, 6000, shape="in", gain=.9), HANDS_SHUT - .02) # the gasp as the hands close
+    place(track, crackle(.3, gain=.4), HANDS_SHUT)
+    place(track, suck(1.2), SUNK - .4)                                          # it goes in
+    for v in range(3):
+        place(track, groan(.5, 66.0 + 9 * v, gain=.55), HANDS_SHUT + .06 * v)  # they fight it
+    place(track, chime(.32), EYES)                                             # their eyes open
+    rise = RELEASE - STARE + .3
+    swell = np.linspace(.2, 1, int(rise * RATE)) ** 1.2
+    place(track, hum(rise, notes=(98.0, 116.54, 146.83, 87.31), gain=1.1) * swell, STARE)  # they stare
+    place(track, whisper(rise, 6.0, .35) * swell, STARE)
     track = track[:int(LENGTH * RATE)]
     fade = np.ones(len(track)); f0 = int(RELEASE * RATE); fade[f0:] = np.linspace(1, 0, len(track) - f0) ** 1.2
     return track * fade
