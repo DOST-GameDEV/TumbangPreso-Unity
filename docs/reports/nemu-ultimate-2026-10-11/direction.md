@@ -603,3 +603,28 @@ So the next pass starts from that picture, not from 12 to 14: **many souls swirl
 players, who visibly become possessed**, and it must be eerie and readable at a glance. He asked for a handoff to refine it (given
 in chat, 2026-10-13). Uncommitted at this point: v6's code (THEIR OWN SHADOWS) plus an unfilmed fix moving her eye glows down onto
 her real eyes and widening the opening shot.
+
+## 16. SOUL STORM (2026-10-14, agreed before v7; supersedes 12 to 14's story)
+
+Shown reference searches (Bleach spirits, Hu Tao, Diablo soul storm, Ruined King's Black Mist, Fade's NIGHTFALL) and four soul
+sketches, the owner picked **Ruined King's Black Mist + sketch A, the wailing soul**: a glowing violet head with hollow black eyes
+and an open black mouth, trailing a long black streaming tail with a broken violet edge. Many of them, swirling.
+
+Beats (5.9 s), all medium or wide shots (no chibi-head close-ups):
+1. THE CRACKS (0.00-0.90): her whole body on the court; she flings her hands down, violet cracks split the court from her
+   feet, her eyes ignite (0.32), the first souls claw up out of the cracks round her. (Owner on the face close-up: *"i dont
+   like ur intro ... it donnt make sense"*; he picked the storm and the cracks.)
+2. THE STORM (0.90-2.55): high and wide over the court; she throws her arms out and dozens of souls pour out of her and spiral up
+   into a vortex circling the whole court; the players look up at it.
+3. THE DIVE (2.55-4.40): low medium shot of one player with the storm in the sky behind; souls peel off and dive into each player;
+   each hit is a violent jerk (impact frame on the first), more souls sink in while they fight, they go limp, then lift their
+   heads with violet eyes and the aura.
+4. ALL OF THEM (4.40-5.90): crane up and back: every player possessed, heads tilted, staring, as the storm thins out.
+
+EYES (owner: *"i liek glowing eyes but ur current impleemtnation sucsk"*): the floating slanted glows are gone. The possessed
+eyes are the heroes' own painted eyes burning violet (`Runtime/Visual/NemuEyeGlow.cs`, `Shaders/NemuEyes`), with the eye texels
+found per hero by `tools/author_eye_rects.py` into `Resources/Visual/eye-rects.txt` (the nine playable heroes only).
+
+Owner on v7 (2026-10-14): *"oh shit i like the ghosts more now amazing"*. The souls and the storm stay. What is still wrong:
+*"its not obvious that theyre entering the ppl"*; it should be communicated through animation, VFX and camera movement. The next
+pass refines direction and VFX for the ENTRY only; it does not redesign the souls or the storm.

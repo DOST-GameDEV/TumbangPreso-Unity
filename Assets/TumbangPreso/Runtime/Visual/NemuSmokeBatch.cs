@@ -19,6 +19,8 @@ namespace TumbangPreso.Visual
     ///  * A LIGHT is a soft violet glow, round, or drawn along a world direction (a slanted eye, a claw, a mouth) as a short
     ///    chain of round glows, so the shape is a direction in the world and reads the same on every camera. (Film r2:
     ///    stretched billboards on a system that never simulates drew nothing at all.)
+    ///  * A MARK is smoke drawn AFTER the lights: the hollow black eyes and open mouth of a soul whose head is a glow
+    ///    (SOUL STORM, section 16). Same shader and rows as a wisp, a third draw.
     /// No `Random` anywhere: the owner types every row. (The cutscene's dead and their hands were cards here until preview v4;
     /// they are 3D now, `NemuDeadFigure`.)
     /// </summary>
@@ -26,28 +28,33 @@ namespace TumbangPreso.Visual
     {
         public static readonly Color Violet = new Color(.62f, .26f, 1f, 1f);
 
-        private readonly GameObject _smokeGo, _lightGo;
-        private readonly ParticleSystem _smoke, _light;
-        private readonly Material _smokeMaterial, _lightMaterial;
-        private readonly ParticleSystem.Particle[] _puffs, _lights;
-        private int _puffCount, _lightCount;
+        private readonly GameObject _smokeGo, _lightGo, _markGo;
+        private readonly ParticleSystem _smoke, _light, _mark;
+        private readonly Material _smokeMaterial, _lightMaterial, _markMaterial;
+        private readonly ParticleSystem.Particle[] _puffs, _lights, _marks;
+        private int _puffCount, _lightCount, _markCount;
         private Vector3 _viewEye, _viewLook;
         private bool _hasView;
 
         public Renderer SmokeRenderer { get; }
         public Renderer LightRenderer { get; }
 
-        public NemuSmokeBatch(Transform parent, string name, int maxPuffs, int maxLights)
+        public NemuSmokeBatch(Transform parent, string name, int maxPuffs, int maxLights, int maxMarks = 1)
         {
             _puffs = new ParticleSystem.Particle[Mathf.Max(1, maxPuffs)];
             _lights = new ParticleSystem.Particle[Mathf.Max(1, maxLights)];
+            _marks = new ParticleSystem.Particle[Mathf.Max(1, maxMarks)];
             var shader = Resources.Load<Shader>("Shaders/NemuSmoke");
             _smokeMaterial = shader != null ? new Material(shader) { name = name + "Smoke" } : null;
             _lightMaterial = shader != null ? new Material(shader) { name = name + "Light" } : null;
             if (_smokeMaterial != null) { _smokeMaterial.SetFloat("_Mode", 0f); _smokeMaterial.renderQueue = (int)RenderQueue.Transparent + 10; }
             if (_lightMaterial != null) { _lightMaterial.SetFloat("_Mode", 1f); _lightMaterial.renderQueue = (int)RenderQueue.Transparent + 14; }
+            _markMaterial = shader != null ? new Material(shader) { name = name + "Mark" } : null;
+            if (_markMaterial != null) { _markMaterial.SetFloat("_Mode", 0f); _markMaterial.renderQueue = (int)RenderQueue.Transparent + 18; }
             _smoke = Make(parent, name + "Smoke", _puffs.Length, _smokeMaterial, ParticleSystemRenderMode.Billboard, out _smokeGo);
             _light = Make(parent, name + "Light", _lights.Length, _lightMaterial, ParticleSystemRenderMode.Billboard, out _lightGo);
+            _mark = Make(parent, name + "Mark", _marks.Length, _markMaterial, ParticleSystemRenderMode.Billboard, out _markGo);
+            var markMain = _mark.main; markMain.startSize3D = true;
             SmokeRenderer = _smokeGo.GetComponent<ParticleSystemRenderer>();
             LightRenderer = _lightGo.GetComponent<ParticleSystemRenderer>();
             var smokeMain = _smoke.main; smokeMain.startSize3D = true;
@@ -85,7 +92,7 @@ namespace TumbangPreso.Visual
             return ps;
         }
 
-        public void Begin() { _puffCount = 0; _lightCount = 0; }
+        public void Begin() { _puffCount = 0; _lightCount = 0; _markCount = 0; }
 
         /// <summary>The lens this frame's wisps are turned for (world). Without it the main camera is used.</summary>
         public void SetView(Vector3 eye, Vector3 look) { _viewEye = eye; _viewLook = look; _hasView = true; }
@@ -126,6 +133,22 @@ namespace TumbangPreso.Visual
             };
         }
 
+        /// <summary>A strand of black drawn over the lights (a soul's hollow eye or open mouth); no rim, so it reads as a hole.</summary>
+        public void Mark(Vector3 at, Vector3 along, float width, float length, float density, float seed)
+        {
+            if (_markCount >= _marks.Length || density <= .004f || width <= .001f) return;
+            _marks[_markCount++] = new ParticleSystem.Particle
+            {
+                position = at,
+                velocity = Vector3.zero,
+                startSize3D = new Vector3(width, Mathf.Max(width, length), 1f),
+                rotation = ScreenAngle(along.sqrMagnitude > 1e-6f ? along : Vector3.up),
+                startColor = new Color32(0, 0, (byte)(Mathf.Repeat(seed, 1f) * 255f), (byte)(Mathf.Clamp01(density) * 255f)),
+                remainingLifetime = 1000f,
+                startLifetime = 1000f,
+            };
+        }
+
         /// <summary>A smoke puff at <paramref name="at"/> (world), <paramref name="size"/> metres across.</summary>
         /// <param name="density">0 to 1: how black its middle is.</param>
         /// <param name="seed">0 to 1: its own rim.</param>
@@ -151,9 +174,12 @@ namespace TumbangPreso.Visual
         /// <summary>
         /// A light at <paramref name="at"/> (world), <paramref name="size"/> wide, <paramref name="strength"/> 0 to about 1.5.
         /// Give <paramref name="along"/> to stretch it that way (world direction; its length is the extra length in metres).
+        /// <paramref name="pull"/> (metres, up to 2) draws it that much nearer the lens without moving it on screen, so a glow
+        /// lying on the court is not cut in half by it (film r30: Nemu's cracks were sliced into dashes).
         /// </summary>
-        public void Light(Vector3 at, float size, float strength, Color colour, Vector3 along = default)
+        public void Light(Vector3 at, float size, float strength, Color colour, Vector3 along = default, float pull = 0f)
         {
+            float a = 1f - Mathf.Clamp(pull, 0f, 2f) * .5f;
             if (strength <= .004f || size <= .001f) return;
             float s = Mathf.Clamp(strength, 0f, 2.5f) / 2.5f;
             var c = new Color(colour.r * s, colour.g * s, colour.b * s, 1f);
@@ -169,31 +195,37 @@ namespace TumbangPreso.Visual
                     position = at + along * u,
                     velocity = Vector3.zero,
                     startSize = size * taper,
-                    startColor = n == 1 ? c : c * ((.75f + .25f * taper) * Mathf.Min(1f, 2.6f / n)),
+                    startColor = WithAlpha(n == 1 ? c : c * ((.75f + .25f * taper) * Mathf.Min(1f, 2.6f / n)), a),
                     remainingLifetime = 1000f,
                     startLifetime = 1000f,
                 };
             }
         }
 
+        // A light's alpha is not drawn (it only adds); it carries the pull toward the lens.
+        private static Color WithAlpha(Color c, float a) { c.a = a; return c; }
+
         /// <summary>Hand this frame's layout to the two systems; <paramref name="clock"/> drives the smoke's flow.</summary>
         public void End(float clock)
         {
             if (_smokeMaterial != null) _smokeMaterial.SetFloat("_Clock", clock);
             if (_lightMaterial != null) _lightMaterial.SetFloat("_Clock", clock);
+            if (_markMaterial != null) _markMaterial.SetFloat("_Clock", clock);
             _smoke.SetParticles(_puffs, _puffCount);
             _light.SetParticles(_lights, _lightCount);
+            _mark.SetParticles(_marks, _markCount);
         }
 
         public bool Visible
         {
-            set { SmokeRenderer.enabled = value; LightRenderer.enabled = value; }
+            set { SmokeRenderer.enabled = value; LightRenderer.enabled = value; if (_markGo != null) _markGo.GetComponent<ParticleSystemRenderer>().enabled = value; }
         }
 
         public void Dispose()
         {
             if (_smokeGo != null) Destroy(_smokeGo);
             if (_lightGo != null) Destroy(_lightGo);
+            if (_markGo != null) Destroy(_markGo);
         }
 
         private static void Destroy(UnityEngine.Object o)

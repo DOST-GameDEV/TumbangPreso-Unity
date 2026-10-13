@@ -12,6 +12,8 @@
 //    Vertex colour is the light; `_Intensity` lets it go past 1.
 //  * `_Clock` is set by whoever lays the particles out (the scene clock in the cutscene, the status clock in play), so the
 //    smoke still flows with the world paused under the phase, and a film at 30 frames per game second matches.
+//  * A LIGHT's vertex alpha carries a pull toward the lens: (1 - a) * 2 metres, along its own line of sight, so a glow lying
+//    on the court is drawn whole instead of cut by it (Nemu's cracks, film r30).
 //  * `_Near` (metres) thins anything to nothing as the lens comes within that distance, so no puff ever sits on a lens.
 // Loaded through Resources (`Shaders/NemuSmoke`), which keeps it in the player.
 Shader "TumbangPreso/NemuSmoke"
@@ -50,9 +52,15 @@ Shader "TumbangPreso/NemuSmoke"
             v2f vert(appdata v)
             {
                 v2f o;
-                o.pos = UnityObjectToClipPos(v.vertex);
                 float3 view = UnityObjectToViewPos(v.vertex);
                 o.near = saturate((-view.z - 0.15) / max(0.01, _Near));
+                if (_Mode > 0.5)
+                {
+                    float pull = (1.0 - v.color.a) * 2.0;
+                    float d = length(view);
+                    view *= max(0.05, (d - pull) / max(1e-3, d));
+                }
+                o.pos = mul(UNITY_MATRIX_P, float4(view, 1.0));
                 o.color = v.color;
                 o.uv = v.uv;
                 return o;

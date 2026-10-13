@@ -507,53 +507,54 @@ def zack():
 @performance
 def nemu(held=False):
     """
-    LET THEM IN: THEIR OWN SHADOWS, 5.9 s (owner 2026-10-13 on preview v5: *"direction still ssucks, i dont get wtf is
-    happening"*; of three new stories offered he picked THEIR OWN SHADOWS). `docs/reports/nemu-ultimate-2026-10-11/
-    direction.md` section 14.
-    One sentence: Nemu whispers, and every player's own shadow peels up off the ground behind them, stands, puts its hands over
-    their eyes and pours into them.
-      S1 HER 0.00-0.90: close on her face; her eyes ignite (0.32).
-      S2 THE COURT 0.90-2.85: from beside her, daylight; she opens her hands (1.1) and a ring of dark goes out from her feet; as
-        it reaches each player their shadow peels up off the ground and stands behind them (1.55-2.5).
-      S3 TAKEN 2.85-5.90: the shadow's hands over one player's eyes, it pours in, their eyes open violet, pull back to everyone.
-    S1 to S3 are computed from her face and from where the players really are (`HeroIntroductionScene.Nemu.cs`); the authored
-    shots below are their fallbacks with nobody on court. The stage reads these times: keep them in step with its `Nm*` constants.
+    LET THEM IN: SOUL STORM, 5.9 s (owner 2026-10-14; `docs/reports/nemu-ultimate-2026-10-11/direction.md` section 16: Ruined
+    King's Black Mist and the wailing soul; the opening is the storm and the cracks, no face close-up).
+      S1 THE CRACKS 0.00-0.90: she flings her hands down (0.12) and violet cracks split the court from her feet; her eyes
+        ignite (0.32); the first souls claw up out of the cracks round her.
+      S2 THE STORM 0.90-2.55: she throws her arms up and out (1.0); souls pour up out of the cracks into a vortex over the court.
+      S3 THE DIVE 2.55-4.40 and S4 ALL OF THEM 4.40-5.90: souls dive into every player; she watches, head tipped.
+    The shots are computed from where the players really are (`HeroIntroductionScene.Nemu.cs`); the authored shots below are
+    their fallbacks with nobody on court. The stage reads these times: keep them in step with its `Nm*` constants.
     """
     p = Performance("nemu-held" if held else "nemu", 5.9)
-    # Looking down, hands loose at her sides: she has not looked up yet. (No hush: in v1 to v4 the sleeve crossed her face.)
-    down = Pose(torso=(4, 0, 0), head=(24, 0, 2), left=(-4, 14, 0), right=(-4, 14, 0))
-    # Her eyes have opened; the chin comes up, the head tipped: she whispers.
-    up = Pose(torso=(2, 0, 0), head=(6, 0, -8), left=(-2, 16, 0), right=(-2, 16, 0))
-    # Her hands open low at her sides, palms down: let them in. Seen in the near corner of the court shot as the ring goes out.
-    release = Pose(torso=(-3, 0, 0), head=(4, 0, -6), left=(30, 44, -6), right=(30, 44, -6), legs=((4, 3), (-3, 3)))
-    # Watching them, head tipped: she knows what is behind them; then the tip goes the other way as they turn.
-    watch = release.but(torso=(-2, 0, 2), head=(6, -8, 10), left=(26, 38, -6), right=(26, 38, -6))
+    # Still, looking down at the court, hands loose.
+    down = Pose(torso=(4, 0, 0), head=(18, 0, 2), left=(-4, 14, 0), right=(-4, 14, 0))
+    # Hands flung down and out at the court, leaning over them: the cracks split from under her.
+    slam = Pose(torso=(14, 0, 0), head=(20, 0, 0), left=(-10, 52, -6), right=(-10, 52, -6), legs=((10, 4), (-6, 4)))
+    # Head up as her eyes ignite, the hands still spread low.
+    lift = slam.but(torso=(6, 0, 0), head=(2, 0, -4))
+    # Arms thrown up and wide (chibi arms are a head long: wide, not overhead), chest open, looking up into the storm.
+    call = Pose(torso=(-8, 0, 0), head=(-16, 0, 0), left=(70, 78, 0), right=(70, 78, 0), legs=((4, 5), (-3, 5)))
+    # Watching them, head tipped: she knows what is coming for them; then the tip goes the other way as they turn.
+    watch = Pose(torso=(-2, 0, 2), head=(6, -8, 10), left=(26, 38, -6), right=(26, 38, -6))
     watch2 = watch.but(head=(8, 6, -12))
     if held:
         shoe = (8, 26, -5)
         down = down.but(right=shoe)
-        up = up.but(right=shoe)
-        release = release.but(right=shoe)
+        slam = slam.but(right=shoe)
+        lift = lift.but(right=shoe)
+        call = call.but(right=shoe)
         watch = watch.but(right=shoe)
         watch2 = watch2.but(right=shoe)
 
     p.key(0, down)
-    p.hold(0, .22, down)
-    p.key(.45, up)
-    p.hold(.45, .9, up)
-    p.key(1.15, release)
-    p.hold(1.15, 2.4, release)
-    p.key(2.9, watch)
-    p.hold(2.9, 4.7, watch)
-    p.key(5.1, watch2)
-    p.hold(5.1, 5.9, watch2)
+    p.key(.12, slam, punch=True)
+    p.hold(.12, .3, slam)
+    p.key(.45, lift)
+    p.hold(.45, .85, lift)
+    p.key(1.05, call)
+    p.hold(1.05, 2.3, call)
+    p.key(2.8, watch)
+    p.hold(2.8, 4.6, watch)
+    p.key(5.0, watch2)
+    p.hold(5.0, 5.9, watch2)
 
-    # S1: her face, low and close.
-    p.shot(0, .9, (-.1, .84, 1.2), (0, 1.0, 0), 34, eye_to=(-.08, .86, .95), fov_to=30, close=True)
-    # S2 fallback: from beside her, looking out over the court.
-    p.shot(.9, 2.85, (1.5, 2.1, -1.2), (0, .8, 5.0), 50, eye_to=(1.5, 1.95, -.5), look_to=(0, 1.1, 5.0))
+    # S1 fallback: in front of her and above, her whole body and the court round her.
+    p.shot(0, .9, (1.1, 2.2, 4.4), (0, .55, .4), 50, eye_to=(1.1, 1.9, 3.7), look_to=(0, .75, .4))
+    # S2 fallback: high behind her, out over the court.
+    p.shot(.9, 2.55, (1.6, 3.4, -3.4), (0, 1.4, 3.5), 58, eye_to=(1.9, 4.4, -2.9), look_to=(0, 1.9, 4.5), fov_to=64)
     # S3 fallback: out in front of her, easing back to the court.
-    p.shot(2.85, 5.9, (.6, 1.3, 3.2), (0, 1.1, 5.5), 40, eye_to=(1.5, 1.8, 1.5), look_to=(0, 1.0, 5.5), fov_to=50)
+    p.shot(2.55, 5.9, (.6, 1.3, 3.2), (0, 1.1, 5.5), 50, eye_to=(1.5, 3.0, 1.5), look_to=(0, 1.4, 5.5), fov_to=56)
     p.locked((1.2, 2.2, -2.2), (0, .9, 4.5), 54)
     return p
 
