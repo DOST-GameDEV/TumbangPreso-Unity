@@ -507,21 +507,21 @@ def zack():
 @performance
 def nemu(held=False):
     """
-    LET THEM IN, 5.6 s (owner 2026-10-13, `docs/reports/nemu-ultimate-2026-10-11/direction.md` section 11; the owner:
-    *"pls limit ult to below 6 seconds"*; v1, PRUSISYON, was rejected whole). "Looks distracted. Already knows your next
-    move." One sentence: she stops holding the dead back; her shadow floods the court, the dead claw up out of it and pour
-    into every player, and all that is left to see is the aura they cannot shake. The travelling thing is her shadow.
-      A THE HUSH 0.00-1.10: close, three-quarter from her LEFT (so the hushing right hand is on the far side of her face
-        and never covers it). Looking down and away; her eyes come up (0.15); finger to her lips (0.30); her eyes ignite
-        violet (0.42); her shadow spreads; a claw rises beside her (0.85); she lets her hand fall open: go (1.00).
-      B THE FLOOD 1.10-2.90: low behind her right shoulder, craning up. Arms low and out while the ink floods the court and
-        the dead claw up out of it; every head snaps to the lens at 2.35; they launch at 2.55.
-      C LET THEM IN 2.90-5.60: one continuous move riding the dead out to the players.
+    LET THEM IN: BEHIND YOU, 5.9 s (owner 2026-10-13 on preview v3: *"it looks chonky and weird the ult cutscene dont make
+    sense and lacks vfx and direction and visual communication or storytelling"*; of three stories offered he picked
+    BEHIND YOU; *"pls limit ult to below 6 seconds"*). `docs/reports/nemu-ultimate-2026-10-11/direction.md` section 12.
+    One sentence: she whispers, the lights fail, and every time they come back the dead stand closer behind each player,
+    until their hands close over the players' eyes and they are let in. The travelling thing is the dark.
+      A THE WHISPER 0.00-1.10: close, three-quarter from her LEFT. Looking down and away; her eyes come up (0.15); finger to
+        her lips (0.30); her eyes ignite violet and the lights die (0.42); she lets her hand fall open (1.00).
+      B THE FLICKER 1.10-3.80: the lights fail three times (1.50, 2.20, 2.90); each blackout hides a cut closer in, and when
+        they come back a tall ghost stands closer behind every player. She is seen once, from behind, watching them.
+      C TAKEN 3.80-5.90: the hands slide over their eyes from behind; the dead sink in; their eyes open violet; wide on
+        every player, staring into the lens.
     B and C are computed from where the players really are (`HeroIntroductionScene.Nemu.cs`); the authored shots below are
-    their fallbacks with nobody on court. The stage reads these times: keep them in step with `NmHush`, `NmIgnite`,
-    `NmFlood`, `NmSnap` and `NmLaunch`.
+    their fallbacks with nobody on court. The stage reads these times: keep them in step with its `Nm*` constants.
     """
-    p = Performance("nemu-held" if held else "nemu", 5.6)
+    p = Performance("nemu-held" if held else "nemu", 5.9)
     # Looking down and away, hands loosely behind her back: she has not looked at you yet.
     away = Pose(torso=(-2, 8, 2), head=(18, 26, 4), left=(-22, 8, -30), right=(-22, 8, -30))
     # Her eyes come up to the lens: the one beat she is fully present.
@@ -529,11 +529,10 @@ def nemu(held=False):
     # THE HUSH: a finger to her lips, held at the side of the mouth, head dipped a touch.
     # (v1 film: at (128, 4, 42) the hand covered her face in the close lens.)
     hush = Pose(torso=(2, -4, 0), head=(8, 6, -4), left=(-14, 10, -22), right=(128, 4, 36))
-    # Go: the hand falls open, both arms low and out from her sides, palms down, letting them out.
+    # The hand falls open, both arms low and out from her sides, palms down: let them in.
     release = Pose(torso=(-3, 0, 0), head=(4, 0, 0), left=(40, 52, -6), right=(40, 52, -6), legs=((4, 3), (-3, 3)))
-    release_sway = release.but(torso=(-2, 0, 2), head=(6, 0, 5), left=(44, 56, -4), right=(36, 48, -8))
-    # The dead turn to the lens: her chin lifts, knowing.
-    knowing = release.but(head=(-4, 0, 6), left=(46, 58, -6), right=(46, 58, -6))
+    # Watching them from behind, head tipped: she knows what is behind them.
+    watch = release.but(torso=(-2, 0, 2), head=(6, -8, 10), left=(30, 40, -6), right=(30, 40, -6))
     if held:
         # The slipper stays loosely at her outside hip; the hush and the release are her free (left) hand.
         shoe = (8, 26, -5)
@@ -541,26 +540,22 @@ def nemu(held=False):
         present = present.but(right=shoe)
         hush = hush.but(left=(128, 4, 36), right=shoe)
         release = release.but(right=shoe)
-        release_sway = release_sway.but(right=shoe)
-        knowing = knowing.but(right=shoe)
+        watch = watch.but(right=shoe)
 
     p.key(0, away)
     p.key(.15, present)
     p.key(.30, hush, punch=True)
     p.hold(.30, .85, hush)
     p.key(1.0, release, punch=True)
-    p.key(1.6, release_sway).key(2.15, release)
-    p.key(2.35, knowing, punch=True)
-    p.hold(2.35, 2.6, knowing)
-    p.key(3.4, release_sway).key(4.4, release)
-    p.hold(4.4, 5.6, release)
+    p.key(1.8, watch)
+    p.hold(1.8, 5.9, watch)
 
     # A: close, three-quarter from her left, a slow push in.
     p.shot(0, 1.1, (-1.0, 1.05, 2.6), (0, .95, 0), 34, eye_to=(-.85, 1.0, 2.2), close=True)
-    # B: low behind her right shoulder looking out over the court, craning up as the dead rise.
-    p.shot(1.1, 2.9, (.9, .75, -1.7), (0, 1.0, 5.0), 50, eye_to=(1.1, 1.9, -1.3), look_to=(0, .8, 5.5), fov_to=54)
-    # C: from where B ends, out after the dead (computed from the real players in the stage).
-    p.shot(2.9, 5.6, (1.1, 1.9, -1.3), (0, .9, 5.5), 52, eye_to=(3.0, 2.6, 3.0), look_to=(0, .8, 4.5), fov_to=54)
+    # B: behind her right shoulder looking out at the players, creeping in.
+    p.shot(1.1, 3.8, (.9, 1.0, -1.7), (0, 1.0, 5.0), 48, eye_to=(1.2, 1.2, 1.5), look_to=(0, 1.0, 5.5), fov_to=44)
+    # C: in front of a player, then easing back to hold them all (computed from the real players in the stage).
+    p.shot(3.8, 5.9, (.6, 1.3, 3.2), (0, 1.1, 5.5), 40, eye_to=(1.5, 1.8, 1.5), look_to=(0, 1.0, 5.5), fov_to=50)
     p.locked((1.2, 2.2, -2.2), (0, .9, 4.5), 54)
     return p
 

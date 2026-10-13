@@ -1,7 +1,8 @@
 // NEMU'S INK AT THE FRAME'S EDGES (LET THEM IN, 2026-10-13, `HeroIntroductionScene.Nemu.cs`, `NemuPostProcess`). The owner:
 // *"use black and purple or low opacity black"*. v1 sank the whole frame to pitch black at the end, which read as a broken
 // screen; the owner's ending holds on the players instead. So this is only a vignette of near-black ink that creeps in from the
-// edges when her eyes ignite, its edge wavering like smoke (`_Clock`, the scene clock), and lets go as play returns.
+// edges when her eyes ignite, its edge wavering like smoke (`_Clock`, the scene clock), and lets go as play returns. `_Black`
+// (Behind You) takes the whole frame for a blackout, keeping only bright violet light.
 // Light that is bright AND violet (eyes, claws, the halo) is kept: the ink never puts out the one hot light.
 Shader "TumbangPreso/NemuInk"
 {
@@ -9,6 +10,8 @@ Shader "TumbangPreso/NemuInk"
     {
         _MainTex ("Frame", 2D) = "white" {}
         _Ink ("Ink", Range(0, 1)) = 0
+        _Black ("Blackout", Range(0, 1)) = 0
+        _Night ("Night", Range(0, 1)) = 0
         _InkColour ("Ink colour", Color) = (0.006, 0.0, 0.014, 1)
         _Clock ("Clock (s)", Float) = 0
         _Aspect ("Aspect", Float) = 1.777
@@ -23,7 +26,7 @@ Shader "TumbangPreso/NemuInk"
             #pragma fragment frag
             #include "UnityCG.cginc"
             sampler2D _MainTex;
-            float _Ink, _Clock, _Aspect;
+            float _Ink, _Black, _Night, _Clock, _Aspect;
             fixed4 _InkColour;
 
             float hash(float2 p) { return frac(sin(dot(p, float2(127.1, 311.7))) * 43758.5453); }
@@ -48,6 +51,12 @@ Shader "TumbangPreso/NemuInk"
                 float violet = saturate((c.b + c.r * 0.5 - c.g * 1.5) * 3.0);
                 float keep = saturate(violet * smoothstep(0.35, 0.7, bright));
                 float3 inked = lerp(c.rgb, _InkColour.rgb, saturate(edge * _Ink * 0.92) * (1.0 - keep));
+                // BEHIND YOU's blackouts: the lights fail and only the eyes of the dead (bright violet) are left burning.
+                float keepDark = saturate(violet * smoothstep(0.2, 0.55, bright));
+                // Night: everything but bright violet sinks toward a deep blue-violet dark, the sky most of all.
+                float3 nightTint = c.rgb * float3(0.42, 0.40, 0.62);
+                inked = lerp(inked, nightTint, _Night * (1.0 - keepDark) * (0.75 + 0.25 * saturate(i.uv.y * 1.6 - 0.4)));
+                inked = lerp(inked, _InkColour.rgb, _Black * (1.0 - keepDark));
                 return fixed4(inked, c.a);
             }
             ENDCG
