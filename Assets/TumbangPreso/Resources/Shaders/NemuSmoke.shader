@@ -2,7 +2,7 @@
 // The owner: *"use black and purple or low opacity black"*, smoky wraiths, *"hell i hate how the ghosts look"* (v1's lathed
 // translucent bodies). Fade's NIGHTFALL is the reference: black smoke with the faces and claws drawn in light inside it.
 //
-// One shader, three modes (the third, the whole ghost, is described above `ghost`), both particles laid out by hand (`Visual.NemuSmokeBatch`):
+// One shader, four modes (the whole ghost and the hand are described above `ghost` and `hand`), both particles laid out by hand (`Visual.NemuSmokeBatch`):
 //  * `_Mode` 0, SMOKE: a soft round puff with a frayed, flowing rim. PREMULTIPLIED: its body darkens what is behind it (near
 //    black, alpha = density) and its rim adds violet light, so one puff is both the black and the edge.
 //    Vertex colour: r = how much the rim glows, g = fray (0 whole, 1 gone: holes open from the rim in), b = seed (each puff its
@@ -17,7 +17,7 @@ Shader "TumbangPreso/NemuSmoke"
 {
     Properties
     {
-        _Mode ("Mode (0 smoke, 1 light, 2 ghost)", Float) = 0
+        _Mode ("Mode (0 smoke, 1 light, 2 ghost, 3 hand)", Float) = 0
         _Core ("Smoke body", Color) = (0.016, 0.004, 0.03, 1)
         _RimColor ("Smoke rim", Color) = (0.50, 0.17, 0.95, 1)
         _RimGain ("Rim gain", Float) = 0.75
@@ -79,7 +79,7 @@ Shader "TumbangPreso/NemuSmoke"
             // smoke hanging past the shoulders in strings, a starved body tearing into ragged strips, long jointed arms hanging or
             // reaching at the lens with spindly fingers (never above the head), and a DEATH MASK: a dim violet face with two
             // hollow black sockets, a burning pinpoint in each, and a jaw that drops far past the chin when it screams.
-            // The quad is 0.62 as wide as it is tall (`NemuSmokeBatch.GhostAspect`).
+            // The quad is 0.5 as wide as it is tall (`NemuSmokeBatch.GhostAspect`; v3 at 0.62 read as *"chonky"*).
             // Vertex colour: r = the face (0 seen from behind); g = arms (high nibble: 0 hanging, 15 reaching) and scream (low
             // nibble: 0 shut, 15 wide); b = seed; a = density.
             float2 rot2(float2 p, float a) { float c = cos(a), s = sin(a); return float2(p.x * c - p.y * s, p.x * s + p.y * c); }
@@ -91,19 +91,19 @@ Shader "TumbangPreso/NemuSmoke"
                 float packed = floor(col.g * 255.0 + 0.5);
                 float reach = floor(packed / 16.0) / 15.0;
                 float scream = fmod(packed, 16.0) / 15.0;
-                float2 q = float2(c.x * 0.62, c.y);
+                float2 q = float2(c.x * 0.5, c.y);
                 // STOP-MOTION: the head twitches to a new tilt now and then and HOLDS it (stepped from the clock, never smooth).
                 float beat = floor(_Clock * 7.0 + seed * 3.7);
-                float twitch = hash(float2(beat, seed)) > 0.55 ? (hash(float2(seed, beat)) - 0.5) * 0.9 : 0.0;
+                float twitch = hash(float2(beat, seed)) > 0.88 ? (hash(float2(seed, beat)) - 0.5) * 0.9 : 0.0;
                 float tilt = (frac(seed * 0.37) - 0.5) * 0.5 + twitch;
                 float2 neck = float2(0.0, 0.47);
                 float2 hq = rot2(q - neck, -tilt) + neck;
                 // Skull: long and narrow.
-                float d = ellipse(hq - float2(0.0, 0.67), float2(0.145, 0.205));
+                float d = ellipse(hq - float2(0.0, 0.67), float2(0.12, 0.2));
                 // Hair: from the crown down past the shoulders, widening, its lower edge torn into strings that sway.
                 float hy = hq.y;
                 float hx = hq.x + sin(hy * 6.0 + _Clock * 2.2 + seed) * 0.035 * saturate(0.85 - hy);
-                float hw = 0.16 + 0.11 * saturate((0.68 - hy) / 0.6);
+                float hw = 0.125 + 0.07 * saturate((0.68 - hy) / 0.6);
                 float strand = 0.36 - 0.42 * noise(float2(hx * 17.0 + seed, _Clock * 0.25 + seed));
                 float hair = max(max(abs(hx) - hw, hy - 0.86), strand - hy);
                 d = min(d, hair);
@@ -111,7 +111,7 @@ Shader "TumbangPreso/NemuSmoke"
                 float below = saturate(0.4 - q.y);
                 float sway = sin(q.y * 4.0 + _Clock * 2.6 + seed) * 0.09 * below;
                 float t = saturate((0.45 - q.y) / 1.45);
-                float w = lerp(0.20, 0.15, saturate(t * 2.5)) * (1.0 - smoothstep(0.35, 1.0, t)) + 0.012;
+                float w = lerp(0.15, 0.10, saturate(t * 2.5)) * (1.0 - smoothstep(0.35, 1.0, t)) + 0.01;
                 float body = max(abs(q.x - sway) - w, q.y - 0.45);
                 float strips = smoothstep(0.5, 0.68, noise(float2((q.x - sway) * 11.0 + seed, q.y * 1.3 - _Clock * 1.1)));
                 body += strips * 0.14 * smoothstep(0.4, 0.75, t);
@@ -119,28 +119,28 @@ Shader "TumbangPreso/NemuSmoke"
                 // Arms: long and jointed; hanging to the thighs, or reaching at the lens with the hands either side of the face.
                 for (int s = -1; s <= 1; s += 2)
                 {
-                    float2 sh = float2(s * 0.18, 0.40);
+                    float2 sh = float2(s * 0.14, 0.40);
                     float jerk = 0.025 * sin(_Clock * 11.0 + seed * 2.0 + s * 1.7) * step(0.7, hash(float2(beat, s + seed)));
-                    float2 elbow = lerp(float2(s * 0.27, 0.02), float2(s * 0.40, 0.22), reach) + float2(jerk, 0.0);
-                    float2 hand = lerp(float2(s * 0.25, -0.38), float2(s * 0.43, 0.56), reach) + float2(0.0, jerk);
-                    d = smin(d, capsule(q, sh, elbow, 0.03), 0.03);
-                    d = min(d, capsule(q, elbow, hand, 0.022));
-                    d = min(d, length(q - hand) - 0.035);
+                    float2 elbow = lerp(float2(s * 0.21, 0.02), float2(s * 0.30, 0.22), reach) + float2(jerk, 0.0);
+                    float2 hand = lerp(float2(s * 0.19, -0.40), float2(s * 0.30, 0.56), reach) + float2(0.0, jerk);
+                    d = smin(d, capsule(q, sh, elbow, 0.02), 0.025);
+                    d = min(d, capsule(q, elbow, hand, 0.015));
+                    d = min(d, length(q - hand) - 0.025);
                     float2 dir = normalize(hand - elbow);
                     for (int k = 0; k < 4; k++)
                     {
                         float off = (k - 1.5) * 0.34 + 0.07 * sin(_Clock * 9.0 + k * 1.3 + seed);
-                        float2 mid = hand + rot2(dir, off) * 0.10;
-                        float2 tip = mid + rot2(dir, off * 1.3 - s * 0.45) * 0.09;
-                        d = min(d, capsule(q, hand, mid, 0.011));
-                        d = min(d, capsule(q, mid, tip, 0.006));
+                        float2 mid = hand + rot2(dir, off) * 0.09;
+                        float2 tip = mid + rot2(dir, off * 1.3 - s * 0.45) * 0.08;
+                        d = min(d, capsule(q, hand, mid, 0.008));
+                        d = min(d, capsule(q, mid, tip, 0.004));
                     }
                 }
                 // The edge frays like smoke torn off it.
                 float n = fbm(q * 3.4 + float2(seed, -_Clock * 1.3));
-                d += (n - 0.5) * 0.09;
+                d += (n - 0.5) * 0.06;
                 float density = col.a;
-                float fill = smoothstep(0.02, -0.02, d);
+                float fill = smoothstep(0.015, -0.015, d);
                 float a = fill * density * near;
                 float band = smoothstep(-0.06, -0.012, d) * (1.0 - smoothstep(-0.012, 0.015, d)) * smoothstep(0.42, 0.68, n);
                 float rim = band * density * near;
@@ -178,9 +178,51 @@ Shader "TumbangPreso/NemuSmoke"
                 return fixed4(rgb, a);
             }
 
+            // HAND (`_Mode` 3, the Behind You cutscene: the dead's hands sliding over a player's eyes from behind). One long bony
+            // hand of the same black smoke, fingers together and pointing up the quad, the knuckles hooked by `curl`, a thumb
+            // on one side, a broken violet rim. The quad is 0.62 as wide as it is long.
+            // Vertex colour: r = mirror (thumb on the left), g = curl, b = seed, a = density.
+            fixed4 hand(float2 c, fixed4 col, float near)
+            {
+                float seed = col.b * 31.0;
+                float curl = col.g;
+                float2 q = float2(c.x * 0.62 * (col.r > 0.5 ? -1.0 : 1.0), c.y);
+                // Palm and wrist.
+                float d = ellipse(q - float2(0.0, -0.42), float2(0.17, 0.26));
+                d = smin(d, capsule(q, float2(0.0, -0.95), float2(0.0, -0.55), 0.09), 0.08);
+                // Four long fingers, two joints each, the tips hooking toward the palm side with curl.
+                for (int k = 0; k < 4; k++)
+                {
+                    float x = (k - 1.5) * 0.085;
+                    float len = (k == 0 || k == 3) ? 0.82 : 1.0;
+                    float2 knuckle = float2(x * 1.05, -0.2);
+                    float2 joint = knuckle + float2(x * 0.15, 0.48 * len);
+                    float2 tip = joint + float2(x * 0.1 - 0.06 * curl, (0.42 - 0.12 * curl) * len);
+                    float twitch = 0.012 * sin(_Clock * 10.0 + k * 1.7 + seed);
+                    d = min(d, capsule(q, knuckle, joint + float2(twitch, 0.0), 0.032));
+                    d = min(d, capsule(q, joint + float2(twitch, 0.0), tip + float2(twitch * 2.0, 0.0), 0.022));
+                    d = min(d, length(q - joint - float2(twitch, 0.0)) - 0.036);
+                }
+                // The thumb.
+                d = min(d, capsule(q, float2(0.14, -0.5), float2(0.3, -0.15), 0.035));
+                d = min(d, capsule(q, float2(0.3, -0.15), float2(0.34, 0.08), 0.025));
+                float n = fbm(q * 4.0 + float2(seed, -_Clock * 1.1));
+                d += (n - 0.5) * 0.035;
+                float density = col.a;
+                // The wrist melts into smoke.
+                density *= smoothstep(-1.0, -0.6, q.y);
+                float fill = smoothstep(0.012, -0.012, d);
+                float a = fill * density * near;
+                float band = smoothstep(-0.04, -0.008, d) * (1.0 - smoothstep(-0.008, 0.01, d)) * smoothstep(0.4, 0.65, n);
+                float rim = band * density * near;
+                float3 rgb = _Core.rgb * a + _RimColor.rgb * rim * _RimGain * 1.6;
+                return fixed4(rgb, a);
+            }
+
             fixed4 frag(v2f i) : SV_Target
             {
                 float2 c = (i.uv - 0.5) * 2.0;
+                if (_Mode > 2.5) return hand(c, i.color, i.near);
                 if (_Mode > 1.5) return ghost(c, i.color, i.near);
                 if (_Mode > 0.5)
                 {

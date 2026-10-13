@@ -34,7 +34,7 @@ namespace TumbangPreso.Visual
             public bool Reduced;
         }
 
-        private const int Flames = 16, Embers = 6;
+        private const int Flames = 22, Embers = 7;
         private static Mesh _baked;
 
         /// <summary>
@@ -104,18 +104,23 @@ namespace TumbangPreso.Visual
                 Vector3 born = s.Feet + up * (s.Top * h) + ring;
                 Vector3 rise = up * (phase * s.Top * (.4f + .2f * s.Swell)) + ring * (phase * .4f);
                 Vector3 drag = stream * (phase * (.25f + 1.1f * s.Drag) * s.Width * 1.6f);
-                float size = s.Width * (.20f + .30f * phase) * (1f + .3f * s.Swell);
+                // Owner on v3: the round puffs (and the fog they made round the player) looked *"chonky"*. Each tongue is now a
+                // thin strand of smoke drawn along the way it burns: up, leaning with the pull, longer as it rises and frays.
+                float width = s.Width * (.07f + .06f * phase) * (1f + .3f * s.Swell);
+                float length = s.Width * (.28f + .55f * phase) * (1f + .4f * s.Swell + .5f * s.Drag);
                 float life = Mathf.Sin(phase * Mathf.PI);
-                float density = amount * (.62f + .25f * s.Swell) * life;
+                float density = amount * (.7f + .25f * s.Swell) * life;
                 Vector3 at = born + rise + drag;
                 // Nothing below their feet: the fire leaves the body, it does not pool on the court.
                 if (at.y < s.Feet.y + .05f) continue;
-                batch.Puff(at, size, density, j * .0731f + s.Seat * .19f, phase * phase * .8f, .95f, j * 47f + phase * 60f);
+                Vector3 along = up + stream * (.4f + 1.4f * s.Drag) + ring * (.6f / Mathf.Max(.1f, s.Width));
+                batch.Wisp(at + up * (length * .3f), along, width, length, density, j * .0731f + s.Seat * .19f, phase * phase * .7f, .95f);
             }
 
             // THE HALO: one large soft violet light at their middle. Their own body hides its centre, so what shows is a glow round
             // their silhouette that reads from across the court.
-            batch.Light(s.Feet + up * (s.Top * .55f), s.Width * (2.3f + .5f * s.Swell), .5f * amount * (1f + .6f * s.Swell),
+            // (v3: at 2.3 times their width the halo was a purple fog over them; it is a rim now.)
+            batch.Light(s.Feet + up * (s.Top * .55f), s.Width * (1.45f + .35f * s.Swell), .38f * amount * (1f + .6f * s.Swell),
                         NemuSmokeBatch.Violet);
 
             // EMBERS rising off them.
@@ -146,13 +151,11 @@ namespace TumbangPreso.Visual
             side.Normalize();
             Vector3 lift = Vector3.Cross(dir, side);
             Vector3 hand = root + dir * reach;
-            // The arm: three puffs thinning toward the wrist, the first half inside them so it reads as coming OUT.
-            for (int k = 0; k < 3; k++)
-            {
-                float u = .2f + k * .3f;
-                batch.Puff(Vector3.Lerp(root, hand, u), scale * (.30f - .05f * k), amount * .85f, seed + k * .13f, .1f, .8f, seed * 300f + k * 70f);
-            }
-            batch.Puff(hand, scale * .22f, amount * .9f, seed + .5f, .05f, 1f, seed * 200f);
+            // The arm: two thin strands along it, thinning toward the wrist, the first half inside them so it reads as coming
+            // OUT (v3: three round puffs read as a fat sausage).
+            batch.Wisp(Vector3.Lerp(root, hand, .3f), dir, scale * .13f, reach * .7f, amount * .9f, seed + .13f, .1f, .8f);
+            batch.Wisp(Vector3.Lerp(root, hand, .72f), dir, scale * .09f, reach * .55f, amount * .9f, seed + .29f, .1f, .9f);
+            batch.Puff(hand, scale * .11f, amount * .9f, seed + .5f, .05f, 1f, seed * 200f);
             // The fingers: four hooked streaks of violet light.
             float curl = .55f + .25f * Mathf.Sin(clock * 9f + seed * 20f);
             for (int f = 0; f < 4; f++)
