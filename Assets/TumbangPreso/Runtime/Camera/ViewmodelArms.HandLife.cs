@@ -59,17 +59,18 @@ namespace TumbangPreso.CameraSystem
         private string _handCompanionHero;
 
         /// <summary>
-        /// ⚠️ A PET ON THE HAND IS NEMU'S ALONE. Owner, 2026-10-06, of all nine companions seen in play: *"i like it but we were
-        /// trying to reserve the pet idea only for nemu ... we might keep this as an unlockable though"*. So Kuro is always
-        /// on, and the other eight (the ember, the stones, the battery-bean, the snow bunny, the fish, the maya bird, the
-        /// moth, the sampaguita bud) are KEPT, whole and working, behind this switch for a possible unlock. It is off, and
-        /// nothing in the game turns it on yet: an unlock would set it for the local player before the hero is chosen.
+        /// ⚠️ NO PET RIDES A HAND, NOT EVEN KURO. Owner, 2026-10-06, of all nine companions seen in play: *"i like it but we were
+        /// trying to reserve the pet idea only for nemu ... we might keep this as an unlockable though"*. Then, 2026-10-13:
+        /// *"remove her fpp ghost dapat its js following her"*: Kuro is no longer on her sleeve either; in her own first
+        /// person he simply trails her in the world like everyone else sees him (`NemuKuroHand.For` then answers null, so
+        /// `GhostPetCompanion.StepOwnerView` never hides him). All nine (the sleeve Kuro, the ember, the stones, the
+        /// battery-bean, the snow bunny, the fish, the maya bird, the moth, the sampaguita bud) are KEPT, whole and
+        /// working, behind this switch for a possible unlock. It is off, and nothing in the game turns it on yet.
         /// </summary>
         public static bool UnlockedHandPets;
 
         private static HandCompanion CompanionFor(string heroId)
         {
-            if (heroId == "nemu") return new NemuKuroHand();
             // Without a pet a hero's hands are still their own: what the bare arms do (one class a hero, as they are made).
             if (!UnlockedHandPets) return heroId switch { "paete" => new PaeteVineHands(), "phaister" => new SorayaStageHands(), "amihan" => new AmihanWindHands(), "cheska" => new CheskaRimeHands(), "dante" => new DanteGauntletHands(), "sean" => new SeanFlameHands(), "rafi" => new RafiWaterHands(), "zack" => new ZackMagnetHands(), _ => null };
             return heroId switch
@@ -82,6 +83,7 @@ namespace TumbangPreso.CameraSystem
                 "amihan" => new AmihanPinwheelHand(),
                 "phaister" => new SorayaMothHand(),
                 "paete" => new PaeteSproutHand(),
+                "nemu" => new NemuKuroHand(),
                 _ => null,
             };
         }

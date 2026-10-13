@@ -1417,6 +1417,9 @@ namespace TumbangPreso.Visual
             _lastTargetPos = _target != null ? _target.position : _lastTargetPos;
         }
 
+        // ⚠️ RETIRED 2026-10-13 (owner: "remove her fpp ghost dapat its js following her"): the sleeve Kuro is now only an
+        // unlockable (`ViewmodelArms.UnlockedHandPets`), so `For` answers null and he simply trails her in every view.
+        // What follows describes the path that still runs if that unlock is ever switched on.
         // ⚠️⚠️ FOR HER OWN FIRST-PERSON VIEW HE IS ON HER SLEEVE, NOT BEHIND HER (`CameraSystem.NemuKuroHand`; owner,
         // 2026-10-06: "make it so that the fpv only sees the hand kuro. and then when casting her E ability to place kuro,
         // it looks like it moves from her hand for fpv only"). On the machine of the player who IS Nemu, in first
