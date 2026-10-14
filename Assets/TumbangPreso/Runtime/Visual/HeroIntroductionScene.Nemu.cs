@@ -47,15 +47,14 @@ namespace TumbangPreso.Visual
         /// <summary>The rest: running, the chaser, caught in the background.</summary>
         private const float NmBackRun = 2.8f, NmBackOut = 2.9f, NmBackIn = 3.35f;
         /// <summary>
-        /// THE STRINGS, her ending (5.30-7.00), through her own eyes: the possessed before her across the court, bodies turned
-        /// away, turn only their heads all the way round to her, too far, together, until every one stares into the lens (5.40);
-        /// every one is yanked up on its strings at once and left hanging (5.75), then they come for her in three stop-motion
-        /// lurches; the lights die (6.05): the frame sinks into black until only violet is left (their
-        /// eyes, the gate's lip, the souls); the eyes flare once (6.30) and hold in the dark until play comes back. (Film r56:
-        /// from behind her, her back filled half the frame and they were specks; and the last 0.4 s is the hand-back's
-        /// dissolve, so the dark comes before it.)
+        /// THE STRINGS, her ending (5.30-7.00), on the one who ran (owner on v13: *"why do they teleport to the middle"*, *"maybe
+        /// js focus on the dude that was running"*): just hauled up, he hangs with his back to the lens; his body still, his head
+        /// alone comes slowly all the way round to stare into it (5.45); violet strings snap taut from his head and shoulders back
+        /// to her lifted hand and yank him up, dangling, swaying (5.95); he drifts at the lens, then snaps nearer as the lights die
+        /// (6.30) to black but for hot violet, his eyes; they flare (6.42); the lights come back to dusk for the hand-back. The
+        /// others stay where they are.
         /// </summary>
-        private const float NmCrane = 5.3f, NmTurnAll = 5.4f, NmTug = 5.75f, NmDark = 6.05f, NmFlare = 6.3f;
+        private const float NmCrane = 5.3f, NmTurnAll = 5.45f, NmTug = 5.95f, NmDark = 6.3f, NmFlare = 6.42f;
         /// <summary>The chant: her head dips and a ring goes out across the court on each beat.</summary>
         private const float NmChantBeat = .21f;
         private const float NmRunSpeed = 2.2f;
@@ -121,10 +120,7 @@ namespace TumbangPreso.Visual
             /// <summary>Which side of them the lens tracks (+1 or -1).</summary>
             public float Side = 1f;
             public NemuEyeGlow Eyes;
-            /// <summary>THE STRINGS: where they hang before her through her eyes (scene space), and which way their body faces
-            /// (away from her, so the head has to come round too far to stare).</summary>
-            public Vector3 Mark;
-            public float MarkYaw;
+            public Renderer[] Renderers;
             /// <summary>Their chest this frame (scene space), as it jerks.</summary>
             public Vector3 Chest;
             public int Seat;
@@ -327,20 +323,6 @@ namespace TumbangPreso.Visual
                 victim.Wake = victim.Role == 0 ? NmFirstWake : victim.Role == 1 ? NmTripWake : victim.Hits[0] + .1f;
                 victim.Settle = victim.Role == 0 ? NmFirstWake + .15f : victim.Role == 1 ? NmTripSettle : victim.Hits[n - 1] + .45f;
             }
-            // THE STRINGS' marks: an arc 4.4 m before her, in the order they stand across her view, each body turned away from her
-            // and a little aside, alternately.
-            {
-                var order = new List<NmVictim>(_nmVictims);
-                Vector3 across = Vector3.Cross(up, _nmWay);
-                order.Sort((a, b) => Vector3.Dot(a.Home, across).CompareTo(Vector3.Dot(b.Home, across)));
-                for (int k = 0; k < order.Count; k++)
-                {
-                    float ang = (k - (order.Count - 1) * .5f) * 24f;
-                    Vector3 dir = Quaternion.Euler(0f, ang, 0f) * _nmWay;
-                    order[k].Mark = dir * (4.4f + .5f * (k & 1));
-                    order[k].MarkYaw = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg + ((k & 1) == 0 ? 28f : -28f);
-                }
-            }
             // The lens on the one who falls stands on the side that has the others behind him.
             if (_nmTripper >= 0)
             {
@@ -411,6 +393,7 @@ namespace TumbangPreso.Visual
             if (v.Head != null) NemuAura.MeasureFace(v.Head, other.Renderers, other.Holder.transform.forward, out v.FaceLocal, out v.FaceDepth, out v.FaceTop);
             v.Chest = v.Home + Vector3.up * (v.Top * .55f);
             v.Eyes = NemuEyeGlow.On(other.Renderers);
+            v.Renderers = other.Renderers;
             if (v.Eyes != null) _nmEyeGlows.Add(v.Eyes);
             v.Hits = new[] { NmLeadIn }; v.Souls = new[] { 0 }; v.Strength = new[] { 1f };
             v.Wake = NmFirstWake; v.Settle = NmFirstWake + .15f;
@@ -460,27 +443,35 @@ namespace TumbangPreso.Visual
         private void NmBody(NmVictim v, float s, out Vector3 pos, out Quaternion rot, out float lying)
         {
             NmBodyPath(v, s, out pos, out rot, out lying);
-            // THE STRINGS is its own shot: they hang in an arc before her, turned away (film r57: scattered by the hunt, only
-            // one was in her eyes).
-            if (s >= NmCrane && v.Mark != Vector3.zero) { pos = v.Mark; rot = Quaternion.Euler(0f, v.MarkYaw, 0f); lying = 0f; }
-            // THE STRINGS: after the tug they come for her in stop-motion lurches, each a snap and a hold, half the way in
-            // (never nearer than 2.8 m: film r58, nearer their heads were cut off by the frame), hanging on their strings.
+            // THE STRINGS: the one it is about drifts at the lens after the tug, then snaps nearer as the lights die.
             float lurch = NmLurch(s);
-            if (lurch > 0f)
+            if (lurch > 0f && v == NmEndSubject)
             {
-                Vector3 flat = new Vector3(pos.x, 0f, pos.z);
-                float far = flat.magnitude;
-                if (far > 2.8f) pos -= flat / far * (Mathf.Min(far - 2.8f, far * .4f) * lurch);
+                NmEndLens(out var lens, out _);
+                Vector3 to = lens - pos; to.y = 0f;
+                float far = to.magnitude;
+                if (far > 2.4f) pos += to / far * ((far - 2.4f) * lurch);   // (film r61: at 1.5 m he filled the frame)
             }
         }
 
-        /// <summary>THE STRINGS' lurches toward her: three snaps, each held (0 none, 1 all the way).</summary>
+        /// <summary>THE STRINGS' approach: a slow drift a third of the way, then a snap most of the rest as the lights die.</summary>
         private static float NmLurch(float s)
         {
-            float k = (s - (NmTug + .15f)) / .16f;
-            if (k <= 0f) return 0f;
-            float step = Mathf.Floor(k), part = k - step;
-            return step >= 3f ? 1f : Mathf.Clamp01((step + Ease(.6f, 1f, part)) / 3f);
+            if (s <= NmTug + .1f) return 0f;
+            return .3f * Ease(NmTug + .1f, NmDark - .03f, s) + (s >= NmDark - .02f ? .45f : 0f);
+        }
+
+        /// <summary>Whom THE STRINGS is about: the one who ran (else the first).</summary>
+        private NmVictim NmEndSubject => _nmVictims.Count == 0 ? null : _nmVictims[_nmTripper >= 0 ? _nmTripper : 0];
+
+        /// <summary>THE STRINGS' lens, fixed where he was hauled up: behind him and a little aside, at his height (scene space).</summary>
+        private void NmEndLens(out Vector3 eye, out Vector3 at)
+        {
+            var v = NmEndSubject;
+            NmBodyPath(v, NmCrane, out at, out var rot, out _);
+            Vector3 fwd = rot * Vector3.forward; fwd.y = 0f; fwd = fwd.sqrMagnitude > 1e-4f ? fwd.normalized : _nmWay;
+            Vector3 side = Vector3.Cross(Vector3.up, fwd);
+            eye = at - fwd * 2.5f + side * .7f + Vector3.up * 1.15f;
         }
 
         private void NmBodyPath(NmVictim v, float s, out Vector3 pos, out Quaternion rot, out float lying)
@@ -664,6 +655,7 @@ namespace TumbangPreso.Visual
             Vector3 eye = NmW(_nmEye);
             for (int i = 0; i < _nmSouls.Count; i++) DrawSoul(_nmSouls[i], i, t, eye);
             for (int i = 0; i < _nmVictims.Count; i++) SampleVictim(_nmVictims[i], i, t);
+            DrawStrings(t);
             _nmSmoke.End(t);
             // The gate stays open to the end (play keeps it open, `NemuWorld`).
             _nmGate?.Set(NmGateAmount(t), 1f, Mathf.Max(Flash(t, NmGateOpen, .35f), .8f * NmBump(t, NmBurst + .4f, .6f), .6f * Flash(t, NmLead + .1f, .3f)), t);
@@ -709,6 +701,38 @@ namespace TumbangPreso.Visual
                     Vector3 p = Vector3.Lerp(palms + Vector3.up * .3f, _nmGateAt, u * u) + Vector3.up * (Mathf.Sin(u * Mathf.PI) * 1.2f);
                     _nmSmoke.Light(NmW(p), .3f - .05f * j, rising * (1.4f - .3f * j), NemuSmokeBatch.Violet);
                 }
+        }
+
+        /// <summary>
+        /// THE STRINGS: from the tug, thin violet threads from the possessed one's head and shoulders back to her lifted hand,
+        /// snapping taut (a flash running up them), then humming; they burn on into the dark as violet.
+        /// </summary>
+        private void DrawStrings(float t)
+        {
+            var v = NmEndSubject;
+            if (v == null || t < NmTug - .03f) return;
+            float on = Ease(NmTug - .03f, NmTug + .03f, t);
+            Vector3 hand = NmW(FreePalm);
+            Transform[] from = { v.HeadBone.T, v.ArmL.T, v.ArmR.T };
+            for (int k = 0; k < from.Length; k++)
+            {
+                if (from[k] == null) continue;
+                Vector3 a = from[k].position + (k == 0 ? Vector3.up * (v.FaceTop * .6f) : Vector3.zero);
+                Vector3 d = hand - a; float len = d.magnitude;
+                if (len < .2f) continue;
+                int pieces = Mathf.Clamp(Mathf.CeilToInt(len / .6f), 2, 14);
+                float hum = .6f + .4f * Mathf.Sin(t * 40f + k * 2f);
+                float snapFlash = Flash(t, NmTug, .25f);
+                for (int j = 0; j < pieces; j++)
+                {
+                    float u0 = j / (float)pieces, u1 = (j + 1) / (float)pieces;
+                    Vector3 p0 = a + d * u0, p1 = a + d * u1;
+                    float run = Mathf.Clamp01(1f - Mathf.Abs((t - NmTug) / .2f - u0));
+                    // (film r61: a hair-thin smoke strand did not show; a lit thread does.)
+                    _nmSmoke.Wisp((p0 + p1) * .5f, d, .04f, len / pieces * 1.15f, on * .9f, k * .3f + j * .07f, 0f, 1f);
+                    _nmSmoke.Light((p0 + p1) * .5f, .07f, on * (.7f * hum + 1.4f * run * snapFlash), NemuSmokeBatch.Violet, d / pieces);
+                }
+            }
         }
 
         /// <summary>
@@ -1052,12 +1076,14 @@ namespace TumbangPreso.Visual
             float sway = Mathf.Sin(t * 1.4f + seat) * 3f * stance;
 
             if (v.Root.T != null)
-                v.Root.T.position += NmWDir(shove) * standing + Vector3.up * ((lift + .28f * jolt + .1f * stagger + .05f * flinch + bob + (.08f + .06f * NmHash(key, v.Seat + 51)) * wrong * standing + .07f * stance + Mathf.Sin(t * 2f + seat) * .015f * stance))
+                v.Root.T.position += NmWDir(shove) * standing + Vector3.up * ((lift + .4f * jolt + .1f * stagger + .05f * flinch + bob + (.08f + .06f * NmHash(key, v.Seat + 51)) * wrong * standing + .07f * stance + Mathf.Sin(t * 2f + seat) * .015f * stance))
                                    + right * (Mathf.Sin(t * 13f) * .03f * stagger);
 
             float torsoTwist = scared * glanceYaw * .2f + chestYaw * .25f * chestWatch - swing * 8f + scrabble * 10f + Broken(1, 35f) + (turn * .25f * chestTurn - turn * .1f * bodyTurn) * standing;
             float torsoPitch = scared * 10f + running * 14f + flinch * 12f - jerk * 22f + Broken(2, 26f) - stance * 4f - down * 12f;
-            float torsoRoll = tremble + Broken(3, 22f) + sway + stagger * 6f * Mathf.Sin(t * 12f) + Mathf.Sin(stride) * 7f * running;
+            // On the strings they all sway together, one pendulum, like marionettes on one cross.
+            float swing2 = jolt * Mathf.Sin((t - NmTug) * 5.5f) * Mathf.Exp(-(t - NmTug) * 1.2f);
+            float torsoRoll = tremble + Broken(3, 22f) + sway + stagger * 6f * Mathf.Sin(t * 12f) + Mathf.Sin(stride) * 7f * running + 12f * swing2;
             if (v.Torso.T != null)
             {
                 Turn(v.Torso.T, up, torsoTwist);
@@ -1081,9 +1107,20 @@ namespace TumbangPreso.Visual
             float hang = stance * 20f;
             if (v.ArmL.T != null) { Turn(v.ArmL.T, right, -guard + swing * 55f - jerk * 30f + scrabble * 40f + Broken(7, 110f) - stance * 10f); Turn(v.ArmL.T, fwd, fling + Broken(8, 60f) + hang); }
             if (v.ArmR.T != null) { Turn(v.ArmR.T, right, -guard * .9f - swing * 55f - jerk * 30f - scrabble * 40f + Broken(9, 110f) - stance * 10f); Turn(v.ArmR.T, fwd, -fling - Broken(10, 60f) - hang); }
-            float dangle = (wrong + stance) * 10f;
+            float dangle = (wrong + stance) * 10f + jolt * 22f;
             if (v.LegL.T != null) Turn(v.LegL.T, right, swing * 42f + scrabble * 30f + Broken(11, 28f) + dangle);
             if (v.LegR.T != null) Turn(v.LegR.T, right, -swing * 42f - scrabble * 30f + Broken(12, 28f) + dangle);
+
+            // ON THE COURT, NOT IN IT (owner on v13: *"on the ground bro he GOES IN THE GROUND"*): lying, his posed body is
+            // measured and lifted until its lowest point rests on the court (his chibi head and shoulders are thicker than any
+            // fixed lift, most of all on his side mid-roll).
+            if (lying > .01f && v.Renderers != null)
+            {
+                float lowest = float.MaxValue;
+                foreach (var r in v.Renderers) if (r != null && r.enabled) lowest = Mathf.Min(lowest, r.bounds.min.y);
+                float floor = _root.transform.position.y + .01f;
+                if (lowest < floor && lowest > floor - 2f) v.Holder.transform.position += Vector3.up * (floor - lowest);
+            }
         }
 
         private static void Turn(Transform bone, Vector3 axis, float degrees)
@@ -1236,22 +1273,19 @@ namespace TumbangPreso.Visual
                     if (t < NmCrane) NmFallFrame(v, t, out eye, out look, out fov);
                     else
                     {
-                        // THE STRINGS, through her eyes: just in front of her face, at her height, on all of them; wide enough for
-                        // every one, then a slow push in as they turn to stare at her, a jolt with the tug.
+                        // THE STRINGS: behind the one who ran, where he was hauled up, his back to us; a slow push as his head
+                        // comes round, a jolt with the tug; the lens stays put as he comes at it.
                         float u = Ease(NmCrane, Seconds, t);
-                        Vector3 toThem = _nmCentre; toThem.y = 0f; toThem = toThem.sqrMagnitude > 1e-4f ? toThem.normalized : way;
-                        eye = toThem * (.55f + .5f * u) + up * (_nmHerChest.y / .55f * .85f);
-                        Vector3 mid = Vector3.zero; float spread = 0f;
-                        foreach (var o in _nmVictims) { NmBody(o, t, out var at, out _, out _); mid += at; }
-                        mid /= Mathf.Max(1, _nmVictims.Count);
-                        Vector3 gaze = (mid + up * .9f - eye).normalized;
-                        foreach (var o in _nmVictims) { NmBody(o, t, out var at, out _, out _); spread = Mathf.Max(spread, Vector3.Angle(gaze, at + up * .9f - eye)); }
-                        look = eye + gaze * 4f;
-                        fov = Mathf.Clamp(spread * 2.3f + 10f, 34f, 62f) * Mathf.Lerp(1f, .94f, u) - 3f * NmBump(t, NmTug + .04f, .12f);
+                        NmEndLens(out var lens, out var stood);
+                        Vector3 back = (lens - stood); back.y = 0f; back.Normalize();
+                        eye = lens - back * (.35f * u);
+                        look = stood + up * .85f;
+                        fov = Mathf.Lerp(50f, 44f, u) - 3f * NmBump(t, NmTug + .04f, .12f);
                     }
                 }
-                // Off every player where they are now (they run, fall and float: `KeepLensOffOthers` knows where they stood).
-                for (int i = 0; i < _nmVictims.Count; i++)
+                // Off every player where they are now (they run, fall and float: `KeepLensOffOthers` knows where they stood);
+                // not in THE STRINGS, where he comes at the lens on purpose.
+                for (int i = 0; i < _nmVictims.Count && t < NmCrane; i++)
                 {
                     NmBody(_nmVictims[i], t, out var at, out _, out _);
                     Vector3 away = eye - (at + up * .6f); float gap = new Vector2(away.x, away.z).magnitude;
@@ -1351,7 +1385,17 @@ namespace TumbangPreso.Visual
                 Vector3 vp = camera.WorldToViewportPoint(NmW(_nmVictims[shot].Chest));
                 if (vp.z > 0f) focus = new Vector2(Mathf.Clamp(vp.x, .2f, .8f), Mathf.Clamp(vp.y, .2f, .8f));
             }
-            if (eerie <= .01f && ink <= .01f && impact <= 0f && lines <= .01f && blackout <= .01f) return;
+            // GLITCH bursts: a flicker as the first soul goes in; then in THE STRINGS as his head finishes coming round, at the tug,
+            // hard on the snap into the dark, and stuttering through it. Reduced effects keep none.
+            float glitch = 0f;
+            if (!_reducedEffects)
+            {
+                float stutter = NmHash(Mathf.FloorToInt(t * 12f), 77) > .55f ? 1f : 0f;
+                glitch = Mathf.Max(.5f * Flash(t, NmLeadIn, .15f), Mathf.Max(.45f * Flash(t, NmTurnAll + .5f, .2f), .7f * Flash(t, NmTug, .18f)));
+                glitch = Mathf.Max(glitch, Flash(t, NmDark - .04f, .25f));
+                glitch = Mathf.Max(glitch, .45f * stutter * Ease(NmDark, NmDark + .1f, t) * (1f - Ease(Seconds - .35f, Seconds - .1f, t)));
+            }
+            if (eerie <= .01f && ink <= .01f && impact <= 0f && lines <= .01f && blackout <= .01f && glitch <= .01f) return;
             if (_nmInk == null)
             {
                 var shader = Resources.Load<Shader>("Shaders/NemuInk");
@@ -1365,6 +1409,7 @@ namespace TumbangPreso.Visual
             _nmInk.SetFloat("_Impact", impact);
             _nmInk.SetFloat("_Invert", 0f);
             _nmInk.SetFloat("_Lines", lines);
+            _nmInk.SetFloat("_Glitch", glitch);
             _nmInk.SetVector("_Focus", new Vector4(focus.x, focus.y, 0f, 0f));
             _nmInk.SetFloat("_Clock", t);
             _nmInk.SetFloat("_Aspect", frame.height > 0 ? frame.width / (float)frame.height : 16f / 9f);

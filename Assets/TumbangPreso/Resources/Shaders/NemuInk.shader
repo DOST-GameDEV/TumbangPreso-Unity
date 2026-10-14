@@ -27,6 +27,7 @@ Shader "TumbangPreso/NemuInk"
         _Violet ("Violet", Color) = (0.62, 0.26, 1.0, 1)
         _Clock ("Clock (s)", Float) = 0
         _Aspect ("Aspect", Float) = 1.777
+        _Glitch ("Glitch", Range(0, 1)) = 0
     }
     SubShader
     {
@@ -38,7 +39,7 @@ Shader "TumbangPreso/NemuInk"
             #pragma fragment frag
             #include "UnityCG.cginc"
             sampler2D _MainTex;
-            float _Ink, _Black, _Night, _Eerie, _Clock, _Aspect, _Impact, _Invert, _Lines;
+            float _Ink, _Black, _Night, _Eerie, _Clock, _Aspect, _Impact, _Invert, _Lines, _Glitch;
             float4 _Focus;
             fixed4 _InkColour, _Violet;
 
@@ -52,7 +53,30 @@ Shader "TumbangPreso/NemuInk"
 
             fixed4 frag (v2f_img i) : SV_Target
             {
-                fixed4 c = tex2D(_MainTex, i.uv);
+                // GLITCH (owner on v13: *"add some glitchy screen shit to make it creepier"*): the picture tears in horizontal
+                // bands that jump sideways, the violet pulled apart from the rest, scanlines, a block or two smeared, re-rolled
+                // 24 times a second like a failing signal.
+                float2 uv = i.uv;
+                fixed4 c;
+                if (_Glitch > 0.001)
+                {
+                    float tick = floor(_Clock * 24.0);
+                    float rowH = 0.02 + 0.07 * hash(float2(tick, 3.0));
+                    float row = floor(uv.y / rowH);
+                    float tear = step(1.0 - _Glitch * 0.55, hash(float2(row, tick)));
+                    uv.x += (hash(float2(row, tick + 7.0)) - 0.5) * 0.18 * _Glitch * tear;
+                    float2 block = floor(uv * float2(12.0, 7.0));
+                    float smear = step(1.0 - _Glitch * 0.12, hash(block + tick));
+                    uv = lerp(uv, (block + 0.5) / float2(12.0, 7.0), smear * 0.85);
+                    float split = 0.012 * _Glitch * (0.5 + tear);
+                    fixed4 mid = tex2D(_MainTex, uv);
+                    c = mid;
+                    c.r = tex2D(_MainTex, uv + float2(split, 0)).r;
+                    c.b = tex2D(_MainTex, uv - float2(split, 0)).b;
+                    c.rgb *= 1.0 - 0.22 * _Glitch * step(0.5, frac(i.uv.y * 180.0));
+                    c.rgb = lerp(c.rgb, c.rgb * float3(0.7, 0.4, 1.1) + float3(0.05, 0.0, 0.08), tear * _Glitch * 0.6);
+                }
+                else c = tex2D(_MainTex, uv);
                 float2 p = (i.uv - 0.5) * 2.0;
                 p.x *= lerp(1.0, _Aspect, 0.55);
                 // The edge wavers like smoke: noise flowing slowly, round the frame.

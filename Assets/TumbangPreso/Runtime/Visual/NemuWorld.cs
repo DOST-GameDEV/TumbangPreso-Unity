@@ -60,7 +60,7 @@ namespace TumbangPreso.Visual
             }
             _ink.SetFloat("_Eerie", Mathf.Clamp01(weight));
             _ink.SetFloat("_Ink", 0f); _ink.SetFloat("_Black", 0f); _ink.SetFloat("_Night", 0f);
-            _ink.SetFloat("_Impact", 0f); _ink.SetFloat("_Lines", 0f);
+            _ink.SetFloat("_Impact", 0f); _ink.SetFloat("_Lines", 0f); _ink.SetFloat("_Glitch", 0f);
             _ink.SetFloat("_Clock", Time.time);
             Graphics.Blit(source, destination, _ink);
         }

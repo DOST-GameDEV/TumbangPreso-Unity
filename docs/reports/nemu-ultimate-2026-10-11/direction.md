@@ -871,3 +871,23 @@ is born) and glows less near the gate. A look is now taken the way a person turn
 quarter of a second behind, the chest 25 per cent, the head leads and makes up the rest (at most 45 degrees); v12's split
 summed to 115 per cent, so the head overshot and swung round on its own; looking up is at most 28 degrees. Film r60 (her screen)
 passed ([frames](evidence/film-v13/first-one.jpg)).
+
+## 22. v14 (2026-10-15; the ending on the runner, the ground, glitch)
+
+The owner on v13: *"on the ground bro he GOES IN THE GROUND"*, *"ending has to be refined"*, *"why do they teleport to the
+middle"*, *"maybe js focus on the dude that was running"*, *"add some glitchy screen shit to make it creepier"*.
+
+* Lying, the one who falls is measured each frame (his skinned renderers' bounds) and lifted until his lowest point rests on
+  the court.
+* THE STRINGS is on the one who ran, where he really is (no marks): just hauled up he hangs with his back to the lens; his head
+  alone comes round to stare (5.45); strings snap taut from his head and shoulders to her lifted hand and yank him up, swaying
+  (5.95); he drifts at the lens and snaps nearer (to 2.4 m) as the lights die (6.30); his eyes flare (6.42); dusk again for the
+  hand-back. The others stay where they are.
+* GLITCH (`NemuInk` `_Glitch`): torn horizontal bands jumping sideways, the violet pulled apart, scanlines, a block or two
+  smeared, re-rolled 24 times a second; bursts as the first soul goes in, as his head comes round, at the tug, hard on the snap
+  into the dark, and stuttering through it. None with reduced effects; play never sets it.
+
+Film r62 passed (cutscene 6.97 s, clock frozen); Nemu suites 8/8 ([ending](evidence/film-v14/ending.jpg),
+[fall and ending](evidence/film-v14/fall-and-ending.jpg), [XML](evidence/film-v14/play-tests.xml),
+[suites](evidence/film-v14/nemu-suites.xml)). Film: `Logs/nemu-lti/nemu_let_them_in_v14.mp4`. Not yet evidence: the owner's
+verdict. Known: the strings run back toward her, behind the lens, so they read faintly. Handoff: [HANDOFF.md](HANDOFF.md).

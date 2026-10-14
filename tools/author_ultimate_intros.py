@@ -543,10 +543,10 @@ def nemu(held=False):
     p.key(2.57, call, punch=True)
     p.hold(2.57, 3.25, call)
     p.key(3.75, watch)
-    p.hold(3.75, 5.5, watch)
-    # THE STRINGS: she lifts her free hand, and every possessed player is yanked up on its strings with it (5.75).
-    p.key(5.72, strings, punch=True)
-    p.hold(5.72, 7.0, strings)
+    p.hold(3.75, 5.7, watch)
+    # THE STRINGS: she lifts her free hand, and the one who ran is yanked up on its strings with it (5.95).
+    p.key(5.92, strings, punch=True)
+    p.hold(5.92, 7.0, strings)
 
     # THE GATE fallback: low behind her, looking up past her at the sky over the court.
     p.shot(0, .8, (.7, .7, -1.8), (0, 2.6, 5.0), 56, eye_to=(.8, .6, -2.2), look_to=(0, 2.8, 5.0), fov_to=58)
