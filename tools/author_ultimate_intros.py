@@ -511,8 +511,10 @@ def nemu(held=False):
     King's Black Mist and the wailing soul; the opening is the storm and the cracks, no face close-up).
       S1 THE CRACKS 0.00-0.90: she flings her hands down (0.12) and violet cracks split the court from her feet; her eyes
         ignite (0.32); the first souls claw up out of the cracks round her.
-      S2 THE STORM 0.90-2.55: she throws her arms up and out (1.0); souls pour up out of the cracks into a vortex over the court.
-      S3 THE DIVE 2.55-4.40 and S4 ALL OF THEM 4.40-5.90: souls dive into every player; she watches, head tipped.
+      S2 THE STORM 0.90-2.20: she throws her arms up and out (1.0); souls pour up out of the cracks into a vortex over the court.
+      v8 (owner on v7: the entry did not read): S3 THE FIRST 2.20-3.50, the lens rides one soul into the first player;
+      S4 THE FLOOD 3.50-4.40, smash cuts to the others being entered; S5 ALL OF THEM 4.40-5.90, back on the first as his
+      eyes ignite, then the crane. She watches, head tipped, off screen.
     The shots are computed from where the players really are (`HeroIntroductionScene.Nemu.cs`); the authored shots below are
     their fallbacks with nobody on court. The stage reads these times: keep them in step with its `Nm*` constants.
     """
@@ -552,9 +554,12 @@ def nemu(held=False):
     # S1 fallback: in front of her and above, her whole body and the court round her.
     p.shot(0, .9, (1.1, 2.2, 4.4), (0, .55, .4), 50, eye_to=(1.1, 1.9, 3.7), look_to=(0, .75, .4))
     # S2 fallback: high behind her, out over the court.
-    p.shot(.9, 2.55, (1.6, 3.4, -3.4), (0, 1.4, 3.5), 58, eye_to=(1.9, 4.4, -2.9), look_to=(0, 1.9, 4.5), fov_to=64)
-    # S3 fallback: out in front of her, easing back to the court.
-    p.shot(2.55, 5.9, (.6, 1.3, 3.2), (0, 1.1, 5.5), 50, eye_to=(1.5, 3.0, 1.5), look_to=(0, 1.4, 5.5), fov_to=56)
+    p.shot(.9, 2.2, (1.6, 3.4, -3.4), (0, 1.4, 3.5), 58, eye_to=(1.9, 4.4, -2.9), look_to=(0, 1.9, 4.5), fov_to=64)
+    # S3 to S5 fallbacks (one shot per cut, so the cuts are cuts): out in front of her, easing back to the court.
+    p.shot(2.2, 3.5, (.6, 1.3, 3.2), (0, 1.1, 5.5), 50, eye_to=(.8, 1.6, 2.9), look_to=(0, 1.2, 5.5), fov_to=52)
+    p.shot(3.5, 3.95, (-1.2, 1.4, 3.0), (0, 1.1, 5.5), 50, eye_to=(-1.1, 1.5, 2.8))
+    p.shot(3.95, 4.4, (1.8, 1.4, 3.0), (0, 1.1, 5.5), 50, eye_to=(1.7, 1.5, 2.8))
+    p.shot(4.4, 5.9, (.8, 1.6, 2.9), (0, 1.2, 5.5), 50, eye_to=(1.5, 3.0, 1.5), look_to=(0, 1.4, 5.5), fov_to=56)
     p.locked((1.2, 2.2, -2.2), (0, .9, 4.5), 54)
     return p
 

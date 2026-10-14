@@ -50,7 +50,7 @@ namespace TumbangPreso.Visual
             if (_smokeMaterial != null) { _smokeMaterial.SetFloat("_Mode", 0f); _smokeMaterial.renderQueue = (int)RenderQueue.Transparent + 10; }
             if (_lightMaterial != null) { _lightMaterial.SetFloat("_Mode", 1f); _lightMaterial.renderQueue = (int)RenderQueue.Transparent + 14; }
             _markMaterial = shader != null ? new Material(shader) { name = name + "Mark" } : null;
-            if (_markMaterial != null) { _markMaterial.SetFloat("_Mode", 0f); _markMaterial.renderQueue = (int)RenderQueue.Transparent + 18; }
+            if (_markMaterial != null) { _markMaterial.SetFloat("_Mode", 0f); _markMaterial.SetFloat("_Crisp", 1f); _markMaterial.renderQueue = (int)RenderQueue.Transparent + 18; }
             _smoke = Make(parent, name + "Smoke", _puffs.Length, _smokeMaterial, ParticleSystemRenderMode.Billboard, out _smokeGo);
             _light = Make(parent, name + "Light", _lights.Length, _lightMaterial, ParticleSystemRenderMode.Billboard, out _lightGo);
             _mark = Make(parent, name + "Mark", _marks.Length, _markMaterial, ParticleSystemRenderMode.Billboard, out _markGo);

@@ -14,6 +14,7 @@
 //    smoke still flows with the world paused under the phase, and a film at 30 frames per game second matches.
 //  * A LIGHT's vertex alpha carries a pull toward the lens: (1 - a) * 2 metres, along its own line of sight, so a glow lying
 //    on the court is drawn whole instead of cut by it (Nemu's cracks, film r30).
+//  * `_Crisp` 1 (the marks' material): a clean edge, so a soul's eyes and mouth keep their drawn shape.
 //  * `_Near` (metres) thins anything to nothing as the lens comes within that distance, so no puff ever sits on a lens.
 // Loaded through Resources (`Shaders/NemuSmoke`), which keeps it in the player.
 Shader "TumbangPreso/NemuSmoke"
@@ -27,6 +28,7 @@ Shader "TumbangPreso/NemuSmoke"
         _Intensity ("Light intensity", Float) = 5.0
         _Clock ("Clock (s)", Float) = 0
         _Near ("Thin within (m)", Float) = 0.6
+        _Crisp ("Crisp edge (marks)", Float) = 0
     }
     SubShader
     {
@@ -43,7 +45,7 @@ Shader "TumbangPreso/NemuSmoke"
             #pragma fragment frag
             #include "UnityCG.cginc"
 
-            float _Mode, _RimGain, _Intensity, _Clock, _Near;
+            float _Mode, _RimGain, _Intensity, _Clock, _Near, _Crisp;
             fixed4 _Core, _RimColor;
 
             struct appdata { float4 vertex : POSITION; fixed4 color : COLOR; float2 uv : TEXCOORD0; };
@@ -97,8 +99,10 @@ Shader "TumbangPreso/NemuSmoke"
                 float2 q = c * 1.6 + float2(seed * 1.7, seed * 2.3 - _Clock * 0.9);
                 float n = fbm(q);
                 float n2 = fbm(q * 1.8 + float2(-_Clock * 0.4, 3.0));
-                float d = length(c) + (n - 0.5) * 0.8;
-                float body = 1.0 - smoothstep(0.42, 0.98, d);
+                // `_Crisp` (a soul's hollow eyes and mouth, owner on v7: *"their faces are so weird"*): the edge barely boils, so
+                // an eye stays the shape it was drawn instead of wobbling into a blob.
+                float d = length(c) + (n - 0.5) * 0.8 * (1.0 - _Crisp * 0.85);
+                float body = 1.0 - smoothstep(lerp(0.42, 0.74, _Crisp), 0.98, d);
                 // Holes open from the rim inward as it dies.
                 float holes = 1.0 - smoothstep(1.05 - fray * 1.2, 1.2 - fray * 1.2, n2 + d * 0.3);
                 float a = saturate(body * density * holes) * i.near;

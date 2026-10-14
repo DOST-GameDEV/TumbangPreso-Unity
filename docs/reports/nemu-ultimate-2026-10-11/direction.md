@@ -628,3 +628,42 @@ found per hero by `tools/author_eye_rects.py` into `Resources/Visual/eye-rects.t
 Owner on v7 (2026-10-14): *"oh shit i like the ghosts more now amazing"*. The souls and the storm stay. What is still wrong:
 *"its not obvious that theyre entering the ppl"*; it should be communicated through animation, VFX and camera movement. The next
 pass refines direction and VFX for the ENTRY only; it does not redesign the souls or the storm.
+
+## 17. THE ENTRY (2026-10-14, v8; refines 16's dive and the souls' faces, keeps the souls, storm and cracks)
+
+The owner on v7: *"its not obvious that theyre entering the ppl"*, to be fixed through animation, VFX and camera together. During
+the pass he added: *"the ghosts look better now but their faces are so weird ... they have to be refined"*, *"faces should be varied
+for ghosts and not js copy pasted"*, and *"they all face the same friggingw ay despite not having the same angles"*.
+
+Beats (5.9 s; S1 unchanged, S2 trimmed to 2.20):
+1. THE FIRST (2.20-3.50): low at the first player's three-quarter, the lens finds ONE soul in the storm (the rest step back to 40 per
+   cent), tight at 40 degrees; a thread of violet with pulses running down it links it to the spot on his chest, which throbs. The
+   lens rides it as it peels off, swoops and slows onto him (eased in and out, so the press is seen), widening to 52 degrees.
+   It hits at 2.98: impact frame, focus lines closing on him, a ring bursting round the spot across its line and another across
+   the court round his feet; he is thrown back along the soul's line, arched, head snapped back, feet off the court, held 0.22 s.
+   The head squashes flat against him and sinks in (the body hides what is inside, so its face goes in half at a time) while the
+   tail narrows and pours in after it into a small black hole ringed violet with smoke spiralling into it, which closes. Three
+   more souls then drain in quickly from above him (3.22, 3.31, 3.40).
+2. THE FLOOD (3.50-4.40): a smash cut to each of two other players (0.45 s each), the soul already diving at them from the far side,
+   the same ring, throw, hole and focus lines on each first hit, three more pouring in after.
+3. ALL OF THEM (4.40-5.90): back on the first in a medium shot; the violet throbbing in his chest climbs his neck into his eyes,
+   which ignite (4.58); the crane up and back to every player possessed. The aura steps up with every soul in, not one ramp.
+
+THE FACES: each face sits on the front of its own head along its flight (full face coming at the lens, profile crossing it, gone
+flying away), upright to the world, no longer every face turned square to the lens. Every soul its own: head size, eye size,
+spacing and slant (grief, rage or blank, sometimes one eye larger), and mouth (a tall wail, a round scream, a wide crooked howl)
+wailing on its own beat. The marks are drawn crisp (`_Crisp` in `Shaders/NemuSmoke`), so an eye keeps its drawn shape instead of
+boiling into a blob.
+
+### 17.1 Film rounds and evidence
+
+| Film | Seen | Changed |
+|---|---|---|
+| r33 | the thread, ring, arch and flood cuts read; the faces varied and turned with their flight; the first soul a speck from the far side; the hole a black ball on the chest; the cut back a head filling the lens | the first soul taken nearer the lens and in front of him, the lens tight on it (40 degrees); the hole 0.07 to 0.1 m and quicker; the cut back a medium |
+| r34 | one soul isolated in the sky; the lens settled on him early and lost the plunge; the climb glow hid his face | the lens stays on the soul until it is nearly on him; the climb glow smaller |
+| r35, r36 | the dive's last stretch a smear, then the swoop and the press into his chest seen | the first soul eased in and out |
+| r37, v8 | faces in profile faded to nothing, then shown at 65 per cent side on | |
+
+Film: `Logs/nemu-lti/nemu_let_them_in_v8.mp4` (her screen only, no sound); the film test passed
+([XML](evidence/film-v8/play-tests.xml), [key frames](evidence/film-v8/key-frames.jpg)). Not yet evidence: the owner's verdict
+on v8; the sound drafts are still timed to v6.
