@@ -862,3 +862,12 @@ screen *"refine this pa angpanget"*.
 Film r59 (Bayan Plaza, her screen and the possessed screen) passed, cutscene 6.97 s, clock frozen ([ending](evidence/film-v12/ending.jpg),
 [key frames](evidence/film-v12/key-frames.jpg), [possessed screen](evidence/film-v12/possessed-screen.jpg),
 [XML](evidence/film-v12/play-tests.xml)). Film: `Logs/nemu-lti/nemu_let_them_in_v12.mp4`. Not yet evidence: the owner's verdict.
+
+### 21.1 v13 (2026-10-14)
+
+The owner on v12, of the first soul in the gate and the first player: *"ghost here as well as the movement of the dude is so weird
+do u see how weird he turns"*. The first soul stays in the gate's dark until it is through the lip (it shows from 0.3 s after it
+is born) and glows less near the gate. A look is now taken the way a person turns: the body on its feet takes 60 per cent a
+quarter of a second behind, the chest 25 per cent, the head leads and makes up the rest (at most 45 degrees); v12's split
+summed to 115 per cent, so the head overshot and swung round on its own; looking up is at most 28 degrees. Film r60 (her screen)
+passed ([frames](evidence/film-v13/first-one.jpg)).

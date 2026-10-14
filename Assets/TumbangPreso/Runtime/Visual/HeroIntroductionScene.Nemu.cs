@@ -543,7 +543,7 @@ namespace TumbangPreso.Visual
             if (soul.Lead)
             {
                 Vector3 toward = -_nmWay;
-                float crawl = Ease(0f, .5f, r);
+                float crawl = Ease(0f, .45f, r);
                 Vector3 side = Vector3.Cross(Vector3.up, toward);
                 Vector3 outOf = soul.From + toward * (1.1f * crawl) + Vector3.down * (.3f * crawl)
                               + side * (.12f * Mathf.Sin(r * 9f) * (1f - crawl));
@@ -756,7 +756,9 @@ namespace TumbangPreso.Visual
             float fade = Ease(soul.Born, soul.Born + .2f, t);
             // THE FIRST ONE comes out of the gate's dark, not sitting in the middle of it (owner on v10: *"this looks really
             // awkward ... the ghost here"*): it fades up as it crosses the lip.
-            if (soul.Lead) fade = Ease(soul.Born + .08f, soul.Born + .4f, t);
+            // (owner on v12: still a pale blob with a face sitting in the middle of the gate.) It stays in the gate's dark until it
+            // is through the lip and already flying at them.
+            if (soul.Lead) fade = Ease(soul.Born + .3f, soul.Born + .55f, t);
             // The storm is the background: dimmer than the soul the story is about (owner on v9: *"too cluttered"*).
             if (!soul.Lead && !soul.Chase) fade *= .75f;
             // While the lens is on the hunt, the rest of the storm steps back so the hunter is the one you follow.
@@ -798,7 +800,7 @@ namespace TumbangPreso.Visual
             float squash = sink >= 0f ? 1f - .45f * Mathf.Sqrt(sink) : 1f;
             Vector3 axis = sink >= 0f ? NmWDir(soul.Dir) : heading;
             _nmSmoke.Wisp(head, axis, headSize * (sink >= 0f ? 1f + .5f * sink : 1f), headSize * (sink >= 0f ? squash : 1.18f), fade * .95f, index * .113f, 0f, 1f);
-            float glow = soul.Lead ? Mathf.Lerp(.55f, 1.1f, Ease(soul.Born + .3f, soul.Born + .8f, t)) : soul.Hero ? 1.15f : .95f;
+            float glow = soul.Lead ? Mathf.Lerp(.35f, 1.1f, Ease(soul.Born + .5f, soul.Born + 1.0f, t)) : soul.Hero ? 1.15f : .95f;
             _nmSmoke.Light(head, headSize * (soul.Hero || soul.Lead ? 1.1f : 1.6f) * (sink >= 0f ? 1f - .3f * sink : 1f), glow * fade, NemuSmokeBatch.Violet);
             NemuSouls.Face(_nmSmoke, index, t, head, heading, headSize, squash, fade, eye, dist, soul.Lead || soul.Hero);
         }
@@ -969,10 +971,16 @@ namespace TumbangPreso.Visual
                 Vector3 flat = new Vector3(to.x, 0f, to.z);
                 Vector3 facing = r * Vector3.forward; facing.y = 0f;
                 yaw = Mathf.Clamp(Vector3.SignedAngle(facing, flat, Vector3.up), -150f, 150f);
-                pitch = -Mathf.Clamp(Mathf.Atan2(to.y, Mathf.Max(.2f, flat.magnitude)) * Mathf.Rad2Deg, -20f, 55f);
+                // A big chibi head tipped far back reads as a broken neck (owner on v12: *"do u see how weird he turns"*).
+                pitch = -Mathf.Clamp(Mathf.Atan2(to.y, Mathf.Max(.2f, flat.magnitude)) * Mathf.Rad2Deg * .6f, -15f, 28f);
             }
             Watch(t, out float watchYaw, out float watchPitch, out float watch);
             Watch(t - .12f, out float chestYaw, out _, out float chestWatch);
+            // A person turns on their feet: the body takes most of a look a quarter of a second behind the head, the chest a
+            // little, and the head makes up the rest and leads (v12 split the look so the three overshot it by 15 per cent and
+            // the head swung round on its own).
+            Watch(t - .25f, out float feetYaw, out _, out float feetWatch);
+            float headLead = Mathf.Clamp(watchYaw * watch - .6f * feetYaw * feetWatch - .25f * chestYaw * chestWatch, -45f, 45f);
 
             // The turn to the lens at the end.
             Vector3 fwdBase = NmWDir(rot * Vector3.forward); fwdBase.y = 0f;
@@ -985,7 +993,7 @@ namespace TumbangPreso.Visual
             float jolt = t < NmTug ? 0f : Mathf.Clamp01((t - NmTug) / .07f) * (1f - .25f * Ease(NmTug + .1f, NmTug + .5f, t));
             // THE STRINGS (owner on v11: *"show the possession more or explore how fked up or scary it is"*): the body stays turned
             // away and the head alone comes all the way round to stare at her, past where a neck can go.
-            float bodyYaw = (turn * .1f * bodyTurn + chestYaw * .4f * chestWatch) * standing;
+            float bodyYaw = (turn * .1f * bodyTurn + feetYaw * .6f * feetWatch) * standing;
             v.Holder.transform.localPosition = pos;
             v.Holder.transform.localRotation = Quaternion.Euler(0f, bodyYaw, 0f) * rot;
             Vector3 up = v.Holder.transform.up, fwd = v.Holder.transform.forward, right = v.Holder.transform.right;
@@ -1057,7 +1065,7 @@ namespace TumbangPreso.Visual
                 Turn(v.Torso.T, fwd, torsoRoll);
             }
 
-            float headYaw = scared * glanceYaw * .8f + (watchYaw * .6f - chestYaw * .1f) * watch + lookBack * 100f * backSide + scrabble * 25f + Broken(4, 80f)
+            float headYaw = scared * glanceYaw * .8f + headLead + lookBack * 100f * backSide + scrabble * 25f + Broken(4, 80f)
                           + (turn * headTurn - turn * .25f * chestTurn) * standing;
             float headPitch = scared * glancePitch + watchPitch * watch - Mathf.Min(jerk, 1.2f) * 26f + Broken(5, 35f) + stance * 5f + stagger * 10f - down * 20f - jolt * 14f;
             float headRoll = scared * lost * .5f + Broken(6, 55f) + tip + ((v.Seat & 1) == 0 ? 1f : -1f) * 22f * headTurn;
