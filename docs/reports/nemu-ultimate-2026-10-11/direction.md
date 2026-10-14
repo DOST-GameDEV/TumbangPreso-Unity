@@ -933,3 +933,32 @@ then something weird af happens or smth for the ending"*, and *"limit vid u reco
 Film r68 passed (cutscene 6.97 s, clock frozen); Nemu suites 8/8 ([fall](evidence/film-v16/fall-on-court.jpg),
 [ending](evidence/film-v16/ending-walk.jpg), [XML](evidence/film-v16/play-tests.xml), [suites](evidence/film-v16/nemu-suites.xml)).
 Film: `Logs/nemu-lti/nemu_let_them_in_v16.mp4` (7.1 s). Not yet evidence: the owner's verdict.
+
+## 25. v17 THE SNAP (2026-10-15; on his feet, himself again, the glitch and the snap; supersedes 23 and 24's endings)
+
+The owner on v16: *"u brought back old issue which is that he is floating before ghgost even enters him"*, *"baguhin mo
+animation men pabalik balik na bug yang floating or going in ground"*, *"end it here na wag mo na idarken"* (at the snap and
+its glitch), *"i want it to look like he's ok naman after possession then screen has glitch then it slowly zooms into him and
+it snaps and it glitches"*, *"i want the head snap to be very sudden"*, *"add glitch sfx"*, *"isagad mo na sa 7 seconds if
+need"*, and, of other maps, *"i js wannnna see here"* (Bayan Plaza).
+
+* WHY THE GROUND KEPT BREAKING: measured in the film (r69), his rig is scaled 2.38 and the two readings of its skinned bake
+  disagree by half a metre lying down; whichever one was used, he floated or sank. So he no longer lies down.
+* THE TRIP, on his feet: he trips, stumbles on a step, catches himself, turns round to face what is coming and backs away
+  cowering, hunched under his arms, looking up at it; it plunges down into him (4.3); a moment of jerks; he straightens up
+  (4.7). The mesh measuring (`NmLowest`, `NmCalibrate`) and the puppet rise are gone.
+* THE SNAP (5.30-7.00): himself again, he walks at the lens like anyone would (5.2), arms swinging, head level, only his
+  eyes violet; the room goes quiet under his steps. The picture glitches (5.75) and inside it, for two frames, his head is
+  already snapped over; then he is walking as before and the lens slowly closes on him (fov 50 to 38). Mid-glitch (6.75) his
+  head snaps over in one frame, staring at us, and his walk stops dead mid-step; his eyes flare; the lens jumps in. After the
+  snap the glitch runs torn, clear, clear, torn, clear, torn to the end, so the stare shows between the tears and it ends
+  torn. No strings, no blackout. Her fallback table (`tools/author_ultimate_intros.py`) is 7.0 s again.
+* GLITCH SOUND (`tools/build_nemu_ult_audio.py`): `glitch` (bit-crushed squares, held noise, stuck repeats and gaps in
+  15-60 ms pieces) at the first entry, the 5.75 flicker and from just before the snap to the end; `step` (his walk, a step
+  each half of his pace), `riser` (a thin tone under the slow close), `crack` (the neck) with a chime at the snap; the room
+  ducks under the walk; it cuts at 7.0 inside the glitch. Still a draft, out of `Resources/Sfx`.
+
+Film r74 passed (cutscene 6.97 s, clock frozen); Nemu suites 8/8 ([whole cutscene](evidence/film-v17/whole-cutscene.jpg),
+[the snap](evidence/film-v17/snap.jpg), [XML](evidence/film-v17/play-tests.xml), [suites](evidence/film-v17/nemu-suites.xml)).
+Arena r74 also passed. Film (Bayan, cutscene only, with the sound): `Logs/nemu-lti/nemu_let_them_in_v17.mp4`. Not yet evidence:
+the owner's verdict.

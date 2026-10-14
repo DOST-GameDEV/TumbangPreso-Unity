@@ -512,6 +512,7 @@ def nemu(held=False):
       v11: no prayer and no cast laugh (owner: *"start from this wag na prayer"*).
       THE GATE 0.00: she lifts her clasped hands to the sky and the air over the court tears open; she holds them up.
       THE POURING 2.50: she flings her arms wide as the gate pours out the rest; then she watches, head tipped.
+      v17: it ends on his head snapping inside a glitch (6.75), no blackout (owner: *"end it here na wag mo na idarken"*).
     The shots are computed from where the players really are (`HeroIntroductionScene.Nemu.cs`); the authored shots below are
     their fallbacks with nobody on court, one per cut. The stage reads these times: keep them in step with its `Nm*` constants.
     """

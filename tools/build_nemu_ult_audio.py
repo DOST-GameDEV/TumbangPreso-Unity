@@ -25,9 +25,13 @@ Instruments (each typed below, never one recipe for two cues):
   heartbeat  quickening once the dead are right behind them
   gulp     the sky swallowed: a wet throat sweeping down into a sub hit (SWALLOWED SKY, section 13; kept as an instrument)
   peel     a shadow tearing up off the court: a slow stretching creak under a rising whisper (THEIR OWN SHADOWS, section 14)
+  glitch   the picture breaking: chopped, bit-crushed tones and held noise in 15-60 ms pieces, stuttering (v17)
+  step     a shoe on the court, soft (v17: he walks at the lens)
+  riser    a thin tone climbing under the slow close (v17)
+  crack    the head snapping: a dry bone crack over a low knock (v17)
   (toll, handbell, shuffle, snuff: v1's procession, kept as instruments, no longer in a cue)
   (buzz and clunk: BEHIND YOU's failing lights, retired with them in section 13, kept as instruments)
-Cues: sfx_ult_theme_nemu (the 7.0 s THE GATE cutscene, v11, every beat at the stage's time), sfx_nemu_possess_tell, sfx_nemu_possess_surge.
+Cues: sfx_ult_theme_nemu (the 7.0 s cutscene, v17 THE SNAP ending, every beat at the stage's time), sfx_nemu_possess_tell, sfx_nemu_possess_surge.
 """
 import os
 import wave
@@ -293,11 +297,69 @@ def peel(seconds, gain=1.0):
     return (creak * .7 + tear) * gain
 
 
+def glitch(seconds, gain=1.0, density=1.0):
+    """The picture breaking (owner on v16: *"add glitch sfx"*): 15-60 ms pieces, each a bit-crushed square at a random
+    pitch, a burst of sample-held noise, a stuck repeat of the piece before, or a gap; hard edges, no fades."""
+    n = int(seconds * RATE)
+    out = np.zeros(n)
+    i = 0
+    prev = None
+    while i < n:
+        m = min(n - i, int(rng.uniform(.015, .06) * RATE))
+        kind = rng.random()
+        if kind > density:
+            piece = np.zeros(m)
+        elif kind < .35:
+            f = rng.uniform(180, 2400)
+            tt = np.arange(m) / RATE
+            sq = np.sign(np.sin(2 * np.pi * f * tt))
+            piece = np.round(sq * rng.uniform(.3, 1) * 4) / 4
+        elif kind < .7:
+            hold = int(rng.integers(4, 40))
+            raw = rng.standard_normal(m // hold + 1)
+            piece = np.repeat(raw, hold)[:m] * .5
+        elif prev is not None:
+            piece = np.resize(prev, m)
+        else:
+            piece = np.zeros(m)
+        out[i:i + m] = piece * rng.uniform(.4, 1)
+        prev = piece
+        i += m
+    return out * gain
+
+
+def step(gain=1.0):
+    """A shoe on the court: a soft low knock and a scuff."""
+    tt = t_axis(.12)
+    knock = np.sin(2 * np.pi * (110 - 40 * tt / .12) * tt) * np.exp(-tt / .025)
+    scuff = bandnoise(.12, 600, 3500)[:len(tt)] * np.exp(-tt / .03) * .25
+    return (knock + scuff) * gain
+
+
+def riser(seconds, gain=1.0):
+    """A thin tone climbing, barely there, under the slow close."""
+    t = t_axis(seconds)
+    f = 330 * 2 ** (1.5 * (t / seconds) ** 1.6)
+    ph = 2 * np.pi * np.cumsum(f) / RATE
+    x = np.sin(ph) + .3 * np.sin(2.01 * ph)
+    return x * (t / seconds) ** 1.3 * gain
+
+
+def crack(gain=1.0):
+    """The head snapping: a dry bone crack over a low knock."""
+    c = bandnoise(.04, 1200, 9000) * env(int(.04 * RATE), .0003, .007)
+    tt = t_axis(.2)
+    k = np.sin(2 * np.pi * (75 - 30 * tt / .2) * tt) * np.exp(-tt / .05)
+    out = np.zeros(len(tt)); out[:len(c)] += c * 1.2; out += k * .8
+    return out * gain
+
+
 # v11 THE GATE (`direction.md` sections 19 and 20), at the stage's own times (`HeroIntroductionScene.Nemu.cs` `Nm*`).
 LENGTH = 7.0
 BEAT, IGNITE, SPLIT, GATE_OPEN, LEAD, LEAD_IN, FIRST_EYES, BURST = .21, .05, .05, .55, .8, 2.25, 2.35, 2.5
-RUN, TRIP, LANDED, ROLL, BACK_IN, TRIP_IN, RISE, TRIP_EYES, CRANE = 2.75, 3.5, 3.75, 3.85, 3.35, 4.3, 4.7, 4.4, 5.3
-TUG, DARK, FLARE = 5.95, 6.3, 6.42
+RUN, TRIP, ROLL, BACK_IN, TRIP_IN, RISE, TRIP_EYES, CRANE = 2.75, 3.5, 3.85, 3.35, 4.3, 4.7, 4.4, 5.3
+# v17 THE SNAP (section 25): himself again he walks at the lens; a glitch; the slow close; the snap inside a glitch; the end.
+SETTLE, FLICKER, SNAP = 5.2, 5.75, 6.75
 
 
 def theme():
@@ -333,32 +395,37 @@ def theme():
     # caught behind him first.
     heartbeat(RUN, TRIP_IN, track, gain=.7)
     place(track, snap(.6), TRIP)
-    place(track, clunk(.7), LANDED)
+    place(track, step(.8), TRIP + .1)                                             # v17: he stumbles on, he does not go down
+    place(track, step(.6), TRIP + .32)
     place(track, suck(.45), BACK_IN - .35)
     place(track, breath(.3, 900, 6000, shape="in", gain=.85), ROLL + .2)
     place(track, suck(1.2), TRIP_IN - .42)
     place(track, crackle(.3, gain=.45), TRIP_IN)
     place(track, groan(.5, 64.0, gain=.55), TRIP_IN + .06)
-    place(track, peel(.5, gain=.7), RISE)                                         # hauled up like a puppet
     place(track, chime(.3), TRIP_EYES)
-    # THE STRINGS: a low choir as they turn to her; at the tug every string snaps taut at once (a creak and a crack); then the
-    # lights die and the room drops out to a held breath, one last chime as their eyes flare.
-    rise = TUG - CRANE + .1
-    swell = np.linspace(.2, 1, int(rise * RATE)) ** 1.2
-    place(track, hum(rise, notes=(98.0, 116.54, 146.83, 87.31), gain=1.0) * swell, CRANE)
-    place(track, whisper(rise, 6.0, .3) * swell, CRANE)
-    place(track, snap(1.0), TUG)
-    place(track, peel(.35, gain=.8), TUG - .02)
-    place(track, groan(.5, 55.0, gain=.6), TUG + .02)
-    hold = LENGTH - DARK
-    place(track, breath(hold, 300, 2500, shape="out", gain=.35), DARK)
-    place(track, chime(.35), FLARE)
-    duck = np.ones(len(track)); d0 = int(DARK * RATE); d1 = int((DARK + .35) * RATE)
-    duck[d0:d1] = np.linspace(1, .25, d1 - d0); duck[d1:] = .25
-    track *= duck
+    place(track, glitch(.15, .35), LEAD_IN)                                      # the picture flickers as the first goes in
+    # THE SNAP (v17): he straightens up, breathes out, himself again; the storm goes quiet under him and his steps are all
+    # there is; the picture glitches; a thin tone climbs as the lens closes on him; mid-glitch the crack of his neck and his
+    # eyes, and it ends there, cut, inside the glitch.
+    place(track, breath(.6, 300, 2500, shape="out", gain=.5), RISE + .1)
+    at = SETTLE + .24
+    while at < SNAP:
+        place(track, step(.5), at)
+        at += .483                                                               # his pace (`NmAct`: 6.5 rad/s, a step each half)
+    place(track, glitch(.16, 1.0), FLICKER)
+    place(track, riser(SNAP - FLICKER - .1, .25), FLICKER + .1)
+    place(track, glitch(LENGTH - SNAP + .1, .9, density=.85), SNAP - .1)
+    place(track, crack(1.1), SNAP)
+    place(track, chime(.4), SNAP)
+    # Quiet under the walk, so the steps and the glitch carry it; nothing quiets the glitch.
+    quiet = np.ones(len(track)); q0 = int(SETTLE * RATE); q1 = int((SETTLE + .4) * RATE)
+    quiet[q0:q1] = np.linspace(1, .35, q1 - q0); quiet[q1:] = .35
+    room_only = np.zeros(len(track))
+    place(room_only, room, 0)
+    track -= room_only * (1 - quiet)
     track = track[:int(LENGTH * RATE)]
-    fade = np.ones(len(track)); f0 = int((LENGTH - .6) * RATE); fade[f0:] = np.linspace(1, 0, len(track) - f0) ** 1.2
-    return track * fade
+    tail = np.ones(len(track)); tail[-int(.01 * RATE):] = np.linspace(1, 0, int(.01 * RATE))
+    return track * tail
 
 
 def tell():
@@ -379,8 +446,10 @@ def write(name, x, peak=.89):
     x = x / (np.abs(x).max() + 1e-9) * peak
     data = (np.clip(x, -1, 1) * 32767).astype("<i2")
     path = os.path.join(OUT, name + ".wav")
-    with wave.open(path, "wb") as w:
+    # Written aside and swapped in: writing over the file in place sometimes fails here with OSError 22.
+    with wave.open(path + ".tmp", "wb") as w:
         w.setnchannels(1); w.setsampwidth(2); w.setframerate(RATE); w.writeframes(data.tobytes())
+    os.replace(path + ".tmp", path)
     print("wrote", path, f"{len(x) / RATE:.2f}s")
 
 

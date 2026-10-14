@@ -41,21 +41,21 @@ namespace TumbangPreso.Visual
         private const float NmIgnite = .05f, NmSplit = 0f, NmGateFrom = .1f, NmGateOpen = .55f, NmLead = .8f, NmBurst = 2.5f, NmDive = 2.5f;
         /// <summary>The first soul: when it turns on the first player and when it is in him; his eyes.</summary>
         private const float NmLeadOut = 1.85f, NmLeadIn = 2.25f, NmFirstWake = 2.35f;
-        /// <summary>The one who falls: running, the chaser turning on him, the trip, the roll onto his back, the soul in, the pull
-        /// up off the court, his eyes.</summary>
+        /// <summary>The one who trips: running, the chaser turning on him, the trip (he catches himself, turns round to it and
+        /// cowers), the soul in, upright again, his eyes, himself again.</summary>
         private const float NmTripRun = 2.75f, NmTripOut = 2.8f, NmTrip = 3.5f, NmRoll = 3.85f, NmTripIn = 4.3f, NmRise = 4.7f, NmTripWake = 4.4f, NmTripSettle = 5.2f;
         /// <summary>The rest: running, the chaser, caught in the background.</summary>
         private const float NmBackRun = 2.8f, NmBackOut = 2.9f, NmBackIn = 3.35f;
         /// <summary>
-        /// THE STRINGS, her ending (5.30-7.00), on the one who ran (owner on v13: *"why do they teleport to the middle"*, *"maybe
-        /// js focus on the dude that was running"*): v15 (owner on v14: *"why tf does camera go to his back view ... let it flow
-        /// from this"*; v16, on v15: *"walking normally after but then something weird af happens"*): the lens stays in front of
-        /// him from his rise, no cut; set down, he walks at it like anyone would (5.2); violet strings snap taut from his head and
-        /// shoulders back to her lifted hand and yank him off his feet mid-step, legs still walking (5.95); he drifts at the lens, then snaps nearer as
-        /// the lights die (6.30) to black but for hot violet, his eyes; they flare (6.42); the lights come back to dusk for the
-        /// hand-back. The others stay where they are.
+        /// THE SNAP, her ending (5.30-7.00), on the one who ran (owner on v16: *"i want it to look like he's ok naman after
+        /// possession then screen has glitch then it slowly zooms into him and it snaps and it glitches"*, *"make him js walk
+        /// normall then it glitches and mid glitch it snaps and ult cutscene ends"*, *"i want the head snap to be very sudden"*):
+        /// upright again, he walks at the lens like anyone would, eyes violet. The picture glitches (5.75), and inside it, for a
+        /// few frames, his head is seen snapped over; then he is walking as before and the lens slowly closes on him.
+        /// It glitches again and, mid-glitch, his head snaps (6.75) in one frame, over, staring at us; his eyes flare; it
+        /// ends inside the glitch. No strings, no blackout (*"end it here na wag mo na idarken"*). The others stay where they are.
         /// </summary>
-        private const float NmCrane = 5.3f, NmTurnAll = 5.45f, NmTug = 5.95f, NmDark = 6.3f, NmFlare = 6.42f;
+        private const float NmCrane = 5.3f, NmTurnAll = 5.45f, NmFlicker = 5.75f, NmSnap = 6.75f;
         /// <summary>The chant: her head dips and a ring goes out across the court on each beat.</summary>
         private const float NmChantBeat = .21f;
         private const float NmRunSpeed = 2.2f;
@@ -122,8 +122,6 @@ namespace TumbangPreso.Visual
             public float Side = 1f;
             public NemuEyeGlow Eyes;
             public Renderer[] Renderers;
-            /// <summary>Per renderer: whether its baked mesh already carries its transform's scale (`NmCalibrate`).</summary>
-            public bool[] BakeScaled;
             /// <summary>Their chest this frame (scene space), as it jerks.</summary>
             public Vector3 Chest;
             public int Seat;
@@ -315,7 +313,7 @@ namespace TumbangPreso.Visual
                         Vector3 chest = victim.Home + up * (victim.Top * .55f);
                         soul.Dir = (chest - NmFree(soul, outAt)).normalized;
                     }
-                    else if (victim.Role == 1 && j == 0) soul.Dir = (Vector3.down * .95f + victim.Flee * .1f).normalized;   // into him, lying on his back
+                    else if (victim.Role == 1 && j == 0) soul.Dir = (Vector3.down * .95f + victim.Flee * .1f).normalized;   // down into him as he cowers
                     else if (j == 0) soul.Dir = (victim.Flee * .85f + Vector3.down * .25f).normalized;                       // into the back of a runner
                     else soul.Dir = Vector3.down;
                     _nmSouls[pick] = soul;
@@ -397,7 +395,6 @@ namespace TumbangPreso.Visual
             v.Chest = v.Home + Vector3.up * (v.Top * .55f);
             v.Eyes = NemuEyeGlow.On(other.Renderers);
             v.Renderers = other.Renderers;
-            v.BakeScaled = NmCalibrate(v.Renderers);
             if (v.Eyes != null) _nmEyeGlows.Add(v.Eyes);
             v.Hits = new[] { NmLeadIn }; v.Souls = new[] { 0 }; v.Strength = new[] { 1f };
             v.Wake = NmFirstWake; v.Settle = NmFirstWake + .15f;
@@ -429,54 +426,27 @@ namespace TumbangPreso.Visual
         private Vector3 NmWDir(Vector3 local) => _root.transform.TransformDirection(local);
         private static float NmBump(float t, float at, float width) { float u = 1f - Mathf.Abs(t - at) / width; return u <= 0f ? 0f : u * u * (3f - 2f * u); }
 
-        /// <summary>Pulled up off the court like a puppet: in three tugs, each a pull and a sag (0 lying, 1 upright); v9's four
-        /// snaps read as a glitch (owner: *"sharp and rigid"*).</summary>
-        private static float NmPuppetRise(float x)
-        {
-            float r = Mathf.Clamp01(x / .5f) * 3f;
-            float whole = Mathf.Floor(r), part = r - whole;
-            float tug = Ease(.2f, .85f, part) - .08f * NmBump(part, .95f, .2f);
-            return Mathf.Clamp01((whole + (whole >= 3f ? 0f : tug)) / 3f);
-        }
-
         /// <summary>
         /// Where a player's body is at <paramref name="s"/> (scene space): its feet, the turn of the whole body, and how far it is
-        /// lying down. A stagger back as the court splits; running from the first one; the one who falls trips, goes down on his
-        /// face, rolls onto his back, and is pulled up again stiff; the others are thrown on a little as they are caught.
+        /// lying down (no one lies down since v17). A stagger back as the court splits; running from the first one; the one who
+        /// trips stumbles, turns round and backs away, then walks at the lens; the others are thrown on a little as they are caught.
         /// </summary>
         private void NmBody(NmVictim v, float s, out Vector3 pos, out Quaternion rot, out float lying)
         {
             NmBodyPath(v, s, out pos, out rot, out lying);
-            // THE STRINGS: set down from his rise, he walks on the way he faces at a walk's pace until the tug takes him.
-            if (s > NmTripSettle - .05f && v == NmEndSubject)
+            // THE SNAP: himself again, he walks on the way he faces at a walk's pace; at the snap he stops dead, mid-step.
+            if (s > NmTripSettle && v == NmEndSubject)
             {
                 Vector3 ahead = rot * Vector3.forward; ahead.y = 0f;
-                float x = Mathf.Min(s, NmTug) - NmTripSettle;
-                if (x > 0f && ahead.sqrMagnitude > 1e-4f) pos += ahead.normalized * (.85f * x * x / (x + .2f));
-                pos -= Vector3.up * (.08f * Ease(NmTripSettle - .05f, NmTripSettle + .3f, s));
-            }
-            // THE STRINGS: the one it is about drifts at the lens after the tug, then snaps nearer as the lights die.
-            float lurch = NmLurch(s);
-            if (lurch > 0f && v == NmEndSubject)
-            {
-                NmEndLens(out var lens, out _);
-                Vector3 to = lens - pos; to.y = 0f;
-                float far = to.magnitude;
-                if (far > 2.4f) pos += to / far * ((far - 2.4f) * lurch);   // (film r61: at 1.5 m he filled the frame)
+                float x = Mathf.Min(s, NmSnap) - NmTripSettle;
+                if (ahead.sqrMagnitude > 1e-4f) pos += ahead.normalized * (.85f * x * x / (x + .2f));
             }
         }
 
-        /// <summary>THE STRINGS' approach: a slow drift a third of the way, then a snap most of the rest as the lights die.</summary>
-        private static float NmLurch(float s)
-        {
-            if (s <= NmTug + .1f) return 0f;
-            return .3f * Ease(NmTug + .1f, NmDark - .03f, s) + (s >= NmDark - .02f ? .45f : 0f);
-        }
-
-        /// <summary>Whom THE STRINGS is about: the one who ran (else the first).</summary>
+        /// <summary>Whom THE SNAP is about: the one who ran (else the first).</summary>
         private NmVictim NmEndSubject => _nmVictims.Count == 0 ? null : _nmVictims[_nmTripper >= 0 ? _nmTripper : 0];
 
-        /// <summary>THE STRINGS' lens: where his rise left it, in front of him and aside (scene space; owner on v14: *"why tf does
+        /// <summary>THE SNAP's lens: where his getting up left it, in front of him and aside (scene space; owner on v14: *"why tf does
         /// camera go to his back view ... let it flow from this"*).</summary>
         private void NmEndLens(out Vector3 eye, out Vector3 at)
         {
@@ -502,17 +472,12 @@ namespace TumbangPreso.Visual
             float d = NmRunSpeed * x * x / (x + .3f);
             if (v.Role == 1)
             {
-                // THE FALL: a stumble, down on his face sliding, over onto his back, then hauled up by nothing.
-                float fall = Ease(NmTrip + .04f, NmTrip + .3f, s);
-                float stumble = NmBump(s, NmTrip + .04f, .12f);
-                d += .6f * Ease(NmTrip, NmTrip + .45f, s);
-                float roll = Ease(NmRoll, NmRoll + .32f, s);
-                float rise = s > NmRise ? NmPuppetRise(s - NmRise) : 0f;
-                Quaternion down = rot * Quaternion.Euler(90f * fall + 18f * stumble, 0f, 0f) * Quaternion.AngleAxis(180f * roll, Vector3.up);
-                Quaternion stood = Quaternion.Euler(0f, v.RunYaw + 180f, 0f);
-                rot = rise > 0f ? Quaternion.Slerp(down, stood, rise) : down;
-                lying = fall * (1f - rise);
-                pos = at + v.Flee * d + Vector3.up * (v.Width * .3f * lying + .08f * rise) + Vector3.up * (.06f * NmBump(s, NmTrip + .25f, .06f));
+                // THE TRIP, on his feet (owner on v16: *"baguhin mo animation men pabalik balik na bug yang floating or going in
+                // ground"*: lying, his rig's skinned bake read half a metre off one way or the other, so he floated or sank): he
+                // trips, stumbles on, catches himself, turns round to face what is coming and backs away from it, cowering.
+                d += .45f * Ease(NmTrip, NmTrip + .4f, s) + .3f * Ease(NmTrip + .8f, NmTripIn, s);
+                rot = Quaternion.Euler(0f, v.RunYaw + 180f * Ease(NmTrip + .3f, NmTrip + .8f, s), 0f);
+                pos = at + v.Flee * d;
                 return;
             }
             if (s > v.Hits[0]) d += .5f * Ease(v.Hits[0], v.Hits[0] + .35f, s);
@@ -669,7 +634,6 @@ namespace TumbangPreso.Visual
             Vector3 eye = NmW(_nmEye);
             for (int i = 0; i < _nmSouls.Count; i++) DrawSoul(_nmSouls[i], i, t, eye);
             for (int i = 0; i < _nmVictims.Count; i++) SampleVictim(_nmVictims[i], i, t);
-            DrawStrings(t);
             _nmSmoke.End(t);
             // The gate stays open to the end (play keeps it open, `NemuWorld`).
             _nmGate?.Set(NmGateAmount(t), 1f, Mathf.Max(Flash(t, NmGateOpen, .35f), .8f * NmBump(t, NmBurst + .4f, .6f), .6f * Flash(t, NmLead + .1f, .3f)), t);
@@ -715,38 +679,6 @@ namespace TumbangPreso.Visual
                     Vector3 p = Vector3.Lerp(palms + Vector3.up * .3f, _nmGateAt, u * u) + Vector3.up * (Mathf.Sin(u * Mathf.PI) * 1.2f);
                     _nmSmoke.Light(NmW(p), .3f - .05f * j, rising * (1.4f - .3f * j), NemuSmokeBatch.Violet);
                 }
-        }
-
-        /// <summary>
-        /// THE STRINGS: from the tug, thin violet threads from the possessed one's head and shoulders back to her lifted hand,
-        /// snapping taut (a flash running up them), then humming; they burn on into the dark as violet.
-        /// </summary>
-        private void DrawStrings(float t)
-        {
-            var v = NmEndSubject;
-            if (v == null || t < NmTug - .03f) return;
-            float on = Ease(NmTug - .03f, NmTug + .03f, t);
-            Vector3 hand = NmW(FreePalm);
-            Transform[] from = { v.HeadBone.T, v.ArmL.T, v.ArmR.T };
-            for (int k = 0; k < from.Length; k++)
-            {
-                if (from[k] == null) continue;
-                Vector3 a = from[k].position + (k == 0 ? Vector3.up * (v.FaceTop * .6f) : Vector3.zero);
-                Vector3 d = hand - a; float len = d.magnitude;
-                if (len < .2f) continue;
-                int pieces = Mathf.Clamp(Mathf.CeilToInt(len / .6f), 2, 14);
-                float hum = .6f + .4f * Mathf.Sin(t * 40f + k * 2f);
-                float snapFlash = Flash(t, NmTug, .25f);
-                for (int j = 0; j < pieces; j++)
-                {
-                    float u0 = j / (float)pieces, u1 = (j + 1) / (float)pieces;
-                    Vector3 p0 = a + d * u0, p1 = a + d * u1;
-                    float run = Mathf.Clamp01(1f - Mathf.Abs((t - NmTug) / .2f - u0));
-                    // (film r61: a hair-thin smoke strand did not show; a lit thread does.)
-                    _nmSmoke.Wisp((p0 + p1) * .5f, d, .04f, len / pieces * 1.15f, on * .9f, k * .3f + j * .07f, 0f, 1f);
-                    _nmSmoke.Light((p0 + p1) * .5f, .07f, on * (.7f * hum + 1.4f * run * snapFlash), NemuSmokeBatch.Violet, d / pieces);
-                }
-            }
         }
 
         /// <summary>
@@ -966,7 +898,7 @@ namespace TumbangPreso.Visual
                         _nmSmoke.Light(Vector3.Lerp(front, face, u), .16f - .02f * j, .9f * (1f - j * .18f), NemuSmokeBatch.Violet, default, .3f);
                     }
             }
-            float eyes = Ease(v.Wake, v.Wake + .06f, t) * (1f + .8f * Flash(t, NmFlare, .25f));
+            float eyes = Ease(v.Wake, v.Wake + .06f, t) * (1f + .8f * Flash(t, NmSnap, .25f));
             v.Eyes?.Set(eyes, t + v.Seat);
             if (eyes > 0f && v.Head != null)
                 _nmSmoke.Light(face, v.FaceTop * .9f, eyes * (.3f + .9f * Flash(t, v.Wake + .05f, .15f)), NemuSmokeBatch.Violet);
@@ -1042,12 +974,10 @@ namespace TumbangPreso.Visual
             Vector3 toLens = NmW(_nmEye) - NmW(pos); toLens.y = 0f;
             float turn = toLens.sqrMagnitude > 1e-4f && fwdBase.sqrMagnitude > 1e-4f ? Vector3.SignedAngle(fwdBase, toLens, Vector3.up) : 0f;
             // (film r64: in front of him a full turn to the lens showed the back of his head.)
-            if (v == NmEndSubject) turn = Mathf.Clamp(turn, -35f, 35f);
+            if (v == NmEndSubject) turn = 0f;   // himself again, he looks where he walks (THE SNAP does the stare)
             // THE STRINGS: all of them together, slowly, the head first (no offset between them: the unison is the point).
             float turnAt = Mathf.Max(NmTurnAll, v.Settle + .1f);
             float headTurn = Ease(turnAt, turnAt + .5f, t), chestTurn = Ease(turnAt + .2f, turnAt + .7f, t), bodyTurn = Ease(turnAt + .35f, turnAt + .85f, t);
-            // The tug: yanked up on their strings at once, and left hanging.
-            float jolt = t < NmTug ? 0f : Mathf.Clamp01((t - NmTug) / .07f) * (1f - .25f * Ease(NmTug + .1f, NmTug + .5f, t));
             // THE STRINGS (owner on v11: *"show the possession more or explore how fked up or scary it is"*): the body stays turned
             // away and the head alone comes all the way round to stare at her, past where a neck can go.
             float bodyYaw = (turn * .1f * bodyTurn + feetYaw * .6f * feetWatch) * standing;
@@ -1077,7 +1007,9 @@ namespace TumbangPreso.Visual
             float flinch = NmBump(t, NmBurst + .15f, .3f);
             float scared = Ease(NmGateFrom + .1f, NmGateFrom + .5f, t) * (1f - Ease(v.RunAt - .1f, v.RunAt + .1f, t)) * (1f - watch) * (v.Role == 0 ? 1f - Ease(first - .1f, first, t) : 1f);
             float running = Ease(v.RunAt - .05f, v.RunAt + .32f, t) * (1f - Ease(v.Role == 1 ? NmTrip : first - .02f, v.Role == 1 ? NmTrip + .1f : first + .05f, t));
-            float down = v.Role == 1 ? Ease(NmTrip, NmTrip + .15f, t) * (1f - Ease(first - .02f, first + .05f, t)) : 0f;   // flailing on the court
+            // The trip: thrown forward a step, then cowering, hunched under his arms, looking up at it.
+            float trip = v.Role == 1 ? NmBump(t, NmTrip + .12f, .22f) : 0f;
+            float down = v.Role == 1 ? Ease(NmTrip + .35f, NmTrip + .75f, t) * (1f - Ease(first - .02f, first + .05f, t)) : 0f;
             float wrong = Ease(first + .3f, first + .5f, t) * (1f - Ease(v.Settle + .4f, v.Settle + .8f, t)) * (v.Role == 1 ? 1f - .6f * NmBump(t, NmRise + .2f, .25f) : 1f);
             float stance = Ease(v.Settle + .25f, v.Settle + .8f, t);
 
@@ -1096,7 +1028,8 @@ namespace TumbangPreso.Visual
             float bob = Mathf.Abs(Mathf.Cos(stride)) * .07f * running;
             float lookBack = running * Mathf.Max(NmBump(t, v.RunAt + .4f, .25f), NmBump(t, (v.Role == 1 ? NmTrip : first) - .3f, .2f));
             float backSide = (v.Seat & 1) == 0 ? 1f : -1f;
-            float scrabble = Mathf.Sin(t * 13f + seat) * down;
+            // Shaking as he backs away.
+            float scrabble = Mathf.Sin(t * 6f + seat) * down * .15f;
 
             // WRONG: still a puppet on cut strings, but each broken pose is reached in a jolt and held, a few a second (v9's
             // ten a second strobed: *"sharp"*).
@@ -1106,28 +1039,28 @@ namespace TumbangPreso.Visual
             float snap = Ease(.45f, .9f, Mathf.Repeat(clock, step) / step);
             float Broken(int slot, float range) => Mathf.Lerp(NmHash(key * 7 + v.Seat, slot) - .5f, NmHash((key + 1) * 7 + v.Seat, slot) - .5f, snap) * 2f * range * wrong;
 
-            // THE STRINGS (owner on v15: *"make him look like he's walking normally after but then something weird af happens"*):
-            // set down from his rise, he walks at the lens like anyone would, arms swinging, head level, only his eyes wrong;
-            // at the tug he is yanked off his feet mid-step and his legs go on walking in the air while his head flops over.
-            float walk = v == NmEndSubject ? Ease(NmTripSettle - .05f, NmTripSettle + .3f, t) * (1f - Ease(NmDark - .08f, NmDark, t)) : 0f;
-            float normal = walk * (1f - Ease(NmTug, NmTug + .06f, t));
-            float pace = Mathf.Sin((t - NmTripSettle) * 6.5f) * walk;
-            float flop = (v == NmEndSubject ? 1f : 0f) * Ease(NmTug + .02f, NmTug + .16f, t);
+            // THE SNAP: possessed, he jerks a moment, then straightens up himself again (4.7) and walks at the lens like anyone
+            // would, arms swinging, head level, only his eyes wrong; no possessed stance, no cut-string snaps. The snap, in one
+            // frame: his head over, staring at us; his walk stopped dead mid-step. In the first glitch it is seen for a few
+            // frames, and gone again.
+            bool end = v == NmEndSubject;
+            float normal = end ? Ease(NmRise, NmRise + .3f, t) : 0f;
+            float walk = end ? Ease(NmTripSettle - .05f, NmTripSettle + .3f, t) : 0f;
+            float pace = Mathf.Sin((Mathf.Min(t, NmSnap) - NmTripSettle) * 6.5f) * walk;
+            float snapped = end && (t >= NmSnap || (t >= NmFlicker + .03f && t < NmFlicker + .1f)) ? 1f : 0f;
             wrong *= 1f - normal; stance *= 1f - normal;
 
-            float tip = ((v.Seat & 1) == 0 ? 1f : -1f) * (30f * stance + 45f * flop);
+            float tip = ((v.Seat & 1) == 0 ? 1f : -1f) * 30f * stance;
             float sway = Mathf.Sin(t * 1.4f + seat) * 3f * stance;
 
             if (v.Root.T != null)
-                v.Root.T.position += NmWDir(shove) * standing + Vector3.up * ((lift + .4f * jolt + .1f * stagger + .05f * flinch + bob + (.08f + .06f * NmHash(key, v.Seat + 51)) * wrong * standing + .07f * stance + Mathf.Sin(t * 2f + seat) * .015f * stance))
+                v.Root.T.position += NmWDir(shove) * standing + Vector3.up * ((lift + .1f * stagger + .05f * flinch + bob + (.08f + .06f * NmHash(key, v.Seat + 51)) * wrong * standing + .07f * stance + Mathf.Sin(t * 2f + seat) * .015f * stance))
                                    + right * (Mathf.Sin(t * 5f) * .03f * stagger + pace * .02f * normal);
 
             float torsoTwist = scared * glanceYaw * .2f + chestYaw * .25f * chestWatch - swing * 8f + scrabble * 10f + Broken(1, 35f) + (turn * .25f * chestTurn - turn * .1f * bodyTurn) * standing
                              - pace * 6f * normal;
-            float torsoPitch = scared * 10f + running * 14f + flinch * 12f - jerk * 22f + Broken(2, 26f) - stance * 4f - down * 12f + 4f * normal;
-            // On the strings they all sway together, one pendulum, like marionettes on one cross.
-            float swing2 = jolt * Mathf.Sin((t - NmTug) * 5.5f) * Mathf.Exp(-(t - NmTug) * 1.2f);
-            float torsoRoll = tremble + Broken(3, 22f) + sway + stagger * 5f * Mathf.Sin(t * 5f) + Mathf.Sin(stride) * 7f * running + 12f * swing2 + pace * 3f * normal;
+            float torsoPitch = scared * 10f + running * 14f + flinch * 12f - jerk * 22f + Broken(2, 26f) - stance * 4f + down * 30f + trip * 30f + 4f * walk;
+            float torsoRoll = tremble + Broken(3, 22f) + sway + stagger * 5f * Mathf.Sin(t * 5f) + Mathf.Sin(stride) * 7f * running + pace * 3f * walk;
             if (v.Torso.T != null)
             {
                 Turn(v.Torso.T, up, torsoTwist);
@@ -1136,10 +1069,10 @@ namespace TumbangPreso.Visual
             }
 
             float headYaw = scared * glanceYaw * .8f + headLead + lookBack * 100f * backSide + scrabble * 25f + Broken(4, 80f)
-                          + (turn * headTurn - turn * .25f * chestTurn) * standing;
-            float headPitch = scared * glancePitch + watchPitch * watch - Mathf.Min(jerk, 1.2f) * 26f + Broken(5, 35f) + stance * 5f + stagger * 10f - down * 20f - jolt * 14f
-                            - 6f * normal + 25f * flop;
-            float headRoll = scared * lost * .5f + Broken(6, 55f) + tip + ((v.Seat & 1) == 0 ? 1f : -1f) * 22f * headTurn;
+                          + (turn * headTurn - turn * .25f * chestTurn) * standing + 12f * snapped * ((v.Seat & 1) == 0 ? 1f : -1f);   // (film r70: 75 degrees round turned his face away: the snap is over, still at us)
+            float headPitch = scared * glancePitch + watchPitch * watch - Mathf.Min(jerk, 1.2f) * 26f + Broken(5, 35f) + stance * 5f + stagger * 10f - down * 45f - trip * 15f
+                            - 6f * walk - 8f * snapped;
+            float headRoll = scared * lost * .5f + Broken(6, 55f) + tip + ((v.Seat & 1) == 0 ? 1f : -1f) * (22f * headTurn + 88f * snapped);
             if (v.HeadBone.T != null)
             {
                 Turn(v.HeadBone.T, up, headYaw);
@@ -1147,91 +1080,14 @@ namespace TumbangPreso.Visual
                 Turn(v.HeadBone.T, fwd, headRoll);
             }
 
-            float guard = scared * 60f + flinch * 40f + down * 70f - jolt * 35f;
+            float guard = scared * 60f + flinch * 40f + down * 70f;
             float fling = jerk * 70f;
             float hang = stance * 20f;
-            if (v.ArmL.T != null) { Turn(v.ArmL.T, right, -guard + swing * 55f - jerk * 30f + scrabble * 40f + Broken(7, 110f) - stance * 10f + pace * 22f * normal); Turn(v.ArmL.T, fwd, fling + Broken(8, 60f) + hang); }
-            if (v.ArmR.T != null) { Turn(v.ArmR.T, right, -guard * .9f - swing * 55f - jerk * 30f - scrabble * 40f + Broken(9, 110f) - stance * 10f - pace * 22f * normal); Turn(v.ArmR.T, fwd, -fling - Broken(10, 60f) - hang); }
-            float dangle = (wrong + stance) * 10f + jolt * 22f;
-            if (v.LegL.T != null) Turn(v.LegL.T, right, swing * 42f + scrabble * 30f + Broken(11, 28f) + dangle * (1f - normal) + pace * 30f);
-            if (v.LegR.T != null) Turn(v.LegR.T, right, -swing * 42f - scrabble * 30f + Broken(12, 28f) + dangle * (1f - normal) - pace * 30f);
-
-            // ON THE COURT, NOT IN IT (owner on v13: *"on the ground bro he GOES IN THE GROUND"*): lying, his posed body is
-            // measured and lifted until its lowest point rests on the court (his chibi head and shoulders are thicker than any
-            // fixed lift, most of all on his side mid-roll).
-            // Until the soul is in him he lies ON it, not over it (owner on v14: *"this shit floats BEFORE CONTACT WITH GHOST"*):
-            // the boxes round his parts sit lower than the parts do once he is on his side, so lifting by them hung him in the
-            // air through the roll; his real posed mesh is measured, and before the soul he is set down onto the court as well
-            // as lifted out of it. After it only the lift holds, so the puppet can rise.
-            if (lying > .01f && v.Renderers != null)
-            {
-                float lowest = NmLowest(v);
-                float floor = _root.transform.position.y + .01f;
-                bool free = t < first;
-                if (lowest < float.MaxValue && Mathf.Abs(floor - lowest) < 2f && (lowest < floor || free))
-                    v.Holder.transform.position += Vector3.up * (floor - lowest);
-            }
-        }
-
-        private Mesh _nmBaked;
-        private readonly List<Vector3> _nmVerts = new List<Vector3>();
-
-        /// <summary>
-        /// Whether each skinned renderer's baked mesh already carries its transform's scale: it differs between rigs (as in
-        /// `HeroAbilityClips.GroundIntroduction`), and reading it wrong put him half into the court (film r67). Read standing,
-        /// where the renderer's own bounds are tight in height, by whichever reading of the bake matches that height.
-        /// </summary>
-        private bool[] NmCalibrate(Renderer[] renderers)
-        {
-            var scaled = new bool[renderers.Length];
-            for (int i = 0; i < renderers.Length; i++)
-            {
-                if (!(renderers[i] is SkinnedMeshRenderer skin) || skin.sharedMesh == null) continue;
-                if (_nmBaked == null) _nmBaked = new Mesh();
-                skin.BakeMesh(_nmBaked);
-                _nmBaked.GetVertices(_nmVerts);
-                Vector2 a = NmSpan(Matrix4x4.TRS(skin.transform.position, skin.transform.rotation, Vector3.one));
-                Vector2 b = NmSpan(skin.transform.localToWorldMatrix);
-                float height = skin.bounds.size.y;
-                scaled[i] = Mathf.Abs(a.y - a.x - height) <= Mathf.Abs(b.y - b.x - height);
-            }
-            return scaled;
-        }
-
-        private Vector2 NmSpan(Matrix4x4 m)
-        {
-            float lo = float.MaxValue, hi = float.MinValue;
-            foreach (var p in _nmVerts) { float y = m.MultiplyPoint3x4(p).y; lo = Mathf.Min(lo, y); hi = Mathf.Max(hi, y); }
-            return new Vector2(lo, hi);
-        }
-
-        /// <summary>The lowest point of a posed body's real mesh (world y), not of its bounding boxes.</summary>
-        private float NmLowest(NmVictim v)
-        {
-            float lowest = float.MaxValue;
-            for (int i = 0; i < v.Renderers.Length; i++)
-            {
-                var r = v.Renderers[i];
-                if (r == null || !r.enabled) continue;
-                Matrix4x4 m;
-                if (r is SkinnedMeshRenderer skin)
-                {
-                    if (skin.sharedMesh == null) continue;
-                    if (_nmBaked == null) _nmBaked = new Mesh();
-                    skin.BakeMesh(_nmBaked);
-                    _nmBaked.GetVertices(_nmVerts);
-                    m = v.BakeScaled != null && i < v.BakeScaled.Length && v.BakeScaled[i]
-                        ? Matrix4x4.TRS(skin.transform.position, skin.transform.rotation, Vector3.one) : skin.transform.localToWorldMatrix;
-                }
-                else if (r is MeshRenderer && r.TryGetComponent<MeshFilter>(out var filter) && filter.sharedMesh != null && filter.sharedMesh.isReadable)
-                {
-                    filter.sharedMesh.GetVertices(_nmVerts);
-                    m = r.transform.localToWorldMatrix;
-                }
-                else { lowest = Mathf.Min(lowest, r.bounds.min.y); continue; }
-                lowest = Mathf.Min(lowest, NmSpan(m).x);
-            }
-            return lowest;
+            if (v.ArmL.T != null) { Turn(v.ArmL.T, right, -guard + swing * 55f - jerk * 30f + scrabble * 40f + Broken(7, 110f) - stance * 10f + pace * 22f * walk); Turn(v.ArmL.T, fwd, fling + Broken(8, 60f) + hang); }
+            if (v.ArmR.T != null) { Turn(v.ArmR.T, right, -guard * .9f - swing * 55f - jerk * 30f - scrabble * 40f + Broken(9, 110f) - stance * 10f - pace * 22f * walk); Turn(v.ArmR.T, fwd, -fling - Broken(10, 60f) - hang); }
+            float dangle = (wrong + stance) * 10f;
+            if (v.LegL.T != null) Turn(v.LegL.T, right, swing * 42f + scrabble * 30f + Broken(11, 28f) + dangle + pace * 30f);
+            if (v.LegR.T != null) Turn(v.LegR.T, right, -swing * 42f - scrabble * 30f + Broken(12, 28f) + dangle - pace * 30f);
         }
 
         private static void Turn(Transform bone, Vector3 axis, float degrees)
@@ -1384,18 +1240,18 @@ namespace TumbangPreso.Visual
                     if (t < NmCrane) NmFallFrame(v, t, out eye, out look, out fov);
                     else
                     {
-                        // THE STRINGS: on from his rise without a cut, in front of him as he walks at it; a slow push, lifting
-                        // with him as the tug yanks him up; the lens stays put as he comes at it.
-                        float u = Ease(NmCrane, Seconds, t);
+                        // THE SNAP: on from his getting up without a cut, in front of him as he walks at it; after the first
+                        // glitch the lens slowly closes on him; at the snap it jumps in (one frame, like the snap).
                         NmEndLens(out var lens, out var stood);
                         Vector3 back = (lens - stood); back.y = 0f; back.Normalize();
-                        eye = lens - back * (.3f * u);
-                        look = stood + up * (v.Top * .55f + .25f * Ease(NmTug, NmTug + .4f, t));
-                        fov = Mathf.Lerp(56f, 46f, u) - 3f * NmBump(t, NmTug + .04f, .12f);
+                        NmBody(v, t, out var walking, out _, out _);
+                        eye = lens - back * (.3f * Ease(NmCrane, NmFlicker, t));
+                        look = walking + up * (v.Top * .6f);
+                        fov = Mathf.Lerp(56f, 50f, Ease(NmCrane, NmFlicker, t)) - 12f * Ease(NmFlicker + .1f, NmSnap, t) - (t >= NmSnap ? 5f : 0f);
                     }
                 }
                 // Off every player where they are now (they run, fall and float: `KeepLensOffOthers` knows where they stood);
-                // not in THE STRINGS, where he comes at the lens on purpose.
+                // not in THE SNAP, where he walks at the lens on purpose.
                 for (int i = 0; i < _nmVictims.Count && t < NmCrane; i++)
                 {
                     NmBody(_nmVictims[i], t, out var at, out _, out _);
@@ -1470,12 +1326,9 @@ namespace TumbangPreso.Visual
         private void NemuPostProcess(RenderTexture frame, Camera camera, float t)
         {
             float leave = 1f - Ease(Seconds - .6f, Seconds, t);
-            float blackoutInk = Ease(NmDark, NmDark + .25f, t) * (1f - Ease(Seconds - .3f, Seconds - .05f, t));
             float eerie = Ease(0f, .5f, t);
-            float ink = Mathf.Max(Ease(NmIgnite, NmIgnite + .3f, t) * .7f * leave, blackoutInk);
-            // THE STRINGS: the lights die, keeping only violet (the eyes, the gate's lip, the souls).
-            // ...and come back, dusk, for the hand-back's dissolve into play (film r57: from black straight into day was a cut).
-            float blackout = Ease(NmDark, NmDark + .25f, t) * (1f - Ease(Seconds - .3f, Seconds - .05f, t));
+            float ink = Ease(NmIgnite, NmIgnite + .3f, t) * .7f * leave;
+            // No blackout at the end (owner on v16: *"end it here na wag mo na idarken"*): it ends inside the glitch.
             float impact = 0f;
             if (!_reducedEffects && _nmVictims.Count > 0)
             {
@@ -1496,17 +1349,19 @@ namespace TumbangPreso.Visual
                 Vector3 vp = camera.WorldToViewportPoint(NmW(_nmVictims[shot].Chest));
                 if (vp.z > 0f) focus = new Vector2(Mathf.Clamp(vp.x, .2f, .8f), Mathf.Clamp(vp.y, .2f, .8f));
             }
-            // GLITCH bursts: a flicker as the first soul goes in; then in THE STRINGS as his head finishes coming round, at the tug,
-            // hard on the snap into the dark, and stuttering through it. Reduced effects keep none.
+            // GLITCH bursts: a flicker as the first soul goes in; in THE SNAP one as he walks, then from just before the snap
+            // to the end, stuttering. Reduced effects keep none.
             float glitch = 0f;
             if (!_reducedEffects)
             {
-                float stutter = NmHash(Mathf.FloorToInt(t * 12f), 77) > .55f ? 1f : 0f;
-                glitch = Mathf.Max(.5f * Flash(t, NmLeadIn, .15f), Mathf.Max(.45f * Flash(t, NmTurnAll + .5f, .2f), .7f * Flash(t, NmTug, .18f)));
-                glitch = Mathf.Max(glitch, Flash(t, NmDark - .04f, .25f));
-                glitch = Mathf.Max(glitch, .45f * stutter * Ease(NmDark, NmDark + .1f, t) * (1f - Ease(Seconds - .35f, Seconds - .1f, t)));
+                glitch = Mathf.Max(.5f * Flash(t, NmLeadIn, .15f), .8f * Flash(t, NmFlicker, .16f));
+                // Full as the head snaps, then a fixed stutter of torn and clear frames, so the snapped stare shows between
+                // the tears, ending torn (film r71/r72: held full or stuttered at random, the snap itself drowned in it).
+                int after = Mathf.FloorToInt((t - NmSnap) * 30f);
+                float tear = after == 0 || after == 3 || after >= 5 ? 1f : .08f;
+                glitch = Mathf.Max(glitch, Ease(NmSnap - .1f, NmSnap - .02f, t) * (t < NmSnap ? 1f : tear));
             }
-            if (eerie <= .01f && ink <= .01f && impact <= 0f && lines <= .01f && blackout <= .01f && glitch <= .01f) return;
+            if (eerie <= .01f && ink <= .01f && impact <= 0f && lines <= .01f && glitch <= .01f) return;
             if (_nmInk == null)
             {
                 var shader = Resources.Load<Shader>("Shaders/NemuInk");
@@ -1515,7 +1370,7 @@ namespace TumbangPreso.Visual
             }
             _nmInk.SetFloat("_Ink", ink);
             _nmInk.SetFloat("_Eerie", eerie);
-            _nmInk.SetFloat("_Black", blackout);
+            _nmInk.SetFloat("_Black", 0f);
             _nmInk.SetFloat("_Night", 0f);
             _nmInk.SetFloat("_Impact", impact);
             _nmInk.SetFloat("_Invert", 0f);
@@ -1545,7 +1400,6 @@ namespace TumbangPreso.Visual
             foreach (var g in _nmEyeGlows) g.Remove();
             _nmEyeGlows.Clear(); _nmHerEyes = null;
             if (_nmInk != null) { ObjectDestroy(_nmInk); _nmInk = null; }
-            if (_nmBaked != null) { ObjectDestroy(_nmBaked); _nmBaked = null; }
         }
     }
 }
