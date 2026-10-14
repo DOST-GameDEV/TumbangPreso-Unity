@@ -998,12 +998,29 @@ namespace TumbangPreso.Visual
                 // A big chibi head tipped far back reads as a broken neck (owner on v12: *"do u see how weird he turns"*).
                 pitch = -Mathf.Clamp(Mathf.Atan2(to.y, Mathf.Max(.2f, flat.magnitude)) * Mathf.Rad2Deg * .6f, -15f, 28f);
             }
-            Watch(t, out float watchYaw, out float watchPitch, out float watch);
-            Watch(t - .12f, out float chestYaw, out _, out float chestWatch);
+            // A look that comes to rest (owner on v14: *"the looking around animation at the start looks too fast and hard to
+            // follow make it more natural lahat"*): the eyes trail what they follow over half a second, so a head eases after
+            // the soul instead of snapping to it frame by frame; and each man sees it a moment later than the last.
+            float react = .1f + .25f * NmHash(v.Seat, 60);
+            void Look(float at, out float yaw, out float pitch, out float weight)
+            {
+                yaw = 0f; pitch = 0f; weight = 0f;
+                float sum = 0f;
+                for (int k = 0; k < 6; k++)
+                {
+                    float w = 6f - k;
+                    Watch(at - react - k * .1f, out float y, out float p, out float wt);
+                    yaw += y * wt * w; pitch += p * wt * w; weight += wt * w; sum += w;
+                }
+                if (weight > 1e-4f) { yaw /= weight; pitch /= weight; }
+                weight /= sum;
+            }
+            Look(t, out float watchYaw, out float watchPitch, out float watch);
+            Look(t - .2f, out float chestYaw, out _, out float chestWatch);
             // A person turns on their feet: the body takes most of a look a quarter of a second behind the head, the chest a
             // little, and the head makes up the rest and leads (v12 split the look so the three overshot it by 15 per cent and
             // the head swung round on its own).
-            Watch(t - .25f, out float feetYaw, out _, out float feetWatch);
+            Look(t - .45f, out float feetYaw, out _, out float feetWatch);
             float headLead = Mathf.Clamp(watchYaw * watch - .6f * feetYaw * feetWatch - .25f * chestYaw * chestWatch, -45f, 45f);
 
             // The turn to the lens at the end.
@@ -1048,11 +1065,12 @@ namespace TumbangPreso.Visual
             float wrong = Ease(first + .3f, first + .5f, t) * (1f - Ease(v.Settle + .4f, v.Settle + .8f, t)) * (v.Role == 1 ? 1f - .6f * NmBump(t, NmRise + .2f, .25f) : 1f);
             float stance = Ease(v.Settle + .25f, v.Settle + .8f, t);
 
-            // Darting looks, but a look takes a quarter of a second to get there (v9's tenth of a second read as a twitch).
-            int glance = Mathf.FloorToInt((t + seat) / 1.1f);
-            float gu = Ease(0f, .5f, Mathf.Repeat(t + seat, 1.1f));
-            float glanceYaw = Mathf.Lerp((NmHash(glance - 1, v.Seat + 40) - .5f) * 70f, (NmHash(glance, v.Seat + 40) - .5f) * 70f, gu);
-            float glancePitch = Mathf.Lerp(-6f - 12f * NmHash(glance - 1, v.Seat + 41), -6f - 12f * NmHash(glance, v.Seat + 41), gu);
+            // Looking about, a look every second and a half or so, taking most of a second to get there and then resting
+            // (v14's quarter-second looks every 1.1 s read as fast and hard to follow).
+            int glance = Mathf.FloorToInt((t + seat) / 1.6f);
+            float gu = Ease(0f, .8f, Mathf.Repeat(t + seat, 1.6f));
+            float glanceYaw = Mathf.Lerp((NmHash(glance - 1, v.Seat + 40) - .5f) * 45f, (NmHash(glance, v.Seat + 40) - .5f) * 45f, gu);
+            float glancePitch = Mathf.Lerp(-6f - 8f * NmHash(glance - 1, v.Seat + 41), -6f - 8f * NmHash(glance, v.Seat + 41), gu);
             float lost = (NmHash(glance, v.Seat + 42) - .5f) * 26f;
             // Breathing hard, shoulders heaving, rather than a buzz.
             float tremble = Mathf.Sin(t * 6f + seat) * 1.8f * scared;
@@ -1077,13 +1095,13 @@ namespace TumbangPreso.Visual
 
             if (v.Root.T != null)
                 v.Root.T.position += NmWDir(shove) * standing + Vector3.up * ((lift + .4f * jolt + .1f * stagger + .05f * flinch + bob + (.08f + .06f * NmHash(key, v.Seat + 51)) * wrong * standing + .07f * stance + Mathf.Sin(t * 2f + seat) * .015f * stance))
-                                   + right * (Mathf.Sin(t * 13f) * .03f * stagger);
+                                   + right * (Mathf.Sin(t * 5f) * .03f * stagger);
 
             float torsoTwist = scared * glanceYaw * .2f + chestYaw * .25f * chestWatch - swing * 8f + scrabble * 10f + Broken(1, 35f) + (turn * .25f * chestTurn - turn * .1f * bodyTurn) * standing;
             float torsoPitch = scared * 10f + running * 14f + flinch * 12f - jerk * 22f + Broken(2, 26f) - stance * 4f - down * 12f;
             // On the strings they all sway together, one pendulum, like marionettes on one cross.
             float swing2 = jolt * Mathf.Sin((t - NmTug) * 5.5f) * Mathf.Exp(-(t - NmTug) * 1.2f);
-            float torsoRoll = tremble + Broken(3, 22f) + sway + stagger * 6f * Mathf.Sin(t * 12f) + Mathf.Sin(stride) * 7f * running + 12f * swing2;
+            float torsoRoll = tremble + Broken(3, 22f) + sway + stagger * 5f * Mathf.Sin(t * 5f) + Mathf.Sin(stride) * 7f * running + 12f * swing2;
             if (v.Torso.T != null)
             {
                 Turn(v.Torso.T, up, torsoTwist);
@@ -1114,13 +1132,48 @@ namespace TumbangPreso.Visual
             // ON THE COURT, NOT IN IT (owner on v13: *"on the ground bro he GOES IN THE GROUND"*): lying, his posed body is
             // measured and lifted until its lowest point rests on the court (his chibi head and shoulders are thicker than any
             // fixed lift, most of all on his side mid-roll).
+            // Until the soul is in him he lies ON it, not over it (owner on v14: *"this shit floats BEFORE CONTACT WITH GHOST"*):
+            // the boxes round his parts sit lower than the parts do once he is on his side, so lifting by them hung him in the
+            // air through the roll; his real posed mesh is measured, and before the soul he is set down onto the court as well
+            // as lifted out of it. After it only the lift holds, so the puppet can rise.
             if (lying > .01f && v.Renderers != null)
             {
-                float lowest = float.MaxValue;
-                foreach (var r in v.Renderers) if (r != null && r.enabled) lowest = Mathf.Min(lowest, r.bounds.min.y);
+                float lowest = NmLowest(v.Renderers);
                 float floor = _root.transform.position.y + .01f;
-                if (lowest < floor && lowest > floor - 2f) v.Holder.transform.position += Vector3.up * (floor - lowest);
+                bool free = t < first;
+                if (lowest < float.MaxValue && Mathf.Abs(floor - lowest) < 2f && (lowest < floor || free))
+                    v.Holder.transform.position += Vector3.up * (floor - lowest);
             }
+        }
+
+        private Mesh _nmBaked;
+        private readonly List<Vector3> _nmVerts = new List<Vector3>();
+
+        /// <summary>The lowest point of a posed body's real mesh (world y), not of its bounding boxes.</summary>
+        private float NmLowest(Renderer[] renderers)
+        {
+            float lowest = float.MaxValue;
+            foreach (var r in renderers)
+            {
+                if (r == null || !r.enabled) continue;
+                Matrix4x4 m;
+                if (r is SkinnedMeshRenderer skin)
+                {
+                    if (skin.sharedMesh == null) continue;
+                    if (_nmBaked == null) _nmBaked = new Mesh();
+                    skin.BakeMesh(_nmBaked, true);
+                    _nmBaked.GetVertices(_nmVerts);
+                    m = Matrix4x4.TRS(skin.transform.position, skin.transform.rotation, Vector3.one);
+                }
+                else if (r is MeshRenderer && r.TryGetComponent<MeshFilter>(out var filter) && filter.sharedMesh != null && filter.sharedMesh.isReadable)
+                {
+                    filter.sharedMesh.GetVertices(_nmVerts);
+                    m = r.transform.localToWorldMatrix;
+                }
+                else { lowest = Mathf.Min(lowest, r.bounds.min.y); continue; }
+                foreach (var p in _nmVerts) lowest = Mathf.Min(lowest, m.MultiplyPoint3x4(p).y);
+            }
+            return lowest;
         }
 
         private static void Turn(Transform bone, Vector3 axis, float degrees)
@@ -1434,6 +1487,7 @@ namespace TumbangPreso.Visual
             foreach (var g in _nmEyeGlows) g.Remove();
             _nmEyeGlows.Clear(); _nmHerEyes = null;
             if (_nmInk != null) { ObjectDestroy(_nmInk); _nmInk = null; }
+            if (_nmBaked != null) { ObjectDestroy(_nmBaked); _nmBaked = null; }
         }
     }
 }
