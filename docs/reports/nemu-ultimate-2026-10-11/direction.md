@@ -890,4 +890,4 @@ middle"*, *"maybe js focus on the dude that was running"*, *"add some glitchy sc
 Film r62 passed (cutscene 6.97 s, clock frozen); Nemu suites 8/8 ([ending](evidence/film-v14/ending.jpg),
 [fall and ending](evidence/film-v14/fall-and-ending.jpg), [XML](evidence/film-v14/play-tests.xml),
 [suites](evidence/film-v14/nemu-suites.xml)). Film: `Logs/nemu-lti/nemu_let_them_in_v14.mp4`. Not yet evidence: the owner's
-verdict. Known: the strings run back toward her, behind the lens, so they read faintly. Handoff: [HANDOFF.md](HANDOFF.md).
+verdict. Known: the strings run back toward her, behind the lens, so they read faintly.
