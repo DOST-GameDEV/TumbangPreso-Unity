@@ -731,3 +731,74 @@ draft; the film test passed and NemuPrusisyonTests 7/7 ([film XML](evidence/film
 [play, court](evidence/film-v9/play-wide.jpg), [play, possessed](evidence/film-v9/play-victim.jpg)). NemuKitContractProbe fails
 21 of 38 on mechanics retired before this pass (Veil, the familiar, projection, Seance, Carapace); untouched here. Not yet
 evidence: the owner's verdict on v9 and on the sound.
+
+## 19. THE GATE (2026-10-14, v10; supersedes 18's cracks and timing, keeps its story, the souls and their faces)
+
+The owner on v9, in his words: *"refine the cutscene more ... its kinda hard to follow wtf is happening everything feels rigid"*,
+*"maganda na siya we js have to refine the visual communication"*, *"the souls feel to cluttered, madami masyado ... ikalat mo
+more or bawasan mo"*, *"i also wnat the ghosts to continue showing for the whole 15 seconds kahit tapos na"*, *"siguro wag na
+floor cracks"*, *"js show some sort of otherwordly portal somewhere where the ghosts come from"*, *"try to refine visual
+presentation WAY more"*, *"dapat as ult lasts makikita mo na the ghosts slowly fade ... ghosts only fade when posession
+completley disappears"*, *"the animation feels so sharp and rigid, bilis ng nangyayare ... I cant tell wtf is happening"*.
+
+Beats (7.0 s, five instead of six, each held long enough to read):
+1. THE PRAYER (0.00-0.90): unchanged; her eyes snap open (0.72).
+2. THE GATE (0.90-1.85): low behind her, looking up past her: the light leaves her palms and climbs into the sky; the air over the
+   court beyond the players splits as a seam of violet, catches, then rips into an upright oval (`NemuPortal`,
+   `Shaders/NemuPortal`: a black hole going back for ever with rings sinking into it and a slow spiral, a torn flickering lip, a
+   bruise of smoke; it always faces the lens). The players stumble back from it and look up at it. She holds her hands up to it.
+3. THE FIRST ONE (1.85-3.55): low in front of the first player, opening on the gate: ONE soul crawls out of it head first,
+   wriggling, glides down over them and circles low; every head follows it, the chest a beat behind the head. It dives in (3.25,
+   one impact frame, no inverted flash), the coil, his eyes ignite (3.50).
+4. THE HUNT (3.55-5.75): one shot beside the one nearest him (v9's crane into the storm cut): the gate pours out the rest one
+   after another and he steps back, then runs; one hunts him, he trips (4.45), rolls onto his back (4.72), it plunges in (5.00);
+   behind him the third is caught (4.85); he is hauled up in three tugs (5.22) and his eyes ignite (5.60).
+5. ALL OF THEM (5.75-7.00): the crane up and back to every player possessed, the gate open over them, the souls circling.
+
+LESS: 22 souls (12 with reduced effects) instead of 64, spread wide and high round the court (2.5 to 4.6 m), the storm a quarter
+dimmer than the soul the story is about and down to 35 per cent while the lens is on the hunt; the first player takes one soul,
+the others two (v9: three each, every one with its thread, ring and coil).
+
+SOFTER (*"sharp and rigid"*): looks take a quarter of a second, not a tenth; breathing instead of a 47 Hz tremble; the head
+leads and the chest follows 0.12 s behind; a step back before each runner bolts; the run rolls with its stride; the broken
+puppet poses come three to five a second, not ten; the puppet rise is three tugs that sag; a hand-held drift on every shot after
+the prayer; the camera follows the first soul with a tenth of a second's lag.
+
+IN PLAY (`NemuWorld`): no cracks. The gate hangs open 4.2 m up over the court beyond the possessed, and the souls (10, 5 reduced)
+go on circling the court round it, high and spread out, dipping now and then. As the possession runs down they go back into the
+gate one at a time, from 3 s to 13 s, so the court reads as a clock; the last three, and the gate, go only with the last
+possession's own leave. Posed from the possession clock with the most left, so every peer sees the same.
+
+THE DRAG, READ AT A GLANCE (owner, with a sketch of a hooked stroke round the crosshair: *"naisip ko since di Jockey, may ganto
+sa HUD like direction kung saan ka dinadala ng spirit ... so mas clear san ka dapat opposite to resist influence"*, *"make it
+better than what i sent"*, *"some sort of vfx look liek its focusing towards somewhere alongside the arrow"*, *"the aura ... more
+intense towards the direction of where theyre getting pulled"*):
+* On the possessed player's own screen (`Shaders/PossessedVignette`): a ghost's tail curls round the crosshair and thickens into
+  a hooked claw pointing the way it drags them, a pulse running down it to the claw; it pushes out on the surge and fades as
+  they win the grip back. Streaks of ink flow across the screen toward that edge, as though everything is sucked there,
+  stronger on the tell and the surge, never over the middle of the screen.
+* On everyone else's screen (`NemuAura` `Lean`): the possessed player's aura burns toward the pull all the time, longest,
+  densest and brightest on that side, the halo pulled that way, a hot glow stretched along it; the surge still adds the claw.
+* The possessed player's own aura is on their screen too (owner: *"ung aura i want it to shwo ont he players hud tho"*): tall
+  dark flames lick in from the screen's rounded edges with a soft violet heat behind them, fiercest and furthest on the side it
+  drags them to, the far side barely burning; they flare with the tell and the surge and gutter as the grip is worn down.
+* The gate is textured, not flat (owner: *"texturize portal make it look amazing and not flat"*): the world behind it wrung round
+  it (a grab of the frame), a throat of smoke walls going back for ever in three layers turning at their own speeds with violet
+  seams on the ridges, a torn bevel lit from above with filaments crackling along it, black tongues dragged in over the lip,
+  specks spiralling in.
+
+### 19.1 Film rounds and evidence
+
+| Film | Seen | Changed |
+|---|---|---|
+| r44 (her screen) | the story reads: prayer, the gate, the soul out of it, the hunt under it, the wide; the gate a flat lilac disc; her back half the gate shot; the gate filling the lens on the first player and him cut off; lying, he was cut off at the edge | the gate's hole black, 4.2 m beyond them and 2.6 m tall; the gate shot from her side; the first shot opens on him and the gate together; the fall shot wider |
+| r45 (all views, 24 s) | in play the gate stays, the souls circle and go back one at a time, the gate fades with the last leave; the HUD aura a thin wavy rectangle; the swoosh a hairline | the HUD flames tall, rounded, weighted to the pull; the swoosh bolder |
+| r46 | the textured gate reads as a hole; a shader name clash in the HUD | renamed |
+| r47, v10 | as r46; the HUD flames burn on the pull's side, the swoosh points the drag | |
+
+Films: `Logs/nemu-lti/nemu_let_them_in_v10.mp4` (her screen) and `nemu_let_them_in_v10_four_views.mp4` (her screen, the possessed
+player's screen, the possessed from behind, the court), 24 s each with the v10 sound draft (`tools/build_nemu_ult_audio.py`
+retimed). The film test passed with the cutscene 6.97 s and the round clock frozen; NemuPrusisyonTests and
+NemuPossessionMovementTests 8/8 ([film XML](evidence/film-v10/play-tests.xml), [suites XML](evidence/film-v10/nemu-suites.xml),
+[key frames](evidence/film-v10/key-frames.jpg), [possessed screen](evidence/film-v10/possessed-screen.jpg),
+[court](evidence/film-v10/court.jpg)). Not yet evidence: the owner's verdict on v10, the HUD and the sound.

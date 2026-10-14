@@ -16,7 +16,9 @@ namespace TumbangPreso.Visual
     ///  * POSSESSED EYES: their own painted eyes burn violet (`NemuEyeGlow`, the cutscene's), the WHOLE time they are
     ///    possessed, flaring with the tell and the surge. (Owner 2026-10-14 on play after v8: the floating glows sat on the
     ///    cheeks as pink blobs and the eyes were not violet: *"purple eyes entire time na possessed"*.)
-    ///  * WHICH WAY THEY ARE DRAGGED: the smoke streams that way; faint bare footprints walk ahead of them that way.
+    ///  * WHICH WAY THEY ARE DRAGGED: the whole aura burns toward it all the time, fiercest and brightest on that side (owner
+    ///    2026-10-14: *"more intense towards the direction of where theyre getting pulled"*); faint bare footprints walk ahead
+    ///    of them that way. On their own screen the same direction is the HUD's ghost-tail swoosh (`Shaders/PossessedVignette`).
     ///  * THE TELL: the aura swells and darkens, the embers quicken, the eyes flare.
     ///  * THE SURGE: a claw of smoke reaches out of them toward where it drags them, and is yanked back in as it ends.
     ///  * TRYING TO GET OUT (the owner: *"the ghosts are tryna get out of the body but they get sucked in anyways"*): between
@@ -171,6 +173,7 @@ namespace TumbangPreso.Visual
                 {
                     Feet = feet + Vector3.up * (Ease(leave) * .4f), Forward = forward, Stream = pulling ? dir : Vector3.zero,
                     Top = _top, Width = _width, Clock = now, Amount = amount, Swell = Mathf.Max(tell, after * .6f), Drag = surge,
+                    Lean = pulling ? settle * (1f - leave) * Mathf.Clamp01(.65f + .2f * tell + .35f * surge) : 0f,
                     Thin = _motor.PossessionResisting ? 1f - gripLook : 0f, Seat = seat, Reduced = reduced,
                 };
                 NemuAura.Draw(_smoke, state);

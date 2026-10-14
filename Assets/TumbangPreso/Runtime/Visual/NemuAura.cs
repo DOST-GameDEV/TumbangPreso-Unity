@@ -28,6 +28,10 @@ namespace TumbangPreso.Visual
             public float Swell;
             /// <summary>0 to 1: how hard the smoke streams along <see cref="Stream"/> (a surge).</summary>
             public float Drag;
+            /// <summary>0 to 1: how much the whole aura burns toward <see cref="Stream"/> all the time, not only in a surge: fiercer,
+            /// longer and brighter on that side, the halo pulled that way (owner 2026-10-14: *"the aura or smth while possesed is
+            /// more intense towards the direction of where theyre getting pulled towards"*).</summary>
+            public float Lean;
             /// <summary>0 to 1: flicker as the player wears the grip down.</summary>
             public float Thin;
             public int Seat;
@@ -86,9 +90,12 @@ namespace TumbangPreso.Visual
             Vector3 fwd = s.Forward; fwd.y = 0f; fwd = fwd.sqrMagnitude > 1e-4f ? fwd.normalized : Vector3.forward;
             Vector3 side = Vector3.Cross(up, fwd);
             Vector3 stream = s.Stream; stream.y = 0f;
+            Vector3 toward = stream.sqrMagnitude > 1e-4f ? stream.normalized : Vector3.zero;
+            float lean = Mathf.Clamp01(s.Lean) * (toward == Vector3.zero ? 0f : 1f);
+            float pulled = Mathf.Clamp01(s.Drag + .45f * lean);
             float flicker = s.Reduced ? 1f : 1f - .35f * s.Thin * (.5f + .5f * Mathf.Sin(s.Clock * 31f + s.Seat));
             float amount = s.Amount * flicker;
-            float rate = 1f + .6f * s.Swell + .9f * s.Drag;
+            float rate = 1f + .6f * s.Swell + .9f * pulled;
 
             // THE DARK FIRE: tongues of black smoke leaving their outline and burning upward, their edges violet. Each tongue
             // is born on its own spot round the body (golden-angle spaced, its own height) and rises, swells and frays.
@@ -103,25 +110,30 @@ namespace TumbangPreso.Visual
                 Vector3 ring = (side * Mathf.Cos(a) + fwd * round) * (s.Width * .42f);
                 Vector3 born = s.Feet + up * (s.Top * h) + ring;
                 Vector3 rise = up * (phase * s.Top * (.4f + .2f * s.Swell)) + ring * (phase * .4f);
-                Vector3 drag = stream * (phase * (.25f + 1.1f * s.Drag) * s.Width * 1.6f);
+                float facing = Vector3.Dot(ring.normalized, toward);
+                Vector3 drag = stream * (phase * (.25f + 1.1f * pulled) * s.Width * 1.6f);
                 // Owner on v3: the round puffs (and the fog they made round the player) looked *"chonky"*. Each tongue is now a
                 // thin strand of smoke drawn along the way it burns: up, leaning with the pull, longer as it rises and frays.
                 float width = s.Width * (.07f + .06f * phase) * (1f + .3f * s.Swell);
-                float length = s.Width * (.28f + .55f * phase) * (1f + .4f * s.Swell + .5f * s.Drag);
+                float length = s.Width * (.28f + .55f * phase) * (1f + .4f * s.Swell + .5f * pulled) * (1f + .7f * lean * Mathf.Max(0f, facing));
                 float life = Mathf.Sin(phase * Mathf.PI);
-                float density = amount * (.7f + .25f * s.Swell) * life;
+                float density = amount * (.7f + .25f * s.Swell) * life * (1f + lean * (.6f * facing - .1f));
                 Vector3 at = born + rise + drag;
                 // Nothing below their feet: the fire leaves the body, it does not pool on the court.
                 if (at.y < s.Feet.y + .05f) continue;
-                Vector3 along = up + stream * (.4f + 1.4f * s.Drag) + ring * (.6f / Mathf.Max(.1f, s.Width));
+                Vector3 along = up + stream * (.4f + 1.4f * pulled) + ring * (.6f / Mathf.Max(.1f, s.Width));
                 batch.Wisp(at + up * (length * .3f), along, width, length, density, j * .0731f + s.Seat * .19f, phase * phase * .7f, .95f);
             }
 
             // THE HALO: one large soft violet light at their middle. Their own body hides its centre, so what shows is a glow round
             // their silhouette that reads from across the court.
             // (v3: at 2.3 times their width the halo was a purple fog over them; it is a rim now.)
-            batch.Light(s.Feet + up * (s.Top * .55f), s.Width * (1.45f + .35f * s.Swell), .38f * amount * (1f + .6f * s.Swell),
+            batch.Light(s.Feet + up * (s.Top * .55f) + toward * (s.Width * .3f * lean), s.Width * (1.45f + .35f * s.Swell), .38f * amount * (1f + .6f * s.Swell),
                         NemuSmokeBatch.Violet);
+            // The side it drags them to burns hottest: a glow there, stretched the way it pulls.
+            if (lean > .01f)
+                batch.Light(s.Feet + up * (s.Top * .5f) + toward * (s.Width * .65f), s.Width * .7f, .55f * amount * lean * (1f + .5f * s.Drag),
+                            NemuSmokeBatch.Violet, toward * (s.Width * (.5f + .8f * s.Drag)));
 
             // EMBERS rising off them.
             for (int j = 0; j < Embers; j++)
@@ -130,7 +142,7 @@ namespace TumbangPreso.Visual
                 float a = (j * 97f + s.Seat * 23f) * Mathf.Deg2Rad;
                 Vector3 at = s.Feet + up * (s.Top * (.3f + phase * 1.05f))
                            + (side * Mathf.Cos(a) + fwd * Mathf.Sin(a)) * (s.Width * (.45f + .25f * phase))
-                           + stream * (phase * s.Drag * s.Width);
+                           + stream * (phase * pulled * s.Width);
                 float twinkle = s.Reduced ? 1f : .7f + .3f * Mathf.Sin(s.Clock * 13f + j * 2.1f);
                 batch.Light(at, .07f, amount * Mathf.Sin(phase * Mathf.PI) * .9f * twinkle, NemuSmokeBatch.Violet);
             }

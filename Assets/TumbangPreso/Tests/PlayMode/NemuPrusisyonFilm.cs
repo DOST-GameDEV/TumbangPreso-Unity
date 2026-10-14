@@ -155,8 +155,9 @@ namespace TumbangPreso.PlayTests
                 {
                     root = film.Root;
                     // Iteration rounds may film fewer frames and only her screen (TUMP_NEMU_FILM_FRAMES, TUMP_NEMU_FILM_OWNER_ONLY=1);
-                    // the preview film is the default, every view for 17 s.
-                    int frames = int.TryParse(Environment.GetEnvironmentVariable("TUMP_NEMU_FILM_FRAMES"), out int asked) && asked > 0 ? asked : 30 * 17;
+                    // the preview film is the default, every view for 24 s: the cutscene and the whole possession to its last leave (owner
+                    // on v9: the souls go on for the whole 15 s).
+                    int frames = int.TryParse(Environment.GetEnvironmentVariable("TUMP_NEMU_FILM_FRAMES"), out int asked) && asked > 0 ? asked : 30 * 24;
                     bool ownerOnly = Environment.GetEnvironmentVariable("TUMP_NEMU_FILM_OWNER_ONLY") == "1";
                     for (int f = 0; f < frames; f++)
                     {

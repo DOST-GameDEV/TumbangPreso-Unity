@@ -293,18 +293,18 @@ def peel(seconds, gain=1.0):
     return (creak * .7 + tear) * gain
 
 
-# v9 THE PRAYER (`direction.md` section 18), at the stage's own times (`HeroIntroductionScene.Nemu.cs` `Nm*`).
+# v10 THE GATE (`direction.md` section 19), at the stage's own times (`HeroIntroductionScene.Nemu.cs` `Nm*`).
 LENGTH = 7.0
-BEAT, IGNITE, SPLIT, LEAD, LEAD_IN, FIRST_EYES, BURST = .21, .72, .85, 1.35, 2.2, 2.5, 2.55
-RUN, TRIP, LANDED, ROLL, BACK_IN, TRIP_IN, RISE, TRIP_EYES, CRANE = 2.62, 3.95, 4.15, 4.2, 4.2, 4.6, 4.95, 5.3, 5.5
+BEAT, IGNITE, SPLIT, GATE_OPEN, LEAD, LEAD_IN, FIRST_EYES, BURST = .21, .72, .9, 1.45, 1.85, 3.25, 3.5, 3.55
+RUN, TRIP, LANDED, ROLL, BACK_IN, TRIP_IN, RISE, TRIP_EYES, CRANE = 3.78, 4.45, 4.7, 4.72, 4.85, 5.0, 5.22, 5.6, 5.75
 
 
 def theme():
-    """LET THEM IN v9: THE PRAYER, beat for beat."""
+    """LET THEM IN v10: THE GATE, beat for beat."""
     track = np.zeros(int((LENGTH + 1.0) * RATE))
     room = drone(LENGTH + .5, gain=.3)
     u = t_axis(len(room) / RATE)
-    # The room ducks under her chant, then comes back heavier once the court splits.
+    # The room ducks under her chant, then comes back heavier once the gate tears open.
     duck = 1 - .5 * np.clip(1 - u / SPLIT, 0, 1)
     room *= np.minimum(1, u / .25) * duck * (1 + .6 * np.clip((u - SPLIT) / 1.0, 0, 1))
     place(track, room, 0)
@@ -316,13 +316,14 @@ def theme():
     place(track, whisper(SPLIT, 5.0, .3), 0)
     place(track, sub_swell(SPLIT, gain=.3), 0)
     place(track, chime(.2), IGNITE)                                               # her eyes snap open
-    # THE SPLIT: the court breaking open, the boom under it, the wind of it racing out.
-    place(track, crackle(.6, gain=.9), SPLIT)
-    place(track, crackle(.45, gain=.6), SPLIT + .18)
-    place(track, gulp(.7), SPLIT - .03)
-    place(track, wind(.6, gain=.35), SPLIT + .05)
-    # THE FIRST ONE: it claws out alone and wails; a slow heartbeat as everyone watches it circle.
-    place(track, crackle(.35, gain=.4), LEAD - .05)
+    # THE GATE: the light climbing, the air tearing (a crackle as it catches, a rip as it opens), the boom, the wind sucked in.
+    place(track, gulp(.6), SPLIT - .03)
+    place(track, crackle(.4, gain=.6), SPLIT + .08)
+    place(track, peel(.5, gain=.6), GATE_OPEN - .45)
+    place(track, crackle(.6, gain=.9), GATE_OPEN - .05)
+    place(track, sub_swell(.8, gain=.35), GATE_OPEN - .3)
+    place(track, wind(1.2, gain=.35), GATE_OPEN)
+    # THE FIRST ONE: it crawls out alone and wails; a slow heartbeat as everyone watches it circle.
     place(track, wail(.7, gain=.55), LEAD + .15)
     place(track, whisper(LEAD_IN - LEAD, 4.0, .25), LEAD)
     heartbeat(LEAD + .1, LEAD_IN, track, gain=.45)
@@ -330,12 +331,12 @@ def theme():
     place(track, suck(1.1), LEAD_IN - .4)                                         # it pours into him
     place(track, groan(.45, 70.0, gain=.55), LEAD_IN + .05)
     place(track, chime(.26), FIRST_EYES)                                          # his eyes open violet
-    # SUDDENLY MANY: every fissure erupts, a chorus of wails, the storm's wind.
+    # THE POURING: the gate pours them out one after another, a chorus of wails, the storm's wind.
     for k in range(6):
-        place(track, wail(.55 + .05 * k, gain=.35), BURST + .04 * k)
+        place(track, wail(.55 + .05 * k, gain=.35), BURST + .13 * k)
     place(track, wind(2.0, gain=.45), BURST)
     place(track, crackle(.5, gain=.5), BURST)
-    # THE FALL: running, the heart racing; the trip, the body hitting the court; the gasp as he sees it; it goes in; one
+    # THE HUNT: running, the heart racing; the trip, the body hitting the court; the gasp as he sees it; it goes in; one
     # caught behind him first.
     heartbeat(RUN, TRIP_IN, track, gain=.7)
     place(track, snap(.6), TRIP)

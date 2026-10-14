@@ -507,12 +507,12 @@ def zack():
 @performance
 def nemu(held=False):
     """
-    LET THEM IN v9: THE PRAYER, 7.0 s (owner 2026-10-14; `docs/reports/nemu-ultimate-2026-10-11/direction.md` section 18: she
-    clasps her hands and chants, the ground splits open, one soul comes out and they follow it with their heads, then many).
-      THE PRAYER 0.00-0.85: hands clasped at her chest, head bowed, chanting (the head dips on each 0.21 s beat); her eyes snap
+    LET THEM IN v10: THE GATE, 7.0 s (owner 2026-10-14; `docs/reports/nemu-ultimate-2026-10-11/direction.md` section 19: no
+    cracks, the souls come out of an otherworldly portal, fewer of them, slower, every beat given time to read).
+      THE PRAYER 0.00-0.90: hands clasped at her chest, head bowed, chanting (the head dips on each 0.21 s beat); her eyes snap
         open and her head comes up (0.72).
-      THE SPLIT 0.85: she thrusts her clasped hands down and the court splits from her feet; she holds the prayer.
-      SUDDENLY MANY 2.55: she flings her arms up and wide as every fissure erupts; then she watches, head tipped.
+      THE GATE 0.90: she lifts her clasped hands to the sky and the air over the court tears open; she holds them up.
+      THE POURING 3.55: she flings her arms wide as the gate pours out the rest; then she watches, head tipped.
     The shots are computed from where the players really are (`HeroIntroductionScene.Nemu.cs`); the authored shots below are
     their fallbacks with nobody on court, one per cut. The stage reads these times: keep them in step with its `Nm*` constants.
     """
@@ -523,8 +523,8 @@ def nemu(held=False):
     chant = pray.but(torso=(10, 0, 0), head=(21, 0, 0))
     # Eyes open: the head comes up, the hands stay clasped.
     wake = pray.but(torso=(4, 0, 0), head=(-6, 0, 0))
-    # The clasped hands thrust down at the court as it splits.
-    split = Pose(torso=(14, 0, 0), head=(4, 0, 0), left=(40, 5, 38), right=(40, 5, 38), legs=((6, 4), (-4, 4)))
+    # The clasped hands lifted high to the sky as the gate tears open, chest open, looking up at it.
+    gate = Pose(torso=(-10, 0, 0), head=(-20, 0, 0), left=(150, 5, 34), right=(150, 5, 34), legs=((4, 4), (-3, 4)))
     # Arms thrown up and wide (chibi arms are a head long: wide, not overhead), chest open, looking up into the storm.
     call = Pose(torso=(-8, 0, 0), head=(-16, 0, 0), left=(70, 78, 0), right=(70, 78, 0), legs=((4, 5), (-3, 5)))
     # Watching them, head tipped: she knows what is coming for them; then the tip goes the other way as they turn.
@@ -545,25 +545,25 @@ def nemu(held=False):
         t += beat
     p.key(.74, wake, punch=True)
     p.hold(.74, .8, wake)
-    p.key(.88, split, punch=True)
-    p.hold(.88, 2.45, split)
-    p.key(2.6, call, punch=True)
-    p.hold(2.6, 3.3, call)
-    p.key(3.7, watch)
-    p.hold(3.7, 5.6, watch)
-    p.key(6.0, watch2)
-    p.hold(6.0, 7.0, watch2)
+    p.key(.98, gate, punch=True)
+    p.hold(.98, 3.4, gate)
+    p.key(3.62, call, punch=True)
+    p.hold(3.62, 4.3, call)
+    p.key(4.8, watch)
+    p.hold(4.8, 6.0, watch)
+    p.key(6.4, watch2)
+    p.hold(6.4, 7.0, watch2)
 
     # THE PRAYER fallback: in front of her, her whole body, a slow push.
-    p.shot(0, .85, (.55, .95, 2.5), (0, .6, 0), 48, eye_to=(.55, .85, 2.1), look_to=(0, .66, 0), fov_to=45)
-    # THE SPLIT fallback: high behind her, out over the court.
-    p.shot(.85, 1.35, (1.3, 3.3, -2.6), (0, .1, 1.6), 58, eye_to=(1.3, 3.9, -3.1), look_to=(0, .1, 3.6), fov_to=62)
-    # THE FIRST ONE and SUDDENLY MANY fallback: low over her shoulder, craning up into the storm.
-    p.shot(1.35, 3.25, (.9, 1.25, -1.7), (0, 1.0, 4.0), 54, eye_to=(1.6, 4.3, -3.4), look_to=(0, 1.9, 4.5), fov_to=64)
-    # THE FALL fallback: out in front of her.
-    p.shot(3.25, 5.5, (.6, 1.3, 3.2), (0, 1.1, 5.5), 52, eye_to=(.9, 1.5, 2.8))
-    # ALL OF THEM fallback: easing back to the court.
-    p.shot(5.5, 7.0, (1.0, 1.4, 2.4), (0, 1.0, 5.5), 54, eye_to=(1.5, 3.0, 1.5), look_to=(0, 1.4, 5.5), fov_to=56)
+    p.shot(0, .9, (.55, .95, 2.5), (0, .6, 0), 48, eye_to=(.55, .85, 2.1), look_to=(0, .66, 0), fov_to=45)
+    # THE GATE fallback: low behind her, looking up past her at the sky over the court.
+    p.shot(.9, 1.8, (.7, .7, -1.8), (0, 2.6, 5.0), 56, eye_to=(.8, .6, -2.2), look_to=(0, 2.8, 5.0), fov_to=58)
+    # THE FIRST ONE fallback: out in front of her, looking up at the gate.
+    p.shot(1.8, 3.55, (.9, 1.0, 2.0), (0, 2.4, 6.0), 56, eye_to=(1.0, 1.0, 2.4), look_to=(0, 1.6, 6.0), fov_to=52)
+    # THE HUNT fallback: out in front of her.
+    p.shot(3.55, 5.75, (.6, 1.3, 3.2), (0, 1.1, 5.5), 52, eye_to=(.9, 1.5, 2.8))
+    # ALL OF THEM fallback: easing back to the court and the gate over it.
+    p.shot(5.75, 7.0, (1.0, 1.4, 2.4), (0, 1.4, 5.5), 54, eye_to=(1.5, 2.6, 1.2), look_to=(0, 2.0, 5.5), fov_to=58)
     p.locked((1.2, 2.2, -2.2), (0, .9, 4.5), 54)
     return p
 
