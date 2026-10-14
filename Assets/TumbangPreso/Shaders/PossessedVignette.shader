@@ -2,11 +2,13 @@
 // What it must tell the possessed player, at a glance and without words:
 //  * that something is in them: an ink vignette that breathes, and their own aura as soft black smoke rolling in from the
 //    edges (owner 2026-10-14: *"ung aura i want it to shwo ont he players hud"*; on v11 *"the vfx for the ghost aura looks so
-//    bad"*: no lines now, only smoke with a dull violet glow in it), thickest and furthest on the side it drags them to;
+//    bad"*, then *"refine this pa"*: near-black strands streaming toward the pull, violet only in their torn fringes),
+//    thickest and furthest on the side it drags them to;
 //  * WHICH WAY it is dragging them (`_PullDir`, screen space), at a glance (owner: *"may ganto sa HUD like direction kung saan
 //    ka dinadala ng spirit ... so mas clear san ka dapat opposite to resist"*; on v10 *"the arrow looks so shitty and bad,
-//    barely even seen"*): a bold violet crescent hugging the crosshair on that side, a solid arrowhead off it, chevrons
-//    streaming out past it, all outlined in black; streaks flowing across the screen toward that edge;
+//    barely even seen"*, on v11 *"refine this pa"*): a thin compass ring round the crosshair, an arc of violet light on that
+//    side with energy flowing into its middle, two sharp stacked chevrons off it pointing the way, all outlined in black;
+//    streaks flowing across the screen toward that edge;
 //  * that a surge is coming (`_Tell`): a violet glow along that edge, the arrow brightens;
 //  * that it is surging (`_Surge`): the vignette and smoke thicken that side, the arrow grows, the chevrons race;
 //  * nothing ever fades with the grip (owner: *"wag mo ilower opacity"*): it only gets stronger toward the pull.
@@ -62,13 +64,6 @@ Shader "TumbangPreso/PossessedVignette"
                 return lerp(lerp(hash(c), hash(c + float2(1, 0)), u.x), lerp(hash(c + float2(0, 1)), hash(c + float2(1, 1)), u.x), u.y);
             }
 
-            // A triangle's signed distance: base centred on `c`, `w` either side of it, its tip `h` out along `dir`.
-            float tri(float2 p, float2 c, float2 dir, float w, float h)
-            {
-                float2 s = float2(-dir.y, dir.x);
-                float2 l = float2(abs(dot(p - c, s)), dot(p - c, dir));
-                return max(-l.y, (l.x * h + w * l.y - w * h) / sqrt(h * h + w * w));
-            }
             // A chevron (an open V pointing along `dir`, its point at `c`).
             float chevron(float2 p, float2 c, float2 dir, float size, float thick)
             {
@@ -97,22 +92,29 @@ Shader "TumbangPreso/PossessedVignette"
                 float ink = smoothstep(0.45 - 0.12 * _Surge - 0.05 * breathe, 1.3, r + 0.3 * sideWeight * (0.6 + 0.4 * _Surge));
                 ink *= 0.75 + 0.15 * _Surge;
 
-                // THEIR AURA, AS SMOKE (owner on v11: *"the vfx for the ghost aura looks so bad"*; v10's noise contours drew thin
-                // violet squiggles like lightning round the frame): soft black smoke rolling in from the rounded edges and up,
-                // no lines, a deep violet glow in it; it reaches furthest and burns thickest on the side it drags them to.
+                // THEIR AURA, AS SMOKE (owner on v11: *"the vfx for the ghost aura looks so bad"*, then *"refine this pa"*: v11's
+                // smoke read as flat lavender clouds): near-black wisps rolling in from the rounded edges, torn into strands that
+                // stream toward the edge it drags them to, violet only in the thin fringes where the strands thin out. Thickest
+                // and furthest on the pull's side; never fainter elsewhere.
                 float2 n4 = nrm * nrm; n4 *= n4;
                 float fromEdge = 1.0 - pow(n4.x + n4.y, 0.25);
                 float lean = toward * toward * toward;
-                // Never fainter (owner: *"wag mo ilower opacity ... palakasin mo lang towards where its going"*): only stronger toward the pull.
-                float heat = (0.35 + 1.3 * lean) * (1.0 + 0.3 * _Tell + 0.6 * _Surge);
-                float2 sq = p * 2.2 - float2(0.0, go * 0.35) - d * go * (0.25 + 0.6 * _Surge);
-                float smoke = noise(sq) * 0.5 + noise(sq * 2.3 + 4.7) * 0.3 + noise(sq * 5.1 + 9.3) * 0.2;
-                float reachS = 0.08 + 0.32 * heat;
-                float body = 1.0 - smoothstep(0.0, reachS, fromEdge - (smoke - 0.5) * reachS * 0.9);
+                // (film r55: at an even reach the smoke boxed the screen in like a frame; it reaches in on the pull's side.)
+                float heat = 1.6 * lean * (1.0 + 0.3 * _Tell + 0.6 * _Surge);
+                // Strands: noise stretched along the pull and flowing that way, so the smoke itself points where it drags.
+                float2 along = float2(dot(p, d), dot(p, s));
+                float2 sq = float2(along.x * 1.4 - go * (0.5 + 0.9 * _Surge), along.y * 4.0 + go * 0.15);
+                float n1 = noise(sq), n2 = noise(sq * 2.2 + 4.7), n3 = noise(sq * 4.8 + 9.3);
+                float smoke = n1 * 0.5 + n2 * 0.3 + n3 * 0.2;
+                float ridge = 1.0 - abs(2.0 * (n2 * 0.6 + n3 * 0.4) - 1.0);
+                float reachS = max(0.001, 0.38 * heat);
+                float bodyEdge = fromEdge - (smoke - 0.5) * reachS * 1.1;
+                float body = 1.0 - smoothstep(reachS * 0.35, reachS, bodyEdge);
                 body *= smoothstep(0.0, 0.15, _Presence);
-                float glowS = body * (0.3 + 0.7 * smoke) * (0.4 + 1.2 * lean);
+                // The fringe: just inside the smoke's torn edge, lit violet along the strands' ridges.
+                float fringe = smoothstep(reachS * 0.25, reachS * 0.8, bodyEdge) * body * pow(ridge, 3.0) * (0.6 + 0.8 * lean);
 
-                // THE PULL STREAKS: soft lines converging on a point past the pull's edge, flowing toward it, clear of the middle.
+                // THE PULL STREAKS: thin dark lines converging on a point past the pull's edge, flowing toward it, clear of the middle.
                 float2 focus = edge * 1.35;
                 float2 fromFocus = p - focus;
                 float fr = length(fromFocus);
@@ -120,38 +122,34 @@ Shader "TumbangPreso/PossessedVignette"
                 float lane = frac(fa * 30.0 / 6.2832);
                 float laneId = floor(fa * 30.0 / 6.2832);
                 float run = frac(fr * 1.4 + go * (1.0 + 1.6 * _Surge) + hash(float2(laneId, 3.0)));
-                float streak = smoothstep(0.5, 0.0, abs(lane - 0.5) * (3.0 + 3.0 * hash(float2(laneId, 7.0))) - 0.4)
+                float streak = smoothstep(0.5, 0.0, abs(lane - 0.5) * (4.0 + 3.0 * hash(float2(laneId, 7.0))) - 0.4)
                              * smoothstep(0.0, 0.2, run) * (1.0 - smoothstep(0.3, 0.55, run)) * step(0.5, hash(float2(laneId, 11.0)));
                 streak *= smoothstep(0.42, 0.9, r) * (0.35 + 0.3 * _Tell + 0.55 * _Surge);
 
-                // THE ARROW (owner on v10: *"the arrow looks so shitty and bad, barely even seen"*): a bold violet crescent hugging
-                // the crosshair on the pull's side, a solid arrowhead off it pointing the way it drags, and chevrons streaming
-                // out past the head the same way; all outlined in black so it reads on any ground and sky.
-                float R = 0.3 + 0.03 * _Surge;
+                // THE ARROW (owner on v10: *"the arrow looks so shitty ... barely even seen"*, on v11 *"refine this pa"*: the
+                // crescent and solid head read as a paper plane): a thin compass ring round the crosshair; on the pull's side an
+                // arc of violet light, energy flowing along it into its middle; off its middle two sharp stacked chevrons
+                // pointing out the way it drags, pushing out and back. Everything outlined in black so it reads on any ground.
+                float R = 0.25;
                 float pr = length(p);
                 float ang = atan2(p.y, p.x) - atan2(d.y, d.x);
                 ang = ang - 6.2832 * floor((ang + 3.1416) / 6.2832);
-                float span = 0.62;
-                float thin = 1.0 - saturate(abs(ang) / span);
-                float arcD = max(abs(pr - R) - (0.012 + 0.03 * sqrt(thin)), abs(ang) - span);
-                float headD = tri(p, d * (R + 0.01), d, 0.085 + 0.015 * _Surge, 0.15 + 0.03 * _Surge);
-                float arrowD = min(arcD, headD);
-                float chev = 1e3, chevA = 0.0;
-                for (int k = 0; k < 3; k++)
-                {
-                    float ph = frac(go * (0.9 + 1.2 * _Surge) + k / 3.0);
-                    float2 at = d * (R + 0.24 + 0.22 * ph);
-                    float c = chevron(p, at, d, 0.05, 0.011);
-                    float fadeC = sin(ph * 3.14159);
-                    if (c < chev) { chev = c; chevA = fadeC; }
-                }
-                float arrowOn = 1.0;
-                float pulse = _Calm > 0.5 ? 0.6 : 0.6 + 0.4 * sin(t * 6.0);
-                float arrowFill = smoothstep(0.004, -0.003, arrowD);
-                float arrowLine = smoothstep(0.016, 0.006, arrowD) * (1.0 - arrowFill);
-                float arrowGlow = smoothstep(0.09, 0.0, arrowD) * 0.5;
-                float chevFill = smoothstep(0.004, -0.003, chev) * chevA;
-                float chevLine = smoothstep(0.014, 0.005, chev) * chevA * (1.0 - chevFill);
+                float span = 0.75;
+                float onArc = 1.0 - saturate(abs(ang) / span);
+                float ringD = abs(pr - R) - 0.0035;
+                float arcD = max(abs(pr - R) - (0.006 + 0.016 * onArc), abs(ang) - span);
+                float flowA = frac(abs(ang) * 5.0 + go * 2.4);
+                float dash = smoothstep(0.0, 0.15, flowA) * (1.0 - smoothstep(0.35, 0.6, flowA));
+                float push = (_Calm > 0.5 ? 0.0 : 0.012 * sin(t * 7.0)) + 0.02 * _Surge;
+                float chev = min(chevron(p, d * (R + 0.105 + push), d, 0.055, 0.015),
+                                 chevron(p, d * (R + 0.165 + push * 1.6), d, 0.045, 0.012));
+                float markD = min(arcD, chev);
+                float markFill = smoothstep(0.003, -0.003, markD);
+                float markLine = smoothstep(0.015, 0.005, markD) * (1.0 - markFill);
+                float markGlow = smoothstep(0.08, 0.0, markD) * (0.5 + 0.3 * _Surge);
+                float ringLine = smoothstep(0.004, 0.0, ringD) * (1.0 - step(abs(ang), span));
+                float pulse = _Calm > 0.5 ? 0.7 : 0.7 + 0.3 * sin(t * 6.0);
+                float arcLight = (0.55 + 0.45 * onArc) * (0.6 + 0.6 * dash);
 
                 // THE TELL: a violet glow along the pull's edge.
                 float edgeDist = dot(edge - p, d);
@@ -159,23 +157,24 @@ Shader "TumbangPreso/PossessedVignette"
 
                 float3 colour = _Ink.rgb;
                 float alpha = ink;
-                // The smoke: black, its depths lit a dull violet.
+                // The smoke: black strands, violet only in their torn fringes.
                 colour = lerp(colour, _Hand.rgb, body);
-                colour += _Flame.rgb * glowS * (0.35 + 0.35 * _Surge);
-                alpha = max(alpha, body * (0.85 + 0.15 * lean));
+                alpha = max(alpha, body * 0.9);
+                colour += _HandRim.rgb * fringe * (0.9 + 0.6 * _Surge);
                 colour = lerp(colour, _Hand.rgb, streak * 0.85);
-                colour += _HandRim.rgb * streak * 0.15;
                 alpha = max(alpha, streak * 0.5);
                 colour = lerp(colour, _Flame.rgb, saturate(rim * 0.8));
                 alpha = max(alpha, rim * 0.5);
-                // The arrow last, over everything: a glow, a black outline, a bright violet body that pulses.
-                float3 bright = _HandRim.rgb * (1.6 + 0.8 * pulse + 0.8 * _Surge);
-                colour = lerp(colour, _Flame.rgb, arrowGlow * arrowOn);
-                alpha = max(alpha, arrowGlow * 0.55 * arrowOn);
-                colour = lerp(colour, float3(0.0, 0.0, 0.0), max(arrowLine, chevLine) * arrowOn);
-                alpha = max(alpha, max(arrowLine, chevLine) * 0.9 * arrowOn);
-                colour = lerp(colour, bright, max(arrowFill, chevFill) * arrowOn);
-                alpha = max(alpha, max(arrowFill, chevFill) * arrowOn);
+                // The arrow last, over everything.
+                colour = lerp(colour, _Hand.rgb, ringLine * 0.8);
+                alpha = max(alpha, ringLine * 0.45);
+                colour = lerp(colour, _Flame.rgb, markGlow);
+                alpha = max(alpha, markGlow * 0.6);
+                colour = lerp(colour, float3(0.0, 0.0, 0.0), markLine);
+                alpha = max(alpha, markLine * 0.95);
+                float3 bright = _HandRim.rgb * (1.5 + 0.9 * pulse + 0.8 * _Surge);
+                colour = lerp(colour, bright * lerp(1.0, arcLight, step(arcD, chev)), markFill);
+                alpha = max(alpha, markFill);
                 return fixed4(colour, saturate(alpha) * _Presence * i.color.a);
             }
             ENDCG

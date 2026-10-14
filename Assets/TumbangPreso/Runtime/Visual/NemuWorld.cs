@@ -71,7 +71,10 @@ namespace TumbangPreso.Visual
             float weight = 0f, clock = 0f, left = 0f;
             CharacterMotor nemu = null;
             Vector3 centre = Vector3.zero; int held = 0;
-            if (round != null && round.RoundActive)
+            // The round is paused under the cutscene: the world keeps her dusk through it, so play comes back already in it (film
+            // r58: rebuilt after the hand-back, her own screen came back in daylight for half a second).
+            bool phase = SharedUltimatePhase.Instance != null && SharedUltimatePhase.Instance.Active;
+            if (round != null && (round.RoundActive || phase))
                 foreach (var p in round.Players)
                 {
                     if (p == null || !p.gameObject.activeInHierarchy) continue;

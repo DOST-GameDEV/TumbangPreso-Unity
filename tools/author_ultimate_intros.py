@@ -511,7 +511,7 @@ def nemu(held=False):
     cracks, the souls come out of an otherworldly portal, fewer of them, slower, every beat given time to read).
       v11: no prayer and no cast laugh (owner: *"start from this wag na prayer"*).
       THE GATE 0.00: she lifts her clasped hands to the sky and the air over the court tears open; she holds them up.
-      THE POURING 2.75: she flings her arms wide as the gate pours out the rest; then she watches, head tipped.
+      THE POURING 2.50: she flings her arms wide as the gate pours out the rest; then she watches, head tipped.
     The shots are computed from where the players really are (`HeroIntroductionScene.Nemu.cs`); the authored shots below are
     their fallbacks with nobody on court, one per cut. The stage reads these times: keep them in step with its `Nm*` constants.
     """
@@ -529,6 +529,8 @@ def nemu(held=False):
     # Watching them, head tipped: she knows what is coming for them; then the tip goes the other way as they turn.
     watch = Pose(torso=(-2, 0, 2), head=(6, -8, 10), left=(26, 38, -6), right=(26, 38, -6))
     watch2 = watch.but(head=(8, 6, -12))
+    # The puppeteer: her free hand lifted, fingers up, head tipped the other way, watching them hang.
+    strings = watch.but(head=(2, 6, -14), left=(128, 18, 8))
     if held:
         shoe = (8, 26, -5)
         call = call.but(right=shoe)
@@ -538,21 +540,22 @@ def nemu(held=False):
     # v11: no prayer (owner: *"start from this wag na prayer"*): she already holds her hands up to the sky as it opens.
     p.key(0, gate)
     p.hold(0, 2.6, gate)
-    p.key(2.82, call, punch=True)
-    p.hold(2.82, 3.5, call)
-    p.key(4.0, watch)
-    p.hold(4.0, 6.0, watch)
-    p.key(6.4, watch2)
-    p.hold(6.4, 7.0, watch2)
+    p.key(2.57, call, punch=True)
+    p.hold(2.57, 3.25, call)
+    p.key(3.75, watch)
+    p.hold(3.75, 5.5, watch)
+    # THE STRINGS: she lifts her free hand, and every possessed player is yanked up on its strings with it (5.75).
+    p.key(5.72, strings, punch=True)
+    p.hold(5.72, 7.0, strings)
 
     # THE GATE fallback: low behind her, looking up past her at the sky over the court.
-    p.shot(0, .95, (.7, .7, -1.8), (0, 2.6, 5.0), 56, eye_to=(.8, .6, -2.2), look_to=(0, 2.8, 5.0), fov_to=58)
+    p.shot(0, .8, (.7, .7, -1.8), (0, 2.6, 5.0), 56, eye_to=(.8, .6, -2.2), look_to=(0, 2.8, 5.0), fov_to=58)
     # THE FIRST ONE fallback: out in front of her, looking up at the gate.
-    p.shot(.95, 2.75, (.9, 1.0, 2.0), (0, 2.4, 6.0), 56, eye_to=(1.0, 1.0, 2.4), look_to=(0, 1.6, 6.0), fov_to=52)
+    p.shot(.8, 2.5, (.9, 1.0, 2.0), (0, 2.4, 6.0), 56, eye_to=(1.0, 1.0, 2.4), look_to=(0, 1.6, 6.0), fov_to=52)
     # THE HUNT fallback: out in front of her.
-    p.shot(2.75, 5.85, (.6, 1.3, 3.2), (0, 1.1, 5.5), 52, eye_to=(.9, 1.5, 2.8))
-    # ALL OF THEM fallback: easing back to the court and the gate over it.
-    p.shot(5.85, 7.0, (1.0, 1.4, 2.4), (0, 1.4, 5.5), 54, eye_to=(1.5, 2.6, 1.2), look_to=(0, 2.0, 5.5), fov_to=58)
+    p.shot(2.5, 5.3, (.6, 1.3, 3.2), (0, 1.1, 5.5), 52, eye_to=(.9, 1.5, 2.8))
+    # THE STRINGS fallback: low behind her, looking out over the court.
+    p.shot(5.3, 7.0, (.85, 1.05, -2.1), (0, 1.0, 5.5), 52, eye_to=(.85, 1.0, -1.7), look_to=(0, 1.3, 5.5), fov_to=46)
     p.locked((1.2, 2.2, -2.2), (0, .9, 4.5), 54)
     return p
 

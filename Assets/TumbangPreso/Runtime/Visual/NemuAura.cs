@@ -145,7 +145,7 @@ namespace TumbangPreso.Visual
                            + (side * Mathf.Cos(a) + fwd * Mathf.Sin(a)) * (s.Width * (.45f + .25f * phase))
                            + stream * (phase * pulled * s.Width);
                 float twinkle = s.Reduced ? 1f : .7f + .3f * Mathf.Sin(s.Clock * 13f + j * 2.1f);
-                batch.Light(at, .07f, amount * Mathf.Sin(phase * Mathf.PI) * .9f * twinkle, NemuSmokeBatch.Violet);
+                batch.Light(at, .045f, amount * Mathf.Sin(phase * Mathf.PI) * .55f * twinkle, NemuSmokeBatch.Violet);   // (owner on v11: the embers read as pink balls)
             }
         }
 

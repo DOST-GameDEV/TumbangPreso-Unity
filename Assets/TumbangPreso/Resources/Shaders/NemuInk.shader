@@ -82,7 +82,8 @@ Shader "TumbangPreso/NemuInk"
                 }
                 inked = lerp(inked, _InkColour.rgb, saturate(edge * _Ink * 0.92) * (1.0 - keep));
                 // BEHIND YOU's blackouts: the lights fail and only the eyes of the dead (bright violet) are left burning.
-                float keepDark = saturate(violet * smoothstep(0.2, 0.55, bright));
+                // Only hot violet: a grey-violet court or a dusky wall is not light (film r57, Nemu's ending only dimmed).
+                float keepDark = saturate((violet - 0.35) * 2.5) * smoothstep(0.3, 0.65, bright);
                 // Night: everything but bright violet sinks toward a deep blue-violet dark, the sky most of all.
                 float3 nightTint = c.rgb * float3(0.42, 0.40, 0.62);
                 inked = lerp(inked, nightTint, _Night * (1.0 - keepDark) * (0.75 + 0.25 * saturate(i.uv.y * 1.6 - 0.4)));

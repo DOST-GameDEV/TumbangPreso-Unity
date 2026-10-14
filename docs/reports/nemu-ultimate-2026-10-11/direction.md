@@ -835,3 +835,30 @@ Film r54 (Bayan Plaza) passed, cutscene 6.97 s, clock frozen; Nemu suites 8/8 ([
 [key frames](evidence/film-v11/key-frames.jpg), [possessed screen](evidence/film-v11/possessed-screen.jpg),
 [suites](evidence/film-v11/nemu-suites.xml)). Film: `Logs/nemu-lti/nemu_let_them_in_v11.mp4` with the v11 sound draft. Not yet
 evidence: the owner's verdict on v11.
+
+## 21. THE STRINGS (2026-10-14, v12; the ending, the entry and the possessed screen)
+
+The owner on v11: *"give this ending time to breathe ang bilis and sudden ng cutoff"*, *"theres still some random shit to end it
+and make it feel satisfying to see or eerie ... phaister has a good end ult cutscene ... dont copy it think of how nemu's ult
+should end"*, *"i want the ending to show the possession more or explore how fked up or scary it is"*, *"possession vfx wtf"*,
+*"they move so fast its hard to figure out whats happening, it feels unhuman masyado kahit di pa possessed"*, of the possessed
+screen *"refine this pa angpanget"*.
+
+* Retimed (7.0 s): the gate 0 to 0.8, THE FIRST ONE 0.8 (in 2.25), THE HUNT 2.5 to 5.3, THE STRINGS 5.3 to 7.0 (1.7 s).
+* THE STRINGS, through her own eyes: the possessed hang in an arc before her, bodies turned away; only their heads come round,
+  too far, together, until every one stares into the lens (5.40); she lifts her hand and all are yanked up on their strings at
+  once (5.75), then come for her in three stop-motion lurches (to 2.8 m); the lights die (6.05) to black but for hot violet
+  (their eyes, the gate's lip, the souls), the eyes flare (6.30); the lights come back to dusk for the hand-back.
+  `NemuInk`'s blackout keeps only hot violet now (a grey-violet court was kept before). The sound: the strings snap taut at
+  the tug, then the room drops to a held breath and one chime.
+* The world keeps its dusk through the cutscene's paused round (`NemuWorld`), so play comes back in it.
+* Before the soul they are people: slower, smaller glances, a breathing tremble, a slower run.
+* The entry: no dotted threads, no rings of light dots, a small chest flash; one smoke shockwave on the court for the hardest
+  hit; the aura's embers smaller and dimmer.
+* The possessed screen: a thin compass ring round the crosshair, a violet arc on the pull's side with energy flowing into it,
+  two stacked chevrons pointing out, outlined in black; the aura as near-black strands streaming toward the pull, violet only
+  in their fringes, and only on the pull's side (at an even reach it boxed the screen in).
+
+Film r59 (Bayan Plaza, her screen and the possessed screen) passed, cutscene 6.97 s, clock frozen ([ending](evidence/film-v12/ending.jpg),
+[key frames](evidence/film-v12/key-frames.jpg), [possessed screen](evidence/film-v12/possessed-screen.jpg),
+[XML](evidence/film-v12/play-tests.xml)). Film: `Logs/nemu-lti/nemu_let_them_in_v12.mp4`. Not yet evidence: the owner's verdict.

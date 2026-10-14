@@ -295,8 +295,9 @@ def peel(seconds, gain=1.0):
 
 # v11 THE GATE (`direction.md` sections 19 and 20), at the stage's own times (`HeroIntroductionScene.Nemu.cs` `Nm*`).
 LENGTH = 7.0
-BEAT, IGNITE, SPLIT, GATE_OPEN, LEAD, LEAD_IN, FIRST_EYES, BURST = .21, .05, .05, .6, .95, 2.45, 2.55, 2.75
-RUN, TRIP, LANDED, ROLL, BACK_IN, TRIP_IN, RISE, TRIP_EYES, CRANE = 3.0, 3.8, 4.05, 4.15, 3.6, 4.65, 5.1, 4.75, 5.85
+BEAT, IGNITE, SPLIT, GATE_OPEN, LEAD, LEAD_IN, FIRST_EYES, BURST = .21, .05, .05, .55, .8, 2.25, 2.35, 2.5
+RUN, TRIP, LANDED, ROLL, BACK_IN, TRIP_IN, RISE, TRIP_EYES, CRANE = 2.75, 3.5, 3.75, 3.85, 3.35, 4.3, 4.7, 4.4, 5.3
+TUG, DARK, FLARE = 5.75, 6.05, 6.3
 
 
 def theme():
@@ -340,11 +341,21 @@ def theme():
     place(track, groan(.5, 64.0, gain=.55), TRIP_IN + .06)
     place(track, peel(.5, gain=.7), RISE)                                         # hauled up like a puppet
     place(track, chime(.3), TRIP_EYES)
-    # ALL OF THEM: a low choir swelling as they stare.
-    rise = LENGTH - CRANE + .3
+    # THE STRINGS: a low choir as they turn to her; at the tug every string snaps taut at once (a creak and a crack); then the
+    # lights die and the room drops out to a held breath, one last chime as their eyes flare.
+    rise = TUG - CRANE + .1
     swell = np.linspace(.2, 1, int(rise * RATE)) ** 1.2
-    place(track, hum(rise, notes=(98.0, 116.54, 146.83, 87.31), gain=1.1) * swell, CRANE)
-    place(track, whisper(rise, 6.0, .35) * swell, CRANE)
+    place(track, hum(rise, notes=(98.0, 116.54, 146.83, 87.31), gain=1.0) * swell, CRANE)
+    place(track, whisper(rise, 6.0, .3) * swell, CRANE)
+    place(track, snap(1.0), TUG)
+    place(track, peel(.35, gain=.8), TUG - .02)
+    place(track, groan(.5, 55.0, gain=.6), TUG + .02)
+    hold = LENGTH - DARK
+    place(track, breath(hold, 300, 2500, shape="out", gain=.35), DARK)
+    place(track, chime(.35), FLARE)
+    duck = np.ones(len(track)); d0 = int(DARK * RATE); d1 = int((DARK + .35) * RATE)
+    duck[d0:d1] = np.linspace(1, .25, d1 - d0); duck[d1:] = .25
+    track *= duck
     track = track[:int(LENGTH * RATE)]
     fade = np.ones(len(track)); f0 = int((LENGTH - .6) * RATE); fade[f0:] = np.linspace(1, 0, len(track) - f0) ** 1.2
     return track * fade
