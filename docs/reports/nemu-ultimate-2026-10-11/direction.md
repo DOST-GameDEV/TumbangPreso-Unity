@@ -891,3 +891,26 @@ Film r62 passed (cutscene 6.97 s, clock frozen); Nemu suites 8/8 ([ending](evide
 [fall and ending](evidence/film-v14/fall-and-ending.jpg), [XML](evidence/film-v14/play-tests.xml),
 [suites](evidence/film-v14/nemu-suites.xml)). Film: `Logs/nemu-lti/nemu_let_them_in_v14.mp4`. Not yet evidence: the owner's
 verdict. Known: the strings run back toward her, behind the lens, so they read faintly.
+
+## 23. v15 (2026-10-15; the ground before the soul, the first looks, THE STRINGS in front of him)
+
+The owner on v14: *"this shit floats BEFORE CONTACT WITH GHOST"*, *"the looking around animation at the start looks too fast and
+hard to follow make it more natural lahat"*, *"why tf does camera go to his back view ang panget na ng movement let it flow from
+this"* (pointing at the rise, his face to the lens), *"make it look like he's trying to struggle"*.
+
+* THE GROUND: his parts' bounding boxes sit lower than the parts do once he is on his side, so lifting by them hung him in the
+  air through the roll (r62, 3.9 to 4.3 s). His real posed mesh is measured (`NmLowest`), and until the soul is in him he is set
+  down onto the court as well as lifted out of it; after it only the lift holds, so the puppet can rise.
+* THE LOOKS: a head trails what it watches over half a second (six samples, weighted to the latest) instead of snapping to the
+  soul frame by frame; each man reacts 0.1 to 0.35 s apart; the chest follows 0.2 s and the feet 0.45 s behind. Looking about is
+  a look every 1.6 s taking 0.8 s, at most 45 degrees (was 1.1 s, 0.5 s, 70); the stagger shake is 5 rad/s (was 13).
+* THE STRINGS, no cut: the lens stays where his rise left it, in front of him and aside (`NmRiseLens`), and pushes in slowly,
+  lifting with him at the tug. He fights it from 5.0 s until the dark: shoulders wrenching side to side, each arm in turn
+  pulled down against its string, legs kicking, face strained up at the lens; harder once the strings snap taut. While he
+  fights, the cut-string snaps wait (r66: they pitched his head down to its hair) and his head turn to the lens is held to 35
+  degrees (the old head-all-the-way-round beat is gone: he already faces us).
+
+Film r67 passed (cutscene 6.97 s, clock frozen); Nemu suites 8/8 ([fall](evidence/film-v15/fall-grounded.jpg),
+[first looks](evidence/film-v15/first-look.jpg), [ending](evidence/film-v15/ending-struggle.jpg),
+[XML](evidence/film-v15/play-tests.xml), [suites](evidence/film-v15/nemu-suites.xml)). Film:
+`Logs/nemu-lti/nemu_let_them_in_v15.mp4`. Not yet evidence: the owner's verdict.
