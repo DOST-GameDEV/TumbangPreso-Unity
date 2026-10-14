@@ -13,14 +13,16 @@ namespace TumbangPreso.Visual
     ///
     ///  * THE AURA (`NemuAura.Draw`): black smoke burning up off their silhouette like dark fire, its edges violet; a faint
     ///    violet halo round them that reads across the court; embers rising. The same drawing the cutscene ends on.
-    ///  * POSSESSED EYES: two slanted violet lights on their face.
+    ///  * POSSESSED EYES: their own painted eyes burn violet (`NemuEyeGlow`, the cutscene's), the WHOLE time they are
+    ///    possessed, flaring with the tell and the surge. (Owner 2026-10-14 on play after v8: the floating glows sat on the
+    ///    cheeks as pink blobs and the eyes were not violet: *"purple eyes entire time na possessed"*.)
     ///  * WHICH WAY THEY ARE DRAGGED: the smoke streams that way; faint bare footprints walk ahead of them that way.
     ///  * THE TELL: the aura swells and darkens, the embers quicken, the eyes flare.
     ///  * THE SURGE: a claw of smoke reaches out of them toward where it drags them, and is yanked back in as it ends.
     ///  * TRYING TO GET OUT (the owner: *"the ghosts are tryna get out of the body but they get sucked in anyways"*): between
     ///    surges, on typed rows, a claw pushes out of a side and is sucked back with a puff. A claw only: never a face or a body.
     ///  * WINNING: as the player wears the grip down the aura thins and flickers.
-    ///  * THE END: the last 1.2 s the smoke burns off upward and the eyes go out.
+    ///  * THE END: the last 1.2 s the smoke burns off upward; the eyes go out with it.
     ///
     /// ⚠️ PRESENTATION ONLY, posed from the replicated POSSESSED clock and positions through the same pure function the
     /// simulating peer steers with (`CharacterMotor.PossessionPull`), so every screen shows the same drag. It never moves the
@@ -112,7 +114,7 @@ namespace TumbangPreso.Visual
             }
         }
 
-        private void OnDestroy() { _smoke?.Dispose(); _smoke = null; }
+        private void OnDestroy() { _smoke?.Dispose(); _smoke = null; _eyes?.Remove(); _eyes = null; }
 
         // ------------------------------------------------------------------ posing
 
@@ -121,6 +123,8 @@ namespace TumbangPreso.Visual
         private void LateUpdate()
         {
             if (_motor == null) { Destroy(gameObject); return; }
+            // The world while it holds: her dusk on every screen and the court she split kept open.
+            if (_motor.IsPossessed) NemuWorld.Ensure();
             bool reduced = Settings.SettingsStore.Current.ReducedEffects;
             float now = Time.time;
             bool possessed = _motor.IsPossessed;
@@ -186,18 +190,13 @@ namespace TumbangPreso.Visual
                     NemuAura.Claw(_smoke, root, escDir + Vector3.up * .2f, attempt.w * escape, .75f, Mathf.Clamp01(escape * 3f) * settle, now, attempt.y * .01f);
                 }
 
-                // POSSESSED EYES on the front of the head.
-                Vector3 headAt = _head != null ? _head.position : feet + Vector3.up * (_top - .4f);
-                Vector3 look = _head != null ? _head.rotation * _faceLocal : forward; look.y = 0f;
-                look = look.sqrMagnitude > 1e-4f ? look.normalized : forward;
-                float headSize = _faceTop;
-                Vector3 eyes = headAt + Vector3.up * (headSize * .28f) + look * (_faceDepth + .015f);
-                float blink = reduced ? 1f : 1f - .85f * Mathf.Clamp01(1f - Mathf.Abs(Mathf.Repeat(now + seat * .7f, 2.9f) - 1.4f) / .06f);
-                float eyeLight = arrive * (1f - leave) * (1.1f + 1.0f * tell + .5f * surge) * blink * (reduced ? .7f : 1f);
-                var lens = Camera.main;
-                NemuAura.Eyes(_smoke, eyes, look, .32f * headSize, .1f * (1f + .4f * tell), eyeLight * 1.4f, lens != null ? lens.transform.position : (Vector3?)null);
             }
             _smoke.End(now);
+
+            // POSSESSED EYES: their own painted eyes burning violet from the first frame of play to the end (hidden from their
+            // own first-person view, where the head is not drawn either), flaring with the tell and the surge.
+            float burn = hideOwn ? 0f : (1f - leave) * Mathf.Clamp01(.8f + .2f * tell + .2f * surge);
+            _eyes?.Set(burn, now + seat);
 
             // The footprints walk ahead of the feet the way it pulls, one after another, brighter as it gets ready to surge.
             Vector3 across = new Vector3(dir.z, 0f, -dir.x);
@@ -241,6 +240,7 @@ namespace TumbangPreso.Visual
         // ------------------------------------------------------------------ the body it is in, measured once at rest
 
         private Transform _measuredModel, _head;
+        private NemuEyeGlow _eyes;
         private float _top = 1.7f, _width = .7f, _faceDepth = .3f, _faceTop = .5f;
         private Vector3 _faceLocal = Vector3.forward;
 
@@ -251,6 +251,9 @@ namespace TumbangPreso.Visual
         private void Measure(Transform model)
         {
             _measuredModel = model; _head = null;
+            // The eyes are drawn on this model's own head; a rebuilt model gets them again.
+            _eyes?.Remove();
+            _eyes = NemuEyeGlow.On(model.GetComponentsInChildren<Renderer>(true));
             foreach (var t in model.GetComponentsInChildren<Transform>(true)) if (t.name == "head") { _head = t; break; }
             Vector3 feet = _motor.transform.position;
             bool any = false; Bounds b = default;

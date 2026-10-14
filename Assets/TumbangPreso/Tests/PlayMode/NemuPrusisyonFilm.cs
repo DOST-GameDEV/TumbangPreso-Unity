@@ -247,7 +247,8 @@ namespace TumbangPreso.PlayTests
             Debug.Log("[NemuFilm] " + summary);
             Assert.GreaterOrEqual(sceneFirst, 0, "The cutscene never came up.");
             Assert.AreEqual(clockIn, clockOut, 1e-4f, "The round clock ran under the cutscene.");
-            Assert.Less((sceneLast - sceneFirst + 1) / 30f, 6.0f + .2f, "The cutscene ran long.");
+            // The owner's limit for her cutscene is 5 to 7 s (2026-10-14).
+            Assert.Less((sceneLast - sceneFirst + 1) / 30f, 7.0f + .2f, "The cutscene ran long.");
         }
     }
 }

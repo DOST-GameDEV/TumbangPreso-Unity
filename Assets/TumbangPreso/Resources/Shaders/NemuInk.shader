@@ -7,6 +7,9 @@
 // SWALLOWED SKY (section 13, *"a bit anime style"*): `_Impact` is an impact frame (the picture cut to two tones, its light
 // violet and the rest ink; `_Invert` 1 swaps them), carrying each smash cut; `_Lines` draws anime focus lines in from the
 // frame's edge toward `_Focus` (uv), redrawn twelve times a second like hand-drawn boil.
+// EERIE (v9, owner on v8: *"channge the color of the sky too to smth eerie or the screenitself"*): `_Eerie` turns the blue sky and
+// its white clouds to a bruised dusk, deep violet-black overhead to a dull violet-grey at the horizon, and drains and cools the
+// world under it. Bright violet light (the souls, the eyes, the cracks) is kept as it is.
 Shader "TumbangPreso/NemuInk"
 {
     Properties
@@ -15,6 +18,7 @@ Shader "TumbangPreso/NemuInk"
         _Ink ("Ink", Range(0, 1)) = 0
         _Black ("Blackout", Range(0, 1)) = 0
         _Night ("Night", Range(0, 1)) = 0
+        _Eerie ("Eerie sky and world", Range(0, 1)) = 0
         _InkColour ("Ink colour", Color) = (0.006, 0.0, 0.014, 1)
         _Impact ("Impact frame", Range(0, 1)) = 0
         _Invert ("Impact inverted", Float) = 0
@@ -34,7 +38,7 @@ Shader "TumbangPreso/NemuInk"
             #pragma fragment frag
             #include "UnityCG.cginc"
             sampler2D _MainTex;
-            float _Ink, _Black, _Night, _Clock, _Aspect, _Impact, _Invert, _Lines;
+            float _Ink, _Black, _Night, _Eerie, _Clock, _Aspect, _Impact, _Invert, _Lines;
             float4 _Focus;
             fixed4 _InkColour, _Violet;
 
@@ -59,7 +63,24 @@ Shader "TumbangPreso/NemuInk"
                 float bright = max(c.r, max(c.g, c.b));
                 float violet = saturate((c.b + c.r * 0.5 - c.g * 1.5) * 3.0);
                 float keep = saturate(violet * smoothstep(0.35, 0.7, bright));
-                float3 inked = lerp(c.rgb, _InkColour.rgb, saturate(edge * _Ink * 0.92) * (1.0 - keep));
+                float3 inked = c.rgb;
+                if (_Eerie > 0.001)
+                {
+                    float lum = dot(c.rgb, float3(0.3, 0.59, 0.11));
+                    float lo = min(c.r, min(c.g, c.b));
+                    // The sky: blue (green over red, blue over green) and bright; its clouds: near white. Violet (green under
+                    // red) and the court and walls (red over green) are left out.
+                    float sky = saturate((c.g - c.r) * 7.0) * saturate((c.b - c.g) * 9.0 + 0.3) * smoothstep(0.3, 0.55, lum);
+                    float cloud = smoothstep(0.78, 0.93, lum) * (1.0 - saturate((bright - lo) * 5.0));
+                    float skyMask = saturate(sky + cloud) * (1.0 - keep);
+                    float high = saturate((i.uv.y - 0.3) * 1.5);
+                    float3 dusk = lerp(float3(0.24, 0.15, 0.32), float3(0.04, 0.02, 0.08), high) * (0.7 + 0.5 * lum);
+                    // The world under it: drained, cooled toward violet, a little darker.
+                    float3 world = lerp(lum.xxx, c.rgb, 0.45) * float3(0.74, 0.68, 0.9);
+                    float3 eerie = lerp(world, dusk, skyMask);
+                    inked = lerp(c.rgb, eerie, _Eerie * (1.0 - keep));
+                }
+                inked = lerp(inked, _InkColour.rgb, saturate(edge * _Ink * 0.92) * (1.0 - keep));
                 // BEHIND YOU's blackouts: the lights fail and only the eyes of the dead (bright violet) are left burning.
                 float keepDark = saturate(violet * smoothstep(0.2, 0.55, bright));
                 // Night: everything but bright violet sinks toward a deep blue-violet dark, the sky most of all.

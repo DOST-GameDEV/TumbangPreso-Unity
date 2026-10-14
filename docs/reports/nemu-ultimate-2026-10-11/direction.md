@@ -667,3 +667,59 @@ boiling into a blob.
 Film: `Logs/nemu-lti/nemu_let_them_in_v8.mp4` (her screen only, no sound); the film test passed
 ([XML](evidence/film-v8/play-tests.xml), [key frames](evidence/film-v8/key-frames.jpg)). Not yet evidence: the owner's verdict
 on v8; the sound drafts are still timed to v6.
+
+The owner on v8 (2026-10-14): the entry's black hole on the chest *"looks weird as fk ... the dark purple orb is weird af"*;
+*"i like the direction of the ult na but i think it can be better"*; then the picture section 18 is built from.
+
+## 18. THE PRAYER (2026-10-14, v9; supersedes 16's beats and 17's entry, keeps the souls, their faces and the storm)
+
+The owner, during the v8 pass, in his words: *"the start of her ult she clasps her hands tgthr and looks liek she's praying or
+chantinng then the ground splits open and like one muna lalabas and ppl follow it around with their heads and biglang dadami"*;
+*"may una munag mapoposssess and its gonna make the other 2 ppl run away"*; *"theyre running away but they trip and fall and
+while fallenn down they lie on ground and turn aroudn and ghost enters them"*; *"in the bg while focused on one, one by one get
+possessed in the bg"*; *"during the soul storm the player are animated to look around scared, confused tapos they run away when
+a ghost starts chasing them"*; *"when a ghost catches up they move unnatural as fuh"*; an eerie sky or screen; *"u can change ren
+the color of the game for everyone"*; *"keep the groound open during the duration of the possession"*; *"hindi na purple eyes
+dapat purple eyes entire time na possessed"*; the limit is 5 to 7 s.
+
+Beats (7.0 s; one story: her prayer opens the ground, the first soul takes one of them, that sends the others running, they
+are hunted down one by one):
+1. THE PRAYER (0.00-0.85): her whole body, low; hands clasped at her chest, head bowed, chanting (the head dips and a ring of
+   violet goes out across the court on each 0.21 s beat); violet gathering between her palms; the day draining to dusk. Her eyes
+   snap open (0.72).
+2. THE SPLIT (0.85-1.35): smash cut high behind her; the light drops out of her palms and the court splits open from her feet,
+   the fissures racing out under the players, who stagger. The fissures are real geometry on the court (`NemuCrackField`,
+   `Shaders/NemuCrack`): a black depth, violet lips, a scorched rim, opening behind a hot tip; black smoke seeps out of them.
+3. THE FIRST ONE (1.35-2.55): low on the court in front of the first player: ONE soul claws up out of a fissure and circles
+   over him; every player turns head and body to follow it. It dives into him (2.20, impact frame); he is thrown, arched; its
+   tail coils round him and sinks in (no hole: nothing round sits on him); he twitches wrong; his eyes ignite (2.50) and he
+   turns them on the others.
+4. SUDDENLY MANY (2.55-3.25): every fissure erupts at once; the lens cranes up into the storm; the others flinch and run from him.
+5. THE FALL (3.25-5.50): beside the one who runs, the soul hunting him in the frame; he trips (3.95), goes down on his face,
+   rolls onto his back (4.20) and sees it hanging over him; it plunges into his chest (4.60, impact frame). Behind him the third
+   is caught running (4.20). He twitches on the court, then is hauled upright in four jerks like a puppet (4.95) and his eyes
+   ignite (5.30). The lens stands on the side that has the others behind him.
+6. ALL OF THEM (5.50-7.00): a cut to them all, low and near, craning up and back: every player possessed, floating a little,
+   heads tipped too far, turning to the lens, the court split open under them and the dusk over everything.
+
+WRONG (how the possessed move until they settle): stop-motion snaps between broken poses, 0.09 to 0.14 s each (head rolled up to
+55 degrees, twisted up to 80, arms and legs at odd angles), floating; then the stance (floating, head tipped 30 degrees, arms
+hanging out, toes down) and the turn to the lens, head first.
+
+IN PLAY (`NemuWorld`, presentation only, from the replicated possession clocks): while anyone is possessed every match camera
+takes the dusk (`ColourGrade` puts the frame through `NemuInk` `_Eerie`), and her fissures stay open from where she cast,
+letting go with the last possession's leave. Possessed players' own painted eyes burn violet the whole time
+(`PossessedPresence` now uses `NemuEyeGlow`; the floating glows that sat on the cheeks as pink blobs are gone).
+
+### 18.1 Film rounds and evidence
+
+| Film | Seen | Changed |
+|---|---|---|
+| r38 | the court split for real; the fall, roll and puppet rise read; eyes ignite; the first soul a speck behind her head; the hunter on the frame's edge; the crane through a head; the dusk faint | the first soul's shot moved onto the court in front of him; the first soul larger; the chase looks further back; a darker dusk |
+| r39 | the first soul circles and his head follows it, it dives in, his eyes ignite; the bowed head only hair | the prayer shot low; the bow shallower |
+| r40, r41 | her hair hangs over her face by design (the glowing clasped palms in front of it read); the crane still through him | a hard cut on the beat to the wide crane |
+| r42 | the whole story reads | the wide's first frame moved off her head |
+
+Sound: `tools/build_nemu_ult_audio.py` redrafted to v9 (a chant on each beat, the court breaking, one lone wail, a heartbeat as
+it circles, the suck into him, a chorus of wails, the trip and the body on the court, the gasp, the creak of the puppet rise, the
+choir); still drafts in `audio-drafts/`, not in `Resources/Sfx`.

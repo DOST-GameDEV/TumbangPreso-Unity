@@ -236,9 +236,13 @@ namespace TumbangPreso.Visual
         {
             PostAntiAlias.ReportOnce(_camera, source);
 
+            // Nemu's LET THEM IN: while anyone is possessed every match view takes her dusk (`NemuWorld`).
+            float dusk = NemuWorld.WeightFor(_camera);
+
             if (IsIdentity && !HasExperiments)
             {
-                Graphics.Blit(source, destination);
+                if (dusk > 0.0f) NemuWorld.Blit(source, destination, dusk);
+                else Graphics.Blit(source, destination);
                 return;
             }
 
@@ -285,11 +289,17 @@ namespace TumbangPreso.Visual
 
             var protectedMask=PrepareExperimentMaterial(source);
             var bloom=PrepareBrightLook(source);
-            try { Graphics.Blit(source, destination, _material, 0); }
+            var graded = dusk > 0.0f ? RenderTexture.GetTemporary(source.descriptor) : null;
+            try
+            {
+                Graphics.Blit(source, graded != null ? graded : destination, _material, 0);
+                if (graded != null) NemuWorld.Blit(graded, destination, dusk);
+            }
             finally
             {
                 if(protectedMask!=null)RenderTexture.ReleaseTemporary(protectedMask);
                 if(bloom!=null)RenderTexture.ReleaseTemporary(bloom);
+                if(graded!=null)RenderTexture.ReleaseTemporary(graded);
             }
         }
 

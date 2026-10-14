@@ -507,24 +507,24 @@ def zack():
 @performance
 def nemu(held=False):
     """
-    LET THEM IN: SOUL STORM, 5.9 s (owner 2026-10-14; `docs/reports/nemu-ultimate-2026-10-11/direction.md` section 16: Ruined
-    King's Black Mist and the wailing soul; the opening is the storm and the cracks, no face close-up).
-      S1 THE CRACKS 0.00-0.90: she flings her hands down (0.12) and violet cracks split the court from her feet; her eyes
-        ignite (0.32); the first souls claw up out of the cracks round her.
-      S2 THE STORM 0.90-2.20: she throws her arms up and out (1.0); souls pour up out of the cracks into a vortex over the court.
-      v8 (owner on v7: the entry did not read): S3 THE FIRST 2.20-3.50, the lens rides one soul into the first player;
-      S4 THE FLOOD 3.50-4.40, smash cuts to the others being entered; S5 ALL OF THEM 4.40-5.90, back on the first as his
-      eyes ignite, then the crane. She watches, head tipped, off screen.
+    LET THEM IN v9: THE PRAYER, 7.0 s (owner 2026-10-14; `docs/reports/nemu-ultimate-2026-10-11/direction.md` section 18: she
+    clasps her hands and chants, the ground splits open, one soul comes out and they follow it with their heads, then many).
+      THE PRAYER 0.00-0.85: hands clasped at her chest, head bowed, chanting (the head dips on each 0.21 s beat); her eyes snap
+        open and her head comes up (0.72).
+      THE SPLIT 0.85: she thrusts her clasped hands down and the court splits from her feet; she holds the prayer.
+      SUDDENLY MANY 2.55: she flings her arms up and wide as every fissure erupts; then she watches, head tipped.
     The shots are computed from where the players really are (`HeroIntroductionScene.Nemu.cs`); the authored shots below are
-    their fallbacks with nobody on court. The stage reads these times: keep them in step with its `Nm*` constants.
+    their fallbacks with nobody on court, one per cut. The stage reads these times: keep them in step with its `Nm*` constants.
     """
-    p = Performance("nemu-held" if held else "nemu", 5.9)
-    # Still, looking down at the court, hands loose.
-    down = Pose(torso=(4, 0, 0), head=(18, 0, 2), left=(-4, 14, 0), right=(-4, 14, 0))
-    # Hands flung down and out at the court, leaning over them: the cracks split from under her.
-    slam = Pose(torso=(14, 0, 0), head=(20, 0, 0), left=(-10, 52, -6), right=(-10, 52, -6), legs=((10, 4), (-6, 4)))
-    # Head up as her eyes ignite, the hands still spread low.
-    lift = slam.but(torso=(6, 0, 0), head=(2, 0, -4))
+    p = Performance("nemu-held" if held else "nemu", 7.0)
+    # Hands clasped at her chest (twist 38 brings both hands together, measured on Sean's mesh), head bowed: praying.
+    pray = Pose(torso=(8, 0, 0), head=(14, 0, 0), left=(78, 5, 38), right=(78, 5, 38))
+    # The chant: the head dips a little further on each beat.
+    chant = pray.but(torso=(10, 0, 0), head=(21, 0, 0))
+    # Eyes open: the head comes up, the hands stay clasped.
+    wake = pray.but(torso=(4, 0, 0), head=(-6, 0, 0))
+    # The clasped hands thrust down at the court as it splits.
+    split = Pose(torso=(14, 0, 0), head=(4, 0, 0), left=(40, 5, 38), right=(40, 5, 38), legs=((6, 4), (-4, 4)))
     # Arms thrown up and wide (chibi arms are a head long: wide, not overhead), chest open, looking up into the storm.
     call = Pose(torso=(-8, 0, 0), head=(-16, 0, 0), left=(70, 78, 0), right=(70, 78, 0), legs=((4, 5), (-3, 5)))
     # Watching them, head tipped: she knows what is coming for them; then the tip goes the other way as they turn.
@@ -532,34 +532,38 @@ def nemu(held=False):
     watch2 = watch.but(head=(8, 6, -12))
     if held:
         shoe = (8, 26, -5)
-        down = down.but(right=shoe)
-        slam = slam.but(right=shoe)
-        lift = lift.but(right=shoe)
         call = call.but(right=shoe)
         watch = watch.but(right=shoe)
         watch2 = watch2.but(right=shoe)
 
-    p.key(0, down)
-    p.key(.12, slam, punch=True)
-    p.hold(.12, .3, slam)
-    p.key(.45, lift)
-    p.hold(.45, .85, lift)
-    p.key(1.05, call)
-    p.hold(1.05, 2.3, call)
-    p.key(2.8, watch)
-    p.hold(2.8, 4.6, watch)
-    p.key(5.0, watch2)
-    p.hold(5.0, 5.9, watch2)
+    p.key(0, pray)
+    beat = .21
+    t = beat * .5
+    while t < .62:
+        p.key(round(t, 3), chant)
+        p.key(round(t + beat * .5, 3), pray)
+        t += beat
+    p.key(.74, wake, punch=True)
+    p.hold(.74, .8, wake)
+    p.key(.88, split, punch=True)
+    p.hold(.88, 2.45, split)
+    p.key(2.6, call, punch=True)
+    p.hold(2.6, 3.3, call)
+    p.key(3.7, watch)
+    p.hold(3.7, 5.6, watch)
+    p.key(6.0, watch2)
+    p.hold(6.0, 7.0, watch2)
 
-    # S1 fallback: in front of her and above, her whole body and the court round her.
-    p.shot(0, .9, (1.1, 2.2, 4.4), (0, .55, .4), 50, eye_to=(1.1, 1.9, 3.7), look_to=(0, .75, .4))
-    # S2 fallback: high behind her, out over the court.
-    p.shot(.9, 2.2, (1.6, 3.4, -3.4), (0, 1.4, 3.5), 58, eye_to=(1.9, 4.4, -2.9), look_to=(0, 1.9, 4.5), fov_to=64)
-    # S3 to S5 fallbacks (one shot per cut, so the cuts are cuts): out in front of her, easing back to the court.
-    p.shot(2.2, 3.5, (.6, 1.3, 3.2), (0, 1.1, 5.5), 50, eye_to=(.8, 1.6, 2.9), look_to=(0, 1.2, 5.5), fov_to=52)
-    p.shot(3.5, 3.95, (-1.2, 1.4, 3.0), (0, 1.1, 5.5), 50, eye_to=(-1.1, 1.5, 2.8))
-    p.shot(3.95, 4.4, (1.8, 1.4, 3.0), (0, 1.1, 5.5), 50, eye_to=(1.7, 1.5, 2.8))
-    p.shot(4.4, 5.9, (.8, 1.6, 2.9), (0, 1.2, 5.5), 50, eye_to=(1.5, 3.0, 1.5), look_to=(0, 1.4, 5.5), fov_to=56)
+    # THE PRAYER fallback: in front of her, her whole body, a slow push.
+    p.shot(0, .85, (.55, .95, 2.5), (0, .6, 0), 48, eye_to=(.55, .85, 2.1), look_to=(0, .66, 0), fov_to=45)
+    # THE SPLIT fallback: high behind her, out over the court.
+    p.shot(.85, 1.35, (1.3, 3.3, -2.6), (0, .1, 1.6), 58, eye_to=(1.3, 3.9, -3.1), look_to=(0, .1, 3.6), fov_to=62)
+    # THE FIRST ONE and SUDDENLY MANY fallback: low over her shoulder, craning up into the storm.
+    p.shot(1.35, 3.25, (.9, 1.25, -1.7), (0, 1.0, 4.0), 54, eye_to=(1.6, 4.3, -3.4), look_to=(0, 1.9, 4.5), fov_to=64)
+    # THE FALL fallback: out in front of her.
+    p.shot(3.25, 5.5, (.6, 1.3, 3.2), (0, 1.1, 5.5), 52, eye_to=(.9, 1.5, 2.8))
+    # ALL OF THEM fallback: easing back to the court.
+    p.shot(5.5, 7.0, (1.0, 1.4, 2.4), (0, 1.0, 5.5), 54, eye_to=(1.5, 3.0, 1.5), look_to=(0, 1.4, 5.5), fov_to=56)
     p.locked((1.2, 2.2, -2.2), (0, .9, 4.5), 54)
     return p
 

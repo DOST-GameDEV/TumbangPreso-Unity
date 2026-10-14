@@ -27,7 +27,7 @@ Instruments (each typed below, never one recipe for two cues):
   peel     a shadow tearing up off the court: a slow stretching creak under a rising whisper (THEIR OWN SHADOWS, section 14)
   (toll, handbell, shuffle, snuff: v1's procession, kept as instruments, no longer in a cue)
   (buzz and clunk: BEHIND YOU's failing lights, retired with them in section 13, kept as instruments)
-Cues: sfx_ult_theme_nemu (the 5.9 s THEIR OWN SHADOWS cutscene, every beat at the stage's time), sfx_nemu_possess_tell, sfx_nemu_possess_surge.
+Cues: sfx_ult_theme_nemu (the 7.0 s THE PRAYER cutscene, v9, every beat at the stage's time), sfx_nemu_possess_tell, sfx_nemu_possess_surge.
 """
 import os
 import wave
@@ -293,41 +293,65 @@ def peel(seconds, gain=1.0):
     return (creak * .7 + tear) * gain
 
 
-# The stage's times (`HeroIntroductionScene.Nemu.cs`, THEIR OWN SHADOWS): keep in step with NmIgnite, NmWide, NmRingOut,
-# NmPeel, NmStood, NmHandsIn, NmHandsShut, NmPour, NmPoured, NmEyesOpen, NmTurn.
-IGNITE, WIDE, RING, PEEL, STOOD = .32, .90, 1.0, 1.55, 2.5
-HANDS_IN, HANDS_SHUT, POUR, POURED, EYES, TURN, LENGTH = 3.0, 3.6, 3.95, 4.55, 4.60, 4.65, 5.9
+# v9 THE PRAYER (`direction.md` section 18), at the stage's own times (`HeroIntroductionScene.Nemu.cs` `Nm*`).
+LENGTH = 7.0
+BEAT, IGNITE, SPLIT, LEAD, LEAD_IN, FIRST_EYES, BURST = .21, .72, .85, 1.35, 2.2, 2.5, 2.55
+RUN, TRIP, LANDED, ROLL, BACK_IN, TRIP_IN, RISE, TRIP_EYES, CRANE = 2.62, 3.95, 4.15, 4.2, 4.2, 4.6, 4.95, 5.3, 5.5
 
 
 def theme():
-    """LET THEM IN: THEIR OWN SHADOWS, beat for beat (`direction.md` section 14)."""
+    """LET THEM IN v9: THE PRAYER, beat for beat."""
     track = np.zeros(int((LENGTH + 1.0) * RATE))
     room = drone(LENGTH + .5, gain=.3)
     u = t_axis(len(room) / RATE)
-    # The room ducks under her whisper, then comes back heavier once the shadows are up.
-    duck = 1 - .6 * np.exp(-((u - (IGNITE + .1)) / .2) ** 2)
-    room *= np.minimum(1, u / .25) * duck * (1 + .5 * np.clip((u - PEEL) / 1.0, 0, 1))
+    # The room ducks under her chant, then comes back heavier once the court splits.
+    duck = 1 - .5 * np.clip(1 - u / SPLIT, 0, 1)
+    room *= np.minimum(1, u / .25) * duck * (1 + .6 * np.clip((u - SPLIT) / 1.0, 0, 1))
     place(track, room, 0)
-    place(track, breath(.45, 2000, 7000, shape="hush", gain=.55), IGNITE - .12)  # her whisper
-    place(track, chime(.2), IGNITE)                                              # her eyes
-    place(track, sub_swell(.9, gain=.45), RING)                                  # the ring of dark going out
-    place(track, wind(.7, gain=.25), RING)
-    place(track, crackle(.5, gain=.25), RING + .15)                              # the shadows twitch
-    place(track, peel(STOOD - PEEL + .1, gain=.8), PEEL)                         # they peel up off the court
-    place(track, whisper(STOOD - PEEL + .3, 8.0, .45), PEEL + .1)
-    place(track, chime(.18), STOOD - .05)                                        # their eyes open
-    heartbeat(STOOD, HANDS_SHUT, track, gain=.7)                                 # it is right behind you
-    place(track, breath(.6, 500, 3000, shape="out", gain=.35), HANDS_IN)         # its breath on their neck
-    place(track, breath(.22, 900, 6000, shape="in", gain=.9), HANDS_SHUT - .02)  # the gasp as the hands close
-    place(track, crackle(.3, gain=.4), HANDS_SHUT)
-    for v in range(3):
-        place(track, groan(.45, 66.0 + 9 * v, gain=.5), HANDS_SHUT + .06 * v)  # they fight it
-    place(track, suck(1.2), POURED - .42)                                        # it pours in
-    place(track, chime(.32), EYES)                                              # their eyes open violet
-    rise = LENGTH - TURN + .3
+    # THE PRAYER: a low chant on each beat, a whisper under it, the light gathering in her palms.
+    t = 0.0
+    while t < SPLIT - .05:
+        place(track, hum(BEAT * .9, notes=(98.0, 103.83), gain=.35) * np.hanning(int(BEAT * .9 * RATE)), t)
+        t += BEAT
+    place(track, whisper(SPLIT, 5.0, .3), 0)
+    place(track, sub_swell(SPLIT, gain=.3), 0)
+    place(track, chime(.2), IGNITE)                                               # her eyes snap open
+    # THE SPLIT: the court breaking open, the boom under it, the wind of it racing out.
+    place(track, crackle(.6, gain=.9), SPLIT)
+    place(track, crackle(.45, gain=.6), SPLIT + .18)
+    place(track, gulp(.7), SPLIT - .03)
+    place(track, wind(.6, gain=.35), SPLIT + .05)
+    # THE FIRST ONE: it claws out alone and wails; a slow heartbeat as everyone watches it circle.
+    place(track, crackle(.35, gain=.4), LEAD - .05)
+    place(track, wail(.7, gain=.55), LEAD + .15)
+    place(track, whisper(LEAD_IN - LEAD, 4.0, .25), LEAD)
+    heartbeat(LEAD + .1, LEAD_IN, track, gain=.45)
+    place(track, breath(.25, 900, 6000, shape="in", gain=.7), LEAD_IN - .22)    # the gasp as it turns on him
+    place(track, suck(1.1), LEAD_IN - .4)                                         # it pours into him
+    place(track, groan(.45, 70.0, gain=.55), LEAD_IN + .05)
+    place(track, chime(.26), FIRST_EYES)                                          # his eyes open violet
+    # SUDDENLY MANY: every fissure erupts, a chorus of wails, the storm's wind.
+    for k in range(6):
+        place(track, wail(.55 + .05 * k, gain=.35), BURST + .04 * k)
+    place(track, wind(2.0, gain=.45), BURST)
+    place(track, crackle(.5, gain=.5), BURST)
+    # THE FALL: running, the heart racing; the trip, the body hitting the court; the gasp as he sees it; it goes in; one
+    # caught behind him first.
+    heartbeat(RUN, TRIP_IN, track, gain=.7)
+    place(track, snap(.6), TRIP)
+    place(track, clunk(.7), LANDED)
+    place(track, suck(.45), BACK_IN - .35)
+    place(track, breath(.3, 900, 6000, shape="in", gain=.85), ROLL + .2)
+    place(track, suck(1.2), TRIP_IN - .42)
+    place(track, crackle(.3, gain=.45), TRIP_IN)
+    place(track, groan(.5, 64.0, gain=.55), TRIP_IN + .06)
+    place(track, peel(.5, gain=.7), RISE)                                         # hauled up like a puppet
+    place(track, chime(.3), TRIP_EYES)
+    # ALL OF THEM: a low choir swelling as they stare.
+    rise = LENGTH - CRANE + .3
     swell = np.linspace(.2, 1, int(rise * RATE)) ** 1.2
-    place(track, hum(rise, notes=(98.0, 116.54, 146.83, 87.31), gain=1.1) * swell, TURN)  # they stare
-    place(track, whisper(rise, 6.0, .35) * swell, TURN)
+    place(track, hum(rise, notes=(98.0, 116.54, 146.83, 87.31), gain=1.1) * swell, CRANE)
+    place(track, whisper(rise, 6.0, .35) * swell, CRANE)
     track = track[:int(LENGTH * RATE)]
     fade = np.ones(len(track)); f0 = int((LENGTH - .6) * RATE); fade[f0:] = np.linspace(1, 0, len(track) - f0) ** 1.2
     return track * fade

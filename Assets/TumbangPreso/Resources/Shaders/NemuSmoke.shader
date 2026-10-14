@@ -3,7 +3,7 @@
 // translucent bodies). Fade's NIGHTFALL is the reference: black smoke with the faces and claws drawn in light inside it.
 //
 // One shader, two modes, its particles laid out by hand (`Visual.NemuSmokeBatch`). (Modes 2 and 3, the cutscene's dead and their
-// hands drawn as cards, were retired after preview v4: they are 3D now, `Visual.NemuDeadFigure` and `Shaders/NemuDead`.)
+// hands drawn as cards, were retired after preview v4; the 3D dead that replaced them are gone too.)
 //  * `_Mode` 0, SMOKE: a soft round puff with a frayed, flowing rim. PREMULTIPLIED: its body darkens what is behind it (near
 //    black, alpha = density) and its rim adds violet light, so one puff is both the black and the edge.
 //    Vertex colour: r = how much the rim glows, g = fray (0 whole, 1 gone: holes open from the rim in), b = seed (each puff its

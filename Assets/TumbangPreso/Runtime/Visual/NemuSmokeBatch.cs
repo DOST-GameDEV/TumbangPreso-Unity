@@ -22,7 +22,7 @@ namespace TumbangPreso.Visual
     ///  * A MARK is smoke drawn AFTER the lights: the hollow black eyes and open mouth of a soul whose head is a glow
     ///    (SOUL STORM, section 16). Same shader and rows as a wisp, a third draw.
     /// No `Random` anywhere: the owner types every row. (The cutscene's dead and their hands were cards here until preview v4;
-    /// they are 3D now, `NemuDeadFigure`.)
+    /// the 3D dead that replaced them are gone too.)
     /// </summary>
     public sealed class NemuSmokeBatch : IDisposable
     {

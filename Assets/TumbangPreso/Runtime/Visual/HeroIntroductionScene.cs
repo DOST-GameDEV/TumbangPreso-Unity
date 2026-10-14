@@ -428,7 +428,7 @@ namespace TumbangPreso.Visual
         }
 
         private Vector3 Shake(float t) => _hero == "paete" ? PaeteShake(PaeteClock(t)) : _hero == "phaister" ? PhaisterShake(t)
-            : _hero == "amihan" ? AmihanShake(t) : _hero == "dante" ? DanteShake(t) : _hero == "cheska" ? CheskaShake(t) : _hero == "rafi" ? RafiShake(t) : Vector3.zero;
+            : _hero == "amihan" ? AmihanShake(t) : _hero == "dante" ? DanteShake(t) : _hero == "cheska" ? CheskaShake(t) : _hero == "rafi" ? RafiShake(t) : _hero == "nemu" ? NemuShake(t) : Vector3.zero;
 
         /// <summary>
         /// ⚠️ THE STAGE'S OWN GRADE ON THE PHASE CAMERA (v6, 2026-09-27): a whole-frame brightness and saturation multiplier for this
