@@ -404,7 +404,8 @@ namespace TumbangPreso.Abilities
             protected override void OnActivate(AbilityContext ctx)
             {
                 DurationRemaining = Mathf.Min(Duration, ctx.Round?.TimeLeft ?? Duration);
-                NetCue.Play("hero_nemu_ult", ctx.Position);
+                // No cast voice: the cutscene opens on her silent prayer (owner on v10: *"kahit remove the laughing na just start
+                // with this"*). `hero_nemu_ult` stays generated but unplayed.
                 // Only the host writes the status (`ApplyPossessed` refuses elsewhere); `SyncUnit` carries it to every peer.
                 var round = ctx.Round;
                 if (round == null || !NetAuthority.ShouldResolve()) return;

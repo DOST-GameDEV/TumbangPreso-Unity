@@ -7,7 +7,8 @@
 - [x] Owner on preview v3: *"chonky and weird"*, *"dont make sense and lacks vfx and direction and visual communication or storytelling"*; picked the BEHIND YOU story. Rebuilt at 5.9 s (the whisper, three blackouts with the dead nearer each time, hands over the eyes, the stare), thinner ghosts, smoke and aura as strands, a VFX pass, sound redrafted. Preview v4, 11/11: [direction](reports/nemu-ultimate-2026-10-11/direction.md) section 12.
 - [ ] The owner's verdict on preview v4 (cutscene, in-play aura, victim screen) and on the sound drafts.
 - [x] Owner on v9: hard to follow, rigid, too many souls, no cracks, a portal instead, souls for the whole possession, the drag shown on the HUD and the aura. Built v10 THE GATE: five slower beats, 22 souls out of a textured gate (`NemuPortal`) that stays open in play with the souls circling and leaving one by one (`NemuWorld`), softer acting and camera, the HUD ghost-tail swoosh, pull streaks and edge flames (`PossessedVignette`), the aura leaning into the pull (`NemuAura.Lean`). Film r47 passed, suites 8/8: [direction](reports/nemu-ultimate-2026-10-11/direction.md) section 19.
-- [ ] The owner's verdict on v10 (cutscene, gate, in-play souls, HUD swoosh/flames, aura lean) and on the v10 sound draft.
+- [x] Owner on v10: no laugh, no prayer, more time for the possessions, whole-map souls, eyes on entry, a bigger gate, varied faces, other maps, the HUD arms out, a clear arrow, a better aura that only grows toward the pull. Built v11; Bayan r54 and Arena r52 films passed, suites 8/8: [direction](reports/nemu-ultimate-2026-10-11/direction.md) section 20.
+- [ ] The owner's verdict on v11 and on the v11 sound draft; Ilalim, Sa Bubong, Lagoon Cove and Kanto not filmed.
 - [ ] Real networked peers on protocol 160; the owner's verdict on the sound drafts (out of `Resources/Sfx` until approved).
 - [ ] Known stale probe: `NemuKitContractProbe` asserts the retired Seance/Kuro-possession behaviour.
 

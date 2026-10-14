@@ -802,3 +802,36 @@ retimed). The film test passed with the cutscene 6.97 s and the round clock froz
 NemuPossessionMovementTests 8/8 ([film XML](evidence/film-v10/play-tests.xml), [suites XML](evidence/film-v10/nemu-suites.xml),
 [key frames](evidence/film-v10/key-frames.jpg), [possessed screen](evidence/film-v10/possessed-screen.jpg),
 [court](evidence/film-v10/court.jpg)). Not yet evidence: the owner's verdict on v10, the HUD and the sound.
+
+## 20. v11 (2026-10-14; the owner on v10 and during the pass)
+
+The owner, in his words: *"kahit remove the laughing na just start with this"*, *"give the possession shit more time to breathe di
+ko na kasi magets ung bandang dulo"*, *"expand it to whole map di lang dyan sa area na yan"*, *"eyes should glow purple whenn it
+enters him"*, *"portal could be bigger"*, of the first soul in the gate *"this looks really awkward"*, *"change expression of
+some ghosts, make some look mischievous or :0 ... iba ibahin mo"*, *"make sure this shit works with the other maps"*, *"start
+from this wag na prayer"* (the gate shot), *"this fpp pov sucks shit, remove those arms"*, *"the arrow looks so shitty and bad,
+barely even seen"*, *"the vfx for the ghost aura looks so bad"*, *"wag mo ilower opacity ... palakasin mo lang towards where its
+going"*.
+
+* No cast laugh (`hero_nemu_ult` unplayed) and no prayer: it opens on her, hands raised, as the gate tears (0.10 to 0.60).
+* Retimed (7.0 s): THE FIRST ONE 0.95 (in 2.45, eyes 2.55); THE HUNT 2.75 to 5.85, 3.1 s, the third caught (3.60) before the
+  trip (3.80), the plunge 4.65; ALL OF THEM 5.85.
+* Eyes light as the soul goes in (the fallen one's on the court); the possessed stance comes after the jerking (`Settle`).
+* The gate 3.6 m (4.6 m in play, 5.2 m up). The first soul fades up as it crosses the lip, glows less, and wears RAGE.
+* Two thirds of the storm (30 souls; 24 in play) each circle their own spot spread over the WHOLE MAP's playable bounds
+  (`AIController.Playable*`, which every map measures); a third stay round the court.
+* Five expressions (`NemuSouls.Expression`): SHOCK (the :O), MISCHIEF (scheming eyes, a jagged grin), WAIL, RAGE, SMIRK.
+* Other maps: the cutscene stage stood on a floor far below Arena's raised court (the court lookup does not know it by name);
+  it now stands on what is under the caster's own feet when the two disagree by over a metre (all heroes,
+  `HeroIntroductionScene.cs`). The lens is swept back from its subject and stops in front of any piece of the map
+  (`NmClearLens`). The film takes `TUMP_NEMU_FILM_MAP` (Eskinita passed; Arena r52 passed and reads, [frames](evidence/film-v11/arena-key-frames.jpg)).
+  A HUD seal threw before it was under a canvas on Arena (`OwnerAbilitySeal.Edge`), guarded.
+* The possessed player's screen (`PossessedVignette`): the ghost hands gone; a bold arrow (a violet crescent hugging the
+  crosshair, a solid head, chevrons streaming out, black outline); their aura as soft smoke from the edges, no lines; nothing
+  fades with the grip anywhere (here or on the body, `PossessedPresence`, `NemuAura`): it only grows stronger toward the pull.
+* The film's short mode (`TUMP_NEMU_FILM_LITE=1`): her screen and the possessed screen only.
+
+Film r54 (Bayan Plaza) passed, cutscene 6.97 s, clock frozen; Nemu suites 8/8 ([film XML](evidence/film-v11/play-tests.xml),
+[key frames](evidence/film-v11/key-frames.jpg), [possessed screen](evidence/film-v11/possessed-screen.jpg),
+[suites](evidence/film-v11/nemu-suites.xml)). Film: `Logs/nemu-lti/nemu_let_them_in_v11.mp4` with the v11 sound draft. Not yet
+evidence: the owner's verdict on v11.

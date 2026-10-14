@@ -33,7 +33,17 @@ namespace TumbangPreso.PlayTests
             _net = NetAuthority.Provider;
             yield return PlayModeWorld.Reset();
             if (Environment.GetEnvironmentVariable("TUMP_NEMU_FILM") != "1") yield break;
-            yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza, GameMode.HeroStrike);
+            // Any map (TUMP_NEMU_FILM_MAP; owner on v10: *"make sure this shit works with the other maps"*), Bayan Plaza by default.
+            switch (Environment.GetEnvironmentVariable("TUMP_NEMU_FILM_MAP"))
+            {
+                case "Eskinita": yield return MapRetrievalProbe.Load(SceneFlow.Eskinita, GameMode.HeroStrike); break;
+                case "IlalimNgTulay": yield return MapRetrievalProbe.Load(SceneFlow.IlalimNgTulay, GameMode.HeroStrike); break;
+                case "LagoonCove": yield return MapRetrievalProbe.Load(SceneFlow.LagoonCove, GameMode.HeroStrike); break;
+                case "Kanto": yield return MapRetrievalProbe.Load(SceneFlow.Kanto, GameMode.HeroStrike); break;
+                case "Arena": yield return MapRetrievalProbe.Load(SceneFlow.Arena, GameMode.HeroStrike); break;
+                case "SaBubong": yield return MapRetrievalProbe.Load(SceneFlow.SaBubong, GameMode.HeroStrike); break;
+                default: yield return MapRetrievalProbe.Load(SceneFlow.BayanPlaza, GameMode.HeroStrike); break;
+            }
             Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();
             yield return new WaitForSeconds(3.6f);
             NetAuthority.Provider = new SoloProvider();
@@ -121,14 +131,16 @@ namespace TumbangPreso.PlayTests
             var art = RosterBook.Load().FindPersonArt("nemu");
             nemu.GetComponent<CharacterVisual>().ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
             foreach (var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None)) arms.MatchCharacter(nemu);
-            var origin = can + new Vector3(0f, .12f, -5.0f);
+            // On Arena the court is a raised ring round the can: everyone is staged closer so they all stand on it.
+            float spread = Environment.GetEnvironmentVariable("TUMP_NEMU_FILM_MAP") == "Arena" ? .6f : 1f;
+            var origin = can + new Vector3(0f, .12f, -5.0f * spread);
             nemu.Teleport(origin); nemu.transform.rotation = Quaternion.identity;
             nemu.Intent.Clear(); nemu.Intent.Parked = false; nemu.IsBot = false;
             var others = round.Players.Where(p => p != null && p != nemu).ToArray();
             var spots = new[] { new Vector3(-3.2f, 0f, 3.8f), new Vector3(2.8f, 0f, 4.6f), new Vector3(.6f, 0f, 7.2f) };
             for (int i = 0; i < others.Length && i < spots.Length; i++)
             {
-                others[i].Teleport(origin + spots[i]);
+                others[i].Teleport(origin + spots[i] * spread);
                 others[i].Intent.Clear(); others[i].Intent.Parked = false;
                 var d = Flat(origin - others[i].transform.position);
                 if (d.sqrMagnitude > .01f) others[i].transform.rotation = Quaternion.LookRotation(d.normalized);
@@ -159,6 +171,9 @@ namespace TumbangPreso.PlayTests
                     // on v9: the souls go on for the whole 15 s).
                     int frames = int.TryParse(Environment.GetEnvironmentVariable("TUMP_NEMU_FILM_FRAMES"), out int asked) && asked > 0 ? asked : 30 * 24;
                     bool ownerOnly = Environment.GetEnvironmentVariable("TUMP_NEMU_FILM_OWNER_ONLY") == "1";
+                    // A short review (owner: *"the cutscene only and short record of FPP pov na possessed"*): her screen and the
+                    // possessed player's own screen only (TUMP_NEMU_FILM_LITE=1).
+                    bool lite = Environment.GetEnvironmentVariable("TUMP_NEMU_FILM_LITE") == "1";
                     for (int f = 0; f < frames; f++)
                     {
                         frame = f; film.Frame = f;
@@ -194,7 +209,7 @@ namespace TumbangPreso.PlayTests
                         var back = Flat(victim.transform.forward); back = back.sqrMagnitude > .01f ? back.normalized : Vector3.forward;
                         chase.transform.position = v - back * 3.2f + Vector3.Cross(Vector3.up, back) * 1.2f + Vector3.up * 2.4f;
                         chase.transform.LookAt(v + Vector3.up * 1.0f + back * 1.5f);
-                        film.Render(chase); film.Save(film.Target, "victim");
+                        if (!lite) { film.Render(chase); film.Save(film.Target, "victim"); }
 
                         // THAT PLAYER'S OWN SCREEN: their eyes, their grey, their hands.
                         var presence = victim.GetComponentInChildren<PossessedPresence>(true);
@@ -232,7 +247,7 @@ namespace TumbangPreso.PlayTests
                         // THE COURT.
                         wide.transform.position = origin + new Vector3(8.5f, 7.5f, -2.5f);
                         wide.transform.LookAt(origin + new Vector3(0f, .6f, 4.0f));
-                        film.Render(wide); film.Save(film.Target, "wide");
+                        if (!lite) { film.Render(wide); film.Save(film.Target, "wide"); }
                     }
                 }
             }

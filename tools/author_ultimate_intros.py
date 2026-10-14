@@ -509,10 +509,9 @@ def nemu(held=False):
     """
     LET THEM IN v10: THE GATE, 7.0 s (owner 2026-10-14; `docs/reports/nemu-ultimate-2026-10-11/direction.md` section 19: no
     cracks, the souls come out of an otherworldly portal, fewer of them, slower, every beat given time to read).
-      THE PRAYER 0.00-0.90: hands clasped at her chest, head bowed, chanting (the head dips on each 0.21 s beat); her eyes snap
-        open and her head comes up (0.72).
-      THE GATE 0.90: she lifts her clasped hands to the sky and the air over the court tears open; she holds them up.
-      THE POURING 3.55: she flings her arms wide as the gate pours out the rest; then she watches, head tipped.
+      v11: no prayer and no cast laugh (owner: *"start from this wag na prayer"*).
+      THE GATE 0.00: she lifts her clasped hands to the sky and the air over the court tears open; she holds them up.
+      THE POURING 2.75: she flings her arms wide as the gate pours out the rest; then she watches, head tipped.
     The shots are computed from where the players really are (`HeroIntroductionScene.Nemu.cs`); the authored shots below are
     their fallbacks with nobody on court, one per cut. The stage reads these times: keep them in step with its `Nm*` constants.
     """
@@ -536,34 +535,24 @@ def nemu(held=False):
         watch = watch.but(right=shoe)
         watch2 = watch2.but(right=shoe)
 
-    p.key(0, pray)
-    beat = .21
-    t = beat * .5
-    while t < .62:
-        p.key(round(t, 3), chant)
-        p.key(round(t + beat * .5, 3), pray)
-        t += beat
-    p.key(.74, wake, punch=True)
-    p.hold(.74, .8, wake)
-    p.key(.98, gate, punch=True)
-    p.hold(.98, 3.4, gate)
-    p.key(3.62, call, punch=True)
-    p.hold(3.62, 4.3, call)
-    p.key(4.8, watch)
-    p.hold(4.8, 6.0, watch)
+    # v11: no prayer (owner: *"start from this wag na prayer"*): she already holds her hands up to the sky as it opens.
+    p.key(0, gate)
+    p.hold(0, 2.6, gate)
+    p.key(2.82, call, punch=True)
+    p.hold(2.82, 3.5, call)
+    p.key(4.0, watch)
+    p.hold(4.0, 6.0, watch)
     p.key(6.4, watch2)
     p.hold(6.4, 7.0, watch2)
 
-    # THE PRAYER fallback: in front of her, her whole body, a slow push.
-    p.shot(0, .9, (.55, .95, 2.5), (0, .6, 0), 48, eye_to=(.55, .85, 2.1), look_to=(0, .66, 0), fov_to=45)
     # THE GATE fallback: low behind her, looking up past her at the sky over the court.
-    p.shot(.9, 1.8, (.7, .7, -1.8), (0, 2.6, 5.0), 56, eye_to=(.8, .6, -2.2), look_to=(0, 2.8, 5.0), fov_to=58)
+    p.shot(0, .95, (.7, .7, -1.8), (0, 2.6, 5.0), 56, eye_to=(.8, .6, -2.2), look_to=(0, 2.8, 5.0), fov_to=58)
     # THE FIRST ONE fallback: out in front of her, looking up at the gate.
-    p.shot(1.8, 3.55, (.9, 1.0, 2.0), (0, 2.4, 6.0), 56, eye_to=(1.0, 1.0, 2.4), look_to=(0, 1.6, 6.0), fov_to=52)
+    p.shot(.95, 2.75, (.9, 1.0, 2.0), (0, 2.4, 6.0), 56, eye_to=(1.0, 1.0, 2.4), look_to=(0, 1.6, 6.0), fov_to=52)
     # THE HUNT fallback: out in front of her.
-    p.shot(3.55, 5.75, (.6, 1.3, 3.2), (0, 1.1, 5.5), 52, eye_to=(.9, 1.5, 2.8))
+    p.shot(2.75, 5.85, (.6, 1.3, 3.2), (0, 1.1, 5.5), 52, eye_to=(.9, 1.5, 2.8))
     # ALL OF THEM fallback: easing back to the court and the gate over it.
-    p.shot(5.75, 7.0, (1.0, 1.4, 2.4), (0, 1.4, 5.5), 54, eye_to=(1.5, 2.6, 1.2), look_to=(0, 2.0, 5.5), fov_to=58)
+    p.shot(5.85, 7.0, (1.0, 1.4, 2.4), (0, 1.4, 5.5), 54, eye_to=(1.5, 2.6, 1.2), look_to=(0, 2.0, 5.5), fov_to=58)
     p.locked((1.2, 2.2, -2.2), (0, .9, 4.5), 54)
     return p
 

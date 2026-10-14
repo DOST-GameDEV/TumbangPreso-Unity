@@ -82,6 +82,13 @@ namespace TumbangPreso.Visual
                 { _leftPalm = palm; break; }
             }
             _hero = hero; _ground = VfxShapes.GroundPoint(source.transform.position);
+            // A caster standing on a floor the court lookup does not know by name (Arena's raised ring, 2026-10-14) put the whole
+            // stage on a floor far below: then the stage stands on what is under their own feet.
+            if (source.IsGrounded && Mathf.Abs(_ground.y - source.transform.position.y) > 1f)
+            {
+                float feet = Slipper.GroundY(source.transform.position + Vector3.up * .3f);
+                if (!float.IsInfinity(feet) && Mathf.Abs(feet - source.transform.position.y) < 1f) _ground.y = feet;
+            }
             _facing = Quaternion.Euler(0, source.transform.eulerAngles.y, 0);
             _performance = UltimatePerformance.For(hero, source.GetComponent<Carrier>()?.Held != null);
             _reducedEffects = Settings.SettingsStore.Current.ReducedEffects;

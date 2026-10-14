@@ -41,28 +41,53 @@ namespace TumbangPreso.Visual
             Face(batch, index, clock, head, heading, headSize, 1f, fade, eye, dist);
         }
 
+        /// <summary>The faces a soul can pull (owner on v10: *"change expression of some ghosts, make some look mischievous or :0
+        /// ... iba ibahin mo ... its okay if some have same"*).</summary>
+        public enum Expression { Shock, Mischief, Wail, Rage, Smirk }
+
+        /// <summary>Which face soul <paramref name="index"/> pulls: the five spread over the storm, some repeating.</summary>
+        public static Expression ExpressionOf(int index) => (Expression)Mathf.Min(4, (int)(Hash(index, 29) * 5f));
+
         /// <summary>
         /// A soul's face, on the front of its head the way it flies: whole as it comes at the lens, in profile as it crosses,
         /// gone as it flies away. Every soul its own (owner on v7: *"faces should be varied for ghosts and not js copy pasted"*):
-        /// the size, spacing and slant of its hollow eyes, one sometimes larger, and its mouth (a tall wail, a round scream, a
-        /// wide crooked howl), each wailing on its own beat.
+        /// one of five expressions (<see cref="Expression"/>), and within it its own size, spacing and slant of eyes, one
+        /// sometimes larger, its mouth moving on its own beat.
+        ///  * SHOCK: round hollow eyes and a round O of a mouth (the :O the owner kept).
+        ///  * MISCHIEF: narrow eyes slanted down to the middle, scheming, and a wide jagged grin curling up at the ends (his
+        ///    reference: a cartoon ghost's evil grin).
+        ///  * WAIL: eyes slanted up in the middle, grieving, and a tall open wail.
+        ///  * RAGE: big eyes slanted down hard in a scowl and a tall howling mouth.
+        ///  * SMIRK: one eye open, one squinting, and a lopsided jagged grin pulled up on one side.
         /// </summary>
-        public static void Face(NemuSmokeBatch batch, int index, float t, Vector3 head, Vector3 heading, float size, float squash, float fade, Vector3 eye, float dist)
+        /// <param name="fierce">The souls the story follows always pull RAGE (owner on v10: the first one's two dots and little
+        /// round mouth read as a cute face).</param>
+        public static void Face(NemuSmokeBatch batch, int index, float t, Vector3 head, Vector3 heading, float size, float squash, float fade, Vector3 eye, float dist, bool fierce = false)
         {
             Vector3 toLens = (eye - head) / dist;
             Vector3 faceUp = Vector3.up - heading * Vector3.Dot(Vector3.up, heading);
             faceUp = faceUp.sqrMagnitude > 1e-4f ? faceUp.normalized : Vector3.Cross(heading, Vector3.Cross(Vector3.up, toLens)).normalized;
             Vector3 faceRight = Vector3.Cross(faceUp, heading);
             float r = size * .5f;
+            var expression = fierce ? Expression.Rage : ExpressionOf(index);
 
-            float spread = .3f + .14f * Hash(index, 22);
-            float eyeH = .12f + .1f * Hash(index, 23);
-            float slant = (Hash(index, 24) - .4f) * 1.3f;
-            float eyeW = .13f + .06f * Hash(index, 25), eyeL = .22f + .1f * Hash(index, 26);
+            float spread = .3f + .12f * Hash(index, 22);
+            float eyeH = .12f + .08f * Hash(index, 23);
             float odd = Hash(index, 27) > .65f ? .3f * (Hash(index, 28) - .5f) : 0f;
-            int mouth = (int)(Hash(index, 29) * 3f);
+            float jitter = (Hash(index, 24) - .5f) * .3f;
+            float slant, eyeW, eyeL;
+            switch (expression)
+            {
+                case Expression.Shock: slant = jitter * .5f; eyeW = .15f + .04f * Hash(index, 25); eyeL = .19f + .05f * Hash(index, 26); break;
+                case Expression.Mischief: slant = 1.5f + jitter; eyeW = .1f + .03f * Hash(index, 25); eyeL = .28f + .06f * Hash(index, 26); eyeH -= .02f; break;
+                case Expression.Wail: slant = -.8f + jitter; eyeW = .13f + .05f * Hash(index, 25); eyeL = .24f + .08f * Hash(index, 26); break;
+                case Expression.Rage: slant = .9f + jitter * .3f; eyeW = .2f; eyeL = .36f; odd = .08f; spread = .36f; eyeH = .14f; break;
+                default: slant = .5f + jitter; eyeW = .14f + .03f * Hash(index, 25); eyeL = .24f + .05f * Hash(index, 26); break;
+            }
             float beat = 5f + 6f * Hash(index, 30);
             float wail = .5f + .5f * Mathf.Sin(t * beat + index * 1.7f);
+            // Which side a smirk pulls up on, and which eye it squints.
+            float side = Hash(index, 35) > .5f ? 1f : -1f;
 
             Vector3 On(float x, float y, out float facing)
             {
@@ -72,27 +97,64 @@ namespace TumbangPreso.Visual
                 facing = Vector3.Dot(n, toLens);
                 return head + n * r;
             }
+            float Show(float facing) => Mathf.Clamp01(facing * 3f + .65f);
+            float Narrow(float facing) => Mathf.Lerp(.35f, 1f, Mathf.Clamp01(facing));
+
             for (int e = -1; e <= 1; e += 2)
             {
                 Vector3 at = On(e * spread, eyeH, out float facing);
-                float show = Mathf.Clamp01(facing * 3f + .65f);
+                float show = Show(facing);
                 if (show <= .01f) continue;
                 float big = 1f + e * odd;
+                if (expression == Expression.Smirk && e == (int)side)
+                {
+                    // The squinting eye: a short flat slit, tipped a little.
+                    Vector3 slit = (faceRight + faceUp * (-e * .25f)).normalized;
+                    batch.Mark(at + faceUp * (size * .02f), slit, size * .06f * squash, size * .26f * Narrow(facing), fade * show, Hash(index, 31 + e));
+                    continue;
+                }
                 Vector3 along = (faceUp + faceRight * (e * slant * .5f)).normalized;
-                float narrow = Mathf.Lerp(.35f, 1f, Mathf.Clamp01(facing));
-                batch.Mark(at, along, size * eyeW * big * narrow, size * eyeL * big * squash, fade * show, Hash(index, 31 + e));
+                batch.Mark(at, along, size * eyeW * big * Narrow(facing), size * eyeL * big * squash, fade * show, Hash(index, 31 + e));
+            }
+
+            if (expression == Expression.Mischief || expression == Expression.Smirk)
+            {
+                // THE GRIN: a jagged stroke along a smile that curls up at its ends, its points alternating up and down so it
+                // reads as teeth; a smirk's is shorter and pulled up on one side.
+                bool smirk = expression == Expression.Smirk;
+                float half = smirk ? .26f : .34f + .04f * Hash(index, 36);
+                float curl = smirk ? .25f : .55f + .2f * Hash(index, 37);
+                float lop = smirk ? .35f * side : 0f;
+                float open = .05f + .02f * wail;
+                const int points = 7;
+                Vector3 prev = default; float prevFacing = 0f;
+                for (int k = 0; k < points; k++)
+                {
+                    float x = Mathf.Lerp(-half, half, k / (float)(points - 1)) + (smirk ? .06f * side : 0f);
+                    float y = -.36f + curl * x * x + lop * x + ((k & 1) == 0 ? open : -open);
+                    Vector3 at = On(x, y, out float facing);
+                    if (k > 0)
+                    {
+                        float show = Show(Mathf.Min(facing, prevFacing));
+                        Vector3 seg = at - prev;
+                        float len = seg.magnitude;
+                        if (show > .01f && len > 1e-4f)
+                            batch.Mark((at + prev) * .5f, seg, size * .085f * Narrow(facing), len * 1.25f + size * .04f, fade * show, Hash(index, 50 + k));
+                    }
+                    prev = at; prevFacing = facing;
+                }
+                return;
             }
             {
-                float open = mouth == 0 ? .3f + .18f * wail : mouth == 1 ? .22f + .1f * wail : .16f + .08f * wail;
-                float wide = mouth == 0 ? .19f : mouth == 1 ? .22f + .06f * wail : .36f;
-                float crook = mouth == 2 ? (Hash(index, 33) - .5f) * .5f : 0f;
+                float open = expression == Expression.Shock ? .24f + .1f * wail : .3f + .18f * wail;
+                float wide = expression == Expression.Shock ? .2f + .03f * wail : .19f;
+                float crook = expression == Expression.Rage ? (Hash(index, 33) - .5f) * .2f : 0f;
                 Vector3 at = On(crook * .3f, -.32f - open * .45f, out float facing);
-                float show = Mathf.Clamp01(facing * 3f + .65f);
+                float show = Show(facing);
                 if (show > .01f)
                 {
                     Vector3 along = (faceUp + faceRight * crook).normalized;
-                    float narrow = Mathf.Lerp(.35f, 1f, Mathf.Clamp01(facing));
-                    float across = size * wide * narrow, tall = size * open * squash * 1.2f;
+                    float across = size * wide * Narrow(facing), tall = size * open * squash * 1.2f;
                     if (across > tall) batch.Mark(at, Vector3.Cross(heading, along), tall, across, fade * show, Hash(index, 34));
                     else batch.Mark(at, along, across, tall, fade * show, Hash(index, 34));
                 }

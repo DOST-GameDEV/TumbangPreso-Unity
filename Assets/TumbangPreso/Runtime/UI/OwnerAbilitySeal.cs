@@ -70,7 +70,8 @@ namespace TumbangPreso.UI
             }
         }
 
-        private float Edge => .7f / Mathf.Max(.01f, canvas.scaleFactor *
+        // Before it is under a canvas (built while the HUD is still being parented, seen on Arena) the edge is one unit's worth.
+        private float Edge => canvas == null || canvas.rootCanvas == null ? .7f : .7f / Mathf.Max(.01f, canvas.scaleFactor *
             Mathf.Abs(rectTransform.lossyScale.x / canvas.rootCanvas.transform.lossyScale.x));
 
         private void Disc(VertexHelper h, Vector2 centre, float radius, Color ink)

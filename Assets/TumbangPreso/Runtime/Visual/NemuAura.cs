@@ -117,7 +117,8 @@ namespace TumbangPreso.Visual
                 float width = s.Width * (.07f + .06f * phase) * (1f + .3f * s.Swell);
                 float length = s.Width * (.28f + .55f * phase) * (1f + .4f * s.Swell + .5f * pulled) * (1f + .7f * lean * Mathf.Max(0f, facing));
                 float life = Mathf.Sin(phase * Mathf.PI);
-                float density = amount * (.7f + .25f * s.Swell) * life * (1f + lean * (.6f * facing - .1f));
+                // Stronger toward the pull, never fainter away from it (owner: *"wag mo ilower opacity ... palakasin mo lang towards where its going"*).
+                float density = amount * (.7f + .25f * s.Swell) * life * (1f + .9f * lean * Mathf.Max(0f, facing));
                 Vector3 at = born + rise + drag;
                 // Nothing below their feet: the fire leaves the body, it does not pool on the court.
                 if (at.y < s.Feet.y + .05f) continue;

@@ -152,7 +152,6 @@ namespace TumbangPreso.Visual
             float strength = pull.magnitude;
             Vector3 dir = pulling ? pull / Mathf.Max(1e-4f, strength) : _motor.transform.forward;
             dir.y = 0f; dir = dir.sqrMagnitude > 1e-4f ? dir.normalized : Vector3.forward;
-            float gripLook = Mathf.InverseLerp(NemuRules.GripFloor, 1f, _motor.PossessionGrip);
 
             var model = _motor.GetComponent<CharacterVisual>()?.Model;
             if (model != null && _measuredModel != model.transform) Measure(model.transform);
@@ -168,13 +167,13 @@ namespace TumbangPreso.Visual
                 // THE AURA. The cutscene already showed it arriving, so play picks it up whole from the first frame (films r1 and
                 // r9: anything keyed to the possession clock is still at zero on the hand-back frame). It burns off as it leaves.
                 const float arrive = 1f;
-                float amount = arrive * (1f - leave) * Mathf.Lerp(.5f, 1f, gripLook);
+                float amount = arrive * (1f - leave);   // full the whole time: it only leans harder into the pull (owner on v11)
                 var state = new NemuAura.State
                 {
                     Feet = feet + Vector3.up * (Ease(leave) * .4f), Forward = forward, Stream = pulling ? dir : Vector3.zero,
                     Top = _top, Width = _width, Clock = now, Amount = amount, Swell = Mathf.Max(tell, after * .6f), Drag = surge,
                     Lean = pulling ? settle * (1f - leave) * Mathf.Clamp01(.65f + .2f * tell + .35f * surge) : 0f,
-                    Thin = _motor.PossessionResisting ? 1f - gripLook : 0f, Seat = seat, Reduced = reduced,
+                    Thin = 0f, Seat = seat, Reduced = reduced,
                 };
                 NemuAura.Draw(_smoke, state);
 

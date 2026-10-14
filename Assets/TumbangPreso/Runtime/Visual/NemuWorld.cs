@@ -11,17 +11,19 @@ namespace TumbangPreso.Visual
     ///    color of the game for everyone"*.)
     ///  * THE GATE: the tear she opened (`NemuPortal`) hangs open over the court beyond the possessed. (Owner on v9: *"siguro wag
     ///    na floor cracks"*, *"some sort of otherwordly portal somewhere where the ghosts come from"*.)
-    ///  * THE SOULS: the cutscene's storm goes on circling the court round it (*"continue showing for the whole 15 seconds kahit
-    ///    tapos na"*). As the possession runs down they go back into the gate one at a time, so the court can be read as a
+    ///  * THE SOULS: the cutscene's storm goes on circling (*"continue showing for the whole 15 seconds kahit tapos na"*): a
+    ///    third round the court, the rest each circling its own spot spread over the WHOLE MAP's playable bounds, which every
+    ///    map measures for itself (`MatchInstaller.MeasurePlayableBounds`) (*"expand it to whole map"*, *"make sure this shit
+    ///    works with the other maps"*). As the possession runs down they go back into the gate one at a time, so the court can be read as a
     ///    clock (*"as ult lasts makikita mo na the ghosts slowly fade"*); the last three, and the gate, only go with the last
     ///    possession's own leave (*"ghosts only fade when posession completley disappears"*).
     /// PRESENTATION ONLY: posed from the replicated possession clocks, so every peer sees the same; it touches no rule and no state.
     /// </summary>
     public sealed class NemuWorld : MonoBehaviour
     {
-        private const float GateSize = 3.4f, GateHeight = 4.2f;
-        private const int Souls = 10, ReducedSouls = 5, Kept = 3, Tail = 8;
-        private const float TailStep = .035f, ReturnSeconds = 1.1f;
+        private const float GateSize = 4.6f, GateHeight = 5.2f;   // (owner on v10: *"portal could be bigger"*)
+        private const int Souls = 24, ReducedSouls = 12, Kept = 4, Tail = 8;
+        private const float TailStep = .035f, ReturnSeconds = 1.6f;
 
         private static NemuWorld _live;
         private static Material _ink;
@@ -32,6 +34,7 @@ namespace TumbangPreso.Visual
         private bool _placed;
         private readonly Vector3[] _tail = new Vector3[Tail];
         private readonly bool[] _on = new bool[Tail];
+        private Vector2 _mapMin = new Vector2(-10f, -14f), _mapMax = new Vector2(10f, 14f);
 
         /// <summary>0 to 1: how far the world is in Nemu's dusk now.</summary>
         public static float Weight { get; private set; }
@@ -99,7 +102,12 @@ namespace TumbangPreso.Visual
                     if (p != null && p.IsPossessed) _reach = Mathf.Max(_reach, Vector3.Distance(Flat(p.transform.position), Flat(_centre)) + 2f);
                 _reach = Mathf.Min(_reach, 8f);
                 _gate = new NemuPortal(transform, _gateAt, GateSize);
-                _smoke = new NemuSmokeBatch(transform, "NemuWorldSouls", 220, 120, 60);
+                _smoke = new NemuSmokeBatch(transform, "NemuWorldSouls", 320, 160, 100);
+                if (AIController.PlayableMaxX - AIController.PlayableMinX > 4f && AIController.PlayableMaxZ - AIController.PlayableMinZ > 4f)
+                {
+                    _mapMin = new Vector2(AIController.PlayableMinX, AIController.PlayableMinZ);
+                    _mapMax = new Vector2(AIController.PlayableMaxX, AIController.PlayableMaxZ);
+                }
             }
             if (!_placed) return;
 
@@ -138,27 +146,39 @@ namespace TumbangPreso.Visual
             return Mathf.Lerp(3f, NemuRules.PossessedSeconds - 2f, order);
         }
 
-        /// <summary>Where soul <paramref name="i"/> is at <paramref name="s"/> seconds into the possession (world): circling the
-        /// court high, wide and spread out, dipping now and then; once it leaves, drawn back into the gate. False once in.</summary>
+        /// <summary>Where soul <paramref name="i"/> is at <paramref name="s"/> seconds into the possession (world): round the court
+        /// (every third) or round its own spot out over the map, high and spread out, dipping now and then; once it leaves,
+        /// drawn back into the gate across the map. False once in.</summary>
         private bool Soul(int i, float s, float gone, out Vector3 at)
         {
             float h1 = NemuSouls.Hash(i, 1), h2 = NemuSouls.Hash(i, 2), h3 = NemuSouls.Hash(i, 3);
-            float radius = _reach * Mathf.Lerp(.55f, 1.1f, Mathf.Sqrt(h2));
-            float speed = (3f + 1.5f * h3) / Mathf.Max(1f, radius) * (i % 3 == 0 ? -1f : 1f);
+            bool court = i % 3 == 0;
+            Vector3 middle = _centre;
+            float radius = _reach * Mathf.Lerp(.55f, 1.1f, Mathf.Sqrt(h2)), height = 2.8f + 2.6f * h1;
+            if (!court)
+            {
+                // A jittered grid over the playable bounds, so the souls cover the map evenly and never clump.
+                int cells = Mathf.CeilToInt(Mathf.Sqrt(Souls));
+                int k = (i * 7) % (cells * cells);
+                float u = (k % cells + .15f + .7f * NemuSouls.Hash(i, 40)) / cells, w = (k / cells + .15f + .7f * NemuSouls.Hash(i, 41)) / cells;
+                middle = new Vector3(Mathf.Lerp(_mapMin.x, _mapMax.x, u), _centre.y, Mathf.Lerp(_mapMin.y, _mapMax.y, w));
+                radius = 1.5f + 3.5f * h2; height = 3.2f + 3.5f * h1;
+            }
+            float speed = (3f + 1.5f * h3) / Mathf.Max(1f, radius) * (i % 2 == 0 ? -1f : 1f);
             float phase = i / (float)Souls * Mathf.PI * 2f;
             Vector3 Circle(float time)
             {
                 float a = phase + speed * time;
                 float r = radius * (1f + .1f * Mathf.Sin(time * .9f + phase));
-                float h = 2.8f + 2.6f * h1 + .5f * Mathf.Sin(time * 1.3f + phase * 3f) - 1.4f * Mathf.Pow(Mathf.Max(0f, Mathf.Sin(time * .45f + phase * 2f)), 8f);
-                return _centre + new Vector3(Mathf.Sin(a) * r, h, Mathf.Cos(a) * r);
+                float h = height + .5f * Mathf.Sin(time * 1.3f + phase * 3f) - 1.4f * Mathf.Pow(Mathf.Max(0f, Mathf.Sin(time * .45f + phase * 2f)), 8f);
+                return middle + new Vector3(Mathf.Sin(a) * r, h, Mathf.Cos(a) * r);
             }
             if (s < gone) { at = Circle(s); return true; }
-            float u = (s - gone) / ReturnSeconds;
-            if (u >= 1f) { at = default; return false; }
+            float p = (s - gone) / ReturnSeconds;
+            if (p >= 1f) { at = default; return false; }
             Vector3 from = Circle(gone);
-            float e = u * u * (3f - 2f * u);
-            at = Vector3.Lerp(from, _gateAt, e) + Vector3.up * (Mathf.Sin(e * Mathf.PI) * 1.2f);
+            float e = p * p * (3f - 2f * p);
+            at = Vector3.Lerp(from, _gateAt, e) + Vector3.up * (Mathf.Sin(e * Mathf.PI) * 2f);
             return true;
         }
 

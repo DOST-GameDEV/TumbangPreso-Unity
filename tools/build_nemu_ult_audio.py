@@ -27,7 +27,7 @@ Instruments (each typed below, never one recipe for two cues):
   peel     a shadow tearing up off the court: a slow stretching creak under a rising whisper (THEIR OWN SHADOWS, section 14)
   (toll, handbell, shuffle, snuff: v1's procession, kept as instruments, no longer in a cue)
   (buzz and clunk: BEHIND YOU's failing lights, retired with them in section 13, kept as instruments)
-Cues: sfx_ult_theme_nemu (the 7.0 s THE PRAYER cutscene, v9, every beat at the stage's time), sfx_nemu_possess_tell, sfx_nemu_possess_surge.
+Cues: sfx_ult_theme_nemu (the 7.0 s THE GATE cutscene, v11, every beat at the stage's time), sfx_nemu_possess_tell, sfx_nemu_possess_surge.
 """
 import os
 import wave
@@ -293,33 +293,25 @@ def peel(seconds, gain=1.0):
     return (creak * .7 + tear) * gain
 
 
-# v10 THE GATE (`direction.md` section 19), at the stage's own times (`HeroIntroductionScene.Nemu.cs` `Nm*`).
+# v11 THE GATE (`direction.md` sections 19 and 20), at the stage's own times (`HeroIntroductionScene.Nemu.cs` `Nm*`).
 LENGTH = 7.0
-BEAT, IGNITE, SPLIT, GATE_OPEN, LEAD, LEAD_IN, FIRST_EYES, BURST = .21, .72, .9, 1.45, 1.85, 3.25, 3.5, 3.55
-RUN, TRIP, LANDED, ROLL, BACK_IN, TRIP_IN, RISE, TRIP_EYES, CRANE = 3.78, 4.45, 4.7, 4.72, 4.85, 5.0, 5.22, 5.6, 5.75
+BEAT, IGNITE, SPLIT, GATE_OPEN, LEAD, LEAD_IN, FIRST_EYES, BURST = .21, .05, .05, .6, .95, 2.45, 2.55, 2.75
+RUN, TRIP, LANDED, ROLL, BACK_IN, TRIP_IN, RISE, TRIP_EYES, CRANE = 3.0, 3.8, 4.05, 4.15, 3.6, 4.65, 5.1, 4.75, 5.85
 
 
 def theme():
-    """LET THEM IN v10: THE GATE, beat for beat."""
+    """LET THEM IN v11: THE GATE, beat for beat."""
     track = np.zeros(int((LENGTH + 1.0) * RATE))
     room = drone(LENGTH + .5, gain=.3)
     u = t_axis(len(room) / RATE)
-    # The room ducks under her chant, then comes back heavier once the gate tears open.
-    duck = 1 - .5 * np.clip(1 - u / SPLIT, 0, 1)
-    room *= np.minimum(1, u / .25) * duck * (1 + .6 * np.clip((u - SPLIT) / 1.0, 0, 1))
+    # v11: no prayer. The room comes in under the gate and grows heavier as it opens.
+    room *= np.minimum(1, u / .15) * (1 + .6 * np.clip((u - SPLIT) / 1.0, 0, 1))
     place(track, room, 0)
-    # THE PRAYER: a low chant on each beat, a whisper under it, the light gathering in her palms.
-    t = 0.0
-    while t < SPLIT - .05:
-        place(track, hum(BEAT * .9, notes=(98.0, 103.83), gain=.35) * np.hanning(int(BEAT * .9 * RATE)), t)
-        t += BEAT
-    place(track, whisper(SPLIT, 5.0, .3), 0)
-    place(track, sub_swell(SPLIT, gain=.3), 0)
-    place(track, chime(.2), IGNITE)                                               # her eyes snap open
+    place(track, chime(.2), IGNITE)                                               # her eyes burning as it opens
     # THE GATE: the light climbing, the air tearing (a crackle as it catches, a rip as it opens), the boom, the wind sucked in.
-    place(track, gulp(.6), SPLIT - .03)
+    place(track, gulp(.6), max(0.0, SPLIT - .03))
     place(track, crackle(.4, gain=.6), SPLIT + .08)
-    place(track, peel(.5, gain=.6), GATE_OPEN - .45)
+    place(track, peel(.5, gain=.6), max(0.0, GATE_OPEN - .45))
     place(track, crackle(.6, gain=.9), GATE_OPEN - .05)
     place(track, sub_swell(.8, gain=.35), GATE_OPEN - .3)
     place(track, wind(1.2, gain=.35), GATE_OPEN)

@@ -105,9 +105,9 @@ namespace TumbangPreso.UI
         public bool PossessedScreenVisible => _possessed != null && _possessed.enabled && _possessedPresence > .3f;
 
         /// <summary>
-        /// POSSESSED, ON THE VICTIM'S OWN SCREEN (`docs/reports/nemu-ultimate-2026-10-11/direction.md` section 5): ghost hands reach
-        /// in from the edge the ghost is dragging them toward, clench before each surge, lunge during it and slip back as the player
-        /// wears its grip down, over a breathing ink vignette (`Shaders/PossessedVignette`). The direction is the same pure pull the
+        /// POSSESSED, ON THE VICTIM'S OWN SCREEN (`docs/reports/nemu-ultimate-2026-10-11/direction.md` sections 5 and 20): a bold
+        /// arrow round the crosshair pointing the way the ghost drags them, streaks flowing that way, their aura as smoke rolling
+        /// in from the edges (thickest on that side) over a breathing ink vignette (`Shaders/PossessedVignette`). The direction is the same pure pull the
         /// motor steers with (`CharacterMotor.PossessionPull`), turned into the camera's frame, so it always agrees with the body.
         /// It is information, not a flash: Reduce visual effects keeps the shapes and stills the breathing.
         /// </summary>
