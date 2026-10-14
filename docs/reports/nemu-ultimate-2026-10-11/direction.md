@@ -723,3 +723,11 @@ letting go with the last possession's leave. Possessed players' own painted eyes
 Sound: `tools/build_nemu_ult_audio.py` redrafted to v9 (a chant on each beat, the court breaking, one lone wail, a heartbeat as
 it circles, the suck into him, a chorus of wails, the trip and the body on the court, the gasp, the creak of the puppet rise, the
 choir); still drafts in `audio-drafts/`, not in `Resources/Sfx`.
+| r43, v9 | the full four-view film (17 s): the story as r42; in play her fissures stay open across the court and the victim's own screen takes the dusk (the sky violet); the court view is a film camera, not a match camera, so it is not graded | |
+
+Films: `Logs/nemu-lti/nemu_let_them_in_v9.mp4` (her screen) and `nemu_let_them_in_v9_four_views.mp4`, both with the v9 sound
+draft; the film test passed and NemuPrusisyonTests 7/7 ([film XML](evidence/film-v9/play-tests.xml),
+[suites XML](evidence/film-v9/nemu-suites.xml), [key frames](evidence/film-v9/key-frames.jpg),
+[play, court](evidence/film-v9/play-wide.jpg), [play, possessed](evidence/film-v9/play-victim.jpg)). NemuKitContractProbe fails
+21 of 38 on mechanics retired before this pass (Veil, the familiar, projection, Seance, Carapace); untouched here. Not yet
+evidence: the owner's verdict on v9 and on the sound.
