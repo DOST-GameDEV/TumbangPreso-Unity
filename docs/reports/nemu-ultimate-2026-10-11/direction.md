@@ -914,3 +914,22 @@ Film r67 passed (cutscene 6.97 s, clock frozen); Nemu suites 8/8 ([fall](evidenc
 [first looks](evidence/film-v15/first-look.jpg), [ending](evidence/film-v15/ending-struggle.jpg),
 [XML](evidence/film-v15/play-tests.xml), [suites](evidence/film-v15/nemu-suites.xml)). Film:
 `Logs/nemu-lti/nemu_let_them_in_v15.mp4`. Not yet evidence: the owner's verdict.
+
+## 24. v16 (2026-10-15; on the court, he walks, then the strings)
+
+The owner on v15: *"he goes inside floor bruhh"* (lying on his back, 0:04), *"make him look like he's walking normally after but
+then something weird af happens or smth for the ending"*, and *"limit vid u record to js ult cutscene"*.
+
+* THE GROUND: v15's mesh measure read each skinned body's bake in one scale convention, and on this rig it was the other one, so
+  his lowest point read too high and he was pressed half into the court. Which convention each renderer's bake uses is now read
+  once while he stands (`NmCalibrate`, as `HeroAbilityClips.GroundIntroduction` does), by whichever reading matches the
+  renderer's height; `NmLowest` uses it.
+* THE STRINGS (supersedes 23's struggle): set down from his rise (5.2), he walks at the lens like anyone would: a walking pace on
+  the way he faces, arms and legs swinging, head level, no possessed stance or cut-string snaps, only his eyes wrong. At the tug
+  (5.95) he is yanked off his feet mid-step; his legs keep walking in the air and his head flops over 45 degrees; then the lurch,
+  the dark and the flare as before. The lens still runs on from his rise with no cut (its push is 0.3 m, as he now walks at it).
+* Review films are now the cutscene alone, her screen, trimmed to the scene's frames.
+
+Film r68 passed (cutscene 6.97 s, clock frozen); Nemu suites 8/8 ([fall](evidence/film-v16/fall-on-court.jpg),
+[ending](evidence/film-v16/ending-walk.jpg), [XML](evidence/film-v16/play-tests.xml), [suites](evidence/film-v16/nemu-suites.xml)).
+Film: `Logs/nemu-lti/nemu_let_them_in_v16.mp4` (7.1 s). Not yet evidence: the owner's verdict.

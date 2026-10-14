@@ -11,7 +11,8 @@
 - [x] Owner on v11: the ending too sudden and not scary, the entry VFX, people too fast before possession, the possessed screen ugly. Built v12 THE STRINGS ending (through her eyes), a clean entry, calmer acting, a new arrow and one-sided smoke. Film r59 passed: [direction](reports/nemu-ultimate-2026-10-11/direction.md) section 21.
 - [x] Owner on v12/v13: the first soul in the gate, unnatural turns, sinking into the court, the ending (teleporting, focus the runner), glitch. Built v13 and v14; film r62 passed, suites 8/8: [direction](reports/nemu-ultimate-2026-10-11/direction.md) section 22.
 - [x] Owner on v14: floating before the soul, the first looks too fast, the cut to his back, make him struggle. Built v15; film r67 passed, suites 8/8: [direction](reports/nemu-ultimate-2026-10-11/direction.md) section 23.
-- [ ] The owner's verdict on v15 and on the sound draft; one bright frame at her hand-back; Ilalim, Sa Bubong, Lagoon Cove and Kanto not filmed.
+- [x] Owner on v15: sinking into the court, walk normally then something wrong, film only the cutscene. Built v16; film r68 passed, suites 8/8: [direction](reports/nemu-ultimate-2026-10-11/direction.md) section 24.
+- [ ] The owner's verdict on v16 and on the sound draft; one bright frame at her hand-back; Ilalim, Sa Bubong, Lagoon Cove and Kanto not filmed.
 - [ ] Real networked peers on protocol 160; the owner's verdict on the sound drafts (out of `Resources/Sfx` until approved).
 - [ ] Known stale probe: `NemuKitContractProbe` asserts the retired Seance/Kuro-possession behaviour.
 

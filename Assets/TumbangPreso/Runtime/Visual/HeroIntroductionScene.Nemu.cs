@@ -49,9 +49,9 @@ namespace TumbangPreso.Visual
         /// <summary>
         /// THE STRINGS, her ending (5.30-7.00), on the one who ran (owner on v13: *"why do they teleport to the middle"*, *"maybe
         /// js focus on the dude that was running"*): v15 (owner on v14: *"why tf does camera go to his back view ... let it flow
-        /// from this"*, *"make it look like he's trying to struggle"*): the lens stays in front of him from his rise, no cut;
-        /// hauled up, he fights it, wrenching against the pull and kicking (5.0); violet strings snap taut from his head and
-        /// shoulders back to her lifted hand and yank him up, still fighting (5.95); he drifts at the lens, then snaps nearer as
+        /// from this"*; v16, on v15: *"walking normally after but then something weird af happens"*): the lens stays in front of
+        /// him from his rise, no cut; set down, he walks at it like anyone would (5.2); violet strings snap taut from his head and
+        /// shoulders back to her lifted hand and yank him off his feet mid-step, legs still walking (5.95); he drifts at the lens, then snaps nearer as
         /// the lights die (6.30) to black but for hot violet, his eyes; they flare (6.42); the lights come back to dusk for the
         /// hand-back. The others stay where they are.
         /// </summary>
@@ -122,6 +122,8 @@ namespace TumbangPreso.Visual
             public float Side = 1f;
             public NemuEyeGlow Eyes;
             public Renderer[] Renderers;
+            /// <summary>Per renderer: whether its baked mesh already carries its transform's scale (`NmCalibrate`).</summary>
+            public bool[] BakeScaled;
             /// <summary>Their chest this frame (scene space), as it jerks.</summary>
             public Vector3 Chest;
             public int Seat;
@@ -395,6 +397,7 @@ namespace TumbangPreso.Visual
             v.Chest = v.Home + Vector3.up * (v.Top * .55f);
             v.Eyes = NemuEyeGlow.On(other.Renderers);
             v.Renderers = other.Renderers;
+            v.BakeScaled = NmCalibrate(v.Renderers);
             if (v.Eyes != null) _nmEyeGlows.Add(v.Eyes);
             v.Hits = new[] { NmLeadIn }; v.Souls = new[] { 0 }; v.Strength = new[] { 1f };
             v.Wake = NmFirstWake; v.Settle = NmFirstWake + .15f;
@@ -444,6 +447,14 @@ namespace TumbangPreso.Visual
         private void NmBody(NmVictim v, float s, out Vector3 pos, out Quaternion rot, out float lying)
         {
             NmBodyPath(v, s, out pos, out rot, out lying);
+            // THE STRINGS: set down from his rise, he walks on the way he faces at a walk's pace until the tug takes him.
+            if (s > NmTripSettle - .05f && v == NmEndSubject)
+            {
+                Vector3 ahead = rot * Vector3.forward; ahead.y = 0f;
+                float x = Mathf.Min(s, NmTug) - NmTripSettle;
+                if (x > 0f && ahead.sqrMagnitude > 1e-4f) pos += ahead.normalized * (.85f * x * x / (x + .2f));
+                pos -= Vector3.up * (.08f * Ease(NmTripSettle - .05f, NmTripSettle + .3f, s));
+            }
             // THE STRINGS: the one it is about drifts at the lens after the tug, then snaps nearer as the lights die.
             float lurch = NmLurch(s);
             if (lurch > 0f && v == NmEndSubject)
@@ -1030,7 +1041,7 @@ namespace TumbangPreso.Visual
             Vector3 fwdBase = NmWDir(rot * Vector3.forward); fwdBase.y = 0f;
             Vector3 toLens = NmW(_nmEye) - NmW(pos); toLens.y = 0f;
             float turn = toLens.sqrMagnitude > 1e-4f && fwdBase.sqrMagnitude > 1e-4f ? Vector3.SignedAngle(fwdBase, toLens, Vector3.up) : 0f;
-            // (film r64: in front of him a full turn to the lens on top of his fight showed the back of his head.)
+            // (film r64: in front of him a full turn to the lens showed the back of his head.)
             if (v == NmEndSubject) turn = Mathf.Clamp(turn, -35f, 35f);
             // THE STRINGS: all of them together, slowly, the head first (no offset between them: the unison is the point).
             float turnAt = Mathf.Max(NmTurnAll, v.Settle + .1f);
@@ -1095,27 +1106,28 @@ namespace TumbangPreso.Visual
             float snap = Ease(.45f, .9f, Mathf.Repeat(clock, step) / step);
             float Broken(int slot, float range) => Mathf.Lerp(NmHash(key * 7 + v.Seat, slot) - .5f, NmHash((key + 1) * 7 + v.Seat, slot) - .5f, snap) * 2f * range * wrong;
 
-            // THE STRINGS: he fights it (owner on v14: *"make it look like he's trying to struggle"*): hauled up, he wrenches his
-            // shoulders and arms down against the pull, shakes his head, kicks; harder once the strings snap taut, until the dark.
-            // Efforts, not a buzz: a few wrenches a second, each a little different.
-            float fight = v == NmEndSubject ? Ease(NmRise + .3f, NmCrane, t) * (1f - Ease(NmDark - .08f, NmDark, t)) * (1f + .35f * Ease(NmTug, NmTug + .1f, t)) : 0f;
-            float heave = Mathf.Sin(t * 7f + 1.2f * Mathf.Sin(t * 2.3f)), strain = Mathf.Sin(t * 5.2f + 1f), kick = t * 8.4f + seat;
-            // Fighting it he is still himself: the cut-string snaps wait (film r66: they pitched his head down to its hair).
-            wrong *= 1f - Mathf.Min(fight, 1f);
+            // THE STRINGS (owner on v15: *"make him look like he's walking normally after but then something weird af happens"*):
+            // set down from his rise, he walks at the lens like anyone would, arms swinging, head level, only his eyes wrong;
+            // at the tug he is yanked off his feet mid-step and his legs go on walking in the air while his head flops over.
+            float walk = v == NmEndSubject ? Ease(NmTripSettle - .05f, NmTripSettle + .3f, t) * (1f - Ease(NmDark - .08f, NmDark, t)) : 0f;
+            float normal = walk * (1f - Ease(NmTug, NmTug + .06f, t));
+            float pace = Mathf.Sin((t - NmTripSettle) * 6.5f) * walk;
+            float flop = (v == NmEndSubject ? 1f : 0f) * Ease(NmTug + .02f, NmTug + .16f, t);
+            wrong *= 1f - normal; stance *= 1f - normal;
 
-            float tip = ((v.Seat & 1) == 0 ? 1f : -1f) * 30f * stance * (1f - .7f * Mathf.Min(fight, 1f));
+            float tip = ((v.Seat & 1) == 0 ? 1f : -1f) * (30f * stance + 45f * flop);
             float sway = Mathf.Sin(t * 1.4f + seat) * 3f * stance;
 
             if (v.Root.T != null)
                 v.Root.T.position += NmWDir(shove) * standing + Vector3.up * ((lift + .4f * jolt + .1f * stagger + .05f * flinch + bob + (.08f + .06f * NmHash(key, v.Seat + 51)) * wrong * standing + .07f * stance + Mathf.Sin(t * 2f + seat) * .015f * stance))
-                                   + right * (Mathf.Sin(t * 5f) * .03f * stagger + heave * .06f * fight);
+                                   + right * (Mathf.Sin(t * 5f) * .03f * stagger + pace * .02f * normal);
 
             float torsoTwist = scared * glanceYaw * .2f + chestYaw * .25f * chestWatch - swing * 8f + scrabble * 10f + Broken(1, 35f) + (turn * .25f * chestTurn - turn * .1f * bodyTurn) * standing
-                             + heave * 18f * fight;
-            float torsoPitch = scared * 10f + running * 14f + flinch * 12f - jerk * 22f + Broken(2, 26f) - stance * 4f - down * 12f + (6f + 6f * strain) * fight;
+                             - pace * 6f * normal;
+            float torsoPitch = scared * 10f + running * 14f + flinch * 12f - jerk * 22f + Broken(2, 26f) - stance * 4f - down * 12f + 4f * normal;
             // On the strings they all sway together, one pendulum, like marionettes on one cross.
             float swing2 = jolt * Mathf.Sin((t - NmTug) * 5.5f) * Mathf.Exp(-(t - NmTug) * 1.2f);
-            float torsoRoll = tremble + Broken(3, 22f) + sway + stagger * 5f * Mathf.Sin(t * 5f) + Mathf.Sin(stride) * 7f * running + 12f * swing2 - heave * 10f * fight;
+            float torsoRoll = tremble + Broken(3, 22f) + sway + stagger * 5f * Mathf.Sin(t * 5f) + Mathf.Sin(stride) * 7f * running + 12f * swing2 + pace * 3f * normal;
             if (v.Torso.T != null)
             {
                 Turn(v.Torso.T, up, torsoTwist);
@@ -1124,9 +1136,9 @@ namespace TumbangPreso.Visual
             }
 
             float headYaw = scared * glanceYaw * .8f + headLead + lookBack * 100f * backSide + scrabble * 25f + Broken(4, 80f)
-                          + (turn * headTurn - turn * .25f * chestTurn) * standing + (Mathf.Sin(t * 6.3f + 2f) * 14f - heave * 12f) * fight;
+                          + (turn * headTurn - turn * .25f * chestTurn) * standing;
             float headPitch = scared * glancePitch + watchPitch * watch - Mathf.Min(jerk, 1.2f) * 26f + Broken(5, 35f) + stance * 5f + stagger * 10f - down * 20f - jolt * 14f
-                            - (16f + 6f * strain) * fight;   // (film r65: hunched with his head down, his chibi head showed only its hair: he strains with his face up, at us)
+                            - 6f * normal + 25f * flop;
             float headRoll = scared * lost * .5f + Broken(6, 55f) + tip + ((v.Seat & 1) == 0 ? 1f : -1f) * 22f * headTurn;
             if (v.HeadBone.T != null)
             {
@@ -1135,16 +1147,14 @@ namespace TumbangPreso.Visual
                 Turn(v.HeadBone.T, fwd, headRoll);
             }
 
-            float guard = scared * 60f + flinch * 40f + down * 70f - jolt * 35f * (1f - .6f * Mathf.Min(fight, 1f));
+            float guard = scared * 60f + flinch * 40f + down * 70f - jolt * 35f;
             float fling = jerk * 70f;
-            float hang = stance * 20f * (1f - Mathf.Min(fight, 1f));
-            // Fighting, each arm wrenches down and in against its string in turn.
-            float wrenchL = Mathf.Max(0f, heave) * fight, wrenchR = Mathf.Max(0f, -heave) * fight;
-            if (v.ArmL.T != null) { Turn(v.ArmL.T, right, -guard + swing * 55f - jerk * 30f + scrabble * 40f + Broken(7, 110f) - stance * 10f + 35f * fight + 55f * wrenchL); Turn(v.ArmL.T, fwd, fling + Broken(8, 60f) + hang - 25f * wrenchL); }
-            if (v.ArmR.T != null) { Turn(v.ArmR.T, right, -guard * .9f - swing * 55f - jerk * 30f - scrabble * 40f + Broken(9, 110f) - stance * 10f + 35f * fight + 55f * wrenchR); Turn(v.ArmR.T, fwd, -fling - Broken(10, 60f) - hang + 25f * wrenchR); }
+            float hang = stance * 20f;
+            if (v.ArmL.T != null) { Turn(v.ArmL.T, right, -guard + swing * 55f - jerk * 30f + scrabble * 40f + Broken(7, 110f) - stance * 10f + pace * 22f * normal); Turn(v.ArmL.T, fwd, fling + Broken(8, 60f) + hang); }
+            if (v.ArmR.T != null) { Turn(v.ArmR.T, right, -guard * .9f - swing * 55f - jerk * 30f - scrabble * 40f + Broken(9, 110f) - stance * 10f - pace * 22f * normal); Turn(v.ArmR.T, fwd, -fling - Broken(10, 60f) - hang); }
             float dangle = (wrong + stance) * 10f + jolt * 22f;
-            if (v.LegL.T != null) Turn(v.LegL.T, right, swing * 42f + scrabble * 30f + Broken(11, 28f) + dangle + Mathf.Sin(kick) * 38f * fight);
-            if (v.LegR.T != null) Turn(v.LegR.T, right, -swing * 42f - scrabble * 30f + Broken(12, 28f) + dangle + Mathf.Sin(kick + 2.6f) * 38f * fight);
+            if (v.LegL.T != null) Turn(v.LegL.T, right, swing * 42f + scrabble * 30f + Broken(11, 28f) + dangle * (1f - normal) + pace * 30f);
+            if (v.LegR.T != null) Turn(v.LegR.T, right, -swing * 42f - scrabble * 30f + Broken(12, 28f) + dangle * (1f - normal) - pace * 30f);
 
             // ON THE COURT, NOT IN IT (owner on v13: *"on the ground bro he GOES IN THE GROUND"*): lying, his posed body is
             // measured and lifted until its lowest point rests on the court (his chibi head and shoulders are thicker than any
@@ -1155,7 +1165,7 @@ namespace TumbangPreso.Visual
             // as lifted out of it. After it only the lift holds, so the puppet can rise.
             if (lying > .01f && v.Renderers != null)
             {
-                float lowest = NmLowest(v.Renderers);
+                float lowest = NmLowest(v);
                 float floor = _root.transform.position.y + .01f;
                 bool free = t < first;
                 if (lowest < float.MaxValue && Mathf.Abs(floor - lowest) < 2f && (lowest < floor || free))
@@ -1166,21 +1176,52 @@ namespace TumbangPreso.Visual
         private Mesh _nmBaked;
         private readonly List<Vector3> _nmVerts = new List<Vector3>();
 
+        /// <summary>
+        /// Whether each skinned renderer's baked mesh already carries its transform's scale: it differs between rigs (as in
+        /// `HeroAbilityClips.GroundIntroduction`), and reading it wrong put him half into the court (film r67). Read standing,
+        /// where the renderer's own bounds are tight in height, by whichever reading of the bake matches that height.
+        /// </summary>
+        private bool[] NmCalibrate(Renderer[] renderers)
+        {
+            var scaled = new bool[renderers.Length];
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                if (!(renderers[i] is SkinnedMeshRenderer skin) || skin.sharedMesh == null) continue;
+                if (_nmBaked == null) _nmBaked = new Mesh();
+                skin.BakeMesh(_nmBaked);
+                _nmBaked.GetVertices(_nmVerts);
+                Vector2 a = NmSpan(Matrix4x4.TRS(skin.transform.position, skin.transform.rotation, Vector3.one));
+                Vector2 b = NmSpan(skin.transform.localToWorldMatrix);
+                float height = skin.bounds.size.y;
+                scaled[i] = Mathf.Abs(a.y - a.x - height) <= Mathf.Abs(b.y - b.x - height);
+            }
+            return scaled;
+        }
+
+        private Vector2 NmSpan(Matrix4x4 m)
+        {
+            float lo = float.MaxValue, hi = float.MinValue;
+            foreach (var p in _nmVerts) { float y = m.MultiplyPoint3x4(p).y; lo = Mathf.Min(lo, y); hi = Mathf.Max(hi, y); }
+            return new Vector2(lo, hi);
+        }
+
         /// <summary>The lowest point of a posed body's real mesh (world y), not of its bounding boxes.</summary>
-        private float NmLowest(Renderer[] renderers)
+        private float NmLowest(NmVictim v)
         {
             float lowest = float.MaxValue;
-            foreach (var r in renderers)
+            for (int i = 0; i < v.Renderers.Length; i++)
             {
+                var r = v.Renderers[i];
                 if (r == null || !r.enabled) continue;
                 Matrix4x4 m;
                 if (r is SkinnedMeshRenderer skin)
                 {
                     if (skin.sharedMesh == null) continue;
                     if (_nmBaked == null) _nmBaked = new Mesh();
-                    skin.BakeMesh(_nmBaked, true);
+                    skin.BakeMesh(_nmBaked);
                     _nmBaked.GetVertices(_nmVerts);
-                    m = Matrix4x4.TRS(skin.transform.position, skin.transform.rotation, Vector3.one);
+                    m = v.BakeScaled != null && i < v.BakeScaled.Length && v.BakeScaled[i]
+                        ? Matrix4x4.TRS(skin.transform.position, skin.transform.rotation, Vector3.one) : skin.transform.localToWorldMatrix;
                 }
                 else if (r is MeshRenderer && r.TryGetComponent<MeshFilter>(out var filter) && filter.sharedMesh != null && filter.sharedMesh.isReadable)
                 {
@@ -1188,7 +1229,7 @@ namespace TumbangPreso.Visual
                     m = r.transform.localToWorldMatrix;
                 }
                 else { lowest = Mathf.Min(lowest, r.bounds.min.y); continue; }
-                foreach (var p in _nmVerts) lowest = Mathf.Min(lowest, m.MultiplyPoint3x4(p).y);
+                lowest = Mathf.Min(lowest, NmSpan(m).x);
             }
             return lowest;
         }
@@ -1343,12 +1384,12 @@ namespace TumbangPreso.Visual
                     if (t < NmCrane) NmFallFrame(v, t, out eye, out look, out fov);
                     else
                     {
-                        // THE STRINGS: on from his rise without a cut, in front of him as he fights it; a slow push, lifting
+                        // THE STRINGS: on from his rise without a cut, in front of him as he walks at it; a slow push, lifting
                         // with him as the tug yanks him up; the lens stays put as he comes at it.
                         float u = Ease(NmCrane, Seconds, t);
                         NmEndLens(out var lens, out var stood);
                         Vector3 back = (lens - stood); back.y = 0f; back.Normalize();
-                        eye = lens - back * (.6f * u);
+                        eye = lens - back * (.3f * u);
                         look = stood + up * (v.Top * .55f + .25f * Ease(NmTug, NmTug + .4f, t));
                         fov = Mathf.Lerp(56f, 46f, u) - 3f * NmBump(t, NmTug + .04f, .12f);
                     }
