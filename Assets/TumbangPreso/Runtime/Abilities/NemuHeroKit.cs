@@ -83,9 +83,9 @@ namespace TumbangPreso.Abilities
 
             public DontLook(NemuHeroKit kit)
                 : base("nemu_skill1", "DON'T LOOK",
-                       "Hold to aim, release to leave a blindfolded ghost waiting at a spot. It vanishes after 3 s. The first player to come near has it lunge at their eyes: Blinded for 2 s, and slowed by 50%, wearing off over 5 s. One ghost at a time; it leaves after 30 s.",
+                       "Hide a ghost at a spot. The first player to come near is blinded for 2 s, then slowed (wears off over 5 s). Lasts 30 s.",
                        NecroRules.DontLookCooldown, 0.0f, AbilityGlyph.NemuTerrify,
-                       summary: "Hide a ghost. The first to come near is blinded and slowed.",
+                       summary: "Hide a ghost. The first to come near is blinded, then slowed.",
                        telegraphRadius: NecroRules.DontLookTriggerRadius, telegraphRange: NecroRules.DontLookMaxRange,
                        castAction: "hero-nemu-project", viewmodelAction: "project-spirit",
                        castCue: "sfx_cast_nemu_dontlook")
@@ -124,9 +124,9 @@ namespace TumbangPreso.Abilities
 
             public Skitter(NemuHeroKit kit)
                 : base("nemu_skill2", "SKITTER",
-                       "Attacking. Send Skitter, a greedy little ghost, to grab your loose slipper and bring it back beside you. If the taya gets near it on the way back, it drops it.",
+                       "Attacking. A ghost runs to your loose slipper and carries it back to you. If the taya gets close, it drops it.",
                        NecroRules.FetchCooldown, 8.0f, AbilityGlyph.NemuAstralPet,
-                       summary: "A ghost fetches your slipper. The taya can make it drop it.",
+                       summary: "A ghost brings your slipper back. The taya can make it drop.",
                        castAction: "hero-nemu-project", viewmodelAction: "project-spirit",
                        castCue: "sfx_cast_nemu_fetch") { _kit = kit; }
 
@@ -285,9 +285,9 @@ namespace TumbangPreso.Abilities
 
             public Lookout(NemuHeroKit kit)
                 : base("nemu_skill2d", "LOOKOUT",
-                       "Defending. Leave Lookout, a little lantern ghost, minding the can for 15 s. If the can is knocked down it slowly stands it back up (3.5 s), once. An attacker near the can scares it off the job.",
+                       "Defending. A lantern ghost guards the can for 15 s. If knocked down, it slowly lifts it back up once. Attackers scare it off.",
                        NecroRules.LookoutCooldown, NecroRules.LookoutSeconds, AbilityGlyph.NemuKuroGuard,
-                       summary: "A small ghost minds the can and slowly stands it back up.",
+                       summary: "A ghost guards the can and slowly lifts it back up, once.",
                        castAction: "hero-nemu-guard", viewmodelAction: "kuro-guard",
                        castCue: "sfx_cast_nemu_guard") { _kit = kit; }
 
@@ -396,7 +396,7 @@ namespace TumbangPreso.Abilities
 
             public NightmareSeanceVoidAbility()
                 : base("nemu_ultimate", "LET THEM IN",
-                       "Nemu lets the dead out of her shadow and they pour into every other player. They are Possessed for 15 s: the soul inside drags their steering toward danger. Push against it to hold your ground.",
+                       "Every other player is Possessed for 15 s: the soul inside drags their steering toward danger. Push against it.",
                        0, NemuRules.PossessedSeconds, AbilityGlyph.NemuSeanceVoid,
                        summary: "Every other player is Possessed for 15 s.",
                        castAction: "hero-nemu-seance", viewmodelAction: "seance-channel",
