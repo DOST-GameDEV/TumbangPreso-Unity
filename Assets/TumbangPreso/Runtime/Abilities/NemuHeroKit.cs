@@ -58,14 +58,12 @@ namespace TumbangPreso.Abilities
         public NemuHeroKit() : base("nemu", "NEMU")
         {
             Skill1 = new DontLook(this);
-            AttackingSkill = new KuroFetch(this);
-            DefendingSkill = new KuroGuard(this);
+            AttackingSkill = new Skitter(this);
+            DefendingSkill = new Lookout(this);
             Ultimate = new NightmareSeanceVoidAbility();
         }
 
         public override float UltimateCost => 15.0f;
-
-        private static GhostPetCompanion Kuro(AbilityContext ctx) => ctx?.Motor?.GetComponent<CharacterVisual>()?.Companion;
 
         // ================================================================== DON'T LOOK (signature)
 
@@ -105,22 +103,30 @@ namespace TumbangPreso.Abilities
             }
         }
 
-        // ================================================================== KURO FETCH (attacking)
+        // ================================================================== SKITTER (attacking)
 
-        private sealed class KuroFetch : HeroAbility
+        /// <summary>
+        /// SKITTER (owner 2026-10-15, the overhaul of KURO: FETCH!: *"Spawn siya ghost na kukunin slipper for her"*). A greedy
+        /// little green ghost of hers (`NemuSkitter`) pops out beside her, scrambles to her loose slipper, grabs it and hurries
+        /// it back, leaving it on the ground beside her to pick up. A taya who gets near it on the way back makes it drop it.
+        /// Kuro is not sent. ⚠️ The ID is Fetch's, kept for saves, mastery and the wire. HOST-CONFIRMED (Fetch was predicted)
+        /// so every peer runs the same ghost from the accepted cast; only the host moves or lands the slipper (protocol95's
+        /// delivery rules unchanged), and a peer's ghost lets go when the host's slipper stops following it.
+        /// </summary>
+        private sealed class Skitter : HeroAbility
         {
             private readonly NemuHeroKit _kit;
-            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
             private Slipper _shoe;
-            private GhostPetCompanion _kuro;
+            private NemuSkitter _ghost;
             private bool _carrying;
-            private float _nextBroadcast;
+            private float _nextBroadcast, _apart;
 
-            public KuroFetch(NemuHeroKit kit)
-                : base("nemu_skill2", "KURO: FETCH!",
-                       "Attacking. Kuro brings your loose slipper beside you for pickup. If the taya tags him on the way, he drops it.",
+            public Skitter(NemuHeroKit kit)
+                : base("nemu_skill2", "SKITTER",
+                       "Attacking. Send Skitter, a greedy little ghost, to grab your loose slipper and bring it back beside you. If the taya gets near it on the way back, it drops it.",
                        NecroRules.FetchCooldown, 8.0f, AbilityGlyph.NemuAstralPet,
-                       summary: "Kuro fetches your slipper. The taya can make him drop it.",
+                       summary: "A ghost fetches your slipper. The taya can make it drop it.",
                        castAction: "hero-nemu-project", viewmodelAction: "project-spirit",
                        castCue: "sfx_cast_nemu_fetch") { _kit = kit; }
 
@@ -141,15 +147,15 @@ namespace TumbangPreso.Abilities
             {
                 _kit.ShareBasicCooldown(CooldownRemaining, mayLower: false);
                 _shoe = OwnLooseSlipper(ctx.Motor);
-                _kuro = Kuro(ctx);
-                _carrying = false;
-                var shoe = _shoe;
-                var owner = ctx.Motor;
-                _kuro?.BeginErrand(() => shoe == null ? owner.transform.position
-                                         : (_carrying ? owner.transform.position + Vector3.up * 0.4f : shoe.transform.position),
-                                   NecroRules.FetchSpeed, 1.0f);
-                NetCue.Play("sfx_ghost_teleport", ctx.Position);
+                _carrying = false; _apart = 0f;
+                var owner = ctx.Motor.transform;
+                _ghost = NemuSkitter.Summon(owner.position + owner.right * .5f + Vector3.up * .3f, ctx.Forward, ctx.Motor.PlayerSlot);
+                // Every peer runs this from the accepted cast, so its sounds are local, not relayed (`audit_cue_relay.py`).
+                GameServices.Audio?.PlayAt("sfx_ghost_teleport", ctx.Position);
             }
+
+            /// <summary>Where its feet go so its hands are on <paramref name="hold"/>.</summary>
+            private Vector3 FeetFor(Vector3 hold) => hold - (_ghost.HoldPoint - _ghost.Position);
 
             protected override void OnTick(AbilityContext ctx, float dt)
             {
@@ -162,18 +168,28 @@ namespace TumbangPreso.Abilities
                     DurationRemaining = 0.0f;
                     return;
                 }
-                if (_kuro == null) { DurationRemaining = 0.0f; return; }
+                if (_ghost == null) { DurationRemaining = 0.0f; return; }
                 if (!_carrying)
                 {
-                    if (_kuro.ErrandArrived) { _carrying = true; NetCue.Play("sfx_possess_enter", _kuro.transform.position); }
+                    _ghost.Step(FeetFor(_shoe.transform.position + Vector3.up * .1f), NecroRules.FetchSpeed, dt);
+                    if (_ghost.Arrived) { _carrying = true; GameServices.Audio?.PlayAt("sfx_possess_enter", _ghost.Position); }
                     return;
                 }
-                if (!NetAuthority.ShouldResolve()) return;
-                // Carried: the host walks the (loose) slipper under Kuro and tells everyone where it is.
-                Vector3 at = _kuro.transform.position + Vector3.down * 0.35f;
+                // Carrying: it hurries back to her side, low.
+                var owner = ctx.Motor.transform;
+                _ghost.Step(owner.position + owner.right * .6f + Vector3.up * .15f, NecroRules.FetchSpeed, dt);
+                Vector3 at = _ghost.HoldPoint;
+                if (!NetAuthority.ShouldResolve())
+                {
+                    // A peer's ghost lets go when the host's slipper stops following it (dropped, or delivered there).
+                    _apart = (_shoe.transform.position - at).sqrMagnitude > 1.5f * 1.5f ? _apart + dt : 0f;
+                    if (_apart > .4f) DurationRemaining = 0.0f;
+                    return;
+                }
+                // Carried: the host walks the (loose) slipper in its hands and tells everyone where it is.
                 _shoe.transform.position = at;
                 if (Time.time >= _nextBroadcast) { _nextBroadcast = Time.time + 0.1f; Net.MatchRpc.Instance?.BroadcastSlipperState(_shoe); }
-                // THE INTERCEPT (owner: the taya can stop him): a taya who can act and is on him makes him drop it.
+                // THE INTERCEPT (owner: the taya can stop it): a taya who can act and is on it makes it drop it.
                 var round = ctx?.Round;
                 if (round != null)
                     foreach (var p in round.Players)
@@ -210,62 +226,99 @@ namespace TumbangPreso.Abilities
             protected override void OnEnd(AbilityContext ctx)
             {
                 GroundCarriedSlipper();
-                _kuro?.EndErrand();
-                _kuro = null;
+                _ghost?.Leave();
+                _ghost = null;
                 _shoe = null;
             }
             protected override void OnCancelled(AbilityContext ctx) => OnEnd(ctx);
         }
 
-        // ================================================================== KURO: CATCH! (defending)
+        // ================================================================== LOOKOUT (defending)
 
-        private sealed class KuroGuard : HeroAbility, IPreparedWorldReplication
+        /// <summary>
+        /// LOOKOUT (owner 2026-10-15, the overhaul of KURO: CATCH!: *"spawn siya ghost na tutulungan siya magdefend (pede ren
+        /// magtayo lata) but medyo small and not that good but it helps in some cases"*, *"only stays for like 15 seconds"*).
+        /// A small lantern ghost of hers (`NemuLookout`) minds the can for 15 s. If the can is down it stands it back up,
+        /// slowly (3.5 s against the taya's 1.5 s), and an attacker within 1.5 m of the can scares it off the job. It does it
+        /// once; then its job is done and it goes. It no longer makes the can knock-proof (protocol109's protection).
+        /// ⚠️ The ID is Catch's, kept for saves, mastery and the wire. Host-confirmed: every peer runs the same ghost and
+        /// clock; only the host stands the can up (`Lata.HostRestore`, then the usual can broadcast).
+        /// </summary>
+        private sealed class Lookout : HeroAbility, IPreparedWorldReplication
         {
             private readonly NemuHeroKit _kit;
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
-            private GhostPetCompanion _kuro;
+            private NemuLookout _ghost;
             private Lata _can;
-            private bool _approvedReplica;
+            private float _lift;
+            private bool _done;
 
-            public KuroGuard(NemuHeroKit kit)
-                : base("nemu_skill2d", "KURO: CATCH!",
-                       "Defending. Command Kuro to protect the upright can from knockdown for 5 s.",
-                       NecroRules.GuardCooldown, NecroRules.GuardSeconds, AbilityGlyph.NemuKuroGuard,
-                       summary: "Protect the upright can for 5 s.",
+            public Lookout(NemuHeroKit kit)
+                : base("nemu_skill2d", "LOOKOUT",
+                       "Defending. Leave Lookout, a little lantern ghost, minding the can for 15 s. If the can is knocked down it slowly stands it back up (3.5 s), once. An attacker near the can scares it off the job.",
+                       NecroRules.LookoutCooldown, NecroRules.LookoutSeconds, AbilityGlyph.NemuKuroGuard,
+                       summary: "A small ghost minds the can and slowly stands it back up.",
                        castAction: "hero-nemu-guard", viewmodelAction: "kuro-guard",
                        castCue: "sfx_cast_nemu_guard") { _kit = kit; }
 
             public override bool CanActivate(AbilityContext ctx)
-                => base.CanActivate(ctx) && ctx.Motor.IsDefender && ctx.Round?.Lata?.IsUpright == true;
+                => base.CanActivate(ctx) && ctx.Motor.IsDefender && ctx.Round?.Lata != null;
 
             protected override void OnActivate(AbilityContext ctx)
             {
                 _kit.ShareBasicCooldown(CooldownRemaining, mayLower: false);
-                _approvedReplica = ctx.IsApprovedReplay;
-                BindCan(ctx);
+                Bind(ctx);
             }
-            private void BindCan(AbilityContext ctx)
+
+            private void Bind(AbilityContext ctx)
             {
                 _can = ctx?.Round?.Lata;
-                _can?.AddAbilityProtection(this, _approvedReplica);
-                BindCompanion(ctx);
+                _lift = 0f; _done = false;
+                if (_can == null || ctx?.Motor == null) return;
+                _ghost = NemuLookout.Summon(_can.transform, ctx.Motor.transform.position, ctx.Motor.PlayerSlot);
             }
-            private void BindCompanion(AbilityContext ctx)
+
+            /// <summary>The nearest attacker to the can who can act, and how near.</summary>
+            private static CharacterMotor NearestAttacker(AbilityContext ctx, Vector3 can, out float distance)
             {
-                if (_can == null) return;
-                _kuro = Kuro(ctx);
-                _kuro?.BeginErrand(() => _can != null
-                    ? _can.transform.position + Vector3.forward * 1.2f : ctx.Position,
-                    NecroRules.GuardMoveSpeed, NecroRules.GuardScale);
+                CharacterMotor best = null; distance = float.MaxValue;
+                var round = ctx?.Round;
+                if (round == null) return null;
+                foreach (var p in round.Players)
+                {
+                    if (p == null || p.IsDefender || p.IsTagged || !p.gameObject.activeInHierarchy) continue;
+                    Vector3 d = p.transform.position - can; d.y = 0f;
+                    if (d.magnitude < distance) { distance = d.magnitude; best = p; }
+                }
+                return best;
             }
+
             protected override void OnTick(AbilityContext ctx, float dt)
             {
-                if (_can == null) { BindCan(ctx); return; }
-                if (_can != ctx?.Round?.Lata || (NetAuthority.ShouldResolve() && !_can.IsUpright))
-                { DurationRemaining = 0; return; }
-                _can.AddAbilityProtection(this, _approvedReplica);
-                if (_kuro == null) BindCompanion(ctx);
+                if (_can == null) { Bind(ctx); if (_can == null) { DurationRemaining = 0f; return; } }
+                if (_can != ctx?.Round?.Lata) { DurationRemaining = 0f; return; }
+                var near = NearestAttacker(ctx, _can.transform.position, out float distance);
+                bool scared = near != null && distance <= NecroRules.LookoutScareRadius;
+                if (_ghost != null) { _ghost.Watching = near != null ? near.transform.position : (Vector3?)null; _ghost.Scared = scared && !_can.IsUpright; }
+                if (_done) return;
+                if (_can.IsUpright) { _lift = 0f; if (_ghost != null) _ghost.Lift = 0f; return; }
+                if (ctx.Round == null || !ctx.Round.RoundActive || PresentationClock.Held) return;
+                // The can is down: it strains to stand it up, and loses ground twice as fast while an attacker is on it.
+                _lift = scared ? Mathf.Max(0f, _lift - dt * 2f) : _lift + dt;
+                if (_ghost != null) _ghost.Lift = _lift / NecroRules.LookoutRestoreSeconds;
+                if (_lift < NecroRules.LookoutRestoreSeconds) return;
+                _done = true;
+                if (_ghost != null) _ghost.Lift = 0f;
+                // ⚠️ THE GATE IS WRITTEN OUT, NOT HOISTED: `tools/audit_ability_authority.py` reads it by brace depth.
+                if (NetAuthority.ShouldResolve())
+                {
+                    _can.HostRestore();
+                    Net.MatchRpc.Instance?.BroadcastLataState();
+                }
+                // Its job done, it goes.
+                DurationRemaining = Mathf.Min(DurationRemaining, .6f);
             }
+
             public bool CapturePreparedWorld(out Vector3 centre, out float preparation, out float remaining)
             {
                 bool active = IsActive && _can != null;
@@ -273,6 +326,7 @@ namespace TumbangPreso.Abilities
                 preparation = 0; remaining = active ? DurationRemaining : 0;
                 return active;
             }
+
             public bool RestorePreparedWorld(AbilityContext ctx, Vector3 centre, float preparation, float remaining)
             {
                 if (ctx?.Motor == null || !float.IsFinite(centre.x) || !float.IsFinite(centre.y)
@@ -280,19 +334,16 @@ namespace TumbangPreso.Abilities
                     || !float.IsFinite(remaining) || remaining < 0 || remaining > Duration) return false;
                 if (remaining == 0)
                 { EndEarly(ctx); OnEnd(ctx); return false; }
-                if (ctx.Round?.Lata == null || (NetAuthority.ShouldResolve() && !ctx.Round.Lata.IsUpright)) return false;
+                if (ctx.Round?.Lata == null) return false;
                 RestoreLiveClock(remaining);
-                // This callback is reached through the validated shared recovery
-                // route, whose context is not an ordinary cast-playback context.
-                _approvedReplica = true;
-                BindCan(ctx);
+                Bind(ctx);
                 return false;
             }
+
             protected override void OnEnd(AbilityContext ctx)
             {
-                _can?.RemoveAbilityProtection(this); _can = null;
-                _approvedReplica = false;
-                _kuro?.EndErrand(); _kuro = null;
+                _ghost?.Leave(); _ghost = null;
+                _can = null; _lift = 0f;
             }
             protected override void OnCancelled(AbilityContext ctx) => OnEnd(ctx);
         }

@@ -126,6 +126,17 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
+        public void LookoutIsASmallHelperThatOnlyStays15Seconds()
+        {
+            // Owner, 2026-10-15: it helps defend and can stand the can up, "medyo small and not that good", 15 s.
+            Assert.Equal(15.0f, NecroRules.LookoutSeconds);
+            Assert.True(NecroRules.LookoutRestoreSeconds > Balance.ResetChannelTime * 2.0f,
+                "Lookout must stand the can up much slower than the taya does.");
+            Assert.True(NecroRules.LookoutScareRadius > 0.0f);
+            Assert.Equal(NecroRules.BasicCooldown, NecroRules.LookoutCooldown);
+        }
+
+        [Fact]
         public void DontLookIsTheOwnersTripwire()
         {
             // Owner, 2026-10-15: invisible after 3 s, eyes covered 2 s, a 5 s slow that gets lower over time.

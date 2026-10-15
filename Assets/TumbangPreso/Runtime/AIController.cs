@@ -5658,10 +5658,18 @@ namespace TumbangPreso
                 }
                 else if (kit is Abilities.NemuHeroKit)
                 {
-                    // ⚠️ THE ONE `CanReactivate` POWER IN THE GAME, so the second press is not a
-                    // recast and `SlotIsSpendable` lets it through while the first is running.
-                    if (_driving && (Plan == AiPlan.Fetch || Plan == AiPlan.Stalk
-                                     || targetDistance <= 6.0f))
+                    // SKITTER (attacking, 2026-10-15): a ghost fetches her loose slipper, so it is worth it when that slipper
+                    // is lying well away from her (the ability itself refuses with none loose, or one in hand).
+                    // LOOKOUT (defending): a little ghost minds the can 15 s and slowly stands it up if it is down; worth it
+                    // with the can down and her away from it, or an attacker closing on the can.
+                    if (!_motor.IsDefender)
+                    {
+                        foreach (var s in BotSlipperInventory.All)
+                            if (s != null && s.OwnerSlot == _motor.PlayerSlot && s.State == SlipperState.Loose
+                                && (s.transform.position - _motor.transform.position).sqrMagnitude > 6.0f * 6.0f)
+                            { Consider(intent, Verb.Skill2, dt); break; }
+                    }
+                    else if (lata != null && ((!lata.IsUpright && lataDistance > 3.0f) || (lata.IsUpright && targetDistance <= 8.0f)))
                         Consider(intent, Verb.Skill2, dt);
                 }
                 else if (kit is Abilities.PhaisterHeroKit)

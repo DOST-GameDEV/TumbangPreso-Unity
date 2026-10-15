@@ -1,3 +1,18 @@
+## Protocol162: Nemu SKITTER and LOOKOUT (her own ghosts; replace KURO: FETCH! and KURO: CATCH!)
+
+No wire change; the rules differ, so 161 peers are refused. `nemu_skill2` keeps its
+ID, 25 s cooldown, 8 s clock and protocol95's delivery rules, but is SKITTER and
+host-confirmed (was predicted): every peer runs the same ghost (`NemuSkitter`) from
+the accepted cast; only the host moves, intercepts or lands the slipper, and a
+peer's ghost lets go once the host's slipper stops following it. `nemu_skill2d`
+keeps its ID but is LOOKOUT, host-confirmed, 15 s: a ghost (`NemuLookout`) minds
+the can and, while it is down and the round live, stands it up after 3.5 s of
+unscared work (an attacker within 1.5 m drains it twice as fast), once; only the
+host calls `Lata.HostRestore` and broadcasts the can. Protocol109's ability
+protection is no longer granted. Prepared-world recovery keeps its shape (can
+centre, zero preparation, remaining clock). PlayMode checks only; actual matching
+peers remain unqualified.
+
 ## Protocol161: Nemu DON'T LOOK (BLINDED; replaces KURO: SIT!)
 
 `nemu_skill1` keeps its ID and the shared 25 s basic cooldown but is now DON'T LOOK,

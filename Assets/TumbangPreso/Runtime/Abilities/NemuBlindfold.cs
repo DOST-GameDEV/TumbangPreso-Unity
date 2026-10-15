@@ -13,13 +13,17 @@ namespace TumbangPreso.Abilities
     ///
     ///  * WAITING: Blindfold itself (`Visual.BlindfoldGhostModel`, the owner's approved mockup: an icy ghost child with a
     ///    cloth tied over its eyes), floating low over the spot, facing down Nemu's aim. Every screen sees it rise out of the
-    ///    ground; over its first 3 s it fades from everyone but Nemu, who keeps a faint copy so she knows where it is.
+    ///    ground; over its first 3 s it fades to a faint shimmer, still there for anyone who looks hard (Killjoy's traps,
+    ///    owner on v4: *"invisible but like medyo kita"*). Nemu keeps a clearer copy so she knows where it is.
     ///  * SPRUNG: the first other player within 1.8 m once it is armed. ONLY THE HOST DECIDES: it writes BLINDED
     ///    (`CharacterMotor.ApplyBlinded`), and `SyncUnit` carries that clock to every peer. Every other peer learns of the
     ///    spring from that replicated edge: a player near its ghost going Blinded is its victim. No new message.
     ///  * THE LUNGE: visible to everyone, its cloth drops to its neck, its cyan pinpoint eyes open, and it shoots at the
-    ///    victim's face in 0.22 s, arms out, and clings over their eyes until they are uncovered, then lets go and flies
-    ///    off. The victim's own screen is the same ghost from inside: its cloth over their eyes (`Shaders/DontLookBlind`).
+    ///    victim's face in 0.22 s and latches on, face to face, its arms round their head, until their eyes are
+    ///    uncovered, then lets go and flies off.
+    ///  * THE VICTIM'S OWN CAMERA sees the same ghost jump into their lens and cling there, alive (`PoseForLens`), with the
+    ///    dark closing round it (`Shaders/DontLookBlind`). Owner on v4: a face drawn over the screen *"looks wrong"*, *"bat
+    ///    parang slideshoww"*; *"wont it be nicer if the ghost jumps at u"*.
     ///  * Untripped, it goes after 30 s. A rejoiner gets the waiting ghost at the same age (`WorldEffectSnapshot.Kind.Blindfold`).
     ///
     /// Each peer runs the same clock from the accepted cast, so its cues are local, not `NetCue` (`audit_cue_relay.py`).
@@ -53,7 +57,14 @@ namespace TumbangPreso.Abilities
         private static Material _material;
         private static readonly int FadeId = Shader.PropertyToID("_Fade"), FlashId = Shader.PropertyToID("_Flash"),
             ClockId = Shader.PropertyToID("_Clock"), SwayId = Shader.PropertyToID("_Sway");
-        private const float LeaveSeconds = .45f, HoverHeight = .1f, RiseSeconds = .35f, CoverScale = 1.15f;
+        private const float LeaveSeconds = .45f, HoverHeight = .1f, RiseSeconds = .35f, CoverScale = 1f;
+        /// <summary>What everyone but Nemu still sees of it once it is armed, and what she sees.</summary>
+        public const float ShimmerSeen = .16f, OwnerSeen = .45f;
+        /// <summary>In the victim's lens: its head's middle this far in front of the camera, this much bigger, so its face
+        /// (0.4 m nearer, so 0.38 m off the lens) fills the dark hole round it (`Shaders/DontLookBlind`, its radius 0.8).
+        /// (Film r12, 0.75 m with a wider hole, showed the court round it; r13, 0.56 m, was a white wall with eyes at the edges.)</summary>
+        private const float LensDistance = .78f, LensScale = 2f;
+        private Vector3 _worldAt; private Quaternion _worldFacing; private Vector3 _worldScale; private bool _posedForLens;
 
         /// <summary>Puts Nemu's ghost on <paramref name="at"/>, retiring her last one. <paramref name="age"/> &gt; 0 restores.</summary>
         public static NemuBlindfold Place(Vector3 at, Vector3 facing, int ownerSlot, float age = 0.0f)
@@ -126,14 +137,69 @@ namespace TumbangPreso.Abilities
         /// </summary>
         private void HideFromVictim(Camera camera)
         {
-            if (_victim == null || camera == null) return;
-            if (_state != State.Covering && _state != State.Leaving) return;
+            if (_victim == null || camera == null || _body == null) return;
             // A camera at their eyes is theirs (their first person, or a spectator riding it), whoever's seat this is.
             Vector3 eyes = _victim.transform.position + Vector3.up * 1.25f;
-            if ((camera.transform.position - eyes).sqrMagnitude < 1.5f * 1.5f) Show(false);
+            if ((camera.transform.position - eyes).sqrMagnitude >= 1.5f * 1.5f) return;
+            PoseForLens(camera);
         }
 
-        private void ShowAgain(Camera camera) => Show(true);
+        /// <summary>
+        /// ⚠️⚠️ IN THE VICTIM'S OWN LENS THE GHOST JUMPS AT THEM AND CLINGS THERE, THE REAL MODEL, ALIVE. From wherever it is
+        /// in the world it comes at the camera over the lunge and ends with its face filling the view, a hand's breadth
+        /// off the lens, breathing, its head tilting; at the end it lets go and flies up out of view.
+        /// Only this camera's draw is moved (`Camera.onPreCull`), and `ShowAgain` puts it back for every other camera.
+        /// (Its lights are world-space, so they are hidden here; the shader's glow carries the eyes.)
+        /// </summary>
+        private void PoseForLens(Camera camera)
+        {
+            var cam = camera.transform;
+            var body = _body.transform;
+            _worldAt = body.position; _worldFacing = body.rotation; _worldScale = body.localScale; _posedForLens = true;
+            if (_smoke != null) _smoke.Visible = false;
+            float t = _stateAge;
+            float tilt = 9f * Mathf.Sin(_age * 1.7f) + 4f * Mathf.Sin(_age * 4.1f);
+            Quaternion facing = Quaternion.LookRotation(-cam.forward, cam.up) * Quaternion.AngleAxis(tilt, Vector3.forward);
+            float breathe = 1f + .025f * Mathf.Sin(_age * 5.3f);
+            Vector3 drift = cam.right * (.03f * Mathf.Sin(_age * 1.3f)) + cam.up * (.02f * Mathf.Sin(_age * 2.2f));
+            float lean = .03f * Mathf.Sin(_age * 2.7f);
+            Vector3 head = cam.position + cam.forward * (LensDistance - lean) + drift;
+            float scale = LensScale * breathe;
+            Vector3 at = head - facing * (BlindfoldGhostModel.HeadCentre * scale);
+            switch (_state)
+            {
+                case State.Lunging:
+                {
+                    // Off the ground and at the lens, fastest at the end.
+                    float u = Mathf.Clamp01(t / NecroRules.DontLookLungeSeconds);
+                    float e = u * u * u;
+                    at = Vector3.Lerp(_worldAt, at, e);
+                    facing = Quaternion.Slerp(_worldFacing, facing, Mathf.Clamp01(u * 1.6f));
+                    scale = Mathf.Lerp(_worldScale.x, scale, e);
+                    break;
+                }
+                case State.Leaving:
+                {
+                    // It lets go and is gone up and over their head.
+                    float u = Mathf.Clamp01(t / LeaveSeconds);
+                    at += (cam.up * 1.6f + cam.forward * .4f) * (u * u);
+                    break;
+                }
+            }
+            body.SetPositionAndRotation(at, facing);
+            body.localScale = Vector3.one * scale;
+        }
+
+        private void ShowAgain(Camera camera)
+        {
+            if (_posedForLens && _body != null)
+            {
+                _body.transform.SetPositionAndRotation(_worldAt, _worldFacing);
+                _body.transform.localScale = _worldScale;
+                _posedForLens = false;
+            }
+            Show(true);
+        }
 
         private void Show(bool on)
         {
@@ -231,10 +297,17 @@ namespace TumbangPreso.Abilities
             return Spot + Vector3.up * (HoverHeight + .05f * Mathf.Sin(age * 2.1f) - .9f * (1f - rise));
         }
 
-        /// <summary>The victim's face: in front of their eyes, where the ghost's head clings on.</summary>
+        /// <summary>
+        /// Where its head's middle goes to latch on: face to face with the victim, its face pressed to theirs.
+        /// ⚠️ Owner on v4: *"actually latch sa face bcz ang laki ng space"*. It hung 0.95 m out in front (a fix for film r2,
+        /// where the old smoke ghost was lost inside a head); now it is the victim's head's half depth plus its own.
+        /// </summary>
         private static Vector3 FaceOf(CharacterMotor victim) =>
-            // Out in front of the face, not inside it: the cast's heads are big blocks (film r2 lost the ghost in one).
-            victim.transform.position + Vector3.up * 1.35f + AheadOf(victim) * .95f;
+            victim.transform.position + Vector3.up * VictimHeadHeight +
+            AheadOf(victim) * (VictimHeadHalfDepth + BlindfoldGhostModel.HeadHalfDepth * CoverScale - .03f);
+
+        /// <summary>The cast's blocky heads (feet to the head's middle, and half its depth), from the court film.</summary>
+        private const float VictimHeadHeight = 1.38f, VictimHeadHalfDepth = .28f;
 
         private static Vector3 AheadOf(CharacterMotor victim)
         {
@@ -249,7 +322,7 @@ namespace TumbangPreso.Abilities
         {
             bool mine = NetAuthority.LocalSlot == OwnerSlot && !GameLaunch.Spectator;
             float fade = 1.0f - Mathf.SmoothStep(0f, 1f, (age - (NecroRules.DontLookArmSeconds - .8f)) / .8f);
-            return mine ? Mathf.Max(fade, .4f) : fade;
+            return Mathf.Max(fade, mine ? OwnerSeen : ShimmerSeen);
         }
 
         /// <summary>While it waits it looks down Nemu's aim, turning its blind head a little side to side, listening.</summary>

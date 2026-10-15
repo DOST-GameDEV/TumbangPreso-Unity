@@ -616,7 +616,10 @@ namespace TumbangPreso.Net
         // 161 (2026-10-15): Nemu's signature is DON'T LOOK (Blindfold, the hidden ghost that covers the eyes), replacing KURO: SIT!.
         // `SyncUnit` appends the BLINDED clock and the world snapshot gains the waiting ghost (`WorldEffectSnapshot.Kind.Blindfold`);
         // a 160 peer would read a different unit layout and still teleport to Kuro.
-        public const int ProtocolVersion = 161;
+        // 162 (2026-10-15): Nemu's other skills are their own ghosts. SKITTER (`nemu_skill2`, was KURO: FETCH!) is host-confirmed
+        // (was predicted) so every peer runs the ghost; LOOKOUT (`nemu_skill2d`, was KURO: CATCH!) stands a downed can back up
+        // instead of making it knock-proof. The wire is unchanged; a 161 peer would disagree with the host about both skills.
+        public const int ProtocolVersion = 162;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

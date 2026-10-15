@@ -355,10 +355,10 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.ZackOvercharge: return "SLIPPER BUFF";
                 case AbilityGlyph.ZackThunderstrike: return "FROM ABOVE";
                 case AbilityGlyph.NemuPhase: return "EVASION";
-                case AbilityGlyph.NemuAstralPet: return "MOBILITY";
+                case AbilityGlyph.NemuAstralPet: return "FETCH";
                 case AbilityGlyph.NemuSeanceVoid: return "GROUND ZONE";
                 case AbilityGlyph.NemuTerrify: return "BLIND TRAP";
-                case AbilityGlyph.NemuKuroGuard: return "CAN GUARD";
+                case AbilityGlyph.NemuKuroGuard: return "CAN HELPER";
                 case AbilityGlyph.PhaisterHexSigil: return "GROUND ZONE";
                 case AbilityGlyph.PhaisterShadowBlink: return "MOBILITY";
                 case AbilityGlyph.PhaisterEclipse: return "GROUND ZONE";

@@ -285,6 +285,9 @@ namespace TumbangPreso.Net
             Retire<PaeteThorns>();
             Retire<PaeteSentry>();
             Retire<NemuBlindfold>();
+            // Nemu's other ghosts are only looks (their abilities hold the rules), but none outlives the round.
+            Retire<NemuSkitter>();
+            Retire<NemuLookout>();
             // Render-only fissures have no gameplay lifetime component.
             Retire<HeroHazards.EarthPillarComponent>();
             Physics.SyncTransforms();

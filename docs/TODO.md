@@ -1,4 +1,4 @@
-### NEMU-SIGNATURE-1015: DON'T LOOK (renamed from BULAGA!, replaces KURO: SIT!)
+### NEMU-GHOSTS-1015: DON'T LOOK, SKITTER, LOOKOUT (her skills as her own ghosts; replace KURO: SIT!/FETCH!/CATCH!)
 
 Owner 2026-10-15: make Nemu like Gekko (different ghosts, several out at once); the signature is a tripwire blind:
 a ghost placed in an area goes invisible after 3 s, lunges at the eyes of whoever comes near, covers them 2 s and
@@ -14,7 +14,16 @@ slows them 5 s with a slow that gets lower over time. Owner asked for a new name
 - [ ] Owner verdict on play (look of the waiting ghost, the lunge, the blind screen) and the defaults above.
 - [ ] Sound drafts for `sfx_nemu_dontlook_place/spring/fade` and `sfx_cast_nemu_dontlook` (skill sounds stay muted until approved).
 - [ ] Dedicated ability glyph (it reuses `NemuTerrify`); real networked peers on 161.
-- [ ] Next owner topic: the other skills as more ghosts (Gekko-style), not started.
+- [x] Owner on v4: the drawn face *"looks wrong"* (*"parang slideshoww"*, *"wont it be nicer if the ghost jumps at u"*), the
+  slow's frost edge read as Cheska's (*"use diff hud indicator"*), *"invisible but like medyo kita"* (Killjoy), *"make the
+  ghost look better and smaler and actually latch sa face"*. Built: the real ghost jumps into the victim's lens and clings
+  there (`NemuBlindfold.PoseForLens`), the dark closes round it; the slow is its tail coiled round the bottom of the view;
+  armed it stays a faint shimmer (16 %, Nemu 45 %); 0.85 m, rounder head, arms round the victim's head, face to face.
+- [x] *"refine the opther skills of nemu ren"*: SKITTER (`nemu_skill2`, was KURO: FETCH!, green grabber ghost `NemuSkitter`)
+  and LOOKOUT (`nemu_skill2d`, was KURO: CATCH!, a small lantern ghost `NemuLookout` minding the can 15 s that slowly stands
+  a downed can up once, 3.5 s, scared off by an attacker within 1.5 m; no more knock-proof can). Protocol 162. Defaults
+  chosen without the owner's pick: 3.5 s, 1.5 m, once per summon. `NemuLookoutTests` replaces the Catch suites.
+- [ ] Owner verdict on Skitter and Lookout (looks and the Lookout defaults); dedicated glyphs for both.
 
 ### NEMU-ULTIMATE-1011: LET THEM IN (was PRUSISYON)
 

@@ -132,6 +132,16 @@ namespace TumbangPreso.Core
         public const float GuardThinkSeconds = 0.35f;
         public const float GuardReactSeconds = 0.25f;
 
+        /// <summary>LOOKOUT (replaces KURO: CATCH!, owner 2026-10-15): *"spawn siya ghost na tutulungan siya magdefend (pede ren
+        /// magtayo lata) but medyo small and not that good but it helps in some cases"*, *"only stays for like 15 seconds"*.
+        /// It minds the can for 15 s; if the can is down it stands it back up, slowly (3.5 s, slower than the taya's own
+        /// reset), and an attacker within 1.5 m of the can scares it off the job (its progress drains twice as fast as it
+        /// builds). It stands the can up once; then its job is done and it goes. Defaults set here without the owner's pick.</summary>
+        public const float LookoutCooldown = BasicCooldown;
+        public const float LookoutSeconds = 15.0f;
+        public const float LookoutRestoreSeconds = 3.5f;
+        public const float LookoutScareRadius = 1.5f;
+
         /// <summary>KURO PLAYS, owner: *"HARD BOT and fulfills whatever role u have and ghets separate copy
         /// of ur skills"*. Cost set here; lasts to the round's end.</summary>
         public const float KuroPlaysCost = 16.0f;
