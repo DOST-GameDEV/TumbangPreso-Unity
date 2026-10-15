@@ -141,6 +141,7 @@ namespace TumbangPreso.PlayTests
                         float elapsed = victim.BlindedElapsed;
                         float covered = elapsed < NecroRules.DontLookBlindSeconds ? 1f : 0f;
                         blind.SetFloat("_Elapsed", elapsed);
+                        blind.SetFloat("_Clock", t);
                         blind.SetFloat("_Open", Mathf.Clamp01((elapsed - (NecroRules.DontLookBlindSeconds - .3f)) / .3f));
                         blind.SetFloat("_Covered", covered);
                         blind.SetFloat("_Slow", Mathf.Clamp01((1f - victim.BlindedSpeedScale) / NecroRules.DontLookSlowPeak));

@@ -157,6 +157,10 @@ namespace TumbangPreso.UI
         /// <summary>True while the ghost is over the local player's eyes (Nemu's DON'T LOOK).</summary>
         public bool BlindedScreenVisible => _blinded != null && _blinded.enabled && _blindCover > .5f;
         private float _blindCover;
+        /// <summary>True while DON'T LOOK's dark covers this screen. Every player's tag and ring hides with it
+        /// (`Visual.CharacterNameplate`): owner on v5, a name floating in the dark beside the ghost, *"remove the text when
+        /// blinded"*. A blind you can read the court through is not a blind.</summary>
+        public static bool EyesCoveredOnScreen { get; private set; }
 
         /// <summary>
         /// BLINDED, ON THE VICTIM'S OWN SCREEN (Nemu's DON'T LOOK, `Shaders/DontLookBlind`): the dark rushes in round the ghost as it
@@ -175,9 +179,11 @@ namespace TumbangPreso.UI
             float open = Mathf.Clamp01((elapsed - (NecroRules.DontLookBlindSeconds - .3f)) / .3f);
             float slow = on ? (1f - local.BlindedSpeedScale) / NecroRules.DontLookSlowPeak : 0f;
             _blindCover = covered * lunge * (1f - open);
+            EyesCoveredOnScreen = covered > 0f && open < .5f;
             _blinded.enabled = on && (covered > 0f || slow > .01f);
             if (!_blinded.enabled) return;
             _blindedMaterial.SetFloat("_Elapsed", Mathf.Max(0f, elapsed));
+            _blindedMaterial.SetFloat("_Clock", Time.unscaledTime % 1000f);
             _blindedMaterial.SetFloat("_Open", open);
             _blindedMaterial.SetFloat("_Covered", covered);
             _blindedMaterial.SetFloat("_Slow", Mathf.Clamp01(slow));
@@ -189,6 +195,7 @@ namespace TumbangPreso.UI
 
         private void OnDestroy()
         {
+            EyesCoveredOnScreen = false;
             if (_blindedMaterial != null) Destroy(_blindedMaterial);
             if (_possessedMaterial != null) Destroy(_possessedMaterial);
             if (_dangerMaterial != null) Destroy(_dangerMaterial);
