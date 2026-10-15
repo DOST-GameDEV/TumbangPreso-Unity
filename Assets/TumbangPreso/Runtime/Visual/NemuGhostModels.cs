@@ -13,6 +13,11 @@ namespace TumbangPreso.Visual
     /// Voxels typed by hand from the mockup's rows (x right, y up, +z its face). The mockup's eye glints stood a voxel proud;
     /// here they sit flush in the socket (proud glints became slabs up close, Blindfold's film r12). Skitter carries the
     /// real slipper, so the mockup's voxel slipper is not built.
+    ///
+    /// ⚠️ SKITTER'S ARMS AND LOOKOUT'S ARMS AND LANTERN ARE THEIR OWN MESHES (owner on v1: *"doesnt look like theyre holding
+    /// the slippers"*, *"not enough animation"*, *"make it look liek its actually lifting the can man"*). Welded into the body
+    /// they could not reach, grab, heave or swing; now the arms pivot at the shoulder and close round what they hold, and the
+    /// lantern hangs from Lookout's hand and swings.
     /// </summary>
     public static class NemuGhostModels
     {
@@ -23,14 +28,34 @@ namespace TumbangPreso.Visual
         public static readonly Color LookoutBody = Hex(0xFFC77E), LookoutShade = Hex(0xE79A4A), LookoutLight = Hex(0xFFE89A);
         private static readonly Color LanternFrame = Hex(0x3A2A1A);
 
-        /// <summary>Where Skitter's hands meet (local, metres): the slipper hangs here while it carries.</summary>
-        public static readonly Vector3 SkitterHands = new Vector3(0f, 2.5f * BlindfoldGhostModel.Voxel, 8f * BlindfoldGhostModel.Voxel);
-        /// <summary>Lookout's lantern (local, metres), for its light.</summary>
-        public static readonly Vector3 LookoutLantern = new Vector3(7f * BlindfoldGhostModel.Voxel, 4f * BlindfoldGhostModel.Voxel, 0f);
+        private const float V = BlindfoldGhostModel.Voxel;
+        /// <summary>Where Skitter holds the slipper (local, metres): in front of its grin, between its two hands.</summary>
+        public static readonly Vector3 SkitterHands = new Vector3(0f, 4.5f * V, 6f * V);
+        /// <summary>Skitter's shoulders (local, metres), where its arm meshes pivot. Index 0 its left, 1 its right.</summary>
+        public static readonly Vector3[] SkitterShoulder = { new Vector3(-4f * V, 8.5f * V, 1f * V), new Vector3(4f * V, 8.5f * V, 1f * V) };
+        /// <summary>Skitter's eyes (local, metres), for their glow.</summary>
+        public static readonly Vector3[] SkitterEyePoints = { new Vector3(-1.5f * V, 9.5f * V, 3.6f * V), new Vector3(1.5f * V, 9.5f * V, 3.6f * V) };
+        /// <summary>Lookout's shoulders (local, metres), where its arm meshes pivot. Index 0 its left, 1 its right.</summary>
+        public static readonly Vector3[] LookoutShoulder = { new Vector3(-4.5f * V, 7f * V, .5f * V), new Vector3(4.5f * V, 7f * V, .5f * V) };
+        /// <summary>The middle of a hand along an arm (arm-local, metres; Skitter's and Lookout's arms reach along +z).</summary>
+        public static readonly Vector3 SkitterHand = new Vector3(0f, 0f, 6.5f * V), LookoutHandOnArm = new Vector3(0f, 0f, 4.5f * V);
+        /// <summary>The lantern's glass below its pivot (lantern-local, metres), for its light.</summary>
+        public static readonly Vector3 LookoutGlass = new Vector3(0f, -4f * V, 0f);
+        /// <summary>Lookout's eyes (local, metres).</summary>
+        public static readonly Vector3[] LookoutEyePoints = { new Vector3(-1.5f * V, 9.5f * V, 4.1f * V), new Vector3(1.5f * V, 9.5f * V, 4.1f * V) };
 
-        private static Mesh _skitter, _lookout;
+        private static Mesh _skitter, _lookout, _lantern;
+        private static readonly Mesh[] _skitterArm = new Mesh[2], _lookoutArm = new Mesh[2];
         public static Mesh Skitter => _skitter != null ? _skitter : _skitter = GhostVoxels.Build(SkitterShape(), "SkitterGhost", new Vector3(3.5f, 0f, 3.5f));
+        /// <summary>One of Skitter's arms (0 its left, 1 its right), its shoulder at the origin, reaching along +z.</summary>
+        public static Mesh SkitterArm(int side) => _skitterArm[side] != null ? _skitterArm[side]
+            : _skitterArm[side] = GhostVoxels.Build(SkitterArmShape(side), side == 0 ? "SkitterArmL" : "SkitterArmR", new Vector3(.5f, 8.5f, .5f));
         public static Mesh Lookout => _lookout != null ? _lookout : _lookout = GhostVoxels.Build(LookoutShape(), "LookoutGhost", new Vector3(4f, 0f, 3.5f));
+        /// <summary>One of Lookout's stubby sheet arms (0 its left, 1 its right), shoulder at the origin, reaching along +z.</summary>
+        public static Mesh LookoutArm(int side) => _lookoutArm[side] != null ? _lookoutArm[side]
+            : _lookoutArm[side] = GhostVoxels.Build(LookoutArmShape(side), side == 0 ? "LookoutArmL" : "LookoutArmR", new Vector3(.5f, 8.5f, .5f));
+        /// <summary>Lookout's lantern, its pivot (the top of its handle) at the origin, hanging down.</summary>
+        public static Mesh Lantern => _lantern != null ? _lantern : _lantern = GhostVoxels.Build(LanternShape(), "LookoutLantern", new Vector3(1.5f, 6f, 1.5f));
 
         private static GhostVoxels SkitterShape()
         {
@@ -50,10 +75,24 @@ namespace TumbangPreso.Visual
             // The grin, three fangs.
             m.Box(1, 6, 6, 5, 6, 6, Hollow); m.Put(1, 6, 7, Fang); m.Put(3, 6, 7, Fang); m.Put(5, 6, 7, Fang);
             m.Put(2, 7, 6, Hollow); m.Put(4, 7, 6, Hollow);
-            // Long stretchy arms, reaching forward and down to grab, hands cupped together.
-            m.Box(-1, 8, 3, -1, 8, 5, SkitterBody); m.Box(-1, 7, 6, -1, 7, 7, SkitterBody); m.Box(-1, 4, 8, -1, 6, 8, SkitterShade);
-            m.Box(7, 8, 3, 7, 8, 5, SkitterBody); m.Box(7, 7, 6, 7, 7, 7, SkitterBody); m.Box(7, 4, 8, 7, 6, 8, SkitterShade);
-            m.Box(0, 3, 8, 1, 3, 8, SkitterShade); m.Box(5, 3, 8, 6, 3, 8, SkitterShade);
+            // Little nubs where its arms come out (the arms are their own meshes, `SkitterArmShape`).
+            m.Put(-1, 8, 4, SkitterBody); m.Put(7, 8, 4, SkitterBody);
+            return m;
+        }
+
+        /// <summary>
+        /// A long stretchy arm, shoulder voxel at (0, 8, 0), reaching along +z: a thin upper arm, a forearm, and a grabby
+        /// three-clawed hand turned in toward the other one (so the two close round a slipper's ends).
+        /// </summary>
+        private static GhostVoxels SkitterArmShape(int side)
+        {
+            var m = new GhostVoxels { TailTop = .001f };
+            int inward = side == 0 ? 1 : -1;
+            m.Box(0, 8, 0, 0, 8, 3, SkitterBody);
+            m.Box(0, 8, 4, 0, 8, 5, SkitterShade);
+            m.Box(0, 7, 6, 0, 9, 7, SkitterBody);
+            m.Put(inward, 9, 7, SkitterShade); m.Put(inward, 8, 7, SkitterShade); m.Put(inward, 7, 7, SkitterShade);
+            m.Put(inward, 9, 8, Fang); m.Put(inward, 7, 8, Fang); m.Put(0, 8, 8, Fang);
             return m;
         }
 
@@ -70,10 +109,29 @@ namespace TumbangPreso.Visual
             m.Box(1, 8, 7, 2, 9, 7, Hollow); m.Box(5, 8, 7, 6, 9, 7, Hollow);
             m.Put(2, 9, 7, LookoutLight, 1f, true); m.Put(5, 9, 7, LookoutLight, 1f, true);
             m.Box(3, 6, 7, 4, 6, 7, Hollow); m.Put(4, 6, 8, Fang);
-            // Its arms, the right one holding the lantern out on a short handle.
-            m.Box(-2, 6, 3, -1, 7, 4, LookoutBody); m.Box(8, 6, 3, 9, 7, 4, LookoutBody);
-            m.Box(10, 2, 3, 11, 2, 4, LanternFrame); m.Box(10, 3, 3, 11, 4, 4, LookoutLight, 1f, true);
-            m.Box(10, 5, 3, 11, 5, 4, LanternFrame); m.Put(10, 6, 3, LanternFrame); m.Put(9, 7, 3, LanternFrame);
+            // (Its arms are their own meshes, `LookoutArmShape`, and its lantern too, `LanternShape`.)
+            return m;
+        }
+
+        /// <summary>A stubby arm of sheet, shoulder voxel at (0, 8, 0), reaching along +z, a rounded mitten at the end.</summary>
+        private static GhostVoxels LookoutArmShape(int side)
+        {
+            var m = new GhostVoxels { TailTop = .001f };
+            int inward = side == 0 ? 1 : -1;
+            m.Box(0, 8, 0, 0, 8, 3, LookoutBody);
+            m.Box(0, 7, 4, 0, 9, 5, LookoutShade);
+            m.Put(inward, 8, 5, LookoutShade);
+            return m;
+        }
+
+        /// <summary>A little lantern, 3 voxels square: dark frame, a glowing glass, a cap and the handle it hangs by.</summary>
+        private static GhostVoxels LanternShape()
+        {
+            var m = new GhostVoxels { TailTop = .001f };
+            m.Box(0, 0, 0, 2, 0, 2, LanternFrame);
+            m.Box(0, 1, 0, 2, 2, 2, LookoutLight, 1f, true);
+            foreach (var (x, z) in new[] { (0, 0), (2, 0), (0, 2), (2, 2) }) m.Box(x, 1, z, x, 2, z, LanternFrame);
+            m.Box(0, 3, 0, 2, 3, 2, LanternFrame); m.Put(1, 4, 1, LanternFrame); m.Put(1, 5, 1, LanternFrame);
             return m;
         }
     }

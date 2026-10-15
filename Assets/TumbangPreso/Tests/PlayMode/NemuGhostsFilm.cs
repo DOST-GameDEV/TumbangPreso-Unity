@@ -103,11 +103,12 @@ namespace TumbangPreso.PlayTests
             var pixels = new Texture2D(1280, 720, TextureFormat.RGB24, false);
             string root = Path.Combine(Environment.GetEnvironmentVariable("TUMP_EVIDENCE") ?? "Logs", "nemu-ghosts");
             foreach (var view in new[] { "wide", "close" }) Directory.CreateDirectory(Path.Combine(root, view));
-            var timing = new StringBuilder().AppendLine("frame,seconds,skitter,lookout,shoe_to_nemu,can_upright,fetch_active,lookout_active");
+            var timing = new StringBuilder().AppendLine("frame,seconds,skitter,lookout,shoe_to_nemu,can_upright,fetch_active,lookout_active,lookout_lift,can_drawn_lift,can_top_y");
             int previousRate = Time.captureFramerate;
             Time.captureFramerate = 30;
-            int frames = 30 * 15;
-            bool delivered = false, knocked = false, restoredByLookout = false;
+            int frames = 30 * 16;
+            bool delivered = false, knocked = false, restoredByLookout = false, lookoutFramed = false;
+            Vector3 closeAt = Vector3.zero, closeLook = Vector3.zero;
 
             void Save(string view, int f)
             {
@@ -139,26 +140,45 @@ namespace TumbangPreso.PlayTests
                     float shoeToNemu = Vector3.Distance(Flat(shoe.transform.position), Flat(nemu.transform.position));
                     if (t > 1f && t < 6.5f && shoeToNemu < 1.5f) delivered = true;
                     timing.AppendLine(FormattableString.Invariant(
-                        $"{f},{t:F3},{skitter != null},{lookout != null},{shoeToNemu:F2},{round.Lata.IsUpright},{nemu.AbilitySystem.Kit.AttackingSkill.IsActive},{taya.AbilitySystem.Kit.DefendingSkill.IsActive}"));
+                        $"{f},{t:F3},{skitter != null},{lookout != null},{shoeToNemu:F2},{round.Lata.IsUpright},{nemu.AbilitySystem.Kit.AttackingSkill.IsActive},{taya.AbilitySystem.Kit.DefendingSkill.IsActive},{(lookout != null ? lookout.Lift : 0f):F3},{NemuLookout.LiftFor(round.Lata):F3},{(round.Lata.PresentedEnds(out _, out var canTop) ? canTop.y - can.y : -1f):F3}"));
 
                     if (t < 6.5f)
                     {
                         var mid = nemuAt + side * 4.5f;
                         wide.transform.position = mid + Vector3.back * 7.5f + Vector3.up * 3.2f;
                         wide.transform.LookAt(mid + Vector3.up * .5f);
+                        // The close camera is out in front of Skitter (its face, its hands, the slipper in them).
                         Vector3 focus = skitter != null ? skitter.Position : shoe.transform.position;
-                        close.transform.position = focus + Vector3.back * 2.6f + Vector3.up * 1.0f + side * -.6f;
-                        close.transform.LookAt(focus + Vector3.up * .35f);
+                        Vector3 ahead = skitter != null ? skitter.Forward : -side;
+                        Vector3 want = focus + ahead * 2.4f + Vector3.Cross(Vector3.up, ahead) * 1.0f + Vector3.up * .8f;
+                        // (No lag: it runs faster than a following camera keeps up, film v2.)
+                        closeAt = want; closeLook = focus;
+                        close.transform.position = closeAt;
+                        close.transform.LookAt(closeLook + Vector3.up * .3f);
                     }
                     else
                     {
                         wide.transform.position = can + Vector3.back * 6.5f + Vector3.left * 3f + Vector3.up * 3.2f;
                         wide.transform.LookAt(can + Vector3.up * .5f);
-                        close.transform.position = can + Vector3.back * 2.4f + Vector3.left * 1.4f + Vector3.up * .9f;
-                        close.transform.LookAt(can + Vector3.up * .3f);
+                        // The close camera faces Lookout (and the can it is working on).
+                        Vector3 ghostAt = lookout != null ? lookout.Position : can;
+                        Vector3 ahead = lookout != null ? lookout.Forward : Vector3.back;
+                        Vector3 focus = Vector3.Lerp(ghostAt, can, .45f);
+                        Vector3 want = focus + ahead * 2.0f + Vector3.Cross(Vector3.up, ahead) * 1.0f + Vector3.up * .8f;
+                        bool first = !lookoutFramed; lookoutFramed = true;
+                        closeAt = first ? want : Vector3.Lerp(closeAt, want, .06f);
+                        closeLook = first ? focus : Vector3.Lerp(closeLook, focus, .15f);
+                        close.transform.position = closeAt;
+                        close.transform.LookAt(closeLook + Vector3.up * .25f);
                     }
+                    // ⚠️ The can is DRAWN raised (the taya's channel, Lookout's heave) only between its LateUpdate and its next
+                    // Update, and this coroutine runs in between those the wrong way round: raise it for the shot.
+                    var lataType = typeof(Lata); var hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+                    lataType.GetMethod("RestoreRaisePresentation", hidden).Invoke(round.Lata, null);
+                    lataType.GetMethod("ApplyRaisePresentation", hidden).Invoke(round.Lata, null);
                     Render(wide); Save("wide", f);
                     Render(close); Save("close", f);
+                    lataType.GetMethod("RestoreRaisePresentation", hidden).Invoke(round.Lata, null);
                 }
             }
             finally

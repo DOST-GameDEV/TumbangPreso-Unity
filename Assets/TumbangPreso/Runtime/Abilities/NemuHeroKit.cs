@@ -172,7 +172,17 @@ namespace TumbangPreso.Abilities
                 if (!_carrying)
                 {
                     _ghost.Step(FeetFor(_shoe.transform.position + Vector3.up * .1f), NecroRules.FetchSpeed, dt);
-                    if (_ghost.Arrived) { _carrying = true; GameServices.Audio?.PlayAt("sfx_possess_enter", _ghost.Position); }
+                    // Close in, its arms stretch out at it.
+                    _ghost.ReachFor = (_ghost.Position - _shoe.transform.position).sqrMagnitude < 1.4f * 1.4f
+                        ? _shoe.transform.position : (Vector3?)null;
+                    if (_ghost.Arrived)
+                    {
+                        _carrying = true;
+                        // Its hands go round the slipper's two ends, so it needs to know how long it is and which way.
+                        Bounds size = SlipperSize(_shoe);
+                        _ghost.Grab(Mathf.Max(size.size.x, size.size.z) * .5f, size.size.x >= size.size.z);
+                        GameServices.Audio?.PlayAt("sfx_possess_enter", _ghost.Position);
+                    }
                     return;
                 }
                 // Carrying: it hurries back to her side, low.
@@ -186,8 +196,8 @@ namespace TumbangPreso.Abilities
                     if (_apart > .4f) DurationRemaining = 0.0f;
                     return;
                 }
-                // Carried: the host walks the (loose) slipper in its hands and tells everyone where it is.
-                _shoe.transform.position = at;
+                // Carried: the host walks the (loose) slipper in its hands, crosswise between them, and tells everyone.
+                _shoe.transform.SetPositionAndRotation(at, _ghost.CarryRotation);
                 if (Time.time >= _nextBroadcast) { _nextBroadcast = Time.time + 0.1f; Net.MatchRpc.Instance?.BroadcastSlipperState(_shoe); }
                 // THE INTERCEPT (owner: the taya can stop it): a taya who can act and is on it makes it drop it.
                 var round = ctx?.Round;
@@ -206,8 +216,25 @@ namespace TumbangPreso.Abilities
                 {
                     _shoe.transform.position = ctx.Motor.transform.position + ctx.Motor.transform.right * 0.8f;
                     GroundCarriedSlipper();
+                    _ghost.Leave(delivered: true);
                     DurationRemaining = 0.0f;
                 }
+            }
+
+            /// <summary>The slipper's size in its own axes (measured at the grab, while it lies at its rest rotation).</summary>
+            private static Bounds SlipperSize(Slipper shoe)
+            {
+                var b = new Bounds(shoe.transform.position, Vector3.one * .2f);
+                bool any = false;
+                var undo = shoe.transform.rotation;
+                shoe.transform.rotation = Quaternion.identity;
+                foreach (var r in shoe.GetComponentsInChildren<MeshRenderer>())
+                {
+                    if (r.GetComponent<Visual.VfxRenderTag>() != null) continue;
+                    if (!any) { b = r.bounds; any = true; } else b.Encapsulate(r.bounds);
+                }
+                shoe.transform.rotation = undo;
+                return b;
             }
 
             private void GroundCarriedSlipper()
@@ -225,8 +252,11 @@ namespace TumbangPreso.Abilities
 
             protected override void OnEnd(AbilityContext ctx)
             {
+                // Every peer's copy ends here; a carry that ended at her side was a delivery (its happy spin).
+                bool delivered = _carrying && _ghost != null && ctx?.Motor != null &&
+                    (ctx.Motor.transform.position - _ghost.HoldPoint).sqrMagnitude < 1.6f * 1.6f;
                 GroundCarriedSlipper();
-                _ghost?.Leave();
+                _ghost?.Leave(delivered);
                 _ghost = null;
                 _shoe = null;
             }
@@ -308,15 +338,16 @@ namespace TumbangPreso.Abilities
                 if (_ghost != null) _ghost.Lift = _lift / NecroRules.LookoutRestoreSeconds;
                 if (_lift < NecroRules.LookoutRestoreSeconds) return;
                 _done = true;
-                if (_ghost != null) _ghost.Lift = 0f;
+                // It keeps its grip until the can is really up (a peer waits on the host's can broadcast), and cheers.
+                if (_ghost != null) { _ghost.Lift = 1f; _ghost.Cheer(); }
                 // ⚠️ THE GATE IS WRITTEN OUT, NOT HOISTED: `tools/audit_ability_authority.py` reads it by brace depth.
                 if (NetAuthority.ShouldResolve())
                 {
                     _can.HostRestore();
                     Net.MatchRpc.Instance?.BroadcastLataState();
                 }
-                // Its job done, it goes.
-                DurationRemaining = Mathf.Min(DurationRemaining, .6f);
+                // Its job done, it goes (after its cheer).
+                DurationRemaining = Mathf.Min(DurationRemaining, 1.0f);
             }
 
             public bool CapturePreparedWorld(out Vector3 centre, out float preparation, out float remaining)

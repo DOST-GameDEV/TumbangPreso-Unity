@@ -38,10 +38,30 @@ namespace TumbangPreso.Visual
         }
 
         public void Pose(Vector3 at, Quaternion facing, float scale, float fade, float clock, float sway = .05f, float flash = 0f)
+            => Pose(at, facing, Vector3.one * scale, fade, clock, sway, flash);
+
+        /// <summary>Posed with its own squash and stretch (<paramref name="scale"/> per axis, its local axes).</summary>
+        public void Pose(Vector3 at, Quaternion facing, Vector3 scale, float fade, float clock, float sway = .05f, float flash = 0f)
         {
             if (_renderer == null) return;
             Transform.SetPositionAndRotation(at, facing);
-            Transform.localScale = Vector3.one * scale;
+            Transform.localScale = scale;
+            Shade(fade, clock, sway, flash);
+        }
+
+        /// <summary>
+        /// A part hung on another body (an arm, a lantern): made with that body's <see cref="Transform"/> as its parent, it is
+        /// posed in that body's local space, so it squashes, leans and fades with it.
+        /// </summary>
+        public void PoseLocal(Vector3 local, Quaternion rotation, float fade, float clock, float flash = 0f)
+        {
+            if (_renderer == null) return;
+            Transform.localPosition = local; Transform.localRotation = rotation; Transform.localScale = Vector3.one;
+            Shade(fade, clock, 0f, flash);
+        }
+
+        private void Shade(float fade, float clock, float sway, float flash)
+        {
             _renderer.enabled = fade > .005f && _material != null;
             _block.SetFloat(FadeId, Mathf.Clamp01(fade));
             _block.SetFloat(FlashId, flash);

@@ -23,7 +23,14 @@ slows them 5 s with a slow that gets lower over time. Owner asked for a new name
   and LOOKOUT (`nemu_skill2d`, was KURO: CATCH!, a small lantern ghost `NemuLookout` minding the can 15 s that slowly stands
   a downed can up once, 3.5 s, scared off by an attacker within 1.5 m; no more knock-proof can). Protocol 162. Defaults
   chosen without the owner's pick: 3.5 s, 1.5 m, once per summon. `NemuLookoutTests` replaces the Catch suites.
-- [ ] Owner verdict on Skitter and Lookout (looks and the Lookout defaults); dedicated glyphs for both.
+- [x] Owner on v1: *"doesnt look like theyre holding the slippers"*, *"not enough vfx, not enough animation"*, *"make it look
+  liek its actually lifting the can man"*. v2: arms (and Lookout's lantern) are their own meshes. Skitter stretches its arms
+  at the slipper, snatches it (squash, flash, sparks), carries it crosswise between its claws (`NemuSkitter.CarryRotation`,
+  written by the host and broadcast), scurries with squash and stretch, trails and drips ectoplasm, spins off on delivery.
+  Lookout grips the fallen can's rim and heaves it up in pulses: the can's drawn mesh rises with it
+  (`Lata.RaiseTurn` reads `NemuLookout.LiftFor`, its hands ride `Lata.PresentedEnds`), a warm ring fills round the can,
+  it cheers when the can stands; its lantern swings on a pendulum; scared, it covers its eyes and shivers.
+- [ ] Owner verdict on Skitter and Lookout v2 (looks and the Lookout defaults); dedicated glyphs for both.
 - [x] Owner on v5's blind: *"make it feel more like the blind of that ghost (weird ng blackout lang)"*, *"remove the text when
   blinded"*. v6: the dark round its face is stepped in its voxels, twitching block by block, rows tearing, its aura along the
   edge, cold static; every name tag and ring hides while your eyes are covered (`TumpHudEffects.EyesCoveredOnScreen`).
