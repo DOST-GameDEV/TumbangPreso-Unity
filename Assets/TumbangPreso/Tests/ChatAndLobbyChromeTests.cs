@@ -384,7 +384,7 @@ namespace TumbangPreso.Tests
             //160 appends POSSESSED to SyncUnit and replaces Kuro's Haunt with LET THEM IN (first named PRUSISYON).
             //161 appends BLINDED to SyncUnit and Blindfold to the world snapshot (Nemu's DON'T LOOK replaces KURO: SIT!).
             //162 makes Nemu's SKITTER host-confirmed and LOOKOUT a can stand-up (no wire change; the rules differ).
-            Assert.AreEqual(162, NetSession.ProtocolVersion,
+            Assert.AreEqual(164, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

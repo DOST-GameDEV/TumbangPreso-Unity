@@ -16,8 +16,8 @@ namespace TumbangPreso.Abilities
     ///    ground; over its first 3 s it fades to a faint shimmer, still there for anyone who looks hard (Killjoy's traps,
     ///    owner on v4: *"invisible but like medyo kita"*). Nemu keeps a clearer copy so she knows where it is.
     ///  * SPRUNG: the first other player within 1.8 m once it is armed. ONLY THE HOST DECIDES: it writes BLINDED
-    ///    (`CharacterMotor.ApplyBlinded`), and `SyncUnit` carries that clock to every peer. Every other peer learns of the
-    ///    spring from that replicated edge: a player near its ghost going Blinded is its victim. No new message.
+    ///    (`CharacterMotor.ApplyBlinded`), and `SyncUnit` carries that clock to every peer. Protocol163's ghost frame names
+    ///    the exact lifetime and victim, including their movement epoch; peers never guess from a nearby status edge.
     ///  * THE LUNGE: visible to everyone, its cloth drops to its neck, its cyan pinpoint eyes open, and it shoots at the
     ///    victim's face in 0.22 s and latches on, face to face, its arms round their head, until their eyes are
     ///    uncovered, then lets go and flies off.
@@ -26,9 +26,9 @@ namespace TumbangPreso.Abilities
     ///    parang slideshoww"*; *"wont it be nicer if the ghost jumps at u"*.
     ///  * Untripped, it goes after 30 s. A rejoiner gets the waiting ghost at the same age (`WorldEffectSnapshot.Kind.Blindfold`).
     ///
-    /// Each peer runs the same clock from the accepted cast, so its cues are local, not `NetCue` (`audit_cue_relay.py`).
+    /// The host's bounded complete ghost frames also hydrate late arrivals and retire replaced lifetimes.
     /// </summary>
-    public sealed class NemuBlindfold : MonoBehaviour
+    public sealed partial class NemuBlindfold : MonoBehaviour
     {
         public static readonly List<NemuBlindfold> Live = new List<NemuBlindfold>();
 
@@ -227,6 +227,13 @@ namespace TumbangPreso.Abilities
             float dt = Time.deltaTime;
             _age += dt;
             _stateAge += dt;
+            if (!NetAuthority.ShouldResolve())
+            {
+                _victim = _networkVictim >= 0 ? GameServices.Round?.PlayerAt(_networkVictim) : null;
+                if (_victim != null && _victim.MovementEpoch != _networkVictimEpoch) _victim = null;
+                Draw();
+                return;
+            }
             switch (_state)
             {
                 case State.Waiting:
@@ -252,8 +259,7 @@ namespace TumbangPreso.Abilities
         }
 
         /// <summary>
-        /// The host springs it on the first body in reach. Every other peer springs its copy when a body near it goes
-        /// Blinded (the host's replicated edge), within a looser reach because that body has moved on since.
+        /// The host springs it on the first eligible body in reach. Other peers receive the chosen identity.
         /// </summary>
         private void Watch()
         {
@@ -272,11 +278,7 @@ namespace TumbangPreso.Abilities
                     Spring(p);
                     return;
                 }
-                if (!p.IsBlinded || p.BlindedElapsed > .75f) continue;
-                Vector3 d = p.transform.position - Spot; d.y = 0.0f;
-                if (d.magnitude > NecroRules.DontLookTriggerRadius + 2.0f) continue;
-                Spring(p);
-                return;
+                // Peers wait for the host's exact ghost/victim identity, never a proximity guess.
             }
         }
 
@@ -420,7 +422,8 @@ namespace TumbangPreso.Abilities
         public static NemuBlindfold Restore(Net.WorldEffectSnapshot.Field field, float elapsed)
         {
             float age = field.Duration - Mathf.Clamp(field.Remaining - elapsed, 0.0f, field.Duration);
-            return Place(field.Position, field.Forward, field.Owner, Mathf.Max(.01f, age));
+            // Network peers hydrate from the host's complete ghost frame, including already sprung ghosts.
+            return NetAuthority.ShouldResolve() ? Place(field.Position, field.Forward, field.Owner, Mathf.Max(.01f, age)) : null;
         }
 
         /// <summary>Every ghost on the court goes (the round ended, or the snapshot is replacing them).</summary>

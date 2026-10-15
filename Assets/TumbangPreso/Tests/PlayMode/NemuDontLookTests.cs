@@ -110,11 +110,10 @@ namespace TumbangPreso.PlayTests
             yield return null; yield return null;
             Assert.IsFalse(_players[1].IsBlinded, "An observer wrote BLINDED.");
             Assert.IsFalse(blindfold.Sprung, "An observer sprang a ghost the host never did.");
-            // The host's replicated edge is what springs an observer's copy.
+            // A blinded neighbour is insufficient: only the explicit host ghost frame may name the victim.
             _players[1].ApplyNetworkBlinded(StatusRules.BlindedSeconds);
             yield return null; yield return null;
-            Assert.IsTrue(blindfold.Sprung);
-            Assert.AreSame(_players[1], blindfold.Victim);
+            Assert.IsFalse(blindfold.Sprung, "A different trap's victim sprang this waiting ghost.");
         }
 
         [Test] public void TheSlowDecaysAndTheBlindEndsAtTwoSeconds()

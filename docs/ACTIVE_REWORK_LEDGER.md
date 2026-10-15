@@ -1,3 +1,15 @@
+# Ghost network checkpoint, October15
+
+Pulled3fe64. Protocol163 now sends complete host-owned Blindfold/Skitter/Lookout
+visual lifetimes instead of peer guesses, plus late hydration and scoped cleanup.
+Actual UDP and real Relay DTLS host+2client delivery pass. Mixed9 authored models,
+27 participants and6 samples each reproduce/fix render-copy bindpose order; final
+native12/12, admission2/2, Skitter2/2, Core744/744. 52 distinct passing native
+cases across retained runs. No active Unity/player or Desktop replacement.
+[Evidence and limits](reports/nemu-network-2026-10-15/README.md). Next qualify matching163
+full natural matches on separate devices; broader network acceptance stays open.
+Publish this checked source unit immediately, preserving authored hero direction.
+
 # Network refinement checkpoint, October15
 
 Pulled ASTRAReworks26def. Fixed remote crouch/curse-reach sprint stamina and the

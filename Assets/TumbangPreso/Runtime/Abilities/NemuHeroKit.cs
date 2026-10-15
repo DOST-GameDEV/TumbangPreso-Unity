@@ -99,7 +99,8 @@ namespace TumbangPreso.Abilities
             {
                 _kit.ShareBasicCooldown(CooldownRemaining, mayLower: false);
                 if (ctx?.Motor == null) return;
-                NemuBlindfold.Place(AimedDestination(ctx), ctx.Forward, ctx.Motor.PlayerSlot);
+                if (NetAuthority.ShouldResolve())
+                    NemuBlindfold.Place(AimedDestination(ctx), ctx.Forward, ctx.Motor.PlayerSlot);
             }
         }
 
@@ -108,10 +109,10 @@ namespace TumbangPreso.Abilities
         /// <summary>
         /// SKITTER (owner 2026-10-15, the overhaul of KURO: FETCH!: *"Spawn siya ghost na kukunin slipper for her"*). A greedy
         /// little green ghost of hers (`NemuSkitter`) pops out beside her, scrambles to her loose slipper, grabs it and hurries
-        /// it back, leaving it on the ground beside her to pick up. A taya who gets near it on the way back makes it drop it.
+        /// it back, then waits by her holding it out until she takes it with INTERACT. A taya who gets near it makes it drop it.
         /// Kuro is not sent. ⚠️ The ID is Fetch's, kept for saves, mastery and the wire. HOST-CONFIRMED (Fetch was predicted)
-        /// so every peer runs the same ghost from the accepted cast; only the host moves or lands the slipper (protocol95's
-        /// delivery rules unchanged), and a peer's ghost lets go when the host's slipper stops following it.
+        /// so the host accepts the cast and moves or lands the slipper. Protocol163's complete ghost frames carry its
+        /// path, grab and release to every peer alongside the ordinary authoritative slipper state.
         /// </summary>
         private sealed class Skitter : HeroAbility
         {
@@ -120,7 +121,7 @@ namespace TumbangPreso.Abilities
             private Slipper _shoe;
             private NemuSkitter _ghost;
             private bool _carrying;
-            private float _nextBroadcast, _apart;
+            private float _nextBroadcast;
 
             public Skitter(NemuHeroKit kit)
                 : base("nemu_skill2", "SKITTER",
@@ -146,11 +147,12 @@ namespace TumbangPreso.Abilities
             protected override void OnActivate(AbilityContext ctx)
             {
                 _kit.ShareBasicCooldown(CooldownRemaining, mayLower: false);
+                if (!NetAuthority.ShouldResolve()) return;
                 _shoe = OwnLooseSlipper(ctx.Motor);
-                _carrying = false; _apart = 0f;
+                _carrying = false;
                 var owner = ctx.Motor.transform;
                 _ghost = NemuSkitter.Summon(owner.position + owner.right * .5f + Vector3.up * .3f, ctx.Forward, ctx.Motor.PlayerSlot);
-                // Every peer runs this from the accepted cast, so its sounds are local, not relayed (`audit_cue_relay.py`).
+                // The host owns this ghost's live path; peers receive its complete visual state.
                 GameServices.Audio?.PlayAt("sfx_ghost_teleport", ctx.Position);
             }
 
@@ -159,6 +161,8 @@ namespace TumbangPreso.Abilities
 
             protected override void OnTick(AbilityContext ctx, float dt)
             {
+                // Peer visuals follow the host frame; a delayed shoe pose cannot choose another path or grab.
+                if (!NetAuthority.ShouldResolve()) return;
                 if (_shoe == null || !_shoe.gameObject.activeInHierarchy ||
                     _shoe.OwnerSlot != ctx.Motor.PlayerSlot || _shoe.State != SlipperState.Loose)
                 {
@@ -200,13 +204,6 @@ namespace TumbangPreso.Abilities
                 _ghost.Offering = waiting;
                 DurationRemaining = Duration;
                 Vector3 at = _ghost.HoldPoint;
-                if (!NetAuthority.ShouldResolve())
-                {
-                    // A peer's ghost lets go when the host's slipper stops following it (dropped, or delivered there).
-                    _apart = (_shoe.transform.position - at).sqrMagnitude > 1.5f * 1.5f ? _apart + dt : 0f;
-                    if (_apart > .4f) DurationRemaining = 0.0f;
-                    return;
-                }
                 // Carried: the host walks the (loose) slipper in its hands, crosswise between them, and tells everyone.
                 _shoe.transform.SetPositionAndRotation(at, _ghost.CarryRotation);
                 if (Time.time >= _nextBroadcast) { _nextBroadcast = Time.time + 0.1f; Net.MatchRpc.Instance?.BroadcastSlipperState(_shoe); }
@@ -276,7 +273,8 @@ namespace TumbangPreso.Abilities
         /// slowly (3.5 s against the taya's 1.5 s), and an attacker within 1.5 m of the can scares it off the job. It does it
         /// once; then its job is done and it goes. It no longer makes the can knock-proof (protocol109's protection).
         /// ⚠️ The ID is Catch's, kept for saves, mastery and the wire. Host-confirmed: every peer runs the same ghost and
-        /// clock; only the host stands the can up (`Lata.HostRestore`, then the usual can broadcast).
+        /// clock on the host; peers receive its lift/scare/cheer state. Only the host stands the can up
+        /// (`Lata.HostRestore`, then the usual can broadcast).
         /// </summary>
         private sealed class Lookout : HeroAbility, IPreparedWorldReplication
         {
@@ -309,7 +307,8 @@ namespace TumbangPreso.Abilities
                 _can = ctx?.Round?.Lata;
                 _lift = 0f; _done = false;
                 if (_can == null || ctx?.Motor == null) return;
-                _ghost = NemuLookout.Summon(_can.transform, ctx.Motor.transform.position, ctx.Motor.PlayerSlot);
+                if (NetAuthority.ShouldResolve())
+                    _ghost = NemuLookout.Summon(_can.transform, ctx.Motor.transform.position, ctx.Motor.PlayerSlot);
             }
 
             /// <summary>The nearest attacker to the can who can act, and how near.</summary>
@@ -329,6 +328,7 @@ namespace TumbangPreso.Abilities
 
             protected override void OnTick(AbilityContext ctx, float dt)
             {
+                if (!NetAuthority.ShouldResolve()) return;
                 if (_can == null) { Bind(ctx); if (_can == null) { DurationRemaining = 0f; return; } }
                 if (_can != ctx?.Round?.Lata) { DurationRemaining = 0f; return; }
                 var near = NearestAttacker(ctx, _can.transform.position, out float distance);

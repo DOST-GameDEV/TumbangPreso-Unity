@@ -619,7 +619,11 @@ namespace TumbangPreso.Net
         // 162 (2026-10-15): Nemu's other skills are their own ghosts. SKITTER (`nemu_skill2`, was KURO: FETCH!) is host-confirmed
         // (was predicted) so every peer runs the ghost; LOOKOUT (`nemu_skill2d`, was KURO: CATCH!) stands a downed can back up
         // instead of making it knock-proof. The wire is unchanged; a 161 peer would disagree with the host about both skills.
-        public const int ProtocolVersion = 162;
+        // 163: host-authored Nemu ghost lifetimes, victim, carry pose and lift progress on LAN and Relay.
+        // 164 (2026-10-15): SKITTER waits by her holding the slipper until she takes it with INTERACT (no longer set down
+        // beside her; it follows her past its 8 s), and its ghost frame carries that as flag 8 (offering). A 163 peer would
+        // refuse those frames and expect the slipper on the ground.
+        public const int ProtocolVersion = 164;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
@@ -1686,6 +1690,7 @@ namespace TumbangPreso.Net
 
         private static void EndTransportPresentation()
         {
+            MatchRpc.Instance?.CancelNemuGhostPresentation();
             SharedUltimatePhase.Instance?.Cancel();
             HalftimePresentation.Instance?.End(false);
             foreach (var arrival in UnityEngine.Object.FindObjectsByType<MatchArrivalPresentation>(

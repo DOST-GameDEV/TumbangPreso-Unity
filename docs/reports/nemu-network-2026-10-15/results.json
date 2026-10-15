@@ -1,0 +1,372 @@
+{
+  "base": "3fe64c26afa18fa146184b87920c254374a55300",
+  "protocol": 163,
+  "unity": "6000.5.8f1",
+  "distinctPassingNativeCases": 52,
+  "core": {
+    "total": "744",
+    "executed": "744",
+    "passed": "744",
+    "failed": "0",
+    "error": "0",
+    "timeout": "0",
+    "aborted": "0",
+    "inconclusive": "0",
+    "passedButRunAborted": "0",
+    "notRunnable": "0",
+    "notExecuted": "0",
+    "disconnected": "0",
+    "warning": "0",
+    "completed": "0",
+    "inProgress": "0",
+    "pending": "0"
+  },
+  "runs": {
+    "candidate5": {
+      "counts": {
+        "total": "44",
+        "passed": "43",
+        "failed": "1",
+        "skipped": "0"
+      },
+      "rawXmlSha256": "3f340189f1dbac45bfc3d374c013ca086ac6010d9b0166490167da5d70ff3955",
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.NemuDontLookTests.AnObserverCannotSpringIt",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuDontLookTests.AnUnarmedGhostWaitsThenTheHostSpringsItOnTheFirstPlayerNear",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuDontLookTests.ARejoinerGetsTheWaitingGhostAtTheSameAge",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuDontLookTests.CastingLeavesOneGhostAndARecastMovesIt",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuDontLookTests.NemuNeverTripsHerOwnGhost",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuDontLookTests.TheSignatureIsDontLookUnderSitsIdentity",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuDontLookTests.TheSlowDecaysAndTheBlindEndsAtTwoSeconds",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuFetchContractTests.ARealPickupDuringTheReturnStopsFetchWithoutMovingTheHeldSlipper",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuFetchContractTests.CancellationGroundsTheCarriedLooseSlipper",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuFetchContractTests.CannotStartWhileTheOwnedSlipperIsInHand",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuFetchContractTests.ChangedOwnershipStopsTheOldFetchWithoutMovingTheSlipper",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuFetchContractTests.DefenderInterceptionDropsForNormalPickup",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuFetchContractTests.DeliveryLeavesTheSlipperLooseBesideItsEmptyHandedOwner",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuFetchContractTests.ExpiryGroundsTheCarriedSlipperWithoutEquippingIt",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuFetchContractTests.FetchNameAndCooldownMatchTheCurrentContract",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuFetchContractTests.ObserverCannotMoveOrLandTheAuthoritativeSlipper",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuGhostReplicationTests.BodyEpochAndKitChangesRetireOldGhosts",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuGhostReplicationTests.BoundedCodecRejectsMalformedCompleteFrames",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuGhostReplicationTests.FullFramesRetireMissingGhostsAndRejectForgedStaleOrForeignState",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuGhostReplicationTests.HostDeliversCompleteFramesToTwoActualUdpClients",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuGhostReplicationTests.MixedCurrentRosterCutscenesCopyActualParticipantsAndLeaveLiveBodiesAlone",
+          "result": "Failed",
+          "failure": "Unhandled log message: '[Error] Bones do not match bindpose.'. Use UnityEngine.TestTools.LogAssert.Expect"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuGhostReplicationTests.OwnerObserverAndSpectatorHydrateTheSameThreeGhostsWithoutCasting",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuGhostReplicationTests.RealRelayDeliversCompleteFramesToOwnerAndObserver",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuLookoutTests.AnAttackerAtTheCanScaresItOffTheJob",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuLookoutTests.AnObserverRunsTheGhostButCannotStandTheCanUp",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuLookoutTests.IdentityAndClockMatchTheOwnersBrief",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuLookoutTests.ItLeavesAfterFifteenSeconds",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuLookoutTests.ItSlowlyStandsADownedCanBackUpOnceThenGoes",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuLookoutTests.ItSummonsItsGhostAndNoLongerMakesTheCanKnockProof",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuLookoutTests.RecoveryUsesTheRemainingClockWithoutRecastingOrSpending",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SpectatorUltimateEventTests.ADelayedDecisionKeepsTheOriginalEventClock",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SpectatorUltimateEventTests.AnExpiredPulseDoesNotClaimCurrentAction",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SpectatorUltimateEventTests.APulseFromThePreviousRoundDoesNotClaimTheNextRound",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SpectatorUltimateEventTests.ARetiredKitPulseDoesNotDescribeTheReplacementHero",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SpectatorUltimateEventTests.UltimatePresentationPulseSurvivesUntilTheNextDecision(\"dante\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SpectatorUltimateEventTests.UltimatePresentationPulseSurvivesUntilTheNextDecision(\"cheska\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SpectatorUltimateEventTests.UltimatePresentationPulseSurvivesUntilTheNextDecision(\"sean\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SpectatorUltimateEventTests.UltimatePresentationPulseSurvivesUntilTheNextDecision(\"zack\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SpectatorUltimateEventTests.UltimatePresentationPulseSurvivesUntilTheNextDecision(\"nemu\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SpectatorUltimateEventTests.UltimatePresentationPulseSurvivesUntilTheNextDecision(\"phaister\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SpectatorUltimateEventTests.UltimatePresentationPulseSurvivesUntilTheNextDecision(\"rafi\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SpectatorUltimateEventTests.UltimatePresentationPulseSurvivesUntilTheNextDecision(\"amihan\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SpectatorUltimateEventTests.UltimatePresentationPulseSurvivesUntilTheNextDecision(\"paete\")",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SpectatorUltimateEventTests.UnhookRetiresThePresentationPulse",
+          "result": "Passed",
+          "failure": null
+        }
+      ]
+    },
+    "final": {
+      "counts": {
+        "total": "12",
+        "passed": "12",
+        "failed": "0",
+        "skipped": "0"
+      },
+      "rawXmlSha256": "33360ca53c656652c6d6dd4f471100901e673f6b72a5a5a331fdd22271090146",
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.NemuGhostReplicationTests.BodyEpochAndKitChangesRetireOldGhosts",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuGhostReplicationTests.BoundedCodecRejectsMalformedCompleteFrames",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuGhostReplicationTests.ExpiredHydrationAndChangedGhostKindsCannotResurrectOldState",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuGhostReplicationTests.FullFramesRetireMissingGhostsAndRejectForgedStaleOrForeignState",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuGhostReplicationTests.HostCaptureHydratesLateJoinAndTransportEndClearsEveryReplica",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuGhostReplicationTests.HostDeliversCompleteFramesToTwoActualUdpClients",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuGhostReplicationTests.MixedCurrentRosterCutscenesCopyActualParticipantsAndLeaveLiveBodiesAlone",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuGhostReplicationTests.OwnerObserverAndSpectatorHydrateTheSameThreeGhostsWithoutCasting",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SkillReceiptTests.ExpiredUltimateCohortsRetireOlderPlaybackAndKeepTheirTerminalIdentity",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SkillReceiptTests.UltimateCommitCodecBoundsIdentityAndPreservesTheRequestBodyScope",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SkillReceiptTests.UltimatePreparationAndExecutionRequireTheCommittedHeroAndAbility",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.SkillReceiptTests.UltimateReceiverKeepsTheHostDurationWhileTheCasterIsMissing",
+          "result": "Passed",
+          "failure": null
+        }
+      ]
+    },
+    "admission": {
+      "counts": {
+        "total": "2",
+        "passed": "2",
+        "failed": "0",
+        "skipped": "0"
+      },
+      "rawXmlSha256": "142df16022df30f3451746dcd34681a9623970942fdf181c10543dee0f4dadcb",
+      "cases": [
+        {
+          "name": "TumbangPreso.Tests.ChatAndLobbyChromeTests.ConnectionApprovalRefusesThePreviousProtocolAndAcceptsTheCurrentLanHello",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.Tests.ChatAndLobbyChromeTests.TheProtocolCarriesEveryRosterBump",
+          "result": "Passed",
+          "failure": null
+        }
+      ]
+    },
+    "cleanup-controls": {
+      "counts": {
+        "total": "2",
+        "passed": "2",
+        "failed": "0",
+        "skipped": "0"
+      },
+      "rawXmlSha256": "ffc1d24f81c5153433d72a36d4b1fcd7a290b4fd3b78af18dfb0c416527c2772",
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.NemuFetchContractTests.DeliveryLeavesTheSlipperLooseBesideItsEmptyHandedOwner",
+          "result": "Passed",
+          "failure": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.NemuFetchContractTests.ObserverCannotMoveOrLandTheAuthoritativeSlipper",
+          "result": "Passed",
+          "failure": null
+        }
+      ]
+    }
+  },
+  "transportScope": "One host and two actual NGO clients on this PC; direct UDP and real Unity Relay DTLS allocations. Role rendering verified in separate receiver cases.",
+  "rawCoreSha256": "2008ed68aa57865479372b3ea7ff1ddaf50c848fd09f5c65dcb9841b2dff9ac2"
+}

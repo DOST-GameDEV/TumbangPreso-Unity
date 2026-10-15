@@ -229,6 +229,7 @@ namespace TumbangPreso.Net
             Abilities.PaetePlant.AutomaticShotFired -= BroadcastAutomaticPlantShot;
             CancelSnapshotRefreshWork(clearSnapshotTimes: false);
             _pendingSkillCasts.Clear();
+            ResetNemuGhostTransport();
         }
 
         /// <summary>
@@ -348,6 +349,7 @@ namespace TumbangPreso.Net
             ResetTimedKitTransport();
             ResetPaeteVineTransport();
             ResetObjectiveCooldownTransport();
+            ResetNemuGhostTransport();
             _lastSkillRequest.Clear();_skillRequestSequence=0;_skillEventSequence=0;_skillEpoch=long.MinValue;
             _pendingSkillCasts.Clear();
             for (int slot = 0; slot < Balance.PlayerCount; slot++) Unit(slot)?.AbilitySystem?.ResetNetworkSkillReceipts();
@@ -397,6 +399,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("TimedKitState", OnTimedKitStateMsg);
             cm.RegisterNamedMessageHandler("CircuitAim", OnCircuitAimMsg);
             cm.RegisterNamedMessageHandler("CircuitState", OnCircuitStateMsg);
+            cm.RegisterNamedMessageHandler("NemuGhosts", OnNemuGhostsMsg);
             cm.RegisterNamedMessageHandler("PaeteVine", OnPaeteVineMsg);
             cm.RegisterNamedMessageHandler("CastPreparation", OnCastPreparationMsg);
             cm.RegisterNamedMessageHandler("MovementWindow", OnMovementWindowMsg);
@@ -2005,6 +2008,7 @@ namespace TumbangPreso.Net
         {
             if (!NetAuthority.IsHost || GameServices.Match == null || GameServices.Round == null ||
                 _nm?.CustomMessagingManager == null || peer == _nm.LocalClientId) return;
+            SendNemuGhostSnapshot(slot, peer);
             var kit = Unit(slot)?.AbilitySystem?.Kit;
             if (kit is Abilities.AmihanHeroKit amihan)
             {

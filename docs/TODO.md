@@ -1,3 +1,8 @@
+### NEMU-NETWORK-1015: visible host state and participant rigs
+
+- [x] Protocol163 host ghost frames for Blindfold's exact victim, Skitter carry and Lookout lift/scare, with ordered lifetimes, late hydration and round/body/kit/transport cleanup. Actual UDP and real Relay host+2clients pass; 52 distinct native cases and Core744/744. Mixed9 current models/27 participants/6 sample times reproduce/fix copied-skin bindpose initialization. [Evidence](reports/nemu-network-2026-10-15/README.md).
+- [ ] Full matching163 natural multiplayer matches on separate devices and broader NET-SKILLS-1 acceptance. Owner art/audio judgment remains separate.
+
 ### NEMU-GHOSTS-1015: DON'T LOOK, SKITTER, LOOKOUT (her skills as her own ghosts; replace KURO: SIT!/FETCH!/CATCH!)
 
 Owner 2026-10-15: make Nemu like Gekko (different ghosts, several out at once); the signature is a tripwire blind:

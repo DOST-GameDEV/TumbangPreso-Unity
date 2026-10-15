@@ -20,7 +20,7 @@ namespace TumbangPreso.Abilities
     /// (<see cref="CarryRotation"/>, which the host writes to the slipper), swinging with its scurry. Ectoplasm trails behind
     /// it and drips off it; its yellow eyes glow.
     /// </summary>
-    public sealed class NemuSkitter : MonoBehaviour
+    public sealed partial class NemuSkitter : MonoBehaviour
     {
         public static readonly List<NemuSkitter> Live = new List<NemuSkitter>();
 
@@ -157,6 +157,7 @@ namespace TumbangPreso.Abilities
         private void Update()
         {
             float dt = Time.deltaTime;
+            StepNetworkPose(dt);
             _age += dt;
             // Speed from where it actually got to (the ability steps it; tests teleport it).
             Vector3 moved = Position - _lastPosition; _lastPosition = Position;
@@ -184,6 +185,10 @@ namespace TumbangPreso.Abilities
             // WAITING: little eager bounces in place, "here, take it".
             float eager = _offer * (1f - run) * Mathf.Abs(Mathf.Sin(_age * 6f));
             _bob = Mathf.Lerp(.03f * Mathf.Sin(_age * 3f), .09f * hop, run) + .05f * eager;
+            if (_networkDriven && _carrying)
+                foreach (var shoe in BotSlipperInventory.All)
+                    if (shoe != null && shoe.OwnerSlot == OwnerSlot && shoe.State == SlipperState.Loose)
+                    { Position = shoe.transform.position - Vector3.up * _bob - _facing * (NemuGhostModels.SkitterHands + OfferLift); break; }
             float squash = Mathf.Lerp(.04f * Mathf.Sin(_age * 3f), (hop - .5f) * .22f, run);
             // THE GRAB: a hard squash and a green flash.
             float g = Mathf.Clamp01((_age - _grabAt) / GrabSeconds);
