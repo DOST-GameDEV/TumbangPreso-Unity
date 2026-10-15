@@ -84,10 +84,10 @@ namespace TumbangPreso.Abilities
             public DontLook(NemuHeroKit kit)
                 : base("nemu_skill1", "DON'T LOOK",
                        "Hide a ghost at a spot. The first player to come near is blinded for 2 s, then slowed (wears off over 5 s). Lasts 30 s.",
-                       NecroRules.DontLookCooldown, 0.0f, AbilityGlyph.NemuTerrify,
+                       NecroRules.DontLookCooldown, 0.0f, AbilityGlyph.NemuDontLook,
                        summary: "Hide a ghost. The first to come near is blinded, then slowed.",
                        telegraphRadius: NecroRules.DontLookTriggerRadius, telegraphRange: NecroRules.DontLookMaxRange,
-                       castAction: "hero-nemu-project", viewmodelAction: "project-spirit",
+                       castAction: "hero-nemu-dontlook", viewmodelAction: "dontlook-hush",
                        castCue: "sfx_cast_nemu_dontlook")
             {
                 _kit = kit;
@@ -124,10 +124,10 @@ namespace TumbangPreso.Abilities
 
             public Skitter(NemuHeroKit kit)
                 : base("nemu_skill2", "SKITTER",
-                       "Attacking. A ghost runs to your loose slipper and carries it back to you. If the taya gets close, it drops it.",
-                       NecroRules.FetchCooldown, 8.0f, AbilityGlyph.NemuAstralPet,
-                       summary: "A ghost brings your slipper back. The taya can make it drop.",
-                       castAction: "hero-nemu-project", viewmodelAction: "project-spirit",
+                       "Attacking. A ghost fetches your loose slipper and waits by you until you take it. If the taya gets close, it drops it.",
+                       NecroRules.FetchCooldown, 8.0f, AbilityGlyph.NemuSkitter,
+                       summary: "A ghost brings your slipper back and waits for you. The taya can make it drop.",
+                       castAction: "hero-nemu-skitter", viewmodelAction: "skitter-flick",
                        castCue: "sfx_cast_nemu_fetch") { _kit = kit; }
 
             public override bool CanActivate(AbilityContext ctx)
@@ -164,6 +164,9 @@ namespace TumbangPreso.Abilities
                 {
                     // A normal pickup or round ownership change wins over an old
                     // fetch. Never reposition equipment that is now held or thrown.
+                    // She took it out of its claws (her interact): the hand-over, its happy spin on every peer.
+                    if (_carrying && _shoe != null && _shoe.State == SlipperState.Held && _shoe.Holder == ctx.Motor)
+                        _ghost?.Leave(delivered: true);
                     _carrying = false;
                     DurationRemaining = 0.0f;
                     return;
@@ -185,9 +188,17 @@ namespace TumbangPreso.Abilities
                     }
                     return;
                 }
-                // Carrying: it hurries back to her side, low.
+                // Carrying: it hurries back to her side, low, and then WAITS THERE (owner 2026-10-15: *"the guy js waits
+                // annd stays there until she picks it up from him"*, *"it will follow her until she gets it"*). It holds the
+                // slipper out to her, still loose and within her pickup reach, and she takes it with her interact button
+                // (the normal grab, `Carrier.TryPickup`); that pickup ends it above, with its happy spin. Until then it
+                // keeps following her past its 8 s, so the skill's clock holds full while it waits.
                 var owner = ctx.Motor.transform;
                 _ghost.Step(owner.position + owner.right * .6f + Vector3.up * .15f, NecroRules.FetchSpeed, dt);
+                bool waiting = (owner.position - _ghost.Position).sqrMagnitude < 1.4f * 1.4f;
+                if (waiting) _ghost.Face(owner.position, dt);
+                _ghost.Offering = waiting;
+                DurationRemaining = Duration;
                 Vector3 at = _ghost.HoldPoint;
                 if (!NetAuthority.ShouldResolve())
                 {
@@ -212,13 +223,6 @@ namespace TumbangPreso.Abilities
                             DurationRemaining = 0.0f;
                             return;
                         }
-                if ((ctx.Motor.transform.position - at).sqrMagnitude < 1.2f * 1.2f)
-                {
-                    _shoe.transform.position = ctx.Motor.transform.position + ctx.Motor.transform.right * 0.8f;
-                    GroundCarriedSlipper();
-                    _ghost.Leave(delivered: true);
-                    DurationRemaining = 0.0f;
-                }
             }
 
             /// <summary>The slipper's size in its own axes (measured at the grab, while it lies at its rest rotation).</summary>
@@ -286,9 +290,9 @@ namespace TumbangPreso.Abilities
             public Lookout(NemuHeroKit kit)
                 : base("nemu_skill2d", "LOOKOUT",
                        "Defending. A lantern ghost guards the can for 15 s. If knocked down, it slowly lifts it back up once. Attackers scare it off.",
-                       NecroRules.LookoutCooldown, NecroRules.LookoutSeconds, AbilityGlyph.NemuKuroGuard,
+                       NecroRules.LookoutCooldown, NecroRules.LookoutSeconds, AbilityGlyph.NemuLookout,
                        summary: "A ghost guards the can and slowly lifts it back up, once.",
-                       castAction: "hero-nemu-guard", viewmodelAction: "kuro-guard",
+                       castAction: "hero-nemu-lookout", viewmodelAction: "lookout-release",
                        castCue: "sfx_cast_nemu_guard") { _kit = kit; }
 
             public override bool CanActivate(AbilityContext ctx)

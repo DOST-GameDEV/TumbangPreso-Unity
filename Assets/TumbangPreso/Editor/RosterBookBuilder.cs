@@ -422,6 +422,8 @@ namespace TumbangPreso.EditorTools
                         clips.AddRange(PaeteMotionAuthor.Bake(asset.Model));
                     if(kind=="person"&&entry.Id=="phaister"&&asset.Model!=null)
                         clips.AddRange(PhaisterMotionAuthor.Bake(asset.Model));
+                    if(kind=="person"&&entry.Id=="nemu"&&asset.Model!=null)
+                        clips.AddRange(NemuMotionAuthor.Bake(asset.Model));
                     asset.Clips = clips.ToArray();
 
                     if (clips.Count == 0 && kind == "person")
@@ -506,6 +508,8 @@ namespace TumbangPreso.EditorTools
                     clips.AddRange(PaeteMotionAuthor.Bake(asset.Model));
                 if(kind=="person"&&id=="phaister"&&asset.Model!=null)
                     clips.AddRange(PhaisterMotionAuthor.Bake(asset.Model));
+                if(kind=="person"&&id=="nemu"&&asset.Model!=null)
+                    clips.AddRange(NemuMotionAuthor.Bake(asset.Model));
                 asset.Clips = clips.ToArray();
 
                 if (clips.Count == 0 && kind == "person")

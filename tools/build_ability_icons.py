@@ -484,6 +484,71 @@ def nemu_guard(a):
     a.glint(350, 320, 20, 48)
 
 
+# Nemu's ghosts (owner 2026-10-15: dedicated icons for DON'T LOOK, SKITTER, LOOKOUT), each in its ghost's own colour.
+SKITTER, SKITTER_EYE = hexc("8BF07C"), hexc("FFE35A")
+LOOKOUT, LANTERN = hexc("FFC77E"), hexc("3A2A1A")
+
+
+def ghost_hands(a, side, colour):
+    """A ghost's hand closing in from one side: a palm off the edge and three long clawed fingers."""
+    m = 1 if side < 0 else -1
+    x = lambda v: v if side < 0 else 1024 - v
+    a.add(a.ellipse(x(150), 540, 130, 170), colour)
+    for (fx, fy), (tx, ty) in (((230, 420), (455, 330)), ((250, 535), (480, 505)), ((230, 650), (450, 690))):
+        a.add(a.band([(x(fx), fy), (x(tx), ty)], 74), colour)
+        a.ink_mask(a.poly([(x(tx + 20), ty - 26), (x(tx + 78), ty), (x(tx + 20), ty + 26)]))
+
+
+def nemu_dont_look(a):
+    eye = [(512 + 410 * math.cos(math.radians(k)), 512 - 290 * math.sin(math.radians(k))) for k in range(0, 361, 6)]
+    a.add(a.poly(eye), CREAM)
+    a.add(a.circle(512, 512, 170), GOLD)
+    a.ink_mask(a.ellipse(512, 512, 48, 136))
+    ghost_hands(a, -1, PLUM)
+    ghost_hands(a, 1, PLUM)
+    a.add(a.poly(star_pts(512, 170, 80, 26, 4)), LILAC, shade=False)
+    a.add(a.poly(star_pts(512, 860, 60, 20, 4)), LILAC, shade=False)
+    a.glint(470, 450, 26)
+
+
+def nemu_skitter(a):
+    for y, x0 in ((560, 70), (690, 40), (820, 90)):
+        a.add(a.band([(x0, y), (x0 + 170, y)], 50), SKITTER, shade=False)
+    body = [(290, 880), (300, 560)] + [(500 + 210 * math.cos(math.radians(180 + k)), 560 + 220 * math.sin(math.radians(180 + k))) for k in range(0, 181, 6)]
+    body += [(720, 840), (650, 790), (590, 870), (510, 800), (440, 880), (370, 810)]
+    a.add(a.poly(body), SKITTER)
+    a.add(a.band([(350, 520), (270, 230)], 66), SKITTER)
+    a.add(a.band([(650, 520), (750, 190)], 66), SKITTER)
+    slipper(a, 512, 190, 560, 75, PERSIMMON, HONEY)
+    for cx, cy in ((265, 235), (760, 160)):
+        a.add(a.circle(cx, cy, 58), SKITTER)
+    a.add(a.ellipse(430, 520, 52, 64), SKITTER_EYE, shade=False)
+    a.add(a.ellipse(580, 520, 52, 64), SKITTER_EYE, shade=False)
+    a.ink_mask(a.ellipse(440, 530, 18, 40))
+    a.ink_mask(a.ellipse(590, 530, 18, 40))
+    a.ink(rot([(400, 650), (450, 690), (505, 660), (560, 690), (615, 650)], 512, 670, 0), 26)
+    a.glint(380, 420, 20, 44)
+
+
+def nemu_lookout(a):
+    a.add(a.arc_band(690, 600, 300, 70, -50, 64), GOLD, shade=False)
+    tip = (690 + 300 * math.cos(math.radians(-50)), 600 + 300 * math.sin(math.radians(-50)))
+    a.add(a.poly(rot([(tip[0] - 80, tip[1] + 30), (tip[0], tip[1] - 90), (tip[0] + 80, tip[1] + 30)], tip[0], tip[1], -40)), GOLD, shade=False)
+    a.add(a.rect(590, 440, 800, 830), STONE)
+    a.add(a.ellipse(695, 440, 105, 40), STONE_DK)
+    body = [(200, 850), (210, 520)] + [(380 + 170 * math.cos(math.radians(180 + k)), 520 + 190 * math.sin(math.radians(180 + k))) for k in range(0, 181, 6)]
+    body += [(550, 820), (490, 770), (440, 850), (380, 780), (320, 850), (260, 780)]
+    a.add(a.poly(body), LOOKOUT)
+    a.add(a.band([(520, 560), (610, 470)], 60), LOOKOUT)
+    a.ink([(170, 620), (135, 690)], 18)
+    a.add(a.rect(70, 690, 200, 860), LANTERN)
+    a.add(a.rect(95, 715, 175, 835), LEMON, shade=False)
+    a.add(a.band([(220, 600), (160, 640)], 56), LOOKOUT)
+    a.add(a.ellipse(330, 490, 40, 52), LANTERN, shade=False)
+    a.add(a.ellipse(440, 490, 40, 52), LANTERN, shade=False)
+    a.glint(290, 400, 18, 40)
+
+
 def phaister_hex(a):
     a.add(a.circle(512, 512, 400), MAGENTA)
     a.add(a.circle(512, 512, 320), WITCH)
@@ -1012,6 +1077,7 @@ GLYPHS = {
     "ZackSprint": zack_sprint, "ZackOvercharge": zack_magnet, "ZackThunderstrike": zack_thunder,
     "NemuPhase": nemu_phase, "NemuAstralPet": nemu_pet, "NemuSeanceVoid": nemu_seance,
     "NemuTerrify": nemu_terrify, "NemuKuroGuard": nemu_guard,
+    "NemuDontLook": nemu_dont_look, "NemuSkitter": nemu_skitter, "NemuLookout": nemu_lookout,
     "PhaisterHexSigil": phaister_hex, "PhaisterShadowBlink": phaister_blink,
     "PhaisterEclipse": phaister_coven, "PhaisterWitchfire": phaister_witchfire,
     "PhaisterCursedDoll": phaister_cursed_doll, "PhaisterVulnerable": phaister_vulnerable,

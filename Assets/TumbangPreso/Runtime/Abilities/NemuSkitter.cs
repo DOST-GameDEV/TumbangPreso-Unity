@@ -32,7 +32,12 @@ namespace TumbangPreso.Abilities
         /// <summary>Within reach of the last place it was sent.</summary>
         public bool Arrived { get; private set; }
         /// <summary>Where the slipper hangs while it carries (between its hands, riding its bob).</summary>
-        public Vector3 HoldPoint => Position + Vector3.up * _bob + _facing * NemuGhostModels.SkitterHands;
+        public Vector3 HoldPoint => Position + Vector3.up * _bob + _facing * (NemuGhostModels.SkitterHands + OfferLift);
+        /// <summary>Waiting by her with the slipper held out for her to take (owner 2026-10-15); set by the ability each step.</summary>
+        public bool Offering { get; set; }
+        private float _offer;
+        /// <summary>Holding it out to her: raised and pushed forward, bobbing eagerly (hand space, metres).</summary>
+        private Vector3 OfferLift => new Vector3(0f, .1f + .035f * Mathf.Sin(_age * 5f), .08f) * _offer;
         public bool Leaving => _leaving;
         /// <summary>The slipper it is about to grab (its arms stretch at it), or null.</summary>
         public Vector3? ReachFor { get; set; }
@@ -104,6 +109,14 @@ namespace TumbangPreso.Abilities
             Arrived = (goal - Position).sqrMagnitude <= Reach * Reach;
         }
 
+        /// <summary>Turn to face <paramref name="point"/> (waiting by her, it looks at her, not where it last ran).</summary>
+        public void Face(Vector3 point, float dt)
+        {
+            Vector3 flat = point - Position; flat.y = 0f;
+            if (flat.sqrMagnitude > 1e-4f)
+                _facing = Quaternion.Slerp(_facing, Quaternion.LookRotation(flat.normalized), Mathf.Clamp01(dt * 8f));
+        }
+
         /// <summary>
         /// It snatches the slipper: from now its hands close round the slipper's two ends. <paramref name="halfLength"/> is half
         /// the slipper's length; <paramref name="lengthAlongX"/> says which of the slipper's own axes that length lies on.
@@ -149,6 +162,7 @@ namespace TumbangPreso.Abilities
             Vector3 moved = Position - _lastPosition; _lastPosition = Position;
             float measured = dt > 0f ? new Vector3(moved.x, 0f, moved.z).magnitude / dt : 0f;
             _speed = Mathf.Lerp(_speed, Mathf.Min(measured, 8f), Mathf.Clamp01(dt * 10f));
+            _offer = Mathf.MoveTowards(_offer, Offering && _carrying && !_leaving ? 1f : 0f, dt * 4f);
 
             // POP: out of a green burst with an overshoot.
             float p = Mathf.Clamp01(_age / PopSeconds);
@@ -167,12 +181,15 @@ namespace TumbangPreso.Abilities
             float run = Mathf.Clamp01(_speed / 3f);
             float stride = _age * (9f + _speed * 2.5f);
             float hop = Mathf.Abs(Mathf.Sin(stride));
-            _bob = Mathf.Lerp(.03f * Mathf.Sin(_age * 3f), .09f * hop, run);
+            // WAITING: little eager bounces in place, "here, take it".
+            float eager = _offer * (1f - run) * Mathf.Abs(Mathf.Sin(_age * 6f));
+            _bob = Mathf.Lerp(.03f * Mathf.Sin(_age * 3f), .09f * hop, run) + .05f * eager;
             float squash = Mathf.Lerp(.04f * Mathf.Sin(_age * 3f), (hop - .5f) * .22f, run);
             // THE GRAB: a hard squash and a green flash.
             float g = Mathf.Clamp01((_age - _grabAt) / GrabSeconds);
             float grabPulse = g < 1f ? Mathf.Sin(g * Mathf.PI) * (1f - g) : 0f;
             squash -= grabPulse * .45f;
+            squash += (eager - .5f * _offer * (1f - run)) * .14f;
             var scale = new Vector3(1f - squash * .5f, 1f + squash, 1f - squash * .5f) * (Scale * pop * Mathf.Lerp(1f, .4f, leaveU));
             float lean = Mathf.Clamp(_speed * 5f, 0f, 22f) - (_carrying ? 8f : 0f);
             Quaternion facing = _facing * Quaternion.AngleAxis(spin, Vector3.up) * Quaternion.AngleAxis(lean, Vector3.right)
@@ -197,7 +214,7 @@ namespace TumbangPreso.Abilities
                 Vector3 hand;
                 if (_carrying)
                     // Its hands on the slipper's two ends, gripping tight (a little squeeze in time with the scurry).
-                    hand = NemuGhostModels.SkitterHands + Vector3.right * sign * (_halfLength + .015f - .01f * Mathf.Abs(Mathf.Sin(stride)));
+                    hand = NemuGhostModels.SkitterHands + OfferLift + Vector3.right * sign * (_halfLength + .015f - .01f * Mathf.Abs(Mathf.Sin(stride)));
                 else if (ReachFor.HasValue)
                 {
                     // Stretching out at the slipper, claws snatching, one then the other.
@@ -256,11 +273,22 @@ namespace TumbangPreso.Abilities
                 // HOLDING IT: a green glow in its grip, round the slipper.
                 if (_carrying)
                 {
-                    Vector3 hold = body.TransformPoint(NemuGhostModels.SkitterHands);
+                    Vector3 hold = body.TransformPoint(NemuGhostModels.SkitterHands + OfferLift);
                     Vector3 right = body.right * (_halfLength + .02f);
                     _fx.Light(hold, .4f, .55f * fade, Ecto, right * 2f);
                     _fx.Light(hold + right, .14f, .9f * fade, Ecto);
                     _fx.Light(hold - right, .14f, .9f * fade, Ecto);
+                    // OFFERING: a slow green pulse ringing the slipper, "it's yours, take it".
+                    if (_offer > .01f)
+                    {
+                        float beat = Mathf.Repeat(_age * 1.3f, 1f);
+                        for (int i = 0; i < 10; i++)
+                        {
+                            float a = i * Mathf.PI / 5f + _age;
+                            Vector3 ring = (body.right * Mathf.Cos(a) + Vector3.up * Mathf.Sin(a)) * (.18f + beat * .22f);
+                            _fx.Light(hold + ring, .07f, .9f * (1f - beat) * _offer * fade, Ecto);
+                        }
+                    }
                 }
                 // REACHING: its claws glow as they close in.
                 if (ReachFor.HasValue)

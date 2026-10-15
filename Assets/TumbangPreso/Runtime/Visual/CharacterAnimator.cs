@@ -226,6 +226,10 @@ namespace TumbangPreso.Visual
             { "hero-nemu-ghoststep", new[] { "hero-nemu-ghoststep", Sprint, Walk } },
             { "hero-nemu-project", new[] { "hero-nemu-project", "interact-left", "attack-melee-left" } },
             { "hero-nemu-seance", new[] { "hero-nemu-seance", "emote-yes", Interact } },
+            // NEMU'S GHOSTS (owner 2026-10-15): one clip per skill, baked by `NemuMotionAuthor`, Kuro's old clip as the fallback.
+            { "hero-nemu-dontlook", new[] { "hero-nemu-dontlook", "hero-nemu-project", "interact-left" } },
+            { "hero-nemu-skitter", new[] { "hero-nemu-skitter", "hero-nemu-project", "interact-left" } },
+            { "hero-nemu-lookout", new[] { "hero-nemu-lookout", "hero-nemu-guard" } },
 
             { "hero-phaister-hex", new[] { "hero-phaister-hex", "interact-right", "attack-melee-right" } },
             { "hero-phaister-blink", new[] { "hero-phaister-blink", "attack-kick-right", Sprint } },

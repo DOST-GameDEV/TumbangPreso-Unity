@@ -18,7 +18,8 @@ namespace TumbangPreso.PlayTests
     /// <summary>
     /// FILM, not a gate (`docs/HERO_KIT_METHOD.md` section 7): Nemu's other two ghosts in a real Hero Strike match on Bayan
     /// Plaza at true game speed (30 frames per game second). Owner 2026-10-15: *"refine the opther skills of nemu ren"*.
-    ///  * 0 to 6.5 s, SKITTER: an attacking Nemu's slipper lies 9 m off; she sends Skitter, it grabs it and brings it back.
+    ///  * 0 to 6.5 s, SKITTER: an attacking Nemu's slipper lies 9 m off; she sends Skitter, it grabs it and brings it back,
+    ///    then follows her holding it out while she walks (owner: it waits until she takes it), and she takes it with INTERACT.
     ///  * 6.5 to 15 s, LOOKOUT: the taya (also Nemu) leaves Lookout at the can; the can is knocked down; an attacker comes
     ///    right up to it and scares it off; it goes back to work and stands the can up.
     /// Views: a wide one of the court and a close one on the ghost. Runs only with TUMP_NEMU_GHOSTS_FILM=1; frames under
@@ -107,7 +108,7 @@ namespace TumbangPreso.PlayTests
             int previousRate = Time.captureFramerate;
             Time.captureFramerate = 30;
             int frames = 30 * 16;
-            bool delivered = false, knocked = false, restoredByLookout = false, lookoutFramed = false;
+            bool delivered = false, taken = false, knocked = false, restoredByLookout = false, lookoutFramed = false;
             Vector3 closeAt = Vector3.zero, closeLook = Vector3.zero;
 
             void Save(string view, int f)
@@ -125,6 +126,12 @@ namespace TumbangPreso.PlayTests
                 {
                     float t = f / 30f;
                     nemu.Intent.Set(Verb.Skill2, t > .5f && t < .6f);
+                    // She walks off with it waiting on her (it follows), then presses INTERACT and takes it out of its claws.
+                    if (t > 3.6f && t < 4.9f) nemu.Teleport(nemu.transform.position - side * (1.6f / 30f));
+                    // Her INTERACT, as the host resolves it for any peer's press (`Carrier.HostPickUp`, the grab request's
+                    // handler): a press written by this coroutine lands between the motor's edge commit and the carrier's read.
+                    nemu.Intent.Set(Verb.Grab, f >= 156 && f <= 159);
+                    if (f == 156) nemu.GetComponent<Carrier>().HostPickUp(shoe);
                     taya.Intent.Set(Verb.Skill2, t > 6.8f && t < 6.9f);
                     if (!knocked && t > 7.8f) { knocked = true; round.Lata.HostKnockDown(runner.PlayerSlot); }
                     // The runner comes right up to the downed can, lingers, and goes.
@@ -139,6 +146,7 @@ namespace TumbangPreso.PlayTests
                     var lookout = NemuLookout.Live.FirstOrDefault(g => g != null);
                     float shoeToNemu = Vector3.Distance(Flat(shoe.transform.position), Flat(nemu.transform.position));
                     if (t > 1f && t < 6.5f && shoeToNemu < 1.5f) delivered = true;
+                    if (t > 5.2f && t < 6.5f && shoe.Holder == nemu) taken = true;
                     timing.AppendLine(FormattableString.Invariant(
                         $"{f},{t:F3},{skitter != null},{lookout != null},{shoeToNemu:F2},{round.Lata.IsUpright},{nemu.AbilitySystem.Kit.AttackingSkill.IsActive},{taya.AbilitySystem.Kit.DefendingSkill.IsActive},{(lookout != null ? lookout.Lift : 0f):F3},{NemuLookout.LiftFor(round.Lata):F3},{(round.Lata.PresentedEnds(out _, out var canTop) ? canTop.y - can.y : -1f):F3}"));
 
@@ -191,10 +199,11 @@ namespace TumbangPreso.PlayTests
                 Object.Destroy(wide.gameObject); Object.Destroy(close.gameObject);
                 hdr.Release(); ldr.Release(); Object.Destroy(hdr); Object.Destroy(ldr); Object.Destroy(pixels);
             }
-            string summary = FormattableString.Invariant($"delivered {delivered}; knocked {knocked}; stood up by Lookout {restoredByLookout}");
+            string summary = FormattableString.Invariant($"delivered {delivered}; taken {taken}; knocked {knocked}; stood up by Lookout {restoredByLookout}");
             File.WriteAllText(Path.Combine(root, "summary.txt"), summary + Environment.NewLine);
             Debug.Log("[GhostsFilm] " + summary);
             Assert.IsTrue(delivered, "Skitter never brought the slipper back to Nemu.");
+            Assert.IsTrue(taken, "Nemu never took the slipper from Skitter with INTERACT.");
             Assert.IsTrue(restoredByLookout, "Lookout never stood the downed can back up.");
         }
     }

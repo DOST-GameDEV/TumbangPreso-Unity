@@ -839,6 +839,41 @@ namespace TumbangPreso.CameraSystem
             new Key(0.600f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
+        // NEMU'S GHOSTS (owner 2026-10-15), her marionette language: drift in, SNAP, hang, melt back.
+        // DON'T LOOK: the off hand comes up to her lips (the hush, held), then slaps down at the court.
+        private static readonly Key[] DontLookHushClip =
+        {
+            new Key(0, 0, 0, 0, 0, 0, 0),
+            new Key(.20f, .02f, -.02f, 0, -.42f, .16f, -.14f),
+            new Key(.34f, .02f, -.02f, 0, -.44f, .17f, -.15f),
+            new Key(.42f, .04f, -.03f, 0, .50f, .06f, .12f, true),
+            new Key(.62f, .02f, -.02f, 0, .20f, .04f, .04f),
+            new Key(.95f, 0, 0, 0, 0, 0, 0),
+        };
+
+        // SKITTER: the right hand drawn back across, then flicked out at the slipper, fingers wiggling "that one, go".
+        private static readonly Key[] SkitterFlickClip =
+        {
+            new Key(0, 0, 0, 0, 0, 0, 0),
+            new Key(.12f, .24f, -.18f, .12f, .06f, .04f, -.03f),
+            new Key(.18f, -.58f, .14f, -.16f, .14f, .06f, -.05f, true),
+            new Key(.30f, -.52f, .10f, -.10f, .12f, .05f, -.04f),
+            new Key(.39f, -.46f, .12f, -.20f, .12f, .05f, -.04f),
+            new Key(.48f, -.52f, .10f, -.08f, .12f, .05f, -.04f),
+            new Key(.75f, 0, 0, 0, 0, 0, 0),
+        };
+
+        // LOOKOUT: both hands cupped low, lifted to her face, then sprung open and up: the little lantern ghost let go.
+        private static readonly Key[] LookoutReleaseClip =
+        {
+            new Key(0, 0, 0, 0, 0, 0, 0),
+            new Key(.18f, -.30f, .18f, .16f, -.30f, -.18f, -.16f),
+            new Key(.36f, -.52f, .20f, .18f, -.52f, -.20f, -.18f),
+            new Key(.46f, .46f, -.22f, -.20f, .46f, .22f, .20f, true),
+            new Key(.66f, .22f, -.12f, -.10f, .22f, .12f, .10f),
+            new Key(.95f, 0, 0, 0, 0, 0, 0),
+        };
+
         private static readonly Key[] SeanceChannelClip =
         {
             new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
@@ -1193,6 +1228,9 @@ namespace TumbangPreso.CameraSystem
                   : clip == "ghost-step" ? GhostStepClip
                   : clip == "kuro-guard" ? KuroGuardClip
                   : clip == "project-spirit" ? ProjectSpiritClip
+                  : clip == "dontlook-hush" ? DontLookHushClip
+                  : clip == "skitter-flick" ? SkitterFlickClip
+                  : clip == "lookout-release" ? LookoutReleaseClip
                   : clip == "seance-channel" ? SeanceChannelClip
                   : clip == "cast-hex" ? CastHexClip
                   : clip == "blink" ? BlinkClip

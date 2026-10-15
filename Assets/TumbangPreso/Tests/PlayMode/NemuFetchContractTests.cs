@@ -88,21 +88,25 @@ namespace TumbangPreso.PlayTests
         }
 
         [Test]
-        public void DeliveryLeavesTheSlipperLooseBesideItsEmptyHandedOwner()
+        public void AtHerSideItWaitsHoldingTheSlipperUntilSheTakesIt()
         {
+            // Owner 2026-10-15: *"she has to click a button (we have an interact button) to get slipper from the guy"*.
             Collect();
             Ghost.TeleportHands(_motor.transform.position + Vector3.up * 0.3f);
-            using (NetCue.SuppressRelay()) _kit.Tick(_context, 0.01f);
-            Assert.That(_shoe.State, Is.EqualTo(SlipperState.Loose));
-            Assert.That(_shoe.Holder, Is.Null);
+            using (NetCue.SuppressRelay()) for (int i = 0; i < 30; i++) _kit.Tick(_context, 0.05f);
+            Assert.That(_shoe.State, Is.EqualTo(SlipperState.Loose), "It should not put it in her hand by itself.");
             Assert.That(_motor.HoldingSlipper, Is.False);
-            Assert.That(_shoe.transform.position.y, Is.LessThan(0.2f));
-            Assert.That(Vector3.Distance(_shoe.transform.position, _motor.transform.position), Is.LessThan(1.2f));
-            Assert.That(_kit.AttackingSkill.IsActive, Is.False);
-            Assert.That(Ghost, Is.Null, "Skitter should be leaving once it has delivered.");
+            Assert.That(_kit.AttackingSkill.IsActive, Is.True, "It should wait by her.");
+            Assert.That(Ghost, Is.Not.Null);
+            Assert.That(Ghost.Carrying && Ghost.Offering, Is.True);
+            Assert.That(Vector3.Distance(_shoe.transform.position, Ghost.HoldPoint), Is.LessThan(0.05f));
+            // Her interact: the normal grab, in reach of where it holds it out.
             Assert.That(_shoe.CanBeGrabbedBy(_motor), Is.True);
             using (NetCue.SuppressRelay()) Assert.That(_shoe.HostGrab(_motor), Is.True);
-            Assert.That(_motor.HoldingSlipper, Is.True);
+            using (NetCue.SuppressRelay()) _kit.Tick(_context, 0.01f);
+            Assert.That(_shoe.Holder, Is.SameAs(_motor));
+            Assert.That(_kit.AttackingSkill.IsActive, Is.False);
+            Assert.That(Ghost, Is.Null, "Skitter should be leaving once she has taken it.");
         }
 
         [Test]
@@ -134,14 +138,28 @@ namespace TumbangPreso.PlayTests
 
 
         [Test]
-        public void ExpiryGroundsTheCarriedSlipperWithoutEquippingIt()
+        public void CarryingItFollowsHerPastItsDuration()
         {
             Collect();
-            Ghost.TeleportHands(Vector3.forward * 30f + Vector3.up * 2f);
+            _motor.transform.position = Vector3.forward * 30f;
             using (NetCue.SuppressRelay()) _kit.Tick(_context, 9f);
+            Assert.That(_kit.AttackingSkill.IsActive, Is.True, "It should keep following her until she takes it.");
             Assert.That(_shoe.State, Is.EqualTo(SlipperState.Loose));
-            Assert.That(_shoe.transform.position.y, Is.LessThan(0.2f));
             Assert.That(_motor.HoldingSlipper, Is.False);
+            Assert.That(Vector3.Distance(_shoe.transform.position, Ghost.HoldPoint), Is.LessThan(0.05f));
+        }
+
+        [Test]
+        public void ExpiryBeforeItReachesTheSlipperSendsItAway()
+        {
+            using (NetCue.SuppressRelay())
+            {
+                _kit.AttackingSkill.Activate(_context);
+                _shoe.transform.position = Vector3.forward * 200f;
+                _kit.Tick(_context, 9f);
+            }
+            Assert.That(_kit.AttackingSkill.IsActive, Is.False);
+            Assert.That(_shoe.State, Is.EqualTo(SlipperState.Loose));
             Assert.That(Ghost, Is.Null);
         }
 

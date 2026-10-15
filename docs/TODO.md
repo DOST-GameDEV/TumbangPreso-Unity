@@ -13,7 +13,8 @@ slows them 5 s with a slow that gets lower over time. Owner asked for a new name
   face pressed against it, sliding off at 2 s, a frost edge for the slow (`Shaders/DontLookBlind`).
 - [ ] Owner verdict on play (look of the waiting ghost, the lunge, the blind screen) and the defaults above.
 - [ ] Sound drafts for `sfx_nemu_dontlook_place/spring/fade` and `sfx_cast_nemu_dontlook` (skill sounds stay muted until approved).
-- [ ] Dedicated ability glyph (it reuses `NemuTerrify`); real networked peers on 161.
+- [x] Dedicated ability glyph: see the icons line below.
+- [ ] Real networked peers on 162.
 - [x] Owner on v4: the drawn face *"looks wrong"* (*"parang slideshoww"*, *"wont it be nicer if the ghost jumps at u"*), the
   slow's frost edge read as Cheska's (*"use diff hud indicator"*), *"invisible but like medyo kita"* (Killjoy), *"make the
   ghost look better and smaler and actually latch sa face"*. Built: the real ghost jumps into the victim's lens and clings
@@ -30,10 +31,23 @@ slows them 5 s with a slow that gets lower over time. Owner asked for a new name
   Lookout grips the fallen can's rim and heaves it up in pulses: the can's drawn mesh rises with it
   (`Lata.RaiseTurn` reads `NemuLookout.LiftFor`, its hands ride `Lata.PresentedEnds`), a warm ring fills round the can,
   it cheers when the can stands; its lantern swings on a pendulum; scared, it covers its eyes and shivers.
-- [ ] Owner verdict on Skitter and Lookout v2 (looks and the Lookout defaults); dedicated glyphs for both.
+- [ ] Owner verdict on Skitter and Lookout v2 (looks and the Lookout defaults).
 - [x] Owner on v5's blind: *"make it feel more like the blind of that ghost (weird ng blackout lang)"*, *"remove the text when
   blinded"*. v6: the dark round its face is stepped in its voxels, twitching block by block, rows tearing, its aura along the
   edge, cold static; every name tag and ring hides while your eyes are covered (`TumpHudEffects.EyesCoveredOnScreen`).
+- [x] Owner: *"make it so that she has to click a button (we have an itneract button) to get slipper from the guy"*, *"the
+  guy js waits annd stays there until she picks it up from him"*, *"it will follow her until she gets it"*. Skitter now brings
+  the slipper to her side and WAITS: it follows her holding it out (still loose, in her pickup reach), bouncing, a green pulse
+  round the slipper (`NemuSkitter.Offering`), past its 8 s, until she presses INTERACT (the normal grab); then its happy spin.
+  The taya can still make it drop it.
+- [x] Owner: *"make dedicated icons na ren + cast animations lock in make it amazing"*. Icons: `AbilityGlyph.NemuDontLook`
+  (ghost hands closing over a wide eye), `NemuSkitter` (the green ghost with the slipper held up), `NemuLookout` (the lantern
+  ghost by a can, an arrow standing it up), drawn by `tools/build_ability_icons.py`. Casts in her marionette language (drift
+  in, SNAP on the strings, hang, melt back; `HeroAbilityClips.Nemu.cs`, baked by `Editor/NemuMotionAuthor`):
+  `hero-nemu-dontlook` (the hush, then her palm slapped at the court), `hero-nemu-skitter` (the "go fetch" flick),
+  `hero-nemu-lookout` (the little ghost lifted out of her cupped hands and let go), and their first-person gestures
+  `dontlook-hush`, `skitter-flick`, `lookout-release`.
+- [ ] Owner verdict on the waiting Skitter, the three icons and the three casts.
 
 ### NETWORK-REFINEMENT-1015: current movement and possession packets
 

@@ -171,6 +171,24 @@ namespace TumbangPreso.CameraSystem
                 K(.22f, -.02f, -.04f, -.02f, .08f, .29f, .19f),
                 K(.38f, -.02f, -.04f, -.02f, .08f, .28f, .18f),
                 K(.54f, -.01f, -.02f, -.01f, .04f, .14f, .09f), Rest(.76f)) },
+            // NEMU'S GHOSTS (owner 2026-10-15). Her ghosts are puppets on her strings, so these three drift in and then
+            // SNAP and hang (not `Floats`), unlike the old floating Nemu casts above.
+            // DON'T LOOK. The off hand rises to the middle of the view, to her lips, and hangs there (the hush); then it is
+            // slapped down and out at the court, where the ghost goes in, and drawn slowly back up.
+            { "dontlook-hush", new CastPath(.42f, false,
+                Rest(0), K(.20f, .00f, .00f, .00f, .14f, .36f, -.06f), K(.34f, .00f, .00f, .00f, .15f, .37f, -.06f),
+                K(.42f, .00f, -.02f, .00f, .06f, .06f, .26f), K(.62f, .00f, -.01f, .00f, .06f, .18f, .16f), Rest(.95f)) },
+            // SKITTER. The right hand drawn back across the body, then flicked out at the slipper and left pointing at it, the
+            // fingers wiggling: "that one, go".
+            { "skitter-flick", new CastPath(.18f, false,
+                Rest(0), K(.12f, -.12f, .04f, -.06f, .02f, .04f, .00f),
+                K(.18f, .16f, .08f, .32f, .04f, .08f, -.02f), K(.30f, .15f, .09f, .30f, .04f, .08f, -.02f),
+                K(.39f, .16f, .11f, .29f, .04f, .08f, -.02f), K(.48f, .15f, .09f, .30f, .04f, .08f, -.02f), Rest(.75f)) },
+            // LOOKOUT. Both hands cupped together low in the middle, lifted to her face, then sprung open up and apart (it is
+            // out), floating down after it.
+            { "lookout-release", new CastPath(.46f, false,
+                Rest(0), K(.18f, -.12f, .08f, .10f, .12f, .26f, .10f), K(.36f, -.10f, .20f, .12f, .10f, .40f, .12f),
+                K(.46f, .20f, .30f, .16f, -.20f, .52f, .16f), K(.66f, .14f, .18f, .12f, -.14f, .40f, .12f), Rest(.95f)) },
             // DEVOURING SEANCE. Arms wide as she rises, then dragged IN to the centre and down: the only
             // ultimate that collapses rather than strikes.
             { "seance-channel", new CastPath(.40f, true,
