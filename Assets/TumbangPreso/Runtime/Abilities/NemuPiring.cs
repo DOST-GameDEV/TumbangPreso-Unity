@@ -92,8 +92,25 @@ namespace TumbangPreso.Abilities
             Owner = OwnerSlot,
         };
 
-        private void OnEnable() => Live.Add(this);
-        private void OnDisable() => Live.Remove(this);
+        private void OnEnable() { Live.Add(this); Camera.onPreCull += HideFromVictim; Camera.onPostRender += ShowAgain; }
+        private void OnDisable() { Live.Remove(this); Camera.onPreCull -= HideFromVictim; Camera.onPostRender -= ShowAgain; }
+
+        /// <summary>
+        /// ⚠️ ONCE IT IS ON THEIR FACE, THE VICTIM'S OWN CAMERA DOES NOT DRAW IT. Their screen is the blind (`Shaders/PiringBlind`);
+        /// the ghost itself, a metre from their lens, was a black blob over the middle of their view as it tore away (film r8).
+        /// Every other camera, and theirs during the lunge, still sees it. (Asked by the camera's place, not the seat: film r9's
+        /// solo seat did not count as the local viewer.)
+        /// </summary>
+        private void HideFromVictim(Camera camera)
+        {
+            if (_smoke == null || _victim == null || camera == null) return;
+            if (_state != State.Covering && _state != State.Leaving) return;
+            // A camera at their eyes is theirs (their first person, or a spectator riding it), whoever's seat this is.
+            Vector3 eyes = _victim.transform.position + Vector3.up * 1.25f;
+            if ((camera.transform.position - eyes).sqrMagnitude < 1.5f * 1.5f) _smoke.Visible = false;
+        }
+
+        private void ShowAgain(Camera camera) { if (_smoke != null) _smoke.Visible = true; }
         private void OnDestroy() { _smoke?.Dispose(); _smoke = null; }
 
         /// <summary>Can this body trip her ghost? Anyone but Nemu, on their feet near enough, and not already caught.</summary>

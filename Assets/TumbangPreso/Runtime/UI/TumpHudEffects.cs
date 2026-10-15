@@ -159,8 +159,8 @@ namespace TumbangPreso.UI
         private float _blindCover;
 
         /// <summary>
-        /// BLINDED, ON THE VICTIM'S OWN SCREEN (Nemu's DON'T LOOK, `Shaders/PiringBlind`): the ghost bursts up over the lens as it
-        /// lunges, its hands cover the screen for the 2 s, they tear open, and a thin ink edge thins away with the slow. All of
+        /// BLINDED, ON THE VICTIM'S OWN SCREEN (Nemu's DON'T LOOK, `Shaders/PiringBlind`): the dark slams in as it lunges, holds
+        /// with its eyes watching for the 2 s, tears back open, and a smoky edge thins away with the slow. All of
         /// it from the replicated BLINDED clock, so nothing here can outlast or undercut the rule.
         /// ⚠️ Unlike the possessed edges, Reduce visual effects does NOT lift the cover: the blind is the rule, not a flourish.
         /// </summary>
@@ -176,7 +176,7 @@ namespace TumbangPreso.UI
             _blindCover = covered * lunge * (1f - open);
             _blinded.enabled = on && (covered > 0f || slow > .01f);
             if (!_blinded.enabled) return;
-            _blindedMaterial.SetFloat("_Lunge", lunge);
+            _blindedMaterial.SetFloat("_Elapsed", Mathf.Max(0f, elapsed));
             _blindedMaterial.SetFloat("_Open", open);
             _blindedMaterial.SetFloat("_Covered", covered);
             _blindedMaterial.SetFloat("_Slow", Mathf.Clamp01(slow));
