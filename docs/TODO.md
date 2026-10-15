@@ -24,6 +24,14 @@ slows them 5 s with a slow that gets lower over time. Owner asked for a new name
   a downed can up once, 3.5 s, scared off by an attacker within 1.5 m; no more knock-proof can). Protocol 162. Defaults
   chosen without the owner's pick: 3.5 s, 1.5 m, once per summon. `NemuLookoutTests` replaces the Catch suites.
 - [ ] Owner verdict on Skitter and Lookout (looks and the Lookout defaults); dedicated glyphs for both.
+- [x] Owner on v5's blind: *"make it feel more like the blind of that ghost (weird ng blackout lang)"*, *"remove the text when
+  blinded"*. v6: the dark round its face is stepped in its voxels, twitching block by block, rows tearing, its aura along the
+  edge, cold static; every name tag and ring hides while your eyes are covered (`TumpHudEffects.EyesCoveredOnScreen`).
+
+### NETWORK-REFINEMENT-1015: current movement and possession packets
+
+- [x] Reproduce/fix crouched-owner sprint requests, remote curse-reach sprint spending and the maximum309-byte SyncUnit sender. Restore protocol160 body fixtures and add possession rejection/order coverage. Core742/742;21 distinct native cases pass across candidate/focused runs, with original failures and corrected fixture retained. [Evidence and limits](reports/network-refinement-2026-10-15/README.md).
+- [ ] Qualify these fixes on matching remote peers. Existing hop-recovery/crouch-capsule gaps and broader NET-SKILLS-1 acceptance remain open.
 
 ### NEMU-ULTIMATE-1011: LET THEM IN (was PRUSISYON)
 

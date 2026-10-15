@@ -7,7 +7,8 @@ namespace TumbangPreso.Net
     // Body tells only. Private aiming destinations never travel in this state.
     public struct AbilityAimSnapshot : INetworkSerializable
     {
-        public const int MaxWireBytes = 76;
+        public const int MinWireBytes = sizeof(byte) + sizeof(float) + sizeof(long) + sizeof(ushort);
+        public const int MaxWireBytes = MinWireBytes + 61;
         public byte Slot; // 0 none, 1/2 skills, 3 ultimate
         public FixedString64Bytes AbilityId;
         public float Held;
@@ -40,7 +41,7 @@ namespace TumbangPreso.Net
         {
             aim = default;
             int bytes = reader.Length - reader.Position;
-            if (bytes < 15 || bytes > MaxWireBytes) return false;
+            if (bytes < MinWireBytes || bytes > MaxWireBytes) return false;
             try
             {
                 reader.ReadNetworkSerializable(out aim);

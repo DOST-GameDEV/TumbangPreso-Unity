@@ -43,6 +43,19 @@ inert. Protocol159 peers are refused. Native receiver and real-map movement
 checks pass; actual matching peers remain unqualified.
 [Direction and evidence](reports/nemu-ultimate-2026-10-11/direction.md).
 
+## Protocol160 resource and unit-packet refinement, October15
+
+SyncUnit's fixed210-byte prefix (through BlindedLeft, protocol 161),27-byte voodoo state and15-to76-byte aim tail
+require252-to313 bytes. Allocation and minimum-read checks share these codec
+bounds. Owner feedback and voodoo fixtures include PossessedLeft; invalid status
+and old poses cannot consume a new serial or restart possession.
+
+A crouched owner suppresses its sprint request using the existing input bit.
+The host also refuses sprint spending during its authoritative curse reach,
+retaining the input lease so sprint can resume when that reach ends. Tell bits
+do not authorize gameplay. No schema or protocol change is needed for these
+input/resource corrections. [Native evidence and remaining peer work](reports/network-refinement-2026-10-15/README.md).
+
 ## Current protocol159: combined QoL and ASTRA contract
 
 The negotiated version combines QoL movement/crouch pose support, the stepped

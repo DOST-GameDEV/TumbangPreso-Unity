@@ -2539,6 +2539,8 @@ namespace TumbangPreso.Net
         public void SyncUnitTransformClientRpc(int slot, Vector3 pos, float yaw, Vector3 velocity)
             =>SendUnitPose(slot,pos,yaw,velocity,false);
 
+        private const int UnitPoseFixedBytes = 210; // Through BlindedLeft, before the variable tails.
+
         private void SendUnitPose(int slot,Vector3 pos,float yaw,Vector3 velocity,bool reliable,ulong? onlyClient = null,
                                   bool ownerCorrection = true)
         {
@@ -2548,7 +2550,9 @@ namespace TumbangPreso.Net
             var unit = Unit(slot);
             if (unit == null) return;
 
-            using var writer = new FastBufferWriter(308, Allocator.Temp);
+            // Fixed body fields, voodoo state and the largest valid aim identity.
+            using var writer = new FastBufferWriter(UnitPoseFixedBytes + VoodooBodySnapshot.WireBytes
+                + AbilityAimSnapshot.MaxWireBytes, Allocator.Temp);
             unit.FlightPoseEvidence(out bool grounded, out long flightEpisode);
             writer.WriteValueSafe(slot);
             writer.WriteNetworkSerializable(new GameplayActionScope
@@ -2623,7 +2627,7 @@ namespace TumbangPreso.Net
             // Netcode invokes the handler locally for the listen host, so every broadcast the
             // host sent was also applied ON the host, a second time, over authoritative state it
             // had just produced. See § THE LOOPBACK.
-            if (NetAuthority.IsHost || !reader.TryBeginRead(225 + VoodooBodySnapshot.WireBytes)) return;
+            if (NetAuthority.IsHost || !reader.TryBeginRead(UnitPoseFixedBytes + VoodooBodySnapshot.WireBytes + AbilityAimSnapshot.MinWireBytes)) return;
 
             reader.ReadValueSafe(out int slot);
             reader.ReadNetworkSerializable(out GameplayActionScope scope);

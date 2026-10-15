@@ -1,6 +1,6 @@
 # Networking: Where To Work
 
-Current source contract is protocol153 (`NetSession.ProtocolVersion`). Use matching
+Current source contract is protocol160 (`NetSession.ProtocolVersion`). Use matching
 packages for actual peers; branch names are not compatibility identifiers. The
 work-status queue is [TODO](TODO.md), not the older evidence narrative below.
 
@@ -17,6 +17,17 @@ corrections and movement epochs remain authoritative. The causal native evidence
 is [owner feedback](reports/reliability-2026-10-05/owner-pose-feedback/README.md);
 controlled-latency and physical-feel acceptance remain separate. Current source
 also includes the later queued-focus and bunting fixes, which0358 does not carry.
+
+## October15 resource and body-packet refinement
+
+Owner sprint intent excludes an actual crouch; the host applies the existing
+curse-reach sprint restriction. Crouch/slide tell bits remain presentation only.
+SyncUnit reserves313 bytes for its largest valid aim identity and requires252
+bytes for an empty aim tail. Both bounds share the same fixed prefix and codec
+limits. The protocol160 schema is retained. Native21-case passing evidence and
+the original failures are in the [refinement report](reports/network-refinement-2026-10-15/README.md).
+Matching remote peers and the movement rework's hop recovery/crouch collision
+gaps remain unqualified.
 
 ## Historical September30 contracts and qualification
 
