@@ -7,6 +7,10 @@ slows them 5 s with a slow that gets lower over time. Owner asked for a new name
   slow 50 % to 0 over 5 s, eyes covered the first 2 s), the victim's screen (`Shaders/DontLookBlind`, `UI.TumpHudEffects`),
   HUD markers hidden while covered, status icon, bots retargeted, protocol 161 (`SyncUnit` + `WorldEffectSnapshot.Kind.Blindfold`).
   Defaults chosen without the owner's pick: anyone but Nemu trips it, 50 % peak slow, one ghost, 30 s life, 1.8 m reach.
+- [x] Owner picked a distinct ghost per skill (mockup lineup v2: Blindfold, Skitter, Lookout; English names only) and
+  *"Build Blindfold in game first"*, *"dapat blindfold matches the vfx ren sa screen"*. Built: the voxel ghost
+  (`Visual.BlindfoldGhostModel`, `Shaders/BlindfoldGhost`), and the victim's screen as its cloth over their eyes with its
+  face pressed against it, sliding off at 2 s, a frost edge for the slow (`Shaders/DontLookBlind`).
 - [ ] Owner verdict on play (look of the waiting ghost, the lunge, the blind screen) and the defaults above.
 - [ ] Sound drafts for `sfx_nemu_dontlook_place/spring/fade` and `sfx_cast_nemu_dontlook` (skill sounds stay muted until approved).
 - [ ] Dedicated ability glyph (it reuses `NemuTerrify`); real networked peers on 161.

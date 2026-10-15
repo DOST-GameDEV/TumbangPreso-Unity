@@ -30,8 +30,8 @@ namespace TumbangPreso.UI
             _danger = Effect(root, "DangerEdges", "TumbangPreso/DownedVignette", out _dangerMaterial);
             _caught = Effect(root, "CaughtEdges", "TumbangPreso/FrostVignette", out _caughtMaterial);
             _possessed = Effect(root, "PossessedEdges", "TumbangPreso/PossessedVignette", out _possessedMaterial);
-            // Over every other edge effect: the ghost's hands are on the lens.
-            _blinded = Effect(root, "BlindedHands", "TumbangPreso/DontLookBlind", out _blindedMaterial);
+            // Over every other edge effect: the ghost's cloth is over the lens.
+            _blinded = Effect(root, "BlindedCloth", "TumbangPreso/DontLookBlind", out _blindedMaterial);
             _frame = OwnerUiLayout.Rect(root, "DangerFrame").gameObject.AddComponent<HudDangerFrame>();
             OwnerUiLayout.Fill(_frame.rectTransform); _frame.raycastTarget = false; _frame.enabled = false;
         }
@@ -154,13 +154,13 @@ namespace TumbangPreso.UI
             }
         }
 
-        /// <summary>True while the ghost's hands are over the local player's eyes (Nemu's DON'T LOOK).</summary>
+        /// <summary>True while the ghost's cloth is over the local player's eyes (Nemu's DON'T LOOK).</summary>
         public bool BlindedScreenVisible => _blinded != null && _blinded.enabled && _blindCover > .5f;
         private float _blindCover;
 
         /// <summary>
-        /// BLINDED, ON THE VICTIM'S OWN SCREEN (Nemu's DON'T LOOK, `Shaders/DontLookBlind`): the dark slams in as it lunges, holds
-        /// with its eyes watching for the 2 s, tears back open, and a smoky edge thins away with the slow. All of
+        /// BLINDED, ON THE VICTIM'S OWN SCREEN (Nemu's DON'T LOOK, `Shaders/DontLookBlind`): the ghost's cloth whips down over their
+        /// eyes as it lunges, its face pressed against it for the 2 s, slides off, and a frost edge melts away with the slow. All of
         /// it from the replicated BLINDED clock, so nothing here can outlast or undercut the rule.
         /// ⚠️ Unlike the possessed edges, Reduce visual effects does NOT lift the cover: the blind is the rule, not a flourish.
         /// </summary>
