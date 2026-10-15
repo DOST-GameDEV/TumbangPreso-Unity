@@ -79,7 +79,7 @@ namespace TumbangPreso.Core
         /// DON'T LOOK (owner 2026-10-15, replacing KURO: SIT! as the signature: *"tripwire blind, like she would place a ghost
         /// in an area and it becomes invisible after 3 seconds and then if anyone goes near that area the ghost would lunge
         /// at their eyes and cover it for 2 secondns and slow them for 5 seconds (the slow effect gets lower overtime)"*).
-        /// Piring, one ghost, is left at an aimed spot up to 7 m away. It fades from everyone but Nemu over its first 3 s,
+        /// Blindfold, one ghost, is left at an aimed spot up to 7 m away. It fades from everyone but Nemu over its first 3 s,
         /// then waits up to 30 s. The first other player within 1.8 m springs it: BLINDED, eyes covered for 2 s and a
         /// decaying slow (50 % at the spring, easing linearly to nothing at 5 s). One ghost out at a time; recasting moves it.
         /// </summary>

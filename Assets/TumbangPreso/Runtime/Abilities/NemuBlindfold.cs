@@ -6,7 +6,7 @@ using UnityEngine;
 namespace TumbangPreso.Abilities
 {
     /// <summary>
-    /// ⚠️⚠️ PIRING, THE GHOST DON'T LOOK LEAVES WAITING (owner 2026-10-15, `NecroRules.DontLook*`). *"place a ghost in an area and
+    /// ⚠️⚠️ BLINDFOLD, THE GHOST DON'T LOOK LEAVES WAITING (owner 2026-10-15, `NecroRules.DontLook*`). *"place a ghost in an area and
     /// it becomes invisible after 3 seconds and then if anyone goes near that area the ghost would lunge at their eyes and
     /// cover it for 2 secondns and slow them"*. Gekko's way of fighting: a creature of her own does the work while she is
     /// elsewhere. One per Nemu (`Place` retires her last one).
@@ -18,14 +18,14 @@ namespace TumbangPreso.Abilities
     ///    spring from that replicated edge: a player near its ghost going Blinded is its victim. No new message.
     ///  * THE LUNGE: visible to everyone, it shoots off the ground to the victim's face in 0.22 s and clamps over the
     ///    eyes, its tail streaming back round their head, until the eyes are uncovered, then it tears away.
-    ///    The victim's own screen gets its own treatment (`UI.TumpHudEffects`, `Shaders/PiringBlind`).
-    ///  * Untripped, it goes after 30 s. A rejoiner gets the waiting ghost at the same age (`WorldEffectSnapshot.Kind.Piring`).
+    ///    The victim's own screen gets its own treatment (`UI.TumpHudEffects`, `Shaders/DontLookBlind`).
+    ///  * Untripped, it goes after 30 s. A rejoiner gets the waiting ghost at the same age (`WorldEffectSnapshot.Kind.Blindfold`).
     ///
     /// Each peer runs the same clock from the accepted cast, so its cues are local, not `NetCue` (`audit_cue_relay.py`).
     /// </summary>
-    public sealed class NemuPiring : MonoBehaviour
+    public sealed class NemuBlindfold : MonoBehaviour
     {
-        public static readonly List<NemuPiring> Live = new List<NemuPiring>();
+        public static readonly List<NemuBlindfold> Live = new List<NemuBlindfold>();
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetLive() => Live.Clear();
@@ -53,25 +53,25 @@ namespace TumbangPreso.Abilities
         private const float LeaveSeconds = .4f, HoverHeight = .85f, HeadSize = .72f;
 
         /// <summary>Puts Nemu's ghost on <paramref name="at"/>, retiring her last one. <paramref name="age"/> &gt; 0 restores.</summary>
-        public static NemuPiring Place(Vector3 at, Vector3 facing, int ownerSlot, float age = 0.0f)
+        public static NemuBlindfold Place(Vector3 at, Vector3 facing, int ownerSlot, float age = 0.0f)
         {
             for (int i = Live.Count - 1; i >= 0; i--)
                 if (Live[i] != null && Live[i].OwnerSlot == ownerSlot && !Live[i].Sprung) Live[i].Retire();
-            var go = new GameObject("NemuPiring");
+            var go = new GameObject("NemuBlindfold");
             var spot = VfxShapes.GroundPoint(at);
             go.transform.position = spot;
-            var piring = go.AddComponent<NemuPiring>();
-            piring.OwnerSlot = ownerSlot;
-            piring.Spot = spot;
+            var blindfold = go.AddComponent<NemuBlindfold>();
+            blindfold.OwnerSlot = ownerSlot;
+            blindfold.Spot = spot;
             facing.y = 0.0f;
-            piring.Facing = facing.sqrMagnitude > 1e-4f ? facing.normalized : Vector3.forward;
-            piring._age = Mathf.Clamp(float.IsFinite(age) ? age : 0.0f, 0.0f, NecroRules.DontLookLifeSeconds);
-            piring._smoke = new NemuSmokeBatch(go.transform, "Piring", 24, 6, 16);
-            if (piring._age <= 0.0f) GameServices.Audio?.PlayAt("sfx_nemu_dontlook_place", spot);
-            return piring;
+            blindfold.Facing = facing.sqrMagnitude > 1e-4f ? facing.normalized : Vector3.forward;
+            blindfold._age = Mathf.Clamp(float.IsFinite(age) ? age : 0.0f, 0.0f, NecroRules.DontLookLifeSeconds);
+            blindfold._smoke = new NemuSmokeBatch(go.transform, "Blindfold", 24, 6, 16);
+            if (blindfold._age <= 0.0f) GameServices.Audio?.PlayAt("sfx_nemu_dontlook_place", spot);
+            return blindfold;
         }
 
-        public static NemuPiring OwnedBy(int ownerSlot)
+        public static NemuBlindfold OwnedBy(int ownerSlot)
         {
             foreach (var p in Live) if (p != null && p.OwnerSlot == ownerSlot && !p.Sprung) return p;
             return null;
@@ -87,7 +87,7 @@ namespace TumbangPreso.Abilities
 
         public Net.WorldEffectSnapshot.Field Capture() => new Net.WorldEffectSnapshot.Field
         {
-            Type = Net.WorldEffectSnapshot.Kind.Piring, Source = gameObject, Position = Spot, Forward = Facing,
+            Type = Net.WorldEffectSnapshot.Kind.Blindfold, Source = gameObject, Position = Spot, Forward = Facing,
             Duration = NecroRules.DontLookLifeSeconds, Remaining = Remaining, Radius = NecroRules.DontLookTriggerRadius,
             Owner = OwnerSlot,
         };
@@ -96,7 +96,7 @@ namespace TumbangPreso.Abilities
         private void OnDisable() { Live.Remove(this); Camera.onPreCull -= HideFromVictim; Camera.onPostRender -= ShowAgain; }
 
         /// <summary>
-        /// ⚠️ ONCE IT IS ON THEIR FACE, THE VICTIM'S OWN CAMERA DOES NOT DRAW IT. Their screen is the blind (`Shaders/PiringBlind`);
+        /// ⚠️ ONCE IT IS ON THEIR FACE, THE VICTIM'S OWN CAMERA DOES NOT DRAW IT. Their screen is the blind (`Shaders/DontLookBlind`);
         /// the ghost itself, a metre from their lens, was a black blob over the middle of their view as it tore away (film r8).
         /// Every other camera, and theirs during the lunge, still sees it. (Asked by the camera's place, not the seat: film r9's
         /// solo seat did not count as the local viewer.)
@@ -301,7 +301,7 @@ namespace TumbangPreso.Abilities
         }
 
         /// <summary>A rejoiner's waiting ghost, at the same age. Never springs on restore: the host's status decides that.</summary>
-        public static NemuPiring Restore(Net.WorldEffectSnapshot.Field field, float elapsed)
+        public static NemuBlindfold Restore(Net.WorldEffectSnapshot.Field field, float elapsed)
         {
             float age = field.Duration - Mathf.Clamp(field.Remaining - elapsed, 0.0f, field.Duration);
             return Place(field.Position, field.Forward, field.Owner, Mathf.Max(.01f, age));

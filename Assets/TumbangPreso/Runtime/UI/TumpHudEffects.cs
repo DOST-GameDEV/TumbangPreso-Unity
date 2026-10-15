@@ -31,7 +31,7 @@ namespace TumbangPreso.UI
             _caught = Effect(root, "CaughtEdges", "TumbangPreso/FrostVignette", out _caughtMaterial);
             _possessed = Effect(root, "PossessedEdges", "TumbangPreso/PossessedVignette", out _possessedMaterial);
             // Over every other edge effect: the ghost's hands are on the lens.
-            _blinded = Effect(root, "BlindedHands", "TumbangPreso/PiringBlind", out _blindedMaterial);
+            _blinded = Effect(root, "BlindedHands", "TumbangPreso/DontLookBlind", out _blindedMaterial);
             _frame = OwnerUiLayout.Rect(root, "DangerFrame").gameObject.AddComponent<HudDangerFrame>();
             OwnerUiLayout.Fill(_frame.rectTransform); _frame.raycastTarget = false; _frame.enabled = false;
         }
@@ -159,7 +159,7 @@ namespace TumbangPreso.UI
         private float _blindCover;
 
         /// <summary>
-        /// BLINDED, ON THE VICTIM'S OWN SCREEN (Nemu's DON'T LOOK, `Shaders/PiringBlind`): the dark slams in as it lunges, holds
+        /// BLINDED, ON THE VICTIM'S OWN SCREEN (Nemu's DON'T LOOK, `Shaders/DontLookBlind`): the dark slams in as it lunges, holds
         /// with its eyes watching for the 2 s, tears back open, and a smoky edge thins away with the slow. All of
         /// it from the replicated BLINDED clock, so nothing here can outlast or undercut the rule.
         /// ⚠️ Unlike the possessed edges, Reduce visual effects does NOT lift the cover: the blind is the rule, not a flourish.

@@ -43,7 +43,7 @@ namespace TumbangPreso.PlayTests
 
         [UnityTearDown] public IEnumerator After()
         {
-            NemuPiring.RetireAll();
+            NemuBlindfold.RetireAll();
             yield return PlayModeWorld.Reset();
             NetAuthority.Provider = _net;
         }
@@ -85,7 +85,7 @@ namespace TumbangPreso.PlayTests
             yield return null;
 
             var court = MakeCamera("DontLookCourt", 50);
-            var blind = new Material(Shader.Find("TumbangPreso/PiringBlind"));
+            var blind = new Material(Shader.Find("TumbangPreso/DontLookBlind"));
             var hdr = new RenderTexture(1280, 720, 24, RenderTextureFormat.DefaultHDR, RenderTextureReadWrite.Linear);
             var ldr = new RenderTexture(1280, 720, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
             var pixels = new Texture2D(1280, 720, TextureFormat.RGB24, false);
@@ -129,7 +129,7 @@ namespace TumbangPreso.PlayTests
                     victim.Intent.Move = t > 3.6f && t < 9.5f ? Vector2.up : Vector2.zero;
                     yield return null;
 
-                    var ghost = NemuPiring.Live.FirstOrDefault(g => g != null);
+                    var ghost = NemuBlindfold.Live.FirstOrDefault(g => g != null);
                     if (ghost != null && ghost.Sprung && sprungAt < 0f && ghost.Victim != null) sprungAt = t;
                     timing.AppendLine(FormattableString.Invariant(
                         $"{f},{t:F3},{ghost != null},{ghost != null && ghost.Armed},{ghost != null && ghost.Sprung},{victim.BlindedLeft:F3},{victim.EyesCovered},{victim.StatusSpeedScale:F3},{victim.transform.position.z - can.z:F2}"));

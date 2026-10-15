@@ -8,7 +8,7 @@ using UnityEngine;
 namespace TumbangPreso.Abilities
 {
     /// <summary>
-    /// Nemu's current Wiki passive and DON'T LOOK signature (Piring, a hidden ghost, `NemuPiring`) use the shared basic
+    /// Nemu's current Wiki passive and DON'T LOOK signature (Blindfold, a hidden ghost, `NemuBlindfold`) use the shared basic
     /// cooldown. Catch protects the can through its owned clock.
     /// PRUSISYON possesses every other player for 15 s (`CharacterMotor.Possession.cs`).
     /// </summary>
@@ -71,9 +71,9 @@ namespace TumbangPreso.Abilities
 
         /// <summary>
         /// DON'T LOOK (owner 2026-10-15, the overhaul of KURO: SIT!: *"lets make her like gekko ... have diff ghosts and summon
-        /// diff ghosts at the same time"*, and the signature *"a tripwire blind"*). Hold to aim, release: Piring, one of her
+        /// diff ghosts at the same time"*, and the signature *"a tripwire blind"*). Hold to aim, release: Blindfold, one of her
         /// ghosts, waits at the spot and fades from sight after 3 s; whoever comes near first has it lunge at their eyes
-        /// (BLINDED: covered 2 s, a 50 % slow wearing off over 5 s). The ghost is `NemuPiring`; Kuro is not sent.
+        /// (BLINDED: covered 2 s, a 50 % slow wearing off over 5 s). The ghost is `NemuBlindfold`; Kuro is not sent.
         /// ⚠️ The ID is Sit's, kept for saves, mastery and the wire. The cast is host-confirmed, so every peer places the
         /// same ghost from the accepted cast (Cold Feet's pattern) and only the host springs it.
         /// </summary>
@@ -85,7 +85,7 @@ namespace TumbangPreso.Abilities
 
             public DontLook(NemuHeroKit kit)
                 : base("nemu_skill1", "DON'T LOOK",
-                       "Hold to aim, release to leave Piring, a ghost, waiting at a spot. It vanishes after 3 s. The first player to come near has it lunge at their eyes: Blinded for 2 s, and slowed by 50%, wearing off over 5 s. One ghost at a time; it leaves after 30 s.",
+                       "Hold to aim, release to leave a blindfolded ghost waiting at a spot. It vanishes after 3 s. The first player to come near has it lunge at their eyes: Blinded for 2 s, and slowed by 50%, wearing off over 5 s. One ghost at a time; it leaves after 30 s.",
                        NecroRules.DontLookCooldown, 0.0f, AbilityGlyph.NemuTerrify,
                        summary: "Hide a ghost. The first to come near is blinded and slowed.",
                        telegraphRadius: NecroRules.DontLookTriggerRadius, telegraphRange: NecroRules.DontLookMaxRange,
@@ -101,7 +101,7 @@ namespace TumbangPreso.Abilities
             {
                 _kit.ShareBasicCooldown(CooldownRemaining, mayLower: false);
                 if (ctx?.Motor == null) return;
-                NemuPiring.Place(AimedDestination(ctx), ctx.Forward, ctx.Motor.PlayerSlot);
+                NemuBlindfold.Place(AimedDestination(ctx), ctx.Forward, ctx.Motor.PlayerSlot);
             }
         }
 

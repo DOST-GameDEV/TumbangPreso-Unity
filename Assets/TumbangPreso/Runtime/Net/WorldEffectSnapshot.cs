@@ -16,7 +16,7 @@ namespace TumbangPreso.Net
             // ⚠️ APPEND ONLY (protocol 55, HERO-9): Paete's seedling, his thorn construct and his sentry.
             Plant = 12, Thorns = 13, Sentry = 14, Drift = 15, Waterwall = 16, CinderGate = 17, Baha = 18,
             // ⚠️ APPEND ONLY (protocol 161): Nemu's DON'T LOOK ghost, waiting (a sprung one is the victim's BLINDED clock).
-            Piring = 19 }
+            Blindfold = 19 }
         public static bool UsesDynamicIdentity(Kind kind) => RafiWaterField.IsWater(kind) || kind == Kind.CinderGate;
         public struct Field
         {
@@ -115,8 +115,8 @@ namespace TumbangPreso.Net
                 if (water != null && water.isActiveAndEnabled && water.Remaining > .02f) fields.Add(water.Capture());
             foreach (var gate in SeanCinderGate.Active)
                 if (gate != null && gate.isActiveAndEnabled && gate.Remaining > .02f) fields.Add(gate.Capture());
-            foreach (var piring in NemuPiring.Live)
-                if (piring != null && piring.isActiveAndEnabled && !piring.Sprung && piring.Remaining > .02f) fields.Add(piring.Capture());
+            foreach (var blindfold in NemuBlindfold.Live)
+                if (blindfold != null && blindfold.isActiveAndEnabled && !blindfold.Sprung && blindfold.Remaining > .02f) fields.Add(blindfold.Capture());
             return fields;
         }
 
@@ -149,7 +149,7 @@ namespace TumbangPreso.Net
                     && field.FirstScale > 0 && field.FirstScale <= 12 && field.FirstScale / field.Radius <= Mathf.PI
                     && field.SecondScale >= 0 && field.SecondScale <= 16 && field.SecondScale == Mathf.Floor(field.SecondScale);
             }
-            if (field.Type == Kind.Piring)
+            if (field.Type == Kind.Blindfold)
                 return field.Owner >= 0 && Mathf.Abs(field.Duration - Core.NecroRules.DontLookLifeSeconds) < .001f
                     && Mathf.Abs(field.Radius - Core.NecroRules.DontLookTriggerRadius) < .001f
                     && Mathf.Abs(field.Forward.y) < .001f && Mathf.Abs(field.Forward.sqrMagnitude - 1) < .01f
@@ -242,8 +242,8 @@ namespace TumbangPreso.Net
                         restoredTargets: field.TargetMask, instanceId: field.InstanceId);
                 else if (field.Type == Kind.Drift)
                     DanteDriftWave.Restore(field, elapsed);
-                else if (field.Type == Kind.Piring)
-                    NemuPiring.Restore(field, elapsed);
+                else if (field.Type == Kind.Blindfold)
+                    NemuBlindfold.Restore(field, elapsed);
                 else if (field.Type == Kind.Gale)
                 {
                     // A rejoiner's gale is the same front at the same age; the host alone hits.
@@ -284,7 +284,7 @@ namespace TumbangPreso.Net
             Retire<PaetePlant>();
             Retire<PaeteThorns>();
             Retire<PaeteSentry>();
-            Retire<NemuPiring>();
+            Retire<NemuBlindfold>();
             // Render-only fissures have no gameplay lifetime component.
             Retire<HeroHazards.EarthPillarComponent>();
             Physics.SyncTransforms();

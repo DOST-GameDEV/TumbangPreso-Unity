@@ -13,7 +13,7 @@
 //  * THE SLOW (`_Slow` 1 to 0 as it wears off): a smoky black edge round the screen that thins with it.
 // `_Calm` (Reduce visual effects) stills the smoke and the blinks; the blind itself stays (it is the rule).
 // ⚠️ Colours are authored in sRGB like every colour property here (Unity hands the shader their linear values).
-Shader "TumbangPreso/PiringBlind"
+Shader "TumbangPreso/DontLookBlind"
 {
     Properties
     {

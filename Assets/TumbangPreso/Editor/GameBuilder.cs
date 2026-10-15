@@ -864,7 +864,7 @@ namespace TumbangPreso.EditorTools
 
                 // Nemu's DON'T LOOK: the blinded player's own screen (`UI.TumpHudEffects`), reached through `Shader.Find`.
                 // Stripped, the ghost's hands never cover the victim's eyes and the blind is only a slow.
-                "TumbangPreso/PiringBlind",
+                "TumbangPreso/DontLookBlind",
 
                 // ⚠️ THE NEAR-CAMERA DISSOLVE, AND ITS MISS PATH SHIPS THE ORIGINAL REPORT BACK.
                 // `NearFade.Install` reaches it through `Shader.Find` and nothing in any scene

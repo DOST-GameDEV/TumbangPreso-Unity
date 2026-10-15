@@ -53,7 +53,7 @@ namespace TumbangPreso.PlayTests
 
         [UnityTearDown] public IEnumerator After()
         {
-            _kit?.ResetForRound(_ctx); NemuPiring.RetireAll();
+            _kit?.ResetForRound(_ctx); NemuBlindfold.RetireAll();
             yield return PlayModeWorld.Reset(); NetAuthority.Provider = _prior;
         }
 
@@ -69,23 +69,23 @@ namespace TumbangPreso.PlayTests
         [Test] public void CastingLeavesOneGhostAndARecastMovesIt()
         {
             using (NetCue.SuppressRelay()) _kit.Skill1.Activate(_ctx);
-            var first = NemuPiring.OwnedBy(0);
+            var first = NemuBlindfold.OwnedBy(0);
             Assert.IsNotNull(first, "The cast left no ghost.");
             Assert.IsFalse(first.Armed);
             // Shares the basic cooldown, as Sit did.
             Assert.AreEqual(_kit.Skill1.CooldownRemaining, _kit.AttackingSkill.CooldownRemaining, 1e-4f);
-            var second = NemuPiring.Place(new Vector3(3, 0, 3), Vector3.forward, 0);
-            Assert.AreSame(second, NemuPiring.OwnedBy(0), "Two ghosts were waiting at once.");
+            var second = NemuBlindfold.Place(new Vector3(3, 0, 3), Vector3.forward, 0);
+            Assert.AreSame(second, NemuBlindfold.OwnedBy(0), "Two ghosts were waiting at once.");
         }
 
         [UnityTest] public IEnumerator AnUnarmedGhostWaitsThenTheHostSpringsItOnTheFirstPlayerNear()
         {
-            var piring = NemuPiring.Place(new Vector3(0, 0, 5), Vector3.forward, 0);
+            var blindfold = NemuBlindfold.Place(new Vector3(0, 0, 5), Vector3.forward, 0);
             _players[1].transform.position = new Vector3(0.5f, 0, 5.5f);
             yield return null; yield return null;
             Assert.IsFalse(_players[1].IsBlinded, "It sprang before its 3 s were up.");
 
-            var armed = NemuPiring.Place(new Vector3(0, 0, 5), Vector3.forward, 0, age: NecroRules.DontLookArmSeconds + .1f);
+            var armed = NemuBlindfold.Place(new Vector3(0, 0, 5), Vector3.forward, 0, age: NecroRules.DontLookArmSeconds + .1f);
             yield return null; yield return null;
             Assert.IsTrue(armed.Sprung);
             Assert.AreSame(_players[1], armed.Victim);
@@ -97,24 +97,24 @@ namespace TumbangPreso.PlayTests
 
         [UnityTest] public IEnumerator NemuNeverTripsHerOwnGhost()
         {
-            var piring = NemuPiring.Place(Vector3.zero, Vector3.forward, 0, age: NecroRules.DontLookArmSeconds + .1f);
+            var blindfold = NemuBlindfold.Place(Vector3.zero, Vector3.forward, 0, age: NecroRules.DontLookArmSeconds + .1f);
             yield return null; yield return null;
-            Assert.IsFalse(piring.Sprung);
+            Assert.IsFalse(blindfold.Sprung);
             Assert.IsFalse(_players[0].IsBlinded);
         }
 
         [UnityTest] public IEnumerator AnObserverCannotSpringIt()
         {
             _peer.Host = false;
-            var piring = NemuPiring.Place(new Vector3(20, 0, 0), Vector3.forward, 0, age: NecroRules.DontLookArmSeconds + .1f);
+            var blindfold = NemuBlindfold.Place(new Vector3(20, 0, 0), Vector3.forward, 0, age: NecroRules.DontLookArmSeconds + .1f);
             yield return null; yield return null;
             Assert.IsFalse(_players[1].IsBlinded, "An observer wrote BLINDED.");
-            Assert.IsFalse(piring.Sprung, "An observer sprang a ghost the host never did.");
+            Assert.IsFalse(blindfold.Sprung, "An observer sprang a ghost the host never did.");
             // The host's replicated edge is what springs an observer's copy.
             _players[1].ApplyNetworkBlinded(StatusRules.BlindedSeconds);
             yield return null; yield return null;
-            Assert.IsTrue(piring.Sprung);
-            Assert.AreSame(_players[1], piring.Victim);
+            Assert.IsTrue(blindfold.Sprung);
+            Assert.AreSame(_players[1], blindfold.Victim);
         }
 
         [Test] public void TheSlowDecaysAndTheBlindEndsAtTwoSeconds()
@@ -138,8 +138,8 @@ namespace TumbangPreso.PlayTests
 
         [Test] public void ARejoinerGetsTheWaitingGhostAtTheSameAge()
         {
-            var piring = NemuPiring.Place(new Vector3(2, 0, 4), Vector3.right, 0, age: 10f);
-            var field = piring.Capture();
+            var blindfold = NemuBlindfold.Place(new Vector3(2, 0, 4), Vector3.right, 0, age: 10f);
+            var field = blindfold.Capture();
             Assert.IsTrue(WorldEffectSnapshot.Valid(field));
             Assert.AreEqual(20f, field.Remaining, .05f);
             var bad = field; bad.Owner = 9;
@@ -147,9 +147,9 @@ namespace TumbangPreso.PlayTests
             bad = field; bad.Duration = 60f;
             Assert.IsFalse(WorldEffectSnapshot.Valid(bad));
             Assert.IsTrue(WorldEffectSnapshot.Apply(new[] { field }, 1f));
-            var restored = NemuPiring.OwnedBy(0);
+            var restored = NemuBlindfold.OwnedBy(0);
             Assert.IsNotNull(restored);
-            Assert.AreNotSame(piring, restored);
+            Assert.AreNotSame(blindfold, restored);
             Assert.AreEqual(11f, restored.Age, .05f);
             Assert.IsTrue(restored.Armed);
             Assert.IsFalse(restored.Sprung);

@@ -4,7 +4,7 @@ using UnityEngine;
 namespace TumbangPreso
 {
     /// <summary>
-    /// ⚠️⚠️ BLINDED, Nemu's DON'T LOOK (owner 2026-10-15, replacing KURO: SIT!). Piring, the ghost she leaves waiting, lunges
+    /// ⚠️⚠️ BLINDED, Nemu's DON'T LOOK (owner 2026-10-15, replacing KURO: SIT!). Blindfold, the ghost she leaves waiting, lunges
     /// at the eyes of whoever walks into it: their screen is covered for 2 s and they are slowed by a slow that starts at
     /// 50 % and wears off over 5 s (`NecroRules.DontLookSpeedScale`, League's "decaying slow").
     ///
