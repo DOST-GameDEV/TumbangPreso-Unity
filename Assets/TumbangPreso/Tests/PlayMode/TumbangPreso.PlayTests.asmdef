@@ -7,6 +7,7 @@
         "TumbangPreso.Runtime",
         "Unity.Netcode.Runtime",
         "Unity.Collections",
+        "Unity.Networking.Transport",
         "UnityEngine.TestRunner",
         "Unity.InputSystem",
         "Unity.Services.Core",

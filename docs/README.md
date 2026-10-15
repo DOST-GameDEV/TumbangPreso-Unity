@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Current Nemu ghost replication and mixed-character cutscenes: [host state, real Relay/LAN delivery and native rig checks](reports/nemu-network-2026-10-15/README.md).
+
 Current network resource and possession packet bounds: [reproductions, native controls and peer limits](reports/network-refinement-2026-10-15/README.md).
 
 Player render-copy sampling: [actual Windows rejection, inert Animator endpoints and scoped native controls](reports/render-copy-sampling-2026-10-08/README.md).

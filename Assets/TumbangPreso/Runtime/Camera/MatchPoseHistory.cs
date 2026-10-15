@@ -245,7 +245,6 @@ namespace TumbangPreso.CameraSystem
                     if (skin != null)
                     {
                         var rendered = target.AddComponent<SkinnedMeshRenderer>();
-                        rendered.sharedMesh = skin.sharedMesh; rendered.localBounds = skin.localBounds;
                         var bones = skin.bones; var copiedBones = new Transform[bones.Length];
                         for (int i = 0; i < bones.Length; i++)
                         {
@@ -254,6 +253,9 @@ namespace TumbangPreso.CameraSystem
                         }
                         rendered.bones = copiedBones;
                         if (skin.rootBone != null && map.TryGetValue(skin.rootBone, out var copiedRoot)) rendered.rootBone = copiedRoot;
+                        // A renderer under an active parent can validate immediately when bounds are set.
+                        // Bind the complete skeleton before exposing its mesh and bounds.
+                        rendered.sharedMesh = skin.sharedMesh; rendered.localBounds = skin.localBounds;
                         rendered.updateWhenOffscreen = true;
                         if (skin.sharedMesh != null)
                             for (int n = 0; n < skin.sharedMesh.blendShapeCount; n++) rendered.SetBlendShapeWeight(n, skin.GetBlendShapeWeight(n));

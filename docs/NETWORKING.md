@@ -1,6 +1,8 @@
 # Networking: Where To Work
 
-Current source contract is protocol160 (`NetSession.ProtocolVersion`). Use matching
+Current Nemu ghosts: [protocol163 complete host-state delivery, actual UDP/Relay and mixed-roster checks](reports/nemu-network-2026-10-15/README.md).
+
+Current source contract is protocol163 (`NetSession.ProtocolVersion`). Use matching
 packages for actual peers; branch names are not compatibility identifiers. The
 work-status queue is [TODO](TODO.md), not the older evidence narrative below.
 

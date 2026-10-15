@@ -49,6 +49,7 @@ namespace TumbangPreso.Net
         }
         private void Update()
         {
+            TickNemuGhosts();
             TickQueueArrival();
             TickSeatSwaps();
             TickReplayTransfer();

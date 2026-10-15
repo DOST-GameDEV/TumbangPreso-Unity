@@ -1,3 +1,15 @@
+## Protocol163: complete host-authored Nemu ghost visuals
+
+NemuGhosts sends up to6 typed poses per owner (67 bytes each,33-byte header,
+maximum435) on the existing reliable NGO stream at10Hz and in join hydration.
+Each full set carries match/round/caster movement epoch, sequence, lifetime IDs
+and the host round clock. Blindfold names its exact victim and victim epoch;
+Skitter includes carry/claw/facing state; Lookout includes lift/scare/watch/cheer.
+Absent IDs retire. Old, forged, malformed and expired state cannot revive a ghost.
+Clients draw this state without moving shoes, restoring the can or choosing a
+blind victim. Transport/round/kit/body changes retire replicas.162 peers are refused.
+[Real UDP/Relay delivery, mixed-roster correction and evidence limits](reports/nemu-network-2026-10-15/README.md).
+
 ## Protocol162: Nemu SKITTER and LOOKOUT (her own ghosts; replace KURO: FETCH! and KURO: CATCH!)
 
 No wire change; the rules differ, so 161 peers are refused. `nemu_skill2` keeps its

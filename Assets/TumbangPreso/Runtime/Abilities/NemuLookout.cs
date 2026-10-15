@@ -22,7 +22,7 @@ namespace TumbangPreso.Abilities
     ///  * LEAVING: its time is up (or its job done); it sinks away into its lantern's glow.
     /// The can's own transform is never touched here: that is the host's state, and only `Lata.HostRestore` stands it up.
     /// </summary>
-    public sealed class NemuLookout : MonoBehaviour
+    public sealed partial class NemuLookout : MonoBehaviour
     {
         public static readonly List<NemuLookout> Live = new List<NemuLookout>();
 
