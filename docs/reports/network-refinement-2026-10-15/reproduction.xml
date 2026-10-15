@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="11" result="Failed(Child)" total="11" passed="7" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-15 06:02:33Z" end-time="2026-10-15 06:02:35Z" duration="1.7406992">
+  <test-suite type="TestSuite" id="3686" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2171" result="Failed" site="Child" start-time="2026-10-15 06:02:33Z" end-time="2026-10-15 06:02:35Z" duration="1.740699" total="11" passed="7" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3678" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/Documents/Codex/2026-10-15/pi/work/tump-network/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2171" result="Failed" site="Child" start-time="2026-10-15 06:02:34Z" end-time="2026-10-15 06:02:35Z" duration="1.702722" total="11" passed="7" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24384" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3679" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2171" result="Failed" site="Child" start-time="2026-10-15 06:02:34Z" end-time="2026-10-15 06:02:35Z" duration="1.675625" total="11" passed="7" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3682" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2169" result="Failed" site="Child" start-time="2026-10-15 06:02:34Z" end-time="2026-10-15 06:02:35Z" duration="1.648242" total="11" passed="7" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2561" name="OwnerPoseFeedbackTests" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-10-15 06:02:34Z" end-time="2026-10-15 06:02:34Z" duration="0.575093" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2562" name="AcceptedEchoAtAVisibleRoundTripDistanceDoesNotPullTheOwnerBack" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.AcceptedEchoAtAVisibleRoundTripDistanceDoesNotPullTheOwnerBack" methodname="AcceptedEchoAtAVisibleRoundTripDistanceDoesNotPullTheOwnerBack" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="1421817548" result="Passed" start-time="2026-10-15 06:02:34Z" end-time="2026-10-15 06:02:34Z" duration="0.106926" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2563" name="AcceptedEchoBeyondTheOldSnapDistanceDoesNotPullTheOwnerBack" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.AcceptedEchoBeyondTheOldSnapDistanceDoesNotPullTheOwnerBack" methodname="AcceptedEchoBeyondTheOldSnapDistanceDoesNotPullTheOwnerBack" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="997373418" result="Passed" start-time="2026-10-15 06:02:34Z" end-time="2026-10-15 06:02:34Z" duration="0.036738" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2566" name="AcceptedOtherSeatPosesStillMoveTheObservedReplica" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.AcceptedOtherSeatPosesStillMoveTheObservedReplica" methodname="AcceptedOtherSeatPosesStillMoveTheObservedReplica" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="1418661289" result="Passed" start-time="2026-10-15 06:02:34Z" end-time="2026-10-15 06:02:34Z" duration="0.036402" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2565" name="ANewMovementEpochStillAppliesTheAuthoritativeTeleport" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.ANewMovementEpochStillAppliesTheAuthoritativeTeleport" methodname="ANewMovementEpochStillAppliesTheAuthoritativeTeleport" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="2026854293" result="Passed" start-time="2026-10-15 06:02:34Z" end-time="2026-10-15 06:02:34Z" duration="0.049395" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2564" name="AnExplicitHostCorrectionStillCorrectsTheOwner" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.AnExplicitHostCorrectionStillCorrectsTheOwner" methodname="AnExplicitHostCorrectionStillCorrectsTheOwner" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="1051669986" result="Passed" start-time="2026-10-15 06:02:34Z" end-time="2026-10-15 06:02:34Z" duration="0.052807" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2567" name="DelayedEchoesPreserveContinuousPredictedRunning" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.DelayedEchoesPreserveContinuousPredictedRunning" methodname="DelayedEchoesPreserveContinuousPredictedRunning" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="37882309" result="Passed" start-time="2026-10-15 06:02:34Z" end-time="2026-10-15 06:02:34Z" duration="0.098614" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[physics_steps=100 dt=0.020 delayed_steps=25 accepted=75 travel=10.0010 maximum_rollback=0.0000
+]]></output>
+            </test-case>
+            <test-case id="2568" name="PossessionRejectsMalformedAndOlderPosesWithoutConsumingTheirSerial" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.PossessionRejectsMalformedAndOlderPosesWithoutConsumingTheirSerial" methodname="PossessionRejectsMalformedAndOlderPosesWithoutConsumingTheirSerial" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="1822817504" result="Failed" start-time="2026-10-15 06:02:34Z" end-time="2026-10-15 06:02:34Z" duration="0.174264" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Every delayed packet must advance the actual receiver serial.
+  Expected: 2
+  But was:  1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.OwnerPoseFeedbackTests.Deliver (UnityEngine.Vector3 oldPosition, System.Boolean correction, System.Int32 epoch, System.UInt64 serial, System.Single possessed) [0x0045e] in C:\Users\Matthew\Documents\Codex\2026-10-15\pi\work\tump-network\Assets\TumbangPreso\Tests\PlayMode\OwnerPoseFeedbackTests.cs:78
+at TumbangPreso.PlayTests.OwnerPoseFeedbackTests+<PossessionRejectsMalformedAndOlderPosesWithoutConsumingTheirSerial>d__17.MoveNext () [0x00073] in C:\Users\Matthew\Documents\Codex\2026-10-15\pi\work\tump-network\Assets\TumbangPreso\Tests\PlayMode\OwnerPoseFeedbackTests.cs:170
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="3156" name="SkillReceiptTests" fullname="TumbangPreso.PlayTests.SkillReceiptTests" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" testcasecount="54" result="Failed" site="Child" start-time="2026-10-15 06:02:34Z" end-time="2026-10-15 06:02:35Z" duration="0.839160" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="3197" name="ActualUnitSenderFitsTheLargestValidAimIdentity" fullname="TumbangPreso.PlayTests.SkillReceiptTests.ActualUnitSenderFitsTheLargestValidAimIdentity" methodname="ActualUnitSenderFitsTheLargestValidAimIdentity" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="834521536" result="Failed" label="Error" start-time="2026-10-15 06:02:34Z" end-time="2026-10-15 06:02:35Z" duration="0.561964" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.OverflowException : Writing past the end of the buffer]]></message>
+                <stack-trace><![CDATA[  at Unity.Netcode.BufferSerializerWriter.SerializeValue (System.Byte& value) [0x00000] in .\Library\PackageCache\com.unity.netcode.gameobjects@d43d28498f17\Runtime\Serialization\BufferSerializerWriter.cs:30 
+  at Unity.Netcode.BufferSerializer`1[TReaderWriter].SerializeValue (System.Byte& value) [0x00000] in .\Library\PackageCache\com.unity.netcode.gameobjects@d43d28498f17\Runtime\Serialization\BufferSerializer.cs:73 
+  at TumbangPreso.Net.AbilityAimSnapshot.NetworkSerialize[T] (Unity.Netcode.BufferSerializer`1[TReaderWriter] serializer) [0x000a3] in C:\Users\Matthew\Documents\Codex\2026-10-15\pi\work\tump-network\Assets\TumbangPreso\Runtime\Net\AbilityAimSnapshot.cs:34 
+  at Unity.Netcode.FastBufferWriter.WriteNetworkSerializable[T] (T& value) [0x00012] in .\Library\PackageCache\com.unity.netcode.gameobjects@d43d28498f17\Runtime\Serialization\FastBufferWriter.cs:435 
+  at TumbangPreso.Net.MatchRpc.SendUnitPose (System.Int32 slot, UnityEngine.Vector3 pos, System.Single yaw, UnityEngine.Vector3 velocity, System.Boolean reliable, System.Nullable`1[T] onlyClient, System.Boolean ownerCorrection) [0x0048e] in C:\Users\Matthew\Documents\Codex\2026-10-15\pi\work\tump-network\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:2611 
+  at TumbangPreso.Net.MatchRpc.SyncUnitTransformClientRpc (System.Int32 slot, UnityEngine.Vector3 pos, System.Single yaw, UnityEngine.Vector3 velocity) [0x00000] in C:\Users\Matthew\Documents\Codex\2026-10-15\pi\work\tump-network\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:2540 
+  at TumbangPreso.PlayTests.SkillReceiptTests+<ActualUnitSenderFitsTheLargestValidAimIdentity>d__57.MoveNext () [0x001e0] in C:\Users\Matthew\Documents\Codex\2026-10-15\pi\work\tump-network\Assets\TumbangPreso\Tests\PlayMode\SkillReceiptTests.cs:1503 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44 ]]></stack-trace>
+              </failure>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18781, join code 7TDW
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <ea60118747824ac2baa54826b0c72d63>:0 
+  at TumbangPreso.PlayTests.SkillReceiptTests+<ActualUnitSenderFitsTheLargestValidAimIdentity>d__57.MoveNext () [0x00228] in <3a8c1da37fb3413c8f1b6979de662e95>:0 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand+<ExecuteEnumerableAndRecordExceptions>d__4.MoveNext () [0x0006b] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand.AdvanceEnumerator (System.Collections.IEnumerator enumerator) [0x00019] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand+<ExecuteEnumerable>d__2.MoveNext () [0x0010c] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestRunner.NUnitExtensions.Runner.UnityLogCheckDelegatingCommand+<ExecuteEnumerable>d__3.MoveNext () [0x00161] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.EnumerableApplyChangesToContextCommand+<ExecuteEnumerable>d__1.MoveNext () [0x00091] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+]]></output>
+            </test-case>
+            <test-case id="3195" name="CrouchedOwnerDoesNotAskTheHostToSpendSprintStamina" fullname="TumbangPreso.PlayTests.SkillReceiptTests.CrouchedOwnerDoesNotAskTheHostToSpendSprintStamina" methodname="CrouchedOwnerDoesNotAskTheHostToSpendSprintStamina" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="606745057" result="Failed" start-time="2026-10-15 06:02:35Z" end-time="2026-10-15 06:02:35Z" duration="0.043879" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Crouching still submitted a sprint request.
+  Expected: 0
+  But was:  4
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SkillReceiptTests+<CrouchedOwnerDoesNotAskTheHostToSpendSprintStamina>d__55.MoveNext () [0x0008e] in C:\Users\Matthew\Documents\Codex\2026-10-15\pi\work\tump-network\Assets\TumbangPreso\Tests\PlayMode\SkillReceiptTests.cs:1443
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="3196" name="RemoteCurseReachRefusesSprintWithoutDiscardingTheHeldRequest" fullname="TumbangPreso.PlayTests.SkillReceiptTests.RemoteCurseReachRefusesSprintWithoutDiscardingTheHeldRequest" methodname="RemoteCurseReachRefusesSprintWithoutDiscardingTheHeldRequest" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="1950427086" result="Failed" start-time="2026-10-15 06:02:35Z" end-time="2026-10-15 06:02:35Z" duration="0.048610" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The host charged for a refused sprint.
+  Expected: 250.0d +/- 0.0010000000474974513d
+  But was:  230.0d
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SkillReceiptTests+<RemoteCurseReachRefusesSprintWithoutDiscardingTheHeldRequest>d__56.MoveNext () [0x000b0] in C:\Users\Matthew\Documents\Codex\2026-10-15\pi\work\tump-network\Assets\TumbangPreso\Tests\PlayMode\SkillReceiptTests.cs:1470
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="3189" name="VoodooSyncPreservesHostPoolAndCarriesReachOutcomeWithoutTheTargetSnapshot" fullname="TumbangPreso.PlayTests.SkillReceiptTests.VoodooSyncPreservesHostPoolAndCarriesReachOutcomeWithoutTheTargetSnapshot" methodname="VoodooSyncPreservesHostPoolAndCarriesReachOutcomeWithoutTheTargetSnapshot" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="617356599" result="Passed" start-time="2026-10-15 06:02:35Z" end-time="2026-10-15 06:02:35Z" duration="0.152225" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[PhaisterOmen] Shaders/CosmosEye is missing; the eye falls back to a dark disc.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+[PhaisterProp] Models/PhaisterProps/butterfly is missing; run tools/build_phaister_props.py.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -45,7 +45,8 @@ namespace TumbangPreso.PlayTests
             yield return PlayModeWorld.Reset(); NetAuthority.Provider = _previous;
         }
 
-        private void Deliver(Vector3 oldPosition, bool correction, int epoch = 0, ulong serial = 1)
+        private void Deliver(Vector3 oldPosition, bool correction, int epoch = 0, ulong serial = 1, float possessed = 0,
+                             ulong? expectedSerial = null)
         {
             using var writer = new FastBufferWriter(320, Allocator.Temp);
             writer.WriteValueSafe(1);
@@ -68,14 +69,16 @@ namespace TumbangPreso.PlayTests
             writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe(0f);
             writer.WriteValueSafe(Vector3.zero); writer.WriteValueSafe(0L);
             writer.WriteValueSafe(0f); writer.WriteValueSafe(0f);
+            writer.WriteValueSafe(possessed);
             writer.WriteNetworkSerializable(new VoodooBodySnapshot { MarkSource = -1, ReachTarget = -1 });
             writer.WriteNetworkSerializable(default(AbilityAimSnapshot));
-            Assert.AreEqual(216 + VoodooBodySnapshot.WireBytes + (NetSession.ProtocolVersion >= 150 ? 1 : 0), writer.Length);
+            Assert.AreEqual(220 + VoodooBodySnapshot.WireBytes + (NetSession.ProtocolVersion >= 150 ? 1 : 0), writer.Length);
             using var reader = new FastBufferReader(writer, Allocator.Temp);
             typeof(MatchRpc).GetMethod("OnSyncUnitMsg", Hidden).Invoke(_rpc, new object[] { NetworkManager.ServerClientId, reader });
             Assert.AreEqual(42f, _motor.Stamina.Current, "The actual packet must be accepted, not rejected by the fixture.");
-            Assert.AreEqual(serial, (ulong)typeof(CharacterMotor).GetField("_lastNetworkPoseSerial", Hidden).GetValue(_motor),
-                "Every delayed packet must advance the actual receiver serial.");
+            Assert.AreEqual(expectedSerial ?? serial,
+                (ulong)typeof(CharacterMotor).GetField("_lastNetworkPoseSerial", Hidden).GetValue(_motor),
+                "Only accepted packets may advance the actual receiver serial.");
         }
 
         private IEnumerator AcceptedEcho(float travelled)
@@ -158,6 +161,23 @@ namespace TumbangPreso.PlayTests
                 Assert.That(maximumRollback, Is.LessThan(.001f), "A delayed accepted echo rewound continuous movement.");
             }
             finally { Object.Destroy(floor); }
+            yield return null;
+        }
+
+        [UnityTest] public IEnumerator PossessionRejectsMalformedAndOlderPosesWithoutConsumingTheirSerial()
+        {
+            Deliver(Vector3.zero, false, serial: 1, possessed: 12f);
+            Assert.AreEqual(12f, _motor.PossessedLeft, .001f);
+            foreach (float invalid in new[] { float.NaN, float.PositiveInfinity, -1f, StatusRules.PossessedSeconds + .1f })
+                Deliver(Vector3.right * 8, true, serial: 2, possessed: invalid, expectedSerial: 1);
+            Assert.AreEqual(12f, _motor.PossessedLeft, .001f);
+            Assert.AreEqual(Vector3.zero, _motor.transform.position, "Malformed status committed a pose.");
+            Deliver(Vector3.zero, false, serial: 2, possessed: 8f);
+            Assert.AreEqual(8f, _motor.PossessedLeft, .001f, "A refused packet consumed the serial.");
+            Deliver(Vector3.zero, false, serial: 1, possessed: 15f, expectedSerial: 2);
+            Assert.AreEqual(8f, _motor.PossessedLeft, .001f, "An older pose restarted possession.");
+            Deliver(Vector3.zero, false, serial: 3, possessed: 0f);
+            Assert.IsFalse(_motor.IsPossessed);
             yield return null;
         }
 

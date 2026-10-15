@@ -1,3 +1,14 @@
+# Network refinement checkpoint, October15
+
+Pulled ASTRAReworks26def. Fixed remote crouch/curse-reach sprint stamina and the
+309-byte maximum SyncUnit allocation. Protocol160 layout retained. Native original
+three defects reproduced; candidate20/21 and corrected standing-fixture1/1 cover
+21 distinct cases. Core742/742. Named profile and3 shared input prefs restored;
+task-generated resource/settings bytes preserved then restored. No active Unity
+job or build/Desktop replacement. [Exact evidence](reports/network-refinement-2026-10-15/README.md).
+Next qualify matching actual peers; hop recovery/crouch collision and broad
+NET-SKILLS-1 acceptance remain open. Publish this coherent source unit immediately.
+
 # Latest integration and owner scope, October11
 
 Owner requests QoLUpdates merge then finish/push primary checkout's219 local

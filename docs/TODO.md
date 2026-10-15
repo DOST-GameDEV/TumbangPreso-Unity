@@ -1,3 +1,8 @@
+### NETWORK-REFINEMENT-1015: current movement and possession packets
+
+- [x] Reproduce/fix crouched-owner sprint requests, remote curse-reach sprint spending and the maximum309-byte SyncUnit sender. Restore protocol160 body fixtures and add possession rejection/order coverage. Core742/742;21 distinct native cases pass across candidate/focused runs, with original failures and corrected fixture retained. [Evidence and limits](reports/network-refinement-2026-10-15/README.md).
+- [ ] Qualify these fixes on matching remote peers. Existing hop-recovery/crouch-capsule gaps and broader NET-SKILLS-1 acceptance remain open.
+
 ### NEMU-ULTIMATE-1011: LET THEM IN (was PRUSISYON)
 
 - [x] PRUSISYON gameplay: POSSESSED 15 s, 10% slow, Jockey-style steering contest (`NemuRules`), protocol 160. Core.Tests 742/742; PlayMode `NemuPrusisyonTests`, `NemuPossessionMovementTests`, `NemuFamiliarPoseTests` 10/10; film v1 5.80 s with the round clock frozen. [Direction](reports/nemu-ultimate-2026-10-11/direction.md).

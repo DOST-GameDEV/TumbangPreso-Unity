@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Current network resource and possession packet bounds: [reproductions, native controls and peer limits](reports/network-refinement-2026-10-15/README.md).
+
 Player render-copy sampling: [actual Windows rejection, inert Animator endpoints and scoped native controls](reports/render-copy-sampling-2026-10-08/README.md).
 
 Current roster preparation: [ready-state regression, missing rooted sets, 36 actual current-rig samples and preserved startup](reports/home-roster-preparation-2026-10-08/README.md).
