@@ -107,7 +107,9 @@ namespace TumbangPreso.PlayTests
             void Save(string view, int f, Material overlay = null)
             {
                 Graphics.Blit(hdr, ldr);
-                if (overlay != null) Graphics.Blit(null, ldr, overlay);
+                // ⚠️ AND WITH sRGB WRITES ON, as the canvas has them: without, the overlay's linear colours landed raw and the
+                // hands (0.03 linear, about 48/255 on a real screen) filmed at 6/255, so film r5 showed only the light.
+                if (overlay != null) { bool srgb = GL.sRGBWrite; GL.sRGBWrite = true; Graphics.Blit(null, ldr, overlay); GL.sRGBWrite = srgb; }
                 var active = RenderTexture.active; RenderTexture.active = ldr;
                 pixels.ReadPixels(new Rect(0, 0, 1280, 720), 0, 0); pixels.Apply(); RenderTexture.active = active;
                 File.WriteAllBytes(Path.Combine(root, view, $"{f:D5}.jpg"), pixels.EncodeToJPG(92));

@@ -2,20 +2,23 @@
 // 2 secondns and slow them for 5 seconds (the slow effect gets lower overtime)"*). Driven from the replicated BLINDED clock
 // (`UI.TumpHudEffects.TickBlinded`), nothing stored:
 //  * THE LUNGE (`_Lunge` 0 to 1 over the ghost's 0.22 s crossing): black smoke bursts up from below and swallows the screen.
-//  * THE HANDS (until 2 s): the screen is the ghost's palms pressed over the lens, two smoke hands, fingers splayed upward
-//    and inward, near black. Violet light leaks only through the gaps between the fingers, and through the gap between the
-//    hands its two hollow eyes peer back. Almost nothing of the court shows: it is a blind, not a tint.
+//  * THE HANDS (until 2 s; owner on film r1: *"makikita na hands cover ur face and its darkness"*): its two hands rise into
+//    place over your eyes, seen from behind them: broad palms low, thick fingers pressed close up off the top, near black
+//    and a little out of focus. The only light is violet bleeding through the narrow gaps between fingers and catching their
+//    edges, the way light gets round your own fingers. Everything else is darkness: it is a blind, not a tint.
 //  * THE TEAR (`_Open`): the last 0.3 s the hands rip apart from the middle outward, frayed.
 //  * THE SLOW (`_Slow` 1 to 0 as it wears off): a thin ink edge that thins with it, so the player can see the slow fading.
-// `_Calm` (Reduce visual effects) stills the smoke's churn and the eyes' flicker; the blind itself stays (it is the rule).
+// `_Calm` (Reduce visual effects) stills the smoke's churn, the tremble and the flicker; the blind itself stays (it is the rule).
 Shader "TumbangPreso/PiringBlind"
 {
     Properties
     {
         _MainTex ("Sprite Texture (unused, required by UGUI)", 2D) = "white" {}
-        _Ink ("Ink", Color) = (0.015, 0.005, 0.03, 1)
-        _Hand ("Hand", Color) = (0.075, 0.045, 0.11, 1)
-        _Rim ("Rim (violet)", Color) = (0.62, 0.26, 1, 1)
+        _Ink ("Ink", Color) = (0.045, 0.03, 0.06, 1)
+        _Hand ("Hand", Color) = (0.18, 0.15, 0.22, 1)
+        _Rim ("Rim (violet)", Color) = (0.81, 0.58, 1, 1)
+        // ⚠️ Colours are authored in sRGB like every colour property here (Unity hands the shader their linear values): film r5
+        // took the linear numbers of the prototype and the hands came out 6/255, invisible.
         _Lunge ("Lunge", Range(0, 1)) = 0
         _Open ("Open", Range(0, 1)) = 0
         _Slow ("Slow left", Range(0, 1)) = 0
@@ -57,27 +60,32 @@ Shader "TumbangPreso/PiringBlind"
             }
             float smin(float a, float b, float k) { float h = saturate(0.5 + 0.5 * (b - a) / k); return lerp(b, a, h) - k * h * (1.0 - h); }
 
-            // One smoke hand pressed on the lens, as gaunt as the ult's dead: the palm low and off the side, four long thin
-            // fingers reaching up and across the middle, a thumb hooked under. `s` is the side (-1 left, 1 right). Signed
-            // distance (negative inside). (Film r1: short round fingers with a lit outline read as two cartoon mittens.)
-            float hand(float2 p, float s, float wob)
+            // ONE OF ITS HANDS OVER YOUR EYES, seen from behind them (owner on film r1: *"makikita na hands cover ur face and its
+            // darkness"*): a broad palm low at the side, four thick fingers pressed close and reaching up off the top, a thumb in
+            // toward the middle. `s` is the side (-1 left, 1 right). Each finger's distance goes to `fingers` so the light can
+            // find the gaps between two of them. Signed distance (negative inside).
+            float hand(float2 p, float s, float t, inout float near0, inout float near1)
             {
                 float2 q = float2(p.x * s, p.y);
-                float2 palm = float2(0.95, -0.85);
-                float d = length((q - palm) * float2(0.9, 1.0)) - 0.62;
-                for (int k = 0; k < 4; k++)
+                float d = length(float2(q.x - 0.92, (q.y + 1.1) / 0.85)) - 0.66;
+                for (int k = 0; k < 5; k++)
                 {
-                    float a = radians(112.0 + 13.0 * k) + 0.02 * wob * sin(k * 2.3 + s);
-                    float2 base = palm + float2(cos(a), sin(a)) * 0.5;
-                    float len = 1.05 + 0.18 * (k == 1 || k == 2 ? 1.0 : 0.0);
-                    // Each finger bends a little at the knuckle, toward the middle of the screen.
-                    float2 knuckle = base + float2(cos(a), sin(a)) * len * 0.55;
-                    float a2 = a + 0.22;
-                    float2 tip = knuckle + float2(cos(a2), sin(a2)) * len * 0.45;
-                    float w = 0.075 - 0.008 * k;
-                    d = smin(d, min(capsule(q, base, knuckle, w), capsule(q, knuckle, tip, w * 0.75)), 0.05);
+                    float f;
+                    if (k < 4)
+                    {
+                        float bx = 0.22 + 0.33 * k;
+                        float len = k == 1 ? 1.48 : k == 2 ? 1.42 : k == 0 ? 1.30 : 1.18;
+                        float tilt = radians(-6.0 + 8.3 * k + 1.2 * sin(t * 1.7 + k * 1.9 + s));
+                        float w = k == 3 ? 0.155 : 0.175;
+                        float2 base = float2(bx, -0.8);
+                        float2 tip = float2(bx, -0.5) + float2(sin(tilt), cos(tilt)) * len;
+                        f = capsule(q, base, tip, w);
+                    }
+                    else f = capsule(q, float2(0.62, -0.9), float2(0.12, -0.42), 0.16);
+                    // The two nearest single fingers, for the gaps.
+                    if (f < near0) { near1 = near0; near0 = f; } else if (f < near1) near1 = f;
+                    d = smin(d, f, 0.025);
                 }
-                d = smin(d, capsule(q, palm + float2(-0.45, 0.1), float2(-0.05, -0.35), 0.11), 0.08);
                 return d;
             }
 
@@ -88,55 +96,42 @@ Shader "TumbangPreso/PiringBlind"
                 float n = fbm(p * 2.4 + float2(0.0, -t * 0.6));
                 float n2 = fbm(p * 5.0 + float2(t * 0.3, 1.7));
 
-                // THE LUNGE: smoke bursting up from below the lens to swallow it.
+                // THE LUNGE: its smoke bursting up from below the lens to swallow it.
                 float2 from = float2(0.0, -1.4);
                 float reach = _Lunge * 3.4;
                 float burst = 1.0 - smoothstep(reach - 0.35, reach, length((p - from) * float2(0.8, 1.0)) + (n - 0.5) * 0.7);
+                // The hands come in with it, rising from below the frame into place.
+                float2 hp = p - float2(0.0, (1.0 - smoothstep(0.0, 1.0, _Lunge)) * -1.6);
 
-                // THE TEAR: a hole ripping open from the middle, frayed.
+                // THE TEAR: the hands and the dark rip open from the middle, frayed.
                 float holeR = _Open * 2.6;
                 float kept = _Open > 0.0 ? smoothstep(holeR - 0.35, holeR, length(p * float2(0.8, 1.0)) + (n2 - 0.5) * 0.9) : 1.0;
                 float cover = burst * kept * _Covered;
 
-                // THE HANDS over it all, and the gaps between their fingers.
-                float wob = 1.0 + 0.5 * sin(t * 2.0);
-                float dh = min(hand(p, -1.0, wob), hand(p, 1.0, wob));
-                // The fingers' edges are smoke, not lines: torn by noise, soft.
-                dh += (n - 0.5) * 0.09 + (n2 - 0.5) * 0.04;
-                float inHand = smoothstep(0.03, -0.03, dh);
-                // A faint violet sheen only on the smoke's very edge, and the light that seeps through the narrow gaps
-                // between fingers: a thin band just outside them, broken up so it flickers like light through smoke.
-                float rimLine = smoothstep(0.03, 0.0, abs(dh)) * smoothstep(0.45, 0.8, n2) * 0.35;
-                float leak = smoothstep(0.03, 0.0, dh) * (1.0 - inHand) * smoothstep(0.45, 0.8, n2) * 0.35;
+                float near0 = 10.0, near1 = 10.0;
+                float d = min(hand(hp, -1.0, t, near0, near1), hand(hp, 1.0, t, near0, near1));
+                // Smoke, not skin, at the very edge: a little fray.
+                d += (n2 - 0.5) * 0.03;
+                // Close to the eye, so a little out of focus.
+                float inHand = saturate(0.5 - d / 0.045);
+                float depth = saturate(-d / 0.14);
 
-                // ITS EYES through the gap between the hands: two slanted hollows rimmed violet, flickering.
-                float flick = _Calm > 0.5 ? 1.0 : 0.75 + 0.25 * step(0.15, frac(t * 1.3 + 0.37));
-                float eyes = 0.0, hollow = 0.0;
-                for (int e = -1; e <= 1; e += 2)
-                {
-                    float2 c = float2(e * 0.17, 0.12);
-                    float2 q = p - c;
-                    float ang = e * 0.45;
-                    q = float2(q.x * cos(ang) - q.y * sin(ang), q.x * sin(ang) + q.y * cos(ang));
-                    float de = length(q * float2(1.0, 2.1)) - 0.075;
-                    eyes = max(eyes, smoothstep(0.05, 0.0, abs(de)) * flick);
-                    hollow = max(hollow, smoothstep(0.01, -0.01, de));
-                }
-                eyes *= (1.0 - inHand);
+                // BACKLIT: the only light is what bleeds through the narrow gaps between two fingers, and the edges beside it.
+                float flick = _Calm > 0.5 ? 1.0 : 0.85 + 0.15 * sin(t * 3.1 + p.y * 2.0);
+                float gapLight = saturate(1.0 - near1 / 0.045) * (1.0 - inHand) * flick;
+                float edge = saturate(1.0 - abs(d + 0.015) / 0.035) * saturate(1.0 - near1 / 0.09) * flick;
 
-                float3 colour = lerp(_Ink.rgb, _Hand.rgb, inHand);
-                colour += _Rim.rgb * (rimLine * inHand + leak + eyes * 1.4);
-                colour = lerp(colour, float3(0, 0, 0), hollow);
-                // A blind: everything but the leaks is opaque. ⚠️ THE CANVAS BLENDS IN LINEAR: 5 % of the court left under a
-                // 0.95 cover comes back as about a quarter of its brightness on screen (film r2 showed the court through it).
+                float3 colour = lerp(_Ink.rgb, _Hand.rgb * (0.55 + 0.45 * depth), inHand);
+                colour += _Rim.rgb * (0.85 * gapLight + 0.5 * edge);
+                // A blind: opaque. ⚠️ THE CANVAS BLENDS IN LINEAR: 5 % of the court left under a 0.95 cover comes back as
+                // about a quarter of its brightness on screen (film r2 showed the court through it).
                 float alpha = cover * 0.997;
-                alpha = max(alpha, cover * (leak + eyes));
 
                 // THE SLOW WEARING OFF: a thin ink edge, thinner as it fades.
                 float r = length(p / float2(_Aspect, 1.0));
-                float edge = smoothstep(0.75 - 0.2 * _Slow, 1.45, r + (n - 0.5) * 0.25) * _Slow * 0.7;
-                colour = lerp(colour, _Ink.rgb, saturate(edge * (1.0 - cover)));
-                alpha = max(alpha, edge);
+                float slowEdge = smoothstep(0.75 - 0.2 * _Slow, 1.45, r + (n - 0.5) * 0.25) * _Slow * 0.7;
+                colour = lerp(colour, _Ink.rgb, saturate(slowEdge * (1.0 - cover)));
+                alpha = max(alpha, slowEdge);
                 return fixed4(colour, saturate(alpha) * i.color.a);
             }
             ENDCG
