@@ -9,10 +9,10 @@ using UnityEngine.TestTools;
 namespace TumbangPreso.PlayTests
 {
     /// <summary>
-    /// Nemu's BULAGA! (owner 2026-10-15, replacing KURO: SIT!): the ghost waits, hides after 3 s, and only the host springs
+    /// Nemu's DON'T LOOK (owner 2026-10-15, replacing KURO: SIT!): the ghost waits, hides after 3 s, and only the host springs
     /// it on the first other player near it: BLINDED, eyes covered 2 s, a 50 % slow wearing off over 5 s.
     /// </summary>
-    public sealed class NemuBulagaTests
+    public sealed class NemuDontLookTests
     {
         private sealed class Peer : INetProvider
         {
@@ -40,7 +40,7 @@ namespace TumbangPreso.PlayTests
             var at = new[] { Vector3.zero, new Vector3(20, 0, 0), new Vector3(-20, 0, 0), new Vector3(0, 0, -20) };
             for (int i = 0; i < 4; i++)
             {
-                var root = new GameObject("Bulaga seat " + i);
+                var root = new GameObject("Dont look seat " + i);
                 _players[i] = root.AddComponent<CharacterMotor>(); _players[i].enabled = false;
                 _players[i].PlayerSlot = i; _players[i].Mode = GameMode.HeroStrike;
                 root.transform.position = at[i]; GameServices.Round.Register(_players[i]);
@@ -57,10 +57,10 @@ namespace TumbangPreso.PlayTests
             yield return PlayModeWorld.Reset(); NetAuthority.Provider = _prior;
         }
 
-        [Test] public void TheSignatureIsBulagaUnderSitsIdentity()
+        [Test] public void TheSignatureIsDontLookUnderSitsIdentity()
         {
             Assert.AreEqual("nemu_skill1", _kit.Skill1.Id);
-            Assert.AreEqual("BULAGA!", _kit.Skill1.Name);
+            Assert.AreEqual("DON'T LOOK", _kit.Skill1.Name);
             Assert.AreEqual(25f, _kit.Skill1.Cooldown);
             Assert.AreEqual(AbilityNetworkMode.HostConfirmed, _kit.Skill1.NetworkMode);
             Assert.IsFalse(_kit.Skill1.CanReactivate, "There is no teleport back any more.");
@@ -85,7 +85,7 @@ namespace TumbangPreso.PlayTests
             yield return null; yield return null;
             Assert.IsFalse(_players[1].IsBlinded, "It sprang before its 3 s were up.");
 
-            var armed = NemuPiring.Place(new Vector3(0, 0, 5), Vector3.forward, 0, age: NecroRules.BulagaArmSeconds + .1f);
+            var armed = NemuPiring.Place(new Vector3(0, 0, 5), Vector3.forward, 0, age: NecroRules.DontLookArmSeconds + .1f);
             yield return null; yield return null;
             Assert.IsTrue(armed.Sprung);
             Assert.AreSame(_players[1], armed.Victim);
@@ -97,7 +97,7 @@ namespace TumbangPreso.PlayTests
 
         [UnityTest] public IEnumerator NemuNeverTripsHerOwnGhost()
         {
-            var piring = NemuPiring.Place(Vector3.zero, Vector3.forward, 0, age: NecroRules.BulagaArmSeconds + .1f);
+            var piring = NemuPiring.Place(Vector3.zero, Vector3.forward, 0, age: NecroRules.DontLookArmSeconds + .1f);
             yield return null; yield return null;
             Assert.IsFalse(piring.Sprung);
             Assert.IsFalse(_players[0].IsBlinded);
@@ -106,7 +106,7 @@ namespace TumbangPreso.PlayTests
         [UnityTest] public IEnumerator AnObserverCannotSpringIt()
         {
             _peer.Host = false;
-            var piring = NemuPiring.Place(new Vector3(20, 0, 0), Vector3.forward, 0, age: NecroRules.BulagaArmSeconds + .1f);
+            var piring = NemuPiring.Place(new Vector3(20, 0, 0), Vector3.forward, 0, age: NecroRules.DontLookArmSeconds + .1f);
             yield return null; yield return null;
             Assert.IsFalse(_players[1].IsBlinded, "An observer wrote BLINDED.");
             Assert.IsFalse(piring.Sprung, "An observer sprang a ghost the host never did.");

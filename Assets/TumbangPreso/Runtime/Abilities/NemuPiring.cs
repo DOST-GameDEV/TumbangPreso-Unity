@@ -6,7 +6,7 @@ using UnityEngine;
 namespace TumbangPreso.Abilities
 {
     /// <summary>
-    /// ⚠️⚠️ PIRING, THE GHOST BULAGA! LEAVES WAITING (owner 2026-10-15, `NecroRules.Bulaga*`). *"place a ghost in an area and
+    /// ⚠️⚠️ PIRING, THE GHOST DON'T LOOK LEAVES WAITING (owner 2026-10-15, `NecroRules.DontLook*`). *"place a ghost in an area and
     /// it becomes invisible after 3 seconds and then if anyone goes near that area the ghost would lunge at their eyes and
     /// cover it for 2 secondns and slow them"*. Gekko's way of fighting: a creature of her own does the work while she is
     /// elsewhere. One per Nemu (`Place` retires her last one).
@@ -36,10 +36,10 @@ namespace TumbangPreso.Abilities
         public Vector3 Spot { get; private set; }
         public Vector3 Facing { get; private set; } = Vector3.forward;
         public float Age => _age;
-        public bool Armed => _age >= NecroRules.BulagaArmSeconds;
+        public bool Armed => _age >= NecroRules.DontLookArmSeconds;
         public bool Sprung => _state != State.Waiting;
         public CharacterMotor Victim => _victim;
-        public float Remaining => Sprung ? 0.0f : Mathf.Max(0.0f, NecroRules.BulagaLifeSeconds - _age);
+        public float Remaining => Sprung ? 0.0f : Mathf.Max(0.0f, NecroRules.DontLookLifeSeconds - _age);
 
         private State _state;
         private float _age, _stateAge;
@@ -50,7 +50,7 @@ namespace TumbangPreso.Abilities
         private const int TailPoints = 9;
         private readonly Vector3[] _tail = new Vector3[TailPoints];
         private readonly bool[] _on = new bool[TailPoints];
-        private const float LeaveSeconds = .4f, HoverHeight = .55f, HeadSize = .5f;
+        private const float LeaveSeconds = .4f, HoverHeight = .85f, HeadSize = .72f;
 
         /// <summary>Puts Nemu's ghost on <paramref name="at"/>, retiring her last one. <paramref name="age"/> &gt; 0 restores.</summary>
         public static NemuPiring Place(Vector3 at, Vector3 facing, int ownerSlot, float age = 0.0f)
@@ -65,9 +65,9 @@ namespace TumbangPreso.Abilities
             piring.Spot = spot;
             facing.y = 0.0f;
             piring.Facing = facing.sqrMagnitude > 1e-4f ? facing.normalized : Vector3.forward;
-            piring._age = Mathf.Clamp(float.IsFinite(age) ? age : 0.0f, 0.0f, NecroRules.BulagaLifeSeconds);
+            piring._age = Mathf.Clamp(float.IsFinite(age) ? age : 0.0f, 0.0f, NecroRules.DontLookLifeSeconds);
             piring._smoke = new NemuSmokeBatch(go.transform, "Piring", 24, 6, 16);
-            if (piring._age <= 0.0f) GameServices.Audio?.PlayAt("sfx_nemu_bulaga_place", spot);
+            if (piring._age <= 0.0f) GameServices.Audio?.PlayAt("sfx_nemu_dontlook_place", spot);
             return piring;
         }
 
@@ -88,7 +88,7 @@ namespace TumbangPreso.Abilities
         public Net.WorldEffectSnapshot.Field Capture() => new Net.WorldEffectSnapshot.Field
         {
             Type = Net.WorldEffectSnapshot.Kind.Piring, Source = gameObject, Position = Spot, Forward = Facing,
-            Duration = NecroRules.BulagaLifeSeconds, Remaining = Remaining, Radius = NecroRules.BulagaTriggerRadius,
+            Duration = NecroRules.DontLookLifeSeconds, Remaining = Remaining, Radius = NecroRules.DontLookTriggerRadius,
             Owner = OwnerSlot,
         };
 
@@ -104,7 +104,7 @@ namespace TumbangPreso.Abilities
             Vector3 d = p.transform.position - spot;
             if (d.y > 2.2f || d.y < -1.0f) return false;
             d.y = 0.0f;
-            return d.sqrMagnitude <= NecroRules.BulagaTriggerRadius * NecroRules.BulagaTriggerRadius;
+            return d.sqrMagnitude <= NecroRules.DontLookTriggerRadius * NecroRules.DontLookTriggerRadius;
         }
 
         private void Update()
@@ -115,18 +115,18 @@ namespace TumbangPreso.Abilities
             switch (_state)
             {
                 case State.Waiting:
-                    if (_age >= NecroRules.BulagaLifeSeconds) { Retire(); GameServices.Audio?.PlayAt("sfx_nemu_bulaga_fade", Spot); break; }
+                    if (_age >= NecroRules.DontLookLifeSeconds) { Retire(); GameServices.Audio?.PlayAt("sfx_nemu_dontlook_fade", Spot); break; }
                     if (Armed) Watch();
                     break;
                 case State.Lunging:
                     if (_victim == null || !_victim.gameObject.activeInHierarchy) { Retire(); break; }
-                    if (_stateAge >= NecroRules.BulagaLungeSeconds) { _state = State.Covering; _stateAge = 0.0f; }
+                    if (_stateAge >= NecroRules.DontLookLungeSeconds) { _state = State.Covering; _stateAge = 0.0f; }
                     break;
                 case State.Covering:
                     // Clamped on until the eyes are uncovered (or the status was cleansed, or a safety net in case it never
                     // replicated on this peer), then it tears away.
                     if (_victim == null || !_victim.gameObject.activeInHierarchy || !_victim.EyesCovered ||
-                        _stateAge >= NecroRules.BulagaBlindSeconds + .5f)
+                        _stateAge >= NecroRules.DontLookBlindSeconds + .5f)
                     { _state = State.Leaving; _stateAge = 0.0f; }
                     break;
                 case State.Leaving:
@@ -159,7 +159,7 @@ namespace TumbangPreso.Abilities
                 }
                 if (!p.IsBlinded || p.BlindedElapsed > .75f) continue;
                 Vector3 d = p.transform.position - Spot; d.y = 0.0f;
-                if (d.magnitude > NecroRules.BulagaTriggerRadius + 2.0f) continue;
+                if (d.magnitude > NecroRules.DontLookTriggerRadius + 2.0f) continue;
                 Spring(p);
                 return;
             }
@@ -170,7 +170,7 @@ namespace TumbangPreso.Abilities
             _victim = victim;
             _lungeFrom = HeadAt(_age);
             _state = State.Lunging; _stateAge = 0.0f;
-            GameServices.Audio?.PlayAt("sfx_nemu_bulaga_spring", victim.transform.position);
+            GameServices.Audio?.PlayAt("sfx_nemu_dontlook_spring", victim.transform.position);
         }
 
         // ------------------------------------------------------------------ drawing
@@ -188,7 +188,8 @@ namespace TumbangPreso.Abilities
         {
             Vector3 ahead = victim.transform.forward; ahead.y = 0.0f;
             ahead = ahead.sqrMagnitude > 1e-4f ? ahead.normalized : Vector3.forward;
-            return victim.transform.position + Vector3.up * 1.2f + ahead * .28f;
+            // Out in front of the face, not inside it: the cast's heads are big blocks (film r2 lost the ghost in one).
+            return victim.transform.position + Vector3.up * 1.35f + ahead * .95f;
         }
 
         /// <summary>How much of it this screen sees: all of it until it fades out at arming, then only Nemu (faint).</summary>
@@ -197,7 +198,7 @@ namespace TumbangPreso.Abilities
             if (_state != State.Waiting) return 1.0f;
             float settle = Mathf.Clamp01(_age / .35f);
             bool mine = NetAuthority.LocalSlot == OwnerSlot && !GameLaunch.Spectator;
-            float fade = 1.0f - Mathf.SmoothStep(0f, 1f, (_age - (NecroRules.BulagaArmSeconds - .8f)) / .8f);
+            float fade = 1.0f - Mathf.SmoothStep(0f, 1f, (_age - (NecroRules.DontLookArmSeconds - .8f)) / .8f);
             return settle * (mine ? Mathf.Max(fade, .4f) : fade);
         }
 
@@ -215,13 +216,13 @@ namespace TumbangPreso.Abilities
             {
                 case State.Lunging:
                 {
-                    float u = Mathf.Clamp01(_stateAge / NecroRules.BulagaLungeSeconds);
+                    float u = Mathf.Clamp01(_stateAge / NecroRules.DontLookLungeSeconds);
                     Vector3 to = FaceOf(_victim);
                     // Up off the ground and down onto the face: an arc, fast at the end.
                     float e = u * u * (3f - 2f * u);
                     head = Vector3.Lerp(_lungeFrom, to, e) + Vector3.up * (.35f * Mathf.Sin(u * Mathf.PI));
                     back = (_lungeFrom - to).sqrMagnitude > 1e-4f ? (_lungeFrom - to).normalized : Vector3.down;
-                    size = Mathf.Lerp(HeadSize, HeadSize * 1.25f, e);
+                    size = Mathf.Lerp(HeadSize, HeadSize * 1.6f, e);
                     glow = 1.4f;
                     break;
                 }
@@ -230,8 +231,8 @@ namespace TumbangPreso.Abilities
                     head = FaceOf(_victim);
                     // Its tail wraps back over their head and streams behind them.
                     back = -_victim.transform.forward + Vector3.up * .35f;
-                    size = HeadSize * 1.25f;
-                    glow = 1.1f + .2f * Mathf.Sin(_stateAge * 9f);
+                    size = HeadSize * 1.6f;
+                    glow = 2.2f + .4f * Mathf.Sin(_stateAge * 9f);
                     break;
                 }
                 case State.Leaving:
@@ -267,7 +268,7 @@ namespace TumbangPreso.Abilities
                 if (side.sqrMagnitude < 1e-4f) side = Vector3.right;
                 side.Normalize();
                 float wave = Mathf.Sin(_age * 4.3f - k * .9f) * .09f * u;
-                _tail[k] = head + back * (u * .95f) + side * wave + Vector3.up * (.05f * Mathf.Sin(_age * 3.1f + k)) * u;
+                _tail[k] = head + back * (u * 1.3f) + side * wave + Vector3.up * (.05f * Mathf.Sin(_age * 3.1f + k)) * u;
                 if (_state == State.Waiting) _tail[k].y = Mathf.Max(_tail[k].y, Spot.y + .03f);
                 _on[k] = true;
             }
@@ -278,7 +279,7 @@ namespace TumbangPreso.Abilities
         private float Visibility(float age)
         {
             bool mine = NetAuthority.LocalSlot == OwnerSlot && !GameLaunch.Spectator;
-            float fade = 1.0f - Mathf.SmoothStep(0f, 1f, (age - (NecroRules.BulagaArmSeconds - .8f)) / .8f);
+            float fade = 1.0f - Mathf.SmoothStep(0f, 1f, (age - (NecroRules.DontLookArmSeconds - .8f)) / .8f);
             return mine ? Mathf.Max(fade, .4f) : fade;
         }
 

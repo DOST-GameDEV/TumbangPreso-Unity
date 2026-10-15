@@ -613,7 +613,7 @@ namespace TumbangPreso.Net
         // Neither standalone158 QoL nor154 ASTRA peers implement this combined contract.
         // 160 (2026-10-11): Nemu's ultimate is PRUSISYON. `SyncUnit` appends the POSSESSED clock and the ultimate no longer
         // sends Kuro's Haunt chase; a 159 peer would read a different unit layout and run a different ultimate.
-        // 161 (2026-10-15): Nemu's signature is BULAGA! (Piring, the hidden ghost that covers the eyes), replacing KURO: SIT!.
+        // 161 (2026-10-15): Nemu's signature is DON'T LOOK (Piring, the hidden ghost that covers the eyes), replacing KURO: SIT!.
         // `SyncUnit` appends the BLINDED clock and the world snapshot gains the waiting ghost (`WorldEffectSnapshot.Kind.Piring`);
         // a 160 peer would read a different unit layout and still teleport to Kuro.
         public const int ProtocolVersion = 161;

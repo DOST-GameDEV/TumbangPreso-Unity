@@ -46,7 +46,7 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(14, (int)StatusKind.Possessed);
             Assert.Equal(15, (int)StatusKind.Blinded);
             Assert.Equal(15, StatusRules.All.Count);
-            // Nemu's BULAGA! (owner 2026-10-15): eyes covered 2 s, a 50 % slow wearing off over 5 s.
+            // Nemu's DON'T LOOK (owner 2026-10-15): eyes covered 2 s, a 50 % slow wearing off over 5 s.
             var blinded = StatusRules.For(StatusKind.Blinded);
             Assert.Equal(5.0f, blinded.Seconds);
             Assert.Equal(0.5f, blinded.SpeedScale);
@@ -126,25 +126,25 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
-        public void BulagaIsTheOwnersTripwire()
+        public void DontLookIsTheOwnersTripwire()
         {
             // Owner, 2026-10-15: invisible after 3 s, eyes covered 2 s, a 5 s slow that gets lower over time.
-            Assert.Equal(3.0f, NecroRules.BulagaArmSeconds);
-            Assert.Equal(2.0f, NecroRules.BulagaBlindSeconds);
-            Assert.Equal(5.0f, NecroRules.BulagaSlowSeconds);
-            Assert.Equal(NecroRules.BasicCooldown, NecroRules.BulagaCooldown);
-            Assert.InRange(NecroRules.BulagaTriggerRadius, 1.6f, 2.3f);
+            Assert.Equal(3.0f, NecroRules.DontLookArmSeconds);
+            Assert.Equal(2.0f, NecroRules.DontLookBlindSeconds);
+            Assert.Equal(5.0f, NecroRules.DontLookSlowSeconds);
+            Assert.Equal(NecroRules.BasicCooldown, NecroRules.DontLookCooldown);
+            Assert.InRange(NecroRules.DontLookTriggerRadius, 1.6f, 2.3f);
             // The decaying slow: half speed at the spring, easing linearly, none once it runs out.
-            Assert.Equal(0.5f, NecroRules.BulagaSpeedScale(5.0f), 4);
-            Assert.Equal(0.75f, NecroRules.BulagaSpeedScale(2.5f), 4);
-            Assert.Equal(1.0f, NecroRules.BulagaSpeedScale(0.0f), 4);
-            Assert.Equal(1.0f, NecroRules.BulagaSpeedScale(float.NaN), 4);
-            Assert.True(NecroRules.BulagaSpeedScale(1.0f) > NecroRules.BulagaSpeedScale(4.0f));
+            Assert.Equal(0.5f, NecroRules.DontLookSpeedScale(5.0f), 4);
+            Assert.Equal(0.75f, NecroRules.DontLookSpeedScale(2.5f), 4);
+            Assert.Equal(1.0f, NecroRules.DontLookSpeedScale(0.0f), 4);
+            Assert.Equal(1.0f, NecroRules.DontLookSpeedScale(float.NaN), 4);
+            Assert.True(NecroRules.DontLookSpeedScale(1.0f) > NecroRules.DontLookSpeedScale(4.0f));
             // Eyes covered for exactly the first two of the five seconds.
-            Assert.True(NecroRules.BulagaCoversEyes(5.0f));
-            Assert.True(NecroRules.BulagaCoversEyes(3.01f));
-            Assert.False(NecroRules.BulagaCoversEyes(3.0f));
-            Assert.False(NecroRules.BulagaCoversEyes(0.0f));
+            Assert.True(NecroRules.DontLookCoversEyes(5.0f));
+            Assert.True(NecroRules.DontLookCoversEyes(3.01f));
+            Assert.False(NecroRules.DontLookCoversEyes(3.0f));
+            Assert.False(NecroRules.DontLookCoversEyes(0.0f));
         }
 
         [Fact]

@@ -76,8 +76,8 @@ namespace TumbangPreso.Core
         /// <summary>Nemu's LET THEM IN (owner 2026-10-11): a ghost rides the body for 15 s and contests its steering
         /// (`NemuRules`). Control is kept: no stun, no lost actions, the camera stays the player's.</summary>
         Possessed = 14,
-        /// <summary>Nemu's BULAGA! (owner 2026-10-15): a ghost covers the eyes for 2 s, and a slow that starts at 50 % wears
-        /// off over 5 s (`NecroRules.BulagaSpeedScale`). One clock: blind while more than 3 s of it remain.</summary>
+        /// <summary>Nemu's DON'T LOOK (owner 2026-10-15): a ghost covers the eyes for 2 s, and a slow that starts at 50 % wears
+        /// off over 5 s (`NecroRules.DontLookSpeedScale`). One clock: blind while more than 3 s of it remain.</summary>
         Blinded = 15,
     }
 
@@ -168,7 +168,7 @@ namespace TumbangPreso.Core
         public const float HexedSeconds = 7.5f;
         public const float HauntedSeconds = 7.5f;
         public const float PossessedSeconds = NemuRules.PossessedSeconds;
-        public const float BlindedSeconds = NecroRules.BulagaSlowSeconds;
+        public const float BlindedSeconds = NecroRules.DontLookSlowSeconds;
 
         private static readonly StatusRule[] Table =
         {
@@ -246,11 +246,11 @@ namespace TumbangPreso.Core
                 "Possessed: Slowed, Fight the Pull",
                 PossessedSeconds, NemuRules.PossessedSpeedScale, blocksMovement: false, blocksInteraction: false,
                 blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
-            // ⚠️ APPENDED (the enum's note). Nemu's BULAGA! SpeedScale is the slow's peak; it decays to none.
+            // ⚠️ APPENDED (the enum's note). Nemu's DON'T LOOK SpeedScale is the slow's peak; it decays to none.
             new StatusRule(StatusKind.Blinded, "BLINDED",
                 "A ghost covers your eyes for 2 seconds. You are slowed by 50%, wearing off over 5 seconds.",
                 "Blinded, Slowed (Wearing Off)",
-                BlindedSeconds, 1.0f - NecroRules.BulagaSlowPeak, blocksMovement: false, blocksInteraction: false,
+                BlindedSeconds, 1.0f - NecroRules.DontLookSlowPeak, blocksMovement: false, blocksInteraction: false,
                 blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
         };
 

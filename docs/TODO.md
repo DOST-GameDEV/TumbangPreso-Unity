@@ -1,14 +1,14 @@
-### NEMU-SIGNATURE-1015: BULAGA! (replaces KURO: SIT!)
+### NEMU-SIGNATURE-1015: DON'T LOOK (renamed from BULAGA!, replaces KURO: SIT!)
 
 Owner 2026-10-15: make Nemu like Gekko (different ghosts, several out at once); the signature is a tripwire blind:
 a ghost placed in an area goes invisible after 3 s, lunges at the eyes of whoever comes near, covers them 2 s and
 slows them 5 s with a slow that gets lower over time. Owner asked for a new name, not Kuro: Sit.
-- [x] Built BULAGA! (ghost Piring, `Abilities/NemuPiring.cs`), status BLINDED (15, `CharacterMotor.Blinded.cs`, decaying
+- [x] Built DON'T LOOK (ghost Piring, `Abilities/NemuPiring.cs`), status BLINDED (15, `CharacterMotor.Blinded.cs`, decaying
   slow 50 % to 0 over 5 s, eyes covered the first 2 s), the victim's screen (`Shaders/PiringBlind`, `UI.TumpHudEffects`),
   HUD markers hidden while covered, status icon, bots retargeted, protocol 161 (`SyncUnit` + `WorldEffectSnapshot.Kind.Piring`).
   Defaults chosen without the owner's pick: anyone but Nemu trips it, 50 % peak slow, one ghost, 30 s life, 1.8 m reach.
 - [ ] Owner verdict on play (look of the waiting ghost, the lunge, the blind screen) and the defaults above.
-- [ ] Sound drafts for `sfx_nemu_bulaga_place/spring/fade` and `sfx_cast_nemu_bulaga` (skill sounds stay muted until approved).
+- [ ] Sound drafts for `sfx_nemu_dontlook_place/spring/fade` and `sfx_cast_nemu_dontlook` (skill sounds stay muted until approved).
 - [ ] Dedicated ability glyph (it reuses `NemuTerrify`); real networked peers on 161.
 - [ ] Next owner topic: the other skills as more ghosts (Gekko-style), not started.
 

@@ -918,7 +918,7 @@ def status_zapped(a):
 
 
 def status_blinded(a):
-    # BLINDED (Nemu's BULAGA!, 2026-10-15): a ghost's two black smoke hands closing over a wide eye, violet light leaking
+    # BLINDED (Nemu's DON'T LOOK, 2026-10-15): a ghost's two black smoke hands closing over a wide eye, violet light leaking
     # between the fingers. The hands' outline is the read at 44 px.
     _badge(a)
     a.add(a.poly([(175, 520), (320, 380), (510, 320), (710, 380), (850, 520), (710, 660), (510, 720), (320, 660)]), CREAM)

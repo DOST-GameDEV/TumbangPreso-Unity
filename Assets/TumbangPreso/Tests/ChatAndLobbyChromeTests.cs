@@ -382,7 +382,7 @@ namespace TumbangPreso.Tests
             //93 makes Phaister's introduction 6.0 s (it ends on the doll's stare).
             //159 combines companion-aware clips with QoL movement, map and performance contracts.
             //160 appends POSSESSED to SyncUnit and replaces Kuro's Haunt with LET THEM IN (first named PRUSISYON).
-            //161 appends BLINDED to SyncUnit and Piring to the world snapshot (Nemu's BULAGA! replaces KURO: SIT!).
+            //161 appends BLINDED to SyncUnit and Piring to the world snapshot (Nemu's DON'T LOOK replaces KURO: SIT!).
             Assert.AreEqual(161, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +

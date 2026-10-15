@@ -2607,7 +2607,7 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(unit.ZappedLeft);
             // Nemu's PRUSISYON (protocol 160): the POSSESSED clock. The body's own peer computes the pull from it.
             writer.WriteValueSafe(unit.PossessedLeft);
-            // Nemu's BULAGA! (protocol 161): the BLINDED clock. The body's own peer reads its slow and its covered eyes from it.
+            // Nemu's DON'T LOOK (protocol 161): the BLINDED clock. The body's own peer reads its slow and its covered eyes from it.
             writer.WriteValueSafe(unit.BlindedLeft);
             writer.WriteNetworkSerializable(VoodooBodySnapshot.Capture(unit));
             writer.WriteNetworkSerializable(unit.AbilitySystem?.CaptureAimPresentation() ?? default(AbilityAimSnapshot));

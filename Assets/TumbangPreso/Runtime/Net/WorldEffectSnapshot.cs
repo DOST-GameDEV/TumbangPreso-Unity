@@ -15,7 +15,7 @@ namespace TumbangPreso.Net
             Gale = 11,
             // ⚠️ APPEND ONLY (protocol 55, HERO-9): Paete's seedling, his thorn construct and his sentry.
             Plant = 12, Thorns = 13, Sentry = 14, Drift = 15, Waterwall = 16, CinderGate = 17, Baha = 18,
-            // ⚠️ APPEND ONLY (protocol 161): Nemu's BULAGA! ghost, waiting (a sprung one is the victim's BLINDED clock).
+            // ⚠️ APPEND ONLY (protocol 161): Nemu's DON'T LOOK ghost, waiting (a sprung one is the victim's BLINDED clock).
             Piring = 19 }
         public static bool UsesDynamicIdentity(Kind kind) => RafiWaterField.IsWater(kind) || kind == Kind.CinderGate;
         public struct Field
@@ -150,8 +150,8 @@ namespace TumbangPreso.Net
                     && field.SecondScale >= 0 && field.SecondScale <= 16 && field.SecondScale == Mathf.Floor(field.SecondScale);
             }
             if (field.Type == Kind.Piring)
-                return field.Owner >= 0 && Mathf.Abs(field.Duration - Core.NecroRules.BulagaLifeSeconds) < .001f
-                    && Mathf.Abs(field.Radius - Core.NecroRules.BulagaTriggerRadius) < .001f
+                return field.Owner >= 0 && Mathf.Abs(field.Duration - Core.NecroRules.DontLookLifeSeconds) < .001f
+                    && Mathf.Abs(field.Radius - Core.NecroRules.DontLookTriggerRadius) < .001f
                     && Mathf.Abs(field.Forward.y) < .001f && Mathf.Abs(field.Forward.sqrMagnitude - 1) < .01f
                     && field.FirstScale == 0 && field.SecondScale == 0 && !field.Split;
             if (field.Type == Kind.Fissure)

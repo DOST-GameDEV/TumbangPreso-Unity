@@ -154,12 +154,12 @@ namespace TumbangPreso.UI
             }
         }
 
-        /// <summary>True while the ghost's hands are over the local player's eyes (Nemu's BULAGA!).</summary>
+        /// <summary>True while the ghost's hands are over the local player's eyes (Nemu's DON'T LOOK).</summary>
         public bool BlindedScreenVisible => _blinded != null && _blinded.enabled && _blindCover > .5f;
         private float _blindCover;
 
         /// <summary>
-        /// BLINDED, ON THE VICTIM'S OWN SCREEN (Nemu's BULAGA!, `Shaders/PiringBlind`): the ghost bursts up over the lens as it
+        /// BLINDED, ON THE VICTIM'S OWN SCREEN (Nemu's DON'T LOOK, `Shaders/PiringBlind`): the ghost bursts up over the lens as it
         /// lunges, its hands cover the screen for the 2 s, they tear open, and a thin ink edge thins away with the slow. All of
         /// it from the replicated BLINDED clock, so nothing here can outlast or undercut the rule.
         /// ⚠️ Unlike the possessed edges, Reduce visual effects does NOT lift the cover: the blind is the rule, not a flourish.
@@ -169,10 +169,10 @@ namespace TumbangPreso.UI
             if (_blinded == null) return;
             bool on = !spectator && local != null && local.IsBlinded;
             float elapsed = on ? local.BlindedElapsed : StatusRules.BlindedSeconds;
-            float covered = on && elapsed < NecroRules.BulagaBlindSeconds ? 1f : 0f;
-            float lunge = Mathf.Clamp01(elapsed / NecroRules.BulagaLungeSeconds);
-            float open = Mathf.Clamp01((elapsed - (NecroRules.BulagaBlindSeconds - .3f)) / .3f);
-            float slow = on ? (1f - local.BlindedSpeedScale) / NecroRules.BulagaSlowPeak : 0f;
+            float covered = on && elapsed < NecroRules.DontLookBlindSeconds ? 1f : 0f;
+            float lunge = Mathf.Clamp01(elapsed / NecroRules.DontLookLungeSeconds);
+            float open = Mathf.Clamp01((elapsed - (NecroRules.DontLookBlindSeconds - .3f)) / .3f);
+            float slow = on ? (1f - local.BlindedSpeedScale) / NecroRules.DontLookSlowPeak : 0f;
             _blindCover = covered * lunge * (1f - open);
             _blinded.enabled = on && (covered > 0f || slow > .01f);
             if (!_blinded.enabled) return;

@@ -8,7 +8,7 @@ using UnityEngine;
 namespace TumbangPreso.Abilities
 {
     /// <summary>
-    /// Nemu's current Wiki passive and BULAGA! signature (Piring, a hidden ghost, `NemuPiring`) use the shared basic
+    /// Nemu's current Wiki passive and DON'T LOOK signature (Piring, a hidden ghost, `NemuPiring`) use the shared basic
     /// cooldown. Catch protects the can through its owned clock.
     /// PRUSISYON possesses every other player for 15 s (`CharacterMotor.Possession.cs`).
     /// </summary>
@@ -57,7 +57,7 @@ namespace TumbangPreso.Abilities
 
         public NemuHeroKit() : base("nemu", "NEMU")
         {
-            Skill1 = new Bulaga(this);
+            Skill1 = new DontLook(this);
             AttackingSkill = new KuroFetch(this);
             DefendingSkill = new KuroGuard(this);
             Ultimate = new NightmareSeanceVoidAbility();
@@ -67,33 +67,33 @@ namespace TumbangPreso.Abilities
 
         private static GhostPetCompanion Kuro(AbilityContext ctx) => ctx?.Motor?.GetComponent<CharacterVisual>()?.Companion;
 
-        // ================================================================== BULAGA! (signature)
+        // ================================================================== DON'T LOOK (signature)
 
         /// <summary>
-        /// BULAGA! (owner 2026-10-15, the overhaul of KURO: SIT!: *"lets make her like gekko ... have diff ghosts and summon
+        /// DON'T LOOK (owner 2026-10-15, the overhaul of KURO: SIT!: *"lets make her like gekko ... have diff ghosts and summon
         /// diff ghosts at the same time"*, and the signature *"a tripwire blind"*). Hold to aim, release: Piring, one of her
         /// ghosts, waits at the spot and fades from sight after 3 s; whoever comes near first has it lunge at their eyes
         /// (BLINDED: covered 2 s, a 50 % slow wearing off over 5 s). The ghost is `NemuPiring`; Kuro is not sent.
         /// ⚠️ The ID is Sit's, kept for saves, mastery and the wire. The cast is host-confirmed, so every peer places the
         /// same ghost from the accepted cast (Cold Feet's pattern) and only the host springs it.
         /// </summary>
-        private sealed class Bulaga : HeroAbility
+        private sealed class DontLook : HeroAbility
         {
             private readonly NemuHeroKit _kit;
 
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
 
-            public Bulaga(NemuHeroKit kit)
-                : base("nemu_skill1", "BULAGA!",
+            public DontLook(NemuHeroKit kit)
+                : base("nemu_skill1", "DON'T LOOK",
                        "Hold to aim, release to leave Piring, a ghost, waiting at a spot. It vanishes after 3 s. The first player to come near has it lunge at their eyes: Blinded for 2 s, and slowed by 50%, wearing off over 5 s. One ghost at a time; it leaves after 30 s.",
-                       NecroRules.BulagaCooldown, 0.0f, AbilityGlyph.NemuTerrify,
+                       NecroRules.DontLookCooldown, 0.0f, AbilityGlyph.NemuTerrify,
                        summary: "Hide a ghost. The first to come near is blinded and slowed.",
-                       telegraphRadius: NecroRules.BulagaTriggerRadius, telegraphRange: NecroRules.BulagaMaxRange,
+                       telegraphRadius: NecroRules.DontLookTriggerRadius, telegraphRange: NecroRules.DontLookMaxRange,
                        castAction: "hero-nemu-project", viewmodelAction: "project-spirit",
-                       castCue: "sfx_cast_nemu_bulaga")
+                       castCue: "sfx_cast_nemu_dontlook")
             {
                 _kit = kit;
-                AimByHolding(NecroRules.BulagaMinRange, NecroRules.BulagaMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
+                AimByHolding(NecroRules.DontLookMinRange, NecroRules.DontLookMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
                 TelegraphStyle = GroundReticle.Style.Maw;
             }
 
