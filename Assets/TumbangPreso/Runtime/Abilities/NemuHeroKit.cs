@@ -8,8 +8,8 @@ using UnityEngine;
 namespace TumbangPreso.Abilities
 {
     /// <summary>
-    /// Nemu's current Wiki passive and Kuro: Sit signature use the shared basic
-    /// cooldown and recall anchor. Catch protects the can through its owned clock.
+    /// Nemu's current Wiki passive and BULAGA! signature (Piring, a hidden ghost, `NemuPiring`) use the shared basic
+    /// cooldown. Catch protects the can through its owned clock.
     /// PRUSISYON possesses every other player for 15 s (`CharacterMotor.Possession.cs`).
     /// </summary>
     public sealed class NemuHeroKit : HeroKit
@@ -57,7 +57,7 @@ namespace TumbangPreso.Abilities
 
         public NemuHeroKit() : base("nemu", "NEMU")
         {
-            Skill1 = new KuroSit(this);
+            Skill1 = new Bulaga(this);
             AttackingSkill = new KuroFetch(this);
             DefendingSkill = new KuroGuard(this);
             Ultimate = new NightmareSeanceVoidAbility();
@@ -67,111 +67,42 @@ namespace TumbangPreso.Abilities
 
         private static GhostPetCompanion Kuro(AbilityContext ctx) => ctx?.Motor?.GetComponent<CharacterVisual>()?.Companion;
 
-        // ================================================================== KURO: SIT!
+        // ================================================================== BULAGA! (signature)
 
-        private sealed class KuroSit : HeroAbility, IPreparedWorldReplication
+        /// <summary>
+        /// BULAGA! (owner 2026-10-15, the overhaul of KURO: SIT!: *"lets make her like gekko ... have diff ghosts and summon
+        /// diff ghosts at the same time"*, and the signature *"a tripwire blind"*). Hold to aim, release: Piring, one of her
+        /// ghosts, waits at the spot and fades from sight after 3 s; whoever comes near first has it lunge at their eyes
+        /// (BLINDED: covered 2 s, a 50 % slow wearing off over 5 s). The ghost is `NemuPiring`; Kuro is not sent.
+        /// ⚠️ The ID is Sit's, kept for saves, mastery and the wire. The cast is host-confirmed, so every peer places the
+        /// same ghost from the accepted cast (Cold Feet's pattern) and only the host springs it.
+        /// </summary>
+        private sealed class Bulaga : HeroAbility
         {
             private readonly NemuHeroKit _kit;
-            private Vector3 _spot;
-            private bool _hasAnchor;
-            private CharacterMotor _owner;
-            private GhostPetCompanion _kuro;
 
-            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
-            public override bool CanReactivate => true;
-            public override bool ReactivateReady => IsActive && _hasAnchor && _owner != null && _owner.CanAct();
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
 
-            public KuroSit(NemuHeroKit kit)
-                : base("nemu_skill1", "KURO: SIT!",
-                       "Hold to aim, release to leave Kuro at a location for 10 seconds. Reactivate to teleport back to him.",
-                       NecroRules.BasicCooldown, NecroRules.SitSeconds, AbilityGlyph.NemuPhase,
-                       summary: "Leave Kuro at a spot. Reactivate to return to him.",
-                       telegraphRadius: 0.4f, telegraphRange: NecroRules.SitMaxRange,
+            public Bulaga(NemuHeroKit kit)
+                : base("nemu_skill1", "BULAGA!",
+                       "Hold to aim, release to leave Piring, a ghost, waiting at a spot. It vanishes after 3 s. The first player to come near has it lunge at their eyes: Blinded for 2 s, and slowed by 50%, wearing off over 5 s. One ghost at a time; it leaves after 30 s.",
+                       NecroRules.BulagaCooldown, 0.0f, AbilityGlyph.NemuTerrify,
+                       summary: "Hide a ghost. The first to come near is blinded and slowed.",
+                       telegraphRadius: NecroRules.BulagaTriggerRadius, telegraphRange: NecroRules.BulagaMaxRange,
                        castAction: "hero-nemu-project", viewmodelAction: "project-spirit",
-                       castCue: "sfx_cast_nemu_terrify")
+                       castCue: "sfx_cast_nemu_bulaga")
             {
                 _kit = kit;
-                AimByHolding(2.0f, NecroRules.SitMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
+                AimByHolding(NecroRules.BulagaMinRange, NecroRules.BulagaMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
                 TelegraphStyle = GroundReticle.Style.Maw;
             }
 
             protected override void OnActivate(AbilityContext ctx)
             {
                 _kit.ShareBasicCooldown(CooldownRemaining, mayLower: false);
-                _spot = AimedDestination(ctx);
-                _owner = ctx?.Motor;
-                _hasAnchor = true;
-                BindCompanion(ctx);
-                NetCue.Play("sfx_ghost_teleport", _spot);
+                if (ctx?.Motor == null) return;
+                NemuPiring.Place(AimedDestination(ctx), ctx.Forward, ctx.Motor.PlayerSlot);
             }
-
-            private void BindCompanion(AbilityContext ctx)
-            {
-                _kuro = Kuro(ctx);
-                if (_kuro == null) return;
-                _kuro.ApplyCastAnchor(_spot + Vector3.up * 0.9f);
-                _kuro.BeginErrand(() => _spot, NecroRules.FetchSpeed);
-            }
-
-            protected override void OnTick(AbilityContext ctx, float dt)
-            {
-                // A delayed model load must adopt the existing anchor, not cast
-                // again or restart the lifetime and shared cooldown.
-                if (_hasAnchor && _kuro == null) BindCompanion(ctx);
-            }
-
-            public override Vector3 TelegraphCentre(AbilityContext ctx)
-                => _hasAnchor && IsActive ? _spot : AimedDestination(ctx);
-
-            public override void Reactivate(AbilityContext ctx)
-            {
-                if (!IsActive || !_hasAnchor || ctx?.Motor == null) return;
-                if (!ctx.IsApprovedReplay && !ctx.Motor.CanAct()) return;
-                // Teleport owns confinement, prediction and host transform delivery.
-                // An observing replica cannot mutate another player's motor.
-                ctx.Motor.Teleport(_spot);
-                EndEarly(ctx);
-            }
-
-            public bool CapturePreparedWorld(out Vector3 centre, out float preparation, out float remaining)
-            {
-                bool active = _hasAnchor && IsActive;
-                centre = active ? _spot : Vector3.zero;
-                preparation = 0;
-                remaining = active ? DurationRemaining : 0;
-                return active;
-            }
-
-            public bool RestorePreparedWorld(AbilityContext ctx, Vector3 centre, float preparation, float remaining)
-            {
-                if (ctx?.Motor == null || !float.IsFinite(centre.x) || !float.IsFinite(centre.y)
-                    || !float.IsFinite(centre.z) || !float.IsFinite(preparation) || preparation != 0
-                    || !float.IsFinite(remaining) || remaining < 0 || remaining > Duration) return false;
-                if (remaining == 0)
-                {
-                    EndEarly(ctx);
-                    OnEnd(ctx);
-                    return false;
-                }
-                _spot = centre;
-                _owner = ctx.Motor;
-                _hasAnchor = true;
-                RestoreLiveClock(remaining);
-                BindCompanion(ctx);
-                // The interface returns true only for a restored preparation pose.
-                // Sit has no windup; its live anchor was restored without a cast.
-                return false;
-            }
-
-            protected override void OnEnd(AbilityContext ctx)
-            {
-                _kuro?.EndErrand();
-                _kuro = null;
-                _owner = null;
-                _hasAnchor = false;
-            }
-
-            protected override void OnCancelled(AbilityContext ctx) => OnEnd(ctx);
         }
 
         // ================================================================== KURO FETCH (attacking)

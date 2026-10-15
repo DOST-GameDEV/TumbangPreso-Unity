@@ -1,3 +1,19 @@
+## Protocol161: Nemu BULAGA! (BLINDED; replaces KURO: SIT!)
+
+`nemu_skill1` keeps its ID and the shared 25 s basic cooldown but is now BULAGA!,
+host-confirmed: every peer places the same ghost (`NemuPiring`) from the accepted
+cast, aimed 2 to 7 m. It fades from everyone but its owner over 3 s, waits up to
+30 s, one per Nemu (a recast moves it). Only the host springs it, on the first
+other grounded, untagged player within 1.8 m, by writing BLINDED (status 15,
+appended). `SyncUnit` appends `BlindedLeft` after `PossessedLeft` (finite, 0 to
+5; the minimum read is 225 bytes plus the voodoo tail). Eyes are covered while
+more than 3 s remain; the slow is `NecroRules.BulagaSpeedScale` (0.5 rising
+linearly to 1), so the body's own peer needs no other field. Observers spring
+their copy from that replicated edge on a body near the ghost; no new message.
+The waiting ghost rides the world snapshot as `Kind.Piring` (19, append-only);
+a sprung one is only its victim's clock. Protocol160 peers are refused.
+PlayMode receiver/spring checks only; actual matching peers remain unqualified.
+
 ## Protocol160: Nemu LET THEM IN (POSSESSED; named PRUSISYON until 2026-10-13)
 
 `nemu_ultimate` keeps its ID and cost but is now LET THEM IN: the host applies

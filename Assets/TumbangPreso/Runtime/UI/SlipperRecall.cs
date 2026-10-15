@@ -163,7 +163,7 @@ namespace TumbangPreso.UI
             var cam = UnityEngine.Camera.main;
 
             bool show = cam != null && local != null && mine != null
-                        && !local.IsHaunted
+                        && !local.IsHaunted && !local.EyesCovered
                         && !local.IsDefender
                         && mine.gameObject.activeInHierarchy
                         && mine.OwnerSlot == local.PlayerSlot

@@ -74,9 +74,38 @@ namespace TumbangPreso.Core
     {
         /// <summary>Current Wiki: every Kuro basic ability shares one 25-second cooldown.</summary>
         public const float BasicCooldown = 25.0f;
-        public const float SitSeconds = 10.0f;
-        // The Wiki changes the action, not its existing hold-to-aim reach.
-        public const float SitMaxRange = TerrifyMaxRange;
+
+        /// <summary>
+        /// BULAGA! (owner 2026-10-15, replacing KURO: SIT! as the signature: *"tripwire blind, like she would place a ghost
+        /// in an area and it becomes invisible after 3 seconds and then if anyone goes near that area the ghost would lunge
+        /// at their eyes and cover it for 2 secondns and slow them for 5 seconds (the slow effect gets lower overtime)"*).
+        /// Piring, one ghost, is left at an aimed spot up to 7 m away. It fades from everyone but Nemu over its first 3 s,
+        /// then waits up to 30 s. The first other player within 1.8 m springs it: BLINDED, eyes covered for 2 s and a
+        /// decaying slow (50 % at the spring, easing linearly to nothing at 5 s). One ghost out at a time; recasting moves it.
+        /// </summary>
+        public const float BulagaCooldown = BasicCooldown;
+        public const float BulagaMinRange = 2.0f;
+        public const float BulagaMaxRange = TerrifyMaxRange;
+        public const float BulagaArmSeconds = 3.0f;
+        public const float BulagaLifeSeconds = 30.0f;
+        public const float BulagaTriggerRadius = 1.8f;
+        public const float BulagaBlindSeconds = 2.0f;
+        public const float BulagaSlowSeconds = 5.0f;
+        public const float BulagaSlowPeak = 0.5f;
+        /// <summary>How long the ghost takes to cross from its spot to the victim's eyes (presentation only).</summary>
+        public const float BulagaLungeSeconds = 0.22f;
+
+        /// <summary>The decaying slow's speed multiplier with <paramref name="left"/> seconds of BLINDED to run: 0.5 at
+        /// the spring, back to 1 as it runs out.</summary>
+        public static float BulagaSpeedScale(float left)
+        {
+            if (!(left > 0.0f)) return 1.0f;
+            float share = left >= BulagaSlowSeconds ? 1.0f : left / BulagaSlowSeconds;
+            return 1.0f - BulagaSlowPeak * share;
+        }
+
+        /// <summary>True while the ghost still has its hands over the eyes: the first 2 s of the 5.</summary>
+        public static bool BulagaCoversEyes(float left) => left > BulagaSlowSeconds - BulagaBlindSeconds;
 
         /// <summary>TERRIFY, owner: *"Leave Kuro somewhere and everyone there gets feared"*. Set here:
         /// aimed up to 7 m, a 4 s haunt, feared within 2.2 m, once per body per haunt.

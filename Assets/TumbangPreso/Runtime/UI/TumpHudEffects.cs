@@ -7,8 +7,8 @@ namespace TumbangPreso.UI
     /// <summary>State-driven edge effects using the existing game shaders on new native objects.</summary>
     public sealed class TumpHudEffects : MonoBehaviour
     {
-        private Image _danger, _caught, _possessed;
-        private Material _possessedMaterial;
+        private Image _danger, _caught, _possessed, _blinded;
+        private Material _possessedMaterial, _blindedMaterial;
         private float _possessedPresence;
         private Vector2 _possessedDir = Vector2.up;
         private NemuRules.Phase _possessedPhase;
@@ -30,6 +30,8 @@ namespace TumbangPreso.UI
             _danger = Effect(root, "DangerEdges", "TumbangPreso/DownedVignette", out _dangerMaterial);
             _caught = Effect(root, "CaughtEdges", "TumbangPreso/FrostVignette", out _caughtMaterial);
             _possessed = Effect(root, "PossessedEdges", "TumbangPreso/PossessedVignette", out _possessedMaterial);
+            // Over every other edge effect: the ghost's hands are on the lens.
+            _blinded = Effect(root, "BlindedHands", "TumbangPreso/PiringBlind", out _blindedMaterial);
             _frame = OwnerUiLayout.Rect(root, "DangerFrame").gameObject.AddComponent<HudDangerFrame>();
             OwnerUiLayout.Fill(_frame.rectTransform); _frame.raycastTarget = false; _frame.enabled = false;
         }
@@ -47,6 +49,7 @@ namespace TumbangPreso.UI
         {
             float dt = Time.unscaledDeltaTime;
             TickPossessed(local, spectator, dt);
+            TickBlinded(local, spectator);
             var f = OwnerUiTheme.Current;
             var round = GameServices.Round;
             bool threatened = !spectator && local != null && !local.IsDefender && local.IsTaggable()
@@ -151,8 +154,41 @@ namespace TumbangPreso.UI
             }
         }
 
+        /// <summary>True while the ghost's hands are over the local player's eyes (Nemu's BULAGA!).</summary>
+        public bool BlindedScreenVisible => _blinded != null && _blinded.enabled && _blindCover > .5f;
+        private float _blindCover;
+
+        /// <summary>
+        /// BLINDED, ON THE VICTIM'S OWN SCREEN (Nemu's BULAGA!, `Shaders/PiringBlind`): the ghost bursts up over the lens as it
+        /// lunges, its hands cover the screen for the 2 s, they tear open, and a thin ink edge thins away with the slow. All of
+        /// it from the replicated BLINDED clock, so nothing here can outlast or undercut the rule.
+        /// ⚠️ Unlike the possessed edges, Reduce visual effects does NOT lift the cover: the blind is the rule, not a flourish.
+        /// </summary>
+        private void TickBlinded(CharacterMotor local, bool spectator)
+        {
+            if (_blinded == null) return;
+            bool on = !spectator && local != null && local.IsBlinded;
+            float elapsed = on ? local.BlindedElapsed : StatusRules.BlindedSeconds;
+            float covered = on && elapsed < NecroRules.BulagaBlindSeconds ? 1f : 0f;
+            float lunge = Mathf.Clamp01(elapsed / NecroRules.BulagaLungeSeconds);
+            float open = Mathf.Clamp01((elapsed - (NecroRules.BulagaBlindSeconds - .3f)) / .3f);
+            float slow = on ? (1f - local.BlindedSpeedScale) / NecroRules.BulagaSlowPeak : 0f;
+            _blindCover = covered * lunge * (1f - open);
+            _blinded.enabled = on && (covered > 0f || slow > .01f);
+            if (!_blinded.enabled) return;
+            _blindedMaterial.SetFloat("_Lunge", lunge);
+            _blindedMaterial.SetFloat("_Open", open);
+            _blindedMaterial.SetFloat("_Covered", covered);
+            _blindedMaterial.SetFloat("_Slow", Mathf.Clamp01(slow));
+            _blindedMaterial.SetFloat("_Calm", Settings.SettingsStore.Current.ReducedEffects ? 1f : 0f);
+            var size = _blinded.rectTransform.rect.size;
+            if (size.y > 0) _blindedMaterial.SetFloat("_Aspect", size.x / size.y);
+            _blinded.color = Color.white;
+        }
+
         private void OnDestroy()
         {
+            if (_blindedMaterial != null) Destroy(_blindedMaterial);
             if (_possessedMaterial != null) Destroy(_possessedMaterial);
             if (_dangerMaterial != null) Destroy(_dangerMaterial);
             if (_caughtMaterial != null) Destroy(_caughtMaterial);

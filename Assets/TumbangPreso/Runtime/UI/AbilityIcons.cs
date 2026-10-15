@@ -357,7 +357,7 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.NemuPhase: return "EVASION";
                 case AbilityGlyph.NemuAstralPet: return "MOBILITY";
                 case AbilityGlyph.NemuSeanceVoid: return "GROUND ZONE";
-                case AbilityGlyph.NemuTerrify: return "FEAR ZONE";
+                case AbilityGlyph.NemuTerrify: return "BLIND TRAP";
                 case AbilityGlyph.NemuKuroGuard: return "CAN GUARD";
                 case AbilityGlyph.PhaisterHexSigil: return "GROUND ZONE";
                 case AbilityGlyph.PhaisterShadowBlink: return "MOBILITY";

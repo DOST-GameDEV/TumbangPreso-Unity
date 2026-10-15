@@ -5543,16 +5543,14 @@ namespace TumbangPreso
                 }
                 else if (kit is Abilities.NemuHeroKit)
                 {
-                    // Phase before the pickup or the engage. Using it while carrying breaks it
-                    // instantly by design, and spending it with nothing to be untaggable FROM is
-                    // the same waste one step earlier: it is worth a 52 s cooldown only when
-                    // somebody could actually tag her.
-                    bool phaseApproach = !_motor.HoldingSlipper
-                        && (Plan == AiPlan.Fetch || Plan == AiPlan.Stalk)
-                        && targetDistance <= 6.0f;
-                    bool phaseDefence = _motor.IsDefender && targetDistance <= 4.0f;
+                    // BULAGA! (2026-10-15): her ghost waits where she aims and blinds the first to come near. Worth it with
+                    // somebody close enough to walk into it within its 30 s: the taya guarding against an attacker coming
+                    // in, or an attacker on a fetch with the taya near. The aim is already at the target.
+                    bool guardLane = _motor.IsDefender && targetDistance <= 7.0f;
+                    bool coverFetch = !_motor.IsDefender && !_motor.HoldingSlipper
+                        && (Plan == AiPlan.Fetch || Plan == AiPlan.Stalk) && targetDistance <= 6.0f;
 
-                    if (phaseApproach || phaseDefence) Consider(intent, Verb.Skill1, dt);
+                    if (guardLane || coverFetch) Consider(intent, Verb.Skill1, dt);
                 }
                 else if (kit is Abilities.PhaisterHeroKit)
                 {

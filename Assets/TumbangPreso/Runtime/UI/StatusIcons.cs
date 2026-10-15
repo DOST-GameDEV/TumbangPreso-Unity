@@ -63,6 +63,8 @@ namespace TumbangPreso.UI
             if (body.IsZapped) into.Add(StatusKind.Zapped);
             // Nemu's PRUSISYON (2026-10-11).
             if (body.IsPossessed) into.Add(StatusKind.Possessed);
+            // Nemu's BULAGA! (2026-10-15).
+            if (body.IsBlinded) into.Add(StatusKind.Blinded);
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]

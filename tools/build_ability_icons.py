@@ -909,12 +909,39 @@ def status_possessed(a):
     a.add(a.rect(470, 700, 554, 722), hexc("2A1F33"), shade=False)
 
 
+def status_zapped(a):
+    # ZAPPED (Electro, "Disabled Ability Cast"): a lightning bolt struck through, in the status badge family. It had no
+    # picture, so a zapped player saw a blank chip.
+    _badge(a)
+    a.add(a.poly([(560, 170), (360, 560), (490, 560), (430, 860), (680, 440), (545, 440), (640, 170)]), LEMON)
+    a.add(a.band([(250, 270), (780, 780)], 70), RIMRED, shade=False)
+
+
+def status_blinded(a):
+    # BLINDED (Nemu's BULAGA!, 2026-10-15): a ghost's two black smoke hands closing over a wide eye, violet light leaking
+    # between the fingers. The hands' outline is the read at 44 px.
+    _badge(a)
+    a.add(a.poly([(175, 520), (320, 380), (510, 320), (710, 380), (850, 520), (710, 660), (510, 720), (320, 660)]), CREAM)
+    a.add(a.circle(510, 520, 150), WITCH)
+    a.add(a.circle(510, 520, 78), KURO, shade=False)
+    for side in (-1, 1):
+        palm = (512 + side * 230, 760)
+        a.add(a.circle(palm[0], palm[1], 150), hexc("17121F"), shade=False)
+        for k in range(4):
+            ang = math.radians(100 + 17 * k)
+            bx, by = palm[0] + side * math.cos(ang) * 110, palm[1] - math.sin(ang) * 110
+            tx, ty = bx + side * math.cos(ang - 0.12) * 260, by - math.sin(ang - 0.12) * 260
+            a.add(a.band([(bx, by), (tx, ty)], 58 - 6 * k), hexc("17121F"), shade=False)
+            a.add(a.band([(bx + side * 34, by - 10), (tx + side * 34, ty - 10)], 8), hexc("8A3FE0"), shade=False)
+
+
 STATUSES = {"StatusWhirled": status_whirled, "StatusChilled": status_chilled,
             "StatusFrozen": status_frozen, "StatusTagged": status_tagged, "StatusRooted": status_rooted,
             "StatusConcussed": status_concussed, "StatusFeared": status_feared,
             "StatusDisoriented": status_disoriented, "StatusVulnerable": status_vulnerable,
             "StatusDrained": status_drained, "StatusHexed": status_hexed, "StatusHaunted": status_haunted,
-            "StatusPossessed": status_possessed}
+            "StatusPossessed": status_possessed, "StatusBlinded": status_blinded,
+            "StatusZapped": status_zapped}
 
 
 # the nine job glyphs, for any power without a bespoke picture

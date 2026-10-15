@@ -862,6 +862,10 @@ namespace TumbangPreso.EditorTools
                 // Stripped, the victim gets no hands and no direction cue while every observer still sees the rider.
                 "TumbangPreso/PossessedVignette",
 
+                // Nemu's BULAGA!: the blinded player's own screen (`UI.TumpHudEffects`), reached through `Shader.Find`.
+                // Stripped, the ghost's hands never cover the victim's eyes and the blind is only a slow.
+                "TumbangPreso/PiringBlind",
+
                 // ⚠️ THE NEAR-CAMERA DISSOLVE, AND ITS MISS PATH SHIPS THE ORIGINAL REPORT BACK.
                 // `NearFade.Install` reaches it through `Shader.Find` and nothing in any scene
                 // references it, which is exactly the case this list exists for. Stripped, the
