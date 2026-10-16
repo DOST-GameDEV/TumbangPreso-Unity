@@ -128,6 +128,10 @@ namespace TumbangPreso.Abilities
             HeroId = string.IsNullOrEmpty(heroId) ? "dante" : heroId.ToLowerInvariant();
             Kit = CreateKitFor(HeroId);
             ConfigureLoadout(build);
+            // Basilio's Earthbound, shown (heel furrows along a shove's real slide): on his body, on every peer.
+            var furrows = GetComponent<Visual.DanteEarthboundFurrows>();
+            if (HeroId == "dante") { if (furrows == null) gameObject.AddComponent<Visual.DanteEarthboundFurrows>(); }
+            else if (furrows != null) Destroy(furrows);
         }
 
         public bool UpdateLoadout(HeroBuild build)

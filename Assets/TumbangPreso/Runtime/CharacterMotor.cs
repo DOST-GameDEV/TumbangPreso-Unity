@@ -305,6 +305,9 @@ namespace TumbangPreso
         // Read-only presentation speed includes a slide/lunge's impulse as well
         // as steerable travel. It never feeds back into movement or networking.
         public Vector3 PresentationTravelVelocity => _velocity + _externalVelocity;
+        /// <summary>How fast a shove or carry is sliding this body, flat, m/s. Real only on the peer that simulates it
+        /// (Basilio's Earthbound furrows read it there; other peers see the slide through the stagger).</summary>
+        public float ExternalFlatSpeed => new Vector2(_externalVelocity.x, _externalVelocity.z).magnitude;
         public bool IsGrounded => _grounded;
         public bool IsSwimming => RooftopPool.Swimming(transform.position);
         private bool _swimLeap;

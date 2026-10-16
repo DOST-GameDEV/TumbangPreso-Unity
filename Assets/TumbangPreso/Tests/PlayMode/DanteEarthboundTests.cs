@@ -43,6 +43,21 @@ namespace TumbangPreso.PlayTests
             Debug.Log("[Earthbound] impulse dante="+d+" control="+c);
             Assert.Greater(c,1.5f);Assert.That(d/c,Is.InRange(.43f,.57f));
         }
+        [UnityTest] public IEnumerator TheFurrowsAreAsLongAsTheRealSlide()
+        {
+            yield return Open(GameMode.HeroStrike);var a=_dante.transform.position;
+            var furrows=_dante.GetComponent<Visual.DanteEarthboundFurrows>();
+            Assert.IsNotNull(furrows,"Basilio's body carries the Earthbound furrows.");
+            Assert.IsNull(_control.GetComponent<Visual.DanteEarthboundFurrows>(),"Only Basilio's.");
+            _dante.ApplyResolvedImpact(Vector3.forward*12);
+            yield return new WaitForSeconds(.9f);
+            float slid=Vector3.Distance(new Vector3(a.x,0,a.z),new Vector3(_dante.transform.position.x,0,_dante.transform.position.z));
+            Debug.Log("[Earthbound] slid="+slid+" furrow="+furrows.LatestFurrowLength);
+            Assert.AreEqual(1,furrows.FurrowCount,"One slide, one furrow.");
+            Assert.That(furrows.LatestFurrowLength,Is.InRange(slid-.35f,slid+.05f),"The furrow records the real slide, not a fixed length.");
+            yield return new WaitForSeconds(3.4f);
+            Assert.AreEqual(0,furrows.FurrowCount,"It cools, crumbles and is gone after its 2.5 s linger.");
+        }
         [UnityTest] public IEnumerator EarthboundHalvesHeldCarryAndItsTail()
         {
             yield return Open(GameMode.HeroStrike);var a=_dante.transform.position;var b=_control.transform.position;
