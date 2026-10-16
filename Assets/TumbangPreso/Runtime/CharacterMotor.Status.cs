@@ -106,7 +106,7 @@ namespace TumbangPreso
         public void ApplyWhirled(float seconds = StatusRules.WhirledSeconds)
         {
             if (!MayMutateGameplayState()) return;
-            if (AbilitySystem != null && AbilitySystem.IsImmuneToStuns) return;
+            if (Refuses(StatusKind.Whirled, AbilitySystem != null && AbilitySystem.IsImmuneToStuns)) return;
 
             bool fresh = _whirledLeft <= 0.0f;
             _whirledLeft = StatusRules.Refresh(_whirledLeft, seconds);
@@ -130,7 +130,7 @@ namespace TumbangPreso
         public void ApplyChilled(float seconds = StatusRules.ChilledSeconds)
         {
             if (!MayMutateGameplayState()) return;
-            if (AbilitySystem != null && AbilitySystem.IsImmuneToStuns) return;
+            if (Refuses(StatusKind.Chilled, AbilitySystem != null && AbilitySystem.IsImmuneToStuns)) return;
             bool fresh = _chilledLeft <= 0.0f;
             _chilledLeft = StatusRules.Refresh(_chilledLeft, seconds);
             if (fresh) StatusGained?.Invoke(this, StatusKind.Chilled);
@@ -231,7 +231,7 @@ namespace TumbangPreso
         public void ApplyRooted(float seconds = StatusRules.RootedSeconds)
         {
             if (!MayMutateGameplayState()) return;
-            if (AbilitySystem != null && AbilitySystem.IsImmuneToStuns) return;
+            if (Refuses(StatusKind.Rooted, AbilitySystem != null && AbilitySystem.IsImmuneToStuns)) return;
             if (IsTagged) return; // already held harder, and a tag ends roots anyway
             bool fresh = _rootedLeft <= 0.0f;
             _rootedLeft = StatusRules.Refresh(_rootedLeft, seconds);

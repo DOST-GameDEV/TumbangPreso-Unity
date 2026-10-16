@@ -78,8 +78,13 @@ namespace TumbangPreso.Abilities
             {
                 _kit._joiningCarapaceSettled = true;
                 NetCue.Play("guard_block", ctx.Position);
+                // What he carried, read before the cleanse: each one shatters off him in its own colour (`DanteStatusShatter`).
+                var had = new List<StatusKind>(4);
+                foreach (StatusKind kind in Enum.GetValues(typeof(StatusKind)))
+                    if (kind != StatusKind.Tagged && ctx.Motor.StatusLeft(kind) > 0f) had.Add(kind);
                 if (!ctx.Motor.IsTagged) ctx.Motor.ClearStun();
                 ctx.Motor.CleanseStatuses();
+                Visual.DanteStatusShatter.Release(ctx.Motor.transform, had);
                 if (_ward != null) UnityEngine.Object.Destroy(_ward.gameObject);
                 _ward = DanteCarapaceVisual.Attach(ctx.Motor, false, Duration);
             }

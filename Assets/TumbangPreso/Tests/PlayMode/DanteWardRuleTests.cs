@@ -67,6 +67,20 @@ namespace TumbangPreso.PlayTests
             kit.Tick(ctx,14.9f);Assert.IsTrue(_actor.AbilitySystem.IsImmuneToStatuses);
             kit.Tick(ctx,.11f);Assert.IsFalse(_actor.AbilitySystem.IsImmuneToStatuses);
         }
+        [UnityTest] public IEnumerator TheCleanseShattersWhatHeHadAndARefusalSplashes()
+        {
+            yield return Open();_actor.ApplyConcussed();Assert.IsTrue(_actor.IsConcussed);
+            var ctx=new AbilityContext(_actor,_actor.GetComponent<Carrier>(),_actor.GetComponent<CombatVerbs>());
+            Assert.IsTrue(_actor.AbilitySystem.Kit.TryActivateSkill1(ctx));
+            Assert.IsFalse(_actor.IsConcussed);
+            Assert.IsNotNull(Object.FindAnyObjectByType<Visual.DanteStatusShatter>(),"What he carried shatters off him.");
+            StatusKind refused=StatusKind.Tagged;_actor.StatusRefused+=(m,k)=>refused=k;
+            _actor.ApplyConcussed();
+            Assert.IsFalse(_actor.IsConcussed,"Immune.");
+            Assert.AreEqual(StatusKind.Concussed,refused,"The refusal is raised so the plate can flash.");
+            yield return new WaitForSeconds(1.3f);
+            Assert.IsNull(Object.FindAnyObjectByType<Visual.DanteStatusShatter>(),"The shell crumbles into the court and is gone.");
+        }
         [UnityTest] public IEnumerator PauseAndWarmupStillRefuseCleanse()
         {
             yield return Open();_actor.ApplyStagger(2.5f,StunElement.Ice,int.MaxValue);

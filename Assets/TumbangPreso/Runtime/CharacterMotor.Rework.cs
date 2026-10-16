@@ -40,6 +40,18 @@ namespace TumbangPreso
         /// <summary>True while any status except Tagged would be refused (Geo's Shield, Carapace).</summary>
         private bool StatusImmune => AbilitySystem != null && (AbilitySystem.IsImmuneToStuns || AbilitySystem.IsImmuneToStatuses);
 
+        /// <summary>Raised where a status would have landed but immunity refused it (Basilio's Unstoppable flashes a plate).
+        /// Presentation only, on the peer that resolves the status.</summary>
+        public event System.Action<CharacterMotor, StatusKind> StatusRefused;
+
+        /// <summary>True (and the refusal raised) when immunity refuses <paramref name="kind"/>.</summary>
+        private bool Refuses(StatusKind kind, bool immune)
+        {
+            if (!immune) return false;
+            StatusRefused?.Invoke(this, kind);
+            return true;
+        }
+
         /// <summary>
         /// How far the next throw's aim is knocked off, degrees, sampled from a seeded sine of the
         /// body's own clock, so the owner (who throws) and the host (who checks) read the same wobble.
@@ -61,7 +73,7 @@ namespace TumbangPreso
 
         public void ApplyConcussed(float seconds = StatusRules.ConcussedSeconds)
         {
-            if (!MayMutateGameplayState() || StatusImmune) return;
+            if (!MayMutateGameplayState() || Refuses(StatusKind.Concussed, StatusImmune)) return;
             bool fresh = _concussedLeft <= 0.0f;
             _concussedLeft = StatusRules.Refresh(_concussedLeft, seconds);
             if (fresh)
@@ -74,7 +86,7 @@ namespace TumbangPreso
         /// <summary>FEARED from <paramref name="source"/>: the slipper drops (host) and the body flees.</summary>
         public void ApplyFeared(Vector3 source, float seconds = StatusRules.FearedSeconds)
         {
-            if (!MayMutateGameplayState() || StatusImmune) return;
+            if (!MayMutateGameplayState() || Refuses(StatusKind.Feared, StatusImmune)) return;
             bool fresh = _fearedLeft <= 0.0f;
             _fearedLeft = StatusRules.Refresh(_fearedLeft, seconds);
             _fearFrom = source;
@@ -96,7 +108,7 @@ namespace TumbangPreso
 
         public void ApplyDisoriented(float seconds = StatusRules.DisorientedSeconds)
         {
-            if (!MayMutateGameplayState() || StatusImmune) return;
+            if (!MayMutateGameplayState() || Refuses(StatusKind.Disoriented, StatusImmune)) return;
             bool fresh = _disorientedLeft <= 0.0f;
             _disorientedLeft = StatusRules.Refresh(_disorientedLeft, seconds);
             if (fresh) RaiseStatus(StatusKind.Disoriented);
@@ -104,7 +116,7 @@ namespace TumbangPreso
 
         public void ApplyVulnerable(float seconds = StatusRules.VulnerableSeconds)
         {
-            if (!MayMutateGameplayState() || StatusImmune) return;
+            if (!MayMutateGameplayState() || Refuses(StatusKind.Vulnerable, StatusImmune)) return;
             bool fresh = _vulnerableLeft <= 0.0f;
             _vulnerableLeft = StatusRules.Refresh(_vulnerableLeft, seconds);
             if (fresh) RaiseStatus(StatusKind.Vulnerable);
