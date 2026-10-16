@@ -452,6 +452,7 @@ namespace TumbangPreso.Visual
             if (_hero == "sean") SeanGrade(Local(seconds), out brightness, out saturation);
             if (_hero == "nemu") NemuGrade(Local(seconds), out brightness, out saturation);
             if (_hero == "zack") ZackGrade(Local(seconds), out brightness, out saturation);
+            if (_hero == "dante") DanteGrade(Local(seconds), out brightness, out saturation);
         }
 
         /// <summary>
@@ -464,6 +465,7 @@ namespace TumbangPreso.Visual
             if (frame == null || camera == null) return;
             if (_hero == "phaister") PhaisterPostProcess(frame, camera, Local(seconds));
             if (_hero == "nemu") NemuPostProcess(frame, camera, Local(seconds));
+            if (_hero == "dante") DantePostProcess(frame, camera, Local(seconds));
         }
 
         /// <summary>

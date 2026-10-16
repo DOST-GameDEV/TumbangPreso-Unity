@@ -580,71 +580,105 @@ def _dante(held):
 
 def _dante_drift(p, held):
     """
-    CONTINENTAL DRIFT, 7.0 s (owner 2026-10-08: of three staging ideas "dante i like 2 and 3", joined, "About 7 s").
-    He punches the court; it breaks into plates adrift on a molten sea (seen from above); the horned basalt back
-    rises under his plate and lifts him; it raises a fist as he loads both of his, they come down as one, the
-    blasts run up the court and he is set back down in the stamp the live strike starts from.
-    ⚠️ The stage (`HeroIntroductionScene.Dante.cs`) reads these times: the punch 1.10, the lift, the stamp 6.88.
-    It ends EXACTLY on the fist landing, him still up on its back (owner 2026-10-08: "the cutscene should end exactly
-    when the fist lands ... by then dante should still be on the longhorn and only then will it disappeaer into the
-    ground"). So the lift never comes back down in this table: the going under is live play's.
-    The LAST pose is still `stamp`: play resumes from it.
+    CONTINENTAL DRIFT, 7.0 s, REBUILT 2026-10-16 (`docs/reports/dante-presentation-2026-10-16/plan.md` section 5.3, owner approved:
+    *"looks good pede na go"*). One sentence: he knocks on the court like a door, then strikes it; his fire runs through the
+    cracks and splits it into continents, wakes the horned mountain beast beneath, and it lifts him to deliver the blow.
+    His personality, which none of the other four have, is PATIENCE: everyone else's ultimate starts fast; his starts STILL,
+    on one knee, palm on the court, listening. Two calm knocks; only the third blow is violent.
+    Beats (the stage, `HeroIntroductionScene.Dante.cs`, reads these same times):
+      0.00 THE KNOCK      still, on one knee, his palm flat on the court, head tilted, listening
+      0.45, 0.80          knock one, knock two: two knuckles rap the court, calm
+      0.95 to 1.15        an insert on his face: his gold eye (his left, the scarred side) opens
+      1.15 THE PUNCH      up into a crouch, the fist cocked behind his head; 1.30 to 1.50 held, knees sinking; 1.55 it lands
+      1.70 THE CONTINENTS he stays crouched, fist in the court, while the court splits and drifts (one continuous crane)
+      3.30 THE RISE       horns first out of the seam, the eyes ignite at the lens (3.75); three heaves (4.0, 4.5, 4.95) lift him
+      5.30 THE STOMP      he loads both fists over his right shoulder; 6.60 to 6.85 held; 6.88 both fists land as one
+      7.00                cut to live: still on its back in the stamp pose (owner 2026-10-08: the going under is live play's)
+    Every shot is on HIS RIGHT side of the line (+x), so the light always travels the same way across the screen.
+    The LAST pose is still `stamp`: play resumes from it. Holding a slipper, the free (left) hand knocks and punches.
     """
-    wide = ((2, 14), (-2, 14))
-    rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
-    plant = Pose(torso=(6, 0, 0), head=(18, 0, 0), left=(8, 24, 0), right=(8, 24, 0), legs=wide)
-    # The wind-up: the fist goes up behind his head, chest opened to it. Holding a shoe, the free hand does it.
-    wind = Pose(torso=(-10, -16 if held else 16, 0), head=(8, 0, 0), legs=((6, 16), (-8, 16)),
-                left=(165, 22, 0) if held else (16, 30, 0), right=(20, 42, -8) if held else (165, 22, 0))
-    # The punch: down on the front leg, the fist in the court just ahead of his feet.
+    # His knock hand: the right, or the left when the right holds a slipper.
+    def hands(knock, other):
+        return dict(left=knock, right=other) if held else dict(left=other, right=knock)
+    shoe = (20, 42, -8)
+    resting = (36, 18, 12)
+    kneel_legs = ((54, 8), (-30, 8))
+    # THE KNOCK: on one knee, leaning a little over the planted palm, head tilted down to the court, listening.
+    kneel = Pose(torso=(16, 4, -3), head=(18, 6, 12), legs=kneel_legs, **hands((26, 20, 4), shoe if held else resting))
+    listen = kneel.but(head=(20, 8, 15))
+    knock_up = kneel.but(**hands((44, 20, 4), shoe if held else resting))
+    knock_down = kneel.but(torso=(18, 4, -3), **hands((22, 20, 4), shoe if held else resting))
+    # THE EYE: the head comes up off the court, turned a little to his left so the gold eye meets the lens.
+    eye = knock_down.but(head=(2, -10, 4))
+    # THE PUNCH: up into a crouch, the fist cocked behind his head, the chest opened to it.
+    crouch_legs = ((30, 14), (-22, 14))
+    wind = Pose(torso=(-8, -16 if held else 16, 0), head=(6, 0, 0), legs=crouch_legs,
+                **hands((165, 22, 0), shoe if held else (16, 30, 0)))
+    wind_shake = wind.but(torso=(-9, -16 if held else 16, 1.5))
     punch = Pose(torso=(40, 8 if held else -8, 0), head=(-4, 0, 0), legs=((34, 14), (-26, 14)),
-                 left=(58, 8, 22) if held else (18, 38, 0), right=(20, 42, -8) if held else (58, 8, 22))
-    # Standing on a plate that is adrift: low, wide, arms out for balance, watching the seams.
-    adrift = Pose(torso=(14, 0, 0), head=(16, 0, 0), left=(26, 46, 0), right=(20, 42, -8) if held else (26, 46, 0),
-                  legs=((6, 18), (-6, 18)))
-    adrift_l = adrift.but(torso=(13, -6, 2), head=(18, -22, 0))
-    adrift_r = adrift.but(torso=(13, 6, -2), head=(18, 22, 0))
-    # Carried up: knees deeper, head coming up as the ground leaves.
-    ride = Pose(torso=(20, 0, 0), head=(-6, 0, 0), left=(34, 54, 0), right=(20, 42, -8) if held else (34, 54, 0),
-                legs=((12, 20), (-10, 20)))
-    ride_shake = ride.but(torso=(21, 0, 2), left=(36, 56, 0))
-    stand = Pose(torso=(-4, 0, 0), head=(-10, 0, 0), left=(18, 30, 0), right=(20, 42, -8) if held else (18, 30, 0),
-                 legs=((0, 16), (0, 16)))
-    load = Pose(torso=(-4, 22, 0), head=(0, -14, 0), left=(150, 20, 50), right=(150, 20, -8),
-                legs=((8, 12), (-10, 12)))
-    stamp = Pose(torso=(28, -10, 0), head=(-8, 6, 0), left=(72, 6, 30), right=(72, 6, 30),
-                 legs=((22, 10), (-18, 10)))
+                 **hands((58, 8, 22), shoe if held else (18, 38, 0)))
+    # Fist still in the court while it breaks: breathing hard, the head lifting to watch the plates go.
+    watch = punch.but(torso=(36, 8 if held else -8, 0), head=(-12, 0, 0))
+    watch_l = watch.but(head=(-14, -16, 0))
+    watch_r = watch.but(head=(-10, 18, 0))
+    # Carried up: knees deep, braced low, arms out for balance; then he stands as it settles.
+    ride = Pose(torso=(20, 0, 0), head=(-6, 0, 0), legs=((12, 20), (-10, 20)), **hands((34, 54, 0), shoe if held else (34, 54, 0)))
+    ride_shake = ride.but(torso=(22, 0, 2))
+    stand = Pose(torso=(-4, 0, 0), head=(-10, 0, 0), legs=((0, 16), (0, 16)), **hands((18, 30, 0), shoe if held else (18, 30, 0)))
+    load = Pose(torso=(-4, 22, 0), head=(0, -14, 0), left=(150, 20, 50), right=(150, 20, -8), legs=((8, 12), (-10, 12)))
+    load_shake = load.but(torso=(-5, 22, 1.5), left=(152, 20, 50))
+    stamp = Pose(torso=(28, -10, 0), head=(-8, 6, 0), left=(72, 6, 30), right=(72, 6, 30), legs=((22, 10), (-18, 10)))
     if held:
-        load = load.but(right=(20, 42, -8))
+        load = load.but(right=shoe)
+        load_shake = load_shake.but(right=shoe)
         stamp = stamp.but(right=(30, 42, -8))
-    landed = stamp.but(torso=(36, -10, 0), legs=((30, 12), (-24, 12)))
 
-    p.key(0, rest)
-    p.key(.42, plant)
-    p.key(.82, wind)
-    p.hold(.82, .98, wind)
-    p.key(1.10, punch, punch=True)
-    p.hold(1.10, 1.50, punch)
-    p.key(1.95, adrift).key(2.4, adrift_l).key(2.9, adrift_r).key(3.4, adrift)
-    p.key(3.85, ride).key(4.1, ride_shake).key(4.4, ride).key(4.7, ride_shake).key(5.0, ride)
-    p.key(5.5, stand)
-    p.key(6.05, load)
-    p.hold(6.05, 6.66, load)
+    p.key(0, kneel)
+    p.hold(0, .30, kneel)
+    p.key(.38, listen)
+    p.key(.42, knock_up).key(.45, knock_down, punch=True)
+    p.key(.66, listen.but(**hands((26, 20, 4), shoe if held else resting)))
+    p.key(.77, knock_up).key(.80, knock_down, punch=True)
+    p.key(.95, knock_down)
+    p.key(1.08, eye)
+    p.key(1.15, eye)
+    p.key(1.27, wind)
+    p.key(1.33, wind_shake).key(1.39, wind).key(1.45, wind_shake).key(1.50, wind)
+    p.key(1.55, punch, punch=True)
+    p.hold(1.55, 1.95, punch)
+    p.key(2.3, watch).key(2.7, watch_l).key(3.1, watch_r).key(3.45, watch)
+    p.key(3.9, ride)
+    p.key(4.0, ride_shake, punch=True).key(4.2, ride)
+    p.key(4.5, ride_shake, punch=True).key(4.7, ride)
+    p.key(4.95, ride_shake, punch=True).key(5.12, ride)
+    p.key(5.3, stand)
+    p.key(5.8, load)
+    p.key(6.2, load_shake).key(6.4, load).key(6.6, load_shake)
+    p.hold(6.6, 6.85, load_shake)
     p.key(6.88, stamp, punch=True)
     p.hold(6.88, 7.0, stamp)
 
-    # His plate is carried: a slow first heave, the long rise, a settle at the top, then down with the thing as it goes under.
-    p.rise(0, 0).rise(3.45, 0).rise(4.0, .45).rise(5.2, 3.4).rise(7.0, 3.4)
+    # The lift: sunk onto the knee (the rigs have no knees: the kneel is legs apart and sunk, Paete's method), up to a
+    # crouch at the wind-up, knees sinking 6 cm in the held compression, low in the punch; then the beast's three heaves
+    # carry him to its saddle (3.4 m) by 5.2 and he stays up there to the last frame.
+    p.rise(0, -0.32).rise(1.15, -0.32).rise(1.27, -0.12).rise(1.30, -0.12).rise(1.50, -0.18).rise(1.55, -0.24).rise(3.9, -0.24)
+    p.rise(4.0, 0.55).rise(4.2, 0.62).rise(4.5, 1.75).rise(4.7, 1.82).rise(4.95, 2.95).rise(5.2, 3.4).rise(7.0, 3.4)
 
-    # A: low and close in front while he plants, winds and punches.
-    p.shot(0, 1.15, (1.3, .55, 3.4), (0, 1.0, 0), 46, eye_to=(1.0, .5, 2.9))
-    # B: high over him, the court in plates on the sea, rising slowly as they drift.
-    p.shot(1.15, 3.4, (.5, 7.4, -2.2), (0, 0, .5), 58, eye_to=(.9, 10.2, -3.0))
-    # C: low, wide and to his front right, looking up as it comes out of the seam under him.
-    p.shot(3.4, 5.3, (4.0, .7, 5.6), (0, 1.0, .6), 52, eye_to=(4.9, 1.1, 6.8), look_to=(0, 2.9, .6))
-    # D: low in front of its face, him on top, the raised fist over both, creeping in until the fist lands.
-    p.shot(5.3, 7.0, (-2.9, 1.3, 9.8), (.3, 3.3, .9), 46, eye_to=(-2.4, 1.1, 8.6), look_to=(.3, 3.0, 1.2))
-    p.locked((2.6, 1.8, 8.0), (0, 1.6, .5), 54)
+    # 1 THE KNOCK: medium, low, his right side, 2.2 m off, a very slow push-in.
+    p.shot(0, .95, (2.15, .5, .75), (0, .42, .3), 42, eye_to=(1.92, .47, .64), look_to=(0, .42, .3), fov_to=41)
+    # 1b an insert on his face, 0.6 m: the gold eye opens.
+    p.shot(.95, 1.15, (.42, .82, .62), (-.04, .8, 0), 34, eye_to=(.38, .82, .56), close=True)
+    # 2 THE PUNCH: back to the side angle, now 1.4 m.
+    p.shot(1.15, 1.70, (1.45, .5, .85), (0, .55, .45), 46, eye_to=(1.32, .47, .8))
+    # 3 THE CONTINENTS: one continuous crane from his fist up and back to 8 m, following the light ahead of him.
+    p.shot(1.70, 3.30, (1.3, .45, 1.5), (.15, .05, .9), 50, eye_to=(3.6, 8.2, -2.6), look_to=(.2, 0, 4.2), fov_to=58)
+    # 4 THE RISE: cut low and tight to the seam the light dove into; the lens holds as the horns and then the eyes come up.
+    p.shot(3.30, 4.0, (1.7, .32, 5.0), (0, .45, 2.7), 44, eye_to=(1.55, .36, 4.75), look_to=(0, .75, 2.75), fov_to=44)
+    # ...then straight back and up through the three heaves, his plate riding its back.
+    p.shot(4.0, 5.30, (1.55, .36, 4.75), (0, .75, 2.75), 44, eye_to=(5.4, 2.0, 9.6), look_to=(0, 2.8, 1.4), fov_to=52)
+    # 5 THE STOMP: wide and low in front, on the same side, a slow creep in to the landing.
+    p.shot(5.30, 7.0, (6.2, .9, 9.8), (-.2, 3.2, 1.6), 54, eye_to=(5.4, .9, 8.7), look_to=(-.2, 3.1, 1.8), fov_to=50)
+    p.locked((3.2, 1.9, 8.5), (0, 1.8, 1.0), 56)
     return p
 
 
