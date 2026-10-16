@@ -106,7 +106,7 @@ namespace TumbangPreso.Abilities
 
             public Boulder()
                 : base("dante_skill2", "BOULDER",
-                       "Imbue your held slipper for 15 s. Your next throw inflicts Concussed on a player hit: 75% slower for 2.5 s.",
+                       "Imbue your held slipper for 15 s. Your next throw inflicts Concussed on a player hit: 75% slower for 5 s.",
                        GeoRules.BoulderCooldown, 0.0f, AbilityGlyph.DanteBoulder,
                        summary: "Imbue your held slipper with Concussed.",
                        castAction: "hero-dante-boulder", viewmodelAction: "boulder-load",
@@ -181,7 +181,7 @@ namespace TumbangPreso.Abilities
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
             public Earthquake()
                 : base("dante_ultimate", "CONTINENTAL DRIFT",
-                       "A wide earthquake cascades forward in successive blasts. Players caught in each blast are Concussed for 2.5 s.",
+                       "A wide earthquake cascades forward in successive blasts. Players caught in each blast are Concussed for 5 s.",
                        0.0f, 0.0f, AbilityGlyph.DanteFissure,
                        summary: "Successive forward blasts inflict Concussed.",
                        castAction: "hero-dante-fissure", viewmodelAction: "fissure-slam",

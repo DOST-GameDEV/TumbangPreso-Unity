@@ -625,7 +625,9 @@ namespace TumbangPreso.Net
         // refuse those frames and expect the slipper on the ground.
         // 165 (2026-10-16): Nemu's passive is DEAD WEIGHT (rivals within 3 m of her visible ghosts move 10 % slower),
         // replacing KURO!'s 10 % on her own speed. The wire is unchanged; a 164 peer would move its body at a different speed.
-        public const int ProtocolVersion = 165;
+        // 166 (2026-10-16): Concussed lasts 5 s (the Wiki's number), not 2.5 s. The wire is unchanged; a 165 peer would clamp the
+        // replicated timer to 2.5 s and release a Boulder or Drift victim early.
+        public const int ProtocolVersion = 166;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

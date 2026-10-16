@@ -140,8 +140,9 @@ namespace TumbangPreso.Core
         /// <summary>*"Prevents movement or interaction for 5 seconds."* The tag's own number.</summary>
         public const float TaggedSeconds = Balance.TagStunTime;
 
-        /// <summary>Concussed: 2.5 s, speed x0.25, no sprint, aim wobble up to 9 degrees.</summary>
-        public const float ConcussedSeconds = 2.5f;
+        /// <summary>Concussed: 5 s, speed x0.25, no sprint, aim wobble up to 9 degrees. The Wiki's *"75% slower for 5 seconds"*
+        /// (owner approved the 2026-10-16 presentation plan, which follows the Wiki; was 2.5 s).</summary>
+        public const float ConcussedSeconds = 5.0f;
         public const float ConcussedSpeedScale = 0.25f;
         public const float ConcussedAimWobbleDegrees = 9.0f;
 
@@ -201,7 +202,7 @@ namespace TumbangPreso.Core
                 blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
             // ⚠️ APPENDED (the enum's note). ABILITY-2.
             new StatusRule(StatusKind.Concussed, "CONCUSSED",
-                "Dizzy for 2.5 seconds: 75% slower, no sprint, and throws wobble off aim.",
+                "Dizzy for 5 seconds: 75% slower, no sprint, and throws wobble off aim.",
                 "Dizzy: Slower, No Sprint, Wobbly Aim",
                 ConcussedSeconds, ConcussedSpeedScale, blocksMovement: false, blocksInteraction: false,
                 blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),

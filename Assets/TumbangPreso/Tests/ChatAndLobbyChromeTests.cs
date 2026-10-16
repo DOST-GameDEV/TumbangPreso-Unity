@@ -385,7 +385,8 @@ namespace TumbangPreso.Tests
             //161 appends BLINDED to SyncUnit and Blindfold to the world snapshot (Nemu's DON'T LOOK replaces KURO: SIT!).
             //162 makes Nemu's SKITTER host-confirmed and LOOKOUT a can stand-up (no wire change; the rules differ).
             //165 replaces Nemu's KURO! self speed with DEAD WEIGHT, a slow on rivals near her ghosts (no wire change; the rules differ).
-            Assert.AreEqual(165, NetSession.ProtocolVersion,
+            //166 makes Concussed 5 s, the Wiki's number (no wire change; the rules differ).
+            Assert.AreEqual(166, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

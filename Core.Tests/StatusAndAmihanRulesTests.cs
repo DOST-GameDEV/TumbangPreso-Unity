@@ -80,7 +80,7 @@ namespace TumbangPreso.Core.Tests
 
             var concussed = StatusRules.For(StatusKind.Concussed);
             Assert.Equal(0.25f, concussed.SpeedScale);
-            Assert.Equal(2.5f, StatusRules.ConcussedSeconds);
+            Assert.Equal(5.0f, StatusRules.ConcussedSeconds); // the Wiki's "75% slower for 5 seconds"
             Assert.Equal(35.0f, GeoRules.BoulderCooldown);
             Assert.False(concussed.BlocksMovement || concussed.BlocksInteraction);
 
