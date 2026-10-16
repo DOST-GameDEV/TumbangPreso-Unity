@@ -50,8 +50,12 @@ namespace TumbangPreso.Visual
         // =========================================================================================
         private const float DnKnock1 = .45f, DnKnock2 = .80f, DnEyeOpen = .95f, DnWind = 1.15f, DnPunch = 1.55f, DnBreak = 1.57f,
                             DnSplit1 = 1.95f, DnSplit2 = 2.30f, DnDive = 3.10f, DnHorns = 3.30f, DnIgnite = 3.75f, DnRisen = 5.20f,
-                            DnLoad = 5.30f, DnHangFrom = 6.60f, DnHangTo = 6.85f, DnStomp = 6.88f, DnTitanTop = 3.4f, DnFloat = .15f;
+                            DnLoad = 5.30f, DnHangFrom = 6.60f, DnHangTo = 6.85f, DnStomp = 6.88f, DnTitanTop = 3.4f;
         private static readonly float[] DnHeaves = { 4.0f, 4.5f, 4.95f };
+        // The court's own surface over the stage root (`Slipper.GroundY`, the method's section 8 trap): Bayan Plaza's court stands
+        // above the ground the root is found on, and a fixed 0.15 m left every plate under it (film r1). Measured once at the build.
+        private float _dnCourt;
+        private float DnFloat => _dnCourt + .03f;
         // The story clock in the hang runs at a fifth (Amihan's hang, his version): VFX motion reads it, the body's keys do not.
         private const float DnHangSpeed = .2f;
 
@@ -78,8 +82,8 @@ namespace TumbangPreso.Visual
         // model) up under his plate. From 3.95 its saddle and his lift agree (`DnBeastPose`).
         private static readonly Vector3[] DnRiseKeys =
         {
-            new Vector3(3.20f, -6.4f, -34f), new Vector3(3.30f, -5.55f, -34f), new Vector3(3.75f, -3.75f, -32f), new Vector3(3.95f, -3.55f, -30f),
-            new Vector3(4.00f, -2.95f, -27f), new Vector3(4.20f, -2.86f, -24f), new Vector3(4.50f, -1.75f, -15f), new Vector3(4.70f, -1.62f, -12f),
+            new Vector3(3.20f, -6.0f, -36f), new Vector3(3.30f, -5.3f, -38f), new Vector3(3.55f, -3.5f, -41f), new Vector3(3.75f, -2.7f, -42f),
+            new Vector3(3.95f, -2.8f, -38f), new Vector3(4.00f, -2.95f, -27f), new Vector3(4.20f, -2.86f, -24f), new Vector3(4.50f, -1.75f, -15f), new Vector3(4.70f, -1.62f, -12f),
             new Vector3(4.95f, -.45f, -5f), new Vector3(5.20f, 0f, 0f), new Vector3(7.0f, 0f, 0f),
         };
 
@@ -95,9 +99,13 @@ namespace TumbangPreso.Visual
 
         private void BuildDante()
         {
-            _dnDustLow = Wall("DustGround", 0, 1.4f, new Color(.2f, .14f, .09f, .8f), radius: 11.6f);
-            _dnDustHigh = Wall("DustSky", 1.4f, 30, new Color(.42f, .32f, .22f, .72f), radius: 11.6f, emission: .08f, cap: true);
-            _dnSea = Add("MoltenSea", VfxShapes.Prism(28, .02f, 1f), new Color(1f, .36f, .05f, 1f), 1f, plain: true);
+            float court = Slipper.GroundY(_root.transform.position + Vector3.up * .3f) - _root.transform.position.y;
+            _dnCourt = float.IsInfinity(court) || float.IsNaN(court) ? 0f : Mathf.Clamp(court, 0f, .6f);
+            _dnDustLow = Wall("DustGround", 0, 1.4f, new Color(.2f, .14f, .09f, .8f), radius: 15f);
+            _dnDustHigh = Wall("DustSky", 1.4f, 30, new Color(.42f, .32f, .22f, .72f), radius: 15f, emission: .08f, cap: true);
+            // A deep molten red-orange, not molten hot: the sea is the ground the light lives in, so the seams stay the brightest
+            // thing on the court (film r3: a flat (1, .36, .05) sea outshone every seam).
+            _dnSea = Add("MoltenSea", VfxShapes.Prism(28, .02f, 1f), new Color(.72f, .2f, .04f, 1f), .7f, plain: true);
 
             // The plates: the centre one he kneels on, then six round it, each between two cracks.
             var stone = new Color(.31f, .27f, .24f, 1);
@@ -339,7 +347,8 @@ namespace TumbangPreso.Visual
         }
 
         // Where his fist lands, just ahead of his feet on his knock side (the table's punch: the right fist, the left when held).
-        private Vector3 DnFist => new Vector3(.15f, .05f, .85f);
+        // Caught from his real knocking hand at the punch (`DanteFrame.cs`), so the impact, the crest and the seams start under the fist.
+        private Vector3 DnFist => _dnFistAt ?? new Vector3(_heldItem != null ? -.15f : .15f, DnFloat + .02f, .85f);
 
         /// <summary>The beast's root pose at t: height and nose-up pitch from the typed keys.</summary>
         private void DnBeastPose(float t, out float height, out float pitch)
@@ -356,6 +365,11 @@ namespace TumbangPreso.Visual
             height = DnRiseKeys[DnRiseKeys.Length - 1].y; pitch = DnRiseKeys[DnRiseKeys.Length - 1].z;
         }
 
+        // It comes up a body length AHEAD of him, out of the widest seam between him and the targets (plan 5.3, 3.30: the light
+        // dove there), so its face never rises through his own plate; the three heaves slide it back under him as they lift him.
+        private const float DnSurgeAhead = 1.1f;
+        private static float DnSurge(float t) => DnSurgeAhead * (1f - Ease(DnHeaves[0], DnRisen, t));
+
         // Its eyes in the beast's own space (the glb's head node at (0, 1.62, 1.95), the sockets 1.03 in front, 0.17 up).
         private static readonly Vector3 DnEyesLocal = new Vector3(0f, 1.79f, 2.98f);
         private Vector3 DnEyesAt(float t) => _dnTitan != null ? _root.transform.InverseTransformPoint(_dnTitan.TransformPoint(DnEyesLocal)) : new Vector3(0, 1.2f, 3.3f);
@@ -363,6 +377,7 @@ namespace TumbangPreso.Visual
         private void SampleDante(float t)
         {
             float story = DanteStory(t);
+            DnCatchContacts(t);
             float haze = Ease(.0f, .6f, t);
             Tint(_dnDustLow, haze); Tint(_dnDustHigh, haze);
 
@@ -377,7 +392,7 @@ namespace TumbangPreso.Visual
 
             // The sea under everything, breathing; its glow comes up as the gaps open.
             float glow = _reducedEffects ? .85f : .82f + .18f * Mathf.Sin(story * 5.2f);
-            Place(_dnSea, new Vector3(0, .012f, 0), new Vector3(11.3f, 1, 11.3f), Quaternion.identity, broken ? glow * Ease(DnBreak, DnSplit1, t) : 0);
+            Place(_dnSea, new Vector3(0, _dnCourt + .008f, 0), new Vector3(15f, 1, 15f), Quaternion.identity, broken ? glow * Ease(DnBreak, DnSplit1, t) : 0);
 
             for (int i = 0; i < _dnPlates.Count; i++)
             {
@@ -402,7 +417,7 @@ namespace TumbangPreso.Visual
             }
 
             // THE KNOCKS: a thin molten ring runs out under the court from his knuckles each time; the second leaves his hand's cracks lit.
-            var palm = new Vector3(.32f, DnFloat + .012f, .55f);
+            var palm = DnKnockSpot;
             for (int i = 0; i < _dnKnockRings.Count; i++)
             {
                 float at = i == 0 ? DnKnock1 : DnKnock2, age = t - at;
@@ -424,8 +439,11 @@ namespace TumbangPreso.Visual
             {
                 float at = DnBreak + DnSeamDelay[i], run = Mathf.Clamp01((t - at) / .32f);
                 float heat = run <= 0f ? 0f : (1f - .35f * Ease(DnStomp - .2f, DnStomp, t));
-                // Drawn as the crack itself, revealed from the fist outward by scaling it along its own path.
-                PlaceGlow(_dnSeams[i], new Vector3(0f, DnFloat + .02f, 0f), new Vector3(1f, 1f, 1f) * Mathf.Max(.001f, run), Quaternion.identity,
+                // Drawn as the crack itself, revealed from the fist outward: scaled about the fist, not the stage's origin (film r1),
+                // so it grows out of where the punch landed and lies exactly on its crack once run.
+                float grown = Mathf.Max(.001f, run);
+                var fist = new Vector3(DnFist.x, 0f, DnFist.z);
+                PlaceGlow(_dnSeams[i], fist * (1f - grown) + Vector3.up * (DnFloat + .02f), new Vector3(grown, 1f, grown), Quaternion.identity,
                           heat * (1.2f + .25f * Mathf.Sin(story * 7f + i)));
             }
 
@@ -444,7 +462,7 @@ namespace TumbangPreso.Visual
             {
                 DnBeastPose(t, out float height, out float pitch);
                 float grind = _reducedEffects ? 0 : Mathf.Sin(t * 41f) * .025f * (1 - Ease(DnRisen - .1f, DnRisen + .2f, t));
-                _dnTitan.localPosition = new Vector3(grind, height, 0f);
+                _dnTitan.localPosition = new Vector3(grind, height + _dnCourt, DnSurge(t));
                 _dnTitan.localRotation = Quaternion.Euler(pitch, 0f, 0f);
                 if (_dnBeast != null)
                 {

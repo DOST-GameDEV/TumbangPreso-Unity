@@ -106,7 +106,7 @@ namespace TumbangPreso.Visual
         {
             float light = _reducedEffects ? .5f : 1f;
             // HANGING GRIT: still from the first frame, a hop on each knock, pulled into his cocked fist, gone into it at the punch.
-            var fist = RightPalm;
+            var fist = DnKnockPalm;
             for (int i = 0; i < _dnGrit.Count; i++)
             {
                 var r = DnGritRows[i];
@@ -207,7 +207,8 @@ namespace TumbangPreso.Visual
                 float half = Mathf.Tan(fov * .5f * Mathf.Deg2Rad) * dist;
                 float sway = _reducedEffects ? 0f : Mathf.Sin(story * 1.3f + i) * r.drift;
                 var at = eye + fwd * dist + right * (r.sx * half * 1.6f + sway) + up * (r.sy * half + (r.ember ? story * .05f % .2f : -story * .03f % .15f));
-                if (r.ember) PlaceGlow(_dnNear[i], at, Vector3.one * r.size * 4f, Quaternion.identity, 1.1f * light);
+                // Small sharp sparks, not soft blobs: at four times this size, this close, each ember covered a fifth of the frame (film r2).
+                if (r.ember) PlaceGlow(_dnNear[i], at, Vector3.one * r.size * .9f, Quaternion.identity, 1.1f * light);
                 else Place(_dnNear[i], at, Vector3.one * r.size, Quaternion.Euler(i * 31f + story * 40f, i * 17f, i * 11f), 1f);
             }
         }

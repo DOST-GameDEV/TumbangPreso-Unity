@@ -671,13 +671,17 @@ def _dante_drift(p, held):
     # 2 THE PUNCH: back to the side angle, now 1.4 m.
     p.shot(1.15, 1.70, (1.45, .5, .85), (0, .55, .45), 46, eye_to=(1.32, .47, .8))
     # 3 THE CONTINENTS: one continuous crane from his fist up and back to 8 m, following the light ahead of him.
-    p.shot(1.70, 3.30, (1.3, .45, 1.5), (.15, .05, .9), 50, eye_to=(3.6, 8.2, -2.6), look_to=(.2, 0, 4.2), fov_to=58)
+    # (film r3: it began inside his body; his figure is bigger than the table first assumed, so it starts 2.4 m out.)
+    p.shot(1.70, 3.30, (2.4, .9, 2.0), (0, .35, .9), 50, eye_to=(3.6, 8.2, -2.6), look_to=(.2, 0, 4.2), fov_to=58)
     # 4 THE RISE: cut low and tight to the seam the light dove into; the lens holds as the horns and then the eyes come up.
     p.shot(3.30, 4.0, (1.7, .32, 5.0), (0, .45, 2.7), 44, eye_to=(1.55, .36, 4.75), look_to=(0, .75, 2.75), fov_to=44)
     # ...then straight back and up through the three heaves, his plate riding its back.
-    p.shot(4.0, 5.30, (1.55, .36, 4.75), (0, .75, 2.75), 44, eye_to=(5.4, 2.0, 9.6), look_to=(0, 2.8, 1.4), fov_to=52)
-    # 5 THE STOMP: wide and low in front, on the same side, a slow creep in to the landing.
-    p.shot(5.30, 7.0, (6.2, .9, 9.8), (-.2, 3.2, 1.6), 54, eye_to=(5.4, .9, 8.7), look_to=(-.2, 3.1, 1.8), fov_to=50)
+    # (The stage starts it from wherever THE RISE held, `HeroIntroductionScene.DanteFrame.cs`; this is where it ends.)
+    p.shot(4.0, 5.30, (1.55, .36, 4.75), (0, .75, 2.75), 44, eye_to=(5.6, 2.6, 10.0), look_to=(0, 3.4, 1.2), fov_to=52)
+    # 5 THE STOMP: wide and low in front, on the same side, a slow creep in to the landing. Film r3: from 6.2 m to the side
+    # the players were out of frame; now the lens stands beyond them (the dust wall is 15 m round), so they are between it and us.
+    # (r5: 1.3 m high, the nearest player's head filled the middle; 2.6 m up and further right, they stand below the beast.)
+    p.shot(5.30, 7.0, (5.4, 2.6, 13.8), (0, 3.0, 2.0), 50, eye_to=(5.0, 2.5, 13.1), look_to=(0, 3.1, 2.2), fov_to=48)
     p.locked((3.2, 1.9, 8.5), (0, 1.8, 1.0), 56)
     return p
 

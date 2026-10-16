@@ -24,6 +24,7 @@ The owner approved the plan as written, so every open question in plan section 7
 | 2 Concussed presentation | built: the victim's ochre rim (`Shaders/ConcussedVignette`), the double image in the grade, the muffle and a ringing cue (silent until the reworked sounds are released); observers see three typed basalt pebbles circling the head |
 | 3 Earthbound | built: he leans into a shove, grit kicks off his heels, two heel furrows scraped along the real slide (measured), grey then crumbled after 2.5 s |
 | 8 The creature | v2 modelled; turnaround sent for a verdict ([beast-turnaround-v2.png](beast-turnaround-v2.png)) |
+| 9 Cutscene, first films (2026-10-17, internal, not sent) | filmed on his screen in a Bayan Plaza match (`DanteDriftFilm`, seven rounds). Fixed: he floated the whole scene (the phase grounded his already-sunk first frame; it now keeps a negative first lift); every plate was under Bayan's raised court (the stage now measures the court); the seams grew from the stage origin, not the fist; the knock, eye, punch and rise shots aimed at a smaller body (now framed from his head, his real knocking hand and the beast's eyes, `HeroIntroductionScene.DanteFrame.cs`); the sea outshone the seams; the near embers were blobs; the stomp lost the players. Still open: the beast's left horn rises through him at 3.6 to 3.75 s, the eye close-up at 3.75 is blocked by rock, the victims' stumble is unreviewed. Not yet sent to the owner |
 
 ## 3 · Owner verdicts
 

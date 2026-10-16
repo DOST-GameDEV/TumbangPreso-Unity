@@ -428,6 +428,8 @@ namespace TumbangPreso.Visual
             // Nemu's FLOOD and LET THEM IN are computed from where the players stand (`HeroIntroductionScene.Nemu.cs`).
             if (_hero == "nemu") NemuFrame(index, Local(seconds), ref eye, ref look, ref fov);
             if (_hero == "rafi") RafiFrame(index, Local(seconds), ref eye, ref look, ref fov);
+            // Basilio's knock, eye, punch and rise are framed from his own body and the beast's eyes (`HeroIntroductionScene.DanteFrame.cs`).
+            if (_hero == "dante") DanteFrame(index, Local(seconds), ref eye, ref look, ref fov);
             // A hero's own blows shake the lens (Paete's palm and eruption); reduced effects keep it still.
             if (!_reducedEffects) { var shake = Shake(Local(seconds)); eye += shake; look += shake * .5f; }
             position = _ground + _facing * eye; focus = _ground + _facing * look;
