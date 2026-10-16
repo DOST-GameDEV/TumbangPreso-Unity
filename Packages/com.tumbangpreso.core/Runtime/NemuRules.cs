@@ -21,6 +21,20 @@ namespace TumbangPreso.Core
         /// <summary>Owner, 2026-10-11: *"maybe possessed players get 10% slow too"*. A flat 10 % off the walk, on top of the contest.</summary>
         public const float PossessedSpeedScale = 0.9f;
 
+        /// <summary>
+        /// DEAD WEIGHT, Nemu's passive (owner, 2026-10-16, replacing KURO! now that Kuro is gone): rivals near any of
+        /// Nemu's ghosts move 10 % slower, the dead clinging to them. First named COLD COMPANY with a frost ring; the owner
+        /// kept the slow and refused the ice (*"gusto ko ung slow js replace it"*), so its ring is her own smoke and violet.
+        /// One flat 10 % within the ring of any of her visible ghosts; several rings do not stack. The radius is PROPOSED,
+        /// NOT OBJECTED TO.
+        /// </summary>
+        public const float DeadWeightSpeedScale = 0.9f;
+        public const float DeadWeightRadius = 3.0f;
+
+        /// <summary>The speed share for a body whose nearest of the caster's ghosts is this far away, flat on the court.</summary>
+        public static float DeadWeightScale(float flatDistance)
+            => flatDistance >= 0f && flatDistance <= DeadWeightRadius ? DeadWeightSpeedScale : 1.0f;
+
         /// <summary>Owner, 2026-10-11: *"pls limit ult to below 6 seconds"*. The cutscene's authored length.</summary>
         public const float ProcessionSeconds = 5.8f;
 

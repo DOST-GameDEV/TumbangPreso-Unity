@@ -126,7 +126,7 @@ namespace TumbangPreso.Abilities
             Owner = OwnerSlot,
         };
 
-        private void OnEnable() { Live.Add(this); Camera.onPreCull += HideFromVictim; Camera.onPostRender += ShowAgain; }
+        private void OnEnable() { Live.Add(this); DeadWeightRings.Ensure(); Camera.onPreCull += HideFromVictim; Camera.onPostRender += ShowAgain; }
         private void OnDisable() { Live.Remove(this); Camera.onPreCull -= HideFromVictim; Camera.onPostRender -= ShowAgain; }
 
         /// <summary>

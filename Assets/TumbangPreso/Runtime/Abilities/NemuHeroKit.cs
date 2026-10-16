@@ -20,12 +20,9 @@ namespace TumbangPreso.Abilities
         /// <summary>Phantom Veil is gone; a rejoiner has no veil to restore.</summary>
         public bool RestoreJoiningVeil(CharacterMotor motor, float remaining) => false;
 
-        // Kuro's current Wiki passive gives one 10 percent bonus while a basic
-        // ability is cooling down. Read the existing clocks so expiry, round
-        // resets and authoritative corrections cannot leave a stale bonus.
-        public override float MovementSpeedScale =>
-            Skill1?.CooldownRemaining > 0f || AttackingSkill?.CooldownRemaining > 0f ||
-            DefendingSkill?.CooldownRemaining > 0f ? 1.1f : 1f;
+        // Her passive is DEAD WEIGHT (owner 2026-10-16): rivals near her ghosts are slowed, read on their own bodies
+        // (`CharacterMotor.DeadWeightSpeedScale`). The old KURO! bonus to her own speed went with Kuro. The shared
+        // basic cooldown below is a kit rule, kept.
 
         private void ShareBasicCooldown(float seconds, bool mayLower)
         {

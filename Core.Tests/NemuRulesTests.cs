@@ -21,6 +21,16 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
+        public void DeadWeightIsTenPercentInsideTheRingAndNothingOutside()
+        {
+            Assert.Equal(0.9f, NemuRules.DeadWeightSpeedScale); // owner: "move 10% slower"
+            Assert.Equal(0.9f, NemuRules.DeadWeightScale(0f));
+            Assert.Equal(0.9f, NemuRules.DeadWeightScale(NemuRules.DeadWeightRadius));
+            Assert.Equal(1.0f, NemuRules.DeadWeightScale(NemuRules.DeadWeightRadius + 0.01f));
+            Assert.Equal(1.0f, NemuRules.DeadWeightScale(-1f)); // no ghost at all
+        }
+
+        [Fact]
         public void EverySeatSurgesSixTimesClearOfTheSettleAndTheLeave()
         {
             for (int seat = 0; seat < 4; seat++)

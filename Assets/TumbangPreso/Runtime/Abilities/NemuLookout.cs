@@ -104,7 +104,7 @@ namespace TumbangPreso.Abilities
             _leaving = true; _leftAt = _age;
         }
 
-        private void OnEnable() => Live.Add(this);
+        private void OnEnable() { Live.Add(this); DeadWeightRings.Ensure(); }
         private void OnDisable() => Live.Remove(this);
         private void OnDestroy() { _fx?.Dispose(); _fx = null; }
 

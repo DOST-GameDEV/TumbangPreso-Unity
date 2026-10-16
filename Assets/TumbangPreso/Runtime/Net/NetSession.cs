@@ -623,7 +623,9 @@ namespace TumbangPreso.Net
         // 164 (2026-10-15): SKITTER waits by her holding the slipper until she takes it with INTERACT (no longer set down
         // beside her; it follows her past its 8 s), and its ghost frame carries that as flag 8 (offering). A 163 peer would
         // refuse those frames and expect the slipper on the ground.
-        public const int ProtocolVersion = 164;
+        // 165 (2026-10-16): Nemu's passive is DEAD WEIGHT (rivals within 3 m of her visible ghosts move 10 % slower),
+        // replacing KURO!'s 10 % on her own speed. The wire is unchanged; a 164 peer would move its body at a different speed.
+        public const int ProtocolVersion = 165;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

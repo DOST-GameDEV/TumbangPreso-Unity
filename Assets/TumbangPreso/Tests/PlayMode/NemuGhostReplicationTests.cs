@@ -144,6 +144,37 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(NemuLookout.Live.Any(g => g.isActiveAndEnabled));
             Assert.IsFalse(NemuBlindfold.Live.Any(g => g.isActiveAndEnabled));
         }
+        /// <summary>DEAD WEIGHT (owner 2026-10-16): rivals near her visible ghosts are 10 % slower, once however many rings
+        /// they stand in; never Nemu herself; never round a hidden (armed) DON'T LOOK ghost; and every chilling ghost has
+        /// its smoke ring on the court. Bodies stand at x = 0 (Nemu), 3, 6 and 9.</summary>
+        [UnityTest] public IEnumerator DeadWeightSlowsRivalsNearHerVisibleGhostsOnly()
+        {
+            var bodies = Enumerable.Range(0, 4).Select(s => GameServices.Round.Players.Single(p => p.PlayerSlot == s)).ToArray();
+            foreach (var b in bodies) Assert.AreEqual(1f, b.DeadWeightSpeedScale, $"seat {b.PlayerSlot} before any ghost");
+
+            var skitter = NemuSkitter.Summon(new Vector3(3, 0, 2), Vector3.forward, 0);
+            yield return null;
+            Assert.AreEqual(NemuRules.DeadWeightSpeedScale, bodies[1].DeadWeightSpeedScale, 1e-4f, "2 m from Skitter");
+            Assert.AreEqual(1f, bodies[2].DeadWeightSpeedScale, "3.6 m away, outside the ring");
+            Assert.AreEqual(1, DeadWeightRingsCount(), "Skitter's ring");
+
+            skitter.Teleport(new Vector3(0, 0, 1));
+            Assert.AreEqual(1f, bodies[0].DeadWeightSpeedScale, "never her own ghost on herself");
+            Assert.AreEqual(1f, bodies[1].DeadWeightSpeedScale, "3.2 m away now");
+
+            skitter.Teleport(new Vector3(3, 0, 1));
+            NemuBlindfold.Place(new Vector3(3, 0, -1), Vector3.forward, 0, 0f);
+            Assert.AreEqual(NemuRules.DeadWeightSpeedScale, bodies[1].DeadWeightSpeedScale, 1e-4f, "two rings do not stack");
+
+            NemuBlindfold.Place(new Vector3(6, 0, 1), Vector3.forward, 0, 4f);
+            Assert.AreEqual(1f, bodies[2].DeadWeightSpeedScale, "an armed, hidden trap must not give itself away");
+            NemuBlindfold.Place(new Vector3(9, 0, 1), Vector3.forward, 0, 0f);
+            Assert.AreEqual(NemuRules.DeadWeightSpeedScale, bodies[3].DeadWeightSpeedScale, 1e-4f, "an arming trap is still visible");
+            Assert.AreEqual(NemuRules.DeadWeightSpeedScale, bodies[3].StatusSpeedScale, 1e-4f, "it reaches the body's speed");
+            yield return null;
+            Assert.AreEqual(2, DeadWeightRingsCount(), "Skitter and the arming trap; Place retires her earlier traps");
+        }
+        private static int DeadWeightRingsCount() => TumbangPreso.Visual.DeadWeightRings.Count;
         [Test] public void ExpiredHydrationAndChangedGhostKindsCannotResurrectOldState()
         {
             var pose = Pose(1, 901); pose.Age = 29.8f;
