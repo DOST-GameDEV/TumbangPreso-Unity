@@ -49,6 +49,17 @@ namespace TumbangPreso.PlayTests
                     text.Append(colour.a.ToString("R",CultureInfo.InvariantCulture)).Append(';');
             return text.ToString();
         }
+        [Test] public void TheFuseMarksEveryBandBeforeItsBlastAndTheDustStandsOnTheHitArea()
+        {
+            var view=Build(Vector3.zero,Vector3.forward,8,16);
+            Assert.IsNotNull(view.Live,"The live cascade rides the wave.");
+            view.StepTo(.45f);
+            Assert.GreaterOrEqual(view.Live.MarkCount,3,"By 0.45 s the fuse has run past the last band: the three still to blast are marked.");
+            view.StepTo(.01f+2*GeoRules.DriftInterval+.1f);
+            var b=view.Live.DustEdgeBounds(2);
+            Assert.AreEqual(16f,b.size.x,.05f,"The dust edge spans the band's full width (the real hit area).");
+            Assert.AreEqual(16f/GeoRules.DriftBlasts,b.size.z,.05f,"And exactly the band's depth.");
+        }
         [Test] public void FiveBandsHaveDistinctAuthoredGeometry()
         {
             var view=Build(Vector3.zero,Vector3.forward);
