@@ -81,6 +81,25 @@ namespace TumbangPreso.PlayTests
             yield return new WaitForSeconds(1.3f);
             Assert.IsNull(Object.FindAnyObjectByType<Visual.DanteStatusShatter>(),"The shell crumbles into the court and is gone.");
         }
+        [UnityTest] public IEnumerator BastionStandsAsTheReflectAreaAndSinksWhenItEnds()
+        {
+            yield return Open();
+            var ctx=new AbilityContext(_actor,_actor.GetComponent<Carrier>(),_actor.GetComponent<CombatVerbs>());
+            var kit=_actor.AbilitySystem.Kit;_actor.AbilitySystem.enabled=false;
+            kit.DefendingSkill.Activate(ctx);
+            yield return new WaitForSeconds(.6f);
+            var wall=Object.FindAnyObjectByType<Visual.DanteBastionWall>();
+            Assert.IsNotNull(wall,"Bastion stands a wall.");
+            Assert.AreEqual(7,wall.SlabCount,"Seven slabs from bastion.glb.");
+            var field=wall.transform.Find("BastionHeatField");
+            Assert.IsNotNull(field,"The heat field.");
+            var b=field.GetComponent<Renderer>().bounds;
+            Assert.AreEqual(GeoRules.BarrierWidth,b.size.x,.05f,"The field is exactly as wide as the reflect area.");
+            Assert.AreEqual(Visual.DanteBastionWall.FieldTop,b.max.y-_actor.transform.position.y+(_actor.transform.position.y-Slipper.GroundY(_actor.transform.position)),.15f);
+            kit.Tick(ctx,GeoRules.BarrierSeconds+.1f);
+            yield return new WaitForSeconds(.8f);
+            Assert.IsTrue(wall==null,"It sinks into the court and is gone.");
+        }
         [UnityTest] public IEnumerator PauseAndWarmupStillRefuseCleanse()
         {
             yield return Open();_actor.ApplyStagger(2.5f,StunElement.Ice,int.MaxValue);

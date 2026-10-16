@@ -342,6 +342,41 @@ def beast():
     return nodes
 
 
+# ---------------------------------------------------------------------------------------------
+# BASTION's parapet (plan section 4): seven waist-high basalt slabs across his front, rising centre first.
+# ---------------------------------------------------------------------------------------------
+# Typed, one row per slab, left to right in GAME space (x is mirrored on write): centre x, width, height, thickness, yaw,
+# lean (degrees toward him), and its seam stroke on the front face [(u, v, half width)] with u across, v up from the foot.
+# The row spans 3.4 m (`GeoRules.BarrierWidth`); its foot is at y 0 and its front faces +Z (away from him).
+BASTION_SLABS = [
+    (-1.47, 0.44, 0.80, 0.30, -9.0, 4.0, [(-0.10, 0.10, 0.018), (0.02, 0.38, 0.024), (-0.06, 0.66, 0.014)]),
+    (-0.99, 0.50, 0.88, 0.34, -5.0, 2.0, [(0.12, 0.08, 0.020), (0.00, 0.34, 0.026), (0.08, 0.58, 0.020), (-0.04, 0.78, 0.012)]),
+    (-0.49, 0.48, 0.93, 0.32, -2.0, 5.0, [(-0.08, 0.12, 0.022), (0.06, 0.44, 0.028), (-0.02, 0.80, 0.014)]),
+    ( 0.01, 0.54, 0.98, 0.36,  1.0, 3.0, [(0.04, 0.06, 0.024), (-0.08, 0.36, 0.030), (0.06, 0.62, 0.026), (0.00, 0.88, 0.014)]),
+    ( 0.52, 0.46, 0.91, 0.31,  3.0, 6.0, [(0.10, 0.14, 0.020), (-0.02, 0.48, 0.026), (0.07, 0.78, 0.012)]),
+    ( 1.00, 0.49, 0.85, 0.33,  6.0, 2.0, [(-0.06, 0.08, 0.022), (0.06, 0.40, 0.024), (-0.04, 0.70, 0.014)]),
+    ( 1.47, 0.42, 0.78, 0.29, 10.0, 4.0, [(0.08, 0.12, 0.016), (-0.04, 0.42, 0.022), (0.02, 0.64, 0.012)]),
+]
+
+
+def bastion():
+    nodes = []
+    root = Node("bastion"); nodes.append(root)
+    for k, (cx, w, h, d, yaw, lean, seam) in enumerate(BASTION_SLABS):
+        # Write in this file's space: the game's +x is this file's -x.
+        slab = Node("slab-%d" % k, origin=(-cx, 0.0, 0.0), parent="bastion", yaw=-yaw); nodes.append(slab)
+        slab.obox((0.0, h * 0.5, 0.0), (w, h, d), BASALT if k % 2 == 0 else WARM, pitch=0.0, roll=lean * (1 if k % 2 else -1) * 0.3)
+        # A capstone skewed on top, and one chip off a corner, each its own.
+        slab.obox((0.03 * (k % 3 - 1), h + 0.04, -0.02), (w * 0.86, 0.09, d * 1.08), DARK, yaw=4.0 * (k % 2 * 2 - 1))
+        slab.obox((w * 0.38 * (1 if k % 2 else -1), h - 0.06, d * 0.30), (0.12, 0.12, 0.12), MID, yaw=20.0, roll=14.0)
+        # A dust skirt at its foot where it broke up out of the court.
+        slab.obox((0.0, 0.03, d * 0.62), (w * 0.9, 0.06, 0.16), DUST, yaw=6.0 * (k % 2 * 2 - 1))
+        g = Glow("glow-seam-%d" % k, parent="slab-%d" % k); nodes.append(g)
+        g.cut((0.0, 0.0, d * 0.5 + 0.002), (0, 0, 1), (-1, 0, 0), seam, 0.09)
+    write(os.path.join(OUT, "bastion.glb"), nodes)
+    return nodes
+
+
 def measure(nodes):
     """The beast's extents (this file's space, so -X is its right), for the cutscene's numbers."""
     lo, hi = [1e9] * 3, [-1e9] * 3
@@ -366,4 +401,5 @@ if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     built = beast() if (not args or "beast" in args) else None
+    if not args or "bastion" in args: bastion()
     if "--measure" in sys.argv and built: measure(built)

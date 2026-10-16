@@ -138,7 +138,7 @@ namespace TumbangPreso.Abilities
         private sealed class Barrier : HeroAbility
         {
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
-            private GameObject _field;
+            private Visual.DanteBastionWall _field;
             private CharacterMotor _owner;
 
             public Barrier()
@@ -152,8 +152,9 @@ namespace TumbangPreso.Abilities
             protected override void OnActivate(AbilityContext ctx)
             {
                 _owner = ctx.Motor;
-                if (_field != null) UnityEngine.Object.Destroy(_field);
-                _field = DanteBarrierVisual.Build(ctx.Motor.transform);
+                if (_field != null) UnityEngine.Object.Destroy(_field.gameObject);
+                // Seven waist-high slabs and a see-through heat field, exactly the reflect area (`DanteBastionWall`).
+                _field = Visual.DanteBastionWall.Build(ctx.Motor.transform, Duration);
                 NetCue.Play("guard_block", ctx.Position);
             }
 
@@ -175,8 +176,10 @@ namespace TumbangPreso.Abilities
                 }
             }
 
-            protected override void OnEnd(AbilityContext ctx) { if (_field != null) UnityEngine.Object.Destroy(_field); _field = null; }
-            protected override void OnCancelled(AbilityContext ctx) => OnEnd(ctx);
+            // The wall stays where it stood and sinks into the court, outside first.
+            protected override void OnEnd(AbilityContext ctx) { if (_field != null) _field.Release(); _field = null; }
+            // A round reset or an interruption removes it at once: no wall sinks into the next round.
+            protected override void OnCancelled(AbilityContext ctx) { if (_field != null) UnityEngine.Object.Destroy(_field.gameObject); _field = null; }
         }
 
         // ================================================================== EARTHQUAKE (ultimate)
