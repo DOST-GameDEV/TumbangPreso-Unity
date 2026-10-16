@@ -53,6 +53,36 @@ namespace TumbangPreso.Visual
         }
 
         private static readonly Color Dust = new Color(.42f, .32f, .22f);
+        private static readonly Color Basalt = new Color(.31f, .27f, .24f);
+
+        // A crust bursting: six chunks, typed (side, up, size, speed, seed, dust or basalt).
+        private static readonly (float side, float up, float size, float speed, int seed, bool dust)[] BurstRows =
+        {
+            (-.7f, 1.6f, .070f, 2.4f, 4, false), (.5f, 2.2f, .060f, 2.9f, 8, true), (.1f, 1.1f, .085f, 1.9f, 15, false),
+            (-.2f, 2.6f, .050f, 3.1f, 18, true), (.8f, 1.3f, .065f, 2.2f, 25, false), (-.9f, .9f, .055f, 1.7f, 31, true),
+        };
+
+        /// <summary>
+        /// Basalt chunks thrown from <paramref name="at"/> along <paramref name="push"/>: Boulder's crust bursting off the
+        /// slipper on a hit (six), cracking off where it lands (four, <paramref name="dry"/>), or flaking away (three, small).
+        /// </summary>
+        public static DanteStatusShatter Rubble(Vector3 at, Vector3 push, int count, float scale, bool dry)
+        {
+            var go = new GameObject("~BoulderCrust");
+            go.transform.position = at;
+            var fx = go.AddComponent<DanteStatusShatter>();
+            push.y = 0f; push = push.sqrMagnitude > 1e-4f ? push.normalized : Vector3.forward;
+            var side = Vector3.Cross(Vector3.up, push);
+            float ground = Slipper.GroundY(at);
+            for (int i = 0; i < count && i < BurstRows.Length; i++)
+            {
+                var r = BurstRows[i];
+                float speed = r.speed * (dry ? .55f : 1f);
+                fx.Add(at, (push + side * r.side).normalized * speed + Vector3.up * r.up * (dry ? .6f : 1f), MeshFor(Shape.Pebble, r.seed),
+                       r.dust ? Dust : Basalt, r.size * scale, ground, r.seed, Shape.Pebble);
+            }
+            return fx;
+        }
 
         public static Color ColourOf(StatusKind kind)
         {

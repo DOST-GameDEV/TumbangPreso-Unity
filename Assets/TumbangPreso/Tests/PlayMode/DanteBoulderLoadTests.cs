@@ -47,6 +47,16 @@ namespace TumbangPreso.PlayTests
             if(_pinned)SceneFlow.PinSelectedRules(_rules);else SceneFlow.UnpinSelectedRules();
         }
         private Renderer Inlay()=>_shoe.GetComponentsInChildren<Renderer>(true).FirstOrDefault(r=>r.name=="BoulderStoneInlay");
+        [UnityTest] public IEnumerator TheCrustGathersClosesInThreeStepsAndBurstsOnAHit()
+        {
+            Kit.AttackingSkill.Activate(Context);yield return null;yield return null;
+            Assert.IsNotNull(Object.FindAnyObjectByType<TumbangPreso.Visual.DanteBoulderGrit>(),"Grit lifts off the court into his palm.");
+            var block=new MaterialPropertyBlock();
+            Inlay().GetPropertyBlock(block);Assert.Less(block.GetFloat("_Creep"),3f,"The crust is still closing.");
+            yield return new WaitForSeconds(.6f);
+            Inlay().GetPropertyBlock(block);Assert.AreEqual(3f,block.GetFloat("_Creep"),"Closed over in three steps.");
+            Assert.AreEqual(0f,block.GetFloat("_Cool"),"Molten until the last 3 s.");
+        }
         [UnityTest] public IEnumerator NormalAffinityLeavesTheShoeUntouched()
         {
             var filter=_shoe.GetComponentInChildren<MeshFilter>();var mesh=filter.sharedMesh;var materials=filter.GetComponent<Renderer>().sharedMaterials;
