@@ -25,6 +25,7 @@ Shader "TumbangPreso/ColourGrade"
         _Exposure ("Tonemap Exposure", Range(0, 4)) = 0
         _White ("Tonemap White", Range(0.5, 8)) = 1.9
         _Chromatic ("Impact Chromatic Split", Range(0, 1)) = 0
+        _ConcussGhost ("Concussed double image (uv offset xy, weight z)", Vector) = (0, 0, 0, 0)
 
         // 0 is the flat horizontal split this pass shipped with, 1 is the radial one. See the
         // § THE SPLIT'S SHAPE note in the fragment. `Visual.ColourGrade` writes it off
@@ -52,6 +53,7 @@ Shader "TumbangPreso/ColourGrade"
             sampler2D _CueMask;
             UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
             float _HauntedSight;
+            float4 _ConcussGhost;
             float4 _HauntedViewScale;
             float _CueWorld,_CueSpeed,_CueTime,_CueEdges;
             float4 _CuePixels,_CuePips[8];
@@ -270,6 +272,10 @@ Shader "TumbangPreso/ColourGrade"
                 half4 source = tex2D(_MainTex, i.uv);
                 source.r = tex2D(_MainTex, i.uv + split).r;
                 source.b = tex2D(_MainTex, i.uv - split).b;
+                // CONCUSSED, the victim's own view (`Visual.ConcussedPerception`): a second copy of the frame a couple of
+                // pixels off, swaying with their aim wobble. A double image, not a blur: the court stays sharp under it.
+                if (_ConcussGhost.z > 0.0)
+                    source.rgb = lerp(source.rgb, tex2D(_MainTex, i.uv + _ConcussGhost.xy).rgb, _ConcussGhost.z);
                 source.rgb += tex2D(_BloomTex, i.uv).rgb * _BloomIntensity;
 
                 // ⚠️ TONEMAP FIRST, THEN THE BCS ADJUSTMENT. That is the order Godot's

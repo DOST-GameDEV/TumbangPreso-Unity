@@ -218,7 +218,8 @@ namespace TumbangPreso.Visual
             && EffectiveChromatic <= 0.0f
             && BrightLookWeight <= 0.0f
             && !HauntedSight
-            && PossessedSight <= 0.0f;
+            && PossessedSight <= 0.0f
+            && ConcussedPerception.Weight(_camera) <= 0.0f;
 
         /// <summary>
         /// ⚠️ A NO-OP GRADE STILL COSTS A FULL-SCREEN BLIT, so it is skipped outright. This runs
@@ -271,6 +272,10 @@ namespace TumbangPreso.Visual
             _material.SetFloat(ChromaticId, EffectiveChromatic);
             bool haunted = HauntedSight;
             _material.SetFloat("_HauntedSight", haunted ? 1f : 0f);
+            // Basilio's CONCUSSED: the victim's double image (`ConcussedPerception`).
+            float concussed = ConcussedPerception.Weight(_camera);
+            Vector2 ghost = concussed > 0f ? ConcussedPerception.GhostOffset(_camera, source.width, source.height) : Vector2.zero;
+            _material.SetVector("_ConcussGhost", new Vector4(ghost.x, ghost.y, concussed * ConcussedPerception.GhostWeight, 0f));
             if (haunted)
             {
                 // Use this camera's projection, including its current aspect/FOV and lens

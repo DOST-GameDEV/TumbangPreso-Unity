@@ -7,8 +7,8 @@ namespace TumbangPreso.UI
     /// <summary>State-driven edge effects using the existing game shaders on new native objects.</summary>
     public sealed class TumpHudEffects : MonoBehaviour
     {
-        private Image _danger, _caught, _possessed, _blinded;
-        private Material _possessedMaterial, _blindedMaterial;
+        private Image _danger, _caught, _possessed, _blinded, _concussed;
+        private Material _possessedMaterial, _blindedMaterial, _concussedMaterial;
         private float _possessedPresence;
         private Vector2 _possessedDir = Vector2.up;
         private NemuRules.Phase _possessedPhase;
@@ -29,6 +29,7 @@ namespace TumbangPreso.UI
         {
             _danger = Effect(root, "DangerEdges", "TumbangPreso/DownedVignette", out _dangerMaterial);
             _caught = Effect(root, "CaughtEdges", "TumbangPreso/FrostVignette", out _caughtMaterial);
+            _concussed = Effect(root, "ConcussedEdges", "TumbangPreso/ConcussedVignette", out _concussedMaterial);
             _possessed = Effect(root, "PossessedEdges", "TumbangPreso/PossessedVignette", out _possessedMaterial);
             // Over every other edge effect: the ghost is on the lens.
             _blinded = Effect(root, "BlindedCloth", "TumbangPreso/DontLookBlind", out _blindedMaterial);
@@ -50,6 +51,7 @@ namespace TumbangPreso.UI
             float dt = Time.unscaledDeltaTime;
             TickPossessed(local, spectator, dt);
             TickBlinded(local, spectator);
+            TickConcussed(local, spectator);
             var f = OwnerUiTheme.Current;
             var round = GameServices.Round;
             bool threatened = !spectator && local != null && !local.IsDefender && local.IsTaggable()
@@ -193,8 +195,37 @@ namespace TumbangPreso.UI
             _blinded.color = Color.white;
         }
 
+        /// <summary>True while the local player's own screen carries Concussed's ochre rim.</summary>
+        public bool ConcussedScreenVisible => _concussed != null && _concussed.enabled;
+        private bool _wasConcussed;
+
+        /// <summary>
+        /// CONCUSSED, ON THE VICTIM'S OWN SCREEN (Basilio's Boulder and Continental Drift, `Shaders/ConcussedVignette`): a chipped
+        /// dust-ochre rim that throbs slowly, with the double image (`Visual.ConcussedPerception`, in the grade) and a high
+        /// ringing on their ears only. From the replicated Concussed clock. It is information, not a flash: Reduce visual
+        /// effects keeps the rim and stills the throb.
+        /// </summary>
+        private void TickConcussed(CharacterMotor local, bool spectator)
+        {
+            bool on = !spectator && local != null && local.IsConcussed && local.IsLocalViewer;
+            // The ringing is theirs alone; everyone else hears the status land on the body (`sfx_status_concussed`).
+            if (on && !_wasConcussed) GameServices.Audio?.PlayUi("sfx_status_concussed_ring");
+            _wasConcussed = on;
+            if (_concussed == null) return;
+            float presence = on ? Visual.ConcussedPerception.Envelope(local.ConcussedLeft) : 0f;
+            _concussed.enabled = presence > .001f;
+            if (!_concussed.enabled) return;
+            _concussedMaterial.SetFloat("_Presence", presence);
+            _concussedMaterial.SetFloat("_Clock", Time.unscaledTime % 1000f);
+            _concussedMaterial.SetFloat("_Calm", Settings.SettingsStore.Current.ReducedEffects ? 1f : 0f);
+            var size = _concussed.rectTransform.rect.size;
+            if (size.y > 0) _concussedMaterial.SetFloat("_Aspect", size.x / size.y);
+            _concussed.color = Color.white;
+        }
+
         private void OnDestroy()
         {
+            if (_concussedMaterial != null) Destroy(_concussedMaterial);
             EyesCoveredOnScreen = false;
             if (_blindedMaterial != null) Destroy(_blindedMaterial);
             if (_possessedMaterial != null) Destroy(_possessedMaterial);

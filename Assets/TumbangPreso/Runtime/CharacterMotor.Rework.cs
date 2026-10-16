@@ -66,7 +66,7 @@ namespace TumbangPreso
             _concussedLeft = StatusRules.Refresh(_concussedLeft, seconds);
             if (fresh)
             {
-                Visual.DizzyStars.Attach(transform, seconds);
+                Visual.ConcussedPebbles.Attach(this);
                 RaiseStatus(StatusKind.Concussed);
             }
         }
@@ -190,7 +190,7 @@ namespace TumbangPreso
             _disorientedLeft = Mathf.Clamp(disoriented, 0.0f, StatusRules.DisorientedSeconds + 0.01f);
             _vulnerableLeft = Mathf.Clamp(vulnerable, 0.0f, StatusRules.VulnerableSeconds + 0.01f);
             if (Finite(fearFrom)) _fearFrom = fearFrom;
-            if (c) { Visual.DizzyStars.Attach(transform, _concussedLeft); RaiseStatus(StatusKind.Concussed); }
+            if (c) { Visual.ConcussedPebbles.Attach(this); RaiseStatus(StatusKind.Concussed); }
             if (f) RaiseStatus(StatusKind.Feared);
             if (d) RaiseStatus(StatusKind.Disoriented);
             if (v) RaiseStatus(StatusKind.Vulnerable);

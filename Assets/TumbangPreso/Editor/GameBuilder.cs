@@ -862,6 +862,10 @@ namespace TumbangPreso.EditorTools
                 // Stripped, the victim gets no hands and no direction cue while every observer still sees the rider.
                 "TumbangPreso/PossessedVignette",
 
+                // Basilio's CONCUSSED: the victim's ochre rim (`UI.TumpHudEffects`), reached through `Shader.Find`.
+                // Stripped, the victim feels nothing but the slow.
+                "TumbangPreso/ConcussedVignette",
+
                 // Nemu's DON'T LOOK: the blinded player's own screen (`UI.TumpHudEffects`), reached through `Shader.Find`.
                 // Stripped, nothing covers the victim's eyes and the blind is only a slow.
                 "TumbangPreso/DontLookBlind",
