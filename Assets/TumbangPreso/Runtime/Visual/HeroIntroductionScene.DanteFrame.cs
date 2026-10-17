@@ -19,7 +19,8 @@ namespace TumbangPreso.Visual
                 {
                     // THE PLANT: low and close at his right, the fists going into the court.
                     var fists = DnFistMid;
-                    eye = new Vector3(1.9f, DnFloat + .55f, 1.9f);
+                    // Pushing in as they go in.
+                    eye = Vector3.Lerp(new Vector3(2.1f, DnFloat + .6f, 2.1f), new Vector3(1.75f, DnFloat + .5f, 1.75f), Ease(0f, DnCracks, t));
                     look = new Vector3(fists.x * .5f, Mathf.Lerp(head.y - .2f, DnFloat + .35f, Ease(0f, DnPlant, t)), .45f);
                     fov = 46f;
                     break;
@@ -40,9 +41,11 @@ namespace TumbangPreso.Visual
                 {
                     // THE RISE: a low hero angle in front, looking up at him and the boulder fists overhead (film r35: at 2.4 m
                     // the right boulder hid his face).
-                    eye = new Vector3(2.2f, DnFloat + .35f, 3.6f);
+                    // A slow push in and down as he stands, so the boulder fists grow over the lens.
+                    float u = Ease(DnRise - .2f, DnLeap, t);
+                    eye = Vector3.Lerp(new Vector3(2.4f, DnFloat + .45f, 4.0f), new Vector3(2.1f, DnFloat + .28f, 3.4f), u);
                     look = head + new Vector3(0f, .45f, 0f);
-                    fov = 48f;
+                    fov = Mathf.Lerp(50f, 46f, u);
                     break;
                 }
                 case 3:
@@ -58,10 +61,11 @@ namespace TumbangPreso.Visual
                     // THE SLAM AND THE GROUND RISING: high behind him, down the lane at the real players; he comes down into
                     // the frame, the first band heaves toward them, and the lens leans after it as it rises (film r38: low and
                     // close, the first band's slabs filled the frame and nothing read).
-                    float u = Ease(DnSlam, DnEnd, t);
-                    eye = Vector3.Lerp(new Vector3(1.3f, DnFloat + 3.0f, -3.4f), new Vector3(1.1f, DnFloat + 3.3f, -2.4f), u);
+                    // The slam hits the lens too: it snaps in (the field narrows) and dips, then opens out as the ground rises.
+                    float u = Ease(DnSlam, DnEnd, t), hit = DanteKick(t, DnSlam, 1f, .22f);
+                    eye = Vector3.Lerp(new Vector3(1.3f, DnFloat + 3.0f, -3.4f), new Vector3(1.1f, DnFloat + 3.3f, -2.4f), u) + Vector3.down * (.3f * hit);
                     look = new Vector3(0f, DnFloat + .4f, Mathf.Lerp(5.0f, 7.0f, u));
-                    fov = 56f;
+                    fov = 56f - 8f * hit + 4f * u;
                     break;
                 }
             }

@@ -67,10 +67,23 @@ namespace TumbangPreso.Visual
             (-70f, 2.4f, .9f, 1.02f, 47), (75f, 2.2f, .65f, 1.08f, 49), (-125f, 2.0f, 1.0f, .94f, 51), (130f, 2.3f, .45f, 1.0f, 53),
         };
 
+        // EMBERS (owner on v8: *"kinda boring to look at compared to other characrers"*): sparks lift off the cracks and stream up
+        // into his fists while the earth answers, and spray off the slam down the lane. (crack they rise from, seconds per trip,
+        // phase, arc height, size; at the slam: degrees off forward, out speed, up speed.)
+        private static readonly (int crack, float period, float phase, float arc, float size, float spray, float out_, float up)[] DnEmberRows =
+        {
+            (0, .82f, .05f, .55f, .10f, -38f, 4.2f, 4.6f), (4, .78f, .55f, .65f, .09f,  34f, 4.6f, 5.2f), (2, .90f, .30f, .40f, .11f, -12f, 5.4f, 3.8f),
+            (6, .86f, .80f, .50f, .08f,  15f, 5.1f, 4.4f), (1, .74f, .15f, .70f, .09f, -62f, 3.6f, 5.6f), (5, .94f, .65f, .45f, .10f,  58f, 3.9f, 5.0f),
+            (3, .80f, .40f, .60f, .08f, -24f, 4.9f, 6.0f), (7, .88f, .95f, .35f, .11f,  26f, 4.4f, 3.6f), (0, .96f, .70f, .75f, .07f,  -4f, 6.0f, 4.9f),
+            (4, .84f, .20f, .50f, .09f,   6f, 5.7f, 5.5f), (2, .76f, .85f, .60f, .08f, -48f, 4.0f, 4.2f), (6, .92f, .45f, .40f, .10f,  45f, 4.3f, 4.7f),
+            (1, .88f, .10f, .55f, .07f, -78f, 3.2f, 5.3f), (5, .80f, .60f, .70f, .08f,  80f, 3.3f, 4.1f), (3, .86f, .35f, .45f, .09f, -30f, 5.9f, 3.9f),
+            (7, .90f, .75f, .50f, .08f,  20f, 6.2f, 5.8f),
+        };
+
         private readonly List<int> _dnGauntlet = new List<int>(8), _dnFistGlow = new List<int>(2), _dnCracks = new List<int>(8),
                                    _dnTearDust = new List<int>(8), _dnPebbles = new List<int>(12), _dnLift = new List<int>(4),
-                                   _dnPlantStars = new List<int>(2), _dnSlamDust = new List<int>(6);
-        private int _dnSlamStar, _dnSlamRing, _dnLiftStar, _dnLiftRing, _dnGroundGlow;
+                                   _dnPlantStars = new List<int>(2), _dnSlamDust = new List<int>(6), _dnEmbers = new List<int>(16);
+        private int _dnSlamStar, _dnSlamRing, _dnSlamRingOuter, _dnLiftStar, _dnLiftRing, _dnGroundGlow;
         private DanteDriftLive _dnLane;
         private Material _dnImpact;
         private Vector3? _dnFistAt;
@@ -104,6 +117,8 @@ namespace TumbangPreso.Visual
             // THE SLAM: a crack star and a ring under the fists, and the crack that starts down the lane (play's fuse goes on).
             _dnSlamStar = AddGlow("DanteSlamStar", molten, billboard: false, falloff: 1.4f, core: .6f);
             _dnSlamRing = AddGlow("DanteSlamRing", new Color(1f, .5f, .12f), DnRingMesh, billboard: false, band: true, falloff: 1.2f, core: .4f);
+            _dnSlamRingOuter = AddGlow("DanteSlamRingOuter", new Color(1f, .42f, .08f), DnRingMesh, billboard: false, band: true, falloff: 1.4f, core: .3f);
+            for (int i = 0; i < DnEmberRows.Length; i++) _dnEmbers.Add(AddGlow("DanteEmber" + i, new Color(1f, .58f, .16f), falloff: 2.4f, core: .7f));
             // Play's own cascade, on the live lane, measured exactly as the wave will measure it.
             var origin = _source != null ? _source.transform.position : _root.transform.position;
             Abilities.DanteDriftWave.Lane(origin, _root.transform.forward, out float halfWidth, out float reach);
@@ -216,13 +231,18 @@ namespace TumbangPreso.Visual
             return new Vector3(Mathf.Sin(t * 71f), Mathf.Sin(t * 93f + 1.3f), 0) * size;
         }
 
-        /// <summary>The backdrop steps back as the earth answers, so the molten light reads; back up by the cut, as play is.</summary>
+        /// <summary>The backdrop steps back as the earth answers, so the molten light reads; back up by the cut, as play is. Every
+        /// hit flares it (the plant, each wave of stone landing, hardest the slam), so the beats land on the whole frame.</summary>
         private void DanteGrade(float t, out float brightness, out float saturation)
         {
             float back = Ease(DnCracks, DnWaves[0] + .2f, t) * (1f - Ease(DnSlam + .1f, DnEnd - .05f, t));
-            brightness = Mathf.Lerp(1f, .8f, back);
-            saturation = Mathf.Lerp(1f, .88f, back);
+            float beat = Mathf.Max(DnBeat(t, DnSlam, .3f), .4f * DnBeat(t, DnPlant, .25f));
+            foreach (var w in DnWaves) beat = Mathf.Max(beat, .3f * DnBeat(t, w + DnFly, .2f));
+            brightness = Mathf.Lerp(1f, .8f, back) + .24f * beat;
+            saturation = Mathf.Lerp(1f, .9f, back) + .14f * beat;
         }
+
+        private static float DnBeat(float t, float at, float length) => t < at ? 0f : Mathf.Exp(-3f * (t - at) / length);
 
         /// <summary>The impact frame: two frames, ink on molten orange, lines in to the slam.</summary>
         private void DantePostProcess(RenderTexture frame, Camera camera, float t)
@@ -365,6 +385,9 @@ namespace TumbangPreso.Visual
                           Quaternion.Euler(90f, 0f, 0f), age < 0f ? 0f : 1.4f * (1f - .5f * Mathf.Clamp01(age / .8f)));
                 float r = Mathf.Lerp(.3f, 3.6f, Mathf.Clamp01(age / .35f));
                 PlaceGlow(_dnSlamRing, DnFists + Vector3.up * .03f, new Vector3(r, 1f, r), Quaternion.identity, age < 0f ? 0f : 1.2f * (1f - Mathf.Clamp01(age / .4f)));
+                // A second, wider ring a beat behind the first: the shock carrying on out across the court.
+                float outer = age - .06f, ro = Mathf.Lerp(.5f, 6.5f, Ease(0f, .45f, outer));
+                PlaceGlow(_dnSlamRingOuter, DnFists + Vector3.up * .025f, new Vector3(ro, 1f, ro), Quaternion.identity, outer < 0f ? 0f : .9f * (1f - Mathf.Clamp01(outer / .5f)));
                 // Dust bursting out round the impact.
                 for (int i = 0; i < _dnSlamDust.Count; i++)
                 {
@@ -373,6 +396,29 @@ namespace TumbangPreso.Visual
                     var at = DnFists + new Vector3(Mathf.Sin(a), 0f, Mathf.Cos(a)) * (.4f + 1.8f * du) + Vector3.up * (puff * .4f);
                     Place(_dnSlamDust[i], at, age < 0f ? Vector3.zero : new Vector3(puff * 1.2f, 1f, puff), Quaternion.Euler(0f, a * Mathf.Rad2Deg, 0f) * Quaternion.Euler(90f, 0f, 0f),
                           age < 0f ? 0f : .85f * (1f - du * du));
+                }
+            }
+
+            // EMBERS: off the cracks into his fists while the earth answers; then sprayed off the slam, falling and dying out.
+            for (int i = 0; i < _dnEmbers.Count; i++)
+            {
+                var e = DnEmberRows[i];
+                if (t < DnSlam)
+                {
+                    float life = Ease(DnCracks + .15f, DnWaves[0] + .1f, t) * (1f - Ease(DnLeap - .1f, DnLeap + .15f, t));
+                    float c = Mathf.Repeat((t - DnCracks) / e.period + e.phase, 1f);
+                    var from = DnCrackEnd(e.crack) + Vector3.up * .05f;
+                    var to = DnFistPoint(DnGauntletRows[e.crack].fist);
+                    var at = Vector3.Lerp(from, to, c * c) + Vector3.up * (Mathf.Sin(c * Mathf.PI) * e.arc);
+                    PlaceGlow(_dnEmbers[i], at, Vector3.one * e.size * (1.2f - .6f * c), Quaternion.identity, life * 1.6f * Mathf.Sin(c * Mathf.PI));
+                }
+                else
+                {
+                    float a = t - DnSlam - .01f * i, way = e.spray * Mathf.Deg2Rad;
+                    var at = DnFists + new Vector3(Mathf.Sin(way) * e.out_, 0f, Mathf.Cos(way) * e.out_) * Mathf.Max(0f, a)
+                             + Vector3.up * (.1f + e.up * Mathf.Max(0f, a) - 4.9f * a * a);
+                    at.y = Mathf.Max(DnFloat + .04f, at.y);
+                    PlaceGlow(_dnEmbers[i], at, Vector3.one * e.size * 1.3f, Quaternion.identity, a < 0f ? 0f : 1.9f * (1f - Mathf.Clamp01(a / .75f)));
                 }
             }
 

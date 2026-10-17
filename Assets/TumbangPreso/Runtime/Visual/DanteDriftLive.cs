@@ -13,7 +13,10 @@ namespace TumbangPreso.Visual
     ///  * THE FUSE: a molten crack races out from his fists down the middle of the lane, just ahead of the bands.
     ///  * FIVE BANDS, one every `GeoRules.DriftInterval`: a row of basalt slabs heaves up across the band's full width (the hit
     ///    area), molten light in the gaps, dust at its front, rocks thrown; whoever stands on it is knocked away (`DanteDriftWave`).
-    ///  * The rubble holds, then sinks back into the court in two crumbling steps (stone never fades); the light cools away.
+    ///  * THE RECEDE (owner on v8: *"they all js recede in unison and disappear"*, *"how its done rnn looks so bad"*): band by band
+    ///    behind the wave, each slab on its own beat. It cracks with a shudder, tips toward the lane's middle, breaks into three
+    ///    pieces that slump into the court, and dust settles where it stood; the band's seams flare once as it breaks. Stone
+    ///    never fades: it goes into the court.
     ///  * Every viewer's own camera shakes by its distance to each band, and a few grains fall through their view.
     /// The look is the one the owner approved in the cutscene (*"i like how ult cutscene looks liek rn"*, *"i js want actual game
     /// to match it"*): its slab table, lit basalt with a fill, the soft molten glow. Nothing here runs on `Update`; it never
@@ -25,9 +28,12 @@ namespace TumbangPreso.Visual
 
         public static float BandAt(int k) => k * GeoRules.DriftInterval;
         private static float LastBand => BandAt(GeoRules.DriftBlasts - 1);
-        // The rubble holds, then sinks in two crumbling steps, gone before the wave's own end.
-        private static float HoldUntil => LastBand + .9f;
-        private static float GoneAt => GeoRules.DriftSeconds - .15f;
+        // THE RECEDE: each band starts breaking on its own beat, the first while the last still heaves (a ripple behind the wave);
+        // each slab waits up to `SlabWait` more (the middle first), then takes `SlabSink` to go into the court. The last band is
+        // gone at 2.8 s, before the wave's own end (3.0).
+        private static float SinkAt(int k) => BandAt(k) * .6f + 1.3f;
+        private const float SlabWait = .18f, SlabSink = .6f;
+        private static float BandGoneAt(int k) => SinkAt(k) + SlabWait + SlabSink;
         private const float FuseLead = .12f;          // the fuse reaches each band this long before it heaves
 
         // Each band's slabs across the lane: (across share -1 to 1, width share of a column, depth share, height m, tilt x, tilt z,
@@ -71,6 +77,7 @@ namespace TumbangPreso.Visual
             public float Start, End;                     // metres along the lane, as drawn (the first starts ahead of his fists)
             public readonly List<int> Rows = new List<int>(12);   // each slab's row in its band's table
             public readonly List<Transform> Slabs = new List<Transform>(12), Rocks = new List<Transform>(5), Dust = new List<Transform>(4);
+            public readonly List<Transform[]> Pieces = new List<Transform[]>(12);   // what each slab breaks into
             public readonly List<Material> DustMaterials = new List<Material>(4);
             public Glow Light;
         }
@@ -111,22 +118,32 @@ namespace TumbangPreso.Visual
 
         private bool _stage;
 
-        // THE STRIKE: a basalt pillar punching up out of the court under a player the band reaches, a molten star under it,
-        // shards and dust bursting off it; it holds, then crumbles back down into the court in two steps.
+        // THE STRIKE: a basalt column punching up out of the court under a player the band reaches, twice the band's height so it
+        // stands out of the slabs (owner on v8: *"It doesnt feel like it hits that hard for anyone"*). Three stacked chunks with
+        // molten light in the seams between them, a molten star and a ring racing out under it, shards and dust bursting off it.
+        // It holds, then comes apart from the top: the two upper chunks topple off and the base sinks into the court.
         private sealed class Strike
         {
-            public float At;
+            public float At, Yaw;
             public Vector3 Local;
-            public Transform Pillar;
-            public Glow Star;
-            public readonly List<Transform> Shards = new List<Transform>(6);
-            public readonly List<Transform> Dust = new List<Transform>(3);
-            public readonly List<Material> DustMaterials = new List<Material>(3);
+            public readonly Transform[] Chunks = new Transform[3];
+            public readonly Glow[] Core = new Glow[2];
+            public Glow Star, Ring;
+            public readonly List<Transform> Shards = new List<Transform>(10);
+            public readonly List<Transform> Dust = new List<Transform>(5);
+            public readonly List<Material> DustMaterials = new List<Material>(5);
         }
         private readonly List<Strike> _strikes = new List<Strike>(4);
+        private const float PillarHeight = 2.3f, StrikeLife = 1.35f, ChunkGap = .07f;
+        // The column, base up: (share of its height, footprint radius m, the way it falls in degrees round it, when it goes s).
+        private static readonly (float height, float width, float fall, float goes)[] ChunkRows =
+        {
+            (.46f, .78f, 0f, .9f), (.32f, .66f, 140f, .74f), (.22f, .54f, -65f, .58f),
+        };
         private static readonly (float angle, float up, float out_, float size)[] ShardRows =
         {
-            (20f, 6.5f, 2.6f, .2f), (95f, 7.4f, 2.1f, .16f), (160f, 5.8f, 2.9f, .22f), (225f, 6.9f, 2.4f, .17f), (300f, 6.1f, 3.1f, .19f), (350f, 7.8f, 1.8f, .14f),
+            (20f, 7.5f, 2.9f, .26f), (60f, 8.6f, 2.2f, .18f), (95f, 8.2f, 2.4f, .2f), (130f, 6.6f, 3.4f, .24f), (160f, 6.8f, 3.1f, .28f),
+            (200f, 9.0f, 1.9f, .16f), (225f, 7.9f, 2.7f, .22f), (265f, 7.0f, 3.2f, .2f), (300f, 7.1f, 3.4f, .25f), (350f, 8.8f, 2.0f, .18f),
         };
 
         /// <summary>
@@ -135,15 +152,19 @@ namespace TumbangPreso.Visual
         /// </summary>
         public void Struck(Vector3 world, float at, bool local)
         {
-            var s = new Strike { At = at, Local = transform.InverseTransformPoint(world) };
+            int n = _strikes.Count, seed = 600 + n * 13;
+            var s = new Strike { At = at, Local = transform.InverseTransformPoint(world), Yaw = (seed % 7) * 23f };
             s.Local.y = 0f;
-            int seed = 600 + _strikes.Count * 13;
-            s.Pillar = Stone(transform, "DriftStrike" + _strikes.Count, VfxShapes.Prism(5, 1f, .62f, .22f, 0f, seed), Basalt[_strikes.Count % 3]);
-            s.Star = AddGlow(transform, "DriftStrikeStar" + _strikes.Count, MoltenCore, 1.4f, .6f);
+            for (int c = 0; c < ChunkRows.Length; c++)
+                s.Chunks[c] = Stone(transform, "DriftStrike" + n + "_" + c, VfxShapes.Prism(5, 1f, .8f, .22f, 0f, seed + 20 + c), Basalt[(n + c) % 3]);
+            // The molten core: two crossed sheets of light up the column, just inside its stone, so it shows only in the seams.
+            for (int i = 0; i < 2; i++) s.Core[i] = AddGlow(transform, "DriftStrikeCore" + n + "_" + i, MoltenCore, 1.3f, .75f);
+            s.Star = AddGlow(transform, "DriftStrikeStar" + n, MoltenCore, 1.4f, .6f);
             s.Star.Renderer.sharedMaterial.SetFloat("_Band", 0f);
+            s.Ring = AddGlow(transform, "DriftStrikeRing" + n, MoltenFuse, 1.2f, .4f, RingMesh());
             for (int i = 0; i < ShardRows.Length; i++)
                 s.Shards.Add(Stone(transform, "DriftStrikeShard" + i, VfxShapes.Prism(5, 1f, .7f, .3f, 0f, seed + i + 1), Basalt[(i + 1) % 3]));
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 5; i++)
             {
                 var puff = VfxShapes.Stand(transform, "DriftStrikeDust" + i, VfxShapes.TwoSided(VfxShapes.Splat(9, .48f, seed + 40 + i)), 1);
                 var r = puff.GetComponent<Renderer>();
@@ -156,7 +177,9 @@ namespace TumbangPreso.Visual
             if (local && !_stage)
             {
                 var rig = Camera.main != null ? Camera.main.GetComponent<CameraRig>() : null;
-                if (rig != null) { rig.ImpactPunch(transform.forward, 1.8f); rig.Shake(.55f, .4f); }
+                // Up and away with them, hard (owner on v7: *"TRY TO make it more felt"*; on v8: *"It doesnt feel like it hits that
+                // hard"*). Play is never paused for a hit-stop: the round is shared, so the lens takes the stop.
+                if (rig != null) { rig.ImpactPunch(transform.forward + Vector3.up * .7f, 2.6f); rig.Shake(.85f, .5f); rig.BeginGroundRumble(1f); }
             }
             PoseStrike(s, _lastAge);
         }
@@ -164,22 +187,56 @@ namespace TumbangPreso.Visual
         private void PoseStrike(Strike s, float t)
         {
             float a = t - s.At;
-            bool on = a >= 0f && a < 1.1f;
-            // Up in a punch (0.07 s) with a small overshoot, held, then down in two crumbling steps.
-            float up = a < 0f ? 0f : a < .07f ? a / .07f : 1f + .15f * Mathf.Max(0f, 1f - (a - .07f) / .08f);
-            float down = Ease(.45f, .7f, a) * .5f + Ease(.8f, 1.05f, a) * .5f;
-            float h = 1.35f * up * (1f - down), crack = a > .7f ? .85f : 1f;
-            s.Pillar.gameObject.SetActive(on && h > .01f);
-            s.Pillar.localPosition = s.Local + Vector3.down * .25f;
-            s.Pillar.localRotation = Quaternion.Euler(-8f, s.Local.x * 37f, 5f);
-            s.Pillar.localScale = new Vector3(.95f * crack, h + .25f, .95f * crack);
-            Light(s.Star, s.Local + Vector3.up * .02f, Vector3.one * Mathf.Lerp(.6f, 2.2f, Mathf.Clamp01(a / .1f)), Quaternion.Euler(90f, 0f, 0f),
-                  !on ? 0f : 2.2f * (1f - Ease(.1f, .9f, a)));
+            bool on = a >= 0f && a < StrikeLife;
+            // Out of the court in a punch (0.06 s) with an overshoot, held, then apart from the top.
+            float up = a < 0f ? 0f : a < .06f ? a / .06f : 1f + .18f * Mathf.Max(0f, 1f - (a - .06f) / .1f);
+            float bottom = -.25f - PillarHeight * (1f - Mathf.Min(1f, up)) + PillarHeight * .1f * (up - 1f);
+            var spin = Quaternion.Euler(0f, s.Yaw, 0f);
+            for (int c = 0; c < ChunkRows.Length; c++)
+            {
+                var row = ChunkRows[c];
+                float h = row.height * PillarHeight, fa = a - row.goes;
+                var pos = s.Local + Vector3.up * bottom;
+                var turn = spin * Quaternion.Euler(-5f + 4f * c, 25f * c, 4f - 3f * c);
+                if (c == 0)
+                {
+                    // The base shudders and sinks back into the court.
+                    pos += Vector3.down * (h + .35f) * Ease(0f, .4f, fa);
+                    turn = Quaternion.Euler(fa > 0f && fa < .15f ? Mathf.Sin(fa * 120f) * 3f : 0f, 0f, 0f) * turn;
+                }
+                else
+                {
+                    // The upper chunks topple off their own way, then slump into the court.
+                    float topple = Ease(0f, .3f, fa), slump = Ease(.15f, .45f, fa);
+                    float way = (row.fall + s.Yaw) * Mathf.Deg2Rad;
+                    var dir = new Vector3(Mathf.Sin(way), 0f, Mathf.Cos(way));
+                    pos += dir * (.5f * h + .3f * c) * topple;
+                    turn = Quaternion.AngleAxis(75f * topple, Vector3.Cross(Vector3.up, dir)) * turn;
+                    pos += Vector3.down * (bottom + h * (1.2f + c) + .4f) * slump;
+                }
+                bottom += h + ChunkGap;
+                var chunk = s.Chunks[c];
+                chunk.gameObject.SetActive(on && up > 0f && fa < .45f);
+                chunk.localPosition = pos;
+                chunk.localRotation = turn;
+                chunk.localScale = new Vector3(row.width, h, row.width);
+            }
+            // The core burns orange through the seams at the punch and is out as the top chunk goes (film r47: left burning, it
+            // stood on as a column of light with no stone round it).
+            float core = !on ? 0f : (1.4f + 1.4f * (1f - Ease(.06f, .35f, a))) * (1f - Ease(ChunkRows[2].goes - .15f, ChunkRows[2].goes + .02f, a));
+            float coreBase = -.25f - PillarHeight * (1f - Mathf.Min(1f, up));
+            for (int i = 0; i < 2; i++)
+                Light(s.Core[i], s.Local + Vector3.up * (coreBase + PillarHeight * .55f), new Vector3(PillarHeight * 1.1f, 1.05f, 1f),
+                      Quaternion.Euler(0f, s.Yaw + 45f + 90f * i, 90f), core);
+            Light(s.Star, s.Local + Vector3.up * .02f, Vector3.one * Mathf.Lerp(.8f, 3.4f, Mathf.Clamp01(a / .1f)), Quaternion.Euler(90f, 0f, 0f),
+                  !on ? 0f : 2.6f * (1f - Ease(.1f, 1f, a)));
+            float ring = Mathf.Lerp(.4f, 3.6f, Ease(0f, .32f, a));
+            Light(s.Ring, s.Local + Vector3.up * .03f, new Vector3(ring, 1f, ring), Quaternion.identity, !on ? 0f : 1.8f * (1f - Mathf.Clamp01(a / .36f)));
             for (int i = 0; i < s.Shards.Count; i++)
             {
                 var r = ShardRows[i];
                 float ang = r.angle * Mathf.Deg2Rad, land = 2f * r.up / 9.8f, ft = Mathf.Clamp(a, 0f, land);
-                var pos = s.Local + new Vector3(Mathf.Sin(ang), 0f, Mathf.Cos(ang)) * (.3f + r.out_ * ft) + Vector3.up * (.4f + r.up * ft - 4.9f * ft * ft);
+                var pos = s.Local + new Vector3(Mathf.Sin(ang), 0f, Mathf.Cos(ang)) * (.3f + r.out_ * ft) + Vector3.up * (.6f + r.up * ft - 4.9f * ft * ft);
                 pos.y = Mathf.Max(0f, pos.y);
                 float broken = a < land ? 1f : a < land + .2f ? .7f : Mathf.Max(0f, .7f - (a - land - .2f) * 3f);
                 s.Shards[i].gameObject.SetActive(on && a >= 0f && broken > 0f);
@@ -189,11 +246,11 @@ namespace TumbangPreso.Visual
             }
             for (int i = 0; i < s.Dust.Count; i++)
             {
-                float du = Mathf.Clamp01(a / .8f), ang = i * 2.09f + .4f;
-                float puff = Mathf.Lerp(.6f, 1.8f, du);
+                float du = Mathf.Clamp01(a / .9f), ang = i * 1.257f + .4f;
+                float puff = Mathf.Lerp(.7f, 2.3f, du);
                 var d = s.Dust[i];
-                d.gameObject.SetActive(on && du < 1f);
-                d.localPosition = s.Local + new Vector3(Mathf.Sin(ang), 0f, Mathf.Cos(ang)) * (.4f + 1.1f * du) + Vector3.up * (puff * .45f);
+                d.gameObject.SetActive(on && a >= 0f && du < 1f);
+                d.localPosition = s.Local + new Vector3(Mathf.Sin(ang), 0f, Mathf.Cos(ang)) * (.5f + 1.6f * du) + Vector3.up * (puff * .45f);
                 d.localRotation = Quaternion.Euler(0f, ang * Mathf.Rad2Deg, 0f) * Quaternion.Euler(90f, 0f, 0f);
                 d.localScale = new Vector3(puff * 1.2f, 1f, puff);
                 var c = DustColour; c.a = .8f * (1f - du * du);
@@ -237,6 +294,10 @@ namespace TumbangPreso.Visual
                     int seed = s.seed + 131 * (c / 6);
                     b.Rows.Add(c % 6);
                     b.Slabs.Add(Stone(b.Root, "DriftSlab" + k + "_" + seed, VfxShapes.Prism(4, 1f, .84f, .16f, .785f, seed), Basalt[(k + seed) % 3]));
+                    var pieces = new Transform[3];
+                    for (int j = 0; j < 3; j++)
+                        pieces[j] = Stone(b.Root, "DriftSlab" + k + "_" + seed + "_piece" + j, VfxShapes.Prism(4, 1f, .8f, .3f, .785f, seed + 500 + j), Basalt[(k + seed + j) % 3]);
+                    b.Pieces.Add(pieces);
                 }
                 foreach (var r in RockRows)
                     b.Rocks.Add(Stone(b.Root, "DriftRock" + k + "_" + r.seed, VfxShapes.Prism(5, 1f, .7f, .3f, 0f, r.seed + k * 31), Basalt[(k + r.seed) % 3]));
@@ -265,14 +326,17 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>A flat piece of light (`Resources/Shaders/SpiritGlow`): unlit, additive, soft across its width.</summary>
-        private static Glow AddGlow(Transform parent, string name, Color colour, float falloff, float core)
+        private static Glow AddGlow(Transform parent, string name, Color colour, float falloff, float core, Mesh mesh = null)
         {
-            var mesh = new Mesh { name = "DriftGlowQuad" };
-            mesh.vertices = new[] { new Vector3(-.5f, -.5f, 0), new Vector3(.5f, -.5f, 0), new Vector3(.5f, .5f, 0), new Vector3(-.5f, .5f, 0) };
-            mesh.uv = new[] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1) };
-            mesh.triangles = new[] { 0, 2, 1, 0, 3, 2 };
-            mesh.RecalculateNormals();
-            mesh.bounds = new Bounds(Vector3.zero, Vector3.one * 2f);
+            if (mesh == null)
+            {
+                mesh = new Mesh { name = "DriftGlowQuad" };
+                mesh.vertices = new[] { new Vector3(-.5f, -.5f, 0), new Vector3(.5f, -.5f, 0), new Vector3(.5f, .5f, 0), new Vector3(-.5f, .5f, 0) };
+                mesh.uv = new[] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1) };
+                mesh.triangles = new[] { 0, 2, 1, 0, 3, 2 };
+                mesh.RecalculateNormals();
+                mesh.bounds = new Bounds(Vector3.zero, Vector3.one * 2f);
+            }
             var go = VfxShapes.Stand(parent, name, mesh, 1);
             var renderer = go.GetComponent<Renderer>();
             renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; renderer.receiveShadows = false;
@@ -286,6 +350,29 @@ namespace TumbangPreso.Visual
             }
             else VfxMaterial.Ghost(renderer, colour, 1f);
             return new Glow { Node = go.transform, Renderer = renderer, Block = new MaterialPropertyBlock(), Colour = colour };
+        }
+
+        /// <summary>A flat ring in XZ, unit outer radius, its band thin, v across it. One per glow: `VfxShapes.Stand` retires the mesh
+        /// with its piece.</summary>
+        private static Mesh RingMesh()
+        {
+            const int Sides = 48;
+            var v = new Vector3[(Sides + 1) * 2]; var uv = new Vector2[v.Length]; var tris = new int[Sides * 12];
+            for (int i = 0; i <= Sides; i++)
+            {
+                float a = i * Mathf.PI * 2f / Sides;
+                var d = new Vector3(Mathf.Sin(a), 0f, Mathf.Cos(a));
+                v[i * 2] = d * .86f; v[i * 2 + 1] = d;
+                uv[i * 2] = new Vector2(i / (float)Sides, 0f); uv[i * 2 + 1] = new Vector2(i / (float)Sides, 1f);
+                if (i == Sides) continue;
+                int b = i * 12, k = i * 2;
+                // Both faces, so it reads from above and from a lens on the court.
+                tris[b] = k; tris[b + 1] = k + 2; tris[b + 2] = k + 1; tris[b + 3] = k + 2; tris[b + 4] = k + 3; tris[b + 5] = k + 1;
+                tris[b + 6] = k; tris[b + 7] = k + 1; tris[b + 8] = k + 2; tris[b + 9] = k + 2; tris[b + 10] = k + 1; tris[b + 11] = k + 3;
+            }
+            var mesh = new Mesh { name = "DriftStrikeRing", vertices = v, uv = uv, triangles = tris };
+            mesh.RecalculateNormals();
+            return mesh;
         }
 
         private static void Light(Glow g, Vector3 position, Vector3 scale, Quaternion rotation, float strength)
@@ -319,11 +406,7 @@ namespace TumbangPreso.Visual
             foreach (var strike in _strikes) PoseStrike(strike, t);
             int columns = Columns;
             float sixth = _halfWidth * 2f / columns;
-            // Play's end: two crumbling steps down into the court.
-            float sink = Mathf.Clamp01((t - HoldUntil) / (GoneAt - HoldUntil));
-            float stepDown = sink < .5f ? Ease(0f, .5f, sink) * .45f : .45f + Ease(.5f, 1f, sink) * .55f;
-            float crack = sink < .5f ? 1f : .85f;
-            float cool = Ease(LastBand + .4f, HoldUntil + .3f, t);
+            float cool = Ease(LastBand + .4f, SinkAt(_bands.Count - 1) + .3f, t);
 
             // THE FUSE: the molten crack racing down the middle of the lane, just ahead of each band, cooling in play.
             {
@@ -336,12 +419,19 @@ namespace TumbangPreso.Visual
             {
                 var b = _bands[k];
                 float at = BandAt(k), age = t - at, depth = b.End - b.Start, mid = (b.Start + b.End) * .5f;
-                bool gone = sink >= 1f;
+                float breaks = SinkAt(k);
+                bool gone = t >= BandGoneAt(k);
                 b.Root.gameObject.SetActive(age >= 0f && !gone);
                 if (age < 0f || gone) continue;
-                // The molten light: a flare as the band goes, then the glow in its cracks, cooling away.
-                float glow = 2.3f * (1f - .4f * Mathf.Clamp01(age / .8f));
-                Light(b.Light, new Vector3(0f, .01f, mid), new Vector3(_halfWidth * 1.9f, depth, 1f), Quaternion.Euler(90f, 0f, 0f), glow * (1f - .85f * cool));
+                // The molten light: a flare as the band goes, the glow in its cracks cooling, then one last flare through the seams
+                // as it breaks.
+                float glow = 2.3f * (1f - .4f * Mathf.Clamp01(age / .8f)) * (1f - .85f * Ease(at + .4f, breaks + .3f, t));
+                // (Short and low, gone before the stone is: on a bare court it read as an orange stripe, film r47.)
+                float flare = (t - breaks) / .3f;
+                if (flare > 0f && flare < 1f) glow += .55f * Mathf.Sin(flare * Mathf.PI);
+                glow *= 1f - Ease(breaks + .2f, breaks + .45f, t);
+                Light(b.Light, new Vector3(0f, .01f, mid), new Vector3(_halfWidth * 1.9f, depth, 1f), Quaternion.Euler(90f, 0f, 0f), glow);
+                float bandSink = Ease(breaks + .1f, breaks + SlabWait + SlabSink, t);
 
                 // A wide lane makes deep slabs: their tilt is held to the cutscene's edge rise, so none stands up as a wall.
                 float tiltHold = Mathf.Min(1f, 1.4f / Mathf.Max(.1f, depth * .88f));
@@ -359,32 +449,72 @@ namespace TumbangPreso.Visual
                     float h = s.height * .8f, w = sixth * s.width, d = depth * s.depth;
                     float jitter = ((s.seed % 5) - 2) * .12f * Mathf.Min(depth, 1.6f);
                     var slab = b.Slabs[i];
-                    slab.gameObject.SetActive(sa >= 0f);
                     // Inside its own band: the stone never draws past the hit area.
                     // (The last band's slabs tip toward the far edge: they keep their height's lean clear of it.)
                     float far = b.End - d * .5f - (k == _bands.Count - 1 ? h : 0f);
                     float z = Mathf.Clamp(mid + jitter, b.Start + d * .5f, Mathf.Max(b.Start + d * .5f, far));
                     // The edge columns keep their width and roll inside the lane's sides.
                     float x = Mathf.Clamp(across * _halfWidth, -_halfWidth + w * .5f + h * .3f, _halfWidth - w * .5f - h * .3f);
-                    slab.localPosition = new Vector3(x, -h * .5f + h * .8f * lift - h * stepDown, z);
+
+                    // THE RECEDE, this slab's own beat: the middle of the lane first, the edges after, each a little apart.
+                    float su = t - (breaks + .1f * Mathf.Abs(across) + .04f * (s.seed / 3 % 3));
+                    // It cracks (a shudder), then tips toward the lane's middle (so the leaning stone never leaves the lane) and
+                    // slumps; then it breaks in three and the pieces slump on into the court.
+                    float roll = x > 0f ? 1f : -1f;
+                    float shudder = su >= 0f && su < .12f ? Mathf.Sin(su * 110f) * 3f * (1f - su / .12f) : 0f;
+                    float tipOver = Ease(.1f, .3f, su), slump = .25f * tipOver;
+                    bool broken = su >= .3f;
+                    slab.gameObject.SetActive(sa >= 0f && !broken);
+                    var slabAt = new Vector3(x, -h * .5f + h * .8f * lift - h * slump, z);
                     float tip = Mathf.Min(1f, up) * tiltHold;
-                    slab.localRotation = Quaternion.Euler(s.tiltX * 1.6f * tip, (s.seed % 7 - 3) * 5f, s.tiltZ * 1.8f * tip);
-                    slab.localScale = new Vector3(w, h, d) * crack;
+                    var slabTurn = Quaternion.Euler(s.tiltX * 1.6f * tip + shudder, (s.seed % 7 - 3) * 5f, s.tiltZ * 1.8f * tip + shudder * .6f + roll * 20f * tipOver);
+                    slab.localPosition = slabAt;
+                    slab.localRotation = slabTurn;
+                    slab.localScale = new Vector3(w, h, d);
+
+                    var pieces = b.Pieces[i];
+                    float fall = Ease(.3f, .3f + SlabSink - .3f, su);
+                    for (int j = 0; j < 3; j++)
+                    {
+                        float side = j - 1;
+                        var piece = pieces[j];
+                        piece.gameObject.SetActive(broken);
+                        if (!broken) continue;
+                        // Each third of the slab drifts a little off its neighbour, leans its own way and goes down.
+                        piece.localPosition = slabAt + slabTurn * new Vector3(side * w * .34f * (1f + .25f * fall), 0f, ((s.seed + j) % 3 - 1) * d * .08f)
+                                              + Vector3.down * h * (.1f + 1.3f * fall);
+                        piece.localRotation = slabTurn * Quaternion.Euler(((s.seed + j) % 3 - 1) * 14f * fall, j * 30f, (roll * 15f - side * 18f) * fall);
+                        piece.localScale = new Vector3(w * .38f, h * .85f, d * .8f);
+                    }
                 }
                 // Dust on the band's front edge, billowing up and out, thinning (dust may thin; stone may not). Lower than the
                 // cutscene's, so it never paints a wall across a first-person view (live film r21).
+                // The same puffs again as it breaks: low and wide over the band, settling where the stone went down.
                 for (int i = 0; i < b.Dust.Count; i++)
                 {
-                    float du = Mathf.Clamp01(age / .9f);
-                    float across = (i / 3f * 2f - 1f) * (_halfWidth - 1.2f);
-                    float puff = Mathf.Lerp(.8f, 1.9f, du) * (.8f + .1f * i);
-                    float z = Mathf.Min(b.End + .1f, _reach - .2f);
+                    float du = Mathf.Clamp01(age / .9f), settle = (t - breaks - .2f) / .8f;
                     var dust = b.Dust[i];
-                    dust.gameObject.SetActive(du < 1f);
-                    dust.localPosition = new Vector3(across, puff * .5f + du * .4f, z);
-                    dust.localRotation = Quaternion.Euler(90f, 0f, (i - 1.5f) * 9f);
-                    dust.localScale = new Vector3(puff * 1.3f, 1f, puff);
-                    var c = DustColour * (i % 2 == 0 ? .9f : 1f); c.a = .7f * (1f - du * du);
+                    var c = DustColour * (i % 2 == 0 ? .9f : 1f);
+                    if (du < 1f)
+                    {
+                        float across = (i / 3f * 2f - 1f) * (_halfWidth - 1.2f);
+                        float puff = Mathf.Lerp(.8f, 1.9f, du) * (.8f + .1f * i);
+                        float z = Mathf.Min(b.End + .1f, _reach - .2f);
+                        dust.localPosition = new Vector3(across, puff * .5f + du * .4f, z);
+                        dust.localRotation = Quaternion.Euler(90f, 0f, (i - 1.5f) * 9f);
+                        dust.localScale = new Vector3(puff * 1.3f, 1f, puff);
+                        c.a = .7f * (1f - du * du);
+                    }
+                    else if (settle >= 0f && settle < 1f)
+                    {
+                        float across = ((i + .5f) / b.Dust.Count * 2f - 1f) * (_halfWidth - 1f);
+                        float puff = Mathf.Lerp(.7f, 2.1f, settle);
+                        dust.localPosition = new Vector3(across, puff * .3f + settle * .2f, mid + (i % 2 - .5f) * depth * .3f);
+                        dust.localRotation = Quaternion.Euler(90f, 0f, (i - 1.5f) * 13f);
+                        dust.localScale = new Vector3(puff * 1.6f, 1f, puff);
+                        c.a = .55f * (1f - settle * settle);
+                    }
+                    dust.gameObject.SetActive(du < 1f || (settle >= 0f && settle < 1f));
                     b.DustMaterials[i].color = c; if (b.DustMaterials[i].HasProperty("_BaseColor")) b.DustMaterials[i].SetColor("_BaseColor", c);
                 }
                 // Rocks flung up and forward, landing where they land and staying; they go down with the slabs.
@@ -395,11 +525,11 @@ namespace TumbangPreso.Visual
                     float land = 2f * r.up / 9.8f, ft = Mathf.Min(age, land);
                     var pos = start + Vector3.forward * (r.along * ft) + Vector3.up * (r.up * ft - 4.9f * ft * ft);
                     pos.z = Mathf.Min(pos.z, _reach - .2f);
-                    pos.y -= r.size * stepDown * 1.5f;
+                    pos.y -= r.size * 1.6f * bandSink;
                     float spin = ft * (240f + r.seed * 9f);
                     b.Rocks[i].localPosition = pos;
                     b.Rocks[i].localRotation = Quaternion.Euler(spin, r.seed * 23f, spin * .6f);
-                    b.Rocks[i].localScale = Vector3.one * r.size * crack;
+                    b.Rocks[i].localScale = Vector3.one * r.size;
                 }
             }
         }
