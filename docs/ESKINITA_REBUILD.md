@@ -7,6 +7,25 @@ pool, replace the old eskinita") `EskinitaAlleySceneBuilder` writes the stepped 
 "EskinitaClassic", code and asset). Protocol 158. The map card is the new arch picture. The art folder is still
 `Art/EskinitaAlley`. NOTHING IS COMMITTED.
 
+**PUSHED 2026-10-09 as `bd44c197b` on `QoLUpdates`** (with the character rework, the prototype map, the movement rework and
+Paete's kit: everything that was uncommitted in this worktree except the owner's own files). The owner then moved on to
+a new map (`docs/PAETE_RUN_MAP_BRIEF.md`). What follows is what Eskinita still owes.
+
+⚠️ OPEN FAULTS, FOUND IN HIS PLAY AFTER THE SWAP:
+- THE COURT IS TOO NARROW FOR THE GAME'S OWN RULE. `docs/Design.md`: `ConfinementRadius + ThrowStandoff (1.2) + capsule
+  <= wall face`, so a wall may be no nearer than about 8.55 m from the can. The court's walls are at 8.0 (`AX` in
+  `tools/author_eskinita_alley.py`). The bots' trace (`Logs/eskinita/routes_trace.txt`) showed every stuck bot "wanting
+  (8.20, 0.00, z)": the standoff spot, which is inside a house. QUICK FIX IN (a bot sent somewhere it cannot reach walks
+  to the nearest way point and stands, `MapRoutes.StandAt` and `AIController.Goto`); THE REAL FIX IS NOT: widen the
+  court to `AX` 8.8 or more (ledges, the two court stairs, the store front, wall props, roof stairs and the 17 m bunting
+  all carry typed numbers that move with it). Offered to the owner, not yet answered.
+- A slipper "ended up under the map": the collision was one hollow shell. Every piece is now ALSO a solid (52
+  `BoxCollider`s and 17 convex wedges under "CollisionSolids", from the layout's `solids`). Not reproduced, not seen
+  fixed.
+- Play probe 11 logged `NullReferenceException` in `UI.MatchEventFeed.Add` (MatchEventFeed.cs:145) 40 times. Not this
+  map's code; it went out in the push. Unexamined.
+- Nobody has watched a bot take a stair, a bridge or a tarp to a slipper on a roof.
+
 ⚠️ WHAT THE SWAP LEAVES UNDONE (tell the owner again):
 - About 174 test files name Eskinita and NONE has been run against the new map (the editor is open, so no batch run).
   Known to break by reading: `NearFadeTests` (12 `Poste_` nodes), `MapGeometryCheck` (Eskinita is Gated), anything

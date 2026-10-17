@@ -44,7 +44,7 @@ namespace TumbangPreso.Visual
         private void OnDisable() { if (_renderer != null) _renderer.enabled = false; }
         private void Sample()
         {
-            bool loaded = _shoe != null && _shoe.isActiveAndEnabled && _shoe.Affinity == SlipperAffinity.Concussed
+            bool loaded = !DanteBoulderStone.Rocks && _shoe != null && _shoe.isActiveAndEnabled && _shoe.Affinity == SlipperAffinity.Concussed
                 && (_world || _shoe.State == SlipperState.Held);
             if (!loaded)
             {

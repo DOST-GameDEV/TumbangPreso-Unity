@@ -1,0 +1,339 @@
+"""Paete's run: the sounds of a dry, windy bowl of sand and rock, cut from REAL recordings. Nothing here is synthesised.
+
+  py -3 tools/build_paete_run_sfx.py            fetch what is missing, then cut every cue and bed
+  py -3 tools/build_paete_run_sfx.py --fetch    only download and check the sources
+
+For `Run.RunSoundscape` (Assets/TumbangPreso/Runtime/Run/RunSoundscape.cs), wired by the scene builder
+(Editor/MapKit/PaeteRunSceneBuilder.Life.cs). The method is tools/build_eskinita_life_sfx.py's, to the letter:
+Creative Commons 0 recordings from Freesound's preview CDN, each sound's OWN PAGE read first and used only if it
+states CC0 and no other Creative Commons licence, one request at a time, and every file's id, page, URL, author,
+licence and SHA-256 kept in tools/paete_run_sfx_sources.json.
+
+WHAT IS WHERE
+  tools/paete_run_sfx_sources.json              the sources, what each is used for, what was measured and cut
+  ArtSource/paete_run/sfx-sources/              the downloads, as fetched (high-quality MP3 previews)
+  Assets/TumbangPreso/Art/audio/ambience/sfx_run_<cue>_<n>.wav   the one-shots: mono, 44.1 kHz, 16 bit, peak 0.85
+  Assets/TumbangPreso/Art/audio/ambience/run_bed_<name>.wav      the loops (beds and the loops that sit at a place)
+
+WHAT THE GAME ALREADY HAD AND THIS DOES NOT FETCH AGAIN: cloth flapping in a gust (sfx_alley_amb_cloth_N) and wings
+(sfx_alley_amb_wings_N), cut by tools/build_eskinita_life_sfx.py; the race's own cues (countdown, checkpoint, the
+catch of a fall, the set-down, the finish) are the game's (Runtime/Audio/AudioCues.cs).
+
+THE CUT (one-shots). A recording is turned into EVENTS (stretches where its 10 ms envelope stays within `floor` dB
+of its peak, joined across gaps shorter than `join`), and a cue takes the events its row asks for: the loudest ones
+that are not longer than `longest` seconds, or (for `whole`) everything from the first event to the last. Each cut
+gets 30 ms of lead-in room, a tail until it has fallen 34 dB (at most `tail` s), an 80 Hz high-pass (handling
+rumble), a 4 ms fade in and a 40 ms fade out, and is normalised to peak 0.85. No pitch change, no layering, no
+reverb, no generated signal of any kind.
+
+THE LOOPS. The STEADIEST stretch of the recording (the window whose loudest second is nearest its median second, so
+no close event sits in it), closed into a loop by an equal-power crossfade of its last 3 s into its first 3 s, and
+brought to a set RMS. ⚠️ ONE loop is also LOW-PASSED: the festival, at 1.8 kHz, because it is meant to be heard from
+far off across the bowl and air takes the top off a far sound. That is a filter on a real recording, not a made sound.
+
+⚠️ NOBODY HAS HEARD THESE. They were chosen by title, description and measurement only. The json keeps each
+source's title, description and every cut's time span, so a wrong one is found fast: change its row below (another
+source id, `take`, `longest`) and rerun.
+numpy, scipy, soundfile (libsndfile 1.1 or later, which decodes MP3).
+"""
+import argparse
+import datetime
+import hashlib
+import html
+import json
+import re
+import time
+import urllib.request
+import wave
+from pathlib import Path
+
+import numpy as np
+from scipy import signal
+
+SR = 44100
+PEAK = 0.85
+ROOT = Path(__file__).resolve().parents[1]
+MANIFEST = ROOT / "tools/paete_run_sfx_sources.json"
+CACHE = ROOT / "ArtSource/paete_run/sfx-sources"
+OUT = ROOT / "Assets/TumbangPreso/Art/audio/ambience"
+AGENT = "TumbangPresoLifeSfx/1.0 (indie game, CC0 field recordings, one request at a time; thegrinchisthebest@gmail.com)"
+CC0_MARK = "creativecommons.org/publicdomain/zero/1.0"
+OTHER_LICENCES = ("creativecommons.org/licenses/by", "creativecommons.org/licenses/sampling")
+TODAY = datetime.date.today().isoformat()
+
+# cue -> rows of (freesound id, how many events to take, longest event in s, whole?, floor dB, join s, tail s)
+CUES = {
+    # chains creaking where the boulders hang: a boat's chain, a playground swing's
+    "chain_creak": [("55034", 2, 2.5, False, 22, 0.15, 0.4), ("862995", 2, 2.5, False, 20, 0.2, 0.4), ("387896", 1, 3.0, False, 22, 0.2, 0.4)],
+    # wood knocking at the log roll: thumps on a large hollow wooden surface, sticks
+    "wood_knock": [("481106", 3, 0.8, False, 22, 0.08, 0.3), ("609943", 2, 0.8, False, 22, 0.08, 0.3)],
+    # pebbles falling on the rock face: small rocks tumbling down a badlands hill, rocks over a cliff
+    "pebbles": [("575449", 2, 3.5, False, 24, 0.5, 0.5), ("190505", 1, 4.0, False, 24, 0.6, 0.5), ("668606", 1, 3.0, False, 24, 0.5, 0.5)],
+    # a kite's cry high over the summit: red-tailed and red-shouldered hawks (the nearest CC0 raptors to a lawin)
+    "kite_cry": [("616926", 2, 2.5, False, 24, 0.2, 0.5), ("770032", 1, 3.0, False, 24, 0.25, 0.5), ("319619", 1, 3.0, False, 24, 0.25, 0.5)],
+    # a splash where a slide's water arrives
+    "splash": [("737233", 1, 1.2, True, 30, 0.3, 0.4), ("845132", 2, 1.5, False, 24, 0.15, 0.4), ("398039", 1, 2.0, True, 30, 0.3, 0.4)],
+    # a geyser throwing: a sea blowhole's spout, a geyser in Bolivia
+    "geyser_whoosh": [("222642", 1, 4.0, False, 18, 0.6, 0.8), ("441152", 1, 4.0, False, 14, 0.8, 0.8)],
+}
+
+# The loops: name -> (freesound ids, loop seconds, RMS it is brought to, low-pass in Hz or 0). Lengths differ on
+# purpose, so the layers never line up the same way twice. The first id is the one wanted; the rest are stand-ins
+# used, in order, when it could not be fetched.
+BEDS = {
+    "wind": (("718973", "675710", "266656"), 59.0, 0.06, 0),        # a dry desert wind (the Chergui at Agadir; a gusty desert wind)
+    "bowl": (("256125", "574397"), 47.0, 0.05, 0),                  # a semi-desert's air: wind, far birds (the Bardenas; ravens and insects)
+    "festival": (("703643",), 53.0, 0.05, 1800),                    # a festival far off: drums and a crowd, the top taken off by distance
+    "water": (("727804", "698306", "660250"), 31.0, 0.06, 0),       # water running over rock: at the slides' ends and the pools
+    "geyser": (("414762", "456806", "352904"), 23.0, 0.05, 0),      # a hot spring bubbling: at each geyser between throws
+    "mill": (("430589", "345846"), 29.0, 0.05, 0),                  # a millstone turning slowly: at the mill wheels
+}
+
+
+def load_manifest():
+    if MANIFEST.exists():
+        return json.loads(MANIFEST.read_text(encoding="utf-8"))
+    return {"about": "Provenance for the sounds of Paete's run (a dry, windy bowl of sand and rock). tools/build_paete_run_sfx.py "
+                     "reads this, fills in what it fetches and measures, and cuts the cues and loops from it. Every source is a real "
+                     "recording under Creative Commons 0, confirmed on the sound's own Freesound page. Nobody has heard the cuts.",
+            "cache": "ArtSource/paete_run/sfx-sources",
+            "output": "Assets/TumbangPreso/Art/audio/ambience/sfx_run_<cue>_<n>.wav and run_bed_<name>.wav",
+            "reused": "sfx_alley_amb_cloth_N.wav and sfx_alley_amb_wings_N.wav (tools/eskinita_life_sfx_sources.json) for cloth in a gust and "
+                      "a bird's wings; the race's own cues are the game's (Runtime/Audio/AudioCues.cs)",
+            "sources": [], "cues": {}}
+
+
+def save_manifest(m):
+    MANIFEST.write_text(json.dumps(m, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+
+
+def get(url):
+    req = urllib.request.Request(url, headers={"User-Agent": AGENT})
+    with urllib.request.urlopen(req, timeout=75) as f:
+        return f.read()
+
+
+def fetch(m, pause=1.5):
+    """Download what is missing. The sound's own page is read first and must state CC0 and no
+    other Creative Commons licence; the file's URL, author and description come from that page."""
+    import soundfile as sf
+    CACHE.mkdir(parents=True, exist_ok=True)
+    known = {s["id"]: s for s in m["sources"]}
+    wanted = [(cue, row[0]) for cue, rows in CUES.items() for row in rows] + [("bed_" + name, ident) for name, row in BEDS.items() for ident in row[0]]
+    for cue, ident in wanted:
+        if ident not in known:
+            s = {"id": ident, "origin": "freesound", "page": f"https://freesound.org/s/{ident}/", "use": cue, "file": f"{cue}_fs{ident}.mp3"}
+            m["sources"].append(s)
+            known[ident] = s
+    used = {ident for _cue, ident in wanted}
+    for s in m["sources"]:
+        s["used"] = s["id"] in used
+        if not s["used"] and not s.get("dropped"):
+            s["dropped"] = "fetched, then not used: see the note in CUES"
+    for s in m["sources"]:
+        path = CACHE / s["file"]
+        if not path.exists():
+            if s.get("skipped", "").startswith("its page") or not s.get("used", True):
+                continue
+            try:
+                page = get(s["page"]).decode("utf-8", "replace")
+                time.sleep(pause)
+                if CC0_MARK not in page or any(o in page for o in OTHER_LICENCES):
+                    s["licence_confirmed"] = False
+                    s["skipped"] = "its page does not state Creative Commons 0 (and only that)"
+                    print("SKIPPED %s: page does not state CC0" % s["id"])
+                    continue
+                url = re.search(r"previews/\d+/%s_\d+-hq\.mp3" % s["id"], page)
+                who = re.search(r"<title>Freesound - (.*?) by ([^<]+)</title>", page, re.S)
+                said = re.search(r'<meta name="twitter:description" content="([^"]*)"', page)
+                if not url or not who:
+                    raise ValueError("no preview URL or author on the page")
+                s["url"] = "https://cdn.freesound.org/" + url.group(0)
+                s["name_on_page"] = html.unescape(who.group(1)).strip()
+                s["author"] = html.unescape(who.group(2)).strip()
+                s["description"] = re.sub(r"\s+", " ", html.unescape(said.group(1))).strip()[:400] if said else ""
+                s["licence"] = "Creative Commons 0 1.0 (as stated on the sound's page)"
+                s["licence_confirmed"] = True
+                s["fetched"] = TODAY
+                data = get(s["url"])
+                time.sleep(pause)
+                path.write_bytes(data)
+                s.pop("skipped", None)
+            except Exception as e:                          # a failed URL is skipped and reported, never substituted
+                s["skipped"] = "download failed: %s" % e
+                print("SKIPPED %s: %s" % (s["id"], e))
+                save_manifest(m)
+                continue
+            save_manifest(m)
+        data = path.read_bytes()
+        s["sha256"], s["bytes"] = hashlib.sha256(data).hexdigest(), len(data)
+        info = sf.info(str(path))
+        s["seconds"] = round(info.frames / info.samplerate, 3)
+        s["format"] = "%s, %d Hz, %d ch" % (info.format, info.samplerate, info.channels)
+        print("%-8s %-40s %7d bytes %6.2f s  %s | %s" % (s["id"], s["file"], len(data), s["seconds"], s.get("name_on_page", ""), s.get("description", "")[:90]))
+    save_manifest(m)
+
+
+def decode(path):
+    import soundfile as sf
+    x, sr = sf.read(str(path), dtype="float64", always_2d=True)
+    x = x.mean(axis=1)
+    if sr != SR:
+        x = signal.resample_poly(x, SR, sr)
+    return x
+
+
+def envelope(x, ms=10.0):
+    n = max(1, int(SR * ms / 1000))
+    return np.sqrt(np.convolve(x * x, np.ones(n) / n, mode="same"))
+
+
+def events(x, floor_db, join):
+    """(start, end, peak) in samples of every stretch within `floor_db` of the recording's peak envelope."""
+    env = envelope(x)
+    top = env.max()
+    if top <= 0:
+        return []
+    on = env > top * 10 ** (-floor_db / 20)
+    edges = np.flatnonzero(np.diff(np.concatenate(([0], on.astype(np.int8), [0]))))
+    spans = [[int(a), int(b)] for a, b in zip(edges[::2], edges[1::2])]
+    merged = []
+    for a, b in spans:
+        if merged and a - merged[-1][1] < join * SR:
+            merged[-1][1] = b
+        else:
+            merged.append([a, b])
+    return [(a, b, float(np.abs(x[a:b]).max())) for a, b in merged if b - a > 0.03 * SR]
+
+
+def cut(x, a, b, tail):
+    env = envelope(x)
+    level = env[a:b].max() * 10 ** (-34 / 20)
+    end = b
+    stop = min(len(x), b + int(tail * SR))
+    while end < stop and env[end] > level:
+        end += 1
+    a = max(0, a - int(0.03 * SR))
+    y = x[a:end].copy()
+    y = signal.sosfiltfilt(signal.butter(2, 80, "highpass", fs=SR, output="sos"), y)
+    fi, fo = int(0.004 * SR), min(int(0.04 * SR), len(y) // 3)
+    y[:fi] *= np.linspace(0, 1, fi)
+    y[-fo:] *= np.linspace(1, 0, fo)
+    peak = np.abs(y).max()
+    return (y * (PEAK / peak) if peak > 0 else y), a, end
+
+
+def write(path, x):
+    with wave.open(str(path), "wb") as w:
+        w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR)
+        w.writeframes(np.round(np.clip(x, -1, 1) * 32767).astype(np.int16).tobytes())
+
+
+def centroid(x):
+    spec = np.abs(np.fft.rfft(x * np.hanning(len(x))))
+    return float((spec * np.fft.rfftfreq(len(x), 1 / SR)).sum() / max(spec.sum(), 1e-12))
+
+
+def build(m):
+    OUT.mkdir(parents=True, exist_ok=True)
+    known = {s["id"]: s for s in m["sources"]}
+    m["cues"] = {}
+    for old in OUT.glob("sfx_run_*.wav"):
+        old.unlink()
+    for cue, rows in CUES.items():
+        n = 0
+        made = []
+        for ident, take, longest, whole, floor_db, join, tail in rows:
+            s = known.get(ident)
+            path = CACHE / s["file"] if s else None
+            if not s or not path.exists() or not s.get("licence_confirmed"):
+                print("  %-16s source %s is not available: skipped" % (cue, ident))
+                continue
+            x = decode(path)
+            ev = events(x, floor_db, join)
+            if not ev:
+                continue
+            if whole:
+                a, b = ev[0][0], ev[-1][1]
+                if (b - a) / SR > longest:
+                    b = a + int(longest * SR)
+                chosen = [(a, b)]
+            else:
+                fit = [e for e in ev if (e[1] - e[0]) / SR <= longest]
+                if not fit:                                  # nothing short enough: the loudest event, cut to length
+                    a, b, _ = max(ev, key=lambda e: e[2])
+                    fit = [(a, min(b, a + int(longest * SR)), 0.0)]
+                chosen = sorted(sorted(fit, key=lambda e: -e[2])[:take])
+                chosen = [(a, b) for a, b, _ in chosen]
+            for a, b in chosen:
+                y, a2, b2 = cut(x, a, b, tail)
+                n += 1
+                name = f"sfx_run_{cue}_{n}.wav"
+                write(OUT / name, y)
+                made.append({"file": name, "source": ident, "author": s.get("author", ""), "from_s": round(a2 / SR, 3), "to_s": round(b2 / SR, 3),
+                             "seconds": round(len(y) / SR, 3), "centroid_hz": round(centroid(y)), "events_in_source": len(ev)})
+                print("  %-34s %5.2f s  from fs%s %.2f..%.2f (%d events in it)  centroid %d Hz" %
+                      (name, len(y) / SR, ident, a2 / SR, b2 / SR, len(ev), centroid(y)))
+        m["cues"][cue] = made
+    m["beds"] = {}
+    for old in OUT.glob("run_bed_*.wav"):
+        old.unlink()
+    for name, (idents, seconds, rms, lowpass) in BEDS.items():
+        ident = next((i for i in idents if known.get(i) and (CACHE / known[i]["file"]).exists() and known[i].get("licence_confirmed")), None)
+        if ident is None:
+            print("  bed %-14s none of its sources %s is available: skipped" % (name, ", ".join(idents)))
+            continue
+        s = known[ident]
+        path = CACHE / s["file"]
+        x = decode(path)
+        x = signal.sosfiltfilt(signal.butter(2, 60, "highpass", fs=SR, output="sos"), x)
+        if lowpass:
+            x = signal.sosfiltfilt(signal.butter(2, lowpass, "lowpass", fs=SR, output="sos"), x)
+        fade = 3.0
+        need = int((seconds + fade) * SR)
+        if len(x) < need:
+            seconds = max(8.0, len(x) / SR - fade - 0.2)
+            need = int((seconds + fade) * SR)
+        total = np.concatenate(([0.0], np.cumsum(x * x)))            # a one-second RMS every half second
+        starts = np.arange(0, len(x) - SR, SR // 2)
+        sec = np.sqrt((total[starts + SR] - total[starts]) / SR + 1e-12)
+        span = int((seconds + fade) * 2)
+        best, start = 1e9, 0
+        for k in range(0, max(1, len(sec) - span)):
+            w = sec[k:k + span]
+            score = w.max() / max(np.median(w), 1e-9)
+            if score < best:
+                best, start = score, k
+        a = max(0, min(start * (SR // 2), len(x) - need))
+        seg = x[a:a + need].copy()
+        n, f = int(seconds * SR), int(fade * SR)
+        t = np.linspace(0, np.pi / 2, f)
+        loop = seg[:n].copy()
+        loop[:f] = seg[:f] * np.sin(t) + seg[n:n + f] * np.cos(t)
+        level = np.sqrt((loop * loop).mean())
+        loop *= rms / max(level, 1e-9)
+        peak = np.abs(loop).max()
+        if peak > PEAK:
+            loop *= PEAK / peak
+        out = f"run_bed_{name}.wav"
+        write(OUT / out, loop)
+        seam = abs(loop[0] - loop[-1])
+        m["beds"][name] = {"file": out, "source": ident, "author": s.get("author", ""), "from_s": round(a / SR, 2), "seconds": round(seconds, 2),
+                           "low_pass_hz": lowpass, "rms": round(float(np.sqrt((loop * loop).mean())), 4), "peak": round(float(np.abs(loop).max()), 3),
+                           "loudest_second_over_median": round(float(best), 2), "seam_step": round(float(seam), 5), "centroid_hz": round(centroid(loop[:SR * 8]))}
+        print("  %-28s %5.1f s  from fs%s at %.1f s  rms %.3f peak %.2f  loudest second / median %.2f  seam %.5f" %
+              (out, seconds, ident, a / SR, m["beds"][name]["rms"], m["beds"][name]["peak"], best, seam))
+    save_manifest(m)
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--fetch", action="store_true")
+    args = ap.parse_args()
+    m = load_manifest()
+    fetch(m)
+    if not args.fetch:
+        build(m)
+
+
+main()

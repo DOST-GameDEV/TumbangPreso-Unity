@@ -83,6 +83,15 @@ namespace TumbangPreso
         /// <summary>A pad on another map that should sound like the Arena's (owner, 2026-10-09, of the alley's bounce tarps:
         /// "for the jump pad sfx, use the sfx from the arena"). Off by default: Ilalim's pads keep the ordinary jump.</summary>
         public bool ArenaSound;
+
+        /// <summary>A map that draws its pad itself (Payo's geysers, `Map.PayoGeyser`): true builds no look, no halo and no
+        /// light here; the trigger, the throw and its sound are exactly as they are. False, the default and every saved
+        /// scene's value, is the pad as it was.</summary>
+        public bool NoLook;
+
+        /// <summary>`Time.time` of the last throw this peer saw this pad make (its own bodies, and a replica arriving on
+        /// it): what a map's own look of the pad times its burst from. Presentation only.</summary>
+        [System.NonSerialized] public float LaunchedAt = -99.0f;
         private readonly HashSet<CharacterMotor> _remoteOn = new HashSet<CharacterMotor>();
         private float _rescan;
         private float _kick;        // 1 on a launch, eased to 0: the pad's answer to throwing somebody
@@ -148,6 +157,7 @@ namespace TumbangPreso
 
         private void Start()
         {
+            if (NoLook) return;
             // Everything hangs off one root scaled to `Radius`, so a pad made wider in the
             // Inspector still fills its own trigger square.
             _look = new GameObject("Look").transform;
@@ -423,13 +433,13 @@ namespace TumbangPreso
                 if (arena && !motor.IsLocallySimulated())
                 {
                     if (!over || Mathf.Abs(d.y) > 0.5f) _remoteOn.Remove(motor);
-                    else if (_remoteOn.Add(motor)) { GameServices.Audio?.PlayAtVaried(ArenaCue, here, 0.96f, 1.05f, 1.0f); _kick = 1.0f; _sinceLaunch = 0.0f; }
+                    else if (_remoteOn.Add(motor)) { GameServices.Audio?.PlayAtVaried(ArenaCue, here, 0.96f, 1.05f, 1.0f); _kick = 1.0f; _sinceLaunch = 0.0f; LaunchedAt = Time.time; }
                     continue;
                 }
                 if (!motor.IsGrounded || !over || Mathf.Abs(d.y) > 0.8f) continue;
                 if (motor.LaunchUp(LaunchSpeed, arena ? null : "jump"))
                 {
-                    _kick = 1.0f; _sinceLaunch = 0.0f;
+                    _kick = 1.0f; _sinceLaunch = 0.0f; LaunchedAt = Time.time;
                     if (arena) GameServices.Audio?.PlayAtVaried(ArenaCue, here, 0.96f, 1.05f, 1.0f);
                 }
             }

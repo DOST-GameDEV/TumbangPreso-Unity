@@ -159,9 +159,11 @@ namespace TumbangPreso.Core
     {
         // Amihan (2026-09-25). Reaches derived from her kit rather than picked: the dash covers
         // `AmihanRules.QuickDashDistance` and hits within `QuickDashHitRadius` of its line; the gale
-        // rolls `WhirlwindTravel` but a carrier more than 8 m out has time to see it and step off.
+        // rolls `WhirlwindTravel` but a carrier more than 8 m out has time to see it and step off. (8 m was measured
+        // against the band 3.2 m wide; the whirlwind is `2 x WhirlwindRadius` wide, so stepping off it is further and
+        // the reach grows by the difference in half widths.)
         public const float AmihanDashReach = AmihanRules.QuickDashDistance - 0.5f;
-        public const float AmihanGaleReach = 8.0f;
+        public const float AmihanGaleReach = 8.0f + (AmihanRules.WhirlwindRadius - 1.6f);
         /// <summary>How close the taya has to be before Updraft is worth its 45 s.</summary>
         public const float AmihanUpdraftThreat = 5.0f;
 

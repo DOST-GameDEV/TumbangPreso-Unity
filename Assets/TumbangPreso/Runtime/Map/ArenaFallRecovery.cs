@@ -98,6 +98,9 @@ namespace TumbangPreso.Map
         /// <summary>The stage kit's drone, left inactive in the scene by `ArenaSceneBuilder` and
         /// copied for each carry. Null: `ArenaDrone` draws its grey-box.</summary>
         public GameObject DroneTemplate;
+        /// <summary>A map that draws the carry itself (Payo's hawk, `PayoCatchBird`): true draws no drone and no beam here.
+        /// The catch, the carry and the freeze are exactly as they are. False, the default and every Arena scene's value.</summary>
+        public bool NoDrone;
         private Transform _droneRoot;
         private ArenaStage _stage;
         private SliceRunner _slice;
@@ -419,7 +422,7 @@ namespace TumbangPreso.Map
                 // second says there is none.
                 if(IsLostFall(who))Visual.WindTumble.Attach(who)?.Throw(.2f);
                 else if(fx!=null&&InUpdraft(who))Gust(fx,who.transform.position);
-                if(who.EdgeKind!=EdgeRecoveryKind.Drone)continue;
+                if(who.EdgeKind!=EdgeRecoveryKind.Drone||NoDrone)continue;
                 if(!_drones.TryGetValue(who,out var drone)||drone==null)
                 {
                     if(_droneRoot==null)_droneRoot=new GameObject("Arena drones").transform;

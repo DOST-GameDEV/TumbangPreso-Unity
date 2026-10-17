@@ -1,0 +1,29 @@
+{
+ "size": "top 10.0 x 10.0 m exactly, 13.7 m modelled",
+ "pivot": "the centre of the top (y 0): the can stands here",
+ "ground": -13.8,
+ "ink": 0.04,
+ "width": 10.4,
+ "eye_z": 1.7,
+ "look_z": -4.0,
+ "distance": 19.0,
+ "figure": [
+  2.2,
+  -1.8
+ ],
+ "figure_z": 0.0,
+ "fov": 62,
+ "close": [
+  [
+   0.0,
+   0.0,
+   0.5
+  ],
+  [
+   4.5,
+   7.5,
+   7.0
+  ]
+ ],
+ "parts": 142
+}

@@ -1,0 +1,321 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using TumbangPreso.Core;
+using TumbangPreso.Visual;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
+
+namespace TumbangPreso.EditorTools.MapKit
+{
+    /// <summary>
+    /// ⚠️ THE GALE, FILMED WHERE IT IS PLAYED (2026-10-11). The effects bench films an effect alone on a dark floor, and
+    /// that is the wrong place to judge anything that goes into the game: the game is daylight, a lit road, a wall, a
+    /// body in the way, and no camera that blooms. So this films Amihan's Whirlwind on a real map, opened as a PREVIEW
+    /// scene (the scene the owner has open is not touched and nothing is saved), from the three places it is seen from:
+    ///
+    ///   * a third person three-quarter view that follows the front for its whole life;
+    ///   * the caster's own eyes, the front rolling away;
+    ///   * a target's eyes down the lane, the front rolling AT the lens and over it: the view a dodge is made from.
+    ///
+    /// Each frame is nine pictures: those three views down, and across them THE OLD FRONT, THE NEW WHIRLWINDS, and the new ones
+    /// through the bench's bloom (`PaeteAbilityFilm.FxBench.cs`), so the old and the new are judged at the same moments
+    /// and what a bloom would buy is seen beside what ships without one.
+    ///
+    /// Request `gale <tag>` in `Temp/paete-ability-film.request`. Frames go to
+    /// `Logs/paete-ability-film/fxbench_gale_<tag>_frames/` (named like a bench film so the same tools join and cut them),
+    /// then `done_fxbench_gale_<tag>.txt` with what each front costs to draw, or `failed_...` with the exception.
+    /// A tag that begins `scout` films nothing: it writes one picture of the map from straight above with a metre grid,
+    /// for choosing where the lane lies.
+    ///
+    /// ⚠️ BOTH FRONTS ARE STOOD ON THE MAP'S ROAD BY HAND. `VfxShapes.GroundPoint` asks the physics of the scene that is
+    /// OPEN, which is not this one, so after each step the front is put back on the height found here.
+    /// </summary>
+    public static partial class PaeteAbilityFilm
+    {
+        private const int GaleCellWidth = 640, GaleCellHeight = 360;
+        private const string GaleMap = "Assets/TumbangPreso/Scenes/Maps/Eskinita.unity";
+        // Where the caster stands on that map and which way she throws it (degrees about the upright), chosen off the
+        // scout picture: the pale court's whole length, two and a half metres off the houses on its west side, so the
+        // third person view (from the east) has the gale against a wall and the other two have it on the bright floor.
+        private static readonly Vector3 GaleStand = new Vector3(-4.0f, 0f, -7.6f);
+        private const float GaleYaw = 0f, GaleTargetAhead = 7.5f;
+
+        private static void RunGale(string tag)
+        {
+            Directory.CreateDirectory(OutDir);
+            tag = new string((tag ?? "v00").Where(c => char.IsLetterOrDigit(c) || c == '-' || c == '_').ToArray()).ToLowerInvariant();
+            if (tag.Length == 0) tag = "v00";
+            string named = "fxbench_gale_" + tag;
+            string donePath = Path.Combine(OutDir, "done_" + named + ".txt"), failedPath = Path.Combine(OutDir, "failed_" + named + ".txt");
+            if (File.Exists(donePath)) File.Delete(donePath);
+            if (File.Exists(failedPath)) File.Delete(failedPath);
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                File.WriteAllText(failedPath, "The editor is in Play mode. The film only runs outside it.");
+                return;
+            }
+
+            Scene scene = default;
+            bool opened = false, lit = false, switchBefore = AmihanGaleFront.Whirlwinds;
+            var owned = new List<Object>();
+            var report = new System.Text.StringBuilder();
+            try
+            {
+                // The real map, as a preview scene. If it will not open, a plain lit street stands in, and the report says so.
+                try { scene = EditorSceneManager.OpenPreviewScene(GaleMap); opened = scene.IsValid(); }
+                catch (Exception refused) { report.AppendLine("The map did not open as a preview scene (" + refused.Message + "); filmed on a plain ground instead."); }
+                if (!opened)
+                {
+                    scene = EditorSceneManager.NewPreviewScene();
+                    var plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+                    SceneManager.MoveGameObjectToScene(plane, scene);
+                    plane.name = "~GaleFilmGround"; plane.transform.localScale = new Vector3(12f, 1f, 12f);
+                    var plain = new Material(Shader.Find("Standard")) { color = new Color(0.70f, 0.68f, 0.64f), hideFlags = HideFlags.HideAndDontSave };
+                    plain.SetFloat("_Glossiness", 0f); owned.Add(plain);
+                    plane.GetComponent<MeshRenderer>().sharedMaterial = plain;
+                    var sunGo = new GameObject("~GaleFilmSun"); SceneManager.MoveGameObjectToScene(sunGo, scene);
+                    var sun = sunGo.AddComponent<Light>(); sun.type = LightType.Directional; sun.intensity = 1.05f; sun.shadows = LightShadows.Soft;
+                    sunGo.transform.rotation = Quaternion.Euler(48f, -35f, 0f);
+                }
+                GameObject In(GameObject go) { SceneManager.MoveGameObjectToScene(go, scene); return go; }
+                report.AppendLine(opened ? "map: " + GaleMap : "map: none (plain ground)");
+
+                // The scene's own sun, sky and ambient light, not the open scene's.
+                lit = Unsupported.SetOverrideLightingSettings(scene);
+                Shader.SetGlobalFloat("_CharacterSmoothShade", ToonSkin.CharacterSmoothShade);
+
+                var cam = In(new GameObject("~GaleFilmCamera")).AddComponent<Camera>();
+                cam.scene = scene; cam.enabled = false;
+                cam.nearClipPlane = 0.06f; cam.farClipPlane = 400f;
+                cam.clearFlags = RenderSettings.skybox != null ? CameraClearFlags.Skybox : CameraClearFlags.SolidColor;
+                cam.backgroundColor = new Color(0.55f, 0.70f, 0.88f);
+
+                if (tag.StartsWith("scout")) { GaleScout(scene, cam, named, donePath, report, owned); return; }
+
+                // The road under the lane, found in THIS scene's physics; the lane's own frame.
+                Quaternion facing = Quaternion.Euler(0f, GaleYaw, 0f);
+                Vector3 forward = facing * Vector3.forward, right = facing * Vector3.right;
+                float road = GaleStand.y;
+                var physics = scene.GetPhysicsScene();
+                if (physics.IsValid() && physics.Raycast(GaleStand + Vector3.up * 30f, Vector3.down, out var under, 80f, ~0, QueryTriggerInteraction.Ignore))
+                { road = under.point.y; report.AppendLine("road found at y " + road.ToString("0.000") + " on " + under.collider.name); }
+                else report.AppendLine("no road found under the lane in the preview scene's physics; standing at y " + road.ToString("0.000"));
+                Vector3 stand = new Vector3(GaleStand.x, road, GaleStand.z);
+
+                // Three bodies for scale: the caster, a target down the lane, and one standing clear beside it.
+                GameObject Body(string id, Vector3 at, float yaw)
+                {
+                    var art = RosterBook.Load()?.FindPersonArt(id);
+                    if (art == null || art.Model == null) return null;
+                    var body = In((GameObject)Object.Instantiate(art.Model));
+                    body.name = "~GaleFilm-" + id;
+                    body.transform.SetPositionAndRotation(at, Quaternion.Euler(0f, yaw + CharacterVisual.PersonModelYaw, 0f));
+                    body.transform.localScale = Vector3.one * CharacterVisual.PersonScale;
+                    ToonSkin.Apply(body, ToonSkin.PersonOutlineWidth, art.Palette);
+                    foreach (var animator in body.GetComponentsInChildren<Animator>(true)) animator.enabled = false;
+                    return body;
+                }
+                Vector3 targetAt = stand + forward * GaleTargetAhead;
+                var caster = Body("amihan", stand, GaleYaw);
+                var target = Body("dante", targetAt, GaleYaw + 180f);
+                Body("cheska", stand + forward * 4.5f - right * 2.4f, GaleYaw + 90f);
+
+                // One of each gale, at the same place, each built with the switch its own way.
+                var oldHost = In(new GameObject("~GaleFilmOld")); var newHost = In(new GameObject("~GaleFilmNew"));
+                AmihanGaleFront.Whirlwinds = false;
+                var oldFront = AmihanGaleFront.Build(oldHost.transform, stand, forward, AmihanRules.WhirlwindSeconds, AmihanRules.WhirlwindSpeed, AmihanRules.WhirlwindStart, AmihanRules.WhirlwindWidth);
+                AmihanGaleFront.Whirlwinds = true;
+                // What a mesh or a material of the study's costs to leave behind: counted before the row is built, and again
+                // at the end once it has been destroyed the way a gale's is.
+                int meshesBefore = Resources.FindObjectsOfTypeAll<Mesh>().Length, materialsBefore = Resources.FindObjectsOfTypeAll<Material>().Length;
+                // A tag that begins `light` and a number films the row with that many hundredths of it laid on as light.
+                AmihanWhirlwinds.StagedLight = -1f;
+                if (tag.StartsWith("light") && int.TryParse(new string(tag.Substring(5).TakeWhile(char.IsDigit).ToArray()), out int hundredths)) AmihanWhirlwinds.StagedLight = hundredths / 100f;
+                // A tag that begins `wide` and a number stands a whirlwind that many tenths of a metre across, for a still.
+                AmihanWhirlwinds.StagedAcross = -1f;
+                if (tag.StartsWith("wide") && int.TryParse(new string(tag.Substring(4).TakeWhile(char.IsDigit).ToArray()), out int tenths)) AmihanWhirlwinds.StagedAcross = tenths / 10f;
+                var newFront = AmihanGaleFront.Build(newHost.transform, stand, forward, AmihanRules.WhirlwindSeconds, AmihanRules.WhirlwindSpeed, AmihanRules.WhirlwindStart, AmihanRules.WhirlwindWidth);
+                oldFront.enabled = false; newFront.enabled = false;
+                AmihanWhirlwinds.StagedGround = road;
+
+                var plainTarget = new RenderTexture(GaleCellWidth, GaleCellHeight, 24, RenderTextureFormat.ARGB32) { antiAliasing = 4 };
+                var hdrTarget = new RenderTexture(GaleCellWidth, GaleCellHeight, 24, RenderTextureFormat.ARGBHalf) { antiAliasing = 4 };
+                var shown = new RenderTexture(GaleCellWidth, GaleCellHeight, 0, RenderTextureFormat.ARGB32);
+                owned.Add(plainTarget); owned.Add(hdrTarget); owned.Add(shown);
+                var bloomShader = Shader.Find("Hidden/TumbangPreso/FxStudyBloom");
+                Material bloomMaterial = bloomShader != null ? new Material(bloomShader) { hideFlags = HideFlags.HideAndDontSave } : null;
+                if (bloomMaterial != null) owned.Add(bloomMaterial); else report.AppendLine("the bench bloom shader is missing: the third column is the plain picture again");
+                var cell = new Texture2D(GaleCellWidth, GaleCellHeight, TextureFormat.RGB24, false);
+                var sheet = new Texture2D(GaleCellWidth * 3, GaleCellHeight * 3, TextureFormat.RGB24, false);
+                owned.Add(cell); owned.Add(sheet);
+                string frames = Path.Combine(OutDir, named + "_frames");
+                if (Directory.Exists(frames)) foreach (string old in Directory.GetFiles(frames)) File.Delete(old);
+                Directory.CreateDirectory(frames);
+
+                void Shoot(bool bloom, int column, int row)
+                {
+                    cam.allowHDR = bloom && bloomMaterial != null;
+                    cam.targetTexture = cam.allowHDR ? hdrTarget : plainTarget;
+                    Shader.SetGlobalFloat("_FxStudyBloom", cam.allowHDR ? 1f : 0f);
+                    cam.Render();
+                    if (cam.allowHDR) Bloom(hdrTarget, shown, bloomMaterial, BloomIntensity);
+                    var keep = RenderTexture.active; RenderTexture.active = cam.allowHDR ? shown : plainTarget;
+                    cell.ReadPixels(new Rect(0, 0, GaleCellWidth, GaleCellHeight), 0, 0); cell.Apply();
+                    RenderTexture.active = keep;
+                    Shader.SetGlobalFloat("_FxStudyBloom", 0f);
+                    sheet.SetPixels(column * GaleCellWidth, (2 - row) * GaleCellHeight, GaleCellWidth, GaleCellHeight, cell.GetPixels());
+                }
+                void OnRoad(AmihanGaleFront front) { var p = front.transform.position; p.y = road; front.transform.position = p; }
+
+                float life = AmihanRules.WhirlwindSeconds, seconds = life + AmihanWhirlwinds.RemnantSeconds + 0.15f;
+                // The band's front edge reaches the target, and the host would Whirl it, here.
+                float caught = (GaleTargetAhead - AmihanRules.WhirlwindStart - AmihanRules.WhirlwindDepth * 0.5f) / AmihanRules.WhirlwindSpeed + 0.03f;
+                int count = Mathf.CeilToInt(seconds * BenchRate) + 1;
+                string cost = null;
+                for (int f = 0; f < count; f++)
+                {
+                    float t = f / (float)BenchRate;
+                    Vector3 frontAt = AmihanGaleFront.FrontAt(stand, forward, AmihanRules.WhirlwindSpeed, AmihanRules.WhirlwindStart, Mathf.Min(t, life));
+                    for (int view = 0; view < 3; view++)
+                    {
+                        Vector3 eye, look; float fov;
+                        if (view == 0) { eye = frontAt + right * 4.6f + Vector3.up * 2.6f - forward * 3.2f; look = frontAt + Vector3.up * 0.7f + forward * 0.3f; fov = 46f; }
+                        else if (view == 1) { eye = stand + Vector3.up * 1.55f - forward * 0.15f; look = stand + forward * 8f + Vector3.up * 0.9f; fov = 70f; }
+                        else { eye = targetAt + Vector3.up * 1.55f + forward * 0.15f; look = targetAt - forward * 8f + Vector3.up * 0.9f; fov = 70f; }
+                        cam.fieldOfView = fov;
+                        cam.transform.SetPositionAndRotation(eye, Quaternion.LookRotation(look - eye, Vector3.up));
+                        // Nobody sees their own body from behind their own eyes.
+                        if (caster != null) caster.SetActive(view != 1);
+                        if (target != null) target.SetActive(view != 2);
+
+                        newHost.SetActive(false); oldHost.SetActive(t <= life);
+                        oldFront.StepTo(t); OnRoad(oldFront);
+                        Shoot(false, 0, view);
+
+                        oldHost.SetActive(false); newHost.SetActive(true);
+                        AmihanWhirlwinds.StagedEye = eye;
+                        newFront.StepTo(t); OnRoad(newFront);
+                        Shoot(false, 1, view);
+                        Shoot(true, 2, view);
+                    }
+                    sheet.Apply();
+                    File.WriteAllBytes(Path.Combine(frames, "f" + f.ToString("000") + ".png"), sheet.EncodeToPNG());
+
+                    // What each costs to draw, counted once in the middle of the roll: every renderer that is on is one draw
+                    // call here (nothing of either is batched), with the triangles it submits.
+                    if (cost == null && t >= 1.2f)
+                    {
+                        string Count(GameObject host, bool on)
+                        {
+                            host.SetActive(true);
+                            int calls = 0, triangles = 0, seeThrough = 0;
+                            foreach (var renderer in host.GetComponentsInChildren<MeshRenderer>(false))
+                            {
+                                if (!renderer.enabled) continue;
+                                var filter = renderer.GetComponent<MeshFilter>();
+                                if (filter == null || filter.sharedMesh == null) continue;
+                                calls++; triangles += (int)(filter.sharedMesh.GetIndexCount(0) / 3);
+                                if (renderer.sharedMaterial != null && renderer.sharedMaterial.renderQueue >= 2500) seeThrough++;
+                            }
+                            host.SetActive(on);
+                            return calls + " draw calls, " + triangles + " triangles, " + seeThrough + " see-through layers";
+                        }
+                        cost = "at 1.2 s   OLD: " + Count(oldHost, false) + "\n           NEW: " + Count(newHost, true);
+                    }
+                }
+                report.AppendLine(count + " frames at " + BenchRate + " a second (" + seconds.ToString("0.00") + " s; the gale's life is " + life.ToString("0.00") + " s), in " + frames.Replace('\\', '/'));
+                report.AppendLine("each frame: rows are third person, caster's eyes, target's eyes; columns are OLD, NEW, NEW with the bench bloom");
+                report.AppendLine("the target is " + GaleTargetAhead.ToString("0.0") + " m down the lane; the band reaches it at " + caught.ToString("0.00") + " s");
+                report.AppendLine("of the new row, " + (AmihanWhirlwinds.StagedLight >= 0f ? AmihanWhirlwinds.StagedLight : AmihanWhirlwinds.DayLight).ToString("0.00") + " is light laid on (the bench's is 0.85)");
+                // How tall a character stands on this court, and how tall the row is, by what is drawn.
+                float Top(GameObject thing)
+                {
+                    float top = road; bool was = thing.activeSelf; thing.SetActive(true);
+                    foreach (var renderer in thing.GetComponentsInChildren<Renderer>(false)) if (renderer.enabled) top = Mathf.Max(top, renderer.bounds.max.y);
+                    thing.SetActive(was); return top - road;
+                }
+                newFront.StepTo(1.2f);
+                if (caster != null) report.AppendLine("a character stands " + Top(caster).ToString("0.00") + " m; the row's drawn pieces reach " + Top(newHost).ToString("0.00") + " m (motes rise above the horn)");
+                // (Outside Play nothing calls a component's OnDestroy, so the film frees the row by the same call a gale's does.)
+                if (newFront.Winds != null) newFront.Winds.Free();
+                // The row destroyed as a gale's is: whatever is left over is a leak.
+                Object.DestroyImmediate(newHost); owned.Remove(newHost);
+                report.AppendLine("after destroying the new row: " + (Resources.FindObjectsOfTypeAll<Mesh>().Length - meshesBefore) + " meshes and " + (Resources.FindObjectsOfTypeAll<Material>().Length - materialsBefore) + " materials more than before it was built");
+                report.AppendLine(cost ?? "cost not counted");
+                report.AppendLine(lit ? "lit by the map's own lighting settings" : "the map's lighting settings could not be put in force: lit by the open scene's ambient");
+                File.WriteAllText(donePath, report.ToString());
+                Debug.Log("[PaeteAbilityFilm] " + named + " written to " + OutDir);
+            }
+            catch (Exception failure)
+            {
+                File.WriteAllText(failedPath, report + "\n" + failure);
+                Debug.LogError("[PaeteAbilityFilm] " + failure);
+            }
+            finally
+            {
+                AmihanGaleFront.Whirlwinds = switchBefore;
+                AmihanWhirlwinds.StagedEye = null; AmihanWhirlwinds.StagedGround = null; AmihanWhirlwinds.StagedLight = -1f; AmihanWhirlwinds.StagedAcross = -1f;
+                Shader.SetGlobalFloat("_FxStudyBloom", 0f);
+                if (lit) Unsupported.RestoreOverrideLightingSettings();
+                RenderTexture.active = null;
+                foreach (var thing in owned)
+                {
+                    if (thing == null) continue;
+                    if (thing is RenderTexture texture) texture.Release();
+                    Object.DestroyImmediate(thing);
+                }
+                if (scene.IsValid()) EditorSceneManager.ClosePreviewScene(scene);
+            }
+        }
+
+        /// <summary>The map from straight above, sixty metres square about its middle, a line every metre and a heavier one
+        /// every five, and what it holds: for choosing where a lane can be laid.</summary>
+        private static void GaleScout(Scene scene, Camera cam, string named, string donePath, System.Text.StringBuilder report, List<Object> owned)
+        {
+            const int size = 1500; const float span = 60f;
+            var target = new RenderTexture(size, size, 24, RenderTextureFormat.ARGB32) { antiAliasing = 2 };
+            owned.Add(target);
+            cam.orthographic = true; cam.orthographicSize = span * 0.5f; cam.targetTexture = target;
+            cam.transform.SetPositionAndRotation(new Vector3(0f, 120f, 0f), Quaternion.Euler(90f, 0f, 0f));
+            cam.nearClipPlane = 1f; cam.farClipPlane = 400f;
+            cam.Render();
+            var picture = new Texture2D(size, size, TextureFormat.RGB24, false);
+            owned.Add(picture);
+            var keep = RenderTexture.active; RenderTexture.active = target;
+            picture.ReadPixels(new Rect(0, 0, size, size), 0, 0);
+            RenderTexture.active = keep;
+            float perMetre = size / span;
+            for (int m = -30; m <= 30; m++)
+            {
+                int at = Mathf.Clamp(Mathf.RoundToInt((m + 30) * perMetre), 0, size - 1);
+                Color line = m == 0 ? Color.red : m % 5 == 0 ? new Color(1f, 1f, 0f) : new Color(1f, 1f, 1f, 1f);
+                int step = m % 5 == 0 ? 1 : 6;
+                for (int k = 0; k < size; k += step) { picture.SetPixel(at, k, line); picture.SetPixel(k, at, line); }
+            }
+            picture.Apply();
+            string path = Path.Combine(OutDir, named + ".png");
+            File.WriteAllBytes(path, picture.EncodeToPNG());
+            report.AppendLine("scout picture: " + path.Replace('\\', '/') + " (x to the right, z up the picture, yellow every 5 m, red through 0)");
+            foreach (var root in scene.GetRootGameObjects())
+            {
+                var bounds = new Bounds(root.transform.position, Vector3.zero); bool any = false;
+                foreach (var renderer in root.GetComponentsInChildren<Renderer>(false))
+                { if (!any) { bounds = renderer.bounds; any = true; } else bounds.Encapsulate(renderer.bounds); }
+                report.AppendLine("  " + root.name + (any ? "  centre " + bounds.center.ToString("0.0") + " size " + bounds.size.ToString("0.0") : "  (nothing drawn)"));
+            }
+            var physics = scene.GetPhysicsScene();
+            report.AppendLine("preview physics scene valid: " + physics.IsValid());
+            if (physics.IsValid())
+                for (int z = -12; z <= 12; z += 6)
+                    for (int x = -12; x <= 12; x += 6)
+                        if (physics.Raycast(new Vector3(x, 40f, z), Vector3.down, out var hit, 90f, ~0, QueryTriggerInteraction.Ignore))
+                            report.AppendLine("  ground at (" + x + ", " + z + "): y " + hit.point.y.ToString("0.00") + " on " + hit.collider.name);
+            File.WriteAllText(donePath, report.ToString());
+        }
+    }
+}

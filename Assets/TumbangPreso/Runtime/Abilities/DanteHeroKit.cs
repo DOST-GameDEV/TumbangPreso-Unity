@@ -192,11 +192,31 @@ namespace TumbangPreso.Abilities
                 SupportsPendingSnapshot = true;
             }
 
+            // ⚠️ THE CUTSCENE IS THE WIND-UP (2026-10-10, the same rule SUPERNOVA and ABSOLUTE ZERO took). Its cutscene ends on
+            // the longhorn's fist landing, so a 0.4 s wind-up after it was a pause with him standing on the beast and nothing
+            // happening. Released after its cutscene the blasts start at once; a cast with no cutscene winds up as before.
+            // Decided for the owner while he was away; it is his to overrule.
+            protected override bool IntroductionIsTheWindup => true;
+
             protected override void OnActivate(AbilityContext ctx)
             {
-                NetCue.Play("hero_dante_ult", ctx.Position);
+                // Where he stood on the court when he cast it. The blasts start from here whatever is done with him below.
+                Vector3 court = ctx.Position, forward = ctx.Forward;
+                NetCue.Play("hero_dante_ult", court);
                 ctx.Motor.GetComponent<CharacterSquashStretch>()?.Stretch(0.4f);
-                DanteDriftWave.Spawn(ctx.Position, ctx.Forward, ctx.Motor.PlayerSlot);
+                DanteDriftWave.Spawn(court, forward, ctx.Motor.PlayerSlot);
+                if (!HadSharedIntroduction) return;
+
+                // ⚠️ HE IS REALLY UP THERE (owner: "by then dante should still be on the longhorn and only then will it
+                // disappeaer into the ground", "he's really up there", and he "can" walk off it). The cutscene left him on
+                // its back, 3.4 m up, so play resumes with him there on every peer, whether or not that peer drew the
+                // cutscene: the longhorn is stood up under him with a real shelf (`DanteLonghornPerch`), he is put on it,
+                // and it goes under. `Teleport` is the motor's own guarded, replicated move (only the peer that owns the
+                // body moves it, and the host tells the others); it also clears his statuses, as every teleport does and
+                // as SUPERNOVA's does.
+                float rise = DanteLonghornPerch.RiseAt(court);
+                DanteLonghornPerch.Spawn(ctx.Motor, Visual.VfxShapes.GroundPoint(court), ctx.Motor.transform.eulerAngles.y, rise);
+                if (rise > .05f) ctx.Motor.Teleport(court + Vector3.up * rise);
             }
         }
     }

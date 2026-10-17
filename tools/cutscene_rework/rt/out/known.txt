@@ -13,6 +13,11 @@ AiPlan.cs
 AiRetrievalRules.cs
 AiStuckWatch.cs
 AirborneByDesign.cs
+AlleyChickens.cs
+AlleyLifeSound.cs
+AlleyPets.cs
+AlleySoundscape.cs
+AlleyStreet.cs
 AmbientLife.Habitat.cs
 AmbientLife.Visits.cs
 AmbientLife.cs
@@ -584,6 +589,7 @@ PreparedWorldSnapshot.cs
 PresentationClock.cs
 ProfileIndexTab.cs
 ProfilePaths.cs
+PrototypeChaser.cs
 PrototypeMapPlay.cs
 QueueCard.Native.cs
 QueueCard.OwnerPainted.cs
@@ -771,6 +777,7 @@ UltimateIntroductionCache.cs
 UltimatePerformance.cs
 UltimatePhaseView.cs
 UltimatePresentationDirector.cs
+UltimateProp.cs
 VSyncModes.cs
 VerbIcons.cs
 VersionStamp.cs

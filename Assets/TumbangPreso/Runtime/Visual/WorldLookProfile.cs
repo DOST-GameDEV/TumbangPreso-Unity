@@ -380,6 +380,82 @@ namespace TumbangPreso.Visual
             new MapLook("Eskinita",new Color(.58f,.56f,.78f),new Color(.7f,.58f,.58f),new Color(.66f,.48f,.34f),new Color(.9f,.8f,1.08f),60,320,1,false)
                 .Air(new Color(.98f,.88f,.74f),new Color(.4f,.66f,.86f),new Color(.99f,.91f,.76f),new Color(1,.9f,.76f),new Color(.74f,.68f,.84f))
                 .Key(new Color(1,.82f,.58f),1.2f,32,.68f,new Color(.055f,.032f,.065f)),
+            // ⚠️ PAETE'S RUN: A GOLDEN HOUR IN A DESERT BOWL (owner, 2026-10-10, after playing the hidden
+            // race map: "theres no WorldLook"). With no row the scene (Scenes/Maps/PaeteRun.unity, an
+            // unregistered sample built by Editor/MapKit/PaeteRunSceneBuilder.cs) wore nothing in Play: a
+            // plain sun and a flat blue sky. A WARM, LOW-ISH KEY (34 degrees), so every tier, column and
+            // chute lip throws a long shadow down the stepped face; the builder turns it (only the
+            // elevation is taken from here). ⚠️ THE SHADE IS THE BRIGHTEST OF ANY ROW, ON PURPOSE: the
+            // rock and sand are pale and bounce a great deal, so the sky term is a clear lilac-blue, the
+            // equator a rose sand and the ground a strong warm bounce; nothing on this map may read dark.
+            // THE AIR is a warm sand haze that starts PAST THE COURSE (150 m; the site is about 300 m
+            // across) and is whole by 900 m, so the far rock stacks sit pale in it. A deep blue zenith
+            // down to a peach horizon. ⚠️ THE FIRST CUT (zenith .26,.54,.84 over a horizon 1,.84,.64)
+            // rendered the lower sky LAVENDER (Logs/paete-run/unity/v4, `look_face`): the sky rule above.
+            // The zenith's green went up and the horizon's with it, so the blend passes through a pale
+            // blue; the haze is the horizon a little paler, not a deeper orange. The violet stays in the
+            // cloud shade. Light chalk (the race draws no chalk box; this is only what a cue would wear).
+            // No floor lift (pale ground) and the profile's own bloom (a lit pale rock tops out near 1.5,
+            // under the knee, so only the sun and the lanterns' shells glow).
+            // ⚠️ ITS OWN CLOUDS, SPARSE AND HIGH. The course is NOT round the origin (it runs from the start
+            // line at the origin to 245 m west and 237 m north of it, and its summit is 56 m up), so the
+            // profile's ring (100 to 150 m out, 40 to 64 m up) would stand among the tiers. Two bands
+            // instead, both far over everything: six clouds 380 to 520 m out with bellies 130 to 190 m
+            // up, and three nearer ones 210 to 260 m up. The ring turns about the origin, so each band
+            // is clear all the way round (nothing on the map is higher than about 75 m). The colours are
+            // the row's own (`CloudLight`, `CloudShade`, the horizon): the three colours here are left unset.
+            new MapLook("PaeteRun",new Color(.6f,.62f,.86f),new Color(.74f,.64f,.62f),new Color(.7f,.54f,.36f),new Color(.88f,.82f,1.1f),150,900,0,false)
+                .Air(new Color(.98f,.88f,.72f),new Color(.2f,.58f,.88f),new Color(1,.88f,.68f),new Color(1,.88f,.7f),new Color(.7f,.64f,.82f))
+                .Key(new Color(1,.84f,.6f),1.2f,34,.7f,new Color(.055f,.034f,.06f))
+                .CloudLayers(default,default,default,0,
+                    new MapLook.CloudBand(6,380,520,130,190,80,130,9),
+                    new MapLook.CloudBand(3,140,260,210,260,60,90,8)),
+            // ⚠️ PAYO: A HIGHLAND TEMPLE ON A MOUNTAINSIDE, BY DAY AND BY NIGHT (docs/PAYO_MAP_BRIEF.md; owner,
+            // 2026-10-12: "the stones will be more grey than sandy", "i dont think the whole map should be in an
+            // enclosed basin space", "the map changes to night at half time"). TWO ROWS for one scene
+            // (Scenes/Maps/Payo.unity, an unregistered sample built by Editor/MapKit/PayoSceneBuilder.cs). The scene
+            // wears "Payo" by its name, as every map does; `Map.PayoNight` blends the scene's light, air and sky to
+            // "PayoNight" through the half-time break and holds it for the second half (nothing is sent: every
+            // peer works it out from the round number and the break's clock).
+            // THE DAY: clear mountain air. A NEAR-WHITE KEY (a warm one turned the grey stone sandy in the Blender
+            // draft, which the owner ruled out) from 46 degrees; the shade is a clean lilac-blue, the bounce a cool
+            // grey-green off stone and paddy, never the orange of the city rows. THE AIR IS OPEN: the haze starts
+            // past the stage (120 m, the art's own number) and is whole only at 3600 m, because the art's five
+            // ranges stand 0.6, 1.0, 1.4, 2.0 and 2.7 km out and the fog must take them one after another (linear fog
+            // is WHOLE at its end: at 1500 the last three were one flat colour). The sun is 31 degrees up (the art's
+            // morning; it was 46 before the art came). Nothing closes the place in. A clean blue zenith over a pale horizon whose
+            // green stays near its red (the sky rule above). Clouds of its own, few, far and high (the mountain
+            // behind the temple climbs to about 45 m at 145 m out, and the ring turns about the can). Dark chalk
+            // (the court is pale stone). A little glow of its own, for the night's fires: a lit pale stone tops out
+            // near 1.5, under the knee.
+            // ⚠️ COOL BLUE LIGHT ON GREY STONE (owner, 2026-10-12, with a reference picture: "follow that cool teal tropical
+            // tone"; and then, of a first try that leaned everything blue-green: "the texture all reads as too green and
+            // teal. the reference i gave only had cool blue LIGHTING. the stones were the old grey"). So nothing here tints
+            // a surface: the tone is light and air only. A WARM-WHITE SUN, so a lit face of grey stone stays grey and ochre
+            // and red stay warm. THE SHADE IS COOL BLUE (the sky and equator terms of the trilight, which in this pipeline
+            // are every shadow's colour, and the cast's shadow tint), the bounce off the ground a neutral grey, never
+            // green. THE AIR IS AN AQUA-BLUE haze from 80 m that is whole only at 3000 m, so the art's ranges (0.6 to
+            // 2.7 km) fade into it one behind another. The sky runs from a pale aqua horizon to a clear blue zenith (green
+            // above red at both ends, so nothing between can turn lavender). The coloured black floor is a deep blue.
+            new MapLook("Payo",new Color(.44f,.56f,.78f),new Color(.5f,.56f,.64f),new Color(.43f,.44f,.44f),new Color(.8f,.88f,1.1f),80,3000,0,true)
+                .Air(new Color(.66f,.84f,.94f),new Color(.3f,.6f,.88f),new Color(.76f,.9f,.96f),new Color(1,.99f,.96f),new Color(.62f,.74f,.9f))
+                .Key(new Color(1,.95f,.86f),1.16f,31,.72f,new Color(.024f,.034f,.06f)).Glow(.14f,1.9f)
+                .CloudLayers(default,default,default,0,
+                    new MapLook.CloudBand(7,340,520,150,220,80,130,9),
+                    new MapLook.CloudBand(3,220,300,230,280,60,90,8)),
+            // THE NIGHT: Mayari's. The key is the MOON, a cool blue-white at about half the sun's strength, from
+            // over the valley (the builder turns it; `Map.PayoNight` swaps the angle at the middle of the dusk).
+            // The shade is a deep blue and still a colour, never black (the high-key rule holds at night: the
+            // Arena's row is the precedent), so a body in a monolith's shadow is still read. The air is a dark
+            // blue that leaves the far ridges as silhouettes; the sky a near-black zenith over a blue horizon.
+            // Its clouds are the day's, in these colours. Never looked up by a scene name: no scene is called this.
+            // A DEEP BLUE-INDIGO (the day's cool light, carried into the night; not teal).
+            new MapLook("PayoNight",new Color(.16f,.24f,.5f),new Color(.13f,.18f,.38f),new Color(.08f,.1f,.18f),new Color(.76f,.84f,1.12f),90,3000,0,true)
+                .Air(new Color(.045f,.08f,.2f),new Color(.02f,.035f,.11f),new Color(.08f,.14f,.32f),new Color(.32f,.4f,.58f),new Color(.07f,.09f,.18f))
+                .Key(new Color(.7f,.84f,1),.62f,30,.7f,new Color(.018f,.024f,.048f)).Glow(.14f,1.9f)
+                .CloudLayers(default,default,default,0,
+                    new MapLook.CloudBand(7,340,520,150,220,80,130,9),
+                    new MapLook.CloudBand(3,220,300,230,280,60,90,8)),
             // ⚠️ ARENA: A NIGHT MATCH (docs/ARENA_ART_BRIEF.md: a stadium floating in the night sky, owner:
             // "bluelock/rocketleague stadium in aesthetic ... night time"). The one row that is NOT daylight, so
             // it reads the rules above for a night: the key is the floodlights, a cool white from high up

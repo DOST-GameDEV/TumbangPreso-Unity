@@ -1,0 +1,32 @@
+{
+ "monolith": {
+  "triangles": 13500,
+  "kb": 1525,
+  "open_edges": 0,
+  "size_xyz_blender": [
+   7.18,
+   6.46,
+   13.7
+  ]
+ },
+ "core": {
+  "triangles": 22632,
+  "kb": 2340,
+  "open_edges": 2,
+  "size_xyz_blender": [
+   10.34,
+   10.29,
+   13.7
+  ]
+ },
+ "tower_head": {
+  "triangles": 19014,
+  "kb": 1524,
+  "open_edges": 0,
+  "size_xyz_blender": [
+   8.33,
+   8.62,
+   13.5
+  ]
+ }
+}

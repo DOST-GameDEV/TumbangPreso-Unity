@@ -19,7 +19,10 @@ namespace TumbangPreso.UI
     {
         /// <summary>One slot since the 2026-07-29 input overhaul — the old two-slot bindings
         /// addressed a second slot that no longer exists.</summary>
-        public const string KeysText = "F1-F4 drive · F5 cycle · F6 reset · F7 no cooldowns · F8 character AO";
+        ///
+        /// ⚠️ "F12 cloud" IS A TEMPORARY DEMO, CHANGED 2026-10-11 (it read "F12 ice bloom" for a day), TO BE
+        /// REMOVED together with the key in `DebugPlayerSwitcher.Update` and `Visual/CloudDemo.cs`.
+        public const string KeysText = "F1-F4 drive · F5 cycle · F6 reset · F7 no cooldowns · F8 character AO · F12 cloud";
 
         private Text _slots;
         private Text _keys;

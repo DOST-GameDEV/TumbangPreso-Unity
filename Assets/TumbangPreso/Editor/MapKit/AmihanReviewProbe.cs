@@ -97,7 +97,7 @@ namespace TumbangPreso.EditorTools.MapKit
         {
             var host = new GameObject("GaleHost");
             AmihanGaleFront.Build(host.transform, Vector3.zero, Vector3.forward, AmihanRules.WhirlwindSeconds,
-                AmihanRules.WhirlwindSpeed, AmihanRules.WhirlwindStart, AmihanRules.WhirlwindWidth);
+                AmihanRules.WhirlwindSpeed, AmihanRules.WhirlwindStart, AmihanRules.WhirlwindRadius * 2.0f);
             return host;
         }
 

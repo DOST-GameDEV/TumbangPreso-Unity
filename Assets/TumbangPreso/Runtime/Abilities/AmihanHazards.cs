@@ -36,7 +36,7 @@ namespace TumbangPreso.Abilities
             var gale = go.AddComponent<AmihanGale>();
             gale.OwnerSlot = ownerSlot; gale.Origin = origin; gale.Forward = forward;
             gale._front = AmihanGaleFront.Build(go.transform, origin, forward, AmihanRules.WhirlwindSeconds,
-                AmihanRules.WhirlwindSpeed, AmihanRules.WhirlwindStart, AmihanRules.WhirlwindWidth);
+                AmihanRules.WhirlwindSpeed, AmihanRules.WhirlwindStart, AmihanRules.WhirlwindRadius * 2.0f);
             gale._age = Mathf.Clamp(age, 0.0f, AmihanRules.WhirlwindSeconds);
             gale._front.StepTo(gale._age);
             return gale;
@@ -49,43 +49,24 @@ namespace TumbangPreso.Abilities
             if (_age >= Duration) Destroy(gameObject);
         }
 
-        /// <summary>
-        /// Where the arc's centre line is, as a forward offset from its middle, at a lateral offset
-        /// <paramref name="x"/>: a parabola through the chord ends with <see cref="AmihanRules.WhirlwindBow"/>
-        /// at the middle. The same bow `AmihanGaleFront` draws, to the few centimetres a parabola
-        /// and a circular arc differ by at this chord.
-        /// </summary>
-        public static float ArcOffset(float x)
-        {
-            float half = AmihanRules.WhirlwindWidth * 0.5f;
-            float k = Mathf.Clamp01(Mathf.Abs(x) / half);
-            return AmihanRules.WhirlwindBow * (1.0f - k * k) - AmihanRules.WhirlwindBow;
-        }
-
         private void FixedUpdate()
         {
             if (!NetAuthority.ShouldResolve()) return;
             var round = GameServices.Round;
             if (round == null || !round.RoundActive) return;
 
-            // ⚠️ THE SWEPT BAND, NOT THE FRONT'S POSITION THIS STEP. At 5.5 m/s a physics step moves
-            // the front 11 cm, which is inside the 0.9 m depth, but a frame hitch can move it
-            // further; testing the band between last step and this one cannot tunnel.
-            float dt = Time.fixedDeltaTime;
-            float now = AmihanRules.WhirlwindStart + AmihanRules.WhirlwindSpeed * Mathf.Min(_age, Duration);
-            float before = now - AmihanRules.WhirlwindSpeed * dt;
+            // ⚠️ A CIRCLE UNDER THE WHIRLWIND, SWEPT FROM LAST STEP TO THIS ONE (`AmihanRules.WhirlwindCatches` has the
+            // rule and why it is swept; it was a bowed band until the gale became one whirlwind). ⚠️ ONCE A CAST: a body
+            // it has caught is in `_hit` and is passed over for the rest of this gale, however long it stands inside.
+            float now = AmihanRules.WhirlwindCentre(_age);
+            float before = AmihanRules.WhirlwindCentre(_age - Time.fixedDeltaTime);
             Vector3 right = Vector3.Cross(Vector3.up, Forward);
-            float half = AmihanRules.WhirlwindWidth * 0.5f;
-            float depth = AmihanRules.WhirlwindDepth * 0.5f;
 
             foreach (var p in round.Players)
             {
                 if (p == null || p.PlayerSlot == OwnerSlot || _hit.Contains(p.PlayerSlot)) continue;
                 Vector3 d = p.transform.position - Origin; d.y = 0.0f;
-                float x = Vector3.Dot(d, right), z = Vector3.Dot(d, Forward);
-                if (Mathf.Abs(x) > half + 0.3f) continue;
-                float arc = ArcOffset(x);
-                if (z < before + arc - depth || z > now + arc + depth) continue;
+                if (!AmihanRules.WhirlwindCatches(Vector3.Dot(d, right), Vector3.Dot(d, Forward), before, now)) continue;
                 // A body 2.8 m up is over the gale, not in it.
                 if (p.IsAloft) continue;
 
@@ -99,7 +80,7 @@ namespace TumbangPreso.Abilities
         {
             Type = Net.WorldEffectSnapshot.Kind.Gale, Source = gameObject,
             Position = Origin, Forward = Forward, Duration = Duration, Remaining = Remaining,
-            Radius = AmihanRules.WhirlwindWidth * 0.5f, Owner = OwnerSlot,
+            Radius = AmihanRules.WhirlwindRadius, Owner = OwnerSlot,
         };
     }
 

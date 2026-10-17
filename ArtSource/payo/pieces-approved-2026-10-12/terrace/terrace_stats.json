@@ -1,0 +1,670 @@
+{
+ "terrace_straight_young": {
+  "triangles": 6378,
+  "size": [
+   12.6,
+   3.57,
+   1.99
+  ],
+  "materials": [
+   "py_fall",
+   "py_foam",
+   "py_terrace_ground",
+   "py_terrace_plant",
+   "py_terrace_stone",
+   "py_water"
+  ],
+  "pivot": "foot of the wall, left end",
+  "end": [
+   12.0,
+   0.0
+  ],
+  "end_heading_deg": 0.0,
+  "wall_height": 1.15,
+  "parts": {
+   "wall": 784,
+   "dike": 336,
+   "water": 24,
+   "plants": 4996,
+   "spout": 36,
+   "spout_fall": 26,
+   "spout_foam": 168,
+   "seep": 8
+  }
+ },
+ "terrace_straight_ripe": {
+  "triangles": 7456,
+  "size": [
+   12.94,
+   4.1,
+   1.95
+  ],
+  "materials": [
+   "py_fall",
+   "py_foam",
+   "py_terrace_ground",
+   "py_terrace_plant",
+   "py_terrace_stone",
+   "py_water"
+  ],
+  "pivot": "foot of the wall, left end",
+  "end": [
+   12.0,
+   0.0
+  ],
+  "end_heading_deg": 0.0,
+  "wall_height": 1.15,
+  "parts": {
+   "wall": 784,
+   "dike": 336,
+   "water": 24,
+   "plants": 6074,
+   "spout": 36,
+   "spout_fall": 26,
+   "spout_foam": 168,
+   "seep": 8
+  }
+ },
+ "terrace_straight_flooded": {
+  "triangles": 3066,
+  "size": [
+   12.35,
+   3.57,
+   1.72
+  ],
+  "materials": [
+   "py_fall",
+   "py_foam",
+   "py_terrace_ground",
+   "py_terrace_plant",
+   "py_terrace_stone",
+   "py_water"
+  ],
+  "pivot": "foot of the wall, left end",
+  "end": [
+   12.0,
+   0.0
+  ],
+  "end_heading_deg": 0.0,
+  "wall_height": 1.15,
+  "parts": {
+   "wall": 784,
+   "dike": 336,
+   "water": 24,
+   "plants": 1684,
+   "spout": 36,
+   "spout_fall": 26,
+   "spout_foam": 168,
+   "seep": 8
+  }
+ },
+ "terrace_convex_young": {
+  "triangles": 6378,
+  "size": [
+   12.36,
+   5.53,
+   1.99
+  ],
+  "materials": [
+   "py_fall",
+   "py_foam",
+   "py_terrace_ground",
+   "py_terrace_plant",
+   "py_terrace_stone",
+   "py_water"
+  ],
+  "pivot": "foot of the wall, left end",
+  "end": [
+   11.683,
+   2.368
+  ],
+  "end_heading_deg": 22.92,
+  "wall_height": 1.15,
+  "parts": {
+   "wall": 784,
+   "dike": 336,
+   "water": 24,
+   "plants": 4996,
+   "spout": 36,
+   "spout_fall": 26,
+   "spout_foam": 168,
+   "seep": 8
+  }
+ },
+ "terrace_convex_ripe": {
+  "triangles": 7456,
+  "size": [
+   12.5,
+   5.53,
+   1.95
+  ],
+  "materials": [
+   "py_fall",
+   "py_foam",
+   "py_terrace_ground",
+   "py_terrace_plant",
+   "py_terrace_stone",
+   "py_water"
+  ],
+  "pivot": "foot of the wall, left end",
+  "end": [
+   11.683,
+   2.368
+  ],
+  "end_heading_deg": 22.92,
+  "wall_height": 1.15,
+  "parts": {
+   "wall": 784,
+   "dike": 336,
+   "water": 24,
+   "plants": 6074,
+   "spout": 36,
+   "spout_fall": 26,
+   "spout_foam": 168,
+   "seep": 8
+  }
+ },
+ "terrace_convex_flooded": {
+  "triangles": 3066,
+  "size": [
+   12.02,
+   5.53,
+   1.72
+  ],
+  "materials": [
+   "py_fall",
+   "py_foam",
+   "py_terrace_ground",
+   "py_terrace_plant",
+   "py_terrace_stone",
+   "py_water"
+  ],
+  "pivot": "foot of the wall, left end",
+  "end": [
+   11.683,
+   2.368
+  ],
+  "end_heading_deg": 22.92,
+  "wall_height": 1.15,
+  "parts": {
+   "wall": 784,
+   "dike": 336,
+   "water": 24,
+   "plants": 1684,
+   "spout": 36,
+   "spout_fall": 26,
+   "spout_foam": 168,
+   "seep": 8
+  }
+ },
+ "terrace_concave_young": {
+  "triangles": 6378,
+  "size": [
+   13.0,
+   5.42,
+   1.99
+  ],
+  "materials": [
+   "py_fall",
+   "py_foam",
+   "py_terrace_ground",
+   "py_terrace_plant",
+   "py_terrace_stone",
+   "py_water"
+  ],
+  "pivot": "foot of the wall, left end",
+  "end": [
+   11.683,
+   -2.368
+  ],
+  "end_heading_deg": -22.92,
+  "wall_height": 1.15,
+  "parts": {
+   "wall": 784,
+   "dike": 336,
+   "water": 24,
+   "plants": 4996,
+   "spout": 36,
+   "spout_fall": 26,
+   "spout_foam": 168,
+   "seep": 8
+  }
+ },
+ "terrace_concave_ripe": {
+  "triangles": 7456,
+  "size": [
+   13.38,
+   5.59,
+   1.95
+  ],
+  "materials": [
+   "py_fall",
+   "py_foam",
+   "py_terrace_ground",
+   "py_terrace_plant",
+   "py_terrace_stone",
+   "py_water"
+  ],
+  "pivot": "foot of the wall, left end",
+  "end": [
+   11.683,
+   -2.368
+  ],
+  "end_heading_deg": -22.92,
+  "wall_height": 1.15,
+  "parts": {
+   "wall": 784,
+   "dike": 336,
+   "water": 24,
+   "plants": 6074,
+   "spout": 36,
+   "spout_fall": 26,
+   "spout_foam": 168,
+   "seep": 8
+  }
+ },
+ "terrace_concave_flooded": {
+  "triangles": 3066,
+  "size": [
+   12.98,
+   5.22,
+   1.72
+  ],
+  "materials": [
+   "py_fall",
+   "py_foam",
+   "py_terrace_ground",
+   "py_terrace_plant",
+   "py_terrace_stone",
+   "py_water"
+  ],
+  "pivot": "foot of the wall, left end",
+  "end": [
+   11.683,
+   -2.368
+  ],
+  "end_heading_deg": -22.92,
+  "wall_height": 1.15,
+  "parts": {
+   "wall": 784,
+   "dike": 336,
+   "water": 24,
+   "plants": 1684,
+   "spout": 36,
+   "spout_fall": 26,
+   "spout_foam": 168,
+   "seep": 8
+  }
+ },
+ "terrace_cap_young": {
+  "triangles": 1800,
+  "size": [
+   5.46,
+   3.22,
+   1.93
+  ],
+  "materials": [
+   "py_terrace_ground",
+   "py_terrace_plant",
+   "py_terrace_stone",
+   "py_water"
+  ],
+  "pivot": "foot of the wall, left end",
+  "end": [
+   4.979,
+   2.383
+  ],
+  "end_heading_deg": 78.0,
+  "wall_height": 1.15,
+  "parts": {
+   "wall": 274,
+   "dike": 168,
+   "water": 12,
+   "plants": 1346
+  }
+ },
+ "terrace_cap_ripe": {
+  "triangles": 2106,
+  "size": [
+   5.72,
+   3.18,
+   1.92
+  ],
+  "materials": [
+   "py_terrace_ground",
+   "py_terrace_plant",
+   "py_terrace_stone",
+   "py_water"
+  ],
+  "pivot": "foot of the wall, left end",
+  "end": [
+   4.979,
+   2.383
+  ],
+  "end_heading_deg": 78.0,
+  "wall_height": 1.15,
+  "parts": {
+   "wall": 274,
+   "dike": 168,
+   "water": 12,
+   "plants": 1652
+  }
+ },
+ "terrace_cap_flooded": {
+  "triangles": 1298,
+  "size": [
+   5.13,
+   3.01,
+   1.62
+  ],
+  "materials": [
+   "py_terrace_ground",
+   "py_terrace_plant",
+   "py_terrace_stone",
+   "py_water"
+  ],
+  "pivot": "foot of the wall, left end",
+  "end": [
+   4.979,
+   2.383
+  ],
+  "end_heading_deg": 78.0,
+  "wall_height": 1.15,
+  "parts": {
+   "wall": 274,
+   "dike": 168,
+   "water": 12,
+   "plants": 844
+  }
+ },
+ "fall_small": {
+  "triangles": 3882,
+  "size": [
+   2.42,
+   1.98,
+   2.44
+  ],
+  "materials": [
+   "py_fall",
+   "py_foam",
+   "py_mist",
+   "py_rock",
+   "py_water",
+   "py_wet"
+  ],
+  "height": 2.0,
+  "pivot": "foot of the cliff under the middle of the lip",
+  "parts": {
+   "sheet": 120,
+   "foam": 640,
+   "mist": 768,
+   "wet": 2,
+   "lip": 920,
+   "rim": 1420,
+   "pool": 12
+  }
+ },
+ "fall_medium": {
+  "triangles": 6050,
+  "size": [
+   9.34,
+   7.97,
+   9.33
+  ],
+  "materials": [
+   "py_fall",
+   "py_foam",
+   "py_mist",
+   "py_rock",
+   "py_water",
+   "py_wet"
+  ],
+  "height": 8.0,
+  "pivot": "foot of the cliff under the middle of the lip",
+  "parts": {
+   "sheet": 448,
+   "foam": 1024,
+   "mist": 1152,
+   "wet": 2,
+   "lip": 892,
+   "rim": 2520,
+   "pool": 12
+  }
+ },
+ "fall_great": {
+  "triangles": 17850,
+  "size": [
+   33.26,
+   27.24,
+   44.46
+  ],
+  "materials": [
+   "py_fall",
+   "py_foam",
+   "py_mist",
+   "py_rock",
+   "py_water",
+   "py_wet"
+  ],
+  "height": 40.0,
+  "pivot": "foot of the cliff under the middle of the lip",
+  "parts": {
+   "sheet": 2312,
+   "foam": 4608,
+   "mist": 2880,
+   "wet": 2,
+   "lip": 1640,
+   "rim": 6396,
+   "pool": 12
+  }
+ },
+ "terrace_stair": {
+  "triangles": 1314,
+  "size": [
+   3.87,
+   1.57,
+   1.32
+  ],
+  "materials": [
+   "py_rock",
+   "py_terrace_plant"
+  ],
+  "parts": {
+   "stones": 1248,
+   "weeds": 66
+  },
+  "pivot": "foot of the wall under the first step",
+  "climbs": 1.15
+ },
+ "terrace_pipe": {
+  "triangles": 366,
+  "size": [
+   3.39,
+   0.81,
+   1.11
+  ],
+  "materials": [
+   "py_fall",
+   "py_terrace_plant",
+   "py_terrace_wood"
+  ],
+  "parts": {
+   "bamboo": 304,
+   "water": 12,
+   "spill": 20,
+   "weeds": 30
+  },
+  "pivot": "ground under the high end",
+  "next_piece_at": [
+   3.0,
+   0.0,
+   -0.12
+  ]
+ },
+ "terrace_scarecrow": {
+  "triangles": 378,
+  "size": [
+   2.38,
+   0.91,
+   2.22
+  ],
+  "materials": [
+   "py_terrace_plant",
+   "py_terrace_wood"
+  ],
+  "parts": {
+   "body": 294,
+   "straw": 84
+  },
+  "pivot": "ground at the pole",
+  "height": 2.12
+ },
+ "terrace_rack": {
+  "triangles": 1688,
+  "size": [
+   2.9,
+   1.1,
+   1.64
+  ],
+  "materials": [
+   "py_terrace_plant",
+   "py_terrace_wood"
+  ],
+  "parts": {
+   "bamboo": 1088,
+   "grain": 600
+  },
+  "pivot": "ground under the middle",
+  "width": 2.84
+ },
+ "boulder_1": {
+  "triangles": 272,
+  "size": [
+   0.8,
+   1.09,
+   0.58
+  ],
+  "materials": [
+   "py_rock",
+   "py_terrace_plant"
+  ],
+  "parts": {
+   "rock": 212,
+   "weeds": 60
+  },
+  "pivot": "ground under the middle"
+ },
+ "boulder_2": {
+  "triangles": 223,
+  "size": [
+   1.37,
+   1.05,
+   0.82
+  ],
+  "materials": [
+   "py_rock",
+   "py_terrace_plant"
+  ],
+  "parts": {
+   "rock": 148,
+   "weeds": 75
+  },
+  "pivot": "ground under the middle"
+ },
+ "boulder_3": {
+  "triangles": 294,
+  "size": [
+   1.86,
+   1.45,
+   0.99
+  ],
+  "materials": [
+   "py_rock",
+   "py_terrace_plant"
+  ],
+  "parts": {
+   "rock": 204,
+   "weeds": 90
+  },
+  "pivot": "ground under the middle"
+ },
+ "boulder_4": {
+  "triangles": 285,
+  "size": [
+   1.88,
+   1.56,
+   2.15
+  ],
+  "materials": [
+   "py_rock",
+   "py_terrace_plant"
+  ],
+  "parts": {
+   "rock": 180,
+   "weeds": 105
+  },
+  "pivot": "ground under the middle"
+ },
+ "boulder_5": {
+  "triangles": 332,
+  "size": [
+   3.52,
+   2.87,
+   1.69
+  ],
+  "materials": [
+   "py_rock",
+   "py_terrace_plant"
+  ],
+  "parts": {
+   "rock": 212,
+   "weeds": 120
+  },
+  "pivot": "ground under the middle"
+ },
+ "cover_fern": {
+  "triangles": 64,
+  "size": [
+   1.62,
+   1.32,
+   0.53
+  ],
+  "materials": [
+   "py_terrace_plant"
+  ],
+  "parts": {
+   "leaves": 64
+  },
+  "pivot": "ground at the crown"
+ },
+ "cover_taro": {
+  "triangles": 168,
+  "size": [
+   1.71,
+   1.46,
+   0.96
+  ],
+  "materials": [
+   "py_terrace_plant"
+  ],
+  "parts": {
+   "leaves": 168
+  },
+  "pivot": "ground at the crown"
+ },
+ "cover_grass": {
+  "triangles": 231,
+  "size": [
+   0.74,
+   0.75,
+   0.65
+  ],
+  "materials": [
+   "py_terrace_plant"
+  ],
+  "parts": {
+   "leaves": 231
+  },
+  "pivot": "ground at the middle"
+ }
+}

@@ -13,9 +13,29 @@ namespace TumbangPreso.Visual
         private bool _recorded;
         private float _age;
         private static Material _material;
+        // THE LANDING DUST IS SMALL PUFFS OF THE CLOUD NOW, AND A JUMP LEAVES ONE TOO. The owner, having passed the cloud
+        // (`FxCloud`): "can you also use this to replace the jump-land particles that are using the same 2d cloud".
+        // Same cue, same place, same gates as the flat dust below; only what is drawn differs (`CloudPuffs`: one
+        // mesh and one material for every puff in the match, nothing made per landing). Set `CloudLanding` false
+        // and a landing draws the flat dust again; `CloudJump` false and a jump leaves nothing, as before today.
+        // ⚠️ A REPLAY STILL DRAWS THE FLAT DUST (the call with a `recordedParent`): `WorldCourtCueTests` asserts that
+        // call returns this component with a particle system that has particles in it, and the test is not edited.
+        // ⚠️ The jump's dust is NEW: there was none. A jump made in the air (more than 0.4 m up) leaves none.
+        public static bool CloudLanding=true,CloudJump=true;
         public static bool Supports(string cue)=>cue=="can_knockdown" || cue=="land" || cue=="slide_scrape" || cue=="court_skid";
         public static CourtContactDust Play(string cue,Vector3 at,Transform recordedParent=null)
         {
+            if(recordedParent==null && ((cue=="land" && CloudLanding) || (cue=="jump" && CloudJump)))
+            {
+                float ink=WorldCueProfile.Current.InkEffects;bool jump=cue=="jump";
+                if(ink<=0 || !WorldGround.TryBelow(at,.35f,jump?.75f:1.35f,out float floor))return null;
+                var point=new Vector3(at.x,floor+.01f,at.z);
+                var puff=jump?CloudPuffField.Puff.Jump(point):CloudPuffField.Puff.Landing(point);
+                // Quieter where the look or the player asks for less, as the flat dust was fainter and fewer there.
+                puff.Scale*=Mathf.Lerp(.75f,1f,ink);if(Settings.SettingsStore.Current.ReducedEffects)puff.Share=.5f;
+                puff.Turn=FxStudyKit.Hash(CloudPuffs.Spawned,5)*6.2832f;
+                CloudPuffs.Spawn(puff);return null;
+            }
             if(!Supports(cue) || WorldCueProfile.Current.InkEffects<=0 ||
                 !WorldGround.TryBelow(at,.35f,1.35f,out float ground))return null;
             var go=new GameObject("Court dust "+cue);

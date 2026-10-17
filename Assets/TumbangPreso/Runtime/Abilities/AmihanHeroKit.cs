@@ -137,7 +137,8 @@ namespace TumbangPreso.Abilities
 
                 Vector3 end = _start + _dir * AmihanRules.QuickDashDistance;
                 end = AIController.ClampToPlayable(end);
-                AmihanDashWake.Build(_start, end);
+                // (Her body is handed over for the LOOK alone: the streak's front follows it and stops where she stops.)
+                AmihanDashWake.Build(_start, end, null, ctx.Motor.transform);
                 ctx.Motor.GetComponentInChildren<CharacterSquashStretch>()?.Stretch(0.18f);
             }
 
@@ -296,11 +297,12 @@ namespace TumbangPreso.Abilities
 
             public Whirlwind(AmihanHeroKit kit)
                 : base("amihan_skill2d", "WHIRLWIND",
-                       "Defending. Roll an arc of gale down the court for 2.5 s. Everyone it passes is Whirled: slipper dropped, no pickups.",
+                       "Defending. Send a whirlwind down the court for 2.5 s. Everyone it passes over is Whirled: slipper dropped, no pickups.",
                        AmihanRules.WhirlwindCooldown, 0.0f, AbilityGlyph.AmihanWhirlwind,
-                       summary: "Roll a gale down a lane. Everyone it passes is Whirled.",
-                       telegraphRadius: AmihanRules.WhirlwindWidth * 0.5f,
-                       telegraphRange: AmihanRules.WhirlwindStart + AmihanRules.WhirlwindWidth * 0.5f,
+                       summary: "Send a whirlwind down a lane. Everyone it passes over is Whirled.",
+                       // The ring she aims with is the circle it is born as: the same radius, where its middle starts.
+                       telegraphRadius: AmihanRules.WhirlwindRadius,
+                       telegraphRange: AmihanRules.WhirlwindStart,
                        castAction: "hero-amihan-whirlwind", viewmodelAction: "gale-sweep",
                        castCue: "sfx_cast_amihan_whirlwind") { _kit=kit; }
 

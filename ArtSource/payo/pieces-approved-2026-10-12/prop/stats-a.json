@@ -1,0 +1,115 @@
+{
+ "offering_table": {
+  "triangles": 3076,
+  "kb": 573,
+  "open_edges": 0,
+  "size": [
+   1.32,
+   0.66,
+   0.95
+  ],
+  "ground": 0.0,
+  "objects": [
+   "offering_table"
+  ]
+ },
+ "tapuy_jar_large": {
+  "triangles": 1636,
+  "kb": 509,
+  "open_edges": 0,
+  "size": [
+   0.66,
+   0.96,
+   0.66
+  ],
+  "ground": 0.0,
+  "objects": [
+   "tapuy_jar_large"
+  ]
+ },
+ "tapuy_jar_open": {
+  "triangles": 1706,
+  "kb": 511,
+  "open_edges": 0,
+  "size": [
+   0.71,
+   1.05,
+   0.53
+  ],
+  "ground": 0.0,
+  "objects": [
+   "tapuy_jar_open"
+  ]
+ },
+ "tapuy_jar_small": {
+  "triangles": 1350,
+  "kb": 498,
+  "open_edges": 0,
+  "size": [
+   0.46,
+   0.58,
+   0.48
+  ],
+  "ground": 0.0,
+  "objects": [
+   "tapuy_jar_small"
+  ]
+ },
+ "basket_stack": {
+  "triangles": 1480,
+  "kb": 503,
+  "open_edges": 0,
+  "size": [
+   0.79,
+   1.02,
+   0.79
+  ],
+  "ground": 0.0,
+  "objects": [
+   "basket_stack"
+  ]
+ },
+ "bilao_rice": {
+  "triangles": 746,
+  "kb": 473,
+  "open_edges": 0,
+  "size": [
+   0.86,
+   0.2,
+   0.86
+  ],
+  "ground": 0.0,
+  "objects": [
+   "bilao_rice"
+  ]
+ },
+ "mortar_pestles": {
+  "triangles": 664,
+  "kb": 471,
+  "open_edges": 0,
+  "size": [
+   1.39,
+   2.15,
+   0.92
+  ],
+  "ground": 0.0,
+  "objects": [
+   "mortar_pestles"
+  ]
+ },
+ "hearth_pot": {
+  "triangles": 2144,
+  "kb": 524,
+  "open_edges": 0,
+  "size": [
+   1.14,
+   0.94,
+   1.14
+  ],
+  "ground": 0.0,
+  "objects": [
+   "hearth_pot",
+   "hearth_pot__flame"
+  ]
+ }
+}

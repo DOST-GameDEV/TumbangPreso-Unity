@@ -450,7 +450,7 @@ namespace TumbangPreso
             BotSlipperInventory.Invalidate();
             _motionAccent = GetComponent<Visual.SlipperMotionAccent>();
             if (_motionAccent == null) _motionAccent = gameObject.AddComponent<Visual.SlipperMotionAccent>();
-            Visual.DanteBoulderCoating.TrackWorld(this);
+            Visual.DanteBoulderStone.TrackWorld(this);
         }
 
         private void OnDestroy() => BotSlipperInventory.Invalidate();
@@ -1446,11 +1446,12 @@ namespace TumbangPreso
                     // Keep simulating the rebound, but don't restart its lift, body
                     // impulse, sound and flair on every step spent inside one body.
                     int contactBit = 1 << p.PlayerSlot;
-                    if ((_bodyContacts & contactBit) != 0) return;
+                    if ((_bodyContacts & contactBit) != 0) { EndFlightOnGround(prevPos, skimming); return; }
                     _bodyContacts |= contactBit;
                     HostBodyAffinity(p);
                     TriggerAffinityImpact();
                     HostBlockedBy(p);
+                    KeepAboveFloor(prevPos);
                     return;
                 }
             }
@@ -1470,6 +1471,7 @@ namespace TumbangPreso
                 float rebound = Roster.CanReboundScale(round.Lata.SkinIndex);
                 Deflect(-_velocity * Balance.LataRecoilScale * rebound,
                         Balance.LataRecoilLiftScale * rebound);
+                KeepAboveFloor(prevPos);
                 return;
             }
 
@@ -1488,11 +1490,12 @@ namespace TumbangPreso
                     // Keep simulating the rebound, but don't restart its lift, body
                     // impulse, sound and flair on every step spent inside one body.
                     int contactBit = 1 << p.PlayerSlot;
-                    if ((_bodyContacts & contactBit) != 0) return;
+                    if ((_bodyContacts & contactBit) != 0) { EndFlightOnGround(prevPos, skimming); return; }
                     _bodyContacts |= contactBit;
                     HostBodyAffinity(p);
                     TriggerAffinityImpact();
                     HostBlockedBy(p);
+                    KeepAboveFloor(prevPos);
                     return;
                 }
             }
@@ -1511,6 +1514,11 @@ namespace TumbangPreso
             // 3.6 m throw, so it previously landed and recovered on the first step.
             // Include the previous height so a fast descent cannot skip a raised
             // slab. Pass this same support into Land rather than reselecting a roof.
+            EndFlightOnGround(prevPos, skimming);
+        }
+
+        private void EndFlightOnGround(Vector3 prevPos, bool skimming)
+        {
             Vector3 supportAt = transform.position;
             supportAt.y = Mathf.Max(prevPos.y, supportAt.y);
             float flightGround = FindGroundY(supportAt, Balance.SlipperRestHeight);
@@ -1522,6 +1530,28 @@ namespace TumbangPreso
             {
                 if (!BeginSkim(flightGround)) Land(fromFlight: true, landingGround: flightGround);
             }
+        }
+
+        /// <summary>
+        /// ⚠️ A STEP THAT ENDS IN A HIT MUST NOT LEAVE THE SLIPPER UNDER THE FLOOR (owner, 2026-10-12, on Eskinita:
+        /// "if your slipper hits the can ... its possible that the slipper goes through the floor"). The can's branch and
+        /// the two body branches RETURN before the ground test, and a throw that comes down onto the can covers up to
+        /// 0.37 m in that one step, so it could end the step below the court. The ground test looks down from the
+        /// slipper's own height (so that a roof far overhead is not taken for the floor), and a ray that starts inside
+        /// a solid floor does not meet it: from there the next thing down was the map under the court, and the slipper
+        /// came to rest on that. Eskinita's ground is solid boxes with a street below, which is why it showed there.
+        /// Here the support is found from where the step BEGAN, and the slipper is put back on top of it.
+        /// </summary>
+        private void KeepAboveFloor(Vector3 prevPos)
+        {
+            Vector3 at = transform.position;
+            if (prevPos.y <= at.y) return;
+            float ground = FindGroundY(new Vector3(at.x, prevPos.y, at.z), Balance.SlipperRestHeight);
+            float floor = ground + Balance.SlipperRestHeight;
+            if (at.y >= floor || ground > prevPos.y + Balance.SlipperRestHeight) return;
+            at.y = floor;
+            transform.position = at;
+            if (_velocity.y < 0) _velocity.y = 0;
         }
 
         /// <summary>

@@ -1,0 +1,42 @@
+{
+ "gate_totem_a": {
+  "triangles": 3908,
+  "glow_triangles": 240,
+  "kb": 578,
+  "open_edges": 0,
+  "size": "5.7 wide, 11.7 tall, 4.4 deep (m)",
+  "atlas": "2048 px"
+ },
+ "gate_totem_b": {
+  "triangles": 3492,
+  "glow_triangles": 240,
+  "kb": 562,
+  "open_edges": 0,
+  "size": "6.4 wide, 11.4 tall, 5.5 deep (m)",
+  "atlas": "2048 px"
+ },
+ "gate_portal": {
+  "triangles": 15902,
+  "glow_triangles": 1572,
+  "kb": 2273,
+  "open_edges": 0,
+  "size": "19.9 wide, 18.1 tall, 15.6 deep (m)",
+  "atlas": "2048 px"
+ },
+ "gate_stair": {
+  "triangles": 2760,
+  "glow_triangles": 328,
+  "kb": 480,
+  "open_edges": 0,
+  "size": "10.1 wide, 2.5 tall, 6.8 deep (m)",
+  "atlas": "2048 px"
+ },
+ "gate_guardians": {
+  "triangles": 5650,
+  "glow_triangles": 232,
+  "kb": 444,
+  "open_edges": 0,
+  "size": "11.8 wide, 6.7 tall, 3.9 deep (m)",
+  "atlas": "2048 px"
+ }
+}

@@ -1,0 +1,76 @@
+{
+ "fire_bowl": {
+  "triangles": 2052,
+  "kb": 492,
+  "open_edges": 0,
+  "size": [
+   1.31,
+   2.05,
+   1.26
+  ],
+  "ground": 0.0,
+  "objects": [
+   "fire_bowl",
+   "fire_bowl__flame"
+  ]
+ },
+ "lantern_pole": {
+  "triangles": 1300,
+  "kb": 471,
+  "open_edges": 0,
+  "size": [
+   1.51,
+   3.01,
+   0.74
+  ],
+  "ground": 0.0,
+  "objects": [
+   "lantern_pole",
+   "lantern_pole__lantern"
+  ]
+ },
+ "torch": {
+  "triangles": 1814,
+  "kb": 485,
+  "open_edges": 0,
+  "size": [
+   0.67,
+   2.55,
+   0.7
+  ],
+  "ground": 0.0,
+  "objects": [
+   "torch",
+   "torch__flame"
+  ]
+ },
+ "water_pipe": {
+  "triangles": 2780,
+  "kb": 531,
+  "open_edges": 0,
+  "size": [
+   4.03,
+   1.84,
+   1.14
+  ],
+  "ground": 0.0,
+  "objects": [
+   "water_pipe",
+   "water_pipe__water"
+  ]
+ },
+ "water_trough": {
+  "triangles": 1332,
+  "kb": 471,
+  "open_edges": 0,
+  "size": [
+   2.34,
+   0.89,
+   1.22
+  ],
+  "ground": 0.0,
+  "objects": [
+   "water_trough"
+  ]
+ }
+}
