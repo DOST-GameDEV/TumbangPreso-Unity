@@ -81,19 +81,43 @@ namespace TumbangPreso.Tests
         Button Button(string name)=>_root.GetComponentsInChildren<Button>(true).FirstOrDefault(b=>b.name==name);
         [Test] public void OpenAndBotSlotsExposeRealSeatActions()
         {
-            string path=System.Environment.GetEnvironmentVariable("TUMP_LOBBY_CAPTURE");
-            if(!string.IsNullOrEmpty(path) && SystemInfo.graphicsDeviceType != UnityEngine.Rendering.GraphicsDeviceType.Null)
-            {
-                Canvas.ForceUpdateCanvases();_camera.Render();var previous=RenderTexture.active;var image=new Texture2D(960,540,TextureFormat.RGBA32,false);
-                try{RenderTexture.active=_target;image.ReadPixels(new Rect(0,0,960,540),0,0);image.Apply();File.WriteAllBytes(path,image.EncodeToPNG());}
-                finally{RenderTexture.active=previous;Object.DestroyImmediate(image);}
-            }
             var bot=Button("TakeSeat2");var open=Button("TakeSeat3");
             Assert.IsNotNull(bot,"The current lobby needs a seat action for a bot slot.");
             Assert.IsNotNull(open,"The current lobby needs a seat action for an open slot.");
             Assert.IsTrue(bot.interactable);Assert.IsTrue(open.interactable);
             bot.onClick.Invoke();Assert.AreEqual(2,_host.Requested);
             open.onClick.Invoke();Assert.AreEqual(3,_host.Requested);
+        }
+        /// <summary>
+        /// The review picture of the room, written only when TUMP_LOBBY_CAPTURE names a file: the
+        /// room at rest, and a second frame (`_hover` suffix) with P4's row in its hover state.
+        /// ⚠️ THE ENTRANCE IS SETTLED FIRST. `HubSlap` animates the players' panel in from
+        /// `Update`, which never runs inside an EditMode test, so the first capture of this screen
+        /// was a room with no panel in it at all.
+        /// </summary>
+        [Test] public void RenderTheRoomForReview()
+        {
+            string path=System.Environment.GetEnvironmentVariable("TUMP_LOBBY_CAPTURE");
+            if(string.IsNullOrEmpty(path) || SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null) return;
+            // A warm street tone rather than flat grey: every shadow alpha is judged against what is behind it.
+            _camera.backgroundColor=new Color(.47f,.45f,.38f);
+            foreach(var slap in _root.GetComponentsInChildren<HubSlap>(true))
+            {
+                slap.enabled=false;slap.transform.localScale=Vector3.one;slap.transform.localRotation=Quaternion.identity;
+                var group=slap.GetComponent<CanvasGroup>();if(group!=null)group.alpha=1;
+            }
+            Write(path);
+            var row=(HubButton)Button("TakeSeat3");
+            row.Shape.Lit=1;row.Shape.OutlineBoost=1.5f;row.Shape.DepthScale=1.45f;row.Shape.Redraw();
+            row.Body.anchoredPosition=new Vector2(0,4);
+            row.Body.Find("Label").GetComponent<Text>().enabled=true;
+            Write(Path.Combine(Path.GetDirectoryName(path),Path.GetFileNameWithoutExtension(path)+"_hover.png"));
+        }
+        private void Write(string path)
+        {
+            Canvas.ForceUpdateCanvases();_camera.Render();var previous=RenderTexture.active;var image=new Texture2D(960,540,TextureFormat.RGBA32,false);
+            try{RenderTexture.active=_target;image.ReadPixels(new Rect(0,0,960,540),0,0);image.Apply();File.WriteAllBytes(path,image.EncodeToPNG());}
+            finally{RenderTexture.active=previous;Object.DestroyImmediate(image);}
         }
         [Test] public void TheWholeRowIsTheSeatDoorAndSitHereIsGone()
         {
