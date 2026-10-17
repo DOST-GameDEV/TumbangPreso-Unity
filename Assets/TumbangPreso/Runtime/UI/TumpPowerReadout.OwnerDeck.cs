@@ -145,13 +145,17 @@ namespace TumbangPreso.UI
                 // Active reactivation follows its own window, not the original cast cooldown.
                 bool actionReady = skill.IsActive && skill.CanReactivate ? skill.ReactivateReady : skill.IsReady;
                 bool ready = !kit.PracticeMode && !system.GetComponent<CharacterMotor>().IsZapped && (i == 2 ? kit.IsUltimateReady : actionReady);
-                float ratio = skill.IsActive ? skill.DurationRatio : i == 2 ? kit.UltimateRatio : 1 - skill.CooldownRatio;
+                // ⚠️ AN ULTIMATE STILL RUNNING AFTER ITS CAST (MOUNTAIN FORM) is drawn as an active power: the dial is its time left
+                // and the tile reads the seconds, so the player who cast it knows how long the suit lasts (it is hidden from their view).
+                float afterLeft = 0f, afterTotal = 1f;
+                bool aftermath = i == 2 && kit.UltimateAftermath(out afterLeft, out afterTotal);
+                float ratio = aftermath ? afterLeft / Mathf.Max(.01f, afterTotal) : skill.IsActive ? skill.DurationRatio : i == 2 ? kit.UltimateRatio : 1 - skill.CooldownRatio;
                 var mine = system.GetComponent<CharacterMotor>();
                 _ownerDials[i].Accent = mine != null ? PlayerIdentity.Colour(mine.PlayerSlot) : HudDraw.Honey;
-                _ownerDials[i].State(ratio, ready, skill.IsActive, i == 2);
+                _ownerDials[i].State(ratio, ready, skill.IsActive || aftermath, i == 2);
                 _symbols[i].color = ready ? CourtPresentationPalette.Gold : HudDraw.Paper;
                 if (_symbols[i].Muted == ready) { _symbols[i].Muted = !ready; _symbols[i].SetVerticesDirty(); }
-                string state = kit.PracticeMode ? "Wait" : skill.IsPersistentActive ? "Active" : skill.IsActive ? skill.CanReactivate
+                string state = aftermath ? afterLeft.ToString("0.0") + "s" : kit.PracticeMode ? "Wait" : skill.IsPersistentActive ? "Active" : skill.IsActive ? skill.CanReactivate
                     ? (skill.ReactivateReady ? "Again" : AbilityDeckHud.CooldownLabel(skill.ReactivateReadyIn)) + "\n" + skill.DurationRemaining.ToString("0.0") + "s"
                     : skill.DurationRemaining.ToString("0.0") + "s" :
                     i == 2 ? ready ? "" : Mathf.FloorToInt(kit.UltimateRatio * 100) + "%" :

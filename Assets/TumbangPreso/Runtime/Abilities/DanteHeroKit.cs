@@ -37,7 +37,11 @@ namespace TumbangPreso.Abilities
         public float MountainLeft { get; private set; }
         public bool IsMountainForm => MountainLeft > 0f;
         private DanteMountainArmour _armour;
-        private float _armourClock;   // the armour's own clock (`DanteMountainArmour.StepTo`), on past the form's end while it sheds
+        // The armour's own clock (`DanteMountainArmour.StepTo`), on past the form's end while it sheds, and its `EndAt`. Kept by the
+        // kit rather than read off the suit, so a suit built late (a joiner whose model arrived after the snapshot) joins the clock
+        // where it already is.
+        private float _armourClock, _armourEnd;
+        private float _dressRetry;
 
         /// <summary>The form begins: from the end of his cutscene (the suit already formed on him in it), or from nothing, the
         /// suit then closing over him live (no shared cutscene, a test, a practice cast).</summary>
@@ -48,15 +52,17 @@ namespace TumbangPreso.Abilities
             // Status immunity starts with a cleanse, as UNSTOPPABLE's does: nothing he carried into the form stays on him.
             if (!motor.IsTagged) motor.ClearStun();
             motor.CleanseStatuses();
-            DressMountain(motor, afterCutscene ? DanteMountainArmour.CutEndAt : 0f);
+            StartArmourClock(afterCutscene ? DanteMountainArmour.CutEndAt : 0f);
+            DressMountain(motor);
         }
 
-        private void DressMountain(CharacterMotor motor, float clockStart)
+        private void StartArmourClock(float start) { _armourClock = start; _armourEnd = start + GeoRules.MountainSeconds; }
+
+        private void DressMountain(CharacterMotor motor)
         {
             if (_armour != null) UnityEngine.Object.Destroy(_armour.gameObject);
             _armour = DanteMountainArmour.Attach(motor);
-            _armourClock = clockStart;
-            if (_armour != null) { _armour.EndAt = clockStart + GeoRules.MountainSeconds; _armour.StepTo(_armourClock); }
+            if (_armour != null) { _armour.EndAt = _armourEnd; _armour.StepTo(_armourClock); }
             SetMountainClips(motor, true);
         }
 
@@ -69,15 +75,21 @@ namespace TumbangPreso.Abilities
         public override void Tick(AbilityContext ctx, float dt)
         {
             base.Tick(ctx, dt);
+            // His model was rebuilt under the suit: drop it, and the form (below) dresses the new body on its next try.
+            if (_armour != null && _armour.Orphaned) { UnityEngine.Object.Destroy(_armour.gameObject); _armour = null; _dressRetry = 0f; }
             if (MountainLeft > 0f)
             {
                 MountainLeft = Mathf.Max(0f, MountainLeft - dt);
                 // Immune, as UNSTOPPABLE holds it: a stun that reached him anyway (a tag excepted) is lifted at once.
                 if (ctx?.Motor != null && !ctx.Motor.IsTagged) ctx.Motor.ClearStun();
                 if (MountainLeft <= 0f) SetMountainClips(ctx?.Motor, false);
+                // ⚠️ NO SUIT YET, AND THE FORM IS ON: his model was not built when it began (a joiner's snapshot can land before
+                // the roster dresses the body). Try again every half second rather than every frame; `Attach` is cheap to refuse.
+                else if (_armour == null && (_dressRetry -= dt) <= 0f) { _dressRetry = .5f; DressMountain(ctx?.Motor); }
+                _armourClock += dt;
             }
+            else if (_armour != null) _armourClock += dt;
             if (_armour == null) return;
-            _armourClock += dt;
             _armour.StepTo(_armourClock);
             if (_armourClock >= _armour.GoneAt) { UnityEngine.Object.Destroy(_armour.gameObject); _armour = null; }
         }
@@ -97,6 +109,9 @@ namespace TumbangPreso.Abilities
             SetMountainClips(motor, false);
         }
 
+        public override bool UltimateAftermath(out float left, out float total)
+        { left = MountainLeft; total = GeoRules.MountainSeconds; return MountainLeft > 0f; }
+
         public TimedKitSnapshot CaptureTimedKit()
             => new TimedKitSnapshot(Skill1, IsDemonicCarapaceActive ? Skill1.DurationRemaining : 0,
                 passiveRemaining: MountainLeft, passiveCapacity: GeoRules.MountainSeconds);
@@ -107,12 +122,15 @@ namespace TumbangPreso.Abilities
             float left = Mathf.Clamp(state.PassiveRemaining, 0f, GeoRules.MountainSeconds);
             if (motor == null || Mathf.Abs(left - MountainLeft) < .05f) return changed;
             if (left <= 0f) { EndMountain(motor); return true; }
-            // A late joiner sees him in the suit as it is now: formed, or part shed (no flight of stones onto him).
+            // A late joiner sees him in the suit as it is now: formed, or part shed (no flight of stones onto him), on a clock
+            // that reads as if the cutscene had ended `MountainSeconds - left` ago.
+            // ⚠️ A SUIT ALREADY ON HIM IS MOVED, NOT REBUILT: a correction of a few frames must not pop every stone off and on.
+            bool worn = MountainLeft > 0f && _armour != null;
+            if (MountainLeft <= 0f) StartArmourClock(DanteMountainArmour.CutEndAt);
             MountainLeft = left;
-            float elapsed = GeoRules.MountainSeconds - left;
-            DressMountain(motor, DanteMountainArmour.CutEndAt);
-            _armourClock = DanteMountainArmour.CutEndAt + elapsed;
-            if (_armour != null) _armour.StepTo(_armourClock);
+            _armourClock = _armourEnd - left;
+            if (worn) _armour.StepTo(_armourClock);
+            else DressMountain(motor);
             return true;
         }
 
@@ -279,9 +297,9 @@ namespace TumbangPreso.Abilities
             private readonly DanteHeroKit _kit;
             public Earthquake(DanteHeroKit kit)
                 : base("dante_ultimate", "CONTINENTAL DRIFT",
-                       "He slams the court and five bands of earth erupt down the lane, knocking away everyone they reach. They land Concussed for 5 s.",
+                       "He slams the court: five bands of earth erupt down the lane, knocking away everyone they reach. They land Concussed for 5 s.",
                        0.0f, 0.0f, AbilityGlyph.DanteFissure,
-                       summary: "Bands of earth knock away everyone ahead; they land Concussed.",
+                       summary: "Knocks away everyone ahead, then 30 s of MOUNTAIN FORM.",
                        castAction: "hero-dante-fissure", viewmodelAction: "fissure-slam",
                        castCue: "sfx_cast_dante_earthquake")
             {
