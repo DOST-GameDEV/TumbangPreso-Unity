@@ -28,8 +28,10 @@ namespace TumbangPreso.Abilities
                 case "cheska": return new Passive("CHILLING TOUCH",
                     "Yasmin inflicts Chilled on any player she shoves.");
                 // DanteHeroKit.IncomingKnockbackDistanceScale = GeoRules.EarthboundDistanceScale.
+                // DanteHeroKit MOUNTAIN FORM: GeoRules.MountainSeconds, MountainThrowScale, MountainHitStun and the launch.
                 case "dante": return new Passive("EARTHBOUND",
-                    "Dante takes 50% reduced shove distance.");
+                    "Dante takes 50% reduced shove distance.",
+                    "MOUNTAIN FORM, 30 s after his ultimate: immune, throws 25% faster, a hit knocks the player away.");
                 // RafiHeroKit: 1.2x movement for 1.5 s on a genuine own retrieve.
                 case "rafi": return new Passive("BACKWASH",
                     "Retrieving your own thrown slipper grants 20% movement speed for 1.5 seconds, once per throw. Dropping and picking it up again does not count.");

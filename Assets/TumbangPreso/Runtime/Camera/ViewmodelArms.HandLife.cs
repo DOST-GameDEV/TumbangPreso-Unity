@@ -39,6 +39,8 @@ namespace TumbangPreso.CameraSystem
             public bool Casting; public string Action;
             /// <summary>Nothing authored owns the hands (the same test the air spring makes).</summary>
             public bool Free;
+            /// <summary>Seconds of Dante's MOUNTAIN FORM left (`DanteHeroKit.MountainLeft`), 0 when he is not in it.</summary>
+            public float Mountain;
         }
 
         /// <summary>One hero's hand companion. Built once for the hero, stepped every frame, destroyed with them.</summary>
@@ -229,6 +231,7 @@ namespace TumbangPreso.CameraSystem
             mood.Grounded = _characterMotor.IsGrounded || _characterMotor.IsSwimming;
             mood.VerticalSpeed = _characterMotor.Velocity.y;
             mood.Tagged = _characterMotor.IsStunned;
+            mood.Mountain = _characterMotor.AbilitySystem?.Kit is Abilities.DanteHeroKit dante ? dante.MountainLeft : 0f;
             mood.Free = _charge < 0 && _clip == null && _actionReturnLeft <= 0 && string.IsNullOrEmpty(_aimPreview)
                 && !_characterMotor.IsSwimming && !_characterMotor.IsEdgeRecovering && !_characterMotor.IsFlying && !_characterMotor.IsStunned;
             return mood;

@@ -52,6 +52,22 @@ namespace TumbangPreso.CameraSystem
             HandCompanionProp.Hex(0xd9a93a), HandCompanionProp.Hex(0x2f8f4a), HandCompanionProp.Hex(0x3d6335), HandCompanionProp.Hex(0x1d1a1c),
         };
 
+        /// <summary>
+        /// MOUNTAIN FORM's stone on the same model: the four stone swatches turned to the suit's dark basalt
+        /// (`DanteMountainArmour.Basalt`), every other colour as it was. In his own view the hands are all he sees of the suit
+        /// (it is hidden from his first person), so they must be the same stone as the suit everyone else sees.
+        /// </summary>
+        private static readonly Color[] MountainPalette = MountainStone();
+
+        private static Color[] MountainStone()
+        {
+            var p = (Color[])Palette.Clone();
+            p[0] = HandCompanionProp.Hex(0x3b312b); p[1] = HandCompanionProp.Hex(0x4d4037); p[2] = HandCompanionProp.Hex(0x2a221d); p[3] = HandCompanionProp.Hex(0x1f1915);
+            return p;
+        }
+
+        private bool _mountainDressed;
+
         // The twelve plates of one hand, in this order everywhere below.
         private const int K0 = 0, K3 = 3, W = 4, H = 5, S0 = 6, S1 = 7, F0 = 8, F3 = 11, Count = 12;
         private static readonly string[] Names = { "k0", "k1", "k2", "k3", "w", "h", "s0", "s1", "f0", "f1", "f2", "f3" };
@@ -66,6 +82,9 @@ namespace TumbangPreso.CameraSystem
         private static readonly float[] CastLong = { 1.5f, 2.3f, 1.9f, 1.35f }, CastTall = { 1.3f, 1.9f, 1.6f, 1.2f };
         /// <summary>The one knuckle slab's width over a single plate's: the four plates' span (-.168 to .166 across, each about .1 wide).</summary>
         private const float KnuckleSpan = 3.8f;
+        /// <summary>MOUNTAIN FORM's shedding: the share of the last `DanteMountainArmour.ShedSeconds` gone before each plate comes off,
+        /// the forearm from the elbow down first, the cheeks, the back of the hand and the wrist, the boulder knuckles last.</summary>
+        private static readonly float[] MountainShed = { .84f, .84f, .84f, .84f, .74f, .64f, .5f, .56f, .36f, .26f, .14f, .02f };
         /// <summary>The plates a landing cracks off, the outermost first.</summary>
         private static readonly int[] CrackOrder = { 11, 10, 7, 6, 9, 8, 5 };
 
@@ -84,6 +103,8 @@ namespace TumbangPreso.CameraSystem
             public ViewmodelArms.Spring Grow, Y, X, Thick, Long, Wide, Turn;
             /// <summary>Drawn at all; its seam drawn; asked to be grown last frame; crumbled off by a tag.</summary>
             public bool Shown = true, SeamShown, On, Gone;
+            /// <summary>Cracked off by MOUNTAIN FORM's shedding (`MountainShed`); cleared once the form is over.</summary>
+            public bool Shed;
         }
 
         private sealed class Hand
@@ -242,6 +263,21 @@ namespace TumbangPreso.CameraSystem
             else if (!mood.Grounded) doing = _fallClock > 0f ? Doing.Falling : Doing.Rising;
             else if (mood.Casting) doing = Doing.Cast;
 
+            // ⚠️⚠️ MOUNTAIN FORM IN HIS OWN VIEW (owner, 2026-10-18: the suit is hidden from his own first person, so these hands
+            // are all he sees of it). For its 30 s the gauntlet is whole and heavy: every plate grown, the knuckle slab a
+            // boulder, the seams open and breathing with the suit's heat. Over its last `ShedSeconds` it comes off a plate at a
+            // time from the elbow down, each loosening for a beat and cracking off as a chunk, until the resting few are left.
+            float mountain = mood.Mountain;
+            // Recoloured once as the form begins and once as it ends (a new material set each time, so never per frame).
+            if ((mountain > 0f) != _mountainDressed)
+            {
+                _mountainDressed = mountain > 0f;
+                Visual.ToonSkin.Apply(_root.gameObject, HandCompanionProp.InkWidth, _mountainDressed ? MountainPalette : Palette);
+            }
+            float shedSpan = Visual.DanteMountainArmour.ShedSeconds;
+            float lost = mountain > 0f ? Mathf.Clamp01((shedSpan - mountain) / shedSpan) : 0f;
+            float heat = mountain > 0f ? Mathf.Lerp(.55f, 1f, Mathf.Clamp01(mountain / shedSpan)) : 0f;
+
             float stride = mood.Grounded && !mood.Tagged ? Mathf.Clamp01(mood.Walk) : 0f;
             float run = Mathf.Clamp01((mood.Run - .35f) / .4f) * stride;
             float charge = charging ? Mathf.Clamp01(mood.Charge) : 0f;
@@ -362,6 +398,39 @@ namespace TumbangPreso.CameraSystem
                             }
                             break;
                     }
+                    if (mountain <= 0f) p.Shed = false;
+                    else if (doing != Doing.Bare)
+                    {
+                        float shedAt = MountainShed[i] + .05f * a;
+                        if (lost >= shedAt)
+                        {
+                            // Cracked off: a chunk falls away from where it was. The resting plates (the knuckle slab and the
+                            // wrist) stay, back to their own size; every other plate is gone for the rest of the form.
+                            if (i > W) grow = 0f;
+                            if (!p.Shed && p.Shown && p.Grow.Value > .5f)
+                            {
+                                p.Shed = true;
+                                Launch(p.Body.position, new Vector3(Random.Range(-.6f, .6f) + (a == 0 ? .35f : -.35f), Random.Range(.6f, 1.2f), Random.Range(-.2f, .1f)),
+                                       Random.Range(1.2f, 1.7f), Random.Range(.6f, .9f));
+                                if (i > W) { p.Grow.Snap(0f); p.On = false; } else p.Thick.Speed -= 4f;
+                            }
+                        }
+                        else
+                        {
+                            grow = 1f;
+                            // Loosening in the beat before it lets go: a tremble and a lift off the arm.
+                            float loose = Mathf.Clamp01(1f - (shedAt - lost) * shedSpan / .6f);
+                            turn += Mathf.Sin(_clock * 47f + i * 1.7f + a) * 7f * loose;
+                            thick *= 1f + .25f * loose;
+                            if (doing != Doing.Cast && !(holds && knuckle))
+                            {
+                                if (knuckle) { thick = Mathf.Max(thick, 1.65f); lng = Mathf.Max(lng, 1.3f); wide = Mathf.Max(wide, 1.12f); }
+                                else if (i == W || i == H) thick = Mathf.Max(thick, 1.45f);
+                                else thick = Mathf.Max(thick, 1.3f);
+                            }
+                            seam = true;
+                        }
+                    }
                     // ONE KNUCKLE SLAB, NEVER FOUR (owner, 2026-10-17, of his first-person hand: "this sucks bcz none of our
                     // characters have fingers wtf!"). Four plates side by side on the knuckles read as four fingers on a body whose
                     // hands are blocks. The first plate spans the whole knuckle line from the middle; the other three never grow.
@@ -419,7 +488,8 @@ namespace TumbangPreso.CameraSystem
                     if (lit)
                     {
                         // Proud of the stone and beating; as a landing's seam closes it sinks back under the skin.
-                        float open = doing == Doing.Cast ? 1f : Mathf.Clamp01(_seamHold / .15f);
+                        float open = doing == Doing.Cast ? 1f : Mathf.Max(Mathf.Clamp01(_seamHold / .15f),
+                            heat * (.8f + .12f * Mathf.Sin(_clock * 2.6f + a)));
                         p.Seam.localScale = new Vector3(1f, 1f, Mathf.Lerp(.72f, 1f, open) * (1f + Mathf.Sin(_clock * 13f) * .03f));
                     }
                 }
