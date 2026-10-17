@@ -101,7 +101,8 @@ namespace TumbangPreso.Visual
                 ToHer = flat.sqrMagnitude > 1e-4f ? Mathf.Atan2(-flat.x, -flat.z) * Mathf.Rad2Deg : 180f,
                 BraceAt = AmBraceAt + flat.magnitude * AlStaggerPerMetre,
                 // The front crosses the court in about four frames: each is hit a hundredth of a second per metre out.
-                HitAt = AmReleaseAt + flat.magnitude * .01f,
+                // Play puts them where this throw has them at the cut (`AmihanStorm.Release`), so the ripple is play's number.
+                HitAt = AmReleaseAt + flat.magnitude * Abilities.AmihanStorm.CutsceneHitPerMetre,
                 // The live rule's direction (`AmihanStorm.BlowDirection`), in the scene's frame: out along the fan, leaning on it.
                 Blow = Abilities.AmihanStorm.BlowDirection(Vector3.zero, Vector3.forward, flat),
             };

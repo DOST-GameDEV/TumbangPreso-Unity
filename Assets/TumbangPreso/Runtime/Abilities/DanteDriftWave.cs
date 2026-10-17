@@ -90,6 +90,7 @@ namespace TumbangPreso.Abilities
             Age += Mathf.Max(0, dt);
             while (_nextBand < GeoRules.DriftBlasts && Age >= _nextBand * GeoRules.DriftInterval)
             {
+                StrikeBand(_nextBand);
                 ResolveBand(_nextBand);
                 _nextBand++;
             }
@@ -104,6 +105,38 @@ namespace TumbangPreso.Abilities
             if (_visual != null) _visual.StepTo(Age);
             if (Age >= GeoRules.DriftSeconds) { gameObject.SetActive(false); Destroy(gameObject); }
         }
+
+        bool InBand(int band, CharacterMotor actor)
+        {
+            if (actor == null || !actor.gameObject.activeInHierarchy || actor.PlayerSlot == OwnerSlot) return false;
+            Vector3 right = Vector3.Cross(Vector3.up, Forward);
+            float depth = Reach / GeoRules.DriftBlasts, start = band * depth, end = (band + 1) * depth;
+            Vector3 delta = actor.transform.position - Origin;
+            float along = Vector3.Dot(delta, Forward), across = Vector3.Dot(delta, right);
+            return !(along < start || along > end || (band > 0 && along == start) || Mathf.Abs(across) > HalfWidth);
+        }
+
+        /// <summary>
+        /// On every peer, render only: the ground punches up under each player the band reaches (`DanteDriftLive.Struck`), the
+        /// picture of "the earth just launched you" (owner, 2026-10-17: *"communicate visually na someone JUST GOT LOBBED AND HIT
+        /// BY PURE ASS GROUND"*). The same band rule as the host's, from each peer's own view of where they stand.
+        /// </summary>
+        void StrikeBand(int band)
+        {
+            var round = GameServices.Round;
+            var live = _visual != null ? _visual.Live : null;
+            if (round == null || live == null || round.RoundActive != true) return;
+            foreach (var actor in round.Players)
+            {
+                if (!InBand(band, actor)) continue;
+                bool already = false;
+                foreach (var t in _struck) if (t == actor) already = true;
+                if (already) continue;
+                _struck.Add(actor);
+                live.Struck(actor.transform.position, band * GeoRules.DriftInterval, actor.PlayerSlot == NetAuthority.LocalSlot);
+            }
+        }
+        readonly System.Collections.Generic.List<CharacterMotor> _struck = new System.Collections.Generic.List<CharacterMotor>(4);
 
         void ResolveBand(int band)
         {

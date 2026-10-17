@@ -325,6 +325,16 @@ namespace TumbangPreso.Visual
         private float Flash(float t, float at, float width = .08f)
             => _reducedEffects ? 0 : Mathf.Clamp01(1 - Mathf.Abs(t - at) / width);
 
+        /// <summary>
+        /// Where this cutscene leaves other players at its last frame, for the host to put them there as play resumes (by seat,
+        /// world space). Empty for a stage that moves nobody. Owner, 2026-10-17: *"Play keeps the cutscene's moves"*.
+        /// </summary>
+        public void HandBackPlaces(List<(int seat, Vector3 world)> into)
+        {
+            if (into == null) return;
+            if (_hero == "nemu") NemuHandBackPlaces(into);
+        }
+
         public bool StartSound()
         {
             if (_sound != null) return true;

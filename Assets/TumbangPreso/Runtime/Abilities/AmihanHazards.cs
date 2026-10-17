@@ -130,6 +130,8 @@ namespace TumbangPreso.Abilities
         /// <summary>How far the shared cutscene's story clock runs after the release (`HeroIntroductionScene.AmihanStoryAfterRelease`; v6 slows it through the hang, 4.55 to 5.6 s real):
         /// the live fan picks up from that age, so the hand-back never replays the release.</summary>
         public const float CutsceneTail = 0.55f;
+        /// <summary>The cutscene's throw reaches each player this much later per metre from her (`AlCopy`'s `HitAt`), a ripple outward.</summary>
+        public const float CutsceneHitPerMetre = 0.01f;
 
         private float _age;
         private bool _released;
@@ -180,7 +182,11 @@ namespace TumbangPreso.Abilities
         }
 
         /// <summary>The wind leaves: called by the ultimate's activation at the end of the delay.</summary>
-        public void Release()
+        /// <param name="afterCutscene">The shared cutscene already showed the throw (`HeroIntroductionScene.AmihanLane.cs`): each
+        /// caught player is `CutsceneTail` minus 0.01 s per metre from her into their flight at the cut, so play puts them there,
+        /// mid-air, and the throw flies on (owner, 2026-10-17: *"Play keeps the cutscene's moves: at the cut, put each player where
+        /// the cutscene left them (Amihan's mid-air and still flying"*). Before, play threw them again from where they had stood.</param>
+        public void Release(bool afterCutscene = false)
         {
             if (_released) return;
             _released = true;
@@ -201,7 +207,16 @@ namespace TumbangPreso.Abilities
                 // ⚠️ THE CAN IS NOT A SLIPPER AND IS NOT TOUCHED. The table names players and
                 // slippers; moving the objective would be a third thing nobody asked for.
                 p.ApplyWhirled();
-                p.ApplyResolvedCarry(dir * AmihanRules.StormSurgeSpeed + Vector3.up * AmihanRules.StormSurgeLift, hold);
+                Vector3 flat = p.transform.position - Origin; flat.y = 0f;
+                float flown = afterCutscene ? Mathf.Clamp(CutsceneTail - flat.magnitude * CutsceneHitPerMetre, 0f, hold) : 0f;
+                if (flown > 0f)
+                {
+                    // Where the cutscene's last frame drew them: the same speed, lift and 20 m/s2 as the live throw.
+                    float rise = Mathf.Max(0f, AmihanRules.StormSurgeLift * flown - .5f * Balance.CharacterGravity * flown * flown);
+                    p.ApplyResolvedRelocate(p.transform.position + dir * (AmihanRules.StormSurgeSpeed * flown) + Vector3.up * rise);
+                }
+                float lift = Mathf.Max(0f, AmihanRules.StormSurgeLift - Balance.CharacterGravity * flown);
+                p.ApplyResolvedCarry(dir * AmihanRules.StormSurgeSpeed + Vector3.up * lift, Mathf.Max(0f, hold - flown));
             }
             foreach (var shoe in FindObjectsByType<Slipper>())
                 if (shoe != null && shoe.gameObject.activeInHierarchy

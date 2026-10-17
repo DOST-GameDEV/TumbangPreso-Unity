@@ -264,9 +264,19 @@ namespace TumbangPreso
                     var voiced = round?.PlayerAt(seat)?.AbilitySystem?.Kit?.Ultimate;
                     if (voiced != null) voiced.IntroductionVoiced = true;
                 }
+            // Where the cutscenes left other players (Nemu's runners where they ran to): the host puts them there as play resumes.
+            var places = new List<(int seat, Vector3 world)>(4);
+            if (NetAuthority.ShouldResolve()) _view?.HandBackPlaces(places);
             _view?.Dispose(); _view=null;
             ReleasedAt=Now;double activationBegan=Time.realtimeSinceStartupAsDouble;
             Active=false; _sealed=false; _viewAttempted=false; PresentationClock.Release();
+            foreach (var (seat, world) in places)
+            {
+                var body = round?.PlayerAt(seat);
+                if (body == null || !body.gameObject.activeInHierarchy) continue;
+                var at = new Vector3(world.x, body.transform.position.y, world.z);
+                if ((at - body.transform.position).sqrMagnitude > .04f) body.ApplyResolvedRelocate(at);
+            }
             foreach (var cast in accepted)
                 round?.PlayerAt(cast.Seat)?.AbilitySystem?.ExecuteSharedUltimate(cast, themePlayed, PhaseId);
             ActivationMilliseconds=(Time.realtimeSinceStartupAsDouble-activationBegan)*1000;

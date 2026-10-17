@@ -181,18 +181,13 @@ namespace TumbangPreso.Visual
                 StartYaw = motor.eulerAngles.y - _facing.eulerAngles.y,
             };
             c.Model.localScale = model.lossyScale;
-            // Brought inside 2.6 to 8.8 m of the spot, so the pull reads and nobody starts inside the roots.
+            // WHERE THEY REALLY STAND (owner, 2026-10-17: *"try to consider wtf is gonan happen to ppl that are in diff places"*):
+            // the staged tree is the live tree's spot now (`PaeteLandingOffTheCan`), so their real offset from it is kept as it
+            // is; they used to be clamped into 2.6 to 8.8 m and slid round him, and play put them back at the hand-back.
             offset.y = 0f;
-            float d = Mathf.Clamp(offset.magnitude, 2.6f, 8.8f);
+            float d = offset.magnitude;
             c.Dir = offset.sqrMagnitude > 1e-4f ? offset.normalized : Quaternion.Euler(0f, PaeteTreeYaw, 0f) * Vector3.forward;
             c.Start = spot + c.Dir * d;
-            // Never on top of him: a start within 1.6 m of where he kneels is slid round the spot, away from him.
-            var fromHim = new Vector3(c.Start.x, 0f, c.Start.z);
-            if (fromHim.magnitude < 1.6f)
-            {
-                c.Dir = Quaternion.Euler(0f, 60f, 0f) * c.Dir;
-                c.Start = spot + c.Dir * d;
-            }
             c.Hold = spot + c.Dir * Core.PaeteRules.SentryHoldDistance;
             // The animated root: where the rig's clips are bound (the live `Animator`'s transform), and the clips his kit gave this rig.
             var animator = visual.Model.GetComponentInChildren<Animator>();

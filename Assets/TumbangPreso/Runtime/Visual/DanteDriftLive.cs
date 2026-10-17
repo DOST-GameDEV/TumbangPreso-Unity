@@ -110,6 +110,96 @@ namespace TumbangPreso.Visual
         }
 
         private bool _stage;
+
+        // THE STRIKE: a basalt pillar punching up out of the court under a player the band reaches, a molten star under it,
+        // shards and dust bursting off it; it holds, then crumbles back down into the court in two steps.
+        private sealed class Strike
+        {
+            public float At;
+            public Vector3 Local;
+            public Transform Pillar;
+            public Glow Star;
+            public readonly List<Transform> Shards = new List<Transform>(6);
+            public readonly List<Transform> Dust = new List<Transform>(3);
+            public readonly List<Material> DustMaterials = new List<Material>(3);
+        }
+        private readonly List<Strike> _strikes = new List<Strike>(4);
+        private static readonly (float angle, float up, float out_, float size)[] ShardRows =
+        {
+            (20f, 6.5f, 2.6f, .2f), (95f, 7.4f, 2.1f, .16f), (160f, 5.8f, 2.9f, .22f), (225f, 6.9f, 2.4f, .17f), (300f, 6.1f, 3.1f, .19f), (350f, 7.8f, 1.8f, .14f),
+        };
+
+        /// <summary>
+        /// The ground strikes the player at <paramref name="world"/>: posed from the wave's clock like everything else. The one
+        /// struck feels it on their own camera: a hard punch and a shake (owner, 2026-10-17: *"TRY TO make it more felt"*).
+        /// </summary>
+        public void Struck(Vector3 world, float at, bool local)
+        {
+            var s = new Strike { At = at, Local = transform.InverseTransformPoint(world) };
+            s.Local.y = 0f;
+            int seed = 600 + _strikes.Count * 13;
+            s.Pillar = Stone(transform, "DriftStrike" + _strikes.Count, VfxShapes.Prism(5, 1f, .62f, .22f, 0f, seed), Basalt[_strikes.Count % 3]);
+            s.Star = AddGlow(transform, "DriftStrikeStar" + _strikes.Count, MoltenCore, 1.4f, .6f);
+            s.Star.Renderer.sharedMaterial.SetFloat("_Band", 0f);
+            for (int i = 0; i < ShardRows.Length; i++)
+                s.Shards.Add(Stone(transform, "DriftStrikeShard" + i, VfxShapes.Prism(5, 1f, .7f, .3f, 0f, seed + i + 1), Basalt[(i + 1) % 3]));
+            for (int i = 0; i < 3; i++)
+            {
+                var puff = VfxShapes.Stand(transform, "DriftStrikeDust" + i, VfxShapes.TwoSided(VfxShapes.Splat(9, .48f, seed + 40 + i)), 1);
+                var r = puff.GetComponent<Renderer>();
+                r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; r.receiveShadows = false;
+                VfxMaterial.Ghost(r, DustColour, .3f);
+                puff.transform.localScale = Vector3.zero;
+                s.Dust.Add(puff.transform); s.DustMaterials.Add(r.sharedMaterial);
+            }
+            _strikes.Add(s);
+            if (local && !_stage)
+            {
+                var rig = Camera.main != null ? Camera.main.GetComponent<CameraRig>() : null;
+                if (rig != null) { rig.ImpactPunch(transform.forward, 1.8f); rig.Shake(.55f, .4f); }
+            }
+            PoseStrike(s, _lastAge);
+        }
+
+        private void PoseStrike(Strike s, float t)
+        {
+            float a = t - s.At;
+            bool on = a >= 0f && a < 1.1f;
+            // Up in a punch (0.07 s) with a small overshoot, held, then down in two crumbling steps.
+            float up = a < 0f ? 0f : a < .07f ? a / .07f : 1f + .15f * Mathf.Max(0f, 1f - (a - .07f) / .08f);
+            float down = Ease(.45f, .7f, a) * .5f + Ease(.8f, 1.05f, a) * .5f;
+            float h = 1.35f * up * (1f - down), crack = a > .7f ? .85f : 1f;
+            s.Pillar.gameObject.SetActive(on && h > .01f);
+            s.Pillar.localPosition = s.Local + Vector3.down * .25f;
+            s.Pillar.localRotation = Quaternion.Euler(-8f, s.Local.x * 37f, 5f);
+            s.Pillar.localScale = new Vector3(.95f * crack, h + .25f, .95f * crack);
+            Light(s.Star, s.Local + Vector3.up * .02f, Vector3.one * Mathf.Lerp(.6f, 2.2f, Mathf.Clamp01(a / .1f)), Quaternion.Euler(90f, 0f, 0f),
+                  !on ? 0f : 2.2f * (1f - Ease(.1f, .9f, a)));
+            for (int i = 0; i < s.Shards.Count; i++)
+            {
+                var r = ShardRows[i];
+                float ang = r.angle * Mathf.Deg2Rad, land = 2f * r.up / 9.8f, ft = Mathf.Clamp(a, 0f, land);
+                var pos = s.Local + new Vector3(Mathf.Sin(ang), 0f, Mathf.Cos(ang)) * (.3f + r.out_ * ft) + Vector3.up * (.4f + r.up * ft - 4.9f * ft * ft);
+                pos.y = Mathf.Max(0f, pos.y);
+                float broken = a < land ? 1f : a < land + .2f ? .7f : Mathf.Max(0f, .7f - (a - land - .2f) * 3f);
+                s.Shards[i].gameObject.SetActive(on && a >= 0f && broken > 0f);
+                s.Shards[i].localPosition = pos;
+                s.Shards[i].localRotation = Quaternion.Euler(ft * 500f + i * 40f, i * 60f, ft * 300f);
+                s.Shards[i].localScale = Vector3.one * r.size * broken;
+            }
+            for (int i = 0; i < s.Dust.Count; i++)
+            {
+                float du = Mathf.Clamp01(a / .8f), ang = i * 2.09f + .4f;
+                float puff = Mathf.Lerp(.6f, 1.8f, du);
+                var d = s.Dust[i];
+                d.gameObject.SetActive(on && du < 1f);
+                d.localPosition = s.Local + new Vector3(Mathf.Sin(ang), 0f, Mathf.Cos(ang)) * (.4f + 1.1f * du) + Vector3.up * (puff * .45f);
+                d.localRotation = Quaternion.Euler(0f, ang * Mathf.Rad2Deg, 0f) * Quaternion.Euler(90f, 0f, 0f);
+                d.localScale = new Vector3(puff * 1.2f, 1f, puff);
+                var c = DustColour; c.a = .8f * (1f - du * du);
+                s.DustMaterials[i].color = c; if (s.DustMaterials[i].HasProperty("_BaseColor")) s.DustMaterials[i].SetColor("_BaseColor", c);
+            }
+        }
         private int Columns => Mathf.Max(6, Mathf.RoundToInt(_halfWidth * 2f / ColumnWidth));
         public float HalfWidth => _halfWidth;
         public float Reach => _reach;
@@ -226,6 +316,7 @@ namespace TumbangPreso.Visual
 
         private void Pose(float t)
         {
+            foreach (var strike in _strikes) PoseStrike(strike, t);
             int columns = Columns;
             float sixth = _halfWidth * 2f / columns;
             // Play's end: two crumbling steps down into the court.

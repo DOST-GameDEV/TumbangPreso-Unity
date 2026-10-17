@@ -81,13 +81,14 @@ namespace TumbangPreso.PlayTests
         {
             yield return Open();
             var wave = DanteDriftWave.Spawn(_caster.transform.position, Vector3.forward, 0);
-            wave.SendMessage("Advance", .65f);
+            float landed = GeoRules.DriftLandSeconds + .05f;
+            wave.SendMessage("Advance", landed);
             Assert.IsTrue(_near.IsConcussed, "The near player, thrown by the first band, has landed.");
             var field = wave.Capture();
             Assert.IsTrue(Net.WorldEffectSnapshot.Valid(field)); _near.CleanseStatuses();
             Assert.IsTrue(Net.WorldEffectSnapshot.Apply(new[] { field }, 0));
             var restored = Object.FindAnyObjectByType<DanteDriftWave>(); Assert.IsNotNull(restored);
-            Assert.AreEqual(.65f, restored.Age, .001f);
+            Assert.AreEqual(landed, restored.Age, .001f);
             restored.SendMessage("Advance", 1.4f);
             Assert.IsFalse(_near.IsConcussed, "Recovery cannot replay the already-resolved near band.");
             Assert.IsTrue(_far.IsConcussed, "The far band, still to come, throws and lands its player.");

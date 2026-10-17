@@ -598,18 +598,24 @@ def _dante_drift(p, held):
     """
     shoe = (20, 42, -8)
     stand = Pose(torso=(-2, 0, 0), head=(-6, 0, 0), legs=((4, 14), (-4, 14)), left=(18, 30, 0), right=shoe if held else (18, 30, 0))
+    # ⚠️ BOTH FISTS, SLIPPER OR NOT (owner on v7: *"what happened baket one arm nalanh huhu"*): holding a slipper used to keep his
+    # right arm down by his side through the whole charge-up, so only one boulder fist ever rose. The slipper rides in the right
+    # boulder fist now; only the last pose (`stamp`, where the live cast clip continues) keeps the held arm.
     # THE PLANT: down low, both fists driven into the court in front of him, head down.
-    plant = Pose(torso=(44, 0, 0), head=(-20, 0, 0), left=(86, 8, 20), right=shoe if held else (86, 8, 20), legs=((52, 88), (40, 80)))
+    plant = Pose(torso=(44, 0, 0), head=(-20, 0, 0), left=(86, 8, 20), right=(86, 8, 20), legs=((52, 88), (40, 80)))
     plant_shake = plant.but(torso=(46, 0, 1.5))
     # Drawing the boulder fists up out of the court to his hips as the last stone lands.
-    crouch = Pose(torso=(26, 0, 0), head=(-18, 0, 0), left=(48, 24, 26), right=shoe if held else (48, 24, 26), legs=((50, 84), (44, 80)))
-    # THE RISE: standing, chest open, the boulder fists straight up over his head.
-    raised = Pose(torso=(-12, 0, 0), head=(-16, 0, 0), left=(168, 12, 18), right=shoe if held else (168, 12, -18), legs=((10, 14), (-10, 14)))
-    raised_shake = raised.but(torso=(-13, 0, 1.5), left=(170, 12, 18))
+    crouch = Pose(torso=(26, 0, 0), head=(-18, 0, 0), left=(48, 24, 26), right=(48, 24, 26), legs=((50, 84), (44, 80)))
+    # THE RISE: standing, chest open, the boulder fists up and spread wide either side of his head (film r41: straight up, his
+    # short arms brought both fists together in front of his face, one boulder hid the other and it read as one arm).
+    # ⚠️ The same numbers on both arms mirror them (the slam's (72, 6, 30) on both): the old (168, 12, 18) / (168, 12, -18) swung
+    # his left arm across his chest (film r44 measured his left palm 0.18 m left of his middle, his right 0.46 m right of it).
+    raised = Pose(torso=(-12, 0, 0), head=(-16, 0, 0), left=(122, 8, -62), right=(122, 8, -62), legs=((14, 14), (-14, 14)))
+    raised_shake = raised.but(torso=(-13, 0, 1.5), left=(126, 8, -64), right=(126, 8, -64))
     # THE LEAP: stretched up off the court; tucked at the top; turned fists down for the landing.
-    launch = Pose(torso=(-10, 0, 0), head=(-16, 0, 0), left=(170, 10, 14), right=shoe if held else (170, 10, -14), legs=((-6, 6), (-8, 8)))
-    tuck = Pose(torso=(8, 0, 0), head=(-12, 0, 0), left=(160, 12, 20), right=shoe if held else (160, 12, -20), legs=((44, 70), (30, 58)))
-    dive = Pose(torso=(34, 0, 0), head=(-22, 0, 0), left=(120, 8, 26), right=(30, 42, -8) if held else (120, 8, 26), legs=((-8, 20), (-12, 26)))
+    launch = Pose(torso=(-10, 0, 0), head=(-16, 0, 0), left=(150, 10, -40), right=(150, 10, -40), legs=((-6, 6), (-8, 8)))
+    tuck = Pose(torso=(8, 0, 0), head=(-12, 0, 0), left=(140, 12, -45), right=(140, 12, -45), legs=((44, 70), (30, 58)))
+    dive = Pose(torso=(34, 0, 0), head=(-22, 0, 0), left=(120, 8, 26), right=(120, 8, 26), legs=((-8, 20), (-12, 26)))
     stamp = Pose(torso=(28, -10, 0), head=(-8, 6, 0), left=(72, 6, 30), right=(72, 6, 30), legs=((22, 10), (-18, 10)))
     if held:
         stamp = stamp.but(right=(30, 42, -8))

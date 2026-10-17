@@ -69,10 +69,12 @@ namespace TumbangPreso.Core
         // Concussed as they land. Protocol 168.
         public const int DriftBlasts = 5;
         public const float DriftInterval = .30f;
-        public const float DriftThrowUp = 6.0f;      // m/s: a 0.9 m arc against `Balance.CharacterGravity`
-        public const float DriftThrowAway = 4.5f;    // m/s down the lane, held for `DriftThrowHold`
-        public const float DriftThrowHold = .30f;
-        public const float DriftLandSeconds = 2.0f * DriftThrowUp / Balance.CharacterGravity;   // 0.6 s: Concussed as they land
+        // Harder (owner, 2026-10-17: *"lakasann mo pa u nti knnocback"*): the full lift a knock may give
+        // (`Balance.MaxKnockbackLift`), a 1.2 m arc, and well down the lane.
+        public const float DriftThrowUp = 7.0f;      // m/s against `Balance.CharacterGravity`
+        public const float DriftThrowAway = 7.5f;    // m/s down the lane, held for `DriftThrowHold`
+        public const float DriftThrowHold = .40f;
+        public const float DriftLandSeconds = 2.0f * DriftThrowUp / Balance.CharacterGravity;   // 0.7 s: Concussed as they land
         public const float DriftSeconds = (DriftBlasts - 1) * DriftInterval + 1.8f;            // the rubble holds, then sinks back
         /// <summary>How far into the cascade the cutscene's last frame is: it ends with the first band already rising toward
         /// them (owner, 2026-10-17: *"end the cutscene when the ground is rsiing towards the players"*), and play's wave picks

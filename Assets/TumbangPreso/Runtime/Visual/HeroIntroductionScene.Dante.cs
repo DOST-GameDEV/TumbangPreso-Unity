@@ -156,7 +156,30 @@ namespace TumbangPreso.Visual
         }
 
         // His fists: the left, and the right (or where the right's slipper is held).
-        private Vector3 DnFistPoint(int fist) => fist == 0 ? FreePalm : RightPalm;
+        private Vector3 DnFistPoint(int fist) => fist == 0 ? DnLeftFist : RightPalm;
+
+        // ⚠️ HIS LEFT FIST IS THE RIGHT ONE MIRRORED ON HIS OWN ARM (owner on v7: *"what happened baket one arm nalanh huhu"*). The
+        // stage's free palm measured 0.11 m left of his middle while his right palm was 0.46 m right of it (film r43): the left
+        // boulder stood inside his chest and only one fist ever showed. The right hand's offset from its own arm bone, mirrored,
+        // and laid on the left arm bone follows the real left arm through every pose.
+        private Transform _dnArmRight;
+        private bool _dnArmSearched;
+        private Vector3 DnLeftFist
+        {
+            get
+            {
+                if (!_dnArmSearched && _bodyRoot != null)
+                {
+                    _dnArmSearched = true;
+                    foreach (var bone in _bodyRoot.GetComponentsInChildren<Transform>(true))
+                        if (bone.name == "arm-right") { _dnArmRight = bone; break; }
+                }
+                if (_dnArmRight == null || _leftArm == null || _rightHand == null) return FreePalm;
+                var local = _dnArmRight.InverseTransformPoint(_rightHand.position);
+                local.x = -local.x;
+                return _root.transform.InverseTransformPoint(_leftArm.TransformPoint(local));
+            }
+        }
         private Vector3 DnFistMid => (DnFistPoint(0) + DnFistPoint(1)) * .5f;
         private Vector3 DnFists => _dnFistAt ?? new Vector3(0f, DnFloat + .02f, .7f);
 

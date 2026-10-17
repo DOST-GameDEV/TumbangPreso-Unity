@@ -50,6 +50,11 @@ namespace TumbangPreso.CameraSystem
         public bool SoundPlayed { get; private set; }
         /// <summary>Seats whose own voice line already played inside this introduction.</summary>
         public IEnumerable<int> VoicedSeats { get { foreach (var entry in _actors) if (entry.Scene != null && entry.Scene.VoicePlayed) yield return entry.Actor.PlayerSlot; } }
+        /// <summary>Where every cast's cutscene leaves other players at its last frame (`HeroIntroductionScene.HandBackPlaces`).</summary>
+        public void HandBackPlaces(List<(int seat, Vector3 world)> into)
+        {
+            foreach (var entry in _actors) entry.Scene?.HandBackPlaces(into);
+        }
 
         public UltimatePhaseView(Transform owner, IReadOnlyList<UltimateCommit> commits, double duration = UltimatePerformance.DefaultSeconds)
         {

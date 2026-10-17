@@ -165,7 +165,10 @@ namespace TumbangPreso.Visual
             _nmHerEyes = NemuEyeGlow.On(_bodyRenderers);
             if (_nmHerEyes != null) _nmEyeGlows.Add(_nmHerEyes);
 
-            StageOthers(3.0f, 8.5f);
+            // Everyone where they really stand, never pulled in or pushed out (owner, 2026-10-17: *"try to consider wtf is gonan
+            // happen to ppl that are in diff places"*, *"make sure the ults cutscennes arent hardcoded and shows live view of
+            // match"*): the 3 to 8.5 m clamp drew far players at 8.5 m, and play then put them back where they were.
+            StageOthers(0f, 1000f);
             Vector3 centre = Vector3.zero;
             var all = new List<NmVictim>();
             for (int i = 0; i < _others.Count; i++)
@@ -440,6 +443,23 @@ namespace TumbangPreso.Visual
                 Vector3 ahead = rot * Vector3.forward; ahead.y = 0f;
                 float x = Mathf.Min(s, NmSnap) - NmTripSettle;
                 if (ahead.sqrMagnitude > 1e-4f) pos += ahead.normalized * (.85f * x * x / (x + .2f));
+            }
+        }
+
+        /// <summary>
+        /// Where her cutscene leaves each player at its last frame (world space, by seat): the one who ran stands where he ran to,
+        /// the others where they were caught. The host puts them there as play resumes (`SharedUltimatePhase.Complete`; owner,
+        /// 2026-10-17: *"Play keeps the cutscene's moves: at the cut, put each player where the cutscene left them (... Nemu's
+        /// where they ran to)"*), so nobody jumps back at the cut.
+        /// </summary>
+        private void NemuHandBackPlaces(List<(int seat, Vector3 world)> into)
+        {
+            foreach (var v in _nmVictims)
+            {
+                // Only a copy of a real player (a film's stand-in has no seat to move).
+                if (v == null || v.Seat < 0 || v.Holder == null || v.Holder.name != "IntroductionOther-P" + (v.Seat + 1)) continue;
+                NmBody(v, Seconds, out var pos, out _, out _);
+                into.Add((v.Seat, _root.transform.TransformPoint(new Vector3(pos.x, 0f, pos.z))));
             }
         }
 
