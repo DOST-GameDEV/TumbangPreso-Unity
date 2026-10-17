@@ -334,22 +334,20 @@ namespace TumbangPreso.UI
             if (net == null || !net.IsNetworked) { SceneFlow.StartMatch(); return; }
             if (!NetAuthority.IsHost) return;
 
-            // The room's NONE choice must reach the existing four-human gate even
-            // when settings or a previous session left global bot policy enabled.
-            // Queued rooms retain their explicit accepted-bot path below.
+            // The room's own bot choice must win over whatever settings or a previous session
+            // left in the global bot policy. Queued rooms retain their explicit accepted-bot path.
             if (!HubQueueWatch.QueueRoom)
                 AIController.ApplyCustomRoomPolicy(SceneFlow.SelectedRules);
 
-            if (!AIController.BotsEnabled && net.Lobby.OccupiedSeatCount() < Balance.PlayerCount)
-            {
-                if (HubQueueWatch.QueueRoom) AcceptBots();
-                else
-                {
-                    _hubView?.Toast("Bots are off in this room's rules. Fill all four seats, or turn bots on under RULES.");
-                    MenuSfx.Error();
-                    return;
-                }
-            }
+            // ⚠️⚠️ A CUSTOM ROOM STARTS WITH WHOEVER IS IN IT, owner 2026-10-17: *"make sure that
+            // you're able to start the game even when there's no players or bots"*. This used to
+            // refuse until four people sat down or RULES turned bots on, which made a host on
+            // their own unable to try a map. A seat left OPEN is an empty chair in the match
+            // (`MatchInstaller.CustomRoomSeatTakesABot`). Only a queued room still needs its
+            // four, and it fills them by accepting bots rather than by refusing.
+            if (HubQueueWatch.QueueRoom && !AIController.BotsEnabled
+                && net.Lobby.OccupiedSeatCount() < Balance.PlayerCount)
+                AcceptBots();
 
             // ⚠️ NO SECOND `SceneFlow.StartMatch()`: `HostStartMatch` fires `OnMatchStarted`, which
             // this screen answers with the load (`HandleMatchStarted`).

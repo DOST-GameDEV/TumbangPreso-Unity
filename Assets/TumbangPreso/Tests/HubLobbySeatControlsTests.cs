@@ -95,11 +95,14 @@ namespace TumbangPreso.Tests
             bot.onClick.Invoke();Assert.AreEqual(2,_host.Requested);
             open.onClick.Invoke();Assert.AreEqual(3,_host.Requested);
         }
-        [Test] public void HumanOnlyVacanciesExplainWhyStartIsDisabled()
+        [Test] public void EmptySeatsWithNoBotsStillLetTheHostStart()
         {
+            // Owner 2026-10-17: the host starts with nobody else in the room, and the old
+            // "Bots are off" line under START is gone.
             foreach(int i in new[]{0,1,2,3})_host.Data[i]=new HubSeat{Slot=i,CharacterPick=-1};
-            RebuildForCurrentSeats();Assert.IsFalse(Button("StartGame").interactable);
-            var status=_root.GetComponentsInChildren<Text>(true).First(t=>t.name=="Status");StringAssert.Contains("Bots are off",status.text);
+            RebuildForCurrentSeats();Assert.IsTrue(Button("StartGame").interactable);
+            var status=_root.GetComponentsInChildren<Text>(true).First(t=>t.name=="Status");
+            StringAssert.DoesNotContain("Bots are off",status.text);
         }
         [Test] public void FillingVacanciesWithBotsKeepsStartAvailable()
         {

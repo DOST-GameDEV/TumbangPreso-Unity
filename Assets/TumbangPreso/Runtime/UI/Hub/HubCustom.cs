@@ -511,12 +511,8 @@ namespace TumbangPreso.UI.Hub
                             (host.RoomOnline ? "ONLINE" : "LAN");
 
             int occupied = 0;
-            bool fillBots = HubQueueWatch.QueueRoom; // Start retains queued-room bot acceptance.
             foreach (var s in seats)
-            {
                 if (s.Occupied) occupied++;
-                else if (s.Bot) fillBots = true;
-            }
             _count.text = "PLAYERS  " + occupied + " / " + Balance.PlayerCount;
 
             for (int i = _rows.childCount - 1; i >= 0; i--) Destroy(_rows.GetChild(i).gameObject);
@@ -563,11 +559,11 @@ namespace TumbangPreso.UI.Hub
 
             if (host.IsHost)
             {
+                // ⚠️ ALWAYS PRESSABLE FOR THE HOST. A custom room starts with whoever is in it,
+                // and an OPEN seat is an empty chair (`ConvertedMatchSetup.StartGame`).
                 HubKit.SetLabel(_primary, "START GAME");
-                _primary.interactable = occupied >= Balance.PlayerCount || fillBots;
-                _status.text = occupied >= Balance.PlayerCount ? "Everyone is here." : fillBots
-                    ? "Empty seats are filled by bots."
-                    : "Bots are off. Fill all four seats or change RULES.";
+                _primary.interactable = true;
+                _status.text = "";
             }
             else
             {
