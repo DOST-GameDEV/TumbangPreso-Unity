@@ -81,7 +81,7 @@ namespace TumbangPreso.Visual
             public readonly List<Material> DustMaterials = new List<Material>(4);
             public Glow Light;
         }
-        private sealed class Glow
+        internal sealed class Glow
         {
             public Transform Node; public Renderer Renderer; public MaterialPropertyBlock Block; public Color Colour;
         }
@@ -333,7 +333,7 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>A flat piece of light (`Resources/Shaders/SpiritGlow`): unlit, additive, soft across its width.</summary>
-        private static Glow AddGlow(Transform parent, string name, Color colour, float falloff, float core, Mesh mesh = null)
+        internal static Glow AddGlow(Transform parent, string name, Color colour, float falloff, float core, Mesh mesh = null)
         {
             if (mesh == null)
             {
@@ -382,7 +382,7 @@ namespace TumbangPreso.Visual
             return mesh;
         }
 
-        private static void Light(Glow g, Vector3 position, Vector3 scale, Quaternion rotation, float strength)
+        internal static void Light(Glow g, Vector3 position, Vector3 scale, Quaternion rotation, float strength)
         {
             g.Node.localPosition = position; g.Node.localScale = scale; g.Node.localRotation = rotation;
             var c = g.Colour; c.a = Mathf.Max(0f, strength);

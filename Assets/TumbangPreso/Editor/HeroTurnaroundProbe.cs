@@ -294,6 +294,7 @@ namespace TumbangPreso.EditorTools
                     break;
                 }
             }
+            if (rosterId == "dante") MountainFormReview.Dress(model, pivot.transform, yaw);
 
             var renderers = model.GetComponentsInChildren<Renderer>();
             if (renderers.Length == 0) return;

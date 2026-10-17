@@ -375,6 +375,7 @@ namespace TumbangPreso.EditorTools
 
             ToonSkin.Apply(model, ToonSkin.PersonOutlineWidth,
                            entry.Palette != null && entry.Palette.Length == 16 ? entry.Palette : null);
+            if (entry.Id == "dante") MountainFormReview.Dress(model, pivot.transform, yaw);
 
             return model.GetComponentsInChildren<Renderer>().Length == 0 ? null : model;
         }

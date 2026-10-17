@@ -77,6 +77,17 @@ namespace TumbangPreso.Core
         public const float DriftThrowHold = .50f;
         public const float DriftLandSeconds = 2.0f * DriftThrowUp / Balance.CharacterGravity;   // 1.1 s: Concussed as they land
         public const float DriftSeconds = (DriftBlasts - 1) * DriftInterval + 1.8f;            // the rubble holds, then sinks back
+
+        // MOUNTAIN FORM (owner, 2026-10-17: *"AFTER HIS ULT he retains the rock armor for 30 secs or smth and he has some buffs"*,
+        // *"stronger throw"*, *"throws na may stun na unti if it hits personn + knockback"*, *"di tatablan nng debuffs"*): the
+        // mountain's armour stays on him from the cut. While it holds he is immune to every status but Tagged and to stuns (as
+        // Unstoppable), his throws fly `MountainThrowScale` faster, and a throw that hits a player stuns them `MountainHitStun`
+        // and knocks them away along it. Protocol 171.
+        public const float MountainSeconds = 30.0f;
+        public const float MountainThrowScale = 1.25f;
+        public const float MountainHitStun = 0.6f;
+        public const float MountainHitAway = 9.0f;     // m/s along the throw
+        public const float MountainHitUp = 5.0f;       // m/s
         /// <summary>How far into the cascade the cutscene's last frame is: it ends with the first band already rising toward
         /// them (owner, 2026-10-17: *"end the cutscene when the ground is rsiing towards the players"*), and play's wave picks
         /// up at this age, so nothing erupts twice and the next band follows the cut at once.</summary>
