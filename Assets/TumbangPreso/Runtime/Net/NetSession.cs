@@ -636,7 +636,9 @@ namespace TumbangPreso.Net
         // 169 (2026-10-17): after her cutscene AIRBURST puts every caught player where the cutscene's throw had them (mid-air,
         // `CharacterMotor.ApplyResolvedRelocate`, sent as the host teleport) and the throw flies on; a 168 host threw them again
         // from where they had stood. Nemu's LET THEM IN likewise leaves her victims where her cutscene ended them.
-        public const int ProtocolVersion = 169;
+        // 170 (2026-10-17): a Concussed throw wobbles up to 16 degrees (was 9) and has a 60 per cent chance to misfire, sailing
+        // 35 to 80 degrees off, higher and faster (`StatusRules.ConcussedMisfireChance`); a 169 host throws it nearly straight.
+        public const int ProtocolVersion = 170;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

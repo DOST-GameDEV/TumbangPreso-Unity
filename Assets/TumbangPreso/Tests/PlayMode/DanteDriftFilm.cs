@@ -110,24 +110,38 @@ namespace TumbangPreso.PlayTests
 
         private static Vector3 Flat(Vector3 v) => new Vector3(v.x, 0f, v.z);
 
+        /// <summary>This seat as <paramref name="hero"/>: the kit and the model.</summary>
+        private static void Bind(CharacterMotor body, string hero)
+        {
+            body.CharacterIndex = Roster.IndexIn(Roster.HeroPeople, hero);
+            body.AbilitySystem.BindHero(hero);
+            var art = RosterBook.Load().FindPersonArt(hero);
+            if (art != null) body.GetComponent<CharacterVisual>().ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
+        }
+
         [UnityTest, Timeout(1200000)]
         public IEnumerator FilmContinentalDriftInAMatch()
         {
             if (Environment.GetEnvironmentVariable("TUMP_DANTE_FILM") != "1") Assert.Ignore("Film only: set TUMP_DANTE_FILM=1.");
             var round = GameServices.Round;
             var can = Flat(round.Lata.transform.position);
+            // TUMP_DANTE_FILM_POV=1 (owner, 2026-10-17: *"cutscene -> fpp view ng after cutscene of someone nna natamaan"*): the
+            // player it hits is this machine's own seat, so "his screen" is THEIRS: the cutscene, then their own first person as
+            // the ground comes for them, with everything their screen really does. Basilio casts from a bot's seat.
+            bool pov = Environment.GetEnvironmentVariable("TUMP_DANTE_FILM_POV") == "1";
+            var local = round.PlayerAt(GameLaunch.SoloSeat);
             // Basilio 6 m short of the can, facing it; three others ahead of him inside the cascade's lane.
-            var dante = round.PlayerAt(GameLaunch.SoloSeat);
-            dante.CharacterIndex = Roster.IndexIn(Roster.HeroPeople, "dante");
-            dante.AbilitySystem.BindHero("dante");
-            var art = RosterBook.Load().FindPersonArt("dante");
-            dante.GetComponent<CharacterVisual>().ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
-            foreach (var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None)) arms.MatchCharacter(dante);
+            var dante = pov ? round.Players.First(p => p != null && p != local) : local;
+            Bind(dante, "dante");
             var origin = can + new Vector3(0f, .12f, -6.0f);
             dante.Teleport(origin); dante.transform.rotation = Quaternion.identity;
-            dante.Intent.Clear(); dante.Intent.Parked = false; dante.IsBot = false;
+            dante.Intent.Clear(); dante.Intent.Parked = false; dante.IsBot = pov;
             dante.Intent.AimPoint = origin + Vector3.forward * 8f; dante.Intent.FaceAimPoint = true;
-            var others = round.Players.Where(p => p != null && p != dante).ToArray();
+            // Never Basilio as the ones it hits (owner: *"dont use dante as a bot na tatamaann bcz its confusinng"*).
+            var others = round.Players.Where(p => p != null && p != dante).OrderBy(p => p == local ? 1 : 0).ToArray();
+            string[] looks = { "amihan", "paete", "cheska" };
+            for (int i = 0; i < others.Length; i++) Bind(others[i], looks[i % looks.Length]);
+            foreach (var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None)) arms.MatchCharacter(local);
             // Scattered, never a tidy group (owner, 2026-10-17: "EVERYONE isnt always gonnna be in the same place"): one near on
             // his left, one mid-lane far to his right, one deep. TUMP_DANTE_FILM_GROUPED=1 keeps the old tight group.
             var spots = Environment.GetEnvironmentVariable("TUMP_DANTE_FILM_GROUPED") == "1"
@@ -140,9 +154,19 @@ namespace TumbangPreso.PlayTests
                 var d = Flat(origin - others[i].transform.position);
                 if (d.sqrMagnitude > .01f) others[i].transform.rotation = Quaternion.LookRotation(d.normalized);
             }
-            var victim = others[0];
+            // In POV the local seat stands mid-lane on his right (the third band reaches them 0.3 s into play: the ground is seen
+            // coming), looking back at him.
+            if (pov)
+            {
+                var spot = origin + spots[1];
+                var mid = others.First(p => p != local && (p.transform.position - spot).sqrMagnitude < .1f);
+                mid.Teleport(local.transform.position); local.Teleport(spot);
+                local.transform.rotation = Quaternion.LookRotation(Flat(origin - spot).normalized);
+                local.Intent.Clear(); local.Intent.Parked = true; local.IsBot = false;
+            }
+            var victim = pov ? local : others[0];
             dante.AbilitySystem.Kit.AddUltimateCharge(dante.AbilitySystem.Kit.UltimateCost);
-            Camera.main.GetComponent<CameraRig>().Follow(dante);
+            Camera.main.GetComponent<CameraRig>().Follow(pov ? local : dante);
             yield return null;
 
             var wide = Film.Make("DanteWide", 50);

@@ -140,11 +140,22 @@ namespace TumbangPreso.Core
         /// <summary>*"Prevents movement or interaction for 5 seconds."* The tag's own number.</summary>
         public const float TaggedSeconds = Balance.TagStunTime;
 
-        /// <summary>Concussed: 5 s, speed x0.25, no sprint, aim wobble up to 9 degrees. The Wiki's *"75% slower for 5 seconds"*
+        /// <summary>Concussed: 5 s, speed x0.25, no sprint, aim wobble up to 16 degrees, and a throw may misfire (below). The Wiki's *"75% slower for 5 seconds"*
         /// (owner approved the 2026-10-16 presentation plan, which follows the Wiki; was 2.5 s).</summary>
         public const float ConcussedSeconds = 5.0f;
         public const float ConcussedSpeedScale = 0.25f;
-        public const float ConcussedAimWobbleDegrees = 9.0f;
+        public const float ConcussedAimWobbleDegrees = 16.0f;
+
+        /// <summary>
+        /// A Concussed throw can MISFIRE (owner, 2026-10-17: *"inaccuracy gets increased by a lot ( u throw slipper somewhere but
+        /// it FLIES and theres a big chance it flies or goes somewhere completley off)"*). On the host, each throw while Concussed
+        /// has this chance to go wild: turned 35 to 80 degrees off the aim to a random side, kicked 8 to 28 degrees higher and
+        /// 10 to 40 per cent faster, so it sails off somewhere else entirely. A throw that does not misfire still takes the wobble.
+        /// </summary>
+        public const float ConcussedMisfireChance = 0.6f;
+        public const float ConcussedMisfireYawMin = 35.0f, ConcussedMisfireYawMax = 80.0f;
+        public const float ConcussedMisfirePitchMin = 8.0f, ConcussedMisfirePitchMax = 28.0f;
+        public const float ConcussedMisfireSpeedMin = 1.1f, ConcussedMisfireSpeedMax = 1.4f;
 
         /// <summary>Feared: 1.5 s of fleeing from the source at run speed; the held slipper drops at once.</summary>
         public const float FearedSeconds = 1.5f;

@@ -69,12 +69,13 @@ namespace TumbangPreso.Core
         // Concussed as they land. Protocol 168.
         public const int DriftBlasts = 5;
         public const float DriftInterval = .30f;
-        // Harder (owner, 2026-10-17: *"lakasann mo pa u nti knnocback"*): the full lift a knock may give
-        // (`Balance.MaxKnockbackLift`), a 1.2 m arc, and well down the lane.
-        public const float DriftThrowUp = 7.0f;      // m/s against `Balance.CharacterGravity`
-        public const float DriftThrowAway = 7.5f;    // m/s down the lane, held for `DriftThrowHold`
-        public const float DriftThrowHold = .40f;
-        public const float DriftLandSeconds = 2.0f * DriftThrowUp / Balance.CharacterGravity;   // 0.7 s: Concussed as they land
+        // Harder again (owner, 2026-10-17, on v9: *"lakasann mo pa knockback"*): a LAUNCH, past the knock's lift cap, as a car's
+        // hit is (`CharacterMotor.AsLaunch`, under `CharacterMotor.LaunchMaxLift` 13): a 3 m arc, 1.1 s in the air, and about
+        // 6.7 m down the lane (5 m held, then the slide). Protocol 170.
+        public const float DriftThrowUp = 11.0f;     // m/s against `Balance.CharacterGravity`
+        public const float DriftThrowAway = 10.0f;   // m/s down the lane, held for `DriftThrowHold`
+        public const float DriftThrowHold = .50f;
+        public const float DriftLandSeconds = 2.0f * DriftThrowUp / Balance.CharacterGravity;   // 1.1 s: Concussed as they land
         public const float DriftSeconds = (DriftBlasts - 1) * DriftInterval + 1.8f;            // the rubble holds, then sinks back
         /// <summary>How far into the cascade the cutscene's last frame is: it ends with the first band already rising toward
         /// them (owner, 2026-10-17: *"end the cutscene when the ground is rsiing towards the players"*), and play's wave picks

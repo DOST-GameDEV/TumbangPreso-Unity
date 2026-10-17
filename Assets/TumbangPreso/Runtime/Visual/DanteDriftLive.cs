@@ -150,7 +150,7 @@ namespace TumbangPreso.Visual
         /// The ground strikes the player at <paramref name="world"/>: posed from the wave's clock like everything else. The one
         /// struck feels it on their own camera: a hard punch and a shake (owner, 2026-10-17: *"TRY TO make it more felt"*).
         /// </summary>
-        public void Struck(Vector3 world, float at, bool local)
+        public void Struck(Vector3 world, float at, bool viewed)
         {
             int n = _strikes.Count, seed = 600 + n * 13;
             var s = new Strike { At = at, Local = transform.InverseTransformPoint(world), Yaw = (seed % 7) * 23f };
@@ -174,9 +174,16 @@ namespace TumbangPreso.Visual
                 s.Dust.Add(puff.transform); s.DustMaterials.Add(r.sharedMaterial);
             }
             _strikes.Add(s);
-            if (local && !_stage)
+            if (viewed && !_stage)
             {
-                var rig = Camera.main != null ? Camera.main.GetComponent<CameraRig>() : null;
+                var cam = Camera.main;
+                var rig = cam != null ? cam.GetComponent<CameraRig>() : null;
+                // Their own screen takes the hit (`DanteHitLens`), and broken stone bursts up past their eyes.
+                DanteHitLens.Begin(cam, n);
+                if (cam != null && !Settings.SettingsStore.Current.ReducedEffects)
+                    for (int i = 0; i < 6; i++)
+                        DanteBoulderGrit.Drop(cam.transform.position + cam.transform.forward * (.7f + .1f * i) + cam.transform.right * ((i % 3) - 1) * .35f
+                                              + Vector3.down * .2f, true);
                 // Up and away with them, hard (owner on v7: *"TRY TO make it more felt"*; on v8: *"It doesnt feel like it hits that
                 // hard"*). Play is never paused for a hit-stop: the round is shared, so the lens takes the stop.
                 if (rig != null) { rig.ImpactPunch(transform.forward + Vector3.up * .7f, 2.6f); rig.Shake(.85f, .5f); rig.BeginGroundRumble(1f); }

@@ -200,6 +200,8 @@ namespace TumbangPreso.CameraSystem
 
         private bool _emoteView;
         private WhirledView _whirledView;
+        /// <summary>Struck by CONTINENTAL DRIFT's ground: the view thrown up and rolled with the flight (`Visual.DanteHitLens`).</summary>
+        public Visual.DanteHitLens HitLens;
         // Amihan's Airburst v3.2: the swing-out while her wind has thrown this body (`WindTumble`).
         private bool _blownView;
         private Social.EmotePlayer _emotes;
@@ -847,6 +849,8 @@ namespace TumbangPreso.CameraSystem
             // Whirled's dizzy roll, about the line of sight, only on a frame this pass wrote and only in first person.
             if (_mode == CameraMode.Fpp && _whirledView != null && _whirledView.Roll != 0f)
                 transform.rotation *= Quaternion.Euler(0f, 0f, _whirledView.Roll);
+            if (_mode == CameraMode.Fpp && HitLens != null && HitLens.isActiveAndEnabled)
+                transform.rotation *= HitLens.Tilt;
         }
 
         private void StepCompanionLook(Visual.GhostPetCompanion companion)

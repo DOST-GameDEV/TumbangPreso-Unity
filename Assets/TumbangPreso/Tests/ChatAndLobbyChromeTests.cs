@@ -389,7 +389,8 @@ namespace TumbangPreso.Tests
             //167 resolves CONTINENTAL DRIFT at the cutscene's cut: the lane throws everyone, Concussed on landing (no wire change).
             //168 makes CONTINENTAL DRIFT's cascade play's again, band by band, each band throwing (no wire change).
             //169 keeps the cutscenes' moves at the hand-back: Amihan's thrown mid-air, Nemu's where they ran (no wire change).
-            Assert.AreEqual(169, NetSession.ProtocolVersion,
+            //170 makes a Concussed throw wobble harder and often misfire far off its aim (no wire change; the rules differ).
+            Assert.AreEqual(170, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

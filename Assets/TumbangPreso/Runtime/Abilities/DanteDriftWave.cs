@@ -126,6 +126,7 @@ namespace TumbangPreso.Abilities
             var round = GameServices.Round;
             var live = _visual != null ? _visual.Live : null;
             if (round == null || live == null || round.RoundActive != true) return;
+            var rig = Camera.main != null ? Camera.main.GetComponent<CameraSystem.CameraRig>() : null;
             foreach (var actor in round.Players)
             {
                 if (!InBand(band, actor)) continue;
@@ -133,7 +134,10 @@ namespace TumbangPreso.Abilities
                 foreach (var t in _struck) if (t == actor) already = true;
                 if (already) continue;
                 _struck.Add(actor);
-                live.Struck(actor.transform.position, band * GeoRules.DriftInterval, actor.PlayerSlot == NetAuthority.LocalSlot);
+                // The view that is this body's own (the player's, or a spectator riding them) takes the hit on its screen.
+                bool viewed = rig != null && rig.Following == actor;
+                live.Struck(actor.transform.position, band * GeoRules.DriftInterval, viewed);
+                DanteDriftLaunch.Begin(actor, viewed);
             }
         }
         readonly System.Collections.Generic.List<CharacterMotor> _struck = new System.Collections.Generic.List<CharacterMotor>(4);
@@ -154,8 +158,10 @@ namespace TumbangPreso.Abilities
                 bool already = false;
                 foreach (var t in _thrown) if (t.actor == actor) already = true;
                 if (already) continue;   // thrown on into the next band: one throw per wave
-                // Knocked away down the lane, away from him; Concussed as they land.
-                actor.ApplyResolvedCarry(Forward * GeoRules.DriftThrowAway + Vector3.up * GeoRules.DriftThrowUp, GeoRules.DriftThrowHold);
+                // Knocked away down the lane, away from him (a held carry), and launched up past the knock's lift cap (a car's
+                // launch, `CharacterMotor.AsLaunch`); Concussed as they land.
+                actor.ApplyResolvedCarry(Forward * GeoRules.DriftThrowAway, GeoRules.DriftThrowHold);
+                actor.ApplyResolvedImpact(CharacterMotor.AsLaunch(Vector3.up * GeoRules.DriftThrowUp));
                 _thrown.Add((actor, band * GeoRules.DriftInterval + GeoRules.DriftLandSeconds));   // from its own blast
                 int bit = 1 << actor.PlayerSlot;
                 if ((_announced & bit) != 0) continue;
