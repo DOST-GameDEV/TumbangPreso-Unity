@@ -5,52 +5,11 @@ namespace TumbangPreso.Visual
     public sealed partial class HeroIntroductionScene
     {
         // =========================================================================================
-        // BASILIO'S SHOTS, FRAMED FROM HIS REAL BODY (film r1 to r3, 2026-10-17). The table's numbers assumed a body the size of the
-        // others; his is bigger (kneeling, his head bone stands 0.66 m over the court and his hair 1.9 m), so the knock framed his
-        // knees, the eye insert his belt and the punch his hips. These shots now take their subject from the copy itself (his head,
-        // his knocking hand) and the beast's eyes from its own typed rise, with the table giving only the side and the move.
-        // Every shot stays on his right side of the line (+x).
+        // BASILIO'S SHOTS, framed from his real body and the real enemies (his body is bigger than the table assumes: kneeling,
+        // his head bone stood 0.66 m over the court and his hair 1.9 m, film r1). Every shot stays on his right side (+x), and
+        // every shot answers one question in order: WHO (him, winding up), WHAT (the slam), WHERE IT GOES (down the lane at them),
+        // WHAT IT DID (they are thrown), WHAT IS LEFT (the scarred lane).
         // =========================================================================================
-
-        // The hand that knocks and punches: his right, or his free left when the right holds a slipper.
-        private Vector3 DnKnockPalm => _heldItem != null ? FreePalm : RightPalm;
-
-        // Where the knock and the punch actually met the court, caught the first time the stage is sampled at that beat
-        // (the phase samples forward). Until then, a typed fallback on the knocking hand's side.
-        private Vector3? _dnKnockAt, _dnFistAt;
-
-        private Vector3 DnKnockSpot => _dnKnockAt ?? new Vector3(_heldItem != null ? -.32f : .32f, DnFloat + .012f, .55f);
-
-        private void DnCatchContacts(float t)
-        {
-            if (_dnKnockAt == null && t >= DnKnock1 && t < DnKnock2)
-            { var p = DnKnockPalm; _dnKnockAt = new Vector3(p.x, DnFloat + .012f, p.z); }
-            if (_dnFistAt == null && t >= DnPunch && t < DnPunch + .4f)
-            { var p = DnKnockPalm; _dnFistAt = new Vector3(p.x, DnFloat + .02f, p.z); }
-        }
-
-        /// <summary>The beast's eyes at time t, from its typed rise alone (no transform needed, so a shot can aim where they WILL be).</summary>
-        private Vector3 DnEyesTyped(float t)
-        {
-            DnBeastPose(t, out float height, out float pitch);
-            return new Vector3(0f, height + _dnCourt, DnSurge(t)) + Quaternion.Euler(pitch, 0f, 0f) * DnEyesLocal;
-        }
-
-        // THE RISE's fixed lens: straight out along its face from the sockets as they ignite, a little toward his side.
-        // (film r5: 2.6 m off, its eyes were small; the method's climax is the eyes AT the lens.)
-        // Film r8 measured why r7 saw only rock: the face comes up pitched 42 degrees nose up, so a level lens in front of the
-        // eyes looked through the muzzle jutting below them. Along the face's own normal the 1.25 m pair of sockets fills a 46
-        // degree frame at 1.8 m; a hair under it (r9: a hair above, the brow's V hid the sockets' tops), still 0.11 m over the muzzle.
-        private Vector3 DnRiseLens
-        {
-            get
-            {
-                DnBeastPose(DnIgnite, out _, out float pitch);
-                var face = Quaternion.Euler(pitch, 0f, 0f);
-                return DnEyesTyped(DnIgnite) + face * new Vector3(0f, -.08f, 1.8f) + new Vector3(.5f, 0f, 0f);
-            }
-        }
-
         private void DanteFrame(int index, float t, ref Vector3 eye, ref Vector3 look, ref float fov)
         {
             var head = HeadPoint;
@@ -58,63 +17,53 @@ namespace TumbangPreso.Visual
             {
                 case 0:
                 {
-                    // 1 THE KNOCK: the whole kneeling figure and the knocking hand, from his right, low, a very slow push in.
-                    var subject = Vector3.Lerp(head, DnKnockSpot, .45f);
-                    float u = Ease(0f, DnEyeOpen, t);
-                    eye = subject + Vector3.Lerp(new Vector3(2.5f, .05f, 2.3f), new Vector3(2.15f, .05f, 1.95f), u);
-                    look = subject; fov = 44f;
+                    // WHO: a front three-quarter on his right, low, a slow push in as the fists go up and the stone packs on.
+                    var subject = head + new Vector3(0f, -.25f, 0f);
+                    float u = Ease(0f, DnSlam, t);
+                    eye = subject + Vector3.Lerp(new Vector3(2.5f, -.35f, 2.7f), new Vector3(2.0f, -.25f, 2.2f), u);
+                    look = subject + Vector3.up * (.15f * u); fov = 42f;
                     break;
                 }
                 case 1:
                 {
-                    // 1b THE EYE: his face, close, from his front left so the gold (left, scarred) eye meets the lens.
-                    // (film r5: the gold eye sat in the bottom right corner under his hair; the face is lower and to his left.)
-                    var face = head + new Vector3(-.12f, -.4f, .22f);
-                    eye = face + new Vector3(-.25f, .04f, 1.35f); look = face; fov = 32f;
+                    // WHAT: low and close on the fists as they land, the crack star under them.
+                    var fists = DnFists;
+                    eye = fists + new Vector3(1.9f, .55f, 1.5f); look = fists + new Vector3(0f, .25f, .5f); fov = 48f;
                     break;
                 }
                 case 2:
                 {
-                    // 2 THE PUNCH: back to the side, now nearer, his head and the cocked fist in.
-                    var subject = head + new Vector3(0f, -.3f, .2f);
-                    float u = Ease(DnWind, DnPunch, t);
-                    eye = subject + Vector3.Lerp(new Vector3(2.4f, .1f, 1.15f), new Vector3(2.15f, .05f, 1.0f), u);
-                    look = subject; fov = 46f;
+                    // WHERE IT GOES: over his right shoulder, him in the foreground, riding forward behind the front so each band
+                    // erupts ahead of us toward the enemies, and they are in frame the whole time.
+                    float u = Ease(DnFirstBand - .1f, DnHit, t);
+                    float front = DnFront(t);
+                    // High enough to look DOWN the lane (film r17: at his shoulder height the first band stood up as a wall and
+                    // hid everything beyond it).
+                    eye = Vector3.Lerp(new Vector3(1.6f, 2.7f, -3.0f), new Vector3(2.4f, 3.4f, Mathf.Max(-1f, front - 6f)), u);
+                    look = new Vector3(_dnTargets.x * .5f, .4f, Mathf.Max(front + 2f, _dnTargets.z * .85f));
+                    fov = Mathf.Lerp(52f, 56f, u);
+                    break;
+                }
+                case 3:
+                {
+                    // WHAT IT DID: the fifth band bursting under the enemies and throwing them.
+                    var at = new Vector3(_dnTargets.x, 0f, (DnBandStart(4) + DnLaneEnd) * .5f);
+                    float u = Ease(DnHit, DnAfter, t);
+                    // From the side (film r17: from beyond them they were thrown straight into the lens), so they fly across
+                    // the frame, away from him, with the bands behind them.
+                    // Outside the lane's edge (r18: inside it, its edge slab filled half the frame), a little up.
+                    eye = new Vector3(_dnHalfWidth + 3.2f, 0f, at.z - .4f) + Vector3.Lerp(new Vector3(0f, 2.0f, 0f), new Vector3(.4f, 2.4f, .3f), u);
+                    look = at + new Vector3(0f, .8f, .7f); fov = 50f;
                     break;
                 }
                 case 4:
                 {
-                    // 4 THE RISE: the lens holds where its eyes will be; it follows the face up out of the seam.
-                    if (_dnTitan == null) break;
-                    eye = DnRiseLens;
-                    // First its horn tips breaking the surface (above the eyes), then down onto the eyes as they come up and ignite.
-                    var eyes = DnEyesTyped(t);
-                    look = Vector3.Lerp(new Vector3(eyes.x, Mathf.Max(eyes.y + 1.1f, DnFloat + .3f), eyes.z), eyes, Ease(DnHorns + .1f, DnIgnite, t));
-                    // Wide enough at first to hold both horn tips breaking the court 1.4 m either side (r9: at 46 only the court),
-                    // closing onto the eyes as they ignite.
-                    fov = Mathf.Lerp(68f, 46f, Ease(DnHorns + .1f, DnIgnite, t));
-                    break;
-                }
-                case 5:
-                {
-                    // ...then straight back and up through the heaves, from exactly where THE RISE held, to the table's end.
-                    if (_dnTitan == null) break;
-                    _performance.Shot(index, ShotEnd(index), out var endEye, out var endLook, out var endFov);
-                    float u = Ease(ShotStart(index), ShotEnd(index), t);
-                    eye = Vector3.Lerp(DnRiseLens, endEye, u);
-                    look = Vector3.Lerp(DnEyesTyped(ShotStart(index)), endLook, u);
-                    fov = Mathf.Lerp(42f, endFov, u);
-                    break;
-                }
-                case 6:
-                {
-                    // 5 THE STOMP, then THE SHOCKWAVE: as the fists land the lens is thrown back and up with the blast, wider, so the
-                    // wave is seen rolling out across the whole court and reaching us last (film r14: from the creep's place it
-                    // crossed the lens in a fifth of a second and the rest of the scene was still).
-                    float back = Ease(DnStomp + .03f, DnStomp + .55f, t);
-                    eye += new Vector3(3.0f, 4.6f, 6.0f) * back;
-                    look = Vector3.Lerp(look, new Vector3(DnShockCentre.x * .6f, 1.4f, DnShockCentre.y + 2.5f), back);
-                    fov = Mathf.Lerp(fov, 62f, back);
+                    // WHAT IS LEFT: behind him, the whole scarred lane, the enemies down at its end.
+                    float u = Ease(DnAfter, 7f, t);
+                    // Lower and closer than r17 (a flat patch of tiles from high up): down the broken lane to them at its end.
+                    // High enough to see over the rubble to them lying past its end (r18: hidden behind it).
+                    eye = Vector3.Lerp(new Vector3(2.8f, 4.6f, -2.4f), new Vector3(3.2f, 5.0f, -3.0f), u);
+                    look = new Vector3(_dnTargets.x * .5f, .2f, DnLaneEnd + .6f); fov = 52f;
                     break;
                 }
             }

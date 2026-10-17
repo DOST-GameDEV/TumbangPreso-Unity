@@ -9,8 +9,6 @@ namespace TumbangPreso.Visual
     /// CONTINENTAL DRIFT in live play, after the hand-back (`docs/reports/dante-presentation-2026-10-16/plan.md` section 6). This is
     /// what most players actually see, from their own first person, so the scale must read map-wide. It adds to the fault ink
     /// (`DanteDriftFault`), posed from the wave's accepted age like it (`StepTo`), so a rejoiner and a replay draw the same frame:
-    ///  * THE GOING UNDER (0 to .4 s): the mountain beast that carried him in the cutscene sinks into the court behind and under
-    ///    him, rock sliding off its back (the owner, 2026-10-08: it disappears into the ground in live play, not in the cutscene).
     ///  * THE FUSE: a molten seam races forward from him along the cascade's line, far faster than the blasts, and leaves a
     ///    glowing crack-star at the middle of every band before that band goes, so a victim can read it and step out.
     ///  * FIVE BLASTS, one per band every 0.30 s: a slab of court heaves 0.35 m in one jolt and tilts, molten light under it,
@@ -31,8 +29,6 @@ namespace TumbangPreso.Visual
         private readonly List<Band> _bands = new List<Band>(GeoRules.DriftBlasts);
         private Transform _fuse;
         private Material _fuseMaterial;
-        private GameObject _beast;
-        private Transform _beastRoot;
         private int _shookUpTo = -1;
         private float _lastAge = -1f;
 
@@ -74,7 +70,7 @@ namespace TumbangPreso.Visual
             live._halfWidth = halfWidth; live._depth = reach / GeoRules.DriftBlasts;
             live.BuildFuse();
             for (int i = 0; i < GeoRules.DriftBlasts; i++) live.BuildBand(i);
-            live.BuildBeast();
+            // No beast goes under any more: the cutscene was rebuilt without it (owner, 2026-10-17, "lock inr efine it go").
             DanteDriftScar.Spawn(origin, forward, reach);
             live.StepTo(0f);
             return live;
@@ -135,15 +131,6 @@ namespace TumbangPreso.Visual
             _bands.Add(b);
         }
 
-        private void BuildBeast()
-        {
-            _beastRoot = new GameObject("DriftBeastGoingUnder").transform;
-            _beastRoot.SetParent(transform, false);
-            _beastRoot.localPosition = new Vector3(0f, 0f, -1.2f);
-            _beast = DanteProp.Spawn("beast", _beastRoot);
-            if (_beast != null) { DanteProp.SetGlow(_beast, "glow-eyes", 1f); DanteProp.SetGlow(_beast, "glow-seams", .8f); }
-        }
-
         public void StepTo(float age)
         {
             float bandTime = GeoRules.DriftInterval;
@@ -193,14 +180,6 @@ namespace TumbangPreso.Visual
                     var sc = e.localScale; sc.y = .55f * dust; e.localScale = sc;
                     e.gameObject.SetActive(dust > .01f);
                 }
-            }
-            // The beast goes under: down through the court in .4 s, jolting, rock sliding off its back.
-            if (_beastRoot != null)
-            {
-                float under = Mathf.Clamp01(age / .4f);
-                float jolts = under < .33f ? under * 1.2f : under < .66f ? .4f + (under - .33f) * 1.4f : .86f + (under - .66f) * .42f;
-                _beastRoot.localPosition = new Vector3(0f, -4.6f * jolts, -1.2f);
-                _beastRoot.gameObject.SetActive(age < .45f);
             }
             // Map-wide, on this viewer's own camera: once per blast as its clock passes zero.
             if (age >= _lastAge)

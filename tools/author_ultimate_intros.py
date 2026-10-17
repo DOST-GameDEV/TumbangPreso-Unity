@@ -580,111 +580,54 @@ def _dante(held):
 
 def _dante_drift(p, held):
     """
-    CONTINENTAL DRIFT, 7.0 s, REBUILT 2026-10-16 (`docs/reports/dante-presentation-2026-10-16/plan.md` section 5.3, owner approved:
-    *"looks good pede na go"*). One sentence: he knocks on the court like a door, then strikes it; his fire runs through the
-    cracks and splits it into continents, wakes the horned mountain beast beneath, and it lifts him to deliver the blow.
-    His personality, which none of the other four have, is PATIENCE: everyone else's ultimate starts fast; his starts STILL,
-    on one knee, palm on the court, listening. Two calm knocks; only the third blow is violent.
+    CONTINENTAL DRIFT, 7.0 s, REBUILT 2026-10-17 as THE CASCADE. The owner on v3: *"ang panget ng ult cutscen nya im gonna be fr
+    as well as communication of wtf happens i dont even get what js hapepend"*, then *"lock inr efine it go"* on the proposal.
+    v1 to v3 packed twelve beats into seven seconds (a knock, his eye, a punch, continents, a lava sea, a mountain beast rising,
+    its eyes, a ride, a load, a hang, a stomp, a shockwave) and none of them landed. Now ONE idea, told so anyone gets it:
+    HE SLAMS THE GROUND AND THE EARTH RISES AS A WAVE AT HIS ENEMIES, five bands one after another, exactly the five live
+    blasts that follow (the cutscene previews the hit). The beast is cut (it was the biggest source of confusion).
     Beats (the stage, `HeroIntroductionScene.Dante.cs`, reads these same times):
-      0.00 THE KNOCK      still, on one knee, his palm flat on the court, head tilted, listening
-      0.45, 0.80          knock one, knock two: two knuckles rap the court, calm
-      0.95 to 1.15        an insert on his face: his gold eye (his left, the scarred side) opens
-      1.15 THE PUNCH      up into a crouch, the fist cocked behind his head; 1.30 to 1.50 held, knees sinking; 1.55 it lands
-      1.70 THE CONTINENTS he stays crouched, fist in the court, while the court splits and drifts (one continuous crane)
-      3.30 THE RISE       horns first out of the seam, the eyes ignite at the lens (3.75); three heaves (4.0, 4.5, 4.95) lift him
-      5.30 THE STOMP      he loads both fists over his right shoulder; 5.85 to 6.05 held; 6.08 both fists land as one
-      6.08 THE SHOCKWAVE  the ground answers: a ring and a dust wall race out, the plates heave, he holds the stamp to the cut
-      7.00                cut to live: still on its back in the stamp pose (owner 2026-10-08: the going under is live play's)
-    Every shot is on HIS RIGHT side of the line (+x), so the light always travels the same way across the screen.
-    The LAST pose is still `stamp`: play resumes from it. Holding a slipper, the free (left) hand knocks and punches.
+      0.00 THE WIND-UP    planted, both fists raised overhead; stone packs onto them, molten veins lit; held, trembling
+      1.38 THE SLAM       both fists down into the court as one: an impact frame, a molten crack racing forward
+      1.90 THE CASCADE    five bands of court erupt one after another down the lane toward them (he holds the slam, driving it)
+      4.30 THE HIT        the fifth band bursts under them: they are thrown, they land Concussed
+      5.50 THE AFTERMATH  the scarred lane, wide and high; he is still in the slam pose, where play resumes
+    Every shot is on HIS RIGHT side of the line (+x). The LAST pose is `stamp` (the live cast clip continues from it).
     """
-    # His knock hand: the right, or the left when the right holds a slipper.
-    def hands(knock, other):
-        return dict(left=knock, right=other) if held else dict(left=other, right=knock)
     shoe = (20, 42, -8)
-    resting = (36, 18, 12)
-    kneel_legs = ((54, 8), (-30, 8))
-    # THE KNOCK: on one knee, leaning a little over the planted palm, head tilted down to the court, listening.
-    kneel = Pose(torso=(16, 4, -3), head=(18, 6, 12), legs=kneel_legs, **hands((26, 20, 4), shoe if held else resting))
-    listen = kneel.but(head=(20, 8, 15))
-    knock_up = kneel.but(**hands((44, 20, 4), shoe if held else resting))
-    knock_down = kneel.but(torso=(18, 4, -3), **hands((22, 20, 4), shoe if held else resting))
-    # THE EYE: the head comes up off the court, turned a little to his left so the gold eye meets the lens.
-    eye = knock_down.but(head=(2, -10, 4))
-    # THE PUNCH: up into a crouch, the fist cocked behind his head, the chest opened to it.
-    crouch_legs = ((30, 14), (-22, 14))
-    wind = Pose(torso=(-8, -16 if held else 16, 0), head=(6, 0, 0), legs=crouch_legs,
-                **hands((165, 22, 0), shoe if held else (16, 30, 0)))
-    wind_shake = wind.but(torso=(-9, -16 if held else 16, 1.5))
-    punch = Pose(torso=(40, 8 if held else -8, 0), head=(-4, 0, 0), legs=((34, 14), (-26, 14)),
-                 **hands((58, 8, 22), shoe if held else (18, 38, 0)))
-    # Fist still in the court while it breaks: breathing hard, the head lifting to watch the plates go.
-    watch = punch.but(torso=(36, 8 if held else -8, 0), head=(-12, 0, 0))
-    watch_l = watch.but(head=(-14, -16, 0))
-    watch_r = watch.but(head=(-10, 18, 0))
-    # Carried up: knees deep, braced low, arms out for balance; then he stands as it settles.
-    ride = Pose(torso=(20, 0, 0), head=(-6, 0, 0), legs=((12, 20), (-10, 20)), **hands((34, 54, 0), shoe if held else (34, 54, 0)))
-    ride_shake = ride.but(torso=(22, 0, 2))
-    stand = Pose(torso=(-4, 0, 0), head=(-10, 0, 0), legs=((0, 16), (0, 16)), **hands((18, 30, 0), shoe if held else (18, 30, 0)))
-    load = Pose(torso=(-4, 22, 0), head=(0, -14, 0), left=(150, 20, 50), right=(150, 20, -8), legs=((8, 12), (-10, 12)))
-    load_shake = load.but(torso=(-5, 22, 1.5), left=(152, 20, 50))
+    stand = Pose(torso=(-2, 0, 0), head=(-6, 0, 0), legs=((4, 14), (-4, 14)), left=(18, 30, 0), right=shoe if held else (18, 30, 0))
+    # THE WIND-UP: both fists straight up over his head, chest open, chin up; with a slipper the right keeps it.
+    raised = Pose(torso=(-12, 0, 0), head=(-16, 0, 0), left=(168, 12, 18), right=shoe if held else (168, 12, -18), legs=((10, 14), (-10, 14)))
+    raised_shake = raised.but(torso=(-13, 0, 1.5), left=(170, 12, 18))
     stamp = Pose(torso=(28, -10, 0), head=(-8, 6, 0), left=(72, 6, 30), right=(72, 6, 30), legs=((22, 10), (-18, 10)))
     if held:
-        load = load.but(right=shoe)
-        load_shake = load_shake.but(right=shoe)
         stamp = stamp.but(right=(30, 42, -8))
+    stamp_shake = stamp.but(torso=(30, -10, 1.5))
 
-    p.key(0, kneel)
-    p.hold(0, .30, kneel)
-    p.key(.38, listen)
-    p.key(.42, knock_up).key(.45, knock_down, punch=True)
-    p.key(.66, listen.but(**hands((26, 20, 4), shoe if held else resting)))
-    p.key(.77, knock_up).key(.80, knock_down, punch=True)
-    p.key(.95, knock_down)
-    p.key(1.08, eye)
-    p.key(1.15, eye)
-    p.key(1.27, wind)
-    p.key(1.33, wind_shake).key(1.39, wind).key(1.45, wind_shake).key(1.50, wind)
-    p.key(1.55, punch, punch=True)
-    p.hold(1.55, 1.95, punch)
-    p.key(2.3, watch).key(2.7, watch_l).key(3.1, watch_r).key(3.45, watch)
-    p.key(3.9, ride)
-    p.key(4.0, ride_shake, punch=True).key(4.2, ride)
-    p.key(4.5, ride_shake, punch=True).key(4.7, ride)
-    p.key(4.95, ride_shake, punch=True).key(5.12, ride)
-    p.key(5.3, stand)
-    # Owner on v1's ending (2026-10-17): "look ennding of ult wtf even is happening here"; on v2: "the entire ult builds up to
-    # this shockwave but IT NEVER HAPPENS". The stomp lands at 6.08 so its shockwave plays out in the scene, fists held down.
-    p.key(5.55, load)
-    p.key(5.68, load_shake).key(5.77, load).key(5.85, load_shake)
-    p.hold(5.85, 6.05, load_shake)
-    p.key(6.08, stamp, punch=True)
-    p.hold(6.08, 7.0, stamp)
+    p.key(0, stand)
+    p.hold(0, .25, stand)
+    p.key(.85, raised)
+    p.key(.98, raised_shake).key(1.08, raised).key(1.18, raised_shake).key(1.28, raised)
+    p.key(1.38, stamp, punch=True)
+    # He holds the slam, driving the cascade: a jolt through him as each band goes.
+    for at in (1.90, 2.50, 3.10, 3.70, 4.30):
+        p.key(at, stamp_shake, punch=True).key(at + .14, stamp)
+    p.hold(4.44, 7.0, stamp)
 
-    # The lift: sunk onto the knee (the rigs have no knees: the kneel is legs apart and sunk, Paete's method), up to a
-    # crouch at the wind-up, knees sinking 6 cm in the held compression, low in the punch; then the beast's three heaves
-    # carry him to its saddle (3.4 m) by 5.2 and he stays up there to the last frame.
-    p.rise(0, -0.32).rise(1.15, -0.32).rise(1.27, -0.12).rise(1.30, -0.12).rise(1.50, -0.18).rise(1.55, -0.24).rise(3.9, -0.24)
-    p.rise(4.0, 0.55).rise(4.2, 0.62).rise(4.5, 1.75).rise(4.7, 1.82).rise(4.95, 2.95).rise(5.2, 3.4).rise(7.0, 3.4)
+    p.rise(0, 0).rise(1.30, 0).rise(1.38, -.16).rise(7.0, -.16)
 
-    # 1 THE KNOCK: medium, low, his right side, 2.2 m off, a very slow push-in.
-    p.shot(0, .95, (2.15, .5, .75), (0, .42, .3), 42, eye_to=(1.92, .47, .64), look_to=(0, .42, .3), fov_to=41)
-    # 1b an insert on his face, 0.6 m: the gold eye opens.
-    p.shot(.95, 1.15, (.42, .82, .62), (-.04, .8, 0), 34, eye_to=(.38, .82, .56), close=True)
-    # 2 THE PUNCH: back to the side angle, now 1.4 m.
-    p.shot(1.15, 1.70, (1.45, .5, .85), (0, .55, .45), 46, eye_to=(1.32, .47, .8))
-    # 3 THE CONTINENTS: one continuous crane from his fist up and back to 8 m, following the light ahead of him.
-    # (film r3: it began inside his body; his figure is bigger than the table first assumed, so it starts 2.4 m out.)
-    p.shot(1.70, 3.30, (2.4, .9, 2.0), (0, .35, .9), 50, eye_to=(3.6, 8.2, -2.6), look_to=(.2, 0, 4.2), fov_to=58)
-    # 4 THE RISE: cut low and tight to the seam the light dove into; the lens holds as the horns and then the eyes come up.
-    p.shot(3.30, 4.0, (1.7, .32, 5.0), (0, .45, 2.7), 44, eye_to=(1.55, .36, 4.75), look_to=(0, .75, 2.75), fov_to=44)
-    # ...then straight back and up through the three heaves, his plate riding its back.
-    # (The stage starts it from wherever THE RISE held, `HeroIntroductionScene.DanteFrame.cs`; this is where it ends.)
-    p.shot(4.0, 5.30, (1.55, .36, 4.75), (0, .75, 2.75), 44, eye_to=(5.6, 2.6, 10.0), look_to=(0, 3.4, 1.2), fov_to=52)
-    # 5 THE STOMP: wide and low in front, on the same side, a slow creep in to the landing. Film r3: from 6.2 m to the side
-    # the players were out of frame; now the lens stands beyond them (the dust wall is 15 m round), so they are between it and us.
-    # (r5: 1.3 m high, the nearest player's head filled the middle; 2.6 m up and further right, they stand below the beast.)
-    p.shot(5.30, 7.0, (5.4, 2.6, 13.8), (0, 3.0, 2.0), 50, eye_to=(5.0, 2.5, 13.1), look_to=(0, 3.1, 2.2), fov_to=48)
+    # The stage frames every shot from the real bodies and the real enemies (`HeroIntroductionScene.DanteFrame.cs`); these
+    # are the shots' sides and moves.
+    # 0 THE WIND-UP: front three-quarter on his right, low, a slow push in.
+    p.shot(0, 1.38, (2.3, .7, 2.4), (0, 1.1, 0), 40, eye_to=(1.9, .8, 2.0), look_to=(0, 1.2, 0), fov_to=38)
+    # 1 THE SLAM: close and low on his fists as they land.
+    p.shot(1.38, 1.90, (1.7, .45, 1.4), (0, .35, .6), 46)
+    # 2 THE CASCADE: low over his right shoulder, riding forward behind the front.
+    p.shot(1.90, 4.30, (1.1, 1.5, -2.0), (0, .5, 4.0), 52, eye_to=(1.4, 2.0, 3.0), look_to=(0, .5, 9.0), fov_to=54)
+    # 3 THE HIT: beyond the enemies, looking back down the lane at them.
+    p.shot(4.30, 5.50, (1.8, 1.2, 11.0), (0, .8, 7.0), 50)
+    # 4 THE AFTERMATH: high and wide behind him, the whole scarred lane.
+    p.shot(5.50, 7.0, (3.4, 5.2, -4.4), (0, 0, 5.0), 56, eye_to=(3.8, 5.8, -5.0), look_to=(0, 0, 5.4), fov_to=56)
     p.locked((3.2, 1.9, 8.5), (0, 1.8, 1.0), 56)
     return p
 
