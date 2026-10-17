@@ -208,7 +208,8 @@ namespace TumbangPreso.Abilities
             {
                 NetCue.Play("hero_dante_ult", ctx.Position);
                 ctx.Motor.GetComponent<CharacterSquashStretch>()?.Stretch(0.4f);
-                DanteDriftWave.Spawn(ctx.Position, ctx.Forward, ctx.Motor.PlayerSlot);
+                // After his cutscene the cascade is already under way: its last frame drew the first band rising.
+                DanteDriftWave.Spawn(ctx.Position, ctx.Forward, ctx.Motor.PlayerSlot, HadSharedIntroduction ? GeoRules.DriftCutsceneTail : 0f);
             }
         }
     }

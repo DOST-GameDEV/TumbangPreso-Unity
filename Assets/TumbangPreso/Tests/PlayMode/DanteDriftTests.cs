@@ -147,6 +147,17 @@ namespace TumbangPreso.PlayTests
             var kit = new DanteHeroKit(); Assert.AreEqual("CONTINENTAL DRIFT", kit.Ultimate.Name);
             Assert.AreEqual(12, kit.UltimateCost); Assert.AreEqual("dante_ultimate", kit.Ultimate.Id);
         }
+        [UnityTest] public IEnumerator AfterTheCutsceneTheRisingBandResolvesOnceAndTheRestFollow()
+        {
+            yield return Open();
+            var wave = DanteDriftWave.Spawn(_caster.transform.position, Vector3.forward, 0, GeoRules.DriftCutsceneTail);
+            Assert.AreEqual(GeoRules.DriftCutsceneTail, wave.Age, .001f, "Play picks up where the cutscene's last frame was.");
+            Assert.AreEqual(1, wave.ReleasedBands, "The band the cutscene showed rising resolves on the cut, once.");
+            Assert.IsTrue(_near.IsCarried, "Whoever stands on it is knocked away as play resumes.");
+            Assert.IsFalse(_far.IsCarried);
+            yield return new WaitForSeconds((GeoRules.DriftBlasts - 1) * GeoRules.DriftInterval + GeoRules.DriftLandSeconds);
+            Assert.IsTrue(_near.IsConcussed && _far.IsConcussed); Assert.IsFalse(_behind.IsConcussed);
+        }
         [UnityTest] public IEnumerator ReleasedEarthquakeKnocksAwayNearThenFarAndNeverBehind()
         {
             yield return Open();

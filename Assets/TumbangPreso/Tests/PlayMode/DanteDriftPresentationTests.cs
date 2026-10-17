@@ -66,6 +66,16 @@ namespace TumbangPreso.PlayTests
             Assert.Less(b.size.x,17.4f,"(Renderer bounds box the turned slabs; the exact stone check is TheCascadeIsDeterministicAndStaysOnItsLane.)");
             Assert.GreaterOrEqual(b.min.z,-.05f);Assert.LessOrEqual(b.max.z,16.5f);
         }
+        [Test] public void PlayOpensOnTheCutscenesLastFrame()
+        {
+            var stage=Keep(new GameObject("Drift stage"));
+            var scene=DanteDriftLive.BuildStage(stage.transform,0f,8f,16f);
+            scene.StepTo(GeoRules.DriftCutsceneTail);
+            var play=Build(Vector3.zero,Vector3.forward,8,16);play.StepTo(GeoRules.DriftCutsceneTail);
+            for(int k=0;k<GeoRules.DriftBlasts;k++)
+                Assert.AreEqual(State(Band(scene.transform,k)),State(Band(play.Live.transform,k)),"Band "+k+" as the cutscene left it.");
+            Assert.IsTrue(Band(play.Live.transform,0).gameObject.activeSelf,"The first band is already rising when play resumes.");
+        }
         [Test] public void FiveBandsHaveDistinctAuthoredGeometry()
         {
             var view=Build(Vector3.zero,Vector3.forward);

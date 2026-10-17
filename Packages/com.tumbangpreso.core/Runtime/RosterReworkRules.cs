@@ -74,6 +74,10 @@ namespace TumbangPreso.Core
         public const float DriftThrowHold = .30f;
         public const float DriftLandSeconds = 2.0f * DriftThrowUp / Balance.CharacterGravity;   // 0.6 s: Concussed as they land
         public const float DriftSeconds = (DriftBlasts - 1) * DriftInterval + 1.8f;            // the rubble holds, then sinks back
+        /// <summary>How far into the cascade the cutscene's last frame is: it ends with the first band already rising toward
+        /// them (owner, 2026-10-17: *"end the cutscene when the ground is rsiing towards the players"*), and play's wave picks
+        /// up at this age, so nothing erupts twice and the next band follows the cut at once.</summary>
+        public const float DriftCutsceneTail = .28f;
     }
 
     public static class NecroRules

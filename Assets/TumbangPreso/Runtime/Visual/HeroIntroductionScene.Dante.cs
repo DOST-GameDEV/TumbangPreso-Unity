@@ -19,14 +19,23 @@ namespace TumbangPreso.Visual
         //                         rock hands come from is on screen.
         //   1.65 THE RISE         he stands with the boulder fists overhead, molten light in their seams, the cracks pulsing
         //   2.09 THE LEAP         he jumps high against the sky (a crack, a ring and dust where he left)
-        //   3.25 THE SLAM         he lands fists first: an impact frame, a ring, and the molten crack starts racing forward down
-        //                         the lane; the cut is on it, and play's cascade leaves his fists from there
+        //   3.25 THE SLAM         seen high from behind him, down the lane at the real players where they stand: he lands fists
+        //                         first, the stone on his fists is driven back into the court (that earth is what erupts, and why
+        //                         his hands are bare in play), dust bursts out, the crack leaps forward
+        //   3.33 THE GROUND RISES the first band heaves at his fists, the crack racing on at them; the cut comes as it rises, before
+        //                         it reaches anyone, and play's cascade carries on from that very frame (`DanteDriftLive` is
+        //                         built here on the live lane and posed with play's own clock; the wave starts
+        //                         `GeoRules.DriftCutsceneTail` in). The owner on v6: *"dante's ult dont make sense wwtf"*, *"why
+        //                         does the earthquake or ground up come after 10000 years dapat it happens right after he goes
+        //                         down"*, *"dont force it to 7 seconds"*, *"sa end ng ult ni dante dapat nakikita na ground is
+        //                         rising ito tapos it resumes nnalang"*, *"end the cutscene when the ground is rsiing towards the
+        //                         players"*
         //
         // RULES (the method's traps): nothing here runs on `Update`, everything is posed from the scene clock; flat effects sit on
         // the court; light is cut INTO stone, never raised; the hottest colour is (1, .62, .18), never white; stone never fades:
         // it is torn up, flies, and stays on his fists (the pebbles are pulled into them).
         // =========================================================================================
-        private const float DnPlant = .30f, DnCracks = .35f, DnRise = 1.65f, DnLeap = 2.09f, DnSlam = 3.25f, DnEnd = 3.9f;
+        private const float DnPlant = .30f, DnCracks = .35f, DnRise = 1.65f, DnLeap = 2.09f, DnSlam = 3.25f, DnBand0 = 3.33f, DnEnd = DnBand0 + Core.GeoRules.DriftCutsceneTail;
         /// <summary>The three waves of stone off the court onto his fists (the gauntlet rows' steps).</summary>
         private static readonly float[] DnWaves = { .58f, .88f, 1.18f };
         private const float DnFly = .26f;
@@ -60,8 +69,9 @@ namespace TumbangPreso.Visual
 
         private readonly List<int> _dnGauntlet = new List<int>(8), _dnFistGlow = new List<int>(2), _dnCracks = new List<int>(8),
                                    _dnTearDust = new List<int>(8), _dnPebbles = new List<int>(12), _dnLift = new List<int>(4),
-                                   _dnPlantStars = new List<int>(2);
-        private int _dnSlamStar, _dnSlamRing, _dnLiftStar, _dnLiftRing, _dnGroundGlow, _dnFuse;
+                                   _dnPlantStars = new List<int>(2), _dnSlamDust = new List<int>(6);
+        private int _dnSlamStar, _dnSlamRing, _dnLiftStar, _dnLiftRing, _dnGroundGlow;
+        private DanteDriftLive _dnLane;
         private Material _dnImpact;
         private Vector3? _dnFistAt;
         private readonly Vector3[] _dnPlantAt = new Vector3[2];
@@ -94,7 +104,15 @@ namespace TumbangPreso.Visual
             // THE SLAM: a crack star and a ring under the fists, and the crack that starts down the lane (play's fuse goes on).
             _dnSlamStar = AddGlow("DanteSlamStar", molten, billboard: false, falloff: 1.4f, core: .6f);
             _dnSlamRing = AddGlow("DanteSlamRing", new Color(1f, .5f, .12f), DnRingMesh, billboard: false, band: true, falloff: 1.2f, core: .4f);
-            _dnFuse = AddGlow("DanteFuse", new Color(1f, .5f, .1f), billboard: false, band: true, falloff: 1.6f, core: .7f);
+            // Play's own cascade, on the live lane, measured exactly as the wave will measure it.
+            var origin = _source != null ? _source.transform.position : _root.transform.position;
+            Abilities.DanteDriftWave.Lane(origin, _root.transform.forward, out float halfWidth, out float reach);
+            _dnLane = DanteDriftLive.BuildStage(_root.transform, _dnCourt, halfWidth, reach);
+            _dnLane.gameObject.SetActive(false);
+            for (int i = 0; i < 6; i++)
+                _dnSlamDust.Add(Add("DanteSlamDust" + i, VfxShapes.TwoSided(VfxShapes.Splat(9, .48f, 501 + i * 7)), new Color(.5f, .37f, .24f, .72f), .3f, plain: true));
+            // The real players, where they stand (unclamped): the last shot looks down the lane at them.
+            StageOthers(0f, 1000f);
         }
 
         /// <summary>An opaque lit stone with a small local fill, so the dusk stage cannot turn it into a black cutout.</summary>
@@ -261,6 +279,15 @@ namespace TumbangPreso.Visual
                 var lying = bed + Vector3.up * (g.size * .6f * Ease(DnCracks + .3f, tear, t) - .08f);
                 var at = Vector3.Lerp(lying, fist, arrive) + Vector3.up * (Mathf.Sin(fly * Mathf.PI) * .9f);
                 float size = g.size * 2.3f * Mathf.Lerp(.75f, 1f, arrive) * (1f + .18f * Flash(t, tear + DnFly, .06f));
+                // THE SLAM drives it back into the court: off his fist, into the ground round the impact, crumbling into it.
+                if (t > DnSlam)
+                {
+                    float a = (g.seed * 47f) * Mathf.Deg2Rad;
+                    var bury = DnFists + new Vector3(Mathf.Sin(a) * .5f, -g.size * .9f, .3f + Mathf.Cos(a) * .45f);
+                    at = Vector3.Lerp(at, bury, Ease(DnSlam, DnSlam + .07f, t));
+                    float crumble = Ease(DnSlam + .07f, DnSlam + .12f, t) * .2f + Ease(DnSlam + .13f, DnEnd, t) * .25f;
+                    size *= 1f - crumble;
+                }
                 bool shown = t >= DnCracks + .3f;
                 Place(_dnGauntlet[i], at, shown ? Vector3.one * size : Vector3.zero,
                       Quaternion.Euler(g.seed * 23f + 400f * fly, g.seed * 41f, g.seed * 13f + 260f * fly), 1f);
@@ -315,9 +342,23 @@ namespace TumbangPreso.Visual
                           Quaternion.Euler(90f, 0f, 0f), age < 0f ? 0f : 1.4f * (1f - .5f * Mathf.Clamp01(age / .8f)));
                 float r = Mathf.Lerp(.3f, 3.6f, Mathf.Clamp01(age / .35f));
                 PlaceGlow(_dnSlamRing, DnFists + Vector3.up * .03f, new Vector3(r, 1f, r), Quaternion.identity, age < 0f ? 0f : 1.2f * (1f - Mathf.Clamp01(age / .4f)));
-                float len = Mathf.Max(.01f, 6f * Mathf.Clamp01((age - .12f) / .5f));
-                PlaceGlow(_dnFuse, new Vector3(0f, DnFloat + .015f, DnFists.z + len * .5f), new Vector3(len, .32f, 1f), Quaternion.Euler(90f, 90f, 0f),
-                          age < .12f ? 0f : 1.4f);
+                // Dust bursting out round the impact.
+                for (int i = 0; i < _dnSlamDust.Count; i++)
+                {
+                    float du = Mathf.Clamp01(age / .5f), a = i * 1.047f + .3f;
+                    float puff = Mathf.Lerp(.5f, 1.6f, du);
+                    var at = DnFists + new Vector3(Mathf.Sin(a), 0f, Mathf.Cos(a)) * (.4f + 1.8f * du) + Vector3.up * (puff * .4f);
+                    Place(_dnSlamDust[i], at, age < 0f ? Vector3.zero : new Vector3(puff * 1.2f, 1f, puff), Quaternion.Euler(0f, a * Mathf.Rad2Deg, 0f) * Quaternion.Euler(90f, 0f, 0f),
+                          age < 0f ? 0f : .85f * (1f - du * du));
+                }
+            }
+
+            // THE GROUND RISES: play's cascade, on play's clock, from the first band on.
+            if (_dnLane != null)
+            {
+                bool on = t >= DnBand0;
+                if (_dnLane.gameObject.activeSelf != on) _dnLane.gameObject.SetActive(on);
+                if (on) _dnLane.StepTo(t - DnBand0);
             }
         }
     }

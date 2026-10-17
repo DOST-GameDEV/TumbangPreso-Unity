@@ -53,12 +53,14 @@ namespace TumbangPreso.Abilities
             return along >= 0 && along <= reach && Mathf.Abs(across) <= halfWidth;
         }
 
-        public static DanteDriftWave Spawn(Vector3 origin, Vector3 forward, int owner)
+        /// <param name="age">Where the cascade already is: `GeoRules.DriftCutsceneTail` after his cutscene (its last frame drew
+        /// the first band rising), 0 for a cast without one.</param>
+        public static DanteDriftWave Spawn(Vector3 origin, Vector3 forward, int owner, float age = 0f)
         {
             forward.y = 0;
             forward = forward.sqrMagnitude > .001f ? forward.normalized : Vector3.forward;
             Lane(origin, forward, out float width, out float reach);
-            return Create(origin, forward, owner, width, reach, 0, false);
+            return Create(origin, forward, owner, width, reach, Mathf.Max(0f, age), false);
         }
 
         public static DanteDriftWave Restore(WorldEffectSnapshot.Field field, float elapsed)

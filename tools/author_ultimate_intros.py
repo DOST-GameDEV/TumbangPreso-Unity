@@ -574,13 +574,13 @@ def _dante(held):
     strike the live fissure continues. Every hold trembles slightly: effort, not stillness.
     Signs measured on the sheets: +twist brings an arm inward, +torso yaw turns to his right.
     """
-    p = Performance("dante-held" if held else "dante", 3.9)
+    p = Performance("dante-held" if held else "dante", 3.61)
     return _dante_drift(p, held)
 
 
 def _dante_drift(p, held):
     """
-    CONTINENTAL DRIFT, 3.9 s: THE CHARGE-UP. The owner on v5: *"where does the rock hands come from , he js has them"*, then
+    CONTINENTAL DRIFT, 3.61 s: THE CHARGE-UP. The owner on v5: *"where does the rock hands come from , he js has them"*, then
     *"after nna malaunch ung ult, end nna dapat cutscene tapos ppl see the rock going towards them and maknoknnock away sila and
     concuss"*, *"so focus on directing his charge up and vfx related to it brahh"*. The cutscene is him gathering the earth and
     it ends as he launches it; the cascade is play's (`DanteDriftLive`).
@@ -590,7 +590,10 @@ def _dante_drift(p, held):
       0.58 THE EARTH ANSWERS  three waves of stone tear up out of the cracks and land on his fists (0.58, 0.88, 1.18)
       1.65 THE RISE           he stands, boulder fists overhead
       2.09 THE LEAP           up against the sky, fists turned down
-      3.25 THE SLAM           he lands fists first; the crack races off down the lane and play takes over
+      3.25 THE SLAM           seen high behind him down the lane: he lands fists first, the stone driven into the court
+      3.33 THE GROUND RISES   the first band heaves at his fists, racing at them; the cut comes as it rises (3.61) and play's
+                              cascade carries on from that frame (owner: "end the cutscene when the ground is rsiing towards
+                              the players", "dont force it to 7 seconds")
     Every shot is on HIS RIGHT side of the line (+x). The LAST pose is `stamp` (the live cast clip continues from it).
     """
     shoe = (20, 42, -8)
@@ -627,11 +630,11 @@ def _dante_drift(p, held):
     p.key(2.76, tuck)
     p.key(3.04, dive)
     p.key(3.25, stamp, punch=True)
-    p.key(3.40, stamp_shake, punch=True).key(3.52, stamp)
-    p.hold(3.52, 3.9, stamp)
+    p.key(3.33, stamp_shake, punch=True).key(3.45, stamp)
+    p.hold(3.45, 3.61, stamp)
 
     p.rise(0, 0).rise(.30, -.24).rise(1.50, -.24).rise(1.80, 0).rise(2.02, -.2).rise(2.11, 0).rise(2.27, 1.7).rise(2.47, 2.9)
-    p.rise(2.67, 3.3).rise(2.82, 3.25).rise(3.02, 2.4).rise(3.16, 1.0).rise(3.25, -.16).rise(3.9, -.16)
+    p.rise(2.67, 3.3).rise(2.82, 3.25).rise(3.02, 2.4).rise(3.16, 1.0).rise(3.25, -.16).rise(3.61, -.16)
 
     # The stage frames every shot from his real body (`HeroIntroductionScene.DanteFrame.cs`); these are the shots' sides and moves.
     # 0 THE PLANT: low and close at his right.
@@ -641,9 +644,10 @@ def _dante_drift(p, held):
     # 2 THE RISE: a low hero angle, looking up at the boulder fists.
     p.shot(1.65, 2.09, (1.3, .3, 2.4), (0, 2.2, 0), 46)
     # 3 THE LEAP: low on the court, looking up at him against the sky.
-    p.shot(2.09, 3.25, (3.2, .35, 3.0), (0, 3.0, 0), 50, fov_to=54)
-    # 4 THE SLAM: close and low on the fists, easing back to see the crack leave down the lane.
-    p.shot(3.25, 3.9, (1.9, .55, 2.2), (0, .3, 1.2), 48, eye_to=(2.4, 1.3, .1), look_to=(0, .2, 3.3))
+    p.shot(2.09, 3.08, (3.2, .35, 3.0), (0, 3.0, 0), 50, fov_to=54)
+    # 4 THE SLAM AND THE GROUND RISING: high behind him down the lane at the real players; he comes down into it, the first
+    # band heaves toward them, and it cuts as it rises.
+    p.shot(3.08, 3.61, (1.2, 2.9, -3.4), (0, .4, 5.0), 56)
     p.locked((3.2, 1.9, 4.5), (0, 1.2, .5), 52)
     return p
 

@@ -95,6 +95,21 @@ namespace TumbangPreso.Visual
             return live;
         }
 
+        /// <summary>The cutscene: the same build inside its stage (his feet at the stage's origin, forward along +z), posed with
+        /// the same `StepTo` on the cutscene's clock; play's wave picks up where its last frame left off.</summary>
+        public static DanteDriftLive BuildStage(Transform stage, float courtY, float halfWidth, float reach)
+        {
+            var root = new GameObject("ContinentalDriftStage");
+            root.transform.SetParent(stage, false);
+            root.transform.localPosition = new Vector3(0f, courtY, 0f);
+            var live = root.AddComponent<DanteDriftLive>();
+            live._stage = true;
+            live.Make(halfWidth, reach);
+            live.StepTo(0f);
+            return live;
+        }
+
+        private bool _stage;
         private int Columns => Mathf.Max(6, Mathf.RoundToInt(_halfWidth * 2f / ColumnWidth));
         public float HalfWidth => _halfWidth;
         public float Reach => _reach;
@@ -203,7 +218,7 @@ namespace TumbangPreso.Visual
                 for (int i = _shookUpTo + 1; i < _bands.Count && age >= BandAt(i); i++)
                 {
                     // Never on a rejoin far into the wave.
-                    if (age - BandAt(i) < .25f) Quake(i);
+                    if (!_stage && age - BandAt(i) < .25f) Quake(i);
                     _shookUpTo = i;
                 }
             _lastAge = age;

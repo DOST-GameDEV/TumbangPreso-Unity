@@ -55,12 +55,13 @@ namespace TumbangPreso.Visual
                 }
                 case 4:
                 {
-                    // THE SLAM: close and low on the fists as they land, then easing back so the crack is seen leaving down the lane.
-                    var fists = DnFists;
-                    float u = Ease(DnSlam + .1f, DnEnd, t);
-                    eye = fists + Vector3.Lerp(new Vector3(1.9f, .55f, 1.5f), new Vector3(2.4f, 1.3f, -.6f), u);
-                    look = fists + Vector3.Lerp(new Vector3(0f, .25f, .5f), new Vector3(0f, .2f, 2.6f), u);
-                    fov = 48f;
+                    // THE SLAM AND THE GROUND RISING: high behind him, down the lane at the real players; he comes down into
+                    // the frame, the first band heaves toward them, and the lens leans after it as it rises (film r38: low and
+                    // close, the first band's slabs filled the frame and nothing read).
+                    float u = Ease(DnSlam, DnEnd, t);
+                    eye = Vector3.Lerp(new Vector3(1.3f, DnFloat + 3.0f, -3.4f), new Vector3(1.1f, DnFloat + 3.3f, -2.4f), u);
+                    look = new Vector3(0f, DnFloat + .4f, Mathf.Lerp(5.0f, 7.0f, u));
+                    fov = 56f;
                     break;
                 }
             }

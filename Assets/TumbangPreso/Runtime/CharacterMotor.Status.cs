@@ -457,6 +457,28 @@ namespace TumbangPreso
             BeginCarry(velocity, seconds);
         }
 
+        /// <summary>
+        /// The host puts a body where an ultimate's cutscene left it (owner, 2026-10-17: *"Play keeps the cutscene's moves: at the
+        /// cut, put each player where the cutscene left them"*): mid-air down a lane, or where they ran to. Unlike
+        /// <see cref="Teleport"/> it keeps every status and does not pin the body for the spawn settle, so a carry applied
+        /// right after (<see cref="ApplyResolvedCarry"/>) flies it on from there. Sent to every peer as the host's teleport.
+        /// </summary>
+        public void ApplyResolvedRelocate(Vector3 position)
+        {
+            if (!NetAuthority.ShouldResolve() || !MayMutateGameplayState() || !Finite(position)) return;
+            var flat = AIController.ClampToPlayable(position);
+            position = new Vector3(flat.x, position.y, flat.z);
+            _cc.enabled = false;
+            transform.position = position;
+            _cc.enabled = true;
+            _networkTargetPosition = position;
+            _networkTargetVelocity = Vector3.zero;
+            _networkSmoothVelocity = Vector3.zero;
+            GetComponent<Visual.CharacterVisual>()?.SnapRemoteTransform();
+            if (NetAuthority.IsNetworked && GameServices.Round?.PlayerAt(_playerSlot) == this)
+                Net.MatchRpc.Instance?.BroadcastTeleport(_playerSlot, position, transform.eulerAngles.y);
+        }
+
         /// <summary>Called from the physics step: hold the carry, before `Friction` decays it.</summary>
         private void StepCarry(float dt)
         {
