@@ -29,10 +29,19 @@ visibly cover his whole body in the cutscene. Gameplay is protocol 171 (`DanteHe
 - [ ] Owner verdict on the suit, the cutscene and the first-person hands (films `Logs/mf/dante_mountain_cutscene_v*.mp4`).
 - [ ] Sound: drafts by `tools/draft_dante_mountain_sfx.py` (form, stomp, hit, crack, end; takes A and B) await the owner's ear;
   the form's stomp still borrows `land` pitched down. Register the chosen takes in `AudioCues.ReworkedSkillSfx`.
-- [ ] Animation feel pass: mountain-holding-right, crouch/fatigue and slide variants; heavier casts; gait-swap timing at the
-  form's start and end. The clip GLB writer (`tools/author_dante_mountain_clips.py`) leaves the replaced clips' bytes in the
-  binary chunk, so the GLB grows on every rewrite: compact it before the next authoring pass.
-- [ ] Real host and client match: the cleanse and immunity on a non-host, the suit and clips on every peer, a joiner mid-form.
+- [x] His own carry (`mountain-holding-right`: he holds a slipper most of the form, and the kid's carry folded his boulder
+  fists into the breastplate), fatigue (`mountain-crouch`) and slide (`mountain-slide`) clips, wired on person_dante.asset
+  (`Logs/mf/clips_v8`); the clip writer compacts the GLB (every rewrite used to add about 190 KB).
+- [x] Real players (`tools/net_mountain_matrix.py`, `Logs/mf/net-v2` and `net-v3-delay80`, all checks passing): host, caster,
+  observer and a joiner with 14 s left; the form 29.9 s and its clock within 0.08 s on every peer; the suit, clips and immunity
+  through it and gone after; the host's stun and concussion refused on every peer; the rock staggered and launched seat 2 as its
+  own process saw it; the joiner drew the suit at once on the same clock.
+- [x] In-play film: `DanteMountainFilm`, `Logs/mf/dante_mountain_play_v1.mp4` (forming live, walk, sprint, jump, carry, throw,
+  the shedding).
+- [ ] Heavier versions of his skill casts in the form (his hero-dante-* clips play unchanged inside the suit).
+- [ ] The gait layer swaps walk and sprint without a crossfade, so at the form's end his legs and root lift pop once (a 7 degree
+  splay and a squash; the arms crossfade through the main mixer). Small; a crossfade would touch every hero's animator.
+- [ ] Bot Dante casting it in a full match and the practice range (not yet run on this branch).
 - [ ] Balance with the owner: form length, throw scale, stagger and knock.
 - [ ] Remove the `[Mountain]` debug logs in `DanteMountainArmour` when the suit is final.
 

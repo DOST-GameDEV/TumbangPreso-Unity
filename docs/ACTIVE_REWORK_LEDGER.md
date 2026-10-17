@@ -8,8 +8,10 @@ DanteMountainFormTests 12/12; DanteDrift and DanteDriftPresentation green; Dante
 after the probe subtracts the baked lift. EditMode failures left are the pre-existing roster-drift list (Cheska, Zack, Nemu,
 Sean, Phaister). The suit is plates (Logs/mf/poses_v7), forms in the cutscene on its clock, the slam was rebuilt, his
 first-person hands carry the form, and his deck shows its seconds. Films sent: Logs/mf/dante_mountain_cutscene_v1 and v3.
-Next: the owner's verdict on v3, his pick of the sound drafts (tools/draft_dante_mountain_sfx.py), the animation variants,
-a real host and client match, and balance. Open items: docs/TODO.md DANTE-MOUNTAIN-FORM-1018.
+Owner approved v3. Then: his carry, fatigue and slide clips; four real players passing every Mountain Form check direct and at
+80 ms (Logs/mf/net-v2, net-v3-delay80); an in-play film (Logs/mf/dante_mountain_play_v1.mp4). Dante PlayMode 68/68; EditMode
+48 failures, all on this morning's baseline list, none new. Next: his pick of the sound drafts (tools/draft_dante_mountain_sfx.py),
+heavier casts, bot Dante, balance. Open items: docs/TODO.md DANTE-MOUNTAIN-FORM-1018.
 
 # Ghost network checkpoint, October15
 
