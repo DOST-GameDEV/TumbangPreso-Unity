@@ -40,6 +40,37 @@ namespace TumbangPreso.UI.Hub
         public Vector2 ShadowOffset = new Vector2(7.0f, -8.0f);
         public Color ShadowColor = new Color(0.11f, 0.06f, 0.02f, 0.85f);
 
+        /// <summary>
+        /// How high the sticker floats, in canvas units. Zero draws no depth. Above zero, four
+        /// soft shadows are stacked under the hard one, each twice as far down and twice as
+        /// blurred as the last, so the surface reads as lifted off the court rather than as a
+        /// flat cut-out.
+        ///
+        /// ⚠️⚠️ FOUR LAYERS, OWNER 2026-10-17: *"increase depth for everything such as using 4
+        /// shadows"*. One shadow at one offset is a cut-out; light falling off a raised object
+        /// leaves a tight dark contact shadow and a wide faint ambient one, and a doubling stack
+        /// of four is the cheapest shape that draws both. The hard sticker shadow above them is
+        /// unchanged and is still what a press flattens.
+        ///
+        /// ⚠️ IT IS GEOMETRY, NOT A BLUR. Each layer is the outline fanned solid and feathered to
+        /// clear over its own blur width, in the same mesh, so it costs no texture, no material
+        /// and no extra draw call.
+        /// </summary>
+        public float Depth;
+
+        /// <summary>Multiplies <see cref="Depth"/>: `HubButton` lifts it on hover and flattens it on
+        /// press, exactly as it does the hard shadow.</summary>
+        public float DepthScale = 1.0f;
+
+        /// <summary>The colour of the stacked shadows. Warm ink, never a cold grey (`CLAUDE.md` § 6.4).</summary>
+        public Color DepthColor = new Color(0.10f, 0.05f, 0.015f, 1.0f);
+
+        public const int DepthLayers = 4;
+
+        /// <summary>Each layer's opacity, contact shadow first. Measured by eye against the lit
+        /// street behind the room: darker than this and the stack read as a smudge under the panel.</summary>
+        private static readonly float[] DepthAlpha = { 0.30f, 0.22f, 0.15f, 0.10f };
+
         /// <summary>Diagonal hatch across the fill: § 1.2's sign for NOT AVAILABLE. Locked items,
         /// unowned heroes, a disabled button. It is a SHAPE, so it reads in greyscale.</summary>
         public bool Hatched;
@@ -108,6 +139,19 @@ namespace TumbangPreso.UI.Hub
             float corner = Mathf.Min(Corner, Mathf.Min(r.width, r.height) * 0.45f);
             bool finish = Pressable && width > 0.0f;
             float rim = finish ? RimWidth * HubStyle.OutlineScale : 0.0f;
+
+            float depth = Depth * DepthScale;
+            if (depth > 0.5f)
+            {
+                // Widest and faintest first, so the tight contact shadow draws on top.
+                for (int i = DepthLayers - 1; i >= 0; i--)
+                {
+                    float reach = depth * (1 << i) / (1 << (DepthLayers - 1));
+                    Build(Outer, Offset(Grow(r, rim), new Vector2(reach * 0.15f, -reach)), corner + rim, 0.0f);
+                    Color layer = DepthColor; layer.a *= DepthAlpha[i];
+                    FeatherFan(vh, Outer, layer * color, Mathf.Max(1.0f, reach));
+                }
+            }
 
             if (ShadowOffset.sqrMagnitude > 0.01f && ShadowColor.a > 0.0f)
             {
@@ -318,6 +362,41 @@ namespace TumbangPreso.UI.Hub
             {
                 int a = start + i * 2, b = start + ((i + 1) % points.Count) * 2;
                 vh.AddTriangle(a, b, a + 1); vh.AddTriangle(a + 1, b, b + 1);
+            }
+        }
+
+        /// <summary>
+        /// A convex outline filled solid to half its blur inside the edge and faded to clear by
+        /// half its blur outside it, which is what a gaussian edge looks like from arm's length.
+        /// </summary>
+        private static void FeatherFan(VertexHelper vh, List<Vector2> points, Color colour, float blur)
+        {
+            int n = points.Count;
+            if (n < 3) return;
+            Vector2 centre = Vector2.zero;
+            foreach (var p in points) centre += p;
+            centre /= n;
+
+            float half = blur * 0.5f;
+            Color clear = colour; clear.a = 0;
+            int start = vh.currentVertCount;
+            vh.AddVert(centre, colour, Vector2.zero);
+            for (int i = 0; i < n; i++)
+            {
+                Vector2 previous = points[(i + n - 1) % n], current = points[i], next = points[(i + 1) % n];
+                Vector2 a = (current - previous).normalized, b = (next - current).normalized;
+                Vector2 normal = (new Vector2(-a.y, a.x) + new Vector2(-b.y, b.x)).normalized;
+                // Never pull the solid core past the centre on a small sticker.
+                float inward = Mathf.Min(half, (current - centre).magnitude * 0.5f);
+                vh.AddVert(current - normal * inward, colour, Vector2.zero);
+                vh.AddVert(current + normal * half, clear, Vector2.zero);
+            }
+            for (int i = 0; i < n; i++)
+            {
+                int inner = start + 1 + i * 2, nextInner = start + 1 + ((i + 1) % n) * 2;
+                vh.AddTriangle(start, inner, nextInner);
+                vh.AddTriangle(inner, nextInner, inner + 1);
+                vh.AddTriangle(inner + 1, nextInner, nextInner + 1);
             }
         }
 

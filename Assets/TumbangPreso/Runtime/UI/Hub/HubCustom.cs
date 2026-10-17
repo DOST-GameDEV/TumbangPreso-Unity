@@ -415,8 +415,26 @@ namespace TumbangPreso.UI.Hub
             HubKit.Stretch(mapLabel.rectTransform);
             mapLabel.rectTransform.offsetMin = new Vector2(72, 6);
 
+            plate.Depth = PanelDepth;
+            foreach (var words in new[] { _title, _mapLine, _address, _count, _status })
+                HubDepthText.On(words, TextDepth);
+
             Draw(true);
             HubSlap.On(panel, 0, -1);
+        }
+
+        // ⚠️⚠️ DEPTH ON EVERYTHING IN THE ROOM, owner 2026-10-17: *"increase depth for everything
+        // such as using 4 shadows"*. Three heights, so the stack reads as layers rather than as one
+        // blur everywhere: the players' panel floats highest over the street, every button sits
+        // on it at button height, and the seat rows sit lowest because they lie ON the panel.
+        private const float PanelDepth = 34.0f, ButtonDepth = 20.0f, RowDepth = 12.0f, TextDepth = 9.0f;
+
+        /// <summary>Give every surface in the room its height. Run after each draw, because the
+        /// seat rows are rebuilt; a surface that already has one keeps it.</summary>
+        private void Deepen()
+        {
+            foreach (var shape in Root.GetComponentsInChildren<HubShape>(true))
+                if (shape.Depth <= 0.0f) shape.Depth = shape.Pressable ? ButtonDepth : RowDepth;
         }
 
         private void Door(string name, HubGlyph.Mark mark, string words, int index, System.Action action)
@@ -575,6 +593,7 @@ namespace TumbangPreso.UI.Hub
                 _status.text = "Waiting for the other player to accept the seat switch.";
             else if (!string.IsNullOrEmpty(host.SeatSwapResult)) _status.text = host.SeatSwapResult;
             _map.gameObject.SetActive(host.IsHost);
+            Deepen();
             Hub.RefreshFocus();
         }
 

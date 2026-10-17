@@ -194,6 +194,9 @@ namespace TumbangPreso.UI.Hub
                 Vector2 shadow = _restShadow * (1.0f + _lift * 0.45f) * (1.0f - _press * 0.85f);
                 if (!IsInteractable()) shadow = _restShadow * 0.35f;
                 Shape.ShadowOffset = shadow;
+                // The stacked depth rises and flattens with the hard shadow, so a hovered sticker
+                // lifts off the court and a pressed one sits down on it.
+                Shape.DepthScale = IsInteractable() ? (1.0f + _lift * 0.45f) * (1.0f - _press * 0.85f) : 0.35f;
                 Shape.Lit = IsInteractable() ? _lift : 0.0f;
                 Shape.Redraw();
             }
