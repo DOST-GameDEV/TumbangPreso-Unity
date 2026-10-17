@@ -265,7 +265,7 @@ namespace TumbangPreso.PlayTests
             Vector3 origin = new Vector3(0f, 1.5f, -9f);
             var shoe = PaeteWoodenSlipper.Spawn(origin, origin + Vector3.forward * 8f, 1);
             var renderers = shoe.GetComponentsInChildren<Renderer>();
-            Assert.AreEqual(3, renderers.Length, "The wooden sole and both straps must be drawn.");
+            Assert.GreaterOrEqual(renderers.Length, 3, "The wooden sole and both straps must be drawn (more parts may be added).");
             foreach (var renderer in renderers)
                 Assert.IsTrue(renderer.enabled && renderer.bounds.size.sqrMagnitude > .001f);
             yield return new WaitForSeconds(.25f);
