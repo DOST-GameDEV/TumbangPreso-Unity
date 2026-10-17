@@ -113,6 +113,8 @@ namespace TumbangPreso.Visual
                 _renderers = _root.GetComponentsInChildren<Renderer>(true);
                 // Amihan's cutscene faces are look renderers beside the copied head, outside the root: captured with the scene.
                 if (_amFace != null) { var all = new List<Renderer>(_renderers); all.AddRange(_amFace.Renderers); _renderers = all.ToArray(); }
+                // Dante's suit rides the copy's bones, outside the root: captured with the scene too.
+                if (_dnArmour != null) { var all = new List<Renderer>(_renderers); all.AddRange(_dnArmour.Renderers); _renderers = all.ToArray(); }
                 SetVisibleForCapture(false);
                 Sample(0);
             }

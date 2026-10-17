@@ -14,14 +14,18 @@ namespace TumbangPreso.Visual
         //
         //   0.30 THE PLANT        he drives both fists into the court: a crack star under each, the court shudders
         //   0.35 THE CRACKS       molten cracks spider out from his fists across the court round him
-        //   0.55 THE EARTH ANSWERS stone tears up out of the far end of each crack and flies onto his fists, three waves, each
-        //                         landing with a jolt; loose pebbles lift off the court and hang, then are pulled in. Where the
-        //                         rock hands come from is on screen.
+        //   0.55 THE EARTH ANSWERS stone tears up out of the court round him and flies onto him, three waves, each landing with a
+        //                         jolt: the fists first, then the legs, the bracers, the chest, the shoulders, the horn last;
+        //                         loose pebbles lift off the court and hang, then are pulled in. By 2.0 the whole suit of
+        //                         MOUNTAIN FORM (`DanteMountainArmour`, the same pieces on the same clock as in play) is on him,
+        //                         so where the armour comes from is on screen, and the cut hands play a body already wearing it.
         //   1.65 THE RISE         he stands with the boulder fists overhead, molten light in their seams, the cracks pulsing
         //   2.09 THE LEAP         he jumps high against the sky (a crack, a ring and dust where he left)
-        //   3.25 THE SLAM         seen high from behind him, down the lane at the real players where they stand: he lands fists
-        //                         first, the stone on his fists is driven back into the court (that earth is what erupts, and why
-        //                         his hands are bare in play), dust bursts out, the crack leaps forward
+        //   2.96 THE HANG         at the top of the fall he stops, boulder fists wound back overhead, trembling, for a beat
+        //   3.25 THE SLAM         seen high from behind him, down the lane at the real players where they stand: he drops three
+        //                         metres in a sixth of a second and lands fists first. Three impact frames, a crater with radial
+        //                         cracks, a wall of dust, two shockwaves, embers, the hardest shake and a punch of the lens. He
+        //                         keeps the suit (owner, 2026-10-18: the armour stays on him for 30 s of play)
         //   3.33 THE GROUND RISES the first band heaves at his fists, the crack racing on at them; the cut comes as it rises, before
         //                         it reaches anyone, and play's cascade carries on from that very frame (`DanteDriftLive` is
         //                         built here on the live lane and posed with play's own clock; the wave starts
@@ -33,7 +37,7 @@ namespace TumbangPreso.Visual
         //
         // RULES (the method's traps): nothing here runs on `Update`, everything is posed from the scene clock; flat effects sit on
         // the court; light is cut INTO stone, never raised; the hottest colour is (1, .62, .18), never white; stone never fades:
-        // it is torn up, flies, and stays on his fists (the pebbles are pulled into them).
+        // it is torn up, flies, and stays on him (the pebbles are pulled into his fists).
         // =========================================================================================
         private const float DnPlant = .30f, DnCracks = .35f, DnRise = 1.65f, DnLeap = 2.09f, DnSlam = 3.25f, DnBand0 = 3.33f, DnEnd = DnBand0 + Core.GeoRules.DriftCutsceneTail;
         /// <summary>The three waves of stone off the court onto his fists (the gauntlet rows' steps).</summary>
@@ -80,10 +84,20 @@ namespace TumbangPreso.Visual
             (7, .90f, .75f, .50f, .08f,  20f, 6.2f, 5.8f),
         };
 
-        private readonly List<int> _dnGauntlet = new List<int>(8), _dnFistGlow = new List<int>(2), _dnCracks = new List<int>(8),
+        private readonly List<int> _dnFistGlow = new List<int>(2), _dnCracks = new List<int>(8),
                                    _dnTearDust = new List<int>(8), _dnPebbles = new List<int>(12), _dnLift = new List<int>(4),
-                                   _dnPlantStars = new List<int>(2), _dnSlamDust = new List<int>(6), _dnEmbers = new List<int>(16);
-        private int _dnSlamStar, _dnSlamRing, _dnSlamRingOuter, _dnLiftStar, _dnLiftRing, _dnGroundGlow;
+                                   _dnPlantStars = new List<int>(2), _dnSlamDust = new List<int>(6), _dnEmbers = new List<int>(16),
+                                   _dnDustWall = new List<int>(12), _dnRadial = new List<int>(10);
+        private int _dnSlamStar, _dnSlamRing, _dnSlamRingOuter, _dnLiftStar, _dnLiftRing, _dnGroundGlow, _dnCrater, _dnCraterGlow;
+        // ⚠️ MOUNTAIN FORM, BUILT ON THE CUTSCENE'S COPY OF HIS BODY and stepped on this scene's clock: the same suit, the same
+        // pieces and the same beats (`DanteMountainArmour.FormedAt`) as the one play puts on him at `CutEndAt`. It REPLACES the
+        // eight gauntlet stones the cut used to fly onto his fists and bury at the slam (which is why his hands were bare in play).
+        private DanteMountainArmour _dnArmour;
+        // THE CRATER'S RADIAL CRACKS: (degrees off his forward, length m).
+        private static readonly (float angle, float length)[] DnRadialRows =
+        {
+            (-8f, 2.9f), (28f, 2.2f), (62f, 1.7f), (104f, 1.5f), (148f, 1.3f), (-150f, 1.4f), (-112f, 1.6f), (-70f, 1.9f), (-38f, 2.5f), (8f, 3.3f),
+        };
         private DanteDriftLive _dnLane;
         private Material _dnImpact;
         private Vector3? _dnFistAt;
@@ -103,8 +117,6 @@ namespace TumbangPreso.Visual
             for (int i = 0; i < DnCrackRows.Length * 3; i++) _dnCracks.Add(AddGlow("DanteCrack" + i, new Color(1f, .5f, .1f), billboard: false, band: true, falloff: 1.7f, core: .7f));
             for (int i = 0; i < DnCrackRows.Length; i++)
                 _dnTearDust.Add(Add("DanteTearDust" + i, VfxShapes.TwoSided(VfxShapes.Splat(9, .48f, 301 + i * 7)), new Color(.5f, .37f, .24f, .72f), .3f, plain: true));
-            foreach (var g in DnGauntletRows)
-                _dnGauntlet.Add(DanteStone("DanteGauntlet" + g.seed, VfxShapes.Prism(5, 1f, .72f, .3f, 0f, g.seed), basalt[g.seed % 3]));
             foreach (var p in DnPebbleRows)
                 _dnPebbles.Add(DanteStone("DantePebble" + p.seed, VfxShapes.Prism(5, 1f, .62f, .32f, 0f, p.seed), basalt[p.seed % 3]));
             for (int f = 0; f < 2; f++)
@@ -126,6 +138,16 @@ namespace TumbangPreso.Visual
             _dnLane.gameObject.SetActive(false);
             for (int i = 0; i < 6; i++)
                 _dnSlamDust.Add(Add("DanteSlamDust" + i, VfxShapes.TwoSided(VfxShapes.Splat(9, .48f, 501 + i * 7)), new Color(.5f, .37f, .24f, .72f), .3f, plain: true));
+            // THE CRATER: a scorched bowl under the fists with a molten floor, cracks running out of it, and a wall of dust thrown
+            // up all round it.
+            _dnCrater = Add("DanteCrater", VfxShapes.Splat(13, .34f, 611), new Color(.13f, .09f, .07f, .92f), .05f, plain: true);
+            _dnCraterGlow = AddGlow("DanteCraterGlow", new Color(1f, .45f, .09f), billboard: false, falloff: 1.4f, core: .55f);
+            for (int i = 0; i < DnRadialRows.Length; i++)
+                _dnRadial.Add(AddGlow("DanteRadial" + i, new Color(1f, .5f, .1f), billboard: false, band: true, falloff: 1.7f, core: .7f));
+            for (int i = 0; i < 12; i++)
+                _dnDustWall.Add(Add("DanteDustWall" + i, VfxShapes.TwoSided(VfxShapes.Splat(10, .4f, 631 + i * 5)), new Color(.52f, .4f, .28f, .78f), .28f, plain: true));
+            // THE SUIT, on his copy (owner, 2026-10-18: the earth must visibly cover his whole body as he charges).
+            if (_bodyRoot != null) _dnArmour = DanteMountainArmour.Build(_bodyRoot, _root.transform);
             // The real players, where they stand (unclamped): the last shot looks down the lane at them.
             StageOthers(0f, 1000f);
         }
@@ -224,7 +246,10 @@ namespace TumbangPreso.Visual
         /// <summary>The lens feels it: the plant, every wave of stone landing on his fists, the leap, the slam.</summary>
         private Vector3 DanteShake(float t)
         {
-            float size = DanteKick(t, DnPlant, .09f, .2f) + DanteKick(t, DnLeap, .06f, .2f) + DanteKick(t, DnSlam, .18f, .3f);
+            // THE SLAM is the hardest blow in his kit: twice the old jolt, longer, and an aftershock as the first band heaves.
+            float size = DanteKick(t, DnPlant, .09f, .2f) + DanteKick(t, DnLeap, .06f, .2f) + DanteKick(t, DnSlam, .34f, .45f) + DanteKick(t, DnBand0, .1f, .22f);
+            // The hang: a fine tremble while he holds the fists wound back.
+            size += .018f * Ease(DnSlam - .3f, DnSlam - .2f, t) * (1f - Ease(DnSlam - .08f, DnSlam, t));
             foreach (var w in DnWaves) size += DanteKick(t, w + DnFly, .045f, .16f);
             // A low tremble while the earth answers.
             size += .012f * Ease(DnCracks, DnWaves[0], t) * (1f - Ease(DnRise, DnLeap, t));
@@ -238,16 +263,20 @@ namespace TumbangPreso.Visual
             float back = Ease(DnCracks, DnWaves[0] + .2f, t) * (1f - Ease(DnSlam + .1f, DnEnd - .05f, t));
             float beat = Mathf.Max(DnBeat(t, DnSlam, .3f), .4f * DnBeat(t, DnPlant, .25f));
             foreach (var w in DnWaves) beat = Mathf.Max(beat, .3f * DnBeat(t, w + DnFly, .2f));
-            brightness = Mathf.Lerp(1f, .8f, back) + .24f * beat;
-            saturation = Mathf.Lerp(1f, .9f, back) + .14f * beat;
+            // The hang draws the world down under him for a beat before the slam lights it.
+            float hold = Ease(DnSlam - .3f, DnSlam - .05f, t) * (1f - Ease(DnSlam, DnSlam + .02f, t));
+            brightness = Mathf.Lerp(1f, .8f, back) - .14f * hold + .34f * beat;
+            saturation = Mathf.Lerp(1f, .9f, back) - .1f * hold + .2f * beat;
         }
 
         private static float DnBeat(float t, float at, float length) => t < at ? 0f : Mathf.Exp(-3f * (t - at) / length);
 
-        /// <summary>The impact frame: two frames, ink on molten orange, lines in to the slam.</summary>
+        /// <summary>The impact frames: three, ink on molten orange, lines in to the slam, each with its own lines, the last half
+        /// mixed back into the picture so the frame lands into the world rather than cutting to it.</summary>
         private void DantePostProcess(RenderTexture frame, Camera camera, float t)
         {
-            if (_reducedEffects || camera == null || t < DnSlam || t >= DnSlam + .067f) return;
+            if (_reducedEffects || camera == null || t < DnSlam || t >= DnSlam + .1f) return;
+            int beat = Mathf.Clamp(Mathf.FloorToInt((t - DnSlam) / .0334f), 0, 2);
             if (_dnImpact == null)
             {
                 var shader = Resources.Load<Shader>("Shaders/DanteImpact");
@@ -255,10 +284,10 @@ namespace TumbangPreso.Visual
                 _dnImpact = new Material(shader) { name = "DanteImpact" };
             }
             var vp = camera.WorldToViewportPoint(_root.transform.TransformPoint(DnFists));
-            _dnImpact.SetFloat("_Impact", 1f);
+            _dnImpact.SetFloat("_Impact", beat == 2 ? .55f : 1f);
             _dnImpact.SetVector("_Focus", new Vector4(Mathf.Clamp(vp.x, .1f, .9f), Mathf.Clamp(vp.y, .1f, .9f), 0f, 0f));
             _dnImpact.SetFloat("_Aspect", frame.height > 0 ? frame.width / (float)frame.height : 16f / 9f);
-            _dnImpact.SetFloat("_Seed", 1f);
+            _dnImpact.SetFloat("_Seed", 1f + beat);
             var tmp = RenderTexture.GetTemporary(frame.descriptor);
             Graphics.Blit(frame, tmp, _dnImpact);
             Graphics.Blit(tmp, frame);
@@ -310,36 +339,22 @@ namespace TumbangPreso.Visual
                     PlaceGlow(_dnCracks[i * 3 + leg], from + dir.normalized * (len * .5f), new Vector3(len + .3f * grow, width, 1f), Quaternion.Euler(90f, yaw, 0f), heat);
                 }
 
-            // THE EARTH ANSWERS: each stone lies in the court at its crack's end, glowing under it; on its wave it tears up, flies
-            // in an arc and lands on his fist with a jolt; it stays there.
+            // THE EARTH ANSWERS: on its wave the court tears open where each crack ends (dust thrown up), and the suit's stones fly
+            // in off the court round him and lock onto him on their own beats (`DanteMountainArmour`): fists, legs, bracers, chest,
+            // shoulders, the stone horn last. Formed at `DanteMountainArmour.FormedAt`; on him through the leap and the slam.
             for (int i = 0; i < DnGauntletRows.Length; i++)
             {
-                var g = DnGauntletRows[i];
                 var bed = DnCrackEnd(i);
-                float tear = DnWaves[g.step] + .02f * i;
-                float fly = Mathf.Clamp01((t - tear) / DnFly), arrive = Ease(0f, 1f, fly);
-                var fist = DnFistPoint(g.fist) + g.offset * 2.2f;
-                var lying = bed + Vector3.up * (g.size * .6f * Ease(DnCracks + .3f, tear, t) - .08f);
-                var at = Vector3.Lerp(lying, fist, arrive) + Vector3.up * (Mathf.Sin(fly * Mathf.PI) * .9f);
-                float size = g.size * 2.3f * Mathf.Lerp(.75f, 1f, arrive) * (1f + .18f * Flash(t, tear + DnFly, .06f));
-                // THE SLAM drives it back into the court: off his fist, into the ground round the impact, crumbling into it.
-                if (t > DnSlam)
-                {
-                    float a = (g.seed * 47f) * Mathf.Deg2Rad;
-                    var bury = DnFists + new Vector3(Mathf.Sin(a) * .5f, -g.size * .9f, .3f + Mathf.Cos(a) * .45f);
-                    at = Vector3.Lerp(at, bury, Ease(DnSlam, DnSlam + .07f, t));
-                    float crumble = Ease(DnSlam + .07f, DnSlam + .12f, t) * .2f + Ease(DnSlam + .13f, DnEnd, t) * .25f;
-                    size *= 1f - crumble;
-                }
-                bool shown = t >= DnCracks + .3f;
-                Place(_dnGauntlet[i], at, shown ? Vector3.one * size : Vector3.zero,
-                      Quaternion.Euler(g.seed * 23f + 400f * fly, g.seed * 41f, g.seed * 13f + 260f * fly), 1f);
-                // Dust where it tore out.
+                float tear = DnWaves[DnGauntletRows[i].step] + .02f * i;
                 float du = Mathf.Clamp01((t - tear) / .7f);
                 float puff = Mathf.Lerp(.3f, 1.1f, du);
                 Place(_dnTearDust[i], bed + Vector3.up * (puff * .4f), t < tear ? Vector3.zero : new Vector3(puff * 1.2f, 1f, puff),
                       Quaternion.Euler(0f, i * 45f, 0f) * Quaternion.Euler(90f, 0f, 0f), t < tear ? 0f : .75f * (1f - du * du));
             }
+            _dnArmour?.StepTo(t);
+            // A slipper he holds goes into the boulder fist as the first wave of stone closes it (film v9: its white sole faced the
+            // lens through the whole leap); in play it comes back out coated in the same stone (`DanteBoulderCoating.MountainHeld`).
+            if (_heldItem != null) _heldItem.transform.localScale = t >= DnWaves[0] + DnFly ? Vector3.zero : Vector3.one;
             // Loose pebbles lift off the court and hang, trembling, then are pulled into his fists as he rises.
             for (int i = 0; i < DnPebbleRows.Length; i++)
             {
@@ -383,11 +398,36 @@ namespace TumbangPreso.Visual
                 float age = t - DnSlam;
                 PlaceGlow(_dnSlamStar, DnFists + Vector3.up * .02f, Vector3.one * Mathf.Lerp(.6f, 1.8f, Mathf.Clamp01(age / .08f)),
                           Quaternion.Euler(90f, 0f, 0f), age < 0f ? 0f : 1.4f * (1f - .5f * Mathf.Clamp01(age / .8f)));
-                float r = Mathf.Lerp(.3f, 3.6f, Mathf.Clamp01(age / .35f));
-                PlaceGlow(_dnSlamRing, DnFists + Vector3.up * .03f, new Vector3(r, 1f, r), Quaternion.identity, age < 0f ? 0f : 1.2f * (1f - Mathf.Clamp01(age / .4f)));
+                float r = Mathf.Lerp(.3f, 4.4f, 1f - Mathf.Pow(1f - Mathf.Clamp01(age / .3f), 2f));
+                PlaceGlow(_dnSlamRing, DnFists + Vector3.up * .03f, new Vector3(r, 1f, r), Quaternion.identity, age < 0f ? 0f : 1.7f * (1f - Mathf.Clamp01(age / .36f)));
                 // A second, wider ring a beat behind the first: the shock carrying on out across the court.
-                float outer = age - .06f, ro = Mathf.Lerp(.5f, 6.5f, Ease(0f, .45f, outer));
-                PlaceGlow(_dnSlamRingOuter, DnFists + Vector3.up * .025f, new Vector3(ro, 1f, ro), Quaternion.identity, outer < 0f ? 0f : .9f * (1f - Mathf.Clamp01(outer / .5f)));
+                float outer = age - .07f, ro = Mathf.Lerp(.6f, 9f, Ease(0f, .5f, outer));
+                PlaceGlow(_dnSlamRingOuter, DnFists + Vector3.up * .025f, new Vector3(ro, 1f, ro), Quaternion.identity, outer < 0f ? 0f : 1.35f * (1f - Mathf.Clamp01(outer / .55f)));
+                // THE CRATER: scorched into the court under the fists at once, its floor molten and cooling.
+                float crater = age < 0f ? 0f : Mathf.Lerp(.45f, 1f, Ease(0f, .06f, age));
+                Place(_dnCrater, DnFists + Vector3.up * .006f, new Vector3(1.0f, 1f, .9f) * crater, Quaternion.Euler(0f, 17f, 0f), age < 0f ? 0f : .92f);
+                PlaceGlow(_dnCraterGlow, DnFists + Vector3.up * .014f, Vector3.one * 2.2f * crater, Quaternion.Euler(90f, 0f, 0f),
+                          age < 0f ? 0f : 2.2f * (1f - .55f * Ease(0f, .4f, age)));
+                // RADIAL CRACKS race out of it, the longest down the lane at them.
+                for (int i = 0; i < _dnRadial.Count; i++)
+                {
+                    var row = DnRadialRows[i];
+                    var d = new Vector3(Mathf.Sin(row.angle * Mathf.Deg2Rad), 0f, Mathf.Cos(row.angle * Mathf.Deg2Rad));
+                    float len = row.length * Ease(.008f * i, .1f + .008f * i, age);
+                    var from = DnFists + d * .45f + Vector3.up * .012f;
+                    PlaceGlow(_dnRadial[i], from + d * (len * .5f), new Vector3(len + .2f, .17f - .007f * i, 1f), Quaternion.Euler(90f, 90f - row.angle, 0f),
+                              age < 0f || len < .02f ? 0f : 1.8f * (1f - .5f * Ease(.15f, .5f, age)));
+                }
+                // THE DUST WALL: thrown up all round the crater, racing out and rising, then thinning.
+                for (int i = 0; i < _dnDustWall.Count; i++)
+                {
+                    float a = i * 30f + 15f, du = Mathf.Clamp01((age - .02f) / .75f);
+                    var d = new Vector3(Mathf.Sin(a * Mathf.Deg2Rad), 0f, Mathf.Cos(a * Mathf.Deg2Rad));
+                    float rise = Mathf.Lerp(.35f, 1.7f, Ease(0f, .3f, age - .02f)) * (1f + .25f * ((i * 7) % 3 - 1) / 2f);
+                    float rr = Mathf.Lerp(.6f, 3.4f, 1f - (1f - du) * (1f - du));
+                    Place(_dnDustWall[i], DnFists + d * rr + Vector3.up * (rise * .42f), age < .02f ? Vector3.zero : new Vector3(1.2f + .7f * du, 1f, rise),
+                          Quaternion.Euler(0f, a, 0f) * Quaternion.Euler(90f, 0f, 0f), age < .02f ? 0f : .82f * (1f - du * du));
+                }
                 // Dust bursting out round the impact.
                 for (int i = 0; i < _dnSlamDust.Count; i++)
                 {
@@ -418,7 +458,7 @@ namespace TumbangPreso.Visual
                     var at = DnFists + new Vector3(Mathf.Sin(way) * e.out_, 0f, Mathf.Cos(way) * e.out_) * Mathf.Max(0f, a)
                              + Vector3.up * (.1f + e.up * Mathf.Max(0f, a) - 4.9f * a * a);
                     at.y = Mathf.Max(DnFloat + .04f, at.y);
-                    PlaceGlow(_dnEmbers[i], at, Vector3.one * e.size * 1.3f, Quaternion.identity, a < 0f ? 0f : 1.9f * (1f - Mathf.Clamp01(a / .75f)));
+                    PlaceGlow(_dnEmbers[i], at, Vector3.one * e.size * 1.9f, Quaternion.identity, a < 0f ? 0f : 2.3f * (1f - Mathf.Clamp01(a / .9f)));
                 }
             }
 

@@ -175,6 +175,14 @@ namespace TumbangPreso.PlayTests
                     // REFINE-2.11: each hero's introduction has its own authored length and lift.
                     var performance = UltimatePerformance.For(hero, actor.GetComponent<Carrier>().Held != null);
                     Assert.IsNotNull(performance, hero + " has no authored introduction table.");
+                    float BakedLift(float age)
+                    {
+                        int steps = Mathf.Max(1, Mathf.CeilToInt(clip.length * 60));
+                        float x = Mathf.Clamp(age, 0f, clip.length) / clip.length * steps;
+                        int i = Mathf.Min(Mathf.FloorToInt(x), steps - 1);
+                        float t0 = clip.length * i / steps, t1 = clip.length * (i + 1) / steps;
+                        return Mathf.Lerp(performance.LiftAt(t0), performance.LiftAt(t1), Mathf.InverseLerp(t0, t1, age));
+                    }
                     if((hero=="sean"||hero=="dante")&&!emptyHands)
                         Assert.AreNotSame(UltimatePerformance.For(hero,false),performance,hero+" needs its actual held-equipment performance.");
                     float seconds = performance.Seconds;
@@ -342,7 +350,12 @@ namespace TumbangPreso.PlayTests
                                     }
                                 }
                                 // Authored lift (Phaister's levitation) is intended height, not float.
-                                float clearance = Low(age) - floor - performance.LiftAt(Mathf.Min(age, seconds));
+                                // ⚠️ AS THE CLIP CARRIES IT, NOT AS THE TABLE EASES IT. `HeroAbilityClips.GroundIntroduction` bakes the
+                                // root on samples `clip.length / ceil(length * 60)` apart, straight between them; the table's lift is a
+                                // smoothstep. On a steep drop (Dante's slam: 1.8 m in 0.07 s) the two part by 5 cm mid-air, and the
+                                // gap was read as his feet through the court while he was 1.5 m up (2026-10-18: -0.024 m before
+                                // the hang, -0.055 m after it). Subtracting the baked lift leaves only real penetration.
+                                float clearance = Low(age) - floor - BakedLift(Mathf.Min(age, seconds));
                                 lowest = Mathf.Min(lowest, clearance); highest = Mathf.Max(highest, clearance);
                             });
                         report.AppendLine(FormattableString.Invariant($"{hero}: clearance {lowest:F5} to {highest:F5} metres"));

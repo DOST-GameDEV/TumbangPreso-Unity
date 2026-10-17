@@ -615,7 +615,12 @@ def _dante_drift(p, held):
     # THE LEAP: stretched up off the court; tucked at the top; turned fists down for the landing.
     launch = Pose(torso=(-10, 0, 0), head=(-16, 0, 0), left=(150, 10, -40), right=(150, 10, -40), legs=((-6, 6), (-8, 8)))
     tuck = Pose(torso=(8, 0, 0), head=(-12, 0, 0), left=(140, 12, -45), right=(140, 12, -45), legs=((44, 70), (30, 58)))
-    dive = Pose(torso=(34, 0, 0), head=(-22, 0, 0), left=(120, 8, 26), right=(120, 8, 26), legs=((-8, 20), (-12, 26)))
+    # THE HANG (owner's brief for the slam, 2026-10-18: "a hang before impact"): at the top of the fall he stops, both boulder
+    # fists wound back over his head, trembling, for a beat; then everything goes into the court at once.
+    # The legs stay drawn up as in the tuck (half-extended legs here put his feet through the court on the drop to the stamp:
+    # `UltimateIntroductionProbe`'s support plane went from -0.024 m to -0.055 m).
+    cocked = Pose(torso=(-8, 0, 0), head=(-22, 0, 0), left=(164, 10, -26), right=(164, 10, -26), legs=((44, 70), (30, 58)))
+    cocked_shake = cocked.but(torso=(-9, 0, 1.5), left=(168, 10, -28), right=(168, 10, -28))
     stamp = Pose(torso=(28, -10, 0), head=(-8, 6, 0), left=(72, 6, 30), right=(72, 6, 30), legs=((22, 10), (-18, 10)))
     if held:
         stamp = stamp.but(right=(30, 42, -8))
@@ -634,13 +639,15 @@ def _dante_drift(p, held):
     p.key(2.11, launch, punch=True)
     p.key(2.40, tuck)
     p.key(2.76, tuck)
-    p.key(3.04, dive)
+    p.key(2.96, cocked)
+    p.key(3.04, cocked_shake).key(3.10, cocked)
     p.key(3.25, stamp, punch=True)
     p.key(3.33, stamp_shake, punch=True).key(3.45, stamp)
     p.hold(3.45, 3.61, stamp)
 
     p.rise(0, 0).rise(.30, -.24).rise(1.50, -.24).rise(1.80, 0).rise(2.02, -.2).rise(2.11, 0).rise(2.27, 1.7).rise(2.47, 2.9)
-    p.rise(2.67, 3.3).rise(2.82, 3.25).rise(3.02, 2.4).rise(3.16, 1.0).rise(3.25, -.16).rise(3.61, -.16)
+    # The hang: from 2.96 to 3.10 he barely sinks; then 2.9 m in 0.15 s, the drop four times the speed it was.
+    p.rise(2.67, 3.3).rise(2.82, 3.25).rise(2.96, 3.1).rise(3.10, 2.95).rise(3.18, 1.6).rise(3.25, -.16).rise(3.61, -.16)
 
     # The stage frames every shot from his real body (`HeroIntroductionScene.DanteFrame.cs`); these are the shots' sides and moves.
     # 0 THE PLANT: low and close at his right.
