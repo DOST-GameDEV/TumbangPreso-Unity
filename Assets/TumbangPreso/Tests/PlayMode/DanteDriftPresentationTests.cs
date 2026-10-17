@@ -50,13 +50,17 @@ namespace TumbangPreso.PlayTests
             return text.ToString();
         }
         static Transform Band(Transform live,int k)=>live.Find("DriftBand"+k);
-        [Test] public void PlayOpensOnTheBrokenLaneAndItsStoneCoversTheHitArea()
+        [Test] public void EachBandHeavesOnItsBlastAndItsStoneCoversTheHitArea()
         {
             var view=Build(Vector3.zero,Vector3.forward,8,16);
-            Assert.IsNotNull(view.Live,"The cutscene's cascade rides the wave.");
-            view.StepTo(0f);
+            Assert.IsNotNull(view.Live,"The cascade rides the wave.");
             for(int k=0;k<GeoRules.DriftBlasts;k++)
-                Assert.IsTrue(Band(view.Live.transform,k).gameObject.activeSelf,"Band "+k+" is already broken when play opens: nothing erupts twice.");
+            {
+                float at=k*GeoRules.DriftInterval;
+                view.StepTo(at-.01f);if(k>0)Assert.IsFalse(Band(view.Live.transform,k).gameObject.activeSelf,"Band "+k+" waits for its blast.");
+                view.StepTo(at+.01f);Assert.IsTrue(Band(view.Live.transform,k).gameObject.activeSelf,"Band "+k+" heaves on its blast.");
+            }
+            view.StepTo(1.4f);
             var b=view.Live.StoneBounds();
             Assert.Greater(b.size.x,14f,"The slabs span the lane's full width (the real hit area).");
             Assert.Less(b.size.x,17.4f,"(Renderer bounds box the turned slabs; the exact stone check is TheCascadeIsDeterministicAndStaysOnItsLane.)");
@@ -81,7 +85,7 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(random,UnityEngine.Random.state,"Sampling must not consume gameplay random state.");
             view.StepTo(GeoRules.DriftSeconds);
             for(int k=0;k<GeoRules.DriftBlasts;k++)Assert.IsFalse(Band(view.Live.transform,k).gameObject.activeSelf,"The rubble has gone back into the court.");
-            view.StepTo(.2f);
+            view.StepTo(1.5f);
             foreach(var filter in view.GetComponentsInChildren<MeshFilter>(false))
             {
                 // Dust may billow past the edge; stone may not.
@@ -93,15 +97,6 @@ namespace TumbangPreso.PlayTests
                     Assert.That(Vector3.Dot(offset,forward),Is.InRange(-.5f,16.5f));
                 }
             }
-        }
-        [Test] public void TheCutsceneAndPlayDrawTheSameFrameAtTheCut()
-        {
-            var stage=Keep(new GameObject("Drift stage"));
-            var scene=DanteDriftLive.BuildStage(stage.transform,0f,8f,16f);
-            scene.Pose(DanteDriftLive.SceneEnd);
-            var play=Build(Vector3.zero,Vector3.forward,8,16);play.StepTo(0f);
-            for(int k=0;k<GeoRules.DriftBlasts;k++)
-                Assert.AreEqual(State(Band(scene.transform,k)),State(Band(play.Live.transform,k)),"Play opens on exactly the cutscene's last frame (band "+k+").");
         }
         [UnityTest] public IEnumerator GeneratedGeometryIsRetiredWithItsWave()
         {

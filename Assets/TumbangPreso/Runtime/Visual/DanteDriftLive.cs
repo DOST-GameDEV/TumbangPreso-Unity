@@ -6,38 +6,29 @@ using UnityEngine;
 namespace TumbangPreso.Visual
 {
     /// <summary>
-    /// CONTINENTAL DRIFT's cascade: ONE build, posed from ONE clock, drawn by the cutscene AND by live play
-    /// (`docs/reports/dante-presentation-2026-10-16/direction.md` section 3). The owner on the cutscene and play side by side:
-    /// *"the fkn ult cutscene doesnt match witht he actual thing that happens"*, then *"i like how ult cutscene looks liek rn"*,
-    /// *"i js want actual game to match it"*, and *"dapat cutscene transitions into game well, hindi na dapat uulit"*.
-    /// Before, the cutscene and play each had their own slab table and their own look, so they drifted apart; and play erupted
-    /// all five bands AGAIN right after the cutscene had shown them. Now:
-    ///  * The cutscene builds this inside its stage (`BuildStage`) and poses it with its own scene clock (`Pose`).
-    ///  * Play builds the same thing on the real lane (`Build`) and continues the SAME clock from the cutscene's end
-    ///    (`StepTo(age)` is `Pose(SceneEnd + age)`): the lane is already broken, nothing erupts twice. The rubble holds, then
-    ///    sinks back into the court in two crumbling steps (stone never fades), the light cools to nothing.
-    /// The lane is always the live lane (`DanteDriftWave.Lane`: from his feet, the court's full width, five bands of reach / 5),
-    /// so the cutscene's last frame is the frame play opens on.
-    ///
-    /// THE TIMELINE (scene seconds, read by the cutscene's stage, shots and body keys; owner, 2026-10-17: "The leap",
-    /// "Fast cascade, per-enemy cuts"):
-    ///   0.00 he crouches, stone packing onto his fists; 0.70 he leaps
-    ///   1.85 THE SLAM   he lands fists first; the fuse runs down the lane
-    ///   2.25 + 0.30 k   band k heaves (play's own pace): a row of basalt slabs, molten light in the gaps, dust and rocks thrown
-    ///   3.75 the stone grips each enemy's feet where they stand (the cutscene's cuts, `HeroIntroductionScene.DanteTake.cs`)
-    ///   6.55 THE BURST  the whole lane heaves once more and throws everyone on it (play's launch, `DanteDriftWave`)
-    ///   7.00 the cut: they are in the air; play lands them, Concussed
-    /// Nothing here runs on `Update`; it never consumes gameplay random state; the hottest colour is (1, .62, .18).
+    /// CONTINENTAL DRIFT's cascade in play (`docs/reports/dante-presentation-2026-10-16/direction.md` section 3). The cutscene is
+    /// his charge-up and ends as he slams down (owner, 2026-10-17: *"after nna malaunch ung ult, end nna dapat cutscene tapos ppl
+    /// see the rock going towards them and maknoknnock away sila and concuss"*); this is what everyone then sees, from their own
+    /// first person, posed from the wave's accepted age (`StepTo`) so a rejoiner and a replay draw the same frame:
+    ///  * THE FUSE: a molten crack races out from his fists down the middle of the lane, just ahead of the bands.
+    ///  * FIVE BANDS, one every `GeoRules.DriftInterval`: a row of basalt slabs heaves up across the band's full width (the hit
+    ///    area), molten light in the gaps, dust at its front, rocks thrown; whoever stands on it is knocked away (`DanteDriftWave`).
+    ///  * The rubble holds, then sinks back into the court in two crumbling steps (stone never fades); the light cools away.
+    ///  * Every viewer's own camera shakes by its distance to each band, and a few grains fall through their view.
+    /// The look is the one the owner approved in the cutscene (*"i like how ult cutscene looks liek rn"*, *"i js want actual game
+    /// to match it"*): its slab table, lit basalt with a fill, the soft molten glow. Nothing here runs on `Update`; it never
+    /// consumes gameplay random state; the hottest colour is (1, .62, .18).
     /// </summary>
     public sealed class DanteDriftLive : MonoBehaviour, IVfxTimeline
     {
         public float LifeSeconds => GeoRules.DriftSeconds;
 
-        public const float LeapAt = .70f, SlamAt = 1.85f, FirstBand = 2.25f, BandGap = .30f, GripAt = 3.75f, BurstAt = 6.55f, SceneEnd = 7.0f;
-        public static float BandAt(int k) => FirstBand + BandGap * k;
-        // Play's end: the rubble holds, then sinks in two crumbling steps, gone before the wave's own end.
-        private const float HoldUntil = SceneEnd + 1.2f;
-        private static float GoneAt => SceneEnd + GeoRules.DriftSeconds - .15f;
+        public static float BandAt(int k) => k * GeoRules.DriftInterval;
+        private static float LastBand => BandAt(GeoRules.DriftBlasts - 1);
+        // The rubble holds, then sinks in two crumbling steps, gone before the wave's own end.
+        private static float HoldUntil => LastBand + .9f;
+        private static float GoneAt => GeoRules.DriftSeconds - .15f;
+        private const float FuseLead = .12f;          // the fuse reaches each band this long before it heaves
 
         // Each band's slabs across the lane: (across share -1 to 1, width share of a column, depth share, height m, tilt x, tilt z,
         // delay s, seed). Typed per band, no two bands alike. The cutscene's table, the only one. A lane wider than the cutscene's
@@ -69,7 +60,8 @@ namespace TumbangPreso.Visual
         private static readonly int ColourId = Shader.PropertyToID("_Color"), FacingId = Shader.PropertyToID("_Facing");
 
         private float _halfWidth, _reach, _depth;
-        private bool _stage, _shook;
+        private int _shookUpTo = -1;
+        private float _lastAge = -1f;
         private Glow _fuse;
         private readonly List<Band> _bands = new List<Band>(GeoRules.DriftBlasts);
 
@@ -98,20 +90,8 @@ namespace TumbangPreso.Visual
             if (!float.IsInfinity(court) && !float.IsNaN(court) && court > ground.y && court - ground.y < .6f) ground.y = court;
             root.transform.SetPositionAndRotation(ground, Quaternion.LookRotation(forward));
             var live = root.AddComponent<DanteDriftLive>();
-            live.Make(halfWidth, reach, false);
+            live.Make(halfWidth, reach);
             live.StepTo(0f);
-            return live;
-        }
-
-        /// <summary>The cutscene: the same build inside its stage (his feet at the stage's origin, forward along +z).</summary>
-        public static DanteDriftLive BuildStage(Transform stage, float courtY, float halfWidth, float reach)
-        {
-            var root = new GameObject("ContinentalDriftStage");
-            root.transform.SetParent(stage, false);
-            root.transform.localPosition = new Vector3(0f, courtY, 0f);
-            var live = root.AddComponent<DanteDriftLive>();
-            live.Make(halfWidth, reach, true);
-            live.Pose(0f);
             return live;
         }
 
@@ -119,23 +99,23 @@ namespace TumbangPreso.Visual
         public float HalfWidth => _halfWidth;
         public float Reach => _reach;
         public float BandDepth => _depth;
-        /// <summary>Which band (0 to 4) a point this far along the lane stands in.</summary>
-        public int BandOf(float along) => Mathf.Clamp(Mathf.FloorToInt(along / _depth), 0, GeoRules.DriftBlasts - 1);
-        /// <summary>Where the molten crack has reached down the lane at scene time t.</summary>
-        public float Front(float t)
+        /// <summary>Where the molten crack has reached down the lane at this age: each band's middle just before it heaves.</summary>
+        private float Front(float t)
         {
-            float from = _bands[0].Start * .5f;
-            if (t <= SlamAt) return from;
-            if (t <= BandAt(0)) return Mathf.Lerp(from, _bands[0].Start, (t - SlamAt) / (BandAt(0) - SlamAt));
-            for (int k = 0; k < GeoRules.DriftBlasts - 1; k++)
-                if (t <= BandAt(k + 1)) return Mathf.Lerp(_bands[k].Start, _bands[k + 1].Start, (t - BandAt(k)) / BandGap);
-            var last = _bands[GeoRules.DriftBlasts - 1];
-            return Mathf.Lerp(last.Start, last.End, Mathf.Clamp01((t - BandAt(GeoRules.DriftBlasts - 1)) / .25f));
+            float from = .4f;
+            for (int k = 0; k < _bands.Count; k++)
+            {
+                float reach = (_bands[k].Start + _bands[k].End) * .5f, at = Mathf.Max(0f, BandAt(k) - FuseLead);
+                float prevAt = k == 0 ? 0f : Mathf.Max(0f, BandAt(k - 1) - FuseLead), prev = k == 0 ? from : (_bands[k - 1].Start + _bands[k - 1].End) * .5f;
+                if (t <= at) return k == 0 ? Mathf.Lerp(from, reach, t / Mathf.Max(.01f, at)) : Mathf.Lerp(prev, reach, (t - prevAt) / Mathf.Max(.01f, at - prevAt));
+            }
+            var last = _bands[_bands.Count - 1];
+            return Mathf.Lerp((last.Start + last.End) * .5f, last.End, Mathf.Clamp01((t - LastBand + FuseLead) / .25f));
         }
 
-        private void Make(float halfWidth, float reach, bool stage)
+        private void Make(float halfWidth, float reach)
         {
-            _halfWidth = Mathf.Max(.5f, halfWidth); _reach = Mathf.Max(1f, reach); _depth = _reach / GeoRules.DriftBlasts; _stage = stage;
+            _halfWidth = Mathf.Max(.5f, halfWidth); _reach = Mathf.Max(1f, reach); _depth = _reach / GeoRules.DriftBlasts;
             _fuse = AddGlow(transform, "DriftFuse", MoltenFuse, 1.6f, .7f);
             for (int k = 0; k < GeoRules.DriftBlasts; k++)
             {
@@ -215,17 +195,21 @@ namespace TumbangPreso.Visual
         private static float Ease(float from, float to, float time)
         { float u = Mathf.InverseLerp(from, to, time); return u * u * (3 - 2 * u); }
 
-        /// <summary>Play: the wave's accepted age continues the cutscene's clock from its end. Once per wave, the viewer feels it.</summary>
+        /// <summary>Pose every piece at the wave's accepted age; each band's quake once, as its clock passes zero.</summary>
         public void StepTo(float age)
         {
-            Pose(SceneEnd + Mathf.Max(0f, age));
-            // The rumble as play resumes, on this viewer's own camera (never on a rejoin far into the wave).
-            if (!_stage && !_shook && age < .2f) { _shook = true; Quake(); }
-            if (age >= .2f) _shook = true;
+            Pose(Mathf.Max(0f, age));
+            if (age >= _lastAge)
+                for (int i = _shookUpTo + 1; i < _bands.Count && age >= BandAt(i); i++)
+                {
+                    // Never on a rejoin far into the wave.
+                    if (age - BandAt(i) < .25f) Quake(i);
+                    _shookUpTo = i;
+                }
+            _lastAge = age;
         }
 
-        /// <summary>Pose every piece at scene time t (the cutscene's clock; play passes SceneEnd + its age).</summary>
-        public void Pose(float t)
+        private void Pose(float t)
         {
             int columns = Columns;
             float sixth = _halfWidth * 2f / columns;
@@ -233,12 +217,12 @@ namespace TumbangPreso.Visual
             float sink = Mathf.Clamp01((t - HoldUntil) / (GoneAt - HoldUntil));
             float stepDown = sink < .5f ? Ease(0f, .5f, sink) * .45f : .45f + Ease(.5f, 1f, sink) * .55f;
             float crack = sink < .5f ? 1f : .85f;
-            float cool = Ease(SceneEnd + .2f, HoldUntil + .3f, t);
+            float cool = Ease(LastBand + .4f, HoldUntil + .3f, t);
 
             // THE FUSE: the molten crack racing down the middle of the lane, just ahead of each band, cooling in play.
             {
-                float front = Front(t), from = _bands[0].Start * .5f, len = Mathf.Max(.01f, front - from);
-                float heat = t < SlamAt ? 0f : 1.4f * (1f - .55f * Ease(BandAt(4) + .3f, SceneEnd, t)) * (1f - cool);
+                float front = Front(t), from = .4f, len = Mathf.Max(.01f, front - from);
+                float heat = 1.4f * (1f - .55f * Ease(LastBand + .1f, LastBand + .6f, t)) * (1f - cool);
                 Light(_fuse, new Vector3(0f, .015f, from + len * .5f), new Vector3(len, .32f, 1f), Quaternion.Euler(90f, 90f, 0f), heat);
             }
 
@@ -249,8 +233,8 @@ namespace TumbangPreso.Visual
                 bool gone = sink >= 1f;
                 b.Root.gameObject.SetActive(age >= 0f && !gone);
                 if (age < 0f || gone) continue;
-                // The molten light: a flare as the band goes, the glow in its cracks, a second flare at the burst, cooling in play.
-                float glow = 2.3f * (1f - .4f * Mathf.Clamp01(age / .8f)) + 1.1f * Mathf.Clamp01(1f - Mathf.Abs(t - BurstAt - .05f) / .3f);
+                // The molten light: a flare as the band goes, then the glow in its cracks, cooling away.
+                float glow = 2.3f * (1f - .4f * Mathf.Clamp01(age / .8f));
                 Light(b.Light, new Vector3(0f, .01f, mid), new Vector3(_halfWidth * 1.9f, depth, 1f), Quaternion.Euler(90f, 0f, 0f), glow * (1f - .85f * cool));
 
                 // A wide lane makes deep slabs: their tilt is held to the cutscene's edge rise, so none stands up as a wall.
@@ -265,10 +249,7 @@ namespace TumbangPreso.Visual
                     // A jolt, a small overshoot, a hold, then it settles back to rubble so the ridge travels down the lane.
                     float up = sa < 0f ? 0f : u < 1f ? u * u : 1f + .12f * Mathf.Max(0f, 1f - (sa - .1f) / .12f);
                     float settle = 1f - .5f * Ease(.25f, .7f, sa);
-                    // THE BURST: the whole lane heaves once more under them, and settles a little.
-                    float bt = t - BurstAt - s.delay * .5f;
-                    float burst = bt < 0f ? 0f : .38f * Mathf.Clamp01(bt / .08f) * (1f - .45f * Ease(.12f, .5f, bt));
-                    float lift = up * settle + burst;
+                    float lift = up * settle;
                     float h = s.height * .8f, w = sixth * s.width, d = depth * s.depth;
                     float jitter = ((s.seed % 5) - 2) * .12f * Mathf.Min(depth, 1.6f);
                     var slab = b.Slabs[i];
@@ -280,25 +261,24 @@ namespace TumbangPreso.Visual
                     // The edge columns keep their width and roll inside the lane's sides.
                     float x = Mathf.Clamp(across * _halfWidth, -_halfWidth + w * .5f + h * .3f, _halfWidth - w * .5f - h * .3f);
                     slab.localPosition = new Vector3(x, -h * .5f + h * .8f * lift - h * stepDown, z);
-                    float tip = Mathf.Min(1f, up) * tiltHold * (1f + .25f * Mathf.Clamp01(burst / .38f));
+                    float tip = Mathf.Min(1f, up) * tiltHold;
                     slab.localRotation = Quaternion.Euler(s.tiltX * 1.6f * tip, (s.seed % 7 - 3) * 5f, s.tiltZ * 1.8f * tip);
                     slab.localScale = new Vector3(w, h, d) * crack;
                 }
-                // Dust on the band's front edge, billowing up and out, thinning (dust may thin; stone may not); again, lower, at the burst.
+                // Dust on the band's front edge, billowing up and out, thinning (dust may thin; stone may not). Lower than the
+                // cutscene's, so it never paints a wall across a first-person view (live film r21).
                 for (int i = 0; i < b.Dust.Count; i++)
                 {
-                    float first = Mathf.Clamp01(age / .9f), second = Mathf.Clamp01((t - BurstAt) / .9f);
-                    bool late = t >= BurstAt;
-                    float du = late ? second : first;
+                    float du = Mathf.Clamp01(age / .9f);
                     float across = (i / 3f * 2f - 1f) * (_halfWidth - 1.2f);
-                    float puff = (late ? Mathf.Lerp(.7f, 1.7f, du) : Mathf.Lerp(1.0f, 2.6f, du)) * (.8f + .1f * i);
+                    float puff = Mathf.Lerp(.8f, 1.9f, du) * (.8f + .1f * i);
                     float z = Mathf.Min(b.End + .1f, _reach - .2f);
                     var dust = b.Dust[i];
                     dust.gameObject.SetActive(du < 1f);
                     dust.localPosition = new Vector3(across, puff * .5f + du * .4f, z);
                     dust.localRotation = Quaternion.Euler(90f, 0f, (i - 1.5f) * 9f);
                     dust.localScale = new Vector3(puff * 1.3f, 1f, puff);
-                    var c = DustColour * (i % 2 == 0 ? .9f : 1f); c.a = .85f * (1f - du * du) * (late ? .7f : 1f);
+                    var c = DustColour * (i % 2 == 0 ? .9f : 1f); c.a = .7f * (1f - du * du);
                     b.DustMaterials[i].color = c; if (b.DustMaterials[i].HasProperty("_BaseColor")) b.DustMaterials[i].SetColor("_BaseColor", c);
                 }
                 // Rocks flung up and forward, landing where they land and staying; they go down with the slabs.
@@ -318,20 +298,21 @@ namespace TumbangPreso.Visual
             }
         }
 
-        private void Quake()
+        private void Quake(int band)
         {
             var cam = Camera.main;
             if (cam == null) return;
             var rig = cam.GetComponent<CameraRig>();
-            Vector3 centre = transform.TransformPoint(new Vector3(0f, 0f, _reach * .5f));
+            var b = _bands[band];
+            Vector3 centre = transform.TransformPoint(new Vector3(0f, 0f, (b.Start + b.End) * .5f));
             float distance = Vector3.Distance(new Vector3(cam.transform.position.x, 0f, cam.transform.position.z), new Vector3(centre.x, 0f, centre.z));
-            float falloff = Mathf.Lerp(1f, .35f, Mathf.Clamp01(distance / 18f));
-            if (rig != null) { rig.Shake(.36f * falloff, .3f); rig.BeginGroundRumble(.6f * falloff); }
+            float falloff = Mathf.Lerp(1f, .35f, Mathf.Clamp01(distance / 18f)) * (band == GeoRules.DriftBlasts - 1 ? 1.25f : 1f);
+            if (rig != null) { rig.Shake(.32f * falloff, .28f); rig.BeginGroundRumble(.55f * falloff); }
             if (Settings.SettingsStore.Current.ReducedEffects) return;
             // A few grains through this viewer's own view, from above.
             var ahead = cam.transform.position + cam.transform.forward * 1.6f + Vector3.up * 1.1f;
-            DanteBoulderGrit.Drop(ahead - cam.transform.right * .4f, false);
-            DanteBoulderGrit.Drop(ahead + cam.transform.right * .45f + cam.transform.forward * .4f, false);
+            DanteBoulderGrit.Drop(ahead + cam.transform.right * (-.5f + .3f * (band % 3)), false);
+            DanteBoulderGrit.Drop(ahead + cam.transform.right * (.45f - .2f * (band % 2)) + cam.transform.forward * .4f, false);
         }
 
         /// <summary>The lane's stone, as drawn, in world space (tests: it covers the hit area and never strays out of it).</summary>

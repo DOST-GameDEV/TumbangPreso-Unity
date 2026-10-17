@@ -387,7 +387,8 @@ namespace TumbangPreso.Tests
             //165 replaces Nemu's KURO! self speed with DEAD WEIGHT, a slow on rivals near her ghosts (no wire change; the rules differ).
             //166 makes Concussed 5 s, the Wiki's number (no wire change; the rules differ).
             //167 resolves CONTINENTAL DRIFT at the cutscene's cut: the lane throws everyone, Concussed on landing (no wire change).
-            Assert.AreEqual(167, NetSession.ProtocolVersion,
+            //168 makes CONTINENTAL DRIFT's cascade play's again, band by band, each band throwing (no wire change).
+            Assert.AreEqual(168, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

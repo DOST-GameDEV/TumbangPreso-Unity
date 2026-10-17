@@ -574,33 +574,36 @@ def _dante(held):
     strike the live fissure continues. Every hold trembles slightly: effort, not stillness.
     Signs measured on the sheets: +twist brings an arm inward, +torso yaw turns to his right.
     """
-    p = Performance("dante-held" if held else "dante", 7.0)
+    p = Performance("dante-held" if held else "dante", 3.9)
     return _dante_drift(p, held)
 
 
 def _dante_drift(p, held):
     """
-    CONTINENTAL DRIFT, 7.0 s: THE LEAP. The owner, 2026-10-17: *"dannte's entire ult is js him hitting the ground annd 4
-    seconds of eart moving towards the pppl"*, *"EVERYONE isnt always gonnna be in the same place"*; his picks: "The leap",
-    "Fast cascade, per-enemy cuts". And *"i js want actual game to match it"*, *"dapat cutscene transitions into game well,
-    hindi na dapat uulit"*: the bands are play's own build (`DanteDriftLive`) on the real lane, and play continues from the
-    cut with the enemies in the air; nothing erupts twice.
-    Beats (the stage, `HeroIntroductionScene.Dante.cs`, reads these same times from `DanteDriftLive`):
-      0.00 THE CROUCH     he sinks, stone packing onto his fists until they are boulders
-      0.70 THE LEAP       he jumps high against the sky, turns fists down
-      1.85 THE SLAM       he lands fists first
-      2.25 THE CASCADE    five bands erupt down the real lane, 0.3 s apart (play's pace)
-      3.75 THE GRIP       a cut to each enemy where they really stand as the stone closes over their feet
-      6.55 THE BURST      the whole lane throws them; at the cut (7.0) they are in the air, and play lands them
-    Every shot is on HIS RIGHT side of the line (+x) unless an enemy stands at the lane's right edge. The LAST pose is
-    `stamp` (the live cast clip continues from it).
+    CONTINENTAL DRIFT, 3.9 s: THE CHARGE-UP. The owner on v5: *"where does the rock hands come from , he js has them"*, then
+    *"after nna malaunch ung ult, end nna dapat cutscene tapos ppl see the rock going towards them and maknoknnock away sila and
+    concuss"*, *"so focus on directing his charge up and vfx related to it brahh"*. The cutscene is him gathering the earth and
+    it ends as he launches it; the cascade is play's (`DanteDriftLive`).
+    Beats (the stage, `HeroIntroductionScene.Dante.cs`, reads these same times):
+      0.30 THE PLANT          both fists driven into the court
+      0.35 THE CRACKS         molten cracks spider out from his fists
+      0.58 THE EARTH ANSWERS  three waves of stone tear up out of the cracks and land on his fists (0.58, 0.88, 1.18)
+      1.65 THE RISE           he stands, boulder fists overhead
+      2.09 THE LEAP           up against the sky, fists turned down
+      3.25 THE SLAM           he lands fists first; the crack races off down the lane and play takes over
+    Every shot is on HIS RIGHT side of the line (+x). The LAST pose is `stamp` (the live cast clip continues from it).
     """
     shoe = (20, 42, -8)
     stand = Pose(torso=(-2, 0, 0), head=(-6, 0, 0), legs=((4, 14), (-4, 14)), left=(18, 30, 0), right=shoe if held else (18, 30, 0))
-    # THE CROUCH: sunk low, the boulder fists drawn back at his hips, chin down, eyes up.
+    # THE PLANT: down low, both fists driven into the court in front of him, head down.
+    plant = Pose(torso=(44, 0, 0), head=(-20, 0, 0), left=(86, 8, 20), right=shoe if held else (86, 8, 20), legs=((52, 88), (40, 80)))
+    plant_shake = plant.but(torso=(46, 0, 1.5))
+    # Drawing the boulder fists up out of the court to his hips as the last stone lands.
     crouch = Pose(torso=(26, 0, 0), head=(-18, 0, 0), left=(48, 24, 26), right=shoe if held else (48, 24, 26), legs=((50, 84), (44, 80)))
-    crouch_shake = crouch.but(torso=(27, 0, 1.5))
-    # THE LEAP: stretched up off the court, fists overhead; tucked at the top; turned fists down for the landing.
+    # THE RISE: standing, chest open, the boulder fists straight up over his head.
+    raised = Pose(torso=(-12, 0, 0), head=(-16, 0, 0), left=(168, 12, 18), right=shoe if held else (168, 12, -18), legs=((10, 14), (-10, 14)))
+    raised_shake = raised.but(torso=(-13, 0, 1.5), left=(170, 12, 18))
+    # THE LEAP: stretched up off the court; tucked at the top; turned fists down for the landing.
     launch = Pose(torso=(-10, 0, 0), head=(-16, 0, 0), left=(170, 10, 14), right=shoe if held else (170, 10, -14), legs=((-6, 6), (-8, 8)))
     tuck = Pose(torso=(8, 0, 0), head=(-12, 0, 0), left=(160, 12, 20), right=shoe if held else (160, 12, -20), legs=((44, 70), (30, 58)))
     dive = Pose(torso=(34, 0, 0), head=(-22, 0, 0), left=(120, 8, 26), right=(30, 42, -8) if held else (120, 8, 26), legs=((-8, 20), (-12, 26)))
@@ -610,36 +613,38 @@ def _dante_drift(p, held):
     stamp_shake = stamp.but(torso=(30, -10, 1.5))
 
     p.key(0, stand)
-    p.key(.12, crouch)
-    p.key(.30, crouch_shake).key(.40, crouch).key(.50, crouch_shake).key(.60, crouch)
-    p.key(.74, launch, punch=True)
-    p.key(1.05, tuck)
-    p.key(1.40, tuck)
-    p.key(1.66, dive)
-    p.key(1.85, stamp, punch=True)
-    # He holds the slam, driving the cascade: a jolt through him as each band goes, and the burst.
-    for at in (2.25, 2.55, 2.85, 3.15, 3.45, 6.55):
-        p.key(at, stamp_shake, punch=True).key(at + .12, stamp)
-    p.hold(6.67, 7.0, stamp)
+    p.key(.16, crouch)
+    p.key(.30, plant, punch=True)
+    # Each wave of stone landing on his fists jolts through him.
+    for at in (.84, 1.14, 1.44):
+        p.key(at, plant_shake, punch=True).key(at + .1, plant)
+    p.key(1.56, crouch)
+    p.key(1.80, raised)
+    p.key(1.88, raised_shake).key(1.94, raised)
+    p.key(2.02, crouch)
+    p.key(2.11, launch, punch=True)
+    p.key(2.40, tuck)
+    p.key(2.76, tuck)
+    p.key(3.04, dive)
+    p.key(3.25, stamp, punch=True)
+    p.key(3.40, stamp_shake, punch=True).key(3.52, stamp)
+    p.hold(3.52, 3.9, stamp)
 
-    p.rise(0, 0).rise(.12, -.18).rise(.62, -.22).rise(.72, 0).rise(.88, 1.7).rise(1.1, 2.9).rise(1.3, 3.3).rise(1.45, 3.25)
-    p.rise(1.62, 2.4).rise(1.76, 1.0).rise(1.85, -.16).rise(7.0, -.16)
+    p.rise(0, 0).rise(.30, -.24).rise(1.50, -.24).rise(1.80, 0).rise(2.02, -.2).rise(2.11, 0).rise(2.27, 1.7).rise(2.47, 2.9)
+    p.rise(2.67, 3.3).rise(2.82, 3.25).rise(3.02, 2.4).rise(3.16, 1.0).rise(3.25, -.16).rise(3.9, -.16)
 
-    # The stage frames every shot from the real bodies and the real enemies (`HeroIntroductionScene.DanteFrame.cs`); these
-    # are the shots' sides and moves.
-    # 0 THE CROUCH: front three-quarter on his right, low, a slow push in.
-    p.shot(0, .70, (2.3, .7, 2.4), (0, .9, 0), 42, eye_to=(1.9, .7, 2.0), look_to=(0, .9, 0))
-    # 1 THE LEAP: low on the court, looking up at him against the sky.
-    p.shot(.70, 1.85, (3.2, .35, 3.0), (0, 3.0, 0), 50, fov_to=54)
-    # 2 THE SLAM: close and low on his fists as they land.
-    p.shot(1.85, 2.25, (1.7, .45, 1.4), (0, .35, .6), 48)
-    # 3 THE CASCADE: high over his right shoulder, riding forward behind the front.
-    p.shot(2.25, 3.75, (1.8, 3.2, -3.2), (0, .3, 6.0), 56, eye_to=(2.6, 4.6, 2.0), look_to=(0, .3, 10.0), fov_to=60)
-    # 4 THE GRIP: a cut to each enemy where they stand (the stage cuts between them inside this shot).
-    p.shot(3.75, 6.40, (2.9, 1.25, 7.0), (0, .6, 8.3), 42)
-    # 5 THE BURST: wide on every caught enemy, tipping up with them as they are thrown.
-    p.shot(6.40, 7.0, (6.0, 3.0, 4.0), (0, 1.0, 8.6), 52, look_to=(0, 1.7, 8.6))
-    p.locked((3.2, 1.9, 8.5), (0, 1.8, 1.0), 56)
+    # The stage frames every shot from his real body (`HeroIntroductionScene.DanteFrame.cs`); these are the shots' sides and moves.
+    # 0 THE PLANT: low and close at his right.
+    p.shot(0, .55, (1.9, .55, 1.9), (0, .5, .45), 46)
+    # 1 THE EARTH ANSWERS: low and wide in front, arcing round from his right.
+    p.shot(.55, 1.65, (3.1, .9, 2.8), (0, .5, .3), 52, eye_to=(.8, .6, 3.3), look_to=(0, .7, .3))
+    # 2 THE RISE: a low hero angle, looking up at the boulder fists.
+    p.shot(1.65, 2.09, (1.3, .3, 2.4), (0, 2.2, 0), 46)
+    # 3 THE LEAP: low on the court, looking up at him against the sky.
+    p.shot(2.09, 3.25, (3.2, .35, 3.0), (0, 3.0, 0), 50, fov_to=54)
+    # 4 THE SLAM: close and low on the fists, easing back to see the crack leave down the lane.
+    p.shot(3.25, 3.9, (1.9, .55, 2.2), (0, .3, 1.2), 48, eye_to=(2.4, 1.3, .1), look_to=(0, .2, 3.3))
+    p.locked((3.2, 1.9, 4.5), (0, 1.2, .5), 52)
     return p
 
 

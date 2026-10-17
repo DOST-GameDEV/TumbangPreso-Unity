@@ -189,9 +189,9 @@ namespace TumbangPreso.Abilities
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
             public Earthquake()
                 : base("dante_ultimate", "CONTINENTAL DRIFT",
-                       "He slams the court and five bands of earth heave down the lane, throwing everyone on it. They land Concussed for 5 s.",
+                       "He slams the court and five bands of earth erupt down the lane, knocking away everyone they reach. They land Concussed for 5 s.",
                        0.0f, 0.0f, AbilityGlyph.DanteFissure,
-                       summary: "Throws everyone in the lane ahead; they land Concussed.",
+                       summary: "Bands of earth knock away everyone ahead; they land Concussed.",
                        castAction: "hero-dante-fissure", viewmodelAction: "fissure-slam",
                        castCue: "sfx_cast_dante_earthquake")
             {
@@ -200,8 +200,8 @@ namespace TumbangPreso.Abilities
                 SupportsPendingSnapshot = true;
             }
 
-            // The cutscene shows the lane erupt and throw them; play takes over on the cut with them in the air (owner,
-            // 2026-10-17: "if natulak na odi when they get in the game theyre js flying"), so no wind-up after it.
+            // The cutscene is his charge-up and ends on the slam; the cascade leaves his fists on the cut (owner, 2026-10-17:
+            // "after nna malaunch ung ult, end nna dapat cutscene"), so no wind-up after it.
             protected override bool IntroductionIsTheWindup => true;
 
             protected override void OnActivate(AbilityContext ctx)

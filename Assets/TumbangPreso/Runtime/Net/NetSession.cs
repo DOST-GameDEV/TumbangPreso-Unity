@@ -630,7 +630,10 @@ namespace TumbangPreso.Net
         // 167 (2026-10-17): CONTINENTAL DRIFT resolves at the cutscene's cut, all five bands at once: everyone in the lane is
         // thrown down it (a carry) and Concussed as they land 0.6 s later; it no longer erupts band by band after the cutscene.
         // A 166 host would resolve the bands 0.3 s apart and throw nobody.
-        public const int ProtocolVersion = 167;
+        // 168 (2026-10-17): CONTINENTAL DRIFT's cutscene ends on the slam and the cascade is play's: five bands 0.3 s apart from
+        // the cut, each throwing the players in it down the lane, Concussed as they land. A 167 host would throw the whole lane
+        // at once.
+        public const int ProtocolVersion = 168;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
