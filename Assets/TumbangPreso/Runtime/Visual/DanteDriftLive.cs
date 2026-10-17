@@ -19,9 +19,12 @@ namespace TumbangPreso.Visual
     /// The lane is always the live lane (`DanteDriftWave.Lane`: from his feet, the court's full width, five bands of reach / 5),
     /// so the cutscene's last frame is the frame play opens on.
     ///
-    /// THE TIMELINE (scene seconds, read by the cutscene's stage, shots and body keys):
-    ///   1.38 the slam; the fuse runs down the lane
-    ///   1.90 + 0.80 k  band k heaves: a row of six basalt slabs, molten light in the gaps, dust and rocks thrown
+    /// THE TIMELINE (scene seconds, read by the cutscene's stage, shots and body keys; owner, 2026-10-17: "The leap",
+    /// "Fast cascade, per-enemy cuts"):
+    ///   0.00 he crouches, stone packing onto his fists; 0.70 he leaps
+    ///   1.85 THE SLAM   he lands fists first; the fuse runs down the lane
+    ///   2.25 + 0.30 k   band k heaves (play's own pace): a row of basalt slabs, molten light in the gaps, dust and rocks thrown
+    ///   3.75 the stone grips each enemy's feet where they stand (the cutscene's cuts, `HeroIntroductionScene.DanteTake.cs`)
     ///   6.55 THE BURST  the whole lane heaves once more and throws everyone on it (play's launch, `DanteDriftWave`)
     ///   7.00 the cut: they are in the air; play lands them, Concussed
     /// Nothing here runs on `Update`; it never consumes gameplay random state; the hottest colour is (1, .62, .18).
@@ -30,14 +33,17 @@ namespace TumbangPreso.Visual
     {
         public float LifeSeconds => GeoRules.DriftSeconds;
 
-        public const float SlamAt = 1.38f, FirstBand = 1.90f, BandGap = .80f, BurstAt = 6.55f, SceneEnd = 7.0f;
+        public const float LeapAt = .70f, SlamAt = 1.85f, FirstBand = 2.25f, BandGap = .30f, GripAt = 3.75f, BurstAt = 6.55f, SceneEnd = 7.0f;
         public static float BandAt(int k) => FirstBand + BandGap * k;
         // Play's end: the rubble holds, then sinks in two crumbling steps, gone before the wave's own end.
         private const float HoldUntil = SceneEnd + 1.2f;
         private static float GoneAt => SceneEnd + GeoRules.DriftSeconds - .15f;
 
-        // Each band's slabs across the lane: (across share -1 to 1, width share of a sixth, depth share, height m, tilt x, tilt z,
-        // delay s, seed). Typed per band, no two bands alike. The cutscene's table, the only one.
+        // Each band's slabs across the lane: (across share -1 to 1, width share of a column, depth share, height m, tilt x, tilt z,
+        // delay s, seed). Typed per band, no two bands alike. The cutscene's table, the only one. A lane wider than the cutscene's
+        // first one (9 m) gets more columns of the same size, the table repeated with new seeds (film r30: six columns across the
+        // court's 17 m made 2.7 m plates that read as walls).
+        private const float ColumnWidth = 1.5f;
         private static readonly (float across, float width, float depth, float height, float tiltX, float tiltZ, float delay, int seed)[][] SlabRows =
         {
             new[] { (-.86f, .95f, .82f, .62f, -9f,  6f, .03f,  3), (-.52f, 1.05f, .90f, .78f, -12f, -4f, .00f,  5), (-.17f, .98f, .86f, .70f, -8f,  3f, .02f,  7),
@@ -71,7 +77,8 @@ namespace TumbangPreso.Visual
         {
             public Transform Root;
             public float Start, End;                     // metres along the lane, as drawn (the first starts ahead of his fists)
-            public readonly List<Transform> Slabs = new List<Transform>(6), Rocks = new List<Transform>(5), Dust = new List<Transform>(4);
+            public readonly List<int> Rows = new List<int>(12);   // each slab's row in its band's table
+            public readonly List<Transform> Slabs = new List<Transform>(12), Rocks = new List<Transform>(5), Dust = new List<Transform>(4);
             public readonly List<Material> DustMaterials = new List<Material>(4);
             public Glow Light;
         }
@@ -108,6 +115,7 @@ namespace TumbangPreso.Visual
             return live;
         }
 
+        private int Columns => Mathf.Max(6, Mathf.RoundToInt(_halfWidth * 2f / ColumnWidth));
         public float HalfWidth => _halfWidth;
         public float Reach => _reach;
         public float BandDepth => _depth;
@@ -138,8 +146,13 @@ namespace TumbangPreso.Visual
                 b.Root.SetParent(transform, false);
                 // The molten light under the band, seen in the gaps as its slabs heave.
                 b.Light = AddGlow(b.Root, "DriftBandGlow" + k, MoltenCore, .8f, .7f);
-                foreach (var s in SlabRows[k])
-                    b.Slabs.Add(Stone(b.Root, "DriftSlab" + k + "_" + s.seed, VfxShapes.Prism(4, 1f, .84f, .16f, .785f, s.seed), Basalt[(k + s.seed) % 3]));
+                for (int c = 0; c < Columns; c++)
+                {
+                    var s = SlabRows[k][c % 6];
+                    int seed = s.seed + 131 * (c / 6);
+                    b.Rows.Add(c % 6);
+                    b.Slabs.Add(Stone(b.Root, "DriftSlab" + k + "_" + seed, VfxShapes.Prism(4, 1f, .84f, .16f, .785f, seed), Basalt[(k + seed) % 3]));
+                }
                 foreach (var r in RockRows)
                     b.Rocks.Add(Stone(b.Root, "DriftRock" + k + "_" + r.seed, VfxShapes.Prism(5, 1f, .7f, .3f, 0f, r.seed + k * 31), Basalt[(k + r.seed) % 3]));
                 for (int i = 0; i < 4; i++)
@@ -214,7 +227,8 @@ namespace TumbangPreso.Visual
         /// <summary>Pose every piece at scene time t (the cutscene's clock; play passes SceneEnd + its age).</summary>
         public void Pose(float t)
         {
-            float sixth = _halfWidth * 2f / 6f;
+            int columns = Columns;
+            float sixth = _halfWidth * 2f / columns;
             // Play's end: two crumbling steps down into the court.
             float sink = Mathf.Clamp01((t - HoldUntil) / (GoneAt - HoldUntil));
             float stepDown = sink < .5f ? Ease(0f, .5f, sink) * .45f : .45f + Ease(.5f, 1f, sink) * .55f;
@@ -242,9 +256,11 @@ namespace TumbangPreso.Visual
                 // A wide lane makes deep slabs: their tilt is held to the cutscene's edge rise, so none stands up as a wall.
                 float tiltHold = Mathf.Min(1f, 1.4f / Mathf.Max(.1f, depth * .88f));
                 var rows = SlabRows[k];
-                for (int i = 0; i < rows.Length; i++)
+                for (int i = 0; i < b.Slabs.Count; i++)
                 {
-                    var s = rows[i];
+                    var s = rows[b.Rows[i]];
+                    // Evenly across the lane, each column nudged by its row's own offset within a sixth.
+                    float across = ((i + .5f) / columns * 2f - 1f) + (s.across - ((b.Rows[i] + .5f) / 6f * 2f - 1f)) / columns;
                     float sa = age - s.delay, u = Mathf.Clamp01(sa / .1f);
                     // A jolt, a small overshoot, a hold, then it settles back to rubble so the ridge travels down the lane.
                     float up = sa < 0f ? 0f : u < 1f ? u * u : 1f + .12f * Mathf.Max(0f, 1f - (sa - .1f) / .12f);
@@ -261,7 +277,9 @@ namespace TumbangPreso.Visual
                     // (The last band's slabs tip toward the far edge: they keep their height's lean clear of it.)
                     float far = b.End - d * .5f - (k == _bands.Count - 1 ? h : 0f);
                     float z = Mathf.Clamp(mid + jitter, b.Start + d * .5f, Mathf.Max(b.Start + d * .5f, far));
-                    slab.localPosition = new Vector3(s.across * (_halfWidth - sixth * .5f), -h * .5f + h * .8f * lift - h * stepDown, z);
+                    // The edge columns keep their width and roll inside the lane's sides.
+                    float x = Mathf.Clamp(across * _halfWidth, -_halfWidth + w * .5f + h * .3f, _halfWidth - w * .5f - h * .3f);
+                    slab.localPosition = new Vector3(x, -h * .5f + h * .8f * lift - h * stepDown, z);
                     float tip = Mathf.Min(1f, up) * tiltHold * (1f + .25f * Mathf.Clamp01(burst / .38f));
                     slab.localRotation = Quaternion.Euler(s.tiltX * 1.6f * tip, (s.seed % 7 - 3) * 5f, s.tiltZ * 1.8f * tip);
                     slab.localScale = new Vector3(w, h, d) * crack;

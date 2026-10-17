@@ -9,14 +9,17 @@ namespace TumbangPreso.Visual
         // =========================================================================================
         // BASILIO, CONTINENTAL DRIFT: THE CASCADE. ONE idea anyone gets:
         //
-        //      HE SLAMS THE GROUND AND THE EARTH RISES AS A WAVE AT HIS ENEMIES, AND THROWS THEM.
+        //      HE LEAPS, COMES DOWN FISTS FIRST, AND THE EARTH RISES AS A WAVE AT HIS ENEMIES AND THROWS THEM.
         //
-        //   0.00 THE WIND-UP    planted, fists up; stone packs onto them in three steps until they are BOULDERS, molten veins lit
-        //   1.38 THE SLAM       both fists into the court as one: an impact frame, a molten crack racing forward down the lane
-        //   1.90 THE CASCADE    five bands of court erupt one after another down the real lane, 0.8 s apart; each catches
-        //                       whoever stands on it (they stagger as it heaves under them)
-        //   6.55 THE BURST      the whole lane heaves once more and throws everyone on it
+        //   0.00 THE CROUCH     he sinks, stone packing onto his fists in three steps until they are BOULDERS, molten veins lit
+        //   0.70 THE LEAP       he jumps high (a crack and dust where he left), against the sky, and turns fists down
+        //   1.85 THE SLAM       he lands fists first: an impact frame, a molten crack racing forward down the lane
+        //   2.25 THE CASCADE    five bands erupt down the real lane at play's own pace (0.3 s apart)
+        //   3.75 THE GRIP       a cut to each enemy WHERE THEY REALLY STAND as the stone closes over their feet
+        //   6.55 THE BURST      the whole lane heaves once more and throws everyone on it, framed wide to hold them all
         //   7.00 THE CUT        they are in the air; play lands them, Concussed (`DanteDriftWave`)
+        // The owner, 2026-10-17: *"dannte's entire ult is js him hitting the ground annd 4 seconds of eart moving towards the
+        // pppl"*, *"EVERYONE isnt always gonnna be in the same place"*; his picks: "The leap", "Fast cascade, per-enemy cuts".
         //
         // ⚠️ THE CASCADE IS PLAY'S OWN (owner, 2026-10-17: *"i js want actual game to match it"*, *"dapat cutscene transitions into
         // game well, hindi na dapat uulit"*). The bands are `DanteDriftLive`, built here on the live lane (`DanteDriftWave.Lane`:
@@ -27,7 +30,8 @@ namespace TumbangPreso.Visual
         // RULES (the method's traps): nothing here runs on `Update`, everything is posed from the scene clock; flat effects sit on
         // the court; light is cut INTO stone, never raised; the hottest colour is (1, .62, .18), never white.
         // =========================================================================================
-        private const float DnSlam = DanteDriftLive.SlamAt, DnFirstBand = DanteDriftLive.FirstBand, DnBurst = DanteDriftLive.BurstAt;
+        private const float DnLeap = DanteDriftLive.LeapAt, DnSlam = DanteDriftLive.SlamAt, DnFirstBand = DanteDriftLive.FirstBand,
+                             DnGrip = DanteDriftLive.GripAt, DnBurst = DanteDriftLive.BurstAt, DnEnd = DanteDriftLive.SceneEnd;
         private static float DnBandAt(int k) => DanteDriftLive.BandAt(k);
 
         // The court's own surface over the stage root (`Slipper.GroundY`): Bayan Plaza's court stands above the root.
@@ -48,7 +52,8 @@ namespace TumbangPreso.Visual
         };
 
         private readonly List<int> _dnGauntlet = new List<int>(8), _dnFistGlow = new List<int>(2);
-        private int _dnSlamStar, _dnSlamRing;
+        private readonly List<int> _dnLift = new List<int>(4);
+        private int _dnSlamStar, _dnSlamRing, _dnLiftStar, _dnLiftRing;
         private Material _dnImpact;
         private Vector3? _dnFistAt;
 
@@ -69,11 +74,22 @@ namespace TumbangPreso.Visual
             if (caught == 0) foreach (var v in _dnVictims) { sum += v.Spot; caught++; }
             if (caught > 0) _dnTargets = sum / caught;
             _dnTargets.z = Mathf.Clamp(_dnTargets.z, 3f, Mathf.Max(3f, _dnReach - 1f));
+            DnPlanGrips();
 
             var basalt = new[] { new Color(.29f, .24f, .2f, 1f), new Color(.34f, .29f, .25f, 1f), new Color(.24f, .2f, .17f, 1f) };
             // A flat hot spot under the fists (a custom mesh would need its own uv: the glow fades by uv, the crest lesson).
             _dnSlamStar = AddGlow("DanteSlamStar", new Color(1f, .45f, .09f), billboard: false, falloff: 1.4f, core: .6f);
             _dnSlamRing = AddGlow("DanteSlamRing", new Color(1f, .5f, .12f), DnRingMesh, billboard: false, band: true, falloff: 1.2f, core: .4f);
+            // THE LEAP: a crack and a ring under his feet where he leaves the court, and dust kicked up round them.
+            _dnLiftStar = AddGlow("DanteLiftStar", new Color(1f, .45f, .09f), billboard: false, falloff: 1.6f, core: .6f);
+            _dnLiftRing = AddGlow("DanteLiftRing", new Color(1f, .5f, .12f), DnRingMesh, billboard: false, band: true, falloff: 1.2f, core: .4f);
+            for (int i = 0; i < 4; i++)
+                _dnLift.Add(Add("DanteLiftDust" + i, VfxShapes.TwoSided(VfxShapes.Splat(9, .48f, 401 + i * 7)), new Color(.5f, .37f, .24f, .72f), .3f, plain: true));
+            // THE GRIP: three stones close over each caught enemy's feet.
+            foreach (var v in _dnVictims)
+                if (v.Caught)
+                    for (int i = 0; i < 3; i++)
+                        _dnGrips.Add(BasilioStone("DanteGrip" + _dnGrips.Count, VfxShapes.Prism(5, 1f, .7f, .3f, 0f, 500 + _dnGrips.Count), basalt[_dnGrips.Count % 3]));
             foreach (var g in DnGauntletRows)
                 _dnGauntlet.Add(BasilioStone("DanteGauntlet" + g.seed, VfxShapes.Prism(5, 1f, .72f, .3f, 0f, g.seed), basalt[g.seed % 3]));
             for (int f = 0; f < 2; f++)
@@ -127,10 +143,11 @@ namespace TumbangPreso.Visual
         private static float DanteKick(float t, float at, float size, float fade)
             => t < at ? 0 : size * Mathf.Clamp01(1 - (t - at) / fade);
 
-        /// <summary>The lens feels it: the slam, each band (harder as they come), the burst.</summary>
+        /// <summary>The lens feels it: the leap, the slam, each band (harder as they come), each grip, the burst.</summary>
         private Vector3 DanteShake(float t)
         {
-            float size = DanteKick(t, DnSlam, .16f, .2f) + DanteKick(t, DnBurst, .15f, .35f);
+            float size = DanteKick(t, DnLeap, .06f, .2f) + DanteKick(t, DnSlam, .18f, .25f) + DanteKick(t, DnBurst, .15f, .35f);
+            for (int i = 0; i < _dnShown.Count; i++) size += DanteKick(t, DnGripAt(i), .05f, .2f);
             for (int k = 0; k < 5; k++) size += DanteKick(t, DnBandAt(k), .03f + .012f * k, .22f);
             return new Vector3(Mathf.Sin(t * 71f), Mathf.Sin(t * 93f + 1.3f), 0) * size;
         }
@@ -177,11 +194,11 @@ namespace TumbangPreso.Visual
                 _dnFistAt = new Vector3(mid.x, DnFloat + .02f, Mathf.Max(.4f, mid.z));
             }
 
-            // THE WIND-UP: stone packs onto his fists in three steps as they rise; molten veins lit; it stays on them.
+            // THE CROUCH: stone packs onto his fists in three steps as he sinks; molten veins lit; it stays on them.
             for (int i = 0; i < DnGauntletRows.Length; i++)
             {
                 var g = DnGauntletRows[i];
-                float step = .35f + g.step * .22f;
+                float step = .06f + g.step * .17f;
                 float grow = Ease(step, step + .08f, t);
                 var at = DnFistPoint(g.fist) + g.offset * 2.2f;
                 Place(_dnGauntlet[i], at, Vector3.one * g.size * 2.3f * grow * (1f + .15f * Flash(t, step + .08f, .06f)),
@@ -189,8 +206,25 @@ namespace TumbangPreso.Visual
             }
             for (int f = 0; f < 2; f++)
             {
-                float veins = Ease(.4f, 1.0f, t) * (1f - .5f * Ease(DnSlam + .2f, DnSlam + .8f, t));
+                float veins = Ease(.1f, .6f, t) * (1f - .5f * Ease(DnSlam + .2f, DnSlam + .8f, t));
                 PlaceGlow(_dnFistGlow[f], DnFistPoint(f), Vector3.one * 1.3f, Quaternion.identity, veins * (1f + .2f * Mathf.Sin(t * 24f + f)));
+            }
+
+            // THE LEAP: where he left the court.
+            {
+                float age = t - DnLeap;
+                PlaceGlow(_dnLiftStar, new Vector3(0f, DnFloat + .02f, 0f), Vector3.one * Mathf.Lerp(.5f, 1.3f, Mathf.Clamp01(age / .08f)),
+                          Quaternion.Euler(90f, 0f, 0f), age < 0f ? 0f : 1.1f * (1f - Mathf.Clamp01(age / .9f)));
+                float r = Mathf.Lerp(.3f, 2.4f, Mathf.Clamp01(age / .3f));
+                PlaceGlow(_dnLiftRing, new Vector3(0f, DnFloat + .03f, 0f), new Vector3(r, 1f, r), Quaternion.identity, age < 0f ? 0f : 1f * (1f - Mathf.Clamp01(age / .35f)));
+                for (int i = 0; i < _dnLift.Count; i++)
+                {
+                    float du = Mathf.Clamp01(age / .8f), a = i * 1.571f + .4f;
+                    float puff = Mathf.Lerp(.5f, 1.5f, du);
+                    var at = new Vector3(Mathf.Sin(a), 0f, Mathf.Cos(a)) * (.5f + 1.4f * du) + Vector3.up * (DnFloat + puff * .45f);
+                    Place(_dnLift[i], at, age < 0f ? Vector3.zero : new Vector3(puff * 1.2f, 1f, puff), Quaternion.Euler(0f, a * Mathf.Rad2Deg, 0f) * Quaternion.Euler(90f, 0f, 0f),
+                          age < 0f ? 0f : .8f * (1f - du * du));
+                }
             }
 
             // THE SLAM: a crack star and a ring under the fists.

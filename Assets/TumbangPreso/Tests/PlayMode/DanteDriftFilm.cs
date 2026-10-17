@@ -128,7 +128,11 @@ namespace TumbangPreso.PlayTests
             dante.Intent.Clear(); dante.Intent.Parked = false; dante.IsBot = false;
             dante.Intent.AimPoint = origin + Vector3.forward * 8f; dante.Intent.FaceAimPoint = true;
             var others = round.Players.Where(p => p != null && p != dante).ToArray();
-            var spots = new[] { new Vector3(-1.6f, 0f, 4.2f), new Vector3(1.4f, 0f, 6.0f), new Vector3(-.4f, 0f, 8.4f) };
+            // Scattered, never a tidy group (owner, 2026-10-17: "EVERYONE isnt always gonnna be in the same place"): one near on
+            // his left, one mid-lane far to his right, one deep. TUMP_DANTE_FILM_GROUPED=1 keeps the old tight group.
+            var spots = Environment.GetEnvironmentVariable("TUMP_DANTE_FILM_GROUPED") == "1"
+                ? new[] { new Vector3(-1.6f, 0f, 4.2f), new Vector3(1.4f, 0f, 6.0f), new Vector3(-.4f, 0f, 8.4f) }
+                : new[] { new Vector3(-5.2f, 0f, 3.0f), new Vector3(5.0f, 0f, 7.0f), new Vector3(-1.2f, 0f, 11.5f) };
             for (int i = 0; i < others.Length && i < spots.Length; i++)
             {
                 others[i].Teleport(origin + spots[i]);

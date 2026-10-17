@@ -27,6 +27,30 @@ namespace TumbangPreso.Visual
             public AnimationClip Shock;
         }
         private readonly List<DnVictim> _dnVictims = new List<DnVictim>(7);
+        // THE GRIP: the caught enemies the cuts show (up to three, near to far), and when the stone closes on each. The rest
+        // are gripped with the last one, off camera.
+        private readonly List<DnVictim> _dnShown = new List<DnVictim>(3);
+        private readonly List<int> _dnGrips = new List<int>(21);
+        private float _dnGripSlot = 1f;
+        private float DnGripAt(int shown) => DnGrip + .12f + _dnGripSlot * Mathf.Min(shown, Mathf.Max(0, _dnShown.Count - 1));
+
+        private void DnPlanGrips()
+        {
+            var caught = new List<DnVictim>();
+            foreach (var v in _dnVictims) if (v.Caught) caught.Add(v);
+            caught.Sort((a, b) => a.Spot.z.CompareTo(b.Spot.z));
+            // Up to three, spread over the lane: the nearest, the farthest, and the one between.
+            if (caught.Count <= 3) _dnShown.AddRange(caught);
+            else { _dnShown.Add(caught[0]); _dnShown.Add(caught[caught.Count / 2]); _dnShown.Add(caught[caught.Count - 1]); }
+            _dnGripSlot = (DnBurst - .2f - DnGrip) / Mathf.Max(1, _dnShown.Count);
+        }
+
+        /// <summary>When the stone closes on this enemy: on their own cut, or with the last cut if the cuts do not show them.</summary>
+        private float DnGripTime(DnVictim v)
+        {
+            int i = _dnShown.IndexOf(v);
+            return DnGripAt(i >= 0 ? i : _dnShown.Count - 1);
+        }
 
         private void BuildDanteTake()
         {
@@ -91,6 +115,25 @@ namespace TumbangPreso.Visual
                 // Nearer bands going make even the uncaught flinch back a step.
                 float flinch = 0f;
                 for (int k = 0; k < 5; k++) if (k < v.Band) flinch += Ease(DnBandAt(k), DnBandAt(k) + .15f, t) * .05f;
+                // THE GRIP: three stones close over their feet, and crack apart as the burst throws them.
+                if (v.Caught)
+                {
+                    int caughtIndex = 0;
+                    for (int m = 0; m < n; m++) if (_dnVictims[m].Caught) caughtIndex++;
+                    float grip = DnGripTime(v), close = Ease(grip, grip + .14f, t);
+                    float broken = Mathf.Clamp01((t - DnBurst) / .25f);
+                    float crumble = broken < .5f ? 1f - .3f * Ease(0f, .5f, broken) : .7f * (1f - Ease(.5f, 1f, broken));
+                    for (int i = 0; i < 3; i++)
+                    {
+                        int index = caughtIndex * 3 + i;
+                        if (index >= _dnGrips.Count) break;
+                        float a = v.Yaw * Mathf.Deg2Rad + i * 2.094f + .5f;
+                        var foot = v.Spot + new Vector3(Mathf.Sin(a), 0f, Mathf.Cos(a)) * Mathf.Lerp(.55f, .3f, close)
+                                   + Vector3.up * (DnFloat + hop + Mathf.Lerp(-.25f, .14f, close) - .2f * broken);
+                        Place(_dnGrips[index], foot, Vector3.one * .38f * (t < grip ? 0f : 1f) * crumble * (1f + .2f * Flash(t, grip + .14f, .06f)),
+                              Quaternion.Euler(-30f + i * 17f, a * Mathf.Rad2Deg, 20f - i * 11f), 1f);
+                    }
+                }
                 // THE BURST: thrown up and down the lane, away from him; still rising, near the top, at the cut.
                 float ft = v.Caught ? Mathf.Max(0f, t - DnBurst - .03f - v.Phase * .1f) : 0f;
                 float rise = ft <= 0f ? 0f : DnThrowUp * ft - .5f * DnThrowGravity * ft * ft;

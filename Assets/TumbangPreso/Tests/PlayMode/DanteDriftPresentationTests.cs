@@ -59,7 +59,7 @@ namespace TumbangPreso.PlayTests
                 Assert.IsTrue(Band(view.Live.transform,k).gameObject.activeSelf,"Band "+k+" is already broken when play opens: nothing erupts twice.");
             var b=view.Live.StoneBounds();
             Assert.Greater(b.size.x,14f,"The slabs span the lane's full width (the real hit area).");
-            Assert.Less(b.size.x,16.8f);
+            Assert.Less(b.size.x,17.4f,"(Renderer bounds box the turned slabs; the exact stone check is TheCascadeIsDeterministicAndStaysOnItsLane.)");
             Assert.GreaterOrEqual(b.min.z,-.05f);Assert.LessOrEqual(b.max.z,16.5f);
         }
         [Test] public void FiveBandsHaveDistinctAuthoredGeometry()
