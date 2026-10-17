@@ -143,6 +143,10 @@ namespace TumbangPreso.EditorTools
             report.AppendLine($"serialised clips on the roster entry: {supplied.Count}");
 
             string resolved = ResolveThroughGameChain(clipName, supplied, out string[] chain, out int slot);
+            // MOUNTAIN FORM's own set (`CharacterAnimator.ClipVariant`): -mountain photographs `mountain-<name>` where the rig
+            // has one, for a locomotion name (idle, walk, sprint, jump, fall) as well as an action.
+            string mountain = MountainFormReview.On && rosterId == "dante" ? CharacterAnimator.MountainVariant + clipName : null;
+            if (mountain != null && supplied.Any(c => c.name == mountain)) { resolved = mountain; chain = new[] { mountain }; slot = 0; }
             if (resolved == null)
             {
                 report.AppendLine($"FAIL: nothing in the '{clipName}' chain resolves on this rig.");

@@ -47,6 +47,9 @@ namespace TumbangPreso.Visual
             _distance+=travel;
             // One quiet accent per cycle avoids a wall of taps from four runners.
             float stride=swimming ? 2.3f : _animator!=null ? Mathf.Max(.3f,_animator.FootfallCycleMetres) : 1f;
+            // MOUNTAIN FORM stamps on EVERY foot (`CharacterAnimator.ClipVariant`): the stone boots are what he is heard by.
+            bool mountain=!swimming&&_animator!=null&&_animator.ClipVariant==CharacterAnimator.MountainVariant;
+            if(mountain)stride*=.5f;
             if (_distance<stride)return;
             _distance%=stride;_left=!_left;
             // Quiet, short rubber contact. It cannot play from a parked or teleported
@@ -63,9 +66,28 @@ namespace TumbangPreso.Visual
             }
             // Amihan steps light (owner 2026-10-02): her own airy step in place of the rubber slap, on any dry surface.
             if(!swimming&&_animator!=null&&_animator.Style==GaitStyles.Amihan)cue="step_amihan";
+            if(mountain)
+            {
+                // A stone boot on the court: the landing's thud pitched down and loud, the court's grit and dust kicked up under
+                // it, and the ground shaking for a camera near it (the player's own view less, or every step would be a jolt).
+                cue="land";
+                bool sprint=speed>OrdinaryStride(_motor)*1.15f;
+                DanteBoulderGrit.Stomp(contact,sprint?1f:.7f);
+                var cam=Camera.main;var rig=cam!=null?cam.GetComponent<CameraSystem.CameraRig>():null;
+                if(rig!=null)
+                {
+                    float near=1f-Mathf.Clamp01(Vector3.Distance(cam.transform.position,contact)/9f);
+                    float shake=(rig.Following==_motor?.05f:.16f*near)*(sprint?1.3f:1f);
+                    if(shake>.01f)rig.Shake(shake,.12f);
+                }
+                try { GameServices.Audio?.PlayAtVaried(cue,contact,.68f,.78f,sprint?1f:.85f); }
+                finally { Random.state=randomState; }
+                return;
+            }
             try { GameServices.Audio?.PlayAtVaried(cue,contact,.96f,1.04f,swimming?.65f:.9f); }
             finally { Random.state=randomState; } // Cosmetic contacts must not advance the AI's random stream.
         }
+        private static float OrdinaryStride(CharacterMotor motor)=>Core.Stamina.MovementSpeed(motor.IsDefender,false);
         public static bool TryChalkCrossing(Vector3 from,Vector3 to,out Vector3 at)
         {
             float radius=Core.Confinement.Radius,first=2;at=to;

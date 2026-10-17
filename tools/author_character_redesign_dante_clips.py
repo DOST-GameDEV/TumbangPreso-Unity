@@ -307,3 +307,176 @@ def idle():
 
 
 CLIPS = {"idle": idle, "walk": walk, "sprint": sprint, "jump": jump, "fall": fall}
+
+
+# ------------------------------------------------------------------ MOUNTAIN FORM
+#
+# HIS OWN BODY IN THE ARMOUR (owner, 2026-10-18: *"baguhin mo na ren animation niya"*, change his animations too, rather
+# than fitting the suit to the kid's clips). After CONTINENTAL DRIFT he wears `DanteMountainArmour` for 30 s, a bulk suit
+# of basalt with a boulder past each hand. A kid's bounce and folded arms inside that read as the suit floating on him.
+# So these are a HEAVY body's: the boulder arms held wide off the suit (they cannot hang inside it), a wide planted
+# stance, steps that STOMP (no bounce up, a drop and a squash on the contact), the weight rolling over the planted foot,
+# and the head low and forward. `CharacterAnimator.ClipVariant` plays `mountain-<name>` in place of `<name>` while the
+# suit is on; walk and sprint keep the kid's lengths so the gait's cadence calibration is unchanged.
+#
+# ⚠️ NO KNEES. The rig bends at the hip only, so "low" cannot be a crouch: it is the wide splay of the legs (which drops
+# the hips a little; the root is lowered to keep the feet on the court) and the chest leaned over them.
+
+MOUNTAIN_SPLAY = 7.0        # degrees each leg is turned out from straight down: the wide stance
+MOUNTAIN_SINK = -0.0016     # the root lowered by what that splay lifts the feet (a 0.18 m leg at 7 degrees)
+#   the boulder arms, held wide: the upper arm out and down, the forearm forward and out, so the fist boulders sit
+#   beside the hips and clear of the suit's skirt (his LEFT arm; the right is the mirror)
+MOUNTAIN_ARMS = ((0.80, -0.56, 0.10), (0.55, -0.62, 0.56))
+MOUNTAIN_ARMS_UP = ((0.93, 0.26, 0.20), (0.35, 0.90, 0.25))      # flung up and out: a gorilla's leap, not a V
+MOUNTAIN_ARMS_BRACE = ((0.90, -0.10, 0.40), (0.30, -0.55, 0.78))  # out in front of him to meet the court
+
+
+def _mountain_arms(row, pose, swing=0.0):
+    """Both arms posed by where they point, each swung `swing` degrees about his left-right axis (+ back)."""
+    for side, name in ((1, "left"), (-1, "right")):
+        upper, fore = _arm(side, *pose)
+        sw = swing * side
+        row[("arm-" + name, "rotation")] = mul(qx(sw), upper)
+        row[("forearm-" + name, "rotation")] = fore
+
+
+def _mountain_stride(length, leg, arm, bounce, squash, roll, lean, torso_lean, twist, head_down):
+    """THE STOMP: a short heavy stride. The body VAULTS over the planted leg (highest as the legs pass) and DROPS onto the
+    next foot with a squash; the whole body rolls onto the planted side; the arms swing a little, held wide."""
+    out = {}
+    for t in _times(length):
+        phase = 2.0 * math.pi * t / length
+        s = math.sin(phase)
+        sh = _snap(s, 0.6)
+        reach = abs(s)
+        contact = reach ** 10                    # sharp: the foot lands and the body takes it
+        vault = 1.0 - reach ** 1.6               # highest as the legs pass under him
+        row = {
+            ("root", "translation"): (0.0, MOUNTAIN_SINK + bounce * vault, 0.0),
+            ("root", "rotation"): mul(qx(lean), qz(roll * sh)),
+            ("root", "scale"): _squash(1.0 - squash * contact),
+            ("leg-left", "rotation"): mul(qx(-leg * sh), qz(MOUNTAIN_SPLAY)),
+            ("leg-right", "rotation"): mul(qx(leg * sh), qz(-MOUNTAIN_SPLAY)),
+            ("torso", "rotation"): mul(qx(torso_lean + 2.0 * contact), qy(twist * sh)),
+            ("head", "rotation"): mul(qx(head_down - 2.5 * contact), qy(-0.7 * twist * sh)),
+        }
+        _mountain_arms(row, MOUNTAIN_ARMS, swing=arm * sh)
+        for key, value in row.items():
+            out.setdefault(key, []).append((t, value))
+    return out
+
+
+def mountain_walk():
+    return _mountain_stride(0.72, leg=30.0, arm=12.0, bounce=0.005, squash=0.07, roll=4.5, lean=2.0, torso_lean=7.0,
+                            twist=5.0, head_down=4.0)
+
+
+def mountain_sprint():
+    return _mountain_stride(0.48, leg=42.0, arm=22.0, bounce=0.009, squash=0.09, roll=3.5, lean=10.0, torso_lean=13.0,
+                            twist=8.0, head_down=-2.0)
+
+
+MOUNTAIN_IDLE_LENGTH = 3.2
+
+
+def mountain_idle():
+    """A mountain at rest: wide and planted, the shoulders heaving on a slow heavy breath, the weight shifting from foot to
+    foot once a loop, the fists flexing out and the head turning over the court."""
+    out = {}
+    for t in _times(MOUNTAIN_IDLE_LENGTH):
+        u = t / MOUNTAIN_IDLE_LENGTH
+        breath = math.sin(2.0 * math.pi * u * 2.0)          # two deep breaths a loop
+        shift = math.sin(2.0 * math.pi * u)                  # the weight over one foot, then the other
+        flex = _window(t, 1.1, 1.3, 2.0, 0.2)                # the fists pushed out once, a show of the boulders
+        look = 14.0 * math.sin(2.0 * math.pi * u + 0.6)
+        row = {
+            ("root", "translation"): (0.0, MOUNTAIN_SINK, 0.0),
+            ("root", "scale"): _squash(1.0 + 0.022 * breath),
+            ("root", "rotation"): qz(2.2 * shift),
+            ("leg-left", "rotation"): qz(MOUNTAIN_SPLAY - 2.2 * shift),
+            ("leg-right", "rotation"): qz(-MOUNTAIN_SPLAY - 2.2 * shift),
+            ("torso", "rotation"): mul(qx(6.0 - 2.5 * breath), qz(-1.4 * shift)),
+            ("head", "rotation"): mul(mul(qy(look), qx(5.0 + 1.5 * breath)), qz(-0.8 * shift)),
+        }
+        upper, fore = MOUNTAIN_ARMS
+        out_upper = (upper[0] + 0.12 * flex, upper[1] + 0.10 * flex + 0.03 * breath, upper[2])
+        _mountain_arms(row, (out_upper, fore), swing=0.0)
+        for key, value in row.items():
+            out.setdefault(key, []).append((t, value))
+    return out
+
+
+def mountain_jump():
+    """The heavy leap: he does not spring, he HEAVES. Squashed hard at take-off, then the boulder arms flung up and out
+    and the legs drawn up apart under the suit."""
+    out = {}
+    for t in _times(0.50):
+        heave = 1.0 - math.exp(-t / 0.08)
+        ring = math.cos(2.0 * math.pi * t / 0.40) * math.exp(-t / 0.10)
+        row = {
+            ("root", "translation"): (0.0, MOUNTAIN_SINK, 0.0),
+            ("root", "scale"): _squash(1.0 + 0.14 * ring),
+            ("root", "rotation"): qx(4.0 * heave),
+            ("leg-left", "rotation"): mul(qx(8.0 - 26.0 * heave), qz(MOUNTAIN_SPLAY + 6.0 * heave)),
+            ("leg-right", "rotation"): mul(qx(8.0 - 26.0 * heave), qz(-MOUNTAIN_SPLAY - 6.0 * heave)),
+            ("torso", "rotation"): qx(-10.0 * math.exp(-t / 0.10) + 8.0 * heave),
+            ("head", "rotation"): qx(-6.0 * heave),
+        }
+        q = []
+        for k in range(2):
+            a, b = MOUNTAIN_ARMS[k], MOUNTAIN_ARMS_UP[k]
+            w = _ease(t / 0.16)
+            q.append(tuple(a[i] + (b[i] - a[i]) * w for i in range(3)))
+        _mountain_arms(row, (q[0], q[1]))
+        for key, value in row.items():
+            out.setdefault(key, []).append((t, value))
+    return out
+
+
+def mountain_fall():
+    """Coming down to break the court: arms out in front and wide to meet it, legs apart and reaching, eyes down."""
+    out = {}
+    length = 0.40
+    for t in _times(length):
+        phase = 2.0 * math.pi * t / length
+        s = math.sin(phase)
+        row = {
+            ("root", "translation"): (0.0, MOUNTAIN_SINK, 0.0),
+            ("root", "scale"): _squash(1.04 + 0.012 * math.sin(2.0 * phase)),
+            ("leg-left", "rotation"): mul(qx(-10.0 + 6.0 * s), qz(MOUNTAIN_SPLAY + 5.0)),
+            ("leg-right", "rotation"): mul(qx(-10.0 - 6.0 * s), qz(-MOUNTAIN_SPLAY - 5.0)),
+            ("torso", "rotation"): qx(10.0),
+            ("head", "rotation"): qx(12.0),
+        }
+        _mountain_arms(row, MOUNTAIN_ARMS_BRACE, swing=3.0 * s)
+        for key, value in row.items():
+            out.setdefault(key, []).append((t, value))
+    return out
+
+
+def mountain_throw():
+    """THE THROW'S LEGS (0.54 s, `ThrowGesture.ReleaseSeconds`). The arms, chest and head of a throw are posed by
+    `CharacterAnimator.ThrowBody` over whatever plays; this is the body under it: the front (left) foot STAMPS forward at
+    the release, the root drops and squashes onto it and the back leg drives, then he settles back into the stance."""
+    out = {}
+    length = 0.54
+    for t in _times(length):
+        stamp = _ease(t / 0.07) * (1.0 - _ease((t - 0.30) / 0.24))
+        hit = math.exp(-((t - 0.08) / 0.035) ** 2)
+        row = {
+            ("root", "translation"): (0.0, MOUNTAIN_SINK, 0.0),
+            ("root", "scale"): _squash(1.0 - 0.10 * hit),
+            ("root", "rotation"): qx(7.0 * stamp + 3.0 * hit),
+            ("leg-left", "rotation"): mul(qx(-26.0 * stamp), qz(MOUNTAIN_SPLAY + 3.0 * stamp)),
+            ("leg-right", "rotation"): mul(qx(18.0 * stamp), qz(-MOUNTAIN_SPLAY)),
+            ("torso", "rotation"): qx(6.0 + 6.0 * stamp),
+            ("head", "rotation"): qx(3.0 - 4.0 * hit),
+        }
+        _mountain_arms(row, MOUNTAIN_ARMS, swing=-10.0 * stamp)
+        for key, value in row.items():
+            out.setdefault(key, []).append((t, value))
+    return out
+
+
+MOUNTAIN_CLIPS = {"mountain-idle": mountain_idle, "mountain-walk": mountain_walk, "mountain-sprint": mountain_sprint,
+                  "mountain-jump": mountain_jump, "mountain-fall": mountain_fall, "mountain-throw": mountain_throw}
