@@ -6,346 +6,328 @@ using UnityEngine;
 namespace TumbangPreso.Visual
 {
     /// <summary>
-    /// CONTINENTAL DRIFT in live play, after the hand-back (`docs/reports/dante-presentation-2026-10-16/plan.md` section 6). This is
-    /// what most players actually see, from their own first person, so the scale must read map-wide. It adds to the fault ink
-    /// (`DanteDriftFault`), posed from the wave's accepted age like it (`StepTo`), so a rejoiner and a replay draw the same frame:
-    ///  * THE FUSE: a molten seam races forward from him along the cascade's line, far faster than the blasts, and leaves a
-    ///    glowing crack-star at the middle of every band before that band goes, so a victim can read it and step out.
-    ///  * FIVE BLASTS, one per band every 0.30 s: the cutscene's row of six basalt slabs heaves up across the band, molten light under it,
-    ///    five big chunks thrown (typed per band, no two alike), dust clumps at its front, and molten cracks that open exactly
-    ///    along the band's real hit rectangle (full width x band depth): the picture never lies about the hit area. The rubble
-    ///    holds, then sinks back into the court in two crumbling steps before the wave's tail ends.
-    ///  * MAP-WIDE: every viewer's own camera shakes by its distance to the blast, the ground rumbles, and a few grains fall
-    ///    through their own view from above.
-    ///  * THE SCAR: the fault line stays after the wave, cools orange, dull red, grey, then crumbles flat (`DanteDriftScar`).
+    /// CONTINENTAL DRIFT's cascade: ONE build, posed from ONE clock, drawn by the cutscene AND by live play
+    /// (`docs/reports/dante-presentation-2026-10-16/direction.md` section 3). The owner on the cutscene and play side by side:
+    /// *"the fkn ult cutscene doesnt match witht he actual thing that happens"*, then *"i like how ult cutscene looks liek rn"*,
+    /// *"i js want actual game to match it"*, and *"dapat cutscene transitions into game well, hindi na dapat uulit"*.
+    /// Before, the cutscene and play each had their own slab table and their own look, so they drifted apart; and play erupted
+    /// all five bands AGAIN right after the cutscene had shown them. Now:
+    ///  * The cutscene builds this inside its stage (`BuildStage`) and poses it with its own scene clock (`Pose`).
+    ///  * Play builds the same thing on the real lane (`Build`) and continues the SAME clock from the cutscene's end
+    ///    (`StepTo(age)` is `Pose(SceneEnd + age)`): the lane is already broken, nothing erupts twice. The rubble holds, then
+    ///    sinks back into the court in two crumbling steps (stone never fades), the light cools to nothing.
+    /// The lane is always the live lane (`DanteDriftWave.Lane`: from his feet, the court's full width, five bands of reach / 5),
+    /// so the cutscene's last frame is the frame play opens on.
+    ///
+    /// THE TIMELINE (scene seconds, read by the cutscene's stage, shots and body keys):
+    ///   1.38 the slam; the fuse runs down the lane
+    ///   1.90 + 0.80 k  band k heaves: a row of six basalt slabs, molten light in the gaps, dust and rocks thrown
+    ///   6.55 THE BURST  the whole lane heaves once more and throws everyone on it (play's launch, `DanteDriftWave`)
+    ///   7.00 the cut: they are in the air; play lands them, Concussed
+    /// Nothing here runs on `Update`; it never consumes gameplay random state; the hottest colour is (1, .62, .18).
     /// </summary>
     public sealed class DanteDriftLive : MonoBehaviour, IVfxTimeline
     {
         public float LifeSeconds => GeoRules.DriftSeconds;
-        private const float FuseSpeed = 34f;          // m/s along the line: it reaches the far band long before its blast
 
-        private Vector3 _origin, _forward, _right;
-        private float _halfWidth, _depth;
+        public const float SlamAt = 1.38f, FirstBand = 1.90f, BandGap = .80f, BurstAt = 6.55f, SceneEnd = 7.0f;
+        public static float BandAt(int k) => FirstBand + BandGap * k;
+        // Play's end: the rubble holds, then sinks in two crumbling steps, gone before the wave's own end.
+        private const float HoldUntil = SceneEnd + 1.2f;
+        private static float GoneAt => SceneEnd + GeoRules.DriftSeconds - .15f;
+
+        // Each band's slabs across the lane: (across share -1 to 1, width share of a sixth, depth share, height m, tilt x, tilt z,
+        // delay s, seed). Typed per band, no two bands alike. The cutscene's table, the only one.
+        private static readonly (float across, float width, float depth, float height, float tiltX, float tiltZ, float delay, int seed)[][] SlabRows =
+        {
+            new[] { (-.86f, .95f, .82f, .62f, -9f,  6f, .03f,  3), (-.52f, 1.05f, .90f, .78f, -12f, -4f, .00f,  5), (-.17f, .98f, .86f, .70f, -8f,  3f, .02f,  7),
+                    ( .18f, 1.02f, .92f, .84f, -14f, -5f, .01f, 11), ( .53f, .96f, .84f, .66f, -10f,  7f, .04f, 13), ( .87f, 1.00f, .88f, .58f, -7f, -6f, .05f, 17) },
+            new[] { (-.85f, 1.00f, .86f, .72f, -11f, -5f, .04f, 19), (-.50f, .97f, .92f, .90f, -15f,  4f, .01f, 23), (-.16f, 1.04f, .84f, .80f, -9f, -3f, .00f, 29),
+                    ( .19f, .95f, .90f, .96f, -16f,  6f, .02f, 31), ( .54f, 1.03f, .86f, .74f, -12f, -7f, .03f, 37), ( .88f, .98f, .82f, .64f, -8f,  5f, .05f, 41) },
+            new[] { (-.87f, .97f, .88f, .80f, -13f,  5f, .02f, 43), (-.51f, 1.02f, .84f, .98f, -17f, -6f, .03f, 47), (-.15f, .99f, .92f, 1.06f, -12f,  4f, .00f, 53),
+                    ( .20f, 1.04f, .86f, .92f, -15f, -4f, .01f, 59), ( .55f, .96f, .90f, .84f, -13f,  7f, .04f, 61), ( .86f, 1.01f, .84f, .70f, -9f, -5f, .05f, 67) },
+            new[] { (-.86f, 1.03f, .84f, .88f, -14f, -6f, .03f, 71), (-.52f, .96f, .90f, 1.10f, -18f,  5f, .02f, 73), (-.17f, 1.02f, .86f, 1.18f, -13f, -3f, .00f, 79),
+                    ( .18f, .98f, .92f, 1.04f, -16f,  6f, .01f, 83), ( .53f, 1.04f, .84f, .94f, -14f, -7f, .04f, 89), ( .87f, .97f, .88f, .78f, -10f,  4f, .05f, 97) },
+            new[] { (-.85f, .99f, .90f, 1.00f, -16f,  7f, .02f, 101), (-.51f, 1.04f, .86f, 1.26f, -20f, -5f, .01f, 103), (-.16f, .97f, .92f, 1.36f, -15f,  4f, .00f, 107),
+                    ( .19f, 1.03f, .84f, 1.30f, -19f, -6f, .02f, 109), ( .54f, .98f, .90f, 1.12f, -16f,  6f, .03f, 113), ( .88f, 1.02f, .86f, .92f, -12f, -4f, .05f, 127) },
+        };
+        // Rocks each band throws: (across share, up speed, forward speed, size, seed). Five per band.
+        private static readonly (float across, float up, float along, float size, int seed)[] RockRows =
+        {
+            (-.62f, 5.2f, 1.6f, .26f, 2), (-.20f, 6.4f, 2.2f, .32f, 4), (.14f, 5.8f, 1.2f, .22f, 6), (.48f, 6.8f, 2.6f, .28f, 8), (.80f, 4.9f, 1.8f, .24f, 10),
+        };
+
+        private static readonly Color[] Basalt = { new Color(.29f, .24f, .2f, 1f), new Color(.34f, .29f, .25f, 1f), new Color(.24f, .2f, .17f, 1f) };
+        private static readonly Color DustColour = new Color(.5f, .37f, .24f, .72f);
+        private static readonly Color MoltenCore = new Color(1f, .42f, .08f), MoltenFuse = new Color(1f, .5f, .1f);
+        private static readonly int ColourId = Shader.PropertyToID("_Color"), FacingId = Shader.PropertyToID("_Facing");
+
+        private float _halfWidth, _reach, _depth;
+        private bool _stage, _shook;
+        private Glow _fuse;
         private readonly List<Band> _bands = new List<Band>(GeoRules.DriftBlasts);
-        private Transform _fuse;
-        private Material _fuseMaterial;
-        private int _shookUpTo = -1;
-        private float _lastAge = -1f;
 
         private sealed class Band
         {
-            public float Start;            // metres along the line
-            public readonly List<Transform> Slabs = new List<Transform>(6);
-            public readonly List<Transform> Dust = new List<Transform>(4);
+            public Transform Root;
+            public float Start, End;                     // metres along the lane, as drawn (the first starts ahead of his fists)
+            public readonly List<Transform> Slabs = new List<Transform>(6), Rocks = new List<Transform>(5), Dust = new List<Transform>(4);
             public readonly List<Material> DustMaterials = new List<Material>(4);
-            public Transform Star, Glow;
-            public Material StarMaterial, GlowMaterial;
-            public readonly List<Chunk> Chunks = new List<Chunk>(5);
-            public Transform[] Edge = new Transform[4];
+            public Glow Light;
         }
-        private struct Chunk { public Transform Node; public Vector3 Start, Velocity, Spin; public float Size; }
-
-        // Five chunks per band, typed per band: (across as a share of the half width, up speed, out speed along, size, seed).
-        private static readonly (float across, float up, float along, float size, int seed)[][] ChunkRows =
+        private sealed class Glow
         {
-            new[] { (-.18f, 5.6f, 1.2f, .34f, 3), (.09f, 6.4f, .4f, .26f, 8), (.31f, 4.9f, 1.8f, .30f, 12), (-.42f, 4.2f, .9f, .22f, 17), (.52f, 5.1f, -.3f, .25f, 21) },
-            new[] { (.14f, 6.1f, .8f, .36f, 4), (-.27f, 5.2f, 1.5f, .28f, 9), (.38f, 4.4f, .2f, .24f, 14), (-.05f, 6.9f, -.4f, .21f, 18), (-.55f, 4.6f, 1.1f, .27f, 23) },
-            new[] { (-.08f, 6.6f, .5f, .38f, 5), (.24f, 5.5f, 1.4f, .29f, 10), (-.33f, 4.7f, .7f, .26f, 15), (.47f, 5.9f, -.2f, .23f, 19), (-.60f, 4.0f, 1.6f, .24f, 24) },
-            new[] { (.20f, 5.8f, 1.0f, .35f, 6), (-.15f, 6.7f, .3f, .27f, 11), (-.40f, 4.5f, 1.7f, .31f, 16), (.36f, 4.9f, .6f, .22f, 20), (.62f, 5.3f, -.5f, .26f, 25) },
-            new[] { (-.22f, 7.0f, .9f, .40f, 7), (.11f, 6.0f, 1.6f, .33f, 13), (.43f, 5.2f, .1f, .27f, 22), (-.48f, 4.8f, 1.3f, .29f, 26), (.02f, 7.6f, -.6f, .24f, 28) },
-        };
-        // Each band's heaved slab: (across centre as a share of the half width, width share, depth share, tilt about the line, about across).
-        private static readonly (float across, float width, float depth, float roll, float pitch)[] SlabRows =
-        {
-            (-.04f, .34f, .46f, 6f, -7f), (.07f, .30f, .52f, -8f, -5f), (-.10f, .36f, .44f, 5f, -9f), (.05f, .32f, .50f, -6f, -6f), (0f, .40f, .48f, 7f, -10f),
-        };
+            public Transform Node; public Renderer Renderer; public MaterialPropertyBlock Block; public Color Colour;
+        }
 
-        // THE CUTSCENE'S BANDS, IN PLAY (owner, 2026-10-17, on the after-ult film and the cascade rebuild): each band is the same
-        // row of six basalt slabs the cutscene heaved, across the band's full width, lower so players stay readable over them.
-        // (across share -1 to 1, width share of a sixth, depth share, height m, tilt x, tilt z, delay s, seed). Typed per band.
-        private static readonly (float across, float width, float depth, float height, float tiltX, float tiltZ, float delay, int seed)[][] LiveSlabRows =
-        {
-            new[] { (-.86f, .95f, .80f, .42f, -12f,  7f, .03f,  3), (-.52f, 1.05f, .88f, .52f, -16f, -5f, .00f,  5), (-.17f, .98f, .84f, .48f, -11f,  4f, .02f,  7),
-                    ( .18f, 1.02f, .90f, .56f, -18f, -6f, .01f, 11), ( .53f, .96f, .82f, .44f, -13f,  8f, .04f, 13), ( .87f, 1.00f, .86f, .40f, -10f, -7f, .05f, 17) },
-            new[] { (-.85f, 1.00f, .84f, .48f, -14f, -6f, .04f, 19), (-.50f, .97f, .90f, .60f, -19f,  5f, .01f, 23), (-.16f, 1.04f, .82f, .54f, -12f, -4f, .00f, 29),
-                    ( .19f, .95f, .88f, .62f, -20f,  7f, .02f, 31), ( .54f, 1.03f, .84f, .50f, -15f, -8f, .03f, 37), ( .88f, .98f, .80f, .44f, -11f,  6f, .05f, 41) },
-            new[] { (-.87f, .97f, .86f, .52f, -16f,  6f, .02f, 43), (-.51f, 1.02f, .82f, .64f, -21f, -7f, .03f, 47), (-.15f, .99f, .90f, .68f, -15f,  5f, .00f, 53),
-                    ( .20f, 1.04f, .84f, .60f, -19f, -5f, .01f, 59), ( .55f, .96f, .88f, .56f, -16f,  8f, .04f, 61), ( .86f, 1.01f, .82f, .46f, -12f, -6f, .05f, 67) },
-            new[] { (-.86f, 1.03f, .82f, .56f, -17f, -7f, .03f, 71), (-.52f, .96f, .88f, .70f, -22f,  6f, .02f, 73), (-.17f, 1.02f, .84f, .74f, -16f, -4f, .00f, 79),
-                    ( .18f, .98f, .90f, .66f, -20f,  7f, .01f, 83), ( .53f, 1.04f, .82f, .60f, -17f, -8f, .04f, 89), ( .87f, .97f, .86f, .50f, -13f,  5f, .05f, 97) },
-            new[] { (-.85f, .99f, .88f, .62f, -20f,  8f, .02f, 101), (-.51f, 1.04f, .84f, .78f, -24f, -6f, .01f, 103), (-.16f, .97f, .90f, .84f, -19f,  5f, .00f, 107),
-                    ( .19f, 1.03f, .82f, .80f, -23f, -7f, .02f, 109), ( .54f, .98f, .88f, .70f, -20f,  7f, .03f, 113), ( .88f, 1.02f, .84f, .58f, -15f, -5f, .05f, 127) },
-        };
-
-        private static readonly Color Basalt = new Color(.31f, .27f, .24f), Dust = new Color(.42f, .32f, .22f);
-        private static readonly Color MoltenHot = new Color(1f, .62f, .18f), MoltenCore = new Color(1f, .42f, .08f);
-
+        /// <summary>Play: the real lane, on the court's own surface, continuing the cutscene's clock.</summary>
         public static DanteDriftLive Build(Transform parent, Vector3 origin, Vector3 forward, float halfWidth, float reach)
         {
             var root = new GameObject("ContinentalDriftLive");
             root.transform.SetParent(parent, false);
-            // On the court's own surface (the cutscene's trap, film r1: Bayan Plaza's court stands above the floor `GroundPoint`
-            // finds, so every flat piece here, the molten light, the fuse marks and the hit edges, lay buried under it).
+            // On the court's own surface (film r1: Bayan Plaza's court stands above the floor `GroundPoint` finds).
             var ground = VfxShapes.GroundPoint(origin);
             float court = Slipper.GroundY(origin + Vector3.up * .3f);
             if (!float.IsInfinity(court) && !float.IsNaN(court) && court > ground.y && court - ground.y < .6f) ground.y = court;
             root.transform.SetPositionAndRotation(ground, Quaternion.LookRotation(forward));
             var live = root.AddComponent<DanteDriftLive>();
-            live._origin = origin; live._forward = forward; live._right = Vector3.Cross(Vector3.up, forward);
-            live._halfWidth = halfWidth; live._depth = reach / GeoRules.DriftBlasts;
-            live.BuildFuse();
-            for (int i = 0; i < GeoRules.DriftBlasts; i++) live.BuildBand(i);
-            // No beast goes under any more: the cutscene was rebuilt without it (owner, 2026-10-17, "lock inr efine it go").
-            DanteDriftScar.Spawn(origin, forward, reach);
+            live.Make(halfWidth, reach, false);
             live.StepTo(0f);
             return live;
         }
 
-        private void BuildFuse()
+        /// <summary>The cutscene: the same build inside its stage (his feet at the stage's origin, forward along +z).</summary>
+        public static DanteDriftLive BuildStage(Transform stage, float courtY, float halfWidth, float reach)
         {
-            var seam = VfxShapes.Lay(transform, "DriftFuse", RaggedLine(), 1, 0);
-            _fuse = seam.transform;
-            VfxMaterial.Ghost(seam.GetComponent<Renderer>(), new Color(MoltenHot.r, MoltenHot.g, MoltenHot.b, .95f), .7f);
-            _fuseMaterial = seam.GetComponent<Renderer>().sharedMaterial;
+            var root = new GameObject("ContinentalDriftStage");
+            root.transform.SetParent(stage, false);
+            root.transform.localPosition = new Vector3(0f, courtY, 0f);
+            var live = root.AddComponent<DanteDriftLive>();
+            live.Make(halfWidth, reach, true);
+            live.Pose(0f);
+            return live;
         }
 
-        private void BuildBand(int i)
+        public float HalfWidth => _halfWidth;
+        public float Reach => _reach;
+        public float BandDepth => _depth;
+        /// <summary>Which band (0 to 4) a point this far along the lane stands in.</summary>
+        public int BandOf(float along) => Mathf.Clamp(Mathf.FloorToInt(along / _depth), 0, GeoRules.DriftBlasts - 1);
+        /// <summary>Where the molten crack has reached down the lane at scene time t.</summary>
+        public float Front(float t)
         {
-            var b = new Band { Start = i * _depth };
-            var s = SlabRows[i];
-            // The crack-star the fuse leaves at the band's middle: where this blast will land.
-            var star = VfxShapes.Lay(transform, "DriftMark" + i, VfxShapes.Star(6, .28f, 40 + i), 1, 0);
-            star.transform.localPosition = new Vector3(s.across * _halfWidth, .02f, b.Start + _depth * .5f);
-            star.transform.localScale = Vector3.one * Mathf.Min(1.4f, _depth * .45f);
-            VfxMaterial.Ghost(star.GetComponent<Renderer>(), new Color(MoltenCore.r, MoltenCore.g, MoltenCore.b, .9f), .6f);
-            b.Star = star.transform; b.StarMaterial = star.GetComponent<Renderer>().sharedMaterial;
-            // The molten light under the whole band, seen in the gaps as its slabs heave (the cutscene's band glow).
-            var glow = VfxShapes.Lay(transform, "DriftUnderGlow" + i, VfxShapes.Splat(9, .18f, 60 + i), 1, 0);
-            glow.transform.localPosition = new Vector3(0f, .015f, b.Start + _depth * .5f);
-            glow.transform.localScale = new Vector3(_halfWidth * .98f, 1f, _depth * .34f);
-            VfxMaterial.Ghost(glow.GetComponent<Renderer>(), new Color(MoltenCore.r, MoltenCore.g, MoltenCore.b, .85f), .8f);
-            b.Glow = glow.transform; b.GlowMaterial = glow.GetComponent<Renderer>().sharedMaterial;
-            // The band's row of six basalt slabs, as in the cutscene (film after-ult v1: one wide flat slab read as a brown mat).
-            float sixth = _halfWidth * 2f / 6f;
-            foreach (var r in LiveSlabRows[i])
-            {
-                var slab = VfxShapes.Stand(transform, "DriftHeave" + i + "_" + r.seed, VfxShapes.Prism(4, 1f, .84f, .16f, .785f, r.seed), 1);
-                slab.transform.localScale = Vector3.zero;
-                // Lit, faceted stone like the cutscene's (live film r21: the flat toon dress read as brown tarps).
-                VfxMaterial.Solid(slab.GetComponent<Renderer>(), Basalt * (.8f + .12f * (r.seed % 3)), .2f);
-                VfxRenderTag.Attach(slab);
-                b.Slabs.Add(slab.transform);
-            }
-            // Dust standing on the band's front edge, billowing as it goes: ragged clumps, never a wall.
-            for (int d = 0; d < 4; d++)
-            {
-                var puff = VfxShapes.Stand(transform, "DriftDust" + i + "_" + d, VfxShapes.TwoSided(VfxShapes.Splat(9, .48f, 201 + i * 17 + d * 5)), 1);
-                puff.transform.localScale = Vector3.zero;
-                VfxMaterial.Ghost(puff.GetComponent<Renderer>(), new Color(Dust.r, Dust.g, Dust.b, .7f), .25f);
-                b.Dust.Add(puff.transform); b.DustMaterials.Add(puff.GetComponent<Renderer>().sharedMaterial);
-            }
-            // Five chunks, typed.
-            foreach (var r in ChunkRows[i])
-            {
-                var part = GrowthVfx.Part(transform, "DriftChunk", VfxShapes.Prism(5, 1f, .66f, .3f, 15f, r.seed), r.seed % 3 == 0 ? Dust : Basalt);
-                var start = new Vector3(r.across * _halfWidth, .1f, b.Start + _depth * (.35f + .3f * ((r.seed % 5) / 4f)));
-                part.transform.localPosition = start;
-                part.transform.localScale = Vector3.zero;
-                b.Chunks.Add(new Chunk { Node = part.transform, Start = start, Velocity = new Vector3(r.across * 1.6f, r.up, r.along), Spin = new Vector3(r.seed * 31f, 160f + r.seed * 7f, r.seed * 11f), Size = r.size });
-            }
-            // The hit edge: four molten cracks on the court, exactly on the band's real hit rectangle (after-ult v1: as low brown
-            // walls they read as planks lying on the court; the picture still never lies about the hit area).
-            for (int e = 0; e < 4; e++)
-            {
-                var wall = VfxShapes.Stand(transform, "DriftDustEdge" + i + "_" + e, VfxShapes.Prism(4, 1f, .9f, .12f, 0f, 90 + e), 1);
-                VfxMaterial.Ghost(wall.GetComponent<Renderer>(), new Color(MoltenCore.r, MoltenCore.g, MoltenCore.b, .9f), .7f); VfxRenderTag.Attach(wall);
-                bool along = e < 2;
-                float x = along ? (e == 0 ? -_halfWidth : _halfWidth) : 0f;
-                float z = along ? b.Start + _depth * .5f : (e == 2 ? b.Start : b.Start + _depth);
-                wall.transform.localPosition = new Vector3(x, 0f, z);
-                wall.transform.localRotation = Quaternion.Euler(0f, along ? 0f : 90f, 0f);
-                wall.transform.localScale = new Vector3(.18f, 0f, along ? _depth : _halfWidth * 2f);
-                b.Edge[e] = wall.transform;
-            }
-            _bands.Add(b);
+            float from = _bands[0].Start * .5f;
+            if (t <= SlamAt) return from;
+            if (t <= BandAt(0)) return Mathf.Lerp(from, _bands[0].Start, (t - SlamAt) / (BandAt(0) - SlamAt));
+            for (int k = 0; k < GeoRules.DriftBlasts - 1; k++)
+                if (t <= BandAt(k + 1)) return Mathf.Lerp(_bands[k].Start, _bands[k + 1].Start, (t - BandAt(k)) / BandGap);
+            var last = _bands[GeoRules.DriftBlasts - 1];
+            return Mathf.Lerp(last.Start, last.End, Mathf.Clamp01((t - BandAt(GeoRules.DriftBlasts - 1)) / .25f));
         }
 
+        private void Make(float halfWidth, float reach, bool stage)
+        {
+            _halfWidth = Mathf.Max(.5f, halfWidth); _reach = Mathf.Max(1f, reach); _depth = _reach / GeoRules.DriftBlasts; _stage = stage;
+            _fuse = AddGlow(transform, "DriftFuse", MoltenFuse, 1.6f, .7f);
+            for (int k = 0; k < GeoRules.DriftBlasts; k++)
+            {
+                var b = new Band { Start = k * _depth, End = (k + 1) * _depth };
+                // The first band's slabs start ahead of his fists, never under his own body.
+                if (k == 0) b.Start = Mathf.Min(1.4f, _depth * .45f);
+                b.Root = new GameObject("DriftBand" + k).transform;
+                b.Root.SetParent(transform, false);
+                // The molten light under the band, seen in the gaps as its slabs heave.
+                b.Light = AddGlow(b.Root, "DriftBandGlow" + k, MoltenCore, .8f, .7f);
+                foreach (var s in SlabRows[k])
+                    b.Slabs.Add(Stone(b.Root, "DriftSlab" + k + "_" + s.seed, VfxShapes.Prism(4, 1f, .84f, .16f, .785f, s.seed), Basalt[(k + s.seed) % 3]));
+                foreach (var r in RockRows)
+                    b.Rocks.Add(Stone(b.Root, "DriftRock" + k + "_" + r.seed, VfxShapes.Prism(5, 1f, .7f, .3f, 0f, r.seed + k * 31), Basalt[(k + r.seed) % 3]));
+                for (int i = 0; i < 4; i++)
+                {
+                    var puff = VfxShapes.Stand(b.Root, "DriftDust" + k + "_" + i, VfxShapes.TwoSided(VfxShapes.Splat(9, .48f, 201 + k * 17 + i * 5)), 1);
+                    var r = puff.GetComponent<Renderer>();
+                    r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; r.receiveShadows = false;
+                    VfxMaterial.Ghost(r, DustColour * (i % 2 == 0 ? .9f : 1f), .3f);
+                    puff.transform.localScale = Vector3.zero;
+                    b.Dust.Add(puff.transform); b.DustMaterials.Add(r.sharedMaterial);
+                }
+                _bands.Add(b);
+            }
+        }
+
+        /// <summary>An opaque lit stone with a small local fill, so the dusk court cannot turn it into a black cutout.</summary>
+        private static Transform Stone(Transform parent, string name, Mesh mesh, Color colour)
+        {
+            var go = VfxShapes.Stand(parent, name, mesh, 1);
+            var r = go.GetComponent<Renderer>();
+            r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+            VfxMaterial.Solid(r, colour, .45f);
+            go.transform.localScale = Vector3.zero;
+            return go.transform;
+        }
+
+        /// <summary>A flat piece of light (`Resources/Shaders/SpiritGlow`): unlit, additive, soft across its width.</summary>
+        private static Glow AddGlow(Transform parent, string name, Color colour, float falloff, float core)
+        {
+            var mesh = new Mesh { name = "DriftGlowQuad" };
+            mesh.vertices = new[] { new Vector3(-.5f, -.5f, 0), new Vector3(.5f, -.5f, 0), new Vector3(.5f, .5f, 0), new Vector3(-.5f, .5f, 0) };
+            mesh.uv = new[] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1) };
+            mesh.triangles = new[] { 0, 2, 1, 0, 3, 2 };
+            mesh.RecalculateNormals();
+            mesh.bounds = new Bounds(Vector3.zero, Vector3.one * 2f);
+            var go = VfxShapes.Stand(parent, name, mesh, 1);
+            var renderer = go.GetComponent<Renderer>();
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; renderer.receiveShadows = false;
+            var shader = Resources.Load<Shader>("Shaders/SpiritGlow");
+            if (shader != null)
+            {
+                var m = new Material(shader) { name = name };
+                m.SetFloat("_Billboard", 0f); m.SetFloat("_Band", 1f); m.SetFloat("_Falloff", falloff); m.SetFloat("_Core", core); m.SetFloat("_Lift", 0f);
+                renderer.sharedMaterial = m;
+                VfxRenderTag.Own(go, m);
+            }
+            else VfxMaterial.Ghost(renderer, colour, 1f);
+            return new Glow { Node = go.transform, Renderer = renderer, Block = new MaterialPropertyBlock(), Colour = colour };
+        }
+
+        private static void Light(Glow g, Vector3 position, Vector3 scale, Quaternion rotation, float strength)
+        {
+            g.Node.localPosition = position; g.Node.localScale = scale; g.Node.localRotation = rotation;
+            var c = g.Colour; c.a = Mathf.Max(0f, strength);
+            g.Block.SetColor(ColourId, c); g.Block.SetVector(FacingId, Vector4.zero);
+            g.Renderer.SetPropertyBlock(g.Block);
+            g.Renderer.enabled = strength > .002f;
+        }
+
+        private static float Ease(float from, float to, float time)
+        { float u = Mathf.InverseLerp(from, to, time); return u * u * (3 - 2 * u); }
+
+        /// <summary>Play: the wave's accepted age continues the cutscene's clock from its end. Once per wave, the viewer feels it.</summary>
         public void StepTo(float age)
         {
-            float bandTime = GeoRules.DriftInterval;
-            // The fuse runs out ahead of everything, then cools behind the last mark.
-            float fuseAt = Mathf.Min(age * FuseSpeed, _depth * GeoRules.DriftBlasts);
-            float fuseCool = Mathf.Clamp01((age - .6f) / .4f);
-            _fuse.localPosition = new Vector3(0f, .018f, fuseAt * .5f);
-            _fuse.localScale = new Vector3(.32f, 1f, Mathf.Max(.01f, fuseAt));
-            _fuse.gameObject.SetActive(fuseCool < 1f);
-            _fuseMaterial.SetColor("_EmissionColor", Color.Lerp(MoltenHot, MoltenCore * .3f, fuseCool) * .9f);
-
-            for (int i = 0; i < _bands.Count; i++)
-            {
-                var b = _bands[i];
-                float marked = fuseAt >= b.Start + _depth * .5f ? 1f : 0f;
-                float t = age - i * bandTime;                    // the band's own blast clock
-                // The mark: lit as the fuse passes, pulsing, and spent when its blast goes.
-                b.Star.gameObject.SetActive(marked > 0f && t < .05f);
-                b.StarMaterial.SetColor("_EmissionColor", MoltenCore * (.6f + .4f * Mathf.Abs(Mathf.Sin(age * 14f))));
-                // The band's slabs: each jolts up (a small overshoot), settles to rubble, holds, then sinks back into the court in
-                // two crumbling steps before the wave's tail ends (stone never fades), as the cutscene's bands did.
-                float sixth = _halfWidth * 2f / 6f, mid = b.Start + _depth * .5f;
-                float tail = GeoRules.DriftSeconds - i * bandTime;            // this band's own time left
-                for (int k = 0; k < b.Slabs.Count; k++)
-                {
-                    var r = LiveSlabRows[i][k];
-                    float sa = t - r.delay;
-                    float u = Mathf.Clamp01(sa / .08f);
-                    float up = sa < 0f ? 0f : u < 1f ? u * u : 1f + .12f * Mathf.Max(0f, 1f - (sa - .08f) / .1f);
-                    float settle = 1f - .45f * Mathf.Clamp01((sa - .2f) / .4f);
-                    // Sinks over the last .5 s of its band's time, in two steps, each a little smaller (cracking down).
-                    float sink = Mathf.Clamp01((t - (tail - .55f)) / .5f);
-                    float stepDown = sink < .5f ? sink * 2f * .5f : .5f + (sink - .5f) * 2f * .5f;
-                    float crack = sink < .5f ? 1f : .85f;
-                    // The band at his feet stays low, so his own first-person view keeps the lane ahead (live film r23).
-                    float h = r.height * (i == 0 ? .5f : 1f);
-                    var slab = b.Slabs[k];
-                    slab.gameObject.SetActive(sa >= 0f && sink < 1f);
-                    slab.localPosition = new Vector3(r.across * (_halfWidth - sixth * .5f), -h * .5f + h * .8f * up * settle - h * stepDown,
-                                                     mid + ((r.seed % 5) - 2) * .1f * _depth);
-                    slab.localRotation = Quaternion.Euler(r.tiltX * Mathf.Min(1f, up), (r.seed % 7 - 3) * 5f, r.tiltZ * Mathf.Min(1f, up));
-                    // Lumps with gaps between them (r21: full-size they closed into one mat), so the molten light shows.
-                    slab.localScale = new Vector3(sixth * r.width * .55f, h, _depth * r.depth * .5f) * crack;
-                }
-                // Dust on the band's front edge: billowing up and out, thinning (dust may thin; stone may not).
-                for (int d = 0; d < b.Dust.Count; d++)
-                {
-                    float du = Mathf.Clamp01(t / .9f);
-                    float across = (d / 3f * 2f - 1f) * (_halfWidth - 1f);
-                    // Low and thin (r21: tall clumps a few metres ahead painted a dark band over his first-person view).
-                    float puff = Mathf.Lerp(.6f, 1.4f, du) * (.8f + .1f * d);
-                    var dust = b.Dust[d];
-                    dust.gameObject.SetActive(t >= 0f && du < 1f);
-                    dust.localPosition = new Vector3(across, puff * .5f + du * .4f, b.Start + _depth + .1f);
-                    dust.localRotation = Quaternion.Euler(90f, 0f, (d - 1.5f) * 9f);
-                    dust.localScale = new Vector3(puff * 1.3f, 1f, puff);
-                    var c = new Color(Dust.r, Dust.g, Dust.b, .45f * (1f - du * du));
-                    b.DustMaterials[d].color = c; if (b.DustMaterials[d].HasProperty("_BaseColor")) b.DustMaterials[d].SetColor("_BaseColor", c);
-                }
-                b.Glow.gameObject.SetActive(t >= 0f && t < tail - .1f);
-                b.GlowMaterial.SetColor("_EmissionColor", Color.Lerp(MoltenHot, MoltenCore * .35f, Mathf.Clamp01((t - .2f) / .9f)));
-                for (int c = 0; c < b.Chunks.Count; c++)
-                {
-                    var ch = b.Chunks[c];
-                    float u = Mathf.Max(0f, t);
-                    var p = ch.Start + ch.Velocity * u + Vector3.down * (.5f * 9.81f * 1.3f * u * u);
-                    bool landed = p.y < 0f;
-                    if (landed) p.y = 0f;
-                    ch.Node.gameObject.SetActive(t >= 0f && t < 1.2f);
-                    ch.Node.localPosition = p;
-                    ch.Node.localRotation = Quaternion.Euler(ch.Spin * Mathf.Min(u, .9f));
-                    float broken = !landed ? 1f : t < .85f ? .7f : Mathf.Max(0f, .7f - (t - .85f) * 2f);
-                    ch.Node.localScale = Vector3.one * ch.Size * broken;
-                }
-                // The hit edge: molten cracks opening on the court along the hit rectangle as the band goes, then closing.
-                float edge = t < 0f ? 0f : Mathf.Clamp01(t / .1f) * (1f - Mathf.Clamp01((t - .7f) / .4f));
-                foreach (var e in b.Edge)
-                {
-                    var sc = e.localScale; sc.x = .14f; sc.y = .035f * edge; e.localScale = sc;
-                    e.gameObject.SetActive(edge > .01f);
-                }
-            }
-            // Map-wide, on this viewer's own camera: once per blast as its clock passes zero.
-            if (age >= _lastAge)
-                for (int i = _shookUpTo + 1; i < _bands.Count && age >= i * bandTime; i++) { Quake(i); _shookUpTo = i; }
-            _lastAge = age;
+            Pose(SceneEnd + Mathf.Max(0f, age));
+            // The rumble as play resumes, on this viewer's own camera (never on a rejoin far into the wave).
+            if (!_stage && !_shook && age < .2f) { _shook = true; Quake(); }
+            if (age >= .2f) _shook = true;
         }
 
-        private void Quake(int band)
+        /// <summary>Pose every piece at scene time t (the cutscene's clock; play passes SceneEnd + its age).</summary>
+        public void Pose(float t)
+        {
+            float sixth = _halfWidth * 2f / 6f;
+            // Play's end: two crumbling steps down into the court.
+            float sink = Mathf.Clamp01((t - HoldUntil) / (GoneAt - HoldUntil));
+            float stepDown = sink < .5f ? Ease(0f, .5f, sink) * .45f : .45f + Ease(.5f, 1f, sink) * .55f;
+            float crack = sink < .5f ? 1f : .85f;
+            float cool = Ease(SceneEnd + .2f, HoldUntil + .3f, t);
+
+            // THE FUSE: the molten crack racing down the middle of the lane, just ahead of each band, cooling in play.
+            {
+                float front = Front(t), from = _bands[0].Start * .5f, len = Mathf.Max(.01f, front - from);
+                float heat = t < SlamAt ? 0f : 1.4f * (1f - .55f * Ease(BandAt(4) + .3f, SceneEnd, t)) * (1f - cool);
+                Light(_fuse, new Vector3(0f, .015f, from + len * .5f), new Vector3(len, .32f, 1f), Quaternion.Euler(90f, 90f, 0f), heat);
+            }
+
+            for (int k = 0; k < _bands.Count; k++)
+            {
+                var b = _bands[k];
+                float at = BandAt(k), age = t - at, depth = b.End - b.Start, mid = (b.Start + b.End) * .5f;
+                bool gone = sink >= 1f;
+                b.Root.gameObject.SetActive(age >= 0f && !gone);
+                if (age < 0f || gone) continue;
+                // The molten light: a flare as the band goes, the glow in its cracks, a second flare at the burst, cooling in play.
+                float glow = 2.3f * (1f - .4f * Mathf.Clamp01(age / .8f)) + 1.1f * Mathf.Clamp01(1f - Mathf.Abs(t - BurstAt - .05f) / .3f);
+                Light(b.Light, new Vector3(0f, .01f, mid), new Vector3(_halfWidth * 1.9f, depth, 1f), Quaternion.Euler(90f, 0f, 0f), glow * (1f - .85f * cool));
+
+                // A wide lane makes deep slabs: their tilt is held to the cutscene's edge rise, so none stands up as a wall.
+                float tiltHold = Mathf.Min(1f, 1.4f / Mathf.Max(.1f, depth * .88f));
+                var rows = SlabRows[k];
+                for (int i = 0; i < rows.Length; i++)
+                {
+                    var s = rows[i];
+                    float sa = age - s.delay, u = Mathf.Clamp01(sa / .1f);
+                    // A jolt, a small overshoot, a hold, then it settles back to rubble so the ridge travels down the lane.
+                    float up = sa < 0f ? 0f : u < 1f ? u * u : 1f + .12f * Mathf.Max(0f, 1f - (sa - .1f) / .12f);
+                    float settle = 1f - .5f * Ease(.25f, .7f, sa);
+                    // THE BURST: the whole lane heaves once more under them, and settles a little.
+                    float bt = t - BurstAt - s.delay * .5f;
+                    float burst = bt < 0f ? 0f : .38f * Mathf.Clamp01(bt / .08f) * (1f - .45f * Ease(.12f, .5f, bt));
+                    float lift = up * settle + burst;
+                    float h = s.height * .8f, w = sixth * s.width, d = depth * s.depth;
+                    float jitter = ((s.seed % 5) - 2) * .12f * Mathf.Min(depth, 1.6f);
+                    var slab = b.Slabs[i];
+                    slab.gameObject.SetActive(sa >= 0f);
+                    // Inside its own band: the stone never draws past the hit area.
+                    // (The last band's slabs tip toward the far edge: they keep their height's lean clear of it.)
+                    float far = b.End - d * .5f - (k == _bands.Count - 1 ? h : 0f);
+                    float z = Mathf.Clamp(mid + jitter, b.Start + d * .5f, Mathf.Max(b.Start + d * .5f, far));
+                    slab.localPosition = new Vector3(s.across * (_halfWidth - sixth * .5f), -h * .5f + h * .8f * lift - h * stepDown, z);
+                    float tip = Mathf.Min(1f, up) * tiltHold * (1f + .25f * Mathf.Clamp01(burst / .38f));
+                    slab.localRotation = Quaternion.Euler(s.tiltX * 1.6f * tip, (s.seed % 7 - 3) * 5f, s.tiltZ * 1.8f * tip);
+                    slab.localScale = new Vector3(w, h, d) * crack;
+                }
+                // Dust on the band's front edge, billowing up and out, thinning (dust may thin; stone may not); again, lower, at the burst.
+                for (int i = 0; i < b.Dust.Count; i++)
+                {
+                    float first = Mathf.Clamp01(age / .9f), second = Mathf.Clamp01((t - BurstAt) / .9f);
+                    bool late = t >= BurstAt;
+                    float du = late ? second : first;
+                    float across = (i / 3f * 2f - 1f) * (_halfWidth - 1.2f);
+                    float puff = (late ? Mathf.Lerp(.7f, 1.7f, du) : Mathf.Lerp(1.0f, 2.6f, du)) * (.8f + .1f * i);
+                    float z = Mathf.Min(b.End + .1f, _reach - .2f);
+                    var dust = b.Dust[i];
+                    dust.gameObject.SetActive(du < 1f);
+                    dust.localPosition = new Vector3(across, puff * .5f + du * .4f, z);
+                    dust.localRotation = Quaternion.Euler(90f, 0f, (i - 1.5f) * 9f);
+                    dust.localScale = new Vector3(puff * 1.3f, 1f, puff);
+                    var c = DustColour * (i % 2 == 0 ? .9f : 1f); c.a = .85f * (1f - du * du) * (late ? .7f : 1f);
+                    b.DustMaterials[i].color = c; if (b.DustMaterials[i].HasProperty("_BaseColor")) b.DustMaterials[i].SetColor("_BaseColor", c);
+                }
+                // Rocks flung up and forward, landing where they land and staying; they go down with the slabs.
+                for (int i = 0; i < RockRows.Length; i++)
+                {
+                    var r = RockRows[i];
+                    var start = new Vector3(r.across * (_halfWidth - .4f), .2f, mid);
+                    float land = 2f * r.up / 9.8f, ft = Mathf.Min(age, land);
+                    var pos = start + Vector3.forward * (r.along * ft) + Vector3.up * (r.up * ft - 4.9f * ft * ft);
+                    pos.z = Mathf.Min(pos.z, _reach - .2f);
+                    pos.y -= r.size * stepDown * 1.5f;
+                    float spin = ft * (240f + r.seed * 9f);
+                    b.Rocks[i].localPosition = pos;
+                    b.Rocks[i].localRotation = Quaternion.Euler(spin, r.seed * 23f, spin * .6f);
+                    b.Rocks[i].localScale = Vector3.one * r.size * crack;
+                }
+            }
+        }
+
+        private void Quake()
         {
             var cam = Camera.main;
             if (cam == null) return;
             var rig = cam.GetComponent<CameraRig>();
-            Vector3 centre = transform.TransformPoint(new Vector3(0f, 0f, _bands[band].Start + _depth * .5f));
+            Vector3 centre = transform.TransformPoint(new Vector3(0f, 0f, _reach * .5f));
             float distance = Vector3.Distance(new Vector3(cam.transform.position.x, 0f, cam.transform.position.z), new Vector3(centre.x, 0f, centre.z));
-            float falloff = Mathf.Lerp(1f, .35f, Mathf.Clamp01(distance / 18f)) * (band == GeoRules.DriftBlasts - 1 ? 1.25f : 1f);
-            if (rig != null) { rig.Shake(.32f * falloff, .28f); rig.BeginGroundRumble(.55f * falloff); }
+            float falloff = Mathf.Lerp(1f, .35f, Mathf.Clamp01(distance / 18f));
+            if (rig != null) { rig.Shake(.36f * falloff, .3f); rig.BeginGroundRumble(.6f * falloff); }
             if (Settings.SettingsStore.Current.ReducedEffects) return;
             // A few grains through this viewer's own view, from above.
             var ahead = cam.transform.position + cam.transform.forward * 1.6f + Vector3.up * 1.1f;
-            DanteBoulderGrit.Drop(ahead + cam.transform.right * (-.5f + .3f * band % 3), false);
-            DanteBoulderGrit.Drop(ahead + cam.transform.right * (.45f - .2f * (band % 2)) + cam.transform.forward * .4f, false);
+            DanteBoulderGrit.Drop(ahead - cam.transform.right * .4f, false);
+            DanteBoulderGrit.Drop(ahead + cam.transform.right * .45f + cam.transform.forward * .4f, false);
         }
 
-        // A flat crack one unit long (z 0 to 1, centred on z .5 so its scale grows from the middle), its own typed wander
-        // and width per point: one dominant line, never a straight bar.
-        private static readonly (float x, float z, float w)[] Ragged =
+        /// <summary>The lane's stone, as drawn, in world space (tests: it covers the hit area and never strays out of it).</summary>
+        public Bounds StoneBounds()
         {
-            (0f, -.5f, .10f), (.30f, -.41f, .55f), (-.22f, -.30f, .80f), (.18f, -.17f, 1f), (-.35f, -.05f, .85f), (.12f, .08f, .95f),
-            (.40f, .19f, .70f), (-.15f, .31f, .90f), (.22f, .42f, .60f), (0f, .5f, .12f),
-        };
-        internal static Mesh RaggedLine()
-        {
-            var v = new List<Vector3>(); var t = new List<int>();
-            for (int i = 0; i < Ragged.Length; i++)
-            {
-                var r = Ragged[i];
-                v.Add(new Vector3(r.x - .5f * r.w, 0f, r.z)); v.Add(new Vector3(r.x + .5f * r.w, 0f, r.z));
-                if (i == 0) continue;
-                int n = v.Count;
-                t.AddRange(new[] { n - 4, n - 2, n - 3, n - 3, n - 2, n - 1 });
-            }
-            var m = new Mesh { name = "Drift ragged line" };
-            m.SetVertices(v); m.SetTriangles(t, 0); m.RecalculateNormals(); m.RecalculateBounds();
-            return m;
-        }
-
-        public int MarkCount { get { int n = 0; foreach (var b in _bands) if (b.Star.gameObject.activeSelf) n++; return n; } }
-        public Bounds DustEdgeBounds(int band)
-        {
-            var b = _bands[band];
-            var bounds = new Bounds(b.Edge[0].position, Vector3.zero);
-            foreach (var e in b.Edge) bounds.Encapsulate(e.position);
+            bool any = false; var bounds = new Bounds();
+            foreach (var b in _bands)
+                foreach (var s in b.Slabs)
+                {
+                    if (!s.gameObject.activeInHierarchy) continue;
+                    var r = s.GetComponent<Renderer>().bounds;
+                    if (!any) { bounds = r; any = true; } else bounds.Encapsulate(r);
+                }
             return bounds;
-        }
-    }
-
-    /// <summary>
-    /// The fault line Continental Drift leaves: it outlives the wave by 3 s, cools from molten through dull red to grey, then
-    /// crumbles flat from his end outward. Its own clock, as nothing gameplay reads it.
-    /// </summary>
-    public sealed class DanteDriftScar : MonoBehaviour
-    {
-        private const float Life = GeoRules.DriftSeconds + 3f;
-        private Material _material;
-        private float _age, _length;
-        private Transform _line;
-
-        public static void Spawn(Vector3 origin, Vector3 forward, float reach)
-        {
-            var go = new GameObject("~ContinentalDriftScar");
-            go.transform.SetPositionAndRotation(VfxShapes.GroundPoint(origin) + Vector3.up * .021f, Quaternion.LookRotation(forward));
-            var scar = go.AddComponent<DanteDriftScar>();
-            scar._length = reach;
-            var line = VfxShapes.Lay(go.transform, "ScarLine", DanteDriftLive.RaggedLine(), 1, 0);
-            scar._line = line.transform;
-            VfxMaterial.Ghost(line.GetComponent<Renderer>(), new Color(1f, .42f, .08f, .9f), .5f);
-            scar._material = line.GetComponent<Renderer>().sharedMaterial;
-            scar.Step();
-        }
-
-        private void Update() { _age += Time.deltaTime; Step(); if (_age > Life) Destroy(gameObject); }
-
-        private void Step()
-        {
-            float grown = Mathf.Clamp01(_age / ((GeoRules.DriftBlasts - 1) * GeoRules.DriftInterval + .1f));
-            float cool = Mathf.Clamp01((_age - GeoRules.DriftSeconds) / 2f);
-            float crumble = Mathf.Clamp01((_age - (Life - 1f)) / 1f);
-            Color c = cool < .5f ? Color.Lerp(new Color(1f, .42f, .08f), new Color(.55f, .16f, .06f), cool * 2f)
-                                 : Color.Lerp(new Color(.55f, .16f, .06f), new Color(.22f, .21f, .20f), cool * 2f - 1f);
-            _material.SetColor("_EmissionColor", c * (1f - .7f * cool));
-            _material.color = new Color(c.r, c.g, c.b, .9f);
-            // Crumbles flat: narrows to nothing, his end first (the line's start shrinks toward its far end).
-            float len = _length * grown * (1f - crumble);
-            _line.localPosition = new Vector3(0f, 0f, _length * grown - len * .5f);
-            _line.localScale = new Vector3(.55f * (1f - crumble * .6f), 1f, Mathf.Max(.01f, len));
         }
     }
 }

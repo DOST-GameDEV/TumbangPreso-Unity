@@ -63,11 +63,16 @@ namespace TumbangPreso.Core
 
         /// <summary>EARTHQUAKE, owner: *"Everyone concussed"*. Cost set here.</summary>
         public const float EarthquakeCost = 12.0f;
-        // Current Wiki specifies successive forward blasts. Spacing is gameplay tuning.
+        // The cutscene shows the five forward blasts erupting (`Visual.DanteDriftLive`). Play does not erupt them again
+        // (owner, 2026-10-17: *"dapat cutscene transitions into game well, hindi na dapat uulit"*, *"if natulak na odi when they
+        // get in the game theyre js flying and abt to be concussed"*): at the cut every band resolves at once, everyone in the
+        // lane is thrown down it, and is Concussed as they land. Protocol 167.
         public const int DriftBlasts = 5;
-        public const float DriftInterval = .30f;
-        public const float DriftVisualTail = 1.2f;
-        public const float DriftSeconds = (DriftBlasts - 1) * DriftInterval + DriftVisualTail;
+        public const float DriftThrowUp = 6.0f;      // m/s: a 0.9 m arc against `Balance.CharacterGravity`
+        public const float DriftThrowAway = 4.5f;    // m/s down the lane, held for `DriftThrowHold`
+        public const float DriftThrowHold = .30f;
+        public const float DriftLandSeconds = 2.0f * DriftThrowUp / Balance.CharacterGravity;   // 0.6 s: Concussed as they land
+        public const float DriftSeconds = 2.4f;      // the rubble holds, then sinks back into the court
     }
 
     public static class NecroRules

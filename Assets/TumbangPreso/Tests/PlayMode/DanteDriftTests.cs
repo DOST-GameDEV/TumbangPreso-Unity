@@ -77,18 +77,20 @@ namespace TumbangPreso.PlayTests
             }
             finally { PresentationClock.RequestScale(1); NetAuthority.Provider = prior; }
         }
-        [UnityTest] public IEnumerator RecoverySkipsPastBlastsAndRetiresWithRound()
+        [UnityTest] public IEnumerator RecoveryNeverReplaysTheThrowAndRetiresWithRound()
         {
             yield return Open();
             var wave = DanteDriftWave.Spawn(_caster.transform.position, Vector3.forward, 0);
-            wave.SendMessage("Advance", .65f); var field = wave.Capture();
-            Assert.IsTrue(Net.WorldEffectSnapshot.Valid(field)); _near.CleanseStatuses();
+            wave.SendMessage("Advance", .65f);
+            Assert.IsTrue(_near.IsConcussed && _far.IsConcussed, "Both landed inside the wave's own time.");
+            var field = wave.Capture();
+            Assert.IsTrue(Net.WorldEffectSnapshot.Valid(field)); _near.CleanseStatuses(); _far.CleanseStatuses();
             Assert.IsTrue(Net.WorldEffectSnapshot.Apply(new[] { field }, 0));
-            Assert.IsFalse(_near.IsConcussed, "Recovery cannot replay the already-resolved near band.");
             var restored = Object.FindAnyObjectByType<DanteDriftWave>(); Assert.IsNotNull(restored);
             Assert.AreEqual(.65f, restored.Age, .001f);
             restored.SendMessage("Advance", .60f);
-            Assert.IsTrue(_far.IsConcussed); Assert.IsFalse(_near.IsConcussed);
+            Assert.IsFalse(_near.IsConcussed, "Recovery cannot replay the already-resolved throw.");
+            Assert.IsFalse(_far.IsConcussed);
             GameServices.Round.EndRound(); Assert.IsFalse(restored.gameObject.activeInHierarchy);
         }
         [UnityTest] public IEnumerator SnapshotBoundsAndReplayRemainRenderOnly()
@@ -145,18 +147,21 @@ namespace TumbangPreso.PlayTests
             var kit = new DanteHeroKit(); Assert.AreEqual("CONTINENTAL DRIFT", kit.Ultimate.Name);
             Assert.AreEqual(12, kit.UltimateCost); Assert.AreEqual("dante_ultimate", kit.Ultimate.Id);
         }
-        [UnityTest] public IEnumerator ReleasedEarthquakeReachesNearThenFarAndNeverBehind()
+        [UnityTest] public IEnumerator ReleasedEarthquakeThrowsTheWholeLaneAndConcussesOnLanding()
         {
             yield return Open();
             var kit = new DanteHeroKit();
             var context = new AbilityContext(_caster, _caster.GetComponent<Carrier>(), _caster.GetComponent<CombatVerbs>());
             kit.Ultimate.Activate(context); kit.Ultimate.Tick(context, kit.Ultimate.Windup + .01f);
-            yield return null;
-            Assert.IsTrue(_near.IsConcussed, "The first forward band must reach the nearby player across its width.");
-            Assert.IsFalse(_far.IsConcussed, "The far end must wait for the travelling cascade.");
-            Assert.IsFalse(_behind.IsConcussed, "A player behind the accepted origin is outside the forward blast.");
-            yield return new WaitForSeconds(1.3f);
-            Assert.IsTrue(_far.IsConcussed); Assert.IsFalse(_behind.IsConcussed); Assert.IsFalse(_caster.IsConcussed);
+            var wave = Object.FindAnyObjectByType<DanteDriftWave>(); Assert.IsNotNull(wave);
+            Assert.AreEqual(GeoRules.DriftBlasts, wave.ReleasedBands, "Every band resolves at once: the cutscene already showed them erupt.");
+            Assert.IsTrue(_near.IsCarried, "The near player is thrown down the lane.");
+            Assert.IsTrue(_far.IsCarried, "So is the far one: the whole lane throws at once.");
+            Assert.IsFalse(_behind.IsCarried, "A player behind the accepted origin is outside the lane.");
+            Assert.IsFalse(_near.IsConcussed, "Still in the air: Concussed as they land.");
+            yield return new WaitForSeconds(GeoRules.DriftLandSeconds + .1f);
+            Assert.IsTrue(_near.IsConcussed); Assert.IsTrue(_far.IsConcussed);
+            Assert.IsFalse(_behind.IsConcussed); Assert.IsFalse(_caster.IsConcussed);
         }
     }
 }

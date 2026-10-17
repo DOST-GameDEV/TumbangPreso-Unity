@@ -5,7 +5,12 @@ using UnityEngine;
 
 namespace TumbangPreso.Abilities
 {
-    /// <summary>Accepted forward earthquake. Only the host resolves each timed band.</summary>
+    /// <summary>
+    /// Accepted forward earthquake. It starts at the cutscene's cut: the cutscene already showed the five bands erupting and the
+    /// whole lane throwing everyone on it (`Visual.DanteDriftLive`), so play does not erupt them again (owner, 2026-10-17:
+    /// *"dapat cutscene transitions into game well, hindi na dapat uulit"*). Only the host resolves: at once, everyone in the
+    /// lane is thrown down it (a carry), and is Concussed as they land (`GeoRules.DriftLandSeconds`).
+    /// </summary>
     public sealed class DanteDriftWave : MonoBehaviour
     {
         public Vector3 Origin { get; private set; }
@@ -15,16 +20,20 @@ namespace TumbangPreso.Abilities
         public float Reach { get; private set; }
         public float Age { get; private set; }
         public float Remaining => Mathf.Max(0, GeoRules.DriftSeconds - Age);
-        public int ReleasedBands => _nextBand;
-        int _nextBand, _announced;
+        public int ReleasedBands => _released ? GeoRules.DriftBlasts : 0;
+        bool _released, _landed;
+        int _announced;
+        readonly System.Collections.Generic.List<CharacterMotor> _thrown = new System.Collections.Generic.List<CharacterMotor>(4);
         DanteDriftVisual _visual;
 
-        public static DanteDriftWave Spawn(Vector3 origin, Vector3 forward, int owner)
+        /// <summary>The lane: from his feet forward to the court's far edge, as wide as the court reaches either side of him.
+        /// The cutscene stages exactly this lane, and the AI reads the same.</summary>
+        public static void Lane(Vector3 origin, Vector3 forward, out float halfWidth, out float reach)
         {
             forward.y = 0;
             forward = forward.sqrMagnitude > .001f ? forward.normalized : Vector3.forward;
             Vector3 right = Vector3.Cross(Vector3.up, forward);
-            float reach = .1f, width = .1f;
+            reach = .1f; halfWidth = .1f;
             foreach (var corner in new[] {
                 new Vector3(AIController.PlayableMinX, 0, AIController.PlayableMinZ),
                 new Vector3(AIController.PlayableMinX, 0, AIController.PlayableMaxZ),
@@ -33,8 +42,24 @@ namespace TumbangPreso.Abilities
             {
                 Vector3 delta = corner - origin; delta.y = 0;
                 reach = Mathf.Max(reach, Vector3.Dot(delta, forward));
-                width = Mathf.Max(width, Mathf.Abs(Vector3.Dot(delta, right)));
+                halfWidth = Mathf.Max(halfWidth, Mathf.Abs(Vector3.Dot(delta, right)));
             }
+        }
+
+        /// <summary>Whether a point stands in the lane (the five bands together): the rule the host resolves and the cutscene stages.</summary>
+        public static bool InLane(Vector3 origin, Vector3 forward, float halfWidth, float reach, Vector3 point)
+        {
+            forward.y = 0; forward = forward.sqrMagnitude > .001f ? forward.normalized : Vector3.forward;
+            Vector3 delta = point - origin, right = Vector3.Cross(Vector3.up, forward);
+            float along = Vector3.Dot(delta, forward), across = Vector3.Dot(delta, right);
+            return along >= 0 && along <= reach && Mathf.Abs(across) <= halfWidth;
+        }
+
+        public static DanteDriftWave Spawn(Vector3 origin, Vector3 forward, int owner)
+        {
+            forward.y = 0;
+            forward = forward.sqrMagnitude > .001f ? forward.normalized : Vector3.forward;
+            Lane(origin, forward, out float width, out float reach);
             return Create(origin, forward, owner, width, reach, 0, false);
         }
 
@@ -49,9 +74,8 @@ namespace TumbangPreso.Abilities
             var wave = go.AddComponent<DanteDriftWave>();
             wave.Origin = origin; wave.Forward = forward; wave.OwnerSlot = owner;
             wave.HalfWidth = width; wave.Reach = reach; wave.Age = age;
-            // A snapshot describes outcomes already resolved. Never replay old blasts.
-            wave._nextBand = restored ? Mathf.Min(GeoRules.DriftBlasts,
-                Mathf.FloorToInt(age / GeoRules.DriftInterval) + 1) : 0;
+            // A snapshot describes outcomes already resolved. Never replay the throw.
+            wave._released = restored; wave._landed = restored;
             wave._announced = restored ? (1 << Balance.PlayerCount) - 1 : 0;
             wave._visual = DanteDriftVisual.Build(go.transform, origin, forward, width, reach);
             wave.Advance(0);
@@ -63,29 +87,30 @@ namespace TumbangPreso.Abilities
         internal void Advance(float dt)
         {
             Age += Mathf.Max(0, dt);
-            while (_nextBand < GeoRules.DriftBlasts && Age >= _nextBand * GeoRules.DriftInterval)
+            if (!_released) { _released = true; Throw(); }
+            if (!_landed && Age >= GeoRules.DriftLandSeconds)
             {
-                ResolveBand(_nextBand);
-                _nextBand++;
+                _landed = true;
+                if (GameServices.Round?.RoundActive == true)
+                foreach (var actor in _thrown)
+                    if (actor != null && actor.gameObject.activeInHierarchy) actor.ApplyConcussed();
+                _thrown.Clear();
             }
             if (_visual != null) _visual.StepTo(Age);
             if (Age >= GeoRules.DriftSeconds) { gameObject.SetActive(false); Destroy(gameObject); }
         }
 
-        void ResolveBand(int band)
+        void Throw()
         {
             var round = GameServices.Round;
             if (!NetAuthority.ShouldResolve() || round?.RoundActive != true) return;
-            Vector3 right = Vector3.Cross(Vector3.up, Forward);
-            float depth = Reach / GeoRules.DriftBlasts;
-            float start = band * depth, end = (band + 1) * depth;
             foreach (var actor in round.Players)
             {
                 if (actor == null || !actor.gameObject.activeInHierarchy || actor.PlayerSlot == OwnerSlot) continue;
-                Vector3 delta = actor.transform.position - Origin;
-                float along = Vector3.Dot(delta, Forward), across = Vector3.Dot(delta, right);
-                if (along < start || along > end || (band > 0 && along == start) || Mathf.Abs(across) > HalfWidth) continue;
-                actor.ApplyConcussed();
+                if (!InLane(Origin, Forward, HalfWidth, Reach, actor.transform.position)) continue;
+                // Thrown down the lane, away from him, as the cutscene threw them; Concussed as they land.
+                actor.ApplyResolvedCarry(Forward * GeoRules.DriftThrowAway + Vector3.up * GeoRules.DriftThrowUp, GeoRules.DriftThrowHold);
+                _thrown.Add(actor);
                 int bit = 1 << actor.PlayerSlot;
                 if ((_announced & bit) != 0) continue;
                 _announced |= bit;

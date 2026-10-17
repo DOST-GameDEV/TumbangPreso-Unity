@@ -627,7 +627,10 @@ namespace TumbangPreso.Net
         // replacing KURO!'s 10 % on her own speed. The wire is unchanged; a 164 peer would move its body at a different speed.
         // 166 (2026-10-16): Concussed lasts 5 s (the Wiki's number), not 2.5 s. The wire is unchanged; a 165 peer would clamp the
         // replicated timer to 2.5 s and release a Boulder or Drift victim early.
-        public const int ProtocolVersion = 166;
+        // 167 (2026-10-17): CONTINENTAL DRIFT resolves at the cutscene's cut, all five bands at once: everyone in the lane is
+        // thrown down it (a carry) and Concussed as they land 0.6 s later; it no longer erupts band by band after the cutscene.
+        // A 166 host would resolve the bands 0.3 s apart and throw nobody.
+        public const int ProtocolVersion = 167;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

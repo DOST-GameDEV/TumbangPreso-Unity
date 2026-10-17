@@ -8,7 +8,7 @@ namespace TumbangPreso.Visual
         // BASILIO'S SHOTS, framed from his real body and the real enemies (his body is bigger than the table assumes: kneeling,
         // his head bone stood 0.66 m over the court and his hair 1.9 m, film r1). Every shot stays on his right side (+x), and
         // every shot answers one question in order: WHO (him, winding up), WHAT (the slam), WHERE IT GOES (down the lane at them),
-        // WHAT IT DID (they are thrown), WHAT IS LEFT (the scarred lane).
+        // WHAT IT DOES (it catches them and throws them, and play takes over with them in the air).
         // =========================================================================================
         private void DanteFrame(int index, float t, ref Vector3 eye, ref Vector3 look, ref float fov)
         {
@@ -34,36 +34,25 @@ namespace TumbangPreso.Visual
                 case 2:
                 {
                     // WHERE IT GOES: over his right shoulder, him in the foreground, riding forward behind the front so each band
-                    // erupts ahead of us toward the enemies, and they are in frame the whole time.
-                    float u = Ease(DnFirstBand - .1f, DnHit, t);
+                    // erupts ahead of us toward the enemies, and they are in frame the whole time. The lane is the court's full
+                    // width, so the lens is high enough to look DOWN it (film r17: at his shoulder a band stood up as a wall).
+                    float u = Ease(DnFirstBand - .1f, DnBandAt(4) + .4f, t);
                     float front = DnFront(t);
-                    // High enough to look DOWN the lane (film r17: at his shoulder height the first band stood up as a wall and
-                    // hid everything beyond it).
-                    eye = Vector3.Lerp(new Vector3(1.6f, 2.7f, -3.0f), new Vector3(2.4f, 3.4f, Mathf.Max(-1f, front - 6f)), u);
-                    look = new Vector3(_dnTargets.x * .5f, .4f, Mathf.Max(front + 2f, _dnTargets.z * .85f));
-                    fov = Mathf.Lerp(52f, 56f, u);
+                    eye = Vector3.Lerp(new Vector3(1.8f, 3.0f, -3.2f), new Vector3(2.6f, 4.2f, Mathf.Clamp(front - 7f, -1.5f, _dnTargets.z - 6f)), u);
+                    look = new Vector3(_dnTargets.x * .5f, .3f, Mathf.Max(front + 3f, _dnTargets.z * .8f));
+                    fov = Mathf.Lerp(54f, 58f, u);
                     break;
                 }
                 case 3:
                 {
-                    // WHAT IT DID: the fifth band bursting under the enemies and throwing them.
-                    var at = new Vector3(_dnTargets.x, 0f, (DnBandStart(4) + DnLaneEnd) * .5f);
-                    float u = Ease(DnHit, DnAfter, t);
-                    // From the side (film r17: from beyond them they were thrown straight into the lens), so they fly across
-                    // the frame, away from him, with the bands behind them.
-                    // Outside the lane's edge (r18: inside it, its edge slab filled half the frame), a little up.
-                    eye = new Vector3(_dnHalfWidth + 3.2f, 0f, at.z - .4f) + Vector3.Lerp(new Vector3(0f, 2.0f, 0f), new Vector3(.4f, 2.4f, .3f), u);
-                    look = at + new Vector3(0f, .8f, .7f); fov = 50f;
-                    break;
-                }
-                case 4:
-                {
-                    // WHAT IS LEFT: behind him, the whole scarred lane, the enemies down at its end.
-                    float u = Ease(DnAfter, 7f, t);
-                    // Lower and closer than r17 (a flat patch of tiles from high up): down the broken lane to them at its end.
-                    // High enough to see over the rubble to them lying past its end (r18: hidden behind it).
-                    eye = Vector3.Lerp(new Vector3(2.8f, 4.6f, -2.4f), new Vector3(3.2f, 5.0f, -3.0f), u);
-                    look = new Vector3(_dnTargets.x * .5f, .2f, DnLaneEnd + .6f); fov = 52f;
+                    // WHAT IT DOES: side-on to the enemies on the heaved lane, a slow push in; the burst throws them up across
+                    // the frame, away from him, and the lens tips up with them to the cut (film r17: from beyond them they were
+                    // thrown straight into the lens).
+                    float u = Ease(DnBandAt(4) + .3f, DanteDriftLive.SceneEnd, t);
+                    float lift = Ease(DnBurst, DanteDriftLive.SceneEnd, t);
+                    eye = _dnTargets + Vector3.Lerp(new Vector3(6.6f, 2.3f, -1.6f), new Vector3(5.6f, 2.5f, -1.0f), u);
+                    look = _dnTargets + new Vector3(0f, 1.0f + .6f * lift, .6f + .6f * lift);
+                    fov = 48f;
                     break;
                 }
             }
