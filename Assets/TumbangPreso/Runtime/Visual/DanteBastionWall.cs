@@ -59,6 +59,7 @@ namespace TumbangPreso.Visual
                 }
             }
             wall.BuildField();
+            wall.BuildCrust();
             wall.BuildTell();
             wall.StepTo(0f);
             return wall;
@@ -85,6 +86,68 @@ namespace TumbangPreso.Visual
             r.sharedMaterial = _fieldMaterial;
             VfxRenderTag.Own(_field, _fieldMaterial);
             VfxRenderTag.Attach(_field);
+        }
+
+        // THE STONE RIM (owner on kit v3, 2026-10-17: "refine pa gagu ano yan u js put 2d drawings on the hologram"). The crust
+        // was a pattern in the field's flat shader, a painted sheet from the side. Now the rim is real basalt: typed chunks with
+        // depth frame the field's sides and top, three shards jut in to break the line, and the molten joints show between them
+        // (the shader). Each: across the field (0 left to 1 right), up it (0 slab tops to 1 its top), its width, height and depth
+        // in metres, its roll and its seed.
+        private static readonly (float u, float v, float w, float h, float d, float roll, int seed)[] CrustRows =
+        {
+            (.03f, .06f, .36f, .40f, .34f,  8f,  3), (.02f, .25f, .30f, .36f, .30f, -6f,  7), (.04f, .44f, .34f, .42f, .36f, 12f, 11),
+            (.02f, .63f, .28f, .34f, .28f, -9f, 13), (.04f, .81f, .32f, .38f, .32f,  5f, 17), (.06f, .97f, .40f, .30f, .34f, 20f, 19),
+            (.97f, .05f, .34f, .38f, .32f, -7f, 23), (.98f, .23f, .32f, .40f, .34f, 10f, 29), (.96f, .42f, .30f, .34f, .30f, -12f, 31),
+            (.98f, .61f, .36f, .40f, .36f,  6f, 37), (.96f, .80f, .28f, .36f, .28f, -4f, 41), (.94f, .97f, .38f, .32f, .32f, -18f, 43),
+            (.18f, .99f, .34f, .26f, .30f,  4f, 47), (.31f, 1.0f, .30f, .24f, .28f, -8f, 53), (.44f, .98f, .36f, .28f, .32f, 10f, 59),
+            (.57f, 1.0f, .32f, .25f, .30f, -5f, 61), (.70f, .99f, .34f, .27f, .30f,  7f, 67), (.83f, 1.0f, .30f, .24f, .28f, -10f, 71),
+            (.11f, .86f, .22f, .20f, .22f, 35f, 73), (.89f, .88f, .20f, .22f, .20f, -30f, 79), (.09f, .16f, .20f, .18f, .22f, -25f, 83),
+        };
+        private Transform[] _crust = new Transform[0];
+        private Vector3[] _crustRest = new Vector3[0];
+
+        private void BuildCrust()
+        {
+            float w = GeoRules.BarrierWidth, bottom = .95f, top = FieldTop;
+            var holder = new GameObject("BastionStoneRim").transform;
+            holder.SetParent(transform, false);
+            var tones = new[] { new Color(.24f, .2f, .17f), new Color(.3f, .25f, .21f), new Color(.2f, .17f, .14f) };
+            _crust = new Transform[CrustRows.Length]; _crustRest = new Vector3[CrustRows.Length];
+            for (int i = 0; i < CrustRows.Length; i++)
+            {
+                var k = CrustRows[i];
+                var go = new GameObject("RimStone" + i);
+                go.transform.SetParent(holder, false);
+                // A five-sided rock lying with its axis through the field (toward the thrower), so it has depth from every side.
+                go.AddComponent<MeshFilter>().sharedMesh = VfxShapes.Prism(5, 1f, .72f, .32f, 0f, k.seed);
+                var r = go.AddComponent<MeshRenderer>();
+                VfxMaterial.Solid(r, tones[i % 3], .08f);
+                _crustRest[i] = new Vector3((k.u - .5f) * w, Mathf.Lerp(bottom, top, k.v), 0f);
+                _crust[i] = go.transform;
+            }
+        }
+
+        /// <summary>The rim's stones from the field's rise, its warning and its sink: up off the slabs, a sag, then a fall.</summary>
+        private void PoseCrust(float rise, float warn, float sink)
+        {
+            for (int i = 0; i < _crust.Length; i++)
+            {
+                var t = _crust[i]; if (t == null) continue;
+                var k = CrustRows[i];
+                // Each stone pops up as the field's top passes its height: a jolt, a small overshoot, a hold.
+                float u = Mathf.Clamp01((rise - k.v * .9f) / .12f);
+                float grow = u >= 1f ? 1f : u * u * (1f + .3f * (1f - u));
+                // On the sink it drops out of the rim and tumbles, the top stones first, gone below the court (never faded).
+                float fall = Mathf.Clamp01(sink * 1.8f - (1f - k.v) * .5f);
+                var at = _crustRest[i] + Vector3.down * (warn * .05f + fall * fall * 3.2f);
+                t.localPosition = at;
+                t.localRotation = Quaternion.Euler(90f + fall * 70f * (i % 2 == 0 ? 1f : -1f), (k.seed % 7 - 3) * 4f, k.roll + fall * 40f);
+                // The prism's axis is its height: lying through the field, so its depth is the axis and its face is w by h.
+                // At 0.8 of their typed size, so the molten joint behind them shows in the gaps (kit film r9: they closed up solid).
+                t.localScale = new Vector3(k.w, k.d, k.h) * (.8f * Mathf.Max(0f, grow));
+                bool on = grow > .01f && at.y > -.2f;
+                if (t.gameObject.activeSelf != on) t.gameObject.SetActive(on);
+            }
         }
 
         // The tell: two cracks run out sideways from under his stamp, along the wall's line, each with a typed kink.
@@ -172,6 +235,7 @@ namespace TumbangPreso.Visual
                 _fieldMaterial.SetFloat("_Calm", Settings.SettingsStore.Current.ReducedEffects ? 1f : 0f);
                 var hit = _fieldMaterial.GetVector("_Hit"); hit.z += Time.deltaTime; _fieldMaterial.SetVector("_Hit", hit);
             }
+            PoseCrust(Mathf.Clamp01((age - .3f) / .2f), warn, sink);
             if (_tell != null)
             {
                 float run = Mathf.Clamp01(age / .2f), cool = Mathf.Clamp01((age - .45f) / .5f);
