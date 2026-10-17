@@ -180,7 +180,7 @@ namespace TumbangPreso.Visual
                 var at = Vector3.Lerp(from, to, u) + Vector3.down * down * .6f;
                 PlaceGlow(_dnDiveLight, at, Vector3.one * .55f, Quaternion.identity, (u > 0f ? 1f : 0f) * (1f - down) * 1.6f * light);
             }
-            // Up its arm into its fist, and from his chest down his arms into his fists, through the load (5.30 to 6.60).
+            // Up its arm into its fist, and from his chest down his arms into his fists, through the load (5.30 to 6.25).
             {
                 float u = Ease(DnLoad + .1f, DnHangFrom, t);
                 float on = (u > 0f ? 1f : 0f) * (1f - Ease(DnStomp, DnStomp + .05f, t)) * 1.4f * light;

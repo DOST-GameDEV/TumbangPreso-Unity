@@ -69,11 +69,11 @@ Shader "TumbangPreso/BoulderLoad"
                 d=max(d,-flaked(p,_Flake));
                 float aa=max(length(fwidth(p)),.0015);
                 float coverage=1-smoothstep(-aa,aa,d);
-                float seam=smoothstep(-.016,-.006,d);
-                float3 basalt=float3(.31,.27,.24);
+                // Only the seams draw now (owner on kit v1: the grey plates painted on the slipper read as a pattern, not stone):
+                // the rock is `DanteBoulderCoating`'s typed chunks, and these are the molten cracks running between them.
+                float seam=smoothstep(-.024,-.008,d);
                 float3 molten=_Cool<.5?lerp(float3(1,.42,.08),float3(.55,.16,.06),_Cool*2.0):lerp(float3(.55,.16,.06),float3(.40,.38,.36),_Cool*2.0-1.0);
-                float3 colour=lerp(basalt,molten,seam);
-                return fixed4(colour,coverage*.92);
+                return fixed4(molten,coverage*seam*.95);
             }
             ENDCG
         }

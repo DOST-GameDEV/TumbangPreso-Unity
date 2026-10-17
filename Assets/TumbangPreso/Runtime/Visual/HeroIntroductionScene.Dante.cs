@@ -34,7 +34,7 @@ namespace TumbangPreso.Visual
         //   3.30 THE RISE       face first: its horn tips break the surface, then its brow; 3.75 its eyes ignite at the lens (an
         //                       impact frame), the crest lit on its brow; three heaves (4.0, 4.5, 4.95) carry his plate up on its back
         //   5.30 THE STOMP      it raises its right fist; he loads both of his; the light runs up its arm and down his;
-        //                       6.60 to 6.85 THE HANG (the story clock at a fifth); 6.88 both fists land as one; the cut, on contact
+        //                       6.25 to 6.50 THE HANG (the story clock at a fifth); 6.53 both fists land as one; held down to the cut
         // ⚠️ NO BLAST IS SHOWN AND NOTHING GOES BACK UNDER (owner, 2026-10-08): it ends on the fist with him still on its back; the
         // going under and the five blasts are live play's (`DanteDriftLive`). So the stage is whole on the last frame.
         //
@@ -50,7 +50,9 @@ namespace TumbangPreso.Visual
         // =========================================================================================
         private const float DnKnock1 = .45f, DnKnock2 = .80f, DnEyeOpen = .95f, DnWind = 1.15f, DnPunch = 1.55f, DnBreak = 1.57f,
                             DnSplit1 = 1.95f, DnSplit2 = 2.30f, DnDive = 3.10f, DnHorns = 3.30f, DnIgnite = 3.75f, DnRisen = 5.20f,
-                            DnLoad = 5.30f, DnHangFrom = 6.60f, DnHangTo = 6.85f, DnStomp = 6.88f, DnTitanTop = 3.4f;
+                            DnLoad = 5.30f, DnHangFrom = 6.25f, DnHangTo = 6.50f, DnStomp = 6.53f, DnTitanTop = 3.4f;
+        // The stomp lands 0.47 s before the cut (owner on v1, 2026-10-17: "look ennding of ult wtf even is happening here"; at
+        // 6.88 its impact frame was the film's last picture), so the fists are seen down and the seam racing at the players.
         private static readonly float[] DnHeaves = { 4.0f, 4.5f, 4.95f };
         // The court's own surface over the stage root (`Slipper.GroundY`, the method's section 8 trap): Bayan Plaza's court stands
         // above the ground the root is found on, and a fixed 0.15 m left every plate under it (film r1). Measured once at the build.

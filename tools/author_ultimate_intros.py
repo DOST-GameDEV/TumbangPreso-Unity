@@ -592,7 +592,7 @@ def _dante_drift(p, held):
       1.15 THE PUNCH      up into a crouch, the fist cocked behind his head; 1.30 to 1.50 held, knees sinking; 1.55 it lands
       1.70 THE CONTINENTS he stays crouched, fist in the court, while the court splits and drifts (one continuous crane)
       3.30 THE RISE       horns first out of the seam, the eyes ignite at the lens (3.75); three heaves (4.0, 4.5, 4.95) lift him
-      5.30 THE STOMP      he loads both fists over his right shoulder; 6.60 to 6.85 held; 6.88 both fists land as one
+      5.30 THE STOMP      he loads both fists over his right shoulder; 6.25 to 6.50 held; 6.53 both fists land as one, held down to the cut
       7.00                cut to live: still on its back in the stamp pose (owner 2026-10-08: the going under is live play's)
     Every shot is on HIS RIGHT side of the line (+x), so the light always travels the same way across the screen.
     The LAST pose is still `stamp`: play resumes from it. Holding a slipper, the free (left) hand knocks and punches.
@@ -652,11 +652,13 @@ def _dante_drift(p, held):
     p.key(4.5, ride_shake, punch=True).key(4.7, ride)
     p.key(4.95, ride_shake, punch=True).key(5.12, ride)
     p.key(5.3, stand)
-    p.key(5.8, load)
-    p.key(6.2, load_shake).key(6.4, load).key(6.6, load_shake)
-    p.hold(6.6, 6.85, load_shake)
-    p.key(6.88, stamp, punch=True)
-    p.hold(6.88, 7.0, stamp)
+    # Owner on v1's ending (2026-10-17): "look ennding of ult wtf even is happening here". The stomp at 6.88 put its impact
+    # frame on the scene's last two frames, so the film ended on ink. It lands at 6.53 now and the fists stay down 0.47 s.
+    p.key(5.75, load)
+    p.key(6.0, load_shake).key(6.12, load).key(6.25, load_shake)
+    p.hold(6.25, 6.50, load_shake)
+    p.key(6.53, stamp, punch=True)
+    p.hold(6.53, 7.0, stamp)
 
     # The lift: sunk onto the knee (the rigs have no knees: the kneel is legs apart and sunk, Paete's method), up to a
     # crouch at the wind-up, knees sinking 6 cm in the held compression, low in the punch; then the beast's three heaves
