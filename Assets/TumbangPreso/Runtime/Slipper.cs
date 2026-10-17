@@ -221,6 +221,11 @@ namespace TumbangPreso
         private float _throwerIgnoreLeft;
         // Contact episodes, not a timed immunity: separation re-arms this body.
         private int _bodyContacts;
+        // Host only: this flight was thrown by Dante in MOUNTAIN FORM, so the first player it hits is staggered and knocked back.
+        private bool _mountainHit;
+
+        /// <summary>The throw just made was a MOUNTAIN FORM throw (`Carrier.HostThrowAt`, host).</summary>
+        public void HostArmMountainHit() { if (NetAuthority.ShouldResolve() && State == SlipperState.InFlight) _mountainHit = true; }
         private MatchDirector _chainMatch;
         private long _chainThrow, _chainEpoch;
         private int _chainOwner, _launchCanSerial;
@@ -1217,6 +1222,7 @@ namespace TumbangPreso
         public void HostThrow(CharacterMotor thrower, Vector3 origin, Vector3 velocity, SlipperAffinity affinity = SlipperAffinity.Normal, float pektusSpin = 0.0f)
         {
             if (!NetAuthority.ShouldResolve()) return;
+            _mountainHit = false;   // armed again by the thrower's own form, after this (`HostArmMountainHit`)
             // Null identifies an environmental ability displacement, which may
             // move any loose shoe without granting somebody else's shot credit.
             if (thrower != null && !OwnershipAllows(thrower)) return;
@@ -1931,6 +1937,18 @@ namespace TumbangPreso
         {
             // Body hits must call this before generic impact consumes affinity.
             if (victim == null) return;
+            if (_mountainHit)
+            {
+                // MOUNTAIN FORM's throw hits like a rock: a short stagger and a knock away along its flight, lifted off the court
+                // (`CharacterMotor.AsLaunch`, past the knock's lift cap). Once per throw; an immune body refuses both.
+                _mountainHit = false;
+                Vector3 along = new Vector3(_velocity.x, 0f, _velocity.z);
+                if (along.sqrMagnitude < 1e-4f) along = victim.transform.position - transform.position;
+                along.y = 0f; along = along.sqrMagnitude > 1e-4f ? along.normalized : Vector3.forward;
+                victim.ApplyStagger(GeoRules.MountainHitStun, StunElement.None, Balance.StunBreakPressesDefault);
+                victim.ApplyResolvedImpact(CharacterMotor.AsLaunch(along * GeoRules.MountainHitAway + Vector3.up * GeoRules.MountainHitUp));
+                NetCue.Play("land", transform.position);
+            }
             if (Affinity == SlipperAffinity.Concussed)
             {
                 victim.ApplyConcussed();
@@ -1988,6 +2006,7 @@ namespace TumbangPreso
             _velocity.y = Balance.DeflectLift * liftScale;
             _flightTime = 0.0f;
             _throwerSlot = -1; // a deflected slipper credits nobody
+            _mountainHit = false; // nor carries his rock back at anyone
         }
 
         // A current bends an existing throw; it is not a block or a new throw.

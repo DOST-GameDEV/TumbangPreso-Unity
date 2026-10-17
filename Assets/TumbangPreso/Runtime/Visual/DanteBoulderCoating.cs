@@ -40,6 +40,9 @@ namespace TumbangPreso.Visual
         private bool _wasLoaded;
         private float _loadedAge, _grainClock;
         private SlipperState _lastState;
+        private CharacterMotor _lastHolder;
+        private static bool MountainHeldBy(CharacterMotor holder)
+            => holder != null && holder.AbilitySystem?.Kit is Abilities.DanteHeroKit dante && dante.IsMountainForm;
         private Vector3 _lastPos;
         private const float LoadSeconds = Core.GeoRules.BoulderLoadSeconds, WarnSeconds = 3f;
 
@@ -52,12 +55,29 @@ namespace TumbangPreso.Visual
             effect._shoe = shoe;
         }
 
+        /// <summary>
+        /// MOUNTAIN FORM's slipper is stone too (owner, 2026-10-18: a stronger throw that hits like a rock): held by Dante in the
+        /// form, and on the flight it leaves his hand on. Read from the holder's kit, which every peer ticks, so nothing extra
+        /// crosses the wire.
+        /// </summary>
+        public static bool MountainHeld(Slipper shoe)
+            => shoe != null && shoe.State == SlipperState.Held && shoe.Holder != null
+               && shoe.Holder.AbilitySystem?.Kit is Abilities.DanteHeroKit dante && dante.IsMountainForm;
+
+        private bool _mountainFlight;
+        private bool Loaded()
+        {
+            if (_shoe == null || !_shoe.isActiveAndEnabled) return false;
+            if (_shoe.Affinity == SlipperAffinity.Concussed) return true;
+            return MountainHeld(_shoe) || (_mountainFlight && _shoe.State == SlipperState.InFlight);
+        }
+
         public static void MatchOwner(MeshFilter target, Slipper shoe)
         {
             var effect = target.GetComponent<DanteBoulderCoating>();
             if (effect == null)
             {
-                if (shoe == null || shoe.Affinity != SlipperAffinity.Concussed) return;
+                if (shoe == null || (shoe.Affinity != SlipperAffinity.Concussed && !MountainHeld(shoe))) return;
                 effect = target.gameObject.AddComponent<DanteBoulderCoating>();
             }
             effect._shoe = shoe;
@@ -70,8 +90,7 @@ namespace TumbangPreso.Visual
         private void HideChunks() { foreach (var c in _chunks) if (c != null && c.gameObject.activeSelf) c.gameObject.SetActive(false); }
         private void Sample()
         {
-            bool loaded = _shoe != null && _shoe.isActiveAndEnabled && _shoe.Affinity == SlipperAffinity.Concussed
-                && (_world || _shoe.State == SlipperState.Held);
+            bool loaded = Loaded() && (_world || _shoe.State == SlipperState.Held);
             if (!loaded)
             {
                 if (_renderer != null) _renderer.enabled = false;
@@ -98,6 +117,7 @@ namespace TumbangPreso.Visual
             float creep = _loadedAge < .25f ? 0f : _loadedAge < .32f ? 1f : _loadedAge < .39f ? 2f : 3f;
             float late = Mathf.Clamp01((_loadedAge - (LoadSeconds - WarnSeconds)) / WarnSeconds);
             if (_world && _shoe.State != SlipperState.Held) { creep = 3f; late = 0f; }
+            if (_shoe.Affinity != SlipperAffinity.Concussed) late = 0f;   // MOUNTAIN FORM's stone does not cool on a 15 s load
             _block.SetFloat("_Creep", creep);
             _block.SetFloat("_Cool", late);
             _block.SetFloat("_Flake", late * late * .85f);
@@ -130,8 +150,12 @@ namespace TumbangPreso.Visual
         private void Beats()
         {
             if (_shoe == null) return;
-            bool loaded = _shoe.isActiveAndEnabled && _shoe.Affinity == SlipperAffinity.Concussed;
             var state = _shoe.State;
+            // A MOUNTAIN FORM slipper keeps its stone for the flight it leaves his hand on.
+            if (state == SlipperState.InFlight && _lastState == SlipperState.Held && MountainHeldBy(_lastHolder)) _mountainFlight = true;
+            else if (state != SlipperState.InFlight) _mountainFlight = false;
+            _lastHolder = _shoe.Holder;
+            bool loaded = Loaded();
             Vector3 at = _shoe.transform.position;
             float dt = Time.deltaTime;
             if (loaded && !_wasLoaded)

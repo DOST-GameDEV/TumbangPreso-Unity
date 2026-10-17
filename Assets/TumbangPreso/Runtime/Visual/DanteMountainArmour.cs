@@ -28,6 +28,8 @@ namespace TumbangPreso.Visual
     {
         /// <summary>The cutscene second every piece is on him: the end of THE RISE, just before THE LEAP.</summary>
         public const float FormedAt = 2.0f;
+        /// <summary>The cutscene's last second (`HeroIntroductionScene.Dante`'s DnEnd): play takes the armour's clock from here.</summary>
+        public const float CutEndAt = 3.33f + GeoRules.DriftCutsceneTail;
         public const float FlyTime = .26f;
         /// <summary>
         /// THE SHEDDING (owner, 2026-10-18: *"as ult nears end (starting at 20 seconds) parts of it falll off until at 30 seconds its

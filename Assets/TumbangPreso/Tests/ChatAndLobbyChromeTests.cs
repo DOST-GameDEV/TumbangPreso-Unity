@@ -390,7 +390,9 @@ namespace TumbangPreso.Tests
             //168 makes CONTINENTAL DRIFT's cascade play's again, band by band, each band throwing (no wire change).
             //169 keeps the cutscenes' moves at the hand-back: Amihan's thrown mid-air, Nemu's where they ran (no wire change).
             //170 makes a Concussed throw wobble harder and often misfire far off its aim (no wire change; the rules differ).
-            Assert.AreEqual(170, NetSession.ProtocolVersion,
+            //171 gives Dante MOUNTAIN FORM after CONTINENTAL DRIFT: 30 s of status immunity, x1.25 throws that stagger and knock
+            //back, and its time left in the timed-kit snapshot's passive fields.
+            Assert.AreEqual(171, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

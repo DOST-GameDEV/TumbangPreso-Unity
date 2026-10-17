@@ -31,7 +31,7 @@ namespace TumbangPreso.Abilities
         public bool IsImmuneToTags => Kit is NemuHeroKit nemu
             && nemu.IsPhantomPhaseActive
             && (_motor == null || !_motor.HoldingSlipper);
-        public bool IsImmuneToStuns => Kit is DanteHeroKit dante && dante.IsDemonicCarapaceActive;
+        public bool IsImmuneToStuns => Kit is DanteHeroKit dante && (dante.IsDemonicCarapaceActive || dante.IsMountainForm);
 
         /// <summary>Status immunity (Geo's SHIELD, ABILITY-2): every status but Tagged is refused.
         /// Today the same flag as stun immunity, named for what the rework's statuses ask.</summary>

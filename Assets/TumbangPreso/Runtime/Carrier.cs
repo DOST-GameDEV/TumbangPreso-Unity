@@ -360,8 +360,14 @@ namespace TumbangPreso
                 phaister.IsWitchfireInfused = false;
             }
 
+            // DANTE IN MOUNTAIN FORM throws a rock: `GeoRules.MountainThrowScale` faster, and the hit stuns and knocks back
+            // (`Slipper.HostBodyAffinity`). On top of whatever the slipper already carries (a Boulder load stays a Boulder load).
+            bool mountain = ability?.Kit is DanteHeroKit danteForm && danteForm.IsMountainForm;
+            if (mountain) velocity *= GeoRules.MountainThrowScale;
+
             var thrown = Held;
             thrown.HostThrow(_motor, origin, velocity, affinity, spin);
+            if (mountain) thrown.HostArmMountainHit();
             // The Arena's slipper balloon (`Map.ArenaBalloon`, a toy): a full-charge throw aimed at it leaves
             // play to strike it and is set back on the stage. No other map has one: there this is one null
             // test, and the throw above is the whole of what happened.
