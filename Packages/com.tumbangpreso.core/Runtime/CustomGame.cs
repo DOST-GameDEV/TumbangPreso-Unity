@@ -315,6 +315,55 @@ namespace TumbangPreso.Core
         public static int ClampBots(int bots)
             => bots < 0 ? 0 : bots > MaxBots ? MaxBots : bots;
 
+        /// <summary>Every seat's bit set: the largest legal <see cref="CustomRules.BotSeats"/>.</summary>
+        public const int AllBotSeats = (1 << Balance.PlayerCount) - 1;
+
+        public static int ClampBotSeats(int mask) => mask & AllBotSeats;
+
+        /// <summary>
+        /// Whether an EMPTY seat holds a bot in this room. An occupied seat is a person whatever
+        /// this says, which is why the question is only ever asked about an empty one.
+        ///
+        /// ⚠️⚠️ THREE STATES, AND THE MIDDLE ONE IS THE OLD GAME. `Bots == 0` is no bots at all.
+        /// `Bots > 0` with no <see cref="CustomRules.BotSeats"/> is "fill every empty seat", which
+        /// is what the RULES screen's on/off switch has always meant and what an older build's
+        /// wire still says. A non-zero mask is the player's room choosing seat by seat with ADD
+        /// BOT. Reading a zero mask as "no bots" would have emptied every room an older host
+        /// opened with bots on.
+        /// </summary>
+        public static bool SeatHasBot(CustomRules rules, int seat)
+        {
+            if (rules == null || rules.Bots <= 0) return false;
+            if (seat < 0 || seat >= Balance.PlayerCount) return false;
+            return rules.BotSeats == 0 || (rules.BotSeats & (1 << seat)) != 0;
+        }
+
+        /// <summary>
+        /// ADD BOT and REMOVE BOT: put a bot in one seat, or take it out, leaving every other
+        /// seat as it was.
+        ///
+        /// ⚠️ THE MASK IS WRITTEN OUT IN FULL FIRST, so removing one bot from a room that was
+        /// filling every seat keeps the other three rather than dropping all of them.
+        ///
+        /// ⚠️ AND THE LAST BOT OUT TURNS BOTS OFF. An empty mask with bots on means "fill every
+        /// seat" (<see cref="SeatHasBot"/>), so leaving `Bots` on after removing the last bot
+        /// would put all of them back. `Bots` stays all or nothing (`MaxBots` or 0), which is
+        /// what `CanBeRanked` and `AIController.ApplyCustomRoomPolicy` read.
+        /// </summary>
+        public static void SetSeatBot(CustomRules rules, int seat, bool bot)
+        {
+            if (rules == null || seat < 0 || seat >= Balance.PlayerCount) return;
+            int mask = 0;
+            for (int i = 0; i < Balance.PlayerCount; i++)
+                if (SeatHasBot(rules, i)) mask |= 1 << i;
+
+            if (bot) mask |= 1 << seat;
+            else mask &= ~(1 << seat);
+
+            rules.BotSeats = mask;
+            rules.Bots = mask == 0 ? 0 : MaxBots;
+        }
+
         /// <summary>
         /// The default rule set for a mode: exactly what the game plays today.
         ///
@@ -419,7 +468,8 @@ namespace TumbangPreso.Core
                 r.BotDifficulty.ToString(),
                 r.Private ? "1" : "0",
                 r.ManualReady ? "1" : "0",
-                r.MapVote ? "1" : "0");
+                r.MapVote ? "1" : "0",
+                r.BotSeats.ToString());
         }
 
         public static CustomRules Parse(string wire, GameMode fallback)
@@ -452,6 +502,8 @@ namespace TumbangPreso.Core
             // An absent suffix preserves the older room's explicit ready gate.
             if (parts.Length > 9) rules.ManualReady = parts[9] != "0";
             if (parts.Length > 10) rules.MapVote = parts[10] == "1";
+            // An absent suffix is an older build's room: every empty seat or none (`SeatHasBot`).
+            if (parts.Length > 11 && int.TryParse(parts[11], out int botSeats)) rules.BotSeats = ClampBotSeats(botSeats);
 
             // ⚠️ THE PASSWORD IS NOT ON THE WIRE AND MUST NEVER BE. A lobby advert is readable by
             // everybody in the pool; a password in it is a lock with the key taped to the door.
@@ -480,6 +532,13 @@ namespace TumbangPreso.Core
         public int Tsinelas = CustomGameRules.StartingTsinelas;
         public int Bots;
         public int BotDifficulty = (int)Difficulty.Normal;
+
+        /// <summary>
+        /// Which empty seats the player's room filled with ADD BOT, one bit per seat. Zero means
+        /// "every empty seat" while <see cref="Bots"/> is on; see `CustomGameRules.SeatHasBot`.
+        /// </summary>
+        public int BotSeats;
+
         public bool Private;
 
         /// <summary>Legacy wire field, retained for reading older rule records.</summary>
@@ -501,6 +560,7 @@ namespace TumbangPreso.Core
             Tsinelas = Tsinelas,
             Bots = Bots,
             BotDifficulty = BotDifficulty,
+            BotSeats = BotSeats,
             Private = Private,
             ManualReady = ManualReady,
             MapVote = MapVote,

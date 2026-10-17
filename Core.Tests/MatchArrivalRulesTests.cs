@@ -26,7 +26,7 @@ namespace TumbangPreso.Core.Tests
             rules.ManualReady = false;
             string wire = CustomGameRules.ToWire(rules);
             Assert.StartsWith(old + "|", wire);
-            Assert.Equal(11, wire.Split('|').Length);
+            Assert.Equal(12, wire.Split('|').Length);
             Assert.False(rules.MapVote);
             Assert.False(CustomGameRules.Parse(wire, GameMode.HeroStrike).ManualReady);
             // Explicit legacy non-zero fields retain their original decoding; the ready gate ignores this flag.
