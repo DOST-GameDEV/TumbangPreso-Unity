@@ -1,4 +1,4 @@
-// CONCUSSED, THE VICTIM'S OWN SCREEN (Basilio's Boulder and Continental Drift; `docs/reports/dante-presentation-2026-10-16/plan.md`
+// CONCUSSED, THE VICTIM'S OWN SCREEN (Dante's Boulder and Continental Drift; `docs/reports/dante-presentation-2026-10-16/plan.md`
 // section 3). A dull dust-ochre rim, the colour of the court's dust after a stone hits, thick in the corners and clear through the
 // middle (a rim, never a filter: the victim still has to read the court and run). Its inner edge is chipped, a few broad angular
 // steps round the frame like a broken stone's outline, never grain (the owner refused texture noise on his stone). It throbs

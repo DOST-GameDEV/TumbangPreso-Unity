@@ -1,4 +1,4 @@
-// BASILIO'S IMPACT FRAMES (CONTINENTAL DRIFT's cutscene, `HeroIntroductionScene.Dante.cs`; `docs/reports/dante-presentation-2026-10-16/
+// DANTE'S IMPACT FRAMES (CONTINENTAL DRIFT's cutscene, `HeroIntroductionScene.Dante.cs`; `docs/reports/dante-presentation-2026-10-16/
 // plan.md` section 5.4: three, the punch, the eyes igniting, the stomp, two frames each). The finished frame is redrawn in two
 // tones: its darks become ink, everything else molten orange, with radial speed lines running in to the hit's point on screen.
 // Never white: the light tone is molten core (1, .42, .08), the hottest molten hot (1, .62, .18). `_Impact` 0 passes the frame
