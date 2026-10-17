@@ -194,7 +194,7 @@ namespace TumbangPreso.PlayTests
                                 var at = stageRoot.position;
                                 if (f == sceneFirst) Debug.Log(FormattableString.Invariant($"[DanteFilm] stage root y {at.y:F3}; court under it {Slipper.GroundY(at + Vector3.up * .3f):F3}; live feet {dante.transform.position.y:F3}"));
                                 // Measured in the stage's own space: his head, both hands, his lowest point, the beast's top and eyes.
-                                if ((f - sceneFirst) % 6 == 0)
+                                if ((f - sceneFirst) % 3 == 0)
                                 {
                                     Vector3 L(Vector3 w) => Quaternion.Inverse(stageRoot.rotation) * (w - at);
                                     var bones = copies.GetComponentsInChildren<Transform>(true);
@@ -220,6 +220,15 @@ namespace TumbangPreso.PlayTests
                                         var rs = beast.GetComponentsInChildren<Renderer>(true);
                                         var b = rs[0].bounds; foreach (var r in rs) b.Encapsulate(r.bounds);
                                         beastText = FormattableString.Invariant($" beast min {L(b.min)} max {L(b.max)}");
+                                        // Its horns and sockets on their own (film r7: a horn through him at 3.6, the eye lens on rock).
+                                        foreach (var part in new[] { "horn-left", "horn-right", "glow-eyes" })
+                                        {
+                                            var node = beast.GetComponentsInChildren<Transform>(true).FirstOrDefault(x => x.name == part);
+                                            var prs = node != null ? node.GetComponentsInChildren<Renderer>(true) : new Renderer[0];
+                                            if (prs.Length == 0) continue;
+                                            var pb = prs[0].bounds; foreach (var r in prs) pb.Encapsulate(r.bounds);
+                                            beastText += FormattableString.Invariant($" {part} min {L(pb.min)} max {L(pb.max)} centre {L(pb.center)}");
+                                        }
                                     }
                                     Debug.Log(FormattableString.Invariant(
                                         $"[DanteMeasure] age {UltimatePhaseView.LastAge:F2} head {(head != null ? L(head.position) : Vector3.zero)} hand {(hand != null ? L(hand.position) : Vector3.zero)} armL {(armL != null ? L(armL.position) : Vector3.zero)} low {low - at.y:F3} top {top - at.y:F3}{beastText}"));

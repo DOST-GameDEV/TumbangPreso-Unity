@@ -268,13 +268,15 @@ namespace TumbangPreso.Visual
             get
             {
                 if (_dnCrestMeshCache != null) return _dnCrestMeshCache;
-                var v = new List<Vector3>(); var t = new List<int>();
+                // SpiritGlow fades by the uv's distance from its middle, so each piece's centre is uv (.5, .5), hottest, and its
+                // outline sits part way out (film r8: with no uv every crest read uv 0, past the falloff, and never drew at all).
+                var v = new List<Vector3>(); var uv = new List<Vector2>(); var t = new List<int>();
                 void Poly(params float[] xy)
                 {
                     int start = v.Count, n = xy.Length / 2;
                     float cx = 0f, cy = 0f; for (int i = 0; i < n; i++) { cx += xy[i * 2]; cy += xy[i * 2 + 1]; }
-                    v.Add(new Vector3(cx / n, cy / n, 0f));
-                    for (int i = 0; i < n; i++) v.Add(new Vector3(xy[i * 2], xy[i * 2 + 1], 0f));
+                    v.Add(new Vector3(cx / n, cy / n, 0f)); uv.Add(new Vector2(.5f, .5f));
+                    for (int i = 0; i < n; i++) { v.Add(new Vector3(xy[i * 2], xy[i * 2 + 1], 0f)); uv.Add(new Vector2(.72f, .5f)); }
                     for (int i = 0; i < n; i++) { t.Add(start); t.Add(start + 1 + i); t.Add(start + 1 + (i + 1) % n); }
                 }
                 // The split stone: two halves, a gap between, each chipped differently.
@@ -285,7 +287,7 @@ namespace TumbangPreso.Visual
                 // The left horn, chipped: the same sweep, stopping at a slanted break below its hook.
                 Poly(-.10f, .18f, -.30f, .16f, -.52f, .26f, -.66f, .46f, -.71f, .64f, -.60f, .70f, -.54f, .58f, -.44f, .44f, -.24f, .30f);
                 var m = new Mesh { name = "Basilio crest", hideFlags = HideFlags.DontSave };
-                m.SetVertices(v); m.SetTriangles(t, 0); m.RecalculateNormals(); m.RecalculateBounds();
+                m.SetVertices(v); m.SetUVs(0, uv); m.SetTriangles(t, 0); m.RecalculateNormals(); m.RecalculateBounds();
                 _dnCrestMeshCache = VfxShapes.TwoSided(m);
                 return _dnCrestMeshCache;
             }
@@ -410,8 +412,12 @@ namespace TumbangPreso.Visual
                 Vector2 away = home.normalized * open * DnShare[k];
                 float loose = Mathf.Clamp01(open / .9f), heel = Mathf.Clamp01(shoved / 2.1f);
                 float bob = Mathf.Sin(story * 1.4f + k * 1.7f) * .035f * loose;
-                plate.localPosition = new Vector3(home.x + away.x, DnFloat + bob + heel * .42f, home.y + away.y);
-                var rock = DnTilt[k] * .24f * loose * (.6f + .4f * Mathf.Sin(story * 1.1f + k));
+                // Once loose they ride up on the welling sea (film r9: at the court's own height a one degree rock sank each plate's
+                // far half under the sea's surface, so the players stood in molten rock on slivers of stone). Rock and bob together
+                // now dip a plate's far edge at most 0.11 m, under the 0.12 m it rides.
+                float afloat = Ease(DnBreak, DnSplit1, t) * .12f;
+                plate.localPosition = new Vector3(home.x + away.x, DnFloat + afloat + bob + heel * .42f, home.y + away.y);
+                var rock = DnTilt[k] * .12f * loose * (.6f + .4f * Mathf.Sin(story * 1.1f + k));
                 var heeled = Quaternion.AngleAxis(-4f * heel, new Vector3(-home.y, 0, home.x).normalized);
                 plate.localRotation = heeled * Quaternion.Euler(rock.x, rock.y * .4f, rock.z);
             }
@@ -451,7 +457,7 @@ namespace TumbangPreso.Visual
             {
                 float age = t - DnPunch;
                 float s = age < 0f ? 0f : (1f - Mathf.Clamp01((age - .2f) / .1f));
-                PlaceGlow(_dnCrestCourt, DnFist + Vector3.up * .025f, Vector3.one * 1.3f * Mathf.Lerp(.6f, 1f, Mathf.Clamp01(age / .06f)),
+                PlaceGlow(_dnCrestCourt, DnFist + Vector3.up * .025f, Vector3.one * 1.7f * Mathf.Lerp(.6f, 1f, Mathf.Clamp01(age / .06f)),
                           Quaternion.Euler(90f, 0f, 0f), s * 1.3f);
             }
 
@@ -489,7 +495,9 @@ namespace TumbangPreso.Visual
             {
                 float c = Ease(DnLoad + .5f, DnHangFrom, t);
                 float flare = Flash(t, DnStomp, .1f);
-                PlaceGlow(_dnCrestSky, new Vector3(-.4f, 6.4f, -5.5f), Vector3.one * 9.5f, Quaternion.identity, c * (.55f + .6f * flare));
+                // Film r9: at 9.5 m its stone hid behind the beast and its horns ran off the top, washed pink on the sky; smaller and
+                // higher, the whole emblem stands over the beast, and hotter.
+                PlaceGlow(_dnCrestSky, new Vector3(-.4f, 6.9f, -5.5f), Vector3.one * 6.5f, Quaternion.identity, c * (.95f + .6f * flare));
             }
 
             // Where its fist lands: a lit seam shooting forward toward them on the last frames.

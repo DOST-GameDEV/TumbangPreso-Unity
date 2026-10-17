@@ -68,8 +68,15 @@ namespace TumbangPreso.Visual
             float dist = Mathf.Clamp(local.magnitude, 4.5f, 8.5f);
             var spot = new Vector2(Mathf.Sin(bearing), Mathf.Cos(bearing)) * dist;
             v.Offset = new Vector3(spot.x - home.x, 0f, spot.y - home.y);
-            // Never off the plate's slab: pulled toward its middle.
-            if (v.Offset.magnitude > 2.4f) v.Offset = v.Offset.normalized * 2.4f;
+            // Never off the plate's slab: pulled toward its middle. Film r8: at 2.4 m a target straight ahead of him stood 0.2 m
+            // from the crack that runs at the targets (plate 1's edge), and once the plates parted they stood in the molten gap.
+            // Every outer plate's middle is at least 2.5 m from its own cracks, so 1.2 m keeps their whole body on the stone.
+            if (v.Offset.magnitude > 1.2f) v.Offset = v.Offset.normalized * 1.2f;
+            // Two targets on one plate stand apart, never inside each other: the later one a step across from the earlier.
+            var across = new Vector3(Mathf.Cos(bearing), 0f, -Mathf.Sin(bearing));
+            foreach (var other in _dnVictims)
+                if (other.Plate == v.Plate && (other.Offset - v.Offset).magnitude < .8f)
+                    v.Offset = Vector3.ClampMagnitude(other.Offset + across * (Vector3.Dot(v.Offset - other.Offset, across) < 0f ? -.9f : .9f), 1.5f);
             // Facing him (they look back at what is happening), each a little different.
             v.Yaw = Mathf.Atan2(-spot.x, -spot.y) * Mathf.Rad2Deg;
             v.Phase = _dnVictims.Count * .07f;

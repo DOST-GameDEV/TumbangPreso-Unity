@@ -36,10 +36,20 @@ namespace TumbangPreso.Visual
             return new Vector3(0f, height + _dnCourt, DnSurge(t)) + Quaternion.Euler(pitch, 0f, 0f) * DnEyesLocal;
         }
 
-        // THE RISE's fixed lens: in front of its face and on his side, at the height its eyes reach as they ignite.
+        // THE RISE's fixed lens: straight out along its face from the sockets as they ignite, a little toward his side.
         // (film r5: 2.6 m off, its eyes were small; the method's climax is the eyes AT the lens.)
-        // A little under them, so the lens looks up into the sockets over the plates' edges (r6: level with them, a plate hid them).
-        private Vector3 DnRiseLens => DnEyesTyped(DnIgnite) + new Vector3(.6f, -.08f, 1.45f);
+        // Film r8 measured why r7 saw only rock: the face comes up pitched 42 degrees nose up, so a level lens in front of the
+        // eyes looked through the muzzle jutting below them. Along the face's own normal the 1.25 m pair of sockets fills a 46
+        // degree frame at 1.8 m; a hair under it (r9: a hair above, the brow's V hid the sockets' tops), still 0.11 m over the muzzle.
+        private Vector3 DnRiseLens
+        {
+            get
+            {
+                DnBeastPose(DnIgnite, out _, out float pitch);
+                var face = Quaternion.Euler(pitch, 0f, 0f);
+                return DnEyesTyped(DnIgnite) + face * new Vector3(0f, -.08f, 1.8f) + new Vector3(.5f, 0f, 0f);
+            }
+        }
 
         private void DanteFrame(int index, float t, ref Vector3 eye, ref Vector3 look, ref float fov)
         {
@@ -80,7 +90,9 @@ namespace TumbangPreso.Visual
                     // First its horn tips breaking the surface (above the eyes), then down onto the eyes as they come up and ignite.
                     var eyes = DnEyesTyped(t);
                     look = Vector3.Lerp(new Vector3(eyes.x, Mathf.Max(eyes.y + 1.1f, DnFloat + .3f), eyes.z), eyes, Ease(DnHorns + .1f, DnIgnite, t));
-                    fov = 46f;
+                    // Wide enough at first to hold both horn tips breaking the court 1.4 m either side (r9: at 46 only the court),
+                    // closing onto the eyes as they ignite.
+                    fov = Mathf.Lerp(68f, 46f, Ease(DnHorns + .1f, DnIgnite, t));
                     break;
                 }
                 case 5:
