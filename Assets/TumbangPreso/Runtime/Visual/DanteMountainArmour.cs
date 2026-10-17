@@ -14,12 +14,13 @@ namespace TumbangPreso.Visual
     /// THE DESIGN (owner, 2026-10-18, over eleven turnarounds in `Logs/dante-armour`): a BULK SUIT of columnar basalt, Toph's
     /// earth suit as the measure of bulk but not of look. Every piece rides one of his rigid bones, placed from that bone's own
     /// rest-pose vertices, so it moves with every clip and never stretches:
-    ///  * the torso, four rings of nine boulders and a skirt of rocks over the coat's hem; a range of columns off his back;
-    ///  * the shoulders, column clusters on the torso's shoulder line outside the head box (tall over the horn's side);
-    ///  * the arms, rock shells on upper arm and forearm and a great boulder fist; the legs, rock pillars, boots and toe caps;
+    ///  * the torso, a breastplate over a belly plate, a back plate and side plates, a collar that leaves the face bare, a belt
+    ///    of blocks with one molten line through it, and two layers of tassets past the coat's hem; a range of columns off his back;
+    ///  * the shoulders, a domed pauldron and a hanging plate outside the head box, and a range of columns over the horn's side;
+    ///  * the arms, a bracer on each bone and a great boulder fist; the legs, thigh bracers, greaves, boots and toe caps;
     ///  * the head keeps his face and hair bare (owner: no rocks on his hair); his obsidian horn gets molten veins and a basalt
     ///    collar, and its exact mirror in stone grows on his right temple (`MirroredHorn`); his gold eye burns.
-    /// A third of the rocks are cut through with the molten core showing: the suit glows from inside its seams.
+    /// Every plate is split by one molten seam along it, and the columns are cut through to the core: the suit glows along its lines.
     /// ONE CLOCK (`StepTo`), the cutscene's: pieces arrive on the charge-up's beats, complete at `FormedAt`, hold, then over the
     /// last `ShedSeconds` come off one at a time onto the court, cool and sink in.
     /// Hidden from his own first-person view (`DanteGauntletHands` draws his stone hands there). Presentation only.
@@ -39,7 +40,9 @@ namespace TumbangPreso.Visual
         /// </summary>
         public const float ShedSeconds = 10f, LoosenSeconds = .45f, DebrisSeconds = 1.6f;
         // The charge-up's beats (`HeroIntroductionScene.Dante.cs`): the three waves of stone land at .84, 1.14 and 1.44.
-        private const float FistsAt = .84f, BracersAt = 1.14f, ShouldersAt = 1.44f, LegsAt = .98f, ChestAt = 1.28f, HeadAt = 1.70f;
+        // ⚠️ THE LEGS COME AS HE STANDS (1.56 to 1.8), NOT WHILE HE KNEELS: plated during the plant, his shins lie on the court and
+        // their plates went 5 cm into it (`UltimateIntroductionProbe`'s support plane). The earth climbs him boots first as he rises.
+        private const float FistsAt = .84f, BracersAt = 1.14f, ShouldersAt = 1.44f, LegsAt = 1.62f, ChestAt = 1.28f, HeadAt = 1.70f;
 
         private enum Arrive { Fly, Rise, Grow }
 
@@ -92,6 +95,13 @@ namespace TumbangPreso.Visual
         public float Age { get; private set; }
         public IReadOnlyList<Renderer> Renderers => _renderers;
         public int PieceCount => _pieces.Count;
+        /// <summary>
+        /// ⚠️ THE BODY IT WAS BUILT ON IS GONE: his model was rebuilt under it (`CharacterVisual.ApplyModel`, a skin or a roster
+        /// refresh mid-form), so every stone went with the old bones and the veins' bone is a destroyed transform. Nothing here
+        /// can be moved onto the new rig; the kit throws this suit away and dresses the new body (`DanteHeroKit.Tick`).
+        /// </summary>
+        public bool Orphaned => _body == null || _pieces.Exists(p => p.Node == null);
+        private SkinnedMeshRenderer _body;
 
         /// <summary>On his live body.</summary>
         public static DanteMountainArmour Attach(CharacterMotor owner)
@@ -110,8 +120,8 @@ namespace TumbangPreso.Visual
             var go = new GameObject("DanteMountainArmour");
             go.transform.SetParent(worldRoot, false);
             var armour = go.AddComponent<DanteMountainArmour>();
-            armour._owner = owner; armour._worldRoot = worldRoot;
-            armour.Make(skin);
+            armour._owner = owner; armour._worldRoot = worldRoot; armour._body = skin;
+            armour.Make(skin, model);
             if (owner != null) armour._badge = DanteWardBadge.Create(worldRoot, owner, UI.AbilityGlyph.DanteFissure);
             armour.StepTo(0f);
             return armour;
@@ -193,9 +203,12 @@ namespace TumbangPreso.Visual
             return f;
         }
 
-        private void Make(SkinnedMeshRenderer body)
+        private void Make(SkinnedMeshRenderer body, GameObject model)
         {
-            _skins = body.transform.root.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+            // ⚠️ THIS MODEL'S SKINS ONLY, NEVER THE BODY ROOT'S. A model swapped in the same frame the form begins
+            // (`CharacterVisual.ApplyModel` destroys the old one at the frame's end) left both under the root, and the old
+            // head won `FindBone`'s tie: the horn's veins were lit on a bone that was gone a frame later.
+            _skins = model.GetComponentsInChildren<SkinnedMeshRenderer>(true);
             if (_skins.Length == 0) _skins = new[] { body };
             if (FindBone("torso", out var s, out int b)) { var f = Basis(s, b, out var pts); var core = Bounds(f, pts, null); Basis(s, b, out var coat, .2f); Torso(core, Whole(f, coat)); Shoulders(core); }
             foreach (var side in new[] { "left", "right" })
@@ -207,7 +220,7 @@ namespace TumbangPreso.Visual
                 {
                     var f = Basis(s, b, out var pts); var whole = Bounds(f, pts, null);
                     float shoe = whole.Min.y + (whole.Max.y - whole.Min.y) * .28f;
-                    Leg(Bounds(f, pts, p => p.y > shoe), whole);
+                    Leg(Bounds(f, pts, p => p.y > shoe), whole, Whole(f, pts).Min.y);
                 }
             }
             if (FindBone("head", out s, out b)) Head(s, b);
@@ -225,7 +238,10 @@ namespace TumbangPreso.Visual
         // it is the same earth as the cascade. Every stone is a chamfered hex column cut through once, with the molten core
         // showing only in that cut: light inside the stone, never an outline round it.
 
-        private static readonly Color Basalt = new Color(.27f, .26f, .27f), BasaltDark = new Color(.2f, .19f, .2f), BasaltPale = new Color(.34f, .33f, .34f);
+        // The cutscene's own basalt (`HeroIntroductionScene.Dante`'s gauntlet stones), so the suit he forms in the cut is the suit he
+        // wears in play: warm dark stone, not a neutral grey (which beside his orange seams read cold and flat).
+        // Kept darker than the cut's stones (`Logs/mf/poses_v4`: at the cut's own values the suit sat in the court's tan).
+        private static readonly Color Basalt = new Color(.23f, .19f, .17f), BasaltDark = new Color(.16f, .13f, .115f), BasaltPale = new Color(.3f, .25f, .21f);
         private static readonly Color Lava = new Color(1f, .43f, .08f, .92f);
 
         private static void Dress(Transform node, Color colour)
@@ -278,9 +294,12 @@ namespace TumbangPreso.Visual
             node.SetParent(f.Bone, false);
             foreach (float side in new[] { -1f, 1f })
             {
-                var half = VfxShapes.Stand(node, side < 0 ? "SlabA" : "SlabB", VfxShapes.Prism(4, 1f, .78f, .05f, .785f, seed + (side < 0 ? 0 : 1)), 1).transform;
-                half.localPosition = new Vector3(side * .26f, 0f, side * .05f);
-                half.localScale = new Vector3(.5f, 1f, .98f);
+                var half = VfxShapes.Stand(node, side < 0 ? "SlabA" : "SlabB", VfxShapes.Prism(4, 1f, .9f, .05f, .785f, seed + (side < 0 ? 0 : 1)), 1).transform;
+                // ⚠️ APART, SO THE SEAM SHOWS. At .26 the two halves (each .35 wide) overlapped and covered the groove: on the body
+                // the seams read as orange specks (`Logs/mf/poses_v3`). At .38 there is a cut between them, narrow at the plate's
+                // foot and opening a little to its face (the halves taper), and the molten groove fills it: a line along the plate.
+                half.localPosition = new Vector3(side * .38f, 0f, side * .02f);
+                half.localScale = new Vector3(.48f, 1f, .98f);
                 half.localRotation = Quaternion.Euler(0f, side * 4f, 0f);
                 Dress(half, side < 0 ? colour : colour * 1.08f);
             }
@@ -320,9 +339,8 @@ namespace TumbangPreso.Visual
         };
 
         // THE SUIT (owner, 2026-10-18: *"i want really bulk armor hindi ung parts of the body lang"*, Toph's earth suit as the
-        // measure of bulk and not of look): every bone wears a SHELL of boulders, ring over ring round its own axis, pushing his
-        // whole outline out. Basalt, not Toph's sandstone cobbles: dark chamfered rocks, a third of them cut through with the
-        // molten core showing, so the suit glows from inside its seams.
+        // measure of bulk and not of look). Basalt, not Toph's sandstone cobbles. The bulk was first built as a shell of boulders
+        // round every bone and is now built as plates (the note over `Plate`): the same bulk, with shapes that read.
 
         /// <summary>Its place in the shedding: the high and far pieces first, the core of the suit late, the stone horn last.</summary>
         private static float ShedOrder(string role, int index)
@@ -331,6 +349,7 @@ namespace TumbangPreso.Visual
             if (role.Contains("Crown") || role.Contains("Range") || role.Contains("Shoulder")) return .02f + .3f * jitter;
             if (role.Contains("Hood") || role.Contains("Knuckle") || role.Contains("Boot")) return .15f + .4f * jitter;
             if (role.Contains("Fist") || role.Contains("HornSeat")) return .82f + .12f * jitter;
+            if (role.Contains("Chest") || role.Contains("MountainBack")) return .64f + .16f * jitter;
             return .25f + .6f * jitter;
         }
 
@@ -350,51 +369,59 @@ namespace TumbangPreso.Visual
             return piece;
         }
 
+        // ------------------------------------------------------------------ the suit, plate by plate
+        //
+        // ⚠️⚠️ PLATES, NOT A HEAP (2026-10-18, turnarounds `Logs/mf/poses_v2`). The first suit was every bone wrapped in rings of
+        // similar boulders, about 250 of them: from any side it read as one grey dome with his head on top, the arms sank into it,
+        // every clip looked like every other, and the molten seams were specks with no direction. The brief is a deliberate,
+        // bulky stone warrior. So the suit is built like armour: a few big plates, each with one job and its own place, layered
+        // over each other (the breastplate over the belly plate, the belt over the tassets, the pauldron over the arm's plate),
+        // and one molten seam per plate running along it, so the lines lead the eye: down the chest, round the belt, along the
+        // limbs to the boulder fists. The face stays bare (the old gorget ring rose to his eyes).
+
         /// <summary>
-        /// A shell of <paramref name="rings"/> rings of <paramref name="perRing"/> boulders round a bone, from <paramref name="from"/>
-        /// to <paramref name="to"/> along its long axis (0 his right, 1 his up), on the ellipse of its own cross-section, each ring
-        /// turned half a step from the last. <paramref name="skip"/> leaves a direction bare (the face, the top of the hand).
+        /// A plate whose long side runs along <paramref name="along"/> (in the bone's frame) and whose face looks along
+        /// <paramref name="normal"/>; <paramref name="size"/> is (across, thickness, along). Its molten seam runs its length.
         /// </summary>
-        private void Shell(Frame f, string role, int axis, float from, float to, int rings, int perRing, float size, float stand,
-                           float lockFrom, float lockStep, Arrive how, int seed, System.Func<Vector3, bool> skip = null)
+        private Piece Plate(Frame f, string role, Vector3 rest, Vector3 normal, Vector3 along, Vector3 size, float lockAt, Arrive how, int seed, Color colour)
+        {
+            var p = Slab(f, role, rest, normal, size, lockAt, how, seed, colour);
+            var n = normal.normalized;
+            var forward = along - Vector3.Dot(along, n) * n;
+            if (forward.sqrMagnitude < 1e-6f) forward = Vector3.Cross(n, Vector3.right);
+            p.Turn = f.Basis * Quaternion.LookRotation(forward.normalized, n);
+            p.Node.localRotation = p.Turn;
+            return p;
+        }
+
+        /// <summary>
+        /// A BRACER: <paramref name="count"/> plates round a limb bone from <paramref name="from"/> to <paramref name="to"/> along its
+        /// long axis (0 his right, 1 his up), each a share of the way round and a little more, so they overlap into a closed tube
+        /// with a seam down every plate.
+        /// </summary>
+        private void Bracer(Frame f, string role, int axis, float from, float to, int count, float thick, float spread, float lockFrom,
+                            float lockStep, Arrive how, int seed, float turn = 0f)
         {
             var c = f.C; var e = f.E;
-            float across = axis == 0 ? Mathf.Max(e.y, e.z) : Mathf.Max(e.x, e.z);
-            int k = 0;
-            for (int r = 0; r < rings; r++)
+            float mid = (from + to) * .5f, length = Mathf.Abs(to - from);
+            float ra = axis == 0 ? e.y : e.x, rb = e.z;
+            float round = Mathf.PI * (ra + rb);
+            var axisDir = axis == 0 ? Vector3.right : Vector3.up;
+            for (int i = 0; i < count; i++)
             {
-                float u = rings == 1 ? .5f : r / (rings - 1f);
-                float along = Mathf.Lerp(from, to, u);
-                for (int i = 0; i < perRing; i++, k++)
-                {
-                    float a = (i + (r % 2) * .5f + .25f * Hash(seed + k, 3)) / perRing * Mathf.PI * 2f;
-                    Vector3 dir, at;
-                    if (axis == 0)
-                    {
-                        dir = new Vector3(0f, Mathf.Cos(a), Mathf.Sin(a));
-                        at = new Vector3(along, c.y + dir.y * e.y * .7f, c.z + dir.z * e.z * .7f);
-                    }
-                    else
-                    {
-                        dir = new Vector3(Mathf.Sin(a), 0f, Mathf.Cos(a));
-                        at = new Vector3(c.x + dir.x * e.x * .82f, along, c.z + dir.z * e.z * .82f);
-                    }
-                    if (skip != null && skip(dir)) continue;
-                    float jitter = .82f + .36f * Hash(seed + k, 4);
-                    Rock(f, role + k, at, dir + new Vector3(0f, (Hash(seed + k, 5) - .5f) * .3f, 0f), across * size * jitter, across * stand * jitter,
-                         lockFrom + lockStep * (r * perRing + i) / Mathf.Max(1, rings * perRing - 1), how, seed + k);
-                }
+                float a = (i + turn) / count * Mathf.PI * 2f;
+                Vector3 dir, at;
+                if (axis == 0) { dir = new Vector3(0f, Mathf.Cos(a), Mathf.Sin(a)); at = new Vector3(mid, c.y + dir.y * ra, c.z + dir.z * rb); }
+                else { dir = new Vector3(Mathf.Sin(a), 0f, Mathf.Cos(a)); at = new Vector3(c.x + dir.x * ra, mid, c.z + dir.z * rb); }
+                Plate(f, role + i, at, dir, axisDir, new Vector3(round / count * spread, thick, length), lockFrom + lockStep * i, how, seed + i,
+                      i % 2 == 0 ? Basalt : BasaltPale);
             }
         }
 
         private void Torso(Frame f, Frame whole)
         {
-            // Four rings from the belt to the shoulders, nine boulders each, all the way round (owner, 2026-10-18: *"cover his legs
-            // and back completley weird kase may shet na nakalabas"*).
-            Shell(f, "MountainTorso", 1, f.Min.y + (f.Max.y - f.Min.y) * .05f, f.Max.y - (f.Max.y - f.Min.y) * .08f, 4, 9, .74f, .46f,
-                  ChestAt - .1f, .34f, Arrive.Fly, 500);
             var c = f.C; var e = f.E;
-            float hem = whole.Min.y;
+            float h = f.Max.y - f.Min.y, hem = whole.Min.y;
             if (Debug.isDebugBuild && Application.isEditor) Debug.Log($"[Mountain] coat min{whole.Min:F3} max{whole.Max:F3}");
             // A point on a ring round him at angle a (0 his front), `grow` times out to the core's (0) or the coat's (1) surface on
             // that side: the coat's tail flares far out behind him at the hem, so the back is not the front mirrored.
@@ -405,60 +432,67 @@ namespace TumbangPreso.Visual
                 float z = Mathf.Lerp(cz > 0f ? f.Max.z - c.z : c.z - f.Min.z, cz > 0f ? whole.Max.z - c.z : c.z - whole.Min.z, coat);
                 return new Vector3(c.x + sx * x * grow, y, c.z + cz * z * grow);
             }
-            // THE BELT: a closed ring of rocks at his waist, all the way round, over the coat's gold band.
+            Vector3 Tangent(float a) => new Vector3(Mathf.Cos(a), 0f, -Mathf.Sin(a));
+
+            // THE BREASTPLATE: two plates, the chest over the belly, each with its seam straight down the middle: the first
+            // line the eye takes on him, from his chin to his belt.
+            Plate(f, "MountainChest0", new Vector3(c.x, f.Min.y + h * .66f, f.Max.z + .002f), new Vector3(0f, .18f, 1f), Vector3.up,
+                  new Vector3(e.x * 2.15f, .05f, h * .52f), ChestAt, Arrive.Fly, 500, BasaltPale);
+            Plate(f, "MountainChest1", new Vector3(c.x, f.Min.y + h * .3f, f.Max.z - .006f), new Vector3(0f, -.08f, 1f), Vector3.up,
+                  new Vector3(e.x * 1.85f, .044f, h * .44f), ChestAt - .06f, Arrive.Fly, 502, Basalt);
+            // THE BACK: one broad plate, and the range of columns rising off it.
+            Plate(f, "MountainBack", new Vector3(c.x, f.Min.y + h * .56f, f.Min.z - .002f), new Vector3(0f, .1f, -1f), Vector3.up,
+                  new Vector3(e.x * 2.1f, .05f, h * .8f), ChestAt + .04f, Arrive.Fly, 504, Basalt);
+            foreach (float side in new[] { -1f, 1f })
+                Plate(f, "MountainSide" + (side < 0 ? "L" : "R"), new Vector3(side * (e.x + .004f) + c.x, f.Min.y + h * .45f, c.z), new Vector3(side, 0f, 0f), Vector3.up,
+                      new Vector3(e.z * 1.7f, .04f, h * .62f), ChestAt + .08f, Arrive.Fly, side < 0 ? 506 : 508, BasaltDark);
+            float[] range = { .11f, .16f, .09f };
+            for (int i = 0; i < 3; i++)
+                Column(f, "MountainRange" + i, c + new Vector3(e.x * (-.45f + .45f * i), e.y * (.45f + .2f * (i % 2)), -e.z * 1.25f),
+                       new Vector3(.4f * (i - 1), .55f, -.85f), .05f - .006f * (i % 2), range[i], ChestAt + .26f + .05f * i, Arrive.Grow, 221 + 3 * i, BasaltPale, .25f);
+
+            // THE COLLAR: low plates round the neck over the coat's collar and its gold points, leaning OUT, never up over his jaw.
+            // None at his chin.
+            for (int i = 0; i < 6; i++)
+            {
+                float a = (i + .5f) / 6f * Mathf.PI * 2f + Mathf.PI / 6f;
+                if (Mathf.Abs(Mathf.DeltaAngle(0f, a * Mathf.Rad2Deg)) < 40f) continue;
+                var dir = new Vector3(Mathf.Sin(a), .55f, Mathf.Cos(a));
+                Plate(f, "MountainCollar" + i, Rim(a, f.Max.y - .008f, 0f, .82f), dir, Tangent(a), new Vector3(.035f, .028f, e.x * .62f),
+                      ChestAt + .12f + .02f * i, Arrive.Fly, 1060 + i, BasaltDark);
+            }
+
+            // THE BELT: twelve blocks, all the way round over the coat's gold band, one molten line running through every one.
             for (int i = 0; i < 12; i++)
             {
-                float a = (i + .25f) / 12f * Mathf.PI * 2f;
-                var dir = new Vector3(Mathf.Sin(a), -.15f, Mathf.Cos(a));
-                Rock(f, "MountainBelt" + i, Rim(a, f.Min.y + .01f, .3f, .95f), dir, e.x * .4f * (.9f + .25f * Hash(540 + i, 1)), e.x * .34f,
-                     ChestAt - .16f + .015f * i, Arrive.Rise, 540 + i);
+                float a = i / 12f * Mathf.PI * 2f;
+                var at = Rim(a, f.Min.y + .012f, .35f, 1f);
+                float ring = 2f * Mathf.PI * Mathf.Lerp(e.x, e.z, .5f) * 1.1f;
+                Plate(f, "MountainBelt" + i, at, new Vector3(Mathf.Sin(a), 0f, Mathf.Cos(a)), Tangent(a), new Vector3(.034f, .04f, ring / 12f * 1.12f),
+                      ChestAt - .16f + .012f * i, Arrive.Rise, 540 + i, BasaltDark);
             }
-            // THE GORGET: a low ring round his neck over the coat's collar, under the jaw, no higher than the head box's base.
-            for (int i = 0; i < 10; i++)
-            {
-                float a = (i + .5f) / 10f * Mathf.PI * 2f;
-                var dir = new Vector3(Mathf.Sin(a), .45f, Mathf.Cos(a));
-                Rock(f, "MountainGorget" + i, Rim(a, f.Max.y - .012f, 0f, .78f), dir, e.x * .3f * (.9f + .25f * Hash(1060 + i, 1)), e.x * .2f,
-                     ChestAt + .1f + .012f * i, Arrive.Fly, 1060 + i);
-            }
-            // THE BACK BELT: the coat's tail flares out behind him, so two close rows over the rear half follow it out and down,
-            // from the waist to its gold hem.
-            for (int row = 0; row < 3; row++)
+            // THE TASSETS: two layers of hanging plates from under the belt past the coat's hem, the short outer layer over the
+            // joins of the long inner one, tipped out at the bottom; behind him they follow the coat's tail out.
+            for (int layer = 0; layer < 2; layer++)
                 for (int i = 0; i < 8; i++)
                 {
-                    float a = Mathf.PI * (.55f + .9f * (i + .5f * (row % 2)) / 7.5f);
-                    float u = row / 2f;
-                    var dir = new Vector3(Mathf.Sin(a), -.1f - .4f * u, Mathf.Cos(a));
-                    int seed = 1000 + row * 10 + i;
-                    Rock(f, "MountainBackBelt" + (row * 10 + i), Rim(a, Mathf.Lerp(f.Min.y + .03f, hem + .01f, u), Mathf.Lerp(.5f, 1f, u), 1.02f), dir,
-                         e.x * .42f * (.9f + .25f * Hash(seed, 1)), e.x * .32f, ChestAt - .15f + .015f * i + .02f * row, Arrive.Rise, seed);
+                    float a = (i + .5f * layer) / 8f * Mathf.PI * 2f + Mathf.PI / 8f;
+                    float back = Mathf.Clamp01(-Mathf.Cos(a));
+                    float top = f.Min.y - .004f, bottom = hem - (layer == 0 ? .028f : -.03f);
+                    float y = (top + bottom) * .5f;
+                    var at = Rim(a, y, Mathf.Lerp(.55f, 1f, back), layer == 0 ? 1.02f : 1.1f);
+                    var dir = new Vector3(Mathf.Sin(a), -.32f, Mathf.Cos(a));
+                    float ring = 2f * Mathf.PI * Mathf.Lerp(e.x, Mathf.Lerp(e.z, whole.E.z, back), .5f);
+                    Plate(f, "MountainTasset" + (layer * 10 + i), at, dir, Vector3.down,
+                          new Vector3(ring / 8f * (layer == 0 ? 1.3f : 1.05f), .034f, top - bottom), LegsAt + .14f + .015f * i - .04f * layer, Arrive.Rise,
+                          560 + layer * 20 + i, layer == 0 ? Basalt : BasaltPale);
                 }
-            // THE SKIRT: two rings of rocks hanging over his hips, the lower one out past the coat's hem all round, tipped out and
-            // down, so no hem, gold or green shows between the belt and his legs from any side.
-            for (int ring = 0; ring < 2; ring++)
-            {
-                int count = ring == 0 ? 12 : 14;
-                float y = ring == 0 ? Mathf.Lerp(hem, f.Min.y, .55f) : hem - .015f;
-                for (int i = 0; i < count; i++)
-                {
-                    float a = (i + .5f * ring + .5f) / count * Mathf.PI * 2f;
-                    var dir = new Vector3(Mathf.Sin(a), ring == 0 ? -.55f : -.85f, Mathf.Cos(a));
-                    int seed = 560 + ring * 20 + i;
-                    Rock(f, "MountainSkirt" + (ring * 20 + i), Rim(a, y, ring == 0 ? .7f : 1f, ring == 0 ? .97f : 1.04f), dir,
-                         e.x * (ring == 0 ? .44f : .4f) * (.85f + .3f * Hash(seed, 1)), e.x * .38f, ChestAt - .14f + .015f * i - .04f * ring, Arrive.Rise, seed);
-                }
-            }
-            // A range of columns rising off his back.
-            float[] h = { .11f, .16f, .09f };
-            for (int i = 0; i < 3; i++)
-                Column(f, "MountainRange" + i, c + new Vector3(e.x * (-.4f + .4f * i), e.y * (.4f + .2f * (i % 2)), -e.z * 1.3f),
-                       new Vector3(.4f * (i - 1), .55f, -.85f), .05f - .006f * (i % 2), h[i], ChestAt + .26f + .05f * i, Arrive.Grow, 221 + 3 * i, BasaltPale, .25f);
         }
 
         /// <summary>
-        /// THE SHOULDERS, on the torso's shoulder line and not the upper arm (his idle drops the arms 45 degrees: armour on the
-        /// arm swung out like blades). His head box is wider than his torso, so the columns stand OUTSIDE it and lean out. They
-        /// are not a pair: a tall range over the obsidian horn's side, the horn answered; a low one over the other.
+        /// THE PAULDRONS, on the torso's shoulder line and not the upper arm (his idle drops the arms 45 degrees: armour on the arm
+        /// swung out like blades). A great domed boulder on each shoulder outside his head box, a plate hanging off it over the arm,
+        /// and over the obsidian horn's side a range of columns: the horn answered, the shoulders not a pair.
         /// </summary>
         private void Shoulders(Frame f)
         {
@@ -466,27 +500,35 @@ namespace TumbangPreso.Visual
             foreach (float side in new[] { -1f, 1f })
             {
                 bool hornSide = side < 0f;
+                string s = hornSide ? "L" : "R";
+                var top = new Vector3(c.x + side * (e.x + .026f), f.Max.y - .004f, c.z + e.z * .05f);
+                var dome = VfxShapes.Stand(f.Bone, "MountainShoulder" + s, VfxShapes.Prism(7, 1f, .62f, .3f, 0f, hornSide ? 233 : 273), 1).transform;
+                Dress(dome, Basalt);
+                var lean = Quaternion.Euler(0f, 0f, -side * 28f) * Vector3.up;
+                var piece = Keep(f, dome, top, lean, new Vector3(.105f, .085f, .105f), ShouldersAt, Arrive.Grow, null, 0f);
+                piece.Seed = hornSide ? 233 : 273;
+                Plate(f, "MountainShoulderPlate" + s, top + new Vector3(side * .03f, -.04f, 0f), new Vector3(side, -.35f, 0f), Vector3.down,
+                      new Vector3(e.z * 1.5f, .032f, .06f), ShouldersAt + .05f, Arrive.Fly, hornSide ? 240 : 280, BasaltPale);
                 var rows = hornSide ? HornShoulder : OtherShoulder;
-                var at = new Vector3(side * (e.x + .03f), f.Max.y - .02f, c.z);
                 for (int i = 0; i < rows.Length; i++)
                 {
                     var r = rows[i];
                     var dir = Quaternion.Euler(-r.backLean, 0f, -side * r.outLean) * Vector3.up;
-                    Column(f, "MountainShoulder" + (hornSide ? "L" : "R") + i, at + new Vector3(side * r.x * .045f, 0f, r.z * e.z * .6f), dir,
-                           r.r, r.h, ShouldersAt + .04f * i, Arrive.Grow, 231 + 3 * i + (hornSide ? 0 : 40), i % 2 == 0 ? Basalt : BasaltPale, .22f + .05f * (i % 3));
+                    Column(f, "MountainShoulder" + s + i, top + new Vector3(side * r.x * .03f, .02f, r.z * e.z * .45f), dir,
+                           r.r * .9f, r.h, ShouldersAt + .08f + .04f * i, Arrive.Grow, 231 + 3 * i + (hornSide ? 0 : 40), i % 2 == 0 ? Basalt : BasaltPale,
+                           .22f + .05f * (i % 3));
                 }
             }
         }
 
-        // The boulder arm (owner, 2026-10-18: *"really cover his arms iwth rocks"*, *"gusto ko ung big rocks kanina sa arm niya sa old
-        // ult"*, *"big arms pero change how it looks from earlier"*): the old cutscene's boulder fists, in basalt, the whole arm in
-        // a shell of rocks and a great boulder past the hand.
+        // THE ARMS (owner, 2026-10-18: *"really cover his arms iwth rocks"*, *"gusto ko ung big rocks kanina sa arm niya sa old ult"*):
+        // a bracer on each bone, and the old cutscene's boulder fist past the hand, the suit's focal weight.
         private void UpperArm(Frame f)
         {
             float outward = Mathf.Sign(f.C.x == 0f ? 1f : f.C.x);
             float joint = outward > 0f ? f.Min.x : f.Max.x, elbow = outward > 0f ? f.Max.x : f.Min.x;
-            Shell(f, "MountainUpperArm", 0, Mathf.Lerp(joint, elbow, .25f), Mathf.Lerp(joint, elbow, .85f), 2, 4, .78f, .55f,
-                  ShouldersAt - .12f, .14f, Arrive.Fly, outward < 0f ? 600 : 650);
+            Bracer(f, "MountainUpperArm", 0, Mathf.Lerp(joint, elbow, .3f), Mathf.Lerp(joint, elbow, .95f), 4, .03f, 1.2f,
+                   ShouldersAt - .12f, .04f, Arrive.Fly, outward < 0f ? 600 : 650, .125f);
         }
 
         private void Forearm(Frame f)
@@ -496,8 +538,8 @@ namespace TumbangPreso.Visual
             float elbow = outward > 0f ? f.Min.x : f.Max.x, hand = outward > 0f ? f.Max.x : f.Min.x;
             var c = f.C; var e = f.E;
             float thick = Mathf.Max(e.y, e.z);
-            Shell(f, "MountainForearm", 0, Mathf.Lerp(elbow, hand, .12f), Mathf.Lerp(elbow, hand, .62f), 3, 5, .82f, .62f,
-                  BracersAt - .1f, .2f, Arrive.Fly, hornSide ? 700 : 760);
+            Bracer(f, "MountainForearm", 0, Mathf.Lerp(elbow, hand, .08f), Mathf.Lerp(elbow, hand, .58f), 5, .036f, 1.22f,
+                   BracersAt - .1f, .04f, Arrive.Fly, hornSide ? 700 : 760, .1f);
             // THE BOULDER FIST: one great rock over the hand and past it, knuckle stones on its face.
             Column(f, "MountainFist", new Vector3(Mathf.Lerp(elbow, hand, .74f), c.y, c.z), new Vector3(outward, 0f, 0f), thick * 1.75f,
                    Mathf.Abs(hand - elbow) * .5f, FistsAt, Arrive.Fly, 470 + (hornSide ? 0 : 9), BasaltDark, .45f, .8f, 18f, 6);
@@ -509,32 +551,28 @@ namespace TumbangPreso.Visual
             }
         }
 
-        private void Leg(Frame f, Frame whole)
+        /// <summary>
+        /// THE LEGS: a bracer on the thigh and a greave on the shin, both closed all round (the coat's skirt is skinned to the legs),
+        /// then a boot ring and a cap over the toe. ⚠️ THE BOOT AND THE TOE SIT ABOVE THE SOLE: a plate's lowest edge is its centre less
+        /// half its length, kept over the sole, so a planted foot never shows stone sunk into the court.
+        /// </summary>
+        private void Leg(Frame f, Frame whole, float sole)
         {
             float outward = Mathf.Sign(f.C.x == 0f ? 1f : f.C.x);
-            float foot = whole.Min.y, hip = f.Max.y;
-            // Pillar legs: three rings from the hip down, then boots over the shoes and caps over their toes.
-            Shell(f, "MountainLeg", 1, hip - (hip - foot) * .08f, hip - (hip - foot) * .62f, 3, 6, .82f, .5f,
-                  LegsAt - .06f, .16f, Arrive.Rise, outward > 0 ? 800 : 850);
-            // The coat's skirt and its gold hem are skinned to the legs, and the shin bounds sit forward (the coat's front flap): a
-            // close back plate of rocks behind each leg, round to its outer side, from the hip to below the hem.
-            for (int row = 0; row < 3; row++)
-                for (int i = 0; i < 4; i++)
-                {
-                    float a = Mathf.PI * (1f - .55f * outward * i / 3f);
-                    var dir = new Vector3(Mathf.Sin(a), -.15f - .15f * row, Mathf.Cos(a));
-                    var at = new Vector3(f.C.x + Mathf.Sin(a) * (f.E.x + .01f), hip - (hip - foot) * (.12f + .2f * row),
-                                         Mathf.Lerp(f.C.z, f.Min.z - .008f, -Mathf.Cos(a)));
-                    int seed = 1100 + (outward > 0 ? 0 : 40) + row * 10 + i;
-                    Rock(f, "MountainLegBack" + (row * 10 + i), at, dir, whole.E.x * .62f * (.9f + .25f * Hash(seed, 1)), whole.E.x * .45f,
-                         LegsAt - .04f + .03f * row, Arrive.Rise, seed);
-                }
-            var boot = whole; boot.Min = new Vector3(whole.Min.x, foot, whole.Min.z); boot.Max = new Vector3(whole.Max.x, foot + (hip - foot) * .3f, whole.Max.z);
-            Shell(boot, "MountainBoot", 1, foot + (hip - foot) * .12f, foot + (hip - foot) * .12f, 1, 7, .62f, .42f,
-                  LegsAt - .14f, .08f, Arrive.Rise, outward > 0 ? 880 : 890);
-            for (int i = 0; i < 2; i++)
-                Rock(f, "MountainToe" + i, new Vector3(whole.C.x + (i == 0 ? -.3f : .3f) * whole.E.x, foot + .03f, whole.Max.z - .035f),
-                     new Vector3((i == 0 ? -.2f : .2f), .35f, 1f), whole.E.x * .55f, whole.E.x * .4f, LegsAt - .16f, Arrive.Rise, 895 + i + (outward > 0 ? 0 : 3));
+            float foot = whole.Min.y, hip = f.Max.y, len = hip - foot;
+            int seed = outward > 0 ? 800 : 850;
+            Bracer(f, "MountainThigh", 1, hip - len * .06f, hip - len * .42f, 4, .038f, 1.2f, LegsAt + .1f, .025f, Arrive.Rise, seed, .5f);
+            Bracer(f, "MountainGreave", 1, hip - len * .44f, hip - len * .7f, 4, .036f, 1.2f, LegsAt + .03f, .025f, Arrive.Rise, seed + 10);
+            var boot = whole; boot.Min = new Vector3(whole.Min.x, foot, whole.Min.z); boot.Max = new Vector3(whole.Max.x, foot + len * .3f, whole.Max.z);
+            float bootLow = foot + .016f, bootHigh = foot + len * .26f;
+            Bracer(boot, "MountainBoot", 1, bootLow, bootHigh, 5, .032f, 1.15f, LegsAt - .04f, .015f, Arrive.Rise, seed + 30, .5f);
+            // THE SOLE (film v10: in the leap's hang his white sneaker soles faced the lens, two white cards under the stone): a thin
+            // dark plate under the sole's lowest vertex (`sole`, every vertex, not the percentile `foot`), 2.5 mm deep at the rig's
+            // size, so it covers the white from below and sinks no visible distance into the court.
+            Plate(f, "MountainBootSole", new Vector3(whole.C.x, sole + .0005f, whole.C.z), Vector3.down, Vector3.forward,
+                  new Vector3(whole.E.x * 2.05f, .003f, whole.E.z * 2.05f), LegsAt - .06f, Arrive.Rise, seed + 45, BasaltDark);
+            Plate(f, "MountainToe", new Vector3(whole.C.x, foot + len * .2f, whole.Max.z - .03f), new Vector3(0f, 1f, .45f), Vector3.forward,
+                  new Vector3(whole.E.x * 1.6f, .03f, .06f), LegsAt - .05f, Arrive.Rise, seed + 40, BasaltDark);
         }
 
         /// <summary>
@@ -660,6 +698,7 @@ namespace TumbangPreso.Visual
         public void StepTo(float t)
         {
             Age = t;
+            if (Orphaned) return;
             _visible = t < GoneAt;
             float shedFrom = _endAt - ShedSeconds;
             float heat = 1f - .45f * Ease(FormedAt, shedFrom, t);
@@ -690,7 +729,8 @@ namespace TumbangPreso.Visual
                     {
                         var restWorld = p.Bone.TransformPoint(p.Rest);
                         Vector3 from;
-                        if (p.How == Arrive.Rise) from = new Vector3(restWorld.x, ground - .05f, restWorld.z);
+                        // Out of the court's surface, never from under it (a piece under the court is a piece through it).
+                        if (p.How == Arrive.Rise) from = new Vector3(restWorld.x, ground + .01f, restWorld.z);
                         else
                         {
                             var d = restWorld - _worldRoot.position; d.y = 0f;
@@ -705,20 +745,22 @@ namespace TumbangPreso.Visual
                     }
                 }
                 // The jolt as it locks, the tremble as it cools, the crumble into the court.
-                if (a >= 0f) pos += p.Normal * (.012f * Mathf.Max(0f, 1f - a / .08f));
+                // ⚠️ A LOCK IS A BLOW (film v1: the suit's stones arrived small and quick and the covering did not read): it
+                // overshoots into him and kicks back out, and its seam flares white-hot orange for a beat.
+                if (a >= 0f) pos += p.Normal * (.022f * Mathf.Max(0f, 1f - a / .1f) * Mathf.Cos(a * 40f));
                 // Loosening before it drops: a growing tremble and a nudge out of the suit.
                 float loose = Ease(p.DropAt - LoosenSeconds, p.DropAt, t);
                 float tremble = (warn * .8f + loose * 7f);
                 var turn = p.Turn * Quaternion.Euler(Mathf.Sin(t * 47f + i * 1.7f) * tremble, 0f, Mathf.Sin(t * 53f + i) * tremble);
                 if (p.How != Arrive.Grow || !p.Uniform) pos += p.Normal * (.012f * loose);
-                float flash = a >= 0f ? 1f + .15f * Mathf.Max(0f, 1f - a / .06f) : 1f;
+                float flash = a >= 0f ? 1f + .28f * Mathf.Max(0f, 1f - a / .08f) : 1f;
                 var scale = p.Scale * size * flash;
                 if (p.How == Arrive.Grow && p.Uniform) scale *= grow;
                 else if (p.How == Arrive.Grow) scale = new Vector3(scale.x * Mathf.Lerp(.5f, 1f, grow), scale.y * grow, scale.z * Mathf.Lerp(.5f, 1f, grow));
                 p.Node.localPosition = pos; p.Node.localRotation = turn; p.Node.localScale = _visible ? scale : Vector3.zero;
                 if (p.Seam != null)
                 {
-                    float lit = a >= 0f ? 1f : 0f, flare = a >= 0f ? Mathf.Max(0f, 1f - a / .2f) * .9f : 0f;
+                    float lit = a >= 0f ? 1f : 0f, flare = a >= 0f ? Mathf.Max(0f, 1f - a / .3f) * 1.8f : 0f;
                     p.Seam.SetColor("_EmissionColor", seamColour * (((.5f + breath + .1f * Mathf.Sin(t * 4.2f + i * .6f)) * heat + flare + loose * .8f) * lit));
                 }
             }
@@ -727,12 +769,13 @@ namespace TumbangPreso.Visual
             float vein = Ease(HeadAt + .2f, HeadAt + .3f, t) * (1f - fall) * heat * (1.2f + .3f * Mathf.Sin(t * 5f)) + 1.4f * Mathf.Max(0f, 1f - Mathf.Abs(t - HeadAt - .28f) / .12f);
             for (int i = 0; i < _veins.Count; i++)
             {
+                if (_veins[i]?.Node == null) continue;
                 var (from, to) = _veinPath[i / 2];
                 var d = to - from;
                 var turn = Quaternion.FromToRotation(Vector3.right, d.normalized) * Quaternion.Euler(90f * (i % 2), 0f, 0f);
                 DanteDriftLive.Light(_veins[i], (from + to) * .5f, new Vector3(d.magnitude * 1.1f, .028f, .028f), turn, _visible ? vein : 0f);
             }
-            if (_eye != null)
+            if (_eye?.Node != null)
             {
                 float eye = (2.4f * Mathf.Max(0f, 1f - Mathf.Abs(t - FormedAt) / .15f) + .9f * Ease(FormedAt - .1f, FormedAt, t)) * (1f - fall) * Mathf.Lerp(.7f, 1f, heat);
                 DanteDriftLive.Light(_eye, _eyeAt, Vector3.one * .055f * (1f + .4f * Mathf.Max(0f, 1f - Mathf.Abs(t - FormedAt) / .15f)), Quaternion.identity, _visible ? eye : 0f);
@@ -754,7 +797,10 @@ namespace TumbangPreso.Visual
                 p.FromWorld = p.Node.position; p.FromTurn = p.Node.rotation;
                 var away = p.FromWorld - _worldRoot.position; away.y = 0f;
                 p.Out = away.sqrMagnitude > 1e-4f ? away.normalized : Quaternion.Euler(0f, p.Seed * 47f, 0f) * Vector3.forward;
-                p.Ground = _worldRoot.position.y;
+                // ⚠️ THE COURT UNDER THE STONE, NOT HIS FEET: a stone that lets go while he is in the air (a jump, a launch, a
+                // ledge) fell to where his root was and lay there floating. On the court his root is the court; off it, the ray.
+                p.Ground = _owner == null || _owner.IsGrounded ? _worldRoot.position.y
+                    : Mathf.Min(_worldRoot.position.y, Slipper.FindGroundY(p.FromWorld, .1f));
                 p.Node.SetParent(_debris, true);
                 p.LyingScale = p.Node.localScale;
                 p.Dropped = true;
