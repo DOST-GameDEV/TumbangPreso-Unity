@@ -6071,6 +6071,16 @@ Implementation order within UX-1:
   n/4 portrait list/host mark, START GAME and character/loadout/settings doors.
   Loading uses map art/name/percentage, bottom tips, optional BH Studios mark. Preserve
   UGS Lobby/Relay,4-character codes,LAN discovery,quick/ranked,reconnect and rematch.
+  2026-10-17 player's room pass, branch `player-room-depth-and-bots`: four-layer depth on
+  every room surface and its lettering (`HubShape.Depth`, `HubDepthText`); the whole seat row
+  is the door to that seat, with a MOVE HERE / SWITCH hint on hover and focus; SIT HERE is
+  replaced by host-only ADD BOT / REMOVE BOT per seat, carried as `CustomRules.BotSeats`
+  (appended wire field, no protocol bump); START GAME is always available to a custom-room
+  host and the "Bots are off" line is gone. ⚠️ OPEN: a seat left OPEN starts the match as a
+  body with no input source, so it stands still, and stands still as taya on its round.
+  Decide whether a custom room should skip building it (the offline `soloPractice` path in
+  `MatchInstaller.InstallMatch` already does) and prove it in a two-peer native run. Not yet
+  seen by the owner in a build.
 - [ ] **UX-1.8 Real soft currency and hero/item shop.** Built: `EconomyRules`, `wallet.js`,
   `WalletStore`, SHOP popup, UNLOCK/BUY. Deployment DONE: version1 and exact source/params verified in existing project
   production. Live wallet action checks remain open; no runtime pass inferred. SHOP is a popup exposing Hero
