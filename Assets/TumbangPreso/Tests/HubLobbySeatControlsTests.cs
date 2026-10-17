@@ -95,6 +95,31 @@ namespace TumbangPreso.Tests
             bot.onClick.Invoke();Assert.AreEqual(2,_host.Requested);
             open.onClick.Invoke();Assert.AreEqual(3,_host.Requested);
         }
+        [Test] public void TheWholeRowIsTheSeatDoorAndSitHereIsGone()
+        {
+            // Owner 2026-10-17: click anywhere on another P row to move there.
+            var row=Button("TakeSeat3");Assert.IsNotNull(row);
+            var rect=(RectTransform)row.transform;var seat=(RectTransform)rect.parent;
+            Assert.AreEqual(seat.rect.size,rect.rect.size,"The seat door must cover the whole row.");
+            Assert.IsFalse(_root.GetComponentsInChildren<Text>(true).Any(t=>t.text.Contains("SIT HERE")));
+        }
+        [Test] public void TheHostAddsAndRemovesBotsSeatBySeat()
+        {
+            var add=Button("AddBot3");var remove=Button("RemoveBot2");
+            Assert.IsNotNull(add,"An open seat offers ADD BOT to the host.");
+            Assert.IsNotNull(remove,"A bot seat offers REMOVE BOT to the host.");
+            Assert.IsNull(Button("AddBot1"),"An occupied seat has no bot control.");
+            Assert.IsNull(Button("AddBot0"));
+            add.onClick.Invoke();Assert.AreEqual(3,_host.BotSeat);Assert.IsTrue(_host.BotWanted);
+            remove.onClick.Invoke();Assert.AreEqual(2,_host.BotSeat);Assert.IsFalse(_host.BotWanted);
+            Assert.AreEqual(-1,_host.Requested,"A bot control must not also move the player.");
+        }
+        [Test] public void OnlyTheHostSeesBotControls()
+        {
+            _host.EditBots=false;RebuildForCurrentSeats();
+            Assert.IsNull(Button("AddBot3"));Assert.IsNull(Button("RemoveBot2"));
+            Assert.IsNotNull(Button("TakeSeat3"),"Moving seats does not depend on editing bots.");
+        }
         [Test] public void EmptySeatsWithNoBotsStillLetTheHostStart()
         {
             // Owner 2026-10-17: the host starts with nobody else in the room, and the old
