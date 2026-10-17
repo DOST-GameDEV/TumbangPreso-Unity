@@ -136,8 +136,11 @@ namespace TumbangPreso.Visual
             return skin != null;
         }
 
-        /// <summary>A bone's rest points in its rest frame (his right, up and front, from the bind pose).</summary>
-        private Frame Basis(SkinnedMeshRenderer skin, int bone, out List<Vector3> points)
+        /// <summary>
+        /// A bone's rest points in its rest frame (his right, up and front, from the bind pose): those carried by it alone, or with
+        /// <paramref name="minWeight"/> below 1 also those it shares (his coat's tail is blended between the torso and the legs).
+        /// </summary>
+        private Frame Basis(SkinnedMeshRenderer skin, int bone, out List<Vector3> points, float minWeight = .99f)
         {
             var mesh = skin.sharedMesh;
             var bind = mesh.bindposes[bone];
@@ -154,7 +157,7 @@ namespace TumbangPreso.Visual
                 var w = weights[i];
                 float weight = (w.boneIndex0 == bone ? w.weight0 : 0) + (w.boneIndex1 == bone ? w.weight1 : 0)
                              + (w.boneIndex2 == bone ? w.weight2 : 0) + (w.boneIndex3 == bone ? w.weight3 : 0);
-                if (weight < .99f) continue;
+                if (weight < minWeight) continue;
                 var q = bind.MultiplyPoint3x4(vertices[i]);
                 points.Add(new Vector3(Vector3.Dot(q, f.R), Vector3.Dot(q, f.U), Vector3.Dot(q, f.F)));
             }
@@ -192,7 +195,7 @@ namespace TumbangPreso.Visual
         {
             _skins = body.transform.root.GetComponentsInChildren<SkinnedMeshRenderer>(true);
             if (_skins.Length == 0) _skins = new[] { body };
-            if (FindBone("torso", out var s, out int b)) { var f = Basis(s, b, out var pts); var core = Bounds(f, pts, null); Torso(core, Whole(f, pts)); Shoulders(core); }
+            if (FindBone("torso", out var s, out int b)) { var f = Basis(s, b, out var pts); var core = Bounds(f, pts, null); Basis(s, b, out var coat, .2f); Torso(core, Whole(f, coat)); Shoulders(core); }
             foreach (var side in new[] { "left", "right" })
             {
                 if (FindBone("arm-" + side, out s, out b)) { var f = Basis(s, b, out var pts); UpperArm(Bounds(f, pts, null)); }
@@ -388,16 +391,60 @@ namespace TumbangPreso.Visual
             // and back completley weird kase may shet na nakalabas"*).
             Shell(f, "MountainTorso", 1, f.Min.y + (f.Max.y - f.Min.y) * .05f, f.Max.y - (f.Max.y - f.Min.y) * .08f, 4, 9, .74f, .46f,
                   ChestAt - .1f, .34f, Arrive.Fly, 500);
-            // THE SKIRT: a ring of rocks hanging over his hips, down past the coat's hem, tipped out and down.
             var c = f.C; var e = f.E;
             float hem = whole.Min.y;
-            for (int i = 0; i < 11; i++)
+            if (Debug.isDebugBuild && Application.isEditor) Debug.Log($"[Mountain] coat min{whole.Min:F3} max{whole.Max:F3}");
+            // A point on a ring round him at angle a (0 his front), `grow` times out to the core's (0) or the coat's (1) surface on
+            // that side: the coat's tail flares far out behind him at the hem, so the back is not the front mirrored.
+            Vector3 Rim(float a, float y, float coat, float grow)
             {
-                float a = (i + .5f) / 11f * Mathf.PI * 2f;
-                var dir = new Vector3(Mathf.Sin(a), -.75f, Mathf.Cos(a));
-                var at = new Vector3(c.x + Mathf.Sin(a) * Mathf.Max(e.x, whole.E.x) * .86f, hem + (f.Min.y - hem) * .45f + .02f,
-                                     c.z + Mathf.Cos(a) * Mathf.Max(e.z, whole.E.z) * .86f);
-                Rock(f, "MountainSkirt" + i, at, dir, e.x * .44f * (.85f + .3f * Hash(560 + i, 1)), e.x * .36f, ChestAt - .14f + .02f * i, Arrive.Rise, 560 + i);
+                float sx = Mathf.Sin(a), cz = Mathf.Cos(a);
+                float x = Mathf.Lerp(sx > 0f ? f.Max.x - c.x : c.x - f.Min.x, sx > 0f ? whole.Max.x - c.x : c.x - whole.Min.x, coat);
+                float z = Mathf.Lerp(cz > 0f ? f.Max.z - c.z : c.z - f.Min.z, cz > 0f ? whole.Max.z - c.z : c.z - whole.Min.z, coat);
+                return new Vector3(c.x + sx * x * grow, y, c.z + cz * z * grow);
+            }
+            // THE BELT: a closed ring of rocks at his waist, all the way round, over the coat's gold band.
+            for (int i = 0; i < 12; i++)
+            {
+                float a = (i + .25f) / 12f * Mathf.PI * 2f;
+                var dir = new Vector3(Mathf.Sin(a), -.15f, Mathf.Cos(a));
+                Rock(f, "MountainBelt" + i, Rim(a, f.Min.y + .01f, .3f, .95f), dir, e.x * .4f * (.9f + .25f * Hash(540 + i, 1)), e.x * .34f,
+                     ChestAt - .16f + .015f * i, Arrive.Rise, 540 + i);
+            }
+            // THE GORGET: a low ring round his neck over the coat's collar, under the jaw, no higher than the head box's base.
+            for (int i = 0; i < 10; i++)
+            {
+                float a = (i + .5f) / 10f * Mathf.PI * 2f;
+                var dir = new Vector3(Mathf.Sin(a), .45f, Mathf.Cos(a));
+                Rock(f, "MountainGorget" + i, Rim(a, f.Max.y - .012f, 0f, .78f), dir, e.x * .3f * (.9f + .25f * Hash(1060 + i, 1)), e.x * .2f,
+                     ChestAt + .1f + .012f * i, Arrive.Fly, 1060 + i);
+            }
+            // THE BACK BELT: the coat's tail flares out behind him, so two close rows over the rear half follow it out and down,
+            // from the waist to its gold hem.
+            for (int row = 0; row < 3; row++)
+                for (int i = 0; i < 8; i++)
+                {
+                    float a = Mathf.PI * (.55f + .9f * (i + .5f * (row % 2)) / 7.5f);
+                    float u = row / 2f;
+                    var dir = new Vector3(Mathf.Sin(a), -.1f - .4f * u, Mathf.Cos(a));
+                    int seed = 1000 + row * 10 + i;
+                    Rock(f, "MountainBackBelt" + (row * 10 + i), Rim(a, Mathf.Lerp(f.Min.y + .03f, hem + .01f, u), Mathf.Lerp(.5f, 1f, u), 1.02f), dir,
+                         e.x * .42f * (.9f + .25f * Hash(seed, 1)), e.x * .32f, ChestAt - .15f + .015f * i + .02f * row, Arrive.Rise, seed);
+                }
+            // THE SKIRT: two rings of rocks hanging over his hips, the lower one out past the coat's hem all round, tipped out and
+            // down, so no hem, gold or green shows between the belt and his legs from any side.
+            for (int ring = 0; ring < 2; ring++)
+            {
+                int count = ring == 0 ? 12 : 14;
+                float y = ring == 0 ? Mathf.Lerp(hem, f.Min.y, .55f) : hem - .015f;
+                for (int i = 0; i < count; i++)
+                {
+                    float a = (i + .5f * ring + .5f) / count * Mathf.PI * 2f;
+                    var dir = new Vector3(Mathf.Sin(a), ring == 0 ? -.55f : -.85f, Mathf.Cos(a));
+                    int seed = 560 + ring * 20 + i;
+                    Rock(f, "MountainSkirt" + (ring * 20 + i), Rim(a, y, ring == 0 ? .7f : 1f, ring == 0 ? .97f : 1.04f), dir,
+                         e.x * (ring == 0 ? .44f : .4f) * (.85f + .3f * Hash(seed, 1)), e.x * .38f, ChestAt - .14f + .015f * i - .04f * ring, Arrive.Rise, seed);
+                }
             }
             // A range of columns rising off his back.
             float[] h = { .11f, .16f, .09f };
@@ -467,47 +514,25 @@ namespace TumbangPreso.Visual
             // Pillar legs: three rings from the hip down, then boots over the shoes and caps over their toes.
             Shell(f, "MountainLeg", 1, hip - (hip - foot) * .08f, hip - (hip - foot) * .62f, 3, 6, .82f, .5f,
                   LegsAt - .06f, .16f, Arrive.Rise, outward > 0 ? 800 : 850);
+            // The coat's skirt and its gold hem are skinned to the legs, and the shin bounds sit forward (the coat's front flap): a
+            // close back plate of rocks behind each leg, round to its outer side, from the hip to below the hem.
+            for (int row = 0; row < 3; row++)
+                for (int i = 0; i < 4; i++)
+                {
+                    float a = Mathf.PI * (1f - .55f * outward * i / 3f);
+                    var dir = new Vector3(Mathf.Sin(a), -.15f - .15f * row, Mathf.Cos(a));
+                    var at = new Vector3(f.C.x + Mathf.Sin(a) * (f.E.x + .01f), hip - (hip - foot) * (.12f + .2f * row),
+                                         Mathf.Lerp(f.C.z, f.Min.z - .008f, -Mathf.Cos(a)));
+                    int seed = 1100 + (outward > 0 ? 0 : 40) + row * 10 + i;
+                    Rock(f, "MountainLegBack" + (row * 10 + i), at, dir, whole.E.x * .62f * (.9f + .25f * Hash(seed, 1)), whole.E.x * .45f,
+                         LegsAt - .04f + .03f * row, Arrive.Rise, seed);
+                }
             var boot = whole; boot.Min = new Vector3(whole.Min.x, foot, whole.Min.z); boot.Max = new Vector3(whole.Max.x, foot + (hip - foot) * .3f, whole.Max.z);
             Shell(boot, "MountainBoot", 1, foot + (hip - foot) * .12f, foot + (hip - foot) * .12f, 1, 7, .62f, .42f,
                   LegsAt - .14f, .08f, Arrive.Rise, outward > 0 ? 880 : 890);
             for (int i = 0; i < 2; i++)
                 Rock(f, "MountainToe" + i, new Vector3(whole.C.x + (i == 0 ? -.3f : .3f) * whole.E.x, foot + .03f, whole.Max.z - .035f),
                      new Vector3((i == 0 ? -.2f : .2f), .35f, 1f), whole.E.x * .55f, whole.E.x * .4f, LegsAt - .16f, Arrive.Rise, 895 + i + (outward > 0 ? 0 : 3));
-        }
-
-        /// <summary>A faceted horn lofted along <paramref name="path"/> (five-sided, as his own horn is built), rings of <paramref name="radii"/>.</summary>
-        private static Mesh HornMesh(Vector3[] path, float[] radii, Vector3 headCentre)
-        {
-            const int Sides = 5;
-            var verts = new List<Vector3>(); var tris = new List<int>();
-            for (int i = 0; i < path.Length; i++)
-            {
-                var tangent = (path[Mathf.Min(i + 1, path.Length - 1)] - path[Mathf.Max(i - 1, 0)]).normalized;
-                var u = Vector3.Cross(tangent, path[i] - headCentre).normalized;
-                if (u.sqrMagnitude < .1f) u = Vector3.Cross(tangent, Vector3.up).normalized;
-                var v = Vector3.Cross(tangent, u).normalized;
-                for (int j = 0; j < Sides; j++)
-                {
-                    float a = 2f * Mathf.PI * (j + .5f) / Sides;
-                    verts.Add(path[i] + u * (Mathf.Cos(a) * radii[i]) + v * (Mathf.Sin(a) * radii[i] * .82f));
-                }
-            }
-            for (int i = 0; i < path.Length - 1; i++)
-                for (int j = 0; j < Sides; j++)
-                {
-                    int a = i * Sides + j, b = i * Sides + (j + 1) % Sides, cc = a + Sides, d = b + Sides;
-                    tris.Add(a); tris.Add(cc); tris.Add(b); tris.Add(b); tris.Add(cc); tris.Add(d);
-                }
-            // The broken tip: a flat cap, its centre a little proud.
-            int last = (path.Length - 1) * Sides, n = path.Length;
-            verts.Add(path[n - 1] + (path[n - 1] - path[n - 2]).normalized * radii[n - 1] * .4f);
-            for (int j = 0; j < Sides; j++) { tris.Add(last + j); tris.Add(verts.Count - 1); tris.Add(last + (j + 1) % Sides); }
-            // Faceted, as the obsidian horn reads: every triangle its own vertices.
-            var flatV = new List<Vector3>(tris.Count); var flatT = new List<int>(tris.Count);
-            foreach (int t in tris) { flatT.Add(flatV.Count); flatV.Add(verts[t]); }
-            var mesh = new Mesh { name = "MountainStoneHorn" };
-            mesh.SetVertices(flatV); mesh.SetTriangles(flatT, 0); mesh.RecalculateNormals(); mesh.RecalculateBounds();
-            return mesh;
         }
 
         /// <summary>
