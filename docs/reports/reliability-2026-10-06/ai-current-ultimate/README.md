@@ -1,6 +1,6 @@
 # Current bot ultimate decision footprints
 
-Natural seven-round Arena play leaves Yasmin and Basilio at12/12 charge without an ultimate, while Ilyas naturally casts. Their current abilities have no circular telegraph, but their bot branches called WouldCatch, which rejected !HasTelegraph. Continental Drift was additionally gated away from its own can even though its current forward wave only affects players.
+Natural seven-round Arena play leaves Yasmin and Dante at12/12 charge without an ultimate, while Ilyas naturally casts. Their current abilities have no circular telegraph, but their bot branches called WouldCatch, which rejected !HasTelegraph. Continental Drift was additionally gated away from its own can even though its current forward wave only affects players.
 
 Original native8176 reproduces three cause failures with four controls passing. Its can-side case initially failed the fixture's defender precondition; that setup error is retained. Correcting only the test's role flag gives9368 a real missing-decision failure. Candidate24396 passes the corrected eight cases. A review then catches an unintended neighboring non-circle value-count change:20504 reproduces one control failure. Final17396 passes all nine after restoring that original fallback.
 

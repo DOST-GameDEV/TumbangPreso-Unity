@@ -47,8 +47,8 @@ namespace TumbangPreso.PlayTests
         {
             yield return Open(GameMode.HeroStrike);var a=_dante.transform.position;
             var furrows=_dante.GetComponent<Visual.DanteEarthboundFurrows>();
-            Assert.IsNotNull(furrows,"Basilio's body carries the Earthbound furrows.");
-            Assert.IsNull(_control.GetComponent<Visual.DanteEarthboundFurrows>(),"Only Basilio's.");
+            Assert.IsNotNull(furrows,"Dante's body carries the Earthbound furrows.");
+            Assert.IsNull(_control.GetComponent<Visual.DanteEarthboundFurrows>(),"Only Dante's.");
             _dante.ApplyResolvedImpact(Vector3.forward*12);
             yield return new WaitForSeconds(.9f);
             float slid=Vector3.Distance(new Vector3(a.x,0,a.z),new Vector3(_dante.transform.position.x,0,_dante.transform.position.z));

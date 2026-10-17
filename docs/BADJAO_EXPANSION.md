@@ -23,7 +23,7 @@ The owner reiterates Ilyas belongs only to Hero Strike, never the Classic cast,
 and asks for careful renders/refinement of every body part, especially bracelets,
 accessories and hair. Roster.cs already puts him only in HeroPeople; AllPeople is
 the asset union, not the Classic selection. Classic figures in the deck diagnostic
-are not Ilyas references. His only cast comparison is Rago/Yasmin/Basilio/Isagani/Nemu/
+are not Ilyas references. His only cast comparison is Rago/Yasmin/Dante/Isagani/Nemu/
 Soraya. The published56a220a9 model is a checkpoint, not final visual acceptance.
 
 Work order, retained before editing:
@@ -131,7 +131,7 @@ superseded history, not an outstanding task. His water magic remains personal ma
 
 The owner rejected BOTH the separate-box Ilyas and the sparse, regular lagoon dock.
 Those images/assets are drafts, not approved art. The later request explicitly
-requires Ilyas to belong beside **Rago, Yasmin, Basilio and the HERO cast**, and says
+requires Ilyas to belong beside **Rago, Yasmin, Dante and the HERO cast**, and says
 to copy and retrofit the old voxel builder without editing existing characters.
 `tools/build_rafi_voxel.py` is now a dedicated copy of `build_person_voxel.py`;
 the original and all existing character models/builders stay untouched. The old
@@ -170,7 +170,7 @@ slipper strap, then bet that rival cannot read his next throw.
 His weakness is overplaying a clever idea when a simple shot would do. Tournament
 play challenges him to make the useful choice, not merely the funny one. Rago's
 directness frustrates his elaborate feints; Yasmin spots more of them than he likes;
-Basilio's steadiness makes an opponent worth studying. These relationships do not
+Dante's steadiness makes an opponent worth studying. These relationships do not
 change or redesign those heroes. Ilyas's movement is an off-hand cut, an abandoned
 heel-turn and a cupped hip-to-side wave release. No borrowed weapon, armor or outfit.
 His water magic is an individual fantasy power.
@@ -426,7 +426,7 @@ escape across the edge. It is a travelling event, not a sustained prison.
 - Form: low glassy crest, visible trough, trailing foam that settles quickly.
   Keep the can readable through the water. No blue copy of a fire nova or ice wall.
 - Cast: low cupped-water gather at one hip, a continuous rising spiral through
-  the torso, then an open sideways release. No Basilio ground slam, Rago leap,
+  the torso, then an open sideways release. No Dante ground slam, Rago leap,
   Soraya overhead invocation or Yasmin inward burst.
 
 Numbers and alternates wait for the later prototype. Start with role, tell,

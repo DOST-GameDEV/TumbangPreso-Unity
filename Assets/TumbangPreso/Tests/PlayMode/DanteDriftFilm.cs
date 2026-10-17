@@ -17,7 +17,7 @@ using Object = UnityEngine.Object;
 namespace TumbangPreso.PlayTests
 {
     /// <summary>
-    /// FILM, not a gate (`docs/HERO_KIT_METHOD.md` section 7): Basilio's CONTINENTAL DRIFT in a real Hero Strike match on Bayan
+    /// FILM, not a gate (`docs/HERO_KIT_METHOD.md` section 7): Dante's CONTINENTAL DRIFT in a real Hero Strike match on Bayan
     /// Plaza at true game speed (30 frames per game second, the phase on the film clock). Views: his screen (the cutscene, then
     /// his own first person), the court from his right, and a player the cascade catches. Three players stand ahead of him in
     /// the cascade's rectangle so the cutscene stages them on their plates. Runs only with TUMP_DANTE_FILM=1; frames under
@@ -127,17 +127,17 @@ namespace TumbangPreso.PlayTests
             var can = Flat(round.Lata.transform.position);
             // TUMP_DANTE_FILM_POV=1 (owner, 2026-10-17: *"cutscene -> fpp view ng after cutscene of someone nna natamaan"*): the
             // player it hits is this machine's own seat, so "his screen" is THEIRS: the cutscene, then their own first person as
-            // the ground comes for them, with everything their screen really does. Basilio casts from a bot's seat.
+            // the ground comes for them, with everything their screen really does. Dante casts from a bot's seat.
             bool pov = Environment.GetEnvironmentVariable("TUMP_DANTE_FILM_POV") == "1";
             var local = round.PlayerAt(GameLaunch.SoloSeat);
-            // Basilio 6 m short of the can, facing it; three others ahead of him inside the cascade's lane.
+            // Dante 6 m short of the can, facing it; three others ahead of him inside the cascade's lane.
             var dante = pov ? round.Players.First(p => p != null && p != local) : local;
             Bind(dante, "dante");
             var origin = can + new Vector3(0f, .12f, -6.0f);
             dante.Teleport(origin); dante.transform.rotation = Quaternion.identity;
             dante.Intent.Clear(); dante.Intent.Parked = false; dante.IsBot = pov;
             dante.Intent.AimPoint = origin + Vector3.forward * 8f; dante.Intent.FaceAimPoint = true;
-            // Never Basilio as the ones it hits (owner: *"dont use dante as a bot na tatamaann bcz its confusinng"*).
+            // Never Dante as the ones it hits (owner: *"dont use dante as a bot na tatamaann bcz its confusinng"*).
             var others = round.Players.Where(p => p != null && p != dante).OrderBy(p => p == local ? 1 : 0).ToArray();
             string[] looks = { "amihan", "paete", "cheska" };
             for (int i = 0; i < others.Length; i++) Bind(others[i], looks[i % looks.Length]);

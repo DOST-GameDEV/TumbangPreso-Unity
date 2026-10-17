@@ -1,4 +1,4 @@
-"""New locomotion clips for the Dante (displayed: Basilio) redesign PROTOTYPE.
+"""New locomotion clips for the Dante (displayed: Dante) redesign PROTOTYPE.
 
 Imported by tools/author_character_redesign_dante.py, which writes them into the two prototype
 .glb files IN PLACE OF the clips of the same name copied from team-dante.glb. Nothing in the

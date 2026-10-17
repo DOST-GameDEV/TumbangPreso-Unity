@@ -1,6 +1,6 @@
 # Retire presses received while the player input reader is disabled
 
-Previously, enabling the reader could cast Basilio's E or spend Q on its owned
+Previously, enabling the reader could cast Dante's E or spend Q on its owned
 slipper using a key pressed while the reader was disabled. The input actions
 continue processing device events during that interval, but OnEnable only
 subscribed to device changes; OnDisable had sampled buttons before the new press.

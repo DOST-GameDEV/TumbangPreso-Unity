@@ -64,10 +64,10 @@ namespace TumbangPreso.PlayTests
             => Study(new[] { "sean" }, false, true, true);
 
         [UnityTest, Timeout(90000)]
-        public IEnumerator BasilioTitanFissureVisualReview()
+        public IEnumerator DanteTitanFissureVisualReview()
             => Study(new[] { "dante" }, false, false, true);
         [UnityTest, Timeout(90000)]
-        public IEnumerator BasilioEmptyHandsVisualReview()
+        public IEnumerator DanteEmptyHandsVisualReview()
             => Study(new[] { "dante" }, false, true, true);
 
         [UnityTest, Timeout(90000)]

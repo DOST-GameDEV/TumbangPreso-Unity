@@ -1,6 +1,6 @@
-# Refuse retired Basilio skill scenarios before native launches
+# Refuse retired Dante skill scenarios before native launches
 
-The current Basilio kit is Unstoppable on Skill1, attacking Boulder or defending
+The current Dante kit is Unstoppable on Skill1, attacking Boulder or defending
 Bastion on Skill2 and Continental Drift as the ultimate. The older matrix's
 basic evaluator expects two Stomp charges, an immunity ward on Skill2 and old
 Fissure pillars. Those assertions cannot qualify the current kit.
@@ -22,6 +22,6 @@ argument routing only, not the supported peer scenarios.
 
 [Receipts](receipt.json) record each case. Raw SHA256: e38d8e9c0dfeb1491dd014dd3c56e521ab15bbf2e87e5914794cb979b8e555b4.
 
-The owner's physical E/Q report stays open. Current-kit Basilio native/live
+The owner's physical E/Q report stays open. Current-kit Dante native/live
 casts, accepted outcomes and visible feedback still require qualification.
 This prevents a misleading failure or pass; it does not fix or prove a skill.

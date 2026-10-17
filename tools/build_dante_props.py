@@ -1,4 +1,4 @@
-"""Basilio's props, modelled part by part: the mountain beast of CONTINENTAL DRIFT's cutscene.
+"""Dante's props, modelled part by part: the mountain beast of CONTINENTAL DRIFT's cutscene.
 
     python tools/build_dante_props.py [beast]
     python tools/build_dante_props.py --measure beast
@@ -9,7 +9,7 @@ props stands for every hero: *"the current models of all his skills look ugly st
 Paete's sentry (`tools/build_paete_props.py`, whose helpers this uses): chamfered boxes, faceted tubes, smoothed normals so the
 inverted-hull ink closes, its own sixteen-slot palette (`DantePalette` in `Visual/DanteProp.cs`, the same hex values).
 
-WHAT IT IS: the horned basalt beast under Montalban, Bernardo Carpio's mountain, in Basilio's own family. His horn shape (the
+WHAT IT IS: the horned basalt beast under Montalban, Bernardo Carpio's mountain, in Dante's own family. His horn shape (the
 swept, five-sided, stepped horn of his model, `tools/author_character_redesign_dante.py` `build_horn`): out from the temple, up,
 then hooked; and like him, one side marked: its LEFT horn is chipped short, as his scar is on his left. A carabao's broad, low
 skull (the island's beast of burden: the mountain is a working animal), a heavy brow, a hump of a back his court plate rides on,
@@ -28,7 +28,7 @@ NAMED NODES FOR WHAT MOVES (big things move little; its life is breath, seam pul
         > body > arm-left > fist-left ; arm-right > fist-right   (an arm hangs straight down -Y from its shoulder pivot)
         > body > back-0, back-1, back-2                           (the slabs that shed rock as it rises)
         > body > glow-seams
-The saddle on top of its back is at y 3.4 (`HeroIntroductionScene.DnTitanTop`): Basilio's plate rides there.
+The saddle on top of its back is at y 3.4 (`HeroIntroductionScene.DnTitanTop`): Dante's plate rides there.
 
 ⚠️ glTFast NEGATES X ON IMPORT (the method's first trap). Its face is on +Z; in Unity its RIGHT hand is at +X, so in this file its
 right is at -X and its left at +X. `L` and `R` below say which is which; never type a side as a bare sign.

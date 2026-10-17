@@ -8,7 +8,7 @@ The fresh profile briefly entered Casual matchmaking when Home Play was inspecte
 
 ## Actual match and retained proof
 
-The laptop selected available Basilio and clicked Done. Paete's preview explicitly reported locked ownership with a disabled Done control; that expected restriction is retained, not bypassed or called a network defect. The actual client read-only Rules screen confirms Hero Strike/Standard/four rounds/30 seconds/score target Off. A client's saved preference still reading8x90 is not proof the host rules failed to synchronize. The actual Ready button set P2YOU READY and Waiting for host; the PC independently saw its ready receipt and clicked its actual Start control.
+The laptop selected available Dante and clicked Done. Paete's preview explicitly reported locked ownership with a disabled Done control; that expected restriction is retained, not bypassed or called a network defect. The actual client read-only Rules screen confirms Hero Strike/Standard/four rounds/30 seconds/score target Off. A client's saved preference still reading8x90 is not proof the host rules failed to synchronize. The actual Ready button set P2YOU READY and Waiting for host; the PC independently saw its ready receipt and clicked its actual Start control.
 
 The match finished naturally: Match3ae8dc265147411d8b54ea9f7f070f26, online HeroStrike/Eskinita, four rounds, duration119.94305419921875seconds, scores20/20/640/540, winner slot2. Both complete saved History records produce the same canonical SHA-256 bfd02a8f283308b5848f9a82597b0d908b2f1b90469146efec24fea628e9d441. The PC independently acknowledged all fields and that full hash. The actual result screen labels Hero Strike/four rounds and the matching standings.
 

@@ -200,7 +200,7 @@ namespace TumbangPreso.UI
         private bool _wasConcussed;
 
         /// <summary>
-        /// CONCUSSED, ON THE VICTIM'S OWN SCREEN (Basilio's Boulder and Continental Drift, `Shaders/ConcussedVignette`): a chipped
+        /// CONCUSSED, ON THE VICTIM'S OWN SCREEN (Dante's Boulder and Continental Drift, `Shaders/ConcussedVignette`): a chipped
         /// dust-ochre rim that throbs slowly, with the double image (`Visual.ConcussedPerception`, in the grade) and a high
         /// ringing on their ears only. From the replicated Concussed clock. It is information, not a flash: Reduce visual
         /// effects keeps the rim and stills the throb.

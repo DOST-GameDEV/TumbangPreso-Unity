@@ -3,7 +3,7 @@ using UnityEngine;
 namespace TumbangPreso.CameraSystem
 {
     /// <summary>
-    /// BASILIO'S BARE HANDS: STONE GROWS ON THEM.
+    /// DANTE'S BARE HANDS: STONE GROWS ON THEM.
     ///
     /// Owner, 2026-10-06, of the creatures on every hero's hands: "i like it but we were trying to reserve the pet idea
     /// only for nemu... so i need something for the bare hands". So nothing rides him here. What moves is his own

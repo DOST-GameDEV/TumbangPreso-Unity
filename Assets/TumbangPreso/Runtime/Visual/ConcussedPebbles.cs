@@ -5,7 +5,7 @@ using UnityEngine;
 namespace TumbangPreso.Visual
 {
     /// <summary>
-    /// CONCUSSED, AS EVERYONE ELSE SEES IT (Basilio's Boulder and Continental Drift; `docs/reports/dante-presentation-2026-10-16/
+    /// CONCUSSED, AS EVERYONE ELSE SEES IT (Dante's Boulder and Continental Drift; `docs/reports/dante-presentation-2026-10-16/
     /// plan.md` section 3): three small basalt pebbles circling the victim's head, slow, because the victim walks slow. They
     /// replace the generic dizzy stars for this one status, so a Concussed player reads as hit by stone, not by a cartoon.
     ///

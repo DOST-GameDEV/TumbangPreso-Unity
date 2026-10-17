@@ -53,7 +53,7 @@ namespace TumbangPreso.EditorTools
 
         internal static readonly (string Id, string Name)[] Heroes =
         {
-            ("dante", "Basilio"), ("cheska", "Yasmin"), ("sean", "Rago"), ("zack", "Isagani"),
+            ("dante", "Dante"), ("cheska", "Yasmin"), ("sean", "Rago"), ("zack", "Isagani"),
             ("nemu", "Nemu"), ("rafi", "Ilyas"), ("amihan", "Amihan"),
             // Owner, 2026-10-05: "should probably work on a paete and phaister rework". Lineup figures
             // only; the roster still plays their real models.

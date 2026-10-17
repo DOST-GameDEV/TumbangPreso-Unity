@@ -10,7 +10,7 @@ namespace TumbangPreso
         {
             // Nemu's PRUSISYON muffles the possessed player's hearing too, a little less than Haunted (the ghost is inside them).
             float possessed = isActiveAndEnabled ? Visual.PossessedPerception.Weight(view) : 0f;
-            // Basilio's CONCUSSED muffles the victim's hearing under the ringing (`Visual.ConcussedPerception`).
+            // Dante's CONCUSSED muffles the victim's hearing under the ringing (`Visual.ConcussedPerception`).
             float concussed = isActiveAndEnabled ? Visual.ConcussedPerception.Weight(view) : 0f;
             bool active = isActiveAndEnabled && (Visual.HauntedPerception.Applies(view) || possessed > 0f || concussed > 0f);
             if (!active)

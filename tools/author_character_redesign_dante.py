@@ -1,4 +1,4 @@
-"""Build the Dante (displayed: Basilio) redesign PROTOTYPE: the same block kid, shaped and painted.
+"""Build the Dante (displayed: Dante) redesign PROTOTYPE: the same block kid, shaped and painted.
 
     py -3 tools/author_character_redesign_dante_textures.py
     "C:/Program Files/Blender Foundation/Blender 5.0/blender.exe" -b --python tools/author_character_redesign_dante.py

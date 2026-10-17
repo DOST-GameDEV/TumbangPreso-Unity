@@ -1,17 +1,17 @@
-# Basilio (Dante) presentation plan: direction and VFX, 2026-10-16
+# Dante (Dante) presentation plan: direction and VFX, 2026-10-16
 
 Status: PROPOSED, waiting for the owner's verdict. Research: [research.md](research.md). Method:
 [HERO_KIT_METHOD](../../HERO_KIT_METHOD.md). Mechanics are the Wiki's and do not change here except where section 7 asks.
 
 ## 0 · Who he is on screen
 
-**Basilio holds the difficult space and refuses to be rushed.** Montalban, Bernardo Carpio's mountain struggle, a horned
+**Dante holds the difficult space and refuses to be rushed.** Montalban, Bernardo Carpio's mountain struggle, a horned
 basalt body with molten seams, a gold eye and scar on his left. Everything he does should feel like the ground obeying his
 weight, slowly and completely.
 
 **The one idea behind every skill: his body presses, the stone answers.** Never a spell thrown from the hands.
 
-### The effect family (every Basilio effect obeys all eight)
+### The effect family (every Dante effect obeys all eight)
 
 1. **Cause first.** Every effect starts at a contact point of his body (a heel, a fist, a palm, a shoulder) and travels
    through the court. Nothing spawns in the air.
@@ -109,7 +109,7 @@ centre area under 15 per cent covered).
 
 Owner, 2026-10-16: *"it has to be as good as paete, nemu, phaister and amihans ult"*. Read from their own scene headers:
 
-| What all four do | Paete | Nemu | Phaister | Amihan | Basilio (this plan) |
+| What all four do | Paete | Nemu | Phaister | Amihan | Dante (this plan) |
 |---|---|---|---|---|---|
 | A personality beat, not only power | kneels and calls the ground | the possessed player walking normally, then the snap | floats up limp, laughing | bored, eyes shut, taps, shrug; a wink to finish | **patient: he kneels, listens, and knocks twice on the court like a door** |
 | The WORLD changes | court sprouts, the light comes down | a gate tears the sky open | the day dies; the sky splits | the monsoon sweeps the whole plaza | **the court breaks into continents on a molten sea** |
@@ -154,11 +154,11 @@ be rushed."* Two calm knocks; only the third blow is violent. The contrast is th
 from his chest into his fists. **It always travels left to right across the screen**, and every shot keeps the camera on
 the same side of the line (his right, the creature's left).
 
-**The emblem:** Basilio's mark, **two hooked horns over a split stone** (the left horn chipped, like his own scar side). Drawn
+**The emblem:** Dante's mark, **two hooked horns over a split stone** (the left horn chipped, like his own scar side). Drawn
 three times only: cracked into the court by the punch (0.2 s), lit on the creature's brow as it wakes, and huge behind them
 both at the stomp. Each time with the horn-call motif.
 
-**Length:** 7.0 s, the length the owner already agreed for Basilio (2026-10-08); the same as Nemu's. The time is re-spent,
+**Length:** 7.0 s, the length the owner already agreed for Dante (2026-10-08); the same as Nemu's. The time is re-spent,
 not added: the knock buys the personality, CONTINENTS gets shorter and now carries the victims.
 
 ### 5.3 · Beat table (7.0 s)
@@ -186,7 +186,7 @@ not added: the knock buys the personality, CONTINENTS gets shorter and now carri
 
 ### 5.4 · The density pass, typed per beat (take the kinds from Paete, never his rows)
 
-| Kind | Basilio's version | Count |
+| Kind | Dante's version | Count |
 |---|---|---|
 | Hanging grit | angular basalt pieces, each its own size, hanging still at the knock, hopping on each knock, pulled into the fist | 14 |
 | Knock rings | thin molten rings running under the court surface from his knuckles | 2 |
@@ -203,7 +203,7 @@ not added: the knock buys the personality, CONTINENTS gets shorter and now carri
 ### 5.5 · The creature, modelled (replacing the blocking prisms)
 
 A typed glb like Paete's props (`tools/build_dante_props.py`, every part by hand): **a horned basalt mountain-beast**, the
-same family as Basilio (his horn shape, molten seams cut in, a chipped left horn), blocky TUMP shapes, no realistic anatomy,
+same family as Dante (his horn shape, molten seams cut in, a chipped left horn), blocky TUMP shapes, no realistic anatomy,
 no texture grain. Named nodes for what moves: horns, brow, jaw, two arms with fists, three back plates that shed rock. Eyes are
 sunken lit sockets on the real surface (measure the mesh, seat them, per the method's eye lesson). Big things move little:
 its life is in breath, seam pulses and rock shedding, not in turning. Owner turnaround verdict before it goes into the scene.

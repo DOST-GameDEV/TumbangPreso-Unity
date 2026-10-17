@@ -8,7 +8,7 @@ remain preserved. The observation correction still requires owned powered-flight
 provenance, matched target contact, affinity consumption and target movement;
 actual updated-player acceptance is pending.
 
-The same run exposed Invalid recorded field during Basilio's ultimate. Current
+The same run exposed Invalid recorded field during Dante's ultimate. Current
 accepted-cast feedback creates a forward fissure with zero radial telegraph size.
 The visual uses its forward geometry; the recorded-field validator rejectedzero.
 The candidate accepts zero only for Seismic fissure shapes. It does not change

@@ -862,7 +862,7 @@ namespace TumbangPreso.EditorTools
                 // Stripped, the victim gets no hands and no direction cue while every observer still sees the rider.
                 "TumbangPreso/PossessedVignette",
 
-                // Basilio's CONCUSSED: the victim's ochre rim (`UI.TumpHudEffects`), reached through `Shader.Find`.
+                // Dante's CONCUSSED: the victim's ochre rim (`UI.TumpHudEffects`), reached through `Shader.Find`.
                 // Stripped, the victim feels nothing but the slow.
                 "TumbangPreso/ConcussedVignette",
 

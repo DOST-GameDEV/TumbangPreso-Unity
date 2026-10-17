@@ -29,7 +29,7 @@ on both peers and no second timeout. Full record78e6013911614781a571827884ed6543
 is2452 bytes with SHA256c2e19f313e30ab7fc8b4433f4a0832655903069a7bf9aeddf1535c8e132fee8d.
 Scores0/60/1935/1530 and the complete canonical object match.
 
-Basilio E/Q presses on the automated keyboard path did not produce convincing
+Dante E/Q presses on the automated keyboard path did not produce convincing
 visible cooldown changes. The human report remains OPEN. Bindings E=signature,
 Q=role and X=ultimate exist; post-match parked/CanAct/expired-answer state cannot
 prove an active-round refusal. A held slipper is required for attacker Q, which

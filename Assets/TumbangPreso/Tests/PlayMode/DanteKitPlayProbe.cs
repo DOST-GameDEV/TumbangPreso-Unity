@@ -15,7 +15,7 @@ using Object = UnityEngine.Object;
 namespace TumbangPreso.PlayTests
 {
     /// <summary>
-    /// BASILIO'S KIT, PLAYED AND FILMED (plan section 8, the film rounds): a real Hero Strike match on Bayan Plaza, his skills
+    /// DANTE'S KIT, PLAYED AND FILMED (plan section 8, the film rounds): a real Hero Strike match on Bayan Plaza, his skills
     /// pressed through `InputIntent` as a player presses them, host-resolved as in a match, filmed at 30 fps from his own screen,
     /// a court camera and a camera on the player it reaches, every world cue logged for `tools/stitch_ability_film.py`.
     /// Runs only with TUMP_DANTE_KIT_FILM=1; frames under TUMP_EVIDENCE (default Logs), folder `dante-kit-film-TAG`.
@@ -49,7 +49,7 @@ namespace TumbangPreso.PlayTests
         }
 
         /// <summary>His body AND his kit on a seat (the Paete lesson: re-binding only the kit filmed someone else casting).</summary>
-        private static CharacterMotor Basilio(int slot, Vector3 at)
+        private static CharacterMotor Dante(int slot, Vector3 at)
         {
             var who = GameServices.Round.PlayerAt(slot);
             who.CharacterIndex = Roster.IndexIn(Roster.HeroPeople, "dante");
@@ -91,7 +91,7 @@ namespace TumbangPreso.PlayTests
         ///   0.0 to 2.4    EARTHBOUND: a hit from behind shoves him (from in front, the court's edge 12 m out stopped him dead); he leans into it, grit off his heels, two furrows.
         ///   2.4 to 7.0    BOULDER: he loads his held slipper (the stone coating), aims at a player 6 m ahead and throws; it
         ///                 Concusses them (their ochre rim is on THEIR screen; here the pebbles circling their head).
-        ///   7.0 to 12.0   BASTION: a second Basilio, the taya, raises the wall; an attacker throws into it and it flies back.
+        ///   7.0 to 12.0   BASTION: a second Dante, the taya, raises the wall; an attacker throws into it and it flies back.
         ///   12.0 to 17.5  UNSTOPPABLE: he carries three statuses; he roars, they shatter off him, the plates assemble from the feet.
         ///   (cut)         the last 3.5 s of its 15: the cooling warning, then the crumble.
         /// Views: `owner/` his screen (for Bastion a front three-quarter on the taya, who casts it), `wide/` the court, `victim/`
@@ -116,8 +116,8 @@ namespace TumbangPreso.PlayTests
             Assert.GreaterOrEqual(thrower, 0, "The film needs four seats.");
 
             Vector3 start = can + new Vector3(0f, .12f, -12f);
-            var him = Basilio(me, start);
-            var wall = Basilio(taya, can + new Vector3(-2f, .12f, -1f));
+            var him = Dante(me, start);
+            var wall = Dante(taya, can + new Vector3(-2f, .12f, -1f));
             var victim = round.PlayerAt(victimSeat);
             victim.Teleport(start + new Vector3(0f, 0f, 6f)); victim.Intent.Parked = true;
             var other = round.PlayerAt(thrower);
@@ -185,7 +185,7 @@ namespace TumbangPreso.PlayTests
                     if (t >= 2.4f && t < 7.0f) { him.Intent.AimPoint = victim.transform.position + Vector3.up * .9f; Face(him, victim.transform.position); }
                     him.Intent.Set(Verb.Skill2, t > 2.6f && t < 2.8f);
                     him.Intent.Set(Verb.SpecialAbility, t > 4.0f && t < 4.7f);
-                    // BASTION: the taya Basilio faces the thrower and raises it; the thrower throws into it.
+                    // BASTION: the taya Dante faces the thrower and raises it; the thrower throws into it.
                     if (f == 210)
                     {
                         other.Teleport(Flat(wall.transform.position) + Vector3.up * .12f + new Vector3(.6f, 0f, -6.5f));

@@ -13,13 +13,13 @@ namespace TumbangPreso.PlayTests
     /// <summary>
     /// The mountain beast's turnaround for the owner (`docs/reports/dante-presentation-2026-10-16/plan.md` section 5.5: a verdict
     /// BEFORE it goes into the scene). The real glb, dressed as the game dresses it (`DanteProp`: toon paint, ink, the cut-in
-    /// light), Basilio's own model standing on its saddle for scale, five views. Writes PNGs to `TUMP_EVIDENCE` (default Logs).
+    /// light), Dante's own model standing on its saddle for scale, five views. Writes PNGs to `TUMP_EVIDENCE` (default Logs).
     /// </summary>
     [Category("WallClock")]
     public sealed class DanteBeastReview
     {
         [UnityTest]
-        public IEnumerator TurnaroundWithBasilioForScale()
+        public IEnumerator TurnaroundWithDanteForScale()
         {
             yield return PlayModeWorld.Reset();
             string dir = System.Environment.GetEnvironmentVariable("TUMP_EVIDENCE");

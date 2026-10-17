@@ -112,7 +112,7 @@ namespace TumbangPreso.PlayTests
             yield return null;
         }
 
-        [UnityTest] public IEnumerator SignatureNativeStateReachesActualBasilioConsumer()
+        [UnityTest] public IEnumerator SignatureNativeStateReachesActualDanteConsumer()
         {
             yield return ActualConsumer();
             yield return NativePress(Key.E, false);
@@ -121,7 +121,7 @@ namespace TumbangPreso.PlayTests
             Assert.Greater(_hero.Kit.Skill1.DurationRemaining, 10);
         }
 
-        [UnityTest] public IEnumerator SignatureNativeQuickTapActivatesActualBasilioConsumer()
+        [UnityTest] public IEnumerator SignatureNativeQuickTapActivatesActualDanteConsumer()
         {
             yield return ActualConsumer();
             yield return NativePress(Key.E, true);
@@ -149,7 +149,7 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(HeroKit.CastOutcome.Missing, _hero.LastAnswer(HeroAbilitySystem.Slot.Skill1));
         }
 
-        [UnityTest] public IEnumerator TextEventDoesNotActivateActualBasilioConsumer()
+        [UnityTest] public IEnumerator TextEventDoesNotActivateActualDanteConsumer()
         {
             yield return ActualConsumer();
             InputSystem.QueueTextEvent(_keyboard, 'e');

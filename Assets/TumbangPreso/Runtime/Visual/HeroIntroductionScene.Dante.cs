@@ -6,7 +6,7 @@ namespace TumbangPreso.Visual
     public sealed partial class HeroIntroductionScene
     {
         // =========================================================================================
-        // BASILIO, CONTINENTAL DRIFT: THE CHARGE-UP (v6, 2026-10-17). The owner on v5: *"where does the rock hands come from , he
+        // DANTE, CONTINENTAL DRIFT: THE CHARGE-UP (v6, 2026-10-17). The owner on v5: *"where does the rock hands come from , he
         // js has them"*, *"why the fk are ppl knocked back already annd they js stay them"*, then *"after nna malaunch ung ult, end
         // nna dapat cutscene tapos ppl see the rock going towards them and maknoknnock away sila and concuss"*, *"so focus on
         // directing his charge up and vfx related to it brahh"*. So the cutscene is HIM, gathering the earth, and it ends as he
@@ -104,9 +104,9 @@ namespace TumbangPreso.Visual
             for (int i = 0; i < DnCrackRows.Length; i++)
                 _dnTearDust.Add(Add("DanteTearDust" + i, VfxShapes.TwoSided(VfxShapes.Splat(9, .48f, 301 + i * 7)), new Color(.5f, .37f, .24f, .72f), .3f, plain: true));
             foreach (var g in DnGauntletRows)
-                _dnGauntlet.Add(BasilioStone("DanteGauntlet" + g.seed, VfxShapes.Prism(5, 1f, .72f, .3f, 0f, g.seed), basalt[g.seed % 3]));
+                _dnGauntlet.Add(DanteStone("DanteGauntlet" + g.seed, VfxShapes.Prism(5, 1f, .72f, .3f, 0f, g.seed), basalt[g.seed % 3]));
             foreach (var p in DnPebbleRows)
-                _dnPebbles.Add(BasilioStone("DantePebble" + p.seed, VfxShapes.Prism(5, 1f, .62f, .32f, 0f, p.seed), basalt[p.seed % 3]));
+                _dnPebbles.Add(DanteStone("DantePebble" + p.seed, VfxShapes.Prism(5, 1f, .62f, .32f, 0f, p.seed), basalt[p.seed % 3]));
             for (int f = 0; f < 2; f++)
                 _dnFistGlow.Add(AddGlow("DanteFistGlow" + f, new Color(1f, .5f, .12f), falloff: 2.2f, core: .8f));
             // THE LEAP: where he leaves the court.
@@ -131,7 +131,7 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>An opaque lit stone with a small local fill, so the dusk stage cannot turn it into a black cutout.</summary>
-        private int BasilioStone(string name, Mesh mesh, Color colour)
+        private int DanteStone(string name, Mesh mesh, Color colour)
         {
             int index = AddSolid(name, mesh, colour);
             var material = _pieces[index].Renderer.sharedMaterial;
@@ -164,7 +164,7 @@ namespace TumbangPreso.Visual
                     int b = i * 6, k = i * 2;
                     tris[b] = k; tris[b + 1] = k + 2; tris[b + 2] = k + 1; tris[b + 3] = k + 2; tris[b + 4] = k + 3; tris[b + 5] = k + 1;
                 }
-                _dnRingMesh = new Mesh { name = "BasilioRing", hideFlags = HideFlags.DontSave, vertices = v, uv = uv, triangles = tris };
+                _dnRingMesh = new Mesh { name = "DanteRing", hideFlags = HideFlags.DontSave, vertices = v, uv = uv, triangles = tris };
                 _dnRingMesh = VfxShapes.TwoSided(_dnRingMesh);
                 return _dnRingMesh;
             }

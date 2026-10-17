@@ -272,7 +272,7 @@ namespace TumbangPreso.Visual
             _material.SetFloat(ChromaticId, EffectiveChromatic);
             bool haunted = HauntedSight;
             _material.SetFloat("_HauntedSight", haunted ? 1f : 0f);
-            // Basilio's CONCUSSED: the victim's double image (`ConcussedPerception`).
+            // Dante's CONCUSSED: the victim's double image (`ConcussedPerception`).
             float concussed = ConcussedPerception.Weight(_camera);
             Vector2 ghost = concussed > 0f ? ConcussedPerception.GhostOffset(_camera, source.width, source.height) : Vector2.zero;
             _material.SetVector("_ConcussGhost", new Vector4(ghost.x, ghost.y, concussed * ConcussedPerception.GhostWeight, 0f));

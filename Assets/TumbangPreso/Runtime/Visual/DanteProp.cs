@@ -3,7 +3,7 @@ using UnityEngine;
 namespace TumbangPreso.Visual
 {
     /// <summary>
-    /// Basilio's modelled props (`tools/build_dante_props.py`, `Resources/Models/DanteProps`): the mountain beast of CONTINENTAL
+    /// Dante's modelled props (`tools/build_dante_props.py`, `Resources/Models/DanteProps`): the mountain beast of CONTINENTAL
     /// DRIFT. Loaded and dressed the way the cast is (`ToonSkin`, the ink outline) in his own palette (the builder's
     /// `DANTE_PALETTE`, same hex values), and its light repainted after: every `glow-*` node is a cut-in opening in the
     /// `SoulGlow` layout (a mouth on the stone, a cup sunk behind it), so the eyes and seams glow from INSIDE the rock.

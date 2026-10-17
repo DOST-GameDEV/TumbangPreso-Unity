@@ -5,7 +5,7 @@ using UnityEngine;
 namespace TumbangPreso.Visual
 {
     /// <summary>
-    /// CONCUSSED, ON THE VICTIM'S OWN SCREEN (Basilio's Boulder and Continental Drift; `docs/reports/dante-presentation-2026-10-16/
+    /// CONCUSSED, ON THE VICTIM'S OWN SCREEN (Dante's Boulder and Continental Drift; `docs/reports/dante-presentation-2026-10-16/
     /// plan.md` section 3, owner approved 2026-10-16). Breach's lesson (research.md): a status is felt, not only listed. The victim
     /// gets three things, all from the replicated Concussed clock so nothing here outlasts or undercuts the rule:
     ///  * a dull dust-ochre rim at the screen edges (`UI.TumpHudEffects`, `Shaders/ConcussedVignette`);

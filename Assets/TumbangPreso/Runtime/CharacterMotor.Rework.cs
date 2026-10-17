@@ -40,7 +40,7 @@ namespace TumbangPreso
         /// <summary>True while any status except Tagged would be refused (Geo's Shield, Carapace).</summary>
         private bool StatusImmune => AbilitySystem != null && (AbilitySystem.IsImmuneToStuns || AbilitySystem.IsImmuneToStatuses);
 
-        /// <summary>Raised where a status would have landed but immunity refused it (Basilio's Unstoppable flashes a plate).
+        /// <summary>Raised where a status would have landed but immunity refused it (Dante's Unstoppable flashes a plate).
         /// Presentation only, on the peer that resolves the status.</summary>
         public event System.Action<CharacterMotor, StatusKind> StatusRefused;
 

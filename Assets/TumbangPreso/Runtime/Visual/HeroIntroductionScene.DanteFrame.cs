@@ -5,7 +5,7 @@ namespace TumbangPreso.Visual
     public sealed partial class HeroIntroductionScene
     {
         // =========================================================================================
-        // BASILIO'S SHOTS, framed from his real body (his body is bigger than the table assumes: kneeling, his head bone stood
+        // DANTE'S SHOTS, framed from his real body (his body is bigger than the table assumes: kneeling, his head bone stood
         // 0.66 m over the court and his hair 1.9 m, film r1). Every shot stays on his right side (+x), and every shot answers one
         // question in order: WHAT HE DOES (fists into the court), WHAT ANSWERS (the earth, torn up onto his fists), WHO HE IS
         // NOW (the boulder fists raised), WHERE HE GOES (up), WHAT HE LAUNCHES (the slam, the crack racing off down the lane).

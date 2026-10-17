@@ -1,4 +1,4 @@
-# Character redesign prototype: Dante (displayed as Basilio)
+# Character redesign prototype: Dante (displayed as Dante)
 
 > ⚠️ **START AT SECTION 15.9, PART J (the last part, the newest), then part I, then the rest of 15.9, then 15.8.** It is the current state (end of 2026-10-05, second session) and it
 > supersedes anything above it that disagrees. Sections 1 to 14 are the record of how it got
@@ -39,7 +39,7 @@ should say "that is the same kid, with a lot more detail", not "that is another 
 The owner described the kid they were looking at: orange-brown skin, a blocky black hair mass
 with a fringe, one squinting eye and one yellow eye with a scar down that side, a small frown,
 a green jacket with gold trim, brown trousers, white shoes. That is roster id `dante`,
-displayed as **Basilio** (AGENTS.md, "Owner-approved character names"). Lowercase ids stay
+displayed as **Dante** (AGENTS.md, "Owner-approved character names"). Lowercase ids stay
 `dante` everywhere in code and assets.
 
 | What | Where |

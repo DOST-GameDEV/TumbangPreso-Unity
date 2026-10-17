@@ -323,7 +323,7 @@ Next action after publishing this unit: inspect actual rendered Isagani-to-Nemu
 contact and foot support. Both baseline/candidate show about0.43m hand bounds
 gap. Diagnose the capsule-assumed target surface and0.5m visual-step cap before
 changing shared reach presentation; keep actual soles supported and limb scale
-restored. Other failing pairs: Basilio/Yasmin, Yasmin/Rago, Nemu/Soraya,
+restored. Other failing pairs: Dante/Yasmin, Yasmin/Rago, Nemu/Soraya,
 Soraya/Ilyas, Ilyas/Amihan, Amihan/Paete and Paete/Bayan. Preserve strict tests,
 hit/score/recovery rules and finalized designs. Then continue meaningful natural
 camera/bot/navigation work, per-map authored intros/arrivals and slipper fixes.

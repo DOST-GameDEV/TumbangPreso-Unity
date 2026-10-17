@@ -5,7 +5,7 @@ using UnityEngine;
 namespace TumbangPreso.Visual
 {
     /// <summary>
-    /// EARTHBOUND, SHOWN (Basilio's passive: shoves move him half as far; `docs/reports/dante-presentation-2026-10-16/plan.md`
+    /// EARTHBOUND, SHOWN (Dante's passive: shoves move him half as far; `docs/reports/dante-presentation-2026-10-16/plan.md`
     /// section 1). Before this nothing on screen said WHY he moved less: a shove simply travelled half as far. Now:
     ///  * CONTACT: he leans INTO the shove (chest forward, hips down, 0.35 s, posed on the torso after the animator), and six
     ///    typed grit pieces kick up off his heels;

@@ -1,4 +1,4 @@
-# Basilio (Dante) presentation: direction and the owner's verdicts
+# Dante (Dante) presentation: direction and the owner's verdicts
 
 The spec is [plan.md](plan.md) (with [research.md](research.md)). This file records what the owner answered and decided,
 in his words, and what each answer became. Newest round at the bottom.

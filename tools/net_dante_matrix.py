@@ -1,7 +1,7 @@
 """Compare current movement/preparation reconstruction across three real players.
 
 The retained evaluate() function can read historical Dante traces. Its old
-Stomp, Carapace and Fissure scenarios do not qualify Basilio's current kit.
+Stomp, Carapace and Fissure scenarios do not qualify Dante's current kit.
 """
 import argparse
 import csv
@@ -227,7 +227,7 @@ def main():
     if args.movement_review:args.pending_review=True
     if args.hero == "dante":
         parser.error("These Dante scenarios target the retired Stomp/Carapace/Fissure kit. "
-                     "Basilio now uses Unstoppable, Boulder/Bastion and Continental Drift. "
+                     "Dante now uses Unstoppable, Boulder/Bastion and Continental Drift. "
                      "Do not use this matrix to qualify his current skills.")
     if not args.pending_review:
         parser.error("The basic skill matrix targets retired Dante mechanics. "

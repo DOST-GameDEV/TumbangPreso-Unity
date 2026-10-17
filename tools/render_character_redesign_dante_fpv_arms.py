@@ -1,4 +1,4 @@
-"""Render the review stills of Dante's (displayed: Basilio) first-person arms, in Blender, no Unity.
+"""Render the review stills of Dante's (displayed: Dante) first-person arms, in Blender, no Unity.
 
     "C:/Program Files/Blender Foundation/Blender 5.0/blender.exe" -b --python tools/render_character_redesign_dante_fpv_arms.py -- fpv01
     py -3 tools/render_character_redesign_dante_fpv_arms.py fpv01        (stacks and labels the frames)

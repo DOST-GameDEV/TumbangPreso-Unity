@@ -6,7 +6,7 @@ the presentation clock and reach the live effect. Inputs are scripted, not human
 play. They do not represent full matches or actual network peers.
 
 - Rago: 1/1, 28.6162138 seconds.
-- Basilio: 1/1, 24.7200742 seconds.
+- Dante: 1/1, 24.7200742 seconds.
 - Nemu: 1/1, 24.9610376 seconds; Kuro retains his revealed scale into live activation.
 - Yasmin: 1/1, 26.1174286 seconds.
 - Ilyas: corrected field-aware case 1/1, 23.6194508 seconds.
@@ -20,7 +20,7 @@ rule was changed to pass. Original failed evidence is retained.
 The old generic screenshot helper yields layout frames and can miss a short
 cinematic. The strengthened probe asserts its RawImage is enabled and reads the
 actual phase render target synchronously. Nemu, Yasmin and Ilyas frames were
-inspected. Earlier Rago/Basilio state handoffs passed, but their generic screenshots
+inspected. Earlier Rago/Dante state handoffs passed, but their generic screenshots
 do not independently prove the on-screen cinematic. Their separate isolated native
 art studies remain available in the individual presentation reports.
 

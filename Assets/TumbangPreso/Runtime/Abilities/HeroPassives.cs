@@ -29,7 +29,7 @@ namespace TumbangPreso.Abilities
                     "Yasmin inflicts Chilled on any player she shoves.");
                 // DanteHeroKit.IncomingKnockbackDistanceScale = GeoRules.EarthboundDistanceScale.
                 case "dante": return new Passive("EARTHBOUND",
-                    "Basilio takes 50% reduced shove distance.");
+                    "Dante takes 50% reduced shove distance.");
                 // RafiHeroKit: 1.2x movement for 1.5 s on a genuine own retrieve.
                 case "rafi": return new Passive("BACKWASH",
                     "Retrieving your own thrown slipper grants 20% movement speed for 1.5 seconds, once per throw. Dropping and picking it up again does not count.");

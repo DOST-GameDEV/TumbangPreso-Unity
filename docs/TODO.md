@@ -486,7 +486,7 @@ slows them 5 s with a slow that gets lower over time. Owner asked for a new name
   by a debug switcher. Two takeover causes and a separate missing-POV cause
   reproduced; final4 native cases pass with normal gameplay handover intact.
   [Evidence](reports/reliability-2026-10-06/spectator-seat-keys/README.md).
-- [x] Use wide spectator composition for current Yasmin/Basilio/Amihan court
+- [x] Use wide spectator composition for current Yasmin/Dante/Amihan court
   ultimates without circular telegraphs. Three native causes reproduce; final5
   cases pass with Baha/Overclock choices preserved. Full framing stays open.
   [Evidence](reports/reliability-2026-10-06/spectator-ultimate-footprint/README.md).
@@ -525,11 +525,11 @@ slows them 5 s with a slow that gets lower over time. Owner asked for a new name
   Full target-loss, interception and all-map/all-kit quality remain open.
   [Scoped evidence](reports/bot-lunge-reach-2026-10-07/README.md).
 
-- [x] Resolve the demonstrated prerequisite preventing current Yasmin/Basilio
+- [x] Resolve the demonstrated prerequisite preventing current Yasmin/Dante
   ultimate decisions. Native original cause failures become final9 passes,
   with a neighboring value-control regression found and corrected. Hero effects
   and casting cadence unchanged. Corrected natural Arena play now records both
-  Yasmin and Basilio casts; full bot quality remains open.
+  Yasmin and Dante casts; full bot quality remains open.
   [Evidence](reports/reliability-2026-10-06/ai-current-ultimate/README.md).
 
 - [ ] Thoroughly refine bots' decisions and skill use. Investigate unnatural
@@ -793,7 +793,7 @@ Unity rendering, input and live transport requirements remain separate.
 
 ### HERO-PRESENTATION-PARITY-1004: remaining hero presentation
 
-Owner target: refine Isagani, Rago, Basilio, Yasmin, Nemu and Ilyas to the presentation
+Owner target: refine Isagani, Rago, Dante, Yasmin, Nemu and Ilyas to the presentation
 standard of Soraya, Paete and Amihan. Review actual motion, body/FPP coherence,
 readable VFX, sound timing and ultimate direction. Preserve each hero's identity;
 reference characters are quality examples, not a new redesign assignment.
@@ -810,7 +810,7 @@ reference characters are quality examples, not a new redesign assignment.
 - [ ] Rago: Supernova parol handoff and held-equipment staging refined; native
   held/empty studies pass2/2. Full kit/player/SFX review remains open.
   [Evidence](reports/rago-supernova-2026-10-04/README.md).
-- [ ] Basilio: held slipper/face intersection fixed and slab visibility refined;
+- [ ] Dante: held slipper/face intersection fixed and slab visibility refined;
   native baseline1 fail/1 control becomes2/2. Full kit/player/SFX review remains open.
   [Evidence](reports/basilio-fissure-2026-10-04/README.md).
 - [ ] Nemu: giant reveal separates both silhouettes; opening shot has more clearance.
@@ -841,7 +841,7 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
-### CHAR-REDESIGN-1: Dante (Basilio) redesign prototype, Blender only
+### CHAR-REDESIGN-1: Dante (Dante) redesign prototype, Blender only
 
 Owner, 2026-10-05: *"can you try redesigning one of the normal blocky character models? add
 texture, more unique shapes and be less oriented around the whole blocky aesthetic"*. Then, on
@@ -952,14 +952,14 @@ Handoff: [CHARACTER_REDESIGN_DANTE.md](CHARACTER_REDESIGN_DANTE.md).
   row/rejoin/recovered-Home captures. JPEG screenshots prove controls, not lossless
   UI quality. No new full-match, two-machine, impaired-link or QA-failure closure.
   [Current local online controls](reports/laptop-validation-2026-10-05/current-online-lobby/README.md).
-- [ ] Owner Basilio E/Q failure on both machines: isolate actual input events,
+- [ ] Owner Dante E/Q failure on both machines: isolate actual input events,
   effective bindings and eligible ability consumption. Sky letter presses produce
   TEXT rather than key-state events. Native producer-to-consumer checks pass13/13;
   physical and paired skill effects remain unqualified.
   [Input evidence](reports/laptop-validation-2026-10-05/editor151-network-input/README.md).
   Retired Stomp/Carapace/Fissure matrix cases now refuse launch before profiles
   or players are touched: six refusals and four supported argument controls.
-  This does not qualify current Basilio skills.
+  This does not qualify current Dante skills.
   [Runner evidence](reports/reliability-2026-10-06/current-skill-matrix/README.md).
 - [x] Retire E/Q presses received while the player input reader is disabled.
   Original actual-consumer cases cast the15s signature or imbue the owned slipper
@@ -1048,7 +1048,7 @@ Handoff: [CHARACTER_REDESIGN_DANTE.md](CHARACTER_REDESIGN_DANTE.md).
   finds no editor-opening code.
 - [x] Paete ready-recast slipper flight: authored 13m/s speed restored, ba1a02554;
   two causal native failures plus ungrown control -> same three passes on laptop.
-- [x] Basilio boulder restores authored14m/s rather than unit-direction speed.
+- [x] Dante boulder restores authored14m/s rather than unit-direction speed.
   Original real flight0.0888m becomes1.2434m with native2/2 including cast control.
   [Evidence](reports/laptop-validation-2026-10-05/boulder-flight/README.md).
 - [x] Owner override: mature Paete plant automatically lobs a slipper at a valid
@@ -1195,7 +1195,7 @@ Handoff: [CHARACTER_REDESIGN_DANTE.md](CHARACTER_REDESIGN_DANTE.md).
 
 ### CHARACTER-NAMES-1004: owner-approved names across the UI
 
-- [x] Basilio/Yasmin/Rago/Isagani/Soraya/Ilyas replace the previous displayed
+- [x] Dante/Yasmin/Rago/Isagani/Soraya/Ilyas replace the previous displayed
   names. Nemu/Amihan/Paete stay. Both roster tables, kit headings, current dialogue,
   Soraya's doll, fallback selection and mastery-result labels use current names.
   Stable IDs/assets/progression are preserved. Current character docs updated.

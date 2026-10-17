@@ -1,4 +1,4 @@
-"""Basilio's (Dante's) sounds, DRAFTS for the owner's ear (`docs/reports/dante-presentation-2026-10-16/plan.md`, his sound family).
+"""Dante's (Dante's) sounds, DRAFTS for the owner's ear (`docs/reports/dante-presentation-2026-10-16/plan.md`, his sound family).
 
 Skill sounds stay switched off in the game until the owner picks a draft by ear (`AudioCues.ReworkedSkillSfx`), and an
 unapproved skill sound has no file in the game. So these are written to the report's `audio-drafts/` and mixed into the review

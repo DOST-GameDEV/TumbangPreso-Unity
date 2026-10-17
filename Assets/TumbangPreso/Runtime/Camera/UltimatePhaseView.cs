@@ -91,7 +91,7 @@ namespace TumbangPreso.CameraSystem
                     if (actor.IsGrounded)
                     {
                         var surfaces=body.Renderers.Where(r=>r.enabled&&r.gameObject.activeInHierarchy).ToArray();
-                        // The clip's first frame already carries its authored lift; keep it. Basilio's opens sunk 0.32 m onto
+                        // The clip's first frame already carries its authored lift; keep it. Dante's opens sunk 0.32 m onto
                         // his knee, and grounding that frame's lowest vertex undid the sink for the whole cutscene (he floated,
                         // Dante film r2). Every other table starts at lift 0, so nothing else moves.
                         float firstLift=UltimatePerformance.For(actor.AbilitySystem.HeroId,actor.GetComponent<Carrier>().Held!=null)?.LiftAt(0)??0f;

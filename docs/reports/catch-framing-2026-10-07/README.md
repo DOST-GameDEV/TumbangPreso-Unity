@@ -28,7 +28,7 @@ Native graphics evidence:
   Rago-to-Isagani contact pass. Default visible-skin gap is0.028543m with
   full opacity,28degree lean and armStretch1.
 - Unchanged published roster baseline32968:1PASS/8FAIL, the same failed pairings.
-  Amihan-to-Paete, Yasmin-to-Rago, Basilio-to-Yasmin, Nemu-to-Soraya,
+  Amihan-to-Paete, Yasmin-to-Rago, Dante-to-Yasmin, Nemu-to-Soraya,
   Soraya-to-Ilyas, Ilyas-to-Amihan and Isagani-to-Nemu still fail reach/surface
   contact. Paete-to-Bayan still fails limb-scale restoration. These are open
   authored-rig contact defects. Their strict existing assertions are retained.
