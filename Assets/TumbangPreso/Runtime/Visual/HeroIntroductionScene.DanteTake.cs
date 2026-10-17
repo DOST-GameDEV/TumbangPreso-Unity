@@ -101,10 +101,14 @@ namespace TumbangPreso.Visual
                 var at = plate.localPosition + plate.localRotation * v.Offset;
                 // Stumbling with the plate's jolts: knocked back a step on each split.
                 float knock = Ease(DnSplit1, DnSplit1 + .15f, t) * .25f + Ease(DnSplit2, DnSplit2 + .15f, t) * .3f;
+                // The stomp's shockwave throws them back as it passes under them, and they rock back on their heels.
+                var flat = new Vector2(at.x, at.z);
+                float passed = DnShockPassed(t, flat), lift = DnShockPass(t, flat);
+                knock += passed * passed * .9f;
                 var back = new Vector3(Mathf.Sin(v.Yaw * Mathf.Deg2Rad), 0f, Mathf.Cos(v.Yaw * Mathf.Deg2Rad));
-                v.Model.localPosition = at - back * knock + Vector3.up * .02f;
+                v.Model.localPosition = at - back * knock + Vector3.up * (.02f + .35f * lift);
                 float sway = _reducedEffects ? 0f : Mathf.Sin(story * 6f + v.Phase * 30f) * 6f * Ease(DnSplit1, DnSplit2, t) * (1f - Ease(DnLoad, DnLoad + .4f, t));
-                v.Model.localRotation = Quaternion.Euler(0f, v.Yaw, sway);
+                v.Model.localRotation = Quaternion.Euler(0f, v.Yaw, 0f) * Quaternion.Euler(-24f * lift - 6f * passed, 0f, sway);
                 // The rig's flung-arms clip: windmilling from the splits, held braced from the load.
                 if (v.Shock != null)
                 {

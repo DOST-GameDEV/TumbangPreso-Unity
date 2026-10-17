@@ -34,9 +34,12 @@ namespace TumbangPreso.Visual
         //   3.30 THE RISE       face first: its horn tips break the surface, then its brow; 3.75 its eyes ignite at the lens (an
         //                       impact frame), the crest lit on its brow; three heaves (4.0, 4.5, 4.95) carry his plate up on its back
         //   5.30 THE STOMP      it raises its right fist; he loads both of his; the light runs up its arm and down his;
-        //                       6.25 to 6.50 THE HANG (the story clock at a fifth); 6.53 both fists land as one; held down to the cut
-        // ⚠️ NO BLAST IS SHOWN AND NOTHING GOES BACK UNDER (owner, 2026-10-08): it ends on the fist with him still on its back; the
-        // going under and the five blasts are live play's (`DanteDriftLive`). So the stage is whole on the last frame.
+        //                       5.85 to 6.05 THE HANG (the story clock at a fifth); 6.08 both fists land as one
+        //   6.08 THE SHOCKWAVE  a molten ring and a dust wall race out 17 m, the plates heave as it passes, rocks fly, the
+        //                       players are thrown back, it crosses the lens; all settled by the cut (`DanteShock.cs`)
+        // NOTHING GOES BACK UNDER (owner, 2026-10-08): he is still on its back at the cut; the going under and the five blasts are
+        // live play's (`DanteDriftLive`), so the stage is whole on the last frame. The stomp's own shockwave IS shown now (owner,
+        // 2026-10-17, on v2: "IT NEVER HAPPENS"); it passes and settles before the cut.
         //
         // THE TRAVELLING THING is the molten light: his fist, the seams, the dive, its eyes, up its arm and down his, always
         // travelling left to right across the screen; every shot is on his right side of the line (+x).
@@ -50,9 +53,9 @@ namespace TumbangPreso.Visual
         // =========================================================================================
         private const float DnKnock1 = .45f, DnKnock2 = .80f, DnEyeOpen = .95f, DnWind = 1.15f, DnPunch = 1.55f, DnBreak = 1.57f,
                             DnSplit1 = 1.95f, DnSplit2 = 2.30f, DnDive = 3.10f, DnHorns = 3.30f, DnIgnite = 3.75f, DnRisen = 5.20f,
-                            DnLoad = 5.30f, DnHangFrom = 6.25f, DnHangTo = 6.50f, DnStomp = 6.53f, DnTitanTop = 3.4f;
-        // The stomp lands 0.47 s before the cut (owner on v1, 2026-10-17: "look ennding of ult wtf even is happening here"; at
-        // 6.88 its impact frame was the film's last picture), so the fists are seen down and the seam racing at the players.
+                            DnLoad = 5.30f, DnHangFrom = 5.85f, DnHangTo = 6.05f, DnStomp = 6.08f, DnTitanTop = 3.4f;
+        // The stomp lands 0.92 s before the cut so its shockwave plays out in the scene (owner on v1, 2026-10-17: "look ennding of
+        // ult wtf even is happening here"; on v2: "the entire ult builds up to this shockwave but IT NEVER HAPPENS"). `DanteShock.cs`.
         private static readonly float[] DnHeaves = { 4.0f, 4.5f, 4.95f };
         // The court's own surface over the stage root (`Slipper.GroundY`, the method's section 8 trap): Bayan Plaza's court stands
         // above the ground the root is found on, and a fixed 0.15 m left every plate under it (film r1). Measured once at the build.
@@ -136,6 +139,7 @@ namespace TumbangPreso.Visual
 
             BuildDanteBeast();
             BuildDanteBurst();
+            BuildDanteShock();
             BuildDanteTake();
 
             var strip = new[] { new Vector2(-.5f, -.5f), new Vector2(.5f, -.5f), new Vector2(.5f, .5f), new Vector2(-.5f, .5f) };
@@ -301,7 +305,7 @@ namespace TumbangPreso.Visual
         /// <summary>The lens feels it: the punch (four hard frames), each heave, and the stomp it ends on.</summary>
         private Vector3 DanteShake(float t)
         {
-            float size = DanteKick(t, DnPunch, .07f, .14f) + DanteKick(t, DnStomp, .13f, .12f)
+            float size = DanteKick(t, DnPunch, .07f, .14f) + DanteKick(t, DnStomp, .2f, .18f) + DanteKick(t, DnStomp + .3f, .16f, .3f)
                        + DanteKick(t, DnHeaves[0], .03f, .3f) + DanteKick(t, DnHeaves[1], .035f, .3f) + DanteKick(t, DnHeaves[2], .04f, .3f)
                        + DanteKick(t, DnSplit1, .02f, .2f) + DanteKick(t, DnSplit2, .025f, .2f);
             return new Vector3(Mathf.Sin(t * 71f), Mathf.Sin(t * 93f + 1.3f), 0) * size;
@@ -418,10 +422,12 @@ namespace TumbangPreso.Visual
                 // far half under the sea's surface, so the players stood in molten rock on slivers of stone). Rock and bob together
                 // now dip a plate's far edge at most 0.11 m, under the 0.12 m it rides.
                 float afloat = Ease(DnBreak, DnSplit1, t) * .12f;
-                plate.localPosition = new Vector3(home.x + away.x, DnFloat + afloat + bob + heel * .42f, home.y + away.y);
+                // The stomp's shockwave heaves each plate as it passes under it (`DanteShock.cs`).
+                DnHeave(t, home + away, out float heave, out Quaternion tip);
+                plate.localPosition = new Vector3(home.x + away.x, DnFloat + afloat + bob + heel * .42f + heave, home.y + away.y);
                 var rock = DnTilt[k] * .12f * loose * (.6f + .4f * Mathf.Sin(story * 1.1f + k));
                 var heeled = Quaternion.AngleAxis(-4f * heel, new Vector3(-home.y, 0, home.x).normalized);
-                plate.localRotation = heeled * Quaternion.Euler(rock.x, rock.y * .4f, rock.z);
+                plate.localRotation = tip * heeled * Quaternion.Euler(rock.x, rock.y * .4f, rock.z);
             }
 
             // THE KNOCKS: a thin molten ring runs out under the court from his knuckles each time; the second leaves his hand's cracks lit.
@@ -483,7 +489,7 @@ namespace TumbangPreso.Visual
                 float nod = 0f; foreach (var h in DnHeaves) nod += Mathf.Sin(Mathf.Clamp01((t - h) / .35f) * Mathf.PI) * -4f;
                 if (_dnTitanHead != null) _dnTitanHead.localRotation = _dnHeadRest * Quaternion.Euler(nod, 0f, 0f);
                 // Its right arm: planted, raised overhead through his load, held trembling in the hang, brought down on the stomp.
-                float raised = Ease(DnLoad, DnLoad + .8f, t) * (1 - Ease(DnStomp - .06f, DnStomp, t));
+                float raised = Ease(DnLoad, DnLoad + .5f, t) * (1 - Ease(DnStomp - .06f, DnStomp, t));
                 float tremble = _reducedEffects ? 0 : Mathf.Sin(t * 33f) * 1.6f * raised * Ease(DnHangFrom - .3f, DnHangFrom, t);
                 if (_dnTitanArm != null) _dnTitanArm.localRotation = _dnArmRest * Quaternion.Euler(-150f * raised + tremble, 0f, -12f * raised);
                 // THE CREST, 2 of 3: lit on its brow as it wakes.
@@ -495,7 +501,7 @@ namespace TumbangPreso.Visual
 
             // THE CREST, 3 of 3: huge behind them both at the stomp, flaring and cracking as the fists land.
             {
-                float c = Ease(DnLoad + .5f, DnHangFrom, t);
+                float c = Ease(DnLoad + .2f, DnHangFrom, t);
                 float flare = Flash(t, DnStomp, .1f);
                 // Film r9: at 9.5 m its stone hid behind the beast and its horns ran off the top, washed pink on the sky; smaller and
                 // higher, the whole emblem stands over the beast, and hotter.
@@ -509,6 +515,7 @@ namespace TumbangPreso.Visual
                       new Vector3(.5f, 1, 3.2f * (1 + 4f * Mathf.Clamp01(age / .1f))), Quaternion.identity, age >= 0 ? 1 : 0);
             }
 
+            SampleDanteShock(t);
             SampleDanteBurst(t, story);
             SampleDanteTake(t, story);
         }

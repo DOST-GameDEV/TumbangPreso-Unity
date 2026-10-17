@@ -106,6 +106,17 @@ namespace TumbangPreso.Visual
                     fov = Mathf.Lerp(42f, endFov, u);
                     break;
                 }
+                case 6:
+                {
+                    // 5 THE STOMP, then THE SHOCKWAVE: as the fists land the lens is thrown back and up with the blast, wider, so the
+                    // wave is seen rolling out across the whole court and reaching us last (film r14: from the creep's place it
+                    // crossed the lens in a fifth of a second and the rest of the scene was still).
+                    float back = Ease(DnStomp + .03f, DnStomp + .55f, t);
+                    eye += new Vector3(3.0f, 4.6f, 6.0f) * back;
+                    look = Vector3.Lerp(look, new Vector3(DnShockCentre.x * .6f, 1.4f, DnShockCentre.y + 2.5f), back);
+                    fov = Mathf.Lerp(fov, 62f, back);
+                    break;
+                }
             }
         }
     }

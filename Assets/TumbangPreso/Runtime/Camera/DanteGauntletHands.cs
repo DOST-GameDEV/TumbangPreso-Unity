@@ -64,6 +64,8 @@ namespace TumbangPreso.CameraSystem
         private static readonly float[] FallOrder = { 0f, 0f, 0f, 0f, 0f, 1f, 2f, 3f, 4f, 5f, 6f, 7f };
         /// <summary>A cast: how long and how tall each knuckle plate stands, stepped like his Bastion's slabs.</summary>
         private static readonly float[] CastLong = { 1.5f, 2.3f, 1.9f, 1.35f }, CastTall = { 1.3f, 1.9f, 1.6f, 1.2f };
+        /// <summary>The one knuckle slab's width over a single plate's: the four plates' span (-.168 to .166 across, each about .1 wide).</summary>
+        private const float KnuckleSpan = 3.8f;
         /// <summary>The plates a landing cracks off, the outermost first.</summary>
         private static readonly int[] CrackOrder = { 11, 10, 7, 6, 9, 8, 5 };
 
@@ -360,6 +362,14 @@ namespace TumbangPreso.CameraSystem
                             }
                             break;
                     }
+                    // ONE KNUCKLE SLAB, NEVER FOUR (owner, 2026-10-17, of his first-person hand: "this sucks bcz none of our
+                    // characters have fingers wtf!"). Four plates side by side on the knuckles read as four fingers on a body whose
+                    // hands are blocks. The first plate spans the whole knuckle line from the middle; the other three never grow.
+                    if (knuckle)
+                    {
+                        if (i != K0) grow = 0f;
+                        else { x = 0f; wide *= KnuckleSpan; }
+                    }
                     // The throw's slam: the right hand's knuckle plates come home fast and overshoot once.
                     if (_slam > 0f && hand.Right && knuckle && doing == Doing.Ground) { stiff = 2.3f; damp = 1.35f; }
 
@@ -400,7 +410,7 @@ namespace TumbangPreso.CameraSystem
                     }
                     p.Body.position = hand.Arm.TransformPoint(at);
                     p.Body.rotation = hand.Arm.rotation * turned;
-                    p.Body.localScale = new Vector3(Mathf.Clamp(p.Wide.Value, .3f, 2.4f) * g, Mathf.Clamp(p.Long.Value, .3f, 2.8f) * g,
+                    p.Body.localScale = new Vector3(Mathf.Clamp(p.Wide.Value, .3f, i == K0 ? 2.4f * KnuckleSpan : 2.4f) * g, Mathf.Clamp(p.Long.Value, .3f, 2.8f) * g,
                         Mathf.Clamp(p.Thick.Value * breath, .25f, 2.6f) * g);
 
                     if (p.Seam == null) continue;
