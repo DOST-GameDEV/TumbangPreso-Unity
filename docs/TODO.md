@@ -1,3 +1,41 @@
+### DANTE-MOUNTAIN-FORM-1018: 30 s of rock armour after CONTINENTAL DRIFT (IN PROGRESS)
+
+Owner 2026-10-17 and 18: after his ultimate Dante keeps a suit of rock armour for 30 s, pieces falling off from 20 s; his own
+heavy animation set; a stronger throw that staggers and knocks back a player it hits; immunity to debuffs; the earth must
+visibly cover his whole body in the cutscene. Gameplay is protocol 171 (`DanteHeroKit` MOUNTAIN FORM note).
+- [x] Gameplay verified by `PlayTests.DanteMountainFormTests`: the 30 s clock and its end, the cleanse and the immunity on and
+  off, the x1.25 throw, the stagger and launch on a hit (player and taya block paths), an immune body refusing it, HostThrow and
+  Deflect clearing the mark, ResetForRound removing the suit and the clip variant, the suit gone after its debris, a model rebuilt
+  mid-form dressed again, the rejoin restore mid-form and mid-shed, and the clip variant's fallback.
+- [x] Fixed: the suit read every skin under the body's root, so a model swapped the frame the form began lit the horn's veins on
+  the old (destroyed) head (MissingReferenceException in `DanteDriftTests`/`DanteDriftPresentationTests`); a rebuilt model now
+  orphans the suit and the kit dresses the new body on the same clock; a rejoin correction moves a worn suit instead of
+  rebuilding it; a suit is retried every 0.5 s until his model exists; debris that drops while he is airborne lies on the court.
+- [x] `SeanSteadyEmberTests` updated: Dante's timed-kit passive fields now carry MOUNTAIN FORM's time (capacity 30 s).
+- [x] Armour rebuilt as plates (`Logs/mf/poses_v2` to `_v6`, `MountainFormSheet`): ~250 ringed boulders read as a grey heap;
+  now a layered breastplate with one molten seam down it, back and side plates, a collar that leaves the face bare, a belt with
+  one molten line, two layers of tassets, domed pauldrons, bracers, greaves, boots, a sole plate over the white sneakers;
+  110 pieces, warm basalt (`Logs/mf/poses_v7`).
+- [x] Cutscene: the suit is built on the cutscene's body copy and forms on its clock (legs as he stands, 1.58 to 1.87 s, so no
+  plate is pushed into the court while he kneels); the 8 gauntlet stones and the slam's bury are gone; a held slipper goes into
+  the boulder fist; the hang before the slam (`tools/author_ultimate_intros.py`), three impact frames, crater, radial cracks,
+  dust wall, stronger double shockwave, larger embers, harder shake, field-of-view punches, a tighter leap shot.
+- [x] First person: `DanteGauntletHands` MOUNTAIN FORM mode (whole gauntlet, boulder knuckles, seams lit, the suit's basalt,
+  plates cracking off from the elbow down over the last 10 s); the owner's deck draws the form's time on the ultimate tile
+  (`HeroKit.UltimateAftermath`). Text: the ult summary and a kit-rule line under EARTHBOUND; the description trimmed to 124.
+- [x] `UltimateIntroductionProbe`'s grounding subtracted the table's smoothstep lift while the clip carries a 60 Hz linear bake,
+  so a steep drop read as feet through the court mid-air (Dante -0.024 m before this work, -0.055 m with the hang): it now
+  subtracts the baked lift.
+- [ ] Owner verdict on the suit, the cutscene and the first-person hands (films `Logs/mf/dante_mountain_cutscene_v*.mp4`).
+- [ ] Sound: drafts by `tools/draft_dante_mountain_sfx.py` (form, stomp, hit, crack, end; takes A and B) await the owner's ear;
+  the form's stomp still borrows `land` pitched down. Register the chosen takes in `AudioCues.ReworkedSkillSfx`.
+- [ ] Animation feel pass: mountain-holding-right, crouch/fatigue and slide variants; heavier casts; gait-swap timing at the
+  form's start and end. The clip GLB writer (`tools/author_dante_mountain_clips.py`) leaves the replaced clips' bytes in the
+  binary chunk, so the GLB grows on every rewrite: compact it before the next authoring pass.
+- [ ] Real host and client match: the cleanse and immunity on a non-host, the suit and clips on every peer, a joiner mid-form.
+- [ ] Balance with the owner: form length, throw scale, stagger and knock.
+- [ ] Remove the `[Mountain]` debug logs in `DanteMountainArmour` when the suit is final.
+
 ### NEMU-NETWORK-1015: visible host state and participant rigs
 
 - [x] Protocol163 host ghost frames for Blindfold's exact victim, Skitter carry and Lookout lift/scare, with ordered lifetimes, late hydration and round/body/kit/transport cleanup. Actual UDP and real Relay host+2clients pass; 52 distinct native cases and Core744/744. Mixed9 current models/27 participants/6 sample times reproduce/fix copied-skin bindpose initialization. [Evidence](reports/nemu-network-2026-10-15/README.md).

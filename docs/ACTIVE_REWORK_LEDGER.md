@@ -1,3 +1,16 @@
+# Dante Mountain Form checkpoint, October18
+
+On ASTRAReworks after 4d79a33cb (protocol 171). Checked the last session's work before building on it: two real faults
+(the suit read every skin under the body's root and threw MissingReferenceException after a same-frame model swap; Dante's
+timed-kit passive fields broke SeanSteadyEmberTests' pins) and three test-setup lessons (bodies inside the first 0.25 s of
+a throw are not tested; offline a non-local human takes knocks through the relay; the taya is clamped into the can's box).
+DanteMountainFormTests 12/12; DanteDrift and DanteDriftPresentation green; Dante's UltimateIntroductionProbe grounding green
+after the probe subtracts the baked lift. EditMode failures left are the pre-existing roster-drift list (Cheska, Zack, Nemu,
+Sean, Phaister). The suit is plates (Logs/mf/poses_v7), forms in the cutscene on its clock, the slam was rebuilt, his
+first-person hands carry the form, and his deck shows its seconds. Films sent: Logs/mf/dante_mountain_cutscene_v1 and v3.
+Next: the owner's verdict on v3, his pick of the sound drafts (tools/draft_dante_mountain_sfx.py), the animation variants,
+a real host and client match, and balance. Open items: docs/TODO.md DANTE-MOUNTAIN-FORM-1018.
+
 # Ghost network checkpoint, October15
 
 Pulled3fe64. Protocol163 now sends complete host-owned Blindfold/Skitter/Lookout
