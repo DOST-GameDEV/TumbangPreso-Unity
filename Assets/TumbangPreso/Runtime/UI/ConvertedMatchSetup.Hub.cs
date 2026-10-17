@@ -153,6 +153,14 @@ namespace TumbangPreso.UI
             NetSession.RoomVisibility = (int)visibility;
             SelectMap(map);
             SelectMode(mode);
+            // ⚠️ A NEW ROOM OPENS WITH NO SEAT CHOSEN. The last room's ADD BOT picks live in
+            // `SelectedRules` until something replaces them, and a fresh room is not that room.
+            if (SceneFlow.SelectedRules.BotSeats != 0)
+            {
+                var fresh = SceneFlow.SelectedRules.Clone();
+                fresh.BotSeats = 0;
+                SceneFlow.AdoptRemoteRules(fresh);
+            }
             SceneFlow.Networked = true;
             _ownerRoute = LobbyMode.Custom;
 
@@ -254,10 +262,10 @@ namespace TumbangPreso.UI
             bool live = IsLive;
             int local = live ? NetAuthority.LocalSlot : GameLaunch.SoloSeat;
             var settings = Settings.SettingsStore.Current;
-            // Custom room seats reflect their live rules before Start applies global AI policy.
-            // Queued rooms keep the explicit accepted-bot policy.
-            bool fillBots = HubQueueWatch.QueueRoom ? AIController.BotsEnabled
-                : SceneFlow.SelectedRules != null && SceneFlow.SelectedRules.Bots > 0;
+            // Custom room seats reflect their live rules before Start applies global AI policy,
+            // seat by seat (`CustomGameRules.SeatHasBot`). Queued rooms keep the explicit
+            // accepted-bot policy for every empty seat.
+            bool queueBots = HubQueueWatch.QueueRoom && AIController.BotsEnabled;
             for (int i = 0; i < seats.Length; i++)
             {
                 var info = live ? MatchRpc.Instance?.GetSeatInfo(i) : null;
@@ -270,12 +278,35 @@ namespace TumbangPreso.UI
                     Mine = mine,
                     Host = live && occupied && (mine ? NetAuthority.IsHost : info != null && info.PeerId == 0),
                     Ready = mine ? _localReady : info != null && info.Ready,
-                    Bot = !occupied && fillBots,
+                    Bot = !occupied && (HubQueueWatch.QueueRoom ? queueBots
+                                                                : CustomGameRules.SeatHasBot(SceneFlow.SelectedRules, i)),
                     Name = mine ? "YOU" : info != null && !string.IsNullOrEmpty(info.Name) ? info.Name : "PLAYER " + (i + 1),
                     CharacterPick = mine ? settings.CharacterPick : info?.CharacterPick ?? -1,
                 };
             }
             return seats;
+        }
+
+        /// <summary>
+        /// ADD BOT and REMOVE BOT. Only the host of a custom room decides, and only before the
+        /// match: a queued room's bots are the queue's offer, not a seat-by-seat choice.
+        /// </summary>
+        public bool CanEditBots => IsHost && !MatchInProgress && !HubQueueWatch.QueueRoom;
+
+        /// <summary>
+        /// ⚠️ THE CHOICE TRAVELS AS PART OF THE ROOM'S RULES, NOT AS A NEW MESSAGE.
+        /// `MatchRpc.SelectRulesServerRpc` is the single rules path (`docs/TODO.md` § 38.5), the
+        /// host clamps before it broadcasts, and every peer's seat list redraws off the same
+        /// record. ⚠️ `AdoptRemoteRules` RATHER THAN `SetSelectedRules`, because the latter saves
+        /// to `settings.json` and a bot in P3 belongs to this room, not to the next one.
+        /// </summary>
+        public void SetSeatBot(int seat, bool bot)
+        {
+            if (!CanEditBots || seat < 0 || seat >= Balance.PlayerCount) return;
+            var rules = SceneFlow.SelectedRules.Clone();
+            CustomGameRules.SetSeatBot(rules, seat, bot);
+            SceneFlow.AdoptRemoteRules(rules);
+            if (SceneFlow.Networked) MatchRpc.Instance?.SelectRulesServerRpc(CustomGameRules.ToWire(rules));
         }
 
         public LobbySeatSwapOffer SeatSwapOffer => MatchRpc.Instance?.SeatSwapOffer;

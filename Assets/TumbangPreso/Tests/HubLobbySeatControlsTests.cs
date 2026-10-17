@@ -33,6 +33,9 @@ namespace TumbangPreso.Tests
             public void RespondToSeatSwap(long id,bool accept){Replied=id;Accepted=accept;SeatSwapOffer=null;}
             public bool CanTakeSeat(int seat)=>Allow&&!MatchInProgress&&SeatSwapOffer==null&&seat>=0&&seat<Data.Length&&!Data[seat].Mine;
             public void TakeSeat(int seat){Requested=seat;}
+            public bool EditBots=true;public int BotSeat=-1;public bool BotWanted;
+            public bool CanEditBots=>EditBots&&!MatchInProgress;
+            public void SetSeatBot(int seat,bool bot){BotSeat=seat;BotWanted=bot;}
             public void OpenSettings(){}public void OpenProfile(){}public void OpenCareer(){}public void OpenParty(){}public void OpenCustomRules(){}
             public void StartPractice(){}public string StartQueue(GameMode mode,QueueStake stake)=>"";
             public void CancelQueue(){}public void AcceptBots(){}public void LeaveRoom(){}

@@ -859,6 +859,23 @@ namespace TumbangPreso
         private readonly bool[] _customChecked = new bool[Balance.PlayerCount];
 
         /// <summary>
+        /// Whether this empty seat was given a bot in the player's room.
+        ///
+        /// ⚠️ ONLY A CUSTOM ROOM CHOOSES SEAT BY SEAT. The room's ADD BOT writes
+        /// `CustomRules.BotSeats`, and `CustomGameRules.SeatHasBot` reads it; a seat left OPEN
+        /// there stays an empty chair in the match rather than quietly becoming a bot the host
+        /// never asked for. Practice, the tutorial, the range and queued rooms keep their own
+        /// policy and answer true, so nothing about them changes.
+        /// </summary>
+        private static bool CustomRoomSeatTakesABot(int slot)
+        {
+            var session = Net.NetSession.Instance;
+            bool customRoom = session != null && session.IsNetworked && !UI.Hub.HubQueueWatch.QueueRoom
+                              && !GameLaunch.GuidedTutorial && !PracticeRange.Requested;
+            return !customRoom || CustomGameRules.SeatHasBot(SceneFlow.SelectedRules, slot);
+        }
+
+        /// <summary>
         /// ⚠️ 1.6 CAPSULE, 1.25 EYE. Those belong to the Person ROLE, not to any model, and
         /// everything ever tuned against a Person assumes them. A default 2.0 capsule would
         /// quietly invalidate every distance in the game.
@@ -1120,7 +1137,7 @@ namespace TumbangPreso
                 go.AddComponent<AIController>();
             }
             else if ((AIController.BotsEnabled || PracticeRange.Requested) && !isHumanPlayer &&
-                     (!isNetworked || NetAuthority.IsHost))
+                     (!isNetworked || NetAuthority.IsHost) && CustomRoomSeatTakesABot(slot))
             {
                 // Unoccupied seats run AI on the host only
                 go.AddComponent<AIController>();
