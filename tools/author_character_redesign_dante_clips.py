@@ -478,5 +478,83 @@ def mountain_throw():
     return out
 
 
+#   CARRYING (the game plays `holding-right` over the gait whenever a slipper is in his hand, which in MOUNTAIN FORM is most
+#   of the time): the kid's carry folds both arms in against a chest that is now a suit of stone, so the boulder fists sank
+#   into the plates. Here the left arm is held wide as in the stance and the right is brought forward and out, the fist (and
+#   the slipper in it) ahead of the breastplate where the throw takes it from.
+MOUNTAIN_ARMS_CARRY_RIGHT = ((0.62, -0.50, 0.60), (0.30, -0.22, 0.93))
+
+
+def mountain_holding_right():
+    """The carry: arms only (the gait layer owns the legs and the root), a held pose with a slow heavy breath in the arms."""
+    out = {}
+    length = 1.6
+    for t in _times(length):
+        breath = math.sin(2.0 * math.pi * t / length)
+        left_upper, left_fore = MOUNTAIN_ARMS
+        l_up, l_fo = _arm(1, (left_upper[0], left_upper[1] + 0.03 * breath, left_upper[2]), left_fore)
+        r_upper, r_fore = MOUNTAIN_ARMS_CARRY_RIGHT
+        r_up, r_fo = _arm(-1, (r_upper[0], r_upper[1] + 0.025 * breath, r_upper[2]), r_fore)
+        row = {("arm-left", "rotation"): l_up, ("forearm-left", "rotation"): l_fo,
+               ("arm-right", "rotation"): r_up, ("forearm-right", "rotation"): r_fo}
+        for key, value in row.items():
+            out.setdefault(key, []).append((t, value))
+    return out
+
+
+def mountain_crouch():
+    """SPENT (the fatigue pose, `crouch`): a mountain out of breath does not fold up small like the kid; it sags. The legs
+    splay wider, the chest drops forward over them, the boulder fists hang low and forward almost to the court, the head
+    hangs, and the whole suit heaves on a slow labouring breath."""
+    out = {}
+    length = 1.4
+    for t in _times(length):
+        breath = math.sin(2.0 * math.pi * t / length)
+        row = {
+            ("root", "translation"): (0.0, MOUNTAIN_SINK - 0.006, 0.0),
+            ("root", "scale"): _squash(0.97 + 0.025 * breath),
+            ("leg-left", "rotation"): mul(qx(-6.0), qz(MOUNTAIN_SPLAY + 5.0)),
+            ("leg-right", "rotation"): mul(qx(-6.0), qz(-MOUNTAIN_SPLAY - 5.0)),
+            ("torso", "rotation"): qx(26.0 - 3.5 * breath),
+            ("head", "rotation"): qx(14.0 + 2.0 * breath),
+        }
+        _mountain_arms(row, ((0.55, -0.70, 0.45), (0.25, -0.88, 0.40)), swing=-4.0 * breath)
+        for key, value in row.items():
+            out.setdefault(key, []).append((t, value))
+    return out
+
+
+def mountain_slide():
+    """THE SLIDE (0.95 s, the kid's length): too heavy to skim, he ploughs. Dropped low on the planted back leg with the
+    front leg driven out ahead, the chest leaned back against the speed, the boulder arms thrown out wide for balance; a
+    jolt as he lands into it and a heave as he comes up out of it."""
+    out = {}
+    length = 0.95
+    for t in _times(length):
+        into = _ease(t / 0.12)
+        up = _ease((t - 0.72) / 0.23)
+        low = into * (1.0 - up)
+        jolt = math.exp(-((t - 0.12) / 0.04) ** 2)
+        row = {
+            ("root", "translation"): (0.0, MOUNTAIN_SINK - 0.018 * low, 0.0),
+            ("root", "scale"): _squash(1.0 - 0.08 * jolt),
+            ("root", "rotation"): qx(-6.0 * low),
+            ("leg-left", "rotation"): mul(qx(-48.0 * low), qz(MOUNTAIN_SPLAY)),
+            ("leg-right", "rotation"): mul(qx(22.0 * low), qz(-MOUNTAIN_SPLAY - 4.0 * low)),
+            ("torso", "rotation"): qx(6.0 - 16.0 * low + 3.0 * jolt),
+            ("head", "rotation"): qx(4.0 + 8.0 * low),
+        }
+        wide = ((0.95, -0.15, 0.05), (0.75, -0.05, 0.45))
+        q = []
+        for k in range(2):
+            a, b = MOUNTAIN_ARMS[k], wide[k]
+            q.append(tuple(a[i] + (b[i] - a[i]) * low for i in range(3)))
+        _mountain_arms(row, (q[0], q[1]))
+        for key, value in row.items():
+            out.setdefault(key, []).append((t, value))
+    return out
+
+
 MOUNTAIN_CLIPS = {"mountain-idle": mountain_idle, "mountain-walk": mountain_walk, "mountain-sprint": mountain_sprint,
-                  "mountain-jump": mountain_jump, "mountain-fall": mountain_fall, "mountain-throw": mountain_throw}
+                  "mountain-jump": mountain_jump, "mountain-fall": mountain_fall, "mountain-throw": mountain_throw,
+                  "mountain-holding-right": mountain_holding_right, "mountain-crouch": mountain_crouch, "mountain-slide": mountain_slide}
