@@ -11,9 +11,10 @@ namespace TumbangPreso.Visual
     /// (`DanteDriftFault`), posed from the wave's accepted age like it (`StepTo`), so a rejoiner and a replay draw the same frame:
     ///  * THE FUSE: a molten seam races forward from him along the cascade's line, far faster than the blasts, and leaves a
     ///    glowing crack-star at the middle of every band before that band goes, so a victim can read it and step out.
-    ///  * FIVE BLASTS, one per band every 0.30 s: a slab of court heaves 0.35 m in one jolt and tilts, molten light under it,
-    ///    five big chunks thrown (typed per band, no two alike), and a DUST EDGE that rises exactly along the band's real hit
-    ///    rectangle (full width x band depth): the picture never lies about the hit area.
+    ///  * FIVE BLASTS, one per band every 0.30 s: the cutscene's row of six basalt slabs heaves up across the band, molten light under it,
+    ///    five big chunks thrown (typed per band, no two alike), dust clumps at its front, and molten cracks that open exactly
+    ///    along the band's real hit rectangle (full width x band depth): the picture never lies about the hit area. The rubble
+    ///    holds, then sinks back into the court in two crumbling steps before the wave's tail ends.
     ///  * MAP-WIDE: every viewer's own camera shakes by its distance to the blast, the ground rumbles, and a few grains fall
     ///    through their own view from above.
     ///  * THE SCAR: the fault line stays after the wave, cools orange, dull red, grey, then crumbles flat (`DanteDriftScar`).
@@ -22,7 +23,6 @@ namespace TumbangPreso.Visual
     {
         public float LifeSeconds => GeoRules.DriftSeconds;
         private const float FuseSpeed = 34f;          // m/s along the line: it reaches the far band long before its blast
-        private const float HeaveLift = .35f;
 
         private Vector3 _origin, _forward, _right;
         private float _halfWidth, _depth;
@@ -35,7 +35,10 @@ namespace TumbangPreso.Visual
         private sealed class Band
         {
             public float Start;            // metres along the line
-            public Transform Slab, Star, Glow;
+            public readonly List<Transform> Slabs = new List<Transform>(6);
+            public readonly List<Transform> Dust = new List<Transform>(4);
+            public readonly List<Material> DustMaterials = new List<Material>(4);
+            public Transform Star, Glow;
             public Material StarMaterial, GlowMaterial;
             public readonly List<Chunk> Chunks = new List<Chunk>(5);
             public Transform[] Edge = new Transform[4];
@@ -57,6 +60,23 @@ namespace TumbangPreso.Visual
             (-.04f, .34f, .46f, 6f, -7f), (.07f, .30f, .52f, -8f, -5f), (-.10f, .36f, .44f, 5f, -9f), (.05f, .32f, .50f, -6f, -6f), (0f, .40f, .48f, 7f, -10f),
         };
 
+        // THE CUTSCENE'S BANDS, IN PLAY (owner, 2026-10-17, on the after-ult film and the cascade rebuild): each band is the same
+        // row of six basalt slabs the cutscene heaved, across the band's full width, lower so players stay readable over them.
+        // (across share -1 to 1, width share of a sixth, depth share, height m, tilt x, tilt z, delay s, seed). Typed per band.
+        private static readonly (float across, float width, float depth, float height, float tiltX, float tiltZ, float delay, int seed)[][] LiveSlabRows =
+        {
+            new[] { (-.86f, .95f, .80f, .42f, -12f,  7f, .03f,  3), (-.52f, 1.05f, .88f, .52f, -16f, -5f, .00f,  5), (-.17f, .98f, .84f, .48f, -11f,  4f, .02f,  7),
+                    ( .18f, 1.02f, .90f, .56f, -18f, -6f, .01f, 11), ( .53f, .96f, .82f, .44f, -13f,  8f, .04f, 13), ( .87f, 1.00f, .86f, .40f, -10f, -7f, .05f, 17) },
+            new[] { (-.85f, 1.00f, .84f, .48f, -14f, -6f, .04f, 19), (-.50f, .97f, .90f, .60f, -19f,  5f, .01f, 23), (-.16f, 1.04f, .82f, .54f, -12f, -4f, .00f, 29),
+                    ( .19f, .95f, .88f, .62f, -20f,  7f, .02f, 31), ( .54f, 1.03f, .84f, .50f, -15f, -8f, .03f, 37), ( .88f, .98f, .80f, .44f, -11f,  6f, .05f, 41) },
+            new[] { (-.87f, .97f, .86f, .52f, -16f,  6f, .02f, 43), (-.51f, 1.02f, .82f, .64f, -21f, -7f, .03f, 47), (-.15f, .99f, .90f, .68f, -15f,  5f, .00f, 53),
+                    ( .20f, 1.04f, .84f, .60f, -19f, -5f, .01f, 59), ( .55f, .96f, .88f, .56f, -16f,  8f, .04f, 61), ( .86f, 1.01f, .82f, .46f, -12f, -6f, .05f, 67) },
+            new[] { (-.86f, 1.03f, .82f, .56f, -17f, -7f, .03f, 71), (-.52f, .96f, .88f, .70f, -22f,  6f, .02f, 73), (-.17f, 1.02f, .84f, .74f, -16f, -4f, .00f, 79),
+                    ( .18f, .98f, .90f, .66f, -20f,  7f, .01f, 83), ( .53f, 1.04f, .82f, .60f, -17f, -8f, .04f, 89), ( .87f, .97f, .86f, .50f, -13f,  5f, .05f, 97) },
+            new[] { (-.85f, .99f, .88f, .62f, -20f,  8f, .02f, 101), (-.51f, 1.04f, .84f, .78f, -24f, -6f, .01f, 103), (-.16f, .97f, .90f, .84f, -19f,  5f, .00f, 107),
+                    ( .19f, 1.03f, .82f, .80f, -23f, -7f, .02f, 109), ( .54f, .98f, .88f, .70f, -20f,  7f, .03f, 113), ( .88f, 1.02f, .84f, .58f, -15f, -5f, .05f, 127) },
+        };
+
         private static readonly Color Basalt = new Color(.31f, .27f, .24f), Dust = new Color(.42f, .32f, .22f);
         private static readonly Color MoltenHot = new Color(1f, .62f, .18f), MoltenCore = new Color(1f, .42f, .08f);
 
@@ -64,7 +84,12 @@ namespace TumbangPreso.Visual
         {
             var root = new GameObject("ContinentalDriftLive");
             root.transform.SetParent(parent, false);
-            root.transform.SetPositionAndRotation(VfxShapes.GroundPoint(origin), Quaternion.LookRotation(forward));
+            // On the court's own surface (the cutscene's trap, film r1: Bayan Plaza's court stands above the floor `GroundPoint`
+            // finds, so every flat piece here, the molten light, the fuse marks and the hit edges, lay buried under it).
+            var ground = VfxShapes.GroundPoint(origin);
+            float court = Slipper.GroundY(origin + Vector3.up * .3f);
+            if (!float.IsInfinity(court) && !float.IsNaN(court) && court > ground.y && court - ground.y < .6f) ground.y = court;
+            root.transform.SetPositionAndRotation(ground, Quaternion.LookRotation(forward));
             var live = root.AddComponent<DanteDriftLive>();
             live._origin = origin; live._forward = forward; live._right = Vector3.Cross(Vector3.up, forward);
             live._halfWidth = halfWidth; live._depth = reach / GeoRules.DriftBlasts;
@@ -94,18 +119,31 @@ namespace TumbangPreso.Visual
             star.transform.localScale = Vector3.one * Mathf.Min(1.4f, _depth * .45f);
             VfxMaterial.Ghost(star.GetComponent<Renderer>(), new Color(MoltenCore.r, MoltenCore.g, MoltenCore.b, .9f), .6f);
             b.Star = star.transform; b.StarMaterial = star.GetComponent<Renderer>().sharedMaterial;
-            // The heaved slab: a piece of court that jolts up and tilts; the light under it is a flat molten pool beneath.
+            // The molten light under the whole band, seen in the gaps as its slabs heave (the cutscene's band glow).
             var glow = VfxShapes.Lay(transform, "DriftUnderGlow" + i, VfxShapes.Splat(9, .18f, 60 + i), 1, 0);
-            glow.transform.localPosition = new Vector3(s.across * _halfWidth, .015f, b.Start + _depth * .5f);
-            glow.transform.localScale = new Vector3(s.width * _halfWidth * 2.3f, 1f, s.depth * _depth * 1.3f);
+            glow.transform.localPosition = new Vector3(0f, .015f, b.Start + _depth * .5f);
+            glow.transform.localScale = new Vector3(_halfWidth * .98f, 1f, _depth * .34f);
             VfxMaterial.Ghost(glow.GetComponent<Renderer>(), new Color(MoltenCore.r, MoltenCore.g, MoltenCore.b, .85f), .8f);
             b.Glow = glow.transform; b.GlowMaterial = glow.GetComponent<Renderer>().sharedMaterial;
-            var slab = VfxShapes.Stand(transform, "DriftHeave" + i, VfxShapes.Prism(6, .3f, .94f, .14f, 0f, 80 + i), 1);
-            slab.transform.localPosition = glow.transform.localPosition;
-            slab.transform.localScale = new Vector3(s.width * _halfWidth * 2f, 1.1f, s.depth * _depth);
-            MaterialKit.Dress(slab.GetComponent<Renderer>(), Basalt);
-            ToonSkin.Apply(slab.GetComponent<Renderer>(), .008f); VfxRenderTag.Attach(slab);
-            b.Slab = slab.transform;
+            // The band's row of six basalt slabs, as in the cutscene (film after-ult v1: one wide flat slab read as a brown mat).
+            float sixth = _halfWidth * 2f / 6f;
+            foreach (var r in LiveSlabRows[i])
+            {
+                var slab = VfxShapes.Stand(transform, "DriftHeave" + i + "_" + r.seed, VfxShapes.Prism(4, 1f, .84f, .16f, .785f, r.seed), 1);
+                slab.transform.localScale = Vector3.zero;
+                // Lit, faceted stone like the cutscene's (live film r21: the flat toon dress read as brown tarps).
+                VfxMaterial.Solid(slab.GetComponent<Renderer>(), Basalt * (.8f + .12f * (r.seed % 3)), .2f);
+                VfxRenderTag.Attach(slab);
+                b.Slabs.Add(slab.transform);
+            }
+            // Dust standing on the band's front edge, billowing as it goes: ragged clumps, never a wall.
+            for (int d = 0; d < 4; d++)
+            {
+                var puff = VfxShapes.Stand(transform, "DriftDust" + i + "_" + d, VfxShapes.TwoSided(VfxShapes.Splat(9, .48f, 201 + i * 17 + d * 5)), 1);
+                puff.transform.localScale = Vector3.zero;
+                VfxMaterial.Ghost(puff.GetComponent<Renderer>(), new Color(Dust.r, Dust.g, Dust.b, .7f), .25f);
+                b.Dust.Add(puff.transform); b.DustMaterials.Add(puff.GetComponent<Renderer>().sharedMaterial);
+            }
             // Five chunks, typed.
             foreach (var r in ChunkRows[i])
             {
@@ -115,11 +153,12 @@ namespace TumbangPreso.Visual
                 part.transform.localScale = Vector3.zero;
                 b.Chunks.Add(new Chunk { Node = part.transform, Start = start, Velocity = new Vector3(r.across * 1.6f, r.up, r.along), Spin = new Vector3(r.seed * 31f, 160f + r.seed * 7f, r.seed * 11f), Size = r.size });
             }
-            // The dust edge: four low walls standing exactly on the band's real hit rectangle.
+            // The hit edge: four molten cracks on the court, exactly on the band's real hit rectangle (after-ult v1: as low brown
+            // walls they read as planks lying on the court; the picture still never lies about the hit area).
             for (int e = 0; e < 4; e++)
             {
-                var wall = VfxShapes.Stand(transform, "DriftDustEdge" + i + "_" + e, VfxShapes.Prism(4, 1f, .55f, .12f, 0f, 90 + e), 1);
-                MaterialKit.Dress(wall.GetComponent<Renderer>(), Dust); VfxRenderTag.Attach(wall);
+                var wall = VfxShapes.Stand(transform, "DriftDustEdge" + i + "_" + e, VfxShapes.Prism(4, 1f, .9f, .12f, 0f, 90 + e), 1);
+                VfxMaterial.Ghost(wall.GetComponent<Renderer>(), new Color(MoltenCore.r, MoltenCore.g, MoltenCore.b, .9f), .7f); VfxRenderTag.Attach(wall);
                 bool along = e < 2;
                 float x = along ? (e == 0 ? -_halfWidth : _halfWidth) : 0f;
                 float z = along ? b.Start + _depth * .5f : (e == 2 ? b.Start : b.Start + _depth);
@@ -150,16 +189,48 @@ namespace TumbangPreso.Visual
                 // The mark: lit as the fuse passes, pulsing, and spent when its blast goes.
                 b.Star.gameObject.SetActive(marked > 0f && t < .05f);
                 b.StarMaterial.SetColor("_EmissionColor", MoltenCore * (.6f + .4f * Mathf.Abs(Mathf.Sin(age * 14f))));
-                // The heave: a jolt up in .06 s, a held tilt, then it drops back over the tail.
-                float jolt = t < 0f ? 0f : Mathf.Clamp01(t / .06f);
-                float drop = Mathf.Clamp01((t - .55f) / .35f);
-                float lift = HeaveLift * jolt * (1f - drop * drop);
-                var s = SlabRows[i];
-                b.Slab.gameObject.SetActive(t >= 0f && t < 1.2f);
-                b.Slab.localPosition = new Vector3(s.across * _halfWidth, lift - .3f * 1.1f * (1f - jolt), b.Start + _depth * .5f);
-                b.Slab.localRotation = Quaternion.Euler(s.pitch * jolt * (1f - drop), 0f, s.roll * jolt * (1f - drop));
-                b.Glow.gameObject.SetActive(t >= 0f && t < 1.0f);
-                b.GlowMaterial.SetColor("_EmissionColor", Color.Lerp(MoltenHot, MoltenCore * .25f, Mathf.Clamp01((t - .2f) / .7f)));
+                // The band's slabs: each jolts up (a small overshoot), settles to rubble, holds, then sinks back into the court in
+                // two crumbling steps before the wave's tail ends (stone never fades), as the cutscene's bands did.
+                float sixth = _halfWidth * 2f / 6f, mid = b.Start + _depth * .5f;
+                float tail = GeoRules.DriftSeconds - i * bandTime;            // this band's own time left
+                for (int k = 0; k < b.Slabs.Count; k++)
+                {
+                    var r = LiveSlabRows[i][k];
+                    float sa = t - r.delay;
+                    float u = Mathf.Clamp01(sa / .08f);
+                    float up = sa < 0f ? 0f : u < 1f ? u * u : 1f + .12f * Mathf.Max(0f, 1f - (sa - .08f) / .1f);
+                    float settle = 1f - .45f * Mathf.Clamp01((sa - .2f) / .4f);
+                    // Sinks over the last .5 s of its band's time, in two steps, each a little smaller (cracking down).
+                    float sink = Mathf.Clamp01((t - (tail - .55f)) / .5f);
+                    float stepDown = sink < .5f ? sink * 2f * .5f : .5f + (sink - .5f) * 2f * .5f;
+                    float crack = sink < .5f ? 1f : .85f;
+                    // The band at his feet stays low, so his own first-person view keeps the lane ahead (live film r23).
+                    float h = r.height * (i == 0 ? .5f : 1f);
+                    var slab = b.Slabs[k];
+                    slab.gameObject.SetActive(sa >= 0f && sink < 1f);
+                    slab.localPosition = new Vector3(r.across * (_halfWidth - sixth * .5f), -h * .5f + h * .8f * up * settle - h * stepDown,
+                                                     mid + ((r.seed % 5) - 2) * .1f * _depth);
+                    slab.localRotation = Quaternion.Euler(r.tiltX * Mathf.Min(1f, up), (r.seed % 7 - 3) * 5f, r.tiltZ * Mathf.Min(1f, up));
+                    // Lumps with gaps between them (r21: full-size they closed into one mat), so the molten light shows.
+                    slab.localScale = new Vector3(sixth * r.width * .55f, h, _depth * r.depth * .5f) * crack;
+                }
+                // Dust on the band's front edge: billowing up and out, thinning (dust may thin; stone may not).
+                for (int d = 0; d < b.Dust.Count; d++)
+                {
+                    float du = Mathf.Clamp01(t / .9f);
+                    float across = (d / 3f * 2f - 1f) * (_halfWidth - 1f);
+                    // Low and thin (r21: tall clumps a few metres ahead painted a dark band over his first-person view).
+                    float puff = Mathf.Lerp(.6f, 1.4f, du) * (.8f + .1f * d);
+                    var dust = b.Dust[d];
+                    dust.gameObject.SetActive(t >= 0f && du < 1f);
+                    dust.localPosition = new Vector3(across, puff * .5f + du * .4f, b.Start + _depth + .1f);
+                    dust.localRotation = Quaternion.Euler(90f, 0f, (d - 1.5f) * 9f);
+                    dust.localScale = new Vector3(puff * 1.3f, 1f, puff);
+                    var c = new Color(Dust.r, Dust.g, Dust.b, .45f * (1f - du * du));
+                    b.DustMaterials[d].color = c; if (b.DustMaterials[d].HasProperty("_BaseColor")) b.DustMaterials[d].SetColor("_BaseColor", c);
+                }
+                b.Glow.gameObject.SetActive(t >= 0f && t < tail - .1f);
+                b.GlowMaterial.SetColor("_EmissionColor", Color.Lerp(MoltenHot, MoltenCore * .35f, Mathf.Clamp01((t - .2f) / .9f)));
                 for (int c = 0; c < b.Chunks.Count; c++)
                 {
                     var ch = b.Chunks[c];
@@ -173,12 +244,12 @@ namespace TumbangPreso.Visual
                     float broken = !landed ? 1f : t < .85f ? .7f : Mathf.Max(0f, .7f - (t - .85f) * 2f);
                     ch.Node.localScale = Vector3.one * ch.Size * broken;
                 }
-                // The dust edge rises along the hit rectangle and sinks back.
-                float dust = t < 0f ? 0f : Mathf.Clamp01(t / .12f) * (1f - Mathf.Clamp01((t - .5f) / .5f));
+                // The hit edge: molten cracks opening on the court along the hit rectangle as the band goes, then closing.
+                float edge = t < 0f ? 0f : Mathf.Clamp01(t / .1f) * (1f - Mathf.Clamp01((t - .7f) / .4f));
                 foreach (var e in b.Edge)
                 {
-                    var sc = e.localScale; sc.y = .55f * dust; e.localScale = sc;
-                    e.gameObject.SetActive(dust > .01f);
+                    var sc = e.localScale; sc.x = .14f; sc.y = .035f * edge; e.localScale = sc;
+                    e.gameObject.SetActive(edge > .01f);
                 }
             }
             // Map-wide, on this viewer's own camera: once per blast as its clock passes zero.
