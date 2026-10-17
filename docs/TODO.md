@@ -41,7 +41,10 @@ visibly cover his whole body in the cutscene. Gameplay is protocol 171 (`DanteHe
 - [ ] Heavier versions of his skill casts in the form (his hero-dante-* clips play unchanged inside the suit).
 - [ ] The gait layer swaps walk and sprint without a crossfade, so at the form's end his legs and root lift pop once (a 7 degree
   splay and a squash; the arms crossfade through the main mixer). Small; a crossfade would touch every hero's animator.
-- [ ] Bot Dante casting it in a full match and the practice range (not yet run on this branch).
+- [x] A bot Dante weighs CONTINENTAL DRIFT with a player in the lane and wears the form like a human
+  (`DanteMountainFormTests.ABotDanteChoosesHisUltimateAndWearsTheForm`).
+- [ ] The practice range (a refilled ultimate re-cast inside the form rebuilds the suit from nothing) and a bot Dante over a
+  whole match (`BotBehaviourProbe`) are not run on this branch.
 - [ ] Balance with the owner: form length, throw scale, stagger and knock.
 - [ ] Remove the `[Mountain]` debug logs in `DanteMountainArmour` when the suit is final.
 
