@@ -67,9 +67,11 @@ namespace TumbangPreso.UI.Hub
 
         public const int DepthLayers = 4;
 
-        /// <summary>Each layer's opacity, contact shadow first. Measured by eye against the lit
-        /// street behind the room: darker than this and the stack read as a smudge under the panel.</summary>
-        private static readonly float[] DepthAlpha = { 0.30f, 0.22f, 0.15f, 0.10f };
+        /// <summary>Each layer's opacity, contact shadow first. ⚠️ MEASURED, NOT PICKED: at
+        /// 0.30/0.22/0.15/0.10 the first capture darkened a street-toned background under the
+        /// players' panel from 120 to only 88 (8-bit), which read as no change at play size; these
+        /// values were the next step and the review capture is `HubLobbySeatControlsTests.RenderTheRoomForReview`.</summary>
+        private static readonly float[] DepthAlpha = { 0.42f, 0.32f, 0.24f, 0.16f };
 
         /// <summary>Diagonal hatch across the fill: § 1.2's sign for NOT AVAILABLE. Locked items,
         /// unowned heroes, a disabled button. It is a SHAPE, so it reads in greyscale.</summary>
@@ -147,9 +149,13 @@ namespace TumbangPreso.UI.Hub
                 for (int i = DepthLayers - 1; i >= 0; i--)
                 {
                     float reach = depth * (1 << i) / (1 << (DepthLayers - 1));
-                    Build(Outer, Offset(Grow(r, rim), new Vector2(reach * 0.15f, -reach)), corner + rim, 0.0f);
+                    // The core shrinks by half the blur and the feather grows out by the whole of
+                    // it, so the layer's half-tone edge sits on the sticker's own edge.
+                    float half = Mathf.Min(reach * 0.5f, Mathf.Min(r.width, r.height) * 0.25f);
+                    CleanOutline(Outer, Offset(Grow(r, rim - half), new Vector2(reach * 0.15f, -reach)),
+                                 Mathf.Max(half * 0.5f, corner + rim - half), Pressable);
                     Color layer = DepthColor; layer.a *= DepthAlpha[i];
-                    FeatherFan(vh, Outer, layer * color, Mathf.Max(1.0f, reach));
+                    FeatherFan(vh, Outer, layer * color, Mathf.Max(1.0f, half * 2.0f));
                 }
             }
 
@@ -366,9 +372,44 @@ namespace TumbangPreso.UI.Hub
         }
 
         /// <summary>
-        /// A convex outline filled solid to half its blur inside the edge and faded to clear by
-        /// half its blur outside it, which is what a gaussian edge looks like from arm's length.
+        /// A convex outline filled solid and faded to clear over <paramref name="blur"/> units
+        /// outside it, which is what a gaussian edge looks like from arm's length.
+        ///
+        /// ⚠️ THE FEATHER ONLY EVER GROWS OUTWARD. The first version also inset the solid core by
+        /// half the blur, and on a rounded plate the inset vertices folded across each other at
+        /// the corners: the overlap drew twice and left a dark seam running out of the players'
+        /// panel's corner in the first review capture. Offsetting a convex outline outward cannot
+        /// fold, so the caller shrinks the rectangle instead.
         /// </summary>
+        /// <summary>
+        /// The sticker's silhouette without its hand-cut wobble, for the depth layers.
+        ///
+        /// ⚠️ THE WOBBLE IS FOR THE STICKER, NOT ITS SHADOW. `Build` jitters every point by up to a
+        /// couple of units so a screen of stickers looks hand-cut; on a corner shrunk for a blur the
+        /// points are that close together, so the jitter turned the edge into a zig-zag and the
+        /// feather's joins spiked out of the panel's corner (third capture). A blurred shadow
+        /// shows no wobble anyway.
+        /// </summary>
+        private static void CleanOutline(List<Vector2> points, Rect r, float corner, bool chamfer)
+        {
+            points.Clear();
+            corner = Mathf.Min(corner, Mathf.Min(r.width, r.height) * 0.45f);
+            Vector2[] at = { new Vector2(r.xMin, r.yMax), new Vector2(r.xMax, r.yMax), new Vector2(r.xMax, r.yMin), new Vector2(r.xMin, r.yMin) };
+            Vector2[] arrive = { new Vector2(0, -1), new Vector2(-1, 0), new Vector2(0, 1), new Vector2(1, 0) };
+            Vector2[] leave = { new Vector2(1, 0), new Vector2(0, -1), new Vector2(-1, 0), new Vector2(0, 1) };
+            int steps = chamfer ? 1 : 8;
+            for (int k = 0; k < 4; k++)
+            {
+                Vector2 a = at[k] + arrive[k] * corner, b = at[k] + leave[k] * corner;
+                for (int step = 0; step <= steps; step++)
+                {
+                    float t = step / (float)steps;
+                    points.Add(chamfer ? Vector2.Lerp(a, b, t)
+                                       : Vector2.Lerp(Vector2.Lerp(a, at[k], t), Vector2.Lerp(at[k], b, t), t));
+                }
+            }
+        }
+
         private static void FeatherFan(VertexHelper vh, List<Vector2> points, Color colour, float blur)
         {
             int n = points.Count;
@@ -377,7 +418,11 @@ namespace TumbangPreso.UI.Hub
             foreach (var p in points) centre += p;
             centre /= n;
 
-            float half = blur * 0.5f;
+            // ⚠️ A ROUND JOIN, NOT ONE OUTER VERTEX PER POINT. With one averaged normal per point the
+            // corner quads fan out to several times their inner length, and the triangle split
+            // inside each showed as a crease running out of the panel's corner (second capture).
+            // Here each edge's feather is a true rectangle (both sides share the edge's normal) and
+            // each corner is a radial wedge, so alpha falls off along the normal everywhere.
             Color clear = colour; clear.a = 0;
             int start = vh.currentVertCount;
             vh.AddVert(centre, colour, Vector2.zero);
@@ -385,18 +430,22 @@ namespace TumbangPreso.UI.Hub
             {
                 Vector2 previous = points[(i + n - 1) % n], current = points[i], next = points[(i + 1) % n];
                 Vector2 a = (current - previous).normalized, b = (next - current).normalized;
-                Vector2 normal = (new Vector2(-a.y, a.x) + new Vector2(-b.y, b.x)).normalized;
-                // Never pull the solid core past the centre on a small sticker.
-                float inward = Mathf.Min(half, (current - centre).magnitude * 0.5f);
-                vh.AddVert(current - normal * inward, colour, Vector2.zero);
-                vh.AddVert(current + normal * half, clear, Vector2.zero);
+                // Build emits clockwise contours; their left normals point outwards.
+                Vector2 normalA = new Vector2(-a.y, a.x), normalB = new Vector2(-b.y, b.x);
+                Vector2 middle = (normalA + normalB).sqrMagnitude > 1e-4f ? (normalA + normalB).normalized : normalB;
+                vh.AddVert(current, colour, Vector2.zero);
+                vh.AddVert(current + normalA * blur, clear, Vector2.zero);
+                vh.AddVert(current + middle * blur, clear, Vector2.zero);
+                vh.AddVert(current + normalB * blur, clear, Vector2.zero);
             }
             for (int i = 0; i < n; i++)
             {
-                int inner = start + 1 + i * 2, nextInner = start + 1 + ((i + 1) % n) * 2;
-                vh.AddTriangle(start, inner, nextInner);
-                vh.AddTriangle(inner, nextInner, inner + 1);
-                vh.AddTriangle(inner + 1, nextInner, nextInner + 1);
+                int c = start + 1 + i * 4, nc = start + 1 + ((i + 1) % n) * 4;
+                vh.AddTriangle(start, c, nc);                 // the solid core
+                vh.AddTriangle(c, c + 1, c + 2);              // the corner wedge
+                vh.AddTriangle(c, c + 2, c + 3);
+                vh.AddTriangle(c, c + 3, nc + 1);             // the edge rectangle
+                vh.AddTriangle(c, nc + 1, nc);
             }
         }
 

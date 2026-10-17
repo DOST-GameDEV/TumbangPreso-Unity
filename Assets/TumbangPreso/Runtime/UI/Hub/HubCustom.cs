@@ -427,7 +427,7 @@ namespace TumbangPreso.UI.Hub
         // such as using 4 shadows"*. Three heights, so the stack reads as layers rather than as one
         // blur everywhere: the players' panel floats highest over the street, every button sits
         // on it at button height, and the seat rows sit lowest because they lie ON the panel.
-        private const float PanelDepth = 34.0f, ButtonDepth = 20.0f, RowDepth = 12.0f, TextDepth = 9.0f;
+        private const float PanelDepth = 48.0f, ButtonDepth = 28.0f, RowDepth = 16.0f, TextDepth = 10.0f;
 
         /// <summary>Give every surface in the room its height. Run after each draw, because the
         /// seat rows are rebuilt; a surface that already has one keeps it.</summary>
