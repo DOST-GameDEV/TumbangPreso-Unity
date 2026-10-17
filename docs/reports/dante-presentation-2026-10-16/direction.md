@@ -32,3 +32,4 @@ The owner approved the plan as written, so every open question in plan section 7
 |---|---|---|---|
 | beast v2 turnaround | 2026-10-17 | (waiting) | |
 | cutscene v1 (`dante_ult_v1.mp4`, his screen, frames 20 to 228, draft theme only) | 2026-10-17 | (waiting) | |
+| kit v1 (`dante_kit_v1.mp4`: Earthbound, Boulder, Bastion, Unstoppable; his screen, the court, who it reaches; `DanteKitPlayProbe`, the armour's middle 6.6 s cut; no draft cue is wired yet, so it is nearly silent) | 2026-10-17 | (waiting) | |
