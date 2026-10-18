@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: slipper_heels
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterEntryAsset
   Id: heels
-  Model: {fileID: -3694208346518680311, guid: 6f80755ab5ea9a54aac674c6eca39f8a, type: 3}
+  Model: {fileID: -9087045194268823551, guid: 6f80755ab5ea9a54aac674c6eca39f8a, type: 3}
   ArmModel: {fileID: 0}
   PetModel: {fileID: 0}
   Material: {fileID: 0}

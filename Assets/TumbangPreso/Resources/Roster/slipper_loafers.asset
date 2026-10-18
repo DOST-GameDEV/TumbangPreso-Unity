@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: slipper_loafers
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterEntryAsset
   Id: loafers
-  Model: {fileID: 1358436059824806998, guid: f0a89c5fb70f904489782dd9001b4010, type: 3}
+  Model: {fileID: -2933272393203718897, guid: f0a89c5fb70f904489782dd9001b4010, type: 3}
   ArmModel: {fileID: 0}
   PetModel: {fileID: 0}
   Material: {fileID: 0}

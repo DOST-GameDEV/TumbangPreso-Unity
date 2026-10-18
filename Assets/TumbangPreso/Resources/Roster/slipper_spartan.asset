@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: slipper_spartan
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterEntryAsset
   Id: spartan
-  Model: {fileID: 601378519229367292, guid: a9642326957753640bbb8553dfcb5635, type: 3}
+  Model: {fileID: 2332529346964831562, guid: a9642326957753640bbb8553dfcb5635, type: 3}
   ArmModel: {fileID: 0}
   PetModel: {fileID: 0}
   Material: {fileID: 0}

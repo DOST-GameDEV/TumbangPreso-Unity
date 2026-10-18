@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: slipper_sike
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterEntryAsset
   Id: sike
-  Model: {fileID: 919132149155446097, guid: cda303ba575c76c409fee93cb2648fc6, type: 3}
+  Model: {fileID: 7691962733469995420, guid: 928c814fa49a59d4eab67a44e1c02d22, type: 3}
   ArmModel: {fileID: 0}
   PetModel: {fileID: 0}
   Material: {fileID: 0}

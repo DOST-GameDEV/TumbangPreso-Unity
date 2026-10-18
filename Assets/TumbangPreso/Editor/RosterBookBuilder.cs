@@ -177,7 +177,7 @@ namespace TumbangPreso.EditorTools
             { "tsinelas", "models/tsinelas_tsinelas.glb" },
             { "crocs",    "models/tsinelas_crocs.glb" },
             { "pantulog", "models/tsinelas_pantulog.glb" },
-            { "sike",     "models/tsinelas_sike.obj" },
+            { "sike",     "models/tsinelas_sike.glb" },   // 2026-10-18: the remodelled set (tools/build_slippers.py); the .obj moved out
             { "spartan",   "models/tsinelas_spartan.glb" },
             { "alpombra",  "models/tsinelas_alpombra.glb" },
             { "pambahay",  "models/tsinelas_pambahay.glb" },

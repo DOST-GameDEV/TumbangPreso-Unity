@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: slipper_crocs
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterEntryAsset
   Id: crocs
-  Model: {fileID: 1948226748658532997, guid: 26a98e04c8e8f90458f7b64009131608, type: 3}
+  Model: {fileID: 63951506003296537, guid: 26a98e04c8e8f90458f7b64009131608, type: 3}
   ArmModel: {fileID: 0}
   PetModel: {fileID: 0}
   Material: {fileID: 0}

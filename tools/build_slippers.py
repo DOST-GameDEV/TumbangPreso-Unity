@@ -20,6 +20,9 @@ THREE STEPS:
 
 THE CONTRACT WITH THE GAME (read from build_slipper_models.py and MatchInstaller.BuildSlipper, not chosen here):
   * ONE shoe, toe along +X, y up, sole seated on y = 0, centred on x and z.
+    ⚠️ WRONG WAY ROUND FOR THE GAME (owner, 2026-10-18, in hand: "the slippers are backwards"): the game's shoes carry
+    the toe along -X. The shoes here are still built toe +X, and `tools/slipper_turn.py <id>.glb <Art/models/tsinelas_id.glb>`
+    turns each one half round as it is installed. Never install a built glb without it.
   * 0.432 m toe to heel: the mesh's own units are the gameplay size (the prop is instantiated with no rescale), and the
     hit radius is a fixed 0.23 m.
   * It is dressed by ToonSkin.ApplySlipper with NO palette, so every colour is PAINT (the atlas's upper half).
