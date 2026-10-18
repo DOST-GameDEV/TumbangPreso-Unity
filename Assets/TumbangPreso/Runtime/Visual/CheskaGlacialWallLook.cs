@@ -99,6 +99,70 @@ namespace TumbangPreso.Visual
         private static float _bakedLength = -1f, _bakedRadius = -1f;
         private static MaterialPropertyBlock _block;
 
+        /// <summary>
+        /// How stylised the wall is (owner, of the crystal samples: "same for cheska's ice.. doesnt fit the style of
+        /// the game rn"). Crystal: the approved crystals as they are (g1, g2). Painted: the same crystals, painted in
+        /// three flat values. Chunky: our own few broad six-sided pieces with blunt tops, painted. Blocky: fewer,
+        /// cube-like chunks with bevelled tops, painted, closest to the cast's blocky build.
+        /// </summary>
+        public enum Style
+        {
+            Crystal = 0, Painted = 1, Chunky = 2, Blocky = 3,
+            // In between (g4, owner of g3: "Painted, Chunky and Blocky all look the same to me. try to give me an
+            // in-between texture design. and something slightly more cyan"). `Shaders/CheskaWallBetween`: four crisp
+            // value bands, a frosted rim, painted inner streaks and cracks, a little see-through depth, a climbing
+            // shimmer and crawling sparkles, in a cyan nearer the game's ice. A, B and C differ in band contrast and
+            // inner detail (A softest and plainest, C boldest and busiest). The first three are on the approved
+            // crystals' silhouette, the last three on Chunky's.
+            BetweenA = 4, BetweenB = 5, BetweenC = 6, ChunkyBetweenA = 7, ChunkyBetweenB = 8, ChunkyBetweenC = 9,
+            // With an inside (g6, owner of g5: "glacial wall designs are still lacking the depth detail the realistic
+            // one had"). B's painted bands and cyan, plus the crystal's depth language made stylised: a dark core where
+            // the ice is thick (the crystal's own baked thickness on the crystal shapes), bright fracture veins at three
+            // depths that slide under the surface as the view moves, a cloudy inner volume and a frosted shell where it
+            // is thin. DepthPlus goes further toward Crystal.
+            DepthB = 10, DepthPlus = 11, ChunkyDepthB = 12, ChunkyDepthPlus = 13,
+        }
+
+        /// <summary>0, 1 or 2 for an in-between style (its variant), or -1.</summary>
+        private static int BetweenOf(Style style) =>
+            style >= Style.DepthB ? 3 + ((int)style - (int)Style.DepthB) % 2 :
+            style >= Style.BetweenA ? ((int)style - (int)Style.BetweenA) % 3 : -1;
+        /// <summary>The mesh set a style is drawn on: Crystal (the crystals), Chunky or Blocky.</summary>
+        private static Style ShapeOf(Style style) =>
+            style == Style.Painted || (style >= Style.BetweenA && style <= Style.BetweenC) || style == Style.DepthB || style == Style.DepthPlus ? Style.Crystal :
+            style >= Style.ChunkyBetweenA ? Style.Chunky : style;
+
+        // The three in-between variants: band contrast, flat facets, rim, streaks, cracks, depth, sparkle, shimmer.
+        private static readonly float[,] BetweenTable =
+        {
+            //   contrast facet  rim   streaks cracks depth sparkle shimmer | core  shell inner innerDepth cloud glint
+            {    0.62f,  0.55f, 0.80f, 0.35f,  0.00f, 0.25f, 0.55f,  0.16f,   0f,   0f,   0f,   0.30f,    0f,  1.4f },  // A: soft bands, plain inside
+            {    0.88f,  0.80f, 0.90f, 0.55f,  0.45f, 0.45f, 0.80f,  0.22f,   0f,   0f,   0f,   0.30f,    0f,  1.4f },  // B: clear bands, streaks and a few cracks
+            {    1.08f,  1.00f, 1.00f, 0.80f,  0.85f, 0.70f, 1.00f,  0.24f,   0f,   0f,   0f,   0.30f,    0f,  1.4f },  // C: bold bands, busy inside, deepest
+            {    0.88f,  0.80f, 0.90f, 0.30f,  0.00f, 0.20f, 0.80f,  0.20f, 0.60f, 0.28f, 0.85f, 0.28f,  0.40f, 1.4f },  // DepthB: B with an inside
+            {    0.95f,  0.85f, 0.95f, 0.20f,  0.00f, 0.30f, 0.80f,  0.18f, 0.75f, 0.70f, 1.15f, 0.42f,  0.60f, 1.4f },  // DepthPlus: deeper, closer to Crystal
+        };
+        private static readonly string[] BetweenKeys = { "_Contrast", "_Facet", "_Rim", "_Streaks", "_Cracks", "_Depth", "_Sparkle", "_Shimmer",
+                                                         "_Core", "_Shell", "_Inner", "_InnerDepth", "_Cloud", "_Glint" };
+        private static readonly Material[] _between = new Material[5];
+        // The depth variants on the crystal shapes read each kind's own baked thickness, so they need a copy a kind.
+        private static readonly Material[,] _betweenKind = new Material[5, 4];
+        private static Material BetweenLook(int variant, int kind, bool crystalShape)
+        {
+            var baseLook = _between[variant];
+            if (baseLook == null || variant < 3 || !crystalShape) return baseLook;
+            if (_betweenKind[variant, kind] != null) return _betweenKind[variant, kind];
+            var mask = _looks[kind] != null && _looks[kind].HasProperty("_MaskTex") ? _looks[kind].GetTexture("_MaskTex") : null;
+            if (mask == null) return baseLook;
+            var m = new Material(baseLook) { name = baseLook.name + "_" + KindNames[kind] };
+            m.SetTexture("_MaskTex", mask);
+            m.SetFloat("_HasMask", 1f);
+            return _betweenKind[variant, kind] = m;
+        }
+
+        private static Material _paint, _frostPainted;
+        private static readonly Mesh[] _blocks = new Mesh[4];
+
         /// <summary>What the last bake found, for a film's report.</summary>
         public static string BakeReport { get; private set; } = "";
 
@@ -107,6 +171,8 @@ namespace TumbangPreso.Visual
         {
             for (int i = 0; i < 4; i++) { _meshes[i] = null; _looks[i] = null; }
             _frostMesh = null; _frostLook = null; _bakedLength = -1f; _block = null;
+            _paint = null; _frostPainted = null; for (int i = 0; i < 4; i++) _blocks[i] = null;
+            for (int i = 0; i < 5; i++) { _between[i] = null; for (int k = 0; k < 4; k++) _betweenKind[i, k] = null; }
         }
 
         /// <summary>One wall's renderers, posed by <see cref="Pose"/>.</summary>
@@ -119,20 +185,28 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>A wall under <paramref name="parent"/> (its +Z is her aim, its origin the aimed point on the road).</summary>
-        public static Wall Build(Transform parent, float arcLength, float arcRadius)
+        // KEEP: owner 2026-10-18, "depth b looks good" (g6 DepthB on the crystal shapes). Approved look; do not change.
+        public static Wall Build(Transform parent, float arcLength, float arcRadius, Style style = Style.DepthB)
         {
             Bake(arcLength, arcRadius);
-            var root = new GameObject("GlacialWallLook");
+            EnsureStyle(style, arcLength, arcRadius);
+            var root = new GameObject("GlacialWallLook-" + style);
             root.transform.SetParent(parent, false);
             var parts = new List<Renderer>();
+            Style shape = ShapeOf(style);
+            int between = BetweenOf(style);
             for (int k = 0; k < 4; k++)
             {
-                if (_meshes[k] == null || _looks[k] == null) continue;
-                var go = new GameObject("Ice-" + KindNames[k]);
+                Mesh mesh; Material look;
+                if (style == Style.Crystal) { mesh = _meshes[k]; look = _looks[k]; }
+                else if (shape == Style.Crystal) { mesh = _meshes[k]; look = between >= 0 ? BetweenLook(between, k, true) : _paint; }
+                else { mesh = k == 0 ? _blocks[(int)shape] : null; look = between >= 0 ? _between[between] : _paint; }
+                if (mesh == null || look == null) continue;
+                var go = new GameObject("Ice-" + (shape == Style.Crystal ? KindNames[k] : style.ToString()));
                 go.transform.SetParent(root.transform, false);
-                go.AddComponent<MeshFilter>().sharedMesh = _meshes[k];
+                go.AddComponent<MeshFilter>().sharedMesh = mesh;
                 var r = go.AddComponent<MeshRenderer>();
-                r.sharedMaterial = _looks[k];
+                r.sharedMaterial = look;
                 r.shadowCastingMode = ShadowCastingMode.Off; r.receiveShadows = false;
                 VfxRenderTag.Attach(go);
                 parts.Add(r);
@@ -145,7 +219,7 @@ namespace TumbangPreso.Visual
                 go.transform.localPosition = new Vector3(0f, 0.012f, 0f);
                 go.AddComponent<MeshFilter>().sharedMesh = _frostMesh;
                 frost = go.AddComponent<MeshRenderer>();
-                frost.sharedMaterial = _frostLook;
+                frost.sharedMaterial = style == Style.Crystal || _frostPainted == null ? _frostLook : _frostPainted;
                 frost.shadowCastingMode = ShadowCastingMode.Off; frost.receiveShadows = false;
                 VfxRenderTag.Attach(go);
             }
@@ -180,6 +254,165 @@ namespace TumbangPreso.Visual
                 _block.SetFloat(ThawId, Mathf.Clamp01((age - (life - SinkLead + 0.10f)) / (SinkLead - 0.05f)) * 1.08f);
                 wall.Frost.SetPropertyBlock(_block);
             }
+        }
+
+        // ------------------------------------------------------------------------------------------- painted styles
+
+        /// <summary>One piece of a painted wall, typed: a few broad faces round a blunt top, never a spike.</summary>
+        private readonly struct Block
+        {
+            public readonly float Along, Out, Wide, Deep, Tall; // metres; Wide along the arc, Deep through the wall
+            public readonly int Sides;                           // faces round it
+            public readonly float Box;                           // 1 round, under 1 squarer (a cube-like chunk)
+            public readonly float Cap, Shoulder, Apex, ApexOff;  // share of its height that is top; ring sizes; tip offset
+            public readonly float LeanOut, LeanAlong, Turn, Late;
+            public Block(float along, float @out, float wide, float deep, float tall, int sides, float box, float cap, float shoulder, float apex, float apexOff,
+                         float leanOut, float leanAlong, float turn, float late)
+            {
+                Along = along; Out = @out; Wide = wide; Deep = deep; Tall = tall; Sides = sides; Box = box; Cap = cap; Shoulder = shoulder;
+                Apex = apex; ApexOff = apexOff; LeanOut = leanOut; LeanAlong = leanAlong; Turn = turn; Late = late;
+            }
+        }
+
+        // CHUNKY: seven broad six-sided pieces, tallest in the middle, four narrower five-sided ones between them for
+        // the skyline, seven small ones at the foot. Every top is cut blunt (a flat apex face), so the skyline reads as
+        // friendly chunks, not knives. Each typed.
+        private static readonly Block[] Chunky =
+        {
+            //        along   out    wide  deep  tall  sides box  cap   shld  apex  apexOff lnOut lnAlong turn late
+            new Block(-2.15f, 0.00f, 0.84f, 0.52f, 1.12f, 6, 1.0f, 0.34f, 0.90f, 0.34f,  0.10f,  4f, -10f,  10f, 0.00f),
+            new Block(-1.45f, 0.03f, 0.96f, 0.58f, 1.42f, 6, 1.0f, 0.32f, 0.92f, 0.30f, -0.08f,  2f,  -6f,  35f, 0.02f),
+            new Block(-0.75f,-0.02f, 1.00f, 0.60f, 1.66f, 6, 1.0f, 0.30f, 0.90f, 0.32f,  0.12f, -3f,  -3f,   5f, 0.00f),
+            new Block( 0.00f, 0.02f, 1.10f, 0.62f, 1.92f, 6, 1.0f, 0.30f, 0.92f, 0.30f, -0.06f,  2f,   0f,  20f, 0.00f),
+            new Block( 0.75f,-0.03f, 1.00f, 0.60f, 1.62f, 6, 1.0f, 0.31f, 0.90f, 0.34f,  0.08f,  3f,   4f,  40f, 0.03f),
+            new Block( 1.45f, 0.02f, 0.94f, 0.58f, 1.38f, 6, 1.0f, 0.33f, 0.92f, 0.30f, -0.10f, -2f,   7f,  15f, 0.01f),
+            new Block( 2.15f, 0.00f, 0.84f, 0.52f, 1.08f, 6, 1.0f, 0.35f, 0.90f, 0.36f,  0.06f,  4f,  11f,  30f, 0.02f),
+            new Block(-1.10f, 0.10f, 0.58f, 0.40f, 1.82f, 5, 1.0f, 0.38f, 0.88f, 0.24f,  0.10f,  8f,  -6f,   0f, 0.05f),
+            new Block(-0.38f,-0.10f, 0.62f, 0.42f, 2.12f, 5, 1.0f, 0.36f, 0.88f, 0.22f, -0.08f, -6f,  -2f,  20f, 0.06f),
+            new Block( 0.38f, 0.09f, 0.62f, 0.42f, 2.02f, 5, 1.0f, 0.37f, 0.88f, 0.24f,  0.08f,  7f,   3f,  10f, 0.05f),
+            new Block( 1.10f,-0.09f, 0.58f, 0.40f, 1.72f, 5, 1.0f, 0.38f, 0.88f, 0.24f, -0.10f, -7f,   6f,  30f, 0.06f),
+            new Block(-2.45f, 0.22f, 0.46f, 0.34f, 0.52f, 5, 1.0f, 0.45f, 0.90f, 0.40f,  0.05f, 15f, -15f,   0f, 0.08f),
+            new Block(-0.95f, 0.30f, 0.44f, 0.32f, 0.44f, 5, 1.0f, 0.45f, 0.90f, 0.42f, -0.05f, 18f,   0f,  20f, 0.09f),
+            new Block( 0.55f, 0.30f, 0.48f, 0.34f, 0.50f, 5, 1.0f, 0.44f, 0.90f, 0.40f,  0.06f, 16f,   5f,  10f, 0.08f),
+            new Block( 1.85f, 0.26f, 0.44f, 0.32f, 0.46f, 5, 1.0f, 0.45f, 0.90f, 0.42f, -0.04f, 14f,  12f,   0f, 0.10f),
+            new Block(-1.70f,-0.28f, 0.44f, 0.32f, 0.46f, 5, 1.0f, 0.45f, 0.90f, 0.40f,  0.05f,-16f,  -6f,  15f, 0.09f),
+            new Block( 0.15f,-0.30f, 0.48f, 0.34f, 0.50f, 5, 1.0f, 0.44f, 0.90f, 0.42f, -0.06f,-18f,   0f,   5f, 0.08f),
+            new Block( 2.45f,-0.22f, 0.44f, 0.32f, 0.44f, 5, 1.0f, 0.45f, 0.90f, 0.40f,  0.04f,-14f,  15f,  25f, 0.10f),
+        };
+
+        // BLOCKY: five big cube-like chunks (eight faces round a near-square, a short bevelled top), two smaller ones
+        // standing between them, and six little cubes at the foot. The cast's own build: big plain planes.
+        private static readonly Block[] Blocky =
+        {
+            //        along   out    wide  deep  tall  sides box   cap   shld  apex  apexOff lnOut lnAlong turn late
+            new Block(-1.95f, 0.00f, 1.02f, 0.58f, 1.12f, 8, 0.35f, 0.16f, 0.96f, 0.74f, 0.00f,   3f,  -6f,   0f, 0.00f),
+            new Block(-0.98f, 0.02f, 1.04f, 0.60f, 1.52f, 8, 0.35f, 0.14f, 0.96f, 0.76f, 0.00f,  -2f,  -3f,   4f, 0.01f),
+            new Block( 0.00f, 0.00f, 1.06f, 0.62f, 1.86f, 8, 0.35f, 0.13f, 0.96f, 0.76f, 0.00f,   2f,   0f,  -3f, 0.00f),
+            new Block( 0.98f,-0.02f, 1.04f, 0.60f, 1.48f, 8, 0.35f, 0.14f, 0.96f, 0.76f, 0.00f,  -2f,   3f,   3f, 0.01f),
+            new Block( 1.95f, 0.00f, 1.00f, 0.58f, 1.08f, 8, 0.35f, 0.16f, 0.96f, 0.74f, 0.00f,   3f,   6f,  -4f, 0.00f),
+            new Block(-1.48f, 0.06f, 0.56f, 0.42f, 1.74f, 8, 0.40f, 0.18f, 0.94f, 0.70f, 0.00f,   5f,  -8f,  12f, 0.06f),
+            new Block( 0.50f,-0.06f, 0.56f, 0.42f, 2.12f, 8, 0.40f, 0.17f, 0.94f, 0.70f, 0.00f,  -5f,   5f, -10f, 0.06f),
+            new Block(-2.48f, 0.20f, 0.46f, 0.40f, 0.48f, 8, 0.38f, 0.22f, 0.94f, 0.70f, 0.00f,  12f, -14f,  18f, 0.09f),
+            new Block(-0.50f, 0.32f, 0.48f, 0.40f, 0.44f, 8, 0.38f, 0.22f, 0.94f, 0.70f, 0.00f,  14f,   0f, -12f, 0.08f),
+            new Block( 1.45f, 0.30f, 0.46f, 0.40f, 0.46f, 8, 0.38f, 0.22f, 0.94f, 0.70f, 0.00f,  12f,   8f,  22f, 0.09f),
+            new Block(-1.40f,-0.30f, 0.46f, 0.40f, 0.42f, 8, 0.38f, 0.22f, 0.94f, 0.70f, 0.00f, -14f,  -4f,   8f, 0.08f),
+            new Block( 0.45f,-0.32f, 0.48f, 0.40f, 0.46f, 8, 0.38f, 0.22f, 0.94f, 0.70f, 0.00f, -12f,   4f, -16f, 0.09f),
+            new Block( 2.46f,-0.20f, 0.44f, 0.38f, 0.42f, 8, 0.38f, 0.22f, 0.94f, 0.70f, 0.00f, -12f,  14f,  10f, 0.08f),
+        };
+
+        private static void EnsureStyle(Style style, float arcLength, float radius)
+        {
+            if (style == Style.Crystal) return;
+            if (_paint == null)
+            {
+                var shader = Resources.Load<Shader>("Shaders/CheskaWallIce");
+                if (shader != null && shader.isSupported)
+                {
+                    _paint = new Material(shader) { name = "GlacialWallPainted" };
+                    _paint.SetVector("_KeyDir", IceCrystalKit.TowardKey);
+                    _paint.SetFloat("_GrowTime", RiseSeconds);
+                    _paint.SetFloat("_DieTime", SinkSeconds);
+                }
+                else BakeReport += "painted shader missing; ";
+            }
+            if (_frostPainted == null && _frostLook != null)
+            {
+                _frostPainted = new Material(_frostLook) { name = "GlacialWallFrostPainted" };
+                _frostPainted.SetFloat("_Painted", 1f);
+            }
+            int between = BetweenOf(style);
+            if (between >= 0 && _between[between] == null)
+            {
+                var shader = Resources.Load<Shader>("Shaders/CheskaWallBetween");
+                if (shader != null && shader.isSupported)
+                {
+                    var m = new Material(shader) { name = "GlacialWallBetween" + (between < 3 ? ((char)('A' + between)).ToString() : between == 3 ? "DepthB" : "DepthPlus") };
+                    m.SetVector("_KeyDir", IceCrystalKit.TowardKey);
+                    m.SetFloat("_GrowTime", RiseSeconds);
+                    m.SetFloat("_DieTime", SinkSeconds);
+                    for (int q = 0; q < BetweenKeys.Length; q++) m.SetFloat(BetweenKeys[q], BetweenTable[between, q]);
+                    _between[between] = m;
+                }
+                else BakeReport += "in-between shader missing; ";
+            }
+            style = ShapeOf(style);
+            if (style == Style.Crystal) return;
+            if (_blocks[(int)style] != null) return;
+            var table = style == Style.Chunky ? Chunky : Blocky;
+            float stretch = arcLength / 5f;
+            var verts = new List<Vector3>(); var norms = new List<Vector3>(); var feet = new List<Vector4>(); var lives = new List<Vector4>(); var tris = new List<int>();
+            for (int c = 0; c < table.Length; c++)
+            {
+                var b = table[c];
+                float along = b.Along * stretch;
+                Vector3 foot = ArcPoint(along, b.Out, radius);
+                float heading = along / radius * Mathf.Rad2Deg;
+                Matrix4x4 place = Matrix4x4.TRS(foot, Quaternion.Euler(0f, heading, 0f) * Quaternion.Euler(b.LeanOut, 0f, -b.LeanAlong) * Quaternion.Euler(0f, b.Turn, 0f), Vector3.one);
+                float birth = RunSeconds * Mathf.Abs(along) / (arcLength * 0.5f) + b.Late;
+                float death = (1f - Mathf.Abs(along) / (arcLength * 0.5f)) * 0.16f + b.Late * 0.6f;
+                var life = new Vector4(birth, b.Tall, death, c);
+                var footV = new Vector4(foot.x, foot.y, foot.z, 0f);
+                // Three rings: a buried foot, a shoulder, a blunt apex; flat faces between them and a flat top.
+                int n = b.Sides;
+                var ring = new Vector3[3, n];
+                float shoulderY = b.Tall * (1f - b.Cap);
+                for (int k = 0; k < n; k++)
+                {
+                    float a = (k + 0.5f) / n * Mathf.PI * 2f;
+                    float cx = Mathf.Cos(a), sz = Mathf.Sin(a);
+                    float x = Mathf.Sign(cx) * Mathf.Pow(Mathf.Abs(cx), b.Box), z = Mathf.Sign(sz) * Mathf.Pow(Mathf.Abs(sz), b.Box);
+                    float hx = b.Wide * 0.5f, hz = b.Deep * 0.5f;
+                    ring[0, k] = new Vector3(x * hx, -0.18f, z * hz);
+                    ring[1, k] = new Vector3(x * hx * b.Shoulder, shoulderY, z * hz * b.Shoulder);
+                    ring[2, k] = new Vector3(x * hx * b.Apex + b.ApexOff * hx, b.Tall, z * hz * b.Apex);
+                }
+                void Face(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, bool quad)
+                {
+                    Vector3 w0 = place.MultiplyPoint3x4(p0), w1 = place.MultiplyPoint3x4(p1), w2 = place.MultiplyPoint3x4(p2);
+                    Vector3 nrm = Vector3.Cross(w1 - w0, w2 - w0).normalized;
+                    int s0 = verts.Count;
+                    verts.Add(w0); verts.Add(w1); verts.Add(w2);
+                    if (quad) verts.Add(place.MultiplyPoint3x4(p3));
+                    int count = quad ? 4 : 3;
+                    for (int q = 0; q < count; q++) { norms.Add(nrm); feet.Add(footV); lives.Add(life); }
+                    tris.Add(s0); tris.Add(s0 + 1); tris.Add(s0 + 2);
+                    if (quad) { tris.Add(s0); tris.Add(s0 + 2); tris.Add(s0 + 3); }
+                }
+                for (int k = 0; k < n; k++)
+                {
+                    int j = (k + 1) % n;
+                    Face(ring[0, k], ring[1, k], ring[1, j], ring[0, j], true);
+                    Face(ring[1, k], ring[2, k], ring[2, j], ring[1, j], true);
+                }
+                for (int k = 1; k < n - 1; k++) Face(ring[2, 0], ring[2, k + 1], ring[2, k], Vector3.zero, false);
+            }
+            var mesh = new Mesh { name = "GlacialWall_" + style };
+            mesh.SetVertices(verts); mesh.SetNormals(norms); mesh.SetUVs(1, feet); mesh.SetUVs(2, lives); mesh.SetTriangles(tris, 0);
+            mesh.RecalculateBounds();
+            var bb = mesh.bounds; bb.Encapsulate(bb.min - Vector3.up * 2.3f); mesh.bounds = bb;
+            mesh.UploadMeshData(true);
+            _blocks[(int)style] = mesh;
+            BakeReport += style + ": " + table.Length + " pieces, " + tris.Count / 3 + " triangles; ";
         }
 
         // ------------------------------------------------------------------------------------------------- the bake
@@ -272,11 +505,22 @@ namespace TumbangPreso.Visual
                 baked.UploadMeshData(true);
                 if (look != null)
                 {
+                    // The shader's growth and drift exist only in this variant; the approved crystals never switch it on.
+                    look.EnableKeyword("_GLACIAL_WALL");
                     look.SetFloat("_Grow", 1f);
+                    // Lighter than the approved crystal's dark-room values, so the wall reads as ice on a sunlit road and
+                    // not as a navy block (g1 read heavy): paler darkest step, less navy in turned faces and deep parts,
+                    // bright faces pushed further toward frost. The crystal's own maps and construction are untouched.
+                    look.SetFloat("_Shade", 0.62f);
+                    look.SetFloat("_DeepAmount", 0.24f);
+                    look.SetFloat("_Depth", 0.34f);
+                    look.SetColor("_Deep", new Color(0.07f, 0.24f, 0.46f, 1f));
+                    look.SetFloat("_LitAmount", 0.62f);
+                    look.SetColor("_LitColor", new Color(0.70f, 0.92f, 1.00f, 1f));
                     look.SetFloat("_GrowTime", RiseSeconds);
                     look.SetFloat("_DieTime", SinkSeconds);
                     look.SetFloat("_Shimmer", 0.6f);
-                    if (flowTex != null) { look.SetTexture("_FlowTex", flowTex); look.SetFloat("_Flow", 0.30f); }
+                    if (flowTex != null) { look.SetTexture("_FlowTex", flowTex); look.SetFloat("_Flow", 0.50f); }
                 }
                 Kill(_meshes[k]); Kill(_looks[k]);
                 _meshes[k] = baked; _looks[k] = look;

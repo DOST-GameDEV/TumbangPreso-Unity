@@ -36,7 +36,7 @@ namespace TumbangPreso.Visual
             effect._copy = go.AddComponent<MeshFilter>();
             effect._renderer = go.AddComponent<MeshRenderer>();
             effect._renderer.receiveShadows = false;
-            var shader = Resources.Load<Shader>("Shaders/FrostbiteLoad");
+            var shader = CheskaPaintedFrostLook.Coat(Resources.Load<Shader>("Shaders/FrostbiteLoad"));
             if (shader == null) throw new System.InvalidOperationException("Frostbite load shader is missing.");
             effect._material = new Material(shader) { name = "Frostbite surface rime" };
             VfxRenderTag.Own(go, effect._material);

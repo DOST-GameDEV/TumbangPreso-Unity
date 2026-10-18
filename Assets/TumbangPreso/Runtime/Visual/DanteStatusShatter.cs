@@ -57,6 +57,7 @@ namespace TumbangPreso.Visual
         /// <summary>A refused status: chips of its colour splash off the point it struck (his nearest plate) and fall.</summary>
         public static DanteStatusShatter Refusal(Vector3 at, Vector3 outward, StatusKind kind)
         {
+            if (DanteRefusalPuff.Enabled) { DanteRefusalPuff.Spawn(at, outward, kind); return null; }
             var go = new GameObject("~UnstoppableRefusal");
             go.transform.position = at;
             var fx = go.AddComponent<DanteStatusShatter>();

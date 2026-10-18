@@ -60,7 +60,7 @@ namespace TumbangPreso.Visual
             var mesh = Object.Instantiate(source);
             var go = VfxShapes.Lay(parent, name, mesh, radius, 0);
             VfxShapes.DrapeToGround(go, .003f);
-            var shader = Shader.Find("TumbangPreso/FrostSurface");
+            var shader = CheskaPaintedFrostLook.Field(Shader.Find("TumbangPreso/FrostSurface"));
             if (shader == null) throw new System.InvalidOperationException("Missing FrostSurface shader.");
             var material = new Material(shader);
             material.SetColor("_Color", color);

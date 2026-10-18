@@ -37,7 +37,7 @@ namespace TumbangPreso.Visual
     public sealed class FxStudyDanteBastion : FxStudyEffect
     {
         /// <summary>Which BASTION: the b3 sample, or b4 with one of its three field candidates.</summary>
-        public enum Look { B3, Licks, Shimmer, Veil }
+        public enum Look { B3, Licks, Shimmer, Veil, B5, B6, B7, B8 }
         /// <summary>The b4 field he is shown in the film: the board's strongest (`FxStudyDanteBastionBoard`).</summary>
         public const Look B4 = Look.Licks;
         public const string ModelB4 = "Models/AbilityFx/dante_bastion_b4", MaskB4 = "Models/AbilityFx/dante_bastion_b4_mask";
@@ -46,6 +46,10 @@ namespace TumbangPreso.Visual
         private const float HeatLeft = -2.1f, HeatFoot = 0.3f, HeatWide = 4.2f, HeatHigh = 2.7f;
         public const string Model = "Models/AbilityFx/dante_bastion", Mask = "Models/AbilityFx/dante_bastion_mask";
         public const string FieldShader = "TumbangPreso/FxStudyBastionField";
+        // b5: magma in the slabs (`FxStudyBastionStone.shader`) and fire on the field (`FxStudyBastionFire.shader`).
+        public const string StoneShader = "TumbangPreso/FxStudyBastionStone", FireShader = "TumbangPreso/FxStudyBastionFire";
+        // b6: columns of heat in place of b5's flames (`FxStudyBastionColumns.shader`).
+        public const string ColumnShader = "TumbangPreso/FxStudyBastionColumns";
 
         // ------------------------------------------------------------------ the rule (`DanteHeroKit.Barrier`, `GeoRules`)
         public const float Width = 3.4f, Forward = 1.2f, FieldTop = 2.6f, FieldFoot = 0.5f, Life = 7.5f;
@@ -58,17 +62,19 @@ namespace TumbangPreso.Visual
         private static readonly (float at, float across, float up)[] Throws = { (2.00f, 0.55f, 1.45f), (5.00f, -0.85f, 2.05f) };
         private const float ThrowFlight = 0.45f;
 
-        private static Mesh _wall, _field, _wallB4, _fieldB4;
-        private static Material _slab, _sheet, _slabB4, _heat;
+        private static Mesh _wall, _field, _wallB4, _fieldB4, _fire, _columns, _columnsB7, _columnsB8;
+        private static Material _slab, _sheet, _slabB4, _heat, _slabB5, _fireLook, _slabB6, _columnLook, _columnLookB7, _columnLookB8;
         private static readonly int ModeId = Shader.PropertyToID("_Mode");
         private readonly Look _look;
+        // A pale warm floor in place of the dark bench (`dantebastionb6day`): a stand-in for the sunlit court, not the court.
+        private readonly bool _day;
         private static readonly int RiseId = Shader.PropertyToID("_Rise"), SinkId = Shader.PropertyToID("_Sink"), HeatId = Shader.PropertyToID("_Heat");
         private static readonly int AgeId = Shader.PropertyToID("_Age"), GrowId = Shader.PropertyToID("_Grow"), CoolId = Shader.PropertyToID("_Cool"), GoneId = Shader.PropertyToID("_Gone");
         private static readonly int[] HitIds = { Shader.PropertyToID("_HitA"), Shader.PropertyToID("_HitB"), Shader.PropertyToID("_HitC"), Shader.PropertyToID("_HitD") };
 
         private readonly Transform _follow, _caster, _shoe;
-        private readonly MeshRenderer _slabs, _sheetRenderer;
-        private readonly MaterialPropertyBlock _slabBlock = new MaterialPropertyBlock(), _sheetBlock = new MaterialPropertyBlock();
+        private readonly MeshRenderer _slabs, _sheetRenderer, _fireRenderer;
+        private readonly MaterialPropertyBlock _slabBlock = new MaterialPropertyBlock(), _sheetBlock = new MaterialPropertyBlock(), _fireBlock = new MaterialPropertyBlock();
         private readonly FxPiece _split, _splitGlow;
         private readonly List<(FxCloud cloud, float born, Transform holder)> _puffs = new List<(FxCloud, float, Transform)>();
         private static readonly FxCloud.Emitter PuffEmitter = Billow();
@@ -80,8 +86,8 @@ namespace TumbangPreso.Visual
         }
 
         public override float Seconds => EndAt + 1.0f;
-        public override Color FloorColour => new Color(0.200f, 0.200f, 0.212f);
-        public override Color FloorLine => new Color(0.150f, 0.150f, 0.160f);
+        public override Color FloorColour => _day ? new Color(0.78f, 0.70f, 0.58f) : new Color(0.200f, 0.200f, 0.212f);
+        public override Color FloorLine => _day ? new Color(0.70f, 0.62f, 0.50f) : new Color(0.150f, 0.150f, 0.160f);
         public override float FloorDim => 0.55f;
         public override float FloorDimAt => 12f;
         public override float BloomIntensity => 0.30f;
@@ -194,6 +200,250 @@ namespace TumbangPreso.Visual
             return made;
         }
 
+        /// <summary>b5's slabs: the b4 stone as it is, drawn by `FxStudyBastionStone` (its own copy of the BOULDER's stone, so
+        /// the locked BOULDER is never touched) with magma in it: a molten foot, veins, molten edges, hotter gaps.</summary>
+        public static Material SlabB5()
+        {
+            var b4 = Slab(Look.Licks);
+            var shader = Shader.Find(StoneShader);
+            if (b4 == null || shader == null) return null;
+            if (_slabB5 == null) _slabB5 = new Material(shader) { name = "FxStudyBastionStone-b5", hideFlags = HideFlags.HideAndDontSave };
+            // Everything the b4 stone was given (its palette array by hand: a material forgets an array).
+            _slabB5.CopyPropertiesFromMaterial(b4);
+            var linear = new List<Vector4>(16);
+            foreach (var colour in FxStudyDanteBoulder.Palette) linear.Add(colour.linear);
+            _slabB5.SetVectorArray("_Palette", linear);
+            // How much magma; how high the foot glow licks (m); how high the veins reach (a share of a slab); a vein's width.
+            _slabB5.SetVector("_Magma", MagmaB5);
+            // ⚠️ Said here: copying from a material whose shader has no such colours leaves them black (b5a and b5b's slabs
+            // came out with black feet and black veins).
+            _slabB5.SetColor("_Red", new Color(0.62f, 0.09f, 0.03f));
+            _slabB5.SetColor("_Orange", new Color(1.00f, 0.40f, 0.05f));
+            _slabB5.SetColor("_Yellow", new Color(1.00f, 0.74f, 0.18f));
+            _slabB5.SetColor("_Heart", new Color(1.00f, 0.90f, 0.56f));
+            return _slabB5;
+        }
+        public static Vector4 MagmaB5 = new Vector4(1f, 0.17f, 0.85f, 0.050f);
+
+        /// <summary>b5's fire: tongues, the bed and embers on the slab tops, in ONE mesh made once (`FxStudyBastionFire`).
+        /// Where each is born is read off the b4 model's own slab tops, so the fire sits on the stone and not over it.</summary>
+        public static Mesh FireMesh()
+        {
+            if (_fire != null) return _fire;
+            var source = Resources.Load<GameObject>(ModelB4);
+            if (source == null) return null;
+            // Each slab across the wall: its middle, half its width, its top (in the wall's own space).
+            var slabs = new List<Vector3>();
+            foreach (var filter in source.GetComponentsInChildren<MeshFilter>(true))
+            {
+                if (filter.sharedMesh == null || !filter.name.StartsWith("slab-")) continue;
+                Matrix4x4 place = source.transform.worldToLocalMatrix * filter.transform.localToWorldMatrix;
+                float left = float.MaxValue, right = float.MinValue, top = float.MinValue;
+                foreach (var v in filter.sharedMesh.vertices) { var p = place.MultiplyPoint3x4(v); left = Mathf.Min(left, p.x); right = Mathf.Max(right, p.x); top = Mathf.Max(top, p.y); }
+                slabs.Add(new Vector3((left + right) * 0.5f, (right - left) * 0.5f, top));
+            }
+            if (slabs.Count == 0) return null;
+            slabs.Sort((l, r) => l.x.CompareTo(r.x));
+            float TopAt(float x) { var best = slabs[0]; foreach (var s in slabs) if (Mathf.Abs(s.x - x) < Mathf.Abs(best.x - x)) best = s; return best.z; }
+            var points = new List<Vector3>(); var faces = new List<int>(); var a = new List<Vector4>(); var b = new List<Vector4>(); var c = new List<Vector4>();
+            void Card(float kind, int index, Vector4 born, Vector4 more)
+            {
+                int first = points.Count;
+                foreach (var q in new[] { new Vector2(-1f, -1f), new Vector2(1f, -1f), new Vector2(-1f, 1f), new Vector2(1f, 1f) })
+                { points.Add(Vector3.zero); a.Add(new Vector4(q.x, q.y, kind, index)); b.Add(born); c.Add(more); }
+                faces.Add(first); faces.Add(first + 2); faces.Add(first + 1); faces.Add(first + 1); faces.Add(first + 2); faces.Add(first + 3);
+            }
+            // TONGUES first (drawn behind), two to a slab, the taller slabs' a little taller.
+            int k = 0;
+            foreach (var s in slabs)
+                for (int j = 0; j < 2; j++, k++)
+                {
+                    float x = s.x + (j == 0 ? -0.35f : 0.35f) * s.y;
+                    float size = (0.55f + 0.75f * FxStudyKit.Hash(k, 21) * FxStudyKit.Hash(k, 26) + (k % 5 == 2 ? 0.55f : 0f)) * Mathf.Lerp(0.85f, 1.15f, Mathf.InverseLerp(0.45f, 1.05f, s.z));
+                    Card(0f, k, new Vector4(x, s.z - 0.10f, size, 0.55f + 0.30f * FxStudyKit.Hash(k, 22)), new Vector4(FxStudyKit.Hash(k, 23) * 2f, FxStudyKit.Hash(k, 24), FxStudyKit.Hash(k, 25), 0f));
+                }
+            // THE BED, two rim cards to a slab top.
+            k = 0;
+            foreach (var s in slabs)
+                for (int j = 0; j < 2; j++, k++)
+                    Card(1f, k, new Vector4(s.x + (j == 0 ? -0.4f : 0.4f) * s.y, s.z - 0.12f, 0.40f + 0.12f * FxStudyKit.Hash(k, 31), 0.10f + 0.05f * FxStudyKit.Hash(k, 32)), new Vector4(FxStudyKit.Hash(k, 33) * 0.3f, FxStudyKit.Hash(k, 34), FxStudyKit.Hash(k, 35), 0f));
+            // EMBERS, spread along the whole wall.
+            const int embers = 30;
+            for (k = 0; k < embers; k++)
+            {
+                float x = Mathf.Lerp(-1.55f, 1.55f, (k + FxStudyKit.Hash(k, 41)) / embers);
+                Card(2f, k, new Vector4(x, TopAt(x) - 0.05f, 0.030f, 1.3f + 0.8f * FxStudyKit.Hash(k, 42)), new Vector4(FxStudyKit.Hash(k, 43) * 2.2f, FxStudyKit.Hash(k, 44), FxStudyKit.Hash(k, 45), 0f));
+            }
+            _fire = new Mesh { name = "Bastion fire b5", hideFlags = HideFlags.HideAndDontSave };
+            _fire.SetVertices(points); _fire.SetUVs(0, a); _fire.SetUVs(1, b); _fire.SetUVs(2, c); _fire.SetTriangles(faces, 0, false);
+            // Everything it can reach: the zone and a little over (the vertex shader places every card).
+            _fire.bounds = new Bounds(new Vector3(0f, 1.5f, 0f), new Vector3(4.2f, 3.2f, 1.6f));
+            _fire.UploadMeshData(true);
+            return _fire;
+        }
+
+        public static Material Fire()
+        {
+            if (_fireLook == null)
+            {
+                var shader = Shader.Find(FireShader);
+                if (shader == null) return null;
+                _fireLook = new Material(shader) { name = "FxStudyBastionFire", hideFlags = HideFlags.HideAndDontSave };
+            }
+            var streak = FxStudyKit.Mask("erode_streak"); var cloud = FxStudyKit.Mask("erode_cloud");
+            if (streak != null) _fireLook.SetTexture("_NoiseA", streak);
+            if (cloud != null) _fireLook.SetTexture("_NoiseB", cloud);
+            _fireLook.SetVector("_Zone", new Vector4(Width * 0.5f, FieldTop, 0f, 0f));
+            _fireLook.SetFloat("_Add", FireAdd);
+            _fireLook.SetFloat("_Gain", 1.1f);
+            _fireLook.renderQueue = 3012;
+            return _fireLook;
+        }
+        public static float FireAdd = 0.25f;
+
+        /// <summary>b6's slabs: b5's magma stone with its foot broken into patches (`_FootPatch`), which read as stripes.</summary>
+        public static Material SlabB6()
+        {
+            var b5 = SlabB5();
+            if (b5 == null) return null;
+            if (_slabB6 == null) _slabB6 = new Material(b5) { name = "FxStudyBastionStone-b6", hideFlags = HideFlags.HideAndDontSave };
+            _slabB6.CopyPropertiesFromMaterial(b5);
+            var linear = new List<Vector4>(16);
+            foreach (var colour in FxStudyDanteBoulder.Palette) linear.Add(colour.linear);
+            _slabB6.SetVectorArray("_Palette", linear);
+            _slabB6.SetFloat("_FootPatch", 1f);
+            return _slabB6;
+        }
+
+        /// <summary>b6's field: a few tall COLUMNS OF HEAT standing on and between the slabs, two sheets to a place a little
+        /// apart (curtains), with sparks rising inside them and a few embers thrown out (`FxStudyBastionColumns`). The owner,
+        /// of b5's flames: "fire is too much, and it looks like a flashing sticker"; of his reference: "look at the column of
+        /// fire here (ignore the base), try something like that". One mesh, made once.</summary>
+        public static Mesh ColumnMesh(bool b7 = false, bool b8 = false)
+        {
+            if (b8) b7 = true;
+            if (b8 ? _columnsB8 != null : b7 ? _columnsB7 != null : _columns != null) return b8 ? _columnsB8 : b7 ? _columnsB7 : _columns;
+            var source = Resources.Load<GameObject>(ModelB4);
+            if (source == null) return null;
+            var slabs = new List<Vector3>();
+            foreach (var filter in source.GetComponentsInChildren<MeshFilter>(true))
+            {
+                if (filter.sharedMesh == null || !filter.name.StartsWith("slab-")) continue;
+                Matrix4x4 place = source.transform.worldToLocalMatrix * filter.transform.localToWorldMatrix;
+                float left = float.MaxValue, right = float.MinValue, top = float.MinValue;
+                foreach (var v in filter.sharedMesh.vertices) { var p = place.MultiplyPoint3x4(v); left = Mathf.Min(left, p.x); right = Mathf.Max(right, p.x); top = Mathf.Max(top, p.y); }
+                slabs.Add(new Vector3((left + right) * 0.5f, (right - left) * 0.5f, top));
+            }
+            if (slabs.Count == 0) return null;
+            float TopAt(float x) { var best = slabs[0]; foreach (var s in slabs) if (Mathf.Abs(s.x - x) < Mathf.Abs(best.x - x)) best = s; return best.z; }
+            var points = new List<Vector3>(); var faces = new List<int>(); var a = new List<Vector4>(); var b = new List<Vector4>(); var c = new List<Vector4>();
+            void Card(float kind, int index, Vector4 born, Vector4 more, int rows)
+            {
+                int first = points.Count;
+                for (int r = 0; r <= rows; r++)
+                    for (int side = 0; side < 2; side++)
+                    { points.Add(Vector3.zero); a.Add(new Vector4(side == 0 ? -1f : 1f, r / (float)rows, kind, index)); b.Add(born); c.Add(more); }
+                for (int r = 0; r < rows; r++)
+                {
+                    int i = first + r * 2;
+                    faces.Add(i); faces.Add(i + 2); faces.Add(i + 1); faces.Add(i + 1); faces.Add(i + 2); faces.Add(i + 3);
+                }
+            }
+            // THE COLUMNS: five places across the wall, each two sheets a little apart and of different heights.
+            // b7: the owner, "do only 3 wide ones of varying height": three broad curtains, unevenly placed, short, tall,
+            // medium (not in order), each one sheet about two slabs wide.
+            float[] across = b7 ? new[] { -1.12f, 0.02f, 1.02f } : new[] { -1.30f, -0.62f, 0.04f, 0.68f, 1.32f };
+            float[] tall = b7 ? new[] { 1.10f, 2.00f, 1.50f } : new[] { 1.65f, 2.05f, 1.45f, 2.15f, 1.75f };
+            // b8: "widen them to the two slabs asked": the sheet is wider again, since its sides now fade well inside it.
+            float[] broad = b8 ? new[] { 1.15f, 1.35f, 1.22f } : new[] { 0.85f, 1.05f, 0.92f };
+            int k = 0;
+            for (int p = 0; p < across.Length; p++)
+                for (int j = 0; j < (b7 ? 1 : 2); j++, k++)
+                {
+                    float x = across[p] + (j == 0 ? -0.07f : 0.09f) + 0.06f * (FxStudyKit.Hash(k, 51) - 0.5f);
+                    float foot = Mathf.Max(0.25f, TopAt(x) - 0.30f);
+                    float wide = b7 ? broad[p] : (j == 0 ? 0.30f : 0.20f) * Mathf.Lerp(0.85f, 1.15f, FxStudyKit.Hash(k, 52));
+                    if (b7) x = across[p];
+                    float high = tall[p] * (j == 0 ? 1f : Mathf.Lerp(0.70f, 0.85f, FxStudyKit.Hash(k, 53)));
+                    // b8: the foot sunk to the court among the slabs, so it rises OUT of them with no gap from any side; the
+                    // join (where it leaves the magma) is the mean slab top under its middle.
+                    float join = 0f;
+                    if (b8)
+                    {
+                        for (int q = -2; q <= 2; q++) join += TopAt(x + q * wide * 0.17f) / 5f;
+                        high += foot - 0.10f; foot = 0.10f;
+                    }
+                    Card(0f, k, new Vector4(x, foot, wide, high), new Vector4(b7 ? 0f : j == 0 ? -0.06f : 0.07f, FxStudyKit.Hash(k, 54), FxStudyKit.Hash(k, 55), join), 8);
+                }
+            // SPARKS inside the columns: five to a place.
+            k = 0;
+            for (int p = 0; p < across.Length; p++)
+                for (int j = 0; j < 5; j++, k++)
+                    Card(1f, k, new Vector4(across[p], Mathf.Max(0.25f, TopAt(across[p]) - 0.2f), b7 ? broad[p] * 0.75f : 0.38f, 0.55f + 0.45f * FxStudyKit.Hash(k, 61)), new Vector4(0f, FxStudyKit.Hash(k, 62), FxStudyKit.Hash(k, 63), 0f), 1);
+            // EMBERS thrown up and out: fewer and thinner than b5's.
+            const int embers = 14;
+            for (k = 0; k < embers; k++)
+            {
+                float x = Mathf.Lerp(-1.5f, 1.5f, (k + FxStudyKit.Hash(k, 71)) / embers);
+                Card(2f, k, new Vector4(x, TopAt(x) - 0.05f, 0.018f, 1.4f + 0.9f * FxStudyKit.Hash(k, 72)), new Vector4(0f, FxStudyKit.Hash(k, 73), FxStudyKit.Hash(k, 74), 0f), 1);
+            }
+            var made = new Mesh { name = b8 ? "Bastion columns b8" : b7 ? "Bastion columns b7" : "Bastion columns b6", hideFlags = HideFlags.HideAndDontSave };
+            made.SetVertices(points); made.SetUVs(0, a); made.SetUVs(1, b); made.SetUVs(2, c); made.SetTriangles(faces, 0, false);
+            made.bounds = new Bounds(new Vector3(0f, 1.5f, 0f), new Vector3(5.0f, 3.4f, 3.0f));
+            made.UploadMeshData(true);
+            if (b8) _columnsB8 = made; else if (b7) _columnsB7 = made; else _columns = made;
+            return made;
+        }
+
+        public static Material Columns()
+        {
+            if (_columnLook == null)
+            {
+                var shader = Shader.Find(ColumnShader);
+                if (shader == null) return null;
+                _columnLook = new Material(shader) { name = "FxStudyBastionColumns", hideFlags = HideFlags.HideAndDontSave };
+            }
+            var streak = FxStudyKit.Mask("erode_streak"); var cloud = FxStudyKit.Mask("erode_cloud");
+            if (streak != null) _columnLook.SetTexture("_NoiseA", streak);
+            if (cloud != null) _columnLook.SetTexture("_NoiseB", cloud);
+            _columnLook.SetVector("_Zone", new Vector4(Width * 0.5f, FieldTop, 0f, 0f));
+            _columnLook.SetFloat("_Cover", ColumnCover);
+            _columnLook.SetFloat("_Gain", 1.0f);
+            _columnLook.renderQueue = 3012;
+            return _columnLook;
+        }
+        public static float ColumnCover = 0.55f;
+
+        /// <summary>b7's columns: the same shader, broad soft strands and a little more see-through (owner, of b6b: "too harsh,
+        /// do only 3 wide ones of varying height, less thin/fine flame strands. and slightly more transparent").</summary>
+        public static Material ColumnsB7()
+        {
+            var b6 = Columns();
+            if (b6 == null) return null;
+            if (_columnLookB7 == null) _columnLookB7 = new Material(b6) { name = "FxStudyBastionColumns-b7", hideFlags = HideFlags.HideAndDontSave };
+            _columnLookB7.CopyPropertiesFromMaterial(b6);
+            _columnLookB7.SetFloat("_Broad", 1f);
+            _columnLookB7.SetFloat("_Alpha", ColumnAlphaB7);
+            _columnLookB7.SetFloat("_Cover", 0.45f);
+            _columnLookB7.renderQueue = 3012;
+            return _columnLookB7;
+        }
+        public static float ColumnAlphaB7 = 0.72f;
+
+        /// <summary>b8's columns: b7's, rising out of the magma (owner, of b7: "make them connect"), colour held higher.</summary>
+        public static Material ColumnsB8()
+        {
+            var b7 = ColumnsB7();
+            if (b7 == null) return null;
+            if (_columnLookB8 == null) _columnLookB8 = new Material(b7) { name = "FxStudyBastionColumns-b8", hideFlags = HideFlags.HideAndDontSave };
+            _columnLookB8.CopyPropertiesFromMaterial(b7);
+            _columnLookB8.SetFloat("_Join", 1f);
+            // A little more cover so its colour holds on a pale court above its middle; see-through as b7 otherwise.
+            _columnLookB8.SetFloat("_Cover", 0.55f);
+            _columnLookB8.renderQueue = 3012;
+            return _columnLookB8;
+        }
+
         public static Material Heat()
         {
             if (_heat == null)
@@ -235,9 +485,9 @@ namespace TumbangPreso.Visual
 
         public FxStudyDanteBastion(Transform parent) : this(parent, Look.B3) { }
 
-        public FxStudyDanteBastion(Transform parent, Look look) : base(look == Look.B3 ? "dantebastion" : "dantebastionb4", parent)
+        public FxStudyDanteBastion(Transform parent, Look look, bool day = false) : base(look == Look.B3 ? "dantebastion" : look == Look.B5 ? "dantebastionb5" : look == Look.B6 ? "dantebastionb6" : look == Look.B7 ? "dantebastionb7" : look == Look.B8 ? "dantebastionb8" : "dantebastionb4", parent)
         {
-            _look = look;
+            _look = look; _day = day;
             // He, and the wall with him: it is HIS (it follows him), so it hangs under a holder that moves as he does.
             _follow = Group("him");
             var wall = new GameObject("wall") { hideFlags = HideFlags.DontSave }.transform;
@@ -245,9 +495,14 @@ namespace TumbangPreso.Visual
             // In front of him by the rule, its face (+z) toward the thrower (+x on the bench).
             wall.localPosition = new Vector3(Forward, 0f, 0f);
             wall.localRotation = Quaternion.Euler(0f, 90f, 0f);
-            _slabs = Draw(wall, "slabs", Wall(look), Slab(look));
+            _slabs = Draw(wall, "slabs", Wall(look), look >= Look.B6 ? SlabB6() : look == Look.B5 ? SlabB5() : Slab(look));
             _sheetRenderer = Draw(wall, "field", Field(look), look == Look.B3 ? Sheet() : Heat());
-            if (look != Look.B3) _sheetBlock.SetFloat(ModeId, (int)look - 1);
+            // (b5 stands on the SHIMMER: its own tongues are the fire, and b4's soft licks behind them read as a blur.)
+            if (look != Look.B3) _sheetBlock.SetFloat(ModeId, look >= Look.B5 ? 1 : (int)look - 1);
+            if (look == Look.B5) _fireRenderer = Draw(wall, "fire", FireMesh(), Fire());
+            if (look == Look.B6) _fireRenderer = Draw(wall, "columns", ColumnMesh(), Columns());
+            if (look == Look.B7) _fireRenderer = Draw(wall, "columns", ColumnMesh(true), ColumnsB7());
+            if (look == Look.B8) _fireRenderer = Draw(wall, "columns", ColumnMesh(true, true), ColumnsB8());
 
             // The split the slabs come out of: his BOULDER's, laid along the line and stretched across the wall.
             _splitGlow = AddGlow("split-glow", 1, new Color(1.0f, 0.86f, 0.45f), new Color(1.0f, 0.42f, 0.10f), lying: true);
@@ -321,6 +576,10 @@ namespace TumbangPreso.Visual
         /// <summary>The wall at `since` seconds after the cast, with `hits` (where each slipper struck, in metres across and
         /// up the field, and how long ago): what a match would set from its own clock.</summary>
         public static void Pose(MeshRenderer slabs, MaterialPropertyBlock slabBlock, MeshRenderer sheet, MaterialPropertyBlock sheetBlock, float since, IReadOnlyList<Vector3> hits, bool held = false)
+            => Pose(slabs, slabBlock, sheet, sheetBlock, null, null, since, hits, held);
+
+        /// <summary>The same with b5's fire (`fire` may be null): its clock, its rise, its cooling and the strikes.</summary>
+        public static void Pose(MeshRenderer slabs, MaterialPropertyBlock slabBlock, MeshRenderer sheet, MaterialPropertyBlock sheetBlock, MeshRenderer fire, MaterialPropertyBlock fireBlock, float since, IReadOnlyList<Vector3> hits, bool held = false)
         {
             float left = Life - since, ended = since - Life;
             float cool = Mathf.Clamp01(1f - left / CoolFor);
@@ -350,6 +609,19 @@ namespace TumbangPreso.Visual
                 bool on = grow > 0.001f && ended < EatFor;
                 if (sheet.enabled != on) sheet.enabled = on;
             }
+            if (fire != null)
+            {
+                float grow = FxStudyKit.EaseOut(FxStudyKit.Run(since, 0.55f, 0.90f));
+                fireBlock.SetFloat(AgeId, since);
+                fireBlock.SetFloat(GrowId, grow);
+                fireBlock.SetFloat(CoolId, cool);
+                fireBlock.SetFloat(GoneId, Mathf.Clamp01(ended / EatFor));
+                for (int k = 0; k < HitIds.Length; k++)
+                    fireBlock.SetVector(HitIds[k], hits != null && k < hits.Count && hits[k].z >= 0f && hits[k].z < 1.5f ? new Vector4(hits[k].x, hits[k].y, hits[k].z, 1f) : Vector4.zero);
+                fire.SetPropertyBlock(fireBlock);
+                bool on = grow > 0.001f && ended < EatFor;
+                if (fire.enabled != on) fire.enabled = on;
+            }
         }
 
         private readonly List<Vector3> _hits = new List<Vector3>(4);
@@ -367,7 +639,8 @@ namespace TumbangPreso.Visual
             foreach (var t in Throws) _hits.Add(_look == Look.B3 ? new Vector3(t.across + Width * 0.5f, t.up - FieldFoot, age - (t.at + ThrowFlight)) : new Vector3(t.across, t.up, age - (t.at + ThrowFlight)));
             _slabs.gameObject.SetActive(since > 0f);
             _sheetRenderer.gameObject.SetActive(since > 0f);
-            Pose(_slabs, _slabBlock, _sheetRenderer, _sheetBlock, Mathf.Max(0f, since), _hits, _look != Look.B3);
+            if (_fireRenderer != null) _fireRenderer.gameObject.SetActive(since > 0f);
+            Pose(_slabs, _slabBlock, _sheetRenderer, _sheetBlock, _fireRenderer, _fireBlock, Mathf.Max(0f, since), _hits, _look != Look.B3);
 
             // The split: torn open along the line as he stamps, its seam cooling, closed as the slabs stand.
             float torn = FxStudyKit.EaseOut(FxStudyKit.Run(age, CastAt - 0.04f, CastAt + 0.14f));

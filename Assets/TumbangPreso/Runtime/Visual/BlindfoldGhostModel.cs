@@ -21,19 +21,23 @@ namespace TumbangPreso.Visual
         /// ⚠️ Was 0.075 (1.3 m): owner on film v4, *"make the ghost look better and smaler"*.</summary>
         public const float Voxel = .05f;
         /// <summary>Half its head's depth (metres, unscaled): how far its face stands in front of its head's middle.</summary>
-        public const float HeadHalfDepth = 4f * Voxel;
+        public static float HeadHalfDepth => PetGhostModels.PetGhosts ? PetGhostModels.MouseHeadHalfDepth : VoxelHeadHalfDepth;
+        private const float VoxelHeadHalfDepth = 4f * Voxel;
         /// <summary>The middle of its head (local, metres): where it clamps over a victim's eyes.</summary>
-        public static readonly Vector3 HeadCentre = new Vector3(0f, 12.5f * Voxel, 0f);
+        public static Vector3 HeadCentre => PetGhostModels.PetGhosts ? PetGhostModels.MouseHeadCentre : VoxelHeadCentre;
+        private static readonly Vector3 VoxelHeadCentre = new Vector3(0f, 12.5f * Voxel, 0f);
         /// <summary>Its eyes when sprung (local, metres), for their glow.</summary>
-        public static readonly Vector3[] Eyes = { new Vector3(-1.5f * Voxel, 12.5f * Voxel, 4.1f * Voxel), new Vector3(1.5f * Voxel, 12.5f * Voxel, 4.1f * Voxel) };
+        public static Vector3[] Eyes => PetGhostModels.PetGhosts ? PetGhostModels.MouseEyes : VoxelEyes;
+        private static readonly Vector3[] VoxelEyes = { new Vector3(-1.5f * Voxel, 12.5f * Voxel, 4.1f * Voxel), new Vector3(1.5f * Voxel, 12.5f * Voxel, 4.1f * Voxel) };
 
         public static readonly Color Body = Hex(0xDCEEFF), BodyShade = Hex(0xA9CBEA), Hair = Hex(0x16141E);
         public static readonly Color Cloth = Hex(0xF0EEF2), ClothShade = Hex(0xBDBACB), Hollow = Hex(0x0B0A0F);
         public static readonly Color Fang = Hex(0xF4F1EA), Pinpoint = Hex(0x7FF3FF), Aura = Hex(0x9FD6FF);
 
         private static Mesh _waiting, _sprung;
-        public static Mesh Waiting => _waiting != null ? _waiting : _waiting = GhostVoxels.Build(Shape(false), "BlindfoldGhost", Origin);
-        public static Mesh Sprung => _sprung != null ? _sprung : _sprung = GhostVoxels.Build(Shape(true), "BlindfoldGhostSprung", Origin);
+        // ⚠️ `PetGhostModels.PetGhosts` (off) swaps in the mint mouse; its cloth is over its eyes waiting, round its neck sprung.
+        public static Mesh Waiting => PetGhostModels.PetGhosts && PetGhostModels.MouseWaiting != null ? PetGhostModels.MouseWaiting : _waiting != null ? _waiting : _waiting = GhostVoxels.Build(Shape(false), "BlindfoldGhost", Origin);
+        public static Mesh Sprung => PetGhostModels.PetGhosts && PetGhostModels.MouseSprung != null ? PetGhostModels.MouseSprung : _sprung != null ? _sprung : _sprung = GhostVoxels.Build(Shape(true), "BlindfoldGhostSprung", Origin);
         // Centred on x and z (the body spans 0..8 voxel corners), standing on y 0.
         private static readonly Vector3 Origin = new Vector3(4f, 0f, 4f);
 

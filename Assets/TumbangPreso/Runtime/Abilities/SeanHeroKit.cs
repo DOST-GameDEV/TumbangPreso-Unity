@@ -41,7 +41,7 @@ namespace TumbangPreso.Abilities
         public bool IsIgnitionCannonActive { get; set; }
         private SeanCinderGate _gate;
         public void AdoptGate(SeanCinderGate gate)
-        { _gate = gate; ((CinderGateAbility)DefendingSkill).SyncField(gate); }
+        { _gate = gate; ((CinderGateAbility)DefendingSkill).SyncField(gate); if (SeanCinderGateLook.Enabled) SeanCinderGateLook.Attach(gate); }
         public override bool BlocksOwnLocomotion => Skill1.IsWindingUp || Skill1.IsActive;
         public override bool BlocksOwnActions => BlocksOwnLocomotion;
         public const float StokeDistance = 2f, StokeAnticipation = .18f, StokeRecovery = .25f;
@@ -463,6 +463,7 @@ namespace TumbangPreso.Abilities
                     // worth pressing as a taya, now that the blast no longer topples his own can.
                     HeroHazards.SpawnSupernovaCrater(ctx.Position, 5.4f, 5.0f,
                                                      ctx.Motor.PlayerSlot);
+                    if (SeanSupernovaLook.Enabled) SeanSupernovaLook.Spawn(ctx.Position, 5.4f, 5.0f);
 
                     // ⚠️⚠️ THIS WAS `SpawnMagmaEruption`, WHICH IS DANTE'S. Sean's whole identity
                     // is `HeroFire` and Dante's is `HeroMagmaCore`, and the biggest moment in

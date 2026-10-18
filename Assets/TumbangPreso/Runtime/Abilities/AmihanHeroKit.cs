@@ -360,6 +360,7 @@ namespace TumbangPreso.Abilities
                         AmihanRules.StormSurgeGatherSeconds + AmihanStorm.CutsceneTail);
                 // After the cutscene, everyone it threw flies on from where its last frame drew them.
                 _storm?.Release(HadSharedIntroduction);
+                if (Visual.UltimateLiveLook.AmihanAirburst && ctx != null) Visual.UltimateLiveLook.Amihan(ctx.Position, ctx.Forward, AmihanRules.StormSurgeRangeForCourt(AIController.PlayableMinX, AIController.PlayableMaxX, AIController.PlayableMinZ, AIController.PlayableMaxZ), AmihanRules.StormSurgeAroundRadius);
                 _storm = null;
             }
 

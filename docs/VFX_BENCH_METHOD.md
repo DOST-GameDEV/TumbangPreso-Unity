@@ -259,3 +259,65 @@ contact, the start, the reach, the aiming ring, the bots' reach and the drawn wh
 | Whirled, immunity, once per victim per cast | | unchanged |
 
 `NetSession.ProtocolVersion` went from 158 to 159 with this, since the host decides who is Whirled.
+
+## 10. Lessons and state, 2026-10-18 (supersedes section 9's table)
+
+### 10.1 What the owner rejected this round, and the rule each one became
+
+- **Judge MOTION, never stills.** "the trail just looks the same as it moves", "all of the flame moves as one", and "watch the
+  actual video". A contact sheet of chosen moments hides a rigid shape sliding along. Every hand-back carries every
+  consecutive frame across the body of the effect and onion skins (3 to 4 consecutive frames tinted and overlaid: one outline
+  merely shifted means rigid). Compare against Quick Circuit z4 read the same way. For an online reference video, step it in
+  the browser one frame (1/30 s) at a time.
+- **Both ends of the style fail.** Flat cel fills and single picture cards: "stickers and flat", "looks like a png". Soft
+  photographic fire and glassy ice: "too realistic ... doesnt fit the style of the game". The target is painted: 3 to 4 crisp
+  value bands, chunky rounder shapes, see-through layers, with living motion. His references give construction and motion,
+  not the finish; the finish matches the approved effects (Whirlwind, Quick Circuit, the cloud puffs).
+- **His fire recipe** (his breakdown image): a trail texture panned and multiplied by itself at two speeds; a shorter trail
+  with another width curve layered on; a head of rim/crescent cards with offset pivot and random rotation so its inside
+  changes every frame; panning noise on UVs; embers stretched by speed with curl noise.
+- **Four views.** A ribbon must turn to the view about its own line (align to view) or it shows slivers and card edges seen
+  end-on: "the trail looks flat when looking at it straight on". Film side, behind, front looking back down the path, above.
+- **A trail is history.** Never re-point it when its source turns ("the trail just turns around"); a dying trail dissipates in
+  place and never rotates or swings ("rotating upwards at the end ... doesnt look natural").
+- **Daylight.** Additive glow and low alpha wash out on the sunlit court without bloom (Baha, Overclock, Skim were nearly
+  invisible). Give a painted body real cover (a floor under the mask), stronger value contrast, then check on the court. Too
+  much cover reads as a flat sticker (Overclock q2): the middle is the target.
+- **No white-blue star sticker** at Bank Shot's load ("dont use this").
+- **Films are 1x only** now ("no need for the .5x").
+
+### 10.2 Working practice learned
+
+- The editor log never records LEAVING Play, so "Entering Playmode with no exit" means nothing. Test Play with a ping to a
+  film tool (for example `ping` into `Temp/quick-rework-film.request`; an answer means not in Play).
+- One film lock, `Temp/cutscene-film.lock`. Whoever takes it releases it the moment the save or film ends (a forgotten lock
+  blocked another session for 43 minutes).
+- Background sessions may be refused writes into this worktree by their tools; the coordinator installs their drafts under
+  the lock, diffs each patched file against the current one first, backs up originals, compiles outside Unity, then films.
+- After the ASTRA merge the old shared compile snapshot is stale; the outside compile builds Core from source first
+  (`cc_k.sh` in the coordinator's scratch, or an equivalent).
+- Context windows stay between 200k and 500k tokens; then update this section and hand off in chat.
+
+### 10.3 Where things stand
+
+| Ability | State | Switch / file |
+|---|---|---|
+| Amihan WHIRLWIND, DRIFT | Final / in game | (locked) |
+| Zack QUICK CIRCUIT | Approved, in game | `ZackCircuitFlash.Streak` |
+| Dante BOULDER | Ours, approved, kept over ASTRA's | `DanteBoulderStone.Rocks` |
+| Paete (all) | Done, never touch | |
+| Zack BANK SHOT | APPROVED b13d (silk, circle head) 2026-10-18: "zacks bankshot is good, lock it in"; backed up in `approved/zackbank_b13d`; bench only, not yet in game | `FxStudyZackBank` (bench only), `HeadLook = 2` |
+| Sean STOKE STEP | c3 CHOSEN 2026-10-18 (owner: "stoke - c3"); stays as filmed, no painted pass | `SeanStokeFire.Streak` (line 29) |
+| Sean EMPOWERED THROW | stylisation s2 CHOSEN 2026-10-18 (owner: "s2 for empowered"); next: bring s2 to the game behind a switch | `FxStudySeanThrow.Stylise` |
+| Rafi WATER WALL | Built, off | `RafiWaterVisual.NewWall` |
+| Rafi CROSSCURRENT | APPROVED rw8 2026-10-19 ("cross current looks good"); backed up in `approved/rafi_crosscurrent_rw8`; bench only | `FxStudyRafiCross` |
+| Cheska GLACIAL WALL | APPROVED g6 DepthB 2026-10-18 ("depth b looks good"); backed up in `approved/cheskawall_g6_depthb`; look only, not yet hooked into a match | `CheskaGlacialWallLook.Enabled`, default `Style.DepthB` |
+| Dante BASTION | b4 bench; owner 2026-10-18: "needs more emmissives and fire effects on the field"; b5 in progress | `FxStudyDanteBastion` |
+| Dante CONTINENTAL DRIFT | ASTRA's version merged; longhorn P1/P2/P3 boarded; PARKED 2026-10-18 (owner: "lets work on continental drift later") | (cutscene) |
+| Quick reworks: Skim, Cold Feet, Frostbite, Unstoppable refusal, Closed Circuit, Cinder Gate, Supernova, Airburst, Absolute Zero, Baha, Overclock | Installed behind switches, all OFF; films `quickrework_all_q1.mp4` and visibility pass `quickrework_all_q2.mp4`. Overclock q2 is too flat and solid; Absolute Zero's lighter pass filmed but not reviewed; Frostbite's death goes dark; Supernova tongues read as flat cards | `RafiSkimPainted.Enabled`, `CheskaPaintedFrostLook.PaintedColdFeet / PaintedFrostbite`, `DanteRefusalPuff.Enabled`, `ZackCircuitArc.Enabled`, `SeanCinderGateLook.Enabled`, `SeanSupernovaLook.Enabled`, `UltimateLiveLook.AmihanAirburst / CheskaAbsoluteZero / RafiBaha / ZackOverclock` |
+| Amihan FEATHERFALL | Bench sample, never in game, no verdict | |
+| Nemu ghosts (ASTRA kit) | Owner opened the ghost MODELS 2026-10-19 ("start remodelling nemu's new ghosts ... cutesy style like you did for kuro"). Pet-ghost set chosen: mint mouse (DON'T LOOK), cocoa bear (SKITTER), yellow owl with big eyes (LOOKOUT); rabbit and croc scrapped. Renders `Logs/nemu_ghosts/lineup_v12_cocoa.png`; builder `tools/build_nemu_ghosts_simple.py`. Next: in game behind a switch, off | `NemuGhostBody` (switch to come) |
+| Nemu kit rules, Phaister | Not to be touched | |
+
+Film tool for the quick reworks: `Editor/MapKit/QuickReworkFilm.cs` (request `Temp/quick-rework-film.request`: `ping`,
+`scout`, `<look|all|a,b> <tag>`), stitched by the coordinator's `qrvideo.py`.

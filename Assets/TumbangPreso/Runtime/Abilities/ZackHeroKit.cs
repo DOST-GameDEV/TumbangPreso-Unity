@@ -276,6 +276,7 @@ namespace TumbangPreso.Abilities
                         var difference = body.transform.position - at; difference.y = 0;
                         if (difference.sqrMagnitude <= 4.5f * 4.5f) body.ApplyZapped();
                     }
+                if (Visual.UltimateLiveLook.ZackOverclock) Visual.UltimateLiveLook.Zack(at, 4.5f);
                 Visual.AbilityVfx.SpawnElectricArcs(at, 4.5f);
                 _kit.RefreshChargeVisual(ctx);
 

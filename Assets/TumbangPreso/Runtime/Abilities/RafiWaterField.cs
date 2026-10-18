@@ -179,6 +179,7 @@ namespace TumbangPreso.Abilities
             field._epoch = MatchRpc.Instance?.PresentationMatchId ?? 0;
             field._visual = RafiWaterVisual.Build(go.transform, state);
             field._visual.StepTo(field._age);
+            if (UltimateLiveLook.RafiBaha && state.Type == WorldEffectSnapshot.Kind.Baha) UltimateLiveLook.Rafi(go.transform, state.Position, state.Forward, state.Radius, state.SecondScale, RafiRules.BahaWarning, RafiRules.BahaSpeed, state.Duration, field._age);
             field._shoes = FindObjectsByType<Slipper>(FindObjectsSortMode.None);
             foreach (var shoe in field._shoes) field._previousShoes[shoe] = shoe.transform.position;
             field._previousTravel = field.Travel;

@@ -30,32 +30,41 @@ namespace TumbangPreso.Visual
 
         private const float V = BlindfoldGhostModel.Voxel;
         /// <summary>Where Skitter holds the slipper (local, metres): in front of its grin, between its two hands.</summary>
-        public static readonly Vector3 SkitterHands = new Vector3(0f, 4.5f * V, 6f * V);
+        // ⚠️ With `PetGhostModels.PetGhosts` (off) every attach point and mesh below is the pet ghost's (the cocoa bear, the owl).
+        public static Vector3 SkitterHands => PetGhostModels.PetGhosts ? PetGhostModels.BearHands : VoxelSkitterHands;
+        private static readonly Vector3 VoxelSkitterHands = new Vector3(0f, 4.5f * V, 6f * V);
         /// <summary>Skitter's shoulders (local, metres), where its arm meshes pivot. Index 0 its left, 1 its right.</summary>
-        public static readonly Vector3[] SkitterShoulder = { new Vector3(-4f * V, 8.5f * V, 1f * V), new Vector3(4f * V, 8.5f * V, 1f * V) };
+        public static Vector3[] SkitterShoulder => PetGhostModels.PetGhosts ? PetGhostModels.BearShoulder : VoxelSkitterShoulder;
+        private static readonly Vector3[] VoxelSkitterShoulder = { new Vector3(-4f * V, 8.5f * V, 1f * V), new Vector3(4f * V, 8.5f * V, 1f * V) };
         /// <summary>Skitter's eyes (local, metres), for their glow.</summary>
-        public static readonly Vector3[] SkitterEyePoints = { new Vector3(-1.5f * V, 9.5f * V, 3.6f * V), new Vector3(1.5f * V, 9.5f * V, 3.6f * V) };
+        public static Vector3[] SkitterEyePoints => PetGhostModels.PetGhosts ? PetGhostModels.BearEyes : VoxelSkitterEyePoints;
+        private static readonly Vector3[] VoxelSkitterEyePoints = { new Vector3(-1.5f * V, 9.5f * V, 3.6f * V), new Vector3(1.5f * V, 9.5f * V, 3.6f * V) };
         /// <summary>Lookout's shoulders (local, metres), where its arm meshes pivot. Index 0 its left, 1 its right.</summary>
-        public static readonly Vector3[] LookoutShoulder = { new Vector3(-4.5f * V, 7f * V, .5f * V), new Vector3(4.5f * V, 7f * V, .5f * V) };
+        public static Vector3[] LookoutShoulder => PetGhostModels.PetGhosts ? PetGhostModels.OwlShoulder : VoxelLookoutShoulder;
+        private static readonly Vector3[] VoxelLookoutShoulder = { new Vector3(-4.5f * V, 7f * V, .5f * V), new Vector3(4.5f * V, 7f * V, .5f * V) };
         /// <summary>The middle of a hand along an arm (arm-local, metres; Skitter's and Lookout's arms reach along +z).</summary>
-        public static readonly Vector3 SkitterHand = new Vector3(0f, 0f, 6.5f * V), LookoutHandOnArm = new Vector3(0f, 0f, 4.5f * V);
+        public static Vector3 SkitterHand => PetGhostModels.PetGhosts ? PetGhostModels.BearHand : VoxelSkitterHand;
+        public static Vector3 LookoutHandOnArm => PetGhostModels.PetGhosts ? PetGhostModels.OwlHandOnArm : VoxelLookoutHandOnArm;
+        private static readonly Vector3 VoxelSkitterHand = new Vector3(0f, 0f, 6.5f * V), VoxelLookoutHandOnArm = new Vector3(0f, 0f, 4.5f * V);
         /// <summary>The lantern's glass below its pivot (lantern-local, metres), for its light.</summary>
-        public static readonly Vector3 LookoutGlass = new Vector3(0f, -4f * V, 0f);
+        public static Vector3 LookoutGlass => PetGhostModels.PetGhosts ? PetGhostModels.LanternGlass : VoxelLookoutGlass;
+        private static readonly Vector3 VoxelLookoutGlass = new Vector3(0f, -4f * V, 0f);
         /// <summary>Lookout's eyes (local, metres).</summary>
-        public static readonly Vector3[] LookoutEyePoints = { new Vector3(-1.5f * V, 9.5f * V, 4.1f * V), new Vector3(1.5f * V, 9.5f * V, 4.1f * V) };
+        public static Vector3[] LookoutEyePoints => PetGhostModels.PetGhosts ? PetGhostModels.OwlEyes : VoxelLookoutEyePoints;
+        private static readonly Vector3[] VoxelLookoutEyePoints = { new Vector3(-1.5f * V, 9.5f * V, 4.1f * V), new Vector3(1.5f * V, 9.5f * V, 4.1f * V) };
 
         private static Mesh _skitter, _lookout, _lantern;
         private static readonly Mesh[] _skitterArm = new Mesh[2], _lookoutArm = new Mesh[2];
-        public static Mesh Skitter => _skitter != null ? _skitter : _skitter = GhostVoxels.Build(SkitterShape(), "SkitterGhost", new Vector3(3.5f, 0f, 3.5f));
+        public static Mesh Skitter => PetGhostModels.PetGhosts && PetGhostModels.Bear != null ? PetGhostModels.Bear : _skitter != null ? _skitter : _skitter = GhostVoxels.Build(SkitterShape(), "SkitterGhost", new Vector3(3.5f, 0f, 3.5f));
         /// <summary>One of Skitter's arms (0 its left, 1 its right), its shoulder at the origin, reaching along +z.</summary>
-        public static Mesh SkitterArm(int side) => _skitterArm[side] != null ? _skitterArm[side]
+        public static Mesh SkitterArm(int side) => PetGhostModels.PetGhosts && PetGhostModels.BearArm(side) != null ? PetGhostModels.BearArm(side) : _skitterArm[side] != null ? _skitterArm[side]
             : _skitterArm[side] = GhostVoxels.Build(SkitterArmShape(side), side == 0 ? "SkitterArmL" : "SkitterArmR", new Vector3(.5f, 8.5f, .5f));
-        public static Mesh Lookout => _lookout != null ? _lookout : _lookout = GhostVoxels.Build(LookoutShape(), "LookoutGhost", new Vector3(4f, 0f, 3.5f));
+        public static Mesh Lookout => PetGhostModels.PetGhosts && PetGhostModels.Owl != null ? PetGhostModels.Owl : _lookout != null ? _lookout : _lookout = GhostVoxels.Build(LookoutShape(), "LookoutGhost", new Vector3(4f, 0f, 3.5f));
         /// <summary>One of Lookout's stubby sheet arms (0 its left, 1 its right), shoulder at the origin, reaching along +z.</summary>
-        public static Mesh LookoutArm(int side) => _lookoutArm[side] != null ? _lookoutArm[side]
+        public static Mesh LookoutArm(int side) => PetGhostModels.PetGhosts && PetGhostModels.OwlArm(side) != null ? PetGhostModels.OwlArm(side) : _lookoutArm[side] != null ? _lookoutArm[side]
             : _lookoutArm[side] = GhostVoxels.Build(LookoutArmShape(side), side == 0 ? "LookoutArmL" : "LookoutArmR", new Vector3(.5f, 8.5f, .5f));
         /// <summary>Lookout's lantern, its pivot (the top of its handle) at the origin, hanging down.</summary>
-        public static Mesh Lantern => _lantern != null ? _lantern : _lantern = GhostVoxels.Build(LanternShape(), "LookoutLantern", new Vector3(1.5f, 6f, 1.5f));
+        public static Mesh Lantern => PetGhostModels.PetGhosts && PetGhostModels.Lantern != null ? PetGhostModels.Lantern : _lantern != null ? _lantern : _lantern = GhostVoxels.Build(LanternShape(), "LookoutLantern", new Vector3(1.5f, 6f, 1.5f));
 
         private static GhostVoxels SkitterShape()
         {

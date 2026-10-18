@@ -43,6 +43,8 @@ namespace TumbangPreso.Abilities
         private const float PopSeconds = .35f, LeaveSeconds = .6f, CheerSeconds = .7f, Scale = .85f;
         private static readonly Color Warm = NemuGhostModels.LookoutLight;
         private NemuGhostBody _body, _lantern;
+        // The pet owl's slow orbit and hop round its point (`PetGhostFlight`, drawing only, behind `PetGhostModels.PetGhosts`).
+        private readonly PetGhostFlight _flight = new PetGhostFlight(PetGhostFlight.Kind.Owl);
         private readonly NemuGhostBody[] _arms = new NemuGhostBody[2];
         private NemuSmokeBatch _fx;
         private Transform _can;
@@ -167,6 +169,14 @@ namespace TumbangPreso.Abilities
             // It leans back against the can's weight while it heaves.
             Quaternion facing = _facing * Quaternion.AngleAxis(-12f * _engage - 8f * heave, Vector3.right);
             float flash = Mathf.Max((1f - p) * .7f, cheering ? (1f - cheer) * .5f : 0f);
+            if (PetGhostModels.PetGhosts && _body != null)
+            {
+                // The pet owl glides round its minding spot while nothing happens; it is back on the point to lift, hide or
+                // cheer, and keeps close while it watches an attacker. Drawing only: the can and its spot do not move.
+                float free = (1f - _engage) * (1f - _scare) * (cheering ? 0f : 1f) * (Watching.HasValue ? .35f : 1f) * (p >= 1f && !_leaving ? 1f : 0f);
+                _flight.Apply(ref at, ref facing, _age, free, dt);
+                _body.Trail = _flight.TrailLocal;
+            }
             _body?.Pose(at, facing, scale, fade, _age, .05f + .04f * _engage, flash);
 
             PoseArms(top, bottom, ends, heave, hop, fade, flash);
@@ -205,7 +215,7 @@ namespace TumbangPreso.Abilities
                 float length = to.magnitude;
                 Quaternion rot = length > 1e-4f ? Quaternion.LookRotation(to / length, Vector3.up) : Quaternion.identity;
                 _arms[s].PoseLocal(shoulder, rot, fade, _age, flash);
-                _arms[s].Transform.localScale = new Vector3(1f, 1f, Mathf.Clamp(length / NemuGhostModels.LookoutHandOnArm.z, .5f, 2.6f));
+                _arms[s].Transform.localScale = new Vector3(1f, 1f, Mathf.Clamp(length / NemuGhostModels.LookoutHandOnArm.z, .5f, PetGhostModels.PetGhosts ? PetGhostModels.MaxArmStretch : 2.6f));
             }
         }
 

@@ -72,7 +72,7 @@ namespace TumbangPreso.EditorTools.MapKit
                     foreach (var animator in model.GetComponentsInChildren<Animator>(true)) animator.enabled = false;
                     return holder;
                 }
-                Person("sean", Vector3.zero, 0f);
+                var seanBody = Person("sean", Vector3.zero, 0f);
                 Person("dante", new Vector3(0f, 0f, 7.2f), 180f);
                 // The real tsinelas, flying the bench's arc.
                 var shoe = In(new GameObject("~SeanThrow-tsinelas"));
@@ -131,7 +131,7 @@ namespace TumbangPreso.EditorTools.MapKit
                     shoe.transform.position = at;
                     shoe.SetActive(age >= thrown ? flying : true);
                     // Held at his right hip until the throw; its fire rides it and goes out as it leaves his hand.
-                    if (age < thrown) { shoe.transform.position = new Vector3(0.38f, 1.0f, 0.15f); shoe.transform.rotation = Quaternion.Euler(0f, 0f, 70f); }
+                    if (age < thrown) { shoe.transform.position = new Vector3(0.40f, 0.95f, 0.70f); shoe.transform.rotation = Quaternion.Euler(0f, 0f, 70f); }
                     else shoe.transform.rotation = Quaternion.LookRotation(Vector3.forward);
                     heldLook.SetFloat("_Age", age); heldLook.SetFloat("_Opacity", age < thrown ? 1f : 0f);
                     clock.Restart(); fx.Sample(age, at); clock.Stop();
@@ -148,8 +148,10 @@ namespace TumbangPreso.EditorTools.MapKit
                         // His own eyes (the first-person shoe held up into view while it is loaded), and a close look at the
                         // world shoe at his hip while held.
                         else if (view == 4) { eye = sheEye; aim = sheEye + new Vector3(0.12f, -0.25f, 1f); fov = 70f; }
-                        else { eye = new Vector3(1.5f, 1.15f, -0.6f); aim = new Vector3(0.38f, 1.05f, 0.15f); fov = 40f; }
+                        else { eye = new Vector3(1.7f, 1.25f, 2.2f); aim = new Vector3(0.40f, 1.0f, 0.70f); fov = 32f; }
                         eyeShoe.SetActive(view == 4 && age < thrown);
+                        // Nobody sees their own head from inside it.
+                        seanBody.SetActive(view != 4);
                         worldFire.SetActive(view != 4);
                         cam.fieldOfView = fov;
                         cam.transform.SetPositionAndRotation(eye, Quaternion.LookRotation(aim - eye, view == 3 ? Vector3.forward : Vector3.up));

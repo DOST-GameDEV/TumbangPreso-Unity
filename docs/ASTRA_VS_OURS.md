@@ -4,6 +4,8 @@ Written 2026-10-17. Compared: `origin/ASTRAReworks` at `a7c1189` (2026-10-17 20:
 at `eb2dc15` plus all uncommitted effects and cutscene work). ASTRA already contains every QoLUpdates commit; it is 441
 commits ahead. Nothing was merged or changed to write this.
 
+**MERGED 2026-10-18** (owner: "merge into k now"): QoLUpdates d971877ec (snapshot) then 2082b38b3 (merge of the prepared branch `astra-merge-prep`, ASTRA at b0494a266). Local only, not pushed. ProtocolVersion 172 (ASTRA had moved to 171). Our Boulder guard now sits inside `DanteBoulderCoating.Loaded()` so ASTRA's Mountain Form stone still draws on any shoe not Boulder-loaded (owner: our rocks win on a loaded shoe). Old Dante p11 and Nemu p16 are kept as text in `tools/cutscene_rework/old/pre-astra-merge-2026-10-18/`. ASTRA renamed Basilio back to Dante. Not yet verified: Unity tests, Checks.RunAll, peer play.
+
 **The plan this is for (owner, 2026-10-17):** take each hero's ability KIT from ASTRA (what the abilities do, their names,
 numbers and rules), then rework their EFFECTS the way we have been redesigning the old ones (`docs/VFX_BENCH_METHOD.md`:
 references first, built from the approved bench pieces, side by side, locked on approval, GPU and measured, honest

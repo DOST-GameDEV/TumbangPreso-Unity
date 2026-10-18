@@ -50,6 +50,10 @@ namespace TumbangPreso.Visual
 
         public FxStudySeanThrow(Transform parent) : this(parent, AmihanWhirlwind.DayLight) { }
 
+        /// <summary>How it is painted: 0 the soft ramp of t6 (kept), 1 four painted bands, 2 three crisp bands (boards s1, s2).
+        /// A painted look covers more than it lights: its light share falls as the bands get crisper.</summary>
+        public static int Stylise = 0;
+
         public FxStudySeanThrow(Transform parent, float light) : base("seanthrow", parent)
         {
             if (_mesh == null) _mesh = BuildMesh();
@@ -62,7 +66,8 @@ namespace TumbangPreso.Visual
                 var a = FxStudyKit.Mask("erode_streak"); var b = FxStudyKit.Mask("erode_cloud");
                 if (a != null) _fireLook.SetTexture("_NoiseA", a);
                 if (b != null) _fireLook.SetTexture("_NoiseB", b);
-                _fireLook.SetFloat("_Add", light); _fireLook.SetFloat("_Radius", Radius);
+                _fireLook.SetFloat("_Add", Stylise == 0 ? light : Stylise == 1 ? 0.30f : 0.15f); _fireLook.SetFloat("_Radius", Radius);
+                _fireLook.SetFloat("_Stylise", Stylise);
                 _fireLook.SetVectorArray(HistId, _hist);
             }
             _fire.Renderer.localBounds = new Bounds(Vector3.zero, Vector3.one * 200f);

@@ -445,7 +445,7 @@ namespace TumbangPreso.Visual
     /// </summary>
     public abstract class FxStudyEffect : IDisposable
     {
-        public static readonly string[] Names = { "trails", "wisp", "wispshells", "smoke", "circle", "lotus", "scorch", "whirlwind", "whirlwindparts", "whirlwindh1", "whirlwindh7", "drift", "rafiwall", "danteboulder", "rafiwallsplit", "danteboulderboard", "dantebastion", "dantebastionb3", "dantebastionb4", "dantebastionboard", "cloud", "cloudline", "clouddark", "cloudburst", "cloudlinedark", "raficurrent", "raficurrentspent" };
+        public static readonly string[] Names = { "trails", "wisp", "wispshells", "smoke", "circle", "lotus", "scorch", "whirlwind", "whirlwindparts", "whirlwindh1", "whirlwindh7", "drift", "rafiwall", "danteboulder", "rafiwallsplit", "danteboulderboard", "dantebastion", "dantebastionb3", "dantebastionb4", "dantebastionb5", "dantebastionb6", "dantebastionb6day", "dantebastionb7", "dantebastionb7day", "dantebastionb8", "dantebastionb8day", "dantebastionboard", "cloud", "cloudline", "clouddark", "cloudburst", "cloudlinedark", "raficurrent", "raficurrentspent" };
 
         public readonly Transform Root;
         private readonly List<FxPiece> _pieces = new List<FxPiece>();
@@ -537,6 +537,18 @@ namespace TumbangPreso.Visual
                 // BASTION by version: b3 (the sample he called ugly, kept to compare), b4, and b4's field candidates.
                 case "dantebastionb3": return new FxStudyDanteBastion(parent);
                 case "dantebastionb4": return new FxStudyDanteBastion(parent, FxStudyDanteBastion.B4);
+                // b5: b4 with magma in the slabs and painted fire on the field ("needs more emmissives and fire effects").
+                case "dantebastionb5": return new FxStudyDanteBastion(parent, FxStudyDanteBastion.Look.B5);
+                // b6: b5's magma slabs with columns of heat in place of its flames ("fire is too much ... flashing sticker").
+                case "dantebastionb6": return new FxStudyDanteBastion(parent, FxStudyDanteBastion.Look.B6);
+                // The same on a pale warm floor, a stand-in for the sunlit court.
+                case "dantebastionb6day": return new FxStudyDanteBastion(parent, FxStudyDanteBastion.Look.B6, true);
+                // b7: three broad soft columns of varying height ("too harsh, do only 3 wide ones"), and on the pale floor.
+                case "dantebastionb7": return new FxStudyDanteBastion(parent, FxStudyDanteBastion.Look.B7);
+                case "dantebastionb7day": return new FxStudyDanteBastion(parent, FxStudyDanteBastion.Look.B7, true);
+                // b8: b7's columns rising out of the magma ("make them connect"), and on the pale floor.
+                case "dantebastionb8": return new FxStudyDanteBastion(parent, FxStudyDanteBastion.Look.B8);
+                case "dantebastionb8day": return new FxStudyDanteBastion(parent, FxStudyDanteBastion.Look.B8, true);
                 case "dantebastionboard": return new FxStudyDanteBastionBoard(parent);
                 default: return null;
             }

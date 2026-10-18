@@ -5,7 +5,24 @@ using Knot = TumbangPreso.Visual.FxStudyKit.Knot;
 namespace TumbangPreso.Visual
 {
     /// <summary>
-    /// STUDY J, BANK SHOT (eleventh rough sample, b12; b3 to b11 are kept as `FxStudyZackBankB3` to `B11`).
+    /// STUDY J, BANK SHOT (twelfth rough sample, b13; b3 to b11 are kept as `FxStudyZackBankB3` to `B11`, b12 is this file
+    /// at the commit before b13).
+    ///
+    /// ⚠️ b13: SILK, AND A BODY. The owner chose the silk picture from `zack_trail_compare.mp4` ("silk"), and Bank Shot
+    /// "doesnt have the same quality as zack circuit". Quick Circuit's sweep is a BROAD see-through amber body with a lemon
+    /// fold and a thin white line in it; b12 was a bundle of thin wisps. So:
+    ///   * every trail piece wears `zack_trail_silk` at the tune it was judged at (lift 4.0, cut 0 to 0.10, level 0.85);
+    ///   * THE BODY: each leg's trail is now broad (0.75 m across where it is fullest) and every point of it has an AGE,
+    ///     the time since the shoe passed it (`ZackTrail.shader`, `_Life`). A point is born thin at the shoe, swells in
+    ///     0.07 s, thins again and is eaten where it lies from 0.15 s; so the trail is history, made of points that live and
+    ///     die in place, and its outline is never one shape slid along. Its width wobbles with a noise fixed to the ground;
+    ///   * THE CORE: a second, narrower trail inside it on the same line, with its own width curve (fatter at birth, dead in
+    ///     0.16 s), its picture flowing three times as fast and the other way across, lemon going to white;
+    ///   * PAINTED IN FOUR FLAT VALUES (`_Bands`): a see-through deep-amber veil, an amber body, a lemon fold and a white
+    ///     core, each step crisp. Quick Circuit's palette and the same order of values;
+    ///   * COVER for the sunlit court: the body is a little over half light and the rest paint (`_Add` 0.55), so it does not
+    ///     go pale on a bright road without bloom (filmed on a light floor too, `Day`).
+    /// The strands, the bulb, the rim cards, the spines and the load are b12's, now in silk and in the four values.
     ///
     /// ⚠️ b12: NEAR THE LENS IT DISSOLVES, AND EATEN PIECES TEAR. From in front, with the shoe passing about a metre from
     /// the eye, b11's nearest strands filled the frame as broad flat panes, and pieces eaten along their length were left
@@ -146,6 +163,8 @@ namespace TumbangPreso.Visual
         private static readonly Color LemonDeep = new Color(1.00f, 0.80f, 0.10f), Lemon = new Color(1.00f, 0.95f, 0.28f),
                                       White = new Color(1.00f, 1.00f, 0.90f), LemonVeil = new Color(1.00f, 0.86f, 0.18f);
         private static readonly Color Ink = new Color(0.10f, 0.06f, 0.26f), Spark = new Color(0.86f, 0.95f, 1.00f);
+        // b13's body colour: between Quick Circuit's amber and its pale gold.
+        private static readonly Color Gold = new Color(1.00f, 0.76f, 0.18f);
 
         private static readonly Vector3[] Route = { new Vector3(0f, 1.0f, 0.3f), new Vector3(2.1f, 1.0f, 2.2f), new Vector3(0.0f, 1.0f, 4.9f), new Vector3(-1.9f, 1.0f, 2.6f) };
         private static readonly Vector3[] Facing = { Vector3.left, Vector3.back };
@@ -158,11 +177,22 @@ namespace TumbangPreso.Visual
                                     ScrollId = Shader.PropertyToID("_Scroll"), ErodeScrollId = Shader.PropertyToID("_ErodeScroll"), SweepId = Shader.PropertyToID("_Sweep"),
                                     WarpId = Shader.PropertyToID("_Warp"), HueId = Shader.PropertyToID("_Hue"), GainId = Shader.PropertyToID("_Gain"),
                                     ThickId = Shader.PropertyToID("_Thick"), RollId = Shader.PropertyToID("_Roll"),
-                                    Tile1Id = Shader.PropertyToID("_Tile1"), Tile2Id = Shader.PropertyToID("_Tile2"), WaveId = Shader.PropertyToID("_Wave");
+                                    Tile1Id = Shader.PropertyToID("_Tile1"), Tile2Id = Shader.PropertyToID("_Tile2"), WaveId = Shader.PropertyToID("_Wave"),
+                                    Pan1Id = Shader.PropertyToID("_Pan1"), Pan2Id = Shader.PropertyToID("_Pan2"), LifeId = Shader.PropertyToID("_Life");
+        /// <summary>BENCH ONLY: film on a light floor and light walls, a stand-in for the sunlit court (no bloom there).</summary>
+        public static bool Day;
+        /// <summary>BENCH ONLY, b13d: the head's rim. 0 is b13c's three rings (read by the owner as a stretched oval), 1 ORGANIC
+        /// (uneven crescent tongues, eaten by noise, turned and resized every frame about offset pivots), 2 CIRCLE (one round
+        /// ring, turned to the eye, never stretched, crisp, sized to the head). Set by the film's `head` request.</summary>
+        // KEEP: owner 2026-10-18, "zacks bankshot is good, lock it in" (b13d, circle head). Approved look; do not change.
+        public static int HeadLook = 2;
+        // The silk picture and the tune it was chosen at (`zack_trail_compare.mp4`): lift, cut from, cut to, level.
+        private const string Silk = "zack_trail_silk";
+        private static readonly Vector4 SilkTune = new Vector4(4.0f, 0.0f, 0.10f, 0.85f);
         private static Material _sweepMat, _boltMat, _crackMat, _glowMat, _scorchMat, _burstMat, _sparkMat, _plainMat;
         private static Mesh _square, _sparkMesh;
         private static Mesh[] _tails, _spines;
-        private static Mesh _blade, _bladeFlat, _strandUp, _strandFlat, _streak, _bulb, _bulbFlat, _card;
+        private static Mesh _blade, _bladeFlat, _strandUp, _strandFlat, _streak, _bulb, _bulbFlat, _card, _even;
         private static Material _trailMat, _rimMat;
         /// <summary>BENCH ONLY: a trail picture to try on every ZackTrail ribbon in place of the fifth trail, set by the film's
         /// `mask` request and cleared by `mask -`. Null leaves the material exactly as built. It exists so candidate pictures can
@@ -318,6 +348,12 @@ namespace TumbangPreso.Visual
                 new Knot(0f, 0f, -Long * 0.15f, 0.34f), new Knot(0f, 0f, -Long * 0.04f, 0.40f), new Knot(0f, 0f, 0f, 0.30f),
             };
             _streak = Shared(TurnedRibbon(streak, 8, 4));
+            // b13's body and core: one metre across all along, 2.4 m down -z (u 0 at its tail, 1 at the shoe). Their widths
+            // are their points' ages', worked out in the shader, so the mesh carries none; 48 rings so a width that changes
+            // over a few centimetres near the shoe is drawn smooth however far the leg is stretched.
+            var even = new Knot[7];
+            for (int k = 0; k < even.Length; k++) even[k] = new Knot(0f, 0f, -Long * (1f - k / 6f), 1f);
+            _even = Shared(TurnedRibbon(even, 8, 4));
             var bulb = new[]
             {
                 new Knot(0f, 0f, -0.90f, 0.04f), new Knot(0f, 0f, -0.66f, 0.30f), new Knot(0f, 0f, -0.40f, 0.62f),
@@ -338,7 +374,7 @@ namespace TumbangPreso.Visual
             if (trailShader != null)
             {
                 _trailMat = Queued(new Material(trailShader), 10);
-                _trailMat.SetTexture("_MaskTex", FxStudyKit.Mask(FxStudyTrails.MaskOf(4)));
+                _trailMat.SetTexture("_MaskTex", FxStudyKit.Mask(Silk));
                 _trailMat.SetTexture("_NoiseTex", FxStudyKit.Mask("erode_cloud"));
                 _trailMat.SetFloat("_ViewAlign", 1f);
                 _trailMat.SetVector("_Near", new Vector4(0.7f, 2.2f, 0f, 0f));
@@ -348,7 +384,12 @@ namespace TumbangPreso.Visual
                 _trailMat.SetColor("_Deep", AmberDeep); _trailMat.SetColor("_Body", Amber); _trailMat.SetColor("_Hot", new Color(1.00f, 0.96f, 0.72f));
                 // A product of two greys is far darker than either: lifted well up and cut low, so the crossings make a body
                 // and not a scatter of flecks (the first b9 film was flecks).
-                _trailMat.SetFloat("_Mix", 1.8f); _trailMat.SetVector("_Cut", new Vector4(0.05f, 0.40f, 0f, 0f)); _trailMat.SetVector("_Stops", new Vector4(0.22f, 0.55f, 0.90f, 0f));
+                _trailMat.SetFloat("_Mix", SilkTune.x); _trailMat.SetVector("_Cut", new Vector4(SilkTune.y, SilkTune.z, 0f, 0f)); _trailMat.SetFloat("_Level", SilkTune.w);
+                // b13: four flat values. Veil from the cut, body at 0.20, the lemon fold at 0.48, the white core at 0.80.
+                _trailMat.SetVector("_Stops", new Vector4(0.20f, 0.48f, 0.80f, 0f));
+                _trailMat.SetVector("_Bands", new Vector4(1f, 0.025f, 0.45f, 0.82f));
+                _trailMat.SetColor("_Fold", Lemon); _trailMat.SetColor("_Hot", White);
+                _trailMat.SetFloat("_Add", 0.70f);
             }
             // THE RIM CARDS: the approved ribbon shader wearing the rim picture whole, as light.
             _rimMat = Queued(FxStudyKit.Ribbon("zack_rim", "erode_blobs"), 32);
@@ -463,6 +504,10 @@ namespace TumbangPreso.Visual
             public void Flow(float along, float erodeAlong, float sweep)
             { _block.SetVector(ScrollId, new Vector4(along, 0f, 0f, 0f)); _block.SetVector(ErodeScrollId, new Vector4(erodeAlong, 0f, 0f, 0f)); _block.SetFloat(SweepId, sweep); }
             public void Colour(string name, Color colour) => _block.SetColor(name, colour);
+            public void Vec(string name, Vector4 value) => _block.SetVector(name, value);
+            public void Num(string name, float value) => _block.SetFloat(name, value);
+            public void Pans(float a, float b, float c, float d) { _block.SetVector(Pan1Id, new Vector4(a, b, 0f, 0f)); _block.SetVector(Pan2Id, new Vector4(c, d, 0f, 0f)); }
+            public void Life(float speed, float extra) => _block.SetVector(LifeId, new Vector4(speed, extra, 0f, 0f));
             public void Frame(float age, float opacity, float erode = 0f)
             {
                 bool shown = opacity > 0.002f && erode < 0.999f && _renderer.sharedMaterial != null && _renderer.enabled;
@@ -502,15 +547,15 @@ namespace TumbangPreso.Visual
         };
         private readonly Part[] _strand = new Part[Strands];
         private const int Inbound = 6, Cards = 3, Embers = 3;
-        private readonly Part[] _long = new Part[3], _short = new Part[2], _cardPart = new Part[Cards], _ember = new Part[Embers];
+        private readonly Part[] _long = new Part[3], _core = new Part[3], _short = new Part[2], _cardPart = new Part[Cards], _ember = new Part[Embers];
         private readonly Part[] _inbound = new Part[Inbound];
         private readonly Part[,,] _spine = new Part[3, MaxCharges, Shapes];
         private readonly Part[,] _tail = new Part[MaxCharges, Shapes];
         private readonly Part[] _scorch = new Part[MaxCharges], _sparks = new Part[MaxCharges];
 
         public override float Seconds => _show == Show.RunsOut ? 2.6f : 3.0f;
-        public override Color FloorColour => new Color(0.150f, 0.152f, 0.160f);
-        public override Color FloorLine => new Color(0.118f, 0.120f, 0.128f);
+        public override Color FloorColour => Day ? new Color(0.60f, 0.57f, 0.52f) : new Color(0.150f, 0.152f, 0.160f);
+        public override Color FloorLine => Day ? new Color(0.52f, 0.49f, 0.45f) : new Color(0.118f, 0.120f, 0.128f);
         public override float BloomIntensity => 0.26f;
         public override void Shot(float age, out Vector3 eye, out Vector3 focus, out float fov)
         {
@@ -549,7 +594,7 @@ namespace TumbangPreso.Visual
                 wall.At.localPosition = side == 0 ? new Vector3(2.22f, 1.0f, 2.4f) : new Vector3(0.2f, 1.0f, 5.02f);
                 wall.At.localRotation = Quaternion.LookRotation(-Facing[side]);
                 wall.At.localScale = new Vector3(side == 0 ? 5.6f : 4.8f, 2.0f, 1f);
-                wall.Colour("_Hot", new Color(0.30f, 0.30f, 0.32f));
+                wall.Colour("_Hot", Day ? new Color(0.72f, 0.69f, 0.63f) : new Color(0.30f, 0.30f, 0.32f));
                 wall.Frame(0f, show == Show.Behind || show == Show.Front || show == Show.Above ? 0f : 1f);
             }
             _shoeAt = Group("shoe");
@@ -599,7 +644,7 @@ namespace TumbangPreso.Visual
             }
             for (int i = 0; i < Strands; i++) _strand[i] = new Part("strand-" + i, Root, Table[i].Flat ? _strandFlat : _strandUp, _trailMat);
             for (int i = 0; i < Inbound; i++) _inbound[i] = new Part("inbound-" + i, Root, _tails[i % Shapes], _boltMat);
-            for (int l = 0; l < 3; l++) _long[l] = new Part("trail-" + l, _legAt[l], _streak, _trailMat);
+            for (int l = 0; l < 3; l++) { _long[l] = new Part("trail-body-" + l, _legAt[l], _even, _trailMat); _core[l] = new Part("trail-core-" + l, _legAt[l], _even, _trailMat); }
             _short[0] = new Part("bulb", Root, _bulb, _trailMat); _short[1] = new Part("bulb-flat", Root, _bulbFlat, _trailMat);
             for (int i = 0; i < Cards; i++) _cardPart[i] = new Part("head-card-" + i, Root, _card, _rimMat);
             for (int i = 0; i < Embers; i++) _ember[i] = new Part("embers-" + i, Root, _sparkMesh, _sparkMat);
@@ -626,11 +671,11 @@ namespace TumbangPreso.Visual
         public override void Sample(float age, Vector3 eye)
         {
             // One texture swap on the shared material when the bench asks for a different picture, never per frame.
-            string want = string.IsNullOrEmpty(StrandMask) ? FxStudyTrails.MaskOf(4) : StrandMask;
+            string want = string.IsNullOrEmpty(StrandMask) ? Silk : StrandMask;
             if (_trailMat != null && want != _wornMask) { _trailMat.SetTexture("_MaskTex", FxStudyKit.Mask(want)); _wornMask = want; }
             if (_trailMat != null && StrandTune != _wornTune)
             {
-                Vector4 tune = StrandTune ?? new Vector4(1.8f, 0.05f, 0.40f, 1f);
+                Vector4 tune = StrandTune ?? SilkTune;
                 _trailMat.SetFloat("_Mix", tune.x); _trailMat.SetVector("_Cut", new Vector4(tune.y, tune.z, 0f, 0f)); _trailMat.SetFloat("_Level", tune.w); _wornTune = StrandTune;
             }
             float loaded = _show == Show.RunsOut ? age + 6.0f - Load : age - Load;
@@ -680,6 +725,7 @@ namespace TumbangPreso.Visual
                     stream.Window(-1f, Mathf.Lerp(0.2f, 1.1f, landed) * (1f - 0.5f * fray), 0.08f);
                     stream.Reads(0.6f, c * 0.37f, 0.8f, c * 0.61f);
                     stream.Wave(0.02f, 1.6f, 9f, c * 2.1f);
+                    stream.Colour("_Deep", Amber); stream.Colour("_Body", Gold);
                     stream.Frame(age, on ? 1f : 0f, fray * 0.5f);
                 }
 
@@ -741,12 +787,45 @@ namespace TumbangPreso.Visual
                 _legAt[l].localScale = new Vector3(Mathf.Lerp(0.35f, 1f, snap), Mathf.Lerp(0.35f, 1f, snap), stretch);
                 // THE LONG TRAIL of this leg: stretched from where the leg began to the shoe, its tail letting go, its inside
                 // churning (two reads of its picture at different speeds, multiplied, bent by noise).
+                // b13: THE BODY and THE CORE of this leg, laid from where the leg began to the shoe. Each point's width and
+                // death are its age's (the shader works it out from the speed and from how long ago this leg ended), so the
+                // trail is history: it is never re-pointed, a flown leg's points simply go on ageing where they lie.
+                float extra = flownLeg ? since : 0f;
                 var trail = _long[l];
-                trail.Window(tailU, headU, 0.04f);
-                trail.Facing(Mathf.Lerp(0.35f, 1f, snap), l * 60f + 30f);
-                trail.Reads(0.8f * stretch, l * 0.31f, 1.0f * stretch, l * 0.57f);
-                trail.Wave(0.05f, 1.2f * stretch, 7f, l * 1.9f);
-                trail.Frame(age, shown ? 0.9f * open : 0f, flownLeg ? FxStudyKit.Run(since, 0f, 0.40f) : 0.05f);
+                trail.Window(-1f, 2f, 0.02f);
+                trail.Size(flownOnLeg, 1f);
+                trail.Life(_legSpeed[l], extra);
+                trail.Vec("_Grow", new Vector4(0.22f, 0.07f, 0.55f, 0.32f));
+                trail.Vec("_Die", new Vector4(0.15f, 0.34f, 0f, 0f));
+                trail.Vec("_Wobble", new Vector4(0.40f, 0.65f, 0.90f, l * 0.23f));
+                trail.Vec("_Ends", new Vector4(0.0f, 0.03f, 0.30f, 0f));
+                // Quick Circuit's gold, not fire: the veil is amber, the body a warm gold, the fold lemon, the core white. (v1
+                // had the deep orange as its veil and read as Rago's fire.) Over half of it paint, for the sunlit court.
+                trail.Colour("_Deep", Amber); trail.Colour("_Body", Gold);
+                trail.Vec("_Bands", new Vector4(1f, 0.025f, 0.50f, 0.85f));
+                trail.Vec("_Stops", new Vector4(0.12f, 0.46f, 0.80f, 0f));
+                trail.Num("_Add", 0.38f);
+                trail.Facing(0.75f, l * 60f + 30f);
+                trail.Reads(0.75f * stretch, l * 0.31f, 1.05f * stretch, l * 0.57f);
+                trail.Pans(-0.50f, 0.05f, -1.10f, -0.08f);
+                trail.Wave(0.04f, 1.0f * stretch, 5f, l * 1.9f);
+                trail.Frame(age, shown ? open : 0f, 0f);
+                var core = _core[l];
+                core.Window(-1f, 2f, 0.02f);
+                core.Size(flownOnLeg, 1f);
+                core.Life(_legSpeed[l], extra);
+                core.Vec("_Grow", new Vector4(0.55f, 0.03f, 0.35f, 0.15f));
+                core.Vec("_Die", new Vector4(0.05f, 0.16f, 0f, 0f));
+                core.Vec("_Wobble", new Vector4(0.25f, 1.3f, -0.8f, 0.5f + l * 0.17f));
+                core.Vec("_Ends", new Vector4(0.0f, 0.02f, 0.30f, 0f));
+                core.Vec("_Stops", new Vector4(0.10f, 0.26f, 0.58f, 0f));
+                core.Colour("_Deep", Amber); core.Colour("_Body", LemonDeep); core.Colour("_Fold", Lemon);
+                core.Num("_Add", 0.80f);
+                core.Facing(0.30f, l * 60f + 75f);
+                core.Reads(1.3f * stretch, l * 0.43f, 1.7f * stretch, l * 0.19f);
+                core.Pans(-0.95f, -0.06f, -1.60f, 0.08f);
+                core.Wave(0.02f, 2.0f * stretch, 9f, l * 1.3f + 0.7f);
+                core.Frame(age, shown ? open : 0f, 0f);
                 // A spine keeps a fixed face (upright, its flat side across the leg): it fades as it turns edge-on to the eye.
                 Vector3 toEyeLeg = (eye - _legAt[l].position).normalized;
                 float edgeOn = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.12f, 0.45f, Mathf.Abs(Vector3.Dot(_legAt[l].right, toEyeLeg))));
@@ -806,14 +885,15 @@ namespace TumbangPreso.Visual
                 // A slight lift as it thins, a few centimetres, never a swing.
                 strand.At.localPosition = pivot + Vector3.up * (0.06f * FxStudyKit.Ease(peeled));
                 strand.At.localScale = new Vector3(1f, 1f, length);
-                strand.Facing(thick, i * 45f + (st.Flat ? 22f : 0f));
+                strand.Facing(thick * 0.7f, i * 45f + (st.Flat ? 22f : 0f));
                 // Its own flow and warp: the waves run along it and drift, and grow as it peels off and curls.
                 strand.Flow(st.Flow, st.Flow * 0.5f, -1.1f);
                 // It loosens as it dies: the wave through it, point by point, grows a little and slows.
                 strand.Wave(0.04f + 0.09f * peeled, st.Waves * (1f + 0.4f * peeled), st.Speed * (2f - 0.8f * peeled), i * 1.37f);
                 strand.Reads(0.9f * length / 1.6f, i * 0.29f, 1.1f * length / 1.6f, i * 0.53f);
                 float fade = FxStudyKit.Run(life, 0f, 0.08f);
-                strand.Frame(age, 0.85f * fade, 0.25f + 0.75f * FxStudyKit.Ease(peeled));
+                strand.Colour("_Deep", Amber); strand.Colour("_Body", Gold);
+                strand.Frame(age, 0.60f * fade, 0.25f + 0.75f * FxStudyKit.Ease(peeled));
             }
 
             // THE SHORT TRAIL, THE HEAD CARDS AND THE EMBERS ride a charged shoe in flight.
@@ -830,6 +910,7 @@ namespace TumbangPreso.Visual
                 // Two layers, the second narrower and at another roll: depth, seen from any side.
                 bulbPart.Facing(k == 0 ? 1f : 0.6f, k == 0 ? 0f : 90f);
                 bulbPart.Wave(0.03f, 1.4f, 10f, k * 3.1f);
+                bulbPart.Colour("_Deep", Amber); bulbPart.Colour("_Body", Gold);
                 bulbPart.Frame(age, flying ? 0.95f * open : 0f, 0.0f);
             }
             int frame = Mathf.FloorToInt(age * 60f);
@@ -841,11 +922,35 @@ namespace TumbangPreso.Visual
                 // Laid so its picture's bright side leads, turned to the eye, then turned a new way every frame about its pivot.
                 Vector3 across = back - toEye * Vector3.Dot(back, toEye);
                 card.At.localRotation = across.sqrMagnitude > 1e-6f ? Quaternion.LookRotation(toEye, Vector3.Cross(toEye, across.normalized)) : Quaternion.LookRotation(toEye);
+                float sideways = across.magnitude;
+                if (HeadLook == 2)
+                {
+                    // CIRCLE: one ring, round on the screen whatever the speed, its bright side leading, crisp, the head's size.
+                    card.At.localScale = Vector3.one * 0.50f;
+                    card.Vec("_Cut", new Vector4(0.30f, 0.36f, 0f, 0f)); card.Num("_Halo", 0.10f); card.Num("_Soft", 0.02f);
+                    card.Frame(age, flying && i == 0 ? 0.85f * open : 0f, 0f);
+                    continue;
+                }
+                if (HeadLook == 1)
+                {
+                    // ORGANIC: each card a crescent tongue, never a whole ring. Every frame it turns a new way about its offset
+                    // pivot, takes a slightly different width and height, sits a few centimetres off the shoe's line, and is
+                    // eaten along its arc by the blob noise at a new place, so its edge is uneven and its tips tear.
+                    float h1 = FxStudyKit.Hash(frame, 90 + i), h2 = FxStudyKit.Hash(frame, 95 + i), h3 = FxStudyKit.Hash(frame, 101 + i), h4 = FxStudyKit.Hash(frame, 107 + i);
+                    card.At.localRotation *= Quaternion.Euler(0f, 0f, (h1 - 0.5f) * 160f);
+                    float size = 0.42f + 0.22f * h2;
+                    card.At.localScale = new Vector3(size * (0.88f + 0.24f * h3), size * (0.88f + 0.24f * h4), 1f);
+                    card.At.localPosition = lead + card.At.up * ((h3 - 0.5f) * 0.10f);
+                    card.Vec("_ErodeTile", new Vector4(1.6f, 1.3f, h1 * 3.7f, h4 * 2.9f));
+                    card.Num("_Sweep", 0.8f); card.Num("_Soft", 0.10f);
+                    card.Frame(age, flying ? 0.6f * (0.9f - 0.15f * i) * open * Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.45f, 0.85f, sideways)) : 0f,
+                               0.30f + 0.25f * h2);
+                    continue;
+                }
                 card.At.localRotation *= Quaternion.Euler(0f, 0f, (FxStudyKit.Hash(frame, 90 + i) - 0.5f) * 70f);
                 card.At.localScale = Vector3.one * (0.55f + 0.25f * FxStudyKit.Hash(frame, 95 + i));
                 // Seen along the flight the lead has no direction on the screen and a card is a flat disc: it fades out.
-                float sideways = across.magnitude;
-                card.Frame(age, flying ? (0.8f - 0.2f * i) * open * Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.45f, 0.85f, sideways)) : 0f);
+                card.Frame(age, flying ? 0.4f * (0.8f - 0.2f * i) * open * Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.45f, 0.85f, sideways)) : 0f);
             }
             for (int i = 0; i < Embers; i++)
             {

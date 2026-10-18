@@ -11,12 +11,16 @@ namespace TumbangPreso.Visual
     {
         private static Material _material;
         private static readonly int FadeId = Shader.PropertyToID("_Fade"), FlashId = Shader.PropertyToID("_Flash"),
-            ClockId = Shader.PropertyToID("_Clock"), SwayId = Shader.PropertyToID("_Sway"), RimId = Shader.PropertyToID("_Rim");
+            ClockId = Shader.PropertyToID("_Clock"), SwayId = Shader.PropertyToID("_Sway"), RimId = Shader.PropertyToID("_Rim"),
+            TrailId = Shader.PropertyToID("_Trail");
 
         private readonly MeshRenderer _renderer;
         private readonly MaterialPropertyBlock _block = new MaterialPropertyBlock();
         private readonly Color _rim;
         public Transform Transform { get; }
+        /// <summary>How far its tail lags behind its flight (its own space, metres at the tip): `PetGhostFlight.TrailLocal`. Only
+        /// `Shaders/PetGhost` reads it; ASTRA's voxel shader ignores it.</summary>
+        public Vector3 Trail;
 
         public NemuGhostBody(Transform parent, string name, Mesh mesh, Color rim)
         {
@@ -31,7 +35,8 @@ namespace TumbangPreso.Visual
             Transform = go.transform;
             go.AddComponent<MeshFilter>().sharedMesh = mesh;
             _renderer = go.AddComponent<MeshRenderer>();
-            _renderer.sharedMaterial = _material;
+            // A pet ghost's mesh (`PetGhostModels`, behind its switch) brings its own painted material; ASTRA's voxels keep theirs.
+            _renderer.sharedMaterial = PetGhostModels.MaterialFor(mesh, _material);
             _renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             _renderer.receiveShadows = false;
             _rim = rim;
@@ -62,12 +67,13 @@ namespace TumbangPreso.Visual
 
         private void Shade(float fade, float clock, float sway, float flash)
         {
-            _renderer.enabled = fade > .005f && _material != null;
+            _renderer.enabled = fade > .005f && _renderer.sharedMaterial != null;
             _block.SetFloat(FadeId, Mathf.Clamp01(fade));
             _block.SetFloat(FlashId, flash);
             _block.SetFloat(ClockId, clock);
             _block.SetFloat(SwayId, sway);
             _block.SetColor(RimId, _rim);
+            _block.SetVector(TrailId, Trail);
             _renderer.SetPropertyBlock(_block);
         }
     }

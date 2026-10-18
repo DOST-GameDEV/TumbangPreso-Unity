@@ -54,6 +54,9 @@ namespace TumbangPreso.Abilities
         private MeshFilter _mesh;
         private MeshRenderer _body;
         private MaterialPropertyBlock _block;
+        // The pet mouse's darting figure-eights round its hiding spot (`PetGhostFlight`, drawing only, behind `PetGhostModels.PetGhosts`).
+        private readonly PetGhostFlight _flight = new PetGhostFlight(PetGhostFlight.Kind.Mouse);
+        private static readonly int TrailId = Shader.PropertyToID("_Trail");
         private static Material _material;
         private static readonly int FadeId = Shader.PropertyToID("_Fade"), FlashId = Shader.PropertyToID("_Flash"),
             ClockId = Shader.PropertyToID("_Clock"), SwayId = Shader.PropertyToID("_Sway");
@@ -105,7 +108,7 @@ namespace TumbangPreso.Abilities
             _mesh = go.AddComponent<MeshFilter>();
             _mesh.sharedMesh = BlindfoldGhostModel.Waiting;
             _body = go.AddComponent<MeshRenderer>();
-            _body.sharedMaterial = _material;
+            _body.sharedMaterial = PetGhostModels.MaterialFor(_mesh.sharedMesh, _material);
             _body.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             _body.receiveShadows = false;
             _block = new MaterialPropertyBlock();
@@ -392,8 +395,20 @@ namespace TumbangPreso.Abilities
                     at = BaseAt(_age);
                     break;
             }
+            if (PetGhostModels.PetGhosts)
+            {
+                // The pet mouse darts round its hiding spot while it waits; the moment it springs it is back on the point (the
+                // lunge starts from there). Drawing only: the spot and the trigger radius do not move.
+                _flight.Apply(ref at, ref facing, _age, _state == State.Waiting && !sprung ? 1f : 0f, Time.deltaTime);
+                _block.SetVector(TrailId, _flight.TrailLocal);
+            }
             var mesh = sprung ? BlindfoldGhostModel.Sprung : BlindfoldGhostModel.Waiting;
-            if (_mesh.sharedMesh != mesh) _mesh.sharedMesh = mesh;
+            if (_mesh.sharedMesh != mesh)
+            {
+                _mesh.sharedMesh = mesh;
+                // The mint mouse (`PetGhostModels`, behind its switch) is drawn with its own painted material.
+                _body.sharedMaterial = PetGhostModels.MaterialFor(mesh, _material);
+            }
             var body = _body.transform;
             body.SetPositionAndRotation(at, facing);
             body.localScale = Vector3.one * scale;

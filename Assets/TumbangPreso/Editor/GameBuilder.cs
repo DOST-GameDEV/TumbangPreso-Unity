@@ -871,6 +871,8 @@ namespace TumbangPreso.EditorTools
                 "TumbangPreso/DontLookBlind",
                 // ...and its ghost, Blindfold (`Visual.BlindfoldGhostModel`), also only through `Shader.Find`.
                 "TumbangPreso/BlindfoldGhost",
+                // ...and the pet ghosts that can stand in for ASTRA's three (`Visual.PetGhostModels`, behind its switch).
+                "TumbangPreso/PetGhost",
 
                 // ⚠️ THE NEAR-CAMERA DISSOLVE, AND ITS MISS PATH SHIPS THE ORIGINAL REPORT BACK.
                 // `NearFade.Install` reaches it through `Shader.Find` and nothing in any scene

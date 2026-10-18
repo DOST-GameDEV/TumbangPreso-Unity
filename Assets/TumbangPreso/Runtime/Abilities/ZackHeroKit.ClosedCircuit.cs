@@ -62,7 +62,7 @@ namespace TumbangPreso.Abilities
                 Episode++;Target=target.PlayerSlot;Phase=CircuitPhase.Acquiring;
                 DurationRemaining=LockSeconds;_remoteAim=ctx.AimPoint;
                 _aimClock=ctx.Round.TimeLeft;_aimSequence=0;_nextAim=0;_dirty=true;
-                Visual.ZackCircuitTell.Ensure(ctx.Motor,_kit);
+                if(Visual.ZackCircuitArc.Enabled)Visual.ZackCircuitArc.Ensure(ctx.Motor,_kit);else Visual.ZackCircuitTell.Ensure(ctx.Motor,_kit);
             }
             private CharacterMotor Select(AbilityContext ctx,Vector3 aim,int excluded)
             {

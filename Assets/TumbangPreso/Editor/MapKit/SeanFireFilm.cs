@@ -61,7 +61,14 @@ namespace TumbangPreso.EditorTools.MapKit
             // `court <tag>`: on a real map in daylight, old beside new (`SeanFireCourt.cs`).
             if (mode == "court") { RunSeanCourt(tag); return; }
             // `throw <tag>`: EMPOWERED THROW on the bench, four views (`SeanThrowFilm.cs`).
-            if (mode == "throw") { RunSeanThrow(tag); return; }
+            if (mode == "throw")
+            {
+                // The third word picks the painting (`FxStudySeanThrow.Stylise`): `s1`, `s2`, or the soft t6 ramp.
+                var keep = FxStudySeanThrow.Stylise;
+                FxStudySeanThrow.Stylise = look == "s1" ? 1 : look == "s2" ? 2 : 0;
+                try { RunSeanThrow(tag); } finally { FxStudySeanThrow.Stylise = keep; }
+                return;
+            }
             Directory.CreateDirectory(OutDir);
             tag = new string((tag ?? "v00").Where(c => char.IsLetterOrDigit(c) || c == '-' || c == '_').ToArray()).ToLowerInvariant();
             if (tag.Length == 0) tag = "v00";

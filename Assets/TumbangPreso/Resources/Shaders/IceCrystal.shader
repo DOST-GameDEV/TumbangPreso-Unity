@@ -29,8 +29,9 @@
 // ⚠️ TWO OPT-IN INPUTS, BOTH OFF BY DEFAULT, for Yasmin's GLACIAL WALL (`CheskaGlacialWallLook`), which draws many
 // crystals as one baked mesh a kind. `_Grow` (0 off) raises each crystal out of the ground and sinks it again, from what
 // the mesh carries per vertex (TEXCOORD1 the crystal's foot, TEXCOORD2 its birth, height, death and seed), on `_Age`.
-// `_Flow` (0 off) lets cold light drift through the inside at two speeds. At 0 the approved crystals draw exactly as
-// they were filmed: the first changes nothing when it is off, the second adds nothing.
+// `_Flow` (0 off) lets cold light drift through the inside at two speeds. Both live ONLY in the `_GLACIAL_WALL`
+// variant, which the wall's own materials switch on: without that keyword this compiles to the approved shader's code
+// exactly, so the approved crystals draw as they were filmed.
 //
 // ⚠️ WRITTEN FOR PHONES AS WELL (GLES3): four texture reads, no loops, no screen-space derivatives, no depth texture,
 // no grab pass. SOLID: it writes depth and needs no sorting, so a cluster standing through itself draws correctly.
@@ -88,22 +89,36 @@ Shader "TumbangPreso/IceCrystal"
             #pragma vertex vert
             #pragma fragment frag
             #pragma target 3.0
+            #pragma multi_compile_local __ _GLACIAL_WALL
             #include "UnityCG.cginc"
-            sampler2D _MainTex, _BumpMap, _MaskTex, _FlowTex;
+            sampler2D _MainTex, _BumpMap, _MaskTex;
+            #ifdef _GLACIAL_WALL
+            sampler2D _FlowTex;
             float _Grow, _GrowTime, _DieAt, _DieTime, _Flow;
+            #endif
             float4 _MainTex_ST, _KeyDir;
             fixed4 _Deep, _LitColor, _GlowDeep, _GlowHot, _EdgeSoft, _EdgeSharp, _RimColor, _GlintColor;
             float _Bump, _Shade, _DeepAmount, _LitAmount, _GlintAmount, _Depth, _Parallax, _Inner, _Glow, _GlowBase, _GlowBack, _GlowThrough;
             float _EdgeSoftAmount, _EdgeSharpAmount, _RimAmount, _GlintPower, _Age, _Shimmer, _ShimmerPace, _Lit;
-            struct appdata { float4 vertex:POSITION; float3 normal:NORMAL; float4 tangent:TANGENT; float2 uv:TEXCOORD0; float4 foot:TEXCOORD1; float4 life:TEXCOORD2; };
+            struct appdata
+            {
+                float4 vertex:POSITION; float3 normal:NORMAL; float4 tangent:TANGENT; float2 uv:TEXCOORD0;
+            #ifdef _GLACIAL_WALL
+                float4 foot:TEXCOORD1; float4 life:TEXCOORD2;
+            #endif
+            };
             struct v2f
             {
                 float4 vertex:SV_POSITION; float2 uv:TEXCOORD0; float3 normal:TEXCOORD1; float3 tangent:TEXCOORD2;
-                float3 bitangent:TEXCOORD3; float3 toLens:TEXCOORD4; float3 at:TEXCOORD5;
+                float3 bitangent:TEXCOORD3; float3 toLens:TEXCOORD4;
+            #ifdef _GLACIAL_WALL
+                float3 at:TEXCOORD5;
+            #endif
             };
             v2f vert(appdata v)
             {
                 v2f o;
+            #ifdef _GLACIAL_WALL
                 o.at=v.vertex.xyz;
                 if (_Grow>0.5)
                 {
@@ -120,6 +135,7 @@ Shader "TumbangPreso/IceCrystal"
                     rel.y-=(1.0-rise)*v.life.y*1.08+d*v.life.y*1.05;
                     v.vertex.xyz=v.foot.xyz+rel;
                 }
+            #endif
                 o.vertex=UnityObjectToClipPos(v.vertex);
                 o.uv=TRANSFORM_TEX(v.uv,_MainTex);
                 o.normal=UnityObjectToWorldNormal(v.normal);
@@ -174,6 +190,7 @@ Shader "TumbangPreso/IceCrystal"
                 float spec=pow(saturate(dot(n,normalize(l+v))),_GlintPower);
                 float broken=paint.a+_Shimmer*.22*sin(_Age*_ShimmerPace+paint.a*17.0+i.uv.x*31.0);
                 col+=_GlintColor.rgb*smoothstep(.42,.50,spec*(.35+broken))*_GlintAmount;
+            #ifdef _GLACIAL_WALL
                 if (_Flow>0.0)
                 {
                     // Cold light drifting through: one map read twice, crossing at two speeds and multiplied, so what
@@ -182,6 +199,7 @@ Shader "TumbangPreso/IceCrystal"
                     f=smoothstep(0.18,0.62,f);
                     col+=lerp(_GlowDeep.rgb,_GlowHot.rgb,f)*f*_Flow*(0.35+0.65*glow);
                 }
+            #endif
                 return fixed4(col,1);
             }
             ENDCG

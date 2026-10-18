@@ -48,6 +48,8 @@ namespace TumbangPreso.Abilities
         private const float PopSeconds = .3f, LeaveSeconds = .45f, GrabSeconds = .3f, Reach = .3f, Scale = 1f;
         private static readonly Color Ecto = NemuGhostModels.SkitterBody, EyeGlow = NemuGhostModels.SkitterEyes;
         private NemuGhostBody _body;
+        // The pet bear's lively circles round its point (`PetGhostFlight`, drawing only, behind `PetGhostModels.PetGhosts`).
+        private readonly PetGhostFlight _flight = new PetGhostFlight(PetGhostFlight.Kind.Bear);
         private readonly NemuGhostBody[] _arms = new NemuGhostBody[2];
         private NemuSmokeBatch _fx;
         private Quaternion _facing = Quaternion.identity;
@@ -201,6 +203,15 @@ namespace TumbangPreso.Abilities
                 * Quaternion.AngleAxis(Mathf.Sin(stride * .5f) * 7f * run, Vector3.forward);
             float flash = Mathf.Max(grabPulse * 1.2f, (1f - p) * .8f);
             Vector3 at = Position + Vector3.up * (_bob + rise);
+            if (PetGhostModels.PetGhosts && _body != null)
+            {
+                // The pet bear circles round its point while it is free (never while it reaches, carries or leaves: then it is
+                // on the point), and spins for joy as it grabs. Drawing only: `Position` and the hold point do not move.
+                float free = !_carrying && !ReachFor.HasValue && !_leaving ? 1f - run : 0f;
+                _flight.Apply(ref at, ref facing, _age, free, dt);
+                if (g < 1f) facing *= Quaternion.AngleAxis(360f * g * g * (3f - 2f * g), Vector3.up);
+                _body.Trail = _flight.TrailLocal;
+            }
             _body?.Pose(at, facing, scale, fade, _age, .08f + _speed * .015f, Mathf.Clamp01(flash));
 
             PoseArms(fade, flash, run, stride);
@@ -234,7 +245,7 @@ namespace TumbangPreso.Abilities
                 Vector3 to = hand - shoulder;
                 float length = to.magnitude;
                 Quaternion rot = length > 1e-4f ? Quaternion.LookRotation(to / length, Vector3.up) : Quaternion.identity;
-                float stretch = Mathf.Clamp(length / NemuGhostModels.SkitterHand.z, .5f, 3.2f);
+                float stretch = Mathf.Clamp(length / NemuGhostModels.SkitterHand.z, .5f, PetGhostModels.PetGhosts ? PetGhostModels.MaxArmStretch : 3.2f);
                 _arms[side].PoseLocal(shoulder, rot, fade, _age, flash);
                 _arms[side].Transform.localScale = new Vector3(1f, 1f, stretch);
             }

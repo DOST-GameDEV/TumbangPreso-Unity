@@ -29,6 +29,17 @@
 // `_Near.y` metres narrows and fades, and is gone by `_Near.x`; and the threshold it is cut at, and the two ends of the
 // window it is drawn in, are pushed about by the noise (`_Ragged` is how far), so every cut edge is torn.
 //
+// ⚠️ b13: A TRAIL POINT HAS AN AGE, AND ITS WIDTH AND ITS DEATH ARE ITS AGE'S (`_Life`, `_Grow`, `_Die`, `_Wobble`; all
+// off at 0, so earlier films draw as they did). A ribbon laid from where a leg began to the shoe knows how long ago the
+// shoe passed each of its points: (metres behind the head) / speed, plus the time since its leg ended. So every point
+// is born thin at the shoe, swells, thins again and is eaten where it lies, and the trail's outline is the sum of those
+// lives, never one shape slid along. The width also wobbles with a noise fixed to the ground and drifting slowly
+// (`_Wobble`), so no two frames have the same edge.
+//
+// ⚠️ b13: PAINTED IN FOUR FLAT VALUES (`_Bands` on). The owner wants painted, neither stickers nor soft photographic
+// light: so the result is cut into a veil (`_Deep`, see-through), a body (`_Body`), a fold (`_Fold`) and a white core
+// (`_Hot`), each step crisp (`_Bands.y` wide), as Quick Circuit's streak reads: amber air, lemon charge, thin white.
+//
 // ⚠️ THE MASKS ARE PAINTED IN PLAIN GREY AND THE PROJECT IS LINEAR; `grey()` undoes the darkening.
 Shader "TumbangPreso/ZackTrail"
 {
@@ -61,6 +72,13 @@ Shader "TumbangPreso/ZackTrail"
         _Roll ("Its roll (degrees) about its own line, used where it is seen end-on", Float) = 0
         _Near ("Gone nearer the eye than x metres, whole beyond y (0 0 is off)", Vector) = (0, 0, 0, 0)
         _Ragged ("How far the noise tears its cut edges and window ends (0 off)", Range(0, 1)) = 0
+        _Size ("Length now (m), set per frame", Vector) = (1, 1, 0, 0)
+        _Life ("Age of a point: speed of the shoe (m/s, 0 off), seconds added (its leg's end)", Vector) = (0, 0, 0, 0)
+        _Grow ("Width by age: share at birth, full at x s... (birth share, full at, thinned share, thinned by)", Vector) = (0.3, 0.06, 0.5, 0.35)
+        _Die ("Eaten by age: from x s, gone by y s", Vector) = (0.2, 0.35, 0, 0)
+        _Wobble ("Width wobble: amount, noise per metre, drift a second", Vector) = (0, 0.6, 0.4, 0)
+        _Bands ("Four flat values: on (x), step softness (y), veil alpha (z), body alpha (w)", Vector) = (0, 0.03, 0.5, 0.85)
+        _Fold ("Colour of the fold band", Color) = (1, 0.95, 0.28, 1)
     }
     SubShader
     {
@@ -73,15 +91,17 @@ Shader "TumbangPreso/ZackTrail"
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma target 3.0
             #include "UnityCG.cginc"
             sampler2D _MaskTex, _NoiseTex;
             fixed4 _Deep, _Body, _Hot;
             float4 _Tile1, _Pan1, _Tile2, _Pan2, _Distort, _Wave, _Cut, _Stops, _Ends, _Window;
             float _Level;
             float _Mix, _Add, _Gain, _Age, _Opacity, _Erode, _ViewAlign, _Thick, _Roll, _Ragged;
-            float4 _Near;
+            float4 _Near, _Size, _Life, _Grow, _Die, _Wobble, _Bands;
+            fixed4 _Fold;
             struct appdata { float4 vertex:POSITION; float2 uv:TEXCOORD0; float2 across:TEXCOORD1; fixed4 colour:COLOR; };
-            struct v2f { float4 vertex:SV_POSITION; float2 uv:TEXCOORD0; fixed4 colour:COLOR; float near:TEXCOORD1; };
+            struct v2f { float4 vertex:SV_POSITION; float2 uv:TEXCOORD0; fixed4 colour:COLOR; float near:TEXCOORD1; float eaten:TEXCOORD2; };
             float grey(float sampled)
             {
                 #ifdef UNITY_COLORSPACE_GAMMA
@@ -93,6 +113,20 @@ Shader "TumbangPreso/ZackTrail"
             v2f vert(appdata v)
             {
                 v2f o;
+                // Its age, and what its age does to its width and its life.
+                float lifeWidth = 1.0; o.eaten = 0.0;
+                if (_Life.x > 0.0)
+                {
+                    float behind = (1.0 - v.uv.x) * _Size.x, age = behind / _Life.x + _Life.y;
+                    lifeWidth = lerp(_Grow.x, 1.0, smoothstep(0.0, _Grow.y, age)) * lerp(1.0, _Grow.z, smoothstep(_Grow.y, _Grow.w, age));
+                    o.eaten = smoothstep(_Die.x, _Die.y, age);
+                }
+                if (_Wobble.x > 0.0)
+                {
+                    float metres = v.uv.x * _Size.x;
+                    float n = tex2Dlod(_NoiseTex, float4(metres * _Wobble.y + _Wobble.z * _Age, 0.37 + _Wobble.w, 0, 0)).r - 0.5;
+                    lifeWidth *= max(0.2, 1.0 + 2.0 * n * _Wobble.x);
+                }
                 // A wave runs along it toward the tail, more at the tail than at the head.
                 float free = 1.0 - v.uv.x;
                 float phase = v.uv.x * _Wave.y * 6.2832 + _Age * _Wave.z + _Wave.w;
@@ -113,12 +147,13 @@ Shader "TumbangPreso/ZackTrail"
                     float3 face = cross(side, along);
                     // Near the eye it narrows as well as fades, so it never fills the frame as a pane.
                     float near = _Near.y > 0.0 ? smoothstep(_Near.x, _Near.y, distance(_WorldSpaceCameraPos, centre)) : 1.0;
-                    float3 world = centre + side * (v.across.x * _Thick * lerp(0.35, 1.0, near) + sway) + face * lift;
+                    float3 world = centre + side * (v.across.x * _Thick * lifeWidth * lerp(0.35, 1.0, near) + sway) + face * lift;
                     o.vertex = mul(UNITY_MATRIX_VP, float4(world, 1));
                     o.near = near;
                 }
                 else
                 {
+                    v.vertex.x *= lifeWidth;
                     v.vertex.y += lift;
                     v.vertex.x += sway;
                     o.vertex = UnityObjectToClipPos(v.vertex);
@@ -152,10 +187,27 @@ Shader "TumbangPreso/ZackTrail"
                 // Eaten: the threshold climbs, so what thins first is what was faint, and it tears.
                 // The edge it is cut at stays soft however far it is eaten (eaten, the cut narrowed to a hard line, and a
                 // strand seen from close by read as a card cut out with scissors).
-                float cutFrom = lerp(_Cut.x, 1.0, _Erode) + tear * (0.25 + 0.5 * _Erode), cutTo = cutFrom + max(0.18, lerp(_Cut.y, 1.05, _Erode) - cutFrom);
-                float alpha = smoothstep(cutFrom, cutTo, v) * _Opacity * i.near;
-                float3 colour = lerp(_Deep.rgb, _Body.rgb, smoothstep(_Cut.x, _Stops.x, v));
-                colour = lerp(colour, _Hot.rgb, smoothstep(_Stops.y, _Stops.z, v));
+                float erode = max(_Erode, i.eaten);
+                float cutFrom = lerp(_Cut.x, 1.0, erode) + tear * (0.25 + 0.5 * erode), cutTo = cutFrom + max(0.18, lerp(_Cut.y, 1.05, erode) - cutFrom);
+                float alpha; float3 colour;
+                if (_Bands.x > 0.5)
+                {
+                    // Four flat values, each step a narrow ramp; eaten, every step climbs with the cut, so the faint veil
+                    // goes first and the white core last, and the edges tear with the same noise.
+                    float s = _Bands.y, lift = cutFrom - _Cut.x;
+                    float veil = smoothstep(cutFrom - s, cutFrom + s, v);
+                    float body = smoothstep(_Stops.x + lift - s, _Stops.x + lift + s, v);
+                    float fold = smoothstep(_Stops.y + lift - s, _Stops.y + lift + s, v);
+                    float core = smoothstep(_Stops.z + lift - s, _Stops.z + lift + s, v);
+                    colour = lerp(lerp(lerp(_Deep.rgb, _Body.rgb, body), _Fold.rgb, fold), _Hot.rgb, core);
+                    alpha = veil * lerp(_Bands.z, lerp(_Bands.w, 1.0, fold), body) * _Opacity * i.near;
+                }
+                else
+                {
+                    alpha = smoothstep(cutFrom, cutTo, v) * _Opacity * i.near;
+                    colour = lerp(_Deep.rgb, _Body.rgb, smoothstep(_Cut.x, _Stops.x, v));
+                    colour = lerp(colour, _Hot.rgb, smoothstep(_Stops.y, _Stops.z, v));
+                }
                 colour *= i.colour.rgb;
                 return float4(colour * alpha * _Gain, alpha * (1.0 - _Add));
             }

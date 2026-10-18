@@ -225,6 +225,7 @@ namespace TumbangPreso.Abilities
                         MatchFlair.Announce(MatchFlair.Kind.UltimateImpact, ctx.Motor.PlayerSlot, p.PlayerSlot, ctx.Position);
                     }
                 }
+                if (Visual.UltimateLiveLook.CheskaAbsoluteZero) Visual.UltimateLiveLook.Cheska(ctx.Position);
                 FrostSurfacePresentation.Nova(ctx.Position, 4.6f);
             }
         }

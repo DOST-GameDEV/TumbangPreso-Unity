@@ -69,6 +69,16 @@ namespace TumbangPreso.EditorTools.MapKit
                     finally { FxStudyZackBank.StrandMask = null; FxStudyZackBank.StrandTune = null; }
                     continue;
                 }
+                // `head <0|1|2>`: Bank Shot's head rim for the films that follow in the same request (b13d candidates).
+                if (words[0] == "head" && words.Length > 1) { int.TryParse(words[1], out FxStudyZackBank.HeadLook); continue; }
+                // `daybench <effect> <tag>`: a bench film of Bank Shot on a light floor and light walls, the sunlit court's stand-in.
+                if (words[0] == "daybench" && words.Length > 2)
+                {
+                    FxStudyZackBank.Day = true;
+                    try { PaeteAbilityFilm.ZackBench(words[1], words[2]); }
+                    finally { FxStudyZackBank.Day = false; }
+                    continue;
+                }
                 // `mask <name> [lift cutFrom cutTo]` puts a candidate picture on Bank Shot's trail ribbons for the bench films that follow; `mask -` clears it.
                 if (words[0] == "mask") { FxStudyZackBank.StrandMask = words.Length > 1 && words[1] != "-" ? words[1] : null; FxStudyZackBank.StrandTune = words.Length > 4 ? new Vector4(float.Parse(words[2], System.Globalization.CultureInfo.InvariantCulture), float.Parse(words[3], System.Globalization.CultureInfo.InvariantCulture), float.Parse(words[4], System.Globalization.CultureInfo.InvariantCulture), words.Length > 5 ? float.Parse(words[5], System.Globalization.CultureInfo.InvariantCulture) : 1f) : (Vector4?)null; Debug.Log("[ZackCircuitFilm] trail mask " + (words.Length > 1 ? words[1] : "-")); continue; }
                 if (words[0].StartsWith("cost")) { PaeteAbilityFilm.CostOf(words[0], words.Length > 1 ? words[1] : "zackbank"); continue; }

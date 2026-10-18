@@ -127,7 +127,7 @@ namespace TumbangPreso.Abilities
             {
                 _kit._joiningSkimSettled = true; _kit._loadedSlipper = ctx.Carrier?.Held;
                 var shoe=_kit._loadedSlipper;
-                if(shoe!=null)Visual.RafiSkimCoating.Ensure(shoe.GetComponentInChildren<MeshFilter>(),shoe,_kit);
+                if(shoe!=null){if(Visual.RafiSkimPainted.Enabled)Visual.RafiSkimPainted.Ensure(shoe.GetComponentInChildren<MeshFilter>(),shoe,_kit);else Visual.RafiSkimCoating.Ensure(shoe.GetComponentInChildren<MeshFilter>(),shoe,_kit);}
             }
             protected override void OnTick(AbilityContext ctx, float dt)
             {
