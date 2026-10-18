@@ -86,6 +86,20 @@ Standalone QoL158 and ASTRA154 peers cannot join this combined contract.
 Earlier saved player clip formats remain readable under their own bounds.
 Matching actual-peer and full-match/performance acceptance remain separate.
 
+## Payo moon easter egg (2026-10-19, no protocol step)
+
+`Map.PayoMoon` follows the Arena balloon exactly: the HOST decides a hit at the throw
+(`Carrier.HostThrowAt` calls `PayoMoon.HostOfferThrow` beside the balloon's call), takes
+the slipper out of play and returns it through `ArenaFallRecovery.HostSendAway`, and tells
+the room with ONE host-to-all named message, `PayoMoon` (`MatchRpc.PayoMoon.cs`, same
+layout as `ArenaBalloon`), also sent to a joining peer. The reward (Mayari, the shower,
+the moon's sleep) is a pure function of the revealing throw's launch time on
+`ArenaFx.SharedClock`, so the snapshot carries that launch and a late joiner sees it as
+far along as the room. A client sends nothing. No score, tag, can or rule changes. Not
+bumped: a peer built before it has no handler, Netcode drops the unknown name unread, and
+that peer only misses the moon's reaction (the slipper's own state is unchanged).
+Actual-peer acceptance is not yet recorded.
+
 ## Protocol154: companion replay bodies
 
 Clip format15 adds summoned doll body tracks and permits companion seats4-7

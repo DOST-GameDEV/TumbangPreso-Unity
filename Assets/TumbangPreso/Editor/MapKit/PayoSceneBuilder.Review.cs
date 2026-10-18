@@ -295,11 +295,18 @@ namespace TumbangPreso.EditorTools.MapKit
         internal static string Run(string request)
         {
             var words = request.ToLowerInvariant().Split(new[] { ' ', '\t', '\r', '\n', ',' }, StringSplitOptions.RemoveEmptyEntries);
-            bool build = words.Contains("build"), review = words.Contains("review");
-            if (!build && !review) throw new InvalidOperationException("unknown request '" + request.Trim() + "' (write build, review, probe, or several of them)");
+            bool build = words.Contains("build"), review = words.Contains("review"), stills = words.Contains("stills"), sheet = words.Contains("sheet");
+            if (!build && !review && !stills && !sheet) throw new InvalidOperationException("unknown request '" + request.Trim() + "' (write build, review, stills LABEL, sheet, probe, measure LABEL, or several of them)");
             var said = new List<string>();
             var warnings = new List<string>();
             if (build) { said.Add(Build()); warnings.AddRange(Warnings); }
+            if (stills)
+            {
+                int at = Array.IndexOf(words, "stills");
+                string label = at + 1 < words.Length && !new[] { "build", "review", "sheet" }.Contains(words[at + 1]) ? words[at + 1] : "stills";
+                said.Add(Stills(label));
+            }
+            if (sheet) said.Add(PerfSheet());
             if (review) { Warnings.Clear(); said.Add(Review(NextReviewFolder())); warnings.AddRange(Warnings.Where(w => !warnings.Contains(w))); }
             string result = string.Join("; ", said);
             if (warnings.Count > 0) result += "\n" + warnings.Count + " warning(s):\n- " + string.Join("\n- ", warnings);
@@ -333,7 +340,7 @@ namespace TumbangPreso.EditorTools.MapKit
             if (EditorApplication.timeSinceStartup < _nextPoll) return;
             _nextPoll = EditorApplication.timeSinceStartup + 1.0;
             if (!File.Exists(Request)) return;
-            if (PayoPlayProbe.Busy || PaeteRunPlayProbe.Busy || EskinitaAlleyPlayProbe.Busy || Others.Any(File.Exists)) return;
+            if (PayoPlayProbe.Busy || PayoPerfProbe.Busy || PaeteRunPlayProbe.Busy || EskinitaAlleyPlayProbe.Busy || Others.Any(File.Exists)) return;
             if (EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isCompiling || EditorApplication.isUpdating) return;
 
             string result;
@@ -345,16 +352,22 @@ namespace TumbangPreso.EditorTools.MapKit
                 File.Delete(Request);
                 if (File.Exists(Done)) File.Delete(Done);
                 var words = text.ToLowerInvariant().Split(new[] { ' ', '\t', '\r', '\n', ',' }, StringSplitOptions.RemoveEmptyEntries);
+                if (words.Contains("measure"))
+                {
+                    // `measure LABEL`: the frame measurement in Play (PayoPerfProbe), written to Logs/payo/unity/perf/LABEL.txt.
+                    PayoPerfProbe.Begin(words.FirstOrDefault(w => w != "measure") ?? "measure");
+                    return;
+                }
                 if (words.Contains("probe"))
                 {
                     // `probe arena` checks the Arena's own scene; `rounds=N` sets the pinned match's length (6 unless said).
-                    bool arena = words.Contains("arena");
+                    bool arena = words.Contains("arena"), fall = words.Contains("fall");
                     int rounds = 6;
                     foreach (string w in words) if (w.StartsWith("rounds=", StringComparison.Ordinal) && int.TryParse(w.Substring(7), out int asked)) rounds = asked;
-                    var rest = words.Where(w => w != "probe" && w != "arena" && !w.StartsWith("rounds=", StringComparison.Ordinal) && !int.TryParse(w, out _)).ToArray();
+                    var rest = words.Where(w => w != "probe" && w != "arena" && w != "fall" && !w.StartsWith("rounds=", StringComparison.Ordinal) && !int.TryParse(w, out _)).ToArray();
                     int budget = words.Select(w => int.TryParse(w, out int n) ? n : 0).FirstOrDefault(n => n > 0);
                     string before = rest.Length > 0 ? Guarded(string.Join(" ", rest)) : "";
-                    PayoPlayProbe.Begin(before, budget > 0 ? budget : PayoPlayProbe.DefaultBudget, arena ? "arena" : "", rounds);
+                    PayoPlayProbe.Begin(before, budget > 0 ? budget : PayoPlayProbe.DefaultBudget, arena ? "arena" : fall ? "fall" : "", rounds);
                     return;
                 }
                 result = "OK " + Guarded(text);

@@ -64,7 +64,9 @@ namespace TumbangPreso.EditorTools.MapKit
 
         /// <summary>The sun by day: 46 degrees up (the look row's), travelling from over the valley in the north east.
         /// The moon: lower, from the north, where Mayari stands.</summary>
-        public const float SunYaw = 230.0f, MoonYaw = 193.0f, MoonElevation = 30.0f;
+        // The sun stands in the valley's open end, due north (owner, 2026-10-18: "sun is off center"; it was 150, about 30
+        // degrees west of north).
+        public const float SunYaw = 180.0f, MoonYaw = 193.0f, MoonElevation = 22.0f;   // 22: the moonlight and its sky glow sit on the cute moon (PayoMoon, 22 degrees up), 2026-10-19
         /// <summary>The cameras see across the valley; the ink is whole on the stage and gone before the terraces.</summary>
         /// ⚠️ 3.7 km: the art's Mayari stands 2.9 km out beyond a last range at 2.7 km, and the stars ride 3.35 km out.
         private const float PlayFar = 3700.0f, FreeFar = 4200.0f, InkFadeStart = 45.0f, InkFadeEnd = 95.0f;
@@ -110,7 +112,11 @@ namespace TumbangPreso.EditorTools.MapKit
             /// <summary>By block id: the turn its model is placed with (and its stair's), and the plain shaft hung under it.</summary>
             public readonly Dictionary<string, float> BlockYaw = new Dictionary<string, float>(), StairYaw = new Dictionary<string, float>();
             public readonly Dictionary<string, string> Extension = new Dictionary<string, string>();
+            /// <summary>By block id: d53's few-millimetre height offset (every top a little apart, so no two share a plane and flicker).</summary>
+            public readonly Dictionary<string, float> BlockDy = new Dictionary<string, float>();
             public string Geyser, SpeedPad, Plinth;
+            /// <summary>The stamina orb (cell and halo) hung over each plinth as `ArenaStaminaPickup`'s own model (tools/payo_pieces/orb_build.py).</summary>
+            public string Orb = "pickup_orb";
             public bool HasFires;
             /// <summary>The art says every model carries vertex colour and every material but the leaf cards must multiply by it.</summary>
             public bool VertexColour;
@@ -154,12 +160,15 @@ namespace TumbangPreso.EditorTools.MapKit
                     if (id == null) continue;
                     if (Str(b["model"]) != null) art.BlockModel[id] = Str(b["model"]);
                     art.BlockYaw[id] = Num(b["yaw"], 0.0f);
+                    // Only ever a few millimetres DOWN (the art then stays under its collision top): anything else is ignored.
+                    float dy = Num(b["dy"], 0.0f);
+                    if (dy < 0.0f && dy > -0.1f) art.BlockDy[id] = dy;
                     if (Str(b["extension"]) != null) art.Extension[id] = Str(b["extension"]);
                     if (b["stair"] is JObject stair && Str(stair["model"]) != null) { art.StairModel[id] = Str(stair["model"]); art.StairYaw[id] = Num(stair["yaw"], art.BlockYaw[id]); }
                 }
                 if (art.Doc["movers"] is JObject movers)
                     foreach (var pair in movers) if (pair.Value is JObject m && Str(m["model"]) != null) art.MoverModel[pair.Key] = Str(m["model"]);
-                if (art.Doc["pads"] is JObject pads) { art.Geyser = Str(pads["jumpPads"]); art.SpeedPad = Str(pads["speedPads"]); art.Plinth = Str(pads["pickups"]); }
+                if (art.Doc["pads"] is JObject pads) { art.Geyser = Str(pads["jumpPads"]); art.SpeedPad = Str(pads["speedPads"]); art.Plinth = Str(pads["pickups"]); art.Orb = Str(pads["pickupOrb"]) ?? art.Orb; }
                 foreach (var p in art.Placements) if (Str(p["model"]) == "fire_bowl" || Str(p["model"]) == "fire_flame") art.HasFires = true;
                 art.VertexColour = art.Doc["vertex_colour"] != null;
             }
@@ -202,18 +211,30 @@ namespace TumbangPreso.EditorTools.MapKit
             int placed = 0, missing = 0;
             Renderer[] mayari = null;
             if (art.Doc != null) placed = Dressing(root, layout, art, named, nightOnly, nightGlow, ref missing, out mayari);
-            string scenery = (art.HideSolids ? "no stand-in scenery (hide_solids)" : StandIn(root, layout)) + "; " + Mist(root, layout);
+            if (art.Doc != null) { try { Debug.Log(Tag + Plaza(root, named)); } catch (Exception e) { Warn("plaza: FAILED, the map is built without it: " + e.Message); Debug.LogException(e); } }   // the basin's dressing (PayoSceneBuilder.Plaza.cs)
+            // Rice on the paddies and grass on the flat ground near the court, baked onto the land just placed (docs/PAYO_BLADES.md).
+            string blades = "no blades (no art)";
+            if (art.Doc != null)
+            {
+                try { blades = PayoBladesBaker.Bake(root); }
+                catch (Exception e) { blades = "blades: FAILED, the map is built without them: " + e.Message; Warn(blades); Debug.LogException(e); }
+            }
+            // The stand-in mist sheets (payo_standin_mist_*) went with the stand-in: the approved art (2026-10-18) has the pit's own
+            // pool and falls, and the opaque bottom sheet hid them behind a pale pane.
+            string scenery = art.HideSolids ? "no stand-in scenery or stand-in mist (hide_solids)" : StandIn(root, layout) + "; " + Mist(root, layout);
             string night = Night(root, layout, sun, mayari, nightOnly, nightGlow);
+            night += "; " + Moon(root);   // the cute moon and Mayari of the stars as its reward (PayoSceneBuilder.Moon.cs)
             string alive;
             try { alive = Life(root, layout, stage, art); }
             catch (Exception e) { alive = "life: FAILED, the map is built without it: " + e.Message; Warn(alive); Debug.LogException(e); }
+            if (art.Doc != null) _plantSaid += "; " + InkClear(root);
 
             Directory.CreateDirectory(Path.GetDirectoryName(ScenePath));
             EditorSceneManager.MarkSceneDirty(scene);
             if (!EditorSceneManager.SaveScene(scene, ScenePath)) throw new InvalidOperationException("Could not save " + ScenePath);
             AssetDatabase.SaveAssets();
             string summary = $"built {ScenePath} from {LayoutPath} ({layout.Layouts.Count} layouts: {string.Join(", ", layout.Layouts.Select(l => l.Name))}); {stageSaid}; " +
-                             $"{(art.Doc != null ? placed + " art pieces placed, " + missing + " missing; " + _terraceSaid + "; " + named.Count + " materials built of " + Specs.Count + " specs" : "no payo_art.json: the stand-in look")}; {scenery}; {night}; {alive}; " +
+                             $"{(art.Doc != null ? placed + " art pieces placed, " + missing + " missing; " + _plantSaid + "; " + _faceUp + " upside-down river meshes turned up; " + Collided + " mesh colliders on collide placements; " + blades + "; " + _terraceSaid + "; " + named.Count + " materials built of " + Specs.Count + " specs" : "no payo_art.json: the stand-in look")}; {scenery}; {night}; {alive}; " +
                              $"sun yaw {SunYaw:0} at {day.SunElevation:0} degrees, cameras to {PlayFar:0} m (play) and {FreeFar:0} m (free); NOT in any map list or build settings";
             Debug.Log(Tag + summary);
             return summary;
@@ -323,7 +344,8 @@ namespace TumbangPreso.EditorTools.MapKit
                         float turn = shape.Stair != 0 && art.StairYaw.TryGetValue(id, out float sy) ? sy : art.BlockYaw.TryGetValue(id, out float by) ? by : 0.0f;
                         var instance = (GameObject)PrefabUtility.InstantiatePrefab(model, holder.transform);
                         instance.name = "Model";
-                        instance.transform.localPosition = new Vector3(shape.X, shape.Top - 0.01f, shape.Z);
+                        float dy = art.BlockDy.TryGetValue(id, out float bdy) ? bdy : 0.0f;
+                        instance.transform.localPosition = new Vector3(shape.X, shape.Top - 0.01f + dy, shape.Z);
                         instance.transform.localRotation = Quaternion.Euler(0.0f, turn, 0.0f);
                         Rematerial(instance, named);
                         foreach (var c in instance.GetComponentsInChildren<Collider>(true)) Object.DestroyImmediate(c);
@@ -332,7 +354,7 @@ namespace TumbangPreso.EditorTools.MapKit
                         // The plain shaft under it, so a raised block shows no foot: the same origin and turn, riding with it.
                         if (art.Extension.TryGetValue(id, out string extension))
                         {
-                            var shaft0 = Hang(extension, holder.transform, new Vector3(shape.X, shape.Top - 0.01f, shape.Z), "Extension", named);
+                            var shaft0 = Hang(extension, holder.transform, new Vector3(shape.X, shape.Top - 0.01f + dy, shape.Z), "Extension", named);
                             if (shaft0 != null) shaft0.transform.localRotation = Quaternion.Euler(0.0f, art.BlockYaw.TryGetValue(id, out float ey) ? ey : 0.0f, 0.0f);
                         }
                         authored++;
@@ -536,8 +558,9 @@ namespace TumbangPreso.EditorTools.MapKit
                 var pickup = Group(group, "StaminaPickup " + n++);
                 pickup.position = p.At;
                 pickup.gameObject.AddComponent<ArenaStaminaPickup>();
-                // Not named as the component's own model: the plinth has no orb, so the component still draws its orb over it.
+                // The plinth is the base; the orb (pickup_cell, pickup_halo) is the component's own model, so it draws no grey-box.
                 if (_art != null) Hang(_art.Plinth, pickup, Vector3.zero, "Plinth", _named);
+                if (_art != null) Hang(_art.Orb, pickup, Vector3.zero, ArenaStaminaPickup.ModelName, _named);
                 made++;
             }
 
@@ -686,6 +709,9 @@ namespace TumbangPreso.EditorTools.MapKit
                 sky.SetColor("_Ground", day.Fog * 0.8f);
                 sky.SetColor("_CloudLight", day.CloudLight); sky.SetColor("_CloudShade", day.CloudShade);
                 sky.SetColor("_SunColor", day.Sun); sky.SetVector("_SunDirection", -sun.transform.forward);
+                // the setting sun shows as a disc over the valley (owner: the play area faces the valley and the sunset);
+                // PayoNight.Sky swaps these for the moon at the break
+                sky.SetFloat("_SunDisc", .05f); sky.SetFloat("_SunHalo", 1f); sky.SetFloat("_SunClear", .35f); sky.SetFloat("_SunCrisp", .85f);
                 EditorUtility.SetDirty(sky);
             }
             else Warn("no sky material was made (MapAtmosphereAuthor): the scene has no skybox");
@@ -813,6 +839,8 @@ namespace TumbangPreso.EditorTools.MapKit
         {
             var holder = Group(root, "Night").gameObject;
             var night = holder.AddComponent<PayoNight>();
+            holder.AddComponent<PayoHaze>();      // the aerial haze over the valley, by day and night (owner, 2026-10-18: "should add a haze")
+            holder.AddComponent<PayoPaddySky>();  // the live sky's colours for the watered paddies' reflection (PayoLand, paddy_flood)
             night.Sun = sun;
             night.SunDay = sun.transform.rotation;
             night.SunNight = Quaternion.Euler(MoonElevation, MoonYaw, 0.0f);
@@ -1199,7 +1227,7 @@ namespace TumbangPreso.EditorTools.MapKit
         private static Dictionary<string, Material> ArtMaterials()
         {
             Specs.Clear(); Glows.Clear(); NoShadow.Clear(); Unknown.Clear();
-            Lanterns.Clear(); Lamps.Clear(); Plants.Clear(); _terraceSaid = "";
+            Lanterns.Clear(); Lamps.Clear(); Plants.Clear(); FarPlants.Clear(); _terraceSaid = ""; Collided = 0; _plantSaid = ""; _plantLod1 = _plantSway = _plantNoLod1 = 0; NoLod1.Clear(); _faceUp = 0;
             if (!File.Exists(MaterialsPath)) return new Dictionary<string, Material>();
             try
             {
@@ -1244,6 +1272,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 kind = name == "py_mayari" || Flag("unlit") ? "unlit" : name == "py_water" ? "water" : name == "py_fall" ? "fall" : name == "py_foam" ? "foam"
                      : Flag("foliage") ? "foliage card" : Flag("emissive") ? "glow" : "painted";
             if (kind == "foliage") kind = "foliage card";
+            if (kind == "payo_land") return LandMaterial(name, token);
             // A kept plant material says kind painted and foliage true: its leaves are cards.
             if (kind == "painted" && Flag("foliage")) kind = "foliage card";
             bool cut = Flag("cutout") || kind == "foliage card" || kind == "decal";
@@ -1317,14 +1346,223 @@ namespace TumbangPreso.EditorTools.MapKit
                 m.SetFloat("_Cull", cut || Flag("two_sided") ? (float)CullMode.Off : (float)CullMode.Back);
                 m.SetFloat("_Cutoff", kind == "decal" ? 0.35f : cut ? 0.5f : 0.0f);
                 // By day a glow is a faint light of its own picture; the night's colour for it is set by `Night`.
-                m.SetColor("_EmissionColor", glow ? new Color(0.1f, 0.1f, 0.1f) : Color.black);
+                // `day_glow` in the spec lifts a glow that must shine by day too (the stamina orb); 0.1 otherwise.
+                float day = Num(token["day_glow"], 0.1f);
+                m.SetColor("_EmissionColor", glow ? new Color(day, day, day) : Color.black);
                 m.SetFloat("_EmissionFromAlbedo", glow && albedo != null ? 1.0f : 0.0f);
                 m.SetFloat("_Grain", 0.0f); m.SetFloat("_Haze", 0.0f); m.SetFloat("_NormalToneOn", 0.0f);
+                StoneGrain(m, name);
                 m.globalIlluminationFlags = MaterialGlobalIlluminationFlags.None;
                 m.renderQueue = -1;
                 if (glow) Glows.Add(name);
                 if (kind == "decal") NoShadow.Add(name);
             }
+            m.enableInstancing = true;
+            EditorUtility.SetDirty(m);
+            return m;
+        }
+
+        /// <summary>
+        /// THE STAGE STONE'S DETAIL LAYER (owner, 2026-10-18: "the textures look low res"). Each block wears one painted
+        /// atlas over the whole block: 35 to 46 pixels a metre on the blocks, 64 on the court, 7 on the 40 m shafts, so up
+        /// close its joints and motifs go soft, where the other maps tile small textures and stay sharp. The painted
+        /// shader's grain (`_Grain`) is turned on for the stone as a COLOUR MOTTLE: `Textures/stone_mottle_albedo.png`
+        /// (`tools/payo_pieces/stone_mottle.py`), soft greener and redder patches a metre or more across, box-projected
+        /// at 10 m and again at 0.61 of that, turned, a few per cent either way (`_GrainHue`). The first pass's fine grey
+        /// grain (`stone_grain.py`, 1.4 m) was "a bit too much ... they shouldnt be too fine. they should look like large
+        /// splotches of a small random hue offset" (owner, 2026-10-18). The sharpness itself comes from the atlases
+        /// (`stone_kit.py` UP: the court's core is painted at twice the pixels). The approved paint is unchanged.
+        /// </summary>
+        private static readonly System.Text.RegularExpressions.Regex StoneNames = new System.Text.RegularExpressions.Regex(
+            "^(core|monolith|mid_|slab_|stone_|bridge_|tower_|ext_|stair_|mover_|pad_|pickup_plinth|py_court_stone)");
+        public const float StoneGrainMetres = 10f, StoneGrainFine = 0.61f, StoneGrainHue = 0.06f;
+
+        private static void StoneGrain(Material m, string name)
+        {
+            if (!StoneNames.IsMatch(name)) return;
+            var grain = LoadTexture($"{Root}/Textures/stone_mottle_albedo.png", TexUse.Data);   // linear: its grey is 0.5, no change
+            if (grain == null) { Warn("Textures/stone_mottle_albedo.png is missing: the stage stone has no colour mottle"); return; }
+            m.SetFloat("_Grain", 1.0f);
+            m.SetTexture("_GrainTex", grain);
+            m.SetFloat("_GrainScale", StoneGrainMetres);
+            m.SetFloat("_GrainFine", StoneGrainFine);
+            m.SetFloat("_GrainHue", StoneGrainHue);
+        }
+
+        private const string LandShader = "TumbangPreso/PayoLand", LandTextures = Root + "/Textures/land";
+
+        /// <summary>
+        /// A land material (kind `payo_land`) on TumbangPreso/PayoLand, the port of calm_paint() in tools/payo_land_blend.py
+        /// (docs/PAYO_LAND_SHADER.md). The spec's `surface` picks the shader keyword and the Blender numbers below (tile
+        /// metres, relief, anti-tiling rotation, far fade, hue drift tints, roughness), each overridable from the spec:
+        /// `tile` (number or [x, y, z]), `relief`, `smoothness`, `far` [start, end], `hue_warm`, `hue_cool` ([r, g, b]),
+        /// `origin` (the Unity position of the Blender land origin, [x, y, z]), `vertex_colour`, `colour` ([r, g, b] sRGB),
+        /// `glow`. Pictures are read from Textures/land under their tex_calm names unless the spec (or its `textures`
+        /// object) names a file for `value`, `height`, `colour`, `shade`, `grass`, `macro` or `rows`.
+        /// </summary>
+        private static Material LandMaterial(string name, JToken token)
+        {
+            var shader = Shader.Find(LandShader);
+            if (shader == null) { Warn("the shader " + LandShader + " is missing: the land keeps the importer's material"); return null; }
+            string[] surfaces = { "slope", "wall", "paddy", "rock", "paving", "flooded", "town_wall", "water", "foam" };
+            string[] keywords = { "_SURFACE_SLOPE", "_SURFACE_WALL", "_SURFACE_PADDY", "_SURFACE_ROCK", "_SURFACE_PAVING", "_SURFACE_FLOODED", "_SURFACE_TOWNWALL", "_SURFACE_WATER", "_SURFACE_FOAM" };
+            string surface = (Str(token["surface"]) ?? "slope").ToLowerInvariant();
+            int index = Array.IndexOf(surfaces, surface);
+            if (index < 0) { Warn($"land material '{name}' has an unknown surface '{surface}': it is drawn as a slope"); index = 0; surface = "slope"; }
+
+            // tools/payo_land_blend.py: CALM_TEX (metres, relief), CALM_ROTATE, CALM_FAR, CALM_HUE, the materials' roughness
+            string prefix = surface == "slope" ? "grass" : surface == "wall" ? "earth" : surface == "town_wall" ? "bank" : surface;
+            float metres = surface switch { "slope" => 20f, "wall" => 6f, "paddy" => 12f, "rock" => 16f, "paving" => 10f, "flooded" => 14f, "water" => 24f, "foam" => 10f, _ => 12f };
+            Vector3 tile = surface == "town_wall" ? new Vector3(12f, 12f, 5f) : Vector3.one * metres;
+            float relief = surface switch { "slope" => 0.12f, "wall" => 0.06f, "paddy" => 0.02f, "rock" => 0.22f, "paving" => 0.05f, "flooded" => 0.025f, "town_wall" => 0.097f, _ => 0.10f };
+            bool rotate = surface == "slope" || surface == "rock" || surface == "flooded" || surface == "water" || surface == "foam";
+            Vector2 far = surface == "wall" || surface == "town_wall" ? new Vector2(80f, 240f) : new Vector2(120f, 320f);
+            // ⚠️ NOT Blender's roughness (flooded 0.12, river 0.15, foam 0.4): the built scene has no baked reflection (no
+            // probe, the skybox reflection is never generated by the batch build), so a glossy surface reflects near black
+            // at a grazing view and the river and the flooded paddies read dark grey where Blender's are pale (Logs/payo/unity/v1).
+            // The flooded paddies now draw their own sky (the shader's watered paddies, 2026-10-18), so they take none.
+            float smoothness = surface == "water" ? 0.35f : surface == "foam" ? 0.2f : 0.0f;
+            (Vector3 warm, Vector3 cool) hue = surface switch
+            {
+                "slope" => (new Vector3(1.10f, 1.07f, 0.84f), new Vector3(0.90f, 1.0f, 1.12f)),
+                "town_wall" => (new Vector3(1.06f, 1.01f, 0.92f), new Vector3(0.95f, 0.99f, 1.06f)),
+                "paddy" => (new Vector3(1.08f, 1.02f, 0.84f), new Vector3(0.94f, 1.04f, 0.98f)),
+                "rock" => (new Vector3(1.07f, 1.01f, 0.91f), new Vector3(0.94f, 0.99f, 1.07f)),
+                "paving" => (new Vector3(1.05f, 1.01f, 0.93f), new Vector3(0.96f, 0.99f, 1.05f)),
+                "flooded" => (new Vector3(1.02f, 1.0f, 0.96f), new Vector3(0.97f, 1.0f, 1.04f)),
+                "wall" => (new Vector3(1.07f, 1.02f, 0.90f), new Vector3(0.95f, 0.99f, 1.06f)),
+                _ => (Vector3.one, Vector3.one),
+            };
+            bool river = surface == "water" || surface == "foam";
+            Color riverColour = surface == "foam" ? new Color(0.86f, 0.94f, 0.96f, 1f) : new Color(0.56f, 0.74f, 0.82f, 1f);
+            float glow = surface == "foam" ? 0.35f : surface == "water" ? 0.25f : 0.0f;
+
+            Vector3 Vec3(JToken v, Vector3 fallback) => v is JArray a && a.Count >= 3 ? new Vector3((float)a[0], (float)a[1], (float)a[2]) : fallback;
+            if (token["tile"] is JArray) tile = Vec3(token["tile"], tile);
+            else if (token["tile"] != null) tile = Vector3.one * Num(token["tile"], metres);
+            relief = Num(token["relief"], relief);
+            smoothness = Num(token["smoothness"], smoothness);
+            if (token["far"] is JArray fa && fa.Count >= 2) far = new Vector2((float)fa[0], (float)fa[1]);
+            hue = (Vec3(token["hue_warm"], hue.warm), Vec3(token["hue_cool"], hue.cool));
+            Vector3 origin = Vec3(token["origin"], Vector3.zero);
+            bool vertex = token["vertex_colour"] != null ? Yes(token["vertex_colour"]) : !river;
+            Vector3 given = Vec3(token["colour"], new Vector3(riverColour.r, riverColour.g, riverColour.b));
+            riverColour = new Color(given.x, given.y, given.z, 1f);
+            glow = Num(token["glow"], glow);
+
+            string projectRoot = Path.GetDirectoryName(Application.dataPath);
+            Texture2D LandPicture(string key, string file, TexUse use, bool sixteen = false, bool clamp = false)
+            {
+                string named = Str(token[key]) ?? (token["textures"] is JObject tx ? Str(tx[key]) : null);
+                string f = named ?? file;
+                if (!Path.HasExtension(f)) f += ".png";
+                string path = f.StartsWith("Assets/", StringComparison.Ordinal) ? f : $"{LandTextures}/{f}";
+                var tex = LoadTexture(path, use);
+                if (tex == null) { Warn($"land material '{name}': the picture {path} is missing"); return null; }
+                var importer = AssetImporter.GetAtPath(path) as TextureImporter;
+                if (importer != null && (sixteen || clamp))
+                {
+                    bool dirty = false;
+                    // ⚠️ 16 BITS KEPT: the heights and the rows map are 16-bit pngs. At 8 bits the rows' distance (0..130 m)
+                    // would step every half metre, coarser than the 1.2 m row pitch, and the bump would terrace.
+                    var ps = importer.GetPlatformTextureSettings("Standalone");
+                    if (sixteen && (!ps.overridden || ps.format != TextureImporterFormat.R16))
+                    {
+                        ps.overridden = true; ps.format = TextureImporterFormat.R16;
+                        importer.SetPlatformTextureSettings(ps); dirty = true;
+                    }
+                    if (clamp && importer.wrapMode != TextureWrapMode.Clamp) { importer.wrapMode = TextureWrapMode.Clamp; dirty = true; }
+                    if (dirty) { importer.SaveAndReimport(); tex = AssetDatabase.LoadAssetAtPath<Texture2D>(path); }
+                }
+                return tex;
+            }
+            float[] Numbers(string key, string file, int count)
+            {
+                if (token[key] is JArray a && a.Count >= count) return a.Take(count).Select(e => (float)e).ToArray();
+                foreach (string path in new[] { $"{LandTextures}/{file}", Path.Combine(projectRoot, "Logs", "payo", "terrain", "tex_calm", file) })
+                {
+                    if (!File.Exists(path)) continue;
+                    var words = File.ReadAllText(path).Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
+                    var values = new List<float>();
+                    foreach (string w in words)
+                        if (values.Count < count && float.TryParse(w, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float v)) values.Add(v);
+                    if (values.Count == count) return values.ToArray();
+                }
+                return null;
+            }
+            float Luminance(float r, float g, float b) => 0.2126f * Mathf.Pow(r, 2.2f) + 0.7152f * Mathf.Pow(g, 2.2f) + 0.0722f * Mathf.Pow(b, 2.2f);
+
+            string matPath = $"{Root}/Materials/{name}.mat";
+            var m = AssetDatabase.LoadAssetAtPath<Material>(matPath);
+            if (m == null) { m = new Material(shader); AssetDatabase.CreateAsset(m, matPath); }
+            m.shader = shader;
+            var defaults = new Material(shader);
+            m.CopyPropertiesFromMaterial(defaults);
+            Object.DestroyImmediate(defaults);
+            m.shaderKeywords = new[] { keywords[index] };
+            m.SetFloat("_Surface", index);
+            m.SetVector("_BlenderOrigin", origin);
+            m.SetFloat("_VertexColour", vertex ? 1f : 0f);
+            m.SetColor("_BaseColour", riverColour);
+            m.SetFloat("_EmissionStrength", glow);
+            m.SetFloat("_Glossiness", smoothness);
+            m.SetVector("_TileMetres", tile);
+            m.SetFloat("_Relief", relief);
+            m.SetFloat("_AntiTileRotate", rotate ? 1f : 0f);
+            m.SetFloat("_Feather", rotate ? 0.08f : 0.03f);
+            m.SetVector("_FarFade", far);
+            m.SetVector("_HueWarm", hue.warm);
+            m.SetVector("_HueCool", hue.cool);
+            m.SetFloat("_HueOn", river ? 0f : 1f);
+            m.SetTexture("_MacroTex", LandPicture("macro", "macro_value", TexUse.Data));
+            m.SetFloat("_MacroMetres", 96f);
+            if (surface == "wall" || surface == "town_wall")
+            {
+                m.SetTexture("_ColourTex", LandPicture("colour", prefix + "_color", TexUse.Colour));
+                m.SetTexture("_HeightTex", LandPicture("height", prefix + "_height", TexUse.Data, sixteen: true));
+                // payo_land.py's WALL and TOWN_WALL: the earth and the stones take their wall's brightness, not its green
+                m.SetFloat("_WallLum", surface == "wall" ? Luminance(0.40f, 0.55f, 0.31f) : Luminance(0.43f, 0.56f, 0.33f));
+                m.SetFloat("_Step", Num(token["step"], 5f));
+                if (surface == "wall")
+                {
+                    m.SetTexture("_GrassTex", LandPicture("grass", "grass_value", TexUse.Data));
+                    m.SetFloat("_GrassMetres", 20f);
+                    m.SetVector("_WallMean", new Vector4(0.51f, 0.39f, 0.27f, 1f));       // EARTH_MEAN, what the earth fades to
+                }
+                else
+                {
+                    m.SetTexture("_ShadeTex", LandPicture("shade", "bank_shade", TexUse.Data));
+                    var mean = Numbers("wall_mean", "bank_mean.txt", 4) ?? new[] { 0.5878f, 0.5704f, 0.5370f, 0.9416f };
+                    m.SetVector("_WallMean", new Vector4(mean[0], mean[1], mean[2], mean[3]));
+                }
+            }
+            else
+            {
+                m.SetTexture("_ValueTex", LandPicture("value", prefix + "_value", TexUse.Data));
+                m.SetTexture("_HeightTex", LandPicture("height", prefix + "_height", TexUse.Data, sixteen: true));
+            }
+            if (surface == "paddy" || surface == "flooded")
+            {
+                // WATERED PADDIES (owner, 2026-10-18): the fields tools/payo_pieces/paddy_flood.py put under water, as a world
+                // map over the paddy and flooded surfaces; the shader draws the water and its sky (docs/PAYO_LAND_SHADER.md).
+                m.SetTexture("_FloodTex", LandPicture("flood", "paddy_flood", TexUse.Data, clamp: true));
+                var box = Numbers("flood_bounds", "paddy_flood.txt", 4);
+                if (box == null) Warn($"land material '{name}': no paddy_flood.txt (x0 y0 x1 y1): the watered paddies use the shader's box");
+                else m.SetVector("_FloodBounds", new Vector4(box[0], box[1], box[2], box[3]));
+            }
+            if (surface == "paddy")
+            {
+                m.SetTexture("_RowsTex", LandPicture("rows", "paddy_rows", TexUse.Data, sixteen: true, clamp: true));
+                var rows = Numbers("rows_bounds", "paddy_rows.txt", 5);
+                if (rows == null) Warn($"land material '{name}': no paddy_rows.txt (x0 y0 x1 y1 dmax): the rows use the shader's defaults");
+                else
+                {
+                    m.SetVector("_RowsBounds", new Vector4(rows[0], rows[1], rows[2], rows[3]));
+                    m.SetVector("_RowsShape", new Vector4(1.2f, 0.08f, rows[4], 0.05f));   // ROW_PITCH, ROW_AMP, dmax, the rows' bump
+                }
+            }
+            m.globalIlluminationFlags = MaterialGlobalIlluminationFlags.None;
+            m.renderQueue = -1;
             m.enableInstancing = true;
             EditorUtility.SetDirty(m);
             return m;
@@ -1364,9 +1602,10 @@ namespace TumbangPreso.EditorTools.MapKit
             var defaults = new Material(shader);
             m.CopyPropertiesFromMaterial(defaults);
             Object.DestroyImmediate(defaults);
-            m.SetColor("_ShallowColor", new Color(0.30f, 0.72f, 0.70f, 1.0f));
-            m.SetColor("_MidColor", new Color(0.12f, 0.55f, 0.58f, 1.0f));
-            m.SetColor("_DeepColor", new Color(0.04f, 0.34f, 0.42f, 1.0f));
+            // Paler than the cove's sea: the approved Blender pools (pool_basin, the head's plunge pool) read pale sky blue.
+            m.SetColor("_ShallowColor", new Color(0.62f, 0.84f, 0.88f, 1.0f));
+            m.SetColor("_MidColor", new Color(0.50f, 0.76f, 0.84f, 1.0f));
+            m.SetColor("_DeepColor", new Color(0.36f, 0.62f, 0.74f, 1.0f));
             m.SetFloat("_MidDepth", 0.3f); m.SetFloat("_DeepDepth", 1.5f);
             m.SetFloat("_ShallowAlpha", 0.55f); m.SetFloat("_DeepAlpha", 0.85f); m.SetFloat("_ClarityDepth", 4.0f);
             m.SetFloat("_WaveHeight", 0.0f);
@@ -1447,8 +1686,17 @@ namespace TumbangPreso.EditorTools.MapKit
             go.transform.localPosition = origin + new Vector3((float)position[0], (float)position[1], (float)position[2]);
             go.transform.localRotation = Quaternion.Euler(0.0f, yaw, 0.0f);
             if (scale > 0.0f) go.transform.localScale = Vector3.one * scale;
+            // `scale3`: a piece not scaled uniformly (the cliff_wall run below the pit's open front is 1.35 tall).
+            if (p["scale3"] is JArray s3 && s3.Count >= 3) go.transform.localScale = new Vector3((float)s3[0], (float)s3[1], (float)s3[2]);
             Rematerial(go, named);
             foreach (var c in go.GetComponentsInChildren<Collider>(true)) Object.DestroyImmediate(c);
+            // ⚠️ `collide: true` GIVES NO COLLIDER (owner, 2026-10-18: "the falling mechanic doesnt exist yet btw when you
+            // fall off"). The court piece's pit floor (y -30) and the land under it answered `ArenaFallRecovery`'s rays,
+            // which ask EVERY layer for "stage floor": over the pit `OverTheVoid` was false, so the updraft began only
+            // under the blocks' lowest underside instead of 0.3 m under the deck, a slipper's void return never took the
+            // void path, and a body that got past the play walls could stand on the paving outside them for good. The stage's own
+            // boxes and play walls are the gameplay; the land rays that need the art's ground (life, blades) make their
+            // own temporary colliders. The flag stays in the art file for a future dedicated layer.
             return go;
         }
 
@@ -1489,6 +1737,8 @@ namespace TumbangPreso.EditorTools.MapKit
         private static readonly List<Renderer> Lanterns = new List<Renderer>();
         private static readonly List<Light> Lamps = new List<Light>();
         private static readonly List<Transform> Plants = new List<Transform>();
+        /// <summary>Mesh colliders given to `collide: true` placements in this build.</summary>
+        private static int Collided;
 
         /// <summary>
         /// THE FLAMES INSIDE A PLACED PIECE (the assembled art: child nodes whose names end "__flame" in fire_bowl, torch and
@@ -1669,11 +1919,15 @@ namespace TumbangPreso.EditorTools.MapKit
                 string model = p["model"] != null && p["model"].Type == JTokenType.String ? (string)p["model"] : "";
                 if (!groups.TryGetValue(model, out var group)) groups[model] = group = Group(dressing, model.Length > 0 ? model : "unnamed");
                 if (model == "fire_flame") { if (Fire(p, group, Vector3.zero, named) != null) placed++; else missing++; continue; }
+                // A plant far from the court is not an object: it is listed for the instanced PayoFlora (Plants.cs).
+                if (Str(p["group"]) == "plant" && ListFar(p, model, Str(p["family"]) == "trees")) { placed++; continue; }
                 var go = Place(p, group, Vector3.zero, named);
                 if (go == null) { missing++; continue; }
-                // A plant sways (`PayoLife`), so it is not static; everything else that stands on the land is.
-                Finish(go, Str(p["group"]) != "plant" && Str(p["group"]) != "life" && model != skyModel);
-                if (Str(p["group"]) == "plant") Plants.Add(go.transform);
+                // A plant gets levels of detail, and sways (`PayoLife`) only near the court; everything else that stands on the land is static.
+                bool plant = Str(p["group"]) == "plant";
+                Finish(go, !plant && Str(p["group"]) != "life" && model != skyModel);
+                if (plant) PlantLod(go, model, Str(p["family"]) == "trees", named);
+                if (model == "payo_river") FaceUp(go);
                 Fires(go);
                 if (model == skyModel)
                 {
@@ -1684,6 +1938,8 @@ namespace TumbangPreso.EditorTools.MapKit
                 placed++;
             }
             if (skyFound.Count > 0) mayari = skyFound.ToArray();
+            _plantSaid += "; " + FarFlora(root, named);
+            foreach (var g in groups.Values.ToList()) if (g != null && g.childCount == 0) Object.DestroyImmediate(g.gameObject);
             // The art's lights that stand on the land (those on a block were hung on it by `Stage`).
             var fires = dressing.GetComponentsInChildren<PayoFlame>(true);
             var lamps = Group(root, "NightLights");

@@ -262,3 +262,48 @@ Written and compiled outside Unity; NOT yet built or seen in the editor (it was 
 - **Review.** Stills from 1.7 m at the can in eight directions and on the four mid blocks in four, day and night, plus
   `stats.txt` (renderers, materials and triangles in the frustum from the can). Set-pass calls are the play probe's
   (the game view's own counter as round 1 goes live).
+
+## FOURTH PASS (2026-10-17 to 10-18): the rebuilt valley, approved in Blender, brought into Unity. READ THIS FIRST
+
+The handoff and working rules are in `docs/PAYO_HANDOFF.md`. This section records what was built and why.
+
+### The valley (Blender), owner-steered
+- Land: `tools/payo_land.py` (heightfield, terraces cut along contour lines so no edge is jagged, town tiers cut the
+  same way with stone walls at the town's edge, the court platform and pool and head cut away under authored pieces;
+  writes `Logs/payo/terrain/land_<tag>.npz`), `tools/payo_land_blend.py` (the land materials: painted, world-projected,
+  anti-tiling as Kanto/Lagoon/Ilalim do it, hue drift, earth-and-grass valley walls from world-space noise, stone town
+  walls, green paddies with rows along each field; sunset sky), `tools/payo_land_tex.py` (the textures, rice density),
+  `tools/payo_dress.py` (places every piece; calm repainted pieces preferred; flora from Lagoon/Eskinita/Payo sets).
+- Owner decisions in this pass: textures calm, not noisy (all pieces repainted, `Logs/payo/pieces/CALM_STYLE.md`);
+  normal maps on pieces; the Toon shader is retiring; no jagged terraces; town on contour streets, houses 1.45x and
+  21 m apart; the court and gorge "unpolished" until rebuilt as ONE authored stone piece
+  (`tools/payo_pieces/court_build.py`, `pool_build.py`: platform, pit, gorge, stepped retaining walls, inlet weir,
+  sacred pool with outlet); the head as ONE sculpted piece (`head_build.py`: horseshoe cliff, fall, plunge pool,
+  outlet); the shrine (gate_portal) large and high on the cliff top above the fall; more foliage and flora; tiling
+  must not show (rotation and feathering); slight hue drift on plain areas; "muddy brown with green patches" is for the
+  VALLEY retaining walls only (not the paddies, not the town walls); "more grass" on them; then "looks good".
+- Approved build: land v59, dress d53; frozen in `ArtSource/payo/approved-2026-10-18/`.
+- Checks: `tools/payo_audit.py` (floating, sunk, straddling, z-fighting within 3 cm) on a dressed blend.
+
+### Unity
+- Export: `tools/payo_export_unity.py` (Blender `-- export`, Python `--check`): land in 256 m chunks (far chunks
+  decimated), water, 105 piece glbs, `payo_art.json` (13,181 placements), `materials_payo.json` (land kind
+  `payo_land`), textures to `Art/Payo/Textures/land/`. Axis: Blender (x, y, z) = Unity (x, z, y).
+- Builder additions: `scale3`, block `dy`, plant LODs and far plants drawn instanced (`Runtime/Map/PayoFlora.cs`,
+  `PayoSceneBuilder.Plants.cs`), far land and plants skip the outline prepass, blades baked
+  (`PayoBladesBaker.cs`, `Runtime/Map/PayoBlades.cs`, `Resources/Shaders/PayoBlades.shader`), land shader
+  `Resources/Shaders/PayoLand.shader`, Life re-seated and paddies found from `py_land_flooded`, compare/perf/stills
+  tools (`PayoSceneBuilder.Compare.cs`, `.Perf.cs`, `PayoPerfProbe.cs`), art colliders NOT added (they broke the
+  fall's void test), fall probe (`probe fall`), F9 next-round key (`PayoNight.cs`), fall catcher presentation
+  (`PayoBubbleSpirit*.cs`, `PayoSpiritMeshes.cs`, shaders PayoSpirit/PayoBubble/PayoSplash; look rejected, being
+  replaced), "Payo" WorldLook day row retuned to a sunset (sun yaw 150, 14 degrees; sun disc on the sky material).
+- Measured in Play (owner's editor, RTX 5070): frame 16.3 to 6.5 ms median, GPU 9.6 to 5.4 ms, set-pass 5,780 to
+  1,300, renderers 29,805 to 2,007; scene file 111 MB to 10 MB. Fall: 4 of 4 caught at about 3.2 s, carry 3.6 s,
+  freeze 5.0 s, slipper back at the edge in 1.6 s.
+
+### Commit set (when the owner asks; see the handoff for the exclusions)
+`Assets/TumbangPreso/Art/Payo/**`, `Scenes/Maps/Payo.unity`, `Editor/MapKit/Payo*.cs` (+ PayoBladesBaker,
+PayoPerfProbe, PayoPlayProbe, PayoCatcherFilm), `Runtime/Map/Payo*.cs`, `Resources/Shaders/Payo*.shader`,
+`Runtime/Visual/WorldLookProfile.cs` and `Resources/WorldLookProfile.asset` (Payo row only),
+`Art/MapAtmosphere/PayoSky.mat`, `tools/payo_export_unity.py`, `tools/payo_plant_lods.py`, `tools/payo_audit.py`,
+`tools/payo_pieces/{court,pool,head}_*.py`, `docs/PAYO_*.md`. NOT `ArtSource/payo/`, NOT `tools/payo_pieces/catcher_*.py`.

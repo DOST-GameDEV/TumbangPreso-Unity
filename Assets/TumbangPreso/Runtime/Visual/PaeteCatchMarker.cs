@@ -41,6 +41,11 @@ namespace TumbangPreso.Visual
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Install()
         {
+            // ⚠️ ONE MARKER (owner, 2026-10-18: "there are paete vine swing crosshairs everywhere"): a DontSave object
+            // outlives Play in the editor, so every Play added one more; 91 had stacked up, 89 of them still showing.
+            // Clear any earlier copy first. Nothing else about the marker changes.
+            foreach (var old in Resources.FindObjectsOfTypeAll<PaeteCatchMarker>())
+                if (old != null) DestroyImmediate(old.gameObject);
             var go = new GameObject("PaeteCatchMarker") { hideFlags = HideFlags.HideAndDontSave };
             DontDestroyOnLoad(go);
             go.AddComponent<PaeteCatchMarker>();
@@ -143,6 +148,9 @@ namespace TumbangPreso.Visual
             colour.a *= _shown;
             _material.color = colour;
         }
+
+        // Gone when Play ends, so it is not left standing in the editor's views.
+        private void OnApplicationQuit() => Destroy(gameObject);
 
         private void OnDestroy()
         {

@@ -26,7 +26,14 @@ namespace TumbangPreso.UI
 
         private Text _slots;
         private Text _keys;
+        private Text _fps;
         private Canvas _canvas;
+        // The frame counter (owner, 2026-10-18: "add an fps counter because it lowkey feels a bit laggy on my end"):
+        // frames a second and the mean frame time over half a second, and that half second's WORST frame, since a
+        // hitch reads as lag even when the mean is fine. Unscaled time, so a pause or slow motion does not fake it.
+        private const float FpsWindow = 0.5f;
+        private float _fpsTime, _fpsWorst;
+        private int _fpsFrames;
 
         private void Awake()
         {
@@ -60,6 +67,20 @@ namespace TumbangPreso.UI
             if (_canvas != null)
                 _canvas.enabled = !NetAuthority.IsNetworked && !GameLaunch.Spectator
                     && (Hud.Instance == null || !Hud.Instance.Spectating);
+            CountFrame(Time.unscaledDeltaTime);
+        }
+
+        private void CountFrame(float dt)
+        {
+            _fpsTime += dt; _fpsFrames++;
+            if (dt > _fpsWorst) _fpsWorst = dt;
+            if (_fpsTime < FpsWindow || _fps == null) return;
+            float mean = _fpsTime / _fpsFrames;
+            _fps.text = $"{1f / mean:0} FPS  {mean * 1000f:0.0} ms  worst {_fpsWorst * 1000f:0.0} ms";
+            // Plain warning colours, not the game's: under 50 a second or a worst frame past 33 ms is a hitch you feel.
+            _fps.color = mean > 1f / 30f || _fpsWorst > 0.05f ? new Color(1f, 0.45f, 0.4f)
+                       : mean > 1f / 50f || _fpsWorst > 1f / 30f ? new Color(1f, 0.85f, 0.4f) : Color.white;
+            _fpsTime = 0f; _fpsFrames = 0; _fpsWorst = 0f;
         }
 
         /// <summary>Called by the switcher. Debug registers with debug; no gameplay script
@@ -97,6 +118,7 @@ namespace TumbangPreso.UI
             _slots = MakeLabel(strip.transform, "Slots", TextAnchor.MiddleLeft, 8.0f);
             _keys = MakeLabel(strip.transform, "Keys", TextAnchor.MiddleRight, -8.0f);
             _keys.text = KeysText;
+            _fps = MakeLabel(strip.transform, "Fps", TextAnchor.MiddleCenter, 0.0f);
         }
 
         private static Text MakeLabel(Transform parent, string name, TextAnchor align, float xPad)

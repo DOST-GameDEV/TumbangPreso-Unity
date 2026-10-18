@@ -22,7 +22,8 @@ namespace TumbangPreso.EditorTools.MapKit
     ///    on a patch of ground measured flat.
     ///  * `PayoSound`: the beds, the falls, the hawk and the rooster, the stone, the gong, the geyser, from real recordings
     ///    built by `tools/build_payo_sfx.py`. A clip that is not built yet is left empty and said so.
-    ///  * The hawk that catches a fallen body (`PayoCatchBird`), when the art's `catch_bird.glb` exists.
+    ///  * The bubble spirit that catches a fallen body (`PayoBubbleSpiritCatch`, owner 2026-10-18), built in code. The
+    ///    hawk before it (`PayoCatchBird`, `catch_bird.glb`) is kept but no longer put in the scene.
     /// ⚠️ NOT HERE YET: villagers, carabao and a dog. They wait on the art's "life" list.
     /// </summary>
     public static partial class PayoSceneBuilder
@@ -123,35 +124,83 @@ namespace TumbangPreso.EditorTools.MapKit
         }
 
         /// <summary>The art's land given mesh colliders for the questions this file asks of it (where a paddy is, whether a
-        /// patch is flat); `Dispose` takes them away again before the scene is saved.</summary>
+        /// patch is flat, where a figure's feet are); `Dispose` takes away again the colliders it made (the `collide`
+        /// placements keep theirs). WATER is told by the land's own material under the hit: the 2026-10-18 land is
+        /// chunks (payo_land_x*_y*) with one submesh a material, and a paddy's water is its `py_land_flooded` (an older
+        /// art's whole pieces named payo_paddy* or payo_shelf_water* still count).</summary>
         private sealed class Ground : IDisposable
         {
             private readonly List<MeshCollider> _made = new List<MeshCollider>();
-            public readonly List<MeshCollider> Water = new List<MeshCollider>();
+            private readonly Dictionary<Collider, (int[] ends, bool[] water)> _land = new Dictionary<Collider, (int[], bool[])>();
+            private readonly HashSet<Collider> _wholeWater = new HashSet<Collider>();
             public Ground(Transform root)
             {
                 var dressing = root.Find("Dressing");
                 if (dressing == null) return;
                 var pieces = new List<Transform>();
-                foreach (Transform piece in dressing) if (IsLand(piece.name)) pieces.Add(piece);
+                foreach (Transform group in dressing)
+                {
+                    if (IsLand(group.name)) pieces.Add(group);
+                    else foreach (Transform piece in group) if (IsLand(piece.name)) pieces.Add(piece);
+                }
                 if (root.Find("Terraces") != null) pieces.Add(root.Find("Terraces"));
                 foreach (Transform piece in pieces)
                 {
-                    bool water = piece.name.StartsWith("payo_paddy") || piece.name.StartsWith("payo_shelf_water");
+                    bool whole = piece.name.StartsWith("payo_paddy") || piece.name.StartsWith("payo_shelf_water");
                     foreach (var filter in piece.GetComponentsInChildren<MeshFilter>(true))
                     {
-                        if (filter.sharedMesh == null) continue;
-                        var collider = filter.gameObject.AddComponent<MeshCollider>();
-                        collider.sharedMesh = filter.sharedMesh;
-                        _made.Add(collider);
-                        if (water) Water.Add(collider);
+                        var mesh = filter.sharedMesh;
+                        if (mesh == null) continue;
+                        var collider = filter.GetComponent<MeshCollider>();
+                        if (collider == null)
+                        {
+                            collider = filter.gameObject.AddComponent<MeshCollider>();
+                            collider.sharedMesh = mesh;
+                            _made.Add(collider);
+                        }
+                        if (whole) { _wholeWater.Add(collider); continue; }
+                        var mats = filter.GetComponent<Renderer>() != null ? filter.GetComponent<Renderer>().sharedMaterials : new Material[0];
+                        var ends = new int[mesh.subMeshCount]; var water = new bool[mesh.subMeshCount];
+                        int total = 0;
+                        for (int sub = 0; sub < mesh.subMeshCount; sub++)
+                        {
+                            total += (int)(mesh.GetIndexCount(sub) / 3); ends[sub] = total;
+                            string n = sub < mats.Length && mats[sub] != null ? mats[sub].name : "";
+                            water[sub] = n.Contains("flooded") || n.Contains("paddy_water") || n == "py_water";
+                        }
+                        _land[collider] = (ends, water);
                     }
                 }
+                // The `collide` placements (the court platform's paving, the pools, the head) are ground too, never water.
+                foreach (var collider in dressing.GetComponentsInChildren<MeshCollider>(true))
+                    if (!_land.ContainsKey(collider) && !_wholeWater.Contains(collider)) _land[collider] = (new int[0], new bool[0]);
                 Physics.SyncTransforms();
             }
-            public bool Any => _made.Count > 0;
+            public bool Any => _land.Count > 0 || _wholeWater.Count > 0;
+            public bool AnyWater => _wholeWater.Count > 0 || _land.Values.Any(l => l.water.Any(w => w));
+            public bool IsGround(Collider c) => c != null && (_land.ContainsKey(c) || _wholeWater.Contains(c));
+            /// <summary>Whether a hit is on a paddy's water (the material of the triangle hit).</summary>
+            public bool IsWater(RaycastHit hit)
+            {
+                if (hit.collider == null) return false;
+                if (_wholeWater.Contains(hit.collider)) return true;
+                if (!_land.TryGetValue(hit.collider, out var l)) return false;
+                for (int sub = 0; sub < l.ends.Length; sub++) if (hit.triangleIndex < l.ends[sub]) return l.water[sub];
+                return false;
+            }
             public bool Down(float x, float z, out RaycastHit hit) =>
                 Physics.Raycast(new Vector3(x, 400f, z), Vector3.down, out hit, 900f, ~0, QueryTriggerInteraction.Ignore);
+            /// <summary>The land under a point, within `reach` above or below it (the highest land surface in that span).</summary>
+            public bool Under(Vector3 at, float reach, out RaycastHit ground)
+            {
+                ground = default; bool found = false;
+                foreach (var hit in Physics.RaycastAll(at + Vector3.up * reach, Vector3.down, reach * 2f, ~0, QueryTriggerInteraction.Ignore))
+                {
+                    if (!IsGround(hit.collider)) continue;
+                    if (!found || hit.point.y > ground.point.y) { ground = hit; found = true; }
+                }
+                return found;
+            }
             public void Dispose() { foreach (var c in _made) if (c != null) Object.DestroyImmediate(c); _made.Clear(); }
         }
 
@@ -168,7 +217,11 @@ namespace TumbangPreso.EditorTools.MapKit
             var holder = Group(lifeRoot, "Figures");
             var actors = holder.gameObject.AddComponent<PayoActors>();
             var made = new List<PayoActors.Actor>();
-            int missing = 0, unknown = 0;
+            int missing = 0, unknown = 0, seated = 0, kept = 0, dropped = 0, airborne = 0;
+            float moved = 0f;
+            // The list was authored on an earlier land: each figure's feet are set again on the land under it now (when the
+            // land is within 3 m of where it was put; farther off it stands on something that is not land, a porch, and keeps its height).
+            using (var ground = new Ground(lifeRoot.parent))
             foreach (var entry in list)
             {
                 string kind = Str(entry["kind"]) ?? "", model = Str(entry["model"]) ?? kind;
@@ -179,6 +232,14 @@ namespace TumbangPreso.EditorTools.MapKit
                 var go = (GameObject)PrefabUtility.InstantiatePrefab(prefab, holder);
                 go.name = kind + " " + made.Count;
                 var at = new Vector3((float)position[0], (float)position[1], (float)position[2]);
+                if (ground.Under(at, 3f, out var feet)) { moved = Mathf.Max(moved, Mathf.Abs(feet.point.y - at.y)); at.y = feet.point.y; seated++; }
+                // ⚠️ NOT IN THE AIR (owner, 2026-10-19: "floating models out here"): the list predates this land, so a figure
+                // with no land near its feet keeps its height only if something is under them (a porch, paving); otherwise
+                // it is set on flat land below (within 60 m), or left out.
+                else if (Physics.Raycast(at + Vector3.up * 0.5f, Vector3.down, 3f, ~0, QueryTriggerInteraction.Ignore)) kept++;
+                else if (ground.Under(at + Vector3.down * 57f, 60f, out var below) && below.normal.y > 0.85f)
+                { moved = Mathf.Max(moved, Mathf.Abs(below.point.y - at.y)); at.y = below.point.y; seated++; dropped++; }
+                else { Object.DestroyImmediate(go); airborne++; continue; }
                 float yaw = entry["yaw"] != null && (entry["yaw"].Type == Newtonsoft.Json.Linq.JTokenType.Float || entry["yaw"].Type == Newtonsoft.Json.Linq.JTokenType.Integer) ? (float)entry["yaw"] : 0f;
                 go.transform.SetPositionAndRotation(at, Quaternion.Euler(0f, yaw, 0f));
                 Rematerial(go, _named);
@@ -190,7 +251,7 @@ namespace TumbangPreso.EditorTools.MapKit
             }
             actors.Actors = made.ToArray();
             EditorUtility.SetDirty(actors);
-            return $"{made.Count} figures from the art's life list ({string.Join(", ", made.GroupBy(a => a.Kind).Select(g => g.Count() + " " + g.Key))}; {missing} models missing, {unknown} of an unknown kind)";
+            return $"{made.Count} figures from the art's life list ({string.Join(", ", made.GroupBy(a => a.Kind).Select(g => g.Count() + " " + g.Key))}; {missing} models missing, {unknown} of an unknown kind; {seated} set on the land (at most {moved:0.00} m moved, {dropped} of them brought down from the air), {kept} kept at their height on something, {airborne} left out with no land under them)";
         }
 
         private static string Life(Transform root, PayoLayout layout, ArenaStage stage, Art art)
@@ -270,12 +331,12 @@ namespace TumbangPreso.EditorTools.MapKit
                     flocks.WingFoldSweep = 84f; flocks.WingFoldDroop = 18f;
                     var perches = new List<Vector3>();
                     var random = new System.Random(733);
-                    for (int tries = 0; tries < 2500 && perches.Count < 28 && ground.Water.Count > 0; tries++)
+                    for (int tries = 0; tries < 2500 && perches.Count < 28 && ground.AnyWater; tries++)
                     {
                         float bearing = (float)random.NextDouble() * 360f, r = 38f + (float)random.NextDouble() * 60f;
                         Vector3 d = ArenaStageMesh.Direction(bearing) * r;
                         // Standing IN a paddy: the first thing under the sky there must be the paddy's water.
-                        if (!ground.Down(d.x, d.z, out var hit) || !ground.Water.Contains(hit.collider as MeshCollider) || hit.point.y < -20f || hit.point.y > 45f) continue;
+                        if (!ground.Down(d.x, d.z, out var hit) || !ground.IsWater(hit) || hit.point.y < -20f || hit.point.y > 45f) continue;
                         Vector3 along = ArenaStageMesh.Direction(bearing + 90f);
                         perches.Add(hit.point - along * 0.3f + Vector3.up * 0.02f); perches.Add(hit.point + along * 0.3f + Vector3.up * 0.02f);
                     }
@@ -316,7 +377,7 @@ namespace TumbangPreso.EditorTools.MapKit
             EditorUtility.SetDirty(life);
 
             said.Add(Sound(root, layout, life, houses));
-            said.Add(Hawk(stage, art));
+            said.Add(Catcher(stage));
             return "life: " + string.Join("; ", said);
         }
 
@@ -405,7 +466,7 @@ namespace TumbangPreso.EditorTools.MapKit
                     for (int i = 0; i < width; i++)
                     {
                         float x = home.x - half + (i + 0.5f) * cell, z = home.z - half + (j + 0.5f) * cell;
-                        bool ok = ground.Down(x, z, out var hit) && hit.normal.y >= 0.97f && Mathf.Abs(hit.point.y - floor.point.y) < 0.05f && !ground.Water.Contains(hit.collider as MeshCollider);
+                        bool ok = ground.Down(x, z, out var hit) && hit.normal.y >= 0.97f && Mathf.Abs(hit.point.y - floor.point.y) < 0.05f && !ground.IsWater(hit);
                         walk[j * width + i] = ok; if (ok) open++;
                     }
                 if (open < 150) continue;
@@ -491,7 +552,34 @@ namespace TumbangPreso.EditorTools.MapKit
             return $"sound: {beds} of 5 beds, {loops.Count} loops, {shots.Count} kinds of shot, lock {sound.Lock.Length}, gong {sound.Gong.Length}, geyser {sound.Geyser.Length}, hawk {sound.Hawk.Length} recordings";
         }
 
-        /// <summary>The hawk that catches a fallen body, in place of the Arena's drone, when the art's model is there.</summary>
+        /// <summary>
+        /// What catches a fallen body, in place of the Arena's drone: the bubble spirit (owner, 2026-10-18, of the hawk:
+        /// "does not fit the cutesy look of the game at all"). Built in code at run time, so the scene only carries the
+        /// chooser; the catch, the carry and the freeze are untouched.
+        /// </summary>
+        private static string Catcher(ArenaStage stage)
+        {
+            if (stage == null) return "the catch is still the Arena's stand-in drone (no stage)";
+            // Kanlit (owner's pick 2026-10-18, variant A): a carved bulul wood buddy under a gabi leaf, its vine hugs the body.
+            bool kanlit = Shader.Find(PayoKanlit.BuddyShader) != null && Shader.Find(PayoKanlit.VineShader) != null
+                && Resources.Load<TextAsset>(PayoKanlitMeshes.Folder + "kanlit") != null && Resources.Load<TextAsset>(PayoKanlitMeshes.Folder + "kanlit_vine") != null;
+            if (kanlit)
+            {
+                stage.gameObject.AddComponent<PayoKanlitCatch>();
+                var drone = stage.GetComponent<ArenaFallRecovery>();
+                if (drone != null) drone.NoDrone = true;
+                return "the catch is Kanlit (PayoKanlitCatch); the Arena's drone is not drawn";
+            }
+            Warn("Kanlit's shaders or baked meshes were not found: falling back to the bubble spirit");
+            bool shaders = Shader.Find(PayoBubbleSpirit.SpiritShader) != null && Shader.Find(PayoBubbleSpirit.BubbleShader) != null && Shader.Find(PayoBubbleSpirit.SplashShader) != null;
+            if (!shaders) { Warn("the bubble spirit's shaders were not found: the catch is still the Arena's drone"); return "the catch is still the Arena's drone (no spirit shaders)"; }
+            stage.gameObject.AddComponent<PayoBubbleSpiritCatch>();
+            var recovery = stage.GetComponent<ArenaFallRecovery>();
+            if (recovery != null) recovery.NoDrone = true;
+            return "the catch is the bubble spirit (PayoBubbleSpiritCatch); the Arena's drone is not drawn";
+        }
+
+        /// <summary>The hawk that caught a fallen body before the bubble spirit (2026-10-12 to 2026-10-18). Not called; kept to bring back.</summary>
         private static string Hawk(ArenaStage stage, Art art)
         {
             var model = Model("catch_bird");

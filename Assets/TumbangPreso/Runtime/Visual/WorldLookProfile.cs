@@ -437,9 +437,19 @@ namespace TumbangPreso.Visual
             // green. THE AIR IS AN AQUA-BLUE haze from 80 m that is whole only at 3000 m, so the art's ranges (0.6 to
             // 2.7 km) fade into it one behind another. The sky runs from a pale aqua horizon to a clear blue zenith (green
             // above red at both ends, so nothing between can turn lavender). The coloured black floor is a deep blue.
-            new MapLook("Payo",new Color(.44f,.56f,.78f),new Color(.5f,.56f,.64f),new Color(.43f,.44f,.44f),new Color(.8f,.88f,1.1f),80,3000,0,true)
-                .Air(new Color(.66f,.84f,.94f),new Color(.3f,.6f,.88f),new Color(.76f,.9f,.96f),new Color(1,.99f,.96f),new Color(.62f,.74f,.9f))
-                .Key(new Color(1,.95f,.86f),1.16f,31,.72f,new Color(.024f,.034f,.06f)).Glow(.14f,1.9f)
+            // ⚠️⚠️ RETUNED TO A SUNSET, 2026-10-18 (owner: "yes retune the day row to the sunset"). The noon values above
+            // describe the old draft. The rebuilt court faces NORTH down the valley to the horizon, and the approved Blender
+            // look (Logs/payo/terrain/dressed_d53_over_the_court.png) puts a low warm sun over the valley's open end. So: a
+            // warm key 14 degrees up from about 30 degrees west of north (`PayoSceneBuilder.SunYaw` 150), strong enough
+            // (1.36) that the court floor still reads at that grazing angle; long shadows across the stage. The key is only
+            // gently warm (1, .87, .72): at (1, .84, .66) lit grey stone read peach, and the old rule holds (grey stone
+            // stays grey). The shade stays cool blue-lilac (sky .48,.58,.84; equator .6,.62,.7) and the bounce a near
+            // neutral grey. A peach-gold horizon under a blue-violet zenith (green kept well above red in the zenith, or
+            // the whole upper sky turns lavender), pink-gold lit clouds over lilac bodies, and a warm peach haze.
+            // Sheet: Logs/payo/unity/look/compare.png (before, after, Blender).
+            new MapLook("Payo",new Color(.48f,.58f,.84f),new Color(.6f,.62f,.7f),new Color(.5f,.48f,.46f),new Color(.84f,.86f,1.1f),80,3000,0,true)
+                .Air(new Color(.94f,.82f,.72f),new Color(.46f,.6f,.82f),new Color(1,.8f,.6f),new Color(1,.74f,.64f),new Color(.66f,.62f,.8f))
+                .Key(new Color(1,.87f,.72f),1.36f,14,.7f,new Color(.03f,.032f,.06f)).Glow(.14f,1.9f)
                 .CloudLayers(default,default,default,0,
                     new MapLook.CloudBand(7,340,520,150,220,80,130,9),
                     new MapLook.CloudBand(3,220,300,230,280,60,90,8)),
@@ -450,9 +460,11 @@ namespace TumbangPreso.Visual
             // blue that leaves the far ridges as silhouettes; the sky a near-black zenith over a blue horizon.
             // Its clouds are the day's, in these colours. Never looked up by a scene name: no scene is called this.
             // A DEEP BLUE-INDIGO (the day's cool light, carried into the night; not teal).
-            new MapLook("PayoNight",new Color(.16f,.24f,.5f),new Color(.13f,.18f,.38f),new Color(.08f,.1f,.18f),new Color(.76f,.84f,1.12f),90,3000,0,true)
-                .Air(new Color(.045f,.08f,.2f),new Color(.02f,.035f,.11f),new Color(.08f,.14f,.32f),new Color(.32f,.4f,.58f),new Color(.07f,.09f,.18f))
-                .Key(new Color(.7f,.84f,1),.62f,30,.7f,new Color(.018f,.024f,.048f)).Glow(.14f,1.9f)
+            // 2026-10-19 (owner: "it looks too sharply dark and high contrast", "i dont notice the haze and fog much
+            // anymore"): the ambient, the shadow floor and the fog lifted, shadows softer (0.7 to 0.55).
+            new MapLook("PayoNight",new Color(.24f,.32f,.58f),new Color(.2f,.26f,.46f),new Color(.14f,.17f,.28f),new Color(.76f,.84f,1.12f),60,3000,0,true)
+                .Air(new Color(.09f,.13f,.27f),new Color(.02f,.035f,.11f),new Color(.08f,.14f,.32f),new Color(.32f,.4f,.58f),new Color(.07f,.09f,.18f))
+                .Key(new Color(.7f,.84f,1),.62f,30,.55f,new Color(.035f,.045f,.085f)).Glow(.14f,1.9f)
                 .CloudLayers(default,default,default,0,
                     new MapLook.CloudBand(7,340,520,150,220,80,130,9),
                     new MapLook.CloudBand(3,220,300,230,280,60,90,8)),

@@ -49,6 +49,8 @@ namespace TumbangPreso.EditorTools.MapKit
         /// the first half; 2 to 5 is a match that had no half time before this map forced one.</summary>
         private static int Rounds => Mathf.Clamp(SessionState.GetInt(K + "rounds", 6), 2, 12);
         private static bool Arena => SessionState.GetString(K + "mode", "") == "arena";
+        /// <summary>`probe fall`: only the fall test (`FallChecks`), in one long round of the Payo scene.</summary>
+        private static bool FallOnly => SessionState.GetString(K + "mode", "") == "fall";
         private static string Scene => Arena ? ArenaScene : PayoSceneBuilder.ScenePath;
         private const string Done = "Temp/payo.done", LogFolder = "Logs/payo/unity";
         private const string K = "PayoProbe.";
@@ -155,7 +157,7 @@ namespace TumbangPreso.EditorTools.MapKit
             {
                 if (phase == "entering")
                 {
-                    if (EditorApplication.isPlaying) { Stamp("play", Now); Phase = "playing"; _driver = Arena ? ArenaChecks() : Checks(); _lastFrame = -1; }
+                    if (EditorApplication.isPlaying) { Stamp("play", Now); Phase = "playing"; _driver = Arena ? ArenaChecks() : FallOnly ? FallChecks() : Checks(); _lastFrame = -1; }
                     else if (Now > Stamp("deadline"))
                     {
                         Fail("the editor did not enter Play within 60 s of being asked (a compile error, or a dialog waiting for an answer)");
@@ -618,7 +620,7 @@ namespace TumbangPreso.EditorTools.MapKit
                         {
                             Check(caughtY < ArenaStage.CatchY + 3f && lowest > ArenaStage.MoveFloorY, $"the catch was near the line (caught at y {caughtY:0.0}, the line {ArenaStage.CatchY:0.0}, lowest {lowest:0.0}, the move floor {ArenaStage.MoveFloorY:0.0})");
                             float carry = Time.time; bool carried = false;
-                            var hawk = Object.FindFirstObjectByType<PayoCatchBird>();
+                            var catcher = Object.FindFirstObjectByType<PayoKanlitCatch>();
                             var recovery = ArenaFallRecovery.Instance;
                             while (Time.time - carry < 12f && Live(round) && tester.IsEdgeRecovering)
                             {
@@ -630,7 +632,7 @@ namespace TumbangPreso.EditorTools.MapKit
                                 }
                                 yield return null;
                             }
-                            Say($"  what carried it: PayoCatchBird in the scene {hawk != null}{(hawk != null ? ", with a model " + (hawk.Template != null) : "")}; the Arena's drone switched off here: {(recovery != null && recovery.NoDrone)}");
+                            Say($"  what carried it: PayoKanlitCatch in the scene {catcher != null}{(catcher != null ? ", Kanlits made " + catcher.Made : "")}; the Arena's drone switched off here: {(recovery != null && recovery.NoDrone)}");
                             for (float t = Time.time; Time.time - t < 0.4f && Live(round);) yield return null;
                             var feet = Feet(tester);
                             var on = one.At(feet.x, feet.z, out float top);
@@ -794,6 +796,205 @@ namespace TumbangPreso.EditorTools.MapKit
             }
             Say($"layouts stood in, in order: {string.Join(", ", seen.Select(i => stage.Layouts[i].Name))}{(seen.Distinct().Count() == stage.LayoutCount ? " (all of them)" : " (NOT all of them)")}; the night was seen coming: {sawNightComing}");
             Say($"the probe used {Time.realtimeSinceStartup - t0:0} s of Play");
+        }
+
+        // ------------------------------------------------------------------ the fall, alone
+
+        private static string NameOf(Transform t)
+        {
+            string s = t.name;
+            for (var p = t.parent; p != null && s.Length < 160; p = p.parent) s = p.name + "/" + s;
+            return s;
+        }
+
+        /// <summary>Every collider a ray straight down from `from` meets (no bodies, slippers or can), top first.</summary>
+        private static string Column(Vector3 from, float depth)
+        {
+            int count = Physics.RaycastNonAlloc(from, Vector3.down, Hits, depth, ~0, QueryTriggerInteraction.Ignore);
+            var hits = Enumerable.Range(0, count).Select(i => Hits[i]).Where(h => IsMap(h.collider)).OrderByDescending(h => h.point.y).ToList();
+            return hits.Count == 0 ? "nothing" : string.Join("; ", hits.Select(h => $"y {h.point.y:0.0} {NameOf(h.collider.transform)} ({h.collider.GetType().Name}, layer {LayerMask.LayerToName(h.collider.gameObject.layer)})"));
+        }
+
+        private static bool Inside(PayoLayout.Layout one, float x, float z, float margin)
+        {
+            foreach (var b in one.Blocks) if (Mathf.Abs(x - b.X) < b.SX * 0.5f + margin && Mathf.Abs(z - b.Z) < b.SZ * 0.5f + margin) return true;
+            foreach (var m in one.Movers) if (Mathf.Abs(x - m.From.x) < 7f && Mathf.Abs(z - m.From.z) < 7f) return true;
+            return false;
+        }
+
+        /// <summary>
+        /// `probe fall`: the Arena's fall on Payo, measured. One long round; everybody parked; a body is walked off the
+        /// outermost walk-set edge on each side (east, west, south, north over the gorge) and logged every 0.1 s
+        /// (height, grounded, InUpdraft, OverTheVoid, IsShaftFall, IsLostFall, edge recovery) to the catch, the carry,
+        /// the set-down and the freeze; a slipper is thrown off an edge and timed back; Paete's map catch is asked
+        /// from the shaft. What is under the pit is listed first.
+        /// </summary>
+        private static IEnumerator FallChecks()
+        {
+            float t0 = Time.realtimeSinceStartup;
+            var rules = CustomGameRules.Defaults(SceneFlow.SelectedRules != null ? SceneFlow.SelectedRules.Mode : GameMode.HeroStrike);
+            rules.Rounds = 2; rules.RoundSeconds = CustomGameRules.MaxRoundSeconds;
+            SceneFlow.PinSelectedRules(rules);
+            PayoLayout layout = null;
+            try { layout = PayoSceneBuilder.ReadLayout(); } catch (Exception e) { Fail("the layout could not be read: " + e.Message); }
+            Say($"FALL TEST. Play scene: {SceneManager.GetActiveScene().path}; rules pinned: 2 rounds of {CustomGameRules.MaxRoundSeconds} s");
+            if (layout == null) yield break;
+            CharacterMotor local = null; RoundDirector round = null; CameraRig rig = null;
+            while (Time.realtimeSinceStartup - t0 < 15f)
+            {
+                round = GameServices.Round; rig = Object.FindFirstObjectByType<CameraRig>();
+                if (round != null) local = round.Players.FirstOrDefault(p => p != null && !p.IsBot);
+                if (local != null) break;
+                yield return null;
+            }
+            if (round == null) { Fail("no round within 15 s"); yield break; }
+            var stage = ArenaStage.Instance;
+            if (stage == null || ArenaFallRecovery.Instance == null) { Fail("no ArenaStage or no ArenaFallRecovery"); yield break; }
+            float ready = Time.realtimeSinceStartup;
+            while (Time.realtimeSinceStartup - ready < 70f && Left() > 60f && !Live(round)) yield return null;
+            if (!Live(round)) { Fail("no live round"); yield break; }
+            var tester = Park(round, local);
+            if (tester == null) { Fail("no body to drive"); yield break; }
+            var one = layout.Layouts.FirstOrDefault(l => l.Name == stage.Layouts[stage.Applied].Name);
+            if (one == null) { Fail("the stage stands in a layout the file does not name"); yield break; }
+            float deck = stage.transform.position.y;
+            Say($"layout '{one.Name}', deck y {deck:0.00}, CatchY {ArenaStage.CatchY:0.0}, SlipperCatchY {ArenaStage.SlipperCatchY:0.0}, LowestUnderside {stage.LowestUnderside:0.0}, MoveFloorY {ArenaStage.MoveFloorY:0.0}, KillPlaneY {stage.KillPlaneY:0.0}; test body {tester.name}");
+            int meshColliders = Object.FindObjectsByType<MeshCollider>(FindObjectsSortMode.None).Count(c => c.enabled && c.GetComponentInParent<CharacterMotor>() == null);
+            Say($"enabled mesh colliders in the scene (not on bodies): {meshColliders}");
+
+            // ---- what is under the open pit
+            Say(""); Say("WHAT A RAY STRAIGHT DOWN FROM DECK HEIGHT MEETS, over open air inside the walls:");
+            var samples = new List<Vector3>();
+            for (float x = -layout.WallHalf + 1.5f; x < layout.WallHalf - 1f && samples.Count < 6; x += 3.5f)
+                for (float z = -layout.WallHalf + 1.5f; z < layout.WallHalf - 1f && samples.Count < 6; z += 7.3f)
+                    if (!Inside(one, x, z, 1.5f)) samples.Add(new Vector3(x, deck + 0.4f, z));
+            foreach (var s in samples)
+                Say($"  at ({s.x:0.0}, {s.z:0.0}): OverTheVoid {ArenaFallRecovery.OverTheVoid(s - Vector3.up * 0.4f)}; {Column(s, 80f)}");
+
+            // ---- off each side
+            var walk = one.Blocks.Where(b => b.Reach == PayoLayout.Reach.Walk && b.Stair == 0).ToList();
+            // ---- a slipper off the edge
+            Say(""); Say("A SLIPPER THROWN OFF THE EDGE:");
+            var slice = Object.FindFirstObjectByType<SliceRunner>();
+            var shoe = slice != null && slice.Slippers != null ? slice.Slippers.FirstOrDefault(s => s != null && s.gameObject.activeSelf && s.Holder != tester) : null;
+            var east = walk.OrderByDescending(b => b.X + b.SX * 0.5f).FirstOrDefault(b => b.X + b.SX * 0.5f < layout.WallHalf - 5f && !Inside(one, b.X + b.SX * 0.5f + 1.6f, b.Z, 0.3f) && !Inside(one, b.X + b.SX * 0.5f + 3.5f, b.Z, 0.3f));
+            if (shoe == null || east == null || !Live(round)) Fail($"no slipper ({shoe != null}) or no east edge ({east != null}) or no round to throw in");
+            else
+            {
+                if (shoe.State == SlipperState.Held) shoe.HostDisarm();
+                yield return null;
+                var from = new Vector3(east.X + east.SX * 0.5f - 0.5f, east.Top + 1.2f, east.Z);
+                shoe.HostThrow(null, from, Vector3.right * 5f + Vector3.up * 1.5f);
+                float thrown = Time.time, goneAt = -1f, backAt = -1f; Vector3 goneWhere = default;
+                while (Time.time - thrown < 10f && Live(round))
+                {
+                    if (goneAt < 0f && !shoe.gameObject.activeSelf) { goneAt = Time.time - thrown; goneWhere = shoe.transform.position; }
+                    if (goneAt >= 0f && shoe.gameObject.activeSelf) { backAt = Time.time - thrown; break; }
+                    yield return null;
+                }
+                var at = shoe.transform.position;
+                var lands = one.At(at.x, at.z, out float topAt);
+                if (goneAt < 0f) Fail($"the slipper thrown east off '{east.Id}' at {V(from)} was NEVER taken in 10 s: it is {shoe.State} at {V(at)}; under it: {Column(at + Vector3.up * 0.3f, 3f)}");
+                else Check(backAt >= 0f && lands != null && backAt - goneAt < 2.2f,
+                    $"the slipper thrown east off '{east.Id}' was taken {goneAt:0.00} s after the throw at {V(goneWhere)} and set back {(backAt >= 0f ? (backAt - goneAt).ToString("0.00") + " s later" : "NEVER (10 s)")} at {V(at)} ({shoe.State}) on {(lands != null ? lands.Id : "NOTHING")} (its top {topAt:0.00})");
+            }
+
+            var sides = new (string name, Vector3 dir)[] { ("north (+z, the gorge side)", Vector3.forward), ("south (-z)", Vector3.back), ("east (+x)", Vector3.right), ("west (-x)", Vector3.left) };
+            int caughtCount = 0, tried = 0;
+            foreach (var side in sides)
+            {
+                if (!Live(round) || Left() < 30f) { Say($"NOT TRIED ({side.name}): round {Live(round)}, {Left():0} s left"); continue; }
+                PayoLayout.Block best = null; float bestEdge = float.MinValue; Vector3 edge = default;
+                foreach (var b in walk)
+                {
+                    float half = Vector3.Dot(new Vector3(b.SX, 0, b.SZ) * 0.5f, new Vector3(Mathf.Abs(side.dir.x), 0, Mathf.Abs(side.dir.z)));
+                    var e = new Vector3(b.X, b.Top, b.Z) + side.dir * half;
+                    float along = Vector3.Dot(e, side.dir);
+                    var outside = e + side.dir * 1.6f;
+                    if (Inside(one, outside.x, outside.z, 0.3f) || Mathf.Abs(outside.x) > layout.WallHalf - 0.5f || Mathf.Abs(outside.z) > layout.WallHalf - 0.5f) continue;
+                    if (along > bestEdge) { bestEdge = along; best = b; edge = e; }
+                }
+                Say("");
+                if (best == null) { Say($"OFF THE {side.name.ToUpperInvariant()}: no walk-set edge with open air past it inside the walls"); continue; }
+                for (float w = Time.time; Time.time - w < 8f && (tester.IsStunned || tester.IsEdgeRecovering);) yield return null;
+                var start = edge - side.dir * 1.2f;
+                Say($"OFF THE {side.name.ToUpperInvariant()}: block '{best.Id}' top {best.Top:0.00}, edge at {V(edge)}; under the air 1.6 m past it: {Column(edge + side.dir * 1.6f + Vector3.up * 0.4f, 80f)}");
+                tried++;
+                PayoCatcherFilm.Side(tried, side.name, tester, rig != null && rig.Camera != null ? rig.Camera : Camera.main);
+                Place(tester, start);
+                for (float w = Time.time; Time.time - w < 0.4f;) yield return null;
+                float began = Time.time, leftAt = -1f, caughtAt = -1f, caughtY = 0f, lowest = 99f, yLeft = 0f, yOneSecond = float.NaN, nextLog = 0f;
+                bool updraft = false, shaft = false, lost = false, voidSeen = false; int shots = 0;
+                while (Time.time - began < 16f && Live(round))
+                {
+                    var feet = Feet(tester); float t = Time.time - began;
+                    if (leftAt < 0f && !tester.IsGrounded && Vector3.Dot(feet - edge, side.dir) > 0f) { leftAt = t; yLeft = feet.y; }
+                    tester.Intent.Parked = false;
+                    tester.Intent.Move = leftAt < 0f || t - leftAt < 0.25f ? Axis(tester, rig, side.dir) : Vector2.zero;
+                    lowest = Mathf.Min(lowest, feet.y);
+                    bool up = ArenaFallRecovery.InUpdraft(tester), ov = ArenaFallRecovery.OverTheVoid(tester.transform.position), sf = ArenaStage.IsShaftFall(tester), lf = ArenaFallRecovery.IsLostFall(tester);
+                    updraft |= up; shaft |= sf; lost |= lf; voidSeen |= ov && leftAt >= 0f;
+                    if (leftAt >= 0f && float.IsNaN(yOneSecond) && t - leftAt >= 1f) yOneSecond = feet.y;
+                    if (side.dir == Vector3.forward && leftAt >= 0f && shots < 3 && t - leftAt >= new[] { 0.8f, 1.8f, 2.8f }[shots])
+                    {
+                        var eye = rig != null && rig.Camera != null ? rig.Camera : Camera.main;
+                        if (Picture(eye, $"fall_{shots}_{t - leftAt:0.0}s")) Say($"    picture fall_{shots}: the game camera {t - leftAt:0.0} s after leaving the edge, feet y {feet.y:0.0}");
+                        shots++;
+                    }
+                    if (t >= nextLog)
+                    {
+                        nextLog = t + 0.1f;
+                        Say($"    t {t:0.0} feet {V(feet)} vy {tester.Velocity.y:0.0} grounded {tester.IsGrounded} InUpdraft {up} OverTheVoid {ov} IsShaftFall {sf} IsLostFall {lf} edge {tester.IsEdgeRecovering} {tester.EdgeKind}");
+                    }
+                    if (tester.IsEdgeRecovering) { caughtAt = t; caughtY = feet.y; break; }
+                    if (leftAt >= 0f && tester.IsGrounded && t - leftAt > 1f) break;   // standing on something below
+                    PayoCatcherFilm.Tick(); yield return null;
+                }
+                tester.Intent.Move = Vector2.zero;
+                var endFeet = Feet(tester);
+                if (leftAt < 0f) { Fail($"{side.name}: the body never left the edge in 16 s (ended at {V(endFeet)})"); continue; }
+                if (caughtAt < 0f)
+                {
+                    Fail($"{side.name}: NOT CAUGHT. Left the edge at t {leftAt:0.0} (y {yLeft:0.0}); ended {(tester.IsGrounded ? "STANDING" : "in the air")} at {V(endFeet)} after {Time.time - began - leftAt:0.0} s; under its feet: {Column(endFeet + Vector3.up * 0.3f, 2f)}; updraft {updraft}, over the void seen {voidSeen}, shaft fall {shaft}, lost fall {lost}");
+                    continue;
+                }
+                caughtCount++;
+                Pass($"{side.name}: caught {caughtAt - leftAt:0.00} s after leaving the edge, at y {caughtY:0.0} (line {ArenaStage.CatchY:0.0}, kind {tester.EdgeKind}); first second dropped {yLeft - yOneSecond:0.0} m; updraft {updraft}, over the void {voidSeen}, shaft fall {shaft}, lost fall (tumble/fall view) {lost}; lowest {lowest:0.0}");
+                float carry = Time.time;
+                bool snapped = false;
+                while (Time.time - carry < 14f && tester.IsEdgeRecovering)
+                {
+                    if (!snapped && side.dir == Vector3.forward && Time.time - carry > 1.5f)
+                    {
+                        snapped = true;
+                        var eye = rig != null && rig.Camera != null ? rig.Camera : Camera.main;
+                        if (Picture(eye, "fall_3_carry")) Say($"    picture fall_3_carry: the game camera 1.5 s into the carry ({tester.EdgeKind})");
+                    }
+                    PayoCatcherFilm.Tick(); yield return null;
+                }
+                float carried = Time.time - carry;
+                for (float w = Time.time; Time.time - w < 0.3f;) { PayoCatcherFilm.Tick(); yield return null; }
+                var down = Feet(tester);
+                var on = one.At(down.x, down.z, out float top);
+                bool standing = on != null && Mathf.Abs(top - down.y) < 0.4f;
+                float freeze = Time.time; bool frozen = tester.IsStunned;
+                while (Time.time - freeze < 8f && tester.IsStunned) { PayoCatcherFilm.Tick(); yield return null; }
+                PayoCatcherFilm.EndSide();
+                Check(standing && on.Reach == PayoLayout.Reach.Walk, $"{side.name}: carried {carried:0.0} s ({tester.EdgeKind}), set down at {V(down)} on {(on != null ? on.Id + " (" + on.Reach + ")" : "NOTHING")}, {Vector3.Distance(new Vector3(down.x, 0, down.z), new Vector3(start.x, 0, start.z)):0.0} m from where it last stood; frozen {frozen} for {Time.time - freeze + 0.3f:0.0} s after the set-down");
+            }
+            Say(""); Say($"bodies caught: {caughtCount} of {tried} tried");
+            Say(""); Say(PayoCatcherFilm.Finish());
+
+            // ---- Paete's catch from the shaft, asked directly
+            Say(""); Say("PAETE'S VINE CATCH, ASKED FROM THE SHAFT (Abilities.PaeteVine.MapCatch):");
+            if (Abilities.PaeteVine.MapCatch == null) Fail("no map catch is hooked on this map");
+            else if (east != null)
+            {
+                var feet = new Vector3(east.X + east.SX * 0.5f + 1.2f, deck - 3f, east.Z);
+                bool ok = Abilities.PaeteVine.MapCatch(feet, new Vector3(east.X + east.SX * 0.5f, east.Top, east.Z), true, out var via, out var landing);
+                Check(ok, $"from feet {V(feet)} (3 m under the deck, 1.2 m off '{east.Id}'): {(ok ? $"hauled via {V(via)} to {V(landing)}" : "NO CATCH (the vines would only reel)")}");
+            }
+            Say($"the fall test used {Time.realtimeSinceStartup - t0:0} s of Play");
         }
 
         // ------------------------------------------------------------------ the Arena, after its shared code changed

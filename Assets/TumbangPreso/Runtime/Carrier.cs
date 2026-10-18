@@ -372,6 +372,7 @@ namespace TumbangPreso
             // play to strike it and is set back on the stage. No other map has one: there this is one null
             // test, and the throw above is the whole of what happened.
             Map.ArenaBalloon.HostOfferThrow(thrown, _motor, origin, aimPoint, charge, affinity);
+            Map.PayoMoon.HostOfferThrow(thrown, _motor, origin, aimPoint, charge, affinity);   // Payo's moon, the same toy at night
 
             Held = null;
             _motor.HoldingSlipper = false;

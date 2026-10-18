@@ -395,6 +395,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("PreparedWorld", OnPreparedWorldMsg);
             cm.RegisterNamedMessageHandler("SkyEffect", OnSkyEffectMsg);
             cm.RegisterNamedMessageHandler("ArenaBalloon", OnArenaBalloonMsg);
+            cm.RegisterNamedMessageHandler("PayoMoon", OnPayoMoonMsg);
             cm.RegisterNamedMessageHandler("TimedKit", OnTimedKitMsg);
             cm.RegisterNamedMessageHandler("TimedKitState", OnTimedKitStateMsg);
             cm.RegisterNamedMessageHandler("CircuitAim", OnCircuitAimMsg);
@@ -6460,6 +6461,7 @@ namespace TumbangPreso.Net
             SendReplayShortlist((ulong)peerId);
             SendSkySnapshot((ulong)peerId);
             SendArenaBalloonSnapshot((ulong)peerId);
+            SendPayoMoonSnapshot((ulong)peerId);
             FindFirstObjectByType<BufferSkipVote>()?.PublishTally((ulong)peerId);
             FindFirstObjectByType<UI.MatchResult>()?.PublishRematchTally((ulong)peerId);
             int previousFieldGeneration=_worldFieldGeneration;

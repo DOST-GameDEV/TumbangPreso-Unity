@@ -99,12 +99,148 @@ Shader "TumbangPreso/WorldOutline"
             // platform this project builds for is 3.0 or better; the built-in blit path defaults
             // lower purely for history.
             #pragma target 3.0
+            // The edge term's depth, refined on a long far plane exactly as pass 2's (see `WORLD_AO_FINE_DEPTH` there):
+            // on Payo the 16-bit depth's 5.6 cm steps were each read as a depth edge near the lens and inked as a
+            // line across a flat floor (owner, 2026-10-18: "still having striping").
+            #pragma multi_compile_local __ WORLD_AO_FINE_DEPTH
             #include "UnityCG.cginc"
 
             sampler2D _MainTex;
             float4 _MainTex_TexelSize;
 
             sampler2D _CameraDepthNormalsTexture;
+            #ifdef WORLD_AO_FINE_DEPTH
+            UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
+            float4 _WorldContactProjectionFar;
+            // PAYO'S AERIAL HAZE (owner, 2026-10-18: "should add a haze"), set as globals by `Map.PayoHaze`, so only a
+            // scene that carries one has any: x the most it takes, y metres for it to reach 63 per cent of that past
+            // z metres from the eye, w the height (m) over which it fades to none above `_MapHazeBase.x` (a ceiling, so
+            // it stays in the valley: owner, 2026-10-18, "it should only be within the valley"). The colour
+            // is the scene's fog colour, so it meets the fog the materials already add without a seam.
+            float4 _MapHaze, _MapHazeBase, _MapHazeColor;
+            float4x4 _HazeToWorld;
+            // WISPS IN THE HAZE (owner, 2026-10-19: "should have some wispy moving clouds in the haze"): two flat sheets
+            // of thin cloud inside the valley, at heights `_MapHazeWisp.y` and `.z`, drifting along `_MapHazeWind.xy`
+            // at `.z` m/s. A sheet shows only where the eye's ray crosses it before it meets the land, so the wisps lie
+            // over the valley floor and pass in front of the far terraces but never over the hills above them. x is the
+            // most a wisp takes, w one over the wisps' size (m). `_MapHazeWind.xy` is the axis the wisps are drawn out
+            // along (down the valley), zw their drift (m/s, world x and z): it crosses that axis, because a wisp
+            // sliding along its own length looks still (owner, 2026-10-19: "make the cloud wisps move").
+            float4 _MapHazeWisp, _MapHazeWind;
+
+            float HazeHash(float2 p)
+            {
+                p = frac(p * float2(123.34, 456.21));
+                p += dot(p, p + 45.32);
+                return frac(p.x * p.y);
+            }
+
+            float HazeNoise(float2 p)
+            {
+                float2 i = floor(p), f = frac(p);
+                f = f * f * (3.0 - 2.0 * f);
+                return lerp(lerp(HazeHash(i), HazeHash(i + float2(1, 0)), f.x),
+                            lerp(HazeHash(i + float2(0, 1)), HazeHash(i + float2(1, 1)), f.x), f.y);
+            }
+
+            // How much of one sheet (height h) the ray from the eye to the land point crosses: long thin wisps,
+            // stretched along the wind, soft where the land or the eye comes near the sheet, none in the first metres
+            // (no cloud in the player's face) and thinning far off, where the haze has the ranges anyway.
+            float HazeWisp(float3 eyePos, float3 world, float h, float2 drift, float seed, float edge)
+            {
+                float a = eyePos.y - h, b = world.y - h;
+                if (a * b >= 0.0) return 0.0;
+                float3 p = lerp(eyePos, world, a / (a - b));
+                float dist = distance(eyePos, p);
+                float2 along = _MapHazeWind.xy, across = float2(-along.y, along.x);
+                float2 q = p.xz - drift;
+                q = float2(dot(q, along) * 0.4, dot(q, across)) * _MapHazeWisp.w + seed;
+                float t = _Time.y;
+                float n = 0.55 * HazeNoise(q + float2(0.0, t * 0.02)) + 0.3 * HazeNoise(q * 2.1 + float2(t * 0.05, 5.2))
+                        + 0.15 * HazeNoise(q * 4.3 - float2(t * 0.09, t * 0.04));
+                float shape = smoothstep(edge, edge + 0.22, n);
+                return shape * saturate(abs(a) / 4.0) * saturate(abs(b) / 6.0)
+                     * smoothstep(25.0, 90.0, dist) * (1.0 - smoothstep(700.0, 1600.0, dist));
+            }
+
+            // GOD RAYS AND A LENS FLARE (owner, 2026-10-19: "can we have some god rays and lens flare?"), set by
+            // `Map.PayoHaze` like the haze: `_MapSun.xyz` the direction to the sun (world), w the rays' strength;
+            // `_MapSunColor.rgb` the sunlight, a the flare's strength. The rays march the depth from each pixel toward
+            // the sun's place on screen and count how much open sky they pass, so the land, trees and grass cut
+            // shafts out of the glow; the flare is a short row of soft painted rings along the line from the sun
+            // through the middle of the screen and a thin warm streak through the sun, all dimmed by how much of the
+            // sun itself is hidden. Drawn here, analytically: no textures, no extra pass.
+            float4 _MapSun, _MapSunColor;
+            float4x4 _HazeToView;
+
+            float HazeSky(float2 uv)
+            {
+                return Linear01Depth(SAMPLE_DEPTH_TEXTURE_LOD(_CameraDepthTexture, float4(uv, 0.0, 0.0))) >= 0.999 ? 1.0 : 0.0;
+            }
+
+            float FlareRing(float2 uv, float2 centre, float r, float aspect)
+            {
+                float d = length((uv - centre) * float2(aspect, 1.0));
+                float face = 1.0 - smoothstep(r * 0.55, r, d);
+                float rim = smoothstep(r * 0.7, r * 0.92, d) * (1.0 - smoothstep(r * 0.92, r * 1.05, d));
+                return face * 0.35 + rim * 0.65;
+            }
+
+            float3 SunLight(float2 duv, float2 viewRay)
+            {
+                float3 sv = mul((float3x3)_HazeToView, _MapSun.xyz);
+                if (sv.z > -0.05) return 0;
+                float2 sun = (sv.xy / -sv.z) / viewRay * 0.5 + 0.5;
+                float aspect = viewRay.x / viewRay.y;
+                float3 add = 0;
+                if (_MapSun.w > 0.0)
+                {
+                    // ⚠️ A SHORT, DENSE MARCH (owner, 2026-10-19: "ambient occlusion flashing and bleeding through
+                    // walls"): 24 taps over the whole way to the sun stamped spaced copies of the skyline's plants and
+                    // statues on the floor, crawling as the eye moved. Now 32 taps over the 40 per cent of the way
+                    // nearest the pixel, so neighbouring taps overlap into a smooth shaft.
+                    float2 stepUv = (sun - duv) * 0.4 / 32.0;
+                    float2 p = duv + stepUv * HazeHash(duv * _ScreenParams.xy);
+                    float lit = 0.0, w = 1.0, total = 0.0;
+                    [loop] for (int k = 0; k < 32; k++)
+                    {
+                        float2 q = p;
+                        float inside = step(0.0, q.x) * step(q.x, 1.0) * step(0.0, q.y) * step(q.y, 1.0);
+                        lit += HazeSky(saturate(q)) * inside * w;
+                        total += w;
+                        w *= 0.96;
+                        p += stepUv;
+                    }
+                    float2 d = (sun - duv) * float2(aspect, 1.0);
+                    // shafts over the land; the open sky (already lit by its own glow) takes only a little,
+                    // or the whole frame round the sun washes out (owner's screenshot, 2026-10-19)
+                    float overLand = lerp(0.08, 1.0, 1.0 - HazeSky(duv));
+                    add += _MapSunColor.rgb * (_MapSun.w * (lit / total) * exp(-length(d) * 4.5) * overLand);
+                }
+                if (_MapSunColor.a > 0.0)
+                {
+                    float o = 0.012;
+                    float seen = (HazeSky(sun) + HazeSky(sun + float2(o, 0)) + HazeSky(sun - float2(o, 0))
+                                + HazeSky(sun + float2(0, o * aspect)) + HazeSky(sun - float2(0, o * aspect))) / 5.0;
+                    seen *= 1.0 - smoothstep(0.45, 0.62, max(abs(sun.x - 0.5), abs(sun.y - 0.5)));
+                    if (seen > 0.0)
+                    {
+                        float2 axis = 0.5 - sun;
+                        float3 f = 0;
+                        f += float3(1.00, 0.72, 0.42) * FlareRing(duv, sun + axis * 0.55, 0.035, aspect);
+                        f += float3(0.55, 0.90, 0.80) * FlareRing(duv, sun + axis * 0.95, 0.02, aspect);
+                        f += float3(0.90, 0.62, 0.90) * FlareRing(duv, sun + axis * 1.35, 0.07, aspect);
+                        f += float3(1.00, 0.88, 0.60) * FlareRing(duv, sun + axis * 1.75, 0.03, aspect);
+                        f += float3(0.55, 0.75, 1.00) * FlareRing(duv, sun + axis * 2.25, 0.12, aspect) * 0.7;
+                        float2 ds = (duv - sun) * float2(aspect, 1.0);
+                        float streak = exp(-abs(ds.y) * 260.0) * exp(-abs(ds.x) * 3.5);
+                        f += float3(1.0, 0.85, 0.65) * streak * 1.2;
+                        add += f * _MapSunColor.rgb * (_MapSunColor.a * seen);
+                    }
+                }
+                return add;
+            }
+            #endif
             sampler2D _WorldOutlineMask;
 
             fixed4 _OutlineColor;
@@ -167,6 +303,13 @@ Shader "TumbangPreso/WorldOutline"
                 DepthNormalSample s;
                 DecodeDepthNormal(tex2Dlod(_CameraDepthNormalsTexture, float4(uv, 0.0, 0.0)),
                                   s.depth, s.normal);
+                #ifdef WORLD_AO_FINE_DEPTH
+                // Only a refinement of the same surface, never a new one (the first-person arms are in the camera's
+                // depth texture and not in the depth-normals one): beyond the old depth's own steps, the old stands.
+                float fine = Linear01Depth(SAMPLE_DEPTH_TEXTURE_LOD(_CameraDepthTexture, float4(uv, 0.0, 0.0)));
+                float far = _WorldContactProjectionFar.x;
+                if (abs(fine - s.depth) * far < 0.25 + s.depth * far * 0.01) s.depth = fine;
+                #endif
                 return s;
             }
 
@@ -419,7 +562,7 @@ Shader "TumbangPreso/WorldOutline"
                 float3 world=mul(_WorldContactToWorld,float4(view,1)).xyz;
                 return step(depth,.9999)*step(abs(world.y-_WorldGroundContact.x),.07)*step(max(abs(world.x),abs(world.z)),24);
             }
-            half4 frag (v2f_img i) : SV_Target
+            half4 Ink (v2f_img i)
             {
                 half4 source = tex2D(_MainTex, i.uv);
 
@@ -630,6 +773,55 @@ Shader "TumbangPreso/WorldOutline"
 
                 return half4(lerp(inked, colour, saturate(_PeakEdge.w)), source.a);
             }
+
+            half4 frag (v2f_img i) : SV_Target
+            {
+                half4 c = Ink(i);
+                #ifdef WORLD_AO_FINE_DEPTH
+                if (_MapHaze.x > 0.0)
+                {
+                    // Over the inked frame, before the grade: the camera's own depth (the far pieces kept out of the
+                    // ink's prepass are in it), the sky (the far plane) left to its own horizon colour.
+                    float2 duv = i.uv;
+                    #if UNITY_UV_STARTS_AT_TOP
+                    if (_MainTex_TexelSize.y < 0.0) duv.y = 1.0 - duv.y;
+                    #endif
+                    float d01 = Linear01Depth(SAMPLE_DEPTH_TEXTURE_LOD(_CameraDepthTexture, float4(duv, 0.0, 0.0)));
+                    if (d01 < 0.999)
+                    {
+                        float eye = d01 * _WorldContactProjectionFar.x;
+                        float3 view = float3((duv * 2 - 1) * _ViewRay.xy * eye, -eye);
+                        float3 world = mul(_HazeToWorld, float4(view, 1)).xyz;
+                        float far = 1 - exp(-max(0, length(view) - _MapHaze.z) / _MapHaze.y);
+                        float low = 1 - smoothstep(_MapHazeBase.x, _MapHazeBase.x + _MapHaze.w, world.y);
+                        c.rgb = lerp(c.rgb, _MapHazeColor.rgb, saturate(_MapHaze.x * far * low));
+                        if (_MapHazeWisp.x > 0.0)
+                        {
+                            float3 eyePos = _HazeToWorld._m03_m13_m23;
+                            float2 drift = _MapHazeWind.zw * _Time.y;
+                            // VOLUME (owner, 2026-10-19: "they arent volumetric much?"): seven slices through the
+                            // wisp band, each the same drifting noise nudged a little per slice, so a wisp has depth;
+                            // the outline tightens toward the top and bottom slices (a rounded billow, thick in the
+                            // middle, frayed at its edges), and the upper slices are lit, the lower ones in shade.
+                            float clear = 1.0;
+                            float3 tint = 0;
+                            [unroll] for (int s = 0; s < 7; s++)
+                            {
+                                float f = s / 6.0;
+                                float h = lerp(_MapHazeWisp.z, _MapHazeWisp.y, f);
+                                float edge = 0.36 + 0.22 * abs(f * 2.0 - 1.0);
+                                float a = saturate(_MapHazeWisp.x * 0.6 * HazeWisp(eyePos, world, h, drift, f * 0.45, edge));
+                                tint += a * clear * saturate(_MapHazeColor.rgb * lerp(0.85, 1.25, f) + lerp(0.02, 0.1, f));
+                                clear *= 1.0 - a;
+                            }
+                            c.rgb = c.rgb * clear + tint;
+                        }
+                    }
+                    c.rgb += SunLight(duv, _ViewRay.xy);
+                }
+                #endif
+                return c;
+            }
             ENDCG
         }
 
@@ -769,6 +961,14 @@ Shader "TumbangPreso/WorldOutline"
             // graphics tier (`WorldOutline.AmbientOcclusionLiteKeyword`), so a build must carry
             // both variants whatever the materials on disk say.
             #pragma multi_compile_local __ WORLD_AO_LITE
+            // ⚠️⚠️ FINE DEPTH ON A LONG FAR PLANE (owner, 2026-10-18, on Payo: "theres also some striping on the AO for
+            // both world and characters, this doesnt show on other maps"). The depth-normals texture holds depth in 16
+            // bits spread evenly to the far plane: Payo's play camera sees 3700 m, so a step is 5.6 cm, past this
+            // pass's 3 cm bias, and every smooth slope and body shaded itself in bands, one per step. With
+            // `WORLD_AO_FINE_DEPTH` (switched on by `WorldOutline` only for a far plane past `FineDepthFar`, so no
+            // other map changes) the depth here comes from the camera's own depth texture, full precision near the
+            // lens; the normals still come from the depth-normals texture.
+            #pragma multi_compile_local __ WORLD_AO_FINE_DEPTH
             #include "UnityCG.cginc"
             // The probes a pixel takes: sixteen on the top tier, eight on the tiers below it
             // (owner, 2026-10-04: the joining players' frame rate). Two a ring instead of four.
@@ -778,19 +978,38 @@ Shader "TumbangPreso/WorldOutline"
             #define WORLD_AO_PROBES 16
             #endif
             sampler2D _CameraDepthNormalsTexture;
+            #ifdef WORLD_AO_FINE_DEPTH
+            UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
+            #endif
             float4 _ViewRay,_WorldContactProjection,_WorldAOParams;
             // x on (the cast's share, > 0), y radius in metres, z bias in metres. See CastAO.
             float4 _CharacterAOParams;
+            // A probe's view of the two depths (`WorldOutline.FineDepthView`, never set in play): 1 white where they
+            // agree and black where they do not, 2 the fine depth as a ramp a metre wide, 3 the coarse one the same.
+            float _FineDepthView;
+            float EyeDepth(float2 uv)
+            {
+                float depth;float3 normal;DecodeDepthNormal(tex2Dlod(_CameraDepthNormalsTexture,float4(uv,0,0)),depth,normal);
+                float coarse=depth*_WorldContactProjection.x;
+                #ifdef WORLD_AO_FINE_DEPTH
+                // Only a REFINEMENT of the depth-normals depth, never a new surface: where the two disagree by more
+                // than its steps could (the first-person arms and anything else the depth-normals prepass leaves out
+                // are in the camera's depth texture), the depth-normals value stands, so nothing the pass did not see
+                // before can occlude now (owner, 2026-10-18: "its having shading flickers like way back then").
+                float fine=LinearEyeDepth(SAMPLE_DEPTH_TEXTURE_LOD(_CameraDepthTexture,float4(uv,0,0)));
+                return abs(fine-coarse)<.25+coarse*.01?fine:coarse;
+                #else
+                return coarse;
+                #endif
+            }
             float3 ViewPoint(float2 uv,out float3 normal)
             {
                 float depth;DecodeDepthNormal(tex2Dlod(_CameraDepthNormalsTexture,float4(uv,0,0)),depth,normal);
                 float eye=depth*_WorldContactProjection.x;
+                #ifdef WORLD_AO_FINE_DEPTH
+                eye=EyeDepth(uv);
+                #endif
                 return float3((uv*2-1)*_ViewRay.xy*eye,-eye);
-            }
-            float EyeDepth(float2 uv)
-            {
-                float depth;float3 normal;DecodeDepthNormal(tex2Dlod(_CameraDepthNormalsTexture,float4(uv,0,0)),depth,normal);
-                return depth*_WorldContactProjection.x;
             }
             // ⚠️⚠️ § THE CAST'S OWN OCCLUSION, A SECOND KERNEL AT A BODY'S SCALE (owner, 2026-10-05,
             // circling the head and chest in the difference picture: "notice how this part doesnt
@@ -873,6 +1092,16 @@ Shader "TumbangPreso/WorldOutline"
             }
             half4 frag(v2f_img i):SV_Target
             {
+                #ifdef WORLD_AO_FINE_DEPTH
+                if(_FineDepthView>.5)
+                {
+                    float dv;float3 nv;DecodeDepthNormal(tex2Dlod(_CameraDepthNormalsTexture,float4(i.uv,0,0)),dv,nv);
+                    float cv=dv*_WorldContactProjection.x;
+                    float fv=LinearEyeDepth(SAMPLE_DEPTH_TEXTURE_LOD(_CameraDepthTexture,float4(i.uv,0,0)));
+                    float shown=_FineDepthView<1.5?(abs(fv-cv)<.25+cv*.01?1:0):frac(_FineDepthView<2.5?fv:cv);
+                    return half4(shown,1,shown,1);
+                }
+                #endif
                 float3 n;float3 p=ViewPoint(i.uv,n);
                 if(-p.z>_WorldContactProjection.x*.999)return 1;
                 float cast=1;
@@ -968,13 +1197,28 @@ Shader "TumbangPreso/WorldOutline"
             #pragma vertex vert_img
             #pragma fragment frag
             #pragma target 3.0
+            // The same depth as pass 2 reads (see `WORLD_AO_FINE_DEPTH` there).
+            #pragma multi_compile_local __ WORLD_AO_FINE_DEPTH
             #include "UnityCG.cginc"
             sampler2D _MainTex,_CameraDepthNormalsTexture;
+            #ifdef WORLD_AO_FINE_DEPTH
+            UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
+            #endif
             float4 _MainTex_TexelSize,_WorldContactProjection;
             float EyeDepth(float2 uv)
             {
                 float depth;float3 normal;DecodeDepthNormal(tex2Dlod(_CameraDepthNormalsTexture,float4(uv,0,0)),depth,normal);
-                return depth*_WorldContactProjection.x;
+                float coarse=depth*_WorldContactProjection.x;
+                #ifdef WORLD_AO_FINE_DEPTH
+                // Only a REFINEMENT of the depth-normals depth, never a new surface: where the two disagree by more
+                // than its steps could (the first-person arms and anything else the depth-normals prepass leaves out
+                // are in the camera's depth texture), the depth-normals value stands, so nothing the pass did not see
+                // before can occlude now (owner, 2026-10-18: "its having shading flickers like way back then").
+                float fine=LinearEyeDepth(SAMPLE_DEPTH_TEXTURE_LOD(_CameraDepthTexture,float4(uv,0,0)));
+                return abs(fine-coarse)<.25+coarse*.01?fine:coarse;
+                #else
+                return coarse;
+                #endif
             }
             half4 frag(v2f_img i):SV_Target
             {

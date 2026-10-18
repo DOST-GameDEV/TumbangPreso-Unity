@@ -679,7 +679,8 @@ def pad(S, glb):
 
 def ext(S, glb, sx, sz):
     """A plain shaft to stand under a block: origin the block's top centre, it runs from 12.6 m down to 52.6 m down."""
-    P = Piece(glb, size=512, ppm=7, seed=seed_of(glb))
+    # 2026-10-18 (owner: "the textures look low res"): was 512 px at 7 px a metre, the softest paint on the stage.
+    P = Piece(glb, size=2048, ppm=28, seed=seed_of(glb))
     box(P, (sx * 0.3, 20.0, sz * 0.3), 0.3, (0, -32.6, 0), paint=S.stone_wall(course=1.6, length=(2.0, 3.4), tone=0.78, moss=0.3, drips=0.6, damp=0.8, top=False, seed=3), seg=8, rings=4)
     P.meta.update({"size": "%.1f x %.1f m, from 12.6 to 52.6 m under the block's top" % (sx * 0.6, sz * 0.6), "pivot": "the block's top centre", "ground": -52.7, "close": [(0, -14, 0), (8, -10, 12)]})
     return P

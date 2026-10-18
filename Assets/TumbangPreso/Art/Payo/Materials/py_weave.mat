@@ -45,6 +45,9 @@ Material:
     - _EmissionFromAlbedo: 0
     - _Glossiness: 0.08
     - _Grain: 0
+    - _GrainFine: 0
+    - _GrainHue: 0
+    - _GrainScale: 4
     - _Haze: 0
     - _Metallic: 0
     - _NearFadeCell: 2

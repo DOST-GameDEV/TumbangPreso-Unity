@@ -101,6 +101,23 @@ namespace TumbangPreso.Map
             return t * t * (3.0f - 2.0f * t);
         }
 
+        // ⚠️ A DEVELOPER KEY, PAYO ONLY (owner, 2026-10-18: "add a small debug key for payo where i can go to the next
+        // round"). F9 runs the round's clock out, so the round ends the ordinary way: the scoreboard, the break, the
+        // half-time dusk into night. F9 is free here: its only other use is the movement switch on the prototype map,
+        // which this scene does not carry. Editor and development builds, single-player, no open menu.
+        private void Update()
+        {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            var kb = UnityEngine.InputSystem.Keyboard.current;
+            if (kb == null || !kb.f9Key.wasPressedThisFrame) return;
+            if (NetAuthority.IsNetworked || UI.Panel.AnyOpen) return;
+            var round = GameServices.Round;
+            if (round == null || !round.RoundActive) return;
+            round.ApplyPresentationTime(0.0f);
+            Debug.Log("[Payo] F9: round " + (GameServices.Match != null ? GameServices.Match.RoundNumber : 0) + " ended by the debug key");
+#endif
+        }
+
         private void LateUpdate()
         {
             float n = Hold >= 0.0f ? Mathf.Clamp01(Hold) : FactorFor(GameServices.Match, HalftimePresentation.Instance);

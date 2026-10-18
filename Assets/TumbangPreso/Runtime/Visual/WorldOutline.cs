@@ -372,6 +372,7 @@ namespace TumbangPreso.Visual
         /// </summary>
         private void RequestDepthNormals(bool want)
         {
+            RequestFineDepth(want && FineDepth);
             if (_camera == null || want == _depthNormalsRequested) return;
 
             if (want) _camera.depthTextureMode |= DepthTextureMode.DepthNormals;
@@ -400,6 +401,40 @@ namespace TumbangPreso.Visual
         /// the Chromatic style also stops paying for the depth-normals request and the exclusion
         /// mask rebuild rather than only for the composite.
         /// </summary>
+        /// <summary>
+        /// ⚠️⚠️ PAST THIS FAR PLANE THE OCCLUSION READS THE CAMERA'S OWN DEPTH TEXTURE (owner, 2026-10-18, on Payo:
+        /// "theres also some striping on the AO for both world and characters, this doesnt show on other maps").
+        /// The depth-normals texture's 16-bit depth steps by far / 65536: 240 m (every map but two) is 4 mm, the
+        /// Arena's 1300 m is 2 cm, Payo's 3700 m is 5.6 cm, past the occlusion's 3 cm bias, so smooth slopes and
+        /// bodies shaded in bands. Only a camera past this far plane (Payo) switches `WORLD_AO_FINE_DEPTH` on and asks
+        /// for `DepthTextureMode.Depth`; every other map keeps exactly what it had. With a shadowed sun the built-in
+        /// pipeline renders that depth texture for its screen-space shadows anyway.
+        /// </summary>
+        public const float FineDepthFar = 1500f;
+        /// <summary>The exclusion mask's depth tolerance past `FineDepthFar`, in metres (see where the mask is drawn).</summary>
+        private const float MaskToleranceMetres = 0.2f;
+        private const string FineDepthKeyword = "WORLD_AO_FINE_DEPTH";
+        private bool FineDepth => _camera != null && !_camera.orthographic
+            && (FineDepthTest >= 0 ? FineDepthTest > 0 : _camera.farClipPlane > FineDepthFar);
+        /// <summary>A probe's switches, never set by the game: `FineDepthTest` -1 lets the far plane decide, 0 forces
+        /// the old depth, 1 the fine one; `FineDepthView` 0 normal, 1 paints where the two depths agree (white) or
+        /// not (black), 2 the fine depth as a metre ramp, 3 the old one.</summary>
+        public static int FineDepthTest = -1, FineDepthView;
+        private bool _depthRequested;
+
+        private void RequestFineDepth(bool want)
+        {
+            if (_camera == null || want == _depthRequested) return;
+            // Only ever takes back what it added: a camera that already asked for depth keeps it, untouched.
+            if (want)
+            {
+                if ((_camera.depthTextureMode & DepthTextureMode.Depth) != 0) return;
+                _camera.depthTextureMode |= DepthTextureMode.Depth;
+            }
+            else _camera.depthTextureMode &= ~DepthTextureMode.Depth;
+            _depthRequested = want;
+        }
+
         private bool HasWorldContact => WorldLookPresentation.HandlesCamera(_camera)
             && WorldCueProfile.LightingWeight>0 && WorldLookProfile.Current.EnvironmentContact>0
             && Settings.SettingsStore.Current.GraphicsQuality>0;
@@ -687,7 +722,13 @@ namespace TumbangPreso.Visual
             _maskBuffer.SetRenderTarget(_mask);
             _maskBuffer.ClearRenderTarget(false, true, Color.black);
 
-            _maskMaterial.SetFloat(MaskToleranceId, _maskDepthTolerance);
+            // ⚠️ THE TOLERANCE IS A SHARE OF THE FAR PLANE: 0.0008 is 19 cm at 240 m but 3 m at Payo's 3700 m, so a vine up to
+            // 3 m BEHIND a platform passed as visible and cut its shape out of the platform's AO (owner, 2026-10-19: "the AO
+            // of the vines across the basin are visible through the platforms"). Past the fine-depth far plane it is held
+            // to `MaskToleranceMetres`; every other map keeps exactly its old value.
+            float tolerance = _maskDepthTolerance;
+            if (FineDepth) tolerance = Mathf.Min(tolerance, MaskToleranceMetres / _camera.farClipPlane);
+            _maskMaterial.SetFloat(MaskToleranceId, tolerance);
             _maskBuffer.SetGlobalVector(NearFadeMaskId,Vector4.zero);NearFadeMaskDraws=0;
 
             foreach (var renderer in _excluded)
@@ -1006,6 +1047,8 @@ namespace TumbangPreso.Visual
                 _material.SetVector(WorldAOParamsId,new Vector4(aoStrength,WorldLookProfile.Current.AmbientOcclusionRadius,.03f,NearGuard()));
                 // Eight probes below the top tier, sixteen on it (see `AmbientOcclusionLiteKeyword`).
                 if(AmbientOcclusionLite)_material.EnableKeyword(AmbientOcclusionLiteKeyword);else _material.DisableKeyword(AmbientOcclusionLiteKeyword);
+                if(FineDepth)_material.EnableKeyword(FineDepthKeyword);else _material.DisableKeyword(FineDepthKeyword);
+                _material.SetFloat("_FineDepthView",FineDepthView);
                 Graphics.Blit(source,occlusion,_material,AmbientOcclusionPass);
                 Graphics.Blit(occlusion,occlusionBlur,_material,AmbientOcclusionBlurPass);
                 _material.SetTexture(WorldAOId,occlusionBlur);
@@ -1017,6 +1060,11 @@ namespace TumbangPreso.Visual
                 _material.SetTexture(WorldAOId,Texture2D.whiteTexture);
             }
             _material.SetTexture(MainTexId, source);
+            // The composite's edge term reads the same refined depth as the occlusion (see `FineDepthFar`).
+            if(FineDepth)_material.EnableKeyword(FineDepthKeyword);else _material.DisableKeyword(FineDepthKeyword);
+            _material.SetVector("_WorldContactProjectionFar",new Vector4(_camera.farClipPlane,0,0,0));
+            // Payo's aerial haze reads the world from the same depth (`Map.PayoHaze`; nothing elsewhere).
+            if(FineDepth){_material.SetMatrix("_HazeToWorld",_camera.cameraToWorldMatrix);_material.SetMatrix("_HazeToView",_camera.worldToCameraMatrix);}
 
             // ⚠️ THE PASS INDEX IS NOT OPTIONAL. `Graphics.Blit` without one runs EVERY pass in
             // the SubShader, and pass 1 is the exclusion mask: blitted full-screen it writes

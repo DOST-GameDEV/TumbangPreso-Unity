@@ -42,6 +42,9 @@ Shader "TumbangPreso/LagoonPainted"
         [Toggle] _Grain ("Stone grain", Float) = 0
         _GrainTex ("Grain source (rock_a)", 2D) = "grey" {}
         _GrainRange ("Grain map range (in lo, in hi, out lo, out hi)", Vector) = (0.4398, 0.8168, 0.84, 1.06)
+        _GrainScale ("Grain box size (m)", Float) = 4
+        _GrainFine ("A second, finer grain: its size as a share of the first (0 none)", Float) = 0
+        _GrainHue ("Colour mottle: the grain's RGB as an offset of this strength (0: a grey grain through _GrainRange)", Float) = 0
         [Toggle] _Haze ("Backdrop haze", Float) = 0
         _HazeColour ("Haze colour", Color) = (0.9, 0.93, 0.92, 1)
         [Toggle] _NormalToneOn ("Normal tone", Float) = 0
@@ -64,6 +67,7 @@ Shader "TumbangPreso/LagoonPainted"
         half _Glossiness, _VertexTint, _BumpScale, _EmissionFromAlbedo, _Cutoff, _Grain, _Haze, _NormalToneOn;
         half4 _EmissionColor, _HazeColour;
         float4 _GrainRange, _NormalTone;
+        float _GrainScale, _GrainFine, _GrainHue;
 
         struct Input
         {
@@ -95,11 +99,25 @@ Shader "TumbangPreso/LagoonPainted"
             float3 worldN = WorldNormalVector(IN, float3(0, 0, 1));
             if (_Grain > 0)
             {
-                // The emblem is carved in the stone: the stone's own grain, box-projected at 4 m.
-                float3 pB = ToBlender(IN.worldPos) / 4.0;
+                // The emblem is carved in the stone: the stone's own grain, box-projected at 4 m (`_GrainScale`).
+                // Payo's stage stone (2026-10-18, "the textures look low res") takes a fine grain at about 1.4 m and,
+                // with `_GrainFine`, a second one smaller and turned, so the repeat never lines up.
+                float3 pB = ToBlender(IN.worldPos) / _GrainScale;
                 float3 w = BoxWeights(ToBlender(worldN), 0.45);
                 float3 g = tex2D(_GrainTex, pB.yz).rgb * w.x + tex2D(_GrainTex, pB.xz).rgb * w.y + tex2D(_GrainTex, pB.xy).rgb * w.z;
-                c.rgb *= MapRangeLinear(Luminance(g), _GrainRange.x, _GrainRange.y, _GrainRange.z, _GrainRange.w);
+                if (_GrainFine > 0)
+                {
+                    float3 q = pB / _GrainFine;
+                    float2 r = float2(0.7986, 0.6018);                 // 37 degrees
+                    float3 g2 = tex2D(_GrainTex, float2(q.y * r.x - q.z * r.y, q.y * r.y + q.z * r.x) + 0.31).rgb * w.x
+                              + tex2D(_GrainTex, float2(q.x * r.x - q.z * r.y, q.x * r.y + q.z * r.x) + 0.57).rgb * w.y
+                              + tex2D(_GrainTex, float2(q.x * r.x - q.y * r.y, q.x * r.y + q.y * r.x) + 0.13).rgb * w.z;
+                    g = (g + g2) * 0.5;
+                }
+                // Payo's stone (owner, 2026-10-18: "large splotches of a small random hue offset"): the texture's RGB is
+                // an offset around 0.5 per channel, greener or redder patches on plain paint.
+                if (_GrainHue > 0) c.rgb *= 1 + (g * 2 - 1) * _GrainHue;
+                else c.rgb *= MapRangeLinear(Luminance(g), _GrainRange.x, _GrainRange.y, _GrainRange.z, _GrainRange.w);
             }
             if (_NormalToneOn > 0)
                 c.rgb *= MapRangeLinear(worldN.y, _NormalTone.x, _NormalTone.y, _NormalTone.z, _NormalTone.w);

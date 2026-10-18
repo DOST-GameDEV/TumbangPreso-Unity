@@ -390,25 +390,25 @@ MonoBehaviour:
     Bloom: 0
     BloomThreshold: 0
   - Map: Payo
-    Sky: {r: 0.44, g: 0.56, b: 0.78, a: 1}
-    Equator: {r: 0.5, g: 0.56, b: 0.64, a: 1}
-    Ground: {r: 0.43, g: 0.44, b: 0.44, a: 1}
-    ShadowTint: {r: 0.8, g: 0.88, b: 1.1, a: 1}
+    Sky: {r: 0.48, g: 0.58, b: 0.84, a: 1}
+    Equator: {r: 0.6, g: 0.62, b: 0.7, a: 1}
+    Ground: {r: 0.5, g: 0.48, b: 0.46, a: 1}
+    ShadowTint: {r: 0.84, g: 0.86, b: 1.1, a: 1}
     Chalk: {r: 0.18, g: 0.16, b: 0.14, a: 1}
     ChalkEdge: {r: 0.79, g: 0.75, b: 0.65, a: 1}
     FogStart: 80
     FogEnd: 3000
     WearKind: 0
-    Sun: {r: 1, g: 0.95, b: 0.86, a: 1}
-    SunIntensity: 1.16
-    SunElevation: 31
-    ShadowStrength: 0.72
-    Fog: {r: 0.66, g: 0.84, b: 0.94, a: 1}
-    Zenith: {r: 0.3, g: 0.6, b: 0.88, a: 1}
-    Horizon: {r: 0.76, g: 0.9, b: 0.96, a: 1}
-    CloudLight: {r: 1, g: 0.99, b: 0.96, a: 1}
-    CloudShade: {r: 0.62, g: 0.74, b: 0.9, a: 1}
-    Lift: {r: 0.024, g: 0.034, b: 0.06, a: 1}
+    Sun: {r: 1, g: 0.87, b: 0.72, a: 1}
+    SunIntensity: 1.36
+    SunElevation: 14
+    ShadowStrength: 0.7
+    Fog: {r: 0.94, g: 0.82, b: 0.72, a: 1}
+    Zenith: {r: 0.46, g: 0.6, b: 0.82, a: 1}
+    Horizon: {r: 1, g: 0.8, b: 0.6, a: 1}
+    CloudLight: {r: 1, g: 0.74, b: 0.64, a: 1}
+    CloudShade: {r: 0.66, g: 0.62, b: 0.8, a: 1}
+    Lift: {r: 0.03, g: 0.032, b: 0.06, a: 1}
     GroundLift: 1
     NoBlockyClouds: 0
     CloudBands:
@@ -429,25 +429,25 @@ MonoBehaviour:
     Bloom: 0.14
     BloomThreshold: 1.9
   - Map: PayoNight
-    Sky: {r: 0.16, g: 0.24, b: 0.5, a: 1}
-    Equator: {r: 0.13, g: 0.18, b: 0.38, a: 1}
-    Ground: {r: 0.08, g: 0.1, b: 0.18, a: 1}
+    Sky: {r: 0.24, g: 0.32, b: 0.58, a: 1}
+    Equator: {r: 0.2, g: 0.26, b: 0.46, a: 1}
+    Ground: {r: 0.14, g: 0.17, b: 0.28, a: 1}
     ShadowTint: {r: 0.76, g: 0.84, b: 1.12, a: 1}
     Chalk: {r: 0.18, g: 0.16, b: 0.14, a: 1}
     ChalkEdge: {r: 0.79, g: 0.75, b: 0.65, a: 1}
-    FogStart: 90
+    FogStart: 60
     FogEnd: 3000
     WearKind: 0
     Sun: {r: 0.7, g: 0.84, b: 1, a: 1}
     SunIntensity: 0.62
     SunElevation: 30
-    ShadowStrength: 0.7
-    Fog: {r: 0.045, g: 0.08, b: 0.2, a: 1}
+    ShadowStrength: 0.55
+    Fog: {r: 0.09, g: 0.13, b: 0.27, a: 1}
     Zenith: {r: 0.02, g: 0.035, b: 0.11, a: 1}
     Horizon: {r: 0.08, g: 0.14, b: 0.32, a: 1}
     CloudLight: {r: 0.32, g: 0.4, b: 0.58, a: 1}
     CloudShade: {r: 0.07, g: 0.09, b: 0.18, a: 1}
-    Lift: {r: 0.018, g: 0.024, b: 0.048, a: 1}
+    Lift: {r: 0.035, g: 0.045, b: 0.085, a: 1}
     GroundLift: 1
     NoBlockyClouds: 0
     CloudBands:

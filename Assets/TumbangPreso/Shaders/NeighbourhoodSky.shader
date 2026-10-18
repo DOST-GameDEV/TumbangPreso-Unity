@@ -23,6 +23,7 @@ Shader "TumbangPreso/NeighbourhoodSky"
         _SunDisc("Sun disc radius (radians, 0 = none)", Range(0,.2))=0
         _SunHalo("Sun halo strength", Range(0,2))=0
         _SunClear("Clear sky round the sun (radians, 0 = none)", Range(0,1))=0
+        _SunCrisp("Sun disc edge: 0 feathered (Lagoon), 1 crisp", Range(0,1))=0
     }
     SubShader
     {
@@ -35,7 +36,7 @@ Shader "TumbangPreso/NeighbourhoodSky"
             #pragma fragment frag
             #include "UnityCG.cginc"
             sampler2D _CloudMap;
-            float4 _Zenith,_Horizon,_Ground,_SunColor,_SunDirection,_Tint,_CloudLight,_CloudShade;float _SunDisc,_SunHalo,_SunClear;
+            float4 _Zenith,_Horizon,_Ground,_SunColor,_SunDirection,_Tint,_CloudLight,_CloudShade;float _SunDisc,_SunHalo,_SunClear,_SunCrisp;
             float _TumpSkyTime;
             float _CloudSpeed;
             float _Exposure,_CloudYaw,_CloudLumaScale,_CloudSunCutoff,_CloudOpacity,_CloudLumaLow,_CloudLumaHigh,_CloudPaint;
@@ -114,13 +115,18 @@ Shader "TumbangPreso/NeighbourhoodSky"
                     // warm, FEATHERED disc (the edge fades over half its radius) inside two glows,
                     // a tight bright one and a wide soft one, like a painted sunset.
                     float angle=acos(clamp(alignment,-1,1));
-                    float disc=1-smoothstep(_SunDisc*.45,_SunDisc*1.15,angle);
+                    // Payo (owner, 2026-10-19: "sun is too blurry"): _SunCrisp narrows the feather to a
+                    // thin painted edge and tightens the glows; at 0 (the Lagoon) nothing changes.
+                    float disc=1-smoothstep(_SunDisc*lerp(.45,.9,_SunCrisp),_SunDisc*lerp(1.15,1.0,_SunCrisp),angle);
                     float inner=exp(-angle/max(_SunDisc*1.6,1e-3));
                     float outer=exp(-angle/max(_SunDisc*7,1e-3));
                     half3 warm=lerp(_SunColor.rgb,half3(1,.93,.78),.4);
                     float veil=1-cloud*.75;
-                    sky=lerp(sky,warm*1.35,disc*.9*veil);
-                    sky+=warm*(inner*.45+outer*.28)*_SunHalo*veil;
+                    // crisp (Payo, owner: "sun is still hard to see"): a hot near-white face that stands
+                    // well clear of the bright sunset sky round it, and much less halo to wash it out
+                    half3 face=lerp(warm*1.35,lerp(warm,half3(1,.97,.9),.6)*2.6,_SunCrisp);
+                    sky=lerp(sky,face,disc*lerp(.9,1,_SunCrisp)*veil);
+                    sky+=warm*(inner*.45+outer*.28)*_SunHalo*veil*(1-.75*_SunCrisp);
                 }
                 return half4(sky*_Tint.rgb*unity_ColorSpaceDouble.rgb*_Exposure,1);
             }

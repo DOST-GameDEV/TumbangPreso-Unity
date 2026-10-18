@@ -104,18 +104,27 @@ def shade(c, f):
     return tuple(max(0, min(255, int(v * f))) for v in c)
 
 
+# A piece's atlas SUPERSAMPLED (owner, 2026-10-18, on the court: "the shape edges are too blurry and low qual"): every
+# region is painted at k times its pixels into an atlas k times the size, at the same place, so the UVs (fractions of
+# the atlas) and the layout stay exactly the approved ones and only the sharpness changes. The painters' pixel-sized
+# blurs then cover a k-th of the ground, so edges come out crisper as well as finer.
+UP = {"core": 2}
+
+
 class Piece:
     """One object: its parts and its atlas."""
 
     def __init__(self, name, size=2048, ppm=48, seed=1):
         self.name, self.S, self.ppm = name, size, ppm
-        self.img = Image.new("RGB", (size, size), (150, 148, 144))
+        self.U = UP.get(name, 1)
+        self.img = Image.new("RGB", (size * self.U, size * self.U), (150, 148, 144))
         self.x, self.y, self.row = 6, 6, 0
         self.parts, self.sw, self.meta = [], {}, {}
         self.rnd = random.Random(seed)
-        self.himg = Image.new("L", (size, size), 128) if CALM else None
+        self.himg = Image.new("L", (size * self.U, size * self.U), 128) if CALM else None
         TINT.clear()                                      # a piece's trim tint is its own (set after this by its builder)
         self.rects = []
+        self.kept = []                                    # per painted region: True where the supersampled painting was kept
 
     # ---- the atlas
     def alloc(self, w, h):
@@ -131,9 +140,9 @@ class Piece:
     def uvrect(self, r, inset=1.5):
         return ((r[0] + inset) / self.S, (r[1] + inset) / self.S, (r[2] - inset) / self.S, (r[3] - inset) / self.S)
 
-    def paint(self, r, fn, info=None):
-        w, h = r[2] - r[0], r[3] - r[1]
+    def _draw(self, w, h, fn, info):
         sub = Image.new("RGB", (w, h), (150, 148, 144))
+        hb = None
         if CALM:
             hb = Image.new("L", (w, h), 128)
             HEIGHT[id(sub)] = hb
@@ -142,12 +151,43 @@ class Piece:
             HEIGHT.pop(id(sub), None)
             if out is not None and out is not sub:
                 hb = HEIGHT.pop(id(out), hb)
-        sub = out or sub
-        self.img.paste(sub.resize((w + 6, h + 6)), (r[0] - 3, r[1] - 3))          # bleed past the edge
+        return out or sub, hb
+
+    def paint(self, r, fn, info=None):
+        U = self.U
+        w, h = r[2] - r[0], r[3] - r[1]
+        if U > 1:
+            self._before = (random.getstate(), self.rnd.getstate(), np.random.get_state())
+        sub, hb = self._draw(w, h, fn, info)              # the painting as approved, always made first
+        if U > 1:
+            # Painted again at U times, from the same random state, and kept only where it IS the approved painting:
+            # some painters lay things out in fixed pixels (panel spacing, band motifs), and those keep the approved
+            # painting, scaled. Shared random states are put back as the approved run left them.
+            big = None
+            if info is not None:
+                after = (random.getstate(), self.rnd.getstate(), np.random.get_state())
+                random.setstate(self._before[0]); self.rnd.setstate(self._before[1]); np.random.set_state(self._before[2])
+                up = dict(info, ppm=info["ppm"] * U, w=info["w"] * U, h=info["h"] * U, margin=info.get("margin", 0) * U)
+                big, bhb = self._draw(w * U, h * U, fn, up)
+                random.setstate(after[0]); self.rnd.setstate(after[1]); np.random.set_state(after[2])
+                d = np.abs(np.asarray(big.resize((w, h), Image.BOX), np.float32) - np.asarray(sub, np.float32))
+                if d.mean() > 2.5 or np.percentile(d, 99) > 40:
+                    big = None
+            self.kept.append(big is not None)
+            if big is not None:
+                sub, hb = big, bhb
+            else:
+                sub = sub.resize((w * U, h * U), Image.BICUBIC)
+                hb = hb.resize((w * U, h * U), Image.BILINEAR) if hb is not None else None
+            r = tuple(v * U for v in r)
+            w, h = w * U, h * U
+            if info is not None:
+                info = dict(info, ppm=info["ppm"] * U)
+        self.img.paste(sub.resize((w + 6 * U, h + 6 * U)), (r[0] - 3 * U, r[1] - 3 * U))          # bleed past the edge
         self.img.paste(sub, (r[0], r[1]))
         if CALM:
             self.himg.paste(hb, (r[0], r[1]))
-            self.rects.append((r[0], r[1], r[2], r[3], (info or {}).get("ppm", self.ppm)))
+            self.rects.append((r[0], r[1], r[2], r[3], (info or {}).get("ppm", self.ppm * U)))
 
     def swatch(self, colour, key=None):
         """A small painted patch shared by small parts: lighter at its top, darker at its foot, a couple of soft marks."""
@@ -193,6 +233,8 @@ class Piece:
         self.img.save(m.folder / (self.name + "-atlas.png"))
         path = m.write()
         self.meta["parts"] = len(self.parts)
+        if self.U > 1:
+            print("%s: atlas x%d, %d of %d regions painted at x%d, the rest the approved painting scaled" % (self.name, self.U, sum(self.kept), len(self.kept), self.U))
         (m.folder / (self.name + ".json")).write_text(json.dumps(self.meta, indent=1))
         if CALM:                                          # the atlas, its height map and the normal map beside the glb
             import calm_glb

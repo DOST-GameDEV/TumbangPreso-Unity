@@ -26,16 +26,16 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 0fcbe8bf12a251b4491d6ec7eb54ee9f, type: 3}
-        m_Scale: {x: 0.25, y: 0.25}
+        m_Texture: {fileID: 316339261052548053, guid: edc019730f6814e47911131a7b14a4ce, type: 3}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _GrainTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 6f8f208ed3853054eb3d97e3a3e7624a, type: 3}
-        m_Scale: {x: 0.25, y: 0.25}
+        m_Texture: {fileID: -2157529932457104991, guid: edc019730f6814e47911131a7b14a4ce, type: 3}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
@@ -46,6 +46,9 @@ Material:
     - _EmissionFromAlbedo: 0
     - _Glossiness: 0.08
     - _Grain: 0
+    - _GrainFine: 0
+    - _GrainHue: 0
+    - _GrainScale: 4
     - _Haze: 0
     - _Metallic: 0
     - _NearFadeCell: 2
@@ -62,7 +65,7 @@ Material:
     - _SurfaceVertexRoles: 0
     - _VertexTint: 1
     m_Colors:
-    - _Color: {r: 0.56, g: 0.72, b: 0.74, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _GrainRange: {r: 0.4398, g: 0.8168, b: 0.84, a: 1.06}
     - _HazeColour: {r: 0.9, g: 0.93, b: 0.92, a: 1}
