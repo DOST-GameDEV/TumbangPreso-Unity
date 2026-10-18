@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 02:42:51Z" end-time="2026-10-06 02:43:31Z" duration="39.5854767">
+  <test-suite type="TestSuite" id="3242" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1826" result="Passed" start-time="2026-10-06 02:42:51Z" end-time="2026-10-06 02:43:31Z" duration="39.585477" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3234" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1826" result="Passed" start-time="2026-10-06 02:42:51Z" end-time="2026-10-06 02:43:31Z" duration="39.566810" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="42644" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3235" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1826" result="Passed" start-time="2026-10-06 02:42:51Z" end-time="2026-10-06 02:43:31Z" duration="39.554258" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3238" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1824" result="Passed" start-time="2026-10-06 02:42:51Z" end-time="2026-10-06 02:43:31Z" duration="39.541929" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2871" name="SpectatorIsaganiEventProbe" fullname="TumbangPreso.PlayTests.SpectatorIsaganiEventProbe" classname="TumbangPreso.PlayTests.SpectatorIsaganiEventProbe" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-06 02:42:51Z" end-time="2026-10-06 02:43:31Z" duration="39.515968" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2872" name="ObserveNaturalIsaganiThrowFraming" fullname="TumbangPreso.PlayTests.SpectatorIsaganiEventProbe.ObserveNaturalIsaganiThrowFraming" methodname="ObserveNaturalIsaganiThrowFraming" classname="TumbangPreso.PlayTests.SpectatorIsaganiEventProbe" runstate="Runnable" seed="1643336289" result="Passed" start-time="2026-10-06 02:42:51Z" end-time="2026-10-06 02:43:31Z" duration="39.505297" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-isagani-event-1006/BayanPlaza/map-natural-0.png
+Natural BayanPlaza capture completed: 1 actual rendered frames, 16 cuts, 0 fallbacks.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

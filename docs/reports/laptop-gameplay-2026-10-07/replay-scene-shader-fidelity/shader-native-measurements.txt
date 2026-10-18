@@ -1,0 +1,16 @@
+[ShaderClockGPU] cpu=0.9769456 level=0.9769456 real=101.2752 editor=142.399649 global=(0.00, 0.00, 0.00, 0.00) gpu=RGBA(0.049, 0.977, 1.954, 2.931)
+[RecordedShaderClock] animation=0.3534546 rewind=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/MoonShaft.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/OmenVeil.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/RoofPoolWater.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/SoulGlow.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/SoulSpill.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/SpiritGhost.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/VoodooGhost.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/VoodooThread.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/VoodooWisp.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Shaders/ArenaHologram.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Shaders/LagoonCoveWater.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Shaders/SlipperBeam.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Shaders/Toon.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Shaders/VolcanicRock.shader delta=0

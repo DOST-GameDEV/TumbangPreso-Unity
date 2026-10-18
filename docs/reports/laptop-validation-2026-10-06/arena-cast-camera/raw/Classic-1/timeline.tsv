@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.500	Quiet	QuietEstablish	the street	1	0
+1.002	89.000	Quiet	QuietEstablish	the street	1	0
+1.502	88.500	Quiet	QuietEstablish	the street	1	0
+2.004	88.000	Quiet	QuietEstablish	the street	1	0
+2.506	87.500	SlipperLanded	Objective	the can	2	0
+3.006	87.001	SlipperLanded	Objective	the can	2	0
+3.506	86.501	SlipperLanded	Objective	the can	2	0
+4.008	86.001	SlipperLanded	Objective	the can	2	0
+4.509	85.481	Quiet	QuietEstablish	the street	3	0
+5.186	84.821	Quiet	QuietEstablish	the street	3	0
+5.686	84.321	Quiet	QuietEstablish	the street	3	0
+6.187	83.821	Quiet	QuietEstablish	the street	3	0
+6.689	83.361	Quiet	QuietEstablish	the street	3	0
+7.190	82.861	Tag	Defender	tag · TOTOY	4	0
+7.690	82.361	Tag	Defender	tag · TOTOY	4	0
+8.191	81.861	Tag	Defender	tag · TOTOY	4	0
+8.692	81.361	Tag	Defender	tag · TOTOY	4	0
+9.194	80.862	Tag	Defender	tag · TOTOY	4	0
+9.696	80.362	Downed	Recovery	down · OWNER UPDATED	5	0
+10.197	79.862	Downed	Recovery	down · OWNER UPDATED	5	0
+10.699	79.362	Downed	Recovery	down · OWNER UPDATED	5	0
+11.200	78.862	Downed	Recovery	down · OWNER UPDATED	5	0
+11.701	78.362	Downed	Recovery	down · OWNER UPDATED	5	0
+12.201	77.922	Tag	Defender	tag · TOTOY	6	0
+12.702	77.422	Tag	Defender	tag · TOTOY	6	0
+13.203	76.922	Tag	Defender	tag · TOTOY	6	0
+13.703	76.422	Tag	Defender	tag · TOTOY	6	0
+14.204	75.922	Tag	Defender	tag · TOTOY	6	0
+14.705	75.402	Downed	Recovery	down · BEBANG	7	0

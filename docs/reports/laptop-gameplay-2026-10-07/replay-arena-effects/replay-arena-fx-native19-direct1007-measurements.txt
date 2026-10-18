@@ -1,0 +1,2 @@
+[ShaderClockGPU] cpu=1.949425 level=0.31175 real=43.63938 editor=85.3890962 global=(0.00, 0.00, 0.00, 0.00) gpu=RGBA(0.016, 0.312, 0.624, 0.935)
+[RecordedShaderClock] animation=0.7776286 rewind=0

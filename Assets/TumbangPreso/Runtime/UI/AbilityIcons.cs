@@ -148,6 +148,14 @@ namespace TumbangPreso.UI
         RafiSkim,
         RafiWaterwall,
         SeanCinderGate,
+
+        // ⚠️ NEMU'S GHOSTS (owner 2026-10-15, *"make dedicated icons"*), appended to keep every serialized value.
+        /// <summary>Nemu signature: DON'T LOOK (two ghost hands closing over a wide eye).</summary>
+        NemuDontLook,
+        /// <summary>Nemu attacking: SKITTER (a green ghost scurrying with a slipper held up in its claws).</summary>
+        NemuSkitter,
+        /// <summary>Nemu defending: LOOKOUT (a lantern ghost beside a can, an arrow standing it up).</summary>
+        NemuLookout,
     }
 
     /// <summary>
@@ -355,10 +363,13 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.ZackOvercharge: return "SLIPPER BUFF";
                 case AbilityGlyph.ZackThunderstrike: return "FROM ABOVE";
                 case AbilityGlyph.NemuPhase: return "EVASION";
-                case AbilityGlyph.NemuAstralPet: return "MOBILITY";
+                case AbilityGlyph.NemuAstralPet: return "FETCH";
                 case AbilityGlyph.NemuSeanceVoid: return "GROUND ZONE";
-                case AbilityGlyph.NemuTerrify: return "FEAR ZONE";
-                case AbilityGlyph.NemuKuroGuard: return "CAN GUARD";
+                case AbilityGlyph.NemuTerrify: return "BLIND TRAP";
+                case AbilityGlyph.NemuKuroGuard: return "CAN HELPER";
+                case AbilityGlyph.NemuDontLook: return "BLIND TRAP";
+                case AbilityGlyph.NemuSkitter: return "FETCH";
+                case AbilityGlyph.NemuLookout: return "CAN HELPER";
                 case AbilityGlyph.PhaisterHexSigil: return "GROUND ZONE";
                 case AbilityGlyph.PhaisterShadowBlink: return "MOBILITY";
                 case AbilityGlyph.PhaisterEclipse: return "GROUND ZONE";
@@ -586,6 +597,7 @@ namespace TumbangPreso.UI
                     return GhostStep(u, v);
 
                 case AbilityGlyph.NemuAstralPet:
+                case AbilityGlyph.NemuSkitter:
                     // Kuro the ghost companion pet silhouette
                     return KuroGhostPet(u, v);
 
@@ -594,11 +606,13 @@ namespace TumbangPreso.UI
                     return SpiralVoid(u, v);
 
                 case AbilityGlyph.NemuTerrify:
+                case AbilityGlyph.NemuDontLook:
                     return Mathf.Max(Disc(u, v - 0.15f, 0.5f),
                         Mathf.Max(DownTriangle(u - 0.48f, v + 0.36f, 0.24f, 0.4f),
                             DownTriangle(u + 0.48f, v + 0.36f, 0.24f, 0.4f)));
 
                 case AbilityGlyph.NemuKuroGuard:
+                case AbilityGlyph.NemuLookout:
                     return Mathf.Max(Crest(u, v, 1.2f, 1.5f),
                         Mathf.Max(DownTriangle(u - 0.38f, v - 0.47f, 0.24f, 0.3f),
                             DownTriangle(u + 0.38f, v - 0.47f, 0.24f, 0.3f)));

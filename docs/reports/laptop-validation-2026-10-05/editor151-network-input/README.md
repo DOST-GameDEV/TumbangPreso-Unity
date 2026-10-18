@@ -85,7 +85,7 @@ the later Normal value is not Concussed or flight proof.
 
 The added automated consumer cases cover:
 
-- Held E reaches the actual Basilio kit and starts its active duration.
+- Held E reaches the actual Dante kit and starts its active duration.
 - Same-update E down/up reaches that kit despite the released key state.
 - Same-update Q down/up imbues the actual owned slipper with Concussed affinity.
 - Native W state moves the actual motor without casting the signature.

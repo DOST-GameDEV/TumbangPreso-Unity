@@ -1,4 +1,4 @@
-"""Basilio's bare hands: the stone that grows on them (`DanteGauntletHands`). No creature, no face: plates of his own
+"""Dante's bare hands: the stone that grows on them (`DanteGauntletHands`). No creature, no face: plates of his own
 cut stone, rooted on the back of his fists and forearms, that the C# side grows, slides and sheds.
 
   py -3 tools/build_hands_dante.py                 the plain model (what the game loads)

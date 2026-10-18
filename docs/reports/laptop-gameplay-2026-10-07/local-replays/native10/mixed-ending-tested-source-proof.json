@@ -1,0 +1,55 @@
+{
+  "source": "Exact retained native10 overlay packet; raw SHA verified before normalization",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/MatchReplayArchive.cs",
+      "nativeRawSha256": "5ef4f56ee83371e4e5c748aff9e1b0430d86d4ab8dc4be5c1324ce46f93d8083",
+      "qualifiedSourceRawMatches": true,
+      "testedNormalizedLfSha256": "8993ccd41b65e8db1d7e57cb8e23513a44c842ee570783e68e855ee3b113f179",
+      "productNormalizedLfSha256": "8993ccd41b65e8db1d7e57cb8e23513a44c842ee570783e68e855ee3b113f179",
+      "normalizedBytesEqual": true,
+      "CRLFcount": 195,
+      "bareLFcount": 50
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/RecordedMatchClip.cs",
+      "nativeRawSha256": "bd0461bd1017ff99ce7170db877195f733530632729dfc0cd47e40ede4ca5abc",
+      "qualifiedSourceRawMatches": true,
+      "testedNormalizedLfSha256": "3bec4e01729831f32893293758111013628705a0423f24f62556e415582d3f4b",
+      "productNormalizedLfSha256": "3bec4e01729831f32893293758111013628705a0423f24f62556e415582d3f4b",
+      "normalizedBytesEqual": true,
+      "CRLFcount": 213,
+      "bareLFcount": 12
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Camera/RecordedWorldView.cs",
+      "nativeRawSha256": "b7bd859d5b91e1d70bc1b5972872982ed7cdf188444f4855f6a4a8527cab3f4b",
+      "qualifiedSourceRawMatches": true,
+      "testedNormalizedLfSha256": "f7869b42a55ef5afa8aa2543b6acf06aa7cdb5c71af01f274489097682ff6354",
+      "productNormalizedLfSha256": "f7869b42a55ef5afa8aa2543b6acf06aa7cdb5c71af01f274489097682ff6354",
+      "normalizedBytesEqual": true,
+      "CRLFcount": 350,
+      "bareLFcount": 92
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/MatchInstaller.cs",
+      "nativeRawSha256": "7d902e4c57900f9a6cdd5cbdb5d2da62035a090dca1ecdc9a3400bed646f68c2",
+      "qualifiedSourceRawMatches": true,
+      "testedNormalizedLfSha256": "70596b294d97c42f31e47987ad138dee2cba1862ee1932a1f55ec21bc6803cc7",
+      "productNormalizedLfSha256": "70596b294d97c42f31e47987ad138dee2cba1862ee1932a1f55ec21bc6803cc7",
+      "normalizedBytesEqual": true,
+      "CRLFcount": 1818,
+      "bareLFcount": 9
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubMenus.cs",
+      "nativeRawSha256": "1a87160605e4e9499cd07bb460dab1e842773fa4b9d39c7dfc6394b9a7a3511c",
+      "qualifiedSourceRawMatches": true,
+      "testedNormalizedLfSha256": "6749681c42f4a38cab3095710642f9d950be8b1221dfa6eeb2874db650942554",
+      "productNormalizedLfSha256": "6749681c42f4a38cab3095710642f9d950be8b1221dfa6eeb2874db650942554",
+      "normalizedBytesEqual": true,
+      "CRLFcount": 200,
+      "bareLFcount": 5
+    }
+  ]
+}

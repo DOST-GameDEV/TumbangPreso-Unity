@@ -1,0 +1,9 @@
+# Prepare Home video during usable login
+
+Home video clips, the selected poster and the hidden video decoder previously prepared in Splash before the login form appeared. Move that existing asynchronous warmup into ConvertedMainMenu while login is usable. Reuse the same retained caches and prepared first frame; do not duplicate resource storage. Existing shader, roster, audio, ability and map preparation remains in Splash for this unit. The small title progress bar reports actual preparation and then scene loading; Home opens automatically after login closes.
+
+Native Windows11 gamergmae / Unity6000.5.8f1 job54752 has one actual pass, zero fails and exit0. The strengthened fixture keeps login open and updates its form throughout the entire Home warmup, confirms no scene operation during login, then reaches actual TumpHub.AtHome/ShowingHome without a continuation click. It checks the noninteractive bar, removed prompt and restored loading priority. Full warmup sampled652 frames: median0.421ms, p95 0.893ms, worst22.640ms, zero over100ms. These are local editor timings with controlled form assignments, not physical typing or a universal cold-device guarantee.
+
+All21218 frozen inputs,13 existing editor preferences and four original named-profile files restore;279 generated import deltas were retained. Source qualification records exact tested file hashes against frozen base770e32219 and overlays. This unit does not qualify concurrent desktop visual changes. Earlier failed held-scene approach remains in the preceding login-home-resource-preload report and is not reintroduced.
+
+Raw fixture, source, XML, launch and restoration receipts plus all recorded frame samples are covered by SHA256.json. More substantial work can overlap login only after preserving responsiveness and scene/component lifetime. Map instantiation latency and packaged/device acceptance remain separate.

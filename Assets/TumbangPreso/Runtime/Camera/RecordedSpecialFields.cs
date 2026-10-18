@@ -79,7 +79,7 @@ namespace TumbangPreso.CameraSystem
             if(!Finite(f.Position.x)||!Finite(f.Position.y)||!Finite(f.Position.z)||f.Position.sqrMagnitude>10000*10000
                 ||!Finite(f.Forward.sqrMagnitude)||(f.Type==Kuro?f.Forward.sqrMagnitude>10000*10000:f.Forward.sqrMagnitude<.5f||f.Forward.sqrMagnitude>1.5f)
                 ||!Finite(f.Duration)||f.Duration<=0||f.Duration>60||!Finite(f.Remaining)||f.Remaining<0||f.Remaining>f.Duration+.05f
-                ||!Finite(f.Radius)||f.Radius<=0||f.Radius>15||!Finite(f.FirstScale)||!Finite(f.SecondScale)||f.Owner< -1||f.Owner>=4)return false;
+                ||!Finite(f.Radius)||f.Radius<0||(f.Radius==0&&(f.Type!=Seismic||!f.Split))||f.Radius>15||!Finite(f.FirstScale)||!Finite(f.SecondScale)||f.Owner< -1||f.Owner>=4)return false;
             if(f.Type==Coven)return f.FirstScale>=0&&f.FirstScale<=3&&f.FirstScale<f.Duration;
             if(f.Type==Kuro)return f.Owner>=0;
             if(f.Type==Ignition||f.Type==Charge)return f.Owner>=0&&f.FirstScale>=0&&f.FirstScale<=600&&f.SecondScale>=0&&f.SecondScale<128&&f.SecondScale==(int)f.SecondScale;

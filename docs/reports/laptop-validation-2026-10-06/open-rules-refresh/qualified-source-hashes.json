@@ -1,0 +1,14 @@
+{
+  "Assets/TumbangPreso/Runtime/UI/CustomGameScreen.cs": {
+    "rawSha256": "5556b25ee71d9302e611d3ad6733f30d3e02eef4f282e19924dc749c60358eb9",
+    "lfSha256": "1dfe5d1511b347a1e42195a394f72861bb712f6157672e60d26edbe69cdaa7b9"
+  },
+  "Assets/TumbangPreso/Tests/PlayMode/CustomRulesLiveRefreshTests.cs": {
+    "rawSha256": "52feb7d043b2d0a5a48c28232a17a30998161e2cb024a9bac600a3022115f6f2",
+    "lfSha256": "52feb7d043b2d0a5a48c28232a17a30998161e2cb024a9bac600a3022115f6f2"
+  },
+  "Assets/TumbangPreso/Tests/PlayMode/CustomRulesLiveRefreshTests.cs.meta": {
+    "rawSha256": "b747dcd61bbfc8a0cfc51c75529342de073bf04fd8005deaa8fa9fe4721b0a47",
+    "lfSha256": "5147b858c39bd529fc87b79db49323d67f34f63b31ac9a79b4371e27e1d70de2"
+  }
+}

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 23:38:03Z" end-time="2026-10-05 23:38:34Z" duration="30.5195799">
+  <test-suite type="TestSuite" id="3222" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1810" result="Failed" site="Child" start-time="2026-10-05 23:38:03Z" end-time="2026-10-05 23:38:34Z" duration="30.519580" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3214" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1810" result="Failed" site="Child" start-time="2026-10-05 23:38:03Z" end-time="2026-10-05 23:38:34Z" duration="30.492791" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23916" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3215" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1810" result="Failed" site="Child" start-time="2026-10-05 23:38:03Z" end-time="2026-10-05 23:38:34Z" duration="30.474689" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3218" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1808" result="Failed" site="Child" start-time="2026-10-05 23:38:03Z" end-time="2026-10-05 23:38:34Z" duration="30.456668" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2212" name="OwnerMenuEditsTests" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" testcasecount="16" result="Failed" site="Child" start-time="2026-10-05 23:38:03Z" end-time="2026-10-05 23:38:34Z" duration="30.405085" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2213" name="MeasureCurrentMapPreloadWithoutStartingAMatch" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests.MeasureCurrentMapPreloadWithoutStartingAMatch" methodname="MeasureCurrentMapPreloadWithoutStartingAMatch" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" seed="745005284" result="Failed" start-time="2026-10-05 23:38:03Z" end-time="2026-10-05 23:38:34Z" duration="30.388843" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Boot asset loading unexpectedly started a match.
+  Expected: null
+  But was:  <~GameServices (TumbangPreso.RoundDirector)>
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.OwnerMenuEditsTests+<MeasureCurrentMapPreloadWithoutStartingAMatch>d__2.MoveNext () [0x00221] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\OwnerMenuEditsTests.cs:47
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Env] repainted 0 of 297 renderers, 0 with a roof variant.
+[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

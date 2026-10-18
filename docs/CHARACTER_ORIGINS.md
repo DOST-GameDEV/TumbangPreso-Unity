@@ -3,7 +3,7 @@
 Owner-requested direction, 2026-09-14. These are original fictional biographies
 for TUMP's existing sporting world. Real places ground the stories; they do not
 make these athletes historical people or representatives of everyone from a region.
-Owner-approved names, October4: Basilio, Yasmin, Rago, Isagani, Nemu, Soraya,
+Owner-approved names, October4: Dante, Yasmin, Rago, Isagani, Nemu, Soraya,
 Ilyas, Amihan and Paete. Stable roster/save IDs retain existing progression.
 
 ## Rago: San Fernando, Pampanga
@@ -43,7 +43,7 @@ for himself and partly so the neighbours can say they used to beat him upstairs.
 Pasig is the fictional condo's chosen locality, not a claim that the current map
 copies a real building. Electricity belongs to Isagani's talent, not a named deity.
 
-## Basilio: Montalban, Rizal
+## Dante: Montalban, Rizal
 
 Home court: **Bayan Plaza**, a fictional civic court in his home municipality.
 
@@ -51,7 +51,7 @@ Character-select line: **Holds the difficult space. Refuses to be rushed.**
 
 Long introduction:
 
-In Montalban, Basilio was the player trusted to keep a crowded game fair: settle
+In Montalban, Dante was the player trusted to keep a crowded game fair: settle
 the argument, straighten the can, give the youngest player another try. He still
 arrives early to mark out the plaza court. That patience becomes stubbornness
 when a rival tries to move him. His stone armour and shaking faults make the
@@ -59,7 +59,7 @@ mountain stories he grew up hearing feel close enough to touch. Yasmin admires
 his discipline. She also knows exactly how long he will defend a bad position.
 
 Bernardo Carpio's mountain struggle informs force and divided stone. The demonic
-horns and molten seams are Basilio's fictional visual expression; the folk hero
+horns and molten seams are Dante's fictional visual expression; the folk hero
 is not described as a demon. No real monument or church acquires invented history.
 
 ## Yasmin: La Trinidad, Benguet
@@ -76,7 +76,7 @@ walks its edges, tests the footing and remembers where everyone likes to run.
 Friends mistake her quietness for caution until their easiest route freezes
 shut. Away from competition she is the practical one who remembered the water
 and checked the ride home. Losing bothers her more than she admits, especially
-when an untidy play works. Basilio can make her wait; Isagani can make her improvise.
+when an untidy play works. Dante can make her wait; Isagani can make her improvise.
 She is learning to enjoy both problems.
 
 Benguet's highland terrain and cool climate anchor her atmosphere. Her ice is
@@ -137,7 +137,7 @@ data with the introduction view and future genuine hero-unlock event. UI wiring
 and aspect/focus verification remain explicit tasks, not claims made by this file.
 
 The four existing map identities remain intact: Rago/Eskinita, Isagani/Sa Bubong,
-Basilio/Bayan, Soraya's adopted court/Ilalim. Yasmin and Nemu have off-screen home
+Dante/Bayan, Soraya's adopted court/Ilalim. Yasmin and Nemu have off-screen home
 courts until a separately scheduled map expansion. All athletes can play all maps.
 
 ## Research and creative boundaries
@@ -204,7 +204,7 @@ a little amused by everyone else's panic. He lets you take a run at anything. He
 you leave with it. And when one tree is not enough, he opens his hand, and she puts a seed in it.
 
 His calm is the flaw inside the strength: so sure of his reach that he lets a moment pass. Amihan
-cannot stand him (she hates a stalled game and he is one). Basilio, the other mountain in the cast,
+cannot stand him (she hates a stalled game and he is one). Dante, the other mountain in the cast,
 is the only one who waits as long as he does. Isagani still thinks he is a prop.
 
 ⚠️ REVERSED BY THE OWNER, 2026-09-26: *"i want the lore for this character to be that its the guardian

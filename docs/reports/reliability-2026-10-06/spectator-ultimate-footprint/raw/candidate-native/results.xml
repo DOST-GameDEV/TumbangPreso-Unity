@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 05:17:11Z" end-time="2026-10-06 05:17:11Z" duration="0.4627978">
+  <test-suite type="TestSuite" id="3288" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1864" result="Passed" start-time="2026-10-06 05:17:11Z" end-time="2026-10-06 05:17:11Z" duration="0.462798" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3280" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1864" result="Passed" start-time="2026-10-06 05:17:11Z" end-time="2026-10-06 05:17:11Z" duration="0.428927" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="6244" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3281" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1864" result="Passed" start-time="2026-10-06 05:17:11Z" end-time="2026-10-06 05:17:11Z" duration="0.403967" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3284" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1862" result="Passed" start-time="2026-10-06 05:17:11Z" end-time="2026-10-06 05:17:11Z" duration="0.379260" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2925" name="SpectatorUltimateFootprintTests" fullname="TumbangPreso.PlayTests.SpectatorUltimateFootprintTests" classname="TumbangPreso.PlayTests.SpectatorUltimateFootprintTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-06 05:17:11Z" end-time="2026-10-06 05:17:11Z" duration="0.331612" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2930" name="ExistingCircularFloodRetainsItsWideShot" fullname="TumbangPreso.PlayTests.SpectatorUltimateFootprintTests.ExistingCircularFloodRetainsItsWideShot" methodname="ExistingCircularFloodRetainsItsWideShot" classname="TumbangPreso.PlayTests.SpectatorUltimateFootprintTests" runstate="Runnable" seed="1024641677" result="Passed" start-time="2026-10-06 05:17:11Z" end-time="2026-10-06 05:17:11Z" duration="0.158054" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2931" name="ExistingOverclockZapRetainsItsWideShot" fullname="TumbangPreso.PlayTests.SpectatorUltimateFootprintTests.ExistingOverclockZapRetainsItsWideShot" methodname="ExistingOverclockZapRetainsItsWideShot" classname="TumbangPreso.PlayTests.SpectatorUltimateFootprintTests" runstate="Runnable" seed="595487860" result="Passed" start-time="2026-10-06 05:17:11Z" end-time="2026-10-06 05:17:11Z" duration="0.038350" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2929" name="NonCircularCourtEffectsRequestTheWideShot" fullname="TumbangPreso.PlayTests.SpectatorUltimateFootprintTests.NonCircularCourtEffectsRequestTheWideShot" classname="TumbangPreso.PlayTests.SpectatorUltimateFootprintTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-06 05:17:11Z" end-time="2026-10-06 05:17:11Z" duration="0.119669" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2926" name="NonCircularCourtEffectsRequestTheWideShot(&quot;cheska&quot;)" fullname="TumbangPreso.PlayTests.SpectatorUltimateFootprintTests.NonCircularCourtEffectsRequestTheWideShot(&quot;cheska&quot;)" methodname="NonCircularCourtEffectsRequestTheWideShot" classname="TumbangPreso.PlayTests.SpectatorUltimateFootprintTests" runstate="Runnable" seed="2105363179" result="Passed" start-time="2026-10-06 05:17:11Z" end-time="2026-10-06 05:17:11Z" duration="0.037858" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2927" name="NonCircularCourtEffectsRequestTheWideShot(&quot;dante&quot;)" fullname="TumbangPreso.PlayTests.SpectatorUltimateFootprintTests.NonCircularCourtEffectsRequestTheWideShot(&quot;dante&quot;)" methodname="NonCircularCourtEffectsRequestTheWideShot" classname="TumbangPreso.PlayTests.SpectatorUltimateFootprintTests" runstate="Runnable" seed="1651302739" result="Passed" start-time="2026-10-06 05:17:11Z" end-time="2026-10-06 05:17:11Z" duration="0.039908" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2928" name="NonCircularCourtEffectsRequestTheWideShot(&quot;amihan&quot;)" fullname="TumbangPreso.PlayTests.SpectatorUltimateFootprintTests.NonCircularCourtEffectsRequestTheWideShot(&quot;amihan&quot;)" methodname="NonCircularCourtEffectsRequestTheWideShot" classname="TumbangPreso.PlayTests.SpectatorUltimateFootprintTests" runstate="Runnable" seed="186445366" result="Passed" start-time="2026-10-06 05:17:11Z" end-time="2026-10-06 05:17:11Z" duration="0.038585" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

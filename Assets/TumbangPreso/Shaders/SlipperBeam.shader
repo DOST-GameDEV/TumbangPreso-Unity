@@ -97,6 +97,7 @@ Shader "TumbangPreso/SlipperBeam"
         Pass
         {
             CGPROGRAM
+            #include "../Resources/Shaders/RecordedShaderTime.cginc"
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
@@ -192,8 +193,8 @@ Shader "TumbangPreso/SlipperBeam"
                 // `_Scroll`, each with its own phase, so the line reads as light moving up rather
                 // than a lit rod. Kept shallow: a beacon that flickers pulls the eye off the fight.
                 float metres = h * _Height;
-                float cell = floor(metres * 3.0 - _Time.y * _Scroll * 3.0);
-                float local = frac(metres * 3.0 - _Time.y * _Scroll * 3.0);
+                float cell = floor(metres * 3.0 - TumpShaderTime() * _Scroll * 3.0);
+                float local = frac(metres * 3.0 - TumpShaderTime() * _Scroll * 3.0);
                 float spark = smoothstep(0.0, 0.5, local) * smoothstep(1.0, 0.5, local);
                 spark *= step(0.45, hash11(cell));
                 float lift = 1.0 + _Sparkle * spark;

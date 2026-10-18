@@ -1,0 +1,219 @@
+{
+  "frame": "18",
+  "cpuMs": 36.8833,
+  "retainedJitSamples": 120,
+  "retainedJitInclusiveMsSum": 24.8822999823,
+  "scope": "Main thread in the worst measured Hero CPU frame. Export retains samples >=0.05ms plus depth<2; JIT sum covers retained rows. Nested inclusive samples are not additive. Diagnostic overhead is included.",
+  "top": [
+    {
+      "sample": "0",
+      "parent": "-1",
+      "depth": "0",
+      "name": "Main Thread",
+      "ms": 36.8833
+    },
+    {
+      "sample": "1",
+      "parent": "0",
+      "depth": "1",
+      "name": "PlayerLoop",
+      "ms": 36.8585
+    },
+    {
+      "sample": "245",
+      "parent": "1",
+      "depth": "2",
+      "name": "Update.ScriptRunDelayedDynamicFrameRate",
+      "ms": 34.7576
+    },
+    {
+      "sample": "246",
+      "parent": "245",
+      "depth": "3",
+      "name": "CoroutinesDelayedCalls",
+      "ms": 34.7569
+    },
+    {
+      "sample": "247",
+      "parent": "246",
+      "depth": "4",
+      "name": "TumbangPreso.Runtime.dll!TumbangPreso.UI.Hub::TumpHub.PrepareScreen() [Coroutine: MoveNext] [Invoke]",
+      "ms": 34.7352
+    },
+    {
+      "sample": "554",
+      "parent": "247",
+      "depth": "5",
+      "name": "Loading.ReadObject",
+      "ms": 2.1815
+    },
+    {
+      "sample": "555",
+      "parent": "554",
+      "depth": "6",
+      "name": "Loading.ReadObjectThreaded",
+      "ms": 2.1712
+    },
+    {
+      "sample": "559",
+      "parent": "555",
+      "depth": "7",
+      "name": "ReadObjectFromSerializedFile",
+      "ms": 2.152
+    },
+    {
+      "sample": "2226",
+      "parent": "247",
+      "depth": "5",
+      "name": "Mono.JIT",
+      "ms": 1.1834
+    },
+    {
+      "sample": "2040",
+      "parent": "247",
+      "depth": "5",
+      "name": "Mono.JIT",
+      "ms": 1.1437
+    },
+    {
+      "sample": "2018",
+      "parent": "247",
+      "depth": "5",
+      "name": "Mono.JIT",
+      "ms": 1.1259
+    },
+    {
+      "sample": "1321",
+      "parent": "247",
+      "depth": "5",
+      "name": "Mono.JIT",
+      "ms": 0.9765
+    },
+    {
+      "sample": "1091",
+      "parent": "247",
+      "depth": "5",
+      "name": "Mono.JIT",
+      "ms": 0.9698
+    },
+    {
+      "sample": "1383",
+      "parent": "247",
+      "depth": "5",
+      "name": "Mono.JIT",
+      "ms": 0.9531
+    },
+    {
+      "sample": "1360",
+      "parent": "247",
+      "depth": "5",
+      "name": "Mono.JIT",
+      "ms": 0.7235
+    },
+    {
+      "sample": "2520",
+      "parent": "247",
+      "depth": "5",
+      "name": "Mono.JIT",
+      "ms": 0.6526
+    },
+    {
+      "sample": "2022",
+      "parent": "247",
+      "depth": "5",
+      "name": "Mono.JIT",
+      "ms": 0.6472
+    },
+    {
+      "sample": "188",
+      "parent": "1",
+      "depth": "2",
+      "name": "Update.ScriptRunBehaviourUpdate",
+      "ms": 0.6455
+    },
+    {
+      "sample": "189",
+      "parent": "188",
+      "depth": "3",
+      "name": "BehaviourUpdate",
+      "ms": 0.6449
+    },
+    {
+      "sample": "2535",
+      "parent": "247",
+      "depth": "5",
+      "name": "Mono.JIT",
+      "ms": 0.557
+    },
+    {
+      "sample": "1308",
+      "parent": "247",
+      "depth": "5",
+      "name": "Mono.JIT",
+      "ms": 0.5309
+    },
+    {
+      "sample": "1429",
+      "parent": "247",
+      "depth": "5",
+      "name": "Mono.JIT",
+      "ms": 0.515
+    },
+    {
+      "sample": "1397",
+      "parent": "247",
+      "depth": "5",
+      "name": "Mono.JIT",
+      "ms": 0.4447
+    },
+    {
+      "sample": "2829",
+      "parent": "1",
+      "depth": "2",
+      "name": "PostLateUpdate.FinishFrameRendering",
+      "ms": 0.4244
+    },
+    {
+      "sample": "1256",
+      "parent": "247",
+      "depth": "5",
+      "name": "Mono.JIT",
+      "ms": 0.4178
+    },
+    {
+      "sample": "2518",
+      "parent": "247",
+      "depth": "5",
+      "name": "Mono.JIT",
+      "ms": 0.4142
+    },
+    {
+      "sample": "1355",
+      "parent": "247",
+      "depth": "5",
+      "name": "Mono.JIT",
+      "ms": 0.4088
+    },
+    {
+      "sample": "2454",
+      "parent": "247",
+      "depth": "5",
+      "name": "Mono.JIT",
+      "ms": 0.4083
+    },
+    {
+      "sample": "248",
+      "parent": "247",
+      "depth": "5",
+      "name": "Mono.JIT",
+      "ms": 0.4078
+    },
+    {
+      "sample": "1357",
+      "parent": "247",
+      "depth": "5",
+      "name": "Mono.JIT",
+      "ms": 0.396
+    }
+  ]
+}

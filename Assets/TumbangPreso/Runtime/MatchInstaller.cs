@@ -431,6 +431,13 @@ namespace TumbangPreso
 
         private void Start()
         {
+            if(CameraSystem.LocalReplayPlayback.Active)
+            {
+                CameraSystem.LocalReplayPlayback.PrepareCourt(transform);
+                _installed=true;
+                enabled=false;
+                return;
+            }
             if (PreviewOnly)
             {
                 enabled = false;
@@ -457,7 +464,11 @@ namespace TumbangPreso
             // ⚠️ THE SAVED DIFFICULTY WAS BEING IGNORED. It is written by the settings panel
             // and was never read back, so every bot played at Normal no matter what the
             // player chose. Applied once here, before any seat is built.
-            AIController.ApplyDifficultyFromSettings();
+            var policySession = Net.NetSession.Instance;
+            bool customNetwork = policySession != null && policySession.IsNetworked
+                                 && !UI.Hub.HubQueueWatch.QueueRoom && !guided && !range;
+            if (customNetwork) AIController.ApplyCustomRoomPolicy(SceneFlow.SelectedRules);
+            else AIController.ApplyDifficultyFromSettings();
 
             MeasurePlayableBounds();
 

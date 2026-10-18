@@ -1,0 +1,15 @@
+{
+  "bothActualRound1": true,
+  "neitherMatchOver": true,
+  "observedBeforeStopUtc": "2026-10-07T00:41:50.1956542Z",
+  "manifestSha256": "43d83532e35eb85a6d0d0c98e80ba05272922cc6a07b1e167409a2d9a61723c8",
+  "stoppedAtUtc": "2026-10-07T00:41:50.3057485Z",
+  "runtimeSha256": "e9b69cf6d8c86a4a15cc2fbb16947312153209be5cd677e1383becf87c06cdd4",
+  "exactHostCommand": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\combined-peer1007\\TumbangPreso.exe -batchmode -screen-fullscreen 0 -screen-width 640 -screen-height 360 -tp-framecap 60 -tp-profile pc-hostloss-cb5f1007a -tp-autostart 2 -tp-netreport C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\combined-peer1007\\pc-laptop-hostloss1007a-host\\state.txt -tp-netseconds 360 -logFile C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\combined-peer1007\\pc-laptop-hostloss1007a-host\\player.log -tp-lobby -tp-lobbyport 49157",
+  "hostStartedAtUtc": "2026-10-07T08:40:18.740082+08:00",
+  "clientPid": 59804,
+  "clientStartedAtUtc": "2026-10-07T08:40:46.64617+08:00",
+  "hostPid": 40372,
+  "bothReady": true,
+  "purpose": "Intentional active-match host loss; no normal host-completion PASS"
+}

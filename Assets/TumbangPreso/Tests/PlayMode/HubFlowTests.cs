@@ -700,11 +700,11 @@ namespace TumbangPreso.PlayTests
                 yield return Press("HostDoor");
                 Assert.IsInstanceOf<HubHost>(TumpHub.Current.Top);
                 yield return Shots("Host");
-                yield return Press("MapDropdown");
-                Assert.IsInstanceOf<HubChoicePopup>(TumpHub.Current.Top);
-                yield return Shots("Host-map-list");
-                yield return Press("Option1");
-                Assert.AreEqual(SceneFlow.MapRegistry[1].Id, SceneFlow.SelectedMap, "The map choice moves the court behind the form.");
+                int nextMap = (System.Array.FindIndex(SceneFlow.MapRegistry,x=>x.Id==SceneFlow.SelectedMap)+1)%SceneFlow.MapRegistry.Length;
+                yield return Press("MapNext");
+                Assert.IsInstanceOf<HubHost>(TumpHub.Current.Top,"Map arrows must stay on the form without a popup.");
+                yield return Shots("Host-map-choice");
+                Assert.AreEqual(SceneFlow.MapRegistry[nextMap].Id, SceneFlow.SelectedMap, "The map choice moves the court behind the form.");
                 Back(); yield return null;
                 Assert.IsInstanceOf<HubModeSelect>(TumpHub.Current.Top, "BACK from HOST returns to GAMEMODE SELECT.");
                 yield return Press("CustomCard");

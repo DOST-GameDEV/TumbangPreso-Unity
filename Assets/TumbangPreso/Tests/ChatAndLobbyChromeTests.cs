@@ -382,8 +382,22 @@ namespace TumbangPreso.Tests
             //93 makes Phaister's introduction 6.0 s (it ends on the doll's stare).
             //94 to 158 are recorded in `NetSession` beside the number; this line was not moved with them, so this test had
             //been red since 94. It is moved now, deliberately, with:
-            //159 makes Amihan's Whirlwind hit a circle under one whirlwind (radius 2.1 m, born 2.4 m ahead), not a bowed band.
-            Assert.AreEqual(159, NetSession.ProtocolVersion,
+            //159 combines companion-aware clips with QoL movement, map and performance contracts.
+            //160 appends POSSESSED to SyncUnit and replaces Kuro's Haunt with LET THEM IN (first named PRUSISYON).
+            //161 appends BLINDED to SyncUnit and Blindfold to the world snapshot (Nemu's DON'T LOOK replaces KURO: SIT!).
+            //162 makes Nemu's SKITTER host-confirmed and LOOKOUT a can stand-up (no wire change; the rules differ).
+            //165 replaces Nemu's KURO! self speed with DEAD WEIGHT, a slow on rivals near her ghosts (no wire change; the rules differ).
+            //166 makes Concussed 5 s, the Wiki's number (no wire change; the rules differ).
+            //167 resolves CONTINENTAL DRIFT at the cutscene's cut: the lane throws everyone, Concussed on landing (no wire change).
+            //168 makes CONTINENTAL DRIFT's cascade play's again, band by band, each band throwing (no wire change).
+            //169 keeps the cutscenes' moves at the hand-back: Amihan's thrown mid-air, Nemu's where they ran (no wire change).
+            //170 makes a Concussed throw wobble harder and often misfire far off its aim (no wire change; the rules differ).
+            //171 gives Dante MOUNTAIN FORM after CONTINENTAL DRIFT: 30 s of status immunity, x1.25 throws that stagger and knock
+            //back, and its time left in the timed-kit snapshot's passive fields.
+            //QoLUpdates' own 159 (not the 159 above; the two lines took the number separately) makes Amihan's Whirlwind hit a
+            //circle under one whirlwind (radius 2.1 m, born 2.4 m ahead), not a bowed band.
+            //172 is where QoLUpdates and ASTRAReworks meet: one number above both (159 and 171), with both rule sets in.
+            Assert.AreEqual(172, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

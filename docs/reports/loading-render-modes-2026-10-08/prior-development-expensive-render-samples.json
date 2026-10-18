@@ -1,0 +1,252 @@
+[
+  {
+    "frame": "337",
+    "thread": "1",
+    "thread_name": "Render Thread",
+    "sample": "141",
+    "parent": "0",
+    "depth": "1",
+    "inclusive_ms": "446.635",
+    "name": "Gfx.WaitForGfxCommandsFromMainThread"
+  },
+  {
+    "frame": "337",
+    "thread": "1",
+    "thread_name": "Render Thread",
+    "sample": "142",
+    "parent": "141",
+    "depth": "2",
+    "inclusive_ms": "446.633881",
+    "name": "Semaphore.WaitForSignal"
+  },
+  {
+    "frame": "18",
+    "thread": "1",
+    "thread_name": "Render Thread",
+    "sample": "1",
+    "parent": "0",
+    "depth": "1",
+    "inclusive_ms": "329.6655",
+    "name": "RenderLoop"
+  },
+  {
+    "frame": "13",
+    "thread": "1",
+    "thread_name": "Render Thread",
+    "sample": "1",
+    "parent": "0",
+    "depth": "1",
+    "inclusive_ms": "246.1299",
+    "name": "RenderLoop"
+  },
+  {
+    "frame": "18",
+    "thread": "1",
+    "thread_name": "Render Thread",
+    "sample": "60",
+    "parent": "1",
+    "depth": "2",
+    "inclusive_ms": "219.6236",
+    "name": "AsyncUploadManager.AsyncResourceUploadAll"
+  },
+  {
+    "frame": "18",
+    "thread": "1",
+    "thread_name": "Render Thread",
+    "sample": "61",
+    "parent": "60",
+    "depth": "3",
+    "inclusive_ms": "219.6218",
+    "name": "AsyncUploadManager.AsyncResourceUpload"
+  },
+  {
+    "frame": "18",
+    "thread": "1",
+    "thread_name": "Render Thread",
+    "sample": "62",
+    "parent": "61",
+    "depth": "4",
+    "inclusive_ms": "219.6203",
+    "name": "Async.TextureProcessingCompleteCallback"
+  },
+  {
+    "frame": "18",
+    "thread": "1",
+    "thread_name": "Render Thread",
+    "sample": "63",
+    "parent": "62",
+    "depth": "5",
+    "inclusive_ms": "219.6199",
+    "name": "Async.TextureProcessingFinalizeCallback"
+  },
+  {
+    "frame": "18",
+    "thread": "1",
+    "thread_name": "Render Thread",
+    "sample": "64",
+    "parent": "63",
+    "depth": "6",
+    "inclusive_ms": "219.609192",
+    "name": "Async.UploadTexture"
+  },
+  {
+    "frame": "6",
+    "thread": "1",
+    "thread_name": "Render Thread",
+    "sample": "1",
+    "parent": "0",
+    "depth": "1",
+    "inclusive_ms": "219.317413",
+    "name": "RenderLoop"
+  },
+  {
+    "frame": "6",
+    "thread": "1",
+    "thread_name": "Render Thread",
+    "sample": "3",
+    "parent": "1",
+    "depth": "2",
+    "inclusive_ms": "218.5461",
+    "name": "AsyncUploadManager.AsyncResourceUploadAll"
+  },
+  {
+    "frame": "6",
+    "thread": "1",
+    "thread_name": "Render Thread",
+    "sample": "4",
+    "parent": "3",
+    "depth": "3",
+    "inclusive_ms": "218.5324",
+    "name": "AsyncUploadManager.AsyncResourceUpload"
+  },
+  {
+    "frame": "6",
+    "thread": "1",
+    "thread_name": "Render Thread",
+    "sample": "5",
+    "parent": "4",
+    "depth": "4",
+    "inclusive_ms": "218.530212",
+    "name": "Async.TextureProcessingCompleteCallback"
+  },
+  {
+    "frame": "6",
+    "thread": "1",
+    "thread_name": "Render Thread",
+    "sample": "6",
+    "parent": "5",
+    "depth": "5",
+    "inclusive_ms": "218.529785",
+    "name": "Async.TextureProcessingFinalizeCallback"
+  },
+  {
+    "frame": "6",
+    "thread": "1",
+    "thread_name": "Render Thread",
+    "sample": "7",
+    "parent": "6",
+    "depth": "6",
+    "inclusive_ms": "218.5236",
+    "name": "Async.UploadTexture"
+  },
+  {
+    "frame": "18",
+    "thread": "1",
+    "thread_name": "Render Thread",
+    "sample": "66",
+    "parent": "64",
+    "depth": "7",
+    "inclusive_ms": "218.220184",
+    "name": "Gfx.UploadTextureData"
+  },
+  {
+    "frame": "13",
+    "thread": "1",
+    "thread_name": "Render Thread",
+    "sample": "76",
+    "parent": "1",
+    "depth": "2",
+    "inclusive_ms": "217.561691",
+    "name": "AsyncUploadManager.AsyncResourceUploadAll"
+  },
+  {
+    "frame": "13",
+    "thread": "1",
+    "thread_name": "Render Thread",
+    "sample": "77",
+    "parent": "76",
+    "depth": "3",
+    "inclusive_ms": "217.542709",
+    "name": "AsyncUploadManager.AsyncResourceUpload"
+  },
+  {
+    "frame": "13",
+    "thread": "1",
+    "thread_name": "Render Thread",
+    "sample": "78",
+    "parent": "77",
+    "depth": "4",
+    "inclusive_ms": "217.5411",
+    "name": "Async.TextureProcessingCompleteCallback"
+  },
+  {
+    "frame": "13",
+    "thread": "1",
+    "thread_name": "Render Thread",
+    "sample": "79",
+    "parent": "78",
+    "depth": "5",
+    "inclusive_ms": "217.54071",
+    "name": "Async.TextureProcessingFinalizeCallback"
+  },
+  {
+    "frame": "13",
+    "thread": "1",
+    "thread_name": "Render Thread",
+    "sample": "80",
+    "parent": "79",
+    "depth": "6",
+    "inclusive_ms": "217.5353",
+    "name": "Async.UploadTexture"
+  },
+  {
+    "frame": "6",
+    "thread": "1",
+    "thread_name": "Render Thread",
+    "sample": "9",
+    "parent": "7",
+    "depth": "7",
+    "inclusive_ms": "216.757111",
+    "name": "Gfx.UploadTextureData"
+  },
+  {
+    "frame": "13",
+    "thread": "1",
+    "thread_name": "Render Thread",
+    "sample": "82",
+    "parent": "80",
+    "depth": "7",
+    "inclusive_ms": "215.168",
+    "name": "Gfx.UploadTextureData"
+  },
+  {
+    "frame": "18",
+    "thread": "1",
+    "thread_name": "Render Thread",
+    "sample": "3",
+    "parent": "1",
+    "depth": "2",
+    "inclusive_ms": "109.1653",
+    "name": "AsyncUploadManager.AsyncResourceUploadAll"
+  },
+  {
+    "frame": "18",
+    "thread": "1",
+    "thread_name": "Render Thread",
+    "sample": "4",
+    "parent": "3",
+    "depth": "3",
+    "inclusive_ms": "109.1637",
+    "name": "AsyncUploadManager.AsyncResourceUpload"
+  }
+]

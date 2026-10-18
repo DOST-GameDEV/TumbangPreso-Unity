@@ -184,12 +184,17 @@ namespace TumbangPreso.UI
         private RawImage _surface;
         private RenderTexture _target;
         private Camera _camera;
+        private MapPreviewVideo _recorded;
+        private Coroutine _swap;
         private bool _renderingEnabled = true;
+        /// <summary>Offline recorder uses the exact live camera even when media already exists.</summary>
+        public bool PreferRecordedPreview { get; set; } = true;
 
         public void SetRenderingEnabled(bool visible)
         {
             _renderingEnabled = visible;
-            if (_camera != null && _camera.enabled != visible) _camera.enabled = visible;
+            if(_recorded!=null&&_recorded.Map!=null)_recorded.SetVisible(visible);
+            if (_camera != null) _camera.enabled = visible && !_busy && (_recorded==null||_recorded.Map==null);
             if (_surface != null && _surface.enabled != visible) _surface.enabled = visible;
         }
         private string _showing;
@@ -255,14 +260,14 @@ namespace TumbangPreso.UI
         /// `Swap`, after the scene load, so a caller that reads this from its own `Start` gets
         /// nothing. Wait for <see cref="MapShown"/>.
         /// </summary>
-        public Camera Camera => _camera;
+        public Camera Camera => _recorded!=null&&_recorded.Map!=null?null:_camera;
 
         /// <summary>Where the play area is, in world space: the average of the map's spawn
         /// markers. See <see cref="AimAt"/>.</summary>
         public Vector3 Pivot => _pivot;
 
         /// <summary>The map currently in the surface, or null before the first swap.</summary>
-        public string Showing => _showing;
+        public string Showing => _recorded!=null&&_recorded.Map!=null?_recorded.Map:_showing;
 
         /// <summary>The tuned angle, without the sway. A caller placing something in front of
         /// the camera wants the shot's yaw, not this frame's wobble.</summary>
@@ -295,6 +300,10 @@ namespace TumbangPreso.UI
                 if (_lobbyShot == value) return;
 
                 _lobbyShot = value;
+                if(value&&_recorded!=null&&_recorded.Map!=null)
+                {
+                    string map=_recorded.Map;_recorded.Stop();_showing=null;Show(map);
+                }
 
                 // ⚠️ THE PRACTICE SCREEN GETS THE WHOLE STREET BACK. See `ClearSightlines`: what
                 // it hides is hidden so a FACE can be seen, and the map shot has no faces in it,
@@ -352,16 +361,33 @@ namespace TumbangPreso.UI
             if (!Application.isPlaying) return;
             // A caller may already have selected this surface's map before
             // Start. Do not queue the global default over that explicit request.
-            if (!_busy && _showing == null && _wantedMap == null)
+            if (!_busy && Showing == null && _wantedMap == null)
                 Show(SceneFlow.SelectedMap);
         }
 
         public void Show(string map)
         {
             if (_retiring || string.IsNullOrEmpty(map)) return;
+            if(PreferRecordedPreview&&!_lobbyShot&&MapPreviewVideo.PosterFor(map)!=null)
+            {
+                if(_swap!=null){StopCoroutine(_swap);_swap=null;_busy=false;EndPreviewLoad();}
+                _wantedMap=null;ReleasePreviewLook();Park(_showing);
+                if(_camera!=null)_camera.enabled=false;
+                if(_recorded==null)_recorded=gameObject.AddComponent<MapPreviewVideo>();
+                _recorded.SetVisible(_renderingEnabled);_recorded.Show(map);
+                return;
+            }
+            if(_recorded!=null)_recorded.Stop();
+            if (!(_cache.TryGetValue(map, out var cached) && cached.IsValid() && cached.isLoaded)
+                && !Application.CanStreamedLevelBeLoaded(map))
+            {
+                Debug.LogWarning($"[MapPreview] '{map}' is not in the build settings; " +
+                                 "the setup screen keeps its backdrop.");
+                return;
+            }
             if (_busy) { _wantedMap = map; return; }
             if (map == _showing) return;
-            StartCoroutine(Swap(map));
+            _swap=StartCoroutine(Swap(map));
         }
 
         // ⚠️⚠️ THERE IS NO `PrepareAll` ANY MORE, AND NO HUB LOADING SCREEN IN FRONT OF IT.
@@ -378,6 +404,9 @@ namespace TumbangPreso.UI
         private IEnumerator Swap(string map)
         {
             _busy = true;
+            // Retain the last completed image while its scene is parked. Otherwise
+            // the camera clears the visible target to an empty grey frame each tick.
+            if (_camera != null) _camera.enabled = false;
             try
             {
 
@@ -393,14 +422,6 @@ namespace TumbangPreso.UI
                 }
                 else
                 {
-                    if (!Application.CanStreamedLevelBeLoaded(map))
-                    {
-                        Debug.LogWarning($"[MapPreview] '{map}' is not in the build settings; " +
-                                         "the setup screen keeps its backdrop.");
-                        _busy = false;
-                        yield break;
-                    }
-
                     // ⚠️⚠️ SET BEFORE THE LOAD, NOT AFTER. `MatchInstaller.Start` runs the instant
                     // the additive scene finishes loading, and by the time this coroutine resumes it
                     // has already spawned four characters, the can and the directors. Stripping them
@@ -446,6 +467,9 @@ namespace TumbangPreso.UI
                     Unpark(map);
                 }
 
+                // Let activated environment components finish their first frame
+                // before replacing the completed preview image.
+                yield return null;
                 _showing = map;
 
                 AimAt(map);
@@ -456,10 +480,13 @@ namespace TumbangPreso.UI
                 // does not exist on the first swap until EnsureCamera has run.
                 ApplyMapEnvironment(map);
 
+                if (_camera != null && _renderingEnabled) _camera.Render();
+
                 _surface.texture = _target;
                 _surface.color = Color.white;
 
                 _busy = false;
+                if (_camera != null) _camera.enabled = _renderingEnabled;
 
                 // ⚠️ LAST, AFTER THE CAMERA AND THE ENVIRONMENT. A listener's whole reason to exist
                 // is to put something INTO this map, and the two things it needs (a camera to be
@@ -817,6 +844,18 @@ namespace TumbangPreso.UI
             }
 
             if (count > 0) _pivot = sum / count;
+
+            // Selection footage should describe the court, rather than the
+            // near-side arrival line. Keep interactive lobby shots unchanged.
+            if (!_lobbyShot && map == SceneFlow.IlalimNgTulay)
+            {
+                _pivot.x = 0; _pivot.z = 0;
+                _distance = 16; _height = 6.4f;
+            }
+            if (!_lobbyShot && map == SceneFlow.LagoonCove)
+            {
+                _yaw = -35; _distance = 32; _height = 22;
+            }
         }
 
         private static Transform FindByName(Transform root, string name)
@@ -928,6 +967,7 @@ namespace TumbangPreso.UI
 
         public void ReapplyEnvironment()
         {
+            if(_recorded!=null&&_recorded.Map!=null)return;
             if (!string.IsNullOrEmpty(_showing))
                 ApplyMapEnvironment(_showing);
         }
@@ -1168,7 +1208,7 @@ namespace TumbangPreso.UI
 
             _camera.fieldOfView = _lobbyShot ? LobbyFieldOfView : FieldOfView;
             _camera.targetTexture = _target;
-            _camera.enabled = _renderingEnabled;
+            _camera.enabled = _renderingEnabled && !_busy;
             if (_surface != null) _surface.texture = _target;
             _camera.clearFlags = CameraClearFlags.Skybox;
             _camera.depth = -10;
@@ -1283,6 +1323,7 @@ namespace TumbangPreso.UI
 
         private void Update()
         {
+            if(_recorded!=null&&_recorded.Map!=null)return;
             if (!Application.isPlaying || _camera == null || _showing == null) return;
 
             _time += Time.unscaledDeltaTime;

@@ -1,0 +1,11 @@
+{
+  "raw/original-native/results.xml": "880d0097fd387118fd38f1728353a731dd67c2995fcc26029d1e026ddd99bf49",
+  "raw/original-native/result.json": "485827e8cb17e864b364ebd74623a5fdb30bb0e5a19fe4c7fd1651e04d569dd7",
+  "raw/original-native/classification.json": "43da356bc04a09f5889cca21c0ae31318265f8a51ddb9f91dff9846e461933f3",
+  "raw/original-native/editor.log": "1145574b0ead673637ee27d3a9600cd09bd0f82b4993c84a679c192736ec24a3",
+  "raw/candidate-native/results.xml": "5d94b168451d9129c7fb4e6c884af685fd685dff4d22c8136bf4b6998e83a6b4",
+  "raw/candidate-native/result.json": "4bc9dab890f2d15de3032e38487ac5c272daf4f915fa56075205d61aa7e8e70d",
+  "raw/candidate-native/classification.json": "43da356bc04a09f5889cca21c0ae31318265f8a51ddb9f91dff9846e461933f3",
+  "raw/candidate-native/editor.log": "d9e34bb1c85d226c90cdd62e0aca3d79b29028e9c29e07d8b477464e7ac15489",
+  "raw/ArrivalViewOwnershipTests.cs": "3ef9a78e6f9df02e99cce901fe727997e516c9c457deef0aa64ee2ffc75236a8"
+}

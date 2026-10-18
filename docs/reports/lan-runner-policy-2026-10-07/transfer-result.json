@@ -1,0 +1,12 @@
+{
+  "sourceCommit": "cb5f4ad9f84fdde4eeb856dc1caca0eef2ab4944",
+  "runtimeSha256": "e9b69cf6d8c86a4a15cc2fbb16947312153209be5cd677e1383becf87c06cdd4",
+  "protocol": 153,
+  "fileCount": 261,
+  "totalBytes": 3535817714,
+  "seconds": 48.23499999998603,
+  "artifactPath": "C:\\Users\\Matthew\\Documents\\Codex\\2026-10-03\\continue-competition-readiness-engineering-for-dost\\Builds\\lan-combined-cb5f1007",
+  "allManifestHashesMatched": true,
+  "manifestSha256": "43d83532e35eb85a6d0d0c98e80ba05272922cc6a07b1e167409a2d9a61723c8",
+  "scope": "Exact accepted PC package copied to laptop; no player execution yet."
+}

@@ -1,0 +1,12 @@
+{
+  "sourceCommit": "cb5f4ad9f84fdde4eeb856dc1caca0eef2ab4944",
+  "runtimeSha256": "e9b69cf6d8c86a4a15cc2fbb16947312153209be5cd677e1383becf87c06cdd4",
+  "wire": "1|0|1|30|0|3|3|1|0|1|0",
+  "packagedCoreParsed": {
+    "seconds": 30,
+    "rounds": 1,
+    "manual": true,
+    "wire": "1|0|1|30|0|3|3|1|0|1|0"
+  },
+  "artifactAllHashesPassed": true
+}

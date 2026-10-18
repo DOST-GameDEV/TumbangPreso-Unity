@@ -22,7 +22,9 @@ namespace TumbangPreso.Tests
                 Assert.AreEqual(1,kit.ThrowChargeRate,kit.HeroId);
             var sean=new SeanHeroKit();Assert.AreEqual(4,sean.PassiveDuration);
             Assert.AreEqual(0,sean.CaptureTimedKit().PassiveRemaining);
-            Assert.AreEqual(0,new DanteHeroKit().CaptureTimedKit().PassiveCapacity);
+            // Dante's passive fields carry MOUNTAIN FORM's time left (`DanteHeroKit.CaptureTimedKit`): none until his ultimate.
+            var dante=new DanteHeroKit().CaptureTimedKit();
+            Assert.AreEqual(0,dante.PassiveRemaining);Assert.AreEqual(GeoRules.MountainSeconds,dante.PassiveCapacity);
         }
         [Test] public void PassiveRoundtripAgesIndependentlyOfTheLoadedSlipper()
         {
@@ -43,7 +45,8 @@ namespace TumbangPreso.Tests
             Assert.IsFalse(State(4.01f).TryResolve(new SeanHeroKit(),100,out _));
             var dante=new DanteHeroKit();var state=TimedKitState.Capture(dante,dante.CaptureTimedKit(),1,
                 new GameplayActionScope{Match=123,Round=1,Epoch=0},1,100);
-            state.PassiveRemaining=.1f;Assert.IsFalse(state.TryResolve(dante,100,out _));
+            state.PassiveRemaining=GeoRules.MountainSeconds+.01f;Assert.IsFalse(state.TryResolve(dante,100,out _));
+            state.PassiveRemaining=.1f;Assert.IsTrue(state.TryResolve(dante,100,out _),"MOUNTAIN FORM's time left is in range.");
             state.PassiveRemaining=0;Assert.IsTrue(state.TryResolve(dante,100,out _));
         }
         [Test] public void AgedAndEmptyWindowsCannotAcquireNegativeTime()

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 14:51:34Z" end-time="2026-10-05 14:51:34Z" duration="0.5344864">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1387" result="Passed" start-time="2026-10-05 14:51:34Z" end-time="2026-10-05 14:51:34Z" duration="0.534486" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2712" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1387" result="Passed" start-time="2026-10-05 14:51:34Z" end-time="2026-10-05 14:51:34Z" duration="0.516511" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="43816" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2713" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1387" result="Passed" start-time="2026-10-05 14:51:34Z" end-time="2026-10-05 14:51:34Z" duration="0.504804" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2714" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1387" result="Passed" start-time="2026-10-05 14:51:34Z" end-time="2026-10-05 14:51:34Z" duration="0.492737" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2646" name="UiCardImportQualityTests" fullname="TumbangPreso.Tests.UiCardImportQualityTests" classname="TumbangPreso.Tests.UiCardImportQualityTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-05 14:51:34Z" end-time="2026-10-05 14:51:34Z" duration="0.471119" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="2650" name="RealReimportKeepsUiSourceDimensionsAndUncompressedColor" fullname="TumbangPreso.Tests.UiCardImportQualityTests.RealReimportKeepsUiSourceDimensionsAndUncompressedColor" classname="TumbangPreso.Tests.UiCardImportQualityTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-05 14:51:34Z" end-time="2026-10-05 14:51:34Z" duration="0.467983" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2647" name="RealReimportKeepsUiSourceDimensionsAndUncompressedColor(&quot;Assets/TumbangPreso/Resources/UI/map-cards/Arena.png&quot;)" fullname="TumbangPreso.Tests.UiCardImportQualityTests.RealReimportKeepsUiSourceDimensionsAndUncompressedColor(&quot;Assets/TumbangPreso/Resources/UI/map-cards/Arena.png&quot;)" methodname="RealReimportKeepsUiSourceDimensionsAndUncompressedColor" classname="TumbangPreso.Tests.UiCardImportQualityTests" runstate="Runnable" seed="9084946" result="Passed" start-time="2026-10-05 14:51:34Z" end-time="2026-10-05 14:51:34Z" duration="0.167587" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UiCardImport] Assets/TumbangPreso/Resources/UI/map-cards/Arena.png source=960x540 imported=960x540 format=RGB24 compression=Uncompressed npot=None
+]]></output>
+              </test-case>
+              <test-case id="2648" name="RealReimportKeepsUiSourceDimensionsAndUncompressedColor(&quot;Assets/TumbangPreso/Resources/UI/mode-cards/HeroStrikeChoice.png&quot;)" fullname="TumbangPreso.Tests.UiCardImportQualityTests.RealReimportKeepsUiSourceDimensionsAndUncompressedColor(&quot;Assets/TumbangPreso/Resources/UI/mode-cards/HeroStrikeChoice.png&quot;)" methodname="RealReimportKeepsUiSourceDimensionsAndUncompressedColor" classname="TumbangPreso.Tests.UiCardImportQualityTests" runstate="Runnable" seed="873403266" result="Passed" start-time="2026-10-05 14:51:34Z" end-time="2026-10-05 14:51:34Z" duration="0.123866" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UiCardImport] Assets/TumbangPreso/Resources/UI/mode-cards/HeroStrikeChoice.png source=1040x920 imported=1040x920 format=RGB24 compression=Uncompressed npot=None
+]]></output>
+              </test-case>
+              <test-case id="2649" name="RealReimportKeepsUiSourceDimensionsAndUncompressedColor(&quot;Assets/TumbangPreso/Resources/UI/brand/tump_logo.png&quot;)" fullname="TumbangPreso.Tests.UiCardImportQualityTests.RealReimportKeepsUiSourceDimensionsAndUncompressedColor(&quot;Assets/TumbangPreso/Resources/UI/brand/tump_logo.png&quot;)" methodname="RealReimportKeepsUiSourceDimensionsAndUncompressedColor" classname="TumbangPreso.Tests.UiCardImportQualityTests" runstate="Runnable" seed="2133161215" result="Passed" start-time="2026-10-05 14:51:34Z" end-time="2026-10-05 14:51:34Z" duration="0.167400" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UiCardImport] Assets/TumbangPreso/Resources/UI/brand/tump_logo.png source=2048x1349 imported=2048x1349 format=RGBA32 compression=Uncompressed npot=None
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,114 @@
+{
+  "localRoot": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\arena\\unity",
+  "files": {
+    "match-post438-8x60-herostrike1006_break_hukay_to_entablado_1_hologram.png": {
+      "bytes": 1495167,
+      "sha256": "6ebe5906185a4f7a9aa303146f7b60806044699b8aef6359bfbcfe79a5ccb52a"
+    },
+    "match-post438-8x60-herostrike1006_break_hukay_to_entablado_2_mid_travel.png": {
+      "bytes": 1667087,
+      "sha256": "9e43892a72c42bca7fb09bbcdaa5c1b542d4d4944dd6578e1be03789f7fbee74"
+    },
+    "match-post438-8x60-herostrike1006_break_hukay_to_entablado_3_settled.png": {
+      "bytes": 2008739,
+      "sha256": "44178426ca73a43d77ef1954346c078e2a1f6bea11ce0e18e09c195deda865d9"
+    },
+    "match-post438-8x60-herostrike1006_r1_hukay_can.png": {
+      "bytes": 985848,
+      "sha256": "a734d29b73a674df4e40ea1cdd439d8665356d55a90de7500432292586f498b2"
+    },
+    "match-post438-8x60-herostrike1006_r1_hukay_hud.png": {
+      "bytes": 2008623,
+      "sha256": "691c59c679338ce1f376a10b6649d133923325c90924570bc293febdd9505651"
+    },
+    "match-post438-8x60-herostrike1006_r1_hukay_spawn.png": {
+      "bytes": 1324770,
+      "sha256": "3f6184c475b5448a7eda600fe800a23a73102a1bfe1c492d53e5272b4bcb35c5"
+    },
+    "match-post438-8x60-herostrike1006_r2_entablado_can.png": {
+      "bytes": 1039242,
+      "sha256": "aee6be9df63c5be375baf5c5f63ef8183435da0058758d3a9c9dc1a6b7c2ea5c"
+    },
+    "match-post438-8x60-herostrike1006_r2_entablado_hud.png": {
+      "bytes": 1967951,
+      "sha256": "9bde98d755f31be6455d17b4e92992cffa7b16b03e01a42f0d3e0543e5eed225"
+    },
+    "match-post438-8x60-herostrike1006_r2_entablado_spawn.png": {
+      "bytes": 1375456,
+      "sha256": "c4134abf4470240ea6908578bc14308dc303a396916bb9dbd4dcc25dea35e4c0"
+    },
+    "match-post438-8x60-herostrike1006_r3_tore_can.png": {
+      "bytes": 1136364,
+      "sha256": "b7b7e898fa6ef0b9c2e51e451ea7ffe3b4679bbc5fe9057997dadee76c9816a5"
+    },
+    "match-post438-8x60-herostrike1006_r3_tore_hud.png": {
+      "bytes": 2016056,
+      "sha256": "6d64112e383bbeaeda2e0b3baadca52e5806b10f69cef6bac23b640c3a3c48f8"
+    },
+    "match-post438-8x60-herostrike1006_r3_tore_spawn.png": {
+      "bytes": 1452668,
+      "sha256": "7df3f9b0842414e727778f8c261f86b4b9e70b6a3442d60582f0c27086a9d2ae"
+    },
+    "match-post438-8x60-herostrike1006_r4_krus_can.png": {
+      "bytes": 1050547,
+      "sha256": "50aa46eb7a477b22ac791f62ee26848ea8bf37cd6ea35152f3fec85e131cdd90"
+    },
+    "match-post438-8x60-herostrike1006_r4_krus_hud.png": {
+      "bytes": 2158212,
+      "sha256": "421316fb9f0374c35c7ca5a910e5d1bcc42dbe177f1ffb44c019d8a8b2387884"
+    },
+    "match-post438-8x60-herostrike1006_r4_krus_spawn.png": {
+      "bytes": 1399376,
+      "sha256": "b78f673c8160c0a98a5ae1bc6e613ecc87232eb6b08c22aa196454c171f75149"
+    },
+    "match-post438-8x60-herostrike1006_r5_plaza_can.png": {
+      "bytes": 1101863,
+      "sha256": "260588c2d395e399f0e3f9c10404de48818ee18d73655915f2c76c87ba2fb368"
+    },
+    "match-post438-8x60-herostrike1006_r5_plaza_hud.png": {
+      "bytes": 1924895,
+      "sha256": "ea45590f5ab58482f32345390f7f519837d5905b5cf233f1428d78124a863ac9"
+    },
+    "match-post438-8x60-herostrike1006_r5_plaza_spawn.png": {
+      "bytes": 1377723,
+      "sha256": "c575e7fb46c4a5a7d3299d2ace02e2391d539cf87c96aaba88c4512b7d642079"
+    },
+    "match-post438-8x60-herostrike1006_r6_hukay_can.png": {
+      "bytes": 1032161,
+      "sha256": "b36cd3d2f9af53438f8b6edea76a741845a6468ec449a80898f5ddcd39a33397"
+    },
+    "match-post438-8x60-herostrike1006_r6_hukay_hud.png": {
+      "bytes": 2030340,
+      "sha256": "ce9fa2e7a34d09bae4a6d296a9dc5dac0edce77d139167a353006c30092f793f"
+    },
+    "match-post438-8x60-herostrike1006_r6_hukay_spawn.png": {
+      "bytes": 1338708,
+      "sha256": "71d1268485bb57a84fef3f3ddc3838f5cd70eb04c6b8487b020411da145d8db8"
+    },
+    "match-post438-8x60-herostrike1006_r7_entablado_can.png": {
+      "bytes": 1119252,
+      "sha256": "3380c28df1f10bc5704620194017d7eefd71211be4632157f6dd824d43348668"
+    },
+    "match-post438-8x60-herostrike1006_r7_entablado_hud.png": {
+      "bytes": 1968069,
+      "sha256": "b79f2247f942ddb03aad44ee7257d771152a3b796ab39ad05152052b21a8948c"
+    },
+    "match-post438-8x60-herostrike1006_r7_entablado_spawn.png": {
+      "bytes": 1378700,
+      "sha256": "ea226d3d8591339cdf935c75df49cc9bebf72dede1372b55b628f3312e4b7ae4"
+    },
+    "match-post438-8x60-herostrike1006_r8_tore_can.png": {
+      "bytes": 1078065,
+      "sha256": "3d16fc1ef2d1736fc4fb8a6e139f72dc29ace43b79a3ad720c9a90a7a0ae0c8c"
+    },
+    "match-post438-8x60-herostrike1006_r8_tore_hud.png": {
+      "bytes": 2011840,
+      "sha256": "4f9588fdd76439d5eb36b75ab005e8b6007d302bb37f657f461725fe5338056a"
+    },
+    "match-post438-8x60-herostrike1006_r8_tore_spawn.png": {
+      "bytes": 1452865,
+      "sha256": "43698f835200b2364db29f4dde083925e7dee77d1b75baf8e341f718d1a65b38"
+    }
+  },
+  "scope": "Native rendered evidence retained locally; no new UI acceptance claim."
+}

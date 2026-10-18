@@ -131,7 +131,7 @@ namespace TumbangPreso.Core
         public static readonly IReadOnlyList<RosterEntry> HeroPeople = new[]
         {
             //                id              name           bilis lakas tatag
-            new RosterEntry("dante",       "BASILIO",         2,    4,    5),
+            new RosterEntry("dante",       "DANTE",         2,    4,    5),
             new RosterEntry("cheska",      "YASMIN",          3,    4,    4),
             new RosterEntry("sean",        "RAGO",            1,    5,    3),
             new RosterEntry("zack",        "ISAGANI",         4,    3,    3),
@@ -167,7 +167,7 @@ namespace TumbangPreso.Core
             new RosterEntry("lola_pacing", "LOLA PACING",     1,    4,    5),
             new RosterEntry("mang_kanor",  "MANG KANOR",      5,    3,    2),
             new RosterEntry("aling_nena",  "ALING NENA",      2,    3,    5),
-            new RosterEntry("dante",       "BASILIO",         2,    4,    5),
+            new RosterEntry("dante",       "DANTE",         2,    4,    5),
             new RosterEntry("cheska",      "YASMIN",          3,    4,    4),
             new RosterEntry("sean",        "RAGO",            1,    5,    3),
             new RosterEntry("zack",        "ISAGANI",         4,    3,    3),

@@ -81,13 +81,18 @@ namespace TumbangPreso.PlayTests
                 if (graphic is UI.HudBadge badge && badge.Kind == UI.HudBadge.Glyph.None) continue;
                 if (graphic is UI.HudDangerFrame) continue;
                 Rect local;
-                if (graphic is Text text && text.cachedTextGenerator.vertexCount > 0)
+                // ⚠️ THE DRAWN MESH, NOT THE GENERATOR. CrispUiText samples small glyphs at up to twice
+                // the canvas scale and converts back to units itself, so generator vertices divided
+                // by pixelsPerUnit doubled every label's measured box (2026-10-06: the clock's numbers
+                // were counted twice their size, outside their own tile).
+                var drawn = graphic is Text ? graphic.canvasRenderer.GetMesh() : null;
+                if (graphic is Text && drawn != null && drawn.vertexCount > 0)
                 {
                     var min = new Vector2(float.PositiveInfinity, float.PositiveInfinity); var max = -min;
-                    float unit = 1 / Mathf.Max(.0001f, text.pixelsPerUnit);
-                    foreach (var v in text.cachedTextGenerator.verts)
+                    var b = drawn.bounds;
+                    foreach (var corner in new[] { new Vector3(b.min.x, b.min.y), new Vector3(b.max.x, b.min.y), new Vector3(b.min.x, b.max.y), new Vector3(b.max.x, b.max.y) })
                     {
-                        Vector2 p = root.InverseTransformPoint(text.rectTransform.TransformPoint((Vector3)v.position * unit));
+                        Vector2 p = root.InverseTransformPoint(graphic.rectTransform.TransformPoint(corner));
                         min = Vector2.Min(min, p); max = Vector2.Max(max, p);
                     }
                     local = Rect.MinMaxRect(min.x, min.y, max.x, max.y);

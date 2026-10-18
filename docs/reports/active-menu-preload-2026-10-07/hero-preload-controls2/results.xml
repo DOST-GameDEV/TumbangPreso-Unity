@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 13:12:37Z" end-time="2026-10-07 13:13:01Z" duration="24.3502864">
+  <test-suite type="TestSuite" id="3602" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2105" result="Passed" start-time="2026-10-07 13:12:37Z" end-time="2026-10-07 13:13:01Z" duration="24.350286" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3594" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2105" result="Passed" start-time="2026-10-07 13:12:37Z" end-time="2026-10-07 13:13:01Z" duration="24.325301" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="41768" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3595" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2105" result="Passed" start-time="2026-10-07 13:12:37Z" end-time="2026-10-07 13:13:01Z" duration="24.309794" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3598" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2103" result="Passed" start-time="2026-10-07 13:12:37Z" end-time="2026-10-07 13:13:01Z" duration="24.294350" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2104" name="LoginHomePreloadTests" fullname="TumbangPreso.PlayTests.LoginHomePreloadTests" classname="TumbangPreso.PlayTests.LoginHomePreloadTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-07 13:12:37Z" end-time="2026-10-07 13:12:49Z" duration="11.565910" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2106" name="LeavingDuringPreparationRestoresBackgroundPriority" fullname="TumbangPreso.PlayTests.LoginHomePreloadTests.LeavingDuringPreparationRestoresBackgroundPriority" methodname="LeavingDuringPreparationRestoresBackgroundPriority" classname="TumbangPreso.PlayTests.LoginHomePreloadTests" runstate="Runnable" seed="851971310" result="Passed" start-time="2026-10-07 13:12:37Z" end-time="2026-10-07 13:12:39Z" duration="2.307334" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2105" name="LoginRemainsEditableWhileHomeStreamsThenArrivesWithoutClick" fullname="TumbangPreso.PlayTests.LoginHomePreloadTests.LoginRemainsEditableWhileHomeStreamsThenArrivesWithoutClick" methodname="LoginRemainsEditableWhileHomeStreamsThenArrivesWithoutClick" classname="TumbangPreso.PlayTests.LoginHomePreloadTests" runstate="Runnable" seed="1340388180" result="Passed" start-time="2026-10-07 13:12:39Z" end-time="2026-10-07 13:12:49Z" duration="9.241385" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="3241" name="StartupOrder1007Tests" fullname="TumbangPreso.PlayTests.StartupOrder1007Tests" classname="TumbangPreso.PlayTests.StartupOrder1007Tests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-07 13:12:49Z" end-time="2026-10-07 13:13:01Z" duration="12.618477" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="3242" name="LogosLoginFiveSecondMainThenFirstHomeAnimation" fullname="TumbangPreso.PlayTests.StartupOrder1007Tests.LogosLoginFiveSecondMainThenFirstHomeAnimation" methodname="LogosLoginFiveSecondMainThenFirstHomeAnimation" classname="TumbangPreso.PlayTests.StartupOrder1007Tests" runstate="Runnable" seed="1121022455" result="Passed" start-time="2026-10-07 13:12:49Z" end-time="2026-10-07 13:13:01Z" duration="12.605439" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] StartupLoginFirst1007-1920 cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupLoginFirst1007-1280 cream source=252,211,159 pixel=242,142,106; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupMainLoading1007-1920 cream source=252,211,159 pixel=248,198,142; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupMainLoading1007-1280 cream source=252,211,159 pixel=245,182,120; isolated UI camera, no ColourGrade.
+[StartupOrder1007] studio->login->main-loading->home; loadingSeconds=6.902397 firstFrames=4->40
+[TumpUiCapture] StartupFirstHomePlaying1007-1920 cream source=252,211,159 pixel=45,27,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupFirstHomePlaying1007-1280 cream source=252,211,159 pixel=47,30,19; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

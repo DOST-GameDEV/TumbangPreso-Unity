@@ -174,20 +174,51 @@ namespace TumbangPreso.UI
             if ((userGood && !_userWasGood) || (passGood && !_passWasGood) || (confirmGood && !_confirmWasGood))
                 MenuSfx.Valid();
             _userWasGood = userGood; _passWasGood = passGood; _confirmWasGood = confirmGood;
+            RefreshOwnerRefusalSummary();
+            PlaceOwnerTermsForFeedback();
         }
 
         private string _serverUserValue = "", _serverPassValue = "";
-        private bool _ownerSubmitAttempted, _credentialPairFault;
+        private bool _ownerSubmitAttempted, _credentialPairFault, _ownerLocalRefusal;
+        private const float TermsRestLift = 12;
+        private bool? _ownerTermsHasFeedback;
+
+        private void PlaceOwnerTermsForFeedback()
+        {
+            if (_ownerTermsRow == null || !_ownerTermsRow.activeSelf) return;
+            bool feedback = !string.IsNullOrEmpty(_faultUser.text) || !string.IsNullOrEmpty(_faultPass.text)
+                || !string.IsNullOrEmpty(_faultConfirm.text) || !string.IsNullOrEmpty(_error.text);
+            if (_ownerTermsHasFeedback == feedback) return;
+            _ownerTermsHasFeedback = feedback;
+            var position = new Vector2(TermsRow.x, -TermsRow.y + (feedback ? 0 : TermsRestLift));
+            var motion = _ownerTermsRow.GetComponent<OwnerUiMotion>();
+            if (motion != null) motion.SetRestPosition(position);
+            else ((RectTransform)_ownerTermsRow.transform).anchoredPosition = position;
+        }
+
+        private void RefreshOwnerRefusalSummary()
+        {
+            if (!_ownerLocalRefusal) return;
+            bool fields = !string.IsNullOrEmpty(_faultUser.text) || !string.IsNullOrEmpty(_faultPass.text)
+                || (_creating && !string.IsNullOrEmpty(_faultConfirm.text));
+            bool terms = _creating && !_ownerTerms.isOn;
+            _error.text = fields ? terms ? "Fix the highlighted fields and tick the terms checkbox."
+                : "Fix the highlighted fields." : terms ? "Read and accept the terms to create an account." : "";
+            if (!fields && !terms) _ownerLocalRefusal = false;
+        }
 
         private void ClearOwnerFaults()
         {
             _serverUserFault = _serverPassFault = null;
             _ownerSubmitAttempted = _credentialPairFault = false;
+            _ownerLocalRefusal = false;
+            _ownerTermsHasFeedback = null;
             if (_faultUser != null) { _faultUser.text = ""; _faultPass.text = ""; _faultConfirm.text = ""; }
             if (_markUser != null) _markUser.Show(OwnerFieldMark.State.None);
             _username?.GetComponent<OwnerFieldPulse>()?.Clear();
             _password?.GetComponent<OwnerFieldPulse>()?.Clear();
             _ownerConfirm?.GetComponent<OwnerFieldPulse>()?.Clear();
+            _ownerTermsRow?.GetComponent<OwnerConsentPulse>()?.Clear();
             _userWasGood = _passWasGood = _confirmWasGood = false;
         }
 
@@ -334,13 +365,19 @@ namespace TumbangPreso.UI
             if (!string.IsNullOrEmpty(_faultPass.text)) { PulseOwnerField(_password); if (first == null) first = _password; }
             if (_creating && !string.IsNullOrEmpty(_faultConfirm.text))
             { PulseOwnerField(_ownerConfirm); if (first == null) first = _ownerConfirm; }
+            bool missingTerms = _creating && !_ownerTerms.isOn;
+            _ownerLocalRefusal = first != null || missingTerms;
+            RefreshOwnerRefusalSummary();
+            PlaceOwnerTermsForFeedback();
+            if (missingTerms) _ownerTermsRow.GetComponent<OwnerConsentPulse>()?.Refuse();
             if (first != null)
             {
                 first.Select(); MenuSfx.Error(); return false;
             }
-            if (_creating && !_ownerTerms.isOn)
+            if (missingTerms)
             {
                 Fail("Read and accept the terms to create an account.");
+                _ownerTerms.Select();
                 return false;
             }
             return true;

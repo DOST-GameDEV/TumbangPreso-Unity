@@ -1,0 +1,26 @@
+{
+  "role": "client",
+  "pid": 2024,
+  "profile": "lpt-lobby152-client1005",
+  "profilePath": "C:\\Users\\Matthew\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\228528dc40397e7baf05539d320b8a785254a7fc936a5a4fff2c047461e8b41f",
+  "command": [
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Builds\\current-laptop-8db2dda82-1005\\TumbangPreso.exe",
+    "-force-d3d11",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1280",
+    "-screen-height",
+    "720",
+    "-tp-framecap",
+    "60",
+    "-tp-profile",
+    "lpt-lobby152-client1005",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Logs\\current-local-lobby152-pair1005\\client\\player.log"
+  ],
+  "source": "8db2dda82202690434bd1443555fa3b4fc99eaef",
+  "manifestSHA256": "e407e40685617a40e6fb1f450abaf516de9643645f24ed640d50eb33a33eb511",
+  "route": "ordinary visible boot, UI admission; no bootstrap or auto-start flags",
+  "scope": "Two instances on one laptop; not two-machine acceptance"
+}

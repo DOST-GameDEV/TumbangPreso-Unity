@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 00:57:15Z" end-time="2026-10-07 00:57:16Z" duration="0.5742657">
+  <test-suite type="TestSuite" id="3449" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1985" result="Failed" site="Child" start-time="2026-10-07 00:57:15Z" end-time="2026-10-07 00:57:16Z" duration="0.574266" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3441" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1985" result="Failed" site="Child" start-time="2026-10-07 00:57:15Z" end-time="2026-10-07 00:57:16Z" duration="0.561432" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="59580" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3442" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1985" result="Failed" site="Child" start-time="2026-10-07 00:57:15Z" end-time="2026-10-07 00:57:16Z" duration="0.553610" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3445" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1983" result="Failed" site="Child" start-time="2026-10-07 00:57:15Z" end-time="2026-10-07 00:57:16Z" duration="0.544456" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2062" name="MapPreviewCanvasVisibilityTests" fullname="TumbangPreso.PlayTests.MapPreviewCanvasVisibilityTests" classname="TumbangPreso.PlayTests.MapPreviewCanvasVisibilityTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-07 00:57:15Z" end-time="2026-10-07 00:57:16Z" duration="0.517175" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2064" name="CanvasOverlayPausesAndResumesTheOwnedMovie" fullname="TumbangPreso.PlayTests.MapPreviewCanvasVisibilityTests.CanvasOverlayPausesAndResumesTheOwnedMovie" methodname="CanvasOverlayPausesAndResumesTheOwnedMovie" classname="TumbangPreso.PlayTests.MapPreviewCanvasVisibilityTests" runstate="Runnable" seed="2127253219" result="Failed" start-time="2026-10-07 00:57:15Z" end-time="2026-10-07 00:57:16Z" duration="0.418654" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The hidden Canvas must not keep decoding its background movie.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.MapPreviewCanvasVisibilityTests+<CanvasOverlayPausesAndResumesTheOwnedMovie>d__5.MoveNext () [0x00174] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\MapPreviewCanvasVisibilityTests.cs:46
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2063" name="HiddenCanvasKeepsPosterAndDefersItsDecoder" fullname="TumbangPreso.PlayTests.MapPreviewCanvasVisibilityTests.HiddenCanvasKeepsPosterAndDefersItsDecoder" methodname="HiddenCanvasKeepsPosterAndDefersItsDecoder" classname="TumbangPreso.PlayTests.MapPreviewCanvasVisibilityTests" runstate="Runnable" seed="1615251372" result="Failed" start-time="2026-10-07 00:57:16Z" end-time="2026-10-07 00:57:16Z" duration="0.087475" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A non-drawing Canvas must not start the preview decoder.
+  Expected: null
+  But was:  <Recorded court (UnityEngine.VideoPlayer)>
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.MapPreviewCanvasVisibilityTests+<HiddenCanvasKeepsPosterAndDefersItsDecoder>d__4.MoveNext () [0x000b4] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\MapPreviewCanvasVisibilityTests.cs:30
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

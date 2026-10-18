@@ -1,0 +1,5 @@
+TumbangPreso.PlayTests.RecordedCompanionTests
+"Assets/TumbangPreso/Tests/PlayMode/RecordedCompanionTests.cs"
+Assets\TumbangPreso\Tests\PlayMode\RecordedCompanionTests.cs(42,56): error CS0104: 'CompressionLevel' is an ambiguous reference between 'UnityEngine.CompressionLevel' and 'System.IO.Compression.CompressionLevel'
+Assets\TumbangPreso\Tests\PlayMode\RecordedCompanionTests.cs(42,56): error CS0104: 'CompressionLevel' is an ambiguous reference between 'UnityEngine.CompressionLevel' and 'System.IO.Compression.CompressionLevel'
+Assets\TumbangPreso\Tests\PlayMode\RecordedCompanionTests.cs(42,56): error CS0104: 'CompressionLevel' is an ambiguous reference between 'UnityEngine.CompressionLevel' and 'System.IO.Compression.CompressionLevel'

@@ -1,0 +1,20 @@
+{
+  "pid": 54388,
+  "terminal": true,
+  "exitCode": 0,
+  "probe": {
+    "passed": true,
+    "lifetimeOnly": true,
+    "lifetimePassed": true,
+    "error": "",
+    "cpu": "13th Gen Intel(R) Core(TM) i5-13420H",
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "width": 1920,
+    "height": 1080,
+    "samples": []
+  },
+  "profileSeedRestored": true,
+  "existingPrefsRestored": 0,
+  "artifactUnchanged": true,
+  "passed": true
+}

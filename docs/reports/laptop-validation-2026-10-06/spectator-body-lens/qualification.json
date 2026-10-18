@@ -1,0 +1,78 @@
+{
+  "original1": {
+    "sourceCommit": "98364c83f3d5df55c27f663e9d052e0c15499d1e",
+    "qualifiedManifestSha256": "7566304d1f9c0fd56925b02dd832f4d4bbf561310e23df9200c3993bddc62d5e",
+    "profile": "validation-qa-a-be075dcdfa07",
+    "generatedDeltaCount": 279,
+    "result": {
+      "pid": 49544,
+      "terminal": true,
+      "exitCode": 2,
+      "passed": 0,
+      "failed": 3,
+      "expected": 3,
+      "inputCount": 21154,
+      "allInputsRestored": true,
+      "existingPrefsRestored": 13
+    },
+    "fixtureSha256": "e9f7b9149117b686401112f3cc88d561896982fc1963a3309048c87d5b3d1872",
+    "directorSha256": "6d8578be40a37fb82774fda34548f846c003605b04aa385c334cc94f8693c821"
+  },
+  "original2": {
+    "sourceCommit": "98364c83f3d5df55c27f663e9d052e0c15499d1e",
+    "qualifiedManifestSha256": "a834112a66f26c3efef3586316f00eb12debde1e8b1ffe0f76b445cdcaeda727",
+    "profile": "validation-qa-a-be075dcdfa07",
+    "generatedDeltaCount": 280,
+    "result": {
+      "pid": 47960,
+      "terminal": true,
+      "exitCode": 2,
+      "passed": 2,
+      "failed": 1,
+      "expected": 3,
+      "inputCount": 21154,
+      "allInputsRestored": true,
+      "existingPrefsRestored": 13
+    },
+    "fixtureSha256": "58aaa85d18433a3e43006c54afdd4bb947418d664895fb4c243dce11fbb47af8",
+    "directorSha256": "6d8578be40a37fb82774fda34548f846c003605b04aa385c334cc94f8693c821"
+  },
+  "original3": {
+    "sourceCommit": "98364c83f3d5df55c27f663e9d052e0c15499d1e",
+    "qualifiedManifestSha256": "c3ccbf04d83dbead78a94e39068b7d796a5bf1314c3258a76890d1fbf89836aa",
+    "profile": "validation-qa-a-be075dcdfa07",
+    "generatedDeltaCount": 280,
+    "result": {
+      "pid": 46260,
+      "terminal": true,
+      "exitCode": 2,
+      "passed": 5,
+      "failed": 2,
+      "expected": 7,
+      "inputCount": 21154,
+      "allInputsRestored": true,
+      "existingPrefsRestored": 13
+    },
+    "fixtureSha256": "c60ae39bd1f08e241586184a34f5b3e732dbc6acc620319da0abebe47a486dbe",
+    "directorSha256": "6d8578be40a37fb82774fda34548f846c003605b04aa385c334cc94f8693c821"
+  },
+  "candidate1": {
+    "sourceCommit": "98364c83f3d5df55c27f663e9d052e0c15499d1e",
+    "qualifiedManifestSha256": "5a9ce8a5d4531ecf8a8dae67afbe2f9f6cecdaf37b1a92fb518c8725b8089b14",
+    "profile": "validation-qa-a-be075dcdfa07",
+    "generatedDeltaCount": 280,
+    "result": {
+      "pid": 49052,
+      "terminal": true,
+      "exitCode": 0,
+      "passed": 14,
+      "failed": 0,
+      "expected": 14,
+      "inputCount": 21154,
+      "allInputsRestored": true,
+      "existingPrefsRestored": 13
+    },
+    "fixtureSha256": "c60ae39bd1f08e241586184a34f5b3e732dbc6acc620319da0abebe47a486dbe",
+    "directorSha256": "31ad7df3057a941a72d30f6296d1de974e066e58bb72c48438786d025fd2515c"
+  }
+}

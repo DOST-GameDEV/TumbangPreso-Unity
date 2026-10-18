@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Passed" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 12:18:12Z" end-time="2026-10-06 12:18:43Z" duration="31.2890869">
+  <test-suite type="TestSuite" id="3390" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1945" result="Passed" start-time="2026-10-06 12:18:12Z" end-time="2026-10-06 12:18:43Z" duration="31.289087" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3382" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1945" result="Passed" start-time="2026-10-06 12:18:12Z" end-time="2026-10-06 12:18:43Z" duration="31.269493" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12780" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3383" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1945" result="Passed" start-time="2026-10-06 12:18:12Z" end-time="2026-10-06 12:18:43Z" duration="31.245094" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3386" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1943" result="Passed" start-time="2026-10-06 12:18:12Z" end-time="2026-10-06 12:18:43Z" duration="31.196327" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="3031" name="StatusTypographyTests" fullname="TumbangPreso.PlayTests.StatusTypographyTests" classname="TumbangPreso.PlayTests.StatusTypographyTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-06 12:18:12Z" end-time="2026-10-06 12:18:13Z" duration="1.238493" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="3034" name="ChilledDescriptionStaysOnOneReadableLine" fullname="TumbangPreso.PlayTests.StatusTypographyTests.ChilledDescriptionStaysOnOneReadableLine" methodname="ChilledDescriptionStaysOnOneReadableLine" classname="TumbangPreso.PlayTests.StatusTypographyTests" runstate="Runnable" seed="929739120" result="Passed" start-time="2026-10-06 12:18:12Z" end-time="2026-10-06 12:18:12Z" duration="0.622077" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] StatusTypography-Chilled cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="3035" name="DenseStatusStackKeepsTextInsideCardsAtBothHudScales" fullname="TumbangPreso.PlayTests.StatusTypographyTests.DenseStatusStackKeepsTextInsideCardsAtBothHudScales" methodname="DenseStatusStackKeepsTextInsideCardsAtBothHudScales" classname="TumbangPreso.PlayTests.StatusTypographyTests" runstate="Runnable" seed="1886430290" result="Passed" start-time="2026-10-06 12:18:12Z" end-time="2026-10-06 12:18:13Z" duration="0.520267" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] StatusTypography-Dense-1 cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StatusTypography-Dense-1.2 cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="3033" name="UnzappedAndExpiredStatusDoNotLeaveAChip" fullname="TumbangPreso.PlayTests.StatusTypographyTests.UnzappedAndExpiredStatusDoNotLeaveAChip" methodname="UnzappedAndExpiredStatusDoNotLeaveAChip" classname="TumbangPreso.PlayTests.StatusTypographyTests" runstate="Runnable" seed="165761708" result="Passed" start-time="2026-10-06 12:18:13Z" end-time="2026-10-06 12:18:13Z" duration="0.042193" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="3032" name="ZappedStatusShowsItsOwnLabelAndRemainingTime" fullname="TumbangPreso.PlayTests.StatusTypographyTests.ZappedStatusShowsItsOwnLabelAndRemainingTime" methodname="ZappedStatusShowsItsOwnLabelAndRemainingTime" classname="TumbangPreso.PlayTests.StatusTypographyTests" runstate="Runnable" seed="8464882" result="Passed" start-time="2026-10-06 12:18:13Z" end-time="2026-10-06 12:18:13Z" duration="0.043071" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="3139" name="TumpNativeHudTests" fullname="TumbangPreso.PlayTests.TumpNativeHudTests" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" testcasecount="25" result="Passed" start-time="2026-10-06 12:18:13Z" end-time="2026-10-06 12:18:43Z" duration="29.850406" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="3157" name="DenseStatusesRetainHauntedTimersAndReflowWithoutOverlap" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.DenseStatusesRetainHauntedTimersAndReflowWithoutOverlap" methodname="DenseStatusesRetainHauntedTimersAndReflowWithoutOverlap" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="2118203376" result="Passed" start-time="2026-10-06 12:18:13Z" end-time="2026-10-06 12:18:31Z" duration="17.485446" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] HarryHud-dense-status-1-960x540/Power0: vertices=548, cull=False, alpha=1, depth=207, material=1
+[TumpGeometry] HarryHud-dense-status-1-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=208, material=1
+[TumpGeometry] HarryHud-dense-status-1-960x540/Power1: vertices=548, cull=False, alpha=1, depth=212, material=1
+[TumpGeometry] HarryHud-dense-status-1-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=213, material=1
+[TumpGeometry] HarryHud-dense-status-1-960x540/Power2: vertices=356, cull=False, alpha=1, depth=217, material=1
+[TumpGeometry] HarryHud-dense-status-1-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=218, material=1
+[TumpUiCapture] HarryHud-dense-status-1-960x540 cream source=252,211,159 pixel=212,224,227; isolated UI camera, no ColourGrade.
+[TumpGeometry] HarryHud-dense-status-1-1600x680/Power0: vertices=548, cull=False, alpha=1, depth=207, material=1
+[TumpGeometry] HarryHud-dense-status-1-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=208, material=1
+[TumpGeometry] HarryHud-dense-status-1-1600x680/Power1: vertices=548, cull=False, alpha=1, depth=212, material=1
+[TumpGeometry] HarryHud-dense-status-1-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=213, material=1
+[TumpGeometry] HarryHud-dense-status-1-1600x680/Power2: vertices=356, cull=False, alpha=1, depth=217, material=1
+[TumpGeometry] HarryHud-dense-status-1-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=218, material=1
+[TumpUiCapture] HarryHud-dense-status-1-1600x680 cream source=252,211,159 pixel=197,164,141; isolated UI camera, no ColourGrade.
+[TumpGeometry] HarryHud-dense-status-1.2-960x540/Power0: vertices=548, cull=False, alpha=1, depth=207, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=208, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-960x540/Power1: vertices=548, cull=False, alpha=1, depth=212, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=213, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-960x540/Power2: vertices=356, cull=False, alpha=1, depth=217, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=218, material=1
+[TumpUiCapture] HarryHud-dense-status-1.2-960x540 cream source=252,211,159 pixel=208,193,231; isolated UI camera, no ColourGrade.
+[TumpGeometry] HarryHud-dense-status-1.2-1600x680/Power0: vertices=548, cull=False, alpha=1, depth=207, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=208, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-1600x680/Power1: vertices=548, cull=False, alpha=1, depth=212, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=213, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-1600x680/Power2: vertices=356, cull=False, alpha=1, depth=217, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=218, material=1
+[TumpUiCapture] HarryHud-dense-status-1.2-1600x680 cream source=252,211,159 pixel=183,151,131; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="3156" name="ScoreFeedReflowsWithoutResettingExpiryAndHonoursReducedMotion" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.ScoreFeedReflowsWithoutResettingExpiryAndHonoursReducedMotion" methodname="ScoreFeedReflowsWithoutResettingExpiryAndHonoursReducedMotion" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="298604166" result="Passed" start-time="2026-10-06 12:18:31Z" end-time="2026-10-06 12:18:36Z" duration="5.568155" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[TumpUiCapture] HarryHud-feed-stack-960x540 cream source=252,211,159 pixel=201,218,229; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="3158" name="WarningStripIsThinSingleLineAndMatchesActionOpacity" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.WarningStripIsThinSingleLineAndMatchesActionOpacity" methodname="WarningStripIsThinSingleLineAndMatchesActionOpacity" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="1078705397" result="Passed" start-time="2026-10-06 12:18:36Z" end-time="2026-10-06 12:18:43Z" duration="6.791304" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[TumpUiCapture] Warning-strip-1-960 cream source=252,211,159 pixel=248,205,155; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Warning-strip-1-1600 cream source=252,211,159 pixel=251,209,158; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Warning-strip-1.2-960 cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Warning-strip-1.2-1600 cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

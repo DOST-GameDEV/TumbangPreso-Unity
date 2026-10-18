@@ -81,14 +81,17 @@ namespace TumbangPreso.PlayTests
         {
             yield return Open();
             var wave = DanteDriftWave.Spawn(_caster.transform.position, Vector3.forward, 0);
-            wave.SendMessage("Advance", .65f); var field = wave.Capture();
+            float landed = GeoRules.DriftLandSeconds + .05f;
+            wave.SendMessage("Advance", landed);
+            Assert.IsTrue(_near.IsConcussed, "The near player, thrown by the first band, has landed.");
+            var field = wave.Capture();
             Assert.IsTrue(Net.WorldEffectSnapshot.Valid(field)); _near.CleanseStatuses();
             Assert.IsTrue(Net.WorldEffectSnapshot.Apply(new[] { field }, 0));
-            Assert.IsFalse(_near.IsConcussed, "Recovery cannot replay the already-resolved near band.");
             var restored = Object.FindAnyObjectByType<DanteDriftWave>(); Assert.IsNotNull(restored);
-            Assert.AreEqual(.65f, restored.Age, .001f);
-            restored.SendMessage("Advance", .60f);
-            Assert.IsTrue(_far.IsConcussed); Assert.IsFalse(_near.IsConcussed);
+            Assert.AreEqual(landed, restored.Age, .001f);
+            restored.SendMessage("Advance", 1.4f);
+            Assert.IsFalse(_near.IsConcussed, "Recovery cannot replay the already-resolved near band.");
+            Assert.IsTrue(_far.IsConcussed, "The far band, still to come, throws and lands its player.");
             GameServices.Round.EndRound(); Assert.IsFalse(restored.gameObject.activeInHierarchy);
         }
         [UnityTest] public IEnumerator SnapshotBoundsAndReplayRemainRenderOnly()
@@ -145,17 +148,30 @@ namespace TumbangPreso.PlayTests
             var kit = new DanteHeroKit(); Assert.AreEqual("CONTINENTAL DRIFT", kit.Ultimate.Name);
             Assert.AreEqual(12, kit.UltimateCost); Assert.AreEqual("dante_ultimate", kit.Ultimate.Id);
         }
-        [UnityTest] public IEnumerator ReleasedEarthquakeReachesNearThenFarAndNeverBehind()
+        [UnityTest] public IEnumerator AfterTheCutsceneTheRisingBandResolvesOnceAndTheRestFollow()
+        {
+            yield return Open();
+            var wave = DanteDriftWave.Spawn(_caster.transform.position, Vector3.forward, 0, GeoRules.DriftCutsceneTail);
+            Assert.AreEqual(GeoRules.DriftCutsceneTail, wave.Age, .001f, "Play picks up where the cutscene's last frame was.");
+            Assert.AreEqual(1, wave.ReleasedBands, "The band the cutscene showed rising resolves on the cut, once.");
+            Assert.IsTrue(_near.IsCarried, "Whoever stands on it is knocked away as play resumes.");
+            Assert.IsFalse(_far.IsCarried);
+            yield return new WaitForSeconds((GeoRules.DriftBlasts - 1) * GeoRules.DriftInterval + GeoRules.DriftLandSeconds);
+            Assert.IsTrue(_near.IsConcussed && _far.IsConcussed); Assert.IsFalse(_behind.IsConcussed);
+        }
+        [UnityTest] public IEnumerator ReleasedEarthquakeKnocksAwayNearThenFarAndNeverBehind()
         {
             yield return Open();
             var kit = new DanteHeroKit();
             var context = new AbilityContext(_caster, _caster.GetComponent<Carrier>(), _caster.GetComponent<CombatVerbs>());
             kit.Ultimate.Activate(context); kit.Ultimate.Tick(context, kit.Ultimate.Windup + .01f);
-            yield return null;
-            Assert.IsTrue(_near.IsConcussed, "The first forward band must reach the nearby player across its width.");
-            Assert.IsFalse(_far.IsConcussed, "The far end must wait for the travelling cascade.");
-            Assert.IsFalse(_behind.IsConcussed, "A player behind the accepted origin is outside the forward blast.");
-            yield return new WaitForSeconds(1.3f);
+            Assert.IsTrue(_near.IsCarried, "The first band knocks the nearby player away down the lane.");
+            Assert.IsFalse(_far.IsCarried, "The far end waits for the travelling cascade.");
+            Assert.IsFalse(_behind.IsCarried, "A player behind the accepted origin is outside the forward blast.");
+            Assert.IsFalse(_near.IsConcussed, "Still in the air: Concussed as they land.");
+            yield return new WaitForSeconds(GeoRules.DriftLandSeconds + .1f);
+            Assert.IsTrue(_near.IsConcussed); Assert.IsFalse(_far.IsConcussed);
+            yield return new WaitForSeconds((GeoRules.DriftBlasts - 1) * GeoRules.DriftInterval + .1f);
             Assert.IsTrue(_far.IsConcussed); Assert.IsFalse(_behind.IsConcussed); Assert.IsFalse(_caster.IsConcussed);
         }
     }

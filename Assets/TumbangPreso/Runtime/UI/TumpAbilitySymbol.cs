@@ -169,6 +169,19 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.NemuAstralPet:
                     P(vh,-.33f,-.10f,-.28f,.32f,-.07f,.18f,.14f,.19f,.32f,.34f,.33f,-.11f,0,-.34f,-.33f,-.10f);
                     P(vh,-.12f,.02f,-.08f,-.03f);P(vh,.10f,.02f,.14f,-.03f); break;
+                case AbilityGlyph.NemuDontLook:
+                    P(vh,-.38f,0,-.20f,.15f,0,.20f,.20f,.15f,.38f,0,.20f,-.15f,0,-.20f,-.20f,-.15f,-.38f,0);Ring(vh,0,0,.08f);
+                    P(vh,-.46f,.13f,-.14f,.17f);P(vh,-.46f,0,-.10f,.02f);P(vh,-.46f,-.13f,-.14f,-.15f);
+                    P(vh,.46f,.13f,.14f,.17f);P(vh,.46f,0,.10f,.02f);P(vh,.46f,-.13f,.14f,-.15f); break;
+                case AbilityGlyph.NemuSkitter:
+                    P(vh,-.20f,-.38f,-.20f,0,-.12f,.12f,.12f,.12f,.20f,0,.20f,-.38f,.10f,-.30f,0,-.38f,-.10f,-.30f,-.20f,-.38f);
+                    P(vh,-.16f,.05f,-.24f,.27f);P(vh,.16f,.05f,.24f,.27f);
+                    P(vh,-.32f,.27f,.32f,.27f,.32f,.38f,-.32f,.38f,-.32f,.27f);
+                    Ring(vh,-.07f,-.04f,.035f);Ring(vh,.07f,-.04f,.035f); break;
+                case AbilityGlyph.NemuLookout:
+                    P(vh,-.42f,-.38f,-.42f,-.05f,-.34f,.08f,-.18f,.08f,-.10f,-.05f,-.10f,-.38f,-.18f,-.30f,-.26f,-.38f,-.34f,-.30f,-.42f,-.38f);
+                    P(vh,.04f,-.38f,.04f,.10f,.28f,.10f,.28f,-.38f,.04f,-.38f);P(vh,.04f,.02f,.28f,.02f);
+                    P(vh,.40f,-.24f,.43f,.10f,.32f,.32f);P(vh,.22f,.30f,.32f,.32f,.34f,.21f); break;
                 case AbilityGlyph.NemuSeanceVoid:
                     Ring(vh,0,0,.37f);P(vh,-.29f,0,-.10f,.17f,.13f,.17f,.30f,0,.11f,-.17f,-.11f,-.17f,-.29f,0);
                     Ring(vh,0,0,.08f); break;

@@ -1,0 +1,5 @@
+# Two-human LAN acceptance requests the missing bot seats
+
+The existing LAN runner expected two human origins and four result lines while its room wire requestedBots0. NetAutomationProbe calls the normal hub StartGame action, which correctly refuses an incomplete four-human room when bots are off. The runner now explicitly requestsBots3 for its two-human first gate, preserving the short Hero1/30 rule set, existing ready scenario and disabled map voting. This changes test configuration only; the accepted packaged game remains the exactcb5f source/protocol153.
+
+Eleven existing runner tests pass, including explicit filler-seat configuration. The actual packaged Core parses the complete corrected wire unchanged, and the laptop verifies all261 packaged file hashes,3,535,817,714bytes, executable/Core/Runtime and source identity against the PC's accepted manifest. Transfer takes48.235seconds. Exact receipts are retained here. These are prerequisites, not a completed peer match; both host/client runtime and saved-result parity remain the next acceptance.

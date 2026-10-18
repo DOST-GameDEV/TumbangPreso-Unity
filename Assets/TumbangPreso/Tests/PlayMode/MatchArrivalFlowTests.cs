@@ -247,6 +247,9 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(hosting.IsCompleted && !hosting.IsFaulted && string.IsNullOrEmpty(hosting.Result));
 
             var selectedRules = SceneFlow.SelectedRules.Clone(); selectedRules.MapVote = mapVote;
+            // This fixture hosts one human. Queue acceptance does not override a
+            // custom room's explicit NONE policy; request the needed bot seats.
+            if(!queued)selectedRules.Bots=CustomGameRules.MaxBots;
             MatchRpc.Instance.SelectRulesServerRpc(CustomGameRules.ToWire(selectedRules));
 
             // This is the local queued-room state path on a real LAN host, not a UGS matchmaking claim.
@@ -270,11 +273,13 @@ namespace TumbangPreso.PlayTests
             while (!(TumpHub.Current.Top is HubMapVote) && Time.realtimeSinceStartup < until) yield return null;
             Assert.IsInstanceOf<HubMapVote>(TumpHub.Current.Top);
             Assert.IsFalse(SceneFlow.SelectedRules.ManualReady);
-            var cards = TumpHub.Current.Top.GetComponentsInChildren<UnityEngine.UI.RawImage>();
+            var cards = TumpHub.Current.Top.GetComponentsInChildren<UnityEngine.UI.RawImage>().Where(i=>i.name=="CourtImage").ToArray();
             Assert.AreEqual(SceneFlow.MapRegistry.Length, cards.Length);
             foreach (var card in cards) Assert.IsNotNull(card.texture, card.transform.parent.name + " must show its actual court.");
-            yield return HubFlowTests.Shots("MapVote");
+            // Layout captures have their own qualified fixture. Do not consume
+            // this real twelve-second ballot while taking multiple screenshots.
             yield return HubFlowTests.Press("VoteMap1");
+            yield return HubFlowTests.Press("LockMapVote");
             Assert.AreEqual(1, TumpHub.Current.Host.MapVoteFor(NetAuthority.LocalSlot));
 
             }
@@ -308,6 +313,19 @@ namespace TumbangPreso.PlayTests
             CollectionAssert.AreEqual(new[] { "3", "2", "1", "GO!" }, ticks);
             Assert.IsFalse(PresentationClock.Held);
             Assert.IsFalse(HubLoading.Visible);
+        }
+
+        [UnityTest]public IEnumerator CustomRoomWithBotsOffRequiresFourHumanSeats()
+        {
+            yield return HubFlowTests.OpenHome();
+            var hosting=TumpHub.Current.Host.HostRoom("NO BOT ADMISSION",SceneFlow.Eskinita,GameMode.HeroStrike,RoomVisibility.Private,false);
+            while(!hosting.IsCompleted)yield return null;
+            Assert.IsFalse(hosting.IsFaulted);Assert.IsTrue(string.IsNullOrEmpty(hosting.Result));
+            var rules=SceneFlow.SelectedRules.Clone();rules.Bots=0;
+            MatchRpc.Instance.SelectRulesServerRpc(CustomGameRules.ToWire(rules));
+            TumpHub.Current.Host.AcceptBots();TumpHub.Current.Host.StartGame();yield return null;
+            Assert.IsFalse(AIController.BotsEnabled);Assert.IsFalse(MatchRpc.Instance.CharacterSelecting);
+            Assert.IsFalse(MatchRpc.Instance.QueueMapVoting);Assert.IsFalse(TumpHub.Current.Host.MatchInProgress);
         }
 
         private static void CaptureArrivalCamera(string directory, int index)

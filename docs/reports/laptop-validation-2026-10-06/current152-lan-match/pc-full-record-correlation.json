@@ -1,0 +1,18 @@
+{
+  "confirmedUTC": "2026-10-05T18:01:18.177681+00:00",
+  "MatchId": "5f49c17aee704f349966e7349abc6b8a",
+  "canonicalBytes": 2401,
+  "laptopCanonicalSHA256": "37b2a9f57379d6f3afac8d00039bc4a4e9e893665a1806ed7b5b791d6d33b556",
+  "pcIndependentCanonicalSHA256": "37b2a9f57379d6f3afac8d00039bc4a4e9e893665a1806ed7b5b791d6d33b556",
+  "sameAlgorithmFullHistoryObjectNoRemovedFields": true,
+  "allPlayers": 4,
+  "allFieldsPerPlayer": 28,
+  "source": "8db2dda82202690434bd1443555fa3b4fc99eaef",
+  "protocol": 152,
+  "artifactSame261FilesVerifiedOnBoth": true,
+  "pcHostPid": 21060,
+  "laptopClientPid": 44848,
+  "route": "actual normal GUI direct LAN address AFTER discovery/code failures",
+  "scope": "NaturalArenaHeroStrike4x30/complete full record equality; discovery/code/BotsNONE defect and hardware/performance/loss unqualified",
+  "pcAcknowledgment": "Root independently extracted own career.History and confirmed identical full2401-byte object and37b SHA; no fields dropped/scores-only comparison"
+}

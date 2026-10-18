@@ -82,6 +82,13 @@ namespace TumbangPreso.Visual
                 { _leftPalm = palm; break; }
             }
             _hero = hero; _ground = VfxShapes.GroundPoint(source.transform.position);
+            // A caster standing on a floor the court lookup does not know by name (Arena's raised ring, 2026-10-14) put the whole
+            // stage on a floor far below: then the stage stands on what is under their own feet.
+            if (source.IsGrounded && Mathf.Abs(_ground.y - source.transform.position.y) > 1f)
+            {
+                float feet = Slipper.GroundY(source.transform.position + Vector3.up * .3f);
+                if (!float.IsInfinity(feet) && Mathf.Abs(feet - source.transform.position.y) < 1f) _ground.y = feet;
+            }
             _facing = Quaternion.Euler(0, source.transform.eulerAngles.y, 0);
             _performance = UltimatePerformance.For(hero, source.GetComponent<Carrier>()?.Held != null);
             _reducedEffects = Settings.SettingsStore.Current.ReducedEffects;
@@ -106,6 +113,8 @@ namespace TumbangPreso.Visual
                 _renderers = _root.GetComponentsInChildren<Renderer>(true);
                 // Amihan's cutscene faces are look renderers beside the copied head, outside the root: captured with the scene.
                 if (_amFace != null) { var all = new List<Renderer>(_renderers); all.AddRange(_amFace.Renderers); _renderers = all.ToArray(); }
+                // Dante's suit rides the copy's bones, outside the root: captured with the scene too.
+                if (_dnArmour != null) { var all = new List<Renderer>(_renderers); all.AddRange(_dnArmour.Renderers); _renderers = all.ToArray(); }
                 SetVisibleForCapture(false);
                 Sample(0);
             }
@@ -142,10 +151,7 @@ namespace TumbangPreso.Visual
                 var mesh = source.GetComponent<MeshFilter>();
                 if (mesh == null || mesh.sharedMesh == null) continue;
                 var go = new GameObject("HeldShoeSurface"); go.transform.SetParent(_heldItem.transform, false);
-                go.transform.localPosition = liveHand.InverseTransformPoint(source.transform.position);
-                go.transform.localRotation = Quaternion.Inverse(liveHand.rotation) * source.transform.rotation;
-                Vector3 scale = source.transform.lossyScale, parentScale = liveHand.lossyScale;
-                go.transform.localScale = new Vector3(scale.x / parentScale.x, scale.y / parentScale.y, scale.z / parentScale.z);
+                held.FitCarriedSurface(source.transform, liveHand, go.transform);
                 go.AddComponent<MeshFilter>().sharedMesh = mesh.sharedMesh;
                 var copy = go.AddComponent<MeshRenderer>(); copy.sharedMaterials = source.sharedMaterials;
                 var properties = new MaterialPropertyBlock(); source.GetPropertyBlock(properties); copy.SetPropertyBlock(properties);
@@ -321,6 +327,16 @@ namespace TumbangPreso.Visual
         private float Flash(float t, float at, float width = .08f)
             => _reducedEffects ? 0 : Mathf.Clamp01(1 - Mathf.Abs(t - at) / width);
 
+        /// <summary>
+        /// Where this cutscene leaves other players at its last frame, for the host to put them there as play resumes (by seat,
+        /// world space). Empty for a stage that moves nobody. Owner, 2026-10-17: *"Play keeps the cutscene's moves"*.
+        /// </summary>
+        public void HandBackPlaces(List<(int seat, Vector3 world)> into)
+        {
+            if (into == null) return;
+            if (_hero == "nemu") NemuHandBackPlaces(into);
+        }
+
         public bool StartSound()
         {
             if (_sound != null) return true;
@@ -421,9 +437,11 @@ namespace TumbangPreso.Visual
             if (_hero == "cheska") CheskaFrame(index, Local(seconds), ref eye, ref look, ref fov);
             // Sean's RISE looks at his lantern wherever it has climbed to (`HeroIntroductionScene.Sean.cs`).
             if (_hero == "sean") SeanFrame(index, Local(seconds), ref eye, ref look, ref fov);
-            // Nemu's last shot is kept off the other players and trembles as Kuro comes at it (`HeroIntroductionScene.Nemu.cs`).
+            // Nemu's FLOOD and LET THEM IN are computed from where the players stand (`HeroIntroductionScene.Nemu.cs`).
             if (_hero == "nemu") NemuFrame(index, Local(seconds), ref eye, ref look, ref fov);
             if (_hero == "rafi") RafiFrame(index, Local(seconds), ref eye, ref look, ref fov);
+            // Dante's shots are framed from his own body and the real enemies (`HeroIntroductionScene.DanteFrame.cs`).
+            if (_hero == "dante") DanteFrame(index, Local(seconds), ref eye, ref look, ref fov);
             // A hero's own blows shake the lens (Paete's palm and eruption); reduced effects keep it still.
             if (!_reducedEffects) { var shake = Shake(Local(seconds)); eye += shake; look += shake * .5f; }
             position = _ground + _facing * eye; focus = _ground + _facing * look;
@@ -431,7 +449,7 @@ namespace TumbangPreso.Visual
         }
 
         private Vector3 Shake(float t) => _hero == "paete" ? PaeteShake(PaeteClock(t)) : _hero == "phaister" ? PhaisterShake(t)
-            : _hero == "amihan" ? AmihanShake(t) : _hero == "dante" ? DanteShake(t) : _hero == "cheska" ? CheskaShake(t) : _hero == "rafi" ? RafiShake(t) : Vector3.zero;
+            : _hero == "amihan" ? AmihanShake(t) : _hero == "dante" ? DanteShake(t) : _hero == "cheska" ? CheskaShake(t) : _hero == "rafi" ? RafiShake(t) : _hero == "nemu" ? NemuShake(t) : Vector3.zero;
 
         /// <summary>
         /// ⚠️ THE STAGE'S OWN GRADE ON THE PHASE CAMERA (v6, 2026-09-27): a whole-frame brightness and saturation multiplier for this
@@ -448,6 +466,7 @@ namespace TumbangPreso.Visual
             if (_hero == "sean") SeanGrade(Local(seconds), out brightness, out saturation);
             if (_hero == "nemu") NemuGrade(Local(seconds), out brightness, out saturation);
             if (_hero == "zack") ZackGrade(Local(seconds), out brightness, out saturation);
+            if (_hero == "dante") DanteGrade(Local(seconds), out brightness, out saturation);
         }
 
         /// <summary>
@@ -459,6 +478,8 @@ namespace TumbangPreso.Visual
         {
             if (frame == null || camera == null) return;
             if (_hero == "phaister") PhaisterPostProcess(frame, camera, Local(seconds));
+            if (_hero == "nemu") NemuPostProcess(frame, camera, Local(seconds));
+            if (_hero == "dante") DantePostProcess(frame, camera, Local(seconds));
         }
 
         /// <summary>
@@ -482,7 +503,7 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>
-        /// Keep every body in frame (Nemu with the growing Kuro), keeping the lens constant and
+        /// Keep every body in frame, keeping the lens constant and
         /// backing the camera out along its own line. Retained from the previous Nemu reveal.
         /// </summary>
         private void FitBodies(ref Vector3 position, ref Vector3 focus, float fov, float aspect, float seconds)
@@ -518,7 +539,7 @@ namespace TumbangPreso.Visual
                     if (!found) { result = renderer.bounds; found = true; } else result.Encapsulate(renderer.bounds);
                 }
             }
-            Include(_bodyRenderers); Include(_kuroRenderers); Include(_heldRenderers); bounds = result;
+            Include(_bodyRenderers); Include(_heldRenderers); bounds = result;
             return found;
         }
 
@@ -534,7 +555,7 @@ namespace TumbangPreso.Visual
             if (_voice != null) _voice.Stop();
             // Paete's opens the sky through the map for her (`NearFade.OpenSky`); it must never outlive him.
             if (_hero == "paete") NearFade.CloseSky();
-            _rage?.Dispose(); _rage = null;
+            if (_hero == "nemu") NemuDispose();
             _amFace?.Dispose(); _amFace = null;
             if (_heldItem != null) { _heldItem.SetActive(false); ObjectDestroy(_heldItem); }
             if (_root != null) { _root.SetActive(false); ObjectDestroy(_root); }

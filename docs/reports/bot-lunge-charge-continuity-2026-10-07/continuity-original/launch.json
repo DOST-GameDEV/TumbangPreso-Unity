@@ -1,0 +1,26 @@
+{
+  "sourceRef": "5cb2f59c26a8c011170fe888745f3dff8e5c9cc5",
+  "profile": "pc-humanlike-ai-continuity-original1006",
+  "filter": "TumbangPreso.PlayTests.AiLungeChargeContinuityTests",
+  "expectedCases": 3,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-humanlike-ai-continuity-original1006",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.AiLungeChargeContinuityTests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\bot-lunge-continuity1007\\continuity-original\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\bot-lunge-continuity1007\\continuity-original\\editor.log"
+  ],
+  "pid": 49736
+}

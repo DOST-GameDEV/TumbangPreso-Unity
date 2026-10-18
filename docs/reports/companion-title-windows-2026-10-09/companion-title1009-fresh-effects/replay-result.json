@@ -1,0 +1,20 @@
+{
+    "passed": true,
+    "error": "",
+    "requiredRecordedEffects": true,
+    "recordedEffectFrames": 836,
+    "recordedQuads": 203,
+    "meshVertices": 812,
+    "effectsTexture": "Arena effects atlas",
+    "stages": [
+        "menu-open",
+        "replays-route",
+        "recording-row-created",
+        "recording-open",
+        "seek-17",
+        "fresh-effects-decoded-and-owned-mesh-bound",
+        "playing-2x",
+        "paused-follow",
+        "returned-home"
+    ]
+}

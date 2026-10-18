@@ -61,7 +61,7 @@ namespace TumbangPreso.PlayTests
                 .Where(t => t.enabled && t.text.Contains("UNSTOPPABLE")).ToArray();
             Assert.IsNotEmpty(visible, "The active ward has no named first-person HUD confirmation.");
             Assert.That(visible[0].text, Does.Contain("15.0s"));
-            yield return TumpUiCapture.Capture("Basilio-Unstoppable-active", _view.Canvas, 1920, 1080, false);
+            yield return TumpUiCapture.Capture("Dante-Unstoppable-active", _view.Canvas, 1920, 1080, false);
         }
 
         [Test]

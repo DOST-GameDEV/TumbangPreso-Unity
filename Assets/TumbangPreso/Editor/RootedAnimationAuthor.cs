@@ -23,12 +23,16 @@ namespace TumbangPreso.EditorTools
         private const string Folder="Assets/TumbangPreso/Resources/"+RootedMotion.Folder;
 
         public static void Run()=>EditorApplication.Exit(Execute()?0:1);
+        public static void RunMissing()=>EditorApplication.Exit(ExecuteMissing()?0:1);
 
-        public static bool Execute()
+        public static bool Execute()=>Bake(false);
+        public static bool ExecuteMissing()=>Bake(true);
+
+        private static bool Bake(bool missingOnly)
         {
             Directory.CreateDirectory(Folder);AssetDatabase.Refresh();
             var book=RosterBook.Load();if(book==null)return false;
-            var authored=new HashSet<string>();
+            var authored=new HashSet<string>();int baked=0,preserved=0;
             foreach(var entry in book.People)
             {
                 if(entry==null||entry.Model==null)continue;
@@ -38,6 +42,10 @@ namespace TumbangPreso.EditorTools
                     var animator=instance.GetComponentInChildren<Animator>();var root=animator!=null?animator.transform:instance.transform;
                     string id=DanceClip.ResourceName(root);
                     if(string.IsNullOrEmpty(id)||!authored.Add(id))continue;
+                    // Rig replacements need a set under their own binding key.
+                    // This repair must not regenerate existing authored motion.
+                    if(missingOnly && AssetDatabase.LoadAssetAtPath<GeneratedAnimationSet>(Folder+"/"+id+".asset")!=null)
+                    {preserved++;continue;}
                     var clips=HeroAbilityClips.BuildRootedShared(root);
                     if(clips==null){Debug.LogError("[Rooted] "+entry.Id+" has no complete rig");return false;}
                     foreach(var clip in clips)
@@ -48,11 +56,13 @@ namespace TumbangPreso.EditorTools
                         AnimationUtility.SetAnimationClipSettings(clip,settings);
                     }
                     Save(id,clips);
+                    baked++;
+                    if(missingOnly) Debug.Log("[RootedMissing] baked="+id+" owner="+entry.Id+" clips="+clips.Length);
                 }
                 finally{Object.DestroyImmediate(instance);}
             }
             AssetDatabase.SaveAssets();
-            Debug.Log("[Rooted] baked struggle, heave and break-out for "+authored.Count+" rig hierarchies");
+            Debug.Log("[Rooted] baked struggle, heave and break-out for "+baked+" rig hierarchies; existingSetsPreserved="+preserved);
             return true;
         }
 

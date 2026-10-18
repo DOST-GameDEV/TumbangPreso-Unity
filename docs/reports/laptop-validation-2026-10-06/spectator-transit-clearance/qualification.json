@@ -1,0 +1,36 @@
+{
+  "probe": {
+    "source": "b375e2a5c133753d216b2cbdcbfe7d82b37140c6",
+    "qualifiedManifestSha256": "b1cf3e80eefda7f0f65789ac2bd4f8c26eb49edd5784b55050660797a3feccf4",
+    "profile": "validation-qa-a-be075dcdfa07",
+    "result": {
+      "pid": 45044,
+      "terminal": true,
+      "exitCode": 2,
+      "passed": 1,
+      "failed": 1,
+      "expected": 2,
+      "inputCount": 21144,
+      "allInputsRestored": true,
+      "existingPrefsRestored": 13
+    },
+    "generatedDeltaCount": 279
+  },
+  "candidate": {
+    "source": "b375e2a5c133753d216b2cbdcbfe7d82b37140c6",
+    "qualifiedManifestSha256": "2260df6352d576a03df829dfe23012ab27b0c351d7e0f44d9d0b3f4cabe03ea7",
+    "profile": "validation-qa-a-be075dcdfa07",
+    "result": {
+      "pid": 48792,
+      "terminal": true,
+      "exitCode": 0,
+      "passed": 7,
+      "failed": 0,
+      "expected": 7,
+      "inputCount": 21144,
+      "allInputsRestored": true,
+      "existingPrefsRestored": 13
+    },
+    "generatedDeltaCount": 279
+  }
+}

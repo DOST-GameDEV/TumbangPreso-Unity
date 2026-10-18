@@ -113,8 +113,9 @@ namespace TumbangPreso.PlayTests
             }
             File.WriteAllText(Path.Combine(directory,"fixed-frames.csv"),trace.ToString());
             Assert.AreEqual(5,maximumBands,"All five live bands must remain.");
-            Assert.GreaterOrEqual(firstBand,.38,"No early release during the existing warning.");
-            Assert.Less(firstBand,.55,"No added warning delay.");
+            // The cutscene was the warning: play takes over on the cut, the lane already thrown (owner, 2026-10-17).
+            Assert.GreaterOrEqual(firstBand,0,"The live wave must release.");
+            Assert.Less(firstBand,.1,"The throw lands on the cut, with no wind-up after the cutscene.");
             Assert.IsTrue(sawWave,"Actual shared handoff never produced its live wave.");
             Assert.AreEqual(.4f,actor.AbilitySystem.Kit.Ultimate.Windup);
             Assert.IsFalse(actor.AbilitySystem.Kit.Ultimate.ReservedForIntroduction);

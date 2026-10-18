@@ -38,6 +38,8 @@ namespace TumbangPreso.UI
         // and the power pops when it changes so the swap is seen, not discovered. Keyboard, pad
         // and touch all read this same tile; touch's thumb button reads `kit.Skill2` too.
         private HudBadge _roleBadge;
+        private HudCard _roleChip;
+        private HeroAbilitySystem _system;
         private HeroAbility _shownRoleSkill;
         private float _roleSwappedAt = -10;
         public const float RoleSwapSeconds = 0.45f;
@@ -61,26 +63,29 @@ namespace TumbangPreso.UI
                 _symbols[i].HudStyle = true;
                 // ⚠️ A DRAWN ICON FILLS MORE OF THE DISC (2026-09-23): the illustrations carry their own
                 // ink keyline, so the stroke glyph's .24 inset left them small inside the ring.
-                float inset = size * .15f;
+                float inset = size * .13f;
                 _symbols[i].rectTransform.offsetMin = new Vector2(inset, inset); _symbols[i].rectTransform.offsetMax = new Vector2(-inset, -inset);
                 _symbols[i].raycastTarget = false;
                 _states[i] = OwnerUiLayout.Text(_ownerDials[i].transform, "PowerState", "", 28, OwnerUiLayout.TypeRole.Display);
-                _states[i].color = CourtPresentationPalette.Paper; _states[i].alignment = TextAnchor.MiddleCenter;
+                _states[i].color = HudDraw.Cream; _states[i].alignment = TextAnchor.MiddleCenter;
+                var stateEdge = _states[i].gameObject.AddComponent<Outline>(); stateEdge.effectColor = UiTheme.InGameOutline; stateEdge.effectDistance = new Vector2(2, -2);
                 _states[i].verticalOverflow = VerticalWrapMode.Overflow; OwnerUiLayout.Fill(_states[i].rectTransform);
 
                 _ownerKeycaps[i] = OwnerUiLayout.Rect(_deck, "KeyboardCap" + i).gameObject.AddComponent<HudCard>();
-                _ownerKeycaps[i].color = CourtPresentationPalette.Paper; _ownerKeycaps[i].Radius = 7; _ownerKeycaps[i].ShadowOffset = new Vector2(0, -2);
-                _ownerKeycaps[i].raycastTarget = false; OwnerUiLayout.Place(_ownerKeycaps[i].rectTransform, x + size - 34, y + size - 30, 40, 34);
+                _ownerKeycaps[i].color = CourtPresentationPalette.Paper; _ownerKeycaps[i].Radius = 4;
+                _ownerKeycaps[i].ShadowOffset = new Vector2(0, -2);
+                _ownerKeycaps[i].raycastTarget = false; OwnerUiLayout.Place(_ownerKeycaps[i].rectTransform, x + size - 29, y + size - 29, 26, 26);
                 // ⚠️⚠️ CHARGES ARE A PIP, NOT A NUMBER OVER THE ICON (2026-09-23 UI review). "2" was drawn
                 // across the middle of the power with the icon faded to 22 per cent, so a player saw a
                 // number and could not tell WHICH power it counted. Valorant and Overwatch show the
                 // icon whole and count charges at its edge; the pip sits at the bottom left, opposite
                 // the keycap, in the ready gold.
                 _chargePips[i] = OwnerUiLayout.Rect(_deck, "ChargePip" + i).gameObject.AddComponent<HudCard>();
-                _chargePips[i].color = CourtPresentationPalette.Gold; _chargePips[i].Radius = 17; _chargePips[i].ShadowOffset = new Vector2(0, -2);
-                _chargePips[i].raycastTarget = false; OwnerUiLayout.Place(_chargePips[i].rectTransform, x - 4, y + size - 34, 36, 36);
+                _chargePips[i].color = HudDraw.Honey; _chargePips[i].Radius = 17;
+                _chargePips[i].ShadowOffset = new Vector2(0, -2); _chargePips[i].FollowContrast = false;
+                _chargePips[i].raycastTarget = false; OwnerUiLayout.Place(_chargePips[i].rectTransform, x - 8, y - 4, 34, 34);
                 _chargeCounts[i] = OwnerUiLayout.Text(_chargePips[i].transform, "ChargeCount", "", 28, OwnerUiLayout.TypeRole.Display);
-                _chargeCounts[i].color = HudDraw.CardInk; _chargeCounts[i].alignment = TextAnchor.MiddleCenter;
+                _chargeCounts[i].color = HudDraw.Ink; _chargeCounts[i].alignment = TextAnchor.MiddleCenter;
                 _chargeCounts[i].horizontalOverflow = HorizontalWrapMode.Overflow; _chargeCounts[i].verticalOverflow = VerticalWrapMode.Overflow;
                 OwnerUiLayout.Fill(_chargeCounts[i].rectTransform);
                 _chargePips[i].gameObject.SetActive(false);
@@ -88,16 +93,22 @@ namespace TumbangPreso.UI
                 _keys[i] = OwnerUiLayout.Text(_deck, "LiveBinding" + i, "", 28, OwnerUiLayout.TypeRole.Display);
                 _keys[i].alignment = TextAnchor.MiddleCenter; _keys[i].verticalOverflow = VerticalWrapMode.Overflow;
                 _keys[i].horizontalOverflow = HorizontalWrapMode.Overflow;
-                OwnerUiLayout.Place(_keys[i].rectTransform, x + size - 34, y + size - 30, 40, 34);
+                OwnerUiLayout.Place(_keys[i].rectTransform, x + size - 29, y + size - 29, 26, 26);
                 var edge = _keys[i].gameObject.AddComponent<Outline>(); edge.effectColor = UiTheme.InGameOutline; edge.effectDistance = new Vector2(1, -1);
                 edge.enabled = false;
                 _keyGlyphs[i] = OwnerUiLayout.Rect(_keys[i].transform, "BindingGlyph").gameObject.AddComponent<Image>();
                 _keyGlyphs[i].preserveAspect = true; _keyGlyphs[i].raycastTarget = false; OwnerUiLayout.Fill(_keyGlyphs[i].rectTransform);
-                _keyGlyphs[i].rectTransform.offsetMin = new Vector2(-3, -3); _keyGlyphs[i].rectTransform.offsetMax = new Vector2(3, 3);
+                _keyGlyphs[i].rectTransform.offsetMin = Vector2.zero; _keyGlyphs[i].rectTransform.offsetMax = Vector2.zero;
             }
+            // The role is a small toy chip in the side's own colour on the swapping power's corner.
+            _roleChip = OwnerUiLayout.Rect(_deck, "RoleChip").gameObject.AddComponent<HudCard>();
+            OwnerUiLayout.Place(_roleChip.rectTransform, 102 - 10, OwnerDeckHeight - 90 - 4 - 8, 38, 38);
+            _roleChip.color = HudDraw.Honey; _roleChip.Radius = 19; _roleChip.ShadowOffset = new Vector2(0, -2);
+            _roleChip.raycastTarget = false; _roleChip.FollowContrast = false;
+            _roleChip.gameObject.SetActive(false);
             _roleBadge = OwnerUiLayout.Rect(_deck, "RoleBadge").gameObject.AddComponent<HudBadge>();
             _roleBadge.raycastTarget = false; _roleBadge.RimWidth = 2;
-            OwnerUiLayout.Place(_roleBadge.rectTransform, 102 - 8, OwnerDeckHeight - 90 - 4 - 8, 38, 38);
+            OwnerUiLayout.Place(_roleBadge.rectTransform, 102 - 8, OwnerDeckHeight - 90 - 4 - 6, 34, 34);
             _roleBadge.gameObject.SetActive(false);
             _hint = OwnerUiLayout.Text(_deck, "PowerInfoBinding", "", 28); _hint.color = CourtPresentationPalette.Paper;
             _hint.alignment = TextAnchor.MiddleCenter; OwnerUiLayout.Place(_hint.rectTransform, 0, -40, OwnerDeckWidth, 36);
@@ -120,6 +131,7 @@ namespace TumbangPreso.UI
 
         public void Tick(HeroAbilitySystem system, bool visible)
         {
+            _system = system;
             var kit = system != null ? system.Kit : null; visible &= kit != null; _deck.gameObject.SetActive(visible);
             if (!visible) { _detail.gameObject.SetActive(false); return; }
             PlaceDeck(Hud.OnTouch);
@@ -133,11 +145,17 @@ namespace TumbangPreso.UI
                 // Active reactivation follows its own window, not the original cast cooldown.
                 bool actionReady = skill.IsActive && skill.CanReactivate ? skill.ReactivateReady : skill.IsReady;
                 bool ready = !kit.PracticeMode && !system.GetComponent<CharacterMotor>().IsZapped && (i == 2 ? kit.IsUltimateReady : actionReady);
-                float ratio = skill.IsActive ? skill.DurationRatio : i == 2 ? kit.UltimateRatio : 1 - skill.CooldownRatio;
-                _ownerDials[i].State(ratio, ready, skill.IsActive, i == 2);
-                _symbols[i].color = ready ? CourtPresentationPalette.Gold : CourtPresentationPalette.Paper;
+                // ⚠️ AN ULTIMATE STILL RUNNING AFTER ITS CAST (MOUNTAIN FORM) is drawn as an active power: the dial is its time left
+                // and the tile reads the seconds, so the player who cast it knows how long the suit lasts (it is hidden from their view).
+                float afterLeft = 0f, afterTotal = 1f;
+                bool aftermath = i == 2 && kit.UltimateAftermath(out afterLeft, out afterTotal);
+                float ratio = aftermath ? afterLeft / Mathf.Max(.01f, afterTotal) : skill.IsActive ? skill.DurationRatio : i == 2 ? kit.UltimateRatio : 1 - skill.CooldownRatio;
+                var mine = system.GetComponent<CharacterMotor>();
+                _ownerDials[i].Accent = mine != null ? PlayerIdentity.Colour(mine.PlayerSlot) : HudDraw.Honey;
+                _ownerDials[i].State(ratio, ready, skill.IsActive || aftermath, i == 2);
+                _symbols[i].color = ready ? CourtPresentationPalette.Gold : HudDraw.Paper;
                 if (_symbols[i].Muted == ready) { _symbols[i].Muted = !ready; _symbols[i].SetVerticesDirty(); }
-                string state = kit.PracticeMode ? "Wait" : skill.IsPersistentActive ? "Active" : skill.IsActive ? skill.CanReactivate
+                string state = aftermath ? afterLeft.ToString("0.0") + "s" : kit.PracticeMode ? "Wait" : skill.IsPersistentActive ? "Active" : skill.IsActive ? skill.CanReactivate
                     ? (skill.ReactivateReady ? "Again" : AbilityDeckHud.CooldownLabel(skill.ReactivateReadyIn)) + "\n" + skill.DurationRemaining.ToString("0.0") + "s"
                     : skill.DurationRemaining.ToString("0.0") + "s" :
                     i == 2 ? ready ? "" : Mathf.FloorToInt(kit.UltimateRatio * 100) + "%" :
@@ -160,12 +178,12 @@ namespace TumbangPreso.UI
                 string binding = Hud.KeyLabelFor(Actions[i]); _keys[i].text = Hud.OnTouch ? "" : binding;
                 bool pad = LastInputDevice.Current == InputDeviceKind.Gamepad;
                 _keyGlyphs[i].sprite = !Hud.OnTouch ? InputGlyphs.For(binding.ToUpperInvariant(), true) : null; _keyGlyphs[i].enabled = _keyGlyphs[i].sprite != null;
-                float extraWidth = (InputGlyphs.PromptWidth(_keyGlyphs[i].sprite, 40, 46) - 40) * .5f;
-                _keyGlyphs[i].rectTransform.offsetMin = new Vector2(-extraWidth, -3);
-                _keyGlyphs[i].rectTransform.offsetMax = new Vector2(extraWidth, 3);
+                float extraWidth = (InputGlyphs.PromptWidth(_keyGlyphs[i].sprite, 26, 26) - 26) * .5f;
+                _keyGlyphs[i].rectTransform.offsetMin = new Vector2(-extraWidth, 0);
+                _keyGlyphs[i].rectTransform.offsetMax = new Vector2(extraWidth, 0);
                 bool cap = !Hud.OnTouch && !pad && !_keyGlyphs[i].enabled && binding.Length <= 3;
                 _ownerKeycaps[i].gameObject.SetActive(cap);
-                _keys[i].color = _keyGlyphs[i].enabled ? Color.clear : cap ? HudDraw.CardInk : CourtPresentationPalette.Paper;
+                _keys[i].color = _keyGlyphs[i].enabled ? Color.clear : cap ? HudDraw.Ink : HudDraw.Paper;
                 var edge = _keys[i].GetComponent<Outline>(); if (edge != null) edge.enabled = !cap && !_keyGlyphs[i].enabled;
             }
             if (kit.IsUltimateReady && !kit.PracticeMode && !_ultimateReady) GameServices.Audio?.PlayUi("sfx_super_ready");
@@ -181,13 +199,15 @@ namespace TumbangPreso.UI
         private void PaintRole(HeroKit kit)
         {
             bool role = kit.HasRoleAbilities;
-            if (_roleBadge.gameObject.activeSelf != role) _roleBadge.gameObject.SetActive(role);
+            if (_roleBadge.gameObject.activeSelf != role) { _roleBadge.gameObject.SetActive(role); _roleChip.gameObject.SetActive(role); }
             if (!role) { _shownRoleSkill = null; return; }
             if (_shownRoleSkill != null && _shownRoleSkill != kit.Skill2) _roleSwappedAt = Time.unscaledTime;
             _shownRoleSkill = kit.Skill2;
             bool defending = kit.IsDefending;
-            _roleBadge.Show(defending ? HudBadge.Glyph.Tag : HudBadge.Glyph.Slipper, CourtPresentationPalette.Paper,
-                            defending ? UiTheme.Defense : UiTheme.Offense);
+            _roleBadge.Show(defending ? HudBadge.Glyph.Tag : HudBadge.Glyph.Slipper, CourtPresentationPalette.Paper, Color.clear);
+            var owner = kit != null && _system != null ? _system.GetComponent<CharacterMotor>() : null;
+            var chip = owner != null ? PlayerIdentity.Colour(owner.PlayerSlot) : HudDraw.Honey;
+            if (_roleChip.color != chip) { _roleChip.color = chip; _roleChip.SetVerticesDirty(); }
             float t = Mathf.Clamp01((Time.unscaledTime - _roleSwappedAt) / RoleSwapSeconds);
             // A flip: the power squashes to its edge and turns over into the new one, then settles
             // with a small overshoot. Reduced motion keeps only the badge.

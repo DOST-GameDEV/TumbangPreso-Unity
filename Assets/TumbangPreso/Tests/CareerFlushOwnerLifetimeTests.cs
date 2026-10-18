@@ -82,6 +82,45 @@ namespace TumbangPreso.Tests
         }
         private void Released() => Assert.IsFalse((bool)typeof(CareerStore).GetField("_flushing", Hidden).GetValue(_career));
 
+        private static MatchRecord ValidNext() => new MatchRecord
+        {
+            MatchId = "next-valid-match", Players = new[] { new PlayerMatchStats { PlayerId = OriginalOwner, IsBot = false } }
+        };
+        [Test] public async Task PermanentlyInvalidRetrievalHeadDoesNotBlockTheNextMatchOrEraseLocalHistory()
+        {
+            var bad = Queue(_originalCache)[0]; bad.Players[0].Retrievals = 1;
+            var history = (List<MatchRecord>)_originalCache.GetType().GetField("History").GetValue(_originalCache);
+            history.Add(bad);
+            Queue(_originalCache).Add(ValidNext()); Witnesses(_originalCache).Add("next-witness");
+            var dispatched = new List<string>();
+            await Start((script, args) =>
+            {
+                var record = JsonUtility.FromJson<MatchRecord>((string)args.GetType().GetProperty("record").GetValue(args));
+                dispatched.Add(record.MatchId);
+                if (record.Players[0].Retrievals > record.Players[0].Throws)
+                    return Task.FromException<string>(new InvalidOperationException("Controlled permanent retrieval-count refusal"));
+                Request(script, args, "next-valid-match", "next-witness");
+                return Task.FromResult(Ack);
+            });
+            CollectionAssert.AreEqual(new[] { "next-valid-match" }, dispatched);
+            Assert.IsEmpty(Queue(_originalCache)); Assert.IsEmpty(Witnesses(_originalCache));
+            Assert.IsTrue(history.Contains(bad)); Assert.AreEqual(1, bad.Players[0].Retrievals);
+            Assert.AreEqual(0, bad.Players[0].Throws); Released();
+        }
+        [Test] public async Task TransientFailureKeepsTheValidHeadAndItsFollowingMatchForRetry()
+        {
+            Queue(_originalCache).Add(ValidNext()); Witnesses(_originalCache).Add("next-witness");
+            int calls = 0;
+            await Start((script, args) =>
+            {
+                calls++; Request(script, args, "original-match", "original-witness");
+                return Task.FromException<string>(new InvalidOperationException("Controlled temporary transport failure"));
+            });
+            Assert.AreEqual(1, calls); Assert.AreEqual(2, Queue(_originalCache).Count);
+            CollectionAssert.AreEqual(new[] { "original-witness", "next-witness" }, Witnesses(_originalCache));
+            Assert.AreEqual("original-match", Queue(_originalCache)[0].MatchId); Released();
+        }
+
         [Test] public async Task ObsoleteFailureCannotOverwriteReplacementOwnerStatus()
         {
             var pending = new TaskCompletionSource<string>(); int calls = 0;

@@ -259,6 +259,36 @@ namespace TumbangPreso
         /// HOST-SIDE throw from an explicit origin and aim point, so a networked throw leaves
         /// along the line the CLIENT was aiming rather than the one the host sees a frame later.
         /// </summary>
+        private int _concussedThrows;
+
+        /// <summary>A roll for one Concussed throw, from the thrower's seat, their throw count and the frame. It never touches
+        /// `UnityEngine.Random`, so it cannot shift anything else's random state.</summary>
+        public static uint MisfireRoll(int slot, int count, int frame)
+        {
+            uint h = 2166136261u;
+            h = (h ^ (uint)slot) * 16777619u; h = (h ^ (uint)count) * 16777619u; h = (h ^ (uint)frame) * 16777619u;
+            h ^= h >> 15; h *= 2246822519u; h ^= h >> 13; h *= 3266489917u; h ^= h >> 16;
+            return h;
+        }
+
+        /// <summary>
+        /// The Concussed misfire, decided by <paramref name="roll"/>: with `StatusRules.ConcussedMisfireChance` the throw is
+        /// turned far off to one side, kicked higher and sent faster; otherwise it is returned as it was.
+        /// </summary>
+        public static Vector3 ConcussedMisfire(Vector3 velocity, uint roll)
+        {
+            float U(int shift) => ((roll >> shift) & 0xFF) / 255.0f;
+            if (U(0) >= StatusRules.ConcussedMisfireChance) return velocity;
+            float yaw = Mathf.Lerp(StatusRules.ConcussedMisfireYawMin, StatusRules.ConcussedMisfireYawMax, U(8)) * (U(16) < 0.5f ? -1.0f : 1.0f);
+            float pitch = Mathf.Lerp(StatusRules.ConcussedMisfirePitchMin, StatusRules.ConcussedMisfirePitchMax, U(24));
+            float speed = Mathf.Lerp(StatusRules.ConcussedMisfireSpeedMin, StatusRules.ConcussedMisfireSpeedMax, U(4));
+            var turned = Quaternion.AngleAxis(yaw, Vector3.up) * velocity;
+            var flat = new Vector3(turned.x, 0.0f, turned.z);
+            // Higher: tipped up about the axis across its own flight.
+            if (flat.sqrMagnitude > 1e-4f) turned = Quaternion.AngleAxis(-pitch, Vector3.Cross(Vector3.up, flat.normalized)) * turned;
+            return turned * speed;
+        }
+
         public void HostThrowAt(Vector3 origin, Vector3 aimPoint, float charge, float spin = 0.0f)
         {
             if (!NetAuthority.ShouldResolve() || Held == null || IsThrowChargeDecaying) return;
@@ -297,6 +327,9 @@ namespace TumbangPreso
             // the body's own wobble, on the host, which is where the throw is decided.
             float wobble = _motor.AimWobbleDegrees;
             if (Mathf.Abs(wobble) > 0.01f) velocity = Quaternion.AngleAxis(wobble, Vector3.up) * velocity;
+            // ⚠️ AND A CONCUSSED THROW MAY MISFIRE: sail off somewhere else entirely (`StatusRules.ConcussedMisfireChance`).
+            if (_motor.IsConcussed)
+                velocity = ConcussedMisfire(velocity, MisfireRoll(_motor.PlayerSlot, ++_concussedThrows, Time.frameCount));
             SlipperAffinity affinity = Held.Affinity == SlipperAffinity.Concussed
                 ? SlipperAffinity.Concussed : SlipperAffinity.Normal;
 
@@ -327,8 +360,14 @@ namespace TumbangPreso
                 phaister.IsWitchfireInfused = false;
             }
 
+            // DANTE IN MOUNTAIN FORM throws a rock: `GeoRules.MountainThrowScale` faster, and the hit stuns and knocks back
+            // (`Slipper.HostBodyAffinity`). On top of whatever the slipper already carries (a Boulder load stays a Boulder load).
+            bool mountain = ability?.Kit is DanteHeroKit danteForm && danteForm.IsMountainForm;
+            if (mountain) velocity *= GeoRules.MountainThrowScale;
+
             var thrown = Held;
             thrown.HostThrow(_motor, origin, velocity, affinity, spin);
+            if (mountain) thrown.HostArmMountainHit();
             // The Arena's slipper balloon (`Map.ArenaBalloon`, a toy): a full-charge throw aimed at it leaves
             // play to strike it and is set back on the stage. No other map has one: there this is one null
             // test, and the throw above is the whole of what happened.
@@ -354,7 +393,7 @@ namespace TumbangPreso
         /// emphatically not a "return" mechanic: nothing in this game hands a slipper back,
         /// and a label implying otherwise promised a mechanic that does not exist.
         /// </summary>
-        public void NotifyHolding(Slipper what)
+        public void NotifyHolding(Slipper what, bool retrievedOwnThrow = false)
         {
             // ⚠️ IDEMPOTENT, BECAUSE THERE ARE NOW TWO CALLERS ON ONE PICKUP. `Slipper.HostGrab`
             // tells this component itself (see its own note on owning the relationship) and
@@ -403,8 +442,10 @@ namespace TumbangPreso
             // twice by the double call that guard exists for. The distance to the taya is taken
             // NOW: it is what decides whether this was a run under pressure or a walk, and one
             // frame later the defender has moved.
+            // HostGrab captures the own-throw episode before Held consumes it.
+            // Ownership alone also matches a dropped, unthrown shoe.
             GameServices.Stats?.NoteRetrieval(
-                _motor.PlayerSlot, what.OwnerSlot == _motor.PlayerSlot, DistanceToTaya());
+                _motor.PlayerSlot, retrievedOwnThrow && what.OwnerSlot == _motor.PlayerSlot, DistanceToTaya());
 
             if (what.OwnerSlot == _motor.PlayerSlot)
                 _motor.AbilitySystem?.OnOwnSlipperRetrieved();

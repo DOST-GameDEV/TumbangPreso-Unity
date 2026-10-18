@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 05:23:30Z" end-time="2026-10-06 05:26:30Z" duration="180.1487954">
+  <test-suite type="TestSuite" id="3290" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1865" result="Failed" site="Child" start-time="2026-10-06 05:23:30Z" end-time="2026-10-06 05:26:30Z" duration="180.148795" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3282" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1865" result="Failed" site="Child" start-time="2026-10-06 05:23:30Z" end-time="2026-10-06 05:26:30Z" duration="180.129265" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="47284" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3283" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1865" result="Failed" site="Child" start-time="2026-10-06 05:23:30Z" end-time="2026-10-06 05:26:30Z" duration="180.116206" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3286" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1863" result="Failed" site="Child" start-time="2026-10-06 05:23:30Z" end-time="2026-10-06 05:26:30Z" duration="180.103398" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2932" name="SpectatorUltimateGeometryReview" fullname="TumbangPreso.PlayTests.SpectatorUltimateGeometryReview" classname="TumbangPreso.PlayTests.SpectatorUltimateGeometryReview" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-06 05:23:30Z" end-time="2026-10-06 05:26:30Z" duration="180.077260" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Timeout" value="0" />
+            </properties>
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2933" name="HeroGroup0" fullname="TumbangPreso.PlayTests.SpectatorUltimateGeometryReview.HeroGroup0" methodname="HeroGroup0" classname="TumbangPreso.PlayTests.SpectatorUltimateGeometryReview" runstate="Runnable" seed="1202442397" result="Failed" start-time="2026-10-06 05:23:30Z" end-time="2026-10-06 05:26:30Z" duration="180.066693" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Timeout value of 180000 ms was exceeded. If this is intended, increase the timeout value using a TimeoutAttribute.]]></message>
+                <stack-trace><![CDATA[]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.60, announcer slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 0.85, ambience slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_3 at 0.31 of full scale before the sliders (excitement 0.91, ambience slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.55, ambience slider).
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_3 at 0.38 of full scale before the sliders (excitement 0.85, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/spectator-ultimate-geometry1006/observations/HeroStrike-0/cast-natural-0.png
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.70, announcer slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.26 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.70, ambience slider).
+[Play] wrote Logs/spectator-ultimate-geometry1006/observations/HeroStrike-0/accepted-cheska-0.png
+[Play] wrote Logs/spectator-ultimate-geometry1006/observations/HeroStrike-0/cast-natural-1.png
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.58, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 0.60, announcer slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.60, ambience slider).
+[Play] wrote Logs/spectator-ultimate-geometry1006/observations/HeroStrike-0/cast-natural-2.png
+[ArenaCrowd] chant, throw being charged: sfx_arena_chant_ooh_hey at 0.28 of full scale before the sliders (excitement 0.31, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt at 0.45 of full scale before the sliders (excitement 0.35, ambience slider).
+[Play] wrote Logs/spectator-ultimate-geometry1006/observations/HeroStrike-0/accepted-cheska-1.png
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_3 at 0.45 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.26 of full scale before the sliders (excitement 1.00, ambience slider).
+[Play] wrote Logs/spectator-ultimate-geometry1006/observations/HeroStrike-0/accepted-rafi-1.png
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] hero power landed: sfx_arena_crowd_cheer_2 at 0.30 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_2 at 0.45 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] drone rescue: sfx_arena_pa_fanfare at 0.21 of full scale before the sliders (excitement 1.00, announcer slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.24 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.56, ambience slider).
+[ArenaCrowd] chant, throw being charged: sfx_arena_chant_ooh_hey at 0.28 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.21 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.26 of full scale before the sliders (excitement 0.30, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.26 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.57, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.57, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.25 of full scale before the sliders (excitement 0.20, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.21 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.50, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.26 of full scale before the sliders (excitement 0.43, ambience slider).
+[ArenaCrowd] chant, the round's last seconds (in place of sfx_arena_chant_tumba, which is not recorded): sfx_arena_chant_claps_fast at 0.30 of full scale before the sliders (excitement 0.04, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.27 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] hero power landed: sfx_arena_crowd_cheer at 0.30 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.50, ambience slider).
+[Play] wrote Logs/spectator-ultimate-geometry1006/observations/HeroStrike-0/accepted-cheska-2.png
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.57, ambience slider).
+[Play] wrote Logs/spectator-ultimate-geometry1006/observations/HeroStrike-0/presented-cheska-1.png
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_3 at 0.45 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.21 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_2 at 0.45 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] round over: sfx_arena_crowd_cheer_3 at 0.40 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] stage call: sfx_arena_pa_chime at 0.23 of full scale before the sliders (excitement 0.35, announcer slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 0.69, ambience slider).
+[ArenaCrowd] round 2 begins: sfx_arena_crowd_cheer at 0.38 of full scale before the sliders (excitement 1.00, ambience slider).
+[Slice] round 2 begins, taya is seat 1
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_3 at 0.45 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.26 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] chant, after the can went down (in place of sfx_arena_chant_tumbang_preso, which is not recorded): sfx_arena_chant_claps at 0.30 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.67, ambience slider).
+[Play] wrote Logs/spectator-ultimate-geometry1006/observations/HeroStrike-0/accepted-dante-1.png
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.36, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.26 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.22 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.25 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.24 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt at 0.45 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] chant, after the can went down (in place of sfx_arena_chant_tumbang_preso, which is not recorded): sfx_arena_chant_claps at 0.30 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.67, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.27 of full scale before the sliders (excitement 0.59, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.22 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_3 at 0.45 of full scale before the sliders (excitement 0.50, ambience slider).
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

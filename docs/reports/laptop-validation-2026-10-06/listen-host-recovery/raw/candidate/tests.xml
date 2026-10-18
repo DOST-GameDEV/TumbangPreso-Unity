@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 10:48:58Z" end-time="2026-10-06 10:48:58Z" duration="0.3931567">
+  <test-suite type="TestSuite" id="3383" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1940" result="Passed" start-time="2026-10-06 10:48:58Z" end-time="2026-10-06 10:48:58Z" duration="0.393157" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3375" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1940" result="Passed" start-time="2026-10-06 10:48:58Z" end-time="2026-10-06 10:48:58Z" duration="0.382010" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="51164" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3376" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1940" result="Passed" start-time="2026-10-06 10:48:58Z" end-time="2026-10-06 10:48:58Z" duration="0.376546" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3379" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1938" result="Passed" start-time="2026-10-06 10:48:58Z" end-time="2026-10-06 10:48:58Z" duration="0.370491" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1793" name="HostFailureRecoveryTests" fullname="TumbangPreso.PlayTests.HostFailureRecoveryTests" classname="TumbangPreso.PlayTests.HostFailureRecoveryTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-06 10:48:58Z" end-time="2026-10-06 10:48:58Z" duration="0.344891" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1795" name="RequestedHostStopLeavesNavigationAndOfflineAuthorityAlone" fullname="TumbangPreso.PlayTests.HostFailureRecoveryTests.RequestedHostStopLeavesNavigationAndOfflineAuthorityAlone" methodname="RequestedHostStopLeavesNavigationAndOfflineAuthorityAlone" classname="TumbangPreso.PlayTests.HostFailureRecoveryTests" runstate="Runnable" seed="427757608" result="Passed" start-time="2026-10-06 10:48:58Z" end-time="2026-10-06 10:48:58Z" duration="0.290188" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18766, join code W7CW
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <f59291e68ecf40ecabdd17bf7ad6704b>:0 
+  at TumbangPreso.PlayTests.HostFailureRecoveryTests+<RequestedHostStopLeavesNavigationAndOfflineAuthorityAlone>d__10.MoveNext () [0x0007a] in <11505d13e8a3411686055a2b763ae479>:0 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand+<ExecuteEnumerableAndRecordExceptions>d__4.MoveNext () [0x0006b] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand.AdvanceEnumerator (System.Collections.IEnumerator enumerator) [0x00019] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand+<ExecuteEnumerable>d__2.MoveNext () [0x0010c] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestRunner.NUnitExtensions.Runner.UnityLogCheckDelegatingCommand+<ExecuteEnumerable>d__3.MoveNext () [0x00161] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="1794" name="UnexpectedListenHostStopRevokesAuthorityBeforeRecovery" fullname="TumbangPreso.PlayTests.HostFailureRecoveryTests.UnexpectedListenHostStopRevokesAuthorityBeforeRecovery" methodname="UnexpectedListenHostStopRevokesAuthorityBeforeRecovery" classname="TumbangPreso.PlayTests.HostFailureRecoveryTests" runstate="Runnable" seed="120851836" result="Passed" start-time="2026-10-06 10:48:58Z" end-time="2026-10-06 10:48:58Z" duration="0.044104" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18765, join code HJ49
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-0][TransportShutdown] NetworkConnectionManager was shutdown. The transport was shutdown.
+[Abandon] HostLost: ABANDONED at round 0 of 8; this peer may no longer resolve anything
+[NetLifecycle] server-stopped wasHost=True requestedStop=False
+[Net] offline
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

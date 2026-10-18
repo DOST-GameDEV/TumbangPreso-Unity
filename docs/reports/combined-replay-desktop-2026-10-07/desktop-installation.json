@@ -1,0 +1,13 @@
+{
+  "sourceCommit": "725e28f133bf7382a821befaa6b03d29fb10ef11",
+  "protocol": 153,
+  "desktopExe": "C:\\Users\\matth\\Desktop\\TumbangPreso-UI-2026-10-07\\TumbangPreso.exe",
+  "oldDesktopBackup": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\desktop-cb5-before-replay1007b",
+  "verifiedFiles": 261,
+  "totalBytes": 3572266025,
+  "exeSha256": "fedb275966771506f040ea2fb01dc909c4f3aaa31f9362059e64442a5fc2b40d",
+  "runtimeSha256": "7cca2de9ddbbdd3631dbec23ac1d71115e27061d3c41562d0cc955bb65c1f621",
+  "replacementComplete": true,
+  "stagingRemoved": true,
+  "foregroundPlayerLaunched": false
+}

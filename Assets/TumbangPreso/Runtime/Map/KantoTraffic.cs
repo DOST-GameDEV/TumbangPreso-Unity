@@ -872,7 +872,17 @@ namespace TumbangPreso
                 if (t == null) continue;
                 t.SetPositionAndRotation(_poseAt[i], Quaternion.LookRotation(_poseDir[i], Vector3.up));
             }
+            // A held opening or hitstop has no fixed step to refresh these
+            // moved boxes. Keep queries at the visible vehicles immediately,
+            // including creation rather than leaving phantom solids at origin.
+            if (!_solidsQueryable || PresentationClock.Held || Time.deltaTime <= 0f)
+            {
+                Physics.SyncTransforms();
+                _solidsQueryable = true;
+            }
         }
+
+        private bool _solidsQueryable;
 
         /// <summary>
         /// The live road's step. ⚠️ EVERY PEER MUST COME OUT WITH THE SAME STREET, so nothing here

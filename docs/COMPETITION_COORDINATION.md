@@ -1,5 +1,19 @@
 # Competition engineering coordination
 
+October7 latest owner priority: correct startup to Unity/BH logos, LOGIN, supplied
+main/title used as loading for at least5seconds and until lobby preparation is
+ready, then Home/lobby. No old illustrated startup loading screen. PC owns this
+correction and first-arrival Home playback; laptop released startup files.
+Both chats have active goals and concise task-local checkpoints. After current
+units finish they may take the other's work only after checking file ownership.
+PC's following scope is humanlike all-feature/all-map bots, clear taya replay
+framing, distinct authored pre-match map cameras/poses/arrivals at Arena quality
+and slipper floating/attachment/reliability fixes. Laptop retains map-video,
+MapPreviewSurface/MapPreviewVideo, media/import/freshness and map-vote/result
+preview work. Owner authorizes autonomous work while sleeping; preserve data,
+profiles and separate machine/source ownership, with no unrelated workers or
+unapproved paid services. Compaction resumes exact refs/jobs and one next action.
+
 Owner directives confirmed October 3, 2026. These govern the ongoing competition
 engineering assignment. They are persistent instructions, not a work-status queue.
 Work status belongs in TODO; current execution belongs in ACTIVE_REWORK_LEDGER.
@@ -89,6 +103,15 @@ mark completion merely to stop a turn or because context is nearly full.
 
 ## Current test and hitch directive
 
+October7 owner specifically requested one GPT-6 Astra xhigh subagent in the PC
+chat to review and refine both work streams. This authorizes that reviewer only;
+it begins read-only, confirms concrete file ownership before implementation and
+shares the PC's single heavy-job slot. No new unrelated chats or paid services.
+After current assigned fixes, prioritize optimization and loading placement.
+Noticeable random stutters are unacceptable tournament behavior. Measure actual
+frame pacing, first-use work, recording backpressure and continuous replay seams;
+do not trade away authored quality or call short synthetic checks full readiness.
+
 October4 owner override: remove self-created execution barriers. Do not treat
 estimated RAM/admission budgets, fixed free-memory reserves, retry ceilings or
 external execution deadlines as reasons to stop this engineering workflow.
@@ -105,3 +128,16 @@ between machines. Measure player first-use/frame behavior, identify the expensiv
 work, and move appropriate assets/shaders into existing loading/prewarm hooks.
 Do not lower authored quality or invent preload work without evidence. Keep
 tests/builds/real peers/physical devices separate and record unavailable gates.
+
+## October 6 owner order: spectator then bots
+
+Finish the active pickup/result-saving correction and its meaningful validation
+and publication first. Next, undertake a thorough spectator/automatic-camera
+refinement, including cinematic coverage during real gameplay for every character
+and every map, especially Arena. After that, thoroughly refine bot decisions,
+character-specific skill use and unnatural staring/idle behavior. These are full
+quality passes; isolated checks do not establish completion. Split concrete work
+between the existing PC/laptop chats only after current units finish and current
+task/file ownership is confirmed. Preserve finalized hero direction and keep
+joint network acceptance coordinated. TODO owns progress; the ledger records the
+current unit and exact next action.

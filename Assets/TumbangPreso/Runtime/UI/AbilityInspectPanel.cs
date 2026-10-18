@@ -41,6 +41,7 @@ namespace TumbangPreso.UI
         private readonly Card[] _cards = new Card[3];
         private Text _title;
         private Text _hint;
+        private Text _passive;
 
         private float _open;          // 0 closed, 1 open
         private HeroKit _boundKit;
@@ -100,7 +101,8 @@ namespace TumbangPreso.UI
             _rt.anchorMax = new Vector2(0.5f, 0.0f);
             _rt.pivot = new Vector2(0.5f, 0.0f);
             _rt.anchoredPosition = new Vector2(0, RestY);
-            _rt.sizeDelta = new Vector2(1060, 276);
+            // 276 for the header and cards, plus the passive line (48) and its gap (6).
+            _rt.sizeDelta = new Vector2(1060, 330);
 
             // ⚠️ THE WOOD SET, NOT A SLATE-BLUE GLASS OF ITS OWN. This tray opens over a
             // live match with the wooden scoreboard and clock already on screen, so it was the
@@ -145,6 +147,13 @@ namespace TumbangPreso.UI
             _hint.text = "HOLD [TAB] TO INSPECT";
             var hintLe = _hint.gameObject.AddComponent<LayoutElement>();
             hintLe.minWidth = 220;
+
+            // ---- Passive line: always on, so it has no key or card of its own ----
+            // Two lines at the readable floor fit the longest Wiki passive (Backwash).
+            _passive = Label(transform, "Passive", MenuKit.MinReadableUnits, UiTheme.Cream,
+                             TextAnchor.MiddleLeft);
+            _passive.supportRichText = true;
+            Height(_passive.gameObject, 48);
 
             // ---- Cards Row (3 side-by-side columns) ----
             var cardsRow = new GameObject("CardsRow", typeof(RectTransform));
@@ -395,6 +404,12 @@ namespace TumbangPreso.UI
             _title.text = (kit.HeroName + "  ·  HERO POWERS").ToUpperInvariant();
             _title.color = hero;
 
+            var passive = HeroPassives.For(kit.HeroId);
+            _passive.gameObject.SetActive(passive.Exists);
+            if (passive.Exists)
+                _passive.text = $"<color=#{ColorUtility.ToHtmlStringRGB(hero)}>PASSIVE · {passive.Name}</color>   {passive.Description}"
+                    + (passive.KitRule != null ? "\n" + passive.KitRule : "");
+
             Fill(_cards[0], kit.Skill1, "Skill1", hero);
             Fill(_cards[1], kit.Skill2, "Skill2", hero);
             Fill(_cards[2], kit.Ultimate, "Ultimate", hero);
@@ -615,7 +630,7 @@ namespace TumbangPreso.UI
             go.transform.SetParent(parent, false);
 
             var t = go.AddComponent<Text>();
-            t.font = MenuKit.Font;
+            t.font = InGameTypography.Resolve(MenuKit.Font, name == "Title" || name == "Name" || name == "Key", t);
             t.fontSize = size;
             t.color = colour;
             t.alignment = align;

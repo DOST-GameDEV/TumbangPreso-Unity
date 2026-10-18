@@ -1,0 +1,21 @@
+{
+  "raw/AIController-original.cs": "73a5b3b578633b9f61b27edf07791f48b8864a66ee20c299f91a1a518b6c9ae7",
+  "raw/final-fixture.cs": "19cdf0f365564600d3a431b696a02a2c44b3f8bdcb5bc273fd657e12fabb2761",
+  "raw/fixture.cs": "8c6d55be01e86bc319fb722786c95117af0e5ee20f148393ddce4a511e9993c4",
+  "raw/fixture.cs.meta": "fd76ad60dc6c791d0266e5a5737f817fef0ef210761df9cc58048d308f752dd4",
+  "raw/can-original-native/classification.json": "8a93906f6f18e8d9cac279f44c0ae8d70110666ddee1f96cc8174c7af280df16",
+  "raw/can-original-native/launch.json": "60e864a88f4ec8227f11b27c1a899a1d8bfd4270f9af5c857d2534ad9067bdfe",
+  "raw/can-original-native/results.xml": "c54a4986ef47631648fd3a60b61ecf67094c5e07852b633ada44474b0e95a65c",
+  "raw/candidate-native/classification.json": "8a93906f6f18e8d9cac279f44c0ae8d70110666ddee1f96cc8174c7af280df16",
+  "raw/candidate-native/launch.json": "38b61de043de4417ea9c9d0573827439fa92e520b3fd9801601242b56073dcb8",
+  "raw/candidate-native/results.xml": "f0f196a32c9f9808f7c87736e4e4b1404b3a9fe0ccaff5e5a03d9cde9686419e",
+  "raw/final-native/classification.json": "8a93906f6f18e8d9cac279f44c0ae8d70110666ddee1f96cc8174c7af280df16",
+  "raw/final-native/launch.json": "d5b16e901384204cad559cb0cf1e798b1a507b1b69b52434f2d5d596f54c4762",
+  "raw/final-native/results.xml": "8df2fb4be8e647082630281bf67bb0ec3c5caa24c5a752c6633fd53cd7158453",
+  "raw/original-native/classification.json": "8a93906f6f18e8d9cac279f44c0ae8d70110666ddee1f96cc8174c7af280df16",
+  "raw/original-native/launch.json": "fd4baf6d9d0f97176410f23f70bbfa1ab4e9e3af78b98f1748a42e7505431831",
+  "raw/original-native/results.xml": "dd37a3cfbbc1183cb39ebe855798e2355e98b1ca8c39a6f7c76092935861aab7",
+  "raw/value-intermediate-native/classification.json": "8a93906f6f18e8d9cac279f44c0ae8d70110666ddee1f96cc8174c7af280df16",
+  "raw/value-intermediate-native/launch.json": "c2f9e770fda97f6ff3b9caeb388b6f1e1ef347189547275232313aa49f3d2a16",
+  "raw/value-intermediate-native/results.xml": "19274560f220be0d14b03beb1b6d293774c8c34856f673d92c1fa6e65ee7f07e"
+}

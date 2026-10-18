@@ -987,7 +987,7 @@ namespace TumbangPreso.UI
             contentGo.transform.SetParent(viewportGo.transform, false);
 
             _historyText = contentGo.AddComponent<Text>();
-            _historyText.font = MenuKit.Font;
+            _historyText.font = InGameTypography.Resolve(MenuKit.Font, false, _historyText);
             _historyText.fontSize = 22;
             _historyText.color = UiTheme.PaperInk;
             _historyText.alignment = TextAnchor.UpperLeft;

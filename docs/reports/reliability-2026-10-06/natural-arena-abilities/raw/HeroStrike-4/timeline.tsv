@@ -1,0 +1,238 @@
+0.000	1	89.960	Quiet	QuietEstablish	finding a shot	0	0
+0.526	1	89.440	Quiet	QuietEstablish	the street	1	0
+1.029	1	88.940	Quiet	QuietEstablish	the street	1	0
+1.531	1	88.440	Quiet	QuietEstablish	the street	1	0
+2.032	1	87.940	Quiet	QuietEstablish	the street	1	0
+2.534	1	87.440	ThrowPrep	Objective	throw · SORAYA	2	0
+3.036	1	86.941	ThrowPrep	Objective	throw · SORAYA	2	0
+3.538	1	86.441	ThrowPrep	Objective	throw · SORAYA	2	0
+4.040	1	85.921	Quiet	QuietEstablish	the street	3	0
+4.542	1	85.421	Quiet	QuietEstablish	the street	3	0
+5.268	1	84.701	Quiet	QuietEstablish	the street	3	0
+5.771	1	84.201	Quiet	QuietEstablish	the street	3	0
+6.272	1	83.701	Downed	Recovery	down · CAREERORDERFIX	4	0
+6.827	1	83.141	Downed	Recovery	down · CAREERORDERFIX	4	0
+7.330	1	82.641	Downed	Recovery	down · CAREERORDERFIX	4	0
+7.830	1	82.141	Downed	Recovery	down · CAREERORDERFIX	4	0
+8.335	1	81.641	Downed	Recovery	down · CAREERORDERFIX	4	0
+8.838	1	81.141	Downed	Recovery	down · CAREERORDERFIX	4	0
+9.338	1	80.642	Downed	Recovery	down · CAREERORDERFIX	4	0
+9.839	1	80.142	Downed	Recovery	down · CAREERORDERFIX	4	0
+10.342	1	79.622	Downed	Recovery	down · CAREERORDERFIX	4	0
+10.843	1	79.122	Downed	Recovery	down · CAREERORDERFIX	4	0
+11.345	1	78.622	Downed	Recovery	down · CAREERORDERFIX	4	0
+11.848	1	78.122	Downed	Recovery	down · CAREERORDERFIX	4	0
+12.349	1	77.622	Downed	Recovery	down · CAREERORDERFIX	4	0
+12.851	1	77.182	Downed	Recovery	down · CAREERORDERFIX	4	0
+13.351	1	76.682	Tag	Defender	tag · SORAYA	5	0
+13.853	1	76.182	Tag	Defender	tag · SORAYA	5	0
+14.355	1	75.682	Tag	Defender	tag · SORAYA	5	0
+14.858	1	75.182	Tag	Defender	tag · SORAYA	5	0
+15.361	1	74.663	Tag	Defender	tag · SORAYA	5	0
+15.864	1	74.163	Downed	Recovery	down · YASMIN	6	0
+16.364	1	73.663	Downed	Recovery	down · YASMIN	6	0
+16.864	1	73.163	Downed	Recovery	down · YASMIN	6	0
+17.366	1	72.663	Downed	Recovery	down · YASMIN	6	0
+17.867	1	72.163	Retrieval	Chase	retrieval · SORAYA	6	0
+18.370	1	71.663	Retrieval	Chase	retrieval · SORAYA	6	0
+18.872	1	71.163	Retrieval	Chase	retrieval · SORAYA	6	0
+19.374	1	70.663	ThrowPrep	Objective	throw · CAREERORDERFIX	7	0
+19.874	1	70.163	ThrowPrep	Objective	throw · CAREERORDERFIX	7	0
+20.375	1	69.663	ThrowPrep	Objective	throw · CAREERORDERFIX	7	0
+21.106	1	68.924	LataHit	Objective	the can · SORAYA	7	0
+21.606	1	68.424	LataHit	Objective	the can · SORAYA	7	0
+22.374	1	67.664	LataHit	Objective	the can · SORAYA	7	0
+22.878	1	67.164	Retrieval	RetrievalTwoShot	retrieval · SORAYA	8	0
+23.382	1	66.644	Retrieval	RetrievalTwoShot	retrieval · SORAYA	8	0
+23.885	1	66.144	Retrieval	RetrievalTwoShot	retrieval · SORAYA	8	0
+24.387	1	65.644	Retrieval	RetrievalTwoShot	retrieval · SORAYA	8	0
+24.888	1	65.144	Retrieval	RetrievalTwoShot	retrieval · SORAYA	8	0
+25.391	1	64.644	Retrieval	RetrievalTwoShot	retrieval · YASMIN	9	0
+25.893	1	64.144	LataHit	Objective	the can · YASMIN	10	0
+26.393	1	63.644	Retrieval	Chase	retrieval · SORAYA	11	0
+26.893	1	63.144	Retrieval	Chase	retrieval · SORAYA	11	0
+27.395	1	62.644	ThrowPrep	Objective	throw · CAREERORDERFIX	12	0
+27.897	1	62.144	ThrowPrep	Objective	throw · CAREERORDERFIX	12	0
+28.399	1	61.624	ThrowPrep	Objective	throw · CAREERORDERFIX	12	0
+28.900	1	61.124	LataHit	Objective	the can · SORAYA	13	0
+29.402	1	60.624	LataHit	Objective	the can · SORAYA	13	0
+29.904	1	60.124	LataHit	Objective	the can · SORAYA	13	0
+30.406	1	59.624	Retrieval	Chase	retrieval · SORAYA	14	0
+30.909	1	59.184	LataHit	Objective	the can · SORAYA	15	0
+31.411	1	58.684	Tag	Defender	tag · SORAYA	18	0
+31.938	1	58.144	Tag	Defender	tag · SORAYA	18	0
+32.439	1	57.644	Tag	Defender	tag · SORAYA	18	0
+32.942	1	57.144	Tag	Defender	tag · SORAYA	18	0
+33.443	1	56.644	Downed	Recovery	down · SORAYA	19	0
+33.943	1	56.144	Downed	Recovery	down · SORAYA	19	0
+34.445	1	55.644	Downed	Recovery	down · SORAYA	19	0
+34.945	1	55.144	Downed	Recovery	down · SORAYA	19	0
+35.447	1	54.644	Downed	Recovery	down · SORAYA	19	0
+35.949	1	54.144	Downed	Recovery	down · CAREERORDERFIX	20	0
+36.451	1	53.644	Downed	Recovery	down · CAREERORDERFIX	20	0
+36.953	1	53.144	Downed	Recovery	down · CAREERORDERFIX	20	0
+37.454	1	52.644	Downed	Recovery	down · CAREERORDERFIX	20	0
+37.956	1	52.144	SlipperLanded	Objective	the can	20	0
+38.458	1	51.624	SlipperLanded	Objective	the can	20	0
+38.961	1	51.124	SlipperLanded	Objective	the can	20	0
+39.462	1	50.624	SlipperLanded	Objective	the can	20	0
+39.963	1	50.184	Tag	Defender	tag · SORAYA	21	0
+40.463	1	49.744	Tag	Defender	tag · SORAYA	21	0
+40.966	1	49.244	Tag	Defender	tag · SORAYA	21	0
+41.467	1	48.744	Tag	Defender	tag · SORAYA	21	0
+41.970	1	48.244	Tag	Defender	tag · SORAYA	21	0
+42.471	1	47.744	Tag	Defender	tag · SORAYA	21	0
+42.973	1	47.244	Tag	Defender	tag · SORAYA	21	0
+43.474	1	46.744	Downed	Recovery	down · YASMIN	22	0
+43.975	1	46.244	Downed	Recovery	down · YASMIN	22	0
+44.478	1	45.724	Downed	Recovery	down · YASMIN	22	0
+44.980	1	45.224	Downed	Recovery	down · SORAYA	23	0
+45.483	1	44.724	Downed	Recovery	down · SORAYA	23	0
+45.985	1	44.224	Downed	Recovery	down · SORAYA	23	0
+46.487	1	43.724	Retrieval	Chase	retrieval · SORAYA	24	0
+46.991	1	43.224	LataHit	Objective	the can · YASMIN	25	0
+47.494	1	42.724	LataHit	Objective	the can · YASMIN	25	0
+47.996	1	42.204	LataHit	Objective	the can · YASMIN	25	0
+48.496	1	41.704	LataHit	Objective	the can · YASMIN	25	0
+49.003	1	41.204	Retrieval	Chase	retrieval · YASMIN	26	0
+49.503	1	40.704	Retrieval	Chase	retrieval · YASMIN	26	0
+50.005	1	40.204	ThrowPrep	Objective	throw · SORAYA	27	0
+50.508	1	39.704	ThrowPrep	Objective	throw · SORAYA	27	0
+51.011	1	39.204	SlipperLanded	Objective	the can	27	0
+51.513	1	38.704	SlipperLanded	Objective	the can	27	0
+52.019	1	38.184	SlipperLanded	Objective	the can	27	0
+52.523	1	37.684	Retrieval	RetrievalTwoShot	retrieval · YASMIN	28	0
+53.026	1	37.184	LataHit	Objective	the can · YASMIN	29	0
+53.529	1	36.684	LataHit	Objective	the can · YASMIN	29	0
+54.033	1	36.184	Reset	Defender	reset · SORAYA	30	0
+54.534	1	35.684	Reset	Defender	reset · SORAYA	30	0
+55.035	1	35.164	Reset	Defender	reset · SORAYA	30	0
+55.536	1	34.664	Quiet	QuietEstablish	the street	31	0
+56.040	1	34.164	Quiet	QuietEstablish	the street	31	0
+56.542	1	33.664	Quiet	QuietEstablish	the street	31	0
+57.044	1	33.164	Quiet	QuietEstablish	the street	31	0
+57.546	1	32.664	Quiet	QuietEstablish	the street	31	0
+58.046	1	32.164	Retrieval	RetrievalTwoShot	retrieval · YASMIN	32	0
+58.547	1	31.664	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	33	0
+59.048	1	31.164	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	33	0
+59.552	1	30.664	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	33	0
+60.052	1	30.164	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	33	0
+60.553	1	29.664	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	33	0
+61.057	1	29.204	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	33	0
+61.560	1	28.704	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	33	0
+62.063	1	28.204	Tag	Defender	tag · SORAYA	34	0
+62.564	1	27.704	Tag	Defender	tag · SORAYA	34	0
+63.066	1	27.204	Tag	Defender	tag · SORAYA	34	0
+63.569	1	26.704	Retrieval	Chase	retrieval · YASMIN	35	0
+64.071	1	26.204	Retrieval	Chase	retrieval · YASMIN	35	0
+64.573	1	25.703	Downed	Recovery	down · SORAYA	36	0
+65.075	1	25.183	Downed	Recovery	down · SORAYA	36	0
+65.576	1	24.683	Downed	Recovery	down · SORAYA	36	0
+66.080	1	24.183	ThrowPrep	Objective	throw · CAREERORDERFIX	36	0
+66.582	1	23.683	ThrowPrep	Objective	throw · CAREERORDERFIX	36	0
+67.084	1	23.183	Retrieval	RetrievalTwoShot	retrieval · YASMIN	37	0
+67.587	1	22.683	Retrieval	RetrievalTwoShot	retrieval · YASMIN	37	0
+68.087	1	22.183	Retrieval	RetrievalTwoShot	retrieval · YASMIN	37	0
+68.589	1	21.683	Retrieval	RetrievalTwoShot	retrieval · YASMIN	37	0
+69.091	1	21.183	Retrieval	RetrievalTwoShot	retrieval · YASMIN	37	0
+69.598	1	20.663	Retrieval	RetrievalTwoShot	retrieval · YASMIN	37	0
+70.099	1	20.163	Retrieval	RetrievalTwoShot	retrieval · YASMIN	37	0
+70.600	1	19.663	Retrieval	RetrievalTwoShot	retrieval · YASMIN	37	0
+71.102	1	19.163	Retrieval	RetrievalTwoShot	retrieval · YASMIN	37	0
+71.603	1	18.663	Retrieval	Chase	retrieval · SORAYA	37	0
+72.106	1	18.203	Retrieval	Chase	retrieval · SORAYA	37	0
+72.608	1	17.723	Tag	Defender	tag · SORAYA	38	0
+73.108	1	17.223	Tag	Defender	tag · SORAYA	38	0
+73.610	1	16.723	Tag	Defender	tag · SORAYA	38	0
+74.112	1	16.223	Tag	Defender	tag · SORAYA	38	0
+74.614	1	15.703	Tag	Defender	tag · SORAYA	38	0
+75.117	1	15.203	SlipperLanded	Objective	the can	39	0
+75.619	1	14.703	SlipperLanded	Objective	the can	39	0
+76.121	1	14.203	SlipperLanded	Objective	the can	39	0
+76.624	1	13.703	Downed	Recovery	down · YASMIN	40	0
+77.126	1	13.203	Downed	Recovery	down · YASMIN	40	0
+77.627	1	12.703	ThrowPrep	Objective	throw · CAREERORDERFIX	41	0
+78.129	1	12.203	ThrowPrep	Objective	throw · CAREERORDERFIX	41	0
+78.630	1	11.703	ThrowPrep	Objective	throw · CAREERORDERFIX	41	0
+79.131	1	11.243	ThrowPrep	Objective	throw · CAREERORDERFIX	41	0
+79.632	1	10.743	ThrowPrep	Objective	throw · CAREERORDERFIX	41	0
+80.136	1	10.243	Tag	Defender	tag · SORAYA	42	0
+80.637	1	9.743	Tag	Defender	tag · SORAYA	42	0
+81.139	1	9.243	Tag	Defender	tag · SORAYA	42	0
+81.640	1	8.743	Downed	Recovery	down · SORAYA	42	0
+82.143	1	8.243	Downed	Recovery	down · SORAYA	42	0
+82.645	1	7.743	Downed	Recovery	down · SORAYA	42	0
+83.148	1	7.243	Downed	Recovery	down · SORAYA	42	0
+83.650	1	6.743	Downed	Recovery	down · SORAYA	42	0
+84.154	1	6.223	ThrowPrep	Objective	throw · CAREERORDERFIX	43	0
+84.656	1	5.723	ThrowPrep	Objective	throw · CAREERORDERFIX	43	0
+85.162	1	5.223	ThrowPrep	Objective	throw · CAREERORDERFIX	43	0
+85.664	1	4.723	ThrowPrep	Objective	throw · CAREERORDERFIX	43	0
+86.164	1	4.223	ThrowPrep	Objective	throw · CAREERORDERFIX	43	0
+86.667	1	3.723	ThrowPrep	Objective	throw · CAREERORDERFIX	43	0
+87.170	1	3.223	ThrowPrep	Objective	throw · CAREERORDERFIX	43	0
+87.673	1	2.703	ThrowPrep	Objective	throw · CAREERORDERFIX	43	0
+88.174	1	2.203	ThrowPrep	Objective	throw · CAREERORDERFIX	43	0
+88.677	1	1.703	Retrieval	Chase	retrieval · SORAYA	44	0
+89.181	1	1.263	Tag	Defender	tag · SORAYA	45	0
+89.684	1	0.763	Tag	Defender	tag · SORAYA	45	0
+90.186	1	0.263	Tag	Defender	tag · SORAYA	45	0
+90.691	1	0.000	Tag	Defender	tag · SORAYA	45	0
+91.192	1	0.000	Tag	Defender	tag · SORAYA	45	0
+91.693	1	0.000	Tag	Defender	tag · SORAYA	45	0
+92.196	1	0.000	Tag	Defender	tag · SORAYA	45	0
+92.698	1	0.000	Tag	Defender	tag · SORAYA	45	0
+93.199	1	0.000	Tag	Defender	tag · SORAYA	45	0
+93.700	1	0.000	Tag	Defender	tag · SORAYA	45	0
+94.202	1	0.000	Tag	Defender	tag · SORAYA	45	0
+94.704	1	0.000	Tag	Defender	tag · SORAYA	45	0
+95.205	1	0.000	Tag	Defender	tag · SORAYA	45	0
+95.706	1	0.000	Tag	Defender	tag · SORAYA	45	0
+96.209	1	0.000	Tag	Defender	tag · SORAYA	45	0
+96.710	1	0.000	Tag	Defender	tag · SORAYA	45	0
+97.211	1	0.000	Tag	Defender	tag · SORAYA	45	0
+97.712	1	0.000	Tag	Defender	tag · SORAYA	45	0
+98.213	1	0.000	Tag	Defender	tag · SORAYA	45	0
+98.715	2	89.740	Quiet	QuietEstablish	the street	46	0
+99.218	2	89.240	Quiet	QuietEstablish	the street	46	0
+99.721	2	88.740	Quiet	QuietEstablish	the street	46	0
+100.223	2	88.240	Quiet	QuietEstablish	the street	46	0
+100.726	2	87.740	Quiet	QuietEstablish	the street	46	0
+101.227	2	87.240	ThrowPrep	Objective	throw · SORAYA	48	0
+101.729	2	86.741	ThrowPrep	Objective	throw · SORAYA	48	0
+102.231	2	86.241	Quiet	QuietEstablish	the street	49	0
+102.732	2	85.741	Quiet	QuietEstablish	the street	49	0
+103.233	2	85.241	Quiet	QuietEstablish	the street	49	0
+103.733	2	84.741	Quiet	QuietEstablish	the street	49	0
+104.234	2	84.221	Quiet	QuietEstablish	the street	49	0
+104.735	2	83.721	ThrowPrep	Objective	throw · SORAYA	51	0
+105.236	2	83.221	ThrowPrep	Objective	throw · SORAYA	51	0
+105.739	2	82.721	ThrowPrep	Objective	throw · SORAYA	53	0
+106.242	2	82.221	ThrowPrep	Objective	throw · SORAYA	53	0
+106.745	2	81.721	ThrowPrep	Objective	throw · SORAYA	53	0
+107.247	2	81.221	ThrowPrep	Objective	throw · YASMIN	54	0
+107.748	2	80.722	ThrowPrep	Objective	throw · YASMIN	55	0
+108.248	2	80.222	ThrowPrep	Objective	throw · YASMIN	55	0
+108.748	2	79.722	Quiet	QuietEstablish	the street	56	0
+109.250	2	79.222	Quiet	QuietEstablish	the street	56	0
+109.750	2	78.722	Quiet	QuietEstablish	the street	56	0
+110.251	2	78.222	Quiet	QuietEstablish	the street	56	0
+110.754	2	77.702	Quiet	QuietEstablish	the street	56	0
+111.254	2	77.202	Quiet	QuietEstablish	the street	56	0
+111.756	2	76.702	ThrowPrep	Objective	throw · YASMIN	58	0
+112.256	2	76.202	ThrowPrep	Objective	throw · YASMIN	58	0
+112.760	2	75.702	Retrieval	Chase	retrieval · SORAYA	59	0
+113.260	2	75.202	Retrieval	Chase	retrieval · SORAYA	59	0
+113.761	2	74.703	ThrowPrep	Objective	throw · SORAYA	60	0
+114.263	2	74.203	ThrowPrep	Objective	throw · SORAYA	61	0
+114.765	2	73.703	ThrowPrep	Objective	throw · SORAYA	61	0
+115.266	2	73.203	ThrowPrep	Objective	throw · SORAYA	63	0
+115.768	2	72.703	ThrowPrep	Objective	throw · SORAYA	63	0
+116.271	2	72.203	Quiet	QuietEstablish	the street	64	0
+116.772	2	71.703	Quiet	QuietEstablish	the street	64	0
+117.275	2	71.183	Quiet	QuietEstablish	the street	64	0
+117.778	2	70.683	Quiet	QuietEstablish	the street	64	0
+118.281	2	70.183	Quiet	QuietEstablish	the street	64	0
+118.783	2	69.683	ThrowPrep	Objective	throw · SORAYA	66	0
+119.284	2	69.183	ThrowPrep	Objective	throw · SORAYA	66	0
+119.785	2	68.684	Retrieval	RetrievalTwoShot	retrieval · SORAYA	67	0

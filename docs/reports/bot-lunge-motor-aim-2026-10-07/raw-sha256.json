@@ -1,0 +1,19 @@
+{
+  "motor-aim-original/launch.json": "18b2d62286b28b95eec365448e2d764a28c136b85ecabecb4eea9242112a009f",
+  "motor-aim-original/result.json": "4ab606101cab05d5dc3dccd155b13a603378295a03418f5c7674afaf7db2cebe",
+  "motor-aim-original/source-restoration.json": "b1bff715a04acadc78aa355efcad71692ec9aa74adbbb143d4ec21fe1dafb94b",
+  "motor-aim-original/compiler-errors.txt": "5265626f3c49e42b45ce3cca5e3cd2ebf9c1818dbed531952304caf69416ed8a",
+  "motor-aim-original-compiled/launch.json": "f9c15d1b14af48336a64501c921769dc94d9e0637458794577a454a21202795d",
+  "motor-aim-original-compiled/result.json": "845b1af9ab7b29386a38d245096dfbcf2d3406d2329bae12aad009897d2558e0",
+  "motor-aim-original-compiled/results.xml": "7bda32adcc868117a6f4553f60cb503dfff1e7664b6bb25a1b65057d2a825f2f",
+  "motor-aim-original-compiled/source-restoration.json": "436aca885e192ee5fb174ca90c30af0a346b4c70f2b058c71cf08e213ecea34c",
+  "motor-aim-candidate/launch.json": "1519b83770790b329cfa70b25ef7fed0498aef0e6781b93e86a8705de1ebc65f",
+  "motor-aim-candidate/result.json": "355c83b7a7addd4c6f8f62aa5d6e7cbac02a72ff4edd402df3bdc4889d5ec407",
+  "motor-aim-candidate/results.xml": "3060e6371f138668b53cad1abe48192010a3d20cce400de6cfb328dc025c5de2",
+  "motor-aim-candidate/source-restoration.json": "d675b2befa42646a7050840040a4e5cf04a375f57d2a808d7f783b08fe29d71e",
+  "natural-arena-before/launch.json": "7d65dc36d8527d033f0df0f9f9932c3b0b3ad58609a27daaf730b5d3b9390820",
+  "natural-arena-before/result.json": "ae0a185d645945bf960e766e87dcaf913117d08812e6a1e4d93806563b32dca1",
+  "natural-arena-before/results.xml": "3f201dedc998d527961905dfc49a01a06033d20332a2d3dec7d56521e90987fb",
+  "natural-arena-before/source-restoration.json": "4db8f83fd3e7f8d48841192dbae8d6d77f85f615c751ab3c3966651096653ffd",
+  "natural-arena-before/ai-diagnostic-HeroStrike-Arena.txt": "1259f4531fdd784704ffd765a33c8680ec296c1d97df8513a2a1770cc317b59b"
+}

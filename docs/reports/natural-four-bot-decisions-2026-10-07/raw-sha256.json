@@ -1,0 +1,14 @@
+{
+  "diagnostic-source-sha256.json": "9e2fb7bd495e2b435126d16a400f4d5f0c1d9228bc73f9caa1a7a2beda139eef",
+  "observed-counts.json": "ce3cbc92848fe55a5bf4d8be02c9e8743d01293470f099b5db9ff9a9a2bbc0b7",
+  "capsule-bridge-realclock/ai-diagnostic-Classic-IlalimNgTulay.txt": "07c7987aa494aec2f9f0c42141bbcd66f2da7b5f5aabce737877334b8a43d531",
+  "capsule-bridge-realclock/ai-diagnostic-HeroStrike-IlalimNgTulay.txt": "2587fd6b2dbf4b8e66a26b16dd24f3a9f2126aa936b52e158896f811d395cbef",
+  "capsule-bridge-realclock/result.json": "b7fdfff75ec5818da752161e7501f9cb68e7d0cfe0814024b3129a9a1c67c3d5",
+  "capsule-bridge-realclock/results.xml": "f0c730282fc0614730f6b53a06c09075a2366ebc0e048aafafa332db14b1dad5",
+  "capsule-bridge-realclock/source-restoration.json": "61744f7ffadecc5ee2e703c64b26d33f5d00b840d6f34363e8c03d96676fec93",
+  "natural-four-cove/ai-diagnostic-Classic-LagoonCove.txt": "3a838572026901e9d437cce3bf892a07a77a41e112c7ff602fcd11963bb4c817",
+  "natural-four-cove/ai-diagnostic-HeroStrike-LagoonCove.txt": "bd9dc1b86a5e9ba24de111ecbcad920942d82b7f4680b8264a3bc5e1c1973d51",
+  "natural-four-cove/result.json": "fb722223c2054934db28e38632e7e716ee3e81598fbd0953278e96aefbbd0647",
+  "natural-four-cove/results.xml": "0a4f08bad3c4276008d86dcde7dfdc3096ff56853336a56ebaee69f1ac52a5cf",
+  "natural-four-cove/source-restoration.json": "0241a61a6b96ee88caefff82a3be24cf17ef4adc46abc96aef8baa317777e79f"
+}

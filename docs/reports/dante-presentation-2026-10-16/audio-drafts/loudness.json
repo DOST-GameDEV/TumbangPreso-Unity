@@ -1,0 +1,204 @@
+{
+ "sfx_status_concussed_ring": {
+  "seconds": 2.6,
+  "peak": 0.85,
+  "rms": 0.1231
+ },
+ "sfx_status_concussed": {
+  "seconds": 0.8,
+  "peak": 0.85,
+  "rms": 0.1564
+ },
+ "sfx_dante_earthbound_scrape": {
+  "seconds": 0.7,
+  "peak": 0.85,
+  "rms": 0.0849
+ },
+ "sfx_cast_dante_shield": {
+  "seconds": 1.2,
+  "peak": 0.85,
+  "rms": 0.1426
+ },
+ "sfx_dante_shield_refuse": {
+  "seconds": 0.205,
+  "peak": 0.85,
+  "rms": 0.0903
+ },
+ "sfx_dante_shield_warning": {
+  "seconds": 2.0,
+  "peak": 0.85,
+  "rms": 0.066
+ },
+ "sfx_dante_shield_crumble": {
+  "seconds": 1.1,
+  "peak": 0.85,
+  "rms": 0.1409
+ },
+ "sfx_cast_dante_boulder": {
+  "seconds": 0.8,
+  "peak": 0.85,
+  "rms": 0.1792
+ },
+ "sfx_dante_boulder_sizzle": {
+  "seconds": 1.8,
+  "peak": 0.4,
+  "rms": 0.0298
+ },
+ "sfx_dante_boulder_throw": {
+  "seconds": 0.45,
+  "peak": 0.85,
+  "rms": 0.1662
+ },
+ "sfx_dante_boulder_hit": {
+  "seconds": 1.0,
+  "peak": 0.85,
+  "rms": 0.0723
+ },
+ "sfx_dante_boulder_land": {
+  "seconds": 0.31,
+  "peak": 0.85,
+  "rms": 0.0989
+ },
+ "sfx_dante_boulder_flake": {
+  "seconds": 0.6,
+  "peak": 0.85,
+  "rms": 0.0467
+ },
+ "sfx_cast_dante_barrier": {
+  "seconds": 1.2,
+  "peak": 0.85,
+  "rms": 0.1381
+ },
+ "sfx_dante_barrier_grind": {
+  "seconds": 1.5,
+  "peak": 0.85,
+  "rms": 0.0497
+ },
+ "sfx_dante_barrier_reflect": {
+  "seconds": 0.24,
+  "peak": 0.85,
+  "rms": 0.0815
+ },
+ "sfx_dante_barrier_sink": {
+  "seconds": 1.0,
+  "peak": 0.85,
+  "rms": 0.0983
+ },
+ "sfx_dante_drift_fuse": {
+  "seconds": 0.5,
+  "peak": 0.85,
+  "rms": 0.0673
+ },
+ "sfx_dante_drift_rumble": {
+  "seconds": 2.4,
+  "peak": 0.85,
+  "rms": 0.1844
+ },
+ "sfx_dante_drift_settle": {
+  "seconds": 1.4,
+  "peak": 0.85,
+  "rms": 0.1072
+ },
+ "sfx_ult_theme_dante": {
+  "seconds": 7.0,
+  "peak": 0.85,
+  "rms": 0.0705,
+  "rms_per_0.1s": [
+   0.018,
+   0.028,
+   0.027,
+   0.016,
+   0.049,
+   0.017,
+   0.019,
+   0.009,
+   0.05,
+   0.048,
+   0.062,
+   0.049,
+   0.05,
+   0.042,
+   0.032,
+   0.147,
+   0.171,
+   0.126,
+   0.09,
+   0.069,
+   0.032,
+   0.015,
+   0.008,
+   0.007,
+   0.008,
+   0.012,
+   0.011,
+   0.018,
+   0.015,
+   0.027,
+   0.032,
+   0.025,
+   0.011,
+   0.009,
+   0.005,
+   0.003,
+   0.002,
+   0.032,
+   0.069,
+   0.07,
+   0.072,
+   0.102,
+   0.091,
+   0.082,
+   0.075,
+   0.074,
+   0.101,
+   0.092,
+   0.068,
+   0.043,
+   0.052,
+   0.07,
+   0.044,
+   0.03,
+   0.022,
+   0.018,
+   0.019,
+   0.012,
+   0.011,
+   0.013,
+   0.013,
+   0.016,
+   0.03,
+   0.03,
+   0.04,
+   0.042,
+   0.0,
+   0.0,
+   0.199,
+   0.327
+  ]
+ },
+ "sfx_dante_drift_blast_1": {
+  "seconds": 1.3,
+  "peak": 0.85,
+  "rms": 0.1257
+ },
+ "sfx_dante_drift_blast_2": {
+  "seconds": 1.3,
+  "peak": 0.85,
+  "rms": 0.135
+ },
+ "sfx_dante_drift_blast_3": {
+  "seconds": 1.3,
+  "peak": 0.85,
+  "rms": 0.1377
+ },
+ "sfx_dante_drift_blast_4": {
+  "seconds": 1.3,
+  "peak": 0.85,
+  "rms": 0.1459
+ },
+ "sfx_dante_drift_blast_5": {
+  "seconds": 1.3,
+  "peak": 0.85,
+  "rms": 0.174
+ }
+}

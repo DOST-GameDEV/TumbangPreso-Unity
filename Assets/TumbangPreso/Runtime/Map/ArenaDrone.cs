@@ -54,7 +54,7 @@ namespace TumbangPreso.Map
     /// (`ArenaShow`, which poses them itself through `Hold` and names the act): a break runs
     /// with `Time.timeScale` 0, so that path takes its own step.
     /// </summary>
-    public sealed class ArenaDrone : MonoBehaviour
+    public sealed partial class ArenaDrone : MonoBehaviour
     {
         public enum Act:byte{Search,Lock,Haul,Across,SetDown,Proud,Leave}
 

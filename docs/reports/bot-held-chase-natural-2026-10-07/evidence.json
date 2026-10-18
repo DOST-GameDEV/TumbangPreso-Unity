@@ -1,0 +1,31 @@
+{
+  "sourceRef": "64a01a1af49e2c97be820ddd64d93f3dc928ec61",
+  "sourcePath": "Assets/TumbangPreso/Tests/PlayMode/AiDiagnosticProbe.cs",
+  "sourceSha256": "d58361652ae7cdc4d3bbfb3f818b6238e3b01103f98c652bb59b564fa92ed45c",
+  "protectedCount": 21385,
+  "nativePid": 49760,
+  "rawFiles": {
+    "result.json": "fddabf37e47faad95da4912c4eb164ef3e8f97a36fc2dccdf33d5d08982b81fb",
+    "results.xml": "7c8566449b0f91fd598bde15aba2e77ab0ff14f5aa287c0e40e8e314eb7068c0",
+    "source-restoration.json": "397913b47dd62a8958d61ec4dd97ffc647afa950bd1049105cd9d171b6fc05ce",
+    "ai-diagnostic-Classic-IlalimNgTulay.txt": "02ae1f587fd7ebe42fa47be87d56af9a56bf8f87d36647d56e18b79632c7eba2",
+    "ai-diagnostic-HeroStrike-IlalimNgTulay.txt": "ebe1dcf4d51ad059bc9cbc713567c1b9524118dd4b69a37e43a9c7294a2288b2"
+  },
+  "observations": {
+    "ai-diagnostic-Classic-IlalimNgTulay.txt": {
+      "throws": 16,
+      "lunges": 3,
+      "countedHits": 2,
+      "oneAutomaticStart": true,
+      "liveWindowSeconds": 40
+    },
+    "ai-diagnostic-HeroStrike-IlalimNgTulay.txt": {
+      "throws": 17,
+      "lunges": 3,
+      "countedHits": 1,
+      "oneAutomaticStart": true,
+      "liveWindowSeconds": 40
+    }
+  },
+  "scope": "Short natural1x four-bot windows; no statistical/full-AI/performance claim"
+}

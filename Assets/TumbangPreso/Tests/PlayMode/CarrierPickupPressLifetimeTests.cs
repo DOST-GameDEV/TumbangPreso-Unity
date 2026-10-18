@@ -56,6 +56,52 @@ namespace TumbangPreso.PlayTests
             GameLaunch.Spectator = _spectator; GameLaunch.AllBots = _allBots;
             Hitstop.End(); PresentationClock.RequestScale(1); yield return PlayModeWorld.Reset();
         }
+        private MatchStatsCollector InstallAccounting()
+        {
+            var stats = _body.AddComponent<MatchStatsCollector>(); stats.enabled = false;
+            typeof(GameServices).GetProperty("Stats").SetValue(null, stats);
+            typeof(MatchStatsCollector).GetMethod("BeginMatch", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(stats, null);
+            return stats;
+        }
+        private PlayerMatchStats AccountingLine(MatchStatsCollector stats)
+            => ((PlayerMatchStats[])typeof(MatchStatsCollector).GetField("_lines", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(stats))[1];
+
+        [Test] public void UnthrownOwnPickupDoesNotCreateAnImpossibleRetrievalRecord()
+        {
+            var stats = InstallAccounting();
+            Assert.IsTrue(_shoe.HostGrab(_motor));
+            Assert.AreSame(_shoe, _carrier.Held, "The pickup itself must still succeed.");
+            _carrier.NotifyHolding(_shoe);
+            Assert.AreEqual(0, AccountingLine(stats).Throws);
+            Assert.AreEqual(0, AccountingLine(stats).Retrievals,
+                "An unthrown own-shoe pickup created retrievals greater than throws.");
+        }
+        [Test] public void OwnThrownShoePickupCountsOnceButItsDroppedRegrabDoesNot()
+        {
+            var stats = InstallAccounting();
+            _shoe.HostForceEquip(_motor);
+            stats.NoteThrow(1);
+            _shoe.HostThrow(_motor, _motor.transform.position + Vector3.right * .2f, Vector3.zero);
+            // This stands in for landing; preserve the real held-release episode.
+            typeof(Slipper).GetMethod("SetState", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(_shoe, new object[] { SlipperState.Loose });
+            _shoe.transform.position = _motor.transform.position + Vector3.right * .2f;
+            Assert.IsTrue(_shoe.HostGrab(_motor)); _carrier.NotifyHolding(_shoe);
+            Assert.AreEqual(1, AccountingLine(stats).Retrievals, "A real own throw must still count on retrieval.");
+            Assert.IsTrue(_shoe.HostDisarm());
+            Assert.IsTrue(_shoe.HostGrab(_motor)); _carrier.NotifyHolding(_shoe);
+            Assert.AreEqual(1, AccountingLine(stats).Retrievals, "Dropping and re-grabbing that shoe granted a second retrieval.");
+        }
+        [Test] public void UnownedSparePickupRemainsAvailableWithoutRetrievalCredit()
+        {
+            // Ownerless equipment is an explicit one-human training exception.
+            GameLaunch.TrainingRange = true;
+            GameServices.Round.Register(_motor);
+            var stats = InstallAccounting(); _shoe.OwnerSlot = -1; _shoe.SeatOfOrigin = 2;
+            Assert.IsTrue(_shoe.HostGrab(_motor));
+            Assert.AreSame(_shoe, _carrier.Held);
+            Assert.AreEqual(0, AccountingLine(stats).Retrievals);
+        }
+
         private void Step() => typeof(Carrier).GetMethod("Update", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(_carrier, null);
         private void FirstPickupAndHandLoss()
         {

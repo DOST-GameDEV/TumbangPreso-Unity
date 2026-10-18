@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.500	Quiet	QuietEstablish	the street	1	0
+1.002	89.000	Quiet	QuietEstablish	the street	1	0
+1.503	88.500	Quiet	QuietEstablish	the street	1	0
+2.003	88.000	Quiet	QuietEstablish	the street	1	0
+2.505	87.500	ThrowPrep	Objective	throw · RAGO	2	0
+3.005	86.981	ThrowPrep	Objective	throw · RAGO	2	0
+3.506	86.481	ThrowPrep	Objective	throw · RAGO	2	0
+4.009	85.981	SlipperLanded	Objective	the can	2	0
+4.510	85.481	Quiet	QuietEstablish	the street	3	0
+5.371	84.621	Quiet	QuietEstablish	the street	4	0
+5.872	84.121	Quiet	QuietEstablish	the street	4	0
+6.374	83.621	Quiet	QuietEstablish	the street	4	0
+6.875	83.121	Quiet	QuietEstablish	the street	4	0
+7.375	82.621	Retrieval	Chase	retrieval · AMIHAN	5	0
+7.876	82.121	Retrieval	Chase	retrieval · AMIHAN	5	0
+8.378	81.621	ThrowPrep	Objective	throw · AMIHAN	6	0
+8.878	81.121	ThrowPrep	Objective	throw · AMIHAN	6	0
+9.379	80.622	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	7	0
+9.880	80.122	Retrieval	RetrievalTwoShot	retrieval · RAGO	8	0
+10.381	79.622	Retrieval	Chase	retrieval · RAGO	8	0
+10.882	79.122	Retrieval	Chase	retrieval · RAGO	8	0
+11.383	78.662	Tag	Defender	tag · RAGO	9	0
+11.884	78.162	Tag	Defender	tag · RAGO	9	0
+12.386	77.662	Tag	Defender	tag · RAGO	9	0
+12.886	77.162	Tag	Defender	tag · RAGO	9	0
+13.386	76.662	Tag	Defender	tag · RAGO	9	0
+13.888	76.162	Tag	Defender	tag · RAGO	9	0
+14.388	75.662	Downed	Recovery	down · RAGO	11	0
+14.888	75.162	Downed	Recovery	down · RAGO	11	0

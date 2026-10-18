@@ -1,0 +1,26 @@
+{
+  "source": "dbbd83ee9a9b59b35cf02fed2ff57aa17468f020",
+  "qualifiedManifestSha256": "4d073bba2a7479a2b02a5f118677c9c11eccfff7b9e213a7c6092217d678d790",
+  "result": {
+    "pid": 42644,
+    "terminal": true,
+    "exitCode": 0,
+    "passed": 1,
+    "failed": 0,
+    "inputCount": 21148,
+    "allInputsRestored": true,
+    "existingPrefsRestored": 13
+  },
+  "selectedProjectionRow": [
+    "39.907",
+    "34968",
+    "1",
+    "throw \u00b7 ISAGANI",
+    "(7.7563, 1.3320, -0.1441)",
+    "(0.6838, 0.4985, 14.4401)",
+    "(-8.5501, 2.2931, -0.4588)",
+    "(3.6779, 60.9525, 0.0000)",
+    "78.000",
+    "1.7778"
+  ]
+}

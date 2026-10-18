@@ -34,6 +34,7 @@ Shader "TumbangPreso/SoulSpill"
             Offset -1, -1
 
             CGPROGRAM
+            #include "RecordedShaderTime.cginc"
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
@@ -50,8 +51,8 @@ Shader "TumbangPreso/SoulSpill"
                 if (v.uv.y > 0.0)
                 {
                     float phase = v.uv.x * 6.2832;
-                    p.x += sin(_Time.y * 3.1 + phase) * _Sway * v.uv.y;
-                    p.z += cos(_Time.y * 2.3 + phase * 1.7) * _Sway * 0.7 * v.uv.y;
+                    p.x += sin(TumpShaderTime() * 3.1 + phase) * _Sway * v.uv.y;
+                    p.z += cos(TumpShaderTime() * 2.3 + phase * 1.7) * _Sway * 0.7 * v.uv.y;
                 }
                 o.pos = UnityObjectToClipPos(p);
                 o.height = mul(unity_ObjectToWorld, v.vertex).y;
@@ -62,13 +63,13 @@ Shader "TumbangPreso/SoulSpill"
 
             fixed4 frag(v2f i) : SV_Target
             {
-                float t = _Time.y * _Rate - i.height * 3.1;
+                float t = TumpShaderTime() * _Rate - i.height * 3.1;
                 float breath = 0.6 * sin(t) + 0.4 * sin(t * 2.37 + 1.3);
                 float flicker = 1.0;
                 if (i.flame.y > 0.0)
                 {
                     float phase = i.flame.x * 6.2832;
-                    flicker = 1.0 - _Flicker * (0.5 + 0.5 * sin(_Time.y * 11.0 + phase * 3.0) * sin(_Time.y * 7.3 + phase));
+                    flicker = 1.0 - _Flicker * (0.5 + 0.5 * sin(TumpShaderTime() * 11.0 + phase * 3.0) * sin(TumpShaderTime() * 7.3 + phase));
                 }
                 float3 light = i.colour.rgb * i.colour.a * _Intensity * (1.0 + _Pulse * breath) * flicker;
                 return fixed4(light, 0.0);

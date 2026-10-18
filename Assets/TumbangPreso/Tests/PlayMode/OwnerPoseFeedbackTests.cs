@@ -45,12 +45,13 @@ namespace TumbangPreso.PlayTests
             yield return PlayModeWorld.Reset(); NetAuthority.Provider = _previous;
         }
 
-        private void Deliver(Vector3 oldPosition, bool correction, int epoch = 0)
+        private void Deliver(Vector3 oldPosition, bool correction, int epoch = 0, ulong serial = 1, float possessed = 0,
+                             ulong? expectedSerial = null)
         {
             using var writer = new FastBufferWriter(320, Allocator.Temp);
             writer.WriteValueSafe(1);
             writer.WriteNetworkSerializable(new GameplayActionScope { Match = 123, Round = 1, Epoch = epoch });
-            writer.WriteValueSafe(1UL);
+            writer.WriteValueSafe(serial);
             // Protocol150 distinguishes an accepted echo from a host correction.
             // The baseline149 payload has exactly its original schema.
             if (NetSession.ProtocolVersion >= 150) writer.WriteValueSafe(correction);
@@ -68,12 +69,17 @@ namespace TumbangPreso.PlayTests
             writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe(0f);
             writer.WriteValueSafe(Vector3.zero); writer.WriteValueSafe(0L);
             writer.WriteValueSafe(0f); writer.WriteValueSafe(0f);
+            writer.WriteValueSafe(possessed);
+            writer.WriteValueSafe(0f); // BlindedLeft (protocol 161)
             writer.WriteNetworkSerializable(new VoodooBodySnapshot { MarkSource = -1, ReachTarget = -1 });
             writer.WriteNetworkSerializable(default(AbilityAimSnapshot));
-            Assert.AreEqual(216 + VoodooBodySnapshot.WireBytes + (NetSession.ProtocolVersion >= 150 ? 1 : 0), writer.Length);
+            Assert.AreEqual(224 + VoodooBodySnapshot.WireBytes + (NetSession.ProtocolVersion >= 150 ? 1 : 0), writer.Length);
             using var reader = new FastBufferReader(writer, Allocator.Temp);
             typeof(MatchRpc).GetMethod("OnSyncUnitMsg", Hidden).Invoke(_rpc, new object[] { NetworkManager.ServerClientId, reader });
             Assert.AreEqual(42f, _motor.Stamina.Current, "The actual packet must be accepted, not rejected by the fixture.");
+            Assert.AreEqual(expectedSerial ?? serial,
+                (ulong)typeof(CharacterMotor).GetField("_lastNetworkPoseSerial", Hidden).GetValue(_motor),
+                "Only accepted packets may advance the actual receiver serial.");
         }
 
         private IEnumerator AcceptedEcho(float travelled)
@@ -114,6 +120,68 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(Vector3.zero, _motor.transform.position);
             yield return null;
         }
+        [UnityTest] public IEnumerator DelayedEchoesPreserveContinuousPredictedRunning()
+        {
+            var floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            floor.transform.position = Vector3.down * .5f;
+            floor.transform.localScale = new Vector3(60, 1, 60);
+            try
+            {
+                var cc = _body.GetComponent<CharacterController>();
+                cc.height = 1.6f; cc.radius = .35f; cc.center = Vector3.up * .8f;
+                _motor.transform.position = new Vector3(0, .1f, -5);
+                typeof(CharacterMotor).GetField("_spawnSettle", Hidden).SetValue(_motor, 0);
+                _motor.Intent.Parked = false;
+                _motor.Intent.Move = Vector2.up;
+                _motor.Intent.Set(Verb.Sprint, true);
+                Physics.SyncTransforms();
+                var step = typeof(CharacterMotor).GetMethod("FixedUpdate", Hidden);
+                var poses = new System.Collections.Generic.List<Vector3>();
+                float maximumRollback = 0f, totalDistance = 0f;
+                int accepted = 0;
+                for (int tick = 0; tick < 100; tick++)
+                {
+                    Vector3 prior = _motor.transform.position;
+                    step.Invoke(_motor, null);
+                    Vector3 predicted = _motor.transform.position;
+                    totalDistance += Vector3.Distance(prior, predicted);
+                    poses.Add(predicted);
+                    if (tick >= 25)
+                    {
+                        // Half-second round trip, modeled at the actual receiver.
+                        // No socket, host validation or physical device claim.
+                        Deliver(poses[tick - 25], false, serial: (ulong)(tick + 1));
+                        accepted++;
+                        maximumRollback = Mathf.Max(maximumRollback,
+                            Vector3.Distance(predicted, _motor.transform.position));
+                    }
+                }
+                TestContext.WriteLine($"physics_steps=100 dt={Time.fixedDeltaTime:F3} delayed_steps=25 accepted={accepted} travel={totalDistance:F4} maximum_rollback={maximumRollback:F4}");
+                Assert.That(totalDistance, Is.GreaterThan(6f), "Fixture must really run through the motor and controller.");
+                Assert.That(accepted, Is.EqualTo(75));
+                Assert.That(maximumRollback, Is.LessThan(.001f), "A delayed accepted echo rewound continuous movement.");
+            }
+            finally { Object.Destroy(floor); }
+            yield return null;
+        }
+
+        [UnityTest] public IEnumerator PossessionRejectsMalformedAndOlderPosesWithoutConsumingTheirSerial()
+        {
+            Deliver(Vector3.zero, false, serial: 1, possessed: 12f);
+            Assert.AreEqual(12f, _motor.PossessedLeft, .001f);
+            foreach (float invalid in new[] { float.NaN, float.PositiveInfinity, -1f, StatusRules.PossessedSeconds + .1f })
+                Deliver(Vector3.right * 8, true, serial: 2, possessed: invalid, expectedSerial: 1);
+            Assert.AreEqual(12f, _motor.PossessedLeft, .001f);
+            Assert.AreEqual(Vector3.zero, _motor.transform.position, "Malformed status committed a pose.");
+            Deliver(Vector3.zero, false, serial: 2, possessed: 8f);
+            Assert.AreEqual(8f, _motor.PossessedLeft, .001f, "A refused packet consumed the serial.");
+            Deliver(Vector3.zero, false, serial: 1, possessed: 15f, expectedSerial: 2);
+            Assert.AreEqual(8f, _motor.PossessedLeft, .001f, "An older pose restarted possession.");
+            Deliver(Vector3.zero, false, serial: 3, possessed: 0f);
+            Assert.IsFalse(_motor.IsPossessed);
+            yield return null;
+        }
+
         private sealed class Observer : INetProvider
         {
             public bool IsHost => false; public bool IsNetworked => true;

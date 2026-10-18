@@ -43,7 +43,23 @@ namespace TumbangPreso.Core.Tests
             // Haunted and then Zapped were appended; existing wire IDs stay unchanged.
             Assert.Equal(12, (int)StatusKind.Haunted);
             Assert.Equal(13, (int)StatusKind.Zapped);
-            Assert.Equal(13, StatusRules.All.Count);
+            Assert.Equal(14, (int)StatusKind.Possessed);
+            Assert.Equal(15, (int)StatusKind.Blinded);
+            Assert.Equal(15, StatusRules.All.Count);
+            // Nemu's DON'T LOOK (owner 2026-10-15): eyes covered 2 s, a 50 % slow wearing off over 5 s.
+            var blinded = StatusRules.For(StatusKind.Blinded);
+            Assert.Equal(5.0f, blinded.Seconds);
+            Assert.Equal(0.5f, blinded.SpeedScale);
+            Assert.False(blinded.BlocksMovement || blinded.BlocksInteraction
+                || blinded.BlocksSlipperRetrieval || blinded.DropsHeldSlipper);
+            Assert.True(blinded.Removable && blinded.ImmunityApplies);
+            // Nemu's PRUSISYON (owner 2026-10-11): 15 s, control kept, cleansable.
+            var possessed = StatusRules.For(StatusKind.Possessed);
+            Assert.Equal(15.0f, possessed.Seconds);
+            Assert.Equal(0.9f, possessed.SpeedScale); // owner: "maybe possessed players get 10% slow too"
+            Assert.False(possessed.BlocksMovement || possessed.BlocksInteraction
+                || possessed.BlocksSlipperRetrieval || possessed.DropsHeldSlipper);
+            Assert.True(possessed.Removable && possessed.ImmunityApplies);
             var zapped = StatusRules.For(StatusKind.Zapped);
             Assert.Equal(5.0f, zapped.Seconds);
             Assert.Equal(1.0f, zapped.SpeedScale);
@@ -64,7 +80,7 @@ namespace TumbangPreso.Core.Tests
 
             var concussed = StatusRules.For(StatusKind.Concussed);
             Assert.Equal(0.25f, concussed.SpeedScale);
-            Assert.Equal(2.5f, StatusRules.ConcussedSeconds);
+            Assert.Equal(5.0f, StatusRules.ConcussedSeconds); // the Wiki's "75% slower for 5 seconds"
             Assert.Equal(35.0f, GeoRules.BoulderCooldown);
             Assert.False(concussed.BlocksMovement || concussed.BlocksInteraction);
 
@@ -107,6 +123,39 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(3f,CryoRules.GlacialWallArcRadius);
             Assert.Equal(1.5f,CryoRules.GlacialWallMinRange);
             Assert.InRange(NecroRules.TerrifyRadius, 1.6f, 2.3f);
+        }
+
+        [Fact]
+        public void LookoutIsASmallHelperThatOnlyStays15Seconds()
+        {
+            // Owner, 2026-10-15: it helps defend and can stand the can up, "medyo small and not that good", 15 s.
+            Assert.Equal(15.0f, NecroRules.LookoutSeconds);
+            Assert.True(NecroRules.LookoutRestoreSeconds > Balance.ResetChannelTime * 2.0f,
+                "Lookout must stand the can up much slower than the taya does.");
+            Assert.True(NecroRules.LookoutScareRadius > 0.0f);
+            Assert.Equal(NecroRules.BasicCooldown, NecroRules.LookoutCooldown);
+        }
+
+        [Fact]
+        public void DontLookIsTheOwnersTripwire()
+        {
+            // Owner, 2026-10-15: invisible after 3 s, eyes covered 2 s, a 5 s slow that gets lower over time.
+            Assert.Equal(3.0f, NecroRules.DontLookArmSeconds);
+            Assert.Equal(2.0f, NecroRules.DontLookBlindSeconds);
+            Assert.Equal(5.0f, NecroRules.DontLookSlowSeconds);
+            Assert.Equal(NecroRules.BasicCooldown, NecroRules.DontLookCooldown);
+            Assert.InRange(NecroRules.DontLookTriggerRadius, 1.6f, 2.3f);
+            // The decaying slow: half speed at the spring, easing linearly, none once it runs out.
+            Assert.Equal(0.5f, NecroRules.DontLookSpeedScale(5.0f), 4);
+            Assert.Equal(0.75f, NecroRules.DontLookSpeedScale(2.5f), 4);
+            Assert.Equal(1.0f, NecroRules.DontLookSpeedScale(0.0f), 4);
+            Assert.Equal(1.0f, NecroRules.DontLookSpeedScale(float.NaN), 4);
+            Assert.True(NecroRules.DontLookSpeedScale(1.0f) > NecroRules.DontLookSpeedScale(4.0f));
+            // Eyes covered for exactly the first two of the five seconds.
+            Assert.True(NecroRules.DontLookCoversEyes(5.0f));
+            Assert.True(NecroRules.DontLookCoversEyes(3.01f));
+            Assert.False(NecroRules.DontLookCoversEyes(3.0f));
+            Assert.False(NecroRules.DontLookCoversEyes(0.0f));
         }
 
         [Fact]

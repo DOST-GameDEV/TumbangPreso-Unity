@@ -1,0 +1,22 @@
+{
+  "ready.json": {
+    "bytes": 226,
+    "sha256": "7df0e6ee4f8f0e3b107afe45e324867a3371d5094fb2da1c24d24e197d317703"
+  },
+  "packets.jsonl": {
+    "bytes": 194,
+    "sha256": "ecc9de91e1ac985f72e8fef14852d43583a217d3476771506bc4084e8e16ea29"
+  },
+  "result.json": {
+    "bytes": 658,
+    "sha256": "9d1b80513572d26bfaa5e82bf7d94c694ec2c295e25c2cc394ecbf205b1aceeb"
+  },
+  "sender-ack.json": {
+    "bytes": 947,
+    "sha256": "6c93d5a286dc0408e0dfad4498df75c5403ec8bb91e1e8d16a93a1eda1dd6c03"
+  },
+  "receiver.py": {
+    "bytes": 1745,
+    "sha256": "f43718264aa46a4dfd5980d175e3e25e3cf8501d31e8af4b02d4cefd4aa10511"
+  }
+}

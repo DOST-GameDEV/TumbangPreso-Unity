@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 20:11:16Z" end-time="2026-10-05 20:11:16Z" duration="0.391273">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1396" result="Passed" start-time="2026-10-05 20:11:16Z" end-time="2026-10-05 20:11:16Z" duration="0.391273" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2722" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1396" result="Passed" start-time="2026-10-05 20:11:16Z" end-time="2026-10-05 20:11:16Z" duration="0.369892" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23916" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2723" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1396" result="Passed" start-time="2026-10-05 20:11:16Z" end-time="2026-10-05 20:11:16Z" duration="0.358359" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2724" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1396" result="Passed" start-time="2026-10-05 20:11:16Z" end-time="2026-10-05 20:11:16Z" duration="0.347169" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1703" name="LanReceiveOwnershipTests" fullname="TumbangPreso.Tests.LanReceiveOwnershipTests" classname="TumbangPreso.Tests.LanReceiveOwnershipTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-10-05 20:11:16Z" end-time="2026-10-05 20:11:16Z" duration="0.275181" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1712" name="RepeatedRequestFromOneBrowserIsBoundedWithinTheInterval" fullname="TumbangPreso.Tests.LanReceiveOwnershipTests.RepeatedRequestFromOneBrowserIsBoundedWithinTheInterval" methodname="RepeatedRequestFromOneBrowserIsBoundedWithinTheInterval" classname="TumbangPreso.Tests.LanReceiveOwnershipTests" runstate="Runnable" seed="1073919575" result="Passed" start-time="2026-10-05 20:11:16Z" end-time="2026-10-05 20:11:16Z" duration="0.149666" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1713" name="RetiredListenerRequestCannotProduceAReplacementReply" fullname="TumbangPreso.Tests.LanReceiveOwnershipTests.RetiredListenerRequestCannotProduceAReplacementReply" methodname="RetiredListenerRequestCannotProduceAReplacementReply" classname="TumbangPreso.Tests.LanReceiveOwnershipTests" runstate="Runnable" seed="118842220" result="Passed" start-time="2026-10-05 20:11:16Z" end-time="2026-10-05 20:11:16Z" duration="0.104112" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

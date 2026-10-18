@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="12" result="Passed" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 21:04:35Z" end-time="2026-10-06 21:06:59Z" duration="144.1922159">
+  <test-suite type="TestSuite" id="3438" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1977" result="Passed" start-time="2026-10-06 21:04:35Z" end-time="2026-10-06 21:06:59Z" duration="144.192216" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3430" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1977" result="Passed" start-time="2026-10-06 21:04:35Z" end-time="2026-10-06 21:06:59Z" duration="144.178102" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="34896" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3431" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1977" result="Passed" start-time="2026-10-06 21:04:35Z" end-time="2026-10-06 21:06:59Z" duration="144.172563" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3434" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1975" result="Passed" start-time="2026-10-06 21:04:35Z" end-time="2026-10-06 21:06:59Z" duration="144.166606" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1306" name="CatchMatchLifetimeTests" fullname="TumbangPreso.PlayTests.CatchMatchLifetimeTests" classname="TumbangPreso.PlayTests.CatchMatchLifetimeTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-06 21:04:36Z" end-time="2026-10-06 21:05:44Z" duration="68.548630" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1310" name="AnOldPlayingCatchCannotSuppressANewMatchTagEvent" fullname="TumbangPreso.PlayTests.CatchMatchLifetimeTests.AnOldPlayingCatchCannotSuppressANewMatchTagEvent" methodname="AnOldPlayingCatchCannotSuppressANewMatchTagEvent" classname="TumbangPreso.PlayTests.CatchMatchLifetimeTests" runstate="Runnable" seed="1047926240" result="Passed" start-time="2026-10-06 21:04:36Z" end-time="2026-10-06 21:04:58Z" duration="22.741856" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1308" name="FreshSameRoundIdentityCannotUseAPendingOldContactForLaterState" fullname="TumbangPreso.PlayTests.CatchMatchLifetimeTests.FreshSameRoundIdentityCannotUseAPendingOldContactForLaterState" methodname="FreshSameRoundIdentityCannotUseAPendingOldContactForLaterState" classname="TumbangPreso.PlayTests.CatchMatchLifetimeTests" runstate="Runnable" seed="1044813615" result="Passed" start-time="2026-10-06 21:04:58Z" end-time="2026-10-06 21:05:14Z" duration="15.231106" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1307" name="FreshSameRoundIdentityRetiresAnActiveCatchBeforeOldRecoveryArrives" fullname="TumbangPreso.PlayTests.CatchMatchLifetimeTests.FreshSameRoundIdentityRetiresAnActiveCatchBeforeOldRecoveryArrives" methodname="FreshSameRoundIdentityRetiresAnActiveCatchBeforeOldRecoveryArrives" classname="TumbangPreso.PlayTests.CatchMatchLifetimeTests" runstate="Runnable" seed="1944650182" result="Passed" start-time="2026-10-06 21:05:14Z" end-time="2026-10-06 21:05:29Z" duration="15.241288" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1309" name="SameIdentityKeepsAnAlreadyAcceptedCatchAndRecovery" fullname="TumbangPreso.PlayTests.CatchMatchLifetimeTests.SameIdentityKeepsAnAlreadyAcceptedCatchAndRecovery" methodname="SameIdentityKeepsAnAlreadyAcceptedCatchAndRecovery" classname="TumbangPreso.PlayTests.CatchMatchLifetimeTests" runstate="Runnable" seed="873562021" result="Passed" start-time="2026-10-06 21:05:29Z" end-time="2026-10-06 21:05:44Z" duration="15.315773" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1311" name="CatchReconstructionTests" fullname="TumbangPreso.PlayTests.CatchReconstructionTests" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" testcasecount="49" result="Passed" start-time="2026-10-06 21:05:44Z" end-time="2026-10-06 21:06:59Z" duration="75.083494" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1330" name="AuthoredMapFarTagRetainsVisibleWholeBodyContact" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.AuthoredMapFarTagRetainsVisibleWholeBodyContact" methodname="AuthoredMapFarTagRetainsVisibleWholeBodyContact" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="473139039" result="Passed" start-time="2026-10-06 21:05:44Z" end-time="2026-10-06 21:06:03Z" duration="19.302150" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0 frames=48 bodyShift=0.4654106 torsoLean=27.98922 armStretch=1 skinSurfaceGap=0.04193056 soleY=Infinity
+]]></output>
+            </test-case>
+            <test-case id="1314" name="CatchCameraAdoptsGameplayShaderContextAndRestoresGlobals" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.CatchCameraAdoptsGameplayShaderContextAndRestoresGlobals" methodname="CatchCameraAdoptsGameplayShaderContextAndRestoresGlobals" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1734608534" result="Passed" start-time="2026-10-06 21:06:03Z" end-time="2026-10-06 21:06:20Z" duration="16.253677" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1316" name="CatchChoosesTheOpenSideAndAvoidsAForcedFaceCloseup" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.CatchChoosesTheOpenSideAndAvoidsAForcedFaceCloseup" methodname="CatchChoosesTheOpenSideAndAvoidsAForcedFaceCloseup" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1029617873" result="Passed" start-time="2026-10-06 21:06:20Z" end-time="2026-10-06 21:06:37Z" duration="17.665880" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1326" name="ContactCameraShowsTheActualReachingHand" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.ContactCameraShowsTheActualReachingHand" methodname="ContactCameraShowsTheActualReachingHand" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1463295984" result="Passed" start-time="2026-10-06 21:06:37Z" end-time="2026-10-06 21:06:42Z" duration="4.501826" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[distance=1 contactGap=0 contactAlpha=1 sampleError=0 frames=52 bodyShift=0.1396389 torsoLean=22.57629 armStretch=1 skinSurfaceGap=3.402823E+38 soleY=Infinity
+]]></output>
+            </test-case>
+            <test-case id="1327" name="FarAcceptedTagHasVisibleHandContact" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.FarAcceptedTagHasVisibleHandContact" methodname="FarAcceptedTagHasVisibleHandContact" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1519122752" result="Passed" start-time="2026-10-06 21:06:42Z" end-time="2026-10-06 21:06:46Z" duration="4.430956" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[distance=1.65 contactGap=0 contactAlpha=1 sampleError=0 frames=52 bodyShift=0.5143059 torsoLean=28 armStretch=1 skinSurfaceGap=3.402823E+38 soleY=Infinity
+]]></output>
+            </test-case>
+            <test-case id="1325" name="IsolatedNativeCatchRetainsContinuousMotion" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.IsolatedNativeCatchRetainsContinuousMotion" methodname="IsolatedNativeCatchRetainsContinuousMotion" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="599812634" result="Passed" start-time="2026-10-06 21:06:46Z" end-time="2026-10-06 21:06:54Z" duration="7.891236" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1354" name="ReplayHoldsOneCapturedTagFrameThenFadesWithoutPausingPlay" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.ReplayHoldsOneCapturedTagFrameThenFadesWithoutPausingPlay" methodname="ReplayHoldsOneCapturedTagFrameThenFadesWithoutPausingPlay" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="591600811" result="Passed" start-time="2026-10-06 21:06:54Z" end-time="2026-10-06 21:06:59Z" duration="4.426448" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1328" name="TagContactMetadataCannotAimTheNextMissOrCreateScores" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.TagContactMetadataCannotAimTheNextMissOrCreateScores" methodname="TagContactMetadataCannotAimTheNextMissOrCreateScores" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="159605227" result="Passed" start-time="2026-10-06 21:06:59Z" end-time="2026-10-06 21:06:59Z" duration="0.573984" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

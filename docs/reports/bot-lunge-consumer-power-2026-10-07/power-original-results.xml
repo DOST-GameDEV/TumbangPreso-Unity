@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 04:35:37Z" end-time="2026-10-07 04:35:37Z" duration="0.3331693">
+  <test-suite type="TestSuite" id="3488" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2015" result="Failed" site="Child" start-time="2026-10-07 04:35:37Z" end-time="2026-10-07 04:35:37Z" duration="0.333169" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3480" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2015" result="Failed" site="Child" start-time="2026-10-07 04:35:37Z" end-time="2026-10-07 04:35:37Z" duration="0.322250" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="48352" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3481" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2015" result="Failed" site="Child" start-time="2026-10-07 04:35:37Z" end-time="2026-10-07 04:35:37Z" duration="0.320538" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3484" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2013" result="Failed" site="Child" start-time="2026-10-07 04:35:37Z" end-time="2026-10-07 04:35:37Z" duration="0.319282" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1045" name="AiLungeChargePowerTests" fullname="TumbangPreso.PlayTests.AiLungeChargePowerTests" classname="TumbangPreso.PlayTests.AiLungeChargePowerTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-07 04:35:37Z" end-time="2026-10-07 04:35:37Z" duration="0.259192" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1049" name="ReleaseUsesConsumerChargeAlreadyAccumulated" fullname="TumbangPreso.PlayTests.AiLungeChargePowerTests.ReleaseUsesConsumerChargeAlreadyAccumulated" classname="TumbangPreso.PlayTests.AiLungeChargePowerTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-07 04:35:37Z" end-time="2026-10-07 04:35:37Z" duration="0.254236" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1046" name="ReleaseUsesConsumerChargeAlreadyAccumulated(0.45f,4.4f,False)" fullname="TumbangPreso.PlayTests.AiLungeChargePowerTests.ReleaseUsesConsumerChargeAlreadyAccumulated(0.45f,4.4f,False)" methodname="ReleaseUsesConsumerChargeAlreadyAccumulated" classname="TumbangPreso.PlayTests.AiLungeChargePowerTests" runstate="Runnable" seed="1966481858" result="Failed" start-time="2026-10-07 04:35:37Z" end-time="2026-10-07 04:35:37Z" duration="0.164841" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The planner used full-power travel before the consumer had accumulated full charge.
+  Expected: 0
+  But was:  2.19230771f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.AiLungeChargePowerTests.ReleaseUsesConsumerChargeAlreadyAccumulated (System.Single charge, System.Single distance, System.Boolean reachable) [0x0022d] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\AiLungeChargePowerTests.cs:51
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1047" name="ReleaseUsesConsumerChargeAlreadyAccumulated(0.45f,3.5f,True)" fullname="TumbangPreso.PlayTests.AiLungeChargePowerTests.ReleaseUsesConsumerChargeAlreadyAccumulated(0.45f,3.5f,True)" methodname="ReleaseUsesConsumerChargeAlreadyAccumulated" classname="TumbangPreso.PlayTests.AiLungeChargePowerTests" runstate="Runnable" seed="25417277" result="Passed" start-time="2026-10-07 04:35:37Z" end-time="2026-10-07 04:35:37Z" duration="0.040628" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1048" name="ReleaseUsesConsumerChargeAlreadyAccumulated(1.0f,4.4f,True)" fullname="TumbangPreso.PlayTests.AiLungeChargePowerTests.ReleaseUsesConsumerChargeAlreadyAccumulated(1.0f,4.4f,True)" methodname="ReleaseUsesConsumerChargeAlreadyAccumulated" classname="TumbangPreso.PlayTests.AiLungeChargePowerTests" runstate="Runnable" seed="1001630127" result="Passed" start-time="2026-10-07 04:35:37Z" end-time="2026-10-07 04:35:37Z" duration="0.035261" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

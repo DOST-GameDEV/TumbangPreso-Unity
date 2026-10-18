@@ -1,0 +1,25 @@
+{
+  "source": "4b679b0a8fd9ea882ede486d32513ca8293334d9",
+  "protocol": 152,
+  "profile": "pc-arrival152-1006f",
+  "profilePath": "C:\\Users\\matth\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\8343933acb672b4af3e3873e5a7e7f0f4954742d43fef1eb55f57441c42373de",
+  "manifestSHA256": "2a258217bd64c108c545ae39067f9b038da84dbb190c41c364ac01e542f65462",
+  "command": [
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\online-pc-4b679152-1006\\TumbangPreso.exe",
+    "-force-d3d11",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1280",
+    "-screen-height",
+    "720",
+    "-tp-framecap",
+    "60",
+    "-tp-profile",
+    "pc-arrival152-1006f",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\arrival-visible152-1006\\normal-player\\player.log"
+  ],
+  "scope": "Normal Guest/title/Home online and LAN actual PC/laptop GUI tests; no bootstrap, synthetic engine input or Desktop overwrite.",
+  "pid": 18944
+}

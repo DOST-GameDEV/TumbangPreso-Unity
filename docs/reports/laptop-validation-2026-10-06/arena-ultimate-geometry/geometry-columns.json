@@ -1,0 +1,40 @@
+{
+  "actor-geometry.tsv": [
+    "elapsed",
+    "frame",
+    "round",
+    "phase",
+    "beat",
+    "shot",
+    "caption",
+    "selectedSlot",
+    "casterSlot",
+    "cameraPosition",
+    "cameraEuler",
+    "fov",
+    "presentationHeld",
+    "actorSlot",
+    "hero",
+    "position",
+    "velocity",
+    "grounded",
+    "roundActive",
+    "defender"
+  ],
+  "floor-geometry.tsv": [
+    "elapsed",
+    "phase",
+    "actorSlot",
+    "collider",
+    "hitPoint",
+    "distance"
+  ],
+  "projection.tsv": [
+    "elapsed",
+    "frame",
+    "actorSlot",
+    "position",
+    "chestViewportXYZ",
+    "aspect"
+  ]
+}

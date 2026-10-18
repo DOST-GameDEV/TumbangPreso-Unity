@@ -80,7 +80,12 @@ namespace TumbangPreso.Visual
         {
             foreach (var sheet in VfxSheets.All)
             {
-                LoadTexture(sheet.Resource);
+                if (!Textures.TryGetValue(sheet.Resource, out var cached) || cached == null)
+                {
+                    var load = Resources.LoadAsync<Texture2D>(VfxSheets.Folder + sheet.Resource);
+                    yield return load;
+                    if (load.asset is Texture2D texture) Textures[sheet.Resource] = texture;
+                }
                 yield return null;
             }
         }

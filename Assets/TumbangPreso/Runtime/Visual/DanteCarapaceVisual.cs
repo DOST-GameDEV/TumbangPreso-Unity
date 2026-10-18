@@ -1,11 +1,23 @@
 using System.Collections.Generic;
 using TumbangPreso.CameraSystem;
+using TumbangPreso.Core;
 using UnityEngine;
 
 namespace TumbangPreso.Visual
 {
     // A fitted stone ward. It follows the actual torso and never fills its
     // wearer's first-person view with the former sphere and orbiting cubes.
+    //
+    // UNSTOPPABLE's beats around the owner-approved armour (`docs/reports/dante-presentation-2026-10-16/plan.md` section 2;
+    // the fitted plates' shapes and the orbiting shields are kept exactly):
+    //  * TELL (0 to .15 s): the court cracks in a small ring under his feet, the seams lit (`_ground`).
+    //  * ARMOUR (.15 to about .6 s): the plates rise from the court and lock on him from the lowest to the highest, each a
+    //    0.06 s jolt; a plate's seams light as it locks. The orbiting shields form last.
+    //  * REFUSAL: while it holds, a status that would land flashes the plate nearest its colour's side and splashes chips of
+    //    that colour off it (`CharacterMotor.StatusRefused`, `DanteStatusShatter.Refusal`).
+    //  * WARNING (last 2 s): the seams cool from orange to dull red, the plates tremble, the orbit slows.
+    //  * DISSIPATE (last .5 s): the plates crack and drop to the court, break smaller and sink into it. Never an alpha fade.
+    // All of it posed from `StepTo(seconds)`, so a replay or a rejoiner draws the same frame.
     public sealed class DanteCarapaceVisual : MonoBehaviour, IVfxTimeline
     {
         private CharacterMotor _owner;
@@ -24,6 +36,12 @@ namespace TumbangPreso.Visual
         private GameObject _orbitRoot;
         private DanteWardBadge _badge;
         private Renderer[] _renderers;
+        private int[] _rank;
+        private float[] _flashAt;
+        private GameObject _ground;
+        private Material _groundSeam;
+        private const float AssembleFrom = .15f, AssembleStep = .06f, WarnSeconds = 2f, CrumbleSeconds = .5f;
+        private float OrbitFrom => AssembleFrom + _plates.Count * AssembleStep;
         public float LifeSeconds=>Mathf.Max(.1f,_duration);
         public IReadOnlyList<Renderer> VisiblePieces=>_renderers;
 
@@ -60,7 +78,9 @@ namespace TumbangPreso.Visual
             var root=new GameObject("DanteStoneWard");root.transform.SetParent(body.bones[bone],false);root.transform.localPosition=bounds.center;
             var ward=root.AddComponent<DanteCarapaceVisual>();ward._owner=owner;ward._worldRoot=worldRoot;ward._duration=duration;ward._heavy=heavy;
             if(front==0)front=Mathf.Sign(Vector3.Dot(body.bones[bone].forward,worldRoot.forward));
-            ward._front=front==0?1:front;ward.Build(bounds.extents,ward._front);ward._badge=DanteWardBadge.Create(worldRoot,owner);ward.StepTo(0);return ward;
+            ward._front=front==0?1:front;ward.Build(bounds.extents,ward._front);ward._badge=DanteWardBadge.Create(worldRoot,owner);
+            if(owner!=null)owner.StatusRefused+=ward.OnRefused;
+            ward.StepTo(0);return ward;
         }
 
         private static Bounds TorsoBounds(SkinnedMeshRenderer body,int bone)
@@ -103,7 +123,51 @@ namespace TumbangPreso.Visual
                 _orbiting.Add(CreatePlate(_orbitRoot.transform,"OrbitingStoneProtector",4,i==1,
                     Vector3.zero,Vector3.forward,_heavy ? .22f:.20f,_heavy ? .29f:.26f,_heavy ? .065f:.048f));
             var all=new List<Renderer>(GetComponentsInChildren<Renderer>());
-            all.AddRange(_orbitRoot.GetComponentsInChildren<Renderer>());_renderers=all.ToArray();
+            all.AddRange(_orbitRoot.GetComponentsInChildren<Renderer>());
+            BuildGroundRing();all.AddRange(_ground.GetComponentsInChildren<Renderer>());
+            _renderers=all.ToArray();
+            // Lowest plate locks first: rank by each plate's rest height on the torso.
+            _rank=new int[_plates.Count];_flashAt=new float[_plates.Count];
+            var order=new List<int>();for(int i=0;i<_plates.Count;i++){order.Add(i);_flashAt[i]=-99;}
+            order.Sort((a,b)=>_plates[a].Position.y.CompareTo(_plates[b].Position.y));
+            for(int r=0;r<order.Count;r++)_rank[order[r]]=r;
+        }
+
+        // The tell: seven cracks run out from under his feet, typed (angle deg, length m, half width, one kink).
+        private static readonly (float angle,float length,float width,float kink)[] GroundCracks=
+        {
+            (8,.62f,.020f,.18f),(57,.44f,.016f,-.12f),(103,.70f,.022f,.10f),(151,.38f,.014f,-.20f),
+            (204,.58f,.018f,.14f),(262,.66f,.021f,-.08f),(311,.48f,.015f,.16f),
+        };
+        private void BuildGroundRing()
+        {
+            _ground=new GameObject("UnstoppableGroundRing");_ground.transform.SetParent(_worldRoot,false);
+            var tris=new List<Vector3>();
+            foreach(var c in GroundCracks)
+            {
+                float a=c.angle*Mathf.Deg2Rad;var dir=new Vector2(Mathf.Sin(a),Mathf.Cos(a));var side=new Vector2(-dir.y,dir.x);
+                var p0=dir*.16f;var p1=dir*(.16f+c.length*.5f)+side*c.kink*.5f;var p2=dir*(.16f+c.length);
+                void Seg(Vector2 a0,Vector2 a1,float w0,float w1)
+                {
+                    var d=(a1-a0).normalized;var sd=new Vector2(-d.y,d.x);
+                    var q0=new Vector3(a0.x-sd.x*w0,0,a0.y-sd.y*w0);var q1=new Vector3(a1.x-sd.x*w1,0,a1.y-sd.y*w1);
+                    var q2=new Vector3(a1.x+sd.x*w1,0,a1.y+sd.y*w1);var q3=new Vector3(a0.x+sd.x*w0,0,a0.y+sd.y*w0);
+                    Face(tris,q0,q1,q2,Vector3.up);Face(tris,q0,q2,q3,Vector3.up);
+                }
+                Seg(p0,p1,c.width,c.width*.8f);Seg(p1,p2,c.width*.8f,.002f);
+            }
+            var seam=VfxShapes.Stand(_ground.transform,"MoltenCourtCrack",MeshFrom(tris,"UnstoppableCourtCracks"),1);
+            VfxMaterial.Ghost(seam.GetComponent<Renderer>(),new Color(1,.43f,.08f,.92f),.55f);
+            _groundSeam=seam.GetComponent<Renderer>().sharedMaterial;
+        }
+
+        private void OnRefused(CharacterMotor who,StatusKind kind)
+        {
+            if(_plates.Count==0||!_visible)return;
+            // The plate on the side the status's colour family maps to: a fixed choice per kind, so every frame agrees.
+            int i=((int)kind*5+3)%_plates.Count;var plate=_plates[i];if(plate.Node==null)return;
+            _flashAt[i]=_recordedAge;
+            DanteStatusShatter.Refusal(plate.Node.position,plate.Node.TransformDirection(Vector3.up),kind);
         }
 
         private void AddPlate(string name,int profile,bool mirror,Vector3 at,Vector3 normal,float spanX,float spanZ)
@@ -247,37 +311,77 @@ namespace TumbangPreso.Visual
             _recordedAge=seconds;
             if(_badge!=null)_badge.StepTo(seconds,LifeSeconds);
             _visible=seconds>=0&&seconds<LifeSeconds;
-            float release=Mathf.SmoothStep(0,1,Mathf.Clamp01((LifeSeconds-seconds)/.18f));
+            float life=LifeSeconds;
+            float warn=Mathf.Clamp01((seconds-(life-WarnSeconds))/WarnSeconds);
+            float fall=Mathf.Clamp01((seconds-(life-CrumbleSeconds))/CrumbleSeconds);
+            float ground=Slipper.GroundY(transform.position);
+            float above=Mathf.Max(0,transform.position.y-ground);
+            Color hot=new Color(1,.35f,.04f),cooled=new Color(.55f,.16f,.06f)*.55f;
+            Color seamColour=Color.Lerp(hot,cooled,warn);
             for(int i=0;i<_plates.Count;i++)
             {
                 var plate=_plates[i];if(plate.Node==null)continue;
-                float settle=Mathf.SmoothStep(0,1,Mathf.Clamp01((seconds-i*.015f)/(_heavy ? .36f : .26f)));
-                plate.Node.localPosition=plate.Position+plate.Normal*((1-settle)*.05f+(1-release)*.02f)
-                    -Vector3.up*((1-settle)*.16f+(1-release)*.025f);
-                plate.Node.localRotation=plate.Rotation*Quaternion.Euler((1-settle)*22,0,(1-settle)*(i%2==0?14:-14));
-                plate.Node.localScale=plate.Scale*Mathf.Lerp(.90f,1,release);
-                if(plate.Seam!=null)plate.Seam.SetColor("_EmissionColor",new Color(1,.35f,.04f)*
-                    ((.42f+.10f*Mathf.Sin(seconds*4.2f+i*.6f))*release));
+                int rank=_rank!=null&&i<_rank.Length?_rank[i]:i;
+                // ARMOUR: from the court up to its place in one jolt, lowest plate first.
+                float lockAt=AssembleFrom+(rank+1)*AssembleStep;
+                float jolt=Mathf.Clamp01((seconds-(lockAt-AssembleStep))/AssembleStep);
+                float overshoot=jolt>=1?Mathf.Max(0,1-(seconds-lockAt)/.08f)*.012f:0;
+                float drop=(1-jolt*jolt)*above+fall*fall*above+fall*.12f;
+                var down=transform.InverseTransformVector(Vector3.down*drop);
+                float tremble=warn*(1-fall)*1.8f;
+                plate.Node.localPosition=plate.Position+down+plate.Normal*overshoot;
+                plate.Node.localRotation=plate.Rotation*Quaternion.Euler((1-jolt)*30+fall*48*(i%2==0?1:-1)+Mathf.Sin(seconds*47f+i*1.7f)*tremble,
+                    0,(1-jolt)*(i%2==0?18:-18)+Mathf.Sin(seconds*53f+i)*tremble);
+                // DISSIPATE: it breaks smaller in two steps as it lands, and goes into the court.
+                float broken=fall<.55f?1:fall<.8f?.72f:Mathf.Lerp(.72f,0,(fall-.8f)/.2f);
+                plate.Node.localScale=plate.Scale*Mathf.Lerp(.55f,1,jolt)*broken;
+                if(plate.Seam!=null)
+                {
+                    float lit=jolt>=1?1:0;
+                    float flare=jolt>=1?Mathf.Max(0,1-(seconds-lockAt)/.2f)*.8f:0;
+                    float refused=_flashAt!=null?Mathf.Max(0,1-(seconds-_flashAt[i])/.25f)*1.6f:0;
+                    plate.Seam.SetColor("_EmissionColor",seamColour*
+                        (((.42f+.10f*Mathf.Sin(seconds*4.2f+i*.6f))*(1-fall)+flare+refused)*lit));
+                }
             }
-            float opening=Mathf.SmoothStep(0,1,Mathf.Clamp01(seconds/.36f));
-            float closing=Mathf.SmoothStep(0,1,Mathf.Clamp01((LifeSeconds-seconds)/.28f));
+            // The shields form last, slow in the warning, and drop with the plates.
+            float opening=Mathf.SmoothStep(0,1,Mathf.Clamp01((seconds-OrbitFrom+.06f)/.30f));
+            float closing=Mathf.SmoothStep(0,1,Mathf.Clamp01((life-seconds)/.28f));
+            float speed=_heavy ? .85f:1.05f;
+            float late=Mathf.Max(0,seconds-(life-WarnSeconds));
+            float phase=speed*seconds-speed*.125f*late*late;
+            float orbitHeight=_orbitRoot!=null?_orbitRoot.transform.localPosition.y:.55f;
             for(int i=0;i<_orbiting.Count;i++)
             {
                 var plate=_orbiting[i];if(plate.Node==null)continue;
-                float angle=i*Mathf.PI*2/3+.35f+seconds*(_heavy ? .85f:1.05f);
+                float angle=i*Mathf.PI*2/3+.35f+phase;
                 var outward=new Vector3(Mathf.Cos(angle),0,Mathf.Sin(angle));
                 float radius=Mathf.Lerp(.30f,_heavy ? .80f:.73f,opening*closing);
-                plate.Node.localPosition=outward*radius+Vector3.up*(Mathf.Sin(angle*1.4f)*.055f-(1-closing)*.13f);
+                plate.Node.localPosition=outward*radius+Vector3.up*(Mathf.Sin(angle*1.4f)*.055f-(1-closing)*.13f-fall*fall*orbitHeight);
                 plate.Node.localRotation=Quaternion.LookRotation(Vector3.up,outward)
                     *Quaternion.Euler((1-opening)*35+(1-closing)*65,0,Mathf.Sin(angle)*8);
                 plate.Node.localScale=plate.Scale*Mathf.Lerp(.45f,1,opening)*Mathf.Lerp(.70f,1,closing);
-                if(plate.Seam!=null)plate.Seam.SetColor("_EmissionColor",new Color(1,.40f,.055f)*(.70f+.12f*Mathf.Sin(angle*2))*closing);
+                if(plate.Seam!=null)plate.Seam.SetColor("_EmissionColor",Color.Lerp(new Color(1,.40f,.055f),cooled,warn)*(.70f+.12f*Mathf.Sin(angle*2))*closing);
+            }
+            // TELL: the court cracks under his feet as he hunches, stays lit through the armour, then cools and closes.
+            if(_ground!=null)
+            {
+                float run=Mathf.Clamp01(seconds/.15f),cool=Mathf.Clamp01((seconds-.7f)/.5f);
+                _ground.SetActive(seconds<1.25f&&_visible);
+                var feet=_worldRoot.InverseTransformPoint(new Vector3(_worldRoot.position.x,ground+.012f,_worldRoot.position.z));
+                _ground.transform.localPosition=feet;
+                _ground.transform.localScale=new Vector3(Mathf.Lerp(.2f,1,run),1,Mathf.Lerp(.2f,1,run))*(1-cool*cool);
+                if(_groundSeam!=null)_groundSeam.SetColor("_EmissionColor",Color.Lerp(new Color(1,.42f,.06f),new Color(.55f,.16f,.06f)*.4f,cool)*.9f);
             }
         }
 
         private void OnEnable()=>Camera.onPreCull+=BeforeCamera;
         private void OnDisable()=>Camera.onPreCull-=BeforeCamera;
-        private void OnDestroy(){if(_orbitRoot!=null)Destroy(_orbitRoot);if(_badge!=null)Destroy(_badge.gameObject);}
+        private void OnDestroy()
+        {
+            if(_owner!=null)_owner.StatusRefused-=OnRefused;
+            if(_orbitRoot!=null)Destroy(_orbitRoot);if(_ground!=null)Destroy(_ground);if(_badge!=null)Destroy(_badge.gameObject);
+        }
         private void BeforeCamera(Camera camera)
         {
             if(_owner==null||_renderers==null)return;

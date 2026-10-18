@@ -66,6 +66,7 @@ namespace TumbangPreso.UI
             var text = rect.gameObject.AddComponent<Text>();
             text.text = words; text.fontSize = size > 0 ? size : Theme.BodySize;
             text.font = display || bold ? Theme.Display : Theme.Body;
+            text.font = InGameTypography.Resolve(text.font, display || bold, text);
             text.fontStyle = FontStyle.Normal;
             text.color = Theme.DeepOlive;
             text.alignment = TextAnchor.MiddleLeft;
@@ -158,7 +159,7 @@ namespace TumbangPreso.UI
             var art = Art(button.transform, "Portrait", Sprite("UI/portraits/" + id));
             Stretch(art.rectTransform, 8); art.rectTransform.offsetMin = new Vector2(8, 104);
             var label = button.GetComponentInChildren<Text>();
-            label.text = name; label.font = Theme.Display; label.fontSize = 28;
+            label.text = name; label.font = InGameTypography.Resolve(Theme.Display, true, label); label.fontSize = 28;
             label.rectTransform.anchorMin = Vector2.zero; label.rectTransform.anchorMax = new Vector2(1, 0);
             label.rectTransform.pivot = new Vector2(.5f, 0);
             label.rectTransform.offsetMin = new Vector2(24, 10); label.rectTransform.offsetMax = new Vector2(-24, 100);

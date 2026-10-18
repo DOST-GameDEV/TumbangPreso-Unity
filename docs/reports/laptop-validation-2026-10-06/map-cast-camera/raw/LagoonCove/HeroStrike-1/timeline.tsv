@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.502	89.500	Quiet	QuietEstablish	the street	1	0
+1.003	89.000	Quiet	QuietEstablish	the street	1	0
+1.503	88.500	Quiet	QuietEstablish	the street	1	0
+2.004	88.000	Quiet	QuietEstablish	the street	1	0
+2.505	87.500	SlipperLanded	Objective	the can	2	0
+3.006	87.001	SlipperLanded	Objective	the can	2	0
+3.507	86.501	SlipperLanded	Objective	the can	2	0
+4.008	86.001	SlipperLanded	Objective	the can	2	0
+4.508	85.501	Quiet	QuietEstablish	the street	3	0
+5.353	84.641	Quiet	QuietEstablish	the street	3	0
+5.853	84.141	Quiet	QuietEstablish	the street	3	0
+6.355	83.641	Quiet	QuietEstablish	the street	3	0
+6.855	83.141	Retrieval	Chase	retrieval · RAGO	4	0
+7.357	82.641	Retrieval	Chase	retrieval · RAGO	4	0
+7.858	82.141	Retrieval	Chase	retrieval · RAGO	4	0
+8.360	81.641	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	5	0
+8.861	81.141	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	5	0
+9.361	80.642	ThrowPrep	Objective	throw · AMIHAN	6	0
+9.861	80.142	ThrowPrep	Objective	throw · AMIHAN	6	0
+10.361	79.642	LataHit	Objective	the can · AMIHAN	6	0
+10.864	79.142	LataHit	Objective	the can · AMIHAN	6	0
+11.364	78.642	LataHit	Objective	the can · AMIHAN	6	0
+11.864	78.142	LataHit	Objective	the can · AMIHAN	6	0
+12.367	77.642	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	6	0
+12.868	77.142	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	6	0
+13.368	76.642	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	6	0
+13.868	76.142	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	6	0
+14.370	75.642	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	6	0
+14.871	75.123	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	6	0

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="9" result="Passed" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-08 03:48:57Z" end-time="2026-10-08 03:48:59Z" duration="2.135849">
+  <test-suite type="TestSuite" id="3661" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2153" result="Passed" start-time="2026-10-08 03:48:57Z" end-time="2026-10-08 03:48:59Z" duration="2.135849" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3653" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2153" result="Passed" start-time="2026-10-08 03:48:57Z" end-time="2026-10-08 03:48:59Z" duration="2.091591" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="65784" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3654" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2153" result="Passed" start-time="2026-10-08 03:48:57Z" end-time="2026-10-08 03:48:59Z" duration="2.056144" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3657" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2151" result="Passed" start-time="2026-10-08 03:48:57Z" end-time="2026-10-08 03:48:59Z" duration="2.019556" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2063" name="LivePoseHistoryTests" fullname="TumbangPreso.PlayTests.LivePoseHistoryTests" classname="TumbangPreso.PlayTests.LivePoseHistoryTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-08 03:48:58Z" end-time="2026-10-08 03:48:58Z" duration="0.123116" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="2069" name="AcceptedNetworkEpochNeverInterpolatesThroughTheMap" fullname="TumbangPreso.PlayTests.LivePoseHistoryTests.AcceptedNetworkEpochNeverInterpolatesThroughTheMap" classname="TumbangPreso.PlayTests.LivePoseHistoryTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-08 03:48:58Z" end-time="2026-10-08 03:48:58Z" duration="0.087156" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2067" name="AcceptedNetworkEpochNeverInterpolatesThroughTheMap(False)" fullname="TumbangPreso.PlayTests.LivePoseHistoryTests.AcceptedNetworkEpochNeverInterpolatesThroughTheMap(False)" methodname="AcceptedNetworkEpochNeverInterpolatesThroughTheMap" classname="TumbangPreso.PlayTests.LivePoseHistoryTests" runstate="Runnable" seed="1718611280" result="Passed" start-time="2026-10-08 03:48:58Z" end-time="2026-10-08 03:48:58Z" duration="0.070527" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2068" name="AcceptedNetworkEpochNeverInterpolatesThroughTheMap(True)" fullname="TumbangPreso.PlayTests.LivePoseHistoryTests.AcceptedNetworkEpochNeverInterpolatesThroughTheMap(True)" methodname="AcceptedNetworkEpochNeverInterpolatesThroughTheMap" classname="TumbangPreso.PlayTests.LivePoseHistoryTests" runstate="Runnable" seed="1640964555" result="Passed" start-time="2026-10-08 03:48:58Z" end-time="2026-10-08 03:48:58Z" duration="0.007461" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2073" name="ContactCaptureCarriesAnOfflineTeleportDiscontinuity" fullname="TumbangPreso.PlayTests.LivePoseHistoryTests.ContactCaptureCarriesAnOfflineTeleportDiscontinuity" methodname="ContactCaptureCarriesAnOfflineTeleportDiscontinuity" classname="TumbangPreso.PlayTests.LivePoseHistoryTests" runstate="Runnable" seed="1250978433" result="Passed" start-time="2026-10-08 03:48:58Z" end-time="2026-10-08 03:48:58Z" duration="0.007912" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2072" name="FastContinuousMotionStillInterpolates" fullname="TumbangPreso.PlayTests.LivePoseHistoryTests.FastContinuousMotionStillInterpolates" classname="TumbangPreso.PlayTests.LivePoseHistoryTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-08 03:48:58Z" end-time="2026-10-08 03:48:58Z" duration="0.006282" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2070" name="FastContinuousMotionStillInterpolates(False)" fullname="TumbangPreso.PlayTests.LivePoseHistoryTests.FastContinuousMotionStillInterpolates(False)" methodname="FastContinuousMotionStillInterpolates" classname="TumbangPreso.PlayTests.LivePoseHistoryTests" runstate="Runnable" seed="2120602015" result="Passed" start-time="2026-10-08 03:48:58Z" end-time="2026-10-08 03:48:58Z" duration="0.002677" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2071" name="FastContinuousMotionStillInterpolates(True)" fullname="TumbangPreso.PlayTests.LivePoseHistoryTests.FastContinuousMotionStillInterpolates(True)" methodname="FastContinuousMotionStillInterpolates" classname="TumbangPreso.PlayTests.LivePoseHistoryTests" runstate="Runnable" seed="1555852003" result="Passed" start-time="2026-10-08 03:48:58Z" end-time="2026-10-08 03:48:58Z" duration="0.001825" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2074" name="LiveVisibilityChangesAtTheRecordedTimeNotHalfwayBeforeIt" fullname="TumbangPreso.PlayTests.LivePoseHistoryTests.LiveVisibilityChangesAtTheRecordedTimeNotHalfwayBeforeIt" methodname="LiveVisibilityChangesAtTheRecordedTimeNotHalfwayBeforeIt" classname="TumbangPreso.PlayTests.LivePoseHistoryTests" runstate="Runnable" seed="900557404" result="Passed" start-time="2026-10-08 03:48:58Z" end-time="2026-10-08 03:48:58Z" duration="0.003418" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2066" name="OfflineTeleportNeverBecomesAPhantomWalk" fullname="TumbangPreso.PlayTests.LivePoseHistoryTests.OfflineTeleportNeverBecomesAPhantomWalk" classname="TumbangPreso.PlayTests.LivePoseHistoryTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-08 03:48:58Z" end-time="2026-10-08 03:48:58Z" duration="0.006024" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2064" name="OfflineTeleportNeverBecomesAPhantomWalk(False)" fullname="TumbangPreso.PlayTests.LivePoseHistoryTests.OfflineTeleportNeverBecomesAPhantomWalk(False)" methodname="OfflineTeleportNeverBecomesAPhantomWalk" classname="TumbangPreso.PlayTests.LivePoseHistoryTests" runstate="Runnable" seed="30325844" result="Passed" start-time="2026-10-08 03:48:58Z" end-time="2026-10-08 03:48:58Z" duration="0.002762" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2065" name="OfflineTeleportNeverBecomesAPhantomWalk(True)" fullname="TumbangPreso.PlayTests.LivePoseHistoryTests.OfflineTeleportNeverBecomesAPhantomWalk(True)" methodname="OfflineTeleportNeverBecomesAPhantomWalk" classname="TumbangPreso.PlayTests.LivePoseHistoryTests" runstate="Runnable" seed="1800008355" result="Passed" start-time="2026-10-08 03:48:58Z" end-time="2026-10-08 03:48:58Z" duration="0.001807" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="2920" name="RenderCopyAnimationSamplingTests" fullname="TumbangPreso.PlayTests.RenderCopyAnimationSamplingTests" classname="TumbangPreso.PlayTests.RenderCopyAnimationSamplingTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-08 03:48:58Z" end-time="2026-10-08 03:48:59Z" duration="1.647066" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2921" name="CurrentRigCopiesSampleRootedClipsWithoutAutomaticPoseChangesOrGameplayComponents" fullname="TumbangPreso.PlayTests.RenderCopyAnimationSamplingTests.CurrentRigCopiesSampleRootedClipsWithoutAutomaticPoseChangesOrGameplayComponents" methodname="CurrentRigCopiesSampleRootedClipsWithoutAutomaticPoseChangesOrGameplayComponents" classname="TumbangPreso.PlayTests.RenderCopyAnimationSamplingTests" runstate="Runnable" seed="222224207" result="Passed" start-time="2026-10-08 03:48:58Z" end-time="2026-10-08 03:48:59Z" duration="1.645264" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RenderCopySampling] currentRigs=9 sampledClips=36 automaticPoseChanges=0 gameplayComponents=0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

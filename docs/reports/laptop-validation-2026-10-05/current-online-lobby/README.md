@@ -11,7 +11,7 @@ The owner's intermittent Request timeout/host-kick report remains unresolved.
 
 - Source61a650049b4949bda2c60d8df8991ff1e8705ed0, protocol151, Windows64/Mono,
   Unity6000.5.8f1, D3D11 players. The package includes the checked replay archive
-  recovery, Basilio named active countdown and grounded online failure copy.
+  recovery, Dante named active countdown and grounded online failure copy.
 - Internal artifact Builds/current-laptop-61a650049-1005/TumbangPreso.exe;
  258files,2691131071bytes. Exact manifestSHA256
  47cfe4a338bd0a5de12d4081d53e6a49f9b9e09aee4be8cd28cc796924a83847.

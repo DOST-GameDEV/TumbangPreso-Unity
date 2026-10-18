@@ -34,9 +34,9 @@ namespace TumbangPreso.UI
             { "zack_ultimate", AbilityGlyph.ZackThunderstrike },
 
             // Nemu (Spirit Summoner)
-            { "nemu_skill1", AbilityGlyph.NemuTerrify },
-            { "nemu_skill2", AbilityGlyph.NemuAstralPet },
-            { "nemu_skill2d", AbilityGlyph.NemuKuroGuard },
+            { "nemu_skill1", AbilityGlyph.NemuDontLook },
+            { "nemu_skill2", AbilityGlyph.NemuSkitter },
+            { "nemu_skill2d", AbilityGlyph.NemuLookout },
             { "nemu_ultimate", AbilityGlyph.NemuSeanceVoid },
 
             // Phaister (Street Witch)

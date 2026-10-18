@@ -1,0 +1,13 @@
+# Selected-subject and cut-reason readout on Bayan Plaza and Kanto
+
+Two natural four-bot Hero Strike cases sample the actual selected subject while the existing1600x900 render target is active. Temporary worker-only logs identify the three existing cut sites as new-beat, distance or transit. The logging-only patch and full diagnostic source are retained; no production code or actor outcome is changed by this readout.
+
+All six sampled chest points are inside the viewport at78-degree FOV/aspect1.7778. Their selected IDs/captions differ from the earlier ambiguous throw-ISAGANI still, so this does not refute that earlier frame or prove a full character silhouette is visible. Viewport position alone cannot establish body occlusion, readable abilities or subject continuity. The raw rendered frames and before-render projection snapshots are retained for review.
+
+Bayan Plaza records eight new-beat cuts and three transit safety cuts. Kanto records eight new-beat cuts and two safety cuts; neither run records a distance cut. Two safety cuts follow a new shot within a short interval in each map. This establishes the executed sites and timestamps, not that every safety cut was unnecessary or visually bad. Continuous motion/collision context is needed before a tuning change. The earlier Kanto total alone is not a cause diagnosis.
+
+Unity8152/parent70695 finishes with two actual passes. All21150 frozen inputs restore after279 known importer/ProjectAuditor deltas, thirteen existing isolated editor preferences restore, and all four original isolated profile files restore with zero generated file changes. Qualified-input manifests remain local with an exact hash. Private profile/pref dumps are excluded. The original launch, source manifest and explicit provenance correction remain unchanged.
+
+The packet declared the pulled5052 head, but the reused worker retained the earlier ea7 camera-control implementation. This mismatch was caught by direct source/hash comparison while the run was active. Effective source is the restored ea7 snapshot plus the recorded diagnostic Director and framing fixture overlays. This run does not qualify the later stick controls or full5052 integration. The declared intent is preserved rather than silently relabeled.
+
+Rendered Editor frames, sparse viewport data and cut-site logs do not qualify physical inputs, a current packaged pair, Classic/full Hero roster, every map/stage or tournament-wide readiness. The next camera work should capture the actual natural Isagani throw event and continuous cut context. The desktop separately owns spectator-interest event/caption lifetime. No hero direction, private art, camera contract or production tuning is changed here.

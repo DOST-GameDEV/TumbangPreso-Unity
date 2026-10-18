@@ -9,13 +9,15 @@ namespace TumbangPreso.EditorTools
     public sealed class OwnerArtworkQualityImport : AssetPostprocessor
     {
         public const int QualityMaxTextureSize = 8192;
-        public override uint GetVersion() => 3;
+        public override uint GetVersion() => 5;
         private void OnPreprocessTexture()
         {
             bool menu = assetPath.StartsWith("Assets/TumbangPreso/Resources/UI/owner-menu-edits/", StringComparison.Ordinal);
             bool painted = assetPath.StartsWith("Assets/TumbangPreso/Resources/UI/owner-painted/", StringComparison.Ordinal);
             bool legacyBackdrop = assetPath == "Assets/TumbangPreso/Resources/UI/main-menu/MENU BACKDROP.png";
-            if (!menu && !painted && !legacyBackdrop) return;
+            bool card = assetPath.StartsWith("Assets/TumbangPreso/Resources/UI/map-cards/", StringComparison.Ordinal)
+                || assetPath.StartsWith("Assets/TumbangPreso/Resources/UI/mode-cards/", StringComparison.Ordinal);
+            if (!menu && !painted && !legacyBackdrop && !card) return;
             Apply((TextureImporter)assetImporter, assetPath);
         }
 
@@ -26,7 +28,11 @@ namespace TumbangPreso.EditorTools
                 || name == "main2-sky-mask.png" || name == "main2-shadow.png"
                 || name.Contains("mask");
             bool plate = name.Contains("background") || name == "MENU BACKDROP.png";
-            bool minified = name.Contains("cloud-bank-") || name == "main2-cloud.png" || name == "main2-leaf.png";
+            // Each menu piece has its own texture, so its mip levels cannot bleed
+            // into neighboring pieces as they would in the owner-painted atlas.
+            bool standaloneMenu = path.StartsWith("Assets/TumbangPreso/Resources/UI/owner-menu-edits/", StringComparison.Ordinal);
+            bool minified = (standaloneMenu && !mask) || cardTexture(path)
+                || name.Contains("cloud-bank-") || name == "main2-cloud.png" || name == "main2-leaf.png";
             importer.textureCompression = TextureImporterCompression.Uncompressed;
             importer.crunchedCompression = false;
             importer.npotScale = TextureImporterNPOTScale.None;
@@ -39,6 +45,10 @@ namespace TumbangPreso.EditorTools
             importer.filterMode = minified ? FilterMode.Trilinear : FilterMode.Bilinear;
             importer.wrapMode = TextureWrapMode.Clamp;
         }
+
+        private static bool cardTexture(string path)
+            => path.StartsWith("Assets/TumbangPreso/Resources/UI/map-cards/", StringComparison.Ordinal)
+                || path.StartsWith("Assets/TumbangPreso/Resources/UI/mode-cards/", StringComparison.Ordinal);
 
         public static void ProtectResolution(TextureImporter importer)
         {

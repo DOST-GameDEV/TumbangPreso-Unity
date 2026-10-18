@@ -13,14 +13,17 @@ namespace TumbangPreso.Visual
         private float _height, _width;
         private bool _visible;
 
-        public static DanteWardBadge Create(Transform root, CharacterMotor owner)
+        public static DanteWardBadge Create(Transform root, CharacterMotor owner) => Create(root, owner, AbilityGlyph.DanteShield);
+
+        /// <summary>The badge with <paramref name="glyph"/> (MOUNTAIN FORM shows his ultimate's).</summary>
+        public static DanteWardBadge Create(Transform root, CharacterMotor owner, AbilityGlyph glyph)
         {
-            var go = new GameObject("DanteShieldBadge");
+            var go = new GameObject(glyph == AbilityGlyph.DanteShield ? "DanteShieldBadge" : "DanteMountainBadge");
             go.transform.SetParent(root, false);
             var badge = go.AddComponent<DanteWardBadge>();
             badge._root = root; badge._owner = owner;
             badge._sprite = go.AddComponent<SpriteRenderer>();
-            badge._sprite.sprite = AbilityIcons.For(AbilityGlyph.DanteShield);
+            badge._sprite.sprite = AbilityIcons.For(glyph);
             badge._sprite.sortingOrder = 29;
             badge._sprite.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             var capsule = root.GetComponent<CharacterController>();

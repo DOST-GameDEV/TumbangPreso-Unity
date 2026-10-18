@@ -1,0 +1,9 @@
+# Automatic startup flow retains real Home doors
+
+Reconcile three old HomeFlow fixtures with the owner-requested automatic entry. The loading-title composition keeps the supplied1920x1080 painting, default UI material and small noninteractive bar with no continuation button. The real guest-button raycast now opens Home automatically before testing profile and loadout doors. The full Splash pipeline waits for its illustrated surface after the studio intro and reaches Home after guest admission, without expecting a retired StartButton. Preserve and restore original settings and startup flags around these checks. No runtime or visual-style change in this unit.
+
+Native Unity50716 on exact canonical270f98d75 plus the updated fixture passes all three selected cases, exit0. This includes current integrated Root UI51d80/9dd82, unlike earlier source-pinned preload timing receipts. Actual pointer-event raycasts cover guest/profile/loadout; this remains synthetic pointer input, not physical mouse/keyboard/controller acceptance. Title captures at1080p/720p/short-wide retain a composition control, not a new visual approval.
+
+Full boot logs map preparation41.53s and total45.62s, retaining23067 assets. This is an editor cold-scene observation, not a packaged startup benchmark or a measured speed improvement. ShaderWarmup is absent from this Git source run; the existing warning remains explicit and no complete shader-preparation claim is made. Map activation/large essential assets still precede login and are the next measured optimization target.
+
+All21222 frozen inputs,13 editor preferences and four original named-profile files restore after294 generated deltas were preserved. Raw fixture, XML, boot-stage messages, launch/restoration receipts and exact source qualification are covered by SHA256.json. The unchanged ModeSelect case was not rerun. Current packaged cold-start and physical-device gates remain open.

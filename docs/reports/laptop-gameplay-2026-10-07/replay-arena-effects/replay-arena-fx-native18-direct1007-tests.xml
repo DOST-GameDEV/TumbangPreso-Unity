@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 08:09:09Z" end-time="2026-10-07 08:10:48Z" duration="98.6445979">
+  <test-suite type="TestSuite" id="3529" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="2048" result="Passed" start-time="2026-10-07 08:09:09Z" end-time="2026-10-07 08:10:48Z" duration="98.644598" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3521" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2048" result="Passed" start-time="2026-10-07 08:09:09Z" end-time="2026-10-07 08:10:48Z" duration="98.635975" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="49976" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3522" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2048" result="Passed" start-time="2026-10-07 08:09:09Z" end-time="2026-10-07 08:10:48Z" duration="98.633887" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3525" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2046" result="Passed" start-time="2026-10-07 08:09:09Z" end-time="2026-10-07 08:10:48Z" duration="98.632087" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1170" name="ArenaFxRecordedTests" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-07 08:09:09Z" end-time="2026-10-07 08:10:06Z" duration="56.430508" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1172" name="NaturalArenaMatchWritesRenderFrameEffectsAndActualViewerSeeksThem" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests.NaturalArenaMatchWritesRenderFrameEffectsAndActualViewerSeeksThem" methodname="NaturalArenaMatchWritesRenderFrameEffectsAndActualViewerSeeksThem" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" seed="1015252694" result="Passed" start-time="2026-10-07 08:09:09Z" end-time="2026-10-07 08:10:06Z" duration="56.419784" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] throw: sfx_arena_crowd_gasp_2 at 0.26 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.60, announcer slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_3 at 0.45 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.14, ambience slider).
+[ArenaCrowd] chant, after the can went down (in place of sfx_arena_chant_tumbang_preso, which is not recorded): sfx_arena_chant_claps at 0.30 of full scale before the sliders (excitement 0.14, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_2 at 0.36 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.50, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.57, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer at 0.36 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] near miss: sfx_arena_crowd_aww_3 at 0.35 of full scale before the sliders (excitement 0.50, ambience slider).
+[ArenaCrowd] throw: sfx_arena_crowd_gasp at 0.26 of full scale before the sliders (excitement 0.09, ambience slider).
+[ArenaCrowd] block: sfx_arena_crowd_cheer_3 at 0.36 of full scale before the sliders (excitement 0.35, ambience slider).
+[ArenaCrowd] match over: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 0.50, ambience slider).
+[Slice] match over. scores: 480 / 0 / 150 / 0. seat 0 wins
+[NaturalArenaReplayEffects] frames=13274 totalQuads=2905900 segments=10
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2779" name="RecordedShaderClockTests" fullname="TumbangPreso.PlayTests.RecordedShaderClockTests" classname="TumbangPreso.PlayTests.RecordedShaderClockTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-07 08:10:06Z" end-time="2026-10-07 08:10:48Z" duration="42.139556" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2781" name="AfterTwoMapLoadsTheSavedSceneClockMatchesGpuAndRewindPixels" fullname="TumbangPreso.PlayTests.RecordedShaderClockTests.AfterTwoMapLoadsTheSavedSceneClockMatchesGpuAndRewindPixels" methodname="AfterTwoMapLoadsTheSavedSceneClockMatchesGpuAndRewindPixels" classname="TumbangPreso.PlayTests.RecordedShaderClockTests" runstate="Runnable" seed="740341596" result="Passed" start-time="2026-10-07 08:10:06Z" end-time="2026-10-07 08:10:48Z" duration="42.137952" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+[ShaderClockGPU] cpu=34.63717 level=0 real=85.27697 editor=130.8147575 global=(1.60, 31.95, 63.89, 95.84) gpu=RGBA(0.000, 0.000, 0.000, 0.000)
+[Slice] round 1 begins, taya is seat 0
+[RecordedShaderClock] animation=0.7791036 rewind=0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

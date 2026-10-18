@@ -1,0 +1,4 @@
+0 totoy IsBot=True
+1 maring IsBot=False
+2 bebang IsBot=True
+3 mang_kanor IsBot=True

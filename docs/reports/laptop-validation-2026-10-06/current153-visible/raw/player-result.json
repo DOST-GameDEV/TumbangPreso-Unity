@@ -1,0 +1,41 @@
+{
+  "source": "8bdcfab30ac77682f367caa1fc56728ce38d8753",
+  "protocol": 153,
+  "profile": "lpt-visible153-1006a",
+  "profilePath": "C:\\Users\\Matthew\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\22135b4b4b2b5e4278302e313439b040f0c2d3f74fdd124875251813cbcd0751",
+  "command": [
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Builds\\local153-8bdcfab30-1006\\TumbangPreso.exe",
+    "-force-d3d11",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1280",
+    "-screen-height",
+    "720",
+    "-tp-framecap",
+    "60",
+    "-tp-profile",
+    "lpt-visible153-1006a",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Logs\\visible153-1006a\\player.log"
+  ],
+  "manifestSha256": "1c5cc769df1f0214b3bd1955132925aa0f8da22576edb4d7dfb9436ea54c4b6f",
+  "route": "normal visible boot; actual UI clicks; no network bootstrap",
+  "scope": "Actual normal visible boot/menu/Practice recovery and local lobby controls on current153; local same-source artifact, no desktop peer or physical controller claim",
+  "pid": 37916,
+  "exitCode": 0,
+  "savedProfileHashes": {
+    "career.json": "843da68eb16d6ee11a571a0602d293491ffec95daabb9e7e246a9f08b78c173a",
+    "career.json.bak": "9a1f22770b84956431df6a9027a776f7396ac9b3c731cd6c2d237774592e555e",
+    "settings.json": "53a8c8ede4e3fbe8bdf813ae60f98526ee9082225ee722b2a59feb5ab91edeba",
+    "settings.json.bak": "53a8c8ede4e3fbe8bdf813ae60f98526ee9082225ee722b2a59feb5ab91edeba",
+    "social.json": "fc8198b3d63911821be0367d5484fdb41c7d355d4e594e9b6dc648e4c93c934b",
+    "social.json.bak": "fc8198b3d63911821be0367d5484fdb41c7d355d4e594e9b6dc648e4c93c934b",
+    "wallet.json": "eb64d07ee7245ea469cf743f71097cbb1cb7a7cf50b2ea30a417475834b90a26",
+    "wallet.json.bak": "eb64d07ee7245ea469cf743f71097cbb1cb7a7cf50b2ea30a417475834b90a26"
+  },
+  "inputRestored": true,
+  "seedRestored": true,
+  "terminal": true,
+  "artifactUnchanged": true
+}

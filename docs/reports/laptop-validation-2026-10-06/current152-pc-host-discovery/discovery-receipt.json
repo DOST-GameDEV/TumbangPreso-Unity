@@ -1,0 +1,28 @@
+{
+  "sourceCommit": "917bca66c311fd2832cf571ede2f4b42336deb50",
+  "protocol": 152,
+  "manifestSha256": "3ac354c44b450e9ba0d8d9e07b9ae796ffc2577a0692d63c4113ddf5ef9ac313",
+  "laptop": {
+    "pid": 45252,
+    "window": 12191246,
+    "parentSession": 95506,
+    "profile": "lpt-browse152-1006c",
+    "address": "192.168.1.144",
+    "discoveryBind": "0.0.0.0:8911"
+  },
+  "pc": {
+    "pid": 5472,
+    "window": 8783602,
+    "parentSession": 59299,
+    "profile": "pc-host152-1006c",
+    "address": "192.168.1.7:8910",
+    "normalHostRoom": "CHPJ"
+  },
+  "firstLanClickUtc": "2026-10-05T19:41:37.053Z",
+  "untoggledLanEmptySeconds": 31.672,
+  "lanRow": "absent",
+  "codeLookup": "No game answered to CHPJ",
+  "directAddress": "normal GUI192.168.1.7:8910 admitted seat2",
+  "readiness": "actual lobbyCHPJ2/4 YOU READY",
+  "scope": "Two-machine SAMEpackaged corrected917 ordinary GUI; no match/start/GameAPI/injected packets/firewall changes. Does not close discovery failure."
+}

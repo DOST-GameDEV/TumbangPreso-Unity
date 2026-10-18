@@ -226,6 +226,10 @@ namespace TumbangPreso.Visual
             { "hero-nemu-ghoststep", new[] { "hero-nemu-ghoststep", Sprint, Walk } },
             { "hero-nemu-project", new[] { "hero-nemu-project", "interact-left", "attack-melee-left" } },
             { "hero-nemu-seance", new[] { "hero-nemu-seance", "emote-yes", Interact } },
+            // NEMU'S GHOSTS (owner 2026-10-15): one clip per skill, baked by `NemuMotionAuthor`, Kuro's old clip as the fallback.
+            { "hero-nemu-dontlook", new[] { "hero-nemu-dontlook", "hero-nemu-project", "interact-left" } },
+            { "hero-nemu-skitter", new[] { "hero-nemu-skitter", "hero-nemu-project", "interact-left" } },
+            { "hero-nemu-lookout", new[] { "hero-nemu-lookout", "hero-nemu-guard" } },
 
             { "hero-phaister-hex", new[] { "hero-phaister-hex", "interact-right", "attack-melee-right" } },
             { "hero-phaister-blink", new[] { "hero-phaister-blink", "attack-kick-right", Sprint } },
@@ -547,7 +551,7 @@ namespace TumbangPreso.Visual
                 else DestroyImmediate(_legsMask);
             }
             _legsMask = null;
-            _current = null;
+            _current = null; _playing = null;
             _oneShotLeft = _gaitWeight = _runWeight = _gaitPhase = 0;
             _tripPhase = 0;
             _running = false;
@@ -639,7 +643,7 @@ namespace TumbangPreso.Visual
 
         private void BuildGaitLayer()
         {
-            if (!_clips.TryGetValue(Walk, out var walk) || !_clips.TryGetValue(Sprint, out var run)) return;
+            if (!_clips.TryGetValue(Variant(Walk), out var walk) || !_clips.TryGetValue(Variant(Sprint), out var run)) return;
             CalibrateGait(walk,run);
             _gaitTravelDirection=_motor!=null&&Vector3.Dot(_motor.Velocity,transform.forward)<-.25f*FlatSpeed?-1f:1f;
             _gait = AnimationMixerPlayable.Create(_graph, 2);
@@ -862,6 +866,8 @@ namespace TumbangPreso.Visual
             }
 
             if (_carrier != null && _carrier.ChannelRatio > 0.0f) return Interact;
+
+            if (_throwReleaseTime >= 0 && _current == ThrowVariantClip && _motor.IsGrounded) return ThrowVariantClip;
 
             // HERO-10: a hero's own tell while a skill is held (`AimPose`); no other hero names one.
             string aimPose = AimPose();
@@ -1152,7 +1158,7 @@ namespace TumbangPreso.Visual
         /// <summary>A non-looping action that owns the body until it finishes.</summary>
         public void PlayOneShot(string clipName)
         {
-            if (!_graph.IsValid() || !_clips.TryGetValue(clipName, out var clip)) return;
+            if (!_graph.IsValid() || !_clips.TryGetValue(Variant(clipName), out var clip)) return;
 
             ClearChargePose();
             _throwReleaseTime=-1;
@@ -1246,6 +1252,8 @@ namespace TumbangPreso.Visual
                 _throwReleaseFrom=ThrowGesture.Pose.Apply(_throwCarryBasis,releaseFrom);
                 _throwReleaseSpin=ThrowGesture.Spin(action);_throwReleaseTime=0;
                 _oneShotLeft=ThrowGesture.ReleaseSeconds;
+                // A variant body's own legs under the gesture (`ClipVariant`): Mountain Form stamps into the throw.
+                if(ThrowBase!=null && _motor.IsGrounded)Play(ThrowBase,loop:false,force:true);
             }
             else if (action == "grab" && raising)
             {
@@ -1276,7 +1284,7 @@ namespace TumbangPreso.Visual
             if (key == null || !table.TryGetValue(key, out var chain)) return null;
 
             foreach (string name in chain)
-                if (_clips.ContainsKey(name)) return name;
+                if (HasClip(name)) return name;
 
             return null;
         }
@@ -1300,7 +1308,7 @@ namespace TumbangPreso.Visual
         }
 
         private float ClipLength(string clipName)
-            => _clips.TryGetValue(clipName, out var clip) ? clip.length : 0.0f;
+            => clipName != null && _clips.TryGetValue(Variant(clipName), out var clip) ? clip.length : 0.0f;
 
         /// <summary>
         /// Freeze a non-looping clip on its last frame.
@@ -1543,8 +1551,9 @@ namespace TumbangPreso.Visual
 
         private void Play(string clipName, bool loop, bool force = false)
         {
-            if (!force && clipName == _current) return;
-            if (!_clips.TryGetValue(clipName, out var clip) || !_mixer.IsValid()) return;
+            string playing = Variant(clipName);
+            if (!force && clipName == _current && playing == _playing) return;
+            if (!_clips.TryGetValue(playing, out var clip) || !_mixer.IsValid()) return;
 
             // Retire whatever was on input 0 and slide the current clip down to it, so the
             // mixer always crossfades from what you were doing to what you are doing now.
@@ -1600,7 +1609,7 @@ namespace TumbangPreso.Visual
             _weight = outgoing.IsValid() ? 0.0f : 1.0f;
             _mixer.SetInputWeight(0, 1f - _weight);
             _mixer.SetInputWeight(1, _weight);
-            _current = clipName;
+            _current = clipName; _playing = playing;
             _holdAtEnd = !loop;
             _transitionSeconds = loop&&System.Array.IndexOf(SwimmingMotion.Names,clipName)>=0?.24f:loop ? _blend : Mathf.Min(_blend,.07f);
         }

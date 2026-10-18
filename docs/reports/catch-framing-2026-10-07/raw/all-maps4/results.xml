@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="11" result="Passed" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 19:37:16Z" end-time="2026-10-06 19:41:08Z" duration="232.2579795">
+  <test-suite type="TestSuite" id="3429" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1971" result="Passed" start-time="2026-10-06 19:37:16Z" end-time="2026-10-06 19:41:08Z" duration="232.257980" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3421" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1971" result="Passed" start-time="2026-10-06 19:37:16Z" end-time="2026-10-06 19:41:08Z" duration="232.243975" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="34564" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3422" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1971" result="Passed" start-time="2026-10-06 19:37:16Z" end-time="2026-10-06 19:41:08Z" duration="232.238600" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3425" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1969" result="Passed" start-time="2026-10-06 19:37:16Z" end-time="2026-10-06 19:41:08Z" duration="232.232526" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1311" name="CatchReconstructionTests" fullname="TumbangPreso.PlayTests.CatchReconstructionTests" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" testcasecount="49" result="Passed" start-time="2026-10-06 19:37:16Z" end-time="2026-10-06 19:41:08Z" duration="231.541032" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1330" name="AuthoredMapFarTagRetainsVisibleWholeBodyContact" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.AuthoredMapFarTagRetainsVisibleWholeBodyContact" methodname="AuthoredMapFarTagRetainsVisibleWholeBodyContact" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="2128248066" result="Passed" start-time="2026-10-06 19:37:17Z" end-time="2026-10-06 19:37:40Z" duration="23.542722" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0 frames=48 bodyShift=0.4063034 torsoLean=28 armStretch=1 skinSurfaceGap=0.02875573
+]]></output>
+            </test-case>
+            <test-case id="1316" name="CatchChoosesTheOpenSideAndAvoidsAForcedFaceCloseup" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.CatchChoosesTheOpenSideAndAvoidsAForcedFaceCloseup" methodname="CatchChoosesTheOpenSideAndAvoidsAForcedFaceCloseup" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="109964051" result="Passed" start-time="2026-10-06 19:37:40Z" end-time="2026-10-06 19:37:58Z" duration="17.577347" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1325" name="IsolatedNativeCatchRetainsContinuousMotion" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.IsolatedNativeCatchRetainsContinuousMotion" methodname="IsolatedNativeCatchRetainsContinuousMotion" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1968883289" result="Passed" start-time="2026-10-06 19:37:58Z" end-time="2026-10-06 19:38:06Z" duration="7.960045" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1354" name="ReplayHoldsOneCapturedTagFrameThenFadesWithoutPausingPlay" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.ReplayHoldsOneCapturedTagFrameThenFadesWithoutPausingPlay" methodname="ReplayHoldsOneCapturedTagFrameThenFadesWithoutPausingPlay" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1239066349" result="Passed" start-time="2026-10-06 19:38:06Z" end-time="2026-10-06 19:38:10Z" duration="4.750087" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1317" name="VictimFraming_Arena" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.VictimFraming_Arena" methodname="VictimFraming_Arena" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="327639592" result="Passed" start-time="2026-10-06 19:38:10Z" end-time="2026-10-06 19:38:49Z" duration="39.073321" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.85, ambience slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_3 at 0.31 of full scale before the sliders (excitement 0.91, ambience slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 0.55, ambience slider).
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_3 at 0.38 of full scale before the sliders (excitement 0.89, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.75, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] fall into the shaft: sfx_arena_crowd_ooh_2 at 0.44 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.70, announcer slider).
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.70, announcer slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.70, ambience slider).
+[ArenaCrowd] chant, after a tag (in place of sfx_arena_chant_taya, which is not recorded): sfx_arena_chant_drums at 0.28 of full scale before the sliders (excitement 0.67, ambience slider).
+]]></output>
+            </test-case>
+            <test-case id="1321" name="VictimFraming_BayanPlaza" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.VictimFraming_BayanPlaza" methodname="VictimFraming_BayanPlaza" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="2130908827" result="Passed" start-time="2026-10-06 19:38:49Z" end-time="2026-10-06 19:39:10Z" duration="20.265916" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1318" name="VictimFraming_Eskinita" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.VictimFraming_Eskinita" methodname="VictimFraming_Eskinita" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="365719007" result="Passed" start-time="2026-10-06 19:39:10Z" end-time="2026-10-06 19:39:30Z" duration="20.355598" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1323" name="VictimFraming_IlalimNgTulay" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.VictimFraming_IlalimNgTulay" methodname="VictimFraming_IlalimNgTulay" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="547223868" result="Passed" start-time="2026-10-06 19:39:30Z" end-time="2026-10-06 19:40:01Z" duration="31.131377" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1319" name="VictimFraming_Kanto" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.VictimFraming_Kanto" methodname="VictimFraming_Kanto" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="988177082" result="Passed" start-time="2026-10-06 19:40:01Z" end-time="2026-10-06 19:40:23Z" duration="21.595040" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1320" name="VictimFraming_LagoonCove" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.VictimFraming_LagoonCove" methodname="VictimFraming_LagoonCove" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1495180744" result="Passed" start-time="2026-10-06 19:40:23Z" end-time="2026-10-06 19:40:46Z" duration="23.408265" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1322" name="VictimFraming_SaBubong" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.VictimFraming_SaBubong" methodname="VictimFraming_SaBubong" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="122917434" result="Passed" start-time="2026-10-06 19:40:46Z" end-time="2026-10-06 19:41:08Z" duration="21.824809" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 297 renderers, 0 with a roof variant.
+[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

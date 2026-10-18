@@ -28,17 +28,28 @@ namespace TumbangPreso.Visual
 
         private string _tagAction;
         private float _tagTime = -1;
-        private Transform _tgRoot, _tgTorso, _tgHead, _tgArmR, _tgArmL, _tgLegR, _tgLegL, _tgForeR, _tgForeL;
-        private Vector3 _tgForeAlongL = Vector3.left;
-        private Quaternion _tgForeRRest, _tgForeLRest;
+        private Transform _tgRoot, _tgTorso, _tgHead, _tgArmR, _tgArmL, _tgForeR, _tgForeL, _tgLegR, _tgLegL;
         private Vector3 _tgAlongR = Vector3.right, _tgAlongL = Vector3.left;
+        private Vector3 _tgForeAlongL = Vector3.left;
         private bool _tgResolved, _tgApplied;
+        private TagSoleVertex[] _tgSoleL, _tgSoleR;
+        private float _tagRenderedWeight;
+        private int _tagContactSubject = -1;
+        // History reads the pose that was actually displayed, including a peak
+        // preserved across a slow frame. This never drives the live gesture.
+        internal float RecordedTagContactWeight => _tgApplied && _tagContactValid ? _tagRenderedWeight : 0;
+        internal int RecordedTagContactSubject => _tgApplied && _tagContactValid ? _tagContactSubject : -1;
         private Vector3 _tgRootPositionRest;
         private Quaternion _tgRootRotationRest;
         private Vector3 _tgPalmR, _tgArmScaleRest, _tagContact;
         private bool _tagContactValid, _tagContactPending;
+        private bool _tagSkinContact;
+        private CharacterMotor _tagSkinVictim;
+        private Vector3 _tagSkinAt, _tagSkinBarycentric;
+        private TagSoleVertex _tagSkinA, _tagSkinB, _tagSkinC;
         private float _tagContactUntil, _tagStartedAt = -100f;
         private Quaternion _tgTorsoRest, _tgHeadRest, _tgArmRRest, _tgArmLRest, _tgLegRRest, _tgLegLRest;
+        private Quaternion _tgForeRRest, _tgForeLRest;
 
         private void NoteTag(string action)
         {
@@ -64,7 +75,7 @@ namespace TumbangPreso.Visual
             _tgApplied = false;
         }
 
-        private void ClearTagBody() { RestoreTagBody(); _tgRoot = _tgTorso = _tgHead = _tgArmR = _tgArmL = _tgLegR = _tgLegL = _tgForeR = _tgForeL = null; _tgResolved = false; _tagTime = -1; _tagContactValid = _tagContactPending = false; _tagStartedAt = -100f; }
+        private void ClearTagBody() { RestoreTagBody(); _tgRoot = _tgTorso = _tgHead = _tgArmR = _tgArmL = _tgForeR = _tgForeL = _tgLegR = _tgLegL = null; _tgSoleL = _tgSoleR = null; _tagSkinContact = false; _tagSkinVictim = null; _tagSkinA = _tagSkinB = _tagSkinC = default; _tgResolved = false; _tagTime = -1; _tagContactValid = _tagContactPending = false; _tagStartedAt = -100f; }
 
         // The already accepted, replicated tag supplies the contact. Misses keep
         // the ordinary reach; this cannot award a hit or move either live motor.
@@ -74,6 +85,7 @@ namespace TumbangPreso.Visual
                 || float.IsNaN(at.x) || float.IsNaN(at.y) || float.IsNaN(at.z)
                 || float.IsInfinity(at.x) || float.IsInfinity(at.y) || float.IsInfinity(at.z)) return;
             var capsule = victim.GetComponent<CharacterController>();
+            _tagContactSubject = victim.PlayerSlot;
             var torso = victim.GetComponent<CharacterVisual>()?.TorsoBone;
             float height = torso != null ? torso.position.y - victim.transform.position.y + .12f
                 : capsule != null ? capsule.center.y : .8f;
@@ -81,6 +93,7 @@ namespace TumbangPreso.Visual
             float radius = capsule != null ? capsule.radius * .70f : .28f;
             _tagContact = at + Vector3.up * Mathf.Clamp(height, .3f, 1.2f)
                 + (toward.sqrMagnitude > .001f ? toward.normalized * radius : Vector3.zero);
+            SampleTagSkin(victim, at);
             _tagContactUntil = Time.unscaledTime + .35f;
             _tagContactValid = _tagTime >= 0;
             // An old receipt after a completed gesture cannot aim the next miss.
@@ -95,13 +108,6 @@ namespace TumbangPreso.Visual
             Vector3 desired = _tagContact - _tgArmR.position;
             Vector3 current = _tgArmR.TransformPoint(_tgPalmR) - _tgArmR.position;
             if (desired.sqrMagnitude < .0001f || desired.sqrMagnitude > 9f || current.sqrMagnitude < .0001f) return;
-            float extension = Mathf.Clamp(desired.magnitude / current.magnitude, .90f, 1.10f);
-            Vector3 scale = _tgArmScaleRest;
-            Vector3 axis = new Vector3(Mathf.Abs(_tgPalmR.x), Mathf.Abs(_tgPalmR.y), Mathf.Abs(_tgPalmR.z));
-            int index = axis.x >= axis.y && axis.x >= axis.z ? 0 : axis.y >= axis.z ? 1 : 2;
-            scale[index] *= extension;
-            _tgArmR.localScale = Vector3.Lerp(_tgArmScaleRest, scale, weight);
-            current = _tgArmR.TransformPoint(_tgPalmR) - _tgArmR.position;
             var aimed = Quaternion.FromToRotation(current, desired) * _tgArmR.rotation;
             _tgArmR.rotation = Quaternion.Slerp(_tgArmR.rotation, aimed, weight);
         }
@@ -152,10 +158,12 @@ namespace TumbangPreso.Visual
                     }
                 }
                 _tgResolved = true;
+                _tgSoleL = TagSolePoints(_tgLegL);
+                _tgSoleR = TagSolePoints(_tgLegR);
             }
             if (_tgTorso == null || _tgArmR == null || _tgArmL == null) return;
+            RefreshTagSkinContact();
             var hand = GetComponent<CharacterVisual>()?.HandAnchor;
-            _tgPalmR = hand != null && hand.parent == _tgArmR ? hand.localPosition : _tgAlongR * .28f;
 
             // Keep the touch legible, then recover on the existing clip clock.
             // The lunge holds for its actual live sweep, including late contacts.
@@ -184,15 +192,17 @@ namespace TumbangPreso.Visual
             if (_tgForeR != null) _tgForeRRest = _tgForeR.localRotation;
             if (_tgForeL != null) _tgForeLRest = _tgForeL.localRotation;
             _tgApplied = true;
+            _tagRenderedWeight = w;
 
             ToBind(_tgRoot, w, true);
             ToBind(_tgTorso, w, false); ToBind(_tgHead, w, false);
             ToBind(_tgArmR, w, false); ToBind(_tgArmL, w, false);
+            ToBind(_tgForeR, w, false); ToBind(_tgForeL, w, false);
             ToBind(_tgLegR, w, false); ToBind(_tgLegL, w, false);
-            // ⚠️ THE ELBOWS (owner, 2026-10-07: "all characters will have elbows"). The reaching arm is a straight line
-            // to the touch, so its forearm goes to its bind (in line with the upper arm) whatever the clip left in it;
-            // the off arm's is folded below, after its upper arm is placed.
-            ToBind(_tgForeR, w, false);
+            // Elbow rigs carry the palm below the forearm, not directly below
+            // the upper arm. Aim the actual settled hand through the full chain.
+            _tgPalmR = hand != null && hand.IsChildOf(_tgArmR)
+                ? _tgArmR.InverseTransformPoint(hand.position) : _tgAlongR * .28f;
 
             var up = transform.up; var right = transform.right;
             // Weight moves over the forward foot. The rear sole stays planted:
@@ -208,6 +218,13 @@ namespace TumbangPreso.Visual
             _tgTorso.rotation = Quaternion.AngleAxis(twist * side, up) * Quaternion.AngleAxis(lean, right) * _tgTorso.rotation;
             // Eyes on the target: the head does not follow the chest down.
             if (_tgHead != null) _tgHead.rotation = Quaternion.AngleAxis(-twist * side * .6f, up) * Quaternion.AngleAxis(-lean * .7f, right) * _tgHead.rotation;
+            if (_tgLegR != null && _tgLegL != null)
+            {
+                float sideL = SideOf(_tgLegL, -1f), sideR = SideOf(_tgLegR, 1f);
+                PoseLimb(_tgLegL, _legAxisL, sideL, sideL * side < 0 ? strideAngle : -strideAngle, 0, w);
+                PoseLimb(_tgLegR, _legAxisR, sideR, sideR * side < 0 ? strideAngle : -strideAngle, 0, w);
+            }
+            PlantTagSoles();
             // The reaching hand: straight out at the target, chest height for the jab, low and long for the dive.
             var reach = lunge ? new Vector3(.08f, -.25f, .97f) : new Vector3(.05f, .02f, 1f);
             if (_tagContactValid)
@@ -215,27 +232,145 @@ namespace TumbangPreso.Visual
                 ReachAcceptedContact(w);
                 if (_tgRoot != null && _motor != null && _motor.IsGrounded)
                 {
-                    // Shorter authored arms need the body to finish the accepted step,
-                    // rather than a longer limb. This render-only offset restores next frame.
-                    Vector3 shortfall = Vector3.ProjectOnPlane(_tagContact - _tgArmR.TransformPoint(_tgPalmR), up);
-                    if (Vector3.Dot(shortfall, transform.forward) > 0)
-                        _tgRoot.position += Vector3.ClampMagnitude(shortfall, .5f) * w;
+                    // Solve the horizontal body step from the real arm length
+                    // after grounding the feet. Short rigs cannot finish at an
+                    // arbitrary half-metre cap; long arms may need a shorter step.
+                    Vector3 desired = _tagContact - _tgArmR.position;
+                    Vector3 planar = Vector3.ProjectOnPlane(desired, up);
+                    float reachLength = Vector3.Distance(_tgArmR.position, _tgArmR.TransformPoint(_tgPalmR));
+                    float height = Vector3.Dot(desired, up);
+                    float horizontalReach = Mathf.Sqrt(Mathf.Max(0, reachLength * reachLength - height * height));
+                    if (planar.sqrMagnitude > .0001f && desired.sqrMagnitude < 9f)
+                        _tgRoot.position += planar.normalized * Mathf.Clamp(planar.magnitude - horizontalReach,
+                            -Core.Balance.PunchRange, Core.Balance.PunchRange) * w;
                     ReachAcceptedContact(w);
                 }
             }
             else PointArm(_tgArmR, _tgAlongR, new Vector3(reach.x * side, reach.y, reach.z), w, 0);
             // The off arm swings back for balance.
             PointArm(_tgArmL, _tgAlongL, new Vector3(-.35f * side, -.75f, -.55f), w * .9f, 0);
-            // Its elbow bent, the fist carried forward of the elbow: a runner's back arm, not a stick.
+            // Keep the incoming bent off elbow while retaining settled-palm contact and planted soles.
             if (_tgForeL != null) PointArm(_tgForeL, _tgForeAlongL, new Vector3(-.42f * side, -.62f, .66f), w * .9f, 0);
-            // The free foot steps ahead as the opposite foot pushes off. The
-            // reaching-side shoulder rolls forward while the off arm balances.
-            if (_tgLegR != null && _tgLegL != null)
+        }
+        private readonly struct TagSoleVertex
+        {
+            private readonly Transform _b0, _b1, _b2, _b3;
+            private readonly Vector3 _p0, _p1, _p2, _p3;
+            private readonly BoneWeight _weight;
+            public TagSoleVertex(Vector3 point, BoneWeight weight, Transform[] bones, Matrix4x4[] binds)
             {
-                float sideL = SideOf(_tgLegL, -1f), sideR = SideOf(_tgLegR, 1f);
-                PoseLimb(_tgLegL, _legAxisL, sideL, sideL * side < 0 ? strideAngle : -strideAngle, 0, w);
-                PoseLimb(_tgLegR, _legAxisR, sideR, sideR * side < 0 ? strideAngle : -strideAngle, 0, w);
+                _weight = weight;
+                _b0 = bones[weight.boneIndex0]; _b1 = bones[weight.boneIndex1];
+                _b2 = bones[weight.boneIndex2]; _b3 = bones[weight.boneIndex3];
+                _p0 = binds[weight.boneIndex0].MultiplyPoint3x4(point); _p1 = binds[weight.boneIndex1].MultiplyPoint3x4(point);
+                _p2 = binds[weight.boneIndex2].MultiplyPoint3x4(point); _p3 = binds[weight.boneIndex3].MultiplyPoint3x4(point);
             }
+            public Vector3 Position => _b0.TransformPoint(_p0) * _weight.weight0
+                + (_weight.weight1 > 0 ? _b1.TransformPoint(_p1) * _weight.weight1 : Vector3.zero)
+                + (_weight.weight2 > 0 ? _b2.TransformPoint(_p2) * _weight.weight2 : Vector3.zero)
+                + (_weight.weight3 > 0 ? _b3.TransformPoint(_p3) * _weight.weight3 : Vector3.zero);
+            public float Height => Position.y;
+            public bool Valid => _b0 != null && (_weight.weight1 <= 0 || _b1 != null)
+                && (_weight.weight2 <= 0 || _b2 != null) && (_weight.weight3 <= 0 || _b3 != null);
+        }
+        private void RefreshTagSkinContact()
+        {
+            if (!_tagContactValid || !_tagSkinContact) return;
+            if (_tagSkinVictim == null || !_tagSkinA.Valid || !_tagSkinB.Valid || !_tagSkinC.Valid)
+            { _tagSkinContact = false; return; }
+            _tagContact = _tagSkinA.Position * _tagSkinBarycentric.x + _tagSkinB.Position * _tagSkinBarycentric.y
+                + _tagSkinC.Position * _tagSkinBarycentric.z - _tagSkinVictim.transform.position + _tagSkinAt;
+        }
+        private void SampleTagSkin(CharacterMotor victim, Vector3 at)
+        {
+            _tagSkinContact = false; _tagSkinVictim = victim; _tagSkinAt = at;
+            var receiver = victim.GetComponent<CharacterAnimator>();
+            if (receiver == null || receiver._animator == null) return;
+            Vector3 near = _tagContact + victim.transform.position - at;
+            float best = float.PositiveInfinity;
+            var baked = new Mesh();
+            try
+            {
+                foreach (var skin in receiver._animator.GetComponentsInChildren<SkinnedMeshRenderer>(false))
+                {
+                    if (!skin.enabled || skin.sharedMesh == null || !skin.sharedMesh.isReadable) continue;
+                    skin.BakeMesh(baked, true);
+                    var posed = baked.vertices; var triangles = baked.triangles;
+                    var vertices = skin.sharedMesh.vertices; var weights = skin.sharedMesh.boneWeights;
+                    var binds = skin.sharedMesh.bindposes; var bones = skin.bones;
+                    if (weights.Length != vertices.Length || posed.Length != vertices.Length) continue;
+                    for (int i = 0; i < posed.Length; i++) posed[i] = skin.transform.TransformPoint(posed[i]);
+                    for (int i = 0; i < triangles.Length; i += 3)
+                    {
+                        int a = triangles[i], b = triangles[i + 1], c = triangles[i + 2];
+                        Vector3 bary = TagTriangleBarycentric(near, posed[a], posed[b], posed[c]);
+                        Vector3 point = posed[a] * bary.x + posed[b] * bary.y + posed[c] * bary.z;
+                        float distance = (near - point).sqrMagnitude;
+                        if (distance >= best) continue;
+                        best = distance; _tagSkinBarycentric = bary;
+                        _tagSkinA = new TagSoleVertex(vertices[a], weights[a], bones, binds);
+                        _tagSkinB = new TagSoleVertex(vertices[b], weights[b], bones, binds);
+                        _tagSkinC = new TagSoleVertex(vertices[c], weights[c], bones, binds);
+                        _tagSkinContact = true;
+                    }
+                }
+            }
+            finally { Destroy(baked); }
+        }
+        private static Vector3 TagTriangleBarycentric(Vector3 p, Vector3 a, Vector3 b, Vector3 c)
+        {
+            Vector3 ab = b - a, ac = c - a, ap = p - a;
+            float d1 = Vector3.Dot(ab, ap), d2 = Vector3.Dot(ac, ap);
+            if (d1 <= 0 && d2 <= 0) return Vector3.right;
+            Vector3 bp = p - b;
+            float d3 = Vector3.Dot(ab, bp), d4 = Vector3.Dot(ac, bp);
+            if (d3 >= 0 && d4 <= d3) return Vector3.up;
+            float vc = d1 * d4 - d3 * d2;
+            if (vc <= 0 && d1 >= 0 && d3 <= 0) { float v = d1 / (d1 - d3); return new Vector3(1 - v, v, 0); }
+            Vector3 cp = p - c;
+            float d5 = Vector3.Dot(ab, cp), d6 = Vector3.Dot(ac, cp);
+            if (d6 >= 0 && d5 <= d6) return Vector3.forward;
+            float vb = d5 * d2 - d1 * d6;
+            if (vb <= 0 && d2 >= 0 && d6 <= 0) { float w = d2 / (d2 - d6); return new Vector3(1 - w, 0, w); }
+            float va = d3 * d6 - d5 * d4;
+            if (va <= 0 && d4 - d3 >= 0 && d5 - d6 >= 0)
+            { float w = (d4 - d3) / ((d4 - d3) + (d5 - d6)); return new Vector3(0, 1 - w, w); }
+            float denominator = va + vb + vc;
+            if (Mathf.Abs(denominator) < .0000001f) return Vector3.right;
+            float vFace = vb / denominator, wFace = vc / denominator;
+            return new Vector3(1 - vFace - wFace, vFace, wFace);
+        }
+        private TagSoleVertex[] TagSolePoints(Transform leg)
+        {
+            var result = new System.Collections.Generic.List<TagSoleVertex>();
+            if (leg == null) return result.ToArray();
+            foreach (var skin in _animator.GetComponentsInChildren<SkinnedMeshRenderer>(false))
+            {
+                if (!skin.enabled || skin.sharedMesh == null || !skin.sharedMesh.isReadable) continue;
+                int index = System.Array.IndexOf(skin.bones, leg);
+                var mesh = skin.sharedMesh;
+                if (index < 0 || index >= mesh.bindposes.Length) continue;
+                var vertices = mesh.vertices; var weights = mesh.boneWeights; var binds = mesh.bindposes; var bones = skin.bones;
+                // Every posed sole vertex participates, including blended roots
+                // and raised claws which can become the lowest point in a step.
+                for (int i = 0; i < weights.Length; i++)
+                    if (weights[i].boneIndex0 == index && weights[i].weight0 >= .5f)
+                        result.Add(new TagSoleVertex(vertices[i], weights[i], bones, binds));
+            }
+            return result.ToArray();
+        }
+        private void PlantTagSoles()
+        {
+            if (_tgRoot == null || _motor == null || !_motor.IsGrounded) return;
+            float lowest = float.PositiveInfinity;
+            if (_tgSoleL != null) foreach (var point in _tgSoleL) lowest = Mathf.Min(lowest, point.Height);
+            if (_tgSoleR != null) foreach (var point in _tgSoleR) lowest = Mathf.Min(lowest, point.Height);
+            if (!float.IsFinite(lowest)) return;
+            var capsule = _motor.GetComponent<CharacterController>();
+            if (capsule == null) return;
+            float scale = Mathf.Abs(_motor.transform.lossyScale.y);
+            float floor = _motor.transform.position.y + (capsule.center.y - capsule.height * .5f - capsule.skinWidth) * scale;
+            _tgRoot.position += Vector3.up * (floor + .005f - lowest);
         }
     }
 }

@@ -3,7 +3,7 @@ using UnityEngine;
 namespace TumbangPreso.CameraSystem
 {
     /// <summary>
-    /// BASILIO'S HANDS: THREE STONES FLOAT ROUND HIS LEFT FIST.
+    /// DANTE'S HANDS: THREE STONES FLOAT ROUND HIS LEFT FIST.
     ///
     /// "Holds the difficult space. Refuses to be rushed." So what he carries is heavy and slow: a mother stone with a
     /// sleeping face, a moss cap and a sprout, and two chicks that follow her (one strapped with leather and a gold stud

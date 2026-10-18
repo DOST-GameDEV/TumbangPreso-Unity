@@ -1,0 +1,11 @@
+# Road vehicle queries remain correct while physics is held
+
+IlalimNgTulay opening checks found multiple Road solid vehicle boxes queried at the court origin while their visible vehicles were elsewhere. A spherecast from the taya consequently collapsed the portrait camera into the subject and the defender's visual entrance could not find a clear path. The road already writes its collider transforms, but with automatic synchronization off a held world has no fixed step to refresh the physics query data.
+
+Original native35232 reproduces both cases: immediately after construction and after moving an established vehicle during a hold. In each, a ray hits the stale location and misses the current visible location. The same vehicle placement remains correct in transform space. Neither test manually syncs after the operation under test.
+
+UpdateSolids now synchronizes transforms after initial placement and while an opening or zero-delta clock holds physics. The normal moving road keeps its existing fixed-step query updates. Vehicle routes, visible motion, meshes, hit timing, authorities and gameplay rules are unchanged. Candidate38864 passes the same2 query cases and3 actual new-map opening checks, including the previously cropped Bridge taya and blocked entrance. All21321 frozen inputs and preferences restore. This report publishes the focused road correction and its2 tests; the larger opening feature remains unpublished.
+
+The tested class body was extracted unchanged from the candidate combined fixture into PausedRoadSolidTests.cs with the same namespace, class and methods. Its exact class-body hash is recorded. Original failures, candidate XML, qualified source hashes and restoration receipts remain under raw/. This does not establish all traffic-hit/network/performance behavior or complete tournament readiness.
+
+The owner now restricts map presentation work to IlalimNgTulay, LagoonCove and Kanto. Old map art, scenes and footage are preserved. A collider-only source edit can still invalidate attached-script preview fingerprints; the laptop preview owner must reconcile actual affected capture dependencies and render equivalence or regenerate affected new-map footage before claiming current recordings. No blind old-footage restamp or Desktop replacement occurs in this unit.

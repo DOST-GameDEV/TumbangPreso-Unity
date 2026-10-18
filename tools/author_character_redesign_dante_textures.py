@@ -1,4 +1,4 @@
-"""Paint the atlas of the Dante (displayed: Basilio) redesign PROTOTYPE, by hand, in the house style.
+"""Paint the atlas of the Dante (displayed: Dante) redesign PROTOTYPE, by hand, in the house style.
 
     py -3 tools/author_character_redesign_dante_textures.py [--size 1024]
 

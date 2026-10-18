@@ -1,0 +1,30 @@
+[
+  {
+    "map": "Eskinita",
+    "dependencies": 1206,
+    "changedDependencies": [
+      "Assets/TumbangPreso/Runtime/MatchInstaller.cs"
+    ]
+  },
+  {
+    "map": "BayanPlaza",
+    "dependencies": 766,
+    "changedDependencies": [
+      "Assets/TumbangPreso/Runtime/MatchInstaller.cs"
+    ]
+  },
+  {
+    "map": "SaBubong",
+    "dependencies": 834,
+    "changedDependencies": [
+      "Assets/TumbangPreso/Runtime/MatchInstaller.cs"
+    ]
+  },
+  {
+    "map": "Arena",
+    "dependencies": 1256,
+    "changedDependencies": [
+      "Assets/TumbangPreso/Runtime/MatchInstaller.cs"
+    ]
+  }
+]

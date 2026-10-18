@@ -431,13 +431,16 @@ namespace TumbangPreso.Core
 
             /// <summary>No non-bot line carries this player's id, so the endpoint throws.</summary>
             NoLineForThisPlayer,
+
+            /// <summary>Own retrievals exceed throws, so the endpoint permanently refuses it.</summary>
+            RetrievalsExceedThrows,
         }
 
         /// <summary>
         /// Whether `ugs/cloud-code/match-record.js`'s `submit` branch can ever accept this record
         /// from this player, WITHOUT calling it.
         ///
-        /// ⚠️⚠️ THIS MIRRORS THE TWO `throw`s IN THAT BRANCH AND IT EXISTS BECAUSE A REFUSAL
+        /// ⚠️⚠️ THIS MIRRORS KNOWN PERMANENT REFUSALS IN THAT BRANCH AND IT EXISTS BECAUSE A REFUSAL
         /// THERE IS PERMANENT. Both of them are decided entirely by the bytes in the record and by
         /// who is asking, so a record that fails one fails it on every retry, forever. Cloud Code
         /// answers a thrown error as **422**, `CareerStore.FlushAsync` treats any failure as "the
@@ -453,12 +456,17 @@ namespace TumbangPreso.Core
         ///
         /// ⚠️ A DUPLICATE IS DELIBERATELY `Ok`. The endpoint answers an already-counted match id
         /// with `applied: false` and a 200, which is a success and is what makes the offline queue
-        /// safe to resubmit. Only the two throwing cases are named here.
+        /// safe to resubmit. The local refusals below preserve that retry behavior for valid records.
         /// </summary>
         public static SubmitVerdict Submittable(MatchRecord record, string playerId)
         {
             if (record == null || string.IsNullOrWhiteSpace(record.MatchId)) return SubmitVerdict.NoMatchId;
             if (LineFor(record, playerId) == null) return SubmitVerdict.NoLineForThisPlayer;
+            // The endpoint normalizes negative counters to zero before comparing.
+            // Refuse the known permanent fault without rewriting local history.
+            foreach (var line in record.Players)
+                if (line != null && Math.Max(0, line.Retrievals) > Math.Max(0, line.Throws))
+                    return SubmitVerdict.RetrievalsExceedThrows;
             return SubmitVerdict.Ok;
         }
 
@@ -470,6 +478,9 @@ namespace TumbangPreso.Core
                 "no non-bot line in it carries this player's account id, so the endpoint will " +
                 "always answer 422. The usual cause is a record written before the account " +
                 "finished signing in.",
+            SubmitVerdict.RetrievalsExceedThrows =>
+                "its retrieval count exceeds its throw count, so the endpoint will always " +
+                "refuse it. The local match history is retained.",
             _ => "",
         };
 

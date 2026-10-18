@@ -1,0 +1,59 @@
+[
+  {
+    "ref": "a39a5b8d5398b2f8f2c58dae2e42a9b2489f0ea2",
+    "unit": "replay-scene-shader-fidelity",
+    "nativeCodePathsVerified": [
+      "Assets/TumbangPreso/Runtime/Camera/LocalReplaySceneState.cs",
+      "Assets/TumbangPreso/Runtime/Camera/LocalReplaySceneState.cs.meta",
+      "Assets/TumbangPreso/Runtime/Camera/LocalReplayStore.cs",
+      "Assets/TumbangPreso/Runtime/Camera/LocalReplayStore.cs.meta",
+      "Assets/TumbangPreso/Runtime/Camera/LocalReplayRecorder.cs",
+      "Assets/TumbangPreso/Runtime/Camera/LocalReplayRecorder.cs.meta",
+      "Assets/TumbangPreso/Runtime/Camera/LocalReplayPlayback.cs",
+      "Assets/TumbangPreso/Runtime/Camera/LocalReplayPlayback.cs.meta",
+      "Assets/TumbangPreso/Runtime/Camera/RecordedWorldView.cs",
+      "Assets/TumbangPreso/Runtime/Camera/RecordedWorldView.cs.meta",
+      "Assets/TumbangPreso/Tests/PlayMode/LocalReplaySceneStateTests.cs",
+      "Assets/TumbangPreso/Tests/PlayMode/LocalReplaySceneStateTests.cs.meta",
+      "Assets/TumbangPreso/Runtime/Camera/RecordedShaderClock.cs",
+      "Assets/TumbangPreso/Runtime/Camera/RecordedShaderClock.cs.meta",
+      "Assets/TumbangPreso/Tests/PlayMode/RecordedShaderClockTests.cs",
+      "Assets/TumbangPreso/Tests/PlayMode/RecordedShaderClockTests.cs.meta",
+      "Assets/TumbangPreso/Resources/Shaders/MoonShaft.shader",
+      "Assets/TumbangPreso/Resources/Shaders/OmenVeil.shader",
+      "Assets/TumbangPreso/Resources/Shaders/RoofPoolWater.shader",
+      "Assets/TumbangPreso/Resources/Shaders/SoulGlow.shader",
+      "Assets/TumbangPreso/Resources/Shaders/SoulSpill.shader",
+      "Assets/TumbangPreso/Resources/Shaders/SpiritGhost.shader",
+      "Assets/TumbangPreso/Resources/Shaders/VoodooGhost.shader",
+      "Assets/TumbangPreso/Resources/Shaders/VoodooThread.shader",
+      "Assets/TumbangPreso/Resources/Shaders/VoodooWisp.shader",
+      "Assets/TumbangPreso/Shaders/ArenaHologram.shader",
+      "Assets/TumbangPreso/Shaders/LagoonCoveWater.shader",
+      "Assets/TumbangPreso/Shaders/SlipperBeam.shader",
+      "Assets/TumbangPreso/Shaders/Toon.shader",
+      "Assets/TumbangPreso/Shaders/VolcanicRock.shader",
+      "Assets/TumbangPreso/Resources/Shaders/RecordedShaderTime.cginc",
+      "Assets/TumbangPreso/Resources/Shaders/RecordedShaderTime.cginc.meta",
+      "Assets/TumbangPreso/Editor/MapPreviewFreshness.cs",
+      "Assets/TumbangPreso/Editor/MapPreviewFreshness.cs.meta",
+      "Assets/TumbangPreso/Tests/PlayMode/MapPreviewFreshnessTests.cs",
+      "Assets/TumbangPreso/Tests/PlayMode/MapPreviewFreshnessTests.cs.meta"
+    ],
+    "rawEvidenceFilesVerified": 30
+  },
+  {
+    "ref": "c533e1f6bddd7564a50f67b97a3249cdcd6acf03",
+    "unit": "replay-crowd-wakes",
+    "nativeCodePathsVerified": [
+      "Assets/TumbangPreso/Runtime/Camera/LocalReplaySceneState.cs",
+      "Assets/TumbangPreso/Runtime/Camera/LocalReplayStore.cs",
+      "Assets/TumbangPreso/Runtime/Camera/LocalReplaySceneShaderState.cs",
+      "Assets/TumbangPreso/Runtime/Camera/LocalReplaySceneShaderState.cs.meta",
+      "Assets/TumbangPreso/Tests/PlayMode/LocalReplaySceneStateTests.cs",
+      "Assets/TumbangPreso/Tests/PlayMode/LocalReplaySceneShaderTests.cs",
+      "Assets/TumbangPreso/Tests/PlayMode/LocalReplaySceneShaderTests.cs.meta"
+    ],
+    "rawEvidenceFilesVerified": 24
+  }
+]

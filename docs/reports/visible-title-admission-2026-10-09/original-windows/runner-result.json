@@ -1,0 +1,58 @@
+{
+  "sourceCommit": "0e98b47216bae8620155a1ad35612f39f47c3f12",
+  "protocol": 153,
+  "profile": "pc-combined-replay-startup-0e98b4721-held-release1009-current-natural",
+  "exe": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\release-ui-perf1008g\\TumbangPreso.exe",
+  "command": [
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\release-ui-perf1008g\\TumbangPreso.exe",
+    "-batchmode",
+    "-force-d3d11",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1920",
+    "-screen-height",
+    "1080",
+    "-tp-profile",
+    "pc-combined-replay-startup-0e98b4721-held-release1009-current-natural",
+    "-tp-scenery-art-proof",
+    "-tp-startup-order-probe",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\release-ui-perf1008g\\held-release1009-current-natural",
+    "-tp-replay-package",
+    "C:\\Users\\matth\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\1f432f1e5f10a416da285b04459d2a18c200a57a4b5c02a395f130a9c16441d9\\Replays",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\release-ui-perf1008g\\held-release1009-current-natural\\player.log"
+  ],
+  "execution": "hidden graphics batch, synthetic UI raycast only, no OS mouse/keyboard/foreground interaction",
+  "pid": 72768,
+  "exitCode": 1,
+  "replayProbe": {
+    "passed": false,
+    "error": "No replay receipt"
+  },
+  "probe": {
+    "passed": false,
+    "studioSeen": true,
+    "error": "System.InvalidOperationException: Main/title did not remain visible five seconds\r\n  at TumbangPreso.Diagnostics.StartupOrderPlayerProbe.Step () [0x00491] in <d7a40e5e4d8f4bc2811403bf1fdb641a>:0 \r\n  at TumbangPreso.Diagnostics.StartupOrderPlayerProbe.Update () [0x0000a] in <d7a40e5e4d8f4bc2811403bf1fdb641a>:0 ",
+    "mainVisibleSeconds": 4.788572311401367,
+    "firstFrame": 0,
+    "lastFrame": 0,
+    "firstVideoTime": 0.0,
+    "lastVideoTime": 0.0,
+    "stages": [
+      "login-first at 4.063s",
+      "main-loading-visible at 5.463s"
+    ]
+  },
+  "playerLogAcceptance": {
+    "passed": true,
+    "exceptionCount": 0,
+    "messages": []
+  },
+  "scopedGatePassed": false,
+  "inputRestored": true,
+  "editorInputRestored": true,
+  "taskOwnedReplayPreferenceCreated": false,
+  "profileRestored": true,
+  "terminal": true
+}

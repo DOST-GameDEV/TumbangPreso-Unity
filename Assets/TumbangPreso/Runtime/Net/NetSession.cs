@@ -579,6 +579,8 @@ namespace TumbangPreso.Net
         // ASTRAReworks had taken 146 to 151 for other things.)
         // 153: the Arena's taya box is round and sized by its layout (`Core.Confinement.Use`). Nothing new is sent,
         // but a peer on 152 would judge throws and tags by the square, so the two may not meet.
+        // ASTRA-only154: replay clip15 preserves companion bodies, seats and held slippers.
+        // Older peers cannot decode these new highlight payloads.
         // 154: Paete's LIANA LEAP swings (owner 2026-10-07). `PaeteVineState.Phase` gains three values, and on them the
         // caster's own peer swings itself (`CharacterMotor.BeginSwing`) where the host used to send a flat `Carry`. A
         // peer on 153 would refuse the state and never move.
@@ -607,11 +609,47 @@ namespace TumbangPreso.Net
         // ⚠️ 158 (2026-10-09): ESKINITA IS A DIFFERENT MAP UNDER THE SAME NAME (the stepped alley replaced it, at the owner's word:
         // "push this to the map pool, replace the old eskinita"). Nothing new is sent, but a peer on 157 would load the old flat
         // street for the same map id and stand inside the new one's houses: the two may not meet.
-        // ⚠️ 159 (2026-10-11): AMIHAN'S WHIRLWIND HITS A DIFFERENT SHAPE. Its gale was a bowed band 3.2 m wide and 0.9 m deep born
-        // 1.0 m ahead; it is a circle of radius 2.1 m born 2.4 m ahead (`AmihanRules.WhirlwindRadius`), at the owner's word:
-        // "maybe just do 1 large whirlwind only. feel free to rework the ability itself". Nothing new is sent, but the host
-        // decides who is Whirled, so a peer on 158 would be shown a hit or a miss its own rule and picture disagree with.
-        public const int ProtocolVersion = 159;
+        // 159: integrate QoL movement/crouch, map and timed performances with ASTRA clip15 companions.
+        // Neither standalone158 QoL nor154 ASTRA peers implement this combined contract.
+        // 160 (2026-10-11): Nemu's ultimate is PRUSISYON. `SyncUnit` appends the POSSESSED clock and the ultimate no longer
+        // sends Kuro's Haunt chase; a 159 peer would read a different unit layout and run a different ultimate.
+        // 161 (2026-10-15): Nemu's signature is DON'T LOOK (Blindfold, the hidden ghost that covers the eyes), replacing KURO: SIT!.
+        // `SyncUnit` appends the BLINDED clock and the world snapshot gains the waiting ghost (`WorldEffectSnapshot.Kind.Blindfold`);
+        // a 160 peer would read a different unit layout and still teleport to Kuro.
+        // 162 (2026-10-15): Nemu's other skills are their own ghosts. SKITTER (`nemu_skill2`, was KURO: FETCH!) is host-confirmed
+        // (was predicted) so every peer runs the ghost; LOOKOUT (`nemu_skill2d`, was KURO: CATCH!) stands a downed can back up
+        // instead of making it knock-proof. The wire is unchanged; a 161 peer would disagree with the host about both skills.
+        // 163: host-authored Nemu ghost lifetimes, victim, carry pose and lift progress on LAN and Relay.
+        // 164 (2026-10-15): SKITTER waits by her holding the slipper until she takes it with INTERACT (no longer set down
+        // beside her; it follows her past its 8 s), and its ghost frame carries that as flag 8 (offering). A 163 peer would
+        // refuse those frames and expect the slipper on the ground.
+        // 165 (2026-10-16): Nemu's passive is DEAD WEIGHT (rivals within 3 m of her visible ghosts move 10 % slower),
+        // replacing KURO!'s 10 % on her own speed. The wire is unchanged; a 164 peer would move its body at a different speed.
+        // 166 (2026-10-16): Concussed lasts 5 s (the Wiki's number), not 2.5 s. The wire is unchanged; a 165 peer would clamp the
+        // replicated timer to 2.5 s and release a Boulder or Drift victim early.
+        // 167 (2026-10-17): CONTINENTAL DRIFT resolves at the cutscene's cut, all five bands at once: everyone in the lane is
+        // thrown down it (a carry) and Concussed as they land 0.6 s later; it no longer erupts band by band after the cutscene.
+        // A 166 host would resolve the bands 0.3 s apart and throw nobody.
+        // 168 (2026-10-17): CONTINENTAL DRIFT's cutscene ends on the slam and the cascade is play's: five bands 0.3 s apart from
+        // the cut, each throwing the players in it down the lane, Concussed as they land. A 167 host would throw the whole lane
+        // at once.
+        // 169 (2026-10-17): after her cutscene AIRBURST puts every caught player where the cutscene's throw had them (mid-air,
+        // `CharacterMotor.ApplyResolvedRelocate`, sent as the host teleport) and the throw flies on; a 168 host threw them again
+        // from where they had stood. Nemu's LET THEM IN likewise leaves her victims where her cutscene ended them.
+        // 170 (2026-10-17): a Concussed throw wobbles up to 16 degrees (was 9) and has a 60 per cent chance to misfire, sailing
+        // 35 to 80 degrees off, higher and faster (`StatusRules.ConcussedMisfireChance`); a 169 host throws it nearly straight.
+        // 171 (2026-10-18, ASTRAReworks): Dante's Mountain Form in play, 30 s after CONTINENTAL DRIFT (armour, his own clips,
+        // immunity, rock throws). Recorded here at the merge; the commit that moved it ("protocol 171") left no line of its own.
+        // ⚠️ QoLUpdates-only 159 (2026-10-11): AMIHAN'S WHIRLWIND HITS A DIFFERENT SHAPE. Its gale was a bowed band 3.2 m wide and
+        // 0.9 m deep born 1.0 m ahead; it is a circle of radius 2.1 m born 2.4 m ahead (`AmihanRules.WhirlwindRadius`), at the
+        // owner's word: "maybe just do 1 large whirlwind only. feel free to rework the ability itself". Nothing new is sent, but
+        // the host decides who is Whirled, so a peer on 158 would be shown a hit or a miss its own rule and picture disagree with.
+        // (That 159 is not ASTRAReworks' 159 above: the two lines took the number separately.)
+        // ⚠️ 172 (2026-10-18): QoLUpdates and ASTRAReworks meet. One number above both (QoLUpdates 159, ASTRAReworks 171), and
+        // both rule sets are in: ASTRA's Concussed 5 s, its Dante and Nemu kits and Mountain Form, AND our Whirlwind circle
+        // (radius 2.1 m). A peer on either 159 or 171 judges one of those differently from the host: the two may not meet.
+        // Windows and Android rebuilt from the same commit and shipped together.
+        public const int ProtocolVersion = 172;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
@@ -733,8 +771,13 @@ namespace TumbangPreso.Net
         private bool _stopWasRequested;
         private void OnTransportFailure() => Debug.LogWarning(
             $"[NetLifecycle] transport-failure server={_nm?.IsServer} relay={IsRelay} requestedStop={_stopWasRequested}");
-        private void OnServerStopped(bool wasHost) => Debug.Log(
-            $"[NetLifecycle] server-stopped wasHost={wasHost} requestedStop={_stopWasRequested}");
+        private void OnServerStopped(bool wasHost)
+        {
+            Debug.Log($"[NetLifecycle] server-stopped wasHost={wasHost} requestedStop={_stopWasRequested}");
+            if (_stopWasRequested) return;
+            _beacon?.StopAll();
+            if (Query != null) _ = Query.DeleteHostedLobbyAsync();
+        }
 
         /// <summary>
         /// ⚠️⚠️ THE LAST RESORT FOR A WEDGED NETWORKMANAGER (QA, 2026-09-26; `PrepareManagerForStart` has the whole story). When a
@@ -1673,6 +1716,7 @@ namespace TumbangPreso.Net
 
         private static void EndTransportPresentation()
         {
+            MatchRpc.Instance?.CancelNemuGhostPresentation();
             SharedUltimatePhase.Instance?.Cancel();
             HalftimePresentation.Instance?.End(false);
             foreach (var arrival in UnityEngine.Object.FindObjectsByType<MatchArrivalPresentation>(
@@ -1681,7 +1725,7 @@ namespace TumbangPreso.Net
             PresentationClock.RequestScale(1);
         }
 
-        public void BrowseLan() => _beacon.StartListening();
+        public void BrowseLan() => _beacon.RequestDiscovery();
 
         public System.Collections.Generic.IEnumerable<LanEntry> LanEntries => _beacon.Entries;
 
@@ -2094,7 +2138,12 @@ namespace TumbangPreso.Net
             bool blocked = hello != null &&
                            Core.SocialRules.IsBlocked(GameServices.Social?.List, hello.AccountPlayerId);
 
-            response.Approved = protocolMatches && skillsMatch && hasCapacity && !blocked;
+            // A remote reconnect can replace its prior socket, never the running server's own
+            // lobby record. The server cannot reconnect to itself through a second transport.
+            bool claimsHost = _nm != null && _nm.IsServer && hello != null
+                && request.ClientNetworkId != _nm.LocalClientId
+                && hello.Token == Lobby.PeerById((int)_nm.LocalClientId)?.Token;
+            response.Approved = protocolMatches && skillsMatch && hasCapacity && !blocked && !claimsHost;
             response.CreatePlayerObject = false;
             response.Pending = false;
             // ⚠️ THE REFUSAL SAYS WHAT THE ROOM HOLDS. "Lobby is full" is true of a room with
@@ -2112,6 +2161,8 @@ namespace TumbangPreso.Net
                     ? "Skill rules differ from the host. Use matching game builds."
                 : blocked
                     ? "Could not join this game."
+                : claimsHost
+                    ? "This player is already hosting the room. Use another account to join."
                     : hasCapacity
                         ? string.Empty
                         : $"This game is full: {LobbySession.MaxPlayers} players and "
@@ -2313,6 +2364,8 @@ namespace TumbangPreso.Net
 
             var record = Lobby.Admit((int)clientId, hello.Token, hello.Name,
                                      out int replacedPeerId);
+            // An admitted listen host has an established session too.
+            if (clientId == _nm.LocalClientId) _everConnected = true;
             record.AccountPlayerId = hello.AccountPlayerId ?? "";
             Debug.Log($"[NetArrival] peer={clientId} seat={record.Seat} replaces={replacedPeerId}");
 

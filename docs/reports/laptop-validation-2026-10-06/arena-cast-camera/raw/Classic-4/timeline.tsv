@@ -1,0 +1,30 @@
+0.000	89.980	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.480	Quiet	QuietEstablish	the street	1	0
+1.002	88.980	Quiet	QuietEstablish	the street	1	0
+1.503	88.480	Quiet	QuietEstablish	the street	1	0
+2.004	87.980	Quiet	QuietEstablish	the street	1	0
+2.506	87.480	Quiet	QuietEstablish	the street	1	0
+3.006	86.981	SlipperLanded	Objective	the can	2	0
+3.507	86.481	SlipperLanded	Objective	the can	2	0
+4.007	85.981	SlipperLanded	Objective	the can	2	0
+4.507	85.481	SlipperLanded	Objective	the can	2	0
+5.189	84.801	Quiet	QuietEstablish	the street	3	0
+5.690	84.301	Quiet	QuietEstablish	the street	3	0
+6.192	83.801	Quiet	QuietEstablish	the street	3	0
+6.692	83.301	Quiet	QuietEstablish	the street	3	0
+7.193	82.841	Tag	Defender	tag · ATE GIRLIE	4	0
+7.695	82.341	Tag	Defender	tag · ATE GIRLIE	4	0
+8.195	81.841	Tag	Defender	tag · ATE GIRLIE	4	0
+8.696	81.401	Tag	Defender	tag · ATE GIRLIE	4	0
+9.197	80.902	Tag	Defender	tag · ATE GIRLIE	4	0
+9.698	80.402	Tag	Defender	tag · ATE GIRLIE	4	0
+10.199	79.902	Tag	Defender	tag · ATE GIRLIE	4	0
+10.700	79.402	Tag	Defender	tag · ATE GIRLIE	4	0
+11.201	78.902	Downed	Recovery	down · OWNER UPDATED	4	0
+11.703	78.402	Downed	Recovery	down · OWNER UPDATED	4	0
+12.203	77.902	Downed	Recovery	down · OWNER UPDATED	4	0
+12.704	77.402	Downed	Recovery	down · OWNER UPDATED	4	0
+13.204	76.902	Downed	Recovery	down · OWNER UPDATED	4	0
+13.705	76.402	ThrowPrep	Objective	throw · MARING	5	0
+14.207	75.902	ThrowPrep	Objective	throw · MARING	5	0
+14.708	75.402	ThrowPrep	Objective	throw · MARING	5	0

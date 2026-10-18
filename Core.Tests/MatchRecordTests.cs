@@ -290,6 +290,27 @@ namespace TumbangPreso.Core.Tests
         /// so it refuses rather than counting a record it could never refuse a second time.
         /// </summary>
         [Fact]
+        public void ImpossibleRetrievalCountsAreRefusedBeforeTheEndpointWithoutChangingHistory()
+        {
+            var record = Match(100, 200, 300, 400);
+            record.Players[0].Throws = 0; record.Players[0].Retrievals = 1;
+            Assert.NotEqual(MatchRecordRules.SubmitVerdict.Ok,
+                MatchRecordRules.Submittable(record, "player-0"));
+            Assert.Equal(0, record.Players[0].Throws);
+            Assert.Equal(1, record.Players[0].Retrievals);
+        }
+
+        [Fact]
+        public void AnEqualRealThrowAndRetrievalCountRemainsSubmittable()
+        {
+            var record = Match(100, 200, 300, 400);
+            record.Players[0].Throws = record.Players[0].Retrievals = 1;
+            Assert.Equal(MatchRecordRules.SubmitVerdict.Ok,
+                MatchRecordRules.Submittable(record, "player-0"));
+            Assert.Equal(1, record.Players[0].Retrievals);
+        }
+
+        [Fact]
         public void ARecordWithNoMatchIdIsRefusedWithoutCallingTheEndpoint()
         {
             var record = Match(100, 200, 300, 400);

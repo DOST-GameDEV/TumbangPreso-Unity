@@ -1,0 +1,39 @@
+{
+  "editorProcessComponentsIdentical": true,
+  "componentRows": 28,
+  "rows": [
+    "[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part0 mesh=Tapered aspin body_part0 vertices=982 stream=0 stride=24 bytes=23568 sha256=2D3CF8AC27598E3F19EA61C4843A0F25FD5F8984DB80158986DDA833B4FF91D5",
+    "[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part0 mesh=Tapered aspin body_part0 vertices=982 stream=1 stride=8 bytes=7856 sha256=4BCD2FFF3721E0AE0305D8AB8B76B3F0216235B14E0AB5C2D2896EC8A4EE3C58",
+    "[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part0 mesh=Tapered aspin body_part0 vertices=982 stream=2 stride=32 bytes=31424 sha256=E6C102E8AC1273A634627EDEBBAF813D0758F974B23874D43E86CDF156511567",
+    "[SceneryArtProof] root=RecordedBody-P0 mesh=Tapered aspin body_part0 indexFormat=UInt32 indices=89A64324C46489CA3623652EC7D7E620A93C5BCFF233466BAA5EB8F4C3EE161E",
+    "[SceneryArtProof] root=RecordedBody-P0 material=Coat_NearFade crc=-34512217 shader=TumbangPreso/NearFade queue=2000 keywords=",
+    "[SceneryArtProof] root=RecordedBody-P0 textureProperty=_MainTex texture= identity=",
+    "[SceneryArtProof] root=RecordedBody-P0 textureProperty=_BumpMap texture= identity=",
+    "[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part1 mesh=Tapered aspin body_part1 vertices=504 stream=0 stride=24 bytes=12096 sha256=6A20554530FD61922F710DF9BBF7369D521CFCC2AD81C311F722B6061E27C706",
+    "[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part1 mesh=Tapered aspin body_part1 vertices=504 stream=1 stride=8 bytes=4032 sha256=6CCA8517187D45F27EF77F05A5C4668D65EB93D1FF036E11148DA38B96AE3E9C",
+    "[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part1 mesh=Tapered aspin body_part1 vertices=504 stream=2 stride=32 bytes=16128 sha256=A4740A832EA85A0D2FC87709961C88A2C4111FF880B17E0FC5C6C8257FB0E2B4",
+    "[SceneryArtProof] root=RecordedBody-P0 mesh=Tapered aspin body_part1 indexFormat=UInt32 indices=D7CF0740DFDD9F536649EE8FE37FF4E3B5C5F717CA9B5419A161B06601A90219",
+    "[SceneryArtProof] root=RecordedBody-P0 material=Cream markings_NearFade crc=-1021046204 shader=TumbangPreso/NearFade queue=2000 keywords=",
+    "[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part2 mesh=Tapered aspin body_part2 vertices=216 stream=0 stride=24 bytes=5184 sha256=173448E3B59B0F2A04BE09A53C0D7DA6E8653DEE8372C373CD58E7691073E908",
+    "[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part2 mesh=Tapered aspin body_part2 vertices=216 stream=1 stride=8 bytes=1728 sha256=7636C9F8DA9A82F9A9FCD804A25795A9C900E1C7E19F7442A7B113C8CCD64EB2",
+    "[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part2 mesh=Tapered aspin body_part2 vertices=216 stream=2 stride=32 bytes=6912 sha256=1B41CC7018A805EDE2AE4635F999472A59FF629020B7BB0041747168E1D7EDE5",
+    "[SceneryArtProof] root=RecordedBody-P0 mesh=Tapered aspin body_part2 indexFormat=UInt32 indices=16A60B18100B6C6624538136F31B46B7B362FD7D7317C1ECF7B1CFDE7D5A9422",
+    "[SceneryArtProof] root=RecordedBody-P0 material=Graphic features_NearFade crc=-1643724036 shader=TumbangPreso/NearFade queue=2000 keywords=",
+    "[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part3 mesh=Tapered aspin body_part3 vertices=18 stream=0 stride=24 bytes=432 sha256=0B8FF9A03F95C3623E8F8270E1BA25A43A71A9923D27B05EA7C1F285501E931A",
+    "[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part3 mesh=Tapered aspin body_part3 vertices=18 stream=1 stride=8 bytes=144 sha256=81C611F35BFF79491538B2F7CF201C7597A661A5C549633541C62BDC8AF1613F",
+    "[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part3 mesh=Tapered aspin body_part3 vertices=18 stream=2 stride=32 bytes=576 sha256=A96BCB0CDCEB8019129CA60BF28F75CBA46D0A4C3018BADC31223D9D6506315F",
+    "[SceneryArtProof] root=RecordedBody-P0 mesh=Tapered aspin body_part3 indexFormat=UInt32 indices=F0F3C9633718B4B273F16E8409395F4A9919086AB770145524E7FCBC2241A350",
+    "[SceneryArtProof] root=RecordedBody-P0 material=Inner ear_NearFade crc=-338868660 shader=TumbangPreso/NearFade queue=2000 keywords=",
+    "[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part4 mesh=Tapered aspin body_part4 vertices=84 stream=0 stride=24 bytes=2016 sha256=5EAA2B1455B1FAE85CDA2910CA7ADF1848E3C4917BC7FD8ABA13B7BFB63D1008",
+    "[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part4 mesh=Tapered aspin body_part4 vertices=84 stream=1 stride=8 bytes=672 sha256=F792B7F860BB94E55760C0DAA727D58D13BA96276A2B52F29A645C8E08E73EC1",
+    "[SceneryArtProof] root=RecordedBody-P0 renderer=aspin-tan/StreetAnimalRig/aspin-tan/aspin-tan_part4 mesh=Tapered aspin body_part4 vertices=84 stream=2 stride=32 bytes=2688 sha256=C46F0D583352A88AF68B90D6B2A697F93CA30583B72F7400E4894054FE098DE0",
+    "[SceneryArtProof] root=RecordedBody-P0 mesh=Tapered aspin body_part4 indexFormat=UInt32 indices=317593E30E3204201AE9437668FB49B32D6D7FE51559677C6BA3071204C172FE",
+    "[SceneryArtProof] root=RecordedBody-P0 material=Quiet coat patches_NearFade crc=1979462079 shader=TumbangPreso/NearFade queue=2000 keywords=",
+    "[SceneryArtProof] root=RecordedBody-P0 aggregate=0F756E3EABE235A1CDA03398CE6E18C5DC8580942067A6E7E08B5CE01D7937F8"
+  ],
+  "editorLogSha256": {
+    "scenery-art-components1008": "90c9d4f62ad61f7f9e4dac284e409d74aec7676c2919d13323ed4c6430b9a7df",
+    "scenery-art-process2-1008": "297d92d2c7b3d89390d8f4943b94bb5d24c425bb68968265007d49c04ac2a474"
+  },
+  "scope": "Two independent Unity editor processes. Windows player components remain unmeasured."
+}

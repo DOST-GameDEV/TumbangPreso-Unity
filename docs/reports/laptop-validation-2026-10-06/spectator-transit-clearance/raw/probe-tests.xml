@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 01:52:51Z" end-time="2026-10-06 01:52:52Z" duration="0.1666522">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1405" result="Failed" site="Child" start-time="2026-10-06 01:52:51Z" end-time="2026-10-06 01:52:52Z" duration="0.166652" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2733" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1405" result="Failed" site="Child" start-time="2026-10-06 01:52:51Z" end-time="2026-10-06 01:52:52Z" duration="0.149306" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="45044" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2734" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1405" result="Failed" site="Child" start-time="2026-10-06 01:52:52Z" end-time="2026-10-06 01:52:52Z" duration="0.132541" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2735" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1405" result="Failed" site="Child" start-time="2026-10-06 01:52:52Z" end-time="2026-10-06 01:52:52Z" duration="0.081445" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2589" name="SpectatorTransitClearanceTests" fullname="TumbangPreso.Tests.SpectatorTransitClearanceTests" classname="TumbangPreso.Tests.SpectatorTransitClearanceTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-06 01:52:52Z" end-time="2026-10-06 01:52:52Z" duration="0.056419" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2591" name="AClearDestinationDoesNotPermitAnIntermediateEyeInsideScenery" fullname="TumbangPreso.Tests.SpectatorTransitClearanceTests.AClearDestinationDoesNotPermitAnIntermediateEyeInsideScenery" methodname="AClearDestinationDoesNotPermitAnIntermediateEyeInsideScenery" classname="TumbangPreso.Tests.SpectatorTransitClearanceTests" runstate="Runnable" seed="1293961166" result="Failed" start-time="2026-10-06 01:52:52Z" end-time="2026-10-06 01:52:52Z" duration="0.037018" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The actual rendered eye entered scenery despite a valid destination.
+  Expected: greater than or equal to 0.449999988f
+  But was:  0.0344770551f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.SpectatorTransitClearanceTests.AClearDestinationDoesNotPermitAnIntermediateEyeInsideScenery () [0x0013b] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\SpectatorTransitClearanceTests.cs:60
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2590" name="AnUnobstructedShortReframeStillGlidesWithoutCutting" fullname="TumbangPreso.Tests.SpectatorTransitClearanceTests.AnUnobstructedShortReframeStillGlidesWithoutCutting" methodname="AnUnobstructedShortReframeStillGlidesWithoutCutting" classname="TumbangPreso.Tests.SpectatorTransitClearanceTests" runstate="Runnable" seed="1157055950" result="Passed" start-time="2026-10-06 01:52:52Z" end-time="2026-10-06 01:52:52Z" duration="0.005484" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

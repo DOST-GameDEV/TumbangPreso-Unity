@@ -1,0 +1,73 @@
+{
+  "sourceRef": "8978e05fd9eb193db1b8158f46ce4364e3a7085e",
+  "profile": "pc-catch-framing-all-maps41006",
+  "filter": "TumbangPreso.PlayTests.CatchReconstructionTests.CatchChoosesTheOpenSideAndAvoidsAForcedFaceCloseup;TumbangPreso.PlayTests.CatchReconstructionTests.IsolatedNativeCatchRetainsContinuousMotion;TumbangPreso.PlayTests.CatchReconstructionTests.ReplayHoldsOneCapturedTagFrameThenFadesWithoutPausingPlay;TumbangPreso.PlayTests.CatchReconstructionTests.AuthoredMapFarTagRetainsVisibleWholeBodyContact;TumbangPreso.PlayTests.CatchReconstructionTests.VictimFraming_Arena;TumbangPreso.PlayTests.CatchReconstructionTests.VictimFraming_Eskinita;TumbangPreso.PlayTests.CatchReconstructionTests.VictimFraming_Kanto;TumbangPreso.PlayTests.CatchReconstructionTests.VictimFraming_LagoonCove;TumbangPreso.PlayTests.CatchReconstructionTests.VictimFraming_BayanPlaza;TumbangPreso.PlayTests.CatchReconstructionTests.VictimFraming_SaBubong;TumbangPreso.PlayTests.CatchReconstructionTests.VictimFraming_IlalimNgTulay",
+  "expectedCases": 11,
+  "execution": "direct; no memory/admission/timeout guard",
+  "pid": 34564,
+  "exitCode": 0,
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.AuthoredMapFarTagRetainsVisibleWholeBodyContact",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.CatchChoosesTheOpenSideAndAvoidsAForcedFaceCloseup",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.IsolatedNativeCatchRetainsContinuousMotion",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.ReplayHoldsOneCapturedTagFrameThenFadesWithoutPausingPlay",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.VictimFraming_Arena",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.VictimFraming_BayanPlaza",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.VictimFraming_Eskinita",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.VictimFraming_IlalimNgTulay",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.VictimFraming_Kanto",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.VictimFraming_LagoonCove",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.VictimFraming_SaBubong",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "exactCaseCount": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "protectedCount": 21279,
+  "terminal": true
+}

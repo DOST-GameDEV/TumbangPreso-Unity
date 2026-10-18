@@ -507,69 +507,57 @@ def zack():
 @performance
 def nemu(held=False):
     """
-    DEVOURING SEANCE, 3.8 s (plan.md section 4). "Looks distracted. Already knows your next
-    move." Two characters act: Nemu is gazing at nothing, hands behind her back; Kuro nudges
-    her; she turns to him and offers a hand; then she opens it and looks straight at the viewer,
-    the one beat she is fully present, while Kuro swells behind her. She stays calm, hands
-    folded, and points him ahead.
-    Kuro sits on her LEFT (hero-local -x), which the camera keeps in frame.
+    LET THEM IN v10: THE GATE, 7.0 s (owner 2026-10-14; `docs/reports/nemu-ultimate-2026-10-11/direction.md` section 19: no
+    cracks, the souls come out of an otherworldly portal, fewer of them, slower, every beat given time to read).
+      v11: no prayer and no cast laugh (owner: *"start from this wag na prayer"*).
+      THE GATE 0.00: she lifts her clasped hands to the sky and the air over the court tears open; she holds them up.
+      THE POURING 2.50: she flings her arms wide as the gate pours out the rest; then she watches, head tipped.
+      v17: it ends on his head snapping inside a glitch (6.75), no blackout (owner: *"end it here na wag mo na idarken"*).
+    The shots are computed from where the players really are (`HeroIntroductionScene.Nemu.cs`); the authored shots below are
+    their fallbacks with nobody on court, one per cut. The stage reads these times: keep them in step with its `Nm*` constants.
     """
-    p = Performance("nemu-held" if held else "nemu", 7.2)
-    rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
-    # Gazing away up to her right, hands clasped behind her back.
-    away = Pose(torso=(-2, 8, 2), head=(-16, 30, 4), left=(-24, 8, -30), right=(-24, 8, -30))
-    away_sway = away.but(torso=(-2, 8, -2), head=(-18, 32, 6))
-    startle = away.but(torso=(-5, 2, 0), head=(-6, 10, 0))
-    to_kuro = Pose(torso=(0, -8, 0), head=(4, -34, 6), left=(-10, 10, -20), right=(-20, 8, -30))
-    offer = Pose(torso=(3, -12, 0), head=(6, -30, 10), left=(72, 30, -10), right=(-18, 8, -30))
-    # The knowing look, straight down the lens, the open hand still out.
-    knowing = Pose(torso=(0, 2, 0), head=(2, 0, 0), left=(48, 34, -6), right=(-10, 12, -20))
-    # Calm while the giant grows: hands folded in front, a slow sway.
-    calm = Pose(torso=(0, 0, 2), head=(0, 0, 6), left=(30, 2, 38), right=(30, 2, 38))
-    calm_sway = calm.but(torso=(0, 0, -2), head=(0, 0, -4))
-    send = Pose(torso=(4, -6, 0), head=(4, -4, 0), left=(28, 4, 36), right=(90, 6, 6),
-                legs=((6, 2), (-4, 2)))
+    p = Performance("nemu-held" if held else "nemu", 7.0)
+    # Hands clasped at her chest (twist 38 brings both hands together, measured on Sean's mesh), head bowed: praying.
+    pray = Pose(torso=(8, 0, 0), head=(14, 0, 0), left=(78, 5, 38), right=(78, 5, 38))
+    # The chant: the head dips a little further on each beat.
+    chant = pray.but(torso=(10, 0, 0), head=(21, 0, 0))
+    # Eyes open: the head comes up, the hands stay clasped.
+    wake = pray.but(torso=(4, 0, 0), head=(-6, 0, 0))
+    # The clasped hands lifted high to the sky as the gate tears open, chest open, looking up at it.
+    gate = Pose(torso=(-10, 0, 0), head=(-20, 0, 0), left=(150, 5, 34), right=(150, 5, 34), legs=((4, 4), (-3, 4)))
+    # Arms thrown up and wide (chibi arms are a head long: wide, not overhead), chest open, looking up into the storm.
+    call = Pose(torso=(-8, 0, 0), head=(-16, 0, 0), left=(70, 78, 0), right=(70, 78, 0), legs=((4, 5), (-3, 5)))
+    # Watching them, head tipped: she knows what is coming for them; then the tip goes the other way as they turn.
+    watch = Pose(torso=(-2, 0, 2), head=(6, -8, 10), left=(26, 38, -6), right=(26, 38, -6))
+    watch2 = watch.but(head=(8, 6, -12))
+    # The puppeteer: her free hand lifted, fingers up, head tipped the other way, watching them hang.
+    strings = watch.but(head=(2, 6, -14), left=(128, 18, 8))
     if held:
-        # Native review caught the fitted shoe crossing her large face during
-        # the folded-hand/send beat. Keep it loosely by her outside hip and
-        # send Kuro with the same free hand that just offered him a nuzzle.
         shoe = (8, 26, -5)
-        away = away.but(right=shoe)
-        away_sway = away_sway.but(right=shoe)
-        startle = startle.but(right=shoe)
-        to_kuro = to_kuro.but(right=shoe)
-        offer = offer.but(right=shoe)
-        knowing = knowing.but(right=shoe)
-        calm = calm.but(right=shoe)
-        calm_sway = calm_sway.but(right=shoe)
-        send = send.but(left=(80, 30, 0), right=shoe)
+        call = call.but(right=shoe)
+        watch = watch.but(right=shoe)
+        watch2 = watch2.but(right=shoe)
 
-    p.key(0, rest)
-    p.key(.3, away).key(.55, away_sway)
-    p.key(.72, startle, punch=True)
-    p.key(.9, to_kuro)
-    p.hold(.9, 1.12, to_kuro)
-    p.key(1.3, offer)
-    p.hold(1.3, 1.68, offer)
-    p.key(1.86, knowing, punch=True)
-    p.hold(1.86, 2.5, knowing)
-    # LIGHTS OUT (2026-10-09): she folds her hands and sways through the dive, the rise and his looking round, never
-    # turning to him, and only then points. The times are the stage's (`HeroIntroductionScene.Nemu.cs`).
-    p.key(2.8, calm).key(3.4, calm_sway).key(4.0, calm).key(4.6, calm_sway).key(5.2, calm).key(5.55, calm_sway)
-    p.key(5.8, send, punch=True)
-    p.hold(5.8, 7.2, send)
+    # v11: no prayer (owner: *"start from this wag na prayer"*): she already holds her hands up to the sky as it opens.
+    p.key(0, gate)
+    p.hold(0, 2.6, gate)
+    p.key(2.57, call, punch=True)
+    p.hold(2.57, 3.25, call)
+    p.key(3.75, watch)
+    p.hold(3.75, 5.7, watch)
+    # THE STRINGS: she lifts her free hand, and the one who ran is yanked up on its strings with it (5.95).
+    p.key(5.92, strings, punch=True)
+    p.hold(5.92, 7.0, strings)
 
-    # A: from her left front so Kuro, on her left, shares the frame with her.
-    p.shot(0, 1.76, (-1.5, 1.2, 3.6), (-.4, .95, 0), 46, eye_to=(-1.3, 1.15, 3.4))
-    # B: straight on, close, for the knowing look into the lens.
-    p.shot(1.76, 2.45, (.05, 1.25, 3.1), (0, 1.05, 0), 40, eye_to=(.05, 1.22, 2.8), close=True)
-    # C: high over the court from in front of her. The ink runs out, he dives, he rises behind her, he looks round.
-    p.shot(2.45, 4.95, (1.6, 7.6, 12.5), (0, 2.4, -3.2), 56, eye_to=(1.0, 6.4, 11.2))
-    # D: low and close, looking up past her at him.
-    p.shot(4.95, 6.0, (.6, .45, 3.1), (0, 2.7, -2.6), 58, eye_to=(.5, .5, 2.8))
-    # E: back along the court for the send. He comes at this lens; x is 0 on purpose, so a mirrored shot is the same shot.
-    p.shot(6.0, 7.2, (0, 1.3, 6.5), (0, 3.0, -3.0), 52)
-    p.locked((3.4, 2.4, 8.6), (-.9, 2.1, 0), 52)
+    # THE GATE fallback: low behind her, looking up past her at the sky over the court.
+    p.shot(0, .8, (.7, .7, -1.8), (0, 2.6, 5.0), 56, eye_to=(.8, .6, -2.2), look_to=(0, 2.8, 5.0), fov_to=58)
+    # THE FIRST ONE fallback: out in front of her, looking up at the gate.
+    p.shot(.8, 2.5, (.9, 1.0, 2.0), (0, 2.4, 6.0), 56, eye_to=(1.0, 1.0, 2.4), look_to=(0, 1.6, 6.0), fov_to=52)
+    # THE HUNT fallback: out in front of her.
+    p.shot(2.5, 5.3, (.6, 1.3, 3.2), (0, 1.1, 5.5), 52, eye_to=(.9, 1.5, 2.8))
+    # THE STRINGS fallback: low behind her, looking out over the court.
+    p.shot(5.3, 7.0, (.85, 1.05, -2.1), (0, 1.0, 5.5), 52, eye_to=(.85, 1.0, -1.7), look_to=(0, 1.3, 5.5), fov_to=46)
+    p.locked((1.2, 2.2, -2.2), (0, .9, 4.5), 54)
     return p
 
 
@@ -586,77 +574,94 @@ def _dante(held):
     strike the live fissure continues. Every hold trembles slightly: effort, not stillness.
     Signs measured on the sheets: +twist brings an arm inward, +torso yaw turns to his right.
     """
-    p = Performance("dante-held" if held else "dante", 7.0)
+    p = Performance("dante-held" if held else "dante", 3.61)
     return _dante_drift(p, held)
 
 
 def _dante_drift(p, held):
     """
-    CONTINENTAL DRIFT, 7.0 s (owner 2026-10-08: of three staging ideas "dante i like 2 and 3", joined, "About 7 s").
-    He punches the court; it breaks into plates adrift on a molten sea (seen from above); the horned basalt back
-    rises under his plate and lifts him; it raises a fist as he loads both of his, they come down as one, the
-    blasts run up the court and he is set back down in the stamp the live strike starts from.
-    ⚠️ The stage (`HeroIntroductionScene.Dante.cs`) reads these times: the punch 1.10, the lift, the stamp 6.88.
-    It ends EXACTLY on the fist landing, him still up on its back (owner 2026-10-08: "the cutscene should end exactly
-    when the fist lands ... by then dante should still be on the longhorn and only then will it disappeaer into the
-    ground"). So the lift never comes back down in this table: the going under is live play's.
-    The LAST pose is still `stamp`: play resumes from it.
+    CONTINENTAL DRIFT, 3.61 s: THE CHARGE-UP. The owner on v5: *"where does the rock hands come from , he js has them"*, then
+    *"after nna malaunch ung ult, end nna dapat cutscene tapos ppl see the rock going towards them and maknoknnock away sila and
+    concuss"*, *"so focus on directing his charge up and vfx related to it brahh"*. The cutscene is him gathering the earth and
+    it ends as he launches it; the cascade is play's (`DanteDriftLive`).
+    Beats (the stage, `HeroIntroductionScene.Dante.cs`, reads these same times):
+      0.30 THE PLANT          both fists driven into the court
+      0.35 THE CRACKS         molten cracks spider out from his fists
+      0.58 THE EARTH ANSWERS  three waves of stone tear up out of the cracks and land on his fists (0.58, 0.88, 1.18)
+      1.65 THE RISE           he stands, boulder fists overhead
+      2.09 THE LEAP           up against the sky, fists turned down
+      3.25 THE SLAM           seen high behind him down the lane: he lands fists first, the stone driven into the court
+      3.33 THE GROUND RISES   the first band heaves at his fists, racing at them; the cut comes as it rises (3.61) and play's
+                              cascade carries on from that frame (owner: "end the cutscene when the ground is rsiing towards
+                              the players", "dont force it to 7 seconds")
+    Every shot is on HIS RIGHT side of the line (+x). The LAST pose is `stamp` (the live cast clip continues from it).
     """
-    wide = ((2, 14), (-2, 14))
-    rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
-    plant = Pose(torso=(6, 0, 0), head=(18, 0, 0), left=(8, 24, 0), right=(8, 24, 0), legs=wide)
-    # The wind-up: the fist goes up behind his head, chest opened to it. Holding a shoe, the free hand does it.
-    wind = Pose(torso=(-10, -16 if held else 16, 0), head=(8, 0, 0), legs=((6, 16), (-8, 16)),
-                left=(165, 22, 0) if held else (16, 30, 0), right=(20, 42, -8) if held else (165, 22, 0))
-    # The punch: down on the front leg, the fist in the court just ahead of his feet.
-    punch = Pose(torso=(40, 8 if held else -8, 0), head=(-4, 0, 0), legs=((34, 14), (-26, 14)),
-                 left=(58, 8, 22) if held else (18, 38, 0), right=(20, 42, -8) if held else (58, 8, 22))
-    # Standing on a plate that is adrift: low, wide, arms out for balance, watching the seams.
-    adrift = Pose(torso=(14, 0, 0), head=(16, 0, 0), left=(26, 46, 0), right=(20, 42, -8) if held else (26, 46, 0),
-                  legs=((6, 18), (-6, 18)))
-    adrift_l = adrift.but(torso=(13, -6, 2), head=(18, -22, 0))
-    adrift_r = adrift.but(torso=(13, 6, -2), head=(18, 22, 0))
-    # Carried up: knees deeper, head coming up as the ground leaves.
-    ride = Pose(torso=(20, 0, 0), head=(-6, 0, 0), left=(34, 54, 0), right=(20, 42, -8) if held else (34, 54, 0),
-                legs=((12, 20), (-10, 20)))
-    ride_shake = ride.but(torso=(21, 0, 2), left=(36, 56, 0))
-    stand = Pose(torso=(-4, 0, 0), head=(-10, 0, 0), left=(18, 30, 0), right=(20, 42, -8) if held else (18, 30, 0),
-                 legs=((0, 16), (0, 16)))
-    load = Pose(torso=(-4, 22, 0), head=(0, -14, 0), left=(150, 20, 50), right=(150, 20, -8),
-                legs=((8, 12), (-10, 12)))
-    stamp = Pose(torso=(28, -10, 0), head=(-8, 6, 0), left=(72, 6, 30), right=(72, 6, 30),
-                 legs=((22, 10), (-18, 10)))
+    shoe = (20, 42, -8)
+    stand = Pose(torso=(-2, 0, 0), head=(-6, 0, 0), legs=((4, 14), (-4, 14)), left=(18, 30, 0), right=shoe if held else (18, 30, 0))
+    # ⚠️ BOTH FISTS, SLIPPER OR NOT (owner on v7: *"what happened baket one arm nalanh huhu"*): holding a slipper used to keep his
+    # right arm down by his side through the whole charge-up, so only one boulder fist ever rose. The slipper rides in the right
+    # boulder fist now; only the last pose (`stamp`, where the live cast clip continues) keeps the held arm.
+    # THE PLANT: down low, both fists driven into the court in front of him, head down.
+    plant = Pose(torso=(44, 0, 0), head=(-20, 0, 0), left=(86, 8, 20), right=(86, 8, 20), legs=((52, 88), (40, 80)))
+    plant_shake = plant.but(torso=(46, 0, 1.5))
+    # Drawing the boulder fists up out of the court to his hips as the last stone lands.
+    crouch = Pose(torso=(26, 0, 0), head=(-18, 0, 0), left=(48, 24, 26), right=(48, 24, 26), legs=((50, 84), (44, 80)))
+    # THE RISE: standing, chest open, the boulder fists up and spread wide either side of his head (film r41: straight up, his
+    # short arms brought both fists together in front of his face, one boulder hid the other and it read as one arm).
+    # ⚠️ The same numbers on both arms mirror them (the slam's (72, 6, 30) on both): the old (168, 12, 18) / (168, 12, -18) swung
+    # his left arm across his chest (film r44 measured his left palm 0.18 m left of his middle, his right 0.46 m right of it).
+    raised = Pose(torso=(-12, 0, 0), head=(-16, 0, 0), left=(122, 8, -62), right=(122, 8, -62), legs=((14, 14), (-14, 14)))
+    raised_shake = raised.but(torso=(-13, 0, 1.5), left=(126, 8, -64), right=(126, 8, -64))
+    # THE LEAP: stretched up off the court; tucked at the top; turned fists down for the landing.
+    launch = Pose(torso=(-10, 0, 0), head=(-16, 0, 0), left=(150, 10, -40), right=(150, 10, -40), legs=((-6, 6), (-8, 8)))
+    tuck = Pose(torso=(8, 0, 0), head=(-12, 0, 0), left=(140, 12, -45), right=(140, 12, -45), legs=((44, 70), (30, 58)))
+    # THE HANG (owner's brief for the slam, 2026-10-18: "a hang before impact"): at the top of the fall he stops, both boulder
+    # fists wound back over his head, trembling, for a beat; then everything goes into the court at once.
+    # The legs stay drawn up as in the tuck (half-extended legs here put his feet through the court on the drop to the stamp:
+    # `UltimateIntroductionProbe`'s support plane went from -0.024 m to -0.055 m).
+    cocked = Pose(torso=(-8, 0, 0), head=(-22, 0, 0), left=(164, 10, -26), right=(164, 10, -26), legs=((44, 70), (30, 58)))
+    cocked_shake = cocked.but(torso=(-9, 0, 1.5), left=(168, 10, -28), right=(168, 10, -28))
+    stamp = Pose(torso=(28, -10, 0), head=(-8, 6, 0), left=(72, 6, 30), right=(72, 6, 30), legs=((22, 10), (-18, 10)))
     if held:
-        load = load.but(right=(20, 42, -8))
         stamp = stamp.but(right=(30, 42, -8))
-    landed = stamp.but(torso=(36, -10, 0), legs=((30, 12), (-24, 12)))
+    stamp_shake = stamp.but(torso=(30, -10, 1.5))
 
-    p.key(0, rest)
-    p.key(.42, plant)
-    p.key(.82, wind)
-    p.hold(.82, .98, wind)
-    p.key(1.10, punch, punch=True)
-    p.hold(1.10, 1.50, punch)
-    p.key(1.95, adrift).key(2.4, adrift_l).key(2.9, adrift_r).key(3.4, adrift)
-    p.key(3.85, ride).key(4.1, ride_shake).key(4.4, ride).key(4.7, ride_shake).key(5.0, ride)
-    p.key(5.5, stand)
-    p.key(6.05, load)
-    p.hold(6.05, 6.66, load)
-    p.key(6.88, stamp, punch=True)
-    p.hold(6.88, 7.0, stamp)
+    p.key(0, stand)
+    p.key(.16, crouch)
+    p.key(.30, plant, punch=True)
+    # Each wave of stone landing on his fists jolts through him.
+    for at in (.84, 1.14, 1.44):
+        p.key(at, plant_shake, punch=True).key(at + .1, plant)
+    p.key(1.56, crouch)
+    p.key(1.80, raised)
+    p.key(1.88, raised_shake).key(1.94, raised)
+    p.key(2.02, crouch)
+    p.key(2.11, launch, punch=True)
+    p.key(2.40, tuck)
+    p.key(2.76, tuck)
+    p.key(2.96, cocked)
+    p.key(3.04, cocked_shake).key(3.10, cocked)
+    p.key(3.25, stamp, punch=True)
+    p.key(3.33, stamp_shake, punch=True).key(3.45, stamp)
+    p.hold(3.45, 3.61, stamp)
 
-    # His plate is carried: a slow first heave, the long rise, a settle at the top, then down with the thing as it goes under.
-    p.rise(0, 0).rise(3.45, 0).rise(4.0, .45).rise(5.2, 3.4).rise(7.0, 3.4)
+    p.rise(0, 0).rise(.30, -.24).rise(1.50, -.24).rise(1.80, 0).rise(2.02, -.2).rise(2.11, 0).rise(2.27, 1.7).rise(2.47, 2.9)
+    # The hang: from 2.96 to 3.10 he barely sinks; then 2.9 m in 0.15 s, the drop four times the speed it was.
+    p.rise(2.67, 3.3).rise(2.82, 3.25).rise(2.96, 3.1).rise(3.10, 2.95).rise(3.18, 1.6).rise(3.25, -.16).rise(3.61, -.16)
 
-    # A: low and close in front while he plants, winds and punches.
-    p.shot(0, 1.15, (1.3, .55, 3.4), (0, 1.0, 0), 46, eye_to=(1.0, .5, 2.9))
-    # B: high over him, the court in plates on the sea, rising slowly as they drift.
-    p.shot(1.15, 3.4, (.5, 7.4, -2.2), (0, 0, .5), 58, eye_to=(.9, 10.2, -3.0))
-    # C: low, wide and to his front right, looking up as it comes out of the seam under him.
-    p.shot(3.4, 5.3, (4.0, .7, 5.6), (0, 1.0, .6), 52, eye_to=(4.9, 1.1, 6.8), look_to=(0, 2.9, .6))
-    # D: low in front of its face, him on top, the raised fist over both, creeping in until the fist lands.
-    p.shot(5.3, 7.0, (-2.9, 1.3, 9.8), (.3, 3.3, .9), 46, eye_to=(-2.4, 1.1, 8.6), look_to=(.3, 3.0, 1.2))
-    p.locked((2.6, 1.8, 8.0), (0, 1.6, .5), 54)
+    # The stage frames every shot from his real body (`HeroIntroductionScene.DanteFrame.cs`); these are the shots' sides and moves.
+    # 0 THE PLANT: low and close at his right.
+    p.shot(0, .55, (1.9, .55, 1.9), (0, .5, .45), 46)
+    # 1 THE EARTH ANSWERS: low and wide in front, arcing round from his right.
+    p.shot(.55, 1.65, (3.1, .9, 2.8), (0, .5, .3), 52, eye_to=(.8, .6, 3.3), look_to=(0, .7, .3))
+    # 2 THE RISE: a low hero angle, looking up at the boulder fists.
+    p.shot(1.65, 2.09, (1.3, .3, 2.4), (0, 2.2, 0), 46)
+    # 3 THE LEAP: low on the court, looking up at him against the sky.
+    p.shot(2.09, 3.08, (3.2, .35, 3.0), (0, 3.0, 0), 50, fov_to=54)
+    # 4 THE SLAM AND THE GROUND RISING: high behind him down the lane at the real players; he comes down into it, the first
+    # band heaves toward them, and it cuts as it rises.
+    p.shot(3.08, 3.61, (1.2, 2.9, -3.4), (0, .4, 5.0), 56)
+    p.locked((3.2, 1.9, 4.5), (0, 1.2, .5), 52)
     return p
 
 

@@ -45,7 +45,11 @@ namespace TumbangPreso.Tests
         GameObject _root,_hubRoot,_cameraRoot;Host _host;HubLobby _screen;Camera _camera;RenderTexture _target;
         [SetUp] public void Before()
         {
-            _host=new Host();_hubRoot=new GameObject("Seat control host");var hub=_hubRoot.AddComponent<TumpHub>();hub.enabled=false;
+            _host=new Host();BuildForCurrentSeats();
+        }
+        private void BuildForCurrentSeats()
+        {
+            _hubRoot=new GameObject("Seat control host");var hub=_hubRoot.AddComponent<TumpHub>();hub.enabled=false;
             typeof(TumpHub).GetProperty("Host").SetValue(hub,_host);
             _root=new GameObject("Seat control canvas",typeof(RectTransform),typeof(Canvas),typeof(CanvasScaler));
             typeof(TumpHub).GetProperty("Canvas").SetValue(hub,_root.GetComponent<Canvas>());
@@ -65,6 +69,12 @@ namespace TumbangPreso.Tests
             Object.DestroyImmediate(_root);Object.DestroyImmediate(_hubRoot);Object.DestroyImmediate(_cameraRoot);
             _target.Release();Object.DestroyImmediate(_target);
         }
+        private void RebuildForCurrentSeats()
+        {
+            // Each new Editor case needs its initial roster, not a runtime deferred row redraw.
+            // Dispose only this fixture's previous canvas/camera, then build the real lobby.
+            After();BuildForCurrentSeats();
+        }
         Button Button(string name)=>_root.GetComponentsInChildren<Button>(true).FirstOrDefault(b=>b.name==name);
         [Test] public void OpenAndBotSlotsExposeRealSeatActions()
         {
@@ -81,6 +91,22 @@ namespace TumbangPreso.Tests
             Assert.IsTrue(bot.interactable);Assert.IsTrue(open.interactable);
             bot.onClick.Invoke();Assert.AreEqual(2,_host.Requested);
             open.onClick.Invoke();Assert.AreEqual(3,_host.Requested);
+        }
+        [Test] public void HumanOnlyVacanciesExplainWhyStartIsDisabled()
+        {
+            foreach(int i in new[]{0,1,2,3})_host.Data[i]=new HubSeat{Slot=i,CharacterPick=-1};
+            RebuildForCurrentSeats();Assert.IsFalse(Button("StartGame").interactable);
+            var status=_root.GetComponentsInChildren<Text>(true).First(t=>t.name=="Status");StringAssert.Contains("Bots are off",status.text);
+        }
+        [Test] public void FillingVacanciesWithBotsKeepsStartAvailable()
+        {
+            foreach(int i in new[]{0,1,2,3})_host.Data[i]=new HubSeat{Slot=i,Bot=true,CharacterPick=-1};
+            RebuildForCurrentSeats();Assert.IsTrue(Button("StartGame").interactable);
+        }
+        [Test] public void FourHumansKeepStartAvailableWithoutBots()
+        {
+            foreach(int i in new[]{0,1,2,3})_host.Data[i]=new HubSeat{Slot=i,Occupied=true,CharacterPick=-1,Name="PLAYER"};
+            RebuildForCurrentSeats();Assert.IsTrue(Button("StartGame").interactable);
         }
         [Test] public void StaleRoomStateIsRecheckedBeforeSendingASeatRequest()
         {

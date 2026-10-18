@@ -1,0 +1,7 @@
+{
+  "Assets/TumbangPreso/Runtime/MatchArrivalPresentation.cs": "faa57d2160f3ddafd6906844f49c7741a449c75d16eac2227340fd8ddff3866c",
+  "Assets/TumbangPreso/Runtime/MatchArrivalPresentation.Direction.cs": "ae5069f7c1044c58b9fb473ddd677df60d39f33b885f77907454b850c6282722",
+  "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.Arrival.cs": "d99fcf2f8b6bf88f459c97390e87864ef1091617c31c0be0108de6e538e5edce",
+  "Assets/TumbangPreso/Tests/PlayMode/DirectedMapArrivalTests.cs": "9b8c1ee8524534cda9b0b3dcc35901f57e1d3e76fdcd9a7e402e7a73028bb40a",
+  "Assets/TumbangPreso/Runtime/Map/KantoTraffic.cs": "0f5289af504ada849e7cf1cac06f4f2580225b9bd1ba452d96f6947966fd7fa9"
+}

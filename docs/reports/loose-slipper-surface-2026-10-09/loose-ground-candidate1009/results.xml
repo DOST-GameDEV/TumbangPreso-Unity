@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-08 21:54:15Z" end-time="2026-10-08 21:55:43Z" duration="88.14648">
+  <test-suite type="TestSuite" id="3670" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2159" result="Passed" start-time="2026-10-08 21:54:15Z" end-time="2026-10-08 21:55:43Z" duration="88.146480" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3662" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2159" result="Passed" start-time="2026-10-08 21:54:15Z" end-time="2026-10-08 21:55:43Z" duration="88.120149" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="13404" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3663" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2159" result="Passed" start-time="2026-10-08 21:54:15Z" end-time="2026-10-08 21:55:43Z" duration="88.102721" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3666" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2157" result="Passed" start-time="2026-10-08 21:54:15Z" end-time="2026-10-08 21:55:43Z" duration="88.085575" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2131" name="LooseSlipperSurfaceTests" fullname="TumbangPreso.PlayTests.LooseSlipperSurfaceTests" classname="TumbangPreso.PlayTests.LooseSlipperSurfaceTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-08 21:54:15Z" end-time="2026-10-08 21:55:43Z" duration="88.021571" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2132" name="NewMapLooseShoesRestOnActualCollisionSurfaces" fullname="TumbangPreso.PlayTests.LooseSlipperSurfaceTests.NewMapLooseShoesRestOnActualCollisionSurfaces" methodname="NewMapLooseShoesRestOnActualCollisionSurfaces" classname="TumbangPreso.PlayTests.LooseSlipperSurfaceTests" runstate="Runnable" seed="275183851" result="Passed" start-time="2026-10-08 21:54:15Z" end-time="2026-10-08 21:55:43Z" duration="88.006339" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

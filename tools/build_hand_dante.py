@@ -1,4 +1,4 @@
-"""Basilio's hand companion: three chunky stones with gold veins that float round his left fist (`DanteStoneHand`).
+"""Dante's hand companion: three chunky stones with gold veins that float round his left fist (`DanteStoneHand`).
 
   py -3 tools/build_hand_dante.py            the whole model (what the game loads)
   py -3 tools/build_hand_dante.py --look=sleepy | --look=awake    review only: one face, seams hidden or shown

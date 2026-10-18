@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="14" result="Failed(Child)" total="14" passed="12" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 07:45:27Z" end-time="2026-10-07 07:48:58Z" duration="210.6764038">
+  <test-suite type="TestSuite" id="3533" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2051" result="Failed" site="Child" start-time="2026-10-07 07:45:27Z" end-time="2026-10-07 07:48:58Z" duration="210.676404" total="14" passed="12" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3525" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2051" result="Failed" site="Child" start-time="2026-10-07 07:45:27Z" end-time="2026-10-07 07:48:58Z" duration="210.649633" total="14" passed="12" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="48916" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3526" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2051" result="Failed" site="Child" start-time="2026-10-07 07:45:27Z" end-time="2026-10-07 07:48:58Z" duration="210.634092" total="14" passed="12" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3529" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2049" result="Failed" site="Child" start-time="2026-10-07 07:45:27Z" end-time="2026-10-07 07:48:58Z" duration="210.618503" total="14" passed="12" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2029" name="LocalReplaySceneShaderTests" fullname="TumbangPreso.PlayTests.LocalReplaySceneShaderTests" classname="TumbangPreso.PlayTests.LocalReplaySceneShaderTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-07 07:45:27Z" end-time="2026-10-07 07:46:06Z" duration="38.992417" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2030" name="ActualArenaCrowdSavedUniformsRestoreTheOriginalRenderedFrame" fullname="TumbangPreso.PlayTests.LocalReplaySceneShaderTests.ActualArenaCrowdSavedUniformsRestoreTheOriginalRenderedFrame" methodname="ActualArenaCrowdSavedUniformsRestoreTheOriginalRenderedFrame" classname="TumbangPreso.PlayTests.LocalReplaySceneShaderTests" runstate="Runnable" seed="558883481" result="Passed" start-time="2026-10-07 07:45:27Z" end-time="2026-10-07 07:46:06Z" duration="38.656464" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.85, ambience slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_3 at 0.31 of full scale before the sliders (excitement 0.91, ambience slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 0.55, ambience slider).
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_3 at 0.38 of full scale before the sliders (excitement 0.85, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.70, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ReplayCrowdPixels] control=1.387292 rewind=0
+[ReplayCrowdCaptureCost] averageMs=0.173283
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2031" name="SavedWakeProducesTheOriginalPixelsAndLegacySidecarsStillRead" fullname="TumbangPreso.PlayTests.LocalReplaySceneShaderTests.SavedWakeProducesTheOriginalPixelsAndLegacySidecarsStillRead" methodname="SavedWakeProducesTheOriginalPixelsAndLegacySidecarsStillRead" classname="TumbangPreso.PlayTests.LocalReplaySceneShaderTests" runstate="Runnable" seed="77223727" result="Passed" start-time="2026-10-07 07:46:06Z" end-time="2026-10-07 07:46:06Z" duration="0.315691" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[ReplayWakePixels] control=0.5500081 rewind=0
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2032" name="LocalReplaySceneStateTests" fullname="TumbangPreso.PlayTests.LocalReplaySceneStateTests" classname="TumbangPreso.PlayTests.LocalReplaySceneStateTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-10-07 07:46:06Z" end-time="2026-10-07 07:47:03Z" duration="56.656268" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2038" name="ActualArenaCrowdAndRoofWaterExposeTheirSavedRenderState" fullname="TumbangPreso.PlayTests.LocalReplaySceneStateTests.ActualArenaCrowdAndRoofWaterExposeTheirSavedRenderState" methodname="ActualArenaCrowdAndRoofWaterExposeTheirSavedRenderState" classname="TumbangPreso.PlayTests.LocalReplaySceneStateTests" runstate="Runnable" seed="288441462" result="Passed" start-time="2026-10-07 07:46:06Z" end-time="2026-10-07 07:46:43Z" duration="36.448766" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_3 at 0.31 of full scale before the sliders (excitement 1.00, ambience slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 0.55, ambience slider).
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_3 at 0.38 of full scale before the sliders (excitement 0.88, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.70, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+[Env] repainted 0 of 297 renderers, 0 with a roof variant.
+[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2039" name="ActualKantoRoadCanBeSavedReloadedSeekedAndRestored" fullname="TumbangPreso.PlayTests.LocalReplaySceneStateTests.ActualKantoRoadCanBeSavedReloadedSeekedAndRestored" methodname="ActualKantoRoadCanBeSavedReloadedSeekedAndRestored" classname="TumbangPreso.PlayTests.LocalReplaySceneStateTests" runstate="Runnable" seed="794191356" result="Passed" start-time="2026-10-07 07:46:43Z" end-time="2026-10-07 07:47:03Z" duration="19.962331" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2036" name="EveryAutomaticallyRecordedSceneSegmentHasItsCompleteReadableWindow" fullname="TumbangPreso.PlayTests.LocalReplaySceneStateTests.EveryAutomaticallyRecordedSceneSegmentHasItsCompleteReadableWindow" methodname="EveryAutomaticallyRecordedSceneSegmentHasItsCompleteReadableWindow" classname="TumbangPreso.PlayTests.LocalReplaySceneStateTests" runstate="Runnable" seed="593362352" result="Failed" label="Error" start-time="2026-10-07 07:47:03Z" end-time="2026-10-07 07:47:03Z" duration="0.060640" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.ArgumentException : The actual value must be a string or a non-null IEnumerable or DirectoryInfo
+Parameter name: actual]]></message>
+                <stack-trace><![CDATA[  at NUnit.Framework.Constraints.EmptyConstraint.ApplyTo (System.Object actual) [0x00023] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.NotConstraint.ApplyTo (System.Object actual) [0x00007] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) [0x0000e] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Assert.IsNotEmpty (System.String aString, System.String message, System.Object[] args) [0x0000c] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at TumbangPreso.PlayTests.LocalReplaySceneStateTests+<EveryAutomaticallyRecordedSceneSegmentHasItsCompleteReadableWindow>d__5.MoveNext () [0x00030] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\LocalReplaySceneStateTests.cs:77 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44 ]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2033" name="RecordedRoadPoseIsSeekableAndScopeRestoresPresentState" fullname="TumbangPreso.PlayTests.LocalReplaySceneStateTests.RecordedRoadPoseIsSeekableAndScopeRestoresPresentState" methodname="RecordedRoadPoseIsSeekableAndScopeRestoresPresentState" classname="TumbangPreso.PlayTests.LocalReplaySceneStateTests" runstate="Runnable" seed="809184428" result="Passed" start-time="2026-10-07 07:47:03Z" end-time="2026-10-07 07:47:03Z" duration="0.043277" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2034" name="RecordedVisibilityNeverActivatesAnInactiveVehicle" fullname="TumbangPreso.PlayTests.LocalReplaySceneStateTests.RecordedVisibilityNeverActivatesAnInactiveVehicle" methodname="RecordedVisibilityNeverActivatesAnInactiveVehicle" classname="TumbangPreso.PlayTests.LocalReplaySceneStateTests" runstate="Runnable" seed="269110403" result="Passed" start-time="2026-10-07 07:47:03Z" end-time="2026-10-07 07:47:03Z" duration="0.044165" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2035" name="RoadWrapIsAnEdgeAndSignalSlotsRestoreTheirActualOverrides" fullname="TumbangPreso.PlayTests.LocalReplaySceneStateTests.RoadWrapIsAnEdgeAndSignalSlotsRestoreTheirActualOverrides" methodname="RoadWrapIsAnEdgeAndSignalSlotsRestoreTheirActualOverrides" classname="TumbangPreso.PlayTests.LocalReplaySceneStateTests" runstate="Runnable" seed="26823007" result="Passed" start-time="2026-10-07 07:47:03Z" end-time="2026-10-07 07:47:03Z" duration="0.046734" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2037" name="WaterWakeAndCrowdUniformsSeekAndRestoreWithoutRunningMapEvents" fullname="TumbangPreso.PlayTests.LocalReplaySceneStateTests.WaterWakeAndCrowdUniformsSeekAndRestoreWithoutRunningMapEvents" methodname="WaterWakeAndCrowdUniformsSeekAndRestoreWithoutRunningMapEvents" classname="TumbangPreso.PlayTests.LocalReplaySceneStateTests" runstate="Runnable" seed="1470818237" result="Passed" start-time="2026-10-07 07:47:03Z" end-time="2026-10-07 07:47:03Z" duration="0.047277" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2040" name="LocalReplayTests" fullname="TumbangPreso.PlayTests.LocalReplayTests" classname="TumbangPreso.PlayTests.LocalReplayTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-07 07:47:03Z" end-time="2026-10-07 07:47:13Z" duration="9.747545" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2046" name="ContinuousSegmentKeepsPlayingAudioWhileSeekStopsPastCues" fullname="TumbangPreso.PlayTests.LocalReplayTests.ContinuousSegmentKeepsPlayingAudioWhileSeekStopsPastCues" methodname="ContinuousSegmentKeepsPlayingAudioWhileSeekStopsPastCues" classname="TumbangPreso.PlayTests.LocalReplayTests" runstate="Runnable" seed="597589611" result="Passed" start-time="2026-10-07 07:47:03Z" end-time="2026-10-07 07:47:09Z" duration="6.329807" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+]]></output>
+            </test-case>
+            <test-case id="2043" name="RetainedNativeCustomRecordingCanBeViewedAndScrubbedThroughActualControls" fullname="TumbangPreso.PlayTests.LocalReplayTests.RetainedNativeCustomRecordingCanBeViewedAndScrubbedThroughActualControls" methodname="RetainedNativeCustomRecordingCanBeViewedAndScrubbedThroughActualControls" classname="TumbangPreso.PlayTests.LocalReplayTests" runstate="Runnable" seed="1384763964" result="Passed" start-time="2026-10-07 07:47:09Z" end-time="2026-10-07 07:47:13Z" duration="3.411219" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[TumpUiCapture] local-replay-toolbar1080 cream source=252,211,159 pixel=109,76,54; isolated UI camera, no ColourGrade.
+[TumpUiCapture] local-replay-toolbar720 cream source=252,211,159 pixel=104,73,53; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2138" name="MapPreviewFreshnessTests" fullname="TumbangPreso.PlayTests.MapPreviewFreshnessTests" classname="TumbangPreso.PlayTests.MapPreviewFreshnessTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-07 07:47:13Z" end-time="2026-10-07 07:48:54Z" duration="101.007939" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2140" name="ReplayOnlyShaderClockKeepsPreviewProvenanceAndDetectsLiveFallbackChanges" fullname="TumbangPreso.PlayTests.MapPreviewFreshnessTests.ReplayOnlyShaderClockKeepsPreviewProvenanceAndDetectsLiveFallbackChanges" methodname="ReplayOnlyShaderClockKeepsPreviewProvenanceAndDetectsLiveFallbackChanges" classname="TumbangPreso.PlayTests.MapPreviewFreshnessTests" runstate="Runnable" seed="1778227823" result="Passed" start-time="2026-10-07 07:47:13Z" end-time="2026-10-07 07:48:54Z" duration="101.005085" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2784" name="RecordedShaderClockTests" fullname="TumbangPreso.PlayTests.RecordedShaderClockTests" classname="TumbangPreso.PlayTests.RecordedShaderClockTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-07 07:48:54Z" end-time="2026-10-07 07:48:58Z" duration="3.862883" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2786" name="AuthoredWaterRewindsItsShaderClockAndRestoresLiveTime" fullname="TumbangPreso.PlayTests.RecordedShaderClockTests.AuthoredWaterRewindsItsShaderClockAndRestoresLiveTime" methodname="AuthoredWaterRewindsItsShaderClockAndRestoresLiveTime" classname="TumbangPreso.PlayTests.RecordedShaderClockTests" runstate="Runnable" seed="1675978399" result="Failed" start-time="2026-10-07 07:48:54Z" end-time="2026-10-07 07:48:54Z" duration="0.099613" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The production clip clock must match the actual GPU clock.
+  Expected: 11.33624267578125d +/- 9.9999997473787516E-05d
+  But was:  2.4985756874084473d
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.RecordedShaderClockTests+<AuthoredWaterRewindsItsShaderClockAndRestoresLiveTime>d__6.MoveNext () [0x0025f] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\RecordedShaderClockTests.cs:100
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[ShaderClockGPU] cpu=11.33624 level=2.498576 real=209.1708 editor=277.4962346 global=(0.00, 0.00, 0.00, 0.00) gpu=RGBA(0.125, 2.499, 4.997, 7.496)
+]]></output>
+            </test-case>
+            <test-case id="2785" name="EveryUpdatedAuthoredShaderKeepsItsOrdinaryRender" fullname="TumbangPreso.PlayTests.RecordedShaderClockTests.EveryUpdatedAuthoredShaderKeepsItsOrdinaryRender" methodname="EveryUpdatedAuthoredShaderKeepsItsOrdinaryRender" classname="TumbangPreso.PlayTests.RecordedShaderClockTests" runstate="Runnable" seed="2118288092" result="Passed" start-time="2026-10-07 07:48:54Z" end-time="2026-10-07 07:48:58Z" duration="3.761267" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/MoonShaft.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/OmenVeil.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/RoofPoolWater.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/SoulGlow.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/SoulSpill.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/SpiritGhost.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/VoodooGhost.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/VoodooThread.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Resources/Shaders/VoodooWisp.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Shaders/ArenaHologram.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Shaders/LagoonCoveWater.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Shaders/SlipperBeam.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Shaders/Toon.shader delta=0
+[ShaderLiveEquivalence] Assets/TumbangPreso/Shaders/VolcanicRock.shader delta=0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,18 @@
+{
+  "source": "0358e70de18f94889ec101201934b40ee466a6b4",
+  "pcPid": 9444,
+  "pcWindow": 20056096,
+  "pcParent": 52874,
+  "pcProfile": "pc-solicit152-1006d",
+  "room": "N743",
+  "independentPcAck": {
+    "naturalRowArrivalPeer1Seat1": true,
+    "codeRejoinPeer2Seat1": true,
+    "hostNormalUiBotsNormalThen4x30": true,
+    "normalHostBackHomeRequestedStopTrue": true,
+    "normalQuitExitCode": 0,
+    "inputSeedRestored": true,
+    "all261ArtifactFilesUnchanged": true
+  },
+  "scope": "Independent actual PC GUI/log and terminal ACK; no match/start/forced APIs"
+}

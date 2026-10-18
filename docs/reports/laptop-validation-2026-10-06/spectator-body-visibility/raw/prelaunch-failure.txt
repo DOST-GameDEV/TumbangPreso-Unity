@@ -1,0 +1,1 @@
+No Unity launched. Copied candidate wrapper still referenced old transit snapshot; qualified-input check rejected mismatched AIController before any overlay/preferences mutation. Corrected prior points to restored body-visibility original1; new candidate2 retains this original attempt.

@@ -229,6 +229,7 @@ namespace TumbangPreso.Net
             Abilities.PaetePlant.AutomaticShotFired -= BroadcastAutomaticPlantShot;
             CancelSnapshotRefreshWork(clearSnapshotTimes: false);
             _pendingSkillCasts.Clear();
+            ResetNemuGhostTransport();
         }
 
         /// <summary>
@@ -295,6 +296,14 @@ namespace TumbangPreso.Net
             }
 
             UI.SceneFlow.RetireMatchSimulation();
+            // The current hub recovers to HOME. Requesting a networked preparation
+            // screen here makes AutoHost open a replacement LAN room without input,
+            // including when the original online match already finished.
+            if (UI.ConvertedMatchSetup.HubEnabled)
+            {
+                UI.SceneFlow.GoHome();
+                return;
+            }
             UI.SceneFlow.Networked = true;
             UI.SceneFlow.Go(UI.SceneFlow.MatchSetup);
         }
@@ -340,6 +349,7 @@ namespace TumbangPreso.Net
             ResetTimedKitTransport();
             ResetPaeteVineTransport();
             ResetObjectiveCooldownTransport();
+            ResetNemuGhostTransport();
             _lastSkillRequest.Clear();_skillRequestSequence=0;_skillEventSequence=0;_skillEpoch=long.MinValue;
             _pendingSkillCasts.Clear();
             for (int slot = 0; slot < Balance.PlayerCount; slot++) Unit(slot)?.AbilitySystem?.ResetNetworkSkillReceipts();
@@ -389,6 +399,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("TimedKitState", OnTimedKitStateMsg);
             cm.RegisterNamedMessageHandler("CircuitAim", OnCircuitAimMsg);
             cm.RegisterNamedMessageHandler("CircuitState", OnCircuitStateMsg);
+            cm.RegisterNamedMessageHandler("NemuGhosts", OnNemuGhostsMsg);
             cm.RegisterNamedMessageHandler("PaeteVine", OnPaeteVineMsg);
             cm.RegisterNamedMessageHandler("CastPreparation", OnCastPreparationMsg);
             cm.RegisterNamedMessageHandler("MovementWindow", OnMovementWindowMsg);
@@ -1997,6 +2008,7 @@ namespace TumbangPreso.Net
         {
             if (!NetAuthority.IsHost || GameServices.Match == null || GameServices.Round == null ||
                 _nm?.CustomMessagingManager == null || peer == _nm.LocalClientId) return;
+            SendNemuGhostSnapshot(slot, peer);
             var kit = Unit(slot)?.AbilitySystem?.Kit;
             if (kit is Abilities.AmihanHeroKit amihan)
             {
@@ -2531,6 +2543,8 @@ namespace TumbangPreso.Net
         public void SyncUnitTransformClientRpc(int slot, Vector3 pos, float yaw, Vector3 velocity)
             =>SendUnitPose(slot,pos,yaw,velocity,false);
 
+        private const int UnitPoseFixedBytes = 210; // Through BlindedLeft, before the variable tails.
+
         private void SendUnitPose(int slot,Vector3 pos,float yaw,Vector3 velocity,bool reliable,ulong? onlyClient = null,
                                   bool ownerCorrection = true)
         {
@@ -2540,7 +2554,9 @@ namespace TumbangPreso.Net
             var unit = Unit(slot);
             if (unit == null) return;
 
-            using var writer = new FastBufferWriter(308, Allocator.Temp);
+            // Fixed body fields, voodoo state and the largest valid aim identity.
+            using var writer = new FastBufferWriter(UnitPoseFixedBytes + VoodooBodySnapshot.WireBytes
+                + AbilityAimSnapshot.MaxWireBytes, Allocator.Temp);
             unit.FlightPoseEvidence(out bool grounded, out long flightEpisode);
             writer.WriteValueSafe(slot);
             writer.WriteNetworkSerializable(new GameplayActionScope
@@ -2597,6 +2613,10 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(flightEpisode);
             writer.WriteValueSafe(unit.HauntedLeft);
             writer.WriteValueSafe(unit.ZappedLeft);
+            // Nemu's PRUSISYON (protocol 160): the POSSESSED clock. The body's own peer computes the pull from it.
+            writer.WriteValueSafe(unit.PossessedLeft);
+            // Nemu's DON'T LOOK (protocol 161): the BLINDED clock. The body's own peer reads its slow and its covered eyes from it.
+            writer.WriteValueSafe(unit.BlindedLeft);
             writer.WriteNetworkSerializable(VoodooBodySnapshot.Capture(unit));
             writer.WriteNetworkSerializable(unit.AbilitySystem?.CaptureAimPresentation() ?? default(AbilityAimSnapshot));
             var delivery = reliable ? NetworkDelivery.ReliableSequenced : PoseDelivery;
@@ -2611,7 +2631,7 @@ namespace TumbangPreso.Net
             // Netcode invokes the handler locally for the listen host, so every broadcast the
             // host sent was also applied ON the host, a second time, over authoritative state it
             // had just produced. See § THE LOOPBACK.
-            if (NetAuthority.IsHost || !reader.TryBeginRead(217 + VoodooBodySnapshot.WireBytes)) return;
+            if (NetAuthority.IsHost || !reader.TryBeginRead(UnitPoseFixedBytes + VoodooBodySnapshot.WireBytes + AbilityAimSnapshot.MinWireBytes)) return;
 
             reader.ReadValueSafe(out int slot);
             reader.ReadNetworkSerializable(out GameplayActionScope scope);
@@ -2658,11 +2678,15 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out long flightEpisode);
             reader.ReadValueSafe(out float hauntedLeft);
             reader.ReadValueSafe(out float zappedLeft);
+            reader.ReadValueSafe(out float possessedLeft);
+            reader.ReadValueSafe(out float blindedLeft);
             if (!VoodooBodySnapshot.TryRead(ref reader, slot, out var voodoo)) return;
             if (!AbilityAimSnapshot.TryRead(ref reader, out var aim)) return;
             if(!Finite(whirledLeft) || !Finite(chilledLeft) || !Finite(rootedLeft))return;
             if (!Finite(hauntedLeft) || hauntedLeft < 0 || hauntedLeft > StatusRules.HauntedSeconds) return;
             if (!Finite(zappedLeft) || zappedLeft < 0 || zappedLeft > StatusRules.ZappedSeconds) return;
+            if (!Finite(possessedLeft) || possessedLeft < 0 || possessedLeft > StatusRules.PossessedSeconds) return;
+            if (!Finite(blindedLeft) || blindedLeft < 0 || blindedLeft > StatusRules.BlindedSeconds) return;
             if(!Finite(concussedLeft) || !Finite(fearedLeft) || !Finite(disorientedLeft) || !Finite(vulnerableLeft) || !Finite(fearFrom))return;
             if(recoveryEpisode<0 || recoveryAcknowledged<0)return;
             if(edgeKind>(byte)EdgeRecoveryKind.Drone||edgePhase>2||!Finite(edgeGrip)||!Finite(edgeOutward)||!Finite(edgeRatio))return;
@@ -2706,6 +2730,8 @@ namespace TumbangPreso.Net
                                    staminaCurrent, staminaIdle, fatigueLeft,
                                    recoveryEpisode,recoveryAcknowledged);
             unit.ApplyNetworkStatuses(whirledLeft, chilledLeft, rootedLeft, hauntedLeft, zappedLeft);
+            unit.ApplyNetworkPossessed(possessedLeft);
+            unit.ApplyNetworkBlinded(blindedLeft);
             unit.ApplyNetworkEffort((effort & 1) != 0, pull / 255f);
             // The movement rework's crouch and slide, for this body's pose on a screen that does not simulate it.
             unit.ApplyNetworkMovePose(effort);

@@ -1,0 +1,104 @@
+{
+  "protocol": 154,
+  "clipFormat": 15,
+  "runs": [
+    {
+      "run": "recorded-companion-original1009",
+      "pid": 66012,
+      "exitCode": 2,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.RecordedCompanionTests.ARealSummonedDollAndItsHeldSlipperRecordAndPlayWithoutGameplayCopies",
+          "result": "Failed",
+          "message": "  The actual companion slipper must be a valid recorded object.\n  Expected: No Exception to be thrown\n  But was:  <System.IO.InvalidDataException: Invalid recorded object\n  at TumbangPreso.CameraSystem.RecordedMatchClip.Encode (System.Boolean local) [0x00610] in C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Assets\\TumbangPreso\\Runtime\\Camera\\RecordedMatchClip.cs:94 \n  at TumbangPreso.CameraSystem.RecordedMatchClip.EncodeLocal () [0x00000] in C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Assets\\TumbangPreso\\Runtime\\Camera\\RecordedMatchClip.cs:40 \n  at TumbangPreso.PlayTests.RecordedCompanionTests+<>c__DisplayClass2_0.<ARealSummonedDollAndItsHeldSlipperRecordAndPlayWithoutGameplayCopies>b__0 () [0x00000] in C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Assets\\TumbangPreso\\Tests\\PlayMode\\RecordedCompanionTests.cs:42 \n  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >\n"
+        }
+      ],
+      "exactCaseCount": true,
+      "protectedCount": 21451,
+      "editorLogSha256": "2fe34f9f14fb02e00b9d59b46748836c82489b79a1e18008e1c020fe83ba9df3"
+    },
+    {
+      "run": "recorded-companion-candidate1009",
+      "pid": 59972,
+      "exitCode": 1,
+      "cases": [],
+      "exactCaseCount": false,
+      "protectedCount": 21451,
+      "editorLogSha256": "e04f4b61d9f3b8772b5fff93d1538dfe08004eff3e92dde72d4ed79bf8f60eac"
+    },
+    {
+      "run": "recorded-companion-candidate2-1009",
+      "pid": 76724,
+      "exitCode": 0,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.RecordedCompanionTests.ARealSummonedDollAndItsHeldSlipperRecordAndPlayWithoutGameplayCopies",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedCompanionTests.CurrentCompanionSeatsAndHoldersRemainBounded",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedCompanionTests.Version14PlayerClipsRemainReadableAndRejectCompanionSeats",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "exactCaseCount": true,
+      "protectedCount": 21451,
+      "editorLogSha256": "b8bd40573497bb69929bea89248c037f3a6537da57fc4dddae54cebc188f6a32"
+    },
+    {
+      "run": "recorded-companion-final1009",
+      "pid": 76228,
+      "exitCode": 0,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.RecordedCompanionTests.ARealSummonedDollAndItsHeldSlipperRecordAndPlayWithoutGameplayCopies",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedCompanionTests.CurrentCompanionSeatsAndHoldersRemainBounded",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.RecordedCompanionTests.Version14PlayerClipsRemainReadableAndRejectCompanionSeats",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "exactCaseCount": false,
+      "protectedCount": 21451,
+      "editorLogSha256": "dab2d47a4a1987e2ff9945f49e5f1e3269ad4aa3ef12a8dbce26a19079326d3f"
+    },
+    {
+      "run": "companion-protocol-admission1009",
+      "pid": 72160,
+      "exitCode": 0,
+      "cases": [
+        {
+          "name": "TumbangPreso.Tests.ChatAndLobbyChromeTests.ConnectionApprovalRefusesThePreviousProtocolAndAcceptsTheCurrentLanHello",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "exactCaseCount": true,
+      "protectedCount": 21451,
+      "editorLogSha256": "ccab2f5575832c188f5a511c8862165422f719e63290fe0b3a633ddfb71cc28c"
+    }
+  ],
+  "sourceHashes": {
+    "Assets/TumbangPreso/Runtime/Camera/RecordedMatchClip.cs": "f6b2d1d77624243a5f112a39744a182e605f5fc9811ed1aeb68041eae6f70c8f",
+    "Assets/TumbangPreso/Runtime/Camera/MatchReplayArchive.cs": "89c88fd87d56034e26e05ffaaee5e467c73e599f2fdf0bddc1f1698e975e8129",
+    "Assets/TumbangPreso/Runtime/Camera/RecordedWorldView.cs": "4d2fbf6b40f588b3ceb2fa583e84222900e2e4554f39118c728ab37cce21173e",
+    "Assets/TumbangPreso/Runtime/Net/NetSession.cs": "664515c2c4be6ae36ae0129456613cd1a4fe04a2e1bf17c2a6283ab8d1bf57fc",
+    "Assets/TumbangPreso/Tests/PlayMode/RecordedCompanionTests.cs": "c85f701353f6ba7748a80f3f8de8d02d3b5ae29c811622acbac4c8d91b5430d1",
+    "Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs": "4250c3ec3a24d24b8421fd796a131d94c1f2f0f561fbd9487a83bc69528ed541"
+  },
+  "scope": "Native actual single summoned doll capture plus standalone replay and bounded/legacy codec controls. Actual Windows, natural spawn/despawn seams and matching rebuilt peers pending."
+}

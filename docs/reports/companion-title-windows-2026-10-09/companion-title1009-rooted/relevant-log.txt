@@ -1,0 +1,2 @@
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.

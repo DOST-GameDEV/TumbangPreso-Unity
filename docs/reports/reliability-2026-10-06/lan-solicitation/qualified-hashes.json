@@ -1,0 +1,7 @@
+{
+  "Assets/TumbangPreso/Runtime/Net/LanBeacon.cs": "c2992f469cffe179b01d5859113f61dde50b5ebe9d105a8433c7b6fcd1bd3dec",
+  "Assets/TumbangPreso/Runtime/Net/NetSession.cs": "bc9e1b4443b0c2e6ba4c03c2a6d641b0ddb7e6beeb34f6daebe8fd11a451094c",
+  "Assets/TumbangPreso/Runtime/Net/ServerQuery.cs": "b95bbf2b646b376c5240e01e0e4832566477fcc599b9d9728efc48704f256bc0",
+  "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs": "4a8dcbf69c364b3f22dddd404d81b7a99d718ffa15de09219bcc16efb281f63f",
+  "Assets/TumbangPreso/Tests/LanReceiveOwnershipTests.cs": "987ad58afd613bb850561d304e1636dd553fb0c089601cb8e57016b60146d2af"
+}

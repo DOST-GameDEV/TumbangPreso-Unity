@@ -335,9 +335,12 @@ namespace TumbangPreso.Map
 
         private void Awake()
         {
-            Instance = this;
-            AIController.EdgeSense = true;
-            Net.MatchRpc.MoveFloorY = MoveFloor;
+            if (gameObject.scene == UnityEngine.SceneManagement.SceneManager.GetActiveScene())
+            {
+                Instance = this;
+                AIController.EdgeSense = true;
+                Net.MatchRpc.MoveFloorY = MoveFloor;
+            }
             DeepenTheFall();
             ApplyForRound(WantedRound());
             ShowApplied();
@@ -382,6 +385,7 @@ namespace TumbangPreso.Map
 
         private void OnEnable()
         {
+            if (gameObject.scene != UnityEngine.SceneManagement.SceneManager.GetActiveScene()) return;
             Instance = this;
             AIController.EdgeSense = true;
             Net.MatchRpc.MoveFloorY = MoveFloor;
@@ -389,10 +393,11 @@ namespace TumbangPreso.Map
 
         private void OnDisable()
         {
+            if (Instance != this) return;
             AIController.EdgeSense = false;
             Core.Confinement.Reset();
             Net.MatchRpc.MoveFloorY = Net.MatchRpc.DefaultMoveFloorY;
-            if (Instance == this) Instance = null;
+            Instance = null;
         }
 
         /// <summary>
@@ -431,8 +436,12 @@ namespace TumbangPreso.Map
 
         private void OnDestroy()
         {
-            AIController.EdgeSense = false;
-            if (Instance == this) Instance = null;
+            if (Instance == this)
+            {
+                AIController.EdgeSense = false;
+                Net.MatchRpc.MoveFloorY = Net.MatchRpc.DefaultMoveFloorY;
+                Instance = null;
+            }
             if (_morphMeshes != null)
                 foreach (var mesh in _morphMeshes) if (mesh != null) Destroy(mesh);
         }

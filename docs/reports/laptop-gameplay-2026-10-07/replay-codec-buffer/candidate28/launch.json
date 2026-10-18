@@ -1,0 +1,28 @@
+{
+  "pid": 57320,
+  "source": "1217139728c964ddafdf6f7b6289ef5e85508b78",
+  "kind": "candidate",
+  "out": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\replay-codec-buffer-candidate28-direct1007",
+  "command": [
+    "C:\\Program Files\\Unity\\Hub\\Editor\\6000.5.8f1\\Editor\\Unity.exe",
+    "-projectPath",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a",
+    "-batchmode",
+    "-force-d3d11",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.ArenaFxRecordedTests.FullPoolThreeSecondStreamIsLosslessAndMeasured;TumbangPreso.PlayTests.ArenaFxRecordedTests.CompressedTimelineKeepsSingleFrameFlashesAndRejectsDamage",
+    "-testResults",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\replay-codec-buffer-candidate28-direct1007\\tests.xml",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\replay-codec-buffer-candidate28-direct1007\\unity.log",
+    "-tp-profile",
+    "validation-qa-a-be075dcdfa07",
+    "-job-worker-count",
+    "1",
+    "-gc-helper-count",
+    "1"
+  ]
+}

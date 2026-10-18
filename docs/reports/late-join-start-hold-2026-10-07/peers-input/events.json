@@ -1,0 +1,92 @@
+[
+  {
+    "event": "launch",
+    "label": "host",
+    "pid": 30657,
+    "time": 1791380223.3349273,
+    "args": [
+      "-tp-allbots",
+      "-batchmode",
+      "-nographics",
+      "-tp-host",
+      "8937",
+      "-tp-profile",
+      "cloud-rejoin1007-input-host",
+      "-tp-netreport",
+      "/workspace/scratch/0ed9da4aed7f/task-tools/latejoin/peers-input/host.txt",
+      "-tp-netseconds",
+      "260"
+    ]
+  },
+  {
+    "event": "host-listening",
+    "pid": 30657,
+    "time": 1791380224.3365512
+  },
+  {
+    "event": "launch",
+    "label": "latejoin",
+    "pid": 30712,
+    "time": 1791380264.3385096,
+    "args": [
+      "-force-glcore",
+      "-tp-join",
+      "127.0.0.1",
+      "8937",
+      "-tp-profile",
+      "cloud-rejoin1007-input-client",
+      "-tp-netreport",
+      "/workspace/scratch/0ed9da4aed7f/task-tools/latejoin/peers-input/latejoin.txt",
+      "-tp-netseconds",
+      "70",
+      "-screen-width",
+      "640",
+      "-screen-height",
+      "400",
+      "-screen-fullscreen",
+      "0"
+    ]
+  },
+  {
+    "event": "exit",
+    "label": "latejoin",
+    "code": 0,
+    "time": 1791380336.8899844
+  },
+  {
+    "event": "launch",
+    "label": "rejoin",
+    "pid": 30855,
+    "time": 1791380339.8934462,
+    "args": [
+      "-force-glcore",
+      "-tp-join",
+      "127.0.0.1",
+      "8937",
+      "-tp-profile",
+      "cloud-rejoin1007-input-client",
+      "-tp-netreport",
+      "/workspace/scratch/0ed9da4aed7f/task-tools/latejoin/peers-input/rejoin.txt",
+      "-tp-netseconds",
+      "70",
+      "-screen-width",
+      "640",
+      "-screen-height",
+      "400",
+      "-screen-fullscreen",
+      "0"
+    ]
+  },
+  {
+    "event": "exit",
+    "label": "rejoin",
+    "code": 0,
+    "time": 1791380412.1354616
+  },
+  {
+    "event": "exit",
+    "label": "host",
+    "code": 0,
+    "time": 1791380486.0763824
+  }
+]

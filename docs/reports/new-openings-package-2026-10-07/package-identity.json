@@ -1,0 +1,16 @@
+{
+  "sourceCommit": "120d0a0fb2e02a9494782c013bfd1ac3ddebd403",
+  "protocol": 153,
+  "artifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\new-openings-player1007\\TumbangPreso.exe",
+  "strictReceiptPassed": false,
+  "classifiedArtifactAccepted": true,
+  "classification": "Current new-map opening Windows candidate; internal artifact only. Generated imports and builder settings restored to exact frozen input bytes; private pre-existing source dirt preserved. Native source login/caret/consent/terms/room selectors and Arena skill HUD pass their scoped1080/720 checks; packaged operator and peer acceptance remain separate.",
+  "buildOptions": "None",
+  "exeSha256": "fedb275966771506f040ea2fb01dc909c4f3aaa31f9362059e64442a5fc2b40d",
+  "runtimeSha256": "e5056a894158134cc1450e1158e8a39a8cde171ce49f6dc39638fbf95d0efb64",
+  "coreSha256": "339e00fa0469853257a6081a6015736d16db126ccac9152441ea3f76113f823a",
+  "fileCount": 261,
+  "totalBytes": 3535838735,
+  "currentPlayerAcceptance": "Owner will test Desktop release",
+  "currentPeerAcceptance": "Not established by this build"
+}

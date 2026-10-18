@@ -1,0 +1,11 @@
+{
+  "pcTerminalAck": {
+    "pid": 5472,
+    "parentSession": 59299,
+    "exitCode": 0,
+    "inputSeedRestored": true,
+    "all261ArtifactFilesUnchanged": true
+  },
+  "laptopQuit": "One click on freshly observed verified own in-game Quit Game, window12191246/pid45252; no further input",
+  "returnLimit": "PC normal host departure overlapped laptop Back action. Actual Home/Picture overlay observed, then Escape; own-lobby-Back causality unqualified. Log shows HostLost->HubDisconnected->LeaveRoom->offline. No product click-through diagnosis."
+}

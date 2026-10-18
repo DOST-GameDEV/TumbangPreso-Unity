@@ -1,0 +1,22 @@
+{
+  "originalPid": 78552,
+  "originalStrictCasesFailed": 1,
+  "originalTsinelasFailures": 9,
+  "originalExtraGapMetres": 0.00787,
+  "candidatePid": 71516,
+  "candidatePassedCases": 6,
+  "physicalPairs": 90,
+  "heroes": 9,
+  "selectableShoeModels": 10,
+  "candidateMinSoleGapMetres": 0.0,
+  "candidateMaxSoleGapMetres": 0.0,
+  "protectedInputsRestored": 21449,
+  "testedSourceSha256": {
+    "Assets/TumbangPreso/Runtime/Slipper.cs": "a6e762aebb8dbc1780f8313eb86e3b7c8187d15cd4fef33e441e71f09cb55b1c",
+    "Assets/TumbangPreso/Tests/PlayMode/HeldSlipperSurfaceTests.cs": "82edb72fd6f7b5cb4d6cc68782a095a828adc1314014f7fae67594f315084fbf",
+    "Assets/TumbangPreso/Tests/PlayMode/HeldSlipperSurfaceTests.cs.meta": "cd6c3020c34bd2c15ced6190245b8840994e4fac47bc2e5987878424df551d15"
+  },
+  "currentWindowsCarryFixValidated": false,
+  "desktopUpdated": false,
+  "scope": "Actual rendered mesh-to-palm contact after LateUpdate plus live movement/missing anchor, first-person possession, model-swap and replay/ultimate-copy controls. Ground/air/allhero-kit transitions/natural full matches/peer/performance remain unqualified."
+}

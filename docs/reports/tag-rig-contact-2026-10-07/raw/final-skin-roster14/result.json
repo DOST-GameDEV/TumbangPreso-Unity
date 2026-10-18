@@ -1,0 +1,63 @@
+{
+  "sourceRef": "04913d693202a4a72e1e3b0bf2699849bfdbd6f4",
+  "profile": "pc-catch-framing-final-skin-roster141006",
+  "filter": "TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_dante_To_cheska;TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_cheska_To_sean;TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_sean_To_zack;TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_zack_To_nemu;TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_nemu_To_phaister;TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_phaister_To_rafi;TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_rafi_To_amihan;TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_amihan_To_paete;TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_paete_To_bayan",
+  "expectedCases": 9,
+  "execution": "direct; no memory/admission/timeout guard",
+  "pid": 20040,
+  "exitCode": 0,
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_amihan_To_paete",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_cheska_To_sean",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_dante_To_cheska",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_nemu_To_phaister",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_paete_To_bayan",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_phaister_To_rafi",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_rafi_To_amihan",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_sean_To_zack",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.RosterTag_zack_To_nemu",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "exactCaseCount": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "protectedCount": 21309,
+  "terminal": true
+}

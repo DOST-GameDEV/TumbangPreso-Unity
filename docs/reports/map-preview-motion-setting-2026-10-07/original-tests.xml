@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 00:06:45Z" end-time="2026-10-07 00:06:46Z" duration="0.9199746">
+  <test-suite type="TestSuite" id="3444" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1981" result="Failed" site="Child" start-time="2026-10-07 00:06:45Z" end-time="2026-10-07 00:06:46Z" duration="0.919975" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3436" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1981" result="Failed" site="Child" start-time="2026-10-07 00:06:45Z" end-time="2026-10-07 00:06:46Z" duration="0.906604" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="58800" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3437" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1981" result="Failed" site="Child" start-time="2026-10-07 00:06:45Z" end-time="2026-10-07 00:06:46Z" duration="0.898757" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3440" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1979" result="Failed" site="Child" start-time="2026-10-07 00:06:45Z" end-time="2026-10-07 00:06:46Z" duration="0.891097" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2067" name="MapPreviewMotionSettingsTests" fullname="TumbangPreso.PlayTests.MapPreviewMotionSettingsTests" classname="TumbangPreso.PlayTests.MapPreviewMotionSettingsTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-07 00:06:45Z" end-time="2026-10-07 00:06:46Z" duration="0.862373" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2068" name="VisiblePreviewAdoptsMotionSettingWithoutVisibilityRefresh" fullname="TumbangPreso.PlayTests.MapPreviewMotionSettingsTests.VisiblePreviewAdoptsMotionSettingWithoutVisibilityRefresh" methodname="VisiblePreviewAdoptsMotionSettingWithoutVisibilityRefresh" classname="TumbangPreso.PlayTests.MapPreviewMotionSettingsTests" runstate="Runnable" seed="1380114196" result="Failed" start-time="2026-10-07 00:06:45Z" end-time="2026-10-07 00:06:46Z" duration="0.852267" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Reduced motion must stop the currently visible map movie.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.MapPreviewMotionSettingsTests+<VisiblePreviewAdoptsMotionSettingWithoutVisibilityRefresh>d__3.MoveNext () [0x00147] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\MapPreviewMotionSettingsTests.cs:24
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

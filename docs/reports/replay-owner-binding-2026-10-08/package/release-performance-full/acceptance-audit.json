@@ -1,0 +1,285 @@
+{
+  "sourceCommit": "1570d5de6598cf112adb8d929facae8f008012b3",
+  "protocol": 153,
+  "terminal": true,
+  "exitCode": 0,
+  "inputRestored": true,
+  "editorInputRestored": true,
+  "profileRestored": true,
+  "scopedRoutePassed": true,
+  "windows": 191,
+  "actions": 74,
+  "requiredConsequences": 26,
+  "actionFailures": 0,
+  "preparationFailures": 0,
+  "empoweredThrows": [
+    {
+      "window": "sean-sean_skill2-cast-1",
+      "hero": "sean",
+      "ability": "sean_skill2",
+      "answer": "Cast",
+      "role": "attacking",
+      "coverage": "cast and matched recipe consequence",
+      "repetition": 1,
+      "throws": 1,
+      "hits": 1,
+      "ultimateStarts": 0,
+      "statusGains": 0,
+      "accepted": true,
+      "impactRequired": true,
+      "impactObserved": true,
+      "frozeTarget": false,
+      "knockedTarget": false,
+      "actorSeat": 1,
+      "targetSeat": 0,
+      "presentationMatchId": 639269873128921749,
+      "recipe": "empowered-throw-impact-and-selected-target-nudge",
+      "firstAnswer": "Cast",
+      "preconditionsPassed": true,
+      "anchorObserved": false,
+      "recastDelivered": false,
+      "matchedTargetStatus": true,
+      "effectStateObserved": false,
+      "loadedSourceObserved": true,
+      "ownedPowerFlightObserved": true,
+      "sourceImpactObserved": true,
+      "targetDisplacement": 2.291024923324585,
+      "statuses": []
+    },
+    {
+      "window": "sean-sean_skill2-cast-2",
+      "hero": "sean",
+      "ability": "sean_skill2",
+      "answer": "Cast",
+      "role": "attacking",
+      "coverage": "cast and matched recipe consequence",
+      "repetition": 2,
+      "throws": 1,
+      "hits": 1,
+      "ultimateStarts": 0,
+      "statusGains": 0,
+      "accepted": true,
+      "impactRequired": true,
+      "impactObserved": true,
+      "frozeTarget": false,
+      "knockedTarget": false,
+      "actorSeat": 1,
+      "targetSeat": 0,
+      "presentationMatchId": 639269873128921749,
+      "recipe": "empowered-throw-impact-and-selected-target-nudge",
+      "firstAnswer": "Cast",
+      "preconditionsPassed": true,
+      "anchorObserved": false,
+      "recastDelivered": false,
+      "matchedTargetStatus": true,
+      "effectStateObserved": false,
+      "loadedSourceObserved": true,
+      "ownedPowerFlightObserved": true,
+      "sourceImpactObserved": true,
+      "targetDisplacement": 2.291050434112549,
+      "statuses": []
+    }
+  ],
+  "freshNaturalResults": [
+    {
+      "stage": "fresh-natural-result",
+      "hero": "",
+      "ability": "",
+      "role": "",
+      "failure": "",
+      "recordId": "a287b6a4e16f46e8b14e406d86c25470",
+      "rules": "",
+      "actorSeat": 0,
+      "targetSeat": 0,
+      "registeredSeats": 4,
+      "runnerSeats": 4,
+      "rounds": 1,
+      "presentationMatchId": 639269879765131219,
+      "roundSeconds": 30.0,
+      "clockBefore": 0.0,
+      "clockAfter": 0.0,
+      "training": false,
+      "canUpright": false,
+      "holding": false,
+      "ready": false,
+      "passed": true
+    },
+    {
+      "stage": "fresh-natural-result",
+      "hero": "",
+      "ability": "",
+      "role": "",
+      "failure": "",
+      "recordId": "30b4a5163b8144948a8b4604bc2b308d",
+      "rules": "",
+      "actorSeat": 0,
+      "targetSeat": 0,
+      "registeredSeats": 4,
+      "runnerSeats": 4,
+      "rounds": 1,
+      "presentationMatchId": 639269880141453745,
+      "roundSeconds": 30.0,
+      "clockBefore": 0.0,
+      "clockAfter": 0.0,
+      "training": false,
+      "canUpright": false,
+      "holding": false,
+      "ready": false,
+      "passed": true
+    }
+  ],
+  "invalidRecordedFieldMessages": 0,
+  "replayWarnings": [
+    {
+      "count": 52,
+      "message": "[LocalReplay] Invalid recorded object"
+    },
+    {
+      "count": 10,
+      "message": "[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete."
+    },
+    {
+      "count": 5,
+      "message": "[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment."
+    }
+  ],
+  "menuAndNaturalFrameWindows": [
+    {
+      "mode": "00-boot-to-title",
+      "maxMs": 638.1704711914062,
+      "framesOver50Ms": 4,
+      "framesOver100Ms": 3,
+      "p95Ms": 5.777500152587891,
+      "samples": 950
+    },
+    {
+      "mode": "01-title-to-home",
+      "maxMs": 877.6674194335938,
+      "framesOver50Ms": 10,
+      "framesOver100Ms": 7,
+      "p95Ms": 16.910499572753906,
+      "samples": 622
+    },
+    {
+      "mode": "02-home-idle",
+      "maxMs": 17.195999145507812,
+      "framesOver50Ms": 0,
+      "framesOver100Ms": 0,
+      "p95Ms": 13.83329963684082,
+      "samples": 362
+    },
+    {
+      "mode": "menu-AvatarButton",
+      "maxMs": 28.13960075378418,
+      "framesOver50Ms": 0,
+      "framesOver100Ms": 0,
+      "p95Ms": 13.624099731445312,
+      "samples": 163
+    },
+    {
+      "mode": "menu-HeroButton",
+      "maxMs": 134.52760314941406,
+      "framesOver50Ms": 1,
+      "framesOver100Ms": 1,
+      "p95Ms": 13.780500411987305,
+      "samples": 158
+    },
+    {
+      "mode": "menu-HeroButton-repeat",
+      "maxMs": 19.01099967956543,
+      "framesOver50Ms": 0,
+      "framesOver100Ms": 0,
+      "p95Ms": 14.10200023651123,
+      "samples": 161
+    },
+    {
+      "mode": "menu-LoadoutButton",
+      "maxMs": 70.4988021850586,
+      "framesOver50Ms": 1,
+      "framesOver100Ms": 0,
+      "p95Ms": 13.708200454711914,
+      "samples": 162
+    },
+    {
+      "mode": "menu-ShopButton",
+      "maxMs": 25.36590003967285,
+      "framesOver50Ms": 0,
+      "framesOver100Ms": 0,
+      "p95Ms": 13.618599891662598,
+      "samples": 161
+    },
+    {
+      "mode": "menu-TaskButton",
+      "maxMs": 29.488500595092773,
+      "framesOver50Ms": 0,
+      "framesOver100Ms": 0,
+      "p95Ms": 13.550700187683105,
+      "samples": 162
+    },
+    {
+      "mode": "menu-MenuButton",
+      "maxMs": 13.632699966430664,
+      "framesOver50Ms": 0,
+      "framesOver100Ms": 0,
+      "p95Ms": 13.53950023651123,
+      "samples": 162
+    },
+    {
+      "mode": "menu-ModeCard",
+      "maxMs": 16.89900016784668,
+      "framesOver50Ms": 0,
+      "framesOver100Ms": 0,
+      "p95Ms": 13.660099983215332,
+      "samples": 162
+    },
+    {
+      "mode": "menu-profile",
+      "maxMs": 23.190399169921875,
+      "framesOver50Ms": 0,
+      "framesOver100Ms": 0,
+      "p95Ms": 13.668000221252441,
+      "samples": 241
+    },
+    {
+      "mode": "menu-settings",
+      "maxMs": 75.57360076904297,
+      "framesOver50Ms": 1,
+      "framesOver100Ms": 0,
+      "p95Ms": 13.888799667358398,
+      "samples": 165
+    },
+    {
+      "mode": "menu-hero-selection",
+      "maxMs": 73.15460205078125,
+      "framesOver50Ms": 1,
+      "framesOver100Ms": 0,
+      "p95Ms": 13.587699890136719,
+      "samples": 122
+    },
+    {
+      "mode": "Classic-natural-custom-round-and-match-end",
+      "maxMs": 68.69619750976562,
+      "framesOver50Ms": 3,
+      "framesOver100Ms": 0,
+      "p95Ms": 17.441299438476562,
+      "samples": 2621
+    },
+    {
+      "mode": "HeroStrike-natural-custom-round-and-match-end",
+      "maxMs": 36.45220184326172,
+      "framesOver50Ms": 0,
+      "framesOver100Ms": 0,
+      "p95Ms": 17.335599899291992,
+      "samples": 2635
+    }
+  ],
+  "allocationCounterAvailable": false,
+  "allocationCounterStatus": "unavailable-no-valid-allocation-signal",
+  "limitations": "Hidden ordinary-release controlled normal offline route. Staged model/world resets produced replay warnings. Natural matches use custom one round/30 seconds. No human input, full default match, actual peer, all-map replay fidelity or tournament performance approval.",
+  "rawSha256": {
+    "runner-result.json": "c1e4ee187221d2f00eaa37b1db725ea43cc5b6e62b8a88b5414ae3b38e82d66b",
+    "performance-actions.json": "0c3fc12530f5a54fd75b9f633010870bddb99c2f277b7967e93e43d695ff87c6",
+    "player.log": "41751f5d8feefa78fb0ff3437ca8bc23161d569622754651d4f397d16cb33b31",
+    "result.json": "9611ad8e5f442de800b945d75b811830e485af61dfe514e3de60c319ed762120"
+  }
+}

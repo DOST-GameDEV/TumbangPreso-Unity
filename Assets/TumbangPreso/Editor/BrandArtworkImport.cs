@@ -7,7 +7,7 @@ namespace TumbangPreso.EditorTools
     // Keep the owner's transparent vector exports proportional after reimport.
     public sealed class BrandArtworkImport : AssetPostprocessor
     {
-        public override uint GetVersion() => 3;
+        public override uint GetVersion() => 4;
         private void OnPreprocessTexture()
         {
             string path = assetPath;
@@ -28,9 +28,11 @@ namespace TumbangPreso.EditorTools
             importer.npotScale = TextureImporterNPOTScale.None;
             importer.alphaSource = TextureImporterAlphaSource.FromInput;
             importer.alphaIsTransparency = true;
-            importer.mipmapEnabled = false;
+            // These standalone exports are much larger than their on-screen logos.
+            // Filter the whole pixel footprint when reduced, rather than four source texels.
+            importer.mipmapEnabled = true;
             importer.wrapMode = TextureWrapMode.Clamp;
-            importer.filterMode = FilterMode.Bilinear;
+            importer.filterMode = FilterMode.Trilinear;
             importer.textureCompression = TextureImporterCompression.Uncompressed;
             OwnerArtworkQualityImport.ProtectResolution(importer);
             importer.sRGBTexture = true;

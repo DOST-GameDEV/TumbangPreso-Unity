@@ -1,0 +1,22 @@
+{
+  "checked-source.json": {
+    "bytes": 236,
+    "sha256": "37edf7c1af8bf8c53bf7d71ccbffdc1cac37f9c6a6c8231c892f10c4c0cc9181"
+  },
+  "classified-result.json": {
+    "bytes": 284,
+    "sha256": "95a19bd3e57fbf1d92f7ae566b0d079a7e019dbe44688c7018f33e146419a59e"
+  },
+  "direct-result.json": {
+    "bytes": 68752,
+    "sha256": "22a9e9b59776ddbbb94c2b8ed4c9285f67f5b189746c9c5b6baad9f6c3f7a6e3"
+  },
+  "launch.json": {
+    "bytes": 1065,
+    "sha256": "92f44f8eeefb1962bd58b60b8affc29ae31d5085c22dfb6e8e458e1ef801a1e3"
+  },
+  "tests.xml": {
+    "bytes": 6811,
+    "sha256": "849f23103023e35bb08b596e62ca60d845d0ea42d41758571dc3bf61e39bc79d"
+  }
+}

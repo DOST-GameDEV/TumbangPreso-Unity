@@ -1,0 +1,26 @@
+{
+  "sourceRef": "6fa3e3f17635a6bc6cee0d6151d34cedea63bf05",
+  "profile": "pc-rehost-candidate1006",
+  "filter": "TumbangPreso.Tests.MenuExitLifetimeTests",
+  "expectedCases": 8,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-rehost-candidate1006",
+    "-runTests",
+    "-testPlatform",
+    "EditMode",
+    "-testFilter",
+    "TumbangPreso.Tests.MenuExitLifetimeTests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\postmatch-rehost1006\\candidate-native\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\postmatch-rehost1006\\candidate-native\\editor.log"
+  ],
+  "pid": 14860
+}

@@ -1,4 +1,4 @@
-"""Build Dante's (displayed: Basilio) FIRST-PERSON ARMS: his redesign's own pieces, cut for the close camera.
+"""Build Dante's (displayed: Dante) FIRST-PERSON ARMS: his redesign's own pieces, cut for the close camera.
 
     py -3 tools/author_character_redesign_dante_fpv_arms_textures.py
     "C:/Program Files/Blender Foundation/Blender 5.0/blender.exe" -b --python tools/author_character_redesign_dante_fpv_arms.py

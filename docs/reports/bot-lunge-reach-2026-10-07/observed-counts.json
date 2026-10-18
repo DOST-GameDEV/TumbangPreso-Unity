@@ -1,0 +1,12 @@
+{
+  "Classic": {
+    "lunges": 2,
+    "hits": 1,
+    "maxThrows": 6
+  },
+  "HeroStrike": {
+    "lunges": 0,
+    "hits": 0,
+    "maxThrows": 9
+  }
+}

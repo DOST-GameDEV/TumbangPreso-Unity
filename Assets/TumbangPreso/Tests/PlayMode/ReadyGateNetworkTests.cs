@@ -297,8 +297,8 @@ namespace TumbangPreso.PlayTests
             typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(rpc, 123L);
             var gateRoot = new GameObject("Client ready"); var gate = gateRoot.AddComponent<ReadyGate>();
             gate.enabled = false; gate.Open(null);
-            int ticks = 0, starts = 0;
-            gate.CountdownTick += _ => ticks++; gate.RoundShouldBegin += () => starts++;
+            var ticks = new System.Collections.Generic.List<string>(); int starts = 0;
+            gate.CountdownTick += ticks.Add; gate.RoundShouldBegin += () => starts++;
             try
             {
                 foreach (long match in new long[] { -1, 0, 122, 124 })
@@ -306,15 +306,15 @@ namespace TumbangPreso.PlayTests
                 Deliver(rpc, "OnBeginCountdownMsg", 1, 123);
                 Deliver(rpc, "OnBeginCountdownMsg", 0, 123, trailing: true);
                 Deliver(rpc, "OnBeginCountdownMsg", 0, 123, truncated: true);
-                Assert.IsFalse(gate.CountingDown); Assert.AreEqual(0, ticks);
+                Assert.IsFalse(gate.CountingDown); Assert.AreEqual(0, ticks.Count);
                 Deliver(rpc, "OnBeginCountdownMsg", 0, 123);
                 Deliver(rpc, "OnBeginCountdownMsg", 0, 123);
-                Assert.IsTrue(gate.CountingDown); Assert.AreEqual(1, ticks);
+                Assert.IsTrue(gate.CountingDown); Assert.AreEqual(1, ticks.Count);
                 float deadline = Time.realtimeSinceStartup + 6;
                 while (gate.CountingDown && Time.realtimeSinceStartup < deadline) yield return null;
-                Assert.IsFalse(gate.CountingDown); Assert.AreEqual(1, starts); Assert.AreEqual(6, ticks);
+                Assert.IsFalse(gate.CountingDown); Assert.AreEqual(1, starts); CollectionAssert.AreEqual(new[] { "3", "2", "1", "GO!" }, ticks);
                 Deliver(rpc, "OnBeginCountdownMsg", 0, 123); gate.StartLocalCountdown();
-                Assert.IsFalse(gate.CountingDown); Assert.AreEqual(1, starts); Assert.AreEqual(6, ticks);
+                Assert.IsFalse(gate.CountingDown); Assert.AreEqual(1, starts); CollectionAssert.AreEqual(new[] { "3", "2", "1", "GO!" }, ticks);
                 gate.Open(null); Deliver(rpc, "OnBeginCountdownMsg", 0, 123);
                 Assert.IsTrue(gate.CountingDown, "Explicitly reopening the gate must reset its one-time lifecycle.");
             }

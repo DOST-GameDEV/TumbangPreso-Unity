@@ -1,0 +1,2 @@
+Assets\TumbangPreso\Runtime\Camera\MatchReplayArchive.cs(45,17): error CS0246: The type or namespace name 'LocalReplayRecorder' could not be found (are you missing a using directive or an assembly reference?)
+Assets\TumbangPreso\Runtime\Diagnostics\LocalReplayPackageProbe.cs(26,17): error CS0246: The type or namespace name 'LocalReplayPlayback' could not be found (are you missing a using directive or an assembly reference?)

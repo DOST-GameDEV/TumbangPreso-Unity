@@ -44,7 +44,7 @@ No owner profile was used. The actual built player ran with graphics enabled:
 
 Actual screen pixels were inspected. Retained captures show training pause and
 returned Home at1364×1024. The default native-resolution path superseded the
-1280×720 launch preference. Basilio's training name, dante portrait, green outfit
+1280×720 launch preference. Dante's training name, dante portrait, green outfit
 and earth icons agree; a preliminary identity suspicion was discarded after
 inspecting the real dante/zack portrait assets. No speculative fix was made.
 Bound-window synthetic X11 inputs showed no effect; supported desktop pointer

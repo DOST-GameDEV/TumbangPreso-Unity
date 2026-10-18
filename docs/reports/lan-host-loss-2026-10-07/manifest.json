@@ -1,0 +1,57 @@
+{
+  "rawFiles": {
+    "client-result.json": "beec670674df9b2a6ccc222afae51f366d5f2ec12ceffd4958b4af96338b4727",
+    "client-launch.json": "453e470a959dced1d611a33065d68bb5df6b11782523c2a034b157c4559fb807",
+    "client-state.txt": "dbed9079b4fa8d02730294d43ad0147a79ca7f14518ea067294acb1513abc323",
+    "client-player.log": "581305d8583edcc509feee9000a48a059325e0306788ec0451c62c30d28c5e62",
+    "client-ready.json": "b718c04354acf1b1b2ce704cd1d68a67aa22ed235a524257f82d91d72a3763fd",
+    "pc-stop-coordination.json": "3ca349e2398e84c1ae9b4e1990081021cf785f7f0788defae923eb889077071c"
+  },
+  "clientOutcome": {
+    "passed": true,
+    "role": "client",
+    "sourceCommit": "cb5f4ad9f84fdde4eeb856dc1caca0eef2ab4944",
+    "directExecution": true,
+    "protocol": 153,
+    "runtimeSha256": "e9b69cf6d8c86a4a15cc2fbb16947312153209be5cd677e1383becf87c06cdd4",
+    "exeSha256": "fedb275966771506f040ea2fb01dc909c4f3aaa31f9362059e64442a5fc2b40d",
+    "coreSha256": "339e00fa0469853257a6081a6015736d16db126ccac9152441ea3f76113f823a",
+    "artifactManifestSha256": "43d83532e35eb85a6d0d0c98e80ba05272922cc6a07b1e167409a2d9a61723c8",
+    "characterPick": 2,
+    "scope": "Actual live-round host loss, terminal Home recovery and no completed result; requires paired PC stop evidence, not intermediate-frame/input or reconnect acceptance.",
+    "preparation": {
+      "role": "client",
+      "sourceCommit": "cb5f4ad9f84fdde4eeb856dc1caca0eef2ab4944",
+      "runtimeSha256": "e9b69cf6d8c86a4a15cc2fbb16947312153209be5cd677e1383becf87c06cdd4",
+      "artifactManifestSha256": "43d83532e35eb85a6d0d0c98e80ba05272922cc6a07b1e167409a2d9a61723c8",
+      "profile": "laptop-hostloss-cb5f1007a",
+      "wire": "1|0|1|30|0|3|3|1|0|1|0",
+      "artifactVerified": true,
+      "preparedAtUtc": "2026-10-07T00:28:13.760921+00:00",
+      "startFile": "C:\\Users\\Matthew\\Documents\\Codex\\2026-10-03\\continue-competition-readiness-engineering-for-dost\\work\\lan-hostloss1007\\client-a-start.signal"
+    },
+    "pid": 59804,
+    "playerStartedAtUtc": "2026-10-07T00:40:46.646170+00:00",
+    "exitCode": 0,
+    "recovery": {
+      "readyObserved": true,
+      "liveRoundObserved": true,
+      "activeHostLossObserved": true,
+      "admissionBeforeLoss": true,
+      "completedMatchEvents": 0,
+      "historyCount": 0,
+      "queueCount": 0,
+      "witnessCount": 0,
+      "careerFilePresent": false
+    },
+    "errors": [],
+    "profileSeedsRestored": true,
+    "inputRestored": true,
+    "runtimeUnchanged": true,
+    "manifestUnchanged": true,
+    "artifactUnchanged": true,
+    "terminal": true,
+    "leaseHeld": false
+  },
+  "hostRawEvidence": "Independently owned by PC; combine with its live-stop/before-stop/restoration report, not this coordination message alone."
+}

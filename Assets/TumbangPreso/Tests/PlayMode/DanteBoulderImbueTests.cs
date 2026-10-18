@@ -145,7 +145,7 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(frosted, victim.IsConcussed, "The actual body-impact path lost the Concussed payload.");
             if (frosted)
             {
-                Assert.AreEqual(2.5f, victim.StatusLeft(StatusKind.Concussed), .02f);
+                Assert.AreEqual(StatusRules.ConcussedSeconds, victim.StatusLeft(StatusKind.Concussed), .02f);
                 Assert.AreEqual(.25f, victim.StatusSpeedScale);
             }
             yield return null;

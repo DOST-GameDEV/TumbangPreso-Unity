@@ -24,8 +24,8 @@ namespace TumbangPreso.PlayTests
         }
         private sealed class AimProbeKit : HeroKit
         {
-            public AimProbeKit() : base("aim-probe", "aim-probe")
-            { Skill1 = new AimProbeAbility("aim-one"); Skill2 = new AimProbeAbility("aim-two"); }
+            public AimProbeKit(string one = "aim-one") : base("aim-probe", "aim-probe")
+            { Skill1 = new AimProbeAbility(one); Skill2 = new AimProbeAbility("aim-two"); }
         }
 
         private sealed class ResourceProbeAbility : HeroAbility
@@ -1220,8 +1220,10 @@ namespace TumbangPreso.PlayTests
                 writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe(0f);
                 writer.WriteValueSafe(Vector3.zero); writer.WriteValueSafe(0L); writer.WriteValueSafe(haunted);
                 writer.WriteValueSafe(0f); // Zapped status.
+                writer.WriteValueSafe(0f); // Possessed status, protocol160.
+                writer.WriteValueSafe(0f); // Blinded status, protocol161.
                 writer.WriteNetworkSerializable(data); writer.WriteNetworkSerializable(default(AbilityAimSnapshot));
-                Assert.AreEqual(217 + VoodooBodySnapshot.WireBytes, writer.Length);
+                Assert.AreEqual(225 + VoodooBodySnapshot.WireBytes, writer.Length);
                 using var reader = new FastBufferReader(writer, Allocator.Temp);
                 receive.Invoke(receiver, new object[] { NetworkManager.ServerClientId, reader });
             }
@@ -1426,6 +1428,88 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(spent, motor.Stamina.Current, .01f, "An observing client simulated host-owned resource clocks.");
             Object.Destroy(root);
             yield return null;
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator CrouchedOwnerDoesNotAskTheHostToSpendSprintStamina()
+        {
+            var system = Owner("dante");
+            var motor = system.GetComponent<CharacterMotor>(); motor.RoundActive = true;
+            motor.transform.position = Vector3.up * 2;
+            Physics.SyncTransforms();
+            motor.Intent.Move = Vector2.up; motor.Intent.Set(Verb.Sprint, true);
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var crouch = typeof(CharacterMotor).GetMethod("SetReworkCrouch", flags);
+            crouch.Invoke(motor, new object[] { true });
+            Assert.IsTrue(motor.ReworkCrouched);
+            byte crouched = motor.EffortFlags;
+            Assert.AreEqual(0, crouched & 4, "Crouching still submitted a sprint request.");
+            Assert.AreNotEqual(0, crouched & 16, "The crouch tell was lost.");
+            crouch.Invoke(motor, new object[] { false });
+            Assert.IsFalse(motor.ReworkCrouched, "The standing control needs clear headroom.");
+            byte standing = motor.EffortFlags;
+            Assert.AreNotEqual(0, standing & 4, "Standing did not resume the held sprint request.");
+            NetAuthority.Provider = new ObservingHost();
+            var tick = typeof(CharacterMotor).GetMethod("StepRemoteStamina", flags);
+            motor.ApplyNetworkResourceIntent(crouched);
+            for (int i = 0; i < 10; i++) tick.Invoke(motor, new object[] { .02f });
+            Assert.AreEqual(Balance.StaminaMax, motor.Stamina.Current, .001f);
+            motor.ApplyNetworkResourceIntent(standing);
+            tick.Invoke(motor, new object[] { .02f });
+            Assert.Less(motor.Stamina.Current, Balance.StaminaMax);
+            yield return null;
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator RemoteCurseReachRefusesSprintWithoutDiscardingTheHeldRequest()
+        {
+            var motor = Owner("phaister").GetComponent<CharacterMotor>(); motor.RoundActive = true;
+            NetAuthority.Provider = new ObservingHost();
+            var tick = typeof(CharacterMotor).GetMethod("StepRemoteStamina",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            motor.ApplyNetworkVoodoo(0, 0, 0, -1, 0, (byte)VoodooMarkKind.Hex, 2, .5f, false);
+            Assert.IsTrue(motor.IsVoodooReaching);
+            motor.ApplyNetworkResourceIntent(6);
+            for (int i = 0; i < 10; i++) tick.Invoke(motor, new object[] { .02f });
+            Assert.AreEqual(Balance.StaminaMax, motor.Stamina.Current, .001f, "The host charged for a refused sprint.");
+            motor.ApplyNetworkVoodoo(0, 0, 0, -1, 0, 0, -1, 0, false);
+            tick.Invoke(motor, new object[] { .02f });
+            Assert.Less(motor.Stamina.Current, Balance.StaminaMax, "Ending the reach lost the held sprint request.");
+            yield return null;
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator ActualUnitSenderFitsTheLargestValidAimIdentity()
+        {
+            var net = NetSession.Ensure();
+            var start = net.StartHostAsync(18781);
+            while (!start.IsCompleted) yield return null;
+            Assert.IsTrue(start.Result);
+            try
+            {
+                var system = Owner("phaister");
+                var motor = system.GetComponent<CharacterMotor>(); motor.RoundActive = true;
+                NetAuthority.Provider = new ObservingHost();
+                GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Round.Register(motor);
+                GameServices.Match.ApplySnapshot(new int[4], 1, true);
+                var kit = new AimProbeKit(new string('a', 61));
+                typeof(HeroAbilitySystem).GetProperty("Kit").SetValue(system, kit); system.enabled = true;
+                system.ApplyNetworkAim(new AbilityAimSnapshot { Slot = 1, AbilityId = new FixedString64Bytes(kit.Skill1.Id),
+                    Held = .4f, Token = AbilityAimSnapshot.MakeToken(motor.MovementEpoch, 1) });
+                Assert.AreEqual(61, system.CaptureAimPresentation().AbilityId.Length);
+                var router = new GameObject("Maximum unit sender"); router.SetActive(false);
+                var rpc = router.AddComponent<MatchRpc>();
+                var manager = net.GetComponent<NetworkManager>();
+                typeof(MatchRpc).GetField("_nm", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                    .SetValue(rpc, manager);
+                int bytes = 0;
+                manager.CustomMessagingManager.RegisterNamedMessageHandler("SyncUnit", (_, reader) => bytes = reader.Length);
+                rpc.SyncUnitTransformClientRpc(1, motor.transform.position, 0, Vector3.zero);
+                Assert.AreEqual(313, bytes, "The complete maximum-size body packet did not reach the actual named-message callback.");
+                Object.Destroy(router);
+            }
+            finally { net.Stop(); }
+            while (net.GetComponent<NetworkManager>().IsListening) yield return null;
         }
 
         [UnityTest, Timeout(30000)]

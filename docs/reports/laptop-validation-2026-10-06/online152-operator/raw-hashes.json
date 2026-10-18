@@ -1,0 +1,114 @@
+{
+  "01-host-rules-4x90.png": {
+    "bytes": 120543,
+    "sha256": "6f5f8ef44c9626fdb8303e9a26a15ba4f1097507ffa302c327e869bdcf93e623"
+  },
+  "02-host-room-normal-bots.png": {
+    "bytes": 105313,
+    "sha256": "3491744de75fa2eeac68511c8aa6584c9f8541f84e7091cc74986cdad2bf2bed"
+  },
+  "03-online-host-gejh-ready.png": {
+    "bytes": 1126676,
+    "sha256": "c1da74be442d68ec409ed60bba0ae85b54c546aad1f0cd9d6665feb5edc26933"
+  },
+  "04-host-peer-row-arrival.png": {
+    "bytes": 1108464,
+    "sha256": "7f0cb03c5effd4a3c3091544d8f9abdfa23b8b951fc3e290259082e38409af7b"
+  },
+  "05-host-normal-selection-lock.png": {
+    "bytes": 335145,
+    "sha256": "7cd2d3baa9d2b5a27fb9fd322695924f6a685368bcd39c4e8f7a1426e0d6da98"
+  },
+  "06-host-world-first-observed.png": {
+    "bytes": 1278002,
+    "sha256": "96b197259a2df3530bcad7cd74b9cc46d9e603e37c8f515d9218cebd888a4738"
+  },
+  "07-host-natural-round-progression.png": {
+    "bytes": 1269847,
+    "sha256": "3c07e5d2f03e24f20a3e2cf1eed4239287cd9c5ac2fdbc0decd92d6974a17cd1"
+  },
+  "08-host-after-normal-peer-leave.png": {
+    "bytes": 772271,
+    "sha256": "7c2677420f7d359b06f0ee9f882e005889e5dc3cfe3f691767708a3f50dcf339"
+  },
+  "09-host-results-main-menu-home.png": {
+    "bytes": 1096914,
+    "sha256": "aa754233c8ded2fb37775fb7b276d7d5ee32d9a1792fb1665ee704ec3c1d5f77"
+  },
+  "10-host-own-quit-menu.png": {
+    "bytes": 682969,
+    "sha256": "3303d63ea095abcbad2de0e8a720955bcff63741582363d99fa5751127f9c324"
+  },
+  "01-host-rules-4x90.json": {
+    "bytes": 864,
+    "sha256": "11e3ac553731d86c41da3c104acae371dad6fc554a7fdd71542ccd7819befb77"
+  },
+  "02-host-room-normal-bots.json": {
+    "bytes": 870,
+    "sha256": "17a1ca273f2a8606a37d1e337c8dc58a276630d9a468c263ae96766975f26c5b"
+  },
+  "03-online-host-gejh-ready.json": {
+    "bytes": 871,
+    "sha256": "27a532e8cb3d850a369e951510eb1ff34b2812af0a58835819e37baf3220b71f"
+  },
+  "04-host-peer-row-arrival.json": {
+    "bytes": 870,
+    "sha256": "588a95e265512ef969b62ce6b54e861a832bab9229e8f03559d9c38440d85c48"
+  },
+  "05-host-normal-selection-lock.json": {
+    "bytes": 875,
+    "sha256": "1108a0849ae10c16d7e10dbed5375f6616252a42d24b6acdb76302d0fbfae140"
+  },
+  "06-host-world-first-observed.json": {
+    "bytes": 874,
+    "sha256": "9307e968d2c508a6dbf2bb25051c6ed90131cb5d3e2b806b7f7c5147717edc17"
+  },
+  "07-host-natural-round-progression.json": {
+    "bytes": 879,
+    "sha256": "78e8cb7b5c38ff9162272e99b3d16e58f27b8963a91e106a6e0969944ee75b64"
+  },
+  "08-host-after-normal-peer-leave.json": {
+    "bytes": 877,
+    "sha256": "f30b63ef9148589b73be1365b6765d6eaba03eb815aa8f261983e3fc8c298a98"
+  },
+  "09-host-results-main-menu-home.json": {
+    "bytes": 876,
+    "sha256": "46a88b3c74644305e30785c136464087326d31c3278c658dbff83900ec0beb02"
+  },
+  "10-host-own-quit-menu.json": {
+    "bytes": 867,
+    "sha256": "f05989cd811a070347028147c13844fa7b39d7c913194facafdc384b7b724b15"
+  },
+  "launch.json": {
+    "bytes": 1123,
+    "sha256": "58afaa2b93f128ee1a466489354082c051e66595da02026830e9fdd465e0b219"
+  },
+  "direct-result.json": {
+    "bytes": 1999,
+    "sha256": "73bfc7efbdd8421d8a373159a2003793c568c0376fc9cb9a3dc9e9097a3b50c9"
+  },
+  "match-full-canonical.json": {
+    "bytes": 2406,
+    "sha256": "d752868f47b73a7195f7ff47dfe3de61f07df80f65d8938c1b0776706f949afd"
+  },
+  "match-record-receipt.json": {
+    "bytes": 528,
+    "sha256": "16bee3276208d1f1c8833fde06e55791c60ac2fc401b759798e92232cb1c6404"
+  },
+  "pc-full-record-correlation.json": {
+    "bytes": 480,
+    "sha256": "9fc71080eff28f79cf52fb09e9baa52e318ff56cf3df95d9cf137eca4a9fa798"
+  },
+  "capture-and-input-limits.json": {
+    "bytes": 1087,
+    "sha256": "479dbe30eb1054649ee918ce7f5604cb25a1574fe9af404843c5bfbcb6986644"
+  },
+  "online-peer-correlation.json": {
+    "bytes": 533,
+    "sha256": "5f93d84309bcd007c32a7af9188b3641ebb500eab29a881c636024e3138f00e0"
+  },
+  "runtime-observations.txt": {
+    "bytes": 1490,
+    "sha256": "c9a5e271721d3d630030879b757162ec03f6a62cb6f62053725ab2fe9b416462"
+  }
+}

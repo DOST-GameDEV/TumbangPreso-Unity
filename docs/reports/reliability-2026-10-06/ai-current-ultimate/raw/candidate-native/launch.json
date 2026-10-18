@@ -1,0 +1,26 @@
+{
+  "sourceRef": "98364c83f3d5df55c27f663e9d052e0c15499d1e",
+  "profile": "pc-ai-current-ultimate-candidate1006",
+  "filter": "TumbangPreso.PlayTests.AiCurrentUltimateTests",
+  "expectedCases": 8,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-ai-current-ultimate-candidate1006",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.AiCurrentUltimateTests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\ai-current-ultimate1006\\candidate-native\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\ai-current-ultimate1006\\candidate-native\\editor.log"
+  ],
+  "pid": 24396
+}

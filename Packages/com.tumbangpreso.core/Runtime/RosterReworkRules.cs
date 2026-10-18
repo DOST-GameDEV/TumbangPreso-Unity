@@ -63,20 +63,73 @@ namespace TumbangPreso.Core
 
         /// <summary>EARTHQUAKE, owner: *"Everyone concussed"*. Cost set here.</summary>
         public const float EarthquakeCost = 12.0f;
-        // Current Wiki specifies successive forward blasts. Spacing is gameplay tuning.
+        // The cutscene is his charge-up and ends on the slam; the cascade is play's (owner, 2026-10-17: *"after nna malaunch ung
+        // ult, end nna dapat cutscene tapos ppl see the rock going towards them and maknoknnock away sila and concuss"*). Five
+        // forward blasts, 0.30 s apart from the cut; each throws everyone in its band down the lane (a carry), and they are
+        // Concussed as they land. Protocol 168.
         public const int DriftBlasts = 5;
         public const float DriftInterval = .30f;
-        public const float DriftVisualTail = 1.2f;
-        public const float DriftSeconds = (DriftBlasts - 1) * DriftInterval + DriftVisualTail;
+        // Harder again (owner, 2026-10-17, on v9: *"lakasann mo pa knockback"*): a LAUNCH, past the knock's lift cap, as a car's
+        // hit is (`CharacterMotor.AsLaunch`, under `CharacterMotor.LaunchMaxLift` 13): a 3 m arc, 1.1 s in the air, and about
+        // 6.7 m down the lane (5 m held, then the slide). Protocol 170.
+        public const float DriftThrowUp = 11.0f;     // m/s against `Balance.CharacterGravity`
+        public const float DriftThrowAway = 10.0f;   // m/s down the lane, held for `DriftThrowHold`
+        public const float DriftThrowHold = .50f;
+        public const float DriftLandSeconds = 2.0f * DriftThrowUp / Balance.CharacterGravity;   // 1.1 s: Concussed as they land
+        public const float DriftSeconds = (DriftBlasts - 1) * DriftInterval + 1.8f;            // the rubble holds, then sinks back
+
+        // MOUNTAIN FORM (owner, 2026-10-17: *"AFTER HIS ULT he retains the rock armor for 30 secs or smth and he has some buffs"*,
+        // *"stronger throw"*, *"throws na may stun na unti if it hits personn + knockback"*, *"di tatablan nng debuffs"*): the
+        // mountain's armour stays on him from the cut. While it holds he is immune to every status but Tagged and to stuns (as
+        // Unstoppable), his throws fly `MountainThrowScale` faster, and a throw that hits a player stuns them `MountainHitStun`
+        // and knocks them away along it. Protocol 171.
+        public const float MountainSeconds = 30.0f;
+        public const float MountainThrowScale = 1.25f;
+        public const float MountainHitStun = 0.6f;
+        public const float MountainHitAway = 9.0f;     // m/s along the throw
+        public const float MountainHitUp = 5.0f;       // m/s
+        /// <summary>How far into the cascade the cutscene's last frame is: it ends with the first band already rising toward
+        /// them (owner, 2026-10-17: *"end the cutscene when the ground is rsiing towards the players"*), and play's wave picks
+        /// up at this age, so nothing erupts twice and the next band follows the cut at once.</summary>
+        public const float DriftCutsceneTail = .28f;
     }
 
     public static class NecroRules
     {
         /// <summary>Current Wiki: every Kuro basic ability shares one 25-second cooldown.</summary>
         public const float BasicCooldown = 25.0f;
-        public const float SitSeconds = 10.0f;
-        // The Wiki changes the action, not its existing hold-to-aim reach.
-        public const float SitMaxRange = TerrifyMaxRange;
+
+        /// <summary>
+        /// DON'T LOOK (owner 2026-10-15, replacing KURO: SIT! as the signature: *"tripwire blind, like she would place a ghost
+        /// in an area and it becomes invisible after 3 seconds and then if anyone goes near that area the ghost would lunge
+        /// at their eyes and cover it for 2 secondns and slow them for 5 seconds (the slow effect gets lower overtime)"*).
+        /// Blindfold, one ghost, is left at an aimed spot up to 7 m away. It fades from everyone but Nemu over its first 3 s,
+        /// then waits up to 30 s. The first other player within 1.8 m springs it: BLINDED, eyes covered for 2 s and a
+        /// decaying slow (50 % at the spring, easing linearly to nothing at 5 s). One ghost out at a time; recasting moves it.
+        /// </summary>
+        public const float DontLookCooldown = BasicCooldown;
+        public const float DontLookMinRange = 2.0f;
+        public const float DontLookMaxRange = TerrifyMaxRange;
+        public const float DontLookArmSeconds = 3.0f;
+        public const float DontLookLifeSeconds = 30.0f;
+        public const float DontLookTriggerRadius = 1.8f;
+        public const float DontLookBlindSeconds = 2.0f;
+        public const float DontLookSlowSeconds = 5.0f;
+        public const float DontLookSlowPeak = 0.5f;
+        /// <summary>How long the ghost takes to cross from its spot to the victim's eyes (presentation only).</summary>
+        public const float DontLookLungeSeconds = 0.22f;
+
+        /// <summary>The decaying slow's speed multiplier with <paramref name="left"/> seconds of BLINDED to run: 0.5 at
+        /// the spring, back to 1 as it runs out.</summary>
+        public static float DontLookSpeedScale(float left)
+        {
+            if (!(left > 0.0f)) return 1.0f;
+            float share = left >= DontLookSlowSeconds ? 1.0f : left / DontLookSlowSeconds;
+            return 1.0f - DontLookSlowPeak * share;
+        }
+
+        /// <summary>True while the ghost still has its hands over the eyes: the first 2 s of the 5.</summary>
+        public static bool DontLookCoversEyes(float left) => left > DontLookSlowSeconds - DontLookBlindSeconds;
 
         /// <summary>TERRIFY, owner: *"Leave Kuro somewhere and everyone there gets feared"*. Set here:
         /// aimed up to 7 m, a 4 s haunt, feared within 2.2 m, once per body per haunt.
@@ -102,6 +155,16 @@ namespace TumbangPreso.Core
         /// <summary>How often he re-decides, and how long he waits before acting on it: the fallibility.</summary>
         public const float GuardThinkSeconds = 0.35f;
         public const float GuardReactSeconds = 0.25f;
+
+        /// <summary>LOOKOUT (replaces KURO: CATCH!, owner 2026-10-15): *"spawn siya ghost na tutulungan siya magdefend (pede ren
+        /// magtayo lata) but medyo small and not that good but it helps in some cases"*, *"only stays for like 15 seconds"*.
+        /// It minds the can for 15 s; if the can is down it stands it back up, slowly (3.5 s, slower than the taya's own
+        /// reset), and an attacker within 1.5 m of the can scares it off the job (its progress drains twice as fast as it
+        /// builds). It stands the can up once; then its job is done and it goes. Defaults set here without the owner's pick.</summary>
+        public const float LookoutCooldown = BasicCooldown;
+        public const float LookoutSeconds = 15.0f;
+        public const float LookoutRestoreSeconds = 3.5f;
+        public const float LookoutScareRadius = 1.5f;
 
         /// <summary>KURO PLAYS, owner: *"HARD BOT and fulfills whatever role u have and ghets separate copy
         /// of ur skills"*. Cost set here; lasts to the round's end.</summary>

@@ -58,32 +58,32 @@ namespace TumbangPreso.PlayTests
             };
             return (bool)typeof(MatchRpc).GetMethod("ApplyFamiliarEffect",Hidden).Invoke(_router,new object[]{state,clock});
         }
-        private void Frame(float dt) => typeof(GhostPetCompanion).GetMethod("StepDevour",Hidden).Invoke(_pet,new object[]{dt});
-        [Test] public void LiveMovingReceiptPreservesTheDrawnPoseThenConvergesWithoutReplayingGameplay()
+        // KURO: HAUNT! was replaced by PRUSISYON (2026-10-11): the ultimate no longer moves Kuro, so a familiar receipt that
+        // names it (an older host, a delayed packet) must change nothing: no devour, no charge, no status, no clock.
+        [Test] public void AFamiliarReceiptForTheRetiredHauntChangesNothing()
         {
-            _kit.AddUltimateCharge(3);Assert.IsTrue(Apply(4,100,10,0));
-            float before=_pet.transform.position.x;Assert.AreEqual(0,before,.001f);
-            Assert.IsTrue(Apply(4,99,9,2,90));
-            Assert.AreEqual(2,_pet.DevourGround.x,.001f,"Authoritative ground must adopt immediately.");
-            Assert.AreEqual(before,_pet.transform.position.x,.001f,"A10Hz live receipt snapped the drawn companion.");
-            Frame(.05f);Assert.Greater(_pet.transform.position.x,before);Assert.Less(_pet.transform.position.x,2);
-            Assert.Greater(_pet.transform.eulerAngles.y,0);Assert.Less(_pet.transform.eulerAngles.y,90);
-            Assert.AreEqual(8.95f,_pet.DevourRemaining,.001f,"Movement restarted the lifetime.");
-            Frame(.5f);Assert.AreEqual(2,_pet.transform.position.x,.002f);
-            Assert.Less(Quaternion.Angle(_pet.transform.rotation,Quaternion.Euler(0,90,0)),.1f);
-            Assert.AreEqual(3,_kit.UltimateCharge);Assert.IsFalse(_body.IsHaunted);
+            _kit.AddUltimateCharge(3);
+            Vector3 before=_pet.transform.position;
+            Apply(4,100,10,2,90);Apply(4,99,9,4,180);
+            Assert.IsFalse(_pet.IsDevouring);Assert.IsFalse(_pet.IsRageFormVisible);
+            Assert.AreEqual(before,_pet.transform.position,"A stray receipt moved Kuro.");
+            Assert.AreEqual(3,_kit.UltimateCharge);Assert.IsFalse(_kit.Ultimate.IsActive);
+            Assert.IsFalse(_body.IsHaunted);Assert.IsFalse(_body.IsPossessed);
         }
-        [Test] public void CompletionAndNewLifetimeCannotCarryOldMovementAcrossTheirBoundary()
+        // Kept from the Haunt contract: the sweep Kuro's basic errands still move with (`GhostPetMotion`).
+        [Test] public void ReusedSweepStopsAtAWallAndFailsClosedWhenItsBufferFills()
         {
-            Assert.IsTrue(Apply(4,100,10,0));Assert.IsTrue(Apply(4,99,9,2,90));Frame(.02f);
-            float endingX=_pet.transform.position.x;Assert.IsTrue(Apply(4,99,0,2,90));
-            Assert.IsFalse(_pet.IsDevouring);Assert.IsTrue(_pet.IsReturning);
-            Assert.AreEqual(endingX,_pet.transform.position.x,.001f,"Terminal state jumped before the return.");
-            Assert.IsFalse(Apply(4,98,8,4));
-            Assert.IsTrue(Apply(5,97,7,6,180));
-            Assert.AreEqual(6,_pet.DevourGround.x,.001f);Assert.AreEqual(6,_pet.transform.position.x,.001f);
-            Assert.AreEqual(180,_pet.transform.eulerAngles.y,.001f);Assert.IsFalse(_pet.IsReturning);
-            Frame(.05f);Assert.AreEqual(6,_pet.transform.position.x,.001f,"A new lifetime inherited an old target.");
+            var wall=GameObject.CreatePrimitive(PrimitiveType.Cube);
+            wall.transform.position=new Vector3(2,1,0);wall.transform.localScale=new Vector3(.5f,3,8);
+            Physics.SyncTransforms();
+            var roomy=new RaycastHit[32];
+            var safe=GhostPetMotion.Move(null,Vector3.zero,Vector3.right*5,roomy);
+            Assert.Greater(safe.x,0);Assert.Less(safe.x,1.75f,"The sweep tunnelled through the wall.");
+            var saturated=GhostPetMotion.Move(null,Vector3.zero,Vector3.right*5,new RaycastHit[1]);
+            Assert.AreEqual(Vector3.zero,saturated,"An incomplete blocker query advanced Kuro.");
+            Object.DestroyImmediate(wall);Physics.SyncTransforms();
+            var clear=GhostPetMotion.Move(null,Vector3.zero,Vector3.right*5,roomy);
+            Assert.AreEqual(5,clear.x,.001f);
         }
     }
 }

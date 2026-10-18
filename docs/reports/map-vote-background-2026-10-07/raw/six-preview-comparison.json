@@ -1,0 +1,74 @@
+{
+  "Eskinita": {
+    "bytes": 64086616,
+    "stream": {
+      "width": 1920,
+      "height": 1080,
+      "r_frame_rate": "30/1",
+      "duration": "26.000000",
+      "nb_frames": "780"
+    },
+    "meanAbsoluteRgbErrorAgainstLiveFrame": 2.095815329218107,
+    "upsideDownMeanError": 81.01976594650206
+  },
+  "BayanPlaza": {
+    "bytes": 55766553,
+    "stream": {
+      "width": 1920,
+      "height": 1080,
+      "r_frame_rate": "30/1",
+      "duration": "26.000000",
+      "nb_frames": "780"
+    },
+    "meanAbsoluteRgbErrorAgainstLiveFrame": 1.9258844521604939,
+    "upsideDownMeanError": 52.76404385288066
+  },
+  "IlalimNgTulay": {
+    "bytes": 73832452,
+    "stream": {
+      "width": 1920,
+      "height": 1080,
+      "r_frame_rate": "30/1",
+      "duration": "26.000000",
+      "nb_frames": "780"
+    },
+    "meanAbsoluteRgbErrorAgainstLiveFrame": 1.991932388117284,
+    "upsideDownMeanError": 65.4036517811214
+  },
+  "SaBubong": {
+    "bytes": 53516034,
+    "stream": {
+      "width": 1920,
+      "height": 1080,
+      "r_frame_rate": "30/1",
+      "duration": "26.000000",
+      "nb_frames": "780"
+    },
+    "meanAbsoluteRgbErrorAgainstLiveFrame": 2.001445151748971,
+    "upsideDownMeanError": 46.669302340534976
+  },
+  "LagoonCove": {
+    "bytes": 72012419,
+    "stream": {
+      "width": 1920,
+      "height": 1080,
+      "r_frame_rate": "30/1",
+      "duration": "26.000000",
+      "nb_frames": "780"
+    },
+    "meanAbsoluteRgbErrorAgainstLiveFrame": 1.9438740997942388,
+    "upsideDownMeanError": 45.07596129115226
+  },
+  "Kanto": {
+    "bytes": 100275542,
+    "stream": {
+      "width": 1920,
+      "height": 1080,
+      "r_frame_rate": "30/1",
+      "duration": "26.000000",
+      "nb_frames": "780"
+    },
+    "meanAbsoluteRgbErrorAgainstLiveFrame": 2.5087096514917695,
+    "upsideDownMeanError": 57.00127716692387
+  }
+}

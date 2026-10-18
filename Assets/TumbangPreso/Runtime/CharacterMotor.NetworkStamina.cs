@@ -20,7 +20,7 @@ namespace TumbangPreso
         private float _netMovePoseUntil;
 
         internal byte ResourceIntentFlags => IsLocallySimulated()
-            ? (byte)((Intent.MoveAxis.sqrMagnitude > .0001f ? 2 : 0) | (Intent.Pressed(Verb.Sprint) ? 4 : 0)
+            ? (byte)((Intent.MoveAxis.sqrMagnitude > .0001f ? 2 : 0) | (Intent.Pressed(Verb.Sprint) && !ReworkCrouched ? 4 : 0)
                 | (Intent.Pressed(Verb.Interact) ? 8 : 0)
                 | (_rwCrouched ? CrouchedBit : 0) | (_rwSliding ? SlidingBit : 0))
             // A body this peer does not simulate: the host passes on what the owner last said of its crouch and slide.
@@ -61,9 +61,11 @@ namespace TumbangPreso
             // the accepted owner pose, never a second physics simulation.
             bool fresh = Time.unscaledTime <= _netResourceIntentUntil;
             bool canSteer = CanMove();
-            bool moving = canSteer && (IsFeared || (fresh && _netMoveHeld));
+            bool moving = canSteer && (IsFeared || (fresh && _netMoveHeld) || IsPossessionPulling);
             Stamina.StepFatigue(dt);
-            Stamina.Step(dt, moving, canSteer && !IsConcussed && !IsFeared && fresh && _netSprintHeld);
+            // A remote reach refuses sprint just like the locally simulated motor.
+            Stamina.Step(dt, moving, canSteer && !IsConcussed && !IsFeared && !IsVoodooReaching
+                && fresh && _netSprintHeld);
         }
 
         private void ClearNetworkResourceIntent()

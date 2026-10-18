@@ -1,0 +1,58 @@
+{
+  "sourceCommit": "001d80b568fc0a13fb3603a8ccc23123a61f9a42",
+  "scope": "Newest two actual full-route short natural-result recordings; controlled-rebind recordings remain separate",
+  "freshCompletedRecordings": [
+    {
+      "folder": "C:\\Users\\matth\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\8df2233dc7b6a065dc8032a71fb1f5db3c842369736ebf37bf24077df06be83f\\Replays\\TUMP-20261008-004401-a46385e8529f457ca4e0c7cd35b069d2",
+      "matchId": 639270170411961689,
+      "createdUtc": "2026-10-08T00:44:01.2001711Z",
+      "completed": true,
+      "warning": "",
+      "mode": "HeroStrike",
+      "segments": 10,
+      "scenerySegments": 10
+    },
+    {
+      "folder": "C:\\Users\\matth\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\8df2233dc7b6a065dc8032a71fb1f5db3c842369736ebf37bf24077df06be83f\\Replays\\TUMP-20261008-004323-d63bef33c82d4986b4e344cf84474dcb",
+      "matchId": 639270170037367792,
+      "createdUtc": "2026-10-08T00:43:23.7419103Z",
+      "completed": true,
+      "warning": "",
+      "mode": "Classic",
+      "segments": 10,
+      "scenerySegments": 10
+    }
+  ],
+  "controlledAndOtherRecordings": [
+    {
+      "folder": "C:\\Users\\matth\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\8df2233dc7b6a065dc8032a71fb1f5db3c842369736ebf37bf24077df06be83f\\Replays\\TUMP-20261008-003654-eb2b206138ae4817a29e4ad957689af0",
+      "matchId": 639270166142549206,
+      "createdUtc": "2026-10-08T00:36:54.2602945Z",
+      "completed": false,
+      "warning": "Invalid recorded object",
+      "mode": "HeroStrike",
+      "segments": 50,
+      "scenerySegments": 50
+    },
+    {
+      "folder": "C:\\Users\\matth\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\8df2233dc7b6a065dc8032a71fb1f5db3c842369736ebf37bf24077df06be83f\\Replays\\TUMP-20261008-003218-97645b5e48cf4980b22bce79ac4a3ecf",
+      "matchId": 639270163382356132,
+      "createdUtc": "2026-10-08T00:32:18.2416177Z",
+      "completed": false,
+      "warning": "Some replay footage could not be recorded. Player pose history is incomplete.",
+      "mode": "HeroStrike",
+      "segments": 74,
+      "scenerySegments": 74
+    },
+    {
+      "folder": "C:\\Users\\matth\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\8df2233dc7b6a065dc8032a71fb1f5db3c842369736ebf37bf24077df06be83f\\Replays\\TUMP-20261008-003207-b412c04d8dd3484c982a03c4db3cd844",
+      "matchId": 639270163270730635,
+      "createdUtc": "2026-10-08T00:32:07.1295974Z",
+      "completed": false,
+      "warning": "Some replay footage could not be recorded. Player pose history is incomplete.",
+      "mode": "Classic",
+      "segments": 1,
+      "scenerySegments": 1
+    }
+  ]
+}

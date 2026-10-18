@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="10" result="Passed" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 11:02:00Z" end-time="2026-10-07 11:05:22Z" duration="202.6199456">
+  <test-suite type="TestSuite" id="3595" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2099" result="Passed" start-time="2026-10-07 11:02:00Z" end-time="2026-10-07 11:05:22Z" duration="202.619946" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3587" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2099" result="Passed" start-time="2026-10-07 11:02:00Z" end-time="2026-10-07 11:05:22Z" duration="202.587635" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="49576" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3588" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2099" result="Passed" start-time="2026-10-07 11:02:00Z" end-time="2026-10-07 11:05:22Z" duration="202.566502" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3591" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2097" result="Passed" start-time="2026-10-07 11:02:00Z" end-time="2026-10-07 11:05:22Z" duration="202.547035" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2429" name="NewMapHandoffVisibilityTests" fullname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests" classname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-10-07 11:02:00Z" end-time="2026-10-07 11:05:22Z" duration="202.489574" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2430" name="BridgeHandoff" fullname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.BridgeHandoff" methodname="BridgeHandoff" classname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests" runstate="Runnable" seed="1411420078" result="Passed" start-time="2026-10-07 11:02:00Z" end-time="2026-10-07 11:02:37Z" duration="37.101894" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[NewMapHandoff] map=IlalimNgTulay reduced=False motion=True bots=True frames=247 empty=0 banked=0 maxBank=0.00000
+]]></output>
+            </test-case>
+            <test-case id="2433" name="BridgeHumanRigHandoff" fullname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.BridgeHumanRigHandoff" methodname="BridgeHumanRigHandoff" classname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests" runstate="Runnable" seed="877468842" result="Passed" start-time="2026-10-07 11:02:37Z" end-time="2026-10-07 11:02:57Z" duration="20.085778" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Slice] round 1 begins, taya is seat 0
+[NewMapHandoff] map=IlalimNgTulay reduced=False motion=True bots=False frames=240 empty=0 banked=0 maxBank=0.00000
+]]></output>
+            </test-case>
+            <test-case id="2437" name="BridgeMotionOff" fullname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.BridgeMotionOff" methodname="BridgeMotionOff" classname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests" runstate="Runnable" seed="1864527287" result="Passed" start-time="2026-10-07 11:02:57Z" end-time="2026-10-07 11:03:15Z" duration="18.271406" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[NewMapHandoff] map=IlalimNgTulay reduced=False motion=False bots=True frames=213 empty=0 banked=0 maxBank=0.00000
+]]></output>
+            </test-case>
+            <test-case id="2434" name="BridgeReduced" fullname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.BridgeReduced" methodname="BridgeReduced" classname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests" runstate="Runnable" seed="1194173146" result="Passed" start-time="2026-10-07 11:03:15Z" end-time="2026-10-07 11:03:33Z" duration="18.259292" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[NewMapHandoff] map=IlalimNgTulay reduced=True motion=True bots=True frames=231 empty=0 banked=0 maxBank=0.00000
+]]></output>
+            </test-case>
+            <test-case id="2431" name="CoveHandoff" fullname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.CoveHandoff" methodname="CoveHandoff" classname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests" runstate="Runnable" seed="217088048" result="Passed" start-time="2026-10-07 11:03:33Z" end-time="2026-10-07 11:03:55Z" duration="21.972630" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[NewMapHandoff] map=LagoonCove reduced=False motion=True bots=True frames=282 empty=0 banked=0 maxBank=0.00000
+]]></output>
+            </test-case>
+            <test-case id="2438" name="CoveMotionOff" fullname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.CoveMotionOff" methodname="CoveMotionOff" classname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests" runstate="Runnable" seed="1108895068" result="Passed" start-time="2026-10-07 11:03:55Z" end-time="2026-10-07 11:04:14Z" duration="18.558476" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[NewMapHandoff] map=LagoonCove reduced=False motion=False bots=True frames=286 empty=0 banked=0 maxBank=0.00000
+]]></output>
+            </test-case>
+            <test-case id="2435" name="CoveReduced" fullname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.CoveReduced" methodname="CoveReduced" classname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests" runstate="Runnable" seed="523255200" result="Passed" start-time="2026-10-07 11:04:14Z" end-time="2026-10-07 11:04:33Z" duration="18.557504" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[NewMapHandoff] map=LagoonCove reduced=True motion=True bots=True frames=280 empty=0 banked=0 maxBank=0.00000
+]]></output>
+            </test-case>
+            <test-case id="2432" name="KantoHandoff" fullname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.KantoHandoff" methodname="KantoHandoff" classname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests" runstate="Runnable" seed="157107669" result="Passed" start-time="2026-10-07 11:04:33Z" end-time="2026-10-07 11:04:50Z" duration="17.776494" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[NewMapHandoff] map=Kanto reduced=False motion=True bots=True frames=282 empty=0 banked=0 maxBank=0.00000
+]]></output>
+            </test-case>
+            <test-case id="2439" name="KantoMotionOff" fullname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.KantoMotionOff" methodname="KantoMotionOff" classname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests" runstate="Runnable" seed="1795974108" result="Passed" start-time="2026-10-07 11:04:50Z" end-time="2026-10-07 11:05:06Z" duration="15.938015" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[NewMapHandoff] map=Kanto reduced=False motion=False bots=True frames=283 empty=0 banked=0 maxBank=0.00000
+]]></output>
+            </test-case>
+            <test-case id="2436" name="KantoReduced" fullname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests.KantoReduced" methodname="KantoReduced" classname="TumbangPreso.PlayTests.NewMapHandoffVisibilityTests" runstate="Runnable" seed="1967722012" result="Passed" start-time="2026-10-07 11:05:06Z" end-time="2026-10-07 11:05:22Z" duration="15.949449" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Slice] round 1 begins, taya is seat 0
+[NewMapHandoff] map=Kanto reduced=True motion=True bots=True frames=279 empty=0 banked=0 maxBank=0.00000
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

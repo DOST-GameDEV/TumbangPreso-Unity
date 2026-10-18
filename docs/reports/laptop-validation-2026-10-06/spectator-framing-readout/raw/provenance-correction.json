@@ -1,0 +1,6 @@
+{
+  "declaredPacketBase": "5052f20575780244653e5d06ca318cd07914ee43",
+  "effectiveBase": "ea7f5aed53a0f1c4e36929d4f4ad5c216f048855",
+  "qualification": "Restored Kanto snapshot plus logging-only Director and framing fixture overlays. The pulled5052 stick-control production change was not applied to the frozen worker. This readout does not qualify the new stick controls.",
+  "spectatorCameraLfSha256": "b91480c11ceb549e7261fccacff758955dd4e0ee7bb630cb3ac739b449181f13"
+}

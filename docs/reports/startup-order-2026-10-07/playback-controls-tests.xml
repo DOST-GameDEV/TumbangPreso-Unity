@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="9" result="Passed" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 18:02:35Z" end-time="2026-10-06 18:02:53Z" duration="17.8099357">
+  <test-suite type="TestSuite" id="3419" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1962" result="Passed" start-time="2026-10-06 18:02:35Z" end-time="2026-10-06 18:02:53Z" duration="17.809936" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3411" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1962" result="Passed" start-time="2026-10-06 18:02:35Z" end-time="2026-10-06 18:02:53Z" duration="17.789679" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10748" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3412" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1962" result="Passed" start-time="2026-10-06 18:02:35Z" end-time="2026-10-06 18:02:53Z" duration="17.777890" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3415" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1960" result="Passed" start-time="2026-10-06 18:02:35Z" end-time="2026-10-06 18:02:53Z" duration="17.766484" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1819" name="HubSceneVideoTests" fullname="TumbangPreso.PlayTests.HubSceneVideoTests" classname="TumbangPreso.PlayTests.HubSceneVideoTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-06 18:02:35Z" end-time="2026-10-06 18:02:53Z" duration="17.709958" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1821" name="BootWarmupRetainsOnePausedDecodedFrameAndHandsTheSamePlayerToHome" fullname="TumbangPreso.PlayTests.HubSceneVideoTests.BootWarmupRetainsOnePausedDecodedFrameAndHandsTheSamePlayerToHome" methodname="BootWarmupRetainsOnePausedDecodedFrameAndHandsTheSamePlayerToHome" classname="TumbangPreso.PlayTests.HubSceneVideoTests" runstate="Runnable" seed="2079451686" result="Passed" start-time="2026-10-06 18:02:35Z" end-time="2026-10-06 18:02:36Z" duration="0.896671" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="45000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1824" name="EveryListedHeroShipsItsLoopAndPoster" fullname="TumbangPreso.PlayTests.HubSceneVideoTests.EveryListedHeroShipsItsLoopAndPoster" methodname="EveryListedHeroShipsItsLoopAndPoster" classname="TumbangPreso.PlayTests.HubSceneVideoTests" runstate="Runnable" seed="792670386" result="Passed" start-time="2026-10-06 18:02:36Z" end-time="2026-10-06 18:02:36Z" duration="0.047885" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1822" name="FailedBootWarmupGetsFreshPlaybackWhenHomeOpens" fullname="TumbangPreso.PlayTests.HubSceneVideoTests.FailedBootWarmupGetsFreshPlaybackWhenHomeOpens" methodname="FailedBootWarmupGetsFreshPlaybackWhenHomeOpens" classname="TumbangPreso.PlayTests.HubSceneVideoTests" runstate="Runnable" seed="1508069500" result="Passed" start-time="2026-10-06 18:02:36Z" end-time="2026-10-06 18:02:37Z" duration="1.099344" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="45000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[HubSceneVideo] Controlled boot decoder failure - showing the poster instead.
+]]></output>
+            </test-case>
+            <test-case id="1827" name="HomePlaysTheAnimatedSceneAndHidesItUnderOtherScreens" fullname="TumbangPreso.PlayTests.HubSceneVideoTests.HomePlaysTheAnimatedSceneAndHidesItUnderOtherScreens" methodname="HomePlaysTheAnimatedSceneAndHidesItUnderOtherScreens" classname="TumbangPreso.PlayTests.HubSceneVideoTests" runstate="Runnable" seed="189627311" result="Passed" start-time="2026-10-06 18:02:37Z" end-time="2026-10-06 18:02:48Z" duration="11.089484" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="240000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[TumpUiCapture] Hub-HomeScene-1920x1080 cream source=252,211,159 pixel=52,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-HomeScene-1600x680 cream source=252,211,159 pixel=53,21,14; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1820" name="OpaqueHomeMediaSuspendsTheHiddenCourtAndRestoresItsFallback" fullname="TumbangPreso.PlayTests.HubSceneVideoTests.OpaqueHomeMediaSuspendsTheHiddenCourtAndRestoresItsFallback" methodname="OpaqueHomeMediaSuspendsTheHiddenCourtAndRestoresItsFallback" classname="TumbangPreso.PlayTests.HubSceneVideoTests" runstate="Runnable" seed="1370328447" result="Passed" start-time="2026-10-06 18:02:48Z" end-time="2026-10-06 18:02:48Z" duration="0.051577" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1826" name="PhaistersLoopPlaysWhenPicked" fullname="TumbangPreso.PlayTests.HubSceneVideoTests.PhaistersLoopPlaysWhenPicked" methodname="PhaistersLoopPlaysWhenPicked" classname="TumbangPreso.PlayTests.HubSceneVideoTests" runstate="Runnable" seed="962945625" result="Passed" start-time="2026-10-06 18:02:48Z" end-time="2026-10-06 18:02:53Z" duration="4.366149" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="240000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[TumpUiCapture] Hub-HomeScene-Phaister-1920x1080 cream source=252,211,159 pixel=43,25,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-HomeScene-Phaister-1600x680 cream source=252,211,159 pixel=73,53,45; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1823" name="ReducedMotionWarmupUsesThePosterWithoutOpeningADecoder" fullname="TumbangPreso.PlayTests.HubSceneVideoTests.ReducedMotionWarmupUsesThePosterWithoutOpeningADecoder" methodname="ReducedMotionWarmupUsesThePosterWithoutOpeningADecoder" classname="TumbangPreso.PlayTests.HubSceneVideoTests" runstate="Runnable" seed="1654373641" result="Passed" start-time="2026-10-06 18:02:53Z" end-time="2026-10-06 18:02:53Z" duration="0.055279" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1825" name="ThePickCanLandOnEveryHeroAndFallsBackToZack" fullname="TumbangPreso.PlayTests.HubSceneVideoTests.ThePickCanLandOnEveryHeroAndFallsBackToZack" methodname="ThePickCanLandOnEveryHeroAndFallsBackToZack" classname="TumbangPreso.PlayTests.HubSceneVideoTests" runstate="Runnable" seed="1390347965" result="Passed" start-time="2026-10-06 18:02:53Z" end-time="2026-10-06 18:02:53Z" duration="0.039437" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1828" name="TheStudioMarkLoadsAtItsOwnShape" fullname="TumbangPreso.PlayTests.HubSceneVideoTests.TheStudioMarkLoadsAtItsOwnShape" methodname="TheStudioMarkLoadsAtItsOwnShape" classname="TumbangPreso.PlayTests.HubSceneVideoTests" runstate="Runnable" seed="1525053452" result="Passed" start-time="2026-10-06 18:02:53Z" end-time="2026-10-06 18:02:53Z" duration="0.046333" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

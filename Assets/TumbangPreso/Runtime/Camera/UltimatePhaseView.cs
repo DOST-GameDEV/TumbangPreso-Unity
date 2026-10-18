@@ -50,6 +50,11 @@ namespace TumbangPreso.CameraSystem
         public bool SoundPlayed { get; private set; }
         /// <summary>Seats whose own voice line already played inside this introduction.</summary>
         public IEnumerable<int> VoicedSeats { get { foreach (var entry in _actors) if (entry.Scene != null && entry.Scene.VoicePlayed) yield return entry.Actor.PlayerSlot; } }
+        /// <summary>Where every cast's cutscene leaves other players at its last frame (`HeroIntroductionScene.HandBackPlaces`).</summary>
+        public void HandBackPlaces(List<(int seat, Vector3 world)> into)
+        {
+            foreach (var entry in _actors) entry.Scene?.HandBackPlaces(into);
+        }
 
         public UltimatePhaseView(Transform owner, IReadOnlyList<UltimateCommit> commits, double duration = UltimatePerformance.DefaultSeconds)
         {
@@ -86,8 +91,12 @@ namespace TumbangPreso.CameraSystem
                     if (actor.IsGrounded)
                     {
                         var surfaces=body.Renderers.Where(r=>r.enabled&&r.gameObject.activeInHierarchy).ToArray();
+                        // The clip's first frame already carries its authored lift; keep it. Dante's opens sunk 0.32 m onto
+                        // his knee, and grounding that frame's lowest vertex undid the sink for the whole cutscene (he floated,
+                        // Dante film r2). Every other table starts at lift 0, so nothing else moves.
+                        float firstLift=UltimatePerformance.For(actor.AbilitySystem.HeroId,actor.GetComponent<Carrier>().Held!=null)?.LiftAt(0)??0f;
                         if(surfaces.Length>0)
-                            actorStage.transform.position+=Vector3.up*(Slipper.GroundY(actor.transform.position)-surfaces.Min(r=>r.bounds.min.y));
+                            actorStage.transform.position+=Vector3.up*(Slipper.GroundY(actor.transform.position)-surfaces.Min(r=>r.bounds.min.y)+Mathf.Min(0f,firstLift));
                     }
                     foreach (var surface in body.Renderers) surface.shadowCastingMode = ShadowCastingMode.On;
                     entry.Scene = new HeroIntroductionScene(actorStage.transform, actor.AbilitySystem.HeroId, actor, body, commit.Aim) { Boundary = _duration };

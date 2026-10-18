@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 15:15:35Z" end-time="2026-10-07 15:16:45Z" duration="70.1680401">
+  <test-suite type="TestSuite" id="3615" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2116" result="Passed" start-time="2026-10-07 15:15:35Z" end-time="2026-10-07 15:16:45Z" duration="70.168040" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3607" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/TumbangPreso-Unity/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2116" result="Passed" start-time="2026-10-07 15:15:35Z" end-time="2026-10-07 15:16:45Z" duration="70.091137" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="43202" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3608" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2116" result="Passed" start-time="2026-10-07 15:15:35Z" end-time="2026-10-07 15:16:45Z" duration="70.068142" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3611" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2114" result="Passed" start-time="2026-10-07 15:15:35Z" end-time="2026-10-07 15:16:45Z" duration="70.043864" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="3149" name="SlipperContactTests" fullname="TumbangPreso.PlayTests.SlipperContactTests" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-07 15:15:35Z" end-time="2026-10-07 15:16:45Z" duration="70.000902" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="3150" name="EveryRosterPalmAnchorTouchesItsVisibleHandSurface" fullname="TumbangPreso.PlayTests.SlipperContactTests.EveryRosterPalmAnchorTouchesItsVisibleHandSurface" methodname="EveryRosterPalmAnchorTouchesItsVisibleHandSurface" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" seed="1376228220" result="Passed" start-time="2026-10-07 15:15:35Z" end-time="2026-10-07 15:16:45Z" duration="69.525249" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="3151" name="UltimateCopyDoesNotBakeAStaleLiveCarryPose" fullname="TumbangPreso.PlayTests.SlipperContactTests.UltimateCopyDoesNotBakeAStaleLiveCarryPose" methodname="UltimateCopyDoesNotBakeAStaleLiveCarryPose" classname="TumbangPreso.PlayTests.SlipperContactTests" runstate="Runnable" seed="2145222615" result="Passed" start-time="2026-10-07 15:16:45Z" end-time="2026-10-07 15:16:45Z" duration="0.446298" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-Z80puu/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,16 @@
+{
+  "raw/candidate-classification.json": "8473281a24304fa668669d1b76c7d7ae96f620e17b1b32b651eeb94966a79f35",
+  "raw/candidate-result.json": "95d3ef161824b87c2ab5f251e5f872701d903c315edafd41900ca70c2974c544",
+  "raw/candidate-results.xml": "514822094ae5bdf038166f88f1dbb5769ca25ad16aa9af25ac2a128cc5b337fd",
+  "raw/counter-only-control.json": "a0c2878b7ea84e9060432b62f65b6138b391d58cdab5f1138c77ddfb1ed01764",
+  "raw/fixture-original-accounting.cs": "dfd562749614e190eac6be7fc62237366759b83274237560f2f9b7601258655d",
+  "raw/fixture-qualified-accounting.cs": "3900357104cd855e99a7d12b87258cbbebedcc09b468662d089a22b3ca4714f8",
+  "raw/local-validator-receipt.json": "ae059534b87e8a4c2f14fc833c1290f3f700b24a6bde649563693075fe7206d7",
+  "raw/original-classification.json": "8473281a24304fa668669d1b76c7d7ae96f620e17b1b32b651eeb94966a79f35",
+  "raw/original-result.json": "4e338b24f91566ec8cb470234d5ecf9cb95fbabbeed9eee258d6eeeb15e2f5a4",
+  "raw/original-results.xml": "14247d3466c0b4c259413ee71927494005a66360a495b370f5f9acedab176c58",
+  "raw/sanitized-record.json": "b873287caaf6024022438d9b4c609944678a636c87e8080b5ba13ba08e30903c",
+  "raw/spare-original-classification.json": "8473281a24304fa668669d1b76c7d7ae96f620e17b1b32b651eeb94966a79f35",
+  "raw/spare-original-result.json": "64a9c8ae38dc7fa11e280fe481c779c26cb7889779ad46d102475dd32f027f76",
+  "raw/spare-original-results.xml": "768bbd2ccf5d113ae65e22cf927a712643a83019eb1122f74fccb990a7bfff84"
+}

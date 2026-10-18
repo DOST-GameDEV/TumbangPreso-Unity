@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="14" result="Passed" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 04:14:51Z" end-time="2026-10-07 04:14:52Z" duration="1.0775913">
+  <test-suite type="TestSuite" id="3481" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2010" result="Passed" start-time="2026-10-07 04:14:51Z" end-time="2026-10-07 04:14:52Z" duration="1.077591" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3473" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2010" result="Passed" start-time="2026-10-07 04:14:51Z" end-time="2026-10-07 04:14:52Z" duration="1.066779" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="43680" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3474" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2010" result="Passed" start-time="2026-10-07 04:14:51Z" end-time="2026-10-07 04:14:52Z" duration="1.065166" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3477" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2008" result="Passed" start-time="2026-10-07 04:14:51Z" end-time="2026-10-07 04:14:52Z" duration="1.063704" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1045" name="AiLungeObstacleTests" fullname="TumbangPreso.PlayTests.AiLungeObstacleTests" classname="TumbangPreso.PlayTests.AiLungeObstacleTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-07 04:14:51Z" end-time="2026-10-07 04:14:52Z" duration="0.295001" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1050" name="ChargeReleaseRequiresTravelBeforeAnObstruction" fullname="TumbangPreso.PlayTests.AiLungeObstacleTests.ChargeReleaseRequiresTravelBeforeAnObstruction" classname="TumbangPreso.PlayTests.AiLungeObstacleTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-07 04:14:51Z" end-time="2026-10-07 04:14:52Z" duration="0.245158" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1047" name="ChargeReleaseRequiresTravelBeforeAnObstruction(1.2f,False)" fullname="TumbangPreso.PlayTests.AiLungeObstacleTests.ChargeReleaseRequiresTravelBeforeAnObstruction(1.2f,False)" methodname="ChargeReleaseRequiresTravelBeforeAnObstruction" classname="TumbangPreso.PlayTests.AiLungeObstacleTests" runstate="Runnable" seed="382268368" result="Passed" start-time="2026-10-07 04:14:51Z" end-time="2026-10-07 04:14:52Z" duration="0.152207" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1048" name="ChargeReleaseRequiresTravelBeforeAnObstruction(5.0f,True)" fullname="TumbangPreso.PlayTests.AiLungeObstacleTests.ChargeReleaseRequiresTravelBeforeAnObstruction(5.0f,True)" methodname="ChargeReleaseRequiresTravelBeforeAnObstruction" classname="TumbangPreso.PlayTests.AiLungeObstacleTests" runstate="Runnable" seed="1117028545" result="Passed" start-time="2026-10-07 04:14:52Z" end-time="2026-10-07 04:14:52Z" duration="0.041825" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1049" name="ChargeReleaseRequiresTravelBeforeAnObstruction(-2.0f,True)" fullname="TumbangPreso.PlayTests.AiLungeObstacleTests.ChargeReleaseRequiresTravelBeforeAnObstruction(-2.0f,True)" methodname="ChargeReleaseRequiresTravelBeforeAnObstruction" classname="TumbangPreso.PlayTests.AiLungeObstacleTests" runstate="Runnable" seed="328507419" result="Passed" start-time="2026-10-07 04:14:52Z" end-time="2026-10-07 04:14:52Z" duration="0.041591" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1046" name="LegacyBareCapsuleIntersectsFloorButInstalledGameCapsuleClearsIt" fullname="TumbangPreso.PlayTests.AiLungeObstacleTests.LegacyBareCapsuleIntersectsFloorButInstalledGameCapsuleClearsIt" methodname="LegacyBareCapsuleIntersectsFloorButInstalledGameCapsuleClearsIt" classname="TumbangPreso.PlayTests.AiLungeObstacleTests" runstate="Runnable" seed="1588935738" result="Passed" start-time="2026-10-07 04:14:52Z" end-time="2026-10-07 04:14:52Z" duration="0.039622" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1051" name="AiLungePlanLifetimeTests" fullname="TumbangPreso.PlayTests.AiLungePlanLifetimeTests" classname="TumbangPreso.PlayTests.AiLungePlanLifetimeTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-07 04:14:52Z" end-time="2026-10-07 04:14:52Z" duration="0.194390" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1057" name="ActualCanResetCancelsTheHoldWithoutSpendingTheDash" fullname="TumbangPreso.PlayTests.AiLungePlanLifetimeTests.ActualCanResetCancelsTheHoldWithoutSpendingTheDash" methodname="ActualCanResetCancelsTheHoldWithoutSpendingTheDash" classname="TumbangPreso.PlayTests.AiLungePlanLifetimeTests" runstate="Runnable" seed="1717035578" result="Passed" start-time="2026-10-07 04:14:52Z" end-time="2026-10-07 04:14:52Z" duration="0.041850" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1056" name="TargetlessPlanDoesNotReleaseAnExistingCharge" fullname="TumbangPreso.PlayTests.AiLungePlanLifetimeTests.TargetlessPlanDoesNotReleaseAnExistingCharge" classname="TumbangPreso.PlayTests.AiLungePlanLifetimeTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-07 04:14:52Z" end-time="2026-10-07 04:14:52Z" duration="0.149992" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1052" name="TargetlessPlanDoesNotReleaseAnExistingCharge(Guard)" fullname="TumbangPreso.PlayTests.AiLungePlanLifetimeTests.TargetlessPlanDoesNotReleaseAnExistingCharge(Guard)" methodname="TargetlessPlanDoesNotReleaseAnExistingCharge" classname="TumbangPreso.PlayTests.AiLungePlanLifetimeTests" runstate="Runnable" seed="264630198" result="Passed" start-time="2026-10-07 04:14:52Z" end-time="2026-10-07 04:14:52Z" duration="0.038038" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1053" name="TargetlessPlanDoesNotReleaseAnExistingCharge(Intercept)" fullname="TumbangPreso.PlayTests.AiLungePlanLifetimeTests.TargetlessPlanDoesNotReleaseAnExistingCharge(Intercept)" methodname="TargetlessPlanDoesNotReleaseAnExistingCharge" classname="TumbangPreso.PlayTests.AiLungePlanLifetimeTests" runstate="Runnable" seed="87517915" result="Passed" start-time="2026-10-07 04:14:52Z" end-time="2026-10-07 04:14:52Z" duration="0.036291" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1054" name="TargetlessPlanDoesNotReleaseAnExistingCharge(Reset)" fullname="TumbangPreso.PlayTests.AiLungePlanLifetimeTests.TargetlessPlanDoesNotReleaseAnExistingCharge(Reset)" methodname="TargetlessPlanDoesNotReleaseAnExistingCharge" classname="TumbangPreso.PlayTests.AiLungePlanLifetimeTests" runstate="Runnable" seed="1083515525" result="Passed" start-time="2026-10-07 04:14:52Z" end-time="2026-10-07 04:14:52Z" duration="0.036730" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1055" name="TargetlessPlanDoesNotReleaseAnExistingCharge(Hunt)" fullname="TumbangPreso.PlayTests.AiLungePlanLifetimeTests.TargetlessPlanDoesNotReleaseAnExistingCharge(Hunt)" methodname="TargetlessPlanDoesNotReleaseAnExistingCharge" classname="TumbangPreso.PlayTests.AiLungePlanLifetimeTests" runstate="Runnable" seed="38750992" result="Passed" start-time="2026-10-07 04:14:52Z" end-time="2026-10-07 04:14:52Z" duration="0.036637" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="1076" name="AiTagCommitmentTests" fullname="TumbangPreso.PlayTests.AiTagCommitmentTests" classname="TumbangPreso.PlayTests.AiTagCommitmentTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-07 04:14:52Z" end-time="2026-10-07 04:14:52Z" duration="0.409892" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1080" name="ChargedLungeWaitsForAReachableAim" fullname="TumbangPreso.PlayTests.AiTagCommitmentTests.ChargedLungeWaitsForAReachableAim" classname="TumbangPreso.PlayTests.AiTagCommitmentTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-07 04:14:52Z" end-time="2026-10-07 04:14:52Z" duration="0.115949" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1077" name="ChargedLungeWaitsForAReachableAim(90.0f,3.0f,0.0f)" fullname="TumbangPreso.PlayTests.AiTagCommitmentTests.ChargedLungeWaitsForAReachableAim(90.0f,3.0f,0.0f)" methodname="ChargedLungeWaitsForAReachableAim" classname="TumbangPreso.PlayTests.AiTagCommitmentTests" runstate="Runnable" seed="1126881835" result="Passed" start-time="2026-10-07 04:14:52Z" end-time="2026-10-07 04:14:52Z" duration="0.040897" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1078" name="ChargedLungeWaitsForAReachableAim(25.0f,3.5f,0.0f)" fullname="TumbangPreso.PlayTests.AiTagCommitmentTests.ChargedLungeWaitsForAReachableAim(25.0f,3.5f,0.0f)" methodname="ChargedLungeWaitsForAReachableAim" classname="TumbangPreso.PlayTests.AiTagCommitmentTests" runstate="Runnable" seed="1865651035" result="Passed" start-time="2026-10-07 04:14:52Z" end-time="2026-10-07 04:14:52Z" duration="0.037988" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1079" name="ChargedLungeWaitsForAReachableAim(25.0f,3.5f,4.0f)" fullname="TumbangPreso.PlayTests.AiTagCommitmentTests.ChargedLungeWaitsForAReachableAim(25.0f,3.5f,4.0f)" methodname="ChargedLungeWaitsForAReachableAim" classname="TumbangPreso.PlayTests.AiTagCommitmentTests" runstate="Runnable" seed="357275778" result="Passed" start-time="2026-10-07 04:14:52Z" end-time="2026-10-07 04:14:52Z" duration="0.035006" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1083" name="NearTargetUsesOneTagCommitment" fullname="TumbangPreso.PlayTests.AiTagCommitmentTests.NearTargetUsesOneTagCommitment" classname="TumbangPreso.PlayTests.AiTagCommitmentTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-07 04:14:52Z" end-time="2026-10-07 04:14:52Z" duration="0.291964" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1081" name="NearTargetUsesOneTagCommitment(False)" fullname="TumbangPreso.PlayTests.AiTagCommitmentTests.NearTargetUsesOneTagCommitment(False)" methodname="NearTargetUsesOneTagCommitment" classname="TumbangPreso.PlayTests.AiTagCommitmentTests" runstate="Runnable" seed="1092646174" result="Passed" start-time="2026-10-07 04:14:52Z" end-time="2026-10-07 04:14:52Z" duration="0.253346" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1082" name="NearTargetUsesOneTagCommitment(True)" fullname="TumbangPreso.PlayTests.AiTagCommitmentTests.NearTargetUsesOneTagCommitment(True)" methodname="NearTargetUsesOneTagCommitment" classname="TumbangPreso.PlayTests.AiTagCommitmentTests" runstate="Runnable" seed="1591551782" result="Passed" start-time="2026-10-07 04:14:52Z" end-time="2026-10-07 04:14:52Z" duration="0.036980" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

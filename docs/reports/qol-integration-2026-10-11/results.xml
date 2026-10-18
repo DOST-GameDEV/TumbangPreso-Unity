@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="21" result="Passed" total="21" passed="21" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-11 12:14:21Z" end-time="2026-10-11 12:17:35Z" duration="193.7884821">
+  <test-suite type="TestSuite" id="3675" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2163" result="Passed" start-time="2026-10-11 12:14:21Z" end-time="2026-10-11 12:17:35Z" duration="193.788482" total="21" passed="21" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3667" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2163" result="Passed" start-time="2026-10-11 12:14:21Z" end-time="2026-10-11 12:17:35Z" duration="193.746901" total="21" passed="21" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="14876" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3668" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2163" result="Passed" start-time="2026-10-11 12:14:21Z" end-time="2026-10-11 12:17:35Z" duration="193.715633" total="21" passed="21" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3671" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2161" result="Passed" start-time="2026-10-11 12:14:21Z" end-time="2026-10-11 12:17:35Z" duration="193.684045" total="21" passed="21" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1144" name="AiUnavailableEmoteTests" fullname="TumbangPreso.PlayTests.AiUnavailableEmoteTests" classname="TumbangPreso.PlayTests.AiUnavailableEmoteTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-11 12:14:22Z" end-time="2026-10-11 12:14:23Z" duration="1.782535" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1146" name="PendingPlayableMotionRetainsItsBoundedDeliveryGrace" fullname="TumbangPreso.PlayTests.AiUnavailableEmoteTests.PendingPlayableMotionRetainsItsBoundedDeliveryGrace" methodname="PendingPlayableMotionRetainsItsBoundedDeliveryGrace" classname="TumbangPreso.PlayTests.AiUnavailableEmoteTests" runstate="Runnable" seed="356630402" result="Passed" start-time="2026-10-11 12:14:22Z" end-time="2026-10-11 12:14:23Z" duration="1.512934" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1145" name="PlayableMotionStillStartsAndHoldsItsVisibleEmote" fullname="TumbangPreso.PlayTests.AiUnavailableEmoteTests.PlayableMotionStillStartsAndHoldsItsVisibleEmote" methodname="PlayableMotionStillStartsAndHoldsItsVisibleEmote" classname="TumbangPreso.PlayTests.AiUnavailableEmoteTests" runstate="Runnable" seed="1070628899" result="Passed" start-time="2026-10-11 12:14:23Z" end-time="2026-10-11 12:14:23Z" duration="0.108265" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1147" name="UnavailableMotionDoesNotConsumeTheBotsSocialFrame" fullname="TumbangPreso.PlayTests.AiUnavailableEmoteTests.UnavailableMotionDoesNotConsumeTheBotsSocialFrame" methodname="UnavailableMotionDoesNotConsumeTheBotsSocialFrame" classname="TumbangPreso.PlayTests.AiUnavailableEmoteTests" runstate="Runnable" seed="1995547174" result="Passed" start-time="2026-10-11 12:14:23Z" end-time="2026-10-11 12:14:23Z" duration="0.143220" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2135" name="LooseSlipperSurfaceTests" fullname="TumbangPreso.PlayTests.LooseSlipperSurfaceTests" classname="TumbangPreso.PlayTests.LooseSlipperSurfaceTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-11 12:14:23Z" end-time="2026-10-11 12:16:23Z" duration="119.457590" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2137" name="NewMapLooseShoesRestOnActualCollisionSurfaces" fullname="TumbangPreso.PlayTests.LooseSlipperSurfaceTests.NewMapLooseShoesRestOnActualCollisionSurfaces" methodname="NewMapLooseShoesRestOnActualCollisionSurfaces" classname="TumbangPreso.PlayTests.LooseSlipperSurfaceTests" runstate="Runnable" seed="923287565" result="Passed" start-time="2026-10-11 12:14:23Z" end-time="2026-10-11 12:16:01Z" duration="97.999198" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+]]></output>
+            </test-case>
+            <test-case id="2136" name="RestingSupportIsStableAcrossHeldAndTumblingRootRotations" fullname="TumbangPreso.PlayTests.LooseSlipperSurfaceTests.RestingSupportIsStableAcrossHeldAndTumblingRootRotations" methodname="RestingSupportIsStableAcrossHeldAndTumblingRootRotations" classname="TumbangPreso.PlayTests.LooseSlipperSurfaceTests" runstate="Runnable" seed="71548444" result="Passed" start-time="2026-10-11 12:16:01Z" end-time="2026-10-11 12:16:23Z" duration="21.452945" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2554" name="OwnerPoseFeedbackTests" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-11 12:16:23Z" end-time="2026-10-11 12:16:23Z" duration="0.383249" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2555" name="AcceptedEchoAtAVisibleRoundTripDistanceDoesNotPullTheOwnerBack" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.AcceptedEchoAtAVisibleRoundTripDistanceDoesNotPullTheOwnerBack" methodname="AcceptedEchoAtAVisibleRoundTripDistanceDoesNotPullTheOwnerBack" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="1556118586" result="Passed" start-time="2026-10-11 12:16:23Z" end-time="2026-10-11 12:16:23Z" duration="0.108925" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2556" name="AcceptedEchoBeyondTheOldSnapDistanceDoesNotPullTheOwnerBack" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.AcceptedEchoBeyondTheOldSnapDistanceDoesNotPullTheOwnerBack" methodname="AcceptedEchoBeyondTheOldSnapDistanceDoesNotPullTheOwnerBack" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="160630818" result="Passed" start-time="2026-10-11 12:16:23Z" end-time="2026-10-11 12:16:23Z" duration="0.050938" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2559" name="AcceptedOtherSeatPosesStillMoveTheObservedReplica" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.AcceptedOtherSeatPosesStillMoveTheObservedReplica" methodname="AcceptedOtherSeatPosesStillMoveTheObservedReplica" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="1250000694" result="Passed" start-time="2026-10-11 12:16:23Z" end-time="2026-10-11 12:16:23Z" duration="0.048945" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2558" name="ANewMovementEpochStillAppliesTheAuthoritativeTeleport" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.ANewMovementEpochStillAppliesTheAuthoritativeTeleport" methodname="ANewMovementEpochStillAppliesTheAuthoritativeTeleport" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="1643967350" result="Passed" start-time="2026-10-11 12:16:23Z" end-time="2026-10-11 12:16:23Z" duration="0.046920" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2557" name="AnExplicitHostCorrectionStillCorrectsTheOwner" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.AnExplicitHostCorrectionStillCorrectsTheOwner" methodname="AnExplicitHostCorrectionStillCorrectsTheOwner" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="111719991" result="Passed" start-time="2026-10-11 12:16:23Z" end-time="2026-10-11 12:16:23Z" duration="0.045176" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2560" name="DelayedEchoesPreserveContinuousPredictedRunning" fullname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests.DelayedEchoesPreserveContinuousPredictedRunning" methodname="DelayedEchoesPreserveContinuousPredictedRunning" classname="TumbangPreso.PlayTests.OwnerPoseFeedbackTests" runstate="Runnable" seed="149820194" result="Passed" start-time="2026-10-11 12:16:23Z" end-time="2026-10-11 12:16:23Z" duration="0.065193" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[physics_steps=100 dt=0.020 delayed_steps=25 accepted=75 travel=10.0010 maximum_rollback=0.0000
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2869" name="RecordedCompanionTests" fullname="TumbangPreso.PlayTests.RecordedCompanionTests" classname="TumbangPreso.PlayTests.RecordedCompanionTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-11 12:16:23Z" end-time="2026-10-11 12:16:49Z" duration="25.608035" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2872" name="ARealSummonedDollAndItsHeldSlipperRecordAndPlayWithoutGameplayCopies" fullname="TumbangPreso.PlayTests.RecordedCompanionTests.ARealSummonedDollAndItsHeldSlipperRecordAndPlayWithoutGameplayCopies" methodname="ARealSummonedDollAndItsHeldSlipperRecordAndPlayWithoutGameplayCopies" classname="TumbangPreso.PlayTests.RecordedCompanionTests" runstate="Runnable" seed="1846306711" result="Passed" start-time="2026-10-11 12:16:23Z" end-time="2026-10-11 12:16:49Z" duration="25.490784" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+[RecordedCompanion] seat=5 bytes=4900 objects=11 held samples=21
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2871" name="CurrentCompanionSeatsAndHoldersRemainBounded" fullname="TumbangPreso.PlayTests.RecordedCompanionTests.CurrentCompanionSeatsAndHoldersRemainBounded" methodname="CurrentCompanionSeatsAndHoldersRemainBounded" classname="TumbangPreso.PlayTests.RecordedCompanionTests" runstate="Runnable" seed="1414502169" result="Passed" start-time="2026-10-11 12:16:49Z" end-time="2026-10-11 12:16:49Z" duration="0.056271" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2870" name="Version14PlayerClipsRemainReadableAndRejectCompanionSeats" fullname="TumbangPreso.PlayTests.RecordedCompanionTests.Version14PlayerClipsRemainReadableAndRejectCompanionSeats" methodname="Version14PlayerClipsRemainReadableAndRejectCompanionSeats" classname="TumbangPreso.PlayTests.RecordedCompanionTests" runstate="Runnable" seed="1751785236" result="Passed" start-time="2026-10-11 12:16:49Z" end-time="2026-10-11 12:16:49Z" duration="0.055307" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2945" name="ReplayProbeCatchContactTests" fullname="TumbangPreso.PlayTests.ReplayProbeCatchContactTests" classname="TumbangPreso.PlayTests.ReplayProbeCatchContactTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-11 12:16:49Z" end-time="2026-10-11 12:17:07Z" duration="18.271067" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2946" name="ProbeContactRetainsAnActualCatchClip" fullname="TumbangPreso.PlayTests.ReplayProbeCatchContactTests.ProbeContactRetainsAnActualCatchClip" methodname="ProbeContactRetainsAnActualCatchClip" classname="TumbangPreso.PlayTests.ReplayProbeCatchContactTests" runstate="Runnable" seed="693986621" result="Passed" start-time="2026-10-11 12:16:49Z" end-time="2026-10-11 12:17:07Z" duration="18.268129" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Invalid pose time
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="3136" name="ShoveSlidePressRecoveryTests" fullname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" classname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-11 12:17:07Z" end-time="2026-10-11 12:17:07Z" duration="0.227856" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="3140" name="AnInitiallyBlockedShoveDoesNotSpendItsInputEdge" fullname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.AnInitiallyBlockedShoveDoesNotSpendItsInputEdge" methodname="AnInitiallyBlockedShoveDoesNotSpendItsInputEdge" classname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" runstate="Runnable" seed="1606553523" result="Passed" start-time="2026-10-11 12:17:07Z" end-time="2026-10-11 12:17:07Z" duration="0.067823" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="3139" name="OrdinaryShoveReleaseAndFreshPressStillWork" fullname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.OrdinaryShoveReleaseAndFreshPressStillWork" methodname="OrdinaryShoveReleaseAndFreshPressStillWork" classname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" runstate="Runnable" seed="197917977" result="Passed" start-time="2026-10-11 12:17:07Z" end-time="2026-10-11 12:17:07Z" duration="0.053472" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="3138" name="ShoveReleaseDuringDefenderRoleRearmsTheFreshAttackerPress" fullname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.ShoveReleaseDuringDefenderRoleRearmsTheFreshAttackerPress" methodname="ShoveReleaseDuringDefenderRoleRearmsTheFreshAttackerPress" classname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" runstate="Runnable" seed="295935124" result="Passed" start-time="2026-10-11 12:17:07Z" end-time="2026-10-11 12:17:07Z" duration="0.049740" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="3137" name="ShoveReleaseDuringStunRearmsTheFreshAttackerPress" fullname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.ShoveReleaseDuringStunRearmsTheFreshAttackerPress" methodname="ShoveReleaseDuringStunRearmsTheFreshAttackerPress" classname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" runstate="Runnable" seed="186593266" result="Passed" start-time="2026-10-11 12:17:07Z" end-time="2026-10-11 12:17:07Z" duration="0.051304" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="3311" name="StartupOrder1007Tests" fullname="TumbangPreso.PlayTests.StartupOrder1007Tests" classname="TumbangPreso.PlayTests.StartupOrder1007Tests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-11 12:17:07Z" end-time="2026-10-11 12:17:35Z" duration="27.464725" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="3312" name="LogosLoginFiveSecondMainThenFirstHomeAnimation" fullname="TumbangPreso.PlayTests.StartupOrder1007Tests.LogosLoginFiveSecondMainThenFirstHomeAnimation" methodname="LogosLoginFiveSecondMainThenFirstHomeAnimation" classname="TumbangPreso.PlayTests.StartupOrder1007Tests" runstate="Runnable" seed="1301083999" result="Passed" start-time="2026-10-11 12:17:07Z" end-time="2026-10-11 12:17:22Z" duration="14.334304" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] StartupLoginFirst1007-1920 cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupLoginFirst1007-1280 cream source=252,211,159 pixel=242,142,106; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupMainLoading1007-1920 cream source=252,211,159 pixel=248,198,143; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupMainLoading1007-1280 cream source=252,211,159 pixel=245,182,120; isolated UI camera, no ColourGrade.
+[StartupOrder1007] studio->login->main-loading->home; loadingSeconds=7.740784 firstFrames=4->40
+[TumpUiCapture] StartupFirstHomePlaying1007-1920 cream source=252,211,159 pixel=45,27,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupFirstHomePlaying1007-1280 cream source=252,211,159 pixel=47,29,18; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="3313" name="SlowAdmissionStillLeavesFiveVisibleSecondsBeforeFirstHome" fullname="TumbangPreso.PlayTests.StartupOrder1007Tests.SlowAdmissionStillLeavesFiveVisibleSecondsBeforeFirstHome" methodname="SlowAdmissionStillLeavesFiveVisibleSecondsBeforeFirstHome" classname="TumbangPreso.PlayTests.StartupOrder1007Tests" runstate="Runnable" seed="2008334249" result="Passed" start-time="2026-10-11 12:17:22Z" end-time="2026-10-11 12:17:35Z" duration="13.127969" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] StartupLoginFirst1007-1920 cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupLoginFirst1007-1280 cream source=252,211,159 pixel=242,142,106; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupMainLoading1007-1920 cream source=252,211,159 pixel=244,183,121; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupMainLoading1007-1280 cream source=252,211,159 pixel=245,182,120; isolated UI camera, no ColourGrade.
+[StartupOrder1007] studio->login->main-loading->home; loadingSeconds=6.906067 firstFrames=4->40
+[TumpUiCapture] StartupFirstHomePlaying1007-1920 cream source=252,211,159 pixel=45,27,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupFirstHomePlaying1007-1280 cream source=252,211,159 pixel=46,29,18; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

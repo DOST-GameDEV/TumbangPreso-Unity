@@ -1,0 +1,1323 @@
+{
+  "sourceCommit": "e1c1fd0fee188e8f41b2b30efe914aac7b29e766",
+  "protocol": 154,
+  "artifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\release-ui-perf1008g\\TumbangPreso.exe",
+  "strictReceiptPassed": false,
+  "classifiedArtifactAccepted": true,
+  "classification": "Ordinary release replacing existing G with validated current roster preparation, inert copied animation endpoints measured thin-slipper carry support, visible title timer and companion recording format15/protocol154. Build/source restoration only; actual player timing/startup/replay/previews remain pending.",
+  "buildOptions": "None",
+  "exeSha256": "fedb275966771506f040ea2fb01dc909c4f3aaa31f9362059e64442a5fc2b40d",
+  "runtimeSha256": "4a315c5efff4c9b848a36c0f0c803026782fefcb8585abbead837d0b17c2ef91",
+  "coreSha256": "339e00fa0469853257a6081a6015736d16db126ccac9152441ea3f76113f823a",
+  "fileCount": 261,
+  "totalBytes": 3572707876,
+  "files": [
+    {
+      "path": "D3D12/D3D12Core.dll",
+      "bytes": 4725304,
+      "sha256": "625bd40005b1c3708695d5256ecf230d278e6b8edba5a88af70f3d91324f3052"
+    },
+    {
+      "path": "dstorage.dll",
+      "bytes": 206904,
+      "sha256": "cae65787f61514bec6f012f44546e68b19e39d8854a9ab52af813370d44b272a"
+    },
+    {
+      "path": "dstoragecore.dll",
+      "bytes": 1482784,
+      "sha256": "cf85b19a92a8276f8baca0db9bbcd60735bad50768deb303d310e84d5f4fdd11"
+    },
+    {
+      "path": "MonoBleedingEdge/EmbedRuntime/mono-2.0-bdwgc.dll",
+      "bytes": 7831464,
+      "sha256": "4f76ed30d3fd917865ae98b96c663254c83bb1c3d6ad9cafe80fbb2325a61f2b"
+    },
+    {
+      "path": "MonoBleedingEdge/EmbedRuntime/MonoPosixHelper.dll",
+      "bytes": 611248,
+      "sha256": "c307b35e1fc90a90c624bbea6f9ca4687cc92dde67a5bf58028f5b703828a541"
+    },
+    {
+      "path": "MonoBleedingEdge/etc/mono/2.0/Browsers/Compat.browser",
+      "bytes": 1605,
+      "sha256": "8a1082057ac5681dcd4e9c227ed7fb8eb42ac1618963b5de3b65739dd77e2741"
+    },
+    {
+      "path": "MonoBleedingEdge/etc/mono/2.0/DefaultWsdlHelpGenerator.aspx",
+      "bytes": 60575,
+      "sha256": "751861040b69ea63a3827507b7c8da9c7f549dc181c1c8af4b7ca78cc97d710a"
+    },
+    {
+      "path": "MonoBleedingEdge/etc/mono/2.0/machine.config",
+      "bytes": 29066,
+      "sha256": "e91782a27fa39fc6c1d6ee8b08529f5d35052310d0006034b878eb04b8f2af30"
+    },
+    {
+      "path": "MonoBleedingEdge/etc/mono/2.0/settings.map",
+      "bytes": 2622,
+      "sha256": "49c6160f9d54af4270a3b4e997fc4a8301f79b9e2070118fa46ddbcbbc44f9a2"
+    },
+    {
+      "path": "MonoBleedingEdge/etc/mono/2.0/web.config",
+      "bytes": 11635,
+      "sha256": "cf2b54339e069b9e42f7d6795eecbf562c50c1011f4ca8f65f578fe52d97ff92"
+    },
+    {
+      "path": "MonoBleedingEdge/etc/mono/4.0/Browsers/Compat.browser",
+      "bytes": 1605,
+      "sha256": "8a1082057ac5681dcd4e9c227ed7fb8eb42ac1618963b5de3b65739dd77e2741"
+    },
+    {
+      "path": "MonoBleedingEdge/etc/mono/4.0/DefaultWsdlHelpGenerator.aspx",
+      "bytes": 60575,
+      "sha256": "751861040b69ea63a3827507b7c8da9c7f549dc181c1c8af4b7ca78cc97d710a"
+    },
+    {
+      "path": "MonoBleedingEdge/etc/mono/4.0/machine.config",
+      "bytes": 33598,
+      "sha256": "e60aec2c5115d65b3acb3c55ea21576dbd770f579166c017125571e46ae560ed"
+    },
+    {
+      "path": "MonoBleedingEdge/etc/mono/4.0/settings.map",
+      "bytes": 2622,
+      "sha256": "ce1db1ad8a9512073164e3eccdc193f7eda036e1a9733caec4635de21b2865c8"
+    },
+    {
+      "path": "MonoBleedingEdge/etc/mono/4.0/web.config",
+      "bytes": 18802,
+      "sha256": "e38bb8cc68fe5b4edecdfd288d094b9e8ced7629039b2a347682aba0d8bd7492"
+    },
+    {
+      "path": "MonoBleedingEdge/etc/mono/4.5/Browsers/Compat.browser",
+      "bytes": 1605,
+      "sha256": "8a1082057ac5681dcd4e9c227ed7fb8eb42ac1618963b5de3b65739dd77e2741"
+    },
+    {
+      "path": "MonoBleedingEdge/etc/mono/4.5/DefaultWsdlHelpGenerator.aspx",
+      "bytes": 60575,
+      "sha256": "751861040b69ea63a3827507b7c8da9c7f549dc181c1c8af4b7ca78cc97d710a"
+    },
+    {
+      "path": "MonoBleedingEdge/etc/mono/4.5/machine.config",
+      "bytes": 34056,
+      "sha256": "ee950004b576fb28dc85f4b0435ed04bf96612de2e8b53be84d07afe85a0de6c"
+    },
+    {
+      "path": "MonoBleedingEdge/etc/mono/4.5/settings.map",
+      "bytes": 2622,
+      "sha256": "ce1db1ad8a9512073164e3eccdc193f7eda036e1a9733caec4635de21b2865c8"
+    },
+    {
+      "path": "MonoBleedingEdge/etc/mono/4.5/web.config",
+      "bytes": 18811,
+      "sha256": "c4cbddd4fd9347b58cc5a72b36dc4ba1ad2bb699e65869d05cd3fb9865f0d824"
+    },
+    {
+      "path": "MonoBleedingEdge/etc/mono/browscap.ini",
+      "bytes": 311984,
+      "sha256": "4ddd50f31fb968f30bedefc253a46dc3f2890192d05cdaa9e0a64a056eee807e"
+    },
+    {
+      "path": "MonoBleedingEdge/etc/mono/config",
+      "bytes": 3815,
+      "sha256": "5776169973a26a387b8b3e5c0f2301a7ab9a6dd7c7d3efa22a96abc47fbf8662"
+    },
+    {
+      "path": "MonoBleedingEdge/etc/mono/mconfig/config.xml",
+      "bytes": 25817,
+      "sha256": "0c56e34c69124510fa8c19e7b4c2ca6c1c4ff460ae19f798dd0ca035809e396d"
+    },
+    {
+      "path": "Tumbang Preso_BurstDebugInformation_DoNotShip/Data/Plugins/x86_64/lib_burst_generated.txt",
+      "bytes": 425551,
+      "sha256": "44fae4da4f31b23524fb5f547b6f9220e6e8fe55c5170b8135315c686d37d9b1"
+    },
+    {
+      "path": "TumbangPreso.exe",
+      "bytes": 667648,
+      "sha256": "fedb275966771506f040ea2fb01dc909c4f3aaa31f9362059e64442a5fc2b40d"
+    },
+    {
+      "path": "TumbangPreso_Data/app.info",
+      "bytes": 24,
+      "sha256": "75c601a98a62f46be2155c0013cea06d27f64e46ac59fbc7aef4c8e343af30fe"
+    },
+    {
+      "path": "TumbangPreso_Data/boot.config",
+      "bytes": 156,
+      "sha256": "d0b77aa14e1d45b6a748a880c2b3144c55ea99ebe135f93a40ccb4aadfac2de7"
+    },
+    {
+      "path": "TumbangPreso_Data/globalgamemanagers",
+      "bytes": 446884,
+      "sha256": "4bddce8f72bfe997a0785f92417f5b1e19f3887fb2796afdd177d263f4ca225f"
+    },
+    {
+      "path": "TumbangPreso_Data/globalgamemanagers.assets",
+      "bytes": 1487824,
+      "sha256": "19c78557ef3010f0f32d998ff0c00302593a0e4fcc232f3d51363f833aaa3dec"
+    },
+    {
+      "path": "TumbangPreso_Data/globalgamemanagers.assets.resS",
+      "bytes": 2796240,
+      "sha256": "9288ce0ba1e7665b1cb3e2605aba194aeebea4be808d3e3e4b1c64feeb024782"
+    },
+    {
+      "path": "TumbangPreso_Data/level0",
+      "bytes": 4320,
+      "sha256": "4ed673426208f44fa8796b7aaaf50d92ef5b9597cd3080ab499568a2f77767da"
+    },
+    {
+      "path": "TumbangPreso_Data/level1",
+      "bytes": 69884,
+      "sha256": "11df5dd233d9accf61ca1230d6b1eb5a2329652a673ba68345c31de7b171d2e5"
+    },
+    {
+      "path": "TumbangPreso_Data/level10",
+      "bytes": 121920036,
+      "sha256": "a606f7eb32caa7eb19d7d4304c9aeb3ccf65ccaf9e41f1e85468be3a6b989bb2"
+    },
+    {
+      "path": "TumbangPreso_Data/level10.resS",
+      "bytes": 10317920,
+      "sha256": "8cd8aad1903cd20857d4d1e5c9f9dbf3d543e5aca5139e9a3e87947c427da977"
+    },
+    {
+      "path": "TumbangPreso_Data/level11",
+      "bytes": 270248036,
+      "sha256": "5aaaf66a1c15759fcaba89d7ba01f6adfb1cb83742f467b8313fd1ed85e4f96f"
+    },
+    {
+      "path": "TumbangPreso_Data/level12",
+      "bytes": 19581952,
+      "sha256": "4f960af80fb69485905c3e8c96565a6b1ef6d0279e43105c9c8dcecf7b364afc"
+    },
+    {
+      "path": "TumbangPreso_Data/level2",
+      "bytes": 13720,
+      "sha256": "5c65a40be0baf19c541d5525f86a401b9e1d86bc2070d1ea25037216316f7df4"
+    },
+    {
+      "path": "TumbangPreso_Data/level3",
+      "bytes": 67080,
+      "sha256": "e08593a05e29b1e476a6911bc20670acaf98edb2cdae78f1823112933ada7341"
+    },
+    {
+      "path": "TumbangPreso_Data/level4",
+      "bytes": 19080,
+      "sha256": "1f42f0a3d300f7d61b65d2bcb2cb8c314497bae64f29900723905faad4d7be3b"
+    },
+    {
+      "path": "TumbangPreso_Data/level5",
+      "bytes": 21896,
+      "sha256": "437a1200d8f4d1d8ffa5a464519083140661d1c2daf6587abc79f33289de5a9c"
+    },
+    {
+      "path": "TumbangPreso_Data/level6",
+      "bytes": 5504440,
+      "sha256": "2a643eda6e35287393c168d6b42fea411027ffda0dbb40128ef7aa65acbd202e"
+    },
+    {
+      "path": "TumbangPreso_Data/level6.resS",
+      "bytes": 19647104,
+      "sha256": "c57342a6729bf1e8598afad97e7d36a3178547508925c68c99506b4ba97021b9"
+    },
+    {
+      "path": "TumbangPreso_Data/level7",
+      "bytes": 7569808,
+      "sha256": "40ac9f1f6b47d77621b9d372f8ad54cd0d309c89c9e6308673ef8b9a4e4f86ae"
+    },
+    {
+      "path": "TumbangPreso_Data/level7.resS",
+      "bytes": 8146704,
+      "sha256": "4ff26fd55f0f3dad10c8cb9b2b9caf4cf128f666a26dc134e3dd3ceaf78361ff"
+    },
+    {
+      "path": "TumbangPreso_Data/level8",
+      "bytes": 209994196,
+      "sha256": "d86e876fa80efe9247ea62278c67446d2eada180e767811e08f6ae612047d339"
+    },
+    {
+      "path": "TumbangPreso_Data/level8.resS",
+      "bytes": 6969344,
+      "sha256": "3c9d32e04c8cc64cbba9dd9b640cda6d1dd953c2b714c5efe0e12a6a70c7a02a"
+    },
+    {
+      "path": "TumbangPreso_Data/level9",
+      "bytes": 2687748,
+      "sha256": "870d0bf76e5fada66c0d486ebd2f779bf0db3120487798313a91701fed850978"
+    },
+    {
+      "path": "TumbangPreso_Data/level9.resS",
+      "bytes": 23165616,
+      "sha256": "d90f79c555c93bd3d50dddcde767d374f4b2ceef250690c1abc8186e532f8aa2"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/glTFast.dll",
+      "bytes": 266752,
+      "sha256": "fc4f9c850c22850810855964739c1770796e300743fbe6475a7bdec7d7f2612a"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/glTFast.Documentation.Examples.dll",
+      "bytes": 14848,
+      "sha256": "bf244f1da5cec2a36412c2de9b52fde48307723577366e9b93955b9088450dcd"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/glTFast.dots.dll",
+      "bytes": 3072,
+      "sha256": "7dc5f8d7c54ebb37be0c2598eebfbb48d09441162404d41e6af79e64b63c9b2f"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/glTFast.Export.dll",
+      "bytes": 87040,
+      "sha256": "b7a5043c02d5da8deb97960c51a751c21936d50d74cf4ddd91fdacf75d626c02"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/glTFast.Newtonsoft.dll",
+      "bytes": 11776,
+      "sha256": "bd146953084548a6e310afb19eb34602950cff32007c205a37e1419ba8d83bcc"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Microsoft.CodeAnalysis.CSharp.dll",
+      "bytes": 6098320,
+      "sha256": "e822156145e1add437b1d893c0315257c12e3d5b1b89d83494db6d88d37fe20a"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Microsoft.CodeAnalysis.dll",
+      "bytes": 2903440,
+      "sha256": "159f595e313f8cc09bac14588e2466c312f512a4778d9fa2352fcccf2a53aa3d"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Mono.Security.dll",
+      "bytes": 241152,
+      "sha256": "1849437c1d2fe7698c0fde2a9a6aad9a864372a373b7c1d887da902a36965b36"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/mscorlib.dll",
+      "bytes": 4632064,
+      "sha256": "f7698bd46af58d3ee9dac59a286cfedfd28e51f71c0fe3940671a3ccc7af5711"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/netstandard.dll",
+      "bytes": 90112,
+      "sha256": "6ae62e082dc494a2433984177f60ca4db5fae69b1f360a8b33754172b310b8c5"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Newtonsoft.Json.dll",
+      "bytes": 691712,
+      "sha256": "a56146202232958f46bd6a28b5a7da166aea123ee0d646735a46e5c341dfbf1f"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.Buffers.dll",
+      "bytes": 4608,
+      "sha256": "762f8fdbe975e05b76be5fe996c53ce7c75e4a2830f2f50b02a5948ef6ba0aeb"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.Collections.Immutable.dll",
+      "bytes": 252680,
+      "sha256": "5b1b1c83ba3d135c2fdfe425842fbe9c7432878b7e468623acb554c69b4c130f"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.ComponentModel.Composition.dll",
+      "bytes": 257024,
+      "sha256": "335d76d10ae5b80d1faae4833937b9166551ccc9e79ee8262d2da4d58843f79d"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.Configuration.dll",
+      "bytes": 124928,
+      "sha256": "d7139dd6b622233d316aac733b392b9c1a545375804f62685f57f9d36f1c7ac2"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.Core.dll",
+      "bytes": 1113088,
+      "sha256": "a4637c44a11ea827d686313cfca3f5191225d2a96f7eaf0f10aa32de446380d2"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.Data.DataSetExtensions.dll",
+      "bytes": 29696,
+      "sha256": "80432a96154f8d2935b2f1c9e61b2ee6109fd6234e281327b3b297451c8931ba"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.Data.dll",
+      "bytes": 2125312,
+      "sha256": "ab47d362cff6f6e665cadbc8c6c81f9fa3612f23483a44d08b339347ac99f116"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.dll",
+      "bytes": 2641920,
+      "sha256": "d26cada0fc3dcae061f0fa421df15a082cb35ccf81ccaeebc8b0e2d2e6877099"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.Drawing.dll",
+      "bytes": 489984,
+      "sha256": "3c3586ba170c1788a8d3a4e419eb1f50f092070f4d81e90238b2fe6c5405cf2c"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.EnterpriseServices.dll",
+      "bytes": 44544,
+      "sha256": "00595c8eea345fe0e47da702100e460aaaf8f14d27a24950b71d926cbf1201c4"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.IO.Compression.dll",
+      "bytes": 114688,
+      "sha256": "a2803c059bd49c7fe520673f7e2b06657bb0419b253a5267e3f1da14b357dd5a"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.IO.Compression.FileSystem.dll",
+      "bytes": 18432,
+      "sha256": "f45ca89827639a880dcbeab1917af99a5bd18aec4433fbcb2d7774ccf9fe7121"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.Memory.dll",
+      "bytes": 4608,
+      "sha256": "c4f030a2cba7da7cdcf493257c24560e203d355904aee490d645a935842f834a"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.Net.Http.dll",
+      "bytes": 122880,
+      "sha256": "128b31fec424c70356952314abff2f6b1408f64b7613d2ae4bde5e84c2f8ac03"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.Numerics.dll",
+      "bytes": 119296,
+      "sha256": "b968dc8852985029fd5dd08a1a9c3a6b8750ea4470cd677a5051c33fc5a08639"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.Reflection.Metadata.dll",
+      "bytes": 487584,
+      "sha256": "afcfd6c166fe0d59f45cc6363082806f6a7ea8ceed9dc6c75eec9fd79ccb5717"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.Runtime.CompilerServices.Unsafe.dll",
+      "bytes": 19256,
+      "sha256": "fd67abc4c4af10affbcd42fd68a2a7bc361b26714afe6965d4d0d139459d8297"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.Runtime.dll",
+      "bytes": 12288,
+      "sha256": "e0a7334b7ba419aaab6bd3bb6992d693e689341a9178172c9bf99c2aa6a085bd"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.Runtime.Serialization.dll",
+      "bytes": 934400,
+      "sha256": "685123acdbb6ac313e503e89f4831fed096be838ccb000b85b33ee903562807f"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.Security.dll",
+      "bytes": 320000,
+      "sha256": "02d51b98dc8c877124fea386c9fbf7264790aae381ab15577eb0e2d082d1bcc4"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.ServiceModel.Internals.dll",
+      "bytes": 215040,
+      "sha256": "077333adc8bf20eb40e94d1909db2d07a16925a9192b69064f34eaf128804c8b"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.Text.Encoding.CodePages.dll",
+      "bytes": 5120,
+      "sha256": "73ff3778d2081c4b8bdde5b6777c5e5007d6d0d78ea36158ba1591e4241784ba"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.Threading.Tasks.Extensions.dll",
+      "bytes": 5120,
+      "sha256": "96150abdca5df4446b376560e069d59b3550212deda8cbdd316272f6b834f597"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.Transactions.dll",
+      "bytes": 35328,
+      "sha256": "6557e5029469211193ccec80dd4d3ad090f5eb87d80f5d5341d77a6d3506b64b"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.Xml.dll",
+      "bytes": 3160064,
+      "sha256": "32129a7d847a5efeacee6bd4b0d6bbffc8923551c5446a8c216d8ef1191b1de1"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/System.Xml.Linq.dll",
+      "bytes": 136704,
+      "sha256": "fd300e794b9ccd85d95bbab54e282da1333faa20a9209457944e831c27452b00"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/TumbangPreso.Core.dll",
+      "bytes": 233984,
+      "sha256": "339e00fa0469853257a6081a6015736d16db126ccac9152441ea3f76113f823a"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/TumbangPreso.Runtime.dll",
+      "bytes": 4399104,
+      "sha256": "4a315c5efff4c9b848a36c0f0c803026782fefcb8585abbead837d0b17c2ef91"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/unity-websocket-sharp.dll",
+      "bytes": 214528,
+      "sha256": "31b31aae08001aee39535364a3f225d8eef03ae3ae4d55a91f5223c6ae37466e"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Burst.dll",
+      "bytes": 296960,
+      "sha256": "e604add5b93b52240fc418e5ed303f803df56d395bc5366d9e42895bb80971b4"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Burst.Unsafe.dll",
+      "bytes": 5632,
+      "sha256": "9d9c1ff52411decbee5d9f0d1cd61ebeaa222077aa77a52101ea3debafae98e2"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Collections.dll",
+      "bytes": 439808,
+      "sha256": "81bf2c2d1792e222742b093c4a042e74c81998efc8efb1cb05ee235ba6c11bfe"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Collections.LowLevel.ILSupport.dll",
+      "bytes": 5120,
+      "sha256": "ff50383f807f9692e4913b97e47d86fefcb8faa33d6d48cd3e3fd6fc7ffb448d"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.InputSystem.dll",
+      "bytes": 1094656,
+      "sha256": "e2e053e49dbaf864f33c6f02b4efd2cb03842b0024a37f6accf9105db514f2c1"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.InputSystem.ForUI.dll",
+      "bytes": 15360,
+      "sha256": "8801d7fd6679929b87e2ff396b8d701970838304e0d9fb0c196ea9f7ce90b924"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.InternalAPIEngineBridge.004.dll",
+      "bytes": 4096,
+      "sha256": "9beb9a6edfdc0a5c066d83cd28f14aa27abcb58d6747202f47ed44a0e69dac72"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.InternalAPIEngineBridge.RenderPipelines.Core.Runtime.Shared.dll",
+      "bytes": 3584,
+      "sha256": "6ab002776757d93301b682f4f3d41ecf1839395c306c73ae614c0967a9746ec5"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Mathematics.dll",
+      "bytes": 5632,
+      "sha256": "9217d67cc9f57bd51e41cc1bcabd579fbc2ec1ed77c21b704f9161ca0724e311"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Multiplayer.Center.Common.dll",
+      "bytes": 8704,
+      "sha256": "0f884f5d6c4877fdd92843ecfaf5e58e1d98d3e26a009b5566b252da234b9d2f"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Netcode.Runtime.dll",
+      "bytes": 604672,
+      "sha256": "13eca2cf8887f627d3b2446d09217aeb0c29c31467e82de265afb6ee86f4d096"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Networking.Transport.dll",
+      "bytes": 216064,
+      "sha256": "cf2e5382a5c50c4df786ef7faad71ad3ae0e24d6fe025815e7f336b407842d6b"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.PathTracing.Runtime.dll",
+      "bytes": 142848,
+      "sha256": "93d0e58ee365f36c176958748f1442e6c3067df9fd9fccd34d31dd265c2cac27"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Pipeline.dll",
+      "bytes": 284672,
+      "sha256": "f08b1f4e6939b392308cf3edcf291154da1bcfdf886887649246b6b5691f897f"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Pipeline.IlInterpreter.dll",
+      "bytes": 332800,
+      "sha256": "bafd551d949d632e167ec6860b1986911494c8a90340e7369a9ea2b14eef0e99"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.RenderPipeline.Universal.ShaderLibrary.dll",
+      "bytes": 7680,
+      "sha256": "cc9649f51cc51afa20f20d6a680b8f5d02fd33a087906ef42ddf57dd6bb07daa"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.RenderPipelines.Core.Runtime.dll",
+      "bytes": 1092608,
+      "sha256": "a4625c5a103f329e322c7f260d9c476d6626333a0c2f51a451a6df8e3bd91b8e"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.RenderPipelines.Core.Runtime.Shared.dll",
+      "bytes": 11264,
+      "sha256": "7184eeb9f3c9e657339c5073c23b1db7e8710584df4fe48ec56ddb140f521ed8"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.RenderPipelines.Core.ShaderLibrary.dll",
+      "bytes": 3584,
+      "sha256": "f15449ed2494a33bce10244c8900c0fecaf5330612df1273a6c09b39dda79ddd"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.RenderPipelines.GPUDriven.Runtime.dll",
+      "bytes": 263168,
+      "sha256": "d4156601029e1e91ede2db39c9ed4ac938cb74f2d0cf827d8f4f7c382f19cc33"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll",
+      "bytes": 3584,
+      "sha256": "30ab6b777706f13f764fff7a27bb206486eab58524320744a443349b539aaa15"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.RenderPipelines.Universal.2D.Runtime.dll",
+      "bytes": 198656,
+      "sha256": "e47ae4bc46ba73a369aa889c863d58b9a516967a1cd9425fbf2919d88ae3c5a1"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.RenderPipelines.Universal.Config.Runtime.dll",
+      "bytes": 4096,
+      "sha256": "dfe89e3fbc48ba69b28174c11e5c0f35097ed572af93afc904ac389ae0480157"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.RenderPipelines.Universal.Runtime.dll",
+      "bytes": 722432,
+      "sha256": "c0767c05faf04bcb4efed9ca211dff7e62cf09b83a367d3d9661d927320167a0"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.RenderPipelines.Universal.Shaders.dll",
+      "bytes": 3584,
+      "sha256": "26d964717b82b8b1387a8b83871ad1486f2e9d00e2f0043f131bfad328b8d859"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Scripting.dll",
+      "bytes": 68520,
+      "sha256": "881c00ee513ea7a39fab1d9da2d1e56af4b157154beb0dd9c4073f3aebe32bd1"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Services.Authentication.dll",
+      "bytes": 139776,
+      "sha256": "053849bed6cd4b59f3d1cc6983d5d060ab067c167d498c2f72de76883d001460"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Services.Authentication.PlayerAccounts.dll",
+      "bytes": 36864,
+      "sha256": "f8d1ef4087109261932e04311eb4cb21050d610836395513e35d7eea37a72070"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Services.Core.Analytics.dll",
+      "bytes": 4096,
+      "sha256": "f1330eef632c48434737d1fe68e75f679e3f68d3179a5ee05834fe5c362371e7"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Services.Core.Components.dll",
+      "bytes": 9216,
+      "sha256": "432ff3b0dbdf52a61b4e9b1bd9b10f084f3028890ec2f09b124025a3089ad367"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Services.Core.Configuration.dll",
+      "bytes": 11776,
+      "sha256": "fbfc9dbe1bd7d7f939e255564e70abcbd97efa0083cdff7922603304ece1c13d"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Services.Core.Device.dll",
+      "bytes": 6144,
+      "sha256": "d259fa59677c48f1d6de22854bece497bd862faa67be56466cae60b16546c441"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Services.Core.dll",
+      "bytes": 15360,
+      "sha256": "80b3c9ac0e46e50a7779a708b09c68819bf89664641c6882c495ddf1d7dee7ce"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Services.Core.Environments.dll",
+      "bytes": 4096,
+      "sha256": "107e52090afd5a0f7141938aa99d88993820b6594ead7449dc97d5788fb06b8a"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Services.Core.Environments.Internal.dll",
+      "bytes": 3584,
+      "sha256": "c4e86aff30bc57d178cbacd9367260a8f6c6f08ba4e25ba5206fdaa1a82767c0"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Services.Core.Internal.dll",
+      "bytes": 60416,
+      "sha256": "7445cbf74575199288ac97350329235839cc6c331526addb1ce7e4503ab8667b"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Services.Core.Networking.dll",
+      "bytes": 6656,
+      "sha256": "5a1c735c36f861dad9e09e2816d909e901b81827a4d96f8bf43c5f25c952a798"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Services.Core.Registration.dll",
+      "bytes": 17920,
+      "sha256": "417af852a63b8295d8797b1e2bea50484e273b0da52e0b8d5a6ce7c46170d1fd"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Services.Core.Scheduler.dll",
+      "bytes": 10752,
+      "sha256": "912280551b8d38a5a88bbb52b2335a4490b52adaee50100812e953ae14d21c8d"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Services.Core.Telemetry.dll",
+      "bytes": 6144,
+      "sha256": "5cc0d6839d6ccdc842a4a076a80bcaccf1f36106d65108904eaa6ebe6e8ecc74"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Services.Core.Threading.dll",
+      "bytes": 5632,
+      "sha256": "b63e5d17b0cd07c19303a0d7004bdcee884ba2f9f58534cf1f00ce380e7820de"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Services.Multiplayer.dll",
+      "bytes": 660992,
+      "sha256": "add59f5b6b3bd06fc43b758ca9be1d168dee9bc93e8f169241690dcbd8720ea0"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Services.QoS.dll",
+      "bytes": 121856,
+      "sha256": "61e66e11ae4cdceb6e7d518a17ea3983c740fd381dbe7b79705df5ff03bb32d7"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.Services.Wire.Internal.dll",
+      "bytes": 54272,
+      "sha256": "902439726bbb63fbca718b613453e4afbcb15d84b68cc28484dc4d93d2c0c841"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.SurfaceCache.Runtime.dll",
+      "bytes": 3584,
+      "sha256": "c31e389d6ae135e2451c8ad08ab78129699f12339d42cb2cb33d788e79a5b35a"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.TextMeshPro.dll",
+      "bytes": 439296,
+      "sha256": "005c9873c35075c81fa138986a401ffa2a2226ae12287a19424059f684ef5aad"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/Unity.UnifiedRayTracing.Runtime.dll",
+      "bytes": 91648,
+      "sha256": "59d643f2bcc5106c59f0374f6e68a3df1372276a4a62591ab7ffead9c70a4b60"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.AccessibilityModule.dll",
+      "bytes": 49072,
+      "sha256": "6090ab2ad0f4f44c72b429d568a4e86d23a8fb0101921e30efa0c461253da2ff"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.AdaptivePerformanceModule.dll",
+      "bytes": 118184,
+      "sha256": "d282a48a5d88db7ac4ba46512a4d8489b7780c8bb9791d3384c3eb7a459bd1a3"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.AIModule.dll",
+      "bytes": 86440,
+      "sha256": "a0b82fdaeab698d6cf6d1cf76eea8ad5f172a8cbe7d6b0664c3b1a0bdf066066"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.AMDModule.dll",
+      "bytes": 21936,
+      "sha256": "526735259999a0aeb6a46a1cb116cf78baafadcf3408786e68a687d1e63fedc3"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.AndroidJNIModule.dll",
+      "bytes": 120752,
+      "sha256": "4fb12b1e655c55b6398a0a5e25c791ea73a6fd809820f34a81570eef70169e14"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.AnimationModule.dll",
+      "bytes": 218536,
+      "sha256": "85169723ffd48c876e331e2f953a60659662ba01dd559dc837599d6566835474"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.ARModule.dll",
+      "bytes": 27048,
+      "sha256": "c4d33b77a0e17a9dc83e202ff4acbae27b8497054c554dbe824ab63294b814e1"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.AssetBundleModule.dll",
+      "bytes": 42408,
+      "sha256": "58e4b540d553319b364e38e72804938089f7e6df27f87a41d62dc41aeb98b118"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.AudioModule.dll",
+      "bytes": 142768,
+      "sha256": "ef5a2bac2ccfea9617137efd0708165dcbcb2b3a4d08b21c67fa2dfcb78af591"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.ClothModule.dll",
+      "bytes": 37296,
+      "sha256": "abb72fd9af670fea254697e6643d7ee1949a18ffa9a901cbe6d00bbffee28602"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.ClusterInputModule.dll",
+      "bytes": 29104,
+      "sha256": "3a45f480d1adf2c3500082e0c657e2d05e60c9bc5da1ce4af1528e393ba21dfb"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.ClusterRendererModule.dll",
+      "bytes": 28080,
+      "sha256": "022bd10d5e25df61a0d3db136a4b3dfa29351fe7098439e0c37a9086e8cca67b"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.ContentLoadModule.dll",
+      "bytes": 46504,
+      "sha256": "38e3b8ffd4716bc6ef28e77d7966ea50467353679e86628445a709bdefe57ab3"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.CoreModule.dll",
+      "bytes": 1974192,
+      "sha256": "80187c2f82c8bb82f8425f87df630152121cd0076c75d84996004ca162d8d33c"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.CrashReportingModule.dll",
+      "bytes": 28080,
+      "sha256": "02f586c32624e3418a1ca936a257a895198aa06de1422b44c2835ba52993245b"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.DirectorModule.dll",
+      "bytes": 41896,
+      "sha256": "296857a73dd84d4500ed6355d7d094fabefb0db2898915e97abeac466fbd3cd5"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.dll",
+      "bytes": 210352,
+      "sha256": "3f5474a8e192ba126fd41b582639e18c53f1cd159c7dae9852b0fad815235878"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.DSPGraphModule.dll",
+      "bytes": 32688,
+      "sha256": "8056b02715e9d2a736631a4b5c5122723913e2850366306efade6dfd62835146"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.GameCenterModule.dll",
+      "bytes": 45480,
+      "sha256": "beda7af14db2518c512bddb7241b079579e62fbc06b5cbc6b7ec3cf1609aa7d5"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.GIModule.dll",
+      "bytes": 25520,
+      "sha256": "3181be1039b60876920acb697f8c3d73d5f73ba5bf79b46dcf66ef912490a2d3"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.GraphicsStateCollectionSerializerModule.dll",
+      "bytes": 14248,
+      "sha256": "f3ca35c069c5c43b63e6a668035518a39cfc7b919f706132d68f7a3b707509ad"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.GridModule.dll",
+      "bytes": 32176,
+      "sha256": "ca70fce3da5d5b320013bf0315ab584a1fbd188f070e96d32eec940fbe5b6a3d"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.HierarchyCoreModule.dll",
+      "bytes": 105392,
+      "sha256": "96b57194abc5e03416b6bd6666e6f8d3dfa426841fcba3e29ccfa094312ad6c3"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.HierarchyModule.dll",
+      "bytes": 100264,
+      "sha256": "192e0c48272cd90ff610723794ad7893142fe6e78975e87059c2e96864156b19"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.HotReloadModule.dll",
+      "bytes": 25520,
+      "sha256": "8e95a32a0db34444ae07d96ce45f03b7cc3b3b6207399a3ddbd8a170abbecf7f"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.IdentifiersModule.dll",
+      "bytes": 16816,
+      "sha256": "d963560a918b55c2b8a6b007bf551907d6220f98cf6792dd777ee80bf6ed65ad"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.ImageConversionModule.dll",
+      "bytes": 33712,
+      "sha256": "f6e2c604acdd5de19abeb1230f0359e73a2c1972a2c95e30eefb9d9fab9d7bb5"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.IMGUIModule.dll",
+      "bytes": 188840,
+      "sha256": "b3168e9a044d3c4414c593bc1cd38c508a2b201a6ec5b87aa9e112fea92d2c87"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.InputForUIModule.dll",
+      "bytes": 55728,
+      "sha256": "1a713129d365bf9a8229bff4ec5b57b0ddd75652d42eeff2cf1016d244b2b934"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.InputLegacyModule.dll",
+      "bytes": 41896,
+      "sha256": "799f412303729d09479bf85d025e06296563ca968d40b4f365b138949d1fb83e"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.InputModule.dll",
+      "bytes": 30632,
+      "sha256": "5993245d344a288e9a61ddde09b329c60a2a47cbebc05cf39aa84ba99d60dd29"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.InsightsModule.dll",
+      "bytes": 15784,
+      "sha256": "67847130b47ee428578fa0c8af38c416ba9e3f32a66b7a0561502679f946dc80"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.JSONSerializeModule.dll",
+      "bytes": 28080,
+      "sha256": "d987adaf3f537d168bed9ea53b726e9e10fb673e003c88f34665e6d14aac0d5c"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.LocalizationModule.dll",
+      "bytes": 28080,
+      "sha256": "263266661cc77f0106a688694e2bdc83e3632797a2604a1b3edae660db266298"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.MarshallingModule.dll",
+      "bytes": 97200,
+      "sha256": "cd93058471d677cac1b0f000027e1e11feb7957e375901f984f1d73338b8047d"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.MathematicsModule.dll",
+      "bytes": 740776,
+      "sha256": "b4b8f19efd4dadbd4ece925fcef614348e2416bf4f1a1e3c717400cef6933819"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.MultiplayerModule.dll",
+      "bytes": 17840,
+      "sha256": "03aed58fdeb554267c7b34c32ce1b59af3db0d74c6ef30af40aac0ac4cfd1766"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.NVIDIAModule.dll",
+      "bytes": 40360,
+      "sha256": "06b41139018439f28c11ce13527d717aa41a3279b69b6c31b146650f6e3d9626"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.ParticleSystemModule.dll",
+      "bytes": 168880,
+      "sha256": "5c92c2cd0abae5a837269308602971f12f7843a5f15c8da8bb96f4853a2fbb80"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.PerformanceReportingModule.dll",
+      "bytes": 26544,
+      "sha256": "6dd063a783f762f147609fa97f4c21fe51c79106a8c449d85a6503e6983375cc"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.Physics2DModule.dll",
+      "bytes": 222128,
+      "sha256": "47b338623d239a22d8495a15360262d852f6a4a32bfe8b881d63f781996624f2"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.PhysicsBackendPhysXModule.dll",
+      "bytes": 14248,
+      "sha256": "5733f271a93d3c3ec165295f7d2eda2012b46364c550e1fa241774b4ecdf9f3b"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.PhysicsCore2DModule.dll",
+      "bytes": 450472,
+      "sha256": "3b6fef6d99c1e105abfd01a3b69ca179ee7ace9a0b94628c19fdaea14ff03c4b"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.PhysicsModule.dll",
+      "bytes": 180144,
+      "sha256": "247687fc451fdb2bbdbc095bcd4f461da84708f4b5af85534622c858c9fa7e10"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.PropertiesModule.dll",
+      "bytes": 124848,
+      "sha256": "4e34125a1eb2f5c76f9e3dbd11fc8b521f69945f305f70ea7a7a08f1a65b7761"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.RenderAs2DModule.dll",
+      "bytes": 27056,
+      "sha256": "0ca1e122a87c765e60ad15f5a6fd4872996732933a39b5d267f8617390078569"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule.dll",
+      "bytes": 25512,
+      "sha256": "39f92c1b37821af02771f49e4167f02de685087831a7afa578b1f8ff454e651f"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.ScreenCaptureModule.dll",
+      "bytes": 27560,
+      "sha256": "ac5895945b896f30d862507e70a4149a3120a85ead8a34825646e86807b8c9c0"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.ScriptingModule.dll",
+      "bytes": 27560,
+      "sha256": "f6757a8980bacb185ac7b689a5cf552be780adb4adb8c91fe678eee056460df5"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.ShaderVariantAnalyticsModule.dll",
+      "bytes": 25520,
+      "sha256": "efa96d45f33b0c3b744a299315d29ca1144b9a07e112b27de8645a8347934dca"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.SharedInternalsModule.dll",
+      "bytes": 36784,
+      "sha256": "c0b02a3d2820f9120c4a8521b9019992c7b56d93064b2261754efa9110bbbc56"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.SpriteMaskModule.dll",
+      "bytes": 29608,
+      "sha256": "6ae4885d058c9e36266dac3ddd680126eea04fff1ac88bc5bae65429df1a0c5a"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.SpriteShapeModule.dll",
+      "bytes": 33712,
+      "sha256": "6e7b67fa71f1896a35603b1358273e318ab23d687d28969071cf43bb71f3f4b1"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.StreamingModule.dll",
+      "bytes": 27048,
+      "sha256": "179e202b51ca7069bef667aa9c31fa7cefd1328d1cbf122eb4401ede785262bd"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.SubstanceModule.dll",
+      "bytes": 30640,
+      "sha256": "d1b9e00950a98f74cb4476c28d1c48c359f6681fbebc507816fae73291213dfc"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.SubsystemsModule.dll",
+      "bytes": 42416,
+      "sha256": "590ff643430b94112afa268fb4aa56981553f44b9d5f2816e40ca116e6992088"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.TerrainModule.dll",
+      "bytes": 131504,
+      "sha256": "3cb12f958b2a6a9d03974a0b812b696de2dbe24ee4a6072fa85724662471f54d"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.TerrainPhysicsModule.dll",
+      "bytes": 27056,
+      "sha256": "024bf25f72f458df6347d0cc93dcef2ac7691bb7dc1881db8f9a3f50b1d8c7ba"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.TextCoreFontEngineModule.dll",
+      "bytes": 77744,
+      "sha256": "8779733a6a74085786356c3d7ac481c90b1107cf04716e6fd68cc07d7e440015"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.TextCoreTextEngineModule.dll",
+      "bytes": 332200,
+      "sha256": "b93e73b8d164645c581f2e21990f5fb7034bef0521762064f9ae0934306d1730"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.TextRenderingModule.dll",
+      "bytes": 39336,
+      "sha256": "edb493c7c5fe0945b562275616714d63ee1ce3c48f83b2d5b8b173510750ce0b"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.TilemapModule.dll",
+      "bytes": 75184,
+      "sha256": "2b867efd4bab02d66e92f354de1cb7f678908515ff153048265db00b550088d4"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.TLSModule.dll",
+      "bytes": 33200,
+      "sha256": "8b0dbcc72e110fea67d168182c3ef750701354be76fdc005dd20cc4ce2210b0a"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.U2DRuntimeModule.dll",
+      "bytes": 26544,
+      "sha256": "c4808d15635474595ca656cfc0af6ae75ca4fcd963acdf291721a78cbaa86add"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.UI.dll",
+      "bytes": 262144,
+      "sha256": "1da9069dd8b102619f4042e320d0211f619bf3cc3b4628962cb3f14b63fa55f4"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.UIElementsModule.dll",
+      "bytes": 2349488,
+      "sha256": "9010efd0e26f2f6ee1db357afa2044044c5ebee80c8cc534cd0afca66dc4ffc7"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.UIModule.dll",
+      "bytes": 54192,
+      "sha256": "5e1626fb07c6b00f93230672f7a987e09234c98afa6b93a3e3213e5b846a2b00"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.UmbraModule.dll",
+      "bytes": 25520,
+      "sha256": "8c7f697bf2a2e294d4e1b7ad9f2e4d6bb31d118c7ead81401c35aecba7a4b27a"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.UnityAnalyticsCommonModule.dll",
+      "bytes": 35752,
+      "sha256": "58c24d00c4d156bf96b17459e4bff80da41351159943c3d040036cccb49512d6"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.UnityAnalyticsModule.dll",
+      "bytes": 60328,
+      "sha256": "c551a14a78cdd219f2cb933440b68287e85d7e572626f026ade8d07802cd8670"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.UnityConnectModule.dll",
+      "bytes": 29096,
+      "sha256": "29986257727c6b728a9d598b0986662db550079a93b507fde2ee9e8d314d3dd1"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.UnityConsentModule.dll",
+      "bytes": 16296,
+      "sha256": "d0d128466654cde0544482e94b68c44bf5031d875923620e03097c69a621e081"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.UnityCurlModule.dll",
+      "bytes": 27560,
+      "sha256": "bb9b537257557920e008de5f5620f73f07d11165829b04b8c3724e0ecb662f64"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.UnityWebRequestAssetBundleModule.dll",
+      "bytes": 30120,
+      "sha256": "e490241284fb20412134d2aa38601106ab9ec03a37af77963752a341bf6a94d0"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.UnityWebRequestAudioModule.dll",
+      "bytes": 29608,
+      "sha256": "cb6aaefdfc6e2e73c5186e9779c12900c14d6549d82acfbabe9a46cd331584ec"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.UnityWebRequestModule.dll",
+      "bytes": 79272,
+      "sha256": "2b2d06233f651d13a49c34ed3b030f6933ffcc000b4bb391739160c34f565291"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.UnityWebRequestTextureModule.dll",
+      "bytes": 28592,
+      "sha256": "8fbda7c620c75d24f0e666997d33a5efb10e758ae71bfccf05d6bd4c2080ba37"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.UnityWebRequestWWWModule.dll",
+      "bytes": 36784,
+      "sha256": "eb80258d8a9e06331400aea57548ad9535aaa46252887e2a8392c84f8dfe9277"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.VectorGraphicsModule.dll",
+      "bytes": 227760,
+      "sha256": "d2e3b21a5bb9832640b096793e174d91a971f49675c06eb2310b5b39543fe805"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.VehiclesModule.dll",
+      "bytes": 32688,
+      "sha256": "84f29a9779ed662aaf6a24ddd58b51946e7422785cd960b14d278785b173e585"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.VFXModule.dll",
+      "bytes": 81832,
+      "sha256": "54f1aeecc837b18f62a61e07c6e5a178f8f3544c034865791b18f42cc475911d"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.VideoModule.dll",
+      "bytes": 48552,
+      "sha256": "be1c3811c83d86dc6854a4981d327712d3bb2442223cbaf345ab4d011e427ec5"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.VirtualTexturingModule.dll",
+      "bytes": 43440,
+      "sha256": "d3d7606838c5ec0ee800545b312a24de37d3849a01b4e063b935b0717c7c97b1"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.WindModule.dll",
+      "bytes": 28072,
+      "sha256": "b6a24338eafbdf2663096484748f346679aea0a3fdd0de567b45ea0ca350e36d"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/UnityEngine.XRModule.dll",
+      "bytes": 95656,
+      "sha256": "267b21a1678ab39b89a1f056b9e97651a48c7c5d9ec22713e828227e7ffab225"
+    },
+    {
+      "path": "TumbangPreso_Data/Managed/websocket-sharp.dll",
+      "bytes": 248320,
+      "sha256": "0113ac17878d4fe992fa487c4fd9a8fa3850d4fa4b64cab45ecf782a3d6fef7a"
+    },
+    {
+      "path": "TumbangPreso_Data/Plugins/x86_64/lib_burst_generated.dll",
+      "bytes": 1151488,
+      "sha256": "f427a7bb4a2bf203a8079880ba566300f9db6bd60817f1c35160a6b13d0970d9"
+    },
+    {
+      "path": "TumbangPreso_Data/Resources/unity default resources",
+      "bytes": 5881648,
+      "sha256": "1fbaff511bdec6cf276529de02215fee9fdcf7298ea9d7c49dc6b984ee73a7f5"
+    },
+    {
+      "path": "TumbangPreso_Data/Resources/unity_builtin_extra",
+      "bytes": 916292,
+      "sha256": "1c8035db1f30695c8bf20256c1706924772fd3dc88e005b76001fab13776eb8a"
+    },
+    {
+      "path": "TumbangPreso_Data/resources.assets",
+      "bytes": 53884952,
+      "sha256": "75c52da3e39fcb4cd59ebfd479d18efc954d3f0ae201d29f4520442318a787c8"
+    },
+    {
+      "path": "TumbangPreso_Data/resources.assets.resS",
+      "bytes": 1354730416,
+      "sha256": "58c6f4f1db1d45a5b0d6bab70bd0ad5d127b5f24652d2cee881075810f7d2f3b"
+    },
+    {
+      "path": "TumbangPreso_Data/resources.resource",
+      "bytes": 588662866,
+      "sha256": "85ecf0f2d7f363676fa607fe320b782f09c36392bce06b52b23d469b453aafe2"
+    },
+    {
+      "path": "TumbangPreso_Data/RuntimeInitializeOnLoads.json",
+      "bytes": 26484,
+      "sha256": "b0f9be2389b877b4ff1140ac5b95c65a67063a1a117ab27ac1499a5249b7f870"
+    },
+    {
+      "path": "TumbangPreso_Data/ScriptingAssemblies.json",
+      "bytes": 5472,
+      "sha256": "411d719e68a11e8a0a0c9320ff1e750e65f5cd167cb07daa66c564ff1d1a16dd"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets0.assets",
+      "bytes": 368266,
+      "sha256": "61ae50cf296ba447ff9afad7e81cf21f8ada4a3a1aa15082565557f727caf5ff"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets0.assets.resS",
+      "bytes": 524288,
+      "sha256": "393efe6399536384aa91bdfc4e64f244b4d3e1fbb6a4ff145c483ffee64ccb36"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets0.resource",
+      "bytes": 618002,
+      "sha256": "52c0bf46859022098c8f5cc62fc031f57fb09d2e15e131b07c5a632920c775b5"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets1.assets",
+      "bytes": 21432,
+      "sha256": "2a8d83a691fb29cdcb61b34a2a10e93a377693e662e15377d04e5ae307db3c9a"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets1.assets.resS",
+      "bytes": 8796768,
+      "sha256": "e4c28671b60eeaaa2323c3009b126572642ad50a0743d0e5c54f992d03bb8d1b"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets10.assets",
+      "bytes": 57284580,
+      "sha256": "e6d3bfb31d1a668a3987bff2f042ec824ff9e230b0070c33215e9143140ed63f"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets10.assets.resS",
+      "bytes": 121462992,
+      "sha256": "ee6bdce0385f6de8a8ffd5c0ce3200af8929e1d1947ad188a737064d730a19ff"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets10.resource",
+      "bytes": 9204512,
+      "sha256": "1d914a2174df01ae5eb505837ce3dee8dd211c330b480c21fd54217fdfcd6ebd"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets11.assets",
+      "bytes": 23197004,
+      "sha256": "d19c7e6d11fdc4e1a67f94402d1a6d7c26bc8b6faef4cdffe2d1b28f2aae33a6"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets11.assets.resS",
+      "bytes": 42031408,
+      "sha256": "5c800ac51c3219c3834cbca93c7f2772fcb09784cd8b57dc229fdce03aeff80e"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets12.assets",
+      "bytes": 7196136,
+      "sha256": "564e236a58573621837ea9406e39239879258570a1c7f2c8855a38b167768e1f"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets12.assets.resS",
+      "bytes": 120282752,
+      "sha256": "854208fc68edbe58246c031b06ba408dd9d3a7538c96203a4fd64932921bd3d2"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets2.assets",
+      "bytes": 1492,
+      "sha256": "3525c93950046916b7033e781278513797ec1d7943fa93c0df028d47b282c2a6"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets2.assets.resS",
+      "bytes": 1024,
+      "sha256": "71ac8e8baabe7fb9bb9ae793ac3667a9f2870d913f8086734442a75937970721"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets3.assets",
+      "bytes": 1736,
+      "sha256": "becb04041e747334dc2290334ca576ef4ef1c31a89ed5cb5b7fbd99c415e128b"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets3.assets.resS",
+      "bytes": 1024,
+      "sha256": "1aad1e76ae4633099fb33cbd2a1f864c134bd9f6c0eb97dc6d0890819e873b29"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets4.assets",
+      "bytes": 3684,
+      "sha256": "8985b482c3c747bbbf29e241060e6c5502bbf8bfa316d66e52f24124e42d1f01"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets4.assets.resS",
+      "bytes": 615072,
+      "sha256": "d9d8b53c6002838d789e865c217e0d380579b8ead4e45051461ffa47d1700bd5"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets5.assets",
+      "bytes": 621,
+      "sha256": "5169a497f6847acc9297495bb81cf00bd1c5dc71871e26deb229187c1bba2e60"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets6.assets",
+      "bytes": 8477856,
+      "sha256": "228864fce901c28fcb8d89f917ef137df451a721318b8673d54f9810723da566"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets6.assets.resS",
+      "bytes": 33809872,
+      "sha256": "4f2fa52d5acfe617fbb14d96ead7287cd67bbd5895dd48e02f8a8bdc4ab815aa"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets7.assets",
+      "bytes": 2697684,
+      "sha256": "860d5c97a4f7ada8510b1c1112cc47a675871755c78711d28bee1ac7c5f51c05"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets7.assets.resS",
+      "bytes": 5818736,
+      "sha256": "9b95e3e66f53130cc132a641f60a5d58bd10d8822340dd93090e8ea24816216a"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets8.assets",
+      "bytes": 122974404,
+      "sha256": "cf42a7a95bf92f9161c02031390ab6a2fa6ad0bb12098b3f84edfde635646cbc"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets8.assets.resS",
+      "bytes": 161329472,
+      "sha256": "ede98604acfa87f9457300125fdc3e3d6d7c9b14f5e8ce702c29ae7b30903394"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets8.resource",
+      "bytes": 10293728,
+      "sha256": "2e4731c22746e6abd56e59f35aa071b8a440a2a9fcdf530fb59f9290e8d692c4"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets9.assets",
+      "bytes": 5407864,
+      "sha256": "9b127058c609e93b9a520130f338824cb18772331cb018688f749221ebb45eff"
+    },
+    {
+      "path": "TumbangPreso_Data/sharedassets9.assets.resS",
+      "bytes": 7384880,
+      "sha256": "61bed672586e3d19932d5e37ad56dffb0641d9fbd9f2f0b5a835c9fa9d847a8b"
+    },
+    {
+      "path": "TumbangPreso_Data/StreamingAssets/build-identity.json",
+      "bytes": 337,
+      "sha256": "ddaf67a735ca938f89455db044a498afb7e186e35f2ba8ada3d573ceaab9a70f"
+    },
+    {
+      "path": "TumbangPreso_Data/StreamingAssets/UnityServicesProjectConfiguration.json",
+      "bytes": 2335,
+      "sha256": "2aba75f417c9d9ee1adde6f6674f756c207f20ba477fba4ef4080194c7a451d8"
+    },
+    {
+      "path": "UnityCrashHandler64.exe",
+      "bytes": 1736616,
+      "sha256": "d035f5c7c1bea4a876534b85de5fbd39dc34e2b9b70aa360c4c52f2caf2efe6c"
+    },
+    {
+      "path": "UnityPlayer.dll",
+      "bytes": 37282216,
+      "sha256": "5dcd2af9e14f6416d73c361369559666c31263e4863822e1241cbdbc00c2f667"
+    }
+  ],
+  "currentPlayerAcceptance": "Pending actual startup/replay and new3 map decoder checks",
+  "currentPeerAcceptance": "Not run; LAN unavailable per owner mobile-data instruction"
+}

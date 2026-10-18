@@ -1,0 +1,86 @@
+{
+  "Eskinita": {
+    "stream": {
+      "width": 1920,
+      "height": 1080,
+      "avg_frame_rate": "30/1",
+      "duration": "26.000000",
+      "nb_frames": "780"
+    },
+    "captureSource": "a0e053429dfe51e7b55dca17fbc7b4449d704264a23bbf327891b30e988d4454",
+    "movieSha256": "05c6996ff5097bc2c33e89abe69c14995a16395153779339a83c45456250c574",
+    "bytes": 57798439
+  },
+  "BayanPlaza": {
+    "stream": {
+      "width": 1920,
+      "height": 1080,
+      "avg_frame_rate": "30/1",
+      "duration": "26.000000",
+      "nb_frames": "780"
+    },
+    "captureSource": "eb383dbdc8b53ba9a9fbd483fc65dbdd5dea267c3cbf642fe73a69dec8de3119",
+    "movieSha256": "7bef620e67fdc4444196f12b38f4d12fb062ccfc3a4cfb22af5e4fe7b991087a",
+    "bytes": 48869506
+  },
+  "IlalimNgTulay": {
+    "stream": {
+      "width": 1920,
+      "height": 1080,
+      "avg_frame_rate": "30/1",
+      "duration": "26.000000",
+      "nb_frames": "780"
+    },
+    "captureSource": "45d0b51f45ce0f919ce098c1258e8423f88b26ce83f3ae40aee2642c0f78c4aa",
+    "movieSha256": "a669fc974182620e21023e0ba494ce2636085c4c0c0b138f98a6f1d1031f07fb",
+    "bytes": 65589835
+  },
+  "SaBubong": {
+    "stream": {
+      "width": 1920,
+      "height": 1080,
+      "avg_frame_rate": "30/1",
+      "duration": "26.000000",
+      "nb_frames": "780"
+    },
+    "captureSource": "4adc66dcb1f76e1c1e1db102205e7dab9e604a5da8b4f97cabf1c80e370c8845",
+    "movieSha256": "f5ee2b8886d905dc1d1840faf17a70552acfbcdb5be95dc342e8b011222f486b",
+    "bytes": 44818806
+  },
+  "LagoonCove": {
+    "stream": {
+      "width": 1920,
+      "height": 1080,
+      "avg_frame_rate": "30/1",
+      "duration": "26.000000",
+      "nb_frames": "780"
+    },
+    "captureSource": "37b3e5c4afd17a8d56b22fa564bc465de2aff9e73057444c05483832928420a7",
+    "movieSha256": "582825c91dcc6ce6c03e5160935a02bba00f754477ad88e51192f30df63875d9",
+    "bytes": 66792166
+  },
+  "Kanto": {
+    "stream": {
+      "width": 1920,
+      "height": 1080,
+      "avg_frame_rate": "30/1",
+      "duration": "26.000000",
+      "nb_frames": "780"
+    },
+    "captureSource": "56de081ab3a44b3115f14bce48628c3f4d797af75c66cbce5176de32b6445d5e",
+    "movieSha256": "de7f25ece745550cdf5d06e27345e8e964f58d0899bfce73c4b51f9e6c21b384",
+    "bytes": 97429067
+  },
+  "Arena": {
+    "stream": {
+      "width": 1920,
+      "height": 1080,
+      "avg_frame_rate": "30/1",
+      "duration": "26.000000",
+      "nb_frames": "780"
+    },
+    "captureSource": "0f79bfd91d9258cdbac3c4f34482fe2f8fb489ad9720faf87649271e73501425",
+    "movieSha256": "615b0a18e26a663ab9661cac0996a83132c8194f7bf8774ac70f27dc96d434c8",
+    "bytes": 83717610
+  }
+}

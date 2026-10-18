@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 05:22:48Z" end-time="2026-10-06 05:22:48Z" duration="0.4910706">
+  <test-suite type="TestSuite" id="3293" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1868" result="Failed" site="Child" start-time="2026-10-06 05:22:48Z" end-time="2026-10-06 05:22:48Z" duration="0.491071" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3285" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1868" result="Failed" site="Child" start-time="2026-10-06 05:22:48Z" end-time="2026-10-06 05:22:48Z" duration="0.457126" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22896" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3286" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1868" result="Failed" site="Child" start-time="2026-10-06 05:22:48Z" end-time="2026-10-06 05:22:48Z" duration="0.432048" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3289" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1866" result="Failed" site="Child" start-time="2026-10-06 05:22:48Z" end-time="2026-10-06 05:22:48Z" duration="0.403487" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2900" name="SpectatorRecoveryThreatTests" fullname="TumbangPreso.PlayTests.SpectatorRecoveryThreatTests" classname="TumbangPreso.PlayTests.SpectatorRecoveryThreatTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-06 05:22:48Z" end-time="2026-10-06 05:22:48Z" duration="0.350999" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2902" name="ACommittedRecoveryDropsWhenTheDefenderCannotAct" fullname="TumbangPreso.PlayTests.SpectatorRecoveryThreatTests.ACommittedRecoveryDropsWhenTheDefenderCannotAct" methodname="ACommittedRecoveryDropsWhenTheDefenderCannotAct" classname="TumbangPreso.PlayTests.SpectatorRecoveryThreatTests" runstate="Runnable" seed="317436187" result="Failed" start-time="2026-10-06 05:22:48Z" end-time="2026-10-06 05:22:48Z" duration="0.208945" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: Ultimate
+  But was:  Retrieval
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SpectatorRecoveryThreatTests.ACommittedRecoveryDropsWhenTheDefenderCannotAct () [0x0005c] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\SpectatorRecoveryThreatTests.cs:43
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2904" name="AResolvedPickupDoesNotKeepTheRecoveryCommitment" fullname="TumbangPreso.PlayTests.SpectatorRecoveryThreatTests.AResolvedPickupDoesNotKeepTheRecoveryCommitment" methodname="AResolvedPickupDoesNotKeepTheRecoveryCommitment" classname="TumbangPreso.PlayTests.SpectatorRecoveryThreatTests" runstate="Runnable" seed="406251771" result="Passed" start-time="2026-10-06 05:22:48Z" end-time="2026-10-06 05:22:48Z" duration="0.045669" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2901" name="InactiveThreatDoesNotOutrankTheActualUltimate" fullname="TumbangPreso.PlayTests.SpectatorRecoveryThreatTests.InactiveThreatDoesNotOutrankTheActualUltimate" methodname="InactiveThreatDoesNotOutrankTheActualUltimate" classname="TumbangPreso.PlayTests.SpectatorRecoveryThreatTests" runstate="Runnable" seed="1794124246" result="Failed" start-time="2026-10-06 05:22:48Z" end-time="2026-10-06 05:22:48Z" duration="0.039893" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: Ultimate
+  But was:  Retrieval
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SpectatorRecoveryThreatTests.InactiveThreatDoesNotOutrankTheActualUltimate () [0x00029] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\SpectatorRecoveryThreatTests.cs:39
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2903" name="LiveDefenderRecoveryStillOutranksTheUltimate" fullname="TumbangPreso.PlayTests.SpectatorRecoveryThreatTests.LiveDefenderRecoveryStillOutranksTheUltimate" methodname="LiveDefenderRecoveryStillOutranksTheUltimate" classname="TumbangPreso.PlayTests.SpectatorRecoveryThreatTests" runstate="Runnable" seed="2000472282" result="Passed" start-time="2026-10-06 05:22:48Z" end-time="2026-10-06 05:22:48Z" duration="0.039821" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

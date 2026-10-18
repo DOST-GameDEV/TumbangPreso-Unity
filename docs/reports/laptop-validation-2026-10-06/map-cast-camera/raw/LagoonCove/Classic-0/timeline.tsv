@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.500	89.480	Quiet	QuietEstablish	the street	1	0
+1.003	88.980	Quiet	QuietEstablish	the street	1	0
+1.504	88.480	Quiet	QuietEstablish	the street	1	0
+2.006	87.980	Quiet	QuietEstablish	the street	1	0
+2.507	87.480	ThrowPrep	Objective	throw · TIKBOY	2	0
+3.007	86.981	ThrowPrep	Objective	throw · TIKBOY	2	0
+3.510	86.481	ThrowPrep	Objective	throw · TIKBOY	2	0
+4.010	85.981	Retrieval	Chase	retrieval · LOLA PACING	3	0
+4.510	85.481	Retrieval	Chase	retrieval · LOLA PACING	3	0
+5.299	84.701	Quiet	QuietEstablish	the street	4	0
+5.801	84.181	Quiet	QuietEstablish	the street	4	0
+6.302	83.681	Quiet	QuietEstablish	the street	4	0
+6.804	83.181	Quiet	QuietEstablish	the street	4	0
+7.305	82.681	SlipperLanded	Objective	the can	5	0
+7.806	82.181	SlipperLanded	Objective	the can	5	0
+8.308	81.681	SlipperLanded	Objective	the can	5	0
+8.809	81.181	SlipperLanded	Objective	the can	5	0
+9.310	80.682	SlipperLanded	Objective	the can	5	0
+9.811	80.182	SlipperLanded	Objective	the can	5	0
+10.312	79.682	SlipperLanded	Objective	the can	5	0
+10.813	79.182	Quiet	QuietEstablish	the street	6	0
+11.314	78.682	Quiet	QuietEstablish	the street	6	0
+11.815	78.182	Quiet	QuietEstablish	the street	6	0
+12.316	77.742	Quiet	QuietEstablish	the street	6	0
+12.816	77.242	Quiet	QuietEstablish	the street	6	0
+13.318	76.722	Tag	Defender	tag · MARING	7	0
+13.819	76.222	Tag	Defender	tag · MARING	7	0
+14.320	75.782	Tag	Defender	tag · MARING	7	0
+14.821	75.282	Tag	Defender	tag · MARING	7	0

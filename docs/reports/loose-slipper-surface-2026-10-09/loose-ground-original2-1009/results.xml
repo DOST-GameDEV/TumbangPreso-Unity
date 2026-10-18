@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-08 21:48:00Z" end-time="2026-10-08 21:49:25Z" duration="84.6143804">
+  <test-suite type="TestSuite" id="3670" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2159" result="Failed" site="Child" start-time="2026-10-08 21:48:00Z" end-time="2026-10-08 21:49:25Z" duration="84.614380" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3662" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2159" result="Failed" site="Child" start-time="2026-10-08 21:48:00Z" end-time="2026-10-08 21:49:25Z" duration="84.587625" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="75072" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3663" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2159" result="Failed" site="Child" start-time="2026-10-08 21:48:00Z" end-time="2026-10-08 21:49:25Z" duration="84.568960" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3666" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2157" result="Failed" site="Child" start-time="2026-10-08 21:48:00Z" end-time="2026-10-08 21:49:25Z" duration="84.551438" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2131" name="LooseSlipperSurfaceTests" fullname="TumbangPreso.PlayTests.LooseSlipperSurfaceTests" classname="TumbangPreso.PlayTests.LooseSlipperSurfaceTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-08 21:48:00Z" end-time="2026-10-08 21:49:25Z" duration="84.482921" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2132" name="NewMapLooseShoesRestOnActualCollisionSurfaces" fullname="TumbangPreso.PlayTests.LooseSlipperSurfaceTests.NewMapLooseShoesRestOnActualCollisionSurfaces" methodname="NewMapLooseShoesRestOnActualCollisionSurfaces" classname="TumbangPreso.PlayTests.LooseSlipperSurfaceTests" runstate="Runnable" seed="798275638" result="Failed" start-time="2026-10-08 21:48:00Z" end-time="2026-10-08 21:49:25Z" duration="84.466226" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  IlalimNgTulay/tsinelas: 0.045000 m
+IlalimNgTulay/crocs: 0.091295 m
+IlalimNgTulay/pantulog: 0.083658 m
+IlalimNgTulay/sike: 0.091800 m
+IlalimNgTulay/spartan: 0.060868 m
+IlalimNgTulay/alpombra: 0.073613 m
+IlalimNgTulay/pambahay: 0.050175 m
+IlalimNgTulay/heels: 0.065589 m
+IlalimNgTulay/sandals: 0.062237 m
+IlalimNgTulay/loafers: 0.066044 m
+LagoonCove/tsinelas: 0.045000 m
+LagoonCove/crocs: 0.091295 m
+LagoonCove/pantulog: 0.083658 m
+LagoonCove/sike: 0.091800 m
+LagoonCove/spartan: 0.060868 m
+LagoonCove/alpombra: 0.073613 m
+LagoonCove/pambahay: 0.050175 m
+LagoonCove/heels: 0.065589 m
+LagoonCove/sandals: 0.062237 m
+LagoonCove/loafers: 0.066044 m
+Kanto/tsinelas: 0.045000 m
+Kanto/crocs: 0.091295 m
+Kanto/pantulog: 0.083658 m
+Kanto/sike: 0.091800 m
+Kanto/spartan: 0.060868 m
+Kanto/alpombra: 0.073613 m
+Kanto/pambahay: 0.050175 m
+Kanto/heels: 0.065589 m
+Kanto/sandals: 0.062237 m
+Kanto/loafers: 0.066044 m
+  Expected: <empty>
+  But was:  < "IlalimNgTulay/tsinelas: 0.045000 m", "IlalimNgTulay/crocs: 0.091295 m", "IlalimNgTulay/pantulog: 0.083658 m", "IlalimNgTulay/sike: 0.091800 m", "IlalimNgTulay/spartan: 0.060868 m", "IlalimNgTulay/alpombra: 0.073613 m", "IlalimNgTulay/pambahay: 0.050175 m", "IlalimNgTulay/heels: 0.065589 m", "IlalimNgTulay/sandals: 0.062237 m", "IlalimNgTulay/loafers: 0.066044 m"... >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.LooseSlipperSurfaceTests+<NewMapLooseShoesRestOnActualCollisionSurfaces>d__2.MoveNext () [0x005dc] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\LooseSlipperSurfaceTests.cs:67
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -12,13 +12,14 @@ namespace TumbangPreso
     /// then return the camera for the shared countdown. No model or physical spawn is moved.
     /// This owns only the pre-round hold and restores every camera setting if loading is interrupted.
     /// </summary>
-    public sealed class MatchArrivalPresentation : MonoBehaviour
+    public sealed partial class MatchArrivalPresentation : MonoBehaviour
     {
         private static MatchArrivalPresentation _active;
         public static bool Active => _active != null;
         public static bool OwnsCamera => Active && !_active._returningToGameplay
             && Settings.SettingsStore.Current.CinematicCameraMotion;
         public const float Seconds = 8.6f;
+        public float Duration => _directed ? _direction.End : Seconds;
         private const float EstablishSeconds = 2.8f, PortraitSeconds = 1.1f;
         private const float HandoffStart = 7.2f, PortraitFov = 50;
         private readonly Vector3[] _focus = new Vector3[4];
@@ -107,16 +108,17 @@ namespace TumbangPreso
                 {
                     if (!Current(generation)) yield break;
                     // The same single handoff as below: the rig is live again for the last of the return.
-                    if (opening.Age >= Mathf.Lerp(opening.Timeline.Handoff, opening.Timeline.End, .7f) && _rig != null) _rig.SetActive(true);
+                    if (opening.Age >= Mathf.Lerp(opening.Timeline.Handoff, opening.Timeline.End, .7f) && MayReturnToGameplay()) _rig.SetActive(true);
                     yield return null;
                 }
                 yield break;
             }
             // ARENA-INTRO end.
+            PrepareDirection(map, reduced);
             Sample(0, reduced, map);
             // Loading can now fade onto the already-prepared opening curtain/shot.
             while (HubLoading.Visible) { if (!Current(generation)) yield break; yield return null; }
-            for (float age = 0; age < Seconds; age += Time.unscaledDeltaTime)
+            for (float age = 0; age < Duration; age += Time.unscaledDeltaTime)
             {
                 if (!Current(generation)) yield break;
                 Sample(age, reduced, map);
@@ -202,6 +204,7 @@ namespace TumbangPreso
         // A deterministic sample shared by playback and native composition checks.
         private void Sample(float age, bool reduced, SceneFlow.MapEntry map)
         {
+            if (_directed) { SampleDirection(age, reduced, map); return; }
             age = Mathf.Clamp(age, 0, Seconds);
             int beat = reduced || age < EstablishSeconds ? -1 :
                 Mathf.Clamp((int)((age - EstablishSeconds) / PortraitSeconds), 0, 3);
@@ -234,7 +237,7 @@ namespace TumbangPreso
                     rotation = Quaternion.Slerp(rotation, _rotation, handoff);
                     fov = Mathf.Lerp(fov, _fov, handoff);
                 }
-                if (handoff >= .7f && _rigActive && _rig != null)
+                if (handoff >= .7f && MayReturnToGameplay())
                 { _returningToGameplay = true; _rig.SetActive(true); }
             }
             bool cameraMotion = Settings.SettingsStore.Current.CinematicCameraMotion;
@@ -305,10 +308,21 @@ namespace TumbangPreso
             foreach (var actor in _players) actor?.Intent.RequireFreshActions();
         }
 
+        private bool MayReturnToGameplay()
+        {
+            if (!_rigActive || _rig == null) return false;
+            // The public seat handoff may change ownership during the film.
+            // Its current HUD role outranks the saved opening/launch preference.
+            if (Hud.Instance != null) return !Hud.Instance.Spectating;
+            var watcher = _spectator != null ? _spectator : FindFirstObjectByType<SpectatorCamera>();
+            return !GameLaunch.Spectator && (watcher == null || !watcher.isActiveAndEnabled);
+        }
+
         private void Finish()
         {
             // ARENA-INTRO: the Arena's opening, if one is up, puts back everything it posed. A no-op elsewhere.
             Map.ArenaIntro.Stop();
+            RestoreDirection();
             if (_active == this) _active = null;
             for (int i = 0; i < _poses.Length; i++)
             {
@@ -319,7 +333,7 @@ namespace TumbangPreso
             if (_camera != null)
             {
                 _camera.transform.SetPositionAndRotation(_position, _rotation); _camera.fieldOfView = _fov;
-                if (_rigActive && _rig != null) _rig.SetActive(true);
+                if (_rigActive && _rig != null) _rig.SetActive(MayReturnToGameplay());
                 _camera = null;
             }
             if (_held) { PresentationClock.Release(); _held = false; FreshInput(); }

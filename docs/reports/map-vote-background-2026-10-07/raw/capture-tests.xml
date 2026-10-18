@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 17:26:20Z" end-time="2026-10-06 17:30:28Z" duration="247.7356217">
+  <test-suite type="TestSuite" id="3408" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1956" result="Passed" start-time="2026-10-06 17:26:20Z" end-time="2026-10-06 17:30:28Z" duration="247.735622" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3400" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1956" result="Passed" start-time="2026-10-06 17:26:20Z" end-time="2026-10-06 17:30:28Z" duration="247.715861" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="56336" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3401" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1956" result="Passed" start-time="2026-10-06 17:26:20Z" end-time="2026-10-06 17:30:28Z" duration="247.703028" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3404" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1954" result="Passed" start-time="2026-10-06 17:26:20Z" end-time="2026-10-06 17:30:28Z" duration="247.691282" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2693" name="RemainingMapPreviewCaptureTests" fullname="TumbangPreso.PlayTests.RemainingMapPreviewCaptureTests" classname="TumbangPreso.PlayTests.RemainingMapPreviewCaptureTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-06 17:26:20Z" end-time="2026-10-06 17:30:28Z" duration="247.665245" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2694" name="CaptureRemainingSixActualMapPreviews" fullname="TumbangPreso.PlayTests.RemainingMapPreviewCaptureTests.CaptureRemainingSixActualMapPreviews" methodname="CaptureRemainingSixActualMapPreviews" classname="TumbangPreso.PlayTests.RemainingMapPreviewCaptureTests" runstate="Runnable" seed="783619871" result="Passed" start-time="2026-10-06 17:26:20Z" end-time="2026-10-06 17:30:28Z" duration="247.652036" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="3600000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Env] repainted 0 of 297 renderers, 0 with a roof variant.
+[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

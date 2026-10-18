@@ -1,0 +1,64 @@
+{
+  "dpi": 96,
+  "coordinateScope": "PerMonitorV2 client pixels; temporary read-only thread context restored after capture",
+  "gamePid": 18944,
+  "window": 13239502,
+  "bounds": [
+    160,
+    101,
+    1760,
+    1001
+  ],
+  "fps": 30,
+  "secondsRequested": 20.0,
+  "startUtc": "2026-10-05T22:30:04Z",
+  "scope": "Only independently verified foreground game client pixels; every grab verifies PID/foreground before and after; no input injection or FPS/hardware proof.",
+  "samples": [
+    {
+      "frame": 0,
+      "wallSeconds": 0.094,
+      "sha256": "4a4a79fae7b2a0d614e8f76d9488ff165973032d124e1d382678f195837769e1"
+    },
+    {
+      "frame": 30,
+      "wallSeconds": 2.75,
+      "sha256": "02421605a0f0cea4a58bfe1d3d30b084d445476998324a122f3f4cd4279971a7"
+    },
+    {
+      "frame": 60,
+      "wallSeconds": 5.469,
+      "sha256": "2546283c0153bf84711dbd0ec1e65da5b933069fc329fcab42a14d0bcbdffbe7"
+    },
+    {
+      "frame": 90,
+      "wallSeconds": 8.141,
+      "sha256": "589c4a8470f0f953ed8e43bd24771f073f5d460d3aa769e253708ed1d030bfed"
+    },
+    {
+      "frame": 120,
+      "wallSeconds": 10.969,
+      "sha256": "59923c69efa02a7da1e45bf7f83406fb3ea3ee901b01e7a12dda97ec0b57fab9"
+    },
+    {
+      "frame": 150,
+      "wallSeconds": 13.813,
+      "sha256": "04f994220a12e127e5e23912158b6c6ab46ddc8c17e79fd13ea3aa55ac746aa1"
+    },
+    {
+      "frame": 180,
+      "wallSeconds": 16.5,
+      "sha256": "f02d72cdd3638d2e6123796b57f1a45fc41d7c02b05ca08f860a36da6d5750f9"
+    },
+    {
+      "frame": 210,
+      "wallSeconds": 19.172,
+      "sha256": "4bfb3d35ecf6ff903bf3b6b40a1ceb6de17f31dea95873779a868bd363e6a3d8"
+    }
+  ],
+  "capturePid": 17308,
+  "exitCode": 0,
+  "frames": 221,
+  "terminal": true,
+  "elapsedWallSeconds": 20.155999999988126,
+  "videoBytes": 521054
+}

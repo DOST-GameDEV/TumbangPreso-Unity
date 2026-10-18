@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 12:08:46Z" end-time="2026-10-07 12:11:38Z" duration="171.931948">
+  <test-suite type="TestSuite" id="3611" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="2112" result="Failed" site="Child" start-time="2026-10-07 12:08:46Z" end-time="2026-10-07 12:11:38Z" duration="171.931948" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3603" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2112" result="Failed" site="Child" start-time="2026-10-07 12:08:46Z" end-time="2026-10-07 12:11:38Z" duration="171.911233" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="69152" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3604" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2112" result="Failed" site="Child" start-time="2026-10-07 12:08:46Z" end-time="2026-10-07 12:11:38Z" duration="171.896535" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3607" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2110" result="Failed" site="Child" start-time="2026-10-07 12:08:46Z" end-time="2026-10-07 12:11:38Z" duration="171.881222" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2190" name="MapPreviewFreshnessTests" fullname="TumbangPreso.PlayTests.MapPreviewFreshnessTests" classname="TumbangPreso.PlayTests.MapPreviewFreshnessTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-07 12:08:46Z" end-time="2026-10-07 12:10:45Z" duration="118.608629" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2195" name="ReadOnlyDroneSceneryAccessLeavesExistingPreviewInputsUnchanged" fullname="TumbangPreso.PlayTests.MapPreviewFreshnessTests.ReadOnlyDroneSceneryAccessLeavesExistingPreviewInputsUnchanged" methodname="ReadOnlyDroneSceneryAccessLeavesExistingPreviewInputsUnchanged" classname="TumbangPreso.PlayTests.MapPreviewFreshnessTests" runstate="Runnable" seed="1898899259" result="Passed" start-time="2026-10-07 12:08:46Z" end-time="2026-10-07 12:10:45Z" duration="118.597604" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2853" name="RecordedSceneryTests" fullname="TumbangPreso.PlayTests.RecordedSceneryTests" classname="TumbangPreso.PlayTests.RecordedSceneryTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-07 12:10:45Z" end-time="2026-10-07 12:11:38Z" duration="53.163314" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2857" name="NaturalCustomMatchSavesEverySceneryRenderFrameAndReopensIt" fullname="TumbangPreso.PlayTests.RecordedSceneryTests.NaturalCustomMatchSavesEverySceneryRenderFrameAndReopensIt" methodname="NaturalCustomMatchSavesEverySceneryRenderFrameAndReopensIt" classname="TumbangPreso.PlayTests.RecordedSceneryTests" runstate="Runnable" seed="1579226772" result="Failed" start-time="2026-10-07 12:10:45Z" end-time="2026-10-07 12:11:38Z" duration="53.161470" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Unhandled log message: '[Error] Bones do not match bindpose.'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                <stack-trace><![CDATA[UnityEngine.Renderer:set_localBounds (UnityEngine.Bounds)
+TumbangPreso.CameraSystem.MatchPoseHistory/Track:Clone (UnityEngine.Transform) (at Assets/TumbangPreso/Runtime/Camera/MatchPoseHistory.cs:239)
+TumbangPreso.CameraSystem.RecordedSceneryView:Create (TumbangPreso.CameraSystem.LocalReplaySceneryRoot) (at Assets/TumbangPreso/Runtime/Camera/RecordedSceneryView.cs:93)
+TumbangPreso.CameraSystem.RecordedSceneryView:Draw (TumbangPreso.CameraSystem.LocalReplaySceneryFrame) (at Assets/TumbangPreso/Runtime/Camera/RecordedSceneryView.cs:31)
+TumbangPreso.CameraSystem.RecordedWorldView:Draw (single,bool) (at Assets/TumbangPreso/Runtime/Camera/RecordedWorldView.cs:394)
+TumbangPreso.CameraSystem.LocalReplayPlayback:Update () (at Assets/TumbangPreso/Runtime/Camera/LocalReplayPlayback.cs:316)
+
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] match over. scores: 935 / 300 / 0 / 0. seat 0 wins
+[NaturalSceneryReplay] observed=12111 savedUnique=12111 roots=60600 poses=1090800 bytes=7856100 segments=10
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+Bones do not match bindpose.
+Bones do not match bindpose.
+Bones do not match bindpose.
+Bones do not match bindpose.
+Bones do not match bindpose.
+Bones do not match bindpose.
+Bones do not match bindpose.
+Bones do not match bindpose.
+Bones do not match bindpose.
+Bones do not match bindpose.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

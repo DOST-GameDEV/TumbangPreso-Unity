@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Failed(Child)" total="7" passed="5" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 04:46:45Z" end-time="2026-10-06 04:46:45Z" duration="0.1649121">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1414" result="Failed" site="Child" start-time="2026-10-06 04:46:45Z" end-time="2026-10-06 04:46:45Z" duration="0.164912" total="7" passed="5" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2745" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1414" result="Failed" site="Child" start-time="2026-10-06 04:46:45Z" end-time="2026-10-06 04:46:45Z" duration="0.149155" total="7" passed="5" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="46260" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2746" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1414" result="Failed" site="Child" start-time="2026-10-06 04:46:45Z" end-time="2026-10-06 04:46:45Z" duration="0.138995" total="7" passed="5" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2747" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1414" result="Failed" site="Child" start-time="2026-10-06 04:46:45Z" end-time="2026-10-06 04:46:45Z" duration="0.128765" total="7" passed="5" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2578" name="SpectatorBodyLensContractTests" fullname="TumbangPreso.Tests.SpectatorBodyLensContractTests" classname="TumbangPreso.Tests.SpectatorBodyLensContractTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-10-06 04:46:45Z" end-time="2026-10-06 04:46:45Z" duration="0.112908" total="7" passed="5" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2580" name="ABodyCrossingOnlyTheSightlineRemainsAllowed" fullname="TumbangPreso.Tests.SpectatorBodyLensContractTests.ABodyCrossingOnlyTheSightlineRemainsAllowed" methodname="ABodyCrossingOnlyTheSightlineRemainsAllowed" classname="TumbangPreso.Tests.SpectatorBodyLensContractTests" runstate="Runnable" seed="83658176" result="Passed" start-time="2026-10-06 04:46:45Z" end-time="2026-10-06 04:46:45Z" duration="0.077086" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Anim] Body whose render model extends beyond its rules capsule has no clips. Check the model's animationType is Generic and importAnimation is on.
+]]></output>
+            </test-case>
+            <test-case id="2581" name="AnEyeClearOfBothBodyAndSightlineRemainsAllowed" fullname="TumbangPreso.Tests.SpectatorBodyLensContractTests.AnEyeClearOfBothBodyAndSightlineRemainsAllowed" methodname="AnEyeClearOfBothBodyAndSightlineRemainsAllowed" classname="TumbangPreso.Tests.SpectatorBodyLensContractTests" runstate="Runnable" seed="312474241" result="Passed" start-time="2026-10-06 04:46:45Z" end-time="2026-10-06 04:46:45Z" duration="0.002761" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Anim] Body whose render model extends beyond its rules capsule has no clips. Check the model's animationType is Generic and importAnimation is on.
+]]></output>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2586" name="AShortGlideCannotRenderAnEyeInsideABody" fullname="TumbangPreso.Tests.SpectatorBodyLensContractTests.AShortGlideCannotRenderAnEyeInsideABody" classname="TumbangPreso.Tests.SpectatorBodyLensContractTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-06 04:46:45Z" end-time="2026-10-06 04:46:45Z" duration="0.013790" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2584" name="AShortGlideCannotRenderAnEyeInsideABody(False)" fullname="TumbangPreso.Tests.SpectatorBodyLensContractTests.AShortGlideCannotRenderAnEyeInsideABody(False)" methodname="AShortGlideCannotRenderAnEyeInsideABody" classname="TumbangPreso.Tests.SpectatorBodyLensContractTests" runstate="Runnable" seed="1334880541" result="Failed" start-time="2026-10-06 04:46:45Z" end-time="2026-10-06 04:46:45Z" duration="0.009862" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The actual smoothed eye must recover from or avoid the body enclosure.
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.SpectatorBodyLensContractTests.AShortGlideCannotRenderAnEyeInsideABody (System.Boolean startInside) [0x00192] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\SpectatorBodyLensContractTests.cs:104
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[Anim] Body whose render model extends beyond its rules capsule has no clips. Check the model's animationType is Generic and importAnimation is on.
+]]></output>
+              </test-case>
+              <test-case id="2585" name="AShortGlideCannotRenderAnEyeInsideABody(True)" fullname="TumbangPreso.Tests.SpectatorBodyLensContractTests.AShortGlideCannotRenderAnEyeInsideABody(True)" methodname="AShortGlideCannotRenderAnEyeInsideABody" classname="TumbangPreso.Tests.SpectatorBodyLensContractTests" runstate="Runnable" seed="21973225" result="Passed" start-time="2026-10-06 04:46:45Z" end-time="2026-10-06 04:46:45Z" duration="0.001331" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Anim] Body whose render model extends beyond its rules capsule has no clips. Check the model's animationType is Generic and importAnimation is on.
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-case id="2579" name="EyeInsideAnOpaqueRenderBodyIsNotAValidPose" fullname="TumbangPreso.Tests.SpectatorBodyLensContractTests.EyeInsideAnOpaqueRenderBodyIsNotAValidPose" methodname="EyeInsideAnOpaqueRenderBodyIsNotAValidPose" classname="TumbangPreso.Tests.SpectatorBodyLensContractTests" runstate="Runnable" seed="1050857616" result="Failed" start-time="2026-10-06 04:46:45Z" end-time="2026-10-06 04:46:45Z" duration="0.005222" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The camera eye is in an opaque body despite being outside its capsule.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.SpectatorBodyLensContractTests.EyeInsideAnOpaqueRenderBodyIsNotAValidPose () [0x00085] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\SpectatorBodyLensContractTests.cs:58
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Anim] Body whose render model extends beyond its rules capsule has no clips. Check the model's animationType is Generic and importAnimation is on.
+Physics.ClosestPoint can only be used with a BoxCollider, SphereCollider, CapsuleCollider and a convex MeshCollider.
+]]></output>
+            </test-case>
+            <test-case id="2583" name="HiddenRenderBodiesDoNotBlockTheEye" fullname="TumbangPreso.Tests.SpectatorBodyLensContractTests.HiddenRenderBodiesDoNotBlockTheEye" methodname="HiddenRenderBodiesDoNotBlockTheEye" classname="TumbangPreso.Tests.SpectatorBodyLensContractTests" runstate="Runnable" seed="118299271" result="Passed" start-time="2026-10-06 04:46:45Z" end-time="2026-10-06 04:46:45Z" duration="0.001590" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Anim] Body whose render model extends beyond its rules capsule has no clips. Check the model's animationType is Generic and importAnimation is on.
+]]></output>
+            </test-case>
+            <test-case id="2582" name="NameplateOrEffectOutsideTheInstalledModelDoesNotBlockTheEye" fullname="TumbangPreso.Tests.SpectatorBodyLensContractTests.NameplateOrEffectOutsideTheInstalledModelDoesNotBlockTheEye" methodname="NameplateOrEffectOutsideTheInstalledModelDoesNotBlockTheEye" classname="TumbangPreso.Tests.SpectatorBodyLensContractTests" runstate="Runnable" seed="1787741727" result="Passed" start-time="2026-10-06 04:46:45Z" end-time="2026-10-06 04:46:45Z" duration="0.002072" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Anim] Body whose render model extends beyond its rules capsule has no clips. Check the model's animationType is Generic and importAnimation is on.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

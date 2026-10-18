@@ -1,0 +1,9 @@
+{
+  "playerLogPassed": true,
+  "exceptionCount": 0,
+  "messages": [],
+  "uiProbePassed": true,
+  "replayUiPassed": true,
+  "scopedGatePassed": true,
+  "rawPlayerLogSha256": "a2ab54091d631a3edc72edff25fcfd8712aac71538fadb992cd5b1c1e21a9b86"
+}

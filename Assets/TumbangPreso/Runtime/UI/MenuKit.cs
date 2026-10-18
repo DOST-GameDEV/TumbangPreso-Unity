@@ -125,6 +125,7 @@ namespace TumbangPreso.UI
             label.font = face == Face.Accent ? AccentFont : face == Face.Body
                 ? (bold ? BodyBoldFont : BodyFont)
                 : Font;
+            label.font = InGameTypography.Resolve(label.font, face != Face.Body || bold, label);
 
             label.fontStyle = FontStyle.Normal;
 
@@ -498,7 +499,7 @@ namespace TumbangPreso.UI
             go.transform.SetParent(parent, false);
 
             var t = go.AddComponent<Text>();
-            t.font = Font;
+            t.font = InGameTypography.Resolve(Font, true, t);
             t.text = text;
             t.fontSize = size;
             t.color = color;

@@ -156,8 +156,8 @@ namespace TumbangPreso.UI
 
             // The rebuilt court is below an 8 m soffit. Look down the street under it,
             // rather than through the viaduct deck and the adjacent shop roofs.
-            new MapEntry(IlalimNgTulay, "ILALIM NG TULAY",
-                         "LRT Gilmore strip. Viaduct pillars, PC Express, pisonet.", 0.0f, 22.0f, 5.5f),
+            new MapEntry(IlalimNgTulay, "PADRE FAURA, MANILA",
+                         "Manila street court. Viaduct pillars and neighbourhood shops.", 0.0f, 22.0f, 5.5f),
             new MapEntry(SaBubong,"SA BUBONG",
                          "Condo roofdeck. Watch the edge; lost slippers return after 10s.",35,30,22),
             // ⚠️ THE LAGOON COURT IS THE REWORKED COVE NOW, and Kanto joins the list (owner,
@@ -167,8 +167,8 @@ namespace TumbangPreso.UI
             // angle), Kanto from over the park's corner so the facades and streets frame the court.
             new MapEntry(LagoonCove,"LAGOON COURT",
                          "A cove court in the rocks. Stilt village, reefs and a sunset sea.",0,40,24),
-            new MapEntry(Kanto,"KANTO",
-                         "City park block. Jeepney stop, traffic lights, busy streets.",45,24,16),
+            new MapEntry(Kanto,"BGC, TAGUIG",
+                         "Taguig city park. Jeepney stop, traffic lights, busy streets.",45,24,16),
             // The Arena is LAST: maps travel as an index, so a new one is appended (protocol 152).
             // Preview: high over a corner, so the whole stage and its shaft are in frame. The
             // stage is 43 m across (walking radius 21.5), not the 28 m the first shot was framed

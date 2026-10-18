@@ -1,0 +1,468 @@
+{
+  "sourceRef": "4556ab376007b6a97a6a0457fc3cdfdef9c09e11",
+  "availableFreshTraces": 14,
+  "expectedTraces": 14,
+  "rows": [
+    {
+      "mode": "Classic",
+      "map": "Arena",
+      "file": "ai-diagnostic-Classic-Arena.txt",
+      "throws": 12,
+      "lungeAttempts": 2,
+      "countedHits": 1,
+      "escapedShoeWarnings": 0,
+      "looseSpells": [
+        [
+          "4.7",
+          "2",
+          "Fetch"
+        ],
+        [
+          "7.2",
+          "3",
+          "Fetch"
+        ],
+        [
+          "5.5",
+          "1",
+          "Fetch"
+        ]
+      ],
+      "chargeGateSamples": 19,
+      "chargeGates": {
+        "facing=True/reach=False/edge=True": 1,
+        "facing=False/reach=False/edge=False": 1,
+        "facing=/reach=/edge=True": 15,
+        "facing=False/reach=False/edge=True": 2
+      }
+    },
+    {
+      "mode": "Classic",
+      "map": "IlalimNgTulay",
+      "file": "ai-diagnostic-Classic-IlalimNgTulay.txt",
+      "throws": 14,
+      "lungeAttempts": 5,
+      "countedHits": 0,
+      "escapedShoeWarnings": 0,
+      "looseSpells": [
+        [
+          "1.7",
+          "2",
+          "Fetch"
+        ],
+        [
+          "1.4",
+          "3",
+          "Fetch"
+        ],
+        [
+          "1.9",
+          "1",
+          "Fetch"
+        ]
+      ],
+      "chargeGateSamples": 11,
+      "chargeGates": {
+        "facing=False/reach=True/edge=True": 1,
+        "facing=True/reach=True/edge=True": 3,
+        "facing=/reach=/edge=True": 6,
+        "facing=False/reach=False/edge=True": 1
+      }
+    },
+    {
+      "mode": "Classic",
+      "map": "Kanto",
+      "file": "ai-diagnostic-Classic-Kanto.txt",
+      "throws": 12,
+      "lungeAttempts": 5,
+      "countedHits": 0,
+      "escapedShoeWarnings": 0,
+      "looseSpells": [
+        [
+          "5.2",
+          "3",
+          "Fetch"
+        ],
+        [
+          "4.9",
+          "2",
+          "Fetch"
+        ],
+        [
+          "4.7",
+          "1",
+          "Fetch"
+        ]
+      ],
+      "chargeGateSamples": 22,
+      "chargeGates": {
+        "facing=True/reach=True/edge=True": 1,
+        "facing=False/reach=False/edge=True": 6,
+        "facing=True/reach=False/edge=True": 1,
+        "facing=/reach=/edge=True": 14
+      }
+    },
+    {
+      "mode": "Classic",
+      "map": "LagoonCove",
+      "file": "ai-diagnostic-Classic-LagoonCove.txt",
+      "throws": 16,
+      "lungeAttempts": 2,
+      "countedHits": 0,
+      "escapedShoeWarnings": 0,
+      "looseSpells": [
+        [
+          "4.2",
+          "1",
+          "Fetch"
+        ],
+        [
+          "5.0",
+          "3",
+          "Fetch"
+        ],
+        [
+          "4.6",
+          "2",
+          "Fetch"
+        ]
+      ],
+      "chargeGateSamples": 14,
+      "chargeGates": {
+        "facing=True/reach=True/edge=True": 1,
+        "facing=False/reach=False/edge=True": 1,
+        "facing=False/reach=True/edge=True": 1,
+        "facing=True/reach=False/edge=True": 1,
+        "facing=/reach=/edge=True": 10
+      }
+    },
+    {
+      "mode": "Classic",
+      "map": "Eskinita",
+      "file": "ai-diagnostic-Classic.txt",
+      "throws": 17,
+      "lungeAttempts": 5,
+      "countedHits": 0,
+      "escapedShoeWarnings": 4,
+      "looseSpells": [
+        [
+          "4.7",
+          "3",
+          "Fetch"
+        ],
+        [
+          "5.0",
+          "1",
+          "Fetch"
+        ],
+        [
+          "4.9",
+          "2",
+          "Fetch"
+        ]
+      ],
+      "chargeGateSamples": 11,
+      "chargeGates": {
+        "facing=True/reach=True/edge=True": 4,
+        "facing=True/reach=False/edge=True": 1,
+        "facing=/reach=/edge=True": 5,
+        "facing=False/reach=False/edge=True": 1
+      }
+    },
+    {
+      "mode": "Classic",
+      "map": "BayanPlaza",
+      "file": "ai-diagnostic-Classic-BayanPlaza.txt",
+      "throws": 12,
+      "lungeAttempts": 2,
+      "countedHits": 1,
+      "escapedShoeWarnings": 0,
+      "looseSpells": [
+        [
+          "4.7",
+          "2",
+          "Fetch"
+        ],
+        [
+          "5.2",
+          "3",
+          "Fetch"
+        ],
+        [
+          "5.8",
+          "1",
+          "Fetch"
+        ]
+      ],
+      "chargeGateSamples": 5,
+      "chargeGates": {
+        "facing=True/reach=False/edge=True": 2,
+        "facing=False/reach=False/edge=True": 2,
+        "facing=True/reach=True/edge=True": 1
+      }
+    },
+    {
+      "mode": "Classic",
+      "map": "SaBubong",
+      "file": "ai-diagnostic-Classic-SaBubong.txt",
+      "throws": 18,
+      "lungeAttempts": 5,
+      "countedHits": 0,
+      "escapedShoeWarnings": 0,
+      "looseSpells": [
+        [
+          "2.9",
+          "3",
+          "Fetch"
+        ],
+        [
+          "5.4",
+          "2",
+          "Fetch"
+        ],
+        [
+          "3.2",
+          "1",
+          "Fetch"
+        ]
+      ],
+      "chargeGateSamples": 25,
+      "chargeGates": {
+        "facing=True/reach=True/edge=True": 2,
+        "facing=False/reach=True/edge=True": 1,
+        "facing=True/reach=False/edge=True": 1,
+        "facing=/reach=/edge=True": 20,
+        "facing=False/reach=False/edge=True": 1
+      }
+    },
+    {
+      "mode": "HeroStrike",
+      "map": "Arena",
+      "file": "ai-diagnostic-HeroStrike-Arena.txt",
+      "throws": 9,
+      "lungeAttempts": 1,
+      "countedHits": 0,
+      "escapedShoeWarnings": 0,
+      "looseSpells": [
+        [
+          "5.6",
+          "1",
+          "Fetch"
+        ],
+        [
+          "10.5",
+          "2",
+          "Fetch"
+        ],
+        [
+          "9.9",
+          "3",
+          "Fetch"
+        ]
+      ],
+      "chargeGateSamples": 1,
+      "chargeGates": {
+        "facing=True/reach=True/edge=True": 1
+      }
+    },
+    {
+      "mode": "HeroStrike",
+      "map": "IlalimNgTulay",
+      "file": "ai-diagnostic-HeroStrike-IlalimNgTulay.txt",
+      "throws": 15,
+      "lungeAttempts": 4,
+      "countedHits": 1,
+      "escapedShoeWarnings": 0,
+      "looseSpells": [
+        [
+          "4.7",
+          "3",
+          "Fetch"
+        ],
+        [
+          "5.4",
+          "2",
+          "Fetch"
+        ],
+        [
+          "3.2",
+          "1",
+          "Fetch"
+        ]
+      ],
+      "chargeGateSamples": 59,
+      "chargeGates": {
+        "facing=True/reach=False/edge=True": 2,
+        "facing=False/reach=False/edge=True": 5,
+        "facing=/reach=/edge=True": 50,
+        "facing=True/reach=True/edge=True": 1,
+        "facing=False/reach=True/edge=True": 1
+      }
+    },
+    {
+      "mode": "HeroStrike",
+      "map": "Kanto",
+      "file": "ai-diagnostic-HeroStrike-Kanto.txt",
+      "throws": 13,
+      "lungeAttempts": 3,
+      "countedHits": 1,
+      "escapedShoeWarnings": 0,
+      "looseSpells": [
+        [
+          "5.3",
+          "2",
+          "Fetch"
+        ],
+        [
+          "5.0",
+          "3",
+          "Fetch"
+        ],
+        [
+          "4.8",
+          "1",
+          "Fetch"
+        ]
+      ],
+      "chargeGateSamples": 29,
+      "chargeGates": {
+        "facing=True/reach=True/edge=True": 2,
+        "facing=False/reach=False/edge=True": 5,
+        "facing=True/reach=False/edge=True": 6,
+        "facing=/reach=/edge=True": 16
+      }
+    },
+    {
+      "mode": "HeroStrike",
+      "map": "LagoonCove",
+      "file": "ai-diagnostic-HeroStrike-LagoonCove.txt",
+      "throws": 12,
+      "lungeAttempts": 3,
+      "countedHits": 1,
+      "escapedShoeWarnings": 0,
+      "looseSpells": [
+        [
+          "5.9",
+          "2",
+          "Fetch"
+        ],
+        [
+          "6.0",
+          "3",
+          "Fetch"
+        ],
+        [
+          "5.3",
+          "1",
+          "Fetch"
+        ]
+      ],
+      "chargeGateSamples": 23,
+      "chargeGates": {
+        "facing=True/reach=False/edge=True": 1,
+        "facing=True/reach=True/edge=True": 2,
+        "facing=False/reach=False/edge=True": 3,
+        "facing=/reach=/edge=True": 17
+      }
+    },
+    {
+      "mode": "HeroStrike",
+      "map": "Eskinita",
+      "file": "ai-diagnostic-HeroStrike.txt",
+      "throws": 15,
+      "lungeAttempts": 5,
+      "countedHits": 1,
+      "escapedShoeWarnings": 0,
+      "looseSpells": [
+        [
+          "5.3",
+          "2",
+          "Fetch"
+        ],
+        [
+          "5.0",
+          "3",
+          "Fetch"
+        ],
+        [
+          "4.5",
+          "1",
+          "Fetch"
+        ]
+      ],
+      "chargeGateSamples": 13,
+      "chargeGates": {
+        "facing=True/reach=True/edge=True": 2,
+        "facing=False/reach=False/edge=True": 1,
+        "facing=True/reach=False/edge=True": 2,
+        "facing=/reach=/edge=True": 7,
+        "facing=False/reach=True/edge=True": 1
+      }
+    },
+    {
+      "mode": "HeroStrike",
+      "map": "BayanPlaza",
+      "file": "ai-diagnostic-HeroStrike-BayanPlaza.txt",
+      "throws": 14,
+      "lungeAttempts": 3,
+      "countedHits": 1,
+      "escapedShoeWarnings": 0,
+      "looseSpells": [
+        [
+          "6.1",
+          "2",
+          "Fetch"
+        ],
+        [
+          "4.4",
+          "3",
+          "Fetch"
+        ],
+        [
+          "4.5",
+          "1",
+          "Fetch"
+        ]
+      ],
+      "chargeGateSamples": 9,
+      "chargeGates": {
+        "facing=True/reach=False/edge=True": 2,
+        "facing=True/reach=True/edge=True": 1,
+        "facing=False/reach=False/edge=True": 2,
+        "facing=/reach=/edge=True": 4
+      }
+    },
+    {
+      "mode": "HeroStrike",
+      "map": "SaBubong",
+      "file": "ai-diagnostic-HeroStrike-SaBubong.txt",
+      "throws": 16,
+      "lungeAttempts": 3,
+      "countedHits": 1,
+      "escapedShoeWarnings": 0,
+      "looseSpells": [
+        [
+          "4.6",
+          "3",
+          "Fetch"
+        ],
+        [
+          "5.2",
+          "2",
+          "Fetch"
+        ],
+        [
+          "2.0",
+          "1",
+          "Fetch"
+        ]
+      ],
+      "chargeGateSamples": 4,
+      "chargeGates": {
+        "facing=True/reach=False/edge=True": 3,
+        "facing=False/reach=False/edge=True": 1
+      }
+    }
+  ],
+  "limits": "Partial trace observations until native results and exact restoration finish. Unseeded40-second1x windows include ordinary pauses; no statistical efficacy or full-match claim."
+}
