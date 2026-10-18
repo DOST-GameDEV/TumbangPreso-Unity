@@ -1,0 +1,167 @@
+using TumbangPreso.Core;
+using UnityEngine;
+
+namespace TumbangPreso.Visual
+{
+    /// <summary>
+    /// ⚠️ AMIHAN'S WHIRLWIND, DRAWN AS THREE WHIRLWINDS ABREAST. It is behind a switch (`AmihanGaleFront.Whirlwinds`) and
+    /// the front it replaces is still there and still the default.
+    ///
+    /// The owner, of the ability's name against what it drew (five ribbons, a skirt and threads): "the ability is called
+    /// whirlwind? then make it look like a whirlwind". And of how many: "3 small".
+    ///
+    /// ⚠️ THE WHIRLWIND ITSELF IS NOT MADE HERE. It is the effects study's (`FxStudyWhirlwind`), which he approved on the
+    /// bench as film h8: "that looks amazing as is". This CALLS that, three times, and changes nothing of it: what
+    /// differs between the three goes in through the inputs it already has (its seed, which turns its winding and puts
+    /// its clocks out of step) and through where each is stood and how big. The study's own film must still match its
+    /// approved frames after any change here (`tools/cutscene_rework/fxsame.py whirlwind`).
+    ///
+    /// ⚠️ THE SHAPE TELLS THE TRUTH. The rule (`AmihanGale` in `AmihanHazards.cs`) stops a body that touches a bowed band
+    /// 3.2 m wide and 0.9 m deep, which travels; this only draws. One round whirlwind as wide as that band would reach a
+    /// body a metre before the rule does. So the band is filled by three, side by side, the middle one ahead of the
+    /// outer two by the band's own bow, each standing on a ground swirl that is FITTED TO THE BAND: the band slopes back
+    /// at about 36 degrees where the outer two stand, so their swirls are ovals turned to lie along it. Counted on a
+    /// 5 mm grid, the three swirls cover 77 percent of the band, 0.6 percent of their own area lies outside it, and
+    /// none is more than 2.1 cm ahead of the band's front edge or 1 cm beyond its sides. A whirlwind's horn is narrower
+    /// than its swirl at every height, so nothing overhangs the band at the height of a body.
+    ///
+    /// Where the row is, is the front's (`AmihanGaleFront.FrontAt`, the same sum the rule uses): this hangs under it.
+    /// Nothing here is on the wire and nothing here decides anything.
+    /// </summary>
+    public sealed class AmihanWhirlwinds
+    {
+        /// <summary>A film or a replay has no main camera: it says where the lens is, and the motes turn to it.</summary>
+        public static Vector3? StagedEye;
+        /// <summary>A film stands the gale in a scene the ground queries cannot see: it says how high the road is.</summary>
+        public static float? StagedGround;
+        /// <summary>
+        /// ⚠️ FOR A FILM ONLY, read when a row is built, and left as it is in play. The whirlwind was approved on a dark floor
+        /// under a camera that blooms; a lit court at noon with no bloom is another place. This lets a film lay the same
+        /// row side by side at more than one setting of how much of it is light laid on (below 0 is `DayLight`, what a
+        /// match draws; 0.85 is the bench's).
+        /// </summary>
+        public static float StagedLight = -1f;
+        /// <summary>Kept for the film's arithmetic: the row ends with the gale, and nothing of it outlives it.</summary>
+        public const float RemnantSeconds = 0f;
+
+        // The bench whirlwind stands 2.2 m tall on a ground swirl that reaches 1.07 m from its middle: its stem (the lower
+        // 0.88 m) and the rest above it (1.32 m to the top of its horn) are stretched apart, by `Look.Stem` and `Look.Crown`.
+        private const float BenchReach = 1.03f * 1.04f, BenchStem = 0.88f, BenchCrown = 1.32f;
+        // ⚠️ TALLER THAN A BODY. The owner, asked how tall: "should be larger than body height". On the bench it is about as
+        // tall as its swirl is wide, which on a swirl fitted to a band 0.9 m deep is waist high. So the middle one's horn
+        // tops out at this many metres (a character on the court stands about 1.75: this is 1.3 of that), and the
+        // swirls are NOT widened to carry it: the height is a stretch, the stem by a third more than the mouth, so it is
+        // still a trumpet on a point with its tapes lifted along it, and still stands inside its own footprint.
+        private const float HornTop = 2.28f, StemMore = 1.35f;
+        // ⚠️ HOW MUCH OF IT IS LIGHT IN A MATCH. On the bench 0.85 of every piece is light laid on (it was approved so).
+        // Light laid on a sunlit road adds almost nothing, so in a match that share is this, and the rest of each
+        // piece COVERS what is behind it: the same teal, the same pieces, the same picture, but there in daylight.
+        // It is the one thing of the look that differs from the bench, and it is an input the whirlwind already had.
+        // (Filmed on Eskinita at 0.85 and at 0.50, films g6 and light50: at 0.85 the horns go pale, nearly white, on the
+        // sunlit road; at 0.50 they hold their teal. "keep it teal".)
+        public const float DayLight = 0.50f;
+
+        // One of the three: where it stands across the lane (share of the half width), its ground swirl (m across the
+        // lane, m along it, and how far it is turned to lie along the band, degrees), how tall it is beside the others,
+        // and its seed (which turns its winding and puts its clocks out of step with its neighbours').
+        private readonly struct Sibling
+        {
+            public readonly float Across, Wide, Deep, Turned, Tall, Seed;
+            public Sibling(float across, float wide, float deep, float turned, float tall, float seed) { Across = across; Wide = wide; Deep = deep; Turned = turned; Tall = tall; Seed = seed; }
+        }
+        // ⚠️ SIBLINGS, NOT CLONES, and the swirls are the counted fit above: do not round them.
+        // ⚠️ ONE, LARGE, IN THE APPROVED PROPORTIONS. Three stood abreast on the old band, each stretched thin to stand over a
+        // body on a swirl 0.9 m deep, and the owner said of them: "this looks horrible. the whirlwind should be larger.
+        // maybe just do 1 large whirlwind only". The stretch was what broke the look he had approved. So there is one,
+        // its ground swirl as wide as the lane the ability covers, and nothing of it stretched: it is the bench's
+        // whirlwind, made bigger evenly.
+        // ⚠️ HOW WIDE ITS GROUND SWIRL IS, metres. At 3.2 (the old lane) he said: "make it larger". (`StagedAcross`, for a
+        // film's still only, stands one of another size beside it.)
+        public const float SwirlAcross = 4.2f;
+        public static float StagedAcross = -1f;
+        private static float Across => StagedAcross > 0f ? StagedAcross : SwirlAcross;
+        private static Sibling[] Row => new[]
+        {
+            new Sibling(0f, Across, Across, 0f, 1f, 0f),
+        };
+
+        private readonly Transform _moving;
+        private readonly FxStudyWhirlwind[] _wind = new FxStudyWhirlwind[Row.Length];
+        private readonly Vector3[] _size = new Vector3[Row.Length];
+        private readonly float _life;
+
+        public static AmihanWhirlwinds Build(Transform front, Vector3 origin, Vector3 forward, float life, float speed, float width)
+            => new AmihanWhirlwinds(front, life, width);
+
+        // How far behind the band's middle the band is at a share of its half width: the rule's own bow.
+        private static float Arc(float share) => -AmihanRules.WhirlwindBow * share * share;
+
+        private AmihanWhirlwinds(Transform front, float life, float width)
+        {
+            _life = life;
+            var go = new GameObject("AmihanWhirlwinds");
+            _moving = go.transform;
+            _moving.SetParent(front, false);
+            float half = width * 0.5f;
+            for (int i = 0; i < Row.Length; i++)
+            {
+                Sibling s = Row[i];
+                var look = FxStudyWhirlwind.Look.Picture;
+                look.Seed = s.Seed;
+                look.Light = StagedLight >= 0f ? StagedLight : DayLight;
+                // ⚠️ TEAL, NOT CYAN, AND NOT ONE FLAT HUE. On the court the bench's colours (hue about 175, and light) read as cyan:
+                // "it reads more as cyan than teal.. make it more green, and add some hueshifts with green and blue as
+                // extremes". So the body is a deeper teal at hue 168; the ground swirl leans to the green end and the
+                // motes sit at the blue end; and every piece's hue wanders up to 28 degrees either side of its own along
+                // its length and with the clock (green near 140, blue near 196), each piece from its own seed, so the
+                // horn's streaks and the tapes shimmer between the two. White stays white. (hue, saturation, value)
+                look.SilkDeep = Color.HSVToRGB(160f / 360f, 0.92f, 0.26f); look.Silk = Color.HSVToRGB(168f / 360f, 0.88f, 0.58f);
+                look.SilkHot = new Color(0.86f, 1f, 0.95f); look.SilkHalo = Color.HSVToRGB(168f / 360f, 0.88f, 0.42f);
+                look.TapeDeep = Color.HSVToRGB(170f / 360f, 0.60f, 0.34f); look.Tape = Color.HSVToRGB(172f / 360f, 0.50f, 0.62f); look.TapeHot = Color.HSVToRGB(172f / 360f, 0.22f, 0.92f);
+                look.GroundDeep = Color.HSVToRGB(150f / 360f, 0.90f, 0.22f); look.Ground = Color.HSVToRGB(156f / 360f, 0.82f, 0.46f); look.GroundHot = Color.HSVToRGB(160f / 360f, 0.45f, 0.88f);
+                look.MoteHeart = new Color(0.85f, 0.97f, 1f); look.MoteHalo = Color.HSVToRGB(198f / 360f, 0.85f, 0.85f);
+                look.HueDrift = 28f;
+                // Its swirl is made the oval the band has room for, and its height is stretched to stand over a body.
+                float across = s.Wide * 0.5f / BenchReach, along = s.Deep * 0.5f / BenchReach, up = (across + along) * 0.5f;
+                var wind = new FxStudyWhirlwind(_moving, look);
+                wind.Root.localPosition = new Vector3(s.Across * half, 0f, Arc(s.Across));
+                wind.Root.localRotation = Quaternion.Euler(0f, s.Turned, 0f);
+                _size[i] = new Vector3(across, up, along);
+                wind.Root.localScale = _size[i];
+                _wind[i] = wind;
+            }
+            // Effects, not props: the ground queries and the prop checks pass over them.
+            foreach (var renderer in go.GetComponentsInChildren<MeshRenderer>(true)) VfxRenderTag.Attach(renderer.gameObject);
+        }
+
+        /// <summary>
+        /// Poses the row for the gale's age. ⚠️ A PURE FUNCTION OF THAT AGE: no clock of its own and nothing kept from the
+        /// frame before, so a replay can scrub it and every peer draws the same frame.
+        /// They stand up in the first fifth of a second (the band already stops a body on its first frame, so they are
+        /// a third of their height at once), travel as they were approved, and thin out over the last third of a second
+        /// by the whirlwind's own way of coming apart. Nothing new was designed for either end.
+        /// </summary>
+        public void Pose(float seconds)
+        {
+            if (_moving == null) return;
+            float t = Mathf.Clamp(seconds, 0f, _life);
+            Vector3 eye;
+            if (StagedEye.HasValue) eye = StagedEye.Value;
+            else { var lens = Camera.main; eye = lens != null ? lens.transform.position : _moving.position + new Vector3(0f, 1.6f, -6f); }
+            float stand = FxStudyKit.EaseOut(FxStudyKit.Run(t, 0f, 0.20f)), undone = FxStudyKit.Ease(FxStudyKit.Run(t, _life - 0.35f, _life));
+            for (int i = 0; i < _wind.Length; i++)
+            {
+                if (_wind[i] == null) continue;
+                Vector3 size = _size[i];
+                _wind[i].Root.localScale = new Vector3(size.x * Mathf.Lerp(0.6f, 1f, stand), size.y * Mathf.Lerp(0.33f, 1f, stand), size.z * Mathf.Lerp(0.6f, 1f, stand));
+                _wind[i].Pose(t, eye, Mathf.Lerp(0.5f, 1f, stand), undone);
+            }
+        }
+
+        /// <summary>Frees the three whirlwinds' own meshes and materials. The pictures they wear are everybody's.</summary>
+        public void Free()
+        {
+            for (int i = 0; i < _wind.Length; i++) { _wind[i]?.Dispose(); _wind[i] = null; }
+        }
+    }
+}

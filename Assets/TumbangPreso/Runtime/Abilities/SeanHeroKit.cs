@@ -155,6 +155,13 @@ namespace TumbangPreso.Abilities
             public override bool CanActivate(AbilityContext ctx)
                 => base.CanActivate(ctx) && ctx?.Motor != null && ctx.Motor.IsGrounded && !ctx.Motor.IsFlying;
 
+            public override void Activate(AbilityContext ctx)
+            {
+                // The look alone, on every peer that hears the cast: the brace is drawn from the press. It decides nothing.
+                Visual.SeanStokeFire.Brace(ctx);
+                base.Activate(ctx);
+            }
+
             public HeroMovementState CaptureMovement() => IsActive
                 ? new HeroMovementState { Remaining = DurationRemaining, Wake = Array.Empty<Vector3>() }
                 : HeroMovementState.Empty;
@@ -193,7 +200,10 @@ namespace TumbangPreso.Abilities
                 // Native motor owns friction, body/cover collision and confinement.
                 // No teleport, vertical launch, hit loop or damaging world field.
                 ctx.Motor.ApplyImpulse(heading.normalized * StokeSpeed);
-                _rushAura = AbilityVfx.AttachAura(ctx.Motor.transform, AbilityVfx.Aura.FireEmber, StokeTravelSeconds);
+                // The look alone. With `SeanStokeFire.Streak` on, the fireball wake that follows his body; off (as it ships
+                // until the owner has seen it), the shared fire aura exactly as before.
+                if (Visual.SeanStokeFire.Streak) Visual.SeanStokeFire.Burst(ctx.Motor, heading);
+                else _rushAura = AbilityVfx.AttachAura(ctx.Motor.transform, AbilityVfx.Aura.FireEmber, StokeTravelSeconds);
             }
 
             private void ReleaseAura()

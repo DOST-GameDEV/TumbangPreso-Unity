@@ -1,0 +1,87 @@
+{
+ "drying_rack": {
+  "triangles": 3182,
+  "kb": 569,
+  "open_edges": 0,
+  "size": [
+   3.74,
+   2.36,
+   1.38
+  ],
+  "ground": 0.0,
+  "objects": [
+   "drying_rack"
+  ]
+ },
+ "chicken_coop": {
+  "triangles": 1454,
+  "kb": 489,
+  "open_edges": 0,
+  "size": [
+   1.44,
+   1.0,
+   1.45
+  ],
+  "ground": 0.0,
+  "objects": [
+   "chicken_coop"
+  ]
+ },
+ "bamboo_ladder": {
+  "triangles": 1638,
+  "kb": 503,
+  "open_edges": 0,
+  "size": [
+   0.93,
+   3.39,
+   0.92
+  ],
+  "ground": 0.0,
+  "objects": [
+   "bamboo_ladder"
+  ]
+ },
+ "pasiking": {
+  "triangles": 1420,
+  "kb": 485,
+  "open_edges": 0,
+  "size": [
+   0.75,
+   1.01,
+   0.46
+  ],
+  "ground": 0.0,
+  "objects": [
+   "pasiking"
+  ]
+ },
+ "scarecrow": {
+  "triangles": 2002,
+  "kb": 509,
+  "open_edges": 0,
+  "size": [
+   2.23,
+   2.46,
+   0.93
+  ],
+  "ground": 0.0,
+  "objects": [
+   "scarecrow"
+  ]
+ },
+ "rope_bridge": {
+  "triangles": 3436,
+  "kb": 574,
+  "open_edges": 0,
+  "size": [
+   7.15,
+   2.02,
+   1.77
+  ],
+  "ground": -0.575,
+  "objects": [
+   "rope_bridge",
+   "rope_bridge__posts"
+  ]
+ }
+}

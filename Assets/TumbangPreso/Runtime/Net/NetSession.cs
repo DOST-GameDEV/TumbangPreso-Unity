@@ -595,7 +595,7 @@ namespace TumbangPreso.Net
         // And SUPERNOVA released after its cutscene starts at the top of its leap (the cutscene is the leap): no wind-up, no
         // launch, the caster put `SeanHeroKit.SupernovaApexRise` up by the motor's own teleport, then the dive. A peer on 155
         // would launch him from the ground 0.4 s later.
-        // And Nemu's performance is 3.8 to 7.2 s, Zack's 2.8 to 6.4 s and Rafi's 3.4 to 8.6 s (2026-10-09, restaged; under the same cap and the same
+        // And Nemu's performance is 3.8 to 7.2 s, Zack's 2.8 to 6.4 s and Rafi's 3.4 to 9.2 s (2026-10-09, restaged, Rafi lengthened 2026-10-10 for his dive; under the same cap and the same
         // standing answer on length).
         // 157: THE MOVEMENT REWORK IS ON IN NETWORKED MATCHES (owner 2026-10-09: "lets push the movement rework to the main
         // gameplay for this build", then "yes" to online). Nothing new is sent: a player still simulates their own body
@@ -607,7 +607,11 @@ namespace TumbangPreso.Net
         // ⚠️ 158 (2026-10-09): ESKINITA IS A DIFFERENT MAP UNDER THE SAME NAME (the stepped alley replaced it, at the owner's word:
         // "push this to the map pool, replace the old eskinita"). Nothing new is sent, but a peer on 157 would load the old flat
         // street for the same map id and stand inside the new one's houses: the two may not meet.
-        public const int ProtocolVersion = 158;
+        // ⚠️ 159 (2026-10-11): AMIHAN'S WHIRLWIND HITS A DIFFERENT SHAPE. Its gale was a bowed band 3.2 m wide and 0.9 m deep born
+        // 1.0 m ahead; it is a circle of radius 2.1 m born 2.4 m ahead (`AmihanRules.WhirlwindRadius`), at the owner's word:
+        // "maybe just do 1 large whirlwind only. feel free to rework the ability itself". Nothing new is sent, but the host
+        // decides who is Whirled, so a peer on 158 would be shown a hit or a miss its own rule and picture disagree with.
+        public const int ProtocolVersion = 159;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

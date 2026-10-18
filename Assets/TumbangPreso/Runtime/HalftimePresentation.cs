@@ -44,7 +44,14 @@ namespace TumbangPreso
         private RecordedMatchClip _clip;
         private bool _attempted,_standings,_stageShow;
         private Scene _scene;
-        public static bool IsMiddleBreak(int completed,int total)=>total>=6&&completed==total/2&&completed<total;
+        // PAYO FORCES A HALF TIME (owner, 2026-10-12, of the map that turns to night at half time: "force it to have").
+        // A match shorter than six rounds has no middle break on any other map; on a map that sets this lower it has one
+        // at its middle whatever its length (2 rounds: after round 1). It is set by the MAP when its scene loads
+        // (`Map.PayoNight`), on every peer alike, and put back to 6 when the scene goes: nothing is sent, the host's
+        // stamp and every peer's check of it (`Receive`) read the same number because they stand in the same scene.
+        public const int DefaultMiddleBreakMinRounds=6;
+        public static int MiddleBreakMinRounds=DefaultMiddleBreakMinRounds;
+        public static bool IsMiddleBreak(int completed,int total)=>total>=MiddleBreakMinRounds&&completed==total/2&&completed>=1&&completed<total;
         public static HalftimePresentation Ensure()
         {
             if(Instance!=null)return Instance;

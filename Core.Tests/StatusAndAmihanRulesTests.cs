@@ -186,5 +186,45 @@ namespace TumbangPreso.Core.Tests
             // Updraft is out of any standing reach: higher than a lunge can be read as reaching.
             Assert.True(AmihanRules.UpdraftHeight > 2.0f);
         }
+
+        [Fact]
+        public void TheWhirlwindIsSizedFromItsOneRadius()
+        {
+            // It is born clear of her: its near edge is in front of her feet, never on them.
+            Assert.Equal(AmihanRules.WhirlwindRadius + AmihanRules.WhirlwindClearance, AmihanRules.WhirlwindStart, 4);
+            Assert.True(AmihanRules.WhirlwindStart - AmihanRules.WhirlwindRadius > 0.0f);
+            // Where its middle is: at its start, then at its speed, and it stops at the end of its life.
+            Assert.Equal(AmihanRules.WhirlwindStart, AmihanRules.WhirlwindCentre(0.0f), 4);
+            Assert.Equal(AmihanRules.WhirlwindStart + AmihanRules.WhirlwindSpeed, AmihanRules.WhirlwindCentre(1.0f), 4);
+            Assert.Equal(AmihanRules.WhirlwindCentre(AmihanRules.WhirlwindSeconds), AmihanRules.WhirlwindCentre(99.0f), 4);
+            Assert.Equal(AmihanRules.WhirlwindCentre(0.0f), AmihanRules.WhirlwindCentre(-1.0f), 4);
+            // Its far edge by the end: start, travel and one more radius.
+            Assert.Equal(AmihanRules.WhirlwindStart + AmihanRules.WhirlwindTravel + AmihanRules.WhirlwindRadius, AmihanRules.WhirlwindReach, 4);
+            // A lane, not a wall (VISION section 2): narrower than the 14 m box is wide by a good margin.
+            Assert.True(2 * AmihanRules.WhirlwindRadius < Balance.ConfinementRadius);
+        }
+
+        [Fact]
+        public void TheWhirlwindCatchesACircleSweptBetweenTwoSteps()
+        {
+            float r = AmihanRules.WhirlwindRadius, reach = r + AmihanRules.WhirlwindBodyAllowance, c = 6.0f;
+            // Standing still: inside the circle (and a body's half width past it) is caught, beyond is not, all round.
+            Assert.True(AmihanRules.WhirlwindCatches(0.0f, c, c, c));
+            Assert.True(AmihanRules.WhirlwindCatches(reach - 0.01f, c, c, c));
+            Assert.False(AmihanRules.WhirlwindCatches(reach + 0.01f, c, c, c));
+            Assert.True(AmihanRules.WhirlwindCatches(0.0f, c + reach - 0.01f, c, c));
+            Assert.False(AmihanRules.WhirlwindCatches(0.0f, c + reach + 0.01f, c, c));
+            Assert.True(AmihanRules.WhirlwindCatches(0.0f, c - reach + 0.01f, c, c));
+            Assert.False(AmihanRules.WhirlwindCatches(0.0f, c - reach - 0.01f, c, c));
+            // A circle, not a square: its corner is outside.
+            Assert.False(AmihanRules.WhirlwindCatches(reach * 0.8f, c + reach * 0.8f, c, c));
+            // Either side of the lane alike.
+            Assert.Equal(AmihanRules.WhirlwindCatches(1.3f, c + 0.7f, c, c), AmihanRules.WhirlwindCatches(-1.3f, c + 0.7f, c, c));
+            // A hitch: the circle jumped 9 m in one step. A body it passed over in between is caught, one beside its path is not.
+            Assert.True(AmihanRules.WhirlwindCatches(0.5f, c + 4.5f, c, c + 9.0f));
+            Assert.False(AmihanRules.WhirlwindCatches(reach + 0.2f, c + 4.5f, c, c + 9.0f));
+            // The two steps given either way round are the same sweep.
+            Assert.True(AmihanRules.WhirlwindCatches(0.5f, c + 4.5f, c + 9.0f, c));
+        }
     }
 }

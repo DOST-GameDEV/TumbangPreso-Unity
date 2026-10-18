@@ -195,7 +195,8 @@ namespace TumbangPreso.Map
         public static ArenaIntro Ensure()
         {
             if (Instance != null) return Instance;
-            if (ArenaStage.Instance == null) return null;
+            // A stone stage (the Payo map) has no stadium to walk out into: the arrival plays its own shots there.
+            if (ArenaStage.Instance == null || ArenaStage.Instance.Stone) return null;
 
             var fx = ArenaFx.Ensure();
             return fx != null ? fx.gameObject.AddComponent<ArenaIntro>() : null;

@@ -72,19 +72,54 @@ namespace TumbangPreso.Core
         /// so it can catch a runner, and 13.75 m over its life, which crosses the whole court.</summary>
         public const float WhirlwindSpeed = 5.5f;
 
-        /// <summary>The arc's chord. 3.2 m keeps it a lane, not a wall (VISION § 2).</summary>
-        public const float WhirlwindWidth = 3.2f;
+        // ⚠️ THE GALE IS ONE WHIRLWIND, AND WHAT IT HITS IS THE GROUND IT STANDS ON (2026-10-11). It was a bowed band 3.2 m
+        // wide and 0.9 m deep with a 0.9 m bow, born 1.0 m ahead, drawn as an arc of ribbons. The owner had the ability
+        // redrawn as a whirlwind ("the ability is called whirlwind? then make it look like a whirlwind"), then as one
+        // large one ("maybe just do 1 large whirlwind only. feel free to rework the ability itself", "make it larger").
+        // A whirlwind stands on a round swirl, so the rule became that swirl: a CIRCLE that travels. Speed, life,
+        // cooldown and what Whirled does are as they were.
+        //
+        // ⚠️ ONE NUMBER SIZES ALL OF IT. `WhirlwindRadius` is the whirlwind: the circle that hits, where it is born, how
+        // far it reaches, the ring the caster aims with, and how big it is DRAWN (`AmihanWhirlwind` scales the picture
+        // to it) all follow from it. Change it here and every one of those moves together; nothing else holds a copy.
 
-        /// <summary>How thick the front is. A body inside this band of the arc is hit.</summary>
-        public const float WhirlwindDepth = 0.9f;
+        /// <summary>The whirlwind's radius: the circle on the ground under it, which is what it hits and how wide it is
+        /// drawn. 2.1 m is a lane 4.2 m wide (it was 3.2).</summary>
+        public const float WhirlwindRadius = 2.1f;
 
-        /// <summary>Where the arc is born, in front of her.</summary>
-        public const float WhirlwindStart = 1.0f;
+        /// <summary>A body is caught when its middle is within the radius and this much more: its own half width. The
+        /// band allowed the same 0.3 m at its two sides.</summary>
+        public const float WhirlwindBodyAllowance = 0.3f;
 
-        /// <summary>How far the arc bows forward at its middle.</summary>
-        public const float WhirlwindBow = 0.9f;
+        /// <summary>How far in front of her feet the circle's near edge is when it is born, so it never stands on her.</summary>
+        public const float WhirlwindClearance = 0.3f;
+
+        /// <summary>Where the whirlwind's middle is born, in front of her: its radius and the clearance (2.4 m).</summary>
+        public const float WhirlwindStart = WhirlwindRadius + WhirlwindClearance;
 
         public static float WhirlwindTravel => WhirlwindSpeed * WhirlwindSeconds;
+
+        /// <summary>How far in front of her the circle's far edge gets by the end of its life: 2.4 + 13.75 + 2.1 = 18.25 m
+        /// (the band's far edge got to 1.0 + 13.75 + 0.45 = 15.2 m).</summary>
+        public static float WhirlwindReach => WhirlwindStart + WhirlwindTravel + WhirlwindRadius;
+
+        /// <summary>How far in front of her the whirlwind's middle is at an age (seconds), which stops at its life.</summary>
+        public static float WhirlwindCentre(float age)
+            => WhirlwindStart + WhirlwindSpeed * System.Math.Max(0.0f, System.Math.Min(age, WhirlwindSeconds));
+
+        /// <summary>
+        /// Is a body caught? `across` and `along` are where its middle is from the cast point, across the lane and down
+        /// it (m); the whirlwind's middle was `centreBefore` down the lane at the last step and is `centreNow` at this.
+        /// ⚠️ THE CIRCLE SWEPT BETWEEN THE TWO STEPS, not only where it is now: at 5.5 m/s a step moves it 11 cm, but a
+        /// hitch can move it much further, and a body it passed over in between is still caught.
+        /// </summary>
+        public static bool WhirlwindCatches(float across, float along, float centreBefore, float centreNow)
+        {
+            float from = System.Math.Min(centreBefore, centreNow), to = System.Math.Max(centreBefore, centreNow);
+            float nearest = System.Math.Max(from, System.Math.Min(along, to));
+            float reach = WhirlwindRadius + WhirlwindBodyAllowance, apart = along - nearest;
+            return across * across + apart * apart <= reach * reach;
+        }
 
         // ------------------------------------------------------------------ STORM SURGE (ultimate)
 

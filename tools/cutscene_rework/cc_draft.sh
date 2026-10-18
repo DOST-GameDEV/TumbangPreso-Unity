@@ -15,11 +15,11 @@ for f in "$D"/*.cs; do
   if grep -q "[/\\]$b\"" "$D/out/$A.rsp"; then sed -i -e "/^\"[^\"]*[/\\]$b\"/d" "$D/out/$A.rsp"; n=$((n+1)); else m=$((m+1)); fi
   echo "\"$f\"" >> "$D/out/$A.rsp"
 done
-# Files saved into the project since that rsp was made (it is a snapshot) are in neither list: add them.
+# Files added to the project since that rsp was made (it is a snapshot), committed or not, are in neither list: add them.
 case "$A" in TumbangPreso.Runtime) DIR=Assets/TumbangPreso/Runtime ;; *) DIR=Assets/TumbangPreso/Editor ;; esac
 tr '\\' '/' < "$D/out/$A.rsp" | grep -o "[^/\"]*\.cs\"" | tr -d '"' | sort -u > "$D/out/known.txt"
 k=0
-for f in $(git ls-files -o --exclude-standard "$DIR" | grep '\.cs$'); do
+for f in $(git ls-files -co --exclude-standard "$DIR" | grep '\.cs$'); do
   b=$(basename "$f")
   if ! grep -qxF "$b" "$D/out/known.txt"; then echo "\"$f\"" >> "$D/out/$A.rsp"; k=$((k+1)); fi
 done

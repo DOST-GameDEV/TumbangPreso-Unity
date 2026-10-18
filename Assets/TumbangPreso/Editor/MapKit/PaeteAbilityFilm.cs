@@ -63,6 +63,11 @@ namespace TumbangPreso.EditorTools.MapKit
                 if (words.Length == 0) continue;
                 // `introfx <hero> <tag>` films another hero's cutscene; `introfx <tag>` is still Paete's.
                 if (words.Length > 2 && words[0].ToLowerInvariant() == "introfx") { RunIntroFor(words[1], words[2]); continue; }
+                // `fxbench <effect> <tag>` films one effect of the study alone on a dark floor (`PaeteAbilityFilm.FxBench.cs`).
+                if (words[0].ToLowerInvariant() == "fxbench") { RunFxBench(words.Length > 1 ? words[1] : "", words.Length > 2 ? words[2] : "v00"); continue; }
+                // `gale <tag>` films Amihan's Whirlwind on a real map, the old front beside the new (`PaeteAbilityFilm.Gale.cs`).
+                if (words[0].ToLowerInvariant() == "gale") { RunGale(words.Length > 1 ? words[1] : "v00"); continue; }
+                if (words[0].ToLowerInvariant() == "cloudcourt") { RunCloudCourt(words.Length > 1 ? words[1] : "v00"); continue; }
                 Run(words[0], words.Length > 1 ? words[1] : "v00");
             }
         }

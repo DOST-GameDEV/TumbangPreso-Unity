@@ -196,8 +196,11 @@ namespace TumbangPreso.Map
             _renderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
             _renderer.enabled = false;
 
-            if (GetComponent<ArenaShow>() == null) gameObject.AddComponent<ArenaShow>();
-            if (GetComponent<ArenaAmbience>() == null) gameObject.AddComponent<ArenaAmbience>();
+            // A stone stage (the Payo map) takes the pooled light only, for the catch drone: the stadium's show and
+            // ambience are the Arena's. This runs after `ArenaStage.Awake` (its order is -200, this one's 1000).
+            bool stone = ArenaStage.Instance != null && ArenaStage.Instance.Stone;
+            if (!stone && GetComponent<ArenaShow>() == null) gameObject.AddComponent<ArenaShow>();
+            if (!stone && GetComponent<ArenaAmbience>() == null) gameObject.AddComponent<ArenaAmbience>();
         }
 
         private void OnEnable() => Instance = this;

@@ -888,7 +888,7 @@ def rafi():
     way, then the other, shrugs, beckons twice ("come on"), drops into a boat-deck crouch that
     rocks like a hull, lifts the wave up behind him and sends it with one sweeping arm.
     """
-    p = Performance("rafi", 8.6)
+    p = Performance("rafi", 9.2)
     rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
     feint_l = Pose(torso=(4, -12, 8), head=(0, -16, 4), left=(10, 30, 0), right=(18, 18, 0),
                    legs=((4, 10), (-4, 10)))
@@ -912,7 +912,8 @@ def rafi():
     p.key(.46, feint_r, punch=True).key(.6, feint_r)
     p.key(.8, shrug)
     p.key(1.0, beckon).key(1.12, beckon_pull).key(1.24, beckon).key(1.36, beckon_pull)
-    # THE TIDE GOES OUT, AND WHAT COMES BACK (2026-10-09, 8.6 s; the owner's shark joined to the tide going out). The times
+    # THE TIDE GOES OUT, AND WHAT COMES BACK (2026-10-09, 8.6 s; the owner's shark joined to the tide going out; 9.2 s since
+    # 2026-10-10, when the way into the wall and under was rebuilt: "doesnt really flow well ... then it cuts mid-dive"). The times
     # are the stage's (`HeroIntroductionScene.Rafi.cs`), which also carries his body into the wall, onto the shark and back.
     haul = Pose(torso=(-10, -6, 0), head=(-6, -6, -4), left=(104, 16, -6), right=(96, 16, 6),
                 legs=((10, 12), (-10, 12)))
@@ -937,33 +938,42 @@ def rafi():
     p.key(1.58, deck)
     p.key(1.78, haul, punch=True)
     p.hold(1.78, 2.6, haul_hold)
-    p.key(2.9, dive)
-    p.hold(2.9, 3.2, dive)
-    p.key(3.3, ride).key(3.75, ride_left).key(4.3, ride_right).key(4.75, ride)
-    p.hold(4.75, 5.3, ride)
-    p.key(5.5, air)
-    p.key(5.9, deck, punch=True)
-    p.hold(5.9, 6.05, deck)
-    p.key(6.3, watch)
-    p.hold(6.3, 6.95, watch)
-    p.key(7.2, brace, punch=True)
-    p.hold(7.2, 7.6, brace)
-    p.key(8.0, found)
-    p.hold(8.0, 8.6, found)
+    # Before the leap: down and back, arms swung behind him, the way anything that is about to jump goes the other way first.
+    wind = Pose(torso=(26, 0, 0), head=(-10, 0, 0), left=(-46, 22, 0), right=(-46, 22, 0),
+                legs=((24, 30), (20, 30)))
+    # In the water on the way down to it: stretched, one arm leading, legs trailing apart.
+    sink = Pose(torso=(14, 0, 0), head=(-16, 0, 0), left=(170, 14, 0), right=(120, 30, 0),
+                legs=((-6, 10), (-22, 8)))
+    p.key(2.93, wind)
+    p.key(3.12, dive, punch=True)
+    p.hold(3.12, 3.45, dive)
+    p.key(3.75, sink)
+    p.key(4.08, ride, punch=True).key(4.45, ride_left).key(4.9, ride_right).key(5.25, ride)
+    p.hold(5.25, 5.8, ride)
+    p.key(6.0, air)
+    p.key(6.4, deck, punch=True)
+    p.hold(6.4, 6.55, deck)
+    p.key(6.8, watch)
+    p.hold(6.8, 7.45, watch)
+    p.key(7.7, brace, punch=True)
+    p.hold(7.7, 8.1, brace)
+    p.key(8.5, found)
+    p.hold(8.5, 9.2, found)
 
     # A: front medium for the feints, the shrug and the beckon: he is talking to the viewer.
     p.shot(0, 1.46, (.9, 1.35, 3.9), (0, 1.05, 0), 44, eye_to=(.78, 1.3, 3.55))
     # B: high over the court from in front of him. The water runs off it toward him and past him.
     p.shot(1.46, 2.75, (2.0, 7.6, 11.6), (0, .4, -1.2), 56, eye_to=(1.4, 6.6, 10.6))
-    # C: low from his side as he turns and goes into the wall.
-    p.shot(2.75, 3.2, (4.6, 1.3, 2.2), (0, 2.2, -2.0), 58, eye_to=(4.2, 1.4, 1.6))
-    # D: under. The stage puts this lens beside the shark (`RafiFrame`); these numbers are only its start.
-    p.shot(3.2, 5.0, (3.6, 60.2, -2.2), (0, 59, -4), 58)
+    # C: after him. From behind his shoulder as he turns, following him to the face of the wall, where the water closes over
+    # the lens. The stage moves and aims it (`RafiFrame`); these numbers are only its start.
+    p.shot(2.75, 3.4, (2.3, 1.6, 3.7), (0, 1.2, -1.0), 58)
+    # D: under. He comes down through the surface, the shark comes up under him, and the lens swims beside them (`RafiFrame`).
+    p.shot(3.4, 5.5, (6.6, 60.2, -1.4), (0, 61, -2), 58)
     # E: ONE shot from the ground, the lens not moving (owner 2026-10-09): out of the top of the wall, his landing, the shark
     # going up into the sky as a ghost, and its fall in front of him. The stage aims it (`RafiFrame`).
-    p.shot(5.0, 7.6, (2.4, .35, 10.5), (0, 4.0, 0), 72)
+    p.shot(5.5, 8.1, (2.4, .35, 10.5), (0, 4.0, 0), 72)
     # G: high three-quarter for the wave the hit makes, and the slipper arriving.
-    p.shot(7.6, 8.6, (6.6, 5.6, 7.4), (0, .7, 2.6), 56, eye_to=(5.6, 4.8, 8.4))
+    p.shot(8.1, 9.2, (6.6, 5.6, 7.4), (0, .7, 2.6), 56, eye_to=(5.6, 4.8, 8.4))
     p.locked((1.0, 1.05, 4.9), (0, 1.1, -.5), 48)
     return p
 

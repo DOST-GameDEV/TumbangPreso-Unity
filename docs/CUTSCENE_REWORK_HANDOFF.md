@@ -7,9 +7,181 @@ the end). Read `AGENTS.md`, `docs/HERO_KIT_METHOD.md` and `docs/SKILL_NETWORK_CO
 
 **The continuation prompt is NOT in this file.** A handoff prompt goes in chat, never in a committed file (`CLAUDE.md` 2.4).
 
+**Since 2026-10-11 the effects themselves have their own method document, `docs/VFX_BENCH_METHOD.md`.** Read it before
+making or refining any ability or cutscene effect: references first, build from the approved bench effects, lock what
+he approves, daylight is not the bench. It also carries the current state of the bench and of Amihan's WHIRLWIND.
+
+## READ THIS FIRST: where things stand on 2026-10-10 (the polish pass)
+
+Everything below this section is the record up to 2026-10-09 and is still true unless this section says otherwise.
+
+### What changed since section 1 was written
+
+- **The stagings are agreed enough to polish.** The owner: "continue polishing all the ultimates. i dont want to see anything
+  bare in textures, anything looking unpolished, no vfx etc." So the "do not polish blocking" rule in section 5 is over.
+- **Another session COMMITTED this worktree** (three commits on 2026-10-09, the first `bd44c197b` at 21:13). The cutscene work
+  up to then is in git on `QoLUpdates`. This session has still committed nothing and must not until he asks. Work after
+  21:13 is uncommitted again.
+- **Sean:** 8.4 s now (was 7.0). "sean should have more airtime before going to the fpv. it should also tween to the back of
+  sean in a tpv type of way before going to fpv": same leap, slower over the top, he hangs; the last shot swings round
+  behind him 7.15 to 7.85 (`SnBehind`), holds; his own screen goes into his eyes from 8.02 (`SnHome`). Then "sean jumps up
+  and clips his head on the magic star effect . the effect should look like its reaching from the sky and large": the
+  lantern is 16 m up and 24 m across (`SnHigh`, `SnGiant`). The teleport's cleanse on his ultimate STAYS ("keep"), and the
+  same will hold for Dante.
+- **Sean's live landing** lost its two pixel-art sprite sheets ("i dont like the pixel impact effects, doesnt fit our
+  style"; `HeroHazards.CreateExplosion`, the default/Fire style). He played it: "looks good". The other styles (Dante's dust,
+  Cheska's frost, the slipper's smoke, Ignition, Zack's, Nemu's) still play their sheets; he was asked whether those should
+  go and has not answered.
+- **Rafi** was restaged to his own idea joined to the tide scene, 8.6 s; see "Rafi" below.
+- **Dante's wind-up** after the cutscene: "we'll see this later once refined and in game". His live "really up there" part
+  is still NOT built.
+- **Paete is invisible in the prototype map** (`Scenes/Temp/CharacterPrototype.unity`): the scene was saved 2026-10-07 and
+  his model was re-exported with vine bones on 2026-10-08, so the scene's copy has the old bone list. Not this work. The
+  fix is the menu item Tumbang Preso > Character Redesign > Build Prototype Map (temp scene). He was told; not confirmed.
+
+### The style law for anything modelled (he corrected this twice in one day; do not repeat it)
+
+1. Of a shark built as flat palette-slot prisms with a hinged jaw: "shark model is not at all good, jaw is messed up,
+   doesn't fit the hand painted illustrated stylistic art design of our characters and overall game style. it's also tweened
+   so poorly that it doesnt look like its smoothly jumping out the water and diving down.. need you to read up on how we
+   modeled the fpv hand pets (currently hidden) and the character model redesign docs".
+   **So an object is built with `tools/hand_companion_kit.py`** (round forms, smooth normals, a PAINTED atlas beside the .glb
+   through `Model.texture` and `grid_uv`), never with the prism builder `tools/build_paete_props.py`. Read
+   `docs/CHARACTER_REDESIGN_DANTE.md` 15.3, 15.9 and 15.11 ("How a plant is now built") and a real builder
+   (`tools/build_paete_bloom.py`, `build_paete_sentry.py`, `build_hand_<hero>.py`). **Look at it in Blender first**
+   (`tools/review_hand_companion.py`, then `py -3 tools/hand_companion_kit.py sheet <name> <tag>`; Blender 5.0 is at
+   `C:\Program Files\Blender Foundation\Blender 5.0\blender.exe`; pictures land in `Logs/hand-companions/`).
+2. Of a round cute painted shark made of the kit's balls and leaves: "shark could probably be less bubbly, also maybe it
+   should be a whale shark instead", "it should be more fierce looking, and preferably not made with basic object shapes
+   just put together without proper connection". **So a creature is ONE SKIN**: `tools/build_ultimate_shark.py` fuses typed
+   forms in Blender (voxel remesh, smooth, decimate), lays UVs round the long axis and paints the atlas with PIL.
+3. Of a fused whale shark built from memory: "that's a really bad whale shark model. i need you to research what a whaleshark
+   looks like and give me references for you to follow and analyze". **So look at the real thing before modelling it.** The
+   references and their sources are in `docs/art_refs/whale-shark/` (A side, B head-on, C three-quarter from above, D from
+   below, E to G mouth open; Wikimedia Commons, each credited in section "Whale shark references" below).
+4. **Motion:** nothing with weight moves on a straight lerp. Arcs, anticipation, ease, overshoot, settle, facing along the path.
+5. **Effects** (after the first polish films): "you should be more creative with particle effects and do more with
+   emmissives." Designed particles (shaped, layered, timed, in the hero's own language) and real emissive light.
+6. Water: "water doesnt have a good water shader, nor does it have any flowing water and wave effects, maybe take a look at
+   lagooncove again" (`Assets/TumbangPreso/Shaders/LagoonCoveWater.shader`). ⚠️ That shader runs on `_Time` and scene depth;
+   a cutscene runs with the match paused and the film runs outside Play, so a cutscene's shader needs its own clock, set
+   from the scene clock every frame.
+
+These are also in memory as `props-painted-kit-not-prisms`.
+
+### How the polish is being done: parallel sessions, one lock
+
+He asked for it: "do the rest in parallel", then "send this to subagents, work on rafi through a subagent too", with the main
+session keeping the documentation.
+
+- Each hero is one background agent that owns that hero's files only: `HeroIntroductionScene.<Hero>.cs`,
+  `Runtime/Visual/UltimateProp.<Hero>.cs` (a palette, `public static partial class UltimateProp`),
+  `tools/build_ultimate_props_<hero>.py`, its models under `Resources/Models/UltimateProps/`. `UltimateProp.cs` is the shared
+  loader (`Spawn`, `SpawnSpirit` for a ghost drawn by `Shaders/SpiritGhost` as Makiling is, `Presence`).
+- **`tools/cutscene_rework/agent_cycle.sh <hero> <tag> <draft folder>`** is the only way anything is saved or filmed: it
+  compiles the whole project outside Unity with the draft folder's .cs files standing in, and only if clean takes one lock
+  (`Temp/cutscene-film.lock`), copies the files in, asks the editor for the film and waits. So no session's save recompiles
+  the editor in the middle of another's film. ⚠️ It has once printed `Permission denied` on the copy and then filmed stale
+  code: after a cycle, `cmp` the draft against the project file. ⚠️ A compile can fail on ANOTHER session's half-saved pair of
+  files; retry.
+- An agent's Write and Edit tools refuse paths in this worktree, so it edits a draft folder in its own scratch directory.
+- `tools/cutscene_rework/cc_draft.sh` now also picks up files committed since its old rsp snapshot was made.
+- **Own pass after every agent** (his standing rule): look at each agent's contact sheet yourself before showing him.
+- It costs a lot: the first round of five agents used about two million tokens.
+
+### Where each hero stands
+
+Films and sheets are in `Logs/paete-ability-film/`; a sheet is `sheet_<hero>_<tag>.jpg`.
+
+| Hero | Length | First polish film | His verdict | Round two (running when this was written) |
+|---|---|---|---|---|
+| Nemu | 7.2 s | `nemu_p4` | "the ghost needs a remodel. needs more vfx/particles" | Remodel the giant (rage) Kuro in the painted one-skin style through a tool like `tools/kubo_kuro.py` (same node names, rig, clip: it is the LIVE monster too), and more designed VFX |
+| Sean | 8.4 s | `sean_p3` | "sean's parol looks good, but the ground effects/magic circles are lacking proper shaders and effects" | A new ground shader and emissive, living landing mark; light cast on the court; designed embers and sparks |
+| Zack | 6.4 s | `zack_p3` | none yet | none |
+| Dante | 7.0 s | `dante_p4` | "the longhorn lacks texture. the actual in-game ulitmate is just effects on the ground, it doesnt sell that weight of the longhorn's slampunch" | A: paint the longhorn properly, emissive seams. B: the LIVE ultimate's look (`DanteDriftVisual`, look only, nothing that decides gameplay): the longhorn's fist coming down on each band |
+| Cheska | 11.9 s | `cheska_p4` (sheets p3 and p4) | none yet | none |
+| Rafi | 9.2 s (was 8.6, for the dive) | `rafi_q4` | Second agent pass, awaiting his verdict: whale shark rebuilt from the references (`Logs/hand-companions/shark_w7_vs_refs.jpg`), bending spine (`RafiSharkSpine.cs`), new `RafiSea.shader` with rounded two-layer caustics after his two reference images, the wall as a thick mass he dives into, props rebuilt in the painted kit | Wall reads as a dome from the ground shot; crash crown reads icy; entry ring busy for 3 frames; swim bend unjudged in motion; live water field (`RafiWaterVisual.cs`) untouched |
+| Amihan, Phaister | unchanged | not started | | |
+
+What the first round built, by the agents' own reports (each checked on its sheet by the main session):
+- **Nemu** (`HeroIntroductionScene.Nemu.cs` only): an unlit ink pool rewritten each frame with a living edge and halftone dots,
+  drawn with Kuro's tail shader; ink curtains for walls; sixteen real eyes that open, blink and track; a splash crown on the
+  dive; ink tearing off him on the rise; teeth at the frame edge before black. Vertex colours are stored linear.
+- **Sean**: models `parol`, `parol_small`, `duskline` (a quarter town stood four times) on one painted atlas; the lantern is
+  built stick by stick, then panels; bulbs on cords; a shaped fire trail; a filled star landing mark; the burst throws the
+  lantern's own panels. `SeanParolAt` now arcs and overshoots `SnHigh` by about 0.55 m, settling by 4.95 s.
+- **Zack**: eight painted models (`zack_condo`, `office`, `mast`, `flats`, `row`, `cloud_a`, `cloud_b`, `cloud_top`) on
+  `zack_storm-atlas.png`; a typed bolt with core, sheath and forks on a new `ZackTip` motion; fat hung rain with frozen
+  splash rings; a dome and a dial under each player for the stop; scorch plates and thick arcs after the hit. The backdrop
+  material draws at queue 2900.
+- **Dante**: `longhorn.glb` with a painted atlas (head and jaw are joints, the right arm still its own node); broken plate
+  edges; a gradient lava sea with veins; shards, dust, embers; crags and smoke on the horizon. Almost everything is opaque and
+  grows or shrinks, because see-through pieces sorted badly against the dust walls.
+- **Cheska**: `iceblock`, `icecube`, `glacier`, `icespike_a/b/c`, `icechunks`, `frostpine` with `ice-atlas.png` and
+  `iceblock-atlas.png`; each frozen player also gets the live game's own restraint shards inside the block; a sky, ridges and
+  pines for her world from the glacier on. Its eight `.glb.meta` files were hand-written from `shark.glb.meta` with fresh
+  guids and still name `Textures\colormap.png` as a dependency: worth a look.
+
+Weak points the agents named and nobody has fixed: Dante's stomp lands at the frame's bottom-left edge with 4 frames left (a
+shot or timing change); Cheska's backdrop only exists from the glacier on, her burst is 0.3 s and small, and her ice block
+still vanishes at the hand-back because the live Frozen status draws no block; Zack's city is busy and bright; Sean's sky
+over the town is a flat brown wall. None of the five has been seen in a match, on a real map, with reduced effects, or with
+a held slipper.
+
+### Rafi (the one with the most history)
+
+- His idea, joined to the tide scene and agreed ("rafi's idea sounds good"): the tide runs off the court and stacks up behind
+  him; he dives into the wall; under water he rides a shark; they burst out, he lets go and lands; then "rafi getting off the
+  shark should be a from-ground camera and the shark should end up becoming ghostlike as it enlargens to the sky, like
+  paete's ult makiling. and then the shark drops in front of rafi. camera position stays there, meaning its all in one
+  shot." The hit makes the wave; a loose slipper rides it to his feet.
+- Built by the main session, films r3 to r10: the one ground shot (`_rfGround`, index 4, 5.0 to 7.6); the ghost by
+  `UltimateProp.SpawnSpirit`; the flight as one Hermite curve (`RafiSharkPath`) with the nose following the path; a darker
+  body behind the wall's face and fish swimming in it; faceted water drops; the under-water set as a closed blue shell 60 m
+  OVER the court (`RfDeep`), never seen on a real map.
+- **The shark has been refused three times** (see the style law). The research he asked for is done and shown to him. Asked
+  how to be fierce he chose **"do #1": fierce through attitude, true face**: the real head, tiny eyes, a wide straight
+  mouth held open and dark, a hard downward tilt in the dive, darker paint round the eye; no sculpted brow.
+  What a whale shark is, measured off reference A as shares of length: the head a wide flat spade about twice as wide as
+  tall and the widest part of it; the mouth a straight slot across the very front, nearly the head's full width; tiny eyes
+  low behind the mouth's corners; deepest just behind the head (17%), tapering to a thin stalk (3%); three ridges a side,
+  the lowest a keel on the stalk; the first back fin at 51% to 66%, about 10% tall, a small second at 75% to 82%; side fins
+  broad wings 21% long from about 20%; the tail a tall crescent 30% tip to tip, upper lobe longer; five gill slits; blue-grey
+  to grey-brown over white from the lower lip; small dense spots on the head, larger spots between pale bars on the body.
+  The refused one in the game now (`shark.glb` as built by the current `tools/build_ultimate_shark.py`, picture
+  `Logs/hand-companions/shark_w2.png`) has a cone head, a small frown, big browed eyes, the back fin too far forward.
+- **Still open, all handed to Rafi's agent:** the shark; the water (shader, flow, waves); the dive ("the wave is so thin so
+  it looks like he's diving into basically not much water, then it cuts mid-dive to him being underwater"); and the boat,
+  fish, stilt houses and slipper in `tools/build_ultimate_props.py`, which are still the first faceted kind. That agent may
+  change Rafi's shots, keys and length in `rafi()` of `tools/author_ultimate_intros.py`; if the length changes, update the
+  protocol 156 comment in `NetSession.cs`, which records every length.
+
+### Whale shark references (`docs/art_refs/whale-shark/`)
+
+| File | Source |
+|---|---|
+| `A_side_profile.jpg` | NOAA FGBNMS/Eckert, public domain: commons.wikimedia.org/wiki/File:Rhincodon_typus_fgbnms.jpg |
+| `B_head_on.jpg` | Derek Keats, CC BY 2.0: commons.wikimedia.org/wiki/File:Whale_shark,_Rhincodon_typus,_at_Daedalus_in_the_Egyptian_Red_Sea._(35827412321).jpg |
+| `C_three_quarter_above.jpg` | Matemi01, CC BY 4.0: commons.wikimedia.org/wiki/File:Whale_Shark_(Rhincodon_typus_A._Smith,_1828).jpg |
+| `D_from_below.jpg` | Zac Wolf, CC BY-SA 2.5: commons.wikimedia.org/wiki/File:Male_whale_shark_at_Georgia_Aquarium.jpg |
+| `E_mouth_open.jpg` | Matthew T Rader, CC BY-SA 4.0: commons.wikimedia.org/wiki/File:Whale_Shark_(Rhincodon_typus)_with_open_mouth_in_La_Paz,_Mexico.jpg |
+| `F_mouth_open_below.jpg` | Arturo de Frias Marques, CC BY-SA 4.0: commons.wikimedia.org/wiki/File:Whale_Shark_AdF.jpg |
+| `G_mouth_open_front.jpg` | Don McCulley, CC BY-SA 4.0: commons.wikimedia.org/wiki/File:Rhincodon_typus,_whale_shark_IMG_7075.jpg |
+
+These are study references. They are other people's photographs under their own licences and must not ship in the game.
+
+### What to do when a round-two agent reports
+
+1. Read its report. Look at its last sheet yourself; for a model, its Blender review picture too.
+2. `cmp` its draft against the project file if anything looks stale.
+3. Send him the film (1x then 0.5x) with what changed and what is still weak. He answers in a line; pass it on to the same
+   agent (it keeps its context) or do it yourself.
+4. Keep this section's table current.
+
 ## 0. Where the work is (this cost the last session its first hour)
 
-- ALL of it is UNCOMMITTED in the worktree `.claude/worktrees/kanto-blender-assembly-909442`, branch `QoLUpdates`. A
+- It is all in the worktree `.claude/worktrees/kanto-blender-assembly-909442`, branch `QoLUpdates` (uncommitted when this
+  was written; committed by another session on 2026-10-09, see the top). A
   session opened in any other worktree (for example `heroes-ultimate-cutscenes-rework-8b26f3`, which is 2,000 commits
   behind) will not find these docs or this code. Edit the files in the kanto folder directly. The owner: "yes work
   directly there, and then we'll be pushing changes to the qolupdates branch occasionally."
@@ -300,3 +472,21 @@ touch her ultimate and may still expect 1.5 s. `ChatAndLobbyChromeTests` asserts
 
 Sound for batch 1 has not been started at all: no cutscene of the three has a soundtrack, and the method is his ear on a
 video with real CC0 recordings (`tools/build_paete_ult_sfx.py`, `tools/mux_paete_ult_video.py` are the pattern).
+
+
+### Status added 2026-10-10 (later the same day)
+
+- **Sean**: Round two `sean_p5`: `ParolGround.shader` marks, lantern cast on the court, embers and capiz flakes. Weak: mark reads as a decal from the top shot, bare frame after the burst, clouds are smears. Unseen on a real map.
+- **Dante**: Round two `dante_p6`: repainted longhorn with seam lights, plate breaks up, he stands on the `stand` crown; LIVE perch (`DanteLonghornPerch.cs`, wind-up dropped, teleport, only Dante collides with it) and blast fists (`DanteDriftFist.cs`) built and unseen. Round three running: z-fight on the centre plate in the top-down shot; owner wants the break-up moved to the rise shot as a swapped pre-fractured model "preferrably dropping with simulated physics".
+- **Nemu**: Round two `nemu_p6`: giant Kuro remodelled as one skin (`tools/kubo_kuro_rage.py`, backup `ArtSource/kuro/pet-nemu-ghost.pre-rage.glb`; rerunning `tools/kubo_kuro.py` wipes it), more VFX. OPEN: in a real match the cutscene cuts his head off the top of the frame while the film shows him whole (owner: "still too high, if anything you should raise the camera so the full ghost is always visible"); agent is finding why and framing from his bounds. Nemu films are not trustworthy for framing until then. A live stoop was added by mistake and is to be reverted (`KuroFormTests` asserts taller than 4.2 m).
+- **Editor compile error not ours**: `Editor/MapKit/PaeteRunSceneBuilder.cs` (another session, untracked) used `PaeteRunPlayProbe` before it existed; films return NO FILM while the editor cannot compile.
+
+### The shared effects kit (2026-10-10, night)
+
+The owner pointed at the feed instagram.com/vfx_therapy ("see if you can pull off any of those", then "try doing these"). Reference stills are in the main session's scratchpad `refs_vfx/`. Built and proven on Rafi's crash, film `rafi_fx4`, strip `Logs/paete-ability-film/strip_rafi_fx4_crash.jpg`. AWAITING HIS VERDICT; do not roll it out to other heroes before he says so.
+
+- `Resources/Shaders/UltimateErode.shader`: one unlit shader on its own `_Age`. A procedural mask (`_Look` 0 cells, 1 smoke, 2 ink, 3 streak) scrolls along uv.x and the shape is EATEN AWAY by a threshold (`_Erode`), with a burning rim; `_Dark` for comic black shards, `_Radial` for impact discs, `_Dots` for halftone.
+- `Runtime/Visual/UltimateFx.cs`: `UltimateFx.Wisp`, `Disc`, `Pop`, `Place`, `Set`, `Play`. Meshes are typed and built at runtime (crown, hook, whip, arc, s, spiral, fanA/B/C, streak, disc, card). Everything is driven by one age float; no clock, no random.
+- Technique sources: swept wisp meshes with scrolling erosion (JangaFX), panning trail masks (Saeki Keiichi), comic pop explosions (Sebastien Dulong). The fourth post (ice lotus, gold ring dome, ground crack) is NOT reproduced yet.
+- In `HeroIntroductionScene.Rafi.cs` the session also clamped a lens tilt that looked at empty sky for 0.14 s, made the wave ring rise over 0.3 s, and shortened the wall fade and hit glow. White-out at the crash fell from 36.7 percent to 0.7.
+- Also filmed that night: `rafi_q6` (shark exits from the centre, no flip, less squiggle; the arch barely reads end-on) and `nemu_p12` (giant Kuro animated on his 18 joint rig in the cutscene and live; a dark blob beside his eye 5.1 to 6.4 s is unexplained).

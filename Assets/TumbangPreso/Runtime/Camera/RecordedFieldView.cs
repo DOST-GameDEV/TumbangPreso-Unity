@@ -45,7 +45,7 @@ namespace TumbangPreso.CameraSystem
             else if(field.Type==WorldEffectSnapshot.Kind.Drift)
             {var fx=DanteDriftVisual.Build(Root.transform,field.Position,field.Forward,field.Radius,field.FirstScale);_step=fx.StepTo;}
             else if(field.Type==WorldEffectSnapshot.Kind.Gale)
-            {var fx=AmihanGaleFront.Build(Root.transform,field.Position,field.Forward,field.Duration,Core.AmihanRules.WhirlwindSpeed,Core.AmihanRules.WhirlwindStart,Core.AmihanRules.WhirlwindWidth);fx.enabled=false;_step=fx.StepTo;}
+            {var fx=AmihanGaleFront.Build(Root.transform,field.Position,field.Forward,field.Duration,Core.AmihanRules.WhirlwindSpeed,Core.AmihanRules.WhirlwindStart,Core.AmihanRules.WhirlwindRadius*2f);fx.enabled=false;_step=fx.StepTo;}
             // Paete (HERO-9): the render-only bodies, posed from age alone like every other field here.
             else if(field.Type==WorldEffectSnapshot.Kind.Plant)
             {var body=PaetePlantBody.Build(Root.transform);float until=field.FirstScale,born=field.Duration-field.Remaining;

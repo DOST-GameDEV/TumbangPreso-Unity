@@ -1,0 +1,14 @@
+map: Assets/TumbangPreso/Scenes/Maps/Eskinita.unity
+road found at y 0.000 on CollisionSolids
+the stone is lit from the map's sun (Sun)
+he stands at (-2.5, -6.0) facing 0 degrees; the target is 6.0 m in front of him
+the real tsinelas is 0.432 m long, 0.175 wide, 0.074 high: the rocks are drawn at 0.98 of the size they were carved at
+325 frames at 60 a second (5.40 s), in Logs/paete-ability-film/fxbench_dantecourt_c3_frames
+each frame: rows are third person, his own eyes, the target's eyes; columns are OLD (the inlay), NEW, NEW with the bench bloom
+of its laid-on light (the split's glow, the two blinks) 0.60 is kept; the bench keeps all of it
+new look 0.10 s after the hit: 15 renderers on, 20 draw calls, 31296 triangles drawn
+  posing it: 0.0228 ms a frame, 0 bytes allocated a frame (300 calls)
+  drawing the scene from the target's eyes: 1.883 ms without it, 1.981 ms with it (editor, outside Play, 480x270, time to SUBMIT, not GPU time)
+  the old look is one more draw of the shoe's own mesh while it is loaded
+lit by the map's own lighting settings
+STAGED: nothing here is the game's cast, throw or hit; his body is a still pose; his own eyes have no first-person arms

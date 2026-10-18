@@ -1,0 +1,801 @@
+{
+ "tint_space": "sRGB 0..1, multiplies the texture",
+ "materials": [
+  {
+   "name": "pr_ashlar",
+   "texture": "ashlar",
+   "tint": [
+    1.0,
+    0.84,
+    0.6
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_ashlar_dark",
+   "texture": "ashlar",
+   "tint": [
+    0.84,
+    0.62,
+    0.42
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_ashlar_rose",
+   "texture": "ashlar",
+   "tint": [
+    1.0,
+    0.74,
+    0.58
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_bamboo",
+   "texture": "bamboo",
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_banana_stem",
+   "texture": "banana_stem",
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_bronze",
+   "texture": "metal",
+   "tint": [
+    0.66,
+    0.5,
+    0.24
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_capiz",
+   "texture": "capiz",
+   "tint": [
+    1.0,
+    0.94,
+    0.8
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": true,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_clay",
+   "texture": "clay",
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_cloth_red",
+   "texture": "cloth",
+   "tint": [
+    0.8,
+    0.2,
+    0.24
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_cloth_teal",
+   "texture": "cloth",
+   "tint": [
+    0.16,
+    0.58,
+    0.4
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_cloth_white",
+   "texture": "cloth",
+   "tint": [
+    0.98,
+    0.95,
+    0.88
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_cloth_yellow",
+   "texture": "cloth",
+   "tint": [
+    0.98,
+    0.8,
+    0.24
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_coconut",
+   "texture": "coconut",
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_far_rock",
+   "texture": "",
+   "tint": [
+    0.8,
+    0.66,
+    0.5
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_far_ruin",
+   "texture": "",
+   "tint": [
+    0.86,
+    0.74,
+    0.58
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_flower_pink",
+   "texture": "bougainvillea",
+   "tint": [
+    1.0,
+    0.42,
+    0.56
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_flower_red",
+   "texture": "gumamela",
+   "tint": [
+    1.0,
+    0.42,
+    0.56
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_frond_dark",
+   "texture": "frond_broad",
+   "tint": [
+    0.79,
+    0.83,
+    0.74
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_frond_light",
+   "texture": "frond_broad",
+   "tint": [
+    1.0,
+    1.0,
+    0.98
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_frond_small",
+   "texture": "frond",
+   "tint": [
+    0.85,
+    0.95,
+    0.46
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_grass_dark",
+   "texture": "blade",
+   "tint": [
+    0.72,
+    0.7,
+    0.36
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_grass_light",
+   "texture": "blade",
+   "tint": [
+    0.93,
+    0.86,
+    0.5
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_ground",
+   "texture": "sand_a",
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "tiling": 0.25,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false,
+   "shader": "TumbangPreso/LagoonGround",
+   "note": "One ground material. With TumbangPreso/LagoonGround: COLOR_0 = (court, grass, sand, wet), UV2 = (steep, ring), each 0..1; field = min + value * span below. Textures sand_a, grass_a, earth_a, rock_a. Without it, plain sand_a still reads.",
+   "fieldMinA": [
+    -4,
+    -4,
+    -3,
+    -2
+   ],
+   "fieldSpanA": [
+    7,
+    7,
+    6,
+    6
+   ],
+   "fieldMinB": [
+    -3,
+    -1
+   ],
+   "fieldSpanB": [
+    6,
+    2
+   ]
+  },
+  {
+   "name": "pr_iron",
+   "texture": "metal",
+   "tint": [
+    0.3,
+    0.24,
+    0.2
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_leaf_dark",
+   "texture": "leaf",
+   "tint": [
+    0.34,
+    0.62,
+    0.3
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_leaf_light",
+   "texture": "leaf",
+   "tint": [
+    0.62,
+    0.86,
+    0.34
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_moss",
+   "texture": "stone",
+   "tint": [
+    0.5,
+    0.66,
+    0.26
+   ],
+   "tiling": 0.4,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_paddle_dark",
+   "texture": "paddle",
+   "tint": [
+    0.51,
+    0.77,
+    0.39
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_paddle_light",
+   "texture": "paddle",
+   "tint": [
+    0.85,
+    0.98,
+    0.51
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_paint_black",
+   "texture": "paint",
+   "tint": [
+    0.14,
+    0.12,
+    0.12
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_paint_red",
+   "texture": "paint",
+   "tint": [
+    0.78,
+    0.22,
+    0.22
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_paint_teal",
+   "texture": "paint",
+   "tint": [
+    0.14,
+    0.56,
+    0.4
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_paint_white",
+   "texture": "paint",
+   "tint": [
+    0.96,
+    0.93,
+    0.86
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_paint_yellow",
+   "texture": "paint",
+   "tint": [
+    0.97,
+    0.78,
+    0.22
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_palm_trunk",
+   "texture": "palm_trunk",
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_paving",
+   "texture": "paving",
+   "tint": [
+    1.0,
+    0.84,
+    0.6
+   ],
+   "tiling": 0.4,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_plank",
+   "texture": "plank",
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_plaster",
+   "texture": "plaster",
+   "tint": [
+    0.98,
+    0.92,
+    0.8
+   ],
+   "tiling": 0.4,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_pool_floor",
+   "texture": "paving",
+   "tint": [
+    0.56,
+    0.8,
+    0.7
+   ],
+   "tiling": 0.4,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_rock",
+   "texture": "rock_a",
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "tiling": 0.25,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false,
+   "shader": "TumbangPreso/LagoonRock",
+   "note": "Lagoon Cove's rock: use the material/shader Lagoon's own stones use (TumbangPreso/LagoonRock: rock_a triplanar at 4 m a tile, edge wear from Art/LagoonCove/Textures/rock_edges_atlas.png through UV2, imported LINEAR). The kit stones here are Lagoon's meshes with their UV2."
+  },
+  {
+   "name": "pr_rope",
+   "texture": "rope",
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "tiling": 2.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_sawali",
+   "texture": "sawali",
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_slat",
+   "texture": "pg_slat",
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_stone",
+   "texture": "stone",
+   "tint": [
+    1.0,
+    0.86,
+    0.64
+   ],
+   "tiling": 0.4,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_stone_stain",
+   "texture": "stone",
+   "tint": [
+    0.44,
+    0.52,
+    0.42
+   ],
+   "tiling": 0.4,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_stone_wet",
+   "texture": "stone",
+   "tint": [
+    0.5,
+    0.62,
+    0.56
+   ],
+   "tiling": 0.4,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_stone_worn",
+   "texture": "stone",
+   "tint": [
+    0.86,
+    0.68,
+    0.48
+   ],
+   "tiling": 0.4,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_thatch",
+   "texture": "thatch",
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_timber",
+   "texture": "timber",
+   "tint": [
+    1.0,
+    0.96,
+    0.9
+   ],
+   "tiling": 0.5,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_tree_leaf_dark",
+   "texture": "leaf_kanto",
+   "tint": [
+    0.42,
+    0.64,
+    0.3
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_tree_leaf_light",
+   "texture": "leaf_kanto",
+   "tint": [
+    0.7,
+    0.86,
+    0.36
+   ],
+   "tiling": 1.0,
+   "foliage": true,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_tree_trunk",
+   "texture": "bark",
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_vine",
+   "texture": "",
+   "tint": [
+    0.3,
+    0.46,
+    0.22
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": false,
+   "cutout": false
+  },
+  {
+   "name": "pr_water",
+   "texture": "",
+   "tint": [
+    0.15,
+    0.78,
+    0.76
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": true,
+   "cutout": false,
+   "shader": "TumbangPreso/LagoonCoveWater",
+   "note": "The pools' surface: TumbangPreso/LagoonCoveWater serves (it reads depth behind it; the basins are 3 m deep). Flat tint is the fallback."
+  },
+  {
+   "name": "pr_water_running",
+   "texture": "",
+   "tint": [
+    0.22,
+    0.82,
+    0.78
+   ],
+   "tiling": 1.0,
+   "foliage": false,
+   "emissive": false,
+   "glossy": true,
+   "cutout": false
+  }
+ ]
+}

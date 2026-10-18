@@ -268,9 +268,13 @@ namespace TumbangPreso.UI.Hub
             var introductions = Visual.UltimateIntroductionCache.PrepareRound(done => progress?.Invoke(done * .25f));
             try { while (introductions.MoveNext()) yield return introductions.Current; }
             finally { (introductions as System.IDisposable)?.Dispose(); }
-            var arena = Visual.ArenaPrewarm.Run(done => progress?.Invoke(.25f + done * .75f));
+            var arena = Visual.ArenaPrewarm.Run(done => progress?.Invoke(.25f + done * .65f));
             try { while (arena.MoveNext()) yield return arena.Current; }
             finally { (arena as System.IDisposable)?.Dispose(); }
+            // The hero effects that only exist once somebody casts, built and drawn once each so the first cast of a match does not stall.
+            var heroes = Visual.HeroFxPrewarm.Run(done => progress?.Invoke(.90f + done * .10f));
+            try { while (heroes.MoveNext()) yield return heroes.Current; }
+            finally { (heroes as System.IDisposable)?.Dispose(); }
         }
 
         private void OnDestroy()

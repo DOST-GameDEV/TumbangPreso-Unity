@@ -1,0 +1,377 @@
+using System.Collections.Generic;
+using UnityEngine;
+using Knot = TumbangPreso.Visual.FxStudyKit.Knot;
+
+namespace TumbangPreso.Visual
+{
+    /// <summary>
+    /// STUDY I, THE QUICK CIRCUIT (a rough sample, second pass). Isagani's cut: after a tell of 0.15 s he is thrown 2 m
+    /// to one side and slides to a stop in 0.365 s (`ZackHeroKit.QuickCircuitAbility`: `CutDistance` 2 at a launch
+    /// speed of the square root of 2 x `Balance.Friction` x 2, which friction 30 stops in that time). It stuns nobody
+    /// and leaves nothing behind. So the picture is ONE STREAK OF CHARGED AIR from where he stood to where he is, there
+    /// only while he moves and gone within a sixth of a second of his stopping. Nothing stays on the road: a mark that
+    /// lingered would read as the stun trail this skill says it does not have.
+    ///
+    /// The study had no electricity, so this is its first. What it is made of:
+    ///   * THE STREAK is the approved trail ribbon (`FxStudyKit.Sweep`, `FxStudyTrails.Dress`, the fifth trail), broad
+    ///     and see-through, as tall as he is where it meets him and tapering to a point where he stood. It is the form.
+    ///     ⚠️ THE FIRST SAMPLE HAD NO FORM: a thin bolt alone, with even kinks, which read as a zigzag drawn on the
+    ///     picture and vanished at any distance.
+    ///   * THE BOLT is a thin white line riding inside the streak (`zack_bolt`, on two crossed ribbons): long and
+    ///     short pieces, a fork or two, never a repeating tooth. ⚠️ IT SNAPS, IT DOES NOT SLIDE: five paths are built
+    ///     once and one is shown at a time, changed fourteen times a second, and no picture on it scrolls.
+    ///   * THE AFTERIMAGE is his own body left where he stood: a see-through lit copy with cracks over it
+    ///     (`zack_crackle`), eaten from the feet up in a fifth of a second.
+    ///   * THE TELL is his whole body crackling, a light gathering on him and a leader of the bolt jumping a metre
+    ///     toward the side he is about to go: the only thing a target sees before he moves, and it points the right way.
+    ///   * THE MARKS are one strike on the road under his start (`zack_ground_star`) and a smaller one where he stops,
+    ///     each eaten outward from its heart in a quarter of a second.
+    ///   * THE SPARKS are few and forked (`zack_spark_sheet` through `FxFlecks`): seven kicked back off the start, five
+    ///     thrown on past where he stops, along the cut.
+    /// TWO HUES, kept apart so both are seen: AMBER is the air and the road (the streak, the afterimage's fill, the
+    /// strikes' arms); LEMON going to white is the charge itself (the bolt, the cracks, the sparks, the strikes' hearts).
+    ///
+    /// The bench has no character, so a plain blocky stand-in is drawn for his body (`standIn`) and the afterimage is
+    /// a copy of that. A cast in a match leaves the stand-in out and has to hand in his real outline (a baked copy
+    /// of his own mesh at the moment he leaves); that is not built yet.
+    /// </summary>
+    public sealed class FxStudyZackCircuit : FxStudyEffect
+    {
+        // The rule's own numbers (see the summary). The picture is built from these and from nothing else.
+        public const float Tell = 0.15f, Cut = 2.0f, Friction = 30.0f;
+        public static readonly float Launch = Mathf.Sqrt(2f * Friction * Cut), Slide = Launch / Friction;
+        // How long after he stops the last of the streak is gone, and how often the bolt re-strikes.
+        private const float Gone = 0.16f, Strikes = 14f;
+        private const float Chest = 0.92f, Tall = 1.6f;
+        private const int Shapes = 5;
+
+        // AMBER: the air and the road. Its white is only a pale gold, so a broad piece of it can never blow out.
+        // ⚠️ NO RED IN IT. With its dark end at (0.98, 0.30, 0.03) the strikes on the road came out pink-red and the
+        // afterimage a red slab: on this bench a third of green is already red, and red is another hero's fire.
+        private static readonly Color AmberDeep = new Color(1.00f, 0.50f, 0.04f), Amber = new Color(1.00f, 0.64f, 0.08f),
+                                      AmberHot = new Color(1.00f, 0.84f, 0.34f), AmberVeil = new Color(1.00f, 0.54f, 0.06f);
+        // LEMON: the charge. Its body is a sharp green-leaning yellow and only its thin line reaches white.
+        private static readonly Color LemonDeep = new Color(1.00f, 0.80f, 0.10f), Lemon = new Color(1.00f, 0.95f, 0.28f),
+                                      White = new Color(1.00f, 1.00f, 0.90f), LemonVeil = new Color(1.00f, 0.86f, 0.18f);
+
+        private readonly bool _standIn;
+        private readonly Transform _reach, _bodyAt;
+        private readonly FxPiece _streak, _streakFlat;
+        private readonly FxPiece[] _bolt = new FxPiece[Shapes], _cross = new FxPiece[Shapes];
+        private readonly FxPiece[] _leader = new FxPiece[3];
+        private readonly FxPiece _body, _charge, _ghost, _ghostCracks, _gather, _flash, _strike, _land, _pool;
+        private readonly FxFlecks _sparks;
+
+        public override float Seconds => 1.5f;
+        public override Color FloorColour => new Color(0.150f, 0.152f, 0.160f);
+        public override Color FloorLine => new Color(0.118f, 0.120f, 0.128f);
+        public override float BloomIntensity => 0.26f;
+        public override void Shot(float age, out Vector3 eye, out Vector3 focus, out float fov)
+        {
+            focus = new Vector3(Cut * 0.5f, 0.80f, 0f);
+            eye = focus + new Vector3(1.1f, 1.45f, -5.2f);
+            fov = 30f;
+        }
+
+        public FxStudyZackCircuit(Transform parent) : this(parent, true) { }
+
+        /// <summary>He starts at the root and is thrown down its +x. `standIn` draws the bench's blocky body.</summary>
+        public FxStudyZackCircuit(Transform parent, bool standIn) : base("zackcircuit", parent)
+        {
+            _standIn = standIn;
+            // Everything that spans the cut hangs from this and is drawn out to exactly how far he has gone.
+            _reach = Group("reach");
+
+            // THE STREAK. A point where he stood, his own height where it meets him, and a slow bow along the way so it is
+            // a blade of air and not a banner. Upright it is the picture from the front and behind; a second, narrower
+            // one lies flat through its middle so it is still there from above and from the side.
+            var blade = new[]
+            {
+                new Knot(0.00f * Cut, Chest - 0.10f, 0f, 0.10f), new Knot(0.18f * Cut, Chest - 0.02f, 0f, 0.46f), new Knot(0.42f * Cut, Chest + 0.05f, 0f, 0.92f),
+                new Knot(0.68f * Cut, Chest + 0.02f, 0f, 1.30f), new Knot(0.88f * Cut, Chest - 0.08f, 0f, Tall * 0.96f), new Knot(1.00f * Cut, Chest - 0.12f, 0f, Tall * 0.88f),
+            };
+            _streak = Streak("streak", blade, Vector3.back, 8, 0.31f);
+            var flat = new Knot[blade.Length];
+            for (int k = 0; k < blade.Length; k++) flat[k] = new Knot(blade[k].At, blade[k].Width * 0.5f);
+            _streakFlat = Streak("streak-flat", flat, Vector3.up, 7, 0.68f);
+
+            for (int s = 0; s < Shapes; s++)
+            {
+                var knots = Path(s, 7, Cut, 0.34f, 0.10f, 0.62f);
+                // perKnot 1: the sweep is sampled only AT its knots, so the path is straight pieces with corners.
+                _bolt[s] = Bolt("arc-bolt-" + s, knots, Vector3.back, 20, _reach);
+                _cross[s] = Bolt("arc-cross-" + s, knots, Vector3.up, 21, _reach);
+            }
+            // THE TELL'S LEADER: a metre of the same bolt out of his chest toward the side he will go.
+            for (int s = 0; s < _leader.Length; s++)
+            {
+                var knots = Path(s + 11, 5, 1.05f, 0.22f, 0.06f, 0.70f);
+                _leader[s] = Bolt("leader-" + s, knots, Vector3.back, 22, Root);
+                _leader[s].Set("_Ends", 0.04f, 0.25f, 0f).Set("_Tile", 0.55f, 1f, s * 0.31f, 0f);
+            }
+
+            _bodyAt = Group("body");
+            _body = Add("stand-in", Figure(false), FxStudyKit.Ribbon(null), 4, _bodyAt);
+            _body.Colours(Color.black, Color.black, new Color(0.30f, 0.31f, 0.34f), Color.black)
+                 .Set("_Ends", 0f, 0f, 0f).Set("_Scroll", 0f, 0f).Set("_Halo", 0f).Set("_Add", 0f).Set("_Cut", 0f, 0.1f).Set("_Stops", 0.2f, 0.3f, 0.6f).Set("_Emit", 0f);
+            // The tell's charge: the cracks alone, on his body, while he gathers.
+            _charge = Cracks("charge", 5, _bodyAt);
+
+            // THE AFTERIMAGE: his body where he stood, lit and see-through, with the cracks over it. u runs up it, so
+            // the erosion's sweep eats both from the feet.
+            _ghost = Add("afterimage", Figure(true), FxStudyKit.Ribbon(null, "erode_streak"), 6);
+            _ghost.Colours(AmberDeep, Amber, Amber, AmberVeil).Set("_Ends", 0f, 0f, 0f).Set("_Scroll", 0f, 0f).Set("_Cut", 0f, 0.1f).Set("_Stops", 0.2f, 0.3f, 0.6f)
+                  .Set("_ErodeTile", 1.2f, 1f, 0.3f, 0f).Set("_Sweep", 1.2f).Set("_Soft", 0.10f).Set("_Burn", 1.2f)
+                  .Set("_Halo", 0f).Set("_Add", 0.92f).Set("_Emit", 0.2f).Set("_Hue", 5f, 0f, 0.7f, 1f);
+            _ghostCracks = Cracks("afterimage-cracks", 9, Root);
+
+            _strike = Strike("strike", 3);
+            _land = Strike("landing", 3);
+            _pool = AddGlow("pool", 2, AmberHot, Amber, lying: true);
+            _gather = AddGlow("gather", 30, White, Lemon);
+            _flash = AddGlow("flash", 31, White, Lemon);
+
+            _sparks = AddFlecks("sparks", 40, "zack_spark_sheet");
+            _sparks.Grid = 2;
+            _sparks.Piece.Colours(LemonDeep, Lemon, White, LemonVeil).Set("_Cut", 0.10f, 0.55f).Set("_Stops", 0.30f, 0.62f, 0.92f).Set("_Gain", 1.4f).Set("_Add", 0.85f).Set("_Emit", 0.6f);
+        }
+
+        // The broad ribbon of charged air: the approved fifth trail as it is, in amber, wide and mostly light.
+        private FxPiece Streak(string name, Knot[] knots, Vector3 face, int order, float seed)
+        {
+            var piece = Add(name, FxStudyKit.Sweep(knots, face, perKnot: 8, across: 6), FxStudyKit.Ribbon(FxStudyTrails.MaskOf(4)), order, _reach);
+            FxStudyTrails.Dress(piece, 4).Colours(AmberDeep, Amber, AmberHot, AmberVeil)
+                         // It runs back off him toward where he stood, quickly: this is air, and air may slide.
+                         .Set("_Scroll", -1.6f, 0f).Set("_Hue", 7f, 5f, seed, 1f).Set("_Add", 0.78f).Set("_Halo", 0.55f)
+                         .Set("_Ends", 0.10f, 0.05f, 0.08f).WindowSoft(0.07f);
+            return piece;
+        }
+
+        // One bolt ribbon: the thin white line, its flat lemon body and its forks, nothing scrolling.
+        private FxPiece Bolt(string name, Knot[] knots, Vector3 face, int order, Transform under)
+        {
+            var piece = Add(name, FxStudyKit.Sweep(knots, face, perKnot: 1, across: 4), FxStudyKit.Ribbon("zack_bolt", "erode_streak"), order, under);
+            piece.Colours(LemonDeep, Lemon, White, LemonVeil).Set("_Scroll", 0f, 0f).Set("_Tile", 0.8f, 1f, 0f, 0f)
+                 .Set("_Cut", 0.10f, 0.50f).Set("_Stops", 0.40f, 0.72f, 0.94f).Set("_Ends", 0.03f, 0.03f, 0f)
+                 .Set("_ErodeTile", 1.5f, 1f, 0f, 0f).Set("_Sweep", 1.0f).Set("_Soft", 0.10f)
+                 .Set("_Halo", 0.45f).Set("_Add", 0.80f).Set("_Gain", 1.2f).Set("_Emit", 0.9f).Set("_Hue", 6f, 4f, 0.2f, 1f).WindowSoft(0.03f);
+            return piece;
+        }
+
+        // The body drawn in cracks alone (the veil between them is cut away).
+        private FxPiece Cracks(string name, int order, Transform under)
+        {
+            var piece = Add(name, Figure(true), FxStudyKit.Ribbon("zack_crackle", "erode_streak"), order, under);
+            piece.Colours(LemonDeep, Lemon, White, LemonVeil).Set("_Ends", 0f, 0f, 0f).Set("_Scroll", 0f, 0f).Set("_Tile", 0.9f, 0.9f, 0.13f, 0.41f)
+                 .Set("_Cut", 0.26f, 0.70f).Set("_Stops", 0.45f, 0.70f, 0.94f)
+                 .Set("_ErodeTile", 1.2f, 1f, 0.3f, 0f).Set("_Sweep", 1.2f).Set("_Soft", 0.10f)
+                 .Set("_Halo", 0.3f).Set("_Add", 0.85f).Set("_Gain", 1.2f).Set("_Emit", 0.8f);
+            return piece;
+        }
+
+        private FxPiece Strike(string name, int order)
+        {
+            var piece = AddFlat(name, order, "zack_ground_star", lying: true, erode: "erode_radial");
+            // Amber arms, a lemon line down each, a white heart; and more of it covers than is light (`_Add`), so a
+            // pale sunlit road cannot wash it out.
+            piece.Colours(AmberDeep, Amber, White, AmberVeil).Set("_Cut", 0.10f, 0.42f).Set("_Stops", 0.40f, 0.74f, 0.96f)
+                 .Set("_Polar", 1f).Set("_Sweep", 0.9f).Set("_Soft", 0.10f).Set("_Halo", 0.6f).Set("_Add", 0.55f).Set("_Gain", 1.35f).Set("_Emit", 0.7f).Set("_Hue", 5f, 0f, 0.5f, 1f);
+            return piece;
+        }
+
+        /// <summary>
+        /// A jagged path `length` metres down +x at chest height. Its two ends are where they are told to be. Between
+        /// them the pieces are LONG AND SHORT by a fixed draw for that shape, and each corner is thrown far or hardly
+        /// at all, up or down, so no two shapes match and none of them repeats a tooth.
+        /// </summary>
+        private static Knot[] Path(int shape, int count, float length, float high, float deep, float broad)
+        {
+            var steps = new float[count - 1];
+            float sum = 0f;
+            for (int k = 0; k < steps.Length; k++)
+            {
+                // A long piece or a short one, never a middling one: 0.4 to 0.8, or 1.5 to 2.4.
+                float draw = FxStudyKit.Hash(k, shape * 7 + 1);
+                steps[k] = FxStudyKit.Hash(k, shape * 7 + 4) < 0.5f ? Mathf.Lerp(0.4f, 0.8f, draw) : Mathf.Lerp(1.5f, 2.4f, draw);
+                sum += steps[k];
+            }
+            var knots = new Knot[count];
+            float along = 0f, side = shape % 2 == 0 ? 1f : -1f;
+            for (int k = 0; k < count; k++)
+            {
+                // (Held at nothing or above: the sine of a half turn comes back a hair under zero, and its root is not a number.)
+                float middle = Mathf.Max(0f, Mathf.Sin(Mathf.PI * along));
+                // Mostly to the other side of the last corner, sometimes the same side again.
+                if (FxStudyKit.Hash(k, shape * 7 + 5) < 0.78f) side = -side;
+                float far = FxStudyKit.Hash(k, shape * 7 + 2), throw_ = far < 0.35f ? 0.12f : 0.45f + 0.55f * far;
+                float y = side * high * throw_ * Mathf.Sqrt(middle);
+                float z = (FxStudyKit.Hash(k, shape * 7 + 3) - 0.5f) * 2f * deep * middle;
+                knots[k] = new Knot(new Vector3(along * length, Chest + y, z), broad);
+                if (k < steps.Length) along = Mathf.Min(1f, along + steps[k] / sum);
+            }
+            knots[count - 1] = new Knot(new Vector3(length, Chest, 0f), broad);
+            return knots;
+        }
+
+        // Where he is `t` seconds after the tell began: still through the tell, then the launch speed bled off by friction.
+        private static float Travelled(float t)
+        {
+            float s = Mathf.Clamp(t - Tell, 0f, Slide);
+            return Launch * s - 0.5f * Friction * s * s;
+        }
+
+        // On the bench: a third of a second of nothing, so the tell is seen to begin.
+        public override void Sample(float age, Vector3 eye) => Pose(age - 0.35f, eye, Travelled(age - 0.35f) / Cut);
+
+        /// <summary>
+        /// Poses it `t` seconds after the tell began, with him `reach` of the 2 m along (0 where he stood, 1 at the full
+        /// cut). ⚠️ THE STREAK ENDS AT HIM. A cast in a match hands in where his body really is, so a cut stopped short
+        /// by a wall is a short streak and nothing is ever drawn past him but the five sparks.
+        /// </summary>
+        public void Pose(float t, Vector3 eye, float reach)
+        {
+            float age = Mathf.Max(0f, t), cut = t - Tell, stopped = cut - Slide;
+            reach = Mathf.Clamp01(reach);
+            float x = reach * Cut;
+            bool telling = t >= 0f && cut < 0f, going = cut >= 0f;
+            int strike = Mathf.FloorToInt(age * Strikes);
+
+            // THE STAND-IN, leaning into the cut and standing up again as he stops.
+            _bodyAt.localPosition = new Vector3(x, 0f, 0f);
+            _bodyAt.localRotation = Quaternion.Euler(0f, 0f, going ? -16f * (1f - FxStudyKit.Ease(FxStudyKit.Run(cut, Slide * 0.4f, Slide + 0.12f))) * FxStudyKit.Run(cut, 0f, 0.05f) : 0f);
+            _body.Frame(age, _standIn ? 1f : 0f);
+
+            // THE TELL. His whole body crackles (a new net of cracks each strike), the light gathers on his chest to
+            // about his own height across, and the leader jumps toward the side he will go.
+            float gather = telling ? FxStudyKit.EaseOut(FxStudyKit.Run(t, 0f, Tell)) : 0f;
+            _charge.Set("_Tile", 0.9f, 0.9f, 0.13f + 0.27f * (Mathf.FloorToInt(age * 22f) % 4), 0.41f);
+            _charge.Frame(age, telling ? 0.95f : 0f, 0.25f * (1f - gather));
+            _gather.At.localPosition = new Vector3(0f, Chest, -0.3f);
+            _gather.At.localScale = Vector3.one * Mathf.Lerp(0.5f, 1.7f, gather);
+            _gather.Face(eye);
+            _gather.Frame(age, telling ? 0.30f + 0.30f * gather : 0f);
+            for (int s = 0; s < _leader.Length; s++)
+            {
+                bool shown = telling && Mathf.FloorToInt(age * 22f) % _leader.Length == s;
+                _leader[s].At.localPosition = new Vector3(0.15f, 0f, -0.24f);
+                _leader[s].Open(-1f, Mathf.Lerp(0.5f, 1.1f, gather));
+                _leader[s].Frame(age, shown ? 1f : 0f);
+            }
+
+            // THE STREAK AND ITS BOLT, drawn out to him and let go from where he stood.
+            float drawn = Mathf.Max(0.02f, reach);
+            _reach.localScale = new Vector3(drawn, 1f, 1f);
+            // It starts letting go of the start while he is still moving, and the last of it is gone `Gone` after he stops.
+            float tail = FxStudyKit.Ease(FxStudyKit.Run(cut, Slide * 0.45f, Slide + Gone)) * 1.1f - 0.1f;
+            float eaten = 0.85f * FxStudyKit.Run(stopped, -0.06f, Gone);
+            bool live = going && stopped < Gone;
+            _streak.Open(tail, 1.1f); _streakFlat.Open(tail, 1.1f);
+            // Its picture is laid as many times along it as its length asks, so a short cut is not a long one squashed.
+            _streak.Set("_Tile", 0.75f * Mathf.Max(0.35f, drawn), 1f, 4 * 0.37f, 0f);
+            _streakFlat.Set("_Tile", 0.75f * Mathf.Max(0.35f, drawn), 1f, 0.55f, 0f);
+            _streak.Frame(age, live ? 0.90f : 0f, eaten);
+            _streakFlat.Frame(age, live ? 0.70f : 0f, eaten);
+            float jump = FxStudyKit.Hash(strike, 5);
+            for (int s = 0; s < Shapes; s++)
+            {
+                bool shown = live && strike % Shapes == s;
+                _bolt[s].Open(tail, 1.1f); _cross[s].Open(tail, 1.1f);
+                // Nothing scrolls: each strike lays its picture somewhere new along the path instead.
+                _bolt[s].Set("_Tile", 0.8f * Mathf.Max(0.4f, drawn), 1f, jump, 0f);
+                _cross[s].Set("_Tile", 0.8f * Mathf.Max(0.4f, drawn), 1f, jump + 0.37f, 0f);
+                _bolt[s].Frame(age, shown ? 1f : 0f, eaten * 0.8f);
+                _cross[s].Frame(age, shown ? 0.9f : 0f, eaten * 0.8f);
+            }
+
+            // THE AFTERIMAGE, where he stood: whole for a moment, then eaten from the feet up, cracks and all.
+            float ghostEaten = FxStudyKit.Run(cut, 0.04f, 0.26f);
+            // See-through: a third there. At two thirds it was a lit slab standing beside him, not a memory of him.
+            _ghost.Frame(age, going ? 0.34f : 0f, ghostEaten);
+            _ghostCracks.Set("_Tile", 0.9f, 0.9f, 0.13f + 0.27f * (strike % 4), 0.41f);
+            _ghostCracks.Frame(age, going ? 0.95f : 0f, ghostEaten);
+
+            // THE MARKS. One strike under where he stood as he leaves, a smaller one where he stops. Each lands whole
+            // (a quick overshoot in size) and is then eaten outward from its heart.
+            float land = FxStudyKit.Pop(FxStudyKit.Run(cut, 0f, 0.06f));
+            _strike.At.localPosition = new Vector3(0f, 0.02f, 0f);
+            _strike.At.localRotation = Quaternion.Euler(0f, 25f, 0f);
+            _strike.At.localScale = Vector3.one * (2.1f * Mathf.Lerp(0.55f, 1f, land));
+            _strike.Frame(age, going ? 1f : 0f, FxStudyKit.Run(cut, 0.08f, 0.30f));
+            float stop = FxStudyKit.Pop(FxStudyKit.Run(stopped, -0.04f, 0.02f));
+            _land.At.localPosition = new Vector3(x, 0.02f, 0f);
+            _land.At.localRotation = Quaternion.Euler(0f, 200f, 0f);
+            _land.At.localScale = Vector3.one * (1.4f * Mathf.Lerp(0.55f, 1f, stop));
+            _land.Frame(age, stopped > -0.04f ? 1f : 0f, FxStudyKit.Run(stopped, 0.03f, 0.22f));
+            _pool.At.localPosition = new Vector3(0f, 0.015f, 0f);
+            _pool.At.localScale = new Vector3(1.8f, 1f, 1.8f);
+            _pool.Frame(age, going ? 0.35f * (1f - FxStudyKit.Run(cut, 0.02f, 0.20f)) : 0f);
+            _flash.At.localPosition = new Vector3(x, Chest, -0.3f);
+            _flash.At.localScale = Vector3.one * 1.1f;
+            _flash.Face(eye);
+            _flash.Frame(age, going ? 0.55f * (1f - FxStudyKit.Run(cut, 0f, 0.10f)) : 0f);
+
+            // THE SPARKS: seven kicked back off the start as he leaves, five thrown on past him, along the cut, as he
+            // stops. ⚠️ PAST HIM: the five start beyond his far side and keep going that way. The first ones were born
+            // at his feet and rose, and so sat on his body.
+            _sparks.Begin(eye);
+            for (int i = 0; i < 12; i++)
+            {
+                bool first = i < 7;
+                float born = first ? FxStudyKit.Hash(i, 21) * 0.05f : Slide - 0.03f + FxStudyKit.Hash(i, 21) * 0.05f;
+                float lives = 0.16f + 0.14f * FxStudyKit.Hash(i, 22), life = (cut - born) / lives;
+                if (life <= 0f || life >= 1f) continue;
+                float turn = (FxStudyKit.Hash(i, 23) - 0.5f) * (first ? 2.4f : 1.5f), lift = first ? 0.6f + 1.9f * FxStudyKit.Hash(i, 24) : -1.2f + 4.0f * FxStudyKit.Hash(i, 24);
+                float speed = first ? 2.2f + 2.4f * FxStudyKit.Hash(i, 25) : 4.5f + 3.0f * FxStudyKit.Hash(i, 25);
+                var thrown = new Vector3((first ? -1f : 1f) * Mathf.Cos(turn) * speed, lift, Mathf.Sin(turn) * speed * 0.7f);
+                float s = life * lives;
+                // Thrown fast and braked hard: most of the way in the first third of its life, then it hangs and drops.
+                float far = 1f - (1f - life) * (1f - life);
+                var from = first ? new Vector3(0.1f, 0.25f, 0f) : new Vector3(x + 0.38f, 0.35f + 0.9f * FxStudyKit.Hash(i, 26), -0.1f);
+                var at = from + thrown * (lives * 0.55f * far) + Vector3.down * (3.5f * s * s);
+                var heading = thrown * (1f - 0.8f * life) + Vector3.down * (7f * s);
+                int cell = i + Mathf.FloorToInt(age * Strikes);
+                _sparks.Add(at, heading, 0.30f, 0.22f, 1f - life * life, cell, Color.white);
+            }
+            _sparks.End(age);
+        }
+
+        /// <summary>
+        /// The blocky outline: legs, trunk and a big head, 1.6 m tall, as three boxes, each face shaded by which way
+        /// it looks (the ribbon shader has no light). `wrapped` lays u UP the figure and v round it, so a picture laid
+        /// on it wraps the whole body and its erosion can climb it from the feet.
+        /// </summary>
+        private static Mesh Figure(bool wrapped)
+        {
+            var vertices = new List<Vector3>(); var uvs = new List<Vector2>(); var colours = new List<Color>(); var triangles = new List<int>();
+            Box(vertices, uvs, colours, triangles, new Vector3(0f, 0.30f, 0f), new Vector3(0.36f, 0.60f, 0.24f), wrapped);
+            Box(vertices, uvs, colours, triangles, new Vector3(0f, 0.86f, 0f), new Vector3(0.50f, 0.54f, 0.28f), wrapped);
+            Box(vertices, uvs, colours, triangles, new Vector3(0f, 1.36f, 0f), new Vector3(0.46f, 0.46f, 0.42f), wrapped);
+            var mesh = new Mesh { name = "FxStudyZackFigure", hideFlags = HideFlags.HideAndDontSave };
+            mesh.SetVertices(vertices); mesh.SetUVs(0, uvs); mesh.SetColors(colours); mesh.SetTriangles(triangles, 0);
+            mesh.RecalculateNormals(); mesh.RecalculateBounds();
+            return mesh;
+        }
+
+        private static void Box(List<Vector3> vertices, List<Vector2> uvs, List<Color> colours, List<int> triangles, Vector3 centre, Vector3 size, bool wrapped)
+        {
+            Vector3[] normals = { Vector3.back, Vector3.forward, Vector3.left, Vector3.right, Vector3.up, Vector3.down };
+            Vector3[] rights = { Vector3.right, Vector3.left, Vector3.back, Vector3.forward, Vector3.right, Vector3.right };
+            float[] shades = { 0.80f, 0.45f, 0.55f, 0.62f, 1.00f, 0.35f };
+            for (int f = 0; f < 6; f++)
+            {
+                Vector3 n = normals[f], r = rights[f], u = Vector3.Cross(n, r);
+                int first = vertices.Count;
+                for (int c = 0; c < 4; c++)
+                {
+                    float a = c % 2 == 0 ? -0.5f : 0.5f, b = c < 2 ? -0.5f : 0.5f;
+                    Vector3 p = centre + Vector3.Scale(n * 0.5f + r * a + u * b, size);
+                    vertices.Add(p);
+                    uvs.Add(wrapped ? new Vector2(p.y / Tall, 0.5f + 0.5f * (p.x + p.z * 0.6f) / 0.5f) : new Vector2(0.5f, 0.5f));
+                    colours.Add(new Color(shades[f], shades[f], shades[f], 1f));
+                }
+                triangles.Add(first); triangles.Add(first + 2); triangles.Add(first + 1);
+                triangles.Add(first + 1); triangles.Add(first + 2); triangles.Add(first + 3);
+            }
+        }
+    }
+}

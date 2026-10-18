@@ -111,7 +111,10 @@ namespace TumbangPreso.Map
         private static readonly int SolidId = Shader.PropertyToID("_Solid");
         private static readonly int AppearId = Shader.PropertyToID("_Appear");
 
-        public enum ShapeKind { Disc, Ring, Arc, Ramp }
+        /// <summary>BLOCK (2026-10-12, the Payo map): a rectangular stone monolith, the fifth kind. It is placed by
+        /// its plan centre (`X`, `Z`) and size (`SX`, `SZ`), not by a radius and a bearing. Added LAST, so the four
+        /// kinds a saved Arena scene holds keep their numbers; no Arena layout names one.</summary>
+        public enum ShapeKind { Disc, Ring, Arc, Ramp, Block }
 
         /// <summary>
         /// One piece in one layout. Round kinds: `R0`..`R1` are the radii (a disc's `R0` is 0),
@@ -127,16 +130,26 @@ namespace TumbangPreso.Map
             /// <summary>Only a jump pad reaches it: never a place to set a fallen body down.</summary>
             public bool Bonus;
             public float R0, R1, A0, Sweep, Top, Top1, Width, Thick;
+            /// <summary>A BLOCK only (zero on every round piece and ramp): the plan centre and the full size, metres,
+            /// in the stage's frame. `Top` is its walking surface and `Thick` how far its shaft goes down.</summary>
+            public float X, Z, SX, SZ;
+            /// <summary>A BLOCK only: 0 a level top; else the top is a flight that descends from `Top` to `Top1`
+            /// toward +x (1), -x (2), +z (3) or -z (4).</summary>
+            public int Stair;
 
             public bool IsRamp => Kind == ShapeKind.Ramp;
+            public bool IsBlock => Kind == ShapeKind.Block;
+            /// <summary>A top that is not level: a ramp, or a block whose top is a stair. Never a place to set a body down.</summary>
+            public bool Sloped => IsRamp || (IsBlock && Stair != 0);
             public bool Full => Sweep >= 359.99f;
-            public float Inner => Mathf.Max(0.0f, Mathf.Min(R0, R1));
-            public float Outer => Mathf.Max(R0, R1);
+            public float Inner => IsBlock ? 0.0f : Mathf.Max(0.0f, Mathf.Min(R0, R1));
+            public float Outer => IsBlock ? new Vector2(Mathf.Abs(X) + SX * 0.5f, Mathf.Abs(Z) + SZ * 0.5f).magnitude : Mathf.Max(R0, R1);
 
             /// <summary>True where the piece's top covers the plan point, `inset` in from every edge.</summary>
             public bool Contains(float x, float z, float inset)
             {
                 if (!Exists) return false;
+                if (IsBlock) return Mathf.Abs(x - X) <= SX * 0.5f - inset && Mathf.Abs(z - Z) <= SZ * 0.5f - inset;
 
                 float r = Mathf.Sqrt(x * x + z * z);
                 if (r > Outer - inset) return false;
@@ -159,6 +172,17 @@ namespace TumbangPreso.Map
             /// <summary>The top's height over a plan point the piece covers.</summary>
             public float HeightAt(float x, float z)
             {
+                if (IsBlock)
+                {
+                    switch (Stair)
+                    {
+                        case 1: return Mathf.Lerp(Top, Top1, Mathf.Clamp01((x - (X - SX * 0.5f)) / Mathf.Max(SX, 0.01f)));
+                        case 2: return Mathf.Lerp(Top, Top1, Mathf.Clamp01(((X + SX * 0.5f) - x) / Mathf.Max(SX, 0.01f)));
+                        case 3: return Mathf.Lerp(Top, Top1, Mathf.Clamp01((z - (Z - SZ * 0.5f)) / Mathf.Max(SZ, 0.01f)));
+                        case 4: return Mathf.Lerp(Top, Top1, Mathf.Clamp01(((Z + SZ * 0.5f) - z) / Mathf.Max(SZ, 0.01f)));
+                        default: return Top;
+                    }
+                }
                 if (!IsRamp || Mathf.Abs(R1 - R0) < 1e-4f) return Top;
                 return Mathf.Lerp(Top, Top1, Mathf.Clamp01((Mathf.Sqrt(x * x + z * z) - R0) / (R1 - R0)));
             }
@@ -167,6 +191,14 @@ namespace TumbangPreso.Map
             /// from every edge. A piece narrower than twice the inset answers on its centre line.</summary>
             public Vector3 Nearest(float x, float z, float inset)
             {
+                if (IsBlock)
+                {
+                    // A block narrower than twice the inset answers on its centre line, as a round piece does.
+                    float hx = Mathf.Max(0.0f, SX * 0.5f - inset), hz = Mathf.Max(0.0f, SZ * 0.5f - inset);
+                    float nx = Mathf.Clamp(x, X - hx, X + hx), nz = Mathf.Clamp(z, Z - hz, Z + hz);
+                    return new Vector3(nx, HeightAt(nx, nz), nz);
+                }
+
                 float low = Inner > 0.01f ? Inner + inset : 0.0f, high = Outer - inset;
                 if (low > high) low = high = (Inner + Outer) * 0.5f;
 
@@ -210,7 +242,11 @@ namespace TumbangPreso.Map
 
             /// <summary>True when the two are the same solid, wherever it is turned to or raised to.</summary>
             public static bool SameSolid(in Shape a, in Shape b) =>
-                a.IsRamp == b.IsRamp && Near(a.R0, b.R0) && Near(a.R1, b.R1) && Near(a.Sweep, b.Sweep)
+                a.Kind == ShapeKind.Block || b.Kind == ShapeKind.Block
+                    // Two blocks are one solid when the plan and the top's form are the same: it then only rises or sinks.
+                    ? a.Kind == b.Kind && Near(a.X, b.X) && Near(a.Z, b.Z) && Near(a.SX, b.SX) && Near(a.SZ, b.SZ)
+                      && a.Stair == b.Stair && Near(a.Top1 - a.Top, b.Top1 - b.Top)
+                    : a.IsRamp == b.IsRamp && Near(a.R0, b.R0) && Near(a.R1, b.R1) && Near(a.Sweep, b.Sweep)
                 && Near(a.Top1 - a.Top, b.Top1 - b.Top) && Near(a.Width, b.Width) && Near(a.Thick, b.Thick);
 
             public static bool Same(in Shape a, in Shape b) =>
@@ -259,6 +295,13 @@ namespace TumbangPreso.Map
         public float KillPlaneY = DefaultKillPlaneY;
         /// <summary>The furthest walking edge from the can in any layout, metres: the break camera frames it.</summary>
         public float Radius = 22.0f;
+        /// <summary>
+        /// A STONE STAGE (2026-10-12, the Payo map): the same stage, layouts, breaks and fall, with none of the
+        /// stadium. True: no show, ambience, crowd sound, screens or opening film installs itself (`Start`,
+        /// `ArenaFx.Awake`, `ArenaIntro.Ensure`), and the taya's box is the game's own square, not this map's
+        /// round one. False, the default and what every Arena scene saved, is the Arena exactly as it was.
+        /// </summary>
+        public bool Stone;
         /// <summary>The lowest underside of any piece in any layout: a body in the air under it has nothing to land on.</summary>
         public float LowestUnderside = -1.0f;
         /// <summary>How far a leaving piece sinks into the shaft and an arriving one rises from, metres.</summary>
@@ -484,7 +527,9 @@ namespace TumbangPreso.Map
 
             Physics.SyncTransforms();
             // The taya's box on this layout: round, and as wide as this layout's middle (`BoxRadiusFor`).
-            Core.Confinement.Use(true, BoxRadiusFor(Layouts[layout] != null ? Layouts[layout].Name : null));
+            // A stone stage keeps the square every other map has.
+            if (Stone) Core.Confinement.Reset();
+            else Core.Confinement.Use(true, BoxRadiusFor(Layouts[layout] != null ? Layouts[layout].Name : null));
             Core.Confinement.Touch();
             LayoutApplied?.Invoke(layout);
 
@@ -504,6 +549,8 @@ namespace TumbangPreso.Map
         /// themselves here if the scene was built before they existed.</summary>
         private void Start()
         {
+            // A stone stage carries what it wants in its own scene: nothing of the stadium installs itself there.
+            if (Stone) return;
             ArenaFx.Ensure();
             // The screens' cards in play install themselves too, so a scene built earlier has them.
             if (GetComponent<ArenaScreens>() == null) gameObject.AddComponent<ArenaScreens>();
@@ -750,7 +797,8 @@ namespace TumbangPreso.Map
             if (Shape.Same(a, b)) return Motion.Still;
 
             bool authored = IsAuthored(piece, from) || IsAuthored(piece, to);
-            if (!authored && a.IsRamp == b.IsRamp && PieceMaterials != null && PieceMaterials.Length > 0) return Motion.Morph;
+            // Stone does not change shape: a block turns (for a block, only rises or drops) or swaps, never morphs.
+            if (!authored && !a.IsBlock && !b.IsBlock && a.IsRamp == b.IsRamp && PieceMaterials != null && PieceMaterials.Length > 0) return Motion.Morph;
             return Shape.SameSolid(a, b) ? Motion.Turn : Motion.Swap;
         }
 
@@ -892,6 +940,18 @@ namespace TumbangPreso.Map
             if (!shape.Exists) return 0;
 
             int count = 0;
+            if (shape.IsBlock)
+            {
+                // Its middle, then its four quarter points.
+                into[count++] = transform.TransformPoint(new Vector3(shape.X, shape.HeightAt(shape.X, shape.Z), shape.Z));
+                for (int k = 0; k < 4 && count < into.Length; k++)
+                {
+                    float px = shape.X + shape.SX * 0.25f * (k % 2 == 0 ? 1.0f : -1.0f), pz = shape.Z + shape.SZ * 0.25f * (k < 2 ? 1.0f : -1.0f);
+                    into[count++] = transform.TransformPoint(new Vector3(px, shape.HeightAt(px, pz), pz));
+                }
+                return count;
+            }
+
             if (shape.IsRamp)
             {
                 int along = Mathf.Min(into.Length, 2);
@@ -1060,7 +1120,7 @@ namespace TumbangPreso.Map
                 if (piece == null || piece.Shapes == null || Applied >= piece.Shapes.Length) continue;
 
                 var shape = piece.Shapes[Applied];
-                if (!shape.Exists || shape.IsRamp || shape.Bonus) continue;
+                if (!shape.Exists || shape.Sloped || shape.Bonus) continue;
 
                 Vector3 near = shape.Nearest(local.x, local.z, StandInset);
                 float distance = (near.x - local.x) * (near.x - local.x) + (near.z - local.z) * (near.z - local.z);

@@ -1,0 +1,72 @@
+{
+ "gong_rack": {
+  "triangles": 3062,
+  "kb": 685,
+  "open_edges": 0,
+  "size": [
+   2.78,
+   1.86,
+   0.83
+  ],
+  "ground": 0.0,
+  "objects": [
+   "gong_rack"
+  ]
+ },
+ "spears_shield": {
+  "triangles": 1596,
+  "kb": 617,
+  "open_edges": 0,
+  "size": [
+   1.49,
+   2.51,
+   0.6
+  ],
+  "ground": 0.0,
+  "objects": [
+   "spears_shield"
+  ]
+ },
+ "hagabi_bench": {
+  "triangles": 2198,
+  "kb": 635,
+  "open_edges": 0,
+  "size": [
+   4.5,
+   1.17,
+   0.86
+  ],
+  "ground": 0.0,
+  "objects": [
+   "hagabi_bench"
+  ]
+ },
+ "skull_post": {
+  "triangles": 1862,
+  "kb": 624,
+  "open_edges": 0,
+  "size": [
+   1.89,
+   2.66,
+   0.82
+  ],
+  "ground": 0.0,
+  "objects": [
+   "skull_post"
+  ]
+ },
+ "banner": {
+  "triangles": 2850,
+  "kb": 661,
+  "open_edges": 0,
+  "size": [
+   1.67,
+   5.54,
+   0.95
+  ],
+  "ground": 0.0,
+  "objects": [
+   "banner"
+  ]
+ }
+}

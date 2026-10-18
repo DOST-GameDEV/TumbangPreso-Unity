@@ -60,11 +60,22 @@ namespace TumbangPreso.Visual
             VfxRenderTag.Own(renderer.gameObject, material);
         }
 
+        /// <summary>
+        /// ⚠️ ONE SWITCH BETWEEN TWO WATER WALLS. Off, the wall is the folded sheet built below (`BuildWall`, `Wall`), as it
+        /// has been. On, it is the falling curtain of the effects study (`RafiWallCurtain`, which stands `FxStudyRafiWall`
+        /// on the court). OFF until the owner has seen the new one filmed on a map. Read when a wall is built, so a wall
+        /// already standing keeps the look it was born with. Look only: the rule, the timing and the wire are untouched.
+        /// </summary>
+        public static bool NewWall = false;
+        private RafiWallCurtain _curtain;
+        /// <summary>The new wall, when this one was built as it (a film poses its fall and splash through this).</summary>
+        public RafiWallCurtain Curtain => _curtain;
         private const int WallColumns=13, WallRows=6;
         private static readonly float[] WallHeight={0,.06f,.26f,.74f,1,.94f};
         private static readonly float[] WallFold={-.23f,-.04f,0,.015f,-.055f,-.16f};
         private void BuildWall()
         {
+            if (NewWall) { _curtain = RafiWallCurtain.Build(this, _state); return; }
             var surface=new GameObject("FoldedWaterCurtain");surface.transform.SetParent(transform,false);
             _mesh=new Mesh { name="RafiWaterCurtain" };_mesh.MarkDynamic();
             surface.AddComponent<MeshFilter>().sharedMesh=_mesh;
@@ -109,6 +120,7 @@ namespace TumbangPreso.Visual
 
         private void Wall(float age,float fade)
         {
+            if (_curtain != null) { _curtain.Pose(age, _state); return; }
             float rise=Mathf.SmoothStep(0,1,Mathf.Clamp01(age/Core.RafiRules.WallGather));
             float drain=_state.Split?Mathf.SmoothStep(0,1,Mathf.Clamp01((age-_state.FirstScale)/.25f)):0;
             for(int x=0;x<WallColumns;x++)
@@ -310,6 +322,7 @@ namespace TumbangPreso.Visual
         }
         private void Tint(Renderer renderer, Color colour)
         { _block.Clear(); _block.SetColor("_Color", colour); _block.SetColor("_BaseColor", colour); _block.SetFloat("_FlowAge", _sampleAge); renderer.SetPropertyBlock(_block); }
-        private void OnDestroy() { if (_mesh != null) Destroy(_mesh); }
+        // (The new wall is told its field has gone and at what age: it falls and splashes after that on its own.)
+        private void OnDestroy() { if (_curtain != null) _curtain.Release(_sampleAge, _state); if (_mesh != null) Destroy(_mesh); }
     }
 }

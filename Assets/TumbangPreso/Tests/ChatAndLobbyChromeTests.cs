@@ -380,7 +380,10 @@ namespace TumbangPreso.Tests
             //91 names the scoring body in `Score` and lengthens Phaister's introduction to 6.4 s (VOODOO DOLL v7).
             //92 makes Phaister's introduction 6.35 s (THE TWIST) and the doll 0.5 of a player's speed.
             //93 makes Phaister's introduction 6.0 s (it ends on the doll's stare).
-            Assert.AreEqual(93, NetSession.ProtocolVersion,
+            //94 to 158 are recorded in `NetSession` beside the number; this line was not moved with them, so this test had
+            //been red since 94. It is moved now, deliberately, with:
+            //159 makes Amihan's Whirlwind hit a circle under one whirlwind (radius 2.1 m, born 2.4 m ahead), not a bowed band.
+            Assert.AreEqual(159, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

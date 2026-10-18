@@ -1,0 +1,224 @@
+using System.Collections.Generic;
+using TumbangPreso.Core;
+using TumbangPreso.Visual;
+using UnityEngine;
+
+namespace TumbangPreso.Abilities
+{
+    /// <summary>
+    /// ⚠️⚠️ WHIRLWIND'S GALE: THE GAMEPLAY HALF. `AmihanGaleFront` draws it; this decides who it hit.
+    ///
+    /// Owner's table: *"Create an arc-shaped gale that inflicts Whirled on players it hits as it
+    /// swiftly moves forward. The gale lasts 2.5 s."* It exists on every peer (the cast is
+    /// replicated, and a rejoiner gets it from `WorldEffectSnapshot`), it moves on its own clock
+    /// from its accepted origin, and ONLY THE HOST resolves contact, by distance to the arc
+    /// (`CLAUDE.md` § 4: contact by distance, never a trigger volume). The status the host applies
+    /// reaches everybody through `SyncUnit`, and the body tell and the contact burst are drawn on
+    /// every peer from that, so the picture and the rule are one event.
+    /// </summary>
+    public sealed class AmihanGale : MonoBehaviour
+    {
+        public int OwnerSlot { get; private set; } = -1;
+        public Vector3 Origin { get; private set; }
+        public Vector3 Forward { get; private set; }
+        public float Duration => AmihanRules.WhirlwindSeconds;
+        public float Remaining => Mathf.Max(0.0f, Duration - _age);
+
+        private float _age;
+        private readonly HashSet<int> _hit = new HashSet<int>();
+        private AmihanGaleFront _front;
+
+        public static AmihanGale Spawn(Vector3 origin, Vector3 forward, int ownerSlot, float age = 0.0f)
+        {
+            forward.y = 0.0f;
+            forward = forward.sqrMagnitude > 0.001f ? forward.normalized : Vector3.forward;
+            var go = new GameObject("AmihanGale");
+            var gale = go.AddComponent<AmihanGale>();
+            gale.OwnerSlot = ownerSlot; gale.Origin = origin; gale.Forward = forward;
+            gale._front = AmihanGaleFront.Build(go.transform, origin, forward, AmihanRules.WhirlwindSeconds,
+                AmihanRules.WhirlwindSpeed, AmihanRules.WhirlwindStart, AmihanRules.WhirlwindRadius * 2.0f);
+            gale._age = Mathf.Clamp(age, 0.0f, AmihanRules.WhirlwindSeconds);
+            gale._front.StepTo(gale._age);
+            return gale;
+        }
+
+        private void Update()
+        {
+            _age += Time.deltaTime;
+            if (_front != null) _front.StepTo(_age);
+            if (_age >= Duration) Destroy(gameObject);
+        }
+
+        private void FixedUpdate()
+        {
+            if (!NetAuthority.ShouldResolve()) return;
+            var round = GameServices.Round;
+            if (round == null || !round.RoundActive) return;
+
+            // ⚠️ A CIRCLE UNDER THE WHIRLWIND, SWEPT FROM LAST STEP TO THIS ONE (`AmihanRules.WhirlwindCatches` has the
+            // rule and why it is swept; it was a bowed band until the gale became one whirlwind). ⚠️ ONCE A CAST: a body
+            // it has caught is in `_hit` and is passed over for the rest of this gale, however long it stands inside.
+            float now = AmihanRules.WhirlwindCentre(_age);
+            float before = AmihanRules.WhirlwindCentre(_age - Time.fixedDeltaTime);
+            Vector3 right = Vector3.Cross(Vector3.up, Forward);
+
+            foreach (var p in round.Players)
+            {
+                if (p == null || p.PlayerSlot == OwnerSlot || _hit.Contains(p.PlayerSlot)) continue;
+                Vector3 d = p.transform.position - Origin; d.y = 0.0f;
+                if (!AmihanRules.WhirlwindCatches(Vector3.Dot(d, right), Vector3.Dot(d, Forward), before, now)) continue;
+                // A body 2.8 m up is over the gale, not in it.
+                if (p.IsAloft) continue;
+
+                _hit.Add(p.PlayerSlot);
+                p.ApplyWhirled();
+            }
+        }
+
+        /// <summary>This gale as a world-effect field, for a rejoiner and for the replay.</summary>
+        public Net.WorldEffectSnapshot.Field Capture() => new Net.WorldEffectSnapshot.Field
+        {
+            Type = Net.WorldEffectSnapshot.Kind.Gale, Source = gameObject,
+            Position = Origin, Forward = Forward, Duration = Duration, Remaining = Remaining,
+            Radius = AmihanRules.WhirlwindRadius, Owner = OwnerSlot,
+        };
+    }
+
+    /// <summary>
+    /// ⚠️⚠️ STORM SURGE: THE GAMEPLAY HALF. `AmihanStormFan` draws it; this pushes.
+    ///
+    /// Owner's table: *"After a 2.5 s delay, unleash a map-wide, fan-shaped wind in the target
+    /// direction that greatly pushes back all players and slippers caught inside, almost to the
+    /// edge of the arena."* And on the distance: *"very far, the rsn for this is we want them to
+    /// fall off the map or pushed to the edge"* (2026-09-25).
+    ///
+    /// It is spawned on every peer at the START of the 2.5 s (the ultimate's wind-up), so the
+    /// telegraph every player reads is the real fan, and it is released by the ultimate's
+    /// activation at the END of it, on the same clock. Only the host pushes; a body the host does
+    /// not simulate is carried by the `Carry` message (`CharacterMotor.ApplyResolvedCarry`), and a
+    /// slipper's position already streams to everyone.
+    /// </summary>
+    public sealed class AmihanStorm : MonoBehaviour
+    {
+        public int OwnerSlot { get; private set; } = -1;
+        public Vector3 Origin { get; private set; }
+        public Vector3 Forward { get; private set; }
+        public float Age => _age;
+        public static float FanRange => AmihanRules.StormSurgeRangeForCourt(
+            AIController.PlayableMinX, AIController.PlayableMaxX,
+            AIController.PlayableMinZ, AIController.PlayableMaxZ);
+        public bool Released => _released;
+        /// <summary>How far the shared cutscene's story clock runs after the release (`HeroIntroductionScene.AmihanStoryAfterRelease`; v6 slows it through the hang, 4.55 to 5.6 s real):
+        /// the live fan picks up from that age, so the hand-back never replays the release.</summary>
+        public const float CutsceneTail = 0.55f;
+
+        private float _age;
+        private bool _released;
+        private HeroAbility _source;
+        private AmihanStormFan _fan;
+
+        public static AmihanStorm Spawn(Vector3 origin, Vector3 forward, int ownerSlot, HeroAbility source, float age = 0.0f)
+        {
+            forward.y = 0.0f;
+            forward = forward.sqrMagnitude > 0.001f ? forward.normalized : Vector3.forward;
+            var go = new GameObject("AmihanStorm");
+            var storm = go.AddComponent<AmihanStorm>();
+            storm.OwnerSlot = ownerSlot; storm.Origin = origin; storm.Forward = forward; storm._source = source;
+            storm._fan = AmihanStormFan.Build(go.transform, origin, forward, AmihanRules.StormSurgeGatherSeconds);
+            storm._age = Mathf.Max(0.0f, age);
+            storm._fan.StepTo(storm._age);
+            // The gather is heard only while it is still gathering (v3.2 spawns it already released, after the cutscene).
+            if (storm._age < AmihanRules.StormSurgeGatherSeconds) GameServices.Audio?.PlayAt("sfx_amihan_storm_gather", origin);
+            return storm;
+        }
+
+        /// <summary>
+        /// True if <paramref name="point"/> is inside the fan: within the half angle either side of
+        /// the direction, and within the map-wide range. The same test for bodies and slippers.
+        /// </summary>
+        public static bool InsideFan(Vector3 origin, Vector3 forward, Vector3 point)
+        {
+            Vector3 d = point - origin; d.y = 0.0f;
+            if (d.sqrMagnitude < 0.04f) return false; // her own spot
+            if (d.magnitude > FanRange) return false;
+            // v3.2: everyone close round her is taken too, whichever way they stand.
+            if (d.magnitude <= AmihanRules.StormSurgeAroundRadius) return true;
+            return Vector3.Angle(forward, d) <= AmihanRules.StormSurgeHalfAngle;
+        }
+
+        /// <summary>
+        /// The direction a body at <paramref name="point"/> is blown: outward from her along the fan,
+        /// leaning on the fan's own direction so nobody is thrown sideways out of it.
+        /// </summary>
+        public static Vector3 BlowDirection(Vector3 origin, Vector3 forward, Vector3 point)
+        {
+            Vector3 d = point - origin; d.y = 0.0f;
+            Vector3 radial = d.sqrMagnitude > 0.01f ? d.normalized : forward;
+            // v3.2: in front it leans on her facing; caught BEHIND her (the ring round her) it blows straight out, away from her.
+            float ahead = Mathf.Clamp01(Vector3.Dot(radial, forward) * 2.0f);
+            Vector3 dir = radial * (1.0f - 0.4f * ahead) + forward * (0.4f * ahead);
+            return dir.sqrMagnitude > 0.001f ? dir.normalized : forward;
+        }
+
+        /// <summary>The wind leaves: called by the ultimate's activation at the end of the delay.</summary>
+        public void Release()
+        {
+            if (_released) return;
+            _released = true;
+            _age = Mathf.Max(_age, AmihanRules.StormSurgeGatherSeconds);
+            _fan?.StepTo(_age);
+            GameServices.Audio?.PlayAt("sfx_amihan_storm_release", Origin);
+            PunchNearbyCamera();
+            if (!NetAuthority.ShouldResolve()) return;
+            var round = GameServices.Round;
+            if (round == null) return;
+
+            float hold = AmihanRules.StormSurgeHoldSeconds;
+            foreach (var p in round.Players)
+            {
+                if (p == null || p.PlayerSlot == OwnerSlot) continue;
+                if (!InsideFan(Origin, Forward, p.transform.position)) continue;
+                Vector3 dir = BlowDirection(Origin, Forward, p.transform.position);
+                // ⚠️ THE CAN IS NOT A SLIPPER AND IS NOT TOUCHED. The table names players and
+                // slippers; moving the objective would be a third thing nobody asked for.
+                p.ApplyWhirled();
+                p.ApplyResolvedCarry(dir * AmihanRules.StormSurgeSpeed + Vector3.up * AmihanRules.StormSurgeLift, hold);
+            }
+            foreach (var shoe in FindObjectsByType<Slipper>())
+                if (shoe != null && shoe.gameObject.activeInHierarchy
+                    && shoe.State != SlipperState.Held && InsideFan(Origin, Forward, shoe.transform.position))
+                {
+                    Vector3 velocity = BlowDirection(Origin, Forward, shoe.transform.position)
+                        * AmihanRules.StormSurgeSlipperSpeed + Vector3.up * AmihanRules.StormSurgeLift;
+                    // Existing host flight owns collision, bounds, landing and snapshots.
+                    // An environmental launch must not grant the caster another player's shot.
+                    shoe.HostThrow(null, shoe.transform.position, velocity);
+                }
+        }
+
+        private void PunchNearbyCamera()
+        {
+            var camera = Camera.main;
+            if (camera == null) return;
+            var rig = camera.GetComponent<CameraSystem.CameraRig>();
+            float distance = Vector3.Distance(camera.transform.position, Origin);
+            float falloff = Mathf.InverseLerp(30.0f, 4.0f, distance);
+            bool inFan = InsideFan(Origin, Forward, camera.transform.position);
+            if (inFan) falloff = Mathf.Max(falloff, 0.85f);
+            if (falloff <= 0.01f) return;
+            rig?.ImpactPunch(Forward, 1.3f * falloff);
+            rig?.Shake(0.28f * falloff, 1.0f);
+        }
+
+        private void Update()
+        {
+            _age += Time.deltaTime;
+            if (_fan != null) _fan.StepTo(_age);
+            // ⚠️ A GATHER WHOSE ULTIMATE WAS RESET (a round ending mid-delay) GOES WITH IT, so no
+            // fan is left on the road telegraphing a wind that will never come.
+            if (!_released && _source != null && !_source.IsWindingUp && _age > 0.1f) { Destroy(gameObject); return; }
+            if (_fan != null && _age >= _fan.LifeSeconds) Destroy(gameObject);
+        }
+
+    }
+}

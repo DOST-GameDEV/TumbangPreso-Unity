@@ -37,7 +37,27 @@ namespace TumbangPreso.Visual
 
         public float LifeSeconds => Life;
 
-        public static AmihanDashWake Build(Vector3 from, Vector3 to, Transform parent = null)
+        /// <summary>
+        /// ⚠️ ONE SWITCH BETWEEN TWO DRIFTS. On, the dash is drawn by the effects study's drift (`FxStudyDrift`: the whirlwind's
+        /// noise as a body along the dash with the approved trail ribbons wound round it, in the whirlwind's colours).
+        /// Off, it is the wake below exactly as it was. ON IN THIS WORKTREE, at the owner's word of the new one: "LET ME
+        /// SEE IT IN GAME". TO GO BACK, MAKE THE LINE BELOW `false`. It is a look only: the dash, who it hits and when
+        /// are `AmihanHeroKit`'s and know nothing of this.
+        /// </summary>
+        public static bool Streak = true;
+        private FxStudyDrift _drift;
+        // ⚠️ THE STREAK'S FRONT IS HER BODY. The first one ran the planned 5 m in the dash's nominal time, while she is carried
+        // for part of that and then slides to a stop, and may be stopped short by a wall or a body: it got ahead of her
+        // and ended past her ("it should also only go as far as amihan moves"). So while the dash is live the wake reads
+        // where she IS along its line each frame (her transform, which every peer has), never lets the front go back,
+        // and when she has not advanced for a tenth of a second it is over: the front stays there and the streak unwinds.
+        // A film or a replay hands no body; then the front follows the planned line in the dash's own time.
+        private Transform _who;
+        private Vector3 _lineFrom, _lineDir;
+        private float _planned, _front, _movedAt, _stoppedAt = -1.0f;
+        private void OnDestroy() { if (_drift != null) { _drift.Dispose(); _drift = null; } }
+
+        public static AmihanDashWake Build(Vector3 from, Vector3 to, Transform parent = null, Transform who = null)
         {
             var go = new GameObject("AmihanDashWake");
             if (parent != null) go.transform.SetParent(parent, true);
@@ -45,6 +65,18 @@ namespace TumbangPreso.Visual
             go.transform.position = from;
             var wake = go.AddComponent<AmihanDashWake>();
             wake._from = Vector3.zero; wake._to = to - from;
+            if (Streak)
+            {
+                // The study's drift is 5 m long down its own +z: turned down the dash and drawn out to the dash's real length.
+                Vector3 along = wake._to; along.y = 0.0f;
+                wake._drift = new FxStudyDrift(go.transform, AmihanWhirlwind.DayLight, false);
+                wake._drift.Root.localRotation = along.sqrMagnitude > 0.0001f ? Quaternion.LookRotation(along.normalized) : Quaternion.identity;
+                wake._who = who; wake._lineFrom = from; wake._planned = along.magnitude;
+                wake._lineDir = along.sqrMagnitude > 0.0001f ? along.normalized : Vector3.forward;
+                foreach (var renderer in go.GetComponentsInChildren<MeshRenderer>(true)) VfxRenderTag.Attach(renderer.gameObject);
+                wake.StepTo(0.0f);
+                return wake;
+            }
             Vector3 lift = Vector3.up * 0.85f;
             Vector3 axis = wake._to;
             for (int i = 0; i < 3; i++)
@@ -86,12 +118,32 @@ namespace TumbangPreso.Visual
             return wake;
         }
 
-        private void Update() { StepTo(_age + Time.deltaTime); if (_age >= Life) Destroy(gameObject); }
+        private void Update()
+        {
+            StepTo(_age + Time.deltaTime);
+            // (The streak lives until it has unwound where she stopped; the older wake has its fixed life.)
+            if (_drift != null ? (_stoppedAt >= 0.0f && _age - _stoppedAt > 0.65f) || _age > 2.5f : _age >= Life) Destroy(gameObject);
+        }
 
         public void StepTo(float seconds)
         {
             _age = Mathf.Max(0.0f, seconds);
             float t = _age;
+            if (_drift != null)
+            {
+                var lens = Camera.main;
+                if (_stoppedAt < 0.0f)
+                {
+                    float now = _who != null
+                        ? Mathf.Clamp(Vector3.Dot(_who.position - _lineFrom, _lineDir), 0.0f, _planned + 1.0f)
+                        : _planned * Mathf.Clamp01(t / Mathf.Max(0.05f, AmihanRules.QuickDashHoldSeconds * 1.3f));
+                    if (now > _front + 0.01f) { _front = now; _movedAt = t; }
+                    else if (t - _movedAt > 0.10f && t > 0.12f) _stoppedAt = _movedAt;
+                }
+                _drift.Pose(t, AmihanWhirlwind.StagedEye ?? (lens != null ? lens.transform.position : transform.position + new Vector3(0.0f, 1.6f, -6.0f)),
+                            _front / 5.0f, _stoppedAt < 0.0f ? -1.0f : t - _stoppedAt);
+                return;
+            }
             bool calm = WindVfx.Reduced;
             // The head races the body: 0 to 1 in 0.28 s (she covers 5 m in about 0.45 s, and the
             // air arrives first). The tail follows from 0.2 s and has caught up by 0.85 s.
@@ -469,6 +521,9 @@ namespace TumbangPreso.Visual
     }
 
     /// <summary>
+    /// ⚠️ THIS FRONT REDRAWN AS ONE WHIRLWIND (`AmihanWhirlwind`) IS BEHIND THE SWITCH `Whirlwind` BELOW, and is what is drawn unless
+    /// the owner has seen it. What follows describes the front as it is and has been, which is all still here.
+    ///
     /// WHIRLWIND, the gale: a curved front of layered ribbons rolling along the road, bright leading
     /// edge, lower and dimmer layers behind it, a dust skirt on the ground and cotton torn up into
     /// it. It moves on its own clock from its accepted origin, so every peer draws it in the same
@@ -489,6 +544,24 @@ namespace TumbangPreso.Visual
         private float _age, _life, _speed, _start;
         public float LifeSeconds => _life;
 
+        /// <summary>
+        /// ⚠️ ONE SWITCH BETWEEN TWO GALES. On, the front is drawn as one large whirlwind (`AmihanWhirlwind`, which
+        /// has the whole of why). Off, it is the front below exactly as it was: five ribbons, a skirt, three threads, a
+        /// spray and the cotton, which had direction and film passes of its own and is not thrown away. It is read
+        /// when a gale is BUILT, so a film can build one of each and lay them side by side. Where the front is and
+        /// how long it lives are the same either way: those are `AmihanGale`'s, not the look's.
+        ///
+        /// ⚠️ ON IN THIS WORKTREE, SO THAT A CAST IN PLAY DRAWS THEM. The owner, shown them on the bench: "i wanna see it in
+        /// game". TO GO BACK TO THE OLDER FRONT, MAKE THE LINE BELOW `false`: that one word is the whole of it. Nothing of
+        /// the rule, its timing or the wire knows which is drawn.
+        /// </summary>
+        public static bool Whirlwind = true;
+
+        private const float OlderWidth = 3.2f, OlderBow = 0.9f;
+        private AmihanWhirlwind _wind;
+        /// <summary>The whirlwinds this front is drawn as, or null when it was built as the older front.</summary>
+        public AmihanWhirlwind Wind => _wind;
+
         public static AmihanGaleFront Build(Transform parent, Vector3 origin, Vector3 forward, float life, float speed, float start, float width)
         {
             var go = new GameObject("AmihanGaleFront");
@@ -497,9 +570,18 @@ namespace TumbangPreso.Visual
             forward.y = 0.0f; fx._forward = forward.sqrMagnitude > 0.001f ? forward.normalized : Vector3.forward;
             fx._origin = origin; fx._life = life; fx._speed = speed; fx._start = start;
             // The front is an arc bowed forward: radius from the chord and the bow.
-            float bow = AmihanRules.WhirlwindBow, half = width * 0.5f;
+            // (The older front is a bowed arc 3.2 m across. The rule no longer has a bow or that width: it is a circle
+            // under the one whirlwind now. These are that drawing's own, kept so it still looks as it did.)
+            width = OlderWidth;
+            float bow = OlderBow, half = width * 0.5f;
             float radius = (half * half + bow * bow) / (2.0f * bow);
             float degrees = 2.0f * Mathf.Asin(Mathf.Clamp01(half / radius)) * Mathf.Rad2Deg;
+            if (Whirlwind)
+            {
+                fx._wind = AmihanWhirlwind.Build(go.transform, life);
+                fx.StepTo(0.0f);
+                return fx;
+            }
             for (int i = 0; i < 5; i++)
             {
                 // Five layers: the leading edge tallest and brightest, the later ones lower, a step
@@ -547,6 +629,10 @@ namespace TumbangPreso.Visual
 
         private void Update() { StepTo(_age + Time.deltaTime); }
 
+        // However a gale ends (its life over, a round cleared under it, a replay closed), its whirlwinds' own meshes and
+        // materials go with it. They are not the scene's, so nothing else would free them.
+        private void OnDestroy() { if (_wind != null) { _wind.Free(); _wind = null; } }
+
         public void StepTo(float seconds)
         {
             _age = Mathf.Clamp(seconds, 0.0f, _life);
@@ -554,6 +640,11 @@ namespace TumbangPreso.Visual
             var at = FrontAt(_origin, _forward, _speed, _start, t);
             transform.position = VfxShapes.GroundPoint(at);
             transform.rotation = Quaternion.LookRotation(_forward);
+            if (_wind != null)
+            {
+                _wind.Pose(t);
+                return;
+            }
             float phase = WindVfx.Reduced ? 0.0f : t * 7.0f;
             // Tell: the front unrolls from the middle out in the first 0.18 s. Dissipate: from
             // 2.0 s it frays (thins) and the upper layers drop away first.
@@ -591,7 +682,7 @@ namespace TumbangPreso.Visual
                 _crest[i].Set((0.85f - i * 0.15f) * (1.0f - fray), phase * 1.8f + i, 0.5f + open * 0.5f, 0.5f - open * 0.5f, 0.2f + fray * 0.7f);
             _spray.Set(0.7f * open * (1.0f - fray), phase * 2.0f, 1, 0, 0.3f + fray * 0.7f);
             _motif.Step(Mathf.Repeat(t / 0.9f, 1.0f), 0.85f * (1.0f - fray), (start, drift, u) =>
-                new Vector3((start.x) * AmihanRules.WhirlwindWidth, 0.15f + u * (0.8f + drift.y), -0.2f - u * 1.4f));
+                new Vector3((start.x) * OlderWidth, 0.15f + u * (0.8f + drift.y), -0.2f - u * 1.4f));
         }
     }
 

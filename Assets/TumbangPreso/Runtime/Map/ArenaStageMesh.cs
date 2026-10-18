@@ -72,6 +72,7 @@ namespace TumbangPreso.Map
             foreach (var list in Triangles) list.Clear();
 
             if (shape.Kind == ArenaStage.ShapeKind.Ramp) Ramp(shape, visual ? 0.0f : Seam);
+            else if (shape.Kind == ArenaStage.ShapeKind.Block) Block(shape);
             else Sector(shape);
 
             mesh.Clear();
@@ -188,6 +189,56 @@ namespace TumbangPreso.Map
                 Face(Side, -along, Grid[k, first], Grid[k + 1, first], Grid[k + 1, first] + drop, Grid[k, first] + drop);
                 Face(Side, along, Grid[k, last], Grid[k + 1, last], Grid[k + 1, last] + drop, Grid[k, last] + drop);
             }
+        }
+
+        // ------------------------------------------------------------------ block (the Payo map's monolith)
+
+        /// <summary>How far down from a block's top its dressed cap reaches, and one tread's rise, metres.</summary>
+        public const float BlockCap = 0.9f, BlockTread = 0.15f;
+
+        /// <summary>
+        /// A rectangular monolith: a level top at `Top`, or (`Stair`) a flight of treads from `Top` down to
+        /// `Top1`, over a shaft `Thick` long. ⚠️ ITS THREE SUBMESHES ARE NOT A ROUND PIECE'S: `Top` is every face a
+        /// body walks on, `Side` the dressed CAP (the walls' top `BlockCap` and every riser), and `Under` the
+        /// SHAFT below the cap with its foot, so the shaft can be drawn darker than the cap. Every box keeps its own
+        /// corners. Its collider is not made here: `PayoSceneBuilder` gives a block solid boxes.
+        /// </summary>
+        private static void Block(in ArenaStage.Shape s)
+        {
+            float x0 = s.X - s.SX * 0.5f, x1 = s.X + s.SX * 0.5f, z0 = s.Z - s.SZ * 0.5f, z1 = s.Z + s.SZ * 0.5f;
+            bool stair = s.Stair != 0 && s.Top - s.Top1 > 0.01f;
+            float body = stair ? s.Top1 : s.Top, foot = s.Top - Mathf.Max(s.Thick, MinThick), cap = Mathf.Max(foot, body - BlockCap);
+
+            if (!stair) Face(Top, Vector3.up, new Vector3(x0, body, z0), new Vector3(x0, body, z1), new Vector3(x1, body, z1), new Vector3(x1, body, z0));
+            Walls(Side, x0, x1, z0, z1, body, cap);
+            if (cap > foot + 0.001f) Walls(Under, x0, x1, z0, z1, cap, foot);
+            Face(Under, Vector3.down, new Vector3(x0, foot, z0), new Vector3(x0, foot, z1), new Vector3(x1, foot, z1), new Vector3(x1, foot, z0));
+            if (!stair) return;
+
+            // The flight: treads of equal run, the highest at the block's high edge. Each tread is its own box
+            // standing on the body, so its top is walked on and its four walls are cap.
+            int n = Mathf.Max(1, Mathf.RoundToInt((s.Top - s.Top1) / BlockTread));
+            bool alongX = s.Stair == 1 || s.Stair == 2, rising = s.Stair == 2 || s.Stair == 4;
+            float from = alongX ? x0 : z0, run = (alongX ? s.SX : s.SZ) / n;
+            for (int i = 0; i < n; i++)
+            {
+                // Tread i counts from the low coordinate; its height falls toward the stair's low end.
+                int down = rising ? n - 1 - i : i;
+                float top = Mathf.Lerp(s.Top, s.Top1, down / (float)n);
+                float a = from + run * i, b = a + run;
+                float tx0 = alongX ? a : x0, tx1 = alongX ? b : x1, tz0 = alongX ? z0 : a, tz1 = alongX ? z1 : b;
+                Face(Top, Vector3.up, new Vector3(tx0, top, tz0), new Vector3(tx0, top, tz1), new Vector3(tx1, top, tz1), new Vector3(tx1, top, tz0));
+                if (top > body + 0.001f) Walls(Side, tx0, tx1, tz0, tz1, top, body);
+            }
+        }
+
+        /// <summary>The four upright walls of a box between two heights.</summary>
+        private static void Walls(int submesh, float x0, float x1, float z0, float z1, float top, float bottom)
+        {
+            Face(submesh, Vector3.left, new Vector3(x0, top, z0), new Vector3(x0, top, z1), new Vector3(x0, bottom, z1), new Vector3(x0, bottom, z0));
+            Face(submesh, Vector3.right, new Vector3(x1, top, z0), new Vector3(x1, top, z1), new Vector3(x1, bottom, z1), new Vector3(x1, bottom, z0));
+            Face(submesh, Vector3.back, new Vector3(x0, top, z0), new Vector3(x1, top, z0), new Vector3(x1, bottom, z0), new Vector3(x0, bottom, z0));
+            Face(submesh, Vector3.forward, new Vector3(x0, top, z1), new Vector3(x1, top, z1), new Vector3(x1, bottom, z1), new Vector3(x0, bottom, z1));
         }
 
         // ------------------------------------------------------------------ helpers

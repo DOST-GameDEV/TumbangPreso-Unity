@@ -125,12 +125,19 @@ namespace TumbangPreso.Abilities
             }
             public override bool CanActivate(AbilityContext ctx) => base.CanActivate(ctx) && !IsActive && !ctx.Motor.IsFlying;
             public override void Activate(AbilityContext ctx)
-            { _secondCut = false; _followup = false; _movementKnown = true; _movementRestored = false; base.Activate(ctx); }
+            {
+                _secondCut = false; _followup = false; _movementKnown = true; _movementRestored = false;
+                // The look alone, on every peer that hears the cast: the tell is drawn from the press.
+                Visual.ZackCircuitFlash.Tell(ctx);
+                base.Activate(ctx);
+            }
             public override void Reactivate(AbilityContext ctx)
             {
                 if (ctx?.Motor == null || (!ctx.IsApprovedReplay && !ReactivateReady)) return;
                 float cooldown = CooldownRemaining;
                 _secondCut = true; _followup = false; _movementKnown = true; _movementRestored = false;
+                // The second cut is a cast of its own and is drawn as one.
+                Visual.ZackCircuitFlash.Tell(ctx);
                 base.Activate(ctx); CooldownRemaining = cooldown;
             }
             protected override void OnActivate(AbilityContext ctx)
@@ -139,6 +146,8 @@ namespace TumbangPreso.Abilities
                 var right = Vector3.Cross(Vector3.up, ctx.Forward).normalized;
                 float side = Vector3.Dot(ctx.AimPoint - ctx.Position, right) < 0 ? -1 : 1;
                 ctx.Motor.ApplyImpulse(right * side * CutSpeed);
+                // The look alone: his afterimage and the streak that follows his body. It decides nothing.
+                Visual.ZackCircuitFlash.Cut(ctx.Motor, right * side);
                 ctx.Motor.Commit(RecoverWindow);
                 _followup = !_secondCut && _kit.IsOverclocked;
                 DurationRemaining = _followup ? FollowupSeconds : RecoverWindow;

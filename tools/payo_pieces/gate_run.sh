@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# One round for one gate piece: build, weld, review, sheet.   bash tools/payo_pieces/gate_run.sh <piece> <version> [note]
+set -eo pipefail
+PY=/c/Users/StarX/AppData/Local/Python/pythoncore-3.14-64/python.exe
+B="/c/Program Files/Blender Foundation/Blender 5.0/blender.exe"
+$PY tools/payo_pieces/gate_build.py "$1" | tail -3
+"$B" -b --python tools/payo_pieces/gate_weld.py -- "$1" 2>&1 | grep -E "WELDED|OPEN|Error|Traceback|rror" || true
+"$B" -b --python tools/payo_pieces/gate_review.py -- "$1" 2>&1 | grep -E "Error|Traceback|rror|line [0-9]" || true
+$PY tools/payo_pieces/gate_build.py sheet "$1" "$2" "$3"
