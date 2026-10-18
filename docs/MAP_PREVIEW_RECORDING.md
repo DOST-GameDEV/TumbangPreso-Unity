@@ -7,7 +7,7 @@ the live camera. Login warms clip metadata and first-frame posters asynchronousl
 only the selected background opens a decoder. Full map scenes are not warmed
 solely to display these recordings.
 
-The October18 active pool is Eskinita, Maynila (`IlalimNgTulay`), Tawi-Tawi
+The October18 active pool is Tondo (`Eskinita`), Ermita (`IlalimNgTulay`), Sitangkai
 (`LagoonCove`), BGC (`Kanto`) and The Philippine Arena (`Arena`). Bayan Plaza and
 Sa Bubong retain their source/assets but are outside selection, rotation and
 enabled build scenes. The active Eskinita scene is the stepped alley. Its old

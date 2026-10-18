@@ -1,5 +1,10 @@
 # Map preview refresh checkpoint, October18
 
+Latest owner correction: display Tondo, Ermita and Sitangkai in place of Eskinita,
+Maynila and Tawi-Tawi. BGC and The Philippine Arena stay. Both registries and
+their expected-name check agree; IDs/order/camera/media are unchanged. The32-case
+native evidence below predates this label-only correction.
+
 Owner requested old Eskinita host preview replacement, an all-map preview check
 and the current map names. Pulled fe1daa0d8 on ASTRAReworks. Seven selectable maps
 all have recorded media; the old Lagoon is vaulted. Owner chose Eskinita, Maynila,

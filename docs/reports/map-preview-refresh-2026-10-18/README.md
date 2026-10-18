@@ -1,5 +1,10 @@
 # Current map previews and five-map pool
 
+Later October18 name-only correction: Eskinita is displayed as Tondo, Maynila as
+Ermita and Tawi-Tawi as Sitangkai. The footage, map IDs/order and camera remain
+unchanged. The names in the retained native captures below record the earlier
+approved labels, before this correction.
+
 October18 owner report: Host Game showed the old flat Eskinita although the
 playable map is the stepped alley. Pulled ASTRAReworks fe1daa0d8 before editing.
 Map selection already used recorded videos; stale footage and posters caused

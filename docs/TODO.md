@@ -17,6 +17,8 @@ check all selectable maps use recordings of their current geometry.
 - [x] Native32 distinct cases pass: EditMode22, media5 and selection5; final
   ballot2/2 repeat after caption/status layout correction. Both720p/1080p views
   inspected. [Evidence and limits](reports/map-preview-refresh-2026-10-18/README.md).
+- [x] Later October18 owner rename: Eskinita to Tondo, Maynila to Ermita and
+  Tawi-Tawi to Sitangkai. Labels only; map IDs, order, camera and recordings stay.
 
 ### DANTE-MOUNTAIN-FORM-1018: 30 s of rock armour after CONTINENTAL DRIFT (IN PROGRESS)
 

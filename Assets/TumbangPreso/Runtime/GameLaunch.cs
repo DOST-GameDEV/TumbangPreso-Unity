@@ -39,13 +39,13 @@ namespace TumbangPreso
 
         public static readonly MapEntry[] Maps =
         {
-            new MapEntry("eskinita", "ESKINITA",
+            new MapEntry("eskinita", "TONDO",
                 "Urban side street. Sari-sari, sampay, kanal.", SceneFlow.Eskinita),
-            new MapEntry("ilalim_ng_tulay", "MAYNILA",
+            new MapEntry("ilalim_ng_tulay", "ERMITA",
                 "Manila street court. Viaduct pillars and neighbourhood shops.", SceneFlow.IlalimNgTulay),
             // "lagoon" keeps its id so a saved preference follows the Lagoon Court to its reworked
             // scene; the first Lagoon is vaulted (SceneFlow.Lagoon).
-            new MapEntry("lagoon","TAWI-TAWI",
+            new MapEntry("lagoon","SITANGKAI",
                 "A cove court in the rocks. Stilt village, reefs and a sunset sea.",SceneFlow.LagoonCove),
             new MapEntry("kanto","BGC",
                 "City park block. Jeepney stop, traffic lights, busy streets.",SceneFlow.Kanto),
