@@ -86,6 +86,20 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
+        public void ANewRoomFillsEverySeatAndStillLetsTheHostRemoveOne()
+        {
+            var rules = CustomGameRules.Defaults(GameMode.HeroStrike);
+            CustomGameRules.FillEmptySeatsWithBots(rules);
+            for (int seat = 0; seat < Balance.PlayerCount; seat++)
+                Assert.True(CustomGameRules.SeatHasBot(rules, seat));
+
+            CustomGameRules.SetSeatBot(rules, 2, false);
+            Assert.False(CustomGameRules.SeatHasBot(rules, 2));
+            Assert.True(CustomGameRules.SeatHasBot(rules, 3));
+            Assert.Equal(rules.BotSeats, CustomGameRules.Parse(CustomGameRules.ToWire(rules), GameMode.HeroStrike).BotSeats);
+        }
+
+        [Fact]
         public void AMaskWiderThanTheTableIsClamped()
         {
             var got = CustomGameRules.Parse("0|0|8|90|0|3|3|1|0|0|0|255", GameMode.Classic);

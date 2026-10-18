@@ -6076,7 +6076,9 @@ Implementation order within UX-1:
   is the door to that seat, with a MOVE HERE / SWITCH hint on hover and focus; SIT HERE is
   replaced by host-only ADD BOT / REMOVE BOT per seat, carried as `CustomRules.BotSeats`
   (appended wire field, no protocol bump); START GAME is always available to a custom-room
-  host and the "Bots are off" line is gone. ⚠️ OPEN: a seat left OPEN starts the match as a
+  host and the "Bots are off" line is gone. 2026-10-19: a new room opens with a bot in every
+  empty seat; a joining player takes a bot's seat (bots never hold a lobby seat) and the bot
+  returns if they leave before the match. ⚠️ OPEN: a seat the host empties starts the match as a
   body with no input source, so it stands still, and stands still as taya on its round.
   Decide whether a custom room should skip building it (the offline `soloPractice` path in
   `MatchInstaller.InstallMatch` already does) and prove it in a two-peer native run. Not yet

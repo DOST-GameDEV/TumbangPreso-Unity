@@ -339,6 +339,25 @@ namespace TumbangPreso.Core
         }
 
         /// <summary>
+        /// A new player's room: a bot in every seat nobody is sitting in.
+        ///
+        /// ⚠️⚠️ OWNER 2026-10-19: *"start it with bots already filled up the lobby. but make it so
+        /// that when a player joins in, the bot gets kicked out. a player should have utmost
+        /// priority than the bots."* The second half needs nothing here, and that is the design:
+        /// a bot never holds a seat in `LobbySession`, it is only what an EMPTY seat shows
+        /// (<see cref="SeatHasBot"/> is asked of empty seats alone). A joining player is handed
+        /// the first free seat exactly as before, takes it from the bot by sitting in it, and the
+        /// bot comes back if they leave; mid-match, `MatchRpc.HostTakeSeatBackFromBot` takes the
+        /// brain off that body.
+        /// </summary>
+        public static void FillEmptySeatsWithBots(CustomRules rules)
+        {
+            if (rules == null) return;
+            rules.BotSeats = AllBotSeats;
+            rules.Bots = MaxBots;
+        }
+
+        /// <summary>
         /// ADD BOT and REMOVE BOT: put a bot in one seat, or take it out, leaving every other
         /// seat as it was.
         ///

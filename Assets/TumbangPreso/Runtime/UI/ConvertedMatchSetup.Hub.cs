@@ -153,14 +153,13 @@ namespace TumbangPreso.UI
             NetSession.RoomVisibility = (int)visibility;
             SelectMap(map);
             SelectMode(mode);
-            // ⚠️ A NEW ROOM OPENS WITH NO SEAT CHOSEN. The last room's ADD BOT picks live in
-            // `SelectedRules` until something replaces them, and a fresh room is not that room.
-            if (SceneFlow.SelectedRules.BotSeats != 0)
-            {
-                var fresh = SceneFlow.SelectedRules.Clone();
-                fresh.BotSeats = 0;
-                SceneFlow.AdoptRemoteRules(fresh);
-            }
+            // ⚠️ A NEW ROOM OPENS FULL OF BOTS, owner 2026-10-19, whatever the last room or the
+            // RULES preference left behind: every empty seat shows a bot, the host removes the
+            // ones they do not want, and a player who joins simply takes a bot's seat
+            // (`CustomGameRules.FillEmptySeatsWithBots` says why that needs no other code).
+            var fresh = SceneFlow.SelectedRules.Clone();
+            CustomGameRules.FillEmptySeatsWithBots(fresh);
+            SceneFlow.AdoptRemoteRules(fresh);
             SceneFlow.Networked = true;
             _ownerRoute = LobbyMode.Custom;
 
