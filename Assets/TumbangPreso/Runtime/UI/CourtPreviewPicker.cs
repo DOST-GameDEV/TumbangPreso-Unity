@@ -33,23 +33,23 @@ namespace TumbangPreso.UI
             picker._name=HubKit.Text(root,"SelectedCourtName","",HubStyle.Hero,true,HubStyle.Paper);
             HubKit.Place(picker._name.rectTransform,HubKit.TopLeft,new Vector2(56,-300),new Vector2(1500,170));
             int count=SceneFlow.Maps.Length;picker._cards=new HubButton[count];
-            const float width=226,gap=16;float rowWidth=count*(width+gap)-gap;
-            var row=HubKit.Place(HubKit.Rect(root,"CourtChoices"),HubKit.Bottom,new Vector2(0,100),new Vector2(rowWidth,176));
+            const float width=340,gap=16;float rowWidth=count*(width+gap)-gap;
+            var row=HubKit.Place(HubKit.Rect(root,"CourtChoices"),HubKit.Bottom,new Vector2(0,100),new Vector2(rowWidth,240));
             if(rowWidth>1800)row.localScale=Vector3.one*(1800/rowWidth);
             for(int i=0;i<count;i++)
             {
                 int index=i;
                 var card=HubKit.Button(row,"PreviewCourt"+i,null,HubStyle.Night,()=>picker.Browse(index),0,1670+i);
                 picker._cards[i]=card;card.Attention+=attended=>{if(attended)picker.Browse(index);};
-                HubKit.Place((RectTransform)card.transform,HubKit.TopLeft,new Vector2(i*(width+gap),0),new Vector2(width,176));
+                HubKit.Place((RectTransform)card.transform,HubKit.TopLeft,new Vector2(i*(width+gap),0),new Vector2(width,240));
                 var image=HubKit.Rect(card.Body,"CourtImage").gameObject.AddComponent<RawImage>();
                 image.texture=MapPreviewVideo.PosterFor(SceneFlow.Maps[i]);image.raycastTarget=false;
-                HubKit.Place(image.rectTransform,HubKit.TopLeft,new Vector2(12,-12),new Vector2(202,113.625f));
+                HubKit.Place(image.rectTransform,HubKit.TopLeft,new Vector2(12,-12),new Vector2(316,177.75f));
                 var label=HubKit.Text(card.Body,"CourtName",SceneFlow.MapRegistry[i].Name.ToUpperInvariant(),HubStyle.Floor,true,HubStyle.Paper);
-                HubKit.Place(label.rectTransform,HubKit.TopLeft,new Vector2(12,-128),new Vector2(202,36));HubKit.Fit(label);
+                HubKit.Place(label.rectTransform,HubKit.TopLeft,new Vector2(12,-196),new Vector2(316,36));HubKit.Fit(label);
             }
             var lockVote=HubKit.Button(root,"ConfirmCourtVote","LOCK VOTE",HubStyle.Golden,()=>confirm(picker._candidate),HubStyle.Title,1690);
-            HubKit.Place((RectTransform)lockVote.transform,HubKit.BottomRight,new Vector2(-56,310),new Vector2(430,100));
+            HubKit.Place((RectTransform)lockVote.transform,HubKit.BottomRight,new Vector2(-56,374),new Vector2(430,100));
             int selected=Mathf.Clamp(initial,0,count-1);picker.Browse(selected);
             // ScreenFocus preserves another live screen's selection. Opening a
             // modal explicitly transfers focus before its normal navigation runs.

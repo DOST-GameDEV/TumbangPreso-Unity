@@ -1,3 +1,23 @@
+### MAP-PREVIEW-REFRESH-1018: current previews and five-map pool (DONE)
+
+Owner October18: Host Game still shows the old Eskinita. Replace its preview and
+check all selectable maps use recordings of their current geometry.
+- [x] Pull origin/ASTRAReworks first (fe1daa0d8); preserve existing local edits.
+- [x] Confirm all seven map IDs already have videos/posters and the Host Game
+  route prefers MapPreviewVideo. Eskinita's recording predates its rebuilt alley.
+- [x] Audit source/media receipts, regenerate stale footage and matching posters,
+  inspect the pictures and verify native playback without loading map scenes.
+- [x] Prepare the checked media with preserved GUIDs and source receipts.
+- [x] Owner chose five maps: Eskinita, Maynila, Tawi-Tawi, BGC and The Philippine
+  Arena. Remove Bayan Plaza and Sa Bubong from both registries and enabled build
+  scenes while preserving source/assets for rework. Keep remaining map IDs.
+- [x] Protocol172 prevents old map-index peers from selecting a different map.
+- [x] Verify old Eskinita has no active scene/asset route, replace stale selection
+  thumbnails and check the five-map controls, rotation and preview decoding.
+- [x] Native32 distinct cases pass: EditMode22, media5 and selection5; final
+  ballot2/2 repeat after caption/status layout correction. Both720p/1080p views
+  inspected. [Evidence and limits](reports/map-preview-refresh-2026-10-18/README.md).
+
 ### DANTE-MOUNTAIN-FORM-1018: 30 s of rock armour after CONTINENTAL DRIFT (IN PROGRESS)
 
 Owner 2026-10-17 and 18: after his ultimate Dante keeps a suit of rock armour for 30 s, pieces falling off from 20 s; his own

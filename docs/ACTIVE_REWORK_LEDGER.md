@@ -1,3 +1,36 @@
+# Map preview refresh checkpoint, October18
+
+Owner requested old Eskinita host preview replacement, an all-map preview check
+and the current map names. Pulled fe1daa0d8 on ASTRAReworks. Seven selectable maps
+all have recorded media; the old Lagoon is vaulted. Owner chose Eskinita, Maynila,
+Tawi-Tawi, BGC and The Philippine Arena. Bayan Plaza/Sa Bubong leave selection
+and enabled build scenes; source/assets stay. Protocol172 fences changed indices.
+Owner requires the current stepped-alley Eskinita everywhere, including posters
+and fallback cards. Its old scene is already vaulted with no active GUID route.
+Names delivered in chat. Existing local art
+metadata and ultimate-intro edits are unrelated and preserved. This task owns
+map-preview media/receipts/cards, the five-map registries/build flags/protocol,
+their focused tests and alley_chalk.mat's invalid keyword normalization. Baseline
+found all active footage stale. Recorded all five at1080p/30/780frames; the first
+Eskinita install caught Unity removing its invalid emission keyword at exit.
+Normalized that material and recaptured Eskinita; all five receipts now match.
+Primary media/cards are installed with existing GUIDs. 6,986 source dependencies
+matched between primary and isolated inputs before capture.
+Isolated project C:/Users/matth/Documents/Codex/work/tump-map1018 has its own
+company/product and named profile. No user profile or Desktop replacement.
+Final32 distinct native cases pass: registry22, media5 and selection5. The first
+new EditMode fixture used a runtime API; fixed to enabled EditorBuildSettings.
+Visual review found the long Arena caption outside its thumbnail; widened the
+five vote/result cards, retained the font floor, moved status/confirmation clear
+and added caption-width/status-overlap assertions. Final ballot2/2 repeat pass.
+Current720p/1080p UI and all five native-decoded map images inspected.
+All task jobs exited; no browser tabs opened. Automatic approval review blocked
+temporary-project/duplicate-capture cleanup, so those verified task-owned files
+remain. Logs/map-preview-refresh-1018/cleanup-receipt.json records the boundary.
+Evidence: docs/reports/map-preview-refresh-2026-10-18. Publication target is
+origin/ASTRAReworks; exact remote identity goes in the local publication receipt.
+Next: commit/push this checked unit and verify remote HEAD. TODO task is DONE.
+
 # Dante Mountain Form checkpoint, October18
 
 On ASTRAReworks after 4d79a33cb (protocol 171). Checked the last session's work before building on it: two real faults

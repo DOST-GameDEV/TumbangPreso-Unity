@@ -392,7 +392,8 @@ namespace TumbangPreso.Tests
             //170 makes a Concussed throw wobble harder and often misfire far off its aim (no wire change; the rules differ).
             //171 gives Dante MOUNTAIN FORM after CONTINENTAL DRIFT: 30 s of status immunity, x1.25 throws that stagger and knock
             //back, and its time left in the timed-kit snapshot's passive fields.
-            Assert.AreEqual(171, NetSession.ProtocolVersion,
+            //172 removes Bayan Plaza and Sa Bubong from the indexed map pool.
+            Assert.AreEqual(172, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

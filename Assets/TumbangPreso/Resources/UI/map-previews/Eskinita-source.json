@@ -1,10 +1,10 @@
 {
-  "map": "Eskinita",
-  "sourceFingerprint": "da7b055f1cbd465c35a3b1178ec43fb3b74475da30b73692377a7c207f31a739",
-  "videoSha256": "05c6996ff5097bc2c33e89abe69c14995a16395153779339a83c45456250c574",
-  "posterSha256": "435d04be2769357f12991ac578932f26339f7d0024670398d2a933c81908fdb2",
-  "width": 1920,
-  "height": 1080,
-  "fps": 30,
-  "frames": 780
+    "map": "Eskinita",
+    "sourceFingerprint": "d9d140a1c5479db49c2da1d8272ec7313f04455936e96046425b22ba9505d299",
+    "videoSha256": "614de3cf1d757771579e4947dab5f42007b43bd3b75f4cb9fa41f2f18e8fbb77",
+    "posterSha256": "1675433997502f8d35fe1d17cb7f583a5e07346993d002ee8226de6a81c3453d",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "frames": 780
 }

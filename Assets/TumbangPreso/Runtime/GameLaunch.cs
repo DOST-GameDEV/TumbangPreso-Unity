@@ -41,19 +41,15 @@ namespace TumbangPreso
         {
             new MapEntry("eskinita", "ESKINITA",
                 "Urban side street. Sari-sari, sampay, kanal.", SceneFlow.Eskinita),
-            new MapEntry("bayan_plaza", "BAYAN PLAZA",
-                "Barangay plaza. Church, basketball ring, acacia.", SceneFlow.BayanPlaza),
-            new MapEntry("ilalim_ng_tulay", "PADRE FAURA, MANILA",
+            new MapEntry("ilalim_ng_tulay", "MAYNILA",
                 "Manila street court. Viaduct pillars and neighbourhood shops.", SceneFlow.IlalimNgTulay),
-            new MapEntry("sa_bubong","SA BUBONG",
-                "Condo roofdeck. Watch the edge; lost slippers return after 10s.",SceneFlow.SaBubong),
             // "lagoon" keeps its id so a saved preference follows the Lagoon Court to its reworked
             // scene; the first Lagoon is vaulted (SceneFlow.Lagoon).
-            new MapEntry("lagoon","LAGOON COURT",
+            new MapEntry("lagoon","TAWI-TAWI",
                 "A cove court in the rocks. Stilt village, reefs and a sunset sea.",SceneFlow.LagoonCove),
-            new MapEntry("kanto","BGC, TAGUIG",
+            new MapEntry("kanto","BGC",
                 "City park block. Jeepney stop, traffic lights, busy streets.",SceneFlow.Kanto),
-            new MapEntry("arena","ARENA",
+            new MapEntry("arena","THE PHILIPPINE ARENA",
                 "Game-show stage. It rebuilds each round; mind the edges.",SceneFlow.Arena),
         };
 

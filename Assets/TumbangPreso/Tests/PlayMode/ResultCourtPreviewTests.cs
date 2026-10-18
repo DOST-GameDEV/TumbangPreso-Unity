@@ -52,6 +52,9 @@ namespace TumbangPreso.PlayTests
    var player=image.GetComponent<VideoPlayer>();long frame=player.frame;yield return new WaitForSecondsRealtime(.5f);Assert.Greater(player.frame,frame);
    Assert.AreEqual(scenes,SceneManager.sceneCount,"Selecting a recording must not load another live arena.");
    var canvas=picker.GetComponentInParent<Canvas>();
+   Canvas.ForceUpdateCanvases();
+   foreach(var label in picker.GetComponentsInChildren<Text>().Where(text=>text.name=="CourtName"))
+    Assert.LessOrEqual(label.preferredWidth,label.rectTransform.rect.width+1,label.text+" exceeds its court card.");
    foreach(var size in new[]{new Vector2Int(1920,1080),new Vector2Int(1280,720)})
     yield return TumpUiCapture.Capture("ResultCourtPicker-"+size.x+"x"+size.y,canvas,size.x,size.y,false,checkActionBounds:true);
    // Submit opened/browsed the picker; pointer confirmation uses the same control.
@@ -65,7 +68,7 @@ namespace TumbangPreso.PlayTests
   [UnityTest,Timeout(120000)]public IEnumerator CancelAndRetirementPreserveTheExistingBallotAndReleaseThePreview()
   {
    yield return OpenResults();var result=Object.FindFirstObjectByType<MatchResult>();result.HostReceiveMapVote(1,1);
-   Press("ResultNextMap");yield return null;Press("PreviewCourt6");yield return null;Press("CancelCourtPreview");yield return null;
+   Press("ResultNextMap");yield return null;Press("PreviewCourt"+System.Array.IndexOf(SceneFlow.Maps,SceneFlow.Arena));yield return null;Press("CancelCourtPreview");yield return null;
    Assert.AreEqual(1,Votes(result)[1]);Assert.IsTrue(result.IsVisible);Assert.IsNull(Object.FindFirstObjectByType<CourtPreviewPicker>());
    Press("ResultNextMap");yield return null;result.enabled=false;yield return null;
    Assert.IsNull(Object.FindFirstObjectByType<CourtPreviewPicker>());Assert.That(Time.timeScale,Is.EqualTo(1).Within(.001f));

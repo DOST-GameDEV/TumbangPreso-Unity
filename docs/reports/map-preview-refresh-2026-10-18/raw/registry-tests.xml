@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="22" result="Failed(Child)" total="22" passed="21" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.760453">
+  <test-suite type="TestSuite" id="1000" name="TUMP Map Preview Refresh 1018" fullname="TUMP Map Preview Refresh 1018" runstate="Runnable" testcasecount="1453" result="Failed" site="Child" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.760453" total="22" passed="21" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2794" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-map1018/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1453" result="Failed" site="Child" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.733426" total="22" passed="21" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10704" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2795" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1453" result="Failed" site="Child" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.713498" total="22" passed="21" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2796" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1453" result="Failed" site="Child" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.695013" total="22" passed="21" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1317" name="ChatAndLobbyChromeTests" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.464842" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1320" name="AChatLineCannotBeMadeTallWithNewlines" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.AChatLineCannotBeMadeTallWithNewlines" methodname="AChatLineCannotBeMadeTallWithNewlines" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" seed="549004404" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.019676" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1319" name="AChatLineIsCutToTheLengthTheHostWillRelay" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.AChatLineIsCutToTheLengthTheHostWillRelay" methodname="AChatLineIsCutToTheLengthTheHostWillRelay" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" seed="1981451811" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.007285" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1325" name="AnEmptyOrWhitespaceChatLineIsNothing" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.AnEmptyOrWhitespaceChatLineIsNothing" methodname="AnEmptyOrWhitespaceChatLineIsNothing" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" seed="609382629" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.000454" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1324" name="ChatFieldPreclippingCannotSendHalfAnEmoji" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.ChatFieldPreclippingCannotSendHalfAnEmoji" methodname="ChatFieldPreclippingCannotSendHalfAnEmoji" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" seed="84878735" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.025509" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1323" name="ChatLengthBoundaryKeepsWholeUnicodeCharacters" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.ChatLengthBoundaryKeepsWholeUnicodeCharacters" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.011958" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1321" name="ChatLengthBoundaryKeepsWholeUnicodeCharacters(118)" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.ChatLengthBoundaryKeepsWholeUnicodeCharacters(118)" methodname="ChatLengthBoundaryKeepsWholeUnicodeCharacters" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" seed="1183435765" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.000807" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1322" name="ChatLengthBoundaryKeepsWholeUnicodeCharacters(119)" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.ChatLengthBoundaryKeepsWholeUnicodeCharacters(119)" methodname="ChatLengthBoundaryKeepsWholeUnicodeCharacters" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" seed="1467623430" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.000168" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1318" name="ConnectionApprovalRefusesThePreviousProtocolAndAcceptsTheCurrentLanHello" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.ConnectionApprovalRefusesThePreviousProtocolAndAcceptsTheCurrentLanHello" methodname="ConnectionApprovalRefusesThePreviousProtocolAndAcceptsTheCurrentLanHello" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" seed="1146535587" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.354872" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=42 approved=False reason=Game version mismatch (network protocol 172)
+[NetApproval] peer=42 approved=False reason=Skill rules differ from the host. Use matching game builds.
+[NetApproval] peer=42 approved=True reason=
+]]></output>
+            </test-case>
+            <test-case id="1327" name="NameplatesUseTheWoodSetAndNeitherRoleColour" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.NameplatesUseTheWoodSetAndNeitherRoleColour" methodname="NameplatesUseTheWoodSetAndNeitherRoleColour" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" seed="894468981" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.008703" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1326" name="TheChatRateLimitIsPositiveAndTheLengthCapFitsTheLog" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.TheChatRateLimitIsPositiveAndTheLengthCapFitsTheLog" methodname="TheChatRateLimitIsPositiveAndTheLengthCapFitsTheLog" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" seed="2077971149" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.001837" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1328" name="TheProtocolCarriesEveryRosterBump" fullname="TumbangPreso.Tests.ChatAndLobbyChromeTests.TheProtocolCarriesEveryRosterBump" methodname="TheProtocolCarriesEveryRosterBump" classname="TumbangPreso.Tests.ChatAndLobbyChromeTests" runstate="Runnable" seed="313823144" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.000496" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1938" name="MapLaunchAndRegistryTests" fullname="TumbangPreso.Tests.MapLaunchAndRegistryTests" classname="TumbangPreso.Tests.MapLaunchAndRegistryTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.023637" total="8" passed="7" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1939" name="ActiveMapsHaveApprovedNamesAndExcludeTheReworkPool" fullname="TumbangPreso.Tests.MapLaunchAndRegistryTests.ActiveMapsHaveApprovedNamesAndExcludeTheReworkPool" methodname="ActiveMapsHaveApprovedNamesAndExcludeTheReworkPool" classname="TumbangPreso.Tests.MapLaunchAndRegistryTests" runstate="Runnable" seed="1399779500" result="Failed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.009213" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Eskinita
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.MapLaunchAndRegistryTests.ActiveMapsHaveApprovedNamesAndExcludeTheReworkPool () [0x000ff] in C:\Users\matth\Documents\Codex\work\tump-map1018\Assets\TumbangPreso\Tests\MapLaunchAndRegistryTests.cs:26
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1947" name="DestroyedRegisteredPlayerIsNotReturnedToMessageHandlers" fullname="TumbangPreso.Tests.MapLaunchAndRegistryTests.DestroyedRegisteredPlayerIsNotReturnedToMessageHandlers" methodname="DestroyedRegisteredPlayerIsNotReturnedToMessageHandlers" classname="TumbangPreso.Tests.MapLaunchAndRegistryTests" runstate="Runnable" seed="323995086" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.006032" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1946" name="DirectLaunchPublishesTheSameMapTheHostWillLoad" fullname="TumbangPreso.Tests.MapLaunchAndRegistryTests.DirectLaunchPublishesTheSameMapTheHostWillLoad" methodname="DirectLaunchPublishesTheSameMapTheHostWillLoad" classname="TumbangPreso.Tests.MapLaunchAndRegistryTests" runstate="Runnable" seed="1590858930" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.000738" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1945" name="RetiredMapsCannotEnterThroughDirectLaunch" fullname="TumbangPreso.Tests.MapLaunchAndRegistryTests.RetiredMapsCannotEnterThroughDirectLaunch" classname="TumbangPreso.Tests.MapLaunchAndRegistryTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.003946" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1940" name="RetiredMapsCannotEnterThroughDirectLaunch(&quot;BayanPlaza&quot;)" fullname="TumbangPreso.Tests.MapLaunchAndRegistryTests.RetiredMapsCannotEnterThroughDirectLaunch(&quot;BayanPlaza&quot;)" methodname="RetiredMapsCannotEnterThroughDirectLaunch" classname="TumbangPreso.Tests.MapLaunchAndRegistryTests" runstate="Runnable" seed="1301608013" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.001818" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1941" name="RetiredMapsCannotEnterThroughDirectLaunch(&quot;bayan_plaza&quot;)" fullname="TumbangPreso.Tests.MapLaunchAndRegistryTests.RetiredMapsCannotEnterThroughDirectLaunch(&quot;bayan_plaza&quot;)" methodname="RetiredMapsCannotEnterThroughDirectLaunch" classname="TumbangPreso.Tests.MapLaunchAndRegistryTests" runstate="Runnable" seed="1012497354" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.000192" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1942" name="RetiredMapsCannotEnterThroughDirectLaunch(&quot;SaBubong&quot;)" fullname="TumbangPreso.Tests.MapLaunchAndRegistryTests.RetiredMapsCannotEnterThroughDirectLaunch(&quot;SaBubong&quot;)" methodname="RetiredMapsCannotEnterThroughDirectLaunch" classname="TumbangPreso.Tests.MapLaunchAndRegistryTests" runstate="Runnable" seed="1844622994" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.000094" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1943" name="RetiredMapsCannotEnterThroughDirectLaunch(&quot;sa_bubong&quot;)" fullname="TumbangPreso.Tests.MapLaunchAndRegistryTests.RetiredMapsCannotEnterThroughDirectLaunch(&quot;sa_bubong&quot;)" methodname="RetiredMapsCannotEnterThroughDirectLaunch" classname="TumbangPreso.Tests.MapLaunchAndRegistryTests" runstate="Runnable" seed="1661502883" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.000103" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1944" name="RetiredMapsCannotEnterThroughDirectLaunch(&quot;EskinitaClassic_2026-10-09&quot;)" fullname="TumbangPreso.Tests.MapLaunchAndRegistryTests.RetiredMapsCannotEnterThroughDirectLaunch(&quot;EskinitaClassic_2026-10-09&quot;)" methodname="RetiredMapsCannotEnterThroughDirectLaunch" classname="TumbangPreso.Tests.MapLaunchAndRegistryTests" runstate="Runnable" seed="1700529792" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.000090" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="2436" name="RuntimeLayerTests" fullname="TumbangPreso.Tests.RuntimeLayerTests" classname="TumbangPreso.Tests.RuntimeLayerTests" runstate="Runnable" testcasecount="28" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.037682" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="2464" name="DepartedRematchMapBallotCannotChooseTheNextCourt" fullname="TumbangPreso.Tests.RuntimeLayerTests.DepartedRematchMapBallotCannotChooseTheNextCourt" classname="TumbangPreso.Tests.RuntimeLayerTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.028492" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2460" name="DepartedRematchMapBallotCannotChooseTheNextCourt(False,False)" fullname="TumbangPreso.Tests.RuntimeLayerTests.DepartedRematchMapBallotCannotChooseTheNextCourt(False,False)" methodname="DepartedRematchMapBallotCannotChooseTheNextCourt" classname="TumbangPreso.Tests.RuntimeLayerTests" runstate="Runnable" seed="951966418" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.021951" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2461" name="DepartedRematchMapBallotCannotChooseTheNextCourt(False,True)" fullname="TumbangPreso.Tests.RuntimeLayerTests.DepartedRematchMapBallotCannotChooseTheNextCourt(False,True)" methodname="DepartedRematchMapBallotCannotChooseTheNextCourt" classname="TumbangPreso.Tests.RuntimeLayerTests" runstate="Runnable" seed="2135097726" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.002220" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2462" name="DepartedRematchMapBallotCannotChooseTheNextCourt(True,False)" fullname="TumbangPreso.Tests.RuntimeLayerTests.DepartedRematchMapBallotCannotChooseTheNextCourt(True,False)" methodname="DepartedRematchMapBallotCannotChooseTheNextCourt" classname="TumbangPreso.Tests.RuntimeLayerTests" runstate="Runnable" seed="130245604" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.000605" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2463" name="DepartedRematchMapBallotCannotChooseTheNextCourt(True,True)" fullname="TumbangPreso.Tests.RuntimeLayerTests.DepartedRematchMapBallotCannotChooseTheNextCourt(True,True)" methodname="DepartedRematchMapBallotCannotChooseTheNextCourt" classname="TumbangPreso.Tests.RuntimeLayerTests" runstate="Runnable" seed="299058405" result="Passed" start-time="2026-10-18 11:49:08Z" end-time="2026-10-18 11:49:08Z" duration="0.000624" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios Validation/TUMP Map Preview Refresh 1018\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
