@@ -27,9 +27,10 @@ Current720p/1080p UI and all five native-decoded map images inspected.
 All task jobs exited; no browser tabs opened. Automatic approval review blocked
 temporary-project/duplicate-capture cleanup, so those verified task-owned files
 remain. Logs/map-preview-refresh-1018/cleanup-receipt.json records the boundary.
-Evidence: docs/reports/map-preview-refresh-2026-10-18. Publication target is
-origin/ASTRAReworks; exact remote identity goes in the local publication receipt.
-Next: commit/push this checked unit and verify remote HEAD. TODO task is DONE.
+Evidence: docs/reports/map-preview-refresh-2026-10-18. Source/media commit
+5ac4491c2 is pushed to origin/ASTRAReworks with matching local/remote HEAD verified.
+The local publication receipt retains the full SHA. MAP-PREVIEW-REFRESH-1018 is
+DONE. Bayan Plaza and Sa Bubong stay disabled pending the owner's future rework.
 
 # Dante Mountain Form checkpoint, October18
 
