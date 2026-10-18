@@ -1,0 +1,28 @@
+{
+  "runs": [
+    {
+      "run": "ai-unavailable-emote-original1009",
+      "pid": 69472,
+      "exitCode": 2,
+      "cases": 1,
+      "passed": 0,
+      "restoredInputs": 21455
+    },
+    {
+      "run": "ai-unavailable-emote-candidate1009",
+      "pid": 66348,
+      "exitCode": 0,
+      "cases": 6,
+      "passed": 6,
+      "restoredInputs": 21455
+    }
+  ],
+  "sourceHashes": {
+    "Assets/TumbangPreso/Runtime/AIController.cs": "8678404ea69476077d8f8c4ec67f1858c7d3f6c802e2d612bf7102298d38a103",
+    "Assets/TumbangPreso/Runtime/Social/EmotePlayer.cs": "4c80627566710fdcaf8bad9e2422983e3682a71a57b932f38b3343d610d3fd64",
+    "Assets/TumbangPreso/Tests/PlayMode/AiUnavailableEmoteTests.cs": "c27cca42ee059b03da54aa8b11204bb807b331e04ff042bf7cbd7c795dedcee2"
+  },
+  "networkStartGraceSeconds": 0.25,
+  "currentPlayerRigAvailability": "Not measured by this native fixture",
+  "scope": "Actual AI social consumer and EmotePlayer refusal/positive clip behavior; unavailable-rig controlled repro, bounded simulated delivery wait and lesson eligibility."
+}

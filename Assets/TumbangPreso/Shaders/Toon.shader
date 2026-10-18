@@ -335,6 +335,7 @@ Shader "TumbangPreso/Toon"
         // PASS 2 — the flat toon face.
         // -------------------------------------------------------------------
         CGPROGRAM
+        #include "../Resources/Shaders/RecordedShaderTime.cginc"
         #pragma surface surf Toon fullforwardshadows
         #pragma target 3.0
 
@@ -650,7 +651,7 @@ Shader "TumbangPreso/Toon"
                 // is a scan rather than a snowfall: it says the seat is locked and being held,
                 // and it is a different construction rather than the same one recoloured.
                 // `docs/VISION.md` § 2 rule 3: how a thing is BUILT is the channel.
-                half band = saturate(1.0h - abs(frac(IN.worldPos.y * 1.6h - _Time.y * 0.5h) - 0.5h) * 4.0h);
+                half band = saturate(1.0h - abs(frac(IN.worldPos.y * 1.6h - TumpShaderTime() * 0.5h) - 0.5h) * 4.0h);
 
                 // The taya's colour, on the silhouette. The two-band toon ramp flattens the
                 // interior, so an edge term is what keeps a desaturated body from dissolving

@@ -58,6 +58,13 @@ namespace TumbangPreso.UI
             if (body.IsDrained) into.Add(StatusKind.Drained);
             if (body.IsHexed) into.Add(StatusKind.Hexed);
             if (body.IsHaunted) into.Add(StatusKind.Haunted);
+            // Catalogued and applied in play, but never listed, so a zapped player saw locked
+            // powers with no reason or timer. Appended to keep every existing entry's order.
+            if (body.IsZapped) into.Add(StatusKind.Zapped);
+            // Nemu's PRUSISYON (2026-10-11).
+            if (body.IsPossessed) into.Add(StatusKind.Possessed);
+            // Nemu's DON'T LOOK (2026-10-15).
+            if (body.IsBlinded) into.Add(StatusKind.Blinded);
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]

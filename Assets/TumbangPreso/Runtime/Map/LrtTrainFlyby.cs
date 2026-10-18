@@ -203,25 +203,8 @@ namespace TumbangPreso
         private bool _warned;
         private bool _windowOpen;
 
-        // TEMPORARY TROLL (owner, 2026-10-04: "as a troll ... this is just temporary"). When the
-        // LOCAL-ONLY, git-excluded clip Resources/Troll/lrt_troll exists, the pass plays that music
-        // instead of the recording: it is PAUSED when the consist leaves and RESUMED from the same
-        // point on the next pass, never restarted, and the consist comes round every TrollInterval
-        // seconds. With no such file (every other machine, every build) nothing here does anything.
-        private const string TrollClipPath = "Troll/lrt_troll";
-        private const float TrollInterval = 12.0f;
-        // How far along the line the music is heard: its rolloff reaches zero here.
-        private const float TrollHalfZ = 120.0f;
-        private AudioClip _trollClip;
-        private bool _trollBegun;
-        private AudioSource _trollSource;
-        // Static, so the song carries on from the same point in the NEXT match as well.
-        private static float s_trollTime;
-
         private void Start()
         {
-            _trollClip = Resources.Load<AudioClip>(TrollClipPath);
-            if (_trollClip != null) { Interval = TrollInterval; InitialDelay = Mathf.Min(InitialDelay, 4.0f); }
             _timer = Interval - InitialDelay;
             _isRunning = false;
             Place(StartZ);
@@ -235,13 +218,11 @@ namespace TumbangPreso
         private void OnDisable() => OverheadPassWindow.Clear();
         private void OnDestroy()
         {
-            if (_trollSource != null && _trollBegun) s_trollTime = _trollSource.time;
             OverheadPassWindow.Clear();
         }
 
         private void Update()
         {
-            TickTroll();
             if (!_isRunning)
             {
                 _timer += Time.deltaTime;
@@ -305,9 +286,6 @@ namespace TumbangPreso
                 ImpactBurst.SpawnAt(RunPosition(_currentZ) + Vector3.down * 0.5f);
             }
 
-            // A shuttle run is 280 m, most of it out of earshot: the pass (and the troll music)
-            // plays only across the court, so the clip still starts 48 m out.
-            if (!Shuttle || Mathf.Abs(court) <= TrollHalfZ) ResumeTroll(); else PauseTroll();
             if (!Shuttle || Mathf.Abs(court) <= SoundHalfZ) DriveRumble();
             else if (_rumbleStarted) StopRumble();
 
@@ -539,63 +517,9 @@ namespace TumbangPreso
         /// teleported back to `StartZ` and left there for the rest of the interval; leaving it
         /// playing would put a train under the south wall for 24 s.
         /// </summary>
-        // The troll music is its OWN source beside the recording (owner: "i hear the music but i
-        // still need the sfx"), and it is "on full blast unudjustable": volume 1, and it
-        // ignores the listener volume, so no slider in the game turns it down.
-        private void ResumeTroll()
-        {
-            if (_trollClip == null) return;
-            if (_trollSource == null)
-            {
-                var go = new GameObject("LrtTrollMusic");
-                go.transform.SetParent(transform, false);
-                _trollSource = go.AddComponent<AudioSource>();
-                _trollSource.clip = _trollClip;
-                _trollSource.loop = true;
-                _trollSource.playOnAwake = false;
-                // POSITIONAL, on the consist (owner: "make the music positional then"): it comes
-                // up the line with the train, bends with Unity's own doppler as it passes, and
-                // falls away behind it. Full level out to 30 m, which covers the whole court.
-                _trollSource.spatialBlend = 1.0f;
-                _trollSource.rolloffMode = AudioRolloffMode.Linear;
-                _trollSource.minDistance = 30.0f;
-                _trollSource.maxDistance = TrollHalfZ;
-                _trollSource.dopplerLevel = 1.2f;
-                _trollSource.volume = 0.0f;
-                _trollSource.ignoreListenerVolume = true;
-                Reverb(go);
-                _trollSource.bypassListenerEffects = true;
-                _trollSource.bypassReverbZones = true;
-                _trollSource.priority = 0;
-            }
-            _trollTarget = 1.0f;
-            if (_trollSource.isPlaying) return;
-            if (_trollBegun) { _trollSource.UnPause(); return; }
-            _trollSource.time = Mathf.Repeat(s_trollTime, _trollClip.length - 0.05f);
-            _trollSource.Play();
-            _trollBegun = true;
-        }
-
-        // Never a hard stop (owner: "it kinda cuts off just immediately"): the music is faded out
-        // and only then paused, by `TickTroll`, so the place it resumes from is where it faded.
-        private void PauseTroll() => _trollTarget = 0.0f;
-
-        private const float TrollFadeSeconds = 1.2f;
-        private float _trollTarget;
-
-        private void TickTroll()
-        {
-            if (_trollSource == null) return;
-            _trollSource.volume = Mathf.MoveTowards(_trollSource.volume, _trollTarget, Time.deltaTime / TrollFadeSeconds);
-            if (_trollTarget > 0.0f || _trollSource.volume > 0.0f || !_trollSource.isPlaying) return;
-            s_trollTime = _trollSource.time;
-            _trollSource.Pause();
-        }
-
         private void StopRumble()
         {
             _rumbleStarted = false;
-            PauseTroll();
             if (_rumble != null && _rumble.isPlaying) _rumble.Stop();
             if (_clack != null && _clack.isPlaying) _clack.Stop();
         }

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 11:03:58Z" end-time="2026-10-07 11:04:01Z" duration="2.555482">
+  <test-suite type="TestSuite" id="3582" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="2088" result="Passed" start-time="2026-10-07 11:03:58Z" end-time="2026-10-07 11:04:01Z" duration="2.555482" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3574" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2088" result="Passed" start-time="2026-10-07 11:03:58Z" end-time="2026-10-07 11:04:01Z" duration="2.547018" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="57320" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3575" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2088" result="Passed" start-time="2026-10-07 11:03:58Z" end-time="2026-10-07 11:04:01Z" duration="2.544751" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3578" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2086" result="Passed" start-time="2026-10-07 11:03:58Z" end-time="2026-10-07 11:04:01Z" duration="2.542369" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1219" name="ArenaFxRecordedTests" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-07 11:03:58Z" end-time="2026-10-07 11:04:01Z" duration="2.481928" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1225" name="CompressedTimelineKeepsSingleFrameFlashesAndRejectsDamage" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests.CompressedTimelineKeepsSingleFrameFlashesAndRejectsDamage" methodname="CompressedTimelineKeepsSingleFrameFlashesAndRejectsDamage" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" seed="1370597450" result="Passed" start-time="2026-10-07 11:03:58Z" end-time="2026-10-07 11:03:59Z" duration="0.067223" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1224" name="FullPoolThreeSecondStreamIsLosslessAndMeasured" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests.FullPoolThreeSecondStreamIsLosslessAndMeasured" methodname="FullPoolThreeSecondStreamIsLosslessAndMeasured" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" seed="1885129810" result="Passed" start-time="2026-10-07 11:03:59Z" end-time="2026-10-07 11:04:01Z" duration="2.404159" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[FullPoolFxCodec] frames=180 quadsPerFrame=1664 bytes=3085394 encodeMs=875.2107 decodeMs=307.3502 rawSha256=b0e083f696f670dcfd7e1c57bdb1fcb40ff25547c8ddcaed941e0604310f6c5d
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -21,7 +21,7 @@ namespace TumbangPreso.Tests
         private INetProvider _provider;
         private string _pendingScene;
         private int _pendingFrame;
-        private bool _networked, _visible;
+        private bool _networked, _visible, _hubEnabled;
         private CursorLockMode _cursor;
         private float _scale;
         private HubEntry _entry;
@@ -44,6 +44,7 @@ namespace TumbangPreso.Tests
             _pendingScene = (string)typeof(SceneFlow).GetField("_pendingScene", StaticHidden).GetValue(null);
             _pendingFrame = (int)typeof(SceneFlow).GetField("_pendingFrame", StaticHidden).GetValue(null);
             _networked = SceneFlow.Networked; _entry = TumpHub.PendingEntry;
+            _hubEnabled = ConvertedMatchSetup.HubEnabled;
             _lobbyMode = typeof(PlaySelectionScreen).GetField("RequestedLobbyMode").GetValue(null);
             _launch.Clear();
             foreach (var field in typeof(GameLaunch).GetFields(BindingFlags.Static | BindingFlags.Public))
@@ -72,6 +73,7 @@ namespace TumbangPreso.Tests
             foreach (var saved in _launch) saved.Key.SetValue(null, saved.Value);
             foreach (var saved in _abandon) saved.Key.SetValue(null, saved.Value);
             SceneFlow.Networked = _networked; TumpHub.PendingEntry = _entry;
+            ConvertedMatchSetup.HubEnabled = _hubEnabled;
             typeof(PlaySelectionScreen).GetField("RequestedLobbyMode").SetValue(null, _lobbyMode);
             PresentationClock.RequestScale(_scale); Cursor.lockState = _cursor; Cursor.visible = _visible;
         }
@@ -131,10 +133,28 @@ namespace TumbangPreso.Tests
         }
         [Test] public void HostLossRetiresSimulationBeforeReturningToTheLobby()
         {
+            ConvertedMatchSetup.HubEnabled = false;
             HostLoss();
             Assert.IsFalse(_round.RoundActive); Assert.IsFalse(_match.MatchInProgress);
             Assert.IsTrue(SceneFlow.Networked, "The existing empty online-lobby route must remain available.");
             Assert.AreEqual(1, MatchAbandon.RoundNumber, "Capture the failed round before retiring its state.");
+        }
+        [TestCase(false)]
+        [TestCase(true)]
+        public void HubHostLossReturnsHomeWithoutRequestingAnotherRoom(bool completed)
+        {
+            ConvertedMatchSetup.HubEnabled = true;
+            Value(_match, "HasCompleted", completed);
+            PlaySelectionScreen.RequestedLobbyMode = LobbyMode.Custom;
+            TumpHub.PendingEntry = HubEntry.Lobby;
+            HostLoss();
+            Assert.IsFalse(SceneFlow.Networked,
+                "The disconnected client must not request an automatically hosted replacement room.");
+            Assert.IsNull(PlaySelectionScreen.RequestedLobbyMode);
+            Assert.AreEqual(HubEntry.Home, TumpHub.PendingEntry);
+            Assert.IsFalse(_round.RoundActive);
+            Assert.IsFalse(_match.MatchInProgress);
+            Assert.AreEqual(completed, MatchAbandon.MatchWasCompleted);
         }
         [Test] public void LobbyAuthorityRestorationCannotReviveTheAbandonedClock()
         {

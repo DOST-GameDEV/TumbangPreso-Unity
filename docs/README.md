@@ -1,5 +1,87 @@
 # Documentation: Start Here
 
+Current Nemu ghost replication and mixed-character cutscenes: [host state, real Relay/LAN delivery and native rig checks](reports/nemu-network-2026-10-15/README.md).
+
+Current network resource and possession packet bounds: [reproductions, native controls and peer limits](reports/network-refinement-2026-10-15/README.md).
+
+Player render-copy sampling: [actual Windows rejection, inert Animator endpoints and scoped native controls](reports/render-copy-sampling-2026-10-08/README.md).
+
+Current roster preparation: [ready-state regression, missing rooted sets, 36 actual current-rig samples and preserved startup](reports/home-roster-preparation-2026-10-08/README.md).
+
+Current ordinary Windows loading: [same-binary graphics-thread comparison, retained repeat variation and rejected setting change](reports/loading-render-modes-2026-10-08/README.md).
+
+Ilyas prethrow Skim AI: [original missed opportunity and actual input/load/throw controls](reports/ai-skim-prethrow-2026-10-07/README.md).
+
+Nine-hero live AI input coverage: [actual roster IDs, retained invalid selection coverage and remaining decisions](reports/hero-bot-roster-2026-10-07/README.md).
+
+Current ordinary Desktop release: [installede1c1/protocol154, actual startup/replay/preview acceptance and remaining performance scope](reports/companion-title-windows-2026-10-09/README.md).
+
+Previous October7 combined release: [installed725e package and historical acceptance](reports/combined-replay-desktop-2026-10-07/README.md).
+
+Current PC AI/replay integration: [exact tested-source proof, actual archive/viewer controls and retained fixture failure](reports/pc-local-replay-integration-2026-10-07/README.md).
+
+Bot consumer charge timing: [long-frame release failure and19 native power/obstacle/lifetime controls](reports/bot-lunge-consumer-power-2026-10-07/README.md).
+
+Four-bot natural decision window: [actual one-start readiness, live40second samples and retained legacy limits](reports/natural-four-bot-decisions-2026-10-07/README.md).
+
+Bot charged travel around world obstacles: [original wall failure, actual capsule clearance and post/kerb controls](reports/bot-lunge-obstacles-2026-10-07/README.md).
+
+Bot charge ownership on target/plan loss: [original four failures, legal reset and10 native controls](reports/bot-lunge-plan-lifetime-2026-10-07/README.md).
+
+Actual new-opening Windows package: [startup order, first Home frames and three automatic map flows](reports/new-openings-package-2026-10-07/README.md).
+
+Natural LAN rematch: [strict two-record/rotation expectations and pending paired acceptance](reports/lan-rematch-2026-10-07/README.md).
+
+Packaged preview lifetime: [actual Windows Canvas and motion controls with preserved build/profile evidence](reports/packaged-preview-lifetime-2026-10-07/README.md).
+
+Hidden-Canvas map playback: [native decoder failures and pause/resume correction](reports/map-preview-canvas-visibility-2026-10-07/README.md).
+
+Reduced motion during native video preparation: [callback race, original failure and restored native controls](reports/map-preview-prepare-motion-2026-10-07/README.md).
+
+Actual active host-loss client: [strict recovery, preserved results and paired stop scope](reports/lan-host-loss-2026-10-07/README.md).
+
+Live map-preview motion settings: [native direct-setting failure and pause/poster/resume correction](reports/map-preview-motion-setting-2026-10-07/README.md).
+
+Charged bot lunge aiming: [original blind-release failure and consumer/native traces](reports/bot-lunge-aim-2026-10-07/README.md).
+
+Full-resolution packaged map previews: [actual host-screen playback, first/repeat timings and batch-route controls](reports/fullhd-map-preview-player-2026-10-07/README.md).
+
+Inactive map-view preparation: [native allocation failures and activation recovery](reports/inactive-map-preview-2026-10-07/README.md).
+
+Current combined Desktop package: [startup, exact files and two-machine result parity](reports/combined-desktop-2026-10-07/README.md).
+
+Actual two-machine LAN completion and observation timing: [matching saved records, retained failures and coordinated launch](reports/two-machine-lan-cb5f-2026-10-07/README.md).
+
+Explicit bot policy and the full automatic arrival path: [native preview/confirmation/start and no-bots admission control](reports/arrival-policy-2026-10-07/README.md).
+
+Grounded tags through adopted elbow rigs: [real contact, footwear and recovery checks](reports/tag-rig-contact-2026-10-07/README.md).
+
+Settled all-map preview recordings: [lighting-flash correction, source matches, native loops and remaining seams](reports/settled-map-previews-2026-10-07/README.md).
+
+Results court preview before confirmation: [native focus, seat identity, cancellation and paused playback checks](reports/result-court-preview-2026-10-07/README.md).
+
+Recorded preview interruption recovery and regeneration: [native failures, source receipts and normal vote deadline](reports/map-preview-lifetime-2026-10-07/README.md), [map-maker recording method](MAP_PREVIEW_RECORDING.md).
+
+Caught-player framing and recorded touch: [native map frames and remaining hero-contact failures](reports/catch-framing-2026-10-07/README.md).
+
+Corrected startup order and first Home playback: [cold native evidence and package gate](reports/startup-order-2026-10-07/README.md).
+Background map voting and all-map recordings: [native browse/confirm evidence](reports/map-vote-background-2026-10-07/README.md).
+
+Recorded Arena preview and map voting: [native playback/layout evidence](reports/recorded-map-preview-2026-10-07/README.md).
+Skill HUD reference: [native circles, bindings, fonts and timed-state evidence](reports/skill-hud-reference-2026-10-07/README.md).
+
+Conditional login terms spacing: [native feedback and position evidence](reports/login-terms-spacing-2026-10-07/README.md).
+
+Custom-room choice arrows: [native selector and input evidence](reports/room-arrows-2026-10-07/README.md).
+
+Automatic startup and Home doors: [full boot and pointer-flow checks](reports/laptop-validation-2026-10-06/startup-auto-home-flow/README.md).
+
+Map preview pixels and failed-selection recovery: [native checks](reports/laptop-validation-2026-10-06/preview-selection-recovery/README.md).
+
+Gameplay preload during usable login: [native cache and interruption checks](reports/laptop-validation-2026-10-06/login-gameplay-preload/README.md).
+
+Responsive login and automatic Home loading: [native preparation evidence](reports/laptop-validation-2026-10-06/login-video-preload/README.md).
+
 Real editor online lifetime: [Play-session mismatch and focused correction](reports/reliability-2026-10-05/editor-online-lifetime/README.md).
 
 Browser feedback and editable text: [native correction evidence](reports/reliability-2026-10-05/browser-and-editable-text/README.md).
@@ -220,3 +302,17 @@ First PC/laptop LAN match: [actual paired baseline evidence](reports/reliability
 Ice diagnostic admission timing: [native setup evidence](reports/reliability-2026-10-03/ice-admission-role/README.md).
 
 Current full managed Core integration: [704-case gate and retained contract failure](reports/reliability-2026-10-03/managed-integration/README.md).
+
+Local match replays, library/folder controls and explorable playback: [method](LOCAL_REPLAYS.md) and [native evidence](reports/laptop-gameplay-2026-10-07/local-replays/README.md).
+
+Late-join opening hold: [native failure, corrected adoption and countdown regression evidence](reports/late-join-start-hold-2026-10-07/README.md).
+
+Summoned doll replay bodies and held slippers: [original failure, native capture, codec bounds and admission evidence](reports/recorded-companion-2026-10-09/README.md).
+
+Current ordinary Desktop e1c1/protocol154: [actual startup, replay/preview/controlled gameplay and exact in-place installation](reports/companion-title-windows-2026-10-09/README.md).
+
+Loose footwear floor support: [actual30pair float, upright-pivot correction and12 scoped native controls](reports/loose-slipper-surface-2026-10-09/README.md).
+
+Bot social clip availability: [unavailable-rig pause, preserved playable delivery grace and6 native consumer controls](reports/ai-unavailable-emote-2026-10-09/README.md).
+
+October11 QoLUpdates merge: [combined protocol159,21 native controls and retained private work](reports/qol-integration-2026-10-11/README.md).

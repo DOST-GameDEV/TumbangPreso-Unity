@@ -1,0 +1,114 @@
+{
+  "baseline": {
+    "cpuMs": 123.737106,
+    "frame": "9",
+    "jitCalls": 343,
+    "jitSumMs": 68.614499901,
+    "top": [
+      {
+        "ms": 123.737106,
+        "name": "Main Thread"
+      },
+      {
+        "ms": 123.7122,
+        "name": "PlayerLoop"
+      },
+      {
+        "ms": 77.9554,
+        "name": "Update.ScriptRunDelayedDynamicFrameRate"
+      },
+      {
+        "ms": 77.9546,
+        "name": "CoroutinesDelayedCalls"
+      },
+      {
+        "ms": 77.95,
+        "name": "TumbangPreso.Runtime.dll!TumbangPreso.Diagnostics::OwnerUiPlayerReview.Guard() [Coroutine: MoveNext] [Invoke]"
+      },
+      {
+        "ms": 18.0272,
+        "name": "PostLateUpdate.PlayerUpdateCanvases"
+      },
+      {
+        "ms": 18.0171,
+        "name": "UIEvents.WillRenderCanvases"
+      },
+      {
+        "ms": 18.0164,
+        "name": "UGUI.Rendering.UpdateBatches"
+      },
+      {
+        "ms": 17.696,
+        "name": "UnityEngine.UIModule.dll!UnityEngine::Canvas.SendWillRenderCanvases() [Invoke]"
+      },
+      {
+        "ms": 17.6625,
+        "name": "PostLateUpdate.FinishFrameRendering"
+      },
+      {
+        "ms": 17.662199,
+        "name": "Render"
+      },
+      {
+        "ms": 17.6135,
+        "name": "CanvasUpdate.PreRender"
+      }
+    ]
+  },
+  "warm": {
+    "cpuMs": 173.4716,
+    "frame": "9",
+    "jitCalls": 315,
+    "jitSumMs": 58.3022998961,
+    "top": [
+      {
+        "ms": 173.4716,
+        "name": "Main Thread"
+      },
+      {
+        "ms": 173.4375,
+        "name": "PlayerLoop"
+      },
+      {
+        "ms": 121.8411,
+        "name": "Update.ScriptRunDelayedDynamicFrameRate"
+      },
+      {
+        "ms": 121.8404,
+        "name": "CoroutinesDelayedCalls"
+      },
+      {
+        "ms": 121.8361,
+        "name": "TumbangPreso.Runtime.dll!TumbangPreso.Diagnostics::OwnerUiPlayerReview.Guard() [Coroutine: MoveNext] [Invoke]"
+      },
+      {
+        "ms": 24.73,
+        "name": "PostLateUpdate.FinishFrameRendering"
+      },
+      {
+        "ms": 24.3845,
+        "name": "Camera.Render"
+      },
+      {
+        "ms": 16.4723,
+        "name": "PostLateUpdate.PlayerUpdateCanvases"
+      },
+      {
+        "ms": 16.4609,
+        "name": "UIEvents.WillRenderCanvases"
+      },
+      {
+        "ms": 16.4599,
+        "name": "UGUI.Rendering.UpdateBatches"
+      },
+      {
+        "ms": 16.1246,
+        "name": "UnityEngine.UIModule.dll!UnityEngine::Canvas.SendWillRenderCanvases() [Invoke]"
+      },
+      {
+        "ms": 16.0835,
+        "name": "Render"
+      }
+    ]
+  }
+}

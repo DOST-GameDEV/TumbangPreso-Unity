@@ -1,0 +1,3 @@
+* -text -diff
+README.md -text diff whitespace=-trailing-space,-blank-at-eof
+.gitattributes text eol=lf

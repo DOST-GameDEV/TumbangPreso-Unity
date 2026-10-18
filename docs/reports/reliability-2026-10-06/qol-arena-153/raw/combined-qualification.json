@@ -1,0 +1,24 @@
+{
+  "terminal": true,
+  "requestedCases": 35,
+  "actualCases": 28,
+  "allExecutedPassed": true,
+  "families": {
+    "AiCurrentUltimateTests": 9,
+    "ArenaConfinementIntegrationTests": 6,
+    "ArenaOwnerLifetimeTests": 9,
+    "ArrivalViewOwnershipTests": 4
+  },
+  "excluded": "ReplayCameraClearanceTests Editor-only assembly; separate EditMode run required",
+  "sourceRef": "8b5655e1e0485396913187e743a9801330357f79",
+  "restoration": {
+    "terminal": true,
+    "inputRestored": true,
+    "editorInputRestored": true,
+    "qualityRestored": true,
+    "profileRestored": true,
+    "protectedCount": 21180,
+    "restoredNativeDeltas": 216,
+    "remainingDeltas": []
+  }
+}

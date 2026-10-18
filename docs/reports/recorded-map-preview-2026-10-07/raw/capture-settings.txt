@@ -1,0 +1,11 @@
+map=Arena
+width=1920
+height=1080
+fps=30
+frames=780
+source_target=1920x1080
+msaa=4
+fov=58
+eye=(22.94, 27.10, -26.64)
+rotation=(0.26620, -0.28875, 0.08393, 0.91581)
+colour_space=Linear

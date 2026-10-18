@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 15:15:46Z" end-time="2026-10-06 15:15:52Z" duration="6.7738144">
+  <test-suite type="TestSuite" id="3402" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1954" result="Passed" start-time="2026-10-06 15:15:46Z" end-time="2026-10-06 15:15:52Z" duration="6.773814" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3394" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1954" result="Passed" start-time="2026-10-06 15:15:46Z" end-time="2026-10-06 15:15:52Z" duration="6.730488" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28192" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3395" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1954" result="Passed" start-time="2026-10-06 15:15:46Z" end-time="2026-10-06 15:15:52Z" duration="6.697661" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3398" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1952" result="Passed" start-time="2026-10-06 15:15:46Z" end-time="2026-10-06 15:15:52Z" duration="6.665193" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2305" name="OwnerLoginFeedbackTests" fullname="TumbangPreso.PlayTests.OwnerLoginFeedbackTests" classname="TumbangPreso.PlayTests.OwnerLoginFeedbackTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-06 15:15:46Z" end-time="2026-10-06 15:15:47Z" duration="0.787447" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2306" name="InvalidFieldsKeepTheirOwnMessagesAndPulseWithoutMovingTheirHitBoxes" fullname="TumbangPreso.PlayTests.OwnerLoginFeedbackTests.InvalidFieldsKeepTheirOwnMessagesAndPulseWithoutMovingTheirHitBoxes" methodname="InvalidFieldsKeepTheirOwnMessagesAndPulseWithoutMovingTheirHitBoxes" classname="TumbangPreso.PlayTests.OwnerLoginFeedbackTests" runstate="Runnable" seed="567724438" result="Passed" start-time="2026-10-06 15:15:46Z" end-time="2026-10-06 15:15:47Z" duration="0.770894" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="3248" name="UiEdgeCheckedShots" fullname="TumbangPreso.PlayTests.UiEdgeCheckedShots" classname="TumbangPreso.PlayTests.UiEdgeCheckedShots" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-06 15:15:47Z" end-time="2026-10-06 15:15:52Z" duration="5.692537" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="3253" name="TheSignInScreenDraws" fullname="TumbangPreso.PlayTests.UiEdgeCheckedShots.TheSignInScreenDraws" methodname="TheSignInScreenDraws" classname="TumbangPreso.PlayTests.UiEdgeCheckedShots" runstate="Runnable" seed="2097807733" result="Passed" start-time="2026-10-06 15:15:47Z" end-time="2026-10-06 15:15:52Z" duration="5.689832" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Shot] wrote Logs/ui-edge-checked-captures/SignIn-v95.png
+[Shot] wrote Logs/ui-edge-checked-captures/SignInCreate-v95.png
+[Shot] wrote Logs/ui-edge-checked-captures/SignInCreate-v95-1280.png
+[Shot] wrote Logs/ui-edge-checked-captures/SignInChecked-v95.png
+[Shot] wrote Logs/ui-edge-checked-captures/SignInChecked-v95-1280.png
+[Shot] wrote Logs/ui-edge-checked-captures/SignInBoot-v95.png
+[Shot] wrote Logs/ui-edge-checked-captures/SignInBoot-v95-1280.png
+[Shot] wrote Logs/ui-edge-checked-captures/SignInBootChecked-v95.png
+[Shot] wrote Logs/ui-edge-checked-captures/SignInBootChecked-v95-1280.png
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

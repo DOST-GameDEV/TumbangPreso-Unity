@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 17:58:42Z" end-time="2026-10-06 17:59:01Z" duration="19.0386219">
+  <test-suite type="TestSuite" id="3419" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1962" result="Passed" start-time="2026-10-06 17:58:42Z" end-time="2026-10-06 17:59:01Z" duration="19.038622" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3411" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1962" result="Passed" start-time="2026-10-06 17:58:42Z" end-time="2026-10-06 17:59:01Z" duration="18.993160" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="16216" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3412" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1962" result="Passed" start-time="2026-10-06 17:58:42Z" end-time="2026-10-06 17:59:01Z" duration="18.961722" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3415" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1960" result="Passed" start-time="2026-10-06 17:58:42Z" end-time="2026-10-06 17:59:01Z" duration="18.926956" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="3058" name="StartupOrder1007Tests" fullname="TumbangPreso.PlayTests.StartupOrder1007Tests" classname="TumbangPreso.PlayTests.StartupOrder1007Tests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-06 17:58:42Z" end-time="2026-10-06 17:59:01Z" duration="18.843238" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="3059" name="LogosLoginFiveSecondMainThenFirstHomeAnimation" fullname="TumbangPreso.PlayTests.StartupOrder1007Tests.LogosLoginFiveSecondMainThenFirstHomeAnimation" methodname="LogosLoginFiveSecondMainThenFirstHomeAnimation" classname="TumbangPreso.PlayTests.StartupOrder1007Tests" runstate="Runnable" seed="922913740" result="Passed" start-time="2026-10-06 17:58:42Z" end-time="2026-10-06 17:59:01Z" duration="18.826946" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] StartupLoginFirst1007-1920 cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupLoginFirst1007-1280 cream source=252,211,159 pixel=242,142,106; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupMainLoading1007-1920 cream source=252,211,159 pixel=248,198,141; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupMainLoading1007-1280 cream source=252,211,159 pixel=245,182,120; isolated UI camera, no ColourGrade.
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[StartupOrder1007] studio->login->main-loading->home; loadingSeconds=11.78814 firstFrames=126->163
+[TumpUiCapture] StartupFirstHomePlaying1007-1920 cream source=252,211,159 pixel=59,43,34; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupFirstHomePlaying1007-1280 cream source=252,211,159 pixel=59,43,34; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

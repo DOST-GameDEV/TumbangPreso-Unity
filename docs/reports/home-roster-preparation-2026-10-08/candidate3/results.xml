@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-08 03:06:14Z" end-time="2026-10-08 03:06:35Z" duration="21.0357892">
+  <test-suite type="TestSuite" id="3659" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2152" result="Passed" start-time="2026-10-08 03:06:14Z" end-time="2026-10-08 03:06:35Z" duration="21.035789" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3651" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2152" result="Passed" start-time="2026-10-08 03:06:14Z" end-time="2026-10-08 03:06:35Z" duration="21.004756" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="69820" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3652" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2152" result="Passed" start-time="2026-10-08 03:06:14Z" end-time="2026-10-08 03:06:35Z" duration="20.943595" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3655" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2150" result="Passed" start-time="2026-10-08 03:06:14Z" end-time="2026-10-08 03:06:35Z" duration="20.926614" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1843" name="GeneratedMotionAssetsTests" fullname="TumbangPreso.PlayTests.GeneratedMotionAssetsTests" classname="TumbangPreso.PlayTests.GeneratedMotionAssetsTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-08 03:06:15Z" end-time="2026-10-08 03:06:16Z" duration="1.361965" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1844" name="BakedMotionWarmupRetainsTheExactAssetsWithoutCreatingActors" fullname="TumbangPreso.PlayTests.GeneratedMotionAssetsTests.BakedMotionWarmupRetainsTheExactAssetsWithoutCreatingActors" methodname="BakedMotionWarmupRetainsTheExactAssetsWithoutCreatingActors" classname="TumbangPreso.PlayTests.GeneratedMotionAssetsTests" runstate="Runnable" seed="189439332" result="Passed" start-time="2026-10-08 03:06:15Z" end-time="2026-10-08 03:06:16Z" duration="1.345947" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1912" name="HomeRosterPreparationTests" fullname="TumbangPreso.PlayTests.HomeRosterPreparationTests" classname="TumbangPreso.PlayTests.HomeRosterPreparationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-08 03:06:16Z" end-time="2026-10-08 03:06:21Z" duration="4.525618" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1914" name="ActualHomePreloadPreparesRosterMeshesAndMotionBeforeReadyWithoutSpawningActors" fullname="TumbangPreso.PlayTests.HomeRosterPreparationTests.ActualHomePreloadPreparesRosterMeshesAndMotionBeforeReadyWithoutSpawningActors" methodname="ActualHomePreloadPreparesRosterMeshesAndMotionBeforeReadyWithoutSpawningActors" classname="TumbangPreso.PlayTests.HomeRosterPreparationTests" runstate="Runnable" seed="783533645" result="Passed" start-time="2026-10-08 03:06:16Z" end-time="2026-10-08 03:06:21Z" duration="4.408736" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[HomeAssetTiming] stage=roster-resource-wait wall_ms=0.841 scope=async-wait-not-main-thread-cost
+[HomeAssetTiming] stage=roster-visual-preparation wall_ms=1995.349 scope=coroutine-total-includes-yields
+[HomeAssetTiming] stage=gameplay-preparation wall_ms=1194.509 scope=coroutine-total-includes-yields
+[HomeAssetTiming] stage=mode-posters wall_ms=275.487 scope=async-wait-includes-yields
+[HomeRosterPreparation] models=41 readableMeshes=145 retainedMotion=84 ready=true spawnedActors=0 unchangedAuthoredMaterials=true
+]]></output>
+            </test-case>
+            <test-case id="1913" name="EveryCurrentHeroRootedSetSamplesItsActualRig" fullname="TumbangPreso.PlayTests.HomeRosterPreparationTests.EveryCurrentHeroRootedSetSamplesItsActualRig" methodname="EveryCurrentHeroRootedSetSamplesItsActualRig" classname="TumbangPreso.PlayTests.HomeRosterPreparationTests" runstate="Runnable" seed="968147842" result="Passed" start-time="2026-10-08 03:06:21Z" end-time="2026-10-08 03:06:21Z" duration="0.114251" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[RootedCurrentRig] hero=dante rig=dante-redesign sampledClips=4 nonBindPoses=4
+[RootedCurrentRig] hero=cheska rig=cheska-redesign sampledClips=4 nonBindPoses=4
+[RootedCurrentRig] hero=sean rig=sean-redesign sampledClips=4 nonBindPoses=4
+[RootedCurrentRig] hero=zack rig=zack-redesign sampledClips=4 nonBindPoses=4
+[RootedCurrentRig] hero=nemu rig=nemu-redesign sampledClips=4 nonBindPoses=4
+[RootedCurrentRig] hero=phaister rig=phaister-redesign sampledClips=4 nonBindPoses=4
+[RootedCurrentRig] hero=rafi rig=rafi-redesign sampledClips=4 nonBindPoses=4
+[RootedCurrentRig] hero=amihan rig=amihan-redesign sampledClips=4 nonBindPoses=4
+[RootedCurrentRig] hero=paete rig=paete-redesign sampledClips=4 nonBindPoses=4
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2514" name="OwnerMenuEditsTests" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" testcasecount="15" result="Passed" start-time="2026-10-08 03:06:21Z" end-time="2026-10-08 03:06:21Z" duration="0.074782" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2524" name="OutlineWarmupSurvivesSceneNotificationsWithoutSpawningOrDressingModels" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests.OutlineWarmupSurvivesSceneNotificationsWithoutSpawningOrDressingModels" methodname="OutlineWarmupSurvivesSceneNotificationsWithoutSpawningOrDressingModels" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" seed="2053424857" result="Passed" start-time="2026-10-08 03:06:21Z" end-time="2026-10-08 03:06:21Z" duration="0.064311" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[OutlineWarmupCheck] meshes=2 vertices=4667 coldMs=1.760 maxStepMs=1.002 reusedMs=0.091
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="3296" name="StartupOrder1007Tests" fullname="TumbangPreso.PlayTests.StartupOrder1007Tests" classname="TumbangPreso.PlayTests.StartupOrder1007Tests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-08 03:06:21Z" end-time="2026-10-08 03:06:35Z" duration="14.654544" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="3297" name="LogosLoginFiveSecondMainThenFirstHomeAnimation" fullname="TumbangPreso.PlayTests.StartupOrder1007Tests.LogosLoginFiveSecondMainThenFirstHomeAnimation" methodname="LogosLoginFiveSecondMainThenFirstHomeAnimation" classname="TumbangPreso.PlayTests.StartupOrder1007Tests" runstate="Runnable" seed="1514561995" result="Passed" start-time="2026-10-08 03:06:21Z" end-time="2026-10-08 03:06:35Z" duration="14.652443" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[HomeAssetTiming] stage=roster-resource-wait wall_ms=151.205 scope=async-wait-not-main-thread-cost
+[HomeAssetTiming] stage=roster-visual-preparation wall_ms=48.313 scope=coroutine-total-includes-yields
+[HomeAssetTiming] stage=gameplay-preparation wall_ms=14.888 scope=coroutine-total-includes-yields
+[HomeAssetTiming] stage=mode-posters wall_ms=2.398 scope=async-wait-includes-yields
+[TumpUiCapture] StartupLoginFirst1007-1920 cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupLoginFirst1007-1280 cream source=252,211,159 pixel=242,142,106; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupMainLoading1007-1920 cream source=252,211,159 pixel=247,196,139; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupMainLoading1007-1280 cream source=252,211,159 pixel=245,182,120; isolated UI camera, no ColourGrade.
+[MenuAssetLoad] resource=UI/portraits/bayan synchronous_cpu_ms=8.705 scope=opt-in-cpu-not-gpu-or-present
+[MenuAssetLoad] resource=UI/portraits/dante synchronous_cpu_ms=15.023 scope=opt-in-cpu-not-gpu-or-present
+[MenuAssetLoad] resource=UI/portraits/tsinelas synchronous_cpu_ms=13.450 scope=opt-in-cpu-not-gpu-or-present
+[MenuAssetLoad] resource=UI/portraits/pasip synchronous_cpu_ms=11.135 scope=opt-in-cpu-not-gpu-or-present
+[StartupOrder1007] studio->login->main-loading->home; loadingSeconds=7.790243 firstFrames=4->40
+[TumpUiCapture] StartupFirstHomePlaying1007-1920 cream source=252,211,159 pixel=45,27,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupFirstHomePlaying1007-1280 cream source=252,211,159 pixel=47,30,19; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

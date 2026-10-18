@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 03:33:58Z" end-time="2026-10-06 03:33:59Z" duration="0.7818471">
+  <test-suite type="TestSuite" id="3264" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1845" result="Passed" start-time="2026-10-06 03:33:58Z" end-time="2026-10-06 03:33:59Z" duration="0.781847" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3256" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1845" result="Passed" start-time="2026-10-06 03:33:58Z" end-time="2026-10-06 03:33:59Z" duration="0.747087" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="3440" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3257" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1845" result="Passed" start-time="2026-10-06 03:33:58Z" end-time="2026-10-06 03:33:59Z" duration="0.721384" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3260" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1843" result="Passed" start-time="2026-10-06 03:33:58Z" end-time="2026-10-06 03:33:59Z" duration="0.695953" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2888" name="SpectatorSeatKeysTests" fullname="TumbangPreso.PlayTests.SpectatorSeatKeysTests" classname="TumbangPreso.PlayTests.SpectatorSeatKeysTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-06 03:33:58Z" end-time="2026-10-06 03:33:59Z" duration="0.646600" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2890" name="ActiveWatcherWithoutLaunchFlagStillOwnsItsPovKeys" fullname="TumbangPreso.PlayTests.SpectatorSeatKeysTests.ActiveWatcherWithoutLaunchFlagStillOwnsItsPovKeys" methodname="ActiveWatcherWithoutLaunchFlagStillOwnsItsPovKeys" classname="TumbangPreso.PlayTests.SpectatorSeatKeysTests" runstate="Runnable" seed="676660135" result="Passed" start-time="2026-10-06 03:33:58Z" end-time="2026-10-06 03:33:59Z" duration="0.545795" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2891" name="GameplayStillSupportsTheSoloSeatShortcut" fullname="TumbangPreso.PlayTests.SpectatorSeatKeysTests.GameplayStillSupportsTheSoloSeatShortcut" methodname="GameplayStillSupportsTheSoloSeatShortcut" classname="TumbangPreso.PlayTests.SpectatorSeatKeysTests" runstate="Runnable" seed="1551357883" result="Passed" start-time="2026-10-06 03:33:59Z" end-time="2026-10-06 03:33:59Z" duration="0.045952" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2889" name="WatchHandoffCannotBeUndoneByAPovShortcut" fullname="TumbangPreso.PlayTests.SpectatorSeatKeysTests.WatchHandoffCannotBeUndoneByAPovShortcut" methodname="WatchHandoffCannotBeUndoneByAPovShortcut" classname="TumbangPreso.PlayTests.SpectatorSeatKeysTests" runstate="Runnable" seed="735554968" result="Passed" start-time="2026-10-06 03:33:59Z" end-time="2026-10-06 03:33:59Z" duration="0.038853" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

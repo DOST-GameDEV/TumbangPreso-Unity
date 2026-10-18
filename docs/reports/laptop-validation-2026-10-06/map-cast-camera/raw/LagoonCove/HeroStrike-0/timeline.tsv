@@ -1,0 +1,30 @@
+0.000	89.980	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.480	Quiet	QuietEstablish	the street	1	0
+1.001	88.980	Quiet	QuietEstablish	the street	1	0
+1.502	88.480	Quiet	QuietEstablish	the street	1	0
+2.002	87.980	Quiet	QuietEstablish	the street	1	0
+2.504	87.480	LataHit	Objective	the can · YASMIN	2	0
+3.005	86.981	LataHit	Objective	the can · YASMIN	2	0
+3.506	86.481	LataHit	Objective	the can · YASMIN	2	0
+4.007	85.981	Retrieval	Chase	retrieval · YASMIN	3	0
+4.508	85.481	Retrieval	Chase	retrieval · YASMIN	3	0
+5.378	84.601	Retrieval	Chase	retrieval · YASMIN	3	0
+5.879	84.101	LataHit	Objective	the can · ILYAS	4	0
+6.380	83.601	LataHit	Objective	the can · ILYAS	4	0
+6.880	83.101	LataHit	Objective	the can · ILYAS	4	0
+7.381	82.601	LataHit	Objective	the can · ILYAS	4	0
+7.882	82.101	LataHit	Objective	the can · ILYAS	4	0
+8.383	81.601	Reset	Defender	reset · YASMIN	5	0
+8.885	81.101	Reset	Defender	reset · YASMIN	5	0
+9.385	80.602	Reset	Defender	reset · YASMIN	5	0
+9.886	80.102	ThrowPrep	Objective	throw · ILYAS	6	0
+10.387	79.602	ThrowPrep	Objective	throw · ILYAS	6	0
+10.887	79.102	ThrowPrep	Objective	throw · ILYAS	6	0
+11.389	78.602	LataHit	Objective	the can · YASMIN	6	0
+11.890	78.102	LataHit	Objective	the can · YASMIN	6	0
+12.390	77.602	LataHit	Objective	the can · YASMIN	6	0
+12.890	77.102	LataHit	Objective	the can · YASMIN	6	0
+13.391	76.602	Retrieval	Chase	retrieval · YASMIN	7	0
+13.891	76.102	Retrieval	Chase	retrieval · YASMIN	7	0
+14.391	75.602	Retrieval	Chase	retrieval · YASMIN	7	0
+14.891	75.103	Retrieval	Chase	retrieval · YASMIN	7	0

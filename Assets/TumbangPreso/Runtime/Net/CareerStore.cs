@@ -637,7 +637,7 @@ namespace TumbangPreso.Net
         /// ⚠️⚠️ IT IS DECIDED WITHOUT A CALL, BY `MatchRecordRules.Submittable`, AND THAT IS THE
         /// POINT. Asking the service would cost one 422 per bad record per boot and would still
         /// have to decide what a 422 means, which is unanswerable from the outside: a thrown
-        /// Cloud Code error and a service that is unwell both arrive as one. The two refusals in
+        /// Cloud Code error and a service that is unwell both arrive as one. The known identity/retrieval-count refusals in
         /// `match-record.js`'s `submit` are pure functions of the record and the caller, so this
         /// side can answer them exactly, and everything that survives is a record whose failure
         /// really is worth retrying.

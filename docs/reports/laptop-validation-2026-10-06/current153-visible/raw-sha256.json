@@ -1,0 +1,22 @@
+{
+  "raw/05-arena-lan-host.json": "955be18a9e22fa7ad31e9ae9ab0dea9a2094e375ac87696b62fd8bbf5bc41dcd",
+  "raw/05-arena-lan-host.png": "cf38c3b2f1afe5e268dde4f09262db98df451e5eb96c13918e6f83fa69f2bfc1",
+  "raw/06-default-rules.json": "3369d5749b5b11eb979aa72c5e64e9827f5d76dc8a2acaf4c43aac9d6f7a7924",
+  "raw/06-default-rules.png": "8055c585edf34cdb380f661053b6bf8dbf59455bd20303195d1a2061491f8674",
+  "raw/07-bots-label-start-refusal.json": "a6297460c4e17f3385f114946c196cab4901a74414761831ac3721538b5b0497",
+  "raw/07-bots-label-start-refusal.png": "1fa97cbb6dd929e9dff21fb36eae1d55a01fcc6ffc5ac6c9040dbeab7ad1029d",
+  "raw/08-room-bots-none.json": "29bc788b91a7c7b080a7e88fbfb2f7b5afd3b35fddb74fb641a802ad7f177e3e",
+  "raw/08-room-bots-none.png": "b86d3e2beada4e35c5ad16636d52d9321ad612deca7bb4fa5aa0d8aad0fe1beb",
+  "raw/09-room-bots-hard.json": "0a456ee8c22ca7d839c4ce86c470a1219609c5b974a380814232ba7bd9709db8",
+  "raw/09-room-bots-hard.png": "0c25a1132f8ae14a42856189552e4f1eb936ac31e96d88bf109b348d9894a972",
+  "raw/13-verified-autopilot-k.json": "c072cc558a3c80037feaceb0a764532563d9992a0469e7864eb6e386e596d593",
+  "raw/13-verified-autopilot-k.png": "819034b30490e2fb7e2b2e6ba65cfa8cff81a91b2db01c404815178a0d24c125",
+  "raw/14-basilio-natural-presentation-menu.json": "bb4440ec0cd6262ea5ae555ef1d7cffe5e67728dc2ddb9c20e7e050a1ed9e630",
+  "raw/14-basilio-natural-presentation-menu.png": "de1f62fea6e7e799549866883b5bddc571e6f2713edc2451cfe3d60f8a27def8",
+  "raw/16-completed-eight-round-result.json": "b7bc250c59cddcfe4120b23d53fd4ff68bf7f982a3f37290adffa75342b0c948",
+  "raw/16-completed-eight-round-result.png": "65cb4bacd7e557584912aa63ab8b7dbde8b139829187bada788401bf0b8b3f26",
+  "raw/artifact-manifest.json": "7f20154c450157a28416a1dc1daf30987b16adaaa1c350d62f4985a71075b050",
+  "raw/build-result.json": "88b42032c7d661e1bc9f6802c020b2127b12e4e739b347acac13ef79290d0174",
+  "raw/player-result.json": "de54e05b59084ee84795479b29eedc04765c747514901e0532acca053e37c529",
+  "raw/player.log": "ccb94a2ab7a719df451b894aaf588ebbd1db977acc26e3301caf8505c546a67e"
+}

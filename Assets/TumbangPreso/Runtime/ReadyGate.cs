@@ -230,7 +230,36 @@ namespace TumbangPreso
             _introductionDone = !_automatic;
             _readySendPending = false;
             ReadyPromptChanged?.Invoke(!_automatic);
+            if (AdoptStartedMatch()) return;
             if (_automatic && _arrival == null) _arrival = StartCoroutine(PrepareAutomaticArrival());
+        }
+
+        // A late join never receives the countdown that already finished on the host.
+        // Retire only this gate's presentation; snapshots remain the round-state owner.
+        private bool AdoptStartedMatch()
+        {
+            var match = GameServices.Match;
+            if (!NetAuthority.ShouldRequest() || match == null ||
+                !match.HostConfirmedInProgress) return false;
+            if (!_awaitingLocalReady && !_countingDown && _arrival == null && !_countdownHold)
+                return true;
+
+            StopAllCoroutines(); _arrival = null;
+            var presentation = GetComponent<MatchArrivalPresentation>();
+            if (presentation != null) { presentation.Cancel(); Destroy(presentation); }
+            ReleaseStartHold();
+            // An ultimate snapshot can arrive while the old opening still owns its hold.
+            // Retiring the opening must not release that accepted shared cinematic.
+            if (SharedUltimatePhase.Instance?.Active == true) PresentationClock.Hold();
+            _readySendPending = false;
+            _awaitingLocalReady = false;
+            AwaitingNetReady = false;
+            _countingDown = false;
+            _countdownConsumed = true;
+            _introductionDone = true;
+            ReadyPromptChanged?.Invoke(false);
+            CountdownHidden?.Invoke();
+            return true;
         }
 
         private IEnumerator PrepareAutomaticArrival()
@@ -268,6 +297,7 @@ namespace TumbangPreso
 
         private void Update()
         {
+            if (AdoptStartedMatch()) return;
             // Manual READY reads its action directly, outside PlayerInputReader's
             // loading guard. Do not spend a press or start a hidden countdown.
             if (UI.Hub.HubLoading.Visible) return;

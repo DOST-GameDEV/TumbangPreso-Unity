@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 15:07:39Z" end-time="2026-10-05 15:07:48Z" duration="8.145362">
+  <test-suite type="TestSuite" id="3189" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1782" result="Failed" site="Child" start-time="2026-10-05 15:07:39Z" end-time="2026-10-05 15:07:48Z" duration="8.145362" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3181" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1782" result="Failed" site="Child" start-time="2026-10-05 15:07:39Z" end-time="2026-10-05 15:07:48Z" duration="8.134221" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="43428" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3182" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1782" result="Failed" site="Child" start-time="2026-10-05 15:07:39Z" end-time="2026-10-05 15:07:48Z" duration="8.129111" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3185" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1780" result="Failed" site="Child" start-time="2026-10-05 15:07:39Z" end-time="2026-10-05 15:07:48Z" duration="8.123659" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1686" name="HomeModeCardReadabilityTests" fullname="TumbangPreso.PlayTests.HomeModeCardReadabilityTests" classname="TumbangPreso.PlayTests.HomeModeCardReadabilityTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-05 15:07:39Z" end-time="2026-10-05 15:07:48Z" duration="8.098970" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1687" name="ActualModePostersStayClearOfTheHeadlineAt720And1080" fullname="TumbangPreso.PlayTests.HomeModeCardReadabilityTests.ActualModePostersStayClearOfTheHeadlineAt720And1080" methodname="ActualModePostersStayClearOfTheHeadlineAt720And1080" classname="TumbangPreso.PlayTests.HomeModeCardReadabilityTests" runstate="Runnable" seed="1882567034" result="Failed" start-time="2026-10-05 15:07:39Z" end-time="2026-10-05 15:07:45Z" duration="5.472966" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  mode 0 at 1280: poster crosses headline area; mode 0 at 1920: poster crosses headline area; mode 1 at 1280: poster crosses headline area; mode 1 at 1920: poster crosses headline area; mode 2 at 1280: poster crosses headline area; mode 2 at 1920: poster crosses headline area
+  Expected: <empty>
+  But was:  < "mode 0 at 1280: poster crosses headline area", "mode 0 at 1920: poster crosses headline area", "mode 1 at 1280: poster crosses headline area", "mode 1 at 1920: poster crosses headline area", "mode 2 at 1280: poster crosses headline area", "mode 2 at 1920: poster crosses headline area" >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.HomeModeCardReadabilityTests+<ActualModePostersStayClearOfTheHeadlineAt720And1080>d__7.MoveNext () [0x0034d] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\HomeModeCardReadabilityTests.cs:66
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[TumpUiCapture] Home-mode-card-0-1280 cream source=252,211,159 pixel=54,22,14; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Home-mode-card-0-1920 cream source=252,211,159 pixel=53,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Home-mode-card-1-1280 cream source=252,211,159 pixel=52,21,12; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Home-mode-card-1-1920 cream source=252,211,159 pixel=53,22,14; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Home-mode-card-2-1280 cream source=252,211,159 pixel=54,22,14; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Home-mode-card-2-1920 cream source=252,211,159 pixel=53,22,14; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1688" name="ModeCardStillOpensItsChoiceDoorAndBackKeepsTheSelection" fullname="TumbangPreso.PlayTests.HomeModeCardReadabilityTests.ModeCardStillOpensItsChoiceDoorAndBackKeepsTheSelection" methodname="ModeCardStillOpensItsChoiceDoorAndBackKeepsTheSelection" classname="TumbangPreso.PlayTests.HomeModeCardReadabilityTests" runstate="Runnable" seed="2028904329" result="Passed" start-time="2026-10-05 15:07:45Z" end-time="2026-10-05 15:07:48Z" duration="2.615762" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

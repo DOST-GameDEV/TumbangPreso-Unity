@@ -1,0 +1,19 @@
+{
+  "source": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\replay-integration1007\\fixtures\\saved-native-custom",
+  "destination": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\replay-integration1007\\fixtures\\TUMP-native-custom",
+  "reason": "LocalReplayStore.List only enumerates TUMP-* directories. Original fixture copy name was outside legitimate library naming pattern. No production or replay-byte edit.",
+  "hashes": {
+    "000000.tps": "60f28b7d7a3a4c14a2fd3159f06d04d3dc7650ca01aff259ce77140a0bcf7828",
+    "000001.tps": "84dfdcb3b479b46bd3415587c8b8277dba7d51c517a36a33be48c879a75e7151",
+    "000002.tps": "8972ed303103d00353e40223e6c381e07a0746a3414629ee7a2cb6fbe5bac058",
+    "000003.tps": "ca149cffd7ecb7ca4eadf3eb95326f6faae1b1452adbf64afa2ac4e6f0f51fff",
+    "000004.tps": "6b07e03a683bdae10d17c31cc7de682eda227bb4a1b3f728870120a5da8d7acc",
+    "000005.tps": "24ee786c053d65cc866dec9fb38b596ae63327e06b270f466ee09be37743fdf3",
+    "000006.tps": "994001edf6b6e88241da96ea95ff200611e6006468455e4474175f61669b7c49",
+    "000007.tps": "09c855a6f8e19ebb3943cc97c1b1d542551a7b40f0ec278ca35a0e593acd3e31",
+    "000008.tps": "3c55e407803d5a483fdc6a3bdd2aee5539b2fcaa69bf934507f036181ae3862f",
+    "000009.tps": "36cf9475c50a00cc460e939987da29e138124df21c57ea5ebfd4f2e822ffaa80",
+    "manifest.json": "4594fd9758625318536b2cc041ff8b981446855396515dc2d6f6e998e1e9e9cc"
+  },
+  "unchanged": true
+}

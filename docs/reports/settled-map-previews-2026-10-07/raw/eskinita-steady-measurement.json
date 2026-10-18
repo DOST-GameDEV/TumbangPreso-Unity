@@ -1,0 +1,14 @@
+{
+  "clip": {
+    "width": 1920,
+    "height": 1080,
+    "avg_frame_rate": "30/1",
+    "duration": "26.000000",
+    "nb_frames": "780"
+  },
+  "firstToSecondMean": 2.152940297067901,
+  "lastToFirstMean": 2.7080745241769546,
+  "ordinaryAdjacentMean": 2.1850226658950618,
+  "movieSha256": "05c6996ff5097bc2c33e89abe69c14995a16395153779339a83c45456250c574",
+  "limit": "Frame-difference evidence; requires visual inspection and normal-speed loop. No gameplay pass."
+}

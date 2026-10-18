@@ -1,0 +1,24 @@
+[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code 5R8G
+[NetApproval] peer=1 approved=True reason=
+[NetArrival] peer=1 seat=1 replaces=-1
+[Net] 2 connected, seat 1
+[NetReady] peer 1 seat 1 ready=True -> 1 of 1
+[NetReady] peer 0 seat 0 ready=True -> 0 of 1
+[NetSeat] arena installed: LocalSlot=0 spectator=False host=True allBots=False | s0:reader+sim+live+act | s1:-+live+act | s2:-+ai+sim+bot+live+act | s3:-+ai+sim+bot+live+act
+[ArenaPrewarm] drew 20 views in 0.34 s.
+[HubLoading] Arena ready after 1.27 s.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 2 begins, taya is seat 1
+[Slice] round 3 begins, taya is seat 2
+[Slice] round 4 begins, taya is seat 3
+[Slice] match over. scores: 270 / 30 / 690 / 540. seat 2 wins
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00000] in <8ecf80032d0f4591966a602fbe510ccd>:0 
+[Net] offline
+[NetDisconnect] peer=1 local=0 server=True connected=True
+[Net] 0 connected
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True

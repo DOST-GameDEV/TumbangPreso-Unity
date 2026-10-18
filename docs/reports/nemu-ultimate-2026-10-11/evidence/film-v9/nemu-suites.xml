@@ -1,0 +1,684 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="45" result="Failed(Child)" total="45" passed="24" failed="21" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-14 02:39:01Z" end-time="2026-10-14 02:48:20Z" duration="559.0595075">
+  <test-suite type="TestSuite" id="3682" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2167" result="Failed" site="Child" start-time="2026-10-14 02:39:01Z" end-time="2026-10-14 02:48:20Z" duration="559.059508" total="45" passed="24" failed="21" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3674" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2167" result="Failed" site="Child" start-time="2026-10-14 02:39:01Z" end-time="2026-10-14 02:48:20Z" duration="559.026662" total="45" passed="24" failed="21" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="20284" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3675" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2167" result="Failed" site="Child" start-time="2026-10-14 02:39:01Z" end-time="2026-10-14 02:48:20Z" duration="559.003539" total="45" passed="24" failed="21" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3678" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2165" result="Failed" site="Child" start-time="2026-10-14 02:39:01Z" end-time="2026-10-14 02:48:20Z" duration="558.980384" total="45" passed="24" failed="21" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2403" name="NemuKitContractProbe" fullname="TumbangPreso.PlayTests.NemuKitContractProbe" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" testcasecount="38" result="Failed" site="Child" start-time="2026-10-14 02:39:01Z" end-time="2026-10-14 02:48:19Z" duration="557.886582" total="38" passed="17" failed="21" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2430" name="AClientCannotOriginateResolvedImpacts" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.AClientCannotOriginateResolvedImpacts" methodname="AClientCannotOriginateResolvedImpacts" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="573448708" result="Passed" start-time="2026-10-14 02:39:01Z" end-time="2026-10-14 02:39:23Z" duration="21.772483" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2440" name="ANewSlipperAcquisitionEndsVeilWithoutLeavingItsVisual" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.ANewSlipperAcquisitionEndsVeilWithoutLeavingItsVisual" methodname="ANewSlipperAcquisitionEndsVeilWithoutLeavingItsVisual" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="65206175" result="Failed" start-time="2026-10-14 02:39:23Z" end-time="2026-10-14 02:39:36Z" duration="13.695392" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A genuine new acquisition failed to end Veil.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuKitContractProbe+<ANewSlipperAcquisitionEndsVeilWithoutLeavingItsVisual>d__52.MoveNext () [0x00124] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\NemuKitContractProbe.cs:854
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2434" name="APassingScareDoesNotRefreshItsStunEveryFrame" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.APassingScareDoesNotRefreshItsStunEveryFrame" methodname="APassingScareDoesNotRefreshItsStunEveryFrame" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="1088296158" result="Failed" start-time="2026-10-14 02:39:36Z" end-time="2026-10-14 02:39:50Z" duration="13.730714" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The passing ghost did not make contact.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuKitContractProbe+<APassingScareDoesNotRefreshItsStunEveryFrame>d__45.MoveNext () [0x00148] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\NemuKitContractProbe.cs:770
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2424" name="AuthoritativeFlightRejectsInvalidHeightWallsAndUnfundedTravel" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.AuthoritativeFlightRejectsInvalidHeightWallsAndUnfundedTravel" methodname="AuthoritativeFlightRejectsInvalidHeightWallsAndUnfundedTravel" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="1082253130" result="Passed" start-time="2026-10-14 02:39:50Z" end-time="2026-10-14 02:40:04Z" duration="13.530906" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2423" name="AuthoritativeRecallClearsTheOldReplicaInterpolationTarget" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.AuthoritativeRecallClearsTheOldReplicaInterpolationTarget" methodname="AuthoritativeRecallClearsTheOldReplicaInterpolationTarget" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="1359656291" result="Passed" start-time="2026-10-14 02:40:04Z" end-time="2026-10-14 02:40:17Z" duration="13.716162" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2431" name="CarapaceStopsResolvedImpactWithoutDisablingOwnMovement" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.CarapaceStopsResolvedImpactWithoutDisablingOwnMovement" methodname="CarapaceStopsResolvedImpactWithoutDisablingOwnMovement" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="799780092" result="Failed" start-time="2026-10-14 02:40:17Z" end-time="2026-10-14 02:40:31Z" duration="13.704175" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: less than 0.0199999996f
+  But was:  0.73279202f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuKitContractProbe+<CarapaceStopsResolvedImpactWithoutDisablingOwnMovement>d__42.MoveNext () [0x000cc] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\NemuKitContractProbe.cs:703
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2420" name="DelayedCastKeepsTheAcceptedAimInsteadOfTheReplicaIntent" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.DelayedCastKeepsTheAcceptedAimInsteadOfTheReplicaIntent" methodname="DelayedCastKeepsTheAcceptedAimInsteadOfTheReplicaIntent" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="866929121" result="Passed" start-time="2026-10-14 02:40:31Z" end-time="2026-10-14 02:40:45Z" duration="13.523977" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2418" name="DestroyedBotCannotRemainTheHostSimulationOwner" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.DestroyedBotCannotRemainTheHostSimulationOwner" methodname="DestroyedBotCannotRemainTheHostSimulationOwner" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="430999463" result="Passed" start-time="2026-10-14 02:40:45Z" end-time="2026-10-14 02:40:58Z" duration="13.516316" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2425" name="FamiliarSnapshotRebuildsTheRemainingEffectWithoutAChargeOrTeleport" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.FamiliarSnapshotRebuildsTheRemainingEffectWithoutAChargeOrTeleport" methodname="FamiliarSnapshotRebuildsTheRemainingEffectWithoutAChargeOrTeleport" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="675960307" result="Failed" start-time="2026-10-14 02:40:58Z" end-time="2026-10-14 02:41:12Z" duration="13.653093" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Repeated snapshot duplicated the field.
+  Expected: 1
+  But was:  0
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuKitContractProbe+<FamiliarSnapshotRebuildsTheRemainingEffectWithoutAChargeOrTeleport>d__36.MoveNext () [0x00162] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\NemuKitContractProbe.cs:620
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2441" name="FeedingAndReturningFamiliarDoNotConsumeAPossessionCharge" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.FeedingAndReturningFamiliarDoNotConsumeAPossessionCharge" methodname="FeedingAndReturningFamiliarDoNotConsumeAPossessionCharge" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="363833668" result="Failed" start-time="2026-10-14 02:41:12Z" end-time="2026-10-14 02:41:27Z" duration="15.390005" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The charge stayed unusable after the familiar returned.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuKitContractProbe+<FeedingAndReturningFamiliarDoNotConsumeAPossessionCharge>d__53.MoveNext () [0x001ac] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\NemuKitContractProbe.cs:873
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2409" name="FollowingUltimateStagesAheadAndKeepsItsAcceptedGroundAnchor" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.FollowingUltimateStagesAheadAndKeepsItsAcceptedGroundAnchor" methodname="FollowingUltimateStagesAheadAndKeepsItsAcceptedGroundAnchor" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="307980229" result="Failed" start-time="2026-10-14 02:41:27Z" end-time="2026-10-14 02:41:41Z" duration="13.544291" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Following giant still grows around the player's camera.
+  Expected: greater than 3.0f
+  But was:  0.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuKitContractProbe+<FollowingUltimateStagesAheadAndKeepsItsAcceptedGroundAnchor>d__15.MoveNext () [0x000bf] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\NemuKitContractProbe.cs:262
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2404" name="JoiningCarapaceKeepsItsRemainingProtectionAndReleasesHeavySlow" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.JoiningCarapaceKeepsItsRemainingProtectionAndReleasesHeavySlow" methodname="JoiningCarapaceKeepsItsRemainingProtectionAndReleasesHeavySlow" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="2129210962" result="Failed" start-time="2026-10-14 02:41:41Z" end-time="2026-10-14 02:41:56Z" duration="14.795886" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 0.69999998807907104d +/- 0.0010000000474974513d
+  But was:  1.0d
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuKitContractProbe+<JoiningCarapaceKeepsItsRemainingProtectionAndReleasesHeavySlow>d__10.MoveNext () [0x00215] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\NemuKitContractProbe.cs:81
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+]]></output>
+            </test-case>
+            <test-case id="2406" name="JoiningPersonalBuffCannotOverwriteANewCastOrSurviveHeroReplacement" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.JoiningPersonalBuffCannotOverwriteANewCastOrSurviveHeroReplacement" methodname="JoiningPersonalBuffCannotOverwriteANewCastOrSurviveHeroReplacement" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="854619415" result="Failed" start-time="2026-10-14 02:41:56Z" end-time="2026-10-14 02:42:10Z" duration="14.227292" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuKitContractProbe+<JoiningPersonalBuffCannotOverwriteANewCastOrSurviveHeroReplacement>d__12.MoveNext () [0x00144] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\NemuKitContractProbe.cs:156
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2405" name="JoiningVeilDoesNotSurgeAgainAndStillEndsOnANewPickup" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.JoiningVeilDoesNotSurgeAgainAndStillEndsOnANewPickup" methodname="JoiningVeilDoesNotSurgeAgainAndStillEndsOnANewPickup" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="2108242306" result="Failed" start-time="2026-10-14 02:42:10Z" end-time="2026-10-14 02:42:24Z" duration="13.740975" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuKitContractProbe+<JoiningVeilDoesNotSurgeAgainAndStillEndsOnANewPickup>d__11.MoveNext () [0x001e9] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\NemuKitContractProbe.cs:119
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2407" name="LongFadeTradesSustainedSpeedForMoreTimeAndReleasesItsSlow" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.LongFadeTradesSustainedSpeedForMoreTimeAndReleasesItsSlow" methodname="LongFadeTradesSustainedSpeedForMoreTimeAndReleasesItsSlow" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="1233373202" result="Failed" start-time="2026-10-14 02:42:24Z" end-time="2026-10-14 02:42:38Z" duration="14.049107" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuKitContractProbe+<LongFadeTradesSustainedSpeedForMoreTimeAndReleasesItsSlow>d__13.MoveNext () [0x00229] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\NemuKitContractProbe.cs:190
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2427" name="ModelRebindDoesNotBakeRemoteSmoothingIntoItsAlignment" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.ModelRebindDoesNotBakeRemoteSmoothingIntoItsAlignment" methodname="ModelRebindDoesNotBakeRemoteSmoothingIntoItsAlignment" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="1223691958" result="Passed" start-time="2026-10-14 02:42:38Z" end-time="2026-10-14 02:42:51Z" duration="13.736119" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2437" name="NormalProjectionRecastStillTeleports" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.NormalProjectionRecastStillTeleports" methodname="NormalProjectionRecastStillTeleports" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="1456270934" result="Failed" start-time="2026-10-14 02:42:51Z" end-time="2026-10-14 02:43:05Z" duration="13.859438" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuKitContractProbe+<CheckProjectionEnd>d__49.MoveNext () [0x00064] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\NemuKitContractProbe.cs:782
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2414" name="OrdinaryProjectionReturnNeverBecomesTheGiant" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.OrdinaryProjectionReturnNeverBecomesTheGiant" methodname="OrdinaryProjectionReturnNeverBecomesTheGiant" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="1829408304" result="Failed" start-time="2026-10-14 02:43:05Z" end-time="2026-10-14 02:43:19Z" duration="13.634407" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuKitContractProbe+<OrdinaryProjectionReturnNeverBecomesTheGiant>d__21.MoveNext () [0x00060] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\NemuKitContractProbe.cs:399
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2413" name="PossessedFamiliarCanDevourThroughTheKeyboardReader" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.PossessedFamiliarCanDevourThroughTheKeyboardReader" methodname="PossessedFamiliarCanDevourThroughTheKeyboardReader" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="2107771054" result="Failed" start-time="2026-10-14 02:43:19Z" end-time="2026-10-14 02:43:32Z" duration="13.679333" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuKitContractProbe+<PossessedFamiliarCanDevourThroughTheKeyboardReader>d__20.MoveNext () [0x00066] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\NemuKitContractProbe.cs:363
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2419" name="PredictedRecallIgnoresOldEchoUntilANewMovementEpoch" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.PredictedRecallIgnoresOldEchoUntilANewMovementEpoch" methodname="PredictedRecallIgnoresOldEchoUntilANewMovementEpoch" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="279710382" result="Passed" start-time="2026-10-14 02:43:32Z" end-time="2026-10-14 02:43:46Z" duration="13.555460" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2426" name="ProjectionSnapshotRestoresOnlyItsRemainingTrip" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.ProjectionSnapshotRestoresOnlyItsRemainingTrip" methodname="ProjectionSnapshotRestoresOnlyItsRemainingTrip" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="2063191290" result="Failed" start-time="2026-10-14 02:43:46Z" end-time="2026-10-14 02:44:00Z" duration="13.525993" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuKitContractProbe+<ProjectionSnapshotRestoresOnlyItsRemainingTrip>d__37.MoveNext () [0x00083] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\NemuKitContractProbe.cs:638
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2412" name="QuickControllerTapCannotShortenTimedStun" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.QuickControllerTapCannotShortenTimedStun" methodname="QuickControllerTapCannotShortenTimedStun" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="1119152420" result="Passed" start-time="2026-10-14 02:44:00Z" end-time="2026-10-14 02:44:13Z" duration="13.769694" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2411" name="QuickKeyboardTapCannotShortenTimedStun" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.QuickKeyboardTapCannotShortenTimedStun" methodname="QuickKeyboardTapCannotShortenTimedStun" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="387872879" result="Passed" start-time="2026-10-14 02:44:13Z" end-time="2026-10-14 02:44:27Z" duration="13.735552" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2436" name="RefusedProjectionDoesNotTeleport" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.RefusedProjectionDoesNotTeleport" methodname="RefusedProjectionDoesNotTeleport" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="179833736" result="Failed" start-time="2026-10-14 02:44:27Z" end-time="2026-10-14 02:44:41Z" duration="13.639366" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuKitContractProbe+<CheckProjectionEnd>d__49.MoveNext () [0x00064] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\NemuKitContractProbe.cs:782
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2421" name="RemoteHumanProjectionDoesNotAcquireAIOrSimulateFlight" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.RemoteHumanProjectionDoesNotAcquireAIOrSimulateFlight" methodname="RemoteHumanProjectionDoesNotAcquireAIOrSimulateFlight" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="1816622882" result="Passed" start-time="2026-10-14 02:44:41Z" end-time="2026-10-14 02:44:55Z" duration="14.015448" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2428" name="RepeatedRosterSnapshotPreservesTheActiveFamiliar" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.RepeatedRosterSnapshotPreservesTheActiveFamiliar" methodname="RepeatedRosterSnapshotPreservesTheActiveFamiliar" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="1605606298" result="Passed" start-time="2026-10-14 02:44:55Z" end-time="2026-10-14 02:45:08Z" duration="13.541425" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2429" name="ReplicaDoesNotStoreAnImpulseForALaterOwnershipHandover" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.ReplicaDoesNotStoreAnImpulseForALaterOwnershipHandover" methodname="ReplicaDoesNotStoreAnImpulseForALaterOwnershipHandover" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="1728023247" result="Passed" start-time="2026-10-14 02:45:08Z" end-time="2026-10-14 02:45:22Z" duration="13.723010" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2410" name="ResetDuringInvocationReleasesTheFamiliarWithoutGrowingIt" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.ResetDuringInvocationReleasesTheFamiliarWithoutGrowingIt" methodname="ResetDuringInvocationReleasesTheFamiliarWithoutGrowingIt" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="256085465" result="Passed" start-time="2026-10-14 02:45:22Z" end-time="2026-10-14 02:45:44Z" duration="21.535489" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2435" name="ResetProjectionDoesNotTeleport" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.ResetProjectionDoesNotTeleport" methodname="ResetProjectionDoesNotTeleport" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="2123582643" result="Failed" start-time="2026-10-14 02:45:44Z" end-time="2026-10-14 02:45:57Z" duration="13.645221" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuKitContractProbe+<CheckProjectionEnd>d__49.MoveNext () [0x00064] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\NemuKitContractProbe.cs:782
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2438" name="ResetSeanceRemovesTheLivePullImmediately" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.ResetSeanceRemovesTheLivePullImmediately" methodname="ResetSeanceRemovesTheLivePullImmediately" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="465501643" result="Failed" start-time="2026-10-14 02:45:57Z" end-time="2026-10-14 02:46:18Z" duration="21.142169" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuKitContractProbe+<ResetSeanceRemovesTheLivePullImmediately>d__50.MoveNext () [0x0008f] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\NemuKitContractProbe.cs:804
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2417" name="RetiredRecoveryRequestsCannotAffectAnyEpisode" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.RetiredRecoveryRequestsCannotAffectAnyEpisode" methodname="RetiredRecoveryRequestsCannotAffectAnyEpisode" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="1320471463" result="Passed" start-time="2026-10-14 02:46:18Z" end-time="2026-10-14 02:46:32Z" duration="13.531501" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2433" name="ScoutMovementAndRecallRespectSolidWallsAndCourtBounds" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.ScoutMovementAndRecallRespectSolidWallsAndCourtBounds" methodname="ScoutMovementAndRecallRespectSolidWallsAndCourtBounds" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="601160237" result="Passed" start-time="2026-10-14 02:46:32Z" end-time="2026-10-14 02:46:45Z" duration="13.555865" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2432" name="SeanceActuallyPullsAPlayerAndLooseSlipperWithoutMovingTheCan" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.SeanceActuallyPullsAPlayerAndLooseSlipperWithoutMovingTheCan" methodname="SeanceActuallyPullsAPlayerAndLooseSlipperWithoutMovingTheCan" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="404251534" result="Failed" start-time="2026-10-14 02:46:45Z" end-time="2026-10-14 02:47:07Z" duration="21.717935" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuKitContractProbe+<SeanceActuallyPullsAPlayerAndLooseSlipperWithoutMovingTheCan>d__43.MoveNext () [0x001fc] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\NemuKitContractProbe.cs:725
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2408" name="ShortLeashTradesScoutTimeForFasterControlledTravel" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.ShortLeashTradesScoutTimeForFasterControlledTravel" methodname="ShortLeashTradesScoutTimeForFasterControlledTravel" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="359139745" result="Failed" start-time="2026-10-14 02:47:07Z" end-time="2026-10-14 02:47:21Z" duration="14.268899" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuKitContractProbe+<ShortLeashTradesScoutTimeForFasterControlledTravel>d__14.MoveNext () [0x001b2] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\NemuKitContractProbe.cs:229
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2415" name="TimedStunSnapshotsCannotRestoreRetiredRecoveryInputs" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.TimedStunSnapshotsCannotRestoreRetiredRecoveryInputs" methodname="TimedStunSnapshotsCannotRestoreRetiredRecoveryInputs" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="175616576" result="Passed" start-time="2026-10-14 02:47:21Z" end-time="2026-10-14 02:47:35Z" duration="14.068461" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2416" name="TripSnapshotsStayAuthoritativeWithoutRecoveryPrediction" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.TripSnapshotsStayAuthoritativeWithoutRecoveryPrediction" methodname="TripSnapshotsStayAuthoritativeWithoutRecoveryPrediction" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="1949381745" result="Passed" start-time="2026-10-14 02:47:35Z" end-time="2026-10-14 02:47:50Z" duration="14.165317" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2439" name="VeilSurvivesAnAlreadyHeldSlipperAndItsSustainedSpeedRestores" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.VeilSurvivesAnAlreadyHeldSlipperAndItsSustainedSpeedRestores" methodname="VeilSurvivesAnAlreadyHeldSlipperAndItsSustainedSpeedRestores" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="556022818" result="Failed" start-time="2026-10-14 02:47:50Z" end-time="2026-10-14 02:48:05Z" duration="15.187009" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The speed gain vanished with the opening impulse.
+  Expected: 3.0000001192092896d +/- 0.079999998211860657d
+  But was:  2.75d
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuKitContractProbe+<VeilSurvivesAnAlreadyHeldSlipperAndItsSustainedSpeedRestores>d__51.MoveNext () [0x001ea] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\NemuKitContractProbe.cs:826
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+            <test-case id="2422" name="ZeroScoutInputDoesNotFallBackToTheBodyBotsWalkingDirection" fullname="TumbangPreso.PlayTests.NemuKitContractProbe.ZeroScoutInputDoesNotFallBackToTheBodyBotsWalkingDirection" methodname="ZeroScoutInputDoesNotFallBackToTheBodyBotsWalkingDirection" classname="TumbangPreso.PlayTests.NemuKitContractProbe" runstate="Runnable" seed="477759956" result="Failed" start-time="2026-10-14 02:48:05Z" end-time="2026-10-14 02:48:19Z" duration="14.033202" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: less than 0.00100000005f
+  But was:  5.65749788f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.NemuKitContractProbe+<ZeroScoutInputDoesNotFallBackToTheBodyBotsWalkingDirection>d__33.MoveNext () [0x000b7] in C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Assets\TumbangPreso\Tests\PlayMode\NemuKitContractProbe.cs:569
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2446" name="NemuPrusisyonTests" fullname="TumbangPreso.PlayTests.NemuPrusisyonTests" classname="TumbangPreso.PlayTests.NemuPrusisyonTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-14 02:48:19Z" end-time="2026-10-14 02:48:20Z" duration="0.959728" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2448" name="AnObserverCannotPossessAnybody" fullname="TumbangPreso.PlayTests.NemuPrusisyonTests.AnObserverCannotPossessAnybody" methodname="AnObserverCannotPossessAnybody" classname="TumbangPreso.PlayTests.NemuPrusisyonTests" runstate="Runnable" seed="536606968" result="Passed" start-time="2026-10-14 02:48:19Z" end-time="2026-10-14 02:48:19Z" duration="0.070580" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2449" name="ARefreshNeverAddsAndCleanseOrRoundClearEndsIt" fullname="TumbangPreso.PlayTests.NemuPrusisyonTests.ARefreshNeverAddsAndCleanseOrRoundClearEndsIt" methodname="ARefreshNeverAddsAndCleanseOrRoundClearEndsIt" classname="TumbangPreso.PlayTests.NemuPrusisyonTests" runstate="Runnable" seed="93221207" result="Passed" start-time="2026-10-14 02:48:19Z" end-time="2026-10-14 02:48:19Z" duration="0.112892" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2453" name="AStrayHauntMessageChangesNothing" fullname="TumbangPreso.PlayTests.NemuPrusisyonTests.AStrayHauntMessageChangesNothing" methodname="AStrayHauntMessageChangesNothing" classname="TumbangPreso.PlayTests.NemuPrusisyonTests" runstate="Runnable" seed="1171289787" result="Passed" start-time="2026-10-14 02:48:19Z" end-time="2026-10-14 02:48:19Z" duration="0.172105" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2452" name="TheContestHoldsAgainstTheFightAndWearsDownTheGrip" fullname="TumbangPreso.PlayTests.NemuPrusisyonTests.TheContestHoldsAgainstTheFightAndWearsDownTheGrip" methodname="TheContestHoldsAgainstTheFightAndWearsDownTheGrip" classname="TumbangPreso.PlayTests.NemuPrusisyonTests" runstate="Runnable" seed="1566571381" result="Passed" start-time="2026-10-14 02:48:19Z" end-time="2026-10-14 02:48:19Z" duration="0.158789" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2451" name="TheGhostsPullTowardTheWorstPlaceAndNeverMoveAStunnedBody" fullname="TumbangPreso.PlayTests.NemuPrusisyonTests.TheGhostsPullTowardTheWorstPlaceAndNeverMoveAStunnedBody" methodname="TheGhostsPullTowardTheWorstPlaceAndNeverMoveAStunnedBody" classname="TumbangPreso.PlayTests.NemuPrusisyonTests" runstate="Runnable" seed="26243729" result="Passed" start-time="2026-10-14 02:48:19Z" end-time="2026-10-14 02:48:20Z" duration="0.127274" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2447" name="TheUltimateKeepsItsIdentityAndPossessesEveryOtherPlayerForFifteenSeconds" fullname="TumbangPreso.PlayTests.NemuPrusisyonTests.TheUltimateKeepsItsIdentityAndPossessesEveryOtherPlayerForFifteenSeconds" methodname="TheUltimateKeepsItsIdentityAndPossessesEveryOtherPlayerForFifteenSeconds" classname="TumbangPreso.PlayTests.NemuPrusisyonTests" runstate="Runnable" seed="429685937" result="Passed" start-time="2026-10-14 02:48:20Z" end-time="2026-10-14 02:48:20Z" duration="0.136835" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2450" name="TheWireValueIsBoundedAndItsOwnClockRunsOut" fullname="TumbangPreso.PlayTests.NemuPrusisyonTests.TheWireValueIsBoundedAndItsOwnClockRunsOut" methodname="TheWireValueIsBoundedAndItsOwnClockRunsOut" classname="TumbangPreso.PlayTests.NemuPrusisyonTests" runstate="Runnable" seed="462756988" result="Passed" start-time="2026-10-14 02:48:20Z" end-time="2026-10-14 02:48:20Z" duration="0.177670" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

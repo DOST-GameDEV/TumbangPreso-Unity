@@ -1,0 +1,9 @@
+# Current circle helpers in native Unity
+
+Exact source3216e1b0ac8dc3acc027f0fdbd32c2cf1966e5dd includes the desktop's familiarf46 and chalkd2 fixes, with no candidate overlays. One isolated laptop Unity6000.5.8f1 PlayMode job53620 ran the two new fixture classes and exactly two existing Nemu chase controls. Actual XML is30PASS/0FAIL: FamiliarConfinement9, ChalkCircleCrossing19, and ReusedChaseSweepStopsAtAWallAndFailsClosedWhenItsBufferFills plus ADefendersFamiliarCanReachAnAttackerOutsideTheConfinementBox. No Editor-only classes or old whole-kit probe were requested.
+
+The source-qualified worker used real Unity vector/physics types and actual ArenaStage.BoxRadiusFor values. Familiar cases preserve defender circle projection, ordinary square/interior/height and non-defender/null-owner behavior. Chalk cases cover circle contacts and old-square false contacts at all five current radii, crossing height, axis, stationary/interior/tangent/start/short/pass-through and square controls. Existing Nemu controls preserve saturated wall-sweep safety and authored unrestricted Haunt chase. These tests qualify the narrow helpers and nearby physics contracts, not natural hero movement/recall, audible timing, every AI stage route, physical devices or current packaged networking.
+
+The job exited0 and restored all21186 input hashes after preserving279 native import deltas. Thirteen existing editor preference values and all four named-profile files were restored; no unknown input change remained. The compiled source was unchanged while running. Original source-linked failures remain in the desktop's familiar-confinement and chalk-circle reports; this integration report does not substitute itself for their originals.
+
+Raw XML, log, launch, source manifest, classified result and profile-restoration receipt are retained with exact byte hashes. Private preference/profile contents are excluded. No product code or new build was needed for this unit.

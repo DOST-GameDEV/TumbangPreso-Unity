@@ -1,0 +1,233 @@
+{
+  "arena-current-startup": {
+    "verifiedRawBlobs": 5,
+    "pngs": []
+  },
+  "current152-lan-match": {
+    "verifiedRawBlobs": 32,
+    "pngs": [
+      {
+        "file": "01-first-lan-view-empty.png",
+        "dimensions": [
+          1600,
+          900
+        ]
+      },
+      {
+        "file": "02-lan-empty-after-wait.png",
+        "dimensions": [
+          1600,
+          900
+        ]
+      },
+      {
+        "file": "03-gwec-code-entered.png",
+        "dimensions": [
+          1600,
+          900
+        ]
+      },
+      {
+        "file": "04-gwec-no-answer.png",
+        "dimensions": [
+          1600,
+          900
+        ]
+      },
+      {
+        "file": "05-direct-lan-admitted-ready.png",
+        "dimensions": [
+          1600,
+          900
+        ]
+      },
+      {
+        "file": "06-client-shared-classic-8x90-rules.png",
+        "dimensions": [
+          1600,
+          900
+        ]
+      },
+      {
+        "file": "07-client-shared-room-public-bots-none.png",
+        "dimensions": [
+          1600,
+          900
+        ]
+      },
+      {
+        "file": "08-client-confirmed-hero4x30.png",
+        "dimensions": [
+          1600,
+          900
+        ]
+      },
+      {
+        "file": "09-character-selection.png",
+        "dimensions": [
+          1600,
+          900
+        ]
+      },
+      {
+        "file": "10-arena-live-round.png",
+        "dimensions": [
+          1600,
+          900
+        ]
+      },
+      {
+        "file": "11-natural-match-results.png",
+        "dimensions": [
+          1600,
+          900
+        ]
+      },
+      {
+        "file": "12-postmatch-uncommanded-local-host.png",
+        "dimensions": [
+          1600,
+          900
+        ]
+      }
+    ],
+    "fullRecordByteEqual": true
+  },
+  "current152-online-local": {
+    "verifiedRawBlobs": 30,
+    "pngs": [
+      {
+        "file": "01-host-room.png",
+        "dimensions": [
+          1920,
+          1080
+        ]
+      },
+      {
+        "file": "02-client-public-row.png",
+        "dimensions": [
+          1920,
+          1080
+        ]
+      },
+      {
+        "file": "03-client-ready.png",
+        "dimensions": [
+          1920,
+          1080
+        ]
+      },
+      {
+        "file": "04-host-sees-ready.png",
+        "dimensions": [
+          1920,
+          1080
+        ]
+      },
+      {
+        "file": "05-client-ready-after-idle.png",
+        "dimensions": [
+          1920,
+          1080
+        ]
+      },
+      {
+        "file": "06-host-after-client-leave.png",
+        "dimensions": [
+          1920,
+          1080
+        ]
+      },
+      {
+        "file": "07-code-entered.png",
+        "dimensions": [
+          1920,
+          1080
+        ]
+      },
+      {
+        "file": "08-code-rejoin-ready-reset.png",
+        "dimensions": [
+          1920,
+          1080
+        ]
+      },
+      {
+        "file": "09-client-home-after-host-leave.png",
+        "dimensions": [
+          1920,
+          1080
+        ]
+      },
+      {
+        "file": "10-client-quit-menu.png",
+        "dimensions": [
+          1920,
+          1080
+        ]
+      },
+      {
+        "file": "11-host-quit-menu.png",
+        "dimensions": [
+          1920,
+          1080
+        ]
+      }
+    ]
+  },
+  "current152-online-match": {
+    "verifiedRawBlobs": 21,
+    "pngs": [
+      {
+        "file": "01-public-arena-row.png",
+        "dimensions": [
+          1600,
+          900
+        ]
+      },
+      {
+        "file": "03-online-actual-hero4x30.png",
+        "dimensions": [
+          1600,
+          900
+        ]
+      },
+      {
+        "file": "04-ready-after-actual-rules.png",
+        "dimensions": [
+          1600,
+          900
+        ]
+      },
+      {
+        "file": "05-online-live-round.png",
+        "dimensions": [
+          1600,
+          900
+        ]
+      },
+      {
+        "file": "06-natural-online-results.png",
+        "dimensions": [
+          1600,
+          900
+        ]
+      },
+      {
+        "file": "07-post-online-uncommanded-lan-host.png",
+        "dimensions": [
+          1600,
+          900
+        ]
+      },
+      {
+        "file": "08-own-quit-after-pairs.png",
+        "dimensions": [
+          1600,
+          900
+        ]
+      }
+    ],
+    "fullRecordByteEqual": true
+  }
+}

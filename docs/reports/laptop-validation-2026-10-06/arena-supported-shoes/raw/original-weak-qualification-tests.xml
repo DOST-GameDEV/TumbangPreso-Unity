@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 11:35:05Z" end-time="2026-10-06 11:35:26Z" duration="21.0722712">
+  <test-suite type="TestSuite" id="3382" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1939" result="Passed" start-time="2026-10-06 11:35:05Z" end-time="2026-10-06 11:35:26Z" duration="21.072271" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3374" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1939" result="Passed" start-time="2026-10-06 11:35:05Z" end-time="2026-10-06 11:35:26Z" duration="21.065305" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="48744" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3375" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1939" result="Passed" start-time="2026-10-06 11:35:05Z" end-time="2026-10-06 11:35:26Z" duration="21.063963" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3378" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1937" result="Passed" start-time="2026-10-06 11:35:05Z" end-time="2026-10-06 11:35:26Z" duration="21.062768" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1120" name="ArenaAiObjectiveApproachTests" fullname="TumbangPreso.PlayTests.ArenaAiObjectiveApproachTests" classname="TumbangPreso.PlayTests.ArenaAiObjectiveApproachTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-06 11:35:05Z" end-time="2026-10-06 11:35:26Z" duration="21.038168" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1121" name="OrdinaryBotRetrievesAcrossEachAuthoredRamp" fullname="TumbangPreso.PlayTests.ArenaAiObjectiveApproachTests.OrdinaryBotRetrievesAcrossEachAuthoredRamp" methodname="OrdinaryBotRetrievesAcrossEachAuthoredRamp" classname="TumbangPreso.PlayTests.ArenaAiObjectiveApproachTests" runstate="Runnable" seed="876726551" result="Passed" start-time="2026-10-06 11:35:05Z" end-time="2026-10-06 11:35:26Z" duration="21.027533" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="300000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.60, announcer slider).
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,4 +1,4 @@
-"""Render the review set of the Dante (displayed: Basilio) redesign prototype, in Blender, no Unity.
+"""Render the review set of the Dante (displayed: Dante) redesign prototype, in Blender, no Unity.
 
     "C:/Program Files/Blender Foundation/Blender 5.0/blender.exe" -b --python tools/render_character_redesign_dante.py -- v12
     ... -- v12 turn face          (only some shots: turn face far trio close golem heads)

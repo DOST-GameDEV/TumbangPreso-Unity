@@ -1,4 +1,4 @@
-# Character redesign prototype, Dante (Basilio): pictures, 2026-10-05
+# Character redesign prototype, Dante (Dante): pictures, 2026-10-05
 
 The handoff and the full record are in
 [CHARACTER_REDESIGN_DANTE.md](../../CHARACTER_REDESIGN_DANTE.md). These are the final

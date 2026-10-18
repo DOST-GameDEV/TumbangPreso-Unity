@@ -1,0 +1,11 @@
+{
+  "raw/fixture.cs": "b3fca6a25117cf662eddeb67f06ed2f5b5ef99e3053931e0410455bfc5a99bb2",
+  "raw/fixture.cs.meta": "8c76549e292da733c32cf92b90f239114dbf3f36913e336b2182e300dccedc2f",
+  "raw/Rig-original.cs": "6b14941e88a217f2614aad7aecaae41f38b6594b310aee19024cdf130dda04c3",
+  "raw/candidate-native/classification.json": "ce626613407d53ed2758585618c4b926cd03cecab54327795bcadb56c8c0ccdc",
+  "raw/candidate-native/launch.json": "e9bd4f17de6358c3f30c7a0149d21548600dfb05030717b3ff0c8d2658ad0e78",
+  "raw/candidate-native/results.xml": "9a2f6d163f54217b1f9531ac6adfd81971776f6305e1e1df404fb3b96b2d458e",
+  "raw/original-native/classification.json": "ce626613407d53ed2758585618c4b926cd03cecab54327795bcadb56c8c0ccdc",
+  "raw/original-native/launch.json": "a3ae611e2d3120d9095198ef3cfef414fb5967e07c3a082a6db788fe22c6d73c",
+  "raw/original-native/results.xml": "931f61591e423177cf3fe7c357a6237c4d115a56456f84b6565c8caab9b73426"
+}

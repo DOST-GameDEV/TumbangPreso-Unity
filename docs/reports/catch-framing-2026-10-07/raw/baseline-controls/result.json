@@ -1,0 +1,28 @@
+{
+  "sourceRef": "2d769c26814eeb7ab73b17eb6db0c5e4ab5a9fd6",
+  "profile": "pc-catch-framing-baseline-controls1006",
+  "filter": "TumbangPreso.PlayTests.CatchReconstructionTests.CatchChoosesTheOpenSideAndAvoidsAForcedFaceCloseup;TumbangPreso.PlayTests.CatchReconstructionTests.AuthoredMapFarTagRetainsVisibleWholeBodyContact",
+  "expectedCases": 2,
+  "execution": "direct; no memory/admission/timeout guard",
+  "pid": 34180,
+  "exitCode": 2,
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.AuthoredMapFarTagRetainsVisibleWholeBodyContact",
+      "result": "Failed",
+      "message": "  The actual rendered reaching hand must reach the accepted victim's visible body bounds.\n  Expected: less than 0.0799999982f\n  But was:  0.313013792f\n"
+    },
+    {
+      "name": "TumbangPreso.PlayTests.CatchReconstructionTests.CatchChoosesTheOpenSideAndAvoidsAForcedFaceCloseup",
+      "result": "Failed",
+      "message": "  If neither shot is clear, keep the live recovery view.\n  Expected: False\n  But was:  True\n"
+    }
+  ],
+  "exactCaseCount": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "protectedCount": 21279,
+  "terminal": true
+}

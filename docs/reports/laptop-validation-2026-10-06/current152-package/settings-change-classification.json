@@ -1,0 +1,16 @@
+{
+  "ProjectSettings/ProjectAuditorSettings.asset": {
+    "beforeBytes": 1072,
+    "duringBytes": 1036,
+    "beforeSHA256": "45b12b6b55a6af51617594ca259af79aa6b39dc53249a720540b53c8a7e6fad0",
+    "duringSHA256": "22c699d7b424bd59053e552e6c358d9cca02d0663c276ec46ea0d0bd96651d85",
+    "normalizedLFEqual": true
+  },
+  "ProjectSettings/ProjectSettings.asset": {
+    "beforeBytes": 24821,
+    "duringBytes": 23971,
+    "beforeSHA256": "6e8261ba99968175c032d9802a6964a7ff580d5f703b024a025801308a670c8d",
+    "duringSHA256": "f5cfb1b8f70592e0498d32c87be7d847a2079f94ccf683291c59871b8515c677",
+    "normalizedLFEqual": true
+  }
+}

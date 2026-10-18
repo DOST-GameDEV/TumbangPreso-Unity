@@ -1,0 +1,34 @@
+{
+  "scope": "One controlled diagnostic four-datagram round, not game protocol/8911 acceptance",
+  "senderMachine": "192.168.1.7",
+  "allSocketsClosed": true,
+  "senderTerminal": true,
+  "senderExitCode": 0,
+  "routes": [
+    {
+      "label": "unbound-directed",
+      "destination": "192.168.1.255:18991",
+      "localBind": "0.0.0.0:54947",
+      "bytes": 42
+    },
+    {
+      "label": "unbound-limited",
+      "destination": "255.255.255.255:18991",
+      "localBind": "0.0.0.0:54948",
+      "bytes": 41
+    },
+    {
+      "label": "bound-directed",
+      "destination": "192.168.1.255:18991",
+      "localBind": "192.168.1.7:54949",
+      "bytes": 40
+    },
+    {
+      "label": "bound-unicast",
+      "destination": "192.168.1.144:18991",
+      "localBind": "192.168.1.7:54950",
+      "bytes": 39
+    }
+  ],
+  "byteCountCorrection": "Use exact42/41/40/39; initial prose45/44/43/42 was corrected by sender."
+}

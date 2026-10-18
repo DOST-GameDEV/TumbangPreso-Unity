@@ -1,0 +1,55 @@
+{
+  "sourceCommit": "4d0a78924b28d963aff344c50983d8d01e15d3e2",
+  "protocol": 153,
+  "profile": "pc-combined-replay-startup-4d0a78924-render-copy-isolated-player1009",
+  "exe": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\release-ui-perf1008g\\TumbangPreso.exe",
+  "command": [
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\release-ui-perf1008g\\TumbangPreso.exe",
+    "-force-d3d11",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1920",
+    "-screen-height",
+    "1080",
+    "-tp-profile",
+    "pc-combined-replay-startup-4d0a78924-render-copy-isolated-player1009",
+    "-tp-uireview",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\release-ui-perf1008g\\render-copy-isolated-player1009",
+    "-tp-copy-rooted-sampling",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\release-ui-perf1008g\\render-copy-isolated-player1009\\player.log"
+  ],
+  "execution": "hidden nonbatch graphics; synthetic UI raycast only, no OS mouse/keyboard/foreground interaction",
+  "pid": 9536,
+  "exitCode": 0,
+  "scope": "Actual Windows copied-rooted observer only; all9 rigs/36moving clips/retained pose/control-free endpoint, no introduction captures or full-match acceptance",
+  "replayProbe": {
+    "notApplicable": true
+  },
+  "probe": {
+    "passed": true,
+    "error": "",
+    "measurementMode": "",
+    "scriptingBackend": "",
+    "buildFlagsEvidence": "",
+    "allocationScope": "",
+    "allocationCounterStatus": "",
+    "developmentBuild": false,
+    "editor": false,
+    "binaryProfilerRequested": false,
+    "profilerSupported": false,
+    "allocationCounterAvailable": false,
+    "allocationCalibrationBytes": 0,
+    "stages": [
+      "actual player copied rooted clips; authored introduction study is a separate gate",
+      "actual player copied rooted samples complete: 36"
+    ],
+    "frameWindows": []
+  },
+  "inputRestored": true,
+  "editorInputRestored": true,
+  "taskOwnedReplayPreferenceCreated": false,
+  "profileRestored": true,
+  "terminal": true
+}

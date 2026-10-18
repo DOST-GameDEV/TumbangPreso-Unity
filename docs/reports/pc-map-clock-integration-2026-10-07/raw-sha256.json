@@ -1,0 +1,19 @@
+{
+  "native-three/launch.json": "4f6959aed79ade4d007b747487416cf1df080159e55c70bc5d24e5096658f897",
+  "native-three/result.json": "850063404bc0289ce37fd4b67dffca52a329c5872765046d4170d3ffa9cfead4",
+  "native-three/results.xml": "03c7a3fa471bb6eb8e6e472deaa47f0e7b9513e0e9880e6e8960fcf9b7c4f5fe",
+  "native-three/source-restoration.json": "163a8320c3aeb81381731a4908c23ff6edfa911e4f617d11a06cd79ac868349e",
+  "map-clock-source-proof.json": "3a4c30a2bd154124aed54499a87dcc8421619f56bb32f4c874db68de44323e01",
+  "fresh-scene-recording-audit.json": "e0145472532ca307b325b4f1e2d3470ad121125fcb45a16f041e7713964a4c93",
+  "native-three/clock-measurements.txt": "21e6d4ce85da2d3fa1f242f595f4544147ebea24c52a71ebde64e4e4d9d19a4c",
+  "preceding-arena-followup/launch.json": "f5ad7d6773218eb877e1cce55947bc464e90a673fd9cd7b0ae9f3270ce3aabe5",
+  "preceding-arena-followup/result.json": "51d2ecf3d6eee96d2aba8938cc9eb83aee54ee0f7761f6563c2dfa53b01e0b19",
+  "preceding-arena-followup/results.xml": "321939dd170828769a59ac675ff92877bb195be90304ac17fe487361a36961a5",
+  "preceding-arena-followup/source-restoration.json": "e182a14e09a6d8e2fdf4035664f7f78b1663fc90d6ee3a4d0f1c2d14015a9d75",
+  "preceding-arena-followup/ai-diagnostic-HeroStrike-Arena.txt": "ce477c444c18d71aadf2e4538188178caba12764299d247ef4f87a57b9918689",
+  "native-reader-and-gates/launch.json": "276d880706d0f776aaacf928c039d1eefe8866753bb50b3e1ad27ccac1c497f8",
+  "native-reader-and-gates/result.json": "59947c6a421620d3d646bb0cdd00b96cfcbdcf165048e120f02d070b0d925a5f",
+  "native-reader-and-gates/results.xml": "014b52766c768963af12c0baaff3579ebba015f207f7c273a500763975af94d3",
+  "native-reader-and-gates/source-restoration.json": "cf9dc33b414824e5c19bfdc2fc58249275923833c566bfd92d1f069ce30ae839",
+  "native-reader-and-gates/ai-diagnostic-HeroStrike-Arena.txt": "932c086666c2f27b367cb74d97f6917143175ed959a01ba129757828e3e53a39"
+}

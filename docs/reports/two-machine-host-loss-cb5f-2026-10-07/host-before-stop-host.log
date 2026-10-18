@@ -1,0 +1,64 @@
+Mono path[0] = 'C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/combined-peer1007/TumbangPreso_Data/Managed'
+Mono config path = 'C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/combined-peer1007/MonoBleedingEdge/etc'
+CodeReloadManager initialized
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+Initialize engine version: 6000.5.8f1 (5cb7df797b7d)
+[Subsystems] Discovering subsystems at path C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/combined-peer1007/TumbangPreso_Data/UnitySubsystems
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: AMD Radeon RX 6600 (ID=0x73ff)
+    Vendor:   ATI
+    VRAM:     8147 MB
+    Driver:   32.0.21043.19003
+Begin MonoManager ReloadAssembly
+- Finished resetting the current domain, in  0.046 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+D3D11 device created for Microsoft Media Foundation video decoding.
+[Audio] loaded 122 of 122 cues.
+[NetIdentity] UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.
+UnloadTime: 0.851500 ms
+[Build] TUMBANG PRESO 1.0.0 | cb5f4ad9f84f+dirty | protocol 153 | StandaloneWindows64
+[NetBoot] lobby requested, port=49157 join='' chat=''
+[NetReport] writing C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Logs\combined-peer1007\pc-laptop-hostloss1007a-host\state.txt after 360 s.
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 4.051200 ms
+Unloading 8 unused Assets to reduce memory usage. Loaded Objects now: 4191.
+Total: 2.166300 ms (FindLiveObjects: 0.216900 ms CreateObjectMapping: 0.345700 ms MarkObjects: 1.531600 ms  DeleteObjects: 0.071900 ms)
+
+Unexpected timestamp values detected. This can occur in H.264 videos not encoded with the baseline profile. Timestamps will be skewed to correct the playback for C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/combined-peer1007/TumbangPreso_Data/sharedassets0.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/combined-peer1007/TumbangPreso_Data/sharedassets0.resource
+Unexpected timestamp values detected. This can occur in H.264 videos not encoded with the baseline profile. Timestamps will be skewed to correct the playback for C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/combined-peer1007/TumbangPreso_Data/resources.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/combined-peer1007/TumbangPreso_Data/resources.resource
+First video frame not zero: 4 (0.133333s). Result may be out of sync. Please make sure tracks all start at 0 in C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/combined-peer1007/TumbangPreso_Data/resources.resource
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 49157, join code YPXA
+[NetApproval] peer=1 approved=True reason=
+[NetArrival] peer=1 seat=1 replaces=-1
+[Net] 2 connected, seat 1
+[NetAuto] START GAME from the visible hub lobby.
+[Link] Bad at 4595 ms round trip (host, worst peer).
+[Link] Good at 15 ms round trip (host, worst peer).
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 9.449100 ms
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[NetSeat] arena installed: LocalSlot=0 spectator=False host=True allBots=False | s0:reader+sim+live+act | s1:-+live+act | s2:-+ai+sim+bot+live+act | s3:-+ai+sim+bot+live+act
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+Unloading 82 unused Assets to reduce memory usage. Loaded Objects now: 15746.
+Total: 4.889800 ms (FindLiveObjects: 0.897700 ms CreateObjectMapping: 0.946000 ms MarkObjects: 2.845000 ms  DeleteObjects: 0.200800 ms)
+
+[NetAuto] READY submitted with 2 playing peers.
+[ArenaPrewarm] drew 20 views in 0.40 s.
+[HubLoading] Eskinita ready after 2.37 s.
+[Slice] round 1 begins, taya is seat 0

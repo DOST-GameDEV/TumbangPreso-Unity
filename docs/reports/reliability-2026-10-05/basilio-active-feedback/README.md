@@ -1,6 +1,6 @@
 # Named first-person Unstoppable feedback
 
-The owner could not tell whether Basilio's skill was casting or lacked an
+The owner could not tell whether Dante's skill was casting or lacked an
 indicator. The existing stone ward and badge deliberately hide from the wearer's
 first-person camera. StatusStack already supplies the active skill's effective
 name and real timer, but the HUD skipped every timed row when a reticle existed.
@@ -12,7 +12,7 @@ ability clock and disappears on early end. Candidate PID8576 passed all three.
 The native capture shows UNSTOPPABLE15.0s alongside the existing reticle and dial.
 This is rendered HUD/clock acceptance, not a physical-key or paired-vfx pass.
 
-An explicit status-row flag now lets only Basilio's active signature name/timer
+An explicit status-row flag now lets only Dante's active signature name/timer
 remain visible with the reticle. It uses the existing EffectiveName,
 DurationRemaining and Duration. Other timed-row suppression, status mechanics,
 cast input, ward/orbiting shields, first-person culling, cooldowns and sound are

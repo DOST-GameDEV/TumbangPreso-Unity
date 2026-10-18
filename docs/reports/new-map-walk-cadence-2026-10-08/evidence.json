@@ -1,0 +1,132 @@
+{
+  "baseRef": "e1a4e21138908426cbbed078834c5c32175d94b3",
+  "source": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/MatchArrivalPresentation.Direction.cs",
+      "sha256": "159fd1b689519a6b9a7e56cbb14f78fa4c1399f36b886fd0965ae8de3a8c885b"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.Arrival.cs",
+      "sha256": "00c0ee2b9182dff16d4df5ea7a7be0d93c412877e71b241de31d77a04621daac"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.cs",
+      "sha256": "0c7ec0f7978fd5131e137340a448f7cd282b666cefdf4a4f147597155dae333d"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/DirectedMapArrivalTests.cs",
+      "sha256": "3fc048a675df913ad8ff048680ae81dab4b0553c565cb58167a7aad76d432f28"
+    }
+  ],
+  "runs": {
+    "fixture-error": {
+      "pid": 63296,
+      "exitCode": 1,
+      "cases": [],
+      "restored": 21425
+    },
+    "original": {
+      "pid": 62688,
+      "exitCode": 2,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.DirectedMapArrivalTests.BridgeNaturalHeroWalkCadence",
+          "result": "Failed",
+          "message": "  IlalimNgTulay seat0: walk clip distance diverged from actual root travel\n  Expected: less than 0.0299999993f\n  But was:  0.111284032f\n"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.DirectedMapArrivalTests.CoveNaturalHeroWalkCadence",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoNaturalHeroWalkCadence",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "restored": 21425
+    },
+    "candidate": {
+      "pid": 50836,
+      "exitCode": 0,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.DirectedMapArrivalTests.BridgeNaturalHeroWalkCadence",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.DirectedMapArrivalTests.CoveNaturalHeroWalkCadence",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoNaturalHeroWalkCadence",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "restored": 21425
+    },
+    "geometry": {
+      "pid": 22380,
+      "exitCode": 0,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.DirectedMapArrivalTests.BridgeLowArrival",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.DirectedMapArrivalTests.CoveCurvedArrival",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoCrossingArrival",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "restored": 21425
+    }
+  },
+  "rawSha256": {
+    ".gitattributes": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+    "cadence-comparison.json": "0274c696bacb4b1d290c9fc6b863516196510c95269f1ce3fb2eeb8ac08d64ac",
+    "README.md": "b6cc1de817cc720785e20c0a00662da4fa8f27d969c155fd2524f7cc7c460d4f",
+    "candidate/IlalimNgTulay-cadence-summary.txt": "1b5664b7b2a1153bef65bb79523c3e8e3d3dacadc881c97ad7449001da4ecab0",
+    "candidate/IlalimNgTulay-cadence.csv": "43d8cb9ae4ebeda0d767560e78cf37e86fd655b059428d5404d831a9e86dfd5f",
+    "candidate/Kanto-cadence-summary.txt": "a7f45a6c180b098d48b59aa2ebc8fe9e2fb4f46ddd56d56326ca820a9f062fd3",
+    "candidate/Kanto-cadence.csv": "336f073b3c65d0367917c95489dcd220e8e93c89fd4fef2c9643220ad60814f5",
+    "candidate/LagoonCove-cadence-summary.txt": "a8273647755691a480b830ead76849f156acabb3adba80f6399379c6e51594dc",
+    "candidate/LagoonCove-cadence.csv": "c2c5da2e09a35d02f369ea86be9fa37d7ade3253f10cbcecab1edb27d3848991",
+    "candidate/result.json": "8f20205df448d94f5139f24185a722f9040ac86fb361a648bf705ebbc0bd16f8",
+    "candidate/results.xml": "14c2756c2bf2c5de6b25e7b46bb6b65162d0e30c3071cab209af123c46a70656",
+    "candidate/source-restoration.json": "470b295b0bc9478ce0c0885dc7eac2e34e9ee0cb15797fe94e9ead7b288c89ba",
+    "fixture-error/compiler-errors.txt": "13293c9b926cf8b9b1ea8b127499774f0e72d40ce3f0d9195e5a3d6f56eb491f",
+    "fixture-error/result.json": "66c1c8399f43a45bbaf3dcfd0248717bf88b4c5a9594ec2b3ad48962f00216e7",
+    "fixture-error/source-restoration.json": "021d5e52f2988c375c72558357eed5ad48f455c5d230c01746d4cae8ccf57132",
+    "geometry/result.json": "f1b42b230c2b1ce2d9badcdf4ccb1479da0c58303d5802bd0500554867535d42",
+    "geometry/results.xml": "e07e51ddaf845cad3c5461e07a7cd3bd36da7f5d73f3f206a8fa975febdc083c",
+    "geometry/source-restoration.json": "f9ba9d316f1dc5227fdfa327a3aa628287132b66a69ebbab25774e6e1e5bb508",
+    "original/IlalimNgTulay-cadence-summary.txt": "056bc6ee425c949ba7b3799b9cd4177b45ac0ae697d69089bbe8a436368c2ff0",
+    "original/IlalimNgTulay-cadence.csv": "df273ebbf86833bc403b18f2728a54576283728a9ac9ee6bd80a23ad578f8258",
+    "original/Kanto-cadence-summary.txt": "b12ae7ad17b53800993742dff76f4195ecfd6af60ee0e875616b99263b779311",
+    "original/Kanto-cadence.csv": "cef8822c1afb23e7d085584a82f651450f716a22dacaf31647a6e9d085766a67",
+    "original/LagoonCove-cadence-summary.txt": "7e4e87cacc85236e39902dfe84c367b606311f0ed9ac131171ef833928abc9da",
+    "original/LagoonCove-cadence.csv": "40f802281a2f2312e5c12d78111387b75b8797ff6e0229cf786f89e1b4faa234",
+    "original/result.json": "2964d40797eeb75188028820313b6cc226c4afb72a9bcd1ed288d528d24c4490",
+    "original/results.xml": "9aedaf4e9df1f100538e0ceb11628a147c1bf8ce6229d526a5ab1b9484811fe2",
+    "original/source-restoration.json": "199233cc1535114b1b583d683ac7ef78d3e1f93fc851fa795e1ecdec520fe038",
+    "native-source/Assets/TumbangPreso/Runtime/MatchArrivalPresentation.Direction.cs": "159fd1b689519a6b9a7e56cbb14f78fa4c1399f36b886fd0965ae8de3a8c885b",
+    "native-source/Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.Arrival.cs": "00c0ee2b9182dff16d4df5ea7a7be0d93c412877e71b241de31d77a04621daac",
+    "native-source/Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.cs": "0c7ec0f7978fd5131e137340a448f7cd282b666cefdf4a4f147597155dae333d",
+    "native-source/Assets/TumbangPreso/Tests/PlayMode/DirectedMapArrivalTests.cs": "3fc048a675df913ad8ff048680ae81dab4b0553c565cb58167a7aad76d432f28"
+  },
+  "newBuilds": 0,
+  "oldMapArtOrPresentationChanged": false,
+  "scope": "Three unseeded natural automatic Hero openings at1x and three posed-renderer geometry/support/grip/Taya-framing/return/cancel controls. Twelve observed actors; not every hero, stance-foot sliding, human visual approval, current player latency, replay or whole-match efficacy. Original2green per-frame cases were too weak; totals independently show drift on all12 actor paths. Candidate checks cumulative drift as well.",
+  "playerAcceptance": "Pending batched existing-G replacement; current candidate3/qualifiedDesktop unchanged"
+}

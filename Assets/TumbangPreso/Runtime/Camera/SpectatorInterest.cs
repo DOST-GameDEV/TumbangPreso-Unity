@@ -343,6 +343,10 @@ namespace TumbangPreso.CameraSystem
         private float _ultimateAt = -99.0f;
         private CharacterMotor _ultimateCaster;
         private Abilities.HeroAbility _ultimateAbility;
+        private Abilities.HeroKit _ultimateKit;
+        private RoundDirector _ultimateRound;
+        private MatchDirector _ultimateMatch;
+        private int _ultimateRoundNumber;
 
         private RoundDirector _hookedRound;
         private MatchDirector _hookedMatch;
@@ -404,6 +408,12 @@ namespace TumbangPreso.CameraSystem
             _hookedRound = null;
             _hookedMatch = null;
             _hookedLata = null;
+            _ultimateAt = -99.0f;
+            _ultimateCaster = null;
+            _ultimateAbility = null;
+            _ultimateKit = null;
+            _ultimateRound = null;
+            _ultimateMatch = null;
         }
 
         // -------------------------------------------------------------------
@@ -464,6 +474,10 @@ namespace TumbangPreso.CameraSystem
             _ultimateAt = Time.unscaledTime;
             _ultimateCaster = caster;
             _ultimateAbility = ultimate;
+            _ultimateKit = kit;
+            _ultimateRound = GameServices.Round;
+            _ultimateMatch = GameServices.Match;
+            _ultimateRoundNumber = _ultimateMatch != null ? _ultimateMatch.RoundNumber : -1;
         }
 
         // -------------------------------------------------------------------
@@ -544,7 +558,8 @@ namespace TumbangPreso.CameraSystem
                     // consequence, never drag the broadcast camera to that teleport.
                     if(interest.Main.IsStunned||interest.Main.IsTripped)return false;
                     if(interest.RetrievalShoe!=null)
-                        return !interest.Main.HoldingSlipper&&interest.RetrievalShoe.State==SlipperState.Loose
+                        return interest.Secondary!=null&&interest.Secondary.CanAct()
+                            &&!interest.Main.HoldingSlipper&&interest.RetrievalShoe.State==SlipperState.Loose
                             &&interest.RetrievalShoe.OwnerSlot==interest.Main.PlayerSlot
                             &&Flat(interest.Main.transform.position,interest.RetrievalShoe.transform.position)<7;
                     if(round.Lata==null||!round.Lata.IsUpright||interest.Secondary==null||!interest.Secondary.CanAct())return false;
@@ -635,7 +650,7 @@ namespace TumbangPreso.CameraSystem
             // Show a real own-shoe recovery near the taya's reset. Can restore
             // protection prevents another knockdown, not a tag on a shoe holder;
             // legal chases above still take priority during that protection.
-            if(round.Lata!=null&&(!round.Lata.IsUpright||round.Lata.IsProtected)&&taya!=null
+            if(round.Lata!=null&&(!round.Lata.IsUpright||round.Lata.IsProtected)&&taya!=null&&taya.CanAct()
                 &&Flat(taya.transform.position,LataPoint(round))<=NearLata&&_slippers!=null)
             {
                 Slipper nearest=null;CharacterMotor retriever=null;float gap=6;
@@ -652,6 +667,10 @@ namespace TumbangPreso.CameraSystem
             }
 
             var casting = LiveUltimate(round);
+            // Instant abilities can finish between director decisions. Cover the
+            // presentation event for its original bounded window, never restart it.
+            bool fromPulse = casting == null && RecentUltimate(round, now);
+            if (fromPulse) casting = _ultimateCaster;
             if (casting != null)
             {
                 // ⚠️⚠️ THE HERO SHOT AND THE WIDE SHOT ARE CHOSEN BY THE ULTIMATE'S FOOTPRINT,
@@ -662,12 +681,19 @@ namespace TumbangPreso.CameraSystem
                 var kit = casting.AbilitySystem != null ? casting.AbilitySystem.Kit : null;
                 var ult = kit != null ? kit.Ultimate : null;
                 float footprint = ult != null && ult.HasTelegraph ? ult.TelegraphRadius : 0.0f;
+                // No circle is drawn for the global freeze or the court-wide
+                // wave/fan. Their affected space still needs the wide composition.
+                bool courtEffect = kit is Abilities.CheskaHeroKit || kit is Abilities.DanteHeroKit
+                    || kit is Abilities.AmihanHeroKit;
+                if (courtEffect)
+                    footprint = Mathf.Max(AIController.PlayableMaxX - AIController.PlayableMinX,
+                        AIController.PlayableMaxZ - AIController.PlayableMinZ) * .5f;
 
                 return new SpectatorInterest(
                     SpectatorBeat.Ultimate, casting, NearestOther(round, casting),
                     casting.transform.position, true,
-                    footprint >= 3.0f ? ShotType.UltimateWide : ShotType.UltimateHero,
-                    now, UltimateSeconds, MinCommit,
+                    courtEffect || footprint >= 3.0f ? ShotType.UltimateWide : ShotType.UltimateHero,
+                    fromPulse ? _ultimateAt : now, UltimateSeconds, MinCommit,
                     $"ultimate {(ult != null ? ult.Name : "?")}, footprint {footprint:0.0} m");
             }
 
@@ -820,6 +846,24 @@ namespace TumbangPreso.CameraSystem
             }
 
             return null;
+        }
+
+        private bool RecentUltimate(RoundDirector round, float now)
+        {
+            var match = GameServices.Match;
+            if (_ultimateCaster == null || !_ultimateCaster.RoundActive
+                || !_ultimateCaster.gameObject.activeInHierarchy
+                || now < _ultimateAt || now - _ultimateAt >= UltimateSeconds
+                || round != _ultimateRound || match != _ultimateMatch
+                || match == null || match.RoundNumber != _ultimateRoundNumber)
+                return false;
+            var kit = _ultimateCaster.AbilitySystem != null
+                ? _ultimateCaster.AbilitySystem.Kit : null;
+            if (kit != _ultimateKit || kit == null || kit.Ultimate != _ultimateAbility)
+                return false;
+            foreach (var player in round.Players)
+                if (player == _ultimateCaster) return true;
+            return false;
         }
 
         private static bool LungeCharging(CharacterMotor taya)

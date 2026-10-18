@@ -1,0 +1,3 @@
+cold_kanto_seconds=2.6622
+cached_eskinita_seconds=0.0103
+pending_pixel_checks=32

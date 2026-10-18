@@ -1,0 +1,72 @@
+{
+  "setup-edit": {
+    "sourceCommit": "3216e1b0ac8dc3acc027f0fdbd32c2cf1966e5dd",
+    "inputCount": 21186,
+    "changesFromRetainedCircleManifest": {
+      "Assets/TumbangPreso/Tests/HubLobbySeatControlsTests.cs": "5f1cfb063d13526e268f4780b6d1054732533f6aaa57e0cbb40562ab216020bf"
+    },
+    "unchangedFiles": 21185,
+    "baselineManifest": "../circle-native-integration/raw/qualified-source.json",
+    "passed": 6,
+    "failed": 3
+  },
+  "original-edit": {
+    "sourceCommit": "3216e1b0ac8dc3acc027f0fdbd32c2cf1966e5dd",
+    "inputCount": 21186,
+    "changesFromRetainedCircleManifest": {
+      "Assets/TumbangPreso/Tests/HubLobbySeatControlsTests.cs": "e6db4d9312239e177cbcfe26ae134040e3f1a7b3f6fb3eb194aa5dab27314205"
+    },
+    "unchangedFiles": 21185,
+    "baselineManifest": "../circle-native-integration/raw/qualified-source.json",
+    "passed": 8,
+    "failed": 1
+  },
+  "original-play": {
+    "sourceCommit": "3216e1b0ac8dc3acc027f0fdbd32c2cf1966e5dd",
+    "inputCount": 21188,
+    "changesFromRetainedCircleManifest": {
+      "Assets/TumbangPreso/Tests/HubLobbySeatControlsTests.cs": "e6db4d9312239e177cbcfe26ae134040e3f1a7b3f6fb3eb194aa5dab27314205",
+      "Assets/TumbangPreso/Tests/PlayMode/CustomBotPolicyStartTests.cs": "b941b23ea3669a9c7838ccb6b91cc196204226b218228f1740d383f164fbc3f0",
+      "Assets/TumbangPreso/Tests/PlayMode/RulesArrowHitTests.cs": "2f3f5e14cde2ac4ce2be0afa774be896c17e6ddfa792547d3dec06d9b6647793",
+      "Assets/TumbangPreso/Tests/PlayMode/RulesArrowHitTests.cs.meta": "f916f13d180def93e5514ef52d38a0f93e19ffb955735b23d09a019fb3002cbb"
+    },
+    "unchangedFiles": 21184,
+    "baselineManifest": "../circle-native-integration/raw/qualified-source.json",
+    "passed": 6,
+    "failed": 3
+  },
+  "candidate-play": {
+    "sourceCommit": "3216e1b0ac8dc3acc027f0fdbd32c2cf1966e5dd",
+    "inputCount": 21188,
+    "changesFromRetainedCircleManifest": {
+      "Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.Hub.cs": "6d5d99f27518c28a48b87987ca6db3013576390660d452481308cf84e1d1356c",
+      "Assets/TumbangPreso/Runtime/UI/CustomGameScreen.MatchSlate.cs": "297a279126acce890a3d406705312adbdc63bf7ec3421bdb18551e6fbdda5a19",
+      "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs": "d953cbe3132ed030d08c4310b83d3d58c9e252bcd0f2d3205eec67a2436aa2f0",
+      "Assets/TumbangPreso/Tests/HubLobbySeatControlsTests.cs": "e6db4d9312239e177cbcfe26ae134040e3f1a7b3f6fb3eb194aa5dab27314205",
+      "Assets/TumbangPreso/Tests/PlayMode/CustomBotPolicyStartTests.cs": "b941b23ea3669a9c7838ccb6b91cc196204226b218228f1740d383f164fbc3f0",
+      "Assets/TumbangPreso/Tests/PlayMode/RulesArrowHitTests.cs": "2f3f5e14cde2ac4ce2be0afa774be896c17e6ddfa792547d3dec06d9b6647793",
+      "Assets/TumbangPreso/Tests/PlayMode/RulesArrowHitTests.cs.meta": "f916f13d180def93e5514ef52d38a0f93e19ffb955735b23d09a019fb3002cbb"
+    },
+    "unchangedFiles": 21181,
+    "baselineManifest": "../circle-native-integration/raw/qualified-source.json",
+    "passed": 9,
+    "failed": 0
+  },
+  "candidate-edit": {
+    "sourceCommit": "3216e1b0ac8dc3acc027f0fdbd32c2cf1966e5dd",
+    "inputCount": 21188,
+    "changesFromRetainedCircleManifest": {
+      "Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.Hub.cs": "6d5d99f27518c28a48b87987ca6db3013576390660d452481308cf84e1d1356c",
+      "Assets/TumbangPreso/Runtime/UI/CustomGameScreen.MatchSlate.cs": "297a279126acce890a3d406705312adbdc63bf7ec3421bdb18551e6fbdda5a19",
+      "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs": "d953cbe3132ed030d08c4310b83d3d58c9e252bcd0f2d3205eec67a2436aa2f0",
+      "Assets/TumbangPreso/Tests/HubLobbySeatControlsTests.cs": "e6db4d9312239e177cbcfe26ae134040e3f1a7b3f6fb3eb194aa5dab27314205",
+      "Assets/TumbangPreso/Tests/PlayMode/CustomBotPolicyStartTests.cs": "b941b23ea3669a9c7838ccb6b91cc196204226b218228f1740d383f164fbc3f0",
+      "Assets/TumbangPreso/Tests/PlayMode/RulesArrowHitTests.cs": "2f3f5e14cde2ac4ce2be0afa774be896c17e6ddfa792547d3dec06d9b6647793",
+      "Assets/TumbangPreso/Tests/PlayMode/RulesArrowHitTests.cs.meta": "f916f13d180def93e5514ef52d38a0f93e19ffb955735b23d09a019fb3002cbb"
+    },
+    "unchangedFiles": 21181,
+    "baselineManifest": "../circle-native-integration/raw/qualified-source.json",
+    "passed": 9,
+    "failed": 0
+  }
+}

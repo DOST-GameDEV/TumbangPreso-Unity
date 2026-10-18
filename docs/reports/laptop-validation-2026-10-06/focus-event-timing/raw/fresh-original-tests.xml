@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 22:54:06Z" end-time="2026-10-05 22:54:06Z" duration="0.2676312">
+  <test-suite type="TestSuite" id="3223" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1810" result="Failed" site="Child" start-time="2026-10-05 22:54:06Z" end-time="2026-10-05 22:54:06Z" duration="0.267631" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3215" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1810" result="Failed" site="Child" start-time="2026-10-05 22:54:06Z" end-time="2026-10-05 22:54:06Z" duration="0.256566" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="37984" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3216" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1810" result="Failed" site="Child" start-time="2026-10-05 22:54:06Z" end-time="2026-10-05 22:54:06Z" duration="0.251881" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3219" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1808" result="Failed" site="Child" start-time="2026-10-05 22:54:06Z" end-time="2026-10-05 22:54:06Z" duration="0.247158" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1622" name="FreshFocusEdgeTests" fullname="TumbangPreso.PlayTests.FreshFocusEdgeTests" classname="TumbangPreso.PlayTests.FreshFocusEdgeTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-05 22:54:06Z" end-time="2026-10-05 22:54:06Z" duration="0.222117" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1624" name="BackgroundThrowBeforeLateFocusCallbackStillWaitsForRelease" fullname="TumbangPreso.PlayTests.FreshFocusEdgeTests.BackgroundThrowBeforeLateFocusCallbackStillWaitsForRelease" methodname="BackgroundThrowBeforeLateFocusCallbackStillWaitsForRelease" classname="TumbangPreso.PlayTests.FreshFocusEdgeTests" runstate="Runnable" seed="1681614831" result="Passed" start-time="2026-10-05 22:54:06Z" end-time="2026-10-05 22:54:06Z" duration="0.167388" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1623" name="FreshThrowAfterFocusCallbackBeforeFirstReadRemainsAvailable" fullname="TumbangPreso.PlayTests.FreshFocusEdgeTests.FreshThrowAfterFocusCallbackBeforeFirstReadRemainsAvailable" methodname="FreshThrowAfterFocusCallbackBeforeFirstReadRemainsAvailable" classname="TumbangPreso.PlayTests.FreshFocusEdgeTests" runstate="Runnable" seed="1429567220" result="Failed" start-time="2026-10-05 22:54:06Z" end-time="2026-10-05 22:54:06Z" duration="0.043947" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A genuinely fresh focused press before the first resumed read was discarded.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.FreshFocusEdgeTests+<FreshThrowAfterFocusCallbackBeforeFirstReadRemainsAvailable>d__17.MoveNext () [0x0003b] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\FreshFocusEdgeTests.cs:78
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

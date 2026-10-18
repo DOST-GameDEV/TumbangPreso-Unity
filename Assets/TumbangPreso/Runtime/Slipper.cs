@@ -221,6 +221,11 @@ namespace TumbangPreso
         private float _throwerIgnoreLeft;
         // Contact episodes, not a timed immunity: separation re-arms this body.
         private int _bodyContacts;
+        // Host only: this flight was thrown by Dante in MOUNTAIN FORM, so the first player it hits is staggered and knocked back.
+        private bool _mountainHit;
+
+        /// <summary>The throw just made was a MOUNTAIN FORM throw (`Carrier.HostThrowAt`, host).</summary>
+        public void HostArmMountainHit() { if (NetAuthority.ShouldResolve() && State == SlipperState.InFlight) _mountainHit = true; }
         private MatchDirector _chainMatch;
         private long _chainThrow, _chainEpoch;
         private int _chainOwner, _launchCanSerial;
@@ -610,6 +615,21 @@ namespace TumbangPreso
             }
         }
 
+        /// <summary>Fit a render-copy surface to its hand without sampling a stale live carry pose.</summary>
+        public void FitCarriedSurface(Transform source, Transform hand, Transform copy)
+        {
+            // A cast/replay may begin before Carrier.LateUpdate, or while the
+            // live shoe is stowed. Reconstruct the grip from mesh-relative data.
+            Quaternion correction = hand.rotation * CarryRotation * Quaternion.Inverse(transform.rotation);
+            float support = CarrySupportExtent(Quaternion.Inverse(correction) * hand.up);
+            Vector3 centre = transform.position + DrawnCentreOffset;
+            Vector3 fitted = hand.position + hand.up * support + correction * (source.position - centre);
+            copy.localPosition = hand.InverseTransformPoint(fitted);
+            copy.localRotation = Quaternion.Inverse(hand.rotation) * correction * source.rotation;
+            Vector3 scale = source.lossyScale, parentScale = hand.lossyScale;
+            copy.localScale = new Vector3(scale.x / parentScale.x, scale.y / parentScale.y, scale.z / parentScale.z);
+        }
+
         public float CarrySupportExtent(Vector3 palmNormal)
         {
             var renderer=GetComponentInChildren<Renderer>();
@@ -624,7 +644,9 @@ namespace TumbangPreso
             float extent=Mathf.Abs(Vector3.Dot(normal,matrix.MultiplyVector(Vector3.right)))*extents.x
                 +Mathf.Abs(Vector3.Dot(normal,matrix.MultiplyVector(Vector3.up)))*extents.y
                 +Mathf.Abs(Vector3.Dot(normal,matrix.MultiplyVector(Vector3.forward)))*extents.z;
-            return Mathf.Max(Balance.SlipperRestHeight,extent);
+            // Ground/flight clearance is not a palm spacer. The thin tsinelas
+            // needs less than that minimum; its anchor already clears the skin.
+            return Mathf.Max(.001f,extent);
         }
 
         public float RestHeight
@@ -632,8 +654,19 @@ namespace TumbangPreso
             get
             {
                 var r = GetComponentInChildren<Renderer>();
-                return r != null ? Mathf.Max(Balance.SlipperRestHeight, r.bounds.extents.y)
-                                 : Balance.SlipperRestHeight;
+                if (r == null) return Balance.SlipperRestHeight;
+                var filter = r.GetComponent<MeshFilter>();
+                if (filter == null || filter.sharedMesh == null)
+                    return Mathf.Max(Balance.SlipperRestHeight, r.bounds.extents.y);
+                // Rest support is measured with the shoe root upright, even
+                // when callers ask while it is held or tumbling. Authored
+                // sole pivots must not be lifted by half the mesh's height.
+                var mesh = filter.sharedMesh.bounds;
+                var local = transform.worldToLocalMatrix * filter.transform.localToWorldMatrix;
+                float centre = local.MultiplyPoint3x4(mesh.center).y;
+                float extent = Mathf.Abs(local.m10) * mesh.extents.x
+                    + Mathf.Abs(local.m11) * mesh.extents.y + Mathf.Abs(local.m12) * mesh.extents.z;
+                return Mathf.Max(.001f, (extent - centre) * Mathf.Abs(transform.lossyScale.y));
             }
         }
 
@@ -825,7 +858,7 @@ namespace TumbangPreso
             who.HoldingSlipper = true;
             _velocity = Vector3.zero;
 
-            who.GetComponent<Carrier>()?.NotifyHolding(this);
+            who.GetComponent<Carrier>()?.NotifyHolding(this, retrievedOwnThrow);
             if (retrievedOwnThrow && who.Mode == GameMode.HeroStrike)
                 who.AbilitySystem?.Kit?.OnManualOwnThrowRetrieved(new Abilities.AbilityContext(
                     who,who.GetComponent<Carrier>(),who.GetComponent<CombatVerbs>()));
@@ -1012,7 +1045,7 @@ namespace TumbangPreso
         /// The same return, to a place the MAP chose rather than to the owner's mark: the Arena sets
         /// a slipper that left its stage back down at the nearest standable point to where it left
         /// (`Map.ArenaFallRecovery`). Only that map calls it. `Land` still applies its own rules to
-        /// the resting place (the walls, and a slipper out of its owner's reach goes to the owner).
+        /// the resting place (the walls and recovery for inaccessible or unsupported heights).
         /// </summary>
         public void HostFinishMapRecoveryAt(Vector3 at)
         {
@@ -1189,6 +1222,7 @@ namespace TumbangPreso
         public void HostThrow(CharacterMotor thrower, Vector3 origin, Vector3 velocity, SlipperAffinity affinity = SlipperAffinity.Normal, float pektusSpin = 0.0f)
         {
             if (!NetAuthority.ShouldResolve()) return;
+            _mountainHit = false;   // armed again by the thrower's own form, after this (`HostArmMountainHit`)
             // Null identifies an environmental ability displacement, which may
             // move any loose shoe without granting somebody else's shot credit.
             if (thrower != null && !OwnershipAllows(thrower)) return;
@@ -1933,6 +1967,18 @@ namespace TumbangPreso
         {
             // Body hits must call this before generic impact consumes affinity.
             if (victim == null) return;
+            if (_mountainHit)
+            {
+                // MOUNTAIN FORM's throw hits like a rock: a short stagger and a knock away along its flight, lifted off the court
+                // (`CharacterMotor.AsLaunch`, past the knock's lift cap). Once per throw; an immune body refuses both.
+                _mountainHit = false;
+                Vector3 along = new Vector3(_velocity.x, 0f, _velocity.z);
+                if (along.sqrMagnitude < 1e-4f) along = victim.transform.position - transform.position;
+                along.y = 0f; along = along.sqrMagnitude > 1e-4f ? along.normalized : Vector3.forward;
+                victim.ApplyStagger(GeoRules.MountainHitStun, StunElement.None, Balance.StunBreakPressesDefault);
+                victim.ApplyResolvedImpact(CharacterMotor.AsLaunch(along * GeoRules.MountainHitAway + Vector3.up * GeoRules.MountainHitUp));
+                NetCue.Play("land", transform.position);
+            }
             if (Affinity == SlipperAffinity.Concussed)
             {
                 victim.ApplyConcussed();
@@ -1990,6 +2036,7 @@ namespace TumbangPreso
             _velocity.y = Balance.DeflectLift * liftScale;
             _flightTime = 0.0f;
             _throwerSlot = -1; // a deflected slipper credits nobody
+            _mountainHit = false; // nor carries his rock back at anyone
         }
 
         // A current bends an existing throw; it is not a block or a new throw.
@@ -2137,7 +2184,7 @@ namespace TumbangPreso
             // it inside whatever it landed on top of, and the void branch above already declares
             // the intended rule for ammunition that leaves play: give it back rather than let
             // the round quietly lose a piece of itself.
-            if (rest > ReachablePlaneY() + Balance.SlipperMaxRestReach)
+            if (NeedsHeightRecovery(new Vector3(p.x, rest, p.z)))
             {
                 p = OwnerMark();
                 rest = GroundY(p) + RestHeight;
@@ -2181,6 +2228,41 @@ namespace TumbangPreso
             // clears the flag on any move out of Loose, so setting it first would be undone by
             // the very transition that brought us here.
             SetLandedHighlight(fromFlight);
+        }
+
+        private bool NeedsHeightRecovery(Vector3 resting)
+        {
+            if (resting.y <= ReachablePlaneY() + Balance.SlipperMaxRestReach) return false;
+
+            // The Arena's raised decks and ramps are playable even while the owner is
+            // below them. Only actual support in the active layout exempts a shoe:
+            // roofs above a deck and shoes left floating still recover normally.
+            var stage = Map.ArenaStage.Instance;
+            if (stage != null && stage.Applied >= 0 && stage.Applied < stage.Layouts.Length)
+            {
+                var layout = stage.Layouts[stage.Applied];
+                var support = layout != null ? layout.Colliders : null;
+                if (support != null)
+                {
+                    Vector3 from = resting + Vector3.up * 0.1f;
+                    var hits = GroundHits;
+                    int count = Physics.RaycastNonAlloc(from, Vector3.down, hits,
+                        RestHeight + 0.2f, ~0, QueryTriggerInteraction.Ignore);
+                    if (count == hits.Length)
+                    {
+                        hits = Physics.RaycastAll(from, Vector3.down, RestHeight + 0.2f,
+                            ~0, QueryTriggerInteraction.Ignore);
+                        count = hits.Length;
+                    }
+                    for (int i = 0; i < count; i++)
+                    {
+                        var hit = hits[i];
+                        if (hit.normal.y >= 0.707f && hit.collider.transform.IsChildOf(support.transform))
+                            return false;
+                    }
+                }
+            }
+            return true;
         }
 
         /// <summary>
@@ -2238,7 +2320,7 @@ namespace TumbangPreso
             if (_reachSweepAccum < 0.5f) return;
             _reachSweepAccum = 0.0f;
 
-            if (transform.position.y <= ReachablePlaneY() + Balance.SlipperMaxRestReach) return;
+            if (!NeedsHeightRecovery(transform.position)) return;
 
             Vector3 mark = OwnerMark();
             transform.position = new Vector3(mark.x, GroundY(mark) + RestHeight, mark.z);

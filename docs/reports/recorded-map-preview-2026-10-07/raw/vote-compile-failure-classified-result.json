@@ -1,0 +1,14 @@
+{
+  "pid": 33388,
+  "terminal": true,
+  "exitCode": 1,
+  "passed": 0,
+  "failed": 0,
+  "expected": 1,
+  "cases": [],
+  "inputCount": 21240,
+  "generatedDeltas": {},
+  "allInputsRestored": true,
+  "unknownChangesPreserved": [],
+  "existingPrefsRestored": 13
+}

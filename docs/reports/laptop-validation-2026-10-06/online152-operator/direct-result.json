@@ -1,0 +1,41 @@
+{
+  "source": "4b679b0a8fd9ea882ede486d32513ca8293334d9",
+  "protocol": 152,
+  "profile": "lpt-online152-1006f",
+  "profilePath": "C:\\Users\\Matthew\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\d857758eaaf09df0f6ab27ad77b418a49d8cd3c8d9904293f8c580e56c6c4ff4",
+  "command": [
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Builds\\current-laptop-4b679b0a8-1005\\TumbangPreso.exe",
+    "-force-d3d11",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1280",
+    "-screen-height",
+    "720",
+    "-tp-framecap",
+    "60",
+    "-tp-profile",
+    "lpt-online152-1006f",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Logs\\online-owner152-1006f\\player.log"
+  ],
+  "manifestSha256": "2a258217bd64c108c545ae39067f9b038da84dbb190c41c364ac01e542f65462",
+  "route": "normal visible boot; actual UI clicks; no network bootstrap",
+  "scope": "Actual same updated packaged laptop ONLINE host/PC public-row and code client; bounded first-arrival and observed owner movement/skill paths; no bootstrap/game APIs/hardware or broad latency pass",
+  "pid": 19080,
+  "exitCode": 0,
+  "savedProfileHashes": {
+    "career.json": "ae3da13d764e93f34b1b4f077e03c8d69383fa22e9ca636ffa993feb3bc773ea",
+    "career.json.bak": "394e2f0ce73316a98a9880b356fa5469a710fcae6aa4eeb00bccb5b4a048d3e5",
+    "settings.json": "3fb4a4a99eff4b597c9c10f850552e8077b6bf941a6a92d366bf8c7083e3cf06",
+    "settings.json.bak": "3fb4a4a99eff4b597c9c10f850552e8077b6bf941a6a92d366bf8c7083e3cf06",
+    "social.json": "56f41bb2d2d4eb8543ab8e60d67b8e72b7e1ea578188dc402a382a1925b846fb",
+    "social.json.bak": "56f41bb2d2d4eb8543ab8e60d67b8e72b7e1ea578188dc402a382a1925b846fb",
+    "wallet.json": "c9b9f560165c2fdbca342e4c1c823fbdb325c3fa0a79522045e4104317b6f854",
+    "wallet.json.bak": "c9b9f560165c2fdbca342e4c1c823fbdb325c3fa0a79522045e4104317b6f854"
+  },
+  "inputRestored": true,
+  "seedRestored": true,
+  "terminal": true,
+  "artifactUnchanged": true
+}

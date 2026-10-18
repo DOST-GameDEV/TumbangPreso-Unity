@@ -1,0 +1,71 @@
+{
+  "baseline": {
+    "result": "Failed(Child)",
+    "total": "5",
+    "passed": "1",
+    "failed": "4",
+    "start": "2026-10-07 12:33:57Z",
+    "end": "2026-10-07 12:33:58Z",
+    "sha256": "f10c140147aadb6deddc2269fc0994ec9439f7eff7ffc91d8c5ebdd7a5501952"
+  },
+  "candidate": {
+    "result": "Passed",
+    "total": "8",
+    "passed": "8",
+    "failed": "0",
+    "start": "2026-10-07 12:38:02Z",
+    "end": "2026-10-07 12:38:03Z",
+    "sha256": "34837093df010b3a5c31758caf6b643d8b02dcb98c7104857b5b76e1a862738b"
+  },
+  "final": {
+    "result": "Failed(Child)",
+    "total": "18",
+    "passed": "17",
+    "failed": "1",
+    "start": "2026-10-07 12:41:30Z",
+    "end": "2026-10-07 12:41:35Z",
+    "sha256": "0ab9f8b830fc1fed6feb4c8bb4f382b27b46065d9ad095dfa9265fb3cf8185df"
+  },
+  "old-count-control": {
+    "result": "Failed(Child)",
+    "total": "1",
+    "passed": "0",
+    "failed": "1",
+    "start": "2026-10-07 12:43:55Z",
+    "end": "2026-10-07 12:43:59Z",
+    "sha256": "097454e72cedcdf0e3b6144fe0f61c3904b988405f4606711bb89681d1ed4471"
+  },
+  "checked": {
+    "result": "Passed",
+    "total": "18",
+    "passed": "18",
+    "failed": "0",
+    "start": "2026-10-07 12:46:20Z",
+    "end": "2026-10-07 12:46:24Z",
+    "sha256": "42ec599981290cf23903e8a17d7e82fe4dff13d213fd376c8b47be6d4a99407d"
+  },
+  "sources": {
+    "Assets/TumbangPreso/Runtime/ReadyGate.cs": "bdaf4a62c48b914146b727fdc4b75bf86d555ba616a105a0f9043da7b52247ea",
+    "Assets/TumbangPreso/Tests/PlayMode/LateJoinReadyGateTests.cs": "eff746f9d7a9638ec5a7c7df98cec3cb75e04dd3f3f362cf34aa3c307f3e4507",
+    "Assets/TumbangPreso/Tests/PlayMode/ReadyGateNetworkTests.cs": "6d5dc910b288e7899a4eb105d5fc5bf8041df0f1c622037cb4b36bc57a7c5a6e"
+  },
+  "base": "d1e384577a14fb1f3723dfd3acc0c2675015de24",
+  "profileRestoration": [
+    "Preserved 0 existing profile files in /dev/shm/codex-orbit-desktop/runtime-Z80puu/config/unity3d/BH Studios/Tumbang Preso/profiles/328221d5788fad70b8581eb80b8cfcc650d64add86f458440dc78bde0ae91a7c and 0 shared Editor input preferences; snapshot profile-preservation-b84211918a91",
+    "Preserved 0 existing profile files in /dev/shm/codex-orbit-desktop/runtime-Z80puu/config/unity3d/BH Studios/Tumbang Preso/profiles/5a9c60b87571993e4222a0962142994a3d0ca73c6779f3de1b98d290de44329a and 0 shared Editor input preferences; snapshot profile-preservation-921806f8dd75",
+    "Preserved 0 existing profile files in /dev/shm/codex-orbit-desktop/runtime-Z80puu/config/unity3d/BH Studios/Tumbang Preso/profiles/82713d387fc158584ae7a6178fca362ec21e4d7896df2fa1e0e49864f6529678 and 0 shared Editor input preferences; snapshot profile-preservation-4867df36cc68",
+    "Preserved 0 existing profile files in /dev/shm/codex-orbit-desktop/runtime-Z80puu/config/unity3d/BH Studios/Tumbang Preso/profiles/93740446dce6171005661bd94181607191c2aeb77b93499643614055a39e9958 and 0 shared Editor input preferences; snapshot profile-preservation-1304584b8007",
+    "Preserved 0 existing profile files in /dev/shm/codex-orbit-desktop/runtime-Z80puu/config/unity3d/BH Studios/Tumbang Preso/profiles/5494d44f35844f43ab46ca8fe3a1f503da7a9758268017f165b0e9580183b1bd and 0 shared Editor input preferences; snapshot profile-preservation-c5b601db4dfd"
+  ],
+  "integration": {
+    "base": "19bf07dc020d880f6ac8971cd1785f76944e61d6",
+    "result": "18 passed, 0 failed",
+    "receipt": "integrated.xml",
+    "playerBuiltOnEarlierBase": true
+  },
+  "publicationCheck": {
+    "base": "f3e4c013dfc03e323c550b666438d910713f7653",
+    "result": "18 passed, 0 failed",
+    "receipt": "publish-check.xml"
+  }
+}

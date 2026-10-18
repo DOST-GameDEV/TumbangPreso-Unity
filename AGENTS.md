@@ -30,6 +30,16 @@ Soraya's existing character. Naming does not authorize kit or art redesign.
 
 ## Finalized Paete And Phaister
 
+### October 5 owner exception: adopt QoLUpdates content
+
+The owner explicitly requested merging the current QoLUpdates branch safely.
+Its incoming roster models, rig references and authored motion are adopted as
+part of that integration. The owner specifically confirmed that its incoming
+Yasmin takes precedence over the earlier request to restore her old model.
+This scoped adoption does not authorize later unrelated hero redesigns. Preserve
+stable IDs, approved display names and the current ASTRA engineering fixes.
+Remove the temporary train prank hook from the integrated release path.
+
 - The owner-approved finalized Paete and Phaister implementations are authoritative
   over stale Wiki text, old TODO entries and earlier proposals.
 - Do not change either hero's mechanics, model, animation, VFX, SFX, cutscene,
@@ -227,6 +237,27 @@ during long runs, rather than leaving stale processes or branches behind.
   human taste. These are separate claims, not interchangeable evidence.
 
 ## Product And Authored Work
+
+### October 7 owner directive: recorded map-selection previews
+
+- Map-selection backgrounds should use prerecorded footage of the actual map,
+  avoiding a live arena render while players browse maps. Keep live rendering
+  where interactive lobby characters or gameplay require it.
+- Every map maker must regenerate its preview video and first-frame poster when
+  map geometry, materials, lighting, ambient motion or preview framing changes.
+  Record the source dependency hash and capture settings so stale footage can be
+  detected. A map change is incomplete while its preview depicts an older map.
+- Preserve authored map quality and the existing camera composition. Check the
+  footage against the current MapPreviewSurface output: same pose, lens, sway,
+  lighting, grading, outlines and ambient motion, rather than a new flythrough.
+  Capture settings and source identity must include the preview implementation.
+  Check the
+  loop, sharpness and playback on the supported player platforms. Keep the poster
+  visible during preparation and failures; changing screens must release or reuse
+  the owned player safely. Do not preload full arena scenes solely for these clips.
+- This is the owner-approved direction. Implementation and native playback
+  acceptance remain open until their exact evidence is recorded; this rule alone
+  does not establish that the video preview system is already installed.
 
 - Both Classic and Hero Strike ship, defaulting to eight rounds. Classic people
   are cosmetic/neutral. No Street Hype. Preserve the retrieval-centered game.

@@ -1,0 +1,53 @@
+[Net] offline
+[Net] offline
+[Net] connecting to 192.168.1.7:8910
+[Net] connected
+[Net] connected as seat 2
+[Link] Good at 120 ms round trip (client).
+[Link] Poor at 225 ms round trip (client).
+[Link] Good at 33 ms round trip (client).
+[ArenaPrewarm] drew 20 views in 0.33 s.
+[HubLoading] Arena ready after 1.06 s.
+[Link] Bad at 3033 ms round trip (client).
+[Link] Good at 33 ms round trip (client).
+[Link] Poor at 334 ms round trip (client).
+[Slice] round 1 begins, taya is seat 0
+[Link] Good at 33 ms round trip (client).
+[Slice] match over. scores: 20 / 20 / 540 / 640. seat 3 wins
+[NetDisconnect] peer=1 local=1 server=False connected=True
+[Net] disconnected: The host left the game.
+[Abandon] HostLost: connection ended after completed match at round 4 of 4; authority revoked
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code 6JKN
+[Link] Unknown at 0 ms round trip (host, worst peer).
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00000] in <cc2768c035ac49cf8e9f8cbfad6ba15f>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+[Net] offline
+[Net] signing in to online services...
+[Net] joining relay allocation PJHMQR...
+[Net] connecting to relay host...
+[Net] connected
+[Net] connected as seat 2
+[Link] Good at 117 ms round trip (client).
+[ArenaPrewarm] drew 20 views in 0.34 s.
+[HubLoading] Arena ready after 0.56 s.
+[Link] Poor at 282 ms round trip (client).
+[Link] Good at 99 ms round trip (client).
+[Slice] round 1 begins, taya is seat 0
+[Slice] match over. scores: 90 / 100 / 530 / 1040. seat 3 wins
+[NetDisconnect] peer=2 local=2 server=False connected=True
+[Net] disconnected: The host left the game.
+[Abandon] HostLost: connection ended after completed match at round 4 of 4; authority revoked
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code KJ9W
+[Link] Unknown at 0 ms round trip (host, worst peer).
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00000] in <cc2768c035ac49cf8e9f8cbfad6ba15f>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True

@@ -1,0 +1,6 @@
+{
+  "unityPid": 13444,
+  "reason": "No terminal XML/progress after7minutes; candidate holds Home Single scene operation at0.9 and Unity serializes scene operation queue. Teardown/load queue can stall. Stopped only confirmed owned Editor to release restoration; no gameplay pass claimed.",
+  "scope": "Rejected held-scene candidate; exact fixture progress phase not yet established",
+  "ownedCommandVerified": true
+}

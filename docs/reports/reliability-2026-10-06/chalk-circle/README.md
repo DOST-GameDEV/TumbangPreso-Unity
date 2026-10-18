@@ -1,0 +1,7 @@
+# Chalk contact follows circular Arena boundaries
+
+MotionFoley.TryChalkCrossing still intersected square edges after Arena began drawing circular chalk. It missed actual diagonal crossings and emitted contact at phantom square edges outside the circle. The round branch now intersects the travelled X/Z segment with the current circle, choosing its first positive contact and interpolating Y. Tangency and repeated starting contact are excluded. The existing square branch, audio clips, skid cadence, volumes, random-state preservation and network behavior remain unchanged.
+
+The actual source-linked method compiled with installed Unity managed math and Core reproduces10 failures across the five Arena radii;5 original axis/stationary/interior/square controls pass. Candidate19 pass: the same15 plus four edge controls for pass-through entry, tangency, starting contact and short steps. Audio/actor dependencies are explicit non-invoked shims; this is not native audio, physics or device acceptance. The retained Program is the expanded final fixture, so original-result has15 cases and candidate19, not an identical-count assertion.
+
+Nineteen focused PlayMode geometry cases are prepared for laptop integration, which can be batched with FamiliarConfinementTests and the existing relevant Nemu chase/sweep controls after its current visible UI unit. No PC Unity/player/input while the owner studies. Native and packaged audible contact acceptance remain pending. No new manager, framework, relay or authored effect.

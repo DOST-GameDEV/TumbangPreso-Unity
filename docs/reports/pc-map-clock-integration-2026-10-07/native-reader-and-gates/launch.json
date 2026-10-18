@@ -1,0 +1,26 @@
+{
+  "sourceRef": "aea2774dfc6896a7ddeebc49954a112810fcf188",
+  "profile": "pc-humanlike-ai-hero-arena-lunge-gates1006",
+  "filter": "TumbangPreso.PlayTests.AiDiagnosticProbe.OneHeroRoundAtRealSpeedIsFullyExplained;TumbangPreso.PlayTests.LocalReplaySceneStateTests.EveryAutomaticallyRecordedSceneSegmentHasItsCompleteReadableWindow",
+  "expectedCases": 2,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-humanlike-ai-hero-arena-lunge-gates1006",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.AiDiagnosticProbe.OneHeroRoundAtRealSpeedIsFullyExplained;TumbangPreso.PlayTests.LocalReplaySceneStateTests.EveryAutomaticallyRecordedSceneSegmentHasItsCompleteReadableWindow",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\ai-humanlike1007\\hero-arena-lunge-gates\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\ai-humanlike1007\\hero-arena-lunge-gates\\editor.log"
+  ],
+  "pid": 41908
+}

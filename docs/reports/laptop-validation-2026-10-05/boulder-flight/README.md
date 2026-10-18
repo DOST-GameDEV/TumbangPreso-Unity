@@ -1,4 +1,4 @@
-# Basilio boulder launch velocity
+# Dante boulder launch velocity
 
 Baseline3af811d31, Unity6000.5.8f1, Windows D3D11 isolatedqa-a nativePlayMode. DanteBoulder.Spawn assigned the unit direction returned by Slipper.SolveArc directly as velocity. The authored GeoRules.BoulderSpeed14m/s was used only to solve direction, never to scale movement.
 

@@ -1,0 +1,40 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.500	Quiet	QuietEstablish	the street	1	0
+1.001	89.000	Quiet	QuietEstablish	the street	1	0
+1.502	88.500	Quiet	QuietEstablish	the street	1	0
+2.004	88.000	Quiet	QuietEstablish	the street	1	0
+2.504	87.500	ThrowPrep	Objective	throw · PAETE	2	0
+3.005	87.001	ThrowPrep	Objective	throw · PAETE	2	0
+3.505	86.501	ThrowPrep	Objective	throw · PAETE	2	0
+4.006	86.001	SlipperLanded	Objective	the can	2	0
+4.506	85.501	SlipperLanded	Objective	the can	2	0
+5.199	84.801	SlipperLanded	Objective	the can	2	0
+5.699	84.301	Retrieval	Chase	retrieval · PAETE	3	0
+6.200	83.801	Retrieval	Chase	retrieval · PAETE	3	0
+6.700	83.361	Tag	Defender	tag · ISAGANI	5	0
+7.201	82.861	Tag	Defender	tag · ISAGANI	5	0
+7.702	82.361	Tag	Defender	tag · ISAGANI	5	0
+8.203	81.861	Tag	Defender	tag · ISAGANI	5	0
+8.704	81.361	Tag	Defender	tag · ISAGANI	5	0
+9.204	80.862	Tag	Defender	tag · ISAGANI	5	0
+9.705	80.362	Retrieval	Chase	retrieval · PAETE	6	0
+10.212	79.842	Retrieval	Chase	retrieval · PAETE	6	0
+10.713	79.342	Downed	Recovery	down · ISAGANI	8	0
+11.213	78.842	Downed	Recovery	down · ISAGANI	8	0
+11.714	78.342	Retrieval	RetrievalTwoShot	retrieval · PAETE	9	0
+12.214	77.842	LataHit	Objective	the can · ISAGANI	10	0
+12.715	77.342	Retrieval	Chase	retrieval · ISAGANI	11	0
+13.215	76.842	Retrieval	Chase	retrieval · ISAGANI	11	0
+13.715	76.342	Retrieval	Chase	retrieval · ISAGANI	11	0
+14.216	75.842	ThrowPrep	Objective	throw · PAETE	12	0
+14.717	75.342	ThrowPrep	Objective	throw · PAETE	12	0
+15.218	74.843	ThrowPrep	Objective	throw · ISAGANI	12	0
+15.718	74.343	ThrowPrep	Objective	throw · ISAGANI	12	0
+16.218	73.843	LataHit	Objective	the can · ISAGANI	12	0
+16.719	73.343	LataHit	Objective	the can · ISAGANI	12	0
+17.220	72.843	LataHit	Objective	the can · ISAGANI	12	0
+17.720	72.343	LataHit	Objective	the can · ISAGANI	12	0
+18.220	71.843	Retrieval	Chase	retrieval · ISAGANI	13	0
+18.721	71.343	Retrieval	Chase	retrieval · ISAGANI	13	0
+19.222	70.843	ThrowPrep	Objective	throw · ISAGANI	14	0
+19.723	70.343	ThrowPrep	Objective	throw · ISAGANI	14	0

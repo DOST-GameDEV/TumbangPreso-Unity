@@ -1,0 +1,21 @@
+{
+  "Assets/TumbangPreso/Runtime/Abilities/NemuBlindfold.cs": "2867f70a02ef596069abea9d88595e4bf719bddbe11a088ff858726e6cb76146",
+  "Assets/TumbangPreso/Runtime/Abilities/NemuHeroKit.cs": "5eea4900bcaf0c39713c228c7f55e7650a1290a03a787f73ad140775d87f70bc",
+  "Assets/TumbangPreso/Runtime/Abilities/NemuLookout.cs": "f59ac9a431c873c615ae22c987f42bed21f4acedf7a2c634ae8e755b1465e1e9",
+  "Assets/TumbangPreso/Runtime/Abilities/NemuSkitter.cs": "7a2c6b8d063e3723e4498ec5a4ce73ff3fa85439ec37c3404b05dbb7310cc231",
+  "Assets/TumbangPreso/Runtime/Camera/MatchPoseHistory.cs": "46ce6e6b301870948f753aca53daefd156e4e93215b8ade805300af7ba7540de",
+  "Assets/TumbangPreso/Runtime/Net/MatchRpc.Moments.cs": "a55ff0db40e002b712dad7f4683c76765cc8ea85a2aea0d760a1ff4d4c676892",
+  "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs": "40f199ad029cce1b2b852af4d94d2ed333257a2f8287fe7d4d91ed2fad3a187f",
+  "Assets/TumbangPreso/Runtime/Net/NetSession.cs": "13b3b7ba45f377ba592dee1d1679495bd636cb60d6f38605bac84d0d057155c5",
+  "Assets/TumbangPreso/Tests/ChatAndLobbyChromeTests.cs": "a1dd030dd75fcdc871463fe91c99516ff755d6c44f5988fa93368ea978b38811",
+  "Assets/TumbangPreso/Tests/PlayMode/NemuDontLookTests.cs": "3fe10ef0350d4952ec899dc742d475a1c48d26bb256c67aff5a9bfd020c36c18",
+  "Assets/TumbangPreso/Tests/PlayMode/TumbangPreso.PlayTests.asmdef": "e17fcc01722000e2bd2a6b5dceebd3cbf6ea1f51f6d9174eec1f949a2c99ffff",
+  "Assets/TumbangPreso/Runtime/Abilities/NemuGhosts.Replication.cs": "22a985900e2953f648272188d612ca097fcf5a2355cdb4ad85e55e885638d41d",
+  "Assets/TumbangPreso/Runtime/Abilities/NemuGhosts.Replication.cs.meta": "6fb465d37d4c835aed8790a28cee2c01391e26f158346b8099e10dc31198f5cc",
+  "Assets/TumbangPreso/Runtime/Net/MatchRpc.NemuGhosts.cs": "6f9d892bb07075938bfaa6e389896c3ebd628660b9152682dce516bdee678652",
+  "Assets/TumbangPreso/Runtime/Net/MatchRpc.NemuGhosts.cs.meta": "fdec2b0a9a095dfa8c9a7547f3a01e4f36c78a6adcd7af7bad1b428104984714",
+  "Assets/TumbangPreso/Runtime/Net/NemuGhostFrame.cs": "3faa10b9b36809e1fd43600c5880022b94eda4f15edc870d6ac2bd9f34dc01e7",
+  "Assets/TumbangPreso/Runtime/Net/NemuGhostFrame.cs.meta": "14185b3df12271c50213394b829b77b93db984256960649b46730043ee034474",
+  "Assets/TumbangPreso/Tests/PlayMode/NemuGhostReplicationTests.cs": "2cea77e8e7b95119a2113ecaab721875c9a63b266c877a64ff160a73ca53a1d1",
+  "Assets/TumbangPreso/Tests/PlayMode/NemuGhostReplicationTests.cs.meta": "c55f0ab3cb3aab11643172dacfe76d65ebfb8eec86274f4f7366889b54c09cc2"
+}

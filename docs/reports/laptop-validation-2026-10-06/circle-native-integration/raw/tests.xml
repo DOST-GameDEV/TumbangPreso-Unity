@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="30" result="Passed" total="30" passed="30" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:46Z" duration="1.2252639">
+  <test-suite type="TestSuite" id="3370" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1930" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:46Z" duration="1.225264" total="30" passed="30" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3362" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1930" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:46Z" duration="1.214047" total="30" passed="30" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="53620" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3363" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1930" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:46Z" duration="1.208468" total="30" passed="30" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3366" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1928" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:46Z" duration="1.203179" total="30" passed="30" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1349" name="ChalkCircleCrossingTests" fullname="TumbangPreso.PlayTests.ChalkCircleCrossingTests" classname="TumbangPreso.PlayTests.ChalkCircleCrossingTests" runstate="Runnable" testcasecount="19" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.033125" total="19" passed="19" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1362" name="AxisCrossingStillContactsTheLine" fullname="TumbangPreso.PlayTests.ChalkCircleCrossingTests.AxisCrossingStillContactsTheLine" methodname="AxisCrossingStillContactsTheLine" classname="TumbangPreso.PlayTests.ChalkCircleCrossingTests" runstate="Runnable" seed="954101424" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.012893" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1361" name="CrossingTheOldSquareCornerDoesNotInventACircleContact" fullname="TumbangPreso.PlayTests.ChalkCircleCrossingTests.CrossingTheOldSquareCornerDoesNotInventACircleContact" classname="TumbangPreso.PlayTests.ChalkCircleCrossingTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.004021" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1356" name="CrossingTheOldSquareCornerDoesNotInventACircleContact(&quot;plaza&quot;)" fullname="TumbangPreso.PlayTests.ChalkCircleCrossingTests.CrossingTheOldSquareCornerDoesNotInventACircleContact(&quot;plaza&quot;)" methodname="CrossingTheOldSquareCornerDoesNotInventACircleContact" classname="TumbangPreso.PlayTests.ChalkCircleCrossingTests" runstate="Runnable" seed="207777969" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.000963" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1357" name="CrossingTheOldSquareCornerDoesNotInventACircleContact(&quot;tore&quot;)" fullname="TumbangPreso.PlayTests.ChalkCircleCrossingTests.CrossingTheOldSquareCornerDoesNotInventACircleContact(&quot;tore&quot;)" methodname="CrossingTheOldSquareCornerDoesNotInventACircleContact" classname="TumbangPreso.PlayTests.ChalkCircleCrossingTests" runstate="Runnable" seed="849451447" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.000119" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1358" name="CrossingTheOldSquareCornerDoesNotInventACircleContact(&quot;krus&quot;)" fullname="TumbangPreso.PlayTests.ChalkCircleCrossingTests.CrossingTheOldSquareCornerDoesNotInventACircleContact(&quot;krus&quot;)" methodname="CrossingTheOldSquareCornerDoesNotInventACircleContact" classname="TumbangPreso.PlayTests.ChalkCircleCrossingTests" runstate="Runnable" seed="1931847884" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.000072" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1359" name="CrossingTheOldSquareCornerDoesNotInventACircleContact(&quot;hukay&quot;)" fullname="TumbangPreso.PlayTests.ChalkCircleCrossingTests.CrossingTheOldSquareCornerDoesNotInventACircleContact(&quot;hukay&quot;)" methodname="CrossingTheOldSquareCornerDoesNotInventACircleContact" classname="TumbangPreso.PlayTests.ChalkCircleCrossingTests" runstate="Runnable" seed="1506359148" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.000070" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1360" name="CrossingTheOldSquareCornerDoesNotInventACircleContact(&quot;entablado&quot;)" fullname="TumbangPreso.PlayTests.ChalkCircleCrossingTests.CrossingTheOldSquareCornerDoesNotInventACircleContact(&quot;entablado&quot;)" methodname="CrossingTheOldSquareCornerDoesNotInventACircleContact" classname="TumbangPreso.PlayTests.ChalkCircleCrossingTests" runstate="Runnable" seed="1491130276" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.000071" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1355" name="DiagonalCrossingMatchesTheCurrentCircleAndInterpolatesHeight" fullname="TumbangPreso.PlayTests.ChalkCircleCrossingTests.DiagonalCrossingMatchesTheCurrentCircleAndInterpolatesHeight" classname="TumbangPreso.PlayTests.ChalkCircleCrossingTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.001875" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1350" name="DiagonalCrossingMatchesTheCurrentCircleAndInterpolatesHeight(&quot;plaza&quot;)" fullname="TumbangPreso.PlayTests.ChalkCircleCrossingTests.DiagonalCrossingMatchesTheCurrentCircleAndInterpolatesHeight(&quot;plaza&quot;)" methodname="DiagonalCrossingMatchesTheCurrentCircleAndInterpolatesHeight" classname="TumbangPreso.PlayTests.ChalkCircleCrossingTests" runstate="Runnable" seed="1311374672" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.000401" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1351" name="DiagonalCrossingMatchesTheCurrentCircleAndInterpolatesHeight(&quot;tore&quot;)" fullname="TumbangPreso.PlayTests.ChalkCircleCrossingTests.DiagonalCrossingMatchesTheCurrentCircleAndInterpolatesHeight(&quot;tore&quot;)" methodname="DiagonalCrossingMatchesTheCurrentCircleAndInterpolatesHeight" classname="TumbangPreso.PlayTests.ChalkCircleCrossingTests" runstate="Runnable" seed="415365538" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.000082" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1352" name="DiagonalCrossingMatchesTheCurrentCircleAndInterpolatesHeight(&quot;krus&quot;)" fullname="TumbangPreso.PlayTests.ChalkCircleCrossingTests.DiagonalCrossingMatchesTheCurrentCircleAndInterpolatesHeight(&quot;krus&quot;)" methodname="DiagonalCrossingMatchesTheCurrentCircleAndInterpolatesHeight" classname="TumbangPreso.PlayTests.ChalkCircleCrossingTests" runstate="Runnable" seed="200917231" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.000067" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1353" name="DiagonalCrossingMatchesTheCurrentCircleAndInterpolatesHeight(&quot;hukay&quot;)" fullname="TumbangPreso.PlayTests.ChalkCircleCrossingTests.DiagonalCrossingMatchesTheCurrentCircleAndInterpolatesHeight(&quot;hukay&quot;)" methodname="DiagonalCrossingMatchesTheCurrentCircleAndInterpolatesHeight" classname="TumbangPreso.PlayTests.ChalkCircleCrossingTests" runstate="Runnable" seed="1352059524" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.000063" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1354" name="DiagonalCrossingMatchesTheCurrentCircleAndInterpolatesHeight(&quot;entablado&quot;)" fullname="TumbangPreso.PlayTests.ChalkCircleCrossingTests.DiagonalCrossingMatchesTheCurrentCircleAndInterpolatesHeight(&quot;entablado&quot;)" methodname="DiagonalCrossingMatchesTheCurrentCircleAndInterpolatesHeight" classname="TumbangPreso.PlayTests.ChalkCircleCrossingTests" runstate="Runnable" seed="1156775316" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.000059" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1364" name="InteriorDoesNotCross" fullname="TumbangPreso.PlayTests.ChalkCircleCrossingTests.InteriorDoesNotCross" methodname="InteriorDoesNotCross" classname="TumbangPreso.PlayTests.ChalkCircleCrossingTests" runstate="Runnable" seed="522940340" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.000167" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1365" name="PassingThroughUsesFirstContact" fullname="TumbangPreso.PlayTests.ChalkCircleCrossingTests.PassingThroughUsesFirstContact" methodname="PassingThroughUsesFirstContact" classname="TumbangPreso.PlayTests.ChalkCircleCrossingTests" runstate="Runnable" seed="565976290" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.000283" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1368" name="ShortCrossingRemainsStable" fullname="TumbangPreso.PlayTests.ChalkCircleCrossingTests.ShortCrossingRemainsStable" methodname="ShortCrossingRemainsStable" classname="TumbangPreso.PlayTests.ChalkCircleCrossingTests" runstate="Runnable" seed="1259282719" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.000220" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1369" name="SquareCornerRemainsASquare" fullname="TumbangPreso.PlayTests.ChalkCircleCrossingTests.SquareCornerRemainsASquare" methodname="SquareCornerRemainsASquare" classname="TumbangPreso.PlayTests.ChalkCircleCrossingTests" runstate="Runnable" seed="874710452" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.000209" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1370" name="SquareEdgeGapRemainsRejected" fullname="TumbangPreso.PlayTests.ChalkCircleCrossingTests.SquareEdgeGapRemainsRejected" methodname="SquareEdgeGapRemainsRejected" classname="TumbangPreso.PlayTests.ChalkCircleCrossingTests" runstate="Runnable" seed="940633604" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.000243" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1367" name="StartingOnLineDoesNotRepeatContact" fullname="TumbangPreso.PlayTests.ChalkCircleCrossingTests.StartingOnLineDoesNotRepeatContact" methodname="StartingOnLineDoesNotRepeatContact" classname="TumbangPreso.PlayTests.ChalkCircleCrossingTests" runstate="Runnable" seed="2097728690" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.000177" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1363" name="StationaryDoesNotCross" fullname="TumbangPreso.PlayTests.ChalkCircleCrossingTests.StationaryDoesNotCross" methodname="StationaryDoesNotCross" classname="TumbangPreso.PlayTests.ChalkCircleCrossingTests" runstate="Runnable" seed="836665208" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.000452" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1366" name="TangentDoesNotCross" fullname="TumbangPreso.PlayTests.ChalkCircleCrossingTests.TangentDoesNotCross" methodname="TangentDoesNotCross" classname="TumbangPreso.PlayTests.ChalkCircleCrossingTests" runstate="Runnable" seed="1452053647" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.000169" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1652" name="FamiliarConfinementTests" fullname="TumbangPreso.PlayTests.FamiliarConfinementTests" classname="TumbangPreso.PlayTests.FamiliarConfinementTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:46Z" duration="0.327178" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1658" name="DefenderDiagonalUsesTheCurrentLayoutsRoundBoundary" fullname="TumbangPreso.PlayTests.FamiliarConfinementTests.DefenderDiagonalUsesTheCurrentLayoutsRoundBoundary" classname="TumbangPreso.PlayTests.FamiliarConfinementTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:46Z" duration="0.191593" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1653" name="DefenderDiagonalUsesTheCurrentLayoutsRoundBoundary(&quot;plaza&quot;)" fullname="TumbangPreso.PlayTests.FamiliarConfinementTests.DefenderDiagonalUsesTheCurrentLayoutsRoundBoundary(&quot;plaza&quot;)" methodname="DefenderDiagonalUsesTheCurrentLayoutsRoundBoundary" classname="TumbangPreso.PlayTests.FamiliarConfinementTests" runstate="Runnable" seed="202517158" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.057524" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1654" name="DefenderDiagonalUsesTheCurrentLayoutsRoundBoundary(&quot;tore&quot;)" fullname="TumbangPreso.PlayTests.FamiliarConfinementTests.DefenderDiagonalUsesTheCurrentLayoutsRoundBoundary(&quot;tore&quot;)" methodname="DefenderDiagonalUsesTheCurrentLayoutsRoundBoundary" classname="TumbangPreso.PlayTests.FamiliarConfinementTests" runstate="Runnable" seed="1915780028" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.033773" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1655" name="DefenderDiagonalUsesTheCurrentLayoutsRoundBoundary(&quot;krus&quot;)" fullname="TumbangPreso.PlayTests.FamiliarConfinementTests.DefenderDiagonalUsesTheCurrentLayoutsRoundBoundary(&quot;krus&quot;)" methodname="DefenderDiagonalUsesTheCurrentLayoutsRoundBoundary" classname="TumbangPreso.PlayTests.FamiliarConfinementTests" runstate="Runnable" seed="673962396" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.032227" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1656" name="DefenderDiagonalUsesTheCurrentLayoutsRoundBoundary(&quot;hukay&quot;)" fullname="TumbangPreso.PlayTests.FamiliarConfinementTests.DefenderDiagonalUsesTheCurrentLayoutsRoundBoundary(&quot;hukay&quot;)" methodname="DefenderDiagonalUsesTheCurrentLayoutsRoundBoundary" classname="TumbangPreso.PlayTests.FamiliarConfinementTests" runstate="Runnable" seed="348565971" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:45Z" duration="0.032859" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1657" name="DefenderDiagonalUsesTheCurrentLayoutsRoundBoundary(&quot;entablado&quot;)" fullname="TumbangPreso.PlayTests.FamiliarConfinementTests.DefenderDiagonalUsesTheCurrentLayoutsRoundBoundary(&quot;entablado&quot;)" methodname="DefenderDiagonalUsesTheCurrentLayoutsRoundBoundary" classname="TumbangPreso.PlayTests.FamiliarConfinementTests" runstate="Runnable" seed="588821527" result="Passed" start-time="2026-10-06 09:14:45Z" end-time="2026-10-06 09:14:46Z" duration="0.034132" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1663" name="NonDefenderBranchesKeepPerSideCourtBounds" fullname="TumbangPreso.PlayTests.FamiliarConfinementTests.NonDefenderBranchesKeepPerSideCourtBounds" classname="TumbangPreso.PlayTests.FamiliarConfinementTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-06 09:14:46Z" end-time="2026-10-06 09:14:46Z" duration="0.068825" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1661" name="NonDefenderBranchesKeepPerSideCourtBounds(False)" fullname="TumbangPreso.PlayTests.FamiliarConfinementTests.NonDefenderBranchesKeepPerSideCourtBounds(False)" methodname="NonDefenderBranchesKeepPerSideCourtBounds" classname="TumbangPreso.PlayTests.FamiliarConfinementTests" runstate="Runnable" seed="460608251" result="Passed" start-time="2026-10-06 09:14:46Z" end-time="2026-10-06 09:14:46Z" duration="0.034970" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1662" name="NonDefenderBranchesKeepPerSideCourtBounds(True)" fullname="TumbangPreso.PlayTests.FamiliarConfinementTests.NonDefenderBranchesKeepPerSideCourtBounds(True)" methodname="NonDefenderBranchesKeepPerSideCourtBounds" classname="TumbangPreso.PlayTests.FamiliarConfinementTests" runstate="Runnable" seed="1238912725" result="Passed" start-time="2026-10-06 09:14:46Z" end-time="2026-10-06 09:14:46Z" duration="0.032767" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1659" name="OrdinarySquareKeepsItsCorner" fullname="TumbangPreso.PlayTests.FamiliarConfinementTests.OrdinarySquareKeepsItsCorner" methodname="OrdinarySquareKeepsItsCorner" classname="TumbangPreso.PlayTests.FamiliarConfinementTests" runstate="Runnable" seed="1465993917" result="Passed" start-time="2026-10-06 09:14:46Z" end-time="2026-10-06 09:14:46Z" duration="0.032484" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1660" name="RoundInteriorKeepsItsPositionAndHeight" fullname="TumbangPreso.PlayTests.FamiliarConfinementTests.RoundInteriorKeepsItsPositionAndHeight" methodname="RoundInteriorKeepsItsPositionAndHeight" classname="TumbangPreso.PlayTests.FamiliarConfinementTests" runstate="Runnable" seed="68808640" result="Passed" start-time="2026-10-06 09:14:46Z" end-time="2026-10-06 09:14:46Z" duration="0.032676" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2192" name="NemuHauntContractTests" fullname="TumbangPreso.PlayTests.NemuHauntContractTests" classname="TumbangPreso.PlayTests.NemuHauntContractTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-06 09:14:46Z" end-time="2026-10-06 09:14:46Z" duration="0.689671" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2198" name="ADefendersFamiliarCanReachAnAttackerOutsideTheConfinementBox" fullname="TumbangPreso.PlayTests.NemuHauntContractTests.ADefendersFamiliarCanReachAnAttackerOutsideTheConfinementBox" methodname="ADefendersFamiliarCanReachAnAttackerOutsideTheConfinementBox" classname="TumbangPreso.PlayTests.NemuHauntContractTests" runstate="Runnable" seed="1905515045" result="Passed" start-time="2026-10-06 09:14:46Z" end-time="2026-10-06 09:14:46Z" duration="0.642840" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2197" name="ReusedChaseSweepStopsAtAWallAndFailsClosedWhenItsBufferFills" fullname="TumbangPreso.PlayTests.NemuHauntContractTests.ReusedChaseSweepStopsAtAWallAndFailsClosedWhenItsBufferFills" methodname="ReusedChaseSweepStopsAtAWallAndFailsClosedWhenItsBufferFills" classname="TumbangPreso.PlayTests.NemuHauntContractTests" runstate="Runnable" seed="291143796" result="Passed" start-time="2026-10-06 09:14:46Z" end-time="2026-10-06 09:14:46Z" duration="0.044409" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

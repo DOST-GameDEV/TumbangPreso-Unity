@@ -1160,6 +1160,7 @@ namespace TumbangPreso.UI
         private CameraSystem.SpectatorCamera _spectatorCamera;
         private string _spectatorStatusShown = "";
         private bool _spectatorControlsVisible = true;
+        public bool SpectatorControlsVisible => _spectatorControlsVisible;
 
         /// <summary>
         /// The two lines along the bottom of a spectator's screen.
@@ -4369,7 +4370,7 @@ namespace TumbangPreso.UI
             go.transform.SetParent(parent, false);
 
             var t = go.AddComponent<Text>();
-            t.font = MenuKit.Font;
+            t.font = InGameTypography.Resolve(MenuKit.Font, true, t);
             t.fontSize = size;
             t.color = colour;
             t.alignment = align;

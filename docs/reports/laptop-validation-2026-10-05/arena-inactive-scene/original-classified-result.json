@@ -1,0 +1,13 @@
+{
+  "terminal": true,
+  "exitCode": 2,
+  "passed": 6,
+  "failed": 1,
+  "expected": 7,
+  "inputs": 21126,
+  "generatedDeltas": 279,
+  "allGeneratedBeforeAfterPreservedAndRestored": true,
+  "qualityRestored": true,
+  "existingPrefsRestored": 13,
+  "productionDelta": false
+}

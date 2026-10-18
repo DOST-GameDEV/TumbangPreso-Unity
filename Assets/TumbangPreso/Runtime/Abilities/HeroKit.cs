@@ -142,6 +142,12 @@ namespace TumbangPreso.Abilities
         public virtual bool BlocksOwnLocomotion => false;
         public virtual bool BlocksOwnActions => false;
         public virtual float IncomingKnockbackDistanceScale => 1.0f;
+
+        /// <summary>
+        /// An ultimate whose effect outlasts its cast (Dante's MOUNTAIN FORM, 30 s after CONTINENTAL DRIFT): the seconds of it left
+        /// and its whole length, for the owner's deck to draw as the ultimate tile's timer. False for every kit with nothing running.
+        /// </summary>
+        public virtual bool UltimateAftermath(out float left, out float total) { left = 0f; total = 0f; return false; }
         // Kits with accepted-cast state need the owner event, without repeating a predicted payload.
         public virtual bool RequiresOwnerCastEvents => false;
 

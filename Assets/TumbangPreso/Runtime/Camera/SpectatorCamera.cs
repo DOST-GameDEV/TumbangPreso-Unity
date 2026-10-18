@@ -201,7 +201,7 @@ namespace TumbangPreso.CameraSystem
         /// not re-press V at every one.
         private bool _pov;
 
-        private InputAction _move, _jump, _sprint, _down;
+        private InputAction _move, _jump, _sprint, _down, _look;
 
         // -------------------------------------------------------------------
         // § THE REPLAY BUFFER, AND WHAT IT COSTS
@@ -621,6 +621,7 @@ namespace TumbangPreso.CameraSystem
             if (map == null) return;
 
             _move = map.FindAction("Move", false);
+            _look = map.FindAction("Look", false);
             _jump = map.FindAction("Jump", false);
             _sprint = map.FindAction("Sprint", false);
             // ⚠️ `SpectatorDown`, NOT a gameplay action. In Godot this read `guard_dash`,
@@ -816,6 +817,8 @@ namespace TumbangPreso.CameraSystem
                 // carried item and viewmodel borrowed by the previous POV cut.
                 StepPovArms(delta);
                 Vector2 dir = _move != null ? _move.ReadValue<Vector2>() : Vector2.zero;
+                if (InputLayer.TouchInput.Active && InputLayer.TouchInput.Move.sqrMagnitude > .0001f)
+                    dir = InputLayer.TouchInput.Move;
                 Vector3 move = transform.forward * dir.y + transform.right * dir.x;
 
                 if (_jump != null && _jump.IsPressed()) move += Vector3.up;
@@ -852,15 +855,33 @@ namespace TumbangPreso.CameraSystem
         /// <see cref="CameraRig.StepLook"/> — a spectator whose look speed disagrees with
         /// the game's reads as a different game.
         /// </summary>
+        // Match the gameplay stick response, but spectator control keeps working
+        // when the operator requests a paused match.
+        private Vector2 SpectatorStickLook()
+        {
+            Vector2 stick = _look != null ? _look.ReadValue<Vector2>() : Vector2.zero;
+            if (stick.sqrMagnitude <= 0.16f * 0.16f) return Vector2.zero;
+            return new Vector2(stick.x * Mathf.Abs(stick.x), stick.y * Mathf.Abs(stick.y));
+        }
+
         private void StepLook()
         {
-            if (Cursor.lockState != CursorLockMode.Locked) return;
+            Vector2 delta = SpectatorStickLook() * (150.0f * Time.unscaledDeltaTime);
+            if (InputLayer.TouchInput.Active)
+            {
+                delta += InputLayer.TouchInput.LookDelta;
+                InputLayer.TouchInput.LookDelta = Vector2.zero;
+            }
+            // Only relative mouse look needs a locked cursor. The existing Update
+            // overlay gate keeps pad look out of menus, too.
+            if (Cursor.lockState == CursorLockMode.Locked)
+                delta += new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
+            if (delta.sqrMagnitude <= 0) return;
 
             var s = Settings.SettingsStore.Current;
             float sens = CameraRig.BaseSensitivity * s.MouseSensitivity;
-
-            float dx = Input.GetAxisRaw("Mouse X") * sens;
-            float dy = Input.GetAxisRaw("Mouse Y") * sens;
+            float dx = delta.x * sens;
+            float dy = delta.y * sens;
             if (s.InvertY) dy = -dy;
 
             // ⚠️ YAW ADDS HERE AND SUBTRACTS IN THE .gd. Same handedness flip as the start
@@ -963,36 +984,12 @@ namespace TumbangPreso.CameraSystem
                 UI.Hud.Instance?.ShowToast("CAMERA MARK RECALLED", 0.9f);
             }
 
-            // ⚠️⚠️ F1 TO F4 ARE READ BY TWO COMPONENTS AND `DebugPlayerSwitcher` HAS THE OLDER
-            // CLAIM, SO IT WINS OFFLINE. `DebugPlayerSwitcher.Update` maps the same four keys to
-            // `Assign(0..3)`, which SEIZES that seat: it un-parks the body, enables its
-            // `PlayerInputReader` and moves the player's name onto it. One press therefore did
-            // both, and the result is the screen 🧑 photographed on 2026-09-04, a driven body
-            // under a spectator overlay: **"IF IT isnt spectator why do i see spectator hud"**.
-            // `docs/TODO.md` § 141.
-            //
-            // ⚠️⚠️ AND THIS IS THE COUNTER-EXAMPLE TO THE RULE THAT MAKES THE SPECTATOR KEY SET
-            // LEGAL. `CLAUDE.md` § 4 exempts nine spectator controls from "one control, one
-            // action" on one stated ground: *"a spectator has no body, no seat and no
-            // `CharacterMotor`, so ... they can never both fire."* The debug switcher can hand a
-            // spectator a body, so offline that sentence is false and the exemption does not
-            // cover these four.
-            //
-            // ⚠️ NETWORKED IS THE OTHER WAY ROUND AND IS LEFT ALONE. `DebugPlayerSwitcher.Update`
-            // returns on its first line in a networked session (seizing a seat locally would
-            // desync every peer), so there is no second reader there and a real spectator keeps
-            // its POV keys. **The gate is who else is listening, not which mode we are in.**
-            bool switcherOwnsTheFKeys =
-                !NetAuthority.IsNetworked
-                && UnityEngine.Object.FindFirstObjectByType<DebugPlayerSwitcher>() != null;
-
-            if (!switcherOwnsTheFKeys)
-            {
-                if (kb.f1Key.wasPressedThisFrame) SelectPlayerPov(0);
-                if (kb.f2Key.wasPressedThisFrame) SelectPlayerPov(1);
-                if (kb.f3Key.wasPressedThisFrame) SelectPlayerPov(2);
-                if (kb.f4Key.wasPressedThisFrame) SelectPlayerPov(3);
-            }
+            // The active watcher owns POV selection. The solo seat switcher
+            // yields while this camera is enabled, so a cut cannot claim a body.
+            if (kb.f1Key.wasPressedThisFrame) SelectPlayerPov(0);
+            if (kb.f2Key.wasPressedThisFrame) SelectPlayerPov(1);
+            if (kb.f3Key.wasPressedThisFrame) SelectPlayerPov(2);
+            if (kb.f4Key.wasPressedThisFrame) SelectPlayerPov(3);
 
             // ⚠️ THE THREE SPEED DIGITS STAY LITERAL AND THAT IS DELIBERATE. They are a
             // NUMBERED SET (quarter, half, three quarter speed) the way F1 to F4 are a POSITIONAL
@@ -1883,7 +1880,7 @@ namespace TumbangPreso.CameraSystem
             BuildReplayBand(panelGo.transform, "ReplayHeadingBand", true, 76);
             labelGo.transform.SetParent(panelGo.transform, false);
             _replayLabel = labelGo.AddComponent<Text>();
-            _replayLabel.font = UI.OwnerUiTheme.Current.Display;
+            _replayLabel.font = UI.InGameTypography.Resolve(UI.OwnerUiTheme.Current.Display, true, _replayLabel);
             _replayLabel.fontSize = 36;
             _replayLabel.alignment = TextAnchor.MiddleLeft;
             _replayLabel.color = UI.OwnerUiTheme.Current.Pale;
@@ -1928,7 +1925,7 @@ namespace TumbangPreso.CameraSystem
             BuildReplayBand(panelGo.transform, "ReplayFooterBand", false, 72);
             exitGo.transform.SetParent(panelGo.transform, false);
             _replayExitLabel = exitGo.AddComponent<Text>();
-            _replayExitLabel.font = UI.OwnerUiTheme.Current.Reading;
+            _replayExitLabel.font = UI.InGameTypography.Resolve(UI.OwnerUiTheme.Current.Reading, false, _replayExitLabel);
             _replayExitLabel.fontSize = 26;
             _replayExitLabel.alignment = TextAnchor.MiddleRight;
             _replayExitLabel.color = UI.OwnerUiTheme.Current.Pale;
@@ -2310,6 +2307,40 @@ namespace TumbangPreso.CameraSystem
         private SpectatorDirector _director;
 
         public bool AutopilotEngaged => _director != null && _director.Engaged;
+        public bool HasFollowTarget => _follow != null;
+
+        public enum ViewCommand { Autopilot, FollowNext, Pov, FreeFlight, CleanFeed, Controls }
+
+        /// <summary>Local view controls shared by the touch strip and operator UI.</summary>
+        public bool ExecuteViewCommand(ViewCommand command)
+        {
+            if (!isActiveAndEnabled || PresentationClock.BlocksInput || UI.Panel.AnyOpen
+                || UI.ScreenTakeover.AnyOpenOutside(transform)) return false;
+            if ((uint)command > (uint)ViewCommand.Controls) return false;
+            if (command == ViewCommand.CleanFeed)
+            {
+                var hud = UI.Hud.Instance; if (hud == null || !hud.Spectating) return false;
+                hud.SetCleanFeed(!hud.IsCleanFeed); return true;
+            }
+            if (command == ViewCommand.Controls)
+            {
+                var hud = UI.Hud.Instance; if (hud == null || !hud.Spectating) return false;
+                hud.SetSpectatorControlsVisible(!hud.SpectatorControlsVisible); return true;
+            }
+            EnsureDirector();
+            InputLayer.TouchInput.ReleaseAll();
+            if (command == ViewCommand.Autopilot) { _director.Toggle(); return true; }
+            if (command == ViewCommand.Pov && _follow == null) return false;
+            _director.Engaged = false;
+            if (command == ViewCommand.FollowNext) CycleFollow();
+            else if (command == ViewCommand.Pov) _pov = !_pov;
+            else if (command == ViewCommand.FreeFlight)
+            {
+                _follow = null; _followIndex = -1; _pov = false;
+                _targetPosition = transform.position;
+            }
+            return true;
+        }
 
         /// <summary>
         /// Writes a pose the director computed back into this class's own state.
@@ -2348,6 +2379,9 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private bool ManualTakeover()
         {
+            if (InputLayer.TouchInput.Active && (InputLayer.TouchInput.Move.sqrMagnitude > .0001f
+                || InputLayer.TouchInput.LookDelta.sqrMagnitude > .0001f)) return true;
+            if (SpectatorStickLook().sqrMagnitude > 0) return true;
             if (Cursor.lockState == CursorLockMode.Locked)
             {
                 float dx = Mathf.Abs(Input.GetAxisRaw("Mouse X"));
@@ -2405,8 +2439,7 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private void StepAutopilotKey()
         {
-            if (_director == null) _director = GetComponent<SpectatorDirector>();
-            if (_director == null) _director = gameObject.AddComponent<SpectatorDirector>();
+            EnsureDirector();
 
             if (_autopilotToggle != null && _autopilotToggle.WasPressedThisFrame())
             {
@@ -2415,6 +2448,12 @@ namespace TumbangPreso.CameraSystem
                     _director.Engaged ? "AUTOPILOT ON  ·  MOVE TO TAKE OVER" : "AUTOPILOT OFF",
                     1.2f);
             }
+        }
+
+        private void EnsureDirector()
+        {
+            if (_director == null) _director = GetComponent<SpectatorDirector>();
+            if (_director == null) _director = gameObject.AddComponent<SpectatorDirector>();
         }
 
         private InputAction _autopilotToggle;
@@ -2659,9 +2698,7 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private void StepKeys()
         {
-            var kb = Keyboard.current;
-            if (kb == null) return;
-
+            // These actions include pad bindings; no keyboard device is required.
             if (Fired(_cycleTarget)) CycleFollow();
 
             if (Fired(_freeFly))

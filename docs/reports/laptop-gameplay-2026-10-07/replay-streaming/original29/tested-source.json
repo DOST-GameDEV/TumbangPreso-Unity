@@ -1,0 +1,35 @@
+{
+  "base": "6a4c5b4f69bd22e74546c59a1b9e55980e660500",
+  "packet": {
+    "base": "6a4c5b4f69bd22e74546c59a1b9e55980e660500",
+    "filter": "TumbangPreso.PlayTests.LocalReplayStreamingTests",
+    "expected": 4,
+    "purpose": "original actual1x/4x full-effect continuous playback, obsolete failure and close"
+  },
+  "identity": {
+    "schemaVersion": 1,
+    "workerId": "qa-a-be075dcdfa07",
+    "validationOnly": true,
+    "projectRoot": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a",
+    "sourceProject": "C:\\Users\\Matthew\\dev\\tump-integration1003",
+    "sourceCommit": "8e7cfc7feb4eee614d456347ccbb26ad962d1714",
+    "companyName": "BH Studios Validation",
+    "productName": "TumpWorker-qa-a-be075dcdfa07",
+    "editorVersion": "6000.5.8f1",
+    "guardVersion": 1,
+    "guardSha256": "65b69c94b83cfe306293fec69649d2846f122fc083007c5d1bf64d3849dc4f90",
+    "libraryPath": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Library",
+    "libraryPhysical": true,
+    "libraryCopyFrom": "C:\\Users\\Matthew\\dev\\tump-laptop-native1003\\Library",
+    "requiredProfile": "validation-qa-a-be075dcdfa07",
+    "shippingBuildsAllowed": false,
+    "warmupRequired": true,
+    "editorValidation": "not_run",
+    "state": "ready"
+  },
+  "files": {
+    "Assets/TumbangPreso/Runtime/Camera/LocalReplayPlayback.cs": "6680fa0d479a8b4085b23b6759b63658f2568ac146b7e900cbce961ea6130653",
+    "Assets/TumbangPreso/Tests/PlayMode/LocalReplayStreamingTests.cs": "7001d9e26cd825f91614793da10188a1bfb51afef38724b2d6d90a9ba0c97405",
+    "Assets/TumbangPreso/Tests/PlayMode/LocalReplayStreamingTests.cs.meta": "d0c1129848a58179c6f6e4395352d1c5a4bb06c2d653e2ef94b81422205d4a77"
+  }
+}

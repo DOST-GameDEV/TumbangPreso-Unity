@@ -912,7 +912,24 @@ namespace TumbangPreso
                 _raiseMesh.localScale = new Vector3(sc.x * (1 + squash * 0.6f), sc.y * (1 - squash), sc.z * (1 + squash * 0.6f));
                 return;
             }
-            if (_toppleTimer > 0.0f) return;
+            if (!RaiseTurn(out var turn, out float drop)) return;
+            if (!ResolveRaiseMesh()) return;
+            _raiseMeshPos = _raiseMesh.localPosition; _raiseMeshRot = _raiseMesh.localRotation; _raiseMeshScale = _raiseMesh.localScale;
+            _raiseApplied = true;
+            // About the can's base (its origin), then lowered so it keeps resting on the road.
+            var pivot = transform.position;
+            _raiseMesh.position = pivot + turn * (_raiseMesh.position - pivot) + Vector3.up * drop;
+            _raiseMesh.rotation = turn * _raiseMesh.rotation;
+        }
+
+        /// <summary>
+        /// How the drawn can is turned (about its base, world) and lowered for the raise in progress right now, if any: the
+        /// taya's channel or a Lookout heaving at it.
+        /// </summary>
+        private bool RaiseTurn(out Quaternion turn, out float drop)
+        {
+            turn = Quaternion.identity; drop = 0.0f;
+            if (_isUpright || _toppleTimer > 0.0f) return false;
             float progress = 0.0f;
             var players = GameServices.Round?.Players;
             if (players != null)
@@ -921,19 +938,43 @@ namespace TumbangPreso
                     var anim = who != null ? who.GetComponent<Visual.CharacterAnimator>() : null;
                     if (anim != null) progress = Mathf.Max(progress, anim.ResetRaiseProgress);
                 }
-            if (progress <= 0.0f) return;
-            if (!ResolveRaiseMesh()) return;
+            // Nemu's LOOKOUT heaves it up the same way, in the drawing only (owner on v1: *"make it look liek its actually
+            // lifting the can man"*); `Abilities.NemuLookout` keeps its hands on the rising rim (`PresentedEnds`).
+            progress = Mathf.Max(progress, Abilities.NemuLookout.LiftFor(this));
+            if (progress <= 0.0f) return false;
             // Down to 80 per cent of the way up with the channel; the last of it is the host's restore.
             float shown = Mathf.Lerp(_toppleAngle, 0.0f, 0.8f * Mathf.SmoothStep(0.0f, 1.0f, progress));
-            _raiseMeshPos = _raiseMesh.localPosition; _raiseMeshRot = _raiseMesh.localRotation; _raiseMeshScale = _raiseMesh.localScale;
-            _raiseApplied = true;
-            // About the can's base (its origin), then lowered so it keeps resting on the road.
-            var pivot = transform.position;
-            var turn = transform.rotation * Quaternion.AngleAxis(shown - _toppleAngle, Vector3.right) * Quaternion.Inverse(transform.rotation);
-            _raiseMesh.position = pivot + turn * (_raiseMesh.position - pivot);
-            _raiseMesh.rotation = turn * _raiseMesh.rotation;
-            float drop = DownedLift * (Mathf.Abs(Mathf.Sin(shown * Mathf.Deg2Rad)) - Mathf.Abs(Mathf.Sin(_toppleAngle * Mathf.Deg2Rad)));
-            _raiseMesh.position += Vector3.up * drop;
+            turn = transform.rotation * Quaternion.AngleAxis(shown - _toppleAngle, Vector3.right) * Quaternion.Inverse(transform.rotation);
+            drop = DownedLift * (Mathf.Abs(Mathf.Sin(shown * Mathf.Deg2Rad)) - Mathf.Abs(Mathf.Sin(_toppleAngle * Mathf.Deg2Rad)));
+            return true;
+        }
+
+        /// <summary>
+        /// The can's two ends as it is DRAWN this frame (its base and its rim, world), raise and all: what a ghost heaving it
+        /// up holds on to. False when there is no mesh to measure.
+        /// </summary>
+        public bool PresentedEnds(out Vector3 bottom, out Vector3 top)
+        {
+            bottom = top = transform.position;
+            if (!ResolveRaiseMesh()) return false;
+            var filter = _raiseMesh.GetComponent<MeshFilter>();
+            if (filter == null || filter.sharedMesh == null) return false;
+            var b = filter.sharedMesh.bounds;
+            Vector3 e = b.extents;
+            Vector3 axis = e.y >= e.x && e.y >= e.z ? new Vector3(0f, e.y, 0f) : e.x >= e.z ? new Vector3(e.x, 0f, 0f) : new Vector3(0f, 0f, e.z);
+            Vector3 a = _raiseMesh.TransformPoint(b.center + axis), c = _raiseMesh.TransformPoint(b.center - axis);
+            // ⚠️ `Update` puts the mesh back before `LateUpdate` raises it again, so a reader in between sees it flat:
+            // raise the ends here from the same turn instead of trusting where the mesh happens to be.
+            if (!_raiseApplied && RaiseTurn(out var turn, out float drop))
+            {
+                var pivot = transform.position;
+                a = pivot + turn * (a - pivot) + Vector3.up * drop;
+                c = pivot + turn * (c - pivot) + Vector3.up * drop;
+            }
+            // The base is the end at the can's own origin (it pivots there).
+            if ((a - transform.position).sqrMagnitude < (c - transform.position).sqrMagnitude) { bottom = a; top = c; }
+            else { bottom = c; top = a; }
+            return true;
         }
 
         private bool ResolveRaiseMesh()

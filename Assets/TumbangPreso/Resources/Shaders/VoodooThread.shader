@@ -33,6 +33,7 @@ Shader "TumbangPreso/VoodooThread"
             Blend One OneMinusSrcAlpha
 
             CGPROGRAM
+            #include "RecordedShaderTime.cginc"
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
@@ -59,7 +60,7 @@ Shader "TumbangPreso/VoodooThread"
                 float core = saturate(1.0 - across / coreWidth);
                 core *= core;
                 // The stitches: dashes along the cord, crawling toward its start (her hand).
-                float along = frac(i.uv.x * _Stitch + _Time.y * _Crawl * _Stitch);
+                float along = frac(i.uv.x * _Stitch + TumpShaderTime() * _Crawl * _Stitch);
                 float dash = smoothstep(0.0, 0.08, along) * (1.0 - smoothstep(0.42, 0.5, along));
                 float stitchBand = saturate(1.0 - across / 0.7) * dash * _StitchOn;
                 // The smoke: darkening toward the edges of the cord, soft at its very rim.

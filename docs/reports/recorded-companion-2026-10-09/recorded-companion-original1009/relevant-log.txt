@@ -1,0 +1,3 @@
+TumbangPreso.PlayTests.RecordedCompanionTests
+   groupNames = TumbangPreso.PlayTests.RecordedCompanionTests
+Test run completed. Exiting with code 2 (Failed). One or more tests failed.

@@ -1,0 +1,25 @@
+{
+  "sourceCommit": "4d0a78924b28d963aff344c50983d8d01e15d3e2",
+  "protocol": 153,
+  "profile": "pc-combined-replay-startup-4d0a78924-render-copy-isolated-player1009",
+  "exe": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\release-ui-perf1008g\\TumbangPreso.exe",
+  "command": [
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\release-ui-perf1008g\\TumbangPreso.exe",
+    "-force-d3d11",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1920",
+    "-screen-height",
+    "1080",
+    "-tp-profile",
+    "pc-combined-replay-startup-4d0a78924-render-copy-isolated-player1009",
+    "-tp-uireview",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\release-ui-perf1008g\\render-copy-isolated-player1009",
+    "-tp-copy-rooted-sampling",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\release-ui-perf1008g\\render-copy-isolated-player1009\\player.log"
+  ],
+  "execution": "hidden nonbatch graphics; synthetic UI raycast only, no OS mouse/keyboard/foreground interaction",
+  "pid": 9536
+}

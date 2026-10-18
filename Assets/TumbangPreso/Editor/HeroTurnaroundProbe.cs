@@ -19,7 +19,7 @@ namespace TumbangPreso.EditorTools
         private static readonly (string Id, string Name, string Path)[] Heroes =
         {
             ("cheska",   "Yasmin",   "Assets/TumbangPreso/Art/characters/persons/team-cheska.glb"),
-            ("dante",    "Basilio",    "Assets/TumbangPreso/Art/characters/persons/team-dante.glb"),
+            ("dante",    "Dante",    "Assets/TumbangPreso/Art/characters/persons/team-dante.glb"),
             ("nemu",     "Nemu",     "Assets/TumbangPreso/Art/characters/persons/team-nemu.glb"),
             ("phaister", "Soraya", "Assets/TumbangPreso/Art/characters/persons/team-phaister.glb"),
             ("sean",     "Rago",     "Assets/TumbangPreso/Art/characters/persons/team-sean.glb"),
@@ -294,6 +294,7 @@ namespace TumbangPreso.EditorTools
                     break;
                 }
             }
+            if (rosterId == "dante") MountainFormReview.Dress(model, pivot.transform, yaw);
 
             var renderers = model.GetComponentsInChildren<Renderer>();
             if (renderers.Length == 0) return;

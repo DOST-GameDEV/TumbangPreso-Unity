@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 15:39:48Z" end-time="2026-10-07 15:40:32Z" duration="43.3104852">
+  <test-suite type="TestSuite" id="3633" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2131" result="Passed" start-time="2026-10-07 15:39:48Z" end-time="2026-10-07 15:40:32Z" duration="43.310485" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3625" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2131" result="Passed" start-time="2026-10-07 15:39:48Z" end-time="2026-10-07 15:40:32Z" duration="43.274435" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="50640" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3626" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2131" result="Passed" start-time="2026-10-07 15:39:49Z" end-time="2026-10-07 15:40:32Z" duration="43.247409" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3629" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2129" result="Passed" start-time="2026-10-07 15:39:49Z" end-time="2026-10-07 15:40:32Z" duration="43.220948" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2863" name="RecordedSceneryTests" fullname="TumbangPreso.PlayTests.RecordedSceneryTests" classname="TumbangPreso.PlayTests.RecordedSceneryTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-07 15:39:49Z" end-time="2026-10-07 15:40:32Z" duration="42.963438" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2864" name="ActualDroneAndDetachedMarkReplayUseTheSameRenderedGeometryAndMaterials" fullname="TumbangPreso.PlayTests.RecordedSceneryTests.ActualDroneAndDetachedMarkReplayUseTheSameRenderedGeometryAndMaterials" methodname="ActualDroneAndDetachedMarkReplayUseTheSameRenderedGeometryAndMaterials" classname="TumbangPreso.PlayTests.RecordedSceneryTests" runstate="Runnable" seed="435138919" result="Passed" start-time="2026-10-07 15:39:49Z" end-time="2026-10-07 15:40:13Z" duration="23.981856" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[RecordedSceneryPixels] droneAndMark=0
+]]></output>
+            </test-case>
+            <test-case id="2866" name="SavedAnimalAndNewLineStayVisibleWhenTheirLiveRootIsInactive" fullname="TumbangPreso.PlayTests.RecordedSceneryTests.SavedAnimalAndNewLineStayVisibleWhenTheirLiveRootIsInactive" methodname="SavedAnimalAndNewLineStayVisibleWhenTheirLiveRootIsInactive" classname="TumbangPreso.PlayTests.RecordedSceneryTests" runstate="Runnable" seed="332444476" result="Passed" start-time="2026-10-07 15:40:13Z" end-time="2026-10-07 15:40:32Z" duration="18.963151" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[RecordedSceneryPixels] animalAndLine=0
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2966" name="SceneryTextureIdentityTests" fullname="TumbangPreso.PlayTests.SceneryTextureIdentityTests" classname="TumbangPreso.PlayTests.SceneryTextureIdentityTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-07 15:40:32Z" end-time="2026-10-07 15:40:32Z" duration="0.010829" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2970" name="NullTextureHasTheExistingEmptyIdentity" fullname="TumbangPreso.PlayTests.SceneryTextureIdentityTests.NullTextureHasTheExistingEmptyIdentity" methodname="NullTextureHasTheExistingEmptyIdentity" classname="TumbangPreso.PlayTests.SceneryTextureIdentityTests" runstate="Runnable" seed="656239770" result="Passed" start-time="2026-10-07 15:40:32Z" end-time="2026-10-07 15:40:32Z" duration="0.002547" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2967" name="PreparedLookupUsesExactReferenceEvenWhenNameAndDimensionsMatch" fullname="TumbangPreso.PlayTests.SceneryTextureIdentityTests.PreparedLookupUsesExactReferenceEvenWhenNameAndDimensionsMatch" methodname="PreparedLookupUsesExactReferenceEvenWhenNameAndDimensionsMatch" classname="TumbangPreso.PlayTests.SceneryTextureIdentityTests" runstate="Runnable" seed="1611291279" result="Passed" start-time="2026-10-07 15:40:32Z" end-time="2026-10-07 15:40:32Z" duration="0.003315" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2968" name="ReadableDynamicPixelMutationChangesIdentity" fullname="TumbangPreso.PlayTests.SceneryTextureIdentityTests.ReadableDynamicPixelMutationChangesIdentity" methodname="ReadableDynamicPixelMutationChangesIdentity" classname="TumbangPreso.PlayTests.SceneryTextureIdentityTests" runstate="Runnable" seed="1973605777" result="Passed" start-time="2026-10-07 15:40:32Z" end-time="2026-10-07 15:40:32Z" duration="0.000654" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2969" name="UnpreparedNonReadableTextureDoesNotDegradeToNameOrDimensions" fullname="TumbangPreso.PlayTests.SceneryTextureIdentityTests.UnpreparedNonReadableTextureDoesNotDegradeToNameOrDimensions" methodname="UnpreparedNonReadableTextureDoesNotDegradeToNameOrDimensions" classname="TumbangPreso.PlayTests.SceneryTextureIdentityTests" runstate="Runnable" seed="435491765" result="Passed" start-time="2026-10-07 15:40:32Z" end-time="2026-10-07 15:40:32Z" duration="0.002001" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

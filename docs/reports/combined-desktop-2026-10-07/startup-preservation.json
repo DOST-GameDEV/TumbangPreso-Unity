@@ -1,0 +1,47 @@
+{
+  "sourceCommit": "cb5f4ad9f84fdde4eeb856dc1caca0eef2ab4944",
+  "protocol": 153,
+  "profile": "pc-combined-startup-cb5f4ad9f-player-order",
+  "exe": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\combined-peer1007\\TumbangPreso.exe",
+  "command": [
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\combined-peer1007\\TumbangPreso.exe",
+    "-batchmode",
+    "-force-d3d11",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1920",
+    "-screen-height",
+    "1080",
+    "-tp-profile",
+    "pc-combined-startup-cb5f4ad9f-player-order",
+    "-tp-startup-order-probe",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\combined-peer1007\\player-order",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\combined-peer1007\\player-order\\player.log"
+  ],
+  "execution": "hidden graphics batch, synthetic UI raycast only, no OS mouse/keyboard/foreground interaction",
+  "pid": 33448,
+  "exitCode": 0,
+  "probe": {
+    "passed": true,
+    "studioSeen": true,
+    "error": "",
+    "mainVisibleSeconds": 5.7217206954956055,
+    "firstFrame": 4,
+    "lastFrame": 40,
+    "firstVideoTime": 0.13333333333333333,
+    "lastVideoTime": 1.3333333333333333,
+    "stages": [
+      "login-first at 4.244s",
+      "main-loading-visible at 4.772s",
+      "lobby-arrived at 10.493s",
+      "first-home-video-playing at 10.702s",
+      "first-home-decoded-frames-advance at 11.902s"
+    ]
+  },
+  "inputRestored": true,
+  "editorInputRestored": true,
+  "profileRestored": true,
+  "terminal": true
+}

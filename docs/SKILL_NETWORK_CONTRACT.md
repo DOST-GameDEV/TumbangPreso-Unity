@@ -1,3 +1,111 @@
+## Protocol164: SKITTER waits until she takes it
+
+The host's Skitter no longer sets the slipper down beside her. Back at her side it
+follows her, holding the slipper out (still LOOSE, within her pickup reach), past its
+8 s clock, until she presses INTERACT: the ordinary grab or grab request
+(`Carrier.HostPickUp`), which ends it with its happy spin. The taya's intercept is
+unchanged. Its ghost pose sets flag 8 while it offers (the pose's `Flags` now accepts
+up to 15 for Skitter). Sizes are unchanged; 163 peers are refused. PlayMode checks
+only; actual matching peers remain unqualified.
+
+## Protocol163: complete host-authored Nemu ghost visuals
+
+NemuGhosts sends up to6 typed poses per owner (67 bytes each,33-byte header,
+maximum435) on the existing reliable NGO stream at10Hz and in join hydration.
+Each full set carries match/round/caster movement epoch, sequence, lifetime IDs
+and the host round clock. Blindfold names its exact victim and victim epoch;
+Skitter includes carry/claw/facing state; Lookout includes lift/scare/watch/cheer.
+Absent IDs retire. Old, forged, malformed and expired state cannot revive a ghost.
+Clients draw this state without moving shoes, restoring the can or choosing a
+blind victim. Transport/round/kit/body changes retire replicas.162 peers are refused.
+[Real UDP/Relay delivery, mixed-roster correction and evidence limits](reports/nemu-network-2026-10-15/README.md).
+
+## Protocol162: Nemu SKITTER and LOOKOUT (her own ghosts; replace KURO: FETCH! and KURO: CATCH!)
+
+No wire change; the rules differ, so 161 peers are refused. `nemu_skill2` keeps its
+ID, 25 s cooldown, 8 s clock and protocol95's delivery rules, but is SKITTER and
+host-confirmed (was predicted): every peer runs the same ghost (`NemuSkitter`) from
+the accepted cast; only the host moves, intercepts or lands the slipper, and a
+peer's ghost lets go once the host's slipper stops following it. `nemu_skill2d`
+keeps its ID but is LOOKOUT, host-confirmed, 15 s: a ghost (`NemuLookout`) minds
+the can and, while it is down and the round live, stands it up after 3.5 s of
+unscared work (an attacker within 1.5 m drains it twice as fast), once; only the
+host calls `Lata.HostRestore` and broadcasts the can. Protocol109's ability
+protection is no longer granted. Prepared-world recovery keeps its shape (can
+centre, zero preparation, remaining clock). PlayMode checks only; actual matching
+peers remain unqualified.
+
+## Protocol161: Nemu DON'T LOOK (BLINDED; replaces KURO: SIT!)
+
+`nemu_skill1` keeps its ID and the shared 25 s basic cooldown but is now DON'T LOOK,
+host-confirmed: every peer places the same ghost (`NemuBlindfold`) from the accepted
+cast, aimed 2 to 7 m. It fades from everyone but its owner over 3 s, waits up to
+30 s, one per Nemu (a recast moves it). Only the host springs it, on the first
+other grounded, untagged player within 1.8 m, by writing BLINDED (status 15,
+appended). `SyncUnit` appends `BlindedLeft` after `PossessedLeft` (finite, 0 to
+5; the minimum read is 225 bytes plus the voodoo tail). Eyes are covered while
+more than 3 s remain; the slow is `NecroRules.DontLookSpeedScale` (0.5 rising
+linearly to 1), so the body's own peer needs no other field. Observers spring
+their copy from that replicated edge on a body near the ghost; no new message.
+The waiting ghost rides the world snapshot as `Kind.Blindfold` (19, append-only);
+a sprung one is only its victim's clock. Protocol160 peers are refused.
+PlayMode receiver/spring checks only; actual matching peers remain unqualified.
+
+## Protocol160: Nemu LET THEM IN (POSSESSED; named PRUSISYON until 2026-10-13)
+
+`nemu_ultimate` keeps its ID and cost but is now LET THEM IN: the host applies
+POSSESSED (status 14, appended) to every other player for 15 s. `SyncUnit`
+appends `PossessedLeft` after `ZappedLeft` (finite, 0 to 15; the minimum read is
+221 bytes plus the voodoo tail). The body's own simulating peer adds the ghost's
+pull to its steering from `NemuRules`, a pure function of seat, the replicated
+clock and replicated positions; observers draw the rider from the same function.
+Grip is local to the simulating peer and decides no outcome. Kuro no longer
+chases: `FamiliarEffect` stays on the wire and a receipt for the ultimate is
+inert. Protocol159 peers are refused. Native receiver and real-map movement
+checks pass; actual matching peers remain unqualified.
+[Direction and evidence](reports/nemu-ultimate-2026-10-11/direction.md).
+
+## Protocol160 resource and unit-packet refinement, October15
+
+SyncUnit's fixed210-byte prefix (through BlindedLeft, protocol 161),27-byte voodoo state and15-to76-byte aim tail
+require252-to313 bytes. Allocation and minimum-read checks share these codec
+bounds. Owner feedback and voodoo fixtures include PossessedLeft; invalid status
+and old poses cannot consume a new serial or restart possession.
+
+A crouched owner suppresses its sprint request using the existing input bit.
+The host also refuses sprint spending during its authoritative curse reach,
+retaining the input lease so sprint can resume when that reach ends. Tell bits
+do not authorize gameplay. No schema or protocol change is needed for these
+input/resource corrections. [Native evidence and remaining peer work](reports/network-refinement-2026-10-15/README.md).
+
+## Current protocol159: combined QoL and ASTRA contract
+
+The negotiated version combines QoL movement/crouch pose support, the stepped
+Eskinita map, Paete vine swing and timed performances with ASTRA companion clip15.
+Standalone QoL158 and ASTRA154 peers cannot join this combined contract.
+Earlier saved player clip formats remain readable under their own bounds.
+Matching actual-peer and full-match/performance acceptance remain separate.
+
+## Protocol154: companion replay bodies
+
+Clip format15 adds summoned doll body tracks and permits companion seats4-7
+for recorded slippers and holder identities. Player tracks remain bounded to
+seats0-3. Clip size and pose allocation limits are retained; the bounded object
+limit is21 for four players, shoes, pets, dolls, doll shoes and one can.
+Connection admission rejects153 peers whose replay decoder cannot read these
+payloads. Saved formats10-14 retain their prior four-player bounds.
+Native capture and standalone playback use a real summoned doll and its held
+slipper. Actual matching rebuilt peers and natural birth/despawn recording
+acceptance remain pending.
+
+## Protocol153: Arena layout confinement
+
+Arena uses a circular danger zone sized by its shared layout; other maps retain
+the square default. Every peer derives the same shape/radius from layout state.
+Protocol153 intentionally rejects152 peers whose throw/tag boundaries disagree.
+Fresh matching153 player/host acceptance remains required; older152 evidence is
+historical. No new packet is added by this boundary change.
+
 # Skill Networking Contract
 
 ## Paete delayed player vine, protocol151
@@ -49,8 +157,8 @@ but arc-wall data requires format14. See reports/glacial-restore-2026-10-04.
 ## Fifteen-second imbuements, protocol147
 
 Frostbite remains active for15seconds and coats every throw in that window;
-throwing does not consume or refresh it. Cold Feet uses radius2.5m, range0.5â€“5m
-and a1second aim ramp. Glacial Wall lasts10seconds with range1.5â€“4m and a1second
+throwing does not consume or refresh it. Cold Feet uses radius2.5m, range0.5–5m
+and a1second aim ramp. Glacial Wall lasts10seconds with range1.5–4m and a1second
 aim ramp; its compact5m arc retains radius3m and three slipper hits still shatter it. Boulder now has a
 15second host-owned deadline on the exact loaded slipper. Dropping/retrieving
 it does not refresh that deadline; replacing its affinity retires the old timer.

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Failed(Child)" total="7" passed="4" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 19:37:35Z" end-time="2026-10-05 19:37:36Z" duration="0.5188499">
+  <test-suite type="TestSuite" id="3214" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1803" result="Failed" site="Child" start-time="2026-10-05 19:37:35Z" end-time="2026-10-05 19:37:36Z" duration="0.518850" total="7" passed="4" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3206" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1803" result="Failed" site="Child" start-time="2026-10-05 19:37:35Z" end-time="2026-10-05 19:37:36Z" duration="0.505881" total="7" passed="4" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="42592" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3207" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1803" result="Failed" site="Child" start-time="2026-10-05 19:37:35Z" end-time="2026-10-05 19:37:36Z" duration="0.500117" total="7" passed="4" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3210" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1801" result="Failed" site="Child" start-time="2026-10-05 19:37:35Z" end-time="2026-10-05 19:37:36Z" duration="0.495310" total="7" passed="4" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1465" name="CustomRulesLiveRefreshTests" fullname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests" classname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-10-05 19:37:35Z" end-time="2026-10-05 19:37:36Z" duration="0.468516" total="7" passed="4" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1468" name="ClosedScreenAdoptsCurrentRulesOnReopen" fullname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests.ClosedScreenAdoptsCurrentRulesOnReopen" methodname="ClosedScreenAdoptsCurrentRulesOnReopen" classname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests" runstate="Runnable" seed="402751565" result="Passed" start-time="2026-10-05 19:37:35Z" end-time="2026-10-05 19:37:35Z" duration="0.193113" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1471" name="DisableAndReenableRetiresAndRestoresObservation" fullname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests.DisableAndReenableRetiresAndRestoresObservation" methodname="DisableAndReenableRetiresAndRestoresObservation" classname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests" runstate="Runnable" seed="1607822035" result="Failed" start-time="2026-10-05 19:37:35Z" end-time="2026-10-05 19:37:36Z" duration="0.044555" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  String lengths are both 1. Strings differ at index 0.
+  Expected: "5"
+  But was:  "6"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CustomRulesLiveRefreshTests.DisableAndReenableRetiresAndRestoresObservation () [0x00056] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\CustomRulesLiveRefreshTests.cs:135
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1469" name="HostBroadcastKeepsItsWorkingCopy" fullname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests.HostBroadcastKeepsItsWorkingCopy" methodname="HostBroadcastKeepsItsWorkingCopy" classname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests" runstate="Runnable" seed="853459657" result="Passed" start-time="2026-10-05 19:37:36Z" end-time="2026-10-05 19:37:36Z" duration="0.046963" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1472" name="NonHostPacketDoesNotChangeVisibleRules" fullname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests.NonHostPacketDoesNotChangeVisibleRules" methodname="NonHostPacketDoesNotChangeVisibleRules" classname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests" runstate="Runnable" seed="1592533561" result="Passed" start-time="2026-10-05 19:37:36Z" end-time="2026-10-05 19:37:36Z" duration="0.042174" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1470" name="OfflineEditorKeepsItsWorkingCopy" fullname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests.OfflineEditorKeepsItsWorkingCopy" methodname="OfflineEditorKeepsItsWorkingCopy" classname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests" runstate="Runnable" seed="283109435" result="Passed" start-time="2026-10-05 19:37:36Z" end-time="2026-10-05 19:37:36Z" duration="0.042316" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1466" name="OpenMatchPageFollowsActualRemoteRulesReceive" fullname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests.OpenMatchPageFollowsActualRemoteRulesReceive" methodname="OpenMatchPageFollowsActualRemoteRulesReceive" classname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests" runstate="Runnable" seed="854507510" result="Failed" start-time="2026-10-05 19:37:36Z" end-time="2026-10-05 19:37:36Z" duration="0.043431" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  An already-open MATCH page must display new host rounds.
+  String lengths are both 1. Strings differ at index 0.
+  Expected: "4"
+  But was:  "6"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CustomRulesLiveRefreshTests.OpenMatchPageFollowsActualRemoteRulesReceive () [0x00031] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\CustomRulesLiveRefreshTests.cs:92
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1467" name="OpenRoomPageRefreshesBotsWithoutLosingSelectedTab" fullname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests.OpenRoomPageRefreshesBotsWithoutLosingSelectedTab" methodname="OpenRoomPageRefreshesBotsWithoutLosingSelectedTab" classname="TumbangPreso.PlayTests.CustomRulesLiveRefreshTests" runstate="Runnable" seed="948313569" result="Failed" start-time="2026-10-05 19:37:36Z" end-time="2026-10-05 19:37:36Z" duration="0.043314" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Already-open ROOM must display current bot policy.
+  Expected string length 6 but was 4. Strings differ at index 2.
+  Expected: "NORMAL"
+  But was:  "NONE"
+  -------------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CustomRulesLiveRefreshTests.OpenRoomPageRefreshesBotsWithoutLosingSelectedTab () [0x00058] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\CustomRulesLiveRefreshTests.cs:102
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,32 @@
+{
+  "sourceBase": "ff663f5d85bde45ac3e747485f7a958faed620e2",
+  "nativePid": 21092,
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.OwnerSkillHudReferenceTests.CircularSkillDeckKeepsFontsBindingsAndCurrentMatchHud",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.TimedPowerUiTests.ActiveTimersDrainForBasicRecastAndUltimateThenDisappear",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.TimedPowerUiTests.PermanentOverclockShowsActiveAndZappedCrossesExistingLogos",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "restoredInputCount": 21234,
+  "remainingSourceDeltas": [],
+  "inputRestored": true,
+  "editorInputRestored": true,
+  "profileRestored": true,
+  "sourceSha256": {
+    "Assets/TumbangPreso/Runtime/UI/OwnerAbilitySeal.cs": "1465e30bdef02cfbb98e6b89b02bfcf7a695ac1d6c12afe1d7134757840db71a",
+    "Assets/TumbangPreso/Runtime/UI/TumpPowerReadout.OwnerDeck.cs": "0db6722f9b0efb2265b0383550b7ab98d2a382557f0573eb58379112d4eb5d08",
+    "Assets/TumbangPreso/Tests/PlayMode/OwnerSkillHudReferenceTests.cs": "69c78ed7b7713c85980c54c4f1be7a1951f6593d07449798ea1be8f767cca34d",
+    "Assets/TumbangPreso/Tests/PlayMode/OwnerSkillHudReferenceTests.cs.meta": "4e84c7a3f98b3b710ff126b2f8196f68bb94624382cd5c7862564c6b348f6246"
+  }
+}

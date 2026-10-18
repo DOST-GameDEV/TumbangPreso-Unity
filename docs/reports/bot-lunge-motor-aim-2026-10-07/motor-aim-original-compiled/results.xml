@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 08:40:25Z" end-time="2026-10-07 08:40:26Z" duration="0.3037656">
+  <test-suite type="TestSuite" id="3543" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2057" result="Failed" site="Child" start-time="2026-10-07 08:40:25Z" end-time="2026-10-07 08:40:26Z" duration="0.303766" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3535" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2057" result="Failed" site="Child" start-time="2026-10-07 08:40:25Z" end-time="2026-10-07 08:40:26Z" duration="0.292778" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="46724" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3536" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2057" result="Failed" site="Child" start-time="2026-10-07 08:40:25Z" end-time="2026-10-07 08:40:26Z" duration="0.290833" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3539" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2055" result="Failed" site="Child" start-time="2026-10-07 08:40:25Z" end-time="2026-10-07 08:40:26Z" duration="0.289228" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1066" name="AiLungeMotorAimTests" fullname="TumbangPreso.PlayTests.AiLungeMotorAimTests" classname="TumbangPreso.PlayTests.AiLungeMotorAimTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-07 08:40:25Z" end-time="2026-10-07 08:40:26Z" duration="0.233037" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1069" name="ParallelPursuitUsesTheRealMotorTurnAndFinishesItsCharge" fullname="TumbangPreso.PlayTests.AiLungeMotorAimTests.ParallelPursuitUsesTheRealMotorTurnAndFinishesItsCharge" classname="TumbangPreso.PlayTests.AiLungeMotorAimTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-07 08:40:25Z" end-time="2026-10-07 08:40:26Z" duration="0.228667" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1067" name="ParallelPursuitUsesTheRealMotorTurnAndFinishesItsCharge(20.0f)" fullname="TumbangPreso.PlayTests.AiLungeMotorAimTests.ParallelPursuitUsesTheRealMotorTurnAndFinishesItsCharge(20.0f)" methodname="ParallelPursuitUsesTheRealMotorTurnAndFinishesItsCharge" classname="TumbangPreso.PlayTests.AiLungeMotorAimTests" runstate="Runnable" seed="1838703364" result="Failed" start-time="2026-10-07 08:40:25Z" end-time="2026-10-07 08:40:25Z" duration="0.171012" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The charged parallel pursuit stayed on its nearest digital heading and never completed an aimed release.
+  Expected: greater than 0.0f
+  But was:  0.0f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.AiLungeMotorAimTests.ParallelPursuitUsesTheRealMotorTurnAndFinishesItsCharge (System.Single bearing) [0x0036a] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\AiLungeMotorAimTests.cs:55
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1068" name="ParallelPursuitUsesTheRealMotorTurnAndFinishesItsCharge(22.0f)" fullname="TumbangPreso.PlayTests.AiLungeMotorAimTests.ParallelPursuitUsesTheRealMotorTurnAndFinishesItsCharge(22.0f)" methodname="ParallelPursuitUsesTheRealMotorTurnAndFinishesItsCharge" classname="TumbangPreso.PlayTests.AiLungeMotorAimTests" runstate="Runnable" seed="228223397" result="Failed" start-time="2026-10-07 08:40:25Z" end-time="2026-10-07 08:40:26Z" duration="0.044023" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The charged parallel pursuit stayed on its nearest digital heading and never completed an aimed release.
+  Expected: greater than 0.0f
+  But was:  0.0f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.AiLungeMotorAimTests.ParallelPursuitUsesTheRealMotorTurnAndFinishesItsCharge (System.Single bearing) [0x0036a] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\AiLungeMotorAimTests.cs:55
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

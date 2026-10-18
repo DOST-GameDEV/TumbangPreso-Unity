@@ -1,0 +1,76 @@
+{
+  "runs": [
+    {
+      "run": "loose-ground-original1009",
+      "pid": 54572,
+      "exitCode": 0,
+      "cases": 3,
+      "passed": 3,
+      "exactCaseCount": false,
+      "protectedInputs": 21453,
+      "remainingSourceDeltas": []
+    },
+    {
+      "run": "loose-ground-original2-1009",
+      "pid": 75072,
+      "exitCode": 2,
+      "cases": 1,
+      "passed": 0,
+      "exactCaseCount": true,
+      "protectedInputs": 21453,
+      "remainingSourceDeltas": []
+    },
+    {
+      "run": "loose-ground-candidate1009",
+      "pid": 13404,
+      "exitCode": 0,
+      "cases": 1,
+      "passed": 1,
+      "exactCaseCount": true,
+      "protectedInputs": 21453,
+      "remainingSourceDeltas": []
+    },
+    {
+      "run": "loose-ground-regression1009",
+      "pid": 13636,
+      "exitCode": 2,
+      "cases": 10,
+      "passed": 9,
+      "exactCaseCount": true,
+      "protectedInputs": 21453,
+      "remainingSourceDeltas": []
+    },
+    {
+      "run": "loose-ground-final1009",
+      "pid": 74308,
+      "exitCode": 0,
+      "cases": 12,
+      "passed": 12,
+      "exactCaseCount": true,
+      "protectedInputs": 21453,
+      "remainingSourceDeltas": []
+    }
+  ],
+  "sourceHashes": {
+    "Assets/TumbangPreso/Runtime/Slipper.cs": "eebd412538fa4f5858fa7afcdc5bd4017b432a3dfc8dcd0ce4ad4901360de55b",
+    "Assets/TumbangPreso/Tests/PlayMode/LooseSlipperSurfaceTests.cs": "2cc862c420c7ad95fec9d53df29a690937c63c93237f34ae6dc299090dcb1cc7"
+  },
+  "physicalPairs": 30,
+  "maps": [
+    "IlalimNgTulay",
+    "LagoonCove",
+    "Kanto"
+  ],
+  "shoes": 10,
+  "soleGapMetres": [
+    0.001,
+    0.001
+  ],
+  "oldGapMetres": [
+    0.045,
+    0.0918
+  ],
+  "finalNativeCases": 12,
+  "desktopSource": "e1c1fd0fee188e8f41b2b30efe914aac7b29e766",
+  "newBuild": false
+}

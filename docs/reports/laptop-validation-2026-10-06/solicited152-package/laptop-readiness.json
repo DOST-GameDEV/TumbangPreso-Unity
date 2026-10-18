@@ -1,0 +1,32 @@
+{
+  "utc": "2026-10-05T20:23:58.6281767Z",
+  "hostname": "GAMERGMAE",
+  "os": "Microsoft Windows 11 Home Single Language",
+  "osVersion": "10.0.26200",
+  "unityProductVersion": "6000.5.8f1_5cb7df797b7d",
+  "projectVersion": "m_EditorVersion: 6000.5.8f1",
+  "totalMemoryKiB": 16473976,
+  "freeMemoryKiB": 7674620,
+  "memoryIsAdmissionThreshold": false,
+  "ipv4": [
+    {
+      "IPAddress": "192.168.1.144",
+      "InterfaceAlias": "Wi-Fi"
+    }
+  ],
+  "pcPing": true,
+  "keyboardMouse": [
+    {
+      "Class": "Keyboard",
+      "Status": "OK",
+      "FriendlyName": "Standard PS/2 Keyboard"
+    },
+    {
+      "Class": "Mouse",
+      "Status": "OK",
+      "FriendlyName": "HID-compliant mouse"
+    }
+  ],
+  "namedControllerOrTouchscreen": [],
+  "scope": "Read-only device presence and host facts; no physical gameplay input or performance acceptance"
+}

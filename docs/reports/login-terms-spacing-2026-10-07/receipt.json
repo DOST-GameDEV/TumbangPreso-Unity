@@ -1,0 +1,30 @@
+{
+  "sourceBase": "4655fbac94faa3e9ddfb4bc762d40ded9ceeed1b",
+  "nativePid": 29796,
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.OwnerLoginInputAcceptanceTests.AllInvalidRequirementsHighlightTogetherAndClearAfterCorrection",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.OwnerTermsFeedbackLayoutTests.TermsStayRaisedUntilFeedbackNeedsSpace",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "restoredInputCount": 21232,
+  "remainingSourceDeltas": [],
+  "editorInputRestored": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "qualityRestored": true,
+  "sourceSha256": {
+    "Assets/TumbangPreso/Runtime/UI/OwnerUiMotion.cs": "be0ca861c1e67a08cc6ef5f7a0befee7719e4ce0b07c905ba5b877686838c307",
+    "Assets/TumbangPreso/Runtime/UI/SignInScreen.OwnerPainted.cs": "2295977b47c9e4060011bff0730831b7a71004d679ed457f2a08b01578de9f25",
+    "Assets/TumbangPreso/Runtime/UI/SignInScreen.OwnerState.cs": "94f232716fab88d42fb939ad249bdd032e97f832772445b1bdc072583edf36ed",
+    "Assets/TumbangPreso/Tests/PlayMode/OwnerLoginInputAcceptanceTests.cs": "9f6f3c7d99957aca437535eea8c154b75b903d79921044a9bdbe29767adbcaa5",
+    "Assets/TumbangPreso/Tests/PlayMode/OwnerTermsFeedbackLayoutTests.cs": "4707b0ce0a1e586e171e1fb7fa8883730a23f710e1edeeef6ca4551f6ecdfab0",
+    "Assets/TumbangPreso/Tests/PlayMode/OwnerTermsFeedbackLayoutTests.cs.meta": "a9318a4efa83c2e6596ffec82f5c51a5b7de5f64c76b99d3183771e76be0f93c"
+  }
+}

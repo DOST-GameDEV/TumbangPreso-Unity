@@ -13,7 +13,7 @@ showed192.168.1.7:8910, replacing the wrong Npcap address. The client's ordinary
 browser showed one room, joining succeeded and its read-only Rules screen showed
 four rounds/30seconds. The client clicked READY and the host started normally.
 
-The draft deadline elapsed and both humans used the normal automatic Basilio pick.
+The draft deadline elapsed and both humans used the normal automatic Dante pick.
 An attempted Yasmin portrait press occurred after the timed draft had ended; it is
 not evidence of manual Yasmin selection. The original Yasmin cyan/goggles asset
 remains unchanged and the Benguet replacement remains cancelled.

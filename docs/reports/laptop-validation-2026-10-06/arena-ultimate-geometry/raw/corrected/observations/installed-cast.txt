@@ -1,0 +1,4 @@
+0 cheska IsBot=True
+1 dante IsBot=False
+2 rafi IsBot=True
+3 cheska IsBot=True

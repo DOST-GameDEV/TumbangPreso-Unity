@@ -1,0 +1,18 @@
+{
+  ".gitattributes": "c5697b1364da43c6be256e2cfdc3ff40a04cd4103de6b985befcb7417518e1a1",
+  "local-replay-toolbar1080.png": "aaa6845870fa1c8c0b99b14d6e998c719056d3c6e689ce71db9cc61b227e23f9",
+  "local-replay-toolbar720.png": "c6f59d7b45e74286f732905461d203df2d4b1375c7c2edad6ad7505e168baab2",
+  "README.md": "ccb399759639d501d411dfeb1885aa7d9d8e697a622792aa99528cf01dec1371",
+  "native1/classified-result.json": "9d05fd625e133c2e0ad450d0df3773874c8b333bd0286df4f1203debd9b6c554",
+  "native1/launch.json": "c8aae23e9f12c7a7cf9b56f235be178c9b285e93599da299e913839e0bd6d6b3",
+  "native1/profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+  "native1/qualified-source.json.gz": "bde51bff9a6bcc78e440cee0f96501aaeb7ba77333c351d11ccbe4239368b749",
+  "native1/tests.xml": "41a639944e1207f040bf0cbd8b245c8666c0becb3bdb3bc13eff8ebbb0199687",
+  "native1/unity.log.gz": "01ca40487a7445cb9ff339050ab299fc32ff4d2b6cb7ee5c6782392f3d8b1f7f",
+  "native2/classified-result.json": "b82d36157ba81018fc08db96e9c9c40c29cdb74ec0577b9b576218eaab7561d9",
+  "native2/launch.json": "880c8204ca1c20fec89a473f39c6bce34bab7af912e86fafb94a28433bd78a7f",
+  "native2/profile-restoration.json": "e63c5381f813f84f0021b297422a5de0e2fd20c73b6f136b66da7bbf20e57c6a",
+  "native2/qualified-source.json.gz": "bd7a4ccccfa698ff4a70ce93e98128b66a1457d22c0bc9e6caa8cbacb2dfe432",
+  "native2/tests.xml": "bb41b5ff5bca2d9bf30dc76d42f07a8a8c872b02c15ac7a129615e586b461bd4",
+  "native2/unity.log.gz": "2bb34dae986348b31481ea75df12409cca42dcae3b03a1cc0e9db206c4cb591d"
+}

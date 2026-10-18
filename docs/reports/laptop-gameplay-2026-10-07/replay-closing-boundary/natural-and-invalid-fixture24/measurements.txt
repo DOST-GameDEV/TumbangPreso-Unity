@@ -1,0 +1,1 @@
+[NaturalArenaReplayEffects] observed=15149 observedUnique=15149 savedUnique=15149 frames=15158 totalQuads=3333954 segments=10

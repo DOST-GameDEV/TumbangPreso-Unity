@@ -1,0 +1,4 @@
+0 sean IsBot=True
+1 cheska IsBot=False
+2 amihan IsBot=True
+3 sean IsBot=True

@@ -1,0 +1,25 @@
+{
+  "ref": "6a4c5b4f69bd22e74546c59a1b9e55980e660500",
+  "exactNativeSourceCount": 2,
+  "rawReceiptCount": 18,
+  "allRawHashesVerified": true,
+  "identicalTestFixture": true,
+  "comparison": {
+    "measurements": {
+      "original27": {
+        "bytes": 3085394,
+        "encodeMs": 1255.7599,
+        "decodeMs": 307.5453,
+        "rawSha256": "b0e083f696f670dcfd7e1c57bdb1fcb40ff25547c8ddcaed941e0604310f6c5d"
+      },
+      "candidate28": {
+        "bytes": 3085394,
+        "encodeMs": 875.2107,
+        "decodeMs": 307.3502,
+        "rawSha256": "b0e083f696f670dcfd7e1c57bdb1fcb40ff25547c8ddcaed941e0604310f6c5d"
+      }
+    },
+    "encodeSpeedup": 1.4348086695009556,
+    "sameDecompressedPayload": true
+  }
+}

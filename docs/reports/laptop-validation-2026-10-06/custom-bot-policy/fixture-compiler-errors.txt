@@ -1,0 +1,6 @@
+Assets\TumbangPreso\Tests\PlayMode\CustomBotPolicyStartTests.cs(73,54): error CS0117: 'Difficulty' does not contain a definition for 'Hard'
+Assets\TumbangPreso\Tests\PlayMode\CustomBotPolicyStartTests.cs(76,133): error CS0117: 'Difficulty' does not contain a definition for 'Hard'
+Assets\TumbangPreso\Tests\PlayMode\CustomBotPolicyStartTests.cs(73,54): error CS0117: 'Difficulty' does not contain a definition for 'Hard'
+Assets\TumbangPreso\Tests\PlayMode\CustomBotPolicyStartTests.cs(76,133): error CS0117: 'Difficulty' does not contain a definition for 'Hard'
+Assets\TumbangPreso\Tests\PlayMode\CustomBotPolicyStartTests.cs(73,54): error CS0117: 'Difficulty' does not contain a definition for 'Hard'
+Assets\TumbangPreso\Tests\PlayMode\CustomBotPolicyStartTests.cs(76,133): error CS0117: 'Difficulty' does not contain a definition for 'Hard'

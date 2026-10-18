@@ -127,7 +127,7 @@ namespace TumbangPreso.UI.Hub
 
         public static HubRoom FromLan(Net.LanEntry entry) => new HubRoom
         {
-            Name = entry.HostName, Map = "LAN", Players = entry.Players, Capacity = entry.MaxPlayers,
+            Name = entry.HostName, Map = "UNKNOWN", Players = entry.Players, Capacity = entry.MaxPlayers,
             InProgress = entry.InProgress, IsJoinable = entry.IsJoinable, Key = $"{entry.Address}:{entry.Port}"
         };
 

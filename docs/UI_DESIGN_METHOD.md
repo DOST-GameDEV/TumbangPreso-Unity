@@ -46,6 +46,13 @@ input/focus behavior would be lost if the rectangle were removed.
 
 ## Training Controls
 
+Custom-room MAP, GAME MODE and VISIBILITY use previous/current/next arrows in
+their existing form rectangles. No list popup is opened. Keep the registered
+options, live map callback, room creation indices and standard HubButton input
+paths. [Native selector evidence](reports/room-arrows-2026-10-07/README.md) covers
+cycling, pointer/Submit, navigation and1080/720 bounds; recorded map backgrounds
+are the independent preview work.
+
 PRACTICE-1 uses the existing pause entry and `PausePanel.TrainingRange.cs` for the
 offline range, with `PracticeRange.cs` owning gameplay changes. `Panel.Prepare`
 builds without entering; the owner must hide its root-level canvas until opening.
@@ -177,3 +184,31 @@ Filled glyph edges use one physical screen pixel of transparent coverage and
 bounded adaptive circle detail. Preserve outward winding, cap corner miters and
 inspect actual-size native frames; geometry is scalable but is still rasterized
 by the display. Do not replace authored rough silhouettes merely to smooth edges.
+
+## Match HUD: Toy Block family, element by element
+
+Owner-locked direction (2026-10-06): cream faces, one bevelled cut per corner,
+a solid extruded side, a soft contact shadow, brown Darumadrop for numbers and
+events, brown Nunito Bold for words. Honey means ready, leader or you; red means
+a refusal or an earned moment. Owner, 2026-10-06: no team colours in the HUD.
+Each player number has one colour everywhere, from the guide's palette (P1
+Strawberry Red, P2 Honey Bronze, P3 Light Green, P4 Cool Horizon); the role is
+the can (taya) or slipper (thrower) icon on that player's chip.
+The home screen is not a reference. Each element is designed for its own job:
+
+| Element | Job, read in order | Form and states |
+|---|---|---|
+| Player card | role, who, score, carry state, name | Figurine tile rises out of the card on the family's tan base; a chip in the player's own colour holds the can (taya) or slipper (thrower), whole or faded; crown for a unique leader; honey You chip; stunned star; score bump on events |
+| Clock | time, can, round | Brown tile, cream Darumadrop; honey and one pulse per second for the last ten; can glyph with honey protection ring; octagon beads in a tray, current bead collared, halftime gap |
+| Announcement | game-state notice | Cream plaque, brown display words, short pop; text is the caller's own |
+| Earned moment | who earned what, how big | One tile with the scorer's portrait and a honey bonus badge; tier 1 red, tier 2 red with wings and sunburst, tier 3 gold with crown, turning sunburst and confetti |
+| Refusal | what was refused, why | One red tile, sentence-case title, reason in an inset band; shakes once when new |
+| Action | the verb and its key | Cream tile, saved-binding Xelu glyph, one line; hold progress as an orange groove inside |
+| Score feed | who, what, whom, worth | Cream rows of portraits and event glyph with the points; three rows, slide in, fade |
+| Status | what is wrong, how long, why | Octagon medallion with icon and element ring, timer on a chip under it that blinks in the last second; tab sized to its own explanation |
+| Ability deck | can I use it, when, how | The face is the button: state-coloured rim, art fills the face, cooldown drains from the top over the art, ultimate fills like a jar; keycap tab under the tile; charge and role chips on corners |
+| Pause | stopped or live, choose | Cream card at the left, state pill, toy buttons ranked primary, ordinary, destructive; brown ring for focus |
+
+Every element keeps its live data, input routes and accessibility scaling;
+Reduced UI Motion keeps each look and removes slap, shake, pulse and confetti.
+Native evidence: `UiRevampShots` captures street and Arena at five shapes.

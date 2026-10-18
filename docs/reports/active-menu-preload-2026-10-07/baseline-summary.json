@@ -1,0 +1,104 @@
+{
+  "sourceCommit": "140a25523fac68c200d85ca4a3e1198b37035578",
+  "pid": 53512,
+  "terminal": true,
+  "passed": false,
+  "failure": "Training-range fixture prevented normal results and deactivated other targets",
+  "windowCount": 175,
+  "actionCount": 74,
+  "restored": {
+    "inputRestored": true,
+    "editorInputRestored": true,
+    "profileRestored": true
+  },
+  "selectedWindows": [
+    {
+      "mode": "00-boot-to-title",
+      "samples": 1017,
+      "p99Ms": 5.32919979095459,
+      "maxMs": 621.5958251953125,
+      "framesOver50Ms": 3,
+      "framesOver100Ms": 2,
+      "gc0": 9,
+      "mainThreadAllocatedBytes": -1
+    },
+    {
+      "mode": "01-title-to-home",
+      "samples": 729,
+      "p99Ms": 16.817800521850586,
+      "maxMs": 715.0549926757812,
+      "framesOver50Ms": 3,
+      "framesOver100Ms": 1,
+      "gc0": 13,
+      "mainThreadAllocatedBytes": -1
+    },
+    {
+      "mode": "02-home-idle",
+      "samples": 362,
+      "p99Ms": 16.763200759887695,
+      "maxMs": 17.07740020751953,
+      "framesOver50Ms": 0,
+      "framesOver100Ms": 0,
+      "gc0": 1,
+      "mainThreadAllocatedBytes": -1
+    },
+    {
+      "mode": "menu-HeroButton",
+      "samples": 147,
+      "p99Ms": 94.74949645996094,
+      "maxMs": 4531.7431640625,
+      "framesOver50Ms": 2,
+      "framesOver100Ms": 1,
+      "gc0": 7,
+      "mainThreadAllocatedBytes": -1
+    },
+    {
+      "mode": "menu-ModeCard",
+      "samples": 162,
+      "p99Ms": 13.657500267028809,
+      "maxMs": 132.3737030029297,
+      "framesOver50Ms": 1,
+      "framesOver100Ms": 1,
+      "gc0": 1,
+      "mainThreadAllocatedBytes": -1
+    },
+    {
+      "mode": "menu-settings",
+      "samples": 164,
+      "p99Ms": 13.57040023803711,
+      "maxMs": 67.36170196533203,
+      "framesOver50Ms": 1,
+      "framesOver100Ms": 0,
+      "gc0": 4,
+      "mainThreadAllocatedBytes": -1
+    },
+    {
+      "mode": "classic-first-throw-and-hit",
+      "samples": 470,
+      "p99Ms": 25.260000228881836,
+      "maxMs": 438.65411376953125,
+      "framesOver50Ms": 3,
+      "framesOver100Ms": 1,
+      "gc0": 11,
+      "mainThreadAllocatedBytes": -1
+    },
+    {
+      "mode": "first-throw-and-hit",
+      "samples": 502,
+      "p99Ms": 17.020299911499023,
+      "maxMs": 18.37980079650879,
+      "framesOver50Ms": 0,
+      "framesOver100Ms": 0,
+      "gc0": 11,
+      "mainThreadAllocatedBytes": -1
+    }
+  ],
+  "rawSha256": {
+    "runner-result.json": "b412c29f2df3121010edbe9830c1613598dc19a804dab5746df6afe85af61bc1",
+    "result.json": "e0b0844903bc454b827d582b4478c827ed959fca0ce8d10ce4b089b1511df45d",
+    "performance-actions.json": "ab3ec3e49ad98985b42b873d0a0fca3896f9839a2e4f8eedc8ec1697a8ced258",
+    "menu-HeroButton-frame-times.csv": "c735f147283610c917dd3324d1c668669ca9612c19acd0905b2d99ccd16dd124",
+    "menu-HeroButton-frame-context.csv": "2625b1f19a7cac9829a0c5505b41782c84d7094cb1acc895df85d8c301688fc8"
+  },
+  "limits": "hiddenSW_HIDE/nonbatch ordinary release1080p Balanced; no focused human/device/GPU-duration/allocation availability claim"
+}

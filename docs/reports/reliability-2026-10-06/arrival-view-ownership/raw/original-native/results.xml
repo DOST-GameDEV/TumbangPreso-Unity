@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 06:50:58Z" end-time="2026-10-06 06:51:00Z" duration="1.5827286">
+  <test-suite type="TestSuite" id="3317" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1888" result="Failed" site="Child" start-time="2026-10-06 06:50:58Z" end-time="2026-10-06 06:51:00Z" duration="1.582729" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3309" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1888" result="Failed" site="Child" start-time="2026-10-06 06:50:58Z" end-time="2026-10-06 06:51:00Z" duration="1.563921" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24808" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3310" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1888" result="Failed" site="Child" start-time="2026-10-06 06:50:58Z" end-time="2026-10-06 06:51:00Z" duration="1.557168" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3313" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1886" result="Failed" site="Child" start-time="2026-10-06 06:50:58Z" end-time="2026-10-06 06:51:00Z" duration="1.550474" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1145" name="ArrivalViewOwnershipTests" fullname="TumbangPreso.PlayTests.ArrivalViewOwnershipTests" classname="TumbangPreso.PlayTests.ArrivalViewOwnershipTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-06 06:50:59Z" end-time="2026-10-06 06:51:00Z" duration="1.408207" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1146" name="ArrivalCancellationDoesNotReclaimTheSpectatorsGameplayBody" fullname="TumbangPreso.PlayTests.ArrivalViewOwnershipTests.ArrivalCancellationDoesNotReclaimTheSpectatorsGameplayBody" methodname="ArrivalCancellationDoesNotReclaimTheSpectatorsGameplayBody" classname="TumbangPreso.PlayTests.ArrivalViewOwnershipTests" runstate="Runnable" seed="536845679" result="Failed" start-time="2026-10-06 06:50:59Z" end-time="2026-10-06 06:51:00Z" duration="1.105785" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ArrivalViewOwnershipTests.ArrivalCancellationDoesNotReclaimTheSpectatorsGameplayBody () [0x00018] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\ArrivalViewOwnershipTests.cs:54
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Flow] unknown map 'PlayModeWorldReset_10', falling back to 'Eskinita'.
+]]></output>
+            </test-case>
+            <test-case id="1147" name="ArrivalFinalHandoffHonorsLiveWatchOwnershipWithoutALaunchFlag" fullname="TumbangPreso.PlayTests.ArrivalViewOwnershipTests.ArrivalFinalHandoffHonorsLiveWatchOwnershipWithoutALaunchFlag" methodname="ArrivalFinalHandoffHonorsLiveWatchOwnershipWithoutALaunchFlag" classname="TumbangPreso.PlayTests.ArrivalViewOwnershipTests" runstate="Runnable" seed="1336348266" result="Failed" start-time="2026-10-06 06:51:00Z" end-time="2026-10-06 06:51:00Z" duration="0.094546" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ArrivalViewOwnershipTests.ArrivalFinalHandoffHonorsLiveWatchOwnershipWithoutALaunchFlag () [0x00013] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\ArrivalViewOwnershipTests.cs:56
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Flow] unknown map 'PlayModeWorldReset_18', falling back to 'Eskinita'.
+]]></output>
+            </test-case>
+            <test-case id="1148" name="NormalGameplayCancellationStillRestoresTheActiveFppView" fullname="TumbangPreso.PlayTests.ArrivalViewOwnershipTests.NormalGameplayCancellationStillRestoresTheActiveFppView" methodname="NormalGameplayCancellationStillRestoresTheActiveFppView" classname="TumbangPreso.PlayTests.ArrivalViewOwnershipTests" runstate="Runnable" seed="25288640" result="Passed" start-time="2026-10-06 06:51:00Z" end-time="2026-10-06 06:51:00Z" duration="0.092294" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Flow] unknown map 'PlayModeWorldReset_27', falling back to 'Eskinita'.
+]]></output>
+            </test-case>
+            <test-case id="1149" name="ReseatingBeforeArrivalReturnKeepsTheCurrentGameplayView" fullname="TumbangPreso.PlayTests.ArrivalViewOwnershipTests.ReseatingBeforeArrivalReturnKeepsTheCurrentGameplayView" methodname="ReseatingBeforeArrivalReturnKeepsTheCurrentGameplayView" classname="TumbangPreso.PlayTests.ArrivalViewOwnershipTests" runstate="Runnable" seed="1977467082" result="Passed" start-time="2026-10-06 06:51:00Z" end-time="2026-10-06 06:51:00Z" duration="0.093888" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[Flow] unknown map 'PlayModeWorldReset_36', falling back to 'Eskinita'.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

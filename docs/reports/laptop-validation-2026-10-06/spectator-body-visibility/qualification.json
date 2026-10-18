@@ -1,0 +1,56 @@
+{
+  "original": {
+    "sourceCommit": "0789ee09ab4fe0a1d47758ccf3021ace20013f16",
+    "qualifiedManifestSha256": "41b564a1924a966ac575d07b6d2289f4b2aac0213e01ac4b22e19b4cac0594bf",
+    "profile": "validation-qa-a-be075dcdfa07",
+    "directorSha256": "c32ff39cd2189054e45de6432cd26ac6b7111e06492052a745157ad9df58a388",
+    "fixtureSha256": "6e27bc65c10492c2ff56409cff5a2414b94f965c1e5904065c94caaaab40b3fd",
+    "generatedDeltaCount": 280,
+    "result": {
+      "pid": 48980,
+      "terminal": true,
+      "exitCode": 2,
+      "passed": 15,
+      "failed": 4,
+      "inputCount": 21166,
+      "allInputsRestored": true,
+      "existingPrefsRestored": 13
+    }
+  },
+  "candidate": {
+    "sourceCommit": "0789ee09ab4fe0a1d47758ccf3021ace20013f16",
+    "qualifiedManifestSha256": "bc5aac83de1b10f34b4645c4375ff9b119976504d59385b80364eee5487fd817",
+    "profile": "validation-qa-a-be075dcdfa07",
+    "directorSha256": "1f746ca8e70ea13734d865a9c78d6a6a0805aa7b6221619d072c8d0feb6d51a7",
+    "fixtureSha256": "6e27bc65c10492c2ff56409cff5a2414b94f965c1e5904065c94caaaab40b3fd",
+    "generatedDeltaCount": 280,
+    "result": {
+      "pid": 46764,
+      "terminal": true,
+      "exitCode": 0,
+      "passed": 19,
+      "failed": 0,
+      "inputCount": 21166,
+      "allInputsRestored": true,
+      "existingPrefsRestored": 13
+    }
+  },
+  "lifetime": {
+    "sourceCommit": "0789ee09ab4fe0a1d47758ccf3021ace20013f16",
+    "qualifiedManifestSha256": "c3e5e146ae7318e1e49ccee5017f906e1cb502f040cf46ca53bfaa3c95a9ee3f",
+    "profile": "validation-qa-a-be075dcdfa07",
+    "directorSha256": "1f746ca8e70ea13734d865a9c78d6a6a0805aa7b6221619d072c8d0feb6d51a7",
+    "fixtureSha256": "6e27bc65c10492c2ff56409cff5a2414b94f965c1e5904065c94caaaab40b3fd",
+    "generatedDeltaCount": 279,
+    "result": {
+      "pid": 44040,
+      "terminal": true,
+      "exitCode": 0,
+      "passed": 4,
+      "failed": 0,
+      "inputCount": 21166,
+      "allInputsRestored": true,
+      "existingPrefsRestored": 13
+    }
+  }
+}

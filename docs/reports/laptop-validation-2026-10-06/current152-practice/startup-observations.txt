@@ -1,0 +1,6 @@
+[Splash] preload exceeded six seconds; keeping the loading screen visible until it is ready.
+[Splash] map asset warmup completed in 2.50 s.
+[Splash] preload retained 10067 assets in memory.
+[Splash] boot loading finished after 20.38 s (work-driven, no reading window).
+[Slice] round 1 begins, taya is seat 0
+[HubLoading] Eskinita ready after 1.30 s.

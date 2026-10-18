@@ -37,6 +37,7 @@ Shader "TumbangPreso/SoulGlow"
         Tags { "Queue" = "Geometry+400" "RenderType" = "Opaque" "IgnoreProjector" = "True" }
 
         CGINCLUDE
+        #include "RecordedShaderTime.cginc"
         #include "UnityCG.cginc"
 
         fixed4 _Tint;
@@ -79,7 +80,7 @@ Shader "TumbangPreso/SoulGlow"
         fixed4 fragInside(v2f i) : SV_Target
         {
             // Two waves out of step, so the throb is uneven, and climbing: the phase falls with height.
-            float t = _Time.y * _Rate - i.height * 3.1;
+            float t = TumpShaderTime() * _Rate - i.height * 3.1;
             float breath = 0.6 * sin(t) + 0.4 * sin(t * 2.37 + 1.3);
             float3 light = i.colour.rgb * _Tint.rgb * _Intensity * (1.0 + _Pulse * breath * (0.35 + i.colour.a));
             return fixed4(light, 1.0);

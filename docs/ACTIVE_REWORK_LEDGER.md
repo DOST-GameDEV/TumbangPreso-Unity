@@ -1,187 +1,257 @@
-# Active competition checkpoint
+# Dante Mountain Form checkpoint, October18
 
-Read AGENTS, COMPETITION_COORDINATION and current TODO. TODO is the only queue.
-Exact handles/next command: Logs/arrival-pan-review1004/current-resume.json.
-Resume after compaction; no whole-history rereads or unchanged passing loops.
+On ASTRAReworks after 4d79a33cb (protocol 171). Checked the last session's work before building on it: two real faults
+(the suit read every skin under the body's root and threw MissingReferenceException after a same-frame model swap; Dante's
+timed-kit passive fields broke SeanSteadyEmberTests' pins) and three test-setup lessons (bodies inside the first 0.25 s of
+a throw are not tested; offline a non-local human takes knocks through the relay; the taya is clamped into the can's box).
+DanteMountainFormTests 12/12; DanteDrift and DanteDriftPresentation green; Dante's UltimateIntroductionProbe grounding green
+after the probe subtracts the baked lift. EditMode failures left are the pre-existing roster-drift list (Cheska, Zack, Nemu,
+Sean, Phaister). The suit is plates (Logs/mf/poses_v7), forms in the cutscene on its clock, the slam was rebuilt, his
+first-person hands carry the form, and his deck shows its seconds. Films sent: Logs/mf/dante_mountain_cutscene_v1 and v3.
+Next: the owner's verdict on v3, his pick of the sound drafts (tools/draft_dante_mountain_sfx.py), the animation variants,
+a real host and client match, and balance. Open items: docs/TODO.md DANTE-MOUNTAIN-FORM-1018.
 
-## Owner directives
+# Ghost network checkpoint, October15
 
-Continue autonomously while owner sleeps. NETWORK FIRST: all QA testers could
-not join ASTRAReworks; non-host lag is smooth frames with delay/rubber-banding.
-Fix skill/input failures too. Test visible tester menus and normal input, not only
-CLI/API. Answer promptly then resume; progress updates at least once per minute.
-No arbitrary RAM/admission/retry/time guards, reset, clean, force-push, new chats/
-agents or unapproved paid services. Preserve user data/private art/other work and
-Desktop releases. One heavy job per machine; freeze native/build inputs until the
-parent terminates. Clean verified owned leftovers; never bypass deletion rejection.
-Existing PC/laptop cooperation is authorized; ask files/jobs before reassignment,
-checkpoint for paired tests then resume source work. Normal checked pushes.
-Feature requirements belong TODO/ledger. Paete automatic mature lobs every5s are
-explicitly authorized; unnecessary AGENTS feature entry was removed at owner request.
+Pulled3fe64. Protocol163 now sends complete host-owned Blindfold/Skitter/Lookout
+visual lifetimes instead of peer guesses, plus late hydration and scoped cleanup.
+Actual UDP and real Relay DTLS host+2client delivery pass. Mixed9 authored models,
+27 participants and6 samples each reproduce/fix render-copy bindpose order; final
+native12/12, admission2/2, Skitter2/2, Core744/744. 52 distinct passing native
+cases across retained runs. No active Unity/player or Desktop replacement.
+[Evidence and limits](reports/nemu-network-2026-10-15/README.md). Next qualify matching163
+full natural matches on separate devices; broader network acceptance stays open.
+Publish this checked source unit immediately, preserving authored hero direction.
 
-## Current source and live work
+# Network refinement checkpoint, October15
 
-Published78903035c includes checked HUD40db, replay1968, online failure copy14b
-and scoped quit evidence. Owner is using the PC: no Computer Use or PC native
-launches until released. Screenshot player22960/parent21700/session79371 finished
-normally0; named settings/shared input restored, exe/runtime unchanged. All old
-window handles are stale. Personal PC use leaves source work authorized.
+Pulled ASTRAReworks26def. Fixed remote crouch/curse-reach sprint stamina and the
+309-byte maximum SyncUnit allocation. Protocol160 layout retained. Native original
+three defects reproduced; candidate20/21 and corrected standing-fixture1/1 cover
+21 distinct cases. Core742/742. Named profile and3 shared input prefs restored;
+task-generated resource/settings bytes preserved then restored. No active Unity
+job or build/Desktop replacement. [Exact evidence](reports/network-refinement-2026-10-15/README.md).
+Next qualify matching actual peers; hop recovery/crouch collision and broad
+NET-SKILLS-1 acceptance remain open. Publish this coherent source unit immediately.
 
-Root LAN source unit is qualified and ready for publication: one-line parser
-rejects ports above ushort.MaxValue plus12-case fixture in LobbyAndSettingsTests.cs.
-Native original6FAIL/6validPASS -> candidate12PASS0skip. Both parents/restoration
-terminal. Root checked ten exact evidence Git blobs, XML and source/fixture LF
-hashes against immutable Logs/lan-port-boundary1005/packet.json. No repeated
-unchanged tests; no malformed packets sent. Broader QA failures stay open.
-Preserve protected Auditor dirt/private cancelled Yasmin script. M4tyu633 only.
+# Latest integration and owner scope, October11
 
-Laptop current61a Windows build is terminal/qualified/restored. Ordinary local
-online pair7345/host16344/client22344 is terminal, roomXYUU; public row admission,
-ReadyACK>=268.4s/client leave/rejoin/host leave and both own-menu Quit exits0.
-Root verified20 raw Git blobs and inspected row/rejoin/recovered-Home captures.
-Those captures are JPEG bytes despite PNG names: controls, not lossless UI proof.
-This is TWO INSTANCES ON LAPTOP, not new two-machine proof. Exact job state must be refreshed
-from the coordinating chat before changing its slot or files. Root owns Net/UI,
-TODO/ledger and eventual LAN boundary publication; laptop owns its current test.
+Owner requests QoLUpdates merge then finish/push primary checkout's219 local
+entries and provide a short chat prompt for Opus5.5 Nemu redesign on this PC.
+Only Nemu ultimate+cutscene now: thorough research/direction first then implementation;
+ghost parade, grey/muted world, all-player POSSESSED15gameplay seconds, retained
+agency against ghost steering and eerie HUD/audio. Soraya/Paete quality benchmark.
+Prompt already delivered for research; code editing begins after merged primary pull.
 
-Earlier1d401 review player19352 quit C0000005. Exact local dump matches process,
-exception and Unity Main Thread15248. Installed-symbol StackWalk recovers
-remove_free_block +22 -> DynamicHeapAllocator::RemoveBlock +121, then an unknown
-module/incomplete unwind. No source corruption cause or workaround is proven.
-Raw dump remains local/private. Redacted receipts are in the quit-access-violation
-report, all4 Git blobs hash-verified. Owner screenshot run's later exit0 is a
-control observation with unobserved close route, not resolution of the crash.
+Resolved QoL eb2dc1556 + ASTRAa773 into protocol159. Native14876passes21/21;
+22,351 inputs/preferences restored and private3files unchanged. No build/Desktop
+replacement. Primary219 status entries expand224files:202format-only metadata,
+14meaningful map/mode importer settings,1material and7historical review files.
+202 whitespace-only files normalized with exact originals archived in localLogs.
+Next publish merge immediately, fast-forward primary preserving its22 remaining
+known files then commit/push substantive local changes and label historical evidence.
+No new agents/chats/paid services, reset, clean, force push or old deletion retry.
 
-All close shortcuts remain stopped after owner complaint. Laptop observed a
-client2687718 metadata/screenshot mismatch showing occluding host853516 until
-explicit activation/fresh view. This is a tool confound, not proof of the earlier
-ChatGPT-close cause. Local read-only crop rejects non-foreground/hidden/minimized
-targets; syntax checked only while owner uses PC. TESTING now reflects current
-owner execution directives and actual-window verification, removing stale guards.
+# Current AI social source unit, October9
 
-Exact local inputs/jobs/resume command: Logs/arrival-pan-review1004/current-resume.json.
+Original69472 reproduces unavailable-rig StepSocial frame consumed/no animation.
+Preflight now preserves movement/gameplay keys and retires missing motion with
+normal cooldown. Candidate66348passes6/6: unavailable, actual Rafi dance, bounded
+pending delivery and3lesson gates. All21,455inputs/prefs restore. Existing250ms
+playable grace, authored motion and network contract unchanged. No player/peer/
+all-natural-rig claim. Source pending immediate publication; ground1fbc already
+published/12nativePASS. Desktop/G still e1c1 ordinary/protocol154/runtime4a315c5e.
+Next batch actual-player surface/social observation using existing normal entry,
+qualify then replace SAME G/Desktop only. Continue all natural AI/camera/lifecycle/
+stutter work. No newworkers/chats/paidservices/reset/clean/force/foreground control.
+Root soleowner; humanpaused laptop and retired reviewer stay undisturbed.
 
-## Retained proof context
+# Current ground-support source unit, October9
 
-Published source e77241381552f8c8bbbe5e914a0cdf042c88956c; frozen paired artifact
-c17101d03/protocol151/recording14. Rules palette/plate/Done styling qualified
-locally by one actual native review/five captures. Source current-scope pending:
-PausePanel input custody/ended notice fix, original3causeFAIL/2controlsPASS ->
-candidate5/5PASS; native11892/6288 and exact202metadata/sharedprefs/profile/
-Quality restoration perrun terminal. Publish this coherent unit with scoped
-paired evidence. Preserve Auditor/private cancelled Yasmin script; M4tyu633 only.
+Native final74308 passes12:30new3/10shoe mesh-floor contacts at1mm,10shoe/3rotation
+support invariance,8prediction/Skim and2Arena ramp/recovery controls. All21,453
+inputs/preferences restore. Original30pairs fail45-91.8mm; firstgetter candidate
+30pairs pass but broader9PASS1FAIL exposes held-rotation dependence. Final projects
+mesh support into upright root space. Initial wrong3companion selector excluded.
+No map/hero art/kit change or new build. Desktop/G still ordinarye1c1/protocol154.
+Publish ground source/proof immediately, then investigate missing-emote/social
+holds as a concrete AI idle hypothesis before the next batched build. Actual
+Windows/slope/natural attachment, bots/cameras/lifecycle/stutter acceptance open.
+Root soleowner; laptop humanpaused/reviewer retired. Private3files preserved.
 
-Two actual machines completed owner-code/owner-start ONLINE RWCK4x90 with full
-matching record ef825a4dccae475e88ed7990be31d0b2,2424B/SHA63ce9511523c85b5f41d70d1ab32079355339d914bb258589b0773cd39be6d27.
-Laptop then normally hosted LANVGNR and PC naturally discovered/row-joined.
-A real client ProtocolTimeout beforeStart coincided with a failed read-only
-Pipeline probe; pause/error-pause were not highlighted, cause not proven. Same
-room normalrejoin/no gameplayprobes completed4x90, full record
-78e6013911614781a571827884ed6543,2452B/SHAc2e19f313e30ab7fc8b4433f4a0832655903069a7bf9aeddf1535c8e132fee8d,
-results visible both. Reciprocal PC LANHEAK was initially absent from laptop
-browser, then naturally appeared aftertabswitch beforeanyobserverbind. Real
-beacons reachedbothNICs and laptop, rowjoinadmittedpeer2. Initialviewdelay remains
-OPEN; do not claim a permanent broadcast block, firewall fix or unicast proof.
+# Current Desktop and next PC unit, October9
 
-Basilio E/Q report remains OPEN. Laptop's bounded actual InputSystem observer
-found plain Sky E produced TEXT only, E/Q/Wstate0 and no state/delta event. Thus
-automated single-letter no-response is an input-tool confound, not a kit cause.
-Laptop owns PlayerInputReader/inputproducer investigation and tests supported
-modifier chord in ordinary Practice; PC owns Net/UI/cast routing/rootTODO and
-integration. No held2s/motion/whole-skill pass. Ask current ownership before
-reassignment; checkpoint/finish units for joint LAN/online tests, then resume.
+Desktop and SAME internalG now ordinarye1c1/protocol154/runtime4a315c5e,
+261files/3,572,707,876bytes. Only17 Desktop files changed, all261SHA verified.
+Actual startup5.725s/firstHome4to40, all7 first/repeat previews, rooted36/9,
+old/scenery/FX/fresh replays and full191windows/74accepted/26consequences pass.
+Actual saved doll seat5 body+shoe11objects/48held samples,0invalid object warnings.
+Controlled record incomplete/staged player-history warnings stay explicit.
+Two completed short natural records have10segments each/no warnings.
+All21,451 build/source inputs and player preferences restore; jobs all terminal.
+Performance remains open: loading peaks646/873ms, firstHero35ms. No tournament claim.
+Next import the prepared actual-mesh/new3 loose-shoe contact probe from Logs,
+run baseline then fix only a demonstrated ground float. Preserve old-map art,
+finalized heroes, private3files, profiles/saves and current Desktop. Natural doll
+lifecycle/Windows doll-phase drawing, bot efficacy/camera/full-match/peer/pacing
+remain open. Root soleowner, laptop humanpaused/reviewer retired. No newworkers.
 
-PC players3388/20120 normalexit0; parent56220 terminal, profiles/sharedinput
-restored, exe/runtime unchanged. Temporary artifactshare21720 stopped after
-laptop258-file verifiedACK. No PCnative/game/recorder/proxy/browser leftovers.
-LaptopEditor23268 remains task-owned active Practice; preserve until its own
-normalexit/restoration. Owner explicitly resumed PCComputerUse; do not revive
-old physicalEscape stop. Skytext-only get_window_state refresh avoids WGC
-FrameArrivedtimeouts; fresh owned HWNDcrop is read-only, exclude occludedCodex
-captures from game-render evidence. ActualQAonlineRequesttimeout/hostkick and
-broader physical input/performance/UI acceptance stay OPEN. CurrentCLI is
-AppData/Local/Unity/bin/unity.exe, PATHunity.cmd is an Editorwrapper.
-Prior cf405 deletion was automatically rejected; preserve/no bypass. Desktop
-untouched. Exact refs/jobs/next: Logs/arrival-pan-review1004/current-resume.json.
+# Current PC unit, October9
 
-Laptop departure branch b1486856d was fetched and normally merged/pushed10ceb.
-Independent Root review verified8 boulder,7 online150 and18 Practice raw Git
-hashes. COMPLETE online150 canonical2430-byte record equals Root's object and
-hash99d32afbddb8813d05a135af4e2b9370cd5d4442c43f3f0250e4117bdf63356b.
-This is successful admission/completion/result consistency, not non-host motion.
-The same client log confirms a NEW DEFECT: after Slice reports match over, later
-host departure logs ABANDONED round4of8 and moves back to an own lobby. Preserve
-completion during session teardown; keep genuine host-loss authority revocation.
+Companion recording source is ready for publication: actual original fifth-seat
+slipper1FAIL, candidate/final3PASS PlayMode plus separate connection admission1PASS.
+Format15 records doll bodies/holders; protocol154 excludes old decoders. All21,451
+source inputs/preferences restore. No active Unity/player/helper remains.
+Desktop001d/runtime2005 and internalG0e98/runtime3e6b remain unchanged.
+Next publish this coherent unit, replace SAME G only including ef6 title timer,
+then qualify actual Windows startup/replays/previews before Desktop replacement.
+Natural doll birth/despawn/all-companion/peer and full tournament acceptance stay
+open. Root owns work; laptop human-paused and reviewer retired. Preserve private
+3files and old-map art. No reset/clean/stash/force/newagents/foreground control.
 
-Menu-look eb12c2bf0 is pushed: original23460/2621 two causes plus1 control,
-candidate9168/22252 same3/3 with next-frame look. Parents and202 GUI metadata/
-prefs/Quality restoration terminal. No packaged legacy-mouse/relock claim.
-Completed departure source is ready to publish: original21484/4754 host+client
-terminal paths falsely ABANDONED4of8; two genuine-failure controls pass. Candidate
-22748/53439 same4/4 passes including shipping UI formatter, cached4-round count
-and authority revocation. Completion is recorded at existing MatchEnded, reset
-on new live match and retained for disconnect diagnostics; protocol151 unchanged.
-Both parents/restorations terminal,202 GUI per run exact, no frozen deltas.
-NEXT publish explicit MatchDirector/MatchAbandon/NetSession/test/report paths,
-then make one combined Windows151 package for current source. PC alone; actual
-second-machine motion remains open until owner resumes laptop.
+# Active competition checkpoint, October 8
 
-Normal Windows151 Guest/title/Home animated in real controls and expired-code
-join recovered to usable browser. Paete HERO->TRY IN PRACTICE, one held Q150ms,
-recorded plant mouth/release, wooden slipper in flight and can knockdown score100
-without a second press. Film uses fresh exact-window DESKTOP crop: GDI window-title
-capture returned stale frames, so two failed clips are not acceptance. All player/
-recorder parents exited normally; input/profile settings restored. Proofe9be is
-integrated; no repeated5s interval/remote/audio or mouse-relock film claim.
+Goal ACTIVE. Root is the sole owner after the human paused the laptop and
+transferred its work here. The requested Astra reviewer is finished and retired.
+Do not wake either or create agents/chats. No LAN, foreground control, resets,
+cleans, stashes or force pushes. Preserve finalized kits and old-map art.
 
-## Shipped fixes and evidence limits
+Current G is ordinary0e98b4721/runtime3e6b,261files in the same folder.
+Current Windows69040 passes36copied-rooted clips/9rigs/no sampling warnings.
+Full44388 passes191windows/74accepted/26required effects/zero sampling warnings.
+FreshHero639270754435174732 andClassic639270754060454868 each have10clean scenery
+segments. Controlled invalid-recorded-object warnings also occur in older routes;
+source identifies a fifth-seat doll slipper incompatible with four-seat codec.
+Qualify and repair that recording path; do not redesign Soraya's authored kit.
 
-Online publication2fdf910fc: await UGS room registration before success, clean
-own failed host with readable error and stop Relay advertising direct LAN.
-Original3 causes plus LAN/live UGS controls become5 native PASS. Normal GUI148
-public JOIN and separate typed CODE JOIN also passed on two machines. Reports
-reliability-2026-10-04/online-room-publication and laptop-validation-2026-10-05/
-visible-online148-client. QoL prank branch is read-only comparison, never copy/run.
+Currentstartup72768 FAILS before fresh playback: main visible only4.788572seconds.
+Desktop001d/runtime2005 is preserved. Timer now starts after the admission frame;
+native66104 passes2normal/500ms-delayed admission controls and first-Home4to40.
+All21,449 inputs/prefs restore. Five-second constant/assertion tolerance unchanged.
+Publish this source unit; ordinary Windows rerun and current replay/previews plus
+Desktop replacement remain pending. See visible-title-admission-2026-10-09.
 
-Quicktap e27e55eb8: real E/Q/X down-up events retain one rendered intent plus
-physics edge; original3 causes and2 controls become5 PASS. Owner-pose fc062bb56:
-accepted old echoes preserve prediction; authoritative corrections/epoch/other
-seats remain. Original2 backward snaps at1.6/4.2m and3 controls become6 PASS.
-Protocol150 required. Reports reliability-2026-10-05/hero-quicktap and
-owner-pose-feedback. Actual controlled non-host human motion remains OPEN.
+Held tsinelas source0e98 fixes the7.87mm extra spacer. Native71516passes6controls
+and90pairs/9heroes/10selectable shoes have0extra mesh-to-anchor gap. Ground/air/all
+kit transitions, full natural attachment, AI/cameras/creative new3 and stutter
+acceptance remain open. Old-map art/private3files are untouched. No activejobs.
 
-Paete speed ba1a02554 restores authored13m/s instead of unit1m/s. Mature plant
-5de4675d3 automatically fires every5s with initial3s growth; Core20 and native5
-plus neighborhood4 PASS. Reliable4825f41d5 AutomaticPlantShot36-byte scoped
-replication passes4 native checks. Remote automatic-lob operator proof remains
-OPEN. Concurrent151 contributor bounded player-vine deadlines and added delay/
-loss/jitter Linux peer proof; this is not Windows/WAN/human acceptance.
+ba28 ordinaryWindows G/runtimeea534 is REJECTED after actual191route/74accepted/
+26required consequences:1,991 new nonlegacy sampling warnings in Amihan copied
+victims, versus0previous001d. Desktop001d/runtime2005 remains installed. Focused
+Track.Clone fix retains only disabled controller-free Animator endpoints at the
+source sampling roots. Native65784 passes9controls/36current-rig copied clip
+samples/noautomatic pose changes/no gameplay scripts; all21,447inputs restore.
+Actual fixed-player zero warnings and moving bones plus status/carry/replay and
+package performance remain pending before another SAME G replacement/installation.
+No active Unity/player/helper remains. Evidence: reports/render-copy-sampling-2026-10-08.
 
-HUD06b09fa0b stops normal clock packets renewing Back to Action toast; actual
-packet/HUD original2 causes+2 controls become4 PASS. Names/title plain login/
-logo/camera intro source shipped. Tag ink source is shipped. October5 owner
-cancelled Yasmin Benguet replacement and chose the existing cyan/goggles model;
-verified currentcf405 player preview09 and sourceGLB hashfe571a94. Keep draft
-outside Assets and do not revive its integration after compaction. Other TODO
-acceptance remains unfinished. Preserve
-finalized hero direction and private art. Do not treat source or compilation as
-complete player/audio/transport acceptance.
+New source/data unit restores omitted yielded roster outline/motion preparation
+before Home readiness and adds9 absent RootedAnimation sets using existing
+authoring code. All23 previous sets retain exact bytes. Original68016 reproduces
+ready-before-outline failure; candidate48600 retains2PASS2FAIL for missing motion.
+Candidate70708 and final timing-enabled69820 each pass5 native controls:41models,
+145readablemeshes,84retainedmotion sets,no actors/graphs/material changes,36actual
+current-rig pose samples and actualstartup5secondgate/firstHome4to40. Final native
+inputs21,445 restore; no new build/Desktop update. Qualify current-player latency,
+natural status/carry/replay and remaining fullscope before next existing-G release.
+Evidence: reports/home-roster-preparation-2026-10-08.
 
-## Cleanup and recovery
+Current Desktop and internal G are ordinary source `001d80b568`, protocol 153,
+runtime `2005a5d0`. G replaced the previous diagnostic in the same folder; Desktop was
+updated in place with 34 changed files and all 261 file hashes verified. No new
+build/Desktop folder or profile/save change. Build/native runs restored all
+21,425 frozen inputs/preferences. Evidence: reports/windows-batched-replacement-2026-10-08.
 
-All Root native parents before current Home unit are terminal and their shared
-preferences/Quality/input/generated owned GUI metadata were restored exactly.
-Normal GUI150 host is now closed; shared150 download server already closed.
-Current artifact and essential raw evidence are retained; Desktop release untouched.
-No browser tabs opened. Existing deletion review rejections must not be bypassed.
+Current same-binary native menu ABA runs66940/28080/53308 are all terminal0,
+14PASS and preferences restored. Actual logs confirm normal ClientWorkerJobs,
+experimental Direct and normal again. Loading maxima1099.490/818.523/832.293ms
+and fresh first-Hero39.683/44.624/73.407ms reject adopting Direct as a remedy.
+No production/settings/build/Desktop mutation; prior35.362ms is not a consistent
+upper bound. Older Development Render Thread has individual215-218ms texture
+uploads, but main/render frame indices and current resource identity remain
+unproved. Next isolate preload resources/upload paths; all tournament scope stays
+open. Evidence: reports/loading-render-modes-2026-10-08.
 
-Native graphics Unity path C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe.
-Use bundled PowerShell runtime for existing scan-code attach wrapper; never change
-execution policy. Sky captures fail on Root; fresh exact-window desktop crops work.
-One observed action per refresh. Unsupported instantaneous key taps are not proof
-of a game bug. Do not automate Codex app UI to recover another run; use supported
-thread tools and keep independent engineering moving if peer is stalled.
+That ordinary candidate completed the 191-window controlled release route: 74 accepted actions,
+26 required consequences and two distinct natural custom one-round/30-second
+completion records. Rago's two owned empowered throws include load, flight,
+matched contact, consumption and 2.291 m movement. Both completed recordings
+contain ten scenery segments without recorder warnings. This does not establish
+full default matches, all-map/kit efficacy or tournament performance.
 
-After compaction resume the one concrete command in current-resume.json. Do not
-reread whole chats or reproduce meaningless internal noun fragments. Promptly
-answer the owner then implement/check/publish the next useful unit.
+Original G at1570 failed actual self-recorded scenery playback with 1,389 owner
+exceptions despite its narrow UI probe passing. This failure is retained. The
+replacement passes actual old-recording playback with all five animal hashes
+matching and zero exceptions, startup5.693s/firstHome4to40, legacy/fresh-effect
+replay and all seven first/repeat1080p previews. Windows four hand/copy controls
+also pass. These graphical/native checks do not establish human or peer quality.
+
+This unit binds a shifted sibling path to a unique matching authored AmbientLife
+owner, retaining model/art checks and rejecting ambiguity. Rendering exceptions
+pause and report once; package observation checks viewer errors after opening.
+Three native owner/GPU controls and the corrected warning-count control pass on
+identical production bytes across two runs. All 21,411 inputs/preferences restored.
+Compiler-helper, unrelated round-start and informational-log fixture failures
+are retained. Exact evidence: reports/replay-owner-binding-2026-10-08.
+
+Editor/player art mismatch is attributed: 28 distinct aspin component rows agree
+except five material CRC values and aggregate. Mesh streams, indices and texture
+identities match. Actual Windows values match the saved Windows recording;
+strict validation/serialization are unchanged. Two independent editor processes
+match each other. Future engine/shader compatibility remains unproven.
+
+The earlier G Development diagnostic was `cf9afad38`, runtime
+`df1e584b`, 403 files and 3,647,235,596 bytes. Deferred Hero preparation reduced
+its measured first-open peak from118.399ms to50.302ms CPU, still a noticeable
+spike. The method-entry experiment worsened the peak and stays off. Candidate3
+now renders the actual hidden preview before reveal and preserves Home ambient
+lighting. Native56940 passes four graphical/lifecycle/routing controls and all
+21,425 frozen inputs/preferences restore. Actual player43760 completes14 timing
+windows: first Hero now36.968ms wall/36.883ms CPU with no frame over50ms and one
+over33ms. Its worst frame is still34.735ms inside PrepareScreen, with120 retained
+Mono.JIT samples totaling24.882ms; nested samples are not additive. The completed
+14-trace exporter also restores all21,425 inputs/preferences. These diagnostics
+include collection overhead and do not establish ordinary-release smoothness.
+Candidate4 source prepares UI under an active transparent CanvasGroup, with input
+blocked and the preview component/camera disabled. It replays the authored
+entrance at reveal. Native49756 passes all four graphical/input/focus/lifetime
+controls and all21,425 inputs/preferences restore. The completed trace's199
+Mono.JIT rows have no method metadata; the metadata exporter is qualified but
+the remaining activation cause is still a hypothesis. Separate MoveNext, Reveal
+and Focus profiler markers will resolve it in the next batched comparison.
+These changes are now in the batched ordinary release. Player60716 completes191
+controlled timing windows with74 accepted actions and26 required consequences.
+Hero first opening35.362ms and loading919.843ms remain smoothness failures.
+The startup/old-scenery, legacy, fresh-FX, current new natural-Hero playback and
+all7 first/repeat1080p movie gates pass. The fresh Classic/Hero records each have
+ten scenery segments and no warnings; controlled-rebind warnings remain separate.
+Main loading view5.651s and first Home video4to40 frames are observed. All current
+jobs/preferences restore; build restores21,425 frozen inputs. Desktop is replaced
+after those gates pass. Evidence: reports/windows-batched-replacement-2026-10-08.
+Continue loading/frame pacing, continuous new3 previews/openings and broader goal
+acceptance. Old-map art/presentation remains untouched.
+Preserve Desktop. Previous ordinary first-Hero134.53ms/preload877.67ms remain
+failures; functional checks alone do not close performance or AI quality.
+
+Only replace the existing G build folder for future builds. No additional named
+or numbered output directories. The cleanup of 38 verified superseded internal
+builds, 103.71 GiB, was rejected by tool policy: deleted zero, reclaimed zero.
+Do not bypass the rejection. Preserve G and Desktop until a qualified swap.
+
+The unqualified laptop cache snapshot `455444bc` is preserved and unmerged.
+New3 entrance cadence now follows actual visual-root travel using the existing
+body stride calibration, fixing measured cumulative overstepping on all twelve
+observed paths. Candidate50836 passes three automatic Hero openings and22380
+passes three existing rendered support/grip/Taya-framing/return/cancel controls.
+All21,425 frozen inputs/preferences restore. Original2green/1red per-frame checks
+were too weak; the original CSV totals expose1.06–4.27m drift on all twelve paths.
+The compiler-fixture failure is retained. Old-map/Arena presentation is untouched.
+No build for this unit; full stance-foot, roster, continuous taste and current
+player/performance acceptance remain open. See reports/new-map-walk-cadence-2026-10-08.
+Continue AI engagement, every role/feature/map, natural slipper/air/slope and taya
+camera behavior, creative new-map openings and preview work. TODO is the only
+status queue. Exact refs, jobs, dirty work and next action remain in
+Logs/catch-framing1007/active-checkpoint.json. Private Auditor/voxel and Arrival
+status-only work are untouched. All current native/player jobs are terminal and
+restored; no task-owned browser or server remains.

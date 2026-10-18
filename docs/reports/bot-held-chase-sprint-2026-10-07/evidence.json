@@ -1,0 +1,69 @@
+{
+  "sourceRef": "6c9e594820d8ec0668b9adf378ed7374994de8fe",
+  "productionPaths": [
+    "Assets/TumbangPreso/Runtime/AIController.cs"
+  ],
+  "testPaths": [
+    "Assets/TumbangPreso/Tests/PlayMode/AiLungeChaseSprintTests.cs",
+    "Assets/TumbangPreso/Tests/PlayMode/AiLungeChaseSprintTests.cs.meta"
+  ],
+  "sourceHashes": {
+    "Assets\\TumbangPreso\\Runtime\\AIController.cs": "a1636c4b0cabf68abe73b393c792c57661dc88869163e8da2cfc278b5ba3823f",
+    "Assets\\TumbangPreso\\Tests\\PlayMode\\AiLungeChaseSprintTests.cs": "6d4d0360eb532057864f2fa83c5dba47b70ccf34d8ff5eb35ae0ab124a6c3193",
+    "Assets\\TumbangPreso\\Tests\\PlayMode\\AiLungeChaseSprintTests.cs.meta": "001caad56f40d88687b27191268a9c5e71b98238483a4687148bdddaaf420cfb"
+  },
+  "runs": {
+    "sprint-original": {
+      "nativePid": 23176,
+      "exitCode": 2,
+      "total": "14",
+      "passed": "11",
+      "failed": "3",
+      "protectedCount": 21383,
+      "remainingSourceDeltas": [],
+      "rawFiles": {
+        "Logs\\tournament-review1007\\sprint-original\\results.xml": "6d10d756f92cf91893fbedd3d5426ff81438864a3c1b4cde15c1a25a403d3492",
+        "Logs\\tournament-review1007\\sprint-original\\result.json": "79318e44e64eb612e1f80f121365a677e7f64606bfdd15631085e41f514588bb",
+        "Logs\\tournament-review1007\\sprint-original\\source-restoration.json": "f8e36ef0e28f1d3c1fbb78e2b29f0b059990b81aa8ca170b89d48dd10ad9ed48"
+      },
+      "movement": []
+    },
+    "sprint-original2": {
+      "nativePid": 49208,
+      "exitCode": 2,
+      "total": "14",
+      "passed": "12",
+      "failed": "2",
+      "protectedCount": 21383,
+      "remainingSourceDeltas": [],
+      "rawFiles": {
+        "Logs\\tournament-review1007\\sprint-original2\\results.xml": "44e03b6f427b8a17a795785bd0bb09eeeecab6d006bea83026b02ff1167079cd",
+        "Logs\\tournament-review1007\\sprint-original2\\result.json": "21b2be2964c97ddd4b3199cc0887fcb67c62204e49df0b27a66dfb5118516406",
+        "Logs\\tournament-review1007\\sprint-original2\\source-restoration.json": "644b91e0312d2dcef829f5365a7ae90fc4d5fb84170c0157e01f4ffa64252d4c"
+      },
+      "movement": [
+        "[HeldChaseSprint] held=0.60 gapBefore=6.6000 gapAfter=6.4000 defenderSpeed=7.50 attackerSpeed=5.00 sprint=True cooldown=0.000\n",
+        "[HeldChaseSprint] held=1.20 gapBefore=6.6000 gapAfter=6.7000 defenderSpeed=3.75 attackerSpeed=5.00 sprint=False cooldown=0.000\n"
+      ]
+    },
+    "sprint-candidate": {
+      "nativePid": 50220,
+      "exitCode": 0,
+      "total": "14",
+      "passed": "14",
+      "failed": "0",
+      "protectedCount": 21383,
+      "remainingSourceDeltas": [],
+      "rawFiles": {
+        "Logs\\tournament-review1007\\sprint-candidate\\results.xml": "5d5b91c5e7ad060c4a028ed3608a28fe8e2f81a254b457d69e4773a10e1f1a21",
+        "Logs\\tournament-review1007\\sprint-candidate\\result.json": "1d75063a312d773b9d78d65f379216da78d3aaa9059e816844485bd98bb5d332",
+        "Logs\\tournament-review1007\\sprint-candidate\\source-restoration.json": "beb191da4e315ce86af01ac6a866ca312812ca81870e1af3718b36560c5d3835"
+      },
+      "movement": [
+        "[HeldChaseSprint] held=0.60 gapBefore=6.6000 gapAfter=6.4000 defenderSpeed=7.50 attackerSpeed=5.00 sprint=True cooldown=0.000\n",
+        "[HeldChaseSprint] held=1.20 gapBefore=6.6000 gapAfter=6.4000 defenderSpeed=7.50 attackerSpeed=5.00 sprint=True cooldown=0.000\n"
+      ]
+    }
+  },
+  "scope": "Controlled actual Act, input-consumer and CharacterController motion; no natural-match, player, multiplayer, frame-pacing or full-readiness claim. Initial fixture error retained separately; corrected original2 is the causal baseline."
+}

@@ -1,0 +1,20 @@
+{
+    "passed": true,
+    "error": "",
+    "measurementMode": "",
+    "scriptingBackend": "",
+    "buildFlagsEvidence": "",
+    "allocationScope": "",
+    "allocationCounterStatus": "",
+    "developmentBuild": false,
+    "editor": false,
+    "binaryProfilerRequested": false,
+    "profilerSupported": false,
+    "allocationCounterAvailable": false,
+    "allocationCalibrationBytes": 0,
+    "stages": [
+        "actual player copied rooted clips; authored introduction study is a separate gate",
+        "actual player copied rooted samples complete: 36"
+    ],
+    "frameWindows": []
+}

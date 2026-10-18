@@ -51,6 +51,9 @@ namespace TumbangPreso.Social
         public bool CanEmote() =>
             _motor != null && _motor.CanAct() && !_motor.Intent.Locked(Verb.EmoteWheel) && !IsEmoting;
 
+        public bool HasEmoteClip(string id) =>
+            !string.IsNullOrEmpty(id) && Animator != null && Animator.HasEmoteClip(id);
+
         /// <summary>
         /// Local request. ⚠️ IT ASKS THE HOST RATHER THAN PLAYING IMMEDIATELY on a client, so a
         /// peer cannot show everyone an emote the host would have refused. In single player

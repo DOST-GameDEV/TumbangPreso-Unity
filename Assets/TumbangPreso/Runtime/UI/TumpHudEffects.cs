@@ -7,7 +7,11 @@ namespace TumbangPreso.UI
     /// <summary>State-driven edge effects using the existing game shaders on new native objects.</summary>
     public sealed class TumpHudEffects : MonoBehaviour
     {
-        private Image _danger, _caught;
+        private Image _danger, _caught, _possessed, _blinded, _concussed;
+        private Material _possessedMaterial, _blindedMaterial, _concussedMaterial;
+        private float _possessedPresence;
+        private Vector2 _possessedDir = Vector2.up;
+        private NemuRules.Phase _possessedPhase;
         private HudDangerFrame _frame;
         private float _frameAlpha;
         // Which state owns the frame. Kept through the fade out so the colour never swaps mid-fade.
@@ -25,6 +29,10 @@ namespace TumbangPreso.UI
         {
             _danger = Effect(root, "DangerEdges", "TumbangPreso/DownedVignette", out _dangerMaterial);
             _caught = Effect(root, "CaughtEdges", "TumbangPreso/FrostVignette", out _caughtMaterial);
+            _concussed = Effect(root, "ConcussedEdges", "TumbangPreso/ConcussedVignette", out _concussedMaterial);
+            _possessed = Effect(root, "PossessedEdges", "TumbangPreso/PossessedVignette", out _possessedMaterial);
+            // Over every other edge effect: the ghost is on the lens.
+            _blinded = Effect(root, "BlindedCloth", "TumbangPreso/DontLookBlind", out _blindedMaterial);
             _frame = OwnerUiLayout.Rect(root, "DangerFrame").gameObject.AddComponent<HudDangerFrame>();
             OwnerUiLayout.Fill(_frame.rectTransform); _frame.raycastTarget = false; _frame.enabled = false;
         }
@@ -41,6 +49,9 @@ namespace TumbangPreso.UI
         public void Tick(CharacterMotor local, bool spectator)
         {
             float dt = Time.unscaledDeltaTime;
+            TickPossessed(local, spectator, dt);
+            TickBlinded(local, spectator);
+            TickConcussed(local, spectator);
             var f = OwnerUiTheme.Current;
             var round = GameServices.Round;
             bool threatened = !spectator && local != null && !local.IsDefender && local.IsTaggable()
@@ -95,8 +106,129 @@ namespace TumbangPreso.UI
             var size = _caught.rectTransform.rect.size;
             if (size.y > 0) _caughtMaterial.SetFloat("_Aspect", size.x / size.y);
         }
+        /// <summary>True while the possessed player's own hands-and-ink screen is up (Nemu's PRUSISYON).</summary>
+        public bool PossessedScreenVisible => _possessed != null && _possessed.enabled && _possessedPresence > .3f;
+
+        /// <summary>
+        /// POSSESSED, ON THE VICTIM'S OWN SCREEN (`docs/reports/nemu-ultimate-2026-10-11/direction.md` sections 5 and 20): a bold
+        /// arrow round the crosshair pointing the way the ghost drags them, streaks flowing that way, their aura as smoke rolling
+        /// in from the edges (thickest on that side) over a breathing ink vignette (`Shaders/PossessedVignette`). The direction is the same pure pull the
+        /// motor steers with (`CharacterMotor.PossessionPull`), turned into the camera's frame, so it always agrees with the body.
+        /// It is information, not a flash: Reduce visual effects keeps the shapes and stills the breathing.
+        /// </summary>
+        private void TickPossessed(CharacterMotor local, bool spectator, float dt)
+        {
+            if (_possessed == null) return;
+            bool on = !spectator && local != null && local.IsPossessed;
+            float elapsed = on ? local.PossessionElapsed : NemuRules.PossessedSeconds;
+            float target = on ? Mathf.Clamp01(elapsed / NemuRules.SettleSeconds)
+                                * Mathf.Clamp01((NemuRules.PossessedSeconds - elapsed) / NemuRules.LeaveSeconds) : 0f;
+            _possessedPresence = Mathf.MoveTowards(_possessedPresence, target, dt / (target > _possessedPresence ? .25f : .4f));
+            _possessed.enabled = _possessedPresence > .001f;
+            if (!_possessed.enabled) return;
+            var cam = Camera.main;
+            if (on && cam != null && local.PossessionPull(out var pull))
+            {
+                Vector3 right = cam.transform.right; right.y = 0f;
+                Vector3 ahead = cam.transform.forward; ahead.y = 0f;
+                var screen = new Vector2(Vector3.Dot(pull, right.normalized), Vector3.Dot(pull, ahead.normalized));
+                if (screen.sqrMagnitude > 1e-5f)
+                    _possessedDir = Vector2.Lerp(_possessedDir, screen.normalized, 1f - Mathf.Exp(-dt * 8f)).normalized;
+            }
+            int seat = local != null ? local.PlayerSlot : 0;
+            _possessedMaterial.SetVector("_PullDir", new Vector4(_possessedDir.x, _possessedDir.y, 0f, 0f));
+            _possessedMaterial.SetFloat("_Presence", _possessedPresence);
+            _possessedMaterial.SetFloat("_Tell", on ? NemuRules.TellAmount(elapsed, seat) : 0f);
+            _possessedMaterial.SetFloat("_Surge", on ? NemuRules.SurgeEnvelope(elapsed, seat) : 0f);
+            _possessedMaterial.SetFloat("_Grip", local != null ? local.PossessionGrip : 1f);
+            _possessedMaterial.SetFloat("_Calm", Settings.SettingsStore.Current.ReducedEffects ? 1f : 0f);
+            var size = _possessed.rectTransform.rect.size;
+            if (size.y > 0) _possessedMaterial.SetFloat("_Aspect", size.x / size.y);
+            _possessed.color = Color.white;
+            // Its breath on the victim's own ears: an inhale on the tell, a push on the surge (skill sounds: silent until the
+            // owner releases them, `AudioCues.ReworkedSkillSfx`).
+            var phase = on ? NemuRules.PhaseAt(elapsed, seat) : NemuRules.Phase.None;
+            if (phase != _possessedPhase)
+            {
+                if (phase == NemuRules.Phase.Tell) GameServices.Audio?.PlayUi("sfx_nemu_possess_tell");
+                else if (phase == NemuRules.Phase.Surge) GameServices.Audio?.PlayUi("sfx_nemu_possess_surge");
+                _possessedPhase = phase;
+            }
+        }
+
+        /// <summary>True while the ghost is over the local player's eyes (Nemu's DON'T LOOK).</summary>
+        public bool BlindedScreenVisible => _blinded != null && _blinded.enabled && _blindCover > .5f;
+        private float _blindCover;
+        /// <summary>True while DON'T LOOK's dark covers this screen. Every player's tag and ring hides with it
+        /// (`Visual.CharacterNameplate`): owner on v5, a name floating in the dark beside the ghost, *"remove the text when
+        /// blinded"*. A blind you can read the court through is not a blind.</summary>
+        public static bool EyesCoveredOnScreen { get; private set; }
+
+        /// <summary>
+        /// BLINDED, ON THE VICTIM'S OWN SCREEN (Nemu's DON'T LOOK, `Shaders/DontLookBlind`): the dark rushes in round the ghost as it
+        /// jumps into their lens, holds for the 2 s, draws back as it lets go, and its tail coils round the bottom of the view
+        /// while the slow wears off. All of
+        /// it from the replicated BLINDED clock, so nothing here can outlast or undercut the rule.
+        /// ⚠️ Unlike the possessed edges, Reduce visual effects does NOT lift the cover: the blind is the rule, not a flourish.
+        /// </summary>
+        private void TickBlinded(CharacterMotor local, bool spectator)
+        {
+            if (_blinded == null) return;
+            bool on = !spectator && local != null && local.IsBlinded;
+            float elapsed = on ? local.BlindedElapsed : StatusRules.BlindedSeconds;
+            float covered = on && elapsed < NecroRules.DontLookBlindSeconds ? 1f : 0f;
+            float lunge = Mathf.Clamp01(elapsed / NecroRules.DontLookLungeSeconds);
+            float open = Mathf.Clamp01((elapsed - (NecroRules.DontLookBlindSeconds - .3f)) / .3f);
+            float slow = on ? (1f - local.BlindedSpeedScale) / NecroRules.DontLookSlowPeak : 0f;
+            _blindCover = covered * lunge * (1f - open);
+            EyesCoveredOnScreen = covered > 0f && open < .5f;
+            _blinded.enabled = on && (covered > 0f || slow > .01f);
+            if (!_blinded.enabled) return;
+            _blindedMaterial.SetFloat("_Elapsed", Mathf.Max(0f, elapsed));
+            _blindedMaterial.SetFloat("_Clock", Time.unscaledTime % 1000f);
+            _blindedMaterial.SetFloat("_Open", open);
+            _blindedMaterial.SetFloat("_Covered", covered);
+            _blindedMaterial.SetFloat("_Slow", Mathf.Clamp01(slow));
+            _blindedMaterial.SetFloat("_Calm", Settings.SettingsStore.Current.ReducedEffects ? 1f : 0f);
+            var size = _blinded.rectTransform.rect.size;
+            if (size.y > 0) _blindedMaterial.SetFloat("_Aspect", size.x / size.y);
+            _blinded.color = Color.white;
+        }
+
+        /// <summary>True while the local player's own screen carries Concussed's ochre rim.</summary>
+        public bool ConcussedScreenVisible => _concussed != null && _concussed.enabled;
+        private bool _wasConcussed;
+
+        /// <summary>
+        /// CONCUSSED, ON THE VICTIM'S OWN SCREEN (Dante's Boulder and Continental Drift, `Shaders/ConcussedVignette`): a chipped
+        /// dust-ochre rim that throbs slowly, with the double image (`Visual.ConcussedPerception`, in the grade) and a high
+        /// ringing on their ears only. From the replicated Concussed clock. It is information, not a flash: Reduce visual
+        /// effects keeps the rim and stills the throb.
+        /// </summary>
+        private void TickConcussed(CharacterMotor local, bool spectator)
+        {
+            bool on = !spectator && local != null && local.IsConcussed && local.IsLocalViewer;
+            // The ringing is theirs alone; everyone else hears the status land on the body (`sfx_status_concussed`).
+            if (on && !_wasConcussed) GameServices.Audio?.PlayUi("sfx_status_concussed_ring");
+            _wasConcussed = on;
+            if (_concussed == null) return;
+            float presence = on ? Visual.ConcussedPerception.Envelope(local.ConcussedLeft) : 0f;
+            _concussed.enabled = presence > .001f;
+            if (!_concussed.enabled) return;
+            _concussedMaterial.SetFloat("_Presence", presence);
+            _concussedMaterial.SetFloat("_Clock", Time.unscaledTime % 1000f);
+            _concussedMaterial.SetFloat("_Calm", Settings.SettingsStore.Current.ReducedEffects ? 1f : 0f);
+            var size = _concussed.rectTransform.rect.size;
+            if (size.y > 0) _concussedMaterial.SetFloat("_Aspect", size.x / size.y);
+            _concussed.color = Color.white;
+        }
+
         private void OnDestroy()
         {
+            if (_concussedMaterial != null) Destroy(_concussedMaterial);
+            EyesCoveredOnScreen = false;
+            if (_blindedMaterial != null) Destroy(_blindedMaterial);
+            if (_possessedMaterial != null) Destroy(_possessedMaterial);
             if (_dangerMaterial != null) Destroy(_dangerMaterial);
             if (_caughtMaterial != null) Destroy(_caughtMaterial);
         }

@@ -1,0 +1,15 @@
+{
+  "raw/final-fixture.cs": "f0642d0c8bc4d4ed19428bc8a7f6e38a24568c7f7d3a35693db77dc4eb2d8a9c",
+  "raw/fixture.cs": "bf75772ec8baa197d06c34f5716585baad979317bfb772118e68c2ef676a807f",
+  "raw/fixture.cs.meta": "624669439585d98d0773eb3f4584e12ef18fecba28d77f6bd190bbe6348847ce",
+  "raw/Interest-original.cs": "02a75c1f6ea7d473f4d0e4e492ae477935e01a566905e7b0844802007752f721",
+  "raw/candidate-native/classification.json": "b0c3c2f63a4bc6628f3406b47235742f53cc709dfeb44f365193151032e5f221",
+  "raw/candidate-native/launch.json": "5052a4656772f03bd15cdecfd0059692c5d5e662123c2ec104db8d915c218391",
+  "raw/candidate-native/results.xml": "b8688176d414c4b028f74b85b13ebdb0f91ac87e56223ffcc6147443b0a27e9e",
+  "raw/original-native/classification.json": "b0c3c2f63a4bc6628f3406b47235742f53cc709dfeb44f365193151032e5f221",
+  "raw/original-native/launch.json": "d23edc4501b8ce3e16f6148967356a117208cf14a75ae9ddaa99c8088b6c05be",
+  "raw/original-native/results.xml": "225dd061378b3fe9b70637fbf94a49d510d50ac4621964524f88e4da15ecb880",
+  "raw/overclock-original-native/classification.json": "b0c3c2f63a4bc6628f3406b47235742f53cc709dfeb44f365193151032e5f221",
+  "raw/overclock-original-native/launch.json": "1e1fcdf6e01b68cbd3a8fea5d55d93ab30598842103583c9c9080756df2c9e6e",
+  "raw/overclock-original-native/results.xml": "9801031fe42a875594ebf85f4809058027e1284743e6ab0679bb420776f924d8"
+}

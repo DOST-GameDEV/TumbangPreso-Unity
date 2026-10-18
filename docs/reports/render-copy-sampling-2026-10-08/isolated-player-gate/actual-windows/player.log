@@ -1,0 +1,110 @@
+Mono path[0] = 'C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1008g/TumbangPreso_Data/Managed'
+Mono config path = 'C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1008g/MonoBleedingEdge/etc'
+CodeReloadManager initialized
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+Initialize engine version: 6000.5.8f1 (5cb7df797b7d)
+[Subsystems] Discovering subsystems at path C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1008g/TumbangPreso_Data/UnitySubsystems
+Forcing GfxDevice: Direct3D 11
+GfxDevice: creating device client; kGfxThreadingModeClientWorkerJobs
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: AMD Radeon RX 6600 (ID=0x73ff)
+    Vendor:   ATI
+    VRAM:     8147 MB
+    Driver:   32.0.21043.19003
+Begin MonoManager ReloadAssembly
+- Finished resetting the current domain, in  0.056 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+D3D11 device created for Microsoft Media Foundation video decoding.
+<RI> Initializing input.
+Using Windows.Gaming.Input
+<RI> Input initialized.
+[Audio] loaded 122 of 122 cues.
+[NetIdentity] Online sign-in is disabled for this local UI review.
+UnloadTime: 1.453400 ms
+[Build] TUMBANG PRESO 1.0.0 | 4d0a78924b28+dirty | protocol 153 | StandaloneWindows64
+[OwnerUiReview] actual player copied rooted clips; authored introduction study is a separate gate
+Unexpected timestamp values detected. This can occur in H.264 videos not encoded with the baseline profile. Timestamps will be skewed to correct the playback for C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1008g/TumbangPreso_Data/sharedassets0.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1008g/TumbangPreso_Data/sharedassets0.resource
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 1.930300 ms
+Unloading 19 unused Assets to reduce memory usage. Loaded Objects now: 4690.
+Total: 2.942700 ms (FindLiveObjects: 0.257400 ms CreateObjectMapping: 0.390800 ms MarkObjects: 2.198800 ms  DeleteObjects: 0.095400 ms)
+
+First video frame not zero: 4 (0.133333s). Result may be out of sync. Please make sure tracks all start at 0 in C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1008g/TumbangPreso_Data/resources.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1008g/TumbangPreso_Data/resources.resource
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 3.031300 ms
+Unexpected timestamp values detected. This can occur in H.264 videos not encoded with the baseline profile. Timestamps will be skewed to correct the playback for C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1008g/TumbangPreso_Data/resources.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1008g/TumbangPreso_Data/resources.resource
+First video frame not zero: 4 (0.133333s). Result may be out of sync. Please make sure tracks all start at 0 in C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Builds/release-ui-perf1008g/TumbangPreso_Data/resources.resource
+Unloading 73 unused Assets to reduce memory usage. Loaded Objects now: 10219.
+Total: 6.906800 ms (FindLiveObjects: 0.872000 ms CreateObjectMapping: 1.572400 ms MarkObjects: 4.341800 ms  DeleteObjects: 0.120300 ms)
+
+[Net] offline
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+Cannot Pause a disabled VideoPlayer
+UnloadTime: 8.888900 ms
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[AA] mode requested 0x MSAA + FXAA on; QualitySettings.antiAliasing 0; camera 'Main Camera' allowMSAA True, allowHDR True, path Forward; target delivered 1 sample(s), format ARGBHalf; device supportsMultisampledTextures 1
+Unloading 71 unused Assets to reduce memory usage. Loaded Objects now: 17586.
+Total: 5.730700 ms (FindLiveObjects: 0.966900 ms CreateObjectMapping: 1.301900 ms MarkObjects: 3.304400 ms  DeleteObjects: 0.157100 ms)
+
+[ArenaPrewarm] drew 20 views in 0.22 s.
+[HubLoading] Eskinita ready after 4.09 s.
+[Slice] round 1 begins, taya is seat 0
+[CopyRootedPlayer] hero=dante clip=rooted-struggle movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=dante clip=plant-heave movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=dante clip=root-breakout movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=dante clip=feared-flee movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=cheska clip=rooted-struggle movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=cheska clip=plant-heave movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=cheska clip=root-breakout movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=cheska clip=feared-flee movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=sean clip=rooted-struggle movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=sean clip=plant-heave movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=sean clip=root-breakout movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=sean clip=feared-flee movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=zack clip=rooted-struggle movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=zack clip=plant-heave movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=zack clip=root-breakout movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=zack clip=feared-flee movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=nemu clip=rooted-struggle movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=nemu clip=plant-heave movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=nemu clip=root-breakout movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=nemu clip=feared-flee movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=phaister clip=rooted-struggle movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=phaister clip=plant-heave movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=phaister clip=root-breakout movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=phaister clip=feared-flee movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=rafi clip=rooted-struggle movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=rafi clip=plant-heave movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=rafi clip=root-breakout movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=rafi clip=feared-flee movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=amihan clip=rooted-struggle movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=amihan clip=plant-heave movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=amihan clip=root-breakout movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=amihan clip=feared-flee movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=paete clip=rooted-struggle movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=paete clip=plant-heave movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=paete clip=root-breakout movedBones=7 disabledSampler=true controller=false
+[CopyRootedPlayer] hero=paete clip=feared-flee movedBones=7 disabledSampler=true controller=false
+[OwnerUiReview] actual player copied rooted samples complete: 36
+[OwnerUiReview] PASS
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+CodeReloadManager destroyed

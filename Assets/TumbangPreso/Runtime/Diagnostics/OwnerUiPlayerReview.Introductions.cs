@@ -4,6 +4,7 @@ using System.Linq;
 using TumbangPreso.CameraSystem;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
+using TumbangPreso.UI.Hub;
 using TumbangPreso.Visual;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -12,19 +13,79 @@ namespace TumbangPreso.Diagnostics
 {
     public sealed partial class OwnerUiPlayerReview
     {
+        private IEnumerator RootedCopySamplesOnly()
+        {
+            Stage("actual player copied rooted clips; authored introduction study is a separate gate");
+            yield return WaitFor(() => Find("GuestAccount") != null || Find("ContinueAccount") != null || TumpHub.Current != null, 80);
+            yield return PerformanceHomeEntry();
+            HubHome.Choice = 2;
+            var rules = CustomGameRules.Defaults(GameMode.HeroStrike);
+            rules.Bots = CustomGameRules.MaxBots; rules.ManualReady = false;
+            SceneFlow.PinSelectedRules(rules); SceneFlow.Networked = false; SceneFlow.SelectedMap = ReviewMap();
+            yield return PerformanceScoredEntry();
+            var actor = PerformanceActor(); actor.Intent.Parked = true;
+            var visual = actor.GetComponent<CharacterVisual>(); int sampled = 0;
+            foreach (string hero in ReviewHeroes())
+            {
+                var art = RosterBook.Load().People.First(p => p.Id == hero);
+                actor.CharacterIndex = Roster.IndexIn(Roster.HeroPeople, hero);
+                visual.ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
+                yield return new WaitForSecondsRealtime(.15f);
+                var track = new MatchPoseHistory.Track(actor, visual.Model); track.Record(Time.time); track.Record(Time.time + .05f);
+                var stage = new GameObject("RootedCopyPlayerFixture"); stage.SetActive(false);
+                try
+                {
+                    var copy = track.Clone(stage.transform); if (copy == null) throw new InvalidOperationException(hero + " copy missing");
+                    track.Apply(copy, track.Newest); stage.SetActive(true);
+                    var originalAnimator = visual.Model.GetComponentInChildren<Animator>();
+                    var root = originalAnimator != null ? track.CopiedBone(copy, originalAnimator.transform) : null;
+                    var sampler = root != null ? root.GetComponent<Animator>() : null;
+                    if (sampler == null || sampler.enabled || sampler.runtimeAnimatorController != null || sampler.applyRootMotion)
+                        throw new InvalidOperationException(hero + " sampler is missing or automatic");
+                    var set = GeneratedMotionAssets.For(RootedMotion.Folder, DanceClip.ResourceName(originalAnimator.transform));
+                    if (set?.Clips == null || set.Clips.Length != 4) throw new InvalidOperationException(hero + " rooted set incomplete");
+                    foreach (var clip in set.Clips)
+                    {
+                        track.Apply(copy, track.Newest);
+                        var beforeRotations = copy.Bones.Select(b => b.localRotation).ToArray();
+                        var beforePositions = copy.Bones.Select(b => b.localPosition).ToArray();
+                        clip.SampleAnimation(root.gameObject, clip.length * .37f);
+                        int moved = Enumerable.Range(0, copy.Bones.Length).Count(n => Quaternion.Angle(beforeRotations[n], copy.Bones[n].localRotation) > .1f
+                            || (beforePositions[n] - copy.Bones[n].localPosition).sqrMagnitude > 1e-7f);
+                        if (moved == 0) throw new InvalidOperationException(hero + " / " + clip.name + " copied bones did not move in player");
+                        var heldRotations = copy.Bones.Select(b => b.localRotation).ToArray();
+                        var heldPositions = copy.Bones.Select(b => b.localPosition).ToArray();
+                        yield return null; yield return null;
+                        for (int n = 0; n < copy.Bones.Length; n++)
+                            if (Quaternion.Angle(heldRotations[n], copy.Bones[n].localRotation) > .01f
+                                || Vector3.Distance(heldPositions[n], copy.Bones[n].localPosition) > .0001f)
+                                throw new InvalidOperationException(hero + " copied pose updated automatically");
+                        Debug.Log($"[CopyRootedPlayer] hero={hero} clip={clip.name} movedBones={moved} disabledSampler=true controller=false"); sampled++;
+                    }
+                    if (stage.GetComponentsInChildren<MonoBehaviour>(true).Length != 0) throw new InvalidOperationException(hero + " copy has gameplay scripts");
+                }
+                finally { Object.Destroy(stage); }
+            }
+            if (sampled != ReviewHeroes().Length * 4) throw new InvalidOperationException("Missing copied clip samples");
+            Stage("actual player copied rooted samples complete: " + sampled);
+        }
+
         private IEnumerator IntroductionBodiesOnly()
         {
             bool withScene = Environment.GetCommandLineArgs().Contains("-tp-introduction-scenes");
             Stage("native render-only introduction " + (withScene ? "scene" : "body") + " study, not a live cinematic phase");
-            yield return WaitFor(() => Find("GuestAccount") != null || Find("ContinueAccount") != null || Find("StartButton") != null, 80);
-            if (Find("GuestAccount") != null) yield return Click("GuestAccount");
-            else if (Find("ContinueAccount") != null) yield return Click("ContinueAccount");
+            yield return WaitFor(() => Find("GuestAccount") != null || Find("ContinueAccount") != null || TumpHub.Current != null, 80);
+            yield return PerformanceHomeEntry();
             Settings.SettingsStore.Current.Fullscreen = false;
             Screen.SetResolution(1280, 720, FullScreenMode.Windowed);
-            SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
+            HubHome.Choice = 2;
+            var rules = CustomGameRules.Defaults(GameMode.HeroStrike);
+            rules.Bots = CustomGameRules.MaxBots;
+            rules.ManualReady = false;
+            SceneFlow.PinSelectedRules(rules);
+            SceneFlow.Networked = false;
             SceneFlow.SelectedMap = ReviewMap();
-            yield return Click("StartButton"); yield return Click("HeroStrikeButton"); yield return Click("PracticeButton");
-            yield return Click("PrimaryButton"); yield return StartReadyRound();
+            yield return PerformanceScoredEntry();
             foreach (var brain in Object.FindObjectsByType<AIController>()) brain.enabled = false;
             foreach (var reader in Object.FindObjectsByType<PlayerInputReader>()) reader.enabled = false;
             var actor = Object.FindAnyObjectByType<PauseWatcher>().Local;

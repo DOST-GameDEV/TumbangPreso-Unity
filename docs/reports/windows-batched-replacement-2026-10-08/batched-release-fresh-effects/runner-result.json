@@ -1,0 +1,78 @@
+{
+  "sourceCommit": "001d80b568fc0a13fb3603a8ccc23123a61f9a42",
+  "protocol": 153,
+  "profile": "pc-combined-replay-startup-001d80b56-batched-release-fresh-effects",
+  "exe": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\release-ui-perf1008g\\TumbangPreso.exe",
+  "command": [
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\release-ui-perf1008g\\TumbangPreso.exe",
+    "-batchmode",
+    "-force-d3d11",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1920",
+    "-screen-height",
+    "1080",
+    "-tp-profile",
+    "pc-combined-replay-startup-001d80b56-batched-release-fresh-effects",
+    "-tp-scenery-art-proof",
+    "-tp-startup-order-probe",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\release-ui-perf1008g\\batched-release-fresh-effects",
+    "-tp-replay-package",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\replay-integration1007\\fixtures-current-full-effects",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\release-ui-perf1008g\\batched-release-fresh-effects\\player.log",
+    "-tp-replay-effects-required"
+  ],
+  "execution": "hidden graphics batch, synthetic UI raycast only, no OS mouse/keyboard/foreground interaction",
+  "pid": 51692,
+  "exitCode": 0,
+  "replayProbe": {
+    "passed": true,
+    "error": "",
+    "requiredRecordedEffects": true,
+    "recordedEffectFrames": 836,
+    "recordedQuads": 203,
+    "meshVertices": 812,
+    "effectsTexture": "Arena effects atlas",
+    "stages": [
+      "menu-open",
+      "replays-route",
+      "recording-row-created",
+      "recording-open",
+      "seek-17",
+      "fresh-effects-decoded-and-owned-mesh-bound",
+      "playing-2x",
+      "paused-follow",
+      "returned-home"
+    ]
+  },
+  "probe": {
+    "passed": true,
+    "studioSeen": true,
+    "error": "",
+    "mainVisibleSeconds": 5.699261665344238,
+    "firstFrame": 4,
+    "lastFrame": 40,
+    "firstVideoTime": 0.13333333333333333,
+    "lastVideoTime": 1.3333333333333333,
+    "stages": [
+      "login-first at 4.075s",
+      "main-loading-visible at 4.619s",
+      "lobby-arrived at 10.319s",
+      "first-home-video-playing at 10.522s",
+      "first-home-decoded-frames-advance at 11.723s"
+    ]
+  },
+  "playerLogAcceptance": {
+    "passed": true,
+    "exceptionCount": 0,
+    "messages": []
+  },
+  "scopedGatePassed": true,
+  "inputRestored": true,
+  "editorInputRestored": true,
+  "taskOwnedReplayPreferenceCreated": true,
+  "profileRestored": true,
+  "terminal": true
+}

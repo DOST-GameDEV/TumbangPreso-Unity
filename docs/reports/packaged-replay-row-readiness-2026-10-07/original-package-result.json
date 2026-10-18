@@ -1,0 +1,58 @@
+{
+  "sourceCommit": "8d62ad898ed70a57b92598424bf4638f6671a34f",
+  "protocol": 153,
+  "profile": "pc-combined-replay-startup-8d62ad898-package-startup-replay",
+  "exe": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\replay-desktop1007\\TumbangPreso.exe",
+  "command": [
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\replay-desktop1007\\TumbangPreso.exe",
+    "-batchmode",
+    "-force-d3d11",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1920",
+    "-screen-height",
+    "1080",
+    "-tp-profile",
+    "pc-combined-replay-startup-8d62ad898-package-startup-replay",
+    "-tp-startup-order-probe",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\replay-desktop1007\\package-startup-replay",
+    "-tp-replay-package",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\replay-integration1007\\fixtures",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\replay-desktop1007\\package-startup-replay\\player.log"
+  ],
+  "execution": "hidden graphics batch, synthetic UI raycast only, no OS mouse/keyboard/foreground interaction",
+  "pid": 47924,
+  "exitCode": 1,
+  "replayProbe": {
+    "passed": false,
+    "error": "System.InvalidOperationException: Replay0 has no UI raycast\r\n  at TumbangPreso.Diagnostics.LocalReplayPackageProbe.Click (System.String name) [0x000ea] in <033e4867fcfc4d2b815dd57b2970f286>:0 \r\n  at TumbangPreso.Diagnostics.LocalReplayPackageProbe.Step () [0x000d7] in <033e4867fcfc4d2b815dd57b2970f286>:0 \r\n  at TumbangPreso.Diagnostics.LocalReplayPackageProbe.Update () [0x0000a] in <033e4867fcfc4d2b815dd57b2970f286>:0 ",
+    "stages": [
+      "menu-open",
+      "replays-route"
+    ]
+  },
+  "probe": {
+    "passed": true,
+    "studioSeen": true,
+    "error": "",
+    "mainVisibleSeconds": 5.721958637237549,
+    "firstFrame": 4,
+    "lastFrame": 40,
+    "firstVideoTime": 0.13333333333333333,
+    "lastVideoTime": 1.3333333333333333,
+    "stages": [
+      "login-first at 4.091s",
+      "main-loading-visible at 4.621s",
+      "lobby-arrived at 10.343s",
+      "first-home-video-playing at 10.563s",
+      "first-home-decoded-frames-advance at 11.763s"
+    ]
+  },
+  "inputRestored": true,
+  "editorInputRestored": true,
+  "taskOwnedReplayPreferenceCreated": true,
+  "profileRestored": true,
+  "terminal": true
+}

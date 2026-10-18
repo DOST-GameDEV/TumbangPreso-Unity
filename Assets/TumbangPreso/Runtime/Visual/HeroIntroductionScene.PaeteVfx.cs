@@ -232,15 +232,18 @@ namespace TumbangPreso.Visual
         /// <summary>The staged guardian's spot, pushed off the real can (the live cast's rule), and its ground branches turned away from it.</summary>
         private void PaeteLandingOffTheCan()
         {
-            var lata = GameServices.Round?.Lata;
-            if (lata == null) return;
-            var world = _root.transform.TransformPoint(PaeteLanding);
-            var from = _root.transform.position;
-            var pushed = Abilities.PaeteVine.ClearOfCan(world, lata.transform.position, from);
-            var local = _root.transform.InverseTransformPoint(pushed); local.y = 0f;
-            // The RISE is framed for a tree about 5.5 m ahead; never follow a push further than the clearance itself.
-            var shift = Vector3.ClampMagnitude(local - PaeteLanding, Core.PaeteRules.SentryCanClearance);
-            _pvLanding = PaeteLanding + shift;
+            // ⚠️ THE LIVE TREE'S SPOT, NOT A STAGED ONE (owner, 2026-10-17: *"make sure the ults cutscennes arent hardcoded and shows
+            // live view of match"*). The guardian used to rise 5.5 m straight ahead whatever he aimed at, while the live one lands
+            // where the accepted cast puts it (`PaeteVine.SentryTarget`: up to 8 m along his aim, off the can), so everyone it caught
+            // was staged round the wrong spot and jumped at the hand-back. Now the stage raises it exactly where play will.
+            if (_source == null) return;
+            var round = GameServices.Round;
+            var feet = _source.transform.position;
+            var forward = _source.transform.forward; forward.y = 0f;
+            var target = Abilities.PaeteVine.SentryTarget(feet, forward, _aim, round?.Lata);
+            var local = _root.transform.InverseTransformPoint(target); local.y = 0f;
+            // Never under his own feet (a cast aimed at himself throws it forward).
+            _pvLanding = local.sqrMagnitude > 1f ? local : PaeteLanding;
         }
 
         /// <summary>

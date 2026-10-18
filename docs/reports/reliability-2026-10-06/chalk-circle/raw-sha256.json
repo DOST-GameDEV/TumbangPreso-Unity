@@ -1,0 +1,8 @@
+{
+  "raw/original-result.json": "7740001a6e7c1405be4c585c23588d57729ff2e30cdb4b63c672ddf2e7613fd3",
+  "raw/candidate-result.json": "ee58a64b624737aba026c1137e1e16c565a43efffda177a016d5c145380f268b",
+  "raw/original-source.cs": "9b39487fda0e1b1c7a6410e84cabb45bbf541dec44569ccc42efa4de35f782f8",
+  "raw/Program.cs": "4c454238b1e10722bbbf29b4ecc8aa29e497a396ead1527e2a37623fb095c043",
+  "raw/Shim.cs": "aa635e54aec1e67340b1c8a292d6ff1f68f382fcd277fe6983efc3cf5e77a12a",
+  "raw/SourceCheck.csproj": "9c97bfe0cbb4a29ecf4dea28d9df35ff708e11bdc2b392fe118b8d75ec93ffbd"
+}

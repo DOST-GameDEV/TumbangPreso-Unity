@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.500	Quiet	QuietEstablish	the street	1	0
+1.002	89.000	Quiet	QuietEstablish	the street	1	0
+1.503	88.500	Quiet	QuietEstablish	the street	1	0
+2.004	88.000	Quiet	QuietEstablish	the street	1	0
+2.505	87.480	LataHit	Objective	the can · MANG KANOR	2	0
+3.007	86.981	LataHit	Objective	the can · MANG KANOR	2	0
+3.508	86.481	LataHit	Objective	the can · MANG KANOR	2	0
+4.009	85.981	LataHit	Objective	the can · MANG KANOR	2	0
+4.511	85.481	Retrieval	RetrievalTwoShot	retrieval · BEBANG	3	0
+5.298	84.701	Retrieval	RetrievalTwoShot	retrieval · BEBANG	3	0
+5.800	84.201	Retrieval	Chase	retrieval · BEBANG	3	0
+6.302	83.701	Retrieval	Chase	retrieval · BEBANG	3	0
+6.803	83.261	Tag	Defender	tag · TOTOY	4	0
+7.306	82.741	Tag	Defender	tag · TOTOY	4	0
+7.808	82.241	Tag	Defender	tag · TOTOY	4	0
+8.309	81.741	Tag	Defender	tag · TOTOY	4	0
+8.810	81.241	Tag	Defender	tag · TOTOY	4	0
+9.312	80.742	Retrieval	Chase	retrieval · MANG KANOR	5	0
+9.812	80.302	Tag	Defender	tag · TOTOY	7	0
+10.377	79.742	Tag	Defender	tag · TOTOY	7	0
+10.878	79.242	Tag	Defender	tag · TOTOY	7	0
+11.379	78.742	Tag	Defender	tag · TOTOY	7	0
+11.879	78.242	Tag	Defender	tag · TOTOY	7	0
+12.381	77.742	Retrieval	Chase	retrieval · BEBANG	8	0
+12.882	77.222	Retrieval	Chase	retrieval · BEBANG	9	0
+13.382	76.722	Retrieval	Chase	retrieval · BEBANG	9	0
+13.885	76.222	Downed	Recovery	down · MANG KANOR	10	0
+14.386	75.722	Downed	Recovery	down · MANG KANOR	10	0
+14.889	75.222	LataHit	Objective	the can · BEBANG	11	0

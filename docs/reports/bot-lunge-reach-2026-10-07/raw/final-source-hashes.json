@@ -1,0 +1,8 @@
+{
+  "Assets/TumbangPreso/Runtime/AIController.cs": "cc2b3ded91a4f38fa4be1c04f3649ceb1159a057a0b52ea48054ec1bba8817f7",
+  "Assets/TumbangPreso/Tests/PlayMode/AiTagCommitmentTests.cs": "b8d91584c2a2e18973008eb59480e24e59a223467a19f3492b2be814efcbb9d3",
+  "Assets/TumbangPreso/Runtime/CombatVerbs.cs": "070a2acce433a708dc7f9899cbaeaeb4ac08f55de104223f0440e1ceaab53b4b",
+  "Assets/TumbangPreso/Runtime/CharacterMotor.cs": "717771e5f75befbe78dc9d1b313b206b55109aca4fa74b0b4e83db029d4dae21",
+  "Packages/com.tumbangpreso.core/Runtime/Balance.cs": "cb78204dcb134db25b6830de7e07dd844f40c50cf7039dafe8522e7f6ae89a0b",
+  "Packages/com.tumbangpreso.core/Runtime/AiTuning.cs": "35dd21dc2f988cd724838d6a70bd689c78dcaed44d47bdb11626a12fc6f84ac7"
+}

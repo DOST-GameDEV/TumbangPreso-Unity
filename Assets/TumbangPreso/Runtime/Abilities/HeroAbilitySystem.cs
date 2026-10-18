@@ -31,7 +31,7 @@ namespace TumbangPreso.Abilities
         public bool IsImmuneToTags => Kit is NemuHeroKit nemu
             && nemu.IsPhantomPhaseActive
             && (_motor == null || !_motor.HoldingSlipper);
-        public bool IsImmuneToStuns => Kit is DanteHeroKit dante && dante.IsDemonicCarapaceActive;
+        public bool IsImmuneToStuns => Kit is DanteHeroKit dante && (dante.IsDemonicCarapaceActive || dante.IsMountainForm);
 
         /// <summary>Status immunity (Geo's SHIELD, ABILITY-2): every status but Tagged is refused.
         /// Today the same flag as stun immunity, named for what the rework's statuses ask.</summary>
@@ -128,6 +128,10 @@ namespace TumbangPreso.Abilities
             HeroId = string.IsNullOrEmpty(heroId) ? "dante" : heroId.ToLowerInvariant();
             Kit = CreateKitFor(HeroId);
             ConfigureLoadout(build);
+            // Dante's Earthbound, shown (heel furrows along a shove's real slide): on his body, on every peer.
+            var furrows = GetComponent<Visual.DanteEarthboundFurrows>();
+            if (HeroId == "dante") { if (furrows == null) gameObject.AddComponent<Visual.DanteEarthboundFurrows>(); }
+            else if (furrows != null) Destroy(furrows);
         }
 
         public bool UpdateLoadout(HeroBuild build)

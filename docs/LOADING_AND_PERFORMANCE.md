@@ -7,14 +7,43 @@ Read the current queue,[loading evidence](reports/stability-2026-09-27/loading-a
 
 ## Studio intro before boot work
 
-SplashScreen first plays the existing BH Studios clip on a lightweight surface.
-Fresh keyboard/mouse/controller/touch input skips only that clip through white;
-the usual loading UI, asset/account work and menu-ready barrier follow unchanged.
-Linux uses an explicitly bound VP8 derivative because H264 VideoClip import is
-unsupported there; the original MP4 and authored sequence remain. Missing/failed
-media has a bounded fallback. [Native evidence](reports/studio-intro-2026-10-02/README.md).
+Unity branding and the existing BH Studios clip precede login. The retired
+illustrated loading screen is absent from this startup route. After login, the
+existing main-menu loading view stays for at least five seconds and until its
+required preparation completes, then enters Home. Fresh input skips only the
+studio clip. Linux uses an explicitly bound VP8 derivative because H264 VideoClip
+import is unsupported there; the original MP4 remains. Missing/failed media has
+a bounded fallback. [Startup evidence](reports/startup-order-2026-10-07/README.md).
 
 ## Current Entry Points
+
+The current login/main-menu route now prepares the shared asynchronous roster
+catalogue and existing yielded gameplay icon, prop and effect-data caches before
+map and Home media. This restores preparation skipped when the retired splash
+route was removed. No additional models or preview cameras are created. The six existing mode-selection
+posters also preload through their shared asynchronous cache before Home media. Native
+and actual release timing evidence stays distinct in the
+[active-route preparation report](reports/active-menu-preload-2026-10-07/README.md).
+
+All seven maps have recorded map-selection backgrounds and matching posters.
+Voting previews the highlighted court in the full background; browsing is local,
+LOCK VOTE submits explicitly. [Native flow and media evidence](reports/map-vote-background-2026-10-07/README.md).
+Native checks cover the normal12-second ballot deadline, interrupted decoder
+recovery and original captured-source receipts against the current integration.
+The [recording method](MAP_PREVIEW_RECORDING.md) regenerates true1080p footage
+without retaining the previous capture's live scene. [Exact evidence and limits](reports/map-preview-lifetime-2026-10-07/README.md).
+Packaged performance, loop seams, portable codecs and actual peers remain open.
+Fresh all-map recordings now wait for the actual world-look ground update before
+frame0, correcting Eskinita's dark poster/loop flash while retaining capture
+quality. [Native source/decode/loop checks and remaining traffic seam](reports/settled-map-previews-2026-10-07/README.md).
+
+Arena map selection uses recorded output of the existing preview camera; the live
+lobby remains a real scene. Login warms map poster/clip metadata and only the
+shown view decodes. [Native playback and map-vote evidence](reports/recorded-map-preview-2026-10-07/README.md).
+All seven maps now have checked recordings and a reusable regeneration path;
+player/device acceptance remains separate.
+
+Login-time gameplay assets: [native responsiveness and interruption checks](reports/laptop-validation-2026-10-06/login-gameplay-preload/README.md).
 
 Bot rival-spacing queries reuse per-brain scratch storage. A calibrated native
 100-query measurement falls from200allocation events to0; four cases preserve
@@ -31,8 +60,8 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 
 | Responsibility | Source |
 |---|---|
-| Boot stages and progress | UI/SplashScreen.cs; shader slices,rosters,audio,menu art,input,glyphs and retained dependencies |
-| Roster catalogue handoff | RosterBook.Warmup shares one async catalogue request before SplashScreen iterates its referenced art/clips. Load adopts a completed cancelled request and retains direct synchronous fallback plus the once-only missing warning; no roster IDs/order or serialized art changes |
+| Boot stages and progress | UI/SplashScreen.cs keeps shader slices,rosters,audio,menu art,input and retained map dependencies. ConvertedMainMenu overlaps gameplay icon/VFX/prop/hero-data and Home-video preparation with usable login before automatic Home arrival |
+| Roster catalogue handoff | RosterBook.Warmup shares one async catalogue request on the current ConvertedMainMenu preparation route; the retained legacy SplashScreen consumer uses the same cache. Load adopts a completed cancelled request and retains direct synchronous fallback plus the once-only missing warning; no roster IDs/order or serialized art changes |
 | Shader preparation turns | SplashScreen calls WarmUpProgressively(1),checks a2ms elapsed target between calls and caps10variants/turn; one indivisible native compile may overrun,so this is not a hard frame guarantee |
 | Deferred SFX/voice samples | UI/SplashScreen.WarmAudioAssets; yielded sample loading and retention,not just clip references; music/streaming policy unchanged |
 | Real menu activation barrier | UI/SplashScreen.MenuActivation.cs and ConvertedMainMenu.IsPrepared; retain existing canvas through Wire/layout,then reveal login/input |
@@ -40,7 +69,7 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 | Arrival cancellation | MatchArrivalPresentation.Run is generation-owned and finally-cleaned even when another component drives its iterator; cancelled/disabled/replaced runs cannot reacquire the camera or hold after loading |
 | Title/login art and avatars | UI/OwnerMenuArt.cs,Avatars.cs; async cold reads awaited per item,then existing retained texture/sprite caches; supplied pixels and fallback policy unchanged |
 | Hub/HUD portraits and mode cards | UI/OwnerPortraitArt.cs; async roster-driven warmup and shared cache used by HubKit/TumpUiFactory |
-| First HOME loop | UI/Hub/HubSceneVideo.Warmup.cs; async metadata/selected poster,explicit prepare/play until frameReady then pause behind boot,adopting the same player/target; paused preparation alone timed out on Windows |
+| First HOME loop | ConvertedMainMenu starts UI/Hub/HubSceneVideo.Warmup.cs during usable login; async clips/selected poster and hidden decoder until frameReady, adopting the same player/target. Scene activation begins after login ends; low background priority is restored on menu destruction |
 | Hidden HOME background | HubSceneVideo binds MapPreviewSurface rendering visibility; opaque media suspends the covered court camera/surface without discarding prepared scenes or the fallback |
 | Ability prop source prefabs | Visual/HeroPropAssets.cs; current Paete/Rework/Phaister folders,no gameplay spawn during asset preload |
 | Supplementary baked motion | Visual/GeneratedMotionAssets.cs; yielded per-rig data preload shared by CharacterAnimator and rooted introduction lookups,no clip/graph generation |
@@ -53,7 +82,7 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 | Match loading surface | UI/Hub/HubLoading.cs and MatchInstaller.IsPrepared; ARENAS ONLY. Every SceneFlow peer uses owned async loading after a curtain frame, with in-flight target deduplication, destination setup, failure/return and cancellation instead of timed success. externallyLoaded is explicit observation only, not the network default |
 | Loading illustration deck | LoadingArtwork.Warmup asynchronously retains all three existing textures during boot; subsequent curtain installs and rotations reuse them. Direct no-boot fallback and artwork remain unchanged |
 | Menu scene entry | SceneFlow.Go -> SceneManager.LoadScene. No curtain since 2026-09-30 (TODO LOAD-1.4): the second "GETTING READY" screen was removed as redundant; the boot splash is the one loading screen before a match |
-| Custom map switching | Arena assets are retained by SplashScreen.WarmMapAssets at boot (unconditional again). MapPreviewSurface instances the shown map on hub entry and each other map on its first pick, then reuses the cached scene/look. No hub curtain and no PrepareAll |
+| Custom map switching | SplashScreen retains all map dependencies at boot. MapPreviewSurface keeps the completed image during cold instantiation, rejects unavailable destinations before parking the valid map and reuses cached scenes/looks. [Native pixels and recovery](reports/laptop-validation-2026-10-06/preview-selection-recovery/README.md) |
 | Training controls/targets | PracticeRange.cs,UI/PausePanel.TrainingRange.cs; prebuilt inactive menu and target bodies reused without changing saved preferences |
 | First-use/runtime costs | Existing profiler markers,FrameRateHistogram,tools/cold_start.py and current internal player |
 | Settings value changes | UI/TumpSettingsView partials; whole-row reflow only for new sections/text size,cached chips and one unsaved-state calculation per notification |
@@ -64,8 +93,10 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 
 ## Rules For Changes
 
-- ONE loading screen before the title (the boot splash) and none between menus; asset
-  and shader loading belongs there (TODO LOAD-1.4). Arena entry keeps its curtain.
+- Latest owner startup flow: usable login overlaps asynchronous Home preparation,
+  then supplied title art becomes a noninteractive loading surface with a small
+  actual progress bar and automatic Home arrival. Arena entry keeps its curtain.
+  [Native login preparation](reports/laptop-validation-2026-10-06/login-video-preload/README.md).
 - Owner permits loading screens wherever substantial initialization needs one.
   Reuse the existing surface,cover the actual work,keep feedback responsive and
   provide failure/exit behavior. Do not add timed waits to cheap interactions.
@@ -87,6 +118,10 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
   compilation or a warm cache. Test changed stages,not the same whole boot repeatedly.
 
 ## Current Qualification Boundary
+
+The current automatic startup route passes three native painting/real-pointer/
+full-boot checks on270f98d75. Map warmup took41.53s of45.62s total in that editor
+run; packaged/device timing remains open. [Exact evidence](reports/laptop-validation-2026-10-06/startup-auto-home-flow/README.md).
 
 The latest [focused native integration](reports/stability-2026-09-27/input-integration.md)
 passes loading-readiness and supplementary-data retention cases alongside five

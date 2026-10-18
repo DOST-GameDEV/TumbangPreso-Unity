@@ -1,0 +1,19 @@
+{
+  "sourceRef": "71057afc23abe1de6b6a5dfbb650252e283ca78b",
+  "sourceHashes": {
+    "Assets/TumbangPreso/Runtime/Diagnostics/OwnerUiPlayerReview.cs": "5513a0974b7107f504ca7e16073c0e932c7375f4e98927d6595ea3910851d27d",
+    "Assets/TumbangPreso/Runtime/Diagnostics/OwnerUiPlayerReview.Performance.cs": "ce9eb2503b500a44068db0de6e58f5ae04c997ace15a00cae971cf860ce834ca"
+  },
+  "rawFiles": {
+    "release-performance/runner-result.json": "be68b12fb390874b60044f69630e95e66cfab91961a4f11d29cb0d356b8c08cd",
+    "release-performance/result.json": "040078f64a2f3eeadc728cb4a58707445f43331254378e93755168a1e4be35e5",
+    "release-performance-ui/runner-result.json": "5cb99d8bccf4df8fe889659facb8f681be081a54512c0692b98a9a967f3eab27",
+    "release-performance-ui/result.json": "86892bc2ea19f7ef14ef9372f562d5e004ae2b35778b67058fa81c13f1ff20c3",
+    "route-candidate/result.json": "e5ca3fd529f228a9bd64e05eecad53d8d44e157e2c5ef9794ce4e1cc8a3ece1e",
+    "route-candidate/results.xml": "f50efdd34206e6f8415ee6c12f7237460eb39507b213f6b8258cd35653da7090",
+    "route-candidate/source-restoration.json": "02fa10cd160d03929a7b5f9b21a334154915ff165fdbee8db7c88bacbb926cf8"
+  },
+  "nativePassed": 1,
+  "protectedInputs": 21387,
+  "actualUpdatedPlayerRoute": "Pending fresh release build, not a performance pass"
+}

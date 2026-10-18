@@ -1,0 +1,2 @@
+[ReplayStreaming] speed=4 position=9.189467 missingWallSeconds=5.141832E-06 largest=1.117587E-07 frozenFrames=0
+[ReplayStreaming] speed=1 position=9.188061 missingWallSeconds=9.204401E-05 largest=4.763715E-07 frozenFrames=0

@@ -1,0 +1,13 @@
+# Complete spectator scenery-clearance queries before filtering
+
+SpectatorDirector.ValidatePose used an eight-entry native overlap buffer and filtered out actor, shoe and can colliders. When that buffer filled, scenery could be absent from its returned subset. The director accepted a camera eye inside an opaque collider.
+
+Original source54a76909bbd7f5c9f72d09253b8538a4f227269f reproduces this in native Unity physics. A fixture places seventeen identical overlapping boxes, marks sixteen as ignored can geometry, and varies the scenery box insertion order. The full native query independently finds all seventeen, including the scenery, and its ClosestPoint confirms the eye is inside it. The original director misses that scenery at insertion index8. The dense ignored-only clear-space control and ordinary single-scenery refusal both pass: one causal failure, two controls.
+
+The director now grows and repeats a full overlap query until the result fits before filtering. It retains the expanded reusable buffer. Scenery cannot disappear behind ignored colliders; eligibility filtering, sightlines, shot selection, springs, cuts, timing, hero presentation and gameplay authority stay unchanged.
+
+Original Unity48608/parent3214 exits2 with the one failure and two passes. Candidate47016/82510 exits0 with all three passing, including all seventeen scenery insertion positions. Exact original and candidate launch commands, classified receipts and XML remain under raw. This is native EditMode physics/validator evidence, not a rendered map sequence or player observation. The synthetic crowd deliberately stresses collider capacity; no particular live map is claimed to have produced that crowd.
+
+Both jobs are terminal. Each frozen21142-input snapshot is restored after279 known importer/ProjectAuditor deltas, with no unknown changes. Thirteen existing isolated editor preferences are restored. The full qualified manifests remain local and are identified by exact SHA256; three final production/fixture/meta LF hashes accompany this report. Unity6000.5.8f1 ran locally with graphics on gamergmae Windows11, one heavy job at a time, in the physical qa-a Library and validation profile.
+
+Camera transit clearance, readable natural gameplay, manual takeover, every map and individual Classic/Hero Strike character, especially Arena, remain separate acceptance scopes. This correction does not finish the full spectator pass. The existing shared4b679 package excludes this and the newer input/pickup/queue fixes; its earlier LAN/online evidence cannot qualify these source changes. No hero kit, art, scene, networking or saved profile was retuned.

@@ -858,6 +858,20 @@ namespace TumbangPreso.EditorTools
                 // the editor stays fixed.
                 "TumbangPreso/DownedVignette",
 
+                // Nemu's PRUSISYON: the possessed player's own screen (`UI.TumpHudEffects`), reached through `Shader.Find`.
+                // Stripped, the victim gets no hands and no direction cue while every observer still sees the rider.
+                "TumbangPreso/PossessedVignette",
+
+                // Dante's CONCUSSED: the victim's ochre rim (`UI.TumpHudEffects`), reached through `Shader.Find`.
+                // Stripped, the victim feels nothing but the slow.
+                "TumbangPreso/ConcussedVignette",
+
+                // Nemu's DON'T LOOK: the blinded player's own screen (`UI.TumpHudEffects`), reached through `Shader.Find`.
+                // Stripped, nothing covers the victim's eyes and the blind is only a slow.
+                "TumbangPreso/DontLookBlind",
+                // ...and its ghost, Blindfold (`Visual.BlindfoldGhostModel`), also only through `Shader.Find`.
+                "TumbangPreso/BlindfoldGhost",
+
                 // ⚠️ THE NEAR-CAMERA DISSOLVE, AND ITS MISS PATH SHIPS THE ORIGINAL REPORT BACK.
                 // `NearFade.Install` reaches it through `Shader.Find` and nothing in any scene
                 // references it, which is exactly the case this list exists for. Stripped, the

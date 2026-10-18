@@ -1,0 +1,8 @@
+{
+  "observedUTC": "2026-10-05T17:04:33.086311+00:00",
+  "unix": 1791219873.086311,
+  "route": "Normal DedicatedLAN tab first view; no code/directprobe",
+  "host": "192.168.1.7:8910",
+  "expectedRoom": "GWEC",
+  "expectedMap": "Arena"
+}

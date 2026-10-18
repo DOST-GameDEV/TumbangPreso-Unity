@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 10:45:04Z" end-time="2026-10-07 10:45:32Z" duration="28.3557261">
+  <test-suite type="TestSuite" id="3572" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="2081" result="Failed" site="Child" start-time="2026-10-07 10:45:04Z" end-time="2026-10-07 10:45:32Z" duration="28.355726" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3564" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2081" result="Failed" site="Child" start-time="2026-10-07 10:45:04Z" end-time="2026-10-07 10:45:32Z" duration="28.347500" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="55972" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3565" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2081" result="Failed" site="Child" start-time="2026-10-07 10:45:04Z" end-time="2026-10-07 10:45:32Z" duration="28.345076" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3568" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2079" result="Failed" site="Child" start-time="2026-10-07 10:45:04Z" end-time="2026-10-07 10:45:32Z" duration="28.342986" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1209" name="ArenaFxRecordedTests" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-10-07 10:45:04Z" end-time="2026-10-07 10:45:32Z" duration="28.282389" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1212" name="ClosingBetweenPoseSamplesRetainsTheFinalRenderedFrameAndActualEndpoint" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests.ClosingBetweenPoseSamplesRetainsTheFinalRenderedFrameAndActualEndpoint" methodname="ClosingBetweenPoseSamplesRetainsTheFinalRenderedFrameAndActualEndpoint" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" seed="539656621" result="Failed" start-time="2026-10-07 10:45:04Z" end-time="2026-10-07 10:45:19Z" duration="15.239350" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The final actual render frame must reach disk.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ArenaFxRecordedTests+<ClosingBoundary>d__8.MoveNext () [0x0060d] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\ArenaFxRecordedTests.cs:140
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ReplayClosingBoundary] match=639269667065263790 justFlushed=False pose=0.8137884 finalRendered=0.8230984 closed=0.8246787 clipEnd=0.8137884 saved=10
+]]></output>
+            </test-case>
+            <test-case id="1213" name="ClosingImmediatelyAfterSegmentFlushRetainsTheFinalRenderedFrameAndActualEndpoint" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests.ClosingImmediatelyAfterSegmentFlushRetainsTheFinalRenderedFrameAndActualEndpoint" methodname="ClosingImmediatelyAfterSegmentFlushRetainsTheFinalRenderedFrameAndActualEndpoint" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" seed="957914499" result="Failed" start-time="2026-10-07 10:45:19Z" end-time="2026-10-07 10:45:32Z" duration="13.031848" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The final actual render frame must reach disk.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ArenaFxRecordedTests+<ClosingBoundary>d__8.MoveNext () [0x0060d] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\ArenaFxRecordedTests.cs:140
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ReplayClosingBoundary] match=639269667324447429 justFlushed=True pose=1.375623 finalRendered=1.385623 closed=1.387533 clipEnd=1.375623 saved=28
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

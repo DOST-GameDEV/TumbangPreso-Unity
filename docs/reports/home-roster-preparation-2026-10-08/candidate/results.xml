@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-08 02:45:03Z" end-time="2026-10-08 02:45:23Z" duration="19.8316904">
+  <test-suite type="TestSuite" id="3658" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2151" result="Failed" site="Child" start-time="2026-10-08 02:45:03Z" end-time="2026-10-08 02:45:23Z" duration="19.831690" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3650" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2151" result="Failed" site="Child" start-time="2026-10-08 02:45:03Z" end-time="2026-10-08 02:45:23Z" duration="19.805848" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="48600" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3651" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2151" result="Failed" site="Child" start-time="2026-10-08 02:45:03Z" end-time="2026-10-08 02:45:23Z" duration="19.788356" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3654" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2149" result="Failed" site="Child" start-time="2026-10-08 02:45:03Z" end-time="2026-10-08 02:45:23Z" duration="19.770361" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1843" name="GeneratedMotionAssetsTests" fullname="TumbangPreso.PlayTests.GeneratedMotionAssetsTests" classname="TumbangPreso.PlayTests.GeneratedMotionAssetsTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-08 02:45:04Z" end-time="2026-10-08 02:45:05Z" duration="1.193446" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1844" name="BakedMotionWarmupRetainsTheExactAssetsWithoutCreatingActors" fullname="TumbangPreso.PlayTests.GeneratedMotionAssetsTests.BakedMotionWarmupRetainsTheExactAssetsWithoutCreatingActors" methodname="BakedMotionWarmupRetainsTheExactAssetsWithoutCreatingActors" classname="TumbangPreso.PlayTests.GeneratedMotionAssetsTests" runstate="Runnable" seed="1787914198" result="Failed" start-time="2026-10-08 02:45:04Z" end-time="2026-10-08 02:45:05Z" duration="1.174022" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.GeneratedMotionAssetsTests+<BakedMotionWarmupRetainsTheExactAssetsWithoutCreatingActors>d__2.MoveNext () [0x000d8] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\GeneratedMotionAssetsTests.cs:26
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1912" name="HomeRosterPreparationTests" fullname="TumbangPreso.PlayTests.HomeRosterPreparationTests" classname="TumbangPreso.PlayTests.HomeRosterPreparationTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-08 02:45:05Z" end-time="2026-10-08 02:45:08Z" duration="3.281508" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1913" name="ActualHomePreloadPreparesRosterMeshesAndMotionBeforeReadyWithoutSpawningActors" fullname="TumbangPreso.PlayTests.HomeRosterPreparationTests.ActualHomePreloadPreparesRosterMeshesAndMotionBeforeReadyWithoutSpawningActors" methodname="ActualHomePreloadPreparesRosterMeshesAndMotionBeforeReadyWithoutSpawningActors" classname="TumbangPreso.PlayTests.HomeRosterPreparationTests" runstate="Runnable" seed="288604368" result="Failed" start-time="2026-10-08 02:45:05Z" end-time="2026-10-08 02:45:08Z" duration="3.279570" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Authored recovery/rooted motion must already be retained before Home is ready.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.HomeRosterPreparationTests+<ActualHomePreloadPreparesRosterMeshesAndMotionBeforeReadyWithoutSpawningActors>d__2.MoveNext () [0x0044a] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\HomeRosterPreparationTests.cs:53
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2513" name="OwnerMenuEditsTests" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" testcasecount="15" result="Passed" start-time="2026-10-08 02:45:08Z" end-time="2026-10-08 02:45:08Z" duration="0.083817" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2523" name="OutlineWarmupSurvivesSceneNotificationsWithoutSpawningOrDressingModels" fullname="TumbangPreso.PlayTests.OwnerMenuEditsTests.OutlineWarmupSurvivesSceneNotificationsWithoutSpawningOrDressingModels" methodname="OutlineWarmupSurvivesSceneNotificationsWithoutSpawningOrDressingModels" classname="TumbangPreso.PlayTests.OwnerMenuEditsTests" runstate="Runnable" seed="1839230375" result="Passed" start-time="2026-10-08 02:45:08Z" end-time="2026-10-08 02:45:08Z" duration="0.075241" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[OutlineWarmupCheck] meshes=2 vertices=4667 coldMs=1.739 maxStepMs=0.871 reusedMs=0.340
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="3295" name="StartupOrder1007Tests" fullname="TumbangPreso.PlayTests.StartupOrder1007Tests" classname="TumbangPreso.PlayTests.StartupOrder1007Tests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-08 02:45:08Z" end-time="2026-10-08 02:45:23Z" duration="14.771730" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="3296" name="LogosLoginFiveSecondMainThenFirstHomeAnimation" fullname="TumbangPreso.PlayTests.StartupOrder1007Tests.LogosLoginFiveSecondMainThenFirstHomeAnimation" methodname="LogosLoginFiveSecondMainThenFirstHomeAnimation" classname="TumbangPreso.PlayTests.StartupOrder1007Tests" runstate="Runnable" seed="719575387" result="Passed" start-time="2026-10-08 02:45:08Z" end-time="2026-10-08 02:45:23Z" duration="14.770032" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] StartupLoginFirst1007-1920 cream source=252,211,159 pixel=242,139,102; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupLoginFirst1007-1280 cream source=252,211,159 pixel=242,142,106; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupMainLoading1007-1920 cream source=252,211,159 pixel=247,197,141; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupMainLoading1007-1280 cream source=252,211,159 pixel=245,182,120; isolated UI camera, no ColourGrade.
+[StartupOrder1007] studio->login->main-loading->home; loadingSeconds=7.899323 firstFrames=4->40
+[TumpUiCapture] StartupFirstHomePlaying1007-1920 cream source=252,211,159 pixel=45,27,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] StartupFirstHomePlaying1007-1280 cream source=252,211,159 pixel=47,29,18; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

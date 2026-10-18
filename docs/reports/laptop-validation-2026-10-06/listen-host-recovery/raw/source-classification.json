@@ -1,0 +1,26 @@
+{
+  "original": {
+    "sourceCommit": "3216e1b0ac8dc3acc027f0fdbd32c2cf1966e5dd",
+    "qualifiedBaseline": "b43115d1b111503de7fcc7dfbed2026cd1b7a0c9 plus frozen typography26 overlays",
+    "baselineManifestSha256": "e3e57dfc9e7adc8eda0b212685971c2987980c5925768f77cc04ac160e0a76b2",
+    "inputCount": 21192,
+    "unchangedFiles": 21189,
+    "changedInputs": {
+      "Assets/TumbangPreso/Runtime/Net/NetSession.cs": "588e8c1591f3b5a33d3ffe668db193d725cb2045972e6be350375c257c872dbd",
+      "Assets/TumbangPreso/Tests/PlayMode/HostFailureRecoveryTests.cs": "745eb9b222f9e823b9b0f8f9e36a0ee257cf6b854c89f18168040b88ec384be8",
+      "Assets/TumbangPreso/Tests/PlayMode/HostFailureRecoveryTests.cs.meta": "a3a22e28717f84551e63b439b742bb8d7eb0ea65de573486d11ac96db06920b6"
+    }
+  },
+  "candidate": {
+    "sourceCommit": "3216e1b0ac8dc3acc027f0fdbd32c2cf1966e5dd",
+    "qualifiedBaseline": "b43115d1b111503de7fcc7dfbed2026cd1b7a0c9 plus frozen typography26 overlays",
+    "baselineManifestSha256": "e3e57dfc9e7adc8eda0b212685971c2987980c5925768f77cc04ac160e0a76b2",
+    "inputCount": 21192,
+    "unchangedFiles": 21189,
+    "changedInputs": {
+      "Assets/TumbangPreso/Runtime/Net/NetSession.cs": "dee8034540ad11810150b28868eb8f18f320bc91caa1dc921492e80a28d4958e",
+      "Assets/TumbangPreso/Tests/PlayMode/HostFailureRecoveryTests.cs": "745eb9b222f9e823b9b0f8f9e36a0ee257cf6b854c89f18168040b88ec384be8",
+      "Assets/TumbangPreso/Tests/PlayMode/HostFailureRecoveryTests.cs.meta": "a3a22e28717f84551e63b439b742bb8d7eb0ea65de573486d11ac96db06920b6"
+    }
+  }
+}

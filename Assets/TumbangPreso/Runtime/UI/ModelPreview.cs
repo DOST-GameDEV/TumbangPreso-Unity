@@ -282,6 +282,24 @@ namespace TumbangPreso.UI
         private float _userZoom = 1.0f;
 
         private bool _needsFrame;
+        private bool _loadTimingPending;
+        private string _loadTimingSource;
+        private static int _loadTimingEnabled=-1;
+        internal static bool LoadTimingEnabled
+        {
+            get
+            {
+                if(_loadTimingEnabled<0)
+                {
+                    var args=System.Environment.GetCommandLineArgs();
+                    _loadTimingEnabled=System.Array.IndexOf(args,"-tp-performance-only")>=0
+                        &&System.Array.IndexOf(args,"-tp-tournament")<0?1:0;
+                }
+                return _loadTimingEnabled==1;
+            }
+        }
+        internal static double LoadElapsedMs(long began)
+            =>(System.Diagnostics.Stopwatch.GetTimestamp()-began)*1000.0/System.Diagnostics.Stopwatch.Frequency;
 
         /// <summary>Set by <see cref="SetTileFraming"/>. See that function.</summary>
         private bool _centreSubject;
@@ -710,6 +728,9 @@ namespace TumbangPreso.UI
             if (!forceRebuild && _model != null && prefab == _sourceModel && petModel == _sourcePet &&
                 ShowingSlipper == _sourceSlipper && SameValues(_sourceClips, clips) &&
                 SameValues(_sourcePalette, palette) && (petModel == null || _pet != null)) return;
+            bool measure=LoadTimingEnabled;
+            long prepareBegan=measure?System.Diagnostics.Stopwatch.GetTimestamp():0;
+            _loadTimingPending=false;
             if (_model != null) { _model.SetActive(false); Destroy(_model); }
             if (_pet != null) { _pet.SetActive(false); Destroy(_pet); }
             _model = null; _pet = null;
@@ -721,7 +742,9 @@ namespace TumbangPreso.UI
 
             if (prefab == null) return;
 
+            long instantiateBegan=measure?System.Diagnostics.Stopwatch.GetTimestamp():0;
             _model = Instantiate(prefab, _pivot);
+            double instantiateMs=measure?LoadElapsedMs(instantiateBegan):0;
             _model.transform.localPosition = Vector3.zero;
             _model.transform.localRotation = Quaternion.identity;
             _model.transform.localScale = Vector3.one * PreviewScale;
@@ -784,6 +807,7 @@ namespace TumbangPreso.UI
             // two different things, which is the rule stated at the top of this method; dressing
             // the picker shoe differently from the match shoe would break it in the one place it
             // is most visible. § 79.7 was that bug in the other direction.
+            long dressBegan=measure?System.Diagnostics.Stopwatch.GetTimestamp():0;
             if (!isPerson && ShowingSlipper)
             {
                 Visual.ToonSkin.ApplySlipper(_model, Visual.ToonSkin.PropOutlineWidth);
@@ -795,6 +819,8 @@ namespace TumbangPreso.UI
                     palette);
             }
 
+            double dressMs=measure?LoadElapsedMs(dressBegan):0;
+            long petBegan=measure?System.Diagnostics.Stopwatch.GetTimestamp():0;
             if (petModel != null)
             {
                 _pet = Instantiate(petModel, _pivot);
@@ -805,9 +831,12 @@ namespace TumbangPreso.UI
                 Visual.ToonSkin.Apply(_pet, Visual.ToonSkin.PersonOutlineWidth, palette);
             }
 
+            double petMs=measure?LoadElapsedMs(petBegan):0;
+            long idleBegan=measure?System.Diagnostics.Stopwatch.GetTimestamp():0;
             PlayIdle(clips);
+            double idleMs=measure?LoadElapsedMs(idleBegan):0;
             IsolateFromForeignLights();
-            ApplyPreviewAmbient();
+            if(isActiveAndEnabled)ApplyPreviewAmbient();
 
             // A new subject gets a fresh sweep: the player picked this one to look at, and the
             // arc's phase carrying over means one pick greets you front-on and the next shows
@@ -819,6 +848,11 @@ namespace TumbangPreso.UI
             _turnPhase = InitialTurnPhase;
 
             _needsFrame = true;
+            if(measure)
+            {
+                _loadTimingPending=true;_loadTimingSource=prefab.name;
+                Debug.Log(System.FormattableString.Invariant($"[ModelPreviewLoad] model={_loadTimingSource} stage=prepare instantiate_ms={instantiateMs:F3} toon_ms={dressMs:F3} pet_ms={petMs:F3} idle_bind_ms={idleMs:F3} prepare_cpu_ms={LoadElapsedMs(prepareBegan):F3} scope=opt-in-cpu-includes-probe-overhead"));
+            }
         }
 
         private static bool SameValues<T>(T[] left, T[] right)
@@ -1107,11 +1141,22 @@ namespace TumbangPreso.UI
             if (_camera != null) _camera.Render();
         }
 
+        public System.Collections.IEnumerator PrepareHiddenFrame()
+        {
+            if(isActiveAndEnabled||_camera==null)yield break;
+            Step(settleImmediately:true);
+            yield return null;
+            try{ApplyPreviewAmbient();_camera.Render();}
+            finally{RestoreAmbient();_camera.enabled=false;}
+        }
+
         private void Step(bool settleImmediately = false)
         {
             if (_camera == null) return;
-
+            bool measure=_loadTimingPending;
+            long stepBegan=measure?System.Diagnostics.Stopwatch.GetTimestamp():0;
             EnsureTexture(settleImmediately);
+            double textureMs=measure?LoadElapsedMs(stepBegan):0;
 
             // ⚠️ RE-DERIVED EVERY FRAME, NOT ONLY WHEN THE TARGET IS BUILT. Setting it once in
             // `EnsureTexture` is correct until something resets it, and a camera's aspect is
@@ -1121,9 +1166,12 @@ namespace TumbangPreso.UI
             if (_texture != null && _texture.height > 0)
                 _camera.aspect = _frameAspect;
 
+            long sampleBegan=measure?System.Diagnostics.Stopwatch.GetTimestamp():0;
             SampleIdle();
-
+            double sampleMs=measure?LoadElapsedMs(sampleBegan):0;
+            long frameBegan=measure?System.Diagnostics.Stopwatch.GetTimestamp():0;
             if (_needsFrame) Frame();
+            double frameMs=measure?LoadElapsedMs(frameBegan):0;
 
             // ⚠️⚠️ THE HANDOVER EXPIRES NOW, IT IS NOT PERMANENT. 🧑 2026-08-29, on the picker:
             // *"this is supposed to be like rotating and shit, both slippers and tsinelas and
@@ -1157,6 +1205,11 @@ namespace TumbangPreso.UI
             }
 
             ApplyCamera();
+            if(measure)
+            {
+                _loadTimingPending=false;
+                Debug.Log(System.FormattableString.Invariant($"[ModelPreviewLoad] model={_loadTimingSource} stage=first-step texture_cpu_ms={textureMs:F3} sample_cpu_ms={sampleMs:F3} framing_cpu_ms={frameMs:F3} step_cpu_ms={LoadElapsedMs(stepBegan):F3} scope=cpu-only-not-gpu-or-present"));
+            }
         }
 
         /// <summary>
@@ -1284,6 +1337,7 @@ namespace TumbangPreso.UI
 
         private void OnEnable()
         {
+            if(_model!=null)ApplyPreviewAmbient();
             if(_camera!=null)_camera.enabled=true;
         }
 

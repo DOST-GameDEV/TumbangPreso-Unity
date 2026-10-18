@@ -1,0 +1,28 @@
+{
+  "sourceCommit": "80440c18e80db1a5b85a99151e88914d53674d70",
+  "previousManifest": "../arena-between-ramps/raw/source-delta.json plus ../arena-supported-shoes/raw/original-qualified-source.json and candidate-source-delta.json",
+  "all21194InputsEqualPreviousQualifiedRun": true,
+  "identity": {
+    "schemaVersion": 1,
+    "workerId": "qa-a-be075dcdfa07",
+    "validationOnly": true,
+    "projectRoot": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a",
+    "sourceProject": "C:\\Users\\Matthew\\dev\\tump-integration1003",
+    "sourceCommit": "8e7cfc7feb4eee614d456347ccbb26ad962d1714",
+    "companyName": "BH Studios Validation",
+    "productName": "TumpWorker-qa-a-be075dcdfa07",
+    "editorVersion": "6000.5.8f1",
+    "guardVersion": 1,
+    "guardSha256": "65b69c94b83cfe306293fec69649d2846f122fc083007c5d1bf64d3849dc4f90",
+    "libraryPath": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Library",
+    "libraryPhysical": true,
+    "libraryCopyFrom": "C:\\Users\\Matthew\\dev\\tump-laptop-native1003\\Library",
+    "requiredProfile": "validation-qa-a-be075dcdfa07",
+    "shippingBuildsAllowed": false,
+    "warmupRequired": true,
+    "editorValidation": "not_run",
+    "state": "ready"
+  },
+  "method": "Existing ArenaMatchProbe unchanged, four bots, HeroStrike,8x60 custom rounds, fixed1/60 capture frames, timeScale1, live host clocks for breaks",
+  "stoppingConditions": "MatchEnded, game clock rounds*roundSeconds*1.5+60 or2100 real seconds; fixtureTimeout2400000ms. All8 rounds and winner observed."
+}

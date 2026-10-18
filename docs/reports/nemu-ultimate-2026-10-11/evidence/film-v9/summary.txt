@@ -1,0 +1,1 @@
+v9 THE PRAYER, film r43 (four views, 17 s with play after the hand-back): Logs/nemu-lti/nemu_let_them_in_v9.mp4 (her screen) and nemu_let_them_in_v9_four_views.mp4, with the v9 sound draft. Rounds r38-r43 on 2026-10-14. NemuPrusisyonTests 7/7; NemuKitContractProbe 17/38 (stale before this pass: retired mechanics).

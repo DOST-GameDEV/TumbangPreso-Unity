@@ -1,0 +1,19 @@
+{
+    "passed": true,
+    "error": "",
+    "requiredRecordedEffects": false,
+    "recordedEffectFrames": 0,
+    "recordedQuads": 0,
+    "meshVertices": 0,
+    "effectsTexture": "",
+    "stages": [
+        "menu-open",
+        "replays-route",
+        "recording-row-created",
+        "recording-open",
+        "seek-17",
+        "playing-2x",
+        "paused-follow",
+        "returned-home"
+    ]
+}

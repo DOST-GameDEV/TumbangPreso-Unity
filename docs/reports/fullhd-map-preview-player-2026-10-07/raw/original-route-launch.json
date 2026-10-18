@@ -1,0 +1,21 @@
+{
+  "pid": 55668,
+  "profile": "preview-fullhd1007a",
+  "artifact": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Builds\\preview-player-52b888546-1007\\TumbangPreso.exe",
+  "command": [
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Builds\\preview-player-52b888546-1007\\TumbangPreso.exe",
+    "-batchmode",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1920",
+    "-screen-height",
+    "1080",
+    "-tp-profile",
+    "preview-fullhd1007a",
+    "-tp-map-preview-probe",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\map-preview-player1-direct1007\\probe",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a\\Logs\\map-preview-player1-direct1007\\player.log"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "base": "770e32219d090ff963a6e359f3c4e62608f187c5",
+  "originalMapSha256": "7c5aa86b2c6587b9fd2ad0bf29a18799f01593aff9cc445780f43c110f3c4fa6",
+  "candidateMapSha256": "ba7bc5fbbbff6b342d8bfe33df4d7626d4378d4e116dd1600e89cf1297c8c1e2",
+  "originalManifestSha256": "1aaedbe27fb98277b330dfd5a99dc1268eab768dd1c6005dd7efea68b26242d3",
+  "candidateManifestSha256": "96291ffc79132e8a50cd1ce07e1a1c6f0b8209d93c34366197ec96a95c97c0e7",
+  "fixtureIdentical": true
+}

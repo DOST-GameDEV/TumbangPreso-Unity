@@ -1,0 +1,17 @@
+{
+  "pid": 45252,
+  "parentSession": 95506,
+  "cpuSecondsUnchanged": 240.515625,
+  "workingSetBytes": 989413376,
+  "threads": {
+    "ExecutionDelay": 1,
+    "UserRequest": 51,
+    "EventPairLow": 4,
+    "Unknown": 33
+  },
+  "lastPhase": "Input System module state changed to Shutdown",
+  "terminal": false,
+  "restorationPending": true,
+  "quitAttempts": 1,
+  "action": "Preserve process/profile/package; no further GUI input or kill. Advance one heavy native test in separate physical worker and distinct company/product/editor prefs."
+}

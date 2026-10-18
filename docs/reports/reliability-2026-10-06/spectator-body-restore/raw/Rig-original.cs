@@ -1,0 +1,1869 @@
+using System.Collections.Generic;
+using UnityEngine;
+// ShadowCastingMode, for the first-person self-hide. See ApplyFppSelfHide.
+using UnityEngine.Rendering;
+
+namespace TumbangPreso.CameraSystem
+{
+    public enum CameraMode { Fpp, Tpp }
+
+    public enum AimSource { Mouse, Movement }
+
+    /// <summary>
+    /// The player camera. Ported from `camera_rig.gd`.
+    ///
+    /// ⚠️⚠️ THE GAME IS FIRST PERSON. A Person is ALWAYS FPP and a Prop is ALWAYS TPP; that is
+    /// a stated directive, not a preference, and an earlier version of this port used a
+    /// third-person follow camera for everything, which is a different game.
+    ///
+    /// ⚠️⚠️ THE CAMERA NEVER INHERITS THE BODY'S ROLL OR PITCH, AND THIS IS THE INVARIANT.
+    /// It was reported three times from playtests, with screenshots: the whole 3D view rolled
+    /// forty degrees while the HUD stayed level. The pivots are children of the body, so they
+    /// inherit its full basis, and anything that leaves a non-yaw component on the body lands
+    /// directly in the player's eye. Patching each writer was tried in pieces and failed. So
+    /// the rig stops trusting its parent: every frame both pivots are given an ABSOLUTE
+    /// rotation built from the body's YAW ONLY plus the rig's own pitch. Whatever the body does
+    /// on the other two axes cannot reach the camera, from any code path, including ones
+    /// nobody has written yet.
+    ///
+    /// ⚠️ AND YAW IS RECOVERED FROM THE FORWARD VECTOR, NOT FROM EULER ANGLES. Decomposing a
+    /// basis that has roll in it does not give back the yaw you want, which is precisely the
+    /// situation this exists to survive.
+    /// </summary>
+    public sealed class CameraRig : MonoBehaviour
+    {
+        // -------------------------------------------------------------------
+        // Constants, carried over exactly.
+        // -------------------------------------------------------------------
+
+        public const float PitchMinDeg = -80.0f;
+        public const float PitchMaxDeg = 70.0f;
+        public const float BaseSensitivity = 0.15f;
+
+        /// <summary>
+        /// ⚠️ MEASURED, AND THE OLD 1.55 MUST NOT BE RESTORED. That value was "eye height on a
+        /// 1.6 unit capsule" and was never checked against a model: it put the whole character
+        /// below the near edge of the frame. 0.45 is 55% of the way up the head mesh, which is
+        /// the eye line on the actual rig.
+        /// </summary>
+        public const float FppEyeHeight = 0.45f;
+
+        /// <summary>Meshes whose name contains this are hidden in first person.</summary>
+        public const string FppHiddenMeshHint = "head";
+
+        public const float ViewmodelScale = 0.72f;
+
+        /// <summary>
+        /// ⚠️ PUSHED DOWN AND BACK AFTER SCALING. Shrinking the arms alone just leaves smaller
+        /// arms in the same commanding spot; down clears the centre of frame and back is what
+        /// actually stops them subtending half the vertical FOV.
+        ///
+        /// ⚠️⚠️ THE Z IS FLIPPED FROM THE .gd's `Vector3(0.0, -0.10, -0.16)` AND IT WAS COPIED
+        /// ACROSS UNCHANGED, WHICH PUT THE ARMS BEHIND THE CAMERA. Godot looks down -Z, so -0.16
+        /// there is 16 cm IN FRONT of the eye; Unity looks down +Z, so the same number is 16 cm
+        /// BEHIND it. Every other converted vector in this file and in `ViewmodelArms` takes the
+        /// flip — the arm origins, the carry anchor, the carry direction — and this one was
+        /// missed because it is the only one written as a plain "push it back" offset rather
+        /// than as a transcribed transform. The visible result is the arms straddling the near
+        /// plane and drawing as two enormous slabs across the top of the frame, which is exactly
+        /// what the report's screenshot shows.
+        /// </summary>
+        public static readonly Vector3 ViewmodelSeat = new Vector3(0.0f, -0.10f, 0.16f);
+
+        public const float PersonCapsuleHeight = 1.6f;
+        public const float TppMinSpringLength = 1.8f;
+        public const float TppMinPitchDeg = -34.0f;
+        public const float TppBaseSpringLength = 4.5f;
+        public const float TppBasePitchDeg = -15.0f;
+        public const float TppMountHeight = 1.2f;
+
+        public const float VmKickTime = 0.22f;
+
+        public const float EmotePitchMinDeg = -35.0f;
+        public const float EmotePitchMaxDeg = 20.0f;
+
+        // -------------------------------------------------------------------
+        // § THE FALL FRAMING. The fall REUSES the emote swing's machinery and NOT its shot.
+        //
+        // ⚠️⚠️ THE SHARED PATH IS LOAD-BEARING AND STAYS SHARED. `BeginEmoteView` calls
+        // `RestoreSelfHide`, and without it the camera orbits a body `ApplyFppSelfHide` has put
+        // into SHADOWS_ONLY: that is the reported *"doing emote doesnt show myself in tpp"* bug,
+        // and a fall-specific entry point would rediscover it. Only the three numbers below are
+        // the fall's own.
+        //
+        // ⚠️⚠️ AND THE SHOT COULD NOT STAY SHARED, WHICH IS WHY THESE EXIST. 🧑, 2026-08-26:
+        // the fall camera *"is awkward"*. An emote is a pose you chose while STANDING, so it is
+        // framed off `TppMountHeight` = 1.20 m, a body's chest. A fall is a body flat on the
+        // tarmac, roughly 0.40 m tall and 4.5 m away from a mount that is now 1.2 m of empty
+        // air above it: the subject ends up small, low in frame and partly behind the shot.
+        //
+        // ⚠️ THIS IS NOT THE DELETED HAND-PICKED EMOTE BOOM COMING BACK. `ApplyEmoteView`'s own
+        // note records a 2.6 m arm at a flat 1.0 m being wrong FOR AN EMOTE, because an emote is
+        // a standing character and third person already knows how to frame one of those. That
+        // argument is about a standing body and it is untouched: emotes still ride the TPP boom
+        // exactly as before. These apply only while `_fallView` is true.
+        //
+        // The numbers, solved rather than picked: a body on the road occupies y = 0 to about
+        // 0.40 m, so the mount sits at its middle. At 26 degrees the eye is
+        // 0.20 + 2.80 * sin 26 = 1.43 m up and 2.52 m back, which looks DOWN at the tarmac the
+        // player is lying on rather than across it.
+        public const float FallMountHeight = 0.20f;
+        public const float FallSpringLength = 2.80f;
+        public const float FallPitchDeg = 26.0f;
+
+        /// <summary>Travel, m/s, over which a falling body counts as THROWN (a car, a train) rather
+        /// than tripped where it stood: a sprint is 6 to 7, a car's throw 7 to 14 plus its aside.</summary>
+        public const float ThrownSpeed = 7.5f;
+
+        /// ⚠️ THE FALL KEEPS ITS OWN CLAMP because the emote band tops out at 20 degrees, which
+        /// is BELOW the angle a fall opens at. Sharing it would have silently pulled the shot
+        /// back up to the standing framing on the first frame.
+        public const float FallPitchMinDeg = 6.0f;
+        public const float FallPitchMaxDeg = 48.0f;
+
+        // -------------------------------------------------------------------
+
+        [SerializeField] private AimSource _aimSource = AimSource.Movement;
+        /// <summary>
+        /// ⚠️⚠️ 95 IN FIRST PERSON AND 70 IN THIRD, FROM `CameraRig.tscn`, AND A SINGLE 75 FOR
+        /// BOTH WAS WRONG IN BOTH DIRECTIONS. The .tscn's FppCamera is `fov = 95.0` and its
+        /// TppCamera is `fov = 70.0`; Godot's `keep_aspect` defaults to KEEP_HEIGHT, so both are
+        /// VERTICAL angles and transcribe straight into Unity's `fieldOfView`.
+        ///
+        /// These remain the original defaults. The optional accessibility FOV changes how much
+        /// street the player can see: a first-person view at 75 where the game was framed at
+        /// 95 shows a third less of the street, which changes how much of the box a taya can
+        /// watch at once and how early an attacker sees a lunge coming, and it is most of why
+        /// the two builds' arena screenshots do not look like the same game even with identical
+        /// geometry. It also decides how much of the frame the viewmodel arms occupy.
+        /// </summary>
+        public const float FppFieldOfView = 95.0f;
+        public const float TppFieldOfView = 70.0f;
+
+        /// <summary>
+        /// How many degrees the first-person lens widens while the stamina model is actually
+        /// granting a sprint. See the § THE SPRINT KICK note in <see cref="ApplyLens"/>.
+        ///
+        /// ⚠️ 7 DEGREES ON A 95 DEGREE LENS, WHICH IS DELIBERATELY MODEST BECAUSE THE BASE IS
+        /// ALREADY VERY WIDE. The usual sprint kick in a first-person game is around a tenth of the
+        /// base FOV, but those games start near 60 to 70 degrees. This one transcribes Godot's
+        /// `fov = 95.0`, which is already past the angle where straight lines start bending at the
+        /// frame edge, so the same proportional kick would land at 105 and push the periphery into
+        /// obvious distortion. 7 is a little over 7 per cent: enough to feel the frame open, small
+        /// enough that a wall at the edge does not visibly shear as it arrives.
+        /// </summary>
+        public const float SprintFieldOfViewKick = 7.0f;
+
+        /// <summary>
+        /// How fast the lens converges on its target, in reciprocal seconds. At 8 the kick is
+        /// roughly nine tenths applied after 0.29 s, which is about the time it takes to reach
+        /// sprint speed from standing, so the picture and the acceleration arrive together.
+        /// </summary>
+        public const float SprintLensRate = 8.0f;
+
+        /// <summary>
+        /// The spring arm's standoff. ⚠️ DELIBERATELY LARGER THAN THE NEAR PLANE (0.15 against
+        /// 0.05): the arm stops that far short of whatever it hit, and a margin under the near
+        /// plane lets the wall clip through the camera exactly when the arm bottoms out.
+        /// </summary>
+        public const float TppArmMargin = 0.15f;
+
+        [SerializeField] private float _fieldOfView = FppFieldOfView;
+
+        private CharacterMotor _character;
+        private CameraMode _mode = CameraMode.Fpp;
+
+        private Transform _fppPivot;
+        private Transform _tppPivot;
+        private Transform _viewmodel;
+        private ViewmodelArms _arms;
+        private UnityEngine.Camera _camera;
+
+        private float _pitchDeg;
+        private Vector3 _cosmeticOffset, _holdAimAnchor;
+        // Gameplay aims through the unshaken eye. Presentation intensity is not
+        // another way of changing an accepted throw's origin or target.
+        public Vector3 AimEye => _holding ? _holdAimAnchor : transform.position - _cosmeticOffset;
+        private float _tppPitchDeg = TppBasePitchDeg;
+        private float _tppSpringLength = TppBaseSpringLength;
+
+        private bool _active;
+
+        private readonly List<Renderer> _hiddenForFpp = new List<Renderer>();
+
+        private float _shakeStrength;
+        private float _shakeLeft;
+        private float _groundRumbleAge=3, _groundRumbleStrength;
+        public Vector3 GroundRumbleOffset { get; private set; }
+        private float _vmKickLeft;
+        private Vector3 _vmKickOffset;
+
+        private bool _emoteView;
+        private WhirledView _whirledView;
+        // Amihan's Airburst v3.2: the swing-out while her wind has thrown this body (`WindTumble`).
+        private bool _blownView;
+        private Social.EmotePlayer _emotes;
+        private Visual.CharacterVisual _visual;
+        private GameObject _hiddenModelInstance;
+        private float _emoteYawDeg;
+        private float _emotePitchDeg;
+        private CameraMode _modeBeforeEmote = CameraMode.Fpp;
+
+        /// <summary>
+        /// How long the eye takes to travel from Nemu into Kuro when a possession starts.
+        ///
+        /// ⚠️⚠️ THE POSSESSION WAS ALREADY A TPP VIEW OF THE PET AND STILL DID NOT READ AS ONE.
+        /// 🧑: *"it doesnt feel like im in the pet's body"*, and the first reading of that, that
+        /// the camera never moved, is wrong: `ApplyCompanionPossessionView` has always mounted
+        /// behind Kuro and `StepCompanionLook` has always steered him. What it did was call
+        /// `SetPositionAndRotation` with the finished pose on the possession's FIRST frame.
+        ///
+        /// ⚠️ A CUT IS NOT A TRANSFORMATION. With no travel between the two poses the player
+        /// never sees themselves leave, so there is no moment to attribute the new body to and
+        /// the swap reads as a glitch or as nothing at all. Kuro is projected out AHEAD of Nemu,
+        /// so simply giving the move a duration makes the camera fly from her head to his, which
+        /// is the spirit leaving one body and arriving in the other, drawn rather than asserted.
+        ///
+        /// 0.28 s is short enough that it never costs the player a fight and long enough to be
+        /// seen. `docs/Hero_Strike_Balance.md` § 8.6 is the rule that says this ability, and
+        /// almost none of the others, is allowed to take the camera at all.
+        /// </summary>
+        private const float PossessBlendSeconds = 0.28f;
+
+        /// <summary>True while the third-person swing is being held by a FALL rather than by an
+        /// emote. See <see cref="StepFallView"/>.</summary>
+        private bool _fallView;
+        private int _edgeViewEpisode=-1;
+        private readonly RaycastHit[] _edgeViewHits=new RaycastHit[16];
+
+        private bool _wasPossessing;
+        private float _possessBlend;
+        private Vector3 _possessFromPos;
+        private Quaternion _possessFromRot;
+
+        /// <summary>The trip BACK out of Kuro. 1 means finished, so a rig that never possessed
+        /// anything is already done and costs one comparison a frame.</summary>
+        private float _unpossessBlend = 1.0f;
+        private Vector3 _unpossessFromPos;
+        private Quaternion _unpossessFromRot;
+
+        public CameraMode Mode => _mode;
+        public AimSource Aim => _aimSource;
+        public bool IsLocalFpp => _active && _mode == CameraMode.Fpp;
+
+        /// <summary>Is this rig looking through <paramref name="who"/>? A shake or a kick
+        /// applied to another unit's camera is feedback landing on the wrong screen.</summary>
+        public bool IsFollowing(CharacterMotor who) => _character == who && _active;
+        public UnityEngine.Camera Camera => _camera;
+
+        /// <summary>The seat this rig is looking through, or null. Read-only: `Bind` is the one
+        /// writer, and the mode is derived from the subject rather than set beside it.</summary>
+        public CharacterMotor Following => _character;
+
+        /// <summary>
+        /// Where the main camera's sight line meets the court, for the body it follows (false for any other body: only the player
+        /// looking through this camera can aim with it). Looking at or above the horizon, a point far along the view, which the
+        /// aimed ability then clamps to its reach. Used by casts placed where the player looks (`HeroAbility.AimsWhereLooking`).
+        /// </summary>
+        /// <summary>If the main camera follows <paramref name="who"/> in a held (third-person) view, reopen it behind the body's facing.</summary>
+        public static void FaceHeldView(CharacterMotor who)
+        {
+            var cam = Camera.main;
+            var rig = cam != null ? cam.GetComponent<CameraRig>() : null;
+            if (who == null || rig == null || rig._character != who) return;
+            if (rig._emoteView) rig._emoteYawDeg = rig.BodyYawDeg();
+        }
+
+        /// <summary>
+        /// ⚠️ HERO-10: THE HEIGHT OF THE SIGHT LINE <paramref name="flatDistance"/> metres out, for a power placed in the air
+        /// (Phaister's OMEN: she looks up to hang the eye higher). False unless this camera follows <paramref name="who"/>.
+        /// </summary>
+        public static bool TryLookHeight(CharacterMotor who, float flatDistance, out float height)
+        {
+            height = 0.0f;
+            var cam = Camera.main;
+            var rig = cam != null ? cam.GetComponent<CameraRig>() : null;
+            if (who == null || rig == null || rig._character != who) return false;
+            Vector3 forward = cam.transform.forward;
+            float flat = new Vector2(forward.x, forward.z).magnitude;
+            if (flat < 1e-3f) { height = cam.transform.position.y + 100.0f; return true; }
+            height = cam.transform.position.y + forward.y / flat * flatDistance;
+            return true;
+        }
+
+        public static bool TryLookGround(CharacterMotor who, out Vector3 point)
+        {
+            point = Vector3.zero;
+            var cam = Camera.main;
+            var rig = cam != null ? cam.GetComponent<CameraRig>() : null;
+            if (who == null || rig == null || rig._character != who) return false;
+            Vector3 origin = cam.transform.position, forward = cam.transform.forward;
+            float ground = Slipper.GroundY(who.transform.position + Vector3.up * 0.3f);
+            if (forward.y < -0.02f && origin.y > ground)
+            {
+                point = origin + forward * ((origin.y - ground) / -forward.y);
+                return true;
+            }
+            var flat = new Vector3(forward.x, 0.0f, forward.z);
+            if (flat.sqrMagnitude < 1e-4f) flat = who.transform.forward;
+            point = who.transform.position + flat.normalized * 100.0f;
+            point.y = ground;
+            return true;
+        }
+
+        /// <summary>
+        /// § THE VERB, IN THE PLAYER'S OWN HANDS. `camera_rig.gd::play_viewmodel_action`.
+        ///
+        /// ⚠️⚠️ A CLIP IF THE ARMS HAVE ONE, A PROCEDURAL KICK IF THEY DO NOT, AND THE SECOND
+        /// HALF IS THE POINT. `ViewmodelArms.tscn` carries `throw` and `grab` and nothing else,
+        /// so the punch, the shove and the lunge have no clip — and in first person the body is
+        /// SHADOWS_ONLY, which means those three verbs had NO first-person feedback whatsoever.
+        /// The .gd's own note: *"you pressed shove and the screen did not move"*, added for 🧑
+        /// 2026-08-01: *"add visual cue for first person and for everyone else that shove and
+        /// sunok and other skills and abilities shit is happening"*.
+        ///
+        /// The kick is not a substitute for an authored clip. It is what makes the verb legible
+        /// until somebody animates it, and it disappears on its own the day a clip with that
+        /// name is added, because the branch above wins.
+        ///
+        /// ⚠️ THE GUARD IS THE OTHER HALF. Every verb runs on all four seats, so an unguarded
+        /// call would swing the PLAYER's arm every time a bot threw — three phantom throws a
+        /// second, none of them theirs. Same rule the camera shake follows: feedback belongs to
+        /// the person it happened to.
+        ///
+        /// ⚠️ AND IT IS A STATIC ON THE RIG. `CharacterAnimator` is installed with
+        /// `AddComponent` and cannot carry an inspector reference (rule 3), and the rig is the
+        /// only thing that knows whether it is in FPP at all.
+        /// </summary>
+        public static void PlayViewmodelAction(CharacterMotor who, string kind)
+        {
+            if (who == null) return;
+
+            var rig = FindFirstObjectByType<CameraRig>();
+            if (rig == null || !rig.IsFollowing(who) || rig._mode != CameraMode.Fpp) return;
+            if (rig._arms == null || !rig._arms.gameObject.activeInHierarchy) return;
+
+            if (rig._arms.PlayAction(kind)) return;
+
+            rig.ViewmodelKick(Vector3.forward);
+        }
+
+        /// <summary>
+        /// The first-person hand tip of <paramref name="who"/>, when this screen is looking through
+        /// their eyes; false in third person, for anybody else, or with no viewmodel. Effects that
+        /// leave the hands (Paete's vines) start here so the owner sees them come out of their own arms.
+        /// </summary>
+        public static bool TryViewmodelHand(CharacterMotor who, bool left, out Vector3 world)
+        {
+            world = default;
+            if (who == null) return false;
+            var rig = FindFirstObjectByType<CameraRig>();
+            if (rig == null || !rig.IsFollowing(who) || rig._mode != CameraMode.Fpp) return false;
+            if (rig._arms == null || !rig._arms.gameObject.activeInHierarchy) return false;
+            return rig._arms.TryHandTip(left, out world);
+        }
+
+        /// <summary>
+        /// Where <paramref name="who"/>'s first-person arm is DRAWN (hand, back end, half-width), when this camera is in their eyes
+        /// (HERO-9: LIANA LEAP's vines leave the drawn forearm, `ViewmodelArms.TryDrawnArm`).
+        /// </summary>
+        public static bool TryDrawnViewmodelArm(CharacterMotor who, bool left, out Vector3 hand, out Vector3 back, out float halfWidth)
+        {
+            hand = back = default; halfWidth = 0f;
+            if (who == null) return false;
+            var rig = FindFirstObjectByType<CameraRig>();
+            if (rig == null || !rig.IsFollowing(who) || rig._mode != CameraMode.Fpp) return false;
+            if (rig._arms == null || !rig._arms.gameObject.activeInHierarchy) return false;
+            return rig._arms.TryDrawnArm(left, out hand, out back, out halfWidth);
+        }
+
+        /// <summary>Paete's first-person forearms lengthening with his vines (`ViewmodelArms.SetReachStretch`); 0 puts them back.</summary>
+        public static void SetViewmodelReachStretch(CharacterMotor who, float stretch)
+        {
+            if (who == null) return;
+            var rig = FindFirstObjectByType<CameraRig>();
+            if (rig == null || !rig.IsFollowing(who) || rig._arms == null) return;
+            rig._arms.SetReachStretch(stretch);
+        }
+
+        /// <summary>
+        /// The two first-person arm renderers of <paramref name="who"/>, when this camera is in their eyes (HERO-9: Paete's channel
+        /// lights his own hands on his screen, `Visual.PaeteChannelGlow`).
+        /// </summary>
+        public static bool TryViewmodelArmRenderers(CharacterMotor who, out MeshRenderer left, out MeshRenderer right)
+        {
+            left = right = null;
+            if (who == null) return false;
+            var rig = FindFirstObjectByType<CameraRig>();
+            if (rig == null || !rig.IsFollowing(who) || rig._mode != CameraMode.Fpp) return false;
+            if (rig._arms == null || !rig._arms.gameObject.activeInHierarchy) return false;
+            return rig._arms.TryArmRenderers(out left, out right);
+        }
+
+        public static void SeekViewmodelAction(CharacterMotor who,string expected,float elapsed)
+        {
+            var rig=FindFirstObjectByType<CameraRig>();
+            if(rig!=null && rig.IsFollowing(who) && rig._mode==CameraMode.Fpp)
+                rig._arms?.SeekAction(expected,elapsed);
+        }
+
+        public static void CancelViewmodelAction(CharacterMotor who, string expected = null)
+        {
+            var rig = FindFirstObjectByType<CameraRig>();
+            if (rig != null && rig.IsFollowing(who)) rig._arms?.CancelAction(expected);
+        }
+
+        // -------------------------------------------------------------------
+
+        private void Awake()
+        {
+            _camera = GetComponent<UnityEngine.Camera>();
+            if (_camera == null) _camera = gameObject.AddComponent<UnityEngine.Camera>();
+            // Whirled as the player it happened to sees it (owner, 2026-10-03): the wind round their own view.
+            _whirledView = WhirledView.Attach(this);
+
+            _camera.fieldOfView = _fieldOfView;
+            _camera.nearClipPlane = 0.05f;
+            // The authored districts and 112 m rail corridor fit within this range.
+            // The old 1000 m default wasted most depth precision on empty distance.
+            _camera.farClipPlane = 240f;
+
+            // ⚠️⚠️ THE MAP'S COLOUR GRADE, WHICH NOTHING IN THE PORT APPLIED. Every Godot
+            // Environment in this game enables `adjustment_*` and Eskinita runs contrast 1.03 and
+            // saturation 1.18 over the whole frame. There is no RenderSettings field for that, so
+            // the numbers were dropped at import and the match has been rendering ungraded
+            // against a Godot build that never is. `MapGrade` is what the importer leaves behind;
+            // adopting it here means the match camera and the setup screen's preview camera are
+            // reading the same three numbers off the same object.
+            //
+            // ⚠️ ADOPTED IN Start, NOT HERE. The arena's own objects are not guaranteed to be in
+            // the scene during this component's Awake, and a grade that finds nothing quietly
+            // resolves to an identity blit that looks like the feature was never added.
+            _grade = gameObject.GetComponent<Visual.ColourGrade>();
+            if (_grade == null) _grade = gameObject.AddComponent<Visual.ColourGrade>();
+
+            // ⚠️⚠️ AFTER THE GRADE, AND THE ORDER IS THE WHOLE POINT OF ADDING IT HERE RATHER
+            // THAN AUTHORING IT INTO A PREFAB. Unity runs image effects in COMPONENT ORDER, and
+            // `PostAntiAlias` thresholds luma against display-referred numbers, so it has to see
+            // a frame `ColourGrade` has already tonemapped out of HDR. Adding it on the line
+            // after the grade makes that true by construction on a rig that was built from a
+            // scene, on one built by `SceneBuilder`, and on one a probe assembles from nothing.
+            //
+            // ⚠️ AND IT IS ON THE GAMEPLAY RIG RATHER THAN WHEREVER `ColourGrade` IS. The
+            // character portrait and the map preview also carry the grade, and both render into
+            // a `targetTexture` that is already built with 4 samples; filtering those would
+            // soften a picture that is not aliased. See the class comment on `PostAntiAlias`.
+            if (gameObject.GetComponent<Visual.PostAntiAlias>() == null)
+                gameObject.AddComponent<Visual.PostAntiAlias>();
+
+            // ⚠️⚠️ THE WORLD OUTLINE PROTOTYPE, AND IT IS ON SO IT CAN BE JUDGED. It shipped
+            // inert: nothing added the component and its own toggle defaulted false, which is a
+            // correct default for a retry of a reverted pass and also means there is nothing to
+            // look at. 🧑 2026-08-27: *"i dont see any world outlines"*. A prototype nobody can
+            // see cannot be accepted or rejected, so it is attached here and switched on.
+            //
+            // ⚠️ THIS IS THE 2026-07-29 REVERT BEING RETRIED, NOT IGNORED. That pass was pulled
+            // for banding on large flat surfaces and for the cost of an inverted hull on every
+            // mesh in a dressed street. Neither applies to this one: it is screen-space, so there
+            // is no second hull anywhere, and it draws ONLY an edge rather than putting the
+            // two-band toon ramp on the world. Those are the two failure modes, and this
+            // construction avoids both by being a different construction. If it is rejected
+            // again it has to be for a NEW reason, and that reason belongs in `docs/TODO.md`
+            // beside this one.
+            //
+            // ⚠️ TO TURN IT OFF, clear `Prototype Enabled` on the rig, or delete these three
+            // lines. A component left attached with the toggle off still pays one pass-through
+            // blit, so removing it is the way to pay nothing.
+            var worldOutline = gameObject.GetComponent<Visual.WorldOutline>();
+            if (worldOutline == null) worldOutline = gameObject.AddComponent<Visual.WorldOutline>();
+            worldOutline.PrototypeEnabled = true;
+        }
+
+        private Visual.ColourGrade _grade;
+
+        private void Start()
+        {
+            if (_grade != null) _grade.AdoptFromScene();
+            // A map larger than the 240 m above says so with a `MapCameraRange` (the Arena). No
+            // other map carries one, and then this changes nothing.
+            Visual.MapCameraRange.Adopt(_camera, false);
+        }
+
+        /// <summary>
+        /// ⚠️ THE FOV FOLLOWS THE MODE, because the two cameras in `CameraRig.tscn` are two
+        /// different lenses and the mode swap is what switches between them. Applied every frame
+        /// rather than on the transition, so the emote swing and the spectator handover cannot
+        /// leave the wrong one on.
+        /// </summary>
+        private void ApplyLens()
+        {
+            if (_camera == null) return;
+
+            float want = _mode == CameraMode.Fpp && !_emoteView
+                ? Settings.GameSettings.ValidFirstPersonFov(Settings.SettingsStore.Current.FirstPersonFov)
+                : TppFieldOfView;
+
+            // ------------------------------------------------------------------ § THE SPRINT KICK
+            //
+            // ⚠️ THE LENS WIDENS WHILE SPRINTING, AND IT IS FEEDBACK RATHER THAN DECORATION. This
+            // game's sprint is metered by a stamina bar the player is meant to spend deliberately,
+            // and until now the only thing that said "you are sprinting" was the bar itself, which
+            // is in the corner of the screen and not where anybody is looking while running from a
+            // taya. Widening the lens puts that on the whole frame: the edges pull outward, the
+            // ground moves faster past the periphery, and it reads as effort without costing a
+            // single pixel of HUD.
+            //
+            // ⚠️ FPP ONLY. In third person the camera is orbiting the body rather than sitting in
+            // its head, so a lens change reads as the camera moving rather than as the character
+            // running, and the emote swing already animates the same value. `_emoteView` is folded
+            // into `want` above, so this rides on top of whichever lens that chose and is simply
+            // zero for every case that is not a first-person body.
+            //
+            // ⚠️ IT ASKS THE STAMINA MODEL, NOT THE BUTTON. `Intent.Pressed(Verb.Sprint)` is true
+            // whenever the key is down, including while fatigued, while standing still and while
+            // the seat cannot act, and a lens that widens when the character is NOT accelerating is
+            // worse than no lens change at all. `Stamina.IsSprinting` is the flag the same model
+            // sets when it actually grants the multiplier, so the picture and the physics agree by
+            // construction. See `CharacterMotor.FixedUpdate`, which reads the multiplier off the
+            // same call that sets it.
+            bool sprinting = _mode == CameraMode.Fpp
+                             && !_emoteView
+                             && _character != null
+                             && _character.Stamina != null
+                             && _character.Stamina.IsSprinting;
+
+            want += sprinting ? SprintFieldOfViewKick : 0.0f;
+
+            // ⚠️⚠️ SMOOTHED, AND A SNAP HERE IS THE ONE THING THAT WOULD MAKE THIS UNPLEASANT.
+            // Sprint can start and stop on consecutive frames when the bar bottoms out or the
+            // player taps the key, and an instant 7 degree jump on a 95 degree lens is a visible
+            // lurch that reads as a bug. Exponentially approaching the target means a tap produces
+            // a small nudge and a held sprint produces the full widening.
+            //
+            // ⚠️ FRAME-RATE INDEPENDENT ON PURPOSE. A plain `Lerp(current, want, k)` converges at a
+            // rate that depends on how fast the machine is drawing, so the same sprint would feel
+            // different on two PCs. `1 - exp(-rate * dt)` is the same curve in seconds whatever the
+            // frame rate, which matters here because the arena is played on machines that were
+            // reported lagging.
+            //
+            // ⚠️ AND IT USES UNSCALED TIME. `Time.timeScale` goes to zero for the pause menu and
+            // the broadcast pause, and a lens caught mid-transition would freeze part way and then
+            // finish when the game resumed. The camera is not part of the simulation.
+            float blend = 1.0f - Mathf.Exp(-SprintLensRate * Time.unscaledDeltaTime);
+            float lens = Mathf.Lerp(_camera.fieldOfView, want, blend);
+
+            if (!Mathf.Approximately(_camera.fieldOfView, lens)) _camera.fieldOfView = lens;
+        }
+
+        /// <summary>
+        /// Attach to a body. ⚠️ A PERSON IS ALWAYS FPP.
+        ///
+        /// ⚠️⚠️ AND `_emoteView` IS CLEARED HERE TOO. Nothing about swapping which body this rig
+        /// follows — a spectator cycle, a seat reassignment — routes through `EndEmoteView`, so
+        /// a rig mid-swing when `Follow` is called would otherwise carry `_emoteView = true`
+        /// onto whichever character it picks up next with nothing left that will ever set it
+        /// back to false: `ApplyFpp`/`ApplyTpp` never run while it is true, so the mode never
+        /// settles and the player is stuck orbiting a stranger. A player stuck in third person
+        /// with no way back is worse than any visual glitch this could instead have been.
+        /// </summary>
+        public void Follow(CharacterMotor character, bool makeActive = true)
+        {
+            UnsubscribeEmotes();
+            UnsubscribeVisual();
+
+            _emoteView = false;
+
+            // ⚠️ THE FALL FLAG CLEARS WITH THE EMOTE FLAG, because it is a claim ABOUT the emote
+            // flag. This function's own note above is the reason: a rig that keeps a stale swing
+            // across a seat change leaves the player orbiting a stranger with no way back. Left
+            // set here, `StepFallView` would believe it had already swung out and would refuse
+            // to swing again for the next fall on this body.
+            _fallView = false;
+            _edgeViewEpisode=-1;
+
+            // ⚠️⚠️ THE HITSTOP BELONGS TO THE BODY THAT TOOK THE HIT, AND CLEARING IT HERE IS
+            // REQUIRED RATHER THAN TIDY. `StepHold` anchors the camera to the pose it froze at,
+            // so a hold still running across a seat change would pin the new seat's view to the
+            // OLD body's position for the rest of the freeze. It is the same argument as the
+            // `_fallView` line above and as `docs/TODO.md` § 149.8: state whose meaning came from
+            // a body it no longer follows.
+            _holdLeft = 0.0f;
+            _holding = false;
+            _impactPunchLeft = 0.0f;
+            _shakeLeft = 0.0f;
+            _shakeStrength = 0.0f;
+            _groundRumbleAge=3;_groundRumbleStrength=0;GroundRumbleOffset=Vector3.zero;
+
+            _character = character;
+            _cosmeticOffset = Vector3.zero;
+            _mode = CameraMode.Fpp;
+
+            if (_character == null) return;
+
+            SubscribeEmotes();
+            SubscribeVisual();
+            BuildPivots();
+            if (_arms != null && _character != null) _arms.MatchCharacter(_character);
+            ApplyFppSelfHide();
+            SetActive(makeActive);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE EMOTE SWING IS WIRED HERE, ON THE RIG, AND THAT IS WHAT KEEPS IT LOCAL.
+        ///
+        /// 🧑 2026-08-04: *"i want the emotes to switch camera to TPP js for the emote and go
+        /// back to FPP after the emote ends"*. The emote itself is replicated; the camera
+        /// swing must NOT be, or every peer would spin to third person because somebody else
+        /// danced.
+        ///
+        /// Subscribing from the rig gets that for free rather than by a flag someone has to
+        /// remember: a rig only ever follows the unit this machine is looking through, so a
+        /// remote player's emote has no rig subscribed to it and cannot move any camera.
+        /// Wiring this the other way round — EmotePlayer reaching for a camera — would need
+        /// an "am I local" test at the call site, which is the check that gets forgotten.
+        /// </summary>
+        private void SubscribeEmotes()
+        {
+            _emotes = _character.GetComponent<Social.EmotePlayer>();
+            if (_emotes == null) return;
+
+            _emotes.EmoteStarted += OnEmoteStarted;
+            _emotes.EmoteStopped += OnEmoteStopped;
+        }
+
+        private void UnsubscribeEmotes()
+        {
+            if (_emotes == null) return;
+
+            _emotes.EmoteStarted -= OnEmoteStarted;
+            _emotes.EmoteStopped -= OnEmoteStopped;
+            _emotes = null;
+        }
+
+        private void SubscribeVisual()
+        {
+            if (_character == null) return;
+
+            _visual = _character.GetComponent<Visual.CharacterVisual>();
+            if (_visual == null) return;
+
+            _visual.ModelApplied += OnCharacterModelApplied;
+        }
+
+        private void UnsubscribeVisual()
+        {
+            if (_visual != null)
+            {
+                _visual.ModelApplied -= OnCharacterModelApplied;
+                _visual = null;
+            }
+        }
+
+        private void OnCharacterModelApplied()
+        {
+            if (_arms != null && _character != null) _arms.MatchCharacter(_character);
+
+            if (_active && _mode == CameraMode.Fpp && !_emoteView)
+            {
+                ApplyFppSelfHide();
+            }
+        }
+
+        private void OnEmoteStarted(string id) => BeginEmoteView();
+
+        /// ⚠️ AN EMOTE NEVER ENDS ON ITS OWN. 🧑 2026-08-15: *"the emotes only end when a
+        /// user does smth to interrupt it like move or attack"*. So this fires on exactly one
+        /// path — <see cref="Social.EmotePlayer.Stop"/>, reached by movement, a verb, or the
+        /// unit losing the right to act — and there is no timer to race it.
+        ///
+        /// If a clip-finished path is ever added, it MUST route through Stop() as well.
+        /// Restoring the camera from a second place is how a rig ends up stuck in third
+        /// person: one path returns the view and the other silently does not.
+        private void OnEmoteStopped() => EndEmoteView();
+
+        private void OnDestroy()
+        {
+            UnsubscribeEmotes();
+            UnsubscribeVisual();
+        }
+
+        private void BuildPivots()
+        {
+            // ⚠️ THE PIVOTS ARE NOT PARENTED TO THE BODY. In Godot they were children and
+            // inherited its basis, which is the whole reason the roll bug existed. Here they
+            // are free transforms positioned from the body every frame, so a rolled body
+            // cannot reach them by construction rather than by care.
+            if (_fppPivot == null)
+            {
+                _fppPivot = new GameObject("~FppPivot").transform;
+                _tppPivot = new GameObject("~TppPivot").transform;
+            }
+
+            MountViewmodel();
+        }
+
+        /// <summary>
+        /// ⚠️ FIRST PERSON GETS DEDICATED VIEWMODEL ARMS, NOT THE RIG'S OWN. From playtest:
+        /// "don't see arms of ppl". The real body tops out below the eye line because the chibi
+        /// head is big enough that the eye sits above the shoulders, so looking down showed
+        /// nothing at all. The arms are mounted to the camera pivot and inherit its pitch, so
+        /// they rise and fall with the view, and a remote player's rig is never the one being
+        /// looked through.
+        /// </summary>
+        private void MountViewmodel()
+        {
+            if (_viewmodel != null) return;
+
+            // ⚠️ BUILT IN CODE, NOT LOADED AS A PREFAB. This used to `Resources.Load` a
+            // "Models/ViewmodelArms" prefab that has never existed, so it returned null and
+            // returned early — every FPP view has been armless for the whole port, silently,
+            // because a missing prefab is not an error. ViewmodelArms builds itself from the
+            // .tscn's own baked transforms instead, so there is nothing to author and nothing
+            // to go missing.
+            var go = new GameObject("~ViewmodelArms");
+            go.transform.SetParent(transform, false);
+            go.transform.localScale = Vector3.one * ViewmodelScale;
+            go.transform.localPosition = ViewmodelSeat;
+            go.transform.localRotation = Quaternion.identity;
+
+            _arms = go.AddComponent<ViewmodelArms>();
+
+            foreach (var c in go.GetComponentsInChildren<Collider>(true)) Destroy(c);
+
+            _viewmodel = go.transform;
+        }
+
+        /// <summary>Resolve the gameplay eye under loading, even when world presentation is held.</summary>
+        public bool PrepareArrivalReturnView()
+        {
+            if (_character == null || !_active) return false;
+            ApplyLens();
+            if (_mode == CameraMode.Fpp) ApplyFpp(); else ApplyTpp();
+            return true;
+        }
+
+        public void SetActive(bool active)
+        {
+            _active = active;
+            if (_camera != null && !MatchArrivalPresentation.OwnsCamera) _camera.enabled = active;
+
+            if (_viewmodel != null) _viewmodel.gameObject.SetActive(active && _mode == CameraMode.Fpp && !MatchArrivalPresentation.OwnsCamera);
+
+            if (active && !MatchArrivalPresentation.OwnsCamera) ApplyFppSelfHide();
+            else RestoreSelfHide();
+
+            ApplyCarriedSelfHide();
+        }
+
+        public void SetAimSource(AimSource source) => _aimSource = source;
+
+        // -------------------------------------------------------------------
+
+        private void LateUpdate()
+        {
+            if (_character == null || !_active || PresentationClock.Held) return;
+
+            ApplyLens();
+            ApplyFppSelfHideIfNeeded();
+            ApplyCarriedSelfHide();
+
+            // ⚠️ THE HITSTOP GATE SITS ABOVE EVERYTHING THAT WRITES THE TRANSFORM AND BELOW
+            // EVERYTHING THAT DOES NOT. The lens and the self-hide are per-frame state rather
+            // than motion, and skipping either during a hold would pop the arms or the FOV.
+            // See `HoldFrame` for why this is a camera hold and not a time scale.
+            if (StepHold()) return;
+
+            StepFallView();
+
+            if (_emoteView) { StepEmoteLook(); ApplyEmoteView(); return; }
+
+            var visual = _character.GetComponent<Visual.CharacterVisual>();
+            var companion = visual != null ? visual.Companion : null;
+            bool isPossessingCompanion = companion != null && companion.IsPossessed;
+
+            // ⚠️ THE EDGE IS CAUGHT HERE AND NOWHERE ELSE. `GhostPetCompanion` owns the
+            // possession state and the rig only reads it, so the frame the flag flips is the
+            // only place the rig can learn where the eye was standing when the body was left.
+            // Sampling it later would blend from a pose that has already been overwritten.
+            // ⚠️⚠️ LEAVING A POSSESSION WAS A HARD CUT AND ENTERING ONE WAS NOT, WHICH IS HALF A
+            // FEATURE. `PossessBlendSeconds` carries the eye from Nemu's head to the mount behind
+            // Kuro over 0.28 s, and that is the whole reason the possession reads as one; the
+            // return simply stopped drawing this view and the next frame was rendered from her
+            // skull. 🧑 2026-08-26: *"make sure i switch to tpp view when i go to the body of the
+            // pet of nemu and control it, when it ends too"*. Same blend, same length, other
+            // direction, so the trip out and the trip back are one gesture.
+            if (!isPossessingCompanion && _wasPossessing)
+            {
+                _unpossessBlend = 0.0f;
+                _unpossessFromPos = transform.position;
+                _unpossessFromRot = transform.rotation;
+            }
+
+            if (isPossessingCompanion && !_wasPossessing)
+            {
+                _possessBlend = 0.0f;
+                _possessFromPos = transform.position;
+                _possessFromRot = transform.rotation;
+            }
+
+            _wasPossessing = isPossessingCompanion;
+
+            if (isPossessingCompanion)
+            {
+                StepCompanionLook(companion);
+                ApplyCompanionPossessionView(companion);
+                StepShake();
+                return;
+            }
+
+            StepLook();
+
+            if (_mode == CameraMode.Fpp) ApplyFpp();
+            else ApplyTpp();
+
+            // ⚠️⚠️ THE RETURN IS TRAVELLED, LIKE THE TRIP OUT. This runs AFTER the normal view has
+            // been applied on purpose: `ApplyFpp` has already written where the eye belongs now,
+            // so all this does is drag it back toward where it was standing in Kuro and release
+            // it over the same 0.28 s. Blending before the apply would have been a lerp toward a
+            // target a frame out of date, which shows up as the last few centimetres snapping.
+            //
+            // ⚠️ IT ALSO COVERS THE TELEPORT. Pressing again while possessing moves her BODY to
+            // the pet (`GhostPetCompanion.EndPossession`), so the eye's destination has jumped
+            // several metres in the same frame the possession ended. Cutting there is the worst
+            // frame in the ability; this is the one place the camera can absorb it.
+            if (_unpossessBlend < 1.0f)
+            {
+                _unpossessBlend = Mathf.Clamp01(_unpossessBlend + Time.deltaTime / PossessBlendSeconds);
+
+                float e = _unpossessBlend * _unpossessBlend * (3.0f - 2.0f * _unpossessBlend);
+
+                transform.SetPositionAndRotation(
+                    Vector3.Lerp(_unpossessFromPos, transform.position, e),
+                    Quaternion.Slerp(_unpossessFromRot, transform.rotation, e));
+            }
+
+            StepShake();
+            StepViewmodelKick();
+            // Whirled's dizzy roll, about the line of sight, only on a frame this pass wrote and only in first person.
+            if (_mode == CameraMode.Fpp && _whirledView != null && _whirledView.Roll != 0f)
+                transform.rotation *= Quaternion.Euler(0f, 0f, _whirledView.Roll);
+        }
+
+        private void StepCompanionLook(Visual.GhostPetCompanion companion)
+        {
+            if (_aimSource != AimSource.Mouse) return;
+            if (UI.EmoteWheel.AnyOpen) return;
+
+            LookThisFrame(out float dx, out float dy);
+
+            if (Mathf.Abs(dx) > 0.0001f && companion != null)
+                companion.transform.Rotate(Vector3.up, dx * 10.0f, Space.World);
+
+            _pitchDeg = Mathf.Clamp(_pitchDeg - dy * 10.0f, PitchMinDeg, PitchMaxDeg);
+        }
+
+        private void ApplyCompanionPossessionView(Visual.GhostPetCompanion companion)
+        {
+            if (companion == null) return;
+
+            // Hide human FPP viewmodel arms while possessing companion pet
+            if (_viewmodel != null && _viewmodel.gameObject.activeSelf)
+                _viewmodel.gameObject.SetActive(false);
+
+            float yaw = companion.transform.eulerAngles.y;
+            Vector3 mount = companion.transform.position + Vector3.up * 0.20f;
+            var rot = Quaternion.Euler(Mathf.Clamp(_pitchDeg, -45.0f, 65.0f), yaw, 0.0f);
+            Vector3 wanted = mount - (rot * Vector3.forward) * 1.2f;
+            wanted=ConstrainCompanionCamera(mount,wanted);
+
+            // ⚠️⚠️ THE ARRIVAL IS TRAVELLED, NOT CUT. See `PossessBlendSeconds`. Until the blend
+            // completes the eye is carried from where it stood in Nemu's head to the mount
+            // behind Kuro, which is what makes the possession read as a possession.
+            if (_possessBlend < 1.0f)
+            {
+                _possessBlend = Mathf.Clamp01(_possessBlend + Time.deltaTime / PossessBlendSeconds);
+
+                // ⚠️ SMOOTHSTEP RATHER THAN LINEAR. A constant-speed camera arriving at a dead
+                // stop reads as a scripted move; easing both ends reads as the eye being pulled.
+                float e = _possessBlend * _possessBlend * (3.0f - 2.0f * _possessBlend);
+
+                transform.SetPositionAndRotation(ConstrainCompanionCamera(mount,Vector3.Lerp(_possessFromPos,wanted,e)),
+                                                 Quaternion.Slerp(_possessFromRot,rot,e));
+                return;
+            }
+
+            transform.SetPositionAndRotation(wanted, rot);
+        }
+
+        private static Vector3 ConstrainCompanionCamera(Vector3 mount,Vector3 wanted)
+        {
+            var delta=wanted-mount;float distance=delta.magnitude;
+            if(distance<.001f)return wanted;
+            float clear=distance;
+            foreach(var hit in Physics.SphereCastAll(mount,.12f,delta/distance,distance,~0,QueryTriggerInteraction.Ignore))
+            {
+                if(hit.collider.GetComponentInParent<CharacterMotor>()!=null || hit.collider.GetComponentInParent<Slipper>()!=null)continue;
+                clear=Mathf.Min(clear,Mathf.Max(.16f,hit.distance-.06f));
+            }
+            return mount+delta.normalized*clear;
+        }
+
+        /// <summary>
+        /// This frame's look, already scaled by the player's sensitivity and invert-Y.
+        ///
+        /// ⚠️⚠️ IT ASKS THE INTENT RATHER THAN THE HARDWARE, AND THAT IS THE WHOLE GAMEPAD AND
+        /// TOUCH FIX. All three look methods in this file used to call
+        /// `Input.GetAxisRaw("Mouse X")` themselves, which made the camera the SECOND place in
+        /// the game that reads a device. `PlayerInputReader`'s class note says there is exactly
+        /// one, and the cost of the exception was that a pad's right stick and a phone's drag had
+        /// nowhere to arrive: supporting them here would have meant a fourth and fifth hardware
+        /// read, each carrying its own copy of the deadzone, the response curve and this
+        /// invert-Y line. `PlayerInputReader.ReadLookDelta` sums the three devices into
+        /// `Intent.LookDelta` and every rig in the game reads that one number.
+        ///
+        /// ⚠️ THE SENSITIVITY AND THE INVERT STAY HERE, deliberately. They are a VIEW
+        /// preference, not a device fact, and applying them at the producer would scale a bot's
+        /// zero by a slider and make the setting mean something different per device.
+        ///
+        /// ⚠️ THE SETTING IS STILL CALLED `MouseSensitivity` AND IS NOW READ BY THREE DEVICES.
+        /// Renaming it would move a `PlayerPrefs` key and silently reset every player's
+        /// sensitivity to the default, which is a worse trade than a stale field name. The
+        /// settings panel labels the row, and the label is what a player reads.
+        /// </summary>
+        private void LookThisFrame(out float dx, out float dy)
+        {
+            var s = Settings.SettingsStore.Current;
+            float sens = BaseSensitivity * s.MouseSensitivity;
+
+            Vector2 look = _character != null ? _character.Intent.LookAxis : Vector2.zero;
+
+            dx = look.x * sens;
+            dy = look.y * sens;
+            if (s.InvertY) dy = -dy;
+        }
+
+        private void StepLook()
+        {
+            if (_aimSource != AimSource.Mouse) return;
+            if (_character.Intent.Parked) return;
+
+            // ⚠️ THE EMOTE WHEEL OWNS THE MOUSE WHILE IT IS OPEN. Both this and the wheel are
+            // steered by the same deltas, and without this the player's body spins on the spot
+            // while they pick a slice. Godot got this from `_input` running before
+            // `_unhandled_input`; Unity has no such ordering, so it is an explicit check.
+            if (UI.EmoteWheel.AnyOpen) return;
+
+            LookThisFrame(out float dx, out float dy);
+
+            // ⚠️ YAW GOES ON THE BODY, PITCH STAYS ON THE RIG. The body turning is what makes
+            // a throw leave along the sight line; a rig that yawed on its own would let the
+            // player look one way and throw another.
+            if (Mathf.Abs(dx) > 0.0001f)
+                _character.transform.Rotate(Vector3.up, dx * 10.0f, Space.World);
+
+            _pitchDeg = Mathf.Clamp(_pitchDeg - dy * 10.0f, PitchMinDeg, PitchMaxDeg);
+        }
+
+        /// <summary>
+        /// ⚠️ RECOVERED FROM THE FORWARD VECTOR. Euler decomposition of a basis carrying roll
+        /// does not return the yaw you want, and that is exactly the case this survives.
+        /// </summary>
+        private float BodyYawDeg()
+        {
+            Vector3 forward = _character.transform.forward;
+
+            if (Mathf.Abs(forward.x) < 0.00001f && Mathf.Abs(forward.z) < 0.00001f)
+                return _character.transform.eulerAngles.y; // straight up or down: degenerate
+
+            return Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
+        }
+
+        private float _fppSquatBlend;
+
+        /// <summary>0 to 1: how deep the local taya is in the raise's crouch, eased in and out.</summary>
+        private float FppRaiseSquat()
+        {
+            var carrier = _character != null ? _character.GetComponent<Carrier>() : null;
+            var motor = _character != null ? _character.GetComponent<CharacterMotor>() : null;
+            var lata = GameServices.Round?.Lata;
+            float ratio = carrier != null && motor != null && motor.IsDefender && lata != null && !lata.IsUpright ? carrier.ChannelRatio : 0f;
+            _fppSquatBlend = Mathf.MoveTowards(_fppSquatBlend, ratio > 0 ? 1f : 0f, Time.deltaTime / (ratio > 0 ? .12f : .18f));
+            return _fppSquatBlend * Visual.CanRaiseShape.Crouch(ratio > 0 ? ratio : 1f);
+        }
+
+        private void ApplyFpp()
+        {
+            float yaw = BodyYawDeg();
+            Vector3 eye = _character.transform.position + Vector3.up * (PersonCapsuleHeight * 0.5f + FppEyeHeight);
+
+            // ⚠️ THE TAYA'S SQUAT OVER THE CAN, FELT FROM THE EYES (owner, 2026-09-26: *"they should
+            // crouch first and put it up"*). Same curve as the body (`Visual.CanRaiseShape`); it only
+            // offsets the view, never `_pitchDeg`, so the aim is untouched when the raise ends.
+            float squat = FppRaiseSquat();
+            eye -= Vector3.up * (Visual.CanRaiseShape.FppEyeDrop * squat);
+
+            // ⚠️ PAETE DOWN ON HIS KNEE, FROM HIS OWN EYES (HERO-9 v5, direction.md 5.14: *"HE GOES TO THE GHHROUND AND HIS ROOTS
+            // CONNECT TO IT"*). While MAKILING'S EMBRACE holds him down after its cutscene his view is at kneel height and tipped a
+            // little toward his hands in the court, and it lifts on each of the tree's hauls. The squat's rule exactly: an offset
+            // of the view, never `_pitchDeg`, so the aim is where it was when he stands (and walking ends it at once).
+            float kneel = Visual.PaeteGroundCall.KneelWeight(_character);
+            eye -= Vector3.up * (Visual.PaeteGroundCall.FppEyeDrop * kneel - 0.06f * kneel * Visual.PaeteGroundCall.HeaveJolt(_character));
+
+            // Absolute, from yaw and pitch only. The body's roll cannot reach this.
+            transform.SetPositionAndRotation(eye, Quaternion.Euler(_pitchDeg + Visual.CanRaiseShape.FppLookDown * squat
+                                                                   + Visual.PaeteGroundCall.FppLookDown * kneel, yaw, 0.0f));
+
+            if (_viewmodel != null && !_viewmodel.gameObject.activeSelf && !MatchArrivalPresentation.OwnsCamera)
+                _viewmodel.gameObject.SetActive(true);
+
+            // The hand shows what the unit is actually carrying.
+            if (_arms == null) return;
+
+            if (_character != null) _arms.MatchCharacter(_character);
+
+            // ⚠️ ASKED PER FRAME, NOT ON A PICK-UP EVENT. What a character holds changes
+            // DURING a round, and the self-hide only re-runs on activation and model changes,
+            // so an event-driven version showed both slippers until the next swap.
+            var carrier = _character.GetComponent<Carrier>();
+            var held = carrier != null ? carrier.Held : null;
+
+            // HERO-10 v3: while a curse has her slipper at her belt the right hand is empty and reaching (`StowsCarriedSlipper`).
+            bool stowed = held != null && _character.StowsCarriedSlipper && (carrier == null || carrier.ObservedChargePower < 0.0f);
+            _arms.SetHolding(held != null && !stowed);
+
+            // § THE WIND-UP, POLLED. `character_visual.gd` polls charge for the same reason it
+            // polls carry scale and spin: *"charge is a continuously-varying value, not an event,
+            // and a poll self-heals across a model rebuild on the round swap."*
+            //
+            // ⚠️ THREE SOURCES IN ONE ORDER, AND THE ORDER MATTERS, because the .gd's own note
+            // records the bug it fixes: the throw branch requires something in hand, so a TAYA —
+            // who holds nothing — fell through every branch and *"the attacker got an arm; the
+            // defender got a statue"*. The lunge is the taya's commitment and the one thing an
+            // attacker has to read to dodge it. All three rest at -1, so they compose without any
+            // of them knowing about the others.
+            float charge = -1.0f;
+
+            if (held != null && carrier != null) charge = carrier.ObservedChargePower;
+
+            if (charge < 0.0f)
+            {
+                var verbs = _character.GetComponent<CombatVerbs>();
+                if (verbs != null) charge = verbs.ObservedLungeCharge;
+            }
+
+            _arms.SetCharge(charge,held != null && carrier != null ? carrier.ObservedPektusSpin : 0);
+            var hero=_character.GetComponent<Abilities.HeroAbilitySystem>();
+            string aiming=null;
+            if (_character.CanAct() && hero != null && hero.Kit != null)
+            {
+                if (hero.IsAiming(Abilities.HeroAbilitySystem.Slot.Skill1)) aiming=hero.Kit.Skill1.ViewmodelAction;
+                else if (hero.IsAiming(Abilities.HeroAbilitySystem.Slot.Skill2)) aiming=hero.Kit.Skill2.ViewmodelAction;
+                else if (hero.IsAiming(Abilities.HeroAbilitySystem.Slot.Ultimate)) aiming=hero.Kit.Ultimate.ViewmodelAction;
+                // HERO-10 v3: Phaister's reach holds her hand out in view for as long as the body reaches (a tap, not a held key).
+                if (aiming == null && _character.IsVoodooReaching)
+                    aiming = _character.VoodooReachKind == VoodooMarkKind.Drain ? "reach-drain" : "reach-hex";
+            }
+            _arms.SetAimPreview(aiming);
+
+
+            // ⚠️ THE VIEWMODEL WEARS THE PICKED SKIN. A player who chose CROCS held a brown
+            // flip-flop in their own hands while every peer saw what they had actually picked.
+            if (held != null) _arms.MatchSkin(held);
+        }
+
+        private void ApplyTpp()
+        {
+            float yaw = BodyYawDeg();
+            Vector3 mount = _character.transform.position + Vector3.up * TppMountHeight;
+
+            var rot = Quaternion.Euler(Mathf.Max(_tppPitchDeg, TppMinPitchDeg), yaw, 0.0f);
+            Vector3 wanted = mount - (rot * Vector3.forward) * _tppSpringLength;
+
+            // ⚠️ THE SPRING ARM EXCLUDES THE BODY IT IS WATCHING, or the cast hits the
+            // character's own capsule every frame and drags the camera in against it.
+            float length = _tppSpringLength;
+            if (Physics.SphereCast(mount, 0.2f, (wanted - mount).normalized, out var hit,
+                                   _tppSpringLength, ~0, QueryTriggerInteraction.Ignore))
+            {
+                if (hit.collider.GetComponentInParent<CharacterMotor>() != _character)
+                    length = Mathf.Max(TppMinSpringLength, hit.distance - TppArmMargin);
+            }
+
+            transform.SetPositionAndRotation(mount - (rot * Vector3.forward) * length, rot);
+
+            if (_viewmodel != null) _viewmodel.gameObject.SetActive(false);
+        }
+
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️⚠️ THE WHOLE BODY GOES SHADOWS-ONLY, NOT JUST THE HEAD, AND HEAD-ONLY IS A BUG THE
+        /// GODOT BUILD ALREADY REVERTED. This hid only renderers whose name contained "head",
+        /// which is B-73's original behaviour, and `camera_rig.gd` carries the note explaining
+        /// why that stopped being right:
+        ///
+        ///   *"B-73 kept `body-mesh` visible because there was nothing else to look at in first
+        ///   person. There is now — the viewmodel. Keeping the real body as well means two sets
+        ///   of arms in the same frustum: the viewmodel ones mounted to the camera, and the
+        ///   skinned ones hanging 0.37 below it."*
+        ///
+        /// Reported against this build in exactly those words: *"tf is this why do i have two
+        /// sets of arms"*. It only became visible once `PERSON_SCALE` was applied, because at 42%
+        /// of its height the real body genuinely did sit below the frustum and nobody could see
+        /// the second pair. The scale fix did not cause this; it uncovered it.
+        ///
+        /// ⚠️ SHADOWS-ONLY, NEVER DISABLED. Losing your own shadow in first person destroys the
+        /// ground read, and it is the only cue a Person has for where they are standing relative
+        /// to the base circle. `r.enabled = false` takes the shadow with it, which is the other
+        /// half of what was wrong here.
+        /// </summary>
+        /// <summary>
+        /// ⚠️ SELF-HEALS ACROSS MODEL REBUILDS AND MULTIPLAYER SYNCS. When `SyncPicksClientRpc` or
+        /// a roster change rebuilds the model, the old renderers are destroyed and new ones are
+        /// instanced with ShadowCastingMode.On. Without this check or the event subscription, the
+        /// camera at eye height would sit inside the new head mesh.
+        /// </summary>
+        private void ApplyFppSelfHideIfNeeded()
+        {
+            if (!_active || _mode != CameraMode.Fpp || _emoteView || _character == null) return;
+
+            if (_visual == null)
+            {
+                SubscribeVisual();
+            }
+
+            var currentModel = _visual != null ? _visual.Model : null;
+            if (currentModel != _hiddenModelInstance)
+            {
+                ApplyFppSelfHide();
+                return;
+            }
+
+            for (int i = 0; i < _hiddenForFpp.Count; i++)
+            {
+                if (_hiddenForFpp[i] == null)
+                {
+                    ApplyFppSelfHide();
+                    return;
+                }
+            }
+        }
+
+        private void ApplyFppSelfHide()
+        {
+            RestoreSelfHide();
+
+            if (_character == null || _mode != CameraMode.Fpp || MatchArrivalPresentation.OwnsCamera) return;
+
+            var visual = _visual != null ? _visual : _character.GetComponent<Visual.CharacterVisual>();
+            _hiddenModelInstance = visual != null ? visual.Model : null;
+
+            foreach (var r in _character.GetComponentsInChildren<Renderer>(true))
+            {
+                if (r == null) continue;
+                if (r.shadowCastingMode == ShadowCastingMode.ShadowsOnly) continue;
+
+                _selfShadowModes.Add(r.shadowCastingMode);
+                r.shadowCastingMode = ShadowCastingMode.ShadowsOnly;
+                _hiddenForFpp.Add(r);
+            }
+        }
+
+        /// <summary>
+        /// Draw this rig's own body again, for a camera that is NOT this one. In first person the
+        /// local body is shadows-only so the player does not look out through their own head;
+        /// a cutaway through another camera (the Arena's break camera, which shows every player
+        /// lifted off the stage) would otherwise show three players and a shadow. Nothing has
+        /// to undo it: `ApplyFppSelfHideIfNeeded` hides the body again on the first frame this
+        /// rig draws, which is the frame the hold ends. A no-op when nothing is hidden.
+        /// </summary>
+        public void ShowBodyForCutaway()
+        {
+            if (_hiddenForFpp.Count > 0) RestoreSelfHide();
+        }
+
+        private void RestoreSelfHide()
+        {
+            for (int i = 0; i < _hiddenForFpp.Count; i++)
+            {
+                var r = _hiddenForFpp[i];
+                if (r == null) continue;
+
+                // ⚠️ RESTORED TO WHAT IT WAS, not to On. A mesh the artist authored as
+                // shadows-only or shadowless stays that way when the rig hands it back.
+                r.shadowCastingMode = i < _selfShadowModes.Count
+                    ? _selfShadowModes[i]
+                    : ShadowCastingMode.On;
+
+                // The head-only pass used to disable renderers outright. Anything still carrying
+                // that from an older build is put back here too.
+                r.enabled = true;
+            }
+
+            _hiddenForFpp.Clear();
+            _selfShadowModes.Clear();
+            _hiddenModelInstance = null;
+        }
+
+        private readonly List<ShadowCastingMode> _selfShadowModes = new List<ShadowCastingMode>();
+
+        /// <summary>
+        /// ⚠️⚠️ THE WORLD SLIPPER RIDES THE HAND BY COPYING A TRANSFORM EVERY FRAME
+        /// (`Carrier.RideAnchor`), AND IT IS NEVER REPARENTED ONTO THE CHARACTER. So
+        /// `ApplyFppSelfHide` above — which only reaches renderers under `_character`'s own
+        /// hierarchy — never sees it, and it kept rendering in first person at wherever the
+        /// (now shadows-only) hand anchor put it, at the same time the viewmodel's own
+        /// dedicated `HeldSlipper` rendered mounted to the camera. Two slippers, and only one
+        /// of them was ever hidden. Screenshot: *"look at the tsinelas"*.
+        ///
+        /// `camera_rig.gd::_apply_carried_self_hide` is the original's answer to exactly this,
+        /// called from `_apply_fpp_self_hide` and every viewmodel-carry step. This is that
+        /// function. It is asked every `LateUpdate`, not on a pick-up event, for the same
+        /// reason the arms poll `Carrier.Held` in `ApplyFpp`: what a seat carries changes
+        /// mid-round and a one-shot version only catches it on the next mode change.
+        ///
+        /// ⚠️ NOT GATED ON `_mode == Fpp` ALONE. Unlike the .gd, `BeginEmoteView` here does not
+        /// reassign `_mode` to Tpp (see its own note on why the body is unhidden a different
+        /// way), so `_mode` reads Fpp for the whole swing. `!_emoteView` is what actually turns
+        /// this off during an emote, matching the body's own self-hide being restored there.
+        /// </summary>
+        private void ApplyCarriedSelfHide()
+        {
+            Slipper held = null;
+
+            if (_active && _mode == CameraMode.Fpp && !_emoteView && _character != null && !MatchArrivalPresentation.OwnsCamera)
+            {
+                var carrier = _character.GetComponent<Carrier>();
+                held = carrier != null ? carrier.Held : null;
+            }
+
+            // A released prop starts on the unchanged physical throw origin. Keep
+            // its world mesh hidden from this FPP owner until it clears the eye;
+            // moving the origin forward would let throws bypass nearby obstacles.
+            if (held == null && _active && _mode == CameraMode.Fpp && !_emoteView && _character != null && !MatchArrivalPresentation.OwnsCamera
+                && _hiddenCarriedSlipper != null && _hiddenCarriedSlipper.State == SlipperState.InFlight
+                && _hiddenCarriedSlipper.ThrowerSlot == _character.PlayerSlot)
+            {
+                var fromEye = _hiddenCarriedSlipper.transform.position + _hiddenCarriedSlipper.DrawnCentreOffset - transform.position;
+                if (fromEye.magnitude < .25f + _hiddenCarriedSlipper.CarrySupportExtent(fromEye))
+                    held = _hiddenCarriedSlipper;
+            }
+
+            if (held == _hiddenCarriedSlipper) return;
+
+            for (int i = 0; i < _hiddenCarriedRenderers.Count; i++)
+            {
+                var r = _hiddenCarriedRenderers[i];
+                if (r == null) continue;
+
+                r.shadowCastingMode = i < _carriedShadowModes.Count
+                    ? _carriedShadowModes[i]
+                    : ShadowCastingMode.On;
+            }
+
+            _hiddenCarriedRenderers.Clear();
+            _carriedShadowModes.Clear();
+
+            if (held != null)
+            {
+                foreach (var r in held.GetComponentsInChildren<Renderer>(true))
+                {
+                    if (r == null) continue;
+
+                    _carriedShadowModes.Add(r.shadowCastingMode);
+                    r.shadowCastingMode = ShadowCastingMode.ShadowsOnly;
+                    _hiddenCarriedRenderers.Add(r);
+                }
+            }
+
+            _hiddenCarriedSlipper = held;
+        }
+
+        private Slipper _hiddenCarriedSlipper;
+        private readonly List<Renderer> _hiddenCarriedRenderers = new List<Renderer>();
+        private readonly List<ShadowCastingMode> _carriedShadowModes = new List<ShadowCastingMode>();
+
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️ SHAKE IS FOR THE PERSON IT HAPPENED TO. A body block shakes the BLOCKER's camera
+        /// because it is a thing they did. Shaking everyone tells three other players something
+        /// happened to them when nothing did.
+        ///
+        /// ⚠️ AND IT IS NOT HITSTOP. Hitstop writes a global time scale, which is fine for a
+        /// shove on a long cooldown and completely wrong for a block that can fire as fast as
+        /// three attackers can throw.
+        /// </summary>
+        private Vector3 _impactPunchOffset;
+        private float _impactPunchLeft;
+        private const float ImpactPunchDuration = 0.16f;
+
+        /// <summary>
+        /// Directional camera impact punch for heavy ability hits and strikes.
+        /// </summary>
+        public void ImpactPunch(Vector3 direction, float strength = 1.0f)
+        {
+            _impactPunchLeft = ImpactPunchDuration;
+            _impactPunchOffset = direction.normalized * 0.20f * strength;
+            Shake(strength * 0.45f, 0.22f);
+        }
+
+        public void Shake(float strength = 0.35f, float duration = 0.18f)
+        {
+            _shakeStrength = Mathf.Max(_shakeStrength, strength);
+            _shakeLeft = Mathf.Max(_shakeLeft, duration);
+        }
+
+        public void BeginGroundRumble(float strength)
+        {
+            if(strength<=0)return;
+            if(_groundRumbleAge>=2.4f)_groundRumbleStrength=0;
+            _groundRumbleStrength=Mathf.Clamp01(Mathf.Max(_groundRumbleStrength,strength));
+            _groundRumbleAge=0;
+        }
+
+        public static float GroundRumbleEnvelope(float seconds)
+        {
+            if(seconds<0||seconds>=2.4f)return 0;
+            float primary=.82f*Mathf.Exp(-seconds*2.6f);
+            float first=.26f*Mathf.Exp(-Mathf.Pow((seconds-.95f)/.11f,2));
+            float second=.16f*Mathf.Exp(-Mathf.Pow((seconds-1.65f)/.13f,2));
+            return Mathf.Clamp01(primary+first+second)*Mathf.SmoothStep(0,1,Mathf.Clamp01(seconds/.06f))
+                *Mathf.Clamp01((2.4f-seconds)/.3f);
+        }
+
+        private void StepGroundRumble()
+        {
+            GroundRumbleOffset=Vector3.zero;
+            if(_groundRumbleAge>=2.4f){_groundRumbleStrength=0;return;}
+            _groundRumbleAge+=Time.deltaTime;
+            float amount=GroundRumbleEnvelope(_groundRumbleAge)*_groundRumbleStrength*Settings.SettingsStore.Current.EffectiveCameraShake;
+            // Small smooth translation, no aim rotation, time scaling or gameplay RNG.
+            GroundRumbleOffset=transform.right*(Mathf.Sin(_groundRumbleAge*50.27f)*.010f*amount)
+                +Vector3.up*(Mathf.Sin(_groundRumbleAge*73.8f+.8f)*.004f*amount);
+            transform.position+=GroundRumbleOffset;
+        }
+
+        // ------------------------------------------------------------------ hitstop
+
+        /// <summary>
+        /// ⚠️⚠️ THE IMPACT FRAME, AND IT IS A CAMERA HOLD RATHER THAN A TIME SCALE. A hit in
+        /// this game used to land with no instant of contact at all: a `bump`, some stars and an
+        /// impulse, which between them describe the aftermath and never the moment. This is the
+        /// beat every fighting game spends its budget on. `Visual.HitFeel` is the only caller
+        /// and it carries the reasoning and the weights.
+        ///
+        /// ⚠️⚠️ IT MUST NOT BECOME `Time.timeScale`, WHICH IS THE OBVIOUS IMPLEMENTATION AND IS
+        /// WRONG HERE FOR THREE SEPARATE REASONS. This is a four-player game on one shared
+        /// simulation: a global scale would freeze the physics step for all four, stop the round
+        /// clock, and in a networked match desynchronise the host from its peers. It would also
+        /// hand the anti-stall clocks in `docs/VISION.md` § 4 a free pause on every hit.
+        ///
+        /// What actually happens is much narrower. `LateUpdate` stops WRITING the camera
+        /// transform for a few frames, so the view sticks where it was while the world carries on
+        /// simulating underneath it. The player's own input is not eaten and their character
+        /// keeps moving; only the picture lags, which is exactly the illusion wanted.
+        ///
+        /// ⚠️ UNSCALED TIME, so a hold cannot be stretched by anything else that scales time.
+        /// </summary>
+        public void HoldFrame(float seconds)
+        {
+            if (seconds <= 0.0f) return;
+
+            _holdLeft = Mathf.Max(_holdLeft, seconds);
+        }
+
+        private float _holdLeft;
+
+        // ⚠️⚠️ THE ANCHOR IS WHAT MAKES THE HOLD A HOLD, AND WITHOUT IT THE FREEZE WAS A DRIFT.
+        // `StepShake` writes `transform.position += ...`, which is correct on a normal frame
+        // because `ApplyFpp`/`ApplyTpp` have just written the position ABSOLUTELY and the offset
+        // is therefore discarded and re-applied every frame. A held frame skips that write by
+        // design, so the same `+=` had nothing to be relative TO and compounded instead.
+        private bool _holding;
+        private Vector3 _holdAnchor;
+
+        /// <summary>
+        /// ⚠️ THE SHAKE AND THE PUNCH ARE STILL STEPPED WHILE HELD, AND THAT IS NOT AN
+        /// OVERSIGHT. Their timers have to keep draining or the punch that started with the hit
+        /// would begin only after the freeze released, which reads as two separate events
+        /// instead of one. What is suspended is the FOLLOW: the rig does not re-derive its
+        /// position from the character it is tracking.
+        ///
+        /// ⚠️⚠️ AND BECAUSE THE FOLLOW IS WHAT SUPPLIED THE BASELINE, THE HOLD HAS TO SUPPLY ONE
+        /// ITSELF. MEASURED 2026-09-05 on the shipped weights, `HitFeel.Weight.Ultimate`: a
+        /// 0.11 s hold with a 0.28 m punch offset accumulated **1.14 m at 60 Hz and 2.83 m at
+        /// 144 Hz** by arithmetic, and `HitFreezeProbe` run against this restore commented out
+        /// measured **11.890 m against a 0.45 m ceiling** in batch mode, where the frame rate is
+        /// uncapped. Every held frame added another `offset * punchRatio` on top of the last one,
+        /// and then the follow resumed and snapped it back. That is a camera crossing most of a
+        /// 14 m box during the one beat that is supposed to read as a dead stop, and it got WORSE
+        /// on a better machine, which is the tell: a hold is a DURATION, so a shorter frame buys
+        /// more frames and every frame is another addend. `Hitstop`'s own header records what an
+        /// unbounded timer on a camera costs; this is the same shape one level down.
+        ///
+        /// So the pose the hold froze at is captured once, on the first held frame, and restored
+        /// before the shake each frame after it. The shake and the punch then read exactly as
+        /// they do on a normal frame: an offset from a stable baseline, bounded by their own
+        /// amplitude and independent of the frame rate.
+        /// </summary>
+        private bool StepHold()
+        {
+            if (_holdLeft <= 0.0f)
+            {
+                _holding = false;
+                return false;
+            }
+
+            if (!_holding)
+            {
+                _holdAimAnchor = transform.position - _cosmeticOffset;
+                _holding = true;
+                _holdAnchor = transform.position;
+            }
+
+            // ⚠️ RESTORED BEFORE `StepShake`, NEVER AFTER IT. Assigning afterwards would erase
+            // the punch and the shake, which is the opposite bug: a hitstop with no impact in it.
+            transform.position = _holdAnchor;
+
+            _holdLeft -= Time.unscaledDeltaTime;
+            StepShake();
+            return true;
+        }
+
+        private void StepShake()
+        {
+            Vector3 eye = transform.position;
+            float level = Settings.SettingsStore.Current.EffectiveCameraShake;
+            StepGroundRumble();
+            if (_impactPunchLeft > 0)
+            {
+                _impactPunchLeft -= Time.deltaTime;
+                transform.position += _impactPunchOffset * Mathf.Clamp01(_impactPunchLeft / ImpactPunchDuration) * level;
+            }
+            if (_shakeLeft > 0)
+            {
+                _shakeLeft -= Time.deltaTime;
+                float amount = Mathf.Clamp01(_shakeLeft) * _shakeStrength * level * .1f;
+                float clock = Time.unscaledTime;
+                // Deterministic cosmetic oscillation does not consume simulation
+                // random values or differ because a viewer disabled shake.
+                transform.position += new Vector3(Mathf.Sin(clock * 93.11f), Mathf.Sin(clock * 117.7f + .8f), 0) * amount;
+                if (_shakeLeft <= 0) _shakeStrength = 0;
+            }
+            _cosmeticOffset = transform.position - eye;
+        }
+
+        /// <summary>A punch of the arms toward the player on an action, so a verb is felt.</summary>
+        public void ViewmodelKick(Vector3 direction, float strength = 1.0f)
+        {
+            _vmKickLeft = VmKickTime;
+            _vmKickOffset = direction.normalized * 0.06f * strength;
+        }
+
+        private void StepViewmodelKick()
+        {
+            if (_viewmodel == null) return;
+
+            if (_vmKickLeft > 0.0f) _vmKickLeft -= Time.deltaTime;
+
+            float k = _vmKickLeft <= 0.0f ? 0.0f : _vmKickLeft / VmKickTime;
+            _viewmodel.localPosition = ViewmodelSeat + _vmKickOffset * k;
+        }
+
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// ⚠️ AN EMOTE SWITCHES TO A THIRD-PERSON LOOK, because the whole point of an emote is
+        /// that YOU can see it too. In first person a player performing one sees nothing at all
+        /// and reasonably concludes it did not fire.
+        ///
+        /// ⚠️⚠️ AND THE BODY HAS TO BE GIVEN BACK, WHICH IS THE HALF THAT WAS MISSING. 🧑
+        /// 2026-08-18: *"doing emote doesnt show myself in tpp, i think my body is hidden"*. He
+        /// is exactly right. <see cref="ApplyFppSelfHide"/> puts every renderer on this unit into
+        /// SHADOWS_ONLY, and it only re-runs on `Follow` and `SetActive` — neither of which the
+        /// emote swing touches, because the swing deliberately leaves `_mode` alone so
+        /// `EndEmoteView` can restore it. So the camera dutifully orbited to a third-person
+        /// framing of an invisible person, and the ONE feature whose entire purpose is "you can
+        /// see yourself do it" showed an empty street with a shadow on it.
+        ///
+        /// This is the same shape as the emote-wheel-seat bug: a state that is correct for FPP
+        /// leaking into a view that is no longer FPP. The self-hide is a property of what the
+        /// camera is LOOKING AT, so it is toggled by the same two functions that decide that.
+        /// </summary>
+        /// <summary>
+        /// Swings out to third person while the local player is on the floor, and back when they
+        /// stand up.
+        ///
+        /// ⚠️⚠️ FALLING IS ONE OF ONLY TWO THINGS IN THE GAME THAT EARN THE CAMERA, and the rule
+        /// that decides it is `docs/Hero_Strike_Balance.md` § 8.6: an ability or event takes the
+        /// camera only when the body the player is driving changes, or when they stop driving it.
+        /// A fall is the second of those. Every hero SKILL is refused by that same rule because
+        /// its arms already say it, so this is not a general licence to swing the camera around.
+        ///
+        /// 🧑, after playing the build: *"i dont feel like i fell down"*. In first person a fall
+        /// is the floor arriving and then two and a half seconds of looking at it. The player
+        /// cannot see the knockdown clip, cannot see themselves get up, and the one moment the
+        /// game most wants them to feel happens entirely off screen.
+        ///
+        /// ⚠️ IT REUSES THE EMOTE SWING RATHER THAN ADDING A SECOND ONE, deliberately. That path
+        /// already solves the hard half: `BeginEmoteView` calls `RestoreSelfHide`, and without it
+        /// the camera orbits a body that `ApplyFppSelfHide` has put into SHADOWS_ONLY, which is
+        /// the exact bug 🧑 reported for emotes as *"doing emote doesnt show myself in tpp, i
+        /// think my body is hidden"*. A fresh fall-specific path would have rediscovered it.
+        ///
+        /// ⚠️ AND IT IS A CUT, NOT A BLEND, WHICH IS THE OPPOSITE OF THE POSSESSION.
+        /// `PossessBlendSeconds` travels the eye because a possession is a TRANSFORMATION and the
+        /// player has to see themselves leave. A fall is an IMPACT: cutting on the frame the
+        /// body hits is what sells it, and easing out over a quarter second would read as a
+        /// cutscene starting rather than as being knocked over.
+        /// </summary>
+        private void StepFallView()
+        {
+            if (!Settings.SettingsStore.Current.CinematicCameraMotion)
+            {
+                if (_fallView) { _fallView = false; EndEmoteView(); }
+                return;
+            }
+
+            // ⚠️⚠️ AN ELEMENT STUN EARNS THE CAMERA FOR THE SAME REASON A FALL DOES, and the
+            // rule quoted above is what admits it rather than a second exception. `docs/
+            // Hero_Strike_Balance.md` § 8.6: an event takes the camera when the body the player
+            // is driving changes, or WHEN THEY STOP DRIVING IT. Being frozen solid is the
+            // clearest case of the second there is. 🧑 2026-08-26: *"i want them to go to TPP
+            // and to have a button mashing thing to get unstunned or unfrozen (same as when u
+            // trip)"* — and "same as when u trip" is literally this function.
+            //
+            // ⚠️ `StunElement.None` IS EXCLUDED, WHICH KEEPS THE TAYA'S TAG IN FIRST PERSON.
+            // That is not an oversight: the tag cannot be mashed out of, so there is nothing for
+            // the player to DO with a third-person view of themselves, and swinging out for
+            // every tag in a 90 s round would take the camera off the player four or five times
+            // a match for no decision. Hero skills are refused by the same rule.
+            bool held = _character != null && _character.StunElement != StunElement.None;
+            // ⚠️ ROOTED SWINGS OUT TOO (HERO-9, the owner's table for Paete's ultimate: *"they get stuck on it
+            // (switches to tpp view)"*; planned in docs/reports/paete-kit-2026-09-25/plan.md and never wired
+            // until the sentry film of 2026-09-26 showed a caught player still in first person). Unlike a tag
+            // there IS something to do: hold Interact to struggle free, and they can still throw and cast, so
+            // they see their own body held by the tree. It keeps the standing pitch, as a held body does.
+            bool rooted = _character != null && _character.IsRooted;
+            // ⚠️ BLOWN BACK SWINGS OUT TOO (owner, 2026-10-03, Amihan's Airburst v3.2: *"make the fpp view of all that got pushed back
+            // see that as well"*). Thrown by her wind they have lost their body to it (`WindTumble`), so they watch it tumble, like a
+            // trip; the view comes home once they are down and the carry is spent. Standing pitch: the body is in the air, not on the road.
+            bool blown = _character != null && _character.IsWhirled && (_character.IsCarried || !_character.IsGrounded);
+            // ⚠️ DROPPING THROUGH THE ARENA'S SHAFT SWINGS OUT TOO (owner, 2026-10-05: "falling off
+            // threshold is too high, you need to fall further"). The body has left the stage and
+            // nothing the player presses matters until the drone has it, so the view goes above
+            // and behind the body looking DOWN the shaft: its rings go by and the city is under
+            // their feet. `ArenaStage.IsShaftFall` is false on every other map (no stage), and
+            // the drone's own view (`ApplyEdgeRecoveryView`) takes over at the catch.
+            //
+            // ⚠️⚠️ ONLY ONCE THE BODY IS PAST SAVING (owner, 2026-10-05, playing: "paete's utility is
+            // like a grappling hook but it doesnt even have much of a time window to let me clutch
+            // back up"). This view is the emote orbit: the mouse turns the lens and not the body,
+            // the pitch is held between 6 and 48 degrees DOWN, and `AimPoint` is cast along it, so
+            // from the first metre of a fall a player could not look at the deck, let alone aim a
+            // skill at it. Down to `ArenaFallRecovery.LostDepth` the view and the aim stay the
+            // player's own; under it "nothing the player presses matters" is true and this opens.
+            bool shaft = Map.ArenaFallRecovery.IsLostFall(_character);
+            bool down = _character != null && (_character.IsTripped || held || rooted || blown || shaft);
+            if (down != _fallView) _blownView = down && blown;
+            if (shaft && !_shaftView) _shaftOpened = true;
+            _shaftView = shaft;
+            if (!down) { _thrownView = false; _thrownRenderers = null; _thrownCentreSet = false; }
+            if (down == _fallView)
+            {
+                // The throw can reach the owning peer a frame or two after the trip that opened the view.
+                if (down && !_thrownAimed && Time.time - _fallViewAt < 0.5f && !held && !rooted && !blown && AimAtThrow())
+                    _emotePitchDeg = ThrownPitchDeg;
+                return;
+            }
+
+            // ⚠️ AN EMOTE ALREADY OWNS THE SWING, SO DO NOT TAKE IT FROM ONE. `EmotePlayer.Stop`
+            // is reached by losing the right to act, and a trip does exactly that, so an emote
+            // running when the body goes down ends itself and hands the view back through
+            // `OnEmoteStopped`. Grabbing it here as well would have two owners for one flag.
+            if (down && _emoteView) return;
+
+            _fallView = down;
+
+            if (down)
+            {
+                BeginEmoteView();
+
+                // ⚠️ AFTER, NEVER BEFORE. `BeginEmoteView` seeds the pitch from `_tppPitchDeg`,
+                // which is the standing shot; writing the fall angle first would be overwritten
+                // on the same line that opens the view.
+                //
+                // ⚠️⚠️ AND A HELD BODY IS STILL STANDING, SO IT KEEPS THE STANDING PITCH.
+                // `FallPitchDeg` looks DOWN at a body on the tarmac; using it for a stun would
+                // aim the camera at the road in front of a character who is upright, and the
+                // one thing the player needs to see is the element on their own body.
+                //
+                // ⚠️ THROWN, NOT TRIPPED (owner, 2026-10-04, hit by a car on the rebuilt Ilalim:
+                // "ragdoll cam is weird"). The view opens behind the way the body FACES, and a
+                // player facing the car that hits them is thrown backwards, straight through the
+                // lens: the frame was their own arms. A body with real travel on it is going
+                // somewhere, so the view opens behind the way it is GOING and watches it fly away,
+                // at the standing pitch like the wind's blow (it is in the air, not on the road).
+                _fallViewAt = Time.time; _thrownAimed = false;
+                bool thrown = !held && !rooted && !blown && AimAtThrow();
+                if (!held && !rooted && !blown && !thrown) _emotePitchDeg = FallPitchDeg;
+                if (thrown) _emotePitchDeg = ThrownPitchDeg;
+                // The wind's hit is felt, not just seen.
+                if (blown) Shake(1.1f, .55f);
+            }
+            else EndEmoteView();
+        }
+
+        private float _fallViewAt;
+        private bool _thrownAimed;
+        // The Arena's shaft: the view over a falling body. 46 degrees is inside the fall band's
+        // 48, so the player's own look keeps it; 5 m back and up shows the whole tumbling body.
+        private const float ShaftPitchDeg = 46.0f, ShaftArm = 5.0f, ShaftMountHeight = 1.0f;
+        private bool _shaftView, _shaftOpened;
+
+        /// <summary>Turns the fall view to look along a thrown body's travel. False when the body
+        /// is not travelling fast enough to count as thrown.</summary>
+        private bool AimAtThrow()
+        {
+            Vector3 travel = _character.PresentationTravelVelocity; travel.y = 0.0f;
+            if (travel.sqrMagnitude < ThrownSpeed * ThrownSpeed) return false;
+            _emoteYawDeg = Mathf.Atan2(travel.x, travel.z) * Mathf.Rad2Deg;
+            _thrownAimed = true;
+            _thrownView = true;
+            _thrownRenderers = _character.GetComponentsInChildren<Renderer>();
+            Shake(0.9f, 0.45f);
+            return true;
+        }
+
+        // ⚠️ THE THROWN VIEW FRAMES THE BODY, NOT THE SPOT UNDER IT (owner, 2026-10-04, second look
+        // at a car hit: "can you put the cam back further and align it to the center of mass
+        // instead of the bottom"). The fall view mounts 0.x m over the motor's position, which is
+        // the FEET, on a short arm: right for a body lying on the road, and for a body the car has
+        // just put two metres in the air it left the lens on the tarmac looking up at it. So this
+        // view mounts on the middle of the body's own renderers, wherever the tumble has it, on a
+        // long arm looking a little down.
+        private const float ThrownArm = 6.0f, ThrownPitchDeg = 16.0f;
+        private bool _thrownView;
+        private Renderer[] _thrownRenderers;
+        private Vector3 _thrownCentre;
+        private bool _thrownCentreSet;
+
+        private Vector3 BodyCentre()
+        {
+            bool any = false; Bounds all = default;
+            if (_thrownRenderers != null)
+                foreach (var r in _thrownRenderers)
+                {
+                    if (r == null || !r.enabled || !r.gameObject.activeInHierarchy || r is ParticleSystemRenderer || r is TrailRenderer) continue;
+                    if (!any) { all = r.bounds; any = true; } else all.Encapsulate(r.bounds);
+                }
+            return any ? all.center : _character.transform.position + Vector3.up * 0.9f;
+        }
+
+        public void BeginEmoteView()
+        {
+            if (_emoteView) return;
+
+            _emoteView = true;
+            _modeBeforeEmote = _mode;
+
+            // ⚠️ SEEDED FROM THE BODY'S OWN FACING AND THE TPP PITCH, NO `+ 180`. That is what
+            // `camera_rig.gd::begin_emote_view` does, and its note says why: the camera opens
+            // BEHIND the character it is about to orbit rather than snapping to world north. The
+            // extra half turn here opened it in front of the face instead, which is a different
+            // shot from the one the original gives.
+            _emoteYawDeg = BodyYawDeg();
+            _emotePitchDeg = _tppPitchDeg;
+
+            if (_viewmodel != null) _viewmodel.gameObject.SetActive(false);
+
+            // The whole reason to swing out here. See this function's own note.
+            RestoreSelfHide();
+        }
+
+        public void EndEmoteView()
+        {
+            _edgeViewEpisode=-1;
+            if (!_emoteView) return;
+
+            _emoteView = false;
+            _mode = _modeBeforeEmote;
+
+            if (_viewmodel != null)
+                _viewmodel.gameObject.SetActive(_active && _mode == CameraMode.Fpp && !MatchArrivalPresentation.OwnsCamera);
+
+            // ⚠️ AND HIDE IT AGAIN ON THE WAY BACK, or the emote leaves the player looking at
+            // their own shoulders and a second set of arms for the rest of the round. The guard
+            // inside ApplyFppSelfHide makes this a no-op if the rig came back to TPP.
+            ApplyFppSelfHide();
+        }
+
+        public bool IsEmoteView => _emoteView;
+
+        /// <summary>
+        /// § THE ORBIT. `camera_rig.gd`'s emote branch of `_unhandled_input`.
+        ///
+        /// ⚠️⚠️ AN EMOTE ORBITS, IT DOES NOT STEER, AND THE PORT COULD DO NEITHER. 🧑 2026-08-04
+        /// on the Godot build: *"make srue i can move camera around while im emoting but its
+        /// anchored to my body"*, and 🧑 2026-08-18 on this one: *"im supposed to be able to
+        /// rotate my camera btw when i emote"*. `LateUpdate` returned before `StepLook` for the
+        /// whole duration, so the emote view was frozen on whatever bearing it opened at: the
+        /// mouse did nothing at all until the emote ended.
+        ///
+        /// ⚠️ IT WRITES THIS RIG'S OWN YAW AND PITCH AND NEVER TOUCHES THE BODY, which is the
+        /// half that makes it an orbit. Every other frame in this class turns `_character` with
+        /// the mouse; doing that here would spin the dancing body on the spot for all three
+        /// other players while its owner merely looked around.
+        ///
+        /// ⚠️ AND THE WHEEL STILL OWNS THE MOUSE WHILE IT IS OPEN, the same check `StepLook`
+        /// makes. B opens the wheel, and a player picking a slice must not also swing the camera.
+        /// </summary>
+        private void StepEmoteLook()
+        {
+            if (_aimSource != AimSource.Mouse) return;
+            if (_character.Intent.Parked) return;
+            if (UI.EmoteWheel.AnyOpen) return;
+
+            LookThisFrame(out float dx, out float dy);
+
+            _emoteYawDeg += dx * 10.0f;
+            _emotePitchDeg = Mathf.Clamp(_emotePitchDeg - dy * 10.0f,
+                                         _fallView ? FallPitchMinDeg : EmotePitchMinDeg,
+                                         _fallView ? FallPitchMaxDeg : EmotePitchMaxDeg);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE SAME BOOM TPP ALREADY USES, NOT A SEPARATE ONE. `camera_rig.gd`'s emote
+        /// branch writes `tpp_arm`'s transform directly and lets the SAME `SpringArm3D` — mount
+        /// height, spring length, wall collision, all of it — do the rest; it is not a second,
+        /// shorter arm invented for the occasion. The port's first version was exactly that: a
+        /// hand-picked 2.6 m at a flat 1.0 m up, which put the shot at shoulder height on a
+        /// child-sized rig and roughly half the real TPP distance. Mirroring `ApplyTpp` here
+        /// means "how far behind and how high" is one number this file already has to get right
+        /// for ordinary third person, not a second one to keep in sync with it by hand.
+        /// </summary>
+        private void ApplyEmoteView()
+        {
+            if(_character!=null&&_character.IsEdgeRecovering){ApplyEdgeRecoveryView();return;}
+            if (_shaftView && _shaftOpened) { _shaftOpened = false; _emotePitchDeg = ShaftPitchDeg; }
+            _emotePitchDeg = Mathf.Clamp(_emotePitchDeg,
+                                         _fallView ? FallPitchMinDeg : EmotePitchMinDeg,
+                                         _fallView ? FallPitchMaxDeg : EmotePitchMaxDeg);
+
+            // See § THE FALL FRAMING. An emote rides the TPP boom, unchanged; a fall does not,
+            // because the subject is on the ground.
+            float mountHeight = _fallView ? FallMountHeight : TppMountHeight;
+            float arm = _fallView ? FallSpringLength : _tppSpringLength;
+            // Thrown by her wind (film v3.3: the fall arm put the tumbling body's head across the whole lens): back and up, so the
+            // whole body tumbling and the court it is thrown across are in frame, the lens rocking with the gusts.
+            float roll = 0.0f;
+            if (_blownView)
+            {
+                mountHeight = 1.1f; arm = Mathf.Max(arm, 4.4f);
+                if (Settings.SettingsStore.Current.EffectiveCameraShake > 0f) roll = 7.0f * Mathf.Sin(Time.unscaledTime * 5.3f);
+            }
+
+            if (_shaftView && _fallView) { mountHeight = ShaftMountHeight; arm = Mathf.Max(arm, ShaftArm); }
+
+            Vector3 mount = _character.transform.position + Vector3.up * mountHeight;
+            if (_thrownView)
+            {
+                // Eased, so the tumble's own wobble does not shake the frame; the first frame snaps.
+                Vector3 centre = BodyCentre();
+                _thrownCentre = _thrownCentreSet ? Vector3.Lerp(_thrownCentre, centre, 1.0f - Mathf.Exp(-14.0f * Time.deltaTime)) : centre;
+                _thrownCentreSet = true;
+                mount = _thrownCentre; arm = Mathf.Max(arm, ThrownArm);
+            }
+            var rot = Quaternion.Euler(_emotePitchDeg, _emoteYawDeg, roll);
+            Vector3 wanted = mount - (rot * Vector3.forward) * arm;
+
+            float length = arm;
+            if (Physics.SphereCast(mount, 0.2f, (wanted - mount).normalized, out var hit,
+                                   arm, ~0, QueryTriggerInteraction.Ignore))
+            {
+                // The thrown view opens behind the body's travel, which is where the car that threw it
+                // is: a moving vehicle's box (kinematic) must not fold the arm back onto the body.
+                bool vehicle = _thrownView && hit.collider.attachedRigidbody != null && hit.collider.attachedRigidbody.isKinematic;
+                if (!vehicle && hit.collider.GetComponentInParent<CharacterMotor>() != _character)
+                {
+                    // ⚠️ THE FALL FLOOR IS ITS OWN. `TppMinSpringLength` is 1.80 m, which is
+                    // longer than the whole fall arm would ever need to shrink to, so a kerb or
+                    // a wall behind a fallen player would have pushed the camera back OUT to
+                    // 1.80 m and straight through it.
+                    float floor = _fallView ? 1.0f : TppMinSpringLength;
+                    length = Mathf.Max(floor, hit.distance - TppArmMargin);
+                }
+            }
+
+            transform.SetPositionAndRotation(mount - (rot * Vector3.forward) * length, rot);
+        }
+
+        private void ApplyEdgeRecoveryView()
+        {
+            var outward=_character.EdgeOutward;bool drone=_character.EdgeKind==EdgeRecoveryKind.Drone;
+            float inwardYaw=Mathf.Atan2(-outward.x,-outward.z)*Mathf.Rad2Deg;
+            if(_edgeViewEpisode!=_character.RecoveryEpisode)
+            {_edgeViewEpisode=_character.RecoveryEpisode;_emoteYawDeg=inwardYaw+(drone?0:30);_emotePitchDeg=drone?26:12;}
+            _emoteYawDeg=inwardYaw+Mathf.Clamp(Mathf.DeltaAngle(inwardYaw,_emoteYawDeg),-65,65);
+            _emotePitchDeg=Mathf.Clamp(_emotePitchDeg,-5,35);
+            var mount=_character.EdgeGrip+outward*.50f-Vector3.up*.35f;
+            if(_character.EdgePhase==2)mount=Vector3.Lerp(mount,_character.transform.position+Vector3.up*.85f,
+                Mathf.SmoothStep(0,1,Mathf.InverseLerp(.40f,1,_character.EdgePhaseRatio)));
+            // The Arena's drone carries the body across the stage: there is no lip to frame, so
+            // the mount is the body itself, followed from behind its travel and above.
+            if(drone)mount=_character.transform.position+Vector3.up*1.0f;
+            var rotation=Quaternion.Euler(_emotePitchDeg,_emoteYawDeg,0);var direction=-(rotation*Vector3.forward);
+            // The haul up the shaft is seen from further back: the body, the drone over it and the shaft going by.
+            float length=drone?(_character.EdgePhase==1&&_character.EdgePhaseRatio<CharacterMotor.DroneLiftShare?6.2f:4.8f):3.2f;
+            int hits=Physics.SphereCastNonAlloc(mount,.16f,direction,_edgeViewHits,length,~0,QueryTriggerInteraction.Ignore);
+            for(int i=0;i<hits;i++)
+                if(_edgeViewHits[i].collider.GetComponentInParent<CharacterMotor>()==null)
+                    length=Mathf.Min(length,Mathf.Max(.8f,_edgeViewHits[i].distance-TppArmMargin));
+            transform.SetPositionAndRotation(mount+direction*length,rotation);
+        }
+
+        // -------------------------------------------------------------------
+
+        /// <summary>
+        /// Where this player is aiming. ⚠️ IN FIRST PERSON IT IS THE SIGHT LINE, which is what
+        /// makes the throw leave along the line the player is looking down. Measured: leaving
+        /// from the hand instead sags the flight 0.38 to 0.43 m below that line and drops the
+        /// slipper out of the bottom of the screen on release.
+        /// </summary>
+        /// <summary>How far along the crosshair to look for something to aim AT, before giving
+        /// up and treating the aim as a bearing rather than a target. `carrier.gd:60`.</summary>
+        public const float AimRayLength = 40.0f;
+
+        public Vector3 AimPoint()
+        {
+            if (_character == null) return Vector3.zero;
+
+            if (_mode == CameraMode.Fpp)
+            {
+                // ⚠️ IT CASTS, IT DOES NOT PROJECT A FIXED DISTANCE. `carrier.gd::_aim_point`
+                // raycasts the crosshair and returns the hit, so aiming at the lata twelve
+                // metres away throws AT the lata rather than at a point twenty metres past it.
+                // A fixed projection makes every close-range throw overshoot, and the aiming
+                // arc drawn from it lands somewhere the slipper never goes.
+                var sight = new Ray(AimEye, transform.forward);
+
+                if (Physics.Raycast(sight, out var hit, AimRayLength, ~0,
+                                    QueryTriggerInteraction.Ignore)
+                    && hit.collider.GetComponentInParent<CharacterMotor>() != _character)
+                {
+                    return hit.point;
+                }
+
+                return AimEye + transform.forward * AimRayLength;
+            }
+
+            var ground = new Plane(Vector3.up, _character.transform.position);
+            var ray = new Ray(AimEye, transform.forward);
+
+            return ground.Raycast(ray, out float enter)
+                ? ray.GetPoint(enter)
+                : _character.transform.position + _character.transform.forward * 10.0f;
+        }
+    }
+}

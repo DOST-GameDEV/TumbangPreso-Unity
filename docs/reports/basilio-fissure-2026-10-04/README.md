@@ -1,4 +1,4 @@
-# Basilio Titan Fissure held-equipment correction
+# Dante Titan Fissure held-equipment correction
 
 The original held performance put four sampled slipper vertices through the
 rigid face surface. The empty-hand control passed. A dedicated held performance

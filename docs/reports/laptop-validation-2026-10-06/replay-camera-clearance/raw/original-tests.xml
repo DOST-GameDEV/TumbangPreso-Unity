@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Failed(Child)" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 06:41:21Z" end-time="2026-10-06 06:41:21Z" duration="0.1082985">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1426" result="Failed" site="Child" start-time="2026-10-06 06:41:21Z" end-time="2026-10-06 06:41:21Z" duration="0.108299" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2760" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1426" result="Failed" site="Child" start-time="2026-10-06 06:41:21Z" end-time="2026-10-06 06:41:21Z" duration="0.091011" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22164" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2761" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1426" result="Failed" site="Child" start-time="2026-10-06 06:41:21Z" end-time="2026-10-06 06:41:21Z" duration="0.081285" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2762" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1426" result="Failed" site="Child" start-time="2026-10-06 06:41:21Z" end-time="2026-10-06 06:41:21Z" duration="0.071977" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2336" name="ReplayCameraClearanceTests" fullname="TumbangPreso.Tests.ReplayCameraClearanceTests" classname="TumbangPreso.Tests.ReplayCameraClearanceTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-10-06 06:41:21Z" end-time="2026-10-06 06:41:21Z" duration="0.054592" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2338" name="AnUnobstructedReplayPoseRemainsAvailable" fullname="TumbangPreso.Tests.ReplayCameraClearanceTests.AnUnobstructedReplayPoseRemainsAvailable" methodname="AnUnobstructedReplayPoseRemainsAvailable" classname="TumbangPreso.Tests.ReplayCameraClearanceTests" runstate="Runnable" seed="1667093516" result="Passed" start-time="2026-10-06 06:41:21Z" end-time="2026-10-06 06:41:21Z" duration="0.022155" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2337" name="AReplayEyeCannotAcceptSceneryInsideItsNearPlane" fullname="TumbangPreso.Tests.ReplayCameraClearanceTests.AReplayEyeCannotAcceptSceneryInsideItsNearPlane" methodname="AReplayEyeCannotAcceptSceneryInsideItsNearPlane" classname="TumbangPreso.Tests.ReplayCameraClearanceTests" runstate="Runnable" seed="2050370929" result="Failed" start-time="2026-10-06 06:41:21Z" end-time="2026-10-06 06:41:21Z" duration="0.012275" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The native camera near-plane corner is inside opaque scenery despite a clear central ray.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.ReplayCameraClearanceTests.AReplayEyeCannotAcceptSceneryInsideItsNearPlane () [0x00068] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\ReplayCameraClearanceTests.cs:45
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2344" name="AWallAcrossTheSightlineStillRejectsTheAngle" fullname="TumbangPreso.Tests.ReplayCameraClearanceTests.AWallAcrossTheSightlineStillRejectsTheAngle" methodname="AWallAcrossTheSightlineStillRejectsTheAngle" classname="TumbangPreso.Tests.ReplayCameraClearanceTests" runstate="Runnable" seed="419299079" result="Passed" start-time="2026-10-06 06:41:21Z" end-time="2026-10-06 06:41:21Z" duration="0.002193" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2343" name="ExistingIgnoredGeometryRemainsEligible" fullname="TumbangPreso.Tests.ReplayCameraClearanceTests.ExistingIgnoredGeometryRemainsEligible" classname="TumbangPreso.Tests.ReplayCameraClearanceTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-06 06:41:21Z" end-time="2026-10-06 06:41:21Z" duration="0.006758" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2339" name="ExistingIgnoredGeometryRemainsEligible(&quot;Trigger&quot;)" fullname="TumbangPreso.Tests.ReplayCameraClearanceTests.ExistingIgnoredGeometryRemainsEligible(&quot;Trigger&quot;)" methodname="ExistingIgnoredGeometryRemainsEligible" classname="TumbangPreso.Tests.ReplayCameraClearanceTests" runstate="Runnable" seed="1969159083" result="Passed" start-time="2026-10-06 06:41:21Z" end-time="2026-10-06 06:41:21Z" duration="0.000652" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2340" name="ExistingIgnoredGeometryRemainsEligible(&quot;Can&quot;)" fullname="TumbangPreso.Tests.ReplayCameraClearanceTests.ExistingIgnoredGeometryRemainsEligible(&quot;Can&quot;)" methodname="ExistingIgnoredGeometryRemainsEligible" classname="TumbangPreso.Tests.ReplayCameraClearanceTests" runstate="Runnable" seed="212635028" result="Passed" start-time="2026-10-06 06:41:21Z" end-time="2026-10-06 06:41:21Z" duration="0.000856" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2341" name="ExistingIgnoredGeometryRemainsEligible(&quot;Body&quot;)" fullname="TumbangPreso.Tests.ReplayCameraClearanceTests.ExistingIgnoredGeometryRemainsEligible(&quot;Body&quot;)" methodname="ExistingIgnoredGeometryRemainsEligible" classname="TumbangPreso.Tests.ReplayCameraClearanceTests" runstate="Runnable" seed="135965792" result="Passed" start-time="2026-10-06 06:41:21Z" end-time="2026-10-06 06:41:21Z" duration="0.002123" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2342" name="ExistingIgnoredGeometryRemainsEligible(&quot;Shoe&quot;)" fullname="TumbangPreso.Tests.ReplayCameraClearanceTests.ExistingIgnoredGeometryRemainsEligible(&quot;Shoe&quot;)" methodname="ExistingIgnoredGeometryRemainsEligible" classname="TumbangPreso.Tests.ReplayCameraClearanceTests" runstate="Runnable" seed="1003500350" result="Passed" start-time="2026-10-06 06:41:21Z" end-time="2026-10-06 06:41:21Z" duration="0.000853" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

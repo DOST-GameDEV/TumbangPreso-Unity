@@ -334,7 +334,7 @@ namespace TumbangPreso.Core
             B("rafi", "sean", "Bet you can't read this throw.", "I don't need to. I'll wait."),
             B("sean", "rafi", "No tricks today, Ilyas.", "Then watch really closely."),
             B("rafi", "cheska", "Bet I get one past you.", "You won't. I've seen them all."),
-            B("rafi", "dante", "Basilio, teach me how you stand.", "Stand still. Watch. That's the lesson."),
+            B("rafi", "dante", "Dante, teach me how you stand.", "Stand still. Watch. That's the lesson."),
             B("amihan", "sean", "Rago, the wind won't wait!", "Then it can go without me."),
             B("amihan", "rafi", "Your current needs my wind.", "Then blow harder."),
             B("cheska", "amihan", "Benguet's colder. Admit it.", "Vigan's windier. Admit that."),

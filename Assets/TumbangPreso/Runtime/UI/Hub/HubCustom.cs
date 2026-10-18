@@ -7,7 +7,7 @@ namespace TumbangPreso.UI.Hub
 {
     /// <summary>
     /// HOST GAME, the owner's "Custom Game Mode" sheet: lobby name; MAP, GAME MODE and VISIBILITY
-    /// dropdowns with a default map set; LAN or ONLINE; CREATE LOBBY. The selected map shows subtly
+    /// previous/next choices with a default map set; LAN or ONLINE; CREATE LOBBY. The selected map shows subtly
     /// behind the form and changes with the choice (the sheet's suggestion 2, "mababa lang opacity
     /// para lang alam nila ano yung possible look nung map").
     ///
@@ -23,7 +23,7 @@ namespace TumbangPreso.UI.Hub
         public override float CourtShade => 0.62f;
 
         private InputField _name;
-        private HubDropdown _map, _mode, _visibility;
+        private HubArrowChoice _map, _mode, _visibility;
         private HubButton _lan, _online, _create;
         private bool _onlineChosen;
         private Text _status;
@@ -63,17 +63,17 @@ namespace TumbangPreso.UI.Hub
                 if (SceneFlow.MapRegistry[i].Id == SceneFlow.SelectedMap) mapIndex = i;
             }
             HubField.Label(panel, "MAP", new Vector2(44, -190));
-            _map = HubDropdown.Build(panel, Hub, "MapDropdown", "MAP", maps, mapIndex, 903);
+            _map = HubArrowChoice.Build(panel, "Map", maps, mapIndex, 903);
             HubKit.Place((RectTransform)_map.transform, HubKit.TopLeft, new Vector2(40, -232), new Vector2(740, 92));
             _map.Changed += i => Hub.Host.SelectMap(SceneFlow.MapRegistry[i].Id);
 
             HubField.Label(panel, "GAME MODE", new Vector2(44, -346), 360);
-            _mode = HubDropdown.Build(panel, Hub, "ModeDropdown", "GAME MODE", new[] { "CLASSIC", "HERO STRIKE" },
+            _mode = HubArrowChoice.Build(panel, "Mode", new[] { "CLASSIC", "HERO STRIKE" },
                                       SceneFlow.SelectedMode == GameMode.Classic ? 0 : 1, 904);
             HubKit.Place((RectTransform)_mode.transform, HubKit.TopLeft, new Vector2(40, -388), new Vector2(360, 92));
 
             HubField.Label(panel, "VISIBILITY", new Vector2(424, -346), 360);
-            _visibility = HubDropdown.Build(panel, Hub, "VisibilityDropdown", "VISIBILITY", Visibility, 0, 905);
+            _visibility = HubArrowChoice.Build(panel, "Visibility", Visibility, 0, 905);
             HubKit.Place((RectTransform)_visibility.transform, HubKit.TopLeft, new Vector2(420, -388), new Vector2(360, 92));
 
             HubField.Label(panel, "NETWORK", new Vector2(44, -502));
@@ -268,6 +268,7 @@ namespace TumbangPreso.UI.Hub
         {
             if (Time.unscaledTime < _nextDraw) return;
             _nextDraw = Time.unscaledTime + 1.0f;
+            if (_source == 1) Net.NetSession.Instance?.Beacon?.RequestDiscovery();
             Draw();
         }
 
@@ -491,7 +492,7 @@ namespace TumbangPreso.UI.Hub
             }
 
             var seats = host.Seats();
-            string key = host.RoomTitle + host.RoomCode + host.IsHost + host.LocalReady + SceneFlow.SelectedMap + SceneFlow.SelectedMode + host.Spectating + host.MatchInProgress + host.SeatSwapOffer?.Id + host.SeatSwapResult;
+            string key = host.RoomTitle + host.RoomCode + host.IsHost + host.LocalReady + SceneFlow.SelectedMap + SceneFlow.SelectedMode + host.Spectating + host.MatchInProgress + host.SeatSwapOffer?.Id + host.SeatSwapResult + HubQueueWatch.QueueRoom;
             foreach (var s in seats) key += s.Occupied + ":" + s.Name + ":" + s.CharacterPick + ":" + s.Ready + ":" + s.Bot + ":" + host.CanTakeSeat(s.Slot) + "|";
             if (!force && key == _drawn) return;
             _drawn = key;
@@ -510,7 +511,12 @@ namespace TumbangPreso.UI.Hub
                             (host.RoomOnline ? "ONLINE" : "LAN");
 
             int occupied = 0;
-            foreach (var s in seats) if (s.Occupied) occupied++;
+            bool fillBots = HubQueueWatch.QueueRoom; // Start retains queued-room bot acceptance.
+            foreach (var s in seats)
+            {
+                if (s.Occupied) occupied++;
+                else if (s.Bot) fillBots = true;
+            }
             _count.text = "PLAYERS  " + occupied + " / " + Balance.PlayerCount;
 
             for (int i = _rows.childCount - 1; i >= 0; i--) Destroy(_rows.GetChild(i).gameObject);
@@ -558,8 +564,10 @@ namespace TumbangPreso.UI.Hub
             if (host.IsHost)
             {
                 HubKit.SetLabel(_primary, "START GAME");
-                _primary.interactable = true;
-                _status.text = occupied < Balance.PlayerCount ? "Empty seats are filled by bots." : "Everyone is here.";
+                _primary.interactable = occupied >= Balance.PlayerCount || fillBots;
+                _status.text = occupied >= Balance.PlayerCount ? "Everyone is here." : fillBots
+                    ? "Empty seats are filled by bots."
+                    : "Bots are off. Fill all four seats or change RULES.";
             }
             else
             {

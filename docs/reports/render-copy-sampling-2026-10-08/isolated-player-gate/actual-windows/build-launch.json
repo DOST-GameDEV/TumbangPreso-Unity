@@ -1,0 +1,32 @@
+{
+  "replacesOnlyExistingCandidate": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\release-ui-perf1008g",
+  "previousQualifiedSource": "1d052767f24d1683fd44f8a7bea6cffc87a30b80",
+  "sourceCommit": "4d0a78924b28d963aff344c50983d8d01e15d3e2",
+  "profile": "pc-render-copy-isolated-release-4d0a78924-1008",
+  "output": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\release-ui-perf1008g\\TumbangPreso.exe",
+  "buildOptions": "None",
+  "execution": "direct existing-candidate replacement; no new build directory; no memory/admission/automatic timeout guards",
+  "preExistingSourceDirt": [
+    " M Assets/TumbangPreso/Tests/PlayMode/ArrivalViewOwnershipTests.cs",
+    " M ProjectSettings/ProjectAuditorSettings.asset"
+  ],
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-nographics",
+    "-tp-profile",
+    "pc-render-copy-isolated-release-4d0a78924-1008",
+    "-buildTarget",
+    "Win64",
+    "-executeMethod",
+    "TumbangPreso.EditorTools.GameBuilder.BuildWindows",
+    "-buildOutput",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\release-ui-perf1008g\\TumbangPreso.exe",
+    "-tp-build-trim-unused-assets",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\release-ui-perf1008g\\render-copy-isolated-windows-build1009\\build.log"
+  ],
+  "pid": 72172
+}

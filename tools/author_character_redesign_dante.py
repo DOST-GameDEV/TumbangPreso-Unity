@@ -1,4 +1,4 @@
-"""Build the Dante (displayed: Basilio) redesign PROTOTYPE: the same block kid, shaped and painted.
+"""Build the Dante (displayed: Dante) redesign PROTOTYPE: the same block kid, shaped and painted.
 
     py -3 tools/author_character_redesign_dante_textures.py
     "C:/Program Files/Blender Foundation/Blender 5.0/blender.exe" -b --python tools/author_character_redesign_dante.py
@@ -1007,6 +1007,9 @@ def write_glb(body, head, out):
     gltf["materials"][0]["doubleSided"] = False
     gltf["nodes"][0]["name"] = NAME
     gltf["scenes"][0]["name"] = NAME
+    # MOUNTAIN FORM's own clips (owner, 2026-10-18), appended after the rest (tools/author_dante_mountain_clips.py)
+    import author_dante_mountain_clips as mountain
+    mountain.append_clips(gltf, blob, clips.MOUNTAIN_CLIPS)
     bpv.write_glb(out, gltf, blob)
 
 

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Passed" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 19:45:51Z" end-time="2026-10-06 19:45:51Z" duration="0.1526506">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1437" result="Passed" start-time="2026-10-06 19:45:51Z" end-time="2026-10-06 19:45:51Z" duration="0.152651" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2773" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1437" result="Passed" start-time="2026-10-06 19:45:51Z" end-time="2026-10-06 19:45:51Z" duration="0.138808" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="11300" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2774" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1437" result="Passed" start-time="2026-10-06 19:45:51Z" end-time="2026-10-06 19:45:51Z" duration="0.134221" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2775" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1437" result="Passed" start-time="2026-10-06 19:45:51Z" end-time="2026-10-06 19:45:51Z" duration="0.129913" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1306" name="CatchReplayCompositionTests" fullname="TumbangPreso.Tests.CatchReplayCompositionTests" classname="TumbangPreso.Tests.CatchReplayCompositionTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-06 19:45:51Z" end-time="2026-10-06 19:45:51Z" duration="0.097274" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1314" name="AReplayLensRejectsNearPlaneSceneryEvenWithAClearCenterRay" fullname="TumbangPreso.Tests.CatchReplayCompositionTests.AReplayLensRejectsNearPlaneSceneryEvenWithAClearCenterRay" methodname="AReplayLensRejectsNearPlaneSceneryEvenWithAClearCenterRay" classname="TumbangPreso.Tests.CatchReplayCompositionTests" runstate="Runnable" seed="50801494" result="Passed" start-time="2026-10-06 19:45:51Z" end-time="2026-10-06 19:45:51Z" duration="0.047919" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1313" name="RecordedApproachKeepsTheVictimWholeAndProminent" fullname="TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent" classname="TumbangPreso.Tests.CatchReplayCompositionTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-06 19:45:51Z" end-time="2026-10-06 19:45:51Z" duration="0.013192" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1307" name="RecordedApproachKeepsTheVictimWholeAndProminent(1.0f,1.777778f)" fullname="TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent(1.0f,1.777778f)" methodname="RecordedApproachKeepsTheVictimWholeAndProminent" classname="TumbangPreso.Tests.CatchReplayCompositionTests" runstate="Runnable" seed="847830378" result="Passed" start-time="2026-10-06 19:45:51Z" end-time="2026-10-06 19:45:51Z" duration="0.006946" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1308" name="RecordedApproachKeepsTheVictimWholeAndProminent(6.0f,1.777778f)" fullname="TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent(6.0f,1.777778f)" methodname="RecordedApproachKeepsTheVictimWholeAndProminent" classname="TumbangPreso.Tests.CatchReplayCompositionTests" runstate="Runnable" seed="1264249725" result="Passed" start-time="2026-10-06 19:45:51Z" end-time="2026-10-06 19:45:51Z" duration="0.000668" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1309" name="RecordedApproachKeepsTheVictimWholeAndProminent(10.0f,1.777778f)" fullname="TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent(10.0f,1.777778f)" methodname="RecordedApproachKeepsTheVictimWholeAndProminent" classname="TumbangPreso.Tests.CatchReplayCompositionTests" runstate="Runnable" seed="1904395123" result="Passed" start-time="2026-10-06 19:45:51Z" end-time="2026-10-06 19:45:51Z" duration="0.000553" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1310" name="RecordedApproachKeepsTheVictimWholeAndProminent(1.0f,1.333333f)" fullname="TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent(1.0f,1.333333f)" methodname="RecordedApproachKeepsTheVictimWholeAndProminent" classname="TumbangPreso.Tests.CatchReplayCompositionTests" runstate="Runnable" seed="1944832981" result="Passed" start-time="2026-10-06 19:45:51Z" end-time="2026-10-06 19:45:51Z" duration="0.000529" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1311" name="RecordedApproachKeepsTheVictimWholeAndProminent(6.0f,1.333333f)" fullname="TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent(6.0f,1.333333f)" methodname="RecordedApproachKeepsTheVictimWholeAndProminent" classname="TumbangPreso.Tests.CatchReplayCompositionTests" runstate="Runnable" seed="945410712" result="Passed" start-time="2026-10-06 19:45:51Z" end-time="2026-10-06 19:45:51Z" duration="0.000539" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1312" name="RecordedApproachKeepsTheVictimWholeAndProminent(10.0f,1.333333f)" fullname="TumbangPreso.Tests.CatchReplayCompositionTests.RecordedApproachKeepsTheVictimWholeAndProminent(10.0f,1.333333f)" methodname="RecordedApproachKeepsTheVictimWholeAndProminent" classname="TumbangPreso.Tests.CatchReplayCompositionTests" runstate="Runnable" seed="1768980440" result="Passed" start-time="2026-10-06 19:45:51Z" end-time="2026-10-06 19:45:51Z" duration="0.000533" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1315" name="RetainedTouchCannotUseAnotherVictimsPeakOrTheReturningHand" fullname="TumbangPreso.Tests.CatchReplayCompositionTests.RetainedTouchCannotUseAnotherVictimsPeakOrTheReturningHand" methodname="RetainedTouchCannotUseAnotherVictimsPeakOrTheReturningHand" classname="TumbangPreso.Tests.CatchReplayCompositionTests" runstate="Runnable" seed="377690737" result="Passed" start-time="2026-10-06 19:45:51Z" end-time="2026-10-06 19:45:51Z" duration="0.020700" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

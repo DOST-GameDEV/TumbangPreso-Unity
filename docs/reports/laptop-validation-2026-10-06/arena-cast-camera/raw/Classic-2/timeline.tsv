@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.500	Quiet	QuietEstablish	the street	1	0
+1.002	89.000	Quiet	QuietEstablish	the street	1	0
+1.502	88.500	Quiet	QuietEstablish	the street	1	0
+2.003	88.000	Quiet	QuietEstablish	the street	1	0
+2.503	87.500	SlipperLanded	Objective	the can	2	0
+3.003	87.001	SlipperLanded	Objective	the can	2	0
+3.504	86.501	SlipperLanded	Objective	the can	2	0
+4.005	86.001	SlipperLanded	Objective	the can	2	0
+4.506	85.501	Downed	Recovery	down · OWNER UPDATED	3	0
+5.171	84.821	Downed	Recovery	down · OWNER UPDATED	3	0
+5.671	84.321	Downed	Recovery	down · OWNER UPDATED	3	0
+6.171	83.821	Downed	Recovery	down · OWNER UPDATED	3	0
+6.673	83.321	Downed	Recovery	down · OWNER UPDATED	3	0
+7.173	82.821	Downed	Recovery	down · OWNER UPDATED	3	0
+7.674	82.321	Downed	Recovery	down · OWNER UPDATED	3	0
+8.175	81.881	Downed	Recovery	down · OWNER UPDATED	3	0
+8.676	81.441	Downed	Recovery	down · OWNER UPDATED	3	0
+9.176	80.942	Downed	Recovery	down · OWNER UPDATED	3	0
+9.678	80.442	Tag	Defender	tag · INDAY	3	0
+10.186	79.922	Tag	Defender	tag · INDAY	3	0
+10.686	79.422	Tag	Defender	tag · INDAY	3	0
+11.186	78.922	Tag	Defender	tag · INDAY	3	0
+11.687	78.422	Downed	Recovery	down · OWNER UPDATED	3	0
+12.188	77.922	Downed	Recovery	down · OWNER UPDATED	3	0
+12.688	77.422	Downed	Recovery	down · OWNER UPDATED	3	0
+13.189	76.922	Downed	Recovery	down · JUN-JUN	3	0
+13.690	76.422	Downed	Recovery	down · JUN-JUN	3	0
+14.192	75.922	Quiet	QuietEstablish	the street	4	0
+14.693	75.422	Quiet	QuietEstablish	the street	4	0

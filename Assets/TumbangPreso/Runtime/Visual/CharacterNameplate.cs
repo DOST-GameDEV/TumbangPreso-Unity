@@ -310,11 +310,13 @@ namespace TumbangPreso.Visual
             var rig = cam.GetComponent<CameraSystem.CameraRig>();
             if (rig != null && rig.IsLocalFpp && rig.IsFollowing(_character)) mine = true;
 
-            if (_ring != null) _ring.gameObject.SetActive(!mine);
+            // ⚠️ AND NOBODY'S TAG WHILE DON'T LOOK HAS YOUR EYES: the dark round its face must not carry names through.
+            bool blind = UI.TumpHudEffects.EyesCoveredOnScreen;
+            if (_ring != null) _ring.gameObject.SetActive(!mine && !blind);
             bool introducing = MatchArrivalPresentation.Active;
-            _label.gameObject.SetActive(!mine && !introducing);
+            _label.gameObject.SetActive(!mine && !introducing && !blind);
 
-            if (mine || introducing) return;
+            if (mine || introducing || blind) return;
 
             float distance = Vector3.Distance(cam.transform.position, _labelTransform.position);
 

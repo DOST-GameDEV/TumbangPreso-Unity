@@ -113,6 +113,7 @@ namespace TumbangPreso.Net
         /// <see cref="IsOurOwn"/> for why an empty id can never match ours.
         /// </summary>
         public const string MagicV2 = "tumbang-preso-lan2";
+        public const string DiscoveryRequest = "tumbang-preso-lan-query1";
         public const float BeaconInterval = 1.0f;
         public const float EntryTimeout = 4.0f;
 
@@ -123,6 +124,8 @@ namespace TumbangPreso.Net
         private readonly Dictionary<string, LanEntry> _seen = new Dictionary<string, LanEntry>();
         private string _lastSignature = "";
         private float _nextBeacon;
+        private float _browseUntil, _nextRequest;
+        private readonly Dictionary<string, float> _answered = new Dictionary<string, float>();
 
         /// <summary>
         /// Packets parsed on the socket thread, waiting for <see cref="Update"/> to take them.
@@ -147,6 +150,7 @@ namespace TumbangPreso.Net
         {
             public UdpClient Listener;
             public LanEntry Entry;
+            public IPEndPoint Requester;
         }
         private readonly ConcurrentQueue<ReceivedBeacon> _inbox = new ConcurrentQueue<ReceivedBeacon>();
 
@@ -211,6 +215,7 @@ namespace TumbangPreso.Net
             {
                 _sender = new UdpClient { EnableBroadcast = true };
                 Advertising = true;
+                StartListening();
             }
             catch (Exception e)
             {
@@ -246,6 +251,13 @@ namespace TumbangPreso.Net
             }
         }
 
+        /// <summary>Refresh a short browsing lease; advertising alone never sends queries.</summary>
+        public void RequestDiscovery()
+        {
+            StartListening();
+            _browseUntil = Time.unscaledTime + BeaconInterval * 2f;
+        }
+
         public void StopAll()
         {
             Advertising = false;
@@ -256,6 +268,8 @@ namespace TumbangPreso.Net
 
             _sender = null;
             _listener = null;
+            _browseUntil = _nextRequest = 0;
+            _answered.Clear();
 
             // ⚠️ Anything the socket thread queued but Update() never took would otherwise be
             // drained into a FRESH browse session and shown as live hosts that were last seen
@@ -284,6 +298,15 @@ namespace TumbangPreso.Net
             }
 
             DrainInbox();
+            if (Listening && !Advertising && Time.unscaledTime < _browseUntil && Time.unscaledTime >= _nextRequest)
+            {
+                _nextRequest = Time.unscaledTime + BeaconInterval;
+                byte[] request = Encoding.UTF8.GetBytes(DiscoveryRequest);
+                foreach (var endpoint in GetBroadcastEndpoints())
+                    try { _listener.Send(request, request.Length, endpoint); }
+                    catch (SocketException) { }
+                    catch (ObjectDisposedException) { }
+            }
             Expire();
         }
 
@@ -443,7 +466,10 @@ namespace TumbangPreso.Net
                 var from = new IPEndPoint(IPAddress.Any, 0);
                 byte[] data = listener.EndReceive(ar, ref from);
 
-                if (TryParsePayload(Encoding.UTF8.GetString(data), from.Address.ToString(), out var entry))
+                string payload = Encoding.UTF8.GetString(data);
+                if (payload == DiscoveryRequest)
+                    _inbox.Enqueue(new ReceivedBeacon { Listener = listener, Requester = from });
+                else if (TryParsePayload(payload, from.Address.ToString(), out var entry))
                 {
                     // Handed to Update(); see _inbox. LastSeen is stamped there, on the main thread.
                     _inbox.Enqueue(new ReceivedBeacon { Listener = listener, Entry = entry });
@@ -486,6 +512,29 @@ namespace TumbangPreso.Net
             {
                 // StopAll can race with enqueue after clearing the old inbox.
                 if (!Listening || !ReferenceEquals(received.Listener, _listener)) continue;
+                if (received.Requester != null)
+                {
+                    // Reply only from this live advertising session to the observed source.
+                    // Unicast works on networks that drop host-to-browser broadcasts.
+                    if (!Advertising) continue;
+                    string requesterKey = received.Requester.ToString();
+                    float now = Time.unscaledTime;
+                    if (_answered.TryGetValue(requesterKey, out float previous) && now - previous < BeaconInterval) continue;
+                    if (_answered.Count >= 64 && !_answered.ContainsKey(requesterKey))
+                    {
+                        var expired = new List<string>();
+                        foreach (var reply in _answered) if (now - reply.Value >= EntryTimeout) expired.Add(reply.Key);
+                        foreach (string stale in expired) _answered.Remove(stale);
+                        if (_answered.Count >= 64) continue;
+                    }
+                    _answered[requesterKey] = now;
+                    byte[] response = Encoding.UTF8.GetBytes(BuildPayload(Port, Players, MaxPlayers, InProgress,
+                        JoinCode, HostName, Occupied, Connections, MaxConnections));
+                    try { received.Listener.Send(response, response.Length, received.Requester); }
+                    catch (SocketException) { }
+                    catch (ObjectDisposedException) { }
+                    continue;
+                }
                 var entry = received.Entry;
                 // ⚠️⚠️ OUR OWN ADVERTISEMENT IS DROPPED HERE, AND THAT IS WHY THIS FILTER IS ON
                 // THE MAIN THREAD RATHER THAN IN `TryParsePayload`. The parser is a pure function

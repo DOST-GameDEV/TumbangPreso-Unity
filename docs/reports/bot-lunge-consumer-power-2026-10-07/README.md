@@ -1,0 +1,9 @@
+# Bot lunge prediction uses charge accumulated by the consumer
+
+AI updates before CombatVerbs. With450ms already held, the next50ms planner tick reaches its500ms release threshold. Releasing does not add that tick to the consumer's charge: actual power remains90%. The original predicts full-speed travel to a stationary target4.4m away and spends2.19230771seconds of cooldown even though the shorter impulse cannot reach its contact radius. Native48352 has1FAIL and2PASS controls for a nearer partial-charge target and the same distant full-charge target.
+
+The predictor now takes CombatVerbs.LungeChargeRatio and applies the same minimum/full-power clamp as ReleaseLunge before simulating travel. It retains the existing friction, walking velocity, remembered target lead, body collision and first-contact checks. A blocked release keeps the held input; once the real consumer reaches sufficient power it releases normally. No dash, charge duration, cooldown, physical motor, tag permission or hero kit is retuned.
+
+Native47728 passes all19: the3 charge-power cases,6 obstacle/width/step controls,5 targetless-plan/reset controls and5 aim/reach/near-tag controls. The distant partial-charge case explicitly waits, charges through the normal consumer and then releases at full power. Both original/candidate runs terminate and all21329 frozen inputs plus isolated preferences restore exactly. Original failure is retained. No owned native/player/helper remains; no LAN, paid service, worker or foreground controls were used.
+
+The actual four-bot Lagoon trace on preceding productb818 records natural input decisions and remains a scoped pre-change sample. This correction still needs broader natural all-map/all-kit efficacy and performance checks plus a combined Windows package. Desktopcb5/internal120d predate these recent AI fixes. Laptop retains new-map preview media and full local replay implementation/acceptance. Full tournament readiness is not claimed.

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 11:46:11Z" end-time="2026-10-07 11:46:39Z" duration="28.3301779">
+  <test-suite type="TestSuite" id="3602" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2105" result="Passed" start-time="2026-10-07 11:46:11Z" end-time="2026-10-07 11:46:39Z" duration="28.330178" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3594" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2105" result="Passed" start-time="2026-10-07 11:46:11Z" end-time="2026-10-07 11:46:39Z" duration="28.306089" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="51548" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3595" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2105" result="Passed" start-time="2026-10-07 11:46:11Z" end-time="2026-10-07 11:46:39Z" duration="28.290771" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3598" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2103" result="Passed" start-time="2026-10-07 11:46:11Z" end-time="2026-10-07 11:46:39Z" duration="28.275466" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2087" name="LocalReplayStreamingTests" fullname="TumbangPreso.PlayTests.LocalReplayStreamingTests" classname="TumbangPreso.PlayTests.LocalReplayStreamingTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-07 11:46:11Z" end-time="2026-10-07 11:46:39Z" duration="28.218168" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2090" name="AFailedObsoleteSeekCannotPoisonTheLatestValidPosition" fullname="TumbangPreso.PlayTests.LocalReplayStreamingTests.AFailedObsoleteSeekCannotPoisonTheLatestValidPosition" methodname="AFailedObsoleteSeekCannotPoisonTheLatestValidPosition" classname="TumbangPreso.PlayTests.LocalReplayStreamingTests" runstate="Runnable" seed="946035196" result="Passed" start-time="2026-10-07 11:46:11Z" end-time="2026-10-07 11:46:22Z" duration="10.908903" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2091" name="ClosingDuringARealReadCannotRestoreTheOldViewer" fullname="TumbangPreso.PlayTests.LocalReplayStreamingTests.ClosingDuringARealReadCannotRestoreTheOldViewer" methodname="ClosingDuringARealReadCannotRestoreTheOldViewer" classname="TumbangPreso.PlayTests.LocalReplayStreamingTests" runstate="Runnable" seed="431587413" result="Passed" start-time="2026-10-07 11:46:22Z" end-time="2026-10-07 11:46:24Z" duration="2.308118" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2089" name="ContinuousFourTimesPlaybackDoesNotFreezeAtSavedSegmentSeams" fullname="TumbangPreso.PlayTests.LocalReplayStreamingTests.ContinuousFourTimesPlaybackDoesNotFreezeAtSavedSegmentSeams" methodname="ContinuousFourTimesPlaybackDoesNotFreezeAtSavedSegmentSeams" classname="TumbangPreso.PlayTests.LocalReplayStreamingTests" runstate="Runnable" seed="954530292" result="Passed" start-time="2026-10-07 11:46:24Z" end-time="2026-10-07 11:46:28Z" duration="4.048622" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[ReplayStreaming] speed=4 position=9.20438 missingWallSeconds=3.196299E-06 largest=1.15484E-07 frozenFrames=0
+]]></output>
+            </test-case>
+            <test-case id="2088" name="ContinuousOneTimesPlaybackDoesNotFreezeAtSavedSegmentSeams" fullname="TumbangPreso.PlayTests.LocalReplayStreamingTests.ContinuousOneTimesPlaybackDoesNotFreezeAtSavedSegmentSeams" methodname="ContinuousOneTimesPlaybackDoesNotFreezeAtSavedSegmentSeams" classname="TumbangPreso.PlayTests.LocalReplayStreamingTests" runstate="Runnable" seed="1557526208" result="Passed" start-time="2026-10-07 11:46:28Z" end-time="2026-10-07 11:46:39Z" duration="10.935388" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[ReplayStreaming] speed=1 position=9.186153 missingWallSeconds=4.40795E-05 largest=4.759058E-07 frozenFrames=0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

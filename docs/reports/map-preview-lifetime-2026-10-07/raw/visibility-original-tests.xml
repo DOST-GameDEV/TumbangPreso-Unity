@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 20:15:40Z" end-time="2026-10-06 20:15:40Z" duration="0.1933005">
+  <test-suite type="TestSuite" id="3416" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1961" result="Failed" site="Child" start-time="2026-10-06 20:15:40Z" end-time="2026-10-06 20:15:40Z" duration="0.193301" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3408" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1961" result="Failed" site="Child" start-time="2026-10-06 20:15:40Z" end-time="2026-10-06 20:15:40Z" duration="0.178033" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="56464" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3409" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1961" result="Failed" site="Child" start-time="2026-10-06 20:15:40Z" end-time="2026-10-06 20:15:40Z" duration="0.170021" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3412" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1959" result="Failed" site="Child" start-time="2026-10-06 20:15:40Z" end-time="2026-10-06 20:15:40Z" duration="0.162254" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2066" name="MapPreviewVisibilityTests" fullname="TumbangPreso.PlayTests.MapPreviewVisibilityTests" classname="TumbangPreso.PlayTests.MapPreviewVisibilityTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-06 20:15:40Z" end-time="2026-10-06 20:15:40Z" duration="0.133495" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2067" name="HiddenPreparationRetainsItsPosterAndResumesDecoding" fullname="TumbangPreso.PlayTests.MapPreviewVisibilityTests.HiddenPreparationRetainsItsPosterAndResumesDecoding" methodname="HiddenPreparationRetainsItsPosterAndResumesDecoding" classname="TumbangPreso.PlayTests.MapPreviewVisibilityTests" runstate="Runnable" seed="338728346" result="Failed" start-time="2026-10-06 20:15:40Z" end-time="2026-10-06 20:15:40Z" duration="0.123721" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Time spent hidden must not exhaust the visible first-frame budget.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.MapPreviewVisibilityTests+<HiddenPreparationRetainsItsPosterAndResumesDecoding>d__2.MoveNext () [0x00116] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\MapPreviewVisibilityTests.cs:29
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[MapPreviewVideo] Arena: Decoder did not provide its first frame; retaining the recorded poster.
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

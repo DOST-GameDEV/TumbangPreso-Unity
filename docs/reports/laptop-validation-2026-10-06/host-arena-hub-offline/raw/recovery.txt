@@ -1,0 +1,8 @@
+liveHostClockAdvanced=True
+recoveryEvents=1
+recoveryReason=The host left and the match cannot continue.
+homeScene=MatchSetup
+homeAutoHosted=False
+abandonedSimulationRetired=True
+manufacturedResult=False
+nextOfflineAuthorityAndClock=True

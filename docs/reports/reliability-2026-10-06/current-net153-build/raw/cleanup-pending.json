@@ -1,0 +1,9 @@
+{
+  "action": "delete terminal duplicate source-original backup",
+  "files": 10722,
+  "logicalBytes": 7531421,
+  "verification": "every backup matches before hash and exact currently restored source",
+  "review": "automatic command rejected before execution: blocked by policy; no further reason",
+  "state": "not deleted; preserve until permitted cleanup",
+  "generatedDeltasPreserved": 217
+}

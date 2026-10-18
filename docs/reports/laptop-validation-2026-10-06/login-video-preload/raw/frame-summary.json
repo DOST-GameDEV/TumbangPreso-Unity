@@ -1,0 +1,7 @@
+{
+  "count": 652,
+  "medianMs": 0.421,
+  "p95Ms": 0.893,
+  "worstMs": 22.64,
+  "over100Ms": 0
+}

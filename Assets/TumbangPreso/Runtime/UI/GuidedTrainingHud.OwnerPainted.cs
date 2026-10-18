@@ -83,7 +83,7 @@ namespace TumbangPreso
             System.Action callback,float x,float width,float scale=1)
         {
             var action=OwnerTextAction.Create(parent,name,words,callback,x,0,width,76*scale,Mathf.RoundToInt(30*scale));
-            var label=action.GetComponentInChildren<Text>();label.font=OwnerUiTheme.Current.Display;
+            var label=action.GetComponentInChildren<Text>();label.font=InGameTypography.Resolve(OwnerUiTheme.Current.Display,true,label);
             label.alignment=TextAnchor.MiddleLeft;
             OwnerUiLayout.Place(label.rectTransform,88*scale,0,width-96*scale,76*scale);
             KeyCap(action.transform,key);

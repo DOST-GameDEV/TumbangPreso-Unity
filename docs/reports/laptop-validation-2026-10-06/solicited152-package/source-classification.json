@@ -1,0 +1,33 @@
+{
+  "terminal": true,
+  "sourceCommit": "0358e70de18f94889ec101201934b40ee466a6b4",
+  "inputCount": 21134,
+  "changedInputCount": 280,
+  "metadataCount": 278,
+  "productionCsChangedOrGenerated": false,
+  "settings": {
+    "ProjectSettings/ProjectAuditorSettings.asset": {
+      "beforeRawSHA256": "45b12b6b55a6af51617594ca259af79aa6b39dc53249a720540b53c8a7e6fad0",
+      "afterRawSHA256": "22c699d7b424bd59053e552e6c358d9cca02d0663c276ec46ea0d0bd96651d85",
+      "lfContentsEqual": true
+    },
+    "ProjectSettings/ProjectSettings.asset": {
+      "beforeRawSHA256": "6e8261ba99968175c032d9802a6964a7ff580d5f703b024a025801308a670c8d",
+      "afterRawSHA256": "f5cfb1b8f70592e0498d32c87be7d847a2079f94ccf683291c59871b8515c677",
+      "lfContentsEqual": true
+    }
+  },
+  "newGeneratedPreserved": [
+    "Assets/StreamingAssets/build-identity.json",
+    "Assets/StreamingAssets/build-identity.json.meta",
+    "Assets/TumbangPreso/Resources/BuildBranch.txt",
+    "Assets/TumbangPreso/Resources/BuildBranch.txt.meta",
+    "Assets/TumbangPreso/Resources/BuildIdentity.json",
+    "Assets/TumbangPreso/Resources/BuildIdentity.json.meta",
+    "Assets/TumbangPreso/Resources/ShaderWarmup.shadervariants",
+    "Assets/TumbangPreso/Resources/ShaderWarmup.shadervariants.meta"
+  ],
+  "existingPrefsIndependentlyVerified": 17,
+  "allInputsRestored": true,
+  "classification": "Internal package; import/build churn preserved/restored; packaged dirty identity remains reported, not clean release/gameplay certification"
+}

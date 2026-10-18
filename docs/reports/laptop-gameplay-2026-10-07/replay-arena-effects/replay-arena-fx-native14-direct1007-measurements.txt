@@ -1,0 +1,3 @@
+Assets\TumbangPreso\Runtime\Camera\LocalReplayEffectsCodec.cs(23,50): error CS0104: 'CompressionLevel' is an ambiguous reference between 'UnityEngine.CompressionLevel' and 'System.IO.Compression.CompressionLevel'
+Assets\TumbangPreso\Runtime\Camera\LocalReplayEffectsCodec.cs(23,50): error CS0104: 'CompressionLevel' is an ambiguous reference between 'UnityEngine.CompressionLevel' and 'System.IO.Compression.CompressionLevel'
+Assets\TumbangPreso\Runtime\Camera\LocalReplayEffectsCodec.cs(23,50): error CS0104: 'CompressionLevel' is an ambiguous reference between 'UnityEngine.CompressionLevel' and 'System.IO.Compression.CompressionLevel'

@@ -1,0 +1,82 @@
+{
+  "01-first-lan-view.png": {
+    "bytes": 111332,
+    "sha256": "001357853e24e9d7d85a5da09401d4c80357f84ef1794ac381faac983f17b2f3"
+  },
+  "02-lan-still-empty.png": {
+    "bytes": 111250,
+    "sha256": "3e976e768e6a0c9acffb9c58555eaacd2adee4a403cfb495aa6793d4e261f10d"
+  },
+  "03-code-no-answer.png": {
+    "bytes": 129754,
+    "sha256": "9fa11d29cc1985cf198d4ee8fbbb33f967e87bc937cd02c9e05086975bcf1068"
+  },
+  "04-direct-address-ready.png": {
+    "bytes": 1155972,
+    "sha256": "8cc20d9687352bd04c15eeab9c50f8967fbde4aca098171696b0b94437e422d9"
+  },
+  "05-normal-back-home-picture.png": {
+    "bytes": 501861,
+    "sha256": "cad39819a1f6a9b1ee91527bf58ce94a48313ff59472beb9a994b7d6aedd1d5a"
+  },
+  "06-own-quit-menu.png": {
+    "bytes": 700733,
+    "sha256": "003f717f187e3b259b534f10e9353c05aa51cc1573fe44d549c1ed7de7e8fd24"
+  },
+  "01-first-lan-view.json": {
+    "bytes": 875,
+    "sha256": "4cdad4f1c331cd359903a993339dd677b9b908bf5286c545e85355bd4c4f32fe"
+  },
+  "02-lan-still-empty.json": {
+    "bytes": 876,
+    "sha256": "63bf0d98399e0384d01abbf1992caa74fee98aea80f1b174a9f8e4781a414826"
+  },
+  "03-code-no-answer.json": {
+    "bytes": 875,
+    "sha256": "24bb3b322997b8751f3bf96efea9f2f3ec8b785c3326f59ed2502d17bedb94d1"
+  },
+  "04-direct-address-ready.json": {
+    "bytes": 881,
+    "sha256": "7c0ee9d7ce0d5fa24a1184944343a6d7b53ee9d336c850eb5052368b47fa37ad"
+  },
+  "05-normal-back-home-picture.json": {
+    "bytes": 885,
+    "sha256": "2b72de895082b5b1c1fce91f3209befdf7b65b5f03ce57650d30085b8a8a83b6"
+  },
+  "06-own-quit-menu.json": {
+    "bytes": 874,
+    "sha256": "03d1319a03f153faa4725658e63df6f02ad267be5a8920776fba070659f96189"
+  },
+  "launch.json": {
+    "bytes": 1051,
+    "sha256": "2dd860604263c757b9e6512f4762d63160211d2bf54a74fe666ffa677a192dd0"
+  },
+  "direct-result.json": {
+    "bytes": 1936,
+    "sha256": "c6c4af860afbd04f57f6e6119ea0ed6a09ed3f563814f2f758a710517472eb9e"
+  },
+  "discovery-receipt.json": {
+    "bytes": 999,
+    "sha256": "36971ce456c6f04e186e26e13398534d50781902fbdbcc9a680f6354c947abb5"
+  },
+  "pc-admission-correlation.json": {
+    "bytes": 302,
+    "sha256": "57bf4390283c6734305f8f71a645c8cc80d0f1fffc4570bf83463ea79287bdf4"
+  },
+  "return-and-pc-terminal-receipt.json": {
+    "bytes": 555,
+    "sha256": "754d85d02a71fc7260aa0fb4b3c7eda88d89f089157f2534f31ea7660bf7accd"
+  },
+  "runtime-observations.txt": {
+    "bytes": 724,
+    "sha256": "d3f984e36f9ded3f239b87390757533f2445881caacf6e3bd6bf1b9cdadff9da"
+  },
+  "shutdown-stall-observation.json": {
+    "bytes": 554,
+    "sha256": "5c22ea80c7568afc9201321c27b0aca548c3dd771d9664685b292d1c01e8e3a7"
+  },
+  "verified-owned-shutdown-process.json": {
+    "bytes": 583,
+    "sha256": "0d84b4916aee41f87fb3fad6cc77c611396d5951a06297b95521f0e35ba37ea6"
+  }
+}

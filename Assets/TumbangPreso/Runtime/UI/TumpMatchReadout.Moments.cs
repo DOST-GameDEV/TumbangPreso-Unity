@@ -24,7 +24,9 @@ namespace TumbangPreso.UI
     /// </summary>
     public sealed partial class TumpMatchReadout
     {
-        private CourtPopupGraphic _toastPlate;
+        private HudCard _toastPlate;
+        private const float ToastHeight = 62, ToastTilt = 0f;
+        private float _toastBorn = -10;
         private HudBadge _hitMark;
         private const float HitLife = .28f, PopLife = .85f;
         private readonly Text[] _scorePops = new Text[4];
@@ -89,15 +91,89 @@ namespace TumbangPreso.UI
             var c = _hitMark.color; c.a = u < .6f ? 1 : Mathf.Clamp01((1 - u) / .4f); _hitMark.color = c;
         }
 
-        /// <summary>Fits the brush plate to the toast's words; hidden with them.</summary>
+        /// <summary>Fits the sticker to the toast's words; hidden with them.</summary>
         private void SizeToastPlate()
         {
             if (_toastPlate == null || _toast == null) return;
             bool show = _toast.enabled && !string.IsNullOrEmpty(_toast.text);
             _toastPlate.enabled = show;
             if (!show) return;
-            float width = Mathf.Min(1080, _toast.preferredWidth + 90);
-            _toastPlate.rectTransform.sizeDelta = new Vector2(width, 64);
+            float width = Mathf.Min(1080, _toast.preferredWidth + 84);
+            _toastPlate.rectTransform.sizeDelta = new Vector2(width, ToastHeight);
+        }
+
+        /// <summary>The sticker lands: a short overshoot from 112% unless Reduced UI Motion is on.</summary>
+        private void PaintToast()
+        {
+            if (_toastPlate == null || !_toastPlate.enabled) return;
+            float u = Mathf.Clamp01((Time.unscaledTime - _toastBorn) / .18f);
+            var settings = Settings.SettingsStore.Current;
+            float pop = settings.ReducedUiMotion ? 1 : 1 + .12f * (1 - u) * (1 - u);
+            // HudReadingLayout owns the accessibility size; the pop rides on top of it.
+            float reading = Mathf.Max(Settings.GameSettings.ValidHudScale(settings.HudScale), settings.LargerText ? 1.2f : 1f);
+            var scale = Vector3.one * (pop * reading);
+            if (_toastPlate.rectTransform.localScale != scale) { _toastPlate.rectTransform.localScale = scale; _toast.rectTransform.localScale = scale; }
+        }
+
+        private MatchMomentBanner _momentBanner;
+
+        /// <summary>
+        /// ⚠️ ONE OWNER FOR THE CENTRAL MESSAGE LANES (guide p.6). An announcement, an earned moment
+        /// and a refusal come from three independent sources and can all be live at once. They
+        /// stack under the match bar in that order by their actual scaled heights; the refusal
+        /// keeps its own height on screen unless something above needs the room, and is pushed
+        /// down rather than drawn over. Only vertical placement is decided here.
+        /// </summary>
+        private void ArrangeMessageLanes()
+        {
+            if (_root == null) return;
+            var settings = Settings.SettingsStore.Current;
+            float s = Mathf.Max(Settings.GameSettings.ValidHudScale(settings.HudScale), settings.LargerText ? 1.2f : 1f);
+            float height = _root.rect.height;
+            // Directly under the round beads: the clock tile, its tray and a small breath.
+            float y = BarTop + (ClockHeight + 14 + 24 + 10) * s;
+            bool toast = _toast != null && _toast.enabled && !string.IsNullOrEmpty(_toast.text);
+            bool moment = _momentBanner != null && _momentBanner.Showing;
+            bool warning = _warningRoot != null && _warningRoot.gameObject.activeSelf;
+            float reticleTop = height * .5f - 58 * s, gap = 10 * s;
+            // Owner, 2026-10-06: the earned moment is directly under the match bar. Refusals and
+            // system notices (do not idle, out of bounds, tagged, camera notes) share one lane
+            // under it and stack, refusal first; the stack rises rather than reach the aim point.
+            if (moment)
+            {
+                float h = _momentBanner.LaneHeight;
+                y += (_momentBanner.HasBadge ? 26 : 6) * s; // the bonus badge rides above the tile
+                _momentBanner.Rest = new Vector2(0, height * (1 - .79f) - (y + h * .5f));
+                y += h + (9 + 4) * s + 8;
+            }
+            else if (_momentBanner != null) _momentBanner.Rest = Vector2.zero;
+            float warningHeight = warning ? _warningRoot.rect.height * _warningRoot.localScale.y + 6 * s : 0;
+            float toastHeight = toast ? (ToastHeight + 8) * s : 0;
+            float stack = warningHeight + toastHeight + (warning && toast ? gap : 0);
+            float top = Mathf.Max(y, height * .34f - (warning ? warningHeight : toastHeight) * .5f);
+            if (top + stack > reticleTop) top = Mathf.Max(y, reticleTop - stack);
+            if (warning)
+            {
+                float h = warningHeight - 6 * s;
+                SetLaneY(_warningRoot, height * .34f - (top + h * .5f));
+                top += warningHeight + gap;
+                // A refused input shakes its head once: three quick swings that die out in .3 s.
+                float age = Time.unscaledTime - _warningShookAt;
+                float swing = settings.ReducedUiMotion || age > .3f ? 0 : Mathf.Sin(age * 62f) * 9f * (1 - age / .3f);
+                var at = _warningRoot.anchoredPosition;
+                if (Mathf.Abs(at.x - swing) > .01f) { at.x = swing; _warningRoot.anchoredPosition = at; }
+            }
+            if (toast)
+            {
+                float centre = top + ToastHeight * s * .5f;
+                SetLaneY(_toast.rectTransform, -centre); SetLaneY(_toastPlate.rectTransform, -centre);
+            }
+        }
+
+        private static void SetLaneY(RectTransform rect, float y)
+        {
+            var at = rect.anchoredPosition;
+            if (Mathf.Abs(at.y - y) > .01f) { at.y = y; rect.anchoredPosition = at; }
         }
     }
 }

@@ -1,0 +1,287 @@
+{
+  "runs": {
+    "original": {
+      "pid": 68016,
+      "exitCode": 2,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.HomeRosterPreparationTests.ActualHomePreloadPreparesRosterMeshesAndMotionBeforeReadyWithoutSpawningActors",
+          "result": "Failed",
+          "message": "  Home reports ready while roster meshes still need their first outline bake: body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, ghost-body-core, ghost-body-top-rim, ghost-body-bot-bevel, ghost-eye-l, ghost-eye-glint-l, ghost-eye-pupil-l, ghost-eye-r, ghost-eye-glint-r, ghost-eye-pupil-r, ghost-mouth-dot, ghost-blush-l, ghost-blush-r, ghost-tail-tier1, ghost-tail-tier2, ghost-tail-tier3, ghost-tail-tip-wisp, ghost-tail-tip-glint, KuroCatMouth, KuroCrossLeft, KuroCrossRight, KuroGoofyMouth, KuroPoutMouth, KuroShyEye, KuroHappyEyeL, KuroSleepEyeL, KuroHeartEyeL, KuroSparkleL, KuroHappyEyeR, KuroSleepEyeR, KuroHeartEyeR, KuroSparkleR, KuroOhMouth, KuroGrinMouth, KuroTongue, Cube.002_part0, Cube.002_part1, RageEyeLeft, RageEyeRight, RageFingerLeft0_part0, RageFingerLeft0_part1, RageFingerLeft1_part0, RageFingerLeft1_part1, RageFingerLeft2_part0, RageFingerLeft2_part1, RageFingerRight0_part0, RageFingerRight0_part1, RageFingerRight1_part0, RageFingerRight1_part1, RageFingerRight2_part0, RageFingerRight2_part1, Cube.001_part0, Cube.001_part1, RageHoodWisp_part0, RageHoodWisp_part1, RageJawRim, RageLowerFang0_part0, RageLowerFang0_part1, RageLowerFang1_part0, RageLowerFang1_part1, RageLowerFang2_part0, RageLowerFang2_part1, Cube.003, RageLowerSpirit_part0, RageLowerSpirit_part1, RageMawCavity, Cube.006_part0, Cube.006_part1, Cube.007_part0, Cube.007_part1, Cube.004_part0, Cube.004_part1, Cube.005_part0, Cube.005_part1, RageUpperFang0_part0, RageUpperFang0_part1, RageUpperFang1_part0, RageUpperFang1_part1, RageWristWispLeft_part0, RageWristWispLeft_part1, RageWristWispRight_part0, RageWristWispRight_part1, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, body-mesh, head-mesh, default, default, default, default, default, default, tsinelas_tsinelas, tsinelas_crocs, tsinelas_pantulog, default, tsinelas_spartan, tsinelas_alpombra, tsinelas_pambahay, tsinelas_heels, tsinelas_sandals, tsinelas_loafers\n  Expected: <empty>\n  But was:  < \"body-mesh\", \"head-mesh\", \"body-mesh\", \"head-mesh\", \"body-mesh\", \"head-mesh\", \"body-mesh\", \"head-mesh\", \"body-mesh\", \"head-mesh\", \"body-mesh\", \"head-mesh\", \"body-mesh\", \"head-mesh\", \"body-mesh\", \"head-mesh\", \"body-mesh\", \"head-mesh\", \"body-mesh\", \"head-mesh\", \"body-mesh\", \"head-mesh\", \"body-mesh\", \"head-mesh\", \"body-mesh\", \"head-mesh\", \"body-mesh\", \"head-mesh\", \"body-mesh\", \"head-mesh\", \"body-mesh\", \"head-mesh\", \"body-mesh\", \"head-mesh\", \"ghost-body-core\", \"ghost-body-top-rim\", \"ghost-body-bot-bevel\", \"ghost-eye-l\", \"ghost-eye-glint-l\", \"ghost-eye-pupil-l\", \"ghost-eye-r\", \"ghost-eye-glint-r\", \"ghost-eye-pupil-r\", \"ghost-mouth-dot\", \"ghost-blush-l\", \"ghost-blush-r\", \"ghost-tail-tier1\", \"ghost-tail-tier2\", \"ghost-tail-tier3\", \"ghost-tail-tip-wisp\", \"ghost-tail-tip-glint\", \"KuroCatMouth\", \"KuroCrossLeft\", \"KuroCrossRight\", \"KuroGoofyMouth\", \"KuroPoutMouth\", \"KuroShyEye\", \"KuroHappyEyeL\", \"KuroSleepEyeL\", \"KuroHeartEyeL\", \"KuroSparkleL\", \"KuroHappyEyeR\", \"KuroSleepEyeR\", \"KuroHeartEyeR\", \"KuroSparkleR\", \"KuroOhMouth\", \"KuroGrinMouth\", \"KuroTongue\", \"Cube.002_part0\", \"Cube.002_part1\", \"RageEyeLeft\", \"RageEyeRight\", \"RageFingerLeft0_part0\", \"RageFingerLeft0_part1\", \"RageFingerLeft1_part0\", \"RageFingerLeft1_part1\", \"RageFingerLeft2_part0\", \"RageFingerLeft2_part1\", \"RageFingerRight0_part0\", \"RageFingerRight0_part1\", \"RageFingerRight1_part0\", \"RageFingerRight1_part1\", \"RageFingerRight2_part0\", \"RageFingerRight2_part1\", \"Cube.001_part0\", \"Cube.001_part1\", \"RageHoodWisp_part0\", \"RageHoodWisp_part1\", \"RageJawRim\", \"RageLowerFang0_part0\", \"RageLowerFang0_part1\", \"RageLowerFang1_part0\", \"RageLowerFang1_part1\", \"RageLowerFang2_part0\", \"RageLowerFang2_part1\", \"Cube.003\", \"RageLowerSpirit_part0\", \"RageLowerSpirit_part1\", \"RageMawCavity\", \"Cube.006_part0\", \"Cube.006_part1\", \"Cube.007_part0\", \"Cube.007_part1\", \"Cube.004_part0\", \"Cube.004_part1\", \"Cube.005_part0\", \"Cube.005_part1\", \"RageUpperFang0_part0\", \"RageUpperFang0_part1\", \"RageUpperFang1_part0\", \"RageUpperFang1_part1\", \"RageWristWispLeft_part0\", \"RageWristWispLeft_part1\", \"RageWristWispRight_part0\", \"RageWristWispRight_part1\", \"body-mesh\", \"head-mesh\", \"body-mesh\", \"head-mesh\", \"body-mesh\", \"head-mesh\", \"body-mesh\", \"head-mesh\", \"body-mesh\", \"head-mesh\", \"body-mesh\", \"head-mesh\", \"body-mesh\", \"head-mesh\", \"default\", \"default\", \"default\", \"default\", \"default\", \"default\", \"tsinelas_tsinelas\", \"tsinelas_crocs\", \"tsinelas_pantulog\", \"default\", \"tsinelas_spartan\", \"tsinelas_alpombra\", \"tsinelas_pambahay\", \"tsinelas_heels\", \"tsinelas_sandals\", \"tsinelas_loafers\" >\n"
+        }
+      ],
+      "protectedCount": 21427,
+      "exactRestoration": true,
+      "retainedSha256": {
+        "launch.json": "b04f1403c94540d00aa2666893b51b70a07601d662fefbaa463c5a092deccd5f",
+        "result.json": "8e9dad83b85740904355eb57762cdffb8736f685e6f9edbb2593c62a195785d7",
+        "results.xml": "3138d3365593ddbdd2b0fc981ddfac234ca636529aa64100d45d4cfcad4796f7",
+        "source-restoration.json": "6bc40fe4fbfeee8117c026c8208295938fcfceaf3ed4b1c073e72e126ae5df53",
+        "pre-input-prefs.json": "7d60e51c983c17b4d40b59321401fe44203e79310fd7ef689f3e030801e0c616",
+        "pre-editor-prefs.json": "8e1c1e6da3259eb16f342bfa7056057916ecc5a5534c621b51093866dc592bbd",
+        "editor.log": "536598799556719a9a4c323b559885a623c7286f391cbbdb9418a98f3f6e92d7"
+      }
+    },
+    "candidate": {
+      "pid": 48600,
+      "exitCode": 2,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.GeneratedMotionAssetsTests.BakedMotionWarmupRetainsTheExactAssetsWithoutCreatingActors",
+          "result": "Failed",
+          "message": "  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.HomeRosterPreparationTests.ActualHomePreloadPreparesRosterMeshesAndMotionBeforeReadyWithoutSpawningActors",
+          "result": "Failed",
+          "message": "  Authored recovery/rooted motion must already be retained before Home is ready.\n  Expected: True\n  But was:  False\n"
+        },
+        {
+          "name": "TumbangPreso.PlayTests.OwnerMenuEditsTests.OutlineWarmupSurvivesSceneNotificationsWithoutSpawningOrDressingModels",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.StartupOrder1007Tests.LogosLoginFiveSecondMainThenFirstHomeAnimation",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "protectedCount": 21427,
+      "exactRestoration": true,
+      "retainedSha256": {
+        "launch.json": "991842acd13b686f61ebc66ca1bc2504979d0a2668108726fd95c171d591b59c",
+        "result.json": "605c80a8b698187e8909aa60d2b635067c6fcee181b0354c3201ecee40deca66",
+        "results.xml": "0cc8f54691d00d3af721daa0f4d5e8d54eef4350a521ab0c852991452bd82399",
+        "source-restoration.json": "b17c1ad6ee047ba982e52dcc897de9483f12cbb31552d809eb0b8721c53073d9",
+        "pre-input-prefs.json": "7d60e51c983c17b4d40b59321401fe44203e79310fd7ef689f3e030801e0c616",
+        "pre-editor-prefs.json": "8e1c1e6da3259eb16f342bfa7056057916ecc5a5534c621b51093866dc592bbd",
+        "editor.log": "8275b84d79ea9352b729c6276f1577d19606693b46927c95391ba8644712ccee"
+      }
+    },
+    "bake-missing": {
+      "pid": 52720,
+      "exitCode": 0,
+      "cases": [],
+      "protectedCount": 21427,
+      "exactRestoration": true,
+      "retainedSha256": {
+        "launch.json": "05c2d42648a3a86847d702d0940ae662637f1a1b887767c4f6ca4497ce498a78",
+        "result.json": "2324fbdf8d766a2a6d57fcaed669e4c45fc9db93c0b9ce27de307ef04413c781",
+        "source-restoration.json": "701ecc7c054fa43e8b56f018b1a1d063f7d285fe9405f20e288306bf3fedb69b",
+        "rooted-before.json": "9e0d43065e58a82ad6f523a06f4f0d7557ba0e5c675215e6f82e0ab0eeeea961",
+        "pre-input-prefs.json": "7d60e51c983c17b4d40b59321401fe44203e79310fd7ef689f3e030801e0c616",
+        "pre-editor-prefs.json": "8e1c1e6da3259eb16f342bfa7056057916ecc5a5534c621b51093866dc592bbd",
+        "editor.log": "92f30bf79b7e1be5544164aac3d29bd83a9ce5ed0a42cf6bff9cfa3d5b6de124"
+      }
+    },
+    "candidate2": {
+      "pid": 70708,
+      "exitCode": 0,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.GeneratedMotionAssetsTests.BakedMotionWarmupRetainsTheExactAssetsWithoutCreatingActors",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.HomeRosterPreparationTests.ActualHomePreloadPreparesRosterMeshesAndMotionBeforeReadyWithoutSpawningActors",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.HomeRosterPreparationTests.EveryCurrentHeroRootedSetSamplesItsActualRig",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.OwnerMenuEditsTests.OutlineWarmupSurvivesSceneNotificationsWithoutSpawningOrDressingModels",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.StartupOrder1007Tests.LogosLoginFiveSecondMainThenFirstHomeAnimation",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "protectedCount": 21445,
+      "exactRestoration": true,
+      "retainedSha256": {
+        "launch.json": "1ed43e9f5462469154ec2574f25e519f3ad9dcc8c0448e691fc5a867f2f53c64",
+        "result.json": "bf57d6211544a2570d38ebb47653192ae620e4962f4782c584c0c8fed6d88a8f",
+        "results.xml": "2c16763e1a93f04919cf0d02cbb10df632d609aa895fb0a2b0b9ff714598fcef",
+        "source-restoration.json": "8bf936cb4c4b1edeff3b5b5aa80d5c7f04059b2af71a03bb7e79d64633d4c7d3",
+        "pre-input-prefs.json": "7d60e51c983c17b4d40b59321401fe44203e79310fd7ef689f3e030801e0c616",
+        "pre-editor-prefs.json": "8e1c1e6da3259eb16f342bfa7056057916ecc5a5534c621b51093866dc592bbd",
+        "editor.log": "6777ff7383f87b3d1dfe20dcd7ce64247bccf40e6cc9c0741b6da59b7dae630d"
+      }
+    },
+    "candidate3": {
+      "pid": 69820,
+      "exitCode": 0,
+      "cases": [
+        {
+          "name": "TumbangPreso.PlayTests.GeneratedMotionAssetsTests.BakedMotionWarmupRetainsTheExactAssetsWithoutCreatingActors",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.HomeRosterPreparationTests.ActualHomePreloadPreparesRosterMeshesAndMotionBeforeReadyWithoutSpawningActors",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.HomeRosterPreparationTests.EveryCurrentHeroRootedSetSamplesItsActualRig",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.OwnerMenuEditsTests.OutlineWarmupSurvivesSceneNotificationsWithoutSpawningOrDressingModels",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "TumbangPreso.PlayTests.StartupOrder1007Tests.LogosLoginFiveSecondMainThenFirstHomeAnimation",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "protectedCount": 21445,
+      "exactRestoration": true,
+      "retainedSha256": {
+        "launch.json": "250930cc351213237a228796a6eb0dc4e9434423f679456721e413bd8284c906",
+        "result.json": "2f9a7e4054d3c71e3190e3e26d01bb8528ca11446989848906f41482f39c24a5",
+        "results.xml": "f5607c2ebfd6c35cce4a9ea193619d0be5b6c6a8ebd81dbe30d926c54a1990c8",
+        "source-restoration.json": "fac34fcff9e333a4575f28193d08f0b0ca134c3c43e04c4b46c6bdd30cdabb13",
+        "pre-input-prefs.json": "7d60e51c983c17b4d40b59321401fe44203e79310fd7ef689f3e030801e0c616",
+        "pre-editor-prefs.json": "8e1c1e6da3259eb16f342bfa7056057916ecc5a5534c621b51093866dc592bbd",
+        "editor.log": "894e9e59ca58123aef00289f2f6f61900aec8abff10a3e67d9399dad80b614bf"
+      }
+    }
+  },
+  "buildsCreated": 0,
+  "desktopUpdated": false,
+  "existingDesktopSource": "001d80b568fc0a13fb3603a8ccc23123a61f9a42",
+  "bake": {
+    "existingSetsPreserved": 23,
+    "existingSourceSha256": {
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\character-female-a.asset": "150eb6741efd3616dbd5a52a7452806009675e2da3bcb90fec727883fc5e493d",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\character-female-b.asset": "360378770df863e5c2efd5fb4dbf9906ba87050e302d20a4bfa14a1eedbf4f5e",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\character-female-c.asset": "6d7e76a5c22a997b4f526b4f4696340cd0e4a71a1fa476692c913b424a762247",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\character-female-d.asset": "fa0f341fe70813f17bdc9198fff77c5dd85ae4743b81e2b079bd0d50928a40fe",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\character-female-e.asset": "35f72835107ce69bac0398bfdc83bd6200cfe23327d864781291d2559a335701",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\character-female-f.asset": "4d5d16ada06d3c814f1f84708422201c3bb796443251a6455bda215e32bf1ebd",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\character-male-a.asset": "955fdd3e697c2aef9032dc81d239ecabaf0fcdfd4b6d82080040029a42807430",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\character-male-b.asset": "2be7ff57dc80600d4a6ba53ec6f619011e1ae7d70c804d4f3b9052dd4333bf4a",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\character-male-c.asset": "c534b5490f5f2715666e78fd9176a131d9a9f0e64c3041e39b5b97de8d1db875",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\character-male-d.asset": "50cc65f72a599cdbfe38cd813ed9fc6fa9c1efcb7c3ba878a7a1dc0da1d42b07",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\character-male-e.asset": "43819879f222cbb845ce5d364a53808a020308e28f58fe439db9617c493fd2ad",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\character-male-f.asset": "4178811c47d097cd2436bb75d4160928829603804a5a68cbddccbf1e1c7e906b",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\team-amihan.asset": "714a57e954f02527806fe2e9fa8a8917de275652ce4f1138164b81312feb0c3c",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\team-bayan.asset": "dce58977c0bfe036a5e14bace034c527802f32892c5330a4c56b82ade6b40cf4",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\team-custom-base.asset": "9fa2bd286eb7c0118e657a2001d10d26836c813b615147740cd43809f17184d4",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\team-custom.asset": "6400b1c68df3409094283ff4244a010ef568b8b3f5a69cad303adb72e20856e9",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\team-iggy.asset": "a467980e9df3faa8518f706b09fb5f5f3ea3a3b73dd0e8cb8536b63cc958c4de",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\team-inday.asset": "a1705b948a9f94abb83a2e2a9f057c64dd54ba0251a731427a367abdb66e3aca",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\team-nemu.asset": "5c906e207bce3c8146d7ab071ff206cd095361ae44c064c26469f7b53d66b255",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\team-paete.asset": "1a8a79688dd67d398aa5dc8dbddabd7884cd7c3bbc7738872721000417b1f5ba",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\team-phaister.asset": "5c0b6f776913870c29aba75ed9c7eeb7cc8044b3e69e6902479a493d4de32ab6",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\team-rafi.asset": "259b847383570d42eed2624337033f3e5b8aa2804bba4dc3f6bf1ff594647fea",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\team-zack.asset": "fef0a33734b07e12466c10784f810988bd1fd94d0302548ddd96f33b1f956961"
+    },
+    "newSetsSha256": {
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\amihan-redesign.asset": "1d73173f9a71c023c78070a2e23f9eebb8c5ca9f4335e75fe4d14cd3d3c4e313",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\cheska-redesign.asset": "69b7a5eebceedc6f77419ddccb53c9b91c31607f2699ccfe8f198a26a84ecf85",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\dante-redesign.asset": "19a3740cd487b882d2970694f0833c7a9224b973e6739e4ce9aa35b7265a5fd3",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\nemu-redesign.asset": "967968f8d0c1c1ae7f81328f582eb3e27f4ad2d49ddc70c837521ac6fe6df952",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\paete-redesign.asset": "49b127d365d5e1b1beb672a2277649407296df4a29553a0c5152cc30f38b1626",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\phaister-redesign.asset": "41ab0a5b782a609478192f485fc6e1e86615bbda79a5e1c2ade5e0d7aec4cca1",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\rafi-redesign.asset": "a8d0773799ac5bf12d459da7e7d88c244a02179b91497c153df46dc8fa2bcb48",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\sean-redesign.asset": "2693c441f0cef371201d67b7c9ce0b8a1371add6596daa1ea21782dbcc87c847",
+      "Assets\\TumbangPreso\\Resources\\RootedAnimations\\zack-redesign.asset": "716562a779a3af6f3547e487cf9cbb098de81b8dffc0af431e8ab97afd12368f"
+    }
+  },
+  "sampledCurrentRigs": [
+    {
+      "hero": "dante",
+      "rig": "dante-redesign",
+      "clips": 4
+    },
+    {
+      "hero": "cheska",
+      "rig": "cheska-redesign",
+      "clips": 4
+    },
+    {
+      "hero": "sean",
+      "rig": "sean-redesign",
+      "clips": 4
+    },
+    {
+      "hero": "zack",
+      "rig": "zack-redesign",
+      "clips": 4
+    },
+    {
+      "hero": "nemu",
+      "rig": "nemu-redesign",
+      "clips": 4
+    },
+    {
+      "hero": "phaister",
+      "rig": "phaister-redesign",
+      "clips": 4
+    },
+    {
+      "hero": "rafi",
+      "rig": "rafi-redesign",
+      "clips": 4
+    },
+    {
+      "hero": "amihan",
+      "rig": "amihan-redesign",
+      "clips": 4
+    },
+    {
+      "hero": "paete",
+      "rig": "paete-redesign",
+      "clips": 4
+    }
+  ],
+  "homePreparation": "[HomeRosterPreparation] models=41 readableMeshes=145 retainedMotion=84 ready=true spawnedActors=0 unchangedAuthoredMaterials=true",
+  "startup": "[StartupOrder1007] studio->login->main-loading->home; loadingSeconds=7.790243 firstFrames=4->40",
+  "captureSha256": {
+    "StartupLoginFirst1007-1920.png": "5f7bd9b5326ca410bd7e19a099c49c123bf1ee30540dc4bf5c5a65e3e1ee346c",
+    "StartupLoginFirst1007-1280.png": "1b5fd0a75be05c011e55894fa540d542ee9cccbe43da3cc59059eee0be9e3552",
+    "StartupMainLoading1007-1920.png": "48584c8a20346fe3a57b8fb33832cb4907ec79a5a344aa078b7d926b5e8c44d7",
+    "StartupMainLoading1007-1280.png": "8f11a4dfd3544872b7b07b1358571023189ed778171a9bfb07174e68343b3ea5",
+    "StartupFirstHomePlaying1007-1920.png": "747c15be761a04e168086ddff97e4665ae99cbfb2b5b88d494217b66428559ac",
+    "StartupFirstHomePlaying1007-1280.png": "653557bef688832cb0340d4440b6baa4a7f4f058a804da61365160ab7e57f20b"
+  },
+  "testedSourceSha256": {
+    "Assets/TumbangPreso/Runtime/UI/ConvertedMainMenu.cs": "b3aba2ea52c96283a7ca6557b99b8c78b82c7737e0694709eab91a22069e40ac",
+    "Assets/TumbangPreso/Editor/RootedAnimationAuthor.cs": "326fda5bc55fa0dc557cbc650362ceb358ac2319ce7ea42e0a6b3fdf0bebfa1a",
+    "Assets/TumbangPreso/Tests/PlayMode/HomeRosterPreparationTests.cs": "665b95e81037d38fefd5b5ad1e994a6b873b8f45bad742cd39761ec534a33acd",
+    "Assets/TumbangPreso/Tests/PlayMode/HomeRosterPreparationTests.cs.meta": "4b4e44357b23c7ef4d9cd9a6a7797a7bddac36f9bab9dfaf469b3ed8e3b04ed1",
+    "Assets/TumbangPreso/Resources/RootedAnimations/amihan-redesign.asset": "1d73173f9a71c023c78070a2e23f9eebb8c5ca9f4335e75fe4d14cd3d3c4e313",
+    "Assets/TumbangPreso/Resources/RootedAnimations/cheska-redesign.asset": "69b7a5eebceedc6f77419ddccb53c9b91c31607f2699ccfe8f198a26a84ecf85",
+    "Assets/TumbangPreso/Resources/RootedAnimations/dante-redesign.asset": "19a3740cd487b882d2970694f0833c7a9224b973e6739e4ce9aa35b7265a5fd3",
+    "Assets/TumbangPreso/Resources/RootedAnimations/nemu-redesign.asset": "967968f8d0c1c1ae7f81328f582eb3e27f4ad2d49ddc70c837521ac6fe6df952",
+    "Assets/TumbangPreso/Resources/RootedAnimations/paete-redesign.asset": "49b127d365d5e1b1beb672a2277649407296df4a29553a0c5152cc30f38b1626",
+    "Assets/TumbangPreso/Resources/RootedAnimations/phaister-redesign.asset": "41ab0a5b782a609478192f485fc6e1e86615bbda79a5e1c2ade5e0d7aec4cca1",
+    "Assets/TumbangPreso/Resources/RootedAnimations/rafi-redesign.asset": "a8d0773799ac5bf12d459da7e7d88c244a02179b91497c153df46dc8fa2bcb48",
+    "Assets/TumbangPreso/Resources/RootedAnimations/sean-redesign.asset": "2693c441f0cef371201d67b7c9ce0b8a1371add6596daa1ea21782dbcc87c847",
+    "Assets/TumbangPreso/Resources/RootedAnimations/zack-redesign.asset": "716562a779a3af6f3547e487cf9cbb098de81b8dffc0af431e8ab97afd12368f",
+    "Assets/TumbangPreso/Resources/RootedAnimations/amihan-redesign.asset.meta": "ed088ba93cadee25a0c10a1a5521ef04750b725f58c4f6f40f77b605b85623e3",
+    "Assets/TumbangPreso/Resources/RootedAnimations/cheska-redesign.asset.meta": "457f9bd2aa0d8431554deae2a00f15a274ca6107fd196b0bade8c2bb734f14a2",
+    "Assets/TumbangPreso/Resources/RootedAnimations/dante-redesign.asset.meta": "9f1f9fdb15dafe18fa269ad27af4d10df4d9c857252a6edb7450177cc8594932",
+    "Assets/TumbangPreso/Resources/RootedAnimations/nemu-redesign.asset.meta": "c830b73b467ea96fbeafb67c9e6e99a0f40b43184f4b012dea90cb87ed97d229",
+    "Assets/TumbangPreso/Resources/RootedAnimations/paete-redesign.asset.meta": "d21e25b1710f07c4690e59245d33db068c26343879579aa427ee47623c4da1e6",
+    "Assets/TumbangPreso/Resources/RootedAnimations/phaister-redesign.asset.meta": "c4d0c6c705ba3827c7f423c52e12e9bc8541e30cf9f61258ebc8335c275827aa",
+    "Assets/TumbangPreso/Resources/RootedAnimations/rafi-redesign.asset.meta": "be80badace031458876eda2c8ee086a2382ef5cd03632f6a75f11e1843098866",
+    "Assets/TumbangPreso/Resources/RootedAnimations/sean-redesign.asset.meta": "9cb103f5cb0188531c49cf0307f39df60f53d8eba9074bcadb39c02c5d8b122e",
+    "Assets/TumbangPreso/Resources/RootedAnimations/zack-redesign.asset.meta": "86e9cd69f8b3cd6c0222c0df72cf687982ba9b67d8b53baa58af3ae693c7a014"
+  },
+  "limits": "Native Editor data preparation, exact startup order controls and36 current-rig serialized clip samples. No new ordinary Windows latency, all-map natural/status gameplay, peer/human or tournament acceptance claim. Existing23rooted sets retain exact bytes."
+}

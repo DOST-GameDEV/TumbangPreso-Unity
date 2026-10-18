@@ -1,0 +1,26 @@
+{
+  "passed": false,
+  "role": "client",
+  "sourceCommit": "cb5f4ad9f84fdde4eeb856dc1caca0eef2ab4944",
+  "directExecution": true,
+  "protocol": 153,
+  "runtimeSha256": "e9b69cf6d8c86a4a15cc2fbb16947312153209be5cd677e1383becf87c06cdd4",
+  "exeSha256": "fedb275966771506f040ea2fb01dc909c4f3aaa31f9362059e64442a5fc2b40d",
+  "coreSha256": "339e00fa0469853257a6081a6015736d16db126ccac9152441ea3f76113f823a",
+  "artifactManifestSha256": "43d83532e35eb85a6d0d0c98e80ba05272922cc6a07b1e167409a2d9a61723c8",
+  "characterPick": 2,
+  "scope": "Actual live-round host loss, terminal Home recovery and no completed result; requires paired PC stop evidence, not intermediate-frame/input or reconnect acceptance.",
+  "preparation": {
+    "role": "client",
+    "sourceCommit": "cb5f4ad9f84fdde4eeb856dc1caca0eef2ab4944",
+    "runtimeSha256": "e9b69cf6d8c86a4a15cc2fbb16947312153209be5cd677e1383becf87c06cdd4",
+    "artifactManifestSha256": "43d83532e35eb85a6d0d0c98e80ba05272922cc6a07b1e167409a2d9a61723c8",
+    "profile": "laptop-hostloss-cb5f1007a",
+    "wire": "1|0|1|30|0|3|3|1|0|1|0",
+    "artifactVerified": true,
+    "preparedAtUtc": "2026-10-07T00:28:13.760921+00:00",
+    "startFile": "C:\\Users\\Matthew\\Documents\\Codex\\2026-10-03\\continue-competition-readiness-engineering-for-dost\\work\\lan-hostloss1007\\client-a-start.signal"
+  },
+  "pid": 59804,
+  "playerStartedAtUtc": "2026-10-07T00:40:46.646170+00:00"
+}

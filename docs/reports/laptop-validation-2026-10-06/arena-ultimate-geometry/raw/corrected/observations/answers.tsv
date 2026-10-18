@@ -1,0 +1,22 @@
+elapsed	round	slot	hero	abilitySlot	ability	answer	charge	cost	beat	shot	caption
+3.629	1	3	cheska	Skill1	COLD FEET	Cast	1.000	12	LataHit	Objective	the can · YASMIN
+5.670	1	2	rafi	Skill2	SKIM	Cast	0.000	15	Retrieval	Chase	retrieval · YASMIN
+31.373	1	0	cheska	Skill2	GLACIAL WALL	Cast	5.000	12	Retrieval	Chase	retrieval · YASMIN
+36.455	1	2	rafi	Skill1	CROSSCURRENT	Cast	2.000	15	Downed	Recovery	down · OWNER UPDATED
+40.073	1	0	cheska	Skill1	COLD FEET	Cast	5.000	12	Downed	Recovery	down · OWNER UPDATED
+55.851	1	2	rafi	Skill2	SKIM	CannotAct	2.000	15	ThrowPrep	Objective	throw · OWNER UPDATED
+57.397	1	3	cheska	Skill1	COLD FEET	Cast	2.000	12	ThrowPrep	Objective	throw · OWNER UPDATED
+68.924	1	0	cheska	Skill2	GLACIAL WALL	Cast	9.000	12	ThrowPrep	Objective	throw · OWNER UPDATED
+69.993	1	2	rafi	Skill2	SKIM	CannotAct	3.000	15	ThrowPrep	Objective	throw · OWNER UPDATED
+76.053	1	0	cheska	Skill1	COLD FEET	Cast	10.000	12	Downed	Recovery	down · ILYAS
+82.087	1	2	rafi	Skill2	SKIM	Cast	4.000	15	Retrieval	RetrievalTwoShot	retrieval · ILYAS
+86.427	1	2	rafi	Skill1	CROSSCURRENT	Cast	4.000	15	ThrowPrep	Objective	throw · OWNER UPDATED
+89.028	1	0	cheska	Ultimate	ABSOLUTE ZERO	Cast	0.000	12	Tag	Defender	tag · YASMIN
+105.721	2	3	cheska	Skill1	COLD FEET	Cast	3.000	12	LataHit	Objective	the can · YASMIN
+109.191	2	2	rafi	Skill2	SKIM	Cast	4.000	15	Retrieval	RetrievalTwoShot	retrieval · ILYAS
+117.929	2	0	cheska	Skill1	COLD FEET	Cast	0.000	12	Downed	Recovery	down · YASMIN
+147.162	2	2	rafi	Skill2	SKIM	Cast	4.000	15	ThrowPrep	Objective	throw · YASMIN
+151.222	2	3	cheska	Skill1	COLD FEET	Cast	4.000	12	Downed	Recovery	down · ILYAS
+153.999	2	0	cheska	Skill1	COLD FEET	Cast	0.000	12	Tag	Defender	tag · OWNER UPDATED
+154.466	2	1	dante	Skill2	BASTION	Cast	9.000	12	Tag	Defender	tag · OWNER UPDATED
+173.576	2	1	dante	Ultimate	CONTINENTAL DRIFT	Cast	0.000	12	Tag	Defender	tag · OWNER UPDATED

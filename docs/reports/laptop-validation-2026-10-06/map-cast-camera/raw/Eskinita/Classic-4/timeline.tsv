@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.502	89.500	Quiet	QuietEstablish	the street	1	0
+1.003	89.000	Quiet	QuietEstablish	the street	1	0
+1.503	88.500	Quiet	QuietEstablish	the street	1	0
+2.005	88.000	Quiet	QuietEstablish	the street	1	0
+2.506	87.500	LataHit	Objective	the can · MANG KANOR	2	0
+3.007	87.001	LataHit	Objective	the can · MANG KANOR	2	0
+3.508	86.481	LataHit	Objective	the can · MANG KANOR	2	0
+4.008	85.981	LataHit	Objective	the can · MANG KANOR	2	0
+4.509	85.481	Retrieval	Chase	retrieval · MANG KANOR	3	0
+5.204	84.861	Retrieval	Chase	retrieval · MARING	4	0
+5.706	84.341	Retrieval	Chase	retrieval · MARING	4	0
+6.207	83.841	Tag	Defender	tag · ATE GIRLIE	5	0
+6.708	83.341	Tag	Defender	tag · ATE GIRLIE	5	0
+7.209	82.841	Tag	Defender	tag · ATE GIRLIE	5	0
+7.709	82.341	Downed	Recovery	down · MANG KANOR	6	0
+8.210	81.841	Downed	Recovery	down · MANG KANOR	6	0
+8.710	81.341	Downed	Recovery	down · MANG KANOR	6	0
+9.210	80.842	Downed	Recovery	down · MANG KANOR	6	0
+9.710	80.342	Quiet	QuietEstablish	the street	7	0
+10.216	79.842	Quiet	QuietEstablish	the street	8	0
+10.716	79.402	Quiet	QuietEstablish	the street	8	0
+11.217	78.902	Quiet	QuietEstablish	the street	8	0
+11.718	78.402	Quiet	QuietEstablish	the street	8	0
+12.218	77.902	Tag	Defender	tag · ATE GIRLIE	9	0
+12.718	77.402	Tag	Defender	tag · ATE GIRLIE	9	0
+13.220	76.902	Tag	Defender	tag · ATE GIRLIE	9	0
+13.721	76.402	Downed	Recovery	down · MANG KANOR	10	0
+14.222	75.902	Downed	Recovery	down · MANG KANOR	10	0
+14.723	75.402	Downed	Recovery	down · MANG KANOR	10	0

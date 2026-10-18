@@ -1,0 +1,238 @@
+0.000	1	89.980	Quiet	QuietEstablish	finding a shot	0	0
+0.503	1	89.480	Quiet	QuietEstablish	the street	1	0
+1.004	1	88.980	Quiet	QuietEstablish	the street	1	0
+1.507	1	88.460	Quiet	QuietEstablish	the street	1	0
+2.009	1	87.960	Quiet	QuietEstablish	the street	1	0
+2.513	1	87.460	Quiet	QuietEstablish	the street	1	0
+3.016	1	86.961	LataHit	Objective	the can · RAGO	2	0
+3.518	1	86.461	LataHit	Objective	the can · RAGO	2	0
+4.018	1	85.961	LataHit	Objective	the can · RAGO	2	0
+4.522	1	85.461	Retrieval	RetrievalTwoShot	retrieval · RAGO	3	0
+5.273	1	84.701	Retrieval	RetrievalTwoShot	retrieval · RAGO	3	0
+5.914	1	84.061	Retrieval	RetrievalTwoShot	retrieval · RAGO	3	0
+6.417	1	83.561	Retrieval	RetrievalTwoShot	retrieval · RAGO	3	0
+6.917	1	83.061	Retrieval	RetrievalTwoShot	retrieval · RAGO	3	0
+7.417	1	82.561	Retrieval	RetrievalTwoShot	retrieval · RAGO	3	0
+7.918	1	82.061	Retrieval	Chase	retrieval · RAGO	3	0
+8.419	1	81.561	Retrieval	Chase	retrieval · RAGO	3	0
+8.920	1	81.062	Retrieval	Chase	retrieval · RAGO	3	0
+9.420	1	80.562	Retrieval	Chase	retrieval · RAGO	3	0
+9.922	1	80.062	Retrieval	Chase	retrieval · RAGO	3	0
+10.423	1	79.562	SlipperLanded	Objective	the can	4	0
+10.926	1	79.062	Downed	Recovery	down · CAREERORDERFIX	4	0
+11.428	1	78.602	Downed	Recovery	down · CAREERORDERFIX	4	0
+11.929	1	78.102	Downed	Recovery	down · CAREERORDERFIX	4	0
+12.431	1	77.602	Downed	Recovery	down · CAREERORDERFIX	4	0
+12.934	1	77.102	Downed	Recovery	down · CAREERORDERFIX	4	0
+13.436	1	76.602	LataHit	Objective	the can · AMIHAN	6	0
+13.939	1	76.102	LataHit	Objective	the can · AMIHAN	6	0
+14.497	1	75.542	LataHit	Objective	the can · AMIHAN	6	0
+15.000	1	75.043	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	7	0
+15.500	1	74.543	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	7	0
+16.002	1	74.043	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	7	0
+16.503	1	73.543	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	7	0
+17.005	1	73.043	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	7	0
+17.507	1	72.523	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	7	0
+18.008	1	72.023	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	7	0
+18.508	1	71.583	Tag	Defender	tag · RAGO	8	0
+19.011	1	71.083	Tag	Defender	tag · RAGO	8	0
+19.511	1	70.583	Tag	Defender	tag · RAGO	8	0
+20.012	1	70.083	Tag	Defender	tag · RAGO	8	0
+20.513	1	69.583	Tag	Defender	tag · RAGO	8	0
+21.015	1	69.084	SlipperLanded	Objective	the can	9	0
+21.516	1	68.584	Downed	Recovery	down · AMIHAN	10	0
+22.018	1	68.084	Downed	Recovery	down · AMIHAN	10	0
+22.521	1	67.584	Downed	Recovery	down · AMIHAN	10	0
+23.022	1	67.084	Downed	Recovery	down · AMIHAN	10	0
+23.523	1	66.644	ThrowPrep	Objective	throw · CAREERORDERFIX	11	0
+24.025	1	66.124	ThrowPrep	Objective	throw · CAREERORDERFIX	11	0
+24.528	1	65.624	ThrowPrep	Objective	throw · CAREERORDERFIX	11	0
+25.031	1	65.124	ThrowPrep	Objective	throw · CAREERORDERFIX	11	0
+25.531	1	64.624	ThrowPrep	Objective	throw · CAREERORDERFIX	11	0
+26.034	1	64.124	Tag	Defender	tag · RAGO	12	0
+26.536	1	63.624	Downed	Recovery	down · RAGO	13	0
+27.036	1	63.124	Downed	Recovery	down · RAGO	13	0
+27.539	1	62.624	Downed	Recovery	down · RAGO	13	0
+28.041	1	62.124	Downed	Recovery	down · RAGO	13	0
+28.542	1	61.624	ThrowPrep	Objective	throw · CAREERORDERFIX	14	0
+29.045	1	61.104	ThrowPrep	Objective	throw · CAREERORDERFIX	14	0
+29.548	1	60.604	ThrowPrep	Objective	throw · CAREERORDERFIX	14	0
+30.051	1	60.104	ThrowPrep	Objective	throw · CAREERORDERFIX	14	0
+30.553	1	59.604	ThrowPrep	Objective	throw · CAREERORDERFIX	14	0
+31.054	1	59.104	SlipperLanded	Objective	the can	15	0
+31.558	1	58.604	SlipperLanded	Objective	the can	15	0
+32.060	1	58.104	SlipperLanded	Objective	the can	15	0
+32.563	1	57.604	SlipperLanded	Objective	the can	15	0
+33.063	1	57.104	SlipperLanded	Objective	the can	15	0
+33.563	1	56.604	ThrowPrep	Objective	throw · CAREERORDERFIX	15	0
+34.064	1	56.084	ThrowPrep	Objective	throw · CAREERORDERFIX	15	0
+34.565	1	55.584	ThrowPrep	Objective	throw · CAREERORDERFIX	15	0
+35.067	1	55.144	ThrowPrep	Objective	throw · CAREERORDERFIX	15	0
+35.570	1	54.644	Retrieval	Chase	retrieval · AMIHAN	16	0
+36.071	1	54.144	Retrieval	Chase	retrieval · AMIHAN	16	0
+36.572	1	53.704	Tag	Defender	tag · RAGO	17	0
+37.073	1	53.204	Tag	Defender	tag · RAGO	17	0
+37.576	1	52.704	Tag	Defender	tag · RAGO	17	0
+38.077	1	52.204	Tag	Defender	tag · RAGO	17	0
+38.578	1	51.704	Tag	Defender	tag · RAGO	17	0
+39.078	1	51.204	Tag	Defender	tag · RAGO	17	0
+39.580	1	50.704	Downed	Recovery	down · AMIHAN	18	0
+40.082	1	50.204	Downed	Recovery	down · AMIHAN	18	0
+40.582	1	49.704	Downed	Recovery	down · AMIHAN	18	0
+41.084	1	49.204	Downed	Recovery	down · AMIHAN	18	0
+41.586	1	48.684	ThrowPrep	Objective	throw · CAREERORDERFIX	18	0
+42.087	1	48.184	ThrowPrep	Objective	throw · CAREERORDERFIX	18	0
+42.588	1	47.684	ThrowPrep	Objective	throw · CAREERORDERFIX	18	0
+43.089	1	47.184	ThrowPrep	Objective	throw · CAREERORDERFIX	18	0
+43.590	1	46.684	LataHit	Objective	the can · RAGO	18	0
+44.092	1	46.184	LataHit	Objective	the can · RAGO	18	0
+44.595	1	45.684	LataHit	Objective	the can · RAGO	18	0
+45.097	1	45.184	Retrieval	Chase	retrieval · RAGO	19	0
+45.597	1	44.744	LataHit	Objective	the can · RAGO	20	0
+46.100	1	44.244	Tag	Defender	tag · RAGO	21	0
+46.601	1	43.744	Tag	Defender	tag · RAGO	21	0
+47.102	1	43.244	Tag	Defender	tag · RAGO	21	0
+47.605	1	42.724	Tag	Defender	tag · RAGO	21	0
+48.105	1	42.224	Tag	Defender	tag · RAGO	21	0
+48.609	1	41.724	Downed	Recovery	down · RAGO	23	0
+49.109	1	41.224	Downed	Recovery	down · RAGO	23	0
+49.610	1	40.724	Downed	Recovery	down · RAGO	23	0
+50.111	1	40.224	Downed	Recovery	down · RAGO	23	0
+50.614	1	39.724	Quiet	QuietEstablish	the street	24	0
+51.115	1	39.224	Quiet	QuietEstablish	the street	24	0
+51.616	1	38.724	Quiet	QuietEstablish	the street	24	0
+52.116	1	38.284	Quiet	QuietEstablish	the street	24	0
+52.617	1	37.784	Quiet	QuietEstablish	the street	24	0
+53.119	1	37.284	Tag	Defender	tag · RAGO	25	0
+53.619	1	36.784	Tag	Defender	tag · RAGO	25	0
+54.119	1	36.284	Tag	Defender	tag · RAGO	25	0
+54.620	1	35.784	Tag	Defender	tag · RAGO	25	0
+55.121	1	35.284	Downed	Recovery	down · CAREERORDERFIX	26	0
+55.623	1	34.764	Downed	Recovery	down · CAREERORDERFIX	26	0
+56.123	1	34.264	Downed	Recovery	down · CAREERORDERFIX	26	0
+56.624	1	33.764	Downed	Recovery	down · CAREERORDERFIX	26	0
+57.127	1	33.264	Downed	Recovery	down · CAREERORDERFIX	26	0
+57.627	1	32.764	Downed	Recovery	down · CAREERORDERFIX	26	0
+58.129	1	32.264	Downed	Recovery	down · CAREERORDERFIX	26	0
+58.631	1	31.764	Downed	Recovery	down · CAREERORDERFIX	26	0
+59.132	1	31.264	Downed	Recovery	down · CAREERORDERFIX	26	0
+59.633	1	30.764	Downed	Recovery	down · CAREERORDERFIX	26	0
+60.135	1	30.264	SlipperLanded	Objective	the can	27	0
+60.637	1	29.764	SlipperLanded	Objective	the can	27	0
+61.140	1	29.264	SlipperLanded	Objective	the can	27	0
+61.642	1	28.744	SlipperLanded	Objective	the can	27	0
+62.144	1	28.244	Quiet	QuietEstablish	the street	28	0
+62.644	1	27.744	Quiet	QuietEstablish	the street	28	0
+63.147	1	27.244	Quiet	QuietEstablish	the street	28	0
+63.648	1	26.744	Quiet	QuietEstablish	the street	28	0
+64.149	1	26.244	Quiet	QuietEstablish	the street	28	0
+64.654	1	25.743	Retrieval	RetrievalTwoShot	retrieval · RAGO	30	0
+65.154	1	25.243	Retrieval	RetrievalTwoShot	retrieval · RAGO	30	0
+65.655	1	24.743	Retrieval	RetrievalTwoShot	retrieval · RAGO	30	0
+66.156	1	24.243	Retrieval	RetrievalTwoShot	retrieval · RAGO	30	0
+66.658	1	23.743	Retrieval	RetrievalTwoShot	retrieval · RAGO	30	0
+67.160	1	23.243	Retrieval	RetrievalTwoShot	retrieval · RAGO	30	0
+67.662	1	22.723	Retrieval	RetrievalTwoShot	retrieval · RAGO	30	0
+68.166	1	22.223	Retrieval	RetrievalTwoShot	retrieval · RAGO	30	0
+68.667	1	21.723	Retrieval	Chase	retrieval · RAGO	30	0
+69.170	1	21.283	Tag	Defender	tag · RAGO	31	0
+69.670	1	20.783	Tag	Defender	tag · RAGO	31	0
+70.171	1	20.283	Tag	Defender	tag · RAGO	31	0
+70.671	1	19.783	Tag	Defender	tag · RAGO	31	0
+71.171	1	19.283	Tag	Defender	tag · RAGO	31	0
+71.672	1	18.783	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	32	0
+72.172	1	18.283	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	32	0
+72.673	1	17.783	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	32	0
+73.175	1	17.283	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	32	0
+73.675	1	16.783	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	32	0
+74.176	1	16.283	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	32	0
+74.677	1	15.783	Retrieval	Chase	retrieval · AMIHAN	32	0
+75.179	1	15.283	Retrieval	Chase	retrieval · AMIHAN	32	0
+75.681	1	14.823	Tag	Defender	tag · RAGO	33	0
+76.184	1	14.323	Tag	Defender	tag · RAGO	33	0
+76.686	1	13.823	Tag	Defender	tag · RAGO	33	0
+77.186	1	13.323	Tag	Defender	tag · RAGO	33	0
+77.687	1	12.823	Retrieval	RetrievalTwoShot	retrieval · RAGO	34	0
+78.192	1	12.323	Retrieval	RetrievalTwoShot	retrieval · RAGO	34	0
+78.696	1	11.883	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	35	0
+79.198	1	11.383	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	35	0
+79.699	1	10.863	Retrieval	RetrievalTwoShot	retrieval · CAREERORDERFIX	35	0
+80.200	1	10.363	Tag	Defender	tag · RAGO	36	0
+80.701	1	9.863	Tag	Defender	tag · RAGO	36	0
+81.203	1	9.363	Tag	Defender	tag · RAGO	36	0
+81.705	1	8.863	Downed	Recovery	down · RAGO	37	0
+82.206	1	8.363	Downed	Recovery	down · RAGO	37	0
+82.708	1	7.863	Downed	Recovery	down · RAGO	37	0
+83.208	1	7.363	Downed	Recovery	down · RAGO	37	0
+83.709	1	6.863	LataHit	Objective	the can · AMIHAN	38	0
+84.210	1	6.363	LataHit	Objective	the can · AMIHAN	38	0
+84.713	1	5.863	LataHit	Objective	the can · AMIHAN	38	0
+85.214	1	5.363	LataHit	Objective	the can · AMIHAN	38	0
+85.715	1	4.863	Retrieval	Chase	retrieval · CAREERORDERFIX	39	0
+86.217	1	4.363	Retrieval	Chase	retrieval · CAREERORDERFIX	39	0
+86.719	1	3.863	Quiet	QuietEstablish	the street	40	0
+87.219	1	3.363	Quiet	QuietEstablish	the street	40	0
+87.720	1	2.843	Quiet	QuietEstablish	the street	40	0
+88.225	1	2.343	Quiet	QuietEstablish	the street	40	0
+88.728	1	1.843	Quiet	QuietEstablish	the street	40	0
+89.229	1	1.403	Tag	Defender	tag · RAGO	41	0
+89.732	1	0.903	Tag	Defender	tag · RAGO	41	0
+90.232	1	0.403	Tag	Defender	tag · RAGO	41	0
+90.734	1	0.000	Tag	Defender	tag · RAGO	41	0
+91.234	1	0.000	Tag	Defender	tag · RAGO	41	0
+91.734	1	0.000	Tag	Defender	tag · RAGO	41	0
+92.236	1	0.000	Tag	Defender	tag · RAGO	41	0
+92.738	1	0.000	Tag	Defender	tag · RAGO	41	0
+93.238	1	0.000	Tag	Defender	tag · RAGO	41	0
+93.740	1	0.000	Tag	Defender	tag · RAGO	41	0
+94.241	1	0.000	Tag	Defender	tag · RAGO	41	0
+94.742	1	0.000	Tag	Defender	tag · RAGO	41	0
+95.243	1	0.000	Tag	Defender	tag · RAGO	41	0
+95.745	1	0.000	Tag	Defender	tag · RAGO	41	0
+96.246	1	0.000	Tag	Defender	tag · RAGO	41	0
+96.748	1	0.000	Tag	Defender	tag · RAGO	41	0
+97.250	1	0.000	Tag	Defender	tag · RAGO	41	0
+97.753	1	0.000	Tag	Defender	tag · RAGO	41	0
+98.254	1	0.000	Tag	Defender	tag · RAGO	41	0
+98.757	2	89.900	Quiet	QuietEstablish	the street	42	0
+99.259	2	89.400	Quiet	QuietEstablish	the street	42	0
+99.761	2	88.900	Quiet	QuietEstablish	the street	42	0
+100.261	2	88.400	Quiet	QuietEstablish	the street	42	0
+100.763	2	87.880	Quiet	QuietEstablish	the street	42	0
+101.264	2	87.380	Tag	Chase	tag · CAREERORDERFIX	43	0
+101.765	2	86.941	Tag	Chase	tag · CAREERORDERFIX	43	0
+102.268	2	86.441	Tag	Chase	tag · CAREERORDERFIX	43	0
+102.772	2	85.941	Tag	Chase	tag · CAREERORDERFIX	43	0
+103.273	2	85.441	Tag	Chase	tag · CAREERORDERFIX	43	0
+103.773	2	84.941	Retrieval	Chase	retrieval · AMIHAN	43	0
+104.273	2	84.441	Retrieval	Chase	retrieval · AMIHAN	43	0
+104.776	2	83.941	Downed	Recovery	down · RAGO	44	0
+105.278	2	83.441	Downed	Recovery	down · RAGO	44	0
+105.781	2	82.921	Downed	Recovery	down · RAGO	44	0
+106.283	2	82.421	Downed	Recovery	down · RAGO	44	0
+106.786	2	81.921	Retrieval	RetrievalTwoShot	retrieval · RAGO	45	0
+107.288	2	81.421	LataHit	Objective	the can · AMIHAN	45	0
+107.790	2	80.922	LataHit	Objective	the can · AMIHAN	45	0
+108.293	2	80.422	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	45	0
+108.797	2	79.922	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	45	0
+109.300	2	79.422	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	45	0
+110.105	2	78.602	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	45	0
+110.606	2	78.102	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	45	0
+111.107	2	77.602	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	45	0
+111.609	2	77.102	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	45	0
+112.112	2	76.602	Retrieval	RetrievalTwoShot	retrieval · AMIHAN	46	1
+112.613	2	76.102	Quiet	QuietEstablish	the street	48	1
+113.113	2	75.602	Quiet	QuietEstablish	the street	48	1
+113.615	2	75.103	Quiet	QuietEstablish	the street	48	1
+114.117	2	74.603	Quiet	QuietEstablish	the street	48	1
+114.619	2	74.103	Quiet	QuietEstablish	the street	48	1
+115.120	2	73.603	ThrowPrep	Objective	throw · RAGO	49	1
+115.620	2	73.083	ThrowPrep	Objective	throw · RAGO	49	1
+116.120	2	72.583	Quiet	QuietEstablish	the street	50	1
+116.626	2	72.083	Quiet	QuietEstablish	the street	50	1
+117.128	2	71.583	Quiet	QuietEstablish	the street	50	1
+117.630	2	71.083	Quiet	QuietEstablish	the street	50	1
+118.131	2	70.583	Quiet	QuietEstablish	the street	50	1
+118.633	2	70.083	ThrowPrep	Objective	throw · RAGO	51	1
+119.136	2	69.583	ThrowPrep	Objective	throw · RAGO	51	1
+119.636	2	69.084	Retrieval	RetrievalTwoShot	retrieval · RAGO	52	1

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="17" result="Passed" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 07:22:03Z" end-time="2026-10-06 07:22:04Z" duration="0.7267733">
+  <test-suite type="TestSuite" id="3328" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1896" result="Passed" start-time="2026-10-06 07:22:03Z" end-time="2026-10-06 07:22:04Z" duration="0.726773" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3320" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1896" result="Passed" start-time="2026-10-06 07:22:03Z" end-time="2026-10-06 07:22:04Z" duration="0.720631" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="47108" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3321" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1896" result="Passed" start-time="2026-10-06 07:22:03Z" end-time="2026-10-06 07:22:04Z" duration="0.719446" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3324" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1894" result="Passed" start-time="2026-10-06 07:22:03Z" end-time="2026-10-06 07:22:04Z" duration="0.718565" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1027" name="AiCurrentUltimateTests" fullname="TumbangPreso.PlayTests.AiCurrentUltimateTests" classname="TumbangPreso.PlayTests.AiCurrentUltimateTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-06 07:22:03Z" end-time="2026-10-06 07:22:03Z" duration="0.400139" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1036" name="ClassicDoesNotConsiderHeroUltimateKeys" fullname="TumbangPreso.PlayTests.AiCurrentUltimateTests.ClassicDoesNotConsiderHeroUltimateKeys" methodname="ClassicDoesNotConsiderHeroUltimateKeys" classname="TumbangPreso.PlayTests.AiCurrentUltimateTests" runstate="Runnable" seed="1113739591" result="Passed" start-time="2026-10-06 07:22:03Z" end-time="2026-10-06 07:22:03Z" duration="0.113378" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1030" name="CurrentNonCircularUltimateRecognizesItsActualVictim" fullname="TumbangPreso.PlayTests.AiCurrentUltimateTests.CurrentNonCircularUltimateRecognizesItsActualVictim" classname="TumbangPreso.PlayTests.AiCurrentUltimateTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-06 07:22:03Z" end-time="2026-10-06 07:22:03Z" duration="0.073747" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1028" name="CurrentNonCircularUltimateRecognizesItsActualVictim(&quot;cheska&quot;,True)" fullname="TumbangPreso.PlayTests.AiCurrentUltimateTests.CurrentNonCircularUltimateRecognizesItsActualVictim(&quot;cheska&quot;,True)" methodname="CurrentNonCircularUltimateRecognizesItsActualVictim" classname="TumbangPreso.PlayTests.AiCurrentUltimateTests" runstate="Runnable" seed="14967910" result="Passed" start-time="2026-10-06 07:22:03Z" end-time="2026-10-06 07:22:03Z" duration="0.037678" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1029" name="CurrentNonCircularUltimateRecognizesItsActualVictim(&quot;dante&quot;,False)" fullname="TumbangPreso.PlayTests.AiCurrentUltimateTests.CurrentNonCircularUltimateRecognizesItsActualVictim(&quot;dante&quot;,False)" methodname="CurrentNonCircularUltimateRecognizesItsActualVictim" classname="TumbangPreso.PlayTests.AiCurrentUltimateTests" runstate="Runnable" seed="919526751" result="Passed" start-time="2026-10-06 07:22:03Z" end-time="2026-10-06 07:22:03Z" duration="0.033797" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1032" name="ForwardWaveDoesNotAvoidTheCanItCannotKnockDown" fullname="TumbangPreso.PlayTests.AiCurrentUltimateTests.ForwardWaveDoesNotAvoidTheCanItCannotKnockDown" methodname="ForwardWaveDoesNotAvoidTheCanItCannotKnockDown" classname="TumbangPreso.PlayTests.AiCurrentUltimateTests" runstate="Runnable" seed="800953474" result="Passed" start-time="2026-10-06 07:22:03Z" end-time="2026-10-06 07:22:03Z" duration="0.037295" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1033" name="ForwardWaveDoesNotValueAnOpponentBehindTheCaster" fullname="TumbangPreso.PlayTests.AiCurrentUltimateTests.ForwardWaveDoesNotValueAnOpponentBehindTheCaster" methodname="ForwardWaveDoesNotValueAnOpponentBehindTheCaster" classname="TumbangPreso.PlayTests.AiCurrentUltimateTests" runstate="Runnable" seed="462629368" result="Passed" start-time="2026-10-06 07:22:03Z" end-time="2026-10-06 07:22:03Z" duration="0.032322" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1034" name="GlobalFreezeDoesNotValueAnInactiveOpponent" fullname="TumbangPreso.PlayTests.AiCurrentUltimateTests.GlobalFreezeDoesNotValueAnInactiveOpponent" methodname="GlobalFreezeDoesNotValueAnInactiveOpponent" classname="TumbangPreso.PlayTests.AiCurrentUltimateTests" runstate="Runnable" seed="1620015822" result="Passed" start-time="2026-10-06 07:22:03Z" end-time="2026-10-06 07:22:03Z" duration="0.032549" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1031" name="GlobalFreezeIsConsideredWhenReadyWithAnEligibleObservedOpponent" fullname="TumbangPreso.PlayTests.AiCurrentUltimateTests.GlobalFreezeIsConsideredWhenReadyWithAnEligibleObservedOpponent" methodname="GlobalFreezeIsConsideredWhenReadyWithAnEligibleObservedOpponent" classname="TumbangPreso.PlayTests.AiCurrentUltimateTests" runstate="Runnable" seed="1506943005" result="Passed" start-time="2026-10-06 07:22:03Z" end-time="2026-10-06 07:22:03Z" duration="0.033286" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1035" name="OrdinaryCircleStillRejectsAnOutOfRangeOpponent" fullname="TumbangPreso.PlayTests.AiCurrentUltimateTests.OrdinaryCircleStillRejectsAnOutOfRangeOpponent" methodname="OrdinaryCircleStillRejectsAnOutOfRangeOpponent" classname="TumbangPreso.PlayTests.AiCurrentUltimateTests" runstate="Runnable" seed="1452624857" result="Passed" start-time="2026-10-06 07:22:03Z" end-time="2026-10-06 07:22:03Z" duration="0.032245" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1037" name="OtherNonCircularUltimateKeepsItsExistingValueCount" fullname="TumbangPreso.PlayTests.AiCurrentUltimateTests.OtherNonCircularUltimateKeepsItsExistingValueCount" methodname="OtherNonCircularUltimateKeepsItsExistingValueCount" classname="TumbangPreso.PlayTests.AiCurrentUltimateTests" runstate="Runnable" seed="1447167619" result="Passed" start-time="2026-10-06 07:22:03Z" end-time="2026-10-06 07:22:03Z" duration="0.034755" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1045" name="AiMapBoundaryTargetTests" fullname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests" classname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-06 07:22:03Z" end-time="2026-10-06 07:22:04Z" duration="0.265947" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1055" name="ChaseRanksActualEscapeDepthAtEqualObservedDistance" fullname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests.ChaseRanksActualEscapeDepthAtEqualObservedDistance" classname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-06 07:22:03Z" end-time="2026-10-06 07:22:04Z" duration="0.109505" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1052" name="ChaseRanksActualEscapeDepthAtEqualObservedDistance(True,7.0f)" fullname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests.ChaseRanksActualEscapeDepthAtEqualObservedDistance(True,7.0f)" methodname="ChaseRanksActualEscapeDepthAtEqualObservedDistance" classname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests" runstate="Runnable" seed="781929215" result="Passed" start-time="2026-10-06 07:22:03Z" end-time="2026-10-06 07:22:03Z" duration="0.049924" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1053" name="ChaseRanksActualEscapeDepthAtEqualObservedDistance(True,9.0f)" fullname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests.ChaseRanksActualEscapeDepthAtEqualObservedDistance(True,9.0f)" methodname="ChaseRanksActualEscapeDepthAtEqualObservedDistance" classname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests" runstate="Runnable" seed="800680644" result="Passed" start-time="2026-10-06 07:22:03Z" end-time="2026-10-06 07:22:03Z" duration="0.028989" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1054" name="ChaseRanksActualEscapeDepthAtEqualObservedDistance(False,7.0f)" fullname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests.ChaseRanksActualEscapeDepthAtEqualObservedDistance(False,7.0f)" methodname="ChaseRanksActualEscapeDepthAtEqualObservedDistance" classname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests" runstate="Runnable" seed="450560225" result="Passed" start-time="2026-10-06 07:22:03Z" end-time="2026-10-06 07:22:04Z" duration="0.029768" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1051" name="EachAuthoredArenaLayoutUsesItsCurrentCircularEscapeDepth" fullname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests.EachAuthoredArenaLayoutUsesItsCurrentCircularEscapeDepth" classname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-06 07:22:04Z" end-time="2026-10-06 07:22:04Z" duration="0.155366" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1046" name="EachAuthoredArenaLayoutUsesItsCurrentCircularEscapeDepth(&quot;plaza&quot;)" fullname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests.EachAuthoredArenaLayoutUsesItsCurrentCircularEscapeDepth(&quot;plaza&quot;)" methodname="EachAuthoredArenaLayoutUsesItsCurrentCircularEscapeDepth" classname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests" runstate="Runnable" seed="1654664016" result="Passed" start-time="2026-10-06 07:22:04Z" end-time="2026-10-06 07:22:04Z" duration="0.030419" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1047" name="EachAuthoredArenaLayoutUsesItsCurrentCircularEscapeDepth(&quot;tore&quot;)" fullname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests.EachAuthoredArenaLayoutUsesItsCurrentCircularEscapeDepth(&quot;tore&quot;)" methodname="EachAuthoredArenaLayoutUsesItsCurrentCircularEscapeDepth" classname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests" runstate="Runnable" seed="2097217698" result="Passed" start-time="2026-10-06 07:22:04Z" end-time="2026-10-06 07:22:04Z" duration="0.031298" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1048" name="EachAuthoredArenaLayoutUsesItsCurrentCircularEscapeDepth(&quot;krus&quot;)" fullname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests.EachAuthoredArenaLayoutUsesItsCurrentCircularEscapeDepth(&quot;krus&quot;)" methodname="EachAuthoredArenaLayoutUsesItsCurrentCircularEscapeDepth" classname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests" runstate="Runnable" seed="1192142017" result="Passed" start-time="2026-10-06 07:22:04Z" end-time="2026-10-06 07:22:04Z" duration="0.030525" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1049" name="EachAuthoredArenaLayoutUsesItsCurrentCircularEscapeDepth(&quot;hukay&quot;)" fullname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests.EachAuthoredArenaLayoutUsesItsCurrentCircularEscapeDepth(&quot;hukay&quot;)" methodname="EachAuthoredArenaLayoutUsesItsCurrentCircularEscapeDepth" classname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests" runstate="Runnable" seed="1239239995" result="Passed" start-time="2026-10-06 07:22:04Z" end-time="2026-10-06 07:22:04Z" duration="0.031309" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1050" name="EachAuthoredArenaLayoutUsesItsCurrentCircularEscapeDepth(&quot;entablado&quot;)" fullname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests.EachAuthoredArenaLayoutUsesItsCurrentCircularEscapeDepth(&quot;entablado&quot;)" methodname="EachAuthoredArenaLayoutUsesItsCurrentCircularEscapeDepth" classname="TumbangPreso.PlayTests.AiMapBoundaryTargetTests" runstate="Runnable" seed="926652193" result="Passed" start-time="2026-10-06 07:22:04Z" end-time="2026-10-06 07:22:04Z" duration="0.030429" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

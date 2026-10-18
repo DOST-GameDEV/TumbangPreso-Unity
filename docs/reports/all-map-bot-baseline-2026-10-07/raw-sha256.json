@@ -1,0 +1,22 @@
+{
+  "launch.json": "6fc08c82acd82b41728a1cd1934b35066f58c288bb31997ba6fa9ef5738350f6",
+  "result.json": "38e04ec30b09772d7e4c36e07ee775a2837f8c998ae67a72642d130981151668",
+  "results.xml": "d0e8f65d4cf05a1d6ecf6cf897dd395e30938af406d314611033624af5a5ef0e",
+  "source-restoration.json": "3c5fa2f62d9fb58ce2ef95dde134573a7e431118c4d5eab4e7eabd295a91fa8f",
+  "trace-summary.json": "0f65829be16ccb2d0dd67431ba1759495d1f5cce998ab97922a9961ca930a31f",
+  "ai-diagnostic-Classic-Arena.txt": "8dcc37a4205c67303e9257fb6bb226bb71e29b38929d396df8e6f6f8eabc3648",
+  "ai-diagnostic-Classic-IlalimNgTulay.txt": "2988802ba3d73b4fae420d45da56cd1240939798d3e60b5adaeda0f6f527355e",
+  "ai-diagnostic-Classic-Kanto.txt": "71195c3e6f17dadb85118f3dafb0cedcb6f1117eef72cdcfaebd58889ae29a4d",
+  "ai-diagnostic-Classic-LagoonCove.txt": "48dc0465b8593c0e726a380d2825fa5925d71387879c05905436d99f298569a6",
+  "ai-diagnostic-Classic.txt": "d8cb5cffe2b1b27a34b5ee9d10c2b409e143822d416082479428a3f14ea7f527",
+  "ai-diagnostic-Classic-BayanPlaza.txt": "3fd9335204e5d143d6be73f1a8e95b9e81d10ff8a4abb64e0591d69fc00100ce",
+  "ai-diagnostic-Classic-SaBubong.txt": "d28db202a701ab44168b8d20a341d8a88666b9e4fe3355f88b8886568f9f1517",
+  "ai-diagnostic-HeroStrike-Arena.txt": "ca4dbea488c47cb61b92c22924e522c44ef2c75623bafbd496c2b9262579a374",
+  "ai-diagnostic-HeroStrike-IlalimNgTulay.txt": "3d7716382a68ca4ee708f90615bf62315109f8a6a706c3175a0abbe527b004fe",
+  "ai-diagnostic-HeroStrike-Kanto.txt": "4b4055d8385072ce3d4a9b363e444277f2e2d7fb15b71de9c4d28e352015ef55",
+  "ai-diagnostic-HeroStrike-LagoonCove.txt": "530dda320c1804452ad75a855b9307dedec386a22f50f989c9155127d3e610c4",
+  "ai-diagnostic-HeroStrike.txt": "8319c09ad0227a55bb19444593f150ee54374730381fa6d96cb8983dc3b0a19b",
+  "ai-diagnostic-HeroStrike-BayanPlaza.txt": "e2e67ee64452b8a033e329ce3ffb168f0a7a9ca058a5ebdd067cf8a22d2e118c",
+  "ai-diagnostic-HeroStrike-SaBubong.txt": "7bc43101feee801fc42bb0a281a6f3e090aebfb3959adbb75c38cf71c63c67f2",
+  "tested-diagnostic-source.cs": "6e888d16995252e9caa98645206967963b08930bcd52a0302a4f609210ae8003"
+}

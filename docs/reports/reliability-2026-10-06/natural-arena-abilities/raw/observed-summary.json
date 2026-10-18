@@ -1,0 +1,58 @@
+[
+  {
+    "group": "HeroStrike-0",
+    "accepted": 12,
+    "refused": 0,
+    "ultimateAnswers": 0,
+    "captured": [
+      "accepted-cheska-0.png",
+      "accepted-cheska-1.png",
+      "accepted-dante-1.png",
+      "accepted-rafi-1.png"
+    ],
+    "finalCharges": "0\tcheska\t11\t12\n1\tdante\t2\t12\n2\trafi\t2\t15\n3\tcheska\t4\t12"
+  },
+  {
+    "group": "HeroStrike-1",
+    "accepted": 19,
+    "refused": 0,
+    "ultimateAnswers": 0,
+    "captured": [
+      "accepted-amihan-0.png",
+      "accepted-amihan-1.png",
+      "accepted-cheska-0.png",
+      "accepted-cheska-1.png",
+      "accepted-sean-0.png",
+      "accepted-sean-1.png"
+    ],
+    "finalCharges": "0\tsean\t13\t15\n1\tcheska\t2\t12\n2\tamihan\t4\t15\n3\tsean\t4\t15"
+  },
+  {
+    "group": "HeroStrike-2",
+    "accepted": 17,
+    "refused": 1,
+    "ultimateAnswers": 0,
+    "captured": [
+      "accepted-paete-0.png",
+      "accepted-paete-1.png",
+      "accepted-sean-0.png",
+      "accepted-sean-1.png",
+      "accepted-zack-0.png",
+      "accepted-zack-1.png"
+    ],
+    "finalCharges": "0\tzack\t12\t15\n1\tsean\t3\t15\n2\tpaete\t1\t16\n3\tzack\t2\t15"
+  },
+  {
+    "group": "HeroStrike-4",
+    "accepted": 16,
+    "refused": 0,
+    "ultimateAnswers": 0,
+    "captured": [
+      "accepted-cheska-0.png",
+      "accepted-nemu-1.png",
+      "accepted-phaister-0.png",
+      "accepted-phaister-1.png"
+    ],
+    "finalCharges": "0\tphaister\t9\t12\n1\tnemu\t1\t15\n2\tcheska\t5\t12\n3\tphaister\t2\t12"
+  }
+]

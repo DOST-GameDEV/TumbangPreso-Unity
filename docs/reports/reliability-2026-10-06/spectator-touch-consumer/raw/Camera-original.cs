@@ -1,0 +1,2837 @@
+using System.Collections.Generic;
+using TumbangPreso.Core;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
+using UnityEngine.Experimental.Rendering;
+using UnityEngine.UI;
+
+namespace TumbangPreso.CameraSystem
+{
+    /// <summary>
+    /// SPECTATOR MODE — a free-flying camera with no body. `Design.md` §9.
+    /// Converted from `scripts/systems/spectator_camera.gd` (431 lines).
+    ///
+    /// Human instruction, 2026-07-30: *"implement a Spectator option available in both
+    /// Multiplayer and Singleplayer. The spectator acts as a free-flying camera with no
+    /// physical model, capable of clipping through all geometry to fly anywhere."*
+    ///
+    /// ⚠️⚠️ THE CLIPPING IS BY CONSTRUCTION, NOT BY A COLLISION MASK, AND THAT IS THE WHOLE
+    /// DESIGN OF THIS FILE. This is a plain Transform with a Camera on it. It is not a
+    /// CharacterController, it has no Collider, it is on no physics layer, and it never
+    /// calls Move — so there is nothing for the physics engine to resolve and no layer mask
+    /// anyone can get wrong later. Moving it is one `transform.position +=`.
+    ///
+    /// The alternative — a body with its layer mask cleared — looks equivalent and is not:
+    /// it still enters the broadphase, it still generates depenetration against anything
+    /// that masks IT, and it is one accidental inspector edit away from a spectator who can
+    /// be bumped by a slipper.
+    ///
+    /// ⚠️ AND IT SPAWNS NO CHARACTER AT ALL. A spectator claims no seat (seat -1), is
+    /// skipped by the spawn path, and is excluded from the ready gate. Its slot is filled by
+    /// the same placeholder-AI path that already fills an empty one, so a 2v2 stays a 2v2.
+    ///
+    /// ⚠️ IT IS NOT A PLAYER AND MUST NEVER BECOME ONE. Nothing here writes gameplay state,
+    /// sends an RPC, or resolves a hit. If a future pass wants a spectator to be able to
+    /// nudge anything, that is a different component.
+    ///
+    /// ⚠️⚠️ AND IT IS DRIVEN BY A HUMAN, ONLY, BY CONSTRUCTION. 🧑 human instruction,
+    /// 2026-07-31: *"dont give spectator AI... spectator should only be controllable by a
+    /// person."* In Godot that was held by three separate properties. In Unity ONE
+    /// structural fact holds it: the AI writes <see cref="InputIntent"/> and never touches
+    /// hardware, and this class reads hardware DIRECTLY and never reads an intent. There is
+    /// no <see cref="CharacterMotor"/> here for an AIController to attach to either.
+    ///
+    /// ⚠️ SO DO NOT "TIDY" THIS ONTO PlayerInputReader. That class exists to funnel hardware
+    /// into an intent a bot can also write; routing the spectator through it would put a
+    /// bot one line away from flying the camera, which is the exact thing the instruction
+    /// above forbids.
+    ///
+    /// If a "cinematic auto-cam" is ever wanted it is a new component with a new name.
+    ///
+    /// ⚠️⚠️ **THAT AUTO-CAM WAS WANTED ON 2026-08-27 AND IT EXISTS: <see cref="SpectatorDirector"/>.**
+    /// 🧑: *"add autopilot option in spectator that moves on its own naturally and looks good"*.
+    /// **The 2026-07-31 instruction three paragraphs up is SUPERSEDED by the same person, and
+    /// this note is here because that paragraph on its own now reads as forbidding a feature
+    /// that ships.** Read them together: what was asked for then, and what is still true, is that
+    /// nothing may drive the spectator's INPUT except a person. That holds. The director writes a
+    /// POSE onto a transform; this class is still the only thing in the game that reads a
+    /// spectator's hardware, and there is still no `CharacterMotor` here for an `AIController` to
+    /// attach to. The line above was also right about the shape of the answer, so it was
+    /// followed to the letter: a new component, with a new name.
+    ///
+    /// ⚠️⚠️ AND THE AUTOPILOT MUST NEVER PAUSE OR REPLAY. 🧑, immediately after: *"dont let
+    /// autopilot spectator pause or replay thats for human only"*. This class USED to replay by
+    /// itself on a knockdown, a tag or a score play, and `Update` suppressed that while the
+    /// autopilot was engaged. **The self-replay is deleted outright as of 2026-08-27**, so the
+    /// promise no longer rests on a suppression that a later branch could forget: a replay has
+    /// one trigger, the `SpectatorReplay` key, and the autopilot has no hands. See § THE REPLAY
+    /// NEVER STARTS ITSELF ANY MORE.
+    /// </summary>
+    public sealed class SpectatorCamera : MonoBehaviour
+    {
+        /// Metres per second at the base speed. Faster than a Person's 4.6 walk — a
+        /// spectator is covering a whole map, not a lane.
+        ///
+        /// ⚠️⚠️ 12.0 -> 6.0 ON 2026-08-01, ON DIRECT HUMAN INSTRUCTION. 🧑: *"can u allow
+        /// spectator to slow down huhu why is it so fast, barely controllable"*.
+        /// ⚠️⚠️ 6.0 -> 3.6 ON 2026-08-02, ALSO ON DIRECT HUMAN INSTRUCTION, FOR A USE THIS
+        /// CONSTANT HAD NOT BEEN TUNED FOR. 🧑: *"slow down spectator bcz it so fast, cant
+        /// record anything with it ... spectator will be used as camera for cinematics but
+        /// dont make it too slow"*.
+        ///
+        /// 3.6 is deliberately BELOW a Person's 4.6 walk. That is the property that matters
+        /// for a tracking shot — the camera drifts back through a moving subject rather than
+        /// pulling ahead of them. It still crosses the 15 m court in about four seconds, so
+        /// it is not a tripod. DO NOT "fix" this to match walk speed.
+        public const float BaseSpeed = 3.6f;
+
+        /// Hold Sprint to boost. No stamina: the meter exists to make a chase a decision,
+        /// and a spectator has nothing to decide.
+        ///
+        /// ⚠️ 3.0 -> 2.5, BECAUSE THE BOOST IS THE REPOSITIONING GEAR AND NOT A SECOND
+        /// CAMERA. 2.5 against 3.6 is 9.0 m/s: the court in under two seconds when a shot is
+        /// being SET UP, and still slow enough to be brought to rest on a mark.
+        public const float BoostScale = 2.5f;
+
+        /// Wheel adjusts base speed between these, so framing a close shot of the can and
+        /// crossing Bayan Plaza are not fighting the same number.
+        public const float SpeedMin = 1.2f;
+        public const float SpeedMax = 40.0f;
+        public const float SpeedStep = 1.35f;
+
+        /// Wider than the gameplay rig's clamp, because a free camera genuinely wants to
+        /// look straight down at the circle. Stops just short of the poles, where yaw and
+        /// pitch become the same axis and the view rolls.
+        public const float PitchLimitDeg = 88.0f;
+
+        /// Exponential smoothing on POSITION, so a hard stop reads as a camera being flown
+        /// rather than as a teleport. Rotation is deliberately NOT smoothed — mouse-look
+        /// with any smoothing on it feels like input lag.
+        public const float MoveSmoothRate = 14.0f;
+
+        /// ⚠️ §2.6 — FOLLOW DISTANCE IS THE OTHER HALF OF "WIDE SHOTS AND CLOSE SHOTS BOTH".
+        /// The wheel retunes FLY speed, which does nothing while following, so the follow
+        /// shot used to be a single fixed 6.5 m framing. Same wheel, same gesture, and which
+        /// number it moves depends on which mode you are in — because in each mode that is
+        /// the only one of the two that does anything.
+        public const float FollowDistance = 6.5f;
+        public const float FollowDistanceMin = 1.2f;
+        public const float FollowDistanceMax = 30.0f;
+
+        /// Metres above the followed unit's origin, scaled with distance rather than held
+        /// flat: a 1.2 m close-up wants eye level and a 30 m wide wants to look down.
+        public const float FollowLiftRatio = 0.34f;
+
+        // -------------------------------------------------------------------
+        /// ⚠️⚠️ POV MODE — V — AND IT IS **THIS** CAMERA AT THEIR EYES, NOT THEIR RIG.
+        ///
+        /// 🧑 2026-07-31: *"spectator should be allowed to go to anywhere in the map and
+        /// watch the povs of people/ai, thats why its called camera."*
+        ///
+        /// ⚠️ IT DOES NOT ACTIVATE THE TARGET'S CameraRig, AND THAT IS NOT A SHORTCUT — IT
+        /// IS THE RULE. Going through the rig would not be free even if it were allowed:
+        /// <see cref="CameraRig.SetActive"/> also enables that rig's look pipeline, so a
+        /// spectator pressing V would start feeding a live AI unit this machine's mouse —
+        /// from a component whose entire contract is that it writes no gameplay state.
+        /// Watching somebody must not change what they do.
+        ///
+        /// So POV is a placement, not a takeover: this camera is parked at the unit's eye
+        /// height and its YAW is locked to the unit's facing. Nothing is written to the unit
+        /// at all — it does not know it is being watched.
+        ///
+        /// ⚠️ PITCH STAYS WITH THE OPERATOR. A unit's pitch lives on its rig, and that rig
+        /// is inactive for a bot — so there is no honest pitch to copy, and inventing one
+        /// would be a made-up number presented as somebody else's view. Leaving pitch on the
+        /// mouse is also the better camera: it lets a POV shot tilt down to the lata.
+        public const float PovEyeHeightPerson = 1.45f;
+
+        /// A lata or a tsinelas is ankle-height and its "eyes" are a fiction anyway.
+        public const float PovEyeHeightProp = 0.42f;
+
+        /// ⚠️ AND IT SITS SLIGHTLY IN FRONT OF THE EYES, NOT INSIDE THE HEAD. Rendered a POV
+        /// shot and looked at it: the watched Person's own hat and shoulder hung in the
+        /// bottom-left of frame, because a real FPP rig HIDES the head mesh and this camera
+        /// is a bystander that has not been given the right to hide anything. Stepping
+        /// forward off the unit's own facing clears the model without writing a single
+        /// property to it, which is the whole reason POV is a placement rather than a takeover.
+        public const float PovForwardOffset = 0.34f;
+
+        /// A wider FOV than the gameplay rigs': a spectator is watching four units at once
+        /// rather than aiming at one, and the extra field is what makes the whole circle
+        /// readable from the side of the arena.
+        public const float SpectatorFov = 78.0f;
+
+        /// Well past the map so a shot from outside the arena does not clip the rooflines.
+        public const float SpectatorFar = 400.0f;
+
+        // -------------------------------------------------------------------
+
+        /// <summary>Every unit a spectator may cycle to. Godot used the `spectatable`
+        /// group; Unity has no groups, so units register here on spawn. Rebuilt-on-read
+        /// semantics are preserved by filtering dead entries at cycle time.</summary>
+        private static readonly List<CharacterMotor> Spectatable = new List<CharacterMotor>();
+
+        public static void Register(CharacterMotor unit)
+        {
+            if (unit != null && !Spectatable.Contains(unit)) Spectatable.Add(unit);
+        }
+
+        public static void Unregister(CharacterMotor unit) => Spectatable.Remove(unit);
+
+        private float _yawDeg;
+
+        /// ⚠️ UNITY'S SIGN, NOT GODOT'S. Godot's rotation.x is positive looking UP; Unity's
+        /// euler X is positive looking DOWN, so every pitch constant carried over from the
+        /// .gd is negated on the way in. The Godot source starts at -26 (looking down at the
+        /// circle); that is +26 here. The ±88 clamp is symmetric so it needs no flip.
+        private float _pitchDeg = 26.0f;
+
+        private float _speed = BaseSpeed;
+        private Vector3 _targetPosition;
+        private Camera _camera;
+
+        /// Which unit the camera is following, or null for free flight. Tab cycles, F frees.
+        private CharacterMotor _follow;
+        private int _followIndex = -1;
+        private float _followDistance = FollowDistance;
+
+        /// POV rather than over-the-shoulder. V toggles. Sticky across a Tab cycle on
+        /// purpose: somebody filming POV shots wants to step through all four units in POV,
+        /// not re-press V at every one.
+        private bool _pov;
+
+        private InputAction _move, _jump, _sprint, _down, _look;
+
+        // -------------------------------------------------------------------
+        // § THE REPLAY BUFFER, AND WHAT IT COSTS
+        //
+        // ⚠️⚠️ THE OLD BUFFER SHOWED THE LAST 5.5 SECONDS, NOT THE LAST EVENT, AND THOSE ARE
+        // DIFFERENT CLIPS. `StartReplay` took `Count - wanted` frames from the END of the ring,
+        // so pressing replay four seconds after a tag produced a clip with the tag 40 frames back
+        // and fifteen frames of aftermath: the decisive moment was at the very start of the clip
+        // or already gone. `docs/TODO.md` § 134.4 is the baseline. **A replay that does not
+        // contain the play is worse than no replay**, because the operator has spent the moment
+        // and got nothing.
+        //
+        // ⚠️⚠️ THE FRAME SIZE AND FORMAT BOTH MOVED, AND THE ARITHMETIC IS THE REASON.
+        // At 854 x 480 RGB24 a frame is 854 x 480 x 3 = **1,229,760 B**, and 70 of them is
+        // **86.1 MB of `Texture2D`** held for the whole match. Android is a shipping platform for
+        // this build and nothing had ever measured that. Holding a longer window at that size was
+        // not an option, and the window HAD to get longer: 3.5 s before an event plus 1.5 s after
+        // plus however long the operator takes to press the key is more than 7.0 s of history.
+        //
+        //   * **640 x 360** is exactly half of 720p and still reads a play at full screen.
+        //   * **RGB565** is two bytes a pixel instead of three. A replay is a moving picture of a
+        //     toon-shaded street watched once; the banding is invisible at 0.82x and the saving
+        //     is a third of everything.
+        //
+        // | | old | new |
+        // |---|---|---|
+        // | Frame | 854 x 480 RGB24 | 640 x 360 RGB565 |
+        // | Bytes per frame | 1,229,760 | **460,800** |
+        // | Capacity | 70 frames = 7.0 s | **100 frames = 10.0 s** |
+        // | **Buffer at capacity** | **86.1 MB** | **46.1 MB** |
+        //
+        // ⚠️⚠️ THE SYNCHRONOUS `ReadPixels` IS GONE, 2026-09-05, AND WHAT IT COST WAS A STALL AND
+        // NOT A COPY. `Texture2D.ReadPixels` blocks the CPU until the GPU has finished everything
+        // queued ahead of it and handed the pixels back, ten times a second, for the whole match,
+        // whether or not anybody ever presses replay. On a tournament machine that is a hitch
+        // landing wherever the pipeline happens to be deepest, which is during the effects: 3,600
+        // of them in a four-round Classic set and 7,200 in an eight-round Hero Strike one.
+        // `FrameRateHistogram.MaxSeconds` exists because "tournament pain is a hitch, not a low
+        // average", and this was a hitch the average could not see.
+        //
+        // ⚠️⚠️ `AsyncGPUReadback` INSTEAD, AND THE RING SLOT IS RESERVED AT REQUEST TIME RATHER
+        // THAN FILLED ON COMPLETION. That is the part worth reading twice. A callback that
+        // APPENDS its frame would order the buffer by whenever the driver got round to it, stamp
+        // it with a completion time, and give a marker to whichever frame happened to land next:
+        // three separate corruptions of a clip whose whole value is that it contains the play.
+        // Reserving the slot keeps the capture TIME, the sequence and the marker exactly where
+        // the synchronous version put them, and the only thing that arrives late is the picture.
+        //
+        // ⚠️⚠️ AND THE OUTSTANDING REQUESTS ARE CAPPED. A machine whose GPU is a frame or two
+        // behind will not answer at 10 Hz, and an uncapped requester keeps asking anyway: that is
+        // a queue that grows for the length of a match, holding a texture per entry, on exactly
+        // the hardware least able to afford it. `MaxOutstandingReadbacks` is 4 and a capture that
+        // would exceed it is DROPPED rather than deferred, because a replay is a moving picture
+        // and one missing tenth of a second in it is invisible.
+        //
+        // ⚠️ THE FORMAT IS STILL RGB565 AND THE MEMORY IS STILL 46 MB, which needed the scratch
+        // target to move rather than the readback: a `RenderTextureFormat.RGB565` blit converts
+        // on the GPU for free, so the bytes coming back are already two per pixel and land in the
+        // texture with no CPU pass at all. Reading ARGB32 back and packing it here would have
+        // traded a GPU stall for a 230,400-iteration loop, which is not obviously the better deal.
+        //
+        // ⚠️ THERE IS STILL A SYNCHRONOUS PATH AND IT IS THE FALLBACK, not the default.
+        // `SystemInfo.supportsAsyncGPUReadback` is false on some older Android drivers, which is
+        // a shipping platform here; a replay that silently stops working there is worse than one
+        // that costs what it used to. `docs/TODO.md` § 134.12.
+        // -------------------------------------------------------------------
+
+        private const float ReplaySampleInterval = 0.10f;
+        private const int ReplayFrameCapacity = 100;
+        private const int ReplayWidth = 640;
+        private const int ReplayHeight = 360;
+
+        /// <summary>
+        /// How many readbacks may be in flight at once.
+        ///
+        /// ⚠️⚠️ IT IS SIZED OFF THE SAMPLE RATE AND THE PIPELINE DEPTH, NOT PICKED. A readback
+        /// normally lands two to three frames after it is asked for, and `ReplaySampleInterval` is
+        /// 0.10 s, which is six frames at 60 Hz: one request is outstanding at a time on a healthy
+        /// machine and this is never reached. Four is what a machine running at 20 Hz with a
+        /// three-frame pipeline needs, and past that the honest reading is that the GPU cannot
+        /// keep up and the requests are a queue rather than a buffer.
+        ///
+        /// ⚠️ EXCEEDING IT DROPS THE CAPTURE RATHER THAN DEFERRING IT. A replay is a moving
+        /// picture watched once at 0.82x and one missing tenth of a second in it is invisible; a
+        /// deferred capture is the unbounded queue this number exists to prevent.
+        /// </summary>
+        private const int MaxOutstandingReadbacks = 4;
+
+        /// <summary>
+        /// ⚠️ THE SCRATCH TARGET IS RGB565 SO THE READBACK IS TWO BYTES A PIXEL. `Graphics.Blit`
+        /// converts on the GPU for free; converting on the way back would be a per-pixel CPU loop.
+        /// </summary>
+        private const RenderTextureFormat ReplayScratchFormat = RenderTextureFormat.RGB565;
+
+        /// <summary>
+        /// How long a clip runs when there is no marked event to centre on, in seconds.
+        ///
+        /// ⚠️ THE FALLBACK, NOT THE RULE. A marked clip is `LeadInSeconds + LeadOutSeconds` long
+        /// and is positioned by its event; this is what "show me the last few seconds" means when
+        /// nothing in the buffer is marked.
+        /// </summary>
+        private const float ReplaySeconds = 5.0f;
+
+        /// <summary>
+        /// How long before the marked moment a clip starts, in seconds.
+        ///
+        /// ⚠️⚠️ 3.5 s IS THE APPROACH, AND IT IS MEASURED AGAINST THE PLAY RATHER THAN PICKED.
+        /// An attacker crosses the 14 m box at `Speed * AttackerSpeedScale` = 2.53 m/s, so the
+        /// run into a tag is about three seconds; `Balance.ChargeFullTime` is 2.5 s, so a full
+        /// throw charge is under it too. **A replay that starts at the impact shows the result
+        /// and hides the decision**, and the decision is the thing worth watching twice.
+        /// </summary>
+        private const float LeadInSeconds = 3.5f;
+
+        /// <summary>
+        /// How long after the marked moment a clip runs, in seconds.
+        ///
+        /// ⚠️ THE OUTCOME NEEDS A BEAT AND NOT A SCENE. The can has to finish falling, the tagged
+        /// body has to hit the floor. `SpectatorInterestModel.OutcomeGrace` is 1.15 s for exactly
+        /// the same reason on the live camera.
+        /// </summary>
+        private const float LeadOutSeconds = 1.3f;
+
+        // ⚠️ THE ROLL-IN DELAY AND THE FLOOR BETWEEN TWO SELF-STARTED REPLAYS ARE BOTH DELETED,
+        // because nothing starts a replay but a key now. `DeadFeatureAudit` greps this file for
+        // their names, so do not reintroduce either one even as a comment.
+
+        /// <summary>
+        /// One captured frame and everything that has to be true of it for a clip to be chosen.
+        ///
+        /// ⚠️⚠️ IT USED TO BE ONE FIELD: `Texture2D Image`. Every failure in `docs/TODO.md`
+        /// § 134.4 follows from that. With no timestamp there is no way to ask "which frames are
+        /// within 3.5 s of the tag"; with no marker there is no way to ask "was there a tag"; with
+        /// no slot there is no way to say WHO on the overlay. **The buffer could only ever answer
+        /// "the last N frames", so that is what the feature did.**
+        /// </summary>
+        private sealed class ReplayFrame
+        {
+            public Texture2D Image;
+            // Storage stays fixed-size; playback restores the captured viewport's
+            // proportions instead of treating its storage texture as the camera aspect.
+            public float Aspect;
+
+            /// <summary>
+            /// True until the readback has landed in <see cref="Image"/>.
+            ///
+            /// ⚠️⚠️ A PENDING FRAME IS IN THE RING AND IS NOT IN A CLIP. It has to be in the ring
+            /// or the order and the timestamps are decided by the driver rather than by the
+            /// capture; it must not be in a clip because its texture holds whatever the last
+            /// tenant left in it. `ReadyCount` and `FirstReadyIndex` are the two places that
+            /// difference is spent.
+            /// </summary>
+            public bool Pending;
+
+            /// <summary>`Time.unscaledTime` at capture.</summary>
+            public float CapturedAt;
+
+            /// <summary>Monotonic, so ordering survives a ring that has wrapped.</summary>
+            public int Sequence;
+
+            /// <summary>True when a marked event landed on or near this frame.</summary>
+            public bool Highlight;
+
+            /// <summary>What the event was, e.g. `TAG`. Null when not a highlight.</summary>
+            public string Reason;
+
+            /// <summary>The seat responsible, or -1.</summary>
+            public int Slot;
+
+            /// <summary>`Time.unscaledTime` the event itself happened.</summary>
+            public float EventAt;
+        }
+
+        private readonly List<ReplayFrame> _replayFrames = new List<ReplayFrame>(ReplayFrameCapacity);
+        private readonly List<ReplayFrame> _replayClip = new List<ReplayFrame>(ReplayFrameCapacity);
+        private float _replayRecordAccum;
+        private bool _captureReplayFrame;
+        private bool _replaying;
+
+        private int _outstandingReadbacks;
+        private int _droppedCaptures;
+        private int _failedReadbacks;
+        private int _outstandingHighWater;
+        private int _landedReadbacks;
+        private bool _readbackPrewarmed;
+        private float _prewarmAskedAt;
+        private float _prewarmLandedAt;
+
+        // -------------------------------------------------------------------
+        // § THE COUNTERS, READ BY `ReplayCaptureProbe` AND BY NOTHING ELSE
+        //
+        // ⚠️⚠️ THEY ARE PUBLIC BECAUSE THE PREVIOUS PERFORMANCE CLAIM MEASURED THE WRONG
+        // BOUNDARY AND NOTHING COULD SEE THE RIGHT ONE. `docs/TODO.md` § 145.15: the benchmark
+        // stopped its stopwatch after `AsyncGPUReadback.Request(...)`, and the work that costs a
+        // frame, `GetData`, `LoadRawTextureData` and `Texture2D.Apply`, happens in a callback two
+        // or three frames later. So the recorded number proved **submission became cheap** and
+        // said nothing about whether replay still produces frame spikes. A frame-level
+        // measurement needs to know how many callbacks actually landed inside the window it
+        // measured, and there was no way to ask.
+        //
+        // ⚠️ READ-ONLY, AND NOTHING IN THE GAME BRANCHES ON THEM. A counter a probe reads is a
+        // diagnostic; a counter gameplay reads is state, and this class already has enough.
+        // -------------------------------------------------------------------
+
+        /// <summary>Captures refused because the outstanding cap was already full.</summary>
+        public int DroppedCaptures => _droppedCaptures;
+
+        /// <summary>Readbacks the driver returned an error for, or whose frame had moved on.</summary>
+        public int FailedReadbacks => _failedReadbacks;
+
+        /// <summary>The most readbacks that were ever in flight at once.</summary>
+        public int OutstandingHighWater => _outstandingHighWater;
+
+        /// <summary>Readbacks whose pixels reached a ring frame.</summary>
+        public int LandedReadbacks => _landedReadbacks;
+
+        /// <summary>Whether this device is on the asynchronous path at all.</summary>
+        public bool AsyncReadbackWorks => _asyncReadbackWorks;
+
+        /// <summary>
+        /// Seconds between the warm-up request being asked for and its callback landing, or -1
+        /// when it has not landed (or this device has no asynchronous readback).
+        ///
+        /// ⚠️ IT IS THE NUMBER § 145.16 EXISTS FOR. The probe measured a first request at about
+        /// 147 ms on one run against microseconds for the steady state, and that cost is driver
+        /// and allocator setup rather than the picture: paying it before gameplay is live is free,
+        /// and paying it on the first captured moment of a match is a visible hitch.
+        /// </summary>
+        public float PrewarmSeconds =>
+            _prewarmLandedAt > 0.0f ? _prewarmLandedAt - _prewarmAskedAt : -1.0f;
+
+        /// <summary>
+        /// Bumped by <see cref="OnDestroy"/>, compared by every readback callback.
+        ///
+        /// ⚠️⚠️ IT IS THE ONLY THING BETWEEN A LATE CALLBACK AND A DESTROYED TEXTURE. A closure
+        /// handed to the driver outlives whatever it captured, and `Destroy` on a `Texture2D` is
+        /// deferred to the end of a frame, so "the camera is gone" and "the callback has stopped
+        /// arriving" are separated by however far behind the GPU is. Comparing an int captured by
+        /// value is the cheapest possible statement of "this belongs to a session that has ended".
+        ///
+        /// ⚠️ IT IS AN INSTANCE FIELD AND NOT A STATIC, so two spectator cameras in one process
+        /// (a probe replacing the rig mid-run does exactly this) cannot revoke each other's
+        /// captures.
+        /// </summary>
+        private int _captureGeneration;
+
+        /// <summary>
+        /// Whether this device can read a frame back without stalling.
+        ///
+        /// ⚠️ ASKED ONCE, IN `Awake`, RATHER THAN PER CAPTURE. Both halves have to be true: the
+        /// device supports asynchronous readback, can render the RGB565 scratch target,
+        /// and supports reading that exact format. A device failing any check uses the old
+        /// synchronous copy, which is slower and correct.
+        /// </summary>
+        private bool _asyncReadbackWorks;
+        private Texture2D _synchronousReadback;
+
+        /// <summary>
+        /// True while a clip is covering the screen.
+        ///
+        /// ⚠️ EXPOSED SO THE CASTER RAIL CAN FREEZE. `docs/TODO.md` § 134.6: live cooldowns
+        /// ticking under recorded footage describe a moment that is not on screen. `Hud` asks
+        /// this rather than tracking its own flag, so there is one answer to the question.
+        /// </summary>
+        public bool Replaying => _replaying;
+        private float _replayClock;
+        private string _replayReason = "LAST PLAY";
+        private Canvas _replayCanvas;
+        private RawImage _replayImage;
+        private AspectRatioFitter _replayFit;
+        private Text _replayLabel;
+
+        private string _pendingHighlight;
+        private float _pendingHighlightAt = -100.0f;
+        private bool _lataStateKnown;
+        private bool _lastLataUpright;
+        private bool _scoreStateKnown;
+        private readonly int[] _lastScores = new int[Balance.PlayerCount];
+        private MatchDirector _highlightMatch;
+        private MatchDirector _replayMatch;
+        private long _replayMatchId;
+
+        private bool _broadcastPaused;
+        private float _selectedTimeScale = 1.0f;
+        private float _initialTimeScale = 1.0f;
+        private bool _ownsTimeScale;
+
+        private bool _hasBookmark;
+        private Vector3 _bookmarkPosition;
+        private Quaternion _bookmarkRotation;
+        private float _bookmarkFov;
+
+        private void Awake()
+        {
+            _initialTimeScale = Time.timeScale > 0.0f ? Time.timeScale : 1.0f;
+            _selectedTimeScale = _initialTimeScale;
+            _camera = GetComponent<Camera>();
+            if (_camera == null) _camera = gameObject.AddComponent<Camera>();
+            _camera.fieldOfView = SpectatorFov;
+            _camera.farClipPlane = SpectatorFar;
+            BuildReplayOverlay();
+            UI.ScreenTakeover.Register(this, () => _replaying);
+
+            // ⚠️⚠️ THE MAP'S GRADE AND ITS TONEMAP, WHICH THIS CAMERA HAD NEITHER OF, AND THAT
+            // IS "the characters are all light as frick, same with map and game overall".
+            //
+            // `TumbangPreso/Toon` is a surface shader, so Unity's forward path ADDS
+            // `RenderSettings.ambientLight` after the lit pass. Eskinita's ambient is
+            // (0.62, 0.58, 0.52) x 1.65 = (1.02, 0.96, 0.86) — over 1.0 on the red channel
+            // before a single light is counted — because the Godot Environment it was measured
+            // from tonemaps the composited frame and rolls that back down. Unity's built-in
+            // pipeline has no tonemapper at all, so without a pass on the camera the whole
+            // frame CLIPS: skin and shirt both land on white, the street goes pale, and the
+            // ink outline is the only thing still reading as itself.
+            //
+            // `CameraRig` has carried `ColourGrade` since the grade was converted. This camera
+            // is a fourth rig with its own object (§3a) and was simply never given one, so the
+            // fault was invisible to anybody playing in first person and total for anybody
+            // spectating — which is every screenshot and every recording, because spectator is
+            // the cinematics camera (see BaseSpeed's note).
+            //
+            // ⚠️ ADOPTED IN Start, NOT HERE, for the reason CameraRig.Awake gives: the arena's
+            // own objects are not guaranteed to exist during this component's Awake, and a
+            // grade that finds no MapGrade quietly resolves to an identity blit that looks
+            // exactly like the feature was never added.
+            _grade = GetComponent<Visual.ColourGrade>();
+            if (_grade == null) _grade = gameObject.AddComponent<Visual.ColourGrade>();
+
+            // ⚠️⚠️ BETWEEN THE GRADE AND THE REPLAY CAPTURE, AND BOTH SIDES OF THAT MATTER.
+            // Unity runs image effects in component order. It goes AFTER `ColourGrade` because
+            // it thresholds luma against display-referred numbers and needs a frame that has
+            // already been tonemapped out of HDR. It goes BEFORE `SpectatorReplayCapture`
+            // (added in `Start`, one method below) because the replay records the picture the
+            // spectator saw, and a recording of the pre-filter frame is a recording that is
+            // jagged in exactly the footage this camera exists to produce.
+            if (GetComponent<Visual.PostAntiAlias>() == null)
+                gameObject.AddComponent<Visual.PostAntiAlias>();
+
+            // ⚠️⚠️ THE INK PASS, AND WITHOUT IT THE SPECTATOR WAS WATCHING A DIFFERENT GAME.
+            // 🧑 2026-08-29, holding a spectator frame beside a first-person one: *"is it js me
+            // or the shaders are very dif for spectator and actual"*, then *"spectatator might
+            // not be getting shaders"*. He was reading it correctly and this is the whole of it.
+            //
+            // `CameraRig.Awake` adds three passes — `ColourGrade`, `PostAntiAlias` and
+            // `WorldOutline` — and this camera was given the first two and never the third. The
+            // ink edge is not an effect on this game, it IS the art direction (`VISION.md` § 6,
+            // *"his UI art is the design system ... wood, amber, cream, ink"*), so a frame
+            // without it does not read as a subtler picture, it reads as an untextured one: the
+            // screenshots show flat pale facades with no line anywhere against the same street
+            // drawn in first person with a black edge on every silhouette.
+            //
+            // ⚠️⚠️ THIS IS THE SECOND HALF OF THE FAULT `ColourGrade`'S NOTE ABOVE RECORDS, AND
+            // IT ARRIVED THE SAME WAY. That note says this camera "is a fourth rig with its own
+            // object (§3a) and was simply never given one" — the grade was then added here and
+            // the outline, added to `CameraRig` in a different session for a different reason,
+            // was not. Two rigs that must look identical and are built by two methods is the
+            // shape `docs/TODO.md` §§ 53.1, 57.1, 60, 62.1 and 63.1 each are, one surface
+            // further out. **Anything added to `CameraRig`'s post stack belongs here too.**
+            //
+            // ⚠️ AFTER `PostAntiAlias` AND BEFORE `SpectatorReplayCapture`, WHICH IS EXACTLY
+            // `CameraRig`'S ORDER. Unity runs image effects in component order, so matching the
+            // order is what makes the two cameras produce the same picture rather than merely
+            // carry the same components. The replay is added in `Start`, so it still records
+            // last, and it now records the frame the spectator actually saw.
+            //
+            // ⚠️ `PrototypeEnabled` IS SET FOR THE REASON `CameraRig` SETS IT: the component's
+            // own toggle defaults false, so attaching it alone would leave the pass inert and
+            // reproduce the *"i dont see any world outlines"* report on this camera only.
+            var outline = GetComponent<Visual.WorldOutline>();
+            if (outline == null) outline = gameObject.AddComponent<Visual.WorldOutline>();
+            outline.PrototypeEnabled = true;
+
+            BindActions();
+
+            // Render support alone does not guarantee readback support. Linux OpenGL can
+            // render RGB565 while rejecting every async readback of it. Keep the bounded
+            // two-byte ring and use the existing synchronous conversion on those devices.
+            var replayFormat = GraphicsFormatUtility.GetGraphicsFormat(ReplayScratchFormat, false);
+            _asyncReadbackWorks = SystemInfo.supportsAsyncGPUReadback &&
+                                  SystemInfo.SupportsRenderTextureFormat(ReplayScratchFormat) &&
+                                  SystemInfo.IsFormatSupported(replayFormat, GraphicsFormatUsage.ReadPixels);
+
+            if (!_asyncReadbackWorks)
+                Debug.Log("[Replay] this device cannot asynchronously read the replay format; the capture is the " +
+                          "old synchronous copy, which is slower and correct.");
+
+            PrewarmAsyncReadback();
+
+            // Start above and behind the base circle, looking at it. The circle is at the
+            // world origin on every map (`Art_Direction.md` §3), so this is map-independent
+            // by construction rather than by a per-map marker somebody has to remember.
+            //
+            // ⚠️ THE Z IS NEGATED FROM THE GODOT SOURCE, WHICH READS (0, 9, 14). Godot is
+            // right-handed with -Z forward; Unity is left-handed with +Z forward. The whole
+            // map conversion negates Z for the same reason. At +14 with yaw 0 this camera
+            // would open the mode looking at an empty street with the match behind it.
+            transform.position = new Vector3(0.0f, 9.0f, -14.0f);
+            _targetPosition = transform.position;
+            _yawDeg = 0.0f;
+            ApplyRotation();
+
+            // Mouse-look needs the cursor locked, exactly as the gameplay rigs do.
+            // Re-asserting is harmless and covers being created from a screen that released it.
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+
+        private void BindActions()
+        {
+            var asset = Resources.Load<InputActionAsset>("TumbangPreso");
+            if (asset == null)
+            {
+                Debug.LogWarning("[Spectator] no InputActionAsset; flight controls are dead.");
+                return;
+            }
+
+            var map = asset.FindActionMap("Player", throwIfNotFound: false);
+            if (map == null) return;
+
+            _move = map.FindAction("Move", false);
+            _look = map.FindAction("Look", false);
+            _jump = map.FindAction("Jump", false);
+            _sprint = map.FindAction("Sprint", false);
+            // ⚠️ `SpectatorDown`, NOT a gameplay action. In Godot this read `guard_dash`,
+            // which was deleted with Can-Dash and Flick Dash, and threw
+            // "The InputMap action doesn't exist" every single frame a spectator was live.
+            _down = map.FindAction("SpectatorDown", false);
+
+            // ⚠️ AN ACTION, NOT A `Keyboard.current` READ, AND THAT IS THE WHOLE POINT OF ADDING
+            // IT THIS WAY. 🧑 2026-08-27: *"make sure all keys are in settings and properly
+            // classified"*. Every other spectator key in this file is read off the hardware
+            // directly and therefore cannot be rebound or even SEEN in the settings panel; the
+            // autopilot toggle is the first one that can, and § SPECTATOR AND BROADCAST in
+            // `Settings.Rebinding` is where the rest followed it.
+            _autopilotToggle = map.FindAction("SpectatorAutopilot", false);
+
+            // § THE REST OF THE SPECTATOR SET, for the same reason. Every one of these was a
+            // `Keyboard.current` read until 2026-08-27, which meant the panel could not show it
+            // and `Rebinding.FindDuplicateBindings` could not check it.
+            _cycleTarget = map.FindAction("SpectatorCycleTarget", false);
+            _freeFly = map.FindAction("SpectatorFreeFly", false);
+            _povToggle = map.FindAction("SpectatorPov", false);
+            _mark = map.FindAction("SpectatorMark", false);
+            _recall = map.FindAction("SpectatorRecall", false);
+            _pauseKey = map.FindAction("SpectatorPause", false);
+            _replayKey = map.FindAction("SpectatorReplay", false);
+
+            map.Enable();
+        }
+
+        private Visual.ColourGrade _grade;
+        private SpectatorReplayCapture _replayCapture;
+
+        private void Start()
+        {
+            if (_grade != null) _grade.AdoptFromScene();
+            // A map larger than `SpectatorFar` says so with a `MapCameraRange` (the Arena). No
+            // other map carries one, and then this changes nothing.
+            Visual.MapCameraRange.Adopt(_camera, true);
+
+            // Added after ColourGrade so the replay records the same graded picture the
+            // spectator saw, not the bright pre-tonemap frame that enters the grade pass.
+            _replayCapture = gameObject.AddComponent<SpectatorReplayCapture>();
+            _replayCapture.Owner = this;
+        }
+
+        private void OnEnable() { if (_camera != null) _camera.enabled = true; }
+
+        private void OnDisable()
+        {
+            // Seating the player disables this controller, not its GameObject. Retire
+            // the separate rendering component too, or its depth keeps winning the view.
+            if (_camera != null) _camera.enabled = false;
+            EndReplay(showLiveToast: false);
+            UnhookHighlights();
+
+            // ⚠️ THE BORROWED BODY GOES BACK WHEN THIS CAMERA DOES. A spectator leaving the arena
+            // with a unit still set to `ShadowsOnly` deletes that player from every other view,
+            // including their own, and nothing else would ever put them back. See `StepPovArms`.
+            RestorePovBody();
+            if (_povViewmodel != null) _povViewmodel.gameObject.SetActive(false);
+
+            if (_ownsTimeScale)
+            {
+                Hitstop.End();
+                PresentationClock.RequestScale(_initialTimeScale);
+                _ownsTimeScale = false;
+            }
+        }
+
+        private void Update()
+        {
+            CheckReplayMatch();
+            // ⚠️⚠️ NOT WHILE AN OVERLAY IS UP. The pause card releases the cursor so its buttons
+            // can be clicked, and `Time.timeScale = 0` does not stop an Update — so without this
+            // the wheel still retuned the fly speed, Tab still cycled the follow target, and
+            // every mouse move meant to reach a button also swung the view behind the menu. The
+            // player then resumes pointing somewhere they never aimed.
+            //
+            // ⚠️ ReclaimView IS SKIPPED WITH THE REST, WHICH IS CORRECT RATHER THAN LAZY: the
+            // rigs it defends against are all disabled while the match is stopped, and a camera
+            // that keeps raising its own depth against a paused frame is doing nothing.
+            if (UI.Panel.AnyOpen || UI.ScreenTakeover.AnyOpenOutside(transform)) return;
+
+            // ⚠️⚠️ IT RE-CLAIMS THE VIEW EVERY FRAME, AND WITHOUT THIS THE WHOLE MODE IS A LIE.
+            //
+            // Found in Godot by rendering a spectated match and LOOKING at the frame: every
+            // control measured correctly — the speed changed, TAB picked up a target, the HUD
+            // stripped — and the picture was a Person's first-person view with its orange
+            // viewmodel arms across the bottom of the shot. The camera was flying perfectly
+            // and nobody was looking through it.
+            //
+            // The Unity failure is the same shape with a different mechanism: the highest
+            // `depth` enabled Camera renders, and the debug player switcher enables a
+            // CameraRig on the seat a spectator has just vacated. A one-shot assert in Awake
+            // would only move the race. This is authoritative instead, and that is the
+            // correct reading rather than a workaround: a spectator has no rig, no body and
+            // no seat, so for as long as this component exists there is no other legitimate
+            // owner of the view.
+            if (PresentationClock.Held) { StepBroadcastKeys(); return; }
+            ReclaimView();
+
+            StepAutopilotKey();
+
+            StepBroadcastKeys();
+            if (_replaying)
+            {
+                StepReplay();
+            }
+
+            RecordReplayFrame();
+
+            // ⚠️⚠️ THIS ONLY RECORDS WHAT THE LAST NOTABLE PLAY WAS, AND SINCE 2026-08-27 IT
+            // CANNOT START ANYTHING. See § THE REPLAY NEVER STARTS ITSELF ANY MORE. The autopilot
+            // suppression that used to live here is gone with the thing it was suppressing: a
+            // replay now has exactly one trigger, which is a human pressing the key, and the
+            // autopilot has no hands.
+            PollHighlights();
+
+            // ⚠️⚠️ THE TWO HIGHLIGHTS THAT SCORE NOTHING. A knockdown, a tag and a
+            // sabotage all arrive on `MatchDirector.Scored`; a retrieval made under a closing
+            // taya and an ultimate landing award no points at all, so neither was ever
+            // markable and both are among the best clips this game produces. See
+            // `PollPlayHighlights`.
+            PollPlayHighlights();
+
+            // The replay covers the screen while it runs. The match keeps advancing behind it
+            // and the operator keeps the wheel, rather than the camera returning early and
+            // freezing both the game and the controls.
+
+            // ⚠⚠ THE HUMAN TAKES THE WHEEL BY MOVING IT, AND THAT IS CHECKED BEFORE ANY OF THE
+            // THREE STEPS BELOW RUN. A broadcast operator reaching for the mouse mid-play must
+            // not have to find a toggle first, and a camera that argues with its operator for
+            // even a few frames is worse than one that never offered to help.
+            if (AutopilotEngaged)
+            {
+                if (ManualTakeover()) _director.Engaged = false;
+                else
+                {
+                    // Autopilot never owns a POV shot. Release any borrowed presentation
+                    // before its director takes over the camera position.
+                    _follow = null; _followIndex = -1; _pov = false;
+                    StepPovArms(Time.unscaledDeltaTime);
+                    return;   // `SpectatorDirector.LateUpdate` owns the pose this frame
+                }
+            }
+
+            StepLook();
+            StepWheel();
+            StepKeys();
+
+            // ⚠️ Update, NOT FixedUpdate. There is no physics here — nothing to step, nothing
+            // to collide, nothing another body has to agree with — and a camera that moves on
+            // the render frame is smoother than one moving on the physics tick.
+            // Broadcast cameras remain responsive during a tactical pause and do not become
+            // syrupy in slow motion. The match clock is scaled; the operator is not.
+            float delta = Time.unscaledDeltaTime;
+
+            if (_follow != null)
+            {
+                if (_pov)
+                {
+                    // ⚠️ SNAPPED, NOT SMOOTHED. MoveSmoothRate is what makes a flown camera
+                    // read as flown, and it is exactly wrong here: an eye that lags its own
+                    // head by a few frames is the one camera artefact everybody reads as
+                    // nauseating. A POV shot is rigid or it is not a POV shot.
+                    _targetPosition = _follow.transform.position
+                        + Vector3.up * PovEyeHeight()
+                        + _follow.transform.forward * PovForwardOffset;
+                    transform.position = _targetPosition;
+
+                    // Yaw is TAKEN from the unit; pitch stays on the mouse.
+                    _yawDeg = _follow.transform.eulerAngles.y;
+                    ApplyRotation();
+
+                    // ⚠️ THE HANDS OF WHOEVER IS BEING WATCHED. See `StepPovArms`.
+                    StepPovArms(delta);
+                    return;
+                }
+
+                // Leaving POV puts the body back and takes the borrowed hands away.
+                StepPovArms(delta);
+
+                // Follow mode holds a fixed offset in the camera's own current bearing, so
+                // the player still owns the angle and only gives up the position.
+                Vector3 back = -transform.forward;
+                _targetPosition = _follow.transform.position
+                    + Vector3.up * (_followDistance * FollowLiftRatio)
+                    + back * _followDistance;
+            }
+            else
+            {
+                // Free flight has no follow target, but still has to release the body,
+                // carried item and viewmodel borrowed by the previous POV cut.
+                StepPovArms(delta);
+                Vector2 dir = _move != null ? _move.ReadValue<Vector2>() : Vector2.zero;
+                Vector3 move = transform.forward * dir.y + transform.right * dir.x;
+
+                if (_jump != null && _jump.IsPressed()) move += Vector3.up;
+                if (_down != null && _down.IsPressed()) move += Vector3.down;
+
+                if (move.magnitude > 0.001f)
+                {
+                    bool boosting = _sprint != null && _sprint.IsPressed();
+                    float speed = _speed * (boosting ? BoostScale : 1.0f);
+                    _targetPosition += move.normalized * speed * delta;
+                }
+            }
+
+            float t = 1.0f - Mathf.Exp(-MoveSmoothRate * delta);
+            transform.position = Vector3.Lerp(transform.position, _targetPosition, t);
+        }
+
+        private void ReclaimView()
+        {
+            if (_camera == null) return;
+            if (!_camera.enabled) _camera.enabled = true;
+
+            // Depth, not just enabled: another rig left enabled would otherwise win on ties.
+            foreach (var cam in Camera.allCameras)
+            {
+                if (cam == _camera) continue;
+                if (cam.enabled && cam.depth >= _camera.depth) _camera.depth = cam.depth + 1.0f;
+            }
+        }
+
+        /// <summary>
+        /// ⚠️ THE SAME SENSITIVITY MODEL THE GAMEPLAY RIG USES, read through the same
+        /// settings multiplier and the same ×10 degree factor as
+        /// <see cref="CameraRig.StepLook"/> — a spectator whose look speed disagrees with
+        /// the game's reads as a different game.
+        /// </summary>
+        // Match the gameplay stick response, but spectator control keeps working
+        // when the operator requests a paused match.
+        private Vector2 SpectatorStickLook()
+        {
+            Vector2 stick = _look != null ? _look.ReadValue<Vector2>() : Vector2.zero;
+            if (stick.sqrMagnitude <= 0.16f * 0.16f) return Vector2.zero;
+            return new Vector2(stick.x * Mathf.Abs(stick.x), stick.y * Mathf.Abs(stick.y));
+        }
+
+        private void StepLook()
+        {
+            Vector2 delta = SpectatorStickLook() * (150.0f * Time.unscaledDeltaTime);
+            // Only relative mouse look needs a locked cursor. The existing Update
+            // overlay gate keeps pad look out of menus, too.
+            if (Cursor.lockState == CursorLockMode.Locked)
+                delta += new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
+            if (delta.sqrMagnitude <= 0) return;
+
+            var s = Settings.SettingsStore.Current;
+            float sens = CameraRig.BaseSensitivity * s.MouseSensitivity;
+            float dx = delta.x * sens;
+            float dy = delta.y * sens;
+            if (s.InvertY) dy = -dy;
+
+            // ⚠️ YAW ADDS HERE AND SUBTRACTS IN THE .gd. Same handedness flip as the start
+            // position above: in Godot a rightward mouse move decreases yaw, in Unity it
+            // increases it. Copying the sign across would invert mouse-look for spectators
+            // only, which reads as a broken build rather than as a convention mismatch.
+            _yawDeg += dx * 10.0f;
+            _pitchDeg = Mathf.Clamp(_pitchDeg - dy * 10.0f, -PitchLimitDeg, PitchLimitDeg);
+            ApplyRotation();
+        }
+
+        /// <summary>
+        /// Following: the wheel pulls in and pushes out. Free: it retunes the fly speed.
+        /// See <see cref="FollowDistance"/> for why one control does both.
+        /// </summary>
+        private void StepWheel()
+        {
+            if (Mouse.current == null) return;
+            float wheel = Mouse.current.scroll.ReadValue().y;
+            if (Mathf.Abs(wheel) < 0.01f) return;
+
+            bool following = _follow != null;
+            if (wheel > 0.0f)
+            {
+                if (following)
+                    _followDistance = Mathf.Clamp(_followDistance / SpeedStep,
+                        FollowDistanceMin, FollowDistanceMax);
+                else
+                    _speed = Mathf.Clamp(_speed * SpeedStep, SpeedMin, SpeedMax);
+            }
+            else
+            {
+                if (following)
+                    _followDistance = Mathf.Clamp(_followDistance * SpeedStep,
+                        FollowDistanceMin, FollowDistanceMax);
+                else
+                    _speed = Mathf.Clamp(_speed / SpeedStep, SpeedMin, SpeedMax);
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // BROADCAST CONTROLS.
+        //
+        // ⚠⚠ PAUSE AND SPEED ARE NETWORKED NOW, AND THIS BLOCK USED TO REFUSE THEM OUTRIGHT.
+        // It read *"offline-only by construction: a remote viewer must never acquire authority
+        // over a live tournament simply by spectating"* and answered every press with
+        // `LIVE NETWORK · TIME CONTROLS LOCKED`. 🧑 2026-08-30, after being asked which of the
+        // game's two pauses he meant: *"pause is for spectatotr"*, *"give spectators the authority
+        // to pause, all of them can pause"*, *"make sure time pauses if u pause as well as
+        // everything happening and spectator can move"*, *"liek in game like mobile legends"*.
+        //
+        // The old rule guarded a tournament against a stranger. The spectators here are the people
+        // waiting for the next match and whoever is casting it, and an observer stopping the game
+        // to talk over a fight is the feature he is naming. **Every spectator can**, which he said
+        // twice, so there is no leader check.
+        //
+        // ⚠ THE HOST REMAINS THE ONLY WRITER OF THE CLOCK. This sends a REQUEST and applies
+        // nothing locally; `MatchRpc.RequestTimeScaleServerRpc` carries the whole reasoning and
+        // the refusal for a peer that holds a seat. Four peers each writing `Time.timeScale` is
+        // four matches.
+        //
+        // ⚠ SOLO IS UNCHANGED and still writes the clock directly, because there is nobody to
+        // ask and no second machine to disagree with.
+        //
+        // Replay is a local pixel overlay and is safe on either side of the wire.
+
+        private void StepBroadcastKeys()
+        {
+            var kb = Keyboard.current;
+            if (kb == null) return;
+
+            if (_replaying)
+            {
+                if (Fired(_replayKey) || kb.escapeKey.wasPressedThisFrame)
+                {
+                    if (kb.escapeKey.wasPressedThisFrame) UI.ScreenTakeover.ConsumeEscape();
+                    EndReplay();
+                }
+                return;
+            }
+
+            if (!PresentationClock.Held && Fired(_mark))
+            {
+                _bookmarkPosition = transform.position;
+                _bookmarkRotation = transform.rotation;
+                _bookmarkFov = _camera != null ? _camera.fieldOfView : SpectatorFov;
+                _hasBookmark = true;
+                UI.Hud.Instance?.ShowToast($"CAMERA MARK SAVED  ·  {BoundKey("SpectatorRecall")} TO RECALL", 1.2f);
+            }
+
+            if (!PresentationClock.Held && Fired(_recall) && _hasBookmark)
+            {
+                _follow = null;
+                _followIndex = -1;
+                _pov = false;
+                transform.SetPositionAndRotation(_bookmarkPosition, _bookmarkRotation);
+                _targetPosition = _bookmarkPosition;
+                if (_camera != null) _camera.fieldOfView = _bookmarkFov;
+                SyncAnglesFromTransform();
+                UI.Hud.Instance?.ShowToast("CAMERA MARK RECALLED", 0.9f);
+            }
+
+            // The active watcher owns POV selection. The solo seat switcher
+            // yields while this camera is enabled, so a cut cannot claim a body.
+            if (kb.f1Key.wasPressedThisFrame) SelectPlayerPov(0);
+            if (kb.f2Key.wasPressedThisFrame) SelectPlayerPov(1);
+            if (kb.f3Key.wasPressedThisFrame) SelectPlayerPov(2);
+            if (kb.f4Key.wasPressedThisFrame) SelectPlayerPov(3);
+
+            // ⚠️ THE THREE SPEED DIGITS STAY LITERAL AND THAT IS DELIBERATE. They are a
+            // NUMBERED SET (quarter, half, three quarter speed) the way F1 to F4 are a POSITIONAL
+            // set, and splitting either into separate rebindable rows would add seven lines to
+            // the settings panel to let somebody move "2" to "5". `ControlsText` names them.
+            bool askedForTime = Fired(_pauseKey)
+                                || kb.digit1Key.wasPressedThisFrame
+                                || kb.digit2Key.wasPressedThisFrame
+                                || kb.digit3Key.wasPressedThisFrame;
+
+            // ⚠⚠ A NETWORKED TIME PRESS IS A REQUEST, AND ONLY A SPECTATOR MAY MAKE ONE. The
+            // host answers and tells everybody; see the header above and
+            // `MatchRpc.RequestTimeScaleServerRpc`. A peer holding a chair is refused there too,
+            // so this check is the courtesy message rather than the rule.
+            if (askedForTime && NetAuthority.IsNetworked)
+            {
+                if (!GameLaunch.Spectator)
+                {
+                    UI.Hud.Instance?.ShowToast("LIVE MATCH  ·  ONLY A SPECTATOR MAY PAUSE", 1.5f);
+                    return;
+                }
+
+                // ⚠ THE LOCAL BOOKKEEPING STILL MOVES, so the next press toggles the other way and
+                // the overlay reads correctly. What it does NOT do is write `Time.timeScale`: the
+                // number arrives back through `SyncTime`, which is what keeps four screens on one
+                // clock even when a packet is late.
+                if (Fired(_pauseKey))
+                {
+                    _broadcastPaused = !_broadcastPaused;
+                    Net.MatchRpc.Instance?.RequestTimeScaleServerRpc(
+                        _broadcastPaused ? 0.0f : _selectedTimeScale);
+                }
+
+                if (kb.digit1Key.wasPressedThisFrame) RequestBroadcastScale(0.25f);
+                if (kb.digit2Key.wasPressedThisFrame) RequestBroadcastScale(0.50f);
+                if (kb.digit3Key.wasPressedThisFrame) RequestBroadcastScale(1.00f);
+                return;
+            }
+
+            if (Fired(_pauseKey)) ToggleBroadcastPause();
+            // ⚠️ THE ONE AND ONLY TRIGGER. See § THE REPLAY NEVER STARTS ITSELF ANY MORE. The
+            // reason is looked up rather than passed so the clip is titled after the play it
+            // actually contains.
+            if (Fired(_replayKey) || ConsumeProbeReplayRequest())
+                StartReplay(RecentHighlightReason());
+            if (kb.digit1Key.wasPressedThisFrame) SetBroadcastScale(0.25f);
+            if (kb.digit2Key.wasPressedThisFrame) SetBroadcastScale(0.50f);
+            if (kb.digit3Key.wasPressedThisFrame) SetBroadcastScale(1.00f);
+        }
+
+        private void ToggleBroadcastPause()
+        {
+            Hitstop.End();
+            _ownsTimeScale = true;
+            _broadcastPaused = !_broadcastPaused;
+            PresentationClock.RequestScale(_broadcastPaused ? 0.0f : _selectedTimeScale);
+            UI.Hud.Instance?.ShowToast(_broadcastPaused
+                ? "TACTICAL PAUSE  ·  CAMERA STILL LIVE"
+                : $"BACK TO ACTION  ·  {_selectedTimeScale:0.##}x", 1.1f);
+        }
+
+        /// <summary>
+        /// The networked half of <see cref="SetBroadcastScale"/>: pick a speed and ask for it.
+        ///
+        /// ⚠ IT SETS `_selectedTimeScale` LOCALLY SO THE NEXT UN-PAUSE ASKS FOR THE RIGHT SPEED.
+        /// That field is this camera's memory of what "back to action" means, and it is not
+        /// authoritative over anything: the clock everybody actually runs on is whatever
+        /// `SyncTime` last delivered.
+        /// </summary>
+        private void RequestBroadcastScale(float scale)
+        {
+            _broadcastPaused = false;
+            _selectedTimeScale = Mathf.Clamp(scale, 0.25f, 1.0f);
+            Net.MatchRpc.Instance?.RequestTimeScaleServerRpc(_selectedTimeScale);
+        }
+
+        private void SetBroadcastScale(float scale)
+        {
+            Hitstop.End();
+            _ownsTimeScale = true;
+            _broadcastPaused = false;
+            _selectedTimeScale = Mathf.Clamp(scale, 0.25f, 1.0f);
+            PresentationClock.RequestScale(_selectedTimeScale);
+            UI.Hud.Instance?.ShowToast(_selectedTimeScale < 1.0f
+                ? $"BROADCAST SLOW-MO  ·  {_selectedTimeScale:0.##}x"
+                : "BROADCAST SPEED  ·  LIVE", 1.1f);
+        }
+
+        /// <summary>
+        /// Pay the driver's first-readback cost here, where nobody is playing yet.
+        ///
+        /// ⚠️⚠️ THE FIRST `AsyncGPUReadback.Request` IS NOT THE PRICE OF THE ONES AFTER IT.
+        /// `ReplayCaptureProbe` measured a first request at about **147 ms** on one run while the
+        /// steady state was microseconds: the driver builds its readback plumbing, the allocator
+        /// takes its first native buffer, and on some backends a shader is compiled. This class
+        /// detected support and then let the first REAL captured moment of a match pay for it.
+        /// `docs/TODO.md` § 145.16.
+        ///
+        /// ⚠️⚠️ IT IS 8x8 AND IT TOUCHES NOTHING THE REPLAY OWNS. Five things it must not do, and
+        /// each is a line here:
+        ///   - **no ring slot**: `ReserveFrame` is never called, so nothing enters the playable
+        ///     buffer and no replay marker is created;
+        ///   - **no leaked target**: the temporary is released in the callback on EVERY path,
+        ///     including the one where the generation has moved on;
+        ///   - **no callback touching a destroyed camera**: the generation is captured by value,
+        ///     exactly as the real capture does, and `OnDestroy` bumps it;
+        ///   - **no effect on the cap**: it is deliberately NOT counted in `_outstandingReadbacks`,
+        ///     because counting it would let a warm-up frame nobody will ever watch refuse a real
+        ///     capture;
+        ///   - **no stall**: nothing here waits, and `WaitAllRequests` is still only reached on
+        ///     the one path that already documents itself as a deliberate stall.
+        ///
+        /// ⚠️ AND IT RUNS ONCE. `_readbackPrewarmed` is an instance field, so a second spectator
+        /// camera in a later match warms its own driver state and this one cannot leak across a
+        /// scene load as a static would.
+        /// </summary>
+        private void PrewarmAsyncReadback()
+        {
+            if (_readbackPrewarmed || !_asyncReadbackWorks) return;
+            _readbackPrewarmed = true;
+
+            _prewarmAskedAt = Time.realtimeSinceStartup;
+
+            int generation = _captureGeneration;
+            var scratch = RenderTexture.GetTemporary(8, 8, 0, ReplayScratchFormat);
+
+            AsyncGPUReadback.Request(scratch, 0, request =>
+            {
+                RenderTexture.ReleaseTemporary(scratch);
+
+                if (generation != _captureGeneration) return;
+
+                _prewarmLandedAt = Time.realtimeSinceStartup;
+
+                Debug.Log($"[Replay] readback warm-up landed in " +
+                          $"{(_prewarmLandedAt - _prewarmAskedAt) * 1000.0f:0.0} ms" +
+                          (request.hasError ? " (the driver reported an error, which is still a " +
+                                              "warm-up: the plumbing was built either way)" : ""));
+            });
+        }
+
+        private void RecordReplayFrame()
+        {
+            if (_broadcastPaused) return;
+
+            _replayRecordAccum += Time.unscaledDeltaTime;
+            if (_replayRecordAccum < ReplaySampleInterval) return;
+            _replayRecordAccum %= ReplaySampleInterval;
+
+            _captureReplayFrame = true;
+        }
+
+        /// <summary>
+        /// Copies a small post-render frame into the replay ring. The replay is pixels rather
+        /// than rewound scene transforms, so showing it cannot move a live player, lata or
+        /// slipper and cannot require <c>Time.timeScale = 0</c>.
+        /// </summary>
+        internal void CaptureReplayFrame(RenderTexture source)
+        {
+            CheckReplayMatch();
+            if (!_captureReplayFrame) return;
+            _captureReplayFrame = false;
+
+            // ⚠️ THE CAP IS CHECKED BEFORE ANYTHING IS ALLOCATED. A machine that cannot answer at
+            // 10 Hz must cost nothing extra for trying, which means no scratch target, no texture
+            // and no ring entry for a capture that is going to be dropped.
+            if (_outstandingReadbacks >= MaxOutstandingReadbacks)
+            {
+                _droppedCaptures++;
+                return;
+            }
+
+            var frame = ReserveFrame();
+            if (frame == null) return;
+            frame.Aspect = source.width / (float)source.height;
+
+            if (!_asyncReadbackWorks)
+            {
+                CaptureSynchronously(source, frame);
+                return;
+            }
+
+            // ⚠️⚠️ AN RGB565 SCRATCH TARGET, WHICH IS WHAT KEEPS THE READBACK TWO BYTES A PIXEL.
+            // `Graphics.Blit` converts on the GPU at no cost, so the bytes that come back already
+            // match `TextureFormat.RGB565` and `LoadRawTextureData` is a straight memcpy. Asking
+            // for an ARGB32 readback and packing it here would be a 230,400-iteration CPU loop
+            // ten times a second, which is a different tax rather than a smaller one.
+            var scratch = RenderTexture.GetTemporary(ReplayWidth, ReplayHeight, 0,
+                                                      ReplayScratchFormat);
+            Graphics.Blit(source, scratch);
+
+            // ⚠️⚠️ THE GENERATION IS CAPTURED BY VALUE AND IS THE WHOLE OF THE LIFETIME STORY. A
+            // readback callback is a closure the driver invokes on a later frame, and by then this
+            // camera may have been destroyed, the spectator seat given up, or the whole session
+            // ended: writing into `frame.Image` then is writing into a `Texture2D` that
+            // `OnDestroy` has already destroyed. `OnDestroy` bumps `_captureGeneration`, so every
+            // callback in flight compares unequal and returns having touched nothing.
+            int generation = _captureGeneration;
+            _outstandingReadbacks++;
+            if (_outstandingReadbacks > _outstandingHighWater)
+                _outstandingHighWater = _outstandingReadbacks;
+
+            AsyncGPUReadback.Request(scratch, 0, request =>
+            {
+                RenderTexture.ReleaseTemporary(scratch);
+
+                if (generation != _captureGeneration) return;
+
+                _outstandingReadbacks--;
+
+                // ⚠️ A FAILED READBACK DROPS ITS FRAME AND NOTHING ELSE. `hasError` is a device
+                // reset, a lost context or an alt-tab on some drivers, and the honest response is
+                // one missing tenth of a second in a clip nobody may ever ask for. Retrying would
+                // be the runaway queue this cap exists to prevent, wearing a different name.
+                if (request.hasError)
+                {
+                    _failedReadbacks++;
+                    Forget(frame);
+                    return;
+                }
+
+                // ⚠️ THE FRAME MAY HAVE LEFT THE RING WHILE THE DRIVER WAS THINKING. Ten seconds
+                // of buffer at 10 Hz is a hundred frames, so this only happens on a machine that
+                // is seconds behind, and the frame's texture has already been recycled by then.
+                if (!_replayFrames.Contains(frame)) return;
+
+                var data = request.GetData<byte>();
+                if (frame.Image == null || data.Length != frame.Image.width * frame.Image.height * 2)
+                {
+                    _failedReadbacks++;
+                    Forget(frame);
+                    return;
+                }
+
+                frame.Image.LoadRawTextureData(data);
+                frame.Image.Apply(updateMipmaps: false, makeNoLongerReadable: false);
+                frame.Pending = false;
+
+                // ⚠️ COUNTED WHERE THE WORK ACTUALLY HAPPENS. `LoadRawTextureData` plus `Apply`
+                // is the part that costs a frame, and it runs HERE rather than at the request, so
+                // a frame-level measurement has to know how many of these landed inside its
+                // window. § 145.15.
+                _landedReadbacks++;
+            });
+        }
+
+        /// <summary>
+        /// The old path, kept for a device that cannot do a readback at all.
+        ///
+        /// ⚠️⚠️ IT IS A FALLBACK AND NOT A CHOICE. `SystemInfo.supportsAsyncGPUReadback` is false
+        /// on some older Android drivers and Android is a shipping platform for this build
+        /// (`docs/TODO.md` § 130.5 is the last thing that ANR'd it), so a replay that silently
+        /// stopped working there would be a feature deleted for a whole platform in the name of a
+        /// frame time nobody had measured on it.
+        /// </summary>
+        private void CaptureSynchronously(RenderTexture source, ReplayFrame frame)
+        {
+            var scratch = RenderTexture.GetTemporary(ReplayWidth, ReplayHeight, 0,
+                                                      RenderTextureFormat.ARGB32);
+            var previous = RenderTexture.active;
+
+            try
+            {
+                Graphics.Blit(source, scratch);
+                RenderTexture.active = scratch;
+
+                // ReadPixels cannot write RGB565 on every backend either. One reusable
+                // RGBA staging image keeps the existing two-byte ring, without allocating
+                // a managed pixel array or doubling every retained frame.
+                if (_synchronousReadback == null)
+                    _synchronousReadback = new Texture2D(ReplayWidth, ReplayHeight,
+                        TextureFormat.RGBA32, mipChain: false) { name = "ReplayReadbackStaging" };
+                _synchronousReadback.ReadPixels(new Rect(0, 0, ReplayWidth, ReplayHeight), 0, 0, false);
+                var pixels = _synchronousReadback.GetRawTextureData<Color32>();
+                var packed = frame.Image.GetRawTextureData<ushort>();
+                for (int i = 0; i < pixels.Length; i++)
+                {
+                    var pixel = pixels[i];
+                    packed[i] = (ushort)(((pixel.r >> 3) << 11) | ((pixel.g >> 2) << 5) | (pixel.b >> 3));
+                }
+                frame.Image.Apply(updateMipmaps: false, makeNoLongerReadable: false);
+                frame.Pending = false;
+            }
+            finally
+            {
+                RenderTexture.active = previous;
+                RenderTexture.ReleaseTemporary(scratch);
+            }
+        }
+
+        /// <summary>
+        /// Takes the ring slot, stamps the time, the sequence and any pending marker, and hands
+        /// back a frame whose picture has not arrived yet.
+        ///
+        /// ⚠️⚠️ EVERYTHING EXCEPT THE PIXELS IS DECIDED HERE, ON THE FRAME THE CAPTURE HAPPENED
+        /// ON. That is what makes an asynchronous readback safe for a clip: order, timestamp and
+        /// marker are all properties of WHEN the shutter opened, and a callback that decided any
+        /// of them would be describing when the driver replied.
+        /// </summary>
+        private ReplayFrame ReserveFrame()
+        {
+            var frame = new ReplayFrame
+            {
+                Image = TakeTexture(),
+                CapturedAt = Time.unscaledTime,
+                Sequence = _replaySequence++,
+                Slot = -1,
+                Pending = true,
+            };
+
+            if (frame.Image == null) return null;
+
+            // ⚠️⚠️ THE MARKER IS STAMPED ONTO THE FRAME AT CAPTURE, NOT SEARCHED FOR LATER,
+            // AND THAT IS WHAT MAKES EXPIRY FREE. A marker held in a separate list has to be
+            // aged out by hand against a ring that is dropping its oldest frame ten times a
+            // second, and the two go out of step the first time anybody changes the capacity.
+            // A marker that lives ON the frame it describes cannot outlive it: when the
+            // frame is destroyed the marker is gone, which is the brief's *"expire markers
+            // when their frames leave the buffer"* made structural.
+            if (_pendingMarkAt > 0.0f
+                && Time.unscaledTime - _pendingMarkAt <= ReplaySampleInterval * 2.0f)
+            {
+                frame.Highlight = true;
+                frame.Reason = _pendingMarkReason;
+                frame.Slot = _pendingMarkSlot;
+                frame.EventAt = _pendingMarkAt;
+                _pendingMarkAt = -1.0f;
+            }
+
+            _replayFrames.Add(frame);
+            while (_replayFrames.Count > ReplayFrameCapacity)
+            {
+                RecycleFrame(_replayFrames[0]);
+                _replayFrames.RemoveAt(0);
+            }
+
+            return frame;
+        }
+
+        /// <summary>Drops a frame whose readback failed, without disturbing the rest of the ring.</summary>
+        private void Forget(ReplayFrame frame)
+        {
+            if (frame == null) return;
+
+            int at = _replayFrames.IndexOf(frame);
+            if (at < 0) return;
+
+            _replayFrames.RemoveAt(at);
+            RecycleFrame(frame);
+        }
+
+        // -------------------------------------------------------------------
+        // § THE TEXTURE POOL
+        //
+        // ⚠️⚠️ THE OLD PATH ALLOCATED A `Texture2D` PER CAPTURE AND DESTROYED IT PER EVICTION,
+        // which is 3,600 native allocations and 3,600 destroys in a four-round Classic set, all
+        // of them the same 460,800 bytes. `Destroy` on a texture is deferred to the end of the
+        // frame, so at 10 Hz the driver is being handed a create and a free of an identically
+        // shaped resource forever, and the brief's *"no unbounded allocation growth"* is only
+        // half of what that costs: the other half is fragmentation on the platform least able to
+        // afford it.
+        //
+        // ⚠️ THE POOL IS BOUNDED BY THE RING, so the memory ceiling is exactly what § THE REPLAY
+        // BUFFER, AND WHAT IT COSTS states: capacity plus the clip that is playing, and nothing
+        // else can exist. `TakeTexture` never creates one when the pool has any.
+        // -------------------------------------------------------------------
+
+        private readonly Stack<Texture2D> _texturePool = new Stack<Texture2D>();
+
+        private Texture2D TakeTexture()
+        {
+            while (_texturePool.Count > 0)
+            {
+                var pooled = _texturePool.Pop();
+                if (pooled != null) return pooled;
+            }
+
+            return new Texture2D(ReplayWidth, ReplayHeight, TextureFormat.RGB565,
+                                 mipChain: false)
+            {
+                name = "SpectatorReplayFrame",
+                filterMode = FilterMode.Bilinear,
+                wrapMode = TextureWrapMode.Clamp,
+            };
+        }
+
+        private void RecycleFrame(ReplayFrame frame)
+        {
+            if (frame == null || frame.Image == null) return;
+
+            // ⚠️ A PENDING FRAME'S TEXTURE GOES BACK IN THE POOL AND ITS CALLBACK IS ALREADY
+            // GUARDED. The callback checks `_replayFrames.Contains(frame)` before writing, and
+            // this is the only place a frame leaves that list, so a late readback finds nothing
+            // to write into rather than scribbling on a texture the ring has re-let.
+            if (_texturePool.Count < ReplayFrameCapacity + 8) _texturePool.Push(frame.Image);
+            else Destroy(frame.Image);
+
+            frame.Image = null;
+        }
+
+        /// <summary>
+        /// Builds and starts a clip centred on the newest marked event in the buffer.
+        ///
+        /// ⚠️⚠️ IT CHOOSES A WINDOW, IT DOES NOT TAKE A TAIL. The old body took the last
+        /// `ReplaySeconds` of frames and titled them with whatever `PollHighlights` last saw,
+        /// which meant the title and the footage were two independent claims that happened to
+        /// agree when the operator pressed quickly. Now the FRAMES decide: the newest highlighted
+        /// frame names the event, and the clip is cut `LeadInSeconds` before it and
+        /// `LeadOutSeconds` after it. **The overlay reports the event the clip actually
+        /// contains**, because it reads it off the frame it was built around.
+        ///
+        /// ⚠️ THE FALLBACK IS THE NEWEST INTERVAL AND IT IS NEVER EMPTY. With no marker in the
+        /// buffer the clip is the last `ReplaySeconds`, exactly as before; with fewer than twelve
+        /// frames it refuses and says so rather than playing three frames of nothing.
+        ///
+        /// ⚠️⚠️ IT IGNORES A PRESS WHILE ALREADY PLAYING, WHICH IS A CHANGE. The old body called
+        /// `EndReplay` and started again, so a second press restarted the clip; the brief asks
+        /// for a replay to *"ignore new highlight triggers during playback"* and for a press to
+        /// EXIT. `StepBroadcastKeys` routes a press to `EndReplay` while `_replaying`, so this is
+        /// only reachable when nothing is playing, and the guard is here as well because a
+        /// restart from any other path would be the same bug.
+        /// </summary>
+        private void StartReplay(string reason)
+        {
+            CheckReplayMatch();
+            if (PresentationClock.Held) return;
+            if (_replaying) return;
+
+            if (_broadcastPaused)
+            {
+                UI.Hud.Instance?.ShowToast("RESUME LIVE PLAY BEFORE REPLAY", 1.2f);
+                return;
+            }
+
+            // ⚠️⚠️ READY FRAMES, NOT FRAMES. Since the readback became asynchronous the newest
+            // entries in the ring are reservations whose picture has not landed yet, and a clip
+            // built out of those would play whatever the texture pool's previous tenant left in
+            // them. On a healthy machine that is the last one or two; on a struggling one it is
+            // more, and the honest answer on both is "the buffer is still warming up".
+            if (ReadyFrameCount() < 12)
+            {
+                UI.Hud.Instance?.ShowToast("REPLAY BUFFER IS STILL WARMING UP", 1.2f);
+                return;
+            }
+
+            int first, last;
+            string title;
+            int slot;
+
+            int marked = NewestHighlightIndex();
+
+            if (marked >= 0)
+            {
+                float at = _replayFrames[marked].EventAt > 0.0f
+                    ? _replayFrames[marked].EventAt
+                    : _replayFrames[marked].CapturedAt;
+
+                first = IndexAtOrAfter(at - LeadInSeconds);
+                last = IndexAtOrBefore(at + LeadOutSeconds);
+
+                title = _replayFrames[marked].Reason;
+                slot = _replayFrames[marked].Slot;
+
+                // ⚠️ A MARKER AT THE VERY END OF THE BUFFER HAS NO AFTERMATH YET, which is what
+                // pressing replay the instant something happens produces. Taking what exists is
+                // right; refusing would punish the fastest operator in the room.
+                if (last <= first) last = _replayFrames.Count - 1;
+            }
+            else
+            {
+                int wanted = Mathf.CeilToInt(ReplaySeconds / ReplaySampleInterval);
+                first = Mathf.Max(0, _replayFrames.Count - wanted);
+                last = _replayFrames.Count - 1;
+
+                title = string.IsNullOrEmpty(reason) ? "LAST PLAY" : reason;
+                slot = -1;
+            }
+
+            first = Mathf.Clamp(first, 0, _replayFrames.Count - 1);
+            last = Mathf.Clamp(last, first, _replayFrames.Count - 1);
+
+            if (last - first < 4)
+            {
+                UI.Hud.Instance?.ShowToast("NOTHING TO REPLAY YET", 1.2f);
+                return;
+            }
+
+            // ⚠️⚠️ THE FRAMES AFTER THE CLIP ARE KEPT, WHICH THE OLD BODY DID NOT DO. It called
+            // `_replayFrames.Clear()` and emptied the ring, so the buffer restarted cold after
+            // every replay and a second replay was impossible for ten seconds. Only the frames
+            // BEFORE the clip are dropped now; everything after it stays live, and the ring keeps
+            // filling behind the overlay.
+            for (int i = 0; i < first; i++) RecycleFrame(_replayFrames[i]);
+
+            _replayClip.Clear();
+            for (int i = first; i <= last; i++)
+            {
+                // ⚠️ A PENDING FRAME IS SKIPPED RATHER THAN SHOWN OR WAITED FOR. Its texture is a
+                // recycled one holding somebody else's tenth of a second, and waiting for it would
+                // be the synchronous stall this whole change removed, arriving at the one moment
+                // an operator is watching.
+                if (_replayFrames[i].Pending) continue;
+                _replayClip.Add(_replayFrames[i]);
+            }
+
+            // The clip's frames are now owned by the clip. Everything after `last` stays in the
+            // live ring; everything up to and including `last` leaves it.
+            //
+            // ⚠️ THE PENDING ONES INSIDE THE WINDOW LEAVE THE RING TOO, and their textures go
+            // back to the pool here rather than in `EndReplay`, because the clip never took them.
+            for (int i = first; i <= last; i++)
+                if (_replayFrames[i].Pending) RecycleFrame(_replayFrames[i]);
+
+            _replayFrames.RemoveRange(0, last + 1);
+
+            if (_replayClip.Count < 4)
+            {
+                UI.Hud.Instance?.ShowToast("NOTHING TO REPLAY YET", 1.2f);
+                foreach (var frame in _replayClip) RecycleFrame(frame);
+                _replayClip.Clear();
+                return;
+            }
+
+            _replayClock = 0.0f;
+            _replaying = true;
+            _replayReason = string.IsNullOrEmpty(title) ? "LAST PLAY" : title;
+            _replaySlot = slot;
+
+            NoteClipWindow();
+
+            if (_replayCanvas != null) _replayCanvas.enabled = true;
+            RefreshReplayLabels();
+
+            if (_replayClip.Count > 0) ShowReplayFrame(_replayClip[0]);
+
+            // ⚠️ NO TOAST. The overlay covers the screen and titles itself in 30 pt across the
+            // top; a line underneath it saying the same words is the redundancy 🧑 asked to be rid
+            // of across the whole HUD on 2026-08-27.
+        }
+
+        /// <summary>The newest frame carrying a marker, or -1.</summary>
+        private int NewestHighlightIndex()
+        {
+            for (int i = _replayFrames.Count - 1; i >= 0; i--)
+                if (_replayFrames[i].Highlight) return i;
+
+            return -1;
+        }
+
+        /// <summary>
+        /// The recorded moment this clip actually contains, or a default one when there is none.
+        ///
+        /// ⚠️⚠️ THIS IS THE JOIN `docs/TODO.md` § 147 ASKS FOR AND IT IS DELIBERATELY THE WHOLE
+        /// OF IT: *"the first useful version is gameplay event -> structured marker -> replay can
+        /// identify that time window"*, and the same entry says not to attempt a broadcast
+        /// director. The clip is still chosen by the FRAMES, exactly as `StartReplay`'s own note
+        /// insists; this only asks the highlight log what it knows about the window those frames
+        /// cover, so an export, a caster overlay or a post-match reel has a structured record of
+        /// the moment rather than a title string.
+        ///
+        /// ⚠️ THE RING'S MARKER AND THE LOG'S MARKER ARE TWO RECORDS OF ONE EVENT AND NEITHER IS
+        /// REDUNDANT. The frame's marker is what CUT the clip and dies with the ten seconds of
+        /// pixels; the log's marker carries the measurement, the round and the importance and
+        /// outlives the whole match. They are matched by time here rather than merged, because
+        /// merging them would put a `Texture2D`'s lifetime on a record meant to survive it.
+        /// </summary>
+        public Core.HighlightMarker LastClipMarker { get; private set; }
+
+        /// <summary>True when <see cref="LastClipMarker"/> describes something real.</summary>
+        public bool LastClipWasMarked { get; private set; }
+
+        private void NoteClipWindow()
+        {
+            LastClipWasMarked = false;
+            LastClipMarker = default;
+
+            if (_replayClip.Count == 0) return;
+
+            // ⚠️ THE WINDOW IS THE CLIP'S OWN, IN MATCH TIME. The frames are stamped with
+            // `Time.unscaledTime` and the markers with seconds since the match began, so the two
+            // are compared through `MatchHighlights.Now`, which is the same clock one subtraction
+            // apart. Comparing raw `unscaledTime` against a marker would be comparing a process
+            // uptime against a match clock.
+            float now = Time.unscaledTime;
+            float matchNow = Diagnostics.MatchHighlights.Now;
+
+            float from = matchNow - (now - _replayClip[0].CapturedAt);
+            float to = matchNow - (now - _replayClip[_replayClip.Count - 1].CapturedAt);
+
+            float best = float.MaxValue;
+            foreach (var marker in Diagnostics.MatchHighlights.Log.Markers)
+            {
+                if (marker.AtSeconds < from || marker.AtSeconds > to) continue;
+
+                // ⚠️ THE MOST IMPORTANT ONE IN THE WINDOW, NOT THE NEWEST. A five second clip
+                // routinely contains a tag and the block that led to it, and the reel wants the
+                // one a person would have picked.
+                float rank = 1.0f - marker.Importance;
+                if (rank >= best) continue;
+
+                best = rank;
+                LastClipMarker = marker;
+                LastClipWasMarked = true;
+            }
+
+            if (LastClipWasMarked)
+                Debug.Log($"[Replay] clip covers {Core.HighlightRules.Describe(LastClipMarker)} " +
+                          $"at {LastClipMarker.AtSeconds:F1}s of the match.");
+        }
+
+        /// <summary>
+        /// How many frames in the ring have a picture in them.
+        ///
+        /// ⚠️ IT IS NOT `_replayFrames.Count`, AND THE DIFFERENCE IS THE READBACK LATENCY. On a
+        /// machine answering promptly it is one or two behind; on one that is not, it is the
+        /// honest measure of how much footage actually exists.
+        /// </summary>
+        private int ReadyFrameCount()
+        {
+            int ready = 0;
+            for (int i = 0; i < _replayFrames.Count; i++)
+                if (!_replayFrames[i].Pending) ready++;
+
+            return ready;
+        }
+
+        private int IndexAtOrAfter(float when)
+        {
+            for (int i = 0; i < _replayFrames.Count; i++)
+                if (_replayFrames[i].CapturedAt >= when) return i;
+
+            return _replayFrames.Count - 1;
+        }
+
+        private int IndexAtOrBefore(float when)
+        {
+            for (int i = _replayFrames.Count - 1; i >= 0; i--)
+                if (_replayFrames[i].CapturedAt <= when) return i;
+
+            return 0;
+        }
+
+        /// <summary>
+        /// Writes the two overlay lines: what this is, and how to get out of it.
+        ///
+        /// ⚠️⚠️ THE OVERLAY OWES FIVE THINGS AND USED TO SAY ONE. It said
+        /// `INSTANT REPLAY · TAG` and nothing else: no progress, no responsible player, no
+        /// statement that the match is still running underneath, and no way out. The last of
+        /// those is the one that matters most, because the clip covers the entire screen and a
+        /// spectator who does not know Escape works is watching a black box for six seconds.
+        ///
+        /// ⚠️ THE PLAYER IS NAMED ONLY WHEN IT IS KNOWN. A marker carries a seat for a tag, a
+        /// knockdown or a sabotage and carries -1 for the fallback interval, and inventing a name
+        /// for the fallback would be `docs/VISION.md` § 3's *"a screen that teaches the wrong key
+        /// is worse than one that teaches none"* applied to a scoreboard.
+        /// </summary>
+        private void RefreshReplayLabels()
+        {
+            if (_replayLabel != null)
+            {
+                string who = NameForSlot(_replaySlot);
+
+                _replayLabel.text = string.IsNullOrEmpty(who)
+                    ? "REPLAY  ·  " + _replayReason
+                    : "REPLAY  ·  " + _replayReason + "  ·  " + who;
+            }
+
+            if (_replayExitLabel != null)
+            {
+                // ⚠️ THE LIVE STATEMENT AND THE EXIT ARE ONE LINE, NOT TWO. `CLAUDE.md` § 6.2:
+                // *"what is on screen that the player does not need RIGHT NOW"*. Both facts are
+                // one sentence and the sentence is short.
+                _replayExitLabel.text = OnTouchDevice
+                    ? "LIVE PLAY CONTINUES  ·  TAP TO RETURN"
+                    : "LIVE PLAY CONTINUES  ·  " + BoundKey("SpectatorReplay")
+                      + " OR ESC TO RETURN";
+            }
+        }
+
+        private static bool OnTouchDevice
+            => InputLayer.LastInputDevice.Current == InputLayer.InputDeviceKind.Touch;
+
+        /// <summary>
+        /// The key currently bound to a spectator action, upper case.
+        ///
+        /// ⚠️ THE LIVE BINDING, NEVER A LITERAL. `docs/VISION.md` § 3: *"a screen that teaches
+        /// the wrong key is worse than one that teaches none."* `ControlsText` has an identical
+        /// local function; this is the class-level one so the replay overlay does not have to
+        /// load the asset a second time per rebuild.
+        /// </summary>
+        private static string BoundKey(string action)
+        {
+            var asset = Resources.Load<InputActionAsset>("TumbangPreso");
+            if (asset == null) return "?";
+
+            string label = Settings.Rebinding.DisplayNameFor(asset, action);
+            return string.IsNullOrEmpty(label) ? "?" : label.ToUpperInvariant();
+        }
+
+        private static string NameForSlot(int slot)
+        {
+            if (slot < 0) return null;
+
+            var round = GameServices.Round;
+            if (round == null) return null;
+
+            foreach (var p in round.Players)
+                if (p != null && p.PlayerSlot == slot) return $"P{slot + 1} · {p.DisplayName()}";
+
+            return null;
+        }
+
+        // -------------------------------------------------------------------
+        // § THE ONE WAY A PROBE CAN ASK FOR A REPLAY
+        //
+        // ⚠️⚠️ IT IS CONSUMED IN THE SAME LINE THE KEY IS READ, WHICH IS THE WHOLE DESIGN.
+        // `NationalsShowcaseProbe` has to produce a capture containing a manual replay centred on
+        // a marked event, and driving the Input System's keyboard from a PlayMode test is a
+        // fixture's worth of machinery. The obvious shortcut, a public `TriggerReplay()`, would
+        // be a SECOND call site into `StartReplay`, and a second call site is exactly how the
+        // 2026-08-27 spam came back once already. `BroadcastPassTests
+        // .ReplayHasExactlyOneTriggerAndItIsAKeyPress` asserts there is one, and this keeps that
+        // true: the probe raises a flag, and the same `if` that reads the key reads the flag.
+        //
+        // ⚠️⚠️ THE AUTOPILOT CANNOT REACH IT, AND THAT IS ASSERTED RATHER THAN INTENDED.
+        // `BroadcastPassTests.TheAutopilotCannotReplayPauseOrChangeTime` reads
+        // `SpectatorDirector.cs` and `SpectatorInterest.cs` as text and fails if either names
+        // `ProbeReplayRequest`, alongside `StartReplay` and the pause controls. 🧑 2026-08-27:
+        // *"dont let autopilot spectator pause or replay thats for human only"*.
+        //
+        // ⚠️ IT IS A ONE-SHOT. Consuming clears it, so a probe that sets it once gets one replay
+        // rather than one per frame for the rest of the run.
+        // -------------------------------------------------------------------
+
+        /// <summary>Set by a capture probe to press the replay control exactly once.</summary>
+        public static bool ProbeReplayRequest;
+
+        private static bool ConsumeProbeReplayRequest()
+        {
+            if (!ProbeReplayRequest) return false;
+
+            ProbeReplayRequest = false;
+            return true;
+        }
+
+        private int _replaySlot = -1;
+        private int _replaySequence;
+
+        private float _pendingMarkAt = -1.0f;
+        private string _pendingMarkReason;
+        private int _pendingMarkSlot = -1;
+        private int _pendingMarkFrame = -1;
+
+        private void StepReplay()
+        {
+            int available = _replayClip.Count;
+            if (available < 2) { EndReplay(); return; }
+
+            // A restrained 0.82x lets the decisive beat read while the match remains live in
+            // the rest of the screen.
+            _replayClock += Time.unscaledDeltaTime * 0.82f;
+            float sample = _replayClock / ReplaySampleInterval;
+            int localIndex = Mathf.Clamp(Mathf.FloorToInt(sample), 0, available - 1);
+
+            // ⚠️ IT PLAYS ONCE AND ENDS. It has never looped, and the *"loop every second"*
+            // report of 2026-08-27 was four independent triggers rather than a loop. Keeping the
+            // end condition here rather than clamping the index is what makes that true.
+            if (sample >= available)
+            {
+                EndReplay();
+                return;
+            }
+
+            ShowReplayFrame(_replayClip[localIndex]);
+
+            if (_replayProgress != null)
+            {
+                var rt = _replayProgress.rectTransform;
+                rt.anchorMax = new Vector2(Mathf.Clamp01(sample / available), 1.0f);
+            }
+        }
+
+        private Text _replayExitLabel;
+        private Image _replayProgress;
+
+        private void ShowReplayFrame(ReplayFrame frame)
+        {
+            if (_replayImage == null) return;
+            _replayImage.texture = frame.Image;
+            if (_replayFit != null)
+                _replayFit.aspectRatio = frame.Aspect > 0 ? frame.Aspect : ReplayWidth / (float)ReplayHeight;
+        }
+
+        private void EndReplay(bool showLiveToast = true)
+        {
+            if (!_replaying) return;
+
+            _replaying = false;
+            if (_replayCanvas != null) _replayCanvas.enabled = false;
+            if (_replayImage != null) _replayImage.texture = null;
+
+            // ⚠️ THE BAR IS RESET ON THE WAY OUT, NOT ON THE WAY IN. A replay started while the
+            // previous bar was still full would show a finished progress bar for its first frame,
+            // which is a small thing that reads as the overlay being broken.
+            if (_replayProgress != null)
+                _replayProgress.rectTransform.anchorMax = new Vector2(0.0f, 1.0f);
+
+            _replaySlot = -1;
+
+            // ⚠️ RECYCLED RATHER THAN DESTROYED. A clip is up to fifty textures of exactly the
+            // shape the ring is about to want back; destroying them means fifty native frees now
+            // and fifty allocations over the next five seconds, which is the churn the pool exists
+            // to remove.
+            foreach (var frame in _replayClip) RecycleFrame(frame);
+            _replayClip.Clear();
+
+            if (showLiveToast) UI.Hud.Instance?.ShowToast("LIVE", 0.8f);
+        }
+
+        private void BuildReplayOverlay()
+        {
+            var canvasGo = new GameObject("InstantReplayOverlay");
+            canvasGo.transform.SetParent(transform, false);
+
+            _replayCanvas = canvasGo.AddComponent<Canvas>();
+            _replayCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            _replayCanvas.overrideSorting = true;
+            _replayCanvas.sortingOrder = 500;
+            _replayCanvas.vertexColorAlwaysGammaSpace = true;
+
+            var scaler = canvasGo.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920.0f, 1080.0f);
+            scaler.matchWidthOrHeight = 1.0f;
+
+            // ⚠️⚠️ THE ONE CANVAS IN THE GAME THAT WAS STILL MISSING THE ASPECT RULE.
+            // `AspectSafeCanvas` opens by calling itself *"one rule for every canvas in the
+            // game"*, and every other screen-space canvas here routes through it: the HUD, the
+            // menus, the result board, the role-swap card, the splash, the you-card, the arrows
+            // and every imported screen via `ConvertedScreen`. This one was built with a bare
+            // `matchWidthOrHeight = 1.0`, which is match-on-HEIGHT, so on anything narrower than
+            // 16:9 the spectator's picture-in-picture was cropped off the side of the display.
+            // `ComicPopup` is the only other holdout and it is correctly exempt: it is a WORLD
+            // canvas on `ConstantPixelSize`, which `Apply` no-ops on by design.
+            UI.AspectSafeCanvas.Apply(scaler);
+
+            var panelGo = new GameObject("ReplayPictureInPicture");
+            panelGo.transform.SetParent(canvasGo.transform, false);
+            var panel = panelGo.AddComponent<Image>();
+            panel.color = new Color32(28, 34, 37, 255);
+            panel.raycastTarget = false;
+
+            // ⚠️⚠️ THE WHOLE SCREEN, NOT A CORNER BOX. 🧑 2026-08-27: *"i alsoo really dont like
+            // that instant replay on the top right"* and *"i want it to cover whole screen if i
+            // click it"*. A picture-in-picture was the right shape for something that opened by
+            // itself while the operator was still framing a live shot; now that a replay only
+            // exists because a human asked for it, the live shot is not what they are watching.
+            // A 45 per cent box in the corner was also the worst of both: too small to read a
+            // play in and big enough to ruin the frame behind it.
+            var panelRt = panel.rectTransform;
+            panelRt.anchorMin = Vector2.zero;
+            panelRt.anchorMax = Vector2.one;
+            panelRt.offsetMin = Vector2.zero;
+            panelRt.offsetMax = Vector2.zero;
+
+            var imageGo = new GameObject("ReplayImage");
+            imageGo.transform.SetParent(panelGo.transform, false);
+            _replayImage = imageGo.AddComponent<RawImage>();
+            _replayImage.color = Color.white;
+            _replayImage.raycastTarget = false;
+            _replayImage.uvRect = new Rect(0.0f, 0.0f, 1.0f, 1.0f);
+
+            var imageRt = _replayImage.rectTransform;
+            imageRt.anchorMin = Vector2.zero;
+            imageRt.anchorMax = Vector2.one;
+            imageRt.offsetMin = new Vector2(10.0f, 10.0f);
+            imageRt.offsetMax = new Vector2(-10.0f, -62.0f);
+
+            // Storage textures have a fixed memory budget. ShowReplayFrame restores each
+            // captured viewport's aspect, and FitInParent letterboxes that original picture
+            // inside the current window. Storage dimensions are not camera proportions.
+            var fit = imageGo.AddComponent<AspectRatioFitter>();
+            _replayFit = fit;
+            fit.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
+            fit.aspectRatio = ReplayWidth / (float)ReplayHeight;
+
+            var labelGo = new GameObject("ReplayLabel");
+            BuildReplayBand(panelGo.transform, "ReplayHeadingBand", true, 76);
+            labelGo.transform.SetParent(panelGo.transform, false);
+            _replayLabel = labelGo.AddComponent<Text>();
+            _replayLabel.font = UI.OwnerUiTheme.Current.Display;
+            _replayLabel.fontSize = 36;
+            _replayLabel.alignment = TextAnchor.MiddleLeft;
+            _replayLabel.color = UI.OwnerUiTheme.Current.Pale;
+            _replayLabel.alignByGeometry = true;
+            _replayLabel.horizontalOverflow = HorizontalWrapMode.Overflow;
+            _replayLabel.verticalOverflow = VerticalWrapMode.Overflow;
+            _replayLabel.raycastTarget = false;
+            _replayLabel.text = "INSTANT REPLAY";
+
+            var outline = labelGo.AddComponent<Outline>();
+            outline.effectColor = UI.UiTheme.InGameOutline;
+            outline.effectDistance = new Vector2(3.0f, -3.0f);
+
+            var labelRt = _replayLabel.rectTransform;
+            labelRt.anchorMin = new Vector2(0.0f, 1.0f);
+            labelRt.anchorMax = new Vector2(1.0f, 1.0f);
+            labelRt.pivot = new Vector2(0.5f, 1.0f);
+            labelRt.offsetMin = new Vector2(24.0f, -68.0f);
+            labelRt.offsetMax = new Vector2(-24.0f, -8.0f);
+
+            // -------------------------------------------------------------------
+            // § THE THREE THINGS THE OVERLAY OWED AND DID NOT SAY
+            //
+            // ⚠️⚠️ IT SAID `INSTANT REPLAY · TAG` AND NOTHING ELSE. The brief asks it to
+            // communicate five things: that this is a replay, what the event was, who was
+            // responsible, how far through it is, whether live gameplay is continuing, and how to
+            // get out. It carried two.
+            //
+            // ⚠️⚠️ THE EXIT IS THE ONE THAT MATTERS MOST, because the clip covers the ENTIRE
+            // screen. 🧑 asked for that in 2026-08-27 (*"i want it to cover whole screen if i
+            // click it"*) and it is right, but a spectator who does not know Escape works is
+            // watching a box they cannot leave for six seconds, on a broadcast. `CLAUDE.md`
+            // § 6.2's fourth question is exactly this: *"how do they get out, and is it one
+            // press?"*
+            //
+            // ⚠️ THE PROGRESS BAR IS A BAR AND NOT A COUNTDOWN NUMBER. A replay is watched, not
+            // read: a viewer needs to know how much is left at a glance and a digit costs them a
+            // fixation on the one thing that is not the picture.
+            // -------------------------------------------------------------------
+
+            var exitGo = new GameObject("ReplayExitHint");
+            BuildReplayBand(panelGo.transform, "ReplayFooterBand", false, 72);
+            exitGo.transform.SetParent(panelGo.transform, false);
+            _replayExitLabel = exitGo.AddComponent<Text>();
+            _replayExitLabel.font = UI.OwnerUiTheme.Current.Reading;
+            _replayExitLabel.fontSize = 26;
+            _replayExitLabel.alignment = TextAnchor.MiddleRight;
+            _replayExitLabel.color = UI.OwnerUiTheme.Current.Pale;
+            _replayExitLabel.raycastTarget = false;
+            _replayExitLabel.horizontalOverflow = HorizontalWrapMode.Overflow;
+            _replayExitLabel.verticalOverflow = VerticalWrapMode.Overflow;
+            _replayExitLabel.alignByGeometry = true;
+            _replayExitLabel.text = "LIVE PLAY CONTINUES";
+
+            var exitOutline = exitGo.AddComponent<Outline>();
+            exitOutline.effectColor = UI.UiTheme.InGameOutline;
+            exitOutline.effectDistance = new Vector2(2.0f, -2.0f);
+
+            var exitRt = _replayExitLabel.rectTransform;
+            exitRt.anchorMin = new Vector2(0.0f, 0.0f);
+            exitRt.anchorMax = new Vector2(1.0f, 0.0f);
+            exitRt.pivot = new Vector2(0.5f, 0.0f);
+            exitRt.offsetMin = new Vector2(24.0f, 14.0f);
+            exitRt.offsetMax = new Vector2(-24.0f, 60.0f);
+
+            // The progress bar: a track along the very bottom edge with an amber fill.
+            var trackGo = new GameObject("ReplayProgressTrack");
+            trackGo.transform.SetParent(panelGo.transform, false);
+            var track = trackGo.AddComponent<Image>();
+            track.color = new Color(UI.UiTheme.Ink.r, UI.UiTheme.Ink.g, UI.UiTheme.Ink.b, 0.55f);
+            track.raycastTarget = false;
+
+            var trackRt = track.rectTransform;
+            trackRt.anchorMin = new Vector2(0.0f, 0.0f);
+            trackRt.anchorMax = new Vector2(1.0f, 0.0f);
+            trackRt.pivot = new Vector2(0.5f, 0.0f);
+            trackRt.offsetMin = new Vector2(0.0f, 0.0f);
+            trackRt.offsetMax = new Vector2(0.0f, 6.0f);
+
+            var fillGo = new GameObject("ReplayProgressFill");
+            fillGo.transform.SetParent(trackGo.transform, false);
+            _replayProgress = fillGo.AddComponent<Image>();
+            _replayProgress.color = UI.OwnerUiTheme.Current.Lime;
+            _replayProgress.raycastTarget = false;
+
+            // ⚠️ ANCHORED LEFT AND DRIVEN BY `anchorMax.x`, NOT BY A WIDTH. A width would be
+            // correct at exactly one screen size; an anchor is a fraction of whatever the panel
+            // turns out to be, which is `UiRows`' whole argument about hand-written offsets.
+            var fillRt = _replayProgress.rectTransform;
+            fillRt.anchorMin = new Vector2(0.0f, 0.0f);
+            fillRt.anchorMax = new Vector2(0.0f, 1.0f);
+            fillRt.pivot = new Vector2(0.0f, 0.5f);
+            fillRt.offsetMin = Vector2.zero;
+            fillRt.offsetMax = Vector2.zero;
+
+            _replayCanvas.enabled = false;
+        }
+
+        private static void BuildReplayBand(Transform parent, string name, bool top, float height)
+        {
+            var band = UI.OwnerUiLayout.Rect(parent, name);
+            band.anchorMin = new Vector2(0, top ? 1 : 0); band.anchorMax = new Vector2(1, top ? 1 : 0);
+            band.pivot = new Vector2(.5f, top ? 1 : 0); band.anchoredPosition = Vector2.zero;
+            band.sizeDelta = new Vector2(0, height);
+            var image = band.gameObject.AddComponent<Image>();
+            image.color = new Color32(33, 40, 43, 238); image.raycastTarget = false;
+        }
+
+        private void PollHighlights()
+        {
+            CheckReplayMatch();
+            TryHookHighlights();
+
+            bool lataKnockedNow = false;
+
+            var lata = GameServices.Round != null ? GameServices.Round.Lata : null;
+            if (lata == null)
+            {
+                _lataStateKnown = false;
+            }
+            else if (!_lataStateKnown)
+            {
+                _lataStateKnown = true;
+                _lastLataUpright = lata.IsUpright;
+            }
+            else
+            {
+                lataKnockedNow = _lastLataUpright && !lata.IsUpright;
+                if (lataKnockedNow) QueueHighlight("CAN KNOCKDOWN");
+                _lastLataUpright = lata.IsUpright;
+            }
+
+            var match = GameServices.Match;
+            if (match == null)
+            {
+                _scoreStateKnown = false;
+                return;
+            }
+
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+            {
+                int score = match.ScoreFor(slot);
+                if (_scoreStateKnown && !lataKnockedNow)
+                {
+                    int gain = score - _lastScores[slot];
+                    if (gain >= 100)
+                        QueueHighlight(slot == match.DefenderSlot ? "TAG" : "SCORE PLAY");
+                    else if (gain >= 50)
+                        QueueHighlight("SABOTAGE");
+                }
+                _lastScores[slot] = score;
+            }
+            _scoreStateKnown = true;
+        }
+
+        private void CheckReplayMatch()
+        {
+            var match = GameServices.Match;
+            long identity = match != null ? match.PresentationMatchId : 0;
+            if (_replayMatch == match && _replayMatchId == identity) return;
+            _replayMatch = match; _replayMatchId = identity;
+            EndReplay(showLiveToast: false);
+            foreach (var frame in _replayFrames) RecycleFrame(frame);
+            _replayFrames.Clear();
+            // In-flight readbacks still settle their accounting, then reject these
+            // retired frame objects through the existing ring-membership guard.
+            _captureReplayFrame = false; _replayRecordAccum = 0;
+            _pendingHighlight = null; _pendingHighlightAt = -100;
+            _pendingMarkAt = -1; _pendingMarkReason = null; _pendingMarkSlot = -1; _pendingMarkFrame = -1;
+            _scoreStateKnown = _lataStateKnown = _underPressure = false;
+        }
+
+        private void TryHookHighlights()
+        {
+            var match = GameServices.Match;
+            if (_highlightMatch == match) return;
+
+            UnhookHighlights();
+            _highlightMatch = match;
+            if (_highlightMatch != null) _highlightMatch.Scored += OnHighlightScored;
+
+            // ⚠️ UNSUBSCRIBED FIRST, because this method is reached every time the match
+            // director changes and a static event with a `MonoBehaviour` subscriber doubles
+            // silently. `UltimatePresentationDirector.Hook` carries the same guard for the
+            // same event and the same reason.
+            Abilities.HeroAbilitySystem.UltimateStarted -= OnUltimateForReplay;
+            Abilities.HeroAbilitySystem.UltimateStarted += OnUltimateForReplay;
+        }
+
+        private void UnhookHighlights()
+        {
+            if (_highlightMatch != null) _highlightMatch.Scored -= OnHighlightScored;
+            Abilities.HeroAbilitySystem.UltimateStarted -= OnUltimateForReplay;
+            _highlightMatch = null;
+        }
+
+        private void OnHighlightScored(int slot, ScoreEvent scoreEvent)
+        {
+            switch (scoreEvent)
+            {
+                case ScoreEvent.LataKnocked:
+                    QueueHighlight("CAN KNOCKDOWN", slot);
+                    break;
+                case ScoreEvent.Tag:
+                    QueueHighlight("TAG", slot);
+                    break;
+                case ScoreEvent.Sabotage:
+                    QueueHighlight("SABOTAGE", slot);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Marks a retrieval that was made under real pressure, and an ultimate that landed.
+        ///
+        /// ⚠️⚠️ THE BRIEF NAMES SIX THINGS TO MARK AND THE SCORE EVENTS ONLY CARRY FOUR.
+        /// A knockdown, a tag, a sabotage and a decisive score all arrive on
+        /// `MatchDirector.Scored`. **A retrieval under pressure and an ultimate impact score
+        /// nothing at all**, so neither was ever markable, and both are among the best clips the
+        /// game produces: getting a tsinelas out from under a closing taya is the play
+        /// `docs/VISION.md` opens by calling the whole point of the sport.
+        ///
+        /// ⚠️ IT REUSES THE LIVE CAMERA'S OWN DEFINITION OF PRESSURE RATHER THAN INVENTING
+        /// ONE. `SpectatorInterestModel.ChaseGap` is 9.0 m and carries the reasoning: *"a taya
+        /// six metres behind a retriever is a chase; one on the far side of the arena is two
+        /// unrelated people."* One number, two features.
+        ///
+        /// ⚠️ AND IT ONLY FIRES ON THE EDGE. A retrieval is true for seconds at a time; a
+        /// marker per frame would fill the buffer with a hundred markers describing one play and
+        /// `NewestHighlightIndex` would pick the last frame of it every time.
+        /// </summary>
+        private void PollPlayHighlights()
+        {
+            var round = GameServices.Round;
+            if (round == null) return;
+
+            CharacterMotor taya = null;
+            foreach (var p in round.Players)
+                if (p != null && p.IsDefender) { taya = p; break; }
+
+            bool pressured = false;
+            int who = -1;
+
+            if (taya != null)
+            {
+                foreach (var p in round.Players)
+                {
+                    if (p == null || p == taya || !p.RoundActive) continue;
+                    if (!p.IsTaggable()) continue;
+
+                    Vector3 a = p.transform.position;
+                    Vector3 b = taya.transform.position;
+                    a.y = 0.0f;
+                    b.y = 0.0f;
+
+                    if (Vector3.Distance(a, b) > SpectatorInterestModel.ChaseGap)
+                        continue;
+
+                    pressured = true;
+                    who = p.PlayerSlot;
+                    break;
+                }
+            }
+
+            if (pressured && !_underPressure) QueueHighlight("RETRIEVAL UNDER PRESSURE", who);
+            _underPressure = pressured;
+        }
+
+        private bool _underPressure;
+
+        /// <summary>
+        /// An ultimate has started. Mark it, and remember who for the overlay.
+        ///
+        /// ⚠️ IT IS THE SAME EVENT THE INTRODUCTION CARD AND THE AUTOPILOT BOTH HANG OFF, so a
+        /// replay of an ultimate, the lower third that announced it and the shot that covered it
+        /// can never disagree about whose it was.
+        /// </summary>
+        private void OnUltimateForReplay(CharacterMotor caster, Abilities.HeroKit kit,
+                                         Abilities.HeroAbility ultimate)
+        {
+            if (caster == null || ultimate == null) return;
+
+            QueueHighlight(ultimate.Name, caster.PlayerSlot);
+        }
+
+        // -------------------------------------------------------------------
+        // § THE REPLAY NEVER STARTS ITSELF ANY MORE
+        //
+        // ⚠️⚠️ 🧑 2026-08-27, with two screenshots: *"why is instant replay just spam showing"*,
+        // *"i alsoo really dont like that instant replay on the top right"*, and *"i want it to
+        // cover whole screen if i click it and i dont want it to just loop every second"*.
+        //
+        // ⚠️⚠️ IT WAS NEVER LOOPING. `StepReplay` plays the clip once and ends. What produced the
+        // "every second" reading is that it fired on EVERY scoring event with a 4.0 s floor
+        // between them, and Hero Strike scores constantly: a knockdown, a tag and a sabotage are
+        // three separate triggers, and `PollHighlights` adds a fourth by watching the lata on top
+        // of the `Scored` event that already reports the same knockdown. In an 8-round match
+        // that is a picture-in-picture window opening again about as fast as the cooldown allows,
+        // forever, in the corner of the shot the operator is trying to frame.
+        //
+        // ⚠️⚠️ AND A REPLAY THAT ARRIVES UNINVITED IS THE WRONG FEATURE ANYWAY. The whole value
+        // of an instant replay is that a human decided the last five seconds were worth seeing
+        // again. `SpectatorReplay` is a bound, rebindable key; that press is the trigger now, and
+        // it is the only one. This also finishes what `AutopilotSuppressesAutoReplay` started:
+        // that suppressed self-replay for the AUTOPILOT only, and the same argument (*"thats for
+        // human only"*) applies just as well to a human flying the camera by hand.
+        //
+        // ⚠️ THE HIGHLIGHT REASONS SURVIVE AS A LABEL, NOT AS A TRIGGER. `PollHighlights` still
+        // records what the last notable play was, so a manual replay is titled `INSTANT REPLAY ·
+        // TAG` rather than `LAST PLAY`. Naming what you are about to watch costs nothing and is
+        // the only part of the highlight reel that was ever earning its place.
+        // -------------------------------------------------------------------
+
+        private void QueueHighlight(string reason) => QueueHighlight(reason, -1);
+
+        /// <summary>
+        /// Records that something worth replaying just happened, and marks the next frame.
+        ///
+        /// ⚠️⚠️ THIS USED TO ONLY SET A TITLE. `_pendingHighlight` named the last notable play
+        /// so a manual replay could be called `INSTANT REPLAY - TAG` rather than `LAST PLAY`,
+        /// and that was all it did: nothing in the buffer knew WHEN the tag was, so the clip was
+        /// still the last five and a half seconds whenever the key happened to be pressed. The
+        /// title and the footage were two independent claims. `_pendingMarkAt` is what makes them
+        /// one: the next captured frame carries the marker, and `StartReplay` cuts the clip
+        /// around the frame rather than around the press.
+        ///
+        /// ⚠️ THE SEAT IS CARRIED SO THE OVERLAY CAN NAME WHO. `MatchDirector.Scored` and
+        /// `RoundDirector.Tagged` both know it and it was being thrown away.
+        /// </summary>
+        private void QueueHighlight(string reason, int slot)
+        {
+            CheckReplayMatch();
+            // A coarse state/score poll can observe the same event after Scored supplied
+            // its real actor. Do not replace that same-frame identity with an unknown one.
+            if (slot < 0 && _pendingMarkSlot >= 0 && _pendingMarkFrame == Time.frameCount &&
+                reason == _pendingMarkReason) return;
+            _pendingHighlight = reason;
+            _pendingHighlightAt = Time.unscaledTime;
+
+            _pendingMarkAt = Time.unscaledTime;
+            _pendingMarkReason = reason;
+            _pendingMarkSlot = slot;
+            _pendingMarkFrame = Time.frameCount;
+        }
+
+        /// <summary>
+        /// The last notable play, if it is recent enough to still be inside the replay buffer.
+        ///
+        /// ⚠️ IT EXPIRES WITH THE BUFFER. `ReplaySeconds` is what a manual press actually gets to
+        /// show, so a reason older than that would title the clip after a play that is no longer
+        /// in it. Past that it falls back to LAST PLAY, which is honest.
+        /// </summary>
+        private string RecentHighlightReason()
+        {
+            if (string.IsNullOrEmpty(_pendingHighlight)) return "LAST PLAY";
+            return Time.unscaledTime - _pendingHighlightAt <= ReplaySeconds
+                ? _pendingHighlight
+                : "LAST PLAY";
+        }
+
+        private void DestroyFrame(ReplayFrame frame)
+        {
+            if (frame != null && frame.Image != null) Destroy(frame.Image);
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE GENERATION IS BUMPED FIRST AND EVERY OTHER LINE DEPENDS ON IT. A readback in
+        /// flight holds a closure over a `ReplayFrame` whose `Texture2D` is about to be destroyed,
+        /// and `Destroy` is deferred to the end of the frame, so between here and then a driver
+        /// callback would write into a texture Unity has already scheduled for release. Bumping
+        /// the counter before anything is destroyed makes every callback in flight compare unequal
+        /// and return having touched nothing, which is the whole of "no capture after the session
+        /// is gone".
+        ///
+        /// ⚠️ AND THEN IT WAITS. `WaitAllRequests` is a stall, and this is the one place a stall
+        /// is correct: it is a teardown rather than a frame, and returning without it would leave
+        /// native buffers alive with nothing left to answer them.
+        /// </summary>
+        private void OnDestroy()
+        {
+            UI.ScreenTakeover.Unregister(this);
+            _captureGeneration++;
+
+            UnhookHighlights();
+
+            if (_asyncReadbackWorks) AsyncGPUReadback.WaitAllRequests();
+            _outstandingReadbacks = 0;
+            if (_synchronousReadback != null) Destroy(_synchronousReadback);
+            _synchronousReadback = null;
+
+            foreach (var frame in _replayFrames) DestroyFrame(frame);
+            foreach (var frame in _replayClip) DestroyFrame(frame);
+            _replayFrames.Clear();
+            _replayClip.Clear();
+
+            while (_texturePool.Count > 0)
+            {
+                var pooled = _texturePool.Pop();
+                if (pooled != null) Destroy(pooled);
+            }
+
+            if (_droppedCaptures > 0 || _failedReadbacks > 0)
+                Debug.Log($"[Replay] {_droppedCaptures} captures dropped for a full readback " +
+                          $"queue, {_failedReadbacks} readbacks failed.");
+        }
+
+        private void SyncAnglesFromTransform()
+        {
+            Vector3 euler = transform.eulerAngles;
+            _yawDeg = euler.y;
+            _pitchDeg = euler.x > 180.0f ? euler.x - 360.0f : euler.x;
+        }
+
+        // -------------------------------------------------------------------
+        // § THE AUTOPILOT HANDOVER
+        //
+        // ⚠️⚠️ EVERYTHING IN THIS SECTION IS POSE, NOT CONTROL. `SpectatorDirector` decides
+        // where the camera should be; this class remains the only thing in the game that reads
+        // the spectator's hardware, which is what keeps the 2026-07-31 instruction
+        // (*"spectator should only be controllable by a person"*) structurally true even though
+        // the 2026-08-27 request added a camera that flies itself. See that class's header.
+        // -------------------------------------------------------------------
+
+        private SpectatorDirector _director;
+
+        public bool AutopilotEngaged => _director != null && _director.Engaged;
+
+        /// <summary>
+        /// Writes a pose the director computed back into this class's own state.
+        ///
+        /// ⚠️⚠️ IT SETS `_targetPosition` AS WELL AS THE TRANSFORM, AND MISSING THAT IS A ONE
+        /// FRAME SNAP AT EVERY HANDOVER. `Update` eases `transform.position` toward
+        /// `_targetPosition` every frame it owns the camera, so a director that moved only the
+        /// transform would hand the human a camera that immediately flies back to wherever the
+        /// autopilot was engaged from. The angles are the same story for `StepLook`.
+        /// </summary>
+        public void AdoptPose(Vector3 position, float yawDeg, float pitchDeg)
+        {
+            _targetPosition = position;
+            _yawDeg = yawDeg;
+            _pitchDeg = Mathf.Clamp(pitchDeg, -PitchLimitDeg, PitchLimitDeg);
+        }
+
+        /// <summary>Take the angles that are actually on screen. See <see cref="AdoptPose"/>.</summary>
+        public void AdoptCurrentAngles()
+        {
+            SyncAnglesFromTransform();
+            _targetPosition = transform.position;
+        }
+
+        /// <summary>
+        /// Did the operator just ask for the camera back?
+        ///
+        /// ⚠️ THE MOUSE THRESHOLD IS NOT ZERO AND IT IS NOT TASTE. A mouse at rest still reports
+        /// single-count jitter on most sensors, and a zero test hands the camera back within a
+        /// second of engaging every single time, which reads as the feature not working. A tenth
+        /// of a degree of deliberate movement clears it and no resting hand does.
+        ///
+        /// ⚠️ THE BROADCAST KEYS ARE NOT IN HERE ON PURPOSE. Pause, replay, mark and recall are
+        /// the operator working the GALLERY, not the camera, and a director should not be thrown
+        /// out for calling a replay of the shot it just covered.
+        /// </summary>
+        private bool ManualTakeover()
+        {
+            if (SpectatorStickLook().sqrMagnitude > 0) return true;
+            if (Cursor.lockState == CursorLockMode.Locked)
+            {
+                float dx = Mathf.Abs(Input.GetAxisRaw("Mouse X"));
+                float dy = Mathf.Abs(Input.GetAxisRaw("Mouse Y"));
+                if (dx + dy > 0.01f) return true;
+            }
+
+            if (_move != null && _move.ReadValue<Vector2>().sqrMagnitude > 0.0001f) return true;
+            if (_jump != null && _jump.IsPressed()) return true;
+            if (_down != null && _down.IsPressed()) return true;
+
+            // ⚠️⚠️ THE CAMERA KEYS READ THROUGH THE INPUT ASSET, NOT OFF THE KEYBOARD.
+            // `CLAUDE.md` § 4 put the nine spectator controls into the map as their own context
+            // in 2026-08-27 precisely so they could be rebound and checked, and this function was
+            // still reading `kb.tabKey`, `kb.fKey` and `kb.vKey` as literals. A spectator who
+            // rebound their follow key could not take the camera back with it.
+            if (Fired(_cycleTarget) || Fired(_freeFly) || Fired(_povToggle)) return true;
+
+            // -------------------------------------------------------------------
+            // ⚠️⚠️ THE BROADCAST KEYS DISENGAGE THE AUTOPILOT NOW, AND THIS IS A REVERSAL OF A
+            // DELIBERATE DECISION. THE ARGUMENT IT REVERSES IS WORTH KEEPING.
+            //
+            // This function used to exclude them on purpose, and said why: *"pause, replay, mark
+            // and recall are the operator working the GALLERY, not the camera, and a director
+            // should not be thrown out for calling a replay of the shot it just covered."* That
+            // is a real distinction and it is a good one.
+            //
+            // ⚠️ 🧑'S 2026-09-03 BRIEF ASKS FOR THE OPPOSITE, BY NAME: *"any look, fly, target,
+            // POV, free-camera, mark, recall, replay, or pause input immediately disengages
+            // autopilot"*, under *"any meaningful manual camera input immediately disengages
+            // autopilot"*. The reasoning behind the ask is the nationals: an operator who has
+            // touched ANY control has decided to drive, and a camera that keeps flying itself
+            // after somebody reached for the desk is the failure that reads worst on a stream.
+            //
+            // ⚠️ THE COST IS REAL AND IS ACCEPTED: calling a replay of the autopilot's own shot
+            // now hands the camera back, so an operator who wants the autopilot afterwards
+            // presses the toggle again. `docs/TODO.md` § 134.3 records both halves so the next
+            // session reads the argument rather than rediscovering it.
+            // -------------------------------------------------------------------
+            if (Fired(_replayKey) || Fired(_pauseKey) || Fired(_mark) || Fired(_recall))
+                return true;
+
+            if (Mouse.current != null
+                && Mathf.Abs(Mouse.current.scroll.ReadValue().y) > 0.01f) return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// The autopilot toggle, read every frame in both states.
+        ///
+        /// ⚠️ IT CANNOT LIVE IN `StepKeys`, which is one of the three steps the autopilot skips.
+        /// A toggle that only works while the feature is off is a feature that cannot be turned
+        /// off.
+        /// </summary>
+        private void StepAutopilotKey()
+        {
+            if (_director == null) _director = GetComponent<SpectatorDirector>();
+            if (_director == null) _director = gameObject.AddComponent<SpectatorDirector>();
+
+            if (_autopilotToggle != null && _autopilotToggle.WasPressedThisFrame())
+            {
+                _director.Toggle();
+                UI.Hud.Instance?.ShowToast(
+                    _director.Engaged ? "AUTOPILOT ON  ·  MOVE TO TAKE OVER" : "AUTOPILOT OFF",
+                    1.2f);
+            }
+        }
+
+        private InputAction _autopilotToggle;
+        private InputAction _cycleTarget, _freeFly, _povToggle, _mark, _recall;
+        private InputAction _pauseKey, _replayKey;
+
+        /// <summary>
+        /// True when an action exists and fired this frame.
+        ///
+        /// ⚠️ THE NULL CHECK IS NOT DEFENSIVE PADDING. `FindAction(..., false)` returns null
+        /// rather than throwing when an asset predates an action, and a spectator camera that
+        /// null-referenced every frame on somebody's older `TumbangPreso.inputactions` would take
+        /// the whole broadcast down rather than losing one key.
+        /// </summary>
+        private static bool Fired(InputAction a) => a != null && a.WasPressedThisFrame();
+
+        /// <summary>
+        /// Direct broadcast cut to a seat's eye line. Function keys avoid colliding with the
+        /// number-row slow-motion controls and give an operator four predictable camera cuts
+        /// without tabbing through the roster on air.
+        /// </summary>
+        // -------------------------------------------------------------------
+        // § THE HANDS OF WHOEVER IS BEING WATCHED
+        //
+        // ⚠️⚠️ A POV CUT SHOWED A FIRST-PERSON VIEW WITH NO FIRST PERSON IN IT. 🧑 2026-08-29:
+        // *"f1-f4 for spectator show FPP arms of the ppl ur lookinga t in fpp"*. `CameraRig`
+        // mounts `ViewmodelArms` on the LOCAL player's camera and drives them from that player's
+        // `Carrier` and `CombatVerbs`; this camera is a different object, so pressing F1 parked a
+        // lens at somebody's eyes and drew an empty street. The whole point of a POV cut is that
+        // it is what THEY see.
+        //
+        // ⚠️ THE BODY IS HIDDEN AT THE SAME TIME, AND WITHOUT THAT IT LOOKS WORSE THAN NO ARMS.
+        // `PovForwardOffset` puts the lens 0.34 m in front of the eyes so the chibi head is not
+        // rendered from inside it, which means the unit's REAL arms are in frame. Adding a
+        // viewmodel on top gives four arms. `CameraRig.ApplyFppSelfHide` solves the same problem
+        // for the local player with the same mechanism: `ShadowsOnly`, so the body still casts
+        // its shadow into the shot and only the camera stops seeing it.
+        //
+        // ⚠️ AND IT IS RESTORED WHENEVER POV ENDS, INCLUDING ON A TARGET SWITCH. The hide is per
+        // renderer and per target; leaving it on a unit the operator has cut away from would take
+        // a player out of every other camera in the room, including their own.
+        // -------------------------------------------------------------------
+
+        private CameraSystem.ViewmodelArms _povArms;
+        private Transform _povViewmodel;
+        private CharacterMotor _povHidden;
+        private readonly List<Renderer> _povHiddenRenderers = new List<Renderer>();
+        private readonly List<UnityEngine.Rendering.ShadowCastingMode> _povShadowModes =
+            new List<UnityEngine.Rendering.ShadowCastingMode>();
+        private Slipper _povCarriedSlipper;
+        private readonly List<Renderer> _povCarriedRenderers = new List<Renderer>();
+        private readonly List<UnityEngine.Rendering.ShadowCastingMode> _povCarriedModes =
+            new List<UnityEngine.Rendering.ShadowCastingMode>();
+
+        private void StepPovArms(float delta)
+        {
+            bool wanted = _pov && _follow != null;
+
+            if (!wanted)
+            {
+                if (_povViewmodel != null) _povViewmodel.gameObject.SetActive(false);
+                RestorePovBody();
+                return;
+            }
+
+            EnsurePovArms();
+            if (_povArms == null) return;
+
+            if (_povHidden != _follow) HidePovBody(_follow);
+
+            if (!_povViewmodel.gameObject.activeSelf) _povViewmodel.gameObject.SetActive(true);
+
+            _povArms.MatchCharacter(_follow);
+
+            // ⚠️ POLLED, NOT EVENT-DRIVEN, for the reason `CameraRig` gives on the same three
+            // lines: what a unit holds changes DURING a round, and an event-driven copy shows the
+            // wrong shoe until the next swap.
+            var carrier = _follow.GetComponent<Carrier>();
+            var held = carrier != null ? carrier.Held : null;
+            ApplyPovCarriedHide(held);
+
+            _povArms.SetHolding(held != null);
+
+            // ⚠️ THE SAME THREE SOURCES IN THE SAME ORDER AS THE LOCAL RIG: a throw wind-up needs
+            // something in hand, so a TAYA would fall through every branch and the POV cut of the
+            // one player everybody is watching would be the one with a dead arm.
+            float charge = -1.0f;
+            if (held != null && carrier != null) charge = carrier.ObservedChargePower;
+
+            if (charge < 0.0f)
+            {
+                var verbs = _follow.GetComponent<CombatVerbs>();
+                if (verbs != null) charge = verbs.ObservedLungeCharge;
+            }
+
+            _povArms.SetCharge(charge,held != null && carrier != null ? carrier.ObservedPektusSpin : 0);
+
+            if (held != null) _povArms.MatchSkin(held);
+
+            _povArms.StepVisuals(delta);
+        }
+
+        private void EnsurePovArms()
+        {
+            if (_povArms != null) return;
+
+            // ⚠️ THE SAME SEAT AND SCALE THE LOCAL RIG USES, read from it rather than retyped.
+            // Two viewmodels that disagree about where a hand is would make a POV cut look like a
+            // different game from the player's own screen, which is the one thing it must not.
+            var go = new GameObject("~SpectatorViewmodelArms");
+            go.transform.SetParent(transform, false);
+            go.transform.localScale = Vector3.one * CameraSystem.CameraRig.ViewmodelScale;
+            go.transform.localPosition = CameraSystem.CameraRig.ViewmodelSeat;
+            go.transform.localRotation = Quaternion.identity;
+
+            _povArms = go.AddComponent<CameraSystem.ViewmodelArms>();
+
+            foreach (var c in go.GetComponentsInChildren<Collider>(true)) Destroy(c);
+
+            _povViewmodel = go.transform;
+        }
+
+        private void HidePovBody(CharacterMotor who)
+        {
+            RestorePovBody();
+            if (who == null) return;
+
+            _povHidden = who;
+
+            foreach (var r in who.GetComponentsInChildren<Renderer>(true))
+            {
+                if (r == null) continue;
+                if (r.shadowCastingMode == UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly)
+                    continue;
+
+                _povShadowModes.Add(r.shadowCastingMode);
+                r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
+                _povHiddenRenderers.Add(r);
+            }
+        }
+
+        private void RestorePovBody()
+        {
+            RestorePovCarried();
+            for (int i = 0; i < _povHiddenRenderers.Count; i++)
+            {
+                var r = _povHiddenRenderers[i];
+                if (r == null) continue;
+                r.shadowCastingMode = i < _povShadowModes.Count
+                    ? _povShadowModes[i]
+                    : UnityEngine.Rendering.ShadowCastingMode.On;
+            }
+
+            _povHiddenRenderers.Clear();
+            _povShadowModes.Clear();
+            _povHidden = null;
+        }
+
+        private void ApplyPovCarriedHide(Slipper held)
+        {
+            // The world slipper is not parented to the body. Keep only its shadow while
+            // the POV viewmodel supplies the visible copy, and poll real item changes.
+            if (held == null && _follow != null && _povCarriedSlipper != null &&
+                _povCarriedSlipper.State == SlipperState.InFlight &&
+                _povCarriedSlipper.ThrowerSlot == _follow.PlayerSlot)
+            {
+                var fromEye = _povCarriedSlipper.transform.position +
+                    _povCarriedSlipper.DrawnCentreOffset - transform.position;
+                if (fromEye.magnitude < .25f + _povCarriedSlipper.CarrySupportExtent(fromEye))
+                    held = _povCarriedSlipper;
+            }
+            if (held == _povCarriedSlipper) return;
+            RestorePovCarried();
+            if (held == null) return;
+            _povCarriedSlipper = held;
+            foreach (var renderer in held.GetComponentsInChildren<Renderer>(true))
+            {
+                if (renderer == null || renderer.shadowCastingMode == UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly) continue;
+                _povCarriedRenderers.Add(renderer); _povCarriedModes.Add(renderer.shadowCastingMode);
+                renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
+            }
+        }
+
+        private void RestorePovCarried()
+        {
+            for (int i = 0; i < _povCarriedRenderers.Count; i++)
+                if (_povCarriedRenderers[i] != null)
+                    _povCarriedRenderers[i].shadowCastingMode = _povCarriedModes[i];
+            _povCarriedRenderers.Clear(); _povCarriedModes.Clear(); _povCarriedSlipper = null;
+        }
+
+        private void SelectPlayerPov(int slot)
+        {
+            CharacterMotor wanted = null;
+
+            foreach (var unit in Spectatable)
+            {
+                if (unit == null || unit.PlayerSlot != slot) continue;
+                wanted = unit;
+                break;
+            }
+
+            if (wanted == null)
+            {
+                foreach (var unit in FindObjectsByType<CharacterMotor>(FindObjectsInactive.Exclude,
+                                                                       FindObjectsSortMode.None))
+                {
+                    if (unit == null || unit.PlayerSlot != slot) continue;
+                    wanted = unit;
+                    break;
+                }
+            }
+
+            if (wanted == null)
+            {
+                UI.Hud.Instance?.ShowToast($"P{slot + 1} POV IS NOT AVAILABLE", 1.0f);
+                return;
+            }
+
+            // A direct function-key cut is a manual camera decision too.
+            if (_director != null) _director.Engaged = false;
+            _follow = wanted;
+            _followIndex = -1;
+            _pov = true;
+            UI.Hud.Instance?.ShowToast($"POV CUT  ·  P{slot + 1} · {wanted.DisplayName()}", 0.9f);
+        }
+
+        /// <summary>
+        /// Tab / F / V, read straight off the keyboard device.
+        ///
+        /// ⚠️ RAW KEYS RATHER THAN INPUT ACTIONS, ON PURPOSE AND CARRIED OVER FROM THE .gd:
+        /// adding three actions for a spectator-only convenience would mean three more rows
+        /// in the rebind panel, three more conflict checks, and a settings migration — for a
+        /// mode with no gameplay stake at all.
+        ///
+        /// The Godot original had to fight for Tab specifically (it is bound to
+        /// `ui_focus_next` and the Viewport ate it during the GUI phase, so the follow cycle
+        /// could not be reached at all and read as "not built"). Unity's Input System does
+        /// not route keys through UI focus the same way, so this is a plain device read —
+        /// but if a UI package is ever added that captures Tab, THAT is the bug this note is
+        /// here to name.
+        /// </summary>
+        private void StepKeys()
+        {
+            // These actions include pad bindings; no keyboard device is required.
+            if (Fired(_cycleTarget)) CycleFollow();
+
+            if (Fired(_freeFly))
+            {
+                _follow = null;
+                _followIndex = -1;
+                _pov = false;
+                // Leaving follow hands the camera back where it currently IS rather than
+                // where it was when follow started, or the view would jump across the map.
+                _targetPosition = transform.position;
+            }
+
+            // A no-op in free flight rather than an error: there is no POV of nobody, and a
+            // key that silently arms a mode you cannot see is worse than one that waits.
+            if (Fired(_povToggle) && _follow != null) _pov = !_pov;
+        }
+
+        private void ApplyRotation()
+            => transform.rotation = Quaternion.Euler(_pitchDeg, _yawDeg, 0.0f);
+
+        /// <summary>
+        /// Cycles the follow target through every live unit, then back to free flight.
+        /// Rebuilt on every press rather than cached: a unit can be spawned, destroyed or
+        /// handed to an AI mid-match, and a stale list would follow a dangling reference.
+        /// </summary>
+        private void CycleFollow()
+        {
+            var units = new List<CharacterMotor>();
+            foreach (var unit in Spectatable)
+                if (unit != null) units.Add(unit);
+
+            if (units.Count == 0)
+            {
+                // Fall back to a scan when nothing registered — the registry is populated at
+                // spawn, and a probe scene that builds characters by hand does not go
+                // through it.
+                units.AddRange(FindObjectsByType<CharacterMotor>(FindObjectsInactive.Exclude));
+            }
+
+            if (units.Count == 0)
+            {
+                _follow = null;
+                _followIndex = -1;
+                return;
+            }
+
+            _followIndex += 1;
+            if (_followIndex >= units.Count)
+            {
+                _follow = null;
+                _followIndex = -1;
+                _targetPosition = transform.position;
+                return;
+            }
+
+            _follow = units[_followIndex];
+        }
+
+        /// <summary>The on-screen legend. Built by the match installer rather than here so
+        /// the spectator stays a camera and nothing else — the same rule that keeps gameplay
+        /// state out of it.</summary>
+        /// <summary>
+        /// The on-screen legend, built from the LIVE BINDINGS.
+        ///
+        /// ⚠⚠ IT WAS A STRING LITERAL NAMING TAB, V, F, R, P, B, N AND C, AND EVERY ONE OF
+        /// THOSE IS REBINDABLE AS OF 2026-08-27. `docs/VISION.md` § 3 is explicit about what that
+        /// costs: *"Key labels come from the live binding, never from a literal. A screen that
+        /// teaches the wrong key is worse than one that teaches none."* The literal was correct
+        /// on the day it was written and would have started lying the first time anybody opened
+        /// the settings panel.
+        ///
+        /// ⚠️ F1 TO F4 AND THE THREE SPEED DIGITS STAY SPELLED OUT, because they are a
+        /// positional and a numeric set rather than single actions. See `StepBroadcastKeys`.
+        /// </summary>
+        public static string ControlsText()
+        {
+            var asset = Resources.Load<InputActionAsset>("TumbangPreso");
+
+            string Key(string action) => Settings.Rebinding.DisplayNameFor(asset, action).ToUpperInvariant();
+
+            // ⚠️ `WASD fly` IS GONE ON PURPOSE. 🧑 2026-08-29, pointing at this overlay:
+            // *"remove live netwrok here as well as WASD FLY"*. It is the one item on the line
+            // that teaches nothing: every other entry names a key the player would not guess,
+            // while WASD is the same walk the whole game is already played with, and the status
+            // line above it already says `FREE FLIGHT` with the speed.
+            return "SPECTATOR    F1-F4 player POV · " + Key("SpectatorCycleTarget")
+                 + " follow · " + Key("SpectatorPov") + " POV/chase · " + Key("SpectatorFreeFly")
+                 + " free · WHEEL speed/zoom · " + Key("SpectatorAutopilot") + " autopilot\n"
+                 + "BROADCAST    " + Key("SpectatorReplay") + " replay · " + Key("SpectatorPause")
+                 + " pause · 1/2/3 speed .25/.5/1x · " + Key("SpectatorMark") + " save cam · "
+                 + Key("SpectatorRecall") + " recall · " + Key("SpectatorControls") + " controls";
+        }
+
+        /// <summary>
+        /// ⚠️ §2.6 — WHAT THE CAMERA IS DOING RIGHT NOW, which the static legend cannot say.
+        /// Polled once a frame by the HUD's spectator branch. Both numbers on it are ones a
+        /// person framing a shot is actively changing and cannot otherwise see: turning the
+        /// wheel produced no feedback at all, so "am I at 3 m/s or 40" was answered by flying
+        /// and finding out — twice, because the wheel means two different things.
+        ///
+        /// Returns a plain string and reads nothing outside this component, so the HUD does
+        /// not have to know what a follow target is.
+        /// </summary>
+        public string StatusText()
+        {
+            string broadcast = "";
+            if (_replaying)
+                broadcast = $"⏪ REPLAY {_replayReason}  ·  {_replayClock:0.0}s / {ReplaySeconds:0.0}s  ·  LIVE CONTINUES  |  ";
+            else if (_broadcastPaused)
+                broadcast = "⏸ TACTICAL PAUSE  |  ";
+            else if (_selectedTimeScale < 0.99f)
+                broadcast = $"SLOW-MO {_selectedTimeScale:0.##}x  |  ";
+
+            // ⚠️⚠️ THERE IS NO `● LIVE NETWORK` PREFIX ANY MORE. 🧑 2026-08-29: *"remove live
+            // netwrok here as well as WASD FLY"*, and *"remove live here too"* about the red bug
+            // in the corner, which is the same word in the other place.
+            //
+            // ⚠️ THE THREE BRANCHES ABOVE STAY, AND THAT IS THE WHOLE DISTINCTION. Replay, pause
+            // and slow-mo each say the frame is NOT the present moment, which a watcher cannot
+            // work out by looking. Live was the else: it fired whenever none of those did, so it
+            // only ever announced the ordinary case, and it announced it on a networked match
+            // and stayed silent on a local one, which makes it a netcode readout wearing a
+            // broadcast label.
+
+            // ⚠️ THE AUTOPILOT ANNOUNCES ITSELF, AND IT HAS TO. A camera that moves on its own
+            // with nothing on screen saying so is indistinguishable from a camera somebody else
+            // is flying, which is the first thing an operator would report as a bug.
+            if (AutopilotEngaged)
+                return $"{broadcast}AUTOPILOT  ·  {_director.ShotName()}  ·  move to take over";
+
+            if (_follow != null)
+            {
+                if (_pov) return $"{broadcast}POV  {FollowName()}  ·  through their eyes";
+                return $"{broadcast}FOLLOWING  {FollowName()}  ·  {_followDistance:F1} m";
+            }
+            return $"{broadcast}FREE FLIGHT  ·  {_speed:F1} m/s";
+        }
+
+        /// <summary>Where this unit's eyes are. A Person stands; a lata and a tsinelas lie on
+        /// the street. Read off IsPerson — the same property the camera directive itself is
+        /// derived from — rather than off a per-class table, so a new roster entry needs no
+        /// edit here.</summary>
+        private float PovEyeHeight()
+            => _follow == null || _follow.IsPerson ? PovEyeHeightPerson : PovEyeHeightProp;
+
+        /// <summary>
+        /// The followed unit's name, in the words the rest of the game uses for it rather
+        /// than its object name — a legend that says `TeamAProp@3` is a debug print with a
+        /// nicer font.
+        ///
+        /// ⚠️⚠️ THIS THREW ON EVERY CALL IN GODOT UNTIL 2026-08-01 AND NOTHING CAUGHT IT. It
+        /// read `character.team`, a property the HARRYDAKS pivot renamed to `player_slot`, so
+        /// every frame the legend drew it raised "Invalid access to property or key 'team'".
+        /// It survived because the spectator's own probes never rendered the legend.
+        ///
+        /// ⚠️ AND THE STRING IT WAS BUILDING DESCRIBED A DELETED GAME. There are no teams
+        /// (`Design.md` §1 — four players, one taya, role derived from the round number) and
+        /// no playable props (§12), so "TEAM A · LATA" was three wrong words out of three.
+        /// </summary>
+        private string FollowName()
+        {
+            if (_follow == null) return "";
+            return $"P{_follow.PlayerSlot + 1} · {_follow.DisplayName()} · {(_follow.IsDefender ? "DEFENDER" : "ATTACKER")}";
+        }
+    }
+
+    /// <summary>
+    /// Final local render pass for the spectator's replay buffer. It is attached at runtime
+    /// after the colour grade, has no network component, and only copies pixels owned by this
+    /// camera. Keeping it separate also means a gameplay camera can never record or display a
+    /// replay by sharing a helper intended for the spectator.
+    /// </summary>
+    internal sealed class SpectatorReplayCapture : MonoBehaviour
+    {
+        public SpectatorCamera Owner { get; set; }
+
+        private void OnRenderImage(RenderTexture source, RenderTexture destination)
+        {
+            Graphics.Blit(source, destination);
+            Owner?.CaptureReplayFrame(source);
+        }
+    }
+}

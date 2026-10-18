@@ -1,0 +1,30 @@
+0.000	89.980	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.480	Quiet	QuietEstablish	the street	1	0
+1.001	88.980	Quiet	QuietEstablish	the street	1	0
+1.502	88.480	Quiet	QuietEstablish	the street	1	0
+2.003	87.980	Quiet	QuietEstablish	the street	1	0
+2.503	87.480	ThrowPrep	Objective	throw · SORAYA	2	0
+3.004	86.981	ThrowPrep	Objective	throw · SORAYA	2	0
+3.504	86.481	ThrowPrep	Objective	throw · SORAYA	2	0
+4.005	85.981	Quiet	QuietEstablish	the street	4	0
+4.505	85.481	Quiet	QuietEstablish	the street	4	0
+5.215	84.781	Quiet	QuietEstablish	the street	4	0
+5.716	84.261	Quiet	QuietEstablish	the street	4	0
+6.216	83.761	ThrowPrep	Objective	throw · YASMIN	5	0
+6.717	83.261	ThrowPrep	Objective	throw · YASMIN	5	0
+7.219	82.761	SlipperLanded	Objective	the can	5	0
+7.721	82.261	SlipperLanded	Objective	the can	5	0
+8.221	81.761	SlipperLanded	Objective	the can	5	0
+8.722	81.261	SlipperLanded	Objective	the can	5	0
+9.222	80.762	Retrieval	Chase	retrieval · SORAYA	6	0
+9.723	80.262	Retrieval	Chase	retrieval · SORAYA	6	0
+10.224	79.762	Quiet	QuietEstablish	the street	7	0
+10.724	79.262	Quiet	QuietEstablish	the street	7	0
+11.225	78.762	Quiet	QuietEstablish	the street	7	0
+11.726	78.262	Quiet	QuietEstablish	the street	7	0
+12.226	77.762	Quiet	QuietEstablish	the street	7	0
+12.726	77.262	Retrieval	Chase	retrieval · YASMIN	9	0
+13.227	76.762	Retrieval	Chase	retrieval · YASMIN	9	0
+13.728	76.262	Retrieval	Chase	retrieval · SORAYA	9	0
+14.229	75.762	Retrieval	Chase	retrieval · SORAYA	9	0
+14.730	75.262	ThrowPrep	Objective	throw · YASMIN	10	0

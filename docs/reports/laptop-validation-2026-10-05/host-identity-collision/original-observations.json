@@ -1,0 +1,20 @@
+{
+  "observations": [
+    "[NetApproval] peer=0 approved=True reason=",
+    "[NetApproval] peer=0 approved=True reason=",
+    "[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.EnsureStoppedAsync (System.Nullable`1[T] joinAttempt) [0x0005b] in <314d354e0f5b4b4d89b1394faf4bbd8f>:0 ",
+    "[NetLifecycle] server-stopped wasHost=True requestedStop=True",
+    "[NetApproval] peer=0 approved=True reason=",
+    "[NetApproval] peer=101 approved=True reason=",
+    "[HostCollision] approved=True keepsHost=False leaderBefore=0 leaderAfter=101 listening=True",
+    "[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.EnsureStoppedAsync (System.Nullable`1[T] joinAttempt) [0x0005b] in <314d354e0f5b4b4d89b1394faf4bbd8f>:0 ",
+    "[NetLifecycle] server-stopped wasHost=True requestedStop=True",
+    "[NetApproval] peer=0 approved=True reason=",
+    "[NetApproval] peer=102 approved=True reason=",
+    "[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.EnsureStoppedAsync (System.Nullable`1[T] joinAttempt) [0x0005b] in <314d354e0f5b4b4d89b1394faf4bbd8f>:0 ",
+    "[NetLifecycle] server-stopped wasHost=True requestedStop=True",
+    "[NetApproval] peer=0 approved=True reason=",
+    "[NetApproval] peer=101 approved=True reason=",
+    "[NetLifecycle] server-stopped wasHost=True requestedStop=False"
+  ]
+}

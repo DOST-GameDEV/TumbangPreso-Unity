@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 05:50:08Z" end-time="2026-10-06 05:50:09Z" duration="0.7812805">
+  <test-suite type="TestSuite" id="3305" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1878" result="Passed" start-time="2026-10-06 05:50:08Z" end-time="2026-10-06 05:50:09Z" duration="0.781281" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3297" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1878" result="Passed" start-time="2026-10-06 05:50:08Z" end-time="2026-10-06 05:50:09Z" duration="0.746902" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="20244" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3298" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1878" result="Passed" start-time="2026-10-06 05:50:08Z" end-time="2026-10-06 05:50:09Z" duration="0.721423" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3301" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1876" result="Passed" start-time="2026-10-06 05:50:08Z" end-time="2026-10-06 05:50:09Z" duration="0.696527" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2880" name="SpectatorBodyRestoreTests" fullname="TumbangPreso.PlayTests.SpectatorBodyRestoreTests" classname="TumbangPreso.PlayTests.SpectatorBodyRestoreTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-06 05:50:08Z" end-time="2026-10-06 05:50:09Z" duration="0.646925" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2882" name="ActiveFppRestoresItsOwnHideAfterTheEmote" fullname="TumbangPreso.PlayTests.SpectatorBodyRestoreTests.ActiveFppRestoresItsOwnHideAfterTheEmote" methodname="ActiveFppRestoresItsOwnHideAfterTheEmote" classname="TumbangPreso.PlayTests.SpectatorBodyRestoreTests" runstate="Runnable" seed="1345154857" result="Passed" start-time="2026-10-06 05:50:08Z" end-time="2026-10-06 05:50:09Z" duration="0.467342" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2883" name="ImmediatePublicWatchHandoffAlreadyRestoresTheBody" fullname="TumbangPreso.PlayTests.SpectatorBodyRestoreTests.ImmediatePublicWatchHandoffAlreadyRestoresTheBody" methodname="ImmediatePublicWatchHandoffAlreadyRestoresTheBody" classname="TumbangPreso.PlayTests.SpectatorBodyRestoreTests" runstate="Runnable" seed="1280006138" result="Passed" start-time="2026-10-06 05:50:09Z" end-time="2026-10-06 05:50:09Z" duration="0.042873" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2884" name="InactiveFollowDoesNotLeaveTheNewBodyHidden" fullname="TumbangPreso.PlayTests.SpectatorBodyRestoreTests.InactiveFollowDoesNotLeaveTheNewBodyHidden" methodname="InactiveFollowDoesNotLeaveTheNewBodyHidden" classname="TumbangPreso.PlayTests.SpectatorBodyRestoreTests" runstate="Runnable" seed="1418450175" result="Passed" start-time="2026-10-06 05:50:09Z" end-time="2026-10-06 05:50:09Z" duration="0.038405" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2885" name="InactiveReleasePreservesTheAuthoredShadowlessMode" fullname="TumbangPreso.PlayTests.SpectatorBodyRestoreTests.InactiveReleasePreservesTheAuthoredShadowlessMode" methodname="InactiveReleasePreservesTheAuthoredShadowlessMode" classname="TumbangPreso.PlayTests.SpectatorBodyRestoreTests" runstate="Runnable" seed="1065125589" result="Passed" start-time="2026-10-06 05:50:09Z" end-time="2026-10-06 05:50:09Z" duration="0.039212" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2881" name="PublicWatchHandoffThenEmoteReleaseKeepsTheBodyVisible" fullname="TumbangPreso.PlayTests.SpectatorBodyRestoreTests.PublicWatchHandoffThenEmoteReleaseKeepsTheBodyVisible" methodname="PublicWatchHandoffThenEmoteReleaseKeepsTheBodyVisible" classname="TumbangPreso.PlayTests.SpectatorBodyRestoreTests" runstate="Runnable" seed="1564746507" result="Passed" start-time="2026-10-06 05:50:09Z" end-time="2026-10-06 05:50:09Z" duration="0.041885" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

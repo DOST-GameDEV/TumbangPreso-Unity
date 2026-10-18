@@ -1,0 +1,16 @@
+{
+  "attemptedAt": "2026-10-05T12:31:46.800601+00:00",
+  "action": "PowerShell Remove-Item -LiteralPath exact4obsolete task-owned internal build directories, with retained manifests/receipts, containment/process/reparse validation",
+  "result": "CreateProcess rejected before execution: blocked by policy",
+  "detailedRule": "Not supplied",
+  "autoReviewAttribution": "Unproven; do not label Auto-review",
+  "removedDirectories": 0,
+  "targets": [
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Builds\\integration-23168e908-1004",
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Builds\\integration-3947a82e8-1004",
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Builds\\integration-5d600801e-1004",
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Builds\\integration-9226f4f78-1004"
+  ],
+  "targetsStillPresent": true,
+  "retryOrAlternateMethod": "Prohibited; preserve exact rejected targets"
+}

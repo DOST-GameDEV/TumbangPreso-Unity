@@ -1,0 +1,19 @@
+{
+  "sourceRef": "d2f0b68c24d8a1cda7922b3feabc88511c351e75",
+  "pid": 23916,
+  "exitCode": 2,
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.OwnerMenuEditsTests.MeasureCurrentMapPreloadWithoutStartingAMatch",
+      "result": "Failed",
+      "message": "  Boot asset loading unexpectedly started a match.\n  Expected: null\n  But was:  <~GameServices (TumbangPreso.RoundDirector)>\n"
+    }
+  ],
+  "exactCaseCount": true,
+  "terminal": true,
+  "protectedCount": 21136,
+  "inputRestored": true,
+  "editorInputRestored": true,
+  "profileRestored": true,
+  "qualityRestored": true
+}

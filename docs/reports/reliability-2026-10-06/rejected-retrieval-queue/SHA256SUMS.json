@@ -1,0 +1,15 @@
+{
+  "raw/candidate-classification.json": "8473281a24304fa668669d1b76c7d7ae96f620e17b1b32b651eeb94966a79f35",
+  "raw/candidate-core.trx": "f4070d4a9322c52c20d0e38d4680263baa4a98d4f2d847fb11f1861a15fe038f",
+  "raw/candidate-result.json": "2e14f10ae0a7d7af284fe1279ba181fafba255603f844bd372fe3a53a686856d",
+  "raw/candidate-results.xml": "51a72a20840ee04d956f825a466169407fdb05359b5b9df214f19e24cd1260ed",
+  "raw/core-tests.cs": "05cf3056defb7019af2202656f8937c4b1446f0ed680193cc3d40c0b831f91e0",
+  "raw/MatchRecord-candidate.cs": "eea56465fe115174c0022bdae8ccd665bb556dff46095caa08b991dbd7c00ec6",
+  "raw/MatchRecord-original.cs": "05ad3c7a92072fa0d0677dc5db0dd291c04a9492cb880dcf70105a2e915b4d14",
+  "raw/native-tests.cs": "cd5de49b7e4f6e25cbf171acdb3ae923fee935922836b110f3d083ba77b6d224",
+  "raw/original-case-count-classification.json": "2724182cbc5041da4f6f98d6c3ae3cf29ac13d36396ef8e97271565a0b7949ee",
+  "raw/original-classification.json": "8473281a24304fa668669d1b76c7d7ae96f620e17b1b32b651eeb94966a79f35",
+  "raw/original-core.trx": "6be9e8aab1b6204b8e378f9890ea94f511417e7c1199666ea778f63b151d164e",
+  "raw/original-result.json": "bcca3121878d2008f326e4e5a5d74490f1c63a89af5d86a95c3fc9be19e3ed48",
+  "raw/original-results.xml": "17655ced450e8c9fc22ac5cf3bbec9efdb08f6fadb85c6c007fc210b19249254"
+}

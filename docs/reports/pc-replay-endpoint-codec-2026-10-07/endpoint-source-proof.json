@@ -1,0 +1,77 @@
+{
+  "ref": "0833f379ecf196a669bfca0904216edc046aef05",
+  "sourcePaths": [
+    "Assets/TumbangPreso/Runtime/Camera/LocalReplayRecorder.cs",
+    "Assets/TumbangPreso/Runtime/Camera/MatchReplayArchive.cs",
+    "Assets/TumbangPreso/Tests/PlayMode/ArenaFxRecordedTests.cs"
+  ],
+  "exactNativeSourceCount": 3,
+  "unreconstructedNativeSources": [],
+  "rawReceiptCount": 31,
+  "allRawHashesVerified": true,
+  "productionSameAcrossNatural24AndClosing26": true,
+  "original25": {
+    "pid": 55972,
+    "terminal": true,
+    "exitCode": 2,
+    "passed": 0,
+    "failed": 2,
+    "expected": 2,
+    "allInputsRestored": true,
+    "existingPrefsRestored": 13,
+    "cases": [
+      {
+        "name": "ClosingBetweenPoseSamplesRetainsTheFinalRenderedFrameAndActualEndpoint",
+        "result": "Failed"
+      },
+      {
+        "name": "ClosingImmediatelyAfterSegmentFlushRetainsTheFinalRenderedFrameAndActualEndpoint",
+        "result": "Failed"
+      }
+    ]
+  },
+  "candidate26": {
+    "pid": 33504,
+    "terminal": true,
+    "exitCode": 0,
+    "passed": 2,
+    "failed": 0,
+    "expected": 2,
+    "allInputsRestored": true,
+    "existingPrefsRestored": 13,
+    "cases": [
+      {
+        "name": "ClosingBetweenPoseSamplesRetainsTheFinalRenderedFrameAndActualEndpoint",
+        "result": "Passed"
+      },
+      {
+        "name": "ClosingImmediatelyAfterSegmentFlushRetainsTheFinalRenderedFrameAndActualEndpoint",
+        "result": "Passed"
+      }
+    ]
+  },
+  "natural-and-invalid-fixture24": {
+    "pid": 66012,
+    "terminal": true,
+    "exitCode": 2,
+    "passed": 1,
+    "failed": 2,
+    "expected": 3,
+    "allInputsRestored": true,
+    "existingPrefsRestored": 13,
+    "cases": [
+      {
+        "name": "ClosingBetweenPoseSamplesRetainsTheFinalRenderedFrameAndActualEndpoint",
+        "result": "Failed"
+      },
+      {
+        "name": "ClosingImmediatelyAfterSegmentFlushRetainsTheFinalRenderedFrameAndActualEndpoint",
+        "result": "Failed"
+      },
+      {
+        "name": "NaturalArenaMatchWritesRenderFrameEffectsAndActualViewerSeeksThem",
+        "result": "Passed"
+      }
+    ]
+  }
+}

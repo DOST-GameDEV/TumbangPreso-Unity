@@ -53,7 +53,7 @@ namespace TumbangPreso.PlayTests
         public IEnumerator RagoCurrentIntroductionReturnsToHisLiveAbility()
             => Profiles(new[] { "sean" });
         [UnityTest, Timeout(90000)]
-        public IEnumerator BasilioCurrentIntroductionReturnsToHisLiveAbility()
+        public IEnumerator DanteCurrentIntroductionReturnsToHisLiveAbility()
             => Profiles(new[] { "dante" });
         [UnityTest, Timeout(90000)]
         public IEnumerator YasminCurrentIntroductionReturnsToHerLiveAbility()

@@ -51,22 +51,19 @@ namespace TumbangPreso.UI
                 var seat = _seats[i].a > 0 ? _seats[i] : PlayerIdentity.Colour(i % 4);
                 var centre = new Vector2(x, y);
                 float radius = Diameter * .5f;
-                var dark = HudDraw.Shadow; dark.a = .55f;
+                // Toy beads: octagons, the family's cut. Played rounds are solid, the round in play
+                // is larger in a cream collar, and rounds to come are hollow in their taya's colour.
+                Rect Bead(float h) => new Rect(centre.x - h, centre.y - h, h * 2, h * 2);
                 if (round == Current)
                 {
-                    HudDraw.Disc(vh, centre, radius + 4.5f, dark, 24);
-                    HudDraw.Arc(vh, centre, radius + 4.5f, radius + 2f, 90, 360, Ring, 32);
-                    HudDraw.Disc(vh, centre, radius + .5f, seat, 24);
+                    HudDraw.Octagon(vh, Bead(radius + 4.5f), HudDraw.Cream);
+                    HudDraw.Octagon(vh, Bead(radius + 1.5f), seat);
                 }
-                else if (round < Current)
-                {
-                    HudDraw.Disc(vh, centre, radius + 1.5f, dark, 20);
-                    HudDraw.Disc(vh, centre, radius, seat, 20);
-                }
+                else if (round < Current) HudDraw.Octagon(vh, Bead(radius), seat);
                 else
                 {
-                    HudDraw.Disc(vh, centre, radius + 1.5f, dark, 20);
-                    HudDraw.Arc(vh, centre, radius, radius - 2.5f, 90, 360, seat, 24);
+                    HudDraw.Octagon(vh, Bead(radius), seat);
+                    HudDraw.Octagon(vh, Bead(radius - 3f), new Color32(44, 26, 15, 255));
                 }
                 x += Diameter + Gap;
             }

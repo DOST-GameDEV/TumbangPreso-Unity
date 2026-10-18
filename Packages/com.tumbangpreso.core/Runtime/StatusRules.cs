@@ -73,6 +73,12 @@ namespace TumbangPreso.Core
         Haunted = 12,
         /// <summary>Electro. Ability casts disabled for five seconds; movement and ordinary actions remain.</summary>
         Zapped = 13,
+        /// <summary>Nemu's LET THEM IN (owner 2026-10-11): a ghost rides the body for 15 s and contests its steering
+        /// (`NemuRules`). Control is kept: no stun, no lost actions, the camera stays the player's.</summary>
+        Possessed = 14,
+        /// <summary>Nemu's DON'T LOOK (owner 2026-10-15): a ghost covers the eyes for 2 s, and a slow that starts at 50 % wears
+        /// off over 5 s (`NecroRules.DontLookSpeedScale`). One clock: blind while more than 3 s of it remain.</summary>
+        Blinded = 15,
     }
 
     /// <summary>One row of the owner's status table.</summary>
@@ -134,10 +140,22 @@ namespace TumbangPreso.Core
         /// <summary>*"Prevents movement or interaction for 5 seconds."* The tag's own number.</summary>
         public const float TaggedSeconds = Balance.TagStunTime;
 
-        /// <summary>Concussed: 2.5 s, speed x0.25, no sprint, aim wobble up to 9 degrees.</summary>
-        public const float ConcussedSeconds = 2.5f;
+        /// <summary>Concussed: 5 s, speed x0.25, no sprint, aim wobble up to 16 degrees, and a throw may misfire (below). The Wiki's *"75% slower for 5 seconds"*
+        /// (owner approved the 2026-10-16 presentation plan, which follows the Wiki; was 2.5 s).</summary>
+        public const float ConcussedSeconds = 5.0f;
         public const float ConcussedSpeedScale = 0.25f;
-        public const float ConcussedAimWobbleDegrees = 9.0f;
+        public const float ConcussedAimWobbleDegrees = 16.0f;
+
+        /// <summary>
+        /// A Concussed throw can MISFIRE (owner, 2026-10-17: *"inaccuracy gets increased by a lot ( u throw slipper somewhere but
+        /// it FLIES and theres a big chance it flies or goes somewhere completley off)"*). On the host, each throw while Concussed
+        /// has this chance to go wild: turned 35 to 80 degrees off the aim to a random side, kicked 8 to 28 degrees higher and
+        /// 10 to 40 per cent faster, so it sails off somewhere else entirely. A throw that does not misfire still takes the wobble.
+        /// </summary>
+        public const float ConcussedMisfireChance = 0.6f;
+        public const float ConcussedMisfireYawMin = 35.0f, ConcussedMisfireYawMax = 80.0f;
+        public const float ConcussedMisfirePitchMin = 8.0f, ConcussedMisfirePitchMax = 28.0f;
+        public const float ConcussedMisfireSpeedMin = 1.1f, ConcussedMisfireSpeedMax = 1.4f;
 
         /// <summary>Feared: 1.5 s of fleeing from the source at run speed; the held slipper drops at once.</summary>
         public const float FearedSeconds = 1.5f;
@@ -161,6 +179,8 @@ namespace TumbangPreso.Core
         /// <summary>*"Hallucinations of slippers randomly appear on your screen for 7.5 seconds."*</summary>
         public const float HexedSeconds = 7.5f;
         public const float HauntedSeconds = 7.5f;
+        public const float PossessedSeconds = NemuRules.PossessedSeconds;
+        public const float BlindedSeconds = NecroRules.DontLookSlowSeconds;
 
         private static readonly StatusRule[] Table =
         {
@@ -193,7 +213,7 @@ namespace TumbangPreso.Core
                 blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
             // ⚠️ APPENDED (the enum's note). ABILITY-2.
             new StatusRule(StatusKind.Concussed, "CONCUSSED",
-                "Dizzy for 2.5 seconds: 75% slower, no sprint, and throws wobble off aim.",
+                "Dizzy for 5 seconds: 75% slower, no sprint, and throws wobble off aim.",
                 "Dizzy: Slower, No Sprint, Wobbly Aim",
                 ConcussedSeconds, ConcussedSpeedScale, blocksMovement: false, blocksInteraction: false,
                 blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
@@ -231,6 +251,18 @@ namespace TumbangPreso.Core
             new StatusRule(StatusKind.Zapped, "ZAPPED",
                 "Prevents ability casts for 5 seconds.", "Disabled Ability Cast",
                 ZappedSeconds, 1, blocksMovement: false, blocksInteraction: false,
+                blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
+            // ⚠️ APPENDED (the enum's note). Nemu's LET THEM IN, `docs/reports/nemu-ultimate-2026-10-11/direction.md`.
+            new StatusRule(StatusKind.Possessed, "POSSESSED",
+                "For 15 seconds a ghost is inside you: 10% slower, and it drags your steering toward danger. Push against it to hold your ground; fighting wears its grip down.",
+                "Possessed: Slowed, Fight the Pull",
+                PossessedSeconds, NemuRules.PossessedSpeedScale, blocksMovement: false, blocksInteraction: false,
+                blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
+            // ⚠️ APPENDED (the enum's note). Nemu's DON'T LOOK SpeedScale is the slow's peak; it decays to none.
+            new StatusRule(StatusKind.Blinded, "BLINDED",
+                "A ghost covers your eyes for 2 seconds. You are slowed by 50%, wearing off over 5 seconds.",
+                "Blinded, Slowed (Wearing Off)",
+                BlindedSeconds, 1.0f - NecroRules.DontLookSlowPeak, blocksMovement: false, blocksInteraction: false,
                 blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
         };
 

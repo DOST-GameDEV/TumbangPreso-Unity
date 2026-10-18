@@ -119,6 +119,12 @@ namespace TumbangPreso
             ActiveDifficulty = (Difficulty)Mathf.Clamp(savedIndex, 0, 2);
         }
 
+        /// <summary>Apply the current custom room policy without rewriting this machine's preference.</summary>
+        internal static void ApplyCustomRoomPolicy(CustomRules rules)
+            => ApplyDifficulty(rules != null && rules.Bots > 0
+                ? Mathf.Clamp(rules.BotDifficulty, 0, NoBotsIndex - 1)
+                : NoBotsIndex);
+
         public static void ApplyDifficultyFromSettings()
             => ApplyDifficulty(Settings.SettingsStore.Current.AiDifficulty);
 
@@ -669,6 +675,17 @@ namespace TumbangPreso
             if (_wantedFor >= EmoteWantSeconds) { _wantedEmote = null; return false; }
 
             if (!SafeToEmote() || !emotes.CanEmote()) return false;
+
+            // A request with unavailable rig motion cannot start a clip. Do not
+            // release gameplay keys or spend the network startup grace on it.
+            if (!emotes.HasEmoteClip(_wantedEmote))
+            {
+                _wantedEmote = null;
+                _wantedFor = 0.0f;
+                _emoteCooldown = UnityEngine.Random.Range(AiTuning.EmoteCooldownMin,
+                                                          AiTuning.EmoteCooldownMax);
+                return false;
+            }
 
             // ⚠️⚠️ THE KEYS GO DOWN BEFORE THE REQUEST, NOT AFTER IT, AND THAT ORDER IS THE FIX.
             // `EmotePlayer.Update` runs later this same frame and reads the axis this controller
@@ -1947,8 +1964,10 @@ namespace TumbangPreso
                 // a step past the line from a stand over the lata; the one with further to run
                 // back out is the one this chase can actually catch.
                 Vector3 observed = At(who).Value;
-                float depth = Confinement.Radius
-                              - Mathf.Max(Mathf.Abs(observed.x), Mathf.Abs(observed.z));
+                float boundaryReach = Confinement.Round
+                    ? Mathf.Sqrt(observed.x * observed.x + observed.z * observed.z)
+                    : Mathf.Max(Mathf.Abs(observed.x), Mathf.Abs(observed.z));
+                float depth = Confinement.Radius - boundaryReach;
                 if (depth > 0.0f) score += AiTuning.TagDepthWeight * depth;
 
                 // ⚠️ OFF THE OBSERVED POSITION, NOT THE TRUE ONE. Every other read of a rival in
@@ -2054,6 +2073,12 @@ namespace TumbangPreso
         {
             _touched.Clear();
 
+            // A plan change is not a release decision. Only the real reset channel
+            // or a retired defender action may cancel this producer's pending charge.
+            if (_lungeHeld >= 0 && (!_motor.IsDefender || !_motor.CanAct()
+                || (_carrier != null && _carrier.ChannelRatio > 0)))
+                _lungeHeld = -1.0f;
+
             // ⚠️ THE STICK IS CLEARED FIRST, THE VERBS ARE NOT. Every branch below either
             // drives or stops, exactly as the .gd's do, and clearing here makes "the plan
             // forgot to move" a stand rather than the last plan's heading held forever. The
@@ -2083,8 +2108,11 @@ namespace TumbangPreso
 
             if (!_touched.Contains(Verb.SpecialAbility)) Press(intent, Verb.SpecialAbility, false);
             if (Plan != AiPlan.Windup) _windup = false;
+            // Losing the target can fall back to Guard, Intercept or Reset. Releasing
+            // here would fire the stored dash at nobody; retain the human held input
+            // until Hunt supplies an aimed release or Carrier starts a legal reset.
+            if (_lungeHeld >= 0 && !_touched.Contains(Verb.Lunge)) Press(intent, Verb.Lunge, true);
             if (!_touched.Contains(Verb.Lunge)) Press(intent, Verb.Lunge, false);
-            if (Plan != AiPlan.Hunt) _lungeHeld = -1.0f;
             if (!_touched.Contains(Verb.Grab)) Press(intent, Verb.Grab, false);
         }
 
@@ -2687,7 +2715,16 @@ namespace TumbangPreso
                 _lungeHeld = 0.0f;
             }
 
-            _lungeHeld += dt;
+            // Other plans preserve the held button while the normal consumer
+            // continues charging. Rejoining the hunt must use that real age.
+            _lungeHeld = Mathf.Max(_lungeHeld, verbs.ObservedLungeCharge * Balance.LungeChargeTime) + dt;
+
+            // Movement stays on the bot's ordinary keyboard headings. The
+            // attack needs the motor's bounded point aim: two parallel runners
+            // can keep an off-axis bearing that no digital heading can resolve.
+            Vector3 lungeAim = AheadOf(victim, .12f).Value;
+            intent.AimPoint = lungeAim;
+            intent.FaceAimPoint = true;
 
             // ⚠️ AND THE RELEASE IS HELD BACK WHILE THE FACING POINTS OFF THE STAGE. The body
             // has walked and turned since the charge began, and letting go is what fires it.
@@ -2704,7 +2741,8 @@ namespace TumbangPreso
             // `LungeConeFloor`, so a tighter tier value would ask for an angle the bot has no
             // key for and the release would never pass its own test.
             if (_lungeHeld >= AiTuning.LungeHoldTime
-                && Facing(victim, AiTuning.EffectiveLungeCone(EffectiveDifficulty)))
+                && Facing(victim, AiTuning.EffectiveLungeCone(EffectiveDifficulty))
+                && LungeCanReach(victim, verbs.LungeChargeRatio))
             {
                 _lungeHeld = -1.0f;
                 Press(intent, Verb.Lunge, false);   // the release edge is what fires it
@@ -2713,14 +2751,113 @@ namespace TumbangPreso
 
             if (_lungeHeld >= AiTuning.LungeHoldTime + 0.45f)
             {
-                // Fully charged and still not lined up. Let it go rather than hold a dash for
-                // ever: the cooldown is 1.5 s and the attacker is leaving.
-                _lungeHeld = -1.0f;
-                Press(intent, Verb.Lunge, false);
+                // A full charge still needs an aimed release. Finish turning
+                // through the same movement input instead of spending the dash
+                // sideways just because a planner timer expired.
+                Vector3 aim = lungeAim - transform.position;
+                if (EdgeSense) _edgeGoalDistance = aim.magnitude;
+                // Keep the ordinary chase's sprint request while finishing aim.
+                // Clearing it here also prevents the normal sprint commitment.
+                Drive(intent, aim, MaySprint() && aim.magnitude > 1.5f, pausesOnTurn: false);
+                Press(intent, Verb.Lunge, true);
                 return;
             }
 
             Press(intent, Verb.Lunge, true);
+        }
+
+        private bool LungeCanReach(CharacterMotor victim, float chargeRatio)
+        {
+            if (victim == null || !ActorIsVisible(victim)) return false;
+            Vector3 forward = transform.forward;
+            forward.y = 0;
+            if (forward.sqrMagnitude < .0001f) return false;
+            forward.Normalize();
+            Vector3 walk = _motor.Velocity;
+            walk.y = 0;
+            Vector3 start = transform.position;
+            Vector3 previousBody = start;
+            Vector3 dash = Vector3.zero;
+            Vector3 targetStart = At(victim).Value;
+            Vector3 targetVelocity = HasBelief(victim) && _seenVel.TryGetValue(victim.PlayerSlot, out Vector3 measuredVelocity)
+                ? measuredVelocity : Vector3.zero;
+            targetVelocity.y = 0;
+            Vector3 previous = targetStart - start;
+            previous.y = 0;
+            // AI advances before the consumer. Releasing this frame spends the
+            // charge already accumulated, without adding the planner's new dt.
+            float speed = Balance.LungeSpeed * Mathf.Clamp(chargeRatio, Balance.LungeMinPower, 1);
+            float radius = Balance.LungeTagRadius * victim.TagReachScale;
+            float step = Mathf.Max(.005f, Time.fixedDeltaTime);
+            // Use the consumer's friction and the body's current walking velocity.
+            // A cone alone admits distant targets outside the dash; conversely,
+            // walking during a dash can reach somebody outside its static line.
+            for (float age = 0; age < Balance.LungeActiveTime;)
+            {
+                float dt = Mathf.Min(step, Balance.LungeActiveTime - age);
+                age += dt;
+                speed = Mathf.Max(0, speed - Balance.Friction * dt);
+                dash += forward * speed * dt;
+                Vector3 body = start + dash + walk * age;
+                // Reach is a physical question. The tier's willingness to lead
+                // movement cannot make a measured fleeing actor run more slowly.
+                Vector3 relative = targetStart + targetVelocity * age - body;
+                relative.y = 0;
+                Vector3 segment = relative - previous;
+                float along = segment.sqrMagnitude > .0001f
+                    ? Mathf.Clamp01(-Vector3.Dot(previous, segment) / segment.sqrMagnitude) : 0;
+                if ((previous + segment * along).sqrMagnitude <= radius * radius)
+                {
+                    // Ask only for travel up to the first possible contact. A wall
+                    // farther along the dash must not forbid a tag already in reach.
+                    float first = 0;
+                    float outside = previous.sqrMagnitude - radius * radius;
+                    if (outside > 0 && segment.sqrMagnitude > .0001f)
+                    {
+                        float dot = Vector3.Dot(previous, segment);
+                        float discriminant = Mathf.Max(0, dot * dot - segment.sqrMagnitude * outside);
+                        first = Mathf.Clamp01((-dot - Mathf.Sqrt(discriminant)) / segment.sqrMagnitude);
+                    }
+                    return LungeTravelClear(previousBody, Vector3.Lerp(previousBody, body, first));
+                }
+                if (!LungeTravelClear(previousBody, body)) return false;
+                previousBody = body;
+                previous = relative;
+            }
+            return false;
+        }
+
+        private bool LungeTravelClear(Vector3 from, Vector3 to)
+        {
+            Vector3 delta = to - from;
+            float distance = delta.magnitude;
+            if (distance < .0001f) return true;
+            var capsule = GetComponent<CharacterController>();
+            if (capsule == null) return false;
+            Vector3 scale = transform.lossyScale;
+            float radius = capsule.radius * Mathf.Max(Mathf.Abs(scale.x), Mathf.Abs(scale.z));
+            float half = Mathf.Max(radius, capsule.height * Mathf.Abs(scale.y) * .5f);
+            Vector3 centre = from + transform.TransformVector(capsule.center);
+            Vector3 top = centre + Vector3.up * (half - radius);
+            // The motor may step over small kerbs. Probe the body above its legal
+            // step height so floor trim does not count as a wall across the route.
+            Vector3 bottom = centre - Vector3.up * (half - radius)
+                + Vector3.up * Mathf.Min(capsule.stepOffset * Mathf.Abs(scale.y), 2 * (half - radius));
+            var hits = _shoveRouteHits;
+            int count = Physics.CapsuleCastNonAlloc(bottom, top, radius, delta / distance,
+                hits, distance, ~0, QueryTriggerInteraction.Ignore);
+            if (count == hits.Length)
+            { hits = Physics.CapsuleCastAll(bottom, top, radius, delta / distance, distance, ~0, QueryTriggerInteraction.Ignore); count = hits.Length; }
+            for (int i = 0; i < count; i++)
+            {
+                var collider = hits[i].collider;
+                if (collider == null || hits[i].normal.y > .65f) continue;
+                if (collider.GetComponentInParent<CharacterMotor>() != null
+                    || collider.GetComponentInParent<Slipper>() != null
+                    || collider.GetComponentInParent<Lata>() != null) continue;
+                return false;
+            }
+            return true;
         }
 
         // ---- THE THROW SOLVE ------------------------------------------------
@@ -4970,12 +5107,52 @@ namespace TumbangPreso
 
         /// <summary>Would this power's own footprint, cast right now, land on anybody?</summary>
         private bool WouldCatch(Abilities.HeroAbility ability, bool stunPayload)
-        {
-            if (ability == null || !ability.HasTelegraph) return false;
+            => VictimsForAbility(ability, stunPayload) > 0;
 
-            return VictimsUnder(FootprintOf(ability),
-                                ability.TelegraphRadius + AiTuning.AbilityVictimMargin,
-                                stunPayload) > 0;
+        private int VictimsForAbility(Abilities.HeroAbility ability, bool stunPayload, bool requireTelegraph = true)
+        {
+            if (ability == null) return 0;
+            var kit = _motor.AbilitySystem != null ? _motor.AbilitySystem.Kit : null;
+            bool globalFreeze = kit is Abilities.CheskaHeroKit && ability == kit.Ultimate;
+            bool drift = kit is Abilities.DanteHeroKit && ability == kit.Ultimate;
+            if (!globalFreeze && !drift)
+                return !requireTelegraph || ability.HasTelegraph
+                    ? VictimsUnder(FootprintOf(ability), ability.TelegraphRadius + AiTuning.AbilityVictimMargin, stunPayload)
+                    : 0;
+
+            var round = GameServices.Round;
+            if (round == null) return 0;
+            Vector3 origin = transform.position;
+            Vector3 forward = transform.forward; forward.y = 0;
+            forward = forward.sqrMagnitude > .001f ? forward.normalized : Vector3.forward;
+            Vector3 right = Vector3.Cross(Vector3.up, forward);
+            float reach = .1f, width = .1f;
+            if (drift)
+            {
+                // Match the court-spanning bands resolved by DanteDriftWave.
+                for (int x = 0; x < 2; x++)
+                    for (int z = 0; z < 2; z++)
+                    {
+                        Vector3 delta = new Vector3(x == 0 ? PlayableMinX : PlayableMaxX, origin.y,
+                            z == 0 ? PlayableMinZ : PlayableMaxZ) - origin;
+                        reach = Mathf.Max(reach, Vector3.Dot(delta, forward));
+                        width = Mathf.Max(width, Mathf.Abs(Vector3.Dot(delta, right)));
+                    }
+            }
+            int found = 0;
+            foreach (var who in Perceived(round.Players))
+            {
+                if (who == null || who == _motor || !who.RoundActive) continue;
+                if (stunPayload && (who.IsStunned || who.IsTripped)) continue;
+                if (drift)
+                {
+                    Vector3 delta = At(who).Value - origin;
+                    float along = Vector3.Dot(delta, forward);
+                    if (along < 0 || along > reach || Mathf.Abs(Vector3.Dot(delta, right)) > width) continue;
+                }
+                found++;
+            }
+            return found;
         }
 
         /// <summary>
@@ -5170,11 +5347,12 @@ namespace TumbangPreso
             // ⚠️ A RELEASED HOLD LEAVES ITS KEY IN THE TABLE WITH -1 IN IT (`HoldAim` writes
             // -1.0 rather than removing the entry), so `_aimHeld.Count` latches true after the
             // first blink of the match and would have held this gate open for the rest of it.
-            bool holding = false;
-            foreach (var held in _aimHeld.Values)
+            Verb? heldSlot = null;
+            foreach (var held in _aimHeld)
             {
-                if (held >= 0.0f) { holding = true; break; }
+                if (held.Value >= 0.0f) { heldSlot = held.Key; break; }
             }
+            bool holding = heldSlot.HasValue;
 
             // ⚠️⚠️ THE OPENING GATE IS PER SEAT NOW, NOT ONE CONSTANT FOUR BOTS SHARE. See
             // `AiTuning.AbilityOpeningJitterSeconds`: a single number means all four unlock on
@@ -5205,6 +5383,10 @@ namespace TumbangPreso
             }
 
             _weighedThisFrame = false;
+            // One opportunity owns this frame. An acquired aim hold keeps its
+            // slot so another ready power cannot replace its point or release it.
+            bool MayConsider(Verb slot) => !_weighedThisFrame
+                && (!heldSlot.HasValue || heldSlot.Value == slot);
 
             Vector3 myPos = transform.position;
             CharacterMotor target = _motor.IsDefender ? TagTarget() : DefenderOf(round);
@@ -5244,9 +5426,7 @@ namespace TumbangPreso
 
             if (kit.IsUltimateReady && kit.Ultimate != null)
             {
-                int underIt = VictimsUnder(FootprintOf(kit.Ultimate),
-                                           kit.Ultimate.TelegraphRadius + AiTuning.AbilityVictimMargin,
-                                           stunPayload: false);
+                int underIt = VictimsForAbility(kit.Ultimate, stunPayload: false, requireTelegraph: false);
 
                 ultimateWorthIt =
                     underIt >= AiTuning.UltimateWantsVictims
@@ -5258,22 +5438,17 @@ namespace TumbangPreso
                     || (kit is Abilities.ZackHeroKit zack && !zack.IsOverclocked);
             }
 
-            if (kit.IsUltimateReady && kit.Ultimate != null && ultimateWorthIt)
+            if (MayConsider(Verb.Ultimate) && kit.IsUltimateReady && kit.Ultimate != null && ultimateWorthIt)
             {
                 if (kit is Abilities.DanteHeroKit)
                 {
-                    // ⚠️ THE FISSURE IS DIRECTIONAL: a 4.5 m circle centred 2.2 m in FRONT of
-                    // him. The old 9.0 m gate had no direction in it at all, so half of every
-                    // cast opened the ground behind his back. It launches rather than stuns, so
-                    // a body already down is still worth catching.
-                    bool safeForOwnCan = !_motor.IsDefender || lataDistance > 10.0f;
-                    if (safeForOwnCan && WouldCatch(kit.Ultimate, stunPayload: false))
+                    // Continental Drift affects forward court bands and never the can.
+                    if (WouldCatch(kit.Ultimate, stunPayload: false))
                         Consider(intent, Verb.Ultimate, dt);
                 }
                 else if (kit is Abilities.CheskaHeroKit)
                 {
-                    // Glacial Shatter freezes what it catches, so somebody already frozen is
-                    // not a reason to spend it.
+                    // Absolute Zero reaches the map; already helpless bodies do not justify it.
                     if (WouldCatch(kit.Ultimate, stunPayload: true)) Consider(intent, Verb.Ultimate, dt);
                 }
                 else if (kit is Abilities.SeanHeroKit)
@@ -5300,15 +5475,14 @@ namespace TumbangPreso
                 }
                 else if (kit is Abilities.NemuHeroKit)
                 {
-                    // ⚠️ THE 4.5 m OFFSET AND 7.5 m RADIUS THAT USED TO BE WRITTEN HERE WERE THE
-                    // PRE-FOOTPRINT-PASS NUMBERS. The void has been 2.8 m at 3.5 m since § 8
-                    // brought the ability sizes down, so this asked about a circle nearly three
-                    // times the area of the one it casts.
-                    Vector3 voidCentre = FootprintOf(kit.Ultimate);
-                    float voidReach = kit.Ultimate.TelegraphRadius + AiTuning.AbilityVictimMargin;
-
-                    if (HasRelevantVoidTarget(voidCentre, voidReach)
-                        || VictimsUnder(voidCentre, voidReach, stunPayload: false) > 0)
+                    // PRUSISYON possesses every other player for 15 s wherever they are, so the question is WHEN, not
+                    // where: with at least two opponents on court to drag, and enough round left for the drag to matter.
+                    var live = GameServices.Round;
+                    int opponents = 0;
+                    if (live != null)
+                        foreach (var p in live.Players)
+                            if (p != null && p != _motor && p.gameObject.activeInHierarchy && !p.IsPossessed) opponents++;
+                    if (opponents >= 2 && live != null && live.TimeLeft > 8.0f)
                         Consider(intent, Verb.Ultimate, dt);
                 }
                 else if (kit is Abilities.PhaisterHeroKit)
@@ -5336,12 +5510,12 @@ namespace TumbangPreso
             // telegraph radius is 0 and "victims under the footprint" is always nobody. The wind is
             // a map-wide fan in front of her, so the count is the fan's: two bodies in it is worth
             // the meter, and one is worth it once the ordinary hold runs out.
-            if (kit is Abilities.AmihanHeroKit && kit.IsUltimateReady && kit.Ultimate != null
+            if (MayConsider(Verb.Ultimate) && kit is Abilities.AmihanHeroKit && kit.IsUltimateReady && kit.Ultimate != null
                 && !ultimateWorthIt && AmihanFanCount(round) >= 1
                 && (_ultimateReadyFor >= AiTuning.UltimateHoldSeconds || round.TimeLeft <= AiTuning.UltimateDumpWindowSeconds))
                 Consider(intent, Verb.Ultimate, dt);
 
-            if (SlotIsSpendable(kit.Skill1))
+            if (MayConsider(Verb.Skill1) && SlotIsSpendable(kit.Skill1))
             {
                 if (kit is Abilities.DanteHeroKit)
                 {
@@ -5369,16 +5543,14 @@ namespace TumbangPreso
                 }
                 else if (kit is Abilities.NemuHeroKit)
                 {
-                    // Phase before the pickup or the engage. Using it while carrying breaks it
-                    // instantly by design, and spending it with nothing to be untaggable FROM is
-                    // the same waste one step earlier: it is worth a 52 s cooldown only when
-                    // somebody could actually tag her.
-                    bool phaseApproach = !_motor.HoldingSlipper
-                        && (Plan == AiPlan.Fetch || Plan == AiPlan.Stalk)
-                        && targetDistance <= 6.0f;
-                    bool phaseDefence = _motor.IsDefender && targetDistance <= 4.0f;
+                    // DON'T LOOK (2026-10-15): her ghost waits where she aims and blinds the first to come near. Worth it with
+                    // somebody close enough to walk into it within its 30 s: the taya guarding against an attacker coming
+                    // in, or an attacker on a fetch with the taya near. The aim is already at the target.
+                    bool guardLane = _motor.IsDefender && targetDistance <= 7.0f;
+                    bool coverFetch = !_motor.IsDefender && !_motor.HoldingSlipper
+                        && (Plan == AiPlan.Fetch || Plan == AiPlan.Stalk) && targetDistance <= 6.0f;
 
-                    if (phaseApproach || phaseDefence) Consider(intent, Verb.Skill1, dt);
+                    if (guardLane || coverFetch) Consider(intent, Verb.Skill1, dt);
                 }
                 else if (kit is Abilities.PhaisterHeroKit)
                 {
@@ -5422,11 +5594,15 @@ namespace TumbangPreso
                     foreach(var shoe in PerceivedSlippers)
                         if(shoe.State==SlipperState.InFlight && Flat(myPos,shoe.transform.position)<5
                             && Vector3.Dot(shoe.Velocity,myPos-shoe.transform.position)>0)
-                        { Consider(intent,Verb.Skill1,dt);break; }
+                        {
+                            intent.AimPoint=shoe.transform.position;
+                            intent.FaceAimPoint=true;
+                            Consider(intent,Verb.Skill1,dt);break;
+                        }
                 }
             }
 
-            if (SlotIsSpendable(kit.Skill2))
+            if (MayConsider(Verb.Skill2) && SlotIsSpendable(kit.Skill2))
             {
                 if (kit is Abilities.DanteHeroKit)
                 {
@@ -5482,10 +5658,18 @@ namespace TumbangPreso
                 }
                 else if (kit is Abilities.NemuHeroKit)
                 {
-                    // ⚠️ THE ONE `CanReactivate` POWER IN THE GAME, so the second press is not a
-                    // recast and `SlotIsSpendable` lets it through while the first is running.
-                    if (_driving && (Plan == AiPlan.Fetch || Plan == AiPlan.Stalk
-                                     || targetDistance <= 6.0f))
+                    // SKITTER (attacking, 2026-10-15): a ghost fetches her loose slipper, so it is worth it when that slipper
+                    // is lying well away from her (the ability itself refuses with none loose, or one in hand).
+                    // LOOKOUT (defending): a little ghost minds the can 15 s and slowly stands it up if it is down; worth it
+                    // with the can down and her away from it, or an attacker closing on the can.
+                    if (!_motor.IsDefender)
+                    {
+                        foreach (var s in BotSlipperInventory.All)
+                            if (s != null && s.OwnerSlot == _motor.PlayerSlot && s.State == SlipperState.Loose
+                                && (s.transform.position - _motor.transform.position).sqrMagnitude > 6.0f * 6.0f)
+                            { Consider(intent, Verb.Skill2, dt); break; }
+                    }
+                    else if (lata != null && ((!lata.IsUpright && lataDistance > 3.0f) || (lata.IsUpright && targetDistance <= 8.0f)))
                         Consider(intent, Verb.Skill2, dt);
                 }
                 else if (kit is Abilities.PhaisterHeroKit)
@@ -5516,9 +5700,16 @@ namespace TumbangPreso
                         if (worth) Consider(intent, Verb.Skill2, dt);
                     }
                 }
-                else if (kit is Abilities.RafiHeroKit && _driving && targetDistance < 5
-                    && (Plan == AiPlan.Withdraw || Plan == AiPlan.Fetch || _motor.IsDefender))
-                    Consider(intent,Verb.Skill2,dt);
+                else if (kit is Abilities.RafiHeroKit)
+                {
+                    // Skim coats the slipper for its next throw. A movement/near-
+                    // pursuer gate misses the armed windup and asks while fetching
+                    // an unheld shoe. Keep Waterwall's existing defender decision.
+                    bool coatNextThrow = !_motor.IsDefender && _carrier != null
+                        && _carrier.Held != null && Plan == AiPlan.Windup;
+                    bool defend = _motor.IsDefender && _driving && targetDistance < 5;
+                    if (coatNextThrow || defend) Consider(intent, Verb.Skill2, dt);
+                }
                 else if (kit is Abilities.PaeteHeroKit paete)
                 {
                     if (paete.IsDefending)
@@ -5683,6 +5874,7 @@ namespace TumbangPreso
         /// </summary>
         private bool Weighed(Verb verb, float dt)
         {
+            if (_weighedThisFrame) return false;
             _weighedThisFrame = true;
 
             if (_weighing != verb)
@@ -5818,9 +6010,16 @@ namespace TumbangPreso
         /// again.</summary>
         private void Consider(InputIntent intent, Verb verb, float dt)
         {
+            var ability = AbilityForVerb(verb);
+            if (ability != null && ability.HoldToAim
+                && _aimHeld.TryGetValue(verb, out float held) && held >= 0)
+            {
+                _weighedThisFrame = true;
+                HoldAim(intent, verb, ability, dt);
+                return;
+            }
             if (!Weighed(verb, dt)) return;
 
-            var ability = AbilityForVerb(verb);
             if (ability != null && ability.HoldToAim) HoldAim(intent, verb, ability, dt);
             else Tap(intent, verb);
         }

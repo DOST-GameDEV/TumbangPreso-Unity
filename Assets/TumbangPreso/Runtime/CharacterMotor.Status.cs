@@ -67,6 +67,8 @@ namespace TumbangPreso
                 case StatusKind.Hexed: return _hexedLeft;
                 case StatusKind.Haunted: return _hauntedLeft;
                 case StatusKind.Zapped: return _zappedLeft;
+                case StatusKind.Possessed: return _possessedLeft;
+                case StatusKind.Blinded: return _blindedLeft;
                 default: return 0.0f;
             }
         }
@@ -88,7 +90,10 @@ namespace TumbangPreso
         /// </summary>
         public float StatusSpeedScale => IsRooted ? 0.0f
             : (IsChilled ? StatusRules.ChilledSpeedScale : 1.0f) * (IsConcussed ? StatusRules.ConcussedSpeedScale : 1.0f)
-              * VoodooSpeedScale;
+              * VoodooSpeedScale
+              * (IsPossessed ? NemuRules.PossessedSpeedScale : 1.0f)
+              * BlindedSpeedScale
+              * DeadWeightSpeedScale;
 
         /// <summary>
         /// WHIRLED: *"Drops slipper if currently in hand. Prevents slipper retrieval for 2.5
@@ -101,7 +106,7 @@ namespace TumbangPreso
         public void ApplyWhirled(float seconds = StatusRules.WhirledSeconds)
         {
             if (!MayMutateGameplayState()) return;
-            if (AbilitySystem != null && AbilitySystem.IsImmuneToStuns) return;
+            if (Refuses(StatusKind.Whirled, AbilitySystem != null && AbilitySystem.IsImmuneToStuns)) return;
 
             bool fresh = _whirledLeft <= 0.0f;
             _whirledLeft = StatusRules.Refresh(_whirledLeft, seconds);
@@ -125,7 +130,7 @@ namespace TumbangPreso
         public void ApplyChilled(float seconds = StatusRules.ChilledSeconds)
         {
             if (!MayMutateGameplayState()) return;
-            if (AbilitySystem != null && AbilitySystem.IsImmuneToStuns) return;
+            if (Refuses(StatusKind.Chilled, AbilitySystem != null && AbilitySystem.IsImmuneToStuns)) return;
             bool fresh = _chilledLeft <= 0.0f;
             _chilledLeft = StatusRules.Refresh(_chilledLeft, seconds);
             if (fresh) StatusGained?.Invoke(this, StatusKind.Chilled);
@@ -226,7 +231,7 @@ namespace TumbangPreso
         public void ApplyRooted(float seconds = StatusRules.RootedSeconds)
         {
             if (!MayMutateGameplayState()) return;
-            if (AbilitySystem != null && AbilitySystem.IsImmuneToStuns) return;
+            if (Refuses(StatusKind.Rooted, AbilitySystem != null && AbilitySystem.IsImmuneToStuns)) return;
             if (IsTagged) return; // already held harder, and a tag ends roots anyway
             bool fresh = _rootedLeft <= 0.0f;
             _rootedLeft = StatusRules.Refresh(_rootedLeft, seconds);
@@ -277,6 +282,8 @@ namespace TumbangPreso
             _whirledLeft = 0.0f;
             _chilledLeft = 0.0f;
             _hauntedLeft = 0.0f;
+            ClearPossession();
+            ClearBlinded();
             _carryLeft = 0.0f;
             EndHaul();
             EndSwing();
@@ -318,6 +325,8 @@ namespace TumbangPreso
         {
             if (_zappedLeft > 0) _zappedLeft = Mathf.Max(0, _zappedLeft - dt);
             if (_hauntedLeft > 0) _hauntedLeft = Mathf.Max(0, _hauntedLeft - dt);
+            StepPossession(dt);
+            StepBlinded(dt);
             if (_whirledLeft > 0.0f) _whirledLeft = Mathf.Max(0.0f, _whirledLeft - dt);
             if (_chilledLeft > 0.0f) _chilledLeft = Mathf.Max(0.0f, _chilledLeft - dt);
             if (_rootedLeft > 0.0f)
@@ -446,6 +455,28 @@ namespace TumbangPreso
                 return;
             }
             BeginCarry(velocity, seconds);
+        }
+
+        /// <summary>
+        /// The host puts a body where an ultimate's cutscene left it (owner, 2026-10-17: *"Play keeps the cutscene's moves: at the
+        /// cut, put each player where the cutscene left them"*): mid-air down a lane, or where they ran to. Unlike
+        /// <see cref="Teleport"/> it keeps every status and does not pin the body for the spawn settle, so a carry applied
+        /// right after (<see cref="ApplyResolvedCarry"/>) flies it on from there. Sent to every peer as the host's teleport.
+        /// </summary>
+        public void ApplyResolvedRelocate(Vector3 position)
+        {
+            if (!NetAuthority.ShouldResolve() || !MayMutateGameplayState() || !Finite(position)) return;
+            var flat = AIController.ClampToPlayable(position);
+            position = new Vector3(flat.x, position.y, flat.z);
+            _cc.enabled = false;
+            transform.position = position;
+            _cc.enabled = true;
+            _networkTargetPosition = position;
+            _networkTargetVelocity = Vector3.zero;
+            _networkSmoothVelocity = Vector3.zero;
+            GetComponent<Visual.CharacterVisual>()?.SnapRemoteTransform();
+            if (NetAuthority.IsNetworked && GameServices.Round?.PlayerAt(_playerSlot) == this)
+                Net.MatchRpc.Instance?.BroadcastTeleport(_playerSlot, position, transform.eulerAngles.y);
         }
 
         /// <summary>Called from the physics step: hold the carry, before `Friction` decays it.</summary>

@@ -1,0 +1,10 @@
+{
+  "base": "8d786d6f550595c453f065140ca5cecb182d6a2a",
+  "LFsha256": {
+    "HubHome-candidate.cs": "a2f91087c711526fe90f1b0bd0f0e4c9d5bc94a255d5c935db6b10de6d8fbde1",
+    "HomeModeCardReadabilityTests.cs": "b1075acdb660c1db85c2043de44f53395bb12242ceda6790779a8c08a47c29ed",
+    "HomeModeCardReadabilityTests.cs.meta": "d3cecd6d741bfb2851e8ff5dee52ba2cc68126c1bc8795b499fe32e52d911f0f"
+  },
+  "mainSourceChangedByLaptop": false,
+  "sourcePublicationOwner": "Desktop"
+}

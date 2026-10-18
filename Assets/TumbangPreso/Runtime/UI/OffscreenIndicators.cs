@@ -195,7 +195,7 @@ namespace TumbangPreso.UI
         public void UpdateArrows(CharacterMotor local, Transform can)
         {
             var cam = UnityEngine.Camera.main;
-            if (PresentationClock.Held || ScreenTakeover.AnyOpen || cam == null || local == null || local.IsHaunted)
+            if (PresentationClock.Held || ScreenTakeover.AnyOpen || cam == null || local == null || local.IsHaunted || local.EyesCovered)
             {
                 _canArrow.gameObject.SetActive(false);
                 return;

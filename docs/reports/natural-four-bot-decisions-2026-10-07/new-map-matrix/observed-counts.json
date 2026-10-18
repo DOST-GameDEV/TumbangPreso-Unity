@@ -1,0 +1,26 @@
+{
+  "ai-diagnostic-Classic-IlalimNgTulay.txt": {
+    "throws": 12,
+    "lunges": 2,
+    "countedHits": 2,
+    "naturalOneStart": true
+  },
+  "ai-diagnostic-Classic-Kanto.txt": {
+    "throws": 20,
+    "lunges": 1,
+    "countedHits": 0,
+    "naturalOneStart": true
+  },
+  "ai-diagnostic-HeroStrike-IlalimNgTulay.txt": {
+    "throws": 16,
+    "lunges": 2,
+    "countedHits": 0,
+    "naturalOneStart": true
+  },
+  "ai-diagnostic-HeroStrike-Kanto.txt": {
+    "throws": 16,
+    "lunges": 1,
+    "countedHits": 0,
+    "naturalOneStart": true
+  }
+}

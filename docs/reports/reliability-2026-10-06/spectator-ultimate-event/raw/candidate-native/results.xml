@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="12" result="Passed" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 03:01:19Z" end-time="2026-10-06 03:01:20Z" duration="0.8649154">
+  <test-suite type="TestSuite" id="3254" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1837" result="Passed" start-time="2026-10-06 03:01:19Z" end-time="2026-10-06 03:01:20Z" duration="0.864915" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3246" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1837" result="Passed" start-time="2026-10-06 03:01:19Z" end-time="2026-10-06 03:01:20Z" duration="0.829690" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="4308" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3247" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1837" result="Passed" start-time="2026-10-06 03:01:19Z" end-time="2026-10-06 03:01:20Z" duration="0.803507" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3250" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1835" result="Passed" start-time="2026-10-06 03:01:20Z" end-time="2026-10-06 03:01:20Z" duration="0.777446" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2884" name="SpectatorUltimateEventTests" fullname="TumbangPreso.PlayTests.SpectatorUltimateEventTests" classname="TumbangPreso.PlayTests.SpectatorUltimateEventTests" runstate="Runnable" testcasecount="12" result="Passed" start-time="2026-10-06 03:01:20Z" end-time="2026-10-06 03:01:20Z" duration="0.726522" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2895" name="AnExpiredPulseDoesNotClaimCurrentAction" fullname="TumbangPreso.PlayTests.SpectatorUltimateEventTests.AnExpiredPulseDoesNotClaimCurrentAction" methodname="AnExpiredPulseDoesNotClaimCurrentAction" classname="TumbangPreso.PlayTests.SpectatorUltimateEventTests" runstate="Runnable" seed="1288370692" result="Passed" start-time="2026-10-06 03:01:20Z" end-time="2026-10-06 03:01:20Z" duration="0.140997" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2896" name="APulseFromThePreviousRoundDoesNotClaimTheNextRound" fullname="TumbangPreso.PlayTests.SpectatorUltimateEventTests.APulseFromThePreviousRoundDoesNotClaimTheNextRound" methodname="APulseFromThePreviousRoundDoesNotClaimTheNextRound" classname="TumbangPreso.PlayTests.SpectatorUltimateEventTests" runstate="Runnable" seed="251307827" result="Passed" start-time="2026-10-06 03:01:20Z" end-time="2026-10-06 03:01:20Z" duration="0.039429" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2897" name="ARetiredKitPulseDoesNotDescribeTheReplacementHero" fullname="TumbangPreso.PlayTests.SpectatorUltimateEventTests.ARetiredKitPulseDoesNotDescribeTheReplacementHero" methodname="ARetiredKitPulseDoesNotDescribeTheReplacementHero" classname="TumbangPreso.PlayTests.SpectatorUltimateEventTests" runstate="Runnable" seed="1492523804" result="Passed" start-time="2026-10-06 03:01:20Z" end-time="2026-10-06 03:01:20Z" duration="0.039111" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2894" name="UltimatePresentationPulseSurvivesUntilTheNextDecision" fullname="TumbangPreso.PlayTests.SpectatorUltimateEventTests.UltimatePresentationPulseSurvivesUntilTheNextDecision" classname="TumbangPreso.PlayTests.SpectatorUltimateEventTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-06 03:01:20Z" end-time="2026-10-06 03:01:20Z" duration="0.491645" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2885" name="UltimatePresentationPulseSurvivesUntilTheNextDecision(&quot;dante&quot;)" fullname="TumbangPreso.PlayTests.SpectatorUltimateEventTests.UltimatePresentationPulseSurvivesUntilTheNextDecision(&quot;dante&quot;)" methodname="UltimatePresentationPulseSurvivesUntilTheNextDecision" classname="TumbangPreso.PlayTests.SpectatorUltimateEventTests" runstate="Runnable" seed="36902059" result="Passed" start-time="2026-10-06 03:01:20Z" end-time="2026-10-06 03:01:20Z" duration="0.045328" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2886" name="UltimatePresentationPulseSurvivesUntilTheNextDecision(&quot;cheska&quot;)" fullname="TumbangPreso.PlayTests.SpectatorUltimateEventTests.UltimatePresentationPulseSurvivesUntilTheNextDecision(&quot;cheska&quot;)" methodname="UltimatePresentationPulseSurvivesUntilTheNextDecision" classname="TumbangPreso.PlayTests.SpectatorUltimateEventTests" runstate="Runnable" seed="214034829" result="Passed" start-time="2026-10-06 03:01:20Z" end-time="2026-10-06 03:01:20Z" duration="0.041103" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2887" name="UltimatePresentationPulseSurvivesUntilTheNextDecision(&quot;sean&quot;)" fullname="TumbangPreso.PlayTests.SpectatorUltimateEventTests.UltimatePresentationPulseSurvivesUntilTheNextDecision(&quot;sean&quot;)" methodname="UltimatePresentationPulseSurvivesUntilTheNextDecision" classname="TumbangPreso.PlayTests.SpectatorUltimateEventTests" runstate="Runnable" seed="651415884" result="Passed" start-time="2026-10-06 03:01:20Z" end-time="2026-10-06 03:01:20Z" duration="0.044896" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2888" name="UltimatePresentationPulseSurvivesUntilTheNextDecision(&quot;zack&quot;)" fullname="TumbangPreso.PlayTests.SpectatorUltimateEventTests.UltimatePresentationPulseSurvivesUntilTheNextDecision(&quot;zack&quot;)" methodname="UltimatePresentationPulseSurvivesUntilTheNextDecision" classname="TumbangPreso.PlayTests.SpectatorUltimateEventTests" runstate="Runnable" seed="812440407" result="Passed" start-time="2026-10-06 03:01:20Z" end-time="2026-10-06 03:01:20Z" duration="0.043013" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2889" name="UltimatePresentationPulseSurvivesUntilTheNextDecision(&quot;nemu&quot;)" fullname="TumbangPreso.PlayTests.SpectatorUltimateEventTests.UltimatePresentationPulseSurvivesUntilTheNextDecision(&quot;nemu&quot;)" methodname="UltimatePresentationPulseSurvivesUntilTheNextDecision" classname="TumbangPreso.PlayTests.SpectatorUltimateEventTests" runstate="Runnable" seed="1693628762" result="Passed" start-time="2026-10-06 03:01:20Z" end-time="2026-10-06 03:01:20Z" duration="0.044110" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2890" name="UltimatePresentationPulseSurvivesUntilTheNextDecision(&quot;phaister&quot;)" fullname="TumbangPreso.PlayTests.SpectatorUltimateEventTests.UltimatePresentationPulseSurvivesUntilTheNextDecision(&quot;phaister&quot;)" methodname="UltimatePresentationPulseSurvivesUntilTheNextDecision" classname="TumbangPreso.PlayTests.SpectatorUltimateEventTests" runstate="Runnable" seed="898836482" result="Passed" start-time="2026-10-06 03:01:20Z" end-time="2026-10-06 03:01:20Z" duration="0.151098" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2891" name="UltimatePresentationPulseSurvivesUntilTheNextDecision(&quot;rafi&quot;)" fullname="TumbangPreso.PlayTests.SpectatorUltimateEventTests.UltimatePresentationPulseSurvivesUntilTheNextDecision(&quot;rafi&quot;)" methodname="UltimatePresentationPulseSurvivesUntilTheNextDecision" classname="TumbangPreso.PlayTests.SpectatorUltimateEventTests" runstate="Runnable" seed="691129523" result="Passed" start-time="2026-10-06 03:01:20Z" end-time="2026-10-06 03:01:20Z" duration="0.038205" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2892" name="UltimatePresentationPulseSurvivesUntilTheNextDecision(&quot;amihan&quot;)" fullname="TumbangPreso.PlayTests.SpectatorUltimateEventTests.UltimatePresentationPulseSurvivesUntilTheNextDecision(&quot;amihan&quot;)" methodname="UltimatePresentationPulseSurvivesUntilTheNextDecision" classname="TumbangPreso.PlayTests.SpectatorUltimateEventTests" runstate="Runnable" seed="529922035" result="Passed" start-time="2026-10-06 03:01:20Z" end-time="2026-10-06 03:01:20Z" duration="0.040616" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2893" name="UltimatePresentationPulseSurvivesUntilTheNextDecision(&quot;paete&quot;)" fullname="TumbangPreso.PlayTests.SpectatorUltimateEventTests.UltimatePresentationPulseSurvivesUntilTheNextDecision(&quot;paete&quot;)" methodname="UltimatePresentationPulseSurvivesUntilTheNextDecision" classname="TumbangPreso.PlayTests.SpectatorUltimateEventTests" runstate="Runnable" seed="1397914287" result="Passed" start-time="2026-10-06 03:01:20Z" end-time="2026-10-06 03:01:20Z" duration="0.038601" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

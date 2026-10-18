@@ -1,0 +1,2 @@
+[RecordedSceneryPixels] droneAndMark=0.2611402
+[RecordedSceneryPixels] animalAndLine=0

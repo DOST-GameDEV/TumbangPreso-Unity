@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-14 15:11:34Z" end-time="2026-10-14 15:14:00Z" duration="145.7381957">
+  <test-suite type="TestSuite" id="3682" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2167" result="Passed" start-time="2026-10-14 15:11:34Z" end-time="2026-10-14 15:14:00Z" duration="145.738196" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3674" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2167" result="Passed" start-time="2026-10-14 15:11:34Z" end-time="2026-10-14 15:14:00Z" duration="145.703403" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12140" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3675" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2167" result="Passed" start-time="2026-10-14 15:11:34Z" end-time="2026-10-14 15:14:00Z" duration="145.678918" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3678" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2165" result="Passed" start-time="2026-10-14 15:11:34Z" end-time="2026-10-14 15:14:00Z" duration="145.652888" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2444" name="NemuPrusisyonFilm" fullname="TumbangPreso.PlayTests.NemuPrusisyonFilm" classname="TumbangPreso.PlayTests.NemuPrusisyonFilm" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-14 15:11:34Z" end-time="2026-10-14 15:14:00Z" duration="145.581065" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="Review" />
+            </properties>
+            <test-case id="2445" name="FilmPrusisyonInAMatch" fullname="TumbangPreso.PlayTests.NemuPrusisyonFilm.FilmPrusisyonInAMatch" methodname="FilmPrusisyonInAMatch" classname="TumbangPreso.PlayTests.NemuPrusisyonFilm" runstate="Runnable" seed="16880531" result="Passed" start-time="2026-10-14 15:11:34Z" end-time="2026-10-14 15:14:00Z" duration="145.563100" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="1200000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_2 at 0.56 of full scale before the sliders (excitement 0.85, ambience slider).
+[ArenaCrowd] the stands erupt: sfx_arena_crowd_erupt_3 at 0.31 of full scale before the sliders (excitement 0.91, ambience slider).
+[ArenaCrowd] stage reveal: sfx_arena_crowd_erupt at 0.56 of full scale before the sliders (excitement 0.55, ambience slider).
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_3 at 0.38 of full scale before the sliders (excitement 0.86, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.70, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.70, announcer slider).
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.70, announcer slider).
+[ArenaCrowd] chant, a lull: sfx_arena_chant_claps at 0.31 of full scale before the sliders (excitement 0.00, ambience slider).
+[ArenaCrowd] tag: sfx_arena_crowd_ooh at 0.44 of full scale before the sliders (excitement 0.34, ambience slider).
+[LocalReplay] Some replay footage could not be recorded. The recorded world changed within this segment.
+[ArenaCrowd] tag: sfx_arena_crowd_ooh_3 at 0.44 of full scale before the sliders (excitement 0.60, ambience slider).
+[ArenaScreens] replay: a moment is queued for the screens: CATCH, round 1, 3.4 s
+[ArenaScreens] replay: playing on the screens
+[ArenaCrowd] can knocked down: sfx_arena_crowd_erupt_3 at 0.45 of full scale before the sliders (excitement 0.40, ambience slider).
+[ArenaScreens] replay: a moment is queued for the screens: CAN KNOCKDOWN, round 1, 3.4 s
+[ArenaScreens] replay: playing on the screens
+[ArenaCrowd] chant, a lull: sfx_arena_chant_drums at 0.29 of full scale before the sliders (excitement 0.22, ambience slider).
+Releasing render texture that is set to be RenderTexture.active!
+[NemuFilm] scene frames 20-228 (6.97 s); clock 85.161 to 85.161; victim seat 0
+[LocalReplay] Some replay footage could not be recorded. Player pose history is incomplete.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

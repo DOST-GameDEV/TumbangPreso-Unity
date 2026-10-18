@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 11:45:34Z" end-time="2026-10-06 11:46:13Z" duration="38.430539">
+  <test-suite type="TestSuite" id="3383" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1940" result="Failed" site="Child" start-time="2026-10-06 11:45:34Z" end-time="2026-10-06 11:46:13Z" duration="38.430539" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3375" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1940" result="Failed" site="Child" start-time="2026-10-06 11:45:34Z" end-time="2026-10-06 11:46:13Z" duration="38.423694" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="54752" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3376" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1940" result="Failed" site="Child" start-time="2026-10-06 11:45:34Z" end-time="2026-10-06 11:46:13Z" duration="38.422364" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3379" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1938" result="Failed" site="Child" start-time="2026-10-06 11:45:34Z" end-time="2026-10-06 11:46:13Z" duration="38.421188" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1120" name="ArenaAiObjectiveApproachTests" fullname="TumbangPreso.PlayTests.ArenaAiObjectiveApproachTests" classname="TumbangPreso.PlayTests.ArenaAiObjectiveApproachTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-06 11:45:34Z" end-time="2026-10-06 11:46:13Z" duration="38.392952" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1121" name="OrdinaryBotRetrievesAcrossEachAuthoredRamp" fullname="TumbangPreso.PlayTests.ArenaAiObjectiveApproachTests.OrdinaryBotRetrievesAcrossEachAuthoredRamp" methodname="OrdinaryBotRetrievesAcrossEachAuthoredRamp" classname="TumbangPreso.PlayTests.ArenaAiObjectiveApproachTests" runstate="Runnable" seed="1790576312" result="Failed" start-time="2026-10-06 11:45:34Z" end-time="2026-10-06 11:45:55Z" duration="20.895455" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="300000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  tore: retrieved=True movedLoose=3.910 seconds=0.380 start=(8.50, 0.00, 0.00) target=(4.00, 0.00, 0.00) heights=0.000/1.500 final=(7.70, 0.24, 0.00) best3d=0.070 lowY=0.040 plan=Fetch
+  Expected: <empty>
+  But was:  < "tore: retrieved=True movedLoose=3.910 seconds=0.380 start=(8.50, 0.00, 0.00) target=(4.00, 0.00, 0.00) heights=0.000/1.500 final=(7.70, 0.24, 0.00) best3d=0.070 lowY=0.040 plan=Fetch" >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ArenaAiObjectiveApproachTests+<OrdinaryBotRetrievesAcrossEachAuthoredRamp>d__14.MoveNext () [0x008c6] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\ArenaAiObjectiveApproachTests.cs:95
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.60, announcer slider).
+]]></output>
+            </test-case>
+            <test-case id="1122" name="SupportedDecksKeepShoesButRoofsAndFloatingShoesRecover" fullname="TumbangPreso.PlayTests.ArenaAiObjectiveApproachTests.SupportedDecksKeepShoesButRoofsAndFloatingShoesRecover" methodname="SupportedDecksKeepShoesButRoofsAndFloatingShoesRecover" classname="TumbangPreso.PlayTests.ArenaAiObjectiveApproachTests" runstate="Runnable" seed="1262785579" result="Failed" start-time="2026-10-06 11:45:55Z" end-time="2026-10-06 11:46:13Z" duration="17.486534" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  tore: landingMoved=4.755 looseMoved=4.755 ownerY=0.000 deckY=1.500 rest=0.091
+entablado: landingMoved=4.380 looseMoved=4.380 ownerY=0.000 deckY=1.200 rest=0.091
+  Expected: <empty>
+  But was:  < "tore: landingMoved=4.755 looseMoved=4.755 ownerY=0.000 deckY=1.500 rest=0.091", "entablado: landingMoved=4.380 looseMoved=4.380 ownerY=0.000 deckY=1.200 rest=0.091" >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ArenaAiObjectiveApproachTests+<SupportedDecksKeepShoesButRoofsAndFloatingShoesRecover>d__15.MoveNext () [0x009b7] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\ArenaAiObjectiveApproachTests.cs:149
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[ArenaCrowd] round 1 begins: sfx_arena_crowd_cheer_2 at 0.38 of full scale before the sliders (excitement 0.00, ambience slider).
+[Slice] round 1 begins, taya is seat 0
+[ArenaCrowd] first round: sfx_arena_pa_organ at 0.18 of full scale before the sliders (excitement 0.60, announcer slider).
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

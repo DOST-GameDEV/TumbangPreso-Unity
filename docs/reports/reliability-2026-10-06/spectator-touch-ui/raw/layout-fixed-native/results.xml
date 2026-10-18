@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 06:26:24Z" end-time="2026-10-06 06:26:26Z" duration="2.582833">
+  <test-suite type="TestSuite" id="3311" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1883" result="Passed" start-time="2026-10-06 06:26:24Z" end-time="2026-10-06 06:26:26Z" duration="2.582833" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3303" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1883" result="Passed" start-time="2026-10-06 06:26:24Z" end-time="2026-10-06 06:26:26Z" duration="2.526369" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="13328" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3304" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1883" result="Passed" start-time="2026-10-06 06:26:24Z" end-time="2026-10-06 06:26:26Z" duration="2.490320" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3307" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1881" result="Passed" start-time="2026-10-06 06:26:24Z" end-time="2026-10-06 06:26:26Z" duration="2.456081" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2926" name="SpectatorTouchUiTests" fullname="TumbangPreso.PlayTests.SpectatorTouchUiTests" classname="TumbangPreso.PlayTests.SpectatorTouchUiTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-06 06:26:24Z" end-time="2026-10-06 06:26:26Z" duration="2.337283" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2929" name="CleanFeedAndControlHintsCanBeRestoredFromTouch" fullname="TumbangPreso.PlayTests.SpectatorTouchUiTests.CleanFeedAndControlHintsCanBeRestoredFromTouch" methodname="CleanFeedAndControlHintsCanBeRestoredFromTouch" classname="TumbangPreso.PlayTests.SpectatorTouchUiTests" runstate="Runnable" seed="741753957" result="Passed" start-time="2026-10-06 06:26:24Z" end-time="2026-10-06 06:26:25Z" duration="1.228524" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2928" name="FollowPovFreeAndAutoUseTheExistingCamera" fullname="TumbangPreso.PlayTests.SpectatorTouchUiTests.FollowPovFreeAndAutoUseTheExistingCamera" methodname="FollowPovFreeAndAutoUseTheExistingCamera" classname="TumbangPreso.PlayTests.SpectatorTouchUiTests" runstate="Runnable" seed="592313137" result="Passed" start-time="2026-10-06 06:26:25Z" end-time="2026-10-06 06:26:25Z" duration="0.138648" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2930" name="MenuRetiresTouchAxesAndRestoresTheStripAfterResume" fullname="TumbangPreso.PlayTests.SpectatorTouchUiTests.MenuRetiresTouchAxesAndRestoresTheStripAfterResume" methodname="MenuRetiresTouchAxesAndRestoresTheStripAfterResume" classname="TumbangPreso.PlayTests.SpectatorTouchUiTests" runstate="Runnable" seed="2061229485" result="Passed" start-time="2026-10-06 06:26:25Z" end-time="2026-10-06 06:26:25Z" duration="0.162399" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2931" name="ReSeatingReturnsGameplayControlsAndRetiresCameraCommands" fullname="TumbangPreso.PlayTests.SpectatorTouchUiTests.ReSeatingReturnsGameplayControlsAndRetiresCameraCommands" methodname="ReSeatingReturnsGameplayControlsAndRetiresCameraCommands" classname="TumbangPreso.PlayTests.SpectatorTouchUiTests" runstate="Runnable" seed="1173036884" result="Passed" start-time="2026-10-06 06:26:25Z" end-time="2026-10-06 06:26:26Z" duration="0.147984" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2927" name="WatcherHasViewControlsAndNoGameplayButtons" fullname="TumbangPreso.PlayTests.SpectatorTouchUiTests.WatcherHasViewControlsAndNoGameplayButtons" methodname="WatcherHasViewControlsAndNoGameplayButtons" classname="TumbangPreso.PlayTests.SpectatorTouchUiTests" runstate="Runnable" seed="146530031" result="Passed" start-time="2026-10-06 06:26:26Z" end-time="2026-10-06 06:26:26Z" duration="0.618401" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+[TumpUiCapture] spectator-touch-landscape cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+[TumpUiCapture] spectator-touch-portrait cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

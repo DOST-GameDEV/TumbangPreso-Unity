@@ -1,7 +1,7 @@
 # Current hero headings and remaining story resource correction
 
 The exact protocol145/sourcebd97 release player passed all nine visible hero
-headings: BASILIO, YASMIN, RAGO, ISAGANI, NEMU, SORAYA, ILYAS, AMIHAN and PAETE.
+headings: DANTE, YASMIN, RAGO, ISAGANI, NEMU, SORAYA, ILYAS, AMIHAN and PAETE.
 The real headings matched the current roster, did not repeat, fit their text
 bounds and had no former character names in visible hero-screen text. Current
 settings and mode selection/back passed. Normal exit0, input/profile restoration

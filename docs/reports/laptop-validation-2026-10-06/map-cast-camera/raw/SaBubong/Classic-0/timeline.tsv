@@ -1,0 +1,30 @@
+0.000	90.000	Quiet	QuietEstablish	finding a shot	0	0
+0.501	89.480	Quiet	QuietEstablish	the street	1	0
+1.002	88.980	Quiet	QuietEstablish	the street	1	0
+1.504	88.480	Quiet	QuietEstablish	the street	1	0
+2.005	87.980	Quiet	QuietEstablish	the street	1	0
+2.505	87.480	ThrowPrep	Objective	throw · TIKBOY	2	0
+3.006	86.981	ThrowPrep	Objective	throw · TIKBOY	2	0
+3.506	86.481	ThrowPrep	Objective	throw · TIKBOY	2	0
+4.007	85.981	Quiet	QuietEstablish	the street	3	0
+4.507	85.481	Quiet	QuietEstablish	the street	3	0
+5.237	84.901	Quiet	QuietEstablish	the street	3	0
+5.739	84.401	Quiet	QuietEstablish	the street	3	0
+6.239	83.901	Tag	Defender	tag · MARING	4	0
+6.740	83.401	Tag	Defender	tag · MARING	4	0
+7.241	82.901	Tag	Defender	tag · MARING	4	0
+7.741	82.401	Tag	Defender	tag · MARING	4	0
+8.242	81.901	Downed	Recovery	down · LOLA PACING	5	0
+8.742	81.401	Downed	Recovery	down · LOLA PACING	5	0
+9.243	80.902	Downed	Recovery	down · LOLA PACING	5	0
+9.744	80.402	Downed	Recovery	down · LOLA PACING	5	0
+10.245	79.902	Quiet	QuietEstablish	the street	6	0
+10.745	79.402	Quiet	QuietEstablish	the street	6	0
+11.246	78.902	Quiet	QuietEstablish	the street	6	0
+11.746	78.402	Quiet	QuietEstablish	the street	6	0
+12.247	77.902	Quiet	QuietEstablish	the street	6	0
+12.747	77.402	Quiet	QuietEstablish	the street	6	0
+13.249	76.882	LataHit	Objective	the can · LOLA PACING	7	0
+13.749	76.382	LataHit	Objective	the can · LOLA PACING	7	0
+14.250	75.882	LataHit	Objective	the can · LOLA PACING	7	0
+14.750	75.382	LataHit	Objective	the can · LOLA PACING	7	0

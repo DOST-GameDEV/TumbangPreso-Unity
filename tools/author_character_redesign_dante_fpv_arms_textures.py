@@ -1,4 +1,4 @@
-"""Paint the atlas of Dante's (displayed: Basilio) FIRST-PERSON ARMS, by hand, in his redesign's style.
+"""Paint the atlas of Dante's (displayed: Dante) FIRST-PERSON ARMS, by hand, in his redesign's style.
 
     py -3 tools/author_character_redesign_dante_fpv_arms_textures.py [--sheet out.png]
 

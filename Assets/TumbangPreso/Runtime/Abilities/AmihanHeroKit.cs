@@ -358,7 +358,8 @@ namespace TumbangPreso.Abilities
                 if (_storm == null && ctx?.Motor != null)
                     _storm = AmihanStorm.Spawn(ctx.Position, ctx.Forward, ctx.Motor.PlayerSlot, this,
                         AmihanRules.StormSurgeGatherSeconds + AmihanStorm.CutsceneTail);
-                _storm?.Release();
+                // After the cutscene, everyone it threw flies on from where its last frame drew them.
+                _storm?.Release(HadSharedIntroduction);
                 _storm = null;
             }
 

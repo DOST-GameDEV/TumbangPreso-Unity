@@ -1,0 +1,180 @@
+opening-found age=0.000 seat=0 body=(0.000, 0.020, -2.500) captured=Visual capturedAt=(-0.850, 0.043, -86.700) current=Visual currentAt=(-0.850, 0.043, -86.700) same=True stand=(-0.850, 0.040, -86.700) model=(-0.850, 0.043, -86.700)
+  body-mesh centre=(-0.829, 0.518, -86.672) bounds=(1.420, 1.080, 1.070) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-0.941, 1.307, -86.594) bounds=(1.210, 1.042, 1.149) enabled=True active=True shadows=On forceOff=False layer=0
+opening-found age=0.000 seat=1 body=(-1.800, 1.220, 9.900) captured=Visual capturedAt=(0.850, 0.108, -86.950) current=Visual currentAt=(0.850, 0.108, -86.950) same=True stand=(0.850, 0.040, -86.950) model=(0.850, 0.108, -86.950)
+  body-mesh centre=(0.879, 0.526, -86.969) bounds=(1.309, 1.031, 0.774) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(0.926, 1.355, -87.090) bounds=(0.975, 1.113, 1.034) enabled=True active=True shadows=On forceOff=False layer=0
+opening-found age=0.000 seat=2 body=(0.000, 1.220, 9.900) captured=Visual capturedAt=(-0.850, 0.097, -88.500) current=Visual currentAt=(-0.850, 0.097, -88.500) same=True stand=(-0.850, 0.040, -88.500) model=(-0.850, 0.097, -88.500)
+  body-mesh centre=(-0.872, 0.504, -88.521) bounds=(1.417, 0.996, 0.925) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-0.882, 1.216, -88.697) bounds=(1.156, 1.316, 1.201) enabled=True active=True shadows=On forceOff=False layer=0
+opening-found age=0.000 seat=3 body=(1.800, 1.220, 9.900) captured=Visual capturedAt=(0.850, 0.080, -88.720) current=Visual currentAt=(0.850, 0.080, -88.720) same=True stand=(0.850, 0.040, -88.720) model=(0.850, 0.080, -88.720)
+  body-mesh centre=(0.851, 0.553, -88.776) bounds=(1.408, 1.101, 1.007) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(0.704, 1.337, -88.842) bounds=(1.191, 1.056, 1.097) enabled=True active=True shadows=On forceOff=False layer=0
+intro_01_tunnel.png age=1.003 seat=0 body=(0.000, 0.020, -2.500) captured=Visual capturedAt=(0.000, 0.023, -2.500) current=Visual currentAt=(0.000, 0.023, -2.500) same=True stand=(-0.850, 0.040, -86.700) model=(0.000, 0.023, -2.500)
+  body-mesh centre=(0.048, 0.564, -2.464) bounds=(1.304, 1.370, 1.396) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-0.079, 1.444, -2.321) bounds=(1.265, 1.212, 1.291) enabled=True active=True shadows=On forceOff=False layer=0
+intro_01_tunnel.png age=1.003 seat=1 body=(-1.800, 1.220, 9.900) captured=Visual capturedAt=(-1.800, 1.225, 9.900) current=Visual currentAt=(-1.800, 1.225, 9.900) same=True stand=(0.850, 0.040, -86.950) model=(-1.800, 1.225, 9.900)
+  body-mesh centre=(-1.740, 1.663, 9.866) bounds=(1.156, 1.180, 1.001) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-1.686, 2.505, 9.634) bounds=(1.086, 1.301, 1.227) enabled=True active=True shadows=On forceOff=False layer=0
+intro_01_tunnel.png age=1.003 seat=2 body=(0.000, 1.220, 9.900) captured=Visual capturedAt=(0.000, 1.223, 9.900) current=Visual currentAt=(0.000, 1.223, 9.900) same=True stand=(-0.850, 0.040, -88.500) model=(0.000, 1.223, 9.900)
+  body-mesh centre=(-0.024, 1.591, 9.873) bounds=(1.468, 1.229, 1.171) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-0.093, 2.341, 9.682) bounds=(1.289, 1.420, 1.265) enabled=True active=True shadows=On forceOff=False layer=0
+intro_01_tunnel.png age=1.003 seat=3 body=(1.800, 1.220, 9.900) captured=Visual capturedAt=(1.800, 1.223, 9.900) current=Visual currentAt=(1.800, 1.223, 9.900) same=True stand=(0.850, 0.040, -88.720) model=(1.800, 1.223, 9.900)
+  body-mesh centre=(1.825, 1.751, 9.845) bounds=(1.284, 1.282, 1.236) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(1.661, 2.627, 9.841) bounds=(1.226, 1.090, 1.111) enabled=True active=True shadows=On forceOff=False layer=0
+intro_02_walk.png age=4.804 seat=0 body=(0.000, 0.020, -2.500) captured=Visual capturedAt=(0.000, 0.023, -2.500) current=Visual currentAt=(0.000, 0.023, -2.500) same=True stand=(-0.850, 0.040, -84.262) model=(0.000, 0.023, -2.500)
+  body-mesh centre=(0.030, 0.494, -2.459) bounds=(1.361, 1.242, 1.302) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-0.105, 1.287, -2.322) bounds=(1.250, 1.109, 1.253) enabled=True active=True shadows=On forceOff=False layer=0
+intro_02_walk.png age=4.804 seat=1 body=(-1.800, 1.220, 9.900) captured=Visual capturedAt=(-1.800, 1.225, 9.900) current=Visual currentAt=(-1.800, 1.225, 9.900) same=True stand=(0.850, 0.040, -84.512) model=(-1.800, 1.225, 9.900)
+  body-mesh centre=(-1.782, 1.658, 9.850) bounds=(1.244, 1.145, 0.966) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-1.730, 2.480, 9.651) bounds=(1.096, 1.260, 1.229) enabled=True active=True shadows=On forceOff=False layer=0
+intro_02_walk.png age=4.804 seat=2 body=(0.000, 1.220, 9.900) captured=Visual capturedAt=(0.000, 1.223, 9.900) current=Visual currentAt=(0.000, 1.223, 9.900) same=True stand=(-0.850, 0.040, -86.062) model=(0.000, 1.223, 9.900)
+  body-mesh centre=(-0.008, 1.702, 9.859) bounds=(1.275, 1.159, 1.091) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-0.029, 2.435, 9.673) bounds=(1.344, 1.528, 1.289) enabled=True active=True shadows=On forceOff=False layer=0
+intro_02_walk.png age=4.804 seat=3 body=(1.800, 1.220, 9.900) captured=Visual capturedAt=(1.800, 1.223, 9.900) current=Visual currentAt=(1.800, 1.223, 9.900) same=True stand=(0.850, 0.040, -86.282) model=(1.800, 1.223, 9.900)
+  body-mesh centre=(1.818, 1.678, 9.863) bounds=(1.360, 1.051, 1.069) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(1.681, 2.435, 9.865) bounds=(1.227, 0.952, 1.117) enabled=True active=True shadows=On forceOff=False layer=0
+intro_03_glare_rising.png age=6.204 seat=0 body=(0.000, 0.020, -2.500) captured=Visual capturedAt=(0.000, 0.023, -2.500) current=Visual currentAt=(0.000, 0.023, -2.500) same=True stand=(-0.867, 0.040, -82.370) model=(0.000, 0.023, -2.500)
+  body-mesh centre=(0.080, 0.561, -2.525) bounds=(1.362, 1.306, 1.247) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-0.009, 1.455, -2.546) bounds=(1.316, 1.160, 1.164) enabled=True active=True shadows=On forceOff=False layer=0
+intro_03_glare_rising.png age=6.204 seat=1 body=(-1.800, 1.220, 9.900) captured=Visual capturedAt=(-1.800, 1.225, 9.900) current=Visual currentAt=(-1.800, 1.225, 9.900) same=True stand=(0.855, 0.040, -82.620) model=(-1.800, 1.225, 9.900)
+  body-mesh centre=(-1.775, 1.668, 9.916) bounds=(1.253, 1.145, 0.967) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-1.801, 2.535, 9.783) bounds=(1.204, 1.237, 1.177) enabled=True active=True shadows=On forceOff=False layer=0
+intro_03_glare_rising.png age=6.204 seat=2 body=(0.000, 1.220, 9.900) captured=Visual capturedAt=(0.000, 1.223, 9.900) current=Visual currentAt=(0.000, 1.223, 9.900) same=True stand=(-0.850, 0.040, -84.170) model=(0.000, 1.223, 9.900)
+  body-mesh centre=(0.057, 1.700, 9.857) bounds=(1.219, 1.131, 1.040) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(0.116, 2.430, 9.670) bounds=(1.271, 1.502, 1.236) enabled=True active=True shadows=On forceOff=False layer=0
+intro_03_glare_rising.png age=6.204 seat=3 body=(1.800, 1.220, 9.900) captured=Visual capturedAt=(1.800, 1.223, 9.900) current=Visual currentAt=(1.800, 1.223, 9.900) same=True stand=(0.850, 0.040, -84.390) model=(1.800, 1.223, 9.900)
+  body-mesh centre=(1.793, 1.761, 9.846) bounds=(1.274, 1.274, 1.278) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(1.703, 2.650, 9.793) bounds=(1.238, 1.107, 1.173) enabled=True active=True shadows=On forceOff=False layer=0
+intro_04_glare_peak.png age=6.806 seat=0 body=(0.000, 0.020, -2.500) captured=Visual capturedAt=(0.000, 0.023, -2.500) current=Visual currentAt=(0.000, 0.023, -2.500) same=True stand=(-0.948, 0.040, -81.555) model=(0.000, 0.023, -2.500)
+  body-mesh centre=(-0.012, 0.489, -2.455) bounds=(1.351, 1.311, 1.126) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-0.222, 1.258, -2.336) bounds=(1.223, 1.176, 1.105) enabled=True active=True shadows=On forceOff=False layer=0
+intro_04_glare_peak.png age=6.806 seat=1 body=(-1.800, 1.220, 9.900) captured=Visual capturedAt=(-1.800, 1.225, 9.900) current=Visual currentAt=(-1.800, 1.225, 9.900) same=True stand=(0.917, 0.040, -81.805) model=(-1.800, 1.225, 9.900)
+  body-mesh centre=(-1.787, 1.673, 9.927) bounds=(1.299, 1.216, 1.068) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-1.813, 2.564, 9.773) bounds=(1.260, 1.296, 1.246) enabled=True active=True shadows=On forceOff=False layer=0
+intro_04_glare_peak.png age=6.806 seat=2 body=(0.000, 1.220, 9.900) captured=Visual capturedAt=(0.000, 1.223, 9.900) current=Visual currentAt=(0.000, 1.223, 9.900) same=True stand=(-0.850, 0.040, -83.355) model=(0.000, 1.223, 9.900)
+  body-mesh centre=(-0.010, 1.562, 9.874) bounds=(1.457, 1.240, 1.177) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-0.106, 2.288, 9.697) bounds=(1.364, 1.442, 1.265) enabled=True active=True shadows=On forceOff=False layer=0
+intro_04_glare_peak.png age=6.806 seat=3 body=(1.800, 1.220, 9.900) captured=Visual capturedAt=(1.800, 1.223, 9.900) current=Visual currentAt=(1.800, 1.223, 9.900) same=True stand=(0.850, 0.040, -83.575) model=(1.800, 1.223, 9.900)
+  body-mesh centre=(1.839, 1.731, 9.860) bounds=(1.354, 1.317, 1.174) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(1.833, 2.597, 9.828) bounds=(1.285, 1.179, 1.108) enabled=True active=True shadows=On forceOff=False layer=0
+intro_05_reveal_early.png age=7.857 seat=0 body=(0.000, 0.020, -2.500) captured=Visual capturedAt=(0.000, 0.023, -2.500) current=Visual currentAt=(0.000, 0.023, -2.500) same=True stand=(-1.188, 0.040, -80.135) model=(0.000, 0.023, -2.500)
+  body-mesh centre=(-0.022, 0.508, -2.458) bounds=(1.359, 1.290, 1.323) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-0.147, 1.332, -2.368) bounds=(1.268, 1.148, 1.253) enabled=True active=True shadows=On forceOff=False layer=0
+intro_05_reveal_early.png age=7.857 seat=1 body=(-1.800, 1.220, 9.900) captured=Visual capturedAt=(-1.800, 1.225, 9.900) current=Visual currentAt=(-1.800, 1.225, 9.900) same=True stand=(1.141, 0.040, -80.385) model=(-1.800, 1.225, 9.900)
+  body-mesh centre=(-1.846, 1.642, 9.853) bounds=(1.291, 1.105, 0.866) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-1.895, 2.437, 9.681) bounds=(1.120, 1.265, 1.186) enabled=True active=True shadows=On forceOff=False layer=0
+intro_05_reveal_early.png age=7.857 seat=2 body=(0.000, 1.220, 9.900) captured=Visual capturedAt=(0.000, 1.223, 9.900) current=Visual currentAt=(0.000, 1.223, 9.900) same=True stand=(-0.903, 0.040, -81.935) model=(0.000, 1.223, 9.900)
+  body-mesh centre=(0.029, 1.598, 9.931) bounds=(1.466, 1.221, 1.170) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(0.104, 2.372, 9.858) bounds=(1.282, 1.420, 1.262) enabled=True active=True shadows=On forceOff=False layer=0
+intro_05_reveal_early.png age=7.857 seat=3 body=(1.800, 1.220, 9.900) captured=Visual capturedAt=(1.800, 1.223, 9.900) current=Visual currentAt=(1.800, 1.223, 9.900) same=True stand=(0.882, 0.040, -82.155) model=(1.800, 1.223, 9.900)
+  body-mesh centre=(1.878, 1.761, 9.877) bounds=(1.295, 1.305, 1.188) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(1.787, 2.657, 9.876) bounds=(1.254, 1.153, 1.098) enabled=True active=True shadows=On forceOff=False layer=0
+intro_06_reveal_bowl.png age=9.154 seat=0 body=(0.000, 0.020, -2.500) captured=Visual capturedAt=(0.000, 0.023, -2.500) current=Visual currentAt=(0.000, 0.023, -2.500) same=True stand=(-1.499, 0.040, -78.379) model=(0.000, 0.023, -2.500)
+  body-mesh centre=(0.019, 0.494, -2.457) bounds=(1.374, 1.268, 1.258) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-0.040, 1.297, -2.341) bounds=(1.262, 1.133, 1.212) enabled=True active=True shadows=On forceOff=False layer=0
+intro_06_reveal_bowl.png age=9.154 seat=1 body=(-1.800, 1.220, 9.900) captured=Visual capturedAt=(-1.800, 1.225, 9.900) current=Visual currentAt=(-1.800, 1.225, 9.900) same=True stand=(1.461, 0.040, -78.629) model=(-1.800, 1.225, 9.900)
+  body-mesh centre=(-1.757, 1.663, 9.867) bounds=(1.194, 1.226, 1.131) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-1.732, 2.526, 9.605) bounds=(1.092, 1.335, 1.309) enabled=True active=True shadows=On forceOff=False layer=0
+intro_06_reveal_bowl.png age=9.154 seat=2 body=(0.000, 1.220, 9.900) captured=Visual capturedAt=(0.000, 1.223, 9.900) current=Visual currentAt=(0.000, 1.223, 9.900) same=True stand=(-1.179, 0.040, -80.179) model=(0.000, 1.223, 9.900)
+  body-mesh centre=(0.012, 1.689, 9.863) bounds=(1.261, 1.143, 1.121) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(0.018, 2.427, 9.677) bounds=(1.334, 1.496, 1.317) enabled=True active=True shadows=On forceOff=False layer=0
+intro_06_reveal_bowl.png age=9.154 seat=3 body=(1.800, 1.220, 9.900) captured=Visual capturedAt=(1.800, 1.223, 9.900) current=Visual currentAt=(1.800, 1.223, 9.900) same=True stand=(1.138, 0.040, -80.399) model=(1.800, 1.223, 9.900)
+  body-mesh centre=(1.812, 1.745, 9.846) bounds=(1.276, 1.310, 1.188) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(1.624, 2.610, 9.830) bounds=(1.209, 1.107, 1.066) enabled=True active=True shadows=On forceOff=False layer=0
+intro_07_taya_shuffle.png age=10.704 seat=0 body=(0.000, 0.020, -2.500) captured=Visual capturedAt=(0.000, 0.023, -2.500) current=Visual currentAt=(0.000, 0.023, -2.500) same=True stand=(-1.586, 0.040, -77.600) model=(0.000, 0.023, -2.500)
+  body-mesh centre=(0.016, 0.495, -2.515) bounds=(1.336, 0.956, 0.731) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-0.106, 1.263, -2.530) bounds=(1.074, 0.939, 0.905) enabled=True active=True shadows=On forceOff=False layer=0
+intro_07_taya_shuffle.png age=10.704 seat=1 body=(-1.800, 1.220, 9.900) captured=Visual capturedAt=(-1.800, 1.225, 9.900) current=Visual currentAt=(-1.800, 1.225, 9.900) same=True stand=(1.564, 0.040, -77.850) model=(-1.800, 1.225, 9.900)
+  body-mesh centre=(-1.800, 1.652, 9.913) bounds=(1.288, 0.865, 0.640) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-1.795, 2.479, 9.908) bounds=(0.907, 0.944, 0.902) enabled=True active=True shadows=On forceOff=False layer=0
+intro_07_taya_shuffle.png age=10.704 seat=2 body=(0.000, 1.220, 9.900) captured=Visual capturedAt=(0.000, 1.223, 9.900) current=Visual currentAt=(0.000, 1.223, 9.900) same=True stand=(-1.327, 0.040, -79.400) model=(0.000, 1.223, 9.900)
+  body-mesh centre=(0.000, 1.645, 9.916) bounds=(1.348, 0.856, 0.651) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(0.000, 2.357, 9.811) bounds=(0.998, 1.192, 0.980) enabled=True active=True shadows=On forceOff=False layer=0
+intro_07_taya_shuffle.png age=10.704 seat=3 body=(1.800, 1.220, 9.900) captured=Visual capturedAt=(1.800, 1.223, 9.900) current=Visual currentAt=(1.800, 1.223, 9.900) same=True stand=(1.286, 0.040, -79.620) model=(1.800, 1.223, 9.900)
+  body-mesh centre=(1.816, 1.695, 9.885) bounds=(1.336, 0.956, 0.731) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(1.694, 2.463, 9.870) bounds=(1.074, 0.939, 0.905) enabled=True active=True shadows=On forceOff=False layer=0
+intro_08_taya_stamp.png age=13.406 seat=0 body=(0.000, 0.020, -2.500) captured=Visual capturedAt=(0.000, 0.023, -2.500) current=Visual currentAt=(0.000, 0.023, -2.500) same=True stand=(-1.586, 0.040, -77.600) model=(0.000, 0.023, -2.500)
+  body-mesh centre=(0.043, 0.516, -2.560) bounds=(1.267, 1.097, 0.964) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-0.101, 1.261, -2.543) bounds=(1.504, 1.178, 1.374) enabled=True active=True shadows=On forceOff=False layer=0
+intro_08_taya_stamp.png age=13.406 seat=1 body=(-1.800, 1.220, 9.900) captured=Visual capturedAt=(-1.800, 1.225, 9.900) current=Visual currentAt=(-1.800, 1.225, 9.900) same=True stand=(1.564, 0.040, -77.850) model=(-1.800, 1.225, 9.900)
+  body-mesh centre=(-1.800, 1.650, 9.913) bounds=(1.292, 0.861, 0.641) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-1.795, 2.475, 9.906) bounds=(0.909, 0.942, 0.904) enabled=True active=True shadows=On forceOff=False layer=0
+intro_08_taya_stamp.png age=13.406 seat=2 body=(0.000, 1.220, 9.900) captured=Visual capturedAt=(0.000, 1.223, 9.900) current=Visual currentAt=(0.000, 1.223, 9.900) same=True stand=(-1.327, 0.040, -79.400) model=(0.000, 1.223, 9.900)
+  body-mesh centre=(0.000, 1.640, 9.771) bounds=(1.168, 0.912, 0.946) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-0.012, 2.335, 9.709) bounds=(1.111, 1.353, 1.275) enabled=True active=True shadows=On forceOff=False layer=0
+intro_08_taya_stamp.png age=13.406 seat=3 body=(1.800, 1.220, 9.900) captured=Visual capturedAt=(1.800, 1.223, 9.900) current=Visual currentAt=(1.800, 1.223, 9.900) same=True stand=(1.286, 0.040, -79.620) model=(1.800, 1.223, 9.900)
+  body-mesh centre=(1.843, 1.716, 9.840) bounds=(1.267, 1.097, 0.964) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(1.699, 2.461, 9.857) bounds=(1.504, 1.178, 1.374) enabled=True active=True shadows=On forceOff=False layer=0
+intro_09_taya_spot.png age=15.554 seat=0 body=(0.000, 0.020, -2.500) captured=Visual capturedAt=(0.000, 0.023, -2.500) current=Visual currentAt=(0.000, 0.023, -2.500) same=True stand=(-1.154, 0.040, -77.600) model=(0.000, 0.023, -2.500)
+  body-mesh centre=(-0.036, 0.532, -2.474) bounds=(1.284, 1.348, 1.247) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-0.172, 1.385, -2.368) bounds=(1.208, 1.130, 1.105) enabled=True active=True shadows=On forceOff=False layer=0
+intro_09_taya_spot.png age=15.554 seat=1 body=(-1.800, 1.220, 9.900) captured=Visual capturedAt=(-1.800, 1.225, 9.900) current=Visual currentAt=(-1.800, 1.225, 9.900) same=True stand=(1.150, 0.040, -77.649) model=(-1.800, 1.225, 9.900)
+  body-mesh centre=(-1.796, 1.652, 9.896) bounds=(1.281, 1.230, 1.078) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-1.796, 2.518, 9.680) bounds=(1.138, 1.321, 1.247) enabled=True active=True shadows=On forceOff=False layer=0
+intro_09_taya_spot.png age=15.554 seat=2 body=(0.000, 1.220, 9.900) captured=Visual capturedAt=(0.000, 1.223, 9.900) current=Visual currentAt=(0.000, 1.223, 9.900) same=True stand=(-2.796, 0.040, -77.949) model=(0.000, 1.223, 9.900)
+  body-mesh centre=(-0.013, 1.584, 9.889) bounds=(1.296, 1.086, 1.012) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(0.001, 2.340, 9.735) bounds=(1.094, 1.294, 1.113) enabled=True active=True shadows=On forceOff=False layer=0
+intro_09_taya_spot.png age=15.554 seat=3 body=(1.800, 1.220, 9.900) captured=Visual capturedAt=(1.800, 1.223, 9.900) current=Visual currentAt=(1.800, 1.223, 9.900) same=True stand=(2.788, 0.040, -77.992) model=(1.800, 1.223, 9.900)
+  body-mesh centre=(1.840, 1.675, 9.885) bounds=(1.364, 1.038, 0.935) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(1.746, 2.417, 9.908) bounds=(1.218, 0.950, 1.030) enabled=True active=True shadows=On forceOff=False layer=0
+intro_10_build_blueprint.png age=18.855 seat=0 body=(0.000, 0.020, -2.500) captured=Visual capturedAt=(0.000, 0.023, -2.500) current=Visual currentAt=(0.000, 0.023, -2.500) same=True stand=(-1.050, 0.040, -77.600) model=(0.000, 0.023, -2.500)
+  body-mesh centre=(0.043, 0.512, -2.573) bounds=(1.279, 1.088, 0.968) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-0.058, 1.231, -2.661) bounds=(1.474, 1.180, 1.408) enabled=True active=True shadows=On forceOff=False layer=0
+intro_10_build_blueprint.png age=18.855 seat=1 body=(-1.800, 1.220, 9.900) captured=Visual capturedAt=(-1.800, 1.225, 9.900) current=Visual currentAt=(-1.800, 1.225, 9.900) same=True stand=(1.050, 0.040, -77.600) model=(-1.800, 1.225, 9.900)
+  body-mesh centre=(-1.800, 1.661, 9.935) bounds=(1.176, 1.024, 0.930) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-1.758, 2.467, 9.817) bounds=(1.056, 1.182, 1.163) enabled=True active=True shadows=On forceOff=False layer=0
+intro_10_build_blueprint.png age=18.855 seat=2 body=(0.000, 1.220, 9.900) captured=Visual capturedAt=(0.000, 1.223, 9.900) current=Visual currentAt=(0.000, 1.223, 9.900) same=True stand=(-3.150, 0.040, -77.600) model=(0.000, 1.223, 9.900)
+  body-mesh centre=(0.000, 1.653, 9.786) bounds=(1.115, 0.889, 0.949) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(0.001, 2.335, 9.742) bounds=(1.011, 1.351, 1.198) enabled=True active=True shadows=On forceOff=False layer=0
+intro_10_build_blueprint.png age=18.855 seat=3 body=(1.800, 1.220, 9.900) captured=Visual capturedAt=(1.800, 1.223, 9.900) current=Visual currentAt=(1.800, 1.223, 9.900) same=True stand=(3.150, 0.040, -77.600) model=(1.800, 1.223, 9.900)
+  body-mesh centre=(1.843, 1.712, 9.827) bounds=(1.279, 1.088, 0.968) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(1.742, 2.431, 9.739) bounds=(1.474, 1.180, 1.408) enabled=True active=True shadows=On forceOff=False layer=0
+intro_11_build_rising.png age=20.756 seat=0 body=(0.000, 0.020, -2.500) captured=Visual capturedAt=(0.000, 0.023, -2.500) current=Visual currentAt=(0.000, 0.023, -2.500) same=True stand=(-1.050, 0.040, -77.600) model=(0.000, 0.023, -2.500)
+  body-mesh centre=(0.008, 0.512, -2.415) bounds=(1.603, 1.088, 1.536) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(0.142, 1.231, -2.404) bounds=(2.021, 1.180, 2.007) enabled=True active=True shadows=On forceOff=False layer=0
+intro_11_build_rising.png age=20.756 seat=1 body=(-1.800, 1.220, 9.900) captured=Visual capturedAt=(-1.800, 1.225, 9.900) current=Visual currentAt=(-1.800, 1.225, 9.900) same=True stand=(1.050, 0.040, -77.600) model=(-1.800, 1.225, 9.900)
+  body-mesh centre=(-1.823, 1.661, 9.926) bounds=(1.497, 1.024, 1.478) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-1.714, 2.467, 9.866) bounds=(1.563, 1.182, 1.571) enabled=True active=True shadows=On forceOff=False layer=0
+intro_11_build_rising.png age=20.756 seat=2 body=(0.000, 1.220, 9.900) captured=Visual capturedAt=(0.000, 1.223, 9.900) current=Visual currentAt=(0.000, 1.223, 9.900) same=True stand=(-3.150, 0.040, -77.600) model=(0.000, 1.223, 9.900)
+  body-mesh centre=(-0.108, 1.653, 9.935) bounds=(1.249, 0.889, 1.355) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-0.151, 2.335, 9.948) bounds=(1.453, 1.351, 1.333) enabled=True active=True shadows=On forceOff=False layer=0
+intro_11_build_rising.png age=20.756 seat=3 body=(1.800, 1.220, 9.900) captured=Visual capturedAt=(1.800, 1.223, 9.900) current=Visual currentAt=(1.800, 1.223, 9.900) same=True stand=(3.150, 0.040, -77.600) model=(1.800, 1.223, 9.900)
+  body-mesh centre=(1.715, 1.712, 9.891) bounds=(1.408, 1.088, 1.564) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(1.677, 2.431, 10.019) bounds=(1.890, 1.180, 1.923) enabled=True active=True shadows=On forceOff=False layer=0
+intro_12_build_reveal.png age=22.254 seat=0 body=(0.000, 0.020, -2.500) captured=Visual capturedAt=(0.000, 0.023, -2.500) current=Visual currentAt=(0.000, 0.023, -2.500) same=True stand=(-1.050, 0.040, -77.600) model=(0.000, 0.023, -2.500)
+  body-mesh centre=(0.043, 0.512, -2.573) bounds=(1.279, 1.088, 0.968) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-0.058, 1.231, -2.661) bounds=(1.474, 1.180, 1.408) enabled=True active=True shadows=On forceOff=False layer=0
+intro_12_build_reveal.png age=22.254 seat=1 body=(-1.800, 1.220, 9.900) captured=Visual capturedAt=(-1.800, 1.225, 9.900) current=Visual currentAt=(-1.800, 1.225, 9.900) same=True stand=(1.050, 0.040, -77.600) model=(-1.800, 1.225, 9.900)
+  body-mesh centre=(-1.794, 1.661, 9.866) bounds=(1.324, 1.024, 1.125) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-1.856, 2.467, 9.974) bounds=(1.247, 1.182, 1.333) enabled=True active=True shadows=On forceOff=False layer=0
+intro_12_build_reveal.png age=22.254 seat=2 body=(0.000, 1.220, 9.900) captured=Visual capturedAt=(0.000, 1.223, 9.900) current=Visual currentAt=(0.000, 1.223, 9.900) same=True stand=(-3.150, 0.040, -77.600) model=(0.000, 1.223, 9.900)
+  body-mesh centre=(0.000, 1.653, 10.014) bounds=(1.115, 0.889, 0.949) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-0.001, 2.335, 10.058) bounds=(1.011, 1.351, 1.198) enabled=True active=True shadows=On forceOff=False layer=0
+intro_12_build_reveal.png age=22.254 seat=3 body=(1.800, 1.220, 9.900) captured=Visual capturedAt=(1.800, 1.223, 9.900) current=Visual currentAt=(1.800, 1.223, 9.900) same=True stand=(3.150, 0.040, -77.600) model=(1.800, 1.223, 9.900)
+  body-mesh centre=(1.770, 1.712, 9.980) bounds=(1.431, 1.088, 1.181) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(1.886, 2.431, 10.048) bounds=(1.702, 1.180, 1.649) enabled=True active=True shadows=On forceOff=False layer=0
+intro_13_handoff.png age=23.809 seat=0 body=(0.000, 0.020, -2.500) captured=Visual capturedAt=(0.000, 0.023, -2.500) current=Visual currentAt=(0.000, 0.023, -2.500) same=True stand=(-1.050, 0.040, -77.600) model=(0.000, 0.023, -2.500)
+  body-mesh centre=(0.043, 0.512, -2.573) bounds=(1.279, 1.088, 0.968) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-0.058, 1.231, -2.661) bounds=(1.474, 1.180, 1.408) enabled=True active=True shadows=On forceOff=False layer=0
+intro_13_handoff.png age=23.809 seat=1 body=(-1.800, 1.220, 9.900) captured=Visual capturedAt=(-1.800, 1.225, 9.900) current=Visual currentAt=(-1.800, 1.225, 9.900) same=True stand=(1.050, 0.040, -77.600) model=(-1.800, 1.225, 9.900)
+  body-mesh centre=(-1.794, 1.661, 9.866) bounds=(1.324, 1.024, 1.125) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-1.856, 2.467, 9.974) bounds=(1.247, 1.182, 1.333) enabled=True active=True shadows=On forceOff=False layer=0
+intro_13_handoff.png age=23.809 seat=2 body=(0.000, 1.220, 9.900) captured=Visual capturedAt=(0.000, 1.223, 9.900) current=Visual currentAt=(0.000, 1.223, 9.900) same=True stand=(-3.150, 0.040, -77.600) model=(0.000, 1.223, 9.900)
+  body-mesh centre=(0.000, 1.653, 10.014) bounds=(1.115, 0.889, 0.949) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-0.001, 2.335, 10.058) bounds=(1.011, 1.351, 1.198) enabled=True active=True shadows=On forceOff=False layer=0
+intro_13_handoff.png age=23.809 seat=3 body=(1.800, 1.220, 9.900) captured=Visual capturedAt=(1.800, 1.223, 9.900) current=Visual currentAt=(1.800, 1.223, 9.900) same=True stand=(3.150, 0.040, -77.600) model=(1.800, 1.223, 9.900)
+  body-mesh centre=(1.770, 1.712, 9.980) bounds=(1.431, 1.088, 1.181) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(1.886, 2.431, 10.048) bounds=(1.702, 1.180, 1.649) enabled=True active=True shadows=On forceOff=False layer=0
+intro_14_round_live.png age=24.051 seat=0 body=(0.000, 0.080, -2.425) captured=Visual capturedAt=(0.000, 0.042, -2.425) current=Visual currentAt=(0.000, 0.042, -2.425) same=True stand=(-1.050, 0.040, -77.600) model=(0.000, 0.042, -2.425)
+  body-mesh centre=(0.004, 0.503, -2.402) bounds=(1.469, 1.172, 0.855) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-0.091, 1.328, -2.402) bounds=(1.235, 1.119, 1.161) enabled=True active=True shadows=On forceOff=False layer=0
+intro_14_round_live.png age=24.051 seat=1 body=(-1.800, 1.220, 9.500) captured=Visual capturedAt=(-1.800, 1.205, 9.500) current=Visual currentAt=(-1.800, 1.205, 9.500) same=True stand=(1.050, 0.040, -77.600) model=(-1.800, 1.205, 9.500)
+  body-mesh centre=(-1.798, 1.697, 9.521) bounds=(1.774, 1.128, 1.152) enabled=True active=True shadows=ShadowsOnly forceOff=False layer=0
+  head-mesh centre=(-1.854, 2.484, 9.575) bounds=(1.259, 1.254, 1.389) enabled=True active=True shadows=ShadowsOnly forceOff=False layer=0
+intro_14_round_live.png age=24.051 seat=2 body=(-0.050, 1.280, 9.500) captured=Visual capturedAt=(-0.050, 1.242, 9.500) current=Visual currentAt=(-0.050, 1.242, 9.500) same=True stand=(-3.150, 0.040, -77.600) model=(-0.050, 1.242, 9.500)
+  body-mesh centre=(-0.046, 1.681, 9.527) bounds=(1.786, 1.068, 0.896) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(-0.065, 2.408, 9.549) bounds=(1.152, 1.367, 1.148) enabled=True active=True shadows=On forceOff=False layer=0
+intro_14_round_live.png age=24.051 seat=3 body=(1.835, 1.280, 9.465) captured=Visual capturedAt=(1.835, 1.242, 9.465) current=Visual currentAt=(1.835, 1.242, 9.465) same=True stand=(3.150, 0.040, -77.600) model=(1.835, 1.242, 9.465)
+  body-mesh centre=(1.829, 1.703, 9.442) bounds=(1.549, 1.172, 1.000) enabled=True active=True shadows=On forceOff=False layer=0
+  head-mesh centre=(1.923, 2.528, 9.433) bounds=(1.347, 1.119, 1.281) enabled=True active=True shadows=On forceOff=False layer=0

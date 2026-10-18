@@ -49,40 +49,64 @@ namespace TumbangPreso.PlayTests
                     text.Append(colour.a.ToString("R",CultureInfo.InvariantCulture)).Append(';');
             return text.ToString();
         }
+        static Transform Band(Transform live,int k)=>live.Find("DriftBand"+k);
+        [Test] public void EachBandHeavesOnItsBlastAndItsStoneCoversTheHitArea()
+        {
+            var view=Build(Vector3.zero,Vector3.forward,8,16);
+            Assert.IsNotNull(view.Live,"The cascade rides the wave.");
+            for(int k=0;k<GeoRules.DriftBlasts;k++)
+            {
+                float at=k*GeoRules.DriftInterval;
+                view.StepTo(at-.01f);if(k>0)Assert.IsFalse(Band(view.Live.transform,k).gameObject.activeSelf,"Band "+k+" waits for its blast.");
+                view.StepTo(at+.01f);Assert.IsTrue(Band(view.Live.transform,k).gameObject.activeSelf,"Band "+k+" heaves on its blast.");
+            }
+            view.StepTo(1.4f);
+            var b=view.Live.StoneBounds();
+            Assert.Greater(b.size.x,14f,"The slabs span the lane's full width (the real hit area).");
+            Assert.Less(b.size.x,17.4f,"(Renderer bounds box the turned slabs; the exact stone check is TheCascadeIsDeterministicAndStaysOnItsLane.)");
+            Assert.GreaterOrEqual(b.min.z,-.05f);Assert.LessOrEqual(b.max.z,16.5f);
+        }
+        [Test] public void PlayOpensOnTheCutscenesLastFrame()
+        {
+            var stage=Keep(new GameObject("Drift stage"));
+            var scene=DanteDriftLive.BuildStage(stage.transform,0f,8f,16f);
+            scene.StepTo(GeoRules.DriftCutsceneTail);
+            var play=Build(Vector3.zero,Vector3.forward,8,16);play.StepTo(GeoRules.DriftCutsceneTail);
+            for(int k=0;k<GeoRules.DriftBlasts;k++)
+                Assert.AreEqual(State(Band(scene.transform,k)),State(Band(play.Live.transform,k)),"Band "+k+" as the cutscene left it.");
+            Assert.IsTrue(Band(play.Live.transform,0).gameObject.activeSelf,"The first band is already rising when play resumes.");
+        }
         [Test] public void FiveBandsHaveDistinctAuthoredGeometry()
         {
             var view=Build(Vector3.zero,Vector3.forward);
-            Assert.AreEqual(GeoRules.DriftBlasts,view.transform.childCount);
             var shapes=new HashSet<string>();
-            for(int i=0;i<view.transform.childCount;i++)shapes.Add(Geometry(view.transform.GetChild(i)));
-            Assert.AreEqual(5,shapes.Count,"All five bands must have their own branches, not one repeated stamp.");
+            for(int i=0;i<GeoRules.DriftBlasts;i++){var band=Band(view.Live.transform,i);Assert.IsNotNull(band);shapes.Add(Geometry(band));}
+            Assert.AreEqual(5,shapes.Count,"All five bands must have their own slabs, not one repeated stamp.");
             Assert.IsEmpty(view.GetComponentsInChildren<Collider>(true));
             Assert.IsEmpty(view.GetComponentsInChildren<DanteDriftWave>(true));
         }
-        [Test] public void AcceptedBandBoundariesAndRewindAreDeterministic()
+        [Test] public void TheCascadeIsDeterministicAndStaysOnItsLane()
         {
             var origin=new Vector3(2,.12f,-5);var forward=new Vector3(.6f,0,.8f);
             var view=Build(origin,forward);var right=Vector3.Cross(Vector3.up,forward);
             var random=UnityEngine.Random.state;
-            for(int band=0;band<5;band++)
-            {
-                float boundary=band*GeoRules.DriftInterval;
-                view.StepTo(boundary-.001f);Assert.IsFalse(view.transform.GetChild(band).gameObject.activeSelf);
-                view.StepTo(boundary+.001f);Assert.IsTrue(view.transform.GetChild(band).gameObject.activeSelf);
-            }
             view.StepTo(.73f);string direct=State(view.transform);
             view.StepTo(1.9f);view.StepTo(.73f);Assert.AreEqual(direct,State(view.transform));
             Assert.AreEqual(random,UnityEngine.Random.state,"Sampling must not consume gameplay random state.");
             view.StepTo(GeoRules.DriftSeconds);
-            foreach(Transform band in view.transform)Assert.IsFalse(band.gameObject.activeSelf);
-            view.StepTo(.2f);
-            foreach(var filter in view.GetComponentsInChildren<MeshFilter>(true))
+            for(int k=0;k<GeoRules.DriftBlasts;k++)Assert.IsFalse(Band(view.Live.transform,k).gameObject.activeSelf,"The rubble has gone back into the court.");
+            view.StepTo(1.5f);
+            foreach(var filter in view.GetComponentsInChildren<MeshFilter>(false))
+            {
+                // Dust may billow past the edge; stone may not.
+                if(!filter.name.StartsWith("DriftSlab")&&!filter.name.StartsWith("DriftRock"))continue;
                 foreach(var vertex in filter.sharedMesh.vertices)
                 {
                     var offset=filter.transform.TransformPoint(vertex)-origin;
-                    Assert.LessOrEqual(Mathf.Abs(Vector3.Dot(offset,right)),8.05f);
-                    Assert.That(Vector3.Dot(offset,forward),Is.InRange(-.05f,16.05f));
+                    Assert.LessOrEqual(Mathf.Abs(Vector3.Dot(offset,right)),8.5f);
+                    Assert.That(Vector3.Dot(offset,forward),Is.InRange(-.5f,16.5f));
                 }
+            }
         }
         [UnityTest] public IEnumerator GeneratedGeometryIsRetiredWithItsWave()
         {

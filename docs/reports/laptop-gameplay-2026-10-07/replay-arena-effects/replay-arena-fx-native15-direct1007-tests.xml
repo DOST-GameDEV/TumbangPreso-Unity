@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-07 07:41:16Z" end-time="2026-10-07 07:41:16Z" duration="0.1394073">
+  <test-suite type="TestSuite" id="3527" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="2046" result="Passed" start-time="2026-10-07 07:41:16Z" end-time="2026-10-07 07:41:16Z" duration="0.139407" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3519" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2046" result="Passed" start-time="2026-10-07 07:41:16Z" end-time="2026-10-07 07:41:16Z" duration="0.131994" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15648" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3520" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2046" result="Passed" start-time="2026-10-07 07:41:16Z" end-time="2026-10-07 07:41:16Z" duration="0.130063" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3523" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2044" result="Passed" start-time="2026-10-07 07:41:16Z" end-time="2026-10-07 07:41:16Z" duration="0.128447" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1170" name="ArenaFxRecordedTests" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-07 07:41:16Z" end-time="2026-10-07 07:41:16Z" duration="0.097402" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1172" name="CompressedTimelineKeepsSingleFrameFlashesAndRejectsDamage" fullname="TumbangPreso.PlayTests.ArenaFxRecordedTests.CompressedTimelineKeepsSingleFrameFlashesAndRejectsDamage" methodname="CompressedTimelineKeepsSingleFrameFlashesAndRejectsDamage" classname="TumbangPreso.PlayTests.ArenaFxRecordedTests" runstate="Runnable" seed="384716657" result="Passed" start-time="2026-10-07 07:41:16Z" end-time="2026-10-07 07:41:16Z" duration="0.087719" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

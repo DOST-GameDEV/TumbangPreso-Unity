@@ -1,0 +1,14 @@
+{
+  "Assets/TumbangPreso/Runtime/Map/ArenaStage.cs": {
+    "normalizedLFsha256": "71eed45af0ecc2c1af662c9b78f667a55fbf396ec30d40e0367d5a6d74573b3a",
+    "testedRawSHA256": "fede34fd342abc7f66d5a11787d88dff0f91386a6ec2d12968e2eda36a439c50"
+  },
+  "Assets/TumbangPreso/Tests/PlayMode/ArenaOwnerLifetimeTests.cs": {
+    "normalizedLFsha256": "aa23aca5777cafabac32b0933324b3947e30ee361dfafcd13a0ea9ba721bd802",
+    "testedRawSHA256": "473bd88c59b942f0939a6c25aa3aaf1f97d0f3654a5628329678c33b71e0ca9a"
+  },
+  "Assets/TumbangPreso/Tests/PlayMode/ArenaOwnerLifetimeTests.cs.meta": {
+    "normalizedLFsha256": "48db5ed1e7d4b6536dd2f06ff4269eeeb84f1ec79e9684d1991840eef7ac5a42",
+    "rawSHA256": "ecc49ede1d90f8b847c4ed5824634162a2cbfa84f67902c407cb01d160d755df"
+  }
+}

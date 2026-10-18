@@ -1,0 +1,42 @@
+{
+  "baseline-native-classification.json": {
+    "bytes": 226,
+    "sha256": "c8300f5c10faa7d1ad38449a8302b359248c0a6e19160db8a0095e938224feff"
+  },
+  "baseline-native-launch.json": {
+    "bytes": 1087,
+    "sha256": "be26da84f9443fe84542e87272970504a89e9f260c8f2c2400d1f2169408f247"
+  },
+  "baseline-native-result.json": {
+    "bytes": 607,
+    "sha256": "577e201f202afb495f97e309661a746e239a2682d64e65695c464d954943b0c1"
+  },
+  "baseline-native-results.xml": {
+    "bytes": 5732,
+    "sha256": "eab52141b7a024a2fd1d66a4ac4c283a78be7e03ca3248f15364e9c924fca805"
+  },
+  "measured-native-classification.json": {
+    "bytes": 226,
+    "sha256": "c8300f5c10faa7d1ad38449a8302b359248c0a6e19160db8a0095e938224feff"
+  },
+  "measured-native-launch.json": {
+    "bytes": 1095,
+    "sha256": "a732bc1340072a2bf454a71c58e354dff887aea2469c6df3219ee0f84635196e"
+  },
+  "measured-native-result.json": {
+    "bytes": 481,
+    "sha256": "e55dbbaf6e4a7a1aea7df87205776a23e490258dbd37b05334041149038dc9d1"
+  },
+  "measured-native-results.xml": {
+    "bytes": 4331,
+    "sha256": "b6f28ca49a5e0e030be6f7d48c22cc722eabb7f8420d3c0c96b682da478470ed"
+  },
+  "measurement.txt": {
+    "bytes": 329,
+    "sha256": "b67adc03d3d5fe7dd74d9712d1541fec1a0ba9e235d68df7e62995a38f3c1289"
+  },
+  "qualification.json": {
+    "bytes": 410,
+    "sha256": "7c4080bd28d44b24d494cdac6c3396505944d6eb54387dd7424efb6fe644f94d"
+  }
+}

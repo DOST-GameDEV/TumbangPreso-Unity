@@ -1,0 +1,2 @@
+sample,real_seconds,simulation_seconds,round_left,gc0,gc1,gc2,main_thread_allocated_bytes,allocation_counter_available
+0,0.003862,0.357355,0.000000,188,188,188,-1,0

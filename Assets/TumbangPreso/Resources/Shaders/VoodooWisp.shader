@@ -28,6 +28,7 @@ Shader "TumbangPreso/VoodooWisp"
             Blend SrcAlpha OneMinusSrcAlpha
 
             CGPROGRAM
+            #include "RecordedShaderTime.cginc"
             #pragma vertex vert
             #pragma fragment frag
             #include "UnityCG.cginc"
@@ -62,7 +63,7 @@ Shader "TumbangPreso/VoodooWisp"
             {
                 float2 c = (i.uv - 0.5) * 2.0;
                 // Flowing torn edge: the noise runs along the wisp's length, so the rim streams like smoke pulled away.
-                float t = _Time.y;
+                float t = TumpShaderTime();
                 float n = noise(float2(c.x * 2.3 - t * 3.1 + i.seed * 17.0, c.y * 2.3 + i.seed * 9.0)) * 0.6
                         + noise(float2(c.x * 5.0 - t * 5.3, c.y * 5.0 - i.seed * 4.0)) * 0.4;
                 float d = length(c) + (n - 0.5) * 0.38;
