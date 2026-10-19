@@ -226,6 +226,7 @@ namespace TumbangPreso.Net
             _heldSeats.Clear();
             _heldPicks.Clear();
             MatchInProgress = false;
+            _benchedSeats.Clear();
 
             if (LeaderPeerId != -1)
             {
@@ -490,7 +491,41 @@ namespace TumbangPreso.Net
             foreach (var p in _peers.Values)
                 if (p.Seat >= 0) taken++;
 
-            return Mathf.Max(0, MaxPlayers - taken - _heldSeats.Count);
+            int benched = 0;
+            if (MatchInProgress)
+                foreach (int seat in _benchedSeats)
+                    if (!_heldSeats.ContainsKey(seat) && !SeatTaken(seat)) benched++;
+
+            return Mathf.Max(0, MaxPlayers - taken - _heldSeats.Count - benched);
+        }
+
+        /// <summary>
+        /// Seats that have no body in the running match: a custom room's empty seat with no bot.
+        ///
+        /// ⚠️⚠️ A NEWCOMER MUST NOT BE SEATED IN ONE, owner 2026-10-19: removing every bot used to
+        /// leave four standing bodies, so those seats are no longer built at all
+        /// (`MatchInstaller.SeatHasABody`). A seat with no body cannot be driven, scored or
+        /// shown, so a player arriving mid-match into one would be a camera with nothing to
+        /// follow. They watch instead (`RuleOnArrival` branch 3), and the seat is a normal free
+        /// seat again the moment the match ends.
+        /// </summary>
+        private readonly HashSet<int> _benchedSeats = new HashSet<int>();
+
+        public void BenchSeats(IEnumerable<int> seats)
+        {
+            _benchedSeats.Clear();
+            if (seats != null)
+                foreach (int seat in seats)
+                    if (seat >= 0 && seat < MaxPlayers) _benchedSeats.Add(seat);
+        }
+
+        public bool IsSeatBenched(int seat) => MatchInProgress && _benchedSeats.Contains(seat);
+
+        private bool SeatTaken(int seat)
+        {
+            foreach (var p in _peers.Values)
+                if (p.Seat == seat) return true;
+            return false;
         }
 
         public int FirstFreeSeat()
@@ -498,6 +533,7 @@ namespace TumbangPreso.Net
             for (int seat = 0; seat < MaxPlayers; seat++)
             {
                 if (_heldSeats.ContainsKey(seat)) continue;
+                if (IsSeatBenched(seat)) continue;
 
                 bool used = false;
                 foreach (var p in _peers.Values)
@@ -925,6 +961,7 @@ namespace TumbangPreso.Net
         {
             MatchInProgress = true;
             _heldSeats.Clear();
+            _benchedSeats.Clear();
             _heldPicks.Clear();
         }
 
@@ -957,6 +994,7 @@ namespace TumbangPreso.Net
         {
             MatchInProgress = false;
             _heldSeats.Clear();
+            _benchedSeats.Clear();
             _heldPicks.Clear();
         }
 
@@ -964,6 +1002,7 @@ namespace TumbangPreso.Net
         {
             MatchInProgress = false;
             _heldSeats.Clear();
+            _benchedSeats.Clear();
             _heldPicks.Clear();
             _seenThisMatch.Clear();
             SetJoinCode("");
