@@ -137,6 +137,20 @@ namespace TumbangPreso.PlayTests
             }
         }
 
+        /// <summary>
+        /// ⚠️ HERO IS BUILT ACROSS FRAMES BEHIND HOME AND JOINS THE STACK ONLY WHEN IT IS COMPLETE
+        /// (`HubHero.BuildAcrossFrames`, `TumpHub.PrepareScreen`, 2026-10-08), so `Press`'s one frame
+        /// and 0.45 s is not the time it takes. The shop's HEROES door read as broken for that
+        /// reason alone (`docs/TODO_Archive.md` UX-1.5a). The time is logged so a slow reveal is seen.
+        /// </summary>
+        internal static IEnumerator AwaitDeferredHero()
+        {
+            float began = Time.realtimeSinceStartup, until = began + 10;
+            while (!(TumpHub.Current.Top is HubHero) && Time.realtimeSinceStartup < until) yield return null;
+            Debug.Log($"[HeroReveal] {(TumpHub.Current.Top is HubHero ? "revealed" : "NOT revealed")} " +
+                      $"{Time.realtimeSinceStartup - began:F2} s beyond Press's own wait");
+        }
+
         private static void Back()
         {
             TumpHub.Current.Back();
@@ -167,6 +181,7 @@ namespace TumbangPreso.PlayTests
                 yield return OpenHome();
                 yield return Press("ShopButton");
                 yield return Press("HeroShopDoor");
+                yield return AwaitDeferredHero();
                 var hero = TumpHub.Current.Top as HubHero;
                 Assert.IsNotNull(hero,"The shop's HEROES door did not open the hero stage.");
                 Assert.IsTrue(hero.ShopMode);
@@ -249,6 +264,11 @@ namespace TumbangPreso.PlayTests
                     for (int i = 0; i < people.Count; i++) if (people[i].Id == ids[h]) { index = i; break; }
                     Assert.GreaterOrEqual(index,0,"The current hero picker has no " + ids[h]);
                     yield return Press("Portrait"+index);
+                    // ⚠️ THE PICKER MUST BE SHOWING THE HERO, not whoever sits at that index in another
+                    // cast: a room reset to Classic on its way through HOME measured Classic people here.
+                    Assert.AreEqual(people[index].Name,
+                        picker.GetComponentsInChildren<Text>().Single(t => t.name == "Heading").text,
+                        "The room's character select is not showing the Hero Strike cast.");
                     for (int s = 0; s < sizes.Length; s++)
                     {
                         int heroIndex = h, sizeIndex = s;
@@ -282,10 +302,13 @@ namespace TumbangPreso.PlayTests
                     Debug.Log($"[HeroSize] {sizes[s].x}x{sizes[s].y}: shop Sean={shop[0,s].Share:F3}, Cheska={shop[1,s].Share:F3}, Paete={shop[2,s].Share:F3}; selector Sean={selector[0,s].Share:F3}, Cheska={selector[1,s].Share:F3}, Paete={selector[2,s].Share:F3}");
                     Assert.Greater(shop[2,s].Share,shop[0,s].Share,"Paete should read larger than Sean on the actual shop stage.");
                     Assert.Greater(selector[2,s].Share,selector[0,s].Share,"Paete should read larger than Sean on character select.");
-                    Assert.LessOrEqual(Mathf.Abs(shop[2,s].Share-shop[1,s].Share)/shop[1,s].Share,.1f,
-                        "Paete shop height differs from Cheska by over 10%.");
-                    Assert.LessOrEqual(Mathf.Abs(selector[2,s].Share-selector[1,s].Share)/selector[1,s].Share,.1f,
-                        "Paete selector height differs from Cheska by over 10%.");
+                    // ⚠️⚠️ NO "WITHIN 10% OF CHESKA" BAND ANY MORE, AND IT WAS NOT LOOSENED TO PASS. The band
+                    // was set on 2026-09-27, when every standard hero shared one body and Cheska stood for
+                    // all of them (Sean 0.705, Cheska 0.695 at 1600x680). Since the October redesigns the
+                    // owner adopted, each hero has their own height: on 2026-10-19 Sean drew 0.801 and
+                    // Cheska 0.711 on character select, so the owner's rule above ("supposed to be larger
+                    // than sean") and the band could not both hold. Cheska stays in the log for the record;
+                    // the crop checks above still bound Paete from the other side.
                 }
             }
             finally

@@ -6063,17 +6063,16 @@ Implementation order within UX-1:
   lock-in and a chalked TAYA IN ROUND n over your seat. Research, faults, captures and what is
   still open: `docs/reports/character-select-2026-10-19/README.md`. Still open here: the
   multi-peer lock-in check, and a pad and phone pass in hand.
-- [ ] **UX-1.5a Three PlayMode checks left behind by later work (OPEN, found 2026-10-19).** They
-  fail identically on `player-room-depth-and-bots` at `368b625f9` with and without the character
-  select rework (`docs/reports/character-select-2026-10-19/README.md` section 6):
-  `ModelPreviewTests.ClassicCharacterSelectDrawsTheGodotCastAndBackdrop` expects Berto's mesh to be
-  `character-male-f`, which became `bayan-redesign` in `bd44c197b`;
-  `MatchArrivalFlowTests.CustomRoomWithBotsOffRequiresFourHumanSeats` still forbids starting a room
-  with empty seats, which `eec7970b0` allowed on purpose; and
-  `HubFlowTests.PaeteAndSeanKeepTheirRelativeSizeInShopAndCharacterSelect` stops at "The shop's
-  HEROES door did not open the hero stage", which may be a real fault in the SHOP to HERO route.
-  Done means the first two assert today's intended behaviour, the third's door is traced and fixed
-  or its test corrected, and all three pass so their character select halves run again.
+- [x] **UX-1.5a Three PlayMode checks left behind by later work.** DONE 2026-10-19: all three pass
+  and their character select halves run again. Body, causes and evidence:
+  [TODO_Archive](TODO_Archive.md#ux-15a-three-playmode-checks-left-behind-by-later-work-done-2026-10-19).
+  It also fixed HOME resetting a live room to the mode card's defaults (`HubHome.ApplyChoice`).
+- [ ] **UX-1.5b The door walk asserts HERO before it has been built (OPEN, found 2026-10-19).**
+  `HubFlowTests.HomeAndEveryDoorOpensItsScreenAndBackReturns` asserts `HubHero` straight after
+  `Press("HeroButton")` and after `Press("HeroShopDoor")`. HERO builds across frames behind HOME and
+  arrived 0.09 to 0.13 s after `Press`'s own wait in five measured runs (UX-1.5a), so both asserts can
+  fail on a working door. Done means both wait through `HubFlowTests.AwaitDeferredHero` and the whole
+  door walk passes in a guarded run, or its remaining failures are recorded here.
 - [ ] **UX-1.6 Custom host/join.** Built; a real LAN host is opened by `HubFlowTests`. Open: a
   second process joining by code and from the LAN and online lists (`tools/net_matrix.py`).
   Immediate native code entry exposed cold LAN lookup plus concurrent online-query429;
@@ -6099,9 +6098,10 @@ Implementation order within UX-1:
   returns if they leave before the match. A seat the host empties of its bot now has no
   body in the match (`MatchInstaller.SeatHasABody`, the offline `soloPractice` path extended
   to a room opened from the game; command-line sessions keep four), and the lobby benches it
-  so a mid-match arrival watches instead (`LobbySession.BenchSeats`). ⚠️ OPEN: not yet proven
-  in a two-peer native run (host and client must build the same seats), and not yet seen by
-  the owner in a build.
+  so a mid-match arrival watches instead (`LobbySession.BenchSeats`). The host-alone case passes
+  in PlayMode (`MatchArrivalFlowTests.CustomRoomWithEveryBotRemovedStartsWithOnlyTheHostsSeatInTheMatch`,
+  UX-1.5a). ⚠️ OPEN: not yet proven in a two-peer native run (host and client must build the same
+  seats), and not yet seen by the owner in a build.
 - [ ] **UX-1.8 Real soft currency and hero/item shop.** Built: `EconomyRules`, `wallet.js`,
   `WalletStore`, SHOP popup, UNLOCK/BUY. Deployment DONE: version1 and exact source/params verified in existing project
   production. Live wallet action checks remain open; no runtime pass inferred. SHOP is a popup exposing Hero

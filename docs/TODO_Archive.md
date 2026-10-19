@@ -1,5 +1,72 @@
 # TODO archive: the batch reports and the closed work
 
+## UX-1.5a Three PlayMode checks left behind by later work DONE 2026-10-19
+
+The entry as it stood in `docs/TODO.md`:
+
+> They fail identically on `player-room-depth-and-bots` at `368b625f9` with and without the
+> character select rework (`docs/reports/character-select-2026-10-19/README.md` section 6):
+> `ModelPreviewTests.ClassicCharacterSelectDrawsTheGodotCastAndBackdrop` expects Berto's mesh to be
+> `character-male-f`, which became `bayan-redesign` in `bd44c197b`;
+> `MatchArrivalFlowTests.CustomRoomWithBotsOffRequiresFourHumanSeats` still forbids starting a room
+> with empty seats, which `eec7970b0` allowed on purpose; and
+> `HubFlowTests.PaeteAndSeanKeepTheirRelativeSizeInShopAndCharacterSelect` stops at "The shop's
+> HEROES door did not open the hero stage", which may be a real fault in the SHOP to HERO route.
+> Done means the first two assert today's intended behaviour, the third's door is traced and fixed
+> or its test corrected, and all three pass so their character select halves run again.
+
+**Result: 3 of 3 pass** in a graphics-enabled guarded PlayMode run of the committed code on a fresh
+named profile (`evidence/ux15a-run5-accepted.xml` in the character select report, total 3, failed 0;
+20.9 s, 19.9 s and 4.2 s). Every case was launched through `tools/run_unity_guarded.py` with
+UDP 8910 checked free first.
+
+1. **Berto's mesh.** The expectation is `bayan-redesign(Clone)`, the model `RosterBookBuilder.PersonModels`
+   and `Resources/Roster/person_bayan.asset` give the `bayan` id since the twelve Classic people were
+   redrawn. The chalk circle and contact shadow assertions after it now run, and pass.
+2. **The bots-off room.** Replaced by `CustomRoomWithEveryBotRemovedStartsWithOnlyTheHostsSeatInTheMatch`.
+   It hosts a LAN room, checks the room opens with a bot in every empty seat, presses REMOVE BOT on all
+   three, presses START GAME over a stale accepted-bot policy, presses SELECT, and follows the host into
+   a running round on Eskinita. It asserts the room's NONE retired the stale policy at START, the
+   host's seat alone has a body (`MatchInstaller.SeatHasABody`) and the three empty seats are benched
+   (`LobbySession.IsSeatBenched`). That is the first PlayMode proof of `40b7e5d9c` on a real host; the
+   two-peer case under UX-1.7 is still open.
+   - ⚠️⚠️ **IT FOUND A PRODUCT FAULT, FIXED IN THE SAME COMMIT.** `TumpHub.ShowLobby` pops to HOME before
+     pushing the lobby, and HOME's passive `Refresh` ran `HubHome.ApplyChoice`, which resets the mode and
+     the rules to the mode card's defaults. A player whose card read CLASSIC who hosted a HERO STRIKE room
+     therefore had it turned into a Classic room with every bot gone as CREATE LOBBY landed (a client's
+     adopted rules were exposed the same way). Run 3 caught it: *"Seats 0=person, 1=open, 2=open, 3=open;
+     host seat 0, Bots 0, BotSeats 0, pinned False"*. A passive refresh now leaves a live room's rules
+     alone, as `33873b71a` already made it leave pinned ones; an explicit card choice still applies. The
+     test now sets the card to CLASSIC on purpose and asserts the room is still Hero Strike in the lobby.
+   - The card was CLASSIC in runs 2 and 3 because `ModelPreviewTests`' Classic case saved it through
+     `HubHome.Choice` and restored it in memory only, and the guarded runner keeps files a run creates
+     in a named profile. That case now saves its restore.
+3. **The shop's HEROES door was never broken.** `HubShopPopup` closes itself and pushes `HubHero`, which
+   since `a225294d3` and `e1a4e2113` (2026-10-08) builds across frames behind HOME and joins the stack
+   only when complete. The test looked one frame and 0.45 s after the press. Measured over five runs,
+   the hero stage arrived 0.09 to 0.13 s after that wait. The test now waits for it (bounded at 10 s) and
+   logs the time as `[HeroReveal]`.
+   - With the door open, the size half ran for the first time since the cast was redesigned, and its
+     "Paete within 10% of Cheska" band failed: 14% on the shop stage and 17% on character select
+     (run 1). The band was set on 2026-09-27, when every standard hero shared one body (Sean 0.705,
+     Cheska 0.695). Today Sean draws 0.794 to 0.813 and Cheska 0.706 to 0.728 on character select, so
+     the owner's own rule ("supposed to be larger than sean") and the band cannot both hold there. The
+     band is removed with that reasoning beside it; the owner's rule and both crop checks remain, and a
+     new check that the picker's heading names the hero being measured.
+   - Accepted shares (run 5), Sean / Cheska / Paete: shop 0.672 / 0.646 / 0.737 at 1600x680 and
+     0.656 / 0.643 / 0.737 at 2340x1080; character select 0.799 / 0.711 / 0.832 and
+     0.794 / 0.706 / 0.834. Across a whole idle on character select (run 4, sampled every 0.12 s)
+     Paete ran 0.816 to 0.845 and Sean 0.773 to 0.808, so the order does not depend on the frame a
+     capture lands on. Paete is framed on his own standing height (2.448) and the others on the shared
+     reference (1.880).
+   - ⚠️ Runs 2 and 3 measured Paete below Sean on character select (0.735 and 0.749 against 0.770 and
+     0.768). Those were Classic people at the hero portrait indices, because the room had been reset to
+     Classic by the fault in point 2; the heading check now refuses that measurement.
+
+Not covered: `HubFlowTests.HomeAndEveryDoorOpensItsScreenAndBackReturns` asserts `HubHero` immediately
+after `Press("HeroButton")` and `Press("HeroShopDoor")`, the same timing fault, and was not run here (see
+UX-1.5b). No other Unity suite was run beyond these three PlayMode cases and `HubPinnedRulesTests`.
+
 ## DOCS-0927 Documentation Organization DONE 2026-09-27
 
 Owner requested documentation organization next,after the current loading/login

@@ -150,6 +150,14 @@ Because the HERO screen check fails before it reaches character select, and the 
 fails before it reaches the chalk circle, this pass's Paete sizes and its updated Classic
 assertion are not exercised by those two until they are repaired.
 
+**Repaired the same day under UX-1.5a** (`docs/TODO_Archive.md`): all three pass
+(`evidence/ux15a-run5-accepted.xml`), so the chalk circle and contact shadow on the Classic screen
+and the Paete, Sean and Cheska shares on this screen now run. On this screen Paete drew 0.832 and
+0.834 against Sean's 0.799 and 0.794 (1600x680 and 2340x1080), and stayed above Sean across a whole
+idle (`evidence/ux15a-run4-home-fix-idle-spread.xml`). The repair also fixed HOME resetting a live
+room to the mode card's defaults, which had made the room in run 3 Classic
+(`evidence/ux15a-run3-classic-card-reset.xml`).
+
 ### Still open
 - A multi-peer lock-in check is still open (`docs/TODO.md` UX-1.5); this pass ran offline only.
 - The ability glyphs on the kit row are placeholders like every icon in the build (`AGENTS.md`,
