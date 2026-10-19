@@ -42,6 +42,18 @@ namespace TumbangPreso
         private int _shownBeat = -2;
         private int _runGeneration;
         private bool _returningToGameplay;
+        // When the curtain lifted and the film became visible on this peer; -1 before that.
+        private float _shownAt = -1;
+
+        /// <summary>
+        /// ⚠️ ONE LOG LINE PER STATE CHANGE, ON EVERY PEER. A peer that never saw the opening is
+        /// otherwise indistinguishable in a player log from one that did: the countdown, the
+        /// round and the HUD all arrive the same either way. The role is in the line because the
+        /// report this was written for was "it plays for the host and not for the people who
+        /// joined", and the two logs are only comparable if each says which side it is.
+        /// </summary>
+        internal static void Trace(string text) =>
+            Debug.Log("[Arrival] " + (NetAuthority.IsNetworked ? NetAuthority.IsHost ? "host" : "client" : "offline") + ": " + text);
 
         public IEnumerator Run()
         {
@@ -76,7 +88,7 @@ namespace TumbangPreso
             while (HubLoading.Preparing) { if (!Current(generation)) yield break; yield return null; }
             if (!Current(generation)) yield break;
             _camera = Camera.main;
-            if (_camera == null) yield break;
+            if (_camera == null) { Trace("no main camera, so no opening"); yield break; }
             _rig = _camera.GetComponent<CameraRig>();
             _spectator = _camera.GetComponent<SpectatorCamera>();
             _rigActive = _rig != null && _camera.enabled && (_spectator == null || !_spectator.enabled);
@@ -101,9 +113,12 @@ namespace TumbangPreso
             var opening = Map.ArenaIntro.Ensure();
             if (opening != null && _rigActive && opening.Begin(_camera, _players, _position, _rotation, _fov, reduced))
             {
+                Trace($"arena opening prepared ({opening.Timeline.End:F1} s, full={opening.Timeline.Full})");
                 _ink.color = Color.clear; _captionGroup.alpha = 0;
                 while (HubLoading.Visible) { if (!Current(generation)) yield break; yield return null; }
+                _shownAt = Time.realtimeSinceStartup;
                 opening.Roll();
+                Trace("arena opening rolling");
                 while (opening != null && opening.Playing)
                 {
                     if (!Current(generation)) yield break;
@@ -114,10 +129,14 @@ namespace TumbangPreso
                 yield break;
             }
             // ARENA-INTRO end.
+            if (opening != null) Trace("arena opening refused (rig=" + _rigActive + "), playing the arrival instead");
             PrepareDirection(map, reduced);
             Sample(0, reduced, map);
+            Trace($"arrival prepared ({Duration:F1} s, directed={_directed}, rig={_rigActive})");
             // Loading can now fade onto the already-prepared opening curtain/shot.
             while (HubLoading.Visible) { if (!Current(generation)) yield break; yield return null; }
+            _shownAt = Time.realtimeSinceStartup;
+            Trace("arrival playing");
             for (float age = 0; age < Duration; age += Time.unscaledDeltaTime)
             {
                 if (!Current(generation)) yield break;
@@ -318,8 +337,12 @@ namespace TumbangPreso
             return !GameLaunch.Spectator && (watcher == null || !watcher.isActiveAndEnabled);
         }
 
-        private void Finish()
+        private void Finish(string how = "finished")
         {
+            if (_active == this)
+                Trace(_shownAt < 0 ? how + " before it was shown"
+                    : $"{how} after {Time.realtimeSinceStartup - _shownAt:F1} s on screen");
+            _shownAt = -1;
             // ARENA-INTRO: the Arena's opening, if one is up, puts back everything it posed. A no-op elsewhere.
             Map.ArenaIntro.Stop();
             RestoreDirection();
@@ -338,7 +361,7 @@ namespace TumbangPreso
             }
             if (_held) { PresentationClock.Release(); _held = false; FreshInput(); }
         }
-        public void Cancel() { _runGeneration++; Finish(); }
+        public void Cancel() { _runGeneration++; Finish("cancelled"); }
         private void OnDisable() => Cancel();
         private void OnDestroy() => Cancel();
     }
