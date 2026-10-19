@@ -148,8 +148,24 @@ namespace TumbangPreso.UI.Hub
         private Text _header, _status, _empty;
         private RectTransform _emptyCan;
         private InputField _codeField;
+        private HubButton _refresh;
+        private float _refreshUntil = float.NegativeInfinity;
+        private bool _refreshShown;
         private bool _busy;
         private float _nextDraw;
+
+        /// <summary>
+        /// How long REFRESH reads REFRESHING... and ignores presses. A LAN host answers the query within
+        /// a frame or two and broadcasts every second; the online list asks UGS at once. The hold is what
+        /// stops a held button or a mashed pad A from becoming a query per frame.
+        /// </summary>
+        public const float RefreshHoldSeconds = 1.5f;
+
+        /// <summary>The LAN list while a REFRESH has emptied it and the answers are on their way.</summary>
+        public const string LanRefreshingMessage = "Looking for rooms on your network...";
+
+        /// <summary>The row's tag where JOIN would be, for a host on another protocol (beacon v3).</summary>
+        public const string DifferentVersionLabel = "DIFFERENT\nVERSION";
         private const int VisibleRooms = 5;
         private readonly List<HubRoom> _drawnRooms = new List<HubRoom>(VisibleRooms);
         private string _drawnEmptyMessage;
@@ -186,6 +202,18 @@ namespace TumbangPreso.UI.Hub
             HubKit.Stretch(plate.rectTransform);
             _header = HubKit.Text(right, "Heading", "", HubStyle.Title, true, HubStyle.Golden, TextAnchor.MiddleLeft);
             HubKit.Place(_header.rectTransform, HubKit.TopLeft, new Vector2(34, -20), new Vector2(900, 64));
+            // ⚠️ REFRESH SITS ON THE LIST IT REFRESHES (owner 2026-10-20, "add a refresh button on server
+            // list to refresh the servers"), at the heading's right, above the columns, so it reads as the
+            // list's own control and not as a fourth SOURCE. It is a sticker button like every other one
+            // here: the hub's focus path reaches it on a pad and a thumb presses it. Hidden for CODE.
+            // ⚠️ PLACED FROM THE LEFT, OVER THE JOIN COLUMN, NOT IN THE PANEL'S CORNER. The rows are 1180
+            // wide from the list's left (30), so JOIN's right edge is 1196 at every window shape; pinned
+            // to the panel's corner, REFRESH sat under the corner tape at 16:9 and drifted 400 units
+            // right of the rows on the owner's short wide window (first renders, 2026-10-20). Here it
+            // spans 956 to 1196: clear of the heading (34 to 934) and of the tape, whose left end starts
+            // at 1195 on the narrowest panel (1328 wide) and sits above y -12 there.
+            _refresh = HubKit.Button(right, "RefreshServers", "REFRESH", HubStyle.Honey, RefreshServers, HubStyle.Label, 921);
+            HubKit.Place((RectTransform)_refresh.transform, HubKit.TopLeft, new Vector2(956, -16), new Vector2(240, 72));
 
             _list = HubKit.Span(HubKit.Rect(right, "List"), Vector2.zero, Vector2.one, new Vector2(30, 30), new Vector2(30, 150));
             var columns = HubKit.Place(HubKit.Rect(right, "Columns"), HubKit.TopLeft, new Vector2(34, -96), new Vector2(1100, 40));
@@ -257,6 +285,9 @@ namespace TumbangPreso.UI.Hub
             _code.gameObject.SetActive(code);
             _list.gameObject.SetActive(!code);
             _list.parent.Find("Columns").gameObject.SetActive(!code);
+            _refresh.gameObject.SetActive(!code);
+            _refreshUntil = float.NegativeInfinity;
+            ShowRefresh();
             _header.text = code ? "JOIN BY CODE" : index == 0 ? "SERVERS (ONLINE)" : "SERVERS (LAN)";
             _drawnSource = -1;
             Draw();
@@ -267,10 +298,32 @@ namespace TumbangPreso.UI.Hub
         public override void Tick()
         {
             if (_busy) ShowJoining();
+            if (_refreshShown != Refreshing) { ShowRefresh(); _nextDraw = 0; }
             if (Time.unscaledTime < _nextDraw) return;
             _nextDraw = Time.unscaledTime + 1.0f;
             if (_source == 1) Net.NetSession.Instance?.Beacon?.RequestDiscovery();
             Draw();
+        }
+
+        private bool Refreshing => Time.unscaledTime < _refreshUntil;
+
+        /// <summary>REFRESH: re-ask the network for the list on screen. See <see cref="RefreshHoldSeconds"/>.</summary>
+        private void RefreshServers()
+        {
+            if (_source == 2 || Refreshing) return;
+            _refreshUntil = Time.unscaledTime + RefreshHoldSeconds;
+            Hub.Host.RefreshRooms(_source == 1);
+            ShowRefresh();
+            _drawnSource = -1;
+            Draw();
+        }
+
+        private void ShowRefresh()
+        {
+            _refreshShown = Refreshing;
+            HubKit.SetLabel(_refresh, _refreshShown ? "REFRESHING..." : "REFRESH");
+            HubKit.Fit(HubKit.LabelOf(_refresh), 204);
+            _refresh.interactable = !_refreshShown;
         }
 
         private void Draw()
@@ -278,7 +331,7 @@ namespace TumbangPreso.UI.Hub
             if (_source == 2) return;
             var rooms = Hub.Host.Rooms(_source == 1);
             string emptyMessage = _source == 1
-                ? "No rooms on your network yet. Host one, or join with a code."
+                ? Refreshing ? LanRefreshingMessage : "No rooms on your network yet. Host one, or join with a code."
                 : Hub.Host.OnlineBrowserMessage;
             int visible = Mathf.Min(rooms.Count, VisibleRooms);
             bool same = _drawnSource == _source && _drawnRooms.Count == visible
@@ -309,6 +362,19 @@ namespace TumbangPreso.UI.Hub
                 HubKit.Fit(map, 270);
                 var players = HubKit.Text(row, "Players", room.InProgress ? "IN A MATCH" : room.Players + " / " + room.Capacity, HubStyle.Body, false, HubStyle.Honey, TextAnchor.MiddleLeft);
                 HubKit.Place(players.rectTransform, HubKit.Left, new Vector2(764, 0), new Vector2(200, 60));
+                // ⚠️ A HOST ON ANOTHER PROTOCOL GETS NO JOIN AT ALL, NOT A GREYED ONE (LAN-VPN-JOIN-1020).
+                // Pressing it could only be refused at approval after the wait; a disabled JOIN would still
+                // say "this is a game you may join later", and a full room's does mean exactly that. The tag
+                // says why in the place the press would have been, and the focus path skips it.
+                if (room.DifferentVersion)
+                {
+                    // 84 tall, not JOIN's 72: two lines of the reading face at the floor size measure 76
+                    // (`TumpUiCapture`'s clip check, 2026-10-20), and the row is 92.
+                    var tag = HubKit.Text(row, "Version", DifferentVersionLabel, HubStyle.Floor, false, HubStyle.HoneySoft, TextAnchor.MiddleCenter);
+                    HubKit.Place(tag.rectTransform, HubKit.Right, new Vector2(-14, 0), new Vector2(180, 84));
+                    HubKit.Fit(tag, 180);
+                    continue;
+                }
                 string key2 = room.Key;
                 var join = HubKit.Button(row, "Join" + i, "JOIN", HubStyle.Chartreuse, () => Join(key2), HubStyle.Label, 950 + i);
                 HubKit.Place((RectTransform)join.transform, HubKit.Right, new Vector2(-14, 0), new Vector2(180, 72));

@@ -1,3 +1,26 @@
+## LAN beacon v3 (2026-10-20, no protocol step)
+
+LAN-VPN-JOIN-1020. The discovery beacon (`LanBeacon`, UDP 8911, outside Netcode) gains a third layout
+under its own magic, `tumbang-preso-lan3`: v2's fields in v2's places, then the host's
+`NetSession.ProtocolVersion` and its selected map id (`SceneFlow.SelectedMap`, cut to letters, digits,
+`_` and `-`), then the room name, still last. A v3 reader lists a host on another protocol as DIFFERENT
+VERSION with nothing to press, names every row's map, and keeps reading v1 and v2 (protocol unsaid,
+joinable as before). A host sends v3 then v2, each interval and in each query reply, and a v3 reader keeps
+a host's v3 protocol and map when its v2 copy arrives (both carry one beacon id, so they are one row).
+
+Not bumped, and why: nothing a connected peer exchanges changed, connection approval is untouched,
+and `tools/audit_wire_payloads.py` audits `MatchRpc`'s named messages, which the beacon is not. A build
+from before v3 drops the unknown magic unread and still lists the host from its v2 copy, so two players
+on the same protocol from different commits (the reporter's case: a 174 player built from `8c4164b2a`)
+keep finding each other. Bumping would have refused exactly those peers for a discovery format that is
+backward compatible by construction, the reasoning `ChatAndLobbyChromeTests` records for the v2 change.
+The v2 copy may stop once no v2-only build is in play; a v2-only reader then simply stops listing v3 hosts.
+
+Also in the beacon, no wire effect: an address on a subnet this machine shares beats one it does not,
+and a real LAN beats 25.0.0.0/8 (Hamachi) and 26.0.0.0/8 (Radmin VPN) when one host is heard on two
+adapters; a tie keeps the address already shown (`LanBeacon.AddressPreference`). JOIN GAME's REFRESH
+empties the LAN rows and asks at once, or queries UGS at once for the online list.
+
 ## Protocol164: SKITTER waits until she takes it
 
 The host's Skitter no longer sets the slipper down beside her. Back at her side it

@@ -22,12 +22,19 @@ A LAN room can be played over a virtual LAN. What has to be true, and what goes 
   host's executable (or the Editor) inbound on Public networks, or mark the VPN network
   Private. The joiner's firewall normally lets the host's replies back in, because they answer
   packets the joiner sent first (not yet verified on a blocked joiner).
-- **Same build.** The beacon carries no protocol, so a host on another build is still
-  listed; the join is refused with "That host runs another version (protocol N, yours M)".
-  The MAP column of a LAN row always reads UNKNOWN for now (`HubRoom.FromLan`).
-- **Two adapters.** When both machines also share a real LAN, a row keeps whichever adapter
-  delivered the last beacon; 25.0.0.0/8 and 192.168.0.0/16 are scored alike
-  (`LanBeacon.AddressPreference`).
+- **Same build.** Beacon v3 (`LanBeacon.MagicV3`) carries the host's protocol and map, so a
+  host on another protocol is listed as DIFFERENT VERSION with no JOIN, and the MAP column
+  names the map. A host from before v3 (v1 or v2 beacon) says neither: its row reads MAP
+  UNKNOWN and stays joinable, and approval refuses a real mismatch with "That host runs
+  another version (protocol N, yours M)". A code join that finds a v3 LAN host on another
+  protocol refuses with that sentence before connecting. A host sends v3 and v2, so a build
+  from before v3 still lists it ([contract](SKILL_NETWORK_CONTRACT.md#lan-beacon-v3-2026-10-20-no-protocol-step)).
+- **Two adapters.** When one host is heard on two adapters, an address on a subnet this
+  machine shares wins, and a real LAN beats 25.0.0.0/8 (Hamachi) and 26.0.0.0/8 (Radmin);
+  a tie keeps the address already shown (`LanBeacon.AddressPreference`). A VPN address both
+  machines share still beats a LAN address this machine is not on.
+- **REFRESH** on the JOIN GAME list forgets the LAN rows and asks again at once (live hosts
+  return within about a second), or queries the online list at once.
 
 The matched0358 Windows package qualifies natural PC-hosted LAN discovery, row
 admission, code rejoin and an already-open client Rules panel. The corrected917

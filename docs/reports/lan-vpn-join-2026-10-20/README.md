@@ -52,3 +52,98 @@ refreshes its line each second. No wire change.
 
 No real join over Hamachi: the host PC's firewall and build are not reachable from here. The beacon
 still cannot say a host is on another build before JOIN is pressed (a wire change, left open).
+Superseded by the beacon v3 section below.
+
+## Beacon v3, the shared-subnet address and REFRESH
+
+Branch `claude/lan-beacon-v3` off QoLUpdates `ef248c215`, protocol 174 (unchanged).
+
+### The change
+
+- `LanBeacon.MagicV3` (`tumbang-preso-lan3`): v2's fields, then `NetSession.ProtocolVersion` and the
+  selected map id (`SceneFlow.SelectedMap`, refreshed every frame by `NetSession.RefreshBeaconCounts`,
+  sanitised to `[A-Za-z0-9_-]`, at most 48), then the room name, still last. v1 and v2 still parse with
+  protocol 0 ("unsaid") and stay joinable. A truncated v3 packet is refused; an unreadable protocol is
+  unsaid.
+- A host sends v3 then v2 each interval and in each discovery reply. A v3 reader merges a host's two
+  copies on its beacon id and keeps the v3 protocol and map when the v2 copy arrives.
+- `LanEntry.DifferentVersion` (`Core.JoinFailureRules.ProtocolDiffers`: said and not ours) makes a row
+  neither joinable nor watchable; it sorts after joinable rooms.
+- JOIN GAME (`HubJoin`): the MAP column shows the map's display name (`HubRoom.MapName`; a map this build
+  lacks shows its own id, an unsaid map UNKNOWN), and a different-protocol row shows DIFFERENT VERSION
+  where JOIN would be, with nothing to press. The online rows use `HubRoom.MapName` too, which no longer
+  falls back to TONDO with a warning once a second for a map this build lacks. The native join card greys
+  the row and says "Different version"; the legacy card's state reads DIFFERENT VERSION. A join by code
+  that resolves to a v3 LAN host on another protocol refuses before connecting with approval's own
+  sentence (`JoinFailureRules.VersionLine`).
+- `LanBeacon.AddressPreference`: 5 shared non-VPN, 4 shared VPN range, 3 other, 2 VPN range not shared,
+  1 link-local, 0 unreadable or loopback; VPN ranges are 25.0.0.0/8 (Hamachi) and 26.0.0.0/8 (Radmin).
+  This machine's subnets are read at most every 5 s. A tie keeps the address already shown: before, a host
+  heard on a LAN and on Hamachi (both scored 2) took whichever copy came last, so its row's address swapped
+  every packet.
+- REFRESH on the JOIN list (owner, 2026-10-20: "add a refresh button on server list to refresh the
+  servers"): on the LAN list it drops every row and asks again on the next frame (`LanBeacon.Refresh`), the
+  empty list reading "Looking for rooms on your network..."; on the online list it brings the UGS query
+  forward (`ServerQuery.RefreshNow`, never doubling one in flight). It reads REFRESHING... and ignores
+  presses for 1.5 s. A sticker button at the list heading's right: mouse, pad focus path and touch reach
+  it; hidden for JOIN BY CODE.
+
+### No protocol bump
+
+The beacon is UDP 8911 outside Netcode. Nothing a connected peer exchanges changed and approval is
+untouched. `tools/audit_wire_payloads.py` reads only `MatchRpc.cs` (not touched here); it exits 1 on the
+same pre-existing `MatchRpc` mismatches as before (`ReqLunge`, `ReqPunch`, `ReqShove`, `ReqSlide`,
+`SyncUnit` and others) and names nothing in the beacon. A build from before v3 ignores the new magic and
+still lists the host from its v2 copy, so same-protocol peers from different commits keep finding each
+other. Recorded in [the network contract](../../SKILL_NETWORK_CONTRACT.md#lan-beacon-v3-2026-10-20-no-protocol-step).
+
+### Verification
+
+All Unity launches through `tools/run_unity_guarded.py` with profile `lan-beacon-v3-1020`; counts read from
+the XML.
+
+- Core.Tests 769/769 (`JoinFailureRulesTests` 13/13: `ProtocolDiffers` says nothing for 0, and the beacon's
+  `VersionLine` is the refusal's own sentence).
+- [EditMode 152/152](beacon-v3/editmode-final.xml): `LanBeaconV3Tests` 12/12 (v3 round trip with a pipe in the
+  name, v2 and v1 still parsed and joinable, either neighbouring protocol not joinable or watchable, map names,
+  map id sanitising, unreadable protocol and truncated v3, the v2 copy keeping v3's protocol and map, shared
+  LAN over shared Hamachi over unshared LAN, one host on Hamachi and LAN joined over the LAN, a tie keeping
+  the shown address, `Refresh` emptying and re-asking); `LanReceiveOwnershipTests` 10/10 (a discovery reply
+  is now v3 then v2, both on one beacon id); `LanBrowserIdentityTests`, `LanListenerStartTests`,
+  `LobbyAndSettingsTests`, `HubLobbySeatControlsTests`, `ChatAndLobbyChromeTests` (protocol tripwire, still 174).
+- [PlayMode final 4/5](beacon-v3/playmode-final.xml): `HubJoinLanVersionTests` 1/1 on the real hub JOIN screen
+  with the real `NetSession` beacon on UDP 8911. Three hosts are real UDP senders on this machine, unicast to
+  127.0.0.1 (never broadcast to the network): another protocol (v3 + v2), ours (v3 + v2), and v2 only. The
+  other-protocol row reads DIFFERENT VERSION with no Selectable, sorts after joinable rooms and keeps its
+  protocol through its v2 copy; ours reads BGC with JOIN; the v2 host reads UNKNOWN with JOIN. REFRESH empties
+  the list in the same frame, reads REFRESHING... and "Looking for rooms on your network...", the hosts
+  return, the button comes back after 1.5 s and is on the pad's navigation; it is hidden for JOIN BY CODE and
+  on the online list brings the UGS query forward. `HubJoinWaitTests` 1/1, `UiEdgeQualityReview` 2/2 (JOIN
+  at 1600x900 and 2560x1440 with every control in frame).
+- The one failure, `UiBrowserFeedbackReview`, expects "Finding public rooms..." on opening JOIN and read
+  "Online services are unavailable": it [passes alone](beacon-v3/ui-browser-feedback-alone.xml) (1/1) and fails
+  right after `HubJoinWaitTests`, whose teardown leaves `NetSession`'s online browser running with that message
+  (UGS sign-in is disabled in batch mode). `HubJoinLanVersionTests` stops browsing in its teardown. Recorded in
+  the TODO entry; not changed here.
+- [First PlayMode run, 18/20](beacon-v3/playmode-first-run.xml): the same order failure, and a real one this
+  change then fixed: `TumpUiCapture` measured the two-line DIFFERENT VERSION tag 76 units tall in a 72-unit box,
+  so the tag is 84 tall (the row is 92). An earlier EditMode copy of the screen checks could not build
+  `HubJoin` at all (`HubScenery.SprayTitle` calls `Destroy`, which edit mode refuses); those checks live in
+  the PlayMode test instead.
+
+### Pictures
+
+Rendered by `HubJoinLanVersionTests` through `TumpUiCapture` (action bounds and text clipping checked).
+
+- `beacon-v3/join-lan-v2-1920x1080.png`, `-1600x680.png` (the owner's short wide window), `-1280x960.png`: the
+  three rows and REFRESH over the JOIN column.
+- `beacon-v3/join-lan-v2-refreshing-1600x680.png`: the frame after REFRESH.
+- `beacon-v3/join-lan-v1-1920x1080.png`, `-1600x680.png`: the first placement, REFRESH in the panel's corner
+  under its tape at 16:9 and 400 units right of the rows on the wide window; why it moved.
+
+### Not verified
+
+No second build on another protocol has been run against this one on a real network; the PlayMode check
+sends the packets such a host sends, from this machine. No real Hamachi pair (the TODO's host-firewall item).
+Pad and touch reach REFRESH through the hub's existing focus path and sticker hit area; no physical pad or
+phone was used.

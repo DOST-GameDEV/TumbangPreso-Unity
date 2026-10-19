@@ -80,6 +80,27 @@ namespace TumbangPreso.Core.Tests
             Assert.True(JoinFailureRules.LooksLikeAddress("localhost"));
         }
 
+        // ⚠️ LAN-VPN-JOIN-1020's beacon item: a v3 row says its protocol before anybody presses JOIN.
+        [Fact]
+        public void OnlyASaidAndDifferentProtocolDiffers()
+        {
+            Assert.True(JoinFailureRules.ProtocolDiffers(173, 174));
+            Assert.True(JoinFailureRules.ProtocolDiffers(175, 174));
+            Assert.False(JoinFailureRules.ProtocolDiffers(174, 174));
+            // A v1 or v2 beacon says nothing, and such a host stays joinable as it always was.
+            Assert.False(JoinFailureRules.ProtocolDiffers(0, 174));
+            Assert.False(JoinFailureRules.ProtocolDiffers(-1, 174));
+        }
+
+        [Fact]
+        public void TheBeaconsVersionLineIsTheRefusalsSentence()
+        {
+            Assert.Equal(JoinFailureRules.FailureLine(Lan, "disconnected: Game version mismatch (network protocol 173)", 174),
+                         JoinFailureRules.VersionLine(173, 174));
+            Assert.Equal(JoinFailureRules.FailureLine(Lan, "disconnected: Game version mismatch", 174),
+                         JoinFailureRules.VersionLine(0, 174));
+        }
+
         [Fact]
         public void WaitingNeverPrintsANegativeOrRunawayCount()
         {

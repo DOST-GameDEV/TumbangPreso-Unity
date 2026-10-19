@@ -24,6 +24,9 @@ namespace TumbangPreso.Net
         public int MaxPlayers;
         public bool InProgress;
 
+        /// <summary>A LAN host's advertised protocol (beacon v3), or 0 when it did not say or it is online.</summary>
+        public int Protocol;
+
         public bool IsJoinable => !InProgress && Occupied < MaxPlayers;
     }
 
@@ -188,6 +191,19 @@ namespace TumbangPreso.Net
             _browsing = true;
             OnlineBrowserMessage = "Finding public rooms...";
             _sinceQuery = QueryInterval; // Query immediately
+        }
+
+        /// <summary>
+        /// The JOIN list's REFRESH: ask UGS on the next frame instead of at the end of the interval.
+        ///
+        /// ⚠️ THE ROWS STAY UNTIL THE ANSWER REPLACES THEM (it already drops lobbies that are gone), and a
+        /// query in flight is not doubled: `QueryLobbiesSpacedAsync` spaces calls for the service's rate
+        /// limit, and a press must not be a way around it.
+        /// </summary>
+        public void RefreshNow()
+        {
+            if (!_browsing) { StartBrowsing(); return; }
+            _sinceQuery = QueryInterval;
         }
 
         public void StopBrowsing()
@@ -408,7 +424,8 @@ namespace TumbangPreso.Net
                                 Seated = entry.Players,
                                 Occupied = entry.Players,
                                 MaxPlayers = entry.MaxPlayers,
-                                InProgress = entry.InProgress
+                                InProgress = entry.InProgress,
+                                Protocol = entry.Protocol
                             };
                         }
                     }

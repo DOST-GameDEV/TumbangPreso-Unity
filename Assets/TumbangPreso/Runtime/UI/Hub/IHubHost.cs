@@ -104,6 +104,10 @@ namespace TumbangPreso.UI.Hub
 
         /// <summary>Start the LAN and online browse loops the JOIN screen reads.</summary>
         void Browse();
+
+        /// <summary>The JOIN list's REFRESH: the LAN beacon forgets its rows and asks again, or the
+        /// online browser queries now rather than at the end of its interval.</summary>
+        void RefreshRooms(bool lan);
         string OnlineBrowserMessage { get; }
 
         /// <summary>Rooms to list: the LAN beacon's, or the online UGS lobbies. Public rooms only.</summary>
@@ -130,18 +134,44 @@ namespace TumbangPreso.UI.Hub
         public bool InProgress;
         public bool IsJoinable;
 
+        /// <summary>
+        /// The host said a protocol and it is not ours (LAN beacon v3). The row reads DIFFERENT VERSION
+        /// where JOIN would be, because approval would only refuse the press.
+        /// </summary>
+        public bool DifferentVersion;
+
         /// <summary>What JOIN passes to <see cref="IHubHost.Join"/>: a code, or an address.</summary>
         public string Key;
 
+        /// <summary>What a LAN row from a host that does not say its map (a v1 or v2 beacon) shows.</summary>
+        public const string UnknownMap = "UNKNOWN";
+
         public static HubRoom FromLan(Net.LanEntry entry) => new HubRoom
         {
-            Name = entry.HostName, Map = "UNKNOWN", Players = entry.Players, Capacity = entry.MaxPlayers,
-            InProgress = entry.InProgress, IsJoinable = entry.IsJoinable, Key = $"{entry.Address}:{entry.Port}"
+            Name = entry.HostName, Map = MapName(entry.MapId), Players = entry.Players, Capacity = entry.MaxPlayers,
+            InProgress = entry.InProgress, IsJoinable = entry.IsJoinable, DifferentVersion = entry.DifferentVersion,
+            Key = $"{entry.Address}:{entry.Port}"
         };
+
+        /// <summary>
+        /// A map id as the MAP column shows it: the registry's display name, or the id itself for a map
+        /// this build does not have (another version's pool), or <see cref="UnknownMap"/> when unsaid.
+        ///
+        /// ⚠️ NOT `SceneFlow.PreviewFor`. That falls back to the FIRST map with a warning, so a row from a
+        /// build with a map we lack would read TONDO, a map that host is not playing, and log once a second.
+        /// </summary>
+        public static string MapName(string mapId)
+        {
+            if (string.IsNullOrEmpty(mapId)) return UnknownMap;
+            foreach (var entry in SceneFlow.MapRegistry)
+                if (entry.Id == mapId) return entry.Name;
+            return mapId.ToUpperInvariant();
+        }
 
         public bool SameListing(HubRoom other)
             => Key == other.Key && Name == other.Name && Map == other.Map
                 && Players == other.Players && Capacity == other.Capacity
-                && InProgress == other.InProgress && IsJoinable == other.IsJoinable;
+                && InProgress == other.InProgress && IsJoinable == other.IsJoinable
+                && DifferentVersion == other.DifferentVersion;
     }
 }

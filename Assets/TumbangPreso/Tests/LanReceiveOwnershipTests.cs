@@ -93,14 +93,25 @@ namespace TumbangPreso.Tests
             typeof(LanBeacon).GetProperty("Advertising").SetValue(_beacon, true);
             _beacon.JoinCode = "ROOM"; _beacon.HostName = "Current host";
             _beacon.Players = 1; _beacon.Occupied = 1; _beacon.Connections = 1;
+            _beacon.MapId = UI.SceneFlow.Kanto;
             Receive(DiscoveryRequest("tumbang-preso-lan-query1")); Drain();
-            Assert.IsTrue(SpinWait.SpinUntil(() => _sender.Available > 0, 1000),
-                "The host ignored a browser request instead of replying over the usable unicast route.");
-            var from = new IPEndPoint(IPAddress.Any, 0);
-            string response = Encoding.UTF8.GetString(_sender.Receive(ref from));
-            Assert.IsTrue(LanBeacon.TryParsePayload(response, from.Address.ToString(), out var room));
-            Assert.AreEqual("ROOM", room.JoinCode); Assert.AreEqual("Current host", room.HostName);
-            Assert.AreEqual(1, room.Players);
+            // ⚠️ ONE ANSWER IS TWO DATAGRAMS SINCE BEACON v3 (LAN-VPN-JOIN-1020): v3, then v2 for a browser
+            // from before v3, which sends this same query and reads nothing else.
+            string[] magic = { LanBeacon.MagicV3, LanBeacon.MagicV2 };
+            for (int i = 0; i < magic.Length; i++)
+            {
+                Assert.IsTrue(SpinWait.SpinUntil(() => _sender.Available > 0, 1000),
+                    "The host ignored a browser request instead of replying over the usable unicast route (" + magic[i] + ").");
+                var from = new IPEndPoint(IPAddress.Any, 0);
+                string response = Encoding.UTF8.GetString(_sender.Receive(ref from));
+                StringAssert.StartsWith(magic[i] + "|", response);
+                Assert.IsTrue(LanBeacon.TryParsePayload(response, from.Address.ToString(), out var room));
+                Assert.AreEqual("ROOM", room.JoinCode); Assert.AreEqual("Current host", room.HostName);
+                Assert.AreEqual(1, room.Players);
+                Assert.AreEqual(LanBeacon.ProcessBeaconId, room.BeaconId, "Both copies must land on one row.");
+                Assert.AreEqual(i == 0 ? NetSession.ProtocolVersion : 0, room.Protocol);
+                Assert.AreEqual(i == 0 ? UI.SceneFlow.Kanto : "", room.MapId ?? "");
+            }
         }
 
         [Test] public void BrowsingOnlyDoesNotReplyToDiscoveryRequests()
@@ -145,8 +156,13 @@ namespace TumbangPreso.Tests
         {
             Adopt(_current); typeof(LanBeacon).GetProperty("Advertising").SetValue(_beacon, true);
             Receive(DiscoveryRequest("tumbang-preso-lan-query1")); Drain();
-            Assert.IsTrue(SpinWait.SpinUntil(() => _sender.Available > 0, 1000));
-            var from = new IPEndPoint(IPAddress.Any, 0); _sender.Receive(ref from);
+            // The first answer is two datagrams (v3 and v2); both are read before asking again.
+            var from = new IPEndPoint(IPAddress.Any, 0);
+            for (int i = 0; i < 2; i++)
+            {
+                Assert.IsTrue(SpinWait.SpinUntil(() => _sender.Available > 0, 1000));
+                _sender.Receive(ref from);
+            }
             var bytes = Encoding.UTF8.GetBytes("tumbang-preso-lan-query1");
             _sender.Send(bytes, bytes.Length, (IPEndPoint)_current.Client.LocalEndPoint);
             Assert.IsTrue(SpinWait.SpinUntil(() => Pending > 0, 1000)); Drain();
