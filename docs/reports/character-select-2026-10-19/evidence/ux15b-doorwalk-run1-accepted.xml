@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-19 10:08:17Z" end-time="2026-10-19 10:08:42Z" duration="25.7246373">
+  <test-suite type="TestSuite" id="3712" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2191" result="Passed" start-time="2026-10-19 10:08:17Z" end-time="2026-10-19 10:08:42Z" duration="25.724637" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3704" name="TumbangPreso.PlayTests.dll" fullname="D:/GitHub/TumbangPreso-Unity/.claude/worktrees/exciting-hertz-f98e11/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2191" result="Passed" start-time="2026-10-19 10:08:17Z" end-time="2026-10-19 10:08:42Z" duration="25.707396" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="26156" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3705" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2191" result="Passed" start-time="2026-10-19 10:08:17Z" end-time="2026-10-19 10:08:42Z" duration="25.696989" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3708" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2189" result="Passed" start-time="2026-10-19 10:08:17Z" end-time="2026-10-19 10:08:42Z" duration="25.686951" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1949" name="HubFlowTests" fullname="TumbangPreso.PlayTests.HubFlowTests" classname="TumbangPreso.PlayTests.HubFlowTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-19 10:08:17Z" end-time="2026-10-19 10:08:42Z" duration="25.641345" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1953" name="HomeAndEveryDoorOpensItsScreenAndBackReturns" fullname="TumbangPreso.PlayTests.HubFlowTests.HomeAndEveryDoorOpensItsScreenAndBackReturns" methodname="HomeAndEveryDoorOpensItsScreenAndBackReturns" classname="TumbangPreso.PlayTests.HubFlowTests" runstate="Runnable" seed="18023758" result="Passed" start-time="2026-10-19 10:08:17Z" end-time="2026-10-19 10:08:42Z" duration="25.628381" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="600000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] Hub-Home-960x540 cream source=252,211,159 pixel=53,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Home-1280x720 cream source=252,211,159 pixel=54,22,14; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Home-1920x1080 cream source=252,211,159 pixel=53,22,14; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Home-1280x960 cream source=252,211,159 pixel=52,21,12; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Home-1600x680 cream source=252,211,159 pixel=53,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Avatar-960x540 cream source=252,211,159 pixel=45,22,12; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Avatar-1280x720 cream source=252,211,159 pixel=45,22,12; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Avatar-1920x1080 cream source=252,211,159 pixel=45,22,12; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Avatar-1280x960 cream source=252,211,159 pixel=45,22,12; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Avatar-1600x680 cream source=252,211,159 pixel=47,22,12; isolated UI camera, no ColourGrade.
+[HeroReveal] revealed 0.12 s beyond Press's own wait
+[TumpGeometry] Hub-Hero-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-Hero-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-Hero-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-Hero-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpUiCapture] Hub-Hero-960x540 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-Hero-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-Hero-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-Hero-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-Hero-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpUiCapture] Hub-Hero-1280x720 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-Hero-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-Hero-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-Hero-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-Hero-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpUiCapture] Hub-Hero-1920x1080 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-Hero-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-Hero-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-Hero-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-Hero-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpUiCapture] Hub-Hero-1280x960 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-Hero-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-Hero-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-Hero-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-Hero-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpUiCapture] Hub-Hero-1600x680 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-AbilityDetail-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-AbilityDetail-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-AbilityDetail-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-AbilityDetail-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-AbilityDetail-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] Hub-AbilityDetail-960x540 cream source=252,211,159 pixel=58,21,13; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-AbilityDetail-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-AbilityDetail-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-AbilityDetail-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-AbilityDetail-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-AbilityDetail-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] Hub-AbilityDetail-1280x720 cream source=252,211,159 pixel=58,21,13; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-AbilityDetail-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-AbilityDetail-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-AbilityDetail-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-AbilityDetail-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-AbilityDetail-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] Hub-AbilityDetail-1920x1080 cream source=252,211,159 pixel=58,21,13; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-AbilityDetail-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-AbilityDetail-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-AbilityDetail-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-AbilityDetail-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-AbilityDetail-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] Hub-AbilityDetail-1280x960 cream source=252,211,159 pixel=58,21,13; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-AbilityDetail-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=34, material=1
+[TumpGeometry] Hub-AbilityDetail-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=38, material=1
+[TumpGeometry] Hub-AbilityDetail-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=42, material=1
+[TumpGeometry] Hub-AbilityDetail-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-AbilityDetail-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=68, material=1
+[TumpUiCapture] Hub-AbilityDetail-1600x680 cream source=252,211,159 pixel=58,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Loadout-960x540 cream source=252,211,159 pixel=28,15,6; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Loadout-1280x720 cream source=252,211,159 pixel=28,15,6; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Loadout-1920x1080 cream source=252,211,159 pixel=28,15,6; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Loadout-1280x960 cream source=252,211,159 pixel=28,15,6; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Loadout-1600x680 cream source=252,211,159 pixel=28,15,6; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Loadout-unowned-960x540 cream source=252,211,159 pixel=28,15,6; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Loadout-unowned-1280x720 cream source=252,211,159 pixel=28,15,6; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Loadout-unowned-1920x1080 cream source=252,211,159 pixel=28,15,6; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Loadout-unowned-1280x960 cream source=252,211,159 pixel=28,15,6; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Loadout-unowned-1600x680 cream source=252,211,159 pixel=28,15,6; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-ItemPopup-960x540 cream source=252,211,159 pixel=38,20,10; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-ItemPopup-1280x720 cream source=252,211,159 pixel=38,20,10; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-ItemPopup-1920x1080 cream source=252,211,159 pixel=38,20,10; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-ItemPopup-1280x960 cream source=252,211,159 pixel=38,20,10; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-ItemPopup-1600x680 cream source=252,211,159 pixel=38,20,10; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-ItemPopup-inspect-960x540 cream source=252,211,159 pixel=38,20,10; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-ItemPopup-inspect-1280x720 cream source=252,211,159 pixel=38,20,10; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-ItemPopup-inspect-1920x1080 cream source=252,211,159 pixel=38,20,10; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-ItemPopup-inspect-1280x960 cream source=252,211,159 pixel=38,20,10; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-ItemPopup-inspect-1600x680 cream source=252,211,159 pixel=38,20,10; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Shop-960x540 cream source=252,211,159 pixel=45,22,12; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Shop-1280x720 cream source=252,211,159 pixel=45,22,12; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Shop-1920x1080 cream source=252,211,159 pixel=48,26,11; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Shop-1280x960 cream source=252,211,159 pixel=45,22,12; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Shop-1600x680 cream source=252,211,159 pixel=49,23,12; isolated UI camera, no ColourGrade.
+[HeroReveal] revealed 0.00 s beyond Press's own wait
+[TumpUiCapture] Hub-Tasks-960x540 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Tasks-1280x720 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Tasks-1920x1080 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Tasks-1280x960 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Tasks-1600x680 cream source=252,211,159 pixel=86,16,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Menu-960x540 cream source=252,211,159 pixel=44,22,12; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Menu-1280x720 cream source=252,211,159 pixel=45,23,12; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Menu-1920x1080 cream source=252,211,159 pixel=45,23,11; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Menu-1280x960 cream source=252,211,159 pixel=44,22,12; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Hub-Menu-1600x680 cream source=252,211,159 pixel=49,25,12; isolated UI camera, no ColourGrade.
+[Net] offline
+Saving results to: C:/Users/Andrei/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

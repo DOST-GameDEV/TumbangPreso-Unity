@@ -6067,12 +6067,10 @@ Implementation order within UX-1:
   and their character select halves run again. Body, causes and evidence:
   [TODO_Archive](TODO_Archive.md#ux-15a-three-playmode-checks-left-behind-by-later-work-done-2026-10-19).
   It also fixed HOME resetting a live room to the mode card's defaults (`HubHome.ApplyChoice`).
-- [ ] **UX-1.5b The door walk asserts HERO before it has been built (OPEN, found 2026-10-19).**
-  `HubFlowTests.HomeAndEveryDoorOpensItsScreenAndBackReturns` asserts `HubHero` straight after
-  `Press("HeroButton")` and after `Press("HeroShopDoor")`. HERO builds across frames behind HOME and
-  arrived 0.09 to 0.13 s after `Press`'s own wait in five measured runs (UX-1.5a), so both asserts can
-  fail on a working door. Done means both wait through `HubFlowTests.AwaitDeferredHero` and the whole
-  door walk passes in a guarded run, or its remaining failures are recorded here.
+- [x] **UX-1.5b The door walk asserts HERO before it has been built.** DONE 2026-10-19: both HERO
+  asserts wait through `HubFlowTests.AwaitDeferredHero` and the whole door walk passes in a guarded run
+  (total 1, failed 0). Body and evidence:
+  [TODO_Archive](TODO_Archive.md#ux-15b-the-door-walk-asserts-hero-before-it-has-been-built-done-2026-10-19).
 - [ ] **UX-1.6 Custom host/join.** Built; a real LAN host is opened by `HubFlowTests`. Open: a
   second process joining by code and from the LAN and online lists (`tools/net_matrix.py`).
   Immediate native code entry exposed cold LAN lookup plus concurrent online-query429;

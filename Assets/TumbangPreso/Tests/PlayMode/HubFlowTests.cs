@@ -538,7 +538,10 @@ namespace TumbangPreso.PlayTests
                     Assert.IsFalse(TumpHub.Current.Canvas.GetComponentsInChildren<Button>().Any(b => b.name == "SkillTreeButton"),
                                    "The skill tree is off, so HOME must not show its door.");
 
+                // ⚠️ HERO is built across frames behind HOME and joins the stack only when complete,
+                // which measured 0.09 to 0.13 s beyond Press's own wait (`docs/TODO.md` UX-1.5b).
                 yield return Press("HeroButton");
+                yield return AwaitDeferredHero();
                 Assert.IsInstanceOf<HubHero>(TumpHub.Current.Top);
                 yield return new WaitForSecondsRealtime(0.8f);
                 yield return Shots("Hero");
@@ -571,6 +574,7 @@ namespace TumbangPreso.PlayTests
                 Assert.IsInstanceOf<HubShopPopup>(TumpHub.Current.Top);
                 yield return Shots("Shop");
                 yield return Press("HeroShopDoor");
+                yield return AwaitDeferredHero();
                 Assert.IsInstanceOf<HubHero>(TumpHub.Current.Top);
                 yield return BackToHome();
 

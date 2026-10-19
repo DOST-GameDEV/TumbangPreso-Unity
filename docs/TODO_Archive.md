@@ -1,5 +1,37 @@
 # TODO archive: the batch reports and the closed work
 
+## UX-1.5b The door walk asserts HERO before it has been built DONE 2026-10-19
+
+The entry as it stood in `docs/TODO.md`:
+
+> `HubFlowTests.HomeAndEveryDoorOpensItsScreenAndBackReturns` asserts `HubHero` straight after
+> `Press("HeroButton")` and after `Press("HeroShopDoor")`. HERO builds across frames behind HOME and
+> arrived 0.09 to 0.13 s after `Press`'s own wait in five measured runs (UX-1.5a), so both asserts can
+> fail on a working door. Done means both wait through `HubFlowTests.AwaitDeferredHero` and the whole
+> door walk passes in a guarded run, or its remaining failures are recorded here.
+
+**Result: the whole door walk passes**, total 1, failed 0, 25.6 s
+(`docs/reports/character-select-2026-10-19/evidence/ux15b-doorwalk-run1-accepted.xml`). One
+graphics-enabled PlayMode run of the committed test, launched through `tools/run_unity_guarded.py`
+with `-force-d3d11` on a fresh named profile (`ux15b-doorwalk-run1`, no files before the run), with
+UDP 8910 checked free first. The only other Unity on the machine was the owner's interactive editor
+on the main checkout.
+
+- **The change is the wait and nothing else.** Both asserts are unchanged and now follow
+  `AwaitDeferredHero` (bounded at 10 s), the helper UX-1.5a added for the shop's HEROES door.
+- **The HOME door needed it.** `[HeroReveal]` logged the HERO stage arriving **0.12 s** after
+  `Press`'s own one frame and 0.45 s, inside the 0.09 to 0.13 s UX-1.5a measured, so the old assert
+  would have failed on a working door in this run. The shop's HEROES door logged 0.00 s: by then the
+  stage was already up when `Press` returned, which is why it is a race rather than a steady failure.
+- **The rest of the walk held as written.** Captures were taken at all five shapes for HOME, AVATAR,
+  HERO, the ability detail, LOADOUT (owned and unowned), the item popup and its inspect view, SHOP,
+  TASKS and MENU, with the action-bounds and 28-unit floor checks on each, followed by BACK on HOME
+  opening the MENU and the name plate's profile door. No further failure was reached.
+
+Not covered: the skill tree door is skipped while `HeroLoadoutRules.SidegradesOpen` is off, as the test
+says. `HighContrastAndLargerTextKeepEveryDoorAndLobbyReadable` walks this same route with both
+accessibility settings on and was not run here.
+
 ## UX-1.5a Three PlayMode checks left behind by later work DONE 2026-10-19
 
 The entry as it stood in `docs/TODO.md`:
