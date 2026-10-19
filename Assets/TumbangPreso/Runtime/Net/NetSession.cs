@@ -653,7 +653,13 @@ namespace TumbangPreso.Net
         // Map sync/votes carry indices, so older peers would interpret the remaining maps differently.
         // 173 (2026-10-19): the two 172s meet (QoLUpdates' merge number and ASTRAReworks' smaller map pool), and Payo joins the
         // pool as its last entry. Map sync and votes carry indices, so a peer on either 172 reads the pool differently.
-        public const int ProtocolVersion = 173;
+        // 174 (2026-10-19): the player's room merges into QoLUpdates. Its rules carry `CustomRules.BotSeats` (the room's
+        // seat-by-seat ADD BOT, a twelfth field on the rules wire) and every peer builds a body only for a seat a person
+        // or a chosen bot fills (`MatchInstaller.SeatHasABody`). A 173 peer builds all four, so in a room with bots off or
+        // an OPEN seat the two would disagree about which bodies exist: they may not meet. The room branch appended the
+        // field without a number because an older parser ignores the suffix; that keeps the rules readable, not the
+        // match the same. Windows and Android rebuilt from the same commit and shipped together.
+        public const int ProtocolVersion = 174;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
