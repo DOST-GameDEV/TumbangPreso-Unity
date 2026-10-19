@@ -510,8 +510,19 @@ namespace TumbangPreso
                 // empty-handed. It skips a seat that is not there instead; the spare tsinelas
                 // lie on their marks, which is exactly what the taya's disowned one already
                 // does in a full match.
-                if (!soloPractice || slot == humanSeat) seats[slot] = BuildSeat(slot);
+                if ((!soloPractice || slot == humanSeat) && SeatHasABody(slot, humanSeat)) seats[slot] = BuildSeat(slot);
                 slippers[slot] = BuildSlipper(slot);
+            }
+
+            // ⚠️ THE HOST TELLS ITS LOBBY WHICH SEATS HAVE NO BODY, so nobody joining mid-match is
+            // put in one (`LobbySession.BenchSeats`). Every peer reached the same answer above
+            // from the same roster and rules; only the host decides who sits where.
+            if (CustomRoomBuildsOnlyFilledSeats() && NetAuthority.IsHost)
+            {
+                var benched = new System.Collections.Generic.List<int>();
+                for (int slot = 0; slot < seats.Length; slot++)
+                    if (seats[slot] == null) benched.Add(slot);
+                liveNetwork?.Lobby?.BenchSeats(benched);
             }
 
             // ⚠️⚠️ THE SEATS ARE REGISTERED AND GIVEN THEIR ROLES BEFORE THE HUD IS BUILT, AND
@@ -537,6 +548,10 @@ namespace TumbangPreso
             // ⚠️ THE CAMERA FOLLOWS THE SEAT THE PLAYER CHOSE, not seat 0. A spectator has no
             // seat at all, so it falls back to the first one and the spectator rig takes over.
             int human = Mathf.Max(0, HumanSeat);
+            // ⚠️ A WATCHER FALLS BACK TO THE FIRST SEAT THAT HAS A BODY, not to seat 0: a custom
+            // room's empty seat is not built any more (`SeatHasABody`), and seat 0 may be one.
+            for (int slot = 0; seats[human] == null && slot < seats.Length; slot++)
+                if (seats[slot] != null) human = slot;
             BuildCameraAndHud(seats[human], lata);
             var court=Visual.CourtBoundaryPresentation.Install(transform,lata);
             var worldLook=Visual.WorldLookPresentation.Install(transform,court.Floor);
@@ -859,6 +874,87 @@ namespace TumbangPreso
         private readonly bool[] _customChecked = new bool[Balance.PlayerCount];
 
         /// <summary>
+        /// Whether a custom room seat gets a character at all: a player sits in it, or the room
+        /// put a bot there.
+        ///
+        /// ⚠️⚠️ OWNER 2026-10-19, WITH A SCREENSHOT OF THREE CHARACTERS STANDING STILL IN A MATCH
+        /// THE HOST HAD REMOVED EVERY BOT FROM: *"there are still bots. however they are
+        /// stationary. make sure they're removed"*. Every networked seat used to be built so a
+        /// peer could always land in it; a seat left empty became a body with no input source.
+        /// This is the offline `soloPractice` path (NONE bots builds only the player's seat)
+        /// extended to a custom room, and the round code already copes with an absent seat
+        /// there: `SliceRunner` leaves its tsinelas on the street and the taya's turn reads
+        /// `PlayerAt(DefenderSlot) == null`.
+        ///
+        /// ⚠️ EVERY PEER MUST ANSWER THE SAME. It reads only what the room replicates: the roster
+        /// (`GetSeatInfo`) and the room's rules (`CustomRules.BotSeats`, synced before START).
+        ///
+        /// ⚠️ AND A ROOM WITH NOBODY AND NO BOTS STILL BUILDS ALL FOUR. A host watching with no
+        /// bots would otherwise open an arena with no character in it, which is the spectator and
+        /// headless-probe case `InstallMatch` already keeps its four for.
+        /// </summary>
+        private bool SeatHasABody(int slot, int humanSeat)
+        {
+            if (!CustomRoomBuildsOnlyFilledSeats()) return true;
+            if (!AnySeatFilled(humanSeat)) return true;
+            return SeatFilled(slot, humanSeat);
+        }
+
+        private static bool SeatFilled(int slot, int humanSeat)
+        {
+            var info = Net.MatchRpc.Instance?.GetSeatInfo(slot);
+            // ⚠️ ONLY THE HOST TRUSTS ITS OWN SEAT NUMBER HERE. A client can install the arena
+            // before its seat assignment lands, when `LocalSlot` is still the default 0 (see
+            // `RebindLocalSeat`), and building seat 0 on that guess would put a body on one screen
+            // that the host never made. The roster says the same thing without guessing, and a
+            // player who joins mid-match is only ever seated in a bot's seat, which the rules
+            // already mark.
+            if (slot == humanSeat && (NetAuthority.IsHost || info == null)) return true;
+            if (info != null && info.Occupied && !info.Spectator) return true;
+            return CustomGameRules.SeatHasBot(SceneFlow.SelectedRules, slot);
+        }
+
+        private static bool AnySeatFilled(int humanSeat)
+        {
+            for (int slot = 0; slot < Balance.PlayerCount; slot++)
+                if (SeatFilled(slot, humanSeat)) return true;
+            return false;
+        }
+
+        /// <summary>
+        /// A live custom room opened from the game: the one place seats are chosen one by one.
+        ///
+        /// ⚠️ A SESSION STARTED FROM THE COMMAND LINE KEEPS ITS FOUR BODIES. The `tools/net_*.py`
+        /// probes and a `-tp-dedicated` referee host through `NetBootstrap` without ever opening
+        /// a room, so their rules carry no seat choice, and several of them drive
+        /// `PlayerAt(n)` by number on the assumption every seat exists.
+        /// </summary>
+        private bool CustomRoomBuildsOnlyFilledSeats()
+        {
+            var session = Net.NetSession.Instance;
+            return session != null && session.IsNetworked && !UI.Hub.HubQueueWatch.QueueRoom
+                   && !GameLaunch.GuidedTutorial && !PracticeRange.Requested
+                   && !_allBots && !GameLaunch.AllBots && !Net.NetBootstrap.Requested;
+        }
+
+        /// <summary>
+        /// Whether this empty seat was given a bot in the player's room.
+        ///
+        /// ⚠️ ONLY A CUSTOM ROOM CHOOSES SEAT BY SEAT. The room's ADD BOT writes
+        /// `CustomRules.BotSeats`, and `CustomGameRules.SeatHasBot` reads it; a seat left OPEN
+        /// there stays an empty chair in the match rather than quietly becoming a bot the host
+        /// never asked for. Practice, the tutorial, the range and queued rooms keep their own
+        /// policy and answer true, so nothing about them changes.
+        /// </summary>
+        private static bool CustomRoomSeatTakesABot(int slot)
+        {
+            var session = Net.NetSession.Instance;
+            bool customRoom = session != null && session.IsNetworked && !UI.Hub.HubQueueWatch.QueueRoom
+                              && !GameLaunch.GuidedTutorial && !PracticeRange.Requested;
+            return !customRoom || CustomGameRules.SeatHasBot(SceneFlow.SelectedRules, slot);
+        }
+
+        /// <summary>
         /// ⚠️ 1.6 CAPSULE, 1.25 EYE. Those belong to the Person ROLE, not to any model, and
         /// everything ever tuned against a Person assumes them. A default 2.0 capsule would
         /// quietly invalidate every distance in the game.
@@ -1120,7 +1216,7 @@ namespace TumbangPreso
                 go.AddComponent<AIController>();
             }
             else if ((AIController.BotsEnabled || PracticeRange.Requested) && !isHumanPlayer &&
-                     (!isNetworked || NetAuthority.IsHost))
+                     (!isNetworked || NetAuthority.IsHost) && CustomRoomSeatTakesABot(slot))
             {
                 // Unoccupied seats run AI on the host only
                 go.AddComponent<AIController>();

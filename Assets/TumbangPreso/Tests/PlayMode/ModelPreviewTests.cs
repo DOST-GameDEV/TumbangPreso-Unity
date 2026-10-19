@@ -500,9 +500,14 @@ namespace TumbangPreso.PlayTests
                 Assert.IsTrue(picker.GetComponentsInChildren<UnityEngine.UI.Text>().Any(t => t.name == "Heading" && t.text == "BERTO"));
                 var preview = picker.GetComponentInChildren<ModelPreview>();
                 Assert.IsNotNull(preview.Subject);
-                StringAssert.AreEqualIgnoringCase("character-male-f(Clone)", preview.Subject.name);
+                // Berto (id `bayan`) wears his own redesign since the twelve Classic people were
+                // redrawn (`RosterBookBuilder.PersonModels`, `bd44c197b`), not the shared Kenney rig.
+                StringAssert.AreEqualIgnoringCase("bayan-redesign(Clone)", preview.Subject.name);
                 // The hub's authored warm stage replaces the retired blue gradient; the cast stays.
-                Assert.IsNotNull(picker.GetComponentsInChildren<HubShape>().FirstOrDefault(g => g.name == "Floor"));
+                // The hero stands in the can's chalk circle over a soft contact shadow (2026-10-19;
+                // the stage's old "Floor" sticker read as an empty text field and was retired).
+                Assert.IsNotNull(picker.GetComponentsInChildren<HubChalk>().FirstOrDefault(g => g.name == "ChalkCircle"));
+                Assert.IsNotNull(picker.GetComponentsInChildren<HubGlow>().FirstOrDefault(g => g.name == "ContactShadow"));
                 yield return TumpUiCapture.Capture("Hub-character-classic", TumpHub.Current.Canvas, 960, 540, false, checkActionBounds: true);
             }
             finally
@@ -510,6 +515,9 @@ namespace TumbangPreso.PlayTests
                 Net.NetSession.Instance?.Stop();
                 Settings.SettingsStore.Current.HubQueueChoice = choice;
                 Settings.SettingsStore.Current.CharacterPick = pick;
+                // ⚠️ SAVED, because `HubHome.Choice` saved the Classic card: restoring it in memory
+                // alone left CLASSIC on disk for the next launch of the editor (UX-1.5a).
+                Settings.SettingsStore.Save();
             }
         }
 

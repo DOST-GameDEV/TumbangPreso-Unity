@@ -266,10 +266,20 @@ namespace TumbangPreso.UI.Hub
         public static GameMode ChoiceMode => Choice == 1 ? GameMode.Classic : GameMode.HeroStrike;
         public static QueueStake ChoiceStake => Choice == 0 ? QueueStake.Ranked : QueueStake.Casual;
 
-        /// <summary>Make the rest of the game agree with the card: the ruleset the next match uses.</summary>
+        /// <summary>
+        /// Make the rest of the game agree with the card: the ruleset the next match uses.
+        ///
+        /// ⚠️⚠️ A PASSIVE REFRESH LEAVES A LIVE ROOM'S RULES ALONE, as it already leaves pinned ones
+        /// (2026-10-03). Entering a room passes through HOME (`TumpHub.ShowLobby` pops to it before
+        /// pushing the lobby), so a player whose card read CLASSIC who hosted a HERO STRIKE room had
+        /// it reset here to Classic defaults, every bot gone, the moment CREATE LOBBY landed
+        /// (`docs/TODO_Archive.md` UX-1.5a). Inside a room the room's own rules decide the next
+        /// match; the card applies again once the player has left it.
+        /// </summary>
         public static void ApplyChoice(bool explicitSelection = false)
         {
             if (SceneFlow.RulesPinned && !explicitSelection) return;
+            if (!explicitSelection && NetSession.Instance != null && NetSession.Instance.IsAdmitted) return;
             if (SceneFlow.SelectedMode != ChoiceMode)
             {
                 SceneFlow.SelectedMode = ChoiceMode;

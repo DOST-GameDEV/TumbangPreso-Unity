@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="10" result="Failed(Child)" total="10" passed="4" failed="6" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-19 08:15:43Z" end-time="2026-10-19 08:17:02Z" duration="78.7331013">
+  <test-suite type="TestSuite" id="3712" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2191" result="Failed" site="Child" start-time="2026-10-19 08:15:43Z" end-time="2026-10-19 08:17:02Z" duration="78.733101" total="10" passed="4" failed="6" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3704" name="TumbangPreso.PlayTests.dll" fullname="D:/GitHub/TumbangPreso-Unity/.claude/worktrees/character-selection-research-4c9055/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2191" result="Failed" site="Child" start-time="2026-10-19 08:15:43Z" end-time="2026-10-19 08:17:02Z" duration="78.711584" total="10" passed="4" failed="6" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="21372" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3705" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2191" result="Failed" site="Child" start-time="2026-10-19 08:15:43Z" end-time="2026-10-19 08:17:02Z" duration="78.697598" total="10" passed="4" failed="6" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3708" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2189" result="Failed" site="Child" start-time="2026-10-19 08:15:43Z" end-time="2026-10-19 08:17:02Z" duration="78.684006" total="10" passed="4" failed="6" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2298" name="MatchArrivalFlowTests" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-10-19 08:15:43Z" end-time="2026-10-19 08:17:02Z" duration="78.637056" total="10" passed="4" failed="6" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2299" name="CharacterSelectionExplainsItsKitWithoutPausingTheClock" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.CharacterSelectionExplainsItsKitWithoutPausingTheClock" methodname="CharacterSelectionExplainsItsKitWithoutPausingTheClock" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="1977975576" result="Failed" start-time="2026-10-19 08:15:43Z" end-time="2026-10-19 08:16:31Z" duration="48.245924" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Hub-A11y-CharacterSelect-learn-large-960x540/TumpHubCanvas/Screens/HubCharacterSelect/Role clips its content.
+  Expected: less than or equal to 59.0f
+  But was:  104.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpUiCapture+<Capture>d__6.MoveNext () [0x0094c] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\character-selection-research-4c9055\Assets\TumbangPreso\Tests\PlayMode\TumpUiCapture.cs:222
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[TumpGeometry] Hub-CharacterSelect-learn-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-learn-960x540 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-learn-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-learn-1280x720 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-learn-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-learn-1920x1080 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-learn-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-learn-1280x960 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[TumpGeometry] Hub-CharacterSelect-learn-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-CharacterSelect-learn-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpUiCapture] Hub-CharacterSelect-learn-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[Net] offline
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=46, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] Hub-A11y-CharacterSelect-learn-large-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="2300" name="CharacterSelectionReviewCaptures" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.CharacterSelectionReviewCaptures" methodname="CharacterSelectionReviewCaptures" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="1104855458" result="Passed" start-time="2026-10-19 08:16:31Z" end-time="2026-10-19 08:16:43Z" duration="11.205528" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="240000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[CharacterSelectFloor] nemu/1600x680: feet=0.088 ring=0.099 stage=(1333.18, 670.00)
+[TumpGeometry] CharSelect-v6-nemu-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v6-nemu-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v6-nemu-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v6-nemu-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v6-nemu-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] nemu/1920x1080: feet=0.088 ring=0.099 stage=(712.00, 670.00)
+[TumpGeometry] CharSelect-v6-nemu-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v6-nemu-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v6-nemu-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v6-nemu-1920x1080/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v6-nemu-1920x1080 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] nemu/1280x720: feet=0.089 ring=0.099 stage=(712.00, 670.00)
+[TumpGeometry] CharSelect-v6-nemu-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v6-nemu-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v6-nemu-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v6-nemu-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v6-nemu-1280x720 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] nemu/960x540: feet=0.090 ring=0.099 stage=(712.00, 670.00)
+[TumpGeometry] CharSelect-v6-nemu-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v6-nemu-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v6-nemu-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v6-nemu-960x540/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v6-nemu-960x540 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] nemu/1280x960: feet=0.089 ring=0.099 stage=(712.00, 1030.00)
+[TumpGeometry] CharSelect-v6-nemu-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v6-nemu-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v6-nemu-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v6-nemu-1280x960/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v6-nemu-1280x960 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] nemu/2560x1080: feet=0.094 ring=0.101 stage=(1352.00, 670.00)
+[TumpGeometry] CharSelect-v6-nemu-2560x1080/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v6-nemu-2560x1080/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v6-nemu-2560x1080/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v6-nemu-2560x1080/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v6-nemu-2560x1080 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] nemu/877x482: feet=0.097 ring=0.099 stage=(757.06, 670.00)
+[TumpGeometry] CharSelect-v6-nemu-877x482/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v6-nemu-877x482/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v6-nemu-877x482/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v6-nemu-877x482/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v6-nemu-877x482 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] dante/1600x680: feet=0.059 ring=0.099 stage=(1333.18, 670.00)
+[TumpGeometry] CharSelect-v6-dante-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v6-dante-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v6-dante-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v6-dante-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v6-dante-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[NetReady] refused peer 0: not in the lobby table
+[CharacterSelectFloor] locked/1600x680: feet=0.059 ring=0.108 stage=(1333.18, 670.00)
+[TumpGeometry] CharSelect-v6-locked-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v6-locked-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v6-locked-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v6-locked-1600x680/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v6-locked-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] larger/1280x720: feet=0.056 ring=0.099 stage=(712.00, 670.00)
+[TumpGeometry] CharSelect-v6-larger-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=49, material=1
+[TumpGeometry] CharSelect-v6-larger-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=52, material=1
+[TumpGeometry] CharSelect-v6-larger-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=55, material=1
+[TumpGeometry] CharSelect-v6-larger-1280x720/Glyph: vertices=4, cull=False, alpha=1, depth=58, material=1
+[TumpUiCapture] CharSelect-v6-larger-1280x720 cream source=252,211,159 pixel=41,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] classic/1600x680: feet=0.073 ring=0.128 stage=(1333.18, 670.00)
+[TumpUiCapture] CharSelect-v6-classic-1600x680 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[CharacterSelectFloor] classic/1280x960: feet=0.068 ring=0.124 stage=(712.00, 1030.00)
+[TumpUiCapture] CharSelect-v6-classic-1280x960 cream source=252,211,159 pixel=42,22,11; isolated UI camera, no ColourGrade.
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="2301" name="ClosedSidegradesShowTheAuthoredSkillDespiteASavedUnlockedAlternate" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.ClosedSidegradesShowTheAuthoredSkillDespiteASavedUnlockedAlternate" methodname="ClosedSidegradesShowTheAuthoredSkillDespiteASavedUnlockedAlternate" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="1378513985" result="Passed" start-time="2026-10-19 08:16:43Z" end-time="2026-10-19 08:16:44Z" duration="1.934300" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="2305" name="CustomHostSelectedCourtSkipsVotingAndBeginsWithoutSecondReady" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.CustomHostSelectedCourtSkipsVotingAndBeginsWithoutSecondReady" methodname="CustomHostSelectedCourtSkipsVotingAndBeginsWithoutSecondReady" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="1974571387" result="Failed" start-time="2026-10-19 08:16:44Z" end-time="2026-10-19 08:16:46Z" duration="1.768751" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Unhandled log message: '[Error] Failed to bind UDP socket because the address is already in use. Likely because there is another process using port 8910.'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                <stack-trace><![CDATA[Unity.Networking.Transport.UDPNetworkInterface:CreateSocket (int,int,Unity.Networking.Transport.NetworkEndpoint,Unity.Baselib.LowLevel.Binding/Baselib_RegisteredNetwork_Socket_UDP&,bool) (at ./Packages/com.unity.transport/Runtime/UDPNetworkInterface.cs:555)
+Unity.Networking.Transport.UDPNetworkInterface:Bind (Unity.Networking.Transport.NetworkEndpoint) (at ./Packages/com.unity.transport/Runtime/UDPNetworkInterface.cs:513)
+Unity.Networking.Transport.NetworkInterfaceLayer`1<Unity.Networking.Transport.UDPNetworkInterface>:Bind (Unity.Networking.Transport.NetworkEndpoint&) (at ./Packages/com.unity.transport/Runtime/Layers/NetworkInterfaceLayer.cs:45)
+Unity.Networking.Transport.NetworkStack/NetworkInterfaceFunctions:BindWrapper<Unity.Networking.Transport.UDPNetworkInterface> (void*,int) (at ./Packages/com.unity.transport/Runtime/NetworkStack.cs:72)
+Unity.Networking.Transport.ManagedCallWrapper:Method (void*,void*,int) (at ./Packages/com.unity.transport/Runtime/Utilities/ManagedCallWrapper.cs:23)
+Unity.Networking.Transport.ManagedCallWrapper:Invoke (void*,int) (at ./Packages/com.unity.transport/Runtime/Utilities/ManagedCallWrapper.cs:72)
+Unity.Networking.Transport.ManagedCallWrapper:Invoke<Unity.Networking.Transport.NetworkStack/NetworkInterfaceFunctions/BindArguments> (Unity.Networking.Transport.NetworkStack/NetworkInterfaceFunctions/BindArguments&) (at ./Packages/com.unity.transport/Runtime/Utilities/ManagedCallWrapper.cs:79)
+Unity.Networking.Transport.NetworkStack/NetworkInterfaceFunctions:Bind (Unity.Networking.Transport.NetworkStack&,Unity.Networking.Transport.NetworkEndpoint&) (at ./Packages/com.unity.transport/Runtime/NetworkStack.cs:36)
+Unity.Networking.Transport.NetworkStack:Bind (Unity.Networking.Transport.NetworkEndpoint&) (at ./Packages/com.unity.transport/Runtime/NetworkStack.cs:319)
+Unity.Networking.Transport.NetworkDriver:Bind (Unity.Networking.Transport.NetworkEndpoint) (at ./Packages/com.unity.transport/Runtime/NetworkDriver.cs:847)
+Unity.Netcode.Transports.UTP.UnityTransport:ServerBindAndListen (Unity.Networking.Transport.NetworkEndpoint) (at ./Library/PackageCache/com.unity.netcode.gameobjects@d43d28498f17/Runtime/Transports/UTP/UnityTransport.cs:789)
+Unity.Netcode.Transports.UTP.UnityTransport:StartServer () (at ./Library/PackageCache/com.unity.netcode.gameobjects@d43d28498f17/Runtime/Transports/UTP/UnityTransport.cs:1692)
+Unity.Netcode.NetworkManager:StartHost () (at ./Library/PackageCache/com.unity.netcode.gameobjects@d43d28498f17/Runtime/Core/NetworkManager.cs:1474)
+TumbangPreso.Net.NetSession/<>c__DisplayClass102_0:<StartHostAsync>b__0 () (at Assets/TumbangPreso/Runtime/Net/NetSession.cs:992)
+TumbangPreso.Net.NetSession:StartNetcode (System.Func`1<bool>,string) (at Assets/TumbangPreso/Runtime/Net/NetSession.cs:863)
+TumbangPreso.Net.NetSession/<StartHostAsync>d__102:MoveNext () (at Assets/TumbangPreso/Runtime/Net/NetSession.cs:992)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<bool>:Start<TumbangPreso.Net.NetSession/<StartHostAsync>d__102> (TumbangPreso.Net.NetSession/<StartHostAsync>d__102&)
+TumbangPreso.Net.NetSession:StartHostAsync (int,bool)
+TumbangPreso.UI.ConvertedMatchSetup/<HostRoom>d__20:MoveNext () (at Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.Hub.cs:168)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<string>:Start<TumbangPreso.UI.ConvertedMatchSetup/<HostRoom>d__20> (TumbangPreso.UI.ConvertedMatchSetup/<HostRoom>d__20&)
+TumbangPreso.UI.ConvertedMatchSetup:HostRoom (string,string,TumbangPreso.Core.GameMode,TumbangPreso.UI.Hub.RoomVisibility,bool)
+TumbangPreso.PlayTests.MatchArrivalFlowTests/<StartFlow>d__15:MoveNext () (at Assets/TumbangPreso/Tests/PlayMode/MatchArrivalFlowTests.cs:392)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr)
+
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[Net] offline
+Failed to bind UDP socket because the address is already in use. Likely because there is another process using port 8910.
+Server failed to bind. This is usually caused by another process being bound to the same port.
+[Netcode] Host is shutting down due to network transport start failure of UnityTransport!
+[NetLifecycle] transport-failure server=True relay=False requestedStop=False
+[Net] failed to start hosting
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="2307" name="CustomRoomHasNoSecondReadyOptionAndLegacyRulesStillIntroduceTheCourt" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.CustomRoomHasNoSecondReadyOptionAndLegacyRulesStillIntroduceTheCourt" methodname="CustomRoomHasNoSecondReadyOptionAndLegacyRulesStillIntroduceTheCourt" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="487525050" result="Passed" start-time="2026-10-19 08:16:46Z" end-time="2026-10-19 08:16:54Z" duration="8.047204" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="2306" name="CustomRoomWithBotsOffRequiresFourHumanSeats" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.CustomRoomWithBotsOffRequiresFourHumanSeats" methodname="CustomRoomWithBotsOffRequiresFourHumanSeats" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="2049128835" result="Failed" start-time="2026-10-19 08:16:54Z" end-time="2026-10-19 08:16:56Z" duration="1.482673" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Unhandled log message: '[Error] Failed to bind UDP socket because the address is already in use. Likely because there is another process using port 8910.'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                <stack-trace><![CDATA[Unity.Networking.Transport.UDPNetworkInterface:CreateSocket (int,int,Unity.Networking.Transport.NetworkEndpoint,Unity.Baselib.LowLevel.Binding/Baselib_RegisteredNetwork_Socket_UDP&,bool) (at ./Packages/com.unity.transport/Runtime/UDPNetworkInterface.cs:555)
+Unity.Networking.Transport.UDPNetworkInterface:Bind (Unity.Networking.Transport.NetworkEndpoint) (at ./Packages/com.unity.transport/Runtime/UDPNetworkInterface.cs:513)
+Unity.Networking.Transport.NetworkInterfaceLayer`1<Unity.Networking.Transport.UDPNetworkInterface>:Bind (Unity.Networking.Transport.NetworkEndpoint&) (at ./Packages/com.unity.transport/Runtime/Layers/NetworkInterfaceLayer.cs:45)
+Unity.Networking.Transport.NetworkStack/NetworkInterfaceFunctions:BindWrapper<Unity.Networking.Transport.UDPNetworkInterface> (void*,int) (at ./Packages/com.unity.transport/Runtime/NetworkStack.cs:72)
+Unity.Networking.Transport.ManagedCallWrapper:Method (void*,void*,int) (at ./Packages/com.unity.transport/Runtime/Utilities/ManagedCallWrapper.cs:23)
+Unity.Networking.Transport.ManagedCallWrapper:Invoke (void*,int) (at ./Packages/com.unity.transport/Runtime/Utilities/ManagedCallWrapper.cs:72)
+Unity.Networking.Transport.ManagedCallWrapper:Invoke<Unity.Networking.Transport.NetworkStack/NetworkInterfaceFunctions/BindArguments> (Unity.Networking.Transport.NetworkStack/NetworkInterfaceFunctions/BindArguments&) (at ./Packages/com.unity.transport/Runtime/Utilities/ManagedCallWrapper.cs:79)
+Unity.Networking.Transport.NetworkStack/NetworkInterfaceFunctions:Bind (Unity.Networking.Transport.NetworkStack&,Unity.Networking.Transport.NetworkEndpoint&) (at ./Packages/com.unity.transport/Runtime/NetworkStack.cs:36)
+Unity.Networking.Transport.NetworkStack:Bind (Unity.Networking.Transport.NetworkEndpoint&) (at ./Packages/com.unity.transport/Runtime/NetworkStack.cs:319)
+Unity.Networking.Transport.NetworkDriver:Bind (Unity.Networking.Transport.NetworkEndpoint) (at ./Packages/com.unity.transport/Runtime/NetworkDriver.cs:847)
+Unity.Netcode.Transports.UTP.UnityTransport:ServerBindAndListen (Unity.Networking.Transport.NetworkEndpoint) (at ./Library/PackageCache/com.unity.netcode.gameobjects@d43d28498f17/Runtime/Transports/UTP/UnityTransport.cs:789)
+Unity.Netcode.Transports.UTP.UnityTransport:StartServer () (at ./Library/PackageCache/com.unity.netcode.gameobjects@d43d28498f17/Runtime/Transports/UTP/UnityTransport.cs:1692)
+Unity.Netcode.NetworkManager:StartHost () (at ./Library/PackageCache/com.unity.netcode.gameobjects@d43d28498f17/Runtime/Core/NetworkManager.cs:1474)
+TumbangPreso.Net.NetSession/<>c__DisplayClass102_0:<StartHostAsync>b__0 () (at Assets/TumbangPreso/Runtime/Net/NetSession.cs:992)
+TumbangPreso.Net.NetSession:StartNetcode (System.Func`1<bool>,string) (at Assets/TumbangPreso/Runtime/Net/NetSession.cs:863)
+TumbangPreso.Net.NetSession/<StartHostAsync>d__102:MoveNext () (at Assets/TumbangPreso/Runtime/Net/NetSession.cs:992)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<bool>:Start<TumbangPreso.Net.NetSession/<StartHostAsync>d__102> (TumbangPreso.Net.NetSession/<StartHostAsync>d__102&)
+TumbangPreso.Net.NetSession:StartHostAsync (int,bool)
+TumbangPreso.UI.ConvertedMatchSetup/<HostRoom>d__20:MoveNext () (at Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.Hub.cs:168)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<string>:Start<TumbangPreso.UI.ConvertedMatchSetup/<HostRoom>d__20> (TumbangPreso.UI.ConvertedMatchSetup/<HostRoom>d__20&)
+TumbangPreso.UI.ConvertedMatchSetup:HostRoom (string,string,TumbangPreso.Core.GameMode,TumbangPreso.UI.Hub.RoomVisibility,bool)
+TumbangPreso.PlayTests.MatchArrivalFlowTests/<CustomRoomWithBotsOffRequiresFourHumanSeats>d__16:MoveNext () (at Assets/TumbangPreso/Tests/PlayMode/MatchArrivalFlowTests.cs:470)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr)
+
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[Net] offline
+Failed to bind UDP socket because the address is already in use. Likely because there is another process using port 8910.
+Server failed to bind. This is usually caused by another process being bound to the same port.
+[Netcode] Host is shutting down due to network transport start failure of UnityTransport!
+[NetLifecycle] transport-failure server=True relay=False requestedStop=False
+[Net] failed to start hosting
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="2304" name="CustomStartSelectsVotesLoadsAndBeginsWithoutSecondReady" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.CustomStartSelectsVotesLoadsAndBeginsWithoutSecondReady" methodname="CustomStartSelectsVotesLoadsAndBeginsWithoutSecondReady" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="64248724" result="Failed" start-time="2026-10-19 08:16:56Z" end-time="2026-10-19 08:16:57Z" duration="1.486572" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Unhandled log message: '[Error] Failed to bind UDP socket because the address is already in use. Likely because there is another process using port 8910.'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                <stack-trace><![CDATA[Unity.Networking.Transport.UDPNetworkInterface:CreateSocket (int,int,Unity.Networking.Transport.NetworkEndpoint,Unity.Baselib.LowLevel.Binding/Baselib_RegisteredNetwork_Socket_UDP&,bool) (at ./Packages/com.unity.transport/Runtime/UDPNetworkInterface.cs:555)
+Unity.Networking.Transport.UDPNetworkInterface:Bind (Unity.Networking.Transport.NetworkEndpoint) (at ./Packages/com.unity.transport/Runtime/UDPNetworkInterface.cs:513)
+Unity.Networking.Transport.NetworkInterfaceLayer`1<Unity.Networking.Transport.UDPNetworkInterface>:Bind (Unity.Networking.Transport.NetworkEndpoint&) (at ./Packages/com.unity.transport/Runtime/Layers/NetworkInterfaceLayer.cs:45)
+Unity.Networking.Transport.NetworkStack/NetworkInterfaceFunctions:BindWrapper<Unity.Networking.Transport.UDPNetworkInterface> (void*,int) (at ./Packages/com.unity.transport/Runtime/NetworkStack.cs:72)
+Unity.Networking.Transport.ManagedCallWrapper:Method (void*,void*,int) (at ./Packages/com.unity.transport/Runtime/Utilities/ManagedCallWrapper.cs:23)
+Unity.Networking.Transport.ManagedCallWrapper:Invoke (void*,int) (at ./Packages/com.unity.transport/Runtime/Utilities/ManagedCallWrapper.cs:72)
+Unity.Networking.Transport.ManagedCallWrapper:Invoke<Unity.Networking.Transport.NetworkStack/NetworkInterfaceFunctions/BindArguments> (Unity.Networking.Transport.NetworkStack/NetworkInterfaceFunctions/BindArguments&) (at ./Packages/com.unity.transport/Runtime/Utilities/ManagedCallWrapper.cs:79)
+Unity.Networking.Transport.NetworkStack/NetworkInterfaceFunctions:Bind (Unity.Networking.Transport.NetworkStack&,Unity.Networking.Transport.NetworkEndpoint&) (at ./Packages/com.unity.transport/Runtime/NetworkStack.cs:36)
+Unity.Networking.Transport.NetworkStack:Bind (Unity.Networking.Transport.NetworkEndpoint&) (at ./Packages/com.unity.transport/Runtime/NetworkStack.cs:319)
+Unity.Networking.Transport.NetworkDriver:Bind (Unity.Networking.Transport.NetworkEndpoint) (at ./Packages/com.unity.transport/Runtime/NetworkDriver.cs:847)
+Unity.Netcode.Transports.UTP.UnityTransport:ServerBindAndListen (Unity.Networking.Transport.NetworkEndpoint) (at ./Library/PackageCache/com.unity.netcode.gameobjects@d43d28498f17/Runtime/Transports/UTP/UnityTransport.cs:789)
+Unity.Netcode.Transports.UTP.UnityTransport:StartServer () (at ./Library/PackageCache/com.unity.netcode.gameobjects@d43d28498f17/Runtime/Transports/UTP/UnityTransport.cs:1692)
+Unity.Netcode.NetworkManager:StartHost () (at ./Library/PackageCache/com.unity.netcode.gameobjects@d43d28498f17/Runtime/Core/NetworkManager.cs:1474)
+TumbangPreso.Net.NetSession/<>c__DisplayClass102_0:<StartHostAsync>b__0 () (at Assets/TumbangPreso/Runtime/Net/NetSession.cs:992)
+TumbangPreso.Net.NetSession:StartNetcode (System.Func`1<bool>,string) (at Assets/TumbangPreso/Runtime/Net/NetSession.cs:863)
+TumbangPreso.Net.NetSession/<StartHostAsync>d__102:MoveNext () (at Assets/TumbangPreso/Runtime/Net/NetSession.cs:992)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<bool>:Start<TumbangPreso.Net.NetSession/<StartHostAsync>d__102> (TumbangPreso.Net.NetSession/<StartHostAsync>d__102&)
+TumbangPreso.Net.NetSession:StartHostAsync (int,bool)
+TumbangPreso.UI.ConvertedMatchSetup/<HostRoom>d__20:MoveNext () (at Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.Hub.cs:168)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<string>:Start<TumbangPreso.UI.ConvertedMatchSetup/<HostRoom>d__20> (TumbangPreso.UI.ConvertedMatchSetup/<HostRoom>d__20&)
+TumbangPreso.UI.ConvertedMatchSetup:HostRoom (string,string,TumbangPreso.Core.GameMode,TumbangPreso.UI.Hub.RoomVisibility,bool)
+TumbangPreso.PlayTests.MatchArrivalFlowTests/<StartFlow>d__15:MoveNext () (at Assets/TumbangPreso/Tests/PlayMode/MatchArrivalFlowTests.cs:392)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr)
+
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[Net] offline
+Failed to bind UDP socket because the address is already in use. Likely because there is another process using port 8910.
+Server failed to bind. This is usually caused by another process being bound to the same port.
+[Netcode] Host is shutting down due to network transport start failure of UnityTransport!
+[NetLifecycle] transport-failure server=True relay=False requestedStop=False
+[Net] failed to start hosting
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="2308" name="LeavingDuringIntroductionReleasesCameraAndClock" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.LeavingDuringIntroductionReleasesCameraAndClock" methodname="LeavingDuringIntroductionReleasesCameraAndClock" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="1138346404" result="Passed" start-time="2026-10-19 08:16:57Z" end-time="2026-10-19 08:16:59Z" duration="1.510261" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="2302" name="OnlineUnownedHeroDimsButRemainsInspectableWithoutAServiceCall" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.OnlineUnownedHeroDimsButRemainsInspectableWithoutAServiceCall" methodname="OnlineUnownedHeroDimsButRemainsInspectableWithoutAServiceCall" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="1884011852" result="Failed" start-time="2026-10-19 08:16:59Z" end-time="2026-10-19 08:17:00Z" duration="1.469597" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Unhandled log message: '[Error] Failed to bind UDP socket because the address is already in use. Likely because there is another process using port 8910.'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                <stack-trace><![CDATA[Unity.Networking.Transport.UDPNetworkInterface:CreateSocket (int,int,Unity.Networking.Transport.NetworkEndpoint,Unity.Baselib.LowLevel.Binding/Baselib_RegisteredNetwork_Socket_UDP&,bool) (at ./Packages/com.unity.transport/Runtime/UDPNetworkInterface.cs:555)
+Unity.Networking.Transport.UDPNetworkInterface:Bind (Unity.Networking.Transport.NetworkEndpoint) (at ./Packages/com.unity.transport/Runtime/UDPNetworkInterface.cs:513)
+Unity.Networking.Transport.NetworkInterfaceLayer`1<Unity.Networking.Transport.UDPNetworkInterface>:Bind (Unity.Networking.Transport.NetworkEndpoint&) (at ./Packages/com.unity.transport/Runtime/Layers/NetworkInterfaceLayer.cs:45)
+Unity.Networking.Transport.NetworkStack/NetworkInterfaceFunctions:BindWrapper<Unity.Networking.Transport.UDPNetworkInterface> (void*,int) (at ./Packages/com.unity.transport/Runtime/NetworkStack.cs:72)
+Unity.Networking.Transport.ManagedCallWrapper:Method (void*,void*,int) (at ./Packages/com.unity.transport/Runtime/Utilities/ManagedCallWrapper.cs:23)
+Unity.Networking.Transport.ManagedCallWrapper:Invoke (void*,int) (at ./Packages/com.unity.transport/Runtime/Utilities/ManagedCallWrapper.cs:72)
+Unity.Networking.Transport.ManagedCallWrapper:Invoke<Unity.Networking.Transport.NetworkStack/NetworkInterfaceFunctions/BindArguments> (Unity.Networking.Transport.NetworkStack/NetworkInterfaceFunctions/BindArguments&) (at ./Packages/com.unity.transport/Runtime/Utilities/ManagedCallWrapper.cs:79)
+Unity.Networking.Transport.NetworkStack/NetworkInterfaceFunctions:Bind (Unity.Networking.Transport.NetworkStack&,Unity.Networking.Transport.NetworkEndpoint&) (at ./Packages/com.unity.transport/Runtime/NetworkStack.cs:36)
+Unity.Networking.Transport.NetworkStack:Bind (Unity.Networking.Transport.NetworkEndpoint&) (at ./Packages/com.unity.transport/Runtime/NetworkStack.cs:319)
+Unity.Networking.Transport.NetworkDriver:Bind (Unity.Networking.Transport.NetworkEndpoint) (at ./Packages/com.unity.transport/Runtime/NetworkDriver.cs:847)
+Unity.Netcode.Transports.UTP.UnityTransport:ServerBindAndListen (Unity.Networking.Transport.NetworkEndpoint) (at ./Library/PackageCache/com.unity.netcode.gameobjects@d43d28498f17/Runtime/Transports/UTP/UnityTransport.cs:789)
+Unity.Netcode.Transports.UTP.UnityTransport:StartServer () (at ./Library/PackageCache/com.unity.netcode.gameobjects@d43d28498f17/Runtime/Transports/UTP/UnityTransport.cs:1692)
+Unity.Netcode.NetworkManager:StartHost () (at ./Library/PackageCache/com.unity.netcode.gameobjects@d43d28498f17/Runtime/Core/NetworkManager.cs:1474)
+TumbangPreso.Net.NetSession/<>c__DisplayClass102_0:<StartHostAsync>b__0 () (at Assets/TumbangPreso/Runtime/Net/NetSession.cs:992)
+TumbangPreso.Net.NetSession:StartNetcode (System.Func`1<bool>,string) (at Assets/TumbangPreso/Runtime/Net/NetSession.cs:863)
+TumbangPreso.Net.NetSession/<StartHostAsync>d__102:MoveNext () (at Assets/TumbangPreso/Runtime/Net/NetSession.cs:992)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<bool>:Start<TumbangPreso.Net.NetSession/<StartHostAsync>d__102> (TumbangPreso.Net.NetSession/<StartHostAsync>d__102&)
+TumbangPreso.Net.NetSession:StartHostAsync (int,bool)
+TumbangPreso.UI.ConvertedMatchSetup/<HostRoom>d__20:MoveNext () (at Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.Hub.cs:168)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<string>:Start<TumbangPreso.UI.ConvertedMatchSetup/<HostRoom>d__20> (TumbangPreso.UI.ConvertedMatchSetup/<HostRoom>d__20&)
+TumbangPreso.UI.ConvertedMatchSetup:HostRoom (string,string,TumbangPreso.Core.GameMode,TumbangPreso.UI.Hub.RoomVisibility,bool)
+TumbangPreso.PlayTests.MatchArrivalFlowTests/<OnlineUnownedHeroDimsButRemainsInspectableWithoutAServiceCall>d__9:MoveNext () (at Assets/TumbangPreso/Tests/PlayMode/MatchArrivalFlowTests.cs:292)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr)
+
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[Net] offline
+Failed to bind UDP socket because the address is already in use. Likely because there is another process using port 8910.
+Server failed to bind. This is usually caused by another process being bound to the same port.
+[Netcode] Host is shutting down due to network transport start failure of UnityTransport!
+[NetLifecycle] transport-failure server=True relay=False requestedStop=False
+[Net] failed to start hosting
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="2303" name="QueuedLockInVotesThenLoadsIntroducesAndStartsWithoutReadyInput" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.QueuedLockInVotesThenLoadsIntroducesAndStartsWithoutReadyInput" methodname="QueuedLockInVotesThenLoadsIntroducesAndStartsWithoutReadyInput" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="1938533240" result="Failed" start-time="2026-10-19 08:17:00Z" end-time="2026-10-19 08:17:02Z" duration="1.469975" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Unhandled log message: '[Error] Failed to bind UDP socket because the address is already in use. Likely because there is another process using port 8910.'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                <stack-trace><![CDATA[Unity.Networking.Transport.UDPNetworkInterface:CreateSocket (int,int,Unity.Networking.Transport.NetworkEndpoint,Unity.Baselib.LowLevel.Binding/Baselib_RegisteredNetwork_Socket_UDP&,bool) (at ./Packages/com.unity.transport/Runtime/UDPNetworkInterface.cs:555)
+Unity.Networking.Transport.UDPNetworkInterface:Bind (Unity.Networking.Transport.NetworkEndpoint) (at ./Packages/com.unity.transport/Runtime/UDPNetworkInterface.cs:513)
+Unity.Networking.Transport.NetworkInterfaceLayer`1<Unity.Networking.Transport.UDPNetworkInterface>:Bind (Unity.Networking.Transport.NetworkEndpoint&) (at ./Packages/com.unity.transport/Runtime/Layers/NetworkInterfaceLayer.cs:45)
+Unity.Networking.Transport.NetworkStack/NetworkInterfaceFunctions:BindWrapper<Unity.Networking.Transport.UDPNetworkInterface> (void*,int) (at ./Packages/com.unity.transport/Runtime/NetworkStack.cs:72)
+Unity.Networking.Transport.ManagedCallWrapper:Method (void*,void*,int) (at ./Packages/com.unity.transport/Runtime/Utilities/ManagedCallWrapper.cs:23)
+Unity.Networking.Transport.ManagedCallWrapper:Invoke (void*,int) (at ./Packages/com.unity.transport/Runtime/Utilities/ManagedCallWrapper.cs:72)
+Unity.Networking.Transport.ManagedCallWrapper:Invoke<Unity.Networking.Transport.NetworkStack/NetworkInterfaceFunctions/BindArguments> (Unity.Networking.Transport.NetworkStack/NetworkInterfaceFunctions/BindArguments&) (at ./Packages/com.unity.transport/Runtime/Utilities/ManagedCallWrapper.cs:79)
+Unity.Networking.Transport.NetworkStack/NetworkInterfaceFunctions:Bind (Unity.Networking.Transport.NetworkStack&,Unity.Networking.Transport.NetworkEndpoint&) (at ./Packages/com.unity.transport/Runtime/NetworkStack.cs:36)
+Unity.Networking.Transport.NetworkStack:Bind (Unity.Networking.Transport.NetworkEndpoint&) (at ./Packages/com.unity.transport/Runtime/NetworkStack.cs:319)
+Unity.Networking.Transport.NetworkDriver:Bind (Unity.Networking.Transport.NetworkEndpoint) (at ./Packages/com.unity.transport/Runtime/NetworkDriver.cs:847)
+Unity.Netcode.Transports.UTP.UnityTransport:ServerBindAndListen (Unity.Networking.Transport.NetworkEndpoint) (at ./Library/PackageCache/com.unity.netcode.gameobjects@d43d28498f17/Runtime/Transports/UTP/UnityTransport.cs:789)
+Unity.Netcode.Transports.UTP.UnityTransport:StartServer () (at ./Library/PackageCache/com.unity.netcode.gameobjects@d43d28498f17/Runtime/Transports/UTP/UnityTransport.cs:1692)
+Unity.Netcode.NetworkManager:StartHost () (at ./Library/PackageCache/com.unity.netcode.gameobjects@d43d28498f17/Runtime/Core/NetworkManager.cs:1474)
+TumbangPreso.Net.NetSession/<>c__DisplayClass102_0:<StartHostAsync>b__0 () (at Assets/TumbangPreso/Runtime/Net/NetSession.cs:992)
+TumbangPreso.Net.NetSession:StartNetcode (System.Func`1<bool>,string) (at Assets/TumbangPreso/Runtime/Net/NetSession.cs:863)
+TumbangPreso.Net.NetSession/<StartHostAsync>d__102:MoveNext () (at Assets/TumbangPreso/Runtime/Net/NetSession.cs:992)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<bool>:Start<TumbangPreso.Net.NetSession/<StartHostAsync>d__102> (TumbangPreso.Net.NetSession/<StartHostAsync>d__102&)
+TumbangPreso.Net.NetSession:StartHostAsync (int,bool)
+TumbangPreso.UI.ConvertedMatchSetup/<HostRoom>d__20:MoveNext () (at Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.Hub.cs:168)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<string>:Start<TumbangPreso.UI.ConvertedMatchSetup/<HostRoom>d__20> (TumbangPreso.UI.ConvertedMatchSetup/<HostRoom>d__20&)
+TumbangPreso.UI.ConvertedMatchSetup:HostRoom (string,string,TumbangPreso.Core.GameMode,TumbangPreso.UI.Hub.RoomVisibility,bool)
+TumbangPreso.PlayTests.MatchArrivalFlowTests/<StartFlow>d__15:MoveNext () (at Assets/TumbangPreso/Tests/PlayMode/MatchArrivalFlowTests.cs:392)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr)
+
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[Net] offline
+Failed to bind UDP socket because the address is already in use. Likely because there is another process using port 8910.
+Server failed to bind. This is usually caused by another process being bound to the same port.
+[Netcode] Host is shutting down due to network transport start failure of UnityTransport!
+[NetLifecycle] transport-failure server=True relay=False requestedStop=False
+[Net] failed to start hosting
+[Net] offline
+Saving results to: C:/Users/<user>/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

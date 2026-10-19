@@ -75,12 +75,15 @@ namespace TumbangPreso.PlayTests
             foreach(var seat in seats)if(!seat.Occupied){vacant++;Assert.IsTrue(seat.Bot,"Enabled room advertised OPEN before Start.");}
             Assert.Greater(vacant,0);yield return null;
         }
-        [UnityTest] public IEnumerator NoneRulesRefuseVacantSeatsDespiteEnabledSavedPolicy()
+        // Owner 2026-10-17: a custom room starts with whoever is in it. Vacant seats with NONE
+        // no longer refuse; they are empty chairs (`MatchInstaller.SeatHasABody`). The stale
+        // enabled policy must still be retired, or those chairs would get bots anyway.
+        [UnityTest] public IEnumerator NoneRulesStartWithVacantSeatsAndRetireEnabledSavedPolicy()
         {
             Rules(0); AIController.ApplyDifficulty((int)Difficulty.Normal);
             _controller.StartGame(); yield return null;
-            Assert.IsTrue(!MatchRpc.Instance.CharacterSelecting&&!AIController.BotsEnabled,
-                "Current NONE room must keep the existing four-human start gate and retire stale enabled policy.");
+            Assert.IsTrue(MatchRpc.Instance.CharacterSelecting&&!AIController.BotsEnabled,
+                "A NONE room starts with vacant seats and retires the stale enabled policy.");
         }
         [UnityTest] public IEnumerator EnabledRoomRulesStartDespiteDisabledSavedPolicy()
         {
@@ -99,11 +102,11 @@ namespace TumbangPreso.PlayTests
             _controller.StartGame(); yield return null;
             Assert.IsTrue(MatchRpc.Instance.CharacterSelecting); Assert.IsFalse(AIController.BotsEnabled);
         }
-        [UnityTest] public IEnumerator AlreadyDisabledNoneStillRefusesVacantSeats()
+        [UnityTest] public IEnumerator AlreadyDisabledNoneStartsWithVacantSeats()
         {
             Rules(0); AIController.ApplyDifficulty(AIController.NoBotsIndex);
             _controller.StartGame(); yield return null;
-            Assert.IsFalse(MatchRpc.Instance.CharacterSelecting); Assert.IsFalse(AIController.BotsEnabled);
+            Assert.IsTrue(MatchRpc.Instance.CharacterSelecting); Assert.IsFalse(AIController.BotsEnabled);
         }
         [UnityTest] public IEnumerator QueueKeepsItsExplicitAcceptedBotPath()
         {

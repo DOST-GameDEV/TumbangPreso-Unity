@@ -4381,14 +4381,16 @@ namespace TumbangPreso.Net
             // score to the next arrival, and anyone joining a running match was turned away.
             var lobby = NetSession.Instance?.Lobby;
 
-            // The rules rotate one taya across four fixed seats. With filler bots disabled an
-            // empty chair cannot defend its round, so the host must wait for four people rather
-            // than starting a match with an inert body. The lobby button carries the same gate;
-            // this check is the authoritative backstop for every other caller.
-            if (!AIController.BotsEnabled &&
+            // The rules rotate one taya across four fixed seats. A QUEUED room with filler bots
+            // disabled must wait for four people rather than start with an inert body; its
+            // lobby button carries the same gate and this check is the authoritative backstop.
+            // ⚠️ A CUSTOM ROOM IS EXEMPT ON PURPOSE: the owner asked that the host can start
+            // with nobody else in it (2026-10-17), and an OPEN seat there is an empty chair by
+            // the host's own choice (`MatchInstaller.CustomRoomSeatTakesABot`).
+            if (UI.Hub.HubQueueWatch.QueueRoom && !AIController.BotsEnabled &&
                 (lobby == null || lobby.OccupiedSeatCount() < Balance.PlayerCount))
             {
-                Debug.LogWarning("[Lobby] start refused: bots are off and not all four seats are occupied.");
+                Debug.LogWarning("[Lobby] start refused: a queued room has bots off and not all four seats occupied.");
                 return;
             }
 

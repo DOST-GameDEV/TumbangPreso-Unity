@@ -44,10 +44,11 @@ namespace TumbangPreso.PlayTests
                         .Single(i => i.name == "Face").color,
                         "Offline portraits must keep their full image");
                 }
-                for (int index = people.Count; index < 12; index++)
-                    Assert.IsFalse(selector.GetComponentsInChildren<HubButton>(true)
-                        .Single(b => b.name == "Portrait" + index).IsInteractable(),
-                        "Empty grid slots are not selectable heroes");
+                // ⚠️ One cell per hero: the fixed 3x4 grid drew three hatched cells for nine heroes,
+                // which read as locked heroes and led nowhere (2026-10-19 rework).
+                Assert.IsNull(selector.GetComponentsInChildren<HubButton>(true)
+                        .FirstOrDefault(b => b.name == "Portrait" + people.Count),
+                        "The grid has a cell with no hero behind it");
                 for (int hero = 0; hero < people.Count; hero++)
                 {
                     yield return HubFlowTests.Press("Portrait" + hero);
@@ -103,6 +104,154 @@ namespace TumbangPreso.PlayTests
             SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
             var classic = TumpHub.Current.Push<HubCharacterSelect>(s => s.Timed = false);
             Assert.IsNull(classic.transform.Find("SelectionAbilities"), "Classic stays neutral and has no hero kit.");
+        }
+
+        /// <summary>The version stamped on the review pictures. Bump it with every layout pass, so a
+        /// chat client that caches by filename never shows the previous picture (`CLAUDE.md` § 6.1).</summary>
+        private const string ReviewVersion = "v8";
+
+        /// <summary>
+        /// The pictures a character select change is judged on: the timed screen as a queue match
+        /// meets it, at every brief shape plus ultrawide and the small window, a locked-in state,
+        /// Larger text, and the untimed Classic route. Saved to `Logs/shots-native-ui`.
+        /// </summary>
+        [UnityTest, Timeout(240000)]
+        public IEnumerator CharacterSelectionReviewCaptures()
+        {
+            Settings.SettingsStore.Current.LargerText = false;
+            Settings.SettingsStore.Current.HighContrastHud = false;
+            // Bots in the empty seats, as the owner's queue screenshot had them.
+            var withBots = CustomGameRules.Defaults(GameMode.HeroStrike); withBots.Bots = CustomGameRules.MaxBots;
+            SceneFlow.PinSelectedRules(withBots);
+            yield return HubFlowTests.OpenHome();
+            var people = Roster.GetPeople(GameMode.HeroStrike);
+            int nemu = Enumerable.Range(0, people.Count).First(i => people[i].Id == "nemu");
+            Settings.SettingsStore.Current.CharacterPick = nemu;
+            var timed = TumpHub.Current.Push<HubCharacterSelect>(s => s.Timed = true);
+            yield return new WaitForSecondsRealtime(1.2f);
+            yield return HubFlowTests.Press("Portrait" + nemu);
+            yield return HubFlowTests.Press("SelectionAbility0");
+            var shapes = new[]
+            {
+                new Vector2Int(1600, 680), new Vector2Int(1920, 1080), new Vector2Int(1280, 720),
+                new Vector2Int(960, 540), new Vector2Int(1280, 960), new Vector2Int(2560, 1080),
+                new Vector2Int(877, 482),
+            };
+            foreach (var size in shapes)
+            {
+                // 877x482 is the owner's small window and sits under the capture's reading floor
+                // (13.95 px), so it is photographed without the bounds pass the brief shapes get.
+                bool brief = size.x >= 960;
+                string where = $"nemu/{size.x}x{size.y}";
+                yield return TumpUiCapture.Capture($"CharSelect-{ReviewVersion}-nemu-{size.x}x{size.y}",
+                    TumpHub.Current.Canvas, size.x, size.y, false, checkActionBounds: brief,
+                    inspectViewport: () => AssertSelectionPicture(timed, where));
+            }
+            int dante = Enumerable.Range(0, people.Count).First(i => people[i].Id == "dante");
+            yield return HubFlowTests.Press("Portrait" + dante);
+            yield return HubFlowTests.Press("SelectionAbility1");
+            // ⚠️ THE REPRODUCER: Dante's ATTACKING power at 1600x680 drew its cooldown over its
+            // sentence in `CharSelect-v1-locked-1600x680.png` (the owner's screenshot showed the
+            // same fault on NEMU at their window). `CrispUiText` has the cause.
+            yield return TumpUiCapture.Capture($"CharSelect-{ReviewVersion}-dante-1600x680",
+                TumpHub.Current.Canvas, 1600, 680, false, checkActionBounds: true,
+                inspectViewport: () => AssertSelectionPicture(timed, "dante/1600x680"));
+            yield return HubFlowTests.Press("SelectButton");
+            yield return new WaitForSecondsRealtime(0.8f);
+            Assert.AreSame(timed, TumpHub.Current.Top, "Offline lock-in stays on the selector.");
+            yield return TumpUiCapture.Capture($"CharSelect-{ReviewVersion}-locked-1600x680",
+                TumpHub.Current.Canvas, 1600, 680, false, checkActionBounds: true,
+                inspectViewport: () => AssertSelectionPicture(timed, "locked/1600x680"));
+            TumpHub.Current.Home();
+
+            Settings.SettingsStore.Current.LargerText = true;
+            Settings.SettingsStore.Current.HighContrastHud = true;
+            var larger = TumpHub.Current.Push<HubCharacterSelect>(s => s.Timed = true);
+            yield return new WaitForSecondsRealtime(1.2f);
+            yield return HubFlowTests.Press("SelectionAbility0");
+            yield return TumpUiCapture.Capture($"CharSelect-{ReviewVersion}-larger-1280x720",
+                TumpHub.Current.Canvas, 1280, 720, false, checkActionBounds: true,
+                inspectViewport: () => AssertSelectionPicture(larger, "larger/1280x720"));
+            TumpHub.Current.Home();
+            Settings.SettingsStore.Current.LargerText = false;
+            Settings.SettingsStore.Current.HighContrastHud = false;
+
+            SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
+            Settings.SettingsStore.Current.CharacterPick = 1;
+            var classic = TumpHub.Current.Push<HubCharacterSelect>(s => s.Timed = false);
+            yield return new WaitForSecondsRealtime(1.2f);
+            yield return TumpUiCapture.Capture($"CharSelect-{ReviewVersion}-classic-1600x680",
+                TumpHub.Current.Canvas, 1600, 680, false, checkActionBounds: true,
+                inspectViewport: () => AssertSelectionPicture(classic, "classic/1600x680"));
+            yield return TumpUiCapture.Capture($"CharSelect-{ReviewVersion}-classic-1280x960",
+                TumpHub.Current.Canvas, 1280, 960, false, checkActionBounds: true,
+                inspectViewport: () => AssertSelectionPicture(classic, "classic/1280x960"));
+            TumpHub.Current.Home();
+        }
+
+        /// <summary>
+        /// The two faults the 2026-10-19 rework fixed, measured on the drawn picture rather than on
+        /// the layout that claimed to be right: every ability line is DRAWN inside its own box and
+        /// the boxes stack without overlapping, and the chalk ring sits on the feet the preview
+        /// actually rendered.
+        /// </summary>
+        private static void AssertSelectionPicture(HubCharacterSelect selector, string where)
+        {
+            var labels = selector.GetComponentsInChildren<Text>();
+            float previousBottom = float.PositiveInfinity;
+            foreach (string name in new[] { "AbilityName", "AbilityMeta", "AbilityCost", "AbilitySummary" })
+            {
+                var text = labels.FirstOrDefault(t => t.name == name);
+                if (text == null || string.IsNullOrEmpty(text.text)) continue;
+                var rect = text.rectTransform.rect;
+                var mesh = text.canvasRenderer.GetMesh();
+                if (mesh != null && mesh.vertexCount > 0)
+                {
+                    Assert.GreaterOrEqual(mesh.bounds.min.y, rect.yMin - 3,
+                        where + "/" + name + " draws below its own box, over the line under it");
+                    Assert.LessOrEqual(mesh.bounds.max.y, rect.yMax + 3, where + "/" + name + " draws above its own box");
+                }
+                float top = text.rectTransform.anchoredPosition.y;
+                Assert.LessOrEqual(top, previousBottom + 0.5f, where + "/" + name + " overlaps the line above it");
+                previousBottom = top - text.rectTransform.sizeDelta.y;
+            }
+
+            var preview = selector.GetComponentInChildren<ModelPreview>();
+            var ring = selector.GetComponentsInChildren<HubChalk>().FirstOrDefault(c => c.name == "ChalkCircle");
+            Assert.IsNotNull(preview?.Target, where + " has no hero picture");
+            Assert.IsNotNull(ring, where + " has no chalk circle");
+            var stage = (RectTransform)ring.transform.parent;
+            float ringCentre = (ring.rectTransform.anchoredPosition.y + ring.rectTransform.sizeDelta.y * 0.5f) / stage.rect.height;
+            float feet = LowestDrawnRow(preview.Target) / (float)preview.Target.height;
+            Debug.Log($"[CharacterSelectFloor] {where}: feet={feet:F3} ring={ringCentre:F3} stage={stage.rect.size}");
+            Assert.GreaterOrEqual(feet, 0, where + " drew no hero");
+            // The soles stand INSIDE the circle: the lowest drawn row (the toes) lies within the
+            // ring's outline, front edge to back edge. v1 failed this by a head: Nemu's toes at
+            // 0.26 of the stage, the ring's centre at 0.12 and its half height 0.06.
+            float ringHalf = ring.rectTransform.sizeDelta.y * 0.5f / stage.rect.height;
+            Assert.GreaterOrEqual(feet, ringCentre - ringHalf,
+                where + " draws the hero's feet in front of the chalk circle");
+            Assert.LessOrEqual(feet, ringCentre + ringHalf,
+                where + " draws the hero's feet behind the chalk circle, floating over it");
+        }
+
+        /// <summary>The lowest row of the preview with anything opaque in it: where the soles are drawn.</summary>
+        private static int LowestDrawnRow(RenderTexture target)
+        {
+            var before = RenderTexture.active;
+            var pixels = new Texture2D(target.width, target.height, TextureFormat.RGBA32, false);
+            try
+            {
+                RenderTexture.active = target;
+                pixels.ReadPixels(new Rect(0, 0, target.width, target.height), 0, 0);
+                pixels.Apply();
+                var colours = pixels.GetPixels32();
+                for (int y = 0; y < target.height; y++)
+                    for (int x = 0; x < target.width; x++)
+                        if (colours[y * target.width + x].a > 40) return y;
+                return -1;
+            }
+            finally { RenderTexture.active = before; Object.Destroy(pixels); }
         }
 
         [UnityTest]
@@ -315,17 +464,84 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(HubLoading.Visible);
         }
 
-        [UnityTest]public IEnumerator CustomRoomWithBotsOffRequiresFourHumanSeats()
+        // ⚠️⚠️ A CUSTOM ROOM STARTS WITH WHOEVER IS IN IT (owner 2026-10-17, `eec7970b0`), AND A SEAT
+        // THE HOST EMPTIES OF ITS BOT HAS NO BODY IN THE MATCH (owner 2026-10-19, `40b7e5d9c`). This
+        // replaced `CustomRoomWithBotsOffRequiresFourHumanSeats`, which still asserted the refusal the
+        // first of those removed. It walks the lobby's own REMOVE BOT and START GAME presses on a real
+        // LAN host into a running round; `CustomBotPolicyStartTests` covers the policy cases in isolation.
+        [UnityTest, Timeout(90000)]
+        public IEnumerator CustomRoomWithEveryBotRemovedStartsWithOnlyTheHostsSeatInTheMatch()
         {
+            Settings.SettingsStore.Current.HighContrastHud = false;
+            Settings.SettingsStore.Current.LargerText = false;
+            // ⚠️ HOME'S CARD READS CLASSIC AND THE ROOM IS HERO STRIKE, ON PURPOSE. Entering the lobby
+            // passes through HOME, whose refresh used to reset the room to the card's defaults: the
+            // mode flipped and every bot was gone (`HubHome.ApplyChoice`, UX-1.5a).
+            HubHome.Choice = 1;
             yield return HubFlowTests.OpenHome();
-            var hosting=TumpHub.Current.Host.HostRoom("NO BOT ADMISSION",SceneFlow.Eskinita,GameMode.HeroStrike,RoomVisibility.Private,false);
-            while(!hosting.IsCompleted)yield return null;
-            Assert.IsFalse(hosting.IsFaulted);Assert.IsTrue(string.IsNullOrEmpty(hosting.Result));
-            var rules=SceneFlow.SelectedRules.Clone();rules.Bots=0;
+            var hosting = TumpHub.Current.Host.HostRoom("NO BOT ADMISSION", SceneFlow.Eskinita,
+                GameMode.HeroStrike, RoomVisibility.Private, false);
+            float until = Time.realtimeSinceStartup + 15;
+            while (!hosting.IsCompleted && Time.realtimeSinceStartup < until) yield return null;
+            Assert.IsTrue(hosting.IsCompleted && !hosting.IsFaulted && string.IsNullOrEmpty(hosting.Result));
+            until = Time.realtimeSinceStartup + 5;
+            while (!(TumpHub.Current.Top is HubLobby) && Time.realtimeSinceStartup < until) yield return null;
+            Assert.IsInstanceOf<HubLobby>(TumpHub.Current.Top);
+            Assert.AreEqual(GameMode.HeroStrike, SceneFlow.SelectedMode, "Passing through HOME changed the room's mode.");
+
+            // A new room opens with a bot in every empty seat (`HostRoom`); the host takes all three out.
+            int host = NetAuthority.LocalSlot;
+            until = Time.realtimeSinceStartup + 5;
+            while (TumpHub.Current.Host.Seats().Any(s => s.Slot != host && !s.Bot) && Time.realtimeSinceStartup < until) yield return null;
+            var opened = TumpHub.Current.Host.Seats();
+            Assert.IsTrue(opened.All(s => s.Slot == host || s.Bot),
+                "A new room must open with a bot in every empty seat. Seats " +
+                string.Join(", ", opened.Select(s => s.Slot + (s.Occupied ? "=person" : s.Bot ? "=bot" : "=open"))) +
+                "; host seat " + host + ", Bots " + SceneFlow.SelectedRules.Bots + ", BotSeats " +
+                SceneFlow.SelectedRules.BotSeats + ", pinned " + SceneFlow.RulesPinned + ", can edit " +
+                TumpHub.Current.Host.CanEditBots);
+            for (int seat = 0; seat < Balance.PlayerCount; seat++)
+                if (seat != host) yield return HubFlowTests.Press("RemoveBot" + seat);
+            Assert.AreEqual(0, SceneFlow.SelectedRules.Bots, "Removing the last bot must switch the room's bots off.");
+            foreach (var seat in TumpHub.Current.Host.Seats())
+                if (seat.Slot != host) Assert.IsFalse(seat.Occupied || seat.Bot, "P" + (seat.Slot + 1) + " must read OPEN.");
+
+            // The host chooses the court, so no ballot stands between selection and the arena.
+            var rules = SceneFlow.SelectedRules.Clone(); rules.MapVote = false;
             MatchRpc.Instance.SelectRulesServerRpc(CustomGameRules.ToWire(rules));
-            TumpHub.Current.Host.AcceptBots();TumpHub.Current.Host.StartGame();yield return null;
-            Assert.IsFalse(AIController.BotsEnabled);Assert.IsFalse(MatchRpc.Instance.CharacterSelecting);
-            Assert.IsFalse(MatchRpc.Instance.QueueMapVoting);Assert.IsFalse(TumpHub.Current.Host.MatchInProgress);
+            // A stale accepted-bot policy must not refill the chairs the room emptied.
+            TumpHub.Current.Host.AcceptBots();
+            Assert.IsTrue(AIController.BotsEnabled);
+            yield return HubFlowTests.Press("StartGame");
+            until = Time.realtimeSinceStartup + 6;
+            while (!(TumpHub.Current.Top is HubCharacterSelect) && Time.realtimeSinceStartup < until) yield return null;
+            Assert.IsInstanceOf<HubCharacterSelect>(TumpHub.Current.Top, "START GAME must open selection with three empty seats.");
+            Assert.IsTrue(MatchRpc.Instance.CharacterSelecting);
+            Assert.IsFalse(MatchRpc.Instance.QueueMapVoting);
+            Assert.IsFalse(AIController.BotsEnabled, "The room's NONE must retire the stale policy at START.");
+
+            yield return HubFlowTests.Press("SelectButton");
+            until = Time.realtimeSinceStartup + 20;
+            while (SceneManager.GetActiveScene().name != SceneFlow.Eskinita && Time.realtimeSinceStartup < until) yield return null;
+            Assert.AreEqual(SceneFlow.Eskinita, SceneManager.GetActiveScene().name);
+            until = Time.realtimeSinceStartup + 20;
+            while (GameServices.Round?.RoundActive != true && Time.realtimeSinceStartup < until) yield return null;
+            Assert.IsTrue(GameServices.Round.RoundActive, "A host on their own must be able to play the court.");
+
+            var lobby = NetSession.Instance.Lobby;
+            Assert.IsTrue(lobby.MatchInProgress);
+            for (int seat = 0; seat < Balance.PlayerCount; seat++)
+            {
+                if (seat == host)
+                {
+                    Assert.IsNotNull(GameServices.Round.PlayerAt(seat), "The host's own seat has no body.");
+                    continue;
+                }
+                Assert.IsNull(GameServices.Round.PlayerAt(seat),
+                    "P" + (seat + 1) + " has no player and no bot, so it must have no body.");
+                Assert.IsTrue(lobby.IsSeatBenched(seat),
+                    "P" + (seat + 1) + " has no body, so a mid-match arrival must watch rather than sit in it.");
+            }
         }
 
         private static void CaptureArrivalCamera(string directory, int index)

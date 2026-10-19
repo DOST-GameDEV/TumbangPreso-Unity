@@ -75,6 +75,14 @@ namespace TumbangPreso.UI.Hub
         /// <summary>Choose a vacant/bot slot through the existing host-authoritative seat route.</summary>
         bool CanTakeSeat(int seat);
         void TakeSeat(int seat);
+
+        /// <summary>Whether this machine may put a bot in an empty seat: the host of a custom
+        /// room, before the match. Every other player sees the bots and cannot change them.</summary>
+        bool CanEditBots { get; }
+
+        /// <summary>ADD BOT (true) or REMOVE BOT (false) for one empty seat.</summary>
+        void SetSeatBot(int seat, bool bot);
+
         Net.LobbySeatSwapOffer SeatSwapOffer { get; }
         string SeatSwapResult { get; }
         void RespondToSeatSwap(long requestId, bool accept);

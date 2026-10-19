@@ -124,7 +124,9 @@ namespace TumbangPreso.UI.Hub
         public static void NightCourtGround(RectTransform root, int seed, Vector2 lightAnchor, Vector2 lightSize)
         {
             Fill(root, HubStyle.Night);
-            Surface(root, HubSurface.Kind.Aggregate, seed).color = new Color(1, 1, 1, 0.7f);
+            var road = Surface(root, HubSurface.Kind.Aggregate, seed);
+            road.color = new Color(1, 1, 1, 0.7f);
+            road.FadedCourt = false;
             var glow = HubKit.Rect(root, "Light").gameObject.AddComponent<HubGlow>();
             glow.color = new Color(HubStyle.Persimmon.r, HubStyle.Persimmon.g, HubStyle.Persimmon.b, 0.30f);
             glow.raycastTarget = false;
@@ -273,6 +275,15 @@ namespace TumbangPreso.UI.Hub
         public Kind Texture;
         public int Seed = 1;
 
+        /// <summary>
+        /// The aggregate's old chalk court, a ring and a long line at a place the seed picks.
+        /// ⚠️ OFF ON CHARACTER SELECT (2026-10-19): there the hero's own chalk ring IS the court,
+        /// and seed 51 drew the old line straight across the hero's waist and a second ring
+        /// beside the seat cards (`CharSelect-v1-nemu-1600x680.png`). It is drawn last, so
+        /// leaving it out changes nothing else the seed draws.
+        /// </summary>
+        public bool FadedCourt = true;
+
         protected override void OnPopulateMesh(VertexHelper vh)
         {
             vh.Clear();
@@ -281,7 +292,7 @@ namespace TumbangPreso.UI.Hub
             float tint = color.a;
             switch (Texture)
             {
-                case Kind.Aggregate: Aggregate(vh, r, rng, tint); break;
+                case Kind.Aggregate: Aggregate(vh, r, rng, tint, FadedCourt); break;
                 case Kind.Corrugated: Corrugated(vh, r, rng, tint); break;
                 case Kind.Blocks: Blocks(vh, r, rng, tint); break;
                 case Kind.Chipped: Chipped(vh, r, rng, tint); break;
@@ -295,7 +306,7 @@ namespace TumbangPreso.UI.Hub
         private static float R(System.Random rng, float a, float b) => a + (float)rng.NextDouble() * (b - a);
 
         // Asphalt: stones in two values and a few worn chalk marks of an old court.
-        private static void Aggregate(VertexHelper vh, Rect r, System.Random rng, float tint)
+        private static void Aggregate(VertexHelper vh, Rect r, System.Random rng, float tint, bool fadedCourt)
         {
             int count = Mathf.RoundToInt(r.width * r.height / 2600f);
             for (int i = 0; i < count; i++)
@@ -313,6 +324,7 @@ namespace TumbangPreso.UI.Hub
                 HubMesh.Quad(vh, new Vector2(r.xMin, y), new Vector2(r.xMax, y + R(rng, -60, 60)), h, A(HubStyle.Ink, 0.10f * tint));
             }
             // A faded court, the chalk of games long finished.
+            if (!fadedCourt) return;
             var chalk = A(HubStyle.Paper, 0.05f * tint);
             var centre = new Vector2(R(rng, r.xMin + r.width * 0.2f, r.xMax - r.width * 0.2f), R(rng, r.yMin, r.center.y));
             HubMesh.Ring(vh, centre, 150, 110, 0.1f, 5, chalk, 40);

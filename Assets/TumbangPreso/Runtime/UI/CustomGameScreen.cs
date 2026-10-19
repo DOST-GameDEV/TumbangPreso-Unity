@@ -666,6 +666,10 @@ namespace TumbangPreso.UI
 
             _editing.Bots = none ? 0 : CustomGameRules.MaxBots;
             if (!none) _editing.BotDifficulty = clamped;
+            // ⚠️ NONE ALSO FORGETS WHICH SEATS THE ROOM CHOSE. Turning bots back on from here is
+            // the old all-or-nothing switch, so it fills every empty seat again
+            // (`CustomGameRules.SeatHasBot`) rather than reviving a stale seat-by-seat pick.
+            if (none) _editing.BotSeats = 0;
 
             var settings = Settings.SettingsStore.Current;
             if (settings != null)

@@ -416,6 +416,52 @@ namespace TumbangPreso.UI
             _needsFrame = true;
         }
 
+        /// <summary>
+        /// Every person stands on ONE floor line, whatever their height: the aim is taken from the
+        /// cast's reference standing height rather than the subject's own, so a short hero is drawn
+        /// short on the same floor instead of being lifted to the middle of the frame.
+        ///
+        /// ⚠️ CHARACTER SELECT ONLY, AND IT CHANGES NO SIZE. The distance is the same reference
+        /// distance `Frame` already uses (Nemu stays smaller than Sean, and Paete's measured shares
+        /// in `HubFlowTests` are unchanged); only where the camera points moves. Before this, Nemu's
+        /// feet stood about 60 units above the chalk ring drawn for everybody's feet
+        /// (`CharSelect-v1-nemu-1600x680.png`), because a smaller subject aimed at its own middle
+        /// put its feet higher up the picture.
+        /// </summary>
+        public void StandOnFloor()
+        {
+            _standOnFloor = true;
+            _needsFrame = true;
+        }
+
+        private bool _standOnFloor;
+
+        /// <summary>The floor under the subject's middle, measured when it was framed.</summary>
+        private Vector3 _groundPoint;
+
+        /// <summary>The subject <see cref="StandOnFloor"/> last measured, and what it measured.</summary>
+        private GameObject _floorSubject;
+        private Vector3 _floorGround;
+        private float _floorHeight;
+
+        /// <summary>
+        /// Where the floor under the subject is drawn, as a fraction of this preview's panel (0,0
+        /// bottom left, 1,1 top right). False until the subject has been framed.
+        ///
+        /// ⚠️ A SCREEN THAT DRAWS SOMETHING UNDER THE FEET ASKS HERE RATHER THAN GUESSING AN OFFSET.
+        /// The projection follows the panel's aspect, the zoom, the pitch and a player's orbit, so
+        /// the chalk ring and the contact shadow land on the feet at every window shape.
+        /// </summary>
+        public bool TryGroundViewport(out Vector2 viewport)
+        {
+            viewport = default;
+            if (_camera == null || _model == null || _needsFrame) return false;
+            var point = _camera.WorldToViewportPoint(_groundPoint);
+            if (point.z <= 0) return false;
+            viewport = new Vector2(point.x, point.y);
+            return true;
+        }
+
         public void SetTileFraming(float factor, bool uniformExtent = false)
         {
             _centreSubject = true;
@@ -1052,6 +1098,12 @@ namespace TumbangPreso.UI
             _frameAim = new Vector3(bounds.center.x,
                                     bounds.min.y + height * _aimHeightRatio,
                                     bounds.center.z);
+            // ⚠️ THE FLOOR IS THE POSED SOLES, NOT THE TRANSFORMED REST BOX. `updateWhenOffscreen`
+            // makes a skinned mesh's local bounds follow the animation after its first frame, so a
+            // subject framed again mid-idle (character select's LOCK IN re-applied its framing)
+            // measured a floor above its own soles and was drawn sunk into its chalk circle by 2
+            // per cent of the panel. The posed box's bottom is where the soles are on every frame.
+            _groundPoint = new Vector3(bounds.center.x, anyPosed ? posed.min.y : bounds.min.y, bounds.center.z);
 
             float halfFov = Mathf.Tan(_camera.fieldOfView * 0.5f * Mathf.Deg2Rad);
             float aspect = Mathf.Max(0.01f, _frameAspect);
@@ -1076,7 +1128,27 @@ namespace TumbangPreso.UI
                 // with the model's OWN world scale less its body scale (the preview stage is scaled; a metre value framed nothing).
                 float unit = _model.transform.lossyScale.y / Mathf.Max(.01f, _bodyScale);
                 float posedHeight = anyPosed ? Mathf.Max(posed.size.y, 0.001f) : height;
-                _frameDistance = (Mathf.Max(ReferenceStandingHeight * unit, posedHeight) * FrameMargin * 0.5f) / halfFov;
+                float framedHeight = Mathf.Max(ReferenceStandingHeight * unit, posedHeight);
+                if (_standOnFloor)
+                {
+                    // ⚠️ MEASURED ONCE PER SUBJECT. Every resize re-frames, and each re-frame samples
+                    // whatever idle pose the subject is in, so the floor and the distance drifted by
+                    // about 2 per cent of the panel between two shots of one hero at one size
+                    // (character select, Dante, before and after LOCK IN). A screen standing a chalk
+                    // ring on the floor needs the floor to stay where it was measured.
+                    if (_floorSubject != _model)
+                    {
+                        _floorSubject = _model;
+                        _floorGround = _groundPoint;
+                        _floorHeight = framedHeight;
+                    }
+                    _groundPoint = _floorGround;
+                    framedHeight = _floorHeight;
+                    // The same height the distance is chosen for, so the floor sits at one place in
+                    // the frame for every subject this tall or shorter.
+                    _frameAim = new Vector3(_groundPoint.x, _groundPoint.y + framedHeight * _aimHeightRatio, _groundPoint.z);
+                }
+                _frameDistance = (framedHeight * FrameMargin * 0.5f) / halfFov;
             }
 
             if (_uniformExtent)

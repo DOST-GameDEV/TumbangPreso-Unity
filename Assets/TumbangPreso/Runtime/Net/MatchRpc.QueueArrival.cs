@@ -32,7 +32,9 @@ namespace TumbangPreso.Net
             if (!NetAuthority.IsHost || !_characterSelecting || !InPreparationScene()) return;
             var lobby = NetSession.Instance?.Lobby;
             if (lobby == null || lobby.MatchInProgress) return;
-            if (!AIController.BotsEnabled && lobby.OccupiedSeatCount() < Balance.PlayerCount)
+            // ⚠️ Queued rooms only: a custom room starts with empty seats (`HostStartMatch`).
+            if (UI.Hub.HubQueueWatch.QueueRoom && !AIController.BotsEnabled
+                && lobby.OccupiedSeatCount() < Balance.PlayerCount)
             {
                 _characterSelecting = false; _queueVoteSerial++;
                 _lobbyReady.Clear(); BroadcastReadyTally(); BroadcastLobbyPicks();

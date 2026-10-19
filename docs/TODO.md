@@ -6185,6 +6185,21 @@ Implementation order within UX-1:
   inspecting it; no modal that suspends host Tick, no redundant navigation tutorial.
   Implemented: all7heroes/3slots checked with normal and large/high-contrast text,
   five shapes and running timer; both960x540frames inspected. Peer lock-in remains open.
+  2026-10-19 rework after the owner's NEMU screenshot (ability cooldown drawn over its sentence):
+  root cause in `CrispUiText` (crisp and native generations wrapped differently), hero now centre
+  stage standing in a chalk circle measured onto its drawn feet, kit column with no box, grid sized
+  to the roster on top of SELECT, seat cards with faint/solid pick states, a tsinelas stamp on
+  lock-in and a chalked TAYA IN ROUND n over your seat. Research, faults, captures and what is
+  still open: `docs/reports/character-select-2026-10-19/README.md`. Still open here: the
+  multi-peer lock-in check, and a pad and phone pass in hand.
+- [x] **UX-1.5a Three PlayMode checks left behind by later work.** DONE 2026-10-19: all three pass
+  and their character select halves run again. Body, causes and evidence:
+  [TODO_Archive](TODO_Archive.md#ux-15a-three-playmode-checks-left-behind-by-later-work-done-2026-10-19).
+  It also fixed HOME resetting a live room to the mode card's defaults (`HubHome.ApplyChoice`).
+- [x] **UX-1.5b The door walk asserts HERO before it has been built.** DONE 2026-10-19: both HERO
+  asserts wait through `HubFlowTests.AwaitDeferredHero` and the whole door walk passes in a guarded run
+  (total 1, failed 0). Body and evidence:
+  [TODO_Archive](TODO_Archive.md#ux-15b-the-door-walk-asserts-hero-before-it-has-been-built-done-2026-10-19).
 - [ ] **UX-1.6 Custom host/join.** Built; a real LAN host is opened by `HubFlowTests`. Open: a
   second process joining by code and from the LAN and online lists (`tools/net_matrix.py`).
   Immediate native code entry exposed cold LAN lookup plus concurrent online-query429;
@@ -6200,6 +6215,20 @@ Implementation order within UX-1:
   n/4 portrait list/host mark, START GAME and character/loadout/settings doors.
   Loading uses map art/name/percentage, bottom tips, optional BH Studios mark. Preserve
   UGS Lobby/Relay,4-character codes,LAN discovery,quick/ranked,reconnect and rematch.
+  2026-10-17 player's room pass, branch `player-room-depth-and-bots`: four-layer depth on
+  every room surface and its lettering (`HubShape.Depth`, `HubDepthText`); the whole seat row
+  is the door to that seat, with a MOVE HERE / SWITCH hint on hover and focus; SIT HERE is
+  replaced by host-only ADD BOT / REMOVE BOT per seat, carried as `CustomRules.BotSeats`
+  (appended wire field, no protocol bump); START GAME is always available to a custom-room
+  host and the "Bots are off" line is gone. 2026-10-19: a new room opens with a bot in every
+  empty seat; a joining player takes a bot's seat (bots never hold a lobby seat) and the bot
+  returns if they leave before the match. A seat the host empties of its bot now has no
+  body in the match (`MatchInstaller.SeatHasABody`, the offline `soloPractice` path extended
+  to a room opened from the game; command-line sessions keep four), and the lobby benches it
+  so a mid-match arrival watches instead (`LobbySession.BenchSeats`). The host-alone case passes
+  in PlayMode (`MatchArrivalFlowTests.CustomRoomWithEveryBotRemovedStartsWithOnlyTheHostsSeatInTheMatch`,
+  UX-1.5a). ⚠️ OPEN: not yet proven in a two-peer native run (host and client must build the same
+  seats), and not yet seen by the owner in a build.
 - [ ] **UX-1.8 Real soft currency and hero/item shop.** Built: `EconomyRules`, `wallet.js`,
   `WalletStore`, SHOP popup, UNLOCK/BUY. Deployment DONE: version1 and exact source/params verified in existing project
   production. Live wallet action checks remain open; no runtime pass inferred. SHOP is a popup exposing Hero

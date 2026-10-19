@@ -40,6 +40,39 @@ namespace TumbangPreso.UI.Hub
         public Vector2 ShadowOffset = new Vector2(7.0f, -8.0f);
         public Color ShadowColor = new Color(0.11f, 0.06f, 0.02f, 0.85f);
 
+        /// <summary>
+        /// How high the sticker floats, in canvas units. Zero draws no depth. Above zero, four
+        /// soft shadows are stacked under the hard one, each twice as far down and twice as
+        /// blurred as the last, so the surface reads as lifted off the court rather than as a
+        /// flat cut-out.
+        ///
+        /// ⚠️⚠️ FOUR LAYERS, OWNER 2026-10-17: *"increase depth for everything such as using 4
+        /// shadows"*. One shadow at one offset is a cut-out; light falling off a raised object
+        /// leaves a tight dark contact shadow and a wide faint ambient one, and a doubling stack
+        /// of four is the cheapest shape that draws both. The hard sticker shadow above them is
+        /// unchanged and is still what a press flattens.
+        ///
+        /// ⚠️ IT IS GEOMETRY, NOT A BLUR. Each layer is the outline fanned solid and feathered to
+        /// clear over its own blur width, in the same mesh, so it costs no texture, no material
+        /// and no extra draw call.
+        /// </summary>
+        public float Depth;
+
+        /// <summary>Multiplies <see cref="Depth"/>: `HubButton` lifts it on hover and flattens it on
+        /// press, exactly as it does the hard shadow.</summary>
+        public float DepthScale = 1.0f;
+
+        /// <summary>The colour of the stacked shadows. Warm ink, never a cold grey (`CLAUDE.md` § 6.4).</summary>
+        public Color DepthColor = new Color(0.10f, 0.05f, 0.015f, 1.0f);
+
+        public const int DepthLayers = 4;
+
+        /// <summary>Each layer's opacity, contact shadow first. ⚠️ MEASURED, NOT PICKED: at
+        /// 0.30/0.22/0.15/0.10 the first capture darkened a street-toned background under the
+        /// players' panel from 120 to only 88 (8-bit), which read as no change at play size; these
+        /// values were the next step and the review capture is `HubLobbySeatControlsTests.RenderTheRoomForReview`.</summary>
+        private static readonly float[] DepthAlpha = { 0.42f, 0.32f, 0.24f, 0.16f };
+
         /// <summary>Diagonal hatch across the fill: § 1.2's sign for NOT AVAILABLE. Locked items,
         /// unowned heroes, a disabled button. It is a SHAPE, so it reads in greyscale.</summary>
         public bool Hatched;
@@ -108,6 +141,23 @@ namespace TumbangPreso.UI.Hub
             float corner = Mathf.Min(Corner, Mathf.Min(r.width, r.height) * 0.45f);
             bool finish = Pressable && width > 0.0f;
             float rim = finish ? RimWidth * HubStyle.OutlineScale : 0.0f;
+
+            float depth = Depth * DepthScale;
+            if (depth > 0.5f)
+            {
+                // Widest and faintest first, so the tight contact shadow draws on top.
+                for (int i = DepthLayers - 1; i >= 0; i--)
+                {
+                    float reach = depth * (1 << i) / (1 << (DepthLayers - 1));
+                    // The core shrinks by half the blur and the feather grows out by the whole of
+                    // it, so the layer's half-tone edge sits on the sticker's own edge.
+                    float half = Mathf.Min(reach * 0.5f, Mathf.Min(r.width, r.height) * 0.25f);
+                    CleanOutline(Outer, Offset(Grow(r, rim - half), new Vector2(reach * 0.15f, -reach)),
+                                 Mathf.Max(half * 0.5f, corner + rim - half), Pressable);
+                    Color layer = DepthColor; layer.a *= DepthAlpha[i];
+                    FeatherFan(vh, Outer, layer * color, Mathf.Max(1.0f, half * 2.0f));
+                }
+            }
 
             if (ShadowOffset.sqrMagnitude > 0.01f && ShadowColor.a > 0.0f)
             {
@@ -318,6 +368,84 @@ namespace TumbangPreso.UI.Hub
             {
                 int a = start + i * 2, b = start + ((i + 1) % points.Count) * 2;
                 vh.AddTriangle(a, b, a + 1); vh.AddTriangle(a + 1, b, b + 1);
+            }
+        }
+
+        /// <summary>
+        /// A convex outline filled solid and faded to clear over <paramref name="blur"/> units
+        /// outside it, which is what a gaussian edge looks like from arm's length.
+        ///
+        /// ⚠️ THE FEATHER ONLY EVER GROWS OUTWARD. The first version also inset the solid core by
+        /// half the blur, and on a rounded plate the inset vertices folded across each other at
+        /// the corners: the overlap drew twice and left a dark seam running out of the players'
+        /// panel's corner in the first review capture. Offsetting a convex outline outward cannot
+        /// fold, so the caller shrinks the rectangle instead.
+        /// </summary>
+        /// <summary>
+        /// The sticker's silhouette without its hand-cut wobble, for the depth layers.
+        ///
+        /// ⚠️ THE WOBBLE IS FOR THE STICKER, NOT ITS SHADOW. `Build` jitters every point by up to a
+        /// couple of units so a screen of stickers looks hand-cut; on a corner shrunk for a blur the
+        /// points are that close together, so the jitter turned the edge into a zig-zag and the
+        /// feather's joins spiked out of the panel's corner (third capture). A blurred shadow
+        /// shows no wobble anyway.
+        /// </summary>
+        private static void CleanOutline(List<Vector2> points, Rect r, float corner, bool chamfer)
+        {
+            points.Clear();
+            corner = Mathf.Min(corner, Mathf.Min(r.width, r.height) * 0.45f);
+            Vector2[] at = { new Vector2(r.xMin, r.yMax), new Vector2(r.xMax, r.yMax), new Vector2(r.xMax, r.yMin), new Vector2(r.xMin, r.yMin) };
+            Vector2[] arrive = { new Vector2(0, -1), new Vector2(-1, 0), new Vector2(0, 1), new Vector2(1, 0) };
+            Vector2[] leave = { new Vector2(1, 0), new Vector2(0, -1), new Vector2(-1, 0), new Vector2(0, 1) };
+            int steps = chamfer ? 1 : 8;
+            for (int k = 0; k < 4; k++)
+            {
+                Vector2 a = at[k] + arrive[k] * corner, b = at[k] + leave[k] * corner;
+                for (int step = 0; step <= steps; step++)
+                {
+                    float t = step / (float)steps;
+                    points.Add(chamfer ? Vector2.Lerp(a, b, t)
+                                       : Vector2.Lerp(Vector2.Lerp(a, at[k], t), Vector2.Lerp(at[k], b, t), t));
+                }
+            }
+        }
+
+        private static void FeatherFan(VertexHelper vh, List<Vector2> points, Color colour, float blur)
+        {
+            int n = points.Count;
+            if (n < 3) return;
+            Vector2 centre = Vector2.zero;
+            foreach (var p in points) centre += p;
+            centre /= n;
+
+            // ⚠️ A ROUND JOIN, NOT ONE OUTER VERTEX PER POINT. With one averaged normal per point the
+            // corner quads fan out to several times their inner length, and the triangle split
+            // inside each showed as a crease running out of the panel's corner (second capture).
+            // Here each edge's feather is a true rectangle (both sides share the edge's normal) and
+            // each corner is a radial wedge, so alpha falls off along the normal everywhere.
+            Color clear = colour; clear.a = 0;
+            int start = vh.currentVertCount;
+            vh.AddVert(centre, colour, Vector2.zero);
+            for (int i = 0; i < n; i++)
+            {
+                Vector2 previous = points[(i + n - 1) % n], current = points[i], next = points[(i + 1) % n];
+                Vector2 a = (current - previous).normalized, b = (next - current).normalized;
+                // Build emits clockwise contours; their left normals point outwards.
+                Vector2 normalA = new Vector2(-a.y, a.x), normalB = new Vector2(-b.y, b.x);
+                Vector2 middle = (normalA + normalB).sqrMagnitude > 1e-4f ? (normalA + normalB).normalized : normalB;
+                vh.AddVert(current, colour, Vector2.zero);
+                vh.AddVert(current + normalA * blur, clear, Vector2.zero);
+                vh.AddVert(current + middle * blur, clear, Vector2.zero);
+                vh.AddVert(current + normalB * blur, clear, Vector2.zero);
+            }
+            for (int i = 0; i < n; i++)
+            {
+                int c = start + 1 + i * 4, nc = start + 1 + ((i + 1) % n) * 4;
+                vh.AddTriangle(start, c, nc);                 // the solid core
+                vh.AddTriangle(c, c + 1, c + 2);              // the corner wedge
+                vh.AddTriangle(c, c + 2, c + 3);
+                vh.AddTriangle(c, c + 3, nc + 1);             // the edge rectangle
+                vh.AddTriangle(c, nc + 1, nc);
             }
         }
 

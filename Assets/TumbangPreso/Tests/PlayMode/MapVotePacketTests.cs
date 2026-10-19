@@ -2,7 +2,9 @@ using System.Collections;
 using System.Reflection;
 using NUnit.Framework;
 using TumbangPreso.Net;
+using TumbangPreso.Core;
 using TumbangPreso.UI;
+using TumbangPreso.UI.Hub;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
@@ -170,16 +172,19 @@ namespace TumbangPreso.PlayTests
         [Test]
         public void MissingRequiredPlayerCancelsSelectionInsteadOfStrandingTheRoom()
         {
+            // ⚠️ A QUEUED ROOM. A custom room starts with empty seats since 2026-10-17
+            // (`MatchRpc.HostStartMatch`), so only the queue still needs its four.
             bool bots = AIController.BotsEnabled;
             try
             {
+                HubQueueWatch.Begin(GameMode.HeroStrike, QueueStake.Casual);
                 AIController.BotsEnabled = false;
                 _rpc.HostBeginCharacterSelection(); Assert.IsTrue(_rpc.CharacterSelecting);
                 _rpc.HostCompleteCharacterSelection();
                 Assert.IsFalse(_rpc.CharacterSelecting); Assert.IsFalse(_rpc.QueueMapVoting);
                 Assert.IsFalse(_session.Lobby.MatchInProgress);
             }
-            finally { AIController.BotsEnabled = bots; }
+            finally { AIController.BotsEnabled = bots; HubQueueWatch.End(); }
         }
 
         [TestCase(0, true), TestCase(1, false)]

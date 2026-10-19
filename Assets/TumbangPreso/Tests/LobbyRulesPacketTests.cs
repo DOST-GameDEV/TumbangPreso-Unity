@@ -83,7 +83,16 @@ namespace TumbangPreso.Tests
         [Test] public void ValidHostBroadcastRetainsTheSupportedCustomWire()
         { Deliver("OnSyncRulesMsg", Packet()); Accepted(); }
         private void Accepted()
-        { Assert.AreEqual(1, _rulesEvents); Assert.AreEqual(1, _formatEvents); Assert.AreEqual(Wire, _wire); }
+        {
+            // ⚠️ THE ROOM PUBLISHES THE CLAMPED RECORD, so an older, shorter wire comes back with
+            // every appended field filled in (`CustomGameRules.ToWire`). Compare against that,
+            // not against the bytes sent: this asserted the raw ten-field string and went stale
+            // when MapVote was appended, and again with BotSeats.
+            Assert.AreEqual(1, _rulesEvents); Assert.AreEqual(1, _formatEvents);
+            Assert.AreEqual(TumbangPreso.Core.CustomGameRules.ToWire(
+                TumbangPreso.Core.CustomGameRules.Parse(Wire, TumbangPreso.Core.GameMode.HeroStrike)), _wire);
+            StringAssert.StartsWith(Wire + "|", _wire);
+        }
         [Test] public void RoleAndLeaderGuardsRefuseMalformedRules()
         {
             Deliver("OnSelectRulesMsg", Array.Empty<byte>()); Unchanged();

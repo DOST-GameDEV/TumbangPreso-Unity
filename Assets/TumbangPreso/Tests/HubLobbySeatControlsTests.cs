@@ -33,6 +33,9 @@ namespace TumbangPreso.Tests
             public void RespondToSeatSwap(long id,bool accept){Replied=id;Accepted=accept;SeatSwapOffer=null;}
             public bool CanTakeSeat(int seat)=>Allow&&!MatchInProgress&&SeatSwapOffer==null&&seat>=0&&seat<Data.Length&&!Data[seat].Mine;
             public void TakeSeat(int seat){Requested=seat;}
+            public bool EditBots=true;public int BotSeat=-1;public bool BotWanted;
+            public bool CanEditBots=>EditBots&&!MatchInProgress;
+            public void SetSeatBot(int seat,bool bot){BotSeat=seat;BotWanted=bot;}
             public void OpenSettings(){}public void OpenProfile(){}public void OpenCareer(){}public void OpenParty(){}public void OpenCustomRules(){}
             public void StartPractice(){}public string StartQueue(GameMode mode,QueueStake stake)=>"";
             public void CancelQueue(){}public void AcceptBots(){}public void LeaveRoom(){}
@@ -78,13 +81,6 @@ namespace TumbangPreso.Tests
         Button Button(string name)=>_root.GetComponentsInChildren<Button>(true).FirstOrDefault(b=>b.name==name);
         [Test] public void OpenAndBotSlotsExposeRealSeatActions()
         {
-            string path=System.Environment.GetEnvironmentVariable("TUMP_LOBBY_CAPTURE");
-            if(!string.IsNullOrEmpty(path) && SystemInfo.graphicsDeviceType != UnityEngine.Rendering.GraphicsDeviceType.Null)
-            {
-                Canvas.ForceUpdateCanvases();_camera.Render();var previous=RenderTexture.active;var image=new Texture2D(960,540,TextureFormat.RGBA32,false);
-                try{RenderTexture.active=_target;image.ReadPixels(new Rect(0,0,960,540),0,0);image.Apply();File.WriteAllBytes(path,image.EncodeToPNG());}
-                finally{RenderTexture.active=previous;Object.DestroyImmediate(image);}
-            }
             var bot=Button("TakeSeat2");var open=Button("TakeSeat3");
             Assert.IsNotNull(bot,"The current lobby needs a seat action for a bot slot.");
             Assert.IsNotNull(open,"The current lobby needs a seat action for an open slot.");
@@ -92,11 +88,70 @@ namespace TumbangPreso.Tests
             bot.onClick.Invoke();Assert.AreEqual(2,_host.Requested);
             open.onClick.Invoke();Assert.AreEqual(3,_host.Requested);
         }
-        [Test] public void HumanOnlyVacanciesExplainWhyStartIsDisabled()
+        /// <summary>
+        /// The review picture of the room, written only when TUMP_LOBBY_CAPTURE names a file: the
+        /// room at rest, and a second frame (`_hover` suffix) with P4's row in its hover state.
+        /// ⚠️ THE ENTRANCE IS SETTLED FIRST. `HubSlap` animates the players' panel in from
+        /// `Update`, which never runs inside an EditMode test, so the first capture of this screen
+        /// was a room with no panel in it at all.
+        /// </summary>
+        [Test] public void RenderTheRoomForReview()
         {
+            string path=System.Environment.GetEnvironmentVariable("TUMP_LOBBY_CAPTURE");
+            if(string.IsNullOrEmpty(path) || SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null) return;
+            // A warm street tone rather than flat grey: every shadow alpha is judged against what is behind it.
+            _camera.backgroundColor=new Color(.47f,.45f,.38f);
+            foreach(var slap in _root.GetComponentsInChildren<HubSlap>(true))
+            {
+                slap.enabled=false;slap.transform.localScale=Vector3.one;slap.transform.localRotation=Quaternion.identity;
+                var group=slap.GetComponent<CanvasGroup>();if(group!=null)group.alpha=1;
+            }
+            Write(path);
+            var row=(HubButton)Button("TakeSeat3");
+            row.Shape.Lit=1;row.Shape.OutlineBoost=1.5f;row.Shape.DepthScale=1.45f;row.Shape.Redraw();
+            row.Body.anchoredPosition=new Vector2(0,4);
+            row.Body.Find("Label").GetComponent<Text>().enabled=true;
+            Write(Path.Combine(Path.GetDirectoryName(path),Path.GetFileNameWithoutExtension(path)+"_hover.png"));
+        }
+        private void Write(string path)
+        {
+            Canvas.ForceUpdateCanvases();_camera.Render();var previous=RenderTexture.active;var image=new Texture2D(960,540,TextureFormat.RGBA32,false);
+            try{RenderTexture.active=_target;image.ReadPixels(new Rect(0,0,960,540),0,0);image.Apply();File.WriteAllBytes(path,image.EncodeToPNG());}
+            finally{RenderTexture.active=previous;Object.DestroyImmediate(image);}
+        }
+        [Test] public void TheWholeRowIsTheSeatDoorAndSitHereIsGone()
+        {
+            // Owner 2026-10-17: click anywhere on another P row to move there.
+            var row=Button("TakeSeat3");Assert.IsNotNull(row);
+            var rect=(RectTransform)row.transform;var seat=(RectTransform)rect.parent;
+            Assert.AreEqual(seat.rect.size,rect.rect.size,"The seat door must cover the whole row.");
+            Assert.IsFalse(_root.GetComponentsInChildren<Text>(true).Any(t=>t.text.Contains("SIT HERE")));
+        }
+        [Test] public void TheHostAddsAndRemovesBotsSeatBySeat()
+        {
+            var add=Button("AddBot3");var remove=Button("RemoveBot2");
+            Assert.IsNotNull(add,"An open seat offers ADD BOT to the host.");
+            Assert.IsNotNull(remove,"A bot seat offers REMOVE BOT to the host.");
+            Assert.IsNull(Button("AddBot1"),"An occupied seat has no bot control.");
+            Assert.IsNull(Button("AddBot0"));
+            add.onClick.Invoke();Assert.AreEqual(3,_host.BotSeat);Assert.IsTrue(_host.BotWanted);
+            remove.onClick.Invoke();Assert.AreEqual(2,_host.BotSeat);Assert.IsFalse(_host.BotWanted);
+            Assert.AreEqual(-1,_host.Requested,"A bot control must not also move the player.");
+        }
+        [Test] public void OnlyTheHostSeesBotControls()
+        {
+            _host.EditBots=false;RebuildForCurrentSeats();
+            Assert.IsNull(Button("AddBot3"));Assert.IsNull(Button("RemoveBot2"));
+            Assert.IsNotNull(Button("TakeSeat3"),"Moving seats does not depend on editing bots.");
+        }
+        [Test] public void EmptySeatsWithNoBotsStillLetTheHostStart()
+        {
+            // Owner 2026-10-17: the host starts with nobody else in the room, and the old
+            // "Bots are off" line under START is gone.
             foreach(int i in new[]{0,1,2,3})_host.Data[i]=new HubSeat{Slot=i,CharacterPick=-1};
-            RebuildForCurrentSeats();Assert.IsFalse(Button("StartGame").interactable);
-            var status=_root.GetComponentsInChildren<Text>(true).First(t=>t.name=="Status");StringAssert.Contains("Bots are off",status.text);
+            RebuildForCurrentSeats();Assert.IsTrue(Button("StartGame").interactable);
+            var status=_root.GetComponentsInChildren<Text>(true).First(t=>t.name=="Status");
+            StringAssert.DoesNotContain("Bots are off",status.text);
         }
         [Test] public void FillingVacanciesWithBotsKeepsStartAvailable()
         {

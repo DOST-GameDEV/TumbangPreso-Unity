@@ -415,8 +415,26 @@ namespace TumbangPreso.UI.Hub
             HubKit.Stretch(mapLabel.rectTransform);
             mapLabel.rectTransform.offsetMin = new Vector2(72, 6);
 
+            plate.Depth = PanelDepth;
+            foreach (var words in new[] { _title, _mapLine, _address, _count, _status })
+                HubDepthText.On(words, TextDepth);
+
             Draw(true);
             HubSlap.On(panel, 0, -1);
+        }
+
+        // ⚠️⚠️ DEPTH ON EVERYTHING IN THE ROOM, owner 2026-10-17: *"increase depth for everything
+        // such as using 4 shadows"*. Three heights, so the stack reads as layers rather than as one
+        // blur everywhere: the players' panel floats highest over the street, every button sits
+        // on it at button height, and the seat rows sit lowest because they lie ON the panel.
+        private const float PanelDepth = 48.0f, ButtonDepth = 28.0f, RowDepth = 16.0f, TextDepth = 10.0f;
+
+        /// <summary>Give every surface in the room its height. Run after each draw, because the
+        /// seat rows are rebuilt; a surface that already has one keeps it.</summary>
+        private void Deepen()
+        {
+            foreach (var shape in Root.GetComponentsInChildren<HubShape>(true))
+                if (shape.Depth <= 0.0f) shape.Depth = shape.Pressable ? ButtonDepth : RowDepth;
         }
 
         private void Door(string name, HubGlyph.Mark mark, string words, int index, System.Action action)
@@ -493,6 +511,7 @@ namespace TumbangPreso.UI.Hub
 
             var seats = host.Seats();
             string key = host.RoomTitle + host.RoomCode + host.IsHost + host.LocalReady + SceneFlow.SelectedMap + SceneFlow.SelectedMode + host.Spectating + host.MatchInProgress + host.SeatSwapOffer?.Id + host.SeatSwapResult + HubQueueWatch.QueueRoom;
+            key += host.CanEditBots;
             foreach (var s in seats) key += s.Occupied + ":" + s.Name + ":" + s.CharacterPick + ":" + s.Ready + ":" + s.Bot + ":" + host.CanTakeSeat(s.Slot) + "|";
             if (!force && key == _drawn) return;
             _drawn = key;
@@ -511,12 +530,8 @@ namespace TumbangPreso.UI.Hub
                             (host.RoomOnline ? "ONLINE" : "LAN");
 
             int occupied = 0;
-            bool fillBots = HubQueueWatch.QueueRoom; // Start retains queued-room bot acceptance.
             foreach (var s in seats)
-            {
                 if (s.Occupied) occupied++;
-                else if (s.Bot) fillBots = true;
-            }
             _count.text = "PLAYERS  " + occupied + " / " + Balance.PlayerCount;
 
             for (int i = _rows.childCount - 1; i >= 0; i--) Destroy(_rows.GetChild(i).gameObject);
@@ -525,49 +540,100 @@ namespace TumbangPreso.UI.Hub
             {
                 var seat = seats[i];
                 var row = HubKit.Place(HubKit.Rect(_rows, "Seat" + i), HubKit.TopLeft, new Vector2(0, -(i * 118)), new Vector2(840, 106));
-                var plate = HubKit.Shape(row, "Plate", seat.Mine ? HubStyle.Persimmon : seat.Occupied ? HubStyle.Night : new Color(0.2f, 0.12f, 0.06f), false, 970 + i, 4, 18);
-                HubKit.Stretch(plate.rectTransform);
+                Color fill = seat.Mine ? HubStyle.Persimmon : seat.Occupied ? HubStyle.Night : new Color(0.2f, 0.12f, 0.06f);
+                int destination = seat.Slot;
+                bool editBots = host.CanEditBots && !seat.Occupied;
+
+                // ⚠️⚠️ THE WHOLE ROW IS THE DOOR, owner 2026-10-17: *"in order to change your P
+                // position, you could instead hover on other p positions and click anywhere on
+                // their respective rectangle"*. The SIT HERE / SWITCH button it replaces was a
+                // second, smaller target inside a target that already meant "this seat". A row
+                // the player can move to is a pressable sticker (`CLAUDE.md` § 6.5: a chamfer
+                // means pressable), lifts under the pointer and says what a press does; a row
+                // they cannot move to stays a rounded plate and does not pretend to be a button.
+                // ⚠️ IT KEEPS THE NAME `TakeSeat{n}` AND THE SAME AUTHORITATIVE REQUEST, re-checked
+                // on press because the host may have filled or started the room since this draw.
+                Transform surface = row;
+                if (!seat.Mine && host.CanTakeSeat(destination))
+                {
+                    var take = HubKit.Button(row, "TakeSeat" + destination, null, fill, () =>
+                    {
+                        if (Hub.Host.CanTakeSeat(destination)) Hub.Host.TakeSeat(destination);
+                    }, HubStyle.Label, 980 + destination);
+                    HubKit.Stretch((RectTransform)take.transform);
+                    take.Shape.OutlineWidth = 4;
+                    take.Shape.Corner = 18;
+                    take.Shape.Depth = RowDepth;
+                    surface = take.Body;
+
+                    // The hint names the press, so the row reads before it is clicked (§ 6.2).
+                    // Shown on hover and on pad focus; a thumb has no hover and simply taps.
+                    var hint = HubKit.Text(take.Body, "Label", seat.Occupied ? "SWITCH" : "MOVE HERE",
+                                           HubStyle.Floor, true, HubStyle.Golden, TextAnchor.MiddleRight);
+                    HubKit.Place(hint.rectTransform, HubKit.Right, new Vector2(editBots ? -270 : -28, 0), new Vector2(220, 44));
+                    HubKit.Fit(hint, 220);
+                    HubDepthText.On(hint, 5.0f);
+                    hint.enabled = false;
+                    take.Attention += attended => { if (hint != null) hint.enabled = attended; };
+                }
+                else
+                {
+                    var plate = HubKit.Shape(row, "Plate", fill, false, 970 + i, 4, 18);
+                    HubKit.Stretch(plate.rectTransform);
+                    plate.Depth = RowDepth;
+                }
+
                 var person = seat.Occupied ? Roster.At(people, seat.CharacterPick) : null;
-                var face = HubKit.Picture(row, "Face", HubKit.Portrait(person?.Id));
+                var face = HubKit.Picture(surface, "Face", HubKit.Portrait(person?.Id));
                 HubKit.Place(face.rectTransform, HubKit.Left, new Vector2(8, 2), new Vector2(96, 96));
                 if (face.sprite == null)
                 {
-                    var icon = HubKit.Glyph(row, "Icon", seat.Occupied ? HubGlyph.Mark.Person : HubGlyph.Mark.Bots, HubStyle.HoneySoft);
+                    // An OPEN seat is an empty chair now that bots are added one by one, so it no
+                    // longer wears the bot's face: a faint person outline, waiting.
+                    var mark = seat.Occupied ? HubGlyph.Mark.Person : seat.Bot ? HubGlyph.Mark.Bots : HubGlyph.Mark.Person;
+                    Color tint = HubStyle.HoneySoft;
+                    if (!seat.Occupied && !seat.Bot) tint.a *= 0.4f;
+                    var icon = HubKit.Glyph(surface, "Icon", mark, tint);
                     HubKit.Place(icon.rectTransform, HubKit.Left, new Vector2(26, 0), new Vector2(60, 60));
                 }
                 Color ink = seat.Mine ? HubStyle.Ink : HubStyle.Honey;
                 string name = seat.Occupied ? (seat.Mine ? "YOU" : seat.Name) : seat.Bot ? "BOT" : "OPEN";
-                var label = HubKit.Text(row, "Name", "P" + (seat.Slot + 1) + " · " + name, HubStyle.Label, true, ink, TextAnchor.MiddleLeft);
+                var label = HubKit.Text(surface, "Name", "P" + (seat.Slot + 1) + " · " + name, HubStyle.Label, true, ink, TextAnchor.MiddleLeft);
                 HubKit.Place(label.rectTransform, HubKit.Left, new Vector2(122, 15), new Vector2(410, 50));
                 HubKit.Fit(label, 410);
                 if (seat.Host)
                 {
-                    var crown = HubKit.Glyph(row, "HostMark", HubGlyph.Mark.Crown, HubStyle.Golden);
+                    var crown = HubKit.Glyph(surface, "HostMark", HubGlyph.Mark.Crown, HubStyle.Golden);
                     HubKit.Place(crown.rectTransform, HubKit.Right, new Vector2(-280, 0), new Vector2(36, 36));
                 }
-                string state = seat.Host ? "HOST" : seat.Ready ? "READY" : seat.Occupied ? "" : "";
-                var tag = HubKit.Text(row, "State", state, HubStyle.Floor, true, seat.Ready ? HubStyle.Chartreuse : ink, TextAnchor.MiddleLeft);
+                string state = seat.Host ? "HOST" : seat.Ready ? "READY" : "";
+                var tag = HubKit.Text(surface, "State", state, HubStyle.Floor, true, seat.Ready ? HubStyle.Chartreuse : ink, TextAnchor.MiddleLeft);
                 HubKit.Place(tag.rectTransform, HubKit.Left, new Vector2(122, -26), new Vector2(340, 38));
-                if (!seat.Mine)
+
+                // ⚠️ ADD BOT REPLACES SIT HERE, owner 2026-10-17. Only the host of a custom room
+                // decides, so everyone else sees the bot and no button. ⚠️ IT IS A SIBLING OF THE
+                // ROW'S BUTTON, NOT A CHILD OF ITS BODY: a child would light the row and show
+                // "MOVE HERE" while the pointer is on ADD BOT, naming the wrong press.
+                if (editBots)
                 {
-                    int destination = seat.Slot;
-                    var take = HubKit.Button(row, "TakeSeat" + destination, seat.Occupied ? "SWITCH" : "SIT HERE", HubStyle.Honey, () =>
-                    {
-                        // Re-check after drawing: the host may have filled or started the room.
-                        if (Hub.Host.CanTakeSeat(destination)) Hub.Host.TakeSeat(destination);
-                    }, HubStyle.Floor, 980 + destination);
-                    HubKit.Place((RectTransform)take.transform, HubKit.Right, new Vector2(-12, 0), new Vector2(240, 88));
-                    take.interactable = host.CanTakeSeat(destination);
+                    bool removing = seat.Bot;
+                    var bot = HubKit.Button(row, (removing ? "RemoveBot" : "AddBot") + destination,
+                                            removing ? "REMOVE BOT" : "ADD BOT", HubStyle.Honey,
+                                            () => Hub.Host.SetSeatBot(destination, !removing),
+                                            HubStyle.Floor, 990 + destination,
+                                            removing ? HubGlyph.Mark.None : HubGlyph.Mark.Bots);
+                    HubKit.Place((RectTransform)bot.transform, HubKit.Right, new Vector2(-12, 0), new Vector2(240, 88));
+                    HubKit.Fit(HubKit.LabelOf(bot), removing ? 200 : 140);
                 }
             }
 
             if (host.IsHost)
             {
+                // ⚠️ ALWAYS PRESSABLE FOR THE HOST. A custom room starts with whoever is in it,
+                // and an OPEN seat is an empty chair (`ConvertedMatchSetup.StartGame`).
                 HubKit.SetLabel(_primary, "START GAME");
-                _primary.interactable = occupied >= Balance.PlayerCount || fillBots;
-                _status.text = occupied >= Balance.PlayerCount ? "Everyone is here." : fillBots
-                    ? "Empty seats are filled by bots."
-                    : "Bots are off. Fill all four seats or change RULES.";
+                _primary.interactable = true;
+                _status.text = "";
             }
             else
             {
@@ -579,6 +645,7 @@ namespace TumbangPreso.UI.Hub
                 _status.text = "Waiting for the other player to accept the seat switch.";
             else if (!string.IsNullOrEmpty(host.SeatSwapResult)) _status.text = host.SeatSwapResult;
             _map.gameObject.SetActive(host.IsHost);
+            Deepen();
             Hub.RefreshFocus();
         }
 

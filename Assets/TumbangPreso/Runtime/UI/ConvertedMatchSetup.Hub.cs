@@ -153,6 +153,27 @@ namespace TumbangPreso.UI
             NetSession.RoomVisibility = (int)visibility;
             SelectMap(map);
             SelectMode(mode);
+            // ⚠️ A NEW ROOM OPENS FULL OF BOTS, owner 2026-10-19, whatever the last room or the
+            // RULES preference left behind: every empty seat shows a bot, the host removes the
+            // ones they do not want, and a player who joins simply takes a bot's seat
+            // (`CustomGameRules.FillEmptySeatsWithBots` says why that needs no other code).
+            //
+            // ⚠️⚠️ SAVED, NOT ONLY ADOPTED. The menu scene that comes back after every match
+            // re-reads the host's rules from `settings.json` (`WireOwnerPreparation`), so a fill
+            // held only in memory vanished after the first match: the host's seats went OPEN while
+            // the clients, who had been sent bots, still drew BOT. Every later bot change already
+            // lands in `SetSelectedRules` through `HandleRulesSynced`, so this is the one write
+            // that was missing. A late joiner is sent the current rules on arrival (`SendRulesTo`).
+            //
+            // ⚠️ A PINNED RULE SET IS LEFT ALONE. `TournamentGuard.Apply` pins a bracket's rules
+            // with no bots, and filling them here would have the guard refusing its own room.
+            if (!SceneFlow.RulesPinned)
+            {
+                var fresh = SceneFlow.SelectedRules.Clone();
+                CustomGameRules.FillEmptySeatsWithBots(fresh);
+                SceneFlow.SetSelectedRules(fresh);
+                Settings.SettingsStore.Save();
+            }
             SceneFlow.Networked = true;
             _ownerRoute = LobbyMode.Custom;
 
@@ -254,10 +275,10 @@ namespace TumbangPreso.UI
             bool live = IsLive;
             int local = live ? NetAuthority.LocalSlot : GameLaunch.SoloSeat;
             var settings = Settings.SettingsStore.Current;
-            // Custom room seats reflect their live rules before Start applies global AI policy.
-            // Queued rooms keep the explicit accepted-bot policy.
-            bool fillBots = HubQueueWatch.QueueRoom ? AIController.BotsEnabled
-                : SceneFlow.SelectedRules != null && SceneFlow.SelectedRules.Bots > 0;
+            // Custom room seats reflect their live rules before Start applies global AI policy,
+            // seat by seat (`CustomGameRules.SeatHasBot`). Queued rooms keep the explicit
+            // accepted-bot policy for every empty seat.
+            bool queueBots = HubQueueWatch.QueueRoom && AIController.BotsEnabled;
             for (int i = 0; i < seats.Length; i++)
             {
                 var info = live ? MatchRpc.Instance?.GetSeatInfo(i) : null;
@@ -270,12 +291,43 @@ namespace TumbangPreso.UI
                     Mine = mine,
                     Host = live && occupied && (mine ? NetAuthority.IsHost : info != null && info.PeerId == 0),
                     Ready = mine ? _localReady : info != null && info.Ready,
-                    Bot = !occupied && fillBots,
+                    Bot = !occupied && (HubQueueWatch.QueueRoom ? queueBots
+                                                                : CustomGameRules.SeatHasBot(SceneFlow.SelectedRules, i)),
                     Name = mine ? "YOU" : info != null && !string.IsNullOrEmpty(info.Name) ? info.Name : "PLAYER " + (i + 1),
                     CharacterPick = mine ? settings.CharacterPick : info?.CharacterPick ?? -1,
                 };
             }
             return seats;
+        }
+
+        /// <summary>
+        /// ADD BOT and REMOVE BOT. Only the host of a custom room decides, and only before the
+        /// match: a queued room's bots are the queue's offer, not a seat-by-seat choice.
+        /// </summary>
+        public bool CanEditBots => IsHost && !MatchInProgress && !HubQueueWatch.QueueRoom;
+
+        /// <summary>
+        /// ⚠️ THE CHOICE TRAVELS AS PART OF THE ROOM'S RULES, NOT AS A NEW MESSAGE.
+        /// `MatchRpc.SelectRulesServerRpc` is the single rules path (`docs/TODO.md` § 38.5), the
+        /// host clamps before it broadcasts, and every peer's seat list redraws off the same
+        /// record. The broadcast loops back to the host's `HandleRulesSynced`, which SAVES it with
+        /// `SetSelectedRules`; that is what keeps the host's seats and the clients' agreeing after a
+        /// match reloads the menu from `settings.json`. A new room refills every seat anyway
+        /// (`HostRoom`), so a saved pick never leaks into the next room.
+        ///
+        /// ⚠️ THE SEATS PLAYERS ARE IN ARE PASSED IN, so removing the last bot from the EMPTY
+        /// seats turns bots off even though the host's own seat still carries its bit.
+        /// </summary>
+        public void SetSeatBot(int seat, bool bot)
+        {
+            if (!CanEditBots || seat < 0 || seat >= Balance.PlayerCount) return;
+            int occupied = 0;
+            foreach (var s in Seats())
+                if (s.Occupied) occupied |= 1 << s.Slot;
+            var rules = SceneFlow.SelectedRules.Clone();
+            CustomGameRules.SetSeatBot(rules, seat, bot, occupied);
+            SceneFlow.AdoptRemoteRules(rules);
+            if (SceneFlow.Networked) MatchRpc.Instance?.SelectRulesServerRpc(CustomGameRules.ToWire(rules));
         }
 
         public LobbySeatSwapOffer SeatSwapOffer => MatchRpc.Instance?.SeatSwapOffer;
@@ -303,22 +355,20 @@ namespace TumbangPreso.UI
             if (net == null || !net.IsNetworked) { SceneFlow.StartMatch(); return; }
             if (!NetAuthority.IsHost) return;
 
-            // The room's NONE choice must reach the existing four-human gate even
-            // when settings or a previous session left global bot policy enabled.
-            // Queued rooms retain their explicit accepted-bot path below.
+            // The room's own bot choice must win over whatever settings or a previous session
+            // left in the global bot policy. Queued rooms retain their explicit accepted-bot path.
             if (!HubQueueWatch.QueueRoom)
                 AIController.ApplyCustomRoomPolicy(SceneFlow.SelectedRules);
 
-            if (!AIController.BotsEnabled && net.Lobby.OccupiedSeatCount() < Balance.PlayerCount)
-            {
-                if (HubQueueWatch.QueueRoom) AcceptBots();
-                else
-                {
-                    _hubView?.Toast("Bots are off in this room's rules. Fill all four seats, or turn bots on under RULES.");
-                    MenuSfx.Error();
-                    return;
-                }
-            }
+            // ⚠️⚠️ A CUSTOM ROOM STARTS WITH WHOEVER IS IN IT, owner 2026-10-17: *"make sure that
+            // you're able to start the game even when there's no players or bots"*. This used to
+            // refuse until four people sat down or RULES turned bots on, which made a host on
+            // their own unable to try a map. A seat left OPEN is an empty chair in the match
+            // (`MatchInstaller.CustomRoomSeatTakesABot`). Only a queued room still needs its
+            // four, and it fills them by accepting bots rather than by refusing.
+            if (HubQueueWatch.QueueRoom && !AIController.BotsEnabled
+                && net.Lobby.OccupiedSeatCount() < Balance.PlayerCount)
+                AcceptBots();
 
             // ⚠️ NO SECOND `SceneFlow.StartMatch()`: `HostStartMatch` fires `OnMatchStarted`, which
             // this screen answers with the load (`HandleMatchStarted`).
