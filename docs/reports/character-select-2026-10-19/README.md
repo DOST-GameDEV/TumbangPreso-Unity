@@ -122,16 +122,35 @@ Floor measurements from `v5` (fraction of the stage height; the ring's half heig
 For comparison, `v1` at 1600x680 drew Nemu's toes at 0.26 of its 740-unit stage with the ring's
 centre at 0.12 (read off the capture: toes at pixel row 440, stage bottom at 560, scale 0.63).
 
-## 6. Open
+### The room-hosting tests, run once the port was free
 
-- **Not run here: every test that hosts a LAN room.** The machine's open Unity Editor held UDP
-  8910 (`LobbySession.DefaultPort`) for the whole session, so `MatchArrivalFlowTests`' three
-  start flows, `OnlineUnownedHeroDimsButRemainsInspectableWithoutAServiceCall` and
-  `CustomRoomWithBotsOffRequiresFourHumanSeats` failed on "Failed to bind UDP socket because the
-  address is already in use" before reaching the screen, and
-  `HubFlowTests.PaeteAndSeanKeepTheirRelativeSizeInShopAndCharacterSelect` and
-  `ModelPreviewTests.ClassicCharacterSelectDrawsTheGodotCastAndBackdrop` host rooms the same way.
-  Re-run them with the port free before calling this merged.
+An open Unity Editor held UDP 8910 (`LobbySession.DefaultPort`) for most of this session, so the
+tests that host a LAN room first failed on "Failed to bind UDP socket" before reaching the
+screen (`evidence/run-v6-whole-fixture.xml`). With the port freed, the selection set (the whole
+`MatchArrivalFlowTests` fixture, `HubFlowTests.PaeteAndSeanKeepTheirRelativeSizeInShopAndCharacterSelect`
+and `ModelPreviewTests.ClassicCharacterSelectDrawsTheGodotCastAndBackdrop`, 12 tests) was run on
+this branch merged with `player-room-depth-and-bots` at `368b625f9`, and the failures were run
+again on `368b625f9` alone, without any of this pass:
+
+| Test | Target `368b625f9` alone | Target plus this pass |
+|---|---|---|
+| The three start flows (queued, custom with vote, custom with chosen court) | not run | **pass** |
+| `OnlineUnownedHeroDimsButRemainsInspectableWithoutAServiceCall` | not run | **pass** |
+| The kit, review-capture, sidegrade, legacy-ready and leave-during-intro cases | not run | **pass** |
+| `CustomRoomWithBotsOffRequiresFourHumanSeats` | fails, "Expected: False But was: True" | fails, same message |
+| `HubFlowTests.PaeteAndSeanKeepTheirRelativeSizeInShopAndCharacterSelect` | fails, "The shop's HEROES door did not open the hero stage" | fails, same message |
+| `ModelPreviewTests.ClassicCharacterSelectDrawsTheGodotCastAndBackdrop` | fails, expects `character-male-f(Clone)`, finds `bayan-redesign(Clone)` | fails, same message |
+
+9 of 12 pass with this pass merged (`evidence/run-merged-lan.xml`), and the 3 that fail fail
+identically without it (`evidence/run-target-baseline.xml`). They are inherited and recorded in
+`docs/TODO.md` beside UX-1.5. Two are expectations left behind by later work (Berto became
+`bayan-redesign` in `bd44c197b`, 2026-10-09; `eec7970b0`, 2026-10-17, let a host start a room
+with empty seats, which the bots-off test still forbids). The shop door may be a real fault.
+Because the HERO screen check fails before it reaches character select, and the Classic check
+fails before it reaches the chalk circle, this pass's Paete sizes and its updated Classic
+assertion are not exercised by those two until they are repaired.
+
+### Still open
 - A multi-peer lock-in check is still open (`docs/TODO.md` UX-1.5); this pass ran offline only.
 - The ability glyphs on the kit row are placeholders like every icon in the build (`AGENTS.md`,
   2026-09-19). Their size and meaning were kept; they were not polished.
