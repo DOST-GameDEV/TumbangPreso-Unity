@@ -422,6 +422,13 @@ namespace TumbangPreso.UI
             net.Query?.StartBrowsing();
         }
 
+        public void RefreshRooms(bool lan)
+        {
+            var net = NetSession.Ensure();
+            if (lan) net.Beacon?.Refresh();
+            else net.Query?.RefreshNow();
+        }
+
         public string OnlineBrowserMessage => NetSession.Instance?.Query?.OnlineBrowserMessage ?? "Finding public rooms...";
 
         public List<HubRoom> Rooms(bool lan)
@@ -450,7 +457,9 @@ namespace TumbangPreso.UI
                 rooms.Add(new HubRoom
                 {
                     Name = entry.Name,
-                    Map = string.IsNullOrEmpty(entry.Map) ? "" : SceneFlow.PreviewFor(entry.Map).Name,
+                    // `HubRoom.MapName`, not `SceneFlow.PreviewFor`: a map this build lacks reads as its
+                    // own id rather than as the first map, and logs nothing once a second.
+                    Map = string.IsNullOrEmpty(entry.Map) ? "" : HubRoom.MapName(entry.Map),
                     Players = entry.Players,
                     Capacity = entry.Capacity <= 0 ? LobbySession.MaxPlayers : entry.Capacity,
                     InProgress = entry.InProgress,

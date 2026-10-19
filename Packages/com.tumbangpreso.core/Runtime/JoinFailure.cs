@@ -31,6 +31,23 @@ namespace TumbangPreso.Core
 
         private static readonly Regex ProtocolNumber = new Regex(@"protocol\s+(\d+)", RegexOptions.IgnoreCase);
 
+        /// <summary>
+        /// True when a host has SAID its protocol and it is not ours: a LAN beacon v3 row (`LanBeacon.MagicV3`).
+        ///
+        /// ⚠️ ZERO MEANS "NOT SAID", NOT "PROTOCOL 0". A v1 or v2 beacon carries no protocol, and such a
+        /// host stays joinable exactly as before: refusing it would hide every room hosted by a build
+        /// from before v3, including one on our own protocol that we can join. Approval still refuses a
+        /// real mismatch after the press, with <see cref="VersionLine"/>'s sentence.
+        /// </summary>
+        public static bool ProtocolDiffers(int advertised, int localProtocol) =>
+            advertised > 0 && advertised != localProtocol;
+
+        /// <summary>The sentence for a host on another protocol, known before or after the press.</summary>
+        public static string VersionLine(int hostProtocol, int localProtocol) =>
+            hostProtocol > 0
+                ? "That host runs another version (protocol " + hostProtocol + ", yours " + localProtocol + "). Use the same build."
+                : "That host runs another version of the game. Use the same build.";
+
         /// <summary>True for an address join (LAN, VPN, typed IP), false for a room code.</summary>
         public static bool LooksLikeAddress(string target) =>
             !string.IsNullOrWhiteSpace(target) &&
@@ -70,10 +87,8 @@ namespace TumbangPreso.Core
                 {
                     case SessionEndCause.VersionMismatch:
                         var number = ProtocolNumber.Match(reason);
-                        return number.Success
-                            ? "That host runs another version (protocol " + number.Groups[1].Value + ", yours " +
-                              localProtocol + "). Use the same build."
-                            : "That host runs another version of the game. Use the same build.";
+                        return VersionLine(number.Success && int.TryParse(number.Groups[1].Value, out int host) ? host : 0,
+                                           localProtocol);
                     case SessionEndCause.LobbyFull:
                         return "That room is full.";
                     case SessionEndCause.HostLost:

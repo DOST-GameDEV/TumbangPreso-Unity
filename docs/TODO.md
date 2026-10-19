@@ -47,9 +47,30 @@ on Public. A read-only audit of the join path (2026-10-20) found:
   [Evidence](reports/lan-vpn-join-2026-10-20/README.md).
 - [ ] The reporter's host PC: allow the host's game (or Editor) inbound on Public networks, same build on both
   (protocol 174 player built 2026-10-20 from `8c4164b2a`), then a real join over Hamachi.
-- [ ] Beacon v3 (new magic) carrying protocol and map, so a row from another build reads DIFFERENT VERSION and
-  is not joinable, and MAP is filled in. A wire change: needs its own protocol number.
-- [ ] Prefer an address on a subnet both machines share over 25.0.0.0/8 when a host is seen on two adapters.
+- [x] Beacon v3 (`LanBeacon.MagicV3`) carries the host's protocol and selected map; JOIN GAME names every LAN
+  row's map and shows a different-protocol host as DIFFERENT VERSION with nothing to press; v1/v2 hosts parse
+  and stay joinable (MAP UNKNOWN). A code join resolving to such a LAN host refuses before connecting.
+  No protocol bump: a host sends v3 and v2, so a same-protocol build from before v3 still lists it, and the
+  beacon is outside Netcode and `audit_wire_payloads.py` (reasoning in
+  [the contract](SKILL_NETWORK_CONTRACT.md#lan-beacon-v3-2026-10-20-no-protocol-step)).
+- [x] One host on two adapters: a subnet this machine shares beats one it does not, a real LAN beats 25/8
+  (Hamachi) and 26/8 (Radmin); a tie keeps the shown address (it used to swap every packet).
+- [x] REFRESH on the JOIN GAME server list (owner 2026-10-20): LAN rows are dropped and re-asked at once, the
+  online list queries at once; 1.5 s hold against mashing; hidden for JOIN BY CODE.
+- [x] Evidence: Core 769/769 (`JoinFailureRulesTests` 13/13); EditMode 152/152 (`LanBeaconV3Tests` 12/12:
+  v3 round trip, v2/v1 still parsed, mismatch flag, map sanitising, v2-after-v3 merge, Hamachi vs LAN, tie,
+  REFRESH; discovery replies now two datagrams); PlayMode 4/5: `HubJoinLanVersionTests` 1/1 on the real JOIN
+  screen and the real beacon socket (three hosts as real UDP senders: other protocol, ours, v2) with renders
+  at 1920x1080, 1600x680 and 1280x960, `HubJoinWaitTests` 1/1, `UiEdgeQualityReview` 2/2; the fifth is the
+  order failure below. [Evidence](reports/lan-vpn-join-2026-10-20/README.md#beacon-v3-the-shared-subnet-address-and-refresh).
+- [ ] Two real builds on one LAN, one on another protocol: the row reads DIFFERENT VERSION (the PlayMode check
+  sends real packets from this machine; no second build has been run).
+- [ ] Found: `UiBrowserFeedbackReview` passes alone (1/1) but failed after other JOIN fixtures in one process
+  ("Online services are unavailable" instead of "Finding public rooms..."): `ServerQuery` lives on `NetSession`,
+  which outlives a test, and a fixture that opens JOIN online leaves it browsing. It failed right after
+  `HubJoinWaitTests`, whose teardown does not stop browsing; `HubJoinLanVersionTests` does. Done means the
+  fixture order no longer decides it (stop browsing in `HubJoinWaitTests`' teardown, or have the review
+  reset the browser it asserts on).
 
 ### ROOM-QOL-MERGE-1019: the player's room on QoLUpdates (IN PROGRESS)
 

@@ -65,12 +65,27 @@ namespace TumbangPreso.Net
         /// </summary>
         public string BeaconId;
 
+        /// <summary>
+        /// The host's <see cref="NetSession.ProtocolVersion"/>, or 0 for a v1 or v2 host, which does not say.
+        ///
+        /// ⚠️⚠️ IT IS ON THE BEACON SO A HOST ON ANOTHER BUILD IS NOT OFFERED AS A GAME. LAN-VPN-JOIN-1020:
+        /// such a host was listed like any other and refused only after JOIN, at connection approval, after
+        /// the player had pressed it and waited. A v3 row now says DIFFERENT VERSION and cannot be pressed.
+        /// </summary>
+        public int Protocol;
+
+        /// <summary>The host's selected map, a `SceneFlow.MapRegistry` id, or empty when it does not say.</summary>
+        public string MapId;
+
+        /// <summary>A v3 host on another protocol: listed, never joinable. See <see cref="Protocol"/>.</summary>
+        public bool DifferentVersion => Core.JoinFailureRules.ProtocolDiffers(Protocol, NetSession.ProtocolVersion);
+
         /// <summary>A free CHAIR, and room on the wire for the socket that would take it.</summary>
         public bool IsJoinable =>
-            !InProgress && Occupied < MaxPlayers && Connections < MaxConnections;
+            !DifferentVersion && !InProgress && Occupied < MaxPlayers && Connections < MaxConnections;
 
         /// <summary>Room to attach and watch, even when every chair is taken.</summary>
-        public bool CanSpectate => Connections < MaxConnections;
+        public bool CanSpectate => !DifferentVersion && Connections < MaxConnections;
     }
 
     /// <summary>
@@ -113,6 +128,27 @@ namespace TumbangPreso.Net
         /// <see cref="IsOurOwn"/> for why an empty id can never match ours.
         /// </summary>
         public const string MagicV2 = "tumbang-preso-lan2";
+
+        /// <summary>
+        /// The layout that carries the host's protocol and map (<see cref="LanEntry.Protocol"/>,
+        /// <see cref="LanEntry.MapId"/>). LAN-VPN-JOIN-1020.
+        ///
+        /// ⚠️⚠️ A HOST SENDS v3 AND v2, EVERY INTERVAL AND IN EVERY QUERY REPLY, AND THAT IS WHY THIS DID NOT
+        /// MOVE `NetSession.ProtocolVersion`. A build from before v3 reads only `Magic` and `MagicV2` and
+        /// drops anything else unread, so a host writing v3 alone would vanish from the browser of a peer
+        /// on the SAME protocol, one it can join (the reporter's two PCs ran players built from different
+        /// commits of 174). The v2 copy keeps that peer seeing exactly what it saw. Nothing a connected peer
+        /// exchanges changed, approval is untouched, and `tools/audit_wire_payloads.py` audits Netcode's named
+        /// messages, which this is not (`docs/SKILL_NETWORK_CONTRACT.md`, "LAN beacon v3").
+        ///
+        /// ⚠️ A v3 READER PREFERS v3. Both copies carry the same beacon id, so they land on one row; a v2 copy
+        /// arriving after a v3 one keeps the protocol and map the v3 copy gave (<see cref="DrainInbox"/>).
+        /// The v2 copy may stop once no build that reads only v2 is still played.
+        /// </summary>
+        public const string MagicV3 = "tumbang-preso-lan3";
+
+        /// <summary>The longest map id a beacon carries; every registry id is far shorter.</summary>
+        public const int MapIdMax = 48;
         public const string DiscoveryRequest = "tumbang-preso-lan-query1";
         public const float BeaconInterval = 1.0f;
         public const float EntryTimeout = 4.0f;
@@ -178,6 +214,9 @@ namespace TumbangPreso.Net
         public int Connections;
         public int MaxConnections = LobbySession.MaxConnections;
         public bool InProgress;
+
+        /// <summary>The map this host's room plays next, kept current by `NetSession.RefreshBeaconCounts`.</summary>
+        public string MapId = "";
 
         public IEnumerable<LanEntry> Entries => _seen.Values;
 
@@ -256,6 +295,32 @@ namespace TumbangPreso.Net
         {
             StartListening();
             _browseUntil = Time.unscaledTime + BeaconInterval * 2f;
+        }
+
+        /// <summary>
+        /// The JOIN list's REFRESH: forget every row and ask the network again on the next frame.
+        ///
+        /// ⚠️ ROWS ARE DROPPED, NOT KEPT, because the press is a request for the network as it is NOW. A
+        /// host that quit lingers for up to <see cref="EntryTimeout"/>, and a row frozen on the wrong
+        /// adapter's address (see <see cref="AddressPreference"/>) stays on it until that one goes silent.
+        /// Live hosts answer the query by unicast and broadcast every <see cref="BeaconInterval"/>, so a
+        /// real room is back within about a second.
+        /// </summary>
+        public void Refresh()
+        {
+            // ⚠️ THE INBOX IS LEFT ALONE: what it holds arrived after the last frame, so it is as fresh as
+            // anything the new query will bring back, and a queued query from a browser still wants its answer.
+            lock (_seen)
+            {
+                if (_seen.Count > 0)
+                {
+                    _seen.Clear();
+                    RaiseIfChanged();
+                }
+            }
+            _localSubnets = null;
+            _nextRequest = 0;
+            RequestDiscovery();
         }
 
         public void StopAll()
@@ -360,24 +425,87 @@ namespace TumbangPreso.Net
                 hostName ?? "");
         }
 
+        /// <summary>
+        /// The v3 layout:
+        /// `magicV3|port|seated|maxSeats|inProgress|joinCode|occupied|connections|maxConnections|beaconId|protocol|mapId|hostName`.
+        ///
+        /// ⚠️ v2's fields in v2's places, then the two new ones, then the name, which stays last for the
+        /// reason every layout above gives. The map id is cut to <see cref="SanitiseMapId"/>'s alphabet, so
+        /// it can never hold the separator either.
+        /// </summary>
+        public static string BuildPayloadV3(int port, int seated, int maxPlayers, bool inProgress,
+                                            string joinCode, string hostName,
+                                            int occupied, int connections, int maxConnections,
+                                            string beaconId, int protocol, string mapId)
+        {
+            return string.Join("|",
+                MagicV3,
+                port.ToString(),
+                seated.ToString(),
+                maxPlayers.ToString(),
+                inProgress ? "1" : "0",
+                joinCode ?? "",
+                occupied.ToString(),
+                connections.ToString(),
+                maxConnections.ToString(),
+                beaconId ?? "",
+                protocol.ToString(),
+                SanitiseMapId(mapId),
+                hostName ?? "");
+        }
+
+        /// <summary>
+        /// A map id as the beacon carries it: letters, digits, `_` and `-`, at most <see cref="MapIdMax"/>.
+        /// Applied on both sides: a registry id passes unchanged, and an unauthenticated packet cannot put
+        /// a separator, markup or a page of text into the MAP column.
+        /// </summary>
+        public static string SanitiseMapId(string mapId)
+        {
+            if (string.IsNullOrEmpty(mapId)) return "";
+            var sb = new StringBuilder(Math.Min(mapId.Length, MapIdMax));
+            foreach (char c in mapId)
+            {
+                if (sb.Length >= MapIdMax) break;
+                if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_' || c == '-')
+                    sb.Append(c);
+            }
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// What this host says each interval and in each query reply: v3, then v2 for builds that read
+        /// only v2 (see <see cref="MagicV3"/>). v3 goes first so a v3 reader usually has it before the copy.
+        /// </summary>
+        private byte[][] CurrentPayloads()
+        {
+            return new[]
+            {
+                Encoding.UTF8.GetBytes(BuildPayloadV3(Port, Players, MaxPlayers, InProgress, JoinCode, HostName,
+                                                      Occupied, Connections, MaxConnections, ProcessBeaconId,
+                                                      NetSession.ProtocolVersion, MapId)),
+                Encoding.UTF8.GetBytes(BuildPayload(Port, Players, MaxPlayers, InProgress, JoinCode, HostName,
+                                                    Occupied, Connections, MaxConnections)),
+            };
+        }
+
         private void Broadcast()
         {
             if (_sender == null) return;
 
-            string payload = BuildPayload(Port, Players, MaxPlayers, InProgress, JoinCode, HostName,
-                                          Occupied, Connections, MaxConnections);
-            byte[] bytes = Encoding.UTF8.GetBytes(payload);
-
+            var payloads = CurrentPayloads();
             var endpoints = GetBroadcastEndpoints();
             foreach (var ep in endpoints)
             {
-                try
+                foreach (var bytes in payloads)
                 {
-                    _sender.Send(bytes, bytes.Length, ep);
-                }
-                catch
-                {
-                    // Ignore transient send failures on individual inactive or restricted interfaces.
+                    try
+                    {
+                        _sender.Send(bytes, bytes.Length, ep);
+                    }
+                    catch
+                    {
+                        // Ignore transient send failures on individual inactive or restricted interfaces.
+                    }
                 }
             }
         }
@@ -528,11 +656,13 @@ namespace TumbangPreso.Net
                         if (_answered.Count >= 64) continue;
                     }
                     _answered[requesterKey] = now;
-                    byte[] response = Encoding.UTF8.GetBytes(BuildPayload(Port, Players, MaxPlayers, InProgress,
-                        JoinCode, HostName, Occupied, Connections, MaxConnections));
-                    try { received.Listener.Send(response, response.Length, received.Requester); }
-                    catch (SocketException) { }
-                    catch (ObjectDisposedException) { }
+                    // Both layouts: a browser from before v3 sends this same query and reads only v2.
+                    foreach (byte[] response in CurrentPayloads())
+                    {
+                        try { received.Listener.Send(response, response.Length, received.Requester); }
+                        catch (SocketException) { }
+                        catch (ObjectDisposedException) { }
+                    }
                     continue;
                 }
                 var entry = received.Entry;
@@ -551,14 +681,34 @@ namespace TumbangPreso.Net
                     : $"beacon:{entry.BeaconId}:{entry.Port}";
                 lock (_seen)
                 {
-                    // One process may advertise through several adapters. Retain its best
-                    // recently observed endpoint, but still refresh the room's other facts.
-                    if (_seen.TryGetValue(key, out var previous) &&
-                        entry.LastSeen - previous.AddressLastSeen <= EntryTimeout &&
-                        AddressPreference(previous.Address) > AddressPreference(entry.Address))
+                    if (_seen.TryGetValue(key, out var previous))
                     {
-                        entry.Address = previous.Address;
-                        entry.AddressLastSeen = previous.AddressLastSeen;
+                        // One process may advertise through several adapters. Retain its best
+                        // recently observed endpoint, but still refresh the room's other facts.
+                        //
+                        // ⚠️ A TIE KEEPS THE ADDRESS ALREADY SHOWN. It used to go to whichever copy came
+                        // last, so a host heard on a LAN and on Hamachi swapped address every packet:
+                        // the row's key changed each second and JOIN aimed at whichever won the race
+                        // (LAN-VPN-JOIN-1020). The kept address is fresh whenever its own copy arrives,
+                        // and once silent for `EntryTimeout` the other one takes over.
+                        if (previous.Address != entry.Address &&
+                            entry.LastSeen - previous.AddressLastSeen <= EntryTimeout)
+                        {
+                            var subnets = LocalSubnets();
+                            if (AddressPreference(previous.Address, subnets) >= AddressPreference(entry.Address, subnets))
+                            {
+                                entry.Address = previous.Address;
+                                entry.AddressLastSeen = previous.AddressLastSeen;
+                            }
+                        }
+
+                        // ⚠️ THE v2 COPY OF A v3 HOST KEEPS WHAT v3 SAID (see `MagicV3`). One process
+                        // never changes protocol, and its map moves only with its next v3 copy.
+                        if (entry.Protocol == 0 && previous.Protocol > 0)
+                        {
+                            entry.Protocol = previous.Protocol;
+                            entry.MapId = previous.MapId;
+                        }
                     }
                     _seen[key] = entry;
                 }
@@ -568,11 +718,98 @@ namespace TumbangPreso.Net
             if (touched) RaiseIfChanged();
         }
 
-        private static int AddressPreference(string address)
+        /// <summary>One IPv4 address this machine holds, with its mask.</summary>
+        public struct LocalSubnet
+        {
+            public IPAddress Address;
+            public IPAddress Mask;
+        }
+
+        private List<LocalSubnet> _localSubnets;
+        private float _localSubnetsRead = float.NegativeInfinity;
+
+        /// <summary>
+        /// This machine's IPv4 subnets, read at most every five seconds: the drain asks once per
+        /// duplicate packet, and enumerating adapters is not free.
+        /// </summary>
+        private List<LocalSubnet> LocalSubnets()
+        {
+            float now = Time.unscaledTime;
+            if (_localSubnets == null || now - _localSubnetsRead > EntryTimeout + 1f)
+            {
+                _localSubnets = ReadLocalSubnets();
+                _localSubnetsRead = now;
+            }
+            return _localSubnets;
+        }
+
+        /// <summary>Every up, non-loopback IPv4 address on this machine with a usable mask.</summary>
+        public static List<LocalSubnet> ReadLocalSubnets()
+        {
+            var subnets = new List<LocalSubnet>();
+            try
+            {
+                foreach (var ni in NetworkInterface.GetAllNetworkInterfaces())
+                {
+                    if (ni.OperationalStatus != OperationalStatus.Up) continue;
+                    if (ni.NetworkInterfaceType == NetworkInterfaceType.Loopback) continue;
+                    foreach (var u in ni.GetIPProperties().UnicastAddresses)
+                    {
+                        if (u.Address.AddressFamily != AddressFamily.InterNetwork) continue;
+                        if (IPAddress.IsLoopback(u.Address)) continue;
+                        if (u.IPv4Mask == null || u.IPv4Mask.Equals(IPAddress.Any)) continue;
+                        subnets.Add(new LocalSubnet { Address = u.Address, Mask = u.IPv4Mask });
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[Lan] Interface enumeration warning: {e.Message}");
+            }
+            return subnets;
+        }
+
+        /// <summary>True when <paramref name="ip"/> is on the same IPv4 subnet as one of <paramref name="local"/>.</summary>
+        public static bool SharesSubnet(IPAddress ip, IReadOnlyList<LocalSubnet> local)
+        {
+            if (ip == null || local == null) return false;
+            byte[] remote = ip.GetAddressBytes();
+            if (remote.Length != 4) return false;
+            foreach (var subnet in local)
+            {
+                if (subnet.Address == null || subnet.Mask == null) continue;
+                byte[] mine = subnet.Address.GetAddressBytes();
+                byte[] mask = subnet.Mask.GetAddressBytes();
+                if (mine.Length != 4 || mask.Length != 4) continue;
+                // A zero mask would claim the whole internet as "our subnet".
+                if (mask[0] == 0) continue;
+                bool same = true;
+                for (int i = 0; i < 4 && same; i++) same = (remote[i] & mask[i]) == (mine[i] & mask[i]);
+                if (same) return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Which of two addresses one host was heard on to show and to join. Higher wins.
+        ///
+        /// ⚠️⚠️ A SUBNET WE SHARE BEATS ONE WE DO NOT, AND A REAL LAN BEATS A VPN'S SQUATTED RANGE.
+        /// LAN-VPN-JOIN-1020: a host with Hamachi and a LAN adapter is heard on both by a peer with both,
+        /// and the Hamachi address is the one a Windows firewall files under Public and blocks. 25.0.0.0/8
+        /// (Hamachi) and 26.0.0.0/8 (Radmin VPN) are public ranges those VPNs reuse, so no real LAN is on
+        /// them. A VPN address we share still beats any address we do not, because a VPN may be the only
+        /// network two players have in common, which is the reporter's own case.
+        ///
+        ///   0 unreadable or loopback, 1 link-local (169.254/16), 2 VPN range not shared,
+        ///   3 other not shared, 4 VPN range shared, 5 other shared.
+        /// </summary>
+        public static int AddressPreference(string address, IReadOnlyList<LocalSubnet> local)
         {
             if (!IPAddress.TryParse(address, out var ip) || IPAddress.IsLoopback(ip)) return 0;
             byte[] bytes = ip.GetAddressBytes();
-            return bytes.Length == 4 && bytes[0] == 169 && bytes[1] == 254 ? 1 : 2;
+            if (bytes.Length == 4 && bytes[0] == 169 && bytes[1] == 254) return 1;
+            bool vpnRange = bytes.Length == 4 && (bytes[0] == 25 || bytes[0] == 26);
+            return (SharesSubnet(ip, local) ? 4 : 2) + (vpnRange ? 0 : 1);
         }
 
         /// <summary>
@@ -614,8 +851,11 @@ namespace TumbangPreso.Net
 
             // ⚠️ THE VERSION IS FIELD 0 AND NOTHING ELSE. See `MagicV2` for why the field count
             // cannot be asked this question.
+            bool v3 = parts[0] == MagicV3;
             bool v2 = parts[0] == MagicV2;
-            if (!v2 && parts[0] != Magic) return false;
+            if (!v3 && !v2 && parts[0] != Magic) return false;
+            // A v3 host always writes every field before the name; fewer is not a v3 packet.
+            if (v3 && parts.Length < 13) return false;
 
             if (!int.TryParse(parts[1], out int port) || port <= 0 || port > ushort.MaxValue) return false;
             if (!int.TryParse(parts[2], out int seated)) seated = 0;
@@ -637,10 +877,22 @@ namespace TumbangPreso.Net
             // ⚠️ THE ROOM TITLE IS EVERYTHING FROM ITS INDEX ONWARDS, not one field. It is
             // the only free-form value on this wire, and rejoining the remainder is
             // what keeps a title containing the separator from truncating rather than corrupting.
-            // v2 spends one more field on the beacon id, so the name starts one later.
-            string beaconId = v2 && parts.Length >= 11 ? parts[9] : "";
+            // v2 spends one more field on the beacon id, so the name starts one later; v3 two more
+            // again, on the protocol and the map.
+            bool identified = v3 || (v2 && parts.Length >= 11);
+            string beaconId = identified ? parts[9] : "";
 
-            int nameIndex = v2 && parts.Length >= 11 ? 10 : extended ? 9 : 6;
+            // ⚠️ AN UNREADABLE PROTOCOL IS "NOT SAID" (0), NOT A REASON TO DROP THE ROW: the row then
+            // behaves exactly as a v2 one, joinable, and approval still has the last word.
+            int protocol = 0;
+            string mapId = "";
+            if (v3)
+            {
+                if (!int.TryParse(parts[10], out protocol) || protocol < 0) protocol = 0;
+                mapId = SanitiseMapId(parts[11]);
+            }
+
+            int nameIndex = v3 ? 12 : identified ? 10 : extended ? 9 : 6;
             string name = string.Join("|", parts, nameIndex, parts.Length - nameIndex);
 
             entry = new LanEntry
@@ -656,6 +908,8 @@ namespace TumbangPreso.Net
                 MaxConnections = Mathf.Clamp(maxConnections, 1, 64),
                 InProgress = parts[4] == "1",
                 BeaconId = beaconId,
+                Protocol = protocol,
+                MapId = mapId,
 
                 // ⚠️ NOT STAMPED HERE. This runs on the socket thread and `Time.unscaledTime` is
                 // a Unity call that throws off the main thread; `DrainInbox` stamps it instead.
@@ -704,7 +958,7 @@ namespace TumbangPreso.Net
             {
                 sb.Append($"{e.Address}:{e.Port}:{e.HostName}:{e.JoinCode}:" +
                           $"{e.Players}/{e.MaxPlayers}:{e.Occupied}:" +
-                          $"{e.Connections}/{e.MaxConnections}:{e.InProgress};");
+                          $"{e.Connections}/{e.MaxConnections}:{e.InProgress}:{e.Protocol}:{e.MapId};");
             }
             return sb.ToString();
         }

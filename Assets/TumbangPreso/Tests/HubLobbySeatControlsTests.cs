@@ -43,7 +43,7 @@ namespace TumbangPreso.Tests
             public Task<string> Join(string codeOrAddress)=>Task.FromResult("");
             public void StartGame(){}public void ToggleReady(){}public void LockIn(){}public void VoteMap(int index){}
             public void PublishPicks(){}public void SelectMap(string map){}public void SelectMode(GameMode mode){}
-            public void Browse(){}public List<HubRoom> Rooms(bool lan)=>new List<HubRoom>();public void ToggleChat(){}public void ToggleSpectate(){}
+            public void Browse(){}public void RefreshRooms(bool lan){}public List<HubRoom> Rooms(bool lan)=>new List<HubRoom>();public void ToggleChat(){}public void ToggleSpectate(){}
         }
         GameObject _root,_hubRoot,_cameraRoot;Host _host;HubLobby _screen;Camera _camera;RenderTexture _target;
         [SetUp] public void Before()

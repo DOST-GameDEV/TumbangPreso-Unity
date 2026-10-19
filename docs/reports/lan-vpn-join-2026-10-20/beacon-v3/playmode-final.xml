@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-19 17:36:53Z" end-time="2026-10-19 17:37:35Z" duration="42.3501188">
+  <test-suite type="TestSuite" id="3713" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2188" result="Failed" site="Child" start-time="2026-10-19 17:36:53Z" end-time="2026-10-19 17:37:35Z" duration="42.350119" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3705" name="TumbangPreso.PlayTests.dll" fullname="D:/GitHub/TumbangPreso-Unity/.claude/worktrees/eager-franklin-a8bbbf/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2188" result="Failed" site="Child" start-time="2026-10-19 17:36:53Z" end-time="2026-10-19 17:37:35Z" duration="42.323736" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24560" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3706" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2188" result="Failed" site="Child" start-time="2026-10-19 17:36:53Z" end-time="2026-10-19 17:37:35Z" duration="42.309366" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3709" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2186" result="Failed" site="Child" start-time="2026-10-19 17:36:53Z" end-time="2026-10-19 17:37:35Z" duration="42.295472" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1976" name="HubJoinLanVersionTests" fullname="TumbangPreso.PlayTests.HubJoinLanVersionTests" classname="TumbangPreso.PlayTests.HubJoinLanVersionTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-19 17:36:53Z" end-time="2026-10-19 17:37:00Z" duration="7.312259" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1977" name="ADifferentProtocolHostIsListedAsDifferentVersionAndRefreshReasksTheNetwork" fullname="TumbangPreso.PlayTests.HubJoinLanVersionTests.ADifferentProtocolHostIsListedAsDifferentVersionAndRefreshReasksTheNetwork" methodname="ADifferentProtocolHostIsListedAsDifferentVersionAndRefreshReasksTheNetwork" classname="TumbangPreso.PlayTests.HubJoinLanVersionTests" runstate="Runnable" seed="1000470261" result="Passed" start-time="2026-10-19 17:36:53Z" end-time="2026-10-19 17:37:00Z" duration="7.291888" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] LanBeaconV3-v2-Join-lan-1920x1080 cream source=252,211,159 pixel=84,15,14; isolated UI camera, no ColourGrade.
+[TumpUiCapture] LanBeaconV3-v2-Join-lan-1600x680 cream source=252,211,159 pixel=91,19,17; isolated UI camera, no ColourGrade.
+[TumpUiCapture] LanBeaconV3-v2-Join-lan-1280x960 cream source=252,211,159 pixel=87,16,15; isolated UI camera, no ColourGrade.
+[TumpUiCapture] LanBeaconV3-v2-Join-lan-refreshing-1600x680 cream source=252,211,159 pixel=91,19,17; isolated UI camera, no ColourGrade.
+[Net] offline
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1978" name="HubJoinWaitTests" fullname="TumbangPreso.PlayTests.HubJoinWaitTests" classname="TumbangPreso.PlayTests.HubJoinWaitTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-19 17:37:00Z" end-time="2026-10-19 17:37:27Z" duration="26.209932" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1979" name="AnUnansweredAddressCountsItsWaitNamesTheFirewallAndEnds" fullname="TumbangPreso.PlayTests.HubJoinWaitTests.AnUnansweredAddressCountsItsWaitNamesTheFirewallAndEnds" methodname="AnUnansweredAddressCountsItsWaitNamesTheFirewallAndEnds" classname="TumbangPreso.PlayTests.HubJoinWaitTests" runstate="Runnable" seed="132470757" result="Passed" start-time="2026-10-19 17:37:00Z" end-time="2026-10-19 17:37:27Z" duration="26.202936" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[Net] connecting to 127.0.0.1:62430
+Failed to connect to server.
+[NetDisconnect] peer=0 local=0 server=False connected=False
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-4294967296][MaxConnectionAttempts] Connection closed due to maximum connection attempts reached.
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-4294967296][MaxConnectionAttempts] Connection closed due to maximum connection attempts reached.
+[Net] offline
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="3560" name="UiBrowserFeedbackReview" fullname="TumbangPreso.PlayTests.UiBrowserFeedbackReview" classname="TumbangPreso.PlayTests.UiBrowserFeedbackReview" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-19 17:37:27Z" end-time="2026-10-19 17:37:28Z" duration="1.717410" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="3561" name="ActualJoinViewRefreshesQueryStatusAndKeepsCodeCaretInsideField" fullname="TumbangPreso.PlayTests.UiBrowserFeedbackReview.ActualJoinViewRefreshesQueryStatusAndKeepsCodeCaretInsideField" methodname="ActualJoinViewRefreshesQueryStatusAndKeepsCodeCaretInsideField" classname="TumbangPreso.PlayTests.UiBrowserFeedbackReview" runstate="Runnable" seed="1994689708" result="Failed" start-time="2026-10-19 17:37:27Z" end-time="2026-10-19 17:37:28Z" duration="1.711384" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected string length 23 but was 69. Strings differ at index 0.
+  Expected: "Finding public rooms..."
+  But was:  "Online services are unavailable. Check your connection and tr..."
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.UiBrowserFeedbackReview+<ActualJoinViewRefreshesQueryStatusAndKeepsCodeCaretInsideField>d__2.MoveNext () [0x000b5] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\eager-franklin-a8bbbf\Assets\TumbangPreso\Tests\PlayMode\UiBrowserFeedbackReview.cs:29
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] offline
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="3566" name="UiEdgeQualityReview" fullname="TumbangPreso.PlayTests.UiEdgeQualityReview" classname="TumbangPreso.PlayTests.UiEdgeQualityReview" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-19 17:37:28Z" end-time="2026-10-19 17:37:35Z" duration="6.696931" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="3567" name="ActualHomeControlsRenderAt1080pQhdAnd4k" fullname="TumbangPreso.PlayTests.UiEdgeQualityReview.ActualHomeControlsRenderAt1080pQhdAnd4k" methodname="ActualHomeControlsRenderAt1080pQhdAnd4k" classname="TumbangPreso.PlayTests.UiEdgeQualityReview" runstate="Runnable" seed="2004581226" result="Passed" start-time="2026-10-19 17:37:28Z" end-time="2026-10-19 17:37:31Z" duration="3.107684" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[TumpUiCapture] UI-edge-quality-1920x1080 cream source=252,211,159 pixel=47,29,20; isolated UI camera, no ColourGrade.
+[TumpUiCapture] UI-edge-quality-2560x1440 cream source=252,211,159 pixel=50,33,23; isolated UI camera, no ColourGrade.
+[TumpUiCapture] UI-edge-quality-3840x2160 cream source=252,211,159 pixel=49,31,22; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="3568" name="CurrentHomeAndJoinRenderAtPcAndQhdSizes" fullname="TumbangPreso.PlayTests.UiEdgeQualityReview.CurrentHomeAndJoinRenderAtPcAndQhdSizes" methodname="CurrentHomeAndJoinRenderAtPcAndQhdSizes" classname="TumbangPreso.PlayTests.UiEdgeQualityReview" runstate="Runnable" seed="1878818136" result="Passed" start-time="2026-10-19 17:37:31Z" end-time="2026-10-19 17:37:35Z" duration="3.586633" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[TumpUiCapture] Current152-Home-1600x900 cream source=252,211,159 pixel=52,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Current152-Home-2560x1440 cream source=252,211,159 pixel=52,21,13; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Current152-Join-1600x900 cream source=252,211,159 pixel=84,15,14; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Current152-Join-2560x1440 cream source=252,211,159 pixel=75,9,8; isolated UI camera, no ColourGrade.
+Saving results to: C:/Users/Andrei/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

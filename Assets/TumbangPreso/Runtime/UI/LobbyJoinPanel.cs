@@ -669,7 +669,7 @@ namespace TumbangPreso.UI
                 string address = $"{entry.Address}:{entry.Port}";
                 _lanAddresses.Add(address);
 
-                string state = entry.InProgress ? "IN A MATCH" : "IN THE LOBBY";
+                string state = entry.DifferentVersion ? "DIFFERENT VERSION" : entry.InProgress ? "IN A MATCH" : "IN THE LOBBY";
                 Draw(_lanRows[i], _lanRowLabels[i],
                      $"{entry.HostName}   ·   {entry.Players}/{entry.MaxPlayers}   ·   {state}   ·   {address}");
             }
@@ -921,6 +921,13 @@ namespace TumbangPreso.UI
 
             if (match.IsLan)
             {
+                // ⚠️ A beacon v3 host already said its protocol: refuse here with approval's own sentence
+                // instead of connecting only to be refused after the wait (LAN-VPN-JOIN-1020).
+                if (Core.JoinFailureRules.ProtocolDiffers(match.Protocol, NetSession.ProtocolVersion))
+                {
+                    Report(Core.JoinFailureRules.VersionLine(match.Protocol, NetSession.ProtocolVersion));
+                    return false;
+                }
                 Report($"Joining {match.HostName} at {match.Address}:{match.Port}...");
 
                 bool connected = await _net.StartClientAsync(match.Address, match.Port, cancellationToken);

@@ -1886,6 +1886,10 @@ namespace TumbangPreso.Net
             _beacon.Occupied = Lobby.OccupiedSeatCount();
             _beacon.Connections = Lobby.ConnectedHumanCount();
             _beacon.InProgress = Lobby.MatchInProgress;
+            // Beacon v3's MAP (LAN-VPN-JOIN-1020): the map the next match loads, the same value the
+            // Multiplay query answers with. Re-read every frame while hosting, like the counts above,
+            // so a lobby map change or a vote shows up in the next beacon without another call site.
+            _beacon.MapId = UI.SceneFlow.SelectedMap ?? "";
         }
 
         /// <summary>
