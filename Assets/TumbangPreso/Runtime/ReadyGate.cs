@@ -95,6 +95,7 @@ namespace TumbangPreso
 
             if (!_netReady.Add(peerId)) return;   // idempotent
 
+            MatchArrivalPresentation.Trace($"peer {peerId} ready ({CurrentReadyCount()}/{ExpectedReadyCount()})");
             RaiseNetReady();
 
             TryBeginNetCountdown();
@@ -165,6 +166,7 @@ namespace TumbangPreso
             if (_automatic && !_introductionDone) return;
 
             AwaitingNetReady = false;
+            MatchArrivalPresentation.Trace($"countdown sent with {CurrentReadyCount()}/{ExpectedReadyCount()} ready");
 
             // Last-chance pick sweep before match starts: broadcast full table to late joiners and peers
             Net.MatchRpc.Instance?.BroadcastPicks();
@@ -181,6 +183,7 @@ namespace TumbangPreso
             // camera or input held after the network has advanced into the playable round.
             if (_arrival != null)
             {
+                MatchArrivalPresentation.Trace("the host's countdown arrived during the opening and cut it");
                 StopCoroutine(_arrival); _arrival = null;
                 var presentation = GetComponent<MatchArrivalPresentation>();
                 if (presentation != null) { presentation.Cancel(); Destroy(presentation); }
@@ -230,6 +233,7 @@ namespace TumbangPreso
             _introductionDone = !_automatic;
             _readySendPending = false;
             ReadyPromptChanged?.Invoke(!_automatic);
+            MatchArrivalPresentation.Trace("gate opened for seat " + (local != null ? local.PlayerSlot : -1));
             if (AdoptStartedMatch()) return;
             if (_automatic && _arrival == null) _arrival = StartCoroutine(PrepareAutomaticArrival());
         }
@@ -244,6 +248,7 @@ namespace TumbangPreso
             if (!_awaitingLocalReady && !_countingDown && _arrival == null && !_countdownHold)
                 return true;
 
+            MatchArrivalPresentation.Trace("adopting the host's running match; the opening is retired");
             StopAllCoroutines(); _arrival = null;
             var presentation = GetComponent<MatchArrivalPresentation>();
             if (presentation != null) { presentation.Cancel(); Destroy(presentation); }
@@ -268,6 +273,7 @@ namespace TumbangPreso
             yield return presentation.Run();
             if (presentation != null) Destroy(presentation);
             HoldUntilStart();
+            MatchArrivalPresentation.Trace("opening done, waiting for the countdown");
             _introductionDone = true;
             _nextAutomaticReady = 0;
             _arrival = null;
