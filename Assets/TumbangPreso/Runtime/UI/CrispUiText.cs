@@ -21,11 +21,28 @@ namespace TumbangPreso.UI
             var settings = GetGenerationSettings(rectTransform.rect.size);
             float nativeScale = Mathf.Max(.01f, settings.scaleFactor);
             // Bound atlas cost for large headings. Small labels get up to twice the glyph detail.
-            settings.scaleFactor = Mathf.Max(nativeScale,
+            float crispScale = Mathf.Max(nativeScale,
                 Mathf.Min(nativeScale * 2f, 160f / Mathf.Max(1, fontSize)));
             m_DisableFontTextureRebuiltCallback = true;
             try
             {
+                // ⚠️⚠️ A WRAPPED LABEL MUST BREAK WHERE IT WAS MEASURED, OR IT DRAWS OVER ITS
+                // NEIGHBOUR (2026-10-19, character select). Layout reads `preferredHeight` from the
+                // NATIVE generation, and a legacy font is generated at a whole pixel size: 28 units
+                // at a 0.446 canvas scale is 12.49 px, generated at 12, so the native text measures
+                // about 4 per cent narrower than the same words at twice the scale. "ATTACKING ·
+                // PROJECTILE" fitted one native line in its 340-unit box and drew as two, and the
+                // cooldown under it landed on the ability's sentence: the owner's screenshot of
+                // NEMU, reproduced on Dante at 1600x680 in `CharSelect-v1-locked-1600x680.png`.
+                // When the two resolutions disagree on the line count, draw at the native one, so
+                // the picture is the layout's picture. Agreeing labels keep the finer glyphs.
+                if (crispScale > nativeScale && horizontalOverflow == HorizontalWrapMode.Wrap
+                    && !string.IsNullOrEmpty(text) && WrapsDifferently(settings, crispScale))
+                {
+                    base.OnPopulateMesh(mesh);
+                    return;
+                }
+                settings.scaleFactor = crispScale;
                 cachedTextGenerator.PopulateWithErrors(text, settings, gameObject);
                 var vertices = cachedTextGenerator.verts;
                 mesh.Clear();
@@ -43,6 +60,21 @@ namespace TumbangPreso.UI
                 }
             }
             finally { m_DisableFontTextureRebuiltCallback = false; }
+        }
+
+        /// <summary>A generator only for comparing line counts; the drawn text never comes from it.</summary>
+        private static TextGenerator s_LineProbe;
+
+        /// <summary>True when the native and crisp generations wrap these words onto different
+        /// numbers of lines. Called inside the font-rebuild guard, like the population itself.</summary>
+        private bool WrapsDifferently(TextGenerationSettings native, float crispScale)
+        {
+            if (s_LineProbe == null) s_LineProbe = new TextGenerator();
+            s_LineProbe.PopulateWithErrors(text, native, gameObject);
+            int nativeLines = s_LineProbe.lineCount;
+            native.scaleFactor = crispScale;
+            s_LineProbe.PopulateWithErrors(text, native, gameObject);
+            return s_LineProbe.lineCount != nativeLines;
         }
     }
 }

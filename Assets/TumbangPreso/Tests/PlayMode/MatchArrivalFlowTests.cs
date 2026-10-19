@@ -44,10 +44,11 @@ namespace TumbangPreso.PlayTests
                         .Single(i => i.name == "Face").color,
                         "Offline portraits must keep their full image");
                 }
-                for (int index = people.Count; index < 12; index++)
-                    Assert.IsFalse(selector.GetComponentsInChildren<HubButton>(true)
-                        .Single(b => b.name == "Portrait" + index).IsInteractable(),
-                        "Empty grid slots are not selectable heroes");
+                // ⚠️ One cell per hero: the fixed 3x4 grid drew three hatched cells for nine heroes,
+                // which read as locked heroes and led nowhere (2026-10-19 rework).
+                Assert.IsNull(selector.GetComponentsInChildren<HubButton>(true)
+                        .FirstOrDefault(b => b.name == "Portrait" + people.Count),
+                        "The grid has a cell with no hero behind it");
                 for (int hero = 0; hero < people.Count; hero++)
                 {
                     yield return HubFlowTests.Press("Portrait" + hero);
@@ -103,6 +104,154 @@ namespace TumbangPreso.PlayTests
             SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
             var classic = TumpHub.Current.Push<HubCharacterSelect>(s => s.Timed = false);
             Assert.IsNull(classic.transform.Find("SelectionAbilities"), "Classic stays neutral and has no hero kit.");
+        }
+
+        /// <summary>The version stamped on the review pictures. Bump it with every layout pass, so a
+        /// chat client that caches by filename never shows the previous picture (`CLAUDE.md` § 6.1).</summary>
+        private const string ReviewVersion = "v8";
+
+        /// <summary>
+        /// The pictures a character select change is judged on: the timed screen as a queue match
+        /// meets it, at every brief shape plus ultrawide and the small window, a locked-in state,
+        /// Larger text, and the untimed Classic route. Saved to `Logs/shots-native-ui`.
+        /// </summary>
+        [UnityTest, Timeout(240000)]
+        public IEnumerator CharacterSelectionReviewCaptures()
+        {
+            Settings.SettingsStore.Current.LargerText = false;
+            Settings.SettingsStore.Current.HighContrastHud = false;
+            // Bots in the empty seats, as the owner's queue screenshot had them.
+            var withBots = CustomGameRules.Defaults(GameMode.HeroStrike); withBots.Bots = CustomGameRules.MaxBots;
+            SceneFlow.PinSelectedRules(withBots);
+            yield return HubFlowTests.OpenHome();
+            var people = Roster.GetPeople(GameMode.HeroStrike);
+            int nemu = Enumerable.Range(0, people.Count).First(i => people[i].Id == "nemu");
+            Settings.SettingsStore.Current.CharacterPick = nemu;
+            var timed = TumpHub.Current.Push<HubCharacterSelect>(s => s.Timed = true);
+            yield return new WaitForSecondsRealtime(1.2f);
+            yield return HubFlowTests.Press("Portrait" + nemu);
+            yield return HubFlowTests.Press("SelectionAbility0");
+            var shapes = new[]
+            {
+                new Vector2Int(1600, 680), new Vector2Int(1920, 1080), new Vector2Int(1280, 720),
+                new Vector2Int(960, 540), new Vector2Int(1280, 960), new Vector2Int(2560, 1080),
+                new Vector2Int(877, 482),
+            };
+            foreach (var size in shapes)
+            {
+                // 877x482 is the owner's small window and sits under the capture's reading floor
+                // (13.95 px), so it is photographed without the bounds pass the brief shapes get.
+                bool brief = size.x >= 960;
+                string where = $"nemu/{size.x}x{size.y}";
+                yield return TumpUiCapture.Capture($"CharSelect-{ReviewVersion}-nemu-{size.x}x{size.y}",
+                    TumpHub.Current.Canvas, size.x, size.y, false, checkActionBounds: brief,
+                    inspectViewport: () => AssertSelectionPicture(timed, where));
+            }
+            int dante = Enumerable.Range(0, people.Count).First(i => people[i].Id == "dante");
+            yield return HubFlowTests.Press("Portrait" + dante);
+            yield return HubFlowTests.Press("SelectionAbility1");
+            // ⚠️ THE REPRODUCER: Dante's ATTACKING power at 1600x680 drew its cooldown over its
+            // sentence in `CharSelect-v1-locked-1600x680.png` (the owner's screenshot showed the
+            // same fault on NEMU at their window). `CrispUiText` has the cause.
+            yield return TumpUiCapture.Capture($"CharSelect-{ReviewVersion}-dante-1600x680",
+                TumpHub.Current.Canvas, 1600, 680, false, checkActionBounds: true,
+                inspectViewport: () => AssertSelectionPicture(timed, "dante/1600x680"));
+            yield return HubFlowTests.Press("SelectButton");
+            yield return new WaitForSecondsRealtime(0.8f);
+            Assert.AreSame(timed, TumpHub.Current.Top, "Offline lock-in stays on the selector.");
+            yield return TumpUiCapture.Capture($"CharSelect-{ReviewVersion}-locked-1600x680",
+                TumpHub.Current.Canvas, 1600, 680, false, checkActionBounds: true,
+                inspectViewport: () => AssertSelectionPicture(timed, "locked/1600x680"));
+            TumpHub.Current.Home();
+
+            Settings.SettingsStore.Current.LargerText = true;
+            Settings.SettingsStore.Current.HighContrastHud = true;
+            var larger = TumpHub.Current.Push<HubCharacterSelect>(s => s.Timed = true);
+            yield return new WaitForSecondsRealtime(1.2f);
+            yield return HubFlowTests.Press("SelectionAbility0");
+            yield return TumpUiCapture.Capture($"CharSelect-{ReviewVersion}-larger-1280x720",
+                TumpHub.Current.Canvas, 1280, 720, false, checkActionBounds: true,
+                inspectViewport: () => AssertSelectionPicture(larger, "larger/1280x720"));
+            TumpHub.Current.Home();
+            Settings.SettingsStore.Current.LargerText = false;
+            Settings.SettingsStore.Current.HighContrastHud = false;
+
+            SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
+            Settings.SettingsStore.Current.CharacterPick = 1;
+            var classic = TumpHub.Current.Push<HubCharacterSelect>(s => s.Timed = false);
+            yield return new WaitForSecondsRealtime(1.2f);
+            yield return TumpUiCapture.Capture($"CharSelect-{ReviewVersion}-classic-1600x680",
+                TumpHub.Current.Canvas, 1600, 680, false, checkActionBounds: true,
+                inspectViewport: () => AssertSelectionPicture(classic, "classic/1600x680"));
+            yield return TumpUiCapture.Capture($"CharSelect-{ReviewVersion}-classic-1280x960",
+                TumpHub.Current.Canvas, 1280, 960, false, checkActionBounds: true,
+                inspectViewport: () => AssertSelectionPicture(classic, "classic/1280x960"));
+            TumpHub.Current.Home();
+        }
+
+        /// <summary>
+        /// The two faults the 2026-10-19 rework fixed, measured on the drawn picture rather than on
+        /// the layout that claimed to be right: every ability line is DRAWN inside its own box and
+        /// the boxes stack without overlapping, and the chalk ring sits on the feet the preview
+        /// actually rendered.
+        /// </summary>
+        private static void AssertSelectionPicture(HubCharacterSelect selector, string where)
+        {
+            var labels = selector.GetComponentsInChildren<Text>();
+            float previousBottom = float.PositiveInfinity;
+            foreach (string name in new[] { "AbilityName", "AbilityMeta", "AbilityCost", "AbilitySummary" })
+            {
+                var text = labels.FirstOrDefault(t => t.name == name);
+                if (text == null || string.IsNullOrEmpty(text.text)) continue;
+                var rect = text.rectTransform.rect;
+                var mesh = text.canvasRenderer.GetMesh();
+                if (mesh != null && mesh.vertexCount > 0)
+                {
+                    Assert.GreaterOrEqual(mesh.bounds.min.y, rect.yMin - 3,
+                        where + "/" + name + " draws below its own box, over the line under it");
+                    Assert.LessOrEqual(mesh.bounds.max.y, rect.yMax + 3, where + "/" + name + " draws above its own box");
+                }
+                float top = text.rectTransform.anchoredPosition.y;
+                Assert.LessOrEqual(top, previousBottom + 0.5f, where + "/" + name + " overlaps the line above it");
+                previousBottom = top - text.rectTransform.sizeDelta.y;
+            }
+
+            var preview = selector.GetComponentInChildren<ModelPreview>();
+            var ring = selector.GetComponentsInChildren<HubChalk>().FirstOrDefault(c => c.name == "ChalkCircle");
+            Assert.IsNotNull(preview?.Target, where + " has no hero picture");
+            Assert.IsNotNull(ring, where + " has no chalk circle");
+            var stage = (RectTransform)ring.transform.parent;
+            float ringCentre = (ring.rectTransform.anchoredPosition.y + ring.rectTransform.sizeDelta.y * 0.5f) / stage.rect.height;
+            float feet = LowestDrawnRow(preview.Target) / (float)preview.Target.height;
+            Debug.Log($"[CharacterSelectFloor] {where}: feet={feet:F3} ring={ringCentre:F3} stage={stage.rect.size}");
+            Assert.GreaterOrEqual(feet, 0, where + " drew no hero");
+            // The soles stand INSIDE the circle: the lowest drawn row (the toes) lies within the
+            // ring's outline, front edge to back edge. v1 failed this by a head: Nemu's toes at
+            // 0.26 of the stage, the ring's centre at 0.12 and its half height 0.06.
+            float ringHalf = ring.rectTransform.sizeDelta.y * 0.5f / stage.rect.height;
+            Assert.GreaterOrEqual(feet, ringCentre - ringHalf,
+                where + " draws the hero's feet in front of the chalk circle");
+            Assert.LessOrEqual(feet, ringCentre + ringHalf,
+                where + " draws the hero's feet behind the chalk circle, floating over it");
+        }
+
+        /// <summary>The lowest row of the preview with anything opaque in it: where the soles are drawn.</summary>
+        private static int LowestDrawnRow(RenderTexture target)
+        {
+            var before = RenderTexture.active;
+            var pixels = new Texture2D(target.width, target.height, TextureFormat.RGBA32, false);
+            try
+            {
+                RenderTexture.active = target;
+                pixels.ReadPixels(new Rect(0, 0, target.width, target.height), 0, 0);
+                pixels.Apply();
+                var colours = pixels.GetPixels32();
+                for (int y = 0; y < target.height; y++)
+                    for (int x = 0; x < target.width; x++)
+                        if (colours[y * target.width + x].a > 40) return y;
+                return -1;
+            }
+            finally { RenderTexture.active = before; Object.Destroy(pixels); }
         }
 
         [UnityTest]

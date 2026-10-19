@@ -502,7 +502,10 @@ namespace TumbangPreso.PlayTests
                 Assert.IsNotNull(preview.Subject);
                 StringAssert.AreEqualIgnoringCase("character-male-f(Clone)", preview.Subject.name);
                 // The hub's authored warm stage replaces the retired blue gradient; the cast stays.
-                Assert.IsNotNull(picker.GetComponentsInChildren<HubShape>().FirstOrDefault(g => g.name == "Floor"));
+                // The hero stands in the can's chalk circle over a soft contact shadow (2026-10-19;
+                // the stage's old "Floor" sticker read as an empty text field and was retired).
+                Assert.IsNotNull(picker.GetComponentsInChildren<HubChalk>().FirstOrDefault(g => g.name == "ChalkCircle"));
+                Assert.IsNotNull(picker.GetComponentsInChildren<HubGlow>().FirstOrDefault(g => g.name == "ContactShadow"));
                 yield return TumpUiCapture.Capture("Hub-character-classic", TumpHub.Current.Canvas, 960, 540, false, checkActionBounds: true);
             }
             finally

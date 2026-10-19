@@ -6056,6 +6056,13 @@ Implementation order within UX-1:
   inspecting it; no modal that suspends host Tick, no redundant navigation tutorial.
   Implemented: all7heroes/3slots checked with normal and large/high-contrast text,
   five shapes and running timer; both960x540frames inspected. Peer lock-in remains open.
+  2026-10-19 rework after the owner's NEMU screenshot (ability cooldown drawn over its sentence):
+  root cause in `CrispUiText` (crisp and native generations wrapped differently), hero now centre
+  stage standing in a chalk circle measured onto its drawn feet, kit column with no box, grid sized
+  to the roster on top of SELECT, seat cards with faint/solid pick states, a tsinelas stamp on
+  lock-in and a chalked TAYA IN ROUND n over your seat. Research, faults, captures and what is
+  still open: `docs/reports/character-select-2026-10-19/README.md`. Still open here: the
+  multi-peer lock-in check, and a pad and phone pass in hand.
 - [ ] **UX-1.6 Custom host/join.** Built; a real LAN host is opened by `HubFlowTests`. Open: a
   second process joining by code and from the LAN and online lists (`tools/net_matrix.py`).
   Immediate native code entry exposed cold LAN lookup plus concurrent online-query429;
