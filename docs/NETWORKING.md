@@ -2,9 +2,32 @@
 
 Current Nemu ghosts: [protocol163 complete host-state delivery, actual UDP/Relay and mixed-roster checks](reports/nemu-network-2026-10-15/README.md).
 
-Current source contract is protocol163 (`NetSession.ProtocolVersion`). Use matching
-packages for actual peers; branch names are not compatibility identifiers. The
-work-status queue is [TODO](TODO.md), not the older evidence narrative below.
+Current source contract is protocol 174 on QoLUpdates (`NetSession.ProtocolVersion`;
+read the source, this line can lag). Use matching packages for actual peers; branch
+names are not compatibility identifiers. The work-status queue is [TODO](TODO.md), not
+the older evidence narrative below.
+
+## LAN over a VPN (Hamachi, Radmin, ZeroTier)
+
+A LAN room can be played over a virtual LAN. What has to be true, and what goes wrong:
+
+- **Ports.** The game listens on UDP 8910 on every adapter (`NetSession` binds `0.0.0.0`);
+  the room beacon is UDP 8911 (`LanBeacon`). The JOIN row dials the beacon packet's source
+  address and the advertised port.
+- **The host's firewall decides.** The beacon is an outbound broadcast from the host, so a
+  room can be listed while the host's Windows Firewall drops every inbound packet to 8910.
+  Windows files Hamachi-style adapters under **Public** networks, and a game (or the Unity
+  Editor) allowed on Private only is blocked there. The joiner then waits about 24 s and
+  fails with "No answer from <address>" (`JoinFailureRules`). Fix it on the host: allow the
+  host's executable (or the Editor) inbound on Public networks, or mark the VPN network
+  Private. The joiner's firewall normally lets the host's replies back in, because they answer
+  packets the joiner sent first (not yet verified on a blocked joiner).
+- **Same build.** The beacon carries no protocol, so a host on another build is still
+  listed; the join is refused with "That host runs another version (protocol N, yours M)".
+  The MAP column of a LAN row always reads UNKNOWN for now (`HubRoom.FromLan`).
+- **Two adapters.** When both machines also share a real LAN, a row keeps whichever adapter
+  delivered the last beacon; 25.0.0.0/8 and 192.168.0.0/16 are scored alike
+  (`LanBeacon.AddressPreference`).
 
 The matched0358 Windows package qualifies natural PC-hosted LAN discovery, row
 admission, code rejoin and an already-open client Rules panel. The corrected917

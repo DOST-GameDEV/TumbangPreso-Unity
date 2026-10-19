@@ -887,7 +887,8 @@ namespace TumbangPreso.UI
                 if (connected && await _net.WaitForConnectionAsync(cancellationToken)) return true;
                 cancellationToken.ThrowIfCancellationRequested();
 
-                Report(Reason($"Could not reach {typed}."));
+                // No answer, another version, a full room or the host's own sentence: `JoinFailureRules`.
+                Report(Core.JoinFailureRules.FailureLine(typed, _net.Status, NetSession.ProtocolVersion));
                 return false;
             }
 
@@ -927,7 +928,8 @@ namespace TumbangPreso.UI
                 if (connected && await _net.WaitForConnectionAsync(cancellationToken)) return true;
                 cancellationToken.ThrowIfCancellationRequested();
 
-                Report(Reason($"Could not reach {match.HostName} at {match.Address}:{match.Port}."));
+                Report(Core.JoinFailureRules.FailureLine($"{match.HostName} at {match.Address}:{match.Port}",
+                                                         _net.Status, NetSession.ProtocolVersion));
                 return false;
             }
 

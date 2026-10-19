@@ -1,3 +1,13 @@
+# LAN over Hamachi checkpoint, October20
+
+Report: a LAN row over Hamachi "stuck on joining". This PC is the joiner; Windows files Hamachi as Public.
+A read-only audit agent traced the path: the beacon is outbound so a firewalled host is still listed, the
+join ends after about 24 s with no progress shown, failures read as transport envelopes, and HubJoin.Join
+could freeze on a throw. Core.JoinFailureRules now writes the waiting and failure lines; HubJoin always
+ends. Core 11/11 new, join PlayMode 12/12 across three fixtures. Main checkout switched to QoLUpdates
+8c4164b2a; a protocol 174 player is at C:/Users/Andrei/TumbangPreso-Builds/qol-174-8c4164b. Open: the
+host PC's firewall, beacon v3 with protocol and map. Evidence: docs/reports/lan-vpn-join-2026-10-20.
+
 # Room merged into QoLUpdates checkpoint, October19
 
 player-room-depth-and-bots (380430039) merged onto QoLUpdates c3cd5fba8, protocol 174 (per-seat bots

@@ -77,7 +77,8 @@ namespace TumbangPreso.PlayTests
                 panel.Joined += () => joined++;
                 panel.Status += value => status = value;
                 panel.Open();
-                var request = panel.AutomationJoin(UnusedLocalAddress());
+                string address = UnusedLocalAddress();
+                var request = panel.AutomationJoin(address);
                 if (!request.IsCompleted)
                     LogAssert.Expect(LogType.Error, "Failed to connect to server.");
                 float deadline = Time.realtimeSinceStartup + 35f;
@@ -87,7 +88,10 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(0, joined);
                 Assert.IsTrue(panel.IsOpen, "Failed admission closed the retry controls.");
                 Assert.IsFalse(net.IsNetworked, "Failed admission retained its listening transport.");
-                Assert.That(status, Does.Contain("timed out").Or.Contain("reach").Or.Contain("failed"));
+                // Nobody answered, so the line says so in the player's words (`JoinFailureRules`), not
+                // with Netcode's `[Disconnect Event]` envelope behind "Could not reach" (2026-10-20).
+                StringAssert.StartsWith("No answer from " + address + ".", status);
+                StringAssert.DoesNotContain("[Disconnect", status);
             }
             finally { net.Stop(); Object.DestroyImmediate(owner); }
         }

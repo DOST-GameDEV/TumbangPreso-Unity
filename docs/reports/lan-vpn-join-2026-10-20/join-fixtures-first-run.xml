@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="12" result="Failed(Child)" total="12" passed="11" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-19 16:39:44Z" end-time="2026-10-19 16:40:51Z" duration="67.4172254">
+  <test-suite type="TestSuite" id="3711" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2187" result="Failed" site="Child" start-time="2026-10-19 16:39:44Z" end-time="2026-10-19 16:40:51Z" duration="67.417225" total="12" passed="11" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3703" name="TumbangPreso.PlayTests.dll" fullname="D:/GitHub/TumbangPreso-Unity/.claude/worktrees/game-networking-lan-relay-d56db9/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2187" result="Failed" site="Child" start-time="2026-10-19 16:39:44Z" end-time="2026-10-19 16:40:51Z" duration="67.392749" total="12" passed="11" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27072" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3704" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2187" result="Failed" site="Child" start-time="2026-10-19 16:39:44Z" end-time="2026-10-19 16:40:51Z" duration="67.374554" total="12" passed="11" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3707" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2185" result="Failed" site="Child" start-time="2026-10-19 16:39:44Z" end-time="2026-10-19 16:40:51Z" duration="67.354620" total="12" passed="11" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1976" name="HubJoinWaitTests" fullname="TumbangPreso.PlayTests.HubJoinWaitTests" classname="TumbangPreso.PlayTests.HubJoinWaitTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-19 16:39:44Z" end-time="2026-10-19 16:40:12Z" duration="27.961012" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1977" name="AnUnansweredAddressCountsItsWaitNamesTheFirewallAndEnds" fullname="TumbangPreso.PlayTests.HubJoinWaitTests.AnUnansweredAddressCountsItsWaitNamesTheFirewallAndEnds" methodname="AnUnansweredAddressCountsItsWaitNamesTheFirewallAndEnds" classname="TumbangPreso.PlayTests.HubJoinWaitTests" runstate="Runnable" seed="400019609" result="Passed" start-time="2026-10-19 16:39:44Z" end-time="2026-10-19 16:40:12Z" duration="27.941012" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] connecting to 127.0.0.1:58491
+Failed to connect to server.
+[NetDisconnect] peer=0 local=0 server=False connected=False
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-4294967296][MaxConnectionAttempts] Connection closed due to maximum connection attempts reached.
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-4294967296][MaxConnectionAttempts] Connection closed due to maximum connection attempts reached.
+[Net] offline
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2723" name="PlayerHubFriendJoinHandlerTests" fullname="TumbangPreso.PlayTests.PlayerHubFriendJoinHandlerTests" classname="TumbangPreso.PlayTests.PlayerHubFriendJoinHandlerTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-19 16:40:12Z" end-time="2026-10-19 16:40:16Z" duration="3.650778" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2724" name="FriendActionFromHomeUsesExistingPanelAndKeepsRefusalVisible" fullname="TumbangPreso.PlayTests.PlayerHubFriendJoinHandlerTests.FriendActionFromHomeUsesExistingPanelAndKeepsRefusalVisible" methodname="FriendActionFromHomeUsesExistingPanelAndKeepsRefusalVisible" classname="TumbangPreso.PlayTests.PlayerHubFriendJoinHandlerTests" runstate="Runnable" seed="992916311" result="Passed" start-time="2026-10-19 16:40:12Z" end-time="2026-10-19 16:40:14Z" duration="1.819763" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="2725" name="FriendActionFromHostedRoomCanCancelWithoutLateLobbyEntry" fullname="TumbangPreso.PlayTests.PlayerHubFriendJoinHandlerTests.FriendActionFromHostedRoomCanCancelWithoutLateLobbyEntry" methodname="FriendActionFromHostedRoomCanCancelWithoutLateLobbyEntry" classname="TumbangPreso.PlayTests.PlayerHubFriendJoinHandlerTests" runstate="Runnable" seed="2048549606" result="Passed" start-time="2026-10-19 16:40:14Z" end-time="2026-10-19 16:40:16Z" duration="1.823521" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 50589, join code 2G64
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <5de7a63aac14480daa9f03be86046b8b>:0 
+  at TumbangPreso.UI.ConvertedMatchSetup.LeaveRoom () [0x0005c] in <5de7a63aac14480daa9f03be86046b8b>:0 
+  at TumbangPreso.UI.ConvertedMatchSetup.Join (System.String codeOrAddress) [0x00060] in <5de7a63aac14480daa9f03be86046b8b>:0 
+  at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[TResult].Start[TStateMachine] (TStateMachine& stateMachine) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.UI.ConvertedMatchSetup.Join (System.String codeOrAddress) [0x00000] in <5de7a63aac14480daa9f03be86046b8b>:0 
+  at TumbangPreso.UI.Hub.HubJoin.Join (System.String key) [0x00064] in <5de7a63aac14480daa9f03be86046b8b>:0 
+  at System.Runtime.CompilerServices.AsyncVoidMethodBuilder.Start[TStateMachine] (TStateMachine& stateMachine) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.UI.Hub.HubJoin.Join (System.String key) [0x00000] in <5de7a63aac14480daa9f03be86046b8b>:0 
+  at TumbangPreso.UI.Hub.HubJoin.Build () [0x0079b] in <5de7a63aac14480daa9f03be86046b8b>:0 
+  at TumbangPreso.UI.Hub.TumpHub.Push[T] (System.Action`1[T] configure) [0x002a0] in <5de7a63aac14480daa9f03be86046b8b>:0 
+  at TumbangPreso.UI.PlayerHub.JoinFriend (System.String joinCode) [0x0003b] in <5de7a63aac14480daa9f03be86046b8b>:0 
+  at System.Reflection.RuntimeMethodInfo.InternalInvoke (System.Reflection.RuntimeMethodInfo , System.Object , System.Object[] , System.Exception& ) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.PlayTests.PlayerHubFriendJoinHandlerTests.InvokeFriendJoin (System.String code) [0x00013] in <85a6467a06bb47e5980f51326307c7f4>:0 
+  at TumbangPreso.PlayTests.PlayerHubFriendJoinHandlerTests+<FriendActionFromHostedRoomCanCancelWithoutLateLobbyEntry>d__14.MoveNext () [0x00141] in <85a6467a06bb47e5980f51326307c7f4>:0 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand+<ExecuteEnumerableAndRecordExceptions>d__4.MoveNext () [0x0006b] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand.AdvanceEnumerator (System.Collections.IEnumerator enumerator) [0x00019] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand+<ExecuteEnumerable>d__2.MoveNext () [0x0010c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestRunner.NUnitExtensions.Runner.UnityLogCheckDelegatingCommand+<ExecuteEnumerable>d__3.MoveNext () [0x00161] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableApplyChangesToContextCommand+<ExecuteEnumerable>d__1.MoveNext () [0x00091] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <5de7a63aac14480daa9f03be86046b8b>:0 
+  at TumbangPreso.UI.ConvertedMatchSetup.LeaveRoom () [0x0005c] in <5de7a63aac14480daa9f03be86046b8b>:0 
+  at TumbangPreso.UI.Hub.HubJoin.Back () [0x0000f] in <5de7a63aac14480daa9f03be86046b8b>:0 
+  at TumbangPreso.UI.Hub.TumpHub.Back () [0x00024] in <5de7a63aac14480daa9f03be86046b8b>:0 
+  at TumbangPreso.PlayTests.PlayerHubFriendJoinHandlerTests+<FriendActionFromHostedRoomCanCancelWithoutLateLobbyEntry>d__14.MoveNext () [0x00190] in <85a6467a06bb47e5980f51326307c7f4>:0 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand+<ExecuteEnumerableAndRecordExceptions>d__4.MoveNext () [0x0006b] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand.AdvanceEnumerator (System.Collections.IEnumerator enumerator) [0x00019] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand+<ExecuteEnumerable>d__2.MoveNext () [0x0010c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestRunner.NUnitExtensions.Runner.UnityLogCheckDelegatingCommand+<ExecuteEnumerable>d__3.MoveNext () [0x00161] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableApplyChangesToContextCommand+<ExecuteEnumerable>d__1.MoveNext () [0x00091] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+[Net] offline
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="3484" name="TumpNativeJoinTests" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-10-19 16:40:16Z" end-time="2026-10-19 16:40:51Z" duration="35.647315" total="9" passed="8" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="3491" name="AnUnsolicitedDisconnectClearsTheSessionOwnedTitle" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests.AnUnsolicitedDisconnectClearsTheSessionOwnedTitle" methodname="AnUnsolicitedDisconnectClearsTheSessionOwnedTitle" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" seed="64823742" result="Passed" start-time="2026-10-19 16:40:16Z" end-time="2026-10-19 16:40:16Z" duration="0.049834" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="10000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[NetDisconnect] peer=0 local=0 server=False connected=False
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-0][TransportShutdown] NetworkConnectionManager was shutdown. The transport was shutdown.
+[Net] offline
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="3488" name="CancelledDelayedJoinCannotCloseOrCompleteTheNewerView" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests.CancelledDelayedJoinCannotCloseOrCompleteTheNewerView" methodname="CancelledDelayedJoinCannotCloseOrCompleteTheNewerView" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" seed="1146376684" result="Passed" start-time="2026-10-19 16:40:16Z" end-time="2026-10-19 16:40:16Z" duration="0.080859" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="3490" name="JoinedTitleUsesOnlyTheCurrentListedRoomAndItsSeatedCode" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests.JoinedTitleUsesOnlyTheCurrentListedRoomAndItsSeatedCode" methodname="JoinedTitleUsesOnlyTheCurrentListedRoomAndItsSeatedCode" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" seed="1487709785" result="Passed" start-time="2026-10-19 16:40:16Z" end-time="2026-10-19 16:40:16Z" duration="0.074050" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[Net] offline
+[Net] offline
+[Net] offline
+[Net] offline
+[Net] offline
+[Net] offline
+[Net] offline
+[Net] offline
+[Net] offline
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="3489" name="LeavingTheHubCancelsItsJoinBeforeANewerRequestStarts" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests.LeavingTheHubCancelsItsJoinBeforeANewerRequestStarts" methodname="LeavingTheHubCancelsItsJoinBeforeANewerRequestStarts" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" seed="802195313" result="Passed" start-time="2026-10-19 16:40:16Z" end-time="2026-10-19 16:40:16Z" duration="0.052189" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] offline
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="3486" name="NativeJoinCompletesOnlyAfterConnectionAndSeatAdmission" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests.NativeJoinCompletesOnlyAfterConnectionAndSeatAdmission" methodname="NativeJoinCompletesOnlyAfterConnectionAndSeatAdmission" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" seed="1721275257" result="Passed" start-time="2026-10-19 16:40:16Z" end-time="2026-10-19 16:40:16Z" duration="0.091082" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="15000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] connecting to 127.0.0.1:50591
+[Net] connected as seat 2
+[NetLifecycle] requested-stop server=False relay=False origin=  at TumbangPreso.Net.NetSession.Stop () [0x00008] in <5de7a63aac14480daa9f03be86046b8b>:0 
+  at TumbangPreso.PlayTests.TumpNativeJoinTests+<NativeJoinCompletesOnlyAfterConnectionAndSeatAdmission>d__7.<>m__Finally1 () [0x00007] in <85a6467a06bb47e5980f51326307c7f4>:0 
+  at TumbangPreso.PlayTests.TumpNativeJoinTests+<NativeJoinCompletesOnlyAfterConnectionAndSeatAdmission>d__7.MoveNext () [0x00299] in <85a6467a06bb47e5980f51326307c7f4>:0 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand+<ExecuteEnumerableAndRecordExceptions>d__4.MoveNext () [0x0006b] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand.AdvanceEnumerator (System.Collections.IEnumerator enumerator) [0x00019] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand+<ExecuteEnumerable>d__2.MoveNext () [0x0010c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestRunner.NUnitExtensions.Runner.UnityLogCheckDelegatingCommand+<ExecuteEnumerable>d__3.MoveNext () [0x00161] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableApplyChangesToContextCommand+<ExecuteEnumerable>d__1.MoveNext () [0x00091] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="3487" name="NativeJoinShowsSourceListsErrorsAndAnActualBackPath" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests.NativeJoinShowsSourceListsErrorsAndAnActualBackPath" methodname="NativeJoinShowsSourceListsErrorsAndAnActualBackPath" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" seed="600980829" result="Passed" start-time="2026-10-19 16:40:16Z" end-time="2026-10-19 16:40:21Z" duration="5.041387" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpGeometry] CourtJoin-nearby-960x540/BackArrow: vertices=12, cull=False, alpha=1, depth=4, material=1
+[TumpUiCapture] CourtJoin-nearby-960x540 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtJoin-nearby-1280x720/BackArrow: vertices=12, cull=False, alpha=1, depth=4, material=1
+[TumpUiCapture] CourtJoin-nearby-1280x720 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtJoin-nearby-1366x768/BackArrow: vertices=12, cull=False, alpha=1, depth=4, material=1
+[TumpUiCapture] CourtJoin-nearby-1366x768 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtJoin-nearby-1920x1080/BackArrow: vertices=12, cull=False, alpha=1, depth=4, material=1
+[TumpUiCapture] CourtJoin-nearby-1920x1080 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtJoin-nearby-1920x1200/BackArrow: vertices=12, cull=False, alpha=1, depth=4, material=1
+[TumpUiCapture] CourtJoin-nearby-1920x1200 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtJoin-nearby-1280x960/BackArrow: vertices=12, cull=False, alpha=1, depth=4, material=1
+[TumpUiCapture] CourtJoin-nearby-1280x960 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtJoin-nearby-2560x1440/BackArrow: vertices=12, cull=False, alpha=1, depth=4, material=1
+[TumpUiCapture] CourtJoin-nearby-2560x1440 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtJoin-nearby-3440x1440/BackArrow: vertices=12, cull=False, alpha=1, depth=4, material=1
+[TumpUiCapture] CourtJoin-nearby-3440x1440 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtJoin-nearby-3840x1080/BackArrow: vertices=12, cull=False, alpha=1, depth=4, material=1
+[TumpUiCapture] CourtJoin-nearby-3840x1080 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtJoin-nearby-3840x2160/BackArrow: vertices=12, cull=False, alpha=1, depth=4, material=1
+[TumpUiCapture] CourtJoin-nearby-3840x2160 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtJoin-online-960x540/BackArrow: vertices=12, cull=False, alpha=1, depth=4, material=1
+[TumpUiCapture] CourtJoin-online-960x540 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtJoin-online-1280x720/BackArrow: vertices=12, cull=False, alpha=1, depth=4, material=1
+[TumpUiCapture] CourtJoin-online-1280x720 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtJoin-online-1366x768/BackArrow: vertices=12, cull=False, alpha=1, depth=4, material=1
+[TumpUiCapture] CourtJoin-online-1366x768 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtJoin-online-1920x1080/BackArrow: vertices=12, cull=False, alpha=1, depth=4, material=1
+[TumpUiCapture] CourtJoin-online-1920x1080 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtJoin-online-1920x1200/BackArrow: vertices=12, cull=False, alpha=1, depth=4, material=1
+[TumpUiCapture] CourtJoin-online-1920x1200 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtJoin-online-1280x960/BackArrow: vertices=12, cull=False, alpha=1, depth=4, material=1
+[TumpUiCapture] CourtJoin-online-1280x960 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtJoin-online-2560x1440/BackArrow: vertices=12, cull=False, alpha=1, depth=4, material=1
+[TumpUiCapture] CourtJoin-online-2560x1440 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtJoin-online-3440x1440/BackArrow: vertices=12, cull=False, alpha=1, depth=4, material=1
+[TumpUiCapture] CourtJoin-online-3440x1440 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtJoin-online-3840x1080/BackArrow: vertices=12, cull=False, alpha=1, depth=4, material=1
+[TumpUiCapture] CourtJoin-online-3840x1080 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+[TumpGeometry] CourtJoin-online-3840x2160/BackArrow: vertices=12, cull=False, alpha=1, depth=4, material=1
+[TumpUiCapture] CourtJoin-online-3840x2160 cream source=252,211,159 pixel=120,13,29; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="3485" name="NativeUnreachableJoinKeepsPanelOpenAndReportsFailure" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests.NativeUnreachableJoinKeepsPanelOpenAndReportsFailure" methodname="NativeUnreachableJoinKeepsPanelOpenAndReportsFailure" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" seed="1430799866" result="Failed" start-time="2026-10-19 16:40:21Z" end-time="2026-10-19 16:40:45Z" duration="24.082886" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="45000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: String containing "timed out" or String containing "reach" or String containing "failed"
+  But was:  "No answer from 127.0.0.1:57136. The host's firewall may be blocking the game."
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpNativeJoinTests+<NativeUnreachableJoinKeepsPanelOpenAndReportsFailure>d__6.MoveNext () [0x001ce] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\game-networking-lan-relay-d56db9\Assets\TumbangPreso\Tests\PlayMode\TumpNativeJoinTests.cs:90
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] offline
+[Net] connecting to 127.0.0.1:57136
+Failed to connect to server.
+[NetDisconnect] peer=0 local=0 server=False connected=False
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-4294967296][MaxConnectionAttempts] Connection closed due to maximum connection attempts reached.
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-4294967296][MaxConnectionAttempts] Connection closed due to maximum connection attempts reached.
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="3493" name="QueueRemainsNonmodalAndItsCancelReturnsTheStartAction" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests.QueueRemainsNonmodalAndItsCancelReturnsTheStartAction" methodname="QueueRemainsNonmodalAndItsCancelReturnsTheStartAction" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" seed="1602613647" result="Passed" start-time="2026-10-19 16:40:45Z" end-time="2026-10-19 16:40:51Z" duration="6.097699" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] QueueStatus-10-960x540 cream source=252,211,159 pixel=236,129,86; isolated UI camera, no ColourGrade.
+[TumpUiCapture] QueueStatus-10-1280x720 cream source=252,211,159 pixel=236,129,86; isolated UI camera, no ColourGrade.
+[TumpUiCapture] QueueStatus-10-1366x768 cream source=252,211,159 pixel=236,129,86; isolated UI camera, no ColourGrade.
+[TumpUiCapture] QueueStatus-10-1920x1080 cream source=252,211,159 pixel=236,126,85; isolated UI camera, no ColourGrade.
+[TumpUiCapture] QueueStatus-10-1920x1200 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+[TumpUiCapture] QueueStatus-10-1280x960 cream source=252,211,159 pixel=237,115,78; isolated UI camera, no ColourGrade.
+[TumpUiCapture] QueueStatus-10-2560x1440 cream source=252,211,159 pixel=236,121,81; isolated UI camera, no ColourGrade.
+[TumpUiCapture] QueueStatus-10-3440x1440 cream source=252,211,159 pixel=236,129,86; isolated UI camera, no ColourGrade.
+[TumpUiCapture] QueueStatus-10-3840x1080 cream source=252,211,159 pixel=236,129,86; isolated UI camera, no ColourGrade.
+[TumpUiCapture] QueueStatus-10-3840x2160 cream source=252,211,159 pixel=237,113,77; isolated UI camera, no ColourGrade.
+[TumpUiCapture] QueueStatus-180-960x540 cream source=252,211,159 pixel=236,129,86; isolated UI camera, no ColourGrade.
+[TumpUiCapture] QueueStatus-180-1280x720 cream source=252,211,159 pixel=236,128,86; isolated UI camera, no ColourGrade.
+[TumpUiCapture] QueueStatus-180-1366x768 cream source=252,211,159 pixel=236,128,86; isolated UI camera, no ColourGrade.
+[TumpUiCapture] QueueStatus-180-1920x1080 cream source=252,211,159 pixel=236,123,83; isolated UI camera, no ColourGrade.
+[TumpUiCapture] QueueStatus-180-1920x1200 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+[TumpUiCapture] QueueStatus-180-1280x960 cream source=252,211,159 pixel=238,108,74; isolated UI camera, no ColourGrade.
+[TumpUiCapture] QueueStatus-180-2560x1440 cream source=252,211,159 pixel=236,116,79; isolated UI camera, no ColourGrade.
+[TumpUiCapture] QueueStatus-180-3440x1440 cream source=252,211,159 pixel=236,129,86; isolated UI camera, no ColourGrade.
+[TumpUiCapture] QueueStatus-180-3840x1080 cream source=252,211,159 pixel=236,127,85; isolated UI camera, no ColourGrade.
+[TumpUiCapture] QueueStatus-180-3840x2160 cream source=252,211,159 pixel=238,110,75; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="3492" name="RestartingAListeningClientKeepsOnlyTheNewTitleOperation" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests.RestartingAListeningClientKeepsOnlyTheNewTitleOperation" methodname="RestartingAListeningClientKeepsOnlyTheNewTitleOperation" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" seed="1576837480" result="Passed" start-time="2026-10-19 16:40:51Z" end-time="2026-10-19 16:40:51Z" duration="0.070051" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] connecting to 127.0.0.1:18679
+[NetLifecycle] requested-stop server=False relay=False origin=  at TumbangPreso.Net.NetSession.EnsureStoppedAsync (System.Nullable`1[T] joinAttempt) [0x0005b] in <5de7a63aac14480daa9f03be86046b8b>:0 
+  at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.Start[TStateMachine] (TStateMachine& stateMachine) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Net.NetSession.EnsureStoppedAsync (System.Nullable`1[T] joinAttempt) [0x00000] in <5de7a63aac14480daa9f03be86046b8b>:0 
+  at TumbangPreso.Net.NetSession.StartClientAsync (System.String address, System.Int32 port, System.Threading.CancellationToken cancellationToken) [0x00057] in <5de7a63aac14480daa9f03be86046b8b>:0 
+  at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[TResult].Start[TStateMachine] (TStateMachine& stateMachine) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Net.NetSession.StartClientAsync (System.String address, System.Int32 port, System.Threading.CancellationToken cancellationToken) [0x00000] in <5de7a63aac14480daa9f03be86046b8b>:0 
+  at TumbangPreso.PlayTests.TumpNativeJoinTests+<RestartingAListeningClientKeepsOnlyTheNewTitleOperation>d__13.MoveNext () [0x000d8] in <85a6467a06bb47e5980f51326307c7f4>:0 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand+<ExecuteEnumerableAndRecordExceptions>d__4.MoveNext () [0x0006b] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand.AdvanceEnumerator (System.Collections.IEnumerator enumerator) [0x00019] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand+<ExecuteEnumerable>d__2.MoveNext () [0x0010c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestRunner.NUnitExtensions.Runner.UnityLogCheckDelegatingCommand+<ExecuteEnumerable>d__3.MoveNext () [0x00161] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableApplyChangesToContextCommand+<ExecuteEnumerable>d__1.MoveNext () [0x00091] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[Net] connecting to 127.0.0.1:18680
+[NetLifecycle] requested-stop server=False relay=False origin=  at TumbangPreso.Net.NetSession.CancelPendingOperation () [0x0007a] in <5de7a63aac14480daa9f03be86046b8b>:0 
+  at TumbangPreso.Net.NetSession.Stop () [0x00000] in <5de7a63aac14480daa9f03be86046b8b>:0 
+  at TumbangPreso.PlayTests.TumpNativeJoinTests+<RestartingAListeningClientKeepsOnlyTheNewTitleOperation>d__13.<>m__Finally1 () [0x00007] in <85a6467a06bb47e5980f51326307c7f4>:0 
+  at TumbangPreso.PlayTests.TumpNativeJoinTests+<RestartingAListeningClientKeepsOnlyTheNewTitleOperation>d__13.MoveNext () [0x00224] in <85a6467a06bb47e5980f51326307c7f4>:0 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand+<ExecuteEnumerableAndRecordExceptions>d__4.MoveNext () [0x0006b] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand.AdvanceEnumerator (System.Collections.IEnumerator enumerator) [0x00019] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableTestMethodCommand+<ExecuteEnumerable>d__2.MoveNext () [0x0010c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestRunner.NUnitExtensions.Runner.UnityLogCheckDelegatingCommand+<ExecuteEnumerable>d__3.MoveNext () [0x00161] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.EnumerableApplyChangesToContextCommand+<ExecuteEnumerable>d__1.MoveNext () [0x00091] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <904f5c806a7a4182adc46e271914aa74>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+Saving results to: C:/Users/Andrei/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -501,7 +501,7 @@ namespace TumbangPreso.UI
                 SetStatus($"Connecting to {addr}...");
                 bool ok = await _net.StartClientAsync(addr);
                 if (ok) SceneFlow.Go(SceneFlow.MatchSetup);
-                else SetStatus(Reason($"Could not reach {addr}."));
+                else SetStatus(Core.JoinFailureRules.FailureLine(addr, _net != null ? _net.Status : null, NetSession.ProtocolVersion));
                 return;
             }
 

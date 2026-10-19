@@ -1,3 +1,32 @@
+### LAN-VPN-JOIN-1020: a LAN row over Hamachi "stuck on joining" (IN PROGRESS)
+
+Report 2026-10-20 with a screenshot: JOIN GAME, DEDICATED (LAN), one row ("MAP UNKNOWN", 1 / 4), and after
+JOIN "Joining 25.17.144.85:8910..." with nothing changing. This PC is the joiner (Hamachi 25.16.130.116);
+both of its networks, Hamachi included, are Windows Public, and its firewall blocks the Unity Editor inbound
+on Public. A read-only audit of the join path (2026-10-20) found:
+- The beacon is an outbound broadcast on 8911 (`LanBeacon`), so a host whose firewall drops inbound UDP 8910
+  on its VPN adapter is still listed. The host binds `0.0.0.0`; nothing in the game adds a firewall rule.
+- An unanswered join ends after about 24 to 26 s (2000 ms x 12 transport attempts, then the seat deadline),
+  but the line never changed meanwhile, and the failure read "Could not reach ..." with Netcode's raw
+  `[Disconnect Event]` text, or "Could not reach" over a host's plain "Game version mismatch (network protocol N)".
+- `HubJoin.Join` was `async void` with no catch: a throw before the attempt's own catch left `_busy` set and
+  the line frozen for good. The beacon carries no protocol and no map; MAP UNKNOWN is a constant (`HubRoom.FromLan`).
+- [x] `Core.JoinFailureRules`: the waiting line counts seconds and names the host's firewall after 8 s on an
+  address join; the failure line says "No answer from ...", "That host runs another version (protocol N,
+  yours M)", "That room is full" or the host's own sentence. Used by `LobbyJoinPanel` (address and LAN
+  match) and the legacy `ConvertedMultiplayerSetup`. Core.Tests `JoinFailureRulesTests` 11/11.
+- [x] `HubJoin.Join` always ends (catch, `_busy` cleared) and refreshes its line each second.
+- [x] VPN guidance in [NETWORKING](NETWORKING.md#lan-over-a-vpn-hamachi-radmin-zerotier).
+- [x] Native PlayMode on this source: `HubJoinWaitTests` 1/1 (real JOIN screen, real transport, an unanswered
+  loopback port: counted wait, firewall hint, "No answer", screen usable), `TumpNativeJoinTests` 9/9 (its
+  unreachable case now asserts the new line), `PlayerHubFriendJoinHandlerTests` 2/2.
+  [Evidence](reports/lan-vpn-join-2026-10-20/README.md).
+- [ ] The reporter's host PC: allow the host's game (or Editor) inbound on Public networks, same build on both
+  (protocol 174 player built 2026-10-20 from `8c4164b2a`), then a real join over Hamachi.
+- [ ] Beacon v3 (new magic) carrying protocol and map, so a row from another build reads DIFFERENT VERSION and
+  is not joinable, and MAP is filled in. A wire change: needs its own protocol number.
+- [ ] Prefer an address on a subnet both machines share over 25.0.0.0/8 when a host is seen on two adapters.
+
 ### ROOM-QOL-MERGE-1019: the player's room on QoLUpdates (IN PROGRESS)
 
 Request 2026-10-19: "merge it to qol updates", the room branch. `player-room-depth-and-bots` (`380430039`)
