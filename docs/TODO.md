@@ -14,9 +14,9 @@ for other non-taya players right before it starts"*.
 - [x] After the spotlight an ATTACKER's own screen cuts to their own character for 1.6 s (framed from
   their renderer bounds, slow push-in, featured greeting, "YOU · ATTACKER"), and the return to their view
   starts from that shot. The taya's and a watcher's screens keep the spotlight for the same time, so every
-  peer's film is the same length (+1.0 s on each directed court). Presentation only: no wire change,
-  protocol 172 unchanged; input is already held by the opening on every device, so keyboard, pad and
-  touch are unaffected.
+  peer's film is the same length (+1.0 s on each directed court). Presentation only: no wire change and
+  no protocol bump (172 on ASTRAReworks, 173 on QoLUpdates from Payo); input is already held by the
+  opening on every device, so keyboard, pad and touch are unaffected.
 - [x] Focused native PlayMode: `DirectedMapArrivalTests` 18/20 with five new closing-beat cases and the
   three natural directed countdowns asserting the attacker's own beat (the two failures are
   DIRECTED-ARRIVAL-SOLE-1019, identical on the baseline); `ArrivalHandoffTests`, `LateJoinReadyGateTests`
@@ -24,6 +24,9 @@ for other non-taya players right before it starts"*.
   [arrival-own-beat-2026-10-19](reports/arrival-own-beat-2026-10-19/README.md).
 - [x] Two real players over Relay on Kanto with this source's built player: the host as taya keeps the
   spotlight, the joiner (seat 1) closes on itself; both films 12.0 s, both return to their own views.
+- [x] Merged into QoLUpdates on top of e33323e13 (only ArenaIntro.cs overlapped, in separate hunks). The
+  same four fixtures on the merged tree: 41/43, the two failures DIRECTED-ARRIVAL-SOLE-1019 with identical
+  values (`merged-qolupdates.xml`).
 - [ ] Verdict on the shot in play (framing, length, caption). Four rejected framings are in the report.
 - [ ] Decide whether Tondo's arrival (every seat gets one portrait, the last is P4) and the Arena opening
   (the taya reveal is mid-film, the stage build closes it for everyone) also want a personal closing beat.

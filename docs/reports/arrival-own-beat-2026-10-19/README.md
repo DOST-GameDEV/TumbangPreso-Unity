@@ -90,6 +90,8 @@ corners of the renderer bounds are in frame and that the player spans at least h
   (ASTRAReworks plus the trace), so they predate this change: DIRECTED-ARRIVAL-SOLE-1019.
 - `ready-and-handoff-final.xml`: `ArrivalHandoffTests` 8, `LateJoinReadyGateTests` 9 and
   `MatchStartContractTests` 6, all 23 pass on the final source.
+- `merged-qolupdates.xml`: after merging into QoLUpdates `e33323e13` (protocol 173, Payo), the same
+  four fixtures give 41/43 with the same two sole failures and identical values.
 - Real players, Relay, Kanto, the built player of this source (`kanto-relay-host-vs-joiner.jpg`, host
   left, joiner right, 6, 9, 10 and 11 s into the film): the host as taya keeps "DANTE · PLAYER 1 ·
   TAYA"; the joiner (seat 1) cuts to "YASMIN · YOU · ATTACKER"; both return to their own views and the
