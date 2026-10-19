@@ -41,6 +41,8 @@ namespace TumbangPreso.EditorTools.MapKit
         {
             EditorApplication.playModeStateChanged -= OnPlayMode;
             EditorApplication.playModeStateChanged += OnPlayMode;
+            EditorApplication.update -= Watch;
+            EditorApplication.update += Watch;
             if (EditorApplication.isPlaying && !string.IsNullOrEmpty(SessionState.GetString(QueueKey, ""))) Begin();
         }
 
@@ -59,6 +61,22 @@ namespace TumbangPreso.EditorTools.MapKit
         public static void MenuArena() => Start(false, SceneFlow.Arena);
 
         public static void RunArena() => Start(true, SceneFlow.Arena);
+
+        // Payo's card (owner, 2026-10-19: "render a map card and push it"), when it joined the map list.
+        [MenuItem("Tumbang Preso/Maps/Render Payo Card")]
+        public static void MenuPayo() => Start(false, SceneFlow.Payo);
+
+        // `Temp/mapcard.request` holding a map's scene name renders that card in the open editor (no batch run while the
+        // owner's editor is up); the answer is the log line "[MapCard] ...".
+        private static void Watch()
+        {
+            const string request = "Temp/mapcard.request";
+            if (!File.Exists(request) || EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isCompiling) return;
+            if (File.Exists("Temp/cutscene-film.lock")) return;
+            string map = File.ReadAllText(request).Trim();
+            File.Delete(request);
+            if (SceneFlow.MapRegistry.Any(e => e.Id == map)) Start(false, map);
+        }
 
         private static void Start(bool batch, params string[] maps)
         {
@@ -145,6 +163,12 @@ namespace TumbangPreso.EditorTools.MapKit
                 {
                     at = new Vector3(0, floor, 0) + dir * 38f + Vector3.up * 27f;
                     aim = new Vector3(0, floor, 0) - dir * 2f;
+                }
+                // Payo: the court and its stones from over the north basin, the temple's terraces, the town and the hills behind.
+                if (map == SceneFlow.Payo)
+                {
+                    at = new Vector3(0, floor, 0) + dir * 44f + Vector3.up * 24f;
+                    aim = new Vector3(0, floor + 4f, 0) - dir * 10f;
                 }
                 cam.fieldOfView = Camera.HorizontalToVerticalFieldOfView(80f, 16f / 9f);
                 cam.transform.SetPositionAndRotation(at, Quaternion.LookRotation(aim - at));
