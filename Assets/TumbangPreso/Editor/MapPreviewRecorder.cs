@@ -1,3 +1,4 @@
+using System.Linq;
 using System;
 using System.Collections;
 using System.Diagnostics;
@@ -22,6 +23,26 @@ namespace TumbangPreso.EditorTools
         {
             EditorApplication.playModeStateChanged-=Changed;
             EditorApplication.playModeStateChanged+=Changed;
+            EditorApplication.update-=Watch;EditorApplication.update+=Watch;
+        }
+        // `Temp/preview.request` = "MAP FFMPEG_PATH": records in the OPEN editor and leaves Play instead of exiting Unity
+        // (Payo, 2026-10-19: the owner's editor stays up), encoding with NVENC where the machine's ffmpeg has no libx264.
+        const string InteractiveKey="MapPreviewRecorder.Interactive";
+        static void Watch()
+        {
+            const string request="Temp/preview.request";
+            if(!File.Exists(request)||EditorApplication.isPlayingOrWillChangePlaymode||EditorApplication.isCompiling||File.Exists("Temp/cutscene-film.lock"))return;
+            string text=File.ReadAllText(request).Trim();File.Delete(request);
+            int cut=text.IndexOf(' ');if(cut<0)return;
+            SessionState.SetString(MapsKey,text.Substring(0,cut));SessionState.SetString(OutputKey,"Logs/preview-capture-payo");
+            SessionState.SetString(EncoderKey,text.Substring(cut+1).Trim());SessionState.SetBool(InteractiveKey,true);
+            EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Single);
+            EditorApplication.EnterPlaymode();
+        }
+        static void Finish(int code)
+        {
+            if(SessionState.GetBool(InteractiveKey,false)){SessionState.EraseBool(InteractiveKey);EditorApplication.ExitPlaymode();}
+            else EditorApplication.Exit(code);
         }
         /// <summary>Batch entry. Run in an isolated project copy; -tp-preview-maps accepts comma-separated scene IDs.</summary>
         public static void Record()
@@ -54,7 +75,7 @@ namespace TumbangPreso.EditorTools
                 {
                     Debug.LogException(error);
                     while(stack.Count>0)try{(stack.Pop() as IDisposable)?.Dispose();}catch(Exception cleanup){Debug.LogException(cleanup);}
-                    SessionState.EraseString(MapsKey);EditorApplication.Exit(1);yield break;
+                    SessionState.EraseString(MapsKey);Finish(1);yield break;
                 }
                 if(!moved){(stack.Pop() as IDisposable)?.Dispose();continue;}
                 if(current is IEnumerator nested)stack.Push(nested);else yield return current;
@@ -69,7 +90,7 @@ namespace TumbangPreso.EditorTools
                 if(Array.IndexOf(SceneFlow.Maps,map)<0)throw new InvalidOperationException("Unregistered capture map: "+map);
                 yield return Capture(map,output,encoderPath);
             }
-            SessionState.EraseString(MapsKey);Debug.Log("[MapPreviewRecorder] All requested recordings completed.");EditorApplication.Exit(0);
+            SessionState.EraseString(MapsKey);Debug.Log("[MapPreviewRecorder] All requested recordings completed.");Finish(0);
         }
         static IEnumerator Capture(string map,string output,string encoderPath)
         {
@@ -93,7 +114,9 @@ namespace TumbangPreso.EditorTools
             typeof(MapPreviewSurface).GetField("_target",BindingFlags.Instance|BindingFlags.NonPublic).SetValue(view,target);
             view.Camera.targetTexture=target;root.GetComponent<RawImage>().texture=target;source.Release();Object.Destroy(source);
             var encoder=new Process{StartInfo=new ProcessStartInfo{FileName=encoderPath,UseShellExecute=false,CreateNoWindow=true,RedirectStandardInput=true,RedirectStandardError=true}};
-            foreach(string arg in new[]{"-y","-loglevel","warning","-f","rawvideo","-pixel_format","rgb24","-video_size","1920x1080","-framerate","30","-i","pipe:0","-vf","vflip","-an","-c:v","libx264","-preset","slower","-crf","14","-pix_fmt","yuv420p","-movflags","+faststart",video})encoder.StartInfo.ArgumentList.Add(arg);
+            foreach(string arg in new[]{"-y","-loglevel","warning","-f","rawvideo","-pixel_format","rgb24","-video_size","1920x1080","-framerate","30","-i","pipe:0","-vf","vflip","-an","-c:v"}.Concat(SessionState.GetBool(InteractiveKey,false)
+                ?new[]{"hevc_nvenc","-preset","p7","-tune","hq","-multipass","fullres","-rc","vbr","-b:v","28M","-maxrate","40M","-bufsize","80M","-bf","0","-spatial-aq","1","-profile:v","main","-tag:v","hvc1"}
+                :new[]{"libx264","-preset","slower","-crf","14"}).Concat(new[]{"-pix_fmt","yuv420p","-movflags","+faststart",video}))encoder.StartInfo.ArgumentList.Add(arg);
             if(!encoder.Start())throw new InvalidOperationException("Encoder did not start.");var errors=encoder.StandardError.ReadToEndAsync();
             var image=new Texture2D(width,height,TextureFormat.RGB24,false);var display=RenderTexture.GetTemporary(width,height,0,RenderTextureFormat.ARGB32,RenderTextureReadWrite.sRGB);
             float capture=Time.captureDeltaTime;var previous=RenderTexture.active;bool srgb=GL.sRGBWrite;
