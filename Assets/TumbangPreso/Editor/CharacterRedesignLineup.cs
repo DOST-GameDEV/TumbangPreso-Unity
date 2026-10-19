@@ -57,7 +57,7 @@ namespace TumbangPreso.EditorTools
             ("nemu", "Nemu"), ("rafi", "Ilyas"), ("amihan", "Amihan"),
             // Owner, 2026-10-05: "should probably work on a paete and phaister rework". Lineup figures
             // only; the roster still plays their real models.
-            ("phaister", "Soraya"), ("paete", "Paete"),
+            ("phaister", "Phaister"), ("paete", "Paete"),
         };
 
         [InitializeOnLoadMethod]

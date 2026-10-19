@@ -21,7 +21,7 @@ namespace TumbangPreso.EditorTools
             ("cheska",   "Yasmin",   "Assets/TumbangPreso/Art/characters/persons/team-cheska.glb"),
             ("dante",    "Dante",    "Assets/TumbangPreso/Art/characters/persons/team-dante.glb"),
             ("nemu",     "Nemu",     "Assets/TumbangPreso/Art/characters/persons/team-nemu.glb"),
-            ("phaister", "Soraya", "Assets/TumbangPreso/Art/characters/persons/team-phaister.glb"),
+            ("phaister", "Phaister", "Assets/TumbangPreso/Art/characters/persons/team-phaister.glb"),
             ("sean",     "Rago",     "Assets/TumbangPreso/Art/characters/persons/team-sean.glb"),
             ("zack",     "Isagani",     "Assets/TumbangPreso/Art/characters/persons/team-zack.glb"),
             ("rafi",     "Ilyas",     "Assets/TumbangPreso/Art/characters/persons/team-rafi.glb"),

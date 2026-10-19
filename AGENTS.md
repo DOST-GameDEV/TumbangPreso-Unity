@@ -21,12 +21,20 @@ replaced, retired and genuinely blocked requirements without reviving old ideas.
 ## Owner-approved character names, October 4
 
 The displayed roster is Basilio (dante), Yasmin (cheska), Rago (sean),
-Isagani (zack), Nemu (nemu), Soraya (phaister), Ilyas (rafi), Amihan (amihan)
+Isagani (zack), Nemu (nemu), Phaister (phaister), Ilyas (rafi), Amihan (amihan)
 and Paete (paete). Use the current display names in UI, captions, dialogue and
 active character documentation. Existing lowercase IDs, source type names and
 asset keys preserve saves, mastery, replay and network compatibility; they do not
-supply player-facing labels. The finalized Phaister protection below applies to
-Soraya's existing character. Naming does not authorize kit or art redesign.
+supply player-facing labels. The witch was renamed from Soraya to Phaister by the owner on 2026-10-20;
+the finalized Phaister protection below still applies to her existing character.
+Naming does not authorize kit or art redesign.
+
+## Owner hero lock, October 20
+
+Only Nemu, Paete, Phaister, Amihan and Dante (dante) are playable, offline, on
+LAN and online. The other heroes still show in character select, hatched, and
+cannot be unlocked, bought, tried in Practice or fielded by a bot.
+`EconomyRules.UnlockedHeroes` is the one list every gate reads; widen it there.
 
 ## Finalized Paete And Phaister
 

@@ -393,6 +393,8 @@ namespace TumbangPreso.UI
         public void PublishPicks()
         {
             var s = Settings.SettingsStore.Current;
+            // A saved pick of a hero that is no longer unlocked becomes the first unlocked one.
+            s.CharacterPick = EconomyRules.PlayablePick(Roster.GetPeople(SceneFlow.SelectedMode), s.CharacterPick);
             if (IsLive) MatchRpc.Instance?.SelectLobbyPickServerRpc(s.CharacterPick, s.CanPick, s.SlipperPick);
             Refresh();
         }

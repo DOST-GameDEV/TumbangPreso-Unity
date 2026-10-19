@@ -274,8 +274,8 @@ namespace TumbangPreso.UI.Hub
         {
             var person = Roster.At(People, index);
             if (person == null) return false;
-            // Every networked room, Online and LAN alike (`WalletStore.Usable` has the history).
-            return !Net.WalletStore.OwnershipRoute || HubOwnership.OwnsHeroInRoom(person.Id);
+            // Every route, offline included (`EconomyRules.UnlockedHeroes`, owner 2026-10-20).
+            return HubOwnership.OwnsHeroInRoom(person.Id);
         }
 
         private void Pick(int index)
@@ -301,7 +301,7 @@ namespace TumbangPreso.UI.Hub
 
         private void Select()
         {
-            if (!Usable(_pick)) { MenuSfx.Error(); Hub.Toast("Unlock this hero in the SHOP to play it online or on LAN. Try it in Practice."); return; }
+            if (!Usable(_pick)) { MenuSfx.Error(); Hub.Toast("This hero is locked. Pick a hero without stripes."); return; }
             Hub.Host.PublishPicks();
             if (!Timed) { Close(); return; }
             _locked = true;
@@ -383,7 +383,7 @@ namespace TumbangPreso.UI.Hub
             HubKit.LabelOf(_select).fontSize = HubStyle.Size(HubStyle.Display);
             _select.interactable = !_locked;
             HubKit.SetFill(_select, can ? HubStyle.Chartreuse : HubStyle.Honey);
-            _hint.text = !can ? "Unlock in the SHOP, or try it in Practice."
+            _hint.text = !can ? "This hero is locked."
                        : _locked ? "Waiting for everyone to lock in." : "";
             _shownSeats = "";
         }

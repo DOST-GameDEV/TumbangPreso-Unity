@@ -2334,7 +2334,8 @@ namespace TumbangPreso.Net
                     MatchRpc.Instance?.Initialize(_nm);
                     SetStatus("connected");
                     var s = Settings.SettingsStore.Current;
-                    int charPick = s.CharacterPick >= 0 ? s.CharacterPick : 0;
+                    // ⚠️ A LOCKED HERO NEVER LEAVES THIS MACHINE (`EconomyRules.UnlockedHeroes`).
+                    int charPick = Core.EconomyRules.PlayablePick(Core.Roster.GetPeople(UI.SceneFlow.SelectedMode), s.CharacterPick >= 0 ? s.CharacterPick : 0);
                     int canPick = s.CanPick >= 0 ? s.CanPick : 0;
                     int slipperPick = s.SlipperPick >= 0 ? s.SlipperPick : 0;
                     var identity = GameServices.Account;
@@ -2412,7 +2413,7 @@ namespace TumbangPreso.Net
             // still arrive on the RPC.
             if (clientId == _nm.LocalClientId)
             {
-                int charPick = settings.CharacterPick >= 0 ? settings.CharacterPick : 0;
+                int charPick = Core.EconomyRules.PlayablePick(Core.Roster.GetPeople(UI.SceneFlow.SelectedMode), settings.CharacterPick >= 0 ? settings.CharacterPick : 0);
                 int canPick = settings.CanPick >= 0 ? settings.CanPick : 0;
                 int slipperPick = settings.SlipperPick >= 0 ? settings.SlipperPick : 0;
                 Lobby.SetPicks((int)clientId, charPick, canPick, slipperPick);

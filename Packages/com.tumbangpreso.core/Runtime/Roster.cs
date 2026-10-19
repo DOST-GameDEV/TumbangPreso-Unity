@@ -136,7 +136,7 @@ namespace TumbangPreso.Core
             new RosterEntry("sean",        "RAGO",            1,    5,    3),
             new RosterEntry("zack",        "ISAGANI",         4,    3,    3),
             new RosterEntry("nemu",        "NEMU",            4,    3,    4),
-            new RosterEntry("phaister",    "SORAYA",          4,    4,    3),
+            new RosterEntry("phaister",    "PHAISTER",          4,    4,    3),
             new RosterEntry("rafi",        "ILYAS",           4,    2,    4),
             // ⚠️ AMIHAN, APPENDED (2026-09-25). Append only: a person index crosses the wire as a
             // bare int, so a row inserted above an existing one renders another character for
@@ -172,7 +172,7 @@ namespace TumbangPreso.Core
             new RosterEntry("sean",        "RAGO",            1,    5,    3),
             new RosterEntry("zack",        "ISAGANI",         4,    3,    3),
             new RosterEntry("nemu",        "NEMU",            4,    3,    4),
-            new RosterEntry("phaister",    "SORAYA",          4,    4,    3),
+            new RosterEntry("phaister",    "PHAISTER",          4,    4,    3),
             new RosterEntry("rafi",        "ILYAS",           4,    2,    4),
             // ⚠️ AMIHAN, APPENDED (2026-09-25). Append only: a person index crosses the wire as a
             // bare int, so a row inserted above an existing one renders another character for

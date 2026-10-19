@@ -23,8 +23,11 @@ namespace TumbangPreso.UI.Hub
             return wallet.Owns(itemId);
         }
 
-        public static bool OwnsHero(string heroId) =>
-            !EconomyRules.IsHero(heroId) || Owns(EconomyRules.ItemId(ShopKind.Hero, heroId));
+        /// <summary>
+        /// ⚠️ A HERO IS PLAYABLE ONLY WHEN IT IS IN `EconomyRules.UnlockedHeroes`, on every route,
+        /// whatever the wallet says (owner, 2026-10-20). Items still follow <see cref="Owns"/>.
+        /// </summary>
+        public static bool OwnsHero(string heroId) => EconomyRules.IsHeroUnlocked(heroId);
 
         /// <summary>
         /// Whether this machine may PLAY a hero in a networked room (Online or LAN).
@@ -37,12 +40,9 @@ namespace TumbangPreso.UI.Hub
         /// </summary>
         public static bool OwnsHeroInRoom(string heroId) => OwnsHeroInRoom(heroId, GameServices.Wallet);
 
-        public static bool OwnsHeroInRoom(string heroId, Net.WalletStore wallet)
-        {
-            if (!EconomyRules.IsHero(heroId)) return true;
-            string id = EconomyRules.ItemId(ShopKind.Hero, heroId);
-            return wallet != null ? wallet.Owns(id) : EconomyRules.IsStarter(id);
-        }
+        public static bool OwnsHeroInRoom(string heroId, Net.WalletStore wallet) =>
+            // The wallet no longer widens it: `EconomyRules.UnlockedHeroes` is the whole list.
+            EconomyRules.IsHeroUnlocked(heroId);
     }
 
     /// <summary>

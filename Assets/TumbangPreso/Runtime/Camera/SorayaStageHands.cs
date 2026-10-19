@@ -3,7 +3,7 @@ using UnityEngine;
 namespace TumbangPreso.CameraSystem
 {
     /// <summary>
-    /// ⚠️⚠️ SORAYA'S BARE HANDS: A STAGE MAGICIAN'S HANDS, ALWAYS MID-TRICK.
+    /// ⚠️⚠️ PHAISTER'S BARE HANDS: A STAGE MAGICIAN'S HANDS, ALWAYS MID-TRICK.
     ///
     /// Owner, 2026-10-06, of a moth in a top hat riding her hand (`SorayaMothHand`, kept, switched off): *"i like it but we
     /// were trying to reserve the pet idea only for nemu ... so i need something for the bare hands"*. So no creature and
@@ -111,7 +111,7 @@ namespace TumbangPreso.CameraSystem
             _leftArm = arms.LeftHandForProps();
             _rightArm = arms.RightHandForProps();
             if (_leftArm == null) return false;
-            _root = new GameObject("~HandCompanion Soraya stage hands").transform;
+            _root = new GameObject("~HandCompanion Phaister stage hands").transform;
             _root.SetParent(arms.transform, false);
             _root.gameObject.layer = arms.gameObject.layer;
             var model = HandCompanionProp.Spawn("phaister_hands", _root, Palette);

@@ -173,6 +173,74 @@ namespace TumbangPreso.Core
         public static readonly string[] StarterSlippers = { "tsinelas", "crocs", "pantulog", "sike" };
         public static readonly string[] StarterCans = { "pasip", "boyben", "decades", "metal" };
 
+        /// <summary>
+        /// ⚠️⚠️ THE ONLY HEROES ANYBODY MAY PLAY, ON EVERY ROUTE: OFFLINE, LAN AND ONLINE (owner,
+        /// 2026-10-20: "make these characters the only unlocked characters. do this for both lan,
+        /// multiplayer, and offline"). This is narrower than ownership on purpose: a wallet that
+        /// bought or migrated another hero still cannot field it, and Practice no longer opens the
+        /// rest. Bots are not limited; this is about the hero a PERSON brings. Classic people are
+        /// never heroes (`IsHero`), so Classic and the tournament preset are untouched.
+        /// Widen it here in one line and every gate follows.
+        /// </summary>
+        public static readonly string[] UnlockedHeroes = { "nemu", "paete", "phaister", "amihan", "dante" };
+
+        /// <summary>True for every non-hero id, and for a hero only when it is in <see cref="UnlockedHeroes"/>.</summary>
+        public static bool IsHeroUnlocked(string heroId) =>
+            !IsHero(heroId) || System.Array.IndexOf(UnlockedHeroes, heroId) >= 0;
+
+        /// <summary>
+        /// The pick a person actually plays from <paramref name="people"/>: their own when it is
+        /// unlocked (or is not a hero at all), otherwise the first unlocked hero in that list.
+        /// ⚠️ A NEGATIVE PICK PASSES THROUGH UNCHANGED, because "no pick yet" means "let the caller
+        /// choose" everywhere this is read, and turning it into 0 would change that contract.
+        /// </summary>
+        public static int PlayablePick(IReadOnlyList<RosterEntry> people, int pick)
+        {
+            if (pick < 0 || people == null || people.Count == 0) return pick;
+            var person = Roster.At(people, pick);
+            if (person == null || IsHeroUnlocked(person.Id)) return pick;
+            for (int i = 0; i < people.Count; i++)
+                if (IsHero(people[i].Id) && IsHeroUnlocked(people[i].Id)) return i;
+            return pick;
+        }
+
+        /// <summary>
+        /// The first unlocked entry at or after <paramref name="start"/>, walking forward and
+        /// wrapping, skipping <paramref name="avoid"/>. ⚠️ BOTS GO THROUGH THIS TOO (owner,
+        /// 2026-10-20: "do not make it unlockable and unusable by ai"), so a bot never fields a
+        /// locked hero. A pure function of its inputs, so every peer resolves the same seat.
+        /// </summary>
+        public static int NextUnlockedPick(IReadOnlyList<RosterEntry> people, int start, int avoid = -1)
+        {
+            if (people == null || people.Count == 0) return 0;
+            int n = people.Count;
+            int from = ((start % n) + n) % n;
+            for (int step = 0; step < n; step++)
+            {
+                int candidate = (from + step) % n;
+                if (candidate != avoid && IsHeroUnlocked(people[candidate].Id)) return candidate;
+            }
+            for (int step = 0; step < n; step++)
+            {
+                int candidate = (from + step) % n;
+                if (IsHeroUnlocked(people[candidate].Id)) return candidate;
+            }
+            return from;
+        }
+
+        /// <summary>
+        /// MIRROR's character of the week, chosen among the UNLOCKED entries only. For a list with
+        /// nothing locked (Classic) it is exactly `CustomGameRules.MirrorIndex`.
+        /// </summary>
+        public static int UnlockedMirrorPick(IReadOnlyList<RosterEntry> people, DateTime utc)
+        {
+            if (people == null || people.Count == 0) return 0;
+            var open = new List<int>();
+            for (int i = 0; i < people.Count; i++) if (IsHeroUnlocked(people[i].Id)) open.Add(i);
+            if (open.Count == 0) return CustomGameRules.MirrorIndex(people.Count, utc);
+            return open[CustomGameRules.MirrorIndex(open.Count, utc)];
+        }
+
         public static string ItemId(ShopKind kind, string refId) => kind switch
         {
             ShopKind.Hero => "hero:" + refId,

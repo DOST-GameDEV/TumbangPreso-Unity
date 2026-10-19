@@ -3,7 +3,7 @@
 Owner-requested direction, 2026-09-14. These are original fictional biographies
 for TUMP's existing sporting world. Real places ground the stories; they do not
 make these athletes historical people or representatives of everyone from a region.
-Owner-approved names, October4: Dante, Yasmin, Rago, Isagani, Nemu, Soraya,
+Owner-approved names, October4: Dante, Yasmin, Rago, Isagani, Nemu, Phaister,
 Ilyas, Amihan and Paete. Stable roster/save IDs retain existing progression.
 
 ## Rago: San Fernando, Pampanga
@@ -96,13 +96,13 @@ stopping whenever a game had one place left. She seems to miss half the
 conversation, then remembers the detail everyone else forgot. Kuro has always
 been part of that routine: a curious little shadow at her shoulder, an alarming
 presence when a match turns serious. She refuses to explain him the same way
-twice. Soraya keeps trying to catch her by surprise. Nemu quietly saves those
+twice. Phaister keeps trying to catch her by surprise. Nemu quietly saves those
 attempts for the walk home.
 
 Kuro is a personal fictional companion, not a claim about local ancestor spirits.
 Keep the restored expressive small ghost and current monster transformation.
 
-## Soraya: Capul, Northern Samar
+## Phaister: Capul, Northern Samar
 
 Origin: **Capul, Northern Samar**. Current practice court: **Ilalim ng Tulay**,
 near the project's existing Gilmore, Quezon City reference.
@@ -111,12 +111,12 @@ Character-select line: **Sets the stage. Lets you discover the trick.**
 
 Long introduction:
 
-Soraya grew up on Capul listening to stories about a moon that could disappear
+Phaister grew up on Capul listening to stories about a moon that could disappear
 into a serpent's mouth. When she moved to Quezon City, she found a regular game
 beneath the rail line and an audience that was difficult to impress. That only
 made her more ambitious. She treats a match like a carefully timed reveal:
 invite a chase, leave a false opening, close the circle. The trouble is that she
-occasionally enjoys the setup more than winning. Nemu notices. Soraya wishes
+occasionally enjoys the setup more than winning. Nemu notices. Phaister wishes
 she would at least look surprised.
 
 Her fictional lunar writing is not Inabaknon script or a documented ritual.
@@ -137,7 +137,7 @@ data with the introduction view and future genuine hero-unlock event. UI wiring
 and aspect/focus verification remain explicit tasks, not claims made by this file.
 
 The four existing map identities remain intact: Rago/Eskinita, Isagani/Sa Bubong,
-Dante/Bayan, Soraya's adopted court/Ilalim. Yasmin and Nemu have off-screen home
+Dante/Bayan, Phaister's adopted court/Ilalim. Yasmin and Nemu have off-screen home
 courts until a separately scheduled map expansion. All athletes can play all maps.
 
 ## Research and creative boundaries
@@ -146,7 +146,7 @@ courts until a separately scheduled map expansion. All athletes can play all map
   mountainous terrain, cool climate and distinct regional communities. Supports
   Yasmin's setting, not a claim of ice magic or assigned ethnicity.
 - [National Museum: Abaknon worldview](https://www.nationalmuseum.gov.ph/2021/10/29/abaknon-and-their-view-of-the-world/):
-  Capul, lunar knowledge and moon-swallowing serpent account. Supports Soraya's
+  Capul, lunar knowledge and moon-swallowing serpent account. Supports Phaister's
   remembered story, not her invented spell writing or a national universal belief.
 - [CCP: Bernardo Carpio](https://epa.culturalcenter.gov.ph/3/82/2199/):
   mountain struggle in the Montalban setting and earthquake association. Modern

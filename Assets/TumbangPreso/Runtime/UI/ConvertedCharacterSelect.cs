@@ -2779,6 +2779,9 @@ namespace TumbangPreso.UI
         private void Confirm()
         {
             var s = Settings.SettingsStore.Current;
+            // ⚠️ A LOCKED HERO IS REFUSED HERE TOO (`EconomyRules.UnlockedHeroes`, owner 2026-10-20).
+            int playable = EconomyRules.PlayablePick(Roster.GetPeople(SceneFlow.SelectedMode), _pick[0]);
+            if (playable != _pick[0]) { MenuSfx.Error(); return; }
             s.CharacterPick = _pick[0];
             s.CanPick = _pick[1];
             s.SlipperPick = _pick[2];

@@ -36,6 +36,48 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
+        public void TheUnlockedHeroesAreExactlyTheOwnersFiveAndAPickOfAnyOtherFallsBackToOne()
+        {
+            // Owner, 2026-10-20: nemu, paete, phaister, amihan and dante, on every route.
+            Assert.Equal(new[] { "amihan", "dante", "nemu", "paete", "phaister" }, EconomyRules.UnlockedHeroes.OrderBy(x => x));
+            foreach (var id in EconomyRules.UnlockedHeroes) Assert.True(EconomyRules.IsHero(id), id);
+
+            var heroes = Roster.HeroPeople;
+            for (int i = 0; i < heroes.Count; i++)
+            {
+                int played = EconomyRules.PlayablePick(heroes, i);
+                Assert.True(EconomyRules.IsHeroUnlocked(heroes[played].Id), heroes[i].Id + " fell back to a locked hero");
+                if (EconomyRules.IsHeroUnlocked(heroes[i].Id)) Assert.Equal(i, played);
+            }
+            Assert.Equal(-1, EconomyRules.PlayablePick(heroes, -1));
+
+            // Classic people are never heroes, so they are never moved.
+            for (int i = 0; i < Roster.ClassicPeople.Count; i++)
+                Assert.Equal(i, EconomyRules.PlayablePick(Roster.ClassicPeople, i));
+        }
+
+        [Fact]
+        public void BotsAndMirrorNeverLandOnALockedHero()
+        {
+            var heroes = Roster.HeroPeople;
+            for (int start = -3; start < heroes.Count * 2; start++)
+                for (int avoid = -1; avoid < heroes.Count; avoid++)
+                {
+                    int pick = EconomyRules.NextUnlockedPick(heroes, start, avoid);
+                    Assert.True(EconomyRules.IsHeroUnlocked(heroes[pick].Id));
+                    Assert.NotEqual(avoid, pick);
+                }
+            var day = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            for (int week = 0; week < 20; week++)
+            {
+                var when = day.AddDays(7 * week);
+                Assert.True(EconomyRules.IsHeroUnlocked(heroes[EconomyRules.UnlockedMirrorPick(heroes, when)].Id));
+                // Nothing is locked in Classic, so its mirror is unchanged.
+                Assert.Equal(CustomGameRules.MirrorIndex(Roster.ClassicPeople.Count, when), EconomyRules.UnlockedMirrorPick(Roster.ClassicPeople, when));
+            }
+        }
+
+        [Fact]
         public void TheStarterSetIsRealRosterEntriesAndIncludesEntryZero()
         {
             foreach (var id in EconomyRules.StarterHeroes) Assert.True(EconomyRules.IsHero(id), id);

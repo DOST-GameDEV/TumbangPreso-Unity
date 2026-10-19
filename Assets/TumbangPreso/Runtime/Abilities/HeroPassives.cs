@@ -47,7 +47,7 @@ namespace TumbangPreso.Abilities
                     "Her abilities share one cooldown.");
                 // CharacterMotor.Voodoo: the curse mark's speed exchange.
                 case "phaister": return new Passive("VOODOO",
-                    "While one of Soraya's curse marks is active, the marked player moves 10% slower and Soraya moves 10% faster.");
+                    "While one of Phaister's curse marks is active, the marked player moves 10% slower and Phaister moves 10% faster.");
                 default: return default;
             }
         }

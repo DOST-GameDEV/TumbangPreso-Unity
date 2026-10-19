@@ -3,7 +3,7 @@ using UnityEngine;
 namespace TumbangPreso.CameraSystem
 {
     /// <summary>
-    /// ⚠️⚠️ SORAYA'S HANDS: HER MOTHS ARE HER STAGEHANDS.
+    /// ⚠️⚠️ PHAISTER'S HANDS: HER MOTHS ARE HER STAGEHANDS.
     ///
     /// She is a stage witch ("Sets the stage. Lets you discover the trick."), and a show has a crew. One LEAD MOTH lives on
     /// her left hand as a tiny performer and assistant: plump and fuzzy, two big eyes rimmed in her magenta, two feathered
@@ -249,7 +249,7 @@ namespace TumbangPreso.CameraSystem
             _leftArm = arms.LeftHandForProps();
             _rightArm = arms.RightHandForProps();
             if (_leftArm == null) return false;
-            _root = new GameObject("~HandCompanion Soraya moths").transform;
+            _root = new GameObject("~HandCompanion Phaister moths").transform;
             _root.SetParent(arms.transform, false);
             _root.gameObject.layer = arms.gameObject.layer;
             _lead = Moth.Make(_root, true, 1f);

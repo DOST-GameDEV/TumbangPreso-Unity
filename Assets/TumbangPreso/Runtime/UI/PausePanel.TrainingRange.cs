@@ -45,9 +45,16 @@ namespace TumbangPreso.UI
             UiRows.Section(list, "Player");
             var roster = Roster.GetPeople(_range.Local.Mode);
             var names = new string[roster.Count];
-            for (int i = 0; i < names.Length; i++) names[i] = roster[i].Name;
+            // ⚠️ A LOCKED HERO IS LISTED AND REFUSED, the way character select hatches it
+            // (`EconomyRules.UnlockedHeroes`, owner 2026-10-20: locked offline too).
+            for (int i = 0; i < names.Length; i++) names[i] = EconomyRules.IsHeroUnlocked(roster[i].Id) ? roster[i].Name : roster[i].Name + " (LOCKED)";
             _rangeCharacter = RangeChoice(list, "Character", names, _range.Local.CharacterIndex,
-                value => { if (!_range.ChangeCharacter(value)) MenuSfx.Error(); RefreshTrainingRange(); });
+                value =>
+                {
+                    bool open = value >= 0 && value < roster.Count && EconomyRules.IsHeroUnlocked(roster[value].Id);
+                    if (!open || !_range.ChangeCharacter(value)) MenuSfx.Error();
+                    RefreshTrainingRange();
+                });
             string[] seats = new string[Balance.PlayerCount];
             for (int i = 0; i < seats.Length; i++) seats[i] = i == _range.Local.PlayerSlot ? "YOU" : "BOT " + (i + 1);
             _rangeDefender = RangeChoice(list, "Defender", seats, GameServices.Match.DefenderSlot,

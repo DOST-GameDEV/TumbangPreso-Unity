@@ -997,15 +997,21 @@ namespace TumbangPreso
             if (isLocalHuman)
             {
                 motor.PlayerName = GameServices.Account?.LobbyName ?? Settings.SettingsStore.Current.PlayerName;
-                motor.CharacterIndex = Settings.SettingsStore.Current.CharacterPick >= 0
-                    ? Settings.SettingsStore.Current.CharacterPick
+                // ⚠️ A SAVED PICK OF A LOCKED HERO PLAYS THE FIRST UNLOCKED ONE, offline included
+                // (`EconomyRules.UnlockedHeroes`). Bots are not clamped; only people are.
+                int ownPick = EconomyRules.PlayablePick(Roster.GetPeople(SceneFlow.SelectedMode), Settings.SettingsStore.Current.CharacterPick);
+                motor.CharacterIndex = ownPick >= 0
+                    ? ownPick
                     : AiCharacterIndex(slot);
             }
             else if (seatInfo != null && seatInfo.Occupied)
             {
                 motor.PlayerName = seatInfo.Name;
-                motor.CharacterIndex = seatInfo.CharacterPick >= 0
-                    ? seatInfo.CharacterPick
+                // Same clamp, deterministic on every peer, so a room whose mode changed after the
+                // picks were made still fields only unlocked heroes.
+                int seatPick = EconomyRules.PlayablePick(Roster.GetPeople(SceneFlow.SelectedMode), seatInfo.CharacterPick);
+                motor.CharacterIndex = seatPick >= 0
+                    ? seatPick
                     : AiCharacterIndex(slot);
             }
             else
@@ -1028,7 +1034,7 @@ namespace TumbangPreso
             if (SceneFlow.SelectedFormat == MatchFormat.Mirror)
             {
                 var mirrorPeople = Roster.GetPeople(SceneFlow.SelectedMode);
-                motor.CharacterIndex = CustomGameRules.MirrorIndex(mirrorPeople.Count, DateTime.UtcNow);
+                motor.CharacterIndex = EconomyRules.UnlockedMirrorPick(mirrorPeople, DateTime.UtcNow);
             }
 
             go.AddComponent<Carrier>();
@@ -1877,13 +1883,8 @@ namespace TumbangPreso
             int rotation = humanPick >= 0 ? humanPick % size : 0;
             int start = (AiPersonSpread[slot % AiPersonSpread.Length] + rotation) % size;
 
-            for (int step = 0; step < size; step++)
-            {
-                int candidate = (start + step) % size;
-                if (candidate != humanPick) return candidate;
-            }
-
-            return start;
+            // ⚠️ LOCKED HEROES ARE SKIPPED (`EconomyRules.UnlockedHeroes`): a bot never fields one.
+            return EconomyRules.NextUnlockedPick(people, start, humanPick);
         }
 
         private int AiCharacterIndex(int slot)
@@ -1893,7 +1894,7 @@ namespace TumbangPreso
             if (NetAuthority.IsNetworked)
                 return ResolveAiCharacterIndex(slot, -1, SceneFlow.SelectedMode);
             int humanSeat = HumanSeat;
-            int human = humanSeat >= 0 ? Settings.SettingsStore.Current.CharacterPick : -1;
+            int human = humanSeat >= 0 ? EconomyRules.PlayablePick(Roster.GetPeople(SceneFlow.SelectedMode), Settings.SettingsStore.Current.CharacterPick) : -1;
             if (GameLaunch.GuidedTutorial && humanSeat >= 0)
             {
                 int size = Roster.GetPeople(SceneFlow.SelectedMode).Count;
@@ -1904,7 +1905,13 @@ namespace TumbangPreso
                     // Give each other seat its own offset after the student. The
                     // normal 0/3/6/9 spread collides in the nine-hero roster.
                     int ordinal = slot < humanSeat ? slot : slot - 1;
-                    return (chosen + 1 + ordinal) % size;
+                    // ⚠️ THE ordinal-TH UNLOCKED HERO AFTER THE STUDENT, so the partners stay
+                    // distinct and never locked. With nothing locked (Classic) this is exactly
+                    // the old `(chosen + 1 + ordinal) % size`.
+                    var tutorialPeople = Roster.GetPeople(SceneFlow.SelectedMode);
+                    int partner = chosen;
+                    for (int k = 0; k <= ordinal; k++) partner = EconomyRules.NextUnlockedPick(tutorialPeople, partner + 1, chosen);
+                    return partner;
                 }
             }
             return ResolveAiCharacterIndex(slot, human, SceneFlow.SelectedMode);

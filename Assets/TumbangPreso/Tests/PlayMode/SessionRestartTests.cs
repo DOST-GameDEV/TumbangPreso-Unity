@@ -285,7 +285,7 @@ namespace TumbangPreso.PlayTests
                 typeof(MatchRpc).GetMethod("HostTakeSeatBackFromBot",BindingFlags.Instance|BindingFlags.NonPublic)
                     .Invoke(rpc,new object[]{0});
                 Assert.IsFalse(body.IsBot);
-                int expected=mirror?Core.CustomGameRules.MirrorIndex(Core.Roster.GetPeople(Core.GameMode.HeroStrike).Count,System.DateTime.UtcNow):underway?3:2;
+                int expected=mirror?Core.EconomyRules.UnlockedMirrorPick(Core.Roster.GetPeople(Core.GameMode.HeroStrike),System.DateTime.UtcNow):underway?3:2;
                 Assert.AreEqual(expected,body.CharacterIndex,"Pre-round handover kept the bot's placeholder pick.");
             }
             finally{net.Stop();}

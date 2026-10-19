@@ -14,19 +14,25 @@ namespace TumbangPreso.Tests
     /// </summary>
     public sealed class LanHeroLockTests
     {
+        /// <summary>
+        /// ⚠️ NARROWED 2026-10-20 (owner: "make these characters the only unlocked characters. do
+        /// this for both lan, multiplayer, and offline"). The room rule used to be the starters plus
+        /// the wallet; it is now `EconomyRules.UnlockedHeroes` alone, with or without a wallet.
+        /// </summary>
         [Test]
-        public void ARoomWithNoKnownWalletOffersOnlyTheStarterHeroes()
+        public void ARoomOffersOnlyTheUnlockedHeroes()
         {
-            foreach (string id in EconomyRules.StarterHeroes)
-                Assert.IsTrue(HubOwnership.OwnsHeroInRoom(id, null), id + " is a starter hero and must stay playable.");
+            foreach (string id in EconomyRules.UnlockedHeroes)
+                Assert.IsTrue(HubOwnership.OwnsHeroInRoom(id, null), id + " is unlocked and must stay playable.");
             int locked = 0;
             foreach (var person in Roster.HeroPeople)
             {
-                if (!EconomyRules.IsHero(person.Id) || System.Array.IndexOf(EconomyRules.StarterHeroes, person.Id) >= 0) continue;
-                Assert.IsFalse(HubOwnership.OwnsHeroInRoom(person.Id, null), person.Id + " must be locked in a room until it is owned.");
+                if (System.Array.IndexOf(EconomyRules.UnlockedHeroes, person.Id) >= 0) continue;
+                Assert.IsFalse(HubOwnership.OwnsHeroInRoom(person.Id, null), person.Id + " must be locked in a room.");
+                Assert.IsFalse(HubOwnership.OwnsHero(person.Id), person.Id + " must be locked offline too.");
                 locked++;
             }
-            Assert.Greater(locked, 0, "The roster has heroes beyond the starters, so a room must lock some.");
+            Assert.Greater(locked, 0, "The roster has heroes beyond the unlocked five, so some must be locked.");
         }
 
         [Test]

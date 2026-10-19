@@ -6267,7 +6267,7 @@ namespace TumbangPreso.Net
                     {
                         int pick = peerRecord.CharacterPick;
                         if (UI.SceneFlow.SelectedFormat == MatchFormat.Mirror)
-                            pick = CustomGameRules.MirrorIndex(Roster.GetPeople(UI.SceneFlow.SelectedMode).Count, DateTime.UtcNow);
+                            pick = EconomyRules.UnlockedMirrorPick(Roster.GetPeople(UI.SceneFlow.SelectedMode), DateTime.UtcNow);
                         // The arena can build this seat as a bot before Identify
                         // arrives. Apply its chosen roster through the existing
                         // art/kit/skin route before the first round freezes it.

@@ -273,7 +273,8 @@ namespace TumbangPreso.UI.Hub
             var settings = Settings.SettingsStore.Current;
             bool current = SceneFlow.SelectedMode == GameMode.HeroStrike && settings.CharacterPick == _index;
 
-            _try.gameObject.SetActive(!owned);
+            // ⚠️ NO TRY IN PRACTICE FOR A LOCKED HERO: offline is locked too (`EconomyRules.UnlockedHeroes`).
+            _try.gameObject.SetActive(false);
             _ownedTag.SetActive(owned && current);
             if (owned)
             {
@@ -283,18 +284,19 @@ namespace TumbangPreso.UI.Hub
             }
             else
             {
-                HubKit.SetLabel(_primary, "UNLOCK  " + EconomyRules.HeroPrice.ToString("N0"));
-                var wallet = GameServices.Wallet;
-                _primary.interactable = wallet != null && !wallet.Busy;
+                // ⚠️ LOCKED, NOT FOR SALE. Buying cannot open a hero outside
+                // `EconomyRules.UnlockedHeroes`, so offering UNLOCK would take coins for nothing.
+                HubKit.SetLabel(_primary, "LOCKED");
+                _primary.interactable = false;
                 HubKit.SetFill(_primary, HubStyle.Chartreuse);
             }
             var label = HubKit.LabelOf(_primary);
             label.fontSize = HubStyle.Size(HubStyle.Label);
             HubKit.Fit(label, 420);
-            _status.text = !owned && GameServices.Wallet != null ? GameServices.Wallet.Status : "";
+            _status.text = "";
         }
 
-        private async void Primary()
+        private void Primary()
         {
             var hero = Heroes[_index];
             if (Owned(hero.Id))
@@ -310,12 +312,7 @@ namespace TumbangPreso.UI.Hub
                 return;
             }
 
-            var wallet = GameServices.Wallet;
-            if (wallet == null) return;
-            string result = await wallet.BuyAsync(EconomyRules.ItemId(ShopKind.Hero, hero.Id));
-            if (this == null) return;
-            Hub.Toast(result == "offline" ? wallet.Status : Net.WalletStore.Sentence(result));
-            RefreshWallet();
+            // A locked hero is not for sale (see `RefreshAction`).
         }
 
         private void TryInPractice()
