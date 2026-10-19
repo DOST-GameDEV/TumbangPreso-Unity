@@ -388,13 +388,10 @@ namespace TumbangPreso.UI
                 drained = local.IsDrained;
                 // HERO-10 v3: Phaister's DRAIN mark is on them and wringing (plan 9.5: *"their stamina bar shakes ... spend it now"*).
                 wringing = local.VoodooMark == VoodooMarkKind.Drain;
-                // ⚠️ 2026-10-20 OVERHAUL: WITH THE VITALS PLATE DRAWN, THE ARC ONLY SPEAKS IN TROUBLE.
-                // The bottom-left bar now carries the ordinary level all the time, so an arc beside
-                // the reticle on every sprint would say the same number twice. It keeps fatigue,
-                // DRAINED and the wring (the moments worth saying where the eye already is), and
-                // keeps its whole job on a phone, where the plate is not drawn.
-                bool plate = VitalsVisible;
-                want = (!plate && ratio < .995f) || fatigued || drained || wringing;
+                // ⚠️ 2026-10-20: THE ARC IS STAMINA'S ONLY READOUT AGAIN. A bottom-left stamina bar was
+                // tried in the glass HUD pass and removed at the owner's word ("remove healthbar in
+                // bottom left corner"), so the arc keeps its whole VISUAL-1.4 job on every device.
+                want = ratio < .995f || fatigued || drained || wringing;
                 _staminaArc.Set(ratio);
                 var fill = drained ? new Color(.62f, .30f, .34f, 1f) : fatigued ? OwnerUiTheme.Current.Orange : CourtPresentationPalette.Gold;
                 _staminaArc.Paint(fill, drained ? new Color(.30f, .04f, .08f, .55f) : new Color(0, 0, 0, .42f));

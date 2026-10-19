@@ -176,12 +176,30 @@ namespace TumbangPreso.Net
         /// <summary>
         /// Whether a hero or item may be PLAYED on the current route.
         ///
-        /// ⚠️ OWNERSHIP GATES ONLINE ROUTES ONLY. Practice, LAN rooms and the tournament preset let
-        /// everything be used: the nationals venue has no service to ask, and a skill challenge must
-        /// be earnable against bots (`AbilityVariant.PracticeSafe`). A hero a player does not own is
-        /// therefore always one press from being TRIED.
+        /// ⚠️ OWNERSHIP GATES EVERY NETWORKED ROOM, ONLINE AND LAN ALIKE (owner, 2026-10-20: "there
+        /// are characters that are locked when playing online mode. that is by design ... lan
+        /// however does not have any locked characters. fix this, it should be the same way as
+        /// online mode"). It used to gate online routes only, on the argument that a LAN party has
+        /// no service to ask; the wallet cache answers that (starters are always owned, and a
+        /// machine that has signed in remembers what it bought). Practice stays open, so a skill
+        /// challenge is still earnable against bots (`AbilityVariant.PracticeSafe`) and a hero a
+        /// player does not own is still one press from being TRIED. The tournament preset is
+        /// Classic, whose people are cosmetic and never locked (`EconomyRules.IsHero`).
         /// </summary>
-        public bool Usable(string id, bool onlineRoute) => !onlineRoute || Owns(id);
+        public bool Usable(string id, bool ownershipRoute) => !ownershipRoute || Owns(id);
+
+        /// <summary>
+        /// True in any networked room, Relay or LAN: the routes where ownership decides who may be
+        /// played. See <see cref="Usable"/> for why LAN joined Online on 2026-10-20.
+        /// </summary>
+        public static bool OwnershipRoute
+        {
+            get
+            {
+                var net = NetSession.Instance;
+                return net != null && net.IsNetworked;
+            }
+        }
 
         public static bool OnlineRoute
         {
@@ -272,7 +290,7 @@ namespace TumbangPreso.Net
         {
             if (!CanTransact)
             {
-                Status = "Sign in to use the shop and claim tasks. Everything is playable in Practice and LAN.";
+                Status = "Sign in to use the shop and claim tasks. Everything is playable in Practice.";
                 Changed?.Invoke();
                 return "offline";
             }

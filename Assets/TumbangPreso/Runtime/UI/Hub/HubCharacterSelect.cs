@@ -274,8 +274,8 @@ namespace TumbangPreso.UI.Hub
         {
             var person = Roster.At(People, index);
             if (person == null) return false;
-            bool online = Net.WalletStore.OnlineRoute;
-            return !online || HubOwnership.OwnsHero(person.Id);
+            // Every networked room, Online and LAN alike (`WalletStore.Usable` has the history).
+            return !Net.WalletStore.OwnershipRoute || HubOwnership.OwnsHeroInRoom(person.Id);
         }
 
         private void Pick(int index)
@@ -301,7 +301,7 @@ namespace TumbangPreso.UI.Hub
 
         private void Select()
         {
-            if (!Usable(_pick)) { MenuSfx.Error(); Hub.Toast("Unlock this hero in the SHOP to play it online. Try it in Practice."); return; }
+            if (!Usable(_pick)) { MenuSfx.Error(); Hub.Toast("Unlock this hero in the SHOP to play it online or on LAN. Try it in Practice."); return; }
             Hub.Host.PublishPicks();
             if (!Timed) { Close(); return; }
             _locked = true;

@@ -36,8 +36,8 @@ Sources: [OW2 beta patch notes](https://overwatch.blizzard.com/en-us/news/patch-
 | Surface | Cream or brown tile, bevelled corners, extruded side, sheen | `HudCard.Glass`: flat warm smoked glass at 55 per cent, cream hairline, short shadow, leaning by `HudDraw.Lean` |
 | Team bar | Four 250 x 68 cream cards, 1306 wide, "You" tile under one | Four 200 x 58 glass chips, 1060 wide; portrait on a leaning seat tile, italic ivory score, can or slipper glyph; your chip has a honey foot bar and honey score; names only for spectators |
 | Clock | Brown tile, octagon beads in a tray | Denser glass, ivory Darumadrop (kept by `FONT_USAGE.md`), leaning round ticks in a glass tray |
-| Vitals (new) | Two mostly hidden sentences; stamina only as the reticle arc | Bottom-left plate at the deck's 125 per cent: portrait on a honey tile with a seat strip, role glyph, ten leaning stamina segments of 25 (`Balance.StaminaMax` is 250). Keyboard and pad only |
-| Stamina arc | Shown whenever stamina was below full | Shown only for fatigue, DRAINED and the wring while the vitals plate is drawn; unchanged on touch |
+| Identity plate (new) | Two mostly hidden sentences | Bottom-left plate at the deck's 125 per cent: portrait on a honey tile beside the baked icon of your equipped tsinelas (the can's when taya), one glass slab, a seat strip along the foot; whole or faded by the chip's rule. Keyboard and pad only. A ten-segment stamina bar was tried first and removed at the owner's word |
+| Stamina arc | Shown whenever stamina was below full | Unchanged: still stamina's one readout |
 | Statuses | Cream tabs, octagon medallion, from the screen's bottom edge | Glass tabs and round glass medallion, stacked above the vitals plate |
 | Skills | Two dark discs bottom right with a keycap badge on the corner | Two leaning glass tiles, a 32-unit key cap centred under each, cooldown shade draining from the top, large italic seconds, honey edge and foot level while active |
 | Ultimate | A third, notched disc in the same row | Its own group, `UltimateSeal`, at the bottom centre: ten notches lighting ivory, percentage inside, solid honey ring with a halo when ready. Touch: one centred row, skill, ultimate, skill |
@@ -95,3 +95,26 @@ Renders (the touch frames come from the full-set run, before the last 10-unit tr
 
 Not established here: the owner's verdict in play, a physical phone or pad, and whether the
 bottom-centre ultimate stays clear of every hero's held-slipper pose on every map.
+
+## Follow-up, same day: identity plate, icons, LAN locks
+
+Owner requests, 2026-10-20: "remove healthbar in bottom left corner. but keep the player icon along
+with the slipper icon. just make it look better together without the healthbar", "update all slippers
+and characters icons using their newest models", and LAN hero locks (LAN-HERO-LOCK-1020 in the TODO).
+
+- **Identity plate.** The ten-segment stamina bar is gone; the plate is your portrait on a honey tile
+  beside the baked icon of your equipped tsinelas (the can's when you are taya) on one glass slab, with
+  a seat-colour foot strip under both. The reticle arc is stamina's one readout again.
+- **Icons.** `TumpPortraitAuthor.CapturePeopleAndSlippers` re-baked all 21 people and 10 tsinelas from
+  the models the match spawns today (cans untouched). The first bake showed the October cast does not
+  fit the September camera numbers (heads 10 to 15 per cent smaller and lower, Paete's antlers at y 27),
+  so people are now framed by measurement: head top at y 72 and median head-band width 167, the
+  September set's own norm, with stray one-row marks outside the figure cleared (two renders had one).
+  [icons-before-after.jpg](icons-before-after.jpg) shows every changed icon, old beside new.
+  `tools/build_avatars.py` rebuilt the 21 profile pictures from them:
+  [profile-pictures-after.jpg](profile-pictures-after.jpg).
+- **Native checks for this follow-up.** `LargerPowerControlsPreserveMarginsBindingsAndFinalizedKitText` now asserts
+  the plate shows the equipped tsinelas' own icon; it failed once (an unpicked tsinelas carries skin -1, which
+  `RosterBook.Resolve` dresses as entry 0, and the icon lookup did not) and passes with that rule mirrored
+  ([identity-plate.jpg](identity-plate.jpg)). The wider HUD set on this source: 23/30, the same 7 failures as
+  pure QoLUpdates. `LanHeroLockTests` 2/2 (EditMode). The keyboard frames above are re-captured on this source.

@@ -25,6 +25,24 @@ namespace TumbangPreso.UI.Hub
 
         public static bool OwnsHero(string heroId) =>
             !EconomyRules.IsHero(heroId) || Owns(EconomyRules.ItemId(ShopKind.Hero, heroId));
+
+        /// <summary>
+        /// Whether this machine may PLAY a hero in a networked room (Online or LAN).
+        ///
+        /// ⚠️ NO "NOTHING KNOWN MEANS OPEN" HERE, which is the one difference from <see cref="Owns"/>.
+        /// That exception is what kept every LAN hero unlocked: a LAN player who never signed in has
+        /// no known wallet, so the open rule fired and the room had no locks at all, unlike Online,
+        /// where signing in is the price of entry. In a room the rule is the account's: the starters,
+        /// plus whatever the wallet cache says was bought, before or after it has loaded.
+        /// </summary>
+        public static bool OwnsHeroInRoom(string heroId) => OwnsHeroInRoom(heroId, GameServices.Wallet);
+
+        public static bool OwnsHeroInRoom(string heroId, Net.WalletStore wallet)
+        {
+            if (!EconomyRules.IsHero(heroId)) return true;
+            string id = EconomyRules.ItemId(ShopKind.Hero, heroId);
+            return wallet != null ? wallet.Owns(id) : EconomyRules.IsStarter(id);
+        }
     }
 
     /// <summary>

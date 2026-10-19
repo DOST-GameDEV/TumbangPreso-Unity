@@ -1,3 +1,31 @@
+### LAN-HERO-LOCK-1020: LAN rooms lock heroes like Online (IN PROGRESS)
+
+Request 2026-10-20: "there are characters that are locked when playing online mode. that is by design ... lan however
+does not have any locked characters. fix this, it should be the same way as online mode." Ownership used to gate only
+`WalletStore.OnlineRoute` (networked and Relay); `HubOwnership.Owns` also opens everything for a wallet nobody has
+heard from, which is every LAN player who never signed in.
+- [x] `WalletStore.OwnershipRoute` (any networked room) gates `HubCharacterSelect`; the room rule
+  `HubOwnership.OwnsHeroInRoom` is starters plus the wallet cache, with no "unknown means open". Online behaves
+  exactly as before (signing in is its price of entry). Practice stays open; Classic people are never locked, so the
+  tournament preset (Classic) is unaffected. `LanHeroLockTests` (EditMode) pins the rule: 2/2 native, beside
+  `HubLobbyLanFirewallTests` and `HubLobbySeatControlsTests` passing (the wallet fixtures in the same run refuse to
+  start without a named isolated profile, by their own design, and were not run that way here).
+- [ ] Two real LAN peers: a non-owned hero is hatched and refuses lock-in on both host and joiner.
+
+### ICON-REBAKE-1020: people and tsinelas thumbnails from the newest models (IN PROGRESS)
+
+Request 2026-10-20: "update all slippers and characters icons using their newest models". The thumbnails in
+`Resources/UI/portraits` predated the October 5 roster adoption. `TumpPortraitAuthor.CapturePeopleAndSlippers`
+re-bakes every person and tsinelas through the canonical `ModelPreview` path (cans untouched; Ilyas joins the shared
+framing instead of the one-off `RafiPortraitAuthor`), and `tools/build_avatars.py` rebuilds the profile pictures.
+- [x] Re-baked 21 people and 10 tsinelas. The October cast did not fit the September camera numbers (heads
+  10 to 15 per cent smaller and lower, Paete's antlers at y 27), so people are framed by measurement against the
+  September norm: head top at y 72, median head-band width 167, stray marks outside the figure cleared. 21
+  profile pictures rebuilt. Sheets: docs/reports/hud-overwatch-2026-10-20 (icons-before-after.jpg,
+  profile-pictures-after.jpg).
+- [ ] Owner verdict on the new thumbnails (Inday's and Jun-Jun's profile pictures crop tightly into the hair,
+  which is `build_avatars.py`'s own crop rule).
+
 ### HUD-OVERWATCH-1020: the in-game HUD in Overwatch's simple shape (IN PROGRESS)
 
 Request 2026-10-20: "overhaul the ingame ui. make it similar to overwatch's simple ingame hud", pushed to
@@ -9,8 +37,9 @@ Evidence: [hud-overwatch-2026-10-20](reports/hud-overwatch-2026-10-20/README.md)
 - [x] One surface (`HudCard.Glass`) and one lean (`HudDraw.Lean`) for every live HUD panel; warm ivory on
   smoked glass, black outlines kept, no blue chrome.
 - [x] Team bar 1060 wide (was 1306): glass chips, honey "you" bar and score, names only for spectators.
-- [x] Bottom-left vitals plate (portrait, role glyph, ten stamina segments of 25), keyboard and pad only;
-  statuses stack above it; the reticle arc speaks only for fatigue, DRAINED and the wring when it is drawn.
+- [x] Bottom-left identity plate, keyboard and pad only: portrait beside the baked icon of the equipped tsinelas
+  (the can's when taya) on one glass slab; statuses stack above it. A ten-segment stamina bar was tried first and
+  removed at the owner's word ("remove healthbar in bottom left corner"); the reticle arc keeps stamina.
 - [x] Skills as leaning tiles bottom right with the key under each; ultimate split into `UltimateSeal` at the
   bottom centre (touch: one centred row, skill, ultimate, skill), registered in reading layout, contrast and
   recede; the recall mark dodges both rectangles.

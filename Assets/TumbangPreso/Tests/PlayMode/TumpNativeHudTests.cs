@@ -653,6 +653,11 @@ namespace TumbangPreso.PlayTests
                 var readout = Object.FindAnyObjectByType<TumpPowerReadout>();
                 var hud = Object.FindAnyObjectByType<TumpMatchReadout>();
                 var deck = (RectTransform)hud.Canvas.transform.Find("PowerSeals");
+                // 2026-10-20: the identity plate shows the baked icon of this seat's own tsinelas.
+                yield return new WaitForSecondsRealtime(.6f);
+                var objectIcon = hud.Canvas.GetComponentsInChildren<Image>(true).First(i => i.name == "VitalsObject");
+                Assert.IsTrue(objectIcon.isActiveAndEnabled && objectIcon.sprite != null,
+                    "The identity plate must show the equipped tsinelas' own icon, not the drawn fallback.");
                 // 2026-10-20 overhaul: the ultimate is its own group at the bottom centre.
                 var ultimate = (RectTransform)hud.Canvas.transform.Find("UltimateSeal");
                 Assert.IsNotNull(ultimate, "The ultimate is its own bottom-centre group.");
