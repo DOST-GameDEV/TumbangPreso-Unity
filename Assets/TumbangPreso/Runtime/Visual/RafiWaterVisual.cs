@@ -44,6 +44,7 @@ namespace TumbangPreso.Visual
             visual.transform.SetPositionAndRotation(state.Position, Quaternion.LookRotation(state.Forward));
             if (state.Type == WorldEffectSnapshot.Kind.Mirrorwake) visual.BuildEcho();
             else if(state.Type==WorldEffectSnapshot.Kind.Waterwall) visual.BuildWall();
+            else if (state.Type == WorldEffectSnapshot.Kind.Current && NewCurrent) visual._stream = RafiCurrentStream.Build(visual, state);
             else visual.BuildCrest();
             return visual;
         }
@@ -70,6 +71,17 @@ namespace TumbangPreso.Visual
         private RafiWallCurtain _curtain;
         /// <summary>The new wall, when this one was built as it (a film poses its fall and splash through this).</summary>
         public RafiWallCurtain Curtain => _curtain;
+        /// <summary>
+        /// ⚠️ ONE SWITCH BETWEEN TWO CROSSCURRENTS. On, it is the approved water of the effects study (`FxStudyRafiCross`
+        /// at rw8, stood in a match by `RafiCurrentStream`); off, it is the glassy crest built below (`BuildCrest`), as it
+        /// was. ON, by the owner's word: "cross current looks good" (2026-10-19), and "the ones that ive said are good to
+        /// go should be put in game already". Read when a current is built, so one already running keeps the look it was
+        /// born with. Look only: the rule, the timing and the wire are untouched.
+        /// </summary>
+        public static bool NewCurrent = true;
+        private RafiCurrentStream _stream;
+        /// <summary>The new current, when this one was built as it (a film poses its death through this).</summary>
+        public RafiCurrentStream Stream => _stream;
         private const int WallColumns=13, WallRows=6;
         private static readonly float[] WallHeight={0,.06f,.26f,.74f,1,.94f};
         private static readonly float[] WallFold={-.23f,-.04f,0,.015f,-.055f,-.16f};
@@ -219,6 +231,7 @@ namespace TumbangPreso.Visual
             float fade = Mathf.Clamp01((LifeSeconds - age) / .22f);
             if (_state.Type == WorldEffectSnapshot.Kind.Mirrorwake) { Echo(age, fade); return; }
             if (_state.Type == WorldEffectSnapshot.Kind.Waterwall) { Wall(age,fade); return; }
+            if (_stream != null) { _stream.Pose(age, _state); return; }
             if (_mesh == null) return;
             bool wave = (_state.Type == WorldEffectSnapshot.Kind.Breakwater || _state.Type == WorldEffectSnapshot.Kind.Baha);
             float gather = RafiWaterField.Gather(_state.Type);
@@ -322,7 +335,12 @@ namespace TumbangPreso.Visual
         }
         private void Tint(Renderer renderer, Color colour)
         { _block.Clear(); _block.SetColor("_Color", colour); _block.SetColor("_BaseColor", colour); _block.SetFloat("_FlowAge", _sampleAge); renderer.SetPropertyBlock(_block); }
-        // (The new wall is told its field has gone and at what age: it falls and splashes after that on its own.)
-        private void OnDestroy() { if (_curtain != null) _curtain.Release(_sampleAge, _state); if (_mesh != null) Destroy(_mesh); }
+        // (The new wall, and the new current, are told their field has gone and at what age: each lets go after that on its own.)
+        private void OnDestroy()
+        {
+            if (_curtain != null) _curtain.Release(_sampleAge, _state);
+            if (_stream != null) _stream.Release(_sampleAge, _state);
+            if (_mesh != null) Destroy(_mesh);
+        }
     }
 }

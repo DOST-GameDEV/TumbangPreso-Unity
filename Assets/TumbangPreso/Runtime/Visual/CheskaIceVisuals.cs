@@ -16,6 +16,13 @@ namespace TumbangPreso.Visual
         {
             foreach (string name in WallMeshes) yield return WarmMesh(name);
             yield return WarmMesh("thaw_shard");
+            // The reworked Glacial Wall bakes four crystal meshes on first use; done here, behind the loading screen,
+            // the first wall of a match costs a frame like any other.
+            if (CheskaGlacialWallLook.Enabled)
+            {
+                CheskaGlacialWallLook.Warm(Core.CryoRules.GlacialWallArcLength, Core.CryoRules.GlacialWallArcRadius);
+                yield return null;
+            }
         }
 
         private static IEnumerator WarmMesh(string name)

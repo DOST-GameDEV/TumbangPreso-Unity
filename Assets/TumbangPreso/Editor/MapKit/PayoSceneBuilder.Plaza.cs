@@ -193,6 +193,8 @@ namespace TumbangPreso.EditorTools.MapKit
                 PlazaPut("tapuy_jar_small", work, new Vector3(s * 31.4f, PlazaY, -55.9f), 0.0f, 1.0f, true, named);
             }
 
+            Debug.Log("[Payo] " + Market(plaza, named));   // 2026-10-19: the south terrace's market and gallery crowd (PayoSceneBuilder.Market.cs)
+
             // ---- grass and fern in the joints at the walls' feet and round the plinths
             var joints = Group(plaza, "joints");
             int tufts = 0;

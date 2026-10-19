@@ -40,6 +40,10 @@ namespace TumbangPreso.Map
         private SliceRunner _slice;
         private float _nextLook;
 
+        // The players' lift in a break (owner, 2026-10-19: "in arena, the players are lifted by the drones when the map
+        // changes. do the same thing here."): Kanlit carries them, `PayoBreakLift`. Installed here so no scene is rebuilt.
+        private void Awake() { if (GetComponent<PayoBreakLift>() == null) gameObject.AddComponent<PayoBreakLift>(); }
+
         private void LateUpdate()
         {
             var stage = ArenaStage.Instance;

@@ -28,6 +28,9 @@ namespace TumbangPreso.EditorTools.MapKit
         private const float LodReferenceFov = 60.0f;
         /// <summary>Trees: full model to this camera distance, LOD1 to the cull (past the valley's far side).</summary>
         private const float TreeFull = 70.0f, TreeCull = 2600.0f;
+        /// <summary>Instanced trees: LOD2 (`MODEL_lod2.glb`, tools/payo_plant_lods.py `-- lod2`) past this (2026-10-19, owner:
+        /// "lowering the detail and vertices for the trees far from the play area"). About 20 pixels tall there.</summary>
+        private const float TreeFar = 220.0f;
         /// <summary>Flora: full model to this distance; culled at this many times its size (clamped), LOD1 between where it has one.</summary>
         private const float FloraFull = 30.0f, FloraCullPerMetre = 60.0f, FloraCullMin = 70.0f, FloraCullMax = 170.0f;
 
@@ -129,6 +132,7 @@ namespace TumbangPreso.EditorTools.MapKit
         /// the line for the land and buildings leaving the ink's prepass, so the town's houses keep their ink.</summary>
         internal const float InstancedPlants = 80.0f;
 
+        private static int _lod2Models;
         private static readonly List<(string model, bool tree, Vector3 at, float yaw, float scale)> FarPlants = new List<(string, bool, Vector3, float, float)>();
 
         /// <summary>True (and the plant listed for PayoFlora) when a plant placement stands past NearPlants.</summary>
@@ -234,6 +238,7 @@ namespace TumbangPreso.EditorTools.MapKit
         /// <summary>The far plants as one PayoFlora under the root. Returns what it made.</summary>
         private static string FarFlora(Transform root, Dictionary<string, Material> named)
         {
+            _lod2Models = 0;
             if (FarPlants.Count == 0) return "no instanced plants";
             var holder = Group(root, "PayoFlora");
             var flora = holder.gameObject.AddComponent<PayoFlora>();
@@ -248,8 +253,13 @@ namespace TumbangPreso.EditorTools.MapKit
                     var lod0 = Parts(Model(f.model), true, named, ref bounds, ref any);
                     var low = Model(f.model + "_lod1");
                     var lod1 = low != null ? Parts(low, f.tree, named, ref bounds, ref any) : System.Array.Empty<PayoFlora.Part>();
+                    // By the file, not by the placement's family: the first tree_round listed may be one of the town's
+                    // plants (family "town"), and the model then went without its LOD2 everywhere.
+                    var lowest = low != null ? Model(f.model + "_lod2") : null;
+                    var lod2 = lowest != null ? Parts(lowest, true, named, ref bounds, ref any) : System.Array.Empty<PayoFlora.Part>();
+                    if (lod2.Length > 0) _lod2Models++;
                     float size = any ? Mathf.Max(bounds.size.x, bounds.size.y, bounds.size.z) : 1.0f;
-                    models.Add(new PayoFlora.Model { Name = f.model, Lod0 = lod0, Lod1 = lod1, Full = f.tree ? TreeFull : FloraFull, Size = Mathf.Max(size, 0.1f) });
+                    models.Add(new PayoFlora.Model { Name = f.model, Lod0 = lod0, Lod1 = lod1, Lod2 = lod2, Full = f.tree ? TreeFull : FloraFull, Far = lod2.Length > 0 ? TreeFar : 0.0f, Size = Mathf.Max(size, 0.1f) });
                     index[f.model] = m = models.Count - 1;
                 }
                 float s = f.scale > 0.0f ? f.scale : 1.0f;
@@ -260,7 +270,7 @@ namespace TumbangPreso.EditorTools.MapKit
             flora.Plants = plants.ToArray();
             flora.Refresh();
             int trees = FarPlants.Count(f => f.tree);
-            return $"{FarPlants.Count} far plants instanced by PayoFlora ({trees} trees, {FarPlants.Count - trees} flora, {models.Count} models, past {InstancedPlants:0} m from the court)";
+            return $"{FarPlants.Count} far plants instanced by PayoFlora ({trees} trees, {FarPlants.Count - trees} flora, {models.Count} models, past {InstancedPlants:0} m from the court; {_lod2Models} tree models with a LOD2 past {TreeFar:0} m)";
         }
     }
 }

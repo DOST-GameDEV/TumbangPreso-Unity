@@ -456,6 +456,8 @@ namespace TumbangPreso
             _motionAccent = GetComponent<Visual.SlipperMotionAccent>();
             if (_motionAccent == null) _motionAccent = gameObject.AddComponent<Visual.SlipperMotionAccent>();
             Visual.DanteBoulderStone.TrackWorld(this);
+            // Bank Shot's silk trail and head, drawn from this shoe's own state on every peer (`Visual.ZackBankFlight`).
+            Visual.ZackBankFlight.TrackWorld(this);
         }
 
         private void OnDestroy() => BotSlipperInventory.Invalidate();
@@ -1147,7 +1149,9 @@ namespace TumbangPreso
             {
                 if (_affinityVfxGo != null) Destroy(_affinityVfxGo);
                 if (affinity == SlipperAffinity.FireExplosive) CreateFireFlightVisual();
-                else CreateZapFlightVisual();
+                // A loaded Bank Shot is drawn by `Visual.ZackBankFlight` while its switch is on. The two thin rails were
+                // only ever drawn here, on a client, so the host never showed them: the new look is the same on both.
+                else if (!(IsPoweredBank(affinity) && Visual.ZackBankFlight.Silk)) CreateZapFlightVisual();
             }
             else if (state != SlipperState.InFlight || affinity == SlipperAffinity.Normal)
             {
@@ -1307,6 +1311,8 @@ namespace TumbangPreso
         {
             _affinityVfxGo = new GameObject("FireSlipperVfx");
             _affinityVfxGo.transform.SetParent(transform, false);
+            // The s2 fireball draws itself off the shoe (a trail is history); this empty marker keeps every cleanup above as it was.
+            if (Visual.SeanThrowFire.Painted) { Visual.SeanThrowFire.Follow(this); return; }
             var light = _affinityVfxGo.AddComponent<Light>();
             light.color = Visual.AbilityVfx.FireHotColour; light.range = 2.1f; light.intensity = .65f;
             light.shadows = LightShadows.None;

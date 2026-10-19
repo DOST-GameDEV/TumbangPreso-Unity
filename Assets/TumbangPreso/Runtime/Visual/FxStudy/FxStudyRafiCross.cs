@@ -91,6 +91,15 @@ namespace TumbangPreso.Visual
 
         public FxStudyRafiCross(Transform parent) : this(parent, FxStudyRafiWall.Look.Bench, -1f, 0f, 0) { }
 
+        /// <summary>
+        /// ⚠️ HOW WIDE IT IS DRAWN, as a share of the width it was approved at (`Radius`). Its cross section, its head and
+        /// its splash scale by this together, so its proportions never change; its length is the path's and is untouched.
+        /// It exists for the match: TIGHT CUT narrows the rule's column (`RafiRules.CurrentRadius` times the variant's
+        /// cost scale), and the picture must be the width of what hits without being stretched. 1 (the default, and the
+        /// bench's) multiplies every number it touches by exactly 1, so the bench film is the approved one to the bit.
+        /// </summary>
+        public float Girth = 1f;
+
         /// <summary>`benchSpentAt` above 0 spends the bench's current at that age; `seed` slides each cast's pictures;
         /// `view` is which of the stream's four views the bench films it from.</summary>
         public FxStudyRafiCross(Transform parent, FxStudyRafiWall.Look look, float benchSpentAt, float seed, int view) : base("rafi-cross", parent)
@@ -421,7 +430,7 @@ namespace TumbangPreso.Visual
             float travel = Mathf.Min(Range, Mathf.Max(0f, Mathf.Min(t, end) - Gather) * Speed);
             // While it gathers it is a swell of water at the hand that grows; then the head runs.
             float swell = FxStudyKit.EaseOut(FxStudyKit.Run(t, 0f, Gather + 0.05f));
-            float head = travel + 0.35f;
+            float head = travel + 0.35f * Girth;
             // The tail is let go from the hand a little after it is thrown and follows more slowly than the head, so it
             // lengthens to over 4 m by its end. (The stream's numbers, film s2.)
             float since = t - end;
@@ -437,9 +446,9 @@ namespace TumbangPreso.Visual
 
             // The body runs from its tail to just under the head's dome: built at unit length and stretched to that, so its
             // taper always spans what is drawn. Its pictures are tiled by the metre (`stretch`), so they are not stretched.
-            float bodyLength = Mathf.Max(0.05f, head - 0.10f - tail);
+            float bodyLength = Mathf.Max(0.05f, head - 0.10f * Girth - tail);
             _body.localPosition = new Vector3(0f, 0f, tail);
-            _body.localScale = new Vector3(1f, 1f, bodyLength);
+            _body.localScale = new Vector3(Girth, Girth, bodyLength);
             float stretch = bodyLength / Length;
             var window = new Vector4(0.0f, 1.2f, 0.06f, 0f);
             var whole = new Vector4(-1f, 2f, 0.05f, 0f);
@@ -458,10 +467,10 @@ namespace TumbangPreso.Visual
             Frame(_trackPart, age, false && since < Die ? 0.30f * Mathf.Min(1f, travel / 0.6f) : 0f, Mathf.Lerp(0.15f, 1f, trackGone), new Vector4(Mathf.Max(0f, tail - 0.5f) / Length, head / Length, 0.08f, 0f));
 
             // ---- the head: grows at the hand, runs with the column, and turns slowly while the body runs past it.
-            _head.localPosition = new Vector3(0f, 0f, head - 0.35f);
+            _head.localPosition = new Vector3(0f, 0f, head - 0.35f * Girth);
             float burst = FxStudyKit.Run(since, 0f, 0.45f);
             float grow = Mathf.Lerp(0.35f, 1f, swell);
-            _head.localScale = Vector3.one * grow;
+            _head.localScale = Vector3.one * (grow * Girth);
             _spin.localRotation = Quaternion.Euler(0f, 0f, -age * 150f);
             Frame(_nosePart, age, live && since < 0.25f ? 0.92f * (1f - FxStudyKit.Run(since, 0f, 0.25f)) : 0f, FxStudyKit.Run(since, 0f, 0.25f), whole);
             // ⚠️ THE COLLAR OPENS INTO THE SPLASH CROWN when it lets go: wider, flatter back, and eaten from its tips.
@@ -471,33 +480,33 @@ namespace TumbangPreso.Visual
             Frame(_collarPart, age, live && since < 0.45f ? 0.95f * collarIn : 0f, Mathf.Lerp(0.30f, 0.98f, FxStudyKit.Ease(FxStudyKit.Run(since, 0f, 0.32f))), whole);
 
             // The face, turned to the eye at the cap's front, round, the head's size.
-            Vector3 front = Root.TransformPoint(new Vector3(0f, Height - fell, head - 0.10f));
+            Vector3 front = Root.TransformPoint(new Vector3(0f, Height - fell, head - 0.10f * Girth));
             Vector3 toEye = front - eye;
             if (toEye.sqrMagnitude < 1e-6f) toEye = Root.forward;
             _facePart.At.SetPositionAndRotation(front, Quaternion.LookRotation(toEye.normalized, Vector3.up));
-            _facePart.At.localScale = Vector3.one * grow;
+            _facePart.At.localScale = Vector3.one * (grow * Girth);
             Frame(_facePart, age, live && since < 0.25f ? 0.80f * (1f - FxStudyKit.Run(since, 0f, 0.25f)) : 0f, FxStudyKit.Run(since, 0f, 0.25f), whole);
 
             // ---- the ring on the ground under the head where it lets go.
             float r = FxStudyKit.Run(since, 0.05f, 0.65f);
             if (since > 0.05f && r < 1f)
             {
-                float size = Mathf.Lerp(1.0f, 2.6f, FxStudyKit.EaseOut(r));
-                _ring.At.localPosition = new Vector3(0f, 0.018f, head - 0.3f);
+                float size = Mathf.Lerp(1.0f, 2.6f, FxStudyKit.EaseOut(r)) * Girth;
+                _ring.At.localPosition = new Vector3(0f, 0.018f, head - 0.3f * Girth);
                 _ring.At.localScale = new Vector3(size, 1f, size);
                 Frame(_ring, age, 0.45f * Mathf.Sin(Mathf.PI * Mathf.Sqrt(r)), 0.25f + 0.70f * r, whole);
             }
             else Frame(_ring, age, 0f, 0f, whole);
 
             // ---- the drops, thrown from the head as it lets go.
-            Vector3 from = new Vector3(0f, Height, head - 0.3f);
+            Vector3 from = new Vector3(0f, Height, head - 0.3f * Girth);
             for (int i = 0; i < Drops.Length; i++)
             {
                 Drop d = Drops[i];
                 float at = since - d.After;
                 Part p = _drops[i];
                 if (at < 0f) { Frame(p, age, 0f, 0f, whole); continue; }
-                Vector3 going = d.Throw + Vector3.down * (9.8f * at), here = from + d.From + d.Throw * at + Vector3.down * (4.9f * at * at);
+                Vector3 going = d.Throw + Vector3.down * (9.8f * at), here = from + d.From * Girth + d.Throw * at + Vector3.down * (4.9f * at * at);
                 if (here.y < 0.03f) { Frame(p, age, 0f, 0f, whole); continue; }
                 Vector3 world = Root.TransformPoint(here), look = world - eye;
                 Vector3 dir = Root.TransformDirection(going);
@@ -506,8 +515,8 @@ namespace TumbangPreso.Visual
                 Vector3 up = Vector3.Cross(look, dir);
                 if (up.sqrMagnitude < 1e-8f) up = Vector3.up;
                 p.At.SetPositionAndRotation(world, Quaternion.LookRotation(look, up));
-                float length = d.Size * Mathf.Lerp(1.4f, 2.2f, Mathf.Clamp01(going.magnitude / 6f));
-                p.At.localScale = new Vector3(length, d.Size, 1f);
+                float length = d.Size * Girth * Mathf.Lerp(1.4f, 2.2f, Mathf.Clamp01(going.magnitude / 6f));
+                p.At.localScale = new Vector3(length, d.Size * Girth, 1f);
                 Frame(p, age, Mathf.Clamp01(here.y / 0.25f + 0.35f), 0f, whole);
             }
         }

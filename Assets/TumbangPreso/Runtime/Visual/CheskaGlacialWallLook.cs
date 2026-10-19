@@ -24,13 +24,26 @@ namespace TumbangPreso.Visual
     ///   * The frost under it (`Shaders/CheskaWallFrost`) runs out from the aimed point to both ends first; the
     ///     crystals rise behind its leading edge.
     ///
-    /// ⚠️ LOOK ONLY. It carries no collider and reads no rule. The arc's colliders stay the old slabs'. Nothing in a
-    /// match builds this until <see cref="Enabled"/> is turned on (default off).
+    /// ⚠️ LOOK ONLY. It carries no collider and reads no rule. The arc's colliders stay the old slabs', which a match
+    /// keeps and stops drawing (`CheskaGlacialWallPresenter`), so what blocks is unchanged to the centimetre.
     /// </summary>
     public static class CheskaGlacialWallLook
     {
-        /// <summary>The switch for matches. Off: the old slabs, exactly as before.</summary>
-        public static bool Enabled = false;
+        /// <summary>
+        /// The switch for matches. On (owner 2026-10-19: "the ones that ive said are good to go should be put in game
+        /// already"): every arc wall in a match is drawn in DepthB. Off: the old slabs, exactly as before.
+        /// </summary>
+        public static bool Enabled = true;
+
+        /// <summary>
+        /// Bakes the shared meshes and materials ahead of the first cast, so the first wall of a match does not stall
+        /// a frame on it. The same calls <see cref="Build"/> makes, in the same order; nothing is drawn.
+        /// </summary>
+        public static void Warm(float arcLength, float arcRadius, Style style = Style.DepthB)
+        {
+            Bake(arcLength, arcRadius);
+            EnsureStyle(style, arcLength, arcRadius);
+        }
 
         /// <summary>How long the frost takes to run to both ends; the crystals rise behind it.</summary>
         public const float RunSeconds = 0.30f;

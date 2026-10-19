@@ -273,13 +273,71 @@ namespace TumbangPreso.EditorTools.MapKit
                 var vines = Object.FindObjectsByType<Renderer>(FindObjectsSortMode.None).Where(r => r.GetComponentsInParent<Transform>(true).Any(t => t.name.Contains("plaza_vine") || t.name == "vines")).ToList();
                 var outline = Object.FindObjectsByType<Visual.WorldOutline>(FindObjectsSortMode.None);
                 Say($"{vines.Count} vine renderers, {outline.Length} WorldOutline");
-                foreach (int view in new[] { 0, 4, 5 })
+                // A label with "flash" too: hold the view through ~1,500 frames of the live round (bots casting) and keep any
+                // frame that jumps from the one before (owner, 2026-10-19: "the ao thing only flashed"). Each frame is
+                // drawn small (160 x 90) and compared with the last; a frame whose mean change is over 4 times the running
+                // typical change (and over 1.5 levels) is shot full size, with the frame after it.
+                if (Label.Contains("flash"))
                 {
+                    var small = new RenderTexture(160, 90, 0, RenderTextureFormat.ARGB32);
+                    var read = new Texture2D(160, 90, TextureFormat.RGB24, false);
+                    Color32[] last = null;
+                    var typical = new List<float>();
+                    int kept = 0, after = -1;
+                    for (int f = 0; f < 1500 && kept < 12; f++)
+                    {
+                        yield return null;
+                        var keep = cam.targetTexture;
+                        cam.targetTexture = rt; cam.Render(); cam.targetTexture = keep;
+                        Graphics.Blit(rt, small);
+                        var prev = RenderTexture.active; RenderTexture.active = small;
+                        read.ReadPixels(new Rect(0, 0, 160, 90), 0, 0); read.Apply(false);
+                        RenderTexture.active = prev;
+                        var px = read.GetPixels32();
+                        bool save = f == after;
+                        if (last != null)
+                        {
+                            double sum = 0;
+                            for (int i = 0; i < px.Length; i++) sum += Mathf.Abs(px[i].r - last[i].r) + Mathf.Abs(px[i].g - last[i].g) + Mathf.Abs(px[i].b - last[i].b);
+                            float change = (float)(sum / (px.Length * 3));
+                            float usual = typical.Count > 20 ? typical.OrderBy(x => x).ElementAt(typical.Count / 2) : 999f;
+                            if (change > Mathf.Max(1.5f, usual * 4f)) { save = true; after = f + 1; Say($"  frame {f}: change {change:0.00} (usual {usual:0.00}) t {Time.time:0.00}"); }
+                            typical.Add(change); if (typical.Count > 120) typical.RemoveAt(0);
+                        }
+                        last = px;
+                        if (save)
+                        {
+                            var big = new Texture2D(rt.width, rt.height, TextureFormat.RGB24, false);
+                            prev = RenderTexture.active; RenderTexture.active = rt;
+                            big.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0); big.Apply();
+                            RenderTexture.active = prev;
+                            File.WriteAllBytes($"{Folder}/{Label}_f{f:0000}.png", big.EncodeToPNG());
+                            Object.Destroy(big); kept++;
+                        }
+                    }
+                    Say($"flash watch: {kept} frames kept");
+                    small.Release(); Object.Destroy(small); Object.Destroy(read);
+                    rt.Release(); Object.Destroy(rt);
+                    yield break;
+                }
+                var haze = Object.FindObjectsByType<PayoHaze>(FindObjectsSortMode.None);
+                // A label with "night" too: the night held at 1, and two more views, 7 with the colour grade off and 8 with
+                // the fog off (owner, 2026-10-19: "night time is fully black screen").
+                bool nightEye = Label.Contains("night") && night != null;
+                var grades = Object.FindObjectsByType<Visual.ColourGrade>(FindObjectsSortMode.None);
+                if (nightEye) { night.Hold = 1f; night.Apply(1f); for (int k = 0; k < 10; k++) yield return null; }
+                foreach (int view in nightEye ? new[] { 0, 4, 5, 6, 7, 8 } : new[] { 0, 4, 5, 6 })
+                {
+                    foreach (var g in grades) g.enabled = view != 7;
                     foreach (var r in vines) r.enabled = view != 4;
                     foreach (var o in outline) o.enabled = view != 5;
+                    foreach (var h in haze) h.enabled = view != 6;   // 6: no haze, wisps, rays or flare
                     for (int k = 0; k < 6; k++) yield return null;
+                    bool fogWas = RenderSettings.fog;
+                    if (view == 8) RenderSettings.fog = false;
                     var keep = cam.targetTexture;
                     cam.targetTexture = rt; cam.Render(); cam.targetTexture = keep;
+                    RenderSettings.fog = fogWas;
                     var prev = RenderTexture.active; RenderTexture.active = rt;
                     var tex = new Texture2D(rt.width, rt.height, TextureFormat.RGB24, false);
                     tex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0); tex.Apply();
@@ -291,6 +349,9 @@ namespace TumbangPreso.EditorTools.MapKit
                 }
                 foreach (var r in vines) r.enabled = true;
                 foreach (var o in outline) o.enabled = true;
+                foreach (var h in haze) h.enabled = true;
+                foreach (var g in grades) g.enabled = true;
+                if (nightEye) { night.Hold = -1f; night.Apply(0f); }
                 rt.Release(); Object.Destroy(rt);
                 yield break;
             }

@@ -40,6 +40,14 @@
 // light: so the result is cut into a veil (`_Deep`, see-through), a body (`_Body`), a fold (`_Fold`) and a white core
 // (`_Hot`), each step crisp (`_Bands.y` wide), as Quick Circuit's streak reads: amber air, lemon charge, thin white.
 //
+// ⚠️ IN A MATCH THE SHOE FALLS AS IT FLIES, SO A LEG IS BOWED ALONG ITS REAL FLIGHT (`_Bend`; off at w 0, so every bench
+// film draws as it did). The bench's route is straight; a real throw drops under gravity (20 m/s2) and curves with spin,
+// and a straight ribbon from where a leg began to the shoe misses the path it stands for by up to half a metre on an
+// ordinary half-second leg. A path under a steady pull is a chord plus a bow, `xyz * u * (1 - u)`, and `xyz` is four
+// times how far the real middle of the flight sits off the chord's middle (`FxStudyZackBank.Live` reads it off the
+// shoe's own history). So each point of the ribbon is drawn where the shoe actually was at that age, and the line it
+// opens out across follows the bow too (`w` is the ribbon's signed length along its own +z, to weigh the two).
+//
 // ⚠️ THE MASKS ARE PAINTED IN PLAIN GREY AND THE PROJECT IS LINEAR; `grey()` undoes the darkening.
 Shader "TumbangPreso/ZackTrail"
 {
@@ -79,6 +87,7 @@ Shader "TumbangPreso/ZackTrail"
         _Wobble ("Width wobble: amount, noise per metre, drift a second", Vector) = (0, 0.6, 0.4, 0)
         _Bands ("Four flat values: on (x), step softness (y), veil alpha (z), body alpha (w)", Vector) = (0, 0.03, 0.5, 0.85)
         _Fold ("Colour of the fold band", Color) = (1, 0.95, 0.28, 1)
+        _Bend ("A real flight's bow: world offset at u 0.5 times four (xyz), the ribbon's signed length along +z (w, 0 off)", Vector) = (0, 0, 0, 0)
     }
     SubShader
     {
@@ -98,7 +107,7 @@ Shader "TumbangPreso/ZackTrail"
             float4 _Tile1, _Pan1, _Tile2, _Pan2, _Distort, _Wave, _Cut, _Stops, _Ends, _Window;
             float _Level;
             float _Mix, _Add, _Gain, _Age, _Opacity, _Erode, _ViewAlign, _Thick, _Roll, _Ragged;
-            float4 _Near, _Size, _Life, _Grow, _Die, _Wobble, _Bands;
+            float4 _Near, _Size, _Life, _Grow, _Die, _Wobble, _Bands, _Bend;
             fixed4 _Fold;
             struct appdata { float4 vertex:POSITION; float2 uv:TEXCOORD0; float2 across:TEXCOORD1; fixed4 colour:COLOR; };
             struct v2f { float4 vertex:SV_POSITION; float2 uv:TEXCOORD0; fixed4 colour:COLOR; float near:TEXCOORD1; float eaten:TEXCOORD2; };
@@ -135,6 +144,12 @@ Shader "TumbangPreso/ZackTrail"
                 {
                     float3 centre = mul(unity_ObjectToWorld, float4(v.vertex.xyz, 1)).xyz;
                     float3 along = normalize(mul((float3x3)unity_ObjectToWorld, float3(0, 0, 1)));
+                    // Bowed along the real flight, and turned along the bow (see `_Bend` above).
+                    if (_Bend.w != 0.0)
+                    {
+                        centre += _Bend.xyz * (v.uv.x * (1.0 - v.uv.x));
+                        along = normalize(along + _Bend.xyz * ((1.0 - 2.0 * v.uv.x) / _Bend.w));
+                    }
                     float3 toEye = normalize(_WorldSpaceCameraPos - centre);
                     float3 square = cross(along, toEye);
                     // Its own roll, for where it is seen down its length.

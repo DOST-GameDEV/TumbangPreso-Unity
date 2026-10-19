@@ -433,6 +433,45 @@ namespace TumbangPreso.EditorTools.MapKit
                     };
                     return;
                 }
+                case "sean_throw":
+                {
+                    // EMPOWERED THROW's s2 look as a match builds it (`SeanThrowFire.NewLook`), on the court in daylight. Not in
+                    // `Looks`, so `all` films what it filmed before. ⚠️ STAGED: the shoe flies the bench's stand-in arc
+                    // (`FxStudySeanThrow.Shoe`, 15 m/s from 1.35 m, landing about 6.5 m out), not a recorded match throw.
+                    Vector3 P = S;
+                    s.Person(p, "sean", P, 0f, out _);
+                    s.Person(p, "dante", s.Ground(P.x, P.z + 7.2f), 180f, out _);
+                    var holder = s.In(new GameObject("SeanThrowFire"), p);
+                    holder.transform.SetPositionAndRotation(P, Quaternion.LookRotation(fwd));
+                    var fx = SeanThrowFire.NewLook(holder.transform);
+                    s.Shoe(p, P, Quaternion.LookRotation(fwd));
+                    var shoe = p.Roots[p.Roots.Count - 1];
+                    float last = float.NegativeInfinity;
+                    s.Report.AppendLine("  painting " + SeanThrowFire.Painting + ", burst radius " + FxStudySeanThrow.Radius + " m (the rule's); thrown at " + FxStudySeanThrow.ThrownAt + " s");
+                    p.Pose = t =>
+                    {
+                        // The history is written in order: a segment that goes back in time starts the effect again.
+                        if (t < last) fx.Restart();
+                        last = t;
+                        float a = Mathf.Max(0f, t);
+                        var at = FxStudySeanThrow.Shoe(a - FxStudySeanThrow.ThrownAt, out bool flying);
+                        bool held = a < FxStudySeanThrow.ThrownAt;
+                        shoe.SetActive(held || flying);
+                        shoe.transform.SetPositionAndRotation(holder.transform.TransformPoint(held ? new Vector3(0.40f, 0.95f, 0.70f) : at), Quaternion.LookRotation(fwd));
+                        fx.Sample(a, holder.transform.position + Vector3.up * 1.6f);
+                    };
+                    p.Release = () => fx.Release();
+                    p.Segments.Add((-0.15f, fx.Seconds));
+                    Vector3 mid = P + fwd * 3.6f;
+                    p.Views = new[]
+                    {
+                        new View("side", mid + right * 8f + up * 0.6f, mid + up * 1.0f, 42f),
+                        new View("behind the thrower", P + right * 1.6f + up * 2.6f - fwd * 3.2f, P + up * 1.0f + fwd * 4f, 50f),
+                        new View("from in front looking back", P + right * 2.2f + up * 1.7f + fwd * 10.5f, P + up * 1.0f + fwd * 3f, 50f),
+                        new View("from above", mid + up * 12f, mid, 45f),
+                    };
+                    return;
+                }
                 case "ult_amihan":
                 {
                     Vector3 A = s.Ground(0f, -7f);

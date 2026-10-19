@@ -163,7 +163,9 @@ namespace TumbangPreso.Visual
                     break;
 
                 case Kind.BankShot:
-                    if (strength == BankShotContact.FlairStrength)
+                    // A powered contact's mark is the approved star and sparks while Bank Shot's silk look is on
+                    // (`ZackBankFlight`, drawn from the shoe itself); the old gold flick only with it off.
+                    if (strength == BankShotContact.FlairStrength && !ZackBankFlight.Silk)
                         BankShotContact.Spawn(at, Settings.SettingsStore.Current.GraphicsQuality == 0,
                             Settings.SettingsStore.Current.ReducedUiMotion);
                     ComicPopup.Spawn(at + Vector3.up * 0.35f, "BANK!", UI.UiTheme.Highlight, 1.0f);

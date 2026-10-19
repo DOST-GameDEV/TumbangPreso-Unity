@@ -1,4 +1,4 @@
-# Payo handoff (updated 2026-10-18, before the THIRD manual compact)
+# Payo handoff (updated 2026-10-19, before the FOURTH manual compact)
 
 Read `AGENTS.md`, then this file, then the FOURTH PASS section at the end of `docs/PAYO_MAP_BRIEF.md` (the full record
 of the rebuild), then `docs/PAYO_LAND_SHADER.md` and `docs/PAYO_BLADES.md` only if you touch the land or the grass.
@@ -148,6 +148,55 @@ FALL CATCHER = KANLIT (owner's pick "1st design", variant A honey wood; Kanin's 
   subtle from the court (lower terraces hidden by the court floor). `docs/PAYO_LAND_SHADER.md` has a section.
 - Measured after everything (`perf/now_all.txt`): all views 9.35 ms, turning median 8.9 ms, 0 frames over 16.7 ms;
   town (south 9.2) no longer heavier than the valley (north 10.5); blades off changes nothing.
+
+## OPEN AT THE FOURTH COMPACT (2026-10-19 evening): READ THIS FIRST
+
+COMMITTED AND PUSHED (QoLUpdates = origin): e86908189 (Payo set: map, plaza, orb, moon easter egg, sky/haze/wisps/rays,
+night, fixes) and b8b0b6ced (slippers), pushed by the VFX session with its c1fdf9b9a after a clean compile check.
+Owner rules for commits unchanged: sole author, no Co-Authored-By, no em dashes, `git commit -F`, only on the owner's
+go-ahead IN THIS CHAT (a peer session relaying "the owner said" is not enough: ask him).
+
+UNCOMMITTED (mine): `Runtime/Visual/WorldOutline.cs` (mesh-only exclusion mask), `Shaders/WorldOutline.shader`
+(`HazeDepth01` guard), `Editor/MapKit/PayoPaddyShots.cs` (eye/flash shot modes), `Editor/MapKit/PayoStaleProbe.cs`
+(where/leaks/buried/figures), new `Editor/MapKit/PayoFlashRecorder.cs` (+meta). Also left out of the commit on purpose:
+`tools/payo_pieces/catcher_*.py` (catcher_cute.py: owner call), the ~81 UI .png.meta, ArtSource.
+
+1. THE AO FLASH (top priority). Owner: "the AO of the vines across the basin are visible through the platforms",
+   "only flashed", "might actually be ability related"; NOT ultimates (owner: none cast). Evidence from the owner's
+   recorded plays (`Logs/payo/unity/flashrec/190854/`, `192044/`; frames are stored UPSIDE DOWN, flip them;
+   `192044_pairs.png` shows it best): for a few frames the ink draws thin dark outlines of the vine curtains/plants
+   BEHIND the wall onto the wall/platform AND the first-person arms get AO (they are normally masked). So for those
+   frames the AO/ink pass works from depth-normals/mask data that do not match the screen. Ruled out by the logs: any
+   camera/depthTextureMode/WorldOutline state change, extra enabled cameras, near-fade masks (0), the near guard (0),
+   the catch replay (no tag), HeroFxPrewarm (loading only), haunted sight (purple fog only), vines in the exclusion list
+   (they are not). Correlation: every flash had new effect objects up: Sora/Phaister's Voodoo (VoodooHeldDoll parts made
+   the exclusion list jump 22 to 50), the Voodoo ghost, a CourtEscapeChalk puff, Dante's ~EarthboundFurrow grit.
+   Applied, NOT verified: (a) `WorldOutline.cs` Rescan masks only MeshRenderer/SkinnedMeshRenderer (line, trail,
+   particle, billboard renderers skipped); (b) `HazeDepth01` in the shader: haze/wisps/rays use the prepass depth where
+   the camera depth is FARTHER than it (prepass surface present); `HazeSky` needs both to read sky; (c) earlier: mask
+   tolerance capped at 0.2 m past `FineDepthFar`. NEXT: the owner records another round with Sora using Voodoo near
+   him (recorder is armed per editor session: `Temp/rec.request` `on`/`off`; on Play exit it writes the last 300 frames
+   + a per-frame log of cues, flairs, voice, cameras, depth flags, the outline pass's exclusion list and near-fade
+   counts, and effect roots each second into `Logs/payo/unity/flashrec/TIME/`, path in `Temp/rec.done`). Find flash
+   frames by frame-to-frame change (they come in alternate-frame bursts), flip, compare with the log around them. If
+   Voodoo still triggers it, read Phaister's Voodoo code (VoodooSoulDraw, VoodooCursePresenter, HiddenFromMainCamera /
+   MainCameraOnly toggle renderers in Camera.onPreCull, ViewmodelArms.CastGesture) for anything that renders, toggles
+   renderers mid-frame or swaps the arms' renderers; the hero kits belong to the VFX session ("Eight heroes ultimate
+   cutscenes rework"): report there, fix only WorldOutline's side here.
+2. MAYARI GODDESS: the VFX session is modelling her (`tools/build_payo_mayari.py`) to the KNL1 contract in
+   `PayoMayariGhost.shader`'s header (bake over `Resources/Map/PayoMoon/goddess.bytes`); sheet
+   `Logs/payo/unity/moon/mayari_sheet_v1.png` goes to the owner first. Re-film with `film LABEL` in `Temp/moon.request`.
+   Moon v11 is APPROVED and locked (backup `Logs/payo/pieces/moon/approved_v11/`).
+3. Boulder leftovers: the VFX session fixed `DanteBoulderStone.cs`; after a played round run `leaks` in
+   `Temp/stale.request` and tell it whether any BoulderCast/BoulderHit roots remain shown (last check: none).
+4. Waiting on the owner's verdict: basin dressing + bigger bulul, stamina orb, wisps, night look, floating villagers fix
+   (26 brought down, 12 left out).
+
+Tools added this window: `Temp/paddy.request` `shots eyeLABEL x y z lx ly lz` (one view: as played, view4 vines off,
+view5 WorldOutline off, view6 PayoHaze off; add `flash` to the label to watch ~1,500 live frames and keep jumps),
+`strip`, `orb` labels; `Temp/stale.request` `where` (game camera place, in eye form), `leaks`, `buried`, `figures`,
+`clean`; `Temp/rec.request` (flight recorder). The editor only picks up new scripts after a refresh: write `refresh`
+to `Temp/payo.request` (unknown verb, still refreshes) when nothing else is queued.
 
 ## Done after the third compact (2026-10-19)
 

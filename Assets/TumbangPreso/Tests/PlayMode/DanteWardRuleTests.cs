@@ -90,14 +90,33 @@ namespace TumbangPreso.PlayTests
             yield return new WaitForSeconds(.6f);
             var wall=Object.FindAnyObjectByType<Visual.DanteBastionWall>();
             Assert.IsNotNull(wall,"Bastion stands a wall.");
-            Assert.AreEqual(7,wall.SlabCount,"Seven slabs from bastion.glb.");
-            var field=wall.transform.Find("BastionHeatField");
-            Assert.IsNotNull(field,"The heat field.");
-            var b=field.GetComponent<Renderer>().bounds;
-            Assert.AreEqual(GeoRules.BarrierWidth,b.size.x,.05f,"The field is exactly as wide as the reflect area.");
-            Assert.AreEqual(Visual.DanteBastionWall.FieldTop,b.max.y-_actor.transform.position.y+(_actor.transform.position.y-Slipper.GroundY(_actor.transform.position)),.15f);
+            Assert.AreEqual(7,wall.SlabCount,"Seven slabs.");
+            if(wall.DrawsApproved)
+            {
+                // The approved wall (owner 2026-10-19, "bastion b8 can go in game now") is the bench effect at its own size,
+                // and its size IS the rule: if one of these moves, the picture no longer shows where slippers turn back.
+                Assert.AreEqual(GeoRules.BarrierWidth,Visual.FxStudyDanteBastion.Width,1e-4f,"The approved wall is as wide as the reflect area.");
+                Assert.AreEqual(GeoRules.BarrierForward,Visual.FxStudyDanteBastion.Forward,1e-4f,"It stands on the reflect line.");
+                Assert.AreEqual(Visual.DanteBastionWall.FieldTop,Visual.FxStudyDanteBastion.FieldTop,1e-4f,"Its field reaches as high as the reflect area.");
+                Assert.AreEqual(GeoRules.BarrierSeconds,Visual.FxStudyDanteBastion.Life,1e-4f,"It lasts as long as the skill.");
+                Transform face=null;foreach(var t in wall.GetComponentsInChildren<Transform>(true))if(t.name=="wall")face=t;
+                Assert.IsNotNull(face,"The approved wall's slabs.");
+                Vector3 local=_actor.transform.InverseTransformPoint(face.position);
+                Assert.AreEqual(0f,local.x,.01f);Assert.AreEqual(GeoRules.BarrierForward,local.z,.01f,"Drawn on the line it reflects on.");
+                Assert.Greater(Vector3.Dot(face.forward,_actor.transform.forward),.999f,"Its face turned to the thrower.");
+                var slabs=face.Find("slabs").GetComponent<Renderer>();Assert.IsTrue(slabs.enabled&&slabs.gameObject.activeInHierarchy,"The slabs stand.");
+            }
+            else
+            {
+                var field=wall.transform.Find("BastionHeatField");
+                Assert.IsNotNull(field,"The heat field.");
+                var b=field.GetComponent<Renderer>().bounds;
+                Assert.AreEqual(GeoRules.BarrierWidth,b.size.x,.05f,"The field is exactly as wide as the reflect area.");
+                Assert.AreEqual(Visual.DanteBastionWall.FieldTop,b.max.y-_actor.transform.position.y+(_actor.transform.position.y-Slipper.GroundY(_actor.transform.position)),.15f);
+            }
             kit.Tick(ctx,GeoRules.BarrierSeconds+.1f);
-            yield return new WaitForSeconds(.8f);
+            // The approved wall is eaten and sunk by 0.63 s and its last dust is gone by 0.95 s; ASTRA's sinks in 0.6 s.
+            yield return new WaitForSeconds(wall.DrawsApproved?1.2f:.8f);
             Assert.IsTrue(wall==null,"It sinks into the court and is gone.");
         }
         [UnityTest] public IEnumerator PauseAndWarmupStillRefuseCleanse()

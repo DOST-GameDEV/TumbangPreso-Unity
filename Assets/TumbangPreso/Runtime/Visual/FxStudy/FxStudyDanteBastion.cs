@@ -4,6 +4,7 @@ using Object = UnityEngine.Object;
 
 namespace TumbangPreso.Visual
 {
+    // KEEP: owner 2026-10-19, "bastion b8 can go in game now" (b8b). Approved look; do not change.
     /// <summary>
     /// BASILIO'S BASTION ON THE BENCH: "Defending. A wide stone force field in front of you for 7.5 s. It follows you, and
     /// every slipper that hits it flies back." Built by his BOULDER's method and in its family, so the two read as one
@@ -485,9 +486,29 @@ namespace TumbangPreso.Visual
 
         public FxStudyDanteBastion(Transform parent) : this(parent, Look.B3) { }
 
-        public FxStudyDanteBastion(Transform parent, Look look, bool day = false) : base(look == Look.B3 ? "dantebastion" : look == Look.B5 ? "dantebastionb5" : look == Look.B6 ? "dantebastionb6" : look == Look.B7 ? "dantebastionb7" : look == Look.B8 ? "dantebastionb8" : "dantebastionb4", parent)
+        public FxStudyDanteBastion(Transform parent, Look look, bool day = false) : this(parent, look, day, false) { }
+
+        // ------------------------------------------------------------------ in a match (`DanteBastionWall`)
+
+        /// <summary>The version a match draws: b8 as filmed in b8b (owner, 2026-10-19: "bastion b8 can go in game now").</summary>
+        public const Look InGame = Look.B8;
+        /// <summary>How many strikes a match copy can show at once, each with its light and its puff of dust.</summary>
+        public const int MatchStrikes = 4;
+        // ⚠️ A MATCH COPY IS THE BENCH'S OWN WALL, SPLIT AND DUST, MADE BY THE SAME CONSTRUCTOR, AND ONLY THE BENCH'S STORY
+        // IS LEFT OUT: no stand-in body, no thrown stand-in shoe, no step aside and no camera. The two puffs the bench kicks
+        // at its two scripted throws become `MatchStrikes` puffs that wait (born at +infinity) until a real strike places
+        // one (`SampleMatch`). Everything the bench builds is built in the same order, so the bench film is untouched.
+        private readonly bool _match;
+        private readonly int _strikeFirst = -1;
+
+        /// <summary>A copy for a match, under `parent`: `parent` stands at his feet on the court, turned so that this
+        /// effect's +x is the way he faces (the bench's wall stands `Forward` along +x, its face to the thrower). Posed by
+        /// <see cref="SampleMatch"/>, never by `Sample`.</summary>
+        public static FxStudyDanteBastion ForMatch(Transform parent) => new FxStudyDanteBastion(parent, InGame, false, true);
+
+        private FxStudyDanteBastion(Transform parent, Look look, bool day, bool match) : base(look == Look.B3 ? "dantebastion" : look == Look.B5 ? "dantebastionb5" : look == Look.B6 ? "dantebastionb6" : look == Look.B7 ? "dantebastionb7" : look == Look.B8 ? "dantebastionb8" : "dantebastionb4", parent)
         {
-            _look = look; _day = day;
+            _look = look; _day = day; _match = match;
             // He, and the wall with him: it is HIS (it follows him), so it hangs under a holder that moves as he does.
             _follow = Group("him");
             var wall = new GameObject("wall") { hideFlags = HideFlags.DontSave }.transform;
@@ -517,7 +538,7 @@ namespace TumbangPreso.Visual
             }
 
             // The bench's stand-ins: him, and the slipper thrown at him (the BOULDER's).
-            var standIns = Resources.Load<GameObject>(FxStudyDanteBoulder.Bench);
+            var standIns = _match ? null : Resources.Load<GameObject>(FxStudyDanteBoulder.Bench);
             if (standIns != null)
             {
                 var copy = Object.Instantiate(standIns, Root, false);
@@ -552,8 +573,16 @@ namespace TumbangPreso.Visual
             // Out along the line from under the slabs, low, and toward the thrower: none toward his own eyes.
             for (int k = 0; k < 3; k++)
                 Puff(wall, RiseAt + 0.06f + RiseStep * (k == 1 ? 0 : 3), new Vector3((k - 1) * 1.25f, 0.05f, 0.18f), new Vector3((k - 1) * 0.8f, 0.45f, 0.6f), 0.20f, 3 + k);
-            for (int k = 0; k < Throws.Length; k++)
-                Puff(wall, Throws[k].at + ThrowFlight, new Vector3(Throws[k].across, Throws[k].up - 0.1f, 0.12f), new Vector3(0f, -0.2f, 1f), 0.15f, 4 + k);
+            if (!_match)
+                for (int k = 0; k < Throws.Length; k++)
+                    Puff(wall, Throws[k].at + ThrowFlight, new Vector3(Throws[k].across, Throws[k].up - 0.1f, 0.12f), new Vector3(0f, -0.2f, 1f), 0.15f, 4 + k);
+            else
+            {
+                // The same strike puff, waiting for a real strike to place it.
+                _strikeFirst = _puffs.Count;
+                for (int k = 0; k < MatchStrikes; k++)
+                    Puff(wall, float.MaxValue, new Vector3(0f, 1f, 0.12f), new Vector3(0f, -0.2f, 1f), 0.15f, 4 + k);
+            }
             for (int k = 0; k < 2; k++)
                 Puff(wall, EndAt + 0.10f + 0.08f * k, new Vector3(k == 0 ? -1.4f : 1.4f, 0.05f, 0.15f), new Vector3(k == 0 ? -0.6f : 0.6f, 0.5f, 0.5f), 0.20f, 5 + k);
         }
@@ -637,20 +666,8 @@ namespace TumbangPreso.Visual
             _hits.Clear();
             // (b3's sheet measures from its left edge and its foot; b4's heat from the zone's middle and the court.)
             foreach (var t in Throws) _hits.Add(_look == Look.B3 ? new Vector3(t.across + Width * 0.5f, t.up - FieldFoot, age - (t.at + ThrowFlight)) : new Vector3(t.across, t.up, age - (t.at + ThrowFlight)));
-            _slabs.gameObject.SetActive(since > 0f);
-            _sheetRenderer.gameObject.SetActive(since > 0f);
-            if (_fireRenderer != null) _fireRenderer.gameObject.SetActive(since > 0f);
-            Pose(_slabs, _slabBlock, _sheetRenderer, _sheetBlock, _fireRenderer, _fireBlock, Mathf.Max(0f, since), _hits, _look != Look.B3);
-
-            // The split: torn open along the line as he stamps, its seam cooling, closed as the slabs stand.
-            float torn = FxStudyKit.EaseOut(FxStudyKit.Run(age, CastAt - 0.04f, CastAt + 0.14f));
-            float gape = FxStudyKit.Pop(FxStudyKit.Run(age, CastAt - 0.04f, CastAt + 0.20f), 0.3f) * (1f - 0.7f * FxStudyKit.Ease(FxStudyKit.Run(age, 0.85f, 1.30f)));
-            float cooled = FxStudyKit.Ease(FxStudyKit.Run(age, 0.80f, 1.40f));
-            _split.At.localScale = new Vector3(Width * 1.05f * Mathf.Lerp(0.25f, 1f, torn), 1f, 1.3f * gape);
-            _split.Set("_Stops", 0.40f, Mathf.Lerp(0.62f, 1.3f, cooled), Mathf.Lerp(0.90f, 1.7f, cooled));
-            _split.Frame(age, age < CastAt - 0.04f ? 0f : 1f, FxStudyKit.Run(age, 1.30f, 1.70f));
-            _splitGlow.At.localScale = new Vector3(Width * torn, 1f, 0.8f * gape);
-            _splitGlow.Frame(age, age < CastAt - 0.04f ? 0f : 0.35f * (1f - cooled));
+            PoseWall(since, _hits);
+            PoseSplit(age);
 
             // The slipper thrown at him: in at the field, struck, and back the way it came with a little lift.
             if (_shoe != null)
@@ -676,6 +693,33 @@ namespace TumbangPreso.Visual
                 if (_shoe.gameObject.activeSelf != shown) _shoe.gameObject.SetActive(shown);
             }
 
+            PosePuffs(age);
+        }
+
+        // The three parts of a frame that the bench and a match share, in the order the bench has always posed them.
+        private void PoseWall(float since, IReadOnlyList<Vector3> hits)
+        {
+            _slabs.gameObject.SetActive(since > 0f);
+            _sheetRenderer.gameObject.SetActive(since > 0f);
+            if (_fireRenderer != null) _fireRenderer.gameObject.SetActive(since > 0f);
+            Pose(_slabs, _slabBlock, _sheetRenderer, _sheetBlock, _fireRenderer, _fireBlock, Mathf.Max(0f, since), hits, _look != Look.B3);
+        }
+
+        private void PoseSplit(float age)
+        {
+            // The split: torn open along the line as he stamps, its seam cooling, closed as the slabs stand.
+            float torn = FxStudyKit.EaseOut(FxStudyKit.Run(age, CastAt - 0.04f, CastAt + 0.14f));
+            float gape = FxStudyKit.Pop(FxStudyKit.Run(age, CastAt - 0.04f, CastAt + 0.20f), 0.3f) * (1f - 0.7f * FxStudyKit.Ease(FxStudyKit.Run(age, 0.85f, 1.30f)));
+            float cooled = FxStudyKit.Ease(FxStudyKit.Run(age, 0.80f, 1.40f));
+            _split.At.localScale = new Vector3(Width * 1.05f * Mathf.Lerp(0.25f, 1f, torn), 1f, 1.3f * gape);
+            _split.Set("_Stops", 0.40f, Mathf.Lerp(0.62f, 1.3f, cooled), Mathf.Lerp(0.90f, 1.7f, cooled));
+            _split.Frame(age, age < CastAt - 0.04f ? 0f : 1f, FxStudyKit.Run(age, 1.30f, 1.70f));
+            _splitGlow.At.localScale = new Vector3(Width * torn, 1f, 0.8f * gape);
+            _splitGlow.Frame(age, age < CastAt - 0.04f ? 0f : 0.35f * (1f - cooled));
+        }
+
+        private void PosePuffs(float age)
+        {
             foreach (var (cloud, born, _) in _puffs)
             {
                 float t = age - born;
@@ -683,6 +727,35 @@ namespace TumbangPreso.Visual
                 if (cloud.Piece.Go.activeSelf != on) cloud.Piece.Go.SetActive(on);
                 if (on) cloud.Pose(t, PuffEmitter);
             }
+        }
+
+        /// <summary>
+        /// A MATCH'S FRAME: the wall `since` seconds after the cast, from the match's own clock. `strikes` are where real
+        /// slippers struck it, at most <see cref="MatchStrikes"/>, each (metres across from the wall's middle, + to his
+        /// right; metres up from the court; the `since` at which it struck); a slot keeps its place in the list, so its
+        /// puff stays where it was kicked. Past `Life` the wall cools, then at `Life` it is eaten and sinks, exactly as on
+        /// the bench. Nothing is allocated.
+        /// </summary>
+        public void SampleMatch(float since, IReadOnlyList<Vector3> strikes)
+        {
+            float age = since + CastAt;
+            _follow.localPosition = Vector3.zero;
+            _hits.Clear();
+            int count = strikes == null ? 0 : Mathf.Min(strikes.Count, MatchStrikes);
+            for (int k = 0; k < count; k++)
+            {
+                var s = strikes[k];
+                _hits.Add(new Vector3(s.x, s.y, since - s.z));
+                if (_strikeFirst < 0) continue;
+                var (cloud, born, holder) = _puffs[_strikeFirst + k];
+                float struck = s.z + CastAt;
+                if (born == struck) continue;
+                holder.localPosition = new Vector3(s.x, s.y - 0.1f, 0.12f);
+                _puffs[_strikeFirst + k] = (cloud, struck, holder);
+            }
+            PoseWall(since, _hits);
+            PoseSplit(age);
+            PosePuffs(age);
         }
 
         // The camera: from the thrower's side for the cast and the first strike, round behind him while he steps and the

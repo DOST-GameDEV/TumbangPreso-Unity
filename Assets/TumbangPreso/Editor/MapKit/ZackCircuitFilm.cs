@@ -81,6 +81,8 @@ namespace TumbangPreso.EditorTools.MapKit
                 }
                 // `mask <name> [lift cutFrom cutTo]` puts a candidate picture on Bank Shot's trail ribbons for the bench films that follow; `mask -` clears it.
                 if (words[0] == "mask") { FxStudyZackBank.StrandMask = words.Length > 1 && words[1] != "-" ? words[1] : null; FxStudyZackBank.StrandTune = words.Length > 4 ? new Vector4(float.Parse(words[2], System.Globalization.CultureInfo.InvariantCulture), float.Parse(words[3], System.Globalization.CultureInfo.InvariantCulture), float.Parse(words[4], System.Globalization.CultureInfo.InvariantCulture), words.Length > 5 ? float.Parse(words[5], System.Globalization.CultureInfo.InvariantCulture) : 1f) : (Vector4?)null; Debug.Log("[ZackCircuitFilm] trail mask " + (words.Length > 1 ? words[1] : "-")); continue; }
+                // `bankcourt <tag> [map]`: Bank Shot's match driver fed a staged loaded throw on a real map (`ZackBankCourtFilm.cs`).
+                if (words[0] == "bankcourt" && words.Length > 1) { PaeteAbilityFilm.RunZackBankCourt(words[1], words.Length > 2 ? words[2] : "eskinita"); continue; }
                 if (words[0].StartsWith("cost")) { PaeteAbilityFilm.CostOf(words[0], words.Length > 1 ? words[1] : "zackbank"); continue; }
                 float[] spot = null;
                 if (words.Length >= 5 && float.TryParse(words[2], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float x)

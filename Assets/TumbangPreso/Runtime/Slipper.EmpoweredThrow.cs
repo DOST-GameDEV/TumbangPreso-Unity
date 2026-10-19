@@ -10,7 +10,10 @@ namespace TumbangPreso
         {
             const float radius = EmpoweredThrowRules.Radius;
             var centre = transform.position;
-            Abilities.HeroHazards.CreateExplosionVisual(centre, radius, "",
+            // With the s2 look on, the burst is drawn by `SeanThrowFire` on every peer (this method runs on the host only, so
+            // the old blast below was never seen by anyone else); its sound is the same relayed cue the old blast played.
+            if (Visual.SeanThrowFire.Painted) { Visual.SeanThrowFire.Burst(this, centre); NetCue.Play("sfx_slipper_burst", centre); }
+            else Abilities.HeroHazards.CreateExplosionVisual(centre, radius, "",
                 Abilities.HeroHazards.ExplosionStyle.Ignition);
             if (!NetAuthority.ShouldResolve() || GameServices.Round?.RoundActive != true) return;
             var round = GameServices.Round;

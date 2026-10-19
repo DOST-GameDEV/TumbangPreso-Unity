@@ -397,6 +397,19 @@ namespace TumbangPreso.Visual
             _fx.Sample(_age, Eye());
         }
 
+        // ⚠️ NO LEFTOVERS (owner, 2026-10-19: "random ability vfx are stuck floating in the map"). The moment is DontSave, so
+        // one still playing when Play ends outlives it in the editor and stays drawn: a probe on Payo found BoulderCast and
+        // BoulderHit chunks, clouds and cracks left standing. End every moment with Play, and sweep any that survived an
+        // earlier Play (this editor enters Play without a domain reload) before the first cast. The look is unchanged.
+        private void OnApplicationQuit() => Destroy(gameObject);
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void SweepLeftovers()
+        {
+            foreach (var old in Resources.FindObjectsOfTypeAll<DanteBoulderMoment>())
+                if (old != null) DestroyImmediate(old.gameObject);
+        }
+
         // Gone before it was over (its scene closed): the copy goes with it.
         private void OnDestroy()
         {

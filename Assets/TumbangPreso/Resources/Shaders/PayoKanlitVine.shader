@@ -11,7 +11,8 @@
 // off spinning when the vine lets go). Lead weight is 1 at the paws, 0 where the hug begins: the share of the buddy's
 // bob (`_Lead`) the vine follows, so it stays in its paws.
 // The CPU writes, once a frame: `_Grow` (0 to 1, how far the tip has got), `_Release` (seconds since it let go, under
-// 0 before), `_Lead` (xyz the buddy's bob in this object's space).
+// 0 before), `_Lead` (xyz the buddy's bob in this object's space; w seconds added to the clock, 0 in a catch, the break's real-time
+// lead in `PayoBreakKanlit`).
 // ⚠️ Queued and tagged as `PayoKanlit.shader` (see there).
 Shader "TumbangPreso/PayoKanlitVine"
 {
@@ -47,7 +48,7 @@ Shader "TumbangPreso/PayoKanlitVine"
     // Moves one vertex; returns how much of it there is (0: folded away).
     float Animate(inout float3 p, inout float3 n, float4 a, float3 pivot)
     {
-        float part = a.x, along = a.y, t = _Time.y;
+        float part = a.x, along = a.y, t = _Time.y + _Lead.w;
         float3 lead = _Lead.xyz * a.w;
         p += lead; pivot += lead;
         if (part < 0.5)

@@ -27,6 +27,12 @@ namespace TumbangPreso.CameraSystem
         /// <summary>How bright a shaded hand is against a lit one (the cast's smooth shading puts a shadowed, sun-facing surface about here).</summary>
         public const float ShadedTone = .66f;
         private const float ShadeEvery = .1f, ShadeBlend = .25f, ShadeReach = 90f;
+        /// <summary>An editor debug switch, never set by the game: true keeps the hands lit (Payo flash hunt, 2026-10-19).</summary>
+        public static bool DebugNoWorldShade;
+        /// <summary>A map's lift on the hands' brightness, 1 for none. `Map.PayoNight` raises it through the night (owner,
+        /// 2026-10-19: "keep the fpv hands a bit lighter during the night"), so the hands stay readable against the dark.</summary>
+        public static float MapLift = 1f;
+        private float _liftApplied = -1f;
 
         private static readonly RaycastHit[] ShadeHits = new RaycastHit[12];
         private readonly List<Renderer> _shadeRenderers = new List<Renderer>();
@@ -84,14 +90,14 @@ namespace TumbangPreso.CameraSystem
                         shaded = true;
                     }
                 }
-                _shadeTarget = shaded ? 1f : 0f;
+                _shadeTarget = shaded && !DebugNoWorldShade ? 1f : 0f;
             }
             _shade = Mathf.MoveTowards(_shade, _shadeTarget, Mathf.Max(0f, dt) / ShadeBlend);
 
-            if (Mathf.Abs(_shade - _shadeApplied) < .004f) return;
-            _shadeApplied = _shade;
+            if (Mathf.Abs(_shade - _shadeApplied) < .004f && Mathf.Abs(MapLift - _liftApplied) < .004f) return;
+            _shadeApplied = _shade; _liftApplied = MapLift;
             _shadeBlock ??= new MaterialPropertyBlock();
-            float tone = Mathf.Lerp(1f, ShadedTone, _shade);
+            float tone = Mathf.Lerp(1f, ShadedTone, _shade) * MapLift;
             for (int i = 0; i < _shadeRenderers.Count && i < _shadeBase.Count; i++)
             {
                 var r = _shadeRenderers[i];

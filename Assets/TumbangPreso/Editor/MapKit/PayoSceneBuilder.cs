@@ -211,7 +211,9 @@ namespace TumbangPreso.EditorTools.MapKit
             int placed = 0, missing = 0;
             Renderer[] mayari = null;
             if (art.Doc != null) placed = Dressing(root, layout, art, named, nightOnly, nightGlow, ref missing, out mayari);
+            if (art.Doc != null) { try { _farSaid += "; " + FarTown(root); } catch (Exception e) { Warn("far houses: FAILED, the houses keep their own materials: " + e.Message); Debug.LogException(e); } }   // the far houses' cheap LOD1 (PayoSceneBuilder.FarTown.cs), before Night reads the glows
             if (art.Doc != null) { try { Debug.Log(Tag + Plaza(root, named)); } catch (Exception e) { Warn("plaza: FAILED, the map is built without it: " + e.Message); Debug.LogException(e); } }   // the basin's dressing (PayoSceneBuilder.Plaza.cs)
+            if (art.Doc != null) { try { Debug.Log(Tag + NightFires(root, named)); } catch (Exception e) { Warn("night fires: FAILED, the map is built without them: " + e.Message); Debug.LogException(e); } }   // fire pedestals and torches for the night (PayoSceneBuilder.Fire.cs), after every other dressing so they keep clear of it
             // Rice on the paddies and grass on the flat ground near the court, baked onto the land just placed (docs/PAYO_BLADES.md).
             string blades = "no blades (no art)";
             if (art.Doc != null)
@@ -234,7 +236,7 @@ namespace TumbangPreso.EditorTools.MapKit
             if (!EditorSceneManager.SaveScene(scene, ScenePath)) throw new InvalidOperationException("Could not save " + ScenePath);
             AssetDatabase.SaveAssets();
             string summary = $"built {ScenePath} from {LayoutPath} ({layout.Layouts.Count} layouts: {string.Join(", ", layout.Layouts.Select(l => l.Name))}); {stageSaid}; " +
-                             $"{(art.Doc != null ? placed + " art pieces placed, " + missing + " missing; " + _plantSaid + "; " + _faceUp + " upside-down river meshes turned up; " + Collided + " mesh colliders on collide placements; " + blades + "; " + _terraceSaid + "; " + named.Count + " materials built of " + Specs.Count + " specs" : "no payo_art.json: the stand-in look")}; {scenery}; {night}; {alive}; " +
+                             $"{(art.Doc != null ? placed + " art pieces placed, " + missing + " missing; " + _plantSaid + "; " + _farSaid + "; " + _faceUp + " upside-down river meshes turned up; " + Collided + " mesh colliders on collide placements; " + blades + "; " + _terraceSaid + "; " + named.Count + " materials built of " + Specs.Count + " specs" : "no payo_art.json: the stand-in look")}; {scenery}; {night}; {alive}; " +
                              $"sun yaw {SunYaw:0} at {day.SunElevation:0} degrees, cameras to {PlayFar:0} m (play) and {FreeFar:0} m (free); NOT in any map list or build settings";
             Debug.Log(Tag + summary);
             return summary;
@@ -1938,7 +1940,8 @@ namespace TumbangPreso.EditorTools.MapKit
                 placed++;
             }
             if (skyFound.Count > 0) mayari = skyFound.ToArray();
-            _plantSaid += "; " + FarFlora(root, named);
+            // Kept apart from _plantSaid: PlantLod rewrites that line on every near plant, the plaza's among them.
+            _farSaid = FarFlora(root, named);
             foreach (var g in groups.Values.ToList()) if (g != null && g.childCount == 0) Object.DestroyImmediate(g.gameObject);
             // The art's lights that stand on the land (those on a block were hung on it by `Stage`).
             var fires = dressing.GetComponentsInChildren<PayoFlame>(true);

@@ -54,6 +54,8 @@ namespace TumbangPreso.Map
         public float MoonDisc = 0.0f, MoonHalo = 0.0f;
         /// <summary>A probe or the review may hold the night at a value (0 to 1); under 0 it follows the match.</summary>
         [System.NonSerialized] public float Hold = -1.0f;
+        /// <summary>How much brighter the first-person hands are at full night (1 for none).</summary>
+        public const float HandLiftAtNight = 1.6f;
 
         private WorldLookProfile.MapLook _day, _night;
         private Material _sky, _skyFrom;
@@ -94,6 +96,13 @@ namespace TumbangPreso.Map
             float span = Mathf.Max(1.0f, hp.StageShowDuration - 1.0f);
             return Smooth((hp.StageShowAge + 1.0f) / span);
         }
+
+        /// <summary>
+        /// READ-ONLY, FOR THE HALF-TIME CAMERA (`PayoBreakDirector`, 2026-10-19): the dusk `showAge` seconds into a
+        /// half-time show `showDuration` long, the very curve `FactorFor` rides in that break, so the film can place its
+        /// beats where the sky is and not on a copy of it. Changes nothing.
+        /// </summary>
+        public static float DuskAt(float showAge, float showDuration) => Smooth((showAge + 1.0f) / Mathf.Max(1.0f, showDuration - 1.0f));
 
         private static float Smooth(float t)
         {
@@ -155,6 +164,8 @@ namespace TumbangPreso.Map
             if (!Rows()) return;
             _applied = n;
             var a = _day; var b = _night;
+            // The first-person hands a little lighter by night (owner, 2026-10-19: "keep the fpv hands a bit lighter during the night").
+            CameraSystem.ViewmodelArms.MapLift = Mathf.Lerp(1.0f, HandLiftAtNight, n);
 
             RenderSettings.ambientMode = AmbientMode.Trilight;
             RenderSettings.ambientSkyColor = Color.Lerp(a.Sky, b.Sky, n);

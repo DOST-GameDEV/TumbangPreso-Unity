@@ -63,6 +63,15 @@ namespace TumbangPreso.Map
         /// <summary>The break's camera while it is the one drawing the picture, else null.</summary>
         public static Camera Showing { get; private set; }
 
+        /// <summary>
+        /// A map's own director (owner, 2026-10-19, on the Payo map: "create more unique mid round cinematics ... the
+        /// camera cinematics end up going through the platform pillars"). When one is registered it is asked first on
+        /// every frame of a break: it poses this camera itself and answers how much of the lock shake to add (0 to 1),
+        /// or under 0 to leave the frame to the five shots below. Only `PayoBreakDirector` registers one; with none (the
+        /// Arena) this camera is exactly what it was.
+        /// </summary>
+        public static System.Func<Camera, float> Director;
+
         private static ArenaBreakCamera _instance;
         private Camera _camera;
         private Visual.ColourGrade _grade;
@@ -128,6 +137,13 @@ namespace TumbangPreso.Map
             }
 
             var settings = Settings.SettingsStore.Current;
+            float directed = Director != null ? Director(_camera) : -1.0f;
+            if (directed >= 0.0f)
+            {
+                if (_grade != null) _grade.SetEventGrade(1.0f, 1.0f);
+                Shake(settings, directed);
+                return;
+            }
             Vector3 centre = stage.transform.position;
             float scale = AuthoredRadius > 0.0f ? Mathf.Max(1.0f, stage.Radius / AuthoredRadius) : 1.0f;
 
@@ -206,7 +222,12 @@ namespace TumbangPreso.Map
             }
 
             // Its own shake, last, so it is added to the shot and never fed back into it.
-            float level = settings.EffectiveCameraShake;
+            Shake(settings, 1.0f);
+        }
+
+        private void Shake(Settings.GameSettings settings, float scale)
+        {
+            float level = settings.EffectiveCameraShake * scale;
             float ring = _punch * Mathf.Exp(-(Time.unscaledTime - _punchAt) * PunchDecay);
             if (level > 0.0f && ring > 0.01f)
             {

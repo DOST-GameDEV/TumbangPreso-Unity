@@ -1,6 +1,6 @@
 # Character redesign prototype: Dante (displayed as Dante)
 
-> ⚠️ **START AT SECTION 15.9, PART J (the last part, the newest), then part I, then the rest of 15.9, then 15.8.** It is the current state (end of 2026-10-05, second session) and it
+> ⚠️ **START AT SECTION 15.9, PART K (the last part, the newest), then J, then I, then the rest of 15.9, then 15.8.** It is the current state (end of 2026-10-05, second session) and it
 > supersedes anything above it that disagrees. Sections 1 to 14 are the record of how it got
 > there, in order, and several early statements in them are no longer true (the prototype IS in
 > Unity now, the rig is no longer seven bones, the model is no longer fully rigid, the cast is
@@ -1587,3 +1587,72 @@ her body, and this can be the same for other maps like the cities or the arena. 
 - THE SESSION MOVED ON (2026-10-08, late): a handoff for the other eight heroes' cutscenes is
   `docs/CUTSCENE_REWORK_HANDOFF.md` (another session will do them in batches of three), and this session picked the
   maps up again with a rebuild of Eskinita: `docs/ESKINITA_REBUILD.md`.
+
+#### K. Where things stand, 2026-10-19 (read this part first)
+
+**Pushed to origin/QoLUpdates by this session:** `b1eb2a777` (slide pose, slide length, air brake, spent chain) and
+`eb2dc1556` (crouch on every device, crouch and slide replicated). Everything before them went up in `bd44c197b`.
+Nothing of this session's is uncommitted except this part K. NOT this session's, never commit: the two
+composition-redesign image metas, `court_chalk.mat`, the input-icon churn under `Resources/UI/input/xelu`,
+`alley_chalk.mat`, `ProjectSettings/QualitySettings.asset`, the arena `.blend` files and kits, `Assets/_Recovery`.
+
+**Unity:** the owner's editor is open on the worktree and its live log is `Logs/Editor.log` IN THE PROJECT. A C#
+save recompiles it; if he is in Play mode the session breaks with null references everywhere. Check the
+`Library/ScriptAssemblies/TumbangPreso.Runtime.dll` time against the edited files and grep the log for
+`error CS` before calling anything compiled. Never batch Unity while it is open.
+
+**1. Classic action clips: DONE, all twelve.** Thirteen clips each (carry, throw, pick up, tag, shove, two
+reaches, slide, crouch, sit, die, yes, no). Brief: `docs/reports/character-redesign/classic-clips-brief.md`.
+Cast sheets: `Logs/character-redesign-classic/clips/cast_keys_1.png`, `_2.png` (tool:
+`tools/sheet_character_redesign_classic_cast.py`). Owner said "yes" to the direction. Fix passes ran on Inday,
+Jun-Jun, Ate Girlie for repeats. Left as is: throw/tag/reaches alike from the front; Tikboy's upside-down
+knock-down (owner not asked again).
+
+**2. Elbows in the code-posed throw and tag**, all 21 characters (`ThrowBody.cs`, `TagBody.cs`). Unseen
+confirmation from the owner.
+
+**3. Prototype map (`Scenes/Temp/CharacterPrototype.unity`, `PrototypeMapPlay.cs`):** Classic row behind the
+heroes (H wears the body, clips and arms); all cheats on but endless stamina OFF; keys: **V** third person (opens
+free: hold right mouse to orbit, keys walk camera-relative), **G** locks it over the right shoulder, **B** a chaser
+(`PrototypeChaser.cs`: Bayan's body, the taya's 7.5 m/s, infinite stamina, reaction lag, bounded turn, tags with
+the game's sound, keeps running after a tag with a 1 s gap, readout of distance, catches and survival time),
+**F9** flips the movement rework. Readout lines at the top of the screen. The cursor is recaptured when the pause
+menu closes (the scene is outside the map pool, so the game did not do it).
+
+**4. MOVEMENT REWORK: ON FOR THE WHOLE GAME, ONLINE TOO** (protocol 157). Every number is a static in
+`Runtime/MovementRework.cs`; the step is `Runtime/CharacterMotor.MovementRework.cs`. Local human only; bots
+unchanged; off under the test runner. THE RULES AS THE OWNER STEERED THEM (each is a decision of his, do not
+undo one without asking):
+- Ground acceleration and friction (about 0.2 s to full speed). Cap 1.2 x the body's run (`MaxSpeedScale`).
+- Jump held hops on every landing (he wants to keep this). Jump fatigue costs SPEED ONLY, never height ("each hop
+  is faster" was the bug), modelled on Counter-Strike's stamina debt.
+- Air: momentum kept; keys steer it at `AirAccel`; speed is earned only by a strafe in time with the view
+  (`AirStrafeGain` 6); left-right alternation is OFF (`StrafeMustAlternate`, he asked to try without).
+- Turning more than 90 degrees inside 0.5 s in the air sheds speed (`AirBrake*`, gentle rate 2.0).
+- A chain that falls to 60% of its best speed (sharp turn or a wall) is SPENT: no strafe gain until the jump debt
+  drains to 10%.
+- The hop costs no stamina (it is what a spent player has left) but blocks the bar's refill; hop ceiling 1.2 x
+  run (`HopSpeedScale`; "if bhopping takes more skill, it should be rewarded more").
+- Crouch (capsule 1.0, headroom to stand); slide on crouch at a sprint, real ground drag, 1.5 x the first length,
+  its own code pose (`CharacterAnimator.SlideBody.cs`; owner saw it locally).
+- Crouch is `Verb.Crouch` on every device: Left Ctrl (C no longer), B on a pad shared with Ready Up
+  (`Rebinding.IsOneUseKey`, `ConsumeReadyControl`), a touch button low-left of THROW (`TouchHud.ClusterOffset`).
+- Crouch and slide replicate as bits 16 and 32 of the pose effort byte (`CharacterMotor.NetworkStamina.cs`),
+  presentation only. Known gaps: the host judges slippers against a standing capsule; the host's stamina count for
+  a remote player does not know the hop blocks the refill. No two-machine test has been run.
+
+**5. OPEN:**
+- Paete "shrinks as he walks": NOT FOUND. His scale is never rewritten; leading suspect is the walk's hip drop
+  (longest legs, widest stride, x1.3) plus his arms folding. Asked the owner for two third-person screenshots
+  (standing vs mid-walk) from one spot; not yet given.
+- Slide pose angles unconfirmed by the owner; touch Crouch button position never seen on a phone; no tests run.
+- **PAYO AUDIENCE v2 DELIVERED 2026-10-19.** v1 (box figures, painted atlas) was REJECTED by the owner ("model them in the way we've modeled the rest of the characters", "textures look noisy"). v2: six villagers on the Classic redesign pipeline (brief `docs/reports/character-redesign/payo-audience-brief.md`, builders `tools/*payo_audience_v2_<id>*.py`, rigged glbs in `ArtSource/payo/audience/v2/<id>/`), static poses baked by `tools/bake_payo_audience_v2.py` (`audience_v2_<id>_stand|cheer|clap|sit.glb`, `audience_v2_lineup.png`, `audience_v2_poses.png`). The boy alone has extra shin bones. Packed up early at the owner's word; Blender only. The v1 request was: The request was: model 4 to 6 simple
+  precolonial Ifugao and Cordillera background people "like rafi (doesnt have to be too detailed)" as an audience
+  for the Payo map's basin wall: men and women, elders and kids; bahag or tapis, a blanket over the shoulders, a
+  head cloth or beads, a betel bag, spear or basket; VERY low poly with ONE shared painted atlas (dozens on screen,
+  frame drops); poses standing, cheering arms up, sitting on a ledge, clapping (static posed meshes fine, a cheap
+  idle only if it costs little). Deliver `.glb` files and one lineup render to
+  `ArtSource/payo/audience/` (absolute paths) and reply to the session "Kanto map assembly in Blender" when the
+  lineup is ready. Do not touch Payo map files, do not commit. Follow docs/CHARACTER_MODEL_METHOD.md and
+  docs/CAST_CLOTHING_STYLE.md; Rafi's builder (`tools/author_character_redesign_rafi*.py`) is the style reference.
+  Memory: new art targets the painted shaders with normal maps (toon shader retiring); props use the painted kit.

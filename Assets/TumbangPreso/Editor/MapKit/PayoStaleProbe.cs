@@ -26,6 +26,17 @@ namespace TumbangPreso.Editor.MapKit
             bool clean = ask == "clean";
             File.Delete(Request);
             var text = new StringBuilder();
+            if (ask == "where")
+            {
+                // The game camera's place and the point 40 m ahead, in the `shots eyeLABEL x y z lx ly lz` form, so a view the
+                // owner is looking at in Play can be shot again exactly.
+                var cam = Camera.main;
+                if (cam == null) { File.WriteAllText(Done, "OK where: no main camera\n"); return; }
+                Vector3 e = cam.transform.position, l = e + cam.transform.forward * 40f;
+                string F(float v) => v.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+                File.WriteAllText(Done, $"OK where ({(EditorApplication.isPlaying ? "in Play" : "edit mode")}) fov {cam.fieldOfView:F0}\n{F(e.x)} {F(e.y)} {F(e.z)} {F(l.x)} {F(l.y)} {F(l.z)}\n");
+                return;
+            }
             if (ask == "leaks")
             {
                 // Owner, 2026-10-19, "random ability vfx are stuck floating in the map": every live renderer, grouped by the

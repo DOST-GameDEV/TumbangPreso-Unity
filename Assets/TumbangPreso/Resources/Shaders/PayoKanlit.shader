@@ -10,7 +10,8 @@
 // Parts: 0 still, 1 gabi leaf rotor (spins about its hub), 2 3 4 the search / haul / happy face (one shown, the others
 // folded to a point and clipped), 5 palay cowlick (sways from its root), 6 a gold hoop (swings from its top).
 // `_Pose` is the one thing the CPU writes, once a frame: x the rotor's angle (radians), y which face (0, 1, 2), z how
-// hard the leaf flaps (0 to 1), w spare.
+// hard the leaf flaps (0 to 1), w seconds added to the clock (0 in a catch; the break's lift, `PayoBreakKanlit`, runs
+// with `Time.timeScale` 0, which stops `_Time`, so it writes its own real-time clock's lead here and the leaf still beats).
 //
 // THE LOOK: the hand pets' painted style in three soft value bands. NO ink line (owner, 2026-10-18: "remove it").
 // ⚠️ TAGGED `Transparent` AND QUEUED AT 2501 THOUGH OPAQUE (the reason `FxCloudPuffs.shader` gives): the game's ink and
@@ -38,7 +39,7 @@ Shader "TumbangPreso/PayoKanlit"
     // Moves one vertex; returns 0 for a vertex of a face that is not shown.
     float Animate(inout float3 p, inout float3 n, float4 a, float3 pivot)
     {
-        float part = a.x, t = _Time.y;
+        float part = a.x, t = _Time.y + _Pose.w;
         if (part > 0.5 && part < 1.5)
         {
             // The gabi leaf: flapping (a tilt that beats) and spinning about its hub.

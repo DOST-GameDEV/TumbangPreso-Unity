@@ -131,6 +131,10 @@ namespace TumbangPreso.EditorTools.MapKit
                 Vector3 spot = Ground(0f, -2f);
                 var nemu = Person("nemu", spot + new Vector3(-2.2f, 0f, -.6f), 60f);
                 var victim = Person("dante", spot + new Vector3(2.6f, 0f, 0f), -90f);
+                float victimHead = VictimHeadHeight;
+                foreach (var r in victim.GetComponentsInChildren<Renderer>(true))
+                    if (r.name.StartsWith("head")) { victimHead = r.bounds.center.y - victim.transform.position.y; break; }
+                report.AppendLine("  the passer-by's head middle: " + victimHead.ToString("0.00") + " m (NemuBlindfold uses " + VictimHeadHeight + " m in a match)");
                 var holderGo = In(new GameObject("~PetGhosts"));
                 var holder = holderGo.transform;
 
@@ -191,8 +195,12 @@ namespace TumbangPreso.EditorTools.MapKit
                     float tm = t - A0;
                     bool inMouse = t < A1;
                     victim.transform.position = spot + new Vector3(2.9f - Mathf.Clamp(tm, 0f, Spring) * .5f, 0f, 0f);
-                    Vector3 face = victim.transform.position + Vector3.up * VictimHeadHeight;
-                    Vector3 toward = (mouseHome - victim.transform.position); toward.y = 0f; toward.Normalize();
+                    // Off the court once the mouse is done, so he does not stand in the next acts' shots.
+                    if (victim.activeSelf != inMouse) victim.SetActive(inMouse);
+                    // His face at HIS head's middle (the roster pose stands lower than the 1.38 m `NemuBlindfold` measured in a match).
+                    Vector3 face = victim.transform.position + Vector3.up * victimHead;
+                    // Straight ahead of his face, as `NemuBlindfold.AheadOf` puts it (v2 c3 aimed at the mouse's spot, so it sat to one side).
+                    Vector3 toward = victim.transform.forward; toward.y = 0f; toward.Normalize();
                     Vector3 faceFront = face + toward * (VictimHeadHalfDepth + BlindfoldGhostModel.HeadHalfDepth - .03f);
                     var mouseFacing = Quaternion.LookRotation(-toward, Vector3.up);
                     bool sprung = tm >= Spring;

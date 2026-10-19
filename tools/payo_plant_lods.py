@@ -2,9 +2,18 @@
 
 Run:  blender -b --factory-startup --python tools/payo_plant_lods.py
       (optional after "--": model names to limit the run, e.g. -- tree_round)
+      blender -b --factory-startup --python tools/payo_plant_lods.py -- lod2
+      (the trees' far LOD2, see MODELS2; model names may follow "lod2")
 
 Reads   Assets/TumbangPreso/Art/Payo/Models/<model>.glb   (never written)
 Writes  Logs/payo/lod/<model>_lod1.glb, report.json, sheet.png  (staging only)
+        with lod2: <model>_lod2.glb, report_lod2.json, sheet_lod2.png
+
+LOD2 (2026-10-19, owner: "optimize the city side of the map, i still get fps
+drops. start by lowering the detail and vertices for the trees far from the
+play area"): the same card method from the full model, about 40 per cent of
+LOD1's triangles, the cards scaled up to SCALE_CAP2 so the crown reaches COVER. PayoFlora draws it past its `Far` distance (220 m at 60
+degrees, lodBias 1), where a tree is about 20 pixels tall.
 
 Method, per material role:
   card   whole 2 triangle leaf cards. A well spread subset is kept (voxel grid
@@ -82,9 +91,24 @@ MODELS = {
     "plant_bush_3": dict(cards=60, rows={r".*": 2}, gkeep={r"lagoon_flower_.*": 0.6}),
 }
 
+# The far trees' LOD2 budgets (a quarter of LOD1's cards; the trunk a few facets).
+# `cap` lets the fewer cards grow further: cards * cap^2 matches LOD1's coverage.
+# First try (44 to 55 cards, cap 6) read thin and gappy at 250 m on the review sheet: 70 to 85 cards at cap 8
+# reach COVER, as LOD1 does not (its cap 3 holds it under).
+SCALE_CAP2 = 8.0
+MODELS2 = {
+    "tree_tall_deep": dict(cards=70, solid=16, cap=SCALE_CAP2),
+    "tree_round": dict(cards=80, solid=20, cap=SCALE_CAP2),
+    "tree_broad_lime": dict(cards=85, solid=24, cap=SCALE_CAP2),
+    "tree_lean_olive": dict(cards=80, solid=20, cap=SCALE_CAP2),
+}
+# Which level this run makes ("lod1" unless "lod2" follows "--"); set by main().
+LEVEL = "lod1"
+
 # How far away the "small" review render pretends to be, metres, and the screen
 # it pretends to be on (1080 px tall, 60 degree vertical field of view).
 FAR_TREE = 100.0
+FAR_TREE2 = 250.0
 FAR_PLANT = 80.0
 PX_PER_RAD = 1080.0 / math.radians(60.0)
 
@@ -418,7 +442,7 @@ def process_object(obj, cfg, rng, notes):
             k = max(2, int(round(budget * len(comps) / max(1, total_cards))))
             if len(comps) < 30:     # a small accent group: keep enough that no card balloons
                 k = max(k, math.ceil(0.25 * len(comps)))
-            d, s = subset_scale(bm, comps, k, crown_c, rng, box, pull=cfg.get("pull", PULL))
+            d, s = subset_scale(bm, comps, k, crown_c, rng, box, cap=cfg.get("cap", SCALE_CAP), pull=cfg.get("pull", PULL))
             dead.extend(d)
             notes.append(f"{obj.name}/{mname}: kept {min(k, len(comps))}/{len(comps)} cards, scale {s:.2f}")
         elif keep < 1.0:
@@ -521,9 +545,9 @@ def finish_normals(obj, solid_mis):
 
 
 def build(name, report):
-    cfg = MODELS[name]
+    cfg = (MODELS2 if LEVEL == "lod2" else MODELS)[name]
     src = os.path.join(SRC, name + ".glb")
-    dst = os.path.join(OUT, name + "_lod1.glb")
+    dst = os.path.join(OUT, name + "_" + LEVEL + ".glb")
     reset()
     objs = import_glb(src)
     vcol = any(len(o.data.color_attributes) for o in objs if o.type == "MESH")
@@ -551,7 +575,7 @@ def build(name, report):
         attributes_before=a["attributes"], attributes_after=b["attributes"],
         material_modes_before=a["materials"], material_modes_after=b["materials"],
         images_after=b["images"], notes=notes)
-    print(f"[lod] {name}: {a['tris']} -> {b['tris']} tris  materials match: {mats_a == mats_b}")
+    print(f"[lod] {name} {LEVEL}: {a['tris']} -> {b['tris']} tris  materials match: {mats_a == mats_b}")
 
 
 def roundtrip(name):
@@ -700,7 +724,7 @@ def render_pair(name, info, specs):
     sun.rotation_euler = (math.radians(50), 0, math.radians(30))
 
     full = import_glb(os.path.join(SRC, name + ".glb"))
-    lod = import_glb(os.path.join(OUT, name + "_lod1.glb"))
+    lod = import_glb(os.path.join(OUT, name + "_" + LEVEL + ".glb"))
     apply_preview(full + lod, specs)
     mn, mx = world_bounds(full)
     size = mx - mn
@@ -736,23 +760,23 @@ def render_pair(name, info, specs):
     drop = up * (height_needed / 1.35 * 0.5 + cam_d.ortho_scale * H / W * 0.06)
     lsize = cam_d.ortho_scale * 0.035
     l1 = label(f"full  {info['source_tris']} tris", focus - right * off - drop, rot, lsize)
-    l2 = label(f"lod1  {info['lod1_tris']} tris", focus + right * off - drop, rot, lsize)
+    l2 = label(f"{LEVEL}  {info['lod1_tris']} tris", focus + right * off - drop, rot, lsize)
 
     os.makedirs(RENDERS, exist_ok=True)
-    mid = os.path.join(RENDERS, name + "_mid.png")
+    mid = os.path.join(RENDERS, name + ("_lod2" if LEVEL == "lod2" else "") + "_mid.png")
     sc.render.resolution_x, sc.render.resolution_y = W, H
     sc.render.resolution_percentage = 100
     sc.render.filepath = mid
     bpy.ops.render.render(write_still=True)
 
     # small: same framing, pixels per metre as seen from far away
-    far = FAR_TREE if name.startswith("tree_") else FAR_PLANT
+    far = (FAR_TREE2 if LEVEL == "lod2" else FAR_TREE) if name.startswith("tree_") else FAR_PLANT
     ppm = PX_PER_RAD / far
     sw = max(8, int(round(cam_d.ortho_scale * ppm)))
     sh = max(4, int(round(sw * H / W)))
     l1.hide_render = True
     l2.hide_render = True
-    small = os.path.join(RENDERS, name + "_small.png")
+    small = os.path.join(RENDERS, name + ("_lod2" if LEVEL == "lod2" else "") + "_small.png")
     sc.render.resolution_x, sc.render.resolution_y = sw, sh
     sc.render.filepath = small
     bpy.ops.render.render(write_still=True)
@@ -803,10 +827,15 @@ def compose_sheet(rows, path):
 
 
 def main():
+    global LEVEL
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
-    names = argv or list(MODELS)
+    if argv and argv[0] == "lod2":
+        LEVEL = "lod2"
+        argv = argv[1:]
+    table = MODELS2 if LEVEL == "lod2" else MODELS
+    names = argv or list(table)
     os.makedirs(OUT, exist_ok=True)
-    rep_path = os.path.join(OUT, "report.json")
+    rep_path = os.path.join(OUT, "report_lod2.json" if LEVEL == "lod2" else "report.json")
     report = {}
     if argv and os.path.exists(rep_path):
         report = json.load(open(rep_path)).get("models", {})
@@ -815,17 +844,17 @@ def main():
         build(n, report)
     specs = load_matspec()
     rows = []
-    for n in MODELS:
+    for n in table:
         if n not in report:
             continue
         mid, small, far = render_pair(n, report[n], specs)
         report[n]["review_small_distance_m"] = far
         rows.append((mid, small))
-    compose_sheet(rows, os.path.join(OUT, "sheet.png"))
+    compose_sheet(rows, os.path.join(OUT, "sheet_lod2.png" if LEVEL == "lod2" else "sheet.png"))
     out = dict(
         tool="tools/payo_plant_lods.py",
         method=__doc__.strip(),
-        params=dict(cover=COVER, scale_cap=SCALE_CAP, pull=PULL, seed=SEED),
+        params=dict(level=LEVEL, cover=COVER, scale_cap=SCALE_CAP2 if LEVEL == "lod2" else SCALE_CAP, pull=PULL, seed=SEED),
         roundtrip_check=rt,
         sheet="Logs/payo/lod/sheet.png (rows in model order; left: 3/4 view full vs lod1, "
               "right: same view rendered at the pixel size seen from review_small_distance_m on a "

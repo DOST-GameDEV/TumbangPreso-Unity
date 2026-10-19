@@ -15,10 +15,31 @@ namespace TumbangPreso.Visual
     ///  * WARNING (last 1.5 s): the seams and the rim cool, the slabs sag 5 cm.
     ///  * DISSIPATE: the wall is left where it stood and sinks back into the court in the same ripple, outside first.
     /// Everything is posed from its age; every peer sees the reflect from the slippers it watches cross the line.
+    ///
+    /// ⚠️⚠️ AND SINCE 2026-10-19 A MATCH DRAWS THE APPROVED WALL INSTEAD (<see cref="Approved"/>, on by default). The owner,
+    /// after the bench film b8b: "bastion b8 can go in game now". So the wall in a match is the bench effect itself
+    /// (`FxStudyDanteBastion.ForMatch`, b8: seven basalt slabs with magma in them, three wide heat columns rising out of
+    /// the slabs, the shimmer between, the split it comes out of and its dust), not a copy of it, posed from this
+    /// component's own clock. Its sizes ARE the rule (`FxStudyDanteBastion.Width`, `Forward`, `FieldTop` and `Life` are
+    /// `GeoRules.BarrierWidth`, `BarrierForward`, 2.6 m and `BarrierSeconds`, and `DanteWardRuleTests` asserts it), so it
+    /// is drawn at its approved size, unstretched, exactly where slippers turn back. It rises out of the court, cools in
+    /// its last 1.5 s, and when the skill ends it stays where it stood and is eaten and sinks, outside first.
+    /// Off, ASTRA's look below is built exactly as before.
     /// </summary>
     public sealed class DanteBastionWall : MonoBehaviour
     {
+        /// <summary>The approved b8b wall (true) or ASTRA's slabs, heat field and stone rim (false). Read when a wall is built.</summary>
+        public static bool Approved = true;
         public const float FieldTop = 2.6f;
+        // The approved wall's end, after the skill ends: the slabs are under the court by 0.63 s and the last of the dust
+        // kicked at their ends is gone by 0.90 s (`FxStudyDanteBastion`'s own beats).
+        private const float ApprovedGone = .95f;
+        private FxStudyDanteBastion _fx;
+        private float _since;
+        private int _approvedSlabs, _strikeNext;
+        private readonly System.Collections.Generic.List<Vector3> _strikes = new System.Collections.Generic.List<Vector3>(FxStudyDanteBastion.MatchStrikes);
+        /// <summary>True when this wall is the approved look.</summary>
+        public bool DrawsApproved => _fx != null;
         private const float RiseFrom = .2f, RiseStep = .035f, RiseJolt = .07f, WarnSeconds = 1.5f, SinkSeconds = .5f;
         // Centre first, then outward: the order each of the seven slabs rises (slab index -> rank).
         private static readonly int[] RiseRank = { 3, 2, 1, 0, 1, 2, 3 };
@@ -42,6 +63,7 @@ namespace TumbangPreso.Visual
             root.transform.localPosition = new Vector3(0f, 0f, GeoRules.BarrierForward);
             var wall = root.AddComponent<DanteBastionWall>();
             wall._owner = owner; wall._life = life; wall._lastPos = owner.position;
+            if (Approved && wall.BuildApproved()) { wall.StepTo(0f); return wall; }
             var model = DanteProp.Spawn("bastion", root.transform);
             if (model != null)
             {
@@ -64,6 +86,40 @@ namespace TumbangPreso.Visual
             wall.StepTo(0f);
             return wall;
         }
+
+        /// <summary>
+        /// The approved wall, stood on his line. This object stands `BarrierForward` in front of him, his way; the bench
+        /// effect stands at his feet with its +x his way and its wall `Forward` along it, so it hangs under a holder put
+        /// back to his feet and turned a quarter. False (and nothing made) if its model is missing, so ASTRA's is built.
+        /// </summary>
+        private bool BuildApproved()
+        {
+            if (FxStudyDanteBastion.Wall(FxStudyDanteBastion.InGame) == null) return false;
+            var model = Resources.Load<GameObject>(FxStudyDanteBastion.ModelB4);
+            if (model != null) foreach (var filter in model.GetComponentsInChildren<MeshFilter>(true)) if (filter.name.StartsWith("slab-")) _approvedSlabs++;
+            var stand = new GameObject("BastionApproved").transform;
+            stand.SetParent(transform, false);
+            stand.localPosition = new Vector3(0f, 0f, -GeoRules.BarrierForward);
+            stand.localRotation = Quaternion.Euler(0f, -90f, 0f);
+            // The stone is shaded by a light of its own: in a match, the map's sun. Its material reads the light when it is
+            // made, so the bench's light is put back at once and a bench film after a Play session is lit as it was filmed.
+            Vector3 bench = FxStudyDanteBoulder.KeyLight;
+            if (RenderSettings.sun != null) FxStudyDanteBoulder.KeyLight = -RenderSettings.sun.transform.forward;
+            try { _fx = FxStudyDanteBastion.ForMatch(stand); }
+            finally { FxStudyDanteBoulder.KeyLight = bench; }
+            return true;
+        }
+
+        private void OnDestroy()
+        {
+            // In Play its materials go with it. Outside Play (a film) the film frees it first (`FreeLook`): nothing may be
+            // destroyed at once from inside OnDestroy.
+            if (_fx != null && Application.isPlaying) _fx.Dispose();
+            _fx = null;
+        }
+
+        /// <summary>Frees the approved wall's own pieces now. For a film outside Play, before the wall is destroyed.</summary>
+        public void FreeLook() { _fx?.Dispose(); _fx = null; }
 
         private void BuildField()
         {
@@ -192,9 +248,15 @@ namespace TumbangPreso.Visual
         {
             _age += Time.deltaTime;
             StepTo(_age);
-            if (_released < 0f) { Follow(); WatchReflects(); }
-            if (_released >= 0f && _age - _released > SinkSeconds + .1f) Destroy(gameObject);
+            if (_released < 0f) { if (_fx == null) Follow(); WatchReflects(); }
+            if (_released >= 0f && _age - _released > (_fx != null ? ApprovedGone : SinkSeconds + .1f)) Destroy(gameObject);
         }
+
+        /// <summary>For a film outside Play, where `Update` does not run: one frame of `dt` seconds, as `Update` plays it.</summary>
+        public void Advance(float dt) { _age += dt; StepTo(_age); }
+
+        // The court's height under the wall, in its own space (0 if nothing is under it).
+        private float _ground;
 
         /// <summary>Posed from the age alone.</summary>
         public void StepTo(float age)
@@ -203,10 +265,19 @@ namespace TumbangPreso.Visual
             float ground = Slipper.GroundY(transform.position);
             float dy = (ground - transform.position.y) / Mathf.Max(.0001f, transform.lossyScale.y);
             if (float.IsInfinity(ground) || float.IsNaN(dy)) dy = 0f;
+            _ground = dy;
             for (int c = 0; c < transform.childCount; c++)
             {
                 var child = transform.GetChild(c);
                 var lp = child.localPosition; lp.y = dy + (child == (_tell != null ? _tell.transform : null) ? .012f : 0f); child.localPosition = lp;
+            }
+            if (_fx != null)
+            {
+                // The approved wall's clock: standing, the age (held at its life, should the end come a frame late); once
+                // the skill has ended, its life plus the time since, so it is eaten and sinks on its own beats.
+                _since = _released < 0f ? Mathf.Min(age, FxStudyDanteBastion.Life) : FxStudyDanteBastion.Life + (age - _released);
+                _fx.SampleMatch(_since, _strikes);
+                return;
             }
             float warn = Mathf.Clamp01((age - (_life - WarnSeconds)) / WarnSeconds);
             float sink = _released >= 0f ? (age - _released) / SinkSeconds : 0f;
@@ -265,7 +336,7 @@ namespace TumbangPreso.Visual
         /// <summary>Every peer sees the reflect from the slipper it watches: one flash per approach that turns back at the line.</summary>
         private void WatchReflects()
         {
-            if (_fieldMaterial == null || _age < .3f) return;
+            if ((_fieldMaterial == null && _fx == null) || _age < .3f) return;
             foreach (var s in Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None))
             {
                 if (s == null || s.State != SlipperState.InFlight) { if (s != null) _seen.Remove(s); continue; }
@@ -282,8 +353,20 @@ namespace TumbangPreso.Visual
             }
         }
 
+        /// <summary>A slipper turned back off the wall at `world`: the approved wall lights there and kicks its dust. For a
+        /// film outside Play as well, where no real slipper flies.</summary>
+        public void Strike(Vector3 world) => Flash(transform.InverseTransformPoint(world), world);
+
         private void Flash(Vector3 local, Vector3 world)
         {
+            if (_fx != null)
+            {
+                // Where it struck, in the approved wall's own terms: across from its middle, up from the court, and when.
+                var at = new Vector3(Mathf.Clamp(local.x, -GeoRules.BarrierWidth * .5f, GeoRules.BarrierWidth * .5f), Mathf.Clamp(local.y - _ground, 0f, FieldTop), _since);
+                if (_strikes.Count < FxStudyDanteBastion.MatchStrikes) _strikes.Add(at); else _strikes[_strikeNext] = at;
+                _strikeNext = (_strikeNext + 1) % FxStudyDanteBastion.MatchStrikes;
+                return;
+            }
             float u = Mathf.InverseLerp(-GeoRules.BarrierWidth * .5f, GeoRules.BarrierWidth * .5f, local.x);
             float v = Mathf.InverseLerp(.95f, FieldTop, local.y);
             _fieldMaterial.SetVector("_Hit", new Vector4(u, Mathf.Clamp01(v), 0f, 0f));
@@ -291,7 +374,14 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>For a review: the last reflect's age on the field (9 when none).</summary>
-        public float LastReflectAge => _fieldMaterial != null ? _fieldMaterial.GetVector("_Hit").z : 9f;
-        public int SlabCount { get { int n = 0; foreach (var t in _slabs) if (t != null) n++; return n; } }
+        public float LastReflectAge
+        {
+            get
+            {
+                if (_fx != null) return _strikes.Count == 0 ? 9f : _since - _strikes[(_strikeNext + FxStudyDanteBastion.MatchStrikes - 1) % FxStudyDanteBastion.MatchStrikes].z;
+                return _fieldMaterial != null ? _fieldMaterial.GetVector("_Hit").z : 9f;
+            }
+        }
+        public int SlabCount { get { if (_fx != null) return _approvedSlabs; int n = 0; foreach (var t in _slabs) if (t != null) n++; return n; } }
     }
 }

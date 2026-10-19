@@ -568,6 +568,12 @@ namespace TumbangPreso.Visual
             foreach (var renderer in FindObjectsByType<Renderer>(FindObjectsSortMode.None))
             {
                 if (renderer == null || !renderer.enabled) continue;
+                // ⚠️ ONLY MESHES ARE MASKED (owner, 2026-10-19: shading outlines flashed through the platforms while
+                // ability effects were up; the recorder caught it with the mask list full of new effect parts). A line,
+                // trail, particle or billboard renderer builds its geometry per camera and is not meant for
+                // `CommandBuffer.DrawRenderer`; such effects also never write the depth-normals prepass, so masking them
+                // protects nothing.
+                if (!(renderer is MeshRenderer) && !(renderer is SkinnedMeshRenderer)) continue;
 
                 bool wanted = _exclusion == Exclusion.Layers
                     ? (_excludedLayers.value & (1 << renderer.gameObject.layer)) != 0

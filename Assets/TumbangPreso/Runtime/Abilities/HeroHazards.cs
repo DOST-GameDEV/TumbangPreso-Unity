@@ -50,6 +50,11 @@ namespace TumbangPreso.Abilities
 
             HazardVolume.Attach(go, 1.6f * spanScale, -1);
 
+            // Glacial Wall's approved look (owner 2026-10-18, "depth b looks good"). The slabs above stay as the
+            // colliders and stop being drawn; the look reads its clock from `comp`, so every peer and a late joiner
+            // draw the same wall at the same moment of its life.
+            if (arcLength > 0.0f && CheskaGlacialWallLook.Enabled) CheskaGlacialWallPresenter.Attach(comp, arcLength, arcRadius);
+
             return go;
         }
 
@@ -99,7 +104,9 @@ namespace TumbangPreso.Abilities
                 if (_shattered) return;
                 _shattered=true;
                 foreach (var collider in GetComponentsInChildren<Collider>()) collider.enabled=false;
-                CheskaIceVisuals.ShatterWall(transform);
+                // The reworked look sinks into the road by itself at the end of its life, so a wall that runs out
+                // throws no chunks; one broken early by slippers still bursts, and its crystals sink behind the burst.
+                if (!CheskaGlacialWallPresenter.End(transform, Remaining)) CheskaIceVisuals.ShatterWall(transform);
                 // Keep the actual ice-break cue and shared match event. Decorative
                 // fragments have no physics or colliders and cannot shove players.
                 NetCue.Play("sfx_ice_shatter", transform.position);

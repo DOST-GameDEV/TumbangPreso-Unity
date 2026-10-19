@@ -214,6 +214,43 @@ namespace TumbangPreso.EditorTools.MapKit
             return root.name + "/" + x.name;
         }
 
+        /// <summary>
+        /// THE CITY SIDE'S GEOMETRY IN VIEW (2026-10-19, owner: "optimize the city side of the map ... lowering the detail and
+        /// vertices for the trees far from the play area ... the houses on the farther side can be using simpler textures"):
+        /// what the last frame drew of the instanced trees (PayoFlora's own count: plants, LOD2 share, triangles, vertices,
+        /// calls) and of the houses (renderers Unity drew, their triangles and vertices, distinct materials and the textures
+        /// those materials sample, in MB as loaded).
+        /// </summary>
+        private static string CityCensus(Transform root)
+        {
+            var flora = Object.FindFirstObjectByType<PayoFlora>();
+            var houses = new List<Renderer>();
+            var dress = root.Find("Dressing");
+            if (dress != null)
+                foreach (Transform group in dress)
+                    if (group.name.StartsWith("house", StringComparison.Ordinal))
+                        houses.AddRange(group.GetComponentsInChildren<Renderer>(false).Where(r => r.enabled && r.isVisible));
+            long tris = 0, verts = 0;
+            var mats = new HashSet<Material>();
+            foreach (var r in houses)
+            {
+                var mesh = r.TryGetComponent<MeshFilter>(out var mf) ? mf.sharedMesh : null;
+                // A static-batched renderer's mesh in Play is the whole combined batch: count only its own submeshes.
+                var mr = r as MeshRenderer;
+                int first = mr != null && mr.isPartOfStaticBatch ? mr.subMeshStartIndex : 0;
+                int count = mr != null && mr.isPartOfStaticBatch ? r.sharedMaterials.Length : mesh != null ? mesh.subMeshCount : 0;
+                if (mesh != null)
+                    for (int s = first; s < first + count && s < mesh.subMeshCount; s++) { tris += mesh.GetIndexCount(s) / 3; verts += mesh.GetSubMesh(s).vertexCount; }
+                foreach (var m in r.sharedMaterials) if (m != null) mats.Add(m);
+            }
+            var textures = new HashSet<Texture>();
+            foreach (var m in mats) foreach (string p in m.GetTexturePropertyNames()) { var t = m.GetTexture(p); if (t != null) textures.Add(t); }
+            double mb = textures.Sum(t => (double)UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(t)) / (1024.0 * 1024.0);
+            return $"houses drawn {houses.Count} renderers, {tris:N0} tris, {verts:N0} verts, {mats.Count} materials ({string.Join("/", mats.Select(m => m.name).OrderBy(n => n))}), " +
+                   $"{textures.Count} textures {mb:0.0} MB ({string.Join("/", textures.Select(t => t.width).Distinct().OrderBy(w => w))} px wide); " +
+                   (flora != null ? flora.Report() : "no PayoFlora");
+        }
+
         private static string LightsOn()
         {
             var on = Object.FindObjectsByType<Light>(FindObjectsSortMode.None).Where(l => l.isActiveAndEnabled && l.type != LightType.Directional).ToList();
@@ -353,6 +390,7 @@ namespace TumbangPreso.EditorTools.MapKit
                     StartView(v.dir);
                     while (Step(v.dir)) yield return null;
                     Say(Line(v.name, Current));
+                    Say("      city: " + CityCensus(root.transform));
                     all.Interval.AddRange(Current.Interval); all.Main.AddRange(Current.Main); all.Loop.AddRange(Current.Loop); all.Render.AddRange(Current.Render); all.Gpu.AddRange(Current.Gpu);
                     all.Batches.AddRange(Current.Batches); all.SetPass.AddRange(Current.SetPass); all.Draws.AddRange(Current.Draws); all.Tris.AddRange(Current.Tris); all.Casters.AddRange(Current.Casters);
                     Flush();
@@ -402,7 +440,11 @@ namespace TumbangPreso.EditorTools.MapKit
             // earlier reports), from the court eye and from a stage top, with this window's additions switched off too.
             try
             {
-                var houses = byPart.TryGetValue("houses", out var hl) ? hl : new List<Renderer>();
+                // Only the town's houses (within 250 m, up the south slope): the 11 hamlet houses 280 to 950 m down the valley
+                // pulled the middle to z +76, so until 2026-10-19 this section looked NORTH, away from the town. Section 5's
+                // heading 180 was the town all along.
+                var houses = (byPart.TryGetValue("houses", out var hl) ? hl : new List<Renderer>())
+                    .Where(r => r != null && new Vector2(r.bounds.center.x, r.bounds.center.z).magnitude < 250f).ToList();
                 Vector3 town = houses.Count > 0 ? houses.Aggregate(Vector3.zero, (a, r) => a + r.bounds.center) / houses.Count : new Vector3(0f, 0f, -150f);
                 var dress = root.transform.Find("Dressing");
                 if (dress != null)
@@ -434,6 +476,16 @@ namespace TumbangPreso.EditorTools.MapKit
                     rows.Add(($"no {part.Key}", () => { foreach (var r in list) if (r != null) r.enabled = false; },
                         () => { for (int i = 0; i < list.Count; i++) if (list[i] != null) list[i].enabled = was[i]; }));
                 }
+                // The city side's two LOD switches (2026-10-19), undone for one row each in the same Play: the far trees
+                // drawing LOD1 where they draw LOD2, and every house held at its full LOD0.
+                var houseGroups = root.GetComponentsInChildren<LODGroup>(true).Where(g => g.transform.parent != null && g.transform.parent.name.StartsWith("house", StringComparison.Ordinal)).ToList();
+                rows.Add(("trees without LOD2", () => PayoFlora.NoLod2 = true, () => PayoFlora.NoLod2 = false));
+                rows.Add(("everything on", none, none));
+                if (houseGroups.Count > 0)
+                {
+                    rows.Add(($"houses held at LOD0 ({houseGroups.Count})", () => { foreach (var g in houseGroups) g.ForceLOD(0); }, () => { foreach (var g in houseGroups) g.ForceLOD(-1); }));
+                    rows.Add(("everything on", none, none));
+                }
                 rows.Add(($"no stone grain ({grained.Count} mats)", () => { foreach (var m in grained) m.SetFloat("_Grain", 0f); }, () => { foreach (var m in grained) m.SetFloat("_Grain", 1f); }));
                 if (sun != null) rows.Add(("no sun shadows", () => sun.shadows = LightShadows.None, () => sun.shadows = lightShadows));
                 if (outline != null) rows.Add(("no world outline", () => outline.enabled = false, () => outline.enabled = true));
@@ -452,6 +504,7 @@ namespace TumbangPreso.EditorTools.MapKit
                         }
                         finally { row.on(); }
                         Say(Line(row.name.Length > 22 ? row.name.Substring(0, 22) : row.name, Current) + (row.name.Length > 22 ? "  [" + row.name + "]" : ""));
+                        if (row.name.StartsWith("everything on", StringComparison.Ordinal)) Say("      city: " + CityCensus(root.transform));
                         Say($"      state: depth mode {cam.depthTextureMode}, far {cam.farClipPlane:0}, lodBias {QualitySettings.lodBias:0.##}, shadow distance {QualitySettings.shadowDistance:0}, " +
                             $"lights on {LightsOn()}, cameras on {Camera.allCamerasCount} ({string.Join("/", Camera.allCameras.Select(c => c.name))}), " +
                             $"night {PayoNight.Factor:0.00}, round {(GameServices.Match != null ? GameServices.Match.RoundNumber : 0)} live {GameServices.Round != null && GameServices.Round.RoundActive}, {Time.realtimeSinceStartup - t0:0} s");

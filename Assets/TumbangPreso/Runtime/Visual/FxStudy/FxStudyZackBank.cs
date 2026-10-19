@@ -148,7 +148,7 @@ namespace TumbangPreso.Visual
     /// The bench: the real `tsinelas_classic` model as the shoe, two stand-in walls, a throw along a fixed route at the
     /// rule's speeds (10 m/s, 85 per cent kept at each bank).
     /// </summary>
-    public sealed class FxStudyZackBank : FxStudyEffect
+    public sealed partial class FxStudyZackBank : FxStudyEffect
     {
         public enum Show { Overclock, Single, RunsOut, EightMetres, EightMetresSingle, Side, Behind, Front, Above }
 
@@ -791,44 +791,9 @@ namespace TumbangPreso.Visual
                 // death are its age's (the shader works it out from the speed and from how long ago this leg ended), so the
                 // trail is history: it is never re-pointed, a flown leg's points simply go on ageing where they lie.
                 float extra = flownLeg ? since : 0f;
-                var trail = _long[l];
-                trail.Window(-1f, 2f, 0.02f);
-                trail.Size(flownOnLeg, 1f);
-                trail.Life(_legSpeed[l], extra);
-                trail.Vec("_Grow", new Vector4(0.22f, 0.07f, 0.55f, 0.32f));
-                trail.Vec("_Die", new Vector4(0.15f, 0.34f, 0f, 0f));
-                trail.Vec("_Wobble", new Vector4(0.40f, 0.65f, 0.90f, l * 0.23f));
-                trail.Vec("_Ends", new Vector4(0.0f, 0.03f, 0.30f, 0f));
-                // Quick Circuit's gold, not fire: the veil is amber, the body a warm gold, the fold lemon, the core white. (v1
-                // had the deep orange as its veil and read as Rago's fire.) Over half of it paint, for the sunlit court.
-                trail.Colour("_Deep", Amber); trail.Colour("_Body", Gold);
-                trail.Vec("_Bands", new Vector4(1f, 0.025f, 0.50f, 0.85f));
-                trail.Vec("_Stops", new Vector4(0.12f, 0.46f, 0.80f, 0f));
-                trail.Num("_Add", 0.38f);
-                trail.Facing(0.75f, l * 60f + 30f);
-                trail.Reads(0.75f * stretch, l * 0.31f, 1.05f * stretch, l * 0.57f);
-                trail.Pans(-0.50f, 0.05f, -1.10f, -0.08f);
-                trail.Wave(0.04f, 1.0f * stretch, 5f, l * 1.9f);
-                trail.Frame(age, shown ? open : 0f, 0f);
-                var core = _core[l];
-                core.Window(-1f, 2f, 0.02f);
-                core.Size(flownOnLeg, 1f);
-                core.Life(_legSpeed[l], extra);
-                core.Vec("_Grow", new Vector4(0.55f, 0.03f, 0.35f, 0.15f));
-                core.Vec("_Die", new Vector4(0.05f, 0.16f, 0f, 0f));
-                core.Vec("_Wobble", new Vector4(0.25f, 1.3f, -0.8f, 0.5f + l * 0.17f));
-                core.Vec("_Ends", new Vector4(0.0f, 0.02f, 0.30f, 0f));
-                core.Vec("_Stops", new Vector4(0.10f, 0.26f, 0.58f, 0f));
-                core.Colour("_Deep", Amber); core.Colour("_Body", LemonDeep); core.Colour("_Fold", Lemon);
-                core.Num("_Add", 0.80f);
-                core.Facing(0.30f, l * 60f + 75f);
-                core.Reads(1.3f * stretch, l * 0.43f, 1.7f * stretch, l * 0.19f);
-                core.Pans(-0.95f, -0.06f, -1.60f, 0.08f);
-                core.Wave(0.02f, 2.0f * stretch, 9f, l * 1.3f + 0.7f);
-                core.Frame(age, shown ? open : 0f, 0f);
+                DressLeg(_long[l], _core[l], l, flownOnLeg, stretch, _legSpeed[l], extra, shown ? open : 0f, age);
                 // A spine keeps a fixed face (upright, its flat side across the leg): it fades as it turns edge-on to the eye.
-                Vector3 toEyeLeg = (eye - _legAt[l].position).normalized;
-                float edgeOn = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.12f, 0.45f, Mathf.Abs(Vector3.Dot(_legAt[l].right, toEyeLeg))));
+                float edgeOn = EdgeOn(_legAt[l], eye);
                 // Its spines: those still to be paid when the shoe flew this leg. The one this leg's bank pays with goes
                 // with the blade at the wall; the others go on into the next leg's blade.
                 for (int c = 0; c < MaxCharges; c++)
@@ -836,12 +801,8 @@ namespace TumbangPreso.Visual
                     int pick = (strike + c) % Shapes;
                     for (int s = 0; s < Shapes; s++)
                     {
-                        var spine = _spine[l, c, s];
-                        spine.Window(tailU, headU, 0.03f);
-                        spine.Tile(1.4f * stretch, 1f, FxStudyKit.Hash(strike, 50 + c + l * 3), 0f);
-                        // The spines' own erosion drifts at their own rate, and they are eaten with the blade at its end.
-                        spine.Flow(0f, c == 0 ? -1.2f : -0.7f, 1.0f);
-                        spine.Frame(age, shown && c >= l && c < _charges && s == pick ? edgeOn : 0f, flownLeg ? FxStudyKit.Run(since, 0f, 0.22f) : 0.12f);
+                        DressSpine(_spine[l, c, s], tailU, headU, stretch, strike, c, l, shown && c >= l && c < _charges && s == pick ? edgeOn : 0f,
+                                   flownLeg ? FxStudyKit.Run(since, 0f, 0.22f) : 0.12f, age);
                     }
                 }
             }
@@ -854,13 +815,10 @@ namespace TumbangPreso.Visual
             float spentAt = Sum(_charges);
             for (int i = 0; i < Strands; i++)
             {
-                var st = Table[i];
-                float phase = i * Cycle / Strands, since0 = flown - phase;
-                int round = Mathf.FloorToInt(since0 / Cycle);
-                float bornAt = phase + round * Cycle, life = (flown - bornAt) / Cycle;
+                float since0 = StrandBeat(i, flown, out float bornAt, out float life);
                 bool alive = thrown && since0 >= 0f && bornAt < spentAt && life >= 0f && life < 1f;
                 if (!alive) { _strand[i].Frame(age, 0f); continue; }
-                float held = 0.55f;
+                float held = StrandHeld;
                 int bornLeg; float bornLegStart; Along(bornAt, out bornLeg, out bornLegStart);
                 float legEnd = bornLeg < 2 ? Sum(bornLeg + 1) : 1e6f;
                 // It rides the shoe until its own time to let go or the end of its leg, whichever comes first.
@@ -871,29 +829,13 @@ namespace TumbangPreso.Visual
                 // (A thousandth of a second inside its own leg: asked at the very instant of the bank, the path answers with
                 // the NEXT leg, and the strand swung round to it. That was the turn the owner saw in b8 and the first b9.)
                 float until = riding ? flown : letGo - 0.001f;
-                Vector3 dir; Vector3 pivot = PosAt(until, out dir) + Vector3.up * (0.04f + st.High * 1.8f);
+                Vector3 dir; Vector3 pivot = PosAt(until, out dir) + Vector3.up * (0.04f + Table[i].High * 1.8f);
                 int untilLeg; float untilStart; float travelled = Along(until, out untilLeg, out untilStart) - _legStartDistance[bornLeg];
                 var strand = _strand[i];
-                // It stretches back as it is born, swells and settles, and bends up as it is let go.
-                float grow = FxStudyKit.EaseOut(Mathf.Clamp01(life / 0.35f)), swell = 1f + 0.35f * Mathf.Sin(Mathf.PI * Mathf.Clamp01(life / 0.7f));
                 // Never longer than the way the shoe has come along this leg (from the hand there is no limit but its own).
                 float reach = bornLeg == 0 ? 1e6f : Mathf.Max(0.02f, travelled);
-                float length = Mathf.Min(1.4f * st.Length * Mathf.Lerp(0.25f, 1f, grow) * (1f + 0.3f * peeled), reach), thick = st.Thick * swell * (1f - 0.35f * peeled);
-                strand.At.localPosition = pivot;
-                // Along the line the shoe took, always. (b9 turned it up to 48 degrees as it let go: "rotating upwards".)
-                strand.At.localRotation = Quaternion.LookRotation(dir);
-                // A slight lift as it thins, a few centimetres, never a swing.
-                strand.At.localPosition = pivot + Vector3.up * (0.06f * FxStudyKit.Ease(peeled));
-                strand.At.localScale = new Vector3(1f, 1f, length);
-                strand.Facing(thick * 0.7f, i * 45f + (st.Flat ? 22f : 0f));
-                // Its own flow and warp: the waves run along it and drift, and grow as it peels off and curls.
-                strand.Flow(st.Flow, st.Flow * 0.5f, -1.1f);
-                // It loosens as it dies: the wave through it, point by point, grows a little and slows.
-                strand.Wave(0.04f + 0.09f * peeled, st.Waves * (1f + 0.4f * peeled), st.Speed * (2f - 0.8f * peeled), i * 1.37f);
-                strand.Reads(0.9f * length / 1.6f, i * 0.29f, 1.1f * length / 1.6f, i * 0.53f);
-                float fade = FxStudyKit.Run(life, 0f, 0.08f);
-                strand.Colour("_Deep", Amber); strand.Colour("_Body", Gold);
-                strand.Frame(age, 0.60f * fade, 0.25f + 0.75f * FxStudyKit.Ease(peeled));
+                StrandShape(i, life, peeled, reach, out float length, out float thick);
+                DressStrand(strand, i, pivot, dir, length, thick, peeled, life, age);
             }
 
             // THE SHORT TRAIL, THE HEAD CARDS AND THE EMBERS ride a charged shoe in flight.
@@ -901,68 +843,19 @@ namespace TumbangPreso.Visual
             Vector3 lead = at + Vector3.up * 0.04f;
             for (int k = 0; k < 2; k++)
             {
-                var bulbPart = _short[k];
-                bulbPart.At.localPosition = lead;
-                bulbPart.At.localRotation = Quaternion.LookRotation(going) * Quaternion.Euler(0f, 0f, k == 0 ? 0f : 4f * Mathf.Sin(age * 11f));
-                float onThisLeg = leg == 0 ? 1e6f : d - _legStartDistance[leg];
-                bulbPart.At.localScale = new Vector3(1f, 1f, Mathf.Min(1f + 0.12f * Mathf.Sin(age * 13f + k), Mathf.Max(0.02f, onThisLeg) / 0.9f));
-                bulbPart.Reads(0.7f, k * 0.41f, 0.9f, k * 0.23f);
-                // Two layers, the second narrower and at another roll: depth, seen from any side.
-                bulbPart.Facing(k == 0 ? 1f : 0.6f, k == 0 ? 0f : 90f);
-                bulbPart.Wave(0.03f, 1.4f, 10f, k * 3.1f);
-                bulbPart.Colour("_Deep", Amber); bulbPart.Colour("_Body", Gold);
-                bulbPart.Frame(age, flying ? 0.95f * open : 0f, 0.0f);
+                DressBulb(_short[k], k, lead, going, leg == 0 ? 1e6f : d - _legStartDistance[leg], flying ? 0.95f * open : 0f, age);
             }
             int frame = Mathf.FloorToInt(age * 60f);
             Vector3 toEye = (lead - eye).normalized, back = -going;
             for (int i = 0; i < Cards; i++)
             {
-                var card = _cardPart[i];
-                card.At.localPosition = lead;
-                // Laid so its picture's bright side leads, turned to the eye, then turned a new way every frame about its pivot.
-                Vector3 across = back - toEye * Vector3.Dot(back, toEye);
-                card.At.localRotation = across.sqrMagnitude > 1e-6f ? Quaternion.LookRotation(toEye, Vector3.Cross(toEye, across.normalized)) : Quaternion.LookRotation(toEye);
-                float sideways = across.magnitude;
-                if (HeadLook == 2)
-                {
-                    // CIRCLE: one ring, round on the screen whatever the speed, its bright side leading, crisp, the head's size.
-                    card.At.localScale = Vector3.one * 0.50f;
-                    card.Vec("_Cut", new Vector4(0.30f, 0.36f, 0f, 0f)); card.Num("_Halo", 0.10f); card.Num("_Soft", 0.02f);
-                    card.Frame(age, flying && i == 0 ? 0.85f * open : 0f, 0f);
-                    continue;
-                }
-                if (HeadLook == 1)
-                {
-                    // ORGANIC: each card a crescent tongue, never a whole ring. Every frame it turns a new way about its offset
-                    // pivot, takes a slightly different width and height, sits a few centimetres off the shoe's line, and is
-                    // eaten along its arc by the blob noise at a new place, so its edge is uneven and its tips tear.
-                    float h1 = FxStudyKit.Hash(frame, 90 + i), h2 = FxStudyKit.Hash(frame, 95 + i), h3 = FxStudyKit.Hash(frame, 101 + i), h4 = FxStudyKit.Hash(frame, 107 + i);
-                    card.At.localRotation *= Quaternion.Euler(0f, 0f, (h1 - 0.5f) * 160f);
-                    float size = 0.42f + 0.22f * h2;
-                    card.At.localScale = new Vector3(size * (0.88f + 0.24f * h3), size * (0.88f + 0.24f * h4), 1f);
-                    card.At.localPosition = lead + card.At.up * ((h3 - 0.5f) * 0.10f);
-                    card.Vec("_ErodeTile", new Vector4(1.6f, 1.3f, h1 * 3.7f, h4 * 2.9f));
-                    card.Num("_Sweep", 0.8f); card.Num("_Soft", 0.10f);
-                    card.Frame(age, flying ? 0.6f * (0.9f - 0.15f * i) * open * Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.45f, 0.85f, sideways)) : 0f,
-                               0.30f + 0.25f * h2);
-                    continue;
-                }
-                card.At.localRotation *= Quaternion.Euler(0f, 0f, (FxStudyKit.Hash(frame, 90 + i) - 0.5f) * 70f);
-                card.At.localScale = Vector3.one * (0.55f + 0.25f * FxStudyKit.Hash(frame, 95 + i));
-                // Seen along the flight the lead has no direction on the screen and a card is a flat disc: it fades out.
-                card.Frame(age, flying ? 0.4f * (0.8f - 0.2f * i) * open * Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.45f, 0.85f, sideways)) : 0f);
+                DressCard(_cardPart[i], i, lead, toEye, back, frame, flying, open, age);
             }
             for (int i = 0; i < Embers; i++)
             {
-                float every = 0.12f, born = Mathf.Floor((flown - i * every / Embers) / every) * every + i * every / Embers;
+                float born = EmberBorn(flown, i);
                 Vector3 bornDir; Vector3 bornAt = PosAt(born, out bornDir);
-                var ember = _ember[i];
-                ember.At.localPosition = bornAt + Vector3.up * 0.05f;
-                ember.At.localRotation = Quaternion.LookRotation(-bornDir + Vector3.up * 0.3f);
-                ember.At.localScale = Vector3.one * 0.45f;
-                ember.Size(0.20f, 0.10f);
-                ember.Clock(age, Throw + born);
-                ember.Frame(age, thrown && born >= 0f && born < spentAt ? 1f : 0f);
+                DressEmber(_ember[i], bornAt, bornDir, Throw + born, thrown && born >= 0f && born < spentAt, age);
             }
 
             // THE BANKS: the star burnt into the wall, and the sparks thrown off it.
@@ -971,16 +864,187 @@ namespace TumbangPreso.Visual
                 float since = flown - Sum(c + 1);
                 bool credited = c < _charges && thrown && since >= 0f;
                 Vector3 hit = Route[c + 1] + Vector3.up * 0.04f, normal = Facing[c];
-                _scorch[c].At.localPosition = hit + normal * 0.03f;
-                _scorch[c].At.localRotation = Quaternion.LookRotation(normal) * Quaternion.Euler(0f, 0f, 40f * c);
-                _scorch[c].At.localScale = Vector3.one * (1.3f * Mathf.Lerp(0.5f, 1f, FxStudyKit.Pop(FxStudyKit.Run(since, 0f, 0.06f))));
-                _scorch[c].Frame(age, credited && since < 0.7f ? 1f : 0f, FxStudyKit.Run(since, 0.35f, 0.65f));
-                // (It lands as the blade of the leg that brought the shoe draws back off the wall: the two never pile up.)
-                _sparks[c].At.localPosition = hit + normal * 0.03f;
-                _sparks[c].At.localRotation = Quaternion.LookRotation(normal);
-                _sparks[c].Clock(age, Throw + Sum(c + 1));
-                _sparks[c].Frame(age, credited && since < 0.5f ? 1f : 0f);
+                DressBank(_scorch[c], _sparks[c], c, hit, normal, since, Throw + Sum(c + 1), credited, age);
             }
+        }
+
+        // ---------------------------------------------------------------- the dressing of one piece, shared with the match
+        //
+        // ⚠️ LIFTED OUT OF `Sample` WORD FOR WORD, so the match (`FxStudyZackBank.Live.cs`) draws the approved look by
+        // CALLING it and never by copying it. `Sample` calls each with exactly what it used to compute in place: the same
+        // values, set in the same order. Only the two numbers the bench read off its own route (a leg's speed, and its
+        // opacity) are handed in.
+
+        private const float StrandHeld = 0.55f;
+
+        // When strand `i` was last born (s after the throw) and how far through its life it is; returns the time since
+        // its first birth (negative before it).
+        private static float StrandBeat(int i, float flown, out float bornAt, out float life)
+        {
+            float phase = i * Cycle / Strands, since0 = flown - phase;
+            int round = Mathf.FloorToInt(since0 / Cycle);
+            bornAt = phase + round * Cycle; life = (flown - bornAt) / Cycle;
+            return since0;
+        }
+
+        // It stretches back as it is born, swells and settles, and bends up as it is let go.
+        private static void StrandShape(int i, float life, float peeled, float reach, out float length, out float thick)
+        {
+            var st = Table[i];
+            float grow = FxStudyKit.EaseOut(Mathf.Clamp01(life / 0.35f)), swell = 1f + 0.35f * Mathf.Sin(Mathf.PI * Mathf.Clamp01(life / 0.7f));
+            length = Mathf.Min(1.4f * st.Length * Mathf.Lerp(0.25f, 1f, grow) * (1f + 0.3f * peeled), reach); thick = st.Thick * swell * (1f - 0.35f * peeled);
+        }
+
+        private static float EmberBorn(float flown, int i)
+        {
+            float every = 0.12f, born = Mathf.Floor((flown - i * every / Embers) / every) * every + i * every / Embers;
+            return born;
+        }
+
+        // A spine keeps a fixed face (upright, its flat side across the leg): it fades as it turns edge-on to the eye.
+        private static float EdgeOn(Transform leg, Vector3 eye)
+        {
+            Vector3 toEyeLeg = (eye - leg.position).normalized;
+            return Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.12f, 0.45f, Mathf.Abs(Vector3.Dot(leg.right, toEyeLeg))));
+        }
+
+        private static void DressLeg(Part trail, Part core, int l, float flownOnLeg, float stretch, float speed, float extra, float opacity, float age)
+        {
+            trail.Window(-1f, 2f, 0.02f);
+            trail.Size(flownOnLeg, 1f);
+            trail.Life(speed, extra);
+            trail.Vec("_Grow", new Vector4(0.22f, 0.07f, 0.55f, 0.32f));
+            trail.Vec("_Die", new Vector4(0.15f, 0.34f, 0f, 0f));
+            trail.Vec("_Wobble", new Vector4(0.40f, 0.65f, 0.90f, l * 0.23f));
+            trail.Vec("_Ends", new Vector4(0.0f, 0.03f, 0.30f, 0f));
+            // Quick Circuit's gold, not fire: the veil is amber, the body a warm gold, the fold lemon, the core white. (v1
+            // had the deep orange as its veil and read as Rago's fire.) Over half of it paint, for the sunlit court.
+            trail.Colour("_Deep", Amber); trail.Colour("_Body", Gold);
+            trail.Vec("_Bands", new Vector4(1f, 0.025f, 0.50f, 0.85f));
+            trail.Vec("_Stops", new Vector4(0.12f, 0.46f, 0.80f, 0f));
+            trail.Num("_Add", 0.38f);
+            trail.Facing(0.75f, l * 60f + 30f);
+            trail.Reads(0.75f * stretch, l * 0.31f, 1.05f * stretch, l * 0.57f);
+            trail.Pans(-0.50f, 0.05f, -1.10f, -0.08f);
+            trail.Wave(0.04f, 1.0f * stretch, 5f, l * 1.9f);
+            trail.Frame(age, opacity, 0f);
+            core.Window(-1f, 2f, 0.02f);
+            core.Size(flownOnLeg, 1f);
+            core.Life(speed, extra);
+            core.Vec("_Grow", new Vector4(0.55f, 0.03f, 0.35f, 0.15f));
+            core.Vec("_Die", new Vector4(0.05f, 0.16f, 0f, 0f));
+            core.Vec("_Wobble", new Vector4(0.25f, 1.3f, -0.8f, 0.5f + l * 0.17f));
+            core.Vec("_Ends", new Vector4(0.0f, 0.02f, 0.30f, 0f));
+            core.Vec("_Stops", new Vector4(0.10f, 0.26f, 0.58f, 0f));
+            core.Colour("_Deep", Amber); core.Colour("_Body", LemonDeep); core.Colour("_Fold", Lemon);
+            core.Num("_Add", 0.80f);
+            core.Facing(0.30f, l * 60f + 75f);
+            core.Reads(1.3f * stretch, l * 0.43f, 1.7f * stretch, l * 0.19f);
+            core.Pans(-0.95f, -0.06f, -1.60f, 0.08f);
+            core.Wave(0.02f, 2.0f * stretch, 9f, l * 1.3f + 0.7f);
+            core.Frame(age, opacity, 0f);
+        }
+
+        private static void DressSpine(Part spine, float tailU, float headU, float stretch, int strike, int c, int l, float opacity, float erode, float age)
+        {
+            spine.Window(tailU, headU, 0.03f);
+            spine.Tile(1.4f * stretch, 1f, FxStudyKit.Hash(strike, 50 + c + l * 3), 0f);
+            // The spines' own erosion drifts at their own rate, and they are eaten with the blade at its end.
+            spine.Flow(0f, c == 0 ? -1.2f : -0.7f, 1.0f);
+            spine.Frame(age, opacity, erode);
+        }
+
+        private static void DressStrand(Part strand, int i, Vector3 pivot, Vector3 dir, float length, float thick, float peeled, float life, float age)
+        {
+            var st = Table[i];
+            strand.At.localPosition = pivot;
+            // Along the line the shoe took, always. (b9 turned it up to 48 degrees as it let go: "rotating upwards".)
+            strand.At.localRotation = Quaternion.LookRotation(dir);
+            // A slight lift as it thins, a few centimetres, never a swing.
+            strand.At.localPosition = pivot + Vector3.up * (0.06f * FxStudyKit.Ease(peeled));
+            strand.At.localScale = new Vector3(1f, 1f, length);
+            strand.Facing(thick * 0.7f, i * 45f + (st.Flat ? 22f : 0f));
+            // Its own flow and warp: the waves run along it and drift, and grow as it peels off and curls.
+            strand.Flow(st.Flow, st.Flow * 0.5f, -1.1f);
+            // It loosens as it dies: the wave through it, point by point, grows a little and slows.
+            strand.Wave(0.04f + 0.09f * peeled, st.Waves * (1f + 0.4f * peeled), st.Speed * (2f - 0.8f * peeled), i * 1.37f);
+            strand.Reads(0.9f * length / 1.6f, i * 0.29f, 1.1f * length / 1.6f, i * 0.53f);
+            float fade = FxStudyKit.Run(life, 0f, 0.08f);
+            strand.Colour("_Deep", Amber); strand.Colour("_Body", Gold);
+            strand.Frame(age, 0.60f * fade, 0.25f + 0.75f * FxStudyKit.Ease(peeled));
+        }
+
+        private static void DressBulb(Part bulbPart, int k, Vector3 lead, Vector3 going, float onThisLeg, float opacity, float age)
+        {
+            bulbPart.At.localPosition = lead;
+            bulbPart.At.localRotation = Quaternion.LookRotation(going) * Quaternion.Euler(0f, 0f, k == 0 ? 0f : 4f * Mathf.Sin(age * 11f));
+            bulbPart.At.localScale = new Vector3(1f, 1f, Mathf.Min(1f + 0.12f * Mathf.Sin(age * 13f + k), Mathf.Max(0.02f, onThisLeg) / 0.9f));
+            bulbPart.Reads(0.7f, k * 0.41f, 0.9f, k * 0.23f);
+            // Two layers, the second narrower and at another roll: depth, seen from any side.
+            bulbPart.Facing(k == 0 ? 1f : 0.6f, k == 0 ? 0f : 90f);
+            bulbPart.Wave(0.03f, 1.4f, 10f, k * 3.1f);
+            bulbPart.Colour("_Deep", Amber); bulbPart.Colour("_Body", Gold);
+            bulbPart.Frame(age, opacity, 0.0f);
+        }
+
+        private static void DressCard(Part card, int i, Vector3 lead, Vector3 toEye, Vector3 back, int frame, bool flying, float open, float age)
+        {
+            card.At.localPosition = lead;
+            // Laid so its picture's bright side leads, turned to the eye, then turned a new way every frame about its pivot.
+            Vector3 across = back - toEye * Vector3.Dot(back, toEye);
+            card.At.localRotation = across.sqrMagnitude > 1e-6f ? Quaternion.LookRotation(toEye, Vector3.Cross(toEye, across.normalized)) : Quaternion.LookRotation(toEye);
+            float sideways = across.magnitude;
+            if (HeadLook == 2)
+            {
+                // CIRCLE: one ring, round on the screen whatever the speed, its bright side leading, crisp, the head's size.
+                card.At.localScale = Vector3.one * 0.50f;
+                card.Vec("_Cut", new Vector4(0.30f, 0.36f, 0f, 0f)); card.Num("_Halo", 0.10f); card.Num("_Soft", 0.02f);
+                card.Frame(age, flying && i == 0 ? 0.85f * open : 0f, 0f);
+                return;
+            }
+            if (HeadLook == 1)
+            {
+                // ORGANIC: each card a crescent tongue, never a whole ring. Every frame it turns a new way about its offset
+                // pivot, takes a slightly different width and height, sits a few centimetres off the shoe's line, and is
+                // eaten along its arc by the blob noise at a new place, so its edge is uneven and its tips tear.
+                float h1 = FxStudyKit.Hash(frame, 90 + i), h2 = FxStudyKit.Hash(frame, 95 + i), h3 = FxStudyKit.Hash(frame, 101 + i), h4 = FxStudyKit.Hash(frame, 107 + i);
+                card.At.localRotation *= Quaternion.Euler(0f, 0f, (h1 - 0.5f) * 160f);
+                float size = 0.42f + 0.22f * h2;
+                card.At.localScale = new Vector3(size * (0.88f + 0.24f * h3), size * (0.88f + 0.24f * h4), 1f);
+                card.At.localPosition = lead + card.At.up * ((h3 - 0.5f) * 0.10f);
+                card.Vec("_ErodeTile", new Vector4(1.6f, 1.3f, h1 * 3.7f, h4 * 2.9f));
+                card.Num("_Sweep", 0.8f); card.Num("_Soft", 0.10f);
+                card.Frame(age, flying ? 0.6f * (0.9f - 0.15f * i) * open * Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.45f, 0.85f, sideways)) : 0f,
+                           0.30f + 0.25f * h2);
+                return;
+            }
+            card.At.localRotation *= Quaternion.Euler(0f, 0f, (FxStudyKit.Hash(frame, 90 + i) - 0.5f) * 70f);
+            card.At.localScale = Vector3.one * (0.55f + 0.25f * FxStudyKit.Hash(frame, 95 + i));
+            // Seen along the flight the lead has no direction on the screen and a card is a flat disc: it fades out.
+            card.Frame(age, flying ? 0.4f * (0.8f - 0.2f * i) * open * Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.45f, 0.85f, sideways)) : 0f);
+        }
+
+        private static void DressEmber(Part ember, Vector3 bornAt, Vector3 bornDir, float bornClock, bool on, float age)
+        {
+            ember.At.localPosition = bornAt + Vector3.up * 0.05f;
+            ember.At.localRotation = Quaternion.LookRotation(-bornDir + Vector3.up * 0.3f);
+            ember.At.localScale = Vector3.one * 0.45f;
+            ember.Size(0.20f, 0.10f);
+            ember.Clock(age, bornClock);
+            ember.Frame(age, on ? 1f : 0f);
+        }
+
+        private static void DressBank(Part scorch, Part sparks, int c, Vector3 hit, Vector3 normal, float since, float bankClock, bool credited, float age)
+        {
+            scorch.At.localPosition = hit + normal * 0.03f;
+            scorch.At.localRotation = Quaternion.LookRotation(normal) * Quaternion.Euler(0f, 0f, 40f * c);
+            scorch.At.localScale = Vector3.one * (1.3f * Mathf.Lerp(0.5f, 1f, FxStudyKit.Pop(FxStudyKit.Run(since, 0f, 0.06f))));
+            scorch.Frame(age, credited && since < 0.7f ? 1f : 0f, FxStudyKit.Run(since, 0.35f, 0.65f));
+            // (It lands as the blade of the leg that brought the shoe draws back off the wall: the two never pile up.)
+            sparks.At.localPosition = hit + normal * 0.03f;
+            sparks.At.localRotation = Quaternion.LookRotation(normal);
+            sparks.Clock(age, bankClock);
+            sparks.Frame(age, credited && since < 0.5f ? 1f : 0f);
         }
 
         // Where the thrown shoe was `t` seconds after the throw, and which way it was going.

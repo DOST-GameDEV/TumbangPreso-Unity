@@ -21,10 +21,22 @@ namespace TumbangPreso.Map
     ///
     /// ⚠️ PRESENTATION ONLY: no collider, nothing sent, nothing gameplay reads; the throw is `JumpPad`'s, unchanged.
     /// Hidden in the menus' map preview. Its pieces are made at run time and are not saved in the scene.
+    ///
+    /// ⚠️ THE PAINTED LOOK (`Painted`, 2026-10-19; the map session, for the owner: "continue making the geyser vfx"). The
+    /// pieces above were flat-shaded lathe shapes, each one colour, moved on the CPU: they read as plastic. The painted
+    /// look is the same story told with the approved water's own masks (Rafi's WATER WALL: `water_flow`, `water_lines`,
+    /// `water_foam`, `water_crest`) in four crisp painted bands, on ONE static mesh drawn by `TumbangPreso/PayoGeyser`,
+    /// which builds the pool, the base surge, a two-layer column, a crown that breaks and falls back, drops and steam
+    /// from a few numbers a frame. The column's top rides the thrown body's own curve (the pad's `LaunchSpeed` and the
+    /// character gravity), so the water is where the throw is. The timers, the burps, the build as a body comes near
+    /// and the sound are the same code for both looks. `Painted = false` brings back the first look unchanged.
     /// </summary>
     [DefaultExecutionOrder(700)]
     public sealed class PayoGeyser : MonoBehaviour
     {
+        /// <summary>The painted look (on) or the first look (off). Not yet judged by the owner.</summary>
+        public static bool Painted = false; // Off until the owner sees it filmed; flip to true on his verdict.
+
         /// <summary>The bowl's inner radius and how far under the pad's floor point the water stands, metres.</summary>
         public float BowlRadius = 0.62f, PoolDepth = -0.02f;
         /// <summary>How high the burst's column stands at its tallest, and how long the burst lasts.</summary>
@@ -65,13 +77,134 @@ namespace TumbangPreso.Map
             if (_pad != null) _lastLaunch = _pad.LaunchedAt;
         }
 
-        private void OnDisable() { if (_root != null) _root.gameObject.SetActive(false); }
+        private void OnDisable()
+        {
+            if (_root != null) _root.gameObject.SetActive(false);
+            if (_painted != null) _painted.gameObject.SetActive(false);
+        }
 
         private void OnDestroy()
         {
             if (_waterMaterial != null) Destroy(_waterMaterial);
             if (_steamMaterial != null) Destroy(_steamMaterial);
             if (_wetMaterial != null) Destroy(_wetMaterial);
+        }
+
+        // ------------------------------------------------------------------ the painted look: one mesh, one material for every geyser
+
+        private static Mesh _paintedMesh;
+        private static Material _paintedMaterial;
+        private Transform _painted;
+        private MeshRenderer _paintedR;
+        private int _shot;
+        private static readonly int ClockId = Shader.PropertyToID("_Clock"), BurstId = Shader.PropertyToID("_Burst"), BurpId = Shader.PropertyToID("_Burp"),
+            NearId = Shader.PropertyToID("_Near"), ApexId = Shader.PropertyToID("_Apex"), RiseId = Shader.PropertyToID("_Rise"), BowlId = Shader.PropertyToID("_Bowl"),
+            PoolId = Shader.PropertyToID("_Pool"), WetId = Shader.PropertyToID("_Wet"), NightId = Shader.PropertyToID("_Night"), ShotId = Shader.PropertyToID("_Shot"),
+            WindId = Shader.PropertyToID("_Wind");
+
+        private void EnsurePainted()
+        {
+            if (_painted != null) return;
+            if (_paintedMesh == null) _paintedMesh = BuildPaintedMesh();
+            if (_paintedMaterial == null)
+            {
+                var shader = Resources.Load<Shader>("Shaders/PayoGeyser");
+                if (shader == null) shader = Shader.Find("TumbangPreso/PayoGeyser");
+                if (shader == null) { Debug.LogWarning("[Payo] the shader TumbangPreso/PayoGeyser is missing: the geyser falls back to its first look"); Painted = false; return; }
+                _paintedMaterial = new Material(shader) { name = "Payo geyser (painted)", hideFlags = HideFlags.HideAndDontSave, renderQueue = 3010 };
+                foreach (var (slot, mask) in new[] { ("_Flow", "water_flow"), ("_Lines", "water_lines"), ("_Foam", "water_foam"), ("_Crest", "water_crest"), ("_Cloud", "erode_cloud") })
+                    _paintedMaterial.SetTexture(slot, Resources.Load<Texture2D>("Textures/UltimateFx/" + mask));
+            }
+            _block ??= new MaterialPropertyBlock();
+            var go = new GameObject("Geyser, painted (made at run time)") { hideFlags = HideFlags.HideAndDontSave, layer = gameObject.layer };
+            _painted = go.transform;
+            _painted.SetParent(transform, false);
+            go.AddComponent<MeshFilter>().sharedMesh = _paintedMesh;
+            _paintedR = go.AddComponent<MeshRenderer>();
+            _paintedR.sharedMaterial = _paintedMaterial;
+            _paintedR.shadowCastingMode = ShadowCastingMode.Off; _paintedR.receiveShadows = false;
+            _paintedR.lightProbeUsage = LightProbeUsage.Off; _paintedR.reflectionProbeUsage = ReflectionProbeUsage.Off;
+        }
+
+        /// <summary>
+        /// Every piece in one mesh, in drawing order: the wet stone, the pool, the inner column, the outer column, the base
+        /// surge, the crown, ten drops, six steam puffs. A corner carries only where it is on its piece (round it and up
+        /// it) and which piece it is; the shader places it. 1,274 triangles in one draw (the first look: about 2,150 in some forty
+        /// renderers, each moved and tinted on the CPU every frame). The bounds hold the tallest throw on the
+        /// map with room (the column, the crown's spread and the drops' arcs).
+        /// </summary>
+        private static Mesh BuildPaintedMesh()
+        {
+            var pos = new System.Collections.Generic.List<Vector3>(); var a = new System.Collections.Generic.List<Vector4>(); var tris = new System.Collections.Generic.List<int>();
+            void Grid(int piece, int round, int rings)
+            {
+                int n = pos.Count;
+                for (int r = 0; r <= rings; r++)
+                    for (int k = 0; k <= round; k++)
+                    {
+                        float u = k / (float)round, s = r / (float)rings;
+                        pos.Add(new Vector3(Mathf.Sin(u * Mathf.PI * 2.0f) * 0.5f, s, Mathf.Cos(u * Mathf.PI * 2.0f) * 0.5f));
+                        a.Add(new Vector4(u, s, piece, 0));
+                    }
+                for (int r = 0; r < rings; r++)
+                    for (int k = 0; k < round; k++)
+                    {
+                        int p = n + r * (round + 1) + k, q = p + round + 1;
+                        tris.Add(p); tris.Add(q); tris.Add(q + 1);
+                        tris.Add(p); tris.Add(q + 1); tris.Add(p + 1);
+                    }
+            }
+            void Card(int piece, int index)
+            {
+                int n = pos.Count;
+                for (int c = 0; c < 4; c++)
+                {
+                    float u = c == 0 || c == 1 ? -1.0f : 1.0f, v = c == 0 || c == 3 ? -1.0f : 1.0f;
+                    pos.Add(new Vector3(u * 0.5f, 0.5f, v * 0.5f));
+                    a.Add(new Vector4(u, v, piece, index));
+                }
+                tris.Add(n); tris.Add(n + 1); tris.Add(n + 2);
+                tris.Add(n); tris.Add(n + 2); tris.Add(n + 3);
+            }
+            Card(0, 0);            // wet stone
+            Grid(1, 20, 4);        // the pool
+            Grid(3, 14, 12);       // inner column
+            Grid(4, 16, 12);       // outer column
+            Grid(2, 20, 3);        // base surge
+            Grid(5, 24, 5);        // crown
+            for (int k = 0; k < 10; k++) Card(6, k);
+            for (int k = 0; k < 6; k++) Card(7, k);
+            var mesh = new Mesh { name = "Payo geyser (painted)", hideFlags = HideFlags.HideAndDontSave };
+            mesh.SetVertices(pos);
+            mesh.SetUVs(0, a);
+            mesh.SetTriangles(tris, 0, false);
+            mesh.bounds = new Bounds(new Vector3(0.0f, 4.0f, 0.0f), new Vector3(10.0f, 10.0f, 10.0f));
+            mesh.UploadMeshData(true);
+            return mesh;
+        }
+
+        /// <summary>The painted look's frame: its numbers into the property block, nothing else.</summary>
+        private void DrawPainted()
+        {
+            if (_paintedR == null) return;
+            float speed = _pad != null ? _pad.LaunchSpeed : 15.4f;
+            float g = Core.Balance.CharacterGravity;
+            _paintedR.GetPropertyBlock(_block);
+            _block.SetFloat(ClockId, _clock);
+            _block.SetFloat(BurstId, _burst);
+            _block.SetFloat(BurpId, _burp);
+            _block.SetFloat(NearId, _near);
+            // The throw's own numbers: the body goes up speed^2 / 2g in speed / g seconds; the column's top rides that curve.
+            _block.SetFloat(ApexId, speed * speed / (2.0f * g));
+            _block.SetFloat(RiseId, speed / g);
+            _block.SetFloat(BowlId, BowlRadius);
+            _block.SetFloat(PoolId, PoolDepth);
+            _block.SetFloat(WetId, _wetness);
+            _block.SetFloat(NightId, PayoNight.Factor);
+            _block.SetFloat(ShotId, _shot);
+            Vector3 wind = transform.InverseTransformDirection(Wind);
+            _block.SetVector(WindId, new Vector4(wind.x, wind.y, wind.z, 0.0f));
+            _paintedR.SetPropertyBlock(_block);
         }
 
         // ------------------------------------------------------------------ made once
@@ -172,14 +305,35 @@ namespace TumbangPreso.Map
 
         private void LateUpdate()
         {
-            if (IsPreview()) { if (_root != null) _root.gameObject.SetActive(false); return; }
-            Ensure();
-            if (!_root.gameObject.activeSelf) _root.gameObject.SetActive(true);
+            if (IsPreview())
+            {
+                if (_root != null) _root.gameObject.SetActive(false);
+                if (_painted != null) _painted.gameObject.SetActive(false);
+                return;
+            }
+            if (Painted) EnsurePainted();
+            bool painted = Painted && _painted != null;
+            if (painted)
+            {
+                if (_root != null && _root.gameObject.activeSelf) _root.gameObject.SetActive(false);
+                if (!_painted.gameObject.activeSelf) _painted.gameObject.SetActive(true);
+            }
+            else
+            {
+                if (_painted != null && _painted.gameObject.activeSelf) _painted.gameObject.SetActive(false);
+                Ensure();
+                if (!_root.gameObject.activeSelf) _root.gameObject.SetActive(true);
+            }
             float dt = Time.deltaTime;
             _clock += dt;
 
             // A new throw: the burst.
-            if (_pad != null && _pad.LaunchedAt > _lastLaunch + 0.01f) { _lastLaunch = _pad.LaunchedAt; Burst(1.0f); PayoSound.GeyserBurst(transform.position); }
+            if (_pad != null && _pad.LaunchedAt > _lastLaunch + 0.01f)
+            {
+                _lastLaunch = _pad.LaunchedAt;
+                if (painted) { _burst = 0.0f; _wetness = 1.0f; _shot++; } else Burst(1.0f);
+                PayoSound.GeyserBurst(transform.position);
+            }
 
             // Who is near: the build.
             _rescan -= dt;
@@ -198,11 +352,18 @@ namespace TumbangPreso.Map
 
             // Left alone, it burps now and then.
             _nextBurp -= dt;
-            if (_nextBurp <= 0.0f) { _nextBurp = Rand(9.0f, 22.0f); if (_burst > BurstSeconds + 1.0f && _near < 0.1f) { _burp = 0.0f; Puff(0.6f, 0.5f); } }
+            if (_nextBurp <= 0.0f) { _nextBurp = Rand(9.0f, 22.0f); if (_burst > BurstSeconds + 1.0f && _near < 0.1f) { _burp = 0.0f; if (!painted) Puff(0.6f, 0.5f); } }
             _nextWisp -= dt;
-            if (_nextWisp <= 0.0f) { _nextWisp = Rand(1.6f, 4.2f) * (_near > 0.3f ? 0.45f : 1.0f); Puff(0.38f + 0.3f * _near, 0.25f); }
+            if (_nextWisp <= 0.0f) { _nextWisp = Rand(1.6f, 4.2f) * (_near > 0.3f ? 0.45f : 1.0f); if (!painted) Puff(0.38f + 0.3f * _near, 0.25f); }
 
             _burst += dt; _burp += dt;
+            if (painted)
+            {
+                // The painted look's steam, drops and wet stone are all in its shader; only the drying is counted here.
+                _wetness = Mathf.MoveTowards(_wetness, 0.0f, dt / 9.0f);
+                DrawPainted();
+                return;
+            }
             float night = Mathf.Lerp(1.0f, 0.42f, PayoNight.Factor);
             Color water = new Color(Water.r * night, Water.g * night, Water.b * night, Water.a);
             Color foam = new Color(Foam.r * night, Foam.g * night, Foam.b * night, Foam.a);

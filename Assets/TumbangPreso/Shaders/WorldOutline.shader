@@ -173,9 +173,29 @@ Shader "TumbangPreso/WorldOutline"
             float4 _MapSun, _MapSunColor;
             float4x4 _HazeToView;
 
+            // ⚠️ THE HAZE'S DEPTH, CHECKED (owner, 2026-10-19: pale outlines of things that are not there flashed over the
+            // platforms "for a short while", "might actually be ability related"). The camera's depth texture is read
+            // here with no other check, and for a few frames around an ability or an ultimate it can hold some other
+            // render's depth, which the haze, wisps and rays then painted as ghost shapes. So, like the occlusion: where
+            // the depth-normals prepass has a surface and the two disagree, the prepass wins. Where the prepass has
+            // nothing (the far land kept out of it, `PayoSceneBuilder.InkClear`), the camera's depth stands.
+            float HazeDepth01(float2 uv, out float prepass)
+            {
+                float cam = Linear01Depth(SAMPLE_DEPTH_TEXTURE_LOD(_CameraDepthTexture, float4(uv, 0.0, 0.0)));
+                float3 n;
+                DecodeDepthNormal(tex2Dlod(_CameraDepthNormalsTexture, float4(uv, 0.0, 0.0)), prepass, n);
+                float far = _WorldContactProjectionFar.x;
+                // Only when the camera's depth is the FARTHER one: a nearer one is real (the first-person arms and the tall
+                // blades are in the camera's depth and not in the prepass) and must keep its own, small haze.
+                if (prepass < 0.999 && (cam - prepass) * far > 0.25 + prepass * far * 0.02) return prepass;
+                return cam;
+            }
+
             float HazeSky(float2 uv)
             {
-                return Linear01Depth(SAMPLE_DEPTH_TEXTURE_LOD(_CameraDepthTexture, float4(uv, 0.0, 0.0))) >= 0.999 ? 1.0 : 0.0;
+                float prepass;
+                float d = HazeDepth01(uv, prepass);
+                return d >= 0.999 && prepass >= 0.999 ? 1.0 : 0.0;
             }
 
             float FlareRing(float2 uv, float2 centre, float r, float aspect)
@@ -786,7 +806,8 @@ Shader "TumbangPreso/WorldOutline"
                     #if UNITY_UV_STARTS_AT_TOP
                     if (_MainTex_TexelSize.y < 0.0) duv.y = 1.0 - duv.y;
                     #endif
-                    float d01 = Linear01Depth(SAMPLE_DEPTH_TEXTURE_LOD(_CameraDepthTexture, float4(duv, 0.0, 0.0)));
+                    float prepass;
+                    float d01 = HazeDepth01(duv, prepass);
                     if (d01 < 0.999)
                     {
                         float eye = d01 * _WorldContactProjectionFar.x;
