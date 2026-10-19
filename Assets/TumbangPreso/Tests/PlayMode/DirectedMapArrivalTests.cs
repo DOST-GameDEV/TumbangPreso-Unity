@@ -67,6 +67,109 @@ namespace TumbangPreso.PlayTests
         [UnityTest] public IEnumerator BridgeNaturalHeroWalkCadence() => NaturalFlow(SceneFlow.IlalimNgTulay, true);
         [UnityTest] public IEnumerator CoveNaturalHeroWalkCadence() => NaturalFlow(SceneFlow.LagoonCove, true);
         [UnityTest] public IEnumerator KantoNaturalHeroWalkCadence() => NaturalFlow(SceneFlow.Kanto, true);
+        // ⚠️ THE OPENING ENDS ON YOU (2026-10-19): an attacker's screen closes on their own character
+        // after the taya's spotlight; the taya's and a watcher's keep the spotlight for the same time.
+        [UnityTest] public IEnumerator BridgeAttackerClosesOnThemselves() => ClosingBeat(SceneFlow.IlalimNgTulay, 1);
+        [UnityTest] public IEnumerator CoveAttackerClosesOnThemselves() => ClosingBeat(SceneFlow.LagoonCove, 2);
+        [UnityTest] public IEnumerator KantoAttackerClosesOnThemselves() => ClosingBeat(SceneFlow.Kanto, 3);
+        [UnityTest] public IEnumerator KantoTayaKeepsTheSpotlight() => ClosingBeat(SceneFlow.Kanto, MatchRules.DefenderSlotFor(1));
+        [UnityTest] public IEnumerator KantoWatcherKeepsTheSpotlight() => ClosingBeat(SceneFlow.Kanto, -1);
+
+        private float DirectionTime(string name) => (float)Field("_direction").GetType().GetField(name).GetValue(Field("_direction"));
+
+        private IEnumerator ClosingBeat(string mapId, int viewer)
+        {
+            SceneFlow.Networked = false;
+            SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
+            GameLaunch.SoloSeat = 1; GameLaunch.GuidedTutorial = false;
+            Settings.SettingsStore.Current.CinematicCameraMotion = true;
+            Settings.SettingsStore.Current.ReducedUiMotion = false;
+            yield return SceneManager.LoadSceneAsync(mapId);
+            while (HubLoading.Preparing) yield return null;
+            yield return null;
+            foreach (var old in Object.FindObjectsByType<MatchArrivalPresentation>(FindObjectsSortMode.None)) old.Cancel();
+            foreach (var ai in Object.FindObjectsByType<AIController>()) ai.enabled = false;
+            foreach (var reader in Object.FindObjectsByType<PlayerInputReader>()) reader.enabled = false;
+            var actors = GameServices.Round.Players.OrderBy(p => p.PlayerSlot).ToArray();
+            Assert.AreEqual(4, actors.Length);
+            foreach (var actor in actors) actor.enabled = false;
+            _camera = Camera.main;
+            var rig = _camera.GetComponent<CameraSystem.CameraRig>();
+            var savedEye = _camera.transform.position; var savedTurn = _camera.transform.rotation; float savedFov = _camera.fieldOfView;
+            var marks = actors.Select(p => p.transform.position).ToArray();
+            _arrival = new GameObject("Directed closing beat").AddComponent<MatchArrivalPresentation>();
+            typeof(MatchArrivalPresentation).GetField("_active", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, _arrival);
+            typeof(PresentationClock).GetMethod("Hold", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, null);
+            Set("_held", true);
+            rig.SetActive(false);
+            Set("_camera", _camera); Set("_rig", rig); Set("_rigActive", true);
+            Set("_position", savedEye); Set("_rotation", savedTurn); Set("_fov", savedFov);
+            var players = (CharacterMotor[])Field("_players"); var poses = (CharacterAnimator[])Field("_poses");
+            for (int i = 0; i < 4; i++) { players[i] = actors[i]; poses[i] = actors[i].GetComponent<CharacterAnimator>(); }
+            Call("BuildCaption"); var map = SceneFlow.PreviewFor(mapId);
+            Call("PrepareShots", map); Call("PrepareDirection", map, false);
+            Set("_viewerSeat", viewer);
+            Assert.IsTrue((bool)Field("_directed"));
+            int taya = MatchRules.DefenderSlotFor(1);
+            float settle = DirectionTime("Settle"), own = DirectionTime("Own"), end = DirectionTime("End");
+            Assert.AreEqual(MatchArrivalPresentation.OwnSeconds, own - settle, .001f);
+            Assert.AreEqual(end, _arrival.Duration, .001f, "Every screen's film must be the same length");
+            bool attacker = viewer >= 0 && viewer != taya;
+            _target = new RenderTexture(960, 540, 24); _target.Create(); _camera.targetTexture = _target;
+            var output = Path.Combine("Logs", "directed-map-arrivals", mapId + "-closing-" + (viewer < 0 ? "watcher" : "seat" + viewer));
+            Directory.CreateDirectory(output);
+            var observer = _arrival.gameObject.AddComponent<DirectedArrivalFrameObserver>();
+            var detail = (UnityEngine.UI.Text)Field("_detail");
+            int shot = 0;
+            if (viewer >= 0) File.WriteAllLines(Path.Combine(output, "measures.txt"), Measures(actors[viewer]));
+            foreach (float age in new[] { settle - .3f, settle + .5f * MatchArrivalPresentation.OwnSeconds, own + .2f })
+            {
+                Call("Sample", age, false, map);
+                System.Exception failure = null; bool observed = false;
+                observer.Observe = () =>
+                {
+                    try
+                    {
+                        observed = true;
+                        Capture(Path.Combine(output, "closing-" + shot++ + ".png"));
+                        bool closing = age >= settle;
+                        int expected = closing && attacker ? viewer : taya;
+                        Assert.AreEqual(expected, (int)Field("_shownBeat"), mapId + " at " + age + ": wrong subject");
+                        Assert.AreEqual(closing && attacker, (bool)Field("_shownYou"), mapId + " at " + age + ": wrong caption owner");
+                        Assert.AreEqual(closing && attacker ? "YOU  ·  ATTACKER" : "PLAYER " + (taya + 1) + "  ·  TAYA", detail.text);
+                        // ⚠️ THE DRAWN BOUNDS, NOT `RenderedPoints`. The model is scaled 2.38 and that helper
+                        // places a scaled bake without the scale, so it measures half the body: it passed a
+                        // shot that cut this player off at the neck (closing_sheet_v4). Every corner of the
+                        // renderers' world box must be in frame, which is stricter than the mesh itself.
+                        Bounds drawn = DrawnBox(actors[expected]);
+                        float lowest = float.PositiveInfinity, highest = float.NegativeInfinity;
+                        for (int corner = 0; corner < 8; corner++)
+                        {
+                            Vector3 point = drawn.center + Vector3.Scale(drawn.extents, new Vector3(
+                                (corner & 1) == 0 ? -1 : 1, (corner & 2) == 0 ? -1 : 1, (corner & 4) == 0 ? -1 : 1));
+                            Vector3 view = _camera.WorldToViewportPoint(point);
+                            Assert.Greater(view.z, _camera.nearClipPlane, "Subject behind the camera");
+                            Assert.That(view.x, Is.InRange(0f, 1f), "Subject cropped horizontally at " + age);
+                            Assert.That(view.y, Is.InRange(0f, 1f), "Subject cropped vertically at " + age);
+                            lowest = Mathf.Min(lowest, view.y); highest = Mathf.Max(highest, view.y);
+                        }
+                        // And this player's own shot must read as THEIR shot: a large share of the frame.
+                        if (closing && attacker) Assert.Greater(highest - lowest, .5f, "The player's own shot draws them too small");
+                        for (int i = 0; i < 4; i++)
+                            Assert.Less(Vector3.Distance(marks[i], actors[i].transform.position), .001f, "Presentation moved a gameplay root");
+                    }
+                    catch (System.Exception error) { failure = error; }
+                };
+                yield return null; yield return null;
+                Assert.IsTrue(observed, "The actual render phase was not observed");
+                if (failure != null) throw failure;
+            }
+            // The return to this player's own view still lands exactly on it.
+            Call("Sample", end, false, map); yield return null;
+            Assert.Less(Vector3.Distance(savedEye, _camera.transform.position), .001f);
+            Assert.Less(Quaternion.Angle(savedTurn, _camera.transform.rotation), .01f);
+            Assert.That(_camera.fieldOfView, Is.EqualTo(savedFov).Within(.001f));
+        }
 
         private IEnumerator NaturalFlow(string mapId, bool checkCadence=false)
         {
@@ -86,7 +189,7 @@ namespace TumbangPreso.PlayTests
             var gate = Object.FindAnyObjectByType<ReadyGate>(); Assert.IsNotNull(gate);
             var ticks = new List<string>(); gate.CountdownTick += ticks.Add;
             var observer = new GameObject("Natural arrival observer").AddComponent<DirectedArrivalFrameObserver>();
-            var maximumTravel = new float[4]; var baseline = new Vector3[4]; bool capturedBaseline = false, sawDirection = false;
+            var maximumTravel = new float[4]; var baseline = new Vector3[4]; bool capturedBaseline = false, sawDirection = false, sawOwnBeat = false;
             int frame = 0; float until = Time.realtimeSinceStartup + 45;
             var folder = Path.Combine("Logs", "directed-map-arrivals", mapId + "-natural-hero"); Directory.CreateDirectory(folder);
             var lastPositions=new Vector3[4];var lastTimes=new double[4];var lastWalking=new bool[4];
@@ -101,6 +204,7 @@ namespace TumbangPreso.PlayTests
                 if (presentation != null && (bool)typeof(MatchArrivalPresentation).GetField("_directed", Hidden).GetValue(presentation))
                 {
                     sawDirection = true;
+                    sawOwnBeat |= (bool)typeof(MatchArrivalPresentation).GetField("_shownYou", Hidden).GetValue(presentation);
                     var players = GameServices.Round.Players.ToArray();
                     if (!capturedBaseline)
                     {
@@ -152,6 +256,8 @@ namespace TumbangPreso.PlayTests
                 }
             }
             Assert.IsTrue(sawDirection && frame > 10, "Observe the actual automatic opening, not manual samples");
+            // Seat 1 is an attacker in round 1: the real gate hands it the film, and the film closes on it.
+            Assert.IsTrue(sawOwnBeat, "An attacker's opening must close on their own character before play");
             Assert.AreEqual(4, maximumTravel.Count(v => v > .8f), "All real Hero actors must visibly arrive");
             Assert.IsTrue(GameServices.Round.RoundActive, "No input was pressed; the automatic opening must release into play");
             CollectionAssert.AreEqual(new[] { "3", "2", "1", "GO!" }, ticks);
@@ -346,6 +452,54 @@ namespace TumbangPreso.PlayTests
             finally { Object.Destroy(mesh); }
         }
         private static float SoleHeight(CharacterMotor actor) => RenderedPoints(actor, true).Min(p => p.y);
+
+        private static Bounds DrawnBox(CharacterMotor actor)
+        {
+            Bounds? box = null;
+            foreach (var renderer in actor.GetComponent<CharacterVisual>().Model.GetComponentsInChildren<Renderer>())
+            {
+                if (!renderer.enabled || !(renderer is SkinnedMeshRenderer || renderer is MeshRenderer)) continue;
+                if (box.HasValue) { var grown = box.Value; grown.Encapsulate(renderer.bounds); box = grown; }
+                else box = renderer.bounds;
+            }
+            Assert.IsTrue(box.HasValue, actor.name + " draws nothing");
+            return box.Value;
+        }
+
+        /// <summary>Every candidate measurement of one drawn body, side by side, for choosing a framing.</summary>
+        private static IEnumerable<string> Measures(CharacterMotor actor)
+        {
+            var visual = actor.GetComponent<CharacterVisual>(); var model = visual.Model;
+            yield return "mark=" + actor.transform.position + " modelRootLossy=" + visual.ModelRoot.lossyScale + " modelLossy=" + model.transform.lossyScale;
+            var controller = actor.GetComponent<CharacterController>();
+            if (controller != null) yield return "capsuleHeight=" + controller.height + " centre=" + controller.center;
+            Bounds? union = null;
+            foreach (var renderer in model.GetComponentsInChildren<Renderer>())
+            {
+                if (!renderer.enabled) continue;
+                yield return "renderer " + renderer.GetType().Name + " " + renderer.name + " bounds=" + renderer.bounds + " lossy=" + renderer.transform.lossyScale;
+                if (renderer is SkinnedMeshRenderer || renderer is MeshRenderer)
+                { var b = renderer.bounds; if (union.HasValue) { var u = union.Value; u.Encapsulate(b); union = u; } else union = b; }
+            }
+            yield return "rendererUnion=" + union;
+            var mesh = new Mesh(); var vertices = new List<Vector3>();
+            try
+            {
+                foreach (var skin in model.GetComponentsInChildren<SkinnedMeshRenderer>())
+                {
+                    if (!skin.enabled || skin.sharedMesh == null) continue;
+                    skin.BakeMesh(mesh, true); mesh.GetVertices(vertices);
+                    var trs = Matrix4x4.TRS(skin.transform.position, skin.transform.rotation, Vector3.one);
+                    var scaled = new Bounds(trs.MultiplyPoint3x4(vertices[0]), Vector3.zero);
+                    foreach (var v in vertices) scaled.Encapsulate(trs.MultiplyPoint3x4(v));
+                    skin.BakeMesh(mesh, false); mesh.GetVertices(vertices);
+                    var local = new Bounds(skin.transform.TransformPoint(vertices[0]), Vector3.zero);
+                    foreach (var v in vertices) local.Encapsulate(skin.transform.TransformPoint(v));
+                    yield return "bake " + skin.name + " useScaleTRS=" + scaled + " noScaleTransform=" + local;
+                }
+            }
+            finally { Object.Destroy(mesh); }
+        }
         private static float FloorUnder(Vector3 at, float expected)
         {
             var hits = Physics.RaycastAll(at + Vector3.up * 1.25f, Vector3.down, 2.5f, ~0, QueryTriggerInteraction.Ignore)

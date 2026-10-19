@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="23" result="Passed" total="23" passed="23" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-19 14:58:55Z" end-time="2026-10-19 14:59:00Z" duration="5.0941497">
+  <test-suite type="TestSuite" id="3708" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2185" result="Passed" start-time="2026-10-19 14:58:55Z" end-time="2026-10-19 14:59:00Z" duration="5.094150" total="23" passed="23" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3700" name="TumbangPreso.PlayTests.dll" fullname="D:/GitHub/TumbangPreso-Unity/.claude/worktrees/game-networking-lan-relay-d56db9/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2185" result="Passed" start-time="2026-10-19 14:58:55Z" end-time="2026-10-19 14:59:00Z" duration="5.082457" total="23" passed="23" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="16132" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3701" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2185" result="Passed" start-time="2026-10-19 14:58:55Z" end-time="2026-10-19 14:59:00Z" duration="5.077757" total="23" passed="23" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3704" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2183" result="Passed" start-time="2026-10-19 14:58:55Z" end-time="2026-10-19 14:59:00Z" duration="5.073031" total="23" passed="23" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1249" name="ArrivalHandoffTests" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-19 14:58:55Z" end-time="2026-10-19 14:58:55Z" duration="0.598375" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1253" name="ArrivalCancellationStillRestoresGameplayHands" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.ArrivalCancellationStillRestoresGameplayHands" methodname="ArrivalCancellationStillRestoresGameplayHands" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="647770931" result="Passed" start-time="2026-10-19 14:58:55Z" end-time="2026-10-19 14:58:55Z" duration="0.199442" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Flow] unknown map 'PlayModeWorldReset_10', falling back to 'Eskinita'.
+[Arrival] offline: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] offline: arrival playing
+[Arrival] offline: cancelled after 0.0 s on screen
+]]></output>
+            </test-case>
+            <test-case id="1254" name="EntryIsOpaqueBeforeTheFirstYieldAndCancellationClearsIt" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.EntryIsOpaqueBeforeTheFirstYieldAndCancellationClearsIt" methodname="EntryIsOpaqueBeforeTheFirstYieldAndCancellationClearsIt" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="1952366361" result="Passed" start-time="2026-10-19 14:58:55Z" end-time="2026-10-19 14:58:55Z" duration="0.042334" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1256" name="HeldRigResolvesPlayerEyeInsteadOfInheritedUnderMapPose" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.HeldRigResolvesPlayerEyeInsteadOfInheritedUnderMapPose" methodname="HeldRigResolvesPlayerEyeInsteadOfInheritedUnderMapPose" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="2099155760" result="Passed" start-time="2026-10-19 14:58:55Z" end-time="2026-10-19 14:58:55Z" duration="0.094845" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Flow] unknown map 'PlayModeWorldReset_31', falling back to 'Eskinita'.
+[Arrival] offline: arrival prepared (8.6 s, directed=False, rig=True, closes on the last portrait)
+[Arrival] offline: arrival playing
+[Arrival] offline: cancelled after 0.0 s on screen
+]]></output>
+            </test-case>
+            <test-case id="1250" name="LateActivationDuringArrivalKeepsGameplayHandsHidden" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.LateActivationDuringArrivalKeepsGameplayHandsHidden" methodname="LateActivationDuringArrivalKeepsGameplayHandsHidden" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="716763251" result="Passed" start-time="2026-10-19 14:58:55Z" end-time="2026-10-19 14:58:55Z" duration="0.038573" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1251" name="LateFollowDuringArrivalKeepsGameplayHandsHidden" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.LateFollowDuringArrivalKeepsGameplayHandsHidden" methodname="LateFollowDuringArrivalKeepsGameplayHandsHidden" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="320174392" result="Passed" start-time="2026-10-19 14:58:55Z" end-time="2026-10-19 14:58:55Z" duration="0.037242" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1257" name="NameplatesHideDuringIntroductionAndReturnAfterCancellation" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.NameplatesHideDuringIntroductionAndReturnAfterCancellation" methodname="NameplatesHideDuringIntroductionAndReturnAfterCancellation" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="477236879" result="Passed" start-time="2026-10-19 14:58:55Z" end-time="2026-10-19 14:58:55Z" duration="0.100120" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1252" name="NormalFppActivationStillShowsGameplayHands" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.NormalFppActivationStillShowsGameplayHands" methodname="NormalFppActivationStillShowsGameplayHands" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="1124877517" result="Passed" start-time="2026-10-19 14:58:55Z" end-time="2026-10-19 14:58:55Z" duration="0.031314" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1255" name="OpeningTakesCameraBeforeLoadingCurtainDisappears" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.OpeningTakesCameraBeforeLoadingCurtainDisappears" methodname="OpeningTakesCameraBeforeLoadingCurtainDisappears" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="1096830795" result="Passed" start-time="2026-10-19 14:58:55Z" end-time="2026-10-19 14:58:55Z" duration="0.038613" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Flow] unknown map 'PlayModeWorldReset_87', falling back to 'Eskinita'.
+[Arrival] offline: arrival prepared (8.6 s, directed=False, rig=False, closes on the last portrait)
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2090" name="LateJoinReadyGateTests" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-19 14:58:55Z" end-time="2026-10-19 14:58:56Z" duration="0.388867" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2096" name="AdoptionPreservesRequestedPauseAndDoesNotUnfreezeStatusEffects" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.AdoptionPreservesRequestedPauseAndDoesNotUnfreezeStatusEffects" methodname="AdoptionPreservesRequestedPauseAndDoesNotUnfreezeStatusEffects" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="979749780" result="Passed" start-time="2026-10-19 14:58:55Z" end-time="2026-10-19 14:58:55Z" duration="0.079203" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] client: gate opened for seat 1
+[Arrival] client: no main camera, so no opening
+[Arrival] client: finished before it was shown
+[Arrival] client: opening done, waiting for the countdown
+[Arrival] client: adopting the host's running match; the opening is retired
+]]></output>
+            </test-case>
+            <test-case id="2097" name="AlreadyAdoptedGateLeavesAnotherPresentationHoldAlone" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.AlreadyAdoptedGateLeavesAnotherPresentationHoldAlone" methodname="AlreadyAdoptedGateLeavesAnotherPresentationHoldAlone" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="1427736930" result="Passed" start-time="2026-10-19 14:58:55Z" end-time="2026-10-19 14:58:55Z" duration="0.035661" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] client: gate opened for seat 1
+[Arrival] client: adopting the host's running match; the opening is retired
+]]></output>
+            </test-case>
+            <test-case id="2099" name="ArrivingUltimateKeepsItsOwnClockHoldAfterOpeningRetires" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.ArrivingUltimateKeepsItsOwnClockHoldAfterOpeningRetires" methodname="ArrivingUltimateKeepsItsOwnClockHoldAfterOpeningRetires" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="553971122" result="Passed" start-time="2026-10-19 14:58:55Z" end-time="2026-10-19 14:58:55Z" duration="0.047348" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] client: gate opened for seat 1
+[Arrival] client: no main camera, so no opening
+[Arrival] client: finished before it was shown
+[Arrival] client: opening done, waiting for the countdown
+[Arrival] client: adopting the host's running match; the opening is retired
+]]></output>
+            </test-case>
+            <test-case id="2098" name="HostRetainsItsNormalStartBarrier" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.HostRetainsItsNormalStartBarrier" methodname="HostRetainsItsNormalStartBarrier" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="536544032" result="Passed" start-time="2026-10-19 14:58:55Z" end-time="2026-10-19 14:58:55Z" duration="0.039228" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] host: gate opened for seat 1
+[Arrival] host: no main camera, so no opening
+[Arrival] host: finished before it was shown
+[Arrival] host: opening done, waiting for the countdown
+[Arrival] host: countdown sent with 0/0 ready
+]]></output>
+            </test-case>
+            <test-case id="2095" name="IntermissionArrivalReleasesOnlyTheOpeningAndKeepsGameplayInactive" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.IntermissionArrivalReleasesOnlyTheOpeningAndKeepsGameplayInactive" methodname="IntermissionArrivalReleasesOnlyTheOpeningAndKeepsGameplayInactive" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="3072903" result="Passed" start-time="2026-10-19 14:58:55Z" end-time="2026-10-19 14:58:56Z" duration="0.039472" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] client: gate opened for seat 1
+[Arrival] client: no main camera, so no opening
+[Arrival] client: finished before it was shown
+[Arrival] client: opening done, waiting for the countdown
+[Arrival] client: adopting the host's running match; the opening is retired
+]]></output>
+            </test-case>
+            <test-case id="2094" name="PrestartSnapshotDoesNotReleaseTheRealStartBarrier" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.PrestartSnapshotDoesNotReleaseTheRealStartBarrier" methodname="PrestartSnapshotDoesNotReleaseTheRealStartBarrier" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="845280754" result="Passed" start-time="2026-10-19 14:58:56Z" end-time="2026-10-19 14:58:56Z" duration="0.036089" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] client: gate opened for seat 1
+[Arrival] client: no main camera, so no opening
+[Arrival] client: finished before it was shown
+[Arrival] client: opening done, waiting for the countdown
+]]></output>
+            </test-case>
+            <test-case id="2093" name="RebindingDuringAnExistingRoundDoesNotReplayTheOpening" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.RebindingDuringAnExistingRoundDoesNotReplayTheOpening" methodname="RebindingDuringAnExistingRoundDoesNotReplayTheOpening" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="1460674219" result="Passed" start-time="2026-10-19 14:58:56Z" end-time="2026-10-19 14:58:56Z" duration="0.032844" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] client: gate opened for seat 1
+[Arrival] client: adopting the host's running match; the opening is retired
+]]></output>
+            </test-case>
+            <test-case id="2092" name="RunningSnapshotCancelsAnIntroductionStillInFlight" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.RunningSnapshotCancelsAnIntroductionStillInFlight" methodname="RunningSnapshotCancelsAnIntroductionStillInFlight" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="980405767" result="Passed" start-time="2026-10-19 14:58:56Z" end-time="2026-10-19 14:58:56Z" duration="0.038645" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] client: gate opened for seat 1
+[Arrival] client: adopting the host's running match; the opening is retired
+[Arrival] client: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="2091" name="RunningSnapshotReleasesMissedCountdownHoldWithoutStartingAnotherRound" fullname="TumbangPreso.PlayTests.LateJoinReadyGateTests.RunningSnapshotReleasesMissedCountdownHoldWithoutStartingAnotherRound" methodname="RunningSnapshotReleasesMissedCountdownHoldWithoutStartingAnotherRound" classname="TumbangPreso.PlayTests.LateJoinReadyGateTests" runstate="Runnable" seed="112513245" result="Passed" start-time="2026-10-19 14:58:56Z" end-time="2026-10-19 14:58:56Z" duration="0.037166" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] client: gate opened for seat 1
+[Arrival] client: no main camera, so no opening
+[Arrival] client: finished before it was shown
+[Arrival] client: opening done, waiting for the countdown
+[Arrival] client: adopting the host's running match; the opening is retired
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2362" name="MatchStartContractTests" fullname="TumbangPreso.PlayTests.MatchStartContractTests" classname="TumbangPreso.PlayTests.MatchStartContractTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-19 14:58:56Z" end-time="2026-10-19 14:59:00Z" duration="4.017185" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2364" name="CustomMapVoteToggleChangesTheRuleAndManualReadyIsAbsent" fullname="TumbangPreso.PlayTests.MatchStartContractTests.CustomMapVoteToggleChangesTheRuleAndManualReadyIsAbsent" methodname="CustomMapVoteToggleChangesTheRuleAndManualReadyIsAbsent" classname="TumbangPreso.PlayTests.MatchStartContractTests" runstate="Runnable" seed="2144841747" result="Passed" start-time="2026-10-19 14:58:56Z" end-time="2026-10-19 14:58:56Z" duration="0.097083" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2366" name="DisablingCountdownReleasesItsHoldAndCannotStartLater" fullname="TumbangPreso.PlayTests.MatchStartContractTests.DisablingCountdownReleasesItsHoldAndCannotStartLater" methodname="DisablingCountdownReleasesItsHoldAndCannotStartLater" classname="TumbangPreso.PlayTests.MatchStartContractTests" runstate="Runnable" seed="264940377" result="Passed" start-time="2026-10-19 14:58:56Z" end-time="2026-10-19 14:58:56Z" duration="0.032340" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2368" name="FourArrivalPosesDifferAndClearWithoutMovingThePhysicalRoot" fullname="TumbangPreso.PlayTests.MatchStartContractTests.FourArrivalPosesDifferAndClearWithoutMovingThePhysicalRoot" methodname="FourArrivalPosesDifferAndClearWithoutMovingThePhysicalRoot" classname="TumbangPreso.PlayTests.MatchStartContractTests" runstate="Runnable" seed="836226418" result="Passed" start-time="2026-10-19 14:58:56Z" end-time="2026-10-19 14:58:56Z" duration="0.282659" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2367" name="LegacyManualRuleCannotShowAnotherReadyPrompt" fullname="TumbangPreso.PlayTests.MatchStartContractTests.LegacyManualRuleCannotShowAnotherReadyPrompt" methodname="LegacyManualRuleCannotShowAnotherReadyPrompt" classname="TumbangPreso.PlayTests.MatchStartContractTests" runstate="Runnable" seed="1173867967" result="Passed" start-time="2026-10-19 14:58:56Z" end-time="2026-10-19 14:58:56Z" duration="0.035524" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat -1
+[Arrival] offline: no main camera, so no opening
+[Arrival] offline: finished before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+]]></output>
+            </test-case>
+            <test-case id="2363" name="MapVotingIsOptionalAndSurvivesCloningAndWireReplication" fullname="TumbangPreso.PlayTests.MatchStartContractTests.MapVotingIsOptionalAndSurvivesCloningAndWireReplication" methodname="MapVotingIsOptionalAndSurvivesCloningAndWireReplication" classname="TumbangPreso.PlayTests.MatchStartContractTests" runstate="Runnable" seed="1845873994" result="Passed" start-time="2026-10-19 14:58:56Z" end-time="2026-10-19 14:58:56Z" duration="0.033063" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2365" name="ThreeSecondCountdownHoldsGameplayStartsOnceAndReleases" fullname="TumbangPreso.PlayTests.MatchStartContractTests.ThreeSecondCountdownHoldsGameplayStartsOnceAndReleases" methodname="ThreeSecondCountdownHoldsGameplayStartsOnceAndReleases" classname="TumbangPreso.PlayTests.MatchStartContractTests" runstate="Runnable" seed="844207334" result="Passed" start-time="2026-10-19 14:58:56Z" end-time="2026-10-19 14:59:00Z" duration="3.534098" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="15000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Andrei/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
