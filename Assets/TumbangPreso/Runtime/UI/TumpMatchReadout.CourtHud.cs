@@ -18,13 +18,16 @@ namespace TumbangPreso.UI
             MatchEventFeed.Create(_root);
             _momentBanner = MatchMomentBanner.Create(_root);
             _powers = gameObject.AddComponent<TumpPowerReadout>(); _powers.Build(_root);
-            // ⚠️ UI REVAMP 2026-10-06: an announcement is a cream toy tile with brown display words
-            // that lands with a short pop; the earned moment beside it is the red one.
+            // ⚠️ 2026-10-20 OVERHAUL: an announcement is big italic ivory words on a strip of smoked
+            // glass, Overwatch's "OVERTIME" and "ROUND 2", landing with the same short pop. It was a
+            // cream toy tile with brown words (UI revamp 2026-10-06); the earned moment is still red.
             _toastPlate = OwnerUiLayout.Rect(_root, "MatchToastPlate").gameObject.AddComponent<HudCard>();
-            _toastPlate.Toy(HudDraw.Cream, HudDraw.CreamSide, 8, 16, .42f).raycastTarget = false; _toastPlate.enabled = false;
+            _toastPlate.Glass(HudDraw.Glass).raycastTarget = false; _toastPlate.enabled = false;
             Pin(_toastPlate.rectTransform, new Vector2(.5f, 1), new Vector2(0, -196), new Vector2(400, ToastHeight));
             _toastPlate.rectTransform.localRotation = Quaternion.Euler(0, 0, ToastTilt);
-            _toast = OwnerUiLayout.Text(_root, "MatchToast", "", 36, OwnerUiLayout.TypeRole.Display); _toast.color = HudDraw.Brown;
+            _toast = OwnerUiLayout.Text(_root, "MatchToast", "", 36, OwnerUiLayout.TypeRole.Display); _toast.color = HudDraw.Ivory;
+            _toast.fontStyle = FontStyle.Italic;
+            var toastEdge = _toast.gameObject.AddComponent<Outline>(); toastEdge.effectColor = UiTheme.InGameOutline; toastEdge.effectDistance = new Vector2(2, -2);
             _toast.alignment = TextAnchor.MiddleCenter; _toast.verticalOverflow = VerticalWrapMode.Overflow;
             Pin(_toast.rectTransform, new Vector2(.5f, 1), new Vector2(0, -196), new Vector2(1080, ToastHeight)); _toast.enabled = false;
             _toast.rectTransform.localRotation = Quaternion.Euler(0, 0, ToastTilt);
@@ -93,17 +96,28 @@ namespace TumbangPreso.UI
         }
         private void BuildCourtPersonal()
         {
+            // ⚠️ 2026-10-20 OVERHAUL: THE BOTTOM-LEFT IS YOUR VITALS PLATE, Overwatch's portrait and
+            // health corner (see `HudVitalsBar` for why stamina takes the health bar's shape). The
+            // group keeps its name, its words and its show/hide rule; it now sits in the corner
+            // proper, 36 units from each edge, and its two sentences ride above the plate on the
+            // rare occasions they speak (piloting Kuro, a limited slipper stock).
+            // ⚠️ PIVOTED ON ITS OWN CORNER so its base scale and the reading scale both grow it away
+            // from the screen edges instead of off them.
             _personalRoot = OwnerUiLayout.Rect(_root, "LocalState");
-            Pin(_personalRoot, new Vector2(0, 0), new Vector2(285, 122), new Vector2(500, 184));
+            Pin(_personalRoot, new Vector2(0, 0), new Vector2(36, 28), new Vector2(500, 120));
+            _personalRoot.pivot = Vector2.zero; _personalRoot.localScale = Vector3.one * VitalsScale;
+            BuildVitals();
             _role = Ink(_personalRoot, "LocalRole", "", 34, true); _role.alignment = TextAnchor.MiddleLeft;
-            OwnerUiLayout.Place(_role.rectTransform, 0, 0, 500, 58);
+            OwnerUiLayout.Place(_role.rectTransform, 108, -86, 392, 46);
             _stock = Ink(_personalRoot, "SlipperState", "", 28, false); _stock.alignment = TextAnchor.MiddleLeft;
-            OwnerUiLayout.Place(_stock.rectTransform, 0, 62, 500, 54);
+            OwnerUiLayout.Place(_stock.rectTransform, 108, -42, 392, 40);
+            // The labelled bar is the piloting readout (whose stamina it is IS the information), so
+            // it rides above the plate with the two lines rather than under the portrait.
             var track = OwnerUiLayout.Rect(_personalRoot, "StaminaTrack").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Place(track.rectTransform, 0, 136, 338, 12); track.color = new Color32(35, 29, 33, 230); track.raycastTarget = false;
+            OwnerUiLayout.Place(track.rectTransform, 108, -116, 230, 12); track.color = new Color32(35, 29, 33, 230); track.raycastTarget = false;
             _stamina = OwnerUiLayout.Rect(track.transform, "StaminaFill").gameObject.AddComponent<Image>();
             OwnerUiLayout.Fill(_stamina.rectTransform); _stamina.color = CourtPresentationPalette.Gold; _stamina.raycastTarget = false;
-            var label = Ink(_personalRoot, "StaminaLabel", "Stamina", 28, false); OwnerUiLayout.Place(label.rectTransform, 353, 121, 142, 42);
+            var label = Ink(_personalRoot, "StaminaLabel", "Stamina", 28, false); OwnerUiLayout.Place(label.rectTransform, 346, -131, 154, 42);
             // VISUAL-1.4: a stun the player cannot time is a stun they cannot play around
             // (`Design.md` § 11), so these stay; they sit under the reticle, where the eye
             // already is, instead of floating in the left margin under a scoreboard that moved.
@@ -117,23 +131,25 @@ namespace TumbangPreso.UI
         {
             _promptRoot = OwnerUiLayout.Rect(_root, "ContextualAction");
             Pin(_promptRoot, new Vector2(.5f, .28f), Vector2.zero, new Vector2(1100, 174));
-            // ⚠️ UI REVAMP 2026-10-06 (guide p.13): the one straight-edged surface in the match. A
-            // 60% ink band sized to its words with a chalk line down each side, the same white
-            // as the court's own lines, so an action reads as "here, now" without becoming
-            // another card. Nunito, because it is an instruction, not an event.
+            // ⚠️ 2026-10-20 OVERHAUL: Overwatch's interaction prompt, the key glyph then the verb in
+            // ivory, on one strip of smoked glass sized to its words (`SizePromptPlate`). The strip
+            // is kept rather than letting the words float because the hold progress has to sit
+            // INSIDE something (`RevisedHudSeparatesStatusesWarningActionAndFitsFourRounds`), and
+            // because the street behind the centre of the screen is bright chalk and sky.
             _promptPlate = OwnerUiLayout.Rect(_promptRoot, "PromptPlate").gameObject.AddComponent<HudCard>();
-            _promptPlate.Toy(HudDraw.Cream, HudDraw.CreamSide, 7, 14, .42f).raycastTarget = false;
+            _promptPlate.Glass(HudDraw.GlassDeep).raycastTarget = false;
             _promptPlate.enabled = false;
             _prompt = OwnerUiLayout.Text(_promptRoot, "ActionPrompt", "", 38, OwnerUiLayout.TypeRole.Reading);
             OwnerUiLayout.Place(_prompt.rectTransform, 0, 0, 1100, 74);
-            _prompt.alignment = TextAnchor.MiddleLeft; _prompt.verticalOverflow = VerticalWrapMode.Overflow; _prompt.color = HudDraw.Brown;
+            _prompt.alignment = TextAnchor.MiddleLeft; _prompt.verticalOverflow = VerticalWrapMode.Overflow; _prompt.color = PromptInk;
+            var promptEdge = _prompt.gameObject.AddComponent<Outline>(); promptEdge.effectColor = UiTheme.InGameOutline; promptEdge.effectDistance = new Vector2(1.5f, -1.5f);
             _bindingGlyph = OwnerUiLayout.Rect(_promptRoot, "ActionBindingGlyph").gameObject.AddComponent<Image>();
             _bindingGlyph.preserveAspect = true; _bindingGlyph.raycastTarget = false; _bindingGlyph.enabled = false;
             _context = Ink(_promptRoot, "ActionDetail", "", 28, false); OwnerUiLayout.Place(_context.rectTransform, 0, 77, 1100, 66);
             var track = OwnerUiLayout.Rect(_promptRoot, "RecoveryProgress").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Place(track.rectTransform, 320, 154, 460, 10); track.color = HudDraw.CreamSide; track.raycastTarget = false;
+            OwnerUiLayout.Place(track.rectTransform, 320, 154, 460, 10); track.color = new Color(0, 0, 0, .5f); track.raycastTarget = false;
             _progress = OwnerUiLayout.Rect(track.transform, "ProgressFill").gameObject.AddComponent<Image>();
-            OwnerUiLayout.Fill(_progress.rectTransform); _progress.color = HudDraw.Brown; _progress.raycastTarget = false;
+            OwnerUiLayout.Fill(_progress.rectTransform); _progress.color = HudDraw.Honey; _progress.raycastTarget = false;
             track.gameObject.SetActive(false);
         }
     }

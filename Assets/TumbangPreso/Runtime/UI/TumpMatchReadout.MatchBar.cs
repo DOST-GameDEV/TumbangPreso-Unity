@@ -43,6 +43,8 @@ namespace TumbangPreso.UI
         private RectTransform _staminaRoot, _drainPins;
         private float _drainPinsAge = -1.0f;
         private HudCard _promptPlate;
+        /// <summary>The action prompt's words: ivory on the glass strip (they were brown on cream).</summary>
+        private static readonly Color PromptInk = HudDraw.Ivory;
 
         /// <summary>Fits the prompt pill to the words it carries; hidden when there are none.</summary>
         private void SizePromptPlate()
@@ -72,17 +74,35 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Place(_context.rectTransform, left - 100, textHeight + (progress ? 30 : 14), width + 200, 66);
         }
 
-        // ⚠️ UI REVAMP 2026-10-06: THE OWNER'S PLAYER CARD (TUMP guide p.10) AS A TOY TILE. Portrait,
-        // username and total score together on a cream face; the guide's thick role border is the
-        // tile's own extruded base, solid blue for the taya and orange for a thrower, so the role
-        // reads from the colour under every card without four outlined boxes. One state icon at
-        // the right: the slipper (whole in hand, faded away) or the can (whole upright, faded down).
-        // The local player's card carries a honey "You" chip underneath.
-        private const float ChipWidth = 250, ChipHeight = 68, ClockWidth = 232, ClockHeight = 72, BarTop = 24;
-        private const float CardDepth = 9, CardBevel = 12, Pop = 8;
-        private const int ScoreFont = 42, ScoreFontFloor = 28;
-        private static readonly float[] ChipX = { 0, 264, 792, 1056 };
-        private const float BarWidth = 1306;
+        // ⚠️⚠️ IN-GAME UI OVERHAUL 2026-10-20: THE TEAM BAR, OVERWATCH'S SHAPE IN THE GAME'S COLOURS.
+        // The request: "make it similar to overwatch's simple ingame hud". Overwatch 2 puts every
+        // player's hero icon in one slim row at the top centre, split either side of the objective
+        // and the clock, and draws nothing else up there. These chips replace the 250 x 68 cream
+        // toy cards that sat on extruded sides with a "You" tile hanging under one of them:
+        //
+        // - A chip is one smoked-glass parallelogram (`HudCard.Glass`) holding the portrait on a
+        //   leaning tile in the seat colour, the score as a large italic numeral, and the role's
+        //   own object (the can or the slipper) at its right end, whole or faded. That is every
+        //   fact the old card carried.
+        // - YOU is a honey bar under your chip and your score in honey, the way Overwatch marks
+        //   your own portrait, instead of a second tile with a word on it.
+        // - The full name is the world nameplate's job in play (the earlier VISUAL-1.4 note says the
+        //   same) and is drawn under each chip only while spectating, where four people are being
+        //   followed rather than one pair of hands.
+        //
+        // ⚠️ THE SIZES ARE MEASURED AGAINST THE WIDEST SCORE THE CHIP MUST HOLD, NOT TASTE.
+        // `LargeScoreChipsStayInsideTheBarAtNormalAndAccessibleSizes` stages "-888888" at the
+        // 28-unit floor: seven DIN Bold glyphs at about 15.5 units each is 108, so the score box is
+        // 112. The chip is 200 so a four-digit score at full size (about 90 units) ends before the
+        // state glyph at 172 (at 190 the first renders drew "1120" through the slipper), and no
+        // wider, because `HeroPowerDetailsAndSpectatorCleanFeedKeepTheirLiveContracts` holds the
+        // permanent Hero Strike HUD under 8 per cent of the frame and a 210 chip measured 8.0006.
+        // The bar is 1060 wide against the old 1306, whose HUD measured 10.8 on the same check.
+        private const float ChipWidth = 200, ChipHeight = 58, ClockWidth = 200, ClockHeight = 58, BarTop = 22;
+        private const float ScoreLeft = 70, ScoreWidth = 112;
+        private const int ScoreFont = 40, ScoreFontFloor = 28;
+        private static readonly float[] ChipX = { 0, 212, 648, 860 };
+        private const float BarWidth = 1060;
         private readonly HudCard[] _portraitTiles = new HudCard[4];
         private readonly HudCard[] _localMarks = new HudCard[4], _roleChips = new HudCard[4];
         private readonly string[] _barNames = new string[4], _barNameLabels = new string[4];
@@ -93,36 +113,41 @@ namespace TumbangPreso.UI
             Pin(_scoreRoot, new Vector2(.5f, 1), new Vector2(0, -(BarTop + ChipHeight * .5f)), new Vector2(BarWidth, ChipHeight));
             for (int i = 0; i < 4; i++) BuildChip(i);
 
+            // The clock is the bar's centre: the same glass, denser, because its numerals are the
+            // one thing on the bar read at a glance under every background.
             _clockRoot = OwnerUiLayout.Rect(_root, "RoundClock");
-            Pin(_clockRoot, new Vector2(.5f, 1), new Vector2(0, -(BarTop - 2 + 60)), new Vector2(ClockWidth, 120));
+            Pin(_clockRoot, new Vector2(.5f, 1), new Vector2(0, -(BarTop + 50)), new Vector2(ClockWidth, 100));
             var plate = OwnerUiLayout.Rect(_clockRoot, "ClockFace").gameObject.AddComponent<HudCard>();
             OwnerUiLayout.Place(plate.rectTransform, 0, 0, ClockWidth, ClockHeight);
-            plate.Toy(HudDraw.Brown, HudDraw.BrownSide, CardDepth, 14, .45f).raycastTarget = false;
+            plate.Glass(HudDraw.GlassDeep).raycastTarget = false;
 
             _canRing = OwnerUiLayout.Rect(_clockRoot, "CanProtection").gameObject.AddComponent<HudRing>();
-            OwnerUiLayout.Place(_canRing.rectTransform, 13, 11, 50, 50);
+            OwnerUiLayout.Place(_canRing.rectTransform, 12, 8, 42, 42);
             _canRing.Thickness = 3; _canRing.Track = Color.clear; _canRing.color = HudDraw.Honey;
             _canRing.Fill = 0; _canRing.raycastTarget = false;
             _canGlyph = OwnerUiLayout.Rect(_clockRoot, "CanStateIcon").gameObject.AddComponent<HudBadge>();
-            OwnerUiLayout.Place(_canGlyph.rectTransform, 18, 16, 40, 40);
-            _canGlyph.Detail = HudDraw.Brown; _canGlyph.raycastTarget = false;
+            OwnerUiLayout.Place(_canGlyph.rectTransform, 17, 13, 32, 32);
+            _canGlyph.Detail = HudDraw.GlassDeep; _canGlyph.raycastTarget = false;
 
-            _clock = OwnerUiLayout.Text(_clockRoot, "TimeLeft", "", 50, OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(_clock.rectTransform, 60, 4, 162, 64);
+            // ⚠️ THE CLOCK KEEPS DARUMADROP: `docs/FONT_USAGE.md`, October 6, names `TimeLeft` as the
+            // one in-game label that does not take DIN. Only its colour and plate changed here.
+            _clock = OwnerUiLayout.Text(_clockRoot, "TimeLeft", "", 46, OwnerUiLayout.TypeRole.Display);
+            OwnerUiLayout.Place(_clock.rectTransform, 56, 1, 134, 56);
             _clock.alignment = TextAnchor.MiddleCenter; _clock.verticalOverflow = VerticalWrapMode.Overflow;
             _clock.horizontalOverflow = HorizontalWrapMode.Overflow;
-            _clock.color = HudDraw.Cream;
+            _clock.color = HudDraw.Ivory;
 
-            // Round beads sit in a small brown tray under the clock (guide p.11).
+            // The round track is a slim glass tray of leaning ticks under the clock, one per round in
+            // that round's taya colour (`HudPips` keeps its meaning; only its shape changed).
             var track = OwnerUiLayout.Rect(_clockRoot, "RoundTrack").gameObject.AddComponent<HudCard>();
-            OwnerUiLayout.Place(track.rectTransform, (ClockWidth - 214) * .5f, ClockHeight + 14, 214, 24);
+            OwnerUiLayout.Place(track.rectTransform, (ClockWidth - 214) * .5f, ClockHeight + 8, 214, 22);
             _roundTrack = track.rectTransform;
-            track.Toy(new Color32(44, 26, 15, 235), Color.clear, 0, 8, .3f).raycastTarget = false; track.Sheen = false;
+            track.Glass(HudDraw.Glass, HudDraw.Lean, 2, .2f).raycastTarget = false; track.BorderWidth = 0;
             _pips = OwnerUiLayout.Rect(_clockRoot, "RoundPips").gameObject.AddComponent<HudPips>();
-            OwnerUiLayout.Place(_pips.rectTransform, -40, ClockHeight + 17, ClockWidth + 80, 18); _pips.raycastTarget = false;
+            OwnerUiLayout.Place(_pips.rectTransform, -40, ClockHeight + 10, ClockWidth + 80, 18); _pips.raycastTarget = false;
             _pips.Diameter = 12; _pips.Gap = 10;
             _round = Ink(_clockRoot, "RoundLabel", "", 28, false);
-            OwnerUiLayout.Place(_round.rectTransform, -134, ClockHeight + 46, ClockWidth + 268, 36);
+            OwnerUiLayout.Place(_round.rectTransform, -134, ClockHeight + 38, ClockWidth + 268, 36);
         }
 
         private void BuildChip(int i)
@@ -130,61 +155,71 @@ namespace TumbangPreso.UI
             var row = OwnerUiLayout.Rect(_scoreRoot, "ScoreRow" + i);
             OwnerUiLayout.Place(row, ChipX[i], 0, ChipWidth, ChipHeight); _scoreRows[i] = row;
             var card = row.gameObject.AddComponent<HudCard>();
-            card.Toy(HudDraw.Cream, HudDraw.CreamSide, CardDepth, CardBevel, .4f).raycastTarget = false; _chipCards[i] = card;
+            card.Glass(HudDraw.Glass).raycastTarget = false; _chipCards[i] = card;
 
-            // The figurine: the player's tile rises out of the card on a cream die-cut edge, so each
-            // card reads as a person standing on their plate rather than a picture in a box.
+            // The portrait stands on a leaning tile in the seat colour: Overwatch's hero icon, and the
+            // colour that ties this chip to its round tick, its feed rows and its nameplate.
             var swatch = OwnerUiLayout.Rect(row, "SeatSwatch").gameObject.AddComponent<HudCard>();
-            OwnerUiLayout.Place(swatch.rectTransform, 7, -Pop, 66, ChipHeight + Pop - 7);
-            swatch.Toy(PlayerIdentity.Colour(i), Color.Lerp(PlayerIdentity.Colour(i), Color.black, .35f), 4, 11, .35f);
-            swatch.Border = HudDraw.Cream; swatch.BorderWidth = 3; swatch.Sheen = false; swatch.FollowContrast = false;
+            OwnerUiLayout.Place(swatch.rectTransform, 6, 4, 58, ChipHeight - 8);
+            swatch.Glass(PlayerIdentity.Colour(i), HudDraw.Lean, 2, .3f); swatch.BorderWidth = 0; swatch.FollowContrast = false;
             swatch.raycastTarget = false; _chipSwatches[i] = swatch; _portraitTiles[i] = swatch;
             _portraits[i] = OwnerPortraitArt.Create(row, "PlayerPortrait", "");
-            OwnerUiLayout.Place(_portraits[i].rectTransform, 10, -Pop + 4, 60, 60);
+            OwnerUiLayout.Place(_portraits[i].rectTransform, 11, 5, 48, 48);
 
-            // Kept for the probes; the role lives on the extruded base and the state icon.
+            // Kept for the probes; the role lives on the state icon at the chip's right end.
             _roleBadges[i] = OwnerUiLayout.Rect(row, "RoleBadge").gameObject.AddComponent<HudBadge>();
-            OwnerUiLayout.Place(_roleBadges[i].rectTransform, 56, 50, 28, 28);
+            OwnerUiLayout.Place(_roleBadges[i].rectTransform, 50, 34, 24, 24);
             _roleBadges[i].Detail = UiTheme.Defense; _roleBadges[i].raycastTarget = false;
             _crowns[i] = OwnerUiLayout.Rect(row, "LeaderCrown").gameObject.AddComponent<HudBadge>();
-            OwnerUiLayout.Place(_crowns[i].rectTransform, 52, -Pop - 18, 34, 28); _crowns[i].raycastTarget = false;
+            OwnerUiLayout.Place(_crowns[i].rectTransform, 22, -22, 30, 24); _crowns[i].raycastTarget = false;
 
-            // The seat tag ties this card to its round bead: seat colour on a small brown chip.
+            // The seat tag is a small dark tab on the portrait's lower corner, in the seat colour.
             var tagPlate = OwnerUiLayout.Rect(row, "SeatTagPlate").gameObject.AddComponent<HudCard>();
-            OwnerUiLayout.Place(tagPlate.rectTransform, 0, ChipHeight - 28, 46, 30);
-            tagPlate.Toy(HudDraw.Brown, Color.clear, 0, 5, 0).raycastTarget = false; tagPlate.Sheen = false;
+            OwnerUiLayout.Place(tagPlate.rectTransform, 0, ChipHeight - 24, 38, 26);
+            // Near-opaque: at glass strength the tag's seat colour sank into the portrait under it.
+            tagPlate.Glass(new Color32(22, 12, 7, 225), HudDraw.Lean, 2, 0).raycastTarget = false; tagPlate.BorderWidth = 0;
             _seatTags[i] = OwnerUiLayout.Text(row, "SeatTag", "", 28, OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(_seatTags[i].rectTransform, 0, ChipHeight - 29, 46, 30);
+            OwnerUiLayout.Place(_seatTags[i].rectTransform, 0, ChipHeight - 25, 38, 26);
             _seatTags[i].alignment = TextAnchor.MiddleCenter; _seatTags[i].color = PlayerIdentity.Colour(i);
             _seatTags[i].verticalOverflow = VerticalWrapMode.Overflow; _seatTags[i].horizontalOverflow = HorizontalWrapMode.Overflow;
 
-            // The role chip: the player's own colour holding the role's own object, the can for the
-            // taya and the slipper for a thrower (whole when held or upright, faded when not).
+            // The state well is retired as a surface (a second coloured tile per chip was the
+            // clutter); its object stays for the reading layout and the glyph draws straight on glass.
             var well = _roleChips[i] = OwnerUiLayout.Rect(row, "StateWell").gameObject.AddComponent<HudCard>();
-            OwnerUiLayout.Place(well.rectTransform, ChipWidth - 52, (ChipHeight - 46) * .5f - 2, 42, 46);
-            well.Toy(PlayerIdentity.Colour(i), Color.Lerp(PlayerIdentity.Colour(i), Color.black, .4f), 4, 10, .3f).raycastTarget = false; well.Sheen = false;
+            OwnerUiLayout.Place(well.rectTransform, ChipWidth - 30, (ChipHeight - 40) * .5f, 26, 40);
+            well.Glass(Color.clear, HudDraw.Lean, 2, 0).raycastTarget = false; well.BorderWidth = 0; well.enabled = false;
             well.FollowContrast = false;
             _stateBadges[i] = OwnerUiLayout.Rect(row, "StateBadge").gameObject.AddComponent<HudBadge>();
-            OwnerUiLayout.Place(_stateBadges[i].rectTransform, ChipWidth - 46, (ChipHeight - 34) * .5f - 2, 30, 34);
-            _stateBadges[i].Detail = PlayerIdentity.Colour(i); _stateBadges[i].Rim = Color.clear; _stateBadges[i].raycastTarget = false;
+            OwnerUiLayout.Place(_stateBadges[i].rectTransform, ChipWidth - 28, (ChipHeight - 32) * .5f, 22, 32);
+            _stateBadges[i].Detail = HudDraw.GlassDeep; _stateBadges[i].Rim = Color.clear; _stateBadges[i].raycastTarget = false;
 
+            // Spectators only: the name sits under the chip, sized to it (`PaintCardName` ellipsises).
             _names[i] = OwnerUiLayout.Text(row, "PlayerName", "", 28, OwnerUiLayout.TypeRole.Reading);
-            OwnerUiLayout.Place(_names[i].rectTransform, 80, 1, ChipWidth - 80 - 56, 30);
-            _names[i].alignment = TextAnchor.MiddleLeft; _names[i].color = new Color32(96, 64, 44, 255);
+            OwnerUiLayout.Place(_names[i].rectTransform, 0, ChipHeight + 8, ChipWidth, 32);
+            _names[i].alignment = TextAnchor.MiddleCenter; _names[i].color = HudDraw.Ivory;
             _names[i].horizontalOverflow = HorizontalWrapMode.Overflow; _names[i].verticalOverflow = VerticalWrapMode.Overflow;
+            var nameEdge = _names[i].gameObject.AddComponent<Outline>(); nameEdge.effectColor = UiTheme.InGameOutline;
+            nameEdge.effectDistance = new Vector2(1.5f, -1.5f);
+            _names[i].enabled = false;
 
             _scores[i] = OwnerUiLayout.Text(row, "Score", "", ScoreFont, OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(_scores[i].rectTransform, 76, 22, ChipWidth - 76 - 52, 46);
-            _scores[i].alignment = TextAnchor.MiddleLeft; _scores[i].color = HudDraw.Brown;
+            OwnerUiLayout.Place(_scores[i].rectTransform, ScoreLeft, 2, ScoreWidth, ChipHeight - 4);
+            _scores[i].alignment = TextAnchor.MiddleLeft; _scores[i].color = HudDraw.Ivory;
+            _scores[i].fontStyle = FontStyle.Italic;
             _scores[i].horizontalOverflow = HorizontalWrapMode.Overflow;
             _scores[i].verticalOverflow = VerticalWrapMode.Overflow;
+            var scoreEdge = _scores[i].gameObject.AddComponent<Outline>(); scoreEdge.effectColor = UiTheme.InGameOutline;
+            scoreEdge.effectDistance = new Vector2(1.5f, -1.5f);
 
+            // YOU: a honey bar along the chip's foot. The label object is kept (and silent) because
+            // the honey bar plus the honey score already say it without a word.
             var mark = _localMarks[i] = OwnerUiLayout.Rect(row, "LocalMark").gameObject.AddComponent<HudCard>();
-            OwnerUiLayout.Place(mark.rectTransform, (ChipWidth - 78) * .5f + 20, ChipHeight + CardDepth + 2, 78, 34);
-            mark.Toy(HudDraw.Honey, HudDraw.HoneySide, 4, 7, .3f).raycastTarget = false; mark.Sheen = false;
+            OwnerUiLayout.Place(mark.rectTransform, 8, ChipHeight + 2, ChipWidth - 16, 5);
+            mark.Glass(HudDraw.Honey, HudDraw.Lean, 1, .3f).raycastTarget = false; mark.BorderWidth = 0; mark.FollowContrast = false;
             var you = OwnerUiLayout.Text(mark.transform, "LocalMarkLabel", "You", 28, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Fill(you.rectTransform); you.alignment = TextAnchor.MiddleCenter; you.color = HudDraw.Brown;
             you.horizontalOverflow = HorizontalWrapMode.Overflow; you.verticalOverflow = VerticalWrapMode.Overflow;
+            you.enabled = false;
             mark.gameObject.SetActive(false);
 
             _roles[i] = Ink(row, "RoleState", "", 28, false);
@@ -294,15 +329,15 @@ namespace TumbangPreso.UI
         private void MatchBarClock(MatchDirector match, RoundDirector round, int time)
         {
             bool urgent = time <= 10 && round.RoundActive;
-            _clock.color = urgent ? HudDraw.Honey : HudDraw.Cream;
+            _clock.color = urgent ? HudDraw.Honey : HudDraw.Ivory;
             float tick = urgent && !Settings.SettingsStore.Current.ReducedUiMotion ? 1 - Mathf.Repeat(round.TimeLeft, 1f) : 1;
             float pulse = 1 + .14f * (1 - Mathf.Clamp01(tick / .25f)) * (urgent ? 1 : 0);
             _clock.rectTransform.localScale = Vector3.one * pulse;
             _pips.Set(Mathf.Max(1, match.TotalRounds), match.IsWarmupBuffer ? 0 : match.RoundNumber);
             float gap = _pips.Count >= 4 && _pips.Count % 2 == 0 ? _pips.Gap : 0;
             float width = _pips.Count * _pips.Diameter + (_pips.Count - 1) * _pips.Gap + gap + 18;
-            if(_roundTrack != null) OwnerUiLayout.Place(_roundTrack, (ClockWidth-width)*.5f, ClockHeight + 14, width, 24);
-            OwnerUiLayout.Place(_pips.rectTransform, (ClockWidth-width)*.5f, ClockHeight + 17, width, 18);
+            if(_roundTrack != null) OwnerUiLayout.Place(_roundTrack, (ClockWidth-width)*.5f, ClockHeight + 8, width, 22);
+            OwnerUiLayout.Place(_pips.rectTransform, (ClockWidth-width)*.5f, ClockHeight + 10, width, 18);
             // Round pips and the ready prompt already cover this information.
             _round.enabled = false;
         }
@@ -310,7 +345,7 @@ namespace TumbangPreso.UI
         private void MatchBarCan(Lata lata)
         {
             if (lata == null) { _canGlyph.Show(HudBadge.Glyph.None, Color.clear, Color.clear); _canRing.Set(0); return; }
-            if (lata.IsUpright) _canGlyph.Show(HudBadge.Glyph.Can, HudDraw.Cream, Color.clear);
+            if (lata.IsUpright) _canGlyph.Show(HudBadge.Glyph.Can, HudDraw.Ivory, Color.clear);
             else _canGlyph.Show(HudBadge.Glyph.CanDown, HudDraw.Alarm, Color.clear);
             _canRing.Set(lata.IsProtected ? lata.ProtectionLeft / Mathf.Max(.01f, Balance.ThrowRestoreCooldown) : 0);
         }
@@ -320,12 +355,12 @@ namespace TumbangPreso.UI
             var seat = PlayerIdentity.Colour(slot);
             _seatTags[i].text = PlayerIdentity.Label(slot);
             if (_seatTags[i].color != seat) _seatTags[i].color = seat;
-            _names[i].enabled = true; PaintCardName(i, slot);
-            if (_roleChips[i] != null && _roleChips[i].color != seat)
-            {
-                _roleChips[i].color = seat; _roleChips[i].Side = Color.Lerp(seat, Color.black, .4f); _roleChips[i].SetVerticesDirty();
-            }
+            // The name is always written (tests and the spectator read it) and drawn only for a
+            // spectator: in play the world nameplate already says who stands where.
+            _names[i].enabled = spectating; PaintCardName(i, slot);
             if (_localMarks[i] != null && _localMarks[i].gameObject.activeSelf != mine) _localMarks[i].gameObject.SetActive(mine);
+            var scoreInk = mine ? HudDraw.Honey : HudDraw.Ivory;
+            if (_scores[i].color != scoreInk) _scores[i].color = scoreInk;
             if (_chipSwatches[i].color != seat) _chipSwatches[i].color = seat;
             _roleBadges[i].Show(HudBadge.Glyph.None, Color.clear, Color.clear);
             _crowns[i].Show(leader ? HudBadge.Glyph.Crown : HudBadge.Glyph.None, HudDraw.Honey, Color.clear);
@@ -334,7 +369,7 @@ namespace TumbangPreso.UI
             // can is whole upright and half when down. A stun or a swim overrides both, because
             // a player who cannot act is the more urgent fact about that seat.
             var lata = GameServices.Round != null ? GameServices.Round.Lata : null;
-            var ink = HudDraw.Brown; var faded = ink; faded.a = .38f;
+            var ink = HudDraw.Ivory; var faded = ink; faded.a = .32f;
             if (actor.IsSwimming) _stateBadges[i].Show(HudBadge.Glyph.Wave, ink, Color.clear);
             else if (actor.IsTripped || actor.IsStunned) _stateBadges[i].Show(HudBadge.Glyph.Star, HudDraw.Honey, Color.clear);
             else if (defender) _stateBadges[i].Show(lata == null || lata.IsUpright ? HudBadge.Glyph.Can : HudBadge.Glyph.CanDown,
@@ -353,7 +388,13 @@ namespace TumbangPreso.UI
                 drained = local.IsDrained;
                 // HERO-10 v3: Phaister's DRAIN mark is on them and wringing (plan 9.5: *"their stamina bar shakes ... spend it now"*).
                 wringing = local.VoodooMark == VoodooMarkKind.Drain;
-                want = ratio < .995f || fatigued || drained || wringing;
+                // ⚠️ 2026-10-20 OVERHAUL: WITH THE VITALS PLATE DRAWN, THE ARC ONLY SPEAKS IN TROUBLE.
+                // The bottom-left bar now carries the ordinary level all the time, so an arc beside
+                // the reticle on every sprint would say the same number twice. It keeps fatigue,
+                // DRAINED and the wring (the moments worth saying where the eye already is), and
+                // keeps its whole job on a phone, where the plate is not drawn.
+                bool plate = VitalsVisible;
+                want = (!plate && ratio < .995f) || fatigued || drained || wringing;
                 _staminaArc.Set(ratio);
                 var fill = drained ? new Color(.62f, .30f, .34f, 1f) : fatigued ? OwnerUiTheme.Current.Orange : CourtPresentationPalette.Gold;
                 _staminaArc.Paint(fill, drained ? new Color(.30f, .04f, .08f, .55f) : new Color(0, 0, 0, .42f));

@@ -278,9 +278,7 @@ namespace TumbangPreso.UI
                 }
                 _roles[i].text = state;
                 _roles[i].color = defender ? CourtPresentationPalette.Gold : OwnerUiTheme.Current.Pale;
-                var people = Roster.GetPeople(actor.Mode);
-                var portrait = actor.CharacterIndex >= 0 && actor.CharacterIndex < people.Count
-                    ? OwnerPortraitArt.Get("UI/portraits/" + people[actor.CharacterIndex].Id) : null;
+                var portrait = PortraitFor(actor);
                 if (_portraits[i].sprite != portrait) _portraits[i].sprite = portrait;
                 _portraits[i].enabled = portrait != null;
                 bool mine = !spectating && local != null && slot == local.PlayerSlot;
@@ -306,6 +304,7 @@ namespace TumbangPreso.UI
             bool show = local != null && !spectating;
             _personalRoot.gameObject.SetActive(show);
             foreach (var text in _status) text.enabled = false;
+            PaintVitals(local, show);
             PaintStatusChips(local, show);
             StaminaArc(show ? local : null);
             if (!show) return;
@@ -369,7 +368,7 @@ namespace TumbangPreso.UI
             if (local == null || spectating) return;
             _prompt.text = ""; _context.text = ""; _progress.transform.parent.gameObject.SetActive(false);
             if (_bindingGlyph != null) _bindingGlyph.enabled = false;
-            _prompt.color = HudDraw.Brown;
+            _prompt.color = PromptInk;
             if(HalftimePresentation.Playing){_prompt.text="HALFTIME";_context.text="Next round in "+Mathf.CeilToInt(HalftimePresentation.Instance.Remaining)+"s";return;}
             var carrier = local.GetComponent<Carrier>(); var round = GameServices.Round;
             if (local.IsTripped)
@@ -444,7 +443,7 @@ namespace TumbangPreso.UI
             // ⚠️ VISUAL-1.1: DANGER IS THE SCREEN-EDGE FRAME (`HudDangerFrame`), NOT A SENTENCE.
             // The older builders, which have no frame, keep the words.
             if (_reticle == null && local.IsTaggable() && round.Lata != null && round.Lata.IsUpright) { _prompt.text = "You can be tagged"; _prompt.color = OwnerUiTheme.Current.Orange; }
-            else _prompt.color = HudDraw.Brown;
+            else _prompt.color = PromptInk;
             if (!local.IsDefender && !local.HoldingSlipper)
             {
                 if (Time.time >= _scanAt) { _scanAt = Time.time + .2f; _slippers = FindObjectsByType<Slipper>(FindObjectsInactive.Include, FindObjectsSortMode.None); }

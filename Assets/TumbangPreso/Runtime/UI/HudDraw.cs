@@ -42,6 +42,85 @@ namespace TumbangPreso.UI
         /// sits with cream and brown instead of glowing cyan against them.</summary>
         public static readonly Color TayaBlue = new Color32(44, 96, 206, 255);
         public static readonly Color ThrowerOrange = new Color32(236, 104, 28, 255);
+        // ⚠️⚠️ THE GLASS PALETTE (in-game UI overhaul, 2026-10-20: "make it similar to overwatch's
+        // simple ingame hud"). The match HUD moved from opaque toy tiles to the shape every
+        // hero-shooter player already reads: thin SMOKED-GLASS panels leaning forward, warm white
+        // numbers and icons, and colour spent only where it means something (honey = ready, you
+        // or leader; red = a refusal; the seat colour = which player). Every value below is warm
+        // on purpose: `CLAUDE.md` § 6.4 bans blue, navy and cold grey from UI chrome, and an
+        // Overwatch HUD's cold white-on-blue is exactly what that rule exists to stop. The toy
+        // constants above stay because the round reports, the match end and the earned moment
+        // are still drawn in them.
+        /// <summary>Smoked warm glass behind HUD readouts: a near-black brown at 55 per cent.
+        /// ⚠️ 55, NOT 47: at 47 the Arena's dark blue stands read straight through every chip as
+        /// a cold grey in the first native renders, which is § 6.4's cold-grey ban arriving by way
+        /// of the background.</summary>
+        public static readonly Color Glass = new Color32(26, 15, 9, 140);
+        /// <summary>The same glass, denser, for a well inside a panel (a keycap, a time chip).</summary>
+        public static readonly Color GlassDeep = new Color32(22, 12, 7, 178);
+        /// <summary>The hairline round a glass panel: the cream at a third, so it reads as an edge
+        /// catching light rather than a drawn border.</summary>
+        public static readonly Color GlassEdge = new Color32(255, 245, 224, 82);
+        /// <summary>Warm white for every number, icon and word drawn on glass.</summary>
+        public static readonly Color Ivory = new Color32(255, 250, 240, 255);
+        /// <summary>Ivory at rest: a cooling power's icon, an empty segment's edge.</summary>
+        public static readonly Color IvoryMuted = new Color32(255, 250, 240, 120);
+        /// <summary>
+        /// ⚠️ THE LEAN: horizontal shear per unit of height, tan(11.3 degrees). Every glass panel,
+        /// bar segment and ability frame leans by this one number so the HUD reads as one italic
+        /// family, the way Overwatch's does. Positive leans the top to the right. Text is NOT
+        /// sheared (it would blur at small sizes); numerals take `FontStyle.Italic` instead.
+        /// </summary>
+        public const float Lean = .2f;
+
+        /// <summary>A rectangle whose top edge is pushed right by <paramref name="lean"/> per unit
+        /// of height, measured from its own centre so the panel does not drift.</summary>
+        public static void Parallelogram(VertexHelper vh, Rect r, float lean, Color c)
+        {
+            if (r.width <= 0 || r.height <= 0 || c.a <= 0) return;
+            Fan(vh, r.center, ParallelogramPoints(r, lean), c);
+        }
+
+        /// <summary>The outline of <see cref="Parallelogram"/>, <paramref name="width"/> wide, open in the middle.</summary>
+        public static void ParallelogramFrame(VertexHelper vh, Rect r, float lean, float width, Color c)
+        {
+            if (width <= 0 || c.a <= 0) return;
+            var outer = ParallelogramPoints(r, lean);
+            var inner = ParallelogramPoints(Inset(r, width), lean);
+            int first = vh.currentVertCount;
+            for (int i = 0; i < 4; i++) { vh.AddVert(outer[i], c, Vector2.zero); vh.AddVert(inner[i], c, Vector2.zero); }
+            for (int i = 0; i < 4; i++)
+            {
+                int a = first + i * 2, b = first + ((i + 1) % 4) * 2;
+                vh.AddTriangle(a, b, b + 1); vh.AddTriangle(a, b + 1, a + 1);
+            }
+        }
+
+        /// <summary>The part of a <see cref="Parallelogram"/> between two heights: a cooldown shade
+        /// or a fill level that keeps the frame's own lean.</summary>
+        public static void ParallelogramBand(VertexHelper vh, Rect r, float lean, float yLow, float yHigh, Color c)
+        {
+            yLow = Mathf.Max(yLow, r.yMin); yHigh = Mathf.Min(yHigh, r.yMax);
+            if (c.a <= 0 || yHigh <= yLow) return;
+            float cy = r.center.y;
+            var points = new[]
+            {
+                new Vector2(r.xMax + (yHigh - cy) * lean, yHigh), new Vector2(r.xMin + (yHigh - cy) * lean, yHigh),
+                new Vector2(r.xMin + (yLow - cy) * lean, yLow), new Vector2(r.xMax + (yLow - cy) * lean, yLow),
+            };
+            Fan(vh, (points[0] + points[2]) * .5f, points, c);
+        }
+
+        private static Vector2[] ParallelogramPoints(Rect r, float lean)
+        {
+            float shift = r.height * .5f * lean;
+            return new[]
+            {
+                new Vector2(r.xMax + shift, r.yMax), new Vector2(r.xMin + shift, r.yMax),
+                new Vector2(r.xMin - shift, r.yMin), new Vector2(r.xMax - shift, r.yMin),
+            };
+        }
+
         // Older names kept so existing callers read the toy palette.
         public static readonly Color Ink = Brown;
         public static readonly Color Paper = Cream;

@@ -51,20 +51,17 @@ namespace TumbangPreso.UI
                 var seat = _seats[i].a > 0 ? _seats[i] : PlayerIdentity.Colour(i % 4);
                 var centre = new Vector2(x, y);
                 float radius = Diameter * .5f;
-                // Toy beads: octagons, the family's cut. Played rounds are solid, the round in play
-                // is larger in a cream collar, and rounds to come are hollow in their taya's colour.
-                Rect Bead(float h) => new Rect(centre.x - h, centre.y - h, h * 2, h * 2);
+                // ⚠️ 2026-10-20 OVERHAUL: LEANING TICKS, the glass HUD's one italic cut, instead of
+                // toy octagon beads. Same meaning: played rounds are solid, the round in play is
+                // taller inside an ivory frame, and rounds to come are hollow in their taya's colour.
+                Rect Tick(float w, float h) => new Rect(centre.x - w, centre.y - h, w * 2, h * 2);
                 if (round == Current)
                 {
-                    HudDraw.Octagon(vh, Bead(radius + 4.5f), HudDraw.Cream);
-                    HudDraw.Octagon(vh, Bead(radius + 1.5f), seat);
+                    HudDraw.Parallelogram(vh, Tick(radius + 2.5f, radius + 3.5f), HudDraw.Lean, HudDraw.Ivory);
+                    HudDraw.Parallelogram(vh, Tick(radius + .5f, radius + 1.5f), HudDraw.Lean, seat);
                 }
-                else if (round < Current) HudDraw.Octagon(vh, Bead(radius), seat);
-                else
-                {
-                    HudDraw.Octagon(vh, Bead(radius), seat);
-                    HudDraw.Octagon(vh, Bead(radius - 3f), new Color32(44, 26, 15, 255));
-                }
+                else if (round < Current) HudDraw.Parallelogram(vh, Tick(radius - 1, radius), HudDraw.Lean, seat);
+                else HudDraw.ParallelogramFrame(vh, Tick(radius - 1, radius), HudDraw.Lean, 2.5f, seat);
                 x += Diameter + Gap;
             }
         }

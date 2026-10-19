@@ -30,15 +30,19 @@ namespace TumbangPreso.PlayTests
             var readout=Object.FindFirstObjectByType<TumpPowerReadout>();
             var system=local.GetComponent<Abilities.HeroAbilitySystem>(); Assert.IsNotNull(system.Kit);
             var deck=(RectTransform)canvas.transform.Find("PowerSeals");
-            var seals=deck.GetComponentsInChildren<OwnerAbilitySeal>(); Assert.AreEqual(3,seals.Length);
+            // 2026-10-20 overhaul: the two skills are the deck, the ultimate its own bottom-centre group.
+            var ultimate=(RectTransform)canvas.transform.Find("UltimateSeal"); Assert.IsNotNull(ultimate);
+            var seals=deck.GetComponentsInChildren<OwnerAbilitySeal>().Concat(ultimate.GetComponentsInChildren<OwnerAbilitySeal>()).ToArray();
+            Assert.AreEqual(3,seals.Length);
             Assert.IsNull(deck.Find("Power0/PowerDrain"),"Ring timers must not have the rejected tile/jar overlays");
             string[] actions={"Skill1","Skill2","Ultimate"};
             for(int i=0;i<3;i++)
             {
-                var label=deck.Find("LiveBinding"+i).GetComponent<Text>();
+                var label=(i==2?ultimate:deck).Find("LiveBinding"+i).GetComponent<Text>();
                 Assert.AreEqual(Hud.KeyLabelFor(actions[i]),label.text,"Saved bindings must drive prompts");
                 Assert.AreSame(InGameTypography.Bold,label.font,"Current DIN remains on skill text");
-                Assert.AreEqual(new Vector2(26,26),label.rectTransform.sizeDelta,"Compact binding footprint");
+                // 2026-10-20 overhaul: the key sits under its power (no longer over the art), at 32.
+                Assert.AreEqual(new Vector2(32,32),label.rectTransform.sizeDelta,"Compact binding footprint");
                 var glyph=label.GetComponentInChildren<Image>(); Assert.IsTrue(glyph.enabled); Assert.IsNotNull(glyph.sprite);
             }
             Assert.AreSame(InGameTypography.Clock,canvas.GetComponentsInChildren<Text>().Single(x=>x.name=="TimeLeft").font);

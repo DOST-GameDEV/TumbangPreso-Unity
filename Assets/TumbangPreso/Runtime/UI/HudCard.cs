@@ -43,6 +43,19 @@ namespace TumbangPreso.UI
             color = face; Side = side; Depth = depth; Bevel = bevel; ShadowAlpha = shadow; Radius = 0;
             SetVerticesDirty(); return this;
         }
+        /// <summary>
+        /// Makes this a GLASS PANEL in one call: a flat smoked fill leaning by
+        /// <see cref="HudDraw.Lean"/>, a hairline edge and a short soft shadow, with no bevel,
+        /// no extruded side and no sheen. The in-match readouts' surface since the 2026-10-20
+        /// overhaul (see <see cref="HudDraw.Glass"/> for why it replaced the toy tile).
+        /// </summary>
+        public HudCard Glass(Color fill, float slant = HudDraw.Lean, float radius = 3, float shadow = .35f)
+        {
+            color = fill; Side = Color.clear; Depth = 0; Bevel = 0; Chamfer = 0; Sheen = false;
+            Radius = radius; Slant = slant; ShadowAlpha = shadow; ShadowOffset = new Vector2(0, -3);
+            Border = HudDraw.GlassEdge; BorderWidth = 1.5f;
+            SetVerticesDirty(); return this;
+        }
         public static readonly Color ContrastFill = new Color(0, 0, 0, .94f);
 
         private float _moment;

@@ -53,14 +53,17 @@ namespace TumbangPreso.UI
                 var chip = OwnerUiLayout.Rect(_root, "StatusChip" + i);
                 Pin(chip, new Vector2(0, 0), new Vector2(StatusMargin + 250, 75 + i * 128), new Vector2(500, Medal));
 
+                // ⚠️ 2026-10-20 OVERHAUL: the tab is a strip of smoked glass and the medallion a round
+                // glass well, the way Overwatch stacks its buff and debuff icons over the health bar.
+                // Shape and meaning are unchanged: the element's ring drains round the icon.
                 var plate = OwnerUiLayout.Rect(chip, "StatusPlate").gameObject.AddComponent<HudCard>();
-                plate.Toy(HudDraw.Cream, HudDraw.CreamSide, 8, 16, .42f).raycastTarget = false;
+                plate.Glass(HudDraw.Glass).raycastTarget = false;
 
                 var rim = OwnerUiLayout.Rect(chip, "StatusMedal").gameObject.AddComponent<HudCard>();
-                rim.Toy(HudDraw.Brown, HudDraw.BrownSide, 4, Medal * .29f, .3f).raycastTarget = false; rim.Sheen = false;
+                rim.Glass(HudDraw.GlassDeep, 0, Medal * .5f, .3f).raycastTarget = false;
                 Pin(rim.rectTransform, new Vector2(0, .5f), new Vector2(Medal * .5f, 0), new Vector2(Medal, Medal));
                 var face = OwnerUiLayout.Rect(chip, "StatusFace").gameObject.AddComponent<HudCard>();
-                face.Toy(HudDraw.Brown, Color.clear, 0, (Medal - 10) * .29f, 0).raycastTarget = false; face.Sheen = false; face.enabled = false;
+                face.Glass(HudDraw.GlassDeep, 0, (Medal - 10) * .5f, 0).raycastTarget = false; face.enabled = false;
                 Pin(face.rectTransform, new Vector2(0, .5f), new Vector2(Medal * .5f, 0), new Vector2(Medal - 10, Medal - 10));
 
                 _chipRing[i] = OwnerUiLayout.Rect(chip, "StatusRing").gameObject.AddComponent<HudRing>();
@@ -79,17 +82,17 @@ namespace TumbangPreso.UI
                 }
 
                 _chipName[i] = OwnerUiLayout.Text(chip, "StatusName", StatusTitle(StatusIcons.Name(kind)), 34, OwnerUiLayout.TypeRole.Display);
-                _chipName[i].color = HudDraw.Brown; _chipName[i].alignment = TextAnchor.MiddleLeft;
+                _chipName[i].color = HudDraw.Ivory; _chipName[i].alignment = TextAnchor.MiddleLeft;
                 _chipName[i].horizontalOverflow = HorizontalWrapMode.Overflow; _chipName[i].verticalOverflow = VerticalWrapMode.Overflow;
                 var timeChip = OwnerUiLayout.Rect(chip, "StatusTimeChip").gameObject.AddComponent<HudCard>();
                 Pin(timeChip.rectTransform, new Vector2(0, .5f), new Vector2(Medal * .5f, -Medal * .5f + 6), new Vector2(78, 32));
-                timeChip.Toy(HudDraw.Brown, HudDraw.BrownSide, 3, 7, .3f).raycastTarget = false; timeChip.Sheen = false;
+                timeChip.Glass(HudDraw.GlassDeep, HudDraw.Lean, 3, .3f).raycastTarget = false;
                 _chipTime[i] = OwnerUiLayout.Text(timeChip.transform, "StatusTime", "", 28, OwnerUiLayout.TypeRole.Display);
                 _chipTime[i].alignment = TextAnchor.MiddleCenter; _chipTime[i].color = StatusColour(kind);
                 _chipTime[i].horizontalOverflow = HorizontalWrapMode.Overflow; _chipTime[i].verticalOverflow = VerticalWrapMode.Overflow;
                 _chipTenths[i] = -1;
                 _chipTip[i] = OwnerUiLayout.Text(chip, "StatusTooltip", StatusIcons.Tooltip(kind), 28, OwnerUiLayout.TypeRole.Reading);
-                _chipTip[i].color = HudDraw.BrownMuted; _chipTip[i].alignment = TextAnchor.UpperLeft;
+                _chipTip[i].color = new Color32(255, 250, 240, 205); _chipTip[i].alignment = TextAnchor.UpperLeft;
                 _chipTip[i].horizontalOverflow = HorizontalWrapMode.Wrap; _chipTip[i].verticalOverflow = VerticalWrapMode.Overflow;
                 _chipTip[i].lineSpacing = .95f;
 
@@ -126,13 +129,16 @@ namespace TumbangPreso.UI
                 if (order >= 0) _orderedSize[order] = _chipSize[i];
             }
             // Stack upward from the bottom-left corner by each tab's real height; a dense set
-            // opens another column instead of running under the match bar.
-            float bottom = StatusMargin, limit = Mathf.Max(Medal + StatusMargin, _root.rect.height / scale - 200);
+            // opens another column instead of running under the match bar. ⚠️ 2026-10-20: with the
+            // vitals plate drawn, the stack starts ABOVE it, which is where Overwatch keeps its
+            // status icons (over the health bar), and it never covers your own portrait.
+            float floor = VitalsVisible ? VitalsTop : StatusMargin;
+            float bottom = floor, limit = Mathf.Max(Medal + floor, _root.rect.height / scale - 200);
             int column = 0;
             for (int order = 0; order < _liveStatuses.Count; order++)
             {
                 var size = _orderedSize[order];
-                if (bottom > StatusMargin && bottom + size.y > limit) { column++; bottom = StatusMargin; }
+                if (bottom > floor && bottom + size.y > limit) { column++; bottom = floor; }
                 _orderedPositions[order] = new Vector2(StatusMargin + (column * StatusColumn + size.x * .5f) * scale, (bottom + size.y * .5f) * scale);
                 bottom += size.y + StatusGap;
             }
@@ -171,7 +177,7 @@ namespace TumbangPreso.UI
                 _chipRing[i].Paint(StatusColour(kind), new Color(1, 1, 1, .16f));
                 // Rewritten only when the shown tenth changes, never every frame.
                 bool ending = left < 1f && left > 0 && !settings.ReducedUiMotion;
-                var timeColour = ending && Mathf.Repeat(Time.unscaledTime * 6f, 1) < .5f ? HudDraw.Cream : StatusColour(kind);
+                var timeColour = ending && Mathf.Repeat(Time.unscaledTime * 6f, 1) < .5f ? HudDraw.Ivory : StatusColour(kind);
                 if (_chipTime[i].color != timeColour) _chipTime[i].color = timeColour;
                 int tenths = Mathf.CeilToInt(left * 10);
                 if (_chipTenths[i] != tenths)

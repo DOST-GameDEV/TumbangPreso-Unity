@@ -30,9 +30,12 @@ namespace TumbangPreso.UI
             Pin(_warningRoot,new Vector2(.5f,.66f),Vector2.zero,new Vector2(900,WarningTitleHeight+WarningReasonHeight+WarningInset));
             _warningPlate=OwnerUiLayout.Rect(_warningRoot,"WarningTitlePlate").gameObject.AddComponent<HudCard>();
             OwnerUiLayout.Fill(_warningPlate.rectTransform);
-            _warningPlate.Toy(HudDraw.Alarm,HudDraw.AlarmSide,6,12,.4f).raycastTarget=false;_warningPlate.FollowContrast=false;
+            // ⚠️ 2026-10-20 OVERHAUL: the same one red tile, now a flat leaning panel like every other
+            // glass surface. It stays FULLY OPAQUE (the one surface in the match that does): a
+            // refusal must read over anything, and `TumpNativeHudTests` holds it to alpha 1.
+            _warningPlate.Glass(HudDraw.Alarm,HudDraw.Lean,3,.4f).raycastTarget=false;_warningPlate.FollowContrast=false;
             _reasonPlate=OwnerUiLayout.Rect(_warningRoot,"WarningReasonPlate").gameObject.AddComponent<HudCard>();
-            _reasonPlate.Toy(HudDraw.AlarmDeep,Color.clear,0,8,0).raycastTarget=false;_reasonPlate.Sheen=false;_reasonPlate.FollowContrast=false;
+            _reasonPlate.Glass(HudDraw.AlarmDeep,HudDraw.Lean,2,0).raycastTarget=false;_reasonPlate.BorderWidth=0;_reasonPlate.FollowContrast=false;
             _warningText=OwnerUiLayout.Text(_warningRoot,"WarningText","",38,OwnerUiLayout.TypeRole.Reading);
             _warningText.color=Color.white;_warningText.alignment=TextAnchor.MiddleCenter;
             _warningText.horizontalOverflow=HorizontalWrapMode.Wrap;_warningText.verticalOverflow=VerticalWrapMode.Overflow;

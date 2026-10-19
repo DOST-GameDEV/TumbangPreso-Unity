@@ -74,18 +74,22 @@ namespace TumbangPreso.UI
             banner._wingLeft = Wing(rect, "MomentWingLeft", .55f); banner._wingRight = Wing(rect, "MomentWingRight", -.55f);
             banner._plate = OwnerUiLayout.Rect(rect, "MomentTile").gameObject.AddComponent<HudCard>();
             OwnerUiLayout.Fill(banner._plate.rectTransform);
-            banner._plate.Toy(HudDraw.Alarm, HudDraw.AlarmSide, 9, 18, .45f).raycastTarget = false; banner._plate.FollowContrast = false;
+            // ⚠️ 2026-10-20 OVERHAUL: the same three tiers on the glass HUD's flat leaning panels
+            // instead of extruded toy tiles. The ceremony (wings, sunburst, confetti) is unchanged;
+            // only the surfaces under it lost their bevel, side and sheen, so an earned moment reads
+            // as part of the same HUD as the bar above it.
+            banner._plate.Glass(HudDraw.Alarm, HudDraw.Lean, 3, .45f).raycastTarget = false; banner._plate.FollowContrast = false;
             banner._portraitTile = OwnerUiLayout.Rect(rect, "MomentPortraitTile").gameObject.AddComponent<HudCard>();
-            banner._portraitTile.Toy(Color.white, Color.clear, 0, 11, 0).raycastTarget = false; banner._portraitTile.Sheen = false;
+            banner._portraitTile.Glass(Color.white, HudDraw.Lean, 2, 0).raycastTarget = false; banner._portraitTile.BorderWidth = 0;
             banner._portraitTile.FollowContrast = false;
             banner._portrait = OwnerPortraitArt.Create(rect, "MomentPortrait", "");
             banner._title = OwnerUiLayout.Text(rect, "MomentTitle", "", 58, OwnerUiLayout.TypeRole.Display);
             banner._title.alignment = TextAnchor.MiddleLeft; banner._title.raycastTarget = false;
-            banner._title.color = HudDraw.Cream; banner._title.supportRichText = false;
+            banner._title.color = HudDraw.Ivory; banner._title.supportRichText = false; banner._title.fontStyle = FontStyle.Italic;
             banner._title.horizontalOverflow = HorizontalWrapMode.Overflow;
             banner._title.verticalOverflow = VerticalWrapMode.Overflow;
             banner._tag = OwnerUiLayout.Rect(rect, "MomentBonus").gameObject.AddComponent<HudCard>();
-            banner._tag.Toy(HudDraw.Honey, HudDraw.HoneySide, 5, 10, .4f).raycastTarget = false; banner._tag.Sheen = false;
+            banner._tag.Glass(HudDraw.Honey, HudDraw.Lean, 3, .4f).raycastTarget = false; banner._tag.BorderWidth = 0;
             banner._tag.FollowContrast = false;
             banner._bonus = OwnerUiLayout.Text(banner._tag.transform, "MomentBonusPoints", "", 36, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Fill(banner._bonus.rectTransform); banner._bonus.alignment = TextAnchor.MiddleCenter; banner._bonus.color = HudDraw.Brown;
@@ -104,8 +108,8 @@ namespace TumbangPreso.UI
         private static HudCard Wing(RectTransform parent, string name, float slant)
         {
             var wing = OwnerUiLayout.Rect(parent, name).gameObject.AddComponent<HudCard>();
-            wing.Toy(HudDraw.AlarmDeep, HudDraw.AlarmSide, 7, 10, .35f).raycastTarget = false;
-            wing.Slant = slant; wing.Sheen = false; wing.FollowContrast = false; wing.gameObject.SetActive(false);
+            wing.Glass(HudDraw.AlarmDeep, slant, 2, .35f).raycastTarget = false; wing.BorderWidth = 0;
+            wing.FollowContrast = false; wing.gameObject.SetActive(false);
             return wing;
         }
 
@@ -259,7 +263,7 @@ namespace TumbangPreso.UI
             _tier = TierOf(moment.Kind);
             bool big = _tier == 3;
             _plate.color = big ? HudDraw.Honey : HudDraw.Alarm; _plate.Side = big ? HudDraw.HoneySide : HudDraw.AlarmSide; _plate.SetVerticesDirty();
-            _title.color = big ? HudDraw.Brown : HudDraw.Cream;
+            _title.color = big ? HudDraw.Brown : HudDraw.Ivory;
             _detail.text = PlayerIdentity.Label(moment.Actor) + " · " + SeatLabel.Raw(moment.Actor)
                 + (moment.Bonus > 0 ? "   +" + moment.Bonus + " bonus" : "");
             _bonus.text = moment.Bonus > 0 ? "+" + moment.Bonus : "";

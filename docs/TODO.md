@@ -1,3 +1,27 @@
+### HUD-OVERWATCH-1020: the in-game HUD in Overwatch's simple shape (IN PROGRESS)
+
+Request 2026-10-20: "overhaul the ingame ui. make it similar to overwatch's simple ingame hud", pushed to
+QoLUpdates. Supersedes the 2026-10-06 Toy Block surfaces for the live match HUD only (pause, round reports,
+match end and the held power reference keep them). Method: `UI_DESIGN_METHOD.md`, glass HUD section.
+Evidence: [hud-overwatch-2026-10-20](reports/hud-overwatch-2026-10-20/README.md).
+- [x] Research (sourced where possible): Overwatch splits the screen by whose information it is; 25 per
+  segment health; one oblique lean; ultimate ring with percentage at the bottom centre; feed top right.
+- [x] One surface (`HudCard.Glass`) and one lean (`HudDraw.Lean`) for every live HUD panel; warm ivory on
+  smoked glass, black outlines kept, no blue chrome.
+- [x] Team bar 1060 wide (was 1306): glass chips, honey "you" bar and score, names only for spectators.
+- [x] Bottom-left vitals plate (portrait, role glyph, ten stamina segments of 25), keyboard and pad only;
+  statuses stack above it; the reticle arc speaks only for fatigue, DRAINED and the wring when it is drawn.
+- [x] Skills as leaning tiles bottom right with the key under each; ultimate split into `UltimateSeal` at the
+  bottom centre (touch: one centred row, skill, ultimate, skill), registered in reading layout, contrast and
+  recede; the recall mark dodges both rectangles.
+- [x] Prompt, announcement, refusal, feed and earned moment restyled; feed moved to the top-right corner on
+  keyboard and pad.
+- [x] Native PlayMode on the committed source: 23/28 across TumpNativeHudTests, OwnerSkillHudReferenceTests and
+  TimedPowerUiTests; every failure also fails on pure QoLUpdates (8/10 of the same cases on the baseline).
+  HUD area at 1080p: Classic 5.24, Hero Strike 7.77 per cent (old HUD 10.8, budget 8). Renders in the report.
+- [ ] Owner verdict in play: does it read as Overwatch-simple, and is the bottom-centre ultimate clear of the
+  held slipper on every map? Physical phone and pad checks are separate claims.
+
 ### ROOM-QOL-MERGE-1019: the player's room on QoLUpdates (IN PROGRESS)
 
 Request 2026-10-19: "merge it to qol updates", the room branch. `player-room-depth-and-bots` (`380430039`)

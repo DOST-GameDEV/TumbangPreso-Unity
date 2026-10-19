@@ -4,15 +4,26 @@ using UnityEngine.UI;
 namespace TumbangPreso.UI
 {
     /// <summary>
-    /// One power in the match deck: a dark disc with a progress ring (TODO VISUAL-1.4, 1.18).
+    /// One power in the match deck (TODO VISUAL-1.4, 1.18; in-game UI overhaul 2026-10-20).
     ///
-    /// ⚠️ THE SAME PLATE AS THE CLOCK, NOT A CRIMSON SQUIRCLE. The seals used to be drawn in
-    /// the front end's deep red (`OwnerUiTheme.DeepInk`), the one colour in the palette that
-    /// already means "something is wrong", with a peach track that read as a second rim. They
-    /// share `HudDraw.Plate` with the clock now, so the match reads as one kit.
+    /// ⚠️⚠️ OVERWATCH'S TWO SHAPES, AND WHY THERE ARE TWO. Overwatch draws an ability as a
+    /// LEANING TILE (bottom right, a key under each) and the ultimate as a RING of charge with
+    /// the percentage inside it (bottom centre). The two shapes answer two different questions:
+    /// a tile is "can I press this now", a ring is "how close am I". This seal used to be one
+    /// dark disc for all three powers, so the ultimate only differed by its notches.
     ///
-    /// ⚠️ VISION § 3: a cooldown drains a smooth ring and the ultimate fills a NOTCHED one.
-    /// Ready is a full gold ring with a soft halo; active is an orange ring counting down.
+    /// - SKILL: a smoked-glass parallelogram at <see cref="HudDraw.Lean"/>. Ready is a crisp
+    ///   ivory edge. Cooling, a darker shade covers the tile from the top and drains down as it
+    ///   recovers, over the icon, with the seconds drawn in the middle by the deck. Active is a
+    ///   honey edge with a honey level along the foot showing the time left.
+    /// - ULTIMATE: a glass disc in ten notches that light ivory as charge builds (`VISION` § 3: a
+    ///   cooldown drains a smooth shape and the ultimate fills a NOTCHED one). At full charge the
+    ///   ring is solid honey with a soft halo, which is Overwatch's "ready" glow in the palette's
+    ///   ready colour. Running after its cast (Mountain Form) it drains as a honey ring.
+    ///
+    /// ⚠️ THE LEAN STAYS INSIDE THE SLOT. `OwnerSkillHudReferenceTests` asserts the mesh is no
+    /// wider than its square rect, so the tile's base is narrowed by its own overhang rather than
+    /// letting the top corner poke into the next power.
     /// </summary>
     [RequireComponent(typeof(CanvasRenderer))]
     public sealed class OwnerAbilitySeal : MaskableGraphic
@@ -23,7 +34,6 @@ namespace TumbangPreso.UI
         public bool Overlay;
         /// <summary>The local player's own colour: the rim and level of a power while it runs.</summary>
         public Color Accent = HudDraw.Honey;
-        
 
         public void State(float fill, bool ready, bool active, bool ultimate)
         {
@@ -41,22 +51,55 @@ namespace TumbangPreso.UI
         protected override void OnPopulateMesh(VertexHelper helper)
         {
             helper.Clear();
+            if (Overlay) return;
             var rect = GetPixelAdjustedRect();
+            if (_ultimate) Ring(helper, rect); else Tile(helper, rect);
+        }
+
+        private void Tile(VertexHelper h, Rect rect)
+        {
+            // ⚠️ 1.5 UNITS OF CLEARANCE ON EACH SIDE: the pixel-adjusted rect on a pixel-perfect
+            // canvas can be most of a pixel wider than the layout rect, and the first native run
+            // measured the lean's corners 0.8 units outside the slot without it.
+            float lean = HudDraw.Lean, overhang = rect.height * .5f * lean, clear = 1.5f;
+            var r = new Rect(rect.xMin + overhang + clear, rect.yMin, rect.width - (overhang + clear) * 2, rect.height);
+            var shadow = HudDraw.Shadow; shadow.a = .28f;
+            HudDraw.Parallelogram(h, new Rect(r.xMin + 1.5f, r.yMin - 3, r.width - 3, r.height), lean, shadow);
+            HudDraw.Parallelogram(h, r, lean, HudDraw.GlassDeep);
+            if (!_ready && !_active && _fill < .999f)
+            {
+                // The unrecovered part, shaded from the top: it drains toward the top as the power returns.
+                var shade = new Color(0, 0, 0, .55f);
+                HudDraw.ParallelogramBand(h, r, lean, r.yMin + r.height * _fill, r.yMax, shade);
+            }
+            if (_active)
+            {
+                // The time left as a honey level along the foot, emptying toward the left. The
+                // narrowed rect keeps the full height so its lean matches the tile's own.
+                var level = HudDraw.Honey; level.a = .9f;
+                HudDraw.ParallelogramBand(h, r, lean, r.yMin, r.yMin + 6, new Color(0, 0, 0, .5f));
+                var left = new Rect(r.xMin, r.yMin, r.width * _fill, r.height);
+                HudDraw.ParallelogramBand(h, left, lean, r.yMin, r.yMin + 6, level);
+            }
+            Color edge = _active ? HudDraw.Honey : _ready ? HudDraw.Ivory : HudDraw.IvoryMuted;
+            HudDraw.ParallelogramFrame(h, r, lean, _ready || _active ? 2.5f : 1.5f, edge);
+        }
+
+        private void Ring(VertexHelper helper, Rect rect)
+        {
             float radius = Mathf.Min(rect.width, rect.height) * .5f - 6;
             var centre = rect.center;
-            if (Overlay) return;
-            var gold = CourtPresentationPalette.Gold;
-            if (_ready) { var halo = gold; halo.a = .24f; Disc(helper, centre, radius + 5, halo); }
-            var shadow = HudDraw.Shadow; shadow.a = .35f;
+            if (_ready) { var halo = HudDraw.Honey; halo.a = .26f; Disc(helper, centre, radius + 5, halo); }
+            var shadow = HudDraw.Shadow; shadow.a = .3f;
             Disc(helper, centre + Vector2.down * 3, radius, shadow);
-            Disc(helper, centre, radius, HudDraw.Plate);
-            float outer = radius - 3, inner = radius - 9;
-            var track = gold; track.a = .22f;
-            Color ink = _active ? OwnerUiTheme.Current.Orange : gold;
-            if (!_ultimate)
+            Disc(helper, centre, radius, HudDraw.GlassDeep);
+            float outer = radius - 2, inner = radius - 9;
+            var track = HudDraw.Ivory; track.a = .18f;
+            if (_active || _ready)
             {
+                Color ink = HudDraw.Honey;
                 Arc(helper, centre, outer, inner, 90, 360, track);
-                Arc(helper, centre, outer, inner, 90, 360 * _fill, ink);
+                Arc(helper, centre, outer, inner, 90, 360 * (_ready && !_active ? 1 : _fill), ink);
                 return;
             }
             const int notches = 10;
@@ -66,7 +109,7 @@ namespace TumbangPreso.UI
                 float start = 90 - i * each - gap * .5f, span = each - gap;
                 float lit = Mathf.Clamp01(_fill * notches - i);
                 Arc(helper, centre, outer, inner, start, span, track);
-                Arc(helper, centre, outer, inner, start, span * lit, ink);
+                Arc(helper, centre, outer, inner, start, span * lit, HudDraw.Ivory);
             }
         }
 

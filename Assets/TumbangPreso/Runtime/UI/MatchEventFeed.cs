@@ -58,8 +58,8 @@ namespace TumbangPreso.UI
         {
             var root = OwnerUiLayout.Rect(parent, "MatchEventFeed");
             root.anchorMin = root.anchorMax = root.pivot = new Vector2(1, 1);
-            root.anchoredPosition = new Vector2(-30, -170); root.sizeDelta = new Vector2(Width, RowStep * Capacity);
-            var feed = root.gameObject.AddComponent<MatchEventFeed>();
+            root.anchoredPosition = new Vector2(-30, TopFor(Hud.OnTouch)); root.sizeDelta = new Vector2(Width, RowStep * Capacity);
+            var feed = root.gameObject.AddComponent<MatchEventFeed>(); feed._placedForTouch = Hud.OnTouch;
             for (int i = 0; i < Capacity; i++) feed._rows[i] = BuildRow(root, i);
             return feed;
         }
@@ -72,11 +72,12 @@ namespace TumbangPreso.UI
             row.Group = row.Root.gameObject.AddComponent<CanvasGroup>();
             row.Group.blocksRaycasts = false; row.Group.interactable = false; row.Group.alpha = 0;
             row.Plate = OwnerUiLayout.Rect(row.Root, "EventPlate").gameObject.AddComponent<HudCard>();
-            row.Plate.Toy(HudDraw.Cream, HudDraw.CreamSide, 5, 12, .38f).raycastTarget = false;
+            // ⚠️ 2026-10-20 OVERHAUL: a row is a strip of smoked glass, Overwatch's kill feed.
+            row.Plate.Glass(HudDraw.Glass).raycastTarget = false;
             for (int k = 0; k < 2; k++)
             {
                 var swatch = OwnerUiLayout.Rect(row.Root, k == 0 ? "ActorChip" : "OtherChip").gameObject.AddComponent<HudCard>();
-                swatch.Toy(Color.white, Color.clear, 0, 8, 0); swatch.Sheen = false; swatch.FollowContrast = false; swatch.raycastTarget = false;
+                swatch.Glass(Color.white, HudDraw.Lean, 2, 0); swatch.BorderWidth = 0; swatch.FollowContrast = false; swatch.raycastTarget = false;
                 row.Swatch[k] = swatch;
                 row.Portrait[k] = OwnerPortraitArt.Create(swatch.transform, "Portrait", "");
                 OwnerUiLayout.Place(row.Portrait[k].rectTransform, 2, 2, Chip - 4, Chip - 4);
@@ -87,10 +88,12 @@ namespace TumbangPreso.UI
                 row.Tag[k] = tag;
             }
             row.Glyph = OwnerUiLayout.Rect(row.Root, "EventGlyph").gameObject.AddComponent<HudBadge>();
-            row.Glyph.Detail = HudDraw.Cream; row.Glyph.raycastTarget = false;
+            row.Glyph.Detail = HudDraw.GlassDeep; row.Glyph.raycastTarget = false;
             // The score feed says what the event was worth, in the same face as the totals.
             row.Points = OwnerUiLayout.Text(row.Root, "EventPoints", "", 36, OwnerUiLayout.TypeRole.Display);
-            row.Points.color = HudDraw.Brown; row.Points.alignment = TextAnchor.MiddleRight; row.Points.raycastTarget = false;
+            row.Points.color = HudDraw.Ivory; row.Points.alignment = TextAnchor.MiddleRight; row.Points.raycastTarget = false;
+            row.Points.fontStyle = FontStyle.Italic;
+            var edge = row.Points.gameObject.AddComponent<Outline>(); edge.effectColor = UiTheme.InGameOutline; edge.effectDistance = new Vector2(1.5f, -1.5f);
             row.Points.horizontalOverflow = HorizontalWrapMode.Overflow; row.Points.verticalOverflow = VerticalWrapMode.Overflow;
             return row;
         }
@@ -177,7 +180,7 @@ namespace TumbangPreso.UI
             Seat(row, 0, item.Actor, x + Pad, y);
             OwnerUiLayout.Place(row.Glyph.rectTransform, x + Pad + Chip + Gap, (RowHeight - GlyphSize) * .5f, GlyphSize, GlyphSize);
             // The event's burst takes the acting player's own colour; no team colours in the HUD.
-            row.Glyph.Show(item.Glyph, HudDraw.Brown, Color.clear, PlayerIdentity.Colour(item.Actor));
+            row.Glyph.Show(item.Glyph, HudDraw.Ivory, Color.clear, PlayerIdentity.Colour(item.Actor));
             row.Swatch[1].gameObject.SetActive(two);
             if (two) Seat(row, 1, item.Other, x + Pad + Chip + Gap + GlyphSize + Gap, y);
             float label = Mathf.Max(0, points - Gap - 4);
@@ -200,7 +203,28 @@ namespace TumbangPreso.UI
             row.Tag[k].text = PlayerIdentity.Label(slot); row.Tag[k].enabled = portrait == null;
         }
 
-        private void Update() { Bind(); Paint(Time.unscaledTime); }
+        /// <summary>
+        /// ⚠️ 2026-10-20 OVERHAUL: THE FEED TAKES OVERWATCH'S TOP-RIGHT CORNER on keyboard and pad,
+        /// 30 units under the top edge, beside the slimmer team bar rather than under the old one.
+        /// Its rows are sized to what they carry and right-aligned, so even a two-portrait row
+        /// (about 200 units) ends well clear of the bar's right end at every supported width. On a
+        /// phone it keeps its old height: the touch chips (EMOTE and the rest) own the top right.
+        /// </summary>
+        private static float TopFor(bool touch) => touch ? -170 : -30;
+        private bool _placedForTouch;
+
+        private void Update()
+        {
+            bool touch = Hud.OnTouch;
+            if (touch != _placedForTouch)
+            {
+                _placedForTouch = touch;
+                var root = (RectTransform)transform;
+                root.anchoredPosition = new Vector2(root.anchoredPosition.x, TopFor(touch));
+                GetComponentInParent<HudReadingLayout>()?.RebasePlacement(root);
+            }
+            Bind(); Paint(Time.unscaledTime);
+        }
         private void Paint(float now)
         {
             while (Count > 0 && _items[Count - 1].Expires <= now) Count--;

@@ -309,7 +309,14 @@ namespace TumbangPreso.UI
             // ⚠️ VISUAL-1.4: THE DECK IS WHERE IT IS DRAWN, NOT WHERE IT USED TO BE. It moved to
             // the lower right on keyboard and pad and stays centred on touch, so the mark asks
             // for the real rectangle instead of the old bottom-centre constants.
-            var deck = _deck.DeckRect();
+            // ⚠️ 2026-10-20: AND THE ULTIMATE IS ITS OWN RECTANGLE AT THE BOTTOM CENTRE NOW (the
+            // Overwatch split), so the mark clears whichever of the two it is over.
+            at = ClearOf(_deck.DeckRect(), at, reach);
+            return ClearOf(_deck.UltimateRect(), at, reach);
+        }
+
+        private static Vector2 ClearOf(Rect deck, Vector2 at, float reach)
+        {
             if (deck.width <= 0) return at;
             if (at.x < deck.xMin - reach || at.x > deck.xMax + reach) return at;
 

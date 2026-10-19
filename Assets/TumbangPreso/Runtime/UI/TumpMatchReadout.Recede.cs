@@ -29,7 +29,7 @@ namespace TumbangPreso.UI
             if (_root == null) return;
             if (_recede == null)
             {
-                var names = new[] { "MatchScores", "MatchEventFeed", "PowerSeals" };
+                var names = new[] { "MatchScores", "MatchEventFeed", "PowerSeals", "UltimateSeal" };
                 _recede = new CanvasGroup[names.Length];
                 for (int i = 0; i < names.Length; i++)
                 {

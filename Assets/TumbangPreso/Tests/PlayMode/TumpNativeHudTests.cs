@@ -653,6 +653,11 @@ namespace TumbangPreso.PlayTests
                 var readout = Object.FindAnyObjectByType<TumpPowerReadout>();
                 var hud = Object.FindAnyObjectByType<TumpMatchReadout>();
                 var deck = (RectTransform)hud.Canvas.transform.Find("PowerSeals");
+                // 2026-10-20 overhaul: the ultimate is its own group at the bottom centre.
+                var ultimate = (RectTransform)hud.Canvas.transform.Find("UltimateSeal");
+                Assert.IsNotNull(ultimate, "The ultimate is its own bottom-centre group.");
+                System.Collections.Generic.IEnumerable<Image> Glyphs(bool inactive) => deck.GetComponentsInChildren<Image>(inactive)
+                    .Concat(ultimate.GetComponentsInChildren<Image>(inactive)).Where(i => i.name == "BindingGlyph");
                 foreach (string hero in new[] { "paete", "phaister", "zack" })
                 {
                     system.BindHero(hero);
@@ -664,10 +669,13 @@ namespace TumbangPreso.PlayTests
                     yield return null;
                     Assert.AreEqual(Vector3.one * 1.25f, deck.localScale);
                     Assert.AreEqual(new Vector2(-40, 30), deck.anchoredPosition);
-                    Assert.AreEqual(316 * 1.25f, readout.DeckRect().width, .1f);
+                    Assert.AreEqual(TumpPowerReadout.SkillDeckWidth * 1.25f, readout.DeckRect().width, .1f);
+                    Assert.AreEqual(new Vector2(.5f, 0), ultimate.anchorMin, "Keyboard and pad keep the ultimate at the bottom centre.");
+                    Assert.AreEqual(Vector3.one * 1.25f, ultimate.localScale);
+                    Assert.IsFalse(readout.DeckRect().Overlaps(readout.UltimateRect()), "The skills and the ultimate must not overlap.");
                     CollectionAssert.AreEqual(names, skills.Select(a => a.EffectiveName).ToArray());
                     CollectionAssert.AreEqual(descriptions, skills.Select(a => a.EffectiveDescription).ToArray());
-                    var glyphs = deck.GetComponentsInChildren<Image>().Where(i => i.name == "BindingGlyph").ToArray();
+                    var glyphs = Glyphs(false).ToArray();
                     Assert.AreEqual(3, glyphs.Length); Assert.IsTrue(glyphs.All(g => g.enabled && g.sprite != null));
                     if (hero == "paete")
                     {
@@ -687,7 +695,9 @@ namespace TumbangPreso.PlayTests
                 yield return null;
                 Assert.AreEqual(new Vector2(.5f, 0), deck.anchorMin);
                 Assert.AreEqual(new Vector2(0, 34), deck.anchoredPosition);
-                Assert.IsTrue(deck.GetComponentsInChildren<Image>(true).Where(i => i.name == "BindingGlyph").All(i => !i.enabled));
+                Assert.IsTrue(Glyphs(true).All(i => !i.enabled));
+                Assert.AreEqual(TumpPowerReadout.TouchDeckWidth * 1.5f, readout.DeckRect().width, .1f, "Touch is one centred row around the ultimate.");
+                Assert.IsTrue(readout.DeckRect().Contains(readout.UltimateRect().center), "On touch the ultimate sits in the row's middle.");
                 readout.Tick(system, false); Assert.IsFalse(readout.DeckVisible);
             }
             finally

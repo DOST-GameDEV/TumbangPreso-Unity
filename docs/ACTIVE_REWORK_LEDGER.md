@@ -1,3 +1,13 @@
+# Glass match HUD checkpoint, October20
+
+Request: "overhaul the ingame ui. make it similar to overwatch's simple ingame hud", pushed to QoLUpdates.
+The live match HUD (TumpMatchReadout, TumpPowerReadout, MatchEventFeed, MatchMomentBanner) moves from
+Toy Block tiles to smoked-glass leaning panels: slim team bar, bottom-left vitals plate with ten stamina
+segments, skills bottom right, the ultimate split into UltimateSeal at the bottom centre, feed top right.
+Toy Block stays for pause, round reports, match end and the held reference. Evidence:
+docs/reports/hud-overwatch-2026-10-20. Open: owner verdict in play; physical phone and pad checks.
+Next: HUD-OVERWATCH-1020.
+
 # Room merged into QoLUpdates checkpoint, October19
 
 player-room-depth-and-bots (380430039) merged onto QoLUpdates c3cd5fba8, protocol 174 (per-seat bots

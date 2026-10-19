@@ -185,7 +185,50 @@ bounded adaptive circle detail. Preserve outward winding, cap corner miters and
 inspect actual-size native frames; geometry is scalable but is still rasterized
 by the display. Do not replace authored rough silhouettes merely to smooth edges.
 
+## Match HUD: the glass HUD, Overwatch's simple shape (2026-10-20)
+
+Request, 2026-10-20: "overhaul the ingame ui. make it similar to overwatch's simple
+ingame hud." This supersedes the Toy Block surfaces below for the live match
+HUD (`TumpMatchReadout`, `TumpPowerReadout`, `MatchEventFeed`,
+`MatchMomentBanner`). The pause menu, round reports, match end and held power
+reference keep their Toy Block look. Research and the full element inventory:
+[the HUD research report](reports/hud-overwatch-2026-10-20/README.md).
+
+The screen is split by whose information it is, the way Overwatch splits it:
+
+| Region | Holds | Form |
+|---|---|---|
+| Top centre | The match: four seat chips around the clock, round ticks under it | Smoked-glass parallelograms; portrait on a leaning seat-colour tile, italic score, the can or slipper glyph; your chip has a honey foot bar and a honey score; names only while spectating |
+| Top right | The score feed | Glass rows (portrait, event glyph, portrait, italic points), right aligned, three rows; on touch it keeps its lower spot under the touch chips |
+| Bottom left | You: portrait, role object, stamina | Vitals plate: portrait on a honey tile with your seat colour as a strip, can or slipper glyph, stamina as ten leaning segments of 25 (`Balance.StaminaMax` 250, Overwatch's own 25-per-segment convention). Keyboard and pad only: the move stick owns this corner on a phone |
+| Above the vitals | Your statuses | The status stack, now glass, starting above the plate |
+| Bottom right | Your two skills | Leaning glass tiles, key cap centred under each, cooldown shade draining from the top with the seconds in large italic numerals, honey edge and foot level while active |
+| Bottom centre | Your ultimate | Glass ring in ten notches lighting ivory, percentage inside; solid honey ring with a halo when ready. Touch keeps one centred row: skill, ultimate, skill |
+| Centre | Reticle, hit mark, stamina arc in trouble only | Unchanged reticle and hit mark; the arc now shows only for fatigue, DRAINED and the wring while the vitals plate is drawn, and keeps its whole job on touch |
+| Centre lanes | Action, announcement, refusal, earned moment | Action and announcement on glass strips with ivory words; refusal stays one fully opaque red panel; earned moments keep their three tiers on flat panels |
+
+Rules that make it one family:
+
+1. One lean everywhere, `HudDraw.Lean` (tan 11.3 degrees). Text is not sheared;
+   numerals use `FontStyle.Italic`.
+2. One surface, `HudCard.Glass`: a flat warm smoked fill at 55 per cent, a cream
+   hairline at a third, a short shadow. No bevel, extruded side or sheen.
+3. Warm ivory for every number, glyph and word on glass, outlined black through
+   `UiTheme.InGameOutline`. The match clock keeps Darumadrop (`FONT_USAGE.md`).
+4. Colour is spent on meaning only: honey for ready, leader or you; red for a
+   refusal; seat colours only on small identity swatches (P4's is a blue).
+   No blue, navy or cold grey anywhere in the chrome.
+5. The middle of the screen holds the reticle and short-lived messages; anything
+   permanent lives in a corner or the top centre.
+6. Every group keeps its object name, its accessibility scaling
+   (`HudReadingLayout`), its high-contrast plate (`HudContrast`) and its recede
+   during ultimates and replays. A new group (`UltimateSeal`) is registered in all
+   three.
+
 ## Match HUD: Toy Block family, element by element
+
+Superseded for the live match HUD by the glass HUD above (2026-10-20); kept as
+the direction for the pause menu, round reports, match end and held reference.
 
 Owner-locked direction (2026-10-06): cream faces, one bevelled cut per corner,
 a solid extruded side, a soft contact shadow, brown Darumadrop for numbers and
