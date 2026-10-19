@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-19 14:16:05Z" end-time="2026-10-19 14:16:34Z" duration="28.8558345">
+  <test-suite type="TestSuite" id="3703" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2180" result="Failed" site="Child" start-time="2026-10-19 14:16:05Z" end-time="2026-10-19 14:16:34Z" duration="28.855835" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3695" name="TumbangPreso.PlayTests.dll" fullname="D:/GitHub/TumbangPreso-Unity/.claude/worktrees/game-networking-lan-relay-d56db9/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2180" result="Failed" site="Child" start-time="2026-10-19 14:16:05Z" end-time="2026-10-19 14:16:34Z" duration="28.837489" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25112" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3696" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2180" result="Failed" site="Child" start-time="2026-10-19 14:16:05Z" end-time="2026-10-19 14:16:34Z" duration="28.826972" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3699" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2178" result="Failed" site="Child" start-time="2026-10-19 14:16:05Z" end-time="2026-10-19 14:16:34Z" duration="28.815667" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1748" name="DirectedMapArrivalTests" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" testcasecount="15" result="Failed" site="Child" start-time="2026-10-19 14:16:05Z" end-time="2026-10-19 14:16:34Z" duration="28.750964" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1749" name="BridgeLowArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.BridgeLowArrival" methodname="BridgeLowArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="1715219318" result="Failed" start-time="2026-10-19 14:16:06Z" end-time="2026-10-19 14:16:28Z" duration="22.484649" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  IlalimNgTulay seat0 rendered sole support at2.85
+  Expected: in range (-0.02,0.04)
+  But was:  0.0429514386f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DirectedMapArrivalTests+<Inspect>d__29.MoveNext () [0x00fa0] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\game-networking-lan-relay-d56db9\Assets\TumbangPreso\Tests\PlayMode\DirectedMapArrivalTests.cs:326
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1751" name="KantoCrossingArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoCrossingArrival" methodname="KantoCrossingArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="171195398" result="Failed" start-time="2026-10-19 14:16:28Z" end-time="2026-10-19 14:16:34Z" duration="6.251157" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Kanto seat0 rendered sole support at2.55
+  Expected: in range (-0.02,0.04)
+  But was:  0.0425910205f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DirectedMapArrivalTests+<Inspect>d__29.MoveNext () [0x00fa0] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\game-networking-lan-relay-d56db9\Assets\TumbangPreso\Tests\PlayMode\DirectedMapArrivalTests.cs:326
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+Saving results to: C:/Users/Andrei/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

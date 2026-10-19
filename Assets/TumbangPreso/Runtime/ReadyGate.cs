@@ -270,6 +270,7 @@ namespace TumbangPreso
         private IEnumerator PrepareAutomaticArrival()
         {
             var presentation = gameObject.AddComponent<MatchArrivalPresentation>();
+            presentation.Viewer = _local;
             yield return presentation.Run();
             if (presentation != null) Destroy(presentation);
             HoldUntilStart();

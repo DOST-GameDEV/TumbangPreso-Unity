@@ -40,6 +40,15 @@ namespace TumbangPreso
         private readonly Visual.CharacterAnimator[] _poses = new Visual.CharacterAnimator[Core.Balance.PlayerCount];
         private readonly RaycastHit[] _hits = new RaycastHit[32];
         private int _shownBeat = -2;
+        private bool _shownYou;
+
+        /// <summary>
+        /// The body this screen plays as, set by the ready gate before `Run`. Its seat closes a directed
+        /// opening when it is an attacker (`OwnSeconds`). Null, a watcher, or the taya leaves the film as
+        /// it was.
+        /// </summary>
+        public CharacterMotor Viewer { get; set; }
+        private int _viewerSeat = -1;
         private int _runGeneration;
         private bool _returningToGameplay;
         // When the curtain lifted and the film became visible on this peer; -1 before that.
@@ -100,6 +109,9 @@ namespace TumbangPreso
             _camera.enabled = true;
             foreach (var player in FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None))
                 if (player.PlayerSlot >= 0 && player.PlayerSlot < _players.Length) _players[player.PlayerSlot] = player;
+            // Only a seated player who is handed back to their own view has a shot of their own.
+            _viewerSeat = Viewer != null && Viewer.PlayerSlot >= 0 && Viewer.PlayerSlot < _players.Length
+                          && _players[Viewer.PlayerSlot] == Viewer && MayReturnToGameplay() ? Viewer.PlayerSlot : -1;
             FreshInput();
             for (int i = 0; i < _players.Length; i++)
                 _poses[i] = _players[i] != null ? _players[i].GetComponent<Visual.CharacterAnimator>() : null;
@@ -132,7 +144,8 @@ namespace TumbangPreso
             if (opening != null) Trace("arena opening refused (rig=" + _rigActive + "), playing the arrival instead");
             PrepareDirection(map, reduced);
             Sample(0, reduced, map);
-            Trace($"arrival prepared ({Duration:F1} s, directed={_directed}, rig={_rigActive})");
+            Trace($"arrival prepared ({Duration:F1} s, directed={_directed}, rig={_rigActive}, closes on " +
+                  (!_directed ? "the last portrait" : OwnClosingBeat ? "this player, seat " + _viewerSeat : "the taya") + ")");
             // Loading can now fade onto the already-prepared opening curtain/shot.
             while (HubLoading.Visible) { if (!Current(generation)) yield break; yield return null; }
             _shownAt = Time.realtimeSinceStartup;
@@ -311,15 +324,16 @@ namespace TumbangPreso
             HubKit.Place(_detail.rectTransform, HubKit.TopLeft, new Vector2(28, -96), new Vector2(704, 48));
         }
 
-        private void Caption(int beat, SceneFlow.MapEntry map)
+        private void Caption(int beat, SceneFlow.MapEntry map, bool you = false)
         {
-            if (_shownBeat == beat) return;
-            _shownBeat = beat;
+            if (_shownBeat == beat && _shownYou == you) return;
+            _shownBeat = beat; _shownYou = you;
             var player = beat >= 0 ? _players[beat] : null;
             _title.text = player != null ? player.CharacterName().ToUpperInvariant() : map.Name;
             _title.fontSize = HubStyle.Size(HubStyle.Display); HubKit.Fit(_title, 708);
-            _detail.text = player != null ? "PLAYER " + (beat + 1) + "  ·  " + (beat == Core.MatchRules.DefenderSlotFor(1) ? "TAYA" : "ATTACKER")
-                : "ROUND 1  ·  " + (SceneFlow.SelectedMode == Core.GameMode.Classic ? "CLASSIC" : "HERO STRIKE");
+            string role = beat == Core.MatchRules.DefenderSlotFor(1) ? "TAYA" : "ATTACKER";
+            _detail.text = player == null ? "ROUND 1  ·  " + (SceneFlow.SelectedMode == Core.GameMode.Classic ? "CLASSIC" : "HERO STRIKE")
+                : you ? "YOU  ·  " + role : "PLAYER " + (beat + 1) + "  ·  " + role;
         }
 
         private void FreshInput()
@@ -342,7 +356,7 @@ namespace TumbangPreso
             if (_active == this)
                 Trace(_shownAt < 0 ? how + " before it was shown"
                     : $"{how} after {Time.realtimeSinceStartup - _shownAt:F1} s on screen");
-            _shownAt = -1;
+            _shownAt = -1; _viewerSeat = -1;
             // ARENA-INTRO: the Arena's opening, if one is up, puts back everything it posed. A no-op elsewhere.
             Map.ArenaIntro.Stop();
             RestoreDirection();

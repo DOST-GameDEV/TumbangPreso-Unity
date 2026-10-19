@@ -7,19 +7,114 @@ namespace TumbangPreso
     public sealed partial class MatchArrivalPresentation
     {
         private enum Direction { Bridge = 2, Cove = 4, Crossing = 5 }
+
+        /// <summary>
+        /// ⚠️ THE OPENING ENDS ON YOU, NOT ONLY ON THE TAYA (2026-10-19: "only p1 at the start of the
+        /// game has a cutscene right before the game starts. incorporate also an appropriate simple
+        /// cutscene for other non-taya players right before it starts"). The taya closes the cast
+        /// and gets the spotlight, and round 1's taya is seat 0, so every screen's last shots before
+        /// play were P1's: the host's own moment, and nothing of the joining players' own.
+        ///
+        /// So after the spotlight each ATTACKER's screen cuts to their own character for
+        /// <see cref="OwnSeconds"/> (the featured greeting, a slow push-in, "YOU · ATTACKER"), and the
+        /// return to their view starts from there. The taya's screen and a watcher's keep the
+        /// spotlight through the same time, so every peer's film is the same length and nobody waits
+        /// on the countdown for somebody else's extra shot. Presentation only: each peer already
+        /// knows its own seat, so nothing travels.
+        /// </summary>
+        public const float OwnSeconds = 1.6f;
+        private const float OwnHold = .4f, ReturnSeconds = 1.4f;
+        /// <summary>The player's height as a share of the frame, the lens, the look down and the push-in.</summary>
+        // ⚠️ The attackers stand 1.8 m apart, so no full-length front view leaves the neighbours out; a tall
+        // fill keeps them to slivers at the edges, and a longer lens from farther back stops the edge from
+        // stretching them bigger than the player (closing_sheet_v7: 70 per cent at 46 degrees).
+        private const float OwnFill = .82f, OwnFov = 40, OwnPitch = 8, OwnPush = .04f;
+
+        // ⚠️ THE OWN SHOT IS FRAMED FROM THE PLAYER'S RENDERER BOUNDS, NOT FROM THE CAST PORTRAIT, AND
+        // NOT FROM A BAKED MESH. Three attempts, each rendered (Logs/directed-map-arrivals/closing_sheet_v1,
+        // v3 and v4): pushing along the portrait read as three attackers shoulder to shoulder, then as the
+        // road behind them; a baked mesh then cut the player off at the neck. The model is scaled 2.38
+        // (Kanto, seat 3, `measures.txt`): `Renderer.bounds` gives the drawn body as 1.76 m tall, beside a
+        // 1.6 m capsule; `BakeMesh(useScale: true)` placed with no scale gives 0.88 m, and
+        // `PrepareShots`' `DrawnBounds` (`BakeMesh` without scale, then `TransformPoint`) gives 3.9 m, the
+        // scale applied twice, which is why every cast portrait centres on the air above the player. This
+        // keeps the portrait's direction (already chosen clear of walls) and fits the player to the frame.
+        private bool _ownFramed;
+        private Vector3 _ownFocus, _ownEye;
+
+        private void FrameOwn(int seat)
+        {
+            _ownFramed = true;
+            _ownFocus = _focus[seat]; _ownEye = _eyes[seat];
+            var actor = _players[seat];
+            var model = actor != null ? actor.GetComponent<CharacterVisual>()?.Model : null;
+            if (model == null) return;
+            bool found = false; Bounds drawn = default;
+            foreach (var renderer in model.GetComponentsInChildren<Renderer>())
+            {
+                if (!renderer.enabled || !(renderer is SkinnedMeshRenderer || renderer is MeshRenderer)) continue;
+                if (!found) { drawn = renderer.bounds; found = true; }
+                else drawn.Encapsulate(renderer.bounds);
+            }
+            if (!found) return;
+
+            float tangent = Mathf.Tan(OwnFov * .5f * Mathf.Deg2Rad);
+            float across = Mathf.Max(drawn.extents.x, drawn.extents.z);
+            float distance = Mathf.Max(drawn.extents.y / (OwnFill * tangent),
+                across / (OwnFill * tangent * Mathf.Max(.5f, _camera != null ? _camera.aspect : 1.78f))) + across;
+            _ownFocus = drawn.center;
+
+            // ⚠️ THE VIEW WITH THE FEWEST OTHER BODIES IN IT, NOT THE PORTRAIT'S AND NOT SIMPLY THE FRONT.
+            // The portrait's yaw put a neighbour in the foreground, nearer and bigger than the player
+            // (closing_sheet_v5, Kanto), and so did the player's own facing (v6): the attackers face the can
+            // on a diagonal, so a neighbour stands between the player and it. Each candidate is scored, the
+            // way `PrepareShots` searches, by how clear the world leaves it and by how far into the frame any
+            // other body reaches (one nearer the camera than the player counts double).
+            Vector3 front = actor.transform.forward; front.y = 0;
+            if (front.sqrMagnitude < .0001f) { front = _eyes[seat] - _focus[seat]; front.y = 0; }
+            if (front.sqrMagnitude < .0001f) front = Vector3.forward;
+            float pitch = OwnPitch * Mathf.Deg2Rad, best = float.NegativeInfinity;
+            float halfWidth = Mathf.Atan(tangent * Mathf.Max(.5f, _camera != null ? _camera.aspect : 1.78f)) + .15f;
+            for (float yaw = -60; yaw <= 60; yaw += 10)
+            {
+                Vector3 away = Quaternion.Euler(0, yaw, 0) * front.normalized;
+                away = away * Mathf.Cos(pitch) + Vector3.up * Mathf.Sin(pitch);
+                Vector3 eye = ClearEye(_ownFocus, _ownFocus + away * distance), look = _ownFocus - eye;
+                float intrusion = 0;
+                for (int other = 0; other < _players.Length; other++)
+                {
+                    if (other == seat || _players[other] == null) continue;
+                    Vector3 at = _players[other].transform.position; at.y = _ownFocus.y;
+                    Vector3 toward = at - eye;
+                    float angle = Vector3.Angle(look, toward) * Mathf.Deg2Rad;
+                    if (angle >= halfWidth) continue;
+                    // By how big it is drawn: nearer than the player counts double, farther shrinks away.
+                    float size = toward.sqrMagnitude < look.sqrMagnitude ? 2 : look.sqrMagnitude / Mathf.Max(.01f, toward.sqrMagnitude);
+                    intrusion += size * (1 - angle / halfWidth);
+                }
+                float score = Vector3.Distance(eye, _ownFocus) / distance * 10 - intrusion * 4 - Mathf.Abs(yaw) * .005f;
+                if (score > best) { best = score; _ownEye = eye; }
+            }
+        }
+
         private readonly struct OpeningDirection
         {
             public readonly Direction Kind;
-            public readonly float Arrival, Portrait, Spotlight, Settle, End;
+            public readonly float Arrival, Portrait, Spotlight, Settle, Own, End;
             public OpeningDirection(Direction kind, float arrival, float portrait, float spotlight)
             {
                 Kind = kind; Arrival = arrival; Portrait = portrait;
                 Spotlight = arrival + 4 * portrait;
                 Settle = Spotlight + spotlight;
-                End = Settle + 2.4f;
+                Own = Settle + OwnSeconds;
+                End = Own + OwnHold + ReturnSeconds;
             }
-            public float Handoff => End - 1.4f;
+            public float Handoff => End - ReturnSeconds;
         }
+
+        /// <summary>True when this screen's closing beat is its own attacker rather than the taya.</summary>
+        private bool OwnClosingBeat => _viewerSeat >= 0 && _viewerSeat < _players.Length && _players[_viewerSeat] != null
+                                       && _viewerSeat != Core.MatchRules.DefenderSlotFor(1);
         private bool _directed;
         private OpeningDirection _direction;
         private readonly Transform[] _walkRoots = new Transform[4];
@@ -44,7 +139,7 @@ namespace TumbangPreso
 
         private void PrepareDirection(SceneFlow.MapEntry map, bool reduced)
         {
-            _directed = true;
+            _directed = true; _ownFramed = false;
             if (map.Id == SceneFlow.IlalimNgTulay) _direction = new OpeningDirection(Direction.Bridge, 3.8f, .9f, 1.9f);
             else if (map.Id == SceneFlow.LagoonCove) _direction = new OpeningDirection(Direction.Cove, 4.8f, .95f, 2f);
             else if (map.Id == SceneFlow.Kanto) _direction = new OpeningDirection(Direction.Crossing, 3.4f, .85f, 1.8f);
@@ -200,6 +295,8 @@ namespace TumbangPreso
                 Mathf.Min(3, (int)((age - _direction.Arrival) / _direction.Portrait));
             int beat = portrait < 0 ? -1 : _portraitOrder[portrait];
             if (age >= _direction.Spotlight) beat = Core.MatchRules.DefenderSlotFor(1);
+            bool own = OwnClosingBeat && age >= _direction.Settle;
+            if (own) beat = _viewerSeat;
             float handoff = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(_direction.Handoff, _direction.End, age));
             for (int i = 0; i < 4; i++) _poses[i]?.SetArrivalPose(i,
                 reduced || !motion ? .001f : Mathf.Max(.001f, i == beat ? .75f * (1 - handoff) : .001f));
@@ -218,6 +315,15 @@ namespace TumbangPreso
                     : Mathf.Repeat((age - _direction.Arrival) / _direction.Portrait, 1);
                 eye = Vector3.Lerp(_eyes[beat], focus, .06f * Mathf.SmoothStep(0, 1, local));
                 fov = age >= _direction.Spotlight ? 46 : PortraitFov;
+            }
+            else if (own)
+            {
+                // This player's own shot (`FrameOwn`), pushed in over the beat and held for the return.
+                if (!_ownFramed) FrameOwn(beat);
+                focus = _ownFocus;
+                float local = Mathf.Clamp01((age - _direction.Settle) / (_direction.Own - _direction.Settle));
+                eye = Vector3.Lerp(_ownEye, focus, OwnPush * Mathf.SmoothStep(0, 1, local));
+                fov = OwnFov;
             }
             else { focus = _focus[beat]; eye = Vector3.Lerp(_eyes[beat], focus, .06f); fov = 46; }
             eye = ClearEye(focus, eye);
@@ -243,12 +349,15 @@ namespace TumbangPreso
             {
                 for (int cut = 0; cut < 4; cut++)
                     ink = Mathf.Max(ink, 1 - Mathf.Clamp01(Mathf.Abs(age - _direction.Arrival - cut * _direction.Portrait) / .1f));
+                // The cut from the taya's spotlight to this player's own shot takes the same breath of ink.
+                if (OwnClosingBeat) ink = Mathf.Max(ink, 1 - Mathf.Clamp01(Mathf.Abs(age - _direction.Settle) / .1f));
             }
             if (reduced && age >= _direction.Handoff) ink = 1 - Mathf.Clamp01(Mathf.Abs(handoff - .5f) / .22f);
             if (!motion) ink = 0;
             _ink.color = new Color(UI.Hub.HubStyle.Ink.r, UI.Hub.HubStyle.Ink.g, UI.Hub.HubStyle.Ink.b, ink);
             _captionGroup.alpha = (1 - ink) * (1 - handoff);
-            Caption(reduced ? (age >= _direction.Spotlight ? Core.MatchRules.DefenderSlotFor(1) : -1) : beat, map);
+            // Reduced motion keeps its single still shot; the caption still names this player last.
+            Caption(reduced ? (own ? _viewerSeat : age >= _direction.Spotlight ? Core.MatchRules.DefenderSlotFor(1) : -1) : beat, map, own);
         }
 
         private void ReturnDirectionView(Vector3 portraitEye, Vector3 portraitFocus, float progress,
@@ -313,7 +422,7 @@ namespace TumbangPreso
                 _walkRoots[i] = null; _walkPath[i] = null; _walkLengths[i] = 0;
                 _walkHadSample[i]=false;_walkPreviousAt[i]=Vector3.zero;
             }
-            _directed = false;
+            _directed = false; _ownFramed = false;
         }
     }
 
