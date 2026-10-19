@@ -359,17 +359,21 @@ namespace TumbangPreso.Core
 
         /// <summary>
         /// ADD BOT and REMOVE BOT: put a bot in one seat, or take it out, leaving every other
-        /// seat as it was.
+        /// seat as it was. <paramref name="occupiedSeats"/> is one bit per seat a player is in.
         ///
         /// ⚠️ THE MASK IS WRITTEN OUT IN FULL FIRST, so removing one bot from a room that was
         /// filling every seat keeps the other three rather than dropping all of them.
         ///
-        /// ⚠️ AND THE LAST BOT OUT TURNS BOTS OFF. An empty mask with bots on means "fill every
-        /// seat" (<see cref="SeatHasBot"/>), so leaving `Bots` on after removing the last bot
-        /// would put all of them back. `Bots` stays all or nothing (`MaxBots` or 0), which is
-        /// what `CanBeRanked` and `AIController.ApplyCustomRoomPolicy` read.
+        /// ⚠️⚠️ AND THE LAST BOT OUT OF AN EMPTY SEAT TURNS BOTS OFF, COUNTING ONLY EMPTY SEATS.
+        /// A full room sets every bit, the host's own seat included, so the first version, which
+        /// asked "is the mask empty", never turned bots off: removing P2, P3 and P4 left the
+        /// host's bit, RULES still showed a difficulty, and moving seats put a bot in the chair the
+        /// host had just left. An empty mask with bots on means "fill every seat"
+        /// (<see cref="SeatHasBot"/>), so bots-off also clears the mask rather than leaving bits
+        /// to come back later. `Bots` stays all or nothing (`MaxBots` or 0), which is what
+        /// `CanBeRanked` and `AIController.ApplyCustomRoomPolicy` read.
         /// </summary>
-        public static void SetSeatBot(CustomRules rules, int seat, bool bot)
+        public static void SetSeatBot(CustomRules rules, int seat, bool bot, int occupiedSeats = 0)
         {
             if (rules == null || seat < 0 || seat >= Balance.PlayerCount) return;
             int mask = 0;
@@ -379,8 +383,9 @@ namespace TumbangPreso.Core
             if (bot) mask |= 1 << seat;
             else mask &= ~(1 << seat);
 
-            rules.BotSeats = mask;
-            rules.Bots = mask == 0 ? 0 : MaxBots;
+            bool anyEmptyBot = (mask & ~occupiedSeats & AllBotSeats) != 0;
+            rules.BotSeats = anyEmptyBot ? mask : 0;
+            rules.Bots = anyEmptyBot ? MaxBots : 0;
         }
 
         /// <summary>
