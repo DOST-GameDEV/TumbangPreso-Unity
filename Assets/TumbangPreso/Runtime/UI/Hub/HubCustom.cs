@@ -266,6 +266,7 @@ namespace TumbangPreso.UI.Hub
 
         public override void Tick()
         {
+            if (_busy) ShowJoining();
             if (Time.unscaledTime < _nextDraw) return;
             _nextDraw = Time.unscaledTime + 1.0f;
             if (_source == 1) Net.NetSession.Instance?.Beacon?.RequestDiscovery();
@@ -316,16 +317,47 @@ namespace TumbangPreso.UI.Hub
             Hub.RefreshFocus();
         }
 
+        // ⚠️ THE WAIT IS VISIBLE AND ALWAYS ENDS (2026-10-20, a LAN row over Hamachi: "it's stuck on
+        // joining"). The line held "Joining <address>..." unchanged for the transport's ~24 s of retries,
+        // which reads as a hang; it now counts the seconds and, after `JoinFailureRules.NoAnswerHintSeconds`,
+        // names the usual cause. And this is `async void`: anything thrown before the attempt's own catch
+        // (leaving the old room, naming the listed one) used to leave `_busy` set and the line frozen for good.
+        private string _joinTarget;
+        private float _joinStarted;
+        private int _joinShownSecond = -1;
+
         private async void Join(string key)
         {
             if (_busy || string.IsNullOrWhiteSpace(key)) return;
             _busy = true;
-            _status.text = "Joining " + key.Trim().ToUpperInvariant() + "...";
-            string refusal = await Hub.Host.Join(key.Trim());
+            _joinTarget = key.Trim().ToUpperInvariant(); _joinStarted = Time.unscaledTime; _joinShownSecond = -1;
+            ShowJoining();
+            string refusal;
+            try { refusal = await Hub.Host.Join(key.Trim()); }
+            catch (System.Exception error)
+            {
+                Debug.LogException(error);
+                refusal = "Could not join: " + error.Message;
+            }
             if (this == null || !_busy) return;
             _busy = false;
-            if (!string.IsNullOrEmpty(refusal)) { _status.text = refusal; MenuSfx.Error(); return; }
+            if (!string.IsNullOrEmpty(refusal)) { SetStatus(refusal); MenuSfx.Error(); return; }
             Hub.ShowLobby();
+        }
+
+        private void ShowJoining()
+        {
+            float waited = Time.unscaledTime - _joinStarted;
+            int second = (int)waited;
+            if (second == _joinShownSecond) return;
+            _joinShownSecond = second;
+            SetStatus(JoinFailureRules.WaitingLine(_joinTarget, waited));
+        }
+
+        private void SetStatus(string line)
+        {
+            _status.text = line;
+            _status.fontSize = HubStyle.Size(HubStyle.Body); HubKit.Fit(_status, 1300);
         }
 
         public override bool Back()
