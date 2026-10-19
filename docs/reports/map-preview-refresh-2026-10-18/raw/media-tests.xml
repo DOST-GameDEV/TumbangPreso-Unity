@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-18 11:51:27Z" end-time="2026-10-18 11:52:25Z" duration="57.3194843">
+  <test-suite type="TestSuite" id="3703" name="TUMP Map Preview Refresh 1018" fullname="TUMP Map Preview Refresh 1018" runstate="Runnable" testcasecount="2180" result="Passed" start-time="2026-10-18 11:51:27Z" end-time="2026-10-18 11:52:25Z" duration="57.319484" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3695" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-map1018/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2180" result="Passed" start-time="2026-10-18 11:51:27Z" end-time="2026-10-18 11:52:25Z" duration="57.289240" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15180" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3696" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2180" result="Passed" start-time="2026-10-18 11:51:27Z" end-time="2026-10-18 11:52:25Z" duration="57.268043" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3699" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2178" result="Passed" start-time="2026-10-18 11:51:27Z" end-time="2026-10-18 11:52:25Z" duration="57.239187" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2245" name="MapPreviewCameraEntryTests" fullname="TumbangPreso.PlayTests.MapPreviewCameraEntryTests" classname="TumbangPreso.PlayTests.MapPreviewCameraEntryTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-18 11:51:28Z" end-time="2026-10-18 11:51:34Z" duration="6.715353" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2246" name="DisplayCopyDoesNotChangeCaptureButCameraDoes" fullname="TumbangPreso.PlayTests.MapPreviewCameraEntryTests.DisplayCopyDoesNotChangeCaptureButCameraDoes" methodname="DisplayCopyDoesNotChangeCaptureButCameraDoes" classname="TumbangPreso.PlayTests.MapPreviewCameraEntryTests" runstate="Runnable" seed="769630840" result="Passed" start-time="2026-10-18 11:51:28Z" end-time="2026-10-18 11:51:34Z" duration="6.698555" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2250" name="MapPreviewFreshnessTests" fullname="TumbangPreso.PlayTests.MapPreviewFreshnessTests" classname="TumbangPreso.PlayTests.MapPreviewFreshnessTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-18 11:51:34Z" end-time="2026-10-18 11:52:17Z" duration="42.248560" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2254" name="ExistingCapturedReceiptsMatchCurrentIntegration" fullname="TumbangPreso.PlayTests.MapPreviewFreshnessTests.ExistingCapturedReceiptsMatchCurrentIntegration" methodname="ExistingCapturedReceiptsMatchCurrentIntegration" classname="TumbangPreso.PlayTests.MapPreviewFreshnessTests" runstate="Runnable" seed="1465168090" result="Passed" start-time="2026-10-18 11:51:34Z" end-time="2026-10-18 11:52:17Z" duration="42.244835" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[MapPreviewFreshness] All registered map source/media receipts match.
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2507" name="NewThreeRecordedPreviewTests" fullname="TumbangPreso.PlayTests.NewThreeRecordedPreviewTests" classname="TumbangPreso.PlayTests.NewThreeRecordedPreviewTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-18 11:52:17Z" end-time="2026-10-18 11:52:23Z" duration="5.871778" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2508" name="AllSelectableCourtFootageDecodesAtOriginalQualityWithoutLoadingAnArena" fullname="TumbangPreso.PlayTests.NewThreeRecordedPreviewTests.AllSelectableCourtFootageDecodesAtOriginalQualityWithoutLoadingAnArena" methodname="AllSelectableCourtFootageDecodesAtOriginalQualityWithoutLoadingAnArena" classname="TumbangPreso.PlayTests.NewThreeRecordedPreviewTests" runstate="Runnable" seed="1662590514" result="Passed" start-time="2026-10-18 11:52:17Z" end-time="2026-10-18 11:52:23Z" duration="5.869533" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Eskinita: clip=Eskinita-loop frame=5 delivered=5 texture=RecordedMapPreview
+Eskinita: decoded-vs-matching-poster meanRGB=6.56324588477366
+IlalimNgTulay: clip=IlalimNgTulay-loop frame=1 delivered=1 texture=RecordedMapPreview
+IlalimNgTulay: decoded-vs-matching-poster meanRGB=5.04639403292181
+LagoonCove: clip=LagoonCove-loop frame=5 delivered=5 texture=RecordedMapPreview
+LagoonCove: decoded-vs-matching-poster meanRGB=5.7695524691358
+Kanto: clip=Kanto-loop frame=1 delivered=1 texture=RecordedMapPreview
+Kanto: decoded-vs-matching-poster meanRGB=5.876579218107
+Arena: clip=Arena-loop frame=1 delivered=1 texture=RecordedMapPreview
+Arena: decoded-vs-matching-poster meanRGB=6.84196502057613
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2910" name="RecordedMapPreviewTests" fullname="TumbangPreso.PlayTests.RecordedMapPreviewTests" classname="TumbangPreso.PlayTests.RecordedMapPreviewTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-18 11:52:23Z" end-time="2026-10-18 11:52:25Z" duration="2.106006" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2911" name="RecordedArenaPlaysWithoutALiveMapAndHandsOffToLobby" fullname="TumbangPreso.PlayTests.RecordedMapPreviewTests.RecordedArenaPlaysWithoutALiveMapAndHandsOffToLobby" methodname="RecordedArenaPlaysWithoutALiveMapAndHandsOffToLobby" classname="TumbangPreso.PlayTests.RecordedMapPreviewTests" runstate="Runnable" seed="2132084567" result="Passed" start-time="2026-10-18 11:52:23Z" end-time="2026-10-18 11:52:25Z" duration="2.033128" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2912" name="ReducedMotionUsesTheMatchingPosterWithoutADecoder" fullname="TumbangPreso.PlayTests.RecordedMapPreviewTests.ReducedMotionUsesTheMatchingPosterWithoutADecoder" methodname="ReducedMotionUsesTheMatchingPosterWithoutADecoder" classname="TumbangPreso.PlayTests.RecordedMapPreviewTests" runstate="Runnable" seed="759603508" result="Passed" start-time="2026-10-18 11:52:25Z" end-time="2026-10-18 11:52:25Z" duration="0.063072" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios Validation/TUMP Map Preview Refresh 1018\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

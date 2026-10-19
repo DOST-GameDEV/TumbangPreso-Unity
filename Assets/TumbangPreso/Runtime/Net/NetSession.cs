@@ -649,7 +649,11 @@ namespace TumbangPreso.Net
         // both rule sets are in: ASTRA's Concussed 5 s, its Dante and Nemu kits and Mountain Form, AND our Whirlwind circle
         // (radius 2.1 m). A peer on either 159 or 171 judges one of those differently from the host: the two may not meet.
         // Windows and Android rebuilt from the same commit and shipped together.
-        public const int ProtocolVersion = 172;
+        // 172 (2026-10-18): Bayan Plaza and Sa Bubong leave the selectable map pool.
+        // Map sync/votes carry indices, so older peers would interpret the remaining maps differently.
+        // 173 (2026-10-19): the two 172s meet (QoLUpdates' merge number and ASTRAReworks' smaller map pool), and Payo joins the
+        // pool as its last entry. Map sync and votes carry indices, so a peer on either 172 reads the pool differently.
+        public const int ProtocolVersion = 173;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

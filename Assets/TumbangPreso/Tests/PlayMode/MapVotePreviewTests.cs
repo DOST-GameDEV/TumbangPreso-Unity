@@ -28,6 +28,13 @@ namespace TumbangPreso.PlayTests
    var cards=vote.GetComponentsInChildren<HubButton>();Assert.AreEqual(SceneFlow.Maps.Length+1,cards.Length);
    Assert.That(TumpHub.Current.Host.MapVoteSecondsLeft,Is.GreaterThan(0).And.LessThanOrEqualTo(12));
    foreach(var picture in vote.GetComponentsInChildren<RawImage>())Assert.IsNotNull(picture.texture);
+   Canvas.ForceUpdateCanvases();
+   foreach(var label in vote.GetComponentsInChildren<Text>().Where(text=>text.name=="CourtName"))
+    Assert.LessOrEqual(label.preferredWidth,label.rectTransform.rect.width+1,label.text+" exceeds its court card.");
+   var status=vote.GetComponentsInChildren<Text>().Single(text=>text.name=="BallotStatus").rectTransform;
+   var row=vote.GetComponentsInChildren<RectTransform>().Single(rect=>rect.name=="MapChoices");
+   var statusCorners=new Vector3[4];var rowCorners=new Vector3[4];status.GetWorldCorners(statusCorners);row.GetWorldCorners(rowCorners);
+   Assert.GreaterOrEqual(statusCorners[0].y,rowCorners[1].y,"The court cards cover the ballot status.");
    int arena=System.Array.IndexOf(SceneFlow.Maps,SceneFlow.Arena);var attended=cards.Single(c=>c.name=="VoteMap"+arena);
    ExecuteEvents.Execute(attended.gameObject,new PointerEventData(EventSystem.current),ExecuteEvents.pointerEnterHandler);yield return null;
    Assert.AreEqual(1,vote.GetComponentsInChildren<VideoPlayer>().Count(p=>p.clip!=null));
@@ -36,6 +43,8 @@ namespace TumbangPreso.PlayTests
    Assert.AreEqual(1,vote.GetComponentsInChildren<VideoPlayer>().Count(p=>p.clip!=null));
    yield return HubFlowTests.Press("VoteMap1");
    Assert.AreEqual(-1,TumpHub.Current.Host.MapVoteFor(NetAuthority.LocalSlot),"Browsing must not cast a vote.");
+   foreach(var size in new[]{new Vector2Int(1920,1080),new Vector2Int(1280,720)})
+    yield return TumpUiCapture.Capture("FiveMapVote-"+size.x+"x"+size.y,TumpHub.Current.Canvas,size.x,size.y,false,checkActionBounds:true);
    yield return HubFlowTests.Press("LockMapVote");
    Assert.AreEqual(1,TumpHub.Current.Host.MapVoteFor(NetAuthority.LocalSlot));
   }

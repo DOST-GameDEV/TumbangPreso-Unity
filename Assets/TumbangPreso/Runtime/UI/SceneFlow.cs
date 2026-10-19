@@ -48,6 +48,7 @@ namespace TumbangPreso.UI
 
         /// <summary>The playable arenas, by the names the Godot builders gave them.</summary>
         public const string Eskinita = "Eskinita";
+        // Vaulted from selection and builds October18; keep IDs/assets for rework.
         public const string BayanPlaza = "BayanPlaza";
         public const string IlalimNgTulay = "IlalimNgTulay";
         public const string SaBubong = "SaBubong";
@@ -63,6 +64,8 @@ namespace TumbangPreso.UI
         /// <summary>The game-show arena whose stage rearranges between rounds (docs/ARENA_MAP_BRIEF.md).
         /// A grey-box until its art exists.</summary>
         public const string Arena = "Arena";
+        // The Ifugao rice-terrace temple, joined to the pool last (owner, 2026-10-19: "put payo in the map roster"; protocol 173).
+        public const string Payo = "Payo";
 
         /// <summary>
         /// One map's registry row, from `game_launch.gd`'s `MAPS`.
@@ -148,37 +151,34 @@ namespace TumbangPreso.UI
         /// </summary>
         public static readonly MapEntry[] MapRegistry =
         {
-            new MapEntry(Eskinita, "ESKINITA",
+            new MapEntry(Eskinita, "TONDO",
                          "Urban side street. Sari-sari, sampay, kanal.", 0.0f, 22.0f, 16.0f),
-
-            new MapEntry(BayanPlaza, "BAYAN PLAZA",
-                         "Barangay plaza. Church, basketball ring, acacia.", 0.0f, 22.0f, 16.0f),
 
             // The rebuilt court is below an 8 m soffit. Look down the street under it,
             // rather than through the viaduct deck and the adjacent shop roofs.
-            new MapEntry(IlalimNgTulay, "PADRE FAURA, MANILA",
+            new MapEntry(IlalimNgTulay, "ERMITA",
                          "Manila street court. Viaduct pillars and neighbourhood shops.", 0.0f, 22.0f, 5.5f),
-            new MapEntry(SaBubong,"SA BUBONG",
-                         "Condo roofdeck. Watch the edge; lost slippers return after 10s.",35,30,22),
             // ⚠️ THE LAGOON COURT IS THE REWORKED COVE NOW, and Kanto joins the list (owner,
             // 2026-09-27: "put kanto and lagoon into the selectable map list. vault the old
-            // lagoon"). The cove keeps the LAGOON COURT name; the old scene is vaulted (see Lagoon).
+            // lagoon"). The owner renamed the cove SITANGKAI October18; the old scene is vaulted (see Lagoon).
             // Preview shots: the cove from the sea side over the court (its review "court_high"
             // angle), Kanto from over the park's corner so the facades and streets frame the court.
-            new MapEntry(LagoonCove,"LAGOON COURT",
+            new MapEntry(LagoonCove,"SITANGKAI",
                          "A cove court in the rocks. Stilt village, reefs and a sunset sea.",0,40,24),
-            new MapEntry(Kanto,"BGC, TAGUIG",
+            new MapEntry(Kanto,"BGC",
                          "Taguig city park. Jeepney stop, traffic lights, busy streets.",45,24,16),
-            // The Arena is LAST: maps travel as an index, so a new one is appended (protocol 152).
+            // Maps travel as an index. Removing Bayan Plaza and Sa Bubong requires protocol172.
             // Preview: high over a corner, so the whole stage and its shaft are in frame. The
             // stage is 43 m across (walking radius 21.5), not the 28 m the first shot was framed
             // for: from 34 m back and 24 m up the near edge of the ring was under the frame
             // (RemadeMapPreviewTests' Arena.png, 2026-10-05). The arrival's wide shot reads these too.
-            new MapEntry(Arena,"ARENA",
+            new MapEntry(Arena,"THE PHILIPPINE ARENA",
                          "Game-show stage. It rebuilds each round; mind the edges.",35,40,27),
+            new MapEntry(Payo,"PAYO",
+                         "Ifugao rice-terrace temple. Stones shift each round; night falls at halftime.",35,40,27),
         };
 
-        public static readonly string[] Maps = { Eskinita, BayanPlaza, IlalimNgTulay, SaBubong, LagoonCove, Kanto, Arena };
+        public static readonly string[] Maps = { Eskinita, IlalimNgTulay, LagoonCove, Kanto, Arena, Payo };
 
         /// <summary>
         /// True while an ARENA is the active scene rather than a menu.

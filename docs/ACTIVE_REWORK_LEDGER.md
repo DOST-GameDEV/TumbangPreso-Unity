@@ -1,3 +1,42 @@
+# Map preview refresh checkpoint, October18
+
+Latest owner correction: display Tondo, Ermita and Sitangkai in place of Eskinita,
+Maynila and Tawi-Tawi. BGC and The Philippine Arena stay. Both registries and
+their expected-name check agree; IDs/order/camera/media are unchanged. The32-case
+native evidence below predates this label-only correction.
+
+Owner requested old Eskinita host preview replacement, an all-map preview check
+and the current map names. Pulled fe1daa0d8 on ASTRAReworks. Seven selectable maps
+all have recorded media; the old Lagoon is vaulted. Owner chose Eskinita, Maynila,
+Tawi-Tawi, BGC and The Philippine Arena. Bayan Plaza/Sa Bubong leave selection
+and enabled build scenes; source/assets stay. Protocol172 fences changed indices.
+Owner requires the current stepped-alley Eskinita everywhere, including posters
+and fallback cards. Its old scene is already vaulted with no active GUID route.
+Names delivered in chat. Existing local art
+metadata and ultimate-intro edits are unrelated and preserved. This task owns
+map-preview media/receipts/cards, the five-map registries/build flags/protocol,
+their focused tests and alley_chalk.mat's invalid keyword normalization. Baseline
+found all active footage stale. Recorded all five at1080p/30/780frames; the first
+Eskinita install caught Unity removing its invalid emission keyword at exit.
+Normalized that material and recaptured Eskinita; all five receipts now match.
+Primary media/cards are installed with existing GUIDs. 6,986 source dependencies
+matched between primary and isolated inputs before capture.
+Isolated project C:/Users/matth/Documents/Codex/work/tump-map1018 has its own
+company/product and named profile. No user profile or Desktop replacement.
+Final32 distinct native cases pass: registry22, media5 and selection5. The first
+new EditMode fixture used a runtime API; fixed to enabled EditorBuildSettings.
+Visual review found the long Arena caption outside its thumbnail; widened the
+five vote/result cards, retained the font floor, moved status/confirmation clear
+and added caption-width/status-overlap assertions. Final ballot2/2 repeat pass.
+Current720p/1080p UI and all five native-decoded map images inspected.
+All task jobs exited; no browser tabs opened. Automatic approval review blocked
+temporary-project/duplicate-capture cleanup, so those verified task-owned files
+remain. Logs/map-preview-refresh-1018/cleanup-receipt.json records the boundary.
+Evidence: docs/reports/map-preview-refresh-2026-10-18. Source/media commit
+5ac4491c2 is pushed to origin/ASTRAReworks with matching local/remote HEAD verified.
+The local publication receipt retains the full SHA. MAP-PREVIEW-REFRESH-1018 is
+DONE. Bayan Plaza and Sa Bubong stay disabled pending the owner's future rework.
+
 # Dante Mountain Form checkpoint, October18
 
 On ASTRAReworks after 4d79a33cb (protocol 171). Checked the last session's work before building on it: two real faults
@@ -8,8 +47,10 @@ DanteMountainFormTests 12/12; DanteDrift and DanteDriftPresentation green; Dante
 after the probe subtracts the baked lift. EditMode failures left are the pre-existing roster-drift list (Cheska, Zack, Nemu,
 Sean, Phaister). The suit is plates (Logs/mf/poses_v7), forms in the cutscene on its clock, the slam was rebuilt, his
 first-person hands carry the form, and his deck shows its seconds. Films sent: Logs/mf/dante_mountain_cutscene_v1 and v3.
-Next: the owner's verdict on v3, his pick of the sound drafts (tools/draft_dante_mountain_sfx.py), the animation variants,
-a real host and client match, and balance. Open items: docs/TODO.md DANTE-MOUNTAIN-FORM-1018.
+Owner approved v3. Then: his carry, fatigue and slide clips; four real players passing every Mountain Form check direct and at
+80 ms (Logs/mf/net-v2, net-v3-delay80); an in-play film (Logs/mf/dante_mountain_play_v1.mp4). Dante PlayMode 68/68; EditMode
+48 failures, all on this morning's baseline list, none new. Next: his pick of the sound drafts (tools/draft_dante_mountain_sfx.py),
+heavier casts, bot Dante, balance. Open items: docs/TODO.md DANTE-MOUNTAIN-FORM-1018.
 
 # Ghost network checkpoint, October15
 

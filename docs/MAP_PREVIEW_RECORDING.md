@@ -7,6 +7,14 @@ the live camera. Login warms clip metadata and first-frame posters asynchronousl
 only the selected background opens a decoder. Full map scenes are not warmed
 solely to display these recordings.
 
+The October18 active pool is Tondo (`Eskinita`), Ermita (`IlalimNgTulay`), Sitangkai
+(`LagoonCove`), BGC (`Kanto`) and The Philippine Arena (`Arena`). Bayan Plaza and
+Sa Bubong retain their source/assets but are outside selection, rotation and
+enabled build scenes. The active Eskinita scene is the stepped alley. Its old
+classic scene is vaulted and must never supply playable or preview routes.
+Keep fallback `UI/map-cards/<scene>.png` images matched to the current posters
+when regenerating footage, so a fallback cannot revive an older map picture.
+
 ## When a map changes
 
 Regenerate that map's video and poster after changing its geometry, materials,

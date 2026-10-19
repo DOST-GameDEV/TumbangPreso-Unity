@@ -8,6 +8,7 @@ docs/reports/improvement-2026-09-14/ui-deferred-source/*.patch -text -whitespace
 docs/reports/improvement-2026-09-14/zack-evidence/*.xml -text -whitespace
 docs/reports/improvement-2026-09-14/nemu-laptop-evidence/*.xml -text -whitespace
 docs/reports/improvement-2026-09-14/cheska-network-evidence/*.xml -text -whitespace
+docs/reports/map-preview-refresh-2026-10-18/raw/*.xml -text -whitespace
 docs/reports/improvement-2026-09-14/ice-rejoin-evidence/*.xml -text -whitespace
 docs/reports/improvement-2026-09-15-buff-rejoin/*.xml -text -whitespace
 docs/reports/pending-casts-2026-09-15/*.xml -text -whitespace

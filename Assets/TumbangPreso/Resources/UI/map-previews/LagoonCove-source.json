@@ -1,10 +1,10 @@
 {
-  "map": "LagoonCove",
-  "sourceFingerprint": "48916e86577d1fe379c5f5ad1f5abd05d4b3f9045d80a9fcc92d2cf90e60f2c7",
-  "videoSha256": "28087f4a9abae4785ae36b263507d1f82d6c4769831b4d8a7a5f286359ce90e7",
-  "posterSha256": "05691bd9ac202473950e500d7ebe7d675890f3c94418b47eba73f8c1a10626a9",
-  "width": 1920,
-  "height": 1080,
-  "fps": 30,
-  "frames": 780
+    "map": "LagoonCove",
+    "sourceFingerprint": "86d5d96d562dd5a0aa6fb41699dbf105d043609207fd52457affb86816b5abd6",
+    "videoSha256": "00cdf7f394bab09dd8e13061001357fb7b98d0b93a536e60c8046070a50d7e83",
+    "posterSha256": "907fee2695aa3ceb86d2b7d05b11ade91a4fcc25bdf45c9b3336f2b846781b81",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "frames": 780
 }

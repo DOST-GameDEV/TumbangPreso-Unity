@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Current five-map pool and refreshed video previews: [source receipts, native playback and selection layout](reports/map-preview-refresh-2026-10-18/README.md).
+
 Current Nemu ghost replication and mixed-character cutscenes: [host state, real Relay/LAN delivery and native rig checks](reports/nemu-network-2026-10-15/README.md).
 
 Current network resource and possession packet bounds: [reproductions, native controls and peer limits](reports/network-refinement-2026-10-15/README.md).

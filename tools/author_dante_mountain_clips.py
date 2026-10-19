@@ -52,13 +52,79 @@ def append_clips(gltf, blob, table):
     gltf["buffers"] = [{"byteLength": len(blob)}]
 
 
+def compact(gltf, blob):
+    """Drop every accessor and buffer view nothing references any more, and their bytes.
+
+    ⚠️ `append_clips` replaces a clip by removing its animation and appending the new one's data, so the old clip's
+    accessors, views and bytes stayed in the file: dante-redesign.glb grew by about 190 KB on every rewrite (629 KB with
+    the kid's clips, 820 KB after the first Mountain set). This keeps what meshes, skins, images and animations still use,
+    in its original order, and returns the new binary chunk."""
+    used = set()
+    for mesh in gltf.get("meshes", []):
+        for prim in mesh.get("primitives", []):
+            used.update(prim.get("attributes", {}).values())
+            if "indices" in prim:
+                used.add(prim["indices"])
+            for target in prim.get("targets", []):
+                used.update(target.values())
+    for skin in gltf.get("skins", []):
+        if "inverseBindMatrices" in skin:
+            used.add(skin["inverseBindMatrices"])
+    for anim in gltf.get("animations", []):
+        for sampler in anim["samplers"]:
+            used.add(sampler["input"]); used.add(sampler["output"])
+    keep = sorted(used)
+    accessor_map = {old: new for new, old in enumerate(keep)}
+    views_used = sorted({gltf["accessors"][i]["bufferView"] for i in keep if "bufferView" in gltf["accessors"][i]}
+                        | {img["bufferView"] for img in gltf.get("images", []) if "bufferView" in img})
+    view_map, out = {}, bytearray()
+    views = []
+    for old in views_used:
+        view = dict(gltf["bufferViews"][old])
+        while len(out) % 4:
+            out.append(0)
+        start = view.get("byteOffset", 0)
+        data = blob[start:start + view["byteLength"]]
+        view["byteOffset"] = len(out)
+        out.extend(data)
+        view_map[old] = len(views); views.append(view)
+    accessors = []
+    for old in keep:
+        acc = dict(gltf["accessors"][old])
+        if "bufferView" in acc:
+            acc["bufferView"] = view_map[acc["bufferView"]]
+        accessors.append(acc)
+    for mesh in gltf.get("meshes", []):
+        for prim in mesh.get("primitives", []):
+            prim["attributes"] = {k: accessor_map[v] for k, v in prim.get("attributes", {}).items()}
+            if "indices" in prim:
+                prim["indices"] = accessor_map[prim["indices"]]
+            if "targets" in prim:
+                prim["targets"] = [{k: accessor_map[v] for k, v in t.items()} for t in prim["targets"]]
+    for skin in gltf.get("skins", []):
+        if "inverseBindMatrices" in skin:
+            skin["inverseBindMatrices"] = accessor_map[skin["inverseBindMatrices"]]
+    for anim in gltf.get("animations", []):
+        for sampler in anim["samplers"]:
+            sampler["input"] = accessor_map[sampler["input"]]; sampler["output"] = accessor_map[sampler["output"]]
+    for img in gltf.get("images", []):
+        if "bufferView" in img:
+            img["bufferView"] = view_map[img["bufferView"]]
+    gltf["accessors"], gltf["bufferViews"] = accessors, views
+    gltf["buffers"] = [{"byteLength": len(out)}]
+    return out
+
+
 def main():
     for path in FILES:
         gltf, buffer = bpv.read_glb(path)
         blob = bytearray(buffer)
         before = [a["name"] for a in gltf["animations"]]
         append_clips(gltf, blob, clips.MOUNTAIN_CLIPS)
+        size = len(blob)
+        blob = compact(gltf, blob)
         bpv.write_glb(path, gltf, blob)
+        print("  binary chunk %d -> %d bytes" % (size, len(blob)))
         after = [a["name"] for a in gltf["animations"]]
         print("  clips %d -> %d: %s" % (len(before), len(after), ", ".join(n for n in after if n.startswith("mountain-"))))
 

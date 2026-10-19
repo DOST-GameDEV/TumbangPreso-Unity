@@ -275,6 +275,24 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(_kit.IsMountainForm); Assert.IsNull(Object.FindAnyObjectByType<DanteMountainArmour>());
         }
 
+        [UnityTest] public IEnumerator ABotDanteChoosesHisUltimateAndWearsTheForm()
+        {
+            yield return Open();
+            _dante.IsBot = true;
+            var brain = _dante.gameObject.AddComponent<AIController>(); brain.enabled = false;
+            _kit.AddUltimateCharge(_kit.UltimateCost);
+            foreach (var ability in new[] { _kit.Skill1, _kit.AttackingSkill, _kit.DefendingSkill })
+                if (ability != null) typeof(HeroAbility).GetProperty("CooldownRemaining").SetValue(ability, 100f);
+            typeof(AIController).GetField("_roundLiveFor", Hidden).SetValue(brain, 100f);
+            typeof(AIController).GetField("_ultimateReadyFor", Hidden).SetValue(brain, 100f);
+            _victim.transform.position = _dante.transform.position + Vector3.forward * 6f; Physics.SyncTransforms();
+            typeof(AIController).GetMethod("StepHeroAbilities", Hidden).Invoke(brain, new object[] { _dante.Intent, .02f });
+            Assert.AreEqual(Verb.Ultimate, typeof(AIController).GetField("_weighing", Hidden).GetValue(brain),
+                "A bot Dante with his ultimate ready and a player in the lane weighs CONTINENTAL DRIFT.");
+            Release();
+            Assert.IsTrue(_powers.IsImmuneToStuns, "And the bot wears MOUNTAIN FORM with its immunity like anyone.");
+        }
+
         [UnityTest] public IEnumerator TheVariantFallsBackToThePlainClipWhereItHasNone()
         {
             yield return Open(dressed: true);

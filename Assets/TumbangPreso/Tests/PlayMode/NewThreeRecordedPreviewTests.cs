@@ -22,10 +22,10 @@ namespace TumbangPreso.PlayTests
         }
         [UnityTearDown] public IEnumerator After()
         {yield return PlayModeWorld.Reset();SettingsStore.OverrideForTests(_settings);}
-        [UnityTest] public IEnumerator NewCourtFootageDecodesAtOriginalQualityWithoutLoadingAnArena()
+        [UnityTest] public IEnumerator AllSelectableCourtFootageDecodesAtOriginalQualityWithoutLoadingAnArena()
         {
             Directory.CreateDirectory("Logs/new3-preview-decoded1007");
-            foreach(string map in new[]{SceneFlow.IlalimNgTulay,SceneFlow.LagoonCove,SceneFlow.Kanto})
+            foreach(string map in SceneFlow.Maps)
             {
                 var root=new GameObject("New court preview "+map,typeof(RectTransform),typeof(RawImage));
                 var view=root.AddComponent<MapPreviewSurface>();view.Show(map);

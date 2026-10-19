@@ -37,24 +37,24 @@ namespace TumbangPreso.UI.Hub
             _mapName=HubKit.Text(Root,"SelectedCourtName","",HubStyle.Hero,true,HubStyle.Paper,TextAnchor.MiddleLeft);
             HubKit.Place(_mapName.rectTransform,HubKit.TopLeft,new Vector2(HubKit.Margin,-330),new Vector2(1320,160));
             _choice=HubKit.Text(Root,"BallotStatus","",HubStyle.Label,false,HubStyle.Paper,TextAnchor.MiddleLeft);
-            HubKit.Place(_choice.rectTransform,HubKit.BottomLeft,new Vector2(HubKit.Margin,330),new Vector2(1100,62));
+            HubKit.Place(_choice.rectTransform,HubKit.BottomLeft,new Vector2(HubKit.Margin,404),new Vector2(1100,62));
             int count=SceneFlow.MapRegistry.Length;_cards=new HubButton[count];_counts=new Text[count];_faces=new Image[count,Balance.PlayerCount];
-            const float width=226,gap=16;float rowWidth=count*(width+gap)-gap;
-            var row=HubKit.Place(HubKit.Rect(Root,"MapChoices"),HubKit.Bottom,new Vector2(0,112),new Vector2(rowWidth,200));
+            const float width=340,gap=16;float rowWidth=count*(width+gap)-gap;
+            var row=HubKit.Place(HubKit.Rect(Root,"MapChoices"),HubKit.Bottom,new Vector2(0,112),new Vector2(rowWidth,274));
             if(rowWidth>1800)row.localScale=Vector3.one*(1800/rowWidth);
             for(int i=0;i<count;i++)
             {
                 int index=i;var map=SceneFlow.MapRegistry[i];
                 var card=HubKit.Button(row,"VoteMap"+i,null,HubStyle.Night,()=>Browse(index),0,1110+i);_cards[i]=card;
                 card.Attention+=attended=>{if(attended)Browse(index);};
-                HubKit.Place((RectTransform)card.transform,HubKit.TopLeft,new Vector2(i*(width+gap),0),new Vector2(width,200));
+                HubKit.Place((RectTransform)card.transform,HubKit.TopLeft,new Vector2(i*(width+gap),0),new Vector2(width,274));
                 var picture=HubKit.Rect(card.Body,"CourtImage").gameObject.AddComponent<RawImage>();
                 picture.texture=MapPreviewVideo.PosterFor(SceneFlow.Maps[i])??Resources.Load<Texture2D>("UI/map-cards/"+map.Id);picture.raycastTarget=false;
-                HubKit.Place(picture.rectTransform,HubKit.TopLeft,new Vector2(12,-12),new Vector2(202,113.625f));
+                HubKit.Place(picture.rectTransform,HubKit.TopLeft,new Vector2(12,-12),new Vector2(316,177.75f));
                 var name=HubKit.Text(card.Body,"CourtName",map.Name.ToUpperInvariant(),HubStyle.Floor,true,HubStyle.Paper,TextAnchor.MiddleLeft);
-                HubKit.Place(name.rectTransform,HubKit.TopLeft,new Vector2(12,-128),new Vector2(202,36));HubKit.Fit(name);
+                HubKit.Place(name.rectTransform,HubKit.TopLeft,new Vector2(12,-196),new Vector2(316,36));HubKit.Fit(name);
                 _counts[i]=HubKit.Text(card.Body,"Votes","",HubStyle.Floor,false,HubStyle.Honey,TextAnchor.MiddleLeft);
-                HubKit.Place(_counts[i].rectTransform,HubKit.TopLeft,new Vector2(12,-162),new Vector2(202,38));
+                HubKit.Place(_counts[i].rectTransform,HubKit.TopLeft,new Vector2(12,-230),new Vector2(316,38));
                 for(int seat=0;seat<Balance.PlayerCount;seat++)
                 {
                     var face=HubKit.Picture(card.Body,"Voter"+seat,null);_faces[i,seat]=face;
@@ -62,7 +62,7 @@ namespace TumbangPreso.UI.Hub
                 }
             }
             _confirm=HubKit.Button(Root,"LockMapVote","LOCK VOTE",HubStyle.Golden,Confirm,HubStyle.Title,1140);
-            HubKit.Place((RectTransform)_confirm.transform,HubKit.BottomRight,new Vector2(-HubKit.Margin,338),new Vector2(430,100));
+            HubKit.Place((RectTransform)_confirm.transform,HubKit.BottomRight,new Vector2(-HubKit.Margin,412),new Vector2(430,100));
             var tie=HubKit.Text(Root,"TieRule","Ties favour a different court from the last one.",HubStyle.Floor,false,HubStyle.Paper,TextAnchor.MiddleCenter);
             HubKit.Place(tie.rectTransform,HubKit.Bottom,new Vector2(0,52),new Vector2(1500,44));
             Browse(0);Draw();

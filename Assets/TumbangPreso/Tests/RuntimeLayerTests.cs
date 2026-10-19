@@ -508,13 +508,14 @@ namespace TumbangPreso.Tests
                 resultType.GetField("_canvas", hidden).SetValue(result, canvas);
                 resultType.GetMethod("ClearMapVotes", hidden).Invoke(result, null);
                 UI.SceneFlow.SelectedMap = UI.SceneFlow.Maps[0];
-                Assert.Greater(UI.SceneFlow.Maps.Length, 5);
+                Assert.Greater(UI.SceneFlow.Maps.Length, 2);
+                int departingMap = 2, connectedMap = UI.SceneFlow.Maps.Length - 1;
                 session.Lobby.OpenLobby(new System.Random(42));
                 session.Lobby.Admit(0, "rematch-host", "Host");
                 var departing = session.Lobby.Admit(7, "rematch-departing", "Departing");
                 var connected = session.Lobby.Admit(19, "rematch-connected", "Connected");
-                result.HostReceiveMapVote(departing.Seat, 3);
-                if (keepConnectedBallot) result.HostReceiveMapVote(connected.Seat, 5);
+                result.HostReceiveMapVote(departing.Seat, departingMap);
+                if (keepConnectedBallot) result.HostReceiveMapVote(connected.Seat, connectedMap);
                 result.HostReceiveVote(departing.PeerId);
                 Assert.AreEqual(1, result.VoteCount);
                 session.Lobby.MatchInProgress = holdReconnectSeat;
@@ -526,12 +527,12 @@ namespace TumbangPreso.Tests
                 result.OnPeerLeft(departing.PeerId);
 
                 int projected = (int)resultType.GetMethod("ProjectedNextMap", hidden).Invoke(result, null);
-                int expected = keepConnectedBallot ? 5 : 1;
+                int expected = keepConnectedBallot ? connectedMap : 1;
                 Assert.AreEqual(expected, projected, "A departed player's ballot still selected the next court.");
                 var votes = (int[])resultType.GetField("_mapVotes", hidden).GetValue(result);
                 UI.SceneFlow.AdvanceMapRotation(votes);
                 Assert.AreEqual(UI.SceneFlow.Maps[expected], UI.SceneFlow.SelectedMap, "The actual rematch route retained a disconnected ballot.");
-                Assert.AreEqual(keepConnectedBallot ? 5 : MapRotationRules.NoVote, votes[connected.Seat], "A live player's ballot was discarded.");
+                Assert.AreEqual(keepConnectedBallot ? connectedMap : MapRotationRules.NoVote, votes[connected.Seat], "A live player's ballot was discarded.");
                 Assert.AreEqual(0, result.VoteCount, "The departed player's rematch consent survived.");
                 Assert.AreEqual(2, result.ExpectedVotes());
                 Assert.IsTrue(result.IsVisible, "Removing a map ballot started an unconsented rematch.");

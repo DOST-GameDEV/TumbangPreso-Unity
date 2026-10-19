@@ -1,3 +1,25 @@
+### MAP-PREVIEW-REFRESH-1018: current previews and five-map pool (DONE)
+
+Owner October18: Host Game still shows the old Eskinita. Replace its preview and
+check all selectable maps use recordings of their current geometry.
+- [x] Pull origin/ASTRAReworks first (fe1daa0d8); preserve existing local edits.
+- [x] Confirm all seven map IDs already have videos/posters and the Host Game
+  route prefers MapPreviewVideo. Eskinita's recording predates its rebuilt alley.
+- [x] Audit source/media receipts, regenerate stale footage and matching posters,
+  inspect the pictures and verify native playback without loading map scenes.
+- [x] Prepare the checked media with preserved GUIDs and source receipts.
+- [x] Owner chose five maps: Eskinita, Maynila, Tawi-Tawi, BGC and The Philippine
+  Arena. Remove Bayan Plaza and Sa Bubong from both registries and enabled build
+  scenes while preserving source/assets for rework. Keep remaining map IDs.
+- [x] Protocol172 prevents old map-index peers from selecting a different map.
+- [x] Verify old Eskinita has no active scene/asset route, replace stale selection
+  thumbnails and check the five-map controls, rotation and preview decoding.
+- [x] Native32 distinct cases pass: EditMode22, media5 and selection5; final
+  ballot2/2 repeat after caption/status layout correction. Both720p/1080p views
+  inspected. [Evidence and limits](reports/map-preview-refresh-2026-10-18/README.md).
+- [x] Later October18 owner rename: Eskinita to Tondo, Maynila to Ermita and
+  Tawi-Tawi to Sitangkai. Labels only; map IDs, order, camera and recordings stay.
+
 ### DANTE-MOUNTAIN-FORM-1018: 30 s of rock armour after CONTINENTAL DRIFT (IN PROGRESS)
 
 Owner 2026-10-17 and 18: after his ultimate Dante keeps a suit of rock armour for 30 s, pieces falling off from 20 s; his own
@@ -29,10 +51,22 @@ visibly cover his whole body in the cutscene. Gameplay is protocol 171 (`DanteHe
 - [ ] Owner verdict on the suit, the cutscene and the first-person hands (films `Logs/mf/dante_mountain_cutscene_v*.mp4`).
 - [ ] Sound: drafts by `tools/draft_dante_mountain_sfx.py` (form, stomp, hit, crack, end; takes A and B) await the owner's ear;
   the form's stomp still borrows `land` pitched down. Register the chosen takes in `AudioCues.ReworkedSkillSfx`.
-- [ ] Animation feel pass: mountain-holding-right, crouch/fatigue and slide variants; heavier casts; gait-swap timing at the
-  form's start and end. The clip GLB writer (`tools/author_dante_mountain_clips.py`) leaves the replaced clips' bytes in the
-  binary chunk, so the GLB grows on every rewrite: compact it before the next authoring pass.
-- [ ] Real host and client match: the cleanse and immunity on a non-host, the suit and clips on every peer, a joiner mid-form.
+- [x] His own carry (`mountain-holding-right`: he holds a slipper most of the form, and the kid's carry folded his boulder
+  fists into the breastplate), fatigue (`mountain-crouch`) and slide (`mountain-slide`) clips, wired on person_dante.asset
+  (`Logs/mf/clips_v8`); the clip writer compacts the GLB (every rewrite used to add about 190 KB).
+- [x] Real players (`tools/net_mountain_matrix.py`, `Logs/mf/net-v2` and `net-v3-delay80`, all checks passing): host, caster,
+  observer and a joiner with 14 s left; the form 29.9 s and its clock within 0.08 s on every peer; the suit, clips and immunity
+  through it and gone after; the host's stun and concussion refused on every peer; the rock staggered and launched seat 2 as its
+  own process saw it; the joiner drew the suit at once on the same clock.
+- [x] In-play film: `DanteMountainFilm`, `Logs/mf/dante_mountain_play_v1.mp4` (forming live, walk, sprint, jump, carry, throw,
+  the shedding).
+- [ ] Heavier versions of his skill casts in the form (his hero-dante-* clips play unchanged inside the suit).
+- [ ] The gait layer swaps walk and sprint without a crossfade, so at the form's end his legs and root lift pop once (a 7 degree
+  splay and a squash; the arms crossfade through the main mixer). Small; a crossfade would touch every hero's animator.
+- [x] A bot Dante weighs CONTINENTAL DRIFT with a player in the lane and wears the form like a human
+  (`DanteMountainFormTests.ABotDanteChoosesHisUltimateAndWearsTheForm`).
+- [ ] The practice range (a refilled ultimate re-cast inside the form rebuilds the suit from nothing) and a bot Dante over a
+  whole match (`BotBehaviourProbe`) are not run on this branch.
 - [ ] Balance with the owner: form length, throw scale, stagger and knock.
 - [ ] Remove the `[Mountain]` debug logs in `DanteMountainArmour` when the suit is final.
 
