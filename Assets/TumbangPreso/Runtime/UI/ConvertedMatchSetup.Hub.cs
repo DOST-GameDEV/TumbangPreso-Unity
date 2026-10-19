@@ -157,9 +157,23 @@ namespace TumbangPreso.UI
             // RULES preference left behind: every empty seat shows a bot, the host removes the
             // ones they do not want, and a player who joins simply takes a bot's seat
             // (`CustomGameRules.FillEmptySeatsWithBots` says why that needs no other code).
-            var fresh = SceneFlow.SelectedRules.Clone();
-            CustomGameRules.FillEmptySeatsWithBots(fresh);
-            SceneFlow.AdoptRemoteRules(fresh);
+            //
+            // ⚠️⚠️ SAVED, NOT ONLY ADOPTED. The menu scene that comes back after every match
+            // re-reads the host's rules from `settings.json` (`WireOwnerPreparation`), so a fill
+            // held only in memory vanished after the first match: the host's seats went OPEN while
+            // the clients, who had been sent bots, still drew BOT. Every later bot change already
+            // lands in `SetSelectedRules` through `HandleRulesSynced`, so this is the one write
+            // that was missing. A late joiner is sent the current rules on arrival (`SendRulesTo`).
+            //
+            // ⚠️ A PINNED RULE SET IS LEFT ALONE. `TournamentGuard.Apply` pins a bracket's rules
+            // with no bots, and filling them here would have the guard refusing its own room.
+            if (!SceneFlow.RulesPinned)
+            {
+                var fresh = SceneFlow.SelectedRules.Clone();
+                CustomGameRules.FillEmptySeatsWithBots(fresh);
+                SceneFlow.SetSelectedRules(fresh);
+                Settings.SettingsStore.Save();
+            }
             SceneFlow.Networked = true;
             _ownerRoute = LobbyMode.Custom;
 
@@ -296,14 +310,22 @@ namespace TumbangPreso.UI
         /// ⚠️ THE CHOICE TRAVELS AS PART OF THE ROOM'S RULES, NOT AS A NEW MESSAGE.
         /// `MatchRpc.SelectRulesServerRpc` is the single rules path (`docs/TODO.md` § 38.5), the
         /// host clamps before it broadcasts, and every peer's seat list redraws off the same
-        /// record. ⚠️ `AdoptRemoteRules` RATHER THAN `SetSelectedRules`, because the latter saves
-        /// to `settings.json` and a bot in P3 belongs to this room, not to the next one.
+        /// record. The broadcast loops back to the host's `HandleRulesSynced`, which SAVES it with
+        /// `SetSelectedRules`; that is what keeps the host's seats and the clients' agreeing after a
+        /// match reloads the menu from `settings.json`. A new room refills every seat anyway
+        /// (`HostRoom`), so a saved pick never leaks into the next room.
+        ///
+        /// ⚠️ THE SEATS PLAYERS ARE IN ARE PASSED IN, so removing the last bot from the EMPTY
+        /// seats turns bots off even though the host's own seat still carries its bit.
         /// </summary>
         public void SetSeatBot(int seat, bool bot)
         {
             if (!CanEditBots || seat < 0 || seat >= Balance.PlayerCount) return;
+            int occupied = 0;
+            foreach (var s in Seats())
+                if (s.Occupied) occupied |= 1 << s.Slot;
             var rules = SceneFlow.SelectedRules.Clone();
-            CustomGameRules.SetSeatBot(rules, seat, bot);
+            CustomGameRules.SetSeatBot(rules, seat, bot, occupied);
             SceneFlow.AdoptRemoteRules(rules);
             if (SceneFlow.Networked) MatchRpc.Instance?.SelectRulesServerRpc(CustomGameRules.ToWire(rules));
         }

@@ -100,6 +100,23 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
+        public void RemovingEveryBotAroundTheHostTurnsBotsOff()
+        {
+            // The room opens full, the host sits in P1, and REMOVE BOT is pressed on the rest.
+            var rules = CustomGameRules.Defaults(GameMode.HeroStrike);
+            CustomGameRules.FillEmptySeatsWithBots(rules);
+            const int hostInP1 = 1 << 0;
+            CustomGameRules.SetSeatBot(rules, 1, false, hostInP1);
+            CustomGameRules.SetSeatBot(rules, 2, false, hostInP1);
+            Assert.True(rules.Bots > 0, "P4 still has its bot.");
+            CustomGameRules.SetSeatBot(rules, 3, false, hostInP1);
+
+            Assert.Equal(0, rules.Bots);
+            Assert.Equal(0, rules.BotSeats);
+            Assert.False(CustomGameRules.SeatHasBot(rules, 0), "Moving out of P1 must not leave a bot behind.");
+        }
+
+        [Fact]
         public void AMaskWiderThanTheTableIsClamped()
         {
             var got = CustomGameRules.Parse("0|0|8|90|0|3|3|1|0|0|0|255", GameMode.Classic);

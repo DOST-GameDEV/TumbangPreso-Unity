@@ -6085,11 +6085,12 @@ Implementation order within UX-1:
   (appended wire field, no protocol bump); START GAME is always available to a custom-room
   host and the "Bots are off" line is gone. 2026-10-19: a new room opens with a bot in every
   empty seat; a joining player takes a bot's seat (bots never hold a lobby seat) and the bot
-  returns if they leave before the match. ⚠️ OPEN: a seat the host empties starts the match as a
-  body with no input source, so it stands still, and stands still as taya on its round.
-  Decide whether a custom room should skip building it (the offline `soloPractice` path in
-  `MatchInstaller.InstallMatch` already does) and prove it in a two-peer native run. Not yet
-  seen by the owner in a build.
+  returns if they leave before the match. A seat the host empties of its bot now has no
+  body in the match (`MatchInstaller.SeatHasABody`, the offline `soloPractice` path extended
+  to a room opened from the game; command-line sessions keep four), and the lobby benches it
+  so a mid-match arrival watches instead (`LobbySession.BenchSeats`). ⚠️ OPEN: not yet proven
+  in a two-peer native run (host and client must build the same seats), and not yet seen by
+  the owner in a build.
 - [ ] **UX-1.8 Real soft currency and hero/item shop.** Built: `EconomyRules`, `wallet.js`,
   `WalletStore`, SHOP popup, UNLOCK/BUY. Deployment DONE: version1 and exact source/params verified in existing project
   production. Live wallet action checks remain open; no runtime pass inferred. SHOP is a popup exposing Hero
