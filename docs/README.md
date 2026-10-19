@@ -311,6 +311,8 @@ Late-join opening hold: [native failure, corrected adoption and countdown regres
 
 Match opening on joining players: [eight real host/joiner pairs, the attacker closing beat, rejected framings and two-player Relay check](reports/arrival-own-beat-2026-10-19/README.md).
 
+Player's room on QoLUpdates: [merge, protocol 174, merged-tree tests and the QoLUpdates baseline](reports/room-qol-merge-2026-10-19/README.md).
+
 Summoned doll replay bodies and held slippers: [original failure, native capture, codec bounds and admission evidence](reports/recorded-companion-2026-10-09/README.md).
 
 Current ordinary Desktop e1c1/protocol154: [actual startup, replay/preview/controlled gameplay and exact in-place installation](reports/companion-title-windows-2026-10-09/README.md).

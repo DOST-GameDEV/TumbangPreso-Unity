@@ -1,3 +1,31 @@
+### ROOM-QOL-MERGE-1019: the player's room on QoLUpdates (IN PROGRESS)
+
+Request 2026-10-19: "merge it to qol updates", the room branch. `player-room-depth-and-bots` (`380430039`)
+merged onto QoLUpdates `c3cd5fba8`. Evidence: [room-qol-merge-2026-10-19](reports/room-qol-merge-2026-10-19/README.md).
+- [x] Merge: one conflict, `MatchArrivalPresentation.cs` (two copies of the same trace lines; QoLUpdates'
+  newer copy with the closing beat stands). The merge carries exactly the room branch's 58 files.
+- [x] Protocol 174: a merged peer builds bodies only for filled seats from `CustomRules.BotSeats`, a 173
+  peer builds four, so with bots off or an OPEN seat they would disagree about which bodies exist.
+  Windows and Android must be rebuilt from the same commit and shipped together.
+- [x] Core 756/756; EditMode 44/44; PlayMode 66/75 on the merged tree, every failure reproduced on pure
+  QoLUpdates or explained (QOL-STALE-PLAYMODE-1019, DIRECTED-ARRIVAL-SOLE-1019).
+- [ ] Two native peers on the merged build in a room with an OPEN seat: both build the same bodies.
+- [ ] `MatchRpc.RequestSnapshotWhenArenaReady` waits for `round.Players.Count >= Balance.PlayerCount`,
+  never reached once a room seat has no body, so such a client never asks for the world. Done means it
+  waits for the installed arena instead and a rejoin into a room with an OPEN seat rehydrates.
+
+### QOL-STALE-PLAYMODE-1019: QoLUpdates PlayMode expectations its own content has outgrown (OPEN)
+
+Measured on pure QoLUpdates `c3cd5fba8` (`playmode-qol-baseline.xml` in the ROOM-QOL-MERGE-1019 report):
+`MatchArrivalFlowTests.CustomStartSelectsVotesLoadsAndBeginsWithoutSecondReady` and
+`QueuedLockInVotesThenLoadsIntroducesAndStartsWithoutReadyInput` expect the vote to land on `BayanPlaza`,
+which left the pool 2026-10-18; `ModelPreviewTests.ClassicRosterUsesTheApprovedClassicRigsAndNoHeroMeshes`
+and `TheReplacedCharacterShowsOnTheSelectScreen` expect the retired `character-male-f` and `team-dante`
+rigs; `TheCastAnimatesInAMatch` and `TheCharacterPreviewIsFramedPosedAndMovable` find `forearm-left`
+motionless (check whether the redesigned rigs still have that bone moving before touching the test);
+`HeroCharacterSelectShowsAbilitiesInsteadOfClassicAttributes` writes into `Logs/shots-preview` that only a
+later test creates, so it fails once in every fresh checkout. Fix each against the shipped content.
+
 ### ARRIVAL-OWN-BEAT-1019: attackers close the match opening on themselves (IN PROGRESS)
 
 Report 2026-10-19, from a room-branch online test: the start-of-match cutscene *"plays for the host
@@ -6219,7 +6247,7 @@ Implementation order within UX-1:
   every room surface and its lettering (`HubShape.Depth`, `HubDepthText`); the whole seat row
   is the door to that seat, with a MOVE HERE / SWITCH hint on hover and focus; SIT HERE is
   replaced by host-only ADD BOT / REMOVE BOT per seat, carried as `CustomRules.BotSeats`
-  (appended wire field, no protocol bump); START GAME is always available to a custom-room
+  (appended wire field; protocol 174 once merged into QoLUpdates, see ROOM-QOL-MERGE-1019); START GAME is always available to a custom-room
   host and the "Bots are off" line is gone. 2026-10-19: a new room opens with a bot in every
   empty seat; a joining player takes a bot's seat (bots never hold a lobby seat) and the bot
   returns if they leave before the match. A seat the host empties of its bot now has no

@@ -1,3 +1,11 @@
+# Room merged into QoLUpdates checkpoint, October19
+
+player-room-depth-and-bots (380430039) merged onto QoLUpdates c3cd5fba8, protocol 174 (per-seat bots
+change which bodies exist; Windows and Android rebuilt together). One conflict, the arrival trace lines.
+Core 756/756, EditMode 44/44, PlayMode 66/75 with every failure reproduced on pure QoLUpdates or
+explained. Open: two native peers in a room with an OPEN seat; the seatless snapshot request; the stale
+QoLUpdates expectations. Evidence: docs/reports/room-qol-merge-2026-10-19. Next: the two-peer run.
+
 # Match opening on joiners checkpoint, October19
 
 Report: the start cutscene played for the host but not for joining players (room-branch online test).
