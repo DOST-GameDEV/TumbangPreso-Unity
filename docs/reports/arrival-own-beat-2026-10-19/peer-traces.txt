@@ -1,0 +1,144 @@
+##### lan-arena-1
+[Arrival] host: gate opened for seat 0
+[Arrival] host: arena opening prepared (24.1 s, full=True)
+[Arrival] host: arena opening rolling
+[Arrival] host: arena opening ran out at 24.1 of 24.1 s
+[Arrival] host: finished after 24.0 s on screen
+[Arrival] host: opening done, waiting for the countdown
+[Arrival] host: peer 0 ready (1/2)
+[Arrival] host: peer 1 ready (2/2)
+[Arrival] host: countdown sent with 2/2 ready
+[Arrival] client: gate opened for seat 1
+[Arrival] client: arena opening prepared (24.1 s, full=True)
+[Arrival] client: arena opening rolling
+[Arrival] client: arena opening ran out at 24.1 of 24.1 s
+[Arrival] client: finished after 24.1 s on screen
+[Arrival] client: opening done, waiting for the countdown
+[Arrival] client: adopting the host's running match; the opening is retired
+##### online-arena-1
+[Arrival] host: gate opened for seat 0
+[Arrival] host: arena opening prepared (24.1 s, full=True)
+[Arrival] host: arena opening rolling
+[Arrival] host: arena opening ran out at 24.1 of 24.1 s
+[Arrival] host: finished after 24.1 s on screen
+[Arrival] host: opening done, waiting for the countdown
+[Arrival] host: peer 0 ready (1/2)
+[Arrival] host: peer 1 ready (2/2)
+[Arrival] host: countdown sent with 2/2 ready
+[Arrival] client: gate opened for seat 1
+[Arrival] client: arena opening prepared (24.1 s, full=True)
+[Arrival] client: arena opening rolling
+[Arrival] client: arena opening ran out at 24.1 of 24.1 s
+[Arrival] client: finished after 24.1 s on screen
+[Arrival] client: opening done, waiting for the countdown
+[Arrival] client: adopting the host's running match; the opening is retired
+##### online-arena-2
+[Arrival] host: gate opened for seat 0
+[Arrival] host: arena opening prepared (24.1 s, full=True)
+[Arrival] host: arena opening rolling
+[Arrival] host: peer 1 ready (1/2)
+[Arrival] host: arena opening ran out at 24.1 of 24.1 s
+[Arrival] host: finished after 24.1 s on screen
+[Arrival] host: opening done, waiting for the countdown
+[Arrival] host: peer 0 ready (2/2)
+[Arrival] host: countdown sent with 2/2 ready
+[Arrival] client: gate opened for seat 1
+[Arrival] client: arena opening prepared (24.1 s, full=True)
+[Arrival] client: arena opening rolling
+[Arrival] client: arena opening ran out at 24.1 of 24.1 s
+[Arrival] client: finished after 22.9 s on screen
+[Arrival] client: opening done, waiting for the countdown
+[Arrival] client: adopting the host's running match; the opening is retired
+##### online-Eskinita-1
+[Arrival] host: gate opened for seat 0
+[Arrival] host: arrival prepared (8.6 s, directed=False, rig=True)
+[Arrival] host: arrival playing
+[Arrival] host: finished after 8.6 s on screen
+[Arrival] host: opening done, waiting for the countdown
+[Arrival] host: peer 0 ready (1/2)
+[Arrival] host: peer 1 ready (2/2)
+[Arrival] host: countdown sent with 2/2 ready
+[Arrival] client: gate opened for seat 1
+[Arrival] client: arrival prepared (8.6 s, directed=False, rig=True)
+[Arrival] client: arrival playing
+[Arrival] client: finished after 8.6 s on screen
+[Arrival] client: opening done, waiting for the countdown
+##### online-Kanto-1
+##### online-Kanto-2
+[Arrival] host: gate opened for seat 0
+[Arrival] host: arrival prepared (11.0 s, directed=True, rig=True)
+[Arrival] host: arrival playing
+[Arrival] host: finished after 11.0 s on screen
+[Arrival] host: opening done, waiting for the countdown
+[Arrival] host: peer 0 ready (1/2)
+[Arrival] host: peer 1 ready (2/2)
+[Arrival] host: countdown sent with 2/2 ready
+[Arrival] client: gate opened for seat 1
+[Arrival] client: arrival prepared (11.0 s, directed=True, rig=True)
+[Arrival] client: arrival playing
+[Arrival] client: finished after 11.0 s on screen
+[Arrival] client: opening done, waiting for the countdown
+[Arrival] client: adopting the host's running match; the opening is retired
+##### online-arena-slow-1
+client slowed to one core, idle priority
+[Arrival] host: gate opened for seat 0
+[Arrival] host: arena opening prepared (24.1 s, full=True)
+[Arrival] host: arena opening rolling
+[Arrival] host: arena opening ran out at 24.1 of 24.1 s
+[Arrival] host: finished after 24.1 s on screen
+[Arrival] host: opening done, waiting for the countdown
+[Arrival] host: peer 0 ready (1/2)
+[Arrival] host: peer 1 ready (2/2)
+[Arrival] host: countdown sent with 2/2 ready
+[Arrival] client: gate opened for seat 1
+[Arrival] client: arena opening prepared (24.1 s, full=True)
+[Arrival] client: arena opening rolling
+[Arrival] client: arena opening ran out at 24.1 of 24.1 s
+[Arrival] client: finished after 24.1 s on screen
+[Arrival] client: opening done, waiting for the countdown
+[Arrival] client: adopting the host's running match; the opening is retired
+##### room-nobots-1
+[Arrival] host: gate opened for seat 0
+[Arrival] host: arrival prepared (8.6 s, directed=False, rig=True)
+[Arrival] host: arrival playing
+[Arrival] host: finished after 8.6 s on screen
+[Arrival] host: opening done, waiting for the countdown
+[Arrival] host: peer 0 ready (1/2)
+[Arrival] host: peer 1 ready (2/2)
+[Arrival] host: countdown sent with 2/2 ready
+[Arrival] client: gate opened for seat 1
+[Arrival] client: arrival prepared (8.6 s, directed=False, rig=True)
+[Arrival] client: arrival playing
+[Arrival] client: finished after 8.6 s on screen
+[Arrival] client: opening done, waiting for the countdown
+[Arrival] client: adopting the host's running match; the opening is retired
+##### room-bots-1
+[Arrival] host: gate opened for seat 0
+[Arrival] host: arrival prepared (8.6 s, directed=False, rig=True)
+[Arrival] host: arrival playing
+[Arrival] host: finished after 8.6 s on screen
+[Arrival] host: opening done, waiting for the countdown
+[Arrival] host: peer 0 ready (1/2)
+[Arrival] host: peer 1 ready (2/2)
+[Arrival] host: countdown sent with 2/2 ready
+[Arrival] client: gate opened for seat 1
+[Arrival] client: arrival prepared (8.6 s, directed=False, rig=True)
+[Arrival] client: arrival playing
+[Arrival] client: finished after 8.6 s on screen
+[Arrival] client: opening done, waiting for the countdown
+[Arrival] client: adopting the host's running match; the opening is retired
+##### own-kanto-1
+[Arrival] host: gate opened for seat 0
+[Arrival] host: arrival prepared (12.0 s, directed=True, rig=True, closes on the taya)
+[Arrival] host: arrival playing
+[Arrival] host: finished after 12.0 s on screen
+[Arrival] host: opening done, waiting for the countdown
+[Arrival] host: peer 0 ready (1/2)
+[Arrival] host: peer 1 ready (2/2)
+[Arrival] host: countdown sent with 2/2 ready
+[Arrival] client: gate opened for seat 1
+[Arrival] client: arrival prepared (12.0 s, directed=True, rig=True, closes on this player, seat 1)
+[Arrival] client: arrival playing
+[Arrival] client: finished after 12.0 s on screen
+[Arrival] client: opening done, waiting for the countdown
+[Arrival] client: adopting the host's running match; the opening is retired

@@ -1,3 +1,17 @@
+# Match opening on joiners checkpoint, October19
+
+Report: the start cutscene played for the host but not for joining players (room-branch online test).
+Session branch claude/game-networking-lan-relay-d56db9 on ASTRAReworks 1735f1d4b; the same trace also on
+claude/room-arrival-trace (room branch 3a98b6678). Eight real host/joiner player pairs (LAN and Relay,
+Arena/Tondo/Kanto, ASTRAReworks and the room branch, bots and empty seats, a slowed joiner) all played the
+joiner's own film in full before the host's countdown: not a network defect. The directed courts close on
+round 1's taya (seat 0, usually the host). Built: an attacker's own 1.6 s closing beat ("YOU · ATTACKER"),
+same film length on every peer, no wire change, protocol 172. DirectedMapArrivalTests 18/20 (two
+pre-existing sole failures, identical on the baseline), arrival/ready fixtures 23/23, Relay pair on Kanto
+verified. Open: verdict on the shot; Tondo/Arena parity; ARENA-SCENERY-IDENTITY-1019;
+DIRECTED-ARRIVAL-SOLE-1019. Internal players Builds/cutscene-trace, cutscene-room and arrival-own are
+task-owned in this worktree. Evidence: docs/reports/arrival-own-beat-2026-10-19. Next: owner verdict.
+
 # Map preview refresh checkpoint, October18
 
 Latest owner correction: display Tondo, Ermita and Sitangkai in place of Eskinita,

@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="20" result="Failed(Child)" total="20" passed="18" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-19 14:49:25Z" end-time="2026-10-19 14:52:12Z" duration="166.8091901">
+  <test-suite type="TestSuite" id="3708" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="2185" result="Failed" site="Child" start-time="2026-10-19 14:49:25Z" end-time="2026-10-19 14:52:12Z" duration="166.809190" total="20" passed="18" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3700" name="TumbangPreso.PlayTests.dll" fullname="D:/GitHub/TumbangPreso-Unity/.claude/worktrees/game-networking-lan-relay-d56db9/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="2185" result="Failed" site="Child" start-time="2026-10-19 14:49:25Z" end-time="2026-10-19 14:52:12Z" duration="166.792810" total="20" passed="18" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24248" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3701" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="2185" result="Failed" site="Child" start-time="2026-10-19 14:49:25Z" end-time="2026-10-19 14:52:12Z" duration="166.783155" total="20" passed="18" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3704" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="2183" result="Failed" site="Child" start-time="2026-10-19 14:49:25Z" end-time="2026-10-19 14:52:12Z" duration="166.774579" total="20" passed="18" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1748" name="DirectedMapArrivalTests" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" testcasecount="20" result="Failed" site="Child" start-time="2026-10-19 14:49:25Z" end-time="2026-10-19 14:52:12Z" duration="166.721728" total="20" passed="18" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1764" name="BridgeAttackerClosesOnThemselves" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.BridgeAttackerClosesOnThemselves" methodname="BridgeAttackerClosesOnThemselves" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="1157948220" result="Passed" start-time="2026-10-19 14:49:25Z" end-time="2026-10-19 14:49:35Z" duration="10.191748" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1755" name="BridgeCameraMotionOff" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.BridgeCameraMotionOff" methodname="BridgeCameraMotionOff" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="1212487757" result="Passed" start-time="2026-10-19 14:49:35Z" end-time="2026-10-19 14:49:39Z" duration="3.936534" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1749" name="BridgeLowArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.BridgeLowArrival" methodname="BridgeLowArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="1239700036" result="Failed" start-time="2026-10-19 14:49:39Z" end-time="2026-10-19 14:49:46Z" duration="6.471076" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  IlalimNgTulay seat0 rendered sole support at2.85
+  Expected: in range (-0.02,0.04)
+  But was:  0.0429514386f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DirectedMapArrivalTests+<Inspect>d__36.MoveNext () [0x00fa0] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\game-networking-lan-relay-d56db9\Assets\TumbangPreso\Tests\PlayMode\DirectedMapArrivalTests.cs:432
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1758" name="BridgeNaturalHeroCountdown" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.BridgeNaturalHeroCountdown" methodname="BridgeNaturalHeroCountdown" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="155710388" result="Passed" start-time="2026-10-19 14:49:46Z" end-time="2026-10-19 14:50:05Z" duration="19.713512" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (12.7 s, directed=True, rig=True, closes on this player, seat 1)
+[Arrival] offline: arrival playing
+[Arrival] offline: finished after 12.6 s on screen
+[Arrival] offline: opening done, waiting for the countdown
+[Slice] round 1 begins, taya is seat 0
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1761" name="BridgeNaturalHeroWalkCadence" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.BridgeNaturalHeroWalkCadence" methodname="BridgeNaturalHeroWalkCadence" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="939344067" result="Passed" start-time="2026-10-19 14:50:05Z" end-time="2026-10-19 14:50:27Z" duration="22.080837" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (12.7 s, directed=True, rig=True, closes on this player, seat 1)
+[Arrival] offline: arrival playing
+[Arrival] offline: finished after 12.6 s on screen
+[Arrival] offline: opening done, waiting for the countdown
+[Slice] round 1 begins, taya is seat 0
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1752" name="BridgeReducedMotionArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.BridgeReducedMotionArrival" methodname="BridgeReducedMotionArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="1164296851" result="Passed" start-time="2026-10-19 14:50:27Z" end-time="2026-10-19 14:50:31Z" duration="4.011915" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Detected one or more triangles where the distance between any 2 vertices is greater than 500 units. The resulting Triangle Mesh can impact simulation and query stability. It is recommended to tessellate meshes that have large triangles. Source mesh name: ground outer plate
+[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1765" name="CoveAttackerClosesOnThemselves" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.CoveAttackerClosesOnThemselves" methodname="CoveAttackerClosesOnThemselves" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="2134426504" result="Passed" start-time="2026-10-19 14:50:31Z" end-time="2026-10-19 14:50:35Z" duration="3.564122" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1756" name="CoveCameraMotionOff" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.CoveCameraMotionOff" methodname="CoveCameraMotionOff" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="2007752939" result="Passed" start-time="2026-10-19 14:50:35Z" end-time="2026-10-19 14:50:37Z" duration="2.553284" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1750" name="CoveCurvedArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.CoveCurvedArrival" methodname="CoveCurvedArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="1589720497" result="Passed" start-time="2026-10-19 14:50:37Z" end-time="2026-10-19 14:50:42Z" duration="4.922597" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1759" name="CoveNaturalHeroCountdown" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.CoveNaturalHeroCountdown" methodname="CoveNaturalHeroCountdown" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="1910347426" result="Passed" start-time="2026-10-19 14:50:42Z" end-time="2026-10-19 14:51:02Z" duration="19.444378" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (14.0 s, directed=True, rig=True, closes on this player, seat 1)
+[Arrival] offline: arrival playing
+[Arrival] offline: finished after 14.0 s on screen
+[Arrival] offline: opening done, waiting for the countdown
+[Slice] round 1 begins, taya is seat 0
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1762" name="CoveNaturalHeroWalkCadence" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.CoveNaturalHeroWalkCadence" methodname="CoveNaturalHeroWalkCadence" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="587375457" result="Passed" start-time="2026-10-19 14:51:02Z" end-time="2026-10-19 14:51:21Z" duration="19.293997" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (14.0 s, directed=True, rig=True, closes on this player, seat 1)
+[Arrival] offline: arrival playing
+[Arrival] offline: finished after 14.0 s on screen
+[Arrival] offline: opening done, waiting for the countdown
+[Slice] round 1 begins, taya is seat 0
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1753" name="CoveReducedMotionArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.CoveReducedMotionArrival" methodname="CoveReducedMotionArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="2128957662" result="Passed" start-time="2026-10-19 14:51:21Z" end-time="2026-10-19 14:51:24Z" duration="2.561260" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1766" name="KantoAttackerClosesOnThemselves" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoAttackerClosesOnThemselves" methodname="KantoAttackerClosesOnThemselves" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="253626204" result="Passed" start-time="2026-10-19 14:51:24Z" end-time="2026-10-19 14:51:26Z" duration="2.564745" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1757" name="KantoCameraMotionOff" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoCameraMotionOff" methodname="KantoCameraMotionOff" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="1266414967" result="Passed" start-time="2026-10-19 14:51:26Z" end-time="2026-10-19 14:51:28Z" duration="1.840999" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1751" name="KantoCrossingArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoCrossingArrival" methodname="KantoCrossingArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="2104504789" result="Failed" start-time="2026-10-19 14:51:28Z" end-time="2026-10-19 14:51:32Z" duration="4.378517" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Kanto seat0 rendered sole support at2.55
+  Expected: in range (-0.02,0.04)
+  But was:  0.0425910205f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DirectedMapArrivalTests+<Inspect>d__36.MoveNext () [0x00fa0] in D:\GitHub\TumbangPreso-Unity\.claude\worktrees\game-networking-lan-relay-d56db9\Assets\TumbangPreso\Tests\PlayMode\DirectedMapArrivalTests.cs:432
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1760" name="KantoNaturalHeroCountdown" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoNaturalHeroCountdown" methodname="KantoNaturalHeroCountdown" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="2059813849" result="Passed" start-time="2026-10-19 14:51:32Z" end-time="2026-10-19 14:51:49Z" duration="16.855021" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (12.0 s, directed=True, rig=True, closes on this player, seat 1)
+[Arrival] offline: arrival playing
+[Arrival] offline: finished after 12.0 s on screen
+[Arrival] offline: opening done, waiting for the countdown
+[Slice] round 1 begins, taya is seat 0
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1763" name="KantoNaturalHeroWalkCadence" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoNaturalHeroWalkCadence" methodname="KantoNaturalHeroWalkCadence" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="999202460" result="Passed" start-time="2026-10-19 14:51:49Z" end-time="2026-10-19 14:52:06Z" duration="16.811084" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: arrival prepared (12.0 s, directed=True, rig=True, closes on this player, seat 1)
+[Arrival] offline: arrival playing
+[Arrival] offline: finished after 12.0 s on screen
+[Arrival] offline: opening done, waiting for the countdown
+[Slice] round 1 begins, taya is seat 0
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1754" name="KantoReducedMotionArrival" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoReducedMotionArrival" methodname="KantoReducedMotionArrival" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="82628806" result="Passed" start-time="2026-10-19 14:52:06Z" end-time="2026-10-19 14:52:08Z" duration="2.263614" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1767" name="KantoTayaKeepsTheSpotlight" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoTayaKeepsTheSpotlight" methodname="KantoTayaKeepsTheSpotlight" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="1939508494" result="Passed" start-time="2026-10-19 14:52:08Z" end-time="2026-10-19 14:52:10Z" duration="1.561019" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+]]></output>
+            </test-case>
+            <test-case id="1768" name="KantoWatcherKeepsTheSpotlight" fullname="TumbangPreso.PlayTests.DirectedMapArrivalTests.KantoWatcherKeepsTheSpotlight" methodname="KantoWatcherKeepsTheSpotlight" classname="TumbangPreso.PlayTests.DirectedMapArrivalTests" runstate="Runnable" seed="1793128576" result="Passed" start-time="2026-10-19 14:52:10Z" end-time="2026-10-19 14:52:12Z" duration="1.682006" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Arrival] offline: gate opened for seat 1
+[Arrival] offline: cancelled before it was shown
+[Arrival] offline: opening done, waiting for the countdown
+[Arrival] offline: cancelled before it was shown
+Saving results to: C:/Users/Andrei/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

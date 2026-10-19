@@ -1,3 +1,57 @@
+### ARRIVAL-OWN-BEAT-1019: attackers close the match opening on themselves (IN PROGRESS)
+
+Report 2026-10-19, from a room-branch online test: the start-of-match cutscene *"plays for the host
+but joining players doesnt play a cutscene"*. After investigation: *"only p1 at the start of the
+game has a cutscene right before the game starts. incorporate also an appropriate simple cutscene
+for other non-taya players right before it starts"*.
+- [x] Trace the opening on every peer: one `[Arrival] host|client|offline:` line per state change in
+  `ReadyGate`, `MatchArrivalPresentation` and `Map.ArenaIntro`, including why an Arena opening refused.
+- [x] Not a network defect. Eight real host/joiner player pairs (LAN and Relay; Arena, Tondo and Kanto;
+  ASTRAReworks and the room branch with and without bots; one joiner slowed to one core) all show the
+  joiner's own film start, run its full length and end before the host's countdown, in its log and on
+  its screen. The directed courts (Kanto, Ilalim, Lagoon) close on round 1's taya: its portrait last,
+  then the spotlight. Round 1's taya is seat 0, usually the host, so every screen's last shots were P1's.
+- [x] After the spotlight an ATTACKER's own screen cuts to their own character for 1.6 s (framed from
+  their renderer bounds, slow push-in, featured greeting, "YOU · ATTACKER"), and the return to their view
+  starts from that shot. The taya's and a watcher's screens keep the spotlight for the same time, so every
+  peer's film is the same length (+1.0 s on each directed court). Presentation only: no wire change,
+  protocol 172 unchanged; input is already held by the opening on every device, so keyboard, pad and
+  touch are unaffected.
+- [x] Focused native PlayMode: `DirectedMapArrivalTests` 18/20 with five new closing-beat cases and the
+  three natural directed countdowns asserting the attacker's own beat (the two failures are
+  DIRECTED-ARRIVAL-SOLE-1019, identical on the baseline); `ArrivalHandoffTests`, `LateJoinReadyGateTests`
+  and `MatchStartContractTests` 23/23. Evidence:
+  [arrival-own-beat-2026-10-19](reports/arrival-own-beat-2026-10-19/README.md).
+- [x] Two real players over Relay on Kanto with this source's built player: the host as taya keeps the
+  spotlight, the joiner (seat 1) closes on itself; both films 12.0 s, both return to their own views.
+- [ ] Verdict on the shot in play (framing, length, caption). Four rejected framings are in the report.
+- [ ] Decide whether Tondo's arrival (every seat gets one portrait, the last is P4) and the Arena opening
+  (the taya reveal is mid-film, the stage build closes it for everyone) also want a personal closing beat.
+- [ ] Found while framing it, belongs to NEW-MAP-HANDOFF-1007's open "stronger individual portrait
+  composition": `MatchArrivalPresentation.PrepareShots` puts every cast portrait's focus 1.86 to 2.04 m over
+  its seat's mark on Ilalim (`Logs/directed-map-arrivals/IlalimNgTulay/composition.txt`), above these
+  characters' heads, so each portrait centres on the air above the player and draws them small and low.
+  Measured cause: the hero model is scaled 2.38 and `DrawnBounds` (`BakeMesh` without scale, then
+  `TransformPoint`) applies it twice, giving a 3.9 m body where `Renderer.bounds` gives 1.76 m. The tests'
+  `RenderedPoints` helper applies it zero times (0.88 m), so the existing spotlight crop check in
+  `DirectedMapArrivalTests.Inspect` cannot catch a crop. The new closing beat uses `Renderer.bounds` (`FrameOwn`).
+
+### ARENA-SCENERY-IDENTITY-1019: arena_stage_props throws every frame of an Arena round (OPEN)
+
+Found 2026-10-19 in every real Arena pair, host and client alike, from `1735f1d4b` (and the room branch):
+`InvalidOperationException: Scenery texture identity was not prepared: arena_stage_props`, thrown from
+`SceneryTextureIdentities.Resolve` via `LocalReplaySceneryState.ArtKey` in `LocalReplayScenerySampler.LateUpdate`,
+once per frame from round 1's start. `arena_stage_props` is absent from `Resources/SceneryTextureIdentities.asset`
+at HEAD. Done means the texture has an identity (or the sampler skips it deliberately), an Arena round logs no
+such exception, and a recorded Arena replay still restores its scenery.
+
+### DIRECTED-ARRIVAL-SOLE-1019: seat 0's sole sits 4 mm over the bound mid-walk on Bridge and Kanto (OPEN)
+
+`DirectedMapArrivalTests.BridgeLowArrival` and `KantoCrossingArrival` fail at 75 per cent of the walk-in:
+`seat0 rendered sole support` 0.04295 m (Ilalim, age 2.85) and 0.04259 m (Kanto, age 2.55) against the 0.04 m
+bound. Identical on the unmodified `aad16105c` baseline, so it predates ARRIVAL-OWN-BEAT-1019 (receipt in that
+entry's report). Decide whether the walk's ground height or the bound is wrong; do not widen the bound unread.
+
 ### MAP-PREVIEW-REFRESH-1018: current previews and five-map pool (DONE)
 
 Owner October18: Host Game still shows the old Eskinita. Replace its preview and

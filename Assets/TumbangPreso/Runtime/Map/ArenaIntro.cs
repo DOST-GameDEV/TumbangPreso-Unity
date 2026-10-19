@@ -227,9 +227,11 @@ namespace TumbangPreso.Map
             var stage = ArenaStage.Instance;
             var match = GameServices.Match;
             // A match already under way (a join in its middle) has no opening to walk out to.
-            if (stage == null || camera == null || players == null || stage.Applied < 0 || ArenaFx.Ensure() == null
-                || (match != null && (match.MatchInProgress || match.RoundNumber > 0))
-                || !Settings.SettingsStore.Current.CinematicCameraMotion) return false;
+            string refused = stage == null ? "no stage" : camera == null ? "no camera" : players == null ? "no players"
+                : stage.Applied < 0 ? "no layout applied" : ArenaFx.Ensure() == null ? "no effects"
+                : match != null && (match.MatchInProgress || match.RoundNumber > 0) ? $"match under way (round {match.RoundNumber})"
+                : !Settings.SettingsStore.Current.CinematicCameraMotion ? "cinematic camera motion off" : null;
+            if (refused != null) { MatchArrivalPresentation.Trace("arena opening refused: " + refused); return false; }
 
             _camera = camera;
             _grade = camera.GetComponent<ColourGrade>();
@@ -286,10 +288,13 @@ namespace TumbangPreso.Map
         /// </summary>
         public static void Stop() { if (Instance != null) Instance.End(); else Unmuffle(); }
 
-        public void End()
+        public void End() => End("stopped");
+
+        private void End(string why)
         {
             Unmuffle();
             if (!_prepared) return;
+            MatchArrivalPresentation.Trace($"arena opening {why} at {Age:F1} of {Timeline.End:F1} s");
             _prepared = false; Playing = false;
             Now = Beat.Done;
 
@@ -364,13 +369,13 @@ namespace TumbangPreso.Map
 
             // A probe or a film that takes the stage for itself (`ArenaStage.HoldLayout`) gets it whole, at once.
             var stage = ArenaStage.Instance;
-            if (stage == null || stage.HoldLayout >= 0) { End(); return; }
+            if (stage == null || stage.HoldLayout >= 0) { End(stage == null ? "lost its stage" : "gave the stage to a held layout"); return; }
 
             Age = double.IsNaN(Began) ? 0.0f : Mathf.Max(0.0f, (float)(SharedUltimatePhase.Now - Began));
             if (Age >= Timeline.End)
             {
                 LastCompleted = true;
-                End();
+                End("ran out");
                 return;
             }
 
@@ -389,7 +394,7 @@ namespace TumbangPreso.Map
         {
             var stage = ArenaStage.Instance;
             var fx = ArenaFx.Instance;
-            if (stage == null || fx == null || _camera == null) { End(); return; }
+            if (stage == null || fx == null || _camera == null) { End("lost its stage, effects or camera"); return; }
 
             var t = Timeline;
             float age = Age, build = age - t.Build;
