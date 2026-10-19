@@ -18,10 +18,36 @@ A LAN room can be played over a virtual LAN. What has to be true, and what goes 
   room can be listed while the host's Windows Firewall drops every inbound packet to 8910.
   Windows files Hamachi-style adapters under **Public** networks, and a game (or the Unity
   Editor) allowed on Private only is blocked there. The joiner then waits about 24 s and
-  fails with "No answer from <address>" (`JoinFailureRules`). Fix it on the host: allow the
-  host's executable (or the Editor) inbound on Public networks, or mark the VPN network
-  Private. The joiner's firewall normally lets the host's replies back in, because they answer
-  packets the joiner sent first (not yet verified on a blocked joiner).
+  fails with "No answer from <address>" (`JoinFailureRules`). The joiner's firewall normally
+  lets the host's replies back in, because they answer packets the joiner sent first (not yet
+  verified on a blocked joiner).
+- **Block beats allow.** Answering Windows' first-run prompt with Public unticked writes an
+  explicit inbound BLOCK rule for the program on Public (the reporting PC has one for the Unity
+  Editor). An allow rule added beside it changes nothing until that block rule is gone.
+- **The game's one rule.** `Tumbang Preso (LAN)`: inbound, allow, UDP, Private and Public,
+  scoped to the program's own path. No port rule, nothing for TCP, nothing for any other
+  program. The host needs both UDP 8910 and 8911 inbound (the beacon answers discovery
+  queries); the program-scoped rule covers both. Command text: `Core.LanFirewallRules`.
+  - **Installed copies** get it from the installer (`installer/TumbangPreso.iss`, built by
+    `python tools/build_installer.py --source <GameBuilder output>`; Inno Setup 6.3+). It asks
+    for admin once at install, adds the rule for `{app}\TumbangPreso.exe`, launches the game as
+    the original user, and removes exactly that rule on uninstall.
+  - **Zip copies and the Editor**: the room tells the host. When the local player hosts a LAN
+    room on Windows, `LanFirewall` reads without admin (rule strings in the local and Group
+    Policy stores, the active profiles from `HNetCfg.FwPolicy2`) whether this exe is reachable
+    on every active Private or Public network. If not, the room shows one line by the address
+    and **ALLOW LAN PLAY**, which starts a PowerShell helper with the "runas" verb: Windows
+    shows its UAC prompt, the helper removes only the block rules naming this exact exe, runs the
+    installer's own `netsh` delete and add, and exits. The game stays unelevated, and the line only
+    says allowed once a fresh read agrees. Hidden for online (Relay) rooms, clients and non-Windows.
+    Shields up ("Block all incoming connections") or a block rule for every program is reported
+    and never touched. Not detected: a third-party firewall that replaces Windows Firewall.
+    Windows' UAC prompt itself needs a mouse, keyboard or touch; a controller cannot answer it.
+- **Checking it by hand** (host PC, no game change): `wf.msc` > Inbound Rules, sort by Program.
+  The game's path should have `Tumbang Preso (LAN)` (Allow, UDP, Private, Public) and no Block
+  rule. Or in PowerShell: `Get-NetFirewallRule -DisplayName 'Tumbang Preso (LAN)' |
+  Get-NetFirewallApplicationFilter`. Marking the VPN network Private also works, but only for
+  hosts whose rule covers Private.
 - **Same build.** Beacon v3 (`LanBeacon.MagicV3`) carries the host's protocol and map, so a
   host on another protocol is listed as DIFFERENT VERSION with no JOIN, and the MAP column
   names the map. A host from before v3 (v1 or v2 beacon) says neither: its row reads MAP

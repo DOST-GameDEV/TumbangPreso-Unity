@@ -457,6 +457,24 @@ namespace TumbangPreso.UI.Hub
         private HubButton _primary, _map, _watch;
         private bool _chatShown;
 
+        // ⚠️⚠️ THE HOST'S FIREWALL LINE (LAN-VPN-JOIN-1020). A zip copy of the game hosting a LAN
+        // room can be listed by every player on a VPN and answer none of them, because Windows'
+        // first-run prompt allows it on Private networks only and files Hamachi and Radmin under
+        // Public. `LanFirewall` reads, without admin, whether this program is reachable on the
+        // active networks; when it is not, the room says so in one line beside the address the
+        // line is about, with ALLOW LAN PLAY, which asks Windows (UAC) to add the installer's rule.
+        // An installed copy reads Open and shows nothing, and so does an online room, a client and
+        // every non-Windows player. Pad and keyboard reach the control on the screen's focus path,
+        // a thumb taps it, and BACK still leaves the room; it opens no layer of its own.
+        // ⚠️ IT SITS IN THE RIGHT-HAND COLUMN BESIDE THE PLAYERS' PANEL, 430 wide so it never runs
+        // under WATCH INSTEAD, and steps aside while the chat panel holds that column.
+        internal const float FirewallWidth = 430;
+        private RectTransform _firewall;
+        private Text _firewallLine;
+        private HubButton _firewallAllow;
+        private string _firewallDrawn = "";
+        private int _firewallAllowedSeen;
+
         public override Selectable FirstFocus => _primary;
         private string _drawn = "";
 
@@ -478,7 +496,21 @@ namespace TumbangPreso.UI.Hub
             HubKit.Place(_address.rectTransform, HubKit.TopRight, new Vector2(-HubKit.Margin, -(HubKit.Margin + 120)), new Vector2(600, 48));
             _address.gameObject.AddComponent<Shadow>().effectColor = HubStyle.Ink;
 
-            _mapLine = HubKit.Text(Root, "MapLine", "", HubStyle.Label, true, HubStyle.Honey, TextAnchor.MiddleLeft);
+            // 16 units under the address line, two rows of text, then the control.
+            _firewall = HubKit.Place(HubKit.Rect(Root, "LanFirewall"), HubKit.TopRight,
+                                     new Vector2(-HubKit.Margin, -(HubKit.Margin + 184)), new Vector2(FirewallWidth, 176));
+            _firewallLine = HubKit.Text(_firewall, "Line", "", HubStyle.Floor, false, HubStyle.Honey, TextAnchor.UpperRight);
+            HubKit.Place(_firewallLine.rectTransform, HubKit.TopRight, Vector2.zero, new Vector2(FirewallWidth, 76));
+            _firewallLine.gameObject.AddComponent<Shadow>().effectColor = HubStyle.Ink;
+            _firewallAllow = HubKit.Button(_firewall, "AllowLanPlay", LanFirewallRules.AllowLabel, HubStyle.Honey, AllowLanPlay,
+                                           HubStyle.Label, 969, HubGlyph.Mark.House);
+            HubKit.Place((RectTransform)_firewallAllow.transform, HubKit.TopRight, new Vector2(0, -84), new Vector2(FirewallWidth, 92));
+            HubKit.Fit(HubKit.LabelOf(_firewallAllow), FirewallWidth - 110);
+            _firewall.gameObject.SetActive(false);
+            Net.LanFirewall.Invalidate();
+            _firewallAllowedSeen = Net.LanFirewall.AllowedCount;
+
+            _mapLine =HubKit.Text(Root, "MapLine", "", HubStyle.Label, true, HubStyle.Honey, TextAnchor.MiddleLeft);
             HubKit.Place(_mapLine.rectTransform, HubKit.TopLeft, new Vector2(HubKit.Margin + HubChrome.BarHeight + 34, -HubKit.Margin - 100), new Vector2(900, 50));
 
             var panel = _playersPanel = HubKit.Place(HubKit.Rect(Root, "Players"), HubKit.Centre, new Vector2(0, 10), new Vector2(RoomSeatWidth, 620));
@@ -514,10 +546,11 @@ namespace TumbangPreso.UI.Hub
             mapLabel.rectTransform.offsetMin = new Vector2(72, 6);
 
             plate.Depth = PanelDepth;
-            foreach (var words in new[] { _title, _mapLine, _address, _count, _status })
+            foreach (var words in new[] { _title, _mapLine, _address, _count, _status, _firewallLine })
                 HubDepthText.On(words, TextDepth);
 
             Draw(true);
+            DrawFirewall();
             HubSlap.On(panel, 0, -1);
         }
 
@@ -595,7 +628,54 @@ namespace TumbangPreso.UI.Hub
             Hub.Toast("Code copied: " + Hub.Host.RoomCode);
         }
 
-        public override void Tick() => Draw(false);
+        public override void Tick()
+        {
+            Draw(false);
+            DrawFirewall();
+        }
+
+        /// <summary>
+        /// The host's firewall line and its control, redrawn only when what they say changes.
+        /// ⚠️ A CONTROL THAT HIDES WHILE FOCUSED HANDS FOCUS TO THE PRIMARY, so a pad that just
+        /// pressed ALLOW LAN PLAY is never left holding nothing.
+        /// </summary>
+        private void DrawFirewall()
+        {
+            if (_firewall == null) return;
+            var host = Hub.Host;
+            bool lanHost = host != null && host.InRoom && host.IsHost && !host.RoomOnline && Net.LanFirewall.Supported;
+            if (lanHost)
+            {
+                var beacon = Net.NetSession.Instance != null ? Net.NetSession.Instance.Beacon : null;
+                Net.LanFirewall.Watch(beacon != null ? beacon.Port : Net.LobbySession.DefaultPort);
+            }
+            if (Net.LanFirewall.AllowedCount != _firewallAllowedSeen)
+            {
+                _firewallAllowedSeen = Net.LanFirewall.AllowedCount;
+                if (lanHost) Hub.Toast(LanFirewallRules.AllowedToast);
+            }
+
+            string line = lanHost ? Net.LanFirewall.Line : "";
+            bool shown = line.Length > 0 && !_chatShown;
+            bool offer = shown && Net.LanFirewall.CanRequest;
+            string key = shown + "|" + offer + "|" + line;
+            if (key == _firewallDrawn) return;
+            _firewallDrawn = key;
+
+            var events = UnityEngine.EventSystems.EventSystem.current;
+            bool focused = events != null && events.currentSelectedGameObject == _firewallAllow.gameObject;
+            _firewall.gameObject.SetActive(shown);
+            _firewallLine.text = line;
+            _firewallAllow.gameObject.SetActive(offer);
+            Hub.RefreshFocus();
+            if (focused && !offer && _primary != null) events.SetSelectedGameObject(_primary.gameObject);
+        }
+
+        private void AllowLanPlay()
+        {
+            Net.LanFirewall.RequestAllow();
+            DrawFirewall();
+        }
 
         private void Draw(bool force)
         {

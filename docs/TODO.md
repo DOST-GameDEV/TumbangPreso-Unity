@@ -71,6 +71,24 @@ on Public. A read-only audit of the join path (2026-10-20) found:
   `HubJoinWaitTests`, whose teardown does not stop browsing; `HubJoinLanVersionTests` does. Done means the
   fixture order no longer decides it (stop browsing in `HubJoinWaitTests`' teardown, or have the review
   reset the browser it asserts on).
+- [x] One firewall rule, `Core.LanFirewallRules`: `Tumbang Preso (LAN)`, inbound allow UDP, Private and Public,
+  scoped to the exe's path (the host needs 8910 and 8911 inbound; nothing for TCP or other programs). Read without
+  admin from the rule strings (local and Group Policy stores) and `HNetCfg.FwPolicy2`'s active profiles; a block
+  rule naming this exe beats every allow and is the only thing the helper removes. Core.Tests
+  `LanFirewallRulesTests` 25/25 (captured rule shapes, ports, narrowing, shields up, policy merge, both scripts
+  parsed by Windows PowerShell); full Core 792/792. Live read on the reporting PC, unelevated: Unity Editor
+  `BlockedByRule` on Public (its `{6C852D9C...}` block rule), a copy allowed on Public `Open`.
+- [x] Installer: `installer/TumbangPreso.iss` (Inno Setup 6.3+, per machine, admin once, adds the rule for
+  `{app}\TumbangPreso.exe`, removes exactly it on uninstall, launches the game as the original user), built by
+  `python tools/build_installer.py --source <GameBuilder output>`. Its netsh text is asserted against Core's.
+- [ ] Compile the installer (Inno Setup is not installed on this PC) and install/uninstall it on a test PC:
+  the rule appears in `wf.msc`, a LAN room over Hamachi answers, uninstall removes the rule.
+- [x] In-game fallback for zip copies and the Editor: `Net.LanFirewall` reads when the local player hosts a LAN
+  room on Windows (again on window focus and after a request); `HubLobby` shows one line by the address and
+  ALLOW LAN PLAY, which runs the helper elevated through "runas" (UAC) and lets a fresh read decide. Hidden for
+  Relay rooms, clients, non-Windows and batch mode. EditMode `HubLobbyLanFirewallTests` (see the report).
+- [ ] A real ALLOW LAN PLAY on a host PC: UAC prompt, rule added, a block rule from Windows' prompt removed,
+  a join over Hamachi answered. Not run here: this PC's firewall is not to be changed by a session.
 
 ### ROOM-QOL-MERGE-1019: the player's room on QoLUpdates (IN PROGRESS)
 

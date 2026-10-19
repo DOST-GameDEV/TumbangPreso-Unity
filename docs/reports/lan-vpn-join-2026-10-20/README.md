@@ -147,3 +147,56 @@ No second build on another protocol has been run against this one on a real netw
 sends the packets such a host sends, from this machine. No real Hamachi pair (the TODO's host-firewall item).
 Pad and touch reach REFRESH through the hub's existing focus path and sticker hit area; no physical pad or
 phone was used.
+
+# Removing the cause: the host's firewall rule
+
+## What Windows does
+
+Read unelevated from this PC's registry (678 rules, active profile Public, both networks Public):
+Windows' first-run prompt writes `TCP Query User{guid}<path>` and `UDP Query User{guid}<path>` rules with
+the path lower-cased, one per ticked profile, and an explicit BLOCK rule for an unticked one. The Unity
+Editor here has Allow on Domain and Block on Public, so it cannot host a room over Hamachi, and an allow
+rule added beside that block would change nothing: block wins.
+
+## The change
+
+- `Core.LanFirewallRules`: the one rule (`Tumbang Preso (LAN)`, inbound allow UDP, Private and Public, the
+  exe's path) as netsh text; the read-only PowerShell probe; the parser for the registry rule grammar
+  ([MS-GPFAS] 2.2.2.10) and the verdict (Open, NeedsRule, BlockedByRule with the exact block rule ids,
+  BlockedByPolicy for shields up or an every-program block); the elevated helper script; the line.
+- `installer/TumbangPreso.iss` + `tools/build_installer.py`: per-machine Inno Setup installer from a
+  GameBuilder output folder. Admin once; adds the rule for `{app}\TumbangPreso.exe` (delete first, so a
+  reinstall never doubles it); launches the game as the original user; uninstall deletes exactly that rule.
+- `Net.LanFirewall` + `HubLobby`: on Windows, when the local player hosts a LAN room, the read runs off the
+  main thread (and again on window focus and after a request). If this exe is not reachable on an active
+  Private or Public network, one line by the address and ALLOW LAN PLAY (House mark, on the focus path, its
+  own hit area). The press starts `powershell -EncodedCommand` with the "runas" verb: Windows' UAC prompt,
+  then the helper removes the named block rules by exact id, runs the installer's netsh delete and add, and
+  exits. The game never runs elevated. The script travels in the command line rather than a temp file, so
+  nothing unelevated can rewrite it between the prompt and the run. "LAN play allowed" is only said after a
+  fresh read agrees; a declined prompt says "Not changed". Hidden for Relay rooms, clients, non-Windows.
+
+## Verification
+
+- Core.Tests `LanFirewallRulesTests` 25/25; full Core 792/792.
+- Live, read-only, on this PC (`TUMP_FIREWALL_LIVE`): Unity Editor `BlockedByRule`, checked Public, removable
+  `{6C852D9C-85B4-4325-893A-58E63F4D643F}`, about 2 s; `C:\Users\Andrei\tp-astra\TumbangPreso.exe` (a copy
+  allowed on Public by the prompt, path stored lower-case) `Open`.
+- Read-only checks of the helper's pieces: `Get-NetFirewallRule -Name <escaped id> | Where Name -eq <id>` finds
+  exactly one rule for a path-bearing prompt id and for the Editor's GUID id; `Start-Process -ArgumentList`
+  hands the netsh text through verbatim (quotes and an apostrophe in the path, checked with `cmd /c echo`).
+- EditMode `HubLobbyLanFirewallTests`: 10/10 with HubLobbySeatControlsTests 13/13 (23/23, D3D11, captures room_firewall_v1 and _policy); that run had the first, longer copy. The two-row copy and the 16-unit gap that followed are asserted in Core 792/792 but not re-run in Unity or re-rendered.
+
+## Not verified here, and the steps
+
+This PC's firewall was not changed, so neither the installer nor the helper has run for real. On a host PC:
+
+1. Installer: install Inno Setup 6.3+, `python tools/build_installer.py --source <GameBuilder output>`, run
+   the setup it prints. In `wf.msc` > Inbound Rules: `Tumbang Preso (LAN)`, Allow, UDP, Private and Public,
+   program `C:\Program Files\Tumbang Preso\TumbangPreso.exe`. Host a LAN room; a player over Hamachi joins.
+   Uninstall; the rule is gone and other rules are untouched.
+2. Zip copy: run a copy that Windows' prompt allowed on Private only (or the Editor here), host a LAN room
+   while Hamachi is connected. The room reads "Windows Firewall may block Hamachi or Radmin players." Press ALLOW LAN PLAY, answer Yes to UAC. The line goes and a toast reads "LAN play
+   allowed in Windows Firewall."; `wf.msc` shows `Tumbang Preso (LAN)` for that exe and its Public block rule
+   is gone. Pressing No instead leaves everything as it was and the line says "Not changed".
+   `Player.log` has one `[LanFirewall]` line per change of verdict.

@@ -364,7 +364,8 @@ namespace TumbangPreso.UI.Hub
             _plate.Allowed = plate && !(Top != null && Top.IsPopup && !Top.ShowsQueuePlate);
         }
 
-        public void Toast(string words) => _toast.Show(words);
+        // A hub that never ran Build (a screen built alone, as the EditMode room tests do) has no toast layer.
+        public void Toast(string words) { if (_toast != null) _toast.Show(words); }
 
         private void Update()
         {
