@@ -1,3 +1,19 @@
+# Main integration and map preview checkpoint, October20
+
+Owner explicitly requests main integration in this task. QoLUpdates adcd0f957
+contains ASTRAReworks 1735f1d4b. Preserve backup 1fcb64d12's snapshot ancestry
+with an ours merge because its tree deliberately equals old main 85504a52c.
+Five incoming preview loops were reverted while their current posters/receipts
+survived. Restored their October18 recordings; all six selectable pairs pass
+media hash, format and decoded-poster checks. Native playback also found incoming
+Payo used unsupported HEVC on this Windows setup. Converted the same footage to
+H.264 and updated only its video receipt hash, retaining its source fingerprint.
+Core796/796 and native1/1 covering all six maps pass, including poster pixels,
+loops and decoder disposal. Test-only settings and profile/input preferences
+are restored. Publication targets main under this explicit owner request.
+No new player build or broad gameplay acceptance. MAIN-MAP-PREVIEW-1020 is DONE.
+[Evidence](reports/main-merge-preview-2026-10-20.md).
+
 # Glass match HUD checkpoint, October20
 
 Request: "overhaul the ingame ui. make it similar to overwatch's simple ingame hud", pushed to QoLUpdates.

@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Main integration and restored Tondo footage: [branch history and preview validation](reports/main-merge-preview-2026-10-20.md).
+
 Current five-map pool and refreshed video previews: [source receipts, native playback and selection layout](reports/map-preview-refresh-2026-10-18/README.md).
 
 Current Nemu ghost replication and mixed-character cutscenes: [host state, real Relay/LAN delivery and native rig checks](reports/nemu-network-2026-10-15/README.md).
