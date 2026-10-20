@@ -1,8 +1,8 @@
 {
     "map": "Kanto",
-    "sourceFingerprint": "f6c2081077bb789790581db912cc7908451a03b0fe5042b74c00b8e2b496a407",
-    "videoSha256": "33e24ef8486774013d7dc95091ebe2d95848f425657c2604ccc3c76745b7d53b",
-    "posterSha256": "dfa4b3d4043a26c7a9098f52572e19c77529178bb709b237fb8f1acb7273a8a6",
+    "sourceFingerprint": "2cad55b37897b6032664e304909216ea3af69059401db1165ebdd6540e36e4d3",
+    "videoSha256": "1ec8fd167157c1fcb31946169b6ec5758ef71c9ffde035a2d9bc131f8ad69e51",
+    "posterSha256": "978851e71df9a0b64164ad6f5c70641d8b5342db955f3bea11606dd21ff76d2c",
     "width": 1920,
     "height": 1080,
     "fps": 30,

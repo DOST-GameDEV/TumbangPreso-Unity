@@ -1,9 +1,9 @@
 ### MAIN-MAP-PREVIEW-1020: branch integration and current Tondo footage (DONE)
 
 - [x] Integrate current QoLUpdates and its ASTRAReworks ancestry; retain the backup archive as recoverable history without replacing current source with old main.
-- [x] Restore five reverted preview loops to their existing posters and capture receipts. All six selectable pairs pass SHA-256, format and decoded-poster checks.
-- [x] Convert the incoming HEVC Payo recording to H.264 for Windows decoding, preserving its footage, dimensions and frame count.
-- [x] Core 796/796 and native all-map decoding, poster-pixel, looping and disposal checks pass. Integrated publication targets main under the owner's explicit request.
+- [x] Freshly record all six maps from current source, install matching videos/posters/fallback cards and bind receipts to their stable capture fingerprints.
+- [x] Use H.264 for every current preview, retaining 1080p/30fps/780frames and existing GUIDs. Every fallback thumbnail matches its poster.
+- [x] Current-source/media freshness passes for all six maps, full-file decoding passes and native all-map poster-pixel/looping/disposal checks pass. Core 796/796 remains green. Publication targets main under the owner's explicit request.
 - Evidence: [integration and preview repair](reports/main-merge-preview-2026-10-20.md).
 
 ### LAN-HERO-LOCK-1020: LAN rooms lock heroes like Online (IN PROGRESS)

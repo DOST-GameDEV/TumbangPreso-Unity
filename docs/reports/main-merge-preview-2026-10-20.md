@@ -1,52 +1,48 @@
-# Main integration and recorded map preview repair
+# Main integration and current map previews
 
-Owner request, October 20: merge every GitHub branch into main and correct the
-old map shown by Tondo's preview. Work used an isolated integration checkout.
-Existing checkouts and their uncommitted settings, artwork and intro edits stay intact.
+All six selectable maps now have newly recorded videos, first-frame posters and
+matching fallback thumbnails from the current source: Tondo, Ermita, Sitangkai,
+BGC, The Philippine Arena and Payo. Existing map IDs, framing, map assets and
+media GUIDs are preserved. Each receipt records its actual capture fingerprint
+and the installed video/poster hashes.
 
-QoLUpdates adcd0f957 already contains ASTRAReworks 1735f1d4b. The backup branch
-1fcb64d12 deliberately has the exact tree of old main 85504a52c; its commit
-message identifies its other parents as recoverable snapshots, not integrated
-release content. Preserve that archive's history with an ours merge, retaining
-QoLUpdates' newer playable tree. This includes every current remote branch head
-without replacing current source with the archive's old main tree.
+## Integration
 
-The incoming Eskinita video depicted the old flat street while its poster and
-playable scene depicted the rebuilt stepped alley. The same integration reverted
-five recorded loops without reverting their posters or source receipts. Restore
-Eskinita, IlalimNgTulay, LagoonCove, Kanto and Arena loops from the recorded
-October 18 publication. Existing media GUIDs, posters and playable maps are unchanged.
+Owner October 20 requested every GitHub branch in main. QoLUpdates adcd0f957
+already contains ASTRAReworks 1735f1d4b. Backup 1fcb64d12 deliberately has the
+exact tree of old main 85504a52c and keeps recoverable snapshots as its parents.
+An ours merge preserves that archive's history while retaining the newer
+QoLUpdates playable tree. All current branch heads are included in main.
+Initial integration was published as 2fa53e3ee.
 
-All six selectable video/poster pairs match their recorded SHA-256 receipts.
-ffprobe confirms 1920x1080, 30 fps, 780 frames and 26 seconds for each clip.
-Decoded first frames match their posters within the existing native fixture's
-20-level mean RGB tolerance; Tondo measures 2.448. Its restored frame was
-visually inspected and shows the stepped alley.
+## Preview repair
 
-The first native all-map run passed each restored clip, then failed on Payo.
-Its incoming MP4 actually contains HEVC; Windows Media Foundation rejected it
-with 0xc00d5212 and Unity could not decode it. Convert that same recorded footage
-to H.264 without changing dimensions, frame rate or frame count. Preserve the
-poster and source fingerprint; update only the video's hash in its receipt.
+Incoming Tondo footage showed the old flat street while its poster and playable
+scene showed the rebuilt stepped alley. Five loops had reverted during earlier
+integration. Payo's incoming HEVC recording also failed native Windows decoding
+with 0xc00d5212. Initial restoration and H.264 conversion passed playback, then
+the owner's all-preview request prompted a stronger source-freshness audit.
+That audit rejected all six receipts after later rendering/quality changes.
 
-The H.264 conversion preserves all 780 frames at 1920x1080 and 30 fps. Its
-100,126,525-byte blob stays below GitHub's 100 MiB limit. Full-clip SSIM against
-the incoming HEVC recording is 0.977105. No new map capture or framing change.
+Recorded all six again with the existing MapPreviewSurface camera and settled
+lighting. Every capture retained the same source fingerprint before and after
+recording. All six installed videos are H.264 at 1920x1080, 30 fps, 780 frames and
+26 seconds. Payo's delivery encode uses CRF 14/slower with 30M maxrate and 60M buffer;
+its 100,125,475-byte file is below 100 MiB. Resolution, frame count and framing stay
+intact. Each fallback card is byte-identical to its new matching poster.
 
-Core tests pass 796/796 with no skips. Native revalidation passes 1/1, covering
-all six selectable maps in NewThreeRecordedPreviewTests:
-AllSelectableCourtFootageDecodesAtOriginalQualityWithoutLoadingAnArena. This
-checks actual decoded pixels against the matching poster, clip identity,
-resolution, frame count, frame rate, end-to-start loops and decoder disposal.
-No arena scene loads solely for a recorded preview. Native Tondo's mean RGB
-difference is 6.563; Payo's is 6.648, both below the existing limit of 20.
+## Validation
 
-Validation used Unity 6000.5.8f1 and D3D11 with an isolated company/product and
-named profile. Test-only project settings were restored to their original bytes;
-the runner verified preservation of the named profile and input preferences.
-Original failed and final passing log/XML evidence is retained locally under
-work/verification/merge-main-1020 after temporary-checkout cleanup. Existing
-Windows timestamp/colour warnings remain; playback assertions pass.
+- Current MapPreviewFreshness.Validate succeeds for all six map/source/media receipts.
+- Full ffmpeg decode of every 780-frame installed clip succeeds without errors.
+- Native NewThreeRecordedPreviewTests.AllSelectableCourtFootageDecodesAtOriginalQualityWithoutLoadingAnArena passes 1/1, exercising all six maps: decoded-pixel/poster matching, clip identity, resolution/fps/frame count, end-to-start loops and decoder disposal. No live arena scene is loaded solely for a recording.
+- All six newly captured posters were visually inspected.
+- Core 796/796 passed with no skips; unchanged code reuses that integration evidence.
 
-No player build, target-device playback or broader gameplay qualification is
-claimed. Source dependency fingerprints were not regenerated or restamped.
+Unity 6000.5.8f1/D3D11 used an isolated company/product and named profile. The
+runner verified profile/input-preference preservation. Test-only settings were
+restored to their exact original bytes. Original failure logs and current
+capture/test/validation evidence are retained locally in
+work/verification/merge-main-1020. Windows timestamp/colour warnings remain;
+native playback assertions pass. No player build, mobile/Linux device playback
+or broader gameplay qualification is claimed.

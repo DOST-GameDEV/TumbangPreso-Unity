@@ -1,16 +1,15 @@
-# Main integration and map preview checkpoint, October20
+# Main integration and all-map preview checkpoint, October20
 
-Owner explicitly requests main integration in this task. QoLUpdates adcd0f957
-contains ASTRAReworks 1735f1d4b. Preserve backup 1fcb64d12's snapshot ancestry
-with an ours merge because its tree deliberately equals old main 85504a52c.
-Five incoming preview loops were reverted while their current posters/receipts
-survived. Restored their October18 recordings; all six selectable pairs pass
-media hash, format and decoded-poster checks. Native playback also found incoming
-Payo used unsupported HEVC on this Windows setup. Converted the same footage to
-H.264 and updated only its video receipt hash, retaining its source fingerprint.
-Core796/796 and native1/1 covering all six maps pass, including poster pixels,
-loops and decoder disposal. Test-only settings and profile/input preferences
-are restored. Publication targets main under this explicit owner request.
+Owner explicitly requests main integration and every preview current/working.
+Main 2fa53e3ee includes QoLUpdates adcd0f957, ASTRAReworks 1735f1d4b and backup
+1fcb64d12's recoverable snapshot history. Current playable tree remains intact.
+After initial clip restoration, the stronger all-map audit rejected all six
+source receipts. Re-recorded every selectable map with stable source hashes;
+installed six H.264 loops/posters, synchronized fallback cards and updated
+captured-source receipts with existing GUIDs. All six current-source/media
+checks and full-file decodes pass. Native 1/1 covers all six maps' actual pixels,
+looping and decoder disposal. Core 796/796 reused unchanged. Test-only settings
+and named profile/input preferences restored. Publication targets main.
 No new player build or broad gameplay acceptance. MAIN-MAP-PREVIEW-1020 is DONE.
 [Evidence](reports/main-merge-preview-2026-10-20.md).
 
