@@ -23,9 +23,23 @@ namespace TumbangPreso.Net
     ///   TumbangPreso.exe -tp-dedicated 7777        referee with no seat
     ///   TumbangPreso.exe -tp-join 127.0.0.1 7777   client
     ///   TumbangPreso.exe -tp-map Eskinita          which arena to open
+    ///   TumbangPreso.exe -tp-lobby                 stop in the LOBBY instead of the arena
+    ///   TumbangPreso.exe -tp-autoseat 3            press seat P4 once the lobby is up (-1 spectates)
+    ///   TumbangPreso.exe -tp-autoready             press READY once the seat has settled
+    ///   TumbangPreso.exe -tp-autodelay 12          wait this long before pressing anything
     ///   TumbangPreso.exe -logFile host.log         Unity's own, and it is REQUIRED for two
     ///                                              instances: both write to one Player.log
     ///                                              otherwise and the interleaving is unreadable
+    ///
+    /// ⚠️⚠️ `-tp-lobby` EXISTS BECAUSE THE LOBBY WAS THE ONE SCREEN THE TWO-PROCESS TEST COULD
+    /// NOT REACH, AND THAT IS EXACTLY WHERE THE BUGS WERE. `-tp-host` and `-tp-join` both call
+    /// `SceneFlow.Go(map)`, so every run so far went straight to the arena and proved only that
+    /// the transport works. Two sessions then reasoned about seat switching and the ready gate
+    /// from the source, wrote them up as fixed, and 🧑 found both still broken on two real
+    /// machines. A screen that cannot be reached headlessly is a screen that gets verified by
+    /// argument. `-tp-autoseat` and `-tp-autoready` are the other half: they press the actual
+    /// Buttons, through `onClick`, so the `interactable` rule is under test too rather than
+    /// being bypassed by a direct call into `MatchRpc`.
     ///
     /// ⚠️ IT RUNS BEFORE ANY SCENE, so a switch cannot be missed by whichever screen happened
     /// to load first.
@@ -37,6 +51,13 @@ namespace TumbangPreso.Net
         public const string JoinSwitch = "-tp-join";
         public const string MapSwitch = "-tp-map";
         public const string ProfileSwitch = "-tp-profile";
+        public const string LobbySwitch = "-tp-lobby";
+        public const string AutoSeatSwitch = "-tp-autoseat";
+        public const string AutoReadySwitch = "-tp-autoready";
+        public const string AutoDelaySwitch = "-tp-autodelay";
+
+        /// <summary>`-tp-autoseat` was not given, so the autopilot leaves the seat alone.</summary>
+        public const int NoAutoSeat = -2;
 
         /// <summary>True when the command line asked for a session, so the menus are skipped.</summary>
         public static bool Requested { get; private set; }
@@ -72,6 +93,16 @@ namespace TumbangPreso.Net
 
             string map = Value(args, MapSwitch) ?? UI.SceneFlow.Eskinita;
 
+            bool toLobby = Has(args, LobbySwitch);
+            int autoSeat = AutoSeat(args);
+            bool autoReady = Has(args, AutoReadySwitch);
+            float autoDelay = float.TryParse(Value(args, AutoDelaySwitch), out float delayArg) ? delayArg : 0.0f;
+
+            // ⚠️ THE DESTINATION IS DECIDED ONCE, HERE, AND BOTH BRANCHES BELOW READ IT. The
+            // host branch and the join branch each ended in their own `Go(map)`, which is how
+            // a switch added to one of them silently does nothing on the other side of the test.
+            string destination = toLobby ? UI.SceneFlow.MatchSetup : map;
+
             bool explicitJoin = !string.IsNullOrEmpty(Value(args, JoinSwitch));
             bool explicitHost = Has(args, HostSwitch) || Has(args, "-host") || Has(args, "--host");
             bool isDedicated = Has(args, DedicatedSwitch) || Has(args, "-dedicated") ||
@@ -86,6 +117,7 @@ namespace TumbangPreso.Net
 
                 Requested = true;
                 Application.runInBackground = true;
+                MarkNetworked(map);
 
                 if (isDedicated)
                 {
@@ -104,7 +136,10 @@ namespace TumbangPreso.Net
                     Debug.Log($"[NetBoot] host requested on {port} dedicated={isDedicated}: " +
                               (ok ? "listening" : "FAILED"));
 
-                    if (ok) UI.SceneFlow.Go(map);
+                    if (!ok) return;
+
+                    UI.SceneFlow.Go(destination);
+                    ArmAutopilot(toLobby, autoSeat, autoReady, autoDelay);
                 });
 
                 return;
@@ -117,6 +152,7 @@ namespace TumbangPreso.Net
 
             Requested = true;
             Application.runInBackground = true;
+            MarkNetworked(map);
 
             Defer(() =>
             {
@@ -126,8 +162,46 @@ namespace TumbangPreso.Net
                 Debug.Log($"[NetBoot] join requested to {address}:{joinPort}: " +
                           (ok ? "connecting" : "FAILED"));
 
-                if (ok) UI.SceneFlow.Go(map);
+                if (!ok) return;
+
+                UI.SceneFlow.Go(destination);
+                ArmAutopilot(toLobby, autoSeat, autoReady, autoDelay);
             });
+        }
+
+        /// <summary>
+        /// ⚠️⚠️ THE LOBBY ONLY BEHAVES AS A LOBBY WHEN `SceneFlow.Networked` IS SET, and nothing
+        /// on the command line path was setting it. `ConvertedModeSelect` writes it when a human
+        /// picks MULTIPLAYER; a process started with `-tp-host` never opens that screen, so
+        /// `ConvertedMatchSetup` drew the OFFLINE setup screen with a real transport running
+        /// behind it, and the seat rows read `GameLaunch.SoloSeat` rather than the network. That
+        /// is a difference between the test rig and the game, which is the one thing a test rig
+        /// may never have.
+        ///
+        /// ⚠️ `SelectedMap` TRAVELS FOR THE SAME REASON: it is what `SceneFlow.StartMatch` loads
+        /// when the lobby finally starts, so `-tp-map` has to reach it even on the lobby path
+        /// where the arena is not loaded directly.
+        /// </summary>
+        private static void MarkNetworked(string map)
+        {
+            UI.SceneFlow.SelectedMap = map;
+            UI.SceneFlow.Networked = true;
+        }
+
+        /// <summary>
+        /// Attaches the lobby autopilot when there is something for it to press.
+        ///
+        /// ⚠️ LOBBY ONLY. Outside the lobby there are no seat rows and no READY button, so an
+        /// autopilot there would sit in a timeout and report a failure that means nothing.
+        /// </summary>
+        private static void ArmAutopilot(bool toLobby, int autoSeat, bool autoReady, float autoDelay)
+        {
+            if (!toLobby) return;
+            if (autoSeat == NoAutoSeat && !autoReady) return;
+
+            var go = new GameObject("~NetLobbyAutopilot");
+            UnityEngine.Object.DontDestroyOnLoad(go);
+            go.AddComponent<NetLobbyAutopilot>().Bind(autoSeat, autoReady, autoDelay);
         }
 
         /// <summary>
@@ -141,6 +215,26 @@ namespace TumbangPreso.Net
             var go = new GameObject("~NetBoot") { hideFlags = HideFlags.HideAndDontSave };
             UnityEngine.Object.DontDestroyOnLoad(go);
             go.AddComponent<NetBootstrapRunner>().Bind(action);
+        }
+
+        /// <summary>
+        /// The seat `-tp-autoseat` asked for, or <see cref="NoAutoSeat"/>.
+        ///
+        /// ⚠️ IT READS THE NEXT ARGUMENT ITSELF RATHER THAN THROUGH `Value`, because `Value`
+        /// refuses anything beginning with a dash so that a switch missing its operand does not
+        /// swallow the switch after it. `-1` is the SPECTATE request and is the single most
+        /// interesting value this flag takes, so it cannot be the one value that cannot be
+        /// typed.
+        /// </summary>
+        private static int AutoSeat(string[] args)
+        {
+            for (int i = 0; i < args.Length - 1; i++)
+            {
+                if (!string.Equals(args[i], AutoSeatSwitch, StringComparison.OrdinalIgnoreCase)) continue;
+                return int.TryParse(args[i + 1], out int seat) ? seat : NoAutoSeat;
+            }
+
+            return NoAutoSeat;
         }
 
         private static bool Has(string[] args, string name)

@@ -373,13 +373,20 @@ namespace TumbangPreso.Net
 
             var lobby = NetSession.Instance?.Lobby;
             var record = lobby?.PeerById(peerId);
-            if (record == null) return;
+            if (record == null)
+            {
+                Debug.LogWarning($"[Net] cannot tell peer {peerId} where it sits: no lobby record.");
+                return;
+            }
 
             if ((ulong)peerId == _nm.LocalClientId)
             {
                 NetSession.Instance?.SetLocalSeating(record.Seat, record.Spectator);
                 return;
             }
+
+            Debug.Log($"[Net] Seating -> peer {peerId}: seat={record.Seat} spectator={record.Spectator} " +
+                      $"leader={lobby.LeaderPeerId} inProgress={lobby.MatchInProgress}");
 
             using var writer = new FastBufferWriter(128, Allocator.Temp);
             writer.WriteValueSafe(record.Seat);
@@ -411,11 +418,22 @@ namespace TumbangPreso.Net
         {
             if (NetAuthority.IsHost)
             {
+                Debug.Log($"[Net] seat {seat} requested locally by the host.");
                 HostAssignSeat(_nm != null ? (int)_nm.LocalClientId : 0, seat);
                 return;
             }
 
-            if (_nm == null || _nm.CustomMessagingManager == null) return;
+            if (_nm == null || _nm.CustomMessagingManager == null)
+            {
+                // ⚠️ THIS IS THE SILENT ONE. A press that lands here changes nothing and says
+                // nothing, and the screen goes on drawing the seat the peer already had, which
+                // from the player's chair is indistinguishable from the host refusing.
+                Debug.LogWarning($"[Net] seat {seat} requested by a client with no messaging manager. " +
+                                 "The press was dropped before it reached the wire.");
+                return;
+            }
+
+            Debug.Log($"[Net] seat {seat} requested by client {_nm.LocalClientId}, sending ReqSeat to the host.");
             using var writer = new FastBufferWriter(16, Allocator.Temp);
             writer.WriteValueSafe(seat);
             _nm.CustomMessagingManager.SendNamedMessage("ReqSeat", NetworkManager.ServerClientId, writer);
@@ -426,6 +444,7 @@ namespace TumbangPreso.Net
             if (!NetAuthority.IsHost) return;
 
             reader.ReadValueSafe(out int seat);
+            Debug.Log($"[Net] ReqSeat {seat} arrived from peer {senderClientId}.");
 
             // ⚠️ THE PERSON COMES FROM THE SENDER'S TRANSPORT ID, NEVER FROM THE PAYLOAD. The
             // message names a chair, not a player; a peer that could name the player could move
@@ -438,7 +457,31 @@ namespace TumbangPreso.Net
             if (!NetAuthority.IsHost) return;
 
             var lobby = NetSession.Instance?.Lobby;
-            if (lobby == null || !lobby.TryTakeSeat(peerId, seat)) return;
+            if (lobby == null)
+            {
+                Debug.LogWarning($"[Net] seat {seat} for peer {peerId} refused: the host has no LobbySession.");
+                return;
+            }
+
+            if (!lobby.TryTakeSeat(peerId, seat))
+            {
+                // ⚠️⚠️ THE REFUSAL PRINTS THE REASON, BECAUSE `TryTakeSeat` HAS SIX OF THEM AND
+                // ALL SIX LOOK IDENTICAL FROM THE OTHER MACHINE: a button that does nothing.
+                // 🧑 reported seat switching working alone and failing the moment a second
+                // player joined, which is a sentence about WHICH branch refused, and nothing in
+                // the log could answer it.
+                var occupant = seat >= 0 ? lobby.PeerInSeat(seat) : null;
+                Debug.LogWarning(
+                    $"[Net] seat {seat} for peer {peerId} REFUSED: " +
+                    $"known={(lobby.PeerById(peerId) != null)} " +
+                    $"referee={lobby.IsSeatlessReferee(peerId)} " +
+                    $"inProgress={lobby.MatchInProgress} " +
+                    $"occupiedBy={(occupant == null ? "nobody" : $"peer {occupant.PeerId}")} " +
+                    $"held={(seat >= 0 && occupant == null && lobby.IsSeatOccupied(seat))}");
+                return;
+            }
+
+            Debug.Log($"[Net] seat {seat} GRANTED to peer {peerId}.");
 
             // ⚠️ MOVING SEATS CLEARS YOUR READY. The arrangement you agreed to is not the one
             // on screen any more, and a tick left standing would count towards a gate that has
@@ -461,6 +504,9 @@ namespace TumbangPreso.Net
             {
                 reader.ReadValueSafe(out joinCode);
             }
+
+            Debug.Log($"[Net] Seating arrived: seat={seat} spectator={spectator} leader={leaderId} " +
+                      $"inProgress={inProgress} scene={UnityEngine.SceneManagement.SceneManager.GetActiveScene().name}");
 
             var net = NetSession.Instance;
             if (net != null)
@@ -565,6 +611,7 @@ namespace TumbangPreso.Net
             var gate = FindFirstObjectByType<ReadyGate>();
             if (gate != null)
             {
+                Debug.Log($"[Net] ready from peer {peerId} ({ready}) handed to the in-match ReadyGate.");
                 if (ready) gate.DeclareReady(peerId);
                 return;
             }
@@ -573,14 +620,29 @@ namespace TumbangPreso.Net
             if (lobby == null) return;
 
             var peer = lobby.PeerById(peerId);
-            if (peer == null || peer.Spectator || peer.Seat < 0) return;
+            if (peer == null || peer.Spectator || peer.Seat < 0)
+            {
+                Debug.LogWarning($"[Net] ready from peer {peerId} IGNORED: " +
+                                 $"known={(peer != null)} " +
+                                 $"spectator={(peer != null && peer.Spectator)} " +
+                                 $"seat={(peer == null ? -99 : peer.Seat)}");
+                return;
+            }
 
             bool moved = ready ? _lobbyReady.Add(peerId) : _lobbyReady.Remove(peerId);
-            if (!moved) return;
+            if (!moved)
+            {
+                Debug.Log($"[Net] ready from peer {peerId} ({ready}) changed nothing; the set already said so.");
+                return;
+            }
 
             BroadcastReadyTally();
 
-            if (LobbyReadyCount() >= LobbyExpectedReady()) HostStartMatch();
+            int count = LobbyReadyCount();
+            int expected = LobbyExpectedReady();
+            Debug.Log($"[Net] lobby ready {count}/{expected} after peer {peerId} said {ready}.");
+
+            if (count >= expected) HostStartMatch();
         }
 
         /// <summary>
@@ -1669,14 +1731,25 @@ namespace TumbangPreso.Net
 
             if (_nm != null && _nm.CustomMessagingManager != null)
             {
+                Debug.Log($"[Net] StartMatch -> all peers, map={UI.SceneFlow.SelectedMap} " +
+                          $"connected={_nm.ConnectedClientsIds.Count}");
                 using var writer = new FastBufferWriter(16, Allocator.Temp);
                 _nm.CustomMessagingManager.SendNamedMessageToAll("StartMatch", writer);
             }
+            else
+            {
+                Debug.LogWarning("[Net] StartMatch could not be broadcast: no messaging manager. " +
+                                 "The host will enter the arena alone.");
+            }
+
             OnMatchStarted?.Invoke();
         }
 
         private void OnStartMatchMsg(ulong senderClientId, FastBufferReader reader)
         {
+            Debug.Log($"[Net] StartMatch arrived from {senderClientId}; host={NetAuthority.IsHost} " +
+                      $"map={UI.SceneFlow.SelectedMap}");
+
             // ⚠️ THE HOST IS ITS OWN CLIENT AND `SendNamedMessageToAll` LOOPS BACK TO IT.
             // Netcode invokes the handler locally for the listen host, so every broadcast the
             // host sent was also applied ON the host, a second time, over authoritative state it
@@ -1926,6 +1999,28 @@ namespace TumbangPreso.Net
             }
         }
 
+        /// <summary>
+        /// The seat roster on one line, so a host log and a client log can be diffed by eye.
+        ///
+        /// ⚠️ IT IS THE SAME FORMATTER ON BOTH SIDES DELIBERATELY. The host prints what it sent
+        /// and the client prints what it stored, and the only useful question about the lobby
+        /// roster is whether those two strings are equal.
+        /// </summary>
+        private static string DescribeSeats(LobbySeatInfo[] seats)
+        {
+            var sb = new System.Text.StringBuilder();
+            for (int slot = 0; slot < seats.Length; slot++)
+            {
+                var s = seats[slot];
+                sb.Append(slot == 0 ? "" : " ");
+                sb.Append(s == null || !s.Occupied
+                              ? $"[{slot} free]"
+                              : $"[{slot} {s.Name}#{s.PeerId} char={s.CharacterPick}]");
+            }
+
+            return sb.ToString();
+        }
+
         public void BroadcastLobbyPicks()
         {
             if (!NetAuthority.IsHost) return;
@@ -1984,6 +2079,7 @@ namespace TumbangPreso.Net
                     writer.WriteValueSafe(s.SlipperPick);
                 }
                 _nm.CustomMessagingManager.SendNamedMessageToAll("SyncLobbyPicks", writer);
+                Debug.Log($"[Net] SyncLobbyPicks -> all peers: {DescribeSeats(seats)}");
             }
 
             var table = new int[Balance.PlayerCount * 4];
@@ -2054,6 +2150,8 @@ namespace TumbangPreso.Net
                     table[slot * 4 + 3] = _replicatedSeats[slot].SlipperPick;
                 }
             }
+
+            Debug.Log($"[Net] SyncLobbyPicks arrived: {DescribeSeats(_replicatedSeats)}");
 
             OnLobbyPicksSynced?.Invoke(table);
             OnLobbyRosterSynced?.Invoke(seats);

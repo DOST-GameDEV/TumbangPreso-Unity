@@ -155,6 +155,15 @@ namespace TumbangPreso.UI
                 SetStatus("You are now the lobby leader - you pick the map, the mode, and when to start.");
             }
 
+            // ⚠️ THE SCREEN SAYS OUT LOUD WHICH GAME IT THINKS IT IS DRAWING. A lobby whose
+            // `isNetworked` is false renders the OFFLINE setup screen: the seat rows read
+            // `GameLaunch.SoloSeat`, every press writes a local static, and nothing reaches the
+            // host. That failure and a host refusing the request look identical from the chair,
+            // and telling them apart from a log was impossible.
+            Debug.Log($"[Net] lobby screen up: networked={isNetworked} host={NetAuthority.IsHost} " +
+                      $"slot={(net == null ? -99 : net.LocalSlot)} spectator={GameLaunch.Spectator} " +
+                      $"rpc={(MatchRpc.Instance != null)}");
+
             Refresh();
         }
 
@@ -364,10 +373,16 @@ namespace TumbangPreso.UI
                 return;
             }
 
-            if (GameLaunch.Spectator) return;
+            if (GameLaunch.Spectator)
+            {
+                Debug.Log("[Net] READY pressed by a spectator; a peer with no chair has nothing to ready.");
+                return;
+            }
 
             _localReady = !_localReady;
             int localPeerId = net.LocalSlot >= 0 ? net.LocalSlot : 0;
+
+            Debug.Log($"[Net] READY pressed: now {_localReady}, host={NetAuthority.IsHost} slot={net.LocalSlot}");
 
             // ⚠️ THE PRESS CARRIES ITS STATE NOW. The button is a toggle and the message was
             // not: un-readying sent a second "I am ready", which the host's set swallowed as a
@@ -540,6 +555,9 @@ namespace TumbangPreso.UI
                     MenuSfx.Click();
 
                     var session = NetSession.Instance;
+                    Debug.Log($"[Net] seat row {seat} pressed: networked={(session != null && session.IsNetworked)} " +
+                              $"slot={(session == null ? -99 : session.LocalSlot)}");
+
                     if (session != null && session.IsNetworked)
                     {
                         // ⚠⚠ IT ASKS THE HOST. `GameLaunch.SoloSeat` is read by the OFFLINE
