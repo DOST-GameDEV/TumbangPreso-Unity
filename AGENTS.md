@@ -144,7 +144,7 @@ back an implementable problem or repeatedly restating it.
   must wait, critique the actual result and prepare a concrete next step; never
   repeat unchanged tests, invent completion or burn resources as busywork.
 - Do not spawn or delegate workers, contact other conversations, buy services,
-  reset usage, mutate live profiles or replace the Desktop build without explicit
+  reset usage, mutate live profiles or replace the current Builds/ player without explicit
   current authorization. Honor contributor reservations and private owner notes.
 - Keep updates concise and useful. Prefer actual fixes to planning, audit,
   diagnostic, fixture or capture-framework churn.
@@ -211,7 +211,26 @@ during long runs, rather than leaving stale processes or branches behind.
   terminal and resolved absolute targets remain inside the intended workspace
   before recursive deletion. Keep active/shared test builds, source, private or
   unfinished work, profiles/saves and essential acceptance/failure evidence.
-  Preserve the Desktop release. Do not accumulate weeks of stale artifacts.
+  Keep only the current playable build per platform in Builds/. Do not accumulate
+  stale artifacts.
+
+### October 20 owner directive: playable builds only, only in Builds/
+
+The owner cleared every build off this Mac (Desktop, Downloads, worktrees and
+probe folders such as Builds/c4-request-safety-v6) and asked that it stay that way.
+
+- Every player build goes inside this checkout's gitignored `Builds/` folder, one
+  folder per platform and nowhere else: `Builds/Windows/TumbangPreso.exe`,
+  `Builds/macOS/TumbangPreso.app`, `Builds/Android/TumbangPreso.apk`, `Builds/WebGL/`.
+- Always pass `-buildOutput <absolute path under Builds/>`. `GameBuilder.BuildWindows`
+  and `BuildAndroid` still default to the Desktop, so never rely on the default.
+- Only produce a build that is meant to be launched and played. No probe,
+  experiment, candidate-numbered or per-task builds, no builds inside worktrees,
+  no copies or zips on the Desktop, in Downloads or in iCloud.
+- One build per platform. A new build replaces the previous one in the same folder
+  (GameBuilder purges it first). Delete the `*_BurstDebugInformation_DoNotShip`
+  folder once the build finishes. A build that fails verification is deleted, not
+  kept beside the good one.
 
 ## Engineering And Evidence
 
@@ -239,8 +258,8 @@ during long runs, rather than leaving stale processes or branches behind.
 - New Unity script metadata needs a valid 32-hex GUID; generate it with
   `Guid.NewGuid().ToString("N")` and verify the file. Direct C# compilation does not
   establish Unity import validity. Preserve existing valid GUIDs.
-- Final builds use explicit internal Builds/<candidate>/TumbangPreso.exe paths.
-  Verify executable/data and run that exact player. No Desktop replacement.
+- Builds follow the October 20 build-folder directive above. Verify executable/data
+  and run that exact player.
 - Be precise about local tests, actual peers, cross-platform play, hardware and
   human taste. These are separate claims, not interchangeable evidence.
 
