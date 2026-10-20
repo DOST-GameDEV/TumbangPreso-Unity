@@ -12,6 +12,7 @@ import sys
 import net_matrix
 from run_unity_guarded import profile_root, unity_environment
 from run_ui_player_review import read_input_preferences
+import build_paths
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -29,9 +30,9 @@ def main():
     args=parser.parse_args()
     if not args.rematch and args.mode!='hero':parser.error('Mode selection is supported for the explicit rematch review.')
     os.chdir(ROOT);exe=args.exe.resolve();output=args.out.resolve()
-    if not exe.is_file() or not exe.is_relative_to(ROOT/'Builds'):raise ValueError('Use a verified internal build.')
+    if not exe.is_file() or not build_paths.is_internal_build(exe):raise ValueError('Use a verified internal build.')
     client_exe=args.client_exe.resolve() if args.client_exe else exe
-    if not client_exe.is_file() or not client_exe.is_relative_to(ROOT/'Builds'):raise ValueError('Use an internal client build.')
+    if not client_exe.is_file() or not build_paths.is_internal_build(client_exe):raise ValueError('Use an internal client build.')
     if args.expect_protocol_refusal and (client_exe==exe or args.rematch):
         raise ValueError('Version refusal requires two different binaries and no rematch.')
     if not output.is_relative_to(ROOT/'Logs') or output==ROOT/'Logs':raise ValueError('Use a dedicated Logs subfolder.')

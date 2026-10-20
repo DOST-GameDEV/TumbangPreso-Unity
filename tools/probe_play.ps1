@@ -11,7 +11,7 @@
 # exercises the Input System backend, the ready gate, the countdown and the motor.
 
 param(
-  [string]$Exe = "$env:USERPROFILE\Desktop\TumbangPreso-Unity\TumbangPreso.exe",
+  [string]$Exe = (Join-Path (& "$PSScriptRoot\build_paths.ps1") 'Windows\TumbangPreso.exe'),
   [string]$OutDir = "Logs\shots-player"
 )
 

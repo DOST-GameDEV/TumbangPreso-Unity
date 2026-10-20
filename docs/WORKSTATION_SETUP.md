@@ -219,9 +219,11 @@ Do not invoke a broad qualification wrapper merely because it exists.
 python tools/run_unity_guarded.py -batchmode -executeMethod TumbangPreso.EditorTools.GameBuilder.BuildWindows -buildTarget Win64 -buildOutput Builds/TransferReview/TumbangPreso.exe -logFile Logs/transfer-review-build.log -tp-profile owner-review-editor
 ```
 
-Always give buildOutput. The builder's default can write to the owner's Desktop,
-which is NOT currently requested. It purges its previous selected build output:
-use a deliberate internal folder and check that player is not running. Do not
+The builder's default is `Builds/Windows` in the MAIN checkout (never the Desktop,
+since 2026-10-20), and it refuses any output outside a `Builds/` folder. Give
+buildOutput when the run needs its own player beside the owner's. It purges its
+previous selected build output: use a deliberate internal folder and check that
+player is not running. Do not
 hand-delete an unchecked computed path. Verify exe AND data/build identity, then
 launch that exact artifact. New screenshots must be captured in-engine, never
 generated/painted as if they were game evidence.

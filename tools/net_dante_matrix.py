@@ -14,6 +14,7 @@ import time
 
 from run_unity_guarded import profile_root, unity_environment
 from run_ui_player_review import read_input_preferences
+import build_paths
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -223,7 +224,7 @@ def main():
     if args.movement_review:args.pending_review=True
     if args.refresh_seat!=2 and (not args.movement_review or args.late_movement):raise ValueError('Owner reconstruction is a normal movement-window fixture; delayed boundary cases use the observer.')
     folder = args.out.resolve()
-    if not args.exe.resolve().is_relative_to(ROOT/'Builds') or not args.exe.is_file():raise ValueError('Use an internal build.')
+    if not build_paths.is_internal_build(args.exe) or not args.exe.is_file():raise ValueError('Use an internal build.')
     if not folder.is_relative_to(ROOT/'Logs') or folder==ROOT/'Logs':raise ValueError('Use a dedicated Logs subfolder.')
     if args.pending_review and args.case not in ('stomp','fissure'):raise ValueError('Preparation review supports stomp/fissure only.')
     if args.movement_review:

@@ -147,7 +147,8 @@ items still open: *"ur supposed to build only when ur done with everything"*.
 
 1. **Do ALL the work** and verify it yourself: `dotnet test`, EditMode, PlayMode, and the
    probes for anything a screenshot would settle.
-2. **Build the .exe to the Desktop.** ⚠️⚠️ **DELETE THE PREVIOUS BUILD FIRST, EVERY TIME.**
+2. **Build the .exe into `Builds/Windows` in the main checkout** (the Desktop until
+   2026-10-20; § 7 has why it moved). ⚠️⚠️ **DELETE THE PREVIOUS BUILD FIRST, EVERY TIME.**
    Not only when asked for a "clean rebuild", not only when a timestamp looks wrong: **every
    build deletes the old output folder before it writes the new one.** An incremental rebuild
    once kept a corrupted `level1` and cost an hour, and Unity will rewrite `TumbangPreso_Data`
@@ -1032,12 +1033,22 @@ and cuts `claude/multiplayer-lobby-switching-bugs-d1546c` in half; legacy `Text`
 so that overflow is silent. `ApplyTo` widens the box and switches to Overflow. This is the same
 trap `ConvertedScreen.SetHeadline` records, for the third time.
 
-⚠️ **`GameBuilder.BuildWindows` targets THIS MACHINE'S DESKTOP, whatever it is.** It calls
-`Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)`, so it resolves per
-profile: `C:\Users\matth\Desktop` on one laptop and `C:\Users\Matthew\Desktop` on the other.
-⚠️⚠️ **THIS LINE USED TO NAME ONE OF THEM AS A CONSTANT**, which sent a session on the
-other machine to check a folder that does not exist and reads exactly like a build that never
-ran. Verify the .exe exists and report its path; do not claim a build that was never written.
+⚠️⚠️ **EVERY PLAYER GOES IN `Builds/` AT THE ROOT OF THE MAIN CHECKOUT, AND THE BUILDER
+REFUSES ANYWHERE ELSE.** Since 2026-10-20: `Builds/Windows/TumbangPreso.exe`,
+`Builds/Android/TumbangPreso.apk`, `Builds/macOS/TumbangPreso.app`, `Builds/WebGL`, and
+`tools/package_release.ps1` writes `Builds/Release`. `GameBuilder.BuildsRoot` asks git for the
+shared `.git`, so a build run from `.claude/worktrees/*` still lands in the main checkout, and
+`-buildOutput` outside a `Builds/` folder fails the build. `tools/build_paths.py` and
+`tools/build_paths.ps1` are the same answer for the harnesses.
+
+**Why it moved off the Desktop, measured:** one scan of the owner's PC found the same day's
+player in five places (the Desktop, `C:\Users\...\TumbangPreso-Builds`, `D:\TumbangPreso-Builds`,
+the main checkout's `Builds/`, and an archive), about 5.3 GB each, three of them superseded and
+nothing saying which was current. **And that profile's Desktop is `OneDrive\Desktop`**, so every
+default build was being uploaded to the cloud, and the copy there was half synced with no .exe.
+The Desktop path also resolved per profile (`C:\Users\matth\Desktop` on one laptop,
+`C:\Users\Matthew\Desktop` on the other), which once sent a session to a folder that did not
+exist. Verify the .exe exists and report its path; do not claim a build that was never written.
 
 ⚠️⚠️ **A successful incremental Windows build is not the same as a clean rebuild.** Unity can
 rewrite `TumbangPreso_Data`, Burst output and DLLs while reusing the byte-identical launcher
@@ -1053,8 +1064,8 @@ When the user asks to **rebuild**, **clean rebuild**, or questions the output ti
 
 1. Ensure no `TumbangPreso` or Unity process is using the output. This is the one step still on
    you: a running game holds the folder and the build will refuse it.
-2. To KEEP the old player, move `Desktop\TumbangPreso-Unity` to a clearly named backup first.
-   Otherwise the build deletes it.
+2. To KEEP the old player, move `Builds\Windows` to a clearly named folder under `Builds\`
+   first. Otherwise the build deletes it.
 3. Run `GameBuilder.BuildWindows`. It writes into a now-missing directory by construction.
 4. Verify the new `TumbangPreso.exe` **and** `TumbangPreso_Data` files have timestamps from the
    current run, then launch that exact executable. Keep the backup until the new player passes.

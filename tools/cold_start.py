@@ -93,6 +93,7 @@ import subprocess
 import sys
 import time
 import uuid
+import build_paths
 
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -139,15 +140,16 @@ def player_path():
     harness could only ever refuse. A cold start that cannot run on the machine somebody is
     sitting at is a cold start nobody runs.
 
-    ⚠️ THE ORDER IS THE PLATFORM'S OWN FIRST. A machine with both a Desktop .exe and a Builds
+    ⚠️ THE ORDER IS THE PLATFORM'S OWN FIRST. A machine with both a Builds .exe and a Builds
     .app has built both, and the one worth starting is the one that runs here.
     """
-    home = pathlib.Path(os.path.expanduser("~"))
     root = pathlib.Path(__file__).resolve().parent.parent
 
-    windows = home / "Desktop" / "TumbangPreso-Unity" / "TumbangPreso.exe"
-    bundles = [root / "Builds" / "macOS" / "TumbangPreso.app",
-               home / "Desktop" / "TumbangPreso.app"]
+    # `tools/build_paths.py` is where the builder writes; the project's own Builds/ is kept
+    # for a bundle built with an explicit -buildOutput from this checkout.
+    windows = build_paths.windows_exe()
+    bundles = [build_paths.mac_app(),
+               root / "Builds" / "macOS" / "TumbangPreso.app"]
 
     def in_bundle(app):
         """

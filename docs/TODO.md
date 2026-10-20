@@ -504,6 +504,41 @@ taht again"*.
 
 ---
 
+## 155 · THE REPOSITORY IS 6.8 GB AND 2.6 GB OF THE TREE IS RAW EVIDENCE UNDER `docs/reports` ⚠️ OPEN, 2026-10-20, branch `claude/cleanup-stale-builds-6494ed`
+
+**What was done in the same pass.** Builds now have one home: `GameBuilder.BuildsRoot` writes
+every player under `Builds/` in the main checkout and refuses an output anywhere else
+(`CLAUDE.md` § 7). The scan that justified it found one day's Windows player in five places,
+about 5.3 GB each, including a half-synced copy on the OneDrive Desktop.
+
+**What is still open, measured on 2026-10-20 against `origin/main` (`85504a52c`):**
+
+- **The GitHub repository is 6.84 GB** (`gh api repos/...` size) and a fresh clone's pack is
+  6.86 GiB. No player, .apk or Unity `Library` was ever committed; the weight is media.
+- **The tracked tree is 6.3 GB and `docs/` is 2.64 GB of it, in 15,591 files.** By type under
+  `docs/`: PNG 1,835 MB (2,596 files), JSON 245 MB (5,253), MP4 196 MB (147), JPG 90 MB,
+  `.log` 59 MB (300), `.gz` 35 MB, `.zip` 23 MB, test XML 22 MB (2,101), `.trx` 17 MB.
+  The biggest folders are dated run evidence: `reports/laptop-validation-2026-10-06` 477 MB,
+  `reports/map-by-map-refinement-2026-09-23` 280 MB, `reports/feedback-2026-09-30` 128 MB,
+  `reports/reliability-2026-10-06` 128 MB.
+- **History carries every re-encode of the map preview loops**: `map-previews/*-loop.mp4`
+  is about 2.6 GB of history, with up to six 90 MB versions of a single file.
+- **Five abandoned `tmp_pack_*` files (565 MB) sat in the local `.git/objects/pack`**, left by
+  fetches that were interrupted.
+
+**The decision this needs from the owner, because AGENTS.md asks for evidence to be
+published:** what a report folder may commit. The proposal is that the markdown write-up and a
+few curated stills are committed, and raw run output (logs, `.trx`, test XML, JSON traces,
+`.gz` and `.zip` bundles, frame sequences) stays in the ignored `Logs/` with its path quoted.
+Shrinking what is already in history means rewriting it and force-pushing every branch, which
+also invalidates every worktree and clone, so it is not done without that explicit go-ahead.
+
+**Done looks like:** a `.gitignore` rule or a pre-commit check that enforces the agreed policy
+on `docs/reports/`, and, only if the owner wants it, a history rewrite with the size before and
+after quoted.
+
+---
+
 ## 154 · THE RECALL MARK, AND OWNERSHIP BECOMES A LOCK ⚠️ IN PROGRESS, 2026-09-19, branch `ASTRAReworks`
 
 🧑, with a reference frame of a ringed button cap sitting on a target: *"i need you to create a

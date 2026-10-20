@@ -13,6 +13,7 @@ import time
 
 from run_unity_guarded import profile_root, unity_environment
 from run_ui_player_review import read_input_preferences
+import build_paths
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -58,7 +59,7 @@ def main():
     parser.add_argument("--mode", choices=("classic", "hero"), required=True)
     args = parser.parse_args()
     exe, folder = args.exe.resolve(), args.out.resolve()
-    if not exe.is_file() or not exe.is_relative_to(ROOT / "Builds"):
+    if not exe.is_file() or not build_paths.is_internal_build(exe):
         raise SystemExit("Use an internal Builds player")
     if not folder.is_relative_to(ROOT / "Logs"):
         raise SystemExit("Output must be inside Logs")

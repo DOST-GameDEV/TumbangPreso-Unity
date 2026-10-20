@@ -105,17 +105,17 @@ To compile and package the playable standalone Windows game directly to the Desk
 # 1. Set scene build order (Ensures SplashScreen.unity is Scene 0):
 Start-Process -FilePath "C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe" -ArgumentList "-batchmode -quit -nographics -projectPath . -executeMethod TumbangPreso.EditorTools.MenuSceneBuilder.BuildAll -logFile Logs/menuscene.log" -Wait
 
-# 2. Compile standalone Windows player to Desktop:
+# 2. Compile standalone Windows player into Builds/:
 Start-Process -FilePath "C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe" -ArgumentList "-batchmode -quit -nographics -projectPath . -executeMethod TumbangPreso.EditorTools.GameBuilder.BuildWindows -logFile Logs/build.log" -Wait
 ```
-*Output Target:* `<Desktop>\TumbangPreso-Unity\TumbangPreso.exe`
+*Output Target:* `<main checkout>\Builds\Windows\TumbangPreso.exe`
 
-⚠️ **The desktop is RESOLVED, not typed.** `GameBuilder` calls
-`Environment.GetFolderPath(SpecialFolder.DesktopDirectory)`, so the player lands on whichever
-machine's desktop ran the build. This line used to read `C:\Users\matth\Desktop\...`, which is
-one particular checkout and sent a session looking for a build on a path that does not exist
-here. Two other documents quoted the same stale user directory and both were deleted on
-2026-08-26; `docs/README.md` records why.
+⚠️ **The folder is RESOLVED, not typed.** `GameBuilder.BuildsRoot` asks git for the shared
+`.git` and writes into `Builds/` beside it, so a build run from any worktree lands in the main
+checkout's `Builds/`. Until 2026-10-20 the target was the Desktop, which on the owner's profile
+is `OneDrive\Desktop` and was uploading every 5 GB player to the cloud. Before that this line
+read `C:\Users\matth\Desktop\...`, one particular machine's path; `docs/README.md` records why
+the two documents that quoted it were deleted.
 
 ---
 

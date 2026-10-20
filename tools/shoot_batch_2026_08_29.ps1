@@ -19,7 +19,7 @@
 # Run:  powershell -File tools/shoot_batch_2026_08_29.ps1 -Tag v2
 
 param(
-  [string]$Exe = "$env:USERPROFILE\Desktop\TumbangPreso-Unity\TumbangPreso.exe",
+  [string]$Exe = (Join-Path (& "$PSScriptRoot\build_paths.ps1") 'Windows\TumbangPreso.exe'),
   [string]$OutDir = "Logs\shots-2026-08-29",
   [string]$Tag = "v2",
   [int]$BootSeconds = 30

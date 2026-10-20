@@ -847,6 +847,15 @@ failures proactively. MAP_TRANSFORMATION_PLAN.md carries the full critique rubri
 - When the selected work is ready, run guarded `GameBuilder.BuildWindows`. Its
   validated purge removes the previous player first. Check for a running player;
   never manually delete a computed directory without verifying the absolute path.
+- **Every player goes in `Builds/` at the root of the MAIN checkout**
+  (`D:\GitHub\TumbangPreso-Unity\Builds` on the owner's PC), never the Desktop, a
+  worktree-only folder or a hand-picked drive folder. Defaults are
+  `Builds/Windows/TumbangPreso.exe`, `Builds/Android/TumbangPreso.apk`,
+  `Builds/macOS/TumbangPreso.app`, `Builds/WebGL`, and `package_release.ps1` writes
+  `Builds/Release`. `GameBuilder` refuses an output outside a `Builds/` folder.
+  An extra internal player uses `-buildOutput Builds/<name>/TumbangPreso.exe`; delete
+  it when its run is recorded. `tools/build_paths.py` finds the player for tools.
+  Older "Desktop build" wording in this file means `Builds/Windows`.
 - Verify executable AND data timestamps, launch that exact build, and exercise
   both modes at ordinary speed plus relevant network paths. Older Desktop/internal
   executables do not represent newer source. Report the actual artifact path.

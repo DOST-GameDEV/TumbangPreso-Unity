@@ -51,8 +51,8 @@ def default_exe():
     """
     The shipped player on THIS machine.
 
-    WARNING: `net_matrix.DEFAULT_EXE` IS A WINDOWS DESKTOP PATH AND THAT IS THE ONLY THING THAT
-    STOPPED THIS RUNNING ON THE MAC. `CLAUDE.md` section 7 keeps a table of three machines and
+    WARNING: `net_matrix.DEFAULT_EXE` WAS A WINDOWS DESKTOP PATH AND THAT IS THE ONLY THING THAT
+    STOPPED THIS RUNNING ON THE MAC. It is `Builds/Windows` now (`tools/build_paths.py`). `CLAUDE.md` section 7 keeps a table of three machines and
     warns in its own words that "a note that is true on one machine and written as a fact about
     'here' sends whoever is on another one hunting"; a hard-coded path in a harness is that note
     as code. `tools/cold_start.py` learned the same lesson one file over, including that the

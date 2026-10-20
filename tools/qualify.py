@@ -81,6 +81,7 @@ import subprocess
 import sys
 import xml.etree.ElementTree as ET
 import zipfile
+import build_paths
 
 # ⚠️⚠️ THE CONSOLE HERE IS cp1252 AND THIS FILE PRINTS THE REPOSITORY'S OWN ⚠ MARKS.
 # `CLAUDE.md` § 7.1 records `audit_audio_reach.py` dying on a UnicodeEncodeError part way
@@ -730,9 +731,8 @@ def artifact_identity():
     another is two games that refuse each other correctly and read as a bug.
     """
     found = {}
-    desktop = pathlib.Path(os.path.expanduser("~")) / "Desktop"
-
-    win = desktop / "TumbangPreso-Unity"
+    # `tools/build_paths.py`: where `GameBuilder` writes every player since 2026-10-20.
+    win = build_paths.windows_exe().parent
     exe = win / "TumbangPreso.exe"
     if exe.exists():
         stamp = win / "TumbangPreso_Data" / "StreamingAssets" / "build-identity.json"
@@ -749,7 +749,8 @@ def artifact_identity():
             row["identity"] = None
         found["windows"] = row
 
-    for apk in sorted(ROOT.glob("build/**/*.apk")) + sorted(desktop.glob("*.apk")):
+    for apk in (sorted(ROOT.glob("build/**/*.apk")) +
+                sorted(build_paths.builds_root().glob("*/*.apk"))):
         row = {
             "path": str(apk),
             "written": datetime.datetime.fromtimestamp(apk.stat().st_mtime)

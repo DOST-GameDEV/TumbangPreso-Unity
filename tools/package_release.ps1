@@ -41,9 +41,12 @@ param(
 $ErrorActionPreference = 'Stop'
 
 $repo = Split-Path -Parent $PSScriptRoot
-$desktop = [Environment]::GetFolderPath('DesktopDirectory')
+# Both ends live under Builds/ in the main checkout, never on the Desktop: the player comes
+# from Builds/Windows, where GameBuilder.BuildWindows writes it, and the release folder and zip
+# go to Builds/Release. `tools/build_paths.py` has why the Desktop stopped being a destination.
+$builds = & (Join-Path $PSScriptRoot 'build_paths.ps1')
 
-$build = Join-Path $desktop 'TumbangPreso-Unity'
+$build = Join-Path $builds 'Windows'
 $exe = Join-Path $build 'TumbangPreso.exe'
 
 # The version and the product name come out of ProjectSettings rather than being typed here, or
@@ -52,7 +55,8 @@ $settings = Get-Content (Join-Path $repo 'ProjectSettings\ProjectSettings.asset'
 $version = if ($settings -match '(?m)^\s*bundleVersion:\s*(.+)$') { $Matches[1].Trim() } else { '1.00' }
 $product = if ($settings -match '(?m)^\s*productName:\s*(.+)$') { $Matches[1].Trim() } else { 'Tumbang Preso' }
 
-$release = Join-Path $desktop "$product v$version"
+$release = Join-Path (Join-Path $builds 'Release') "$product v$version"
+New-Item -ItemType Directory -Path (Split-Path -Parent $release) -Force | Out-Null
 
 Write-Output "product : $product"
 Write-Output "version : $version"

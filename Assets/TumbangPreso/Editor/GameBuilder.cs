@@ -92,16 +92,17 @@ namespace TumbangPreso.EditorTools
         /// so there is no file name to append and `PurgeOutputDirectory` is handed exactly the
         /// folder it is about to fill.
         ///
-        /// ⚠️ IT GOES UNDER `Builds/` RATHER THAN ON THE DESKTOP, unlike Windows and Android.
-        /// Those two are opened by hand and belong where 🧑 can double-click them; a WebGL build
-        /// is uploaded rather than run, and a folder of ten thousand files on somebody's Desktop
-        /// is a nuisance. `DefaultMacOutput` already made this choice for the same reason.
+        /// ⚠️ IT GOES UNDER `Builds/`, like every other platform since 2026-10-20. See
+        /// `BuildsRoot` for why the Desktop stopped being a destination.
         /// </summary>
         public static string DefaultWebGlOutput()
-            => Path.Combine(Directory.GetCurrentDirectory(), "Builds", "WebGL");
+            => Path.Combine(BuildsRoot(), "WebGL");
 
         private static bool BuildWebGlPlayer(string outputPath)
         {
+            // Checked before the target switch, which is minutes of reimport to throw away.
+            if (!IsInsideBuildsFolder(OutputDirectory(outputPath, BuildTarget.WebGL))) return false;
+
             if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.WebGL)
             {
                 if (!EditorUserBuildSettings.SwitchActiveBuildTarget(
@@ -167,7 +168,7 @@ namespace TumbangPreso.EditorTools
         }
 
         /// <summary>
-        /// The .apk, beside the Windows player on the same Desktop.
+        /// The .apk, in `Builds/Android` beside the Windows player in `Builds/Windows`.
         ///
         /// ⚠️ ONE FILE, NOT A FOLDER, WHICH `PurgeOutputDirectory` HAS TO BE TOLD ABOUT. The
         /// Windows player is a directory it can delete wholesale; an .apk is a single file in a
@@ -175,13 +176,13 @@ namespace TumbangPreso.EditorTools
         /// reason, so the purge rule that protects the Windows build protects this one unchanged.
         /// </summary>
         public static string DefaultAndroidOutput()
-        {
-            string desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-            return Path.Combine(desktop, "TumbangPreso-Android", "TumbangPreso.apk");
-        }
+            => Path.Combine(BuildsRoot(), "Android", "TumbangPreso.apk");
 
         private static bool BuildAndroidPlayer(string outputPath)
         {
+            // Checked before the target switch, which is minutes of reimport to throw away.
+            if (!IsInsideBuildsFolder(OutputDirectory(outputPath, BuildTarget.Android))) return false;
+
             if (!ConfigureAndroid()) return false;
 
             // ⚠️⚠️ THE TARGET IS SWITCHED BEFORE THE BUILD, NOT LEFT TO `BuildPlayer`. Switching
@@ -308,15 +309,129 @@ namespace TumbangPreso.EditorTools
             return null;
         }
 
-        private static string DefaultOutput()
-        {
-            string desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-            return Path.Combine(desktop, "TumbangPreso-Unity", "TumbangPreso.exe");
-        }
+        public static string DefaultOutput()
+            => Path.Combine(BuildsRoot(), "Windows", "TumbangPreso.exe");
 
         public static string DefaultMacOutput()
+            => Path.Combine(BuildsRoot(), "macOS", "TumbangPreso.app");
+
+        /// <summary>
+        /// The one folder every player this class writes lands in: `Builds/` at the root of the
+        /// MAIN checkout. Never the Desktop, and never a folder somebody typed.
+        ///
+        /// ⚠️⚠️ WHY, MEASURED ON 2026-10-20. One scan of the owner's machine found Windows
+        /// players from that one day in five places: the Desktop, `C:\Users\...\TumbangPreso-Builds`,
+        /// `D:\TumbangPreso-Builds`, and `Builds/` inside the main checkout. Each was about
+        /// 5.3 GB, three were superseded by the newest, and nothing said which one was current.
+        /// **And the Desktop on that profile is `OneDrive\Desktop`**, which is where
+        /// `SpecialFolder.DesktopDirectory` resolves, so every default build was being uploaded
+        /// to the cloud; the copy there was half synced, with no .exe and no UnityPlayer.dll.
+        ///
+        /// ⚠️ THE MAIN CHECKOUT, NOT THE WORKTREE. Sessions build from `.claude/worktrees/*`, and
+        /// a player left inside a worktree is stranded: nobody looks for it there, and it goes
+        /// when the worktree is cleaned up. `git rev-parse --git-common-dir` names the shared
+        /// `.git` from whichever checkout asks, so its parent is the same folder from all of
+        /// them. When git cannot answer (no git, a bare clone, a hung call) this project's own
+        /// `Builds/` is the answer, which is what it was before worktrees existed.
+        ///
+        /// ⚠️ ONE FOLDER PER PLATFORM, AND THE PURGE KEEPS IT AT ONE PLAYER EACH.
+        /// `Builds/Windows`, `Builds/Android`, `Builds/macOS`, `Builds/WebGL`. A build is
+        /// deleted before the next one is written, so the folder cannot fill up with stale
+        /// copies the way the Desktop and the hand-picked folders did. `.gitignore` already
+        /// carries `[Bb]uilds/`.
+        /// </summary>
+        public static string BuildsRoot()
         {
-            return Path.Combine(Directory.GetCurrentDirectory(), "Builds", "macOS", "TumbangPreso.app");
+            string project = Directory.GetCurrentDirectory();
+            string common;
+            bool ok;
+
+            // `Process.Start` throws rather than returning null when there is no git at all.
+            try
+            {
+                common = Git(project, "rev-parse --path-format=absolute --git-common-dir",
+                             out ok).Trim();
+            }
+            catch (Exception)
+            {
+                common = "";
+                ok = false;
+            }
+
+            if (ok && common.Length > 0)
+            {
+                string full = Path.GetFullPath(common)
+                    .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+                if (string.Equals(Path.GetFileName(full), ".git", StringComparison.OrdinalIgnoreCase))
+                {
+                    string main = Path.GetDirectoryName(full);
+                    if (!string.IsNullOrEmpty(main)) return Path.Combine(main, "Builds");
+                }
+            }
+
+            return Path.Combine(project, "Builds");
+        }
+
+        /// <summary>
+        /// The directory a build of `target` writes and purges. WebGL's "location" is the
+        /// directory itself; every other target's is a file inside one.
+        /// </summary>
+        private static string OutputDirectory(string outputPath, BuildTarget target)
+        {
+            if (string.IsNullOrWhiteSpace(outputPath)) return null;
+
+            string full = Path.GetFullPath(outputPath);
+            return target == BuildTarget.WebGL ? full : Path.GetDirectoryName(full);
+        }
+
+        /// <summary>
+        /// Whether `dir` is a folder strictly INSIDE a `Builds/` folder: the main checkout's,
+        /// or this project's own.
+        ///
+        /// ⚠️⚠️ `-buildOutput` IS CHECKED, NOT TRUSTED. The defaults alone would not have stopped
+        /// the scattering `BuildsRoot` records, because most of those players were written with an
+        /// explicit `-buildOutput` pointing wherever the session that built them liked. A path
+        /// outside a `Builds/` folder fails the build instead. A relative path resolves against
+        /// the project as it always did, so `-buildOutput Builds/<name>/TumbangPreso.exe` keeps
+        /// working from a worktree, and the `tools/` harnesses that insist on an internal
+        /// `Builds/` player still find it.
+        ///
+        /// ⚠️ STRICTLY INSIDE, NEVER THE ROOT ITSELF. The directory handed here is the one
+        /// `PurgeOutputDirectory` deletes. `-buildOutput Builds/TumbangPreso.exe` would aim the
+        /// purge at `Builds/`, which holds every other platform's player.
+        /// </summary>
+        private static bool IsInsideBuildsFolder(string dir)
+        {
+            if (string.IsNullOrEmpty(dir))
+            {
+                Debug.LogError("[Build] no output path. Refusing to build.");
+                return false;
+            }
+
+            string[] roots =
+            {
+                BuildsRoot(),
+                Path.Combine(Directory.GetCurrentDirectory(), "Builds"),
+            };
+
+            string full = Path.GetFullPath(dir)
+                .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+            foreach (string root in roots)
+            {
+                string prefix = Path.GetFullPath(root)
+                    .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                    + Path.DirectorySeparatorChar;
+
+                if (full.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) return true;
+            }
+
+            Debug.LogError($"[Build] output folder '{full}' is not inside a Builds folder. Every " +
+                           $"player goes under '{roots[0]}' (or this project's own Builds/), one " +
+                           "subfolder per build, for example -buildOutput " +
+                           "Builds/Windows/TumbangPreso.exe. Refusing to build.");
+            return false;
         }
 
         /// <summary>
@@ -1097,10 +1212,11 @@ namespace TumbangPreso.EditorTools
             // ⚠️ THE TARGET DECIDES, NOT THE STRING. Sniffing for a trailing extension would be a
             // guess about a path a caller may write however they like (`-buildOutput` takes an
             // arbitrary one); the build target is the fact that actually determines the shape.
-            string dir = target == BuildTarget.WebGL
-                ? outputPath
-                : Path.GetDirectoryName(outputPath);
+            string dir = OutputDirectory(outputPath, target);
 
+            // ⚠️ HERE AS WELL AS AT THE ANDROID AND WEBGL ENTRY POINTS, because this is the one
+            // place every build passes through, menu items included. See `IsInsideBuildsFolder`.
+            if (!IsInsideBuildsFolder(dir)) return false;
             if (!PurgeOutputDirectory(dir)) return false;
             if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
 

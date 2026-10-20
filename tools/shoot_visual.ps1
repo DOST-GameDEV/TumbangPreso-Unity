@@ -15,7 +15,7 @@
 # alone is correct whatever width the window happens to be.
 
 param(
-  [string]$Exe = "$env:USERPROFILE\Desktop\TumbangPreso-Unity\TumbangPreso.exe",
+  [string]$Exe = (Join-Path (& "$PSScriptRoot\build_paths.ps1") 'Windows\TumbangPreso.exe'),
   [string]$OutDir = "Logs\shots-visual"
 )
 

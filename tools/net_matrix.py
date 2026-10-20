@@ -47,12 +47,14 @@ import shutil
 import subprocess
 import sys
 import time
+import build_paths
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
 
-DEFAULT_EXE = os.path.join(
-    os.path.expanduser("~"), "Desktop", "TumbangPreso-Unity", "TumbangPreso.exe")
+# The Windows player `GameBuilder.BuildWindows` writes. `tools/build_paths.py` has why it
+# stopped being a Desktop path.
+DEFAULT_EXE = str(build_paths.windows_exe())
 
 HOST_PORT = 8910
 LINK_PORT = 8911

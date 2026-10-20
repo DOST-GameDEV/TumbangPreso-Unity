@@ -16,7 +16,7 @@
 # between SINGLE PLAYER and MULTIPLAYER, and reads as "the button did the wrong thing".
 
 param(
-  [string]$Exe = "$env:USERPROFILE\Desktop\TumbangPreso-Unity\TumbangPreso.exe",
+  [string]$Exe = (Join-Path (& "$PSScriptRoot\build_paths.ps1") 'Windows\TumbangPreso.exe'),
   [string]$OutDir = "Logs\shots-player"
 )
 

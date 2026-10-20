@@ -6,7 +6,7 @@
 # fix is a rect or a raycast target rather than a listener.
 
 param(
-  [string]$Exe = "$env:USERPROFILE\Desktop\TumbangPreso-Unity\TumbangPreso.exe",
+  [string]$Exe = (Join-Path (& "$PSScriptRoot\build_paths.ps1") 'Windows\TumbangPreso.exe'),
   [string]$OutDir = "Logs\shots-player"
 )
 
