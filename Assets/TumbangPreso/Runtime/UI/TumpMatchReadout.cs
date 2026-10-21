@@ -436,6 +436,7 @@ namespace TumbangPreso.UI
                 _context.text = Mathf.Abs(spin) > .08f ? $"Pektus {(spin < 0 ? "left" : "right")} · {Mathf.RoundToInt(Mathf.Abs(spin) * 100)}%" : "Move the aim sideways for pektus";
                 Progress(carrier.ChargeRatio); return;
             }
+            if (ReclaimPrompt(local)) return;
             // ⚠️ VISUAL-1.1: DANGER IS THE SCREEN-EDGE FRAME (`HudDangerFrame`), NOT A SENTENCE.
             // The older builders, which have no frame, keep the words.
             if (_reticle == null && local.IsTaggable() && round.Lata != null && round.Lata.IsUpright) { _prompt.text = "You can be tagged"; _prompt.color = OwnerUiTheme.Current.Orange; }
@@ -482,6 +483,24 @@ namespace TumbangPreso.UI
                 }
             }
         }
+        /// <summary>
+        /// SOULBOUND (owner 2026-10-21): next to one of her dormant ghosts, Nemu's Grab reads like the can's reset and the
+        /// slipper's retrieve, with the button's icon: "Retrieve Peeker", "Retrieve Fetcher" or "Retrieve Keeper", then
+        /// "Retrieving ..." and its bar while she holds it. `NemuHeroKit` has already given the button to a slipper or a fallen
+        /// can first, so this never hides those prompts.
+        /// </summary>
+        private bool ReclaimPrompt(CharacterMotor local)
+        {
+            if (!(local.AbilitySystem?.Kit is Abilities.NemuHeroKit nemu) || nemu.ReclaimTarget == null || !local.CanAct()) return false;
+            string name = nemu.ReclaimTarget.Name;
+            float ratio = nemu.ReclaimRatio;
+            if (ratio > 0) _prompt.text = "Retrieving " + name;
+            else BindingPrompt("Grab", "Retrieve " + name);
+            if (Hud.OnTouch) TouchHud.Emphasise(Verb.Grab);
+            if (ratio > 0) Progress(ratio);
+            return true;
+        }
+
         private void BindingPrompt(string action, string label)
         {
             if (_bindingGlyph != null)

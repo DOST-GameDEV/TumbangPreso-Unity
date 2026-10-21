@@ -7,8 +7,8 @@ namespace TumbangPreso.Tests
 {
     public sealed class NemuKuroPassiveTests
     {
-        // DEAD WEIGHT (owner 2026-10-16) replaced KURO!: Nemu's passive slows rivals near her ghosts and no longer
-        // touches her own speed, whatever her cooldowns are doing. The shared basic cooldown below is unchanged.
+        // SOULBOUND (owner 2026-10-21) replaced DEAD WEIGHT, which had replaced KURO!: her passive never touches her own
+        // speed, whatever her cooldowns are doing, and her three skills no longer share one clock.
         [TestCase(0)]
         [TestCase(1)]
         [TestCase(2)]
@@ -23,16 +23,26 @@ namespace TumbangPreso.Tests
         }
 
         [Test]
-        public void TheTrayNamesDeadWeightAndTheSharedCooldown()
+        public void TheTrayNamesSoulboundAndTheReclaim()
         {
             var passive = HeroPassives.For("nemu");
-            Assert.That(passive.Name, Is.EqualTo("DEAD WEIGHT"));
-            Assert.That(passive.KitRule, Does.Contain("share one cooldown"));
+            Assert.That(passive.Name, Is.EqualTo("SOULBOUND"));
+            Assert.That(passive.KitRule, Does.Contain("reclaimed"));
+        }
+
+        [Test]
+        public void TheSkillsCarryTheirNewNames()
+        {
+            var kit = new NemuHeroKit();
+            Assert.That(kit.Skill1.Name, Is.EqualTo("PEEKER"));
+            Assert.That(kit.AttackingSkill.Name, Is.EqualTo("FETCHER"));
+            Assert.That(kit.DefendingSkill.Name, Is.EqualTo("KEEPER"));
+            Assert.That(kit.Skill1.Id, Is.EqualTo("nemu_skill1"), "IDs stay for saves, mastery and the wire");
         }
         [TestCase(0)]
         [TestCase(1)]
         [TestCase(2)]
-        public void AcceptedBasicCastStartsAllThreeCooldownsAtTwentyFiveSeconds(int abilityIndex)
+        public void AcceptedBasicCastStartsOnlyItsOwnTwentySecondCooldown(int abilityIndex)
         {
             var go = new GameObject("Nemu accepted cooldown contract");
             var kit = new NemuHeroKit();
@@ -42,13 +52,12 @@ namespace TumbangPreso.Tests
                 var ability = abilityIndex == 0 ? kit.Skill1
                     : abilityIndex == 1 ? kit.AttackingSkill : kit.DefendingSkill;
                 float banked = kit.UltimateCharge;
-                // Accepted observer playback calls Activate directly. This must
-                // share clocks too, without relying only on local input routing.
+                // Accepted observer playback calls Activate directly.
                 using (NetCue.SuppressRelay()) ability.Activate(context);
 
-                Assert.That(kit.Skill1.CooldownRemaining, Is.EqualTo(25f));
-                Assert.That(kit.AttackingSkill.CooldownRemaining, Is.EqualTo(25f));
-                Assert.That(kit.DefendingSkill.CooldownRemaining, Is.EqualTo(25f));
+                Assert.That(kit.Skill1.CooldownRemaining, Is.EqualTo(abilityIndex == 0 ? 20f : 0f));
+                Assert.That(kit.AttackingSkill.CooldownRemaining, Is.EqualTo(abilityIndex == 1 ? 20f : 0f));
+                Assert.That(kit.DefendingSkill.CooldownRemaining, Is.EqualTo(abilityIndex == 2 ? 20f : 0f));
                 Assert.That(kit.Ultimate.CooldownRemaining, Is.Zero);
                 Assert.That(kit.UltimateCharge, Is.EqualTo(banked));
             }
@@ -56,28 +65,8 @@ namespace TumbangPreso.Tests
             {
                 kit.ResetForRound(context);
                 Object.DestroyImmediate(go);
-            }
-        }
-
-        [Test]
-        public void SharedBasicCooldownsTickTogether()
-        {
-            var go = new GameObject("Nemu cooldown ticking contract");
-            var kit = new NemuHeroKit();
-            var context = new AbilityContext(go.AddComponent<CharacterMotor>(), null, null);
-            try
-            {
-                using (NetCue.SuppressRelay()) kit.Skill1.Activate(context);
-                kit.Tick(context, 1f);
-
-                Assert.That(kit.Skill1.CooldownRemaining, Is.EqualTo(24f).Within(0.001f));
-                Assert.That(kit.AttackingSkill.CooldownRemaining, Is.EqualTo(24f).Within(0.001f));
-                Assert.That(kit.DefendingSkill.CooldownRemaining, Is.EqualTo(24f).Within(0.001f));
-            }
-            finally
-            {
-                kit.ResetForRound(context);
-                Object.DestroyImmediate(go);
+                foreach (var g in Object.FindObjectsByType<NemuBlindfold>(FindObjectsSortMode.None)) Object.DestroyImmediate(g.gameObject);
+                foreach (var g in Object.FindObjectsByType<NemuSkitter>(FindObjectsSortMode.None)) Object.DestroyImmediate(g.gameObject);
             }
         }
 
@@ -121,66 +110,16 @@ namespace TumbangPreso.Tests
             kit.DefendingSkill.ApplyNetworkSnapshot(value, 0);
         }
 
-        private static void AssertBasicClocks(HeroKit kit, float value)
-        {
-            Assert.That(kit.Skill1.CooldownRemaining, Is.EqualTo(value));
-            Assert.That(kit.AttackingSkill.CooldownRemaining, Is.EqualTo(value));
-            Assert.That(kit.DefendingSkill.CooldownRemaining, Is.EqualTo(value));
-        }
-
-        [TestCase(false, 0f)]
-        [TestCase(true, 4f)]
-        public void LatestHostReceiptCorrectsTheEntireSharedGroup(bool accepted, float remaining)
-        {
-            var previous = NetAuthority.Provider;
-            var go = new GameObject("Nemu resource receipt");
-            try
-            {
-                NetAuthority.Provider = new PredictingOwner();
-                var system = ReceiptSystem(go);
-                SetBasicClocks(system.Kit, 25f);
-                Assert.That(system.TrackSkillRequest(0, 101), Is.True);
-
-                Assert.That(system.ResolveSkillReceipt(0, 101, accepted, remaining, 0), Is.True);
-
-                AssertBasicClocks(system.Kit, remaining);
-                Assert.That(system.ResolveSkillReceipt(0, 101, accepted, remaining, 0), Is.False);
-            }
-            finally { Object.DestroyImmediate(go); NetAuthority.Provider = previous; }
-        }
-
-        [TestCase(false)]
-        [TestCase(true)]
-        public void OlderOtherSlotReceiptCannotOverwriteALaterRequest(bool laterAlreadyAccepted)
-        {
-            var previous = NetAuthority.Provider;
-            var go = new GameObject("Nemu reordered resource receipt");
-            try
-            {
-                NetAuthority.Provider = new PredictingOwner();
-                var system = ReceiptSystem(go);
-                SetBasicClocks(system.Kit, 25f);
-                Assert.That(system.TrackSkillRequest(0, 201), Is.True);
-                Assert.That(system.TrackSkillRequest(1, 202), Is.True);
-                if (laterAlreadyAccepted)
-                    Assert.That(system.ResolveSkillReceipt(1, 202, true, 12f, 0), Is.True);
-
-                Assert.That(system.ResolveSkillReceipt(0, 201, false, 0f, 0), Is.True);
-
-                AssertBasicClocks(system.Kit, laterAlreadyAccepted ? 12f : 25f);
-            }
-            finally { Object.DestroyImmediate(go); NetAuthority.Provider = previous; }
-        }
-
-        [Test]
-        public void IndependentKitReceiptStillCorrectsOnlyItsOwnAbility()
+        [TestCase("zack")]
+        [TestCase("nemu")]
+        public void IndependentKitReceiptStillCorrectsOnlyItsOwnAbility(string hero)
         {
             var previous = NetAuthority.Provider;
             var go = new GameObject("Independent resource receipt");
             try
             {
                 NetAuthority.Provider = new PredictingOwner();
-                var system = ReceiptSystem(go, "zack");
+                var system = ReceiptSystem(go, hero);
                 SetBasicClocks(system.Kit, 25f);
                 Assert.That(system.TrackSkillRequest(0, 301), Is.True);
                 Assert.That(system.TrackSkillRequest(1, 302), Is.True);

@@ -9,7 +9,8 @@ namespace TumbangPreso.Abilities
     /// magdefend (pede ren magtayo lata) but medyo small and not that good but it helps in some cases"*, *"only stays for like
     /// 15 seconds"*; the look from the approved lineup, `Visual.NemuGhostModels.Lookout`).
     ///
-    /// The rule lives in `NemuHeroKit.Lookout` (the 15 s clock, the slow stand-up, the scare); this is only the ghost:
+    /// KEEPER now (owner 2026-10-21). The rule lives in `NemuHeroKit.Lookout` (the 15 s clock, the 1.5 s stand-up after every
+    /// knockdown); this is only the ghost. Attackers no longer scare it, so `Scared` stays false in play:
     ///  * MINDING: it floats beside the can, lantern held out and swinging, turning to watch the nearest attacker (and
     ///    scanning round when there is none).
     ///  * LIFTING (<see cref="Lift"/> 0 to 1): ⚠️ IT ACTUALLY LIFTS THE CAN (owner on v1: *"make it look liek its actually
@@ -106,7 +107,7 @@ namespace TumbangPreso.Abilities
             _leaving = true; _leftAt = _age;
         }
 
-        private void OnEnable() { Live.Add(this); DeadWeightRings.Ensure(); }
+        private void OnEnable() => Live.Add(this);
         private void OnDisable() => Live.Remove(this);
         private void OnDestroy() { _fx?.Dispose(); _fx = null; }
 

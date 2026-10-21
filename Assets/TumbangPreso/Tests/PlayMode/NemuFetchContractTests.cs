@@ -7,8 +7,9 @@ using UnityEngine.TestTools;
 namespace TumbangPreso.PlayTests
 {
     /// <summary>
-    /// SKITTER (owner 2026-10-15, replaces KURO: FETCH!): a ghost of hers fetches her loose slipper; protocol95's delivery
-    /// rules unchanged. Where these drove Kuro (`ApplyCastAnchor`), they now put Skitter's hands on the spot.
+    /// FETCHER (owner 2026-10-21, renaming SKITTER, which replaced KURO: FETCH!): a ghost of hers fetches her loose slipper;
+    /// protocol95's delivery rules unchanged, but the taya no longer makes it drop it. When it is done it lies dormant and its
+    /// 20 s cooldown waits for her to reclaim it (SOULBOUND). These put Skitter's hands on the spot.
     /// </summary>
     public sealed class NemuFetchContractTests
     {
@@ -59,6 +60,7 @@ namespace TumbangPreso.PlayTests
         {
             _kit.ResetForRound(_context);
             NemuSkitter.RetireAll();
+            NemuDormant.RetireAll();
             Object.Destroy(_owner);
             Object.Destroy(_shoeRoot);
             NetAuthority.Provider = _previous;
@@ -82,9 +84,9 @@ namespace TumbangPreso.PlayTests
         [Test]
         public void FetchNameAndCooldownMatchTheCurrentContract()
         {
-            Assert.That(_kit.AttackingSkill.Name, Is.EqualTo("SKITTER"));
+            Assert.That(_kit.AttackingSkill.Name, Is.EqualTo("FETCHER"));
             Assert.That(_kit.AttackingSkill.Id, Is.EqualTo("nemu_skill2"));
-            Assert.That(_kit.AttackingSkill.Cooldown, Is.EqualTo(25f));
+            Assert.That(_kit.AttackingSkill.Cooldown, Is.EqualTo(20f));
         }
 
         [Test]
@@ -161,6 +163,9 @@ namespace TumbangPreso.PlayTests
             Assert.That(_kit.AttackingSkill.IsActive, Is.False);
             Assert.That(_shoe.State, Is.EqualTo(SlipperState.Loose));
             Assert.That(Ghost, Is.Null);
+            Assert.That(NemuDormant.For(0, NemuDormant.Ghost.Fetcher), Is.Not.Null, "Its time up, Fetcher should lie dormant.");
+            using (NetCue.SuppressRelay()) _kit.Tick(_context, 3f);
+            Assert.That(_kit.AttackingSkill.CooldownRemaining, Is.EqualTo(20f).Within(1e-3f), "The cooldown ran before Fetcher was reclaimed.");
         }
 
         [Test]
@@ -175,7 +180,7 @@ namespace TumbangPreso.PlayTests
             Assert.That(_kit.AttackingSkill.IsActive, Is.False);
         }
         [Test]
-        public void DefenderInterceptionDropsForNormalPickup()
+        public void TheTayaNoLongerMakesItDropTheSlipper()
         {
             GameServices.Ensure();
             var defenderRoot = new GameObject("Fetch interceptor");
@@ -191,11 +196,10 @@ namespace TumbangPreso.PlayTests
                 defender.transform.position = Vector3.forward * 3f;
                 Assert.That(defender.CanAct(), Is.True);
                 using (NetCue.SuppressRelay()) _kit.Tick(_context, 0.01f);
+                // Owner 2026-10-21: *"no longer drops slippers when near defender"*.
                 Assert.That(_shoe.State, Is.EqualTo(SlipperState.Loose));
-                Assert.That(_shoe.transform.position.y, Is.LessThan(0.2f));
-                // (Within a step: it carries toward her for the one tick before the taya is on it.)
-                Assert.That(_shoe.transform.position.z, Is.EqualTo(3f).Within(0.15f));
-                Assert.That(_kit.AttackingSkill.IsActive, Is.False);
+                Assert.That(Vector3.Distance(_shoe.transform.position, Ghost.HoldPoint), Is.LessThan(0.05f), "It let go of the slipper.");
+                Assert.That(_kit.AttackingSkill.IsActive, Is.True);
                 Assert.That(_motor.HoldingSlipper, Is.False);
             }
             finally

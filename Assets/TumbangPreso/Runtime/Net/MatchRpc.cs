@@ -425,6 +425,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("ReqGrab", OnReqGrabMsg);
             cm.RegisterNamedMessageHandler("ReqThrow", OnReqThrowMsg);
             cm.RegisterNamedMessageHandler("ReqReset", OnReqResetMsg);
+            cm.RegisterNamedMessageHandler("ReqReclaim", OnReqReclaimMsg);
             cm.RegisterNamedMessageHandler("ReqEmote", OnReqEmoteMsg);
             cm.RegisterNamedMessageHandler("PlayEmote", OnPlayEmoteMsg);
             cm.RegisterNamedMessageHandler("StartMatch", OnStartMatchMsg);
@@ -690,6 +691,7 @@ namespace TumbangPreso.Net
                 return;
 
             HostStepResetChannels();
+            HostStepReclaimChannels();
             HookCompanions();
 
             BroadcastLataStateIfChanged();

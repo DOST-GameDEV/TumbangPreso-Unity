@@ -100,35 +100,33 @@ namespace TumbangPreso.Core
         public const float BasicCooldown = 25.0f;
 
         /// <summary>
-        /// DON'T LOOK (owner 2026-10-15, replacing KURO: SIT! as the signature: *"tripwire blind, like she would place a ghost
-        /// in an area and it becomes invisible after 3 seconds and then if anyone goes near that area the ghost would lunge
-        /// at their eyes and cover it for 2 secondns and slow them for 5 seconds (the slow effect gets lower overtime)"*).
-        /// Blindfold, one ghost, is left at an aimed spot up to 7 m away. It fades from everyone but Nemu over its first 3 s,
-        /// then waits up to 30 s. The first other player within 1.8 m springs it: BLINDED, eyes covered for 2 s and a
-        /// decaying slow (50 % at the spring, easing linearly to nothing at 5 s). One ghost out at a time; recasting moves it.
+        /// SOULBOUND (owner 2026-10-21): her three ghosts no longer share one clock. Each skill's cooldown is 20 s, and it only
+        /// starts once she has reclaimed that skill's dormant ghost (`NemuRules.ReclaimRadius`, `NemuRules.ReclaimSeconds`).
         /// </summary>
-        public const float DontLookCooldown = BasicCooldown;
+        public const float SoulboundCooldown = 20.0f;
+
+        /// <summary>
+        /// PEEKER (owner 2026-10-21, retuning DON'T LOOK, which replaced KURO: SIT!). Peeker, one ghost, is left at an aimed spot
+        /// up to 7 m away. It fades from everyone but Nemu over its first 2.5 s, then waits up to 15 s. The first other player
+        /// within 2 m (its trigger ring is drawn on the court) springs it: BLINDED, eyes covered and 25 % slower for 2.5 s.
+        /// One ghost out at a time.
+        /// </summary>
+        public const float DontLookCooldown = SoulboundCooldown;
         public const float DontLookMinRange = 2.0f;
         public const float DontLookMaxRange = TerrifyMaxRange;
-        public const float DontLookArmSeconds = 3.0f;
-        public const float DontLookLifeSeconds = 30.0f;
-        public const float DontLookTriggerRadius = 1.8f;
-        public const float DontLookBlindSeconds = 2.0f;
-        public const float DontLookSlowSeconds = 5.0f;
-        public const float DontLookSlowPeak = 0.5f;
+        public const float DontLookArmSeconds = 2.5f;
+        public const float DontLookLifeSeconds = 15.0f;
+        public const float DontLookTriggerRadius = 2.0f;
+        public const float DontLookBlindSeconds = 2.5f;
+        public const float DontLookSlowSeconds = DontLookBlindSeconds;
+        public const float DontLookSlowPeak = 0.25f;
         /// <summary>How long the ghost takes to cross from its spot to the victim's eyes (presentation only).</summary>
         public const float DontLookLungeSeconds = 0.22f;
 
-        /// <summary>The decaying slow's speed multiplier with <paramref name="left"/> seconds of BLINDED to run: 0.5 at
-        /// the spring, back to 1 as it runs out.</summary>
-        public static float DontLookSpeedScale(float left)
-        {
-            if (!(left > 0.0f)) return 1.0f;
-            float share = left >= DontLookSlowSeconds ? 1.0f : left / DontLookSlowSeconds;
-            return 1.0f - DontLookSlowPeak * share;
-        }
+        /// <summary>BLINDED's speed multiplier with <paramref name="left"/> seconds to run: a flat 0.75 while it lasts.</summary>
+        public static float DontLookSpeedScale(float left) => left > 0.0f ? 1.0f - DontLookSlowPeak : 1.0f;
 
-        /// <summary>True while the ghost still has its hands over the eyes: the first 2 s of the 5.</summary>
+        /// <summary>True while the ghost still has its hands over the eyes: the whole of BLINDED.</summary>
         public static bool DontLookCoversEyes(float left) => left > DontLookSlowSeconds - DontLookBlindSeconds;
 
         /// <summary>TERRIFY, owner: *"Leave Kuro somewhere and everyone there gets feared"*. Set here:
@@ -139,11 +137,12 @@ namespace TumbangPreso.Core
         public const float TerrifyHauntSeconds = 4.0f;
         public const float TerrifyRadius = 2.2f;
 
-        /// <summary>KURO FETCH, owner: *"Slipper retrieve"*, and the taya can intercept. Set here.</summary>
-        public const float FetchCooldown = BasicCooldown;
+        /// <summary>FETCHER (owner 2026-10-21, was SKITTER and KURO FETCH): fetches her loose slipper; the taya can no longer
+        /// make it drop.</summary>
+        public const float FetchCooldown = SoulboundCooldown;
         public const float FetchSpeed = 9.0f;
-        /// <summary>A tag this close to Kuro while he carries makes him drop it.</summary>
-        public const float FetchInterceptRadius = 1.3f;
+        /// <summary>How long the ghost runs before it goes dormant (held while it waits by her with the slipper).</summary>
+        public const float FetchSeconds = 8.0f;
 
         /// <summary>KURO: CATCH! Current Wiki grants five seconds of can protection.
         /// Original companion presentation tuning is retained below.</summary>
@@ -156,15 +155,12 @@ namespace TumbangPreso.Core
         public const float GuardThinkSeconds = 0.35f;
         public const float GuardReactSeconds = 0.25f;
 
-        /// <summary>LOOKOUT (replaces KURO: CATCH!, owner 2026-10-15): *"spawn siya ghost na tutulungan siya magdefend (pede ren
-        /// magtayo lata) but medyo small and not that good but it helps in some cases"*, *"only stays for like 15 seconds"*.
-        /// It minds the can for 15 s; if the can is down it stands it back up, slowly (3.5 s, slower than the taya's own
-        /// reset), and an attacker within 1.5 m of the can scares it off the job (its progress drains twice as fast as it
-        /// builds). It stands the can up once; then its job is done and it goes. Defaults set here without the owner's pick.</summary>
-        public const float LookoutCooldown = BasicCooldown;
+        /// <summary>KEEPER (owner 2026-10-21, retuning LOOKOUT, which replaced KURO: CATCH!). A lantern ghost minds the can for
+        /// 15 s. Every time the can is down it stands it back up in 1.5 s, as often as it is knocked, until its time is up.
+        /// Attackers near the can no longer scare it off or undo its progress.</summary>
+        public const float LookoutCooldown = SoulboundCooldown;
         public const float LookoutSeconds = 15.0f;
-        public const float LookoutRestoreSeconds = 3.5f;
-        public const float LookoutScareRadius = 1.5f;
+        public const float LookoutRestoreSeconds = 1.5f;
 
         /// <summary>KURO PLAYS, owner: *"HARD BOT and fulfills whatever role u have and ghets separate copy
         /// of ur skills"*. Cost set here; lasts to the round's end.</summary>

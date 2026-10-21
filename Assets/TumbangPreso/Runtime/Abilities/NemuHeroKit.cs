@@ -8,9 +8,9 @@ using UnityEngine;
 namespace TumbangPreso.Abilities
 {
     /// <summary>
-    /// Nemu's current Wiki passive and DON'T LOOK signature (Blindfold, a hidden ghost, `NemuBlindfold`) use the shared basic
-    /// cooldown. Catch protects the can through its owned clock.
-    /// PRUSISYON possesses every other player for 15 s (`CharacterMotor.Possession.cs`).
+    /// Nemu (owner rework 2026-10-21): SOULBOUND passive, PEEKER signature (a hidden ghost, `NemuBlindfold`), FETCHER and
+    /// KEEPER role skills. Each ghost that ends leaves a dormant ghost (`NemuDormant`) and its skill's 20 s cooldown waits
+    /// until she reclaims it. LET THEM IN possesses every other player for 15 s (`CharacterMotor.Possession.cs`).
     /// </summary>
     public sealed class NemuHeroKit : HeroKit
     {
@@ -19,27 +19,6 @@ namespace TumbangPreso.Abilities
 
         /// <summary>Phantom Veil is gone; a rejoiner has no veil to restore.</summary>
         public bool RestoreJoiningVeil(CharacterMotor motor, float remaining) => false;
-
-        // Her passive is DEAD WEIGHT (owner 2026-10-16): rivals near her ghosts are slowed, read on their own bodies
-        // (`CharacterMotor.DeadWeightSpeedScale`). The old KURO! bonus to her own speed went with Kuro. The shared
-        // basic cooldown below is a kit rule, kept.
-
-        private void ShareBasicCooldown(float seconds, bool mayLower)
-        {
-            Skill1?.ApplyNetworkSnapshot(seconds, Skill1.ChargesRemaining, mayLower);
-            AttackingSkill?.ApplyNetworkSnapshot(seconds, AttackingSkill.ChargesRemaining, mayLower);
-            DefendingSkill?.ApplyNetworkSnapshot(seconds, DefendingSkill.ChargesRemaining, mayLower);
-        }
-
-        internal override void ApplySkillReceiptResources(HeroAbility ability, float cooldown,
-            int charges, bool newerSkillRequestExists)
-        {
-            // A reply for the other slot must not refund or shorten a later cast,
-            // even when that later request has already been acknowledged.
-            if (newerSkillRequestExists) return;
-            base.ApplySkillReceiptResources(ability, cooldown, charges, false);
-            ShareBasicCooldown(cooldown, mayLower: true);
-        }
 
         public void RestoreFamiliar(CharacterMotor motor, int mode, Vector3 position, float remaining, float? yaw = null)
         {
@@ -54,79 +33,221 @@ namespace TumbangPreso.Abilities
 
         public NemuHeroKit() : base("nemu", "NEMU")
         {
-            Skill1 = new DontLook(this);
-            AttackingSkill = new Skitter(this);
-            DefendingSkill = new Lookout(this);
+            Skill1 = new DontLook();
+            AttackingSkill = new Skitter();
+            DefendingSkill = new Lookout();
             Ultimate = new NightmareSeanceVoidAbility();
         }
 
         public override float UltimateCost => 15.0f;
 
-        // ================================================================== DON'T LOOK (signature)
+        // ================================================================== SOULBOUND (passive)
+
+        /// <summary>The dormant ghost this peer's Nemu would reclaim with Grab, for the prompt; null when none.</summary>
+        public NemuDormant ReclaimTarget { get; private set; }
+
+        /// <summary>How far through the 1.5 s reclaim she is, 0 to 1.</summary>
+        public float ReclaimRatio => Mathf.Clamp01(_reclaim / NemuRules.ReclaimSeconds);
+
+        private float _reclaim;
+        private NemuDormant _reclaiming;
+
+        public override void Tick(AbilityContext ctx, float dt)
+        {
+            base.Tick(ctx, dt);
+            StepReclaim(ctx, dt);
+        }
 
         /// <summary>
-        /// DON'T LOOK (owner 2026-10-15, the overhaul of KURO: SIT!: *"lets make her like gekko ... have diff ghosts and summon
-        /// diff ghosts at the same time"*, and the signature *"a tripwire blind"*). Hold to aim, release: Blindfold, one of her
-        /// ghosts, waits at the spot and fades from sight after 3 s; whoever comes near first has it lunge at their eyes
-        /// (BLINDED: covered 2 s, a 50 % slow wearing off over 5 s). The ghost is `NemuBlindfold`; Kuro is not sent.
-        /// ⚠️ The ID is Sit's, kept for saves, mastery and the wire. The cast is host-confirmed, so every peer places the
-        /// same ghost from the accepted cast (Cold Feet's pattern) and only the host springs it.
+        /// SOULBOUND's reclaim (owner 2026-10-21: *"Nemu must RETRIEVE SLIPPER / RESET CAN near the ghost (1 meter distance) for
+        /// 1.5 seconds to reclaim the ghost"*). Run by the peer that moves her: her own screen for a person, the host for a bot.
+        /// Holding Grab within reach of one of her dormant ghosts fills the bar; letting go or stepping away empties it, like
+        /// the can's reset. A slipper she could pick up, or a fallen can she could reset, keeps the button (Carrier answers
+        /// first). As with the can, the client shows its own bar and the HOST reclaims (`MatchRpc.RequestNemuReclaim`).
         /// </summary>
-        private sealed class DontLook : HeroAbility
+        private void StepReclaim(AbilityContext ctx, float dt)
         {
-            private readonly NemuHeroKit _kit;
+            var motor = ctx?.Motor;
+            bool bot = motor != null && motor.IsBot;
+            if (motor == null || !(bot ? NetAuthority.ShouldResolve() : motor.IsLocalViewer))
+            { ReclaimTarget = null; EndReclaim(motor, false); return; }
+
+            // ⚠️ A BOT DOES NOT WALK BACK FOR ITS GHOSTS: the AI has no errand for it, so its dormant ghosts reclaim themselves
+            // after the same 1.5 s, wherever it is. People make the trip.
+            NemuDormant target;
+            if (bot) target = GameServices.Round?.RoundActive == true ? FirstDormant(motor.PlayerSlot) : null;
+            else
+            {
+                target = motor.CanAct() && GameServices.Round?.RoundActive == true && !GrabIsTaken(motor)
+                    ? NemuDormant.InReach(motor.PlayerSlot, motor.transform.position) : null;
+            }
+            ReclaimTarget = target;
+            bool holding = target != null && (bot || motor.Intent.Pressed(Verb.Grab));
+            if (!holding || target != _reclaiming) EndReclaim(motor, true);
+            if (!holding) return;
+
+            if (_reclaiming == null)
+            {
+                _reclaiming = target;
+                if (!bot) motor.GetComponentInChildren<Visual.CharacterAnimator>()?.PlayAction("grab");
+                if (NetAuthority.ShouldRequest())
+                    Net.MatchRpc.Instance?.RequestNemuReclaim(motor.PlayerSlot, target.Kind, Net.MatchRpc.ReclaimPhase.Start);
+            }
+            _reclaim += dt;
+            target.LocalProgress = ReclaimRatio;
+            if (_reclaim < NemuRules.ReclaimSeconds) return;
+
+            _reclaim = 0f;
+            _reclaiming = null;
+            target.LocalProgress = 0f;
+            if (NetAuthority.ShouldRequest())
+            {
+                Net.MatchRpc.Instance?.RequestNemuReclaim(motor.PlayerSlot, target.Kind, Net.MatchRpc.ReclaimPhase.Complete);
+                return;
+            }
+            target.Reclaim();
+        }
+
+        private void EndReclaim(CharacterMotor motor, bool report)
+        {
+            if (_reclaiming == null) { _reclaim = 0f; return; }
+            if (report && motor != null && NetAuthority.ShouldRequest())
+                Net.MatchRpc.Instance?.RequestNemuReclaim(motor.PlayerSlot, _reclaiming.Kind, Net.MatchRpc.ReclaimPhase.Cancel);
+            _reclaiming.LocalProgress = 0f;
+            _reclaiming = null;
+            _reclaim = 0f;
+        }
+
+        /// <summary>The button already means something else here: a slipper to pick up, or a fallen can to reset.</summary>
+        private static bool GrabIsTaken(CharacterMotor motor)
+        {
+            var carrier = motor.GetComponent<Carrier>();
+            if (motor.IsDefender) return carrier != null && carrier.HasResetTarget;
+            if (motor.HoldingSlipper) return false;
+            foreach (var slipper in BotSlipperInventory.All)
+                if (slipper != null && slipper.CanBeGrabbedBy(motor)) return true;
+            return false;
+        }
+
+        private static NemuDormant FirstDormant(int slot)
+        {
+            foreach (var d in NemuDormant.Live) if (d != null && !d.Reclaimed && d.OwnerSlot == slot) return d;
+            return null;
+        }
+
+        /// <summary>
+        /// A Nemu skill whose cooldown waits for its ghost (SOULBOUND). It is spent at the cast like any other, but while its
+        /// ghost is out, or lies dormant waiting for her, the clock is held full; it runs only once she has reclaimed it.
+        /// Every peer can see both (the ghost frames carry them), so the owner's own tray holds too.
+        /// </summary>
+        private abstract class SoulboundAbility : HeroAbility
+        {
+            protected SoulboundAbility(string id, string name, string description, float cooldown, float duration,
+                AbilityGlyph glyph, string summary, string castAction, string viewmodelAction, string castCue,
+                float telegraphRadius = 0f, float telegraphRange = 0f)
+                : base(id, name, description, cooldown, duration, glyph, summary: summary,
+                       telegraphRadius: telegraphRadius, telegraphRange: telegraphRange,
+                       castAction: castAction, viewmodelAction: viewmodelAction, castCue: castCue) { }
 
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
 
-            public DontLook(NemuHeroKit kit)
-                : base("nemu_skill1", "DON'T LOOK",
-                       "Hide a ghost at a spot. The first player to come near is blinded for 2 s, then slowed (wears off over 5 s). Lasts 30 s.",
-                       NecroRules.DontLookCooldown, 0.0f, AbilityGlyph.NemuDontLook,
-                       summary: "Hide a ghost. The first to come near is blinded, then slowed.",
-                       telegraphRadius: NecroRules.DontLookTriggerRadius, telegraphRange: NecroRules.DontLookMaxRange,
-                       castAction: "hero-nemu-dontlook", viewmodelAction: "dontlook-hush",
-                       castCue: "sfx_cast_nemu_dontlook")
+            protected abstract NemuDormant.Ghost Ghost { get; }
+
+            /// <summary>Her ghost of this skill is on the court (any phase, leaving included).</summary>
+            protected abstract bool GhostOut(int slot);
+
+            public override bool CanActivate(AbilityContext ctx)
+                => base.CanActivate(ctx) && NemuDormant.For(ctx.Motor.PlayerSlot, Ghost) == null;
+
+            public override void Tick(AbilityContext ctx, float dt)
             {
-                _kit = kit;
+                base.Tick(ctx, dt);
+                int slot = ctx?.Motor != null ? ctx.Motor.PlayerSlot : -1;
+                if (slot >= 0 && CooldownRemaining > 0f && (IsActive || GhostOut(slot) || NemuDormant.For(slot, Ghost) != null))
+                    CooldownRemaining = Cooldown;
+            }
+
+            /// <summary>The host leaves her dormant ghost where this one ended.</summary>
+            protected void GoDormant(Vector3 at, Vector3 facing, int slot)
+            {
+                // ⚠️ THE GATE IS WRITTEN OUT, NOT HOISTED: `tools/audit_ability_authority.py` reads it by brace depth.
+                if (NetAuthority.ShouldResolve())
+                    NemuDormant.Spawn(Ghost, at, facing, slot);
+            }
+        }
+
+        // ================================================================== PEEKER (signature)
+
+        /// <summary>
+        /// PEEKER (owner 2026-10-21, retuning DON'T LOOK, the overhaul of KURO: SIT!: *"a tripwire blind"*). Hold to aim,
+        /// release: Blindfold, one of her ghosts, waits at the spot and fades from sight over 2.5 s; its 2 m trigger ring stays
+        /// drawn on the court. Whoever comes inside it first has it lunge at their eyes (BLINDED: covered and 25 % slower for
+        /// 2.5 s). Untripped, it goes after 15 s. Either way it then lies dormant until she reclaims it (SOULBOUND).
+        /// ⚠️ The ID is Sit's, kept for saves, mastery and the wire. The cast is host-confirmed and only the host springs it.
+        /// </summary>
+        private sealed class DontLook : SoulboundAbility
+        {
+            public DontLook()
+                : base("nemu_skill1", "PEEKER",
+                       "Hide a ghost at a spot. The first player to step inside its ring is blinded and slowed by 25% for 2.5 s. Lasts 15 s, then lies dormant until you retrieve it.",
+                       NecroRules.DontLookCooldown, 0.0f, AbilityGlyph.NemuDontLook,
+                       summary: "Hide a ghost. The first to step in its ring is blinded and slowed.",
+                       castAction: "hero-nemu-dontlook", viewmodelAction: "dontlook-hush",
+                       castCue: "sfx_cast_nemu_dontlook",
+                       telegraphRadius: NecroRules.DontLookTriggerRadius, telegraphRange: NecroRules.DontLookMaxRange)
+            {
                 AimByHolding(NecroRules.DontLookMinRange, NecroRules.DontLookMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
                 TelegraphStyle = GroundReticle.Style.Maw;
             }
 
+            protected override NemuDormant.Ghost Ghost => NemuDormant.Ghost.Peeker;
+
+            protected override bool GhostOut(int slot)
+            {
+                foreach (var g in NemuBlindfold.Live) if (g != null && g.OwnerSlot == slot) return true;
+                return false;
+            }
+
             protected override void OnActivate(AbilityContext ctx)
             {
-                _kit.ShareBasicCooldown(CooldownRemaining, mayLower: false);
                 if (ctx?.Motor == null) return;
                 if (NetAuthority.ShouldResolve())
                     NemuBlindfold.Place(AimedDestination(ctx), ctx.Forward, ctx.Motor.PlayerSlot);
             }
         }
 
-        // ================================================================== SKITTER (attacking)
+        // ================================================================== FETCHER (attacking)
 
         /// <summary>
-        /// SKITTER (owner 2026-10-15, the overhaul of KURO: FETCH!: *"Spawn siya ghost na kukunin slipper for her"*). A greedy
-        /// little green ghost of hers (`NemuSkitter`) pops out beside her, scrambles to her loose slipper, grabs it and hurries
-        /// it back, then waits by her holding it out until she takes it with INTERACT. A taya who gets near it makes it drop it.
-        /// Kuro is not sent. ⚠️ The ID is Fetch's, kept for saves, mastery and the wire. HOST-CONFIRMED (Fetch was predicted)
-        /// so the host accepts the cast and moves or lands the slipper. Protocol163's complete ghost frames carry its
-        /// path, grab and release to every peer alongside the ordinary authoritative slipper state.
+        /// FETCHER (owner 2026-10-21, renaming SKITTER, the overhaul of KURO: FETCH!: *"Spawn siya ghost na kukunin slipper for
+        /// her"*). A greedy little green ghost of hers (`NemuSkitter`) pops out beside her, scrambles to her loose slipper, grabs
+        /// it and hurries it back, then waits by her holding it out until she takes it with INTERACT. The taya no longer makes
+        /// it drop it (owner 2026-10-21). When it is done it lies dormant until she reclaims it (SOULBOUND).
+        /// ⚠️ The ID is Fetch's, kept for saves, mastery and the wire. HOST-CONFIRMED so the host accepts the cast and moves
+        /// or lands the slipper. Protocol163's complete ghost frames carry its path, grab and release to every peer.
         /// </summary>
-        private sealed class Skitter : HeroAbility
+        private sealed class Skitter : SoulboundAbility
         {
-            private readonly NemuHeroKit _kit;
-            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
             private Slipper _shoe;
             private NemuSkitter _ghost;
             private bool _carrying;
             private float _nextBroadcast;
 
-            public Skitter(NemuHeroKit kit)
-                : base("nemu_skill2", "SKITTER",
-                       "Attacking. A ghost fetches your loose slipper and waits by you until you take it. If the taya gets close, it drops it.",
-                       NecroRules.FetchCooldown, 8.0f, AbilityGlyph.NemuSkitter,
-                       summary: "A ghost brings your slipper back and waits for you. The taya can make it drop.",
+            public Skitter()
+                : base("nemu_skill2", "FETCHER",
+                       "Attacking. A ghost fetches your loose slipper and waits by you until you take it. Then it lies dormant until you retrieve it.",
+                       NecroRules.FetchCooldown, NecroRules.FetchSeconds, AbilityGlyph.NemuSkitter,
+                       summary: "A ghost brings your slipper back and waits for you.",
                        castAction: "hero-nemu-skitter", viewmodelAction: "skitter-flick",
-                       castCue: "sfx_cast_nemu_fetch") { _kit = kit; }
+                       castCue: "sfx_cast_nemu_fetch") { }
+
+            protected override NemuDormant.Ghost Ghost => NemuDormant.Ghost.Fetcher;
+
+            protected override bool GhostOut(int slot)
+            {
+                foreach (var g in NemuSkitter.Live) if (g != null && g.OwnerSlot == slot) return true;
+                return false;
+            }
 
             public override bool CanActivate(AbilityContext ctx)
             {
@@ -143,7 +264,6 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                _kit.ShareBasicCooldown(CooldownRemaining, mayLower: false);
                 if (!NetAuthority.ShouldResolve()) return;
                 _shoe = OwnLooseSlipper(ctx.Motor);
                 _carrying = false;
@@ -193,30 +313,16 @@ namespace TumbangPreso.Abilities
                 // annd stays there until she picks it up from him"*, *"it will follow her until she gets it"*). It holds the
                 // slipper out to her, still loose and within her pickup reach, and she takes it with her interact button
                 // (the normal grab, `Carrier.TryPickup`); that pickup ends it above, with its happy spin. Until then it
-                // keeps following her past its 8 s, so the skill's clock holds full while it waits.
+                // keeps following her past its 8 s. The taya no longer makes it drop it (owner 2026-10-21).
                 var owner = ctx.Motor.transform;
                 _ghost.Step(owner.position + owner.right * .6f + Vector3.up * .15f, NecroRules.FetchSpeed, dt);
                 bool waiting = (owner.position - _ghost.Position).sqrMagnitude < 1.4f * 1.4f;
                 if (waiting) _ghost.Face(owner.position, dt);
                 _ghost.Offering = waiting;
                 DurationRemaining = Duration;
-                Vector3 at = _ghost.HoldPoint;
                 // Carried: the host walks the (loose) slipper in its hands, crosswise between them, and tells everyone.
-                _shoe.transform.SetPositionAndRotation(at, _ghost.CarryRotation);
+                _shoe.transform.SetPositionAndRotation(_ghost.HoldPoint, _ghost.CarryRotation);
                 if (Time.time >= _nextBroadcast) { _nextBroadcast = Time.time + 0.1f; Net.MatchRpc.Instance?.BroadcastSlipperState(_shoe); }
-                // THE INTERCEPT (owner: the taya can stop it): a taya who can act and is on it makes it drop it.
-                var round = ctx?.Round;
-                if (round != null)
-                    foreach (var p in round.Players)
-                        if (p != null && p.IsDefender && p.CanAct() &&
-                            (p.transform.position - at).sqrMagnitude < NecroRules.FetchInterceptRadius * NecroRules.FetchInterceptRadius)
-                        {
-                            GroundCarriedSlipper();
-                            MatchFlair.Announce(MatchFlair.Kind.Block, ctx.Motor.PlayerSlot, p.PlayerSlot, at, 4f);
-                            NetCue.Play("sfx_nemu_fetch_drop", at);
-                            DurationRemaining = 0.0f;
-                            return;
-                        }
             }
 
             /// <summary>The slipper's size in its own axes (measured at the grab, while it lies at its rest rotation).</summary>
@@ -248,70 +354,74 @@ namespace TumbangPreso.Abilities
                 _carrying = false;
             }
 
-            protected override void OnEnd(AbilityContext ctx)
+            protected override void OnEnd(AbilityContext ctx) => Finish(ctx, dormant: true);
+
+            /// <summary>A refused cast or the round's end takes it back with no dormant ghost left behind.</summary>
+            protected override void OnCancelled(AbilityContext ctx) => Finish(ctx, dormant: false);
+
+            private void Finish(AbilityContext ctx, bool dormant)
             {
                 // Every peer's copy ends here; a carry that ended at her side was a delivery (its happy spin).
                 bool delivered = _carrying && _ghost != null && ctx?.Motor != null &&
                     (ctx.Motor.transform.position - _ghost.HoldPoint).sqrMagnitude < 1.6f * 1.6f;
                 GroundCarriedSlipper();
+                if (dormant && _ghost != null && ctx?.Motor != null) GoDormant(_ghost.Position, _ghost.Forward, ctx.Motor.PlayerSlot);
                 _ghost?.Leave(delivered);
                 _ghost = null;
                 _shoe = null;
             }
-            protected override void OnCancelled(AbilityContext ctx) => OnEnd(ctx);
         }
 
-        // ================================================================== LOOKOUT (defending)
+        // ================================================================== KEEPER (defending)
 
         /// <summary>
-        /// LOOKOUT (owner 2026-10-15, the overhaul of KURO: CATCH!: *"spawn siya ghost na tutulungan siya magdefend (pede ren
-        /// magtayo lata) but medyo small and not that good but it helps in some cases"*, *"only stays for like 15 seconds"*).
-        /// A small lantern ghost of hers (`NemuLookout`) minds the can for 15 s. If the can is down it stands it back up,
-        /// slowly (3.5 s against the taya's 1.5 s), and an attacker within 1.5 m of the can scares it off the job. It does it
-        /// once; then its job is done and it goes. It no longer makes the can knock-proof (protocol109's protection).
-        /// ⚠️ The ID is Catch's, kept for saves, mastery and the wire. Host-confirmed: every peer runs the same ghost and
-        /// clock on the host; peers receive its lift/scare/cheer state. Only the host stands the can up
-        /// (`Lata.HostRestore`, then the usual can broadcast).
+        /// KEEPER (owner 2026-10-21, retuning LOOKOUT, the overhaul of KURO: CATCH!: *"spawn siya ghost na tutulungan siya
+        /// magdefend (pede ren magtayo lata)"*). A small lantern ghost of hers (`NemuLookout`) minds the can for 15 s. Every
+        /// time the can is down it stands it back up in 1.5 s, as often as it is knocked, until its time is up. Attackers no
+        /// longer scare it off or undo its progress. Then it lies dormant until she reclaims it (SOULBOUND).
+        /// ⚠️ The ID is Catch's, kept for saves, mastery and the wire. Host-confirmed: peers receive its lift/cheer state.
+        /// Only the host stands the can up (`Lata.HostRestore`, then the usual can broadcast).
         /// </summary>
-        private sealed class Lookout : HeroAbility, IPreparedWorldReplication
+        private sealed class Lookout : SoulboundAbility, IPreparedWorldReplication
         {
-            private readonly NemuHeroKit _kit;
-            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
             private NemuLookout _ghost;
             private Lata _can;
             private float _lift;
-            private bool _done;
 
-            public Lookout(NemuHeroKit kit)
-                : base("nemu_skill2d", "LOOKOUT",
-                       "Defending. A lantern ghost guards the can for 15 s. If knocked down, it slowly lifts it back up once. Attackers scare it off.",
+            public Lookout()
+                : base("nemu_skill2d", "KEEPER",
+                       "Defending. A lantern ghost guards the can for 15 s, standing it back up 1.5 s after every knockdown. Then it lies dormant until you retrieve it.",
                        NecroRules.LookoutCooldown, NecroRules.LookoutSeconds, AbilityGlyph.NemuLookout,
-                       summary: "A ghost guards the can and slowly lifts it back up, once.",
+                       summary: "A ghost guards the can and keeps lifting it back up.",
                        castAction: "hero-nemu-lookout", viewmodelAction: "lookout-release",
-                       castCue: "sfx_cast_nemu_guard") { _kit = kit; }
+                       castCue: "sfx_cast_nemu_guard") { }
+
+            protected override NemuDormant.Ghost Ghost => NemuDormant.Ghost.Keeper;
+
+            protected override bool GhostOut(int slot)
+            {
+                foreach (var g in NemuLookout.Live) if (g != null && g.OwnerSlot == slot) return true;
+                return false;
+            }
 
             public override bool CanActivate(AbilityContext ctx)
                 => base.CanActivate(ctx) && ctx.Motor.IsDefender && ctx.Round?.Lata != null;
 
-            protected override void OnActivate(AbilityContext ctx)
-            {
-                _kit.ShareBasicCooldown(CooldownRemaining, mayLower: false);
-                Bind(ctx);
-            }
+            protected override void OnActivate(AbilityContext ctx) => Bind(ctx);
 
             private void Bind(AbilityContext ctx)
             {
                 _can = ctx?.Round?.Lata;
-                _lift = 0f; _done = false;
+                _lift = 0f;
                 if (_can == null || ctx?.Motor == null) return;
                 if (NetAuthority.ShouldResolve())
                     _ghost = NemuLookout.Summon(_can.transform, ctx.Motor.transform.position, ctx.Motor.PlayerSlot);
             }
 
-            /// <summary>The nearest attacker to the can who can act, and how near.</summary>
-            private static CharacterMotor NearestAttacker(AbilityContext ctx, Vector3 can, out float distance)
+            /// <summary>The nearest attacker to the can who can act, for the ghost to watch.</summary>
+            private static CharacterMotor NearestAttacker(AbilityContext ctx, Vector3 can)
             {
-                CharacterMotor best = null; distance = float.MaxValue;
+                CharacterMotor best = null; float distance = float.MaxValue;
                 var round = ctx?.Round;
                 if (round == null) return null;
                 foreach (var p in round.Players)
@@ -328,17 +438,15 @@ namespace TumbangPreso.Abilities
                 if (!NetAuthority.ShouldResolve()) return;
                 if (_can == null) { Bind(ctx); if (_can == null) { DurationRemaining = 0f; return; } }
                 if (_can != ctx?.Round?.Lata) { DurationRemaining = 0f; return; }
-                var near = NearestAttacker(ctx, _can.transform.position, out float distance);
-                bool scared = near != null && distance <= NecroRules.LookoutScareRadius;
-                if (_ghost != null) { _ghost.Watching = near != null ? near.transform.position : (Vector3?)null; _ghost.Scared = scared && !_can.IsUpright; }
-                if (_done) return;
+                var near = NearestAttacker(ctx, _can.transform.position);
+                if (_ghost != null) _ghost.Watching = near != null ? near.transform.position : (Vector3?)null;
                 if (_can.IsUpright) { _lift = 0f; if (_ghost != null) _ghost.Lift = 0f; return; }
                 if (ctx.Round == null || !ctx.Round.RoundActive || PresentationClock.Held) return;
-                // The can is down: it strains to stand it up, and loses ground twice as fast while an attacker is on it.
-                _lift = scared ? Mathf.Max(0f, _lift - dt * 2f) : _lift + dt;
+                // The can is down: it stands it up, whoever is near (owner 2026-10-21: attackers no longer undo it).
+                _lift += dt;
                 if (_ghost != null) _ghost.Lift = _lift / NecroRules.LookoutRestoreSeconds;
                 if (_lift < NecroRules.LookoutRestoreSeconds) return;
-                _done = true;
+                _lift = 0f;
                 // It keeps its grip until the can is really up (a peer waits on the host's can broadcast), and cheers.
                 if (_ghost != null) { _ghost.Lift = 1f; _ghost.Cheer(); }
                 // ⚠️ THE GATE IS WRITTEN OUT, NOT HOISTED: `tools/audit_ability_authority.py` reads it by brace depth.
@@ -347,8 +455,6 @@ namespace TumbangPreso.Abilities
                     _can.HostRestore();
                     Net.MatchRpc.Instance?.BroadcastLataState();
                 }
-                // Its job done, it goes (after its cheer).
-                DurationRemaining = Mathf.Min(DurationRemaining, 1.0f);
             }
 
             public bool CapturePreparedWorld(out Vector3 centre, out float preparation, out float remaining)
@@ -372,12 +478,17 @@ namespace TumbangPreso.Abilities
                 return false;
             }
 
-            protected override void OnEnd(AbilityContext ctx)
+            protected override void OnEnd(AbilityContext ctx) => Finish(ctx, dormant: true);
+
+            /// <summary>A refused cast or the round's end takes it back with no dormant ghost left behind.</summary>
+            protected override void OnCancelled(AbilityContext ctx) => Finish(ctx, dormant: false);
+
+            private void Finish(AbilityContext ctx, bool dormant)
             {
+                if (dormant && _ghost != null && ctx?.Motor != null) GoDormant(_ghost.Position, _ghost.Forward, ctx.Motor.PlayerSlot);
                 _ghost?.Leave(); _ghost = null;
                 _can = null; _lift = 0f;
             }
-            protected override void OnCancelled(AbilityContext ctx) => OnEnd(ctx);
         }
 
         // ================================================================== PRUSISYON (ultimate)

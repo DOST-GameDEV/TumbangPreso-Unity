@@ -8,8 +8,9 @@ using UnityEngine.TestTools;
 namespace TumbangPreso.PlayTests
 {
     /// <summary>
-    /// LOOKOUT (owner 2026-10-15, replaces KURO: CATCH!): a small ghost minds the can for 15 s and, if the can is down, slowly
-    /// stands it back up, once; an attacker near the can scares it off the job. Only the host stands the can up.
+    /// KEEPER (owner 2026-10-21, retuning LOOKOUT, which replaced KURO: CATCH!): a small ghost minds the can for 15 s and stands
+    /// it back up 1.5 s after every knockdown; attackers no longer stop it. Only the host stands the can up. When its time is
+    /// up it lies dormant and the skill's 20 s cooldown waits for Nemu to reclaim it (SOULBOUND).
     /// (Replaces `NemuCatchContractTests` and `NemuGuardMotionTests`: Catch's knock-proof can is gone.)
     /// </summary>
     public sealed class NemuLookoutTests
@@ -55,6 +56,7 @@ namespace TumbangPreso.PlayTests
         {
             _kit?.ResetForRound(_context);
             NemuLookout.RetireAll();
+            NemuDormant.RetireAll();
             yield return PlayModeWorld.Reset(); NetAuthority.Provider = _provider;
         }
 
@@ -74,12 +76,12 @@ namespace TumbangPreso.PlayTests
 
         [Test] public void IdentityAndClockMatchTheOwnersBrief()
         {
-            Assert.AreEqual("LOOKOUT", _kit.DefendingSkill.Name);
+            Assert.AreEqual("KEEPER", _kit.DefendingSkill.Name);
             Assert.AreEqual("nemu_skill2d", _kit.DefendingSkill.Id);
             Assert.AreEqual(15f, _kit.DefendingSkill.Duration, .001f);
-            Assert.AreEqual(25f, _kit.DefendingSkill.Cooldown, .001f);
+            Assert.AreEqual(20f, _kit.DefendingSkill.Cooldown, .001f);
             _motor.IsDefender = false;
-            Assert.IsFalse(_kit.DefendingSkill.CanActivate(_context), "Lookout is the defender's skill.");
+            Assert.IsFalse(_kit.DefendingSkill.CanActivate(_context), "Keeper is the defender's skill.");
         }
 
         [Test] public void ItSummonsItsGhostAndNoLongerMakesTheCanKnockProof()
@@ -90,28 +92,27 @@ namespace TumbangPreso.PlayTests
             KnockDown();
         }
 
-        [Test] public void ItSlowlyStandsADownedCanBackUpOnceThenGoes()
+        [Test] public void ItStandsTheCanUpIn1Point5SecondsEveryTimeUntilItsTimeIsUp()
         {
             Cast();
             KnockDown();
             Tick(NecroRules.LookoutRestoreSeconds - .2f);
-            Assert.IsFalse(_can.IsUpright, "It stood the can up faster than its 3.5 s.");
+            Assert.IsFalse(_can.IsUpright, "It stood the can up faster than its 1.5 s.");
             Tick(.3f);
-            Assert.IsTrue(_can.IsUpright, "Lookout never stood the downed can back up.");
-            Tick(1f);
-            Assert.IsFalse(_kit.Skill2.IsActive, "Its job done, Lookout should go.");
+            Assert.IsTrue(_can.IsUpright, "Keeper never stood the downed can back up.");
+            KnockDown();
+            Tick(NecroRules.LookoutRestoreSeconds + .1f);
+            Assert.IsTrue(_can.IsUpright, "Keeper should keep standing the can up until its time is up.");
+            Assert.IsTrue(_kit.Skill2.IsActive, "Keeper went before its 15 s were up.");
         }
 
-        [Test] public void AnAttackerAtTheCanScaresItOffTheJob()
+        [Test] public void AnAttackerAtTheCanNoLongerStopsIt()
         {
             Cast();
             KnockDown();
-            _attacker.transform.position = _can.transform.position + Vector3.right * (NecroRules.LookoutScareRadius - .3f);
-            Tick(NecroRules.LookoutRestoreSeconds + 1f);
-            Assert.IsFalse(_can.IsUpright, "An attacker on the can did not scare Lookout off.");
-            _attacker.transform.position = new Vector3(0f, 0f, 10f);
-            Tick(NecroRules.LookoutRestoreSeconds + .2f);
-            Assert.IsTrue(_can.IsUpright, "Once the attacker left, Lookout should finish the job.");
+            _attacker.transform.position = _can.transform.position + Vector3.right * 1.0f;
+            Tick(NecroRules.LookoutRestoreSeconds + .1f);
+            Assert.IsTrue(_can.IsUpright, "An attacker on the can should no longer undo Keeper's progress.");
         }
 
         [Test] public void AnObserverRunsTheGhostButCannotStandTheCanUp()
@@ -130,6 +131,13 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(_kit.Skill2.IsActive);
             Tick(.4f);
             Assert.IsFalse(_kit.Skill2.IsActive);
+            Assert.IsNotNull(NemuDormant.For(0, NemuDormant.Ghost.Keeper), "Its time up, Keeper should lie dormant.");
+            Tick(3f);
+            Assert.AreEqual(NecroRules.LookoutCooldown, _kit.Skill2.CooldownRemaining, 1e-3f, "The cooldown ran before the ghost was reclaimed.");
+            Assert.IsFalse(_kit.Skill2.CanActivate(_context), "A dormant Keeper must be reclaimed before it is cast again.");
+            NemuDormant.For(0, NemuDormant.Ghost.Keeper).Reclaim();
+            Tick(1f);
+            Assert.AreEqual(NecroRules.LookoutCooldown - 1f, _kit.Skill2.CooldownRemaining, .06f, "Reclaimed, its cooldown should run.");
         }
 
         [Test] public void RecoveryUsesTheRemainingClockWithoutRecastingOrSpending()

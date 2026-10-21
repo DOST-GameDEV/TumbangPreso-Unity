@@ -44,6 +44,8 @@ namespace TumbangPreso.Net
                     if (ghost != null && ghost.isActiveAndEnabled && ghost.OwnerSlot == seat) poses.Add(ghost.CaptureNetwork());
                 foreach (var ghost in NemuLookout.Live)
                     if (ghost != null && ghost.isActiveAndEnabled && ghost.OwnerSlot == seat) poses.Add(ghost.CaptureNetwork());
+                foreach (var ghost in NemuDormant.Live)
+                    if (ghost != null && ghost.isActiveAndEnabled && ghost.OwnerSlot == seat) poses.Add(ghost.CaptureNetwork());
             }
             return new NemuGhostFrame { Seat = seat, Scope = new GameplayActionScope { Match = EnsurePresentationMatch(),
                 Round = GameServices.Match?.RoundNumber ?? 0, Epoch = body?.MovementEpoch ?? 0 },
@@ -101,15 +103,17 @@ namespace TumbangPreso.Net
             foreach (var pose in frame.Ghosts)
                 if (replicas.TryGetValue(pose.Id, out var existing) && existing != null
                     && !(pose.Kind == 1 && existing is NemuBlindfold || pose.Kind == 2 && existing is NemuSkitter
-                        || pose.Kind == 3 && existing is NemuLookout)) return false;
+                        || pose.Kind == 3 && existing is NemuLookout || pose.Kind == 4 && existing is NemuDormant)) return false;
             var missing = new List<long>(replicas.Keys);
             float elapsed = Mathf.Max(0, frame.RoundClock - (GameServices.Round?.TimeLeft ?? frame.RoundClock));
             foreach (var pose in frame.Ghosts)
             {
                 // A delayed hydration cannot resurrect a lifetime that expired in simulation time.
+                // A dormant ghost (kind 4) waits as long as it takes her to come back for it.
                 float limit = pose.Kind == 1 ? (pose.Phase == 1 ? Core.NecroRules.DontLookLifeSeconds :
                     pose.Phase == 2 ? Core.NecroRules.DontLookLungeSeconds + Core.NecroRules.DontLookBlindSeconds + .45f :
-                    Core.NecroRules.DontLookBlindSeconds + .45f) : pose.Kind == 2 ? 8.45f : Core.NecroRules.LookoutSeconds + .6f;
+                    Core.NecroRules.DontLookBlindSeconds + .45f) : pose.Kind == 2 ? Core.NecroRules.FetchSeconds + .45f
+                    : pose.Kind == 3 ? Core.NecroRules.LookoutSeconds + .6f : float.PositiveInfinity;
                 if (pose.Phase == 4 ? pose.PhaseAge + elapsed >= (pose.Kind == 3 ? .6f : .45f)
                     : (pose.Kind == 1 && pose.Phase != 1 ? pose.PhaseAge : pose.Age) + elapsed >= limit) continue;
                 missing.Remove(pose.Id);
@@ -126,10 +130,16 @@ namespace TumbangPreso.Net
                     if (ghost == null) ghost = NemuSkitter.Summon(pose.Position, pose.Forward, frame.Seat);
                     ghost.ApplyNetwork(pose, elapsed); replicas[pose.Id] = ghost;
                 }
-                else
+                else if (pose.Kind == 3)
                 {
                     var ghost = replica as NemuLookout;
                     if (ghost == null) ghost = NemuLookout.Summon(GameServices.Round?.Lata?.transform, pose.Position, frame.Seat);
+                    ghost.ApplyNetwork(pose, elapsed); replicas[pose.Id] = ghost;
+                }
+                else
+                {
+                    var ghost = replica as NemuDormant;
+                    if (ghost == null) ghost = NemuDormant.Spawn((NemuDormant.Ghost)pose.Flags, pose.Position, pose.Forward, frame.Seat);
                     ghost.ApplyNetwork(pose, elapsed); replicas[pose.Id] = ghost;
                 }
             }

@@ -57,7 +57,7 @@ namespace TumbangPreso.PlayTests
 
         private static NemuGhostPose Pose(byte kind, long id, byte phase = 1) => new NemuGhostPose
         { Kind = kind, Id = id, Phase = phase, Position = new Vector3(2, 0, 4), Forward = Vector3.forward,
-            Age = 4, PhaseAge = .1f, Target = -1, Progress = kind == 2 ? .14f : 0 };
+            Age = 4, PhaseAge = .1f, Target = -1, Progress = kind == 2 ? .14f : 0, Flags = (byte)(kind == 4 ? 1 : 0) };
         private NemuGhostFrame Frame(params NemuGhostPose[] ghosts) => new NemuGhostFrame
         { Seat = 0, Scope = new GameplayActionScope { Match = 123, Round = 1, Epoch = _owner.MovementEpoch },
             Sequence = 1, RoundClock = GameServices.Round.TimeLeft, Ghosts = ghosts };
@@ -70,7 +70,8 @@ namespace TumbangPreso.PlayTests
         }
         [Test] public void BoundedCodecRejectsMalformedCompleteFrames()
         {
-            var frame = Frame(Pose(1, 1), Pose(1, 2), Pose(2, 3), Pose(2, 4), Pose(3, 5), Pose(3, 6));
+            var fetcher = Pose(4, 8); fetcher.Flags = 2; var keeper = Pose(4, 9); keeper.Flags = 3;
+            var frame = Frame(Pose(1, 1), Pose(1, 2), Pose(2, 3), Pose(2, 4), Pose(3, 5), Pose(3, 6), Pose(4, 7), fetcher, keeper);
             using var writer = new FastBufferWriter(NemuGhostFrame.MaxWireBytes, Allocator.Temp);
             writer.WriteNetworkSerializable(frame); Assert.AreEqual(NemuGhostFrame.MaxWireBytes, writer.Length);
             bool Reads(byte[] bytes)
@@ -80,7 +81,9 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(Reads(valid.Concat(new byte[] { 0 }).ToArray()));
             frame.Ghosts[0].Age = float.NaN; Assert.IsFalse(frame.IsValid);
             frame.Ghosts[0] = Pose(1, 2); Assert.IsFalse(frame.IsValid, "Duplicate lifetimes were accepted.");
-            frame.Ghosts = new NemuGhostPose[7]; Assert.IsFalse(frame.IsValid);
+            frame.Ghosts[0] = Pose(1, 1); frame.Ghosts[6].Flags = 0; Assert.IsFalse(frame.IsValid, "A dormant ghost of no skill was accepted.");
+            frame.Ghosts[6].Flags = 1; frame.Ghosts[6].Phase = 2; Assert.IsFalse(frame.IsValid, "A dormant ghost cannot lunge or carry.");
+            frame.Ghosts = new NemuGhostPose[NemuGhostFrame.MaxGhosts + 1]; Assert.IsFalse(frame.IsValid);
         }
         [UnityTest] public IEnumerator OwnerObserverAndSpectatorHydrateTheSameThreeGhostsWithoutCasting()
         {
@@ -144,37 +147,41 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(NemuLookout.Live.Any(g => g.isActiveAndEnabled));
             Assert.IsFalse(NemuBlindfold.Live.Any(g => g.isActiveAndEnabled));
         }
-        /// <summary>DEAD WEIGHT (owner 2026-10-16): rivals near her visible ghosts are 10 % slower, once however many rings
-        /// they stand in; never Nemu herself; never round a hidden (armed) DON'T LOOK ghost; and every chilling ghost has
-        /// its smoke ring on the court. Bodies stand at x = 0 (Nemu), 3, 6 and 9.</summary>
-        [UnityTest] public IEnumerator DeadWeightSlowsRivalsNearHerVisibleGhostsOnly()
+        /// <summary>SOULBOUND and PEEKER's ring (owner 2026-10-21): a dormant ghost holds its skill's cooldown full until it is
+        /// reclaimed, rides the host's ghost frames to every peer, and Peeker's 2 m trigger ring is drawn while it waits.
+        /// Bodies stand at x = 0 (Nemu), 3, 6 and 9.</summary>
+        [UnityTest] public IEnumerator DormantGhostsHoldTheirSkillRideTheFramesAndPeekerDrawsItsRing()
         {
-            var bodies = Enumerable.Range(0, 4).Select(s => GameServices.Round.Players.Single(p => p.PlayerSlot == s)).ToArray();
-            foreach (var b in bodies) Assert.AreEqual(1f, b.DeadWeightSpeedScale, $"seat {b.PlayerSlot} before any ghost");
-
-            var skitter = NemuSkitter.Summon(new Vector3(3, 0, 2), Vector3.forward, 0);
+            _peer.Host = true; _peer.Seat = 0;
+            var kit = _owner.AbilitySystem.Kit;
+            var context = new AbilityContext(_owner, null, null);
+            kit.Skill1.ApplyNetworkSnapshot(NecroRules.DontLookCooldown, 0);
+            var dormant = NemuDormant.Spawn(NemuDormant.Ghost.Peeker, new Vector3(1.5f, 0, 1.5f), Vector3.forward, 0);
             yield return null;
-            Assert.AreEqual(NemuRules.DeadWeightSpeedScale, bodies[1].DeadWeightSpeedScale, 1e-4f, "2 m from Skitter");
-            Assert.AreEqual(1f, bodies[2].DeadWeightSpeedScale, "3.6 m away, outside the ring");
-            Assert.AreEqual(1, DeadWeightRingsCount(), "Skitter's ring");
+            kit.Tick(context, 5f);
+            Assert.AreEqual(NecroRules.DontLookCooldown, kit.Skill1.CooldownRemaining, 1e-4f, "Its cooldown ran while it lay dormant.");
+            Assert.AreEqual(0f, kit.AttackingSkill.CooldownRemaining, "Another skill's clock was touched.");
 
-            skitter.Teleport(new Vector3(0, 0, 1));
-            Assert.AreEqual(1f, bodies[0].DeadWeightSpeedScale, "never her own ghost on herself");
-            Assert.AreEqual(1f, bodies[1].DeadWeightSpeedScale, "3.2 m away now");
+            var frame = (NemuGhostFrame)typeof(MatchRpc).GetMethod("CaptureNemuGhosts", Hidden).Invoke(_rpc, new object[] { 0 });
+            Assert.IsTrue(frame.IsValid); Assert.AreEqual(1, frame.Ghosts.Length);
+            Assert.AreEqual(4, frame.Ghosts[0].Kind); Assert.AreEqual((byte)NemuDormant.Ghost.Peeker, frame.Ghosts[0].Flags);
 
-            skitter.Teleport(new Vector3(3, 0, 1));
-            NemuBlindfold.Place(new Vector3(3, 0, -1), Vector3.forward, 0, 0f);
-            Assert.AreEqual(NemuRules.DeadWeightSpeedScale, bodies[1].DeadWeightSpeedScale, 1e-4f, "two rings do not stack");
+            dormant.Reclaim();
+            kit.Tick(context, 1f);
+            Assert.AreEqual(NecroRules.DontLookCooldown - 1f, kit.Skill1.CooldownRemaining, 1e-3f, "Reclaimed, its cooldown starts.");
 
-            NemuBlindfold.Place(new Vector3(6, 0, 1), Vector3.forward, 0, 4f);
-            Assert.AreEqual(1f, bodies[2].DeadWeightSpeedScale, "an armed, hidden trap must not give itself away");
-            NemuBlindfold.Place(new Vector3(9, 0, 1), Vector3.forward, 0, 0f);
-            Assert.AreEqual(NemuRules.DeadWeightSpeedScale, bodies[3].DeadWeightSpeedScale, 1e-4f, "an arming trap is still visible");
-            Assert.AreEqual(NemuRules.DeadWeightSpeedScale, bodies[3].StatusSpeedScale, 1e-4f, "it reaches the body's speed");
+            NemuBlindfold.Place(new Vector3(4.5f, 0, 6), Vector3.forward, 0, 4f);
             yield return null;
-            Assert.AreEqual(2, DeadWeightRingsCount(), "Skitter and the arming trap; Place retires her earlier traps");
+            Assert.AreEqual(1, TumbangPreso.Visual.NemuGhostRings.Count, "Peeker's armed trap keeps its trigger ring; a reclaimed ghost has none.");
+
+            WorldEffectSnapshot.ClearPersistentFields(); _peer.Host = false; _peer.Seat = 1;
+            yield return null;
+            Deliver(frame); yield return null;
+            var replica = NemuDormant.Live.Single(g => g.isActiveAndEnabled);
+            Assert.AreEqual(NemuDormant.Ghost.Peeker, replica.Kind);
+            Assert.AreEqual("Peeker", replica.Name);
+            Assert.IsTrue(replica.GetComponentsInChildren<Renderer>().Any(r => r.enabled && r.sharedMaterial != null), "A dormant ghost had no drawable renderer.");
         }
-        private static int DeadWeightRingsCount() => TumbangPreso.Visual.DeadWeightRings.Count;
         [Test] public void ExpiredHydrationAndChangedGhostKindsCannotResurrectOldState()
         {
             var pose = Pose(1, 901); pose.Age = 29.8f;

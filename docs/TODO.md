@@ -1,3 +1,13 @@
+### NEMU-SOULBOUND-1021: SOULBOUND, PEEKER, FETCHER, KEEPER (IN PROGRESS)
+
+Owner 2026-10-21 on branch `Reworks`: passive SOULBOUND (dormant ghosts, reclaim with Grab within 1 m for 1.5 s, cooldowns
+start after reclaim), PEEKER (2.5 s fade, 15 s wait, 2 m ring drawn, blind and 25 % slow for 2.5 s), FETCHER (no taya
+drop), KEEPER (15 s, stands the can up 1.5 s after every knockdown, no scare), all 20 s cooldowns. Protocol175.
+- [x] Rules, kit, `NemuDormant`, reclaim wire and prompt; Core.Tests 797/797; direct Roslyn compile of Runtime, Tests and
+  PlayTests clean.
+- [ ] Unity import and the Nemu EditMode/PlayMode suites (the editor was open on the project, so batch runs were not made).
+- [ ] Owner look at the dormant ghosts, Peeker's ring and the reclaim prompt in play; bots reclaim without walking back.
+
 ### TRAIN-TOAST-REMOVAL-1021: remove train announcements and distant reset hint (DONE)
 
 - [x] Delete all train/Overclock toast strings, generating methods and calls in both modes.

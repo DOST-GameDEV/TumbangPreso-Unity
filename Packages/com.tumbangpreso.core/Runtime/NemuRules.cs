@@ -22,18 +22,12 @@ namespace TumbangPreso.Core
         public const float PossessedSpeedScale = 0.9f;
 
         /// <summary>
-        /// DEAD WEIGHT, Nemu's passive (owner, 2026-10-16, replacing KURO! now that Kuro is gone): rivals near any of
-        /// Nemu's ghosts move 10 % slower, the dead clinging to them. First named COLD COMPANY with a frost ring; the owner
-        /// kept the slow and refused the ice (*"gusto ko ung slow js replace it"*), so its ring is her own smoke and violet.
-        /// One flat 10 % within the ring of any of her visible ghosts; several rings do not stack. The radius is PROPOSED,
-        /// NOT OBJECTED TO.
+        /// SOULBOUND, Nemu's passive (owner, 2026-10-21, replacing DEAD WEIGHT's slow): a ghost whose time is up does not go
+        /// away. It stays where it ended as a dormant ghost, and that skill's cooldown does not start until Nemu reclaims it:
+        /// within this flat distance of it, holding Grab (RETRIEVE SLIPPER / RESET CAN) for this long.
         /// </summary>
-        public const float DeadWeightSpeedScale = 0.9f;
-        public const float DeadWeightRadius = 3.0f;
-
-        /// <summary>The speed share for a body whose nearest of the caster's ghosts is this far away, flat on the court.</summary>
-        public static float DeadWeightScale(float flatDistance)
-            => flatDistance >= 0f && flatDistance <= DeadWeightRadius ? DeadWeightSpeedScale : 1.0f;
+        public const float ReclaimRadius = 1.0f;
+        public const float ReclaimSeconds = 1.5f;
 
         /// <summary>Owner, 2026-10-11: *"pls limit ult to below 6 seconds"*. The cutscene's authored length.</summary>
         public const float ProcessionSeconds = 5.8f;

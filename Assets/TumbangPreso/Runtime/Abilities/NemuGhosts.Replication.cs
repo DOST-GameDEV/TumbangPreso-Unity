@@ -70,4 +70,20 @@ namespace TumbangPreso.Abilities
             Watching = (pose.Flags & 2) != 0 ? pose.Auxiliary : (Vector3?)null;
         }
     }
+
+    public sealed partial class NemuDormant
+    {
+        private long _networkId = NemuGhostFrame.NewId();
+        // Kind 4: phase 1 dormant, phase 4 reclaimed and rising away; Flags names which skill's ghost it is.
+        public NemuGhostPose CaptureNetwork() => new NemuGhostPose { Kind = 4, Id = _networkId,
+            Phase = (byte)(_reclaimed ? 4 : 1), Position = Position, Forward = Facing, Auxiliary = Vector3.zero,
+            Age = Mathf.Min(_age, 60f), PhaseAge = _reclaimed ? Mathf.Min(_age - _goneAt, 60f) : 0f,
+            Progress = Mathf.Clamp01(Mathf.Max(Progress, LocalProgress)), Flags = (byte)Kind, Target = -1 };
+        public void ApplyNetwork(NemuGhostPose pose, float elapsed)
+        {
+            _networkId = pose.Id; Position = pose.Position; Facing = pose.Forward;
+            Progress = pose.Progress;
+            if (pose.Phase == 4 && !_reclaimed) { _reclaimed = true; _goneAt = _age - pose.PhaseAge - elapsed; }
+        }
+    }
 }

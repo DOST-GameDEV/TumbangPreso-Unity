@@ -21,13 +21,11 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
-        public void DeadWeightIsTenPercentInsideTheRingAndNothingOutside()
+        public void SoulboundReclaimsWithin1MetreIn1Point5Seconds()
         {
-            Assert.Equal(0.9f, NemuRules.DeadWeightSpeedScale); // owner: "move 10% slower"
-            Assert.Equal(0.9f, NemuRules.DeadWeightScale(0f));
-            Assert.Equal(0.9f, NemuRules.DeadWeightScale(NemuRules.DeadWeightRadius));
-            Assert.Equal(1.0f, NemuRules.DeadWeightScale(NemuRules.DeadWeightRadius + 0.01f));
-            Assert.Equal(1.0f, NemuRules.DeadWeightScale(-1f)); // no ghost at all
+            // Owner, 2026-10-21: "near the ghost (1 meter distance) for 1.5 seconds".
+            Assert.Equal(1.0f, NemuRules.ReclaimRadius);
+            Assert.Equal(1.5f, NemuRules.ReclaimSeconds);
         }
 
         [Fact]

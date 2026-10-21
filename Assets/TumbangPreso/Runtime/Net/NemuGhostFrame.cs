@@ -10,19 +10,20 @@ namespace TumbangPreso.Net
     public struct NemuGhostPose : INetworkSerializable
     {
         public const int WireBytes = 67;
-        public byte Kind, Phase, Flags; // 1 Blindfold, 2 Skitter, 3 Lookout; phase4 leaves
+        public byte Kind, Phase, Flags; // 1 Blindfold, 2 Skitter, 3 Lookout, 4 dormant (Flags: its skill); phase4 leaves
         public long Id;
         public Vector3 Position, Forward, Auxiliary;
         public float Age, PhaseAge, Progress;
         public int Target, TargetEpoch;
-        public bool IsValid(int owner) => Id > 0 && Kind >= 1 && Kind <= 3 && Phase >= 1 && Phase <= 4
+        public bool IsValid(int owner) => Id > 0 && Kind >= 1 && Kind <= 4 && Phase >= 1 && Phase <= 4
             && Finite(Position) && Finite(Forward) && Finite(Auxiliary)
             && Mathf.Abs(Forward.y) < .01f && Mathf.Abs(Forward.sqrMagnitude - 1f) < .02f
             && Clock(Age) && Clock(PhaseAge) && float.IsFinite(Progress) && Progress >= 0 && Progress <= 1
             && (Kind == 1 ? Flags == 0 && Progress == 0 && (Phase == 1 ? Target == -1 && TargetEpoch == 0
                 : Target >= -1 && Target < Balance.PlayerCount && Target != owner && TargetEpoch >= 0
                     && (Phase == 4 || Target >= 0))
-                : Target == -1 && TargetEpoch == 0 && (Kind == 2 ? Phase != 3 && Flags <= 15 : Phase != 3 && Flags <= 3));
+                : Target == -1 && TargetEpoch == 0 && (Kind == 2 ? Phase != 3 && Flags <= 15
+                    : Kind == 3 ? Phase != 3 && Flags <= 3 : (Phase == 1 || Phase == 4) && Flags >= 1 && Flags <= 3));
         private static bool Clock(float value) => float.IsFinite(value) && value >= 0 && value <= 60;
         private static bool Finite(Vector3 value) => float.IsFinite(value.x) && float.IsFinite(value.y) && float.IsFinite(value.z)
             && Mathf.Abs(value.x) <= 20000 && Mathf.Abs(value.y) <= 20000 && Mathf.Abs(value.z) <= 20000;
@@ -37,7 +38,7 @@ namespace TumbangPreso.Net
 
     public struct NemuGhostFrame : INetworkSerializable
     {
-        public const int MaxGhosts = 6, HeaderBytes = 33, MaxWireBytes = HeaderBytes + MaxGhosts * NemuGhostPose.WireBytes;
+        public const int MaxGhosts = 9, HeaderBytes = 33, MaxWireBytes = HeaderBytes + MaxGhosts * NemuGhostPose.WireBytes;
         public int Seat;
         public GameplayActionScope Scope;
         public long Sequence;
@@ -54,14 +55,15 @@ namespace TumbangPreso.Net
                 if (Seat < 0 || Seat >= Balance.PlayerCount || !Scope.IsValid || Sequence <= 0
                     || !float.IsFinite(RoundClock) || RoundClock < 0 || RoundClock > 36000
                     || Ghosts == null || Ghosts.Length > MaxGhosts) return false;
-                int blind = 0, skitter = 0, lookout = 0;
+                int blind = 0, skitter = 0, lookout = 0, dormant = 0;
                 for (int i = 0; i < Ghosts.Length; i++)
                 {
                     if (!Ghosts[i].IsValid(Seat)) return false;
-                    if (Ghosts[i].Kind == 1) blind++; else if (Ghosts[i].Kind == 2) skitter++; else lookout++;
+                    if (Ghosts[i].Kind == 1) blind++; else if (Ghosts[i].Kind == 2) skitter++;
+                    else if (Ghosts[i].Kind == 3) lookout++; else dormant++;
                     for (int j = 0; j < i; j++) if (Ghosts[i].Id == Ghosts[j].Id) return false;
                 }
-                return blind <= 2 && skitter <= 2 && lookout <= 2;
+                return blind <= 2 && skitter <= 2 && lookout <= 2 && dormant <= 3;
             }
         }
         public void NetworkSerialize<T>(BufferSerializer<T> s) where T : IReaderWriter

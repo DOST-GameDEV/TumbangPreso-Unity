@@ -6,22 +6,18 @@ using UnityEngine;
 namespace TumbangPreso.Visual
 {
     /// <summary>
-    /// DEAD WEIGHT's ring on the court (owner, 2026-10-16: the slow stays, the ice look goes: *"why tf are we making kuro
-    /// an ice"*, *"gusto ko ung slow js replace it"*). One ring round every ghost that slows
-    /// (`CharacterMotor.DeadWeightSpeedScale` reads the same three lists by the same rule), at exactly
-    /// `NemuRules.DeadWeightRadius`, so the line a rival sees is the line where the slow starts.
-    ///
-    ///  * NEMU'S OWN LOOK, NOTHING ELSE: black and one violet (her ultimate's rule). Ice and frost are Yasmin's; a pale
-    ///    ring here would read as Chilled. A crisp thin violet line marks the edge, the court inside it is shaded a
-    ///    little darker, and her black smoke (`NemuSmokeBatch`, the same smoke as her ghosts) crawls slowly round the
-    ///    line with a few strands curling up and inward, as if something unseen is circling the ghost.
-    ///  * It SPREADS from the ghost when it appears (0.4 s) and draws back into it when it goes (0.3 s).
-    ///  * DON'T LOOK's ghost has a ring only while it is visible and arming, like its slow, so it never gives the hidden
-    ///    trap away.
+    /// The rings Nemu's ghosts draw on the court, in her own look: black and one violet (her ultimate's rule). A crisp thin
+    /// violet line marks the edge, the court inside it is shaded a little darker, and her black smoke (`NemuSmokeBatch`, the
+    /// same smoke as her ghosts) crawls slowly round the line with a few strands curling up and inward.
+    ///  * PEEKER's trigger ring (owner 2026-10-21: *"show the like circle aura that activates it"*), at exactly
+    ///    `NecroRules.DontLookTriggerRadius`, for everyone, for as long as the ghost waits: the line a rival sees is the line
+    ///    that springs it.
+    ///  * SOULBOUND's reclaim ring round each of her dormant ghosts, at `NemuRules.ReclaimRadius`, drawn on her screen only.
+    ///  * Each SPREADS from its ghost when it appears (0.4 s) and draws back into it when it goes (0.3 s).
     /// Purely presentational and local: every peer draws it from the ghosts it already runs. Posed from its own clock,
     /// which stands still while the world is paused.
     /// </summary>
-    public sealed class DeadWeightRings : MonoBehaviour
+    public sealed class NemuGhostRings : MonoBehaviour
     {
         private const float GrowSeconds = .4f, ShrinkSeconds = .3f;
         private static readonly Color Edge = new Color(.62f, .26f, 1f, .55f);
@@ -49,22 +45,22 @@ namespace TumbangPreso.Visual
 
         private sealed class Ring
         {
-            public GameObject Go; public NemuSmokeBatch Smoke; public float Grow, Clock; public bool Seen; public Vector3 At;
+            public GameObject Go; public NemuSmokeBatch Smoke; public float Grow, Clock, Radius; public bool Seen; public Vector3 At;
         }
 
-        private static DeadWeightRings _instance;
+        private static NemuGhostRings _instance;
         private readonly Dictionary<Object, Ring> _rings = new Dictionary<Object, Ring>();
         private readonly List<Object> _gone = new List<Object>();
-        private Mesh _mesh;
+        private readonly Dictionary<float, Mesh> _meshes = new Dictionary<float, Mesh>();
         private Material _material;
 
         /// <summary>Called by each ghost as it appears, so the drawer exists whenever there is a ring to draw.</summary>
         public static void Ensure()
         {
             if (_instance != null || !Application.isPlaying) return;
-            var go = new GameObject("DeadWeightRings") { hideFlags = HideFlags.HideInHierarchy };
+            var go = new GameObject("NemuGhostRings") { hideFlags = HideFlags.HideInHierarchy };
             DontDestroyOnLoad(go);
-            _instance = go.AddComponent<DeadWeightRings>();
+            _instance = go.AddComponent<NemuGhostRings>();
         }
 
         /// <summary>How many ghosts had a ring last frame, not counting rings drawing back into a ghost that went (tests).</summary>
@@ -82,9 +78,10 @@ namespace TumbangPreso.Visual
         private void LateUpdate()
         {
             foreach (var r in _rings.Values) r.Seen = false;
-            foreach (var g in NemuSkitter.Live) if (g != null && !g.Leaving) Mark(g, g.Position);
-            foreach (var g in NemuLookout.Live) if (g != null && !g.Leaving) Mark(g, g.Position);
-            foreach (var g in NemuBlindfold.Live) if (g != null && !g.Armed && !g.Sprung) Mark(g, g.Spot);
+            foreach (var g in NemuBlindfold.Live) if (g != null && !g.Sprung && !g.Retiring) Mark(g, g.Spot, NecroRules.DontLookTriggerRadius);
+            bool spectating = GameLaunch.Spectator;
+            foreach (var g in NemuDormant.Live)
+                if (g != null && !g.Reclaimed && !spectating && g.OwnerSlot == NetAuthority.LocalSlot) Mark(g, g.Position, NemuRules.ReclaimRadius);
 
             float dt = Time.deltaTime;
             _gone.Clear();
@@ -107,7 +104,7 @@ namespace TumbangPreso.Visual
         private static void DrawSmoke(Ring r, Vector3 centre, float k)
         {
             var s = r.Smoke;
-            float radius = NemuRules.DeadWeightRadius * k;
+            float radius = r.Radius * k;
             float turn = r.Clock * CrawlDegreesPerSecond;
             s.Begin();
             for (int i = 0; i < Crawl.Length; i++)
@@ -134,25 +131,25 @@ namespace TumbangPreso.Visual
             s.End(r.Clock);
         }
 
-        private void Mark(Object ghost, Vector3 at)
+        private void Mark(Object ghost, Vector3 at, float radius)
         {
             if (!_rings.TryGetValue(ghost, out var r))
             {
-                r = new Ring { Go = Build() };
-                r.Smoke = new NemuSmokeBatch(r.Go.transform, "DeadWeightSmoke", Crawl.Length + Strands.Length, 3, 1);
+                r = new Ring { Go = Build(radius), Radius = radius };
+                r.Smoke = new NemuSmokeBatch(r.Go.transform, "NemuRingSmoke", Crawl.Length + Strands.Length, 3, 1);
                 _rings[ghost] = r;
             }
             r.Seen = true;
             r.At = at;
         }
 
-        private GameObject Build()
+        private GameObject Build(float radius)
         {
-            if (_mesh == null) _mesh = BuildMesh(NemuRules.DeadWeightRadius);
-            if (_material == null) _material = new Material(Shader.Find("Sprites/Default")) { name = "DeadWeightGround" };
-            var go = new GameObject("DeadWeightRing");
+            if (!_meshes.TryGetValue(radius, out var mesh)) _meshes[radius] = mesh = BuildMesh(radius);
+            if (_material == null) _material = new Material(Shader.Find("Sprites/Default")) { name = "NemuRingGround" };
+            var go = new GameObject("NemuGhostRing");
             go.transform.SetParent(transform, false);
-            go.AddComponent<MeshFilter>().sharedMesh = _mesh;
+            go.AddComponent<MeshFilter>().sharedMesh = mesh;
             var mr = go.AddComponent<MeshRenderer>();
             mr.sharedMaterial = _material;
             mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
@@ -184,7 +181,7 @@ namespace TumbangPreso.Visual
                 tris.Add(k); tris.Add(k + 1); tris.Add(k + 2); tris.Add(k + 2); tris.Add(k + 1); tris.Add(k + 3);
             }
 
-            var mesh = new Mesh { name = "DeadWeightRing", hideFlags = HideFlags.DontSave };
+            var mesh = new Mesh { name = "NemuGhostRing", hideFlags = HideFlags.DontSave };
             mesh.SetVertices(v); mesh.SetColors(c); mesh.SetTriangles(tris, 0);
             mesh.RecalculateNormals();
             mesh.bounds = new Bounds(Vector3.zero, new Vector3(radius * 2f, .2f, radius * 2f));

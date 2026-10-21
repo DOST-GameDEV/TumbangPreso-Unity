@@ -21,6 +21,30 @@ and a real LAN beats 25.0.0.0/8 (Hamachi) and 26.0.0.0/8 (Radmin VPN) when one h
 adapters; a tie keeps the address already shown (`LanBeacon.AddressPreference`). JOIN GAME's REFRESH
 empties the LAN rows and asks at once, or queries UGS at once for the online list.
 
+## Protocol175: Nemu SOULBOUND, PEEKER, FETCHER, KEEPER (2026-10-21)
+
+Owner rework on branch `Reworks`. IDs, glyphs and the ghost classes are unchanged; names and rules change.
+
+- SOULBOUND replaces DEAD WEIGHT (no slow any more). A ghost that ends is not removed: the host
+  leaves a dormant ghost where it ended (`NemuDormant`), and that skill's 20 s cooldown is held
+  full until Nemu reclaims it by holding Grab within 1 m for 1.5 s (`NemuRules.ReclaimRadius`,
+  `ReclaimSeconds`). The three skills no longer share one clock.
+- Reclaim is the can reset's split: the owner's peer shows the bar and sends "ReqReclaim"
+  (seat, ghost kind, Start/Cancel/Complete, action scope); the host times it, re-checks that she
+  can act and stands within 1.5 m (0.5 m leeway), and reclaims. A bot's dormant ghosts reclaim
+  themselves on the host after 1.5 s (the AI has no errand to walk back).
+- Ghost frames carry kind 4, the dormant ghost: phase 1 waiting, phase 4 reclaimed; `Flags` is
+  its skill (1 Peeker, 2 Fetcher, 3 Keeper); `Progress` is the reclaim bar. At most three per
+  frame; `MaxGhosts` is 9. None outlives the round (`ClearPersistentFields`).
+- PEEKER (`nemu_skill1`): fades over 2.5 s, waits up to 15 s, trigger radius 2 m with its ring
+  drawn for everyone (`NemuGhostRings`). BLINDED is one 2.5 s clock: eyes covered and a flat
+  0.75 speed for all of it. Untripped it goes dormant at its spot; sprung, where it let go.
+- FETCHER (`nemu_skill2`): the taya no longer makes it drop the slipper.
+- KEEPER (`nemu_skill2d`): 15 s; stands the can up 1.5 s after every knockdown until its time is
+  up; attackers no longer scare it or drain its progress.
+- Prompt: next to a dormant ghost the Grab prompt reads "Retrieve Peeker/Fetcher/Keeper" with the
+  button's icon, then "Retrieving ..." with its bar. A grabbable slipper or a fallen can keeps Grab.
+
 ## Protocol164: SKITTER waits until she takes it
 
 The host's Skitter no longer sets the slipper down beside her. Back at her side it

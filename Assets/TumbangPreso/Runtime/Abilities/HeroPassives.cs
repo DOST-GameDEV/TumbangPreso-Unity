@@ -41,10 +41,10 @@ namespace TumbangPreso.Abilities
                 // SeanHeroKit Steady Ember: 1.25x charge rate for 4 s after a genuine own retrieve.
                 case "sean": return new Passive("HOT STREAK",
                     "Retrieving your own thrown slipper makes your next throw charge 25% faster, once within 4 seconds. Maximum power is unchanged.");
-                // CharacterMotor.DeadWeightSpeedScale (owner 2026-10-16, replacing KURO!); NemuHeroKit.ShareBasicCooldown.
-                case "nemu": return new Passive("DEAD WEIGHT",
-                    "Rivals near any of Nemu's ghosts move 10% slower.",
-                    "Her abilities share one cooldown.");
+                // NemuDormant and NemuHeroKit.StepReclaim (owner 2026-10-21, replacing DEAD WEIGHT).
+                case "nemu": return new Passive("SOULBOUND",
+                    "When a ghost's time is up it stays where it was, dormant. Hold Grab within 1 m of it for 1.5 s to reclaim it.",
+                    "A skill's cooldown starts only once its ghost is reclaimed.");
                 // CharacterMotor.Voodoo: the curse mark's speed exchange.
                 case "phaister": return new Passive("VOODOO",
                     "While one of Phaister's curse marks is active, the marked player moves 10% slower and Phaister moves 10% faster.");
