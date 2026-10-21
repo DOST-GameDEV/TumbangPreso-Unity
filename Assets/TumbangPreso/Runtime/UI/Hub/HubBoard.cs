@@ -250,23 +250,87 @@ namespace TumbangPreso.UI.Hub
         }
 
         /// <summary>Sets a label's words at its board size, shrinking (never growing) to fit its box, or
-        /// <paramref name="roomUnits"/> board units when the box is wider than the piece it sits on.</summary>
+        /// <paramref name="roomUnits"/> board units when the box is wider than the piece it sits on.
+        /// The fit is kept by <see cref="BoardFit"/>, which redoes it whenever the screen changes.</summary>
         public static void SetWords(Text text, string words, LabelSpec spec = null, float roomUnits = 0f)
         {
-            text.text = words;
-            if (spec == null) return;
+            if (spec == null) { text.text = words; return; }
+            var fit = text.GetComponent<BoardFit>();
+            if (fit == null) fit = text.gameObject.AddComponent<BoardFit>();
+            fit.Set(words, spec, roomUnits);
+        }
+    }
+
+    /// <summary>
+    /// ⚠️ A BOARD LABEL STAYS INSIDE ITS PIECE AT EVERY SCREEN SIZE (owner, 2026-10-21: the fonts must
+    /// not break when the screen size changes, or on edge cases). Unity draws a Text at the canvas's
+    /// pixel size, so the same words measure differently at 1280, 1920 or a narrow window, and with
+    /// Larger Text. The fit is redone whenever the rect, the canvas scale or that setting changes,
+    /// with a 3 per cent margin for pixel rounding. Words that still do not fit at 55 per cent of the
+    /// owner's size are cut short with "..." instead of shrinking into an unreadable sliver.
+    /// </summary>
+    [RequireComponent(typeof(Text))]
+    public sealed class BoardFit : MonoBehaviour
+    {
+        private const float Margin = 0.97f, Smallest = 0.55f;
+        private Text _text;
+        private HubBoard.LabelSpec _spec;
+        private string _words;
+        private float _room, _scale = -1f;
+        private bool _larger, _fitting;
+
+        /// <summary>The width the words may take, in the label's own (2x) units.</summary>
+        public float RoomWidth => _spec == null ? float.MaxValue : (_room > 0f ? Mathf.Min(_room, _spec.w) : _spec.w) * 2f * Margin;
+        /// <summary>True when the words, as drawn at the canvas's current scale, fit their room.</summary>
+        public bool Fits => _text == null || _text.preferredWidth <= RoomWidth + 0.5f;
+
+        public void Set(string words, HubBoard.LabelSpec spec, float roomUnits)
+        {
+            _words = words ?? string.Empty; _spec = spec; _room = roomUnits;
+            Fit();
+        }
+
+        private void LateUpdate()
+        {
+            if (_spec == null) return;
+            var canvas = _text != null ? _text.canvas : null;
+            float scale = canvas != null ? canvas.scaleFactor : 1f;
             var settings = Settings.SettingsStore.Current;
-            float larger = settings != null && settings.LargerText ? 1.15f : 1f;
-            int size = Mathf.RoundToInt(spec.size * 2f * larger);
-            text.fontSize = size;
-            float room = (roomUnits > 0f ? Mathf.Min(roomUnits, spec.w) : spec.w) * 2f;
-            for (int guard = 0; guard < 60 && text.preferredWidth > room && text.fontSize > 12; guard++)
-                text.fontSize -= 2;
+            bool larger = settings != null && settings.LargerText;
+            if (!Mathf.Approximately(scale, _scale) || larger != _larger) Fit();
+        }
+
+        private void OnRectTransformDimensionsChange() { if (isActiveAndEnabled && !_fitting) Fit(); }
+
+        public void Fit()
+        {
+            if (_spec == null || _fitting) return;
+            if (_text == null) _text = GetComponent<Text>();
+            _fitting = true;
+            var canvas = _text.canvas;
+            _scale = canvas != null ? canvas.scaleFactor : 1f;
+            var settings = Settings.SettingsStore.Current;
+            _larger = settings != null && settings.LargerText;
+
+            int full = Mathf.RoundToInt(_spec.size * 2f * (_larger ? 1.15f : 1f));
+            int least = Mathf.Max(12, Mathf.RoundToInt(full * Smallest));
+            float room = RoomWidth;
+            string words = _words;
+            _text.text = words;
+            _text.fontSize = full;
+            while (_text.preferredWidth > room && _text.fontSize > least) _text.fontSize = Mathf.Max(least, _text.fontSize - 2);
+            // still too wide at the smallest readable size: cut the words, never the letters
+            while (_text.preferredWidth > room && words.Length > 1)
+            {
+                words = words.Substring(0, words.Length - 1).TrimEnd();
+                _text.text = words + "...";
+            }
             // A Canva box is shorter than Unity's line for some faces; grow the rect downward to
             // the line so nothing clips. Placement is unaffected: BoardBaseline sets the baseline.
-            var rect = text.rectTransform;
-            float need = text.preferredHeight + 2f;
+            var rect = _text.rectTransform;
+            float need = _text.preferredHeight + 2f;
             if (rect.sizeDelta.y < need) rect.sizeDelta = new Vector2(rect.sizeDelta.x, need);
+            _fitting = false;
         }
     }
 

@@ -7,8 +7,7 @@ CLASSIC  the street game itself: the owner's own painted lata and tsinelas on a
 
 ⚠️ THE PEOPLE ARE THE GAME'S MODEL RENDERS (Resources/UI/portraits), never drawn
 (docs/HOME_SCREEN_ANIMATION_METHOD.md 2). Only the backdrops are painted, as exact
-shapes printed with the same knit as every HOME sticker, so the window reads as
-part of the hand-made card rather than a screenshot pasted into it. Portraits are
+shapes in smooth glossy colour (owner, 2026-10-21: no knit texture here, shiny and glossy). Portraits are
 320 px and are only ever scaled DOWN here.
 
 Usage: python -I tools/build_mode_art.py   (after build_lobby_art.py)
@@ -50,10 +49,37 @@ def rays(lay, cx, cy, n, a, b, twist=0.0):
     return a * t + b * (1 - t)
 
 
-def fill(lay, sdf, colour, key, amp=None):
-    col = np.broadcast_to(colour, (lay.h, lay.w, 3)) if colour.ndim == 1 else colour
-    amp = B.knit_for(colour if colour.ndim == 1 else colour.reshape(-1, 3).mean(0)) if amp is None else amp
-    lay.over(B.cover(sdf), col * B.weave(lay.h, lay.w, key, amp))
+def fill(lay, sdf, colour, key=None, amp=None, shine=True):
+    """⚠️ GLOSSY, NOT KNIT (owner, 2026-10-21: no texture on the mode pictures, "make it shiny and
+    glossy"). A flat colour runs light at the top of its shape to deep at the bottom, and a soft
+    white shine sits across the shape's upper part, inset from its edge. key and amp are unused."""
+    cov = B.cover(sdf)
+    if colour.ndim > 1:
+        lay.over(cov, colour); return
+    rows = np.nonzero((cov > 0.5).any(1))[0]
+    if len(rows) == 0: return
+    y0, y1 = float(rows[0]), float(rows[-1] + 1)
+    t = np.clip((lay.yy - y0) / max(y1 - y0, 1), 0, 1)[..., None]
+    top, deep = colour + (1 - colour) * 0.30, colour * 0.74
+    # light in the top half, deep in the bottom half, the shape's own colour across the middle
+    lay.over(cov, colour + (top - colour) * np.clip(1 - 2 * t, 0, 1) + (deep - colour) * np.clip(2 * t - 1, 0, 1))
+    hgt = y1 - y0
+    if shine and hgt > 14:
+        inset = max(2.5, hgt * 0.07)
+        inner = B.cover(sdf + inset)
+        band = np.clip((y0 + hgt * 0.46 - lay.yy) / (hgt * 0.10), 0, 1)
+        k = (inner * band * 0.42)[..., None]
+        lay.rgb = lay.rgb + (1 - lay.rgb) * k * lay.a[..., None]
+
+
+def sheen(lay):
+    """A glossy backdrop: brighter toward the top, a soft diagonal light across it."""
+    P = B.PAD
+    v = np.clip((lay.yy - P) / H, 0, 1)
+    d = ((lay.xx - P) / W * 0.6 - (lay.yy - P) / H)
+    streak = np.exp(-((d + 0.05) / 0.12) ** 2) * 0.16
+    k = (np.clip(0.5 - v, 0, 1) * 0.22 + streak)[..., None]
+    lay.rgb = lay.rgb + (1 - lay.rgb) * k * lay.a[..., None]
 
 
 def person(lay, name, cx, top, height, flip=False, shade=0.0):
@@ -139,7 +165,8 @@ def cast(lay, people):
 
 
 def backdrop(lay, colour_a, colour_b, cx, cy, n, key, twist=0.0):
-    fill(lay, np.full(lay.xx.shape, -10.0, np.float32), rays(lay, cx, cy, n, colour_a, colour_b, twist), key, B.KNIT * 0.9)
+    fill(lay, np.full(lay.xx.shape, -10.0, np.float32), rays(lay, cx, cy, n, colour_a, colour_b, twist))
+    sheen(lay)
 
 
 def ranked():
@@ -151,13 +178,13 @@ def ranked():
     s = H * 0.66
     top = P + H * 0.16
     t = trophy_sdf(lay, cx, top, s)
-    fill(lay, t, hexc('D9781A'), 'rk-cup-shade', B.KNIT)
+    fill(lay, t, hexc('D9781A'))
     lit = B.poly_sdf(lay.xx, lay.yy, B._shrink([(cx - s / 2, top), (cx + s * 0.1, top), (cx - s * 0.04, top + s * 0.62), (cx - s * 0.18, top + s * 0.62)], s * 0.05)) - s * 0.05
-    fill(lay, np.maximum(t, lit), hexc('F5B521'), 'rk-cup', B.KNIT)
+    fill(lay, np.maximum(t, lit), hexc('F5B521'))
     # a star on the cup
     star = [(cx + np.cos(np.radians(a)) * (s * (0.11 if i % 2 == 0 else 0.045)), top + s * 0.26 + np.sin(np.radians(a)) * (s * (0.11 if i % 2 == 0 else 0.045)))
             for i, a in enumerate(range(-90, 270, 36))]
-    fill(lay, B.poly_sdf(lay.xx, lay.yy, star), hexc('A8182C'), 'rk-star', B.KNIT)
+    fill(lay, B.poly_sdf(lay.xx, lay.yy, star), hexc('A8182C'))
     cast(lay, [('phaister', 0.50, 0.16, 0.92, False, 0.16), ('sean', 0.86, 0.20, 0.88, False, 0.16), ('zack', 0.68, 0.10, 0.98, False, 0.0)])
     return finish(lay, 'mode_art_ranked')
 
@@ -170,8 +197,8 @@ def casual():
     u = H * 0.86
     pts = [(0.62, 0.0), (0.18, 0.56), (0.47, 0.56), (0.30, 1.0), (0.82, 0.38), (0.53, 0.38), (0.72, 0.0)]
     bolt = [(cx - u * 0.45 + px * u * 0.9, P + H * 0.07 + py * u) for px, py in pts]
-    fill(lay, bolt_sdf(lay, bolt, 5) - 7, hexc('8A2A12'), 'cs-bolt-edge', B.KNIT)
-    fill(lay, bolt_sdf(lay, bolt, 5), hexc('F5E04A'), 'cs-bolt', B.KNIT)
+    fill(lay, bolt_sdf(lay, bolt, 5) - 7, hexc('8A2A12'), shine=False)
+    fill(lay, bolt_sdf(lay, bolt, 5), hexc('F5E04A'))
     cast(lay, [('nemu', 0.57, 0.16, 0.92, False, 0.12), ('amihan', 0.80, 0.08, 1.0, False, 0.0)])
     return finish(lay, 'mode_art_casual')
 
@@ -179,24 +206,25 @@ def casual():
 def classic():
     lay = canvas(); P = B.PAD
     sky = np.clip((lay.yy - P) / H, 0, 1)[..., None]
-    fill(lay, np.full(lay.xx.shape, -10.0, np.float32), hexc('F5B521') * (1 - sky) + hexc('EE8B3A') * sky, 'cl-sky', B.KNIT * 0.9)
+    fill(lay, np.full(lay.xx.shape, -10.0, np.float32), hexc('F5B521') * (1 - sky) + hexc('EE8B3A') * sky)
+    sheen(lay)
     # banderitas: ONE string sagging across, flags hanging point-down from it
     def yat(u): return P + H * (0.08 + 0.16 * 4 * u * (1 - u))
     xs = np.linspace(-0.02, 1.02, 200)
     string = np.full(lay.xx.shape, np.inf, np.float32)
     for a, b in zip(xs[:-1], xs[1:]):
         string = np.minimum(string, B.capsule_sdf(lay.xx, lay.yy, P + W * a, yat(a), P + W * b, yat(b), 1.6))
-    fill(lay, string, hexc('5E2618'), 'cl-string', 0.0)
+    fill(lay, string, hexc('5E2618'), shine=False)
     cols = ['A31A24', '469678', 'FCD39F', '56071D']
     n = 13
     for i in range(n):
         u0 = (i + 0.15) / n; u1 = (i + 0.85) / n; um = (u0 + u1) / 2
         tri = [(P + W * u0, yat(u0)), (P + W * u1, yat(u1)), (P + W * um, yat(um) + H * 0.13)]
-        fill(lay, B.poly_sdf(lay.xx, lay.yy, B._shrink(tri, 1.5)) - 1.5, hexc(cols[i % 4]), f'cl-flag{i}', B.KNIT)
-    fill(lay, B.rrect_sdf(lay.xx, lay.yy, P - 40, P + H * 0.72, W + 80, H, 0), hexc('7A4B36'), 'cl-road', B.KNIT)
+        fill(lay, B.poly_sdf(lay.xx, lay.yy, B._shrink(tri, 1.5)) - 1.5, hexc(cols[i % 4]))
+    fill(lay, B.rrect_sdf(lay.xx, lay.yy, P - 40, P + H * 0.72, W + 80, H, 0), hexc('7A4B36'), shine=False)
     cx = P + W * 0.22
     ring = np.abs(np.hypot(lay.xx - cx, (lay.yy - (P + H * 0.86)) / 0.3) - W * 0.12) - 3.0
-    fill(lay, ring, hexc('FCD39F'), 'cl-ring', B.KNIT)
+    fill(lay, ring, hexc('FCD39F'))
     item = Image.open(os.path.join(B.OUT, 'icon_item.png')).convert('RGBA')
     target = H * 0.62
     sc = min(target, item.height) / item.height

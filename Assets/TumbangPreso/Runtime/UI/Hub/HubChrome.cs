@@ -113,7 +113,12 @@ namespace TumbangPreso.UI.Hub
             if (_amount == null) return;
             var wallet = GameServices.Wallet;
             int balance = wallet != null ? wallet.Balance : -1;
-            HubBoard.SetWords(_amount, balance < 0 ? "--" : balance.ToString("N0"), _spec);
+            // ⚠️ NEVER EMPTY: the owner's board writes the balance as 000,000 (six digits, zero padded).
+            // Until the wallet answers it shows those zeros dimmed, not a dash.
+            HubBoard.SetWords(_amount, System.Math.Max(0, balance).ToString("000,000", System.Globalization.CultureInfo.InvariantCulture), _spec);
+            var ink = HubBoard.Colour(_spec != null ? _spec.colour : "#55071D");
+            ink.a = balance < 0 ? 0.45f : 1f;
+            _amount.color = ink;
             if (_notice != null) _notice.SetActive(wallet != null && wallet.AnyClaimable);
         }
     }

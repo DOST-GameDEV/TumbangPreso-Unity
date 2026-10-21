@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using TumbangPreso.UI.Hub;
@@ -55,6 +56,34 @@ namespace TumbangPreso.PlayTests
             Assert.Greater(highest, rest.y - 0.5f, "The release must spring the face back up.");
             yield return new WaitForSecondsRealtime(0.8f);
             Assert.AreEqual(rest.y, face.anchoredPosition.y, 0.75f, "PLAY settles back at rest.");
+        }
+
+        /// <summary>
+        /// Owner, 2026-10-21: the fonts must not break when the screen size changes, or on edge cases.
+        /// Every board label on HOME (the longest mode name, an overlong player name) must fit its
+        /// room at every screen shape a player might use, including a short wide window.
+        /// </summary>
+        [UnityTest] public IEnumerator BoardLabelsFitAtEveryScreenSize()
+        {
+            yield return HubFlowTests.OpenHome();
+            var hub = TumpHub.Current;
+            HubHome.Choice = 2; hub.Top.Resumed();     // HERO STRIKE, the longest mode name
+            yield return null;
+            var name = hub.Canvas.GetComponentsInChildren<Text>().Single(t => t.name == "PlayerName");
+            HubBoard.SetWords(name, "AnUnusuallyLongPlayerNameThatNeverEnds", HubBoard.Label("Tump_ID"));
+            var misses = new List<string>();
+            var sizes = new[] { (1280, 720), (1920, 1080), (3840, 2160), (2560, 1080), (1024, 768), (800, 600), (1600, 700) };
+            foreach (var (w, h) in sizes)
+                yield return TumpUiCapture.Capture("Home-labels-" + w + "x" + h, hub.Canvas, w, h, false, inspectViewport: () =>
+                {
+                    foreach (var fit in hub.Canvas.GetComponentsInChildren<BoardFit>())
+                        if (!fit.Fits)
+                            misses.Add($"{fit.name} '{fit.GetComponent<Text>().text}' at {w}x{h}: " +
+                                       $"{fit.GetComponent<Text>().preferredWidth:F0} > {fit.RoomWidth:F0}");
+                });
+            Assert.IsEmpty(misses, string.Join("; ", misses));
+            Assert.IsTrue(name.text.EndsWith("...") || name.preferredWidth <= name.GetComponent<BoardFit>().RoomWidth,
+                "An overlong player name is cut short, not squeezed past its plate.");
         }
 
         [UnityTest] public IEnumerator HoverLiftsTheHeroPicture()
