@@ -31,9 +31,14 @@ namespace TumbangPreso
     {
         private static ReadyGate _active;
 
-        /// <summary>Keep gameplay chrome hidden through the opening, peer wait and final GO cue.</summary>
+        /// <summary>Keep gameplay chrome hidden until the opening and loaded-peer wait finish.</summary>
         public static bool HidesHud => MatchArrivalPresentation.Active ||
-            (_active != null && (_active._awaitingLocalReady || _active._countingDown));
+            (_active != null && _active._awaitingLocalReady && !_active._countingDown);
+
+        /// <summary>Fade gameplay chrome in before the first countdown cue, on the unscaled clock.</summary>
+        public static float HudAlpha => HidesHud ? 0 :
+            _active != null && _active._countingDown
+                ? Mathf.Clamp01((Time.realtimeSinceStartup - _active._hudRevealAt) / HudRevealSeconds) : 1;
 
         /// <summary>Raised when the countdown completes and the round should actually start.
         /// In Godot this called `MatchManager.begin_next_round()`.</summary>
@@ -55,12 +60,14 @@ namespace TumbangPreso
 
         public const float TickSeconds = 1.0f;
         public const float GoSeconds = 0.5f;
+        public const float HudRevealSeconds = 0.5f;
 
         private bool _awaitingLocalReady;
         private bool _countingDown;
         private bool _countdownConsumed;
         private bool _automatic, _introductionDone;
         private float _nextAutomaticReady;
+        private float _hudRevealAt;
         private Coroutine _arrival;
 
         /// <summary>Peers that have declared ready. Host-side; a set, so a second press from
@@ -404,8 +411,12 @@ namespace TumbangPreso
             HoldUntilStart();
             _countdownConsumed = true;
             _readySendPending = false;
+            _hudRevealAt = Time.realtimeSinceStartup;
             _countingDown = true;
             ReadyPromptChanged?.Invoke(false);
+
+            if (MatchAbandon.AuthorityRevoked) { CancelAbandonedCountdown(); yield break; }
+            yield return new WaitForSecondsRealtime(HudRevealSeconds);
 
             foreach (var tick in new[] { "3", "2", "1" })
             {

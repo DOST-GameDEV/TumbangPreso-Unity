@@ -46,7 +46,7 @@ namespace TumbangPreso.PlayTests
             int low=System.Array.IndexOf(QualitySettings.names,"Low");
             if(low>=0)QualitySettings.SetQualityLevel(low,true);
             yield return MapRetrievalProbe.Load("Eskinita",GameMode.HeroStrike);
-            Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();yield return new WaitForSeconds(3.6f);
+            Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();yield return new WaitForSeconds(ReadyGate.HudRevealSeconds + 3.6f);
             foreach(var brain in Object.FindObjectsByType<AIController>(FindObjectsSortMode.None))brain.enabled=false;
             foreach(var input in Object.FindObjectsByType<PlayerInputReader>(FindObjectsSortMode.None))input.enabled=false;
             var actor=GameServices.Round.PlayerAt(1);

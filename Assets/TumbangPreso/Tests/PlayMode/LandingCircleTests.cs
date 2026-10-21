@@ -88,7 +88,7 @@ namespace TumbangPreso.PlayTests
             yield return MapRetrievalProbe.Load(UI.SceneFlow.Eskinita);
             var ready = Object.FindFirstObjectByType<ReadyGate>();
             ready.enabled = true; ready.StartLocalCountdown();
-            yield return new WaitForSeconds(3.6f);
+            yield return new WaitForSeconds(ReadyGate.HudRevealSeconds + 3.6f);
             Assert.IsFalse(ready.AwaitingReady || ready.CountingDown);
             yield return new WaitForSeconds(GameServices.Round.Lata.ProtectionLeft+.05f);
             var who = GameServices.Round.PlayerAt(1); var carrier = who.GetComponent<Carrier>();

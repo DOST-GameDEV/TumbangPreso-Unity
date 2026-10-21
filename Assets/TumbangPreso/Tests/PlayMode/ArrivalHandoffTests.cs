@@ -130,7 +130,7 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(label.gameObject.activeSelf); yield return null;
         }
 
-        [UnityTest] public IEnumerator MatchHudWaitsForTheCompleteOpeningCountdown()
+        [UnityTest] public IEnumerator MatchHudFadesInBeforeTheOpeningCountdown()
         {
             GameServices.Ensure();
             var root = Make("Opening HUD visibility");
@@ -155,18 +155,33 @@ namespace TumbangPreso.PlayTests
 
                 // The host can cut a slower peer's film to the shared countdown.
                 gate.StartLocalCountdown();
+                float revealStarted = Time.realtimeSinceStartup;
+                Assert.IsEmpty(ticks, "The first cue must wait for the HUD fade.");
+                Assert.Less(ReadyGate.HudAlpha, .1f);
+                bool sawFade = false;
                 float deadline = Time.realtimeSinceStartup + 6;
                 while (gate.CountingDown && Time.realtimeSinceStartup < deadline)
                 {
                     yield return null;
                     Canvas.ForceUpdateCanvases();
                     if (!gate.CountingDown) break;
-                    Assert.AreEqual(0, score.GetInheritedAlpha(), "The HUD returned before GO finished.");
-                    Assert.IsFalse(touch.ShouldBeOnScreen);
+                    float alpha = score.GetInheritedAlpha();
+                    Assert.That(alpha, Is.InRange(0f, 1f));
+                    if (alpha > 0 && alpha < 1) sawFade = true;
+                    Assert.That(touch.Canvas.GetComponent<CanvasGroup>().alpha, Is.EqualTo(alpha).Within(.1f));
+                    if (ticks.Count == 0)
+                    {
+                        Assert.IsFalse(countdown.enabled);
+                        continue;
+                    }
+                    Assert.GreaterOrEqual(Time.realtimeSinceStartup - revealStarted, ReadyGate.HudRevealSeconds);
+                    Assert.AreEqual(1, alpha, "The HUD must finish fading before 3 appears.");
+                    Assert.IsTrue(touch.ShouldBeOnScreen);
                     Assert.IsTrue(countdown.enabled);
-                    Assert.AreEqual(1, countdown.canvasRenderer.GetInheritedAlpha(), "Hiding the HUD also hid the countdown.");
+                    Assert.AreEqual(1, countdown.canvasRenderer.GetInheritedAlpha());
                 }
                 Assert.IsFalse(gate.CountingDown, "The countdown did not complete.");
+                Assert.IsTrue(sawFade, "The HUD appeared instantly instead of fading.");
                 CollectionAssert.AreEqual(new[] { "3", "2", "1", "GO!" }, ticks);
                 yield return null;
                 Canvas.ForceUpdateCanvases();

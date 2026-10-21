@@ -227,9 +227,8 @@ namespace TumbangPreso.UI
         private void RefreshOpeningVisibility()
         {
             if (_openingUi == null) return;
-            bool visible = !ReadyGate.HidesHud;
-            _openingUi.alpha = visible ? 1 : 0;
-            _openingUi.interactable = _openingUi.blocksRaycasts = visible;
+            _openingUi.alpha = ReadyGate.HudAlpha;
+            _openingUi.interactable = _openingUi.blocksRaycasts = _openingUi.alpha >= 1;
         }
 
         private void LateUpdate()

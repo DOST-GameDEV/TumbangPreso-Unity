@@ -97,7 +97,7 @@ namespace TumbangPreso.PlayTests
                 yield return MapRetrievalProbe.Load(map);
                 var ready=Object.FindFirstObjectByType<ReadyGate>();
                 Assert.IsNotNull(ready);ready.StartLocalCountdown();
-                yield return new WaitForSeconds(3.6f);
+                yield return new WaitForSeconds(ReadyGate.HudRevealSeconds + 3.6f);
                 Assert.False(ready.AwaitingReady||ready.CountingDown,"Review must enter the active game through its ready countdown.");
                 NetAuthority.Provider=new SoloProvider();GameServices.Round.BeginRound();
                 var who=GameServices.Round.PlayerAt(1);var carrier=who.GetComponent<Carrier>();

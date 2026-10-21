@@ -1,6 +1,6 @@
 # Documentation: Start Here
 
-Opening HUD visibility through the final GO cue:
+Opening HUD half-second fade before the countdown:
 [implementation, compiler checks and pending native regression](reports/opening-hud-2026-10-22.md).
 
 Four-round halftime scheduling:

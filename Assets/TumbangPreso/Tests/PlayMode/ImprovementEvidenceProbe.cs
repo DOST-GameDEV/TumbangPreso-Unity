@@ -367,7 +367,7 @@ namespace TumbangPreso.PlayTests
                 Object.FindFirstObjectByType<SliceRunner>().Begin();
                 yield return new WaitForSecondsRealtime(.3f);
                 var ready=Object.FindFirstObjectByType<ReadyGate>();
-                if(ready!=null){ready.StartLocalCountdown();yield return new WaitForSeconds(3.6f);}
+                if(ready!=null){ready.StartLocalCountdown();yield return new WaitForSeconds(ReadyGate.HudRevealSeconds + 3.6f);}
                 foreach (var brain in Object.FindObjectsByType<AIController>(FindObjectsSortMode.None)) brain.enabled = false;
                 foreach (var reader in Object.FindObjectsByType<PlayerInputReader>(FindObjectsSortMode.None)) reader.enabled = false;
                 foreach(var switcher in Object.FindObjectsByType<DebugPlayerSwitcher>(FindObjectsSortMode.None))switcher.enabled=false;

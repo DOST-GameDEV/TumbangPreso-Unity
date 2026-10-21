@@ -62,7 +62,7 @@ namespace TumbangPreso.PlayTests
         {
             yield return MapRetrievalProbe.Load("Eskinita");
             Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();
-            yield return new WaitForSeconds(3.6f);
+            yield return new WaitForSeconds(ReadyGate.HudRevealSeconds + 3.6f);
             Assert.IsTrue(GameServices.Round.RoundActive, "Carry checks need an actual started round.");
             foreach (var actor in GameServices.Round.Players)
             {

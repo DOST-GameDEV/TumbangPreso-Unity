@@ -47,6 +47,7 @@ namespace TumbangPreso.Tests
 
         [TestCase(1)]
         [TestCase(4)]
+        [TestCase(5)]
         public void AcceptedHostLossRetiresTheCountdownBeforeAnotherCueOrRoundStart(int completedYields)
         {
             var countdown = Countdown();
@@ -62,6 +63,21 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(1, _hidden);
             Assert.IsFalse((bool)typeof(ReadyGate).GetField("_countingDown", Hidden).GetValue(_gate));
             Assert.IsFalse(_gate.AwaitingReady); Assert.IsFalse(_gate.AwaitingNetReady);
+        }
+
+        [Test]
+        public void HudFadePrecedesTheFirstCueWhileTheSimulationStaysHeld()
+        {
+            var countdown = Countdown();
+            Assert.IsTrue(countdown.MoveNext());
+            Assert.IsInstanceOf<WaitForSecondsRealtime>(countdown.Current);
+            Assert.AreEqual(.5f, ((WaitForSecondsRealtime)countdown.Current).waitTime);
+            Assert.IsEmpty(_ticks);
+            Assert.IsTrue(_gate.CountingDown);
+            Assert.IsTrue(PresentationClock.Held);
+            Assert.IsTrue(countdown.MoveNext());
+            CollectionAssert.AreEqual(new[] { "3" }, _ticks);
+            while (countdown.MoveNext()) { }
         }
 
         [Test]

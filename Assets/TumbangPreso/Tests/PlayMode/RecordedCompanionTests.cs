@@ -66,7 +66,7 @@ namespace TumbangPreso.PlayTests
         {
             yield return MapRetrievalProbe.Load("Eskinita", GameMode.HeroStrike);
             Object.FindAnyObjectByType<ReadyGate>().StartLocalCountdown();
-            yield return new WaitForSeconds(3.6f);
+            yield return new WaitForSeconds(ReadyGate.HudRevealSeconds + 3.6f);
             foreach (var actor in GameServices.Round.Players)
             { actor.Intent.Clear(); actor.Intent.Parked = true; }
             var owner = GameServices.Round.PlayerAt(1);

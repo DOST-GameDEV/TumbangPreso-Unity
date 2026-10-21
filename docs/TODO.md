@@ -1205,13 +1205,15 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
-### OPENING-HUD-1022: hide gameplay chrome until GO clears
+### OPENING-HUD-1022: fade gameplay chrome in before the countdown
 
-- [x] BugFix implementation hides the shared HUD and touch controls throughout
-  map arrival, the loaded-peer wait and every countdown cue; countdown stays visible.
-- [x] Direct runtime and PlayTests compilation passed; temporary native Canvas
-  check confirmed hidden HUD alpha0 and independent countdown alpha1.
-- [ ] Run `ArrivalHandoffTests.MatchHudWaitsForTheCompleteOpeningCountdown`
+- [x] Revised owner direction: hide the shared HUD and touch controls during
+  map arrival and the loaded-peer wait, then fade both in over 0.5 seconds before 3.
+  The existing countdown cue durations and gameplay hold remain intact.
+- [x] Revised fade runtime, PlayTests and Tests direct compilation passed.
+  Earlier temporary native Canvas check confirmed the opacity primitive;
+  changed-source fade playback remains unverified.
+- [ ] Run `ArrivalHandoffTests.MatchHudFadesInBeforeTheOpeningCountdown`
   with a named isolated profile, then inspect a normal Tondo opening. The owner's
   existing Editor remains in Play on Arena with its normal profile; do not interrupt it.
   [Evidence and precise check](reports/opening-hud-2026-10-22.md).

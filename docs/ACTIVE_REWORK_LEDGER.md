@@ -1,17 +1,18 @@
 # Opening HUD checkpoint, October22
 
-Owner requested BugFix after a0acf36a9. Shared ready-gate visibility now hides
-match chrome and touch through arrival, peer wait and the final GO cue, while
-the countdown keeps its original layout and timing. Regression added to
-ArrivalHandoffTests. Runtime and PlayTests direct compilation both exit0;
-temporary native Canvas check returns HUD alpha0/countdown alpha1. Native
-regression and normal Tondo playback remain pending, not claimed passed.
-Evidence: docs/reports/opening-hud-2026-10-22.md; logs in Logs/opening-hud-1022.
-Existing Editor PID21120 is actively playing Arena under the normal owner
-profile; no interruption, profile mutation or build. All compiler jobs terminal.
-Unrelated HubChrome, HubCustom and ProjectAuditorSettings edits are preserved.
-Next: publish only this unit to origin/BugFix, verify remote HEAD. Native follow-up
-is TODO OPENING-HUD-1022 when the existing play session is available.
+Original hide-through-GO source published as 1bd559dd1 to origin/BugFix.
+Owner revised it to a 0.5 second fade immediately before 3. Shared HUD and touch
+now read the same unscaled reveal clock; the gate holds simulation during the
+new half-second lead, followed by the original countdown cue durations.
+ArrivalHandoffTests checks the intermediate fade and full opacity at 3;
+ReadyCountdownAbandonTests covers the pre-cue hold and abandonment after GO.
+Existing test/probe setup waits account for the new half-second lead only.
+Evidence: docs/reports/opening-hud-2026-10-22.md. Direct compiler job session40769
+is terminal: runtime, PlayTests and Tests all exit0. Logs/opening-hud-fade-1022.
+Existing Editor session remains untouched; Pipeline read timed out. No profile
+mutation or build. Preserve concurrent map/visual, Hub and Auditor edits.
+Next: publish only this follow-up to origin/BugFix and
+verify remote HEAD. Native follow-up remains TODO OPENING-HUD-1022.
 
 # Four-round halftime checkpoint, October21
 

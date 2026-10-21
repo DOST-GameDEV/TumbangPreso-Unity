@@ -213,6 +213,7 @@ namespace TumbangPreso.InputLayer
         private Text _sandboxLabel;
 
         private Canvas _canvas;
+        private CanvasGroup _openingUi;
         private readonly List<TouchButton> _buttons = new List<TouchButton>();
         private TouchStick _stick;
         private RectTransform _lookArea;
@@ -254,6 +255,8 @@ namespace TumbangPreso.InputLayer
         {
             Instance = this;
             Build();
+            _openingUi = _canvas.gameObject.AddComponent<CanvasGroup>();
+            _openingUi.alpha = ReadyGate.HudAlpha;
         }
 
         private void OnDestroy()
@@ -689,6 +692,11 @@ namespace TumbangPreso.InputLayer
         private void Update()
         {
             RefreshSpectatorControls();
+            if (_openingUi != null)
+            {
+                _openingUi.alpha = ReadyGate.HudAlpha;
+                _openingUi.interactable = _openingUi.blocksRaycasts = _openingUi.alpha >= 1;
+            }
             // ⚠️ THE CANVAS IS DISABLED, NOT THE OBJECT. Disabling the GameObject would run
             // `OnDisable` and release every held verb, which is right for a teardown and wrong
             // for a pause: a player who was sprinting when they opened the menu should still be

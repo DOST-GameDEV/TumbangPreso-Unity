@@ -21,7 +21,7 @@ namespace TumbangPreso.PlayTests
             {
                 yield return MapRetrievalProbe.Load("Eskinita",Core.GameMode.HeroStrike);
                 Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();
-                yield return new WaitForSeconds(3.6f);
+                yield return new WaitForSeconds(ReadyGate.HudRevealSeconds + 3.6f);
                 var who=GameServices.Round.PlayerAt(1); var other=GameServices.Round.PlayerAt(2);
                 foreach(var player in GameServices.Round.Players)
                 {

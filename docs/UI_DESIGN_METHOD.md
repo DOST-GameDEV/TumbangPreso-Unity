@@ -213,10 +213,11 @@ by the display. Do not replace authored rough silhouettes merely to smooth edges
 
 ## Match HUD: the glass HUD, Overwatch's simple shape (2026-10-20)
 
-The gameplay HUD and touch controls stay hidden during every map's opening,
-the loaded-peer wait and the complete 3, 2, 1, GO sequence. The countdown remains
-visible on its own; gameplay chrome returns after GO clears. This uses the
-ready gate's presentation state without changing match timing or camera direction.
+The gameplay HUD and touch controls stay hidden during every map's opening and
+the loaded-peer wait. They then fade in together over 0.5 seconds, reaching full
+opacity before the first 3 cue. The simulation stays held through that fade and
+the existing 3, 2, 1, GO sequence. The ready gate owns the shared reveal clock;
+camera direction and the durations of the countdown cues stay unchanged.
 [Implementation and validation limits](reports/opening-hud-2026-10-22.md).
 
 Request, 2026-10-20: "overhaul the ingame ui. make it similar to overwatch's simple
