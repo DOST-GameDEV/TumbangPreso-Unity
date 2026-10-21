@@ -265,8 +265,6 @@ namespace TumbangPreso.PlayTests
             while(GameObject.Find("OwnerLoadingCanvas")==null&&Time.realtimeSinceStartup<surfaceUntil)yield return null;
             Assert.IsNotNull(Object.FindFirstObjectByType<SplashScreen>());
             var loadingCanvas = GameObject.Find("OwnerLoadingCanvas").GetComponent<Canvas>();
-            Assert.IsNotNull(loadingCanvas.GetComponentInChildren<LoadingArtwork>());
-            Assert.IsTrue(loadingCanvas.GetComponentsInChildren<Text>().Any(t => t.name == "InlineLoadingTip" && !string.IsNullOrEmpty(t.text)));
             Assert.IsFalse(loadingCanvas.GetComponentsInChildren<Button>().Any(b => b.name == "LoadingStories"));
             Assert.IsNull(GameObject.Find("LoadingStoryRoot"), "Tips must not open a second screen or hold readiness.");
             float end = Time.realtimeSinceStartup + 60f;

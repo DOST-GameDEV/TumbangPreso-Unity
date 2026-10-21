@@ -110,14 +110,16 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
-        public IEnumerator LoadingDeckIsRetainedAndAnUnstartedArenaLoadCanBeCancelled()
+        public IEnumerator MapCardsShowAloneAndAnUnstartedArenaLoadCanBeCancelled()
         {
-            yield return LoadingArtwork.Warmup();
-            var cached = (Texture2D[])typeof(LoadingArtwork).GetField("Cached", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
-            Assert.AreEqual(3, cached.Length); Assert.IsTrue(cached.All(texture => texture != null));
-            var retained = cached.ToArray();
-            var warm = LoadingArtwork.Warmup();
-            Assert.IsFalse(warm.MoveNext(), "A prepared loading deck scheduled fresh asset reads.");
+            foreach (string map in SceneFlow.Maps)
+            {
+                var full = HubLoading.CardFor(map);
+                Assert.IsNotNull(full, map + " has no loading card.");
+                Assert.AreEqual(1, full.mipmapCount, map + "'s card must not be mipmapped.");
+                Assert.IsTrue(full.format == TextureFormat.RGBA32 || full.format == TextureFormat.RGB24,
+                    map + "'s card must stay uncompressed, was " + full.format);
+            }
             int loads = 0;
             void Loaded(Scene scene, LoadSceneMode mode) { loads++; }
             SceneManager.sceneLoaded += Loaded;
@@ -130,9 +132,10 @@ namespace TumbangPreso.PlayTests
                     var owner = Object.FindFirstObjectByType<HubLoading>();
                     Assert.IsTrue(HubLoading.Begin(SceneFlow.Eskinita));
                     Assert.AreSame(owner, Object.FindFirstObjectByType<HubLoading>());
-                    var artwork = Object.FindFirstObjectByType<LoadingArtwork>();
-                    var front = artwork.GetComponentsInChildren<RawImage>().Single(i => i.name == "CurrentIllustration");
-                    Assert.AreSame(retained[artwork.FrameIndex], front.texture);
+                    var canvas = Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None).Single(c => c.name == "TumpLoadingCanvas");
+                    var card = canvas.GetComponentsInChildren<RawImage>().Single(i => i.name == "MapCard");
+                    Assert.AreSame(HubLoading.CardFor(SceneFlow.Eskinita), card.texture);
+                    Assert.IsEmpty(canvas.GetComponentsInChildren<Text>(), "The match curtain shows only the map card and its rail.");
                     HubLoading.Cancel();
                     yield return null;
                     Assert.AreEqual(source, SceneManager.GetActiveScene()); Assert.AreEqual(0, loads);
@@ -371,13 +374,12 @@ namespace TumbangPreso.PlayTests
                 var loading = Object.FindFirstObjectByType<HubLoading>();
                 var canvas = Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None)
                     .Single(c => c.name == "TumpLoadingCanvas");
-                var percent = canvas.GetComponentsInChildren<Text>().Single(t => t.name == "Percent");
                 Assert.IsTrue(HubLoading.Visible); Assert.IsFalse(installer.IsPrepared);
-                Assert.AreEqual("60%", percent.text, "A surviving global round bypassed this destination's setup.");
+                Assert.AreEqual(.6f, loading.Progress, 1e-4f, "A surviving global round bypassed this destination's setup.");
                 typeof(MatchInstaller).GetProperty("InstallationError").SetValue(installer, "test installation failed");
                 yield return null; yield return null;
                 Assert.IsNotEmpty(loading.FailureReason);
-                Assert.AreEqual("!", percent.text); Assert.IsTrue(HubLoading.Visible);
+                Assert.AreEqual(.6f, loading.Progress, 1e-4f); Assert.IsTrue(HubLoading.Visible);
                 var back = canvas.GetComponentsInChildren<Button>().Single(b => b.name == "LoadingReturn");
                 Assert.IsTrue(back.interactable);
                 Assert.AreEqual(back.gameObject, UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject);
@@ -391,8 +393,8 @@ namespace TumbangPreso.PlayTests
                 HubLoading.Begin(SceneFlow.Eskinita, true);
                 yield return null; yield return null;
                 canvas = Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None).Single(c => c.name == "TumpLoadingCanvas");
-                percent = canvas.GetComponentsInChildren<Text>().Single(t => t.name == "Percent");
-                Assert.AreEqual("0%", percent.text, "A deferred same-scene rematch adopted its predecessor's installer.");
+                loading = Object.FindFirstObjectByType<HubLoading>();
+                Assert.AreEqual(0f, loading.Progress, "A deferred same-scene rematch adopted its predecessor's installer.");
                 Assert.IsTrue(HubLoading.Visible);
             }
             finally { HubLoading.Cancel(); GameLaunch.TrainingRange = range; }

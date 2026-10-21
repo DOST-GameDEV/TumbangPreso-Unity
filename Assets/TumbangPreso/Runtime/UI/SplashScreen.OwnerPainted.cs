@@ -6,7 +6,7 @@ namespace TumbangPreso.UI
     public sealed partial class SplashScreen
     {
         private bool _ownerLoading;
-        private void BuildOwnerLoadingSurface() => BuildCourtLoadingSurface();
+        private void BuildOwnerLoadingSurface() => BuildPreviousOwnerLoadingSurface();
         private void BuildPreviousOwnerLoadingSurface()
         {
             _ownerLoading=true;

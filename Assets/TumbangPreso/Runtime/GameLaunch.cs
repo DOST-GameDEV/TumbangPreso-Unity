@@ -49,9 +49,9 @@ namespace TumbangPreso
                 "A cove court in the rocks. Stilt village, reefs and a sunset sea.",SceneFlow.LagoonCove),
             new MapEntry("kanto","BGC",
                 "City park block. Jeepney stop, traffic lights, busy streets.",SceneFlow.Kanto),
-            new MapEntry("arena","THE PHILIPPINE ARENA",
+            new MapEntry("arena","PHILIPPINE ARENA",
                 "Game-show stage. It rebuilds each round; mind the edges.",SceneFlow.Arena),
-            new MapEntry("payo","PAYO",
+            new MapEntry("payo","BANAUE",
                 "Ifugao rice-terrace temple. Stones shift each round; night falls at halftime.",SceneFlow.Payo),
         };
 

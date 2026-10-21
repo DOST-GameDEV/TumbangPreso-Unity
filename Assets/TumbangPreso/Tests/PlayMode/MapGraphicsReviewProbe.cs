@@ -712,11 +712,12 @@ namespace TumbangPreso.PlayTests
                 var canvas=new GameObject("Updated map card",typeof(Canvas));
                 var surface=new GameObject("Actual map preview",typeof(RectTransform),typeof(CanvasRenderer),typeof(UnityEngine.UI.RawImage));
                 surface.transform.SetParent(canvas.transform,false);((RectTransform)surface.transform).sizeDelta=new Vector2(1920,1080);
-                var preview=surface.AddComponent<MapPreviewSurface>();preview.Show(map);
+                // Recorded media replaces the live camera by default; these cards photograph the live preview.
+                var preview=surface.AddComponent<MapPreviewSurface>();preview.PreferRecordedPreview=false;preview.Show(map);
                 float deadline=Time.realtimeSinceStartup+30;
                 while(preview.Showing!=map&&Time.realtimeSinceStartup<deadline)yield return null;
                 Assert.AreEqual(map,preview.Showing);Assert.IsNotNull(preview.Camera);preview.enabled=false;
-                using(Visual.NeighbourhoodSkyMotion.At(20))yield return GameplayShots.Render(preview.Camera,map+"-updated-card",false,Output,width:960,height:540);
+                using(Visual.NeighbourhoodSkyMotion.At(20))yield return GameplayShots.Render(preview.Camera,map+"-updated-card",false,Output,width:1920,height:1080);
                 Object.Destroy(canvas);yield return PlayModeWorld.Reset();
             }
         }
