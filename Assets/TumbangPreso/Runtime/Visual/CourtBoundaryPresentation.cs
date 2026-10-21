@@ -252,7 +252,8 @@ namespace TumbangPreso.Visual
             if(_recorded || _renderer==null)return;
             var round=GameServices.Round;var profile=WorldCueProfile.Current;
             ReplaceAuthored(profile.Boundary>.001f);
-            _renderer.enabled=profile.Boundary>.001f;
+            // The Arena's round box is chalked on decks the match's opening has not built yet: it waits for the reveal.
+            _renderer.enabled=profile.Boundary>.001f && !Map.ArenaIntro.StageUnbuilt;
             _armed=round!=null && round.RoundActive && _lata!=null && _lata.IsUpright;
             int number=GameServices.Match!=null?GameServices.Match.RoundNumber:0;
             if(number!=_round){_round=number;_haveFrame=false;_restoreAt=-100;}
@@ -306,7 +307,7 @@ namespace TumbangPreso.Visual
         {
             if(_renderer==null)return;
             var profile=WorldCueProfile.Current;
-            _renderer.enabled=profile.Boundary>.001f;
+            _renderer.enabled=profile.Boundary>.001f && !Map.ArenaIntro.StageUnbuilt;
             _block.SetColor("_Chalk",WorldLookPresentation.CourtChalk);_block.SetColor("_Ink",WorldLookPresentation.CourtEdge);
             _block.SetFloat("_Weight",Mathf.Clamp01(profile.Boundary));_block.SetFloat("_Armed",armed?1:0);
             bool exit=!_recorded && armed && IsThreatened(viewer,_lata) && !PresentationClock.BlocksInput;

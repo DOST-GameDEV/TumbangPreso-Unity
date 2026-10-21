@@ -73,7 +73,8 @@ namespace TumbangPreso.Visual
             bool on=weight>0;
             if(on!=_styled)
             {foreach(var mark in _marks)if(mark.Renderer!=null)mark.Renderer.sharedMaterials=on?mark.Styled:mark.Original;_styled=on;}
-            _floor.enabled=on;_chalk.SetColor("_Medium",WorldLookPresentation.CourtChalk);
+            // The Arena's wear is sampled off colliders that stand before the opening has built the stage.
+            _floor.enabled=on && !Map.ArenaIntro.StageUnbuilt;_chalk.SetColor("_Medium",WorldLookPresentation.CourtChalk);
             _chalk.SetFloat("_Weight",weight);_chalk.SetFloat("_WearKind",_look.Look.WearKind);
             _wear.SetFloat("_Weight",weight);_wear.SetFloat("_WearKind",_look.Look.WearKind);
             _wear.SetFloat("_Radius",Confinement.Radius);

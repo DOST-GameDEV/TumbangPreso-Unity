@@ -57,9 +57,16 @@ namespace TumbangPreso.Map
     /// and the glare and is destroyed at the reveal. This opening's own sounds
     /// (tools/synth_arena_intro_sfx.py) play on its own sources, which bypass that filter.
     ///
-    /// THE SHORT ONE: reduced UI motion, or any opening after the first full one this session
-    /// (a rematch, the next match): beats 3 to 5 only. With cinematic camera motion switched
-    /// off there is no opening at all, and the arrival plays as on every other map.
+    /// THE SHORT ONE: reduced UI motion only: beats 3 to 5. ⚠️ EVERY PLAY OF THE MAP GETS THE FULL
+    /// ONE (owner, 2026-10-22: "the starting animation always plays whenever you restart or like play
+    /// the map again and not just the first time"): a rematch or the next match used to get the short
+    /// one. With cinematic camera motion switched off there is no opening at all, and the arrival
+    /// plays as on every other map.
+    ///
+    /// ⚠️ NOTHING OF THE STAGE SHOWS BEFORE IT IS BUILT (owner, 2026-10-22: "you can see the things and
+    /// ring of the zone even if there is nothing there yet"). The colliders are live from the start,
+    /// so whatever is drawn on or from them (the box's chalk, the court's wear, the players' rings,
+    /// the drips under the decks, the loose slippers, the can) waits for the reveal: `StageUnbuilt`.
     /// </summary>
     [DefaultExecutionOrder(880)]
     public sealed class ArenaIntro : MonoBehaviour
@@ -116,14 +123,18 @@ namespace TumbangPreso.Map
         public static float LastSeconds { get; private set; }
         public static bool LastCompleted { get; private set; }
 
-        private static bool _fullSeen;
         private static AudioLowPassFilter _filter;
 
-        /// <summary>The next opening is the full one again. For a probe.</summary>
-        public static void ResetSession() => _fullSeen = false;
+        /// <summary>Every opening is the full one now; kept for the probes that asked for it.</summary>
+        public static void ResetSession() { }
+
+        /// <summary>True while an opening is playing and the stage it builds has not been revealed:
+        /// what stands on the stage stays undrawn, though its colliders are live.</summary>
+        public static bool StageUnbuilt => Instance != null && Instance._prepared
+            && Instance.Age - Instance.Timeline.Build < BuildSeconds - ArenaStage.OpeningSettle + ArenaStage.RevealLag;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStatics() { _fullSeen = false; _filter = null; Instance = null; LastSeconds = 0.0f; LastCompleted = false; }
+        private static void ResetStatics() { _filter = null; Instance = null; LastSeconds = 0.0f; LastCompleted = false; }
 
         // The stadium's own numbers (docs/ARENA_ART_BRIEF.md; tools/author_arena_bowl.py for the tunnel).
         private const float MouthZ = -83.9f, TunnelHalf = 2.1f, TunnelTop = 2.6f, Ground = 0.04f;
@@ -239,7 +250,7 @@ namespace TumbangPreso.Map
             _still = reducedMotion;
             _centre = stage.transform.position;
             _taya = Core.MatchRules.DefenderSlotFor(1);
-            Timeline = TimesFor(!reducedMotion && !_fullSeen);
+            Timeline = TimesFor(!reducedMotion);
             LastSeconds = Timeline.End; LastCompleted = false;
             LandedSeat = -1; _tick = -2; _beats = 0; _punch = 0.0f; _last = -1.0f;
             // The match's id now, so the stage this opening builds is the one round 1 is played on.
@@ -575,13 +586,19 @@ namespace TumbangPreso.Map
 
         // ------------------------------------------------------------------ the can
 
+        /// <summary>The can and every slipper lying loose on the stage: nothing stands there until it is built.
+        /// A slipper in a hand walks out with its model and stays drawn.</summary>
         private void HideCan()
         {
             _canHidden = false;
+            var hidden = new System.Collections.Generic.List<Renderer>();
             var can = GameServices.Round != null && GameServices.Round.Lata != null ? GameServices.Round.Lata : FindFirstObjectByType<Lata>();
-            if (can == null) return;
+            if (can != null) hidden.AddRange(can.GetComponentsInChildren<Renderer>(false));
+            foreach (var slipper in FindObjectsByType<Slipper>())
+                if (slipper != null && slipper.State != SlipperState.Held) hidden.AddRange(slipper.GetComponentsInChildren<Renderer>(false));
+            if (hidden.Count == 0) return;
 
-            _canRenderers = can.GetComponentsInChildren<Renderer>(false);
+            _canRenderers = hidden.ToArray();
             _canWas = new bool[_canRenderers.Length];
             for (int i = 0; i < _canRenderers.Length; i++)
             {
@@ -1088,7 +1105,6 @@ namespace TumbangPreso.Map
             // The bowl: the stands erupt, fireworks, the welcome.
             if (Crossed(t.Reveal + 0.02f))
             {
-                if (t.Full) _fullSeen = true;
                 ArenaCrowd.Excite(1.0f, 6.0f);
                 ArenaCrowd.Wave();
                 ArenaCrowdAudio.Erupt(1.25f);
