@@ -47,7 +47,8 @@ namespace TumbangPreso.CameraSystem
             {
                 bool transient=false;
                 for(var parent=node;parent!=null&&parent!=source.transform;parent=parent.parent)
-                    if(parent.GetComponent<DanteCarapaceVisual>()!=null||parent.GetComponent<SeanIgnitionVisual>()!=null||parent.GetComponent<ZackMagnetCharge>()!=null)
+                    if(parent.GetComponent<DanteCarapaceVisual>()!=null||parent.GetComponent<SeanIgnitionVisual>()!=null||parent.GetComponent<ZackMagnetCharge>()!=null
+                        ||parent.GetComponent<DanteMountainPiece>()!=null)
                     {transient=true;break;}
                 if(!transient)result.Add(node);
             }

@@ -153,6 +153,19 @@ namespace TumbangPreso.PlayTests
         }
         private static AbilityContext Context(CharacterMotor actor)=>new AbilityContext(actor,actor.GetComponent<Carrier>(),actor.GetComponent<CombatVerbs>());
         [UnityTest]
+        public IEnumerator MountainFormArmourCannotInvalidateTheStableRigIdentity()
+        {
+            // Owner 2026-10-21: a halftime highlight recorded before Dante's ultimate was refused as "Changed recorded art".
+            yield return MapRetrievalProbe.Load("Eskinita",GameMode.HeroStrike);
+            var dante=GameServices.Round.PlayerAt(1);Hero(dante,"dante");yield return null;
+            var source=dante.GetComponent<CharacterVisual>().Model;string beforeKey=MatchReplayArchive.VisualKey(source);
+            int beforeBones=MatchPoseHistory.StableTransforms(source).Length;
+            Assert.IsNotNull(DanteMountainArmour.Attach(dante));yield return null;
+            Assert.Greater(source.GetComponentsInChildren<DanteMountainPiece>(true).Length,0,"The armour should ride his bones.");
+            Assert.AreEqual(beforeKey,MatchReplayArchive.VisualKey(source),"Mountain Form's armour cannot invalidate the stable rig identity");
+            Assert.AreEqual(beforeBones,MatchPoseHistory.StableTransforms(source).Length);
+        }
+        [UnityTest]
         public IEnumerator RecordedHeroVisualsCannotCreateHazardsActorsScoresOrGameplayRandomness()
         {
             yield return MapRetrievalProbe.Load("Eskinita",GameMode.HeroStrike);

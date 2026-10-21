@@ -742,25 +742,34 @@ namespace TumbangPreso
             // the stamina refill and the teleport below are decisions; `Visual.MatchFlair` draws
             // and touches no state. A client that could stun a body from a message is a client
             // that decides, which is `CLAUDE.md` § 4.
-            Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.Tag,
-                                       taya.PlayerSlot, victim.PlayerSlot,
-                                       victim.transform.position);
+            // ⚠️ THE RULE FINISHES WHATEVER THE PRESENTATION DOES (owner 2026-10-21: a tag that left the victim where they
+            // were caught). The refill and the teleport are in the `finally` below, so a throwing piece of presentation
+            // still sends them home.
+            try
+            {
+                Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.Tag,
+                                           taya.PlayerSlot, victim.PlayerSlot,
+                                           victim.transform.position);
 
-            // ⚠️⚠️ THROUGH `NetCue`, BECAUSE THE CALLER OPENS WITH `ShouldResolve()` AND THE TAG
-            // IS THE TAYA'S ENTIRE PAYOFF. 🧑 2026-08-29: *"non hosts dont have sfx in some
-            // plarts"*. `tools/audit_audio_reach.py` reported this line clean and it was not:
-            // the audit looks for a gate at the SAME brace depth, and this method has none —
-            // the gate is in the caller. Every sound reached by a host-resolved verb one call
-            // deep has the same shape. See `docs/TODO.md` § 83.12.
-            NetCue.PlayImpact("tag", "downed", victim.transform.position, 1.0f);
+                // ⚠️⚠️ THROUGH `NetCue`, BECAUSE THE CALLER OPENS WITH `ShouldResolve()` AND THE TAG
+                // IS THE TAYA'S ENTIRE PAYOFF. 🧑 2026-08-29: *"non hosts dont have sfx in some
+                // plarts"*. `tools/audit_audio_reach.py` reported this line clean and it was not:
+                // the audit looks for a gate at the SAME brace depth, and this method has none —
+                // the gate is in the caller. Every sound reached by a host-resolved verb one call
+                // deep has the same shape. See `docs/TODO.md` § 83.12.
+                NetCue.PlayImpact("tag", "downed", victim.transform.position, 1.0f);
 
-            // ⚠️ THE ANNOUNCER AND THE STYLE AWARD MOVED INTO `MatchFlair.PlayTag` WITH THE REST
-            // OF THE PRESENTATION, so each peer speaks its own line off the event rather than
-            // hearing the host's. `NetCue`'s header is explicit that a commentary track must not
-            // be relayed as a world sound, and this is how that rule is kept while still reaching
-            // everybody.
-            victim.Stamina.RefillAndClearFatigue();
-            victim.Teleport(SafeZonePointFor(victim));
+                // ⚠️ THE ANNOUNCER AND THE STYLE AWARD MOVED INTO `MatchFlair.PlayTag` WITH THE REST
+                // OF THE PRESENTATION, so each peer speaks its own line off the event rather than
+                // hearing the host's. `NetCue`'s header is explicit that a commentary track must not
+                // be relayed as a world sound, and this is how that rule is kept while still reaching
+                // everybody.
+            }
+            finally
+            {
+                victim.Stamina.RefillAndClearFatigue();
+                victim.Teleport(SafeZonePointFor(victim));
+            }
         }
 
         /// <summary>

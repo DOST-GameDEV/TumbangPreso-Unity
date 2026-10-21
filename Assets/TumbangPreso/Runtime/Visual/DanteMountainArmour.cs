@@ -323,6 +323,8 @@ namespace TumbangPreso.Visual
                 LockAt = lockAt, How = how, Seam = seam, Seed = _pieces.Count * 7 + 3, Order = ShedOrder(node.name, _pieces.Count),
             };
             node.localPosition = p.Rest; node.localRotation = p.Turn; node.localScale = Vector3.zero;
+            // Kept out of the replay's model fingerprint and pose tracks: it rides his bones but is not his model.
+            node.gameObject.AddComponent<DanteMountainPiece>();
             _pieces.Add(p);
             return p;
         }
