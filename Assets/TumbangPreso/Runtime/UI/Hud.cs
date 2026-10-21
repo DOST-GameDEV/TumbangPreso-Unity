@@ -2637,6 +2637,7 @@ namespace TumbangPreso.UI
             // `Slipper.Holder` are two halves of one relationship (`Slipper.HostGrab`'s note),
             // and reading the half the marker is about cannot go stale against the other.
             _recall?.Track(_local, _ownSlipper);
+            TrackDormantMarks();
         }
 
         private float _ownSlipperScanAt = -99.0f;

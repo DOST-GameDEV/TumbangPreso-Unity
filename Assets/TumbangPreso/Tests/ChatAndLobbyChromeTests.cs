@@ -400,7 +400,8 @@ namespace TumbangPreso.Tests
             //172 removes Bayan Plaza and Sa Bubong from the indexed map pool.
             //173 joins the two 172s (the branch merge and the smaller pool) and appends Payo to the indexed map pool.
             //174 merges the player's room: rules carry per-seat bots and an empty seat with no bot has no body.
-            Assert.AreEqual(174, NetSession.ProtocolVersion,
+            //175 reworks Nemu: dormant ghosts ride her ghost frames and "ReqReclaim" joins the wire.
+            Assert.AreEqual(175, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

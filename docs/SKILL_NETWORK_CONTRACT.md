@@ -21,6 +21,41 @@ and a real LAN beats 25.0.0.0/8 (Hamachi) and 26.0.0.0/8 (Radmin VPN) when one h
 adapters; a tie keeps the address already shown (`LanBeacon.AddressPreference`). JOIN GAME's REFRESH
 empties the LAN rows and asks at once, or queries UGS at once for the online list.
 
+## Protocol175: Nemu SOULBOUND, PEEKER, FETCHER, KEEPER (2026-10-21)
+
+Owner rework on branch `Reworks`. IDs, glyphs and the ghost classes are unchanged; names and rules change.
+
+- SOULBOUND replaces DEAD WEIGHT (no slow any more). A ghost that ends is not removed: the host
+  leaves a dormant ghost where it ended (`NemuDormant`) for 10 s (`NemuRules.DormantSeconds`),
+  and the skill's tile counts that window down. Holding Grab within 1.5 m for 1.5 s reclaims it
+  (`NemuRules.ReclaimRadius`, `ReclaimSeconds`) and the skill takes its 15 s cooldown; left to
+  fade, it is gone and the skill takes 25 s (`NecroRules.SoulboundMissedCooldown`). The three
+  skills no longer share one clock. The dormant ghost sleeps in a globe of its own colour over a
+  pool of light (`Shaders/SoulOrb`) and drifts after her (1.5 m/s from 5 m, 1.25 m/s by 3.5 m,
+  easing to a stop 1 m from her, `NemuRules.DormantFollowSpeedAt`; host-moved, peers ease to the
+  frames). Her screen puts the slipper's recall mark on it, with its window draining on the ring
+  (`SlipperRecall.TrackDormant`); like the slipper's, it goes while "Retrieve ..." is prompted.
+- Reclaim is the can reset's split: the owner's peer shows the bar and sends "ReqReclaim"
+  (seat, ghost kind, Start/Cancel/Complete, action scope); the host times it, re-checks that she
+  can act and stands within 2 m (0.5 m leeway), and reclaims. A bot's dormant ghosts reclaim
+  themselves on the host after 1.5 s (the AI has no errand to walk back).
+- Ghost frames carry kind 4, the dormant ghost: phase 1 waiting, phase 3 faded unclaimed, phase 4
+  reclaimed; `Flags` is
+  its skill (1 Peeker, 2 Fetcher, 3 Keeper); `Progress` is the reclaim bar. At most three per
+  frame; `MaxGhosts` is 9. None outlives the round (`ClearPersistentFields`).
+- PEEKER (`nemu_skill1`): fades over 1.5 s, waits up to 15 s, trigger radius 2 m with its ring
+  drawn for everyone (`NemuGhostRings`). BLINDED is one 2.5 s clock: eyes covered and a flat
+  0.75 speed for all of it. Untripped it goes dormant at its spot; sprung, where it let go. It
+  clings only to its victim's own camera: a camera nearer another body's eyes never draws it.
+- FETCHER (`nemu_skill2`): the taya no longer makes it drop the slipper. It ends the moment she
+  has the slipper and goes dormant beside her.
+- KEEPER (`nemu_skill2d`): 15 s; stands the can up 1.5 s after every knockdown until its time is
+  up; attackers no longer scare it or drain its progress. While a Keeper minds the can the taya
+  gets no RESET CAN prompt and no channel (`NemuLookout.Keeping`, read by `Carrier.HasResetTarget`
+  and the host's `HostMayChannelReset`); every peer runs the ghost, so nothing new is sent.
+- Prompt: next to a dormant ghost the Grab prompt reads "Retrieve Peeker/Fetcher/Keeper" with the
+  button's icon, then "Retrieving ..." with its bar. A grabbable slipper or a fallen can keeps Grab.
+
 ## Protocol164: SKITTER waits until she takes it
 
 The host's Skitter no longer sets the slipper down beside her. Back at her side it

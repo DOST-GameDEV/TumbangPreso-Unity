@@ -21,13 +21,33 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
-        public void DeadWeightIsTenPercentInsideTheRingAndNothingOutside()
+        public void SoulboundReclaimsWithin1Point5MetresIn1Point5Seconds()
         {
-            Assert.Equal(0.9f, NemuRules.DeadWeightSpeedScale); // owner: "move 10% slower"
-            Assert.Equal(0.9f, NemuRules.DeadWeightScale(0f));
-            Assert.Equal(0.9f, NemuRules.DeadWeightScale(NemuRules.DeadWeightRadius));
-            Assert.Equal(1.0f, NemuRules.DeadWeightScale(NemuRules.DeadWeightRadius + 0.01f));
-            Assert.Equal(1.0f, NemuRules.DeadWeightScale(-1f)); // no ghost at all
+            // Owner, 2026-10-21: "for 1.5 seconds", and on the second pass "within 1.5 meters".
+            Assert.Equal(1.5f, NemuRules.ReclaimRadius);
+            Assert.Equal(1.5f, NemuRules.ReclaimSeconds);
+            Assert.Equal(10.0f, NemuRules.DormantSeconds);
+        }
+
+        [Fact]
+        public void TheDormantGlobeDriftsAfterHerAndStopsBesideHer()
+        {
+            // Owner, 2026-10-21: "1.5 m/s from 5 m away 1.25 m/s from 3.5 away then same decelerate logic".
+            Assert.Equal(1.5f, NemuRules.DormantFollowSpeedAt(10f));
+            Assert.Equal(1.5f, NemuRules.DormantFollowSpeedAt(5f));
+            Assert.Equal(1.375f, NemuRules.DormantFollowSpeedAt(4.25f), 4);
+            Assert.Equal(1.25f, NemuRules.DormantFollowSpeedAt(NemuRules.DormantSlowDistance));
+            Assert.Equal(0f, NemuRules.DormantFollowSpeedAt(NemuRules.DormantStopDistance));
+            Assert.Equal(0f, NemuRules.DormantFollowSpeedAt(.2f));
+            Assert.Equal(0f, NemuRules.DormantFollowSpeedAt(float.NaN));
+            Assert.True(NemuRules.DormantStopDistance < NemuRules.ReclaimRadius, "It must stop inside her reach.");
+            float last = 0f;
+            for (float d = NemuRules.DormantStopDistance; d <= 8f; d += .1f)
+            {
+                float v = NemuRules.DormantFollowSpeedAt(d);
+                Assert.True(v >= last, "It must slow more and more the nearer it gets.");
+                last = v;
+            }
         }
 
         [Fact]

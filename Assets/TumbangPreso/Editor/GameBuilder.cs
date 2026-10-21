@@ -873,6 +873,9 @@ namespace TumbangPreso.EditorTools
                 "TumbangPreso/BlindfoldGhost",
                 // ...and the pet ghosts that can stand in for ASTRA's three (`Visual.PetGhostModels`, behind its switch).
                 "TumbangPreso/PetGhost",
+                // ...and SOULBOUND's dormant ghost's globe (`Abilities.NemuDormant`), only through `Shader.Find`. Stripped, a
+                // dormant ghost has no globe and is far harder to read as something to pick up.
+                "TumbangPreso/SoulOrb",
 
                 // ⚠️ THE NEAR-CAMERA DISSOLVE, AND ITS MISS PATH SHIPS THE ORIGINAL REPORT BACK.
                 // `NearFade.Install` reaches it through `Shader.Find` and nothing in any scene

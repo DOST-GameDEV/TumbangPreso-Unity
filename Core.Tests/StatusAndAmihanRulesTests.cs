@@ -46,10 +46,10 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(14, (int)StatusKind.Possessed);
             Assert.Equal(15, (int)StatusKind.Blinded);
             Assert.Equal(15, StatusRules.All.Count);
-            // Nemu's DON'T LOOK (owner 2026-10-15): eyes covered 2 s, a 50 % slow wearing off over 5 s.
+            // Nemu's PEEKER (owner 2026-10-21): eyes covered and 25 % slower, both for 2.5 s.
             var blinded = StatusRules.For(StatusKind.Blinded);
-            Assert.Equal(5.0f, blinded.Seconds);
-            Assert.Equal(0.5f, blinded.SpeedScale);
+            Assert.Equal(2.5f, blinded.Seconds);
+            Assert.Equal(0.75f, blinded.SpeedScale);
             Assert.False(blinded.BlocksMovement || blinded.BlocksInteraction
                 || blinded.BlocksSlipperRetrieval || blinded.DropsHeldSlipper);
             Assert.True(blinded.Removable && blinded.ImmunityApplies);
@@ -126,36 +126,41 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
-        public void LookoutIsASmallHelperThatOnlyStays15Seconds()
+        public void KeeperStandsTheCanUpIn1Point5SecondsFor15Seconds()
         {
-            // Owner, 2026-10-15: it helps defend and can stand the can up, "medyo small and not that good", 15 s.
+            // Owner, 2026-10-21: 15 s, stands the can up in 1.5 s every time, 15 s cooldown after it is reclaimed.
             Assert.Equal(15.0f, NecroRules.LookoutSeconds);
-            Assert.True(NecroRules.LookoutRestoreSeconds > Balance.ResetChannelTime * 2.0f,
-                "Lookout must stand the can up much slower than the taya does.");
-            Assert.True(NecroRules.LookoutScareRadius > 0.0f);
-            Assert.Equal(NecroRules.BasicCooldown, NecroRules.LookoutCooldown);
+            Assert.Equal(1.5f, NecroRules.LookoutRestoreSeconds);
+            Assert.Equal(15.0f, NecroRules.LookoutCooldown);
         }
 
         [Fact]
-        public void DontLookIsTheOwnersTripwire()
+        public void PeekerIsTheOwnersTripwire()
         {
-            // Owner, 2026-10-15: invisible after 3 s, eyes covered 2 s, a 5 s slow that gets lower over time.
-            Assert.Equal(3.0f, NecroRules.DontLookArmSeconds);
-            Assert.Equal(2.0f, NecroRules.DontLookBlindSeconds);
-            Assert.Equal(5.0f, NecroRules.DontLookSlowSeconds);
-            Assert.Equal(NecroRules.BasicCooldown, NecroRules.DontLookCooldown);
-            Assert.InRange(NecroRules.DontLookTriggerRadius, 1.6f, 2.3f);
-            // The decaying slow: half speed at the spring, easing linearly, none once it runs out.
-            Assert.Equal(0.5f, NecroRules.DontLookSpeedScale(5.0f), 4);
+            // Owner, 2026-10-21: fades over 1.5 s, waits up to 15 s, a 2 m trigger, blind and 25 % slower for 2.5 s.
+            Assert.Equal(1.5f, NecroRules.DontLookArmSeconds);
+            Assert.Equal(15.0f, NecroRules.DontLookLifeSeconds);
+            Assert.Equal(2.0f, NecroRules.DontLookTriggerRadius);
+            Assert.Equal(2.5f, NecroRules.DontLookBlindSeconds);
+            Assert.Equal(2.5f, NecroRules.DontLookSlowSeconds);
+            Assert.Equal(15.0f, NecroRules.DontLookCooldown);
+            // A flat 25 % slow for as long as it lasts, none once it runs out.
             Assert.Equal(0.75f, NecroRules.DontLookSpeedScale(2.5f), 4);
+            Assert.Equal(0.75f, NecroRules.DontLookSpeedScale(0.1f), 4);
             Assert.Equal(1.0f, NecroRules.DontLookSpeedScale(0.0f), 4);
             Assert.Equal(1.0f, NecroRules.DontLookSpeedScale(float.NaN), 4);
-            Assert.True(NecroRules.DontLookSpeedScale(1.0f) > NecroRules.DontLookSpeedScale(4.0f));
-            // Eyes covered for exactly the first two of the five seconds.
-            Assert.True(NecroRules.DontLookCoversEyes(5.0f));
-            Assert.True(NecroRules.DontLookCoversEyes(3.01f));
-            Assert.False(NecroRules.DontLookCoversEyes(3.0f));
+            // Eyes covered for the whole of it.
+            Assert.True(NecroRules.DontLookCoversEyes(2.5f));
+            Assert.True(NecroRules.DontLookCoversEyes(0.01f));
             Assert.False(NecroRules.DontLookCoversEyes(0.0f));
+        }
+
+        [Fact]
+        public void FetcherWaitsForItsReclaimedGhost()
+        {
+            Assert.Equal(15.0f, NecroRules.FetchCooldown);
+            Assert.Equal(25.0f, NecroRules.SoulboundMissedCooldown);
+            Assert.Equal(8.0f, NecroRules.FetchSeconds);
         }
 
         [Fact]

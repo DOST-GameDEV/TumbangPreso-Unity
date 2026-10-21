@@ -1,3 +1,19 @@
+### NEMU-SOULBOUND-1021: SOULBOUND, PEEKER, FETCHER, KEEPER (IN PROGRESS)
+
+Owner 2026-10-21 on branch `Reworks`: passive SOULBOUND (dormant ghosts, reclaim with Grab within 1 m for 1.5 s, cooldowns
+start after reclaim), PEEKER (2.5 s fade, 15 s wait, 2 m ring drawn, blind and 25 % slow for 2.5 s), FETCHER (no taya
+drop), KEEPER (15 s, stands the can up 1.5 s after every knockdown, no scare), all 20 s cooldowns. Protocol175.
+Second pass the same day: 15 s cooldowns, Peeker fades in 1.5 s, reclaim within 1.5 m, Fetcher lingers 1 s after the
+hand-over, Keeper takes the reset away from the taya while it minds the can, dormant ghosts as glowing soul-globes (Gekko as
+a reference, not a copy), and Peeker clings only to its own victim's camera. Third pass: no "Retrieve" tile (it
+overflowed); the tile counts a 10 s dormant window, reclaimed in time gives 15 s, missed gives 25 s; the slipper's recall
+ring rides the globe with that clock; the globe drifts after her and stops beside her; Fetcher ends at the hand-over.
+Keeper finishes a lift under way before it expires (an expiry mid-lift left the can down with no RESET CAN prompt).
+- [x] Rules, kit, `NemuDormant`, reclaim wire and prompt; Core.Tests 797/797; direct Roslyn compile of Runtime, Tests and
+  PlayTests clean.
+- [ ] Unity import and the Nemu EditMode/PlayMode suites (the editor was open on the project, so batch runs were not made).
+- [ ] Owner look at the dormant ghosts, Peeker's ring and the reclaim prompt in play; bots reclaim without walking back.
+
 ### SCOREBOARD-FONT-1021: Darumadrop banner headings (DONE)
 
 - [x] Owner requested Darumadrop One for NEXT ROUND, HALFTIME and the final winner banner.

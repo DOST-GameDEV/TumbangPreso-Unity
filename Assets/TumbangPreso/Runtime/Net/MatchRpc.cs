@@ -425,6 +425,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("ReqGrab", OnReqGrabMsg);
             cm.RegisterNamedMessageHandler("ReqThrow", OnReqThrowMsg);
             cm.RegisterNamedMessageHandler("ReqReset", OnReqResetMsg);
+            cm.RegisterNamedMessageHandler("ReqReclaim", OnReqReclaimMsg);
             cm.RegisterNamedMessageHandler("ReqEmote", OnReqEmoteMsg);
             cm.RegisterNamedMessageHandler("PlayEmote", OnPlayEmoteMsg);
             cm.RegisterNamedMessageHandler("StartMatch", OnStartMatchMsg);
@@ -690,6 +691,7 @@ namespace TumbangPreso.Net
                 return;
 
             HostStepResetChannels();
+            HostStepReclaimChannels();
             HookCompanions();
 
             BroadcastLataStateIfChanged();
@@ -3180,6 +3182,7 @@ namespace TumbangPreso.Net
 
             if (lata == null || who == null || lata.IsUpright) return false;
             if (!who.IsDefender || !who.CanAct() || who.IsWhirled) return false;
+            if (Abilities.NemuLookout.Keeping(lata)) return false;
 
             Vector3 a = who.transform.position;
             Vector3 b = lata.transform.position;
